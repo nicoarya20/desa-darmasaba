@@ -3,7 +3,6 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { Image } from "@mantine/core";
 import { useShallowEffect } from "@mantine/hooks";
 
-
 const FlipOnScroll = () => {
   // Menggunakan hook useScroll untuk mendeteksi posisi scroll
   const { scrollYProgress } = useScroll();
