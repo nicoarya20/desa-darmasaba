@@ -1,6 +1,6 @@
 import Content1 from "@/com/main-page/content-1";
 import Content2 from "@/com/main-page/content-2";
-import Content3 from "@/com/main-page/content-3";
+import Content3 from "@/com/main-page/layanan";
 import Content4 from "@/com/main-page/content-4";
 import Content5 from "@/com/main-page/content-5";
 import Content6 from "@/com/main-page/content-6";
