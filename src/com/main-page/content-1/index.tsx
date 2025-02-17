@@ -5,11 +5,11 @@ import {
   Button,
   Card,
   Flex,
+  Image,
   Stack,
   Text,
   Title
 } from "@mantine/core";
-import Image from 'next/image';
 import ModuleView from "./ModuleView";
 import SosmedView from "./SosmedView";
 
@@ -74,11 +74,7 @@ function Content1() {
                     <Image
                       src={"/assets/images/darmasaba-icon.png"}
                       alt="icon"
-                      quality={10}
-                      priority={true}
-                      fill
-                      objectFit="contain"
-                      objectPosition="center"
+                      sizes="100%"
                     />
                   </Box>
                   <Box
@@ -100,11 +96,8 @@ function Content1() {
                     <Image
                       src={"/assets/images/pudak-icon.png"}
                       alt="icon"
-                      fill
-                      quality={10}
-                      priority={true}
-                      objectFit="contain"
-                      objectPosition="center"
+                      sizes={"100%"}
+                      fit="contain"
                     />
                   </Box>
                 </Flex>
@@ -160,12 +153,8 @@ function Content1() {
           <Image
             src={"/assets/images/perbekel.png"}
             alt="perbekel"
-            fill
-            quality={70}
-            objectFit="contain"
-            objectPosition="bottom"
-            placeholder="empty"
-            priority={true}
+            sizes="100%"
+            fit="contain"
           />
           <Box
             pos={"absolute"}

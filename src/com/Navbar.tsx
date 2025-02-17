@@ -2,12 +2,17 @@
 import colors from "@/con/colors";
 import navbarListMenu from "@/con/navbar-list-menu";
 import stateNav from "@/state/state-nav";
-import { Box, Burger, Group } from "@mantine/core";
+import { ActionIcon, Box, Burger, Group, Stack, Text } from "@mantine/core";
+import { IconHome, IconSquareArrowRight } from "@tabler/icons-react";
+import { motion } from 'framer-motion';
 import { useSnapshot } from "valtio";
+import { MenuItem } from "../../types/menu-item";
 import { NavbarMainMenu } from "./NavbarMainMenu";
+import { useRouter } from 'next/navigation'
 
 export function Navbar() {
-  const { item, isSearch } = useSnapshot(stateNav);
+  const { item, isSearch, mobileOpen } = useSnapshot(stateNav);
+  const router = useRouter()
   return (
     <Box>
       <Box
@@ -17,16 +22,54 @@ export function Navbar() {
         top={0}
         style={{
           zIndex: 100,
+          overflow: "scroll"
         }}
       >
         <NavbarMainMenu listNavbar={navbarListMenu} />
-        <Group justify="end">
-          <Box hiddenFrom="sm">
-            <Burger color={colors["blue-button"]} />
-          </Box>
-        </Group>
+        <Stack hiddenFrom="sm" bg={colors.grey[2]}>
+          <Group justify="space-between">
+            <ActionIcon variant="transparent" onClick={() => {
+              router.push("/")
+              stateNav.mobileOpen = false
+            }}>
+              <IconHome />
+            </ActionIcon>
+            <Burger onClick={() => stateNav.mobileOpen = !stateNav.mobileOpen} color={colors["blue-button"]} opened={mobileOpen} />
+          </Group>
+          {mobileOpen && <motion.div
+            initial={{ x: 300 }}
+            animate={{ x: 0 }}
+            transition={{ duration: 0.1 }}
+            style={{
+              height: "100vh",
+              overflow: "scroll"
+            }}
+          >
+            <NavbarMobile listNavbar={navbarListMenu} />
+          </motion.div>}
+        </Stack>
       </Box>
       {(item || isSearch) && <Box className="glass" />}
     </Box>
   );
+}
+
+function NavbarMobile({ listNavbar }: { listNavbar: MenuItem[] }) {
+  const router = useRouter()
+  return <Stack p={"md"} style={{ backgroundColor: "rgba(255, 255, 255, 0.3)" }}>
+    {listNavbar.map((item, k) => {
+      return <Stack key={k}>
+        <Group justify="space-between" onClick={() => {
+          router.push(item.href)
+          stateNav.mobileOpen = false
+        }}>
+          <Text c="dark.9"
+            style={{ fontWeight: "bold" }}
+          >{item.name}</Text>
+          <IconSquareArrowRight />
+        </Group>
+        {item.children && <NavbarMobile listNavbar={item.children} />}
+      </Stack>
+    })}
+  </Stack>
 }

@@ -9,9 +9,12 @@ import {
   BackgroundImage,
   Box,
   Button,
+  Card,
   Container,
   Divider,
   Group,
+  Image,
+  Paper,
   Stack,
   Text,
   useMantineTheme,
@@ -73,9 +76,14 @@ function Slider({ data }: { data: DataSlider[] }) {
   const autoplay = useRef(Autoplay({ delay: 2000 }));
 
   const slides = data.map((item) => (
-    <Carousel.Slide key={item.id}>
-      <BackgroundImage src={images["bg-slide3"]} h={height} p="xl" radius="md">
-        <Stack justify="space-between" h={"100%"} gap={0}>
+    <Carousel.Slide key={item.id} >
+      <Paper h={"100%"} pos={"relative"} style={{
+        backgroundImage: `url(${images["bg-slide3"]}) `,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+      }}>
+        <Stack justify="space-between" h={"100%"} gap={0} p={"lg"} pos={"relative"} >
           <Box p={"lg"}>
             <Text
               fw={"bold"}
@@ -94,7 +102,7 @@ function Slider({ data }: { data: DataSlider[] }) {
             </Button>
           </Group>
         </Stack>
-      </BackgroundImage>
+      </Paper>
     </Carousel.Slide>
   ));
 

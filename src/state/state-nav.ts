@@ -6,7 +6,8 @@ const stateNav = proxy<{
     item: MenuItem[] | null
     isSearch: boolean,
     clear: () => void,
-    module: string | null
+    module: string | null,
+    mobileOpen: boolean
 }>({
     hover: false,
     item: null,
@@ -16,7 +17,8 @@ const stateNav = proxy<{
         stateNav.item = null
         stateNav.isSearch = false
     },
-    module: null
+    module: null,
+    mobileOpen: false
 })
 
 export default stateNav

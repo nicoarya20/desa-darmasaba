@@ -12,7 +12,8 @@ const colors = {
         }
     },
     "grey": {
-        "1": "#F4F5F6"
+        "1": "#F4F5F6",
+        "2": "#CBCACD"
     }
 }
 

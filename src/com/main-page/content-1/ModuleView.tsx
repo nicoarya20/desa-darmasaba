@@ -1,9 +1,8 @@
 import images from "@/con/images";
 import stateNav from "@/state/state-nav";
-import { Card, SimpleGrid } from "@mantine/core";
+import { Card, Image, SimpleGrid } from "@mantine/core";
 import { useHover } from "@mantine/hooks";
 import { useTransitionRouter } from 'next-view-transitions';
-import Image from 'next/image';
 
 
 const listImageModule = Object.values(images.module);
@@ -27,12 +26,13 @@ function ModuleItem({ item }: { item: string }) {
       }}
     >
       <Image src={item} alt="icon"
-        fill
-        quality={10}
-        objectFit="contain"
-        objectPosition="center"
-        priority={true}
-         />
+        fit="contain"
+        sizes="100%"
+        style={{
+          objectFit:"contain",
+          objectPosition:"center"
+        }}
+      />
     </Card>
   );
 }
