@@ -1,7 +1,7 @@
 import { Stack } from "@mantine/core";
 
-export default function Page({ params }: { params: { sub: string } }) {
+export default function Page() {
     return <Stack>
-        {params.sub}
+        lingkungan
     </Stack>
 }

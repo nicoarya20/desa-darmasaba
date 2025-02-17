@@ -1,7 +1,8 @@
-export default function Page({ params }: { params: { sub: string } }) {
+export default async function Page({ params }: { params: Promise<{ sub: string }> }) {
+    const { sub } = await params
     return (
         <div>
-            <h1>{params.sub}</h1>
+            <h1>{sub}</h1>
         </div>
     );
 }

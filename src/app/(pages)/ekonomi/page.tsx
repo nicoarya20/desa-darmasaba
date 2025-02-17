@@ -1,7 +1,8 @@
 import { Stack } from "@mantine/core";
 
-export default function Page({ params }: { params: { sub: string } }) {
+export default async function Page({ params }: { params: Promise<{ sub: string }> }) {
+    const { sub } = await params
     return <Stack>
-        {params.sub}
+        {sub}
     </Stack>
 }
