@@ -1,8 +1,9 @@
 import images from "@/con/images";
 import stateNav from "@/state/state-nav";
-import { Card, Image, SimpleGrid, Stack } from "@mantine/core";
+import { Card, SimpleGrid } from "@mantine/core";
 import { useHover } from "@mantine/hooks";
-import { useTransitionRouter } from 'next-view-transitions'
+import { useTransitionRouter } from 'next-view-transitions';
+import Image from 'next/image';
 
 
 const listImageModule = Object.values(images.module);
@@ -16,6 +17,7 @@ function ModuleItem({ item }: { item: string }) {
         stateNav.module = item;
         router.push("/module");
       }}
+      h={100}
       ref={ref}
       p={"md"}
       bg={"white"}
@@ -24,9 +26,13 @@ function ModuleItem({ item }: { item: string }) {
         border: `2px solid ${hovered ? "lightgray" : "transparent"}`,
       }}
     >
-      <Stack justify="end" h={"100%"}>
-        <Image src={item} alt="icon" fit="contain" loading="lazy" />
-      </Stack>
+      <Image src={item} alt="icon"
+        fill
+        quality={10}
+        objectFit="contain"
+        objectPosition="center"
+        priority={true}
+         />
     </Card>
   );
 }
@@ -35,8 +41,8 @@ function ModuleView() {
   return (
     <SimpleGrid
       cols={{
-        base: 3,
-        md: 4,
+        base: 2,
+        md: 3,
       }}
     >
       {listImageModule.map((item, k) => {

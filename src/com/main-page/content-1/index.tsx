@@ -1,22 +1,21 @@
 "use client";
 import colors from "@/con/colors";
 import {
-  BackgroundImage,
-  Flex,
   Box,
-  Card,
-  Stack,
-  Image,
-  Text,
   Button,
-  Title,
+  Card,
+  Flex,
+  Stack,
+  Text,
+  Title
 } from "@mantine/core";
+import Image from 'next/image';
 import ModuleView from "./ModuleView";
 import SosmedView from "./SosmedView";
 
 function Content1() {
   return (
-    <BackgroundImage src={"/assets/images/bg-blur.png"}>
+    <Stack bg={colors["blue-button"]}>
       <Flex
         gap={"md"}
         wrap={{
@@ -30,7 +29,6 @@ function Content1() {
             base: "100%",
             md: "60%",
           }}
-          h={820}
           py={{
             base: "xs",
             md: "72",
@@ -58,6 +56,7 @@ function Content1() {
               >
                 <Flex gap={"md"} flex={1}>
                   <Box
+                    pos={"relative"}
                     bg={"white"}
                     w={{
                       base: 64,
@@ -75,11 +74,15 @@ function Content1() {
                     <Image
                       src={"/assets/images/darmasaba-icon.png"}
                       alt="icon"
-                      loading="lazy"
-                      fit="contain"
+                      quality={10}
+                      priority={true}
+                      fill
+                      objectFit="contain"
+                      objectPosition="center"
                     />
                   </Box>
                   <Box
+                    pos={"relative"}
                     w={{
                       base: 64,
                       md: 72,
@@ -97,8 +100,11 @@ function Content1() {
                     <Image
                       src={"/assets/images/pudak-icon.png"}
                       alt="icon"
-                      fit="contain"
-                      loading="lazy"
+                      fill
+                      quality={10}
+                      priority={true}
+                      objectFit="contain"
+                      objectPosition="center"
                     />
                   </Box>
                 </Flex>
@@ -112,23 +118,13 @@ function Content1() {
                     Pemerintah Desa
                   </Text>
                   <Title>DARMASABA</Title>
-                  {/* <Text
-                    fw={"bold"}
-                    fz={{
-                      base: "3rem",
-                      md: "3rem",
-                      sm: ""
-                    }}
-                  >
-                    DARMASABA
-                  </Text> */}
                 </Stack>
               </Flex>
               <ModuleView />
               <SosmedView />
             </Stack>
           </Card>
-          <Stack 
+          <Stack
             align="center"
             justify={"center"}
           >
@@ -164,13 +160,12 @@ function Content1() {
           <Image
             src={"/assets/images/perbekel.png"}
             alt="perbekel"
-            fit="contain" // Menyesuaikan gambar agar sesuai dengan kontainer
-            width={"100%"}
-            h={{
-              base: "500",
-              md: "100%",
-            }}
-            loading="lazy"
+            fill
+            quality={70}
+            objectFit="contain"
+            objectPosition="bottom"
+            placeholder="empty"
+            priority={true}
           />
           <Box
             pos={"absolute"}
@@ -196,7 +191,7 @@ function Content1() {
           </Box>
         </Stack>
       </Flex>
-    </BackgroundImage>
+    </Stack >
   );
 }
 
