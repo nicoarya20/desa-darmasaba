@@ -11,7 +11,9 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
                 base: "2.2rem",
                 md: "2.5rem"
             }} />
-            <Box>
+            <Box style={{
+                overflow: "scroll"
+            }}>
                 {children}
             </Box>
             <Footer />

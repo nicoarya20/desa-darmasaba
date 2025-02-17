@@ -1,7 +1,7 @@
 import images from "@/con/images";
 import stateNav from "@/state/state-nav";
-import { Card, Image, SimpleGrid } from "@mantine/core";
-import { useHover } from "@mantine/hooks";
+import { Center, Image, Paper, SimpleGrid } from "@mantine/core";
+import { motion } from 'framer-motion';
 import { useTransitionRouter } from 'next-view-transitions';
 
 
@@ -9,31 +9,33 @@ const listImageModule = Object.values(images.module);
 
 function ModuleItem({ item }: { item: string }) {
   const router = useTransitionRouter();
-  const { ref, hovered } = useHover();
   return (
-    <Card
+    <Paper
       onClick={() => {
         stateNav.module = item;
         router.push("/module");
       }}
-      h={100}
-      ref={ref}
       p={"md"}
       bg={"white"}
       radius={"32"}
-      style={{
-        border: `2px solid ${hovered ? "lightgray" : "transparent"}`,
-      }}
+      pos={"relative"}
     >
-      <Image src={item} alt="icon"
-        fit="contain"
-        sizes="100%"
-        style={{
-          objectFit:"contain",
-          objectPosition:"center"
-        }}
-      />
-    </Card>
+      <Center h={"100%"}>
+        <motion.div
+          whileHover={{ scale: 1.05 }}
+        >
+          <Image src={item} alt="icon"
+            fit="contain"
+            sizes="100%"
+            loading="lazy"
+            style={{
+              objectFit: "contain",
+              objectPosition: "center"
+            }}
+          />
+        </motion.div>
+      </Center>
+    </Paper>
   );
 }
 

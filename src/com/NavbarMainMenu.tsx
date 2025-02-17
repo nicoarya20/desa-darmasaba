@@ -9,6 +9,7 @@ import { useSnapshot } from "valtio"
 import { MenuItem } from "../../types/menu-item"
 import { NavbarSearch } from "./NavBarSearch"
 import { NavbarSubMenu } from "./NavbarSubMenu"
+import { IconSearch } from "@tabler/icons-react"
 
 export function NavbarMainMenu({ listNavbar }: {
     listNavbar: MenuItem[]
@@ -40,7 +41,7 @@ export function NavbarMainMenu({ listNavbar }: {
                     }}
                 >
                     {/* TODO: add icon search */}
-                    {/* <MdSearch size={"1.5rem"} /> */}
+                    <IconSearch size={"1.5rem"} />
                 </ActionIcon>
             </Flex>
         </Container>

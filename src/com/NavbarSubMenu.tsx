@@ -2,12 +2,13 @@
 
 import stateNav from "@/state/state-nav";
 import { Button, Container, Stack } from "@mantine/core";
-import { motion } from "motion/react";
-import Link from "next/link";
-import { MenuItem } from "../../types/menu-item";
 import _ from "lodash";
+import { motion } from "motion/react";
+import { MenuItem } from "../../types/menu-item";
+import { useTransitionRouter } from 'next-view-transitions'
 
 export function NavbarSubMenu({ item }: { item: MenuItem[] | null }) {
+  const router = useTransitionRouter()
   return (
     <motion.div
       key={_.uniqueId()}
@@ -32,12 +33,15 @@ export function NavbarSubMenu({ item }: { item: MenuItem[] | null }) {
             item.map((item, k) => {
               return (
                 <Button
+                  key={k}
                   fz={"lg"}
                   color="dark.9"
                   variant="transparent"
-                  component={Link}
-                  href={item.href}
-                  key={k}
+                  onClick={() => {
+                    router.push(item.href)
+                    stateNav.item = null
+                    stateNav.isSearch = false
+                  }}
                 >
                   {item.name}
                 </Button>
