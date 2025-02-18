@@ -22,6 +22,7 @@ import {
 import { useMediaQuery } from "@mantine/hooks";
 import Autoplay from "embla-carousel-autoplay";
 import _ from "lodash";
+import { useTransitionRouter } from "next-view-transitions";
 import { useRef } from "react";
 import useSWR from "swr";
 
@@ -42,6 +43,8 @@ function Content3() {
     }
   );
 
+  const router = useTransitionRouter()
+
   return (
     <Stack pos={"relative"} bg={colors.grey[1]} gap={"42"} py={"xl"}>
       <Container w={{ base: "100%", md: "50%" }} p={"xl"}>
@@ -57,7 +60,9 @@ function Content3() {
             {textHeading.des}
           </Text>
           <Box p={"md"}>
-            <Button variant="filled" bg={"dark"} radius={100}>
+            <Button onClick={() => {
+              router.push("/layanan")
+            }} variant="filled" bg={"dark"} radius={100}>
               Lanjutkan
             </Button>
           </Box>
@@ -74,6 +79,7 @@ function Slider({ data }: { data: DataSlider[] }) {
   const theme = useMantineTheme();
   const mobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
   const autoplay = useRef(Autoplay({ delay: 2000 }));
+  const router = useTransitionRouter()
 
   const slides = data.map((item) => (
     <Carousel.Slide key={item.id} >
@@ -97,7 +103,9 @@ function Slider({ data }: { data: DataSlider[] }) {
             </Text>
           </Box>
           <Group justify="center">
-            <Button px={46} radius={"100"} size="md">
+            <Button onClick={() => {
+              router.push(`/layanan/${item.id}`)
+            }} px={46} radius={"100"} size="md">
               Detail
             </Button>
           </Group>

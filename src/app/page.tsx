@@ -7,6 +7,7 @@ import Content6 from "@/com/main-page/content-6";
 import colors from "@/con/colors";
 // import ApiFetch from "@/lib/api-fetch";
 import { Stack } from "@mantine/core";
+import Content7 from "@/com/main-page/content-7";
 
 export default function Page() {
   return (
@@ -17,6 +18,7 @@ export default function Page() {
       <Content4 />
       <Content5 />
       <Content6 />
+      <Content7 />
     </Stack>
   );
 }
