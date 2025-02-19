@@ -13,7 +13,7 @@ import {
 import ModuleView from "./ModuleView";
 import SosmedView from "./SosmedView";
 
-function Content1() {
+function LandingPage() {
   return (
     <Stack bg={colors["blue-button"]}>
       <Flex
@@ -184,4 +184,4 @@ function Content1() {
   );
 }
 
-export default Content1;
+export default LandingPage;

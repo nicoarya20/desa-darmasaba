@@ -6,7 +6,7 @@ import { ActionIcon, Button, Container, Flex, Image, Stack } from "@mantine/core
 import { useHover } from "@mantine/hooks"
 import { useTransitionRouter } from 'next-view-transitions'
 import { useSnapshot } from "valtio"
-import { MenuItem } from "../../types/menu-item"
+import { MenuItem } from "../../../../types/menu-item"
 import { NavbarSearch } from "./NavBarSearch"
 import { NavbarSubMenu } from "./NavbarSubMenu"
 import { IconSearch } from "@tabler/icons-react"
@@ -26,7 +26,7 @@ export function NavbarMainMenu({ listNavbar }: {
                 md: "nowrap"
             }}>
                 <ActionIcon radius={"100"} onClick={() => {
-                    router.push("/")
+                    router.push("/darmasaba")
                     stateNav.clear()
                 }} >
                     <Image radius={"100"} src={"/assets/images/darmasaba-icon.png"} alt="icon" w={24} h={24} loading="lazy" />

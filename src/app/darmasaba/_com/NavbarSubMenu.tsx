@@ -4,7 +4,7 @@ import stateNav from "@/state/state-nav";
 import { Button, Container, Stack } from "@mantine/core";
 import _ from "lodash";
 import { motion } from "motion/react";
-import { MenuItem } from "../../types/menu-item";
+import { MenuItem } from "../../../../types/menu-item";
 import { useTransitionRouter } from 'next-view-transitions'
 
 export function NavbarSubMenu({ item }: { item: MenuItem[] | null }) {

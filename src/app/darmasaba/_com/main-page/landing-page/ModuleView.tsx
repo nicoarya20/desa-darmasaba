@@ -1,5 +1,4 @@
 import images from "@/con/images";
-import stateNav from "@/state/state-nav";
 import { Center, Image, Paper, SimpleGrid } from "@mantine/core";
 import { motion } from 'framer-motion';
 import { useTransitionRouter } from 'next-view-transitions';
@@ -12,8 +11,7 @@ function ModuleItem({ item }: { item: string }) {
   return (
     <Paper
       onClick={() => {
-        stateNav.module = item;
-        router.push("/module");
+        router.push(`/module/c`);
       }}
       p={"md"}
       bg={"white"}

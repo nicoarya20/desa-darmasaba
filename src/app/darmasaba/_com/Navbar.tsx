@@ -6,7 +6,7 @@ import { ActionIcon, Box, Burger, Group, Stack, Text } from "@mantine/core";
 import { IconHome, IconSquareArrowRight } from "@tabler/icons-react";
 import { motion } from 'framer-motion';
 import { useSnapshot } from "valtio";
-import { MenuItem } from "../../types/menu-item";
+import { MenuItem } from "../../../../types/menu-item";
 import { NavbarMainMenu } from "./NavbarMainMenu";
 import { useRouter } from 'next/navigation'
 
@@ -29,7 +29,7 @@ export function Navbar() {
         <Stack hiddenFrom="sm" bg={colors.grey[2]}>
           <Group justify="space-between">
             <ActionIcon variant="transparent" onClick={() => {
-              router.push("/")
+              router.push("/darmasaba")
               stateNav.mobileOpen = false
             }}>
               <IconHome />
