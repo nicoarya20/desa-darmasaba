@@ -2,19 +2,22 @@
 // All packages except `@mantine/hooks` require styles imports
 import "@mantine/carousel/styles.css";
 import "@mantine/core/styles.css";
+import '@mantine/dropzone/styles.css';
 import "animate.css";
+import 'react-simple-toasts/dist/style.css';
+import 'react-simple-toasts/dist/theme/dark.css';
 import "./globals.css";
 
-import LoadDataFirstClient from "@/com/LoadDataFirstClient";
+
+
+import LoadDataFirstClient from "@/app/darmasaba/_com/LoadDataFirstClient";
 import {
   ColorSchemeScript,
   MantineProvider,
   createTheme,
   mantineHtmlProps,
 } from "@mantine/core";
-import { MainLayout } from "../com/MainLayout";
 import { ViewTransitions } from "next-view-transitions";
-import { WebVitals } from "./_com/WebVitals";
 
 export const metadata = {
   title: "desa darmasaba",
@@ -47,10 +50,7 @@ export default function RootLayout({
         </head>
         <body>
           <MantineProvider theme={theme}>
-            <MainLayout>
-              <WebVitals />
-              {children}
-            </MainLayout>
+            {children}
           </MantineProvider>
         </body>
         <LoadDataFirstClient />

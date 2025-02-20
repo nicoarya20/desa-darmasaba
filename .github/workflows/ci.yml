@@ -1,0 +1,62 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    services:
+      # Menjalankan PostgreSQL sebagai service di GitHub Actions
+      postgres:
+        image: postgres:14
+        env:
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+      # Checkout kode sumber
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Setup Bun
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+
+      # Install dependencies
+      - name: Install dependencies
+        run: bun install
+
+      # Konfigurasi environment variable untuk PostgreSQL dan variabel tambahan
+      - name: Set up environment variables
+        run: |
+          echo "DATABASE_URL=postgresql://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/${{ secrets.POSTGRES_DB }}?schema=public" >> .env
+          echo "PORT=${{ secrets.PORT }}" >> .env
+          echo "NEXT_PUBLIC_WIBU_URL=${{ secrets.NEXT_PUBLIC_WIBU_URL }}" >> .env
+          echo "WIBU_UPLOAD_DIR=${{ secrets.WIBU_UPLOAD_DIR }}" >> .env
+
+      # Migrasi database menggunakan Prisma
+      - name: Apply Prisma schema to database
+        run: bun prisma db push
+
+      # Seed database (opsional)
+      - name: Seed database
+        run: bun prisma db seed
+
+      # Build project
+      - name: Build project
+        run: bun run build

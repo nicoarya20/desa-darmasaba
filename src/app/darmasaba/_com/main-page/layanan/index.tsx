@@ -1,0 +1,134 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+"use client";
+import colors from "@/con/colors";
+import images from "@/con/images";
+import ApiFetch from "@/lib/api-fetch";
+import { Carousel } from "@mantine/carousel";
+import {
+  BackgroundImage,
+  Box,
+  Button,
+  Card,
+  Container,
+  Divider,
+  Group,
+  Image,
+  Paper,
+  Stack,
+  Text,
+  useMantineTheme,
+} from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
+import Autoplay from "embla-carousel-autoplay";
+import _ from "lodash";
+import { useTransitionRouter } from "next-view-transitions";
+import { useRef } from "react";
+import useSWR from "swr";
+
+type DataSlider = {
+  id: string;
+  name: string;
+};
+const textHeading = {
+  title: "Layanan",
+  des: "Terwujudnya Layanan umum bertajuk Sistem administrasi Kependudukan Terintegrasi di Desa berbasi Elektronik, Smart dan Aman",
+};
+function Content3() {
+  const { data, isLoading } = useSWR(
+    "/",
+    (url) => ApiFetch.api.layanan.get().then(({ data }) => data?.data),
+    {
+      fallbackData: [],
+    }
+  );
+
+  const router = useTransitionRouter()
+
+  return (
+    <Stack pos={"relative"} bg={colors.grey[1]} gap={"42"} py={"xl"}>
+      <Container w={{ base: "100%", md: "50%" }} p={"xl"}>
+        <Stack align="center" gap={"0"}>
+          <Text fz={"3.4rem"} fw={"bold"}>
+            {textHeading.title}
+          </Text>
+          <Text
+            style={{
+              textAlign: "center",
+            }}
+          >
+            {textHeading.des}
+          </Text>
+          <Box p={"md"}>
+            <Button onClick={() => {
+              router.push("/layanan")
+            }} variant="filled" bg={"dark"} radius={100}>
+              Lanjutkan
+            </Button>
+          </Box>
+        </Stack>
+      </Container>
+      <Slider data={data as any} />
+      <Divider />
+    </Stack>
+  );
+}
+
+const height = 720;
+function Slider({ data }: { data: DataSlider[] }) {
+  const theme = useMantineTheme();
+  const mobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
+  const autoplay = useRef(Autoplay({ delay: 2000 }));
+  const router = useTransitionRouter()
+
+  const slides = data.map((item) => (
+    <Carousel.Slide key={item.id} >
+      <Paper h={"100%"} pos={"relative"} style={{
+        backgroundImage: `url(${images["bg-slide3"]}) `,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+      }}>
+        <Stack justify="space-between" h={"100%"} gap={0} p={"lg"} pos={"relative"} >
+          <Box p={"lg"}>
+            <Text
+              fw={"bold"}
+              c={"white"}
+              size={"3.5rem"}
+              style={{
+                textAlign: "center",
+              }}
+            >
+              {_.startCase(item.name)}
+            </Text>
+          </Box>
+          <Group justify="center">
+            <Button onClick={() => {
+              router.push(`/layanan/${item.id}`)
+            }} px={46} radius={"100"} size="md">
+              Detail
+            </Button>
+          </Group>
+        </Stack>
+      </Paper>
+    </Carousel.Slide>
+  ));
+
+  return (
+    <Carousel
+      plugins={[autoplay.current]}
+      onMouseEnter={autoplay.current.stop}
+      onMouseLeave={autoplay.current.reset}
+      height={height}
+      slideSize={{ base: "100%", sm: "50%", md: "33.333333%" }}
+      slideGap={{ base: "xl", sm: "md" }}
+      loop
+      align="start"
+      slidesToScroll={mobile ? 1 : 2}
+    >
+      {slides}
+    </Carousel>
+  );
+}
+
+export default Content3;

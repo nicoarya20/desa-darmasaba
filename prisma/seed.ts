@@ -33,7 +33,16 @@ import prisma from '@/lib/prisma';
     }
 
     console.log("potensi success ...")
+})().then(() => prisma.$disconnect()).catch((e) => {
+    console.error(e)
+    prisma.$disconnect()
+});
 
+process.on('exit', () => {
+    prisma.$disconnect()
+})
 
-
-})();
+process.on('SIGINT', () => {
+    prisma.$disconnect()
+    process.exit(0)
+})

@@ -2,37 +2,37 @@ const navbarListMenu = [
     {
         id: "1",
         name: "Desa",
-        href: "/desa",
+        href: "/darmasaba/desa",
         children: [
             {
                 id: "1.1",
                 name: "profile",
-                href: "/desa/profile"
+                href: "/darmasaba/desa/profile"
             },
             {
                 id: "1.2",
                 name: "potensi",
-                href: "/desa/potensi"
+                href: "/darmasaba/desa/potensi"
             },
             {
                 id: "1.3",
                 name: "berita",
-                href: "/desa/berita"
+                href: "/darmasaba/desa/berita"
             },
             {
                 id: "1.4",
                 name: "pengumuman",
-                href: "/desa/pengumuman"
+                href: "/darmasaba/desa/pengumuman"
             },
             {
                 id: "1.5",
                 name: "galery",
-                href: "/desa/galery"
+                href: "/darmasaba/desa/galery"
             },
             {
                 id: "1.6",
                 name: "layanan",
-                href: "/desa/layanan"
+                href: "/darmasaba/desa/layanan"
             },
 
         ]
@@ -40,240 +40,240 @@ const navbarListMenu = [
     {
         id: "2",
         name: "Kesehatan",
-        href: "/kesehatan",
+        href: "/darmasaba/kesehatan",
         children: [
             {
                 id: "2.1",
                 name: "Posyandu",
-                href: "/kesehatan/posyandu"
+                href: "/darmasaba/kesehatan/posyandu"
             },
             {
                 id: "2.2",
                 name: "Data Kesehatan Warga",
-                href: "/kesehatan/data-kesehatan-warga"
+                href: "/darmasaba/kesehatan/data-kesehatan-warga"
             },
             {
                 id: "2.3",
                 name: "Puskesmas",
-                href: "/kesehatan/puskesmas"
+                href: "/darmasaba/kesehatan/puskesmas"
             },
             {
                 id: "2.4",
                 name: "Program Kesehatan",
-                href: "/kesehatan/program-kesehatan"
+                href: "/darmasaba/kesehatan/program-kesehatan"
             },
             {
                 id: "2.5",
                 name: "Penanganan Darurat",
-                href: "/kesehatan/penanganan-darurat"
+                href: "/darmasaba/kesehatan/penanganan-darurat"
             },
             {
                 id: "2.6",
                 name: "Kontak Darurat",
-                href: "/kesehatan/kontak-darurat"
+                href: "/darmasaba/kesehatan/kontak-darurat"
             },
             {
                 id: "2.7",
                 name: "Info Wabah/Penyakit",
-                href: "/kesehatan/info-wabah-penyakit"
+                href: "/darmasaba/kesehatan/info-wabah-penyakit"
             }
         ]
     },
     {
         id: "3",
         name: "Keamanan",
-        href: "/keamanan",
+        href: "/darmasaba/keamanan",
         children: [
             {
                 id: "3.1",
                 name: "Keamanan Lingkungan (Pecalang/Patwal)",
-                href: "/keamanan/keamanan-lingkungan"
+                href: "/darmasaba/keamanan/keamanan-lingkungan"
             },
             {
                 id: "3.2",
                 name: "Polsek Terdekat",
-                href: "/keamanan/polsek-terdekat"
+                href: "/darmasaba/keamanan/polsek-terdekat"
             },
             {
                 id: "3.3",
                 name: "Kontak Darurat",
-                href: "/keamanan/kontak-darurat"
+                href: "/darmasaba/keamanan/kontak-darurat"
             },
             {
                 id: "3.4",
                 name: "Pencegahan Kriminalitas",
-                href: "/keamanan/pencegahan-kriminalitas"
+                href: "/darmasaba/keamanan/pencegahan-kriminalitas"
             },
             {
                 id: "3.5",
                 name: "Laporan Publik",
-                href: "/keamanan/laporan-publik"
+                href: "/darmasaba/keamanan/laporan-publik"
             },
             {
                 id: "3.6",
                 name: "Tips Keamanan",
-                href: "/keamanan/tips-keamanan"
+                href: "/darmasaba/keamanan/tips-keamanan"
             }
         ]
     },
     {
         id: "4",
         name: "Ekonomi",
-        href: "/ekonomi",
+        href: "/darmasaba/ekonomi",
         children: [
             {
                 id: "4.1",
                 name: "Pasar Desa",
-                href: "/ekonomi/pasar-desa"
+                href: "/darmasaba/ekonomi/pasar-desa"
             },
             {
                 id: "4.2",
                 name: "Koperasi",
-                href: "/ekonomi/koperasi"
+                href: "/darmasaba/ekonomi/koperasi"
             },
             {
                 id: "4.3",
                 name: "UMKM",
-                href: "/ekonomi/umkm"
+                href: "/darmasaba/ekonomi/umkm"
             },
             {
                 id: "4.4",
                 name: "Data Ekonomi Desa",
-                href: "/ekonomi/data-ekonomi-desa"
+                href: "/darmasaba/ekonomi/data-ekonomi-desa"
             },
             {
                 id: "4.5",
                 name: "Pelatihan Wirausaha",
-                href: "/ekonomi/pelatihan-wirausaha"
+                href: "/darmasaba/ekonomi/pelatihan-wirausaha"
             },
             {
                 id: "4.6",
                 name: "Bantuan & Pendanaan",
-                href: "/ekonomi/bantuan-pendanaan"
+                href: "/darmasaba/ekonomi/bantuan-pendanaan"
             },
             {
                 id: "4.7",
                 name: "Investasi Desa",
-                href: "/ekonomi/investasi-desa"
+                href: "/darmasaba/ekonomi/investasi-desa"
             },
             {
                 id: "4.8",
                 name: "Produk Unggulan",
-                href: "/ekonomi/produk-unggulan"
+                href: "/darmasaba/ekonomi/produk-unggulan"
             },
             {
                 id: "4.9",
                 name: "Lowongan Kerja Lokal",
-                href: "/ekonomi/lowongan-kerja-lokal"
+                href: "/darmasaba/ekonomi/lowongan-kerja-lokal"
             }
         ]
     }, {
         id: "5",
         name: "Inovasi",
-        href: "/inovasi",
+        href: "/darmasaba/inovasi",
         children: [
             {
                 id: "5.1",
                 name: "Desa Digital/Smart Village",
-                href: "/inovasi/desa-digital-smart-village"
+                href: "/darmasaba/inovasi/desa-digital-smart-village"
             },
             {
                 id: "5.2",
                 name: "Layanan Online Desa",
-                href: "/inovasi/layanan-online-desa"
+                href: "/darmasaba/inovasi/layanan-online-desa"
             },
             {
                 id: "5.3",
                 name: "Program Kreatif Desa",
-                href: "/inovasi/program-kreatif-desa"
+                href: "/darmasaba/inovasi/program-kreatif-desa"
             },
             {
                 id: "5.4",
                 name: "Kolaborasi Inovasi",
-                href: "/inovasi/kolaborasi-inovasi"
+                href: "/darmasaba/inovasi/kolaborasi-inovasi"
             },
             {
                 id: "5.5",
                 name: "Info Teknologi Tepat Guna",
-                href: "/inovasi/info-teknologi-tepat-guna"
+                href: "/darmasaba/inovasi/info-teknologi-tepat-guna"
             },
             {
                 id: "5.6",
                 name: "Ajukan Ide Inovatif",
-                href: "/inovasi/ajukan-ide-inovatif"
+                href: "/darmasaba/inovasi/ajukan-ide-inovatif"
             }
 
         ]
     }, {
         id: "6",
         name: "Lingkungan",
-        href: "/lingkungan",
+        href: "/darmasaba/lingkungan",
         children: [
             {
                 id: "6.1",
                 name: "Pengelolaan Sampah (Bank Sampah)",
-                href: "/lingkungan/pengelolaan-sampah-bank-sampah"
+                href: "/darmasaba/lingkungan/pengelolaan-sampah-bank-sampah"
             },
             {
                 id: "6.2",
                 name: "Program Penghijauan",
-                href: "/lingkungan/program-penghijauan"
+                href: "/darmasaba/lingkungan/program-penghijauan"
             },
             {
                 id: "6.3",
                 name: "Data Lingkungan Desa",
-                href: "/lingkungan/data-lingkungan-desa"
+                href: "/darmasaba/lingkungan/data-lingkungan-desa"
             },
             {
                 id: "6.4",
                 name: "Gotong Royong",
-                href: "/lingkungan/gotong-royong"
+                href: "/darmasaba/lingkungan/gotong-royong"
             },
             {
                 id: "6.5",
                 name: "Edukasi Lingkungan",
-                href: "/lingkungan/edukasi-lingkungan"
+                href: "/darmasaba/lingkungan/edukasi-lingkungan"
             },
             {
                 id: "6.6",
                 name: "Konservasi Adat Bali",
-                href: "/lingkungan/konservasi-adat-bali"
+                href: "/darmasaba/lingkungan/konservasi-adat-bali"
             }
         ]
     }, {
         id: "7",
         name: "Pendidikan",
-        href: "/pendidikan",
+        href: "/darmasaba/pendidikan",
         children: [
             {
                 id: "7.1",
                 name: "Info Sekolah & PAUD",
-                href: "/pendidikan/info-sekolah-paud"
+                href: "/darmasaba/pendidikan/info-sekolah-paud"
             },
             {
                 id: "7.2",
                 name: "Beasiswa Desa",
-                href: "/pendidikan/beasiswa-desa"
+                href: "/darmasaba/pendidikan/beasiswa-desa"
             },
             {
                 id: "7.3",
                 name: "Program Pendidikan Anak",
-                href: "/pendidikan/program-pendidikan-anak"
+                href: "/darmasaba/pendidikan/program-pendidikan-anak"
             },
             {
                 id: "7.4",
                 name: "Bimbingan Belajar Desa",
-                href: "/pendidikan/bimbingan-belajar-desa"
+                href: "/darmasaba/pendidikan/bimbingan-belajar-desa"
             },
             {
                 id: "7.5",
                 name: "Pendidikan Non Formal",
-                href: "/pendidikan/pendidikan-non-formal"
+                href: "/darmasaba/pendidikan/pendidikan-non-formal"
             },
             {
                 id: "7.6",
                 name: "Perpustakaan Desa",
-                href: "/pendidikan/perpustakaan-desa"
+                href: "/darmasaba/pendidikan/perpustakaan-desa"
             }
         ]
     }
