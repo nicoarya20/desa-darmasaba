@@ -1,4 +1,4 @@
-name: CI Pipeline
+name: CI/CD Pipeline with Symlink
 
 on:
   push:
@@ -9,24 +9,8 @@ on:
       - main
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
-
-    services:
-      # Menjalankan PostgreSQL sebagai service di GitHub Actions
-      postgres:
-        image: postgres:14
-        env:
-          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd="pg_isready"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
 
     steps:
       # Checkout kode sumber
@@ -41,22 +25,56 @@ jobs:
       - name: Install dependencies
         run: bun install
 
-      # Konfigurasi environment variable untuk PostgreSQL dan variabel tambahan
-      - name: Set up environment variables
-        run: |
-          echo "DATABASE_URL=postgresql://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/${{ secrets.POSTGRES_DB }}?schema=public" >> .env
-          echo "PORT=${{ secrets.PORT }}" >> .env
-          echo "NEXT_PUBLIC_WIBU_URL=${{ secrets.NEXT_PUBLIC_WIBU_URL }}" >> .env
-          echo "WIBU_UPLOAD_DIR=${{ secrets.WIBU_UPLOAD_DIR }}" >> .env
-
-      # Migrasi database menggunakan Prisma
-      - name: Apply Prisma schema to database
-        run: bun prisma db push
-
-      # Seed database (opsional)
-      - name: Seed database
-        run: bun prisma db seed
-
       # Build project
       - name: Build project
         run: bun run build
+
+      # Generate unique version directory
+      - name: Generate version directory
+        id: version
+        run: echo "VERSION=myapp-v$(date +%Y%m%d%H%M%S)" >> $GITHUB_ENV
+
+      # Ensure /var/www exists
+      - name: Ensure /var/www exists
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            mkdir -p /var/www
+
+      # Deploy to a new version directory
+      - name: Deploy to VPS (New Version)
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          source: "."
+          target: "/var/www/${{ env.VERSION }}"
+
+      # Prepare and switch symlink
+      - name: Switch symlink to new version
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            cd /var/www
+            mv myapp-current myapp-backup || true
+            ln -sfn ${{ env.VERSION }} myapp-current
+            cd /var/www/myapp-current
+            bun install --production
+            pm2 reload myapp || pm2 start "bun run start" --name myapp
+
+      # Clean up old version (optional)
+      - name: Clean up old version
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            rm -rf /var/www/myapp-backup
