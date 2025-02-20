@@ -1,0 +1,30 @@
+name: CI/CD Pipeline with Symlink
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout kode sumber
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Setup Bun
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+
+      # Install dependencies
+      - name: Install dependencies
+        run: bun install
+
+      # Build project
+      - name: Build project
+        run: bun run build
