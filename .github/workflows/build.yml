@@ -7,6 +7,9 @@ on:
   pull_request:
     branches:
       - main
+env:
+  APP_NAME: desa-darmasaba
+  WA_PHONE: 6289697338821
 
 jobs:
   build:
@@ -29,6 +32,11 @@ jobs:
           --health-retries=5
 
     steps:
+      # Kirim notifikasi ke API build Start
+      - name: Notify start build
+        run: |
+          curl -X GET "https://wa.wibudev.com/code?text=build-start-desa-darmasaba&nom=${{ env.WA_PHONE }}"
+
       # Checkout kode sumber
       - name: Checkout code
         uses: actions/checkout@v3
@@ -65,15 +73,52 @@ jobs:
       - name: Build project
         run: bun run build >> build.txt 2>&1
 
-      # Ensure /var/www exists
-      - name: Ensure /var/www/projects/desa-darmasaba exists
+        # Generate unique version directory
+      - name: Generate version directory
+        id: version
+        run: echo "VERSION=${{ github.sha }}---v$(date +%Y%m%d%H%M%S)" >> $GITHUB_ENV
+
+      # Ensure project directory exists
+      - name: Ensure /var/www/projects/${{ env.APP_NAME }} exists
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USERNAME }}
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
-            mkdir -p /var/www/projects/desa-darmasaba
+            mkdir -p /var/www/projects/${{ env.APP_NAME }}
+
+      # Deploy to a new version directory
+      - name: Deploy to VPS (New Version)
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          source: "."
+          target: "/var/www/projects/${{ env.APP_NAME }}/releases/${{ env.VERSION }}"
+
+      # Kirim file .env ke server
+      - name: Upload .env to server
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          source: ".env"
+          target: "/var/www/projects/desa-darmasaba/releases/${{ env.VERSION }}/.env"
+
+      # Kirim notifikasi ke API jika build berhasil
+      - name: Notify build success via API
+        if: success()
+        run: |
+          curl -X GET "https://wa.wibudev.com/code?text=finish-success&nom=6289697338821"
+
+      # Kirim notifikasi ke API jika build gagal
+      - name: Notify build failed via API
+        if: failure()
+        run: |
+          curl -X GET "https://wa.wibudev.com/code?text=finish-failed&nom=6289697338821"
 
       # Send email with GitHub Actions logs
       - name: Send email with logs
