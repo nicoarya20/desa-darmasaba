@@ -1,0 +1,33 @@
+name: CI/CD Pipeline with Email Notification
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  send-email:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Send email notification
+      - name: Send email notification
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: ${{ secrets.GMAIL_USERNAME }}
+          password: ${{ secrets.GMAIL_APP_PASSWORD }}
+          subject: "GitHub Actions Deployment Log"
+          body: |
+            The deployment process has completed successfully.
+            Please find the details below:
+            
+            Repository: ${{ github.repository }}
+            Branch: ${{ github.ref }}
+            Commit: ${{ github.sha }}
+          to: your-email@example.com
+          from: your-email@gmail.com
