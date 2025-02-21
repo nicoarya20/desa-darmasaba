@@ -9,7 +9,10 @@ on:
       - main
 env:
   APP_NAME: desa-darmasaba
+  APP_VERSION: ${{ github.sha }}---$(date +%Y%m%d%H%M%S)
   WA_PHONE: 6289697338821
+  EMAIL_FROM: bip.production.js@gmail.com
+  EMAIL_TO: kurosakiblackangel@gmail.com
 
 jobs:
   build:
@@ -35,7 +38,7 @@ jobs:
       # Kirim notifikasi ke API build Start
       - name: Notify start build
         run: |
-          curl -X GET "https://wa.wibudev.com/code?text=build-start-desa-darmasaba&nom=${{ env.WA_PHONE }}"
+          curl -X GET "https://wa.wibudev.com/code?text=build-start-${{ env.APP_NAME }}&nom=${{ env.WA_PHONE }}"
 
       # Checkout kode sumber
       - name: Checkout code
@@ -73,11 +76,6 @@ jobs:
       - name: Build project
         run: bun run build >> build.txt 2>&1
 
-        # Generate unique version directory
-      - name: Generate version directory
-        id: version
-        run: echo "VERSION=${{ github.sha }}---v$(date +%Y%m%d%H%M%S)" >> $GITHUB_ENV
-
       # Ensure project directory exists
       - name: Ensure /var/www/projects/${{ env.APP_NAME }} exists
         uses: appleboy/ssh-action@master
@@ -96,7 +94,7 @@ jobs:
           username: ${{ secrets.VPS_USERNAME }}
           key: ${{ secrets.VPS_SSH_KEY }}
           source: "."
-          target: "/var/www/projects/${{ env.APP_NAME }}/releases/${{ env.VERSION }}"
+          target: "/var/www/projects/${{ env.APP_NAME }}/releases/${{ env.APP_VERSION }}"
 
       # Kirim file .env ke server
       - name: Upload .env to server
@@ -106,19 +104,19 @@ jobs:
           username: ${{ secrets.VPS_USERNAME }}
           key: ${{ secrets.VPS_SSH_KEY }}
           source: ".env"
-          target: "/var/www/projects/desa-darmasaba/releases/${{ env.VERSION }}/.env"
+          target: "/var/www/projects/${{ env.APP_NAME }}/releases/${{ env.APP_VERSION }}/"
 
       # Kirim notifikasi ke API jika build berhasil
       - name: Notify build success via API
         if: success()
         run: |
-          curl -X GET "https://wa.wibudev.com/code?text=finish-success&nom=6289697338821"
+          curl -X GET "https://wa.wibudev.com/code?text=finish-success-build-${{ env.APP_NAME }}&nom=6289697338821"
 
       # Kirim notifikasi ke API jika build gagal
       - name: Notify build failed via API
         if: failure()
         run: |
-          curl -X GET "https://wa.wibudev.com/code?text=finish-failed&nom=6289697338821"
+          curl -X GET "https://wa.wibudev.com/code?text=finish-failed-build-${{ env.APP_NAME }}&nom=6289697338821"
 
       # Send email with GitHub Actions logs
       - name: Send email with logs
@@ -136,7 +134,7 @@ jobs:
             Branch: ${{ github.ref }}
             Commit: ${{ github.sha }}
 
-          to: kurosakiblackangel@gmail.com
-          from: bip.production.js@gmail.com
+          to: ${{ env.EMAIL_TO }}
+          from: ${{ env.EMAIL_FROM }}
           attachments: |
             build.txt
