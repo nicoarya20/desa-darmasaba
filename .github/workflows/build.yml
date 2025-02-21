@@ -49,17 +49,21 @@ jobs:
           echo "NEXT_PUBLIC_WIBU_URL=${{ secrets.NEXT_PUBLIC_WIBU_URL }}" >> .env
           echo "WIBU_UPLOAD_DIR=${{ secrets.WIBU_UPLOAD_DIR }}" >> .env
 
+      # create log file
+      - name: Create log file
+        run: touch build.txt
+
       # Migrasi database menggunakan Prisma
       - name: Apply Prisma schema to database
-        run: bun prisma db push
+        run: bun prisma db push >> build.txt 2>&1
 
       # Seed database (opsional)
       - name: Seed database
-        run: bun prisma db seed
+        run: bun prisma db seed >> build.txt 2>&1
 
       # Build project
       - name: Build project
-        run: bun run build
+        run: bun run build >> build.txt 2>&1
 
       # Send email with GitHub Actions logs
       - name: Send email with logs
@@ -77,8 +81,7 @@ jobs:
             Branch: ${{ github.ref }}
             Commit: ${{ github.sha }}
 
-            Please find the logs for this run at the following link:
-            https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/logs
-            https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/logs
           to: kurosakiblackangel@gmail.com
           from: bip.production.js@gmail.com
+          attachments: |
+            build.txt
