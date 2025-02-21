@@ -1,7 +1,2 @@
-// test aja
-// apa kabar
-
-// test 3
-
-// test 4
-export {}
+// percobaan
+console.log(path.basename("/apa/kanar.png", ".png"))
