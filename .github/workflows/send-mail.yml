@@ -29,5 +29,5 @@ jobs:
             Repository: ${{ github.repository }}
             Branch: ${{ github.ref }}
             Commit: ${{ github.sha }}
-          to: your-email@example.com
-          from: your-email@gmail.com
+          to: kurosakiblackangel@gmail.com
+          from: bip.production.js@gmail.com
