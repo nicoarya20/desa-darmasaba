@@ -35,7 +35,7 @@ jobs:
 
       # Setup Bun
       - name: Setup Bun
-        uses: oven-sh/setup-bun@v1
+        uses: oven-sh/setup-bun@v2
 
       # Install dependencies
       - name: Install dependencies
@@ -69,6 +69,12 @@ jobs:
                -L "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/logs" \
                -o logs.zip
 
+      # Extract only important logs
+      - name: Extract important logs
+        run: |
+          unzip logs.zip -d logs
+          grep -E "error|warning" logs/*.txt > important_logs.txt
+
       # Send email with GitHub Actions logs
       - name: Send email with logs
         uses: dawidd6/action-send-mail@v3
@@ -80,8 +86,13 @@ jobs:
           subject: "GitHub Actions Logs"
           body: |
             The deployment process has completed successfully.
-            Please find the attached GitHub Actions logs.
-          to: kurosakiblackangel@gmail.com
-          from: bip.production.js@gmail.com
+
+            Repository: ${{ github.repository }}
+            Branch: ${{ github.ref }}
+            Commit: ${{ github.sha }}
+
+            Please find the attached important logs for more details.
+          to: recipient-email@example.com
+          from: your-email@gmail.com
           attachments: |
-            ${{ github.workspace }}/logs.zip
+            ${{ github.workspace }}/important_logs.txt
