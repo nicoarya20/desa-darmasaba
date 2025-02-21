@@ -65,6 +65,16 @@ jobs:
       - name: Build project
         run: bun run build >> build.txt 2>&1
 
+      # Ensure /var/www exists
+      - name: Ensure /var/www/projects/desa-darmasaba exists
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            mkdir -p /var/www/projects/desa-darmasaba
+
       # Send email with GitHub Actions logs
       - name: Send email with logs
         uses: dawidd6/action-send-mail@v3
