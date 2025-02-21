@@ -78,6 +78,7 @@ jobs:
             Commit: ${{ github.sha }}
 
             Please find the logs for this run at the following link:
-            https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
-          to: recipient-email@example.com
-          from: your-email@gmail.com
+            https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/logs
+            https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/logs
+          to: kurosakiblackangel@gmail.com
+          from: bip.production.js@gmail.com
