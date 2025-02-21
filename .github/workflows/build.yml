@@ -9,7 +9,6 @@ on:
       - main
 env:
   APP_NAME: desa-darmasaba
-  APP_VERSION: ${{ github.sha }}---$(date +%Y%m%d%H%M%S)
   WA_PHONE: 6289697338821
   EMAIL_FROM: bip.production.js@gmail.com
   EMAIL_TO: kurosakiblackangel@gmail.com
@@ -35,6 +34,10 @@ jobs:
           --health-retries=5
 
     steps:
+      # Generate APP_VERSION dynamically
+      - name: Set APP_VERSION
+        run: echo "APP_VERSION=${{ github.sha }}---$(date +%Y%m%d%H%M%S)" >> $GITHUB_ENV
+
       # Kirim notifikasi ke API build Start
       - name: Notify start build
         run: |
