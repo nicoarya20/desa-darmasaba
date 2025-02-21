@@ -1,4 +1,4 @@
-name: CI Pipeline
+name: Build And Save Log
 
 on:
   push:
@@ -60,3 +60,28 @@ jobs:
       # Build project
       - name: Build project
         run: bun run build
+
+      # Download GitHub Actions logs
+      - name: Download GitHub Actions logs
+        run: |
+          mkdir -p logs
+          curl -H "Authorization: token ${{ secrets.WIBU_GITHUB_TOKEN }}" \
+               -L "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/logs" \
+               -o logs.zip
+
+      # Send email with GitHub Actions logs
+      - name: Send email with logs
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: ${{ secrets.GMAIL_USERNAME }}
+          password: ${{ secrets.GMAIL_APP_PASSWORD }}
+          subject: "GitHub Actions Logs"
+          body: |
+            The deployment process has completed successfully.
+            Please find the attached GitHub Actions logs.
+          to: kurosakiblackangel@gmail.com
+          from: bip.production.js@gmail.com
+          attachments: |
+            ${{ github.workspace }}/logs.zip
