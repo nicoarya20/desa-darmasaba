@@ -151,6 +151,6 @@ jobs:
         run: |
           IFS=',' read -ra PHONES <<< "${{ env.WA_PHONE }}"
           for PHONE in "${PHONES[@]}"; do 
-            ENCODED_TEXT=$(bun -e "console.log(encodeURIComponent('Build-${{ env.BUILD_STATUS }}-${{ env.APP_NAME }}-Version-${{ env.APP_VERSION }}-Log:${{ env.LOG_URL }}'))")
+            ENCODED_TEXT=$(bun -e "console.log(encodeURIComponent('Build:${{ env.BUILD_STATUS }}\nApp:${{ env.APP_NAME }}\nVersion:${{ env.APP_VERSION }}\nLog:${{ env.LOG_URL }}'))")
             curl -X GET "https://wa.wibudev.com/code?text=$ENCODED_TEXT&nom=$PHONE"
           done
