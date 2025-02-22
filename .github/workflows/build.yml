@@ -33,6 +33,23 @@ jobs:
           --health-retries=5
 
     steps:
+      # Checkout kode sumber
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Setup Bun
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+
+      # Cache dependencies
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: .bun
+          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lockb') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-
+
       # Step 1: Set BRANCH_NAME based on event type
       - name: Set BRANCH_NAME
         run: |
@@ -54,23 +71,6 @@ jobs:
             ENCODED_TEXT=$(bun -e "console.log(encodeURIComponent('Build:start\nApp:${{ env.APP_NAME }}\nBranch:${{ env.BRANCH_NAME }}\nVersion:${{ env.APP_VERSION }}'))")
             curl -X GET "https://wa.wibudev.com/code?text=$ENCODED_TEXT&nom=$PHONE"
           done
-
-      # Checkout kode sumber
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      # Setup Bun
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
-
-      # Cache dependencies
-      - name: Cache dependencies
-        uses: actions/cache@v3
-        with:
-          path: .bun
-          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lockb') }}
-          restore-keys: |
-            ${{ runner.os }}-bun-
 
       # Install dependencies
       - name: Install dependencies
