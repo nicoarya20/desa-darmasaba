@@ -7,18 +7,17 @@ on:
   pull_request:
     branches:
       - main
+
 env:
   APP_NAME: desa-darmasaba
-  WA_PHONE: 6289697338821
+  WA_PHONE: "6289697338821,6289697338822"
   EMAIL_FROM: bip.production.js@gmail.com
-  EMAIL_TO: kurosakiblackangel@gmail.com
+  EMAIL_TO: "kurosakiblackangel@gmail.com,bip.production.ts@gmail.com"
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     services:
-      # Menjalankan PostgreSQL sebagai service di GitHub Actions
       postgres:
         image: postgres:14
         env:
@@ -41,7 +40,10 @@ jobs:
       # Kirim notifikasi ke API build Start
       - name: Notify start build
         run: |
-          curl -X GET "https://wa.wibudev.com/code?text=build-start-${{ env.APP_NAME }}&nom=${{ env.WA_PHONE }}"
+          IFS=',' read -ra PHONES <<< "${{ env.WA_PHONE }}"
+          for PHONE in "${PHONES[@]}"; do
+            curl -X GET "https://wa.wibudev.com/code?text=build-start-${{ env.APP_NAME }}&nom=$PHONE"
+          done
 
       # Checkout kode sumber
       - name: Checkout code
@@ -50,6 +52,15 @@ jobs:
       # Setup Bun
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
+
+      # Cache dependencies
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: .bun
+          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lockb') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-
 
       # Install dependencies
       - name: Install dependencies
@@ -63,7 +74,7 @@ jobs:
           echo "NEXT_PUBLIC_WIBU_URL=${{ secrets.NEXT_PUBLIC_WIBU_URL }}" >> .env
           echo "WIBU_UPLOAD_DIR=${{ secrets.WIBU_UPLOAD_DIR }}" >> .env
 
-      # create log file
+      # Create log file
       - name: Create log file
         run: touch build.txt
 
@@ -109,35 +120,37 @@ jobs:
           source: ".env"
           target: "/var/www/projects/${{ env.APP_NAME }}/releases/${{ env.APP_VERSION }}/"
 
-      # Kirim notifikasi ke API jika build berhasil
-      - name: Notify build success via API
+      # Step 4: Set BUILD_STATUS based on success or failure
+      - name: Set BUILD_STATUS
         if: success()
-        run: |
-          curl -X GET "https://wa.wibudev.com/code?text=finish-success-build-${{ env.APP_NAME }}&nom=6289697338821"
+        run: echo "BUILD_STATUS=success" >> $GITHUB_ENV
 
-      # Kirim notifikasi ke API jika build gagal
-      - name: Notify build failed via API
+      - name: Set BUILD_STATUS on failure
         if: failure()
+        run: echo "BUILD_STATUS=failed" >> $GITHUB_ENV
+
+      # Update status log
+      - name: Update status log
         run: |
-          curl -X GET "https://wa.wibudev.com/code?text=finish-failed-build-${{ env.APP_NAME }}&nom=6289697338821"
+          echo "=====================" >> build.txt
+          echo "BUILD_STATUS=${{ env.BUILD_STATUS }}" >> build.txt
+          echo "APP_NAME=${{ env.APP_NAME }}" >> build.txt
+          echo "APP_VERSION=${{ env.APP_VERSION }}" >> build.txt
+          echo "LOG_URL=${{ env.LOG_URL }}" >> build.txt
+          echo "=====================" >> build.txt
 
-      # Send email with GitHub Actions logs
-      - name: Send email with logs
-        uses: dawidd6/action-send-mail@v3
-        with:
-          server_address: smtp.gmail.com
-          server_port: 587
-          username: ${{ secrets.GMAIL_USERNAME }}
-          password: ${{ secrets.GMAIL_APP_PASSWORD }}
-          subject: "GitHub Actions Logs"
-          body: |
-            The deployment process has completed successfully.
+      # Upload log to 0x0.st
+      - name: Upload log to 0x0.st
+        id: upload_log
+        run: |
+          LOG_URL=$(curl -F "file=@build.txt" https://0x0.st)
+          echo "LOG_URL=$LOG_URL" >> $GITHUB_ENV
 
-            Repository: ${{ github.repository }}
-            Branch: ${{ github.ref }}
-            Commit: ${{ github.sha }}
-
-          to: ${{ env.EMAIL_TO }}
-          from: ${{ env.EMAIL_FROM }}
-          attachments: |
-            build.txt
+      # Kirim notifikasi ke API
+      - name: Notify build success via API
+        run: |
+          IFS=',' read -ra PHONES <<< "${{ env.WA_PHONE }}"
+          for PHONE in "${PHONES[@]}"; do 
+            ENCODED_TEXT=$(bun -e "console.log(encodeURIComponent('Build-${{ env.BUILD_STATUS }}-${{ env.APP_NAME }}-Version-${{ env.APP_VERSION }}-Log:${{ env.LOG_URL }}'))")
+            curl -X GET "https://wa.wibudev.com/code?text=$ENCODED_TEXT&nom=$PHONE"
+          done
