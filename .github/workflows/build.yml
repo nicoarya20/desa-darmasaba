@@ -9,10 +9,8 @@ on:
       - main
 
 env:
-  APP_NAME: desa-darmasaba
+  APP_NAME: desa-darmasaba-action
   WA_PHONE: "6289697338821,6289697338822"
-  EMAIL_FROM: bip.production.js@gmail.com
-  EMAIL_TO: "kurosakiblackangel@gmail.com,bip.production.ts@gmail.com"
 
 jobs:
   build:
@@ -94,7 +92,8 @@ jobs:
 
       # Seed database (opsional)
       - name: Seed database
-        run: bun prisma db seed >> build.txt 2>&1
+        run: |
+          bun prisma db seed >> build.txt 2>&1 || echo "Seed failed or no seed data found. Continuing without seed." >> build.txt
 
       # Build project
       - name: Build project
@@ -130,6 +129,30 @@ jobs:
           source: ".env"
           target: "/var/www/projects/${{ env.APP_NAME }}/releases/${{ env.APP_VERSION }}/"
 
+      # Ensure project directory exists
+      - name: reload server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            PORT=$(curl -s -X GET https://wibu-bot.wibudev.com/api/find-port | jq -r '.[0]')
+            cd /var/www/projects/${{ env.APP_NAME }}/releases/${{ env.APP_VERSION }}
+            bun install --production
+
+            # Apply database schema
+            if ! bun pm2 db push; then
+              echo "Database migration failed."
+              exit 1
+            fi
+
+            # Seed database (optional)
+            bun pm2 db seed || echo "tidak membutuhkan seed"
+
+            # Restart the application
+            pm2 reload ${{ env.APP_NAME }} || pm2 start "bun run start --port $PORT" --name "${{ env.APP_NAME }}" --namespace ${{ env.APP_NAME }}
+
       # Step 4: Set BUILD_STATUS based on success or failure
       - name: Set BUILD_STATUS
         if: success()
@@ -141,23 +164,25 @@ jobs:
 
       # Update status log
       - name: Update status log
+        if: always()
         run: |
           echo "=====================" >> build.txt
           echo "BUILD_STATUS=${{ env.BUILD_STATUS }}" >> build.txt
           echo "APP_NAME=${{ env.APP_NAME }}" >> build.txt
           echo "APP_VERSION=${{ env.APP_VERSION }}" >> build.txt
-          echo "LOG_URL=${{ env.LOG_URL }}" >> build.txt
           echo "=====================" >> build.txt
 
       # Upload log to 0x0.st
       - name: Upload log to 0x0.st
         id: upload_log
+        if: always()
         run: |
           LOG_URL=$(curl -F "file=@build.txt" https://0x0.st)
           echo "LOG_URL=$LOG_URL" >> $GITHUB_ENV
 
       # Kirim notifikasi ke API
       - name: Notify build success via API
+        if: always()
         run: |
           IFS=',' read -ra PHONES <<< "${{ env.WA_PHONE }}"
           for PHONE in "${PHONES[@]}"; do 
