@@ -119,7 +119,15 @@ jobs:
           source: "."
           target: "/var/www/projects/${{ env.APP_NAME }}/releases/${{ env.APP_VERSION }}"
 
-        # Kirim file .env ke server
+       # Set up environment variables
+      - name: Set up environment variables
+        run: |
+          rm -r .env
+          echo "DATABASE_URL=postgresql://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@localhost:5433/${{ secrets.POSTGRES_DB }}?schema=public" >> .env
+          echo "NEXT_PUBLIC_WIBU_URL=${{ env.APP_NAME }}" >> .env
+          echo "WIBU_UPLOAD_DIR=/var/www/projects/${{ env.APP_NAME }}/uploads" >> .env
+
+      # Kirim file .env ke server
       - name: Upload .env to server
         uses: appleboy/scp-action@master
         with:
@@ -141,45 +149,6 @@ jobs:
             # Source ~/.bashrc
             source ~/.bashrc
 
-            # Install NVM if not already installed
-            if [ ! -d "$HOME/.nvm" ]; then
-              echo "NVM is not installed. Installing now..."
-              curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash
-              source ~/.bashrc
-            fi
-
-            # Verify NVM installation
-            if ! command -v nvm &> /dev/null; then
-              echo "NVM installation failed."
-              exit 1
-            fi
-
-            # Install Node.js if not already installed
-            if ! command -v node &> /dev/null; then
-              echo "Node.js is not installed. Installing now..."
-              nvm install --lts
-              nvm use --lts
-            fi
-
-            # Install Bun if not already installed
-            if ! command -v bun &> /dev/null; then
-              echo "Bun is not installed. Installing now..."
-              curl -fsSL https://bun.sh/install | bash
-              export PATH="$HOME/.bun/bin:$PATH"
-            fi
-
-            # Install PM2 if not already installed
-            if ! command -v pm2 &> /dev/null; then
-              echo "PM2 is not installed. Installing now..."
-              bun install --global pm2
-            fi
-
-             # Install dotenv-cli if not already installed
-            if ! command -v dotenv &> /dev/null; then
-              echo "dotenv-cli is not installed. Installing now..."
-              bun install --global dotenv-cli
-            fi
-
             # Find an available port
             PORT=$(curl -s -X GET https://wibu-bot.wibudev.com/api/find-port | jq -r '.[0]')
             if [ -z "$PORT" ] || ! [[ "$PORT" =~ ^[0-9]+$ ]]; then
@@ -187,14 +156,8 @@ jobs:
               exit 1
             fi
 
-            # Deploy to VPS
+            # manage deployment
             cd /var/www/projects/${{ env.APP_NAME }}/releases/${{ env.APP_VERSION }}
-
-            # Set environment variables
-            dotenv set DATABASE_URL "postgresql://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@localhost:5433/${{ secrets.POSTGRES_DB }}?schema=public"
-            dotenv set PORT "$PORT"
-            dotenv set NEXT_PUBLIC_WIBU_URL "localhost:$PORT"
-            dotenv set WIBU_UPLOAD_DIR "/var/www/projects/${{ env.APP_NAME }}/uploads"
 
             # Create uploads directory
             mkdir -p /var/www/projects/${{ env.APP_NAME }}/uploads
