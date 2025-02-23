@@ -1,12 +1,16 @@
 name: Build And Save Log
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Target environment (e.g., staging, production)"
+        required: true
+        default: "staging"
+      version:
+        description: "Version to deploy"
+        required: false
+        default: "latest"
 
 env:
   APP_NAME: desa-darmasaba-action
@@ -119,7 +123,7 @@ jobs:
           source: "."
           target: "/var/www/projects/${{ env.APP_NAME }}/releases/${{ env.APP_VERSION }}"
 
-       # Set up environment variables
+        # Set up environment variables
       - name: Set up environment variables
         run: |
           rm -r .env
