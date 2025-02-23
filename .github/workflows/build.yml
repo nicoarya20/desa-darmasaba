@@ -168,10 +168,10 @@ jobs:
             cd /var/www/projects/${{ env.APP_NAME }}/releases/${{ env.APP_VERSION }}
 
             # Set environment variables
-            dotenv set DATABASE_URL="postgresql://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@localhost:5433/${{ secrets.POSTGRES_DB }}?schema=public"
-            dotenv set PORT="$PORT"
-            dotenv set NEXT_PUBLIC_WIBU_URL="localhost:$PORT"
-            dotenv set WIBU_UPLOAD_DIR="/var/www/projects/${{ env.APP_NAME }}/uploads"
+            dotenv set DATABASE_URL "postgresql://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@localhost:5433/${{ secrets.POSTGRES_DB }}?schema=public"
+            dotenv set PORT "$PORT"
+            dotenv set NEXT_PUBLIC_WIBU_URL "localhost:$PORT"
+            dotenv set WIBU_UPLOAD_DIR "/var/www/projects/${{ env.APP_NAME }}/uploads"
 
             # Create uploads directory
             mkdir -p /var/www/projects/${{ env.APP_NAME }}/uploads
