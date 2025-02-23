@@ -201,7 +201,7 @@ jobs:
         id: upload_log
         if: always()
         run: |
-          LOG_URL=$(curl -F "file=@build.txt" https://0x0.st)
+          LOG_URL=$(curl -F "file=@build.txt" https://wibu-bot.wibudev.com/api/file )
           echo "LOG_URL=$LOG_URL" >> $GITHUB_ENV
 
       # Kirim notifikasi ke API
