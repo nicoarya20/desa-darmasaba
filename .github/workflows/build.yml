@@ -145,18 +145,29 @@ jobs:
               export PATH="$HOME/.bun/bin:$PATH"
             fi
 
+            # Install PM2 if not already installed
+            if ! command -v pm2 &> /dev/null; then
+              echo "PM2 is not installed. Installing now..."
+              npm install -g pm2
+            fi
+
+            # Find an available port
             PORT=$(curl -s -X GET https://wibu-bot.wibudev.com/api/find-port | jq -r '.[0]')
+
+            # Deploy to VPS
             cd /var/www/projects/${{ env.APP_NAME }}/releases/${{ env.APP_VERSION }}
+
+            # Install dependencies
             bun install --production
 
             # Apply database schema
-            if ! bun pm2 db push; then
+            if ! bun prisma db push; then
               echo "Database migration failed."
               exit 1
             fi
 
             # Seed database (optional)
-            bun pm2 db seed || echo "tidak membutuhkan seed"
+            bun prisma db seed || echo "tidak membutuhkan seed"
 
             # Restart the application
             pm2 reload ${{ env.APP_NAME }} || pm2 start "bun run start --port $PORT" --name "${{ env.APP_NAME }}" --namespace ${{ env.APP_NAME }}
