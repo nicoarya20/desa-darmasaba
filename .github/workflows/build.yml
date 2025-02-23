@@ -137,6 +137,14 @@ jobs:
           username: ${{ secrets.VPS_USERNAME }}
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
+
+            # Install Bun if not already installed
+            if ! command -v bun &> /dev/null; then
+              echo "Bun is not installed. Installing now..."
+              curl -fsSL https://bun.sh/install | bash
+              export PATH="$HOME/.bun/bin:$PATH"
+            fi
+
             PORT=$(curl -s -X GET https://wibu-bot.wibudev.com/api/find-port | jq -r '.[0]')
             cd /var/www/projects/${{ env.APP_NAME }}/releases/${{ env.APP_VERSION }}
             bun install --production
