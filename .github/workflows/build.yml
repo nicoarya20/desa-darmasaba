@@ -78,9 +78,9 @@ jobs:
       - name: Set up environment variables
         run: |
           echo "DATABASE_URL=postgresql://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/${{ secrets.POSTGRES_DB }}?schema=public" >> .env
-          echo "PORT=${{ secrets.PORT }}" >> .env
-          echo "NEXT_PUBLIC_WIBU_URL=${{ secrets.NEXT_PUBLIC_WIBU_URL }}" >> .env
-          echo "WIBU_UPLOAD_DIR=${{ secrets.WIBU_UPLOAD_DIR }}" >> .env
+          echo "PORT=3000" >> .env
+          echo "NEXT_PUBLIC_WIBU_URL=localhost:3000" >> .env
+          echo "WIBU_UPLOAD_DIR=/uploads" >> .env
 
       # Create log file
       - name: Create log file
@@ -119,16 +119,6 @@ jobs:
           source: "."
           target: "/var/www/projects/${{ env.APP_NAME }}/releases/${{ env.APP_VERSION }}"
 
-      # Kirim file .env ke server
-      - name: Upload .env to server
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USERNAME }}
-          key: ${{ secrets.VPS_SSH_KEY }}
-          source: ".env"
-          target: "/var/www/projects/${{ env.APP_NAME }}/releases/${{ env.APP_VERSION }}/"
-
       # Ensure project directory exists
       - name: reload server
         uses: appleboy/ssh-action@master
@@ -156,6 +146,15 @@ jobs:
 
             # Deploy to VPS
             cd /var/www/projects/${{ env.APP_NAME }}/releases/${{ env.APP_VERSION }}
+
+            # Set environment variables
+            echo "DATABASE_URL=postgresql://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@localhost:5433/${{ secrets.POSTGRES_DB }}?schema=public" >> .env
+            echo "PORT=$PORT" >> .env
+            echo "NEXT_PUBLIC_WIBU_URL=localhost:$PORT" >> .env
+            echo "WIBU_UPLOAD_DIR=/uploads" >> .env
+
+            # Create uploads directory
+            mkdir -p /uploads
 
             # Install dependencies
             bun install --production
