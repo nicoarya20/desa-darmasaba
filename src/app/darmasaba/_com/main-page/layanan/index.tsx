@@ -1,23 +1,18 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 import colors from "@/con/colors";
-import images from "@/con/images";
 import ApiFetch from "@/lib/api-fetch";
 import { Carousel } from "@mantine/carousel";
 import {
-  BackgroundImage,
   Box,
   Button,
-  Card,
   Container,
   Divider,
   Group,
-  Image,
   Paper,
   Stack,
   Text,
-  useMantineTheme,
+  useMantineTheme
 } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import Autoplay from "embla-carousel-autoplay";
@@ -26,15 +21,44 @@ import { useTransitionRouter } from "next-view-transitions";
 import { useRef } from "react";
 import useSWR from "swr";
 
-type DataSlider = {
-  id: string;
-  name: string;
-};
+const data = [
+  {
+    id: 1,
+    images: "/assets/images/layanan/test.png",
+    name: "Surat Keterangan Domisili Organisasi"
+  },
+  {
+    id: 2,
+    images: "/assets/images/layanan/test3.jpeg",
+    name: "Surat Keterangan Penghasilan"
+  },
+  {
+    id: 3,
+    images: "/assets/images/layanan/test2.jpeg",
+    name: "Surat Keterangan Tidak Mampu"
+  },
+  {
+    id: 4,
+    images: "/assets/images/layanan/kelahiran.jpeg",
+    name: "Surat Keterangan Kelahiran"
+  },
+  {
+    id: 5,
+    images: "/assets/images/layanan/test.png",
+    name: "Surat Keterangan Usaha"
+  },
+  {
+    id: 6,
+    images: "/assets/images/layanan/test2.jpeg",
+    name: "Surat Keterangan Kematian"
+  },
+
+]
 const textHeading = {
   title: "Layanan",
-  des: "Terwujudnya Layanan umum bertajuk Sistem administrasi Kependudukan Terintegrasi di Desa berbasi Elektronik, Smart dan Aman",
+  des: "Layanan adalah fitur yang membantu warga desa mengakses berbagai kebutuhan administrasi, informasi, dan bantuan secara cepat, mudah, dan transparan. Dengan fitur ini, semua layanan desa ada dalam genggaman Anda!",
 };
-function Content3() {
+function Layanan() {
   const { data, isLoading } = useSWR(
     "/",
     (url) => ApiFetch.api.layanan.get().then(({ data }) => data?.data),
@@ -59,23 +83,23 @@ function Content3() {
           >
             {textHeading.des}
           </Text>
-          <Box p={"md"}>
+          {/* <Box p={"md"}>
             <Button onClick={() => {
               router.push("/layanan")
             }} variant="filled" bg={"dark"} radius={100}>
               Lanjutkan
             </Button>
-          </Box>
+          </Box> */}
         </Stack>
       </Container>
-      <Slider data={data as any} />
+      <Slider />
       <Divider />
     </Stack>
   );
 }
 
 const height = 720;
-function Slider({ data }: { data: DataSlider[] }) {
+function Slider() {
   const theme = useMantineTheme();
   const mobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
   const autoplay = useRef(Autoplay({ delay: 2000 }));
@@ -84,11 +108,21 @@ function Slider({ data }: { data: DataSlider[] }) {
   const slides = data.map((item) => (
     <Carousel.Slide key={item.id} >
       <Paper h={"100%"} pos={"relative"} style={{
-        backgroundImage: `url(${images["bg-slide3"]}) `,
+        backgroundImage: `url(${item.images}) `,
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
       }}>
+        <Box
+          style={{
+            borderRadius: 16,
+            zIndex: 0,
+          }}
+          pos={"absolute"}
+          w={"100%"}
+          h={"100%"}
+          bg={colors.trans.dark[2]}
+        />
         <Stack justify="space-between" h={"100%"} gap={0} p={"lg"} pos={"relative"} >
           <Box p={"lg"}>
             <Text
@@ -131,4 +165,4 @@ function Slider({ data }: { data: DataSlider[] }) {
   );
 }
 
-export default Content3;
+export default Layanan;

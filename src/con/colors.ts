@@ -6,15 +6,18 @@ const colors = {
     "white-trans-3": "rgba(255, 255, 255, 0.9)",
     "trans": {
         "dark": {
-            "1": "rgba(0, 0, 0, 0.5)",
-            "2": "rgba(0, 0, 0, 0.7)",
-            "3": "rgba(0, 0, 0, 0.9)"
+            "1": "rgba(0, 0, 0, 0.3)",
+            "2": "rgba(0, 0, 0, 0.5)",
+            "3": "rgba(0, 0, 0, 0.7)",
+            "4": "rgba(0, 0, 0, 0.9)"
         }
     },
     "grey": {
         "1": "#F4F5F6",
         "2": "#CBCACD"
-    }
+    },
+    "Bg": "#D1d9e8",
+
 }
 
 export default colors
