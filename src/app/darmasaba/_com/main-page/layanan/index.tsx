@@ -18,6 +18,7 @@ import { useMediaQuery } from "@mantine/hooks";
 import Autoplay from "embla-carousel-autoplay";
 import _ from "lodash";
 import { useTransitionRouter } from "next-view-transitions";
+import Link from "next/link";
 import { useRef } from "react";
 import useSWR from "swr";
 
@@ -84,9 +85,7 @@ function Layanan() {
             {textHeading.des}
           </Text>
           <Box p={"md"}>
-            <Button onClick={() => {
-              router.push("/layanan")
-            }} variant="filled" bg={colors["blue-button"]} radius={100}>
+            <Button component={Link} href={"/darmasaba/desa/layanan"} variant="filled" bg={colors["blue-button"]} radius={100}>
               Detail
             </Button>
           </Box>

@@ -2,13 +2,13 @@
 import colors from "@/con/colors";
 import navbarListMenu from "@/con/navbar-list-menu";
 import stateNav from "@/state/state-nav";
-import { ActionIcon, Box, Burger, Group, Stack, Text } from "@mantine/core";
-import { IconHome, IconSquareArrowRight } from "@tabler/icons-react";
+import { ActionIcon, Box, Burger, Group, Image, Stack, Text } from "@mantine/core";
+import { IconSquareArrowRight } from "@tabler/icons-react";
 import { motion } from 'framer-motion';
+import { useRouter } from 'next/navigation';
 import { useSnapshot } from "valtio";
 import { MenuItem } from "../../../../types/menu-item";
 import { NavbarMainMenu } from "./NavbarMainMenu";
-import { useRouter } from 'next/navigation'
 
 export function Navbar() {
   const { item, isSearch, mobileOpen } = useSnapshot(stateNav);
@@ -31,8 +31,10 @@ export function Navbar() {
             <ActionIcon variant="transparent" onClick={() => {
               router.push("/darmasaba")
               stateNav.mobileOpen = false
-            }}>
-              <IconHome />
+            }}
+              size={80} radius={"xl"}
+            >
+              <Image src="/api/img/darmasaba-icon.png" alt="Logo Desa" width={50} height={50} />
             </ActionIcon>
             <Burger onClick={() => stateNav.mobileOpen = !stateNav.mobileOpen} color={colors["blue-button"]} opened={mobileOpen} />
           </Group>

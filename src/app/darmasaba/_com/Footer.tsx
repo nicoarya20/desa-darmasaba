@@ -102,7 +102,9 @@ function Footer() {
                           position: 'relative'
                         }}
                       >
-                        <Image src="/api/img/chatbot-removebg-preview.png" alt="Logo Desa" width={80} height={80} />
+                        <ActionIcon size={80} radius={"xl"} variant='transparent'>
+                          <Image src="/api/img/chatbot-removebg-preview.png" alt="Logo Desa" width={80} height={80} />
+                        </ActionIcon>
                       </Box>
                     </Group>
                   </Stack>
@@ -195,7 +197,7 @@ function Footer() {
           </Box>
           <Divider py={15} />
           <Text ta={"center"} c={"white"} p={20}>
-          © 2024 Desa Darmasaba. Hak Cipta Dilindungi.
+            © 2024 Desa Darmasaba. Hak Cipta Dilindungi.
           </Text>
         </Box>
       </Stack>

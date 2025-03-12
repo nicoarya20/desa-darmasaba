@@ -6,32 +6,32 @@ const navbarListMenu = [
         children: [
             {
                 id: "1.1",
-                name: "profile",
+                name: "Profile",
                 href: "/darmasaba/desa/profile"
             },
             {
                 id: "1.2",
-                name: "potensi",
+                name: "Potensi",
                 href: "/darmasaba/desa/potensi"
             },
             {
                 id: "1.3",
-                name: "berita",
+                name: "Berita",
                 href: "/darmasaba/desa/berita"
             },
             {
                 id: "1.4",
-                name: "pengumuman",
+                name: "Pengumuman",
                 href: "/darmasaba/desa/pengumuman"
             },
             {
                 id: "1.5",
-                name: "galery",
+                name: "Gallery",
                 href: "/darmasaba/desa/galery"
             },
             {
                 id: "1.6",
-                name: "layanan",
+                name: "Layanan",
                 href: "/darmasaba/desa/layanan"
             },
 

@@ -21,7 +21,7 @@ import {
 import { ViewTransitions } from "next-view-transitions";
 
 export const metadata = {
-  title: "desa darmasaba",
+  title: "Desa Darmasaba",
   description: "Desa Darmasaba Kabupaten Badung",
 };
 
