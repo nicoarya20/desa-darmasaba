@@ -1,7 +1,10 @@
 import colors from "@/con/colors";
 import { Box, Space, Stack } from "@mantine/core";
-import Footer from "@/app/darmasaba/_com/Footer";
+
 import { Navbar } from "@/app/darmasaba/_com/Navbar";
+import Footer from "./_com/Footer";
+
+
 
 export default function Layout({ children }: { children: React.ReactNode }) {
     return (

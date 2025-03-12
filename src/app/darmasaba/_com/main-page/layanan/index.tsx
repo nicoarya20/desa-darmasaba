@@ -24,32 +24,32 @@ import useSWR from "swr";
 const data = [
   {
     id: 1,
-    images: "/assets/images/layanan/test.png",
+    images: "/api/img/test.png",
     name: "Surat Keterangan Domisili Organisasi"
   },
   {
     id: 2,
-    images: "/assets/images/layanan/test3.jpeg",
+    images: "/api/img/test-3.jpeg",
     name: "Surat Keterangan Penghasilan"
   },
   {
     id: 3,
-    images: "/assets/images/layanan/test2.jpeg",
+    images: "/api/img/domisili.jpeg",
     name: "Surat Keterangan Tidak Mampu"
   },
   {
     id: 4,
-    images: "/assets/images/layanan/kelahiran.jpeg",
+    images: "/api/img/kelahiran.jpeg",
     name: "Surat Keterangan Kelahiran"
   },
   {
     id: 5,
-    images: "/assets/images/layanan/test.png",
+    images: "/api/img/keterangan-usaha.jpeg",
     name: "Surat Keterangan Usaha"
   },
   {
     id: 6,
-    images: "/assets/images/layanan/test2.jpeg",
+    images: "/api/img/kematian.jpeg",
     name: "Surat Keterangan Kematian"
   },
 
@@ -83,13 +83,13 @@ function Layanan() {
           >
             {textHeading.des}
           </Text>
-          {/* <Box p={"md"}>
+          <Box p={"md"}>
             <Button onClick={() => {
               router.push("/layanan")
-            }} variant="filled" bg={"dark"} radius={100}>
-              Lanjutkan
+            }} variant="filled" bg={colors["blue-button"]} radius={100}>
+              Detail
             </Button>
-          </Box> */}
+          </Box>
         </Stack>
       </Container>
       <Slider />
@@ -126,6 +126,7 @@ function Slider() {
         <Stack justify="space-between" h={"100%"} gap={0} p={"lg"} pos={"relative"} >
           <Box p={"lg"}>
             <Text
+              
               fw={"bold"}
               c={"white"}
               size={"3.5rem"}
@@ -139,7 +140,7 @@ function Slider() {
           <Group justify="center">
             <Button onClick={() => {
               router.push(`/layanan/${item.id}`)
-            }} px={46} radius={"100"} size="md">
+            }} px={46} radius={"100"} size="md" bg={colors["blue-button"]}>
               Detail
             </Button>
           </Group>

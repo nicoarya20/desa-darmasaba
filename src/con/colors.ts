@@ -1,4 +1,5 @@
 const colors = {
+    "orange": "#FCAE00",
     "blue-button": "#0A4E78",
     "white-1": "#FBFBFC",
     "white-trans-1": "rgba(255, 255, 255, 0.5)",
