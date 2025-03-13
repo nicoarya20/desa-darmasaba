@@ -34,6 +34,11 @@ const navbarListMenu = [
                 name: "Layanan",
                 href: "/darmasaba/desa/layanan"
             },
+            {
+                id: "1.7",
+                name: "Penghargaan",
+                href: "/darmasaba/penghargaan"
+            }
 
         ]
     },

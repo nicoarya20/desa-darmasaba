@@ -1,47 +1,78 @@
 'use client'
 import colors from "@/con/colors";
-import { ActionIcon, Anchor, BackgroundImage, Box, Button, Container, Divider, Flex, Group, List, ListItem, SimpleGrid, Stack, Stepper, StepperCompleted, StepperStep, Text } from "@mantine/core";
+import { ActionIcon, BackgroundImage, Box, Button, Container, Divider, Flex, Group, List, ListItem, SimpleGrid, Stack, Stepper, StepperCompleted, StepperStep, Text } from "@mantine/core";
 import { IconBrandFacebook, IconBrandInstagram, IconBrandTwitter, IconBrandWhatsapp } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import BackButton from "./_com/BackButto";
 
 const data = [
     {
         id: 1,
         images: "/api/img/test.png",
         name: "Surat Keterangan Domisili Organisasi",
-        link: ""
+        link: "/darmasaba/desa/layanan/domisili"
     },
     {
         id: 2,
         images: "/api/img/test-3.jpeg",
         name: "Surat Keterangan Penghasilan",
-        link: ""
+        link: "/darmasaba/desa/layanan/penghasilan"
     },
     {
         id: 3,
         images: "/api/img/domisili.jpeg",
         name: "Surat Keterangan Tidak Mampu",
-        link: ""
+        link: "/darmasaba/desa/layanan/tidakmampu"
     },
     {
         id: 4,
         images: "/api/img/kelahiran.jpeg",
         name: "Surat Keterangan Kelahiran",
-        link: ""
+        link: "/darmasaba/desa/layanan/kelahiran"
     },
     {
         id: 5,
         images: "/api/img/keterangan-usaha.jpeg",
         name: "Surat Keterangan Usaha",
-        link: ""
+        link: "/darmasaba/desa/layanan/usaha"
     },
     {
         id: 6,
         images: "/api/img/kematian.jpeg",
         name: "Surat Keterangan Kematian",
-        link: ""
+        link: "/darmasaba/desa/layanan/kematian"
     },
+    {
+        id: 7,
+        images: "/api/img/tempatusaha.jpeg",
+        name: "Surat Keterangan Tempat Usaha",
+        link: "/darmasaba/desa/layanan/tempatusaha"
+    },
+    {
+        id: 8,
+        images: "/api/img/belumkawin.jpeg",
+        name: "Surat Keterangan Belum Kawin",
+        link: "/darmasaba/desa/layanan/belumkawin"
+    },
+    {
+        id: 9,
+        images: "/api/img/berkelakuan-baik.jpeg",
+        name: "Surat Keterangan Kelakuan Baik",
+        link: "/darmasaba/desa/layanan/skck"
+    },
+    {
+        id: 10,
+        images: "/api/img/biodata.jpeg",
+        name: "Surat Keterangan Beda Biodata Diri",
+        link: "/darmasaba/desa/layanan/biodata"
+    },
+    {
+        id: 11,
+        images: "/api/img/yatim.jpeg",
+        name: "Surat Keterangan Yatim Piatu",
+        link: "/darmasaba/desa/layanan/yatim"
+    }
 
 ]
 export default function Page() {
@@ -52,6 +83,7 @@ export default function Page() {
     return (
         <Stack pos={"relative"} bg={colors.grey[1]} py={"xl"} gap={"42"}>
             <Container w={{ base: "100%", md: "50%" }} >
+                <BackButton/>
                 <Stack align="center" gap={0}>
                     {/* Bagian Layanan */}
                     <Text fz={"3.4rem"} fw={"bold"}>
@@ -162,7 +194,7 @@ export default function Page() {
                     </Group>
                     <Text py={35} ta={"justify"} fz={"sm"}>Penting untuk diingat bahwa prosedur dan persyaratan dapat berubah
                         seiring waktu. Untuk informasi yang lebih akurat dan terkini, saya sarankan untuk mengunjungi situs
-                        resmi OSS <Anchor>(https://oss.go.id/)</Anchor> atau menghubungi instansi terkait di pemerintah Indonesia yang bertanggung jawab atas urusan perizinan usaha.</Text>
+                        resmi OSS <a href={"https://oss.go.id/"}>(https://oss.go.id/)</a> atau menghubungi instansi terkait di pemerintah Indonesia yang bertanggung jawab atas urusan perizinan usaha.</Text>
                 </Box>
                 {/* Bagian Pelayanan Telunjuk Sakti Desa */}
                 <Box py={15}>
@@ -170,9 +202,9 @@ export default function Page() {
                 </Box>
                 <Text fz={"sm"} py={10}>Terwujudnya Layanan umum bertajuk Sistim administrasi Kependudukan Terintegrasi di Desa berbasi Elektronik, Smart dan Aman. layanan telunjuk sakti Desa meliputi :</Text>
                 <List type="ordered" pb={20}>
-                    <ListItem fz={"sm"}>Telunjuk Sakti Desa Akta Kelahiran (Petunjuk Pengajuan pada link berikut : Download <Anchor fz={"sm"}>Akta Kelahiran</Anchor>)</ListItem>
-                    <ListItem fz={"sm"}>Telunjuk Sakti Desa Akta Perkawinan (Petunjuk Pengajuan pada link berikut : Download <Anchor fz={"sm"}>Akta Perkawinan</Anchor>)</ListItem>
-                    <ListItem fz={"sm"}>Telunjuk Sakti Desa Akta Kematian (Petunjuk Pengajuan pada link berikut : Download <Anchor fz={"sm"}>Akata Kematian</Anchor>)</ListItem>
+                    <ListItem fz={"sm"}>Telunjuk Sakti Desa Akta Kelahiran (Petunjuk Pengajuan pada link berikut : Download <a href="https://darmasaba.desa.id/storage/files/PERSYARATAN%20DAN%20ALUR%20PENGAJUAN%20AKTA%20KELAHIRAN_(dengan%20contoh%20Formulir).pdf">Akta Kelahiran</a>)</ListItem>
+                    <ListItem fz={"sm"}>Telunjuk Sakti Desa Akta Perkawinan (Petunjuk Pengajuan pada link berikut : Download <a href="https://darmasaba.desa.id/storage/files/PERSYARATAN%20DAN%20ALUR%20PENGAJUAN%20AKTA%20PERKAWINAN_(dengan%20contoh%20Formulir).pdf">Akta Perkawinan</a>)</ListItem>
+                    <ListItem fz={"sm"}>Telunjuk Sakti Desa Akta Kematian (Petunjuk Pengajuan pada link berikut : Download <a href="https://darmasaba.desa.id/storage/files/PERSYARATAN%20DAN%20ALUR%20PENGAJUAN%20AKTA%20KEMATIAN_(dengan%20contoh%20Formulir).pdf">Akata Kematian</a>)</ListItem>
                 </List>
                 {/* Bagian Pelayanan Telunjuk Sakti Desa */}
                 <Box py={15}>
@@ -199,7 +231,7 @@ export default function Page() {
                         </Flex>
                     </Box>
                 </Flex>
-                <Divider pb={50}/>
+                <Divider pb={50} />
             </Container>
         </Stack>
     )

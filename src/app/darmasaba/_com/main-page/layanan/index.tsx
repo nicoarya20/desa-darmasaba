@@ -26,33 +26,69 @@ const data = [
   {
     id: 1,
     images: "/api/img/test.png",
-    name: "Surat Keterangan Domisili Organisasi"
+    name: "Surat Keterangan Domisili Organisasi",
+    link: "/darmasaba/desa/layanan/domisili"
   },
   {
     id: 2,
     images: "/api/img/test-3.jpeg",
-    name: "Surat Keterangan Penghasilan"
+    name: "Surat Keterangan Penghasilan",
+    link: "/darmasaba/desa/layanan/penghasilan"
   },
   {
     id: 3,
     images: "/api/img/domisili.jpeg",
-    name: "Surat Keterangan Tidak Mampu"
+    name: "Surat Keterangan Tidak Mampu",
+    link: "/darmasaba/desa/layanan/tidakmampu"
   },
   {
     id: 4,
     images: "/api/img/kelahiran.jpeg",
-    name: "Surat Keterangan Kelahiran"
+    name: "Surat Keterangan Kelahiran",
+    link: "/darmasaba/desa/layanan/kelahiran"
   },
   {
     id: 5,
     images: "/api/img/keterangan-usaha.jpeg",
-    name: "Surat Keterangan Usaha"
+    name: "Surat Keterangan Usaha",
+    link: "/darmasaba/desa/layanan/usaha"
   },
   {
     id: 6,
     images: "/api/img/kematian.jpeg",
-    name: "Surat Keterangan Kematian"
+    name: "Surat Keterangan Kematian",
+    link: "/darmasaba/desa/layanan/kematian"
   },
+  {
+    id: 7,
+    images: "/api/img/tempatusaha.jpeg",
+    name: "Surat Keterangan Tempat Usaha",
+    link: "/darmasaba/desa/layanan/tempatusaha"
+  },
+  {
+    id: 8,
+    images: "/api/img/belumkawin.jpeg",
+    name: "Surat Keterangan Belum Kawin",
+    link: "/darmasaba/desa/layanan/belumkawin"
+  },
+  {
+    id: 9,
+    images: "/api/img/berkelakuan-baik.jpeg",
+    name: "Surat Keterangan Kelakuan Baik",
+    link: "/darmasaba/desa/layanan/skck"
+  },
+  {
+    id: 10,
+    images: "/api/img/biodata.jpeg",
+    name: "Surat Keterangan Beda Biodata Diri",
+    link: "/darmasaba/desa/layanan/biodata"
+  },
+  {
+    id: 11,
+    images: "/api/img/yatim.jpeg",
+    name: "Surat Keterangan Yatim Piatu",
+    link: "/darmasaba/desa/layanan/yatim"
+  }
 
 ]
 const textHeading = {
@@ -125,7 +161,7 @@ function Slider() {
         <Stack justify="space-between" h={"100%"} gap={0} p={"lg"} pos={"relative"} >
           <Box p={"lg"}>
             <Text
-              
+
               fw={"bold"}
               c={"white"}
               size={"3.5rem"}
@@ -137,9 +173,7 @@ function Slider() {
             </Text>
           </Box>
           <Group justify="center">
-            <Button onClick={() => {
-              router.push(`/layanan/${item.id}`)
-            }} px={46} radius={"100"} size="md" bg={colors["blue-button"]}>
+            <Button component={Link} href={item.link} px={46} radius={"100"} size="md" bg={colors["blue-button"]}>
               Detail
             </Button>
           </Group>

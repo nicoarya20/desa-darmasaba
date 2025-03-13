@@ -16,12 +16,13 @@ import {
 } from "@mantine/core";
 import _ from "lodash";
 import { motion } from "motion/react";
+import { useRouter } from "next/navigation";
 import useSWR from "swr";
 
 const datamap = [
   {
     id: 1,
-    images: "/api/img/tps-3-r-pudak-mesari-olah-sampah-organik-300-kilogra-800-2023-01-12-091459-0.jpg",
+    images: "/api/img/tps.png",
     name: "TPS3R Pudak Mesari",
     deskripsi: "TPS 3R Pudak Mesari Darmasaba layak mendapat penghargaan demikian apresiasi dari Delterra Sosial Indonesia nie Semeton Darmasaba!, Hal tersebut dikarenakan walaupun baru berdiri namun TPS 3R kebanggaan Desa Darmasaba tersebut sudah berjalan dengan sangat baik. "
   },
@@ -33,7 +34,7 @@ const datamap = [
   },
   {
     id: 3,
-    images: "/api/img/tamanbeji.png",
+    images: "/api/img/taman-beji.jpg",
     name: "Taman Beji Cengana",
     deskripsi: "Tirta Klebutan di Pura Taman Beji Cengana di Desa Adat Darmasaba, Badung, selain dipercaya nunas Taksu serta pembersihan diri. Tersemat juga asal usul cerita ditemukannya Tirta Klebutan yang tepat berada di pinggir Tukad Cengana tersebut."
   },
@@ -53,6 +54,7 @@ const textHeading = {
 };
 
 function Potensi() {
+  const router = useRouter()
   const { data, isLoading } = useSWR("/", (url) =>
     ApiFetch.api.potensi.get().then(({ data }) => data?.data)
   );
@@ -126,7 +128,7 @@ function Potensi() {
       </SimpleGrid>
       <Stack align="center">
         <Group>
-          <Button color={colors["blue-button"]} variant="outline" radius={100} size="md">
+          <Button onClick={() => router.push("/darmasaba/desa/potensi")} color={colors["blue-button"]} variant="outline" radius={100} size="md">
             Selengkapnya
           </Button>
         </Group>

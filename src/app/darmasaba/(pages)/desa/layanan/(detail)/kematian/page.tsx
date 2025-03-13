@@ -1,0 +1,36 @@
+import colors from '@/con/colors';
+import { Stack, Container, List, ListItem, Box, Text, Image } from '@mantine/core';
+import React from 'react';
+import BackButton from '../../_com/BackButto';
+
+function Page() {
+  return (
+    <Stack pos={"relative"} bg={colors.grey[1]} py={"xl"} gap={"42"}>
+      <Container w={{ base: "100%", md: "50%" }} p={"xl"}>
+        <BackButton/>
+        <Stack gap={0}>
+          <Text fz={"3.4rem"} ta={"center"} fw={"bold"}>
+            Surat Keterangan Kematian
+          </Text>
+          <Text fz={"h4"} py={20}>
+            Persyaratan Dokumen:
+          </Text>
+          <List>
+            <ListItem fz={"sm"}>Pengantar Kelian Banjar Dinas di Wilayah Masing - masing</ListItem>
+            <ListItem fz={"sm"}>Fotocopy KTP atau Kartu keluarga</ListItem>
+            <ListItem fz={"sm"}>Surat Kematian dari rumah sakit atau dokter (jika ada)</ListItem>
+            <ListItem fz={"sm"}>Tanggal dan Waktu Kematian</ListItem>
+          </List>
+          <Box py={20}>
+            <Text fz={"h4"} py={20}>
+              Alur Pelayanan:
+            </Text>
+            <Image src="/api/img/flowchart-suket-beda-biodatadiri-removebg-preview.png" alt='' />
+          </Box>
+        </Stack>
+      </Container>
+    </Stack>
+  );
+}
+
+export default Page;
