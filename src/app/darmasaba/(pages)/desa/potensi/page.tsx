@@ -1,63 +1,137 @@
 'use client'
 import colors from '@/con/colors';
-import { BackgroundImage, Box, Button, Container, Group, SimpleGrid, Stack, Text } from '@mantine/core';
-import React from 'react';
+import { BackgroundImage, Box, Button, Flex, Group, Paper, SimpleGrid, Stack, Text } from '@mantine/core';
 import BackButton from '../layanan/_com/BackButto';
-// import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 const datamap = [
   {
     id: 1,
     images: "/api/img/tps.png",
     name: "TPS3R Pudak Mesari",
-    deskripsi: "TPS 3R Pudak Mesari Darmasaba layak mendapat penghargaan demikian apresiasi dari Delterra Sosial Indonesia nie Semeton Darmasaba!, Hal tersebut dikarenakan walaupun baru berdiri namun TPS 3R kebanggaan Desa Darmasaba tersebut sudah berjalan dengan sangat baik. "
+    kategori: "Lingkungan",
+    link: "/darmasaba/desa/potensi/tps",
   },
   {
     id: 2,
     images: "/api/img/ack.png",
     name: "Bumdes Pudak Mesari",
-    deskripsi: "Bumdes Pudak Mesari sangat membantu warga desa Darmasaba dalam mengelola dan membangun sebuah desa yang lebih baik lagi"
+    kategori: "Ekonomi",
+    link: "/darmasaba/desa/potensi/bumdes"
   },
   {
     id: 3,
     images: "/api/img/taman-beji.jpg",
     name: "Taman Beji Cengana",
-    deskripsi: "Tirta Klebutan di Pura Taman Beji Cengana di Desa Adat Darmasaba, Badung, selain dipercaya nunas Taksu serta pembersihan diri. Tersemat juga asal usul cerita ditemukannya Tirta Klebutan yang tepat berada di pinggir Tukad Cengana tersebut."
+    kategori: "Wisata",
+    link: "/darmasaba/desa/potensi/taman"
   },
   {
     id: 4,
     images: "/api/img/waterpark.png",
     name: "Gumuh Sari Water Park",
-    deskripsi: "Gumuh Sari Rekreasi atau waterpark, tempat wisata yang asyik dan seru untuk kamu sekeluarga! Tempat liburan di Bali memang seakan nggak ada habisnya. Selalu ada aja destinasi wisata seru yang bisa jadi wishlist. Ada banyak banget tempat wisata yang kamu kunjungi di Bali, mulai dari wisata alam, wisata modern, sampai wisata air."
+    kategori: "Wisata",
+    link: "/darmasaba/desa/potensi/gumuh"
   },
   {
     id: 5,
     images: "/api/img/pertanian.jpg",
     name: "Pertanian",
-    deskripsi: "Dalam rangka pelaksanaan program ketahanan pangan tingkat desa, Pemerintah Desa Darmasaba telah membentuk kelompok petani dan peternak. Kelompok petani selanjutnya menggarap lahan yang sudah disiapkan untuk menanam tanaman pangan seperti cabe, tomat, timun, dan lain-lainnya sedangkan kelompok peternak akan melakukan ternak ikan lele."
+    kategori: "Ekonomi",
+    link: "/darmasaba/desa/potensi/pertanian"
   },
+  {
+    id: 6,
+    images: "/api/img/warungumkm.jpg",
+    name: "Kawasan Kuliner",
+    kategori: "Ekonomi",
+    link: "/darmasaba/desa/potensi/kuliner"
+  },
+  {
+    id: 7,
+    images: "/api/img/ikm.png",
+    name: "IKM berbasis Pengolahan Pangan",
+    kategori: "Ekonomi",
+    link: "/darmasaba/desa/potensi/tps"
+  },
+  {
+    id: 8,
+    images: "/api/img/genteng.jpeg",
+    name: "Genteng",
+    kategori: "Ekonomi",
+    link: "/darmasaba/desa/potensi/tps"
+  },
+  {
+    id: 9,
+    images: "/api/img/peternakanlele.jpg",
+    name: "Peternakan Ikan Lele",
+    kategori: "Ekonomi",
+    link: "/darmasaba/desa/potensi/tps"
+  },
+  {
+    id: 10,
+    images: "/api/img/jogging.jpg",
+    name: "Jogging Track Tegeh Aban, Karang Gadon dan Munduk Uma Desa",
+    kategori: "Lingkungan",
+    link: "/darmasaba/desa/potensi/tps"
+  },
+  {
+    id: 11,
+    images: "/api/img/damtanahputih.jpeg",
+    name: "Dam Tanah Putih",
+    kategori: "Wisata",
+    link: "/darmasaba/desa/potensi/tps"
+  },
+  {
+    id: 12,
+    images: "/api/img/umkm.jpeg",
+    name: "UMKM",
+    kategori: "Ekonomi",
+    link: "/darmasaba/desa/potensi/tps"
+  },
+  {
+    id: 13,
+    images: "/api/img/potong-daging.png",
+    name: "Pemotongan Daging",
+    kategori: "Ekonomi",
+    link: "/darmasaba/desa/potensi/tps"
+  },
+  
 ]
 function Page() {
-  // const router = useRouter()
+  const router = useRouter()
   return (
-    <Stack pos={"relative"} bg={colors.grey[1]} py={"xl"} gap={"42"}>
-      <Container w={{ base: "100%", md: "50%" }}>
-        <BackButton />
-        <Stack align='center' gap={0}>
-          <Text fz={"3.4rem"} fw={"bold"}>
-            Potensi Desa
-          </Text>
-          <Text ta={"justify"} py={10}>
-            Potensi desa adalah segenap sumber daya alam dan sumber daya manusia yang dimiliki desa sebagai modal dasar yang perlu dikelola dan dikembangkan bagi kelangsungan dan perkembangan desa.
-          </Text>
-        </Stack>
-        <Text ta={"justify"}>
-          Adapun potensi yang dimiliki Desa Darmasaba yaitu:
-        </Text>
-      </Container>
+    <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"42"} >
       <Box px={"lg"}>
+        <BackButton />
+        <Box pb={30}>
+          <Stack gap={0}>
+            <Flex justify={"space-between"} align={"center"} px={10}>
+              <Box>
+                <Text fz={"3.4rem"} c={colors["blue-button"]} fw={"bold"}>
+                  Potensi Desa
+                </Text>
+                <Text ta={"justify"} py={10}>
+                  Temukan berbagai potensi dan keunggulan yang dimiliki Desa Darmasaba.
+                </Text>
+              </Box>
+              <Paper radius={"md"} px={"xl"} py={5} bg={colors["blue-button"]} >
+                <Flex justify={"space-evenly"} align={"center"} gap={"xl"}>
+                  <Box>
+                    <Text ta={"center"} fz={"h2"} fw={"bold"} c={"white"}>13</Text>
+                    <Text ta={"center"} fz={"sm"} c={"white"}>Potensi</Text>
+                  </Box>
+                  <Box>
+                    <Text ta={"center"} fz={"h2"} fw={"bold"} c={"white"}>5</Text>
+                    <Text ta={"center"} fz={"sm"} c={"white"}>Destinasi Wisata</Text>
+                  </Box>
+                </Flex>
+              </Paper>
+            </Flex>
+          </Stack>
+        </Box>
 
-      <SimpleGrid
+        <SimpleGrid
           py={20}
           cols={{
             base: 1,
@@ -84,17 +158,23 @@ function Page() {
                   bg={colors.trans.dark[2]}
                 />
                 <Stack justify='space-between' h={"100%"} gap={0} p={"lg"} pos={"relative"}>
+                  <Group>
+                    <Paper radius={"lg"} py={7} px={10}>
+                      <Text>{v.kategori}</Text>
+                    </Paper>
+                  </Group>
                   <Box p={"lg"}>
                     <Text
+                      fw={"bold"}
                       c={"white"}
-                      size={"1.5rem"}
+                      size={"1.8rem"}
                       style={{
                         textAlign: "center",
                       }}>{v.name}</Text>
                   </Box>
                   <Group justify="center">
                     <Button px={20} radius={"100"} size="md" bg={colors["blue-button"]}
-                      >
+                      onClick={() => router.push(v.link)}>
                       Detail
                     </Button>
                   </Group>

@@ -1,7 +1,7 @@
 'use client'
 import colors from "@/con/colors";
-import { ActionIcon, BackgroundImage, Box, Button, Container, Divider, Flex, Group, List, ListItem, SimpleGrid, Stack, Stepper, StepperCompleted, StepperStep, Text } from "@mantine/core";
-import { IconBrandFacebook, IconBrandInstagram, IconBrandTwitter, IconBrandWhatsapp } from "@tabler/icons-react";
+import { ActionIcon, BackgroundImage, Box, Button, Container, Divider, Flex, Group, List, ListItem, SimpleGrid, Stack, Stepper, StepperCompleted, StepperStep, Text, TextInput } from "@mantine/core";
+import { IconBrandFacebook, IconBrandInstagram, IconBrandTwitter, IconBrandWhatsapp, IconSearch } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import BackButton from "./_com/BackButto";
@@ -81,18 +81,25 @@ export default function Page() {
     const nextStep = () => setActive((current) => (current < 6 ? current + 1 : current));
     const prevStep = () => setActive((current) => (current > 0 ? current - 1 : current));
     return (
-        <Stack pos={"relative"} bg={colors.grey[1]} py={"xl"} gap={"42"}>
+        <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"42"}>
             <Container w={{ base: "100%", md: "50%" }} >
                 <BackButton/>
                 <Stack align="center" gap={0}>
                     {/* Bagian Layanan */}
-                    <Text fz={"3.4rem"} fw={"bold"}>
-                        Layanan
+                    <Text fz={"3.4rem"} c={colors["blue-button"]} fw={"bold"}>
+                        Layanan Desa Darmasaba
                     </Text>
                     <Text
                     >
-                        Adapun berbagai layanan yang telah tersedia dan dapat diakses dengan mudah oleh masyarakat di Desa Darmasaba :
+                        Informasi dan Pelayanan Administrasi Digital
                     </Text>
+                    <TextInput
+                        py={20}
+                        w={{ base: "70%", md: "50%" }}
+                        placeholder="Cari Layanan"
+                        leftSection={<IconSearch size={20} />}
+
+                    />
                 </Stack>
                 {/* Bagian Pelayanan Surat Keterangan */}
                 <Box py={10}>
@@ -110,7 +117,7 @@ export default function Page() {
                             <BackgroundImage
                                 key={k}
                                 src={v.images}
-                                h={350}
+                                h={250}
                                 radius={16}
                                 pos={"relative"}
                             >
@@ -211,27 +218,27 @@ export default function Page() {
                     <Text fz={"h4"} fw={"bold"}>Pelayanan Penduduk Non-Permanent</Text>
                 </Box>
                 <Text pb={20} fz={"sm"} ta={"justify"}>Surat Keterangan Penduduk Non-Permanent adalah dokumen yang dikeluarkan oleh pihak berwenang untuk memberikan keterangan bahwa seseorang atau kelompok orang memiliki status penduduk non-permanent di suatu wilayah. Dokumen ini biasanya digunakan untuk keperluan administratif atau legal, seperti mendapatkan akses ke layanan kesehatan, pendidikan, atau pelayanan publik lainnya.</Text>
-                <Divider />
+                <Divider color={colors["blue-button"]}/>
                 <Flex justify={"space-between"} py={20}>
                     <Text fz={"sm"}>25 May 2021 . Darmasaba</Text>
                     <Box>
                         <Flex gap={"lg"}>
                             <ActionIcon variant='transparent'>
-                                <IconBrandFacebook color={"gray"} size={"30"} />
+                                <IconBrandFacebook color={colors["blue-button"]} size={"30"} />
                             </ActionIcon>
                             <ActionIcon variant='transparent'>
-                                <IconBrandInstagram color={"gray"} size={"30"} />
+                                <IconBrandInstagram color={colors["blue-button"]} size={"30"} />
                             </ActionIcon>
                             <ActionIcon variant='transparent'>
-                                <IconBrandTwitter color={"gray"} size={"30"} />
+                                <IconBrandTwitter color={colors["blue-button"]} size={"30"} />
                             </ActionIcon>
                             <ActionIcon variant='transparent'>
-                                <IconBrandWhatsapp color={"gray"} size={"30"} />
+                                <IconBrandWhatsapp color={colors["blue-button"]} size={"30"} />
                             </ActionIcon>
                         </Flex>
                     </Box>
                 </Flex>
-                <Divider pb={50} />
+                <Divider color={colors["blue-button"]} pb={50} />
             </Container>
         </Stack>
     )

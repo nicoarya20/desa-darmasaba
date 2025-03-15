@@ -93,7 +93,7 @@ function LandingPage() {
                     bg={"white"}
                   >
                     <Image
-                      src={"/assets/images/pudak-icon.png"}
+                      src={"/api/img/pudak-icon.png"}
                       alt="icon"
                       sizes={"100%"}
                       fit="contain"

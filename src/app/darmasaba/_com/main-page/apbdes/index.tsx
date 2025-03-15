@@ -29,7 +29,7 @@ function Apbdes() {
   }
   return (
     <>
-      <Stack p={"sm"} gap={"4rem"} >
+      <Stack p={"sm"} gap={"4rem"} bg={colors.Bg}>
         <Box
           w={{
             base: '100%',
@@ -50,6 +50,7 @@ function Apbdes() {
             base: 1,
             sm: 3,
           }}
+          pb={50}
         >
           {data.map((v, k) => {
             return (

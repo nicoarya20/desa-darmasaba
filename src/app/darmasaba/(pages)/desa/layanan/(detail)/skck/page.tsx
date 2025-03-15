@@ -1,5 +1,5 @@
 import colors from '@/con/colors';
-import { Stack, Container, List, ListItem, Box, Text, Image } from '@mantine/core';
+import { Stack, Container, List, ListItem, Box, Text, Image, Button } from '@mantine/core';
 import React from 'react';
 import BackButton from '../../_com/BackButto';
 
@@ -25,6 +25,7 @@ function Page() {
             </Text>
             <Image src="/api/img/flowchart-suket-beda-biodatadiri-removebg-preview.png" alt='' />
           </Box>
+          <Button radius={"lg"} fz={'h4'} bg={colors['blue-button']}>Ajukan Permohonan</Button>
         </Stack>
       </Container>
     </Stack>
