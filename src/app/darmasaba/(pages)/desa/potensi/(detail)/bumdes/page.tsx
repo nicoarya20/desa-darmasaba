@@ -5,7 +5,7 @@ import BackButton from '../../../layanan/_com/BackButto';
 
 function Page() {
   return (
-    <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"42"} >
+    <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"42"} px={{base: "md", md: 0}}>
       <Container w={{ base: "100%", md: "50%" }} >
         <BackButton />
         <Box pb={20}>

@@ -24,25 +24,29 @@ const datamap = [
     id: 1,
     images: "/api/img/tps.png",
     name: "TPS3R Pudak Mesari",
-    deskripsi: "TPS 3R Pudak Mesari Darmasaba layak mendapat penghargaan demikian apresiasi dari Delterra Sosial Indonesia nie Semeton Darmasaba!, Hal tersebut dikarenakan walaupun baru berdiri namun TPS 3R kebanggaan Desa Darmasaba tersebut sudah berjalan dengan sangat baik. "
+    deskripsi: "TPS 3R Pudak Mesari Darmasaba layak mendapat penghargaan demikian apresiasi dari Delterra Sosial Indonesia nie Semeton Darmasaba!, Hal tersebut dikarenakan walaupun baru berdiri namun TPS 3R kebanggaan Desa Darmasaba tersebut sudah berjalan dengan sangat baik. ",
+    link: "/darmasaba/desa/potensi/tps"
   },
   {
     id: 2,
     images: "/api/img/ack.png",
     name: "Bumdes Pudak Mesari",
-    deskripsi: "Bumdes Pudak Mesari sangat membantu warga desa Darmasaba dalam mengelola dan membangun sebuah desa yang lebih baik lagi"
+    deskripsi: "Bumdes Pudak Mesari sangat membantu warga desa Darmasaba dalam mengelola dan membangun sebuah desa yang lebih baik lagi",
+    link: "/darmasaba/desa/potensi/bumdes"
   },
   {
     id: 3,
     images: "/api/img/taman-beji.jpg",
     name: "Taman Beji Cengana",
-    deskripsi: "Tirta Klebutan di Pura Taman Beji Cengana di Desa Adat Darmasaba, Badung, selain dipercaya nunas Taksu serta pembersihan diri. Tersemat juga asal usul cerita ditemukannya Tirta Klebutan yang tepat berada di pinggir Tukad Cengana tersebut."
+    deskripsi: "Tirta Klebutan di Pura Taman Beji Cengana di Desa Adat Darmasaba, Badung, selain dipercaya nunas Taksu serta pembersihan diri. Tersemat juga asal usul cerita ditemukannya Tirta Klebutan yang tepat berada di pinggir Tukad Cengana tersebut.",
+    link: "/darmasaba/desa/potensi/taman"
   },
   {
     id: 4,
     images: "/api/img/waterpark.png",
     name: "Gumuh Sari Water Park",
-    deskripsi: "Gumuh Sari Rekreasi atau waterpark, tempat wisata yang asyik dan seru untuk kamu sekeluarga! Tempat liburan di Bali memang seakan nggak ada habisnya. Selalu ada aja destinasi wisata seru yang bisa jadi wishlist. Ada banyak banget tempat wisata yang kamu kunjungi di Bali, mulai dari wisata alam, wisata modern, sampai wisata air."
+    deskripsi: "Gumuh Sari Rekreasi atau waterpark, tempat wisata yang asyik dan seru untuk kamu sekeluarga! Tempat liburan di Bali memang seakan nggak ada habisnya. Selalu ada aja destinasi wisata seru yang bisa jadi wishlist. Ada banyak banget tempat wisata yang kamu kunjungi di Bali, mulai dari wisata alam, wisata modern, sampai wisata air.",
+    link: "/darmasaba/desa/potensi/gumuh"
   },
 ]
 
@@ -81,6 +85,7 @@ function Potensi() {
             key={k}
             whileHover={{ scale: 1.01 }}
             whileTap={{ scale: 0.8 }}
+            onClick={() => router.push(datamap[k].link)}
           >
             <BackgroundImage
               src={datamap[k].images}

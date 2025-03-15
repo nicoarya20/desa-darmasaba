@@ -50,51 +50,51 @@ const datamap = [
   {
     id: 7,
     images: "/api/img/ikm.png",
-    name: "IKM berbasis Pengolahan Pangan",
+    name: "IKM Berbasis Pengolahan Pangan",
     kategori: "Ekonomi",
-    link: "/darmasaba/desa/potensi/tps"
+    link: "/darmasaba/desa/potensi/ikm"
   },
   {
     id: 8,
     images: "/api/img/genteng.jpeg",
     name: "Genteng",
     kategori: "Ekonomi",
-    link: "/darmasaba/desa/potensi/tps"
+    link: "/darmasaba/desa/potensi/genteng"
   },
   {
     id: 9,
     images: "/api/img/peternakanlele.jpg",
     name: "Peternakan Ikan Lele",
     kategori: "Ekonomi",
-    link: "/darmasaba/desa/potensi/tps"
+    link: "/darmasaba/desa/potensi/lele"
   },
   {
     id: 10,
     images: "/api/img/jogging.jpg",
     name: "Jogging Track Tegeh Aban, Karang Gadon dan Munduk Uma Desa",
     kategori: "Lingkungan",
-    link: "/darmasaba/desa/potensi/tps"
+    link: "/darmasaba/desa/potensi/joging"
   },
   {
     id: 11,
     images: "/api/img/damtanahputih.jpeg",
     name: "Dam Tanah Putih",
     kategori: "Wisata",
-    link: "/darmasaba/desa/potensi/tps"
+    link: "/darmasaba/desa/potensi/dam"
   },
   {
     id: 12,
     images: "/api/img/umkm.jpeg",
     name: "UMKM",
     kategori: "Ekonomi",
-    link: "/darmasaba/desa/potensi/tps"
+    link: "/darmasaba/desa/potensi/umkm"
   },
   {
     id: 13,
     images: "/api/img/potong-daging.png",
     name: "Pemotongan Daging",
     kategori: "Ekonomi",
-    link: "/darmasaba/desa/potensi/tps"
+    link: "/darmasaba/desa/potensi/pemotongan"
   },
   
 ]
