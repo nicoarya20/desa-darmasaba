@@ -15,7 +15,7 @@ function Page() {
           <Text
             ta={"center"}
             fw={"bold"}
-            fz={"h2"}
+            fz={"1.5rem"}
           >
             Informasi dan Pelayanan Administrasi Digital
           </Text>

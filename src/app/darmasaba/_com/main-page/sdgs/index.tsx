@@ -1,6 +1,6 @@
 'use client'
 import colors from "@/con/colors";
-import { Box, Center, Container, Image, Paper, SimpleGrid, Stack, Text, useMantineTheme } from "@mantine/core";
+import { Box, Button, Center, Container, Image, Paper, SimpleGrid, Stack, Text, useMantineTheme } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 
 export default function SDGS() {
@@ -32,6 +32,9 @@ export default function SDGS() {
                             </Center>
                         </SimpleGrid>
                     </Paper>
+                    <Center>
+                        <Button radius={"lg"} fz={"1.2rem"} mt={20} bg={colors["blue-button"]}>Selengkapnya</Button>
+                    </Center>
                 </Box>
             </Container>
 
