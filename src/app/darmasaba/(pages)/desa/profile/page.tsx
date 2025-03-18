@@ -7,6 +7,7 @@ import VisimisiDesa from './ui/visimisiDesa';
 import LambangDesa from './ui/lambangDesa';
 import MaskotDesa from './ui/maskotDesa';
 import ProfilPerbekel from './ui/profilPerbekel';
+import LembagaDesa from './ui/lembagaDesa';
 
 function Page() {
   return (
@@ -28,6 +29,7 @@ function Page() {
         <LambangDesa />
         <MaskotDesa />
         <ProfilPerbekel />
+        <LembagaDesa/>
       </Box>
     </Stack>
   );

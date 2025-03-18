@@ -15,7 +15,6 @@ function ProfileDesa() {
         <Center>
           <Paper p={"xl"} bg={colors['white-trans-1']} w={{ base: "100%", md: "100%" }}>
             <SimpleGrid
-             
               cols={{
                 base: 1,
                 sm: 3

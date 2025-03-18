@@ -2,6 +2,7 @@
 import colors from "@/con/colors";
 import { Box, Button, Center, Container, Image, Paper, SimpleGrid, Stack, Text, useMantineTheme } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
+import Link from "next/link";
 
 export default function SDGS() {
     const theme = useMantineTheme();
@@ -33,7 +34,7 @@ export default function SDGS() {
                         </SimpleGrid>
                     </Paper>
                     <Center>
-                        <Button radius={"lg"} fz={"1.2rem"} mt={20} bg={colors["blue-button"]}>Selengkapnya</Button>
+                        <Button component={Link} href={"/darmasaba/sdgsdesa"} radius={"lg"} fz={"1.2rem"} mt={20} bg={colors["blue-button"]}>Selengkapnya</Button>
                     </Center>
                 </Box>
             </Container>
