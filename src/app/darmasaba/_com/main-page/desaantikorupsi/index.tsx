@@ -1,9 +1,9 @@
-"use client";
+'use client'
 import colors from "@/con/colors";
 import { Box, Button, Center, Container, Flex, Paper, SimpleGrid, Stack, Text, useMantineTheme } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { IconClipboardText } from "@tabler/icons-react";
-import { motion } from "motion/react";
+import Link from "next/link";
 
 function DesaAntiKorupsi() {
   const data = [
@@ -48,7 +48,7 @@ function DesaAntiKorupsi() {
         </Center>
         <Text ta={"center"} fz={"1.4rem"}>Desa antikorupsi mendorong pemerintahan jujur dan transparan. Keuangan desa dikelola terbuka dengan melibatkan warga mengawasi anggaran, sehingga digunakan tepat sasaran sesuai kebutuhan.</Text>
         <Center py={20}>
-          <Button radius={"lg"} fz={"h4"} bg={colors["blue-button"]}>Selengkapnya</Button>
+          <Button radius={"lg"} fz={"h4"} bg={colors["blue-button"]} component={Link} href={"/darmasaba/desaantikorupsi"}>Selengkapnya</Button>
         </Center>
       </Container>
       <SimpleGrid
@@ -59,10 +59,8 @@ function DesaAntiKorupsi() {
         }}>
         {data.map((v, k) => {
           return (
-            <motion.div
+            <Box
               key={k}
-
-              whileTap={{ scale: 0.8 }}
             >
               <Paper p={"lg"} >
                 <Flex gap={"lg"} justify={"center"} align={"center"}>
@@ -74,15 +72,12 @@ function DesaAntiKorupsi() {
                       </Box>
                       <Box px={20}>
                         <Text fz={"sm"} ta={"justify"}>{v.deskripsi}</Text>
-                        <Box pt={10}>
-                          <Button bg={colors["blue-button"]} radius={"lg"}>Download</Button>
-                        </Box>
                       </Box>
                     </Flex>
                   </Box>
                 </Flex>
               </Paper>
-            </motion.div>
+            </Box>
           )
         })}
       </SimpleGrid>

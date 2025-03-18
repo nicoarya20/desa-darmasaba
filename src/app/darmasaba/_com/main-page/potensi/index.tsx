@@ -16,6 +16,7 @@ import {
 } from "@mantine/core";
 import _ from "lodash";
 import { motion } from "motion/react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import useSWR from "swr";
 
@@ -133,7 +134,7 @@ function Potensi() {
       </SimpleGrid>
       <Stack align="center">
         <Group>
-          <Button onClick={() => router.push("/darmasaba/desa/potensi")} color={colors["blue-button"]} variant="outline" radius={100} size="md">
+          <Button component={Link} href={"/darmasaba/desa/potensi"} color={colors["blue-button"]} variant="outline" radius={100} size="md">
             Selengkapnya
           </Button>
         </Group>

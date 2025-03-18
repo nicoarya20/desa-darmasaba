@@ -1,5 +1,7 @@
 import colors from '@/con/colors';
-import { BackgroundImage, Box, Button, Group, SimpleGrid, Stack, Text } from '@mantine/core';
+import { ActionIcon, BackgroundImage, Box, Button, Flex, Group, SimpleGrid, Stack, Text } from '@mantine/core';
+import { IconDownload } from '@tabler/icons-react';
+import Link from 'next/link';
 
 const data = [
   {
@@ -50,7 +52,6 @@ function Apbdes() {
             base: 1,
             sm: 3,
           }}
-          pb={50}
         >
           {data.map((v, k) => {
             return (
@@ -80,23 +81,29 @@ function Apbdes() {
                         textAlign: "center",
                       }}>{v.title}</Text>
                   </Box>
-                    <Text
-                      fw={"bold"}
-                      c={"white"}
-                      size={"3.5rem"}
-                      style={{
-                        textAlign: "center",
-                      }}>{v.value}</Text>
+                  <Text
+                    fw={"bold"}
+                    c={"white"}
+                    size={"3.5rem"}
+                    style={{
+                      textAlign: "center",
+                    }}>{v.value}</Text>
                   <Group justify="center">
-                    <Button px={46} radius={"100"} size="md" bg={colors["blue-button"]}>
-                      Detail
-                    </Button>
-                  </Group>
+                  <ActionIcon px={70} py={20} radius={"xl"} size="md" bg={colors["blue-button"]}>
+                    <Flex gap={"md"}>
+                      <IconDownload size={20} />
+                      <Text fz={"sm"} c={"white"}>Download</Text>
+                    </Flex>
+                  </ActionIcon>
+                </Group>
                 </Stack>
               </BackgroundImage>
             )
           })}
         </SimpleGrid>
+        <Group pb={80} justify='center'>
+          <Button component={Link} href="/darmasaba/apbdesa" radius={"lg"} bg={colors["blue-button"]} fz={"h4"}>Lihat Semua</Button>
+        </Group>
       </Stack>
     </>
   );
