@@ -5,9 +5,9 @@ import BackButton from '../../../layanan/_com/BackButto';
 
 function Page() {
   return (
-    <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"42"} px={{ base: "md", md: 0 }}>
+    <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"22"} px={{ base: "md", md: 0 }}>
+      <Box px={{ base: "md", md: 100 }}><BackButton /></Box>
       <Container w={{ base: "100%", md: "50%" }} >
-        <BackButton />
         <Box pb={20}>
           <Text ta={"center"} fz={"3.4rem"} c={colors["blue-button"]} fw={"bold"}>
             Taman Beji Cengana
@@ -21,6 +21,8 @@ function Page() {
           </Text>
         </Box>
         <Image src="/api/img/taman-beji.jpg" alt='' w={"100%"} h={400} />
+      </Container>
+      <Box px={{ base: "md", md: 100 }}>
         <Text py={20} fz={{ base: "sm", md: "lg" }} ta={"justify"}>
           Taman Beji Cengana, terletak di Desa Darmasaba, Kecamatan Abiansemal, Kabupaten Badung, Bali, adalah situs suci yang memiliki nilai spiritual dan sejarah yang tinggi. Tempat ini dikenal sebagai lokasi untuk ritual pembersihan diri (melukat) dan peribadatan oleh umat Hindu Bali. Keberadaan mata air suci (Tirta Klebutan) di Taman Beji Cengana dipercaya memberikan berkah dan penyucian bagi mereka yang datang untuk berdoa dan melakukan ritual.
         </Text>
@@ -47,7 +49,7 @@ function Page() {
         <Text fz={{ base: "sm", md: "lg" }} ta={"justify"}>
           Dengan memanfaatkan potensi yang dimiliki Taman Beji Cengana, Desa Darmasaba dapat mengembangkan sektor pariwisata, budaya, pendidikan, ekonomi, dan lingkungan secara berkelanjutan, yang pada gilirannya akan meningkatkan kesejahteraan masyarakat dan pelestarian warisan budaya.
         </Text>
-      </Container>
+      </Box>
     </Stack>
   );
 }

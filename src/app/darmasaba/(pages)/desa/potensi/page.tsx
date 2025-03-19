@@ -96,13 +96,13 @@ const datamap = [
     kategori: "Ekonomi",
     link: "/darmasaba/desa/potensi/pemotongan"
   },
-  
+
 ]
 function Page() {
   const router = useRouter()
   return (
     <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"42"} >
-      <Box px={"lg"}>
+      <Box px={{ base: "md", md: 100 }}>
         <BackButton />
         <Box pb={30}>
           <Stack gap={0}>

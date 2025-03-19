@@ -5,9 +5,9 @@ import BackButton from '../../../layanan/_com/BackButto';
 
 function Page() {
   return (
-    <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"42"} px={{ base: "md", md: 0 }}>
+    <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"22"} px={{ base: "md", md: 0 }}>
+      <Box px={{ base: "md", md: 100 }}><BackButton /></Box>
       <Container w={{ base: "100%", md: "50%" }} >
-        <BackButton />
         <Box pb={20}>
           <Text ta={"center"} fz={"3.4rem"} c={colors["blue-button"]} fw={"bold"}>
             TPS3R Pudak Mesari
@@ -21,6 +21,8 @@ function Page() {
           </Text>
         </Box>
         <Image src="/api/img/tps.png" alt='' w={"100%"} />
+      </Container>
+      <Box px={{ base: "md", md: 100 }}>
         <Text py={20} fz={{ base: "sm", md: "lg" }} ta={"justify"}>
           TPS3R Pudak Mesari adalah Tempat Pengolahan Sampah dengan konsep Reduce, Reuse, dan Recycle (TPS3R) yang berlokasi di Desa Darmasaba, Kecamatan Abiansemal, Kabupaten Badung, Bali. Fasilitas ini berperan penting dalam pengelolaan sampah berbasis masyarakat, dengan tujuan mengurangi volume sampah yang masuk ke Tempat Pembuangan Akhir (TPA) dan meningkatkan kesadaran warga tentang pentingnya pengelolaan sampah yang berkelanjutan.
         </Text>
@@ -41,7 +43,7 @@ function Page() {
             <Text fz={{ base: "sm", md: "lg" }} fw={"bold"}>Pengembangan Pariwisata Berkelanjutan:</Text> Dengan lingkungan yang bersih dan asri, Desa Darmasaba memiliki potensi untuk menarik wisatawan yang tertarik pada ekowisata dan budaya lokal, sehingga meningkatkan perekonomian desa.
           </ListItem>
         </List>
-      </Container>
+      </Box>
     </Stack>
   );
 }

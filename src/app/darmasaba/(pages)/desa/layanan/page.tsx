@@ -82,8 +82,10 @@ export default function Page() {
     const prevStep = () => setActive((current) => (current > 0 ? current - 1 : current));
     return (
         <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"42"}>
+            <Box px={{ base: 'md', md: 100 }}>
+                <BackButton />
+            </Box>
             <Container w={{ base: "100%", md: "50%" }} >
-                <BackButton/>
                 <Stack align="center" gap={0}>
                     {/* Bagian Layanan */}
                     <Text fz={"3.4rem"} c={colors["blue-button"]} fw={"bold"}>
@@ -101,9 +103,11 @@ export default function Page() {
 
                     />
                 </Stack>
+            </Container>
+            <Box px={{ base: "md", md: 100 }}>
                 {/* Bagian Pelayanan Surat Keterangan */}
                 <Box py={10}>
-                    <Text fz={"h4"} fw={"bold"}>Pelayanan Surat Keterangan</Text>
+                    <Text fz={{ base: "h4", md: 'h2' }} fw={"bold"}>Pelayanan Surat Keterangan</Text>
                 </Box>
                 <SimpleGrid
                     py={20}
@@ -153,14 +157,14 @@ export default function Page() {
                 </SimpleGrid>
                 {/* Bagian Pelayanan Perizinan Berusaha */}
                 <Box py={15}>
-                    <Text fz={"h4"} fw={"bold"}>Pelayanan Perizinan Berusaha Berbasis Risiko Melalui Sistem ONLINE SINGLE SUBMISSION (OSS)</Text>
+                    <Text fz={{ base: "h4", md: 'h2' }} fw={"bold"}>Pelayanan Perizinan Berusaha Berbasis Risiko Melalui Sistem ONLINE SINGLE SUBMISSION (OSS)</Text>
                 </Box>
-                <Text py={10} ta={"justify"} fz={"sm"}>Penyelenggaraan Perizinan Berusaha Berbasis Risiko melalui Sistem Online Single Submission (OSS)
+                <Text py={10} ta={"justify"} fz={{ base: "sm", md: 'h3' }}>Penyelenggaraan Perizinan Berusaha Berbasis Risiko melalui Sistem Online Single Submission (OSS)
                     merupakan pelaksanaan Undang-Undang Nomor 11 Tahun 2020 Tentang Cipta Kerja. OSS Berbasis Risiko wajib digunakan oleh Pelaku Usaha,
                     Kementerian/Lembaga, Pemerintah Daerah, Administrator Kawasan Ekonomi Khusus (KEK), dan Badan Pengusahaan Kawasan Perdagangan Bebas
                     Pelabuhan Bebas (KPBPB).Berdasarkan Peraturan Pemerintah Nomor 5 Tahun 2021 terdapat 1.702 kegiatan usaha yang terdiri atas 1.349
                     Klasifikasi Baku Lapangan Usaha Indonesia (KBLI) yang sudah diimplementasikan dalam Sistem OSS Berbasis Risiko.</Text>
-                <Text py={10} fz={"sm"}>Proses pendaftaran NIB melalui OSS mencakup beberapa langkah umum, seperti:</Text>
+                <Text py={10} fz={{ base: "sm", md: 'h3' }}>Proses pendaftaran NIB melalui OSS mencakup beberapa langkah umum, seperti:</Text>
                 <Box p={"xl"} w={{ base: "100%", md: "100%" }} >
                     <Stepper active={active} onStepClick={setActive} orientation="vertical"
                         styles={{
@@ -190,7 +194,7 @@ export default function Page() {
                         <StepperStep label="Langkah Keenam" description="Penerimaan NIB">
                             Jika proses sebelumnya berhasil, perusahaan akan menerima NIB sebagai identitas resmi usaha anda
                         </StepperStep>
-                        <StepperCompleted>
+                        <StepperCompleted >
                             Selesai, anda telah mengikuti proses pendaftaran NIB melalui OSS
                         </StepperCompleted>
                     </Stepper>
@@ -199,7 +203,7 @@ export default function Page() {
                         <Button variant="default" onClick={prevStep}>Back</Button>
                         <Button onClick={nextStep}>Next step</Button>
                     </Group>
-                    <Text py={35} ta={"justify"} fz={"sm"}>Penting untuk diingat bahwa prosedur dan persyaratan dapat berubah
+                    <Text py={35} ta={"justify"} fz={{ base: "sm", md: 'h3' }}>Penting untuk diingat bahwa prosedur dan persyaratan dapat berubah
                         seiring waktu. Untuk informasi yang lebih akurat dan terkini, saya sarankan untuk mengunjungi situs
                         resmi OSS <a href={"https://oss.go.id/"}>(https://oss.go.id/)</a> atau menghubungi instansi terkait di pemerintah Indonesia yang bertanggung jawab atas urusan perizinan usaha.</Text>
                 </Box>
@@ -207,20 +211,20 @@ export default function Page() {
                 <Box py={15}>
                     <Text fz={"h4"} fw={"bold"}>Pelayanan Telunjuk Sakti Desa</Text>
                 </Box>
-                <Text fz={"sm"} py={10}>Terwujudnya Layanan umum bertajuk Sistim administrasi Kependudukan Terintegrasi di Desa berbasi Elektronik, Smart dan Aman. layanan telunjuk sakti Desa meliputi :</Text>
+                <Text fz={{ base: "sm", md: 'h3' }} py={10}>Terwujudnya Layanan umum bertajuk Sistim administrasi Kependudukan Terintegrasi di Desa berbasi Elektronik, Smart dan Aman. layanan telunjuk sakti Desa meliputi :</Text>
                 <List type="ordered" pb={20}>
-                    <ListItem fz={"sm"}>Telunjuk Sakti Desa Akta Kelahiran (Petunjuk Pengajuan pada link berikut : Download <a href="https://darmasaba.desa.id/storage/files/PERSYARATAN%20DAN%20ALUR%20PENGAJUAN%20AKTA%20KELAHIRAN_(dengan%20contoh%20Formulir).pdf">Akta Kelahiran</a>)</ListItem>
-                    <ListItem fz={"sm"}>Telunjuk Sakti Desa Akta Perkawinan (Petunjuk Pengajuan pada link berikut : Download <a href="https://darmasaba.desa.id/storage/files/PERSYARATAN%20DAN%20ALUR%20PENGAJUAN%20AKTA%20PERKAWINAN_(dengan%20contoh%20Formulir).pdf">Akta Perkawinan</a>)</ListItem>
-                    <ListItem fz={"sm"}>Telunjuk Sakti Desa Akta Kematian (Petunjuk Pengajuan pada link berikut : Download <a href="https://darmasaba.desa.id/storage/files/PERSYARATAN%20DAN%20ALUR%20PENGAJUAN%20AKTA%20KEMATIAN_(dengan%20contoh%20Formulir).pdf">Akata Kematian</a>)</ListItem>
+                    <ListItem fz={{ base: "sm", md: 'h3' }}>Telunjuk Sakti Desa Akta Kelahiran (Petunjuk Pengajuan pada link berikut : Download <a href="https://darmasaba.desa.id/storage/files/PERSYARATAN%20DAN%20ALUR%20PENGAJUAN%20AKTA%20KELAHIRAN_(dengan%20contoh%20Formulir).pdf">Akta Kelahiran</a>)</ListItem>
+                    <ListItem fz={{ base: "sm", md: 'h3' }}>Telunjuk Sakti Desa Akta Perkawinan (Petunjuk Pengajuan pada link berikut : Download <a href="https://darmasaba.desa.id/storage/files/PERSYARATAN%20DAN%20ALUR%20PENGAJUAN%20AKTA%20PERKAWINAN_(dengan%20contoh%20Formulir).pdf">Akta Perkawinan</a>)</ListItem>
+                    <ListItem fz={{ base: "sm", md: 'h3' }}>Telunjuk Sakti Desa Akta Kematian (Petunjuk Pengajuan pada link berikut : Download <a href="https://darmasaba.desa.id/storage/files/PERSYARATAN%20DAN%20ALUR%20PENGAJUAN%20AKTA%20KEMATIAN_(dengan%20contoh%20Formulir).pdf">Akata Kematian</a>)</ListItem>
                 </List>
                 {/* Bagian Pelayanan Telunjuk Sakti Desa */}
                 <Box py={15}>
                     <Text fz={"h4"} fw={"bold"}>Pelayanan Penduduk Non-Permanent</Text>
                 </Box>
-                <Text pb={20} fz={"sm"} ta={"justify"}>Surat Keterangan Penduduk Non-Permanent adalah dokumen yang dikeluarkan oleh pihak berwenang untuk memberikan keterangan bahwa seseorang atau kelompok orang memiliki status penduduk non-permanent di suatu wilayah. Dokumen ini biasanya digunakan untuk keperluan administratif atau legal, seperti mendapatkan akses ke layanan kesehatan, pendidikan, atau pelayanan publik lainnya.</Text>
-                <Divider color={colors["blue-button"]}/>
+                <Text pb={20} fz={{ base: "sm", md: 'h3' }} ta={"justify"}>Surat Keterangan Penduduk Non-Permanent adalah dokumen yang dikeluarkan oleh pihak berwenang untuk memberikan keterangan bahwa seseorang atau kelompok orang memiliki status penduduk non-permanent di suatu wilayah. Dokumen ini biasanya digunakan untuk keperluan administratif atau legal, seperti mendapatkan akses ke layanan kesehatan, pendidikan, atau pelayanan publik lainnya.</Text>
+                <Divider color={colors["blue-button"]} />
                 <Flex justify={"space-between"} py={20}>
-                    <Text fz={"sm"}>25 May 2021 . Darmasaba</Text>
+                    <Text fz={{ base: "sm", md: 'h3' }}>25 May 2021 . Darmasaba</Text>
                     <Box>
                         <Flex gap={"lg"}>
                             <ActionIcon variant='transparent'>
@@ -239,7 +243,7 @@ export default function Page() {
                     </Box>
                 </Flex>
                 <Divider color={colors["blue-button"]} pb={50} />
-            </Container>
+            </Box>
         </Stack>
     )
 }

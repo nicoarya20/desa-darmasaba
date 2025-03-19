@@ -5,9 +5,9 @@ import BackButton from '../../../layanan/_com/BackButto';
 
 function Page() {
   return (
-    <Stack pos={"relative"} bg={colors.Bg} py={"xl"} px={{ base: "md", md: 0 }} gap={"42"} >
+    <Stack pos={"relative"} bg={colors.Bg} py={"xl"} px={{ base: "md", md: 0 }} gap={"22"} >
+      <Box px={{ base: "md", md: 100 }}><BackButton /></Box>
       <Container w={{ base: "100%", md: "50%" }} >
-        <BackButton />
         <Box pb={20}>
           <Text ta={"center"} fz={"3.4rem"} c={colors["blue-button"]} fw={"bold"}>
             Kawasan Kuliner
@@ -21,6 +21,8 @@ function Page() {
           </Text>
         </Box>
         <Image src="/api/img/warungumkm.jpg" alt='' w={"100%"} h={400} />
+      </Container>
+      <Box px={{ base: "md", md: 100 }}>
         <Text py={20} fz={{ base: "sm", md: "lg" }} ta={"justify"}>
           Desa Darmasaba, yang terletak di Kecamatan Abiansemal, Kabupaten Badung, Bali, memiliki potensi besar dalam sektor kuliner. Sebagai desa yang strategis dan terus berkembang, Darmasaba mulai dikenal sebagai destinasi kuliner yang menawarkan beragam makanan khas Bali hingga makanan modern yang menarik minat wisatawan dan masyarakat lokal.
         </Text>
@@ -52,7 +54,7 @@ function Page() {
         <Text fz={{ base: "sm", md: "lg" }} ta={"justify"}>
           Dengan kekayaan kuliner yang dimiliki, Desa Darmasaba berpotensi menjadi kawasan kuliner unggulan di Kabupaten Badung. Dukungan dari masyarakat, pemerintah desa, serta promosi yang lebih luas dapat menjadikan Darmasaba sebagai destinasi kuliner yang semakin dikenal dan berkembang.
         </Text>
-      </Container>
+      </Box>
     </Stack>
   );
 }

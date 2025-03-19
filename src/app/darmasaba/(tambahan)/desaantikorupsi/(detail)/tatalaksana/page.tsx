@@ -38,8 +38,8 @@ const data = [
 function Tatalaksana() {
   return (
     <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={22}>
+      <Box px={{ base: "md", md: 100 }}><BackButton /></Box>
       <Container w={{ base: "100%", md: "50%" }}>
-        <BackButton />
         <Stack align="center" gap={0}>
           <Text fz={"3.4rem"} fw={"bold"} ta={"center"}>
             Penguatan Tata Laksana
@@ -53,7 +53,7 @@ function Tatalaksana() {
         </Stack>
       </Container>
       <SimpleGrid
-        px={50}
+        px={{ base: "md", md: 100 }}
         cols={{
           base: 1,
           sm: 2,

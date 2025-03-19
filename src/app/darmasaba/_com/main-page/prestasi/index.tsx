@@ -22,7 +22,7 @@ const data = [
         title: "Tata Kelola dan Inovasi Desa",
         deskripsi: "Peringkat 5 Dalam Ajang Bergengsi Mangupura Award",
         image: "/api/img/prestasi-peringkat-5.jpeg",
-        link: "/darmasaba/desa/prestasi/lomba-hukum"
+        link: "/darmasaba/prestasi/mangupura"
       }
 ]
 function Prestasi() {

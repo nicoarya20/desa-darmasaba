@@ -1,6 +1,7 @@
 const colors = {
     "orange": "#FCAE00",
     "blue-button": "#0A4E78",
+    "blue-button-trans": "#628EC6",
     "white-1": "#FBFBFC",
     "white-trans-1": "rgba(255, 255, 255, 0.5)",
     "white-trans-2": "rgba(255, 255, 255, 0.7)",
@@ -18,6 +19,7 @@ const colors = {
         "2": "#CBCACD"
     },
     "Bg": "#D1d9e8",
+    "BG-trans": "#B1C5F2",
 
 }
 

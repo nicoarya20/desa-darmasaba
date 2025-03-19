@@ -24,28 +24,24 @@ const data = [
     title: "Tata Kelola dan Inovasi Desa",
     description: "Peringkat 5 Dalam Ajang Bergengsi Mangupura Award",
     image: "/api/img/prestasi-peringkat-5.jpeg",
-    link: "/darmasaba/desa/prestasi/lomba-hukum"
+    link: "/darmasaba/desa/prestasi/mangupura"
   }
 ]
 function Page() {
   const router = useRouter();
   return (
-    <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"42"} >
+    <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"22"} >
+      <Box px={{ base: "md", md: 100 }}><BackButton /></Box>
       <Container w={{ base: "100%", md: "50%" }}>
-        <Box px={"lg"}>
-          <BackButton />
-          <Box>
-            <Text ta={"center"} fz={"3.4rem"} c={colors["blue-button"]} fw={"bold"}>
-              Prestasi Desa
-            </Text>
-            <Text ta={"center"} py={10}>
-              Temukan berbagai prestasi dan keunggulan yang dimiliki Desa Darmasaba.
-            </Text>
-          </Box>
-        </Box>
+        <Text ta={"center"} fz={"3.4rem"} c={colors["blue-button"]} fw={"bold"}>
+          Prestasi Desa
+        </Text>
+        <Text ta={"center"} py={10}>
+          Temukan berbagai prestasi dan keunggulan yang dimiliki Desa Darmasaba.
+        </Text>
       </Container>
       <SimpleGrid
-        px={50}
+        px={{ base: "md", md: 100 }}
         pb={20}
         cols={{
           base: 1,

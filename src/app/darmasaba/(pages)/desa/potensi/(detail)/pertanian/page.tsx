@@ -5,9 +5,9 @@ import BackButton from '../../../layanan/_com/BackButto';
 
 function Page() {
   return (
-    <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"42"} px={{ base: "md", md: 0 }}>
+    <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"22"} px={{ base: "md", md: 0 }}>
+      <Box px={{ base: "md", md: 100 }}><BackButton /></Box>
       <Container w={{ base: "100%", md: "50%" }} >
-        <BackButton />
         <Box pb={20}>
           <Text ta={"center"} fz={"3.4rem"} c={colors["blue-button"]} fw={"bold"}>
             Pertanian
@@ -21,6 +21,8 @@ function Page() {
           </Text>
         </Box>
         <Image src="/api/img/pertanian.jpg" alt='' w={"100%"} h={400} />
+      </Container>
+      <Box px={{ base: "md", md: 100 }}>
         <Text py={20} fz={{ base: "sm", md: "lg" }} ta={"justify"}>
           Desa Darmasaba, yang terletak di Kecamatan Abiansemal, Kabupaten Badung, Bali, memiliki potensi pertanian yang besar sebagai bagian dari warisan agraris yang telah diwariskan secara turun-temurun. Dengan kondisi tanah yang subur serta sistem irigasi tradisional subak, pertanian di Darmasaba memainkan peran penting dalam ekonomi dan keberlanjutan lingkungan desa.
         </Text>
@@ -52,7 +54,7 @@ function Page() {
         <Text fz={{ base: "sm", md: "lg" }} ta={"justify"}>
           Dengan berbagai potensi yang dimiliki, pertanian di Desa Darmasaba dapat terus berkembang melalui inovasi dan pemanfaatan teknologi pertanian modern. Dukungan dari masyarakat, pemerintah, dan lembaga terkait sangat penting untuk menjaga keberlanjutan sektor pertanian dan meningkatkan kesejahteraan petani di desa ini.
         </Text>
-      </Container>
+      </Box>
     </Stack>
   );
 }
