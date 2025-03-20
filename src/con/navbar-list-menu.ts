@@ -7,7 +7,7 @@ const navbarListMenu = [
             {
                 id: "1.1",
                 name: "Profile PPID",
-                href: "/darmasaba/ppid/profileppid"
+                href: "/darmasaba/ppid/profile"
             },
             {
                 id: "1.2",
@@ -17,12 +17,12 @@ const navbarListMenu = [
             {
                 id: "1.3",
                 name: "Visi Misi PPID",
-                href: "/darmasaba/ppid/visi"
+                href: "/darmasaba/ppid/visimisi"
             },
             {
                 id: "1.4",
                 name: "Dasar Hukum",
-                href: "/darmasaba/ppid/hukum"
+                href: "/darmasaba/ppid/dasarhukum"
             },
             {
                 id: "1.5",
@@ -32,7 +32,7 @@ const navbarListMenu = [
             {
                 id: "1.6",
                 name: "Permohonan Keberatan Informasi Publik",
-                href: "/darmasaba/ppid/permohonan"
+                href: "/darmasaba/ppid/keberatan"
             },
             {
                 id: "1.7",
