@@ -11,7 +11,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <Stack gap={0} bg={colors.grey[1]}>
             <Navbar />
             <Space h={{
-                base: "2.2rem",
+                base: "3.9rem",
                 md: "2.5rem"
             }} />
             <Box style={{

@@ -104,7 +104,7 @@ const navbarListMenu = [
             {
                 id: "3.2",
                 name: "Data Kesehatan Warga",
-                href: "/darmasaba/kesehatan/data-kesehatan-warga"
+                href: "/darmasaba/kesehatan/datakesehatan"
             },
             {
                 id: "3.3",
@@ -114,7 +114,7 @@ const navbarListMenu = [
             {
                 id: "3.4",
                 name: "Program Kesehatan",
-                href: "/darmasaba/kesehatan/program-kesehatan"
+                href: "/darmasaba/kesehatan/program"
             },
             {
                 id: "3.5",
