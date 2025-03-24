@@ -2,20 +2,19 @@
 import colors from "@/con/colors";
 import {
   Box,
-  Button,
   Card,
   Flex,
   Image,
+  Paper,
   Stack,
-  Text,
-  Title
+  Text
 } from "@mantine/core";
 import ModuleView from "./ModuleView";
 import SosmedView from "./SosmedView";
 
 function LandingPage() {
   return (
-    <Stack bg={colors["blue-button"]}>
+    <Stack bg={colors["Bg"]}>
       <Flex
         gap={"md"}
         wrap={{
@@ -31,7 +30,7 @@ function LandingPage() {
           }}
           py={{
             base: "xs",
-            md: "72",
+            md: "40",
           }}
           px={{
             base: "xs",
@@ -94,7 +93,7 @@ function LandingPage() {
                     bg={"white"}
                   >
                     <Image
-                      src={"/assets/images/pudak-icon.png"}
+                      src={"/api/img/pudak-icon.png"}
                       alt="icon"
                       sizes={"100%"}
                       fit="contain"
@@ -102,7 +101,7 @@ function LandingPage() {
                   </Box>
                 </Flex>
                 <Stack flex={2} gap={0} justify="end" c={colors["blue-button"]}>
-                  <Text
+                  {/* <Text
                     fz={{
                       base: "1.5rem",
                       md: "1.4rem",
@@ -110,35 +109,62 @@ function LandingPage() {
                   >
                     Pemerintah Desa
                   </Text>
-                  <Title>DARMASABA</Title>
+                  <Title>DARMASABA</Title> */}
+                  <Paper bg={colors["blue-button"]} p={10} w={400}>
+                    <Flex align={"center"} justify={"space-between"}>
+                      <Box>
+                        <Text c={colors["white-1"]} fz={"sm"}>
+                          Jadwal Kerja
+                        </Text>
+                        <Paper w={175} p={5} bg={colors["white-1"]}>
+                          <Flex justify={"space-between"} align={"center"}>
+                            <Box>
+                              <Text fz={"sm"}>
+                                Buka
+                              </Text>
+                              <Text fw={"bold"} fz={"lg"}>
+                                08:00
+                              </Text>
+                            </Box>
+                            <Text fz={"lg"} fw={"bold"}>-</Text>
+                            <Box>
+                              <Text fz={"sm"}>
+                                Tutup
+                              </Text>
+                              <Text fw={"bold"} fz={"lg"}>
+                                16:00
+                              </Text>
+                            </Box>
+                          </Flex>
+                        </Paper>
+                      </Box>
+                      <Box>
+                        <Text c={colors["white-1"]} fz={"sm"}>
+                          Rabu, 10 Maret 2025
+                        </Text>
+                        <Paper w={175} p={5} bg={colors["white-1"]}>
+                          <Box>
+                            <Text fz={"sm"}>
+                              Buka
+                            </Text>
+                            <Text fw={"bold"} fz={"lg"}>
+                              Sabtu - Minggu
+                            </Text>
+                          </Box>
+                        </Paper>
+                      </Box>
+                    </Flex>
+                  </Paper>
                 </Stack>
               </Flex>
               <ModuleView />
               <SosmedView />
+              <Text c={colors.trans.dark[2]} style={{
+                textAlign: "center"
+              }} >Sampaikan saran dan masukan guna kemajuan dalam pembangunan. Semua lebih mudah melalui fitur interaktif</Text>
             </Stack>
           </Card>
-          <Stack
-            align="center"
-            justify={"center"}
-          >
-            <Text c={"white"} style={{
-              textAlign: "center"
-            }} maw={300}>Tambahkan Text Apa aja disini untuk lebih detail yang berwarna putih</Text>
-            <Button
-              radius={100}
-              w={{
-                base: "100%",
-                sm: "300",
-              }}
-              px={42}
-              size="lg"
-              variant="fill"
-              bg={"gray.1"}
-              c={"dark"}
-            >
-              Button 1
-            </Button>
-          </Stack>
+         
         </Stack>
         <Stack
           justify={"end"}

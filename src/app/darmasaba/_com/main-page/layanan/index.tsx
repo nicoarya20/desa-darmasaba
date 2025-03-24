@@ -1,40 +1,101 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 import colors from "@/con/colors";
-import images from "@/con/images";
 import ApiFetch from "@/lib/api-fetch";
 import { Carousel } from "@mantine/carousel";
 import {
-  BackgroundImage,
   Box,
   Button,
-  Card,
   Container,
   Divider,
   Group,
-  Image,
   Paper,
   Stack,
   Text,
-  useMantineTheme,
+  useMantineTheme
 } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import Autoplay from "embla-carousel-autoplay";
 import _ from "lodash";
 import { useTransitionRouter } from "next-view-transitions";
+import Link from "next/link";
 import { useRef } from "react";
 import useSWR from "swr";
 
-type DataSlider = {
-  id: string;
-  name: string;
-};
+const data = [
+  {
+    id: 1,
+    images: "/api/img/test.png",
+    name: "Surat Keterangan Domisili Organisasi",
+    link: "/darmasaba/desa/layanan/domisili"
+  },
+  {
+    id: 2,
+    images: "/api/img/test-3.jpeg",
+    name: "Surat Keterangan Penghasilan",
+    link: "/darmasaba/desa/layanan/penghasilan"
+  },
+  {
+    id: 3,
+    images: "/api/img/domisili.jpeg",
+    name: "Surat Keterangan Tidak Mampu",
+    link: "/darmasaba/desa/layanan/tidakmampu"
+  },
+  {
+    id: 4,
+    images: "/api/img/kelahiran.jpeg",
+    name: "Surat Keterangan Kelahiran",
+    link: "/darmasaba/desa/layanan/kelahiran"
+  },
+  {
+    id: 5,
+    images: "/api/img/keterangan-usaha.jpeg",
+    name: "Surat Keterangan Usaha",
+    link: "/darmasaba/desa/layanan/usaha"
+  },
+  {
+    id: 6,
+    images: "/api/img/kematian.jpeg",
+    name: "Surat Keterangan Kematian",
+    link: "/darmasaba/desa/layanan/kematian"
+  },
+  {
+    id: 7,
+    images: "/api/img/tempatusaha.jpeg",
+    name: "Surat Keterangan Tempat Usaha",
+    link: "/darmasaba/desa/layanan/tempatusaha"
+  },
+  {
+    id: 8,
+    images: "/api/img/belumkawin.jpeg",
+    name: "Surat Keterangan Belum Kawin",
+    link: "/darmasaba/desa/layanan/belumkawin"
+  },
+  {
+    id: 9,
+    images: "/api/img/berkelakuan-baik.jpeg",
+    name: "Surat Keterangan Kelakuan Baik",
+    link: "/darmasaba/desa/layanan/skck"
+  },
+  {
+    id: 10,
+    images: "/api/img/biodata.jpeg",
+    name: "Surat Keterangan Beda Biodata Diri",
+    link: "/darmasaba/desa/layanan/biodata"
+  },
+  {
+    id: 11,
+    images: "/api/img/yatim.jpeg",
+    name: "Surat Keterangan Yatim Piatu",
+    link: "/darmasaba/desa/layanan/yatim"
+  }
+
+]
 const textHeading = {
   title: "Layanan",
-  des: "Terwujudnya Layanan umum bertajuk Sistem administrasi Kependudukan Terintegrasi di Desa berbasi Elektronik, Smart dan Aman",
+  des: "Layanan adalah fitur yang membantu warga desa mengakses berbagai kebutuhan administrasi, informasi, dan bantuan secara cepat, mudah, dan transparan. Dengan fitur ini, semua layanan desa ada dalam genggaman Anda!",
 };
-function Content3() {
+function Layanan() {
   const { data, isLoading } = useSWR(
     "/",
     (url) => ApiFetch.api.layanan.get().then(({ data }) => data?.data),
@@ -60,22 +121,20 @@ function Content3() {
             {textHeading.des}
           </Text>
           <Box p={"md"}>
-            <Button onClick={() => {
-              router.push("/layanan")
-            }} variant="filled" bg={"dark"} radius={100}>
-              Lanjutkan
+            <Button component={Link} href={"/darmasaba/desa/layanan"} variant="filled" bg={colors["blue-button"]} radius={100}>
+              Detail
             </Button>
           </Box>
         </Stack>
       </Container>
-      <Slider data={data as any} />
+      <Slider />
       <Divider />
     </Stack>
   );
 }
 
 const height = 720;
-function Slider({ data }: { data: DataSlider[] }) {
+function Slider() {
   const theme = useMantineTheme();
   const mobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
   const autoplay = useRef(Autoplay({ delay: 2000 }));
@@ -84,14 +143,25 @@ function Slider({ data }: { data: DataSlider[] }) {
   const slides = data.map((item) => (
     <Carousel.Slide key={item.id} >
       <Paper h={"100%"} pos={"relative"} style={{
-        backgroundImage: `url(${images["bg-slide3"]}) `,
+        backgroundImage: `url(${item.images}) `,
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
       }}>
+        <Box
+          style={{
+            borderRadius: 16,
+            zIndex: 0,
+          }}
+          pos={"absolute"}
+          w={"100%"}
+          h={"100%"}
+          bg={colors.trans.dark[2]}
+        />
         <Stack justify="space-between" h={"100%"} gap={0} p={"lg"} pos={"relative"} >
           <Box p={"lg"}>
             <Text
+
               fw={"bold"}
               c={"white"}
               size={"3.5rem"}
@@ -103,9 +173,7 @@ function Slider({ data }: { data: DataSlider[] }) {
             </Text>
           </Box>
           <Group justify="center">
-            <Button onClick={() => {
-              router.push(`/layanan/${item.id}`)
-            }} px={46} radius={"100"} size="md">
+            <Button component={Link} href={item.link} px={46} radius={"100"} size="md" bg={colors["blue-button"]}>
               Detail
             </Button>
           </Group>
@@ -131,4 +199,4 @@ function Slider({ data }: { data: DataSlider[] }) {
   );
 }
 
-export default Content3;
+export default Layanan;

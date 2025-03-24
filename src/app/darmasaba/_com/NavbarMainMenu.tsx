@@ -25,9 +25,10 @@ export function NavbarMainMenu({ listNavbar }: {
                 base: "wrap",
                 md: "nowrap"
             }}>
-                <ActionIcon radius={"100"} onClick={() => {
+                <ActionIcon radius={"100"} variant="transparent" onClick={() => {
                     router.push("/darmasaba")
                     stateNav.clear()
+                    
                 }} >
                     <Image radius={"100"} src={"/assets/images/darmasaba-icon.png"} alt="icon" w={24} h={24} loading="lazy" />
                 </ActionIcon>

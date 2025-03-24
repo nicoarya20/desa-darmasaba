@@ -7,6 +7,7 @@ import "animate.css";
 import 'react-simple-toasts/dist/style.css';
 import 'react-simple-toasts/dist/theme/dark.css';
 import "./globals.css";
+import '@mantine/charts/styles.css';
 
 
 
@@ -20,7 +21,7 @@ import {
 import { ViewTransitions } from "next-view-transitions";
 
 export const metadata = {
-  title: "desa darmasaba",
+  title: "Desa Darmasaba",
   description: "Desa Darmasaba Kabupaten Badung",
 };
 

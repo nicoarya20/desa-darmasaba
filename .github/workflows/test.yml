@@ -1,0 +1,55 @@
+name: test workflows
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Target environment (e.g., staging, production)"
+        required: true
+        default: "staging"
+      version:
+        description: "Version to deploy"
+        required: false
+        default: "latest"
+
+env:
+  APP_NAME: desa-darmasaba-action
+  WA_PHONE: "6289697338821,6289697338822"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout kode sumber
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Setup Bun
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+
+      # Create log file
+      - name: Create log file
+        run: touch build.txt
+
+       # Step 1: Set BRANCH_NAME based on event type
+      - name: Set BRANCH_NAME
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            echo "BRANCH_NAME=${{ github.head_ref }}" >> $GITHUB_ENV
+          else
+            echo "BRANCH_NAME=${{ github.ref_name }}" >> $GITHUB_ENV
+          fi
+
+      # Step 2: Generate APP_VERSION dynamically
+      - name: Set APP_VERSION
+        run: echo "APP_VERSION=${{ github.sha }}---$(date +%Y%m%d%H%M%S)" >> $GITHUB_ENV
+
+      # Step 3: Kirim notifikasi ke API build Start
+      - name: Notify start build
+        run: |
+          IFS=',' read -ra PHONES <<< "${{ env.WA_PHONE }}"
+          for PHONE in "${PHONES[@]}"; do
+            ENCODED_TEXT=$(bun -e "console.log(encodeURIComponent('Build:start\nApp:${{ env.APP_NAME }}\nenv:${{ inputs.environment }}\nBranch:${{ env.BRANCH_NAME }}\nVersion:${{ env.APP_VERSION }}'))")
+            curl -X GET "https://wa.wibudev.com/code?text=$ENCODED_TEXT&nom=$PHONE"
+          done

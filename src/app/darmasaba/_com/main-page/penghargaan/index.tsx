@@ -1,4 +1,5 @@
 'use client';
+import colors from "@/con/colors";
 import { Stack, Box, Container, Button, Text } from "@mantine/core";
 import { useTransitionRouter } from 'next-view-transitions'
 
@@ -54,7 +55,7 @@ function Penghargaan() {
                 Juara Favorit Lomba Video Pendek
               </Text>
             </Stack>
-            <Button onClick={() => router.push("/penghargaan")} variant="white" radius={100}>
+            <Button color={colors["blue-button"]} onClick={() => router.push("/darmasaba/penghargaan")} variant="white" radius={100}>
               Selanjutnya
             </Button>
           </Stack>
