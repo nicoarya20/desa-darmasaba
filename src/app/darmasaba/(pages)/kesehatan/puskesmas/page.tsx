@@ -107,11 +107,11 @@ function Page() {
                     }}>
                     <Paper p={"xl"} bg={colors['white-trans-1']}>
                       <Text fw={"bold"} fz={'h3'} ta={'center'}>Poliklinik Umum</Text>
-                      <Text ta={'center'} fz={65} fw={'bold'} c={colors['blue-button']}>26</Text>
+                      <Text ta={'center'} fz={{ base: 45, md: 65 }} fw={'bold'} c={colors['blue-button']}>26</Text>
                     </Paper>
                     <Paper p={"xl"} bg={colors['white-trans-1']}>
                       <Text ta={'center'} fz={'h3'} fw={"bold"}>Poli Gigi</Text>
-                      <Text ta={'center'} fz={65} fw={'bold'} c={colors['blue-button']}>26</Text>
+                      <Text ta={'center'} fz={{ base: 45, md: 65 }} fw={'bold'} c={colors['blue-button']}>26</Text>
                     </Paper>
                   </SimpleGrid>
                 </Paper>

@@ -119,17 +119,17 @@ const navbarListMenu = [
             {
                 id: "3.5",
                 name: "Penanganan Darurat",
-                href: "/darmasaba/kesehatan/penanganan-darurat"
+                href: "/darmasaba/kesehatan/penanganan"
             },
             {
                 id: "3.6",
                 name: "Kontak Darurat",
-                href: "/darmasaba/kesehatan/kontak-darurat"
+                href: "/darmasaba/kesehatan/kontak"
             },
             {
                 id: "3.7",
                 name: "Info Wabah/Penyakit",
-                href: "/darmasaba/kesehatan/info-wabah-penyakit"
+                href: "/darmasaba/kesehatan/info"
             }
         ]
     },
@@ -141,27 +141,27 @@ const navbarListMenu = [
             {
                 id: "4.1",
                 name: "Keamanan Lingkungan (Pecalang/Patwal)",
-                href: "/darmasaba/keamanan/keamanan-lingkungan"
+                href: "/darmasaba/keamanan/lingkungan"
             },
             {
                 id: "4.2",
                 name: "Polsek Terdekat",
-                href: "/darmasaba/keamanan/polsek-terdekat"
+                href: "/darmasaba/keamanan/polsek"
             },
             {
                 id: "4.3",
                 name: "Kontak Darurat",
-                href: "/darmasaba/keamanan/kontak-darurat"
+                href: "/darmasaba/keamanan/darurat"
             },
             {
                 id: "4.4",
                 name: "Pencegahan Kriminalitas",
-                href: "/darmasaba/keamanan/pencegahan-kriminalitas"
+                href: "/darmasaba/keamanan/kriminalitas"
             },
             {
                 id: "4.5",
                 name: "Laporan Publik",
-                href: "/darmasaba/keamanan/laporan-publik"
+                href: "/darmasaba/keamanan/laporan"
             },
             {
                 id: "4.6",
