@@ -331,8 +331,13 @@ const navbarListMenu = [
             },
             {
                 id: "8.6",
-                name: "Perpustakaan Desa",
-                href: "/darmasaba/pendidikan/perpustakaan-desa"
+                name: "Perpustakaan Digital",
+                href: "/darmasaba/pendidikan/perpustakaan-digital"
+            },
+            {
+                id: "8.7",
+                name: "Data Pendidikan",
+                href: "/darmasaba/pendidikan/data-pendidikan"
             }
         ]
     }
