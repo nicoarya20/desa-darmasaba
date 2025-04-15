@@ -8,21 +8,21 @@ const data = [
         title: "Olahraga dan Kepemudaan",
         deskripsi: "Tim Bola Voli Putri Dharma Temaja meraih juara 3 dalam Turnamen Bola Voli Mangupura Cup 2024 kategori Putri Se-Bali ",
         image: "/api/img/prestasi-voli.jpeg",
-        link: "/darmasaba/prestasi/voli"
+        link: "/darmasaba/prestasi/tim-bola-voli-putri-dharma-temaja-meraih-juara-3-dalam-turnamen-bola-voli-mangupura-cup-2024-kategori-putri-se-bali"
       },
       {
         id: 2,
         title: "Hukum dan Kesadaran Masyarakat",
         deskripsi: "Prestasi Juara 3 dalam Lomba Keluarga Sadar Hukum Kabupaten Badung Tahun 2024",
         image: "/api/img/prestasilombahukum.png",
-        link: "/darmasaba/prestasi/hukum"
+        link: "/darmasaba/prestasi-desa/prestasi-juara-3-dalam-lomba-keluarga-sadar-hukum-kabupaten-badung-tahun-2024"
       },
       {
         id: 3,
         title: "Tata Kelola dan Inovasi Desa",
         deskripsi: "Peringkat 5 Dalam Ajang Bergengsi Mangupura Award",
         image: "/api/img/prestasi-peringkat-5.jpeg",
-        link: "/darmasaba/prestasi/mangupura"
+        link: "/darmasaba/prestasi-desa/peringkat-5-dalam-ajang-bergengsi-mangupura-award"
       }
 ]
 function Prestasi() {
@@ -33,7 +33,7 @@ function Prestasi() {
                     <Text ta={"center"} fz={"3.4rem"}>Prestasi Desa</Text>
                     <Text fz={"1.4rem"} ta={"center"}>Kami bangga dengan apa yang telah dicapai desa kita hingga saat ini. Semoga prestasi ini menjadi inspirasi untuk terus berkarya dan berinovasi demi kemajuan bersama.</Text>
                     <Center pt={20}>
-                        <Button radius={"lg"} fz={"h4"} color={colors["blue-button"]} component={Link} href="/darmasaba/prestasi">Selengkapnya</Button>
+                        <Button radius={"lg"} fz={"h4"} color={colors["blue-button"]} component={Link} href="/darmasaba/prestasi-desa">Selengkapnya</Button>
                     </Center>
                 </Container>
                 <Box py={50}>
@@ -66,7 +66,7 @@ function Prestasi() {
                                         <Box p={"lg"}>
                                             <Text
                                                 c={"white"}
-                                                size={"1.5rem"}
+                                                fz={{ base: "1rem", md: "1.125rem", lg: "1.25rem", xl: "1.5rem"}}
                                                 ta={"center"}
                                             >
                                                 {v.title}
@@ -75,7 +75,7 @@ function Prestasi() {
                                         <Text
                                             fw={"bold"}
                                             c={"white"}
-                                            size={"3.5rem"}
+                                            fz={{base: "2rem", md: "2.5rem", lg: "2.7rem", xl: "3rem"}}
                                             ta={"center"}
                                         >
                                             {v.deskripsi}

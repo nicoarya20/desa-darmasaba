@@ -13,11 +13,10 @@ function Page() {
       </Text>
       <Box px={{ base: "md", md: 100 }}>
         <Paper p={"xl"} bg={colors['white-trans-1']}>
-          <Box pb={30}>
-            <Text ta={"center"} fw={"bold"} fz={{ base: 'h4', md: 'h3' }}>DASAR HUKUM PEMBENTUKAN PPID</Text>
-            <Text ta={"center"} fw={"bold"} fz={{ base: 'h4', md: 'h3' }}>DESA DARMASABA</Text>
+          <Box>
+            <Text ta={"center"} fw={"bold"} fz={{ base: 'h4', md: 'h3' }}>DASAR HUKUM PEMBENTUKAN PPID DESA DARMASABA</Text>
           </Box>
-          <List>
+          <List p={'lg'}>
             <ListItem fz={{ base: 'md', md: 'h4' }}>
               <Text ta={"justify"} fz={{ base: 'md', md: 'h4' }}>
               <Text fw={"bold"} span>

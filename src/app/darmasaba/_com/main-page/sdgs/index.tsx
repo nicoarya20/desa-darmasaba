@@ -34,7 +34,7 @@ export default function SDGS() {
                         </SimpleGrid>
                     </Paper>
                     <Center>
-                        <Button component={Link} href={"/darmasaba/sdgsdesa"} radius={"lg"} fz={"1.2rem"} mt={20} bg={colors["blue-button"]}>Selengkapnya</Button>
+                        <Button component={Link} href={"/darmasaba/sdgs-desa"} radius={"lg"} fz={"1.2rem"} mt={20} bg={colors["blue-button"]}>Selengkapnya</Button>
                     </Center>
                 </Box>
             </Container>

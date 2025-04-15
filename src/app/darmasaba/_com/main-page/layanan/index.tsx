@@ -27,68 +27,68 @@ const data = [
     id: 1,
     images: "/api/img/test.png",
     name: "Surat Keterangan Domisili Organisasi",
-    link: "/darmasaba/desa/layanan/domisili"
-  },
-  {
+    link: "/darmasaba/desa/layanan/surat-keterangan-domisili"
+},
+{
     id: 2,
     images: "/api/img/test-3.jpeg",
     name: "Surat Keterangan Penghasilan",
-    link: "/darmasaba/desa/layanan/penghasilan"
-  },
-  {
+    link: "/darmasaba/desa/layanan/surat-keterangan-penghasilan"
+},
+{
     id: 3,
     images: "/api/img/domisili.jpeg",
     name: "Surat Keterangan Tidak Mampu",
-    link: "/darmasaba/desa/layanan/tidakmampu"
-  },
-  {
+    link: "/darmasaba/desa/layanan/surat-keterangan-tidak-mampu"
+},
+{
     id: 4,
     images: "/api/img/kelahiran.jpeg",
     name: "Surat Keterangan Kelahiran",
-    link: "/darmasaba/desa/layanan/kelahiran"
-  },
-  {
+    link: "/darmasaba/desa/layanan/surat-keterangan-kelahiran"
+},
+{
     id: 5,
     images: "/api/img/keterangan-usaha.jpeg",
     name: "Surat Keterangan Usaha",
-    link: "/darmasaba/desa/layanan/usaha"
-  },
-  {
+    link: "/darmasaba/desa/layanan/surat-keterangan-usaha"
+},
+{
     id: 6,
     images: "/api/img/kematian.jpeg",
     name: "Surat Keterangan Kematian",
-    link: "/darmasaba/desa/layanan/kematian"
-  },
-  {
+    link: "/darmasaba/desa/layanan/surat-keterangan-kematian"
+},
+{
     id: 7,
     images: "/api/img/tempatusaha.jpeg",
     name: "Surat Keterangan Tempat Usaha",
-    link: "/darmasaba/desa/layanan/tempatusaha"
-  },
-  {
+    link: "/darmasaba/desa/layanan/surat-keterangan-tempat-usaha"
+},
+{
     id: 8,
     images: "/api/img/belumkawin.jpeg",
     name: "Surat Keterangan Belum Kawin",
-    link: "/darmasaba/desa/layanan/belumkawin"
-  },
-  {
+    link: "/darmasaba/desa/layanan/surat-keterangan-belum-kawin"
+},
+{
     id: 9,
     images: "/api/img/berkelakuan-baik.jpeg",
     name: "Surat Keterangan Kelakuan Baik",
-    link: "/darmasaba/desa/layanan/skck"
-  },
-  {
+    link: "/darmasaba/desa/layanan/surat-keterangan-kelakuan-baik"
+},
+{
     id: 10,
     images: "/api/img/biodata.jpeg",
     name: "Surat Keterangan Beda Biodata Diri",
-    link: "/darmasaba/desa/layanan/biodata"
-  },
-  {
+    link: "/darmasaba/desa/layanan/surat-keterangan-beda-biodata-diri"
+},
+{
     id: 11,
     images: "/api/img/yatim.jpeg",
     name: "Surat Keterangan Yatim Piatu",
-    link: "/darmasaba/desa/layanan/yatim"
-  }
+    link: "/darmasaba/desa/layanan/surat-keterangan-yatim-piatu"
+}
 
 ]
 const textHeading = {

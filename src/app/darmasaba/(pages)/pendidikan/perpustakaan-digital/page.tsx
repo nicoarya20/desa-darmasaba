@@ -35,7 +35,7 @@ function Page() {
       <Box px={{ base: 'md', md: 100 }}>
         <Flex justify={'space-between'} align={'center'}>
           <BackButton />
-          <ActionIcon variant='transparent' component={Link} href={'/darmasaba/pendidikan/perpustakaan-digital/login'}>
+          <ActionIcon variant='transparent' component={Link} href={'/login'}>
             <IconUser color={colors["blue-button"]} size={30} />
           </ActionIcon>
         </Flex>

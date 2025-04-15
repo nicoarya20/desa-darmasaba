@@ -36,7 +36,7 @@ function Page() {
               <Text ta={"center"} fz={{ base: "h3", md: "h2" }} fw={"bold"}>
                 MISI PPID
               </Text>
-              <Box px={20} >
+              <Box >
                 <List type='ordered'>
                   <ListItem fz={{ base: "md", md: "h3" }} ta={"justify"}>Meningkatkan pengelolaan dan pelayanan informasi yang berkualitas, benar dan bertanggung jawab</ListItem>
                   <ListItem fz={{ base: "md", md: "h3" }} ta={"justify"}>Membangun dan mengembangkan sistem penyediaan dan layanan informasi.</ListItem>

@@ -15,47 +15,47 @@ const data = [
         images: "/api/img/penghargaan-2.png",
         juara: "Juara 2",
         deskripsi: "Lomba Video Pendek Potensi dan Peluang Investasi di Desa Kabupaten Badung 2024",
-        link: "/darmasaba/penghargaan/detail/lomba1"
+        link: "/darmasaba/penghargaan/juara-2-lomba-video-pendek-potensi-dan-peluang-investasi-di-desa-kabupaten-badung-2024"
     },
     {
         id: 2,
         images: "/api/img/penghargaan-3.png",
         juara: "Juara 2",
         deskripsi: "Duta Invenstasi Kabupaten Badung 2024",
-        link: "/darmasaba/penghargaan/detail/lomba2"
+        link: "/darmasaba/penghargaan/juara-2-duta-invenstasi-kabupaten-badung-2024"
     },
     {
         id: 3,
         images: "/api/img/penghargaan-1.png",
         juara: "Juara Favorit",
         deskripsi: "Lomba Video Pendek Potensi dan Peluang Investasi di Desa Kabupaten Badung 2024",
-        link: "/darmasaba/penghargaan/detail/lomba3"
+        link: "/darmasaba/penghargaan/juara-favorit-lomba-video-pendek-potensi-dan-peluang-investasi-di-desa-kabupaten-badung-2024"
     },
     {
         id: 4,
         images: "/api/img/penghargaan-2.png",
         juara: "Juara 2",
         deskripsi: "Lomba Video Pendek Potensi dan Peluang Investasi di Desa Kabupaten Badung 2024",
-        link: "/darmasaba/penghargaan/detail/lomba1"
+        link: "/darmasaba/penghargaan/juara-2-lomba-video-pendek-potensi-dan-peluang-investasi-di-desa-kabupaten-badung-2024"
     },
     {
         id: 5,
         images: "/api/img/penghargaan-3.png",
         juara: "Juara 2",
         deskripsi: "Duta Invenstasi Kabupaten Badung 2024",
-        link: "/darmasaba/penghargaan/detail/lomba2"
+        link: "/darmasaba/penghargaan/juara-2-duta-invenstasi-kabupaten-badung-2024"
     },
     {
         id: 6,
         images: "/api/img/penghargaan-1.png",
         juara: "Juara Favorit",
         deskripsi: "Lomba Video Pendek Potensi dan Peluang Investasi di Desa Kabupaten Badung 2024",
-        link: "/darmasaba/penghargaan/detail/lomba3"
+        link: "/darmasaba/penghargaan/juara-favorit-lomba-video-pendek-potensi-dan-peluang-investasi-di-desa-kabupaten-badung-2024"
     }
 ]
 export default function Page() {
     return (
-        <Stack pos={"relative"} bg={colors.grey[1]} py={"xl"} gap={42}>
+        <Stack pos={"relative"} bg={colors.grey[1]} py={"xl"} gap={22}>
             <Box px={{ base: "md", md: 100 }}>
             <BackButton />
             </Box>
@@ -125,7 +125,7 @@ function Slider() {
             plugins={[autoplay.current]}
             onMouseEnter={autoplay.current.stop}
             onMouseLeave={autoplay.current.reset}
-            w={width}
+            w={{base: 500, md: 800, lg: 900 , xl: width}}
             height={height}
             slideSize={{ base: "100%", sm: "50%", md: "33.333333%" }}
             slideGap={{ base: "xl", sm: "md" }}

@@ -11,67 +11,67 @@ const data = [
         id: 1,
         images: "/api/img/test.png",
         name: "Surat Keterangan Domisili Organisasi",
-        link: "/darmasaba/desa/layanan/domisili"
+        link: "/darmasaba/desa/layanan/surat-keterangan-domisili"
     },
     {
         id: 2,
         images: "/api/img/test-3.jpeg",
         name: "Surat Keterangan Penghasilan",
-        link: "/darmasaba/desa/layanan/penghasilan"
+        link: "/darmasaba/desa/layanan/surat-keterangan-penghasilan"
     },
     {
         id: 3,
         images: "/api/img/domisili.jpeg",
         name: "Surat Keterangan Tidak Mampu",
-        link: "/darmasaba/desa/layanan/tidakmampu"
+        link: "/darmasaba/desa/layanan/surat-keterangan-tidak-mampu"
     },
     {
         id: 4,
         images: "/api/img/kelahiran.jpeg",
         name: "Surat Keterangan Kelahiran",
-        link: "/darmasaba/desa/layanan/kelahiran"
+        link: "/darmasaba/desa/layanan/surat-keterangan-kelahiran"
     },
     {
         id: 5,
         images: "/api/img/keterangan-usaha.jpeg",
         name: "Surat Keterangan Usaha",
-        link: "/darmasaba/desa/layanan/usaha"
+        link: "/darmasaba/desa/layanan/surat-keterangan-usaha"
     },
     {
         id: 6,
         images: "/api/img/kematian.jpeg",
         name: "Surat Keterangan Kematian",
-        link: "/darmasaba/desa/layanan/kematian"
+        link: "/darmasaba/desa/layanan/surat-keterangan-kematian"
     },
     {
         id: 7,
         images: "/api/img/tempatusaha.jpeg",
         name: "Surat Keterangan Tempat Usaha",
-        link: "/darmasaba/desa/layanan/tempatusaha"
+        link: "/darmasaba/desa/layanan/surat-keterangan-tempat-usaha"
     },
     {
         id: 8,
         images: "/api/img/belumkawin.jpeg",
         name: "Surat Keterangan Belum Kawin",
-        link: "/darmasaba/desa/layanan/belumkawin"
+        link: "/darmasaba/desa/layanan/surat-keterangan-belum-kawin"
     },
     {
         id: 9,
         images: "/api/img/berkelakuan-baik.jpeg",
         name: "Surat Keterangan Kelakuan Baik",
-        link: "/darmasaba/desa/layanan/skck"
+        link: "/darmasaba/desa/layanan/surat-keterangan-kelakuan-baik"
     },
     {
         id: 10,
         images: "/api/img/biodata.jpeg",
         name: "Surat Keterangan Beda Biodata Diri",
-        link: "/darmasaba/desa/layanan/biodata"
+        link: "/darmasaba/desa/layanan/surat-keterangan-beda-biodata-diri"
     },
     {
         id: 11,
         images: "/api/img/yatim.jpeg",
         name: "Surat Keterangan Yatim Piatu",
-        link: "/darmasaba/desa/layanan/yatim"
+        link: "/darmasaba/desa/layanan/surat-keterangan-yatim-piatu"
     }
 
 ]
@@ -88,7 +88,7 @@ export default function Page() {
             <Container w={{ base: "100%", md: "50%" }} >
                 <Stack align="center" gap={0}>
                     {/* Bagian Layanan */}
-                    <Text fz={"3.4rem"} c={colors["blue-button"]} fw={"bold"}>
+                    <Text fz={{ base: "2rem", md: "2.5rem", lg: "3rem", xl: "3.5rem" }} c={colors["blue-button"]} fw={"bold"}>
                         Layanan Desa Darmasaba
                     </Text>
                     <Text
@@ -96,7 +96,7 @@ export default function Page() {
                         Informasi dan Pelayanan Administrasi Digital
                     </Text>
                     <TextInput
-                        py={20}
+                        pt={20}
                         w={{ base: "70%", md: "50%" }}
                         placeholder="Cari Layanan"
                         leftSection={<IconSearch size={20} />}
@@ -106,7 +106,7 @@ export default function Page() {
             </Container>
             <Box px={{ base: "md", md: 100 }}>
                 {/* Bagian Pelayanan Surat Keterangan */}
-                <Box py={10}>
+                <Box pb={10}>
                     <Text fz={{ base: "h4", md: 'h2' }} fw={"bold"}>Pelayanan Surat Keterangan</Text>
                 </Box>
                 <SimpleGrid
@@ -209,7 +209,7 @@ export default function Page() {
                 </Box>
                 {/* Bagian Pelayanan Telunjuk Sakti Desa */}
                 <Box py={15}>
-                    <Text fz={"h4"} fw={"bold"}>Pelayanan Telunjuk Sakti Desa</Text>
+                    <Text fz={{base: "h4", md: "h3"}} fw={"bold"}>Pelayanan Telunjuk Sakti Desa</Text>
                 </Box>
                 <Text fz={{ base: "sm", md: 'h3' }} py={10}>Terwujudnya Layanan umum bertajuk Sistim administrasi Kependudukan Terintegrasi di Desa berbasi Elektronik, Smart dan Aman. layanan telunjuk sakti Desa meliputi :</Text>
                 <List type="ordered" pb={20}>
@@ -219,7 +219,7 @@ export default function Page() {
                 </List>
                 {/* Bagian Pelayanan Telunjuk Sakti Desa */}
                 <Box py={15}>
-                    <Text fz={"h4"} fw={"bold"}>Pelayanan Penduduk Non-Permanent</Text>
+                    <Text fz={{base: "h4", md: "h3"}} fw={"bold"}>Pelayanan Penduduk Non-Permanent</Text>
                 </Box>
                 <Text pb={20} fz={{ base: "sm", md: 'h3' }} ta={"justify"}>Surat Keterangan Penduduk Non-Permanent adalah dokumen yang dikeluarkan oleh pihak berwenang untuk memberikan keterangan bahwa seseorang atau kelompok orang memiliki status penduduk non-permanent di suatu wilayah. Dokumen ini biasanya digunakan untuk keperluan administratif atau legal, seperti mendapatkan akses ke layanan kesehatan, pendidikan, atau pelayanan publik lainnya.</Text>
                 <Divider color={colors["blue-button"]} />

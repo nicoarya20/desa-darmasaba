@@ -102,7 +102,7 @@ function Apbdes() {
           })}
         </SimpleGrid>
         <Group pb={80} justify='center'>
-          <Button component={Link} href="/darmasaba/apbdesa" radius={"lg"} bg={colors["blue-button"]} fz={"h4"}>Lihat Semua</Button>
+          <Button component={Link} href="/darmasaba/apbdes" radius={"lg"} bg={colors["blue-button"]} fz={"h4"}>Lihat Semua</Button>
         </Group>
       </Stack>
     </>

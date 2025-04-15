@@ -1,0 +1,232 @@
+{backup}
+import colors from '@/con/colors';
+import { Box, Center, Container, Divider, Grid, GridCol, Group, Image, Pagination, Paper, SimpleGrid, Stack, Text, TextInput } from '@mantine/core';
+import { IconCalendar, IconSearch, IconUser } from '@tabler/icons-react';
+import BackButton from '../layanan/_com/BackButto';
+
+const dataBeritaTerbaru = [
+  {
+    id: 1,
+    judul: 'Darmasaba Luncurkan Aplikasi Smart Village untuk Pelayanan Publik',
+    image: "/api/img/berita-1.png",
+    tanggal: "Selasa, 11 Januari 2025",
+  },
+  {
+    id: 2,
+    judul: 'Tim Voli Darmasaba Raih Juara Turnamen Desa',
+    image: "/api/img/prestasi-voli.jpeg",
+    tanggal: "Kamis, 13 Januari 2025",
+  },
+  {
+    id: 3,
+    judul: 'Tim Voli Darmasaba Raih Juara Turnamen Desa',
+    image: "/api/img/prestasi-voli.jpeg",
+    tanggal: "Kamis, 13 Januari 2025",
+  },
+]
+function Page() {
+  return (
+    <Stack pos="relative" bg={colors.Bg} py="xl" gap="22">
+      {/* Header */}
+      <Box px={{ base: "md", md: 100 }}>
+        <BackButton />
+      </Box>
+      <Container size="lg" px="md">
+        <Stack align="center" gap="0" >
+          <Text fz={{ base: "2rem", md: "3.4rem" }} c={colors["blue-button"]} fw="bold" ta="center">
+            Portal Berita Darmasaba
+          </Text>
+          <Text ta="center" px="md">
+            Temukan berbagai potensi dan keunggulan yang dimiliki Desa Darmasaba
+          </Text>
+        </Stack>
+      </Container>
+
+      {/* Tabs Menu */}
+      <Box px={{ base: "md", md: "xl" }} py="md" bg={colors['BG-trans']} >
+        <Grid align="center" justify="space-between">
+          <GridCol span={{ base: 12, md: 8 }}>
+            <Group gap="md" wrap="wrap">
+              <Paper bg={colors['blue-button']} radius="xl" py={5} px={20}>
+                <Text c={colors['white-1']} size="sm">
+                  Semua
+                </Text>
+              </Paper>
+              {['Pemerintahan', 'Pembangunan', 'Ekonomi', 'Sosial', 'Budaya', 'Teknologi'].map((kategori) => (
+                <Paper key={kategori} bg={colors['blue-button-trans']} radius="xl" py={5} px={20}>
+                  <Text size="sm">
+                    {kategori}
+                  </Text>
+                </Paper>
+              ))}
+            </Group>
+          </GridCol>
+          <GridCol span={{ base: 12, md: 4 }}>
+            <TextInput
+              radius="lg"
+              placeholder="Cari Berita"
+              leftSection={<IconSearch size={18} />}
+              w="100%"
+            />
+          </GridCol>
+        </Grid>
+      </Box>
+
+      {/* Konten Berita */}
+      <Container size="xl" px={{ base: "md", md: "xl" }}>
+        <Grid gutter={{ base: "md", md: "xl" }} pb={70}>
+          {/* Berita Utama */}
+          <GridCol span={{ base: 12, md: 8 }}>
+            <Paper p="md" shadow="sm" radius="md">
+              <Stack gap="md">
+                <Box>
+                  <Image
+                    src="/api/img/berita-1.png"
+                    alt="Darmasaba Smart Village"
+                    radius="md"
+                    fit="cover"
+                    h={{ base: 450, md: 660 }}
+                  />
+                </Box>
+                <Group>
+                  <Paper px={10} py={5} radius="xl" bg={colors['BG-trans']}>
+                    <Text size="sm">Teknologi</Text>
+                  </Paper>
+                </Group>
+                <Text fz={{ base: "xl", md: "2xl" }} fw="bold" lineClamp={2}>
+                  Darmasaba Luncurkan Aplikasi Smart Village untuk Pelayanan Publik
+                </Text>
+                <Text size="md" lineClamp={3}>
+                  Desa Darmasaba mengambil langkah maju dalam transformasi digital dengan meluncurkan aplikasi Smart Village yang memudahkan warga dalam mengakses layanan publik secara online.
+                </Text>
+                <Group>
+                  <Group gap="xs">
+                    <IconCalendar size={18} />
+                    <Text size="sm">Selasa, 11 Januari 2025</Text>
+                  </Group>
+                  <Group gap="xs">
+                    <IconUser size={18} />
+                    <Text size="sm">Admin Desa</Text>
+                  </Group>
+                </Group>
+              </Stack>
+            </Paper>
+          </GridCol>
+
+          {/* Berita Sampingan */}
+          <GridCol span={{ base: 12, md: 4 }}>
+            <Stack gap="md">
+              {/* Berita Sampingan 1 */}
+              <Paper p="md" shadow="sm" radius="md">
+                <Stack gap="sm">
+                  <Image
+                    radius="md"
+                    src="/api/img/prestasi-voli.jpeg"
+                    alt="Prestasi Voli"
+                    fit="cover"
+                    h={180}
+                  />
+                  <Group>
+                    <Paper px={10} py={5} radius="xl" bg={colors['BG-trans']}>
+                      <Text size="sm">Teknologi</Text>
+                    </Paper>
+                  </Group>
+                  <Text fz="lg" fw="bold" lineClamp={2}>
+                    Darmasaba Luncurkan Aplikasi Smart Village untuk Pelayanan Publik
+                  </Text>
+                  <Group>
+                    <Group gap="xs">
+                      <IconCalendar size={18} />
+                      <Text size="sm">Selasa, 11 Januari 2025</Text>
+                    </Group>
+                    <Group gap="xs">
+                      <IconUser size={18} />
+                      <Text size="sm">Admin Desa</Text>
+                    </Group>
+                  </Group>
+                </Stack>
+              </Paper>
+
+              {/* Berita Sampingan 2 */}
+              <Paper p="md" shadow="sm" radius="md">
+                <Stack gap="sm">
+                  <Image
+                    radius="md"
+                    src="/api/img/prestasi-voli.jpeg"
+                    alt="Prestasi Voli"
+                    fit="cover"
+                    h={180}
+                  />
+                  <Group>
+                    <Paper px={10} py={5} radius="xl" bg={colors['BG-trans']}>
+                      <Text size="sm">Sosial</Text>
+                    </Paper>
+                  </Group>
+                  <Text fz="lg" fw="bold" lineClamp={2}>
+                    Tim Voli Darmasaba Raih Juara Turnamen Desa
+                  </Text>
+                  <Group>
+                    <Group gap="xs">
+                      <IconCalendar size={18} />
+                      <Text size="sm">Selasa, 11 Januari 2025</Text>
+                    </Group>
+                    <Group gap="xs">
+                      <IconUser size={18} />
+                      <Text size="sm">Admin Desa</Text>
+                    </Group>
+                  </Group>
+                </Stack>
+              </Paper>
+            </Stack>
+          </GridCol>
+        </Grid>
+        <Box pb={30}>
+          <Text fz={"h1"} fw={"bold"}>Berita Terbaru</Text>
+          <Divider color={colors["blue-button"]} />
+        </Box>
+        <SimpleGrid cols={{ base: 1, md: 3 }}>
+          {dataBeritaTerbaru.map((v, k) => {
+            return (
+              <Paper key={k} p="md" shadow="sm" radius="md">
+                <Stack gap="sm">
+                  <Image
+                    radius="md"
+                    src={v.image}
+                    alt="Prestasi Voli"
+                    fit="cover"
+                    h={180}
+                  />
+                  <Group>
+                    <Paper px={10} py={5} radius="xl" bg={colors['BG-trans']}>
+                      <Text size="sm">Teknologi</Text>
+                    </Paper>
+                  </Group>
+                  <Text fz="lg" fw="bold" lineClamp={2}>
+                    {v.judul}
+                  </Text>
+                  <Group>
+                    <Group gap="xs">
+                      <IconCalendar size={18} />
+                      <Text size="sm">{v.tanggal}</Text>
+                    </Group>
+                    <Group gap="xs">
+                      <IconUser size={18} />
+                      <Text size="sm">Admin Desa</Text>
+                    </Group>
+                  </Group>
+                </Stack>
+              </Paper>
+            )
+          })}
+        </SimpleGrid>
+        <Box py={"xl"}>
+          <Center>
+            <Pagination total={10} />
+          </Center>
+        </Box>
+      </Container>
+    </Stack>
+  );
+}
+
+export default Page;

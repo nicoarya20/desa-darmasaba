@@ -12,11 +12,11 @@ function Page() {
         <BackButton />
       </Box>
       <Container size="lg" px="md">
-        <Stack align="center" gap="xs" mb="xl">
+        <Stack align="center" gap="0" >
           <Text fz={{ base: "2rem", md: "3.4rem" }} c={colors["blue-button"]} fw="bold" ta="center">
             Pengumuman Desa Darmasaba
           </Text>
-          <Text ta="center" px="md">
+          <Text ta="center" px="md" pb={10}>
             Informasi dan pengumuman resmi terkait kegiatan dan kebijakan Desa Darmasaba
           </Text>
           <TextInput

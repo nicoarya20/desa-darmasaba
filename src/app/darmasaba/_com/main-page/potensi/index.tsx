@@ -26,28 +26,28 @@ const datamap = [
     images: "/api/img/tps.png",
     name: "TPS3R Pudak Mesari",
     deskripsi: "TPS 3R Pudak Mesari Darmasaba layak mendapat penghargaan demikian apresiasi dari Delterra Sosial Indonesia nie Semeton Darmasaba!, Hal tersebut dikarenakan walaupun baru berdiri namun TPS 3R kebanggaan Desa Darmasaba tersebut sudah berjalan dengan sangat baik. ",
-    link: "/darmasaba/desa/potensi/tps"
+    link: "/darmasaba/desa/potensi/tps3r-pudak-mesari"
   },
   {
     id: 2,
     images: "/api/img/ack.png",
     name: "Bumdes Pudak Mesari",
     deskripsi: "Bumdes Pudak Mesari sangat membantu warga desa Darmasaba dalam mengelola dan membangun sebuah desa yang lebih baik lagi",
-    link: "/darmasaba/desa/potensi/bumdes"
+    link: "/darmasaba/desa/potensi/bumdes-pudak-mesari"
   },
   {
     id: 3,
     images: "/api/img/taman-beji.jpg",
     name: "Taman Beji Cengana",
     deskripsi: "Tirta Klebutan di Pura Taman Beji Cengana di Desa Adat Darmasaba, Badung, selain dipercaya nunas Taksu serta pembersihan diri. Tersemat juga asal usul cerita ditemukannya Tirta Klebutan yang tepat berada di pinggir Tukad Cengana tersebut.",
-    link: "/darmasaba/desa/potensi/taman"
+    link: "/darmasaba/desa/potensi/taman-beji-cengana"
   },
   {
     id: 4,
     images: "/api/img/waterpark.png",
     name: "Gumuh Sari Water Park",
     deskripsi: "Gumuh Sari Rekreasi atau waterpark, tempat wisata yang asyik dan seru untuk kamu sekeluarga! Tempat liburan di Bali memang seakan nggak ada habisnya. Selalu ada aja destinasi wisata seru yang bisa jadi wishlist. Ada banyak banget tempat wisata yang kamu kunjungi di Bali, mulai dari wisata alam, wisata modern, sampai wisata air.",
-    link: "/darmasaba/desa/potensi/gumuh"
+    link: "/darmasaba/desa/potensi/gumuh-sari-water-park"
   },
 ]
 
