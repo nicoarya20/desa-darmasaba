@@ -81,7 +81,7 @@ export default function Page() {
     const nextStep = () => setActive((current) => (current < 6 ? current + 1 : current));
     const prevStep = () => setActive((current) => (current > 0 ? current - 1 : current));
     return (
-        <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"42"}>
+        <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"22"}>
             <Box px={{ base: 'md', md: 100 }}>
                 <BackButton />
             </Box>

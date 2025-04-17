@@ -7,19 +7,19 @@ const dataBeritaTerbaru = [
   {
     id: 1,
     judul: 'Darmasaba Luncurkan Aplikasi Smart Village untuk Pelayanan Publik',
-    image: "/api/img/berita-1.png",
+    image: "/api/img/teknologi-3.png",
     tanggal: "Selasa, 11 Januari 2025",
   },
   {
     id: 2,
-    judul: 'Tim Voli Darmasaba Raih Juara Turnamen Desa',
-    image: "/api/img/prestasi-voli.jpeg",
+    judul: 'DARMASABA DIGITAL PROJECT IS COMING!',
+    image: "/api/img/teknologi-1.png",
     tanggal: "Kamis, 13 Januari 2025",
   },
   {
     id: 3,
-    judul: 'Tim Voli Darmasaba Raih Juara Turnamen Desa',
-    image: "/api/img/prestasi-voli.jpeg",
+    judul: 'DARMASABA MENUJU DESA DIGITAL',
+    image: "/api/img/teknologi-2.png",
     tanggal: "Kamis, 13 Januari 2025",
   },
 ]
@@ -74,7 +74,7 @@ function Teknologi() {
                 <Stack gap="sm">
                   <Image
                     radius="md"
-                    src="/api/img/prestasi-voli.jpeg"
+                    src="/api/img/teknologi-1.png"
                     alt="Prestasi Voli"
                     fit="cover"
                     h={180}
@@ -85,7 +85,8 @@ function Teknologi() {
                     </Paper>
                   </Group>
                   <Text fz="lg" fw="bold" lineClamp={2}>
-                    Darmasaba Luncurkan Aplikasi Smart Village untuk Pelayanan Publik
+                  DARMASABA DIGITAL PROJECT IS COMING! Desa Darmasaba nggak pernah berhenti berinovasi! ?
+                  Kali ini, kami siap menghadirkan gebrakan baru yang akan mempermudah sistem kerja di lingkungan
                   </Text>
                   <Group>
                     <Group gap="xs">
@@ -105,18 +106,18 @@ function Teknologi() {
                 <Stack gap="sm">
                   <Image
                     radius="md"
-                    src="/api/img/prestasi-voli.jpeg"
+                    src="/api/img/teknologi-2.png"
                     alt="Prestasi Voli"
                     fit="cover"
                     h={180}
                   />
                   <Group>
                     <Paper px={10} py={5} radius="xl" bg={colors['BG-trans']}>
-                      <Text size="sm">Sosial</Text>
+                      <Text size="sm">Teknologi</Text>
                     </Paper>
                   </Group>
-                  <Text fz="lg" fw="bold" lineClamp={2}>
-                    Tim Voli Darmasaba Raih Juara Turnamen Desa
+                  <Text fz="lg" fw="bold" lineClamp={1}>
+                    DARMASABA MENUJU DESA DIGITAL
                   </Text>
                   <Group>
                     <Group gap="xs">

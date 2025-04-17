@@ -22,7 +22,7 @@ function Page() {
       </Container>
       <Box px={{ base: "md", md: 100 }}>
         <Tabs color={colors['blue-button']} defaultValue="foto">
-          <Grid>
+          <Grid align='center'>
             <GridCol span={{ base: 12, md: 9, lg: 8, xl: 9 }}>
               <Group>
                 <TabsList>

@@ -1,5 +1,6 @@
 'use client'
-import { Box, Flex, Grid, SimpleGrid, Stack, Text, Title } from '@mantine/core';
+import { Box, Container, Flex, Grid, SimpleGrid, Skeleton, Stack, Text, Title } from '@mantine/core';
+import { useSearchParams } from 'next/navigation';
 import React from 'react';
 
 const tx = `
@@ -50,8 +51,55 @@ function Page() {
 
       </Flex>
 
+      <Page2/>
     </Stack>
   );
 }
 
 export default Page;
+
+const Halaman = [Halaman1, Halaman2, Halaman3]
+
+function Page2() {
+  const page = useSearchParams().get("p");
+  if (!page) return <Container >
+    <Stack>
+      <Text>halo 1</Text>
+      {Array.from({ length: 4 }).map((v, k) => <Skeleton h={100} key={k} />)}
+    </Stack>
+  </Container>
+
+
+  return (
+    <Container w={"100%"}>
+      <Stack>
+        <Text>halo 2</Text>
+        {Halaman[Number(page)-1]()}
+      </Stack>
+    </Container>
+
+  );
+}
+
+
+
+function Halaman1() {
+  return <Stack bg={"blue"}>
+    ini halaman 1
+  </Stack>
+}
+
+
+function Halaman2() {
+  return <Stack bg={"red"}>
+    ini halaman 2
+  </Stack>
+}
+
+
+function Halaman3() {
+  return <Stack bg={"grape"}> 
+    ini halaman 3
+  </Stack>
+}
+

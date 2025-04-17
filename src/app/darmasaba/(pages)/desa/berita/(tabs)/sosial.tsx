@@ -7,7 +7,7 @@ const dataBeritaTerbaru = [
   {
     id: 1,
     judul: 'AKSI BERSIH DESA MEMPERINGATI HARI PEDULI SAMPAH NASIONAL 2025',
-    image: "/api/img/sosial-1.jpeg",
+    image: "/api/img/sosial-4.png",
     tanggal: "Selasa, 11 Januari 2025",
   },
   {
@@ -170,7 +170,7 @@ Jaga Bumi, Pilah Sampah dari Sekarang! ♻️
                   />
                   <Group>
                     <Paper px={10} py={5} radius="xl" bg={colors['BG-trans']}>
-                      <Text size="sm">Teknologi</Text>
+                      <Text size="sm">Sosial</Text>
                     </Paper>
                   </Group>
                   <Text fz="lg" fw="bold" lineClamp={2}>

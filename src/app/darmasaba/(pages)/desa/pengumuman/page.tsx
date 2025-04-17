@@ -1,9 +1,61 @@
 import colors from '@/con/colors';
-import { Stack, Box, Container, Text, TextInput, SimpleGrid, Notification, Flex, Anchor, Paper } from '@mantine/core';
-import React from 'react';
+import { Anchor, Box, Container, Flex, Group, Notification, Paper, SimpleGrid, Stack, Text, TextInput, UnstyledButton } from '@mantine/core';
+import { IconCalendar, IconClock, IconSearch } from '@tabler/icons-react';
 import BackButton from '../layanan/_com/BackButto';
-import { IconSearch } from '@tabler/icons-react';
+import Link from 'next/link';
 
+const dataKategori = [
+  {
+    id: 1,
+    kategori: 'Sosial & Kesehatan',
+    jumlah: 5,
+    link: '/darmasaba/desa/pengumuman/sosial-&-kesehatan'
+  },
+  {
+    id: 2,
+    kategori: 'Ekonomi & UMKM',
+    jumlah: 7,
+    link: '/darmasaba/desa/pengumuman/ekonomi-&-umkm'
+  },
+  {
+    id: 3,
+    kategori: 'Pendidikan & Kepemudaan',
+    jumlah: 9,
+    link: '/darmasaba/desa/pengumuman/pendidikan-&-kepemudaan'
+  },
+  {
+    id: 4,
+    kategori: 'Lingkungan & Bencana',
+    jumlah: 6,
+    link: '/darmasaba/desa/pengumuman/lingkungan-&-bencana'
+  },
+  {
+    id: 5,
+    kategori: 'Adat & Budaya',
+    jumlah: 8,
+    link: '/darmasaba/desa/pengumuman/adat-&-budaya'
+  },
+  {
+    id: 6,
+    kategori: 'Digitalisasi Desa',
+    jumlah: 6,
+    link: '/darmasaba/desa/pengumuman/digitalisasi-desa'
+  },
+]
+const dataPenting = [
+  {
+    id: 1,
+    judul: 'Jadwal Rapat',
+    jumlah: 5,
+    link: '/darmasaba/desa/pengumuman/jadwal-rapat'
+  },
+  {
+    id: 2,
+    judul: 'Pendaftaran UMKM',
+    jumlah: 7,
+    link: '/darmasaba/desa/pengumuman/pendaftaran-umkm'
+  }
+]
 function Page() {
   return (
     <Stack pos="relative" bg={colors.Bg} py="xl" gap="md">
@@ -41,32 +93,36 @@ function Page() {
               <Text ta={"justify"} fz={"sm"} c={"black"}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce sagittis nec arcu ac ornare. Praesent a porttitor felis. Proin varius ex nisl, in hendrerit odio tristique vel. </Text>
             </Stack>
             <Flex pt={20} gap={"md"} justify={"space-between"}>
-              <Text fz={"xs"} c={"black"}>1 Februari 2025</Text>
-              <Text fz={"xs"} c={"black"}>09:00 WITA</Text>
+              <Group style={{ color: 'black' }}>
+                <Group gap="xs">
+                  <IconCalendar size={18} />
+                  <Text size="sm">Kamis, 13 Januari 2025</Text>
+                </Group>
+                <Group gap="xs">
+                  <IconClock size={18} />
+                  <Text size="sm">09:00 WITA</Text>
+                </Group>
+              </Group>
               <Anchor>
-                <Text fz={"xs"}>Baca Selengkapnya</Text>
+                <Text fs={'unset'} c={colors["blue-button"]} fz={"sm"}>Baca Selengkapnya</Text>
               </Anchor>
             </Flex>
           </Notification>
           <Paper p={"md"}>
             <Stack gap={"xs"}>
               <Text fw={"bold"} fz={"lg"} c={colors['blue-button']}>Kategori</Text>
-              <Flex justify={"space-between"}>
-                <Text fz={"md"} c={"black"}>Pengumuman</Text>
-                <Text fz={"md"} c={"black"}>5</Text>
-              </Flex>
-              <Flex justify={"space-between"}>
-                <Text fz={"md"} c={"black"}>Kegiatan</Text>
-                <Text fz={"md"} c={"black"}>10</Text>
-              </Flex>
-              <Flex justify={"space-between"}>
-                <Text fz={"md"} c={"black"}>Informasi</Text>
-                <Text fz={"md"} c={"black"}>12</Text>
-              </Flex>
-              <Flex justify={"space-between"}>
-                <Text fz={"md"} c={"black"}>Layanan</Text>
-                <Text fz={"md"} c={"black"}>6</Text>
-              </Flex>
+              {dataKategori.map((v, k) => {
+                return (
+                  <UnstyledButton component={Link} href={v.link} key={k}>
+                    <Paper bg={colors["BG-trans"]} p={5}>
+                      <Group px={3} justify={"space-between"}>
+                        <Text fz={"md"} c={"black"}>{v.kategori}</Text>
+                        <Text fz={"md"} c={"black"}>{v.jumlah}</Text>
+                      </Group>
+                    </Paper>
+                  </UnstyledButton>
+                )
+              })}
             </Stack>
           </Paper>
           <Notification color='yellow' styles={{ title: { fontWeight: "bold" } }} withCloseButton={false} title="Informasi">
@@ -74,25 +130,36 @@ function Page() {
               <Text fz={"sm"} fw={"bold"} c={"black"}>LELANG PEMASANGAN CCTV DESA DARMASABA</Text>
               <Text ta={"justify"} fz={"sm"} c={"black"}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce sagittis nec arcu ac ornare. Praesent a porttitor felis. Proin varius ex nisl, in hendrerit odio tristique vel. </Text>
             </Stack>
-            <Flex pt={20} gap={"md"} justify={"space-between"}>
-              <Text fz={"xs"} c={"black"}>2 Februari 2025</Text>
-              <Text fz={"xs"} c={"black"}>10:00 WITA</Text>
+            <Flex pt={20} gap={"md"} justify={"space-between"}><Group style={{ color: 'black' }}>
+              <Group gap="xs">
+                <IconCalendar size={18} />
+                <Text size="sm">Kamis, 2 Februari 2025</Text>
+              </Group>
+              <Group gap="xs">
+                <IconClock size={18} />
+                <Text size="sm">10:00 WITA</Text>
+              </Group>
+            </Group>
               <Anchor>
-                <Text fz={"xs"}>Baca Selengkapnya</Text>
+                <Text fs={'unset'} c={colors["blue-button"]} fz={"sm"}>Baca Selengkapnya</Text>
               </Anchor>
             </Flex>
           </Notification>
           <Paper p={"md"}>
             <Stack gap={"xs"}>
               <Text fw={"bold"} fz={"lg"} c={colors['blue-button']}>Pengumuman Penting</Text>
-              <Flex justify={"space-between"}>
-                <Text fz={"md"} c={"black"}>Jadwal Rapat</Text>
-                <Text fz={"md"} c={"black"}>5</Text>
-              </Flex>
-              <Flex justify={"space-between"}>
-                <Text fz={"md"} c={"black"}>Pendaftaran UMKM</Text>
-                <Text fz={"md"} c={"black"}>10</Text>
-              </Flex>
+              {dataPenting.map((v, k) => {
+                return (
+                  <UnstyledButton component={Link} href={v.link} key={k}>
+                    <Paper bg={colors["BG-trans"]} p={5}>
+                      <Group px={3} justify={"space-between"}>
+                        <Text fz={"md"} c={"black"}>{v.judul}</Text>
+                        <Text fz={"md"} c={"black"}>{v.jumlah}</Text>
+                      </Group>
+                    </Paper>
+                  </UnstyledButton>
+                )
+              })}
             </Stack>
           </Paper>
         </SimpleGrid>

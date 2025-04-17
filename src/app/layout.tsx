@@ -8,6 +8,7 @@ import 'react-simple-toasts/dist/style.css';
 import 'react-simple-toasts/dist/theme/dark.css';
 import "./globals.css";
 import '@mantine/charts/styles.css';
+import '@mantine/dates/styles.css';
 
 
 

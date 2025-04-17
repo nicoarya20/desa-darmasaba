@@ -13,7 +13,7 @@ const dataBeritaTerbaru = [
   {
     id: 2,
     judul: 'Tim Voli Darmasaba Raih Juara Turnamen Desa',
-    image: "/api/img/pemerintahan-3.jpg",
+    image: "/api/img/pemrintahan-5.png",
     tanggal: "Kamis, 13 Januari 2025",
   },
   {
@@ -151,7 +151,7 @@ function Pemerintahan() {
                   />
                   <Group>
                     <Paper px={10} py={5} radius="xl" bg={colors['BG-trans']}>
-                      <Text size="sm">Teknologi</Text>
+                      <Text size="sm">Pemerintahan</Text>
                     </Paper>
                   </Group>
                   <Text fz="lg" fw="bold" lineClamp={2}>

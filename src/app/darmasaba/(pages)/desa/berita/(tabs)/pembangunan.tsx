@@ -6,21 +6,21 @@ import React from 'react';
 const dataBeritaTerbaru = [
   {
     id: 1,
-    judul: 'PEMBANGUNAN TROTOARISASI JALAN LINGKUNGAN BR. GULINGAN',
+    judul: 'PEMBANGUNAN GOT JALAN LINGKUNGAN BR. TAMAN',
     image: "/api/img/pembangunan-1.jpg",
-    tanggal: "Selasa, 11 Januari 2025",
+    tanggal: "Kamis, 13 Januari 2025",
   },
   {
     id: 2,
-    judul: 'PEMBANGUNAN GOT JALAN LINGKUNGAN BR. TAMAN',
-    image: "/api/img/pembangunan-2.jpg",
+    judul: 'PEMBANGUNAN BALE GAMBELAN SETRA AGENG DESA ADAT TEGAL',
+    image: "/api/img/pembangunan-3.jpg",
     tanggal: "Kamis, 13 Januari 2025",
   },
   {
     id: 3,
-    judul: 'PEMBANGUNAN BALE GAMBELAN SETRA AGENG DESA ADAT TEGAL',
-    image: "/api/img/pembangunan-3.jpg",
-    tanggal: "Kamis, 13 Januari 2025",
+    judul: 'PEMBANGUNAN TROTOARISASI JALAN LINGKUNGAN BR. GULINGAN',
+    image: "/api/img/pembangunan-1.jpg",
+    tanggal: "Selasa, 11 Januari 2025",
   },
 ]
 function Pembangunan() {
@@ -153,7 +153,7 @@ Pemdes Darmasaba dalam rangka memenuhi kebutuhan masyarakat khususnya warga Br. 
                   />
                   <Group>
                     <Paper px={10} py={5} radius="xl" bg={colors['BG-trans']}>
-                      <Text size="sm">Teknologi</Text>
+                      <Text size="sm">Pembangunan</Text>
                     </Paper>
                   </Group>
                   <Text fz="lg" fw="bold" lineClamp={2}>

@@ -6,20 +6,20 @@ import React from 'react';
 const dataBeritaTerbaru = [
   {
     id: 1,
-    judul: 'Darmasaba Luncurkan Aplikasi Smart Village untuk Pelayanan Publik',
-    image: "/api/img/berita-1.png",
+    judul: 'FESTIVAL SENI BUDAYA KAB. BADUNG',
+    image: "/api/img/tari-3.jpg",
     tanggal: "Selasa, 11 Januari 2025",
   },
   {
     id: 2,
-    judul: 'Tim Voli Darmasaba Raih Juara Turnamen Desa',
-    image: "/api/img/prestasi-voli.jpeg",
+    judul: 'LATIHAN TARI REJANG GIRI PUTRI',
+    image: "/api/img/tari-3.jpg",
     tanggal: "Kamis, 13 Januari 2025",
   },
   {
     id: 3,
-    judul: 'Tim Voli Darmasaba Raih Juara Turnamen Desa',
-    image: "/api/img/prestasi-voli.jpeg",
+    judul: 'LATIHAN TARI REJANG GIRI PUTRI',
+    image: "/api/img/tari-3.jpg",
     tanggal: "Kamis, 13 Januari 2025",
   },
 ]
@@ -34,23 +34,23 @@ function Budaya() {
               <Stack gap="md">
                 <Box>
                   <Image
-                    src="/api/img/berita-1.png"
+                    src="/api/img/budaya-1.jpg"
                     alt="Darmasaba Smart Village"
                     radius="md"
                     fit="cover"
-                    h={{ base: 450, md: 660 }}
+                    h={{ base: 450, md: 610 }}
                   />
                 </Box>
                 <Group>
                   <Paper px={10} py={5} radius="xl" bg={colors['BG-trans']}>
-                    <Text size="sm">Teknologi</Text>
+                    <Text size="sm">Budaya</Text>
                   </Paper>
                 </Group>
                 <Text fz={{ base: "xl", md: "2xl" }} fw="bold" lineClamp={2}>
-                  Darmasaba Luncurkan Aplikasi Smart Village untuk Pelayanan Publik
+                  FESTIVAL SENI BUDAYA KAB. BADUNG
                 </Text>
                 <Text size="md" lineClamp={3}>
-                  Desa Darmasaba mengambil langkah maju dalam transformasi digital dengan meluncurkan aplikasi Smart Village yang memudahkan warga dalam mengakses layanan publik secara online.
+                Semeton Darmasaba yang suka menikmati seni seperti baleganjur, gong kebyar, tari, dan lainnya. Nih! ada acara keren di Puspem Badung tepatnya di Balai Budaya Giri Nata Mandala yaitu Festival Seni Budaya dari tanggal 1 November 2023 s.d. 16 November 2023.
                 </Text>
                 <Group>
                   <Group gap="xs">
@@ -74,18 +74,18 @@ function Budaya() {
                 <Stack gap="sm">
                   <Image
                     radius="md"
-                    src="/api/img/prestasi-voli.jpeg"
+                    src="/api/img/tari-3.jpg"
                     alt="Prestasi Voli"
                     fit="cover"
                     h={180}
                   />
                   <Group>
                     <Paper px={10} py={5} radius="xl" bg={colors['BG-trans']}>
-                      <Text size="sm">Teknologi</Text>
+                      <Text size="sm">Budaya</Text>
                     </Paper>
                   </Group>
                   <Text fz="lg" fw="bold" lineClamp={2}>
-                    Darmasaba Luncurkan Aplikasi Smart Village untuk Pelayanan Publik
+                  PELATIHAN TARI WALI
                   </Text>
                   <Group>
                     <Group gap="xs">
@@ -105,18 +105,18 @@ function Budaya() {
                 <Stack gap="sm">
                   <Image
                     radius="md"
-                    src="/api/img/prestasi-voli.jpeg"
+                    src="/api/img/tari-3.jpg"
                     alt="Prestasi Voli"
                     fit="cover"
                     h={180}
                   />
                   <Group>
                     <Paper px={10} py={5} radius="xl" bg={colors['BG-trans']}>
-                      <Text size="sm">Sosial</Text>
+                      <Text size="sm">Budaya</Text>
                     </Paper>
                   </Group>
                   <Text fz="lg" fw="bold" lineClamp={2}>
-                    Tim Voli Darmasaba Raih Juara Turnamen Desa
+                  LATIHAN TARI REJANG GIRI PUTRI
                   </Text>
                   <Group>
                     <Group gap="xs">
@@ -145,13 +145,13 @@ function Budaya() {
                   <Image
                     radius="md"
                     src={v.image}
-                    alt="Prestasi Voli"
+                    alt=""
                     fit="cover"
-                    h={180}
+                    h={282}
                   />
                   <Group>
                     <Paper px={10} py={5} radius="xl" bg={colors['BG-trans']}>
-                      <Text size="sm">Teknologi</Text>
+                      <Text size="sm">Budaya</Text>
                     </Paper>
                   </Group>
                   <Text fz="lg" fw="bold" lineClamp={2}>

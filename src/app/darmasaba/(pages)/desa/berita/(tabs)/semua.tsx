@@ -9,18 +9,21 @@ const dataBeritaTerbaru = [
     judul: 'Darmasaba Luncurkan Aplikasi Smart Village untuk Pelayanan Publik',
     image: "/api/img/berita-1.png",
     tanggal: "Selasa, 11 Januari 2025",
+    kategori: "Teknologi"
   },
   {
     id: 2,
     judul: 'Tim Voli Darmasaba Raih Juara Turnamen Desa',
     image: "/api/img/prestasi-voli.jpeg",
     tanggal: "Kamis, 13 Januari 2025",
+    kategori: "Sosial"
   },
   {
     id: 3,
-    judul: 'Tim Voli Darmasaba Raih Juara Turnamen Desa',
-    image: "/api/img/prestasi-voli.jpeg",
+    judul: 'DARMASABA DIGITAL PROJECT IS COMING!',
+    image: "/api/img/teknologi-1.png",
     tanggal: "Kamis, 13 Januari 2025",
+    kategori: "Teknologi"
   },
 ]
 function Semua() {
@@ -67,7 +70,7 @@ function Semua() {
           </GridCol>
 
           {/* Berita Sampingan */}
-          <GridCol span={{ base: 12,  xl: 4 }}>
+          <GridCol span={{ base: 12, xl: 4 }}>
             <Stack gap="md">
               {/* Berita Sampingan 1 */}
               <Paper p="md" shadow="sm" radius="md">
@@ -147,11 +150,11 @@ function Semua() {
                     src={v.image}
                     alt="Prestasi Voli"
                     fit="cover"
-                    h={180}
+                    h={{ base: 180, xl: 250 }}
                   />
                   <Group>
                     <Paper px={10} py={5} radius="xl" bg={colors['BG-trans']}>
-                      <Text size="sm">Teknologi</Text>
+                      <Text size="sm">{v.kategori}</Text>
                     </Paper>
                   </Group>
                   <Text fz="lg" fw="bold" lineClamp={2}>

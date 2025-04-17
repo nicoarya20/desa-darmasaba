@@ -6,20 +6,20 @@ import React from 'react';
 const dataBeritaTerbaru = [
   {
     id: 1,
-    judul: 'Darmasaba Luncurkan Aplikasi Smart Village untuk Pelayanan Publik',
-    image: "/api/img/berita-1.png",
+    judul: 'PROGRAM KETAHANAN PANGAN PEMERINTAH DESA DARMASABA TAHUN 2023',
+    image: "/api/img/ekonomi-sampingan-3.png",
     tanggal: "Selasa, 11 Januari 2025",
   },
   {
     id: 2,
-    judul: 'Tim Voli Darmasaba Raih Juara Turnamen Desa',
-    image: "/api/img/prestasi-voli.jpeg",
+    judul: 'Sinergitas Pemkab Badung-TNI Wujudkan Kedaulatan Pangan di Subak Aban Darmasaba',
+    image: "/api/img/ekonomi-sampingan.png",
     tanggal: "Kamis, 13 Januari 2025",
   },
   {
     id: 3,
-    judul: 'Tim Voli Darmasaba Raih Juara Turnamen Desa',
-    image: "/api/img/prestasi-voli.jpeg",
+    judul: 'ANTUSIASME WARGA DARMASABA MELAKUKAN PEMBUKAAN REKENING BANK BPD BALI ',
+    image: "/api/img/ekonomi-sampingan-2.png",
     tanggal: "Kamis, 13 Januari 2025",
   },
 ]
@@ -34,7 +34,7 @@ function Ekonomi() {
               <Stack gap="md">
                 <Box>
                   <Image
-                    src="/api/img/berita-1.png"
+                    src="/api/img/ekonomi-utama.png"
                     alt="Darmasaba Smart Village"
                     radius="md"
                     fit="cover"
@@ -43,14 +43,14 @@ function Ekonomi() {
                 </Box>
                 <Group>
                   <Paper px={10} py={5} radius="xl" bg={colors['BG-trans']}>
-                    <Text size="sm">Teknologi</Text>
+                    <Text size="sm">Ekonomi</Text>
                   </Paper>
                 </Group>
                 <Text fz={{ base: "xl", md: "2xl" }} fw="bold" lineClamp={2}>
-                  Darmasaba Luncurkan Aplikasi Smart Village untuk Pelayanan Publik
+                PROGRAM KETAHANAN PANGAN PEMERINTAH DESA DARMASABA TAHUN 2023
                 </Text>
-                <Text size="md" lineClamp={3}>
-                  Desa Darmasaba mengambil langkah maju dalam transformasi digital dengan meluncurkan aplikasi Smart Village yang memudahkan warga dalam mengakses layanan publik secara online.
+                <Text size="md" lineClamp={2}>
+                Pemerintah Desa Darmasaba melalui kegiatan ketahanan pangan ini menjalankan dua kategori yaitu pertanian dan peternakan untuk kategori pertanian telah membuahkan hasil panen pertama pada hari Kamis, 24 Agustus 2023 melakukan panen bawang merah di lokasi ketahanan pangan Br. Taman, Desa Darmasaba, Kecamatan Abiansemal, Kabupaten Badung. Adapun varietas bawang yang dipanen adalah Bawang Bali Karet (Batu Ijo) pada lahan seluas kurang lebih 7 are.
                 </Text>
                 <Group>
                   <Group gap="xs">
@@ -74,18 +74,18 @@ function Ekonomi() {
                 <Stack gap="sm">
                   <Image
                     radius="md"
-                    src="/api/img/prestasi-voli.jpeg"
+                    src="/api/img/ekonomi-sampingan.png"
                     alt="Prestasi Voli"
                     fit="cover"
                     h={180}
                   />
                   <Group>
                     <Paper px={10} py={5} radius="xl" bg={colors['BG-trans']}>
-                      <Text size="sm">Teknologi</Text>
+                      <Text size="sm">Ekonomi</Text>
                     </Paper>
                   </Group>
                   <Text fz="lg" fw="bold" lineClamp={2}>
-                    Darmasaba Luncurkan Aplikasi Smart Village untuk Pelayanan Publik
+                  Sinergitas Pemkab Badung-TNI Wujudkan Kedaulatan Pangan di Subak Aban Darmasaba 
                   </Text>
                   <Group>
                     <Group gap="xs">
@@ -105,18 +105,18 @@ function Ekonomi() {
                 <Stack gap="sm">
                   <Image
                     radius="md"
-                    src="/api/img/prestasi-voli.jpeg"
+                    src="/api/img/ekonomi-sampingan-2.png"
                     alt="Prestasi Voli"
                     fit="cover"
                     h={180}
                   />
                   <Group>
                     <Paper px={10} py={5} radius="xl" bg={colors['BG-trans']}>
-                      <Text size="sm">Sosial</Text>
+                      <Text size="sm">Ekonomi</Text>
                     </Paper>
                   </Group>
-                  <Text fz="lg" fw="bold" lineClamp={2}>
-                    Tim Voli Darmasaba Raih Juara Turnamen Desa
+                  <Text fz="lg" fw="bold" lineClamp={1}>
+                  ANTUSIASME WARGA DARMASABA MELAKUKAN PEMBUKAAN REKENING BANK BPD BALI
                   </Text>
                   <Group>
                     <Group gap="xs">
@@ -151,7 +151,7 @@ function Ekonomi() {
                   />
                   <Group>
                     <Paper px={10} py={5} radius="xl" bg={colors['BG-trans']}>
-                      <Text size="sm">Teknologi</Text>
+                      <Text size="sm">Ekonomi</Text>
                     </Paper>
                   </Group>
                   <Text fz="lg" fw="bold" lineClamp={2}>

@@ -3,6 +3,7 @@ import { Stack, Box, Text, Paper, Center, Flex, ColorSwatch, SimpleGrid, Anchor,
 import React from 'react';
 import BackButton from '../../desa/layanan/_com/BackButto';
 import { BarChart } from '@mantine/charts';
+import Link from 'next/link';
 
 
 const dataKematian = [
@@ -144,7 +145,7 @@ function Page() {
                       <Text fz={'h4'}>
                         Layanan Unggulan: Poli Umum, Poli Gigi, Imunisasi, Ibu/KB
                       </Text>
-                      <Anchor c={'black'} variant='transparent'>
+                      <Anchor component={Link} href={'/darmasaba/kesehatan/data-kesehatan-warga/fasilitas-kesehatan'} c={'black'} variant='transparent'>
                         <Text c={'black'} fz={'h4'}>
                           Detail Lengkap {'>>'}
                         </Text>
@@ -165,7 +166,7 @@ function Page() {
                       <Text fz={'h4'}>
                         Layanan Unggulan: Poli Umum, Poli Gigi, Imunisasi, Ibu/KB
                       </Text>
-                      <Anchor c={'black'} variant='transparent'>
+                      <Anchor component={Link} href={'/darmasaba/kesehatan/data-kesehatan-warga/fasilitas-kesehatan'} c={'black'} variant='transparent'>
                         <Text c={'black'} fz={'h4'}>
                           Detail Lengkap {'>>'}
                         </Text>
@@ -186,7 +187,7 @@ function Page() {
                       <Text fz={'h4'}>
                         Layanan Unggulan: Poli Umum, Poli Gigi, Imunisasi, Ibu/KB
                       </Text>
-                      <Anchor c={'black'} variant='transparent'>
+                      <Anchor component={Link} href={'/darmasaba/kesehatan/data-kesehatan-warga/fasilitas-kesehatan'} c={'black'} variant='transparent'>
                         <Text c={'black'} fz={'h4'}>
                           Detail Lengkap {'>>'}
                         </Text>
