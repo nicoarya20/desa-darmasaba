@@ -33,6 +33,22 @@ import prisma from '@/lib/prisma';
     }
 
     console.log("potensi success ...")
+
+    // for (const lpl of ) {
+    //     await prisma.landingPage_Layanan.upsert({
+    //         where: {
+    //             id: lpl.id
+    //         },
+    //         update: {
+    //             deksripsi: lpl.deksripsi
+    //         },
+    //         create: {
+    //             deksripsi: lpl.deksripsi
+    //         }
+    //     })
+    // }
+
+    // console.log("landing page success ...")
 })().then(() => prisma.$disconnect()).catch((e) => {
     console.error(e)
     prisma.$disconnect()

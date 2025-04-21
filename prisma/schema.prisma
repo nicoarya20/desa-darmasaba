@@ -17,3 +17,8 @@ model Potensi {
   name String @unique
 }
 
+model LandingPage_Layanan {
+  id   String @id @default(cuid())
+  deksripsi String 
+}
+

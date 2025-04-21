@@ -146,7 +146,7 @@ function Page() {
                         Layanan Unggulan: Poli Umum, Poli Gigi, Imunisasi, Ibu/KB
                       </Text>
                       <Anchor component={Link} href={'/darmasaba/kesehatan/data-kesehatan-warga/fasilitas-kesehatan'} c={'black'} variant='transparent'>
-                        <Text c={'black'} fz={'h4'}>
+                        <Text c={colors['blue-button']} fz={'h4'}>
                           Detail Lengkap {'>>'}
                         </Text>
                       </Anchor>
@@ -167,7 +167,7 @@ function Page() {
                         Layanan Unggulan: Poli Umum, Poli Gigi, Imunisasi, Ibu/KB
                       </Text>
                       <Anchor component={Link} href={'/darmasaba/kesehatan/data-kesehatan-warga/fasilitas-kesehatan'} c={'black'} variant='transparent'>
-                        <Text c={'black'} fz={'h4'}>
+                        <Text c={colors['blue-button']} fz={'h4'}>
                           Detail Lengkap {'>>'}
                         </Text>
                       </Anchor>
@@ -188,7 +188,7 @@ function Page() {
                         Layanan Unggulan: Poli Umum, Poli Gigi, Imunisasi, Ibu/KB
                       </Text>
                       <Anchor component={Link} href={'/darmasaba/kesehatan/data-kesehatan-warga/fasilitas-kesehatan'} c={'black'} variant='transparent'>
-                        <Text c={'black'} fz={'h4'}>
+                        <Text c={colors['blue-button']} fz={'h4'}>
                           Detail Lengkap {'>>'}
                         </Text>
                       </Anchor>
@@ -215,7 +215,7 @@ function Page() {
                       <Text fz={'h4'}>
                         Banjar Gulingan
                       </Text>
-                      <Anchor c={colors['blue-button']} variant='transparent'>
+                      <Anchor component={Link} href={'/darmasaba/kesehatan/data-kesehatan-warga/jadwal-kegiatan'} c={colors['blue-button']} variant='transparent'>
                         <Text c={colors['blue-button']} fz={'h4'} >
                           Detail & Pendaftaran
                         </Text>
@@ -235,7 +235,7 @@ function Page() {
                       <Text fz={'h4'}>
                       Puskesmas Abiansemal III
                       </Text>
-                      <Anchor c={colors['blue-button']} variant='transparent'>
+                      <Anchor component={Link} href={'/darmasaba/kesehatan/data-kesehatan-warga/jadwal-kegiatan'} c={colors['blue-button']} variant='transparent'>
                         <Text c={colors['blue-button']} fz={'h4'} >
                           Detail & Pendaftaran
                         </Text>
@@ -260,8 +260,8 @@ function Page() {
                       <Text fz={'h4'} pb={10}>
                       Yuk Kenali gelaja dan cara penanganan DBD yang efektif untuk melindungi keluarga anda selama musim hujan.
                       </Text>
-                      <Anchor c={'black'} variant='transparent'>
-                        <Text c={'black'} fz={'h4'} >
+                      <Anchor c={'black'} component={Link} href={'/darmasaba/kesehatan/data-kesehatan-warga/artikel-kesehatan'} variant='transparent'>
+                        <Text c={colors['blue-button']} fz={'h4'} >
                           Baca Selengkapnya {'>>'}
                         </Text>
                       </Anchor>
@@ -279,8 +279,8 @@ function Page() {
                       <Text fz={'h4'} pb={10}>
                       Yuk Kenali gelaja dan cara penanganan DBD yang efektif untuk melindungi keluarga anda selama musim hujan.
                       </Text>
-                      <Anchor c={'black'} variant='transparent'>
-                        <Text c={'black'} fz={'h4'} >
+                      <Anchor c={'black'} href={'/darmasaba/kesehatan/data-kesehatan-warga/artikel-kesehatan'} variant='transparent'>
+                        <Text c={colors['blue-button']} fz={'h4'} >
                           Baca Selengkapnya {'>>'}
                         </Text>
                       </Anchor>
