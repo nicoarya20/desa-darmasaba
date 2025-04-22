@@ -1,7 +1,9 @@
 import layanan from './data/list-layanan.json'
 import potensi from './data/list-potensi.json'
+import katagoryBerita from './data/katagory-berita.json'
+import categoryPengumuman from './data/category-pengumuman.json'
 import prisma from '@/lib/prisma';
-; (async () => {
+(async () => {
     for (const l of layanan) {
         await prisma.layanan.upsert({
             where: {
@@ -34,21 +36,37 @@ import prisma from '@/lib/prisma';
 
     console.log("potensi success ...")
 
-    // for (const lpl of ) {
-    //     await prisma.landingPage_Layanan.upsert({
-    //         where: {
-    //             id: lpl.id
-    //         },
-    //         update: {
-    //             deksripsi: lpl.deksripsi
-    //         },
-    //         create: {
-    //             deksripsi: lpl.deksripsi
-    //         }
-    //     })
-    // }
+    for (const k of katagoryBerita) {
+        await prisma.katagoryBerita.upsert({
+            where: {
+                name: k.name
+            },
+            update: {
+                name: k.name
+            },
+            create: {
+                name: k.name
+            }
+        })
+    }
 
-    // console.log("landing page success ...")
+    console.log("katagory berita success ...")
+
+    for (const c of categoryPengumuman) {
+        await prisma.categoryPengumuman.upsert({
+            where: {
+                name: c.name
+            },
+            update: {
+                name: c.name
+            },
+            create: {
+                name: c.name
+            }
+        })
+    }
+
+    console.log("category pengumuman success ...")
 })().then(() => prisma.$disconnect()).catch((e) => {
     console.error(e)
     prisma.$disconnect()

@@ -2,16 +2,17 @@ import prisma from "@/lib/prisma";
 import cors, { HTTPMethod } from "@elysiajs/cors";
 import swagger from "@elysiajs/swagger";
 import { Elysia, t } from "elysia";
-import getPotensi from "./_lib/get-potensi";
-import img from "./_lib/img";
 import fs from "fs/promises";
 import path from "path";
-import uplImg from "./_lib/upl-img";
+import getPotensi from "./_lib/get-potensi";
+import img from "./_lib/img";
+import imgDel from "./_lib/img-del";
 import imgs from "./_lib/imgs";
 import uplCsv from "./_lib/upl-csv";
-import imgDel from "./_lib/img-del";
-import { uplImgSingle } from "./_lib/upl-img-single";
 import { uplCsvSingle } from "./_lib/upl-csv-single";
+import uplImg from "./_lib/upl-img";
+import { uplImgSingle } from "./_lib/upl-img-single";
+import Desa from "./_lib/desa";
 const ROOT = process.cwd();
 
 if (!process.env.WIBU_UPLOAD_DIR)
@@ -46,6 +47,7 @@ async function layanan() {
 const ApiServer = new Elysia()
   .use(swagger({ path: "/api/docs" }))
   .use(cors(corsConfig))
+  .use(Desa)
   .onError(({ code }) => {
     if (code === "NOT_FOUND") {
       return {

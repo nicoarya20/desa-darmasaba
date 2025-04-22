@@ -18,7 +18,80 @@ model Potensi {
 }
 
 model LandingPage_Layanan {
-  id   String @id @default(cuid())
-  deksripsi String 
+  id        String @id @default(cuid())
+  deksripsi String
 }
 
+// ========================================= APPMENU ========================================= //
+model AppMenu {
+  id           String         @id @default(cuid())
+  name         String         @unique
+  link         String
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  deletedAt    DateTime       @default(now())
+  isActive     Boolean        @default(true)
+  AppMenuChild AppMenuChild[]
+}
+
+// ========================================= APPMENUCHILD ========================================= //
+model AppMenuChild {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  link      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive  Boolean  @default(true)
+  AppMenu   AppMenu? @relation(fields: [appMenuId], references: [id])
+  appMenuId String?
+}
+
+// ========================================= BERITA ========================================= //
+model Berita {
+  id               String          @id @default(cuid())
+  judul            String
+  deskripsi        String
+  image            String
+  content          String          @db.Text
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  deletedAt        DateTime        @default(now())
+  isActive         Boolean         @default(true)
+  KatagoryBerita   KatagoryBerita? @relation(fields: [katagoryBeritaId], references: [id])
+  katagoryBeritaId String?
+}
+
+model KatagoryBerita {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  beritas   Berita[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive  Boolean  @default(true)
+}
+
+// ========================================= PENGUMUMAN ========================================= //
+model Pengumuman {
+  id                   String              @id @default(cuid())
+  judul                String
+  deskripsi            String
+  content              String              @db.Text
+  createdAt            DateTime            @default(now())
+  updatedAt            DateTime            @updatedAt
+  deletedAt            DateTime            @default(now())
+  isActive             Boolean             @default(true)
+  CategoryPengumuman   CategoryPengumuman? @relation(fields: [categoryPengumumanId], references: [id])
+  categoryPengumumanId String?
+}
+
+model CategoryPengumuman {
+  id          String       @id @default(cuid())
+  name        String       @unique
+  pengumumans Pengumuman[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  deletedAt   DateTime     @default(now())
+  isActive    Boolean      @default(true)
+}
