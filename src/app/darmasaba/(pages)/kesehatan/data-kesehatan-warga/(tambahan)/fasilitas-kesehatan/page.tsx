@@ -134,7 +134,7 @@ function Page() {
                 </List>
                 {/* Dokter */}
                 <Text fz={'h4'} fw={"bold"}>
-                  Dokter & Tenaga Medis
+                 Layanan & Tarif
                 </Text>
                 <Divider />
                 <Table highlightOnHover withTableBorder withColumnBorders>

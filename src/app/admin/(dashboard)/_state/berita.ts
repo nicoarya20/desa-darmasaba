@@ -75,7 +75,6 @@ const berita = proxy({
       | null,
     async load() {
       const res = await ApiFetch.api.desa.berita["find-many"].get();
-      console.log(res)
       if (res.status === 200) {
         berita.findMany.data = (res.data?.data as any) ?? [];
       }

@@ -46,7 +46,7 @@ model AppMenuChild {
   AppMenu   AppMenu? @relation(fields: [appMenuId], references: [id])
   appMenuId String?
 }
-
+// ========================================= MENU DESA ========================================= //
 // ========================================= BERITA ========================================= //
 model Berita {
   id               String          @id @default(cuid())
@@ -94,4 +94,143 @@ model CategoryPengumuman {
   updatedAt   DateTime     @updatedAt
   deletedAt   DateTime     @default(now())
   isActive    Boolean      @default(true)
+}
+
+// ========================================= IMAGES ========================================= //
+model Images {
+  id          String        @id @default(cuid())
+  url         String
+  label       String        @default("null")
+  active      Boolean       @default(true)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  GalleryFoto GalleryFoto[]
+}
+// ========================================= VIDEOS ========================================= //
+model Videos {
+  id           String         @id @default(cuid())
+  url          String
+  label        String         @default("null")
+  active       Boolean        @default(true)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  GalleryVideo GalleryVideo[]
+}
+
+
+// ========================================= GALLERY ========================================= //
+model GalleryFoto {
+  id               String   @id @default(cuid())
+  name             String
+  image            String
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  deletedAt        DateTime @default(now())
+  isActive         Boolean  @default(true)
+  imagesId         String?  @unique
+  imageGalleryFoto Images?  @relation(fields: [imagesId], references: [id])
+}
+
+model GalleryVideo {
+  id               String   @id @default(cuid())
+  name             String
+  video            String
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  deletedAt        DateTime @default(now())
+  isActive         Boolean  @default(true)
+  videosId         String?  @unique
+  videosGalleryVideo Videos?  @relation(fields: [videosId], references: [id])
+}
+// ========================================= MENU KESEHATAN ========================================= //
+// ========================================= DATA KESEHATAN WARGA ========================================= //
+// ========================================= FASILITAS KESEHATAN ========================================= //
+model DataKematian_Kelahiran {
+  id             Int      @id @default(autoincrement())
+  tahun          String
+  kematianKasar  String
+  kematianBayi   String
+  kelahiranKasar String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model FasilitasKesehatan {
+  id   String @id @default(cuid())
+  name String 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive Boolean @default(true)
+  InformasiUmum InformasiUmum[]
+  LayananUnggulan LayananUnggulan[]
+  DokterdanTenagaMedis DokterdanTenagaMedis[]
+  FasilitasPendukung FasilitasPendukung[]
+  ProsedurPendaftaran ProsedurPendaftaran[]
+  TarifDanLayanan TarifDanLayanan[]
+}
+
+model InformasiUmum{
+  id   String @id @default(cuid())
+  fasilitas String
+  alamat String
+  jamOperasional String
+  FasilitasKesehatan FasilitasKesehatan[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive Boolean @default(true)
+}
+
+model LayananUnggulan{
+  id   String @id @default(cuid())
+  content String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive Boolean @default(true)
+  FasilitasKesehatan FasilitasKesehatan[]
+}
+
+model DokterdanTenagaMedis{
+  id   String @id @default(cuid())
+  name String
+  specialist String
+  jadwal String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive Boolean @default(true)
+  FasilitasKesehatan FasilitasKesehatan[]
+}
+
+model FasilitasPendukung{
+  id   String @id @default(cuid())
+  content String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive Boolean @default(true)
+  FasilitasKesehatan FasilitasKesehatan[]
+}
+
+model ProsedurPendaftaran{
+  id   String @id @default(cuid())
+  content String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive Boolean @default(true)
+  FasilitasKesehatan FasilitasKesehatan[]
+}
+
+model TarifDanLayanan{
+  id String @id @default(cuid())
+  layanan String
+  tarif String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive Boolean @default(true)
+  FasilitasKesehatan FasilitasKesehatan[]
 }

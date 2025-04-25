@@ -13,6 +13,7 @@ import { uplCsvSingle } from "./_lib/upl-csv-single";
 import uplImg from "./_lib/upl-img";
 import { uplImgSingle } from "./_lib/upl-img-single";
 import Desa from "./_lib/desa";
+import Kesehatan from "./_lib/kesehatan";
 const ROOT = process.cwd();
 
 if (!process.env.WIBU_UPLOAD_DIR)
@@ -47,6 +48,7 @@ async function layanan() {
 const ApiServer = new Elysia()
   .use(swagger({ path: "/api/docs" }))
   .use(cors(corsConfig))
+  .use(Kesehatan)
   .use(Desa)
   .onError(({ code }) => {
     if (code === "NOT_FOUND") {
