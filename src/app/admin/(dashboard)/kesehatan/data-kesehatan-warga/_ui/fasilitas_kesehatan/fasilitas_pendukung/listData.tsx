@@ -1,11 +1,11 @@
 import { Box, Stack, Text } from '@mantine/core';
 import React from 'react';
 import { useProxy } from 'valtio/utils';
-import stateKesehatan from '@/app/admin/(dashboard)/_state/kesehatan/kesehatan';
+import stateFasilitasKesehatan from '@/app/admin/(dashboard)/_state/kesehatan/fasilitasKesehatan';
 import { useShallowEffect } from '@mantine/hooks';
 
 function FasilitasPendukungList() {
-  const fasilitaspendukungState = useProxy(stateKesehatan.fasilitaspendukung)
+  const fasilitaspendukungState = useProxy(stateFasilitasKesehatan.fasilitaspendukung)
   useShallowEffect(() => {
     fasilitaspendukungState.findMany.load()
   }, [])

@@ -2,7 +2,7 @@
 import { Group, Select, SimpleGrid, Skeleton, Stack, Text, TextInput } from '@mantine/core';
 import React from 'react';
 import { useProxy } from 'valtio/utils';
-import stateDesaPengumuman from '../../_state/pengumuman';
+import stateDesaPengumuman from '../../_state/desa/pengumuman';
 import { useShallowEffect } from '@mantine/hooks';
 import { Prisma } from '@prisma/client';
 import { BeritaEditor } from '../berita/_com/BeritaEditor';

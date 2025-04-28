@@ -1,16 +1,17 @@
 'use client'
+import stateFasilitasKesehatan from '@/app/admin/(dashboard)/_state/kesehatan/fasilitasKesehatan';
 import { Box, Text } from '@mantine/core';
 import { useProxy } from 'valtio/utils';
-import stateKesehatan from '@/app/admin/(dashboard)/_state/kesehatan/kesehatan';
-import { BeritaEditor } from '@/app/admin/(dashboard)/desa/berita/_com/BeritaEditor';
+import { KesehatanEditor } from '../../../_com/kesehatanEditor';
 
 function LayananUnggulan() {
-  const informasiumumState = useProxy(stateKesehatan.layananunggulan)
+  const informasiumumState = useProxy(stateFasilitasKesehatan.layananunggulan)
   return <Box>
     <Text fw={"bold"}>Layanan Unggulan</Text>
-    <BeritaEditor onSubmit={(val) => {
-      informasiumumState.create.form.content = val
-      informasiumumState.create.create()
+    <KesehatanEditor 
+    showSubmit={false}
+    onChange={(val) => {
+      informasiumumState.create.form.content = val;
     }} />
   </Box>
     ;

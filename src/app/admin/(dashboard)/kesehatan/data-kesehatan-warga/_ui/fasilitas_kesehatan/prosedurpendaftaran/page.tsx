@@ -1,16 +1,17 @@
+import stateFasilitasKesehatan from '@/app/admin/(dashboard)/_state/kesehatan/fasilitasKesehatan';
 import { Box, Text } from '@mantine/core';
-import { BeritaEditor } from '@/app/admin/(dashboard)/desa/berita/_com/BeritaEditor';
-import stateKesehatan from '@/app/admin/(dashboard)/_state/kesehatan/kesehatan';
 import { useProxy } from 'valtio/utils';
+import { KesehatanEditor } from '../../../_com/kesehatanEditor';
 
 function ProsedurPendaftaran() {
-  const prosedurpendaftaranState = useProxy(stateKesehatan.prosedurpendaftaran)
+  const prosedurpendaftaranState = useProxy(stateFasilitasKesehatan.prosedurpendaftaran)
   return <Box>
       <Text fw={"bold"}>Prosedur Pendaftaran</Text>
-      <BeritaEditor onSubmit={(val) => {
-        prosedurpendaftaranState.create.form.content = val
-        prosedurpendaftaranState.create.create()
-      }} />
+      <KesehatanEditor 
+          showSubmit={false}
+          onChange={(val) => {
+            prosedurpendaftaranState.create.form.content = val;
+          }} />
     </Box>
   
 }

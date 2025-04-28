@@ -4,7 +4,7 @@ import { useShallowEffect } from '@mantine/hooks';
 import { Prisma } from '@prisma/client';
 import { IconImageInPicture } from '@tabler/icons-react';
 import { useProxy } from 'valtio/utils';
-import stateDashboardBerita from '../../_state/berita';
+import stateDashboardBerita from '../../_state/desa/berita';
 import { BeritaEditor } from './_com/BeritaEditor';
 
 function Page() {

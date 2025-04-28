@@ -3,7 +3,7 @@ import React from 'react';
 
 function ArtikelKesehatan() {
   return (
-    <Stack>
+    <Stack py={10}>
       <SimpleGrid cols={{
         base: 1, md: 2
       }}>

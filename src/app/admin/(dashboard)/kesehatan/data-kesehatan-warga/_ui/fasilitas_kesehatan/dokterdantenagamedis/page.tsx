@@ -1,10 +1,9 @@
-import stateKesehatan from '@/app/admin/(dashboard)/_state/kesehatan/kesehatan';
-import { Box, Button, Text, TextInput } from '@mantine/core';
-import React from 'react';
+import stateFasilitasKesehatan from '@/app/admin/(dashboard)/_state/kesehatan/fasilitasKesehatan';
+import { Box, Text, TextInput } from '@mantine/core';
 import { useProxy } from 'valtio/utils';
 
 function DokterDanTenagaMedis() {
-  const dokterdantenagamedisState = useProxy(stateKesehatan.dokterdantenagamedis)
+  const dokterdantenagamedisState = useProxy(stateFasilitasKesehatan.dokterdantenagamedis)
   return (
     <Box>
       <Text fw={"bold"}>Dokter & Tenaga Medis</Text>
@@ -30,10 +29,6 @@ function DokterDanTenagaMedis() {
           dokterdantenagamedisState.create.form.jadwal = val.target.value
         }}
       />
-      <Button
-        onClick={() => {
-          dokterdantenagamedisState.create.create()
-        }}>Simpan</Button>
     </Box>
   );
 }

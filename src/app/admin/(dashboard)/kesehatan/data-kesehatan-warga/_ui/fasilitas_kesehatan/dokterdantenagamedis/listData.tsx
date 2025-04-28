@@ -1,4 +1,4 @@
-import stateKesehatan from '@/app/admin/(dashboard)/_state/kesehatan/kesehatan';
+import stateFasilitasKesehatan from '@/app/admin/(dashboard)/_state/kesehatan/fasilitasKesehatan';
 import colors from '@/con/colors';
 import { Center, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
@@ -6,7 +6,7 @@ import _ from 'lodash';
 import { useProxy } from 'valtio/utils';
 
 function DokterdanTenagaMedisList() {
-  const kesehatanState = useProxy(stateKesehatan.dokterdantenagamedis);
+  const kesehatanState = useProxy(stateFasilitasKesehatan.dokterdantenagamedis);
   
   useShallowEffect(() => {
     kesehatanState.findMany.load();
@@ -52,8 +52,7 @@ function DokterdanTenagaMedisList() {
 
   return (
     <Stack>
-      <Table
-        
+      <Table     
         striped 
         highlightOnHover 
         withTableBorder 

@@ -321,7 +321,7 @@ const prosedurpendaftaran = proxy({
   },
 })
 
-const stateKesehatan = proxy({
+const stateFasilitasKesehatan = proxy({
   informasiumum,
   layananunggulan,
   dokterdantenagamedis,
@@ -330,4 +330,4 @@ const stateKesehatan = proxy({
   prosedurpendaftaran
 })
 
-export default stateKesehatan
+export default stateFasilitasKesehatan

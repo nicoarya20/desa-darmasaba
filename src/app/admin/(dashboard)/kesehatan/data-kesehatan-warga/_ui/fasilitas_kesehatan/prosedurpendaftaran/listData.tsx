@@ -1,10 +1,10 @@
-import stateKesehatan from '@/app/admin/(dashboard)/_state/kesehatan/kesehatan';
+import stateFasilitasKesehatan from '@/app/admin/(dashboard)/_state/kesehatan/fasilitasKesehatan';
 import { Box, Skeleton, Stack, Text } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { useProxy } from 'valtio/utils';
 
 function ListProsedurPendaftaran() {
-  const prosedurpendaftaranState = useProxy(stateKesehatan.prosedurpendaftaran)
+  const prosedurpendaftaranState = useProxy(stateFasilitasKesehatan.prosedurpendaftaran)
   useShallowEffect(() => {
     prosedurpendaftaranState.findMany.load()
   }, [])

@@ -39,9 +39,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         c={colors["blue-button"]}
         component={ScrollArea}
       >
-        <AppShell.Section h={100} bg={"gray.1"}>
-          <Text c={colors["blue-button"]}>Heder Navbar</Text>
-        </AppShell.Section>
         <AppShell.Section >
           {navBar.map((v, k) => {
             return (
@@ -73,7 +70,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           })}
         </AppShell.Section>
 
-        <AppShell.Section>
+        <AppShell.Section py={20}>
           <Group justify="end">
             <ActionIcon variant="light" onClick={toggleDesktop}><IconChevronLeft /></ActionIcon>
           </Group>

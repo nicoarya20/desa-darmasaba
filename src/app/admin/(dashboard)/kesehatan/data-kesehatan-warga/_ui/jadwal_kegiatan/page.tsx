@@ -1,18 +1,26 @@
-import { Box, SimpleGrid, Stack, TextInput, Title } from '@mantine/core';
-import React from 'react';
+import { Box, Button, SimpleGrid, Stack, Title } from '@mantine/core';
+import InformasiKegiatan from './informasi_kegiatan/page';
+import DeskripsiKegiatan from './deskripsi_kegiatan/page';
+import LayananTersedia from './layanan_yang_tersedia/page';
+import SyaratDanKetentuan from './syarat_dan_ketentuan/page';
+import DokumenYangDiperlukan from './dokumen_yang_diperlukan/page';
+import Pendaftaran from './pendaftaran/page';
 
 function JadwalKegiatan() {
   return (
-    <Stack>
+    <Stack py={10}>
       <SimpleGrid cols={{
         base: 1, md: 2
       }}>
         <Box>
           <Title order={3}>Jadwal Kegiatan</Title>
-          <TextInput
-            label="Jadwal"
-            placeholder='masukkan jadwal kegiatan'
-          />
+          <InformasiKegiatan/>
+          <DeskripsiKegiatan/>
+          <LayananTersedia/>
+          <SyaratDanKetentuan/>
+          <DokumenYangDiperlukan/>
+          <Pendaftaran/>
+          <Button mt={10} fullWidth>Submit</Button>
         </Box>
         <Box>
           <Title order={3}>List Jadwal Kegiatan</Title>

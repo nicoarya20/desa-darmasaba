@@ -1,4 +1,4 @@
-import stateKesehatan from '@/app/admin/(dashboard)/_state/kesehatan/kesehatan';
+import stateFasilitasKesehatan from '@/app/admin/(dashboard)/_state/kesehatan/fasilitasKesehatan';
 import colors from '@/con/colors';
 import { Center, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
@@ -6,7 +6,7 @@ import _ from 'lodash';
 import { useProxy } from 'valtio/utils';
 
 function TarifDanLayananList() {
-  const tarifdanlayanan = useProxy(stateKesehatan.tarifdanlayanan)
+  const tarifdanlayanan = useProxy(stateFasilitasKesehatan.tarifdanlayanan)
   useShallowEffect(() => {
     tarifdanlayanan.findMany.load()
   }, [])

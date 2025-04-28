@@ -1,10 +1,9 @@
-import { Box, Button, Text, TextInput } from '@mantine/core';
-import React from 'react';
+import stateFasilitasKesehatan from '@/app/admin/(dashboard)/_state/kesehatan/fasilitasKesehatan';
+import { Box, Text, TextInput } from '@mantine/core';
 import { useProxy } from 'valtio/utils';
-import stateKesehatan from '@/app/admin/(dashboard)/_state/kesehatan/kesehatan';
 
 function TarifDanLayanan() {
-  const tarifdanlayanan = useProxy(stateKesehatan.tarifdanlayanan)
+  const tarifdanlayanan = useProxy(stateFasilitasKesehatan.tarifdanlayanan)
   return <Box>
   <Text fw={"bold"}>Tarif & Layanan</Text>
   <TextInput
@@ -22,11 +21,6 @@ function TarifDanLayanan() {
       tarifdanlayanan.create.form.layanan = val.target.value
     }}
   />
-  <Button
-    onClick={() => {
-      tarifdanlayanan.create.create()
-    }}
-  >Simpan</Button>
 </Box>
 }
 
