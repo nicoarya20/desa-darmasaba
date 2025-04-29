@@ -298,7 +298,7 @@ model DokumenJadwalKegiatan{
 model PendaftaranJadwalKegiatan{
   id String @id @default(cuid())
   name String
-  tanggal String
+  tanggal DateTime
   namaOrangtua String
   nomor String
   alamat String

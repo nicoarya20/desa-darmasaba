@@ -4,7 +4,7 @@ import layananUnggulanFindMany from "./find-many";
 
 const LayananUnggulan = new Elysia({
     prefix: "/layananunggulan",
-    tags: ["Layanan Unggulan"]
+    tags: ["Data Kesehatan/Fasilitas Kesehatan/Layanan Unggulan"]
 })
 
 .get("/find-many", layananUnggulanFindMany)

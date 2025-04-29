@@ -4,7 +4,7 @@ import FasilitasPendukungCreate from "./create";
 
 const FasilitasPendukung = new Elysia({
   prefix: "/fasilitaspendukung",
-  tags: ["Fasilitas Pendukung"],
+  tags: ["Data Kesehatan/Fasilitas Kesehatan/Fasilitas Pendukung"],
 })
   .get("/find-many", fasilitasPendukungFindMany)
   .post("/create", FasilitasPendukungCreate, {

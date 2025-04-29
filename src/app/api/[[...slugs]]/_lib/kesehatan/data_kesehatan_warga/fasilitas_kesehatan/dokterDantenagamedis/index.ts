@@ -4,7 +4,7 @@ import dokterDantenagamedisCreate from "./create";
 
 const DokterDantenagamedis = new Elysia({
   prefix: "/dokterdantenagamedis",
-  tags: ["Dokter dan Tenaga Medis"],
+  tags: ["Data Kesehatan/Fasilitas Kesehatan/Dokter dan Tenaga Medis"],
 })
 .get("/find-many", dokterDantenagamedisFindMany)
 .post("/create", dokterDantenagamedisCreate, {

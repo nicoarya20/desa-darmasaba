@@ -22,6 +22,7 @@ function TextEditor() {
       Highlight,
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
     ],
+    immediatelyRender: false,
     content,
   });
 

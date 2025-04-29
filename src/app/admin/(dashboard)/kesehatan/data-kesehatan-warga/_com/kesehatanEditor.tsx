@@ -26,6 +26,7 @@ export function KesehatanEditor({ onSubmit, onChange, showSubmit = true }: {
       Highlight,
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
     ],
+    immediatelyRender: false,
     content,
     onUpdate : ({editor}) => {
       onChange(editor.getHTML())

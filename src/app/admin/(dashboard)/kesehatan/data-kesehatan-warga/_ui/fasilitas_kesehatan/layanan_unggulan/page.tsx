@@ -1,5 +1,5 @@
 'use client'
-import stateFasilitasKesehatan from '@/app/admin/(dashboard)/_state/kesehatan/fasilitasKesehatan';
+import stateFasilitasKesehatan from '@/app/admin/(dashboard)/_state/kesehatan/data_kesehatan_warga/fasilitasKesehatan';
 import { Box, Text } from '@mantine/core';
 import { useProxy } from 'valtio/utils';
 import { KesehatanEditor } from '../../../_com/kesehatanEditor';

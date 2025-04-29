@@ -1,4 +1,4 @@
-import stateFasilitasKesehatan from '@/app/admin/(dashboard)/_state/kesehatan/fasilitasKesehatan';
+import stateFasilitasKesehatan from '@/app/admin/(dashboard)/_state/kesehatan/data_kesehatan_warga/fasilitasKesehatan';
 import { Box, Text, TextInput } from '@mantine/core';
 import { useProxy } from 'valtio/utils';
 
