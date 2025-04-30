@@ -61,7 +61,7 @@ function JadwalKegiatan() {
           <SyaratDanKetentuan />
           <DokumenYangDiperlukan />
           <Pendaftaran />
-          <Button onClick={submitAllForms}>
+          <Button mt={10} onClick={submitAllForms}>
             Submit
           </Button>
         </Box>
@@ -84,13 +84,15 @@ function AllList() {
     allList.layanantersedia.findMany.load()
     allList.syaratketentuan.findMany.load()
     allList.dokumenjadwalkegiatan.findMany.load()
-  })
+    allList.pendaftaranjadwal.findMany.load()
+  }, [])
 
   const isLoading = !allList.informasiKegiatan.findMany.data ||
     !allList.deskripsiKegiatan.findMany.data ||
     !allList.layanantersedia.findMany.data ||
     !allList.syaratketentuan.findMany.data ||
-    !allList.dokumenjadwalkegiatan.findMany.data
+    !allList.dokumenjadwalkegiatan.findMany.data ||
+    !allList.pendaftaranjadwal.findMany.data
 
   if (isLoading) {
     return (

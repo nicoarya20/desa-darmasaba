@@ -1,10 +1,10 @@
+import colors from '@/con/colors';
 import { Stack, Tabs, TabsList, TabsPanel, TabsTab } from '@mantine/core';
 import ArtikelKesehatan from './_ui/artikel_kesehatan/page';
 import FasilitasKesehatan from './_ui/fasilitas_kesehatan/page';
+import GrafikHasilKepuasan from './_ui/grafik_hasil_kepuasan/page';
 import JadwalKegiatan from './_ui/jadwal_kegiatan/page';
 import PersentaseDataKelahiranKematian from './_ui/persentase_data_kelahiran_kematian/page';
-import GrafikHasilKepuasan from './_ui/grafik_hasil_kepuasan/page';
-import colors from '@/con/colors';
 
 
 function Page() {

@@ -11,6 +11,9 @@ import LayananTersedia from "./data_kesehatan_warga/jadwal_kegiatan/layanan_yang
 import SyaratKetentuan from "./data_kesehatan_warga/jadwal_kegiatan/syarat_dan_ketentuan";
 import DokumenDiperlukan from "./data_kesehatan_warga/jadwal_kegiatan/dokumen_yang_diperlukan";
 import PendaftaranJadwal from "./data_kesehatan_warga/jadwal_kegiatan/pendaftaran";
+import PersentaseKelahiranKematian from "./data_kesehatan_warga/persentase_kelahiran_kematian";
+import GrafikKepuasan from "./data_kesehatan_warga/grafik_kepuasan";
+
 
 const Kesehatan = new Elysia({
   prefix: "/api/kesehatan",
@@ -28,4 +31,6 @@ const Kesehatan = new Elysia({
 .use(SyaratKetentuan)
 .use(DokumenDiperlukan)
 .use(PendaftaranJadwal)
+.use(PersentaseKelahiranKematian)
+.use(GrafikKepuasan)
 export default Kesehatan;
