@@ -10,28 +10,28 @@ const datamap = [
     images: "/api/img/tps.png",
     name: "TPS3R Pudak Mesari",
     kategori: "Lingkungan",
-    link: "/darmasaba/desa/potensi/tps",
+    link: "/darmasaba/desa/potensi/tps3r-pudak-mesari",
   },
   {
     id: 2,
     images: "/api/img/ack.png",
     name: "Bumdes Pudak Mesari",
     kategori: "Ekonomi",
-    link: "/darmasaba/desa/potensi/bumdes"
+    link: "/darmasaba/desa/potensi/bumdes-pudak-mesari",
   },
   {
     id: 3,
     images: "/api/img/taman-beji.jpg",
     name: "Taman Beji Cengana",
     kategori: "Wisata",
-    link: "/darmasaba/desa/potensi/taman"
+    link: "/darmasaba/desa/potensi/taman-beji-cengana",
   },
   {
     id: 4,
     images: "/api/img/waterpark.png",
     name: "Gumuh Sari Water Park",
     kategori: "Wisata",
-    link: "/darmasaba/desa/potensi/gumuh"
+    link: "/darmasaba/desa/potensi/gumuh-sari-water-park",
   },
   {
     id: 5,
@@ -45,14 +45,14 @@ const datamap = [
     images: "/api/img/warungumkm.jpg",
     name: "Kawasan Kuliner",
     kategori: "Ekonomi",
-    link: "/darmasaba/desa/potensi/kuliner"
+    link: "/darmasaba/desa/potensi/kawasan-kuliner"
   },
   {
     id: 7,
     images: "/api/img/ikm.png",
     name: "IKM Berbasis Pengolahan Pangan",
     kategori: "Ekonomi",
-    link: "/darmasaba/desa/potensi/ikm"
+    link: "/darmasaba/desa/potensi/ikm-berbasis-pengolahan-pangan"
   },
   {
     id: 8,
@@ -66,21 +66,21 @@ const datamap = [
     images: "/api/img/peternakanlele.jpg",
     name: "Peternakan Ikan Lele",
     kategori: "Ekonomi",
-    link: "/darmasaba/desa/potensi/lele"
+    link: "/darmasaba/desa/potensi/peternakan-ikan-lele"
   },
   {
     id: 10,
     images: "/api/img/jogging.jpg",
     name: "Jogging Track Tegeh Aban, Karang Gadon dan Munduk Uma Desa",
     kategori: "Lingkungan",
-    link: "/darmasaba/desa/potensi/joging"
+    link: "/darmasaba/desa/potensi/jogging-track-tegeh-aban-karang-gadon-dan-munduk-uma-desa"
   },
   {
     id: 11,
     images: "/api/img/damtanahputih.jpeg",
     name: "Dam Tanah Putih",
     kategori: "Wisata",
-    link: "/darmasaba/desa/potensi/dam"
+    link: "/darmasaba/desa/potensi/dam-tanah-putih"
   },
   {
     id: 12,
@@ -94,24 +94,26 @@ const datamap = [
     images: "/api/img/potong-daging.png",
     name: "Pemotongan Daging",
     kategori: "Ekonomi",
-    link: "/darmasaba/desa/potensi/pemotongan"
+    link: "/darmasaba/desa/potensi/pemotongan-daging"
   },
 
 ]
 function Page() {
   const router = useRouter()
   return (
-    <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"42"} >
+    <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"22"} >
       <Box px={{ base: "md", md: 100 }}>
         <BackButton />
-        <Box pb={30}>
+      </Box>
+      <Box px={{ base: "md", md: 100 }}>
+        <Box>
           <Stack gap={0}>
-            <Flex justify={"space-between"} align={"center"} px={10}>
+            <Flex justify={"space-between"} align={"center"} >
               <Box>
                 <Text fz={"3.4rem"} c={colors["blue-button"]} fw={"bold"}>
                   Potensi Desa
                 </Text>
-                <Text ta={"justify"} py={10}>
+                <Text ta={"justify"} >
                   Temukan berbagai potensi dan keunggulan yang dimiliki Desa Darmasaba.
                 </Text>
               </Box>

@@ -4,8 +4,10 @@ import {
   Box,
   Card,
   Flex,
+  Grid,
   Image,
   Paper,
+  SimpleGrid,
   Stack,
   Text
 } from "@mantine/core";
@@ -53,109 +55,144 @@ function LandingPage() {
                   md: "nowrap",
                 }}
               >
-                <Flex gap={"md"} flex={1}>
-                  <Box
-                    pos={"relative"}
-                    bg={"white"}
-                    w={{
-                      base: 64,
-                      md: 72,
-                    }}
-                    h={{
-                      base: 64,
-                      md: 72,
-                    }}
-                    style={{
-                      borderRadius: 24,
-                    }}
-                    p={"sm"}
-                  >
-                    <Image
-                      src={"/assets/images/darmasaba-icon.png"}
-                      alt="icon"
-                      sizes="100%"
-                    />
-                  </Box>
-                  <Box
-                    pos={"relative"}
-                    w={{
-                      base: 64,
-                      md: 72,
-                    }}
-                    h={{
-                      base: 64,
-                      md: 72,
-                    }}
-                    style={{
-                      borderRadius: 24,
-                    }}
-                    p={"sm"}
-                    bg={"white"}
-                  >
-                    <Image
-                      src={"/api/img/pudak-icon.png"}
-                      alt="icon"
-                      sizes={"100%"}
-                      fit="contain"
-                    />
-                  </Box>
-                </Flex>
-                <Stack flex={2} gap={0} justify="end" c={colors["blue-button"]}>
-                  {/* <Text
-                    fz={{
-                      base: "1.5rem",
-                      md: "1.4rem",
-                    }}
-                  >
-                    Pemerintah Desa
-                  </Text>
-                  <Title>DARMASABA</Title> */}
-                  <Paper bg={colors["blue-button"]} p={10} w={400}>
-                    <Flex align={"center"} justify={"space-between"}>
-                      <Box>
-                        <Text c={colors["white-1"]} fz={"sm"}>
-                          Jadwal Kerja
-                        </Text>
-                        <Paper w={175} p={5} bg={colors["white-1"]}>
-                          <Flex justify={"space-between"} align={"center"}>
+                <Grid
+                >
+                  <Grid.Col span={{
+                    base: 2,
+                    sm: 3,
+                    md: 3,
+                    xl: 2
+                  }}>
+                    <Box
+                      pos={"relative"}
+                      bg={"white"}
+                      w={{
+                        base: 64,
+                        md: 72,
+                      }}
+                      h={{
+                        base: 64,
+                        md: 72,
+                      }}
+                      style={{
+                        borderRadius: 24,
+                      }}
+                      p={"sm"}
+                    >
+                      <Image
+                        src={"/assets/images/darmasaba-icon.png"}
+                        alt="icon"
+                        sizes="100%"
+                      />
+                    </Box>
+                  </Grid.Col>
+
+                  <Grid.Col span={{
+                    base: 2,
+                    sm: 3,
+                    md: 3,
+                    xl: 2
+                  }}>
+                    <Box
+                      pos={"relative"}
+                      w={{
+                        base: 64,
+                        md: 72,
+                      }}
+                      h={{
+                        base: 64,
+                        md: 72,
+                      }}
+                      style={{
+                        borderRadius: 24,
+                      }}
+                      p={"sm"}
+                      bg={"white"}
+                    >
+                      <Image
+                        src={"/api/img/pudak-icon.png"}
+                        alt="icon"
+                        sizes={"100%"}
+                        fit="contain"
+                      />
+                    </Box>
+                  </Grid.Col>
+                  <Grid.Col span={{
+                    base: 8,
+                    sm: 12,
+                    md: 12,
+                    xl: 8
+                  }}>
+                    <Paper
+                      pos={"relative"}
+                      bg={colors["blue-button"]}
+                      p={10}
+                      w={{ base: "100%", sm: "auto", md: "auto" }}
+                      flex={{ base: "1", sm: "1", md: "1" }}
+                    >
+                      <SimpleGrid
+                        cols={{
+                          base: 2,
+                          sm: 1,
+                          md: 2,
+                        }}
+                        spacing={{ base: "xs", md: "md" }}
+                      >
+                        <Box>
+                          <Text c={colors["white-1"]} fz={"sm"}>
+                            Jadwal Kerja
+                          </Text>
+                          <Paper
+                            w={{ base: "100%", sm: "100%", md: "auto" }}
+                            p={5}
+                            bg={colors["white-1"]}
+                          >
+                            <Flex justify={"space-between"} align={"center"}>
+                              <Box>
+                                <Text fz={"sm"}>
+                                  Buka
+                                </Text>
+                                <Text fw={"bold"} fz={"lg"}>
+                                  08:00
+                                </Text>
+                              </Box>
+                              <Text fz={"lg"} fw={"bold"}>-</Text>
+                              <Box>
+                                <Text fz={"sm"}>
+                                  Tutup
+                                </Text>
+                                <Text fw={"bold"} fz={"lg"}>
+                                  16:00
+                                </Text>
+                              </Box>
+                            </Flex>
+                          </Paper>
+                        </Box>
+                        <Box>
+                          <Text c={colors["white-1"]} fz={"sm"}>
+                            Rabu, 10 Maret 2025
+                          </Text>
+                          <Paper
+                            w={{ base: "100%", sm: "100%", md: "auto" }}
+                            p={5}
+                            bg={colors["white-1"]}
+                          >
                             <Box>
                               <Text fz={"sm"}>
                                 Buka
                               </Text>
                               <Text fw={"bold"} fz={"lg"}>
-                                08:00
+                                Sabtu - Minggu
                               </Text>
                             </Box>
-                            <Text fz={"lg"} fw={"bold"}>-</Text>
-                            <Box>
-                              <Text fz={"sm"}>
-                                Tutup
-                              </Text>
-                              <Text fw={"bold"} fz={"lg"}>
-                                16:00
-                              </Text>
-                            </Box>
-                          </Flex>
-                        </Paper>
-                      </Box>
-                      <Box>
-                        <Text c={colors["white-1"]} fz={"sm"}>
-                          Rabu, 10 Maret 2025
-                        </Text>
-                        <Paper w={175} p={5} bg={colors["white-1"]}>
-                          <Box>
-                            <Text fz={"sm"}>
-                              Buka
-                            </Text>
-                            <Text fw={"bold"} fz={"lg"}>
-                              Sabtu - Minggu
-                            </Text>
-                          </Box>
-                        </Paper>
-                      </Box>
-                    </Flex>
-                  </Paper>
-                </Stack>
+                          </Paper>
+                        </Box>
+                      </SimpleGrid>
+                    </Paper>
+                  </Grid.Col>
+
+                </Grid>
+
               </Flex>
               <ModuleView />
               <SosmedView />
@@ -164,7 +201,7 @@ function LandingPage() {
               }} >Sampaikan saran dan masukan guna kemajuan dalam pembangunan. Semua lebih mudah melalui fitur interaktif</Text>
             </Stack>
           </Card>
-         
+
         </Stack>
         <Stack
           justify={"end"}

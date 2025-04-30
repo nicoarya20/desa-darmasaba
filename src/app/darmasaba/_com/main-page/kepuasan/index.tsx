@@ -108,7 +108,9 @@ function Kepuasan() {
             <SimpleGrid
               cols={{
                 base: 1,
-                sm: 3
+                md: 1,
+                lg: 1,
+                xl: 3
               }}
             >
               <Box>

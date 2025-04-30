@@ -7,42 +7,42 @@ const navbarListMenu = [
             {
                 id: "1.1",
                 name: "Profile PPID",
-                href: "/darmasaba/ppid/profile"
+                href: "/darmasaba/ppid/profile-ppid"
             },
             {
                 id: "1.2",
                 name: "Struktur PPID",
-                href: "/darmasaba/ppid/struktur"
+                href: "/darmasaba/ppid/struktur-ppid"
             },
             {
                 id: "1.3",
                 name: "Visi Misi PPID",
-                href: "/darmasaba/ppid/visimisi"
+                href: "/darmasaba/ppid/visi-misi-ppid"
             },
             {
                 id: "1.4",
                 name: "Dasar Hukum",
-                href: "/darmasaba/ppid/dasarhukum"
+                href: "/darmasaba/ppid/dasar-hukum"
             },
             {
                 id: "1.5",
                 name: "Permohonan Informasi Publik",
-                href: "/darmasaba/ppid/informasi"
+                href: "/darmasaba/ppid/permohonan-informasi-publik"
             },
             {
                 id: "1.6",
                 name: "Permohonan Keberatan Informasi Publik",
-                href: "/darmasaba/ppid/keberatan"
+                href: "/darmasaba/ppid/permohonan-keberatan-informasi-publik"
             },
             {
                 id: "1.7",
                 name: "Daftar Informasi Publik Desa Darmasaba",
-                href: "/darmasaba/ppid/daftar"
+                href: "/darmasaba/ppid/daftar-informasi-publik-desa-darmasaba"
             },
             {
                 id: "1.8",
                 name: "IKM Desa Darmasaba",
-                href: "/darmasaba/ppid/ikm"
+                href: "/darmasaba/ppid/ikm-desa-darmasaba"
             },
 
         ]
@@ -104,7 +104,7 @@ const navbarListMenu = [
             {
                 id: "3.2",
                 name: "Data Kesehatan Warga",
-                href: "/darmasaba/kesehatan/datakesehatan"
+                href: "/darmasaba/kesehatan/data-kesehatan-warga"
             },
             {
                 id: "3.3",
@@ -114,22 +114,22 @@ const navbarListMenu = [
             {
                 id: "3.4",
                 name: "Program Kesehatan",
-                href: "/darmasaba/kesehatan/program"
+                href: "/darmasaba/kesehatan/program-kesehatan"
             },
             {
                 id: "3.5",
                 name: "Penanganan Darurat",
-                href: "/darmasaba/kesehatan/penanganan"
+                href: "/darmasaba/kesehatan/penanganan-darurat"
             },
             {
                 id: "3.6",
                 name: "Kontak Darurat",
-                href: "/darmasaba/kesehatan/kontak"
+                href: "/darmasaba/kesehatan/kontak-darurat"
             },
             {
                 id: "3.7",
                 name: "Info Wabah/Penyakit",
-                href: "/darmasaba/kesehatan/info"
+                href: "/darmasaba/kesehatan/info-wabah-penyakit"
             }
         ]
     },
@@ -141,27 +141,27 @@ const navbarListMenu = [
             {
                 id: "4.1",
                 name: "Keamanan Lingkungan (Pecalang/Patwal)",
-                href: "/darmasaba/keamanan/lingkungan"
+                href: "/darmasaba/keamanan/keamanan-lingkungan-pecalang-patwal"
             },
             {
                 id: "4.2",
                 name: "Polsek Terdekat",
-                href: "/darmasaba/keamanan/polsek"
+                href: "/darmasaba/keamanan/polsek-terdekat"
             },
             {
                 id: "4.3",
                 name: "Kontak Darurat",
-                href: "/darmasaba/keamanan/darurat"
+                href: "/darmasaba/keamanan/kontak-darurat"
             },
             {
                 id: "4.4",
                 name: "Pencegahan Kriminalitas",
-                href: "/darmasaba/keamanan/kriminalitas"
+                href: "/darmasaba/keamanan/pencegahan-kriminalitas"
             },
             {
                 id: "4.5",
                 name: "Laporan Publik",
-                href: "/darmasaba/keamanan/laporan"
+                href: "/darmasaba/keamanan/laporan-publik"
             },
             {
                 id: "4.6",
@@ -182,43 +182,48 @@ const navbarListMenu = [
             },
             {
                 id: "5.2",
-                name: "Koperasi",
-                href: "/darmasaba/ekonomi/koperasi"
+                name: "Lowongan Kerja Lokal",
+                href: "/darmasaba/ekonomi/lowongan-kerja-lokal"
             },
             {
                 id: "5.3",
-                name: "UMKM",
-                href: "/darmasaba/ekonomi/umkm"
+                name: "Struktur Organisasi dan SK Pengurus BUMDesa",
+                href: "/darmasaba/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa"
             },
             {
                 id: "5.4",
-                name: "Data Ekonomi Desa",
-                href: "/darmasaba/ekonomi/data-ekonomi-desa"
+                name: "PADesa (Pendapatan Asli Desa)",
+                href: "/darmasaba/ekonomi/PADesa-pendapatan-asli-desa"
             },
             {
                 id: "5.5",
-                name: "Pelatihan Wirausaha",
-                href: "/darmasaba/ekonomi/pelatihan-wirausaha"
+                name: "Jumlah Pengangguran 2024-2025",
+                href: "/darmasaba/ekonomi/jumlah-pengangguran-2024-2025"
             },
             {
                 id: "5.6",
-                name: "Bantuan & Pendanaan",
-                href: "/darmasaba/ekonomi/bantuan-pendanaan"
+                name: "Jumlah penduduk usia kerja yang menganggur",
+                href: "/darmasaba/ekonomi/jumlah-penduduk-usia-kerja-yang-menganggur"
             },
             {
                 id: "5.7",
-                name: "Investasi Desa",
-                href: "/darmasaba/ekonomi/investasi-desa"
+                name: "Jumlah Penduduk Miskin 2024-2025",
+                href: "/darmasaba/ekonomi/jumlah-penduduk-miskin-2024-2025"
             },
             {
                 id: "5.8",
-                name: "Produk Unggulan",
-                href: "/darmasaba/ekonomi/produk-unggulan"
+                name: "Program Kemiskinan",
+                href: "/darmasaba/ekonomi/program-kemiskinan"
             },
             {
                 id: "5.9",
-                name: "Lowongan Kerja Lokal",
-                href: "/darmasaba/ekonomi/lowongan-kerja-lokal"
+                name: "Sektor Unggulan Desa",
+                href: "/darmasaba/ekonomi/sektor-unggulan-desa"
+            },
+            {
+                id: "5.10",
+                name: "Demografi Pekerjaan",
+                href: "/darmasaba/ekonomi/demografi-pekerjaan"
             }
         ]
     }, {
@@ -326,8 +331,13 @@ const navbarListMenu = [
             },
             {
                 id: "8.6",
-                name: "Perpustakaan Desa",
-                href: "/darmasaba/pendidikan/perpustakaan-desa"
+                name: "Perpustakaan Digital",
+                href: "/darmasaba/pendidikan/perpustakaan-digital"
+            },
+            {
+                id: "8.7",
+                name: "Data Pendidikan",
+                href: "/darmasaba/pendidikan/data-pendidikan"
             }
         ]
     }

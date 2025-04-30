@@ -13,18 +13,18 @@ import SemuaPerbekel from './ui/semuaPerbekel';
 
 function Page() {
   return (
-    <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"42"}>
-      <Box px={50}>
+    <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"22"}>
+      <Box px={{ base: 'md', md: 100 }}>
         <BackButton />
       </Box>
       <Container w={{ base: "100%", md: "50%" }}>
         <Stack align='center' gap={0}>
-          <Text fz={"3.4rem"} c={colors["blue-button"]} fw={"bold"}>
+          <Text fz={{base: "h1", md: "2.5rem"}} c={colors["blue-button"]} fw={"bold"}>
             Profile Desa
           </Text>
         </Stack>
       </Container>
-      <Box w={{ base: "100%", md: "100%" }} px={50}>
+      <Box px={{ base: "md", md: 100 }}>
         <ProfileDesa />
         <SejarahDesa />
         <VisimisiDesa />
