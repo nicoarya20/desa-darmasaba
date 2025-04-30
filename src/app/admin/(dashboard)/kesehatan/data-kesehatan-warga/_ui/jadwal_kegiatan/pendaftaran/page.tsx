@@ -1,21 +1,10 @@
 'use client'
 import stateJadwalKegiatan from '@/app/admin/(dashboard)/_state/kesehatan/data_kesehatan_warga/jadwalKegiatan';
-import { ActionIcon, Box, Text, Textarea, TextInput } from '@mantine/core';
-import { DateInput } from '@mantine/dates';
-import { IconCalendar } from '@tabler/icons-react';
-import { useState } from 'react';
+import { Box, Text, Textarea, TextInput } from '@mantine/core';
 import { useProxy } from 'valtio/utils';
 
 function Pendaftaran() {
     const pendaftaran = useProxy(stateJadwalKegiatan.pendaftaranjadwal)
-    const [dateInputOpened, setDateInputOpened] = useState(false);
-    const pickerControl = (
-      <ActionIcon onClick={() => setDateInputOpened(true)} variant="subtle" color="gray">
-        <IconCalendar size={18} />
-      </ActionIcon>
-    );
-
-    const formatDate = (date: Date | null): string => { if (!date) return ""; return date.toISOString().split('T')[0]; }
 
   return (
     <Box>
@@ -27,16 +16,11 @@ function Pendaftaran() {
         pendaftaran.create.form.name = val.target.value
       }}
       />
-      <DateInput
-      clearable defaultValue={new Date()}
-      styles={{label: {fontSize: '14px'}}}
-      label='Tanggal Lahir'
-      placeholder='dd/mm/yyyy'
-      value={pendaftaran.create.form.tanggal ? new Date(pendaftaran.create.form.tanggal) : null}
-      popoverProps={{opened: dateInputOpened, onChange: setDateInputOpened}}
-      rightSection={pickerControl}
+      <TextInput
+      label='Tanggal'
+      placeholder='Masukkan tanggal'
       onChange={(val) => {
-        pendaftaran.create.form.tanggal = formatDate(val);
+        pendaftaran.create.form.tanggal = val.target.value
       }}
       />
       <TextInput
