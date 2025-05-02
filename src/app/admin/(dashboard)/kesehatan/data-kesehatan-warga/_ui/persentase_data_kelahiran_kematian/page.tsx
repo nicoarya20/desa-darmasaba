@@ -2,15 +2,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import statePersentase from '@/app/admin/(dashboard)/_state/kesehatan/data_kesehatan_warga/persentaseKelahiran';
 import { Box, Button, Stack, TextInput, Title } from '@mantine/core';
-import { useShallowEffect } from '@mantine/hooks';
+import { useMediaQuery, useShallowEffect } from '@mantine/hooks';
 import { useEffect, useState } from 'react';
-import { Bar, BarChart, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { Bar, BarChart, Legend, Tooltip, XAxis, YAxis } from 'recharts';
 import { useProxy } from 'valtio/utils';
 
 function PersentaseDataKelahiranKematian() {
   const persentase = useProxy(statePersentase.persentasekelahiran);
   const [chartData, setChartData] = useState<any[]>([]);
   const [mounted, setMounted] = useState(false); // untuk memastikan DOM sudah ready
+  const isTablet = useMediaQuery('(max-width: 1024px)')
+  const isMobile = useMediaQuery('(max-width: 768px)')
 
   useEffect(() => {
     setMounted(true);
@@ -87,19 +89,17 @@ function PersentaseDataKelahiranKematian() {
 
       {/* Chart */}
       <Box style={{ width: '100%', minWidth: 300, height: 400, minHeight: 300 }}>
-        <Title order={3}>Data Kelahiran & Kematian</Title>
+        <Title pb={10} order={3}>Data Kelahiran & Kematian</Title>
         {mounted && chartData.length > 0 && (
-          <ResponsiveContainer width="100%" aspect={2}>
-            <BarChart width={300} data={chartData}>
-              <XAxis dataKey="tahun" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="kematianKasar" fill="#f03e3e" name="Kematian Kasar" />
-              <Bar dataKey="kematianBayi" fill="#ff922b" name="Kematian Bayi" />
-              <Bar dataKey="kelahiranKasar" fill="#4dabf7" name="Kelahiran Kasar" />
-            </BarChart>
-          </ResponsiveContainer>
+          <BarChart width={isMobile ? 450 : isTablet ? 600 : 900} height={380} data={chartData} >
+            <XAxis dataKey="tahun" />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Bar dataKey="kematianKasar" fill="#f03e3e" name="Kematian Kasar" />
+            <Bar dataKey="kematianBayi" fill="#ff922b" name="Kematian Bayi" />
+            <Bar dataKey="kelahiranKasar" fill="#4dabf7" name="Kelahiran Kasar" />
+          </BarChart>
         )}
       </Box>
     </Stack>

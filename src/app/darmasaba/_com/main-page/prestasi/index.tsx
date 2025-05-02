@@ -8,7 +8,7 @@ const data = [
         title: "Olahraga dan Kepemudaan",
         deskripsi: "Tim Bola Voli Putri Dharma Temaja meraih juara 3 dalam Turnamen Bola Voli Mangupura Cup 2024 kategori Putri Se-Bali ",
         image: "/api/img/prestasi-voli.jpeg",
-        link: "/darmasaba/prestasi/tim-bola-voli-putri-dharma-temaja-meraih-juara-3-dalam-turnamen-bola-voli-mangupura-cup-2024-kategori-putri-se-bali"
+        link: "/darmasaba/prestasi-desa/tim-bola-voli-putri-dharma-temaja-meraih-juara-3-dalam-turnamen-bola-voli-mangupura-cup-2024-kategori-putri-se-bali"
       },
       {
         id: 2,

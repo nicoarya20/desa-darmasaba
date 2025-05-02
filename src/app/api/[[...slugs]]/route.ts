@@ -45,11 +45,25 @@ async function layanan() {
   const data = await prisma.layanan.findMany();
   return { data };
 }
+
+const Utils = new Elysia({
+  prefix: "/api/utils",
+  tags: ["Utils"],
+}).get("/version", async () => {
+  const packageJson = await fs.readFile(
+    path.join(ROOT, "package.json"),
+    "utf-8"
+  );
+  const version = JSON.parse(packageJson).version;
+  return { version };
+});
+
 const ApiServer = new Elysia()
   .use(swagger({ path: "/api/docs" }))
   .use(cors(corsConfig))
   .use(Kesehatan)
   .use(Desa)
+  .use(Utils)
   .onError(({ code }) => {
     if (code === "NOT_FOUND") {
       return {
