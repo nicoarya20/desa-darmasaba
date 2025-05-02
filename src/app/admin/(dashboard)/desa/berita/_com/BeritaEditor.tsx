@@ -24,7 +24,13 @@ export function BeritaEditor({ onSubmit }: { onSubmit: (val: string) => void }) 
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
     ],
     content,
+    immediatelyRender: false
   });
+
+  if (!editor) {
+    return null;
+  }
+
 
   return (
     <Stack>
