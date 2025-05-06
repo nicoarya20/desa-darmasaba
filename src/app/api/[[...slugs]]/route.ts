@@ -14,6 +14,8 @@ import uplImg from "./_lib/upl-img";
 import { uplImgSingle } from "./_lib/upl-img-single";
 import Desa from "./_lib/desa";
 import Kesehatan from "./_lib/kesehatan";
+import PPID from "./_lib/ppid";
+
 const ROOT = process.cwd();
 
 if (!process.env.WIBU_UPLOAD_DIR)
@@ -61,6 +63,7 @@ const Utils = new Elysia({
 const ApiServer = new Elysia()
   .use(swagger({ path: "/api/docs" }))
   .use(cors(corsConfig))
+  .use(PPID)
   .use(Kesehatan)
   .use(Desa)
   .use(Utils)

@@ -47,6 +47,66 @@ model AppMenuChild {
   appMenuId String?
 }
 
+//========================================= MENU PPID ========================================= //
+// ========================================= DAFTAR INFORMASI PUBLIK ========================================= //
+model DaftarInformasiPublik {
+  id             String   @id @default(cuid())
+  nomor          Int      @default(autoincrement())
+  jenisInformasi String
+  deskripsi      String
+  tanggal        String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  deletedAt      DateTime @default(now())
+  isActive       Boolean  @default(true)
+}
+
+//========================================= MENU PPID ========================================= //
+// ========================================= IKM ========================================= //
+model IndeksKepuasanMasyarakat {
+  id        Int      @id @default(autoincrement())
+  label     String
+  kepuasan  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive  Boolean  @default(true)
+}
+
+model GrafikBerdasarkanJenisKelamin {
+  id        String   @id @default(cuid())
+  perempuan String
+  laki      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive  Boolean  @default(true)
+}
+
+model GrafikBerdasarkanResponden {
+  id         String   @id @default(cuid())
+  sangatbaik String
+  baik       String
+  kurangbaik String
+  tidakbaik  String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  deletedAt  DateTime @default(now())
+  isActive   Boolean  @default(true)
+}
+
+model GrafikBerdasarkanUmur {
+  id        String   @id @default(cuid())
+  remaja    String
+  dewasa    String
+  orangtua  String
+  lansia    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive  Boolean  @default(true)
+}
+
 // ========================================= MENU DESA ========================================= //
 // ========================================= BERITA ========================================= //
 model Berita {
