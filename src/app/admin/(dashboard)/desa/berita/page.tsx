@@ -10,9 +10,9 @@ import { BeritaEditor } from './_com/BeritaEditor';
 function Page() {
   return (
     <Stack>
-      <SimpleGrid cols={2}>
-        <BeritaList />
+      <SimpleGrid cols={{base: 1, md: 2}}>
         <BeritaCreate />
+        <BeritaList />
       </SimpleGrid>
     </Stack>
   );

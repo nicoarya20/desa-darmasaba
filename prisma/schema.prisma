@@ -47,6 +47,162 @@ model AppMenuChild {
   appMenuId String?
 }
 
+//========================================= MENU PPID ========================================= //
+// ========================================= VISI MISI PPID ========================================= //
+model VisiPPID {
+  id        String   @id @default(cuid())
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive  Boolean  @default(true)
+}
+
+model MisiPPID {
+  id        String   @id @default(cuid())
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive  Boolean  @default(true)
+}
+
+// ========================================= PROFILE PPID ========================================= //
+model ProfilePPID {
+  id         String   @id @default(cuid())
+  name       String   @unique
+  biodata    String
+  riwayat    String
+  pengalaman String
+  unggulan   String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  deletedAt  DateTime @default(now())
+  isActive   Boolean  @default(true)
+}
+
+// ========================================= DAFTAR INFORMASI PUBLIK ========================================= //
+model DaftarInformasiPublik {
+  id             String   @id @default(cuid())
+  nomor          Int      @default(autoincrement())
+  jenisInformasi String
+  deskripsi      String
+  tanggal        String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  deletedAt      DateTime @default(now())
+  isActive       Boolean  @default(true)
+}
+
+//=========================================PERMOHONAN INFORMASI PUBLIK========================= //
+model PermohonanInformasiPublik {
+  id                               String                          @id @default(cuid())
+  nomor                            Int                             @default(autoincrement())
+  name                             String
+  nik                              String
+  notelp                           String
+  alamat                           String
+  email                            String
+  jenisInformasiDiminta            JenisInformasiDiminta?          @relation(fields: [jenisInformasiDimintaId], references: [id])
+  jenisInformasiDimintaId          String?
+  caraMemperolehInformasi          CaraMemperolehInformasi?        @relation(fields: [caraMemperolehInformasiId], references: [id])
+  caraMemperolehInformasiId        String?
+  caraMemperolehSalinanInformasi   CaraMemperolehSalinanInformasi? @relation(fields: [caraMemperolehSalinanInformasiId], references: [id])
+  caraMemperolehSalinanInformasiId String?
+  createdAt                        DateTime                        @default(now())
+  updatedAt                        DateTime                        @updatedAt
+  deletedAt                        DateTime                        @default(now())
+  isActive                         Boolean                         @default(true)
+}
+
+model JenisInformasiDiminta {
+  id                        String                      @id @default(cuid())
+  name                      String                      @unique
+  createdAt                 DateTime                    @default(now())
+  updatedAt                 DateTime                    @updatedAt
+  deletedAt                 DateTime                    @default(now())
+  isActive                  Boolean                     @default(true)
+  PermohonanInformasiPublik PermohonanInformasiPublik[]
+}
+
+model CaraMemperolehInformasi {
+  id                        String                      @id @default(cuid())
+  name                      String                      @unique
+  createdAt                 DateTime                    @default(now())
+  updatedAt                 DateTime                    @updatedAt
+  deletedAt                 DateTime                    @default(now())
+  isActive                  Boolean                     @default(true)
+  PermohonanInformasiPublik PermohonanInformasiPublik[]
+}
+
+model CaraMemperolehSalinanInformasi {
+  id                        String                      @id @default(cuid())
+  name                      String                      @unique
+  createdAt                 DateTime                    @default(now())
+  updatedAt                 DateTime                    @updatedAt
+  deletedAt                 DateTime                    @default(now())
+  isActive                  Boolean                     @default(true)
+  PermohonanInformasiPublik PermohonanInformasiPublik[]
+}
+
+//=========================================PERMOHONAN INFORMASI KEBERATAN PUBLIK========================= //
+model FormulirPermohonanKeberatan {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  notelp    String
+  alasan    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive  Boolean  @default(true)
+}
+
+// ========================================= IKM ========================================= //
+model IndeksKepuasanMasyarakat {
+  id        Int      @id @default(autoincrement())
+  label     String
+  kepuasan  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive  Boolean  @default(true)
+}
+
+model GrafikBerdasarkanJenisKelamin {
+  id        String   @id @default(cuid())
+  perempuan String
+  laki      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive  Boolean  @default(true)
+}
+
+model GrafikBerdasarkanResponden {
+  id         String   @id @default(cuid())
+  sangatbaik String
+  baik       String
+  kurangbaik String
+  tidakbaik  String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  deletedAt  DateTime @default(now())
+  isActive   Boolean  @default(true)
+}
+
+model GrafikBerdasarkanUmur {
+  id        String   @id @default(cuid())
+  remaja    String
+  dewasa    String
+  orangtua  String
+  lansia    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive  Boolean  @default(true)
+}
+
 // ========================================= MENU DESA ========================================= //
 // ========================================= BERITA ========================================= //
 model Berita {
