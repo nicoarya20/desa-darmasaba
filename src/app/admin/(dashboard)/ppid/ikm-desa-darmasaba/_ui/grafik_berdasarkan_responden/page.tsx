@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import stateGrafikResponden from '@/app/admin/(dashboard)/_state/ppid/indeks_kepuasan_masyarakat/grafikBerdasarkanResponden';
 import colors from '@/con/colors';
-import { Box, Button, Center, Flex, Stack, Text, TextInput, Title } from '@mantine/core';
+import { Box, Button, Center, Flex, Group, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import React, { useEffect, useState } from 'react';
 import { PieChart, Pie, Cell } from 'recharts';
@@ -68,96 +68,103 @@ function GrafikBerdasarkanResponden() {
   return (
     <Box>
       <Box py={15}>
-        <Title order={3}>Grafik Berdasarkan Responden</Title>
-        <TextInput
-          w={{ base: '100%', md: '50%' }}
-          label="Sangat Baik"
-          value={grafikBerdasarkanResponden.create.form.sangatbaik}
-          placeholder="masukkan jumlah respon sangat baik"
-          onChange={(val) => {
-            grafikBerdasarkanResponden.create.form.sangatbaik = val.currentTarget.value;
-          }}
-        />
-        <TextInput
-          w={{ base: '100%', md: '50%' }}
-          label="Baik"
-          value={grafikBerdasarkanResponden.create.form.baik}
-          placeholder="masukkan jumlah respon baik"
-          onChange={(val) => {
-            grafikBerdasarkanResponden.create.form.baik = val.currentTarget.value;
-          }}
-        />
-        <TextInput
-          w={{ base: '100%', md: '50%' }}
-          label="Kurang Baik"
-          value={grafikBerdasarkanResponden.create.form.kurangbaik}
-          placeholder="masukkan jumlah respon kurang baik"
-          onChange={(val) => {
-            grafikBerdasarkanResponden.create.form.kurangbaik = val.currentTarget.value;
-          }}
-        />
-        <TextInput
-          w={{ base: '100%', md: '50%' }}
-          label="Tidak Baik"
-          value={grafikBerdasarkanResponden.create.form.tidakbaik}
-          placeholder="masukkan jumlah respon tidak baik"
-          onChange={(val) => {
-            grafikBerdasarkanResponden.create.form.tidakbaik = val.currentTarget.value;
-          }}
-        />
-        <Button
-          mt={10}
-          bg={colors['blue-button']}
-          onClick={handleSubmit}
-        >
-          Submit
-        </Button>
+        <Paper bg={colors['white-1']} w={{ base: '100%', md: '50%' }} p={'md'}>
+          <Stack gap={"xs"}>
+            <Title order={3}>Grafik Berdasarkan Responden</Title>
+            <TextInput
+              w={{ base: '100%', md: '50%' }}
+              label="Sangat Baik"
+              value={grafikBerdasarkanResponden.create.form.sangatbaik}
+              placeholder="masukkan jumlah respon sangat baik"
+              onChange={(val) => {
+                grafikBerdasarkanResponden.create.form.sangatbaik = val.currentTarget.value;
+              }}
+            />
+            <TextInput
+              w={{ base: '100%', md: '50%' }}
+              label="Baik"
+              value={grafikBerdasarkanResponden.create.form.baik}
+              placeholder="masukkan jumlah respon baik"
+              onChange={(val) => {
+                grafikBerdasarkanResponden.create.form.baik = val.currentTarget.value;
+              }}
+            />
+            <TextInput
+              w={{ base: '100%', md: '50%' }}
+              label="Kurang Baik"
+              value={grafikBerdasarkanResponden.create.form.kurangbaik}
+              placeholder="masukkan jumlah respon kurang baik"
+              onChange={(val) => {
+                grafikBerdasarkanResponden.create.form.kurangbaik = val.currentTarget.value;
+              }}
+            />
+            <TextInput
+              w={{ base: '100%', md: '50%' }}
+              label="Tidak Baik"
+              value={grafikBerdasarkanResponden.create.form.tidakbaik}
+              placeholder="masukkan jumlah respon tidak baik"
+              onChange={(val) => {
+                grafikBerdasarkanResponden.create.form.tidakbaik = val.currentTarget.value;
+              }}
+            />
+            <Group>
+              <Button
+                bg={colors['blue-button']}
+                onClick={handleSubmit}
+              >
+                Submit
+              </Button>
+            </Group>
+          </Stack>
+        </Paper>
       </Box>
 
       {/* Chart */}
       <Box>
-        <Stack>
-          <Title pb={10} order={3}>Grafik Berdasarkan Responden</Title>
-          {mounted && donutData.length > 0 && (
-            <Box style={{ width: '100%', height: 'auto', minHeight: 900 }}>
-              <Center>
-                <PieChart
-                  width={1000} height={400}
-                  data={donutData}
-                >
-                  <Pie
-                    dataKey="value"
-                    nameKey="name"
+        <Paper bg={colors['white-1']} w={{ base: '100%', md: '50%' }} p={'md'}>
+          <Stack>
+            <Title pb={10} order={3}>Grafik Berdasarkan Responden</Title>
+            {mounted && donutData.length > 0 && (
+              <Box style={{ width: '100%', height: 'auto', minHeight: 900 }}>
+                <Center>
+                  <PieChart
+                    width={1000} height={400}
                     data={donutData}
-                    innerRadius={120}
-                    outerRadius={160}
-                    label
                   >
-                    {donutData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                </PieChart>
-              </Center>
-              <Flex gap={"md"} align={"center"}>
-                <Box bg={colors['blue-button']} w={20} h={20} />
-                <Text>Sangat Baik: {donutData.find((entry) => entry.name === 'sangatbaik')?.value}</Text>
-              </Flex>
-              <Flex gap={"md"} align={"center"}>
-                <Box bg={'#10A85AFF'} w={20} h={20} />
-                <Text>Baik: {donutData.find((entry) => entry.name === 'baik')?.value}</Text>
-              </Flex>
-              <Flex gap={"md"} align={"center"}>
-                <Box bg={'#B3AA12FF'} w={20} h={20} />
-                <Text>Kurang Baik: {donutData.find((entry) => entry.name === 'kurangbaik')?.value}</Text>
-              </Flex>
-              <Flex gap={"md"} align={"center"}>
-                <Box bg={'#B21313FF'} w={20} h={20} />
-                <Text>Tidak Baik: {donutData.find((entry) => entry.name === 'tidakbaik')?.value}</Text>
-              </Flex>
-            </Box>
-          )}
-        </Stack>
+                    <Pie
+                      dataKey="value"
+                      nameKey="name"
+                      data={donutData}
+                      innerRadius={120}
+                      outerRadius={230}
+                      label={true}
+                    >
+                      {donutData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                  </PieChart>
+                </Center>
+                <Flex gap={"md"} align={"center"}>
+                  <Box bg={colors['blue-button']} w={20} h={20} />
+                  <Text>Sangat Baik: {donutData.find((entry) => entry.name === 'sangatbaik')?.value}</Text>
+                </Flex>
+                <Flex gap={"md"} align={"center"}>
+                  <Box bg={'#10A85AFF'} w={20} h={20} />
+                  <Text>Baik: {donutData.find((entry) => entry.name === 'baik')?.value}</Text>
+                </Flex>
+                <Flex gap={"md"} align={"center"}>
+                  <Box bg={'#B3AA12FF'} w={20} h={20} />
+                  <Text>Kurang Baik: {donutData.find((entry) => entry.name === 'kurangbaik')?.value}</Text>
+                </Flex>
+                <Flex gap={"md"} align={"center"}>
+                  <Box bg={'#B21313FF'} w={20} h={20} />
+                  <Text>Tidak Baik: {donutData.find((entry) => entry.name === 'tidakbaik')?.value}</Text>
+                </Flex>
+              </Box>
+            )}
+          </Stack>
+        </Paper>
       </Box>
     </Box>
   );
