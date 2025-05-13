@@ -7,7 +7,9 @@ import GrafikBerdasarkanUmur from "./ikm/grafik_berdasarkan_umur";
 import PermohonanInformasiPublik from "./permohonan_informasi_publik";
 import PermohonanKeberatanInformasiPublik from "./permohonan_keberatan_informasi_publik";
 import ProfilePPID from "./profile_ppid";
-import VisiMisiPPID from "./visi_misi_ppid";
+import VisiMisiPPID from "./visi_misi_ppid/visi_misi_ppid";
+import DasarHukumPPID from "./dasar_hukum";
+
 
 
 
@@ -21,6 +23,7 @@ const PPID = new Elysia({ prefix: "/api/ppid", tags: ["PPID"] })
 .use(PermohonanInformasiPublik)
 .use(PermohonanKeberatanInformasiPublik)
 .use(VisiMisiPPID)
+.use(DasarHukumPPID)
 
 
 

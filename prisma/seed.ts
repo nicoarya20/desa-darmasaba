@@ -6,6 +6,9 @@ import caraMemperolehSalinanInformasi from './data/list-caraMemperolehSalinanInf
 import jenisInformasiDiminta from './data/list-jenisInfromasi.json'
 import layanan from './data/list-layanan.json'
 import potensi from './data/list-potensi.json'
+import profilePPID from './data/ppid/profile-ppid/profilePPid.json'
+import visiMisiPPID from './data/ppid/visi-misi-ppid/visimisiPPID.json'
+import dasarHukumPPID from './data/ppid/dasar-hukum-ppid/dasarhukumPPID.json'
 (async () => {
     for (const l of layanan) {
         await prisma.layanan.upsert({
@@ -116,7 +119,67 @@ import potensi from './data/list-potensi.json'
     }
     console.log("cara memperoleh salinan informasi success ...")
 
+    for (const c of profilePPID) {
+        await prisma.profilePPID.upsert({
+            where: {
+                id: c.id
+            },
+            update: {
+                name: c.name,
+                biodata: c.biodata,
+                riwayat: c.riwayat,
+                pengalaman: c.pengalaman,
+                unggulan: c.unggulan,
+                imageUrl: c.imageUrl
+            },
+            create: {
+                id: c.id,
+                name: c.name,
+                biodata: c.biodata,
+                riwayat: c.riwayat,
+                pengalaman: c.pengalaman,
+                unggulan: c.unggulan,
+                imageUrl: c.imageUrl
+            }
+        })
+    }
+    console.log("profile PPID success ...")
     
+    for (const v of visiMisiPPID) {
+        await prisma.visiMisiPPID.upsert({
+            where: {
+                id: v.id,
+            },
+            update: {
+                misi: v.misi,
+                visi: v.visi
+            },
+            create: {
+                id: v.id,
+                misi: v.misi,
+                visi: v.visi
+            }
+        })
+    }
+    console.log("visi misi PPID success ...")
+
+    for (const v of dasarHukumPPID) {
+        await prisma.dasarHukumPPID.upsert({
+            where: {
+                id: v.id,
+            },
+            update: {
+                judul: v.judul,
+                content: v.content
+            },
+            create: {
+                id: v.id,
+                judul: v.judul,
+                content: v.content
+            }
+        })
+    }
+    console.log("dasar hukum PPID success ...")
 
 })().then(() => prisma.$disconnect()).catch((e) => {
     console.error(e)

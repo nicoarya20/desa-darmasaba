@@ -49,18 +49,21 @@ model AppMenuChild {
 
 //========================================= MENU PPID ========================================= //
 // ========================================= VISI MISI PPID ========================================= //
-model VisiPPID {
+model VisiMisiPPID {
   id        String   @id @default(cuid())
-  content   String
+  visi      String   @db.Text
+  misi      String   @db.Text
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   deletedAt DateTime @default(now())
   isActive  Boolean  @default(true)
 }
 
-model MisiPPID {
+// ========================================= DASAR HUKUM PPID ========================================= //
+model DasarHukumPPID {
   id        String   @id @default(cuid())
-  content   String
+  judul     String   @db.Text
+  content   String   @db.Text
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   deletedAt DateTime @default(now())
@@ -70,11 +73,12 @@ model MisiPPID {
 // ========================================= PROFILE PPID ========================================= //
 model ProfilePPID {
   id         String   @id @default(cuid())
-  name       String   @unique
-  biodata    String
-  riwayat    String
-  pengalaman String
-  unggulan   String
+  name       String   @db.Text
+  biodata    String   @db.Text
+  riwayat    String   @db.Text
+  pengalaman String   @db.Text
+  unggulan   String   @db.Text
+  imageUrl   String?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
   deletedAt  DateTime @default(now())

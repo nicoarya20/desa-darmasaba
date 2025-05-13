@@ -4,6 +4,7 @@ import { Context } from "elysia";
 
 type FormCreate = Prisma.ProfilePPIDGetPayload<{
     select: {
+        id: true;
         name: true;
         biodata: true;
         riwayat: true;
@@ -11,10 +12,13 @@ type FormCreate = Prisma.ProfilePPIDGetPayload<{
         unggulan: true;
     }
 }>
-export default async function profilePPIDCreate(context: Context) {
+export default async function profilePPIDUpdate(context: Context) {
     const body = context.body as FormCreate;
 
-    await prisma.profilePPID.create({
+    await prisma.profilePPID.update({
+        where: {
+            id: body.id
+        },
         data: {
             name: body.name,
             biodata: body.biodata,
