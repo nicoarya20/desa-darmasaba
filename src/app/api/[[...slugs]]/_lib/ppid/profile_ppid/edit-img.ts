@@ -3,6 +3,7 @@ import { Context } from "elysia";
 import { writeFile, unlink } from "fs/promises";
 import path from "path";
 import fs from "fs";
+import { mkdir } from "fs/promises";
 
 interface ProfilePPIDBody {
   id: string;
@@ -31,31 +32,51 @@ export default async function editImageProfilePPID(context: Context<{ body: Prof
   const bytes = await file.arrayBuffer();
   const buffer = Buffer.from(bytes);
   const filename = `${id}_${Date.now()}_${file.name}`;
-  const filePath = path.resolve("public", "assets", "images", "ppid", "profile-ppid", filename);
-
-  // Simpan file baru
-  await writeFile(filePath, buffer);
-
-  const imageUrl = `/assets/images/ppid/profile-ppid/${filename}`;
-
-  // Hapus file lama (opsional, kalau mau bersih)
-  const oldData = await prisma.profilePPID.findUnique({ where: { id } });
-  if (oldData?.imageUrl) {
-    const oldPath = path.resolve("public", oldData.imageUrl.replace(/^\//, ""));
-    if (fs.existsSync(oldPath)) {
-      await unlink(oldPath).catch(() => {});
+  const folderPath = path.resolve("public", "assets", "images", "ppid", "profile-ppid");
+  
+  try {
+    await mkdir(folderPath, { recursive: true });
+    
+    console.log('Folder path:', folderPath);
+    const filePath = path.join(folderPath, filename);
+    console.log('File path:', filePath);
+    
+    await writeFile(filePath, buffer);
+    
+    if (!fs.existsSync(filePath)) {
+      return {
+        success: false,
+        message: "Failed to write file to disk",
+      };
     }
+    
+    const imageUrl = `/assets/images/ppid/profile-ppid/${filename}`;
+
+    // Hapus file lama (opsional, kalau mau bersih)
+    const oldData = await prisma.profilePPID.findUnique({ where: { id } });
+    if (oldData?.imageUrl) {
+      const oldPath = path.resolve("public", oldData.imageUrl.replace(/^\//, ""));
+      if (fs.existsSync(oldPath)) {
+        await unlink(oldPath).catch(() => {});
+      }
+    }
+
+    // Update DB
+    await prisma.profilePPID.update({
+      where: { id },
+      data: { imageUrl },
+    });
+
+    return {
+      success: true,
+      message: "Gambar berhasil diunggah",
+      url: imageUrl,
+    };
+  } catch (error) {
+    console.error('Error uploading file:', error);
+    return {
+      success: false,
+      message: "Gagal mengunggah gambar",
+    };
   }
-
-  // Update DB
-  await prisma.profilePPID.update({
-    where: { id },
-    data: { imageUrl },
-  });
-
-  return {
-    success: true,
-    message: "Gambar berhasil diunggah",
-    url: imageUrl,
-  };
 }

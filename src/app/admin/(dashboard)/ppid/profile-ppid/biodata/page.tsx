@@ -1,47 +1,38 @@
 'use client'
 import { Box, Group, Text } from '@mantine/core';
-import React from 'react';
+import React, { useState } from 'react';
 
 import { useProxy } from 'valtio/utils';
 import stateProfilePPID from '../../../_state/ppid/profile_ppid/profile_PPID';
 import { PPIDTextEditor } from '../../_com/PPIDTextEditor';
 import { Dropzone, MIME_TYPES } from '@mantine/dropzone';
 import { IconUpload, IconX, IconPhoto } from '@tabler/icons-react';
+import ApiFetch from '@/lib/api-fetch';
 
 
 function Biodata() {
   const biodataState = useProxy(stateProfilePPID)
-  const handleUpload = async (file: File) => {
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("id", biodataState.findById.data?.id ?? ''); // pastikan ID-nya sesuai
-  
-    const res = await fetch("/api/ppid/profileppid/edit-img", {
-      method: "POST",
-      body: formData,
-    });
-  
-    const result = await res.json();
-  
-    if (result.success && biodataState.findById.data) {
-      biodataState.findById.data.imageUrl = result.url;
-    }
-  };
+  const [loading, setLoading] = useState(false);
   return (<Box>
     <Text fw={"bold"}>Biodata</Text>
     <Dropzone
     mb={20}
-      onDrop={(files) => {
-        const file = files[0];
-        const currentId = biodataState.findById.data?.id;
-        if (file && currentId) {
-          handleUpload(file);
+      onDrop={async (droppedFiles) => {
+        setLoading(true);
+        for (const file of droppedFiles) {
+          await ApiFetch.api.ppid.profileppid["edit-img"].post({
+            file: file,
+            id: biodataState.findById.data?.id,
+          });
+        }
+
+        setLoading(false);
+        if (biodataState.findById.data?.id) {
+          biodataState.findById.load(biodataState.findById.data.id);
         }
       }}
-      onReject={() => console.log('File rejected')}
-      maxSize={5 * 1024 ** 2} // 5MB
       accept={[MIME_TYPES.jpeg, MIME_TYPES.png, MIME_TYPES.webp]}
-      loading={stateProfilePPID.uploadImage.loading}
+      loading={loading}
     >
       <Group justify="center" gap="md" mih={150} style={{ pointerEvents: 'none' }}>
         <Dropzone.Accept>

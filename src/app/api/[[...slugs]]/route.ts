@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { staticPlugin } from '@elysiajs/static'
 import cors, { HTTPMethod } from "@elysiajs/cors";
 import swagger from "@elysiajs/swagger";
 import { Elysia, t } from "elysia";
@@ -22,7 +23,7 @@ if (!process.env.WIBU_UPLOAD_DIR)
   throw new Error("WIBU_UPLOAD_DIR is not defined");
 
 const UPLOAD_DIR = path.join(ROOT, process.env.WIBU_UPLOAD_DIR);
-const UPLOAD_DIR_IMAGE = path.join(UPLOAD_DIR, "image");
+const UPLOAD_DIR_IMAGE = path.join(UPLOAD_DIR, "public", "assets", "images", "ppid", "profile-ppid");
 
 // create uploads dir
 fs.mkdir(UPLOAD_DIR, {
@@ -62,6 +63,10 @@ const Utils = new Elysia({
 
 const ApiServer = new Elysia()
   .use(swagger({ path: "/api/docs" }))
+  .use(staticPlugin({
+    prefix: '/', // biar bisa akses dari root URL
+    assets: './public'
+  }))
   .use(cors(corsConfig))
   .use(PPID)
   .use(Kesehatan)
