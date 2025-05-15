@@ -25,19 +25,16 @@ function ProfileList() {
         <Title order={3}>List Profile PPID</Title>
         {dataArray.map((item) => (
           <Box key={item.id}>
-            <Box>
-              <Text fw={"bold"}>Gambar</Text>
-              {item.imageUrl ? (
+            {item.imageUrl && (
+              <Box mb={20}>
+                <Text fw={"bold"} mb={5}>Preview Gambar:</Text>
                 <Image
                   src={item.imageUrl}
-                  alt="Foto Profil"
+                  alt="Profile"
                   w={200}
-                  radius="md"
                 />
-              ) : (
-                <Text c="dimmed">Belum ada foto</Text>
-              )}
-            </Box>
+              </Box>
+            )}
             <Box>
               <Text fw={"bold"}>Nama</Text>
               <Text dangerouslySetInnerHTML={{ __html: item.name }}></Text>

@@ -56,6 +56,7 @@ const caraMemperolehSalinanInformasi = proxy({
         }
     }
 })
+console.log(caraMemperolehSalinanInformasi)
 
 type PermohonanInformasiPublikForm = Prisma.PermohonanInformasiPublikGetPayload<{
     select: {
@@ -70,12 +71,12 @@ type PermohonanInformasiPublikForm = Prisma.PermohonanInformasiPublikGetPayload<
     };
 }>;
 
-const permohonanInformasiPublikForm = proxy({
+const statepermohonanInformasiPublik = proxy({
     create: {
         form: {} as PermohonanInformasiPublikForm,
         loading: false,
         async create(){
-            const cek = templateForm.safeParse(permohonanInformasiPublikForm.create.form);
+            const cek = templateForm.safeParse(statepermohonanInformasiPublik.create.form);
             if(!cek.success) {
                 const err = `[${cek.error.issues
                     .map((v) => `${v.path.join(".")}`)
@@ -83,38 +84,42 @@ const permohonanInformasiPublikForm = proxy({
                 return toast.error(err);
             }
             try {
-                permohonanInformasiPublikForm.create.loading = true;
-                const res = await ApiFetch.api.ppid.permohonaninformasipublik["create"].post(permohonanInformasiPublikForm.create.form);
+                statepermohonanInformasiPublik.create.loading = true;
+                const res = await ApiFetch.api.ppid.permohonaninformasipublik["create"].post(statepermohonanInformasiPublik.create.form);
                 if (res.status === 200) {
-                    permohonanInformasiPublikForm.findMany.load();
+                    statepermohonanInformasiPublik.findMany.load();
                     return toast.success("success create");
                 }
                 return toast.error("failed create");
             } catch (error) {
                 console.log((error as Error).message);
             } finally {
-                permohonanInformasiPublikForm.create.loading = false;
+                statepermohonanInformasiPublik.create.loading = false;
             }
         }
     },
     findMany: {
         data: null as
-        | Prisma.PermohonanInformasiPublikGetPayload<{ omit: { isActive: true } }>[]
+        | Prisma.PermohonanInformasiPublikGetPayload<{ include: {
+            caraMemperolehSalinanInformasi: true,
+            jenisInformasiDiminta: true,
+            caraMemperolehInformasi: true,
+        } }>[]
         | null,
         async load() {
             const res = await ApiFetch.api.ppid.permohonaninformasipublik["find-many"].get();
             if (res.status === 200) {
-                permohonanInformasiPublikForm.findMany.data = res.data?.data ?? [];
+                statepermohonanInformasiPublik.findMany.data = res.data?.data ?? [];
             }
         }
     }
 })
 
-const statePermohonanInformasi = proxy({
-    permohonanInformasiPublikForm,
+const statepermohonanInformasiPublikForm = proxy({
+    statepermohonanInformasiPublik,
     jenisInformasiDiminta,
     caraMemperolehInformasi,
-    caraMemperolehSalinanInformasi
+    caraMemperolehSalinanInformasi,
 })
 
-export default statePermohonanInformasi;
+export default statepermohonanInformasiPublikForm;

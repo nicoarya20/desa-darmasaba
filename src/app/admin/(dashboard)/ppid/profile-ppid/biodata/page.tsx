@@ -1,18 +1,18 @@
 'use client'
 import { Box, Group, Text } from '@mantine/core';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
+import ApiFetch from '@/lib/api-fetch';
+import { Dropzone, MIME_TYPES } from '@mantine/dropzone';
+import { IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
 import { useProxy } from 'valtio/utils';
 import stateProfilePPID from '../../../_state/ppid/profile_ppid/profile_PPID';
 import { PPIDTextEditor } from '../../_com/PPIDTextEditor';
-import { Dropzone, MIME_TYPES } from '@mantine/dropzone';
-import { IconUpload, IconX, IconPhoto } from '@tabler/icons-react';
-import ApiFetch from '@/lib/api-fetch';
-
 
 function Biodata() {
   const biodataState = useProxy(stateProfilePPID)
   const [loading, setLoading] = useState(false);
+  
   return (<Box>
     <Text fw={"bold"}>Biodata</Text>
     <Dropzone
@@ -55,6 +55,9 @@ function Biodata() {
         </div>
       </Group>
     </Dropzone>
+    
+    
+    
     <PPIDTextEditor
       key={biodataState.findById.data?.id ?? 'new'}
       showSubmit={false}
@@ -67,7 +70,6 @@ function Biodata() {
     />
    
   </Box>
-
   );
 }
 

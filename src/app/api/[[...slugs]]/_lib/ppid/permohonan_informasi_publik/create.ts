@@ -26,6 +26,7 @@ export default async function permohonanInformasiPublikCreate(context: Context) 
             alamat: body.alamat,
             jenisInformasiDimintaId: body.jenisInformasiDimintaId,
             caraMemperolehInformasiId: body.caraMemperolehInformasiId,
+            caraMemperolehSalinanInformasiId: body.caraMemperolehSalinanInformasiId,
         }
     })
 

@@ -9,6 +9,8 @@ import potensi from './data/list-potensi.json'
 import profilePPID from './data/ppid/profile-ppid/profilePPid.json'
 import visiMisiPPID from './data/ppid/visi-misi-ppid/visimisiPPID.json'
 import dasarHukumPPID from './data/ppid/dasar-hukum-ppid/dasarhukumPPID.json'
+import profileDesa from './data/desa/profile/profile_desa.json'
+import profilePerbekel from './data/desa/profile/profil_perbekel.json'
 (async () => {
     for (const l of layanan) {
         await prisma.layanan.upsert({
@@ -180,6 +182,54 @@ import dasarHukumPPID from './data/ppid/dasar-hukum-ppid/dasarhukumPPID.json'
         })
     }
     console.log("dasar hukum PPID success ...")
+
+    for (const v of profileDesa) {
+        await prisma.profileDesa.upsert({
+            where: {
+                id: v.id,
+            },
+            update: {
+                sejarah: v.sejarah,
+                visi: v.visi,
+                misi: v.misi,
+                lambang: v.lambang,
+                maskot: v.maskot,
+                profilPerbekelId: v.profilPerbekelId
+            },
+            create: {
+                id: v.id,
+                sejarah: v.sejarah,
+                visi: v.visi,
+                misi: v.misi,
+                lambang: v.lambang,
+                maskot: v.maskot,
+                profilPerbekelId: v.profilPerbekelId
+            }
+        })
+    }
+    console.log("profile desa success ...")
+
+    for (const v of profilePerbekel) {
+        await prisma.profilPerbekel.upsert({
+            where: {
+                id: v.id,
+            },
+            update: {
+                biodata: v.biodata,
+                pengalaman: v.pengalaman,
+                pengalamanOrganisasi: v.pengalamanOrganisasi,
+                programUnggulan: v.programUnggulan
+            },
+            create: {
+                id: v.id,
+                biodata: v.biodata,
+                pengalaman: v.pengalaman,
+                pengalamanOrganisasi: v.pengalamanOrganisasi,
+                programUnggulan: v.programUnggulan
+            }
+        })
+    }
+    console.log("profile perbekel success ...")
 
 })().then(() => prisma.$disconnect()).catch((e) => {
     console.error(e)
