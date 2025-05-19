@@ -1,21 +1,22 @@
 import prisma from "@/lib/prisma";
-import { staticPlugin } from '@elysiajs/static'
 import cors, { HTTPMethod } from "@elysiajs/cors";
+import { staticPlugin } from "@elysiajs/static";
 import swagger from "@elysiajs/swagger";
 import { Elysia, t } from "elysia";
 import fs from "fs/promises";
 import path from "path";
+import Desa from "./_lib/desa";
 import getPotensi from "./_lib/get-potensi";
 import img from "./_lib/img";
 import imgDel from "./_lib/img-del";
 import imgs from "./_lib/imgs";
+import Kesehatan from "./_lib/kesehatan";
+import PPID from "./_lib/ppid";
 import uplCsv from "./_lib/upl-csv";
 import { uplCsvSingle } from "./_lib/upl-csv-single";
 import uplImg from "./_lib/upl-img";
 import { uplImgSingle } from "./_lib/upl-img-single";
-import Desa from "./_lib/desa";
-import Kesehatan from "./_lib/kesehatan";
-import PPID from "./_lib/ppid";
+import FileStorage from "./_lib/fileStorage";
 
 const ROOT = process.cwd();
 
@@ -23,7 +24,14 @@ if (!process.env.WIBU_UPLOAD_DIR)
   throw new Error("WIBU_UPLOAD_DIR is not defined");
 
 const UPLOAD_DIR = path.join(ROOT, process.env.WIBU_UPLOAD_DIR);
-const UPLOAD_DIR_IMAGE = path.join(UPLOAD_DIR, "public", "assets", "images", "ppid", "profile-ppid");
+const UPLOAD_DIR_IMAGE = path.join(
+  UPLOAD_DIR,
+  "public",
+  "assets",
+  "images",
+  "ppid",
+  "profile-ppid"
+);
 
 // create uploads dir
 fs.mkdir(UPLOAD_DIR, {
@@ -63,15 +71,18 @@ const Utils = new Elysia({
 
 const ApiServer = new Elysia()
   .use(swagger({ path: "/api/docs" }))
-  .use(staticPlugin({
-    prefix: '/', // biar bisa akses dari root URL
-    assets: './public'
-  }))
+  .use(
+    staticPlugin({
+      prefix: "/", // biar bisa akses dari root URL
+      assets: "./public",
+    })
+  )
   .use(cors(corsConfig))
   .use(PPID)
   .use(Kesehatan)
   .use(Desa)
   .use(Utils)
+  .use(FileStorage)
   .onError(({ code }) => {
     if (code === "NOT_FOUND") {
       return {

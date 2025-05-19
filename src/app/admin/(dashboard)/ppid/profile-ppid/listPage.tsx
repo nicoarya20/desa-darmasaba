@@ -29,7 +29,7 @@ function ProfileList() {
               <Box mb={20}>
                 <Text fw={"bold"} mb={5}>Preview Gambar:</Text>
                 <Image
-                  src={item.imageUrl}
+                  src={item.imageUrl ?? '/perbekel.png'}
                   alt="Profile"
                   w={200}
                 />

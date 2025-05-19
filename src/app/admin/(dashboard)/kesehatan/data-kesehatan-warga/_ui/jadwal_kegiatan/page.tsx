@@ -1,6 +1,6 @@
 'use client'
 import stateJadwalKegiatan from '@/app/admin/(dashboard)/_state/kesehatan/data_kesehatan_warga/jadwalKegiatan';
-import { Box, Button, SimpleGrid, Skeleton, Stack, Text, Title } from '@mantine/core';
+import { Box, Button, Paper, SimpleGrid, Skeleton, Stack, Text, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { useProxy } from 'valtio/utils';
 import DeskripsiKegiatan from './deskripsi_kegiatan/page';
@@ -9,6 +9,7 @@ import InformasiKegiatan from './informasi_kegiatan/page';
 import LayananTersedia from './layanan_yang_tersedia/page';
 import Pendaftaran from './pendaftaran/page';
 import SyaratDanKetentuan from './syarat_dan_ketentuan/page';
+import colors from '@/con/colors';
 
 function JadwalKegiatan() {
   const allState = useProxy(stateJadwalKegiatan)
@@ -54,21 +55,25 @@ function JadwalKegiatan() {
         base: 1, md: 2
       }}>
         <Box>
-          <Title order={3}>Jadwal Kegiatan</Title>
-          <InformasiKegiatan />
-          <DeskripsiKegiatan />
-          <LayananTersedia />
-          <SyaratDanKetentuan />
-          <DokumenYangDiperlukan />
-          <Pendaftaran />
-          <Button mt={10} onClick={submitAllForms}>
-            Submit
-          </Button>
+          <Stack gap={"xs"}>
+            <Title order={4}>Tambah Jadwal Kegiatan</Title>
+            <InformasiKegiatan />
+            <DeskripsiKegiatan />
+            <LayananTersedia />
+            <SyaratDanKetentuan />
+            <DokumenYangDiperlukan />
+            <Pendaftaran />
+            <Button mt={10} onClick={submitAllForms}>
+              Submit
+            </Button>
+          </Stack>
         </Box>
 
         <Box>
-          <Title order={3}>List Jadwal Kegiatan</Title>
-          <AllList />
+          <Stack gap={"xs"}>
+            <Title order={4}>Data Jadwal Kegiatan</Title>
+            <AllList />
+          </Stack>
         </Box>
       </SimpleGrid>
     </Stack>
@@ -103,68 +108,82 @@ function AllList() {
     );
   }
   return (
-    <Stack>
-      <Title order={4}>Informasi Kegiatan</Title>
-      {allList.informasiKegiatan.findMany.data?.map((item) => {
-        return (
-          <Box key={item.id}>
-            <Text>{item.name}</Text>
-            <Text>{item.tanggal}</Text>
-            <Text>{item.waktu}</Text>
-            <Text>{item.lokasi}</Text>
-          </Box>
-        )
-      })}
+    <Stack gap={"xs"}>
 
-      <Title order={4}>Deskripsi Kegiatan</Title>
-      {allList.deskripsiKegiatan.findMany.data?.map((item) => {
-        return (
-          <Box key={item.id}>
-            <Text dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
-          </Box>
-        )
-      })}
+      <Paper bg={colors['white-1']} p={'md'}>
+        <Title order={4}>Informasi Kegiatan</Title>
+        {allList.informasiKegiatan.findMany.data?.map((item) => {
+          return (
+            <Box key={item.id}>
+              <Text>{item.name}</Text>
+              <Text>{item.tanggal}</Text>
+              <Text>{item.waktu}</Text>
+              <Text>{item.lokasi}</Text>
+            </Box>
+          )
+        })}
+      </Paper>
 
-      <Title order={4}>Layanan Yang Tersedia</Title>
-      {allList.layanantersedia.findMany.data?.map((item) => {
-        return (
-          <Box key={item.id}>
-            <Text dangerouslySetInnerHTML={{ __html: item.content }} />
-          </Box>
-        )
-      })}
+      <Paper bg={colors['white-1']} p={'md'}>
 
-      <Title order={4}>Syarat dan Ketentuan</Title>
-      {allList.syaratketentuan.findMany.data?.map((item) => {
-        return (
-          <Box key={item.id}>
-            <Text dangerouslySetInnerHTML={{ __html: item.content }} />
-          </Box>
-        )
-      })}
+        <Title order={4}>Deskripsi Kegiatan</Title>
+        {allList.deskripsiKegiatan.findMany.data?.map((item) => {
+          return (
+            <Box key={item.id}>
+              <Text dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
+            </Box>
+          )
+        })}
+      </Paper>
 
-      <Title order={4}>Dokumen Yang Diperlukan</Title>
-      {allList.dokumenjadwalkegiatan.findMany.data?.map((item) => {
-        return (
-          <Box key={item.id}>
-            <Text dangerouslySetInnerHTML={{ __html: item.content }} />
-          </Box>
-        )
-      })}
+      <Paper bg={colors['white-1']} p={'md'}>
+        <Title order={4}>Layanan Yang Tersedia</Title>
+        {allList.layanantersedia.findMany.data?.map((item) => {
+          return (
+            <Box key={item.id}>
+              <Text dangerouslySetInnerHTML={{ __html: item.content }} />
+            </Box>
+          )
+        })}
+      </Paper>
 
-      <Title order={4}>Pendaftaran</Title>
-      {allList.pendaftaranjadwal.findMany.data?.map((item) => {
-        return (
-          <Box key={item.id}>
-            <Text>{item.name}</Text>
-            <Text>{item.tanggal}</Text>
-            <Text>{item.namaOrangtua}</Text>
-            <Text>{item.nomor}</Text>
-            <Text>{item.alamat}</Text>
-            <Text>{item.catatan}</Text>
-          </Box>
-        )
-      })}
+      <Paper bg={colors['white-1']} p={'md'}>
+        <Title order={4}>Syarat dan Ketentuan</Title>
+        {allList.syaratketentuan.findMany.data?.map((item) => {
+          return (
+            <Box key={item.id}>
+              <Text dangerouslySetInnerHTML={{ __html: item.content }} />
+            </Box>
+          )
+        })}
+      </Paper>
+
+      <Paper bg={colors['white-1']} p={'md'}>
+        <Title order={4}>Dokumen Yang Diperlukan</Title>
+        {allList.dokumenjadwalkegiatan.findMany.data?.map((item) => {
+          return (
+            <Box key={item.id}>
+              <Text dangerouslySetInnerHTML={{ __html: item.content }} />
+            </Box>
+          )
+        })}
+      </Paper>
+
+      <Paper bg={colors['white-1']} p={'md'}>
+        <Title order={4}>Pendaftaran</Title>
+        {allList.pendaftaranjadwal.findMany.data?.map((item) => {
+          return (
+            <Box key={item.id}>
+              <Text>{item.name}</Text>
+              <Text>{item.tanggal}</Text>
+              <Text>{item.namaOrangtua}</Text>
+              <Text>{item.nomor}</Text>
+              <Text>{item.alamat}</Text>
+              <Text>{item.catatan}</Text>
+            </Box>
+          )
+        })}
+      </Paper>
     </Stack>
   )
 }

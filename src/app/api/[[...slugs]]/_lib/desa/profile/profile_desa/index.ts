@@ -1,16 +1,16 @@
 import Elysia, { t } from "elysia";
-import profileDesaFindMany from "./find-many";
-import lambangDesaUpdate from "./lambangDesa";
-import maskotDesaUpdate from "./maskotDesa";
-import profilePerbekelUpdate from "./profilePerbekel";
-import sejarahDesaUpdate from "./sejarahDesa";
-import visimisiDesaUpdate from "./visimisiDesa";
+import lambangDesaUpdate from "./lambangDesa/update";
+import maskotDesaUpdate from "./maskotDesa/update";
+import profilePerbekelUpdate from "../profilePerbekel/update";
+import sejarahDesaUpdate from "./sejarah/update";
+import visimisiDesaUpdate from "./visimisiDesa/update";
+import profileDesaFindById from "./find-by-id";
 
 const ProfileDesa = new Elysia({
     prefix: "/profile",
     tags: ["Desa/Profile"]
 })
-.get("/find-many", profileDesaFindMany)
+.get("/find-by-id", profileDesaFindById)
 .post("/profilePerbekel/update", profilePerbekelUpdate, {
     body: t.Object({
         id: t.String(),
@@ -27,7 +27,7 @@ const ProfileDesa = new Elysia({
         misi: t.String(),
     })
 })
-.post("/sejarahDesa/update", sejarahDesaUpdate, {
+.post("/sejarah/update", sejarahDesaUpdate, {
     body: t.Object({
         id: t.String(),
         sejarah: t.String(),

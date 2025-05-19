@@ -1,5 +1,5 @@
 'use client'
-import { Box, Button, Center, SimpleGrid, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title } from '@mantine/core';
+import { Box, Button, Center, Group, Paper, SimpleGrid, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title } from '@mantine/core';
 import IntoductionUI from './introduction/page';
 import SymptomUI from './symptom/page';
 import PreventionUI from './prevention/page';
@@ -39,19 +39,25 @@ function ArtikelKesehatan() {
         base: 1, md: 2
       }}>
         <Box >
-          <Title order={3}>Artikel Kesehatan</Title>
-          <IntoductionUI />
-          <SymptomUI />
-          <PreventionUI />
-          <FirstAidUI />
-          <MythFactUI />
-          <DoctorSignUI />
-          <Button mt={10} onClick={submitAllForms}>Submit</Button>
+          <Stack gap={"xs"}>
+            <Title order={4}>Artikel Kesehatan</Title>
+            <IntoductionUI />
+            <SymptomUI />
+            <PreventionUI />
+            <FirstAidUI />
+            <MythFactUI />
+            <DoctorSignUI />
+            <Group>
+              <Button bg={colors['blue-button']} mt={10} onClick={submitAllForms}>Submit</Button>
+            </Group>
+          </Stack>
         </Box>
 
         <Box>
-          <Title order={3}>List Artikel Kesehatan</Title>
-          <AllList />
+          <Stack gap={"xs"}>
+            <Title order={4}>Data Artikel Kesehatan</Title>
+            <AllList />
+          </Stack>
         </Box>
       </SimpleGrid>
     </Stack>
@@ -78,71 +84,88 @@ function AllList() {
   ) return <Stack>
     {Array.from({ length: 10 }).map((v, k) => <Skeleton key={k} h={40} />)}
   </Stack>
-  return <Stack>
-    <Title order={4}>Intoduction</Title>
-    {listState.introduction.findMany.data?.map((item) => (
-      <Box key={item.id}>
-        <Text dangerouslySetInnerHTML={{ __html: item.content }}></Text>
-      </Box>
-    ))}
+  return <Stack gap={"xs"}>
+    {/* Introduction */}
+    <Paper bg={colors['white-1']} p={'md'}>
+      <Title order={4}>Pendahuluan</Title>
+      {listState.introduction.findMany.data?.map((item) => (
+        <Box key={item.id}>
+          <Text dangerouslySetInnerHTML={{ __html: item.content }}></Text>
+        </Box>
+      ))}
+    </Paper>
     {/* Symptom */}
-    {listState.symptom.findMany.data?.map((item) => (
-      <Box key={item.id}>
-        <Title order={4}>{item.title}</Title>
-        <Text dangerouslySetInnerHTML={{ __html: item.content }}></Text>
-      </Box>
-    ))}
+    <Paper bg={colors['white-1']} p={'md'}>
+      <Title order={4}>Gejala Penyakit</Title>
+      {listState.symptom.findMany.data?.map((item) => (
+        <Box key={item.id}>
+          <Title order={4}>{item.title}</Title>
+          <Text dangerouslySetInnerHTML={{ __html: item.content }}></Text>
+        </Box>
+      ))}
+    </Paper>
     {/* Prevention */}
-    {listState.prevention.findMany.data?.map((item) => (
-      <Box key={item.id}>
-        <Title order={4}>{item.title}</Title>
-        <Text dangerouslySetInnerHTML={{ __html: item.content }}></Text>
-      </Box>
-    ))}
+    <Paper bg={colors['white-1']} p={'md'}>
+    <Title order={4}>Pencegahan Penyakit</Title>
+      {listState.prevention.findMany.data?.map((item) => (
+        <Box key={item.id}>
+          <Title order={4}>{item.title}</Title>
+          <Text dangerouslySetInnerHTML={{ __html: item.content }}></Text>
+        </Box>
+      ))}
+    </Paper>
     {/* First Aid */}
-    {listState.firstAid.findMany.data?.map((item) => (
-      <Box key={item.id}>
-        <Title order={4}>{item.title}</Title>
-        <Text dangerouslySetInnerHTML={{ __html: item.content }}></Text>
-      </Box>
-    ))}
+    <Paper bg={colors['white-1']} p={'md'}>
+    <Title order={4}>Pertolongan Pertama</Title>
+      {listState.firstAid.findMany.data?.map((item) => (
+        <Box key={item.id}>
+          <Title order={4}>{item.title}</Title>
+          <Text dangerouslySetInnerHTML={{ __html: item.content }}></Text>
+        </Box>
+      ))}
+    </Paper>
     {/* Myth Fact */}
-    {listState.mythFact.findMany.data?.map((item) => (
-      <Box key={item.id}>
-        <Title order={4}>{item.title}</Title>
-        <Table
-          striped
-          highlightOnHover
-          withTableBorder
-          withColumnBorders
-          bg={colors['white-1']}
-        >
-          <TableThead >
-            <TableTr >
-              <TableTh >
-                <Center>Mitos</Center>
-              </TableTh>
-              <TableTh >
-                <Center>Fakta</Center>
-              </TableTh>
-            </TableTr>
-          </TableThead>
-          <TableTbody >
-            <TableTr>
-              <TableTd ta="center">{item.mitos}</TableTd>
-              <TableTd ta="center">{item.fakta}</TableTd>
-            </TableTr>
-          </TableTbody>
-        </Table>
-      </Box>
-    ))}
+    <Paper bg={colors['white-1']} p={'md'}>
+    <Title order={4}>Mitos vs Fakta</Title>
+      {listState.mythFact.findMany.data?.map((item) => (
+        <Box key={item.id}>
+          <Title order={4}>{item.title}</Title>
+          <Table
+            striped
+            highlightOnHover
+            withTableBorder
+            withColumnBorders
+            bg={colors['white-1']}
+          >
+            <TableThead >
+              <TableTr >
+                <TableTh >
+                  <Center>Mitos</Center>
+                </TableTh>
+                <TableTh >
+                  <Center>Fakta</Center>
+                </TableTh>
+              </TableTr>
+            </TableThead>
+            <TableTbody >
+              <TableTr>
+                <TableTd ta="center">{item.mitos}</TableTd>
+                <TableTd ta="center">{item.fakta}</TableTd>
+              </TableTr>
+            </TableTbody>
+          </Table>
+        </Box>
+      ))}
+    </Paper>
     {/* Doctor Sign */}
-    <Title order={4}>Kapan Harus Ke Dokter?</Title>
-    {listState.doctorSign.findMany.data?.map((item) => (
-      <Box key={item.id}>
-        <Text dangerouslySetInnerHTML={{ __html: item.content }}/>
-      </Box>
-    ))}
+    <Paper bg={colors['white-1']} p={'md'}>
+      <Title order={4}>Kapan Harus Ke Dokter?</Title>
+      {listState.doctorSign.findMany.data?.map((item) => (
+        <Box key={item.id}>
+          <Text dangerouslySetInnerHTML={{ __html: item.content }} />
+        </Box>
+      ))}
+    </Paper>
   </Stack>
 }
 

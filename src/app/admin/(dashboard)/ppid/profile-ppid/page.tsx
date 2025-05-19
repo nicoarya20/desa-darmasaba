@@ -9,6 +9,8 @@ import { useProxy } from 'valtio/utils';
 import stateProfilePPID from '../../_state/ppid/profile_ppid/profile_PPID';
 import { useShallowEffect } from '@mantine/hooks';
 import ProfileList from './listPage';
+import { useState } from 'react';
+import { toast } from 'react-toastify';
 
 
 function Page() {
@@ -23,14 +25,16 @@ function Page() {
 }
 
 function ProfileCreate() {
+  const [isLoading, setIsLoading] = useState(false)
   const allState = useProxy(stateProfilePPID)
-  
+
   // Initialize data if it doesn't exist
   useShallowEffect(() => {
-    if (!allState.findById.data) {
+    if (!allState.findById.data && isLoading) {
       allState.findById.initialize()
+      setIsLoading(false)
     }
-  }, [])
+  }, [isLoading])
 
   const submit = () => {
     if (
@@ -41,6 +45,12 @@ function ProfileCreate() {
       allState.findById.data?.unggulan
     ) {
       allState.update.save(allState.findById.data)
+      setIsLoading(true)
+      toast.success("success")
+      console.log("[SUBMIT SUCCESS]", JSON.stringify(allState.findById.data, null, 2))
+      allState.findById.initialize()
+    } else {
+      toast.error("error")
     }
   }
 
@@ -63,8 +73,8 @@ function ProfileCreate() {
         <PengalamanOrganisasi />
         <ProgramKerjaUnggulan />
         <Group>
-          <Button 
-            bg={colors['blue-button']} 
+          <Button
+            bg={colors['blue-button']}
             onClick={submit}
             loading={allState.update.loading}
           >

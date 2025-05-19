@@ -210,32 +210,33 @@ model GrafikBerdasarkanUmur {
 // ========================================= MENU DESA ========================================= //
 // ========================================= PROFILE DESA ========================================= //
 model ProfileDesa {
-id String   @id @default(cuid())
-sejarah String @db.Text
-visi String @db.Text
-misi String @db.Text
-lambang String @db.Text
-maskot String @db.Text
-ProfilPerbekel ProfilPerbekel? @relation(fields: [profilPerbekelId], references: [id])
-profilPerbekelId String?
-createdAt DateTime @default(now())
-updatedAt DateTime @updatedAt
-deletedAt DateTime @default(now())
-isActive Boolean @default(true)
-} 
+  id               String          @id @default(cuid())
+  sejarah          String          @db.Text
+  visi             String          @db.Text
+  misi             String          @db.Text
+  lambang          String          @db.Text
+  maskot           String          @db.Text
+  ProfilPerbekel   ProfilPerbekel? @relation(fields: [profilPerbekelId], references: [id])
+  profilPerbekelId String?
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  deletedAt        DateTime        @default(now())
+  isActive         Boolean         @default(true)
+}
 
 model ProfilPerbekel {
-id String   @id @default(cuid())
-biodata String @db.Text
-pengalaman String @db.Text
-pengalamanOrganisasi String @db.Text
-programUnggulan String @db.Text
-ProfileDesa ProfileDesa[]
-createdAt DateTime @default(now())
-updatedAt DateTime @updatedAt
-deletedAt DateTime @default(now())
-isActive Boolean @default(true)
+  id                   String        @id @default(cuid())
+  biodata              String        @db.Text
+  pengalaman           String        @db.Text
+  pengalamanOrganisasi String        @db.Text
+  programUnggulan      String        @db.Text
+  ProfileDesa          ProfileDesa[]
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime      @updatedAt
+  deletedAt            DateTime      @default(now())
+  isActive             Boolean       @default(true)
 }
+
 // ========================================= BERITA ========================================= //
 model Berita {
   id               String          @id @default(cuid())
@@ -580,4 +581,19 @@ model DoctorSign {
   updatedAt DateTime @updatedAt
   deletedAt DateTime @default(now())
   isActive  Boolean  @default(true)
+}
+
+// === BARU
+
+model FileStorage {
+  id        String    @id @default(cuid())
+  name      String    @unique
+  realName  String
+  path      String
+  mimeType  String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime? // nullable agar bisa menandakan belum dihapus
+  isActive  Boolean   @default(true)
+  link      String
 }

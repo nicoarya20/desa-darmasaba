@@ -6,11 +6,16 @@ import caraMemperolehSalinanInformasi from './data/list-caraMemperolehSalinanInf
 import jenisInformasiDiminta from './data/list-jenisInfromasi.json'
 import layanan from './data/list-layanan.json'
 import potensi from './data/list-potensi.json'
-import profilePPID from './data/ppid/profile-ppid/profilePPid.json'
 import visiMisiPPID from './data/ppid/visi-misi-ppid/visimisiPPID.json'
 import dasarHukumPPID from './data/ppid/dasar-hukum-ppid/dasarhukumPPID.json'
 import profileDesa from './data/desa/profile/profile_desa.json'
 import profilePerbekel from './data/desa/profile/profil_perbekel.json'
+import profilePPID from './data/ppid/profile-ppid/profilePPid.json'
+import path from 'path'
+import fs from 'fs'
+import { mkdir, writeFile } from 'fs/promises'
+import { v4 as uuid } from 'uuid'
+
 (async () => {
     for (const l of layanan) {
         await prisma.layanan.upsert({
@@ -121,31 +126,57 @@ import profilePerbekel from './data/desa/profile/profil_perbekel.json'
     }
     console.log("cara memperoleh salinan informasi success ...")
 
-    for (const c of profilePPID) {
-        await prisma.profilePPID.upsert({
-            where: {
-                id: c.id
-            },
+    const seedProfilePPID = async () => {
+        const targetDir = path.resolve("public", "assets", "images", "ppid", "profile-ppid")
+        await mkdir(targetDir, { recursive: true })
+      
+        for (const c of profilePPID) {
+          let finalImageUrl = c.imageUrl
+      
+          // kalau imageUrl diawali dengan "/assets/images", artinya kita harus copy file dari seed-images
+          if (c.imageUrl.startsWith("/assets/images/")) {
+            const filename = path.basename(c.imageUrl) // misal "perbekel.png"
+            const seedImagePath = path.resolve("prisma", "seed-images", filename)
+      
+            // Buat nama baru yang unik agar tidak bentrok
+            const targetFilename = `${uuid()}_${filename}`
+            const targetPath = path.join(targetDir, targetFilename)
+      
+            // Salin file dari prisma/seed-images ke public/
+            const buffer = fs.readFileSync(seedImagePath)
+            await writeFile(targetPath, buffer)
+      
+            finalImageUrl = `/assets/images/ppid/profile-ppid/${targetFilename}`
+          }
+      
+          // Upsert ke database
+          await prisma.profilePPID.upsert({
+            where: { id: c.id },
             update: {
-                name: c.name,
-                biodata: c.biodata,
-                riwayat: c.riwayat,
-                pengalaman: c.pengalaman,
-                unggulan: c.unggulan,
-                imageUrl: c.imageUrl
+              name: c.name,
+              biodata: c.biodata,
+              riwayat: c.riwayat,
+              pengalaman: c.pengalaman,
+              unggulan: c.unggulan,
+              imageUrl: finalImageUrl,
             },
             create: {
-                id: c.id,
-                name: c.name,
-                biodata: c.biodata,
-                riwayat: c.riwayat,
-                pengalaman: c.pengalaman,
-                unggulan: c.unggulan,
-                imageUrl: c.imageUrl
-            }
-        })
-    }
-    console.log("profile PPID success ...")
+              id: c.id,
+              name: c.name,
+              biodata: c.biodata,
+              riwayat: c.riwayat,
+              pengalaman: c.pengalaman,
+              unggulan: c.unggulan,
+              imageUrl: finalImageUrl,
+            },
+          })
+        }
+      
+        console.log("✅ profilePPID seeded from JSON with image copying")
+      }
+      
+      await seedProfilePPID()
+
     
     for (const v of visiMisiPPID) {
         await prisma.visiMisiPPID.upsert({
