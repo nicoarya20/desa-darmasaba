@@ -19,7 +19,7 @@ function Page() {
       <Paper bg={colors['white-1']} p={'md'}>
         <Stack gap={"xs"}>
           <Title order={3}>Permohonan Informasi Publik</Title>
-          <Box p={"xl"}>
+          <Box>
             <Table striped withRowBorders withColumnBorders withTableBorder>
               <TableThead>
                 <TableTr>
