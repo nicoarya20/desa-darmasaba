@@ -9,14 +9,14 @@ function Page() {
   return (
     <Box>
      <Stack gap={'xs'}>
-      <Title order={3}>Wabah Penyakit</Title>
+      <Title order={3}>Info Wabah/Penyakit</Title>
       <Tabs defaultValue="create" color={colors['blue-button']} variant='pills'>
         <TabsList mb={10} bg={colors['BG-trans']} p={'xs'}>
           <TabsTab value="create" >
-            Tambah Wabah Penyakit
+            Tambah Info Wabah/Penyakit
           </TabsTab>
           <TabsTab value="list" >
-            List Wabah Penyakit
+            List Info Wabah/Penyakit
           </TabsTab>
         </TabsList>
 

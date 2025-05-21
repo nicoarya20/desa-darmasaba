@@ -8,6 +8,7 @@ import TextAlign from '@tiptap/extension-text-align';
 import Underline from '@tiptap/extension-underline';
 import { useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import { useEffect } from 'react';
 
 
 export function PPIDTextEditor({ onSubmit, onChange, showSubmit = true, initialContent = '', }: { 
@@ -31,6 +32,12 @@ export function PPIDTextEditor({ onSubmit, onChange, showSubmit = true, initialC
       onChange(editor.getHTML())
     }
   });
+
+  useEffect(() => {
+    if (editor && initialContent !== editor.getHTML()) {
+      editor.commands.setContent(initialContent || '<p></p>');
+    }
+  }, [initialContent, editor]);
 
   return (
     <Stack>
