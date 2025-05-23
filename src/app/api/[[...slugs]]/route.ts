@@ -18,20 +18,14 @@ import uplImg from "./_lib/upl-img";
 import { uplImgSingle } from "./_lib/upl-img-single";
 import FileStorage from "./_lib/fileStorage";
 
+
 const ROOT = process.cwd();
 
 if (!process.env.WIBU_UPLOAD_DIR)
   throw new Error("WIBU_UPLOAD_DIR is not defined");
 
 const UPLOAD_DIR = path.join(ROOT, process.env.WIBU_UPLOAD_DIR);
-const UPLOAD_DIR_IMAGE = path.join(
-  UPLOAD_DIR,
-  "public",
-  "assets",
-  "images",
-  "ppid",
-  "profile-ppid"
-);
+const UPLOAD_DIR_IMAGE = path.join(UPLOAD_DIR, "image");
 
 // create uploads dir
 fs.mkdir(UPLOAD_DIR, {
@@ -73,8 +67,8 @@ const ApiServer = new Elysia()
   .use(swagger({ path: "/api/docs" }))
   .use(
     staticPlugin({
-      prefix: "/", // biar bisa akses dari root URL
-      assets: "./public",
+      assets: process.env.WIBU_UPLOAD_DIR || "./uploads",
+      prefix: "/uploads",
     })
   )
   .use(cors(corsConfig))
@@ -93,116 +87,116 @@ const ApiServer = new Elysia()
   })
   .group("/api", (app) =>
     app
-      .get("/layanan", layanan)
-      .get("/potensi", getPotensi)
-      .get(
-        "/img/:name",
-        ({ params, query }) => {
-          return img({
-            name: params.name,
-            UPLOAD_DIR_IMAGE,
-            ROOT,
-            size: query.size,
-          });
-        },
-        {
-          params: t.Object({
-            name: t.String(),
-          }),
-          query: t.Optional(
-            t.Object({
-              size: t.Optional(t.Number()),
-            })
-          ),
-        }
-      )
-      .delete(
-        "/img/:name",
-        ({ params }) => {
-          return imgDel({
-            name: params.name,
-            UPLOAD_DIR_IMAGE,
-          });
-        },
-        {
-          params: t.Object({
-            name: t.String(),
-          }),
-        }
-      )
-      .get(
-        "/imgs",
-        ({ query }) => {
-          return imgs({
-            search: query.search,
-            page: query.page,
-            count: query.count,
-            UPLOAD_DIR_IMAGE,
-          });
-        },
-        {
-          query: t.Optional(
-            t.Object({
-              page: t.Number({ default: 1 }),
-              count: t.Number({ default: 10 }),
-              search: t.String({ default: "" }),
-            })
-          ),
-        }
-      )
-      .post(
-        "/upl-img",
-        ({ body }) => {
-          console.log(body.title);
-          return uplImg({ files: body.files, UPLOAD_DIR_IMAGE });
-        },
-        {
-          body: t.Object({
-            title: t.String(),
-            files: t.Files({ multiple: true }),
-          }),
-        }
-      )
-      .post(
-        "/upl-img-single",
-        ({ body }) => {
-          return uplImgSingle({
-            fileName: body.name,
-            file: body.file,
-            UPLOAD_DIR_IMAGE,
-          });
-        },
-        {
-          body: t.Object({
-            name: t.String(),
-            file: t.File(),
-          }),
-        }
-      )
-      .post(
-        "/upl-csv-single",
-        ({ body }) => {
-          return uplCsvSingle({ fileName: body.name, file: body.file });
-        },
-        {
-          body: t.Object({
-            name: t.String(),
-            file: t.File(),
-          }),
-        }
-      )
-      .post(
-        "/upl-csv",
-        ({ body }) => {
-          return uplCsv({ files: body.files });
-        },
-        {
-          body: t.Object({
-            files: t.Files(),
-          }),
-        }
-      )
-  );
+  .get("/layanan", layanan)
+  .get("/potensi", getPotensi)
+  .get(
+    "/img/:name",
+    ({ params, query }) => {
+      return img({
+        name: params.name,
+        UPLOAD_DIR_IMAGE,
+        ROOT,
+        size: query.size,
+      });
+    },
+    {
+      params: t.Object({
+        name: t.String(),
+      }),
+      query: t.Optional(
+        t.Object({
+          size: t.Optional(t.Number()),
+        })
+      ),
+    }
+  )
+  .delete(
+    "/img/:name",
+    ({ params }) => {
+      return imgDel({
+        name: params.name,
+        UPLOAD_DIR_IMAGE,
+      });
+    },
+    {
+      params: t.Object({
+        name: t.String(),
+      }),
+    }
+  )
+  .get(
+    "/imgs",
+    ({ query }) => {
+      return imgs({
+        search: query.search,
+        page: query.page,
+        count: query.count,
+        UPLOAD_DIR_IMAGE,
+      });
+    },
+    {
+      query: t.Optional(
+        t.Object({
+          page: t.Number({ default: 1 }),
+          count: t.Number({ default: 10 }),
+          search: t.String({ default: "" }),
+        })
+      ),
+    }
+  )
+  .post(
+    "/upl-img",
+    ({ body }) => {
+      console.log(body.title);
+      return uplImg({ files: body.files, UPLOAD_DIR_IMAGE });
+    },
+    {
+      body: t.Object({
+        title: t.String(),
+        files: t.Files({ multiple: true }),
+      }),
+    }
+  )
+  .post(
+    "/upl-img-single",
+    ({ body }) => {
+      return uplImgSingle({
+        fileName: body.name,
+        file: body.file,
+        UPLOAD_DIR_IMAGE,
+      });
+    },
+    {
+      body: t.Object({
+        name: t.String(),
+        file: t.File(),
+      }),
+    }
+  )
+  .post(
+    "/upl-csv-single",
+    ({ body }) => {
+      return uplCsvSingle({ fileName: body.name, file: body.file });
+    },
+    {
+      body: t.Object({
+        name: t.String(),
+        file: t.File(),
+      }),
+    }
+  )
+  .post(
+    "/upl-csv",
+    ({ body }) => {
+      return uplCsv({ files: body.files });
+    },
+    {
+      body: t.Object({
+        files: t.Files(),
+      }),
+    }
+  )
+);
 
 export const GET = ApiServer.handle;
 export const POST = ApiServer.handle;

@@ -44,6 +44,7 @@ const fileStorageCreate = async (context: Context) => {
   const data = await prisma.fileStorage.create({
     data: {
       name: newName,
+      realName: file.name, // Add the original file name as realName
       path: rootPath,
       mimeType: file.type,
       link: `/api/fileStorage/findUnique/${newName}`,

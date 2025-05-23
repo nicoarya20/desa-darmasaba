@@ -593,7 +593,7 @@ model FileStorage {
   mimeType  String
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-  deletedAt DateTime? // nullable agar bisa menandakan belum dihapus
+  deletedAt DateTime? 
   isActive  Boolean   @default(true)
   link      String
 }
