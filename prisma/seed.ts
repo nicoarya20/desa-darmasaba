@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma";
 import categoryPengumuman from "./data/category-pengumuman.json";
-import katagoryBerita from "./data/katagory-berita.json";
+import kategoriBerita from "./data/kategori-berita.json";
 import caraMemperolehInformasi from "./data/list-caraMemperolehInformasi.json";
 import caraMemperolehSalinanInformasi from "./data/list-caraMemperolehSalinanInformasi.json";
 import jenisInformasiDiminta from "./data/list-jenisInfromasi.json";
@@ -49,8 +49,8 @@ import { v4 as uuid } from "uuid";
 
   console.log("potensi success ...");
 
-  for (const k of katagoryBerita) {
-    await prisma.katagoryBerita.upsert({
+  for (const k of kategoriBerita) {
+    await prisma.kategoriBerita.upsert({
       where: {
         name: k.name,
       },
@@ -63,7 +63,7 @@ import { v4 as uuid } from "uuid";
     });
   }
 
-  console.log("katagory berita success ...");
+  console.log("kategori berita success ...");
 
   for (const c of categoryPengumuman) {
     await prisma.categoryPengumuman.upsert({

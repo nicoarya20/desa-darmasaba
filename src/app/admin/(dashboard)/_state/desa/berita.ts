@@ -8,16 +8,16 @@ import { z } from "zod";
 const templateForm = z.object({
   judul: z.string().min(3, "Judul minimal 3 karakter"),
   deskripsi: z.string().min(3, "Deskripsi minimal 3 karakter"),
-  image: z.string().url().min(3, "Image minimal 3 karakter"),
   content: z.string().min(3, "Content minimal 3 karakter"),
-  katagoryBeritaId: z.string().nonempty(),
+  kategoriBeritaId: z.string().nonempty(),
+  imageId: z.string().nonempty(),
 });
 
 const category = proxy({
   findMany: {
     data: null as
       | null
-      | Prisma.KatagoryBeritaGetPayload<{ omit: { isActive: true } }>[],
+      | Prisma.KategoriBeritaGetPayload<{ omit: { isActive: true } }>[],
     async load() {
       const res = await ApiFetch.api.desa.berita.category["find-many"].get();
       if (res.status === 200) {
@@ -31,9 +31,9 @@ type BeritaForm = Prisma.BeritaGetPayload<{
   select: {
     judul: true;
     deskripsi: true;
-    image: true;
+    imageId: true;
     content: true;
-    katagoryBeritaId: true;
+    kategoriBeritaId: true;
   };
 }>;
 
@@ -42,8 +42,6 @@ const berita = proxy({
     form: {} as BeritaForm,
     loading: false,
     async create() {
-      berita.create.form.image =
-        "https://www.shutterstock.com/image-vector/lower-news-live-streaming-breaking-600nw-2535984111.jpg";
       const cek = templateForm.safeParse(berita.create.form);
       if (!cek.success) {
         const err = `[${cek.error.issues
@@ -71,7 +69,12 @@ const berita = proxy({
   },
   findMany: {
     data: null as
-      | Prisma.BeritaGetPayload<{ omit: { isActive: true } }>[]
+      | Prisma.BeritaGetPayload<{ 
+        include: {
+          image: true,
+          kategoriBerita: true
+        }
+      }>[]
       | null,
     async load() {
       const res = await ApiFetch.api.desa.berita["find-many"].get();
