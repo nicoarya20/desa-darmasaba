@@ -34,6 +34,7 @@ import { useEffect } from 'react';
         TextAlign.configure({ types: ['heading', 'paragraph'] }),
       ],
       content: '',
+      immediatelyRender: false
     });
   
     useEffect(() => {

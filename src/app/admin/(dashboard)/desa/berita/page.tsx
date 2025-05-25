@@ -1,16 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
-import { Box, Button, Center, FileInput, Group, Image, Paper, Select, SimpleGrid, Skeleton, Stack, Text, TextInput, Title } from '@mantine/core';
+import colors from '@/con/colors';
+import ApiFetch from '@/lib/api-fetch';
+import { ActionIcon, Box, Button, Center, FileInput, Flex, Image, Paper, Select, SimpleGrid, Skeleton, Stack, Text, TextInput, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { Prisma } from '@prisma/client';
-import { IconImageInPicture } from '@tabler/icons-react';
+import { IconEdit, IconImageInPicture, IconX } from '@tabler/icons-react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 import stateDashboardBerita from '../../_state/desa/berita';
 import { BeritaEditor } from './_com/BeritaEditor';
-import colors from '@/con/colors';
-import { useState } from 'react';
-import { toast } from 'react-toastify';
-import ApiFetch from '@/lib/api-fetch';
 
 function Page() {
   return (
@@ -175,32 +176,32 @@ function BeritaCreate() {
 
   return (
     <Box py={10}>
-      <Paper bg={colors["white-1"]} p={"md"} w={{base: "100%", md: "50%"}}>
+      <Paper bg={colors["white-1"]} p={"md"} w={{ base: "100%", md: "50%" }}>
         <Stack gap={"xs"}>
+          <TextInput
+            value={beritaState.berita.create.form.judul}
+            onChange={(val) => {
+              beritaState.berita.create.form.judul = val.target.value;
+            }}
+            label={<Text fz={"sm"} fw={"bold"}>Judul</Text>}
+            placeholder="masukkan judul"
+          />
           <SelectCategory
             onChange={(val) => {
               beritaState.berita.create.form.kategoriBeritaId = val.id;
             }}
           />
           <TextInput
-            value={beritaState.berita.create.form.judul}
-            onChange={(val) => {
-              beritaState.berita.create.form.judul = val.target.value;
-            }}
-            label={"Judul"}
-            placeholder="masukkan judul"
-          />
-          <TextInput
             value={beritaState.berita.create.form.deskripsi}
             onChange={(val) => {
               beritaState.berita.create.form.deskripsi = val.target.value;
             }}
-            label={"Deskripsi"}
+            label={<Text fz={"sm"} fw={"bold"}>Deskripsi</Text>}
             placeholder="masukkan deskripsi"
           />
 
           <FileInput
-            label="Upload Gambar"
+            label={<Text fz={"sm"} fw={"bold"}>Upload Gambar</Text>}
             value={file}
             onChange={async (e) => {
               if (!e) return;
@@ -218,12 +219,13 @@ function BeritaCreate() {
               <IconImageInPicture />
             </Center>
           )}
-
-          <BeritaEditor
-            showSubmit={false}
-            onEditorReady={(ed) => setEditorInstance(ed)}
-          />
-
+          <Box>
+            <Text fz={"sm"} fw={"bold"}>Konten</Text>
+            <BeritaEditor
+              showSubmit={false}
+              onEditorReady={(ed) => setEditorInstance(ed)}
+            />
+          </Box>
           <Button onClick={handleSubmit}>Simpan Berita</Button>
         </Stack>
       </Paper>
@@ -240,6 +242,10 @@ function BeritaList() {
     beritaState.berita.findMany.load()
   }, [])
 
+
+
+  const router = useRouter()
+
   if (!beritaState.berita.findMany.data) return <Stack py={10}>
     {Array.from({ length: 10 }).map((v, k) => <Skeleton key={k} h={40} />)}
   </Stack>
@@ -249,28 +255,41 @@ function BeritaList() {
         <Stack>
           <Text fz={"xl"} fw={"bold"}>List Berita</Text>
           <SimpleGrid cols={{ base: 1, md: 4 }}>
-          {beritaState.berita.findMany.data?.map((item) => (
-            <Paper key={item.id} bg={colors['BG-trans']} p={'md'}>
-            <Box >
-              <Text fw={"bold"} fz={"sm"}>
-                Kategori
-              </Text>
-              <Text>{item.kategoriBerita?.name}</Text>
-              <Text fw={"bold"} fz={"sm"}>
-                Judul
-              </Text>
-              <Text>{item.judul}</Text>
-              <Text lineClamp={1} fw={"bold"} fz={"sm"}>
-                Deskripsi
-              </Text>
-              <Text size='sm' lineClamp={2}>{item.deskripsi}</Text>
-              <Text fw={"bold"} fz={"sm"}>
-                Gambar
-              </Text>
-              <Image w={200} src={item.image?.link} alt="gambar" />
-            </Box>
-            </Paper>
-          ))}
+            {beritaState.berita.findMany.data?.map((item) => (
+              <Paper key={item.id} bg={colors['BG-trans']} p={'md'}>
+                <Box >
+                  <Flex justify="flex-end" mt={10}>
+                    <ActionIcon
+                      onClick={() => beritaState.berita.delete.byId(item.id)}
+                      disabled={beritaState.berita.delete.loading}
+                      color={colors['blue-button']} variant='transparent'>
+                      <IconX size={20} />
+                    </ActionIcon>
+                    <ActionIcon onClick={() => {
+                      router.push("/desa/berita/edit");
+                    }} color={colors['blue-button']} variant='transparent'>
+                      <IconEdit size={20} />
+                    </ActionIcon>
+                  </Flex>
+                  <Text fw={"bold"} fz={"sm"}>
+                    Kategori
+                  </Text>
+                  <Text>{item.kategoriBerita?.name}</Text>
+                  <Text fw={"bold"} fz={"sm"}>
+                    Judul
+                  </Text>
+                  <Text>{item.judul}</Text>
+                  <Text lineClamp={1} fw={"bold"} fz={"sm"}>
+                    Deskripsi
+                  </Text>
+                  <Text size='sm' lineClamp={2}>{item.deskripsi}</Text>
+                  <Text fw={"bold"} fz={"sm"}>
+                    Gambar
+                  </Text>
+                  <Image w={{ base: 100, md: 150 }} src={item.image?.link} alt="gambar" />
+                </Box>
+              </Paper>
+            ))}
           </SimpleGrid>
         </Stack>
       </Paper>
@@ -278,30 +297,71 @@ function BeritaList() {
   )
 }
 
-function SelectCategory({ onChange }: {
+function SelectCategory({
+  onChange,
+}: {
   onChange: (value: Prisma.KategoriBeritaGetPayload<{
     select: {
-      name: true,
-      id: true
-    }
-  }>) => void
+      name: true;
+      id: true;
+    };
+  }>) => void;
 }) {
-  const beritaState = useProxy(stateDashboardBerita)
-  useShallowEffect(() => {
-    beritaState.category.findMany.load()
-  }, [])
+  const categoryState = useProxy(stateDashboardBerita.category);
 
-  if (!beritaState.category.findMany.data) return <Skeleton h={40} />
-  return <Group>
-    <Select placeholder='pilih kategori' label={<Text fz={"sm"} fw={"bold"}>Pilih Kategori</Text>} data={beritaState.category.findMany.data.map((item) => ({
-      value: item.id,
-      label: item.name
-    }))} onChange={(v) => {
-      const data = beritaState.category.findMany.data?.find((item) => item.id === v)
-      if (!data) return
-      onChange(data)
-    }} />
-  </Group>
+  useShallowEffect(() => {
+    categoryState.findMany.load();
+  }, []);
+
+  if (!categoryState.findMany.data) {
+    return <Skeleton height={38} />;
+  }
+
+  return (
+    <Select
+      label={<Text fz={"sm"} fw={"bold"}>Kategori</Text>}
+      placeholder="Pilih kategori"
+      data={categoryState.findMany.data.map((item) => ({
+        label: item.name,
+        value: item.id,
+      }))}
+      onChange={(val) => {
+        const selected = categoryState.findMany.data?.find((item) => item.id === val);
+        if (selected) {
+          onChange(selected);
+        }
+      }}
+      searchable
+      nothingFoundMessage="Tidak ditemukan"
+    />
+  );
 }
+
+
+// function SelectCategory({ onChange }: {
+//   onChange: (value: Prisma.KategoriBeritaGetPayload<{
+//     select: {
+//       name: true,
+//       id: true
+//     }
+//   }>) => void
+// }) {
+//   const beritaState = useProxy(stateDashboardBerita)
+//   useShallowEffect(() => {
+//     beritaState.category.findMany.load()
+//   }, [])
+
+//   if (!beritaState.category.findMany.data) return <Skeleton h={40} />
+//   return <Group>
+//     <Select placeholder='pilih kategori' label={<Text fz={"sm"} fw={"bold"}>Pilih Kategori</Text>} data={beritaState.category.findMany.data.map((item) => ({
+//       value: item.id,
+//       label: item.name
+//     }))} onChange={(v) => {
+//       const data = beritaState.category.findMany.data?.find((item) => item.id === v)
+//       if (!data) return
+//       onChange(data)
+//     }} />
+//   </Group>
+// }
 
 export default Page;

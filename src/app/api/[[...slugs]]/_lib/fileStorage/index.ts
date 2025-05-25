@@ -2,6 +2,7 @@ import Elysia, { t } from "elysia";
 import fileStorageCreate from "./_lib/create";
 import fileStorageFindUnique from "./_lib/findUniq";
 import { fileStorageFindMany } from "./_lib/findMany";
+import fileStorageDelete from "./_lib/del";
 
 const FileStorage = new Elysia({
   prefix: "/api/fileStorage",
@@ -14,6 +15,7 @@ const FileStorage = new Elysia({
     }),
   })
   .get("/findUnique/:name", fileStorageFindUnique)
-  .get("/findMany", fileStorageFindMany);
+  .get("/findMany", fileStorageFindMany)
+  .delete("/delete/:id", fileStorageDelete);
 
 export default FileStorage;
