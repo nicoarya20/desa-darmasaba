@@ -2,7 +2,7 @@
 
 import stateFasilitasKesehatan from '@/app/admin/(dashboard)/_state/kesehatan/data_kesehatan_warga/fasilitasKesehatan';
 import colors from '@/con/colors';
-import { Box, Button, Center, SimpleGrid, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title } from '@mantine/core';
+import { Box, Button, Center, Paper, SimpleGrid, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { useProxy } from 'valtio/utils';
 import DokterDanTenagaMedis from './dokterdantenagamedis/page';
@@ -91,7 +91,7 @@ function FasilitasKesehatan() {
       }}>
         <Box>
           <Stack gap={'xs'}>
-            <Title order={3}>Fasilitas Kesehatan</Title>
+            <Title order={4}>Tambah Fasilitas Kesehatan</Title>
             {/* Informasi Umum */}
             <InformasiUmum />
             {/* Layanan Unggulan */}
@@ -110,7 +110,7 @@ function FasilitasKesehatan() {
 
         <Box>
           <Stack gap={"xs"}>
-            <Title order={3}>List Fasilitas Kesehatan</Title>
+            <Title order={4}>Data Fasilitas Kesehatan</Title>
             <AllList />
           </Stack>
         </Box>
@@ -141,100 +141,113 @@ function AllList() {
     {Array.from({ length: 10 }).map((v, k) => <Skeleton key={k} h={40} />)}
   </Stack>
   return <Stack>
-    <Title order={4}>Informasi Umum</Title>
-    {allListState.informasiumum.findMany.data?.map((item) => (
-      <Box key={item.id}>
+    <Paper bg={colors['white-1']} p={'md'}>
+      <Title order={4}>Informasi Umum</Title>
+      {allListState.informasiumum.findMany.data?.map((item) => (
+        <Box key={item.id}>
 
-        <Text>{item.fasilitas}</Text>
-        <Text>{item.alamat}</Text>
-        <Text>{item.jamOperasional}</Text>
-      </Box>
-    ))}
+          <Text>{item.fasilitas}</Text>
+          <Text>{item.alamat}</Text>
+          <Text>{item.jamOperasional}</Text>
+        </Box>
+      ))}
+    </Paper>
 
-    <Title order={4}>Layanan Unggulan</Title>
-    {allListState.layananunggulan.findMany.data?.map((item) => (
-      <Box key={item.id}>
-        <Text dangerouslySetInnerHTML={{ __html: item.content }} />
-      </Box>
-    ))}
+    <Paper bg={colors['white-1']} p={'md'}>
+      <Title order={4}>Layanan Unggulan</Title>
+      {allListState.layananunggulan.findMany.data?.map((item) => (
+        <Box key={item.id}>
+          <Text dangerouslySetInnerHTML={{ __html: item.content }} />
+        </Box>
+      ))}
+    </Paper>
 
 
-    <Title order={4}>Dokter & Tenaga Medis</Title>
-    
-    <Table
-      striped
-      highlightOnHover
-      withTableBorder
-      withColumnBorders
-      bg={colors['white-1']}
-    >
-      <TableThead >
-        <TableTr >
-          <TableTh >
-            <Center>Nama</Center>
-          </TableTh>
-          <TableTh >
-            <Center>Specialist</Center>
-          </TableTh>
-          <TableTh >
-            <Center>Jadwal</Center>
-          </TableTh>
-        </TableTr>
-      </TableThead>
-      <TableTbody >
-        {allListState.dokterdantenagamedis.findMany.data?.map((item) => (
-          <TableTr key={item.id}>
-            <TableTd ta="center">{item.name}</TableTd>
-            <TableTd ta="center">Specialist {item.specialist}</TableTd>
-            <TableTd ta="center">{item.jadwal}</TableTd>
+    <Paper bg={colors['white-1']} p={'md'}>
+      <Title order={4}>Dokter & Tenaga Medis</Title>
+
+      <Table
+        striped
+        highlightOnHover
+        withTableBorder
+        withColumnBorders
+        bg={colors['white-1']}
+      >
+        <TableThead >
+          <TableTr >
+            <TableTh >
+              <Center>Nama</Center>
+            </TableTh>
+            <TableTh >
+              <Center>Specialist</Center>
+            </TableTh>
+            <TableTh >
+              <Center>Jadwal</Center>
+            </TableTh>
           </TableTr>
-        ))}
-      </TableTbody>
-    </Table>
+        </TableThead>
+        <TableTbody >
+          {allListState.dokterdantenagamedis.findMany.data?.map((item) => (
+            <TableTr key={item.id}>
+              <TableTd ta="center">{item.name}</TableTd>
+              <TableTd ta="center">Specialist {item.specialist}</TableTd>
+              <TableTd ta="center">{item.jadwal}</TableTd>
+            </TableTr>
+          ))}
+        </TableTbody>
+      </Table>
+    </Paper>
 
-    <Title order={4}>Fasilitas Pendukung</Title>
-    {allListState.fasilitaspendukung.findMany.data?.map((item) => (
-      <Box key={item.id}>
-        <Text dangerouslySetInnerHTML={{ __html: item.content }} />
-      </Box>
-    ))}
+    <Paper bg={colors['white-1']} p={'md'}>
 
-    <Title order={4}>Tarif & Layanan</Title>
-    <Table
-      suppressHydrationWarning
-      striped
-      highlightOnHover
-      withTableBorder
-      withColumnBorders
-      bg={colors['white-1']}
-    >
-      <TableThead>
-        <TableTr>
-          <TableTh>
-            Layanan
-          </TableTh>
-          <TableTh>
-            Tarif
-          </TableTh>
-        </TableTr>
-      </TableThead>
-      <TableTbody>
-        {allListState.tarifdanlayanan.findMany.data?.map((item) => (
-          <TableTr key={item.id}>
-            <TableTd>{item.layanan}</TableTd>
-            <TableTd>Rp.{item.tarif}</TableTd>
+      <Title order={4}>Fasilitas Pendukung</Title>
+      {allListState.fasilitaspendukung.findMany.data?.map((item) => (
+        <Box key={item.id}>
+          <Text dangerouslySetInnerHTML={{ __html: item.content }} />
+        </Box>
+      ))}
+    </Paper>
+
+    <Paper bg={colors['white-1']} p={'md'}>
+      <Title order={4}>Tarif & Layanan</Title>
+      <Table
+        suppressHydrationWarning
+        striped
+        highlightOnHover
+        withTableBorder
+        withColumnBorders
+        bg={colors['white-1']}
+      >
+        <TableThead>
+          <TableTr>
+            <TableTh>
+              Layanan
+            </TableTh>
+            <TableTh>
+              Tarif
+            </TableTh>
           </TableTr>
-        ))}
-      </TableTbody>
-    </Table>
+        </TableThead>
+        <TableTbody>
+          {allListState.tarifdanlayanan.findMany.data?.map((item) => (
+            <TableTr key={item.id}>
+              <TableTd>{item.layanan}</TableTd>
+              <TableTd>Rp.{item.tarif}</TableTd>
+            </TableTr>
+          ))}
+        </TableTbody>
+      </Table>
+    </Paper>
 
-    <Title order={4}>Prosedur Pendaftaran</Title>
-    {allListState.prosedurpendaftaran.findMany.data?.map((item) => (
-      <Box key={item.id}>
-        <Text dangerouslySetInnerHTML={{__html: item.content}}/>
-      </Box>
-    ))}
+    <Paper bg={colors['white-1']} p={'md'}>
 
+      <Title order={4}>Prosedur Pendaftaran</Title>
+      {allListState.prosedurpendaftaran.findMany.data?.map((item) => (
+        <Box key={item.id}>
+          <Text dangerouslySetInnerHTML={{ __html: item.content }} />
+        </Box>
+      ))}
+    </Paper>
   </Stack>
 }
 

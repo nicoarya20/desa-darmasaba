@@ -47,23 +47,213 @@ model AppMenuChild {
   appMenuId String?
 }
 
+//========================================= MENU PPID ========================================= //
+// ========================================= VISI MISI PPID ========================================= //
+model VisiMisiPPID {
+  id        String   @id @default(cuid())
+  visi      String   @db.Text
+  misi      String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive  Boolean  @default(true)
+}
+
+// ========================================= DASAR HUKUM PPID ========================================= //
+model DasarHukumPPID {
+  id        String   @id @default(cuid())
+  judul     String   @db.Text
+  content   String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive  Boolean  @default(true)
+}
+
+// ========================================= PROFILE PPID ========================================= //
+model ProfilePPID {
+  id         String   @id @default(cuid())
+  name       String   @db.Text
+  biodata    String   @db.Text
+  riwayat    String   @db.Text
+  pengalaman String   @db.Text
+  unggulan   String   @db.Text
+  imageUrl   String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  deletedAt  DateTime @default(now())
+  isActive   Boolean  @default(true)
+}
+
+// ========================================= DAFTAR INFORMASI PUBLIK ========================================= //
+model DaftarInformasiPublik {
+  id             String   @id @default(cuid())
+  nomor          Int      @default(autoincrement())
+  jenisInformasi String
+  deskripsi      String
+  tanggal        String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  deletedAt      DateTime @default(now())
+  isActive       Boolean  @default(true)
+}
+
+//=========================================PERMOHONAN INFORMASI PUBLIK========================= //
+model PermohonanInformasiPublik {
+  id                               String                          @id @default(cuid())
+  nomor                            Int                             @default(autoincrement())
+  name                             String
+  nik                              String
+  notelp                           String
+  alamat                           String
+  email                            String
+  jenisInformasiDiminta            JenisInformasiDiminta?          @relation(fields: [jenisInformasiDimintaId], references: [id])
+  jenisInformasiDimintaId          String?
+  caraMemperolehInformasi          CaraMemperolehInformasi?        @relation(fields: [caraMemperolehInformasiId], references: [id])
+  caraMemperolehInformasiId        String?
+  caraMemperolehSalinanInformasi   CaraMemperolehSalinanInformasi? @relation(fields: [caraMemperolehSalinanInformasiId], references: [id])
+  caraMemperolehSalinanInformasiId String?
+  createdAt                        DateTime                        @default(now())
+  updatedAt                        DateTime                        @updatedAt
+  deletedAt                        DateTime                        @default(now())
+  isActive                         Boolean                         @default(true)
+}
+
+model JenisInformasiDiminta {
+  id                        String                      @id @default(cuid())
+  name                      String                      @unique
+  createdAt                 DateTime                    @default(now())
+  updatedAt                 DateTime                    @updatedAt
+  deletedAt                 DateTime                    @default(now())
+  isActive                  Boolean                     @default(true)
+  PermohonanInformasiPublik PermohonanInformasiPublik[]
+}
+
+model CaraMemperolehInformasi {
+  id                        String                      @id @default(cuid())
+  name                      String                      @unique
+  createdAt                 DateTime                    @default(now())
+  updatedAt                 DateTime                    @updatedAt
+  deletedAt                 DateTime                    @default(now())
+  isActive                  Boolean                     @default(true)
+  PermohonanInformasiPublik PermohonanInformasiPublik[]
+}
+
+model CaraMemperolehSalinanInformasi {
+  id                        String                      @id @default(cuid())
+  name                      String                      @unique
+  createdAt                 DateTime                    @default(now())
+  updatedAt                 DateTime                    @updatedAt
+  deletedAt                 DateTime                    @default(now())
+  isActive                  Boolean                     @default(true)
+  PermohonanInformasiPublik PermohonanInformasiPublik[]
+}
+
+//=========================================PERMOHONAN INFORMASI KEBERATAN PUBLIK========================= //
+model FormulirPermohonanKeberatan {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  notelp    String
+  alasan    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive  Boolean  @default(true)
+}
+
+// ========================================= IKM ========================================= //
+model IndeksKepuasanMasyarakat {
+  id        Int      @id @default(autoincrement())
+  label     String
+  kepuasan  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive  Boolean  @default(true)
+}
+
+model GrafikBerdasarkanJenisKelamin {
+  id        String   @id @default(cuid())
+  perempuan String
+  laki      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive  Boolean  @default(true)
+}
+
+model GrafikBerdasarkanResponden {
+  id         String   @id @default(cuid())
+  sangatbaik String
+  baik       String
+  kurangbaik String
+  tidakbaik  String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  deletedAt  DateTime @default(now())
+  isActive   Boolean  @default(true)
+}
+
+model GrafikBerdasarkanUmur {
+  id        String   @id @default(cuid())
+  remaja    String
+  dewasa    String
+  orangtua  String
+  lansia    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive  Boolean  @default(true)
+}
+
 // ========================================= MENU DESA ========================================= //
+// ========================================= PROFILE DESA ========================================= //
+model ProfileDesa {
+  id               String          @id @default(cuid())
+  sejarah          String          @db.Text
+  visi             String          @db.Text
+  misi             String          @db.Text
+  lambang          String          @db.Text
+  maskot           String          @db.Text
+  ProfilPerbekel   ProfilPerbekel? @relation(fields: [profilPerbekelId], references: [id])
+  profilPerbekelId String?
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  deletedAt        DateTime        @default(now())
+  isActive         Boolean         @default(true)
+}
+
+model ProfilPerbekel {
+  id                   String        @id @default(cuid())
+  biodata              String        @db.Text
+  pengalaman           String        @db.Text
+  pengalamanOrganisasi String        @db.Text
+  programUnggulan      String        @db.Text
+  ProfileDesa          ProfileDesa[]
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime      @updatedAt
+  deletedAt            DateTime      @default(now())
+  isActive             Boolean       @default(true)
+}
+
 // ========================================= BERITA ========================================= //
 model Berita {
   id               String          @id @default(cuid())
   judul            String
   deskripsi        String
-  image            String
+  image            FileStorage     @relation(fields: [imageId], references: [id])
+  imageId          String
   content          String          @db.Text
   createdAt        DateTime        @default(now())
   updatedAt        DateTime        @updatedAt
   deletedAt        DateTime        @default(now())
   isActive         Boolean         @default(true)
-  KatagoryBerita   KatagoryBerita? @relation(fields: [katagoryBeritaId], references: [id])
-  katagoryBeritaId String?
+  kategoriBerita   KategoriBerita? @relation(fields: [kategoriBeritaId], references: [id])
+  kategoriBeritaId String?
 }
 
-model KatagoryBerita {
+model KategoriBerita {
   id        String   @id @default(cuid())
   name      String   @unique
   beritas   Berita[]
@@ -322,4 +512,90 @@ model GrafikKepuasan {
   updatedAt DateTime @updatedAt
   deletedAt DateTime @default(now())
   isActive  Boolean  @default(true)
+}
+
+// ========================================= ARTIKEL KESEHATAN ========================================= //
+model ArtikelKesehatan {
+  id        Int      @id @default(autoincrement())
+  title     String
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive  Boolean  @default(true)
+}
+
+model Introduction {
+  id        Int      @id @default(autoincrement())
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive  Boolean  @default(true)
+}
+
+model Symptom {
+  id        Int      @id @default(autoincrement())
+  title     String
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive  Boolean  @default(true)
+}
+
+model Prevention {
+  id        Int      @id @default(autoincrement())
+  title     String
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive  Boolean  @default(true)
+}
+
+model FirstAid {
+  id        Int      @id @default(autoincrement())
+  title     String
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive  Boolean  @default(true)
+}
+
+model MythVsFact {
+  id        Int      @id @default(autoincrement())
+  title     String
+  mitos     String
+  fakta     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive  Boolean  @default(true)
+}
+
+model DoctorSign {
+  id        Int      @id @default(autoincrement())
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive  Boolean  @default(true)
+}
+
+// === BARU
+
+model FileStorage {
+  id        String    @id @default(cuid())
+  name      String    @unique
+  realName  String
+  path      String
+  mimeType  String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime? 
+  isActive  Boolean   @default(true)
+  link      String
+  Berita Berita[]
 }

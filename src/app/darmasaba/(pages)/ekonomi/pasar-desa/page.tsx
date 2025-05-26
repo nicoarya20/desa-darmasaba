@@ -1,11 +1,11 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Combobox, Flex, Group, Image, InputBase, InputPlaceholder, Paper, SimpleGrid, Stack, Text, TextInput, useCombobox } from '@mantine/core';
-import { IconArrowDown, IconMapPinFilled, IconSearch, IconShoppingCartFilled, IconStarFilled } from '@tabler/icons-react';
+import { Box, Combobox, Flex, Image, InputBase, InputPlaceholder, Paper, SimpleGrid, Stack, Text, TextInput, useCombobox } from '@mantine/core';
+import { IconMapPinFilled, IconSearch, IconShoppingCartFilled, IconStarFilled } from '@tabler/icons-react';
+import { motion } from 'motion/react';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import BackButton from '../../desa/layanan/_com/BackButto';
-import { useRouter } from 'next/navigation';
-import { motion } from 'motion/react';
 
 const groceries = [
   'Makanan',
@@ -170,9 +170,6 @@ function Page() {
               )
             })}
           </SimpleGrid>
-          <Group justify='center'>
-            <Button bg={colors['blue-button']} rightSection={<IconArrowDown size={20} color={colors['white-1']} />} fz={'md'}>Lihat Produk Lainnya</Button>
-          </Group>
         </Stack>
       </Box>
     </Stack>

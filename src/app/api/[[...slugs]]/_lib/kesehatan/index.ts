@@ -13,6 +13,12 @@ import DokumenDiperlukan from "./data_kesehatan_warga/jadwal_kegiatan/dokumen_ya
 import PendaftaranJadwal from "./data_kesehatan_warga/jadwal_kegiatan/pendaftaran";
 import PersentaseKelahiranKematian from "./data_kesehatan_warga/persentase_kelahiran_kematian";
 import GrafikKepuasan from "./data_kesehatan_warga/grafik_kepuasan";
+import Introduction from "./data_kesehatan_warga/artikel_kesehatan/introduction";
+import Syptom from "./data_kesehatan_warga/artikel_kesehatan/syptom";
+import Prevention from "./data_kesehatan_warga/artikel_kesehatan/prevention";
+import FirstAid from "./data_kesehatan_warga/artikel_kesehatan/first_aid";
+import MythVsFact from "./data_kesehatan_warga/artikel_kesehatan/myth_vs_fact";
+import DoctorSign from "./data_kesehatan_warga/artikel_kesehatan/doctor_sign";
 
 
 const Kesehatan = new Elysia({
@@ -33,4 +39,10 @@ const Kesehatan = new Elysia({
 .use(PendaftaranJadwal)
 .use(PersentaseKelahiranKematian)
 .use(GrafikKepuasan)
+.use(Introduction)
+.use(Syptom)
+.use(Prevention)
+.use(FirstAid)
+.use(MythVsFact)
+.use(DoctorSign)
 export default Kesehatan;

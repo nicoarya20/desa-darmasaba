@@ -1,12 +1,15 @@
 import stateJadwalKegiatan from '@/app/admin/(dashboard)/_state/kesehatan/data_kesehatan_warga/jadwalKegiatan';
-import { Box, Text, TextInput } from '@mantine/core';
+import colors from '@/con/colors';
+import { Box, Paper, Stack, TextInput, Title } from '@mantine/core';
 import { useProxy } from 'valtio/utils';
 
 function InformasiKegiatan() {
   const informasiKegiatanState = useProxy(stateJadwalKegiatan.informasiKegiatan)
   return (
     <Box>
-      <Text pt={10} fw={"bold"}>Informasi Kegiatan</Text>
+     <Paper bg={colors['white-1']} p={'md'}>
+     <Stack gap={"xs"}>
+      <Title order={4}>Informasi Kegiatan</Title>
       <TextInput
         label="Nama Kegiatan"
         placeholder="Masukkan nama kegiatan"
@@ -35,6 +38,8 @@ function InformasiKegiatan() {
           informasiKegiatanState.create.form.lokasi = val.target.value
         }}
       />
+     </Stack>
+     </Paper>
     </Box>
   );
 }
