@@ -1,4 +1,5 @@
 // components/modal/ModalKonfirmasiHapus.tsx
+import colors from "@/con/colors"
 import { Modal, Text, Button, Flex } from "@mantine/core"
 
 interface ModalKonfirmasiHapusProps {
@@ -25,7 +26,7 @@ export function ModalKonfirmasiHapus({
     >
       <Text mb="md">{text}</Text>
       <Flex justify="flex-end" gap="sm">
-        <Button variant="default" onClick={onClose}>Batal</Button>
+        <Button style={{color: "white"}} bg={colors['blue-button']} variant="default" onClick={onClose}>Batal</Button>
         <Button color="red" onClick={onConfirm} loading={loading}>
           Yakin Hapus
         </Button>

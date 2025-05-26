@@ -86,7 +86,8 @@ type FormUpdate = Prisma.BeritaGetPayload<{
 
 
 async function beritaUpdate(context: Context) {
-    const id = context.params.id as string; // ambil dari URL
+  try {
+    const id = context.params?.id as string; // ambil dari URL
     const body = (await context.body) as Omit<FormUpdate, "id">;
   
     const {
@@ -98,24 +99,25 @@ async function beritaUpdate(context: Context) {
     } = body;
   
     if (!id) {
-      return {
-        status: 400,
-        body: "ID tidak boleh kosong",
-      };
+      return new Response(
+        JSON.stringify({ success: false, message: "ID tidak boleh kosong" }),
+        { status: 400, headers: { 'Content-Type': 'application/json' } }
+      );
     }
   
     const existing = await prisma.berita.findUnique({
       where: { id },
       include: {
         image: true,
+        kategoriBerita: true,
       },
     });
   
     if (!existing) {
-      return {
-        status: 404,
-        body: "Berita tidak ditemukan",
-      };
+      return new Response(
+        JSON.stringify({ success: false, message: "Berita tidak ditemukan" }),
+        { status: 404, headers: { 'Content-Type': 'application/json' } }
+      );
     }
   
     if (existing.imageId && existing.imageId !== imageId) {
@@ -139,15 +141,28 @@ async function beritaUpdate(context: Context) {
         judul,
         deskripsi,
         content,
-        kategoriBeritaId,
+        kategoriBeritaId: kategoriBeritaId || null,
         imageId,
       },
     });
   
-    return {
-      success: true,
-      message: "Berita berhasil diupdate",
-      data: updated,
-    };
+    return new Response(
+      JSON.stringify({
+        success: true,
+        message: "Berita berhasil diupdate",
+        data: updated,
+      }),
+      { status: 200, headers: { 'Content-Type': 'application/json' } }
+    );
+  } catch (error) {
+    console.error("Error updating berita:", error);
+    return new Response(
+      JSON.stringify({
+        success: false,
+        message: "Terjadi kesalahan saat mengupdate berita",
+      }),
+      { status: 500, headers: { 'Content-Type': 'application/json' } }
+    );
   }
+}
   export default beritaUpdate;
