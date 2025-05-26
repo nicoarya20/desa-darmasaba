@@ -26,9 +26,7 @@ const defaultForm = {
 // 3. Kategori proxy
 const category = proxy({
   findMany: {
-    data: null as
-      | null
-      | Prisma.KategoriBeritaGetPayload<{ omit: { isActive: true } }>[],
+    data: [] as Prisma.KategoriBeritaGetPayload<{ omit: { isActive: true } }>[],
     async load() {
       const res = await ApiFetch.api.desa.berita.category["find-many"].get();
       if (res.status === 200) {
@@ -121,7 +119,108 @@ const berita = proxy({
       }
     },
   },
- 
+  edit: {
+    id: "",
+    form: { ...defaultForm },
+    loading: false,
+
+    async load(id: string) {
+      if (!id) {
+        toast.warn("ID tidak valid");
+        return null;
+      }
+      
+      try {
+        const response = await fetch(`/api/desa/berita/${id}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const result = await response.json();
+        
+        if (result?.success) {
+          const data = result.data;
+          this.id = data.id;
+          this.form = {
+            judul: data.judul,
+            deskripsi: data.deskripsi,
+            content: data.content,
+            kategoriBeritaId: data.kategoriBeritaId || "",
+            imageId: data.imageId || "",
+          };
+          return data; // Return the loaded data
+        } else {
+          throw new Error(result?.message || "Gagal memuat data");
+        }
+      } catch (error) {
+        console.error("Error loading berita:", error);
+        toast.error(error instanceof Error ? error.message : "Gagal memuat data");
+        return null;
+      }
+    },
+
+    async update() {
+      const cek = templateForm.safeParse(berita.edit.form);
+      if (!cek.success) {
+        const err = `[${cek.error.issues
+          .map((v) => `${v.path.join(".")}`)
+          .join("\n")}] required`;
+        toast.error(err);
+        return false;
+      }
+    
+      try {
+        berita.edit.loading = true;
+        
+        const response = await fetch(`/api/desa/berita/${this.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            judul: this.form.judul,
+            deskripsi: this.form.deskripsi,
+            content: this.form.content,
+            kategoriBeritaId: this.form.kategoriBeritaId || null,
+            imageId: this.form.imageId,
+          }),
+        });
+        
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+        }
+        
+        const result = await response.json();
+    
+        if (result.success) {
+          toast.success("Berhasil update berita");
+          await berita.findMany.load(); // refresh list
+          return true;
+        } else {
+          throw new Error(result.message || "Gagal update berita");
+        }
+      } catch (error) {
+        console.error("Error updating berita:", error);
+        toast.error(error instanceof Error ? error.message : "Terjadi kesalahan saat update berita");
+        return false;
+      } finally {
+        berita.edit.loading = false;
+      }
+    },
+
+    reset() {
+      berita.edit.id = "";
+      berita.edit.form = { ...defaultForm };
+    },
+  },
+  
 });
 
 // 5. State global

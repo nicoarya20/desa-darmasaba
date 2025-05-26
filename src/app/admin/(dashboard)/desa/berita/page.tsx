@@ -255,7 +255,7 @@ function BeritaList() {
                       <IconX size={20} />
                     </ActionIcon>
                     <ActionIcon
-                      onClick={() => router.push("/desa/berita/edit")}
+                      onClick={() => router.push(`/admin/desa/berita/edit/${item.id}`)}
                       color={colors['blue-button']} variant='transparent'
                     >
                       <IconEdit size={20} />
@@ -327,32 +327,5 @@ function SelectCategory({
     />
   );
 }
-
-
-// function SelectCategory({ onChange }: {
-//   onChange: (value: Prisma.KategoriBeritaGetPayload<{
-//     select: {
-//       name: true,
-//       id: true
-//     }
-//   }>) => void
-// }) {
-//   const beritaState = useProxy(stateDashboardBerita)
-//   useShallowEffect(() => {
-//     beritaState.category.findMany.load()
-//   }, [])
-
-//   if (!beritaState.category.findMany.data) return <Skeleton h={40} />
-//   return <Group>
-//     <Select placeholder='pilih kategori' label={<Text fz={"sm"} fw={"bold"}>Pilih Kategori</Text>} data={beritaState.category.findMany.data.map((item) => ({
-//       value: item.id,
-//       label: item.name
-//     }))} onChange={(v) => {
-//       const data = beritaState.category.findMany.data?.find((item) => item.id === v)
-//       if (!data) return
-//       onChange(data)
-//     }} />
-//   </Group>
-// }
 
 export default Page;
