@@ -86,6 +86,7 @@ function BeritaCreate() {
     <Box py={10}>
       <Paper bg={colors["white-1"]} p={"md"} w={{ base: "100%", md: "50%" }}>
         <Stack gap={"xs"}>
+          <Title order={3}>Create Berita</Title>
           <TextInput
             value={beritaState.berita.create.form.judul}
             onChange={(val) => {
@@ -134,7 +135,7 @@ function BeritaCreate() {
               onEditorReady={(ed) => setEditorInstance(ed)}
             />
           </Box>
-          <Button onClick={handleSubmit}>Simpan Berita</Button>
+          <Button bg={colors['blue-button']} onClick={handleSubmit}>Simpan Berita</Button>
         </Stack>
       </Paper>
     </Box>
