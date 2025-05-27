@@ -12,8 +12,9 @@ import {
   Stack,
   Text,
   TextInput,
+  Title,
 } from "@mantine/core";
-import { IconImageInPicture } from "@tabler/icons-react";
+import { IconArrowBack, IconImageInPicture } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useProxy } from "valtio/utils";
@@ -26,6 +27,7 @@ import stateDashboardBerita from "../../../../_state/desa/berita";
 import { Prisma } from "@prisma/client";
 import { useShallowEffect } from "@mantine/hooks";
 import { BeritaEditor } from "../../_com/BeritaEditor";
+import colors from "@/con/colors";
 
 function BeritaEdit() {
   const beritaState = useProxy(stateDashboardBerita);
@@ -141,8 +143,10 @@ function BeritaEdit() {
 
   return (
     <Box py={10}>
+      <IconArrowBack color={colors["blue-button"]} size={30} onClick={() => router.back()}/>
       <Paper bg={"white"} p={"md"} w={{ base: "100%", md: "50%" }}>
         <Stack gap={"xs"}>
+          <Title order={3}>Edit Berita</Title>
           <TextInput
             value={formData.judul}
             onChange={(e) => setFormData({...formData, judul: e.target.value})}
