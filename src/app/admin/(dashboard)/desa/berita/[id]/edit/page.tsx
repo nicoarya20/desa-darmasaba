@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import {
@@ -15,29 +14,27 @@ import {
   Title,
 } from "@mantine/core";
 import { IconArrowBack, IconImageInPicture } from "@tabler/icons-react";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useRouter, useParams } from "next/navigation";
-import { useProxy } from "valtio/utils";
 import { toast } from "react-toastify";
+import { useProxy } from "valtio/utils";
 
 
+import EditEditor from "@/app/admin/(dashboard)/_com/editEditor";
+import colors from "@/con/colors";
 import ApiFetch from "@/lib/api-fetch";
 import { FileInput } from "@mantine/core";
-import stateDashboardBerita from "../../../../_state/desa/berita";
-import { Prisma } from "@prisma/client";
 import { useShallowEffect } from "@mantine/hooks";
-import { BeritaEditor } from "../../_com/BeritaEditor";
-import colors from "@/con/colors";
+import { Prisma } from "@prisma/client";
+import stateDashboardBerita from "../../../../_state/desa/berita";
 
-function BeritaEdit() {
+function EditBerita() {
   const beritaState = useProxy(stateDashboardBerita);
   const router = useRouter();
   const params = useParams();
 
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
-  const [editorInstance, setEditorInstance] = useState<any>(null);
-  const [isEditorReady, setIsEditorReady] = useState(false);
   const [formData, setFormData] = useState({
     judul: beritaState.berita.edit.form.judul || '',
     deskripsi: beritaState.berita.edit.form.deskripsi || '',
@@ -51,7 +48,7 @@ function BeritaEdit() {
     const loadBerita = async () => {
       const id = params?.id as string;
       if (!id) return;
-  
+
       try {
         const data = await stateDashboardBerita.berita.edit.load(id); // akses langsung, bukan dari proxy
         if (data) {
@@ -62,7 +59,7 @@ function BeritaEdit() {
             content: data.content || '',
             imageId: data.imageId || '',
           });
-  
+
           if (data?.image?.link) {
             setPreviewImage(data.image.link);
           }
@@ -72,57 +69,28 @@ function BeritaEdit() {
         toast.error("Gagal memuat data berita");
       }
     };
-  
+
     loadBerita();
   }, [params?.id]); // ✅ hapus beritaState dari dependency
-  
-
-
-  // Handle editor ready
-  const handleEditorReady = (editor: any) => {
-    setEditorInstance(editor);
-    setIsEditorReady(true);
-    
-    // Set initial content if exists
-    if (formData.content) {
-      editor.commands.setContent(formData.content);
-    }
-  };
 
   const handleSubmit = async () => {
-    if (!isEditorReady || !editorInstance) {
-      return toast.error("Editor belum siap");
-    }
 
     try {
-      const htmlContent = editorInstance.getHTML();
-      if (!htmlContent || htmlContent === "<p></p>") {
-        return toast.warn("Konten tidak boleh kosong");
-      }
-
-      // Update form data with editor content
-      const updatedFormData = {
-        ...formData,
-        content: htmlContent
-      };
-
       // Update global state with form data
       beritaState.berita.edit.form = {
-        judul: updatedFormData.judul,
-        deskripsi: updatedFormData.deskripsi,
-        content: updatedFormData.content,
-        kategoriBeritaId: updatedFormData.kategoriBeritaId || '',
-        imageId: beritaState.berita.edit.form.imageId // Keep existing imageId if not changed
+        ...beritaState.berita.edit.form,
+        judul: formData.judul,
+        deskripsi: formData.deskripsi,
+        content: formData.content,
+        kategoriBeritaId: formData.kategoriBeritaId || '',
+        imageId: formData.imageId // Keep existing imageId if not changed
       };
 
       // Jika ada file baru, upload
       if (file) {
-        const res = await ApiFetch.api.fileStorage.create.post({
-          file,
-          name: file.name,
-        });
-
+        const res = await ApiFetch.api.fileStorage.create.post({ file, name: file.name });
         const uploaded = res.data?.data;
+
         if (!uploaded?.id) {
           return toast.error("Gagal upload gambar");
         }
@@ -130,7 +98,6 @@ function BeritaEdit() {
         // Update imageId in global state
         beritaState.berita.edit.form.imageId = uploaded.id;
       }
-
 
       await beritaState.berita.edit.update();
       toast.success("Berita berhasil diperbarui!");
@@ -142,14 +109,18 @@ function BeritaEdit() {
   };
 
   return (
-    <Box py={10}>
-      <IconArrowBack color={colors["blue-button"]} size={30} onClick={() => router.back()}/>
+    <Box>
+      <Box mb={10}>
+        <Button variant="subtle" onClick={() => router.back()}>
+          <IconArrowBack color={colors["blue-button"]} size={30} />
+        </Button>
+      </Box>
       <Paper bg={"white"} p={"md"} w={{ base: "100%", md: "50%" }}>
         <Stack gap={"xs"}>
           <Title order={3}>Edit Berita</Title>
           <TextInput
             value={formData.judul}
-            onChange={(e) => setFormData({...formData, judul: e.target.value})}
+            onChange={(e) => setFormData({ ...formData, judul: e.target.value })}
             label={<Text fz={"sm"} fw={"bold"}>Judul</Text>}
             placeholder="masukkan judul"
           />
@@ -166,7 +137,7 @@ function BeritaEdit() {
 
           <TextInput
             value={formData.deskripsi}
-            onChange={(e) => setFormData({...formData, deskripsi: e.target.value})}
+            onChange={(e) => setFormData({ ...formData, deskripsi: e.target.value })}
             label={<Text fz={"sm"} fw={"bold"}>Deskripsi</Text>}
             placeholder="masukkan deskripsi"
           />
@@ -194,15 +165,16 @@ function BeritaEdit() {
 
           <Box>
             <Text fz={"sm"} fw={"bold"}>Konten</Text>
-            <BeritaEditor
-              initialContent={formData.content}
-              onEditorReady={handleEditorReady}
-              showSubmit={false}
-              onUpdate={(content) => setFormData({...formData, content})}
+            <EditEditor
+            value={formData.content}
+            onChange={(htmlContent) => {
+              setFormData((prev) => ({ ...prev, content: htmlContent }));
+              beritaState.berita.edit.form.content = htmlContent;
+            }}
             />
           </Box>
 
-          <Button onClick={handleSubmit}>Simpan Perubahan</Button>
+          <Button onClick={handleSubmit}>Edit Berita</Button>
         </Stack>
       </Paper>
     </Box>
@@ -237,9 +209,9 @@ function SelectCategory({
     return <Skeleton height={38} />;
   }
 
-  
+
   const selectedValue = value || defaultValue;
-  
+
   return (
     <Select
       label={<Text fz={"sm"} fw={"bold"}>Kategori</Text>}
@@ -266,4 +238,4 @@ function SelectCategory({
   );
 }
 
-export default BeritaEdit;
+export default EditBerita;

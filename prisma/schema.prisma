@@ -47,6 +47,23 @@ model AppMenuChild {
   appMenuId String?
 }
 
+// ========================================= FILE STORAGE ========================================= //
+
+model FileStorage {
+  id          String        @id @default(cuid())
+  name        String        @unique
+  realName    String
+  path        String
+  mimeType    String
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  deletedAt   DateTime?
+  isActive    Boolean       @default(true)
+  link        String
+  Berita      Berita[]
+  PotensiDesa PotensiDesa[]
+}
+
 //========================================= MENU PPID ========================================= //
 // ========================================= VISI MISI PPID ========================================= //
 model VisiMisiPPID {
@@ -261,6 +278,21 @@ model KategoriBerita {
   updatedAt DateTime @updatedAt
   deletedAt DateTime @default(now())
   isActive  Boolean  @default(true)
+}
+
+// ========================================= POTENSI DESA ========================================= //
+model PotensiDesa {
+  id        String      @id @default(cuid())
+  name      String
+  deskripsi String
+  kategori  String
+  image     FileStorage @relation(fields: [imageId], references: [id])
+  imageId   String
+  content   String      @db.Text
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  deletedAt DateTime    @default(now())
+  isActive  Boolean     @default(true)
 }
 
 // ========================================= PENGUMUMAN ========================================= //
@@ -582,20 +614,4 @@ model DoctorSign {
   updatedAt DateTime @updatedAt
   deletedAt DateTime @default(now())
   isActive  Boolean  @default(true)
-}
-
-// === BARU
-
-model FileStorage {
-  id        String    @id @default(cuid())
-  name      String    @unique
-  realName  String
-  path      String
-  mimeType  String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime? 
-  isActive  Boolean   @default(true)
-  link      String
-  Berita Berita[]
 }

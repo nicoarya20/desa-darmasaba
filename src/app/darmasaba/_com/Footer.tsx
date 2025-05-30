@@ -10,7 +10,7 @@ function Footer() {
   return (
     <>
       <Stack bg={colors["blue-button"]}>
-        <Box w={mobile ? "100%" : "100%"} p={"xl"} h={{ base: 1850, md: 1100 }} >
+        <Box w={mobile ? "100%" : "100%"} p={"xl"} h={{ base: 2500, md: 1100 }} >
           <Center>
             <Paper w={"100%"}>
               <Box component="footer" py="xl">
