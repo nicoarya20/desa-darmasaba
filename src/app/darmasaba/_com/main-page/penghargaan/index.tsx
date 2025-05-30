@@ -51,7 +51,7 @@ function Penghargaan() {
               <Text fz={"1.4rem"} c={"white"}>
                 Juara 2 Duta Investasi
               </Text>
-              <Text fz={"1.4rem"} c={"white"}>
+              <Text fz={"1.2rem"} c={"white"}>
                 Juara Favorit Lomba Video Pendek
               </Text>
             </Stack>

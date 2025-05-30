@@ -1,9 +1,12 @@
 'use client'
+import permohonanKeberatanInformasi from '@/app/admin/(dashboard)/_state/ppid/permohonan_keberatan_informasi_publik/permohonanKeberatanInformasi';
+import { PPIDTextEditor } from '@/app/admin/(dashboard)/ppid/_com/PPIDTextEditor';
 import colors from '@/con/colors';
-import { Box, Button, Center, Group, Paper, SimpleGrid, Stack, Text, Textarea, TextInput } from '@mantine/core';
+import { Box, Button, Center, Group, Paper, SimpleGrid, Stack, Text, TextInput } from '@mantine/core';
 import { IconFileCheck, IconForms, IconHourglassOff, IconPhoneRinging } from '@tabler/icons-react';
-import BackButton from '../../desa/layanan/_com/BackButto';
 import { useRouter } from 'next/navigation';
+import { useProxy } from 'valtio/utils';
+import BackButton from '../../desa/layanan/_com/BackButto';
 
 const data = [
     {
@@ -32,6 +35,15 @@ const data = [
     },
 ]
 function Page() {
+    const stateKeberatan = useProxy(permohonanKeberatanInformasi)
+    const submit = () => {
+        if (stateKeberatan.create.form.name && stateKeberatan.create.form.email && stateKeberatan.create.form.notelp && stateKeberatan.create.form.alasan) {
+            stateKeberatan.create.create()
+            router.push('/darmasaba/permohonan/berhasil')
+        } else {
+            console.log("Validasi gagal, form tidak lengkap")
+        }
+    }
     const router = useRouter();
     return (
         <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"22"}>
@@ -76,33 +88,41 @@ function Page() {
                         </SimpleGrid>
                         <Group justify='center'>
                             <Paper p={'xl'} bg={colors['white-1']}>
-                                <Text fw={"bold"} fz={{ base: 'h4', md: 'h3' }} ta={"center"}>Formulir Permohonan Keberatan</Text>
-                                <TextInput
-                                    label='Nama'
-                                    styles={{ input: { padding: 20 } }}
-                                    py={10}
-                                    placeholder='Masukkan nama lengkap'
-                                />
-                                <TextInput
-                                    label='Email'
-                                    styles={{ input: { padding: 20 } }}
-                                    placeholder='Masukkan email'
-                                />
-                                <TextInput
-                                    label='Nomor Telepon'
-                                    styles={{ input: { padding: 20 } }}
-                                    py={10}
-                                    placeholder='Masukkan nomor telepon'
-                                />
-                                <Textarea
-                                    pb={20}
-                                    label='Alasan Keberatan'
-                                    styles={{ input: { padding: 20 } }}
-                                    placeholder="Alasan keberatan"
-                                />
-                                <Button onClick={() => router.push('/darmasaba/permohonan/berhasil')} bg={"green"} fullWidth>
-                                    Kirim Permohonan
-                                </Button>
+                                <Stack gap={"xs"}>
+                                    <Text fw={"bold"} fz={{ base: 'h4', md: 'h3' }} ta={"center"}>Formulir Permohonan Keberatan</Text>
+                                    <TextInput
+                                        label="Nama"
+                                        placeholder="masukkan nama lengkap"
+                                        onChange={(val) => {
+                                            stateKeberatan.create.form.name = val.target.value
+                                        }}
+                                    />
+                                    <TextInput
+                                        label="Email"
+                                        placeholder="masukkan email"
+                                        onChange={(val) => {
+                                            stateKeberatan.create.form.email = val.target.value
+                                        }}
+                                    />
+                                    <TextInput
+                                        label="Nomor Telepon"
+                                        placeholder="masukkan nomor telepon"
+                                        onChange={(val) => {
+                                            stateKeberatan.create.form.notelp = val.target.value
+                                        }}
+                                    />
+                                    <Text fz={"sm"}>Alasan Permohonan Keberatan</Text>
+                                    <PPIDTextEditor
+                                        showSubmit={false}
+                                        onChange={(val) => {
+                                            stateKeberatan.create.form.alasan = val
+                                          }}
+                                          
+                                    />
+                                    <Group>
+                                        <Button onClick={submit} bg={'green'}>Kirim Permohonan</Button>
+                                    </Group>
+                                </Stack>
                             </Paper>
                         </Group>
                         <Text pt={20} ta={"center"} fz={'h3'} fw={"bold"}>Kontak PPID</Text>

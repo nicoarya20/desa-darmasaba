@@ -8,14 +8,14 @@ import TextAlign from '@tiptap/extension-text-align';
 import Underline from '@tiptap/extension-underline';
 import { useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import { useEffect } from 'react';
 
-const content =
-  '<h2 style="text-align: center;">Welcome to Mantine rich text editor</h2><p><code>RichTextEditor</code> component focuses on usability and is designed to be as simple as possible to bring a familiar editing experience to regular users. <code>RichTextEditor</code> is based on <a href="https://tiptap.dev/" rel="noopener noreferrer" target="_blank">Tiptap.dev</a> and supports all of its features:</p><ul><li>General text formatting: <strong>bold</strong>, <em>italic</em>, <u>underline</u>, <s>strike-through</s> </li><li>Headings (h1-h6)</li><li>Sub and super scripts (<sup>&lt;sup /&gt;</sup> and <sub>&lt;sub /&gt;</sub> tags)</li><li>Ordered and bullet lists</li><li>Text align&nbsp;</li><li>And all <a href="https://tiptap.dev/extensions" target="_blank" rel="noopener noreferrer">other extensions</a></li></ul>';
 
-export function PPIDTextEditor({ onSubmit, onChange, showSubmit = true }: { 
+export function PPIDTextEditor({ onSubmit, onChange, showSubmit = true, initialContent = '', }: { 
   onSubmit?: (val: string) => void, 
   onChange: (val: string) => void, 
-  showSubmit?: boolean }) {
+  showSubmit?: boolean,
+  initialContent?: string }) {
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -27,11 +27,17 @@ export function PPIDTextEditor({ onSubmit, onChange, showSubmit = true }: {
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
     ],
     immediatelyRender: false,
-    content,
+    content: initialContent,
     onUpdate : ({editor}) => {
       onChange(editor.getHTML())
     }
   });
+
+  useEffect(() => {
+    if (editor && initialContent !== editor.getHTML()) {
+      editor.commands.setContent(initialContent || '<p></p>');
+    }
+  }, [initialContent, editor]);
 
   return (
     <Stack>

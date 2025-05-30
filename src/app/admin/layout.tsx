@@ -1,6 +1,19 @@
 'use client'
+
 import colors from "@/con/colors";
-import { ActionIcon, AppShell, AppShellHeader, AppShellMain, AppShellNavbar, Burger, Group, Image, NavLink, ScrollArea, Text } from "@mantine/core";
+import {
+  ActionIcon,
+  AppShell,
+  AppShellHeader,
+  AppShellMain,
+  AppShellNavbar,
+  Burger,
+  Group,
+  Image,
+  NavLink,
+  ScrollArea,
+  Text
+} from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
 import _ from 'lodash';
@@ -10,75 +23,106 @@ import { navBar } from "./_com/list_PageAdmin";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [opened, { toggle }] = useDisclosure();
-  const [desktopOpened, { toggle: toggleDesktop }] =
-    useDisclosure(true);
+  const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true);
 
+  // Normalisasi semua segmen jadi lowercase
+  const segments = useSelectedLayoutSegments().map(s => _.lowerCase(s));
 
-  const segments = useSelectedLayoutSegments()
   return (
     <AppShell
       suppressHydrationWarning
       header={{ height: 60 }}
       navbar={{
-        width: 300, breakpoint: 'sm', collapsed: { mobile: !opened, desktop: !desktopOpened }
+        width: 300,
+        breakpoint: 'sm',
+        collapsed: {
+          mobile: !opened,
+          desktop: !desktopOpened,
+        },
       }}
       padding={'md'}
     >
-      <AppShellHeader bg={colors["white-trans-1"]}>
+      <AppShellHeader bg={colors["white-1"]}>
         <Group px={10} align="center">
-          {!desktopOpened && <ActionIcon variant="light" onClick={toggleDesktop}><IconChevronRight /></ActionIcon>}
-          <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size={'sm'} />
-          <ActionIcon w={50} h={50} variant="transparent" component={Link} href="/admin">
-            <Image py={5} src={'/assets/images/darmasaba-icon.png'} alt="" width={50} height={50} />
+          {!desktopOpened && (
+            <ActionIcon variant="light" onClick={toggleDesktop}>
+              <IconChevronRight />
+            </ActionIcon>
+          )}
+          <Burger
+            opened={opened}
+            onClick={toggle}
+            hiddenFrom="sm"
+            size={'sm'}
+          />
+          <ActionIcon
+            w={50}
+            h={50}
+            variant="transparent"
+            component={Link}
+            href="/admin"
+          >
+            <Image
+              py={5}
+              src={'/assets/images/darmasaba-icon.png'}
+              alt=""
+              width={50}
+              height={50}
+            />
           </ActionIcon>
-          <Text fw={'bold'} c={colors["blue-button"]} fz={'lg'}>Dashboard Admin</Text>
+          <Text fw={'bold'} c={colors["blue-button"]} fz={'lg'}>
+            Dashboard Admin
+          </Text>
         </Group>
       </AppShellHeader>
-      <AppShellNavbar
 
-        c={colors["blue-button"]}
-        component={ScrollArea}
-      >
-        <AppShell.Section >
+      <AppShellNavbar c={colors["blue-button"]} component={ScrollArea}>
+        <AppShell.Section>
           {navBar.map((v, k) => {
+            const isParentActive = segments.includes(_.lowerCase(v.name));
+
             return (
               <NavLink
-                c={_.lowerCase(v.name) == segments[1] ? colors["blue-button"] : "grey"}
                 key={k}
-                defaultOpened={_.lowerCase(v.name) == segments[1]}
-                // onClick={() => setActive(k)}
-                label={<Text
-                  style={{ fontWeight: _.lowerCase(v.name) == segments[1] ? "bold" : "normal" }}
-                >{v.name}</Text>}
+                defaultOpened={isParentActive}
+                c={isParentActive ? colors["blue-button"] : "grey"}
+                label={
+                  <Text style={{ fontWeight: isParentActive ? "bold" : "normal" }}>
+                    {v.name}
+                  </Text>
+                }
               >
                 {v.children.map((child, key) => {
+                  const isChildActive = segments.includes(_.lowerCase(child.name));
+
                   return (
                     <NavLink
-                      c={_.lowerCase(child.name) == _.lowerCase(segments[2]) ? colors["blue-button"] : "grey"}
                       key={key}
                       href={child.path}
-                      // active={isClient && Number(child.id) === active}
-                      // onClick={() => setActive(Number(child.id))}
-                      label={<Text
-                        style={{ fontWeight: _.lowerCase(child.name) == _.lowerCase(segments[2]) ? "bold" : "normal" }}
-                      >{child.name}</Text>}
+                      c={isChildActive ? colors["blue-button"] : "grey"}
+                      label={
+                        <Text style={{ fontWeight: isChildActive ? "bold" : "normal" }}>
+                          {child.name}
+                        </Text>
+                      }
                     />
-                  )
+                  );
                 })}
               </NavLink>
-            )
+            );
           })}
         </AppShell.Section>
 
         <AppShell.Section py={20}>
           <Group justify="end">
-            <ActionIcon variant="light" onClick={toggleDesktop}><IconChevronLeft /></ActionIcon>
+            <ActionIcon variant="light" onClick={toggleDesktop}>
+              <IconChevronLeft />
+            </ActionIcon>
           </Group>
         </AppShell.Section>
       </AppShellNavbar>
-      <AppShellMain bg={colors.Bg}>
-        {children}
-      </AppShellMain>
+
+      <AppShellMain bg={colors.Bg}>{children}</AppShellMain>
     </AppShell>
   );
 }

@@ -1,9 +1,9 @@
 import prisma from "@/lib/prisma";
 
- async function katagoryBeritaFindMany() {
-  const data = await prisma.katagoryBerita.findMany();
+ async function kategoriBeritaFindMany() {
+  const data = await prisma.kategoriBerita.findMany();
   return { data };
 }
 
-export default katagoryBeritaFindMany
+export default kategoriBeritaFindMany
 

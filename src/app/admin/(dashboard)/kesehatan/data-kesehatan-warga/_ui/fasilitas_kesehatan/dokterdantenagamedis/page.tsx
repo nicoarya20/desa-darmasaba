@@ -1,12 +1,15 @@
 import stateFasilitasKesehatan from '@/app/admin/(dashboard)/_state/kesehatan/data_kesehatan_warga/fasilitasKesehatan';
-import { Box, Text, TextInput } from '@mantine/core';
+import colors from '@/con/colors';
+import { Box, Paper, Stack, Text, TextInput } from '@mantine/core';
 import { useProxy } from 'valtio/utils';
 
 function DokterDanTenagaMedis() {
   const dokterdantenagamedisState = useProxy(stateFasilitasKesehatan.dokterdantenagamedis)
   return (
     <Box>
-      <Text fw={"bold"}>Dokter & Tenaga Medis</Text>
+      <Paper bg={colors['white-1']} p={"md"}>
+        <Stack gap={"xs"}>
+        <Text fw={"bold"}>Dokter & Tenaga Medis</Text>
       <TextInput
         label="Nama Dokter"
         placeholder='masukkan nama dokter'
@@ -29,6 +32,8 @@ function DokterDanTenagaMedis() {
           dokterdantenagamedisState.create.form.jadwal = val.target.value
         }}
       />
+        </Stack>
+      </Paper>
     </Box>
   );
 }

@@ -36,7 +36,6 @@ function GrafikHasilKepuasan() {
           <Stack>
             <Title order={3}>Grafik Hasil Kepuasan Masyarakat Terhadap Pelayanan Publik</Title>
             <TextInput
-              w={{ base: '100%', md: '50%' }}
               label="Label"
               placeholder="masukkan label"
               value={grafikHasilKepuasan.create.form.label}
@@ -45,7 +44,6 @@ function GrafikHasilKepuasan() {
               }}
             />
             <TextInput
-              w={{ base: '100%', md: '50%' }}
               label="Jumlah Kepuasan"
               type="number"
               placeholder="masukkan jumlah kepuasan"

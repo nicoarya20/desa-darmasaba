@@ -6,23 +6,21 @@ type FormCreate = Prisma.BeritaGetPayload<{
   select: {
     judul: true;
     deskripsi: true;
-    image: true;
     content: true;
-    katagoryBeritaId: true;
+    kategoriBeritaId: true;
+    imageId: true;
   };
 }>;
 async function beritaCreate(context: Context) {
   const body = context.body as FormCreate;
 
-//   console.log(body)
-
   await prisma.berita.create({
   data: {
       content: body.content,
       deskripsi: body.deskripsi,
-      image: body.image,
+      imageId: body.imageId,
       judul: body.judul,
-      katagoryBeritaId: body.katagoryBeritaId,
+      kategoriBeritaId: body.kategoriBeritaId,
     },
   });
 

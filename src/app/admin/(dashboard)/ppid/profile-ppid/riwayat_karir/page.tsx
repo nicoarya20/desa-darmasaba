@@ -7,21 +7,24 @@ import dynamic from 'next/dynamic';
 import stateProfilePPID from '../../../_state/ppid/profile_ppid/profile_PPID';
 
 // ini penting
-const PPIDEditor = dynamic(() => import('../../_com/ppid_Editor').then(mod => mod.PPIDEditor), {
+const PPIDTextEditor = dynamic(() => import('../../_com/PPIDTextEditor').then(mod => mod.PPIDTextEditor), {
   ssr: false, // disable server side rendering
 });
-
 function RiwayatKarir() {
-  const biodataState = useProxy(stateProfilePPID.profilePPID);
+  const riwayatKarirState = useProxy(stateProfilePPID);
 
   return (
     <Box>
       <Text fw={"bold"}>Riwayat Karir</Text>
-      <PPIDEditor
+      <PPIDTextEditor
+      key={riwayatKarirState.findById.data?.id ?? 'new'}
         showSubmit={false}
         onChange={(val) => {
-          biodataState.create.form.riwayat = val;
+          if (riwayatKarirState.findById.data) {
+            riwayatKarirState.findById.data.riwayat = val;
+          }
         }}
+        initialContent={riwayatKarirState.findById.data?.riwayat ?? ''}
       />
     </Box>
   );

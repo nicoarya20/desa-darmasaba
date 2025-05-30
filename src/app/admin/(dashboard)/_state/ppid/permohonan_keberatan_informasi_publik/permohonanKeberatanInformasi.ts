@@ -20,12 +20,12 @@ type PermohonanKeberatanInformasiForm = Prisma.FormulirPermohonanKeberatanGetPay
     };
 }>;
 
-const permohonanKeberatanInformasiForm = proxy({
+const permohonanKeberatanInformasi = proxy({
     create: {
         form: {} as PermohonanKeberatanInformasiForm,
         loading: false,
         async create(){
-            const cek = templateForm.safeParse(permohonanKeberatanInformasiForm.create.form);
+            const cek = templateForm.safeParse(permohonanKeberatanInformasi.create.form);
             if(!cek.success) {
                 const err = `[${cek.error.issues
                     .map((v) => `${v.path.join(".")}`)
@@ -33,17 +33,17 @@ const permohonanKeberatanInformasiForm = proxy({
                 return toast.error(err);
             }
             try {
-                permohonanKeberatanInformasiForm.create.loading = true;
-                const res = await ApiFetch.api.ppid.permohonankeberataninformasipublik["create"].post(permohonanKeberatanInformasiForm.create.form);
+                permohonanKeberatanInformasi.create.loading = true;
+                const res = await ApiFetch.api.ppid.permohonankeberataninformasipublik["create"].post(permohonanKeberatanInformasi.create.form);
                 if (res.status === 200) {
-                    permohonanKeberatanInformasiForm.findMany.load();
+                    permohonanKeberatanInformasi.findMany.load();
                     return toast.success("success create");
                 }
                 return toast.error("failed create");
             } catch (error) {
                 console.log((error as Error).message);
             } finally {
-                permohonanKeberatanInformasiForm.create.loading = false;
+                permohonanKeberatanInformasi.create.loading = false;
             }
         },
     },
@@ -54,15 +54,11 @@ const permohonanKeberatanInformasiForm = proxy({
         async load() {
             const res = await ApiFetch.api.ppid.permohonankeberataninformasipublik["find-many"].get();
             if (res.status === 200) {
-                permohonanKeberatanInformasiForm.findMany.data = res.data?.data ?? [];
+                permohonanKeberatanInformasi.findMany.data = res.data?.data ?? [];
             }
         }
     }
 });
 
-const statePermohonanKeberatan = proxy({
-    permohonanKeberatanInformasiForm,
-})
-
-export default statePermohonanKeberatan;
+export default permohonanKeberatanInformasi;
 

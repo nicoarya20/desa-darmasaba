@@ -1,115 +1,57 @@
 'use client'
-import { Box, Button, Group, Paper, SimpleGrid, Stack, TextInput, Title } from '@mantine/core';
-import { useProxy } from 'valtio/utils';
-import statePermohonanInformasi from '../../_state/ppid/permohonan_informasi_publik/permohonanInformasiPublik';
-import JenisInformasi from './jenisInformasi';
-import MemperolehInformasi from './memperolehInformasi';
-import MemperolehSalinan from './memperolehSalinan';
 import colors from '@/con/colors';
+import { Box, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Title } from '@mantine/core';
+import { useProxy } from 'valtio/utils';
+import { useShallowEffect } from '@mantine/hooks';
+import statepermohonanInformasiPublikForm from '../../_state/ppid/permohonan_informasi_publik/permohonanInformasiPublik';
 
 function Page() {
-  return (
-    <Box>
-      <Stack>
-        <SimpleGrid cols={{ base: 1, md: 2 }}>
-          <PermohonanInformasiPublikCreate />
-        </SimpleGrid>
-      </Stack>
-    </Box>
-  );
-}
+  const permohonanInformasiPublikState = useProxy(statepermohonanInformasiPublikForm)
+  useShallowEffect(() => {
+    permohonanInformasiPublikState.statepermohonanInformasiPublik.findMany.load()
+  }, [])
+  if (!permohonanInformasiPublikState.statepermohonanInformasiPublik.findMany.data) return <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"22"}>
+    {Array.from({ length: 10 }).map((v, k) => <Skeleton key={k} h={40} />)}
+  </Stack>
 
-function PermohonanInformasiPublikCreate() {
-  const permohonanInformasiPublikState = useProxy(statePermohonanInformasi)
-  const submitForms = () => {
-    // Tambahkan log untuk debugging
-    console.log("Form data sebelum submit:", {
-      name: permohonanInformasiPublikState.permohonanInformasiPublikForm.create.form.name,
-      nik: permohonanInformasiPublikState.permohonanInformasiPublikForm.create.form.nik,
-      notelp: permohonanInformasiPublikState.permohonanInformasiPublikForm.create.form.notelp,
-      alamat: permohonanInformasiPublikState.permohonanInformasiPublikForm.create.form.alamat,
-      email: permohonanInformasiPublikState.permohonanInformasiPublikForm.create.form.email,
-      jenisInformasiDimintaId: permohonanInformasiPublikState.jenisInformasiDiminta,
-      caraMemperolehInformasiId: permohonanInformasiPublikState.caraMemperolehInformasi,
-      caraMemperolehSalinanInformasiId: permohonanInformasiPublikState.caraMemperolehSalinanInformasi
-    });
-
-    if (permohonanInformasiPublikState.permohonanInformasiPublikForm.create.form.name &&
-      permohonanInformasiPublikState.permohonanInformasiPublikForm.create.form.nik &&
-      permohonanInformasiPublikState.permohonanInformasiPublikForm.create.form.notelp &&
-      permohonanInformasiPublikState.permohonanInformasiPublikForm.create.form.alamat &&
-      permohonanInformasiPublikState.permohonanInformasiPublikForm.create.form.email &&
-      permohonanInformasiPublikState.jenisInformasiDiminta &&
-      permohonanInformasiPublikState.caraMemperolehInformasi &&
-      permohonanInformasiPublikState.caraMemperolehSalinanInformasi) {
-      permohonanInformasiPublikState.permohonanInformasiPublikForm.create.create()
-    } else {
-      console.log("Validasi gagal, form tidak lengkap");
-      // Tampilkan pesan error ke pengguna di sini
-    }
-  }
   return (
     <Box py={5}>
       <Paper bg={colors['white-1']} p={'md'}>
-      <Stack gap={"10"}>
-        <Title order={3}>Permohonan Informasi Publik</Title>
-        <TextInput
-          label="Nama Lengkap"
-          placeholder="masukkan nama lengkap"
-          onChange={(val) => {
-            permohonanInformasiPublikState.permohonanInformasiPublikForm.create.form.name = val.target.value
-          }}
-        />
-        <TextInput
-          label="NIK"
-          placeholder="masukkan NIK"
-          onChange={(val) => {
-            permohonanInformasiPublikState.permohonanInformasiPublikForm.create.form.nik = val.target.value
-          }}
-        />
-        <TextInput
-          label="No.Telp"
-          placeholder="masukkan no telp"
-          onChange={(val) => {
-            permohonanInformasiPublikState.permohonanInformasiPublikForm.create.form.notelp = val.target.value
-          }}
-        />
-        <TextInput
-          label="Alamat"
-          placeholder="masukkan alamat"
-          onChange={(val) => {
-            permohonanInformasiPublikState.permohonanInformasiPublikForm.create.form.alamat = val.target.value
-          }}
-        />
-        <TextInput
-          label="Email"
-          placeholder="masukkan email"
-          onChange={(val) => {
-            permohonanInformasiPublikState.permohonanInformasiPublikForm.create.form.email = val.target.value
-          }}
-        />
-        <JenisInformasi
-          onChange={(val) => {
-            permohonanInformasiPublikState.permohonanInformasiPublikForm.create.form.jenisInformasiDimintaId = val.id
-          }}
-        />
-        <MemperolehInformasi
-          onChange={(val) => {
-            permohonanInformasiPublikState.permohonanInformasiPublikForm.create.form.caraMemperolehInformasiId = val.id
-          }}
-        />
-        <MemperolehSalinan
-          onChange={(val) => {
-            permohonanInformasiPublikState.permohonanInformasiPublikForm.create.form.caraMemperolehSalinanInformasiId = val.id
-          }}
-        />
-        <Group>
-          <Button onClick={submitForms}>Submit</Button>
-        </Group>
-      </Stack>
-    </Paper>
-    </Box >
-  )
+        <Stack gap={"xs"}>
+          <Title order={3}>Permohonan Informasi Publik</Title>
+          <Box>
+            <Table striped withRowBorders withColumnBorders withTableBorder>
+              <TableThead>
+                <TableTr>
+                  <TableTh>No</TableTh>
+                  <TableTh>Nama</TableTh>
+                  <TableTh>NIK</TableTh>
+                  <TableTh>Telepon</TableTh>
+                  <TableTh>Email</TableTh>
+                  <TableTh>Jenis Informasi</TableTh>
+                  <TableTh>Cara Memperoleh Informasi</TableTh>
+                  <TableTh>Cara Memperoleh Salinan Informasi</TableTh>
+                </TableTr>
+              </TableThead>
+              <TableTbody>
+                {permohonanInformasiPublikState.statepermohonanInformasiPublik.findMany.data?.map((item, index) => (
+                  <TableTr key={item.id}>
+                    <TableTd>{index + 1}</TableTd>
+                    <TableTd>{item.name}</TableTd>
+                    <TableTd>{item.nik}</TableTd>
+                    <TableTd>{item.notelp}</TableTd>
+                    <TableTd>{item.email}</TableTd>
+                    <TableTd>{item.jenisInformasiDiminta?.name}</TableTd>
+                    <TableTd>{item.caraMemperolehInformasi?.name}</TableTd>
+                    <TableTd>{item.caraMemperolehSalinanInformasi?.name}</TableTd>
+                  </TableTr>
+                ))}
+              </TableTbody>
+            </Table> </Box>
+        </Stack>
+      </Paper>
+    </Box>
+  );
 }
 
 export default Page;

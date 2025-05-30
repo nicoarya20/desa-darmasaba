@@ -1,4 +1,4 @@
-import { Stack, Tabs, TabsList, TabsPanel, TabsTab } from '@mantine/core';
+import { Stack, Tabs, TabsList, TabsPanel, TabsTab, Title } from '@mantine/core';
 import React from 'react';
 import colors from '@/con/colors';
 import GrafikHasilKepuasan from './_ui/grafik_hasil_kepuasan_masyarakat/page';
@@ -8,9 +8,10 @@ import GrafikBerdasarakanUmur from './_ui/grafik_berdasarkan_umur/page';
 
 function Page() {
   return (
-    <Stack>
-      <Tabs color={colors['blue-button']} variant='pills' defaultValue={"Grafik Hasil Kepuasan Masyarakat Terhadap Pelayanan Publik"}>
-        <TabsList>
+    <Stack >
+      <Title order={3}>Indeks Kepuasan Masyarakat (IKM) Desa Darmasaba</Title>
+      <Tabs  color={colors['blue-button']} variant='pills' defaultValue={"Grafik Hasil Kepuasan Masyarakat Terhadap Pelayanan Publik"}>
+        <TabsList p={"xs"} bg={"#BBC8E7FF"}>
           <TabsTab value="Grafik Hasil Kepuasan Masyarakat Terhadap Pelayanan Publik">
             Grafik Hasil Kepuasan Masyarakat Terhadap Pelayanan Publik
           </TabsTab>
