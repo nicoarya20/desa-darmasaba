@@ -1,30 +1,24 @@
 
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Grid, GridCol, Image, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, TextInput, Title } from '@mantine/core';
-import { IconCircleDashedPlus, IconDeviceImacCog, IconSearch } from '@tabler/icons-react';
-import { useProxy } from 'valtio/utils';
-import potensiDesaState from '../../_state/desa/potensi';
-import { useRouter } from 'next/navigation';
+import { Box, Button, Image, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
+import { IconDeviceImacCog, IconSearch } from '@tabler/icons-react';
+import { useRouter } from 'next/navigation';
+import { useProxy } from 'valtio/utils';
+import HeaderSearch from '../../_com/header';
+import JudulList from '../../_com/judulList';
+import potensiDesaState from '../../_state/desa/potensi';
 
 
 function Potensi() {
   return (
     <Box>
-      <Grid>
-        <GridCol span={{ base: 12, md: 9 }}>
-          <Title order={3}>Potensi Desa</Title>
-        </GridCol>
-        <GridCol span={{ base: 12, md: 3 }}>
-          <Paper radius={"lg"} bg={colors['white-1']}>
-            <TextInput
-              radius="lg"
-              placeholder='pencarian'
-              leftSection={<IconSearch size={20} />} />
-          </Paper>
-        </GridCol>
-      </Grid>
+      <HeaderSearch
+        title='Potensi Desa'
+        placeholder='pencarian'
+        searchIcon={<IconSearch size={20} />}
+      />
       <ListPotensi />
     </Box>
   );
@@ -51,16 +45,10 @@ function ListPotensi() {
     <Box py={10}>
       <Paper bg={colors['white-1']} p={'md'}>
         <Stack>
-          <Grid>
-            <GridCol span={{ base: 12, md: 11 }}>
-              <Text fz={"xl"} fw={"bold"}>List Potensi</Text>
-            </GridCol>
-            <GridCol span={{ base: 12, md: 1}}>
-              <Button onClick={() => router.push("/admin/desa/potensi/create")} bg={colors['blue-button']}>
-                <IconCircleDashedPlus size={25} />
-              </Button>
-            </GridCol>
-          </Grid>
+          <JudulList
+          title='List Potensi'
+          href='/admin/desa/potensi/create'
+          />
           <Box style={{ overflowX: "auto" }}>
             <Table striped withRowBorders withTableBorder style={{ minWidth: '700px' }}>
               <TableThead>
