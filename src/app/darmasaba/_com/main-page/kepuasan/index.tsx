@@ -1,7 +1,8 @@
 "use client";
-import { Stack, Container, Center, Text, Paper, Flex, Box, SimpleGrid } from "@mantine/core";
-import { BarChart, PieChart } from '@mantine/charts';
 import colors from "@/con/colors";
+import { BarChart, PieChart } from '@mantine/charts';
+import { Box, Center, Container, Flex, Paper, SimpleGrid, Stack, Text } from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 
 const dataBarChart = [
   {
@@ -71,13 +72,14 @@ const dataPieChart3 = [
 ]
 
 function Kepuasan() {
+  const isMobile = useMediaQuery('(max-width: 768px)');
   return (
     <Stack p={"sm"}>
       <Container w={{ base: "100%", md: "80%" }} p={"xl"}>
         <Center>
-          <Text fz={"3.4rem"}>Indeks Kepuasan Masyarakat</Text>
+          <Text ta={"center"} fz={{base: "2.4rem", md: "3.4rem"}}>Indeks Kepuasan Masyarakat</Text>
         </Center>
-        <Text fz={"1.4rem"} ta={"center"}>Ukur kebahagiaan warga, tingkatkan layanan desa! Dengan partisipasi aktif masyarakat, kami berkomitmen untuk terus memperbaiki layanan agar lebih transparan, efektif, dan sesuai dengan kebutuhan warga. Kepuasan Anda adalah prioritas utama kami dalam membangun desa yang lebih baik!</Text>
+        <Text fz={{base: "1.2rem", md: "1.4rem"}} ta={"center"}>Ukur kebahagiaan warga, tingkatkan layanan desa! Dengan partisipasi aktif masyarakat, kami berkomitmen untuk terus memperbaiki layanan agar lebih transparan, efektif, dan sesuai dengan kebutuhan warga. Kepuasan Anda adalah prioritas utama kami dalam membangun desa yang lebih baik!</Text>
       </Container>
       <Box px={"xl"}>
         <Paper p={"lg"} bg={colors.Bg}>
@@ -118,7 +120,7 @@ function Kepuasan() {
                   <Text fw={"bold"}>Jenis Kelamin</Text>
                   <Box py={"xl"}>
                     <PieChart
-                      size={250}
+                      size={isMobile ? 100 : 220}
                       withLabelsLine
                       labelsPosition="outside"
                       labelsType="percent"
@@ -135,7 +137,7 @@ function Kepuasan() {
                   <Text fw={"bold"}>Pilihan</Text>
                   <Box py={"xl"}>
                     <PieChart
-                      size={250}
+                      size={isMobile ? 100 : 220}
                       withLabelsLine
                       labelsPosition="outside"
                       labelsType="percent"
@@ -152,7 +154,7 @@ function Kepuasan() {
                   <Text fw={"bold"}>Umur</Text>
                   <Box py={"xl"}>
                     <PieChart
-                      size={250}
+                      size={isMobile ? 100 : 220}
                       withLabelsLine
                       labelsPosition="outside"
                       labelsType="percent"

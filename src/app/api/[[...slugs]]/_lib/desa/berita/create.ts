@@ -13,9 +13,6 @@ type FormCreate = Prisma.BeritaGetPayload<{
 }>;
 async function beritaCreate(context: Context) {
   const body = context.body as FormCreate;
-  console.log(body)
-
-//   console.log(body)
 
   await prisma.berita.create({
   data: {

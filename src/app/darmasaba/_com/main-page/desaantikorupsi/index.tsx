@@ -44,9 +44,9 @@ function DesaAntiKorupsi() {
     <Stack gap={"0"} bg={colors.Bg} p={"sm"} h={mobile ? 2000 : 1150}>
       <Container w={{ base: "100%", md: "80%" }} p={"xl"} >
         <Center>
-          <Text fz={"3.4rem"}>Desa Anti Korupsi</Text>
+          <Text fz={{base: "2.4rem", md: "3.4rem"}}>Desa Anti Korupsi</Text>
         </Center>
-        <Text ta={"center"} fz={"1.4rem"}>Desa antikorupsi mendorong pemerintahan jujur dan transparan. Keuangan desa dikelola terbuka dengan melibatkan warga mengawasi anggaran, sehingga digunakan tepat sasaran sesuai kebutuhan.</Text>
+        <Text ta={"center"} fz={{base: "1.2rem", md: "1.4rem"}}>Desa antikorupsi mendorong pemerintahan jujur dan transparan. Keuangan desa dikelola terbuka dengan melibatkan warga mengawasi anggaran, sehingga digunakan tepat sasaran sesuai kebutuhan.</Text>
         <Center py={20}>
           <Button radius={"lg"} fz={"h4"} bg={colors["blue-button"]} component={Link} href={"/darmasaba/desaantikorupsi"}>Selengkapnya</Button>
         </Center>
@@ -65,13 +65,13 @@ function DesaAntiKorupsi() {
               <Paper p={"lg"} >
                 <Flex gap={"lg"} justify={"center"} align={"center"}>
                   <Box >
-                    <Text fz={"lg"} ta={"center"} c={colors["blue-button"]}>{v.judul}</Text>
+                    <Text fz={{base: "1.2rem", md: "lg"}} ta={"center"} c={colors["blue-button"]}>{v.judul}</Text>
                     <Flex justify={"center"} align={"center"}>
                       <Box>
                         {v.icon}
                       </Box>
                       <Box px={20}>
-                        <Text fz={"sm"} ta={"justify"}>{v.deskripsi}</Text>
+                        <Text fz={"sm"} ta={{base: "left", md: "justify"}}>{v.deskripsi}</Text>
                       </Box>
                     </Flex>
                   </Box>

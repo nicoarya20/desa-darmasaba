@@ -40,26 +40,20 @@ export default async function handler(
     }
 
     // Ensure we're returning a proper Response object
-    return new Response(JSON.stringify({
+    return Response.json({
       success: true,
       message: "Success fetch berita by ID",
       data,
-    }), {
+    }, {
       status: 200,
-      headers: {
-        'Content-Type': 'application/json',
-      },
     });
   } catch (e) {
     console.error("Find by ID error:", e);
-    return new Response(JSON.stringify({
+    return Response.json({
       success: false,
       message: "Gagal mengambil berita: " + (e instanceof Error ? e.message : 'Unknown error'),
-    }), {
+    }, {
       status: 500,
-      headers: {
-        'Content-Type': 'application/json',
-      },
     });
   }
 }

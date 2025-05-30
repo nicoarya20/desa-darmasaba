@@ -85,7 +85,7 @@ async function beritaUpdate(context: Context) {
       { status: 200, headers: { 'Content-Type': 'application/json' } }
     );
   } catch (error) {
-    console.error("Error updating berita:", error);
+    console.error("Error updating berita:", error); 
     return new Response(
       JSON.stringify({
         success: false,

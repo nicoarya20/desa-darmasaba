@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import {
@@ -15,19 +14,19 @@ import {
   Title,
 } from "@mantine/core";
 import { IconArrowBack, IconImageInPicture } from "@tabler/icons-react";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useRouter, useParams } from "next/navigation";
-import { useProxy } from "valtio/utils";
 import { toast } from "react-toastify";
+import { useProxy } from "valtio/utils";
 
 
+import EditEditor from "@/app/admin/(dashboard)/_com/editEditor";
+import colors from "@/con/colors";
 import ApiFetch from "@/lib/api-fetch";
 import { FileInput } from "@mantine/core";
-import stateDashboardBerita from "../../../../_state/desa/berita";
-import { Prisma } from "@prisma/client";
 import { useShallowEffect } from "@mantine/hooks";
-import { BeritaEditor } from "../../_com/BeritaEditor";
-import colors from "@/con/colors";
+import { Prisma } from "@prisma/client";
+import stateDashboardBerita from "../../../../_state/desa/berita";
 
 function EditBerita() {
   const beritaState = useProxy(stateDashboardBerita);
@@ -36,8 +35,6 @@ function EditBerita() {
 
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
-  const [editorInstance, setEditorInstance] = useState<any>(null);
-  const [isEditorReady, setIsEditorReady] = useState(false);
   const [formData, setFormData] = useState({
     judul: beritaState.berita.edit.form.judul || '',
     deskripsi: beritaState.berita.edit.form.deskripsi || '',
@@ -76,28 +73,7 @@ function EditBerita() {
     loadBerita();
   }, [params?.id]); // ✅ hapus beritaState dari dependency
 
-
-
-  // Handle editor ready
-  const handleEditorReady = (editor: any) => {
-    setEditorInstance(editor);
-    setIsEditorReady(true);
-
-    // Set initial content if exists
-    if (formData.content) {
-      editor.commands.setContent(formData.content);
-    }
-  };
-
   const handleSubmit = async () => {
-    if (!isEditorReady || !editorInstance) {
-      return toast.error("Editor belum siap");
-    }
-
-    const htmlContent = editorInstance.getHTML();
-    if (!htmlContent || htmlContent === "<p></p>") {
-      return toast.warn("Konten tidak boleh kosong");
-    }
 
     try {
       // Update global state with form data
@@ -105,7 +81,7 @@ function EditBerita() {
         ...beritaState.berita.edit.form,
         judul: formData.judul,
         deskripsi: formData.deskripsi,
-        content: htmlContent,
+        content: formData.content,
         kategoriBeritaId: formData.kategoriBeritaId || '',
         imageId: formData.imageId // Keep existing imageId if not changed
       };
@@ -189,14 +165,12 @@ function EditBerita() {
 
           <Box>
             <Text fz={"sm"} fw={"bold"}>Konten</Text>
-            <BeritaEditor
-              initialContent={formData.content}
-              onEditorReady={handleEditorReady}
-              showSubmit={false}
-              onUpdate={(content) => {
-                setFormData((prev) => ({ ...prev, content }));
-                beritaState.berita.edit.form.content = content;
-              }}
+            <EditEditor
+            value={formData.content}
+            onChange={(htmlContent) => {
+              setFormData((prev) => ({ ...prev, content: htmlContent }));
+              beritaState.berita.edit.form.content = htmlContent;
+            }}
             />
           </Box>
 

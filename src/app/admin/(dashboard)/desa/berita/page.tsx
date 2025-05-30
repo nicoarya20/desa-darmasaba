@@ -163,7 +163,7 @@ function BeritaList() {
                       <Image w={100} src={item.image?.link} alt="gambar" />
                     </TableTd>
                     <TableTd>
-                      <Button bg={"green"} onClick={() => router.push(`/admin/desa/berita/detail/${item.id}`)}>
+                      <Button bg={"green"} onClick={() => router.push(`/admin/desa/berita/${item.id}`)}>
                         <IconDeviceImacCog size={25} />
                       </Button>
                     </TableTd>

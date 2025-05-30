@@ -5,9 +5,9 @@ import {
   Card,
   Flex,
   Grid,
+  GridCol,
   Image,
   Paper,
-  SimpleGrid,
   Stack,
   Text
 } from "@mantine/core";
@@ -58,10 +58,9 @@ function LandingPage() {
                 <Grid
                 >
                   <Grid.Col span={{
-                    base: 2,
-                    sm: 3,
+                    base: 3,
+                    lg: 2,
                     md: 3,
-                    xl: 2
                   }}>
                     <Box
                       pos={"relative"}
@@ -88,10 +87,9 @@ function LandingPage() {
                   </Grid.Col>
 
                   <Grid.Col span={{
-                    base: 2,
-                    sm: 3,
+                    base: 6,
+                    lg: 2,
                     md: 3,
-                    xl: 2
                   }}>
                     <Box
                       pos={"relative"}
@@ -118,10 +116,9 @@ function LandingPage() {
                     </Box>
                   </Grid.Col>
                   <Grid.Col span={{
-                    base: 8,
-                    sm: 12,
+                    base: 12,
+                    lg: 8,
                     md: 12,
-                    xl: 8
                   }}>
                     <Paper
                       pos={"relative"}
@@ -130,15 +127,14 @@ function LandingPage() {
                       w={{ base: "100%", sm: "auto", md: "auto" }}
                       flex={{ base: "1", sm: "1", md: "1" }}
                     >
-                      <SimpleGrid
-                        cols={{
-                          base: 2,
-                          sm: 1,
-                          md: 2,
-                        }}
-                        spacing={{ base: "xs", md: "md" }}
+                      <Grid
                       >
-                        <Box>
+                        <GridCol span={{
+                          base: 12,
+                          lg: 6,
+                          md: 6,
+                        }}>
+                          <Box>
                           <Text c={colors["white-1"]} fz={"sm"}>
                             Jadwal Kerja
                           </Text>
@@ -168,7 +164,14 @@ function LandingPage() {
                             </Flex>
                           </Paper>
                         </Box>
-                        <Box>
+                        </GridCol>
+                        
+                        <GridCol span={{
+                          base: 12,
+                          lg: 6,
+                          md: 6,
+                        }}>
+                           <Box>
                           <Text c={colors["white-1"]} fz={"sm"}>
                             Rabu, 10 Maret 2025
                           </Text>
@@ -187,7 +190,8 @@ function LandingPage() {
                             </Box>
                           </Paper>
                         </Box>
-                      </SimpleGrid>
+                        </GridCol>
+                      </Grid>
                     </Paper>
                   </Grid.Col>
 

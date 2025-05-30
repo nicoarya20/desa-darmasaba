@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 import colors from '@/con/colors';
 import ApiFetch from '@/lib/api-fetch';
@@ -10,14 +9,13 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
+import CreateEditor from '../../../_com/createEditor';
 import stateDashboardBerita from '../../../_state/desa/berita';
-import { BeritaEditor } from '../_com/BeritaEditor';
 
 export default function CreateBerita() {
   const beritaState = useProxy(stateDashboardBerita);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
-  const [editorInstance, setEditorInstance] = useState<any>(null);
   const router = useRouter()
 
   const resetForm = () => {
@@ -33,21 +31,12 @@ export default function CreateBerita() {
     // Reset state lokal
     setPreviewImage(null);
     setFile(null);
-    if (editorInstance) {
-      editorInstance.commands.setContent(""); // Kosongkan editor
-    }
   };
 
   const handleSubmit = async () => {
     if (!file) {
       return toast.warn("Pilih file gambar terlebih dahulu");
     }
-    if (!editorInstance) return toast.error("Editor belum siap");
-
-    const htmlContent = editorInstance.getHTML();
-    if (!htmlContent || htmlContent === "<p></p>") return toast.warn("Konten tidak boleh kosong");
-
-    beritaState.berita.create.form.content = htmlContent;
 
     // Upload gambar dulu
     const res = await ApiFetch.api.fileStorage.create.post({
@@ -124,9 +113,11 @@ export default function CreateBerita() {
           )}
           <Box>
             <Text fz={"sm"} fw={"bold"}>Konten</Text>
-            <BeritaEditor
-              showSubmit={false}
-              onEditorReady={(ed) => setEditorInstance(ed)}
+            <CreateEditor
+            value={beritaState.berita.create.form.content}
+            onChange={(htmlContent) => {
+              beritaState.berita.create.form.content = htmlContent;
+            }}
             />
           </Box>
           <Button bg={colors['blue-button']} onClick={handleSubmit}>Simpan Berita</Button>
