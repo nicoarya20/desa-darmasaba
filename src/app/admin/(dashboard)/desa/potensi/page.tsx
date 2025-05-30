@@ -1,40 +1,101 @@
+
+'use client'
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, SimpleGrid, Stack, TextInput, Title } from '@mantine/core';
-import ListPotensi from './listPage';
+import { Box, Button, Grid, GridCol, Image, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, TextInput, Title } from '@mantine/core';
+import { IconCircleDashedPlus, IconDeviceImacCog, IconSearch } from '@tabler/icons-react';
+import { useProxy } from 'valtio/utils';
+import potensiDesaState from '../../_state/desa/potensi';
+import { useRouter } from 'next/navigation';
+import { useShallowEffect } from '@mantine/hooks';
+
 
 function Potensi() {
   return (
-    <Box py={10}>
-      <Stack gap={"xs"}>
-        <Title order={3}>Potensi Desa</Title>
-        <SimpleGrid cols={{ base: 1, md: 2 }}>
-          <Box>
-            <Paper bg={colors['white-1']} p={'md'}>
-              <Stack>
-                <TextInput
-                  label="Nama Potensi"
-                  placeholder='masukkan nama potensi'
-                />
-                <TextInput
-                  label="Kategori Potensi"
-                  placeholder='masukkan kategori potensi'
-                />
-                <Group>
-                  <Button
-                    mt={10}
-                    bg={colors['blue-button']}
-                  >
-                    Submit
-                  </Button>
-                </Group>
-              </Stack>
-            </Paper>
-          </Box>
-          <ListPotensi />
-        </SimpleGrid>
-      </Stack>
+    <Box>
+      <Grid>
+        <GridCol span={{ base: 12, md: 9 }}>
+          <Title order={3}>Potensi Desa</Title>
+        </GridCol>
+        <GridCol span={{ base: 12, md: 3 }}>
+          <Paper radius={"lg"} bg={colors['white-1']}>
+            <TextInput
+              radius="lg"
+              placeholder='pencarian'
+              leftSection={<IconSearch size={20} />} />
+          </Paper>
+        </GridCol>
+      </Grid>
+      <ListPotensi />
     </Box>
   );
+}
+
+function ListPotensi() {
+  const potensiState = useProxy(potensiDesaState)
+  useShallowEffect(() => {
+    potensiState.findMany.load()
+  }, [])
+
+  const router = useRouter()
+
+
+  if (!potensiState.findMany.data) {
+    return (
+      <Stack py={10}>
+        <Skeleton h={500} />
+      </Stack>
+    )
+  }
+
+  return (
+    <Box py={10}>
+      <Paper bg={colors['white-1']} p={'md'}>
+        <Stack>
+          <Grid>
+            <GridCol span={{ base: 12, md: 11 }}>
+              <Text fz={"xl"} fw={"bold"}>List Potensi</Text>
+            </GridCol>
+            <GridCol span={{ base: 12, md: 1}}>
+              <Button onClick={() => router.push("/admin/desa/potensi/create")} bg={colors['blue-button']}>
+                <IconCircleDashedPlus size={25} />
+              </Button>
+            </GridCol>
+          </Grid>
+          <Box style={{ overflowX: "auto" }}>
+            <Table striped withRowBorders withTableBorder style={{ minWidth: '700px' }}>
+              <TableThead>
+                <TableTr>
+                  <TableTh>Judul</TableTh>
+                  <TableTh>Kategori</TableTh>
+                  <TableTh>Image</TableTh>
+                  <TableTh>Detail</TableTh>
+                </TableTr>
+              </TableThead>
+              <TableTbody>
+                {potensiState.findMany.data?.map((item) => (
+                  <TableTr key={item.id}>
+                    <TableTd>
+                      <Box w={100}>
+                        <Text truncate="end" fz={"sm"}>{item.name}</Text>
+                      </Box></TableTd>
+                    <TableTd>{item.kategori}</TableTd>
+                    <TableTd>
+                      <Image w={100} src={item.image?.link} alt="image" />
+                    </TableTd>
+                    <TableTd>
+                      <Button onClick={() => router.push(`/admin/desa/potensi/detail/${item.id}`)}>
+                        <IconDeviceImacCog size={25} />
+                      </Button>
+                    </TableTd>
+                  </TableTr>
+                ))}
+              </TableTbody>
+            </Table>
+          </Box>
+        </Stack>
+      </Paper>
+    </Box>
+  )
 }
 
 export default Potensi;

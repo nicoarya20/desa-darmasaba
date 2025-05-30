@@ -1,4 +1,3 @@
-
 import ApiFetch from "@/lib/api-fetch";
 import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
@@ -57,10 +56,10 @@ const berita = proxy({
         );
         if (res.status === 200) {
           berita.findMany.load();
-          return toast.success("success create");
+          return toast.success("Berita berhasil disimpan!");
         }
 
-        return toast.error("failed create");
+        return toast.error("Gagal menyimpan berita");
       } catch (error) {
         console.log((error as Error).message);
       } finally {
@@ -85,6 +84,30 @@ const berita = proxy({
       const res = await ApiFetch.api.desa.berita["find-many"].get();
       if (res.status === 200) {
         berita.findMany.data = (res.data?.data ) ?? [];
+      }
+    },
+  },
+  findUnique: {
+    data: null as
+      | Prisma.BeritaGetPayload<{
+          include: {
+            image: true;
+            kategoriBerita: true;
+          };
+        }> | null,
+    async load(id: string) {
+      try {
+        const res = await fetch(`/api/desa/berita/${id}`);
+        if (res.ok) {
+          const data = await res.json();
+          berita.findUnique.data = data.data ?? null;
+        } else {
+          console.error('Failed to fetch berita:', res.statusText);
+          berita.findUnique.data = null;
+        }
+      } catch (error) {
+        console.error('Error fetching berita:', error);
+        berita.findUnique.data = null;
       }
     },
   },

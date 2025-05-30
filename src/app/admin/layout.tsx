@@ -42,7 +42,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       }}
       padding={'md'}
     >
-      <AppShellHeader bg={colors["white-trans-1"]}>
+      <AppShellHeader bg={colors["white-1"]}>
         <Group px={10} align="center">
           {!desktopOpened && (
             <ActionIcon variant="light" onClick={toggleDesktop}>
