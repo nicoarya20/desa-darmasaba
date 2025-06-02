@@ -1,35 +1,64 @@
 import colors from '@/con/colors';
-import { Box, Stack, Tabs, TabsList, TabsPanel, TabsTab, Title } from '@mantine/core';
-import React from 'react';
-import CreateKontakDarurat from './ui/tambah_kontak_darurat/page';
-import ListKontakDarurat from './ui/list_kontak_darurat/page';
+import { Box, Button, Image, Paper, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
+import { IconDeviceImacCog, IconSearch } from '@tabler/icons-react';
+import JudulList from '../../_com/judulList';
+import HeaderSearch from '../../_com/header';
 
-function Page() {
+function KontakDarurat() {
   return (
     <Box>
-     <Stack gap={'xs'}>
-      <Title order={3}>Kontak Darurat</Title>
-      <Tabs defaultValue="create" color={colors['blue-button']} variant='pills'>
-        <TabsList mb={10} bg={colors['BG-trans']} p={'xs'}>
-          <TabsTab value="create" >
-            Tambah Kontak Darurat
-          </TabsTab>
-          <TabsTab value="list" >
-            List Kontak Darurat
-          </TabsTab>
-        </TabsList>
-
-        <TabsPanel value="create">
-          <CreateKontakDarurat />
-        </TabsPanel>
-
-        <TabsPanel value="list">
-          <ListKontakDarurat/>
-        </TabsPanel>
-      </Tabs>
-      </Stack>
+      <HeaderSearch
+        title='KontakDarurat'
+        placeholder='pencarian'
+        searchIcon={<IconSearch size={20} />}
+      />
+      <ListKontakDarurat/>
     </Box>
   );
 }
 
-export default Page;
+function ListKontakDarurat() {
+  return (
+    <Box py={10}>
+    <Paper bg={colors['white-1']} p={'md'}>
+      <Stack>
+        <JudulList
+          title='List Kontak Darurat'
+          href='/admin/kesehatan/kontak-darurat/create'
+        />
+        <Box style={{ overflowX: "auto" }}>
+          <Table striped withRowBorders withTableBorder style={{ minWidth: '700px' }}>
+            <TableThead>
+              <TableTr>
+                <TableTh>Judul</TableTh>
+                <TableTh>Kategori</TableTh>
+                <TableTh>Image</TableTh>
+                <TableTh>Detail</TableTh>
+              </TableTr>
+            </TableThead>
+            <TableTbody>
+              <TableTr>
+                <TableTd>
+                  <Box w={100}>
+                    <Text truncate="end" fz={"sm"}>Test</Text>
+                  </Box></TableTd>
+                <TableTd>Test</TableTd>
+                <TableTd>
+                  <Image w={100} src={"/"} alt="image" />
+                </TableTd>
+                <TableTd>
+                  <Button>
+                    <IconDeviceImacCog size={25} />
+                  </Button>
+                </TableTd>
+              </TableTr>
+            </TableTbody>
+          </Table>
+        </Box>
+      </Stack>
+    </Paper>
+  </Box>
+  )
+}
+
+export default KontakDarurat;

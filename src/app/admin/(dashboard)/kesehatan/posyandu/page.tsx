@@ -1,52 +1,53 @@
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, SimpleGrid, Stack, Text, TextInput, Title } from '@mantine/core';
-import React from 'react';
-import { KesehatanEditor } from '../_com/kesehatanEditor';
+import { Box, Button, Paper, Table, TableTbody, TableTd, TableTh, TableThead, TableTr } from '@mantine/core';
+import { IconDeviceImac, IconSearch } from '@tabler/icons-react';
+import HeaderSearch from '../../_com/header';
+import JudulList from '../../_com/judulList';
 
 function Posyandu() {
   return (
     <Box>
-      <Title order={3}>Kesehatan</Title>
-      <SimpleGrid py={10} cols={{ base: 1, md: 2 }}>
-        <Box>
-          <Paper bg={colors['white-1']} p={"md"}>
-            <Stack gap={"xs"}>
-              <Title order={3}>Posyandu</Title>
-              <TextInput
-                label={<Text fz={"sm"} fw={"bold"}>Nama Posyandu</Text>}
-                placeholder='masukkan nama posyandu'
-              />
-              <TextInput
-                label={<Text fz={"sm"} fw={"bold"}>Nomor Telepon Posyandu</Text>}
-                placeholder='masukkan nomor telepon posyandu'
-              />
-              <Box>
-              <Text fz={"sm"} fw={"bold"}>Deskripsi Posyandu</Text>
-              <KesehatanEditor
-                showSubmit={false}
-                />
-                </Box>
-                <Box>
-              <Text fz={"sm"} fw={"bold"}>Pelayanan Posyandu</Text>
-              <KesehatanEditor
-                showSubmit={false}
-                />
-                </Box>
-              <Group>
-                <Button bg={colors['blue-button']}>Submit</Button>
-              </Group>
+      <HeaderSearch
+        title='Posyandu'
+        placeholder='pencarian'
+        searchIcon={<IconSearch size={20} />}
+      />
+      <ListPosyandu/>
+    </Box>
+  );
+}
 
-            </Stack>
-          </Paper>
-        </Box>
-        <Box>
-          <Paper bg={colors['white-1']} p={"md"}>
-            <Stack>
-              <Title order={3}>Preview Data Posyandu</Title>
-            </Stack>
-          </Paper>
-        </Box>
-      </SimpleGrid>
+function ListPosyandu() {
+  return (
+    <Box py={10}>
+      <Paper bg={colors['white-1']} p={'md'}>
+        <JudulList
+          title='List Posyandu'
+          href='/admin/kesehatan/posyandu/create'
+        />
+        <Table striped withTableBorder withRowBorders>
+          <TableThead>
+            <TableTr>
+              <TableTh>Nama Posyandu</TableTh>
+              <TableTh>Nomor Posyandu</TableTh>
+              <TableTh>Deskripsi</TableTh>
+              <TableTh>Detail</TableTh>
+              </TableTr>
+          </TableThead>
+          <TableTbody>
+            <TableTr>
+              <TableTd>Posyandu 1</TableTd>
+              <TableTd>0896232831883</TableTd>
+              <TableTd>Posyandu 1</TableTd>
+              <TableTd>
+                <Button>
+                  <IconDeviceImac size={20} />
+                </Button>
+              </TableTd>
+            </TableTr>
+          </TableTbody>
+        </Table>  
+      </Paper>
     </Box>
   );
 }

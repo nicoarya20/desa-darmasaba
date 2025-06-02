@@ -1,7 +1,7 @@
 import colors from '@/con/colors';
 import { Box, Stack, SimpleGrid, Paper, Title, TextInput, Text } from '@mantine/core';
-import React from 'react';
-import { KesehatanEditor } from '../../../_com/kesehatanEditor';
+import { KesehatanEditor } from '../../_com/kesehatanEditor';
+
 
 function UpdatePuskesmas() {
   return (
