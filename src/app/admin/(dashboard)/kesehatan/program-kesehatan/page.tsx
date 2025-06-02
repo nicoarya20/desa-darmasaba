@@ -1,34 +1,64 @@
 import colors from '@/con/colors';
-import { Box, Stack, Tabs, TabsList, TabsPanel, TabsTab, Title } from '@mantine/core';
-import CreateProgramKesehatan from './ui/tambah_program_kesehatan/page';
-import ListProgramKesehatan from './ui/list_program_kesehatan/page';
+import { Box, Button, Image, Paper, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
+import { IconDeviceImacCog, IconSearch } from '@tabler/icons-react';
+import JudulList from '../../_com/judulList';
+import HeaderSearch from '../../_com/header';
 
-function Page() {
+function ProgramKesehatan() {
   return (
     <Box>
-      <Stack gap={'xs'}>
-        <Title order={3}>Program Kesehatan</Title>
-        <Tabs defaultValue="create" color={colors['blue-button']} variant='pills'>
-          <TabsList mb={10} bg={colors['BG-trans']} p={'xs'}>
-            <TabsTab value="create" >
-              Tambah Program Kesehatan
-            </TabsTab>
-            <TabsTab value="list" >
-              List Program Kesehatan
-            </TabsTab>
-          </TabsList>
-
-          <TabsPanel value="create">
-            <CreateProgramKesehatan />
-          </TabsPanel>
-
-          <TabsPanel value="list">
-            <ListProgramKesehatan/>
-          </TabsPanel>
-        </Tabs>
-      </Stack>
+      <HeaderSearch
+        title='ProgramKesehatan'
+        placeholder='pencarian'
+        searchIcon={<IconSearch size={20} />}
+      />
+      <ListProgramKesehatan/>
     </Box>
   );
 }
 
-export default Page;
+function ListProgramKesehatan() {
+  return (
+    <Box py={10}>
+    <Paper bg={colors['white-1']} p={'md'}>
+      <Stack>
+        <JudulList
+          title='List Program Kesehatan'
+          href='/admin/kesehatan/program-kesehatan/create'
+        />
+        <Box style={{ overflowX: "auto" }}>
+          <Table striped withRowBorders withTableBorder style={{ minWidth: '700px' }}>
+            <TableThead>
+              <TableTr>
+                <TableTh>Judul</TableTh>
+                <TableTh>Kategori</TableTh>
+                <TableTh>Image</TableTh>
+                <TableTh>Detail</TableTh>
+              </TableTr>
+            </TableThead>
+            <TableTbody>
+              <TableTr>
+                <TableTd>
+                  <Box w={100}>
+                    <Text truncate="end" fz={"sm"}>Test</Text>
+                  </Box></TableTd>
+                <TableTd>Test</TableTd>
+                <TableTd>
+                  <Image w={100} src={"/"} alt="image" />
+                </TableTd>
+                <TableTd>
+                  <Button>
+                    <IconDeviceImacCog size={25} />
+                  </Button>
+                </TableTd>
+              </TableTr>
+            </TableTbody>
+          </Table>
+        </Box>
+      </Stack>
+    </Paper>
+  </Box>
+  )
+}
+
+export default ProgramKesehatan;
