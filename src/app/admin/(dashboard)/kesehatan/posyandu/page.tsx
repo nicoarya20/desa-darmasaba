@@ -1,8 +1,10 @@
+'use client'
 import colors from '@/con/colors';
 import { Box, Button, Paper, Table, TableTbody, TableTd, TableTh, TableThead, TableTr } from '@mantine/core';
 import { IconDeviceImac, IconSearch } from '@tabler/icons-react';
 import HeaderSearch from '../../_com/header';
 import JudulList from '../../_com/judulList';
+import { useRouter } from 'next/navigation';
 
 function Posyandu() {
   return (
@@ -18,6 +20,7 @@ function Posyandu() {
 }
 
 function ListPosyandu() {
+  const router = useRouter();
   return (
     <Box py={10}>
       <Paper bg={colors['white-1']} p={'md'}>
@@ -40,7 +43,7 @@ function ListPosyandu() {
               <TableTd>0896232831883</TableTd>
               <TableTd>Posyandu 1</TableTd>
               <TableTd>
-                <Button>
+                <Button onClick={() => router.push('/admin/kesehatan/posyandu/detail')}>
                   <IconDeviceImac size={20} />
                 </Button>
               </TableTd>

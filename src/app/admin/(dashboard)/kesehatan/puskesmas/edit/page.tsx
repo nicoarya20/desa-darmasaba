@@ -1,11 +1,19 @@
 import colors from '@/con/colors';
-import { Box, Stack, SimpleGrid, Paper, Title, TextInput, Text } from '@mantine/core';
+import { Box, Stack, SimpleGrid, Paper, Title, TextInput, Text, Button } from '@mantine/core';
 import { KesehatanEditor } from '../../_com/kesehatanEditor';
+import { useRouter } from 'next/navigation';
+import { IconArrowBack } from '@tabler/icons-react';
 
 
-function UpdatePuskesmas() {
-  return (
-    <Box>
+function EditPuskesmas() {
+  const router = useRouter();
+    return (
+      <Box>
+        <Box mb={10}>
+          <Button onClick={() => router.back()} variant='subtle' color={'blue'}>
+            <IconArrowBack color={colors['blue-button']} size={25}/>
+          </Button>
+        </Box>
       <Stack gap={"xs"}>
         <SimpleGrid cols={{ base: 1, md: 2 }}>
           <Box>
@@ -52,4 +60,4 @@ function UpdatePuskesmas() {
   );
 }
 
-export default UpdatePuskesmas;
+export default EditPuskesmas;

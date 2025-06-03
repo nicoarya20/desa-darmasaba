@@ -46,7 +46,7 @@ function DetailPosyandu() {
                   <Button color="red">
                     <IconX size={20} />
                   </Button>
-                  <Button color="green">
+                  <Button onClick={() => router.push('/admin/kesehatan/posyandu/edit')} color="green">
                     <IconEdit size={20} />
                   </Button>
                 </Flex>
