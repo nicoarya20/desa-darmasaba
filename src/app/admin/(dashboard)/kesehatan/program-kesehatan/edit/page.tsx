@@ -1,17 +1,26 @@
+'use client'
 import colors from '@/con/colors';
-import { Box, Stack, SimpleGrid, Paper, Title, TextInput, Text } from '@mantine/core';
+import { Box, Stack, SimpleGrid, Paper, Title, TextInput, Text, Button } from '@mantine/core';
 import { KesehatanEditor } from '../../_com/kesehatanEditor';
+import { IconArrowBack } from '@tabler/icons-react';
+import { useRouter } from 'next/navigation';
 
 
 function EditProgramKesehatan() {
+  const router = useRouter();
   return (
     <Box>
+      <Box mb={10}>
+        <Button variant="subtle" onClick={() => router.back()}>
+          <IconArrowBack color={colors['blue-button']} size={25} />
+        </Button>
+      </Box>
       <Stack gap={"xs"}>
         <SimpleGrid cols={{ base: 1, md: 2 }}>
           <Box>
             <Paper bg={colors['white-1']} p={"md"}>
               <Stack gap={"xs"}>
-                <Title order={4}>Edit Program Kesehatan</Title>
+                <Title order={3}>Edit Program Kesehatan</Title>
                 <TextInput
                   label={<Text fw={"bold"} fz={"sm"}>Nama Program Kesehatan</Text>}
                   placeholder='Masukkan nama Program Kesehatan'

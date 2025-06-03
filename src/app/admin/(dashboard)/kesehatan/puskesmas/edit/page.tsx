@@ -1,3 +1,4 @@
+'use client'
 import colors from '@/con/colors';
 import { Box, Stack, SimpleGrid, Paper, Title, TextInput, Text, Button } from '@mantine/core';
 import { KesehatanEditor } from '../../_com/kesehatanEditor';
