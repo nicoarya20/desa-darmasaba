@@ -1,36 +1,58 @@
+'use client'
 import colors from '@/con/colors';
-import { Box, Stack, Tabs, TabsList, TabsPanel, TabsTab, Title } from '@mantine/core';
-import React from 'react';
-import CreatePolsekTerdekat from './ui/tambah_polsek_terdekat/page';
-import ListPolsekTerdekat from './ui/list_polsek_terdekat/page';
+import { Box, Button, Paper, Table, TableTbody, TableTd, TableTh, TableThead, TableTr } from '@mantine/core';
+import { IconDeviceImac, IconSearch } from '@tabler/icons-react';
+import HeaderSearch from '../../_com/header';
+import JudulList from '../../_com/judulList';
+import { useRouter } from 'next/navigation';
 
-
-function Page() {
+function PolsekTerdekat() {
   return (
     <Box>
-     <Stack gap={'xs'}>
-      <Title order={3}>Polsek Terdekat</Title>
-      <Tabs defaultValue="create" color={colors['blue-button']} variant='pills'>
-        <TabsList mb={10} bg={colors['BG-trans']} p={'xs'}>
-          <TabsTab value="create" >
-            Tambah Polsek Terdekat
-          </TabsTab>
-          <TabsTab value="list" >
-            List Polsek Terdekat
-          </TabsTab>
-        </TabsList>
-
-        <TabsPanel value="create">
-          <CreatePolsekTerdekat/>
-        </TabsPanel>
-
-        <TabsPanel value="list">
-          <ListPolsekTerdekat/>
-        </TabsPanel>
-      </Tabs>
-      </Stack>
+      <HeaderSearch
+        title='Polsek Terdekat'
+        placeholder='pencarian'
+        searchIcon={<IconSearch size={20} />}
+      />
+      <ListPolsekTerdekat/>
     </Box>
   );
 }
 
-export default Page;
+function ListPolsekTerdekat() {
+  const router = useRouter();
+  return (
+    <Box py={10}>
+      <Paper bg={colors['white-1']} p={'md'}>
+        <JudulList
+          title='List Polsek Terdekat'
+          href='/admin/keamanan/polsek-terdekat/create'
+        />
+        <Table striped withTableBorder withRowBorders>
+          <TableThead>
+            <TableTr>
+              <TableTh>Nama Polsek Terdekat</TableTh>
+              <TableTh>Nomor Polsek Terdekat</TableTh>
+              <TableTh>Deskripsi</TableTh>
+              <TableTh>Detail</TableTh>
+              </TableTr>
+          </TableThead>
+          <TableTbody>
+            <TableTr>
+              <TableTd>Polsek Terdekat 1</TableTd>
+              <TableTd>0896232831883</TableTd>
+              <TableTd>Polsek Terdekat 1</TableTd>
+              <TableTd>
+                <Button onClick={() => router.push('/admin/keamanan/polsek-terdekat/detail')}>
+                  <IconDeviceImac size={20} />
+                </Button>
+              </TableTd>
+            </TableTr>
+          </TableTbody>
+        </Table>  
+      </Paper>
+    </Box>
+  );
+}
+
+export default PolsekTerdekat;
