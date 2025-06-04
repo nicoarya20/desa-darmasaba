@@ -1,8 +1,8 @@
 import colors from '@/con/colors';
 import { Box, Stack, Tabs, TabsList, TabsPanel, TabsTab, Title } from '@mantine/core';
 import { IconPhoto, IconVideo } from '@tabler/icons-react';
-import Foto from './ui/foto/page';
-import Video from './ui/video/page';
+import Foto from './foto/page';
+import Video from './video/page';
 
 function Gallery() {
   return (
