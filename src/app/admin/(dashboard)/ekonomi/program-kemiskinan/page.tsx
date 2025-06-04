@@ -1,31 +1,58 @@
+'use client'
 import colors from '@/con/colors';
-import { Stack, Tabs, TabsList, TabsPanel, TabsTab, Title } from '@mantine/core';
-import ProgramKemiskinan from './ui/program/page';
-import StatistikKemiskinan from './ui/statistik/page';
+import { Box, Button, Paper, Table, TableTbody, TableTd, TableTh, TableThead, TableTr } from '@mantine/core';
+import { IconDeviceImac, IconSearch } from '@tabler/icons-react';
+import HeaderSearch from '../../_com/header';
+import JudulList from '../../_com/judulList';
+import { useRouter } from 'next/navigation';
 
-function Page() {
+function ProgramKemiskinan() {
   return (
-    <Stack>
-      <Title order={3}>Program Kemiskinan</Title>
-      <Tabs color={colors['blue-button']} variant='pills' defaultValue={"Program Kemiskinan"}>
-        <TabsList p={"xs"} bg={"#BBC8E7FF"}>
-          <TabsTab value="Program Kemiskinan">
-            Program Kemiskinan
-          </TabsTab>
-          <TabsTab value="Statistik Kemiskinan">
-            Statistik Kemiskinan
-          </TabsTab>
-        </TabsList>
-
-        <TabsPanel value="Program Kemiskinan">
-          <ProgramKemiskinan />
-        </TabsPanel>
-        <TabsPanel value="Statistik Kemiskinan">
-          <StatistikKemiskinan />
-        </TabsPanel>
-      </Tabs>
-    </Stack>
+    <Box>
+      <HeaderSearch
+        title='Program Kemiskinan'
+        placeholder='pencarian'
+        searchIcon={<IconSearch size={20} />}
+      />
+      <ListProgramKemiskinan/>
+    </Box>
   );
 }
 
-export default Page;
+function ListProgramKemiskinan() {
+  const router = useRouter();
+  return (
+    <Box py={10}>
+      <Paper bg={colors['white-1']} p={'md'}>
+        <JudulList
+          title='List Program Kemiskinan'
+          href='/admin/ekonomi/program-kemiskinan/create'
+        />
+        <Table striped withTableBorder withRowBorders>
+          <TableThead>
+            <TableTr>
+              <TableTh>Judul Program</TableTh>
+              <TableTh>Deskripsi Singkat</TableTh>
+              <TableTh>Jumlah Masyarakat Miskin</TableTh>
+              <TableTh>Detail</TableTh>
+              </TableTr>
+          </TableThead>
+          <TableTbody>
+            <TableTr>
+              <TableTd>Program A</TableTd>
+              <TableTd>Deskripsi Program A</TableTd>
+              <TableTd>100</TableTd>
+              <TableTd>
+                <Button onClick={() => router.push('/admin/ekonomi/program-kemiskinan/detail')}>
+                  <IconDeviceImac size={20} />
+                </Button>
+              </TableTd>
+            </TableTr>
+          </TableTbody>
+        </Table>  
+      </Paper>
+    </Box>
+  );
+}
+
+export default ProgramKemiskinan;

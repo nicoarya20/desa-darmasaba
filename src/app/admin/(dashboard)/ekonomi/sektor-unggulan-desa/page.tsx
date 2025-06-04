@@ -1,32 +1,56 @@
+'use client'
 import colors from '@/con/colors';
-import { Stack, Tabs, TabsList, TabsPanel, TabsTab, Title } from '@mantine/core';
-import React from 'react';
-import DataSektorUnggulan from './ui/data_sektor_unggulan/page';
-import GrafikDataSektor from './ui/grafik_data_sektor/page';
+import { Box, Button, Paper, Table, TableTbody, TableTd, TableTh, TableThead, TableTr } from '@mantine/core';
+import { IconDeviceImac, IconSearch } from '@tabler/icons-react';
+import HeaderSearch from '../../_com/header';
+import JudulList from '../../_com/judulList';
+import { useRouter } from 'next/navigation';
 
-function Page() {
+function SektorUnggulanDesa() {
   return (
-    <Stack>
-      <Title order={3}>Sektor Unggulan Desa</Title>
-      <Tabs color={colors['blue-button']} variant='pills' defaultValue={"Data Sektor Unggulan Desa"}>
-        <TabsList p={"xs"} bg={"#BBC8E7FF"}>
-          <TabsTab value="Data Sektor Unggulan Desa">
-            Data Sektor Unggulan Desa
-          </TabsTab>
-          <TabsTab value="Grafik Data Sektor Unggulan Desa">
-            Grafik Data Sektor Unggulan Desa
-          </TabsTab>
-        </TabsList>
-
-        <TabsPanel value="Data Sektor Unggulan Desa">
-          <DataSektorUnggulan />
-        </TabsPanel>
-        <TabsPanel value="Grafik Data Sektor Unggulan Desa">
-          <GrafikDataSektor />
-        </TabsPanel>
-      </Tabs>
-    </Stack>
+    <Box>
+      <HeaderSearch
+        title='Sektor Unggulan Desa'
+        placeholder='pencarian'
+        searchIcon={<IconSearch size={20} />}
+      />
+      <ListSektorUnggulanDesa/>
+    </Box>
   );
 }
 
-export default Page;
+function ListSektorUnggulanDesa() {
+  const router = useRouter();
+  return (
+    <Box py={10}>
+      <Paper bg={colors['white-1']} p={'md'}>
+        <JudulList
+          title='List Sektor Unggulan Desa'
+          href='/admin/ekonomi/sektor-unggulan-desa/create'
+        />
+        <Table striped withTableBorder withRowBorders>
+          <TableThead>
+            <TableTr>
+              <TableTh>Nama Sektor Unggulan</TableTh>
+              <TableTh>Deskripsi Sektor Unggulan</TableTh>
+              <TableTh>Detail</TableTh>
+              </TableTr>
+          </TableThead>
+          <TableTbody>
+            <TableTr>
+              <TableTd>Sektor 1</TableTd>
+              <TableTd>Deskripsi Sektor 1</TableTd>
+              <TableTd>
+                <Button onClick={() => router.push('/admin/ekonomi/sektor-unggulan-desa/detail')}>
+                  <IconDeviceImac size={20} />
+                </Button>
+              </TableTd>
+            </TableTr>
+          </TableTbody>
+        </Table>  
+      </Paper>
+    </Box>
+  );
+}
+
+export default SektorUnggulanDesa;
