@@ -3,7 +3,7 @@ import colors from '@/con/colors';
 import { Box, Button, Group, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import { KeamananEditor } from '../../../keamanan/_com/keamananEditor';
+import { KeamananEditor } from '@/app/admin/(dashboard)/keamanan/_com/keamananEditor';
 
 function EditPengumuman() {
   const router = useRouter();
