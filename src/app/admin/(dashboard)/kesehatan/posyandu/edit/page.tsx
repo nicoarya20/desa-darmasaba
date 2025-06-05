@@ -27,6 +27,10 @@ function EditPosyandu() {
           label={<Text fw={"bold"} fz={"sm"}>Nama Posyandu</Text>}
           placeholder='Masukkan nama posyandu'
           />
+           <TextInput
+          label={<Text fw={"bold"} fz={"sm"}>Nomor Posyandu</Text>}
+          placeholder='Masukkan nomor posyandu'
+          />
           <Box>
             <Text fw={"bold"} fz={"sm"}>Deskripsi Posyandu</Text>
             <KesehatanEditor

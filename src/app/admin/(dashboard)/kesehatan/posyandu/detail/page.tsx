@@ -17,29 +17,25 @@ function DetailPosyandu() {
       </Box>
       <Paper w={{ base: "100%", md: "50%" }} bg={colors['white-1']} p={'md'}>
         <Stack>
-          <Text fz={"xl"} fw={"bold"}>Detail Potensi</Text>
+          <Text fz={"xl"} fw={"bold"}>Detail Posyandu</Text>
 
           <Paper bg={colors['BG-trans']} p={'md'}>
             <Stack gap={"xs"}>
               <Box>
-                <Text fz={"lg"} fw={"bold"}>Judul</Text>
+                <Text fz={"lg"} fw={"bold"}>Nama Posyandu</Text>
                 <Text fz={"lg"}>Test Judul</Text>
               </Box>
               <Box>
-                <Text fz={"lg"} fw={"bold"}>Kategori</Text>
-                <Text fz={"lg"}>Test Kategori</Text>
+                <Text fz={"lg"} fw={"bold"}>Nomor Posyandu</Text>
+                <Text fz={"lg"}>089647038426</Text>
               </Box>
               <Box>
-                <Text fz={"lg"} fw={"bold"}>Deskripsi</Text>
-                <Text fz={"lg"}>Test Deskripsi</Text>
+                <Text fz={"lg"} fw={"bold"}>Deskripsi Posyandu</Text>
+                <Text fz={"lg"}>Test Kategori</Text>
               </Box>
               <Box>
                 <Text fz={"lg"} fw={"bold"}>Gambar</Text>
                 <Image src={"/"} alt="gambar" />
-              </Box>
-              <Box>
-                <Text fz={"lg"} fw={"bold"}>Konten</Text>
-                <Text fz={"lg"} >Test Konten</Text>
               </Box>
               <Box>
                 <Flex gap={"xs"}>
@@ -61,7 +57,7 @@ function DetailPosyandu() {
         opened={modalHapus}
         onClose={() => setModalHapus(false)}
         onConfirm={handleHapus}
-        text="Apakah anda yakin ingin menghapus potensi ini?"
+        text="Apakah anda yakin ingin menghapus penanganan darurat ini?"
       /> */}
     </Box>
   );

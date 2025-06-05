@@ -62,6 +62,8 @@ model FileStorage {
   link        String
   Berita      Berita[]
   PotensiDesa PotensiDesa[]
+
+  Posyandu Posyandu[]
 }
 
 //========================================= MENU PPID ========================================= //
@@ -614,4 +616,18 @@ model DoctorSign {
   updatedAt DateTime @updatedAt
   deletedAt DateTime @default(now())
   isActive  Boolean  @default(true)
+}
+
+// ========================================= POSYANDU ========================================= //
+model Posyandu {
+  id        String      @id @default(cuid())
+  name      String
+  nomor     String
+  deskripsi String
+  image     FileStorage @relation(fields: [imageId], references: [id])
+  imageId   String
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  deletedAt DateTime    @default(now())
+  isActive  Boolean     @default(true)
 }

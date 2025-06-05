@@ -19,6 +19,7 @@ import Prevention from "./data_kesehatan_warga/artikel_kesehatan/prevention";
 import FirstAid from "./data_kesehatan_warga/artikel_kesehatan/first_aid";
 import MythVsFact from "./data_kesehatan_warga/artikel_kesehatan/myth_vs_fact";
 import DoctorSign from "./data_kesehatan_warga/artikel_kesehatan/doctor_sign";
+import Posyandu from "./posyandu";
 
 
 const Kesehatan = new Elysia({
@@ -45,4 +46,5 @@ const Kesehatan = new Elysia({
 .use(FirstAid)
 .use(MythVsFact)
 .use(DoctorSign)
+.use(Posyandu)
 export default Kesehatan;
