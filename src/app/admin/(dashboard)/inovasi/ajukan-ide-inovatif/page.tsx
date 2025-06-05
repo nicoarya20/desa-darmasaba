@@ -19,7 +19,7 @@ function AjukanIdeInofativ() {
 
 function ListAjukanIdeInovatif() {
   return (
-    <Box py={5}>
+    <Box py={10}>
       <Paper bg={colors['white-1']} p={'md'}>
         <Stack gap={"xs"}>
           <Title order={4}>List Ajukan Ide Inovatif</Title>

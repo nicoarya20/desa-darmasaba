@@ -1,11 +1,10 @@
 'use client'
-import React from 'react';
 import colors from '@/con/colors';
-import { Box, Button, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
-import { IconArrowBack, IconImageInPicture } from '@tabler/icons-react';
+import { Box, Button, Group, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
+import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 
-function Page() {
+function CreateKonservasiAdatBali() {
   const router = useRouter()
   return (
     <Box>
@@ -19,12 +18,12 @@ function Page() {
         <Stack gap="xs">
           <Title order={3}>Create Konservasi Adat Bali</Title>
           <TextInput
-            label={<Text fz="sm" fw="bold">Judul</Text>}
-            placeholder="masukkan judul"
+            label={<Text fz="sm" fw="bold">Judul Konservasi Adat Bali</Text>}
+            placeholder="masukkan judul konservasi adat bali"
           />
           <TextInput
-            label={<Text fz="sm" fw="bold">Deskripsi</Text>}
-            placeholder="masukkan deskripsi"
+            label={<Text fz="sm" fw="bold">Deskripsi Konservasi Adat Bali</Text>}
+            placeholder="masukkan deskripsi konservasi adat bali"
           />
           {/* <FileInput
           label={<Text fz="sm" fw="bold">Upload Gambar</Text>}
@@ -46,17 +45,15 @@ function Page() {
               <IconImageInPicture />
             </Center>
           )} */}
-          <Box>
-            <Text fz="sm" fw="bold">Gambar</Text>
-            <IconImageInPicture size={25} />
-          </Box>
-          <Button bg={colors['blue-button']}>
+         <Group>
+         <Button bg={colors['blue-button']}>
             Simpan
           </Button>
+         </Group>
         </Stack>
       </Paper>
     </Box>
   );
 }
 
-export default Page;
+export default CreateKonservasiAdatBali;

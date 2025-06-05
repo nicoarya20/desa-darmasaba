@@ -4,6 +4,7 @@ import { Box, Button, Paper, Stack, Text, TextInput, Title } from '@mantine/core
 import { IconArrowBack, IconImageInPicture } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import React from 'react';
+import { KeamananEditor } from '../../../keamanan/_com/keamananEditor';
 
 function CreateDataLingkunganDesa() {
   const router = useRouter()
@@ -19,10 +20,13 @@ function CreateDataLingkunganDesa() {
         <Stack gap="xs">
           <Title order={3}>Create Data Lingkungan Desa</Title>
           <TextInput
-            label={<Text fz="sm" fw="bold">Judul</Text>}
-            placeholder="masukkan judul"
+            label={<Text fz="sm" fw="bold">Nama Data Lingkungan Desa</Text>}
+            placeholder="masukkan nama data lingkungan desa"
           />
-
+          <TextInput
+            label={<Text fz="sm" fw="bold">Jumlah</Text>}
+            placeholder="masukkan jumlah"
+          />
           <TextInput
             label={<Text fz="sm" fw="bold">Deskripsi</Text>}
             placeholder="masukkan deskripsi"
@@ -51,15 +55,11 @@ function CreateDataLingkunganDesa() {
                             <IconImageInPicture />
                         </Center>
                     )} */}
-
           <Box>
-            <Text fz="sm" fw="bold">Konten</Text>
-            {/* <CreateEditor
-                            value={potensiState.create.form.content}
-                            onChange={(htmlContent) => {
-                                potensiState.create.form.content = htmlContent;
-                            }}
-                        /> */}
+            <Text fw={"bold"} fz={"sm"}>Deskripsi Data Lingkungan Desa</Text>
+            <KeamananEditor
+              showSubmit={false}
+            />
           </Box>
           <Button bg={colors['blue-button']} >
             Simpan Data

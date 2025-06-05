@@ -1,9 +1,10 @@
-import { Box, Button, Image, Paper, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
-import React from 'react';
-import HeaderSearch from '../../_com/header';
-import { IconDeviceImacCog, IconSearch } from '@tabler/icons-react';
+'use client'
 import colors from '@/con/colors';
+import { Box, Button, Paper, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
+import { IconDeviceImacCog, IconSearch } from '@tabler/icons-react';
+import HeaderSearch from '../../_com/header';
 import JudulList from '../../_com/judulList';
+import { useRouter } from 'next/navigation';
 
 function KonservasiAdatBali() {
   return (
@@ -19,6 +20,7 @@ function KonservasiAdatBali() {
 }
 
 function ListKonservasiAdatBali() {
+  const router = useRouter();
   return (
     <Box py={10}>
       <Paper bg={colors['white-1']} p={'md'}>
@@ -31,9 +33,8 @@ function ListKonservasiAdatBali() {
             <Table striped withRowBorders withTableBorder style={{minWidth: '700px'}}>
               <TableThead>
                 <TableTr>
-                  <TableTh>Judul</TableTh>
-                  <TableTh>Gambar</TableTh>
-                  <TableTh>Deskripsi</TableTh>
+                  <TableTh>Judul Konservasi Adat Bali</TableTh>
+                  <TableTh>Deskripsi Konservasi Adat Bali</TableTh>
                   <TableTh>Detail</TableTh>
                 </TableTr>
               </TableThead>
@@ -41,15 +42,12 @@ function ListKonservasiAdatBali() {
                 <TableTr>
                   <TableTd>
                     <Box w={100}>
-                      <Text truncate="end" fz={"sm"}>Judul</Text>
+                      <Text truncate="end" fz={"sm"}>Judul Konservasi Adat Bali</Text>
                     </Box>
                   </TableTd>
+                  <TableTd>Deskripsi Konservasi Adat Bali</TableTd>
                   <TableTd>
-                    <Image w={100} src="/" alt="image" />
-                  </TableTd>
-                  <TableTd>Deskripsi</TableTd>
-                  <TableTd>
-                    <Button>
+                    <Button onClick={() => router.push("/admin/lingkungan/konservasi-adat-bali/detail")}>
                       <IconDeviceImacCog size={25} />
                     </Button>
                   </TableTd>

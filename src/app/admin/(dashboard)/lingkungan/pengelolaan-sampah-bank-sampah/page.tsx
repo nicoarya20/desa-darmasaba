@@ -1,6 +1,9 @@
 import { Box, Stack, Tabs, TabsList, TabsPanel, TabsTab, Title } from '@mantine/core';
-import ListPage from './ui/list_page/listPage';
+
 import colors from '@/con/colors';
+import ListPengelolaanSampahBankSampah from './list_pengelolaan_sampah_bank_sampah/page';
+import KeteranganBankSampahTerdekat from './keterangan_bank_sampah_terdekat/page';
+
 
 function PengelolaanSampahBankSampah() {
   return (
@@ -13,16 +16,16 @@ function PengelolaanSampahBankSampah() {
               List Pengelolaan Sampah Bank Sampah
             </TabsTab>
             <TabsTab value="maps">
-              Maps
+              Keterangan Bank Sampah Terdekat
             </TabsTab>
-          </TabsList> 
+          </TabsList>
 
           <TabsPanel value="list">
-            <ListPage />
+            <ListPengelolaanSampahBankSampah />
           </TabsPanel>
 
           <TabsPanel value="maps">
-            Maps
+            <KeteranganBankSampahTerdekat />
           </TabsPanel>
         </Tabs>
       </Stack>

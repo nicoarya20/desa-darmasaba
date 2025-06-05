@@ -1,9 +1,11 @@
+'use client'
 import { Box, Button, Image, Paper, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
 import React from 'react';
 import HeaderSearch from '../../_com/header';
 import { IconDeviceImacCog, IconSearch } from '@tabler/icons-react';
 import colors from '@/con/colors';
 import JudulList from '../../_com/judulList';
+import { useRouter } from 'next/navigation';
 
 function Page() { 
   return (
@@ -19,6 +21,7 @@ function Page() {
 }
 
 function ListEdukasiLingkungan() {
+  const router = useRouter();
   return (
     <Box py={10}>
       <Paper bg={colors['white-1']} p={'md'}>
@@ -31,9 +34,9 @@ function ListEdukasiLingkungan() {
             <Table striped withRowBorders withTableBorder style={{minWidth: '700px'}}>
               <TableThead>
                 <TableTr>
-                  <TableTh>Judul</TableTh>
+                  <TableTh>Judul Edukasi Lingkungan</TableTh>
                   <TableTh>Gambar</TableTh>
-                  <TableTh>Deskripsi</TableTh>
+                  <TableTh>Deskripsi Edukasi Lingkungan</TableTh>
                   <TableTh>Detail</TableTh>
                 </TableTr>
               </TableThead>
@@ -47,9 +50,9 @@ function ListEdukasiLingkungan() {
                   <TableTd>
                     <Image w={100} src="/" alt="image" />
                   </TableTd>
-                  <TableTd>Deskripsi</TableTd>
+                  <TableTd>Deskripsi Edukasi Lingkungan</TableTd>
                   <TableTd>
-                    <Button>
+                    <Button onClick={() => router.push('/admin/lingkungan/edukasi-lingkungan/detail')}>
                       <IconDeviceImacCog size={25} />
                     </Button>
                   </TableTd>

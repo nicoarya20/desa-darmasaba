@@ -5,7 +5,7 @@ import { Box, Button, Paper, Stack, Text, TextInput, Title } from '@mantine/core
 import { IconArrowBack, IconImageInPicture } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 
-function Page() {
+function CreateEdukasiLingkungan() {
   const router = useRouter()
   return (
     <Box>
@@ -19,12 +19,12 @@ function Page() {
         <Stack gap="xs">
           <Title order={3}>Create Edukasi Lingkungan</Title>
           <TextInput
-            label={<Text fz="sm" fw="bold">Judul</Text>}
-            placeholder="masukkan judul"
+            label={<Text fz="sm" fw="bold">Judul Edukasi Lingkungan</Text>}
+            placeholder="masukkan judul edukasi lingkungan"
           />
           <TextInput
-            label={<Text fz="sm" fw="bold">Deskripsi</Text>}
-            placeholder="masukkan deskripsi"
+            label={<Text fz="sm" fw="bold">Deskripsi Edukasi Lingkungan</Text>}
+            placeholder="masukkan deskripsi edukasi lingkungan"
           />
           {/* <FileInput
           label={<Text fz="sm" fw="bold">Upload Gambar</Text>}
@@ -58,4 +58,4 @@ function Page() {
   );
 }
 
-export default Page;
+export default CreateEdukasiLingkungan;
