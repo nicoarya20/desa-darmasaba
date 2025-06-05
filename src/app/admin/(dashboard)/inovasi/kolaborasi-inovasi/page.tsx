@@ -1,35 +1,58 @@
+'use client'
 import colors from '@/con/colors';
-import { Box, Stack, Tabs, TabsList, TabsPanel, TabsTab, Title } from '@mantine/core';
-import React from 'react';
-import KolaborasiInovasi from './ui/kolaborasiInovasi/page';
-import MitraKolaborasi from './ui/mitraKolaborasi/page';
+import { Box, Button, Paper, Table, TableTbody, TableTd, TableTh, TableThead, TableTr } from '@mantine/core';
+import { IconDeviceImac, IconSearch } from '@tabler/icons-react';
+import HeaderSearch from '../../_com/header';
+import JudulList from '../../_com/judulList';
+import { useRouter } from 'next/navigation';
 
-function Page() {
+function KolaborasiInovasi() {
   return (
     <Box>
-      <Stack>
-      <Title order={3}>Kolaborasi Inovasi</Title>
-        <Tabs color={colors['blue-button']} variant='pills' defaultValue={"Kolaborasi Inovasi"}>
-          <TabsList p={"xs"} bg={"#BBC8E7FF"}>
-            <TabsTab value="Kolaborasi Inovasi">
-               Kolaborasi Inovasi
-            </TabsTab>
-            <TabsTab value="Mitra Kolaborasi">
-              Mitra Kolaborasi
-            </TabsTab>
-          </TabsList>
-
-          <TabsPanel value="Kolaborasi Inovasi">
-            <KolaborasiInovasi/>
-          </TabsPanel>
-
-          <TabsPanel value="Mitra Kolaborasi">
-            <MitraKolaborasi/>
-          </TabsPanel>
-        </Tabs>
-      </Stack>
+      <HeaderSearch
+        title='Kolaborasi Inovasi'
+        placeholder='pencarian'
+        searchIcon={<IconSearch size={20} />}
+      />
+      <ListKolaborasiInovasi/>
     </Box>
   );
 }
 
-export default Page;
+function ListKolaborasiInovasi() {
+  const router = useRouter();
+  return (
+    <Box py={10}>
+      <Paper bg={colors['white-1']} p={'md'}>
+        <JudulList
+          title='List Kolaborasi Inovasi'
+          href='/admin/inovasi/kolaborasi-inovasi/create'
+        />
+        <Table striped withTableBorder withRowBorders>
+          <TableThead>
+            <TableTr>
+              <TableTh>Nama Kolaborasi Inovasi</TableTh>
+              <TableTh>Image</TableTh>
+              <TableTh>Deskripsi Singkat</TableTh>
+              <TableTh>Detail</TableTh>
+              </TableTr>
+          </TableThead>
+          <TableTbody>
+            <TableTr>
+              <TableTd>Kolaborasi Inovasi 1</TableTd>
+              <TableTd>Image</TableTd>
+              <TableTd>Deskripsi Singkat</TableTd>
+              <TableTd>
+                <Button onClick={() => router.push('/admin/inovasi/kolaborasi-inovasi/detail')}>
+                  <IconDeviceImac size={20} />
+                </Button>
+              </TableTd>
+            </TableTr>
+          </TableTbody>
+        </Table>  
+      </Paper>
+    </Box>
+  );
+}
+
+export default KolaborasiInovasi;

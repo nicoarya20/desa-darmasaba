@@ -1,41 +1,56 @@
+'use client'
 import colors from '@/con/colors';
-import { Box, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
-import { IconImageInPicture } from '@tabler/icons-react';
-import React from 'react';
+import { Box, Button, Paper, Table, TableTbody, TableTd, TableTh, TableThead, TableTr } from '@mantine/core';
+import { IconDeviceImac, IconSearch } from '@tabler/icons-react';
+import HeaderSearch from '../../_com/header';
+import JudulList from '../../_com/judulList';
+import { useRouter } from 'next/navigation';
 
-function Page() {
+function LayananOnlineDesa() {
   return (
     <Box>
-      <Stack gap={"xs"}>
-        <Box>
-          <Paper w={{ base: '100%', md: '50%' }} bg={colors['white-1']} p={'md'}>
-            <Stack gap={'xs'}>
-              <Title order={3}>Layanan Online Desa</Title>
-              <TextInput
-                label={<Text fz={'sm'} fw={'bold'}>Nama Layanan</Text>}
-                placeholder="Masukkan nama layanan"
-              />
-              <TextInput
-                label={<Text fz={'sm'} fw={'bold'}>Deskripsi Layanan</Text>}
-                placeholder="Masukkan deskripsi layanan"
-              />
-              <Box>
-                <Text fz={'sm'} fw={'bold'}>Upload Gambar Layanan</Text>
-                <IconImageInPicture size={24} />
-              </Box>
-            </Stack>
-          </Paper>
-        </Box>
-        <Box>
-          <Paper bg={colors['white-1']} p={'md'}>
-            <Stack gap={'xs'}>
-              <Title order={3}>List Data Layanan Online Desa</Title>
-            </Stack>
-          </Paper>
-        </Box>
-      </Stack>
+      <HeaderSearch
+        title='Layanan Online Desa'
+        placeholder='pencarian'
+        searchIcon={<IconSearch size={20} />}
+      />
+      <ListLayananOnlineDesa/>
     </Box>
   );
 }
 
-export default Page;
+function ListLayananOnlineDesa() {
+  const router = useRouter();
+  return (
+    <Box py={10}>
+      <Paper bg={colors['white-1']} p={'md'}>
+        <JudulList
+          title='List Layanan Online Desa'
+          href='/admin/inovasi/layanan-online-desa/create'
+        />
+        <Table striped withTableBorder withRowBorders>
+          <TableThead>
+            <TableTr>
+              <TableTh>Nama Layanan</TableTh>
+              <TableTh>Deskripsi</TableTh>
+              <TableTh>Detail</TableTh>
+              </TableTr>
+          </TableThead>
+          <TableTbody>
+            <TableTr>
+              <TableTd>Layanan Online Desa 1</TableTd>
+              <TableTd>Deskripsi Layanan Online Desa 1</TableTd>
+              <TableTd>
+                <Button onClick={() => router.push('/admin/inovasi/layanan-online-desa/detail')}>
+                  <IconDeviceImac size={20} />
+                </Button>
+              </TableTd>
+            </TableTr>
+          </TableTbody>
+        </Table>  
+      </Paper>
+    </Box>
+  );
+}
+
+export default LayananOnlineDesa;
