@@ -4,9 +4,7 @@ import { Box, Button, Grid, GridCol, Image, Paper, Skeleton, Stack, Table, Table
 import { useShallowEffect } from '@mantine/hooks';
 import { IconCircleDashedPlus, IconDeviceImacCog, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
-import { ModalKonfirmasiHapus } from '../../_com/modalKonfirmasiHapus';
 import stateDashboardBerita from '../../_state/desa/berita';
 
 
@@ -34,22 +32,12 @@ function Page() {
 
 function BeritaList() {
   const beritaState = useProxy(stateDashboardBerita)
-  const [modalHapus, setModalHapus] = useState(false)
-  const [selectedId, setSelectedId] = useState<string | null>(null)
 
   useShallowEffect(() => {
     beritaState.berita.findMany.load()
   }, [])
 
   const router = useRouter()
-
-  const handleHapus = () => {
-    if (selectedId) {
-      beritaState.berita.delete.byId(selectedId)
-      setModalHapus(false)
-      setSelectedId(null)
-    }
-  }
 
   if (!beritaState.berita.findMany.data) {
     return (
@@ -109,13 +97,6 @@ function BeritaList() {
         </Stack>
       </Paper>
 
-      {/* Modal Konfirmasi Hapus */}
-      <ModalKonfirmasiHapus
-        opened={modalHapus}
-        onClose={() => setModalHapus(false)}
-        onConfirm={handleHapus}
-        text='Apakah anda yakin ingin menghapus berita ini?'
-      />
     </Box>
   )
 }

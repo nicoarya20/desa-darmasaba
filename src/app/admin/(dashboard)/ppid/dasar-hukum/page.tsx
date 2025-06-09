@@ -1,61 +1,55 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, SimpleGrid, Stack, Title } from '@mantine/core';
-import CreateDasarHukum from './create/create';
-import ListDataDasarHukum from './listData/page';
+import { Box, Button, Grid, GridCol, Paper, Skeleton, Stack, Text, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
+import { IconEdit } from '@tabler/icons-react';
+import { useRouter } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
 import stateDasarHukumPPID from '../../_state/ppid/dasar_hukum/dasarHukum';
-import { useEffect, useState } from 'react';
 
 function Page() {
-  const dasarHukumState = useProxy(stateDasarHukumPPID)
-  const [judul, setJudul] = useState('');
-  const [content, setContent] = useState('');
-
+  const router = useRouter()
+  const listDasarHukum = useProxy(stateDasarHukumPPID)
   useShallowEffect(() => {
-    if (!dasarHukumState.findById.data) {
-      dasarHukumState.findById.initialize(); // biar masuk ke `findFirst` route kamu
-    }
-  }, []);
+    listDasarHukum.findById.load('1')
+  }, [])
 
-  useEffect(() => {
-    if (dasarHukumState.findById.data) {
-      setJudul(dasarHukumState.findById.data.judul ?? '')
-      setContent(dasarHukumState.findById.data.content ?? '')
-    }
-  }, [dasarHukumState.findById.data])
-
-  const submit = () => {
-    if (dasarHukumState.findById.data) {
-      dasarHukumState.findById.data.judul = judul;
-      dasarHukumState.findById.data.content = content;
-      dasarHukumState.update.save(dasarHukumState.findById.data)
-    }
+  if (!listDasarHukum.findById.data) {
+    return (
+      <Stack>
+        <Skeleton radius={10} h={800} />
+      </Stack>
+    )
   }
-
   return (
-    <Stack gap={"xs"}>
-      <SimpleGrid cols={{ base: 1, md: 2 }}>
-        <Box>
-          <Paper bg={colors['white-1']} p={'md'} radius={10}>
-            <Title order={3}>Dasar Hukum PPID</Title>
-            <CreateDasarHukum onJudulChange={setJudul} onContentChange={setContent} valueJudul={judul} valueContent={content} />
-            <Group>
-              <Button
-                mt={10}
-                bg={colors['blue-button']}
-                onClick={submit}
-                loading={dasarHukumState.update.loading}
-              >
-                Submit
-              </Button>
-            </Group>
-          </Paper>
+    <Paper bg={colors['white-1']} p={'md'} radius={10}>
+      <Stack gap={"22"}>
+        <Grid>
+          <GridCol span={{ base: 12, md: 11 }}>
+            <Title order={2}>Preview Dasar Hukum PPID</Title>
+          </GridCol>
+          <GridCol span={{ base: 12, md: 1 }}>
+            <Button bg={colors['blue-button']} onClick={() => router.push('/admin/ppid/dasar-hukum/edit')}>
+              <IconEdit size={16} />
+            </Button>
+          </GridCol>
+        </Grid>
+        <Box px={{ base: "md", md: 100 }}>
+          <Stack gap={'lg'}>
+            <Paper p={"xl"} bg={colors['BG-trans']}>
+              <Box px={{ base: 20, md: 50 }} pb={30}>
+                <Text ta={"center"} fz={{ base: "h3", md: "h2" }} fw={"bold"}>
+                  {listDasarHukum.findById.data.judul}
+                </Text>
+              </Box>
+              <Box px={{ base: 20, md: 50 }}>
+                <Text fz={{ base: "md", md: "h3" }} ta={"justify"} dangerouslySetInnerHTML={{ __html: listDasarHukum.findById.data.content }} />
+              </Box>
+            </Paper>
+          </Stack>
         </Box>
-        <ListDataDasarHukum />
-      </SimpleGrid>
-    </Stack>
+      </Stack>
+    </Paper>
   )
 }
 

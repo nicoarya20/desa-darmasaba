@@ -10,9 +10,10 @@ function Page() {
   useShallowEffect(() => {
     permohonanInformasiPublikState.statepermohonanInformasiPublik.findMany.load()
   }, [])
-  if (!permohonanInformasiPublikState.statepermohonanInformasiPublik.findMany.data) return <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"22"}>
-    {Array.from({ length: 10 }).map((v, k) => <Skeleton key={k} h={40} />)}
-  </Stack>
+  if (!permohonanInformasiPublikState.statepermohonanInformasiPublik.findMany.data)
+    return <Stack pos={"relative"} bg={colors.Bg}>
+      <Skeleton radius={5} h={200} />
+    </Stack>
 
   return (
     <Box py={5}>

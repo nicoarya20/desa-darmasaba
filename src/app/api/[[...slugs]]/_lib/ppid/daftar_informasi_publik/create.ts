@@ -11,12 +11,8 @@ type FormCreate = Prisma.DaftarInformasiPublikGetPayload<{
 }>
 export default async function daftarInformasiPublikCreate(context: Context) {
     const body = context.body as FormCreate;
-    const jumlahData = await prisma.daftarInformasiPublik.count({
-        where: { isActive: true }, // hitung data aktif aja
-      })
     await prisma.daftarInformasiPublik.create({
-        data: {
-            nomor: jumlahData + 1,
+        data: { 
             jenisInformasi: body.jenisInformasi,
             deskripsi: body.deskripsi,
             tanggal: body.tanggal,

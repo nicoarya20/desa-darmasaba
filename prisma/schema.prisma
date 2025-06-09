@@ -107,7 +107,6 @@ model ProfilePPID {
 // ========================================= DAFTAR INFORMASI PUBLIK ========================================= //
 model DaftarInformasiPublik {
   id             String   @id @default(cuid())
-  nomor          Int      @default(autoincrement())
   jenisInformasi String
   deskripsi      String
   tanggal        String
