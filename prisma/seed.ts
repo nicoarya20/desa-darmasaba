@@ -6,13 +6,9 @@ import caraMemperolehSalinanInformasi from "./data/list-caraMemperolehSalinanInf
 import jenisInformasiDiminta from "./data/list-jenisInfromasi.json";
 import layanan from "./data/list-layanan.json";
 import potensi from "./data/list-potensi.json";
-import visiMisiPPID from "./data/ppid/visi-misi-ppid/visimisiPPID.json";
 import dasarHukumPPID from "./data/ppid/dasar-hukum-ppid/dasarhukumPPID.json";
 import profilePPID from "./data/ppid/profile-ppid/profilePPid.json";
-import path from "path";
-import fs from "fs";
-import { mkdir, writeFile } from "fs/promises";
-import { v4 as uuid } from "uuid";
+import visiMisiPPID from "./data/ppid/visi-misi-ppid/visimisiPPID.json";
 
 (async () => {
   for (const l of layanan) {
@@ -124,56 +120,29 @@ import { v4 as uuid } from "uuid";
   }
   console.log("cara memperoleh salinan informasi success ...");
 
-  const seedProfilePPID = async () => {
-    const targetDir = path.resolve("public", "uploads", "seeded-images", "profile-ppid")
-  
-    // Buat folder hanya jika belum ada
-    if (!fs.existsSync(targetDir)) {
-      await mkdir(targetDir, { recursive: true })
-    }
-  
-    for (const c of profilePPID) {
-      let finalImageUrl = c.imageUrl
-  
-      if (c.imageUrl.startsWith("/uploads/seeded-images/")) {
-        const filename = path.basename(c.imageUrl)
-        const seedImagePath = path.resolve("prisma", "seed-images", filename)
-  
-        const targetFilename = `${uuid()}_${filename}`
-        const targetPath = path.join(targetDir, targetFilename)
-  
-        const buffer = fs.readFileSync(seedImagePath)
-        await writeFile(targetPath, buffer)
-  
-        finalImageUrl = `/uploads/seeded-images/profile-ppid/${targetFilename}`
-      }
-  
-      await prisma.profilePPID.upsert({
-        where: { id: c.id },
-        update: {
-          name: c.name,
-          biodata: c.biodata,
-          riwayat: c.riwayat,
-          pengalaman: c.pengalaman,
-          unggulan: c.unggulan,
-          imageUrl: finalImageUrl,
-        },
-        create: {
-          id: c.id,
-          name: c.name,
-          biodata: c.biodata,
-          riwayat: c.riwayat,
-          pengalaman: c.pengalaman,
-          unggulan: c.unggulan,
-          imageUrl: finalImageUrl,
-        },
-      })
-    }
-  
-    console.log("✅ profilePPID seeded from JSON with image copying")
+  for (const c of profilePPID) {
+    await prisma.profilePPID.upsert({
+      where: { id: c.id },
+      update: {
+        name: c.name,
+        biodata: c.biodata,
+        riwayat: c.riwayat,
+        pengalaman: c.pengalaman,
+        unggulan: c.unggulan,
+        // imageId tidak di-update
+      },
+      create: {
+        id: c.id,
+        name: c.name,
+        biodata: c.biodata,
+        riwayat: c.riwayat,
+        pengalaman: c.pengalaman,
+        unggulan: c.unggulan,
+        // imageId tidak di-create
+      },
+    });
   }
-  
-  await seedProfilePPID()
+  console.log("✅ profilePPID seeded without imageId (editable later via UI)");
 
   for (const v of visiMisiPPID) {
     await prisma.visiMisiPPID.upsert({

@@ -1,4 +1,3 @@
-import ApiFetch from "@/lib/api-fetch";
 import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
 import { proxy } from "valtio";
@@ -13,11 +12,18 @@ const templateForm = z.object({
   riwayat: z.string().min(3, "Riwayat minimal 3 karakter"),
   pengalaman: z.string().min(3, "Pengalaman minimal 3 karakter"),
   unggulan: z.string().min(3, "Unggulan minimal 3 karakter"),
+  imageId: z.string().min(1, "Gambar wajib dipilih"),
 });
 
-/**
- * Tipe data ProfilePPID yang digunakan dalam form dan API, berdasarkan Prisma schema.
- */
+const defaultForm = {
+  name: "",
+  biodata: "",
+  riwayat: "",
+  pengalaman: "",
+  unggulan: "",
+  imageId: "",
+};
+
 type ProfilePPIDForm = Prisma.ProfilePPIDGetPayload<{
   select: {
     id: true;
@@ -26,147 +32,170 @@ type ProfilePPIDForm = Prisma.ProfilePPIDGetPayload<{
     riwayat: true;
     pengalaman: true;
     unggulan: true;
-    imageUrl: true;
+    imageId: true;
+    image?: {
+      select: {
+        link: true;
+      };
+    };
   };
 }>;
 
 /**
- * State utama ProfilePPID yang mencakup fitur:
- * - Ambil data berdasarkan ID
- * - Update data
- * - Upload gambar
+ * Improved State Management - Consolidated and more robust
  */
 const stateProfilePPID = proxy({
-  /**
-   * Bagian untuk ambil data berdasarkan ID
-   */
-  findById: {
+  // Consolidated data management
+  profile: {
     data: null as ProfilePPIDForm | null,
     loading: false,
+    error: null as string | null,
 
-    /**
-     * Inisialisasi data kosong ke dalam state.
-     */
-    initialize() {
-      stateProfilePPID.findById.data = {
-        id: '',
-        name: '',
-        biodata: '',
-        riwayat: '',
-        pengalaman: '',
-        unggulan: '',
-        imageUrl: ''
-      } as ProfilePPIDForm;
-    },
-
-    /**
-     * Mengambil data profil berdasarkan ID.
-     * @param {string} id - ID dari profile yang ingin diambil.
-     */
+    // Single method to load profile data
     async load(id: string) {
-      try {
-        stateProfilePPID.findById.loading = true;
-        const res = await ApiFetch.api.ppid.profileppid["find-by-id"].get({
-          query: { id },
-        });
+      if (!id) {
+        toast.warn("ID tidak valid");
+        return null;
+      }
 
-        if (res.status === 200) {
-          stateProfilePPID.findById.data = res.data?.data ?? null;
+      this.loading = true;
+      this.error = null;
+
+      try {
+        const response = await fetch(`/api/ppid/profileppid/${id}`);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        
+        if (result.success) {
+          this.data = result.data;
+          return result.data;
         } else {
-          toast.error("Gagal mengambil data profile");
+          throw new Error(result.message || "Gagal mengambil data profile");
         }
       } catch (error) {
-        console.error((error as Error).message);
+        const errorMessage = (error as Error).message;
+        this.error = errorMessage;
+        console.error("Load profile error:", errorMessage);
         toast.error("Terjadi kesalahan saat mengambil data profile");
+        return null;
       } finally {
-        stateProfilePPID.findById.loading = false;
+        this.loading = false;
       }
     },
+
+    // Reset profile data
+    reset() {
+      this.data = null;
+      this.error = null;
+      this.loading = false;
+    }
   },
 
-  /**
-   * Bagian untuk update data profile
-   */
-  update: {
+  // Edit form management
+  editForm: {
+    id: "",
+    form: { ...defaultForm },
     loading: false,
+    error: null as string | null,
+    isReadOnly: false, // Flag untuk data yang tidak bisa diedit
 
-    /**
-     * Melakukan validasi dan menyimpan perubahan data profile ke server.
-     * @param {ProfilePPIDForm} data - Data profil yang akan disimpan.
-     */
-    async save(data: ProfilePPIDForm) {
-      const cek = templateForm.safeParse(data);
+    // Initialize form with profile data
+    initialize(profileData: ProfilePPIDForm) {
+      this.id = profileData.id;
+      this.isReadOnly = false; // Semua data bisa diedit
+      this.form = {
+        name: profileData.name || "",
+        biodata: profileData.biodata || "",
+        riwayat: profileData.riwayat || "",
+        pengalaman: profileData.pengalaman || "",
+        unggulan: profileData.unggulan || "",
+        imageId: profileData.imageId || "",
+      };
+    },
 
-      if (!cek.success) {
-        const errors = cek.error.issues
+    // Update form field
+    updateField(field: keyof typeof defaultForm, value: string) {
+      this.form[field] = value;
+    },
+
+    // Submit form
+    async submit() {
+      // Validate form
+      const validation = templateForm.safeParse(this.form);
+      
+      if (!validation.success) {
+        const errors = validation.error.issues
           .map((issue) => `${issue.path.join(".")}: ${issue.message}`)
           .join(", ");
         toast.error(`Form tidak valid: ${errors}`);
-        return;
+        return false;
       }
 
-      try {
-        stateProfilePPID.update.loading = true;
-        const res = await ApiFetch.api.ppid.profileppid["update"].post(data);
+      this.loading = true;
+      this.error = null;
 
-        if (res.status === 200) {
+      try {
+        const response = await fetch(`/api/ppid/profileppid/${this.id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(this.form),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+
+        if (result.success) {
           toast.success("Berhasil update profile");
-          await stateProfilePPID.findById.load(data.id);
+          // Refresh profile data
+          await stateProfilePPID.profile.load(this.id);
+          return true;
         } else {
-          toast.error("Gagal update profile");
+          throw new Error(result.message || "Gagal update profile");
         }
       } catch (error) {
-        console.error((error as Error).message);
+        const errorMessage = (error as Error).message;
+        this.error = errorMessage;
+        console.error("Update profile error:", errorMessage);
         toast.error("Terjadi kesalahan saat update profile");
+        return false;
       } finally {
-        stateProfilePPID.update.loading = false;
+        this.loading = false;
       }
     },
+
+    // Reset form
+    reset() {
+      this.id = "";
+      this.form = { ...defaultForm };
+      this.error = null;
+      this.loading = false;
+      this.isReadOnly = false;
+    }
   },
 
-  /**
-   * Bagian untuk upload gambar profil
-   */
-  uploadImage: {
-    loading: false,
-
-    /**
-     * Mengunggah gambar profil berdasarkan ID.
-     * @param {File} file - File gambar yang akan diunggah.
-     * @param {string} id - ID dari profil yang akan diperbarui gambarnya.
-     */
-    async save(file: File, id: string) {
-      if (!file || !id) {
-        toast.error("File atau ID harus disertakan");
-        return;
-      }
-
-      try {
-        stateProfilePPID.uploadImage.loading = true;
-
-        const form = new FormData();
-        form.append("file", file);
-        form.append("id", id);
-
-        const res = await ApiFetch.api.ppid.profileppid["edit-img"].post(form);
-
-        if (res.status === 200) {
-          toast.success("Berhasil mengunggah gambar");
-          await stateProfilePPID.findById.load(id);
-        } else {
-          toast.error("Gagal mengunggah gambar");
-        }
-      } catch (error) {
-        console.error((error as Error).message);
-        toast.error("Terjadi kesalahan saat mengunggah gambar");
-      } finally {
-        stateProfilePPID.uploadImage.loading = false;
-      }
-    },
+  // Helper methods
+  async loadForEdit(id: string) {
+    const profileData = await this.profile.load(id);
+    if (profileData) {
+      this.editForm.initialize(profileData);
+    }
+    return profileData;
   },
+
+  reset() {
+    this.profile.reset();
+    this.editForm.reset();
+  }
 });
 
-/**
- * Ekspor state utama ProfilePPID untuk digunakan di komponen lain.
- */
 export default stateProfilePPID;

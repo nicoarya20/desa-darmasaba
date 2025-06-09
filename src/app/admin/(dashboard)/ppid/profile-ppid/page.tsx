@@ -1,89 +1,118 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, SimpleGrid, Stack, Text, TextInput, Title } from '@mantine/core';
-import Biodata from './biodata/page';
-import PengalamanOrganisasi from './pengalaman_organisasi/page';
-import RiwayatKarir from './riwayat_karir/page';
-import ProgramKerjaUnggulan from './program_kerja_unggulan/page';
+import { Box, Button, Center, Divider, Flex, Grid, GridCol, Image, List, Paper, Skeleton, Stack, Text, Title } from '@mantine/core';
+import { useShallowEffect } from '@mantine/hooks';
+import { IconEdit } from '@tabler/icons-react';
+import { useRouter } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
 import stateProfilePPID from '../../_state/ppid/profile_ppid/profile_PPID';
-import { useShallowEffect } from '@mantine/hooks';
-import ProfileList from './listPage';
-import { useState } from 'react';
-import { toast } from 'react-toastify';
 
 
 function Page() {
-  return (
-    <Box>
-      <SimpleGrid cols={{ base: 1, md: 2 }}>
-        <ProfileCreate />
-        <ProfileList />
-      </SimpleGrid>
-    </Box>
-  );
-}
-
-function ProfileCreate() {
-  const [isLoading, setIsLoading] = useState(false)
-  const allState = useProxy(stateProfilePPID)
-
-  // Initialize data if it doesn't exist
+  const router = useRouter()
+  const allList = useProxy(stateProfilePPID)
   useShallowEffect(() => {
-    if (!allState.findById.data && isLoading) {
-      allState.findById.initialize()
-      setIsLoading(false)
-    }
-  }, [isLoading])
+    allList.profile.load("1") // Assuming "1" is your default ID, adjust as needed
+  }, [])
 
-  const submit = () => {
-    if (
-      allState.findById.data?.name &&
-      allState.findById.data?.biodata &&
-      allState.findById.data?.riwayat &&
-      allState.findById.data?.pengalaman &&
-      allState.findById.data?.unggulan
-    ) {
-      allState.update.save(allState.findById.data)
-      setIsLoading(true)
-      toast.success("success")
-      console.log("[SUBMIT SUCCESS]", JSON.stringify(allState.findById.data, null, 2))
-      allState.findById.initialize()
-    } else {
-      toast.error("error")
-    }
+  if (!allList.profile.data) {
+    return <Stack>
+      <Skeleton radius={10} h={800} />
+    </Stack>
   }
 
+  const dataArray = Array.isArray(allList.profile.data)
+    ? allList.profile.data
+    : [allList.profile.data];
+
   return (
-    <Paper bg={colors['white-1']} p={'md'} radius={10}>
+    <Paper bg={colors['white-1']} p={'md'}>
       <Stack gap={"xs"}>
-        <Title order={3}>Profile PPID</Title>
-        <TextInput
-          label={<Text fw={"bold"}>Nama Perbekel</Text>}
-          placeholder="masukkan nama perbekel"
-          value={allState.findById.data?.name || ''}
-          onChange={(val) => {
-            if (allState.findById.data) {
-              allState.findById.data.name = val.currentTarget.value
-            }
-          }}
-        />
-        <Biodata />
-        <RiwayatKarir />
-        <PengalamanOrganisasi />
-        <ProgramKerjaUnggulan />
-        <Group>
-          <Button
-            bg={colors['blue-button']}
-            onClick={submit}
-            loading={allState.update.loading}
-          >
-            Submit
-          </Button>
-        </Group>
+        <Grid>
+          <GridCol span={{ base: 12, md: 11 }}>
+            <Title order={3}>List Profile PPID</Title>
+          </GridCol>
+          <GridCol span={{ base: 12, md: 1 }}>
+            <Button bg={colors['blue-button']} onClick={() => router.push(`/admin/ppid/profile-ppid/${allList.profile.data?.id}`)}>
+              <IconEdit size={16} />
+            </Button>
+          </GridCol>
+        </Grid>
+        {dataArray.map((item) => (
+          <Box key={item.id} px={{ base: "md", md: 100 }}>
+            <Paper p={"xl"} bg={colors['BG-trans']}>
+              <Box px={{ base: "md", md: 100 }}>
+                <Flex align={"center"} gap={50}>
+                  <Image src={"/api/img/darmasaba-icon.png"} h={{ base: 80, md: 150 }} alt='' />
+                  <Text fz={{ base: "1.4rem", md: "1.6rem", lg: "2rem", xl: "2.5rem" }} fw={'bold'}>PROFIL PIMPINAN BADAN PUBLIK DESA DARMASABA </Text>
+                </Flex>
+              </Box>
+              <Divider my={"md"} />
+              {/* biodata perbekel */}
+              <Box px={{ base: 0, md: 50 }} pb={30}>
+                <Box px={{ base: 0, md: 50 }}>
+                  <Paper bg={colors['BG-trans']} w={{ base: "100%", md: "100%" }}>
+                    <Stack gap={0}>
+                      <Center>
+                        <Image
+                          pt={{ base: 0, md: 90 }}
+                          src={item.image?.link}
+                          w={{ base: 250, md: 350 }}
+                          alt='Foto Profil PPID'
+                          onError={(e) => {
+                            e.currentTarget.src = "/perbekel.png";
+                          }}
+                        />
+                      </Center>
+                      <Paper
+                        bg={colors['blue-button']}
+                        py={30}
+                        className="glass3"
+                        px={{ base: 20, md: 20 }}
+
+                      >
+                        <Text ta={"center"} c={colors['white-1']} fw={"bolder"} fz={{ base: "1.5rem", md: "1.5rem" }}>
+                          {item.name}
+                        </Text>
+                      </Paper>
+                    </Stack>
+                  </Paper>
+                </Box>
+                <Box pt={10}>
+                  <Box>
+                    <Text fz={{ base: "1.125rem", md: "1.375rem", lg: "1.75rem", xl: "2rem" }} fw={'bold'}>Biodata</Text>
+                    <Text fz={{ base: "1rem", md: "1.125rem", lg: "1.25rem", xl: "1.5rem" }} ta={"justify"} dangerouslySetInnerHTML={{ __html: item.biodata }} />
+                  </Box>
+                  <Box>
+                    <Text fz={{ base: "1.125rem", md: "1.375rem", lg: "1.75rem", xl: "2rem" }} fw={'bold'}>Riwayat Karir</Text>
+                    <Text fz={{ base: "1rem", md: "1.125rem", lg: "1.25rem", xl: "1.5rem" }} dangerouslySetInnerHTML={{ __html: item.riwayat }} />
+                  </Box>
+                </Box>
+              </Box>
+              <Box pb={30}>
+                <Text fz={{ base: "1.125rem", md: "1.375rem", lg: "1.75rem", xl: "2rem" }} fw={'bold'}>Pengalaman Organisasi</Text>
+                <List>
+                  <Box px={20}>
+                    <Text fz={{ base: "1rem", md: "1.125rem", lg: "1.25rem", xl: "1.5rem" }} ta={"justify"} dangerouslySetInnerHTML={{ __html: item.pengalaman }} />
+                  </Box>
+                </List>
+              </Box>
+              <Box pb={20}>
+                <Text fz={{ base: "1.125rem", md: "1.375rem", lg: "1.75rem", xl: "2rem" }} fw={'bold'}>Program Kerja Unggulan</Text>
+                <List>
+                  <Box px={20}>
+                    <Text fz={{ base: "1rem", md: "1.125rem", lg: "1.25rem", xl: "1.5rem" }} ta={"justify"} dangerouslySetInnerHTML={{ __html: item.unggulan }} />
+                  </Box>
+                </List>
+              </Box>
+            </Paper>
+          </Box>
+        ))}
       </Stack>
     </Paper>
   )
 }
+
+
 
 export default Page;
