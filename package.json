@@ -24,6 +24,7 @@
     "@mantine/core": "^7.17.4",
     "@mantine/dates": "^7.17.4",
     "@mantine/dropzone": "^7.17.0",
+    "@mantine/form": "^8.1.0",
     "@mantine/hooks": "^7.17.4",
     "@mantine/tiptap": "^7.17.4",
     "@paljs/types": "^8.1.0",
