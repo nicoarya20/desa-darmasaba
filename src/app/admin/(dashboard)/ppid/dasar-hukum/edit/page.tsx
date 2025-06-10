@@ -38,6 +38,7 @@ function EditDasarHukum() {
       dasarHukumState.findById.data.content = content;
       dasarHukumState.update.save(dasarHukumState.findById.data)
     }
+    router.push('/admin/ppid/dasar-hukum')
   }
   return (
     <Box>

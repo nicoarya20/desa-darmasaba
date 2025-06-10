@@ -1,6 +1,6 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Center, Divider, Flex, Grid, GridCol, Image, List, Paper, Skeleton, Stack, Text, Title } from '@mantine/core';
+import { Box, Button, Center, Divider, Grid, GridCol, Image, Paper, Skeleton, Stack, Text, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconEdit } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
@@ -30,7 +30,7 @@ function Page() {
       <Stack gap={"xs"}>
         <Grid>
           <GridCol span={{ base: 12, md: 11 }}>
-            <Title order={3}>List Profile PPID</Title>
+            <Title order={3}>Preview Profile PPID</Title>
           </GridCol>
           <GridCol span={{ base: 12, md: 1 }}>
             <Button bg={colors['blue-button']} onClick={() => router.push(`/admin/ppid/profile-ppid/${allList.profile.data?.id}`)}>
@@ -39,18 +39,24 @@ function Page() {
           </GridCol>
         </Grid>
         {dataArray.map((item) => (
-          <Box key={item.id} px={{ base: "md", md: 100 }}>
+          <Box key={item.id} >
             <Paper p={"xl"} bg={colors['BG-trans']}>
               <Box px={{ base: "md", md: 100 }}>
-                <Flex align={"center"} gap={50}>
-                  <Image src={"/api/img/darmasaba-icon.png"} h={{ base: 80, md: 150 }} alt='' />
-                  <Text fz={{ base: "1.4rem", md: "1.6rem", lg: "2rem", xl: "2.5rem" }} fw={'bold'}>PROFIL PIMPINAN BADAN PUBLIK DESA DARMASABA </Text>
-                </Flex>
+                <Grid>
+                  <GridCol span={{ base: 12, md: 12 }}>
+                    <Center>
+                      <Image src={"/api/img/darmasaba-icon.png"} w={{ base: 100, md: 150 }} alt='' />
+                    </Center>
+                  </GridCol>
+                  <GridCol span={{ base: 12, md: 12 }}>
+                    <Text ta={"center"} fz={{ base: "1.2rem", md: "1.8rem" }} fw={'bold'}>PROFIL PIMPINAN BADAN PUBLIK DESA DARMASABA </Text>
+                  </GridCol>
+                </Grid>
               </Box>
-              <Divider my={"md"} />
+              <Divider my={"md"} color={colors['blue-button']} />
               {/* biodata perbekel */}
               <Box px={{ base: 0, md: 50 }} pb={30}>
-                <Box px={{ base: 0, md: 50 }}>
+                <Box pb={20} px={{ base: 0, md: 50 }}>
                   <Paper bg={colors['BG-trans']} w={{ base: "100%", md: "100%" }}>
                     <Stack gap={0}>
                       <Center>
@@ -66,12 +72,12 @@ function Page() {
                       </Center>
                       <Paper
                         bg={colors['blue-button']}
-                        py={30}
+                        py={20}
                         className="glass3"
-                        px={{ base: 20, md: 20 }}
+                        px={{ base: 10, md: 10 }}
 
                       >
-                        <Text ta={"center"} c={colors['white-1']} fw={"bolder"} fz={{ base: "1.5rem", md: "1.5rem" }}>
+                        <Text ta={"center"} c={colors['white-1']} fw={"bolder"} fz={{ base: "1.2rem", md: "1.6rem" }}>
                           {item.name}
                         </Text>
                       </Paper>
@@ -80,30 +86,26 @@ function Page() {
                 </Box>
                 <Box pt={10}>
                   <Box>
-                    <Text fz={{ base: "1.125rem", md: "1.375rem", lg: "1.75rem", xl: "2rem" }} fw={'bold'}>Biodata</Text>
-                    <Text fz={{ base: "1rem", md: "1.125rem", lg: "1.25rem", xl: "1.5rem" }} ta={"justify"} dangerouslySetInnerHTML={{ __html: item.biodata }} />
+                    <Text fz={{ base: "1.125rem", md: "1.6rem" }} fw={'bold'}>Biodata</Text>
+                    <Text fz={{ base: "1rem", md: "1.5rem" }} ta={"justify"} dangerouslySetInnerHTML={{ __html: item.biodata }} />
                   </Box>
                   <Box>
-                    <Text fz={{ base: "1.125rem", md: "1.375rem", lg: "1.75rem", xl: "2rem" }} fw={'bold'}>Riwayat Karir</Text>
-                    <Text fz={{ base: "1rem", md: "1.125rem", lg: "1.25rem", xl: "1.5rem" }} dangerouslySetInnerHTML={{ __html: item.riwayat }} />
+                    <Text fz={{ base: "1.125rem", md: "1.6rem" }} fw={'bold'}>Riwayat Karir</Text>
+                    <Text fz={{ base: "1rem", md: "1.5rem" }} dangerouslySetInnerHTML={{ __html: item.riwayat }} />
                   </Box>
                 </Box>
-              </Box>
-              <Box pb={30}>
-                <Text fz={{ base: "1.125rem", md: "1.375rem", lg: "1.75rem", xl: "2rem" }} fw={'bold'}>Pengalaman Organisasi</Text>
-                <List>
+                <Box pb={30}>
+                  <Text fz={{ base: "1.125rem", md: "1.6rem" }} fw={'bold'}>Pengalaman Organisasi</Text>
                   <Box px={20}>
-                    <Text fz={{ base: "1rem", md: "1.125rem", lg: "1.25rem", xl: "1.5rem" }} ta={"justify"} dangerouslySetInnerHTML={{ __html: item.pengalaman }} />
+                    <Text fz={{ base: "1rem", md: "1.5rem" }} ta={"justify"} dangerouslySetInnerHTML={{ __html: item.pengalaman }} />
                   </Box>
-                </List>
-              </Box>
-              <Box pb={20}>
-                <Text fz={{ base: "1.125rem", md: "1.375rem", lg: "1.75rem", xl: "2rem" }} fw={'bold'}>Program Kerja Unggulan</Text>
-                <List>
+                </Box>
+                <Box pb={20}>
+                  <Text fz={{ base: "1.125rem", md: "1.6rem" }} fw={'bold'}>Program Kerja Unggulan</Text>
                   <Box px={20}>
-                    <Text fz={{ base: "1rem", md: "1.125rem", lg: "1.25rem", xl: "1.5rem" }} ta={"justify"} dangerouslySetInnerHTML={{ __html: item.unggulan }} />
+                    <Text fz={{ base: "1rem", md: "1.5rem" }} ta={"justify"} dangerouslySetInnerHTML={{ __html: item.unggulan }} />
                   </Box>
-                </List>
+                </Box>
               </Box>
             </Paper>
           </Box>

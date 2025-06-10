@@ -38,7 +38,7 @@ function VisiMisiPPIDList() {
       <Stack pos={"relative"} gap={"22"}>
         <Grid>
           <GridCol span={{ base: 12, md: 11 }}>
-            <Title order={2}>Preview Visi Misi PPID</Title>
+            <Title order={3}>Preview Visi Misi PPID</Title>
           </GridCol>
           <GridCol span={{ base: 12, md: 1 }}>
             <Button bg={colors['blue-button']} onClick={() => router.push('/admin/ppid/visi-misi-ppid/edit')}>
@@ -46,7 +46,7 @@ function VisiMisiPPIDList() {
             </Button>
           </GridCol>
         </Grid>
-        <Box px={{ base: "md", md: 100 }}>
+        <Box>
           <Stack gap={'lg'}>
             <Paper p={"xl"} bg={colors['BG-trans']}>
               <Box pb={30}>
