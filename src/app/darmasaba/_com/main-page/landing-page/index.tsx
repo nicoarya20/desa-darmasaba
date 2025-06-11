@@ -29,7 +29,7 @@ const getCurrentTime = () => {
 }
 
 const isWorkingHours = (currentTime: string): boolean => {
-  const [openTime, closeTime] = ['08:00', '16:00'];
+  const [openTime, closeTime] = ['08:00', '11:00'];
 
   const compareTimes = (time1: string, time2: string) => {
     const [hour1, minute1] = time1.split(':').map(Number);
@@ -202,14 +202,14 @@ function LandingPage() {
                                 <Paper
                                   w={{ base: "100%", sm: "100%", md: "auto" }}
                                   p={5}
-                                  bg={workStatus.status === 'Buka' ? colors["white-1"] : "red"}
+                                  bg={colors["white-1"]}
                                 >
 
                                   <Box>
-                                    <Text fz="sm">
+                                    <Text fw="bold" fz="sm" c={workStatus.status === 'Buka' ? "black" : "red"}>
                                       {workStatus.status}
                                     </Text>
-                                    <Text fw="bold" fz="lg">
+                                    <Text fw="bold" fz="lg" >
                                       {workStatus.message}
                                     </Text>
                                   </Box>
@@ -234,7 +234,7 @@ function LandingPage() {
                                 Status
                               </Text>
                               <Text fw="bold" fz="lg" >
-                                {workStatus.status === 'Buka' ? 'Operasional' : 'Libur'}
+                                {workStatus.status === 'Buka' ? 'Operasional' : 'Tutup'}
                               </Text>
                             </Paper>
 

@@ -9,6 +9,7 @@ import potensi from "./data/list-potensi.json";
 import dasarHukumPPID from "./data/ppid/dasar-hukum-ppid/dasarhukumPPID.json";
 import profilePPID from "./data/ppid/profile-ppid/profilePPid.json";
 import visiMisiPPID from "./data/ppid/visi-misi-ppid/visimisiPPID.json";
+import strukturPPID from "./data/ppid/struktur-ppid/strukturPPID.json";
 
 (async () => {
   for (const l of layanan) {
@@ -26,6 +27,22 @@ import visiMisiPPID from "./data/ppid/visi-misi-ppid/visimisiPPID.json";
   }
 
   console.log("layanan success ...");
+
+  for (const s of strukturPPID) {
+    await prisma.strukturPPID.upsert({
+      where: {
+        id: s.id,
+      },
+      update: {
+        name: s.name,
+      },
+      create: {
+        id: s.id,
+        name: s.name,
+      },
+    });
+  }
+  console.log("struktur ppid success ...");
 
   for (const p of potensi) {
     await prisma.potensi.upsert({
@@ -179,8 +196,6 @@ import visiMisiPPID from "./data/ppid/visi-misi-ppid/visimisiPPID.json";
     });
   }
   console.log("dasar hukum PPID success ...");
-
-
 })()
   .then(() => prisma.$disconnect())
   .catch((e) => {

@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Center, FileInput, Group, Image, Paper, Stack, Text, TextInput, Title, Alert } from '@mantine/core';
+import { Alert, Box, Button, Center, FileInput, Group, Image, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
 import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import stateProfilePPID from '../../../_state/ppid/profile_ppid/profile_PPID';
 
 import ApiFetch from '@/lib/api-fetch';
-import { IconArrowBack, IconImageInPicture, IconAlertCircle } from '@tabler/icons-react';
+import { IconAlertCircle, IconArrowBack, IconImageInPicture } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 import Biodata from './biodata/biodataForm';
