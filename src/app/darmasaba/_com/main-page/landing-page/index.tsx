@@ -29,7 +29,7 @@ const getCurrentTime = () => {
 }
 
 const isWorkingHours = (currentTime: string): boolean => {
-  const [openTime, closeTime] = ['08:00', '11:00'];
+  const [openTime, closeTime] = ['08:00', '16:00'];
 
   const compareTimes = (time1: string, time2: string) => {
     const [hour1, minute1] = time1.split(':').map(Number);

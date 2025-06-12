@@ -11,17 +11,20 @@ type FormCreate = Prisma.GrafikBerdasarkanJenisKelaminGetPayload<{
 export default async function grafikBerdasarkanJenisKelaminCreate(context: Context) {
     const body = context.body as FormCreate;
 
-    await prisma.grafikBerdasarkanJenisKelamin.create({
+    const created = await prisma.grafikBerdasarkanJenisKelamin.create({
         data: {
             perempuan: body.perempuan,
             laki: body.laki,
         },
+        select: {
+            id: true,
+            perempuan: true,
+            laki: true,
+        }
     });
     return {
         success: true,
         message: "Success create grafik berdasarkan jenis kelamin",
-        data: {
-            ...body,
-        },
+        data: created,
     };
 }

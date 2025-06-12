@@ -196,7 +196,7 @@ model FormulirPermohonanKeberatan {
 
 // ========================================= IKM ========================================= //
 model IndeksKepuasanMasyarakat {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(cuid())
   label     String
   kepuasan  String
   createdAt DateTime @default(now())
