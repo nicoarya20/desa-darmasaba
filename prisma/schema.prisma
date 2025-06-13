@@ -50,36 +50,39 @@ model AppMenuChild {
 // ========================================= FILE STORAGE ========================================= //
 
 model FileStorage {
-  id          String        @id @default(cuid())
-  name        String        @unique
-  realName    String
-  path        String
-  mimeType    String
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  deletedAt   DateTime?
-  isActive    Boolean       @default(true)
-  link        String
-  Berita      Berita[]
-  PotensiDesa PotensiDesa[]
-  Posyandu Posyandu[]
-  ProfilePPID ProfilePPID[]
+  id           String         @id @default(cuid())
+  name         String         @unique
+  realName     String
+  path         String
+  mimeType     String
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  deletedAt    DateTime?
+  isActive     Boolean        @default(true)
+  link         String
+  Berita       Berita[]
+  PotensiDesa  PotensiDesa[]
+  Posyandu     Posyandu[]
+  ProfilePPID  ProfilePPID[]
   StrukturPPID StrukturPPID[]
+
+  GalleryFoto GalleryFoto[]
 }
 
 //========================================= MENU PPID ========================================= //
 
 //========================================= STRUKTUR PPID ========================================= //
 model StrukturPPID {
-  id        String   @id @default(cuid())
-  name      String   @db.Text
+  id        String       @id @default(cuid())
+  name      String       @db.Text
   image     FileStorage? @relation(fields: [imageId], references: [id])
   imageId   String?
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
-  deletedAt DateTime    @default(now())
-  isActive  Boolean     @default(true)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  deletedAt DateTime     @default(now())
+  isActive  Boolean      @default(true)
 }
+
 // ========================================= VISI MISI PPID ========================================= //
 model VisiMisiPPID {
   id        String   @id @default(cuid())
@@ -104,18 +107,18 @@ model DasarHukumPPID {
 
 // ========================================= PROFILE PPID ========================================= //
 model ProfilePPID {
-  id         String      @id @default(cuid())
-  name       String      @db.Text
-  biodata    String      @db.Text
-  riwayat    String      @db.Text
-  pengalaman String      @db.Text
-  unggulan   String      @db.Text
+  id         String       @id @default(cuid())
+  name       String       @db.Text
+  biodata    String       @db.Text
+  riwayat    String       @db.Text
+  pengalaman String       @db.Text
+  unggulan   String       @db.Text
   image      FileStorage? @relation(fields: [imageId], references: [id])
   imageId    String?
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
-  deletedAt  DateTime    @default(now())
-  isActive   Boolean     @default(true)
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  deletedAt  DateTime     @default(now())
+  isActive   Boolean      @default(true)
 }
 
 // ========================================= DAFTAR INFORMASI PUBLIK ========================================= //
@@ -334,51 +337,28 @@ model CategoryPengumuman {
   isActive    Boolean      @default(true)
 }
 
-// ========================================= IMAGES ========================================= //
-model Images {
-  id          String        @id @default(cuid())
-  url         String
-  label       String        @default("null")
-  active      Boolean       @default(true)
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  GalleryFoto GalleryFoto[]
-}
-
-// ========================================= VIDEOS ========================================= //
-model Videos {
-  id           String         @id @default(cuid())
-  url          String
-  label        String         @default("null")
-  active       Boolean        @default(true)
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-  GalleryVideo GalleryVideo[]
-}
-
 // ========================================= GALLERY ========================================= //
 model GalleryFoto {
-  id               String   @id @default(cuid())
+  id               String       @id @default(cuid())
   name             String
-  image            String
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-  deletedAt        DateTime @default(now())
-  isActive         Boolean  @default(true)
-  imagesId         String?  @unique
-  imageGalleryFoto Images?  @relation(fields: [imagesId], references: [id])
+  deskripsi        String       @db.Text
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+  deletedAt        DateTime     @default(now())
+  isActive         Boolean      @default(true)
+  imagesId         String?      @unique
+  imageGalleryFoto FileStorage? @relation(fields: [imagesId], references: [id])
 }
 
 model GalleryVideo {
-  id                 String   @id @default(cuid())
-  name               String
-  video              String
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
-  deletedAt          DateTime @default(now())
-  isActive           Boolean  @default(true)
-  videosId           String?  @unique
-  videosGalleryVideo Videos?  @relation(fields: [videosId], references: [id])
+  id        String   @id @default(cuid())
+  name      String
+  deskripsi String   @db.Text
+  linkVideo String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive  Boolean  @default(true)
 }
 
 // ========================================= MENU KESEHATAN ========================================= //

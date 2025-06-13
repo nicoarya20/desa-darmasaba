@@ -128,7 +128,7 @@ export const navBar = [
       {
         id: "Desa_5",
         name: "Gallery",
-        path: "/admin/desa/gallery"
+        path: "/admin/desa/gallery/foto"
       },
       {
         id: "Desa_6",

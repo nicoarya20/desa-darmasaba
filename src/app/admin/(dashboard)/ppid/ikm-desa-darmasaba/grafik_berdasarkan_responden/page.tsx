@@ -7,14 +7,14 @@ import { IconEdit, IconSearch, IconTrash } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Cell, Pie, PieChart } from 'recharts';
-import { useProxy } from 'valtio/utils';
+import { useSnapshot } from 'valtio';
 import JudulListTab from '../../../_com/jusulListTab';
 import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
 import grafikBerdasarkanResponden from '../../../_state/ppid/indeks_kepuasan_masyarakat/grafikBerdasarkanResponden';
 
 function GrafikBerdasarkanResponden() {
 
-  const stategrafikBerdasarkanResponden = useProxy(grafikBerdasarkanResponden)
+  const stategrafikBerdasarkanResponden = useSnapshot(grafikBerdasarkanResponden)
   const [donutData, setDonutData] = useState<any[]>([]);
   const [mounted, setMounted] = useState(false);
   const [modalHapus, setModalHapus] = useState(false)
@@ -39,7 +39,7 @@ function GrafikBerdasarkanResponden() {
   }, [])
 
   useEffect(() => {
-    if (stategrafikBerdasarkanResponden.findMany.data && stategrafikBerdasarkanResponden.findMany.data.length > 0) {
+    if (stategrafikBerdasarkanResponden.findMany.data) {
       const totalSangatBaik = stategrafikBerdasarkanResponden.findMany.data.reduce((acc: number, cur: any) => acc + Number(cur.sangatbaik || 0), 0);
       const totalBaik = stategrafikBerdasarkanResponden.findMany.data.reduce((acc: number, cur: any) => acc + Number(cur.baik || 0), 0);
       const totalKurangBaik = stategrafikBerdasarkanResponden.findMany.data.reduce((acc: number, cur: any) => acc + Number(cur.kurangbaik || 0), 0);

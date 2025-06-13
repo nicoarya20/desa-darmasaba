@@ -1,7 +1,7 @@
 'use client'
 import JudulListTab from '@/app/admin/(dashboard)/_com/jusulListTab';
 import colors from '@/con/colors';
-import { Box, Button, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Title } from '@mantine/core';
+import { Box, Button, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title } from '@mantine/core';
 import { useMediaQuery, useShallowEffect } from '@mantine/hooks';
 import { IconEdit, IconSearch, IconTrash } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
@@ -30,30 +30,34 @@ function GrafikHasilKepuasanMasyarakat() {
   const router = useRouter();
 
 
-  
+
   const handleDelete = () => {
     if (selectedId) {
       stateGrafikHasilKepuasan.delete.byId(selectedId)
       setModalHapus(false)
       setSelectedId(null)
+
+      stateGrafikHasilKepuasan.findMany.load()
     }
   }
-  
+
   useShallowEffect(() => {
     setMounted(true)
     stateGrafikHasilKepuasan.findMany.load()
   }, [])
-  
+
   useEffect(() => {
-    if (stateGrafikHasilKepuasan.findMany.data && stateGrafikHasilKepuasan.findMany.data.length > 0) {
-      setChartData([...stateGrafikHasilKepuasan.findMany.data.map((item) => ({
-        id: item.id,
-        label: item.label,
-        kepuasan: Number(item.kepuasan),
-      }))]);
+    if (stateGrafikHasilKepuasan.findMany.data) {
+      setChartData(
+        stateGrafikHasilKepuasan.findMany.data.map((item) => ({
+          id: item.id,
+          label: item.label,
+          kepuasan: Number(item.kepuasan),
+        }))
+      );
     }
-  }, [stateGrafikHasilKepuasan.findMany.data])
-  
+  }, [stateGrafikHasilKepuasan.findMany.data]);
+
 
 
   if (!stateGrafikHasilKepuasan.findMany.data) {
@@ -114,7 +118,7 @@ function GrafikHasilKepuasanMasyarakat() {
           <Paper style={{ width: '100%', minWidth: 300, height: 500, minHeight: 300 }} bg={colors['white-1']} p={'md'}>
             <Stack gap={"xs"}>
               <Title pb={10} order={3}>Data Kepuasan Masyarakat</Title>
-              {mounted && chartData.length > 0 && (
+              {mounted && chartData.length > 0 ? (
                 <BarChart width={isMobile ? 300 : isTablet ? 300 : 300} height={380} data={chartData} >
                   <XAxis dataKey="label" />
                   <YAxis />
@@ -122,6 +126,8 @@ function GrafikHasilKepuasanMasyarakat() {
                   <Legend />
                   <Bar dataKey="kepuasan" fill={colors['blue-button']} name="Kepuasan" />
                 </BarChart>
+              ) : (
+                <Text c='dimmed'>Belum ada data untuk ditampilkan dalam grafik</Text>
               )}
             </Stack>
           </Paper>

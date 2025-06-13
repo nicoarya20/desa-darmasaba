@@ -52,7 +52,10 @@ const grafikBerdasarkanResponden = proxy({
           if (id) {
             toast.success("Success create");
             grafikBerdasarkanResponden.create.form = {
-              ...defaultForm
+              sangatbaik: "",
+              baik: "",
+              kurangbaik: "",
+              tidakbaik: "",
             };
             grafikBerdasarkanResponden.findMany.load();
             return id;
@@ -109,7 +112,7 @@ const grafikBerdasarkanResponden = proxy({
     form: {...defaultForm},
     loading: false,
     async byId() {
-      
+      // Method implementation if needed
     },
     async submit() {
       const id = this.id;

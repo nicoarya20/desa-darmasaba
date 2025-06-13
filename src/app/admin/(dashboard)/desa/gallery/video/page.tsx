@@ -1,12 +1,29 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Paper, Table, TableTbody, TableTd, TableTh, TableThead, TableTr } from '@mantine/core';
+import { Box, Button, Paper, Skeleton, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
 import { IconDeviceImac, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import JudulListTab from '../../../_com/jusulListTab';
+import { useProxy } from 'valtio/utils';
+import stateGallery from '../../../_state/desa/gallery';
+import { useShallowEffect } from '@mantine/hooks';
 
 function Video() {
+  const videoState = useProxy(stateGallery.video)
   const router = useRouter();
+
+  useShallowEffect(() => {
+    videoState.findMany.load()
+  }, [])
+
+  if (!videoState.findMany.data) {
+    return (
+      <Box py={10}>
+        <Skeleton h={500} />
+      </Box>
+    )
+  }
+  
   return (
     <Box py={10}>
       <Paper bg={colors['white-1']} p={'md'}>
@@ -26,16 +43,20 @@ function Video() {
             </TableTr>
           </TableThead>
           <TableTbody>
-            <TableTr>
-              <TableTd>Video 1</TableTd>
-              <TableTd>2022-01-01</TableTd>
-              <TableTd>Deskripsi Video 1</TableTd>
-              <TableTd>
-                <Button onClick={() => router.push('/admin/desa/gallery/video/detail')}>
-                  <IconDeviceImac size={20} />
-                </Button>
-              </TableTd>
-            </TableTr>
+            {videoState.findMany.data?.map((item) => (
+              <TableTr key={item.id}>
+                <TableTd>{item.name}</TableTd>
+                <TableTd>{new Date(item.createdAt).toDateString()}</TableTd>
+                <TableTd>
+                  <Text dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
+                </TableTd>
+                <TableTd>
+                  <Button onClick={() => router.push(`/admin/desa/gallery/video/${item.id}`)}>
+                    <IconDeviceImac size={20} />
+                  </Button>
+                </TableTd>
+              </TableTr>
+            ))}
           </TableTbody>
         </Table>
       </Paper>

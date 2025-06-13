@@ -55,7 +55,7 @@ function GrafikBerdasarkanJenisKelaminRespondenCreate() {
              }}
            />
            <TextInput
-             label="Baik"
+             label="Perempuan"
              type="number"
              placeholder="masukkan jumlah"
              value={stategrafikBerdasarkanJenisKelamin.create.form.perempuan}
