@@ -5,6 +5,8 @@ import ProfileDesa from "./profile/profile_desa";
 import PotensiDesa from "./potensi"; 
 import GalleryFoto from "./gallery/foto";
 import GalleryVideo from "./gallery/video";
+import LayananDesa from "./layanan";
+
 
 const Desa = new Elysia({ prefix: "/api/desa", tags: ["Desa"] })
   .use(Berita)
@@ -13,5 +15,6 @@ const Desa = new Elysia({ prefix: "/api/desa", tags: ["Desa"] })
   .use(PotensiDesa)
   .use(GalleryFoto)
   .use(GalleryVideo)
+  .use(LayananDesa)
 
 export default Desa;

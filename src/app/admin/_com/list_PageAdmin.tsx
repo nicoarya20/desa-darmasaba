@@ -133,7 +133,7 @@ export const navBar = [
       {
         id: "Desa_6",
         name: "Layanan",
-        path: "/admin/desa/layanan"
+        path: "/admin/desa/layanan/pelayanan_surat_keterangan"
       },
       {
         id: "Desa_7",
