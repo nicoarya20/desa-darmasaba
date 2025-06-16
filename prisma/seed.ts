@@ -11,6 +11,7 @@ import profilePPID from "./data/ppid/profile-ppid/profilePPid.json";
 import visiMisiPPID from "./data/ppid/visi-misi-ppid/visimisiPPID.json";
 import strukturPPID from "./data/ppid/struktur-ppid/strukturPPID.json";
 import pelayananPerizinanBerusaha from "./data/desa/layanan/pelayananPerizinanBerusaha.json";
+import pelayananPendudukNonPermanen from "./data/desa/layanan/pelayanaPendudukNonPermanen.json";
 
 (async () => {
   for (const l of layanan) {
@@ -44,6 +45,25 @@ import pelayananPerizinanBerusaha from "./data/desa/layanan/pelayananPerizinanBe
         name: l.name,
         deskripsi: l.deskripsi,
         link: l.link,
+      },
+    });
+  }
+
+  console.log("pelayanan perizinan berusaha success ...");
+
+  for (const l of pelayananPendudukNonPermanen) {
+    await prisma.pelayananPendudukNonPermanen.upsert({
+      where: {
+        id: l.id,
+      },
+      update: {
+        name: l.name,
+        deskripsi: l.deskripsi,
+      },
+      create: {
+        id: l.id,
+        name: l.name,
+        deskripsi: l.deskripsi,
       },
     });
   }
