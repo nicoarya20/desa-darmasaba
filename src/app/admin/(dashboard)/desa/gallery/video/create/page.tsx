@@ -2,18 +2,21 @@
 import CreateEditor from '@/app/admin/(dashboard)/_com/createEditor';
 import stateGallery from '@/app/admin/(dashboard)/_state/desa/gallery';
 import colors from '@/con/colors';
-import { ActionIcon, Box, Button, Flex, Group, Image, Modal, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
+import { Box, Button, Group, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
+import { convertYoutubeUrlToEmbed } from '../../lib/youtube-utils';
 
 
 
 function CreateVideo() {
   const videoState = useProxy(stateGallery.video)
   const router = useRouter();
-  const [modalHapus, setModalHapus] = useState(false);
+  const [link, setLink] = useState("");
+  const [embedLink, setEmbedLink] = useState("");
 
   const resetForm = () => {
     videoState.create.form = {
@@ -22,8 +25,12 @@ function CreateVideo() {
       linkVideo: "",
     };
   };
-
   const handleSubmit = async () => {
+    const converted = convertYoutubeUrlToEmbed(videoState.create.form.linkVideo);
+    if (!converted) {
+      toast.error("Link YouTube tidak valid. Pastikan formatnya benar.");
+      return;
+    }
     await videoState.create.create();
     resetForm();
     router.push("/admin/desa/gallery/video")
@@ -49,20 +56,28 @@ function CreateVideo() {
             }}
           />
           <Box>
-            <TextInput
-              label={<Text fw={"bold"} fz={"sm"}>Link Video Youtube <Text span c="red" inherit>*</Text></Text>}
-              placeholder='Masukkan link video youtube'
-              value={videoState.create.form.linkVideo}
-              onChange={(val) => {
-                videoState.create.form.linkVideo = val.target.value;
-              }}
-            />
-            <Flex pt={5} align={"center"} gap={"xs"}>
-              <Text c={"dimmed"} fw={"bold"} fz={"xs"}>Cara mendapatkan link video youtube</Text>
-              <ActionIcon size={"xs"} radius={"xl"} color='black' variant='filled' onClick={() => setModalHapus(true)}>
-                <Text fw={"bold"} fz={"xs"} c="white">?</Text>
-              </ActionIcon>
-            </Flex>
+            <Stack gap={"xs"}>
+              <TextInput
+                label="Link Video YouTube"
+                placeholder="https://www.youtube.com/watch?v=abc123"
+                value={link}
+                onChange={(e) => {
+                  setLink(e.currentTarget.value);
+                  const embed = convertYoutubeUrlToEmbed(e.currentTarget.value);
+                  setEmbedLink(embed || "");
+                }}
+                required
+              />
+
+              {embedLink && (
+                <iframe
+                  style={{ borderRadius: 10, width: "100%", height: 400 }}
+                  src={embedLink}
+                  title="Preview Video"
+                  allowFullScreen
+                ></iframe>
+              )}
+            </Stack>
           </Box>
           <Box>
             <Text fw={"bold"} fz={"sm"}>Deskripsi Video</Text>
@@ -78,36 +93,6 @@ function CreateVideo() {
           </Group>
         </Stack>
       </Paper>
-
-      {/* Modal Konfirmasi Hapus */}
-      <Modal
-        opened={modalHapus}
-        onClose={() => setModalHapus(false)}
-        title={<Text fw={"bold"} fz={"xl"}>Cara mendapatkan link video youtube</Text>}
-      >
-        <Stack gap={"xs"}>
-          <Box>
-          <Text fw={"bold"} fz={"lg"}>Langkah 1</Text>
-          <Text fz={"sm"}>Buka video youtube yang ingin Anda bagikan lalu klik icon titik tiga</Text>
-          <Image src="/video.png" w={300} alt="" />
-          </Box>
-          <Box>
-          <Text fw={"bold"} fz={"lg"}>Langkah 2</Text>
-          <Text fz={"sm"}>Klik bagikan</Text>
-          <Image src="/Share.png" w={300} alt="" />
-          </Box>
-          <Box>
-          <Text fw={"bold"} fz={"lg"}>Langkah 3</Text>
-          <Text fz={"sm"}>Klik dibagian sematkan</Text>
-          <Image src="/bagikanPostingan.png" w={300} alt="" />
-          </Box>
-          <Box>
-          <Text fw={"bold"} fz={"lg"}>Langkah 4</Text>
-          <Text fz={"sm"}>Lalu copy pada bagaian srcnya aja</Text>
-          <Image src="/sematkan.png" w={300} alt="" />
-          </Box>
-        </Stack>
-      </Modal>
     </Box>
   );
 }

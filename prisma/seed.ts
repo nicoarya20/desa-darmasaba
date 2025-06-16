@@ -10,6 +10,7 @@ import dasarHukumPPID from "./data/ppid/dasar-hukum-ppid/dasarhukumPPID.json";
 import profilePPID from "./data/ppid/profile-ppid/profilePPid.json";
 import visiMisiPPID from "./data/ppid/visi-misi-ppid/visimisiPPID.json";
 import strukturPPID from "./data/ppid/struktur-ppid/strukturPPID.json";
+import pelayananPerizinanBerusaha from "./data/desa/layanan/pelayananPerizinanBerusaha.json";
 
 (async () => {
   for (const l of layanan) {
@@ -27,6 +28,27 @@ import strukturPPID from "./data/ppid/struktur-ppid/strukturPPID.json";
   }
 
   console.log("layanan success ...");
+
+  for (const l of pelayananPerizinanBerusaha) {
+    await prisma.pelayananPerizinanBerusaha.upsert({
+      where: {
+        id: l.id,
+      },
+      update: {
+        name: l.name,
+        deskripsi: l.deskripsi,
+        link: l.link,
+      },
+      create: {
+        id: l.id,
+        name: l.name,
+        deskripsi: l.deskripsi,
+        link: l.link,
+      },
+    });
+  }
+
+  console.log("pelayanan perizinan berusaha success ...");
 
   for (const s of strukturPPID) {
     await prisma.strukturPPID.upsert({

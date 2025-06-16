@@ -3,18 +3,19 @@
 import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import stateGallery from '@/app/admin/(dashboard)/_state/desa/gallery';
 import colors from '@/con/colors';
-import { ActionIcon, Box, Button, Flex, Group, Image, Modal, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
+import { Box, Button, Group, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
+import { convertYoutubeUrlToEmbed } from '../../../lib/youtube-utils';
 
 
 
 function EditVideo() {
   const router = useRouter();
-  const [modalHapus, setModalHapus] = useState(false);
+  const [embedLink, setEmbedLink] = useState("");
   const videoState = useProxy(stateGallery.video)
   const params = useParams()
   const [formData, setFormData] = useState({
@@ -31,10 +32,12 @@ function EditVideo() {
         const data = await videoState.update.load(id);
         if (data) {
           setFormData({
-            name: data.name || '',
+            name: data.name || '',    
             deskripsi: data.deskripsi || '',
             linkVideo: data.linkVideo || '',
           });
+          const embed = convertYoutubeUrlToEmbed(data.linkVideo);
+          setEmbedLink(embed || "");
         }
       } catch (error) {
         console.error('Error loading video:', error);
@@ -52,6 +55,11 @@ function EditVideo() {
         deskripsi: formData.deskripsi,
         linkVideo: formData.linkVideo,
       };
+      const converted = convertYoutubeUrlToEmbed(formData.linkVideo);
+      if (!converted) {
+        toast.error("Link YouTube tidak valid. Pastikan formatnya benar.");
+        return;
+      }
       await videoState.update.update();
       toast.success('Video berhasil diperbarui!');
       router.push('/admin/desa/gallery/video');
@@ -85,22 +93,30 @@ function EditVideo() {
           />
           <Box>
             <TextInput
-              label={<Text fw={"bold"} fz={"sm"}>Link Video Youtube <Text span c="red" inherit>*</Text></Text>}
-              placeholder='Masukkan link video youtube'
+              label="Link Video YouTube"
+              placeholder="https://www.youtube.com/watch?v=abc123"
               value={formData.linkVideo}
-              onChange={(val) => {
+              onChange={(e) => {
                 setFormData({
                   ...formData,
-                  linkVideo: val.target.value,
+                  linkVideo: e.currentTarget.value,
                 })
+                const embed = convertYoutubeUrlToEmbed(e.currentTarget.value);
+                setEmbedLink(embed || "");
               }}
+              required
             />
-            <Flex pt={5} align={"center"} gap={"xs"}>
-              <Text c={"dimmed"} fw={"bold"} fz={"xs"}>Cara mendapatkan link video youtube</Text>
-              <ActionIcon size={"xs"} radius={"xl"} color='black' variant='filled' onClick={() => setModalHapus(true)}>
-                <Text fw={"bold"} fz={"xs"} c="white">?</Text>
-              </ActionIcon>
-            </Flex>
+
+            {embedLink && (
+              <iframe
+                className="rounded"
+                width="100%"
+                height="200"
+                src={embedLink}
+                title="Preview Video"
+                allowFullScreen
+              ></iframe>
+            )}
           </Box>
           <Box>
             <Text fw={"bold"} fz={"sm"}>Deskripsi Video</Text>
@@ -119,36 +135,6 @@ function EditVideo() {
           </Group>
         </Stack>
       </Paper>
-
-      {/* Modal Konfirmasi Hapus */}
-      <Modal
-        opened={modalHapus}
-        onClose={() => setModalHapus(false)}
-        title={<Text fw={"bold"} fz={"xl"}>Cara mendapatkan link video youtube</Text>}
-      >
-        <Stack gap={"xs"}>
-          <Box>
-          <Text fw={"bold"} fz={"lg"}>Langkah 1</Text>
-          <Text fz={"sm"}>Buka video youtube yang ingin Anda bagikan lalu klik icon titik tiga</Text>
-          <Image src="/video.png" w={300} alt="" />
-          </Box>
-          <Box>
-          <Text fw={"bold"} fz={"lg"}>Langkah 2</Text>
-          <Text fz={"sm"}>Klik bagikan</Text>
-          <Image src="/Share.png" w={300} alt="" />
-          </Box>
-          <Box>
-          <Text fw={"bold"} fz={"lg"}>Langkah 3</Text>
-          <Text fz={"sm"}>Klik dibagian sematkan</Text>
-          <Image src="/bagikanPostingan.png" w={300} alt="" />
-          </Box>
-          <Box>
-          <Text fw={"bold"} fz={"lg"}>Langkah 4</Text>
-          <Text fz={"sm"}>Lalu copy pada bagaian srcnya aja</Text>
-          <Image src="/sematkan.png" w={300} alt="" />
-          </Box>
-        </Stack>
-      </Modal>
     </Box>
   );
 }

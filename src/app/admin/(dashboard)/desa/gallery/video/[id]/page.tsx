@@ -9,6 +9,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 
+
 function DetailVideo() {
   const videoState = useProxy(stateGallery.video)
   const [modalHapus, setModalHapus] = useState(false);
@@ -55,9 +56,17 @@ function DetailVideo() {
                   <Text fz={"lg"}>{videoState.findUnique.data?.name}</Text>
                 </Box>
                 <Box>
-                  <Text fw={"bold"} fz={"lg"}>Link Video</Text>
-                  <Text fz={"lg"}>{videoState.findUnique.data?.linkVideo}</Text>
+                  <Text fw={"bold"} fz={"lg"}>Video</Text>
+                  <Box component="iframe"
+                    src={convertToEmbedUrl(videoState.findUnique.data?.linkVideo)}
+                    width="100%"
+                    height={300}
+                    allowFullScreen
+                    style={{ borderRadius: 8 }}
+                  />
+
                 </Box>
+
                 <Box>
                   <Text fw={"bold"} fz={"lg"}>Tanggal Video</Text>
                   <Text fz={"lg"}>{new Date(videoState.findUnique.data?.createdAt).toDateString()}</Text>
@@ -105,7 +114,20 @@ function DetailVideo() {
         text='Apakah anda yakin ingin menghapus berita ini?'
       />
     </Box>
+
   );
+  function convertToEmbedUrl(youtubeUrl: string): string {
+    try {
+      const url = new URL(youtubeUrl);
+      const videoId = url.searchParams.get("v");
+      if (!videoId) return youtubeUrl;
+
+      return `https://www.youtube.com/embed/${videoId}`;
+    } catch (err) {
+      console.error("Error converting YouTube URL to embed:", err);
+      return youtubeUrl;
+    }
+  }
 }
 
 export default DetailVideo;
