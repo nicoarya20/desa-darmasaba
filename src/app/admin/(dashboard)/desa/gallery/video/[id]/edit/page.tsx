@@ -11,18 +11,16 @@ import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 import { convertYoutubeUrlToEmbed } from '../../../lib/youtube-utils';
 
-
-
 function EditVideo() {
-  const router = useRouter();
-  const [embedLink, setEmbedLink] = useState("");
+  const router = useRouter(); 
   const videoState = useProxy(stateGallery.video)
   const params = useParams()
+
   const [formData, setFormData] = useState({
-    name: videoState.findUnique.data?.name || '',
-    deskripsi: videoState.findUnique.data?.deskripsi || '',
-    linkVideo: videoState.findUnique.data?.linkVideo || '',
-  })
+    name: '',
+    deskripsi: '',
+    linkVideo: '',
+  });
 
   useEffect(() => {
     const loadVideo = async () => {
@@ -36,8 +34,6 @@ function EditVideo() {
             deskripsi: data.deskripsi || '',
             linkVideo: data.linkVideo || '',
           });
-          const embed = convertYoutubeUrlToEmbed(data.linkVideo);
-          setEmbedLink(embed || "");
         }
       } catch (error) {
         console.error('Error loading video:', error);
@@ -47,7 +43,15 @@ function EditVideo() {
     loadVideo();
   }, [params?.id]);
 
+  const embedLink = convertYoutubeUrlToEmbed(formData.linkVideo);
+
   const handleSubmit = async () => {
+    const converted = convertYoutubeUrlToEmbed(formData.linkVideo);
+    if (!converted) {
+      toast.error("Link YouTube tidak valid. Pastikan formatnya benar.");
+      return;
+    }
+
     try {
       videoState.update.form = {
         ...videoState.update.form,
@@ -55,11 +59,6 @@ function EditVideo() {
         deskripsi: formData.deskripsi,
         linkVideo: formData.linkVideo,
       };
-      const converted = convertYoutubeUrlToEmbed(formData.linkVideo);
-      if (!converted) {
-        toast.error("Link YouTube tidak valid. Pastikan formatnya benar.");
-        return;
-      }
       await videoState.update.update();
       toast.success('Video berhasil diperbarui!');
       router.push('/admin/desa/gallery/video');
@@ -80,29 +79,23 @@ function EditVideo() {
       <Paper w={{ base: '100%', md: '50%' }} bg={colors['white-1']} p={'md'}>
         <Stack gap={"xs"}>
           <Title order={4}>Edit Video</Title>
+
           <TextInput
             label={<Text fw={"bold"} fz={"sm"}>Judul Video</Text>}
             placeholder='Masukkan judul video'
             value={formData.name}
             onChange={(val) => {
-              setFormData({
-                ...formData,
-                name: val.target.value,
-              })
+              setFormData({ ...formData, name: val.target.value });
             }}
           />
+
           <Box>
             <TextInput
               label="Link Video YouTube"
               placeholder="https://www.youtube.com/watch?v=abc123"
               value={formData.linkVideo}
               onChange={(e) => {
-                setFormData({
-                  ...formData,
-                  linkVideo: e.currentTarget.value,
-                })
-                const embed = convertYoutubeUrlToEmbed(e.currentTarget.value);
-                setEmbedLink(embed || "");
+                setFormData({ ...formData, linkVideo: e.currentTarget.value });
               }}
               required
             />
@@ -118,18 +111,17 @@ function EditVideo() {
               ></iframe>
             )}
           </Box>
+
           <Box>
             <Text fw={"bold"} fz={"sm"}>Deskripsi Video</Text>
             <EditEditor
               value={formData.deskripsi}
               onChange={(val) => {
-                setFormData({
-                  ...formData,
-                  deskripsi: val,
-                })
+                setFormData({ ...formData, deskripsi: val });
               }}
             />
           </Box>
+
           <Group>
             <Button onClick={handleSubmit} bg={colors['blue-button']}>Submit</Button>
           </Group>

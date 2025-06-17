@@ -12,6 +12,11 @@ import visiMisiPPID from "./data/ppid/visi-misi-ppid/visimisiPPID.json";
 import strukturPPID from "./data/ppid/struktur-ppid/strukturPPID.json";
 import pelayananPerizinanBerusaha from "./data/desa/layanan/pelayananPerizinanBerusaha.json";
 import pelayananPendudukNonPermanen from "./data/desa/layanan/pelayanaPendudukNonPermanen.json";
+import sejarahDesa from "./data/desa/profile/sejarah_desa.json";
+import visiMisiDesa from "./data/desa/profile/visi_misi_desa.json";
+import lambangDesa from "./data/desa/profile/lambang_desa.json";
+import maskotDesa from "./data/desa/profile/maskot_desa.json";
+import profilPerbekel from "./data/desa/profile/profil_perbekel.json";
 
 (async () => {
   for (const l of layanan) {
@@ -29,6 +34,104 @@ import pelayananPendudukNonPermanen from "./data/desa/layanan/pelayanaPendudukNo
   }
 
   console.log("layanan success ...");
+
+  for (const l of sejarahDesa) {
+    await prisma.sejarahDesa.upsert({
+      where: {
+        id: l.id,
+      },
+      update: {
+        judul: l.judul,
+        deskripsi: l.deskripsi,
+      },
+      create: {
+        id: l.id,
+        judul: l.judul,
+        deskripsi: l.deskripsi,
+      },
+    });
+  }
+
+  console.log("sejarah desa success ...");
+
+  for (const l of maskotDesa) {
+    await prisma.maskotDesa.upsert({
+      where: {
+        id: l.id,
+      },
+      update: {
+        judul: l.judul,
+        deskripsi: l.deskripsi,
+      },
+      create: {
+        id: l.id,
+        judul: l.judul,
+        deskripsi: l.deskripsi,
+      },
+    });
+  }
+
+  console.log("maskot desa success ...");
+
+  for (const l of lambangDesa) {
+    await prisma.lambangDesa.upsert({
+      where: {
+        id: l.id,
+      },
+      update: {
+        judul: l.judul,
+        deskripsi: l.deskripsi,
+      },
+      create: {
+        id: l.id,
+        judul: l.judul,
+        deskripsi: l.deskripsi,
+      },
+    });
+  }
+
+  console.log("lambang desa success ...");
+
+  for (const c of profilPerbekel) {
+    await prisma.profilPerbekel.upsert({
+      where: { id: c.id },
+      update: {
+        biodata: c.biodata,
+        pengalaman: c.pengalaman,
+        pengalamanOrganisasi: c.pengalamanOrganisasi,
+        programUnggulan: c.programUnggulan,
+        // imageId tidak di-update
+      },
+      create: {
+        id: c.id,
+        biodata: c.biodata,
+        pengalaman: c.pengalaman,
+        pengalamanOrganisasi: c.pengalamanOrganisasi,
+        programUnggulan: c.programUnggulan,
+        // imageId tidak di-create
+      },
+    });
+  }
+  console.log("✅ profilePerbekel seeded without imageId (editable later via UI)");
+
+  for (const l of visiMisiDesa) {
+    await prisma.visiMisiDesa.upsert({
+      where: {
+        id: l.id,
+      },
+      update: {
+        visi: l.visi,
+        misi: l.misi,
+      },
+      create: {
+        id: l.id,
+        visi: l.visi,
+        misi: l.misi,
+      },
+    });
+  }
+
+  console.log("visi misi desa success ...");
 
   for (const l of pelayananPerizinanBerusaha) {
     await prisma.pelayananPerizinanBerusaha.upsert({
@@ -67,8 +170,7 @@ import pelayananPendudukNonPermanen from "./data/desa/layanan/pelayanaPendudukNo
       },
     });
   }
-
-  console.log("pelayanan perizinan berusaha success ...");
+  console.log("pelayanan penduduk non permanen success ...");
 
   for (const s of strukturPPID) {
     await prisma.strukturPPID.upsert({

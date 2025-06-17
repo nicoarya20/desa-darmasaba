@@ -16,7 +16,7 @@ function CreateVideo() {
   const videoState = useProxy(stateGallery.video)
   const router = useRouter();
   const [link, setLink] = useState("");
-  const [embedLink, setEmbedLink] = useState("");
+  const embedLink = convertYoutubeUrlToEmbed(link);
 
   const resetForm = () => {
     videoState.create.form = {
@@ -26,15 +26,17 @@ function CreateVideo() {
     };
   };
   const handleSubmit = async () => {
-    const converted = convertYoutubeUrlToEmbed(videoState.create.form.linkVideo);
-    if (!converted) {
+    if (!embedLink) {
       toast.error("Link YouTube tidak valid. Pastikan formatnya benar.");
       return;
     }
+  
+    videoState.create.form.linkVideo = embedLink; // pastikan diset di sini juga (jaga-jaga)
     await videoState.create.create();
     resetForm();
-    router.push("/admin/desa/gallery/video")
+    router.push("/admin/desa/gallery/video");
   };
+  
 
   return (
     <Box>
@@ -63,8 +65,6 @@ function CreateVideo() {
                 value={link}
                 onChange={(e) => {
                   setLink(e.currentTarget.value);
-                  const embed = convertYoutubeUrlToEmbed(e.currentTarget.value);
-                  setEmbedLink(embed || "");
                 }}
                 required
               />

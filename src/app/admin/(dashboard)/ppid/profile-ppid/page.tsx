@@ -45,7 +45,7 @@ function Page() {
                 <Grid>
                   <GridCol span={{ base: 12, md: 12 }}>
                     <Center>
-                      <Image src={"/api/img/darmasaba-icon.png"} w={{ base: 100, md: 150 }} alt='' />
+                      <Image src={"/darmasaba-icon.png"} w={{ base: 100, md: 150 }} alt='' />
                     </Center>
                   </GridCol>
                   <GridCol span={{ base: 12, md: 12 }}>
@@ -62,7 +62,7 @@ function Page() {
                       <Center>
                         <Image
                           pt={{ base: 0, md: 90 }}
-                          src={item.image?.link}
+                          src={item.image?.link || "/perbekel.png"}
                           w={{ base: 250, md: 350 }}
                           alt='Foto Profil PPID'
                           onError={(e) => {
