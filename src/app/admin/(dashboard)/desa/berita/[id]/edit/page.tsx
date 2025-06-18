@@ -125,16 +125,6 @@ function EditBerita() {
             placeholder="masukkan judul"
           />
 
-          <SelectCategory
-            value={formData.kategoriBeritaId}
-            onChange={(val) => {
-              setFormData({
-                ...formData,
-                kategoriBeritaId: val?.id || ''
-              });
-            }}
-          />
-
           <TextInput
             value={formData.deskripsi}
             onChange={(e) => setFormData({ ...formData, deskripsi: e.target.value })}
@@ -173,6 +163,16 @@ function EditBerita() {
             }}
             />
           </Box>
+
+          <SelectCategory
+            value={formData.kategoriBeritaId}
+            onChange={(val) => {
+              setFormData({
+                ...formData,
+                kategoriBeritaId: val?.id || ''
+              });
+            }}
+          />
 
           <Button onClick={handleSubmit}>Edit Berita</Button>
         </Stack>

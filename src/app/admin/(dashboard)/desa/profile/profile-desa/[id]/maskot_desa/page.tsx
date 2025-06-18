@@ -129,7 +129,7 @@ function Page() {
             <Box>
               <Box>
                 <Stack>
-                  <Title order={4}>Edit Maskot Desa</Title>
+                  <Title order={3}>Edit Maskot Desa</Title>
                   <TextInput
                     w={{ base: '100%', md: '50%' }}
                     label={<Text fz={"md"} fw={"bold"}>Judul</Text>}

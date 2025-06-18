@@ -12,7 +12,7 @@ function Page() {
   const router = useRouter()
   const allList = useProxy(stateProfilePPID)
   useShallowEffect(() => {
-    allList.profile.load("1") // Assuming "1" is your default ID, adjust as needed
+    allList.profile.load("edit") // Assuming "1" is your default ID, adjust as needed
   }, [])
 
   if (!allList.profile.data) {

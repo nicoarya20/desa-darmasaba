@@ -90,7 +90,7 @@ function Page() {
                         <Box>
                             <Box>
                                 <Stack>
-                                    <Title order={4}>Edit Sejarah Desa</Title>
+                                    <Title order={3}>Edit Sejarah Desa</Title>
                                     <TextInput
                                         label={<Text fz={"md"} fw={"bold"}>Judul</Text>}
                                         placeholder="Judul"

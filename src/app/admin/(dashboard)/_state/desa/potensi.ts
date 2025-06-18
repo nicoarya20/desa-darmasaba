@@ -6,7 +6,7 @@ import { z } from "zod";
 
 const templateForm = z.object({
     name: z.string().min(1).max(50),
-    deskripsi: z.string().min(1).max(50),
+    deskripsi: z.string().min(1).max(5000),
     kategori: z.string().min(1).max(50),
     imageId: z.string().min(1).max(50),
     content: z.string().min(1).max(5000),

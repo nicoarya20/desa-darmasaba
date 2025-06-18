@@ -63,9 +63,9 @@ export default function CreateBerita() {
   return (
     <Box>
       <Box mb={10}>
-      <Button variant="subtle" onClick={() => router.back()}>
-        <IconArrowBack color={colors['blue-button']} size={25} />
-      </Button>
+        <Button variant="subtle" onClick={() => router.back()}>
+          <IconArrowBack color={colors['blue-button']} size={25} />
+        </Button>
       </Box>
       <Paper bg={colors["white-1"]} p={"md"} w={{ base: "100%", md: "50%" }}>
         <Stack gap={"xs"}>
@@ -79,8 +79,9 @@ export default function CreateBerita() {
             placeholder="masukkan judul"
           />
           <SelectCategory
+            value={beritaState.berita.create.form.kategoriBeritaId}
             onChange={(val) => {
-              beritaState.berita.create.form.kategoriBeritaId = val.id;
+              beritaState.berita.create.form.kategoriBeritaId = val?.id || "";
             }}
           />
           <TextInput
@@ -114,10 +115,10 @@ export default function CreateBerita() {
           <Box>
             <Text fz={"sm"} fw={"bold"}>Konten</Text>
             <CreateEditor
-            value={beritaState.berita.create.form.content}
-            onChange={(htmlContent) => {
-              beritaState.berita.create.form.content = htmlContent;
-            }}
+              value={beritaState.berita.create.form.content}
+              onChange={(htmlContent) => {
+                beritaState.berita.create.form.content = htmlContent;
+              }}
             />
           </Box>
           <Button bg={colors['blue-button']} onClick={handleSubmit}>Simpan Berita</Button>
@@ -126,26 +127,37 @@ export default function CreateBerita() {
     </Box>
   );
 
-  function SelectCategory({
-    onChange,
-  }: {
+  interface SelectCategoryProps {
     onChange: (value: Prisma.KategoriBeritaGetPayload<{
       select: {
         name: true;
         id: true;
       };
-    }>) => void;
-  }) {
+    }> | null) => void;
+    value?: string | null;
+    defaultValue?: string | null;
+  }
+
+  function SelectCategory({
+    onChange,
+    value,
+    defaultValue,
+  }: SelectCategoryProps) {
     const categoryState = useProxy(stateDashboardBerita.category);
-  
+
     useShallowEffect(() => {
-      categoryState.findMany.load();
+      categoryState.findMany.load().then(() => {
+        console.log("Kategori berhasil dimuat:", categoryState.findMany.data);
+      });
     }, []);
-  
+
     if (!categoryState.findMany.data) {
       return <Skeleton height={38} />;
     }
-  
+
+
+    const selectedValue = value || defaultValue;
+
     return (
       <Select
         label={<Text fz={"sm"} fw={"bold"}>Kategori</Text>}
@@ -154,13 +166,19 @@ export default function CreateBerita() {
           label: item.name,
           value: item.id,
         }))}
-        onChange={(val) => {
-          const selected = categoryState.findMany.data?.find((item) => item.id === val);
-          if (selected) {
-            onChange(selected);
+        value={selectedValue || null}
+        onChange={(val: string | null) => {
+          if (val) {
+            const selected = categoryState.findMany.data?.find((item) => item.id === val);
+            if (selected) {
+              onChange(selected);
+            }
+          } else {
+            onChange(null);
           }
         }}
         searchable
+        clearable
         nothingFoundMessage="Tidak ditemukan"
       />
     );

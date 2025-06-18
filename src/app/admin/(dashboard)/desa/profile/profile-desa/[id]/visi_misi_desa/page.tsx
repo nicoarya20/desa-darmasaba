@@ -90,7 +90,7 @@ function Page() {
             <Box>
               <Box>
                 <Stack>
-                  <Title order={4}>Edit Visi Misi Desa</Title>
+                  <Title order={3}>Edit Visi Misi Desa</Title>
                   <Text fz={"md"} fw={"bold"}>Visi</Text>
                   <EditEditor
                     value={visiMisiState.update.form.visi}

@@ -14,10 +14,10 @@ function Page() {
 
   // Panggil load data sekali saat komponen mount
   useEffect(() => {
-    stateProfileDesa.sejarahDesa.findUnique.load("1");
-    stateProfileDesa.visiMisiDesa.findUnique.load("1");
-    stateProfileDesa.lambangDesa.findUnique.load("1");
-    stateProfileDesa.maskotDesa.findUnique.load("1");
+    stateProfileDesa.sejarahDesa.findUnique.load("edit");
+    stateProfileDesa.visiMisiDesa.findUnique.load("edit");
+    stateProfileDesa.lambangDesa.findUnique.load("edit");
+    stateProfileDesa.maskotDesa.findUnique.load("edit");
   }, []);
 
   const sejarah = snap.sejarahDesa.findUnique.data;

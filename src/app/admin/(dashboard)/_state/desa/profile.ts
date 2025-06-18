@@ -690,7 +690,7 @@ const profilPerbekel = proxy({
       this.error = null;
 
       try {
-        const response = await fetch(`/api/desa/profile/profil-perbekel/${id}`);
+        const response = await fetch(`/api/desa/profile/profileperbekel/${id}`);
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -762,7 +762,7 @@ const profilPerbekel = proxy({
 
       try {
         const response = await fetch(
-          `/api/desa/profile/profil-perbekel/${this.id}`,
+          `/api/desa/profile/profileperbekel/${this.id}`,
           {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
