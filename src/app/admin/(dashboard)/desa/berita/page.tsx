@@ -4,9 +4,7 @@ import { Box, Button, Grid, GridCol, Image, Paper, Skeleton, Stack, Table, Table
 import { useShallowEffect } from '@mantine/hooks';
 import { IconCircleDashedPlus, IconDeviceImacCog, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
-import { ModalKonfirmasiHapus } from '../../_com/modalKonfirmasiHapus';
 import stateDashboardBerita from '../../_state/desa/berita';
 
 
@@ -32,90 +30,14 @@ function Page() {
   );
 }
 
-
-
-
-
-
-// function BeritaList() {
-//   const beritaState = useProxy(stateDashboardBerita)
-//   useShallowEffect(() => {
-//     beritaState.berita.findMany.load()
-//   }, [])
-
-
-
-//   const router = useRouter()
-
-//   if (!beritaState.berita.findMany.data) return <Stack py={10}>
-//     {Array.from({ length: 10 }).map((v, k) => <Skeleton key={k} h={40} />)}
-//   </Stack>
-//   return (
-//     <Box py={10}>
-//       <Paper bg={colors['white-1']} p={'md'}>
-//         <Stack>
-//           <Text fz={"xl"} fw={"bold"}>List Berita</Text>
-//           <SimpleGrid cols={{ base: 1, md: 4 }}>
-//             {beritaState.berita.findMany.data?.map((item) => (
-//               <Paper key={item.id} bg={colors['BG-trans']} p={'md'}>
-//                 <Box >
-//                   <Flex justify="flex-end" mt={10}>
-//                     <ActionIcon
-//                       onClick={() => beritaState.berita.delete.byId(item.id)}
-//                       disabled={beritaState.berita.delete.loading}
-//                       color={colors['blue-button']} variant='transparent'>
-//                       <IconX size={20} />
-//                     </ActionIcon>
-//                     <ActionIcon onClick={() => {
-//                       router.push("/desa/berita/edit");
-//                     }} color={colors['blue-button']} variant='transparent'>
-//                       <IconEdit size={20} />
-//                     </ActionIcon>
-//                   </Flex>
-//                   <Text fw={"bold"} fz={"sm"}>
-//                     Kategori
-//                   </Text>
-//                   <Text>{item.kategoriBerita?.name}</Text>
-//                   <Text fw={"bold"} fz={"sm"}>
-//                     Judul
-//                   </Text>
-//                   <Text>{item.judul}</Text>
-//                   <Text lineClamp={1} fw={"bold"} fz={"sm"}>
-//                     Deskripsi
-//                   </Text>
-//                   <Text size='sm' lineClamp={2}>{item.deskripsi}</Text>
-//                   <Text fw={"bold"} fz={"sm"}>
-//                     Gambar
-//                   </Text>
-//                   <Image w={{ base: 100, md: 150 }} src={item.image?.link} alt="gambar" />
-//                 </Box>
-//               </Paper>
-//             ))}
-//           </SimpleGrid>
-//         </Stack>
-//       </Paper>
-//     </Box>
-//   )
-// }
-
 function BeritaList() {
   const beritaState = useProxy(stateDashboardBerita)
-  const [modalHapus, setModalHapus] = useState(false)
-  const [selectedId, setSelectedId] = useState<string | null>(null)
 
   useShallowEffect(() => {
     beritaState.berita.findMany.load()
   }, [])
 
   const router = useRouter()
-
-  const handleHapus = () => {
-    if (selectedId) {
-      beritaState.berita.delete.byId(selectedId)
-      setModalHapus(false)
-      setSelectedId(null)
-    }
-  }
 
   if (!beritaState.berita.findMany.data) {
     return (
@@ -175,13 +97,6 @@ function BeritaList() {
         </Stack>
       </Paper>
 
-      {/* Modal Konfirmasi Hapus */}
-      <ModalKonfirmasiHapus
-        opened={modalHapus}
-        onClose={() => setModalHapus(false)}
-        onConfirm={handleHapus}
-        text='Apakah anda yakin ingin menghapus berita ini?'
-      />
     </Box>
   )
 }

@@ -1,8 +1,10 @@
+'use client'
 import colors from '@/con/colors';
 import { Box, Button, Image, Paper, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
 import { IconDeviceImacCog, IconSearch } from '@tabler/icons-react';
 import JudulList from '../../_com/judulList';
 import HeaderSearch from '../../_com/header';
+import { useRouter } from 'next/navigation';
 
 function PenangananDarurat() {
   return (
@@ -18,6 +20,7 @@ function PenangananDarurat() {
 }
 
 function ListPenangananDarurat() {
+  const router = useRouter();
   return (
     <Box py={10}>
     <Paper bg={colors['white-1']} p={'md'}>
@@ -47,7 +50,7 @@ function ListPenangananDarurat() {
                   <Image w={100} src={"/"} alt="image" />
                 </TableTd>
                 <TableTd>
-                  <Button>
+                  <Button onClick={() => router.push('/admin/kesehatan/penanganan-darurat/detail')}>
                     <IconDeviceImacCog size={25} />
                   </Button>
                 </TableTd>

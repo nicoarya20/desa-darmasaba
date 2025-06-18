@@ -50,21 +50,42 @@ model AppMenuChild {
 // ========================================= FILE STORAGE ========================================= //
 
 model FileStorage {
-  id          String        @id @default(cuid())
-  name        String        @unique
-  realName    String
-  path        String
-  mimeType    String
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  deletedAt   DateTime?
-  isActive    Boolean       @default(true)
-  link        String
-  Berita      Berita[]
-  PotensiDesa PotensiDesa[]
+  id           String         @id @default(cuid())
+  name         String         @unique
+  realName     String
+  path         String
+  mimeType     String
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  deletedAt    DateTime?
+  isActive     Boolean        @default(true)
+  link         String
+  Berita       Berita[]
+  PotensiDesa  PotensiDesa[]
+  Posyandu     Posyandu[]
+  StrukturPPID StrukturPPID[]
+  GalleryFoto GalleryFoto[]
+  PelayananSuratKeterangan PelayananSuratKeterangan[]
+  Penghargaan Penghargaan[]
+  ProfileDesaImage ProfileDesaImage[]
+  ProfilePPID ProfilePPID[]
+  ProfilPerbekel ProfilPerbekel[]
 }
 
 //========================================= MENU PPID ========================================= //
+
+//========================================= STRUKTUR PPID ========================================= //
+model StrukturPPID {
+  id        String       @id @default(cuid())
+  name      String       @db.Text
+  image     FileStorage? @relation(fields: [imageId], references: [id])
+  imageId   String?
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  deletedAt DateTime     @default(now())
+  isActive  Boolean      @default(true)
+}
+
 // ========================================= VISI MISI PPID ========================================= //
 model VisiMisiPPID {
   id        String   @id @default(cuid())
@@ -89,23 +110,23 @@ model DasarHukumPPID {
 
 // ========================================= PROFILE PPID ========================================= //
 model ProfilePPID {
-  id         String   @id @default(cuid())
-  name       String   @db.Text
-  biodata    String   @db.Text
-  riwayat    String   @db.Text
-  pengalaman String   @db.Text
-  unggulan   String   @db.Text
-  imageUrl   String?
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  deletedAt  DateTime @default(now())
-  isActive   Boolean  @default(true)
+  id         String       @id @default(cuid())
+  name       String       @db.Text
+  biodata    String       @db.Text
+  riwayat    String       @db.Text
+  pengalaman String       @db.Text
+  unggulan   String       @db.Text
+  image      FileStorage? @relation(fields: [imageId], references: [id])
+  imageId    String?
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  deletedAt  DateTime     @default(now())
+  isActive   Boolean      @default(true)
 }
 
 // ========================================= DAFTAR INFORMASI PUBLIK ========================================= //
 model DaftarInformasiPublik {
   id             String   @id @default(cuid())
-  nomor          Int      @default(autoincrement())
   jenisInformasi String
   deskripsi      String
   tanggal        String
@@ -181,7 +202,7 @@ model FormulirPermohonanKeberatan {
 
 // ========================================= IKM ========================================= //
 model IndeksKepuasanMasyarakat {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(cuid())
   label     String
   kepuasan  String
   createdAt DateTime @default(now())
@@ -226,32 +247,68 @@ model GrafikBerdasarkanUmur {
 
 // ========================================= MENU DESA ========================================= //
 // ========================================= PROFILE DESA ========================================= //
-model ProfileDesa {
-  id               String          @id @default(cuid())
-  sejarah          String          @db.Text
-  visi             String          @db.Text
-  misi             String          @db.Text
-  lambang          String          @db.Text
-  maskot           String          @db.Text
-  ProfilPerbekel   ProfilPerbekel? @relation(fields: [profilPerbekelId], references: [id])
-  profilPerbekelId String?
-  createdAt        DateTime        @default(now())
-  updatedAt        DateTime        @updatedAt
-  deletedAt        DateTime        @default(now())
-  isActive         Boolean         @default(true)
+model SejarahDesa {
+  id        String   @id @default(cuid())
+  judul     String   @db.Text
+  deskripsi String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive  Boolean  @default(true)
+}
+
+model VisiMisiDesa {
+  id        String   @id @default(cuid())
+  visi      String   @db.Text
+  misi      String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive  Boolean  @default(true)
+}
+
+model LambangDesa {
+  id        String   @id @default(cuid())
+  judul     String
+  deskripsi String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive  Boolean  @default(true)
+}
+
+model MaskotDesa {
+  id        String   @id @default(cuid())
+  judul     String
+  deskripsi String   @db.Text
+  images    ProfileDesaImage[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive  Boolean  @default(true)
+}
+
+model ProfileDesaImage {
+  id            String      @id @default(cuid())
+  label         String
+  image         FileStorage @relation(fields: [imageId], references: [id])
+  imageId       String
+  MaskotDesa MaskotDesa @relation(fields: [maskotDesaId], references: [id])
+  maskotDesaId String
 }
 
 model ProfilPerbekel {
-  id                   String        @id @default(cuid())
-  biodata              String        @db.Text
-  pengalaman           String        @db.Text
-  pengalamanOrganisasi String        @db.Text
-  programUnggulan      String        @db.Text
-  ProfileDesa          ProfileDesa[]
-  createdAt            DateTime      @default(now())
-  updatedAt            DateTime      @updatedAt
-  deletedAt            DateTime      @default(now())
-  isActive             Boolean       @default(true)
+  id                   String   @id @default(cuid())
+  biodata              String   @db.Text
+  pengalaman           String   @db.Text
+  pengalamanOrganisasi String   @db.Text
+  programUnggulan      String   @db.Text
+  image                FileStorage? @relation(fields: [imageId], references: [id])
+  imageId              String?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+  deletedAt            DateTime @default(now())
+  isActive             Boolean  @default(true)
 }
 
 // ========================================= BERITA ========================================= //
@@ -319,51 +376,87 @@ model CategoryPengumuman {
   isActive    Boolean      @default(true)
 }
 
-// ========================================= IMAGES ========================================= //
-model Images {
-  id          String        @id @default(cuid())
-  url         String
-  label       String        @default("null")
-  active      Boolean       @default(true)
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  GalleryFoto GalleryFoto[]
-}
-
-// ========================================= VIDEOS ========================================= //
-model Videos {
-  id           String         @id @default(cuid())
-  url          String
-  label        String         @default("null")
-  active       Boolean        @default(true)
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-  GalleryVideo GalleryVideo[]
-}
-
 // ========================================= GALLERY ========================================= //
 model GalleryFoto {
-  id               String   @id @default(cuid())
+  id               String       @id @default(cuid())
   name             String
-  image            String
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-  deletedAt        DateTime @default(now())
-  isActive         Boolean  @default(true)
-  imagesId         String?  @unique
-  imageGalleryFoto Images?  @relation(fields: [imagesId], references: [id])
+  deskripsi        String       @db.Text
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+  deletedAt        DateTime     @default(now())
+  isActive         Boolean      @default(true)
+  imagesId         String?      @unique
+  imageGalleryFoto FileStorage? @relation(fields: [imagesId], references: [id])
 }
 
 model GalleryVideo {
-  id                 String   @id @default(cuid())
-  name               String
-  video              String
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
-  deletedAt          DateTime @default(now())
-  isActive           Boolean  @default(true)
-  videosId           String?  @unique
-  videosGalleryVideo Videos?  @relation(fields: [videosId], references: [id])
+  id        String   @id @default(cuid())
+  name      String
+  deskripsi String   @db.Text
+  linkVideo String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive  Boolean  @default(true)
+}
+
+// ========================================= LAYANAN DESA ========================================= //
+model PelayananSuratKeterangan {
+  id        String      @id @default(cuid())
+  name      String
+  deskripsi String      @db.Text
+  image     FileStorage @relation(fields: [imageId], references: [id])
+  imageId   String
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  deletedAt DateTime    @default(now())
+  isActive  Boolean     @default(true)
+}
+
+model PelayananTelunjukSaktiDesa {
+  id        String   @id @default(cuid())
+  name      String
+  deskripsi String   @db.Text
+  link      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive  Boolean  @default(true)
+}
+
+model PelayananPerizinanBerusaha {
+  id        String   @id @default(cuid())
+  name      String
+  deskripsi String   @db.Text
+  link      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive  Boolean  @default(true)
+}
+
+model PelayananPendudukNonPermanen {
+  id        String   @id @default(cuid())
+  name      String
+  deskripsi String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive  Boolean  @default(true)
+}
+
+// ========================================= PENGHARGAAN ========================================= //
+model Penghargaan {
+  id        String      @id @default(cuid())
+  name      String
+  juara     String
+  deskripsi String      @db.Text
+  image     FileStorage @relation(fields: [imageId], references: [id])
+  imageId   String
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  deletedAt DateTime    @default(now())
+  isActive  Boolean     @default(true)
 }
 
 // ========================================= MENU KESEHATAN ========================================= //
@@ -614,4 +707,18 @@ model DoctorSign {
   updatedAt DateTime @updatedAt
   deletedAt DateTime @default(now())
   isActive  Boolean  @default(true)
+}
+
+// ========================================= POSYANDU ========================================= //
+model Posyandu {
+  id        String      @id @default(cuid())
+  name      String
+  nomor     String
+  deskripsi String
+  image     FileStorage @relation(fields: [imageId], references: [id])
+  imageId   String
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  deletedAt DateTime    @default(now())
+  isActive  Boolean     @default(true)
 }

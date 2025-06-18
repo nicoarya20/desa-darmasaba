@@ -21,7 +21,7 @@ export function ModalKonfirmasiHapus({
     <Modal
       opened={opened}
       onClose={onClose}
-      title="Konfirmasi Hapus"
+      title={<Text fw={"bold"} fz={"xl"}>Konfirmasi Hapus</Text>}
       centered
     >
       <Text mb="md">{text}</Text>

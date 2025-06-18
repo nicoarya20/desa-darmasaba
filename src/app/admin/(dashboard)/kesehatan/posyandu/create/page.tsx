@@ -12,11 +12,11 @@ function CreatePosyandu() {
     <Box>
       <Box mb={10}>
         <Button onClick={() => router.back()} variant='subtle' color={'blue'}>
-          <IconArrowBack color={colors['blue-button']} size={25}/>
+          <IconArrowBack color={colors['blue-button']} size={25} />
         </Button>
       </Box>
 
-      <Paper w={{base: '100%', md: '50%'}} bg={colors['white-1']} p={'md'}>
+      <Paper w={{ base: '100%', md: '50%' }} bg={colors['white-1']} p={'md'}>
         <Stack gap={"xs"}>
           <Title order={4}>Create Posyandu</Title>
           <Box>
@@ -24,8 +24,12 @@ function CreatePosyandu() {
             <IconImageInPicture size={50} />
           </Box>
           <TextInput
-          label={<Text fw={"bold"} fz={"sm"}>Nama Posyandu</Text>}
-          placeholder='Masukkan nama posyandu'
+            label={<Text fw={"bold"} fz={"sm"}>Nama Posyandu</Text>}
+            placeholder='Masukkan nama posyandu'
+          />
+          <TextInput
+            label={<Text fw={"bold"} fz={"sm"}>Nomor Posyandu</Text>}
+            placeholder='Masukkan nomor posyandu'
           />
           <Box>
             <Text fw={"bold"} fz={"sm"}>Deskripsi Posyandu</Text>
@@ -36,9 +40,9 @@ function CreatePosyandu() {
           <Group>
             <Button bg={colors['blue-button']}>Submit</Button>
           </Group>
-       </Stack>
+        </Stack>
       </Paper>
-   </Box>
+    </Box>
   );
 }
 

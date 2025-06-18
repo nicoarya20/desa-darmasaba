@@ -1,34 +1,69 @@
+'use client'
+import penghargaanState from '@/app/admin/(dashboard)/_state/desa/penghargaan';
 import colors from '@/con/colors';
-import { Box, Stack, Tabs, TabsList, TabsPanel, TabsTab, Title } from '@mantine/core';
-import React from 'react';
-import Penghargaan from './ui/penghargaan/page';
-import GambarPerhargaan from './ui/gambar_perhargaan/page';
+import { Box, Button, Image, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
+import { useShallowEffect } from '@mantine/hooks';
+import { IconDeviceImac, IconSearch } from '@tabler/icons-react';
+import { useRouter } from 'next/navigation';
+import { useProxy } from 'valtio/utils';
+import JudulListTab from '../../_com/jusulListTab';
 
-function Page() {
+function Penghargaan() {
+  const state = useProxy(penghargaanState)
+  const router = useRouter()
+  useShallowEffect(() => {
+    state.findMany.load()
+  }, [])
+
+  if (!state.findMany.data) {
+    return(
+      <Stack py={10}>
+        <Skeleton h={500} />
+      </Stack>
+    )
+  }
   return (
     <Box py={10}>
-      <Stack>
-        <Title order={3}>Penghargaan</Title>
-        <Tabs color={colors['blue-button']} variant='pills' defaultValue={"Penghargaan"}>
-          <TabsList p={"xs"} bg={"#BBC8E7FF"}>
-            <TabsTab value="Penghargaan">
-              Penghargaan
-            </TabsTab>
-            <TabsTab value="Gambar Penghargaan">
-              Gambar Penghargaan
-            </TabsTab>
-          </TabsList>
-
-          <TabsPanel value="Penghargaan">
-            <Penghargaan/>
-          </TabsPanel>
-          <TabsPanel value="Gambar Penghargaan">
-            <GambarPerhargaan/>
-          </TabsPanel>
-        </Tabs>
-      </Stack>
+      <Paper bg={colors['white-1']} p={'md'}>
+        <JudulListTab
+          title='List Penghargaan'
+          href='/admin/desa/penghargaan/create'
+          placeholder='pencarian'
+          searchIcon={<IconSearch size={16} />}
+        />
+        <Table striped withTableBorder withRowBorders>
+          <TableThead>
+            <TableTr>
+              <TableTh>Nama</TableTh>
+              <TableTh>Deskripsi</TableTh>
+              <TableTh>Image</TableTh>
+              <TableTh>Detail</TableTh>
+            </TableTr>
+          </TableThead>
+          <TableTbody>
+            {state.findMany.data?.map((item) => (
+              <TableTr key={item.id}>
+                <TableTd>{item.name}</TableTd>
+                <TableTd>
+                  <Text truncate="end" fz={"sm"} dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
+                </TableTd>
+                <TableTd>
+                  <Image w={100} src={item.image?.link} alt="gambar" />
+                </TableTd>  
+                <TableTd>
+                  <Text>
+                    <Button onClick={() => router.push(`/admin/desa/penghargaan/${item.id}`)}>
+                    <IconDeviceImac size={20} />
+                  </Button>
+                </Text>
+              </TableTd>
+            </TableTr>
+          ))}
+          </TableTbody>
+        </Table>
+      </Paper>
     </Box>
   );
 }
 
-export default Page;
+export default Penghargaan;

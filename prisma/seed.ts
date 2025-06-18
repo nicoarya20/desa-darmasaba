@@ -6,13 +6,17 @@ import caraMemperolehSalinanInformasi from "./data/list-caraMemperolehSalinanInf
 import jenisInformasiDiminta from "./data/list-jenisInfromasi.json";
 import layanan from "./data/list-layanan.json";
 import potensi from "./data/list-potensi.json";
-import visiMisiPPID from "./data/ppid/visi-misi-ppid/visimisiPPID.json";
 import dasarHukumPPID from "./data/ppid/dasar-hukum-ppid/dasarhukumPPID.json";
 import profilePPID from "./data/ppid/profile-ppid/profilePPid.json";
-import path from "path";
-import fs from "fs";
-import { mkdir, writeFile } from "fs/promises";
-import { v4 as uuid } from "uuid";
+import visiMisiPPID from "./data/ppid/visi-misi-ppid/visimisiPPID.json";
+import strukturPPID from "./data/ppid/struktur-ppid/strukturPPID.json";
+import pelayananPerizinanBerusaha from "./data/desa/layanan/pelayananPerizinanBerusaha.json";
+import pelayananPendudukNonPermanen from "./data/desa/layanan/pelayanaPendudukNonPermanen.json";
+import sejarahDesa from "./data/desa/profile/sejarah_desa.json";
+import visiMisiDesa from "./data/desa/profile/visi_misi_desa.json";
+import lambangDesa from "./data/desa/profile/lambang_desa.json";
+import maskotDesa from "./data/desa/profile/maskot_desa.json";
+import profilPerbekel from "./data/desa/profile/profil_perbekel.json";
 
 (async () => {
   for (const l of layanan) {
@@ -30,6 +34,159 @@ import { v4 as uuid } from "uuid";
   }
 
   console.log("layanan success ...");
+
+  for (const l of sejarahDesa) {
+    await prisma.sejarahDesa.upsert({
+      where: {
+        id: l.id,
+      },
+      update: {
+        judul: l.judul,
+        deskripsi: l.deskripsi,
+      },
+      create: {
+        id: l.id,
+        judul: l.judul,
+        deskripsi: l.deskripsi,
+      },
+    });
+  }
+
+  console.log("sejarah desa success ...");
+
+  for (const l of maskotDesa) {
+    await prisma.maskotDesa.upsert({
+      where: {
+        id: l.id,
+      },
+      update: {
+        judul: l.judul,
+        deskripsi: l.deskripsi,
+      },
+      create: {
+        id: l.id,
+        judul: l.judul,
+        deskripsi: l.deskripsi,
+      },
+    });
+  }
+
+  console.log("maskot desa success ...");
+
+  for (const l of lambangDesa) {
+    await prisma.lambangDesa.upsert({
+      where: {
+        id: l.id,
+      },
+      update: {
+        judul: l.judul,
+        deskripsi: l.deskripsi,
+      },
+      create: {
+        id: l.id,
+        judul: l.judul,
+        deskripsi: l.deskripsi,
+      },
+    });
+  }
+
+  console.log("lambang desa success ...");
+
+  for (const c of profilPerbekel) {
+    await prisma.profilPerbekel.upsert({
+      where: { id: c.id },
+      update: {
+        biodata: c.biodata,
+        pengalaman: c.pengalaman,
+        pengalamanOrganisasi: c.pengalamanOrganisasi,
+        programUnggulan: c.programUnggulan,
+        // imageId tidak di-update
+      },
+      create: {
+        id: c.id,
+        biodata: c.biodata,
+        pengalaman: c.pengalaman,
+        pengalamanOrganisasi: c.pengalamanOrganisasi,
+        programUnggulan: c.programUnggulan,
+        // imageId tidak di-create
+      },
+    });
+  }
+  console.log("✅ profilePerbekel seeded without imageId (editable later via UI)");
+
+  for (const l of visiMisiDesa) {
+    await prisma.visiMisiDesa.upsert({
+      where: {
+        id: l.id,
+      },
+      update: {
+        visi: l.visi,
+        misi: l.misi,
+      },
+      create: {
+        id: l.id,
+        visi: l.visi,
+        misi: l.misi,
+      },
+    });
+  }
+
+  console.log("visi misi desa success ...");
+
+  for (const l of pelayananPerizinanBerusaha) {
+    await prisma.pelayananPerizinanBerusaha.upsert({
+      where: {
+        id: l.id,
+      },
+      update: {
+        name: l.name,
+        deskripsi: l.deskripsi,
+        link: l.link,
+      },
+      create: {
+        id: l.id,
+        name: l.name,
+        deskripsi: l.deskripsi,
+        link: l.link,
+      },
+    });
+  }
+
+  console.log("pelayanan perizinan berusaha success ...");
+
+  for (const l of pelayananPendudukNonPermanen) {
+    await prisma.pelayananPendudukNonPermanen.upsert({
+      where: {
+        id: l.id,
+      },
+      update: {
+        name: l.name,
+        deskripsi: l.deskripsi,
+      },
+      create: {
+        id: l.id,
+        name: l.name,
+        deskripsi: l.deskripsi,
+      },
+    });
+  }
+  console.log("pelayanan penduduk non permanen success ...");
+
+  for (const s of strukturPPID) {
+    await prisma.strukturPPID.upsert({
+      where: {
+        id: s.id,
+      },
+      update: {
+        name: s.name,
+      },
+      create: {
+        id: s.id,
+        name: s.name,
+      },
+    });
+  }
+  console.log("struktur ppid success ...");
 
   for (const p of potensi) {
     await prisma.potensi.upsert({
@@ -124,56 +281,29 @@ import { v4 as uuid } from "uuid";
   }
   console.log("cara memperoleh salinan informasi success ...");
 
-  const seedProfilePPID = async () => {
-    const targetDir = path.resolve("public", "uploads", "seeded-images", "profile-ppid")
-  
-    // Buat folder hanya jika belum ada
-    if (!fs.existsSync(targetDir)) {
-      await mkdir(targetDir, { recursive: true })
-    }
-  
-    for (const c of profilePPID) {
-      let finalImageUrl = c.imageUrl
-  
-      if (c.imageUrl.startsWith("/uploads/seeded-images/")) {
-        const filename = path.basename(c.imageUrl)
-        const seedImagePath = path.resolve("prisma", "seed-images", filename)
-  
-        const targetFilename = `${uuid()}_${filename}`
-        const targetPath = path.join(targetDir, targetFilename)
-  
-        const buffer = fs.readFileSync(seedImagePath)
-        await writeFile(targetPath, buffer)
-  
-        finalImageUrl = `/uploads/seeded-images/profile-ppid/${targetFilename}`
-      }
-  
-      await prisma.profilePPID.upsert({
-        where: { id: c.id },
-        update: {
-          name: c.name,
-          biodata: c.biodata,
-          riwayat: c.riwayat,
-          pengalaman: c.pengalaman,
-          unggulan: c.unggulan,
-          imageUrl: finalImageUrl,
-        },
-        create: {
-          id: c.id,
-          name: c.name,
-          biodata: c.biodata,
-          riwayat: c.riwayat,
-          pengalaman: c.pengalaman,
-          unggulan: c.unggulan,
-          imageUrl: finalImageUrl,
-        },
-      })
-    }
-  
-    console.log("✅ profilePPID seeded from JSON with image copying")
+  for (const c of profilePPID) {
+    await prisma.profilePPID.upsert({
+      where: { id: c.id },
+      update: {
+        name: c.name,
+        biodata: c.biodata,
+        riwayat: c.riwayat,
+        pengalaman: c.pengalaman,
+        unggulan: c.unggulan,
+        // imageId tidak di-update
+      },
+      create: {
+        id: c.id,
+        name: c.name,
+        biodata: c.biodata,
+        riwayat: c.riwayat,
+        pengalaman: c.pengalaman,
+        unggulan: c.unggulan,
+        // imageId tidak di-create
+      },
+    });
   }
-  
-  await seedProfilePPID()
+  console.log("✅ profilePPID seeded without imageId (editable later via UI)");
 
   for (const v of visiMisiPPID) {
     await prisma.visiMisiPPID.upsert({
@@ -210,8 +340,6 @@ import { v4 as uuid } from "uuid";
     });
   }
   console.log("dasar hukum PPID success ...");
-
-
 })()
   .then(() => prisma.$disconnect())
   .catch((e) => {

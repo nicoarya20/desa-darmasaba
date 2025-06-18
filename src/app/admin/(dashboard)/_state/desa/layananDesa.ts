@@ -1,0 +1,718 @@
+import ApiFetch from "@/lib/api-fetch";
+import { Prisma } from "@prisma/client";
+import { toast } from "react-toastify";
+import { proxy } from "valtio";
+import { z } from "zod";
+
+const templateSuratKeteranganForm = z.object({
+  name: z.string().min(3, "Nama minimal 3 karakter"),
+  deskripsi: z.string().min(3, "Deskripsi minimal 3 karakter"),
+  imageId: z.string().nonempty(),
+});
+
+const suratKeteranganForm = {
+  name: "",
+  deskripsi: "",
+  imageId: "",
+};
+
+const telunjukSaktiDesaForm = {
+  name: "",
+  deskripsi: "",
+  link: "",
+};
+
+const templateTelunjukSaktiDesaForm = z.object({
+  name: z.string().min(3, "Nama minimal 3 karakter"),
+  deskripsi: z.string().min(3, "Deskripsi minimal 3 karakter"),
+});
+
+
+const templatePelayananPerizinanBerusaha = z.object({
+  name: z.string().min(3, "Nama minimal 3 karakter"),
+  deskripsi: z.string().min(3, "Deskripsi minimal 3 karakter"),
+  link: z.string().min(3, "Link minimal 3 karakter"),
+});
+
+type pelayananPerizinanBerusahaForm =
+  Prisma.PelayananPerizinanBerusahaGetPayload<{
+    select: {
+      id: true;
+      name: true;
+      deskripsi: true;
+      link: true;
+    };
+  }>;
+
+const pelayananPerizinanBerusahaForm = {
+  name: "",
+  deskripsi: "",
+  link: "",
+};
+
+const templatePelayananPendudukNonPermanen = z.object({
+  name: z.string().min(3, "Nama minimal 3 karakter"),
+  deskripsi: z.string().min(3, "Deskripsi minimal 3 karakter"),
+});
+
+type pelayananPendudukNonPermanenForm =
+  Prisma.PelayananPendudukNonPermanenGetPayload<{
+    select: {
+      id: true;
+      name: true;
+      deskripsi: true;
+    };
+  }>;
+
+const pelayananPendudukNonPermanenForm = {
+  name: "",
+  deskripsi: "",
+};
+
+
+const suratKeterangan = proxy({
+  create: {
+    form: { ...suratKeteranganForm },
+    loading: false,
+    async create() {
+      const cek = templateSuratKeteranganForm.safeParse(
+        suratKeterangan.create.form
+      );
+      if (!cek.success) {
+        const err = `[${cek.error.issues
+          .map((v) => `${v.path.join(".")}`)
+          .join("\n")}] required`;
+        return toast.error(err);
+      }
+      try {
+        suratKeterangan.create.loading = true;
+        const res = await ApiFetch.api.desa.layanan.pelayanansuratketerangan[
+          "create"
+        ].post(suratKeterangan.create.form);
+        if (res.status === 200) {
+          suratKeterangan.findMany.load();
+          return toast.success("Surat Keterangan berhasil disimpan!");
+        }
+        return toast.error("Gagal menyimpan surat keterangan");
+      } catch (error) {
+        console.log((error as Error).message);
+      } finally {
+        suratKeterangan.create.loading = false;
+      }
+    },
+    resetForm() {
+      suratKeterangan.create.form = { ...suratKeteranganForm };
+    },
+  },
+  findMany: {
+    data: [] as Prisma.PelayananSuratKeteranganGetPayload<{
+      include: { image: true };
+    }>[],
+    async load() {
+      const res = await ApiFetch.api.desa.layanan.pelayanansuratketerangan[
+        "find-many"
+      ].get();
+      if (res.status === 200) {
+        suratKeterangan.findMany.data = res.data?.data ?? [];
+      }
+    },
+  },
+  findUnique: {
+    data: null as Prisma.PelayananSuratKeteranganGetPayload<{
+      include: {
+        image: true;
+      };
+    }> | null,
+    async load(id: string) {
+      try {
+        const res = await fetch(
+          `/api/desa/layanan/pelayanansuratketerangan/${id}`
+        );
+        if (res.ok) {
+          const data = await res.json();
+          suratKeterangan.findUnique.data = data.data ?? null;
+        } else {
+          console.error("Failed to fetch surat keterangan:", res.statusText);
+          suratKeterangan.findUnique.data = null;
+        }
+      } catch (error) {
+        console.error("Error fetching surat keterangan:", error);
+        suratKeterangan.findUnique.data = null;
+      }
+    },
+  },
+  delete: {
+    loading: false,
+    async byId(id: string) {
+      if (!id) return toast.warn("ID tidak valid");
+      try {
+        suratKeterangan.delete.loading = true;
+        const response = await fetch(
+          `/api/desa/layanan/pelayanansuratketerangan/del/${id}`,
+          {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        const result = await response.json();
+        if (response.ok) {
+          toast.success(result.message || "Surat Keterangan berhasil dihapus");
+          await suratKeterangan.findMany.load(); // refresh list
+        } else {
+          toast.error(result.message || "Gagal menghapus surat keterangan");
+        }
+      } catch (error) {
+        console.error("Gagal delete:", error);
+        toast.error("Terjadi kesalahan saat menghapus surat keterangan");
+      } finally {
+        suratKeterangan.delete.loading = false;
+      }
+    },
+  },
+  edit: {
+    id: "",
+    form: { ...suratKeteranganForm },
+    loading: false,
+
+    async load(id: string) {
+      if (!id) {
+        toast.warn("ID tidak valid");
+        return null;
+      }
+      try {
+        const response = await fetch(
+          `/api/desa/layanan/pelayanansuratketerangan/${id}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const result = await response.json();
+        if (result?.success) {
+          const data = result.data;
+          this.id = data.id;
+          this.form = {
+            name: data.name,
+            deskripsi: data.deskripsi,
+            imageId: data.imageId || "",
+          };
+          return data;
+        } else {
+          throw new Error(result.message || "Gagal memuat data");
+        }
+      } catch (error) {
+        console.error("Error fetching surat keterangan:", error);
+        toast.error(
+          error instanceof Error ? error.message : "Gagal memuat data"
+        );
+        return null;
+      }
+    },
+    async update() {
+      const cek = templateSuratKeteranganForm.safeParse(
+        suratKeterangan.edit.form
+      );
+      if (!cek.success) {
+        const err = `[${cek.error.issues
+          .map((v) => `${v.path.join(".")}`)
+          .join("\n")}] required`;
+        return toast.error(err);
+      }
+      try {
+        suratKeterangan.edit.loading = true;
+        const response = await fetch(
+          `/api/desa/layanan/pelayanansuratketerangan/${this.id}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              name: this.form.name,
+              deskripsi: this.form.deskripsi,
+              imageId: this.form.imageId,
+            }),
+          }
+        );
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(
+            errorData.message || `HTTP error! status: ${response.status}`
+          );
+        }
+        const result = await response.json();
+        if (result.success) {
+          toast.success(result.message || "Surat Keterangan berhasil diupdate");
+          await suratKeterangan.findMany.load(); // refresh list
+          return true;
+        } else {
+          throw new Error(
+            result.message || "Gagal mengupdate surat keterangan"
+          );
+        }
+      } catch (error) {
+        console.error("Error updating surat keterangan:", error);
+        toast.error(
+          error instanceof Error
+            ? error.message
+            : "Terjadi kesalahan saat update surat keterangan"
+        );
+        return false;
+      } finally {
+        suratKeterangan.edit.loading = false;
+      }
+    },
+  },
+});
+
+const pelayananTelunjukSaktiDesa = proxy({
+  create: {
+    form: { ...telunjukSaktiDesaForm },
+    loading: false,
+    async create() {
+      const cek = templateTelunjukSaktiDesaForm.safeParse(
+        pelayananTelunjukSaktiDesa.create.form
+      );
+      if (!cek.success) {
+        const err = `[${cek.error.issues
+          .map((v) => `${v.path.join(".")}`)
+          .join("\n")}] required`;
+        return toast.error(err);
+      }
+      try {
+        pelayananTelunjukSaktiDesa.create.loading = true;
+        const res = await ApiFetch.api.desa.layanan.pelayanantelunjuksaktidesa[
+          "create"
+        ].post(pelayananTelunjukSaktiDesa.create.form);
+        if (res.status === 200) {
+          pelayananTelunjukSaktiDesa.findMany.load();
+          return toast.success("Telunjuk Sakti Desa berhasil disimpan!");
+        }
+        return toast.error("Gagal menyimpan telunjuk sakti desa");
+      } catch (error) {
+        console.log((error as Error).message);
+      } finally {
+        pelayananTelunjukSaktiDesa.create.loading = false;
+      }
+    },
+    resetForm() {
+      pelayananTelunjukSaktiDesa.create.form = { ...telunjukSaktiDesaForm };
+    },
+  },
+  findMany: {
+    data: [] as Prisma.PelayananTelunjukSaktiDesaGetPayload<{
+      omit: { isActive: true };
+    }>[],
+    async load() {
+      const res = await ApiFetch.api.desa.layanan.pelayanantelunjuksaktidesa[
+        "find-many"
+      ].get();
+      if (res.status === 200) {
+        pelayananTelunjukSaktiDesa.findMany.data = res.data?.data ?? [];
+      }
+    },
+  },
+  findUnique: {
+    data: null as Prisma.PelayananTelunjukSaktiDesaGetPayload<{
+      omit: { isActive: true };
+    }> | null,
+    async load(id: string) {
+      try {
+        const res = await fetch(
+          `/api/desa/layanan/pelayanantelunjuksaktidesa/${id}`
+        );
+        if (res.ok) {
+          const data = await res.json();
+          pelayananTelunjukSaktiDesa.findUnique.data = data.data ?? null;
+        } else {
+          console.error("Failed to fetch telunjuk sakti desa:", res.statusText);
+          pelayananTelunjukSaktiDesa.findUnique.data = null;
+        }
+      } catch (error) {
+        console.error("Error fetching telunjuk sakti desa:", error);
+        pelayananTelunjukSaktiDesa.findUnique.data = null;
+      }
+    },
+  },
+  delete: {
+    loading: false,
+    async byId(id: string) {
+      if (!id) return toast.warn("ID tidak valid");
+      try {
+        pelayananTelunjukSaktiDesa.delete.loading = true;
+        const response = await fetch(
+          `/api/desa/layanan/pelayanantelunjuksaktidesa/del/${id}`,
+          {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        const result = await response.json();
+        if (response.ok) {
+          toast.success(result.message || "Telunjuk Sakti Desa berhasil dihapus");
+          await pelayananTelunjukSaktiDesa.findMany.load(); // refresh list
+        } else {
+          toast.error(result.message || "Gagal menghapus telunjuk sakti desa");
+        }
+      } catch (error) {
+        console.error("Gagal delete:", error);
+        toast.error("Terjadi kesalahan saat menghapus telunjuk sakti desa");
+      } finally {
+        pelayananTelunjukSaktiDesa.delete.loading = false;
+      }
+    },
+  },
+  edit: {
+    id: "",
+    form: { ...telunjukSaktiDesaForm },
+    loading: false,
+
+    async load(id: string) {
+      if (!id) {
+        toast.warn("ID tidak valid");
+        return null;
+      }
+      try {
+        const response = await fetch(
+          `/api/desa/layanan/pelayanantelunjuksaktidesa/${id}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const result = await response.json();
+        if (result?.success) {
+          const data = result.data;
+          this.id = data.id;
+          this.form = {
+            name: data.name,
+            deskripsi: data.deskripsi,
+            link: data.link,
+          };
+          return data;
+        } else {
+          throw new Error(result.message || "Gagal memuat data");
+        }
+      } catch (error) {
+        console.error("Error fetching telunjuk sakti desa:", error);
+        toast.error(
+          error instanceof Error ? error.message : "Gagal memuat data"
+        );
+        return null;
+      }
+    },
+    async update() {
+      const cek = templateTelunjukSaktiDesaForm.safeParse(
+        pelayananTelunjukSaktiDesa.edit.form
+      );
+      if (!cek.success) {
+        const err = `[${cek.error.issues
+          .map((v) => `${v.path.join(".")}`)
+          .join("\n")}] required`;
+        return toast.error(err);
+      }
+      try {
+        pelayananTelunjukSaktiDesa.edit.loading = true;
+        const response = await fetch(
+          `/api/desa/layanan/pelayanantelunjuksaktidesa/${this.id}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              name: this.form.name,
+              deskripsi: this.form.deskripsi,
+              link: this.form.link,
+            }),
+          }
+        );
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(
+            errorData.message || `HTTP error! status: ${response.status}`
+          );
+        }
+        const result = await response.json();
+        if (result.success) {
+          toast.success(result.message || "Telunjuk Sakti Desa berhasil diupdate");
+          await pelayananTelunjukSaktiDesa.findMany.load(); // refresh list
+          return true;
+        } else {
+          throw new Error(
+            result.message || "Gagal mengupdate telunjuk sakti desa"
+          );
+        }
+      } catch (error) {
+        console.error("Error updating telunjuk sakti desa:", error);
+        toast.error(
+          error instanceof Error
+            ? error.message
+            : "Terjadi kesalahan saat update telunjuk sakti desa"
+        );
+        return false;
+      } finally {
+        pelayananTelunjukSaktiDesa.edit.loading = false;
+      }
+    },
+  },
+})
+
+const pelayananPerizinanBerusaha = proxy({
+  findById: {
+    data: null as pelayananPerizinanBerusahaForm | null,
+    loading: false,
+    initialize() {
+      pelayananPerizinanBerusaha.findById.data = {
+        id: "",
+        name: "",
+        deskripsi: "",
+        link: "",
+      } as pelayananPerizinanBerusahaForm;
+    },
+    async load(id: string) {
+      try {
+        pelayananPerizinanBerusaha.findById.loading = true;
+        const res = await fetch(
+          `/api/desa/layanan/pelayananperizinanberusaha/${id}`
+        );
+        if (res.ok) {
+          const data = await res.json();
+          pelayananPerizinanBerusaha.findById.data = data.data ?? null;
+        } else {
+          console.error(
+            "Failed to fetch pelayanan perizinan berusaha:",
+            res.statusText
+          );
+          pelayananPerizinanBerusaha.findById.data = null;
+        }
+      } catch (error) {
+        console.error("Error fetching pelayanan perizinan berusaha:", error);
+        pelayananPerizinanBerusaha.findById.data = null;
+      }
+    },
+  },
+  update: {
+    id: "",
+    form: { ...pelayananPerizinanBerusahaForm },
+    loading: false,
+    async load(id: string) {
+      if (!id) {
+        toast.warn("ID tidak boleh kosong");
+        return null;
+      }
+      try {
+        const response = await fetch(
+          `/api/desa/layanan/pelayananperizinanberusaha/${id}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const result = await response.json();
+        if (result?.success) {
+          const data = result.data;
+          pelayananPerizinanBerusaha.update.id = data.id;
+          pelayananPerizinanBerusaha.update.form = {
+            name: data.name,
+            deskripsi: data.deskripsi,
+            link: data.link,
+          };
+          return data;
+        } else {
+          throw new Error(result.message || "Gagal memuat data");
+        }
+      } catch (error) {
+        console.error("Error fetching pelayanan perizinan berusaha:", error);
+        toast.error(
+          error instanceof Error
+            ? error.message
+            : "Gagal memuat data"
+        );
+        return null;
+      }
+    },
+    async update(data: pelayananPerizinanBerusahaForm) {
+      const cek = templatePelayananPerizinanBerusaha.safeParse(data);
+      if (!cek.success) {
+        const errors = cek.error.issues
+          .map((issue) => `${issue.path.join(".")}: ${issue.message}`)
+          .join(", ");
+        toast.error(`Form tidak valid: ${errors}`);
+        return;
+      }
+
+      try {
+        pelayananPerizinanBerusaha.update.loading = true;
+        const res = await fetch(
+          `/api/desa/layanan/pelayananperizinanberusaha/${data.id}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+          }
+        );
+        if (res.ok) {
+          toast.success("Pelayanan perizinan berusaha berhasil diupdate");
+          await pelayananPerizinanBerusaha.findById.load(data.id);
+        } else {
+          toast.error("Gagal mengupdate pelayanan perizinan berusaha");
+        }
+      } catch (error) {
+        console.error("Error updating pelayanan perizinan berusaha:", error);
+        toast.error(
+          "Terjadi kesalahan saat mengupdate pelayanan perizinan berusaha"
+        );
+      } finally {
+        pelayananPerizinanBerusaha.update.loading = false;
+      }
+    },
+  },
+});
+
+const pelayananPendudukNonPermanen = proxy({
+  findById: {
+    data: null as pelayananPendudukNonPermanenForm | null,
+    loading: false,
+    initialize() {
+      pelayananPendudukNonPermanen.findById.data = {
+        id: "",
+        name: "",
+        deskripsi: "",
+      } as pelayananPendudukNonPermanenForm;
+    },
+    async load(id: string) {
+      try {
+        pelayananPendudukNonPermanen.findById.loading = true;
+        const res = await fetch(
+          `/api/desa/layanan/pelayananpenduduknonpermanen/${id}`
+        );
+        if (res.ok) {
+          const data = await res.json();
+          pelayananPendudukNonPermanen.findById.data = data.data ?? null;
+        } else {
+          console.error(
+            "Failed to fetch pelayanan penduduk non permanen:",
+            res.statusText
+          );
+          pelayananPendudukNonPermanen.findById.data = null;
+        }
+      } catch (error) {
+        console.error("Error fetching pelayanan penduduk non permanen:", error);
+        pelayananPendudukNonPermanen.findById.data = null;
+      }
+    },
+  },
+  update: {
+    id: "",
+    form: { ...pelayananPendudukNonPermanenForm },
+    loading: false,
+    async load(id: string) {
+      if (!id) {
+        toast.warn("ID tidak boleh kosong");
+        return null;
+      }
+      try {
+        const response = await fetch(
+          `/api/desa/layanan/pelayananpenduduknonpermanen/${id}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const result = await response.json();
+        if (result?.success) {
+          const data = result.data;
+          pelayananPendudukNonPermanen.update.id = data.id;
+          pelayananPendudukNonPermanen.update.form = {
+            name: data.name,
+            deskripsi: data.deskripsi,
+          };
+          return data;
+        } else {
+          throw new Error(result.message || "Gagal memuat data");
+        }
+      } catch (error) {
+        console.error("Error fetching pelayanan penduduk non permanen:", error);
+        toast.error(
+          error instanceof Error
+            ? error.message
+            : "Gagal memuat data"
+        );
+        return null;
+      }
+    },
+    async update(data: pelayananPendudukNonPermanenForm) {
+      const cek = templatePelayananPendudukNonPermanen.safeParse(data);
+      if (!cek.success) {
+        const errors = cek.error.issues
+          .map((issue) => `${issue.path.join(".")}: ${issue.message}`)
+          .join(", ");
+        toast.error(`Form tidak valid: ${errors}`);
+        return;
+      }
+
+      try {
+        pelayananPendudukNonPermanen.update.loading = true;
+        const res = await fetch(
+          `/api/desa/layanan/pelayananpenduduknonpermanen/${data.id}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+          }
+        );
+        if (res.ok) {
+          toast.success("Pelayanan penduduk non permanen berhasil diupdate");
+          await pelayananPendudukNonPermanen.findById.load(data.id);
+        } else {
+          toast.error("Gagal mengupdate pelayanan penduduk non permanen");
+        }
+      } catch (error) {
+        console.error("Error updating pelayanan penduduk non permanen:", error);
+        toast.error(
+          "Terjadi kesalahan saat mengupdate pelayanan penduduk non permanen"
+        );
+      } finally {
+        pelayananPendudukNonPermanen.update.loading = false;
+      }
+    },
+  },
+});
+
+const stateLayananDesa = proxy({
+  suratKeterangan,
+  pelayananPerizinanBerusaha,
+  pelayananTelunjukSaktiDesa,
+  pelayananPendudukNonPermanen,
+});
+
+export default stateLayananDesa;

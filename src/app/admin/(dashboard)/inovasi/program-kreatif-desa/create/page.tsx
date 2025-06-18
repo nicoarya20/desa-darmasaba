@@ -1,37 +1,49 @@
+'use client'
 import colors from '@/con/colors';
 import { Box, Button, Group, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
-import { IconImageInPicture } from '@tabler/icons-react';
-import React from 'react';
+import { IconArrowBack, IconImageInPicture } from '@tabler/icons-react';
+import { useRouter } from 'next/navigation';
+import { KeamananEditor } from '../../../keamanan/_com/keamananEditor';
 
-function ProgramKreatifCreate() {
+
+function CreateProgramKreatifDesa() {
+  const router = useRouter();
   return (
     <Box>
-      <Stack gap={"xs"}>
-        <Paper w={{base: "100%", md: "50%"}} p={"md"} bg={colors["white-1"]}>
-          <Stack gap={"xs"}>
-            <Title order={4}>Create Program Kreatif Desa</Title>
-            <Box>
-              <Text fz={"sm"} fw={"bold"}>Gambar</Text>
-              <IconImageInPicture size={24}/>
-            </Box>
-            <TextInput
-            label={<Text fz={"sm"} fw={"bold"}>Nama Program</Text>}
-            placeholder="Masukkan nama program"
+      <Box mb={10}>
+        <Button onClick={() => router.back()} variant='subtle' color={'blue'}>
+          <IconArrowBack color={colors['blue-button']} size={25}/>
+        </Button>
+      </Box>
+
+      <Paper w={{base: '100%', md: '50%'}} bg={colors['white-1']} p={'md'}>
+        <Stack gap={"xs"}>
+          <Title order={4}>Create Program Kreatif Desa</Title>
+          <Box>
+            <Text fw={"bold"} fz={"sm"}>Masukkan Image</Text>
+            <IconImageInPicture size={50} />
+          </Box>
+          <TextInput
+          label={<Text fw={"bold"} fz={"sm"}>Nama Program Kreatif Desa</Text>}
+          placeholder='Masukkan nama program kreatif desa'
+          />
+          <TextInput
+          label={<Text fw={"bold"} fz={"sm"}>Deskripsi Singkat Program Kreatif Desa</Text>}
+          placeholder='Masukkan deskripsi singkat program kreatif desa'
+          />
+          <Box>
+            <Text fw={"bold"} fz={"sm"}>Deskripsi Program Kreatif Desa</Text>
+            <KeamananEditor
+              showSubmit={false}
             />
-            <TextInput
-            label={<Text fz={"sm"} fw={"bold"}>Deskripsi</Text>}
-            placeholder="Masukkan deskripsi"
-            />
-            <Group>
-              <Button
-              bg={colors["blue-button"]}
-              >Simpan</Button>
-            </Group>
-          </Stack>
-        </Paper>
-      </Stack>
-    </Box>
+          </Box>
+          <Group>
+            <Button bg={colors['blue-button']}>Submit</Button>
+          </Group>
+       </Stack>
+      </Paper>
+   </Box>
   );
 }
 
-export default ProgramKreatifCreate;
+export default CreateProgramKreatifDesa;

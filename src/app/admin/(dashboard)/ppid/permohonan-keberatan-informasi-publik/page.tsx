@@ -11,9 +11,11 @@ function Page() {
     listState.findMany.load()
   }, [])
 
-  if (!listState.findMany.data) return <Stack>
-    {Array.from({ length: 10 }).map((v, k) => <Skeleton key={k} h={40} />)}
-  </Stack>
+  if (!listState.findMany.data)
+    return <Stack pos={"relative"} bg={colors.Bg}>
+      <Skeleton radius={5} h={200} />
+    </Stack>
+
   return (
     <Box py={10}>
       <Paper bg={colors['white-1']} p={'md'}>

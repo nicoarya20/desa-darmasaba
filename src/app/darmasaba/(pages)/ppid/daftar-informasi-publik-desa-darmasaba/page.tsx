@@ -1,5 +1,5 @@
 'use client'
-import stateDaftarInformasiPublik from '@/app/admin/(dashboard)/_state/ppid/daftar_informasi_publik/daftarInformasiPublik';
+import daftarInformasiPublik from '@/app/admin/(dashboard)/_state/ppid/daftar_informasi_publik/daftarInformasiPublik';
 import colors from '@/con/colors';
 import { Box, Center, Image, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, TextInput } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
@@ -8,7 +8,7 @@ import { useProxy } from 'valtio/utils';
 import BackButton from '../../desa/layanan/_com/BackButto';
 
 function Page() {
-  const listData = useProxy(stateDaftarInformasiPublik.daftarInformasi)
+  const listData = useProxy(daftarInformasiPublik)
   useShallowEffect(() => {
     listData.findMany.load()
   }, [])
@@ -51,9 +51,9 @@ function Page() {
               </TableTr>
             </TableThead>
             <TableTbody bg={colors['white-1']}>
-              {listData.findMany.data?.map((item) => (
+              {listData.findMany.data?.map((item, index) => (
                 <TableTr key={item.id}>
-                  <TableTd ta={'center'}>{item.nomor}</TableTd>
+                  <TableTd ta={'center'}>{index + 1}</TableTd>
                   <TableTd>{item.jenisInformasi}</TableTd>
                   <TableTd dangerouslySetInnerHTML={{ __html: item.deskripsi }}></TableTd>
                   <TableTd>{item.tanggal}</TableTd>
