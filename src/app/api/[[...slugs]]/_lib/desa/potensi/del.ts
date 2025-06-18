@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma";
 import path from "path";
-import { Context } from "vm";
+import { Context } from "elysia";
 import fs from "fs/promises";
 
 const potensiDesaDelete = async (context: Context) => {

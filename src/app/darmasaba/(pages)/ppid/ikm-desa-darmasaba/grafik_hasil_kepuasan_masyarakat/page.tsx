@@ -1,15 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
-import stateGrafikHasilKepuasanMasyarakat from '@/app/admin/(dashboard)/_state/ppid/indeks_kepuasan_masyarakat/grafikHasilKepuasan';
+import grafikHasilKepuasanMasyarakat from '@/app/admin/(dashboard)/_state/ppid/indeks_kepuasan_masyarakat/grafikHasilKepuasan';
 import colors from '@/con/colors';
 import { Box, Skeleton, Stack, Text, Title } from '@mantine/core';
 import { useMediaQuery, useShallowEffect } from '@mantine/hooks';
-import React, { useEffect, useState } from 'react';
-import { BarChart, Tooltip, XAxis, YAxis, Legend, Bar } from 'recharts';
+import { useEffect, useState } from 'react';
+import { Bar, BarChart, Legend, Tooltip, XAxis, YAxis } from 'recharts';
 import { useProxy } from 'valtio/utils';
 
 function GrafikHasilKepuasan() {
-  const grafikHasilKepuasan = useProxy(stateGrafikHasilKepuasanMasyarakat.grafikHasilKepuasanMasyarakat)
+  const grafikHasilKepuasan = useProxy(grafikHasilKepuasanMasyarakat)
   const [chartData, setChartData] = useState<any[]>([]);
   const [mounted, setMounted] = useState(false);
   const isTablet = useMediaQuery('(max-width: 1024px)')

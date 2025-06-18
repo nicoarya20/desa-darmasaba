@@ -11,17 +11,20 @@ type FormCreate = Prisma.IndeksKepuasanMasyarakatGetPayload<{
 export default async function grafikHasilKepuasanMasyarakatCreate(context: Context) {
   const body = context.body as FormCreate;
 
-  await prisma.indeksKepuasanMasyarakat.create({
+  const created = await prisma.indeksKepuasanMasyarakat.create({
     data: {
       label: body.label,
       kepuasan: body.kepuasan,
     },
+    select: {
+      id: true,
+      label: true,
+      kepuasan: true,
+    }
   });
   return {
     success: true,
     message: "Success create grafik hasil kepuasan masyarakat",
-    data: {
-      ...body,
-    },
+    data: created,
   };
 }

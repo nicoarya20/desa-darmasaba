@@ -1,0 +1,193 @@
+'use client'
+/* eslint-disable react-hooks/exhaustive-deps */
+import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
+import stateProfileDesa from '@/app/admin/(dashboard)/_state/desa/profile';
+import colors from '@/con/colors';
+import ApiFetch from '@/lib/api-fetch';
+import { Box, Button, Center, FileInput, Group, Image, Paper, Stack, Text, Title } from '@mantine/core';
+import { IconArrowBack, IconImageInPicture } from '@tabler/icons-react';
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
+import { useProxy } from 'valtio/utils';
+
+function ProfilePerbekel() {
+  const perbekelState = useProxy(stateProfileDesa.profilPerbekel)
+  const router = useRouter()
+  const params = useParams()
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [file, setFile] = useState<File | null>(null);
+
+  useEffect(() => {
+    const loadData = async () => {
+      const id = params?.id as string;
+      if (!id) {
+        toast.error("ID tidak valid");
+        router.push("/admin/desa/profile/profile-perbekel");
+        return;
+      }
+
+      const data = await perbekelState.findUnique.load(id);
+      if (data) {
+        perbekelState.edit.initialize(data);
+      }
+      if (data?.image?.link) {
+        setPreviewImage(data.image.link);
+      }
+    };
+
+    loadData();
+
+    return () => {
+      perbekelState.edit.reset();
+      perbekelState.findUnique.reset(); // opsional: reset juga data lama
+    };
+  }, [params?.id, router]);
+  
+    const handleFileChange = (newFile: File | null) => {
+      if (!newFile) {
+        setFile(null);
+        return;
+      }
+  
+      setFile(newFile);
+  
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setPreviewImage(event.target?.result as string);
+      };
+      reader.readAsDataURL(newFile);
+    };
+
+  const handleSubmit = async () => {
+    if (isSubmitting || !perbekelState.edit.form.biodata.trim()) {
+      toast.error("Biodata wajib diisi");
+      return;
+    }
+    setIsSubmitting(true)
+    try {
+      if (file) {
+        const uploadResponse = await ApiFetch.api.fileStorage.create.post({ file, name: file.name });
+        const uploaded = uploadResponse.data?.data;
+
+        if (!uploaded?.id) {
+          toast.error("Gagal upload gambar");
+          return;
+        }
+
+        perbekelState.edit.form.imageId = uploaded.id;
+      }
+      const success = await perbekelState.edit.submit()
+      if (success) {
+        toast.success("Data berhasil disimpan");
+        router.push("/admin/desa/profile/profile-perbekel");
+      }
+    } catch (error) {
+      console.error("Error update sejarah desa:", error);
+      toast.error("Terjadi kesalahan saat update sejarah desa");
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  const handleBack = () => {
+    router.back()
+  }
+
+  if (
+    perbekelState.findUnique.loading ||
+    !perbekelState.findUnique.data ||
+    perbekelState.edit.loading
+  ) {
+    return (
+      <Box>
+        <Center h={400}>
+          <Text>Memuat data...</Text>
+        </Center>
+      </Box>
+    );
+  }
+
+  return (
+    <Box py={10}>
+      <Stack gap={'xs'}>
+        <Group>
+          <Button variant="subtle" onClick={handleBack}>
+            <IconArrowBack color={colors['blue-button']} size={20} />
+          </Button>
+        </Group>
+        <Paper bg={colors['white-1']} p={'xs'} w={{ base: '100%', md: '50%' }}>
+          <Stack gap={'xs'}>
+            <Box>
+              <Box>
+                <Stack>
+                  <Title order={3}>Edit Profil Perbekel</Title>
+                  <Text fz={"md"} fw={"bold"}>Biodata</Text>
+                  <EditEditor
+                    value={perbekelState.edit.form.biodata}
+                    onChange={(val) => perbekelState.edit.form.biodata = val}
+                  />
+                  {/* File Upload */}
+                  <FileInput
+                    label={<Text fz="sm" fw="bold">Upload Gambar Baru (Opsional)</Text>}
+                    value={file}
+                    onChange={handleFileChange}
+                    accept="image/*"
+                  />
+
+                  {/* Preview Gambar */}
+                  <Box>
+                    <Text fz="sm" fw="bold" mb="xs">Preview Gambar</Text>
+                    {previewImage ? (
+                      <Image alt="Profile preview" src={previewImage} w={200} h={200} fit="cover" radius="md" />
+                    ) : (
+                      <Center w={200} h={200} bg="gray.2">
+                        <Stack align="center" gap="xs">
+                          <IconImageInPicture size={48} color="gray" />
+                          <Text size="sm" c="gray">Tidak ada gambar</Text>
+                        </Stack>
+                      </Center>
+                    )}
+                  </Box>
+
+                  <Box>
+                    <Text fz={"md"} fw={"bold"}>Pengalaman</Text>
+                    <EditEditor
+                      value={perbekelState.edit.form.pengalaman}
+                      onChange={(val) => perbekelState.edit.form.pengalaman = val}
+                    />
+                  </Box>
+                  <Box>
+                    <Text fz={"md"} fw={"bold"}>Pengalaman Organisasi</Text>
+                    <EditEditor
+                      value={perbekelState.edit.form.pengalamanOrganisasi}
+                      onChange={(val) => perbekelState.edit.form.pengalamanOrganisasi = val}
+                    />
+                  </Box>
+                  <Box>
+                    <Text fz={"md"} fw={"bold"}>Program Unggulan</Text>
+                    <EditEditor
+                      value={perbekelState.edit.form.programUnggulan}
+                      onChange={(val) => perbekelState.edit.form.programUnggulan = val}
+                    />
+                  </Box>
+                  <Group>
+                    <Button
+                      onClick={handleSubmit}
+                      bg={colors['blue-button']}
+                    >
+                      Submit
+                    </Button>
+                  </Group>
+                </Stack>
+              </Box>
+            </Box>
+          </Stack>
+        </Paper>
+      </Stack>
+    </Box>
+  );
+}
+
+export default ProfilePerbekel;

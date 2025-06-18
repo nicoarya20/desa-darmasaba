@@ -1,15 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
-import stateGrafikResponden from '@/app/admin/(dashboard)/_state/ppid/indeks_kepuasan_masyarakat/grafikBerdasarkanResponden';
+import grafikBerdasarkanResponden from '@/app/admin/(dashboard)/_state/ppid/indeks_kepuasan_masyarakat/grafikBerdasarkanResponden';
 import colors from '@/con/colors';
-import { Stack, Title, Box, Center, Flex, Text, Skeleton } from '@mantine/core';
+import { Box, Center, Flex, Skeleton, Stack, Text, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import React, { useEffect, useState } from 'react';
-import { PieChart, Pie, Cell } from 'recharts';
+import { useEffect, useState } from 'react';
+import { Cell, Pie, PieChart } from 'recharts';
 import { useProxy } from 'valtio/utils';
 
 function GrafikBerdasarkanResponden() {
-  const grafikBerdasarkanResponden = useProxy(stateGrafikResponden.grafikBerdasarkanResponden)
+  const stategrafikBerdasarkanResponden = useProxy(grafikBerdasarkanResponden)
   const [donutData, setDonutData] = useState<any[]>([]);
   const [mounted, setMounted] = useState(false);
 
@@ -37,13 +37,13 @@ function GrafikBerdasarkanResponden() {
   }, []);
 
   const fetchData = async () => {
-    await grafikBerdasarkanResponden.findMany.load();
-    if (grafikBerdasarkanResponden.findMany.data) {
-      updateChartData(grafikBerdasarkanResponden.findMany.data);
+    await stategrafikBerdasarkanResponden.findMany.load();
+    if (stategrafikBerdasarkanResponden.findMany.data) {
+      updateChartData(stategrafikBerdasarkanResponden.findMany.data);
     }
   };
 
-  if (!grafikBerdasarkanResponden.findMany.data) return <Stack>
+  if (!stategrafikBerdasarkanResponden.findMany.data) return <Stack>
     <Title pb={10} order={3}>Grafik Berdasarkan Responden</Title>
     <Skeleton h={500} />
   </Stack>

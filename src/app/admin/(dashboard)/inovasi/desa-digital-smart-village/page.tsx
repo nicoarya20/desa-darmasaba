@@ -1,50 +1,60 @@
+'use client'
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
-import { IconImageInPicture } from '@tabler/icons-react';
-import React from 'react';
+import { Box, Button, Image, Paper, Table, TableTbody, TableTd, TableTh, TableThead, TableTr } from '@mantine/core';
+import { IconDeviceImac, IconSearch } from '@tabler/icons-react';
+import HeaderSearch from '../../_com/header';
+import JudulList from '../../_com/judulList';
+import { useRouter } from 'next/navigation';
 
-function Page() {
+function DesaDigitalSmartVillage() {
   return (
     <Box>
-      <Stack gap={"xs"}>
-        <Box>
-          <Paper w={{ base: '100%', md: '50%' }} p={"md"} bg={colors['white-1']}>
-            <Stack gap={"xs"}>
-              <Title order={3}>Create Data Desa Digital Smart Village</Title>
-              <TextInput
-                label={<Text fz={"sm"} fw={"bold"}>Nama Desa Digital Smart Village</Text>}
-                placeholder="Masukkan nama desa digital smart village"
-              />
-              <TextInput
-                label={<Text fz={"sm"} fw={"bold"}>Deskripsi Desa Digital Smart Village</Text>}
-                placeholder="Masukkan deskripsi desa digital smart village"
-              />
-              <Box>
-                <Text fz={"sm"} fw={"bold"}>
-                  Upload Gambar Desa Digital Smart Village
-                </Text>
-                <IconImageInPicture size={24} />
-              </Box>
-              <Group>
-                <Button
-                  bg={colors['blue-button']}
-                >
-                  Submit
-                </Button>
-              </Group>
-            </Stack>
-          </Paper>
-        </Box>
-        <Box>
-          <Paper p={"md"} bg={colors['white-1']}>
-            <Stack gap={"xs"}>
-              <Title order={3}>Create Data Desa Digital Smart Village</Title>
-            </Stack>
-          </Paper>
-        </Box>
-      </Stack>
+      <HeaderSearch
+        title='Desa Digital Smart Village'
+        placeholder='pencarian'
+        searchIcon={<IconSearch size={20} />}
+      />
+      <ListDesaDigitalSmartVillage/>
     </Box>
   );
 }
 
-export default Page;
+function ListDesaDigitalSmartVillage() {
+  const router = useRouter();
+  return (
+    <Box py={10}>
+      <Paper bg={colors['white-1']} p={'md'}>
+        <JudulList
+          title='List Desa Digital Smart Village'
+          href='/admin/inovasi/desa-digital-smart-village/create'
+        />
+        <Table striped withTableBorder withRowBorders>
+          <TableThead>
+            <TableTr>
+              <TableTh>Nama Inovasi</TableTh>
+              <TableTh>Deskripsi Singkat Inovasi</TableTh>
+              <TableTh>Image</TableTh>
+              <TableTh>Detail</TableTh>
+              </TableTr>
+          </TableThead>
+          <TableTbody>
+            <TableTr>
+              <TableTd>Layanan Admin Digital</TableTd>
+              <TableTd>Deskripsi Singkat Inovasi</TableTd>
+              <TableTd>
+                <Image src={"/"} alt=''/>
+              </TableTd>
+              <TableTd>
+                <Button onClick={() => router.push('/admin/inovasi/desa-digital-smart-village/detail')}>
+                  <IconDeviceImac size={20} />
+                </Button>
+              </TableTd>
+            </TableTr>
+          </TableTbody>
+        </Table>  
+      </Paper>
+    </Box>
+  );
+}
+
+export default DesaDigitalSmartVillage;

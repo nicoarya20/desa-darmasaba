@@ -1,31 +1,60 @@
+'use client'
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, Stack, Title } from '@mantine/core';
-import React from 'react';
-import CreatePasarDesa from './create/createPasarDesa';
-import ListDataUsaha from './listData/page';
+import { Box, Button, Paper, Table, TableTbody, TableTd, TableTh, TableThead, TableTr } from '@mantine/core';
+import { IconDeviceImac, IconSearch } from '@tabler/icons-react';
+import HeaderSearch from '../../_com/header';
+import JudulList from '../../_com/judulList';
+import { useRouter } from 'next/navigation';
 
-function Page() {
+function PasarDesa() {
   return (
-    <Stack gap={'xs'}>
-      <Box>
-        <Paper w={{ base: '100%', md: '50%' }} bg={colors['white-1']} p={'md'} radius={10}>
-          <Stack gap={'xs'}>
-            <Title order={3}>Pasar Desa</Title>
-            <CreatePasarDesa />
-            <Group>
-              <Button
-                mt={10}
-                bg={colors['blue-button']}
-              >
-                Submit
-              </Button>
-            </Group>
-          </Stack>
-        </Paper>
-      </Box>
-      <ListDataUsaha />
-    </Stack>
+    <Box>
+      <HeaderSearch
+        title='Pasar Desa'
+        placeholder='pencarian'
+        searchIcon={<IconSearch size={20} />}
+      />
+      <ListPasarDesa/>
+    </Box>
   );
 }
 
-export default Page;
+function ListPasarDesa() {
+  const router = useRouter();
+  return (
+    <Box py={10}>
+      <Paper bg={colors['white-1']} p={'md'}>
+        <JudulList
+          title='List Pasar Desa'
+          href='/admin/ekonomi/pasar-desa/create'
+        />
+        <Table striped withTableBorder withRowBorders>
+          <TableThead>
+            <TableTr>
+              <TableTh>Nama Produk</TableTh>
+              <TableTh>Harga Produk</TableTh>
+              <TableTh>Rating Produk</TableTh>
+              <TableTh>Alamat Usaha</TableTh>
+              <TableTh>Detail</TableTh>
+              </TableTr>
+          </TableThead>
+          <TableTbody>
+            <TableTr>
+              <TableTd>Produk 1</TableTd>
+              <TableTd>Harga Rp. 20.000</TableTd>
+              <TableTd>Rating 5</TableTd>
+              <TableTd>Jalan In Aja</TableTd>
+              <TableTd>
+                <Button onClick={() => router.push('/admin/ekonomi/pasar-desa/detail')}>
+                  <IconDeviceImac size={20} />
+                </Button>
+              </TableTd>
+            </TableTr>
+          </TableTbody>
+        </Table>  
+      </Paper>
+    </Box>
+  );
+}
+
+export default PasarDesa;

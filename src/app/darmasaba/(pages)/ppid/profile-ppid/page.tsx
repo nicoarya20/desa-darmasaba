@@ -9,10 +9,10 @@ import BackButton from '../../desa/layanan/_com/BackButto';
 function Page() {
   const allList = useProxy(stateProfilePPID)
   useShallowEffect(() => {
-    allList.findById.load("1") // Assuming "1" is your default ID, adjust as needed
+    allList.profile.load("1") // Assuming "1" is your default ID, adjust as needed
   }, [])
 
-  if (!allList.findById.data) return <Stack bg={colors.Bg} py={"xl"} gap={"22"}>
+  if (!allList.profile.data) return <Stack bg={colors.Bg} py={"xl"} gap={"22"}>
     <Box px={{ base: 'md', md: 100 }}>
       <Skeleton style={{backgroundColor: colors.Bg}} h={40} />
     </Box>
@@ -28,9 +28,9 @@ function Page() {
     </Box>
   </Stack>
 
-  const dataArray = Array.isArray(allList.findById.data)
-    ? allList.findById.data
-    : [allList.findById.data];
+  const dataArray = Array.isArray(allList.profile.data)
+    ? allList.profile.data
+    : [allList.profile.data];
 
   return (
     <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"22"}>

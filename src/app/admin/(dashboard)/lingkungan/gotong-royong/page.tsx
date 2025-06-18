@@ -1,8 +1,10 @@
+'use client'
 import { Box, Button, Image, Paper, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
 import { IconDeviceImacCog, IconSearch } from '@tabler/icons-react';
 import HeaderSearch from '../../_com/header';
 import colors from '@/con/colors';
 import JudulList from '../../_com/judulList';
+import { useRouter } from 'next/navigation';
 
 function GotongRoyong() {
   return (
@@ -18,6 +20,7 @@ function GotongRoyong() {
 }
 
 function ListGotongRoyong() {
+  const router = useRouter();
   return (
     <Box py={10}>
       <Paper bg={colors['white-1']} p={'md'}>
@@ -30,10 +33,10 @@ function ListGotongRoyong() {
             <Table striped withRowBorders withTableBorder style={{ minWidth: '700px'}}>
               <TableThead>
                 <TableTr>
-                  <TableTh>Judul</TableTh>
-                  <TableTh>Kategori</TableTh>
+                  <TableTh>Judul Gotong Royong</TableTh>
+                  <TableTh>Kategori Gotong Royong</TableTh>
                   <TableTh>Image</TableTh>
-                  <TableTh>Deskripsi</TableTh>
+                  <TableTh>Deskripsi Gotong Royong</TableTh>
                   <TableTh>Detail</TableTh>
                 </TableTr>
               </TableThead>
@@ -50,7 +53,7 @@ function ListGotongRoyong() {
                   </TableTd>
                   <TableTd>Deskripsi</TableTd>
                   <TableTd>
-                    <Button>
+                    <Button onClick={() => router.push('/admin/lingkungan/gotong-royong/detail')}>
                       <IconDeviceImacCog size={25} />
                     </Button>
                   </TableTd>

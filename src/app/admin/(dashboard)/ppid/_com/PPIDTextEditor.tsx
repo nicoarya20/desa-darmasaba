@@ -40,7 +40,7 @@ export function PPIDTextEditor({ onSubmit, onChange, showSubmit = true, initialC
   }, [initialContent, editor]);
 
   return (
-    <Stack>
+    <Stack >
       <RichTextEditor editor={editor}>
         <RichTextEditor.Toolbar sticky stickyOffset={60}>
           <RichTextEditor.ControlsGroup>

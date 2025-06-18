@@ -94,7 +94,7 @@ export const navBar = [
       {
         id: "PPID_8",
         name: "IKM Desa Darmasaba",
-        path: "/admin/ppid/ikm-desa-darmasaba"
+        path: "/admin/ppid/ikm-desa-darmasaba/grafik_hasil_kepuasan_masyarakat"
       },
 
     ]
@@ -108,7 +108,7 @@ export const navBar = [
       {
         id: "Desa_1",
         name: "Profile",
-        path: "/admin/desa/profile"
+        path: "/admin/desa/profile/profile-desa"
       },
       {
         id: "Desa_2",
@@ -128,12 +128,12 @@ export const navBar = [
       {
         id: "Desa_5",
         name: "Gallery",
-        path: "/admin/desa/gallery"
+        path: "/admin/desa/gallery/foto"
       },
       {
         id: "Desa_6",
         name: "Layanan",
-        path: "/admin/desa/layanan"
+        path: "/admin/desa/layanan/pelayanan_surat_keterangan"
       },
       {
         id: "Desa_7",

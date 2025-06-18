@@ -34,7 +34,7 @@ const fileStorageCreate = async (context: Context) => {
       body: "UPLOAD_DIR is not defined",
     };
   }
-  const pathName = "desa/ppid/profile-ppid";
+  const pathName = "allFile";
   const rootPath = path.join(UPLOAD_DIR, pathName);
   await fs.mkdir(rootPath, { recursive: true });
 

@@ -1,33 +1,51 @@
 import prisma from "@/lib/prisma";
-import { Context } from "elysia";
 
-export default async function profilePPIDFindById(context: Context) {
+export default async function handler(request: Request) {
+  const url = new URL(request.url);
+  const pathSegments = url.pathname.split('/');
+  const id = pathSegments[pathSegments.length - 1];
+
+  if (!id) {
+    return Response.json({
+      success: false,
+      message: "ID tidak boleh kosong",
+    }, { status: 400 });
+  }
+
   try {
-    const id = context?.params?.slugs?.[0];
-
-    // If no ID provided, get the first profile
-    if (!id) {
-      const data = await prisma.profilePPID.findFirst();
-      return {
-        success: true,
-        data,
-      };
+    if (typeof id !== 'string') {
+      return Response.json({
+        success: false,
+        message: "ID tidak valid",
+      }, { status: 400 });
     }
 
-    const data = await prisma.profilePPID.findUniqueOrThrow({
+    const data = await prisma.profilePPID.findUnique({
       where: { id },
+      include: {
+        image: true,
+      }
     });
 
-    return {
-      success: true,
-      data,
-    };
-  } catch (error) {
-    console.error("Error fetching profilePPID:", error);
+    if (!data) {
+      return Response.json({
+        success: false,
+        message: "Data tidak ditemukan",
+      }, { status: 404 });
+    }
 
-    return {
+    return Response.json({
+      success: true,
+      message: "Berhasil mengambil data berdasarkan ID",
+      data,
+    }, { status: 200 });
+  } catch (e) {
+    console.error("Find by ID error:", e);
+    return Response.json({
       success: false,
-      message: error instanceof Error ? error.message : "Unknown error",
-    };
+      message: "Gagal mengambil data: " + (e instanceof Error ? e.message : 'Unknown error'),
+    }, {
+      status: 500,
+    });
   }
 }

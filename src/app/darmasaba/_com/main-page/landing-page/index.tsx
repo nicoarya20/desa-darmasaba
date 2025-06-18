@@ -13,8 +13,63 @@ import {
 } from "@mantine/core";
 import ModuleView from "./ModuleView";
 import SosmedView from "./SosmedView";
+import { useEffect, useState } from "react";
+
+const getDayOfWeek = () => {
+  const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+  const today = new Date();
+  return days[today.getDay()];
+}
+
+const getCurrentTime = () => {
+  const now = new Date();
+  const hours = String(now.getHours()).padStart(2, '0');
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  return `${hours}:${minutes}`;
+}
+
+const isWorkingHours = (currentTime: string): boolean => {
+  const [openTime, closeTime] = ['08:00', '16:00'];
+
+  const compareTimes = (time1: string, time2: string) => {
+    const [hour1, minute1] = time1.split(':').map(Number);
+    const [hour2, minute2] = time2.split(':').map(Number);
+
+    if (hour1 < hour2) return true;
+    if (hour1 > hour2) return false;
+    return minute1 <= minute2;
+  };
+  return compareTimes(currentTime, closeTime) && !compareTimes(currentTime, openTime);
+}
+const getWorkStatus = (day: string, currentTime: string): { status: string; message: string } => {
+  const workingDays = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'];
+
+  if (!workingDays.includes(day)) {
+    return {
+      status: 'Tutup',
+      message: 'Sabtu - Minggu'
+    }
+  }
+  const isOpen = isWorkingHours(currentTime)
+  return isOpen ? { status: 'Buka', message: '08:00 - 16:00' } : { status: 'Tutup', message: '08:00 - 16:00' };
+}
+
 
 function LandingPage() {
+  const [workStatus, setWorkStatus] = useState<{ status: string; message: string }>
+    ({ status: '', message: '' });
+
+  useEffect(() => {
+    const updateWorkStatus = () => {
+      const day = getDayOfWeek();
+      const time = getCurrentTime();
+      const status = getWorkStatus(day, time);
+      setWorkStatus(status);
+    }
+    updateWorkStatus();
+    const intervalId = setInterval(updateWorkStatus, 60 * 1000);
+    return () => clearInterval(intervalId);
+  }, []);
   return (
     <Stack bg={colors["Bg"]}>
       <Flex
@@ -135,61 +190,55 @@ function LandingPage() {
                           md: 6,
                         }}>
                           <Box>
-                          <Text c={colors["white-1"]} fz={"sm"}>
-                            Jadwal Kerja
-                          </Text>
-                          <Paper
-                            w={{ base: "100%", sm: "100%", md: "auto" }}
-                            p={5}
-                            bg={colors["white-1"]}
-                          >
-                            <Flex justify={"space-between"} align={"center"}>
-                              <Box>
-                                <Text fz={"sm"}>
-                                  Buka
-                                </Text>
-                                <Text fw={"bold"} fz={"lg"}>
-                                  08:00
-                                </Text>
-                              </Box>
-                              <Text fz={"lg"} fw={"bold"}>-</Text>
-                              <Box>
-                                <Text fz={"sm"}>
-                                  Tutup
-                                </Text>
-                                <Text fw={"bold"} fz={"lg"}>
-                                  16:00
-                                </Text>
-                              </Box>
-                            </Flex>
-                          </Paper>
-                        </Box>
+                            <Text c={colors["white-1"]} fz={"sm"}>
+                              Jadwal Kerja
+                            </Text>
+                            <Paper
+                              w={{ base: "100%", sm: "100%", md: "auto" }}
+                              p={5}
+                              bg={colors["white-1"]}
+                            >
+                              <Flex justify={"space-between"} align={"center"}>
+                                <Paper
+                                  w={{ base: "100%", sm: "100%", md: "auto" }}
+                                  p={5}
+                                  bg={colors["white-1"]}
+                                >
+
+                                  <Box>
+                                    <Text fw="bold" fz="sm" c={workStatus.status === 'Buka' ? "black" : "red"}>
+                                      {workStatus.status}
+                                    </Text>
+                                    <Text fw="bold" fz="lg" >
+                                      {workStatus.message}
+                                    </Text>
+                                  </Box>
+                                </Paper>
+                              </Flex>
+                            </Paper>
+                          </Box>
                         </GridCol>
-                        
-                        <GridCol span={{
-                          base: 12,
-                          lg: 6,
-                          md: 6,
-                        }}>
-                           <Box>
-                          <Text c={colors["white-1"]} fz={"sm"}>
-                            Rabu, 10 Maret 2025
-                          </Text>
-                          <Paper
-                            w={{ base: "100%", sm: "100%", md: "auto" }}
-                            p={5}
-                            bg={colors["white-1"]}
-                          >
-                            <Box>
-                              <Text fz={"sm"}>
-                                Buka
+                        {/* Edit yang ini */}
+                        <GridCol span={{ base: 12, lg: 6, md: 6 }}>
+                          <Box>
+                            <Text c={colors["white-1"]} fz={"sm"}>
+                              {new Intl.DateTimeFormat('id-ID', {
+                                weekday: 'long',
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric'
+                              }).format(new Date())}
+                            </Text>
+                            <Paper bg={colors["white-1"]} p={10}>
+                              <Text fz="sm" >
+                                Status
                               </Text>
-                              <Text fw={"bold"} fz={"lg"}>
-                                Sabtu - Minggu
+                              <Text fw="bold" fz="lg" >
+                                {workStatus.status === 'Buka' ? 'Operasional' : 'Tutup'}
                               </Text>
-                            </Box>
-                          </Paper>
-                        </Box>
+                            </Paper>
+
+                          </Box>
                         </GridCol>
                       </Grid>
                     </Paper>

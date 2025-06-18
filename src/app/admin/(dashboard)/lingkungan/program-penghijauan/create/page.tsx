@@ -1,73 +1,53 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
+import { Box, Button, Group, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
 import { IconArrowBack, IconImageInPicture } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
+import { KeamananEditor } from '../../../keamanan/_com/keamananEditor';
 
-function Page() {
-  const router = useRouter()
+
+function CreateProgramKreatifDesa() {
+  const router = useRouter();
   return (
     <Box>
-     <Box mb={10}>
-        <Button variant="subtle" onClick={() => router.back()}>
-          <IconArrowBack color={colors['blue-button']} size={25} />
+      <Box mb={10}>
+        <Button onClick={() => router.back()} variant='subtle' color={'blue'}>
+          <IconArrowBack color={colors['blue-button']} size={25}/>
         </Button>
       </Box>
 
-      <Paper bg={colors['white-1']} p="md" w={{ base: '100%', md: '50%' }}>
+      <Paper w={{base: '100%', md: '50%'}} bg={colors['white-1']} p={'md'}>
         <Stack gap={"xs"}>
-          <Title order={3}>Create Program Penghijauan</Title>
-
-          <TextInput
-            label={<Text fz="sm" fw="bold">Judul</Text>}
-            placeholder="masukkan judul"
-          />
-
-          <TextInput
-            label={<Text fz="sm" fw="bold">Deskripsi</Text>}
-            placeholder="masukkan deskripsi"
-          />
-
-          <Text fz="sm" fw="bold">Gambar</Text>
-          <IconImageInPicture size={25} />
-          {/* <FileInput
-            label={<Text fz="sm" fw="bold">Upload Gambar</Text>}
-            value={file}
-            onChange={async (e) => {
-                if (!e) return;
-                setFile(e);
-                const base64 = await e.arrayBuffer().then((buf) =>
-                    'data:image/png;base64,' + Buffer.from(buf).toString('base64')
-                );
-                setPreviewImage(base64);
-            }}
-          /> */}
-
-          {/* {previewImage ? (
-              <Image alt="" src={previewImage} w={200} h={200} />
-          ) : (
-              <Center w={200} h={200} bg="gray">
-                  <IconImageInPicture />
-              </Center>
-          )} */}
-
+          <Title order={4}>Create Program Penghijauan</Title>
           <Box>
-              <Text fz="sm" fw="bold">Konten</Text>
-              {/* <CreateEditor
-                  value={potensiState.create.form.content}
-                  onChange={(htmlContent) => {
-                      potensiState.create.form.content = htmlContent;
-                  }}
-              /> */}
+            <Text fw={"bold"} fz={"sm"}>Masukkan Image</Text>
+            <IconImageInPicture size={50} />
           </Box>
-
-          <Button bg={colors['blue-button']}>
-              Simpan Potensi
-          </Button>
-        </Stack>
+          <TextInput
+          label={<Text fw={"bold"} fz={"sm"}>Nama Program Penghijauan</Text>}
+          placeholder='Masukkan nama program penghijauan'
+          />
+          <TextInput
+          label={<Text fw={"bold"} fz={"sm"}>Deskripsi Singkat Program Penghijauan</Text>}
+          placeholder='Masukkan deskripsi singkat program penghijauan'
+          />
+          <TextInput
+          label={<Text fw={"bold"} fz={"sm"}>Jumlah</Text>}
+          placeholder='Masukkan jumlah'
+          />
+          <Box>
+            <Text fw={"bold"} fz={"sm"}>Deskripsi Program Kreatif Desa</Text>
+            <KeamananEditor
+              showSubmit={false}
+            />
+          </Box>
+          <Group>
+            <Button bg={colors['blue-button']}>Submit</Button>
+          </Group>
+       </Stack>
       </Paper>
-    </Box>
+   </Box>
   );
 }
 
-export default Page;
+export default CreateProgramKreatifDesa;

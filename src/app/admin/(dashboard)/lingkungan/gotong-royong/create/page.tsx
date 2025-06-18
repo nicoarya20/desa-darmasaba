@@ -4,8 +4,9 @@ import { Box, Button, Paper, Stack, Text, TextInput, Title } from '@mantine/core
 import { IconArrowBack, IconImageInPicture } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import React from 'react';
+import { KeamananEditor } from '../../../keamanan/_com/keamananEditor';
 
-function Page() {
+function CreateGotongRoyong() {
   const router = useRouter()
   return (
     <Box>
@@ -19,17 +20,19 @@ function Page() {
         <Stack gap="xs">
           <Title order={3}>Create Gotong Royong</Title>
           <TextInput
-            label={<Text fz="sm" fw="bold">Judul</Text>}
-            placeholder="masukkan judul"
+            label={<Text fz="sm" fw="bold">Judul Gotong Royong</Text>}
+            placeholder="masukkan judul gotong royong"
           />
           <TextInput
-            label={<Text fz="sm" fw="bold">Kategori</Text>}
-            placeholder="masukkan kategori"
+            label={<Text fz="sm" fw="bold">Kategori Gotong Royong</Text>}
+            placeholder="masukkan kategori gotong royong"
           />
-          <TextInput
-            label={<Text fz="sm" fw="bold">Deskripsi</Text>}
-            placeholder="masukkan deskripsi"
-          />
+          <Box>
+            <Text fw={"bold"} fz={"sm"}>Deskripsi Gotong Royong</Text>
+            <KeamananEditor
+              showSubmit={false}
+            />
+          </Box>
           {/* <FileInput
           label={<Text fz="sm" fw="bold">Upload Gambar</Text>}
           value={file}
@@ -62,4 +65,4 @@ function Page() {
   );
 }
 
-export default Page;
+export default CreateGotongRoyong;

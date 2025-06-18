@@ -1,37 +1,58 @@
+'use client'
 import colors from '@/con/colors';
-import { Stack, Tabs, TabsList, TabsPanel, TabsTab, Title } from '@mantine/core';
-import DataPengangguran from './ui/dataPengangguran/page';
-import GrafikDataPengangguran from './ui/grafikDataPengangguran/page';
-import DetailDataPengangguran from './ui/detailDataPengangguran/page';
+import { Box, Button, Paper, Table, TableTbody, TableTd, TableTh, TableThead, TableTr } from '@mantine/core';
+import { IconDeviceImac, IconSearch } from '@tabler/icons-react';
+import HeaderSearch from '../../_com/header';
+import JudulList from '../../_com/judulList';
+import { useRouter } from 'next/navigation';
 
-function Page() {
+function JumlahPengangguran() {
   return (
-    <Stack>
-      <Title order={3}>Jumlah Pengangguran 2024-2025</Title>
-      <Tabs color={colors['blue-button']} variant='pills' defaultValue={"Data Pengangguran Desa"}>
-        <TabsList p={"xs"} bg={"#BBC8E7FF"}>
-          <TabsTab value="Data Pengangguran Desa">
-            Data Pengangguran Desa
-          </TabsTab>
-          <TabsTab value="Grafik Data Pengangguran Desa">
-            Grafik Data Pengangguran Desa
-          </TabsTab>
-          <TabsTab value="Detail Data Pengangguran Desa">
-            Detail Data Pengangguran Desa
-          </TabsTab>
-        </TabsList>
-        <TabsPanel value="Data Pengangguran Desa">
-          <DataPengangguran/>
-        </TabsPanel>
-        <TabsPanel value="Grafik Data Pengangguran Desa">
-          <GrafikDataPengangguran/>
-        </TabsPanel>
-        <TabsPanel value="Detail Data Pengangguran Desa">
-          <DetailDataPengangguran/>
-        </TabsPanel>
-      </Tabs>
-    </Stack>
-  )
+    <Box>
+      <HeaderSearch
+        title='Jumlah Pengangguran 2024-2025'
+        placeholder='pencarian'
+        searchIcon={<IconSearch size={20} />}
+      />
+      <ListJumlahPengangguran/>
+    </Box>
+  );
 }
 
-export default Page;
+function ListJumlahPengangguran() {
+  const router = useRouter();
+  return (
+    <Box py={10}>
+      <Paper bg={colors['white-1']} p={'md'}>
+        <JudulList
+          title='List Jumlah Pengangguran 2024-2025'
+          href='/admin/ekonomi/jumlah-pengangguran-2024-2025/create'
+        />
+        <Table striped withTableBorder withRowBorders>
+          <TableThead>
+            <TableTr>
+              <TableTh>Pengangguran Terdidik</TableTh>
+              <TableTh>Usia Produktif</TableTh>
+              <TableTh>Sedang Mencari Kerja</TableTh>
+              <TableTh>Detail</TableTh>
+              </TableTr>
+          </TableThead>
+          <TableTbody>
+            <TableTr>
+              <TableTd>100</TableTd>
+              <TableTd>200</TableTd>
+              <TableTd>300</TableTd>
+              <TableTd>
+                <Button onClick={() => router.push('/admin/ekonomi/jumlah-pengangguran-2024-2025/detail')}>
+                  <IconDeviceImac size={20} />
+                </Button>
+              </TableTd>
+            </TableTr>
+          </TableTbody>
+        </Table>  
+      </Paper>
+    </Box>
+  );
+}
+
+export default JumlahPengangguran;

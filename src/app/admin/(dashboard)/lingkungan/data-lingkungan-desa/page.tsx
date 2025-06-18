@@ -1,9 +1,11 @@
+'use client'
 import { Box, Button, Image, Paper, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
 import React from 'react';
 import HeaderSearch from '../../_com/header';
 import { IconDeviceImacCog, IconSearch } from '@tabler/icons-react';
 import colors from '@/con/colors';
 import JudulList from '../../_com/judulList';
+import { useRouter } from 'next/navigation';
 
 function DataLingkunganDesa() {
   return (
@@ -19,6 +21,7 @@ function DataLingkunganDesa() {
 }
 
 function ListDataLingkunganDesa() {
+  const router = useRouter();
   return (
     <Box py={10}>
       <Paper bg={colors['white-1']} p="md">
@@ -31,7 +34,7 @@ function ListDataLingkunganDesa() {
             <Table striped withRowBorders withTableBorder style={{minWidth: '700px'}}>
               <TableThead>
                 <TableTr>
-                  <TableTh>Judul</TableTh>
+                  <TableTh>Nama Data Lingkungan</TableTh>
                   <TableTh>Gambar</TableTh>
                   <TableTh>Deskripsi</TableTh>
                   <TableTh>Detail</TableTh>
@@ -41,15 +44,15 @@ function ListDataLingkunganDesa() {
                 <TableTr>
                   <TableTd>
                     <Box w={100}>
-                      <Text truncate="end" fz={"sm"}>Judul</Text>
+                      <Text truncate="end" fz={"sm"}>Lingkungan Desa</Text>
                     </Box>
                   </TableTd>
                   <TableTd>
-                    <Image w={100}  alt="image" />
+                    <Image w={100} src={"/"}  alt="image" />
                   </TableTd>
                   <TableTd>Deskripsi</TableTd>
                   <TableTd>
-                    <Button>
+                    <Button onClick={() => router.push('/admin/lingkungan/data-lingkungan-desa/detail')}>
                       <IconDeviceImacCog size={25} />
                     </Button>
                   </TableTd>

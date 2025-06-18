@@ -11,6 +11,7 @@ import '@mantine/charts/styles.css';
 import '@mantine/dates/styles.css';
 import '@mantine/tiptap/styles.css';
 
+
 import LoadDataFirstClient from "@/app/darmasaba/_com/LoadDataFirstClient";
 import {
   ColorSchemeScript,

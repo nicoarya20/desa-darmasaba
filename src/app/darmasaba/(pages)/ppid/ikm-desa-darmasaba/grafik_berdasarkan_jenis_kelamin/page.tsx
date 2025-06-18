@@ -1,15 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
-import React, { useEffect, useState } from 'react';
-import { Box, Center, Flex, Skeleton, Stack, Text, Title } from '@mantine/core';
-import { Cell, Pie, PieChart } from 'recharts';
+import grafikBerdasarkanJenisKelamin from '@/app/admin/(dashboard)/_state/ppid/indeks_kepuasan_masyarakat/grafikBerdasarkanJenisKelamin';
 import colors from '@/con/colors';
+import { Box, Center, Flex, Skeleton, Stack, Text, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
+import { useEffect, useState } from 'react';
+import { Cell, Pie, PieChart } from 'recharts';
 import { useProxy } from 'valtio/utils';
-import stateGrafikBerdasarkanJenisKelamin from '@/app/admin/(dashboard)/_state/ppid/indeks_kepuasan_masyarakat/grafikBerdasarkanJenisKelamin';
 
 function GrafikBerdasarkanJenisKelamin() {
-  const grafikBerdasarkanJenisKelamin = useProxy(stateGrafikBerdasarkanJenisKelamin.grafikBerdasarkanJenisKelamin)
+  const stategrafikBerdasarkanJenisKelamin = useProxy(grafikBerdasarkanJenisKelamin)
   const [mounted, setMounted] = useState(false);
   const [donutData, setDonutData] = useState<any[]>([]);
 
@@ -34,13 +34,13 @@ function GrafikBerdasarkanJenisKelamin() {
   }, []);
 
   const fetchData = async () => {
-    await grafikBerdasarkanJenisKelamin.findMany.load();
-    if (grafikBerdasarkanJenisKelamin.findMany.data) {
-      updateChartData(grafikBerdasarkanJenisKelamin.findMany.data);
+    await stategrafikBerdasarkanJenisKelamin.findMany.load();
+    if (stategrafikBerdasarkanJenisKelamin.findMany.data) {
+      updateChartData(stategrafikBerdasarkanJenisKelamin.findMany.data);
     }
   };
 
-  if(!grafikBerdasarkanJenisKelamin.findMany.data) return <Stack>
+  if(!stategrafikBerdasarkanJenisKelamin.findMany.data) return <Stack>
     <Title pb={10} order={3}>Grafik Berdasarkan Jenis Kelamin Responden</Title>
    <Skeleton h={500} />
   </Stack>
