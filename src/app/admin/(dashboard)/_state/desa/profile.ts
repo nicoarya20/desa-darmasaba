@@ -38,13 +38,13 @@ const sejarahDesa = proxy({
       this.error = null;
 
       try {
-        const response = await fetch(`/api/desa/profile/sejarah-desa/${id}`);
-        
+        const response = await fetch(`/api/desa/profile/sejarah/${id}`);
+
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const result = await response.json();
-        
+
         if (result.success) {
           this.data = result.data;
           return result.data;
@@ -91,64 +91,69 @@ const sejarahDesa = proxy({
     },
 
     async submit() {
-          // Validate form
-          const validation = sejarahDesaForm.safeParse(this.form);
-          
-          if (!validation.success) {
-            const errors = validation.error.issues
-              .map((issue) => `${issue.path.join(".")}: ${issue.message}`)
-              .join(", ");
-            toast.error(`Form tidak valid: ${errors}`);
-            return false;
+      // Validate form
+      const validation = sejarahDesaForm.safeParse(this.form);
+
+      if (!validation.success) {
+        const errors = validation.error.issues
+          .map((issue) => `${issue.path.join(".")}: ${issue.message}`)
+          .join(", ");
+        toast.error(`Form tidak valid: ${errors}`);
+        return false;
+      }
+
+      this.loading = true;
+      this.error = null;
+
+      try {
+        const response = await fetch(
+          `/api/desa/profile/sejarah/${this.id}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(this.form),
           }
-    
-          this.loading = true;
-          this.error = null;
-    
-          try {
-            const response = await fetch(`/api/desa/profile/sejarah-desa/${this.id}`, {
-              method: "PUT",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(this.form),
-            });
-    
-            if (!response.ok) {
-              const errorData = await response.json().catch(() => ({}));
-              throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
-            }
-    
-            const result = await response.json();
-    
-            if (result.success) {
-              toast.success("Berhasil update profile");
-              // Refresh profile data
-              await sejarahDesa.findUnique.load(this.id);
-              return true;
-            } else {
-              throw new Error(result.message || "Gagal update profile");
-            }
-          } catch (error) {
-            const errorMessage = (error as Error).message;
-            this.error = errorMessage;
-            console.error("Update profile error:", errorMessage);
-            toast.error("Terjadi kesalahan saat update profile");
-            return false;
-          } finally {
-            this.loading = false;
-          }
-        },
-    
-        // Reset form
-        reset() {
-          this.id = "";
-          this.form = { ...sejarahDesaDefaultForm };
-          this.error = null;
-          this.loading = false;
-          this.isReadOnly = false;
+        );
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(
+            errorData.message || `HTTP error! status: ${response.status}`
+          );
         }
-  }
+
+        const result = await response.json();
+
+        if (result.success) {
+          toast.success("Berhasil update profile");
+          // Refresh profile data
+          await sejarahDesa.findUnique.load(this.id);
+          return true;
+        } else {
+          throw new Error(result.message || "Gagal update profile");
+        }
+      } catch (error) {
+        const errorMessage = (error as Error).message;
+        this.error = errorMessage;
+        console.error("Update profile error:", errorMessage);
+        toast.error("Terjadi kesalahan saat update profile");
+        return false;
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    // Reset form
+    reset() {
+      this.id = "";
+      this.form = { ...sejarahDesaDefaultForm };
+      this.error = null;
+      this.loading = false;
+      this.isReadOnly = false;
+    },
+  },
 });
 
 // ========================================= VISI MISI DESA ========================================= //
@@ -187,12 +192,12 @@ const visiMisiDesa = proxy({
 
       try {
         const response = await fetch(`/api/desa/profile/visi-misi/${id}`);
-        
+
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const result = await response.json();
-        
+
         if (result.success) {
           this.data = result.data;
           return result.data;
@@ -239,64 +244,66 @@ const visiMisiDesa = proxy({
     },
 
     async submit() {
-          // Validate form
-          const validation = visiMisiDesaForm.safeParse(this.form);
-          
-          if (!validation.success) {
-            const errors = validation.error.issues
-              .map((issue) => `${issue.path.join(".")}: ${issue.message}`)
-              .join(", ");
-            toast.error(`Form tidak valid: ${errors}`);
-            return false;
-          }
-    
-          this.loading = true;
-          this.error = null;
-    
-          try {
-            const response = await fetch(`/api/desa/profile/visi-misi/${this.id}`, {
-              method: "PUT",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(this.form),
-            });
-    
-            if (!response.ok) {
-              const errorData = await response.json().catch(() => ({}));
-              throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
-            }
-    
-            const result = await response.json();
-    
-            if (result.success) {
-              toast.success("Berhasil update visi misi desa");
-              // Refresh profile data
-              await visiMisiDesa.findUnique.load(this.id);
-              return true;
-            } else {
-              throw new Error(result.message || "Gagal update visi misi desa");
-            }
-          } catch (error) {
-            const errorMessage = (error as Error).message;
-            this.error = errorMessage;
-            console.error("Update visi misi desa error:", errorMessage);
-            toast.error("Terjadi kesalahan saat update visi misi desa");
-            return false;
-          } finally {
-            this.loading = false;
-          }
-        },
-    
-        // Reset form
-        reset() {
-          this.id = "";
-          this.form = { ...visiMisiDesaDefaultForm };
-          this.error = null;
-          this.loading = false;
-          this.isReadOnly = false;
+      // Validate form
+      const validation = visiMisiDesaForm.safeParse(this.form);
+
+      if (!validation.success) {
+        const errors = validation.error.issues
+          .map((issue) => `${issue.path.join(".")}: ${issue.message}`)
+          .join(", ");
+        toast.error(`Form tidak valid: ${errors}`);
+        return false;
+      }
+
+      this.loading = true;
+      this.error = null;
+
+      try {
+        const response = await fetch(`/api/desa/profile/visi-misi/${this.id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(this.form),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(
+            errorData.message || `HTTP error! status: ${response.status}`
+          );
         }
-  }
+
+        const result = await response.json();
+
+        if (result.success) {
+          toast.success("Berhasil update visi misi desa");
+          // Refresh profile data
+          await visiMisiDesa.findUnique.load(this.id);
+          return true;
+        } else {
+          throw new Error(result.message || "Gagal update visi misi desa");
+        }
+      } catch (error) {
+        const errorMessage = (error as Error).message;
+        this.error = errorMessage;
+        console.error("Update visi misi desa error:", errorMessage);
+        toast.error("Terjadi kesalahan saat update visi misi desa");
+        return false;
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    // Reset form
+    reset() {
+      this.id = "";
+      this.form = { ...visiMisiDesaDefaultForm };
+      this.error = null;
+      this.loading = false;
+      this.isReadOnly = false;
+    },
+  },
 });
 
 // ========================================= LAMBANG DESA ========================================= //
@@ -334,13 +341,13 @@ const lambangDesa = proxy({
       this.error = null;
 
       try {
-        const response = await fetch(`/api/desa/profile/lambang-desa/${id}`);
-        
+        const response = await fetch(`/api/desa/profile/lambang/${id}`);
+
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const result = await response.json();
-        
+
         if (result.success) {
           this.data = result.data;
           return result.data;
@@ -387,64 +394,69 @@ const lambangDesa = proxy({
     },
 
     async submit() {
-          // Validate form
-          const validation = lambangDesaForm.safeParse(this.form);
-          
-          if (!validation.success) {
-            const errors = validation.error.issues
-              .map((issue) => `${issue.path.join(".")}: ${issue.message}`)
-              .join(", ");
-            toast.error(`Form tidak valid: ${errors}`);
-            return false;
+      // Validate form
+      const validation = lambangDesaForm.safeParse(this.form);
+
+      if (!validation.success) {
+        const errors = validation.error.issues
+          .map((issue) => `${issue.path.join(".")}: ${issue.message}`)
+          .join(", ");
+        toast.error(`Form tidak valid: ${errors}`);
+        return false;
+      }
+
+      this.loading = true;
+      this.error = null;
+
+      try {
+        const response = await fetch(
+          `/api/desa/profile/lambang/${this.id}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(this.form),
           }
-    
-          this.loading = true;
-          this.error = null;
-    
-          try {
-            const response = await fetch(`/api/desa/profile/lambang-desa/${this.id}`, {
-              method: "PUT",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(this.form),
-            });
-    
-            if (!response.ok) {
-              const errorData = await response.json().catch(() => ({}));
-              throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
-            }
-    
-            const result = await response.json();
-    
-            if (result.success) {
-              toast.success("Berhasil update lambang desa");
-              // Refresh profile data
-              await lambangDesa.findUnique.load(this.id);
-              return true;
-            } else {
-              throw new Error(result.message || "Gagal update lambang desa");
-            }
-          } catch (error) {
-            const errorMessage = (error as Error).message;
-            this.error = errorMessage;
-            console.error("Update lambang desa error:", errorMessage);
-            toast.error("Terjadi kesalahan saat update lambang desa");
-            return false;
-          } finally {
-            this.loading = false;
-          }
-        },
-    
-        // Reset form
-        reset() {
-          this.id = "";
-          this.form = { ...lambangDesaDefaultForm };
-          this.error = null;
-          this.loading = false;
-          this.isReadOnly = false;
+        );
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(
+            errorData.message || `HTTP error! status: ${response.status}`
+          );
         }
-  }
+
+        const result = await response.json();
+
+        if (result.success) {
+          toast.success("Berhasil update lambang desa");
+          // Refresh profile data
+          await lambangDesa.findUnique.load(this.id);
+          return true;
+        } else {
+          throw new Error(result.message || "Gagal update lambang desa");
+        }
+      } catch (error) {
+        const errorMessage = (error as Error).message;
+        this.error = errorMessage;
+        console.error("Update lambang desa error:", errorMessage);
+        toast.error("Terjadi kesalahan saat update lambang desa");
+        return false;
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    // Reset form
+    reset() {
+      this.id = "";
+      this.form = { ...lambangDesaDefaultForm };
+      this.error = null;
+      this.loading = false;
+      this.isReadOnly = false;
+    },
+  },
 });
 
 // ========================================= MASKOT DESA ========================================= //
@@ -502,7 +514,7 @@ const maskotDesa = proxy({
       this.error = null;
 
       try {
-        const response = await fetch(`/api/desa/profile/maskot-desa/${id}`);
+        const response = await fetch(`/api/desa/profile/maskot/${id}`);
         const result = await response.json();
 
         if (response.ok && result.success) {
@@ -577,7 +589,7 @@ const maskotDesa = proxy({
 
       try {
         const response = await fetch(
-          `/api/desa/profile/maskot-desa/${this.id}`,
+          `/api/desa/profile/maskot/${this.id}`,
           {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
@@ -806,11 +818,12 @@ const profilPerbekel = proxy({
   },
 });
 
-const stateProfileDesa = {
+const stateProfileDesa = proxy({
+  lambangDesa,
   maskotDesa,
   profilPerbekel,
   visiMisiDesa,
   sejarahDesa,
-};
+});
 
 export default stateProfileDesa;

@@ -3,10 +3,10 @@ import maskotDesaFindById from "./find-by-id";
 import Elysia, { t } from "elysia";
 
 const MaskotDesa = new Elysia({
-    prefix: "/maskot",
-    tags: ["Desa/Profile"],
+  prefix: "/maskot",
+  tags: ["Desa/Profile"],
 })
-.get("/:id", async (context) => {
+  .get("/:id", async (context) => {
     const response = await maskotDesaFindById(new Request(context.request));
     return response;
   })
@@ -18,7 +18,8 @@ const MaskotDesa = new Elysia({
     },
     {
       body: t.Object({
-        maskot: t.String(),
+        judul: t.String(),
+        deskripsi: t.String(),
         images: t.Array(
           t.Object({
             imageId: t.String(),
@@ -27,5 +28,5 @@ const MaskotDesa = new Elysia({
         ),
       }),
     }
-  )
+  );
 export default MaskotDesa;
