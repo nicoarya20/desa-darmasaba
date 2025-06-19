@@ -70,6 +70,12 @@ model FileStorage {
   ProfileDesaImage         ProfileDesaImage[]
   ProfilePPID              ProfilePPID[]
   ProfilPerbekel           ProfilPerbekel[]
+  Puskesmas                Puskesmas[]
+  ProgramKesehatan         ProgramKesehatan[]
+  PenangananDarurat        PenangananDarurat[]
+  KontakDarurat KontakDarurat[]
+
+  InfoWabahPenyakit InfoWabahPenyakit[]
 }
 
 //========================================= MENU PPID ========================================= //
@@ -716,6 +722,101 @@ model Posyandu {
   name      String
   nomor     String
   deskripsi String
+  image     FileStorage @relation(fields: [imageId], references: [id])
+  imageId   String
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  deletedAt DateTime    @default(now())
+  isActive  Boolean     @default(true)
+}
+
+// ========================================= PUSKESMAS ========================================= //
+model Puskesmas {
+  id        String          @id @default(cuid())
+  name      String
+  alamat    String
+  jam       JamOperasional  @relation(fields: [jamId], references: [id])
+  jamId     String
+  image     FileStorage     @relation(fields: [imageId], references: [id])
+  imageId   String
+  kontak    KontakPuskesmas @relation(fields: [kontakId], references: [id])
+  kontakId  String
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+  deletedAt DateTime        @default(now())
+  isActive  Boolean         @default(true)
+}
+
+model JamOperasional {
+  id        String      @id @default(cuid())
+  workDays  String
+  weekDays  String
+  holiday   String
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  deletedAt DateTime    @default(now())
+  isActive  Boolean     @default(true)
+  Puskesmas Puskesmas[]
+}
+
+model KontakPuskesmas {
+  id              String      @id @default(cuid())
+  kontakPuskesmas String
+  email           String
+  facebook        String
+  kontakUGD       String
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  deletedAt       DateTime    @default(now())
+  isActive        Boolean     @default(true)
+  Puskesmas       Puskesmas[]
+}
+
+// ========================================= PROGRAM KESSEHATAN ========================================= //
+model ProgramKesehatan {
+  id               String      @id @default(cuid())
+  name             String
+  deskripsiSingkat String
+  deskripsi        String
+  image            FileStorage @relation(fields: [imageId], references: [id])
+  imageId          String
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+  deletedAt        DateTime    @default(now())
+  isActive         Boolean     @default(true)
+}
+
+// ========================================= PENANGANAN DARURAT ========================================= //
+model PenangananDarurat {
+  id        String      @id @default(cuid())
+  name      String
+  deskripsi String
+  image     FileStorage @relation(fields: [imageId], references: [id])
+  imageId   String
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  deletedAt DateTime    @default(now())
+  isActive  Boolean     @default(true)
+}
+
+// ========================================= KONTAK DARURAT ========================================= //
+model KontakDarurat {
+  id        String      @id @default(cuid())
+  name      String
+  deskripsi String
+  image     FileStorage @relation(fields: [imageId], references: [id])
+  imageId   String
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  deletedAt DateTime    @default(now())
+  isActive  Boolean     @default(true)
+}
+// ========================================= INFO WABAH PENYAKIT ========================================= //
+model InfoWabahPenyakit {
+  id        String      @id @default(cuid())
+  name      String
+  deskripsiSingkat String
+  deskripsiLengkap String
   image     FileStorage @relation(fields: [imageId], references: [id])
   imageId   String
   createdAt DateTime    @default(now())
