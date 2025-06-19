@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import { proxy } from "valtio";
 import { z } from "zod";
 
-// Schema validasi
+// Validasi form
 const templateForm = z.object({
   name: z.string().min(1),
   alamat: z.string().min(1),
@@ -37,7 +37,8 @@ const defaultForm = {
     email: "",
     facebook: "",
     kontakUGD: "",
-  }
+  },
+  image: undefined,
 };
 
 const puskesmasState = proxy({
@@ -53,23 +54,105 @@ const puskesmasState = proxy({
 
       try {
         puskesmasState.create.loading = true;
-        const formData = {
-          ...puskesmasState.create.form,
-          kontak: {
-            ...puskesmasState.create.form.kontak,
-            jam: puskesmasState.create.form.jam
-          }
-        };
-        const res = await ApiFetch.api.kesehatan.puskesmas.create.post(formData);
-        if (res.status === 200) {
-          puskesmasState.findMany.load();
-          toast.success("Berhasil menambahkan puskesmas");
-        } else {
-          toast.error("Gagal tambah puskesmas");
+
+        console.log('Form data:', puskesmasState.create.form);
+        interface ErrorResponse {
+          message?: string;
+          error?: string;
+          errors?: Record<string, string[]>;
         }
-      } catch (err) {
-        toast.error("Terjadi kesalahan saat tambah");
-        console.error(err);
+
+        const payload = {
+            name: puskesmasState.create.form.name,
+            alamat: puskesmasState.create.form.alamat,
+            imageId: puskesmasState.create.form.imageId,
+            jam: {
+              workDays: puskesmasState.create.form.jam.workDays,
+              weekDays: puskesmasState.create.form.jam.weekDays,
+              holiday: puskesmasState.create.form.jam.holiday,
+            },
+            kontak: {
+              kontakPuskesmas: puskesmasState.create.form.kontak.kontakPuskesmas,
+              email: puskesmasState.create.form.kontak.email,
+              facebook: puskesmasState.create.form.kontak.facebook,
+              kontakUGD: puskesmasState.create.form.kontak.kontakUGD,
+            },
+          };
+          
+          
+          
+
+        console.log('Sending payload:', JSON.stringify(payload, null, 2));
+
+        try {
+          const res = await ApiFetch.api.kesehatan.puskesmas.create.post(payload);
+          console.log('API Response:', res);
+
+          if (res.status === 200) {
+            await puskesmasState.findMany.load();
+            toast.success("Berhasil menambahkan puskesmas");
+            return res;
+          } else {
+            console.error('API Error Response:', {
+              status: res.status,
+              data: res.data
+            });
+            
+            const errorData = res.data as ErrorResponse;
+            let errorMessage = 'Gagal menambahkan puskesmas';
+            
+            if (errorData?.message) {
+              errorMessage = errorData.message;
+            } else if (errorData?.error) {
+              errorMessage = errorData.error;
+            } else if (errorData?.errors) {
+              errorMessage = Object.entries(errorData.errors)
+                .map(([field, messages]) => `${field}: ${Array.isArray(messages) ? messages.join(', ') : messages}`)
+                .join('; ');
+            }
+            
+            console.error('Extracted error message:', errorMessage);
+            toast.error(errorMessage);
+            throw new Error(errorMessage);
+          }
+        } catch (error) {
+          console.error('Error in API call:', {
+            error,
+            errorString: String(error),
+            jsonError: error instanceof Error ? {
+              name: error.name,
+              message: error.message,
+              stack: error.stack
+            } : 'Not an Error instance'
+          });
+          throw error;
+        }
+      } catch (error) {
+        console.error("Error in puskesmas submit:", {
+          error,
+          errorString: String(error),
+          errorType: typeof error,
+          isErrorInstance: error instanceof Error,
+          errorDetails: error instanceof Error ? {
+            name: error.name,
+            message: error.message,
+            stack: error.stack,
+            cause: error.cause
+          } : null
+        });
+        
+        let errorMessage = "Terjadi kesalahan saat menambahkan puskesmas";
+        if (error instanceof Error) {
+          errorMessage = error.message || errorMessage;
+        } else if (error && typeof error === 'object' && 'message' in error) {
+          errorMessage = String((error as { message: unknown }).message);
+        } else if (typeof error === 'string') {
+          errorMessage = error;
+        }
+        
+        console.error('Displaying error to user:', errorMessage);
+        toast.error(errorMessage);
+        throw error;
       } finally {
         puskesmasState.create.loading = false;
       }
@@ -80,11 +163,9 @@ const puskesmasState = proxy({
   },
 
   findMany: {
-    data: null as
-      | Prisma.PuskesmasGetPayload<{
-          include: { image: true; jam: true; kontak: true };
-        }>[]
-      | null,
+    data: null as Prisma.PuskesmasGetPayload<{
+      include: { image: true; jam: true; kontak: true };
+    }>[] | null,
     async load() {
       const res = await ApiFetch.api.kesehatan.puskesmas["find-many"].get();
       if (res.status === 200) {
@@ -94,11 +175,9 @@ const puskesmasState = proxy({
   },
 
   findUnique: {
-    data: null as
-      | Prisma.PuskesmasGetPayload<{
-          include: { image: true; jam: true; kontak: true };
-        }>
-      | null,
+    data: null as Prisma.PuskesmasGetPayload<{
+      include: { image: true; jam: true; kontak: true };
+    }> | null,
     async load(id: string) {
       const res = await fetch(`/api/kesehatan/puskesmas/${id}`);
       if (res.ok) {
@@ -140,7 +219,8 @@ const puskesmasState = proxy({
           email: data.kontak.email,
           facebook: data.kontak.facebook,
           kontakUGD: data.kontak.kontakUGD,
-        }
+        },
+        image: data.image,
       };
     },
 
@@ -154,17 +234,18 @@ const puskesmasState = proxy({
 
       try {
         puskesmasState.edit.loading = true;
-        const formData = {
-          ...puskesmasState.edit.form,
-          kontak: {
-            ...puskesmasState.edit.form.kontak,
-            jam: puskesmasState.edit.form.jam
-          }
+        const payload = {
+          name: puskesmasState.edit.form.name,
+          alamat: puskesmasState.edit.form.alamat,
+          imageId: puskesmasState.edit.form.imageId,
+          jam: { ...puskesmasState.edit.form.jam },
+          kontak: { ...puskesmasState.edit.form.kontak }
         };
+
         const res = await fetch(`/api/kesehatan/puskesmas/${puskesmasState.edit.id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formData),
+          body: JSON.stringify(payload),
         });
 
         if (!res.ok) {

@@ -9,27 +9,27 @@ const Puskesmas = new Elysia({
   prefix: "puskesmas",
   tags: ["Kesehatan/Puskesmas"],
 })
-  .post("/create", puskesmasCreate, {
-    body: t.Object({
-      name: t.String(),
-      alamat: t.String(),
-      imageId: t.String(),
-      kontak: t.Object({
-        jam: t.Object({
-          workDays: t.String(),
-          weekDays: t.String(),
-          holiday: t.String(),
-        }),
-        kontakPuskesmas: t.String(),
-        email: t.String(),
-        facebook: t.String(),
-        kontakUGD: t.String(),
-      }),
+.post("/create", puskesmasCreate, {
+  body: t.Object({
+    name: t.String(),
+    alamat: t.String(),
+    imageId: t.String(),
+    jam: t.Object({
+      workDays: t.String(),
+      weekDays: t.String(),
+      holiday: t.String(),
     }),
-  })
-  .get("/find-many", puskesmasFindMany)
-  .delete("/del/:id", puskesmasDelete)
-  .get("/:id", async (context) => {
+    kontak: t.Object({
+      kontakPuskesmas: t.String(),
+      email: t.String(),
+      facebook: t.String(),
+      kontakUGD: t.String(),
+    }),
+  }),
+})
+.get("/find-many", puskesmasFindMany)
+.delete("/del/:id", puskesmasDelete)
+.get("/:id", async (context) => {
     const response = await findUniquePuskesmas(new Request(context.request));
     return response;
   })
