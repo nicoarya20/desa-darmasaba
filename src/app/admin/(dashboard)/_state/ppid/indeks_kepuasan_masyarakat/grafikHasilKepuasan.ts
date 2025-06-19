@@ -6,7 +6,7 @@ import { z } from "zod";
 
 const templateGrafikHasilKepuasanMasyarakat = z.object({
   label: z.string().min(2, "Label harus diisi"),
-  kepuasan: z.string().min(2, "Kepuasan harus diisi"),
+  kepuasan: z.string().min(1, "Kepuasan harus diisi"),
 });
 
 type GrafikHasilKepuasanMasyarakat = Prisma.IndeksKepuasanMasyarakatGetPayload<{

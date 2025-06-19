@@ -5,9 +5,9 @@ import { proxy } from "valtio";
 import { z } from "zod";
 
 const templateGrafikJenisKelamin = z.object({
-  laki: z.string().min(2, "Data laki-laki harus diisi"),
-  perempuan: z.string().min(2, "Data perempuan harus diisi"),
-});
+  laki: z.string().min(1, "Data laki-laki harus diisi"),
+  perempuan: z.string().min(1, "Data perempuan harus diisi"),
+}); 
 
 type GrafikJenisKelamin = Prisma.GrafikBerdasarkanJenisKelaminGetPayload<{
   select: {
