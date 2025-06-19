@@ -1,10 +1,14 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Image, Paper, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
+import { Box, Button, Image, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
 import { IconDeviceImacCog, IconSearch } from '@tabler/icons-react';
 import JudulList from '../../_com/judulList';
 import HeaderSearch from '../../_com/header';
 import { useRouter } from 'next/navigation';
+import { useProxy } from 'valtio/utils';
+import { useShallowEffect } from '@mantine/hooks';
+import penangananDarurat from '../../_state/kesehatan/penanganan-darurat/penangananDarurat';
+
 
 function PenangananDarurat() {
   return (
@@ -20,7 +24,21 @@ function PenangananDarurat() {
 }
 
 function ListPenangananDarurat() {
+  const penangananDaruratState = useProxy(penangananDarurat)
   const router = useRouter();
+
+  useShallowEffect(() => {
+    penangananDaruratState.findMany.load()
+  }, [])
+
+  if (!penangananDaruratState.findMany.data) {
+    return (
+      <Box py={10}>
+        <Skeleton h={500} />
+      </Box>
+    )
+  }
+
   return (
     <Box py={10}>
     <Paper bg={colors['white-1']} p={'md'}>
@@ -34,27 +52,31 @@ function ListPenangananDarurat() {
             <TableThead>
               <TableTr>
                 <TableTh>Judul</TableTh>
-                <TableTh>Kategori</TableTh>
+                <TableTh>Deskripsi</TableTh>
                 <TableTh>Image</TableTh>
                 <TableTh>Detail</TableTh>
               </TableTr>
             </TableThead>
             <TableTbody>
-              <TableTr>
+              {penangananDaruratState.findMany.data?.map((item) => (
+                <TableTr key={item.id}>
                 <TableTd>
                   <Box w={100}>
-                    <Text truncate="end" fz={"sm"}>Test</Text>
+                    <Text truncate="end" fz={"sm"}>{item.name}</Text>
                   </Box></TableTd>
-                <TableTd>Test</TableTd>
                 <TableTd>
-                  <Image w={100} src={"/"} alt="image" />
+                  <Text truncate="end" fz={"sm"} dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
                 </TableTd>
                 <TableTd>
-                  <Button onClick={() => router.push('/admin/kesehatan/penanganan-darurat/detail')}>
+                  <Image w={100} src={item.image?.link} alt="image" />
+                </TableTd>
+                <TableTd>
+                  <Button onClick={() => router.push(`/admin/kesehatan/penanganan-darurat/${item.id}`)}>
                     <IconDeviceImacCog size={25} />
                   </Button>
                 </TableTd>
               </TableTr>
+            ))}
             </TableTbody>
           </Table>
         </Box>

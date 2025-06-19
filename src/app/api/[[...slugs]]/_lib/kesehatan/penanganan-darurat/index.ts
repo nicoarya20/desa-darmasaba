@@ -6,7 +6,7 @@ import penangananDaruratFindUnique from "./findUnique";
 import penangananDaruratUpdate from "./updt";
 
 const PenangananDarurat = new Elysia({
-    prefix: "/penanganan-darurat",
+    prefix: "/penanganandarurat",
     tags: ["Kesehatan/Penanganan Darurat"]
 })
 .post("/create", penangananDaruratCreate, {
