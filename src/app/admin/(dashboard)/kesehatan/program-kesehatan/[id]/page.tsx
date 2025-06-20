@@ -46,7 +46,7 @@ function DetailProgramKesehatan() {
       </Box>
       <Paper w={{ base: "100%", md: "50%" }} bg={colors['white-1']} p={'md'}>
         <Stack>
-          <Text fz={"xl"} fw={"bold"}>Detail Potensi</Text>
+          <Text fz={"xl"} fw={"bold"}>Detail Program Kesehatan</Text>
           {programKesehatanState.findUnique.data ? (
             <Paper bg={colors['BG-trans']} p={'md'}>
               <Stack gap={"xs"}>

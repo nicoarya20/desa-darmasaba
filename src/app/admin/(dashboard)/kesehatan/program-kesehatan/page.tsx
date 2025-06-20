@@ -13,7 +13,7 @@ function ProgramKesehatan() {
   return (
     <Box>
       <HeaderSearch
-        title='ProgramKesehatan'
+        title='Program Kesehatan'
         placeholder='pencarian'
         searchIcon={<IconSearch size={20} />}
       />

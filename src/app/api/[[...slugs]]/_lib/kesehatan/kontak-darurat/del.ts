@@ -30,6 +30,9 @@ const kontakDaruratDelete = async (context: Context) => {
         try {
             const filePath = path.join(kontakDarurat.image.path, kontakDarurat.image.name);
             await fs.unlink(filePath);
+            await prisma.fileStorage.delete({
+                where: { id: kontakDarurat.image.id },
+              });
         } catch (error) {
             console.error("Error deleting image file:", error);
         }
@@ -41,7 +44,8 @@ const kontakDaruratDelete = async (context: Context) => {
 
     return {
         status: 200,
-        body: "Kontak darurat berhasil dihapus",
+        success: true,
+        message: "Kontak darurat dan file terkait berhasil dihapus",
     };
 };
 export default kontakDaruratDelete;

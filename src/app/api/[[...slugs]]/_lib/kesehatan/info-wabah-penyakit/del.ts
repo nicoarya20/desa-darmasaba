@@ -30,6 +30,9 @@ const infoWabahPenyakitDelete = async (context: Context) => {
         try {
             const filePath = path.join(infoWabahPenyakit.image.path, infoWabahPenyakit.image.name);
             await fs.unlink(filePath);
+            await prisma.fileStorage.delete({
+                where: { id: infoWabahPenyakit.image.id },
+              });
         } catch (err) {
             console.error("Gagal hapus gambar:", err);
         }
@@ -41,7 +44,8 @@ const infoWabahPenyakitDelete = async (context: Context) => {
 
     return {
         status: 200,
-        body: "Info wabah penyakit berhasil dihapus",
+        success: true,
+    message: "Penanganan darurat dan file terkait berhasil dihapus",
     };
 };
 export default infoWabahPenyakitDelete;
