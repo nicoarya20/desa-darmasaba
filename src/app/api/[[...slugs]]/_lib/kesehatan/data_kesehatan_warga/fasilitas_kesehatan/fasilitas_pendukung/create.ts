@@ -11,18 +11,19 @@ type FormCreate = Prisma.FasilitasPendukungGetPayload<{
 async function FasilitasPendukungCreate(context: Context){
     const body = context.body as FormCreate
 
-    await prisma.fasilitasPendukung.create({
+  const created = await prisma.fasilitasPendukung.create({
         data: {
-  
             content: body.content
+        },
+        select: {
+            id: true,
+            content: true,
         }
     })
     return {
         success: true,
         message: "Success create fasilitas pendukung",
-        data: {
-            ...body
-        }
+        data: created
     }
 }
 

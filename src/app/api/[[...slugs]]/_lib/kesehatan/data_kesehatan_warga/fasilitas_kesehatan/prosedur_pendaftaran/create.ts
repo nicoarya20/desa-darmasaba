@@ -11,17 +11,19 @@ type FormCreate = Prisma.ProsedurPendaftaranGetPayload<{
 async function prosedurPendaftaranCreate(context: Context) {
     const body = context.body as FormCreate
 
-    await prisma.prosedurPendaftaran.create({
+    const created = await prisma.prosedurPendaftaran.create({
         data: {
             content: body.content
+        },
+        select: {
+            id: true,
+            content: true,
         }
     })
     return{
         success: true,
         message: "Success create prosedur pendaftaran",
-        data: {
-            ...body
-        }
+        data: created
     }
 }
 

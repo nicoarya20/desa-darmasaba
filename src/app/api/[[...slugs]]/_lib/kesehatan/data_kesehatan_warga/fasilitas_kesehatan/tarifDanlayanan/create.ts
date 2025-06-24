@@ -12,18 +12,21 @@ type FormCreate = Prisma.TarifDanLayananGetPayload<{
 async function tarifdanlayananCreate(context: Context) {
     const body = context.body as FormCreate
 
-    await prisma.tarifDanLayanan.create({
+   const created =  await prisma.tarifDanLayanan.create({
         data: {
             layanan: body.layanan,
             tarif: body.tarif,
+        },
+        select: {
+            id: true,
+            layanan: true,
+            tarif: true
         }
     })
     return {
         success: true,
         message: "Success create tarif dan layanan",
-        data: {
-            ...body
-        }
+        data: created
     }
 }
 

@@ -141,7 +141,7 @@ export const navBar = [
       {
         id: "Kesehatan_2",
         name: "Data Kesehatan Warga",
-        path: "/admin/kesehatan/data-kesehatan-warga"
+        path: "/admin/kesehatan/data-kesehatan-warga/persentase_data_kelahiran_kematian"
       },
       {
         id: "Kesehatan_3",

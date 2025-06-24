@@ -12,19 +12,23 @@ type FormCreate = Prisma.InformasiUmumGetPayload<{
 async function informasiUmumCreate(context: Context) {
     const body = context.body as FormCreate
 
-    await prisma.informasiUmum.create({
+    const created = await prisma.informasiUmum.create({
         data: {
             fasilitas: body.fasilitas,
             alamat: body.alamat,
             jamOperasional: body.jamOperasional,
+        },
+        select: {
+            id: true,
+            fasilitas: true,
+            alamat: true,
+            jamOperasional: true,
         }
     })
     return{
         success: true,
         message: "Success create informasi umum",
-        data: {
-            ...body
-        }
+        data: created
     }
 }
 

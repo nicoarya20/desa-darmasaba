@@ -13,19 +13,23 @@ type FormCreate = Prisma.DokterdanTenagaMedisGetPayload<{
 async function dokterDantenagamedisCreate(context: Context) {
     const body = context.body as FormCreate
 
-    await prisma.dokterdanTenagaMedis.create({
+    const created = await prisma.dokterdanTenagaMedis.create({
         data: {
             name: body.name,
             specialist: body.specialist,
             jadwal: body.jadwal,
+        },
+        select: {
+            id: true,
+            name: true,
+            specialist: true,
+            jadwal: true,
         }
     })
     return {
         success: true,
         message: "Success create dokter dan tenaga medis",
-        data: {
-            ...body
-        }
+        data: created
     }
 }
 export default dokterDantenagamedisCreate
