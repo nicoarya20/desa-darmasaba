@@ -1,10 +1,13 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Paper, Table, TableTbody, TableTd, TableTh, TableThead, TableTr } from '@mantine/core';
+import { Box, Button, Paper, Skeleton, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
 import { IconDeviceImac, IconSearch } from '@tabler/icons-react';
 import HeaderSearch from '../../_com/header';
 import JudulList from '../../_com/judulList';
 import { useRouter } from 'next/navigation';
+import { useProxy } from 'valtio/utils';
+import posyandustate from '../../_state/kesehatan/posyandu/posyandu';
+import { useShallowEffect } from '@mantine/hooks';
 
 function Posyandu() {
   return (
@@ -14,13 +17,27 @@ function Posyandu() {
         placeholder='pencarian'
         searchIcon={<IconSearch size={20} />}
       />
-      <ListPosyandu/>
+      <ListPosyandu />
     </Box>
   );
 }
 
 function ListPosyandu() {
+  const statePosyandu = useProxy(posyandustate)
   const router = useRouter();
+
+  useShallowEffect(() => {
+    statePosyandu.findMany.load()
+  }, [])
+
+  if (!statePosyandu.findMany.data) {
+    return (
+      <Box py={10}>
+        <Skeleton h={500} />
+      </Box>
+    )
+  }
+
   return (
     <Box py={10}>
       <Paper bg={colors['white-1']} p={'md'}>
@@ -28,28 +45,34 @@ function ListPosyandu() {
           title='List Posyandu'
           href='/admin/kesehatan/posyandu/create'
         />
-        <Table striped withTableBorder withRowBorders>
-          <TableThead>
-            <TableTr>
-              <TableTh>Nama Posyandu</TableTh>
-              <TableTh>Nomor Posyandu</TableTh>
-              <TableTh>Deskripsi</TableTh>
-              <TableTh>Detail</TableTh>
+        <Box style={{ overflowX: "auto" }}>
+          <Table striped withTableBorder withRowBorders>
+            <TableThead>
+              <TableTr>
+                <TableTh>Nama Posyandu</TableTh>
+                <TableTh>Nomor Posyandu</TableTh>
+                <TableTh>Deskripsi</TableTh>
+                <TableTh>Detail</TableTh>
               </TableTr>
-          </TableThead>
-          <TableTbody>
-            <TableTr>
-              <TableTd>Posyandu 1</TableTd>
-              <TableTd>0896232831883</TableTd>
-              <TableTd>Posyandu 1</TableTd>
-              <TableTd>
-                <Button onClick={() => router.push('/admin/kesehatan/posyandu/detail')}>
-                  <IconDeviceImac size={20} />
-                </Button>
-              </TableTd>
-            </TableTr>
-          </TableTbody>
-        </Table>  
+            </TableThead>
+            <TableTbody>
+              {statePosyandu.findMany.data?.map((item) => (
+                <TableTr key={item.id}>
+                  <TableTd>{item.name}</TableTd>
+                  <TableTd>{item.nomor}</TableTd>
+                  <TableTd>
+                    <Text fz={"sm"} dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
+                  </TableTd>
+                  <TableTd>
+                    <Button onClick={() => router.push(`/admin/kesehatan/posyandu/${item.id}`)}>
+                      <IconDeviceImac size={20} />
+                    </Button>
+                  </TableTd>
+                </TableTr>
+              ))}
+            </TableTbody>
+          </Table>
+        </Box>
       </Paper>
     </Box>
   );

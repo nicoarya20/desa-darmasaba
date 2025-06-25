@@ -6,9 +6,9 @@ import { z } from "zod";
 
 const templatePersentase = z.object({
   tahun: z.string().min(4, "Tahun harus diisi"),
-  kematianKasar: z.string().min(2, "Kematian kasar harus diisi"),
-  kelahiranKasar: z.string().min(2, "Kelahiran kasar harus diisi"),
-  kematianBayi: z.string().min(2, "Kematian bayi harus diisi"),
+  kematianKasar: z.string().min(1, "Kematian kasar harus diisi"),
+  kelahiranKasar: z.string().min(1, "Kelahiran kasar harus diisi"),
+  kematianBayi: z.string().min(1, "Kematian bayi harus diisi"),
 });
 
 type Persentase = Prisma.DataKematian_KelahiranGetPayload<{
@@ -37,26 +37,32 @@ const persentasekelahiran = proxy({
         const err = `[${cek.error.issues
           .map((v) => `${v.path.join(".")}`)
           .join("\n")}] required`;
-        return toast.error(err);
+        toast.error(err);
+        return null;
       }
       try {
         persentasekelahiran.create.loading = true;
-        const res = await ApiFetch.api.kesehatan.persentasekelahiran[
-          "create"
-        ].post(persentasekelahiran.create.form);
+        const res = await ApiFetch.api.kesehatan.persentasekelahiran["create"].post(persentasekelahiran.create.form);
+    
         if (res.status === 200) {
-          persentasekelahiran.create.form = {
-            tahun: "",
-            kematianKasar: "",
-            kelahiranKasar: "",
-            kematianBayi: "",
-          };
-          persentasekelahiran.findMany.load();
-          return toast.success("success create");
+          const id = res.data?.data?.id;
+          if (id) {
+            toast.success("Success create");
+            persentasekelahiran.create.form = {
+              tahun: "",
+              kematianKasar: "",
+              kelahiranKasar: "",
+              kematianBayi: "",
+            };
+            persentasekelahiran.findMany.load();
+            return id;
+          }
         }
-        return toast.error("failed create");
+        toast.error("failed create");
+        return null;
       } catch (error) {
         console.log((error as Error).message);
+        return null;
       } finally {
         persentasekelahiran.create.loading = false;
       }
@@ -75,10 +81,111 @@ const persentasekelahiran = proxy({
       }
     },
   },
+  findUnique: {
+    data: null as Prisma.DataKematian_KelahiranGetPayload<{
+      omit: { isActive: true };
+    }> | null,
+    async load(id: string) {
+      try {
+        const res = await fetch(`/api/kesehatan/persentasekelahiran/${id}`);
+        if (res.ok) {
+          const data = await res.json();
+          persentasekelahiran.findUnique.data = data.data ?? null;
+        } else {
+          console.error("Failed to fetch persentasekelahiran:", res.statusText);
+          persentasekelahiran.findUnique.data = null;
+        }
+      } catch (error) {
+        console.error("Error fetching persentasekelahiran:", error);
+        persentasekelahiran.findUnique.data = null;
+      }
+    },
+  },
+  update: {
+    id: "",
+    form: { ...defaultForm },
+    loading: false,
+    async byId() {},
+    async submit() {
+      const id = this.id;
+      if (!id) {
+        toast.warn("ID tidak valid");
+        return null;
+      }
+      const cek = templatePersentase.safeParse(persentasekelahiran.update.form);
+      if (!cek.success) {
+        const err = `[${cek.error.issues
+          .map((v) => `${v.path.join(".")}`)
+          .join("\n")}] required`;
+        return toast.error(err);
+      }
+      try {
+        this.loading = true;
+        const response = await fetch(`/api/kesehatan/persentasekelahiran/${id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(this.form),
+        });
+        const result = await response.json();
+    
+        if (!response.ok || !result?.success) {
+          throw new Error(result?.message || "Gagal update data");
+        }
+    
+        toast.success("Berhasil update data!");
+    
+        // ✅ Optional: refresh list kalau kamu langsung ke halaman list
+        await persentasekelahiran.findMany.load();
+    
+        return result.data;
+      } catch (error) {
+        console.error("Error update data:", error);
+        toast.error("Gagal update data persentase kelahiran");
+      } finally {
+        this.loading = false;
+      }
+    },
+  },
+  delete: {
+    loading: false,
+    async byId(id: string) {
+      if (!id) return toast.warn("ID tidak valid");
+
+      try {
+        persentasekelahiran.delete.loading = true;
+
+        const response = await fetch(
+          `/api/kesehatan/persentasekelahiran/del/${id}`,
+          {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        const result = await response.json();
+
+        if (response.ok && result?.success) {
+          toast.success(
+            result.message || "Persentase kelahiran berhasil dihapus"
+          );
+          await persentasekelahiran.findMany.load(); // refresh list
+        } else {
+          toast.error(
+            result?.message || "Gagal menghapus persentase kelahiran"
+          );
+        }
+      } catch (error) {
+        console.error("Gagal delete:", error);
+        toast.error("Terjadi kesalahan saat menghapus persentase kelahiran");
+      } finally {
+        persentasekelahiran.delete.loading = false;
+      }
+    },
+  },
 });
 
-const statePersentase = proxy({
-  persentasekelahiran,
-});
-
-export default statePersentase;
+export default persentasekelahiran;
