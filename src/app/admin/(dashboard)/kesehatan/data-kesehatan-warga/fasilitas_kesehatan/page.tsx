@@ -1,254 +1,81 @@
-"use client"
-
-import stateFasilitasKesehatan from '@/app/admin/(dashboard)/_state/kesehatan/data_kesehatan_warga/fasilitasKesehatan';
+'use client'
 import colors from '@/con/colors';
-import { Box, Button, Center, Paper, SimpleGrid, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title } from '@mantine/core';
+import { Box, Button, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
+import { IconDeviceImacCog, IconSearch } from '@tabler/icons-react';
+import { useRouter } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
-import DokterDanTenagaMedis from './dokterdantenagamedis/page';
-import FasilitasPendukung from './fasilitas_pendukung/page';
-import InformasiUmum from './informasi_umum/page';
-import LayananUnggulan from './layanan_unggulan/page';
-import ProsedurPendaftaran from './prosedurpendaftaran/page';
-import TarifDanLayanan from './tarifdanlayanan/page';
+import fasilitasKesehatanState from '../../../_state/kesehatan/data_kesehatan_warga/fasilitasKesehatan';
+import HeaderSearch from '../../../_com/header';
+import JudulList from '../../../_com/judulList';
 
 
 function FasilitasKesehatan() {
-  const allState = useProxy(stateFasilitasKesehatan)
-  const submitAllForms = () => {
-    if (allState.informasiumum.create.form.fasilitas &&
-      allState.informasiumum.create.form.alamat &&
-      allState.informasiumum.create.form.jamOperasional) {
-      allState.informasiumum.create.create()
-    }
-
-    if (allState.layananunggulan.create.form.content) {
-      allState.layananunggulan.create.create();
-    }
-
-    if (allState.dokterdantenagamedis.create.form.name &&
-      allState.dokterdantenagamedis.create.form.specialist &&
-      allState.dokterdantenagamedis.create.form.jadwal) {
-      allState.dokterdantenagamedis.create.create()
-    }
-
-    if (allState.fasilitaspendukung.create.form.content) {
-      allState.fasilitaspendukung.create.create();
-    }
-
-    if (allState.tarifdanlayanan.create.form.tarif &&
-      allState.tarifdanlayanan.create.form.layanan) {
-      allState.tarifdanlayanan.create.create()
-    }
-
-    if (allState.prosedurpendaftaran.create.form.content) {
-      allState.prosedurpendaftaran.create.create();
-    }
-
-    // refreshListData();
-    // resetAllForms();
-  }
-
-  // const refreshListData = () => {
-  //   allState.informasiumum.findMany.load();
-  //   allState.layananunggulan.findMany.load();
-  //   allState.dokterdantenagamedis.findMany.load();
-  //   allState.fasilitaspendukung.findMany.load();
-  //   allState.tarifdanlayanan.findMany.load();
-  //   allState.prosedurpendaftaran.findMany.load();
-  // }
-
-  // const resetAllForms = () => {
-  //   allState.informasiumum.create.form = {
-  //     fasilitas: '',
-  //     alamat: '',
-  //     jamOperasional: ''
-  //   };
-  //   allState.layananunggulan.create.form = {
-  //     content: ''
-  //   };
-  //   allState.dokterdantenagamedis.create.form = {
-  //     name: '',
-  //     specialist: '',
-  //     jadwal: ''
-  //   };
-  //   allState.fasilitaspendukung.create.form = {
-  //     content: ''
-  //   };
-  //   allState.tarifdanlayanan.create.form = {
-  //     tarif: '',
-  //     layanan: ''
-  //   };
-  //   allState.prosedurpendaftaran.create.form = {
-  //     content: ''
-  //   };
-  // }
-
   return (
-    <Stack py={10}>
-      <SimpleGrid cols={{
-        base: 1, md: 2
-      }}>
-        <Box>
-          <Stack gap={'xs'}>
-            <Title order={4}>Tambah Fasilitas Kesehatan</Title>
-            {/* Informasi Umum */}
-            <InformasiUmum />
-            {/* Layanan Unggulan */}
-            <LayananUnggulan />
-            {/* Dokter & Tenaga Medis */}
-            <DokterDanTenagaMedis />
-            {/* Fasilitas Pendukung */}
-            <FasilitasPendukung />
-            {/* Tarif & Layanan */}
-            <TarifDanLayanan />
-            {/* Prosedur Pendaftaran */}
-            <ProsedurPendaftaran />
-            <Button onClick={submitAllForms}>Submit</Button>
-          </Stack>
-        </Box>
-
-        <Box>
-          <Stack gap={"xs"}>
-            <Title order={4}>Data Fasilitas Kesehatan</Title>
-            <AllList />
-          </Stack>
-        </Box>
-      </SimpleGrid>
-
-    </Stack>
+    <Box>
+      <HeaderSearch
+        title='Fasilitas Kesehatan'
+        placeholder='pencarian'
+        searchIcon={<IconSearch size={20} />}
+      />
+      <ListFasilitasKesehatan/>
+    </Box>
   );
 }
 
-function AllList() {
-  const allListState = useProxy(stateFasilitasKesehatan)
+function ListFasilitasKesehatan() {
+  const stateFasilitasKesehatan = useProxy(fasilitasKesehatanState)
+  const router = useRouter();
+
   useShallowEffect(() => {
-    allListState.informasiumum.findMany.load();
-    allListState.layananunggulan.findMany.load();
-    allListState.dokterdantenagamedis.findMany.load();
-    allListState.fasilitaspendukung.findMany.load();
-    allListState.tarifdanlayanan.findMany.load();
-    allListState.prosedurpendaftaran.findMany.load();
+    stateFasilitasKesehatan.findMany.load()
   }, [])
 
-  if (!allListState.informasiumum.findMany.data
-    || !allListState.layananunggulan.findMany.data
-    || !allListState.dokterdantenagamedis.findMany.data
-    || !allListState.fasilitaspendukung.findMany.data
-    || !allListState.tarifdanlayanan.findMany.data
-    || !allListState.prosedurpendaftaran.findMany.data
-  ) return <Stack>
-    {Array.from({ length: 10 }).map((v, k) => <Skeleton key={k} h={40} />)}
-  </Stack>
-  return <Stack>
+  if (!stateFasilitasKesehatan.findMany.data) {
+    return (
+      <Box py={10}>
+        <Skeleton h={500}/>
+      </Box>
+    )
+  }
+  return (
+    <Box py={10}>
     <Paper bg={colors['white-1']} p={'md'}>
-      <Title order={4}>Informasi Umum</Title>
-      {allListState.informasiumum.findMany.data?.map((item) => (
-        <Box key={item.id}>
-
-          <Text>{item.fasilitas}</Text>
-          <Text>{item.alamat}</Text>
-          <Text>{item.jamOperasional}</Text>
+      <Stack>
+        <JudulList
+          title='List Fasilitas Kesehatan'
+          href='/admin/kesehatan/data-kesehatan-warga/fasilitas_kesehatan/create'
+        />
+        <Box style={{ overflowX: "auto" }}>
+          <Table striped withRowBorders withTableBorder style={{ minWidth: '700px' }}>
+            <TableThead>
+              <TableTr>
+                <TableTh>Fasilitas Kesehatan</TableTh>
+                <TableTh>Alamat</TableTh>
+                <TableTh>Jam Operasional</TableTh>
+                <TableTh>Detail</TableTh>
+              </TableTr>
+            </TableThead>
+            <TableTbody>
+              {stateFasilitasKesehatan.findMany.data?.map((item) => (
+                <TableTr key={item.id}>
+                  <TableTd>{item.name}</TableTd>
+                  <TableTd>{item.informasiumum.alamat}</TableTd>
+                  <TableTd>{item.informasiumum.jamOperasional}</TableTd>
+                  <TableTd>
+                    <Button onClick={() => router.push(`/admin/kesehatan/data-kesehatan-warga/fasilitas_kesehatan/${item.id}`)}>
+                      <IconDeviceImacCog size={25} />
+                    </Button>
+                  </TableTd>
+                </TableTr>
+              ))}
+            </TableTbody>
+          </Table>
         </Box>
-      ))}
+      </Stack>
     </Paper>
-
-    <Paper bg={colors['white-1']} p={'md'}>
-      <Title order={4}>Layanan Unggulan</Title>
-      {allListState.layananunggulan.findMany.data?.map((item) => (
-        <Box key={item.id}>
-          <Text dangerouslySetInnerHTML={{ __html: item.content }} />
-        </Box>
-      ))}
-    </Paper>
-
-
-    <Paper bg={colors['white-1']} p={'md'}>
-      <Title order={4}>Dokter & Tenaga Medis</Title>
-
-      <Table
-        striped
-        highlightOnHover
-        withTableBorder
-        withColumnBorders
-        bg={colors['white-1']}
-      >
-        <TableThead >
-          <TableTr >
-            <TableTh >
-              <Center>Nama</Center>
-            </TableTh>
-            <TableTh >
-              <Center>Specialist</Center>
-            </TableTh>
-            <TableTh >
-              <Center>Jadwal</Center>
-            </TableTh>
-          </TableTr>
-        </TableThead>
-        <TableTbody >
-          {allListState.dokterdantenagamedis.findMany.data?.map((item) => (
-            <TableTr key={item.id}>
-              <TableTd ta="center">{item.name}</TableTd>
-              <TableTd ta="center">Specialist {item.specialist}</TableTd>
-              <TableTd ta="center">{item.jadwal}</TableTd>
-            </TableTr>
-          ))}
-        </TableTbody>
-      </Table>
-    </Paper>
-
-    <Paper bg={colors['white-1']} p={'md'}>
-
-      <Title order={4}>Fasilitas Pendukung</Title>
-      {allListState.fasilitaspendukung.findMany.data?.map((item) => (
-        <Box key={item.id}>
-          <Text dangerouslySetInnerHTML={{ __html: item.content }} />
-        </Box>
-      ))}
-    </Paper>
-
-    <Paper bg={colors['white-1']} p={'md'}>
-      <Title order={4}>Tarif & Layanan</Title>
-      <Table
-        suppressHydrationWarning
-        striped
-        highlightOnHover
-        withTableBorder
-        withColumnBorders
-        bg={colors['white-1']}
-      >
-        <TableThead>
-          <TableTr>
-            <TableTh>
-              Layanan
-            </TableTh>
-            <TableTh>
-              Tarif
-            </TableTh>
-          </TableTr>
-        </TableThead>
-        <TableTbody>
-          {allListState.tarifdanlayanan.findMany.data?.map((item) => (
-            <TableTr key={item.id}>
-              <TableTd>{item.layanan}</TableTd>
-              <TableTd>Rp.{item.tarif}</TableTd>
-            </TableTr>
-          ))}
-        </TableTbody>
-      </Table>
-    </Paper>
-
-    <Paper bg={colors['white-1']} p={'md'}>
-
-      <Title order={4}>Prosedur Pendaftaran</Title>
-      {allListState.prosedurpendaftaran.findMany.data?.map((item) => (
-        <Box key={item.id}>
-          <Text dangerouslySetInnerHTML={{ __html: item.content }} />
-        </Box>
-      ))}
-    </Paper>
-  </Stack>
+  </Box>
+  )
 }
 
 export default FasilitasKesehatan;

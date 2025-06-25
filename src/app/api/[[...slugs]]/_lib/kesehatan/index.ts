@@ -1,42 +1,31 @@
 import Elysia from "elysia";
-import InformasiUmum from "./data_kesehatan_warga/fasilitas_kesehatan/informasi_umum";
-import LayananUnggulan from "./data_kesehatan_warga/fasilitas_kesehatan/layanan_unggulan";
-import DokterDantenagamedis from "./data_kesehatan_warga/fasilitas_kesehatan/dokterDantenagamedis";
-import FasilitasPendukung from "./data_kesehatan_warga/fasilitas_kesehatan/fasilitas_pendukung";
-import TarifDanLayanan from "./data_kesehatan_warga/fasilitas_kesehatan/tarifDanlayanan";
-import ProsedurPendaftaran from "./data_kesehatan_warga/fasilitas_kesehatan/prosedur_pendaftaran";
-import InformasiJadwalKegiatan from "./data_kesehatan_warga/jadwal_kegiatan/informasi_kegiatan";
-import DeskripsiJadwalKegiatan from "./data_kesehatan_warga/jadwal_kegiatan/deskripsi_kegiatan";
-import LayananTersedia from "./data_kesehatan_warga/jadwal_kegiatan/layanan_yang_tersedia";
-import SyaratKetentuan from "./data_kesehatan_warga/jadwal_kegiatan/syarat_dan_ketentuan";
-import DokumenDiperlukan from "./data_kesehatan_warga/jadwal_kegiatan/dokumen_yang_diperlukan";
-import PendaftaranJadwal from "./data_kesehatan_warga/jadwal_kegiatan/pendaftaran";
-import PersentaseKelahiranKematian from "./data_kesehatan_warga/persentase_kelahiran_kematian";
-import GrafikKepuasan from "./data_kesehatan_warga/grafik_kepuasan";
-import Introduction from "./data_kesehatan_warga/artikel_kesehatan/introduction";
-import Syptom from "./data_kesehatan_warga/artikel_kesehatan/syptom";
-import Prevention from "./data_kesehatan_warga/artikel_kesehatan/prevention";
-import FirstAid from "./data_kesehatan_warga/artikel_kesehatan/first_aid";
-import MythVsFact from "./data_kesehatan_warga/artikel_kesehatan/myth_vs_fact";
 import DoctorSign from "./data_kesehatan_warga/artikel_kesehatan/doctor_sign";
-import Posyandu from "./posyandu";
-import Puskesmas from "./puskesmas";
-import ProgramKesehatan from "./program-kesehatan";
-import PenangananDarurat from "./penanganan-darurat";
-import KontakDarurat from "./kontak-darurat";
+import FirstAid from "./data_kesehatan_warga/artikel_kesehatan/first_aid";
+import Introduction from "./data_kesehatan_warga/artikel_kesehatan/introduction";
+import MythVsFact from "./data_kesehatan_warga/artikel_kesehatan/myth_vs_fact";
+import Prevention from "./data_kesehatan_warga/artikel_kesehatan/prevention";
+import Syptom from "./data_kesehatan_warga/artikel_kesehatan/syptom";
+import GrafikKepuasan from "./data_kesehatan_warga/grafik_kepuasan";
+import DeskripsiJadwalKegiatan from "./data_kesehatan_warga/jadwal_kegiatan/deskripsi_kegiatan";
+import DokumenDiperlukan from "./data_kesehatan_warga/jadwal_kegiatan/dokumen_yang_diperlukan";
+import InformasiJadwalKegiatan from "./data_kesehatan_warga/jadwal_kegiatan/informasi_kegiatan";
+import LayananTersedia from "./data_kesehatan_warga/jadwal_kegiatan/layanan_yang_tersedia";
+import PendaftaranJadwal from "./data_kesehatan_warga/jadwal_kegiatan/pendaftaran";
+import SyaratKetentuan from "./data_kesehatan_warga/jadwal_kegiatan/syarat_dan_ketentuan";
+import PersentaseKelahiranKematian from "./data_kesehatan_warga/persentase_kelahiran_kematian";
 import InfoWabahPenyakit from "./info-wabah-penyakit";
+import KontakDarurat from "./kontak-darurat";
+import PenangananDarurat from "./penanganan-darurat";
+import Posyandu from "./posyandu";
+import ProgramKesehatan from "./program-kesehatan";
+import Puskesmas from "./puskesmas";
+import FasilitasKesehatan from "./data_kesehatan_warga/fasilitas_kesehatan";
 
 
 const Kesehatan = new Elysia({
   prefix: "/api/kesehatan",
   tags: ["Kesehatan"],
 })
-.use(InformasiUmum)
-.use(LayananUnggulan)
-.use(DokterDantenagamedis)
-.use(FasilitasPendukung)
-.use(TarifDanLayanan)
-.use(ProsedurPendaftaran)
 .use(InformasiJadwalKegiatan)
 .use(DeskripsiJadwalKegiatan)
 .use(LayananTersedia)
@@ -57,4 +46,5 @@ const Kesehatan = new Elysia({
 .use(PenangananDarurat)
 .use(KontakDarurat)
 .use(InfoWabahPenyakit)
+.use(FasilitasKesehatan)
 export default Kesehatan;
