@@ -560,6 +560,18 @@ model TarifDanLayanan {
 model JadwalKegiatan {
   id        String   @id @default(cuid())
   content   String
+  informasijadwalkegiatan InformasiJadwalKegiatan @relation(fields: [informasiJadwalKegiatanId], references: [id])
+  informasiJadwalKegiatanId String
+  deskripsijadwalkegiatan DeskripsiJadwalKegiatan @relation(fields: [deskripsiJadwalKegiatanId], references: [id])
+  deskripsiJadwalKegiatanId String
+  layananjadwalkegiatan LayananJadwalKegiatan @relation(fields: [layananJadwalKegiatanId], references: [id])
+  layananJadwalKegiatanId String
+  syaratketentuanjadwalkegiatan SyaratKetentuanJadwalKegiatan @relation(fields: [syaratKetentuanJadwalKegiatanId], references: [id])
+  syaratKetentuanJadwalKegiatanId String
+  dokumenjadwalkegiatan DokumenJadwalKegiatan @relation(fields: [dokumenJadwalKegiatanId], references: [id])
+  dokumenJadwalKegiatanId String
+  pendaftaranjadwalkegiatan PendaftaranJadwalKegiatan @relation(fields: [pendaftaranJadwalKegiatanId], references: [id])
+  pendaftaranJadwalKegiatanId String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   deletedAt DateTime @default(now())
@@ -576,6 +588,7 @@ model InformasiJadwalKegiatan {
   updatedAt DateTime @updatedAt
   deletedAt DateTime @default(now())
   isActive  Boolean  @default(true)
+  JadwalKegiatan JadwalKegiatan[]
 }
 
 model DeskripsiJadwalKegiatan {
@@ -585,6 +598,7 @@ model DeskripsiJadwalKegiatan {
   updatedAt DateTime @updatedAt
   deletedAt DateTime @default(now())
   isActive  Boolean  @default(true)
+  JadwalKegiatan JadwalKegiatan[]
 }
 
 model LayananJadwalKegiatan {
@@ -594,6 +608,8 @@ model LayananJadwalKegiatan {
   updatedAt DateTime @updatedAt
   deletedAt DateTime @default(now())
   isActive  Boolean  @default(true)
+
+  JadwalKegiatan JadwalKegiatan[]
 }
 
 model SyaratKetentuanJadwalKegiatan {
@@ -603,6 +619,8 @@ model SyaratKetentuanJadwalKegiatan {
   updatedAt DateTime @updatedAt
   deletedAt DateTime @default(now())
   isActive  Boolean  @default(true)
+
+  JadwalKegiatan JadwalKegiatan[]
 }
 
 model DokumenJadwalKegiatan {
@@ -612,6 +630,7 @@ model DokumenJadwalKegiatan {
   updatedAt DateTime @updatedAt
   deletedAt DateTime @default(now())
   isActive  Boolean  @default(true)
+  JadwalKegiatan JadwalKegiatan[]
 }
 
 model PendaftaranJadwalKegiatan {
@@ -626,6 +645,7 @@ model PendaftaranJadwalKegiatan {
   updatedAt    DateTime @updatedAt
   deletedAt    DateTime @default(now())
   isActive     Boolean  @default(true)
+  JadwalKegiatan JadwalKegiatan[]
 }
 
 // ========================================= PERSENTASE KELAHIRAN & KEMATIAN ========================================= //
@@ -656,7 +676,7 @@ model GrafikKepuasan {
 
 // ========================================= ARTIKEL KESEHATAN ========================================= //
 model ArtikelKesehatan {
-  id        Int      @id @default(autoincrement())
+  id        String      @id @default(cuid())
   title     String
   content   String
   createdAt DateTime @default(now())
@@ -666,7 +686,7 @@ model ArtikelKesehatan {
 }
 
 model Introduction {
-  id        Int      @id @default(autoincrement())
+  id        String      @id @default(cuid())
   content   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -675,7 +695,7 @@ model Introduction {
 }
 
 model Symptom {
-  id        Int      @id @default(autoincrement())
+  id        String      @id @default(cuid())
   title     String
   content   String
   createdAt DateTime @default(now())
@@ -685,7 +705,7 @@ model Symptom {
 }
 
 model Prevention {
-  id        Int      @id @default(autoincrement())
+  id        String      @id @default(cuid())
   title     String
   content   String
   createdAt DateTime @default(now())
@@ -695,7 +715,7 @@ model Prevention {
 }
 
 model FirstAid {
-  id        Int      @id @default(autoincrement())
+  id        String      @id @default(cuid())
   title     String
   content   String
   createdAt DateTime @default(now())
@@ -705,7 +725,7 @@ model FirstAid {
 }
 
 model MythVsFact {
-  id        Int      @id @default(autoincrement())
+  id        String      @id @default(cuid())
   title     String
   mitos     String
   fakta     String
@@ -716,7 +736,7 @@ model MythVsFact {
 }
 
 model DoctorSign {
-  id        Int      @id @default(autoincrement())
+  id        String      @id @default(cuid())
   content   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
