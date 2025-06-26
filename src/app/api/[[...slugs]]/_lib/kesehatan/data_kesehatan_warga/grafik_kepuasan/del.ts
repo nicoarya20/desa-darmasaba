@@ -3,7 +3,6 @@ import { Context } from "elysia";
 
 export default async function grafikKepuasanDelete(context: Context) {
     const uuid = context.params?.uuid;
-    
     if (!uuid) {
         return {
             success: false,

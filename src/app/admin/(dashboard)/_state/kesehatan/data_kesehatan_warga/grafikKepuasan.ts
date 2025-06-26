@@ -149,7 +149,6 @@ delete: {
     }
     try {
       grafikkepuasan.delete.loading = true;
-
       const response = await fetch(`/api/kesehatan/grafikkepuasan/del/${uuid}`, {
         method: "DELETE",
         headers: {

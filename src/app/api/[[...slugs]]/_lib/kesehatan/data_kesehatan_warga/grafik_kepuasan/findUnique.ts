@@ -4,7 +4,6 @@ export default async function grafikKepuasanFindUnique(request: Request) {
     const url = new URL(request.url);
     const pathSegments = url.pathname.split('/');
     const uuid = pathSegments[pathSegments.length - 1];
-
     if (!uuid) {
         return Response.json({
             success: false,
