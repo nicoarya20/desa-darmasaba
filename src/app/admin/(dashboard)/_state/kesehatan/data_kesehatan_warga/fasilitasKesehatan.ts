@@ -1,333 +1,308 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiFetch from "@/lib/api-fetch";
 import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
 import { proxy } from "valtio";
 import { z } from "zod";
 
-/* Informasi Umum */
-const templateInformasiUmum = z.object({
-  fasilitas: z.string().min(3, "Fasilitas minimal 3 karakter"),
-  alamat: z.string().min(3, "Alamat minimal 3 karakter"),
-  jamOperasional: z.string().min(3, "Jam Operasional minimal 3 karakter"),
+// Validasi form
+const templateForm = z.object({
+  name: z.string().min(1, "Nama harus diisi"),
+  informasiUmum: z.object({
+    fasilitas: z.string().min(1, "Fasilitas harus diisi"),
+    alamat: z.string().min(1, "Alamat harus diisi"),
+    jamOperasional: z.string().min(1, "Jam operasional harus diisi"),
+  }),
+  layananUnggulan: z.object({
+    content: z.string().min(1, "Layanan unggulan harus diisi"),
+  }),
+  dokterdanTenagaMedis: z.object({
+    name: z.string().min(1, "Nama dokter harus diisi"),
+    specialist: z.string().min(1, "Spesialis harus diisi"),
+    jadwal: z.string().min(1, "Jadwal harus diisi"),
+  }),
+  fasilitasPendukung: z.object({
+    content: z.string().min(1, "Fasilitas pendukung harus diisi"),
+  }),
+  prosedurPendaftaran: z.object({
+    content: z.string().min(1, "Prosedur pendaftaran harus diisi"),
+  }),
+  tarifDanLayanan: z.object({
+    layanan: z.string().min(1, "Layanan harus diisi"),
+    tarif: z.string().min(1, "Tarif harus diisi"),
+  }),
 });
 
-type InfromasiUmum = Prisma.InformasiUmumGetPayload<{
-  select: {
-    fasilitas: true;
-    alamat: true;
-    jamOperasional: true;
-  };
-}>;
+// Default form kosong
+const defaultForm = {
+  name: "",
+  informasiUmum: {
+    fasilitas: "",
+    alamat: "",
+    jamOperasional: "",
+  },
+  layananUnggulan: {
+    content: "",
+  },
+  dokterdanTenagaMedis: {
+    name: "",
+    specialist: "",
+    jadwal: "",
+  },
+  fasilitasPendukung: {
+    content: "",
+  },
+  prosedurPendaftaran: {
+    content: "",
+  },
+  tarifDanLayanan: {
+    layanan: "",
+    tarif: "",
+  },
+};
 
-const informasiumum = proxy({
+const fasilitasKesehatanState = proxy({
   create: {
-    form: {} as InfromasiUmum,
+    form: { ...defaultForm },
     loading: false,
-    async create() {
-      const cek = templateInformasiUmum.safeParse(informasiumum.create.form);
+    async submit() {
+      const cek = templateForm.safeParse(this.form);
       if (!cek.success) {
-        const err = `[${cek.error.issues
-          .map((v) => `${v.path.join(".")}`)
-          .join("\n")}] required`;
-        return toast.error(err);
+        const errMsg = cek.error.issues
+          .map((v) => `${v.path.join(".")}: ${v.message}`)
+          .join("\n");
+        toast.error(errMsg);
+        return null;
       }
+
       try {
-        informasiumum.create.loading = true;
-        const res = await ApiFetch.api.kesehatan.informasiumum["create"].post(
-          informasiumum.create.form
+        this.loading = true;
+        const payload = { ...this.form };
+
+        const res = await (ApiFetch.api.kesehatan as any)[
+          "fasilitas-kesehatan"
+        ].create.post(payload);
+
+        if (res.status === 200) {
+          toast.success("Berhasil menambahkan fasilitas kesehatan");
+          this.resetForm();
+          await fasilitasKesehatanState.findMany.load();
+          return res.data;
+        }
+      } catch (err: any) {
+        const msg = err?.message || "Terjadi kesalahan saat mengirim data";
+        toast.error(msg);
+        console.error("SUBMIT ERROR:", err);
+        return null;
+      } finally {
+        this.loading = false;
+      }
+    },
+    resetForm() {
+      this.form = { ...defaultForm };
+    },
+  },
+
+  findMany: {
+    data: null as
+      | Prisma.FasilitasKesehatanGetPayload<{
+          include: {
+            informasiumum: true;
+            layananunggulan: true;
+            dokterdantenagamedis: true;
+            fasilitaspendukung: true;
+            prosedurpendaftaran: true;
+            tarifdanlayanan: true;
+          };
+        }>[]
+      | null,
+    loading: false,
+    async load() {
+      try {
+        this.loading = true;
+        const res = await (ApiFetch.api.kesehatan as any)[
+          "fasilitas-kesehatan"
+        ]["find-many"].get();
+
+        if (res.status === 200) {
+          this.data = res.data?.data ?? [];
+        } else {
+          toast.error("Gagal memuat data fasilitas kesehatan");
+        }
+
+        return res;
+      } catch (err) {
+        toast.error("Terjadi error saat load data");
+        console.error("LOAD ERROR:", err);
+        throw err;
+      } finally {
+        this.loading = false;
+      }
+    },
+  },
+  findUnique: {
+    data: null as Prisma.FasilitasKesehatanGetPayload<{
+      include: {
+        informasiumum: true;
+        layananunggulan: true;
+        dokterdantenagamedis: true;
+        fasilitaspendukung: true;
+        prosedurpendaftaran: true;
+        tarifdanlayanan: true;
+      };
+    }> | null,
+    loading: false,
+    async load(id: string) {
+      const res = await fetch(`/api/kesehatan/fasilitas-kesehatan/${id}`);
+      if (res.ok) {
+        const data = await res.json();
+        fasilitasKesehatanState.findUnique.data = data.data ?? null;
+      } else {
+        toast.error("Gagal load data fasilitas kesehatan");
+      }
+    },
+  },
+  edit: {
+    id: "",
+    form: { ...defaultForm },
+    loading: false,
+    async load(id: string) {
+      const res = await fetch(`/api/kesehatan/fasilitas-kesehatan/${id}`);
+      if (!res.ok) {
+        toast.error("Gagal load data fasilitas kesehatan");
+        return;
+      }
+
+      const result = await res.json();
+      const data = result.data;
+
+      fasilitasKesehatanState.edit.id = data.id;
+      fasilitasKesehatanState.edit.form = {
+        name: data.name,
+        informasiUmum: {
+          fasilitas: data.informasiumum.fasilitas,
+          alamat: data.informasiumum.alamat,
+          jamOperasional: data.informasiumum.jamOperasional,
+        },
+        layananUnggulan: {
+          content: data.layananunggulan.content,
+        },
+        dokterdanTenagaMedis: {
+          name: data.dokterdantenagamedis.name,
+          specialist: data.dokterdantenagamedis.specialist,
+          jadwal: data.dokterdantenagamedis.jadwal,
+        },
+        fasilitasPendukung: {
+          content: data.fasilitaspendukung.content,
+        },
+        prosedurPendaftaran: {
+          content: data.prosedurpendaftaran.content,
+        },
+        tarifDanLayanan: {
+          layanan: data.tarifdanlayanan.layanan,
+          tarif: data.tarifdanlayanan.tarif,
+        },
+      };
+    },
+    async submit() {
+      const cek = templateForm.safeParse(fasilitasKesehatanState.edit.form);
+      if (!cek.success) {
+        const errMsg = cek.error.issues
+          .map((v) => `${v.path.join(".")}: ${v.message}`)
+          .join("\n");
+        toast.error(errMsg);
+        return null;
+      }
+
+      try {
+        fasilitasKesehatanState.edit.loading = true;
+        const payload = {
+          name: fasilitasKesehatanState.edit.form.name,
+          informasiUmum: {
+            fasilitas:
+              fasilitasKesehatanState.edit.form.informasiUmum.fasilitas,
+            alamat: fasilitasKesehatanState.edit.form.informasiUmum.alamat,
+            jamOperasional:
+              fasilitasKesehatanState.edit.form.informasiUmum.jamOperasional,
+          },
+          layananUnggulan: {
+            content: fasilitasKesehatanState.edit.form.layananUnggulan.content,
+          },
+          dokterdanTenagaMedis: {
+            name: fasilitasKesehatanState.edit.form.dokterdanTenagaMedis.name,
+            specialist:
+              fasilitasKesehatanState.edit.form.dokterdanTenagaMedis.specialist,
+            jadwal:
+              fasilitasKesehatanState.edit.form.dokterdanTenagaMedis.jadwal,
+          },
+          fasilitasPendukung: {
+            content:
+              fasilitasKesehatanState.edit.form.fasilitasPendukung.content,
+          },
+          prosedurPendaftaran: {
+            content:
+              fasilitasKesehatanState.edit.form.prosedurPendaftaran.content,
+          },
+          tarifDanLayanan: {
+            layanan: fasilitasKesehatanState.edit.form.tarifDanLayanan.layanan,
+            tarif: fasilitasKesehatanState.edit.form.tarifDanLayanan.tarif,
+          },
+        };
+
+        const res = await fetch(
+          `/api/kesehatan/fasilitas-kesehatan/${fasilitasKesehatanState.edit.id}`,
+          {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          }
         );
-        if (res.status === 200) {
-            informasiumum.findMany.load();
-            return toast.success("success create");
+
+        if (!res.ok) {
+          const error = await res.json();
+          throw new Error(error.message || "Update gagal");
         }
-        return toast.error("failed create");
-      } catch (error) {
-        console.log((error as Error).message);
-      } finally {
-        informasiumum.create.loading = false;
-      }
-    },
-  },
-  findMany: {
-    data: null as
-      | Prisma.InformasiUmumGetPayload<{ omit: { isActive: true } }>[]
-      | null,
-    async load() {
-      const res = await ApiFetch.api.kesehatan.
-      informasiumum["find-many"].get();
-      if (res.status === 200) {
-        informasiumum.findMany.data = res.data?.data ?? [];
-      }
-    },
-  },
-});
-/* ======================================================================= */
 
-/* Layanan Unggulan */
-const templateLayananUnggulanForm = z.object({
-  content: z.string().min(3, "Content minimal 3 karakter"),
-});
-
-type LayananUnggulan = Prisma.LayananUnggulanGetPayload<{
-  select: {
-    content: true;
-  };
-}>;
-
-const layananunggulan = proxy({
-  create: {
-    form: {} as LayananUnggulan,
-    loading: false,
-    async create() {
-      const cek = templateLayananUnggulanForm.safeParse(layananunggulan.create.form);
-      if (!cek.success) {
-        const err = `[${cek.error.issues
-          .map((v) => `${v.path.join(".")}`)
-          .join("\n")}] required`;
-        return toast.error(err);
-      }
-      try {
-        layananunggulan.create.loading = true;
-        const res = await ApiFetch.api.kesehatan.layananunggulan["create"].post(
-          layananunggulan.create.form
+        toast.success("Berhasil update fasilitas kesehatan");
+        await fasilitasKesehatanState.findMany.load();
+        return true;
+      } catch (err) {
+        toast.error(
+          err instanceof Error ? err.message : "Terjadi kesalahan saat update"
         );
-        if (res.status === 200) {
-          layananunggulan.findMany.load();
-          return toast.success("success create");
-        }
-        return toast.error("failed create");
-      } catch (error) {
-        console.log((error as Error).message);
+        return false;
       } finally {
-        layananunggulan.create.loading = false;
+        fasilitasKesehatanState.edit.loading = false;
       }
     },
-  },
-  findMany: {
-    data: null as
-      | Prisma.LayananUnggulanGetPayload<{ omit: { isActive: true } }>[]
-      | null,
-    async load() {
-      const res = await ApiFetch.api.kesehatan.
-      layananunggulan["find-many"].get();
-      if (res.status === 200) {
-        layananunggulan.findMany.data = res.data?.data ?? [];
-      }
+    resetForm() {
+      fasilitasKesehatanState.edit.id = "";
+      fasilitasKesehatanState.edit.form = { ...defaultForm };
     },
   },
-})
-/* ======================================================================= */  
-
-/* Dokter dan Tenaga Medis */
-const templateDokterdanTenagaMedis = z.object({
-  name: z.string().min(3, "Name minimal 3 karakter"),
-  specialist: z.string().min(3, "Specialist minimal 3 karakter"),
-  jadwal: z.string().min(3, "Jadwal minimal 3 karakter"),
-})
-
-type DokterdanTenagaMedis = Prisma.DokterdanTenagaMedisGetPayload<{
-  select: {
-    name: true;
-    specialist: true;
-    jadwal: true;
-  };
-}>;
-
-const dokterdantenagamedis = proxy({
-  create: {
-    form: {} as DokterdanTenagaMedis,
+  delete: {
     loading: false,
-    async create() {
-      const cek = templateDokterdanTenagaMedis.safeParse(dokterdantenagamedis.create.form);
-      if (!cek.success) {
-        const err = `[${cek.error.issues
-          .map((v) => `${v.path.join(".")}`)
-          .join("\n")}] required`;
-        return toast.error(err);
-      }
+    async byId(id: string){
       try {
-        dokterdantenagamedis.create.loading = true;
-        const res = await ApiFetch.api.kesehatan.dokterdantenagamedis["create"].post(dokterdantenagamedis.create.form);
-        if (res.status === 200) {
-          dokterdantenagamedis.findMany.load();
-          return toast.success("success create");
+        fasilitasKesehatanState.delete.loading = true;
+        const res = await fetch(`/api/kesehatan/fasilitas-kesehatan/del/${id}`, {
+          method: "DELETE",
+        });
+
+        const result = await res.json();
+        if (res.ok && result.success) {
+          toast.success("Fasilitas kesehatan berhasil dihapus");
+          await fasilitasKesehatanState.findMany.load();
+        } else {
+          toast.error(result.message || "Gagal menghapus");
         }
-        return toast.error("failed create");
-      } catch (error) {
-        console.log((error as Error).message);
+      } catch {
+        toast.error("Terjadi kesalahan saat menghapus");
       } finally {
-        dokterdantenagamedis.create.loading = false;
+        fasilitasKesehatanState.delete.loading = false;
       }
-    },
+    }
   },
-  findMany: {
-    data: null as
-      | Prisma.DokterdanTenagaMedisGetPayload<{ omit: { isActive: true } }>[]
-      | null,
-    async load() {
-      const res = await ApiFetch.api.kesehatan.dokterdantenagamedis["find-many"].get();
-      if (res.status === 200) {
-        dokterdantenagamedis.findMany.data = res.data?.data ?? [];
-      }
-    },
-  },
-})
-/* ======================================================================= */  
+});
 
-/* Fasilitas Pendukung */
-const templateFasilitasPendukung = z.object({
-  content: z.string().min(3, "Content minimal 3 karakter"),
-})
-
-type FasilitasPendukung = Prisma.FasilitasPendukungGetPayload<{
-  select: {
-    content: true;
-  };
-}>;
-
-const fasilitaspendukung = proxy({
-  create: {
-    form: {} as FasilitasPendukung,
-    loading: false,
-    async create() {
-      const cek = templateFasilitasPendukung.safeParse(fasilitaspendukung.create.form);
-      if (!cek.success) {
-        const err = `[${cek.error.issues
-          .map((v) => `${v.path.join(".")}`)
-          .join("\n")}] required`;
-        return toast.error(err);
-      }
-      try {
-        fasilitaspendukung.create.loading = true;
-        const res = await ApiFetch.api.kesehatan.fasilitaspendukung["create"].post(fasilitaspendukung.create.form);
-        if (res.status === 200) {
-          fasilitaspendukung.findMany.load();
-          return toast.success("success create");
-        }
-        return toast.error("failed create");
-      } catch (error) {
-        console.log((error as Error).message);
-      } finally {
-        fasilitaspendukung.create.loading = false;
-      }
-    },
-  },
-  findMany: {
-    data: null as
-      | Prisma.FasilitasPendukungGetPayload<{ omit: { isActive: true } }>[]
-      | null,
-    async load() {
-      const res = await ApiFetch.api.kesehatan.
-      fasilitaspendukung["find-many"].get();
-      if (res.status === 200) {
-        fasilitaspendukung.findMany.data = res.data?.data ?? [];
-      }
-    },
-  },
-})
-/* ======================================================================= */  
-
-/* Tarif dan Layanan */
-const templateTarifDanLayanan = z.object({
-  layanan: z.string().min(3, "Layanan minimal 3 karakter"),
-  tarif: z.string().min(3, "Tarif minimal 3 karakter"),
-})
-
-const tarifdanlayanan = proxy({
-  create: {
-    form: {} as Prisma.TarifDanLayananGetPayload<{ select: { layanan: true; tarif: true } }>,
-    loading: false,
-    async create() {
-      const cek = templateTarifDanLayanan.safeParse(tarifdanlayanan.create.form);
-      if (!cek.success) {
-        const err = `[${cek.error.issues
-          .map((v) => `${v.path.join(".")}`)
-          .join("\n")}] required`;
-        return toast.error(err);
-      }
-      try {
-        tarifdanlayanan.create.loading = true;
-        const res = await ApiFetch.api.kesehatan.tarifdanlayanan["create"].post(tarifdanlayanan.create.form);
-        if (res.status === 200) {
-          tarifdanlayanan.findMany.load();
-          return toast.success("success create");
-        }
-        return toast.error("failed create");
-      } catch (error) {
-        console.log((error as Error).message);
-      } finally {
-        tarifdanlayanan.create.loading = false;
-      }
-    },
-  },
-  findMany: {
-    data: null as
-      | Prisma.TarifDanLayananGetPayload<{ omit: { isActive: true } }>[]
-      | null,
-    async load() {
-      const res = await ApiFetch.api.kesehatan.
-      tarifdanlayanan["find-many"].get();
-      if (res.status === 200) {
-        tarifdanlayanan.findMany.data = res.data?.data ?? [];
-      }
-    },
-  },
-})
-/* ======================================================================= */  
-
-/* Prosedur Pendaftaran */
-const templateProsedurPendaftaran = z.object({
-  content: z.string().min(3, "Content minimal 3 karakter"),
-})
-
-const prosedurpendaftaran = proxy({
-  create: {
-    form: {} as Prisma.ProsedurPendaftaranGetPayload<{ select: { content: true } }>,
-    loading: false,
-    async create() {
-      const cek = templateProsedurPendaftaran.safeParse(prosedurpendaftaran.create.form);
-      if (!cek.success) {
-        const err = `[${cek.error.issues
-          .map((v) => `${v.path.join(".")}`)
-          .join("\n")}] required`;
-        return toast.error(err);
-      }
-      try {
-        prosedurpendaftaran.create.loading = true;
-        const res = await ApiFetch.api.kesehatan.prosedurpendaftaran["create"].post(prosedurpendaftaran.create.form);
-        if (res.status === 200) {
-          prosedurpendaftaran.findMany.load();
-          return toast.success("success create"); 
-        }
-        return toast.error("failed create");
-      } catch (error) {
-        console.log((error as Error).message);
-      } finally {
-        prosedurpendaftaran.create.loading = false;
-      }
-    },
-  },
-  findMany: {
-    data: null as
-      | Prisma.ProsedurPendaftaranGetPayload<{ omit: { isActive: true } }>[]
-      | null,
-    async load() {
-      const res = await ApiFetch.api.kesehatan.
-      prosedurpendaftaran["find-many"].get();
-      if (res.status === 200) {
-        prosedurpendaftaran.findMany.data = res.data?.data ?? [];
-      }
-    },
-  },
-})
-
-const stateFasilitasKesehatan = proxy({
-  informasiumum,
-  layananunggulan,
-  dokterdantenagamedis,
-  fasilitaspendukung,
-  tarifdanlayanan,
-  prosedurpendaftaran
-})
-
-export default stateFasilitasKesehatan
+export default fasilitasKesehatanState;

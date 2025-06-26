@@ -70,6 +70,12 @@ model FileStorage {
   ProfileDesaImage         ProfileDesaImage[]
   ProfilePPID              ProfilePPID[]
   ProfilPerbekel           ProfilPerbekel[]
+  Puskesmas                Puskesmas[]
+  ProgramKesehatan         ProgramKesehatan[]
+  PenangananDarurat        PenangananDarurat[]
+  KontakDarurat KontakDarurat[]
+
+  InfoWabahPenyakit InfoWabahPenyakit[]
 }
 
 //========================================= MENU PPID ========================================= //
@@ -471,12 +477,18 @@ model FasilitasKesehatan {
   updatedAt            DateTime               @updatedAt
   deletedAt            DateTime               @default(now())
   isActive             Boolean                @default(true)
-  InformasiUmum        InformasiUmum[]
-  LayananUnggulan      LayananUnggulan[]
-  DokterdanTenagaMedis DokterdanTenagaMedis[]
-  FasilitasPendukung   FasilitasPendukung[]
-  ProsedurPendaftaran  ProsedurPendaftaran[]
-  TarifDanLayanan      TarifDanLayanan[]
+  informasiumum        InformasiUmum @relation(fields: [informasiUmumId], references: [id])
+  informasiUmumId      String
+  layananunggulan      LayananUnggulan @relation(fields: [layananUnggulanId], references: [id])
+  layananUnggulanId    String
+  dokterdantenagamedis DokterdanTenagaMedis @relation(fields: [dokterdanTenagaMedisId], references: [id])
+  dokterdanTenagaMedisId String
+  fasilitaspendukung   FasilitasPendukung @relation(fields: [fasilitasPendukungId], references: [id])
+  fasilitasPendukungId String
+  prosedurpendaftaran  ProsedurPendaftaran @relation(fields: [prosedurPendaftaranId], references: [id])
+  prosedurPendaftaranId String
+  tarifdanlayanan      TarifDanLayanan @relation(fields: [tarifDanLayananId], references: [id])
+  tarifDanLayananId String
 }
 
 model InformasiUmum {
@@ -484,10 +496,10 @@ model InformasiUmum {
   fasilitas          String
   alamat             String
   jamOperasional     String
-  FasilitasKesehatan FasilitasKesehatan[]
   createdAt          DateTime             @default(now())
   updatedAt          DateTime             @updatedAt
   deletedAt          DateTime             @default(now())
+  FasilitasKesehatan FasilitasKesehatan[]
   isActive           Boolean              @default(true)
 }
 
@@ -618,7 +630,8 @@ model PendaftaranJadwalKegiatan {
 
 // ========================================= PERSENTASE KELAHIRAN & KEMATIAN ========================================= //
 model DataKematian_Kelahiran {
-  id             Int      @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
+  uuid      String   @default(cuid()) @unique
   tahun          String
   kematianKasar  String
   kematianBayi   String
@@ -632,6 +645,7 @@ model DataKematian_Kelahiran {
 // ========================================= GRAFIK KEPUASAN ========================================= //
 model GrafikKepuasan {
   id        Int      @id @default(autoincrement())
+  uuid      String   @default(cuid()) @unique
   label     String
   jumlah    String
   createdAt DateTime @default(now())
@@ -716,6 +730,101 @@ model Posyandu {
   name      String
   nomor     String
   deskripsi String
+  image     FileStorage @relation(fields: [imageId], references: [id])
+  imageId   String
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  deletedAt DateTime    @default(now())
+  isActive  Boolean     @default(true)
+}
+
+// ========================================= PUSKESMAS ========================================= //
+model Puskesmas {
+  id        String          @id @default(cuid())
+  name      String
+  alamat    String
+  jam       JamOperasional  @relation(fields: [jamId], references: [id])
+  jamId     String
+  image     FileStorage     @relation(fields: [imageId], references: [id])
+  imageId   String
+  kontak    KontakPuskesmas @relation(fields: [kontakId], references: [id])
+  kontakId  String
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+  deletedAt DateTime        @default(now())
+  isActive  Boolean         @default(true)
+}
+
+model JamOperasional {
+  id        String      @id @default(cuid())
+  workDays  String
+  weekDays  String
+  holiday   String
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  deletedAt DateTime    @default(now())
+  isActive  Boolean     @default(true)
+  Puskesmas Puskesmas[]
+}
+
+model KontakPuskesmas {
+  id              String      @id @default(cuid())
+  kontakPuskesmas String
+  email           String
+  facebook        String
+  kontakUGD       String
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  deletedAt       DateTime    @default(now())
+  isActive        Boolean     @default(true)
+  Puskesmas       Puskesmas[]
+}
+
+// ========================================= PROGRAM KESSEHATAN ========================================= //
+model ProgramKesehatan {
+  id               String      @id @default(cuid())
+  name             String
+  deskripsiSingkat String
+  deskripsi        String
+  image            FileStorage @relation(fields: [imageId], references: [id])
+  imageId          String
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+  deletedAt        DateTime    @default(now())
+  isActive         Boolean     @default(true)
+}
+
+// ========================================= PENANGANAN DARURAT ========================================= //
+model PenangananDarurat {
+  id        String      @id @default(cuid())
+  name      String
+  deskripsi String
+  image     FileStorage @relation(fields: [imageId], references: [id])
+  imageId   String
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  deletedAt DateTime    @default(now())
+  isActive  Boolean     @default(true)
+}
+
+// ========================================= KONTAK DARURAT ========================================= //
+model KontakDarurat {
+  id        String      @id @default(cuid())
+  name      String
+  deskripsi String
+  image     FileStorage @relation(fields: [imageId], references: [id])
+  imageId   String
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  deletedAt DateTime    @default(now())
+  isActive  Boolean     @default(true)
+}
+// ========================================= INFO WABAH PENYAKIT ========================================= //
+model InfoWabahPenyakit {
+  id        String      @id @default(cuid())
+  name      String
+  deskripsiSingkat String
+  deskripsiLengkap String
   image     FileStorage @relation(fields: [imageId], references: [id])
   imageId   String
   createdAt DateTime    @default(now())

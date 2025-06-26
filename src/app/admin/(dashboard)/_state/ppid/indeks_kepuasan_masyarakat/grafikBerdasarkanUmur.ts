@@ -5,10 +5,10 @@ import { proxy } from "valtio";
 import { z } from "zod";
 
 const templateGrafikUmur = z.object({
-  remaja: z.string().min(2, "Data remaja harus diisi"),
-  dewasa: z.string().min(2, "Data dewasa harus diisi"),
-  orangtua: z.string().min(2, "Data orangtua harus diisi"),
-  lansia: z.string().min(2, "Data lansia harus diisi"),
+  remaja: z.string().min(1, "Data remaja harus diisi"),
+  dewasa: z.string().min(1, "Data dewasa harus diisi"),
+  orangtua: z.string().min(1, "Data orangtua harus diisi"),
+  lansia: z.string().min(1, "Data lansia harus diisi"),
 });
 
 type GrafikUmur = Prisma.GrafikBerdasarkanUmurGetPayload<{

@@ -42,6 +42,7 @@ function VisiMisiPPIDEdit() {
       visiMisi.findById.data.misi = draftMisi;
       visiMisi.update.save(visiMisi.findById.data);
     }
+    router.push('/admin/ppid/visi-misi-ppid')
   };
 
   return (

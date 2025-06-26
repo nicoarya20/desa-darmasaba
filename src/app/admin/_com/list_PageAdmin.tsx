@@ -11,41 +11,26 @@ export const navBar = [
       },
       {
         id: "Landing_Page_2",
-        name: "Penghargaan",
-        path: "/admin/landing-page/penghargaan"
-      },
-      {
-        id: "Landing_Page_3",
-        name: "Layanan",
-        path: "/admin/landing-page/layanan"
-      },
-      {
-        id: "Landing_Page_4",
-        name: "Potensi",
-        path: "/admin/landing-page/potensi"
-      },
-      {
-        id: "Landing_Page_5",
         name: "Desa Anti Korupsi",
         path: "/admin/landing-page/desa-anti-korupsi"
       },
       {
-        id: "Landing_Page_6",
+        id: "Landing_Page_3",
         name: "Indeks Kepuasan Masyarakat",
         path: "/admin/landing-page/indeks-kepuasan-masyarakat"
       },
       {
-        id: "Landing_Page_7",
+        id: "Landing_Page_4",
         name: "SDGs Desa",
         path: "/admin/landing-page/sdgs-desa"
       },
       {
-        id: "Landing_Page_8",
+        id: "Landing_Page_5",
         name: "APBDes",
         path: "/admin/landing-page/apbdes"
       },
       {
-        id: "Landing_Page_9",
+        id: "Landing_Page_6",
         name: "Prestasi Desa",
         path: "/admin/landing-page/prestasi-desa"
       }
@@ -156,7 +141,7 @@ export const navBar = [
       {
         id: "Kesehatan_2",
         name: "Data Kesehatan Warga",
-        path: "/admin/kesehatan/data-kesehatan-warga"
+        path: "/admin/kesehatan/data-kesehatan-warga/persentase_data_kelahiran_kematian"
       },
       {
         id: "Kesehatan_3",

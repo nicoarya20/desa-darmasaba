@@ -6,7 +6,7 @@ import { z } from "zod";
 
 const templateGrafikKepuasan = z.object({
   label: z.string().min(2, "Label harus diisi"),
-  jumlah: z.string().min(2, "Jumlah harus diisi"),
+  jumlah: z.string().min(1, "Jumlah harus diisi"),
 });
 
 type GrafikKepuasan = Prisma.GrafikKepuasanGetPayload<{
@@ -31,24 +31,30 @@ const grafikkepuasan = proxy({
         const err = `[${cek.error.issues
           .map((v) => `${v.path.join(".")}`)
           .join("\n")}] required`;
-        return toast.error(err);
+        toast.error(err);
+        return null;
       }
       try {
         grafikkepuasan.create.loading = true;
-        const res = await ApiFetch.api.kesehatan.grafikkepuasan["create"].post(
-          grafikkepuasan.create.form
-        );
+        const res = await ApiFetch.api.kesehatan.grafikkepuasan["create"].post(grafikkepuasan.create.form);
+    
         if (res.status === 200) {
-          grafikkepuasan.create.form = {
-            label: "",
-            jumlah: ""
-          };
-          grafikkepuasan.findMany.load();
-          return toast.success("success create");
+          const uuid = res.data?.data?.uuid;
+          if (uuid) {
+            toast.success("Success create");
+            grafikkepuasan.create.form = {
+              label: "",
+              jumlah: "",
+            };
+            grafikkepuasan.findMany.load();
+            return uuid;
+          }
         }
-        return toast.error("failed create");
+        toast.error("failed create");
+        return null;
       } catch (error) {
         console.log((error as Error).message);
+        return null;
       } finally {
         grafikkepuasan.create.loading = false;
       }
@@ -67,10 +73,110 @@ const grafikkepuasan = proxy({
       }
     },
   },
+  findUnique: {
+    data: null as Prisma.GrafikKepuasanGetPayload<{
+       omit: { isActive: true } 
+      }> | null,
+    async load(uuid: string) {
+      try {
+        const res = await fetch(`/api/kesehatan/grafikkepuasan/${uuid}`);
+        if (res.ok) {
+          const data = await res.json();
+          grafikkepuasan.findUnique.data = data.data ?? null;
+        } else {
+          console.error("Failed to fetch grafikkepuasan:", res.statusText);
+          grafikkepuasan.findUnique.data = null;
+        }
+      } catch (error) {
+        console.error("Error fetching grafikkepuasan:", error);
+        grafikkepuasan.findUnique.data = null;
+      }
+    },
+  },
+  update: {
+    uuid: "",
+    form: {...defaultForm},
+    loading: false,
+    async byId() {
+    },
+  async submit() {
+    const uuid = this.uuid;
+    if (!uuid) {
+      toast.warn("ID tidak valid");
+      return null;
+    }
+    const cek = templateGrafikKepuasan.safeParse(grafikkepuasan.update.form);
+    if (!cek.success) {
+      const err = `[${cek.error.issues
+        .map((v) => `${v.path.join(".")}`)
+        .join("\n")}] required`;
+      return toast.error(err);
+    }
+    try {
+      this.loading = true;
+      const response = await fetch(`/api/kesehatan/grafikkepuasan/${uuid}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(this.form),
+      });
+      const result = await response.json();
+
+      if (!response.ok || !result?.success) {
+        throw new Error(result?.message || "Gagal update data");
+      }
+
+      toast.success("Berhasil update data!");
+
+      // ✅ Optional: refresh list kalau kamu langsung ke halaman list
+      await grafikkepuasan.findMany.load();
+
+      return result.data;
+    } catch (error) {
+      console.error("Error update data:", error);
+      toast.error("Gagal update data grafik kepuasan");
+    } finally {
+      this.loading = false;
+    }
+  },
+},
+delete: {
+  loading: false,
+  async byId(uuid: string) {
+    if (!uuid) {
+      return toast.warn("ID tidak valid");
+    }
+    try {
+      grafikkepuasan.delete.loading = true;
+
+      const response = await fetch(`/api/kesehatan/grafikkepuasan/del/${uuid}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result?.success) {
+        toast.success(
+          result.message || "Grafik kepuasan berhasil dihapus"
+        );
+        await grafikkepuasan.findMany.load(); // refresh list
+      } else {
+        toast.error(
+          result?.message || "Gagal menghapus grafik kepuasan"
+        );
+      }
+    } catch (error) {
+      console.error("Gagal delete:", error);
+      toast.error("Terjadi kesalahan saat menghapus grafik kepuasan");
+    } finally {
+      grafikkepuasan.delete.loading = false;
+    }
+  }
+}
 });
 
-const stategrafikKepuasan = proxy({
-  grafikkepuasan,
-});
-
-export default stategrafikKepuasan;
+export default grafikkepuasan;
