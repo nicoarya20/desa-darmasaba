@@ -9,7 +9,7 @@ const PersentaseKelahiranKematian = new Elysia({
   prefix: "/persentasekelahiran",
   tags: ["Data Kesehatan/Persentase Kelahiran Kematian"],
 })
-  .get("/:id", async (context) => {
+  .get("/:uuid", async (context) => {
     const response = await persentaseKelahiranKematianFindUnique(new Request(context.request))
     return response
   })
@@ -22,9 +22,9 @@ const PersentaseKelahiranKematian = new Elysia({
       kelahiranKasar: t.String(),
     }),
   })
-  .put("/:id", persentaseKelahiranKematianUpdate, {
+  .put("/:uuid", persentaseKelahiranKematianUpdate, {
     params: t.Object({
-      id: t.String(),
+      uuid: t.String(),
     }),
     body: t.Object({
       tahun: t.String(),
@@ -33,9 +33,9 @@ const PersentaseKelahiranKematian = new Elysia({
       kelahiranKasar: t.String(),
     }),
   })
-  .delete("/del/:id", persentaseKelahiranKematianDelete, {
+  .delete("/del/:uuid", persentaseKelahiranKematianDelete, {
     params: t.Object({
-      id: t.String(),
+      uuid: t.String(),
     }),
   })
 export default PersentaseKelahiranKematian;

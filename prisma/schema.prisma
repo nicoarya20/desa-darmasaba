@@ -630,7 +630,8 @@ model PendaftaranJadwalKegiatan {
 
 // ========================================= PERSENTASE KELAHIRAN & KEMATIAN ========================================= //
 model DataKematian_Kelahiran {
-  id             String   @id @default(cuid())
+  id        Int      @id @default(autoincrement())
+  uuid      String   @default(cuid()) @unique
   tahun          String
   kematianKasar  String
   kematianBayi   String
@@ -643,7 +644,8 @@ model DataKematian_Kelahiran {
 
 // ========================================= GRAFIK KEPUASAN ========================================= //
 model GrafikKepuasan {
-  id        String   @id @default(cuid())
+  id        Int      @id @default(autoincrement())
+  uuid      String   @default(cuid()) @unique
   label     String
   jumlah    String
   createdAt DateTime @default(now())

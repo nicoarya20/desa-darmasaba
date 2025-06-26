@@ -2,12 +2,12 @@ import prisma from "@/lib/prisma";
 import { Context } from "elysia";
 
 export default async function persentaseKelahiranKematianUpdate(context: Context) {
-    const id = context.params?.id;
+    const uuid = context.params?.uuid;
 
-    if (!id) {
+    if (!uuid) {
         return {
             success: false,
-            message: "Id tidak ditemukan",
+            message: "ID tidak ditemukan",
         }
     }
 
@@ -20,7 +20,7 @@ export default async function persentaseKelahiranKematianUpdate(context: Context
 
     const existing = await prisma.dataKematian_Kelahiran.findUnique({
         where: {
-            id: id,
+            uuid: uuid,
         },
     })
 
@@ -32,7 +32,7 @@ export default async function persentaseKelahiranKematianUpdate(context: Context
     }
 
     const updated = await prisma.dataKematian_Kelahiran.update({
-        where: { id },
+        where: { uuid },
         data: {
             tahun,
             kematianKasar,

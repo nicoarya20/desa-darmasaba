@@ -45,7 +45,7 @@ function GrafikHasilKepuasanMasyarakat() {
     setMounted(true);
     if (stateGrafikKepuasan.findMany.data) {
       setChartData(stateGrafikKepuasan.findMany.data.map((item) => ({
-        id: item.id,
+        id: item.uuid,
         label: item.label,
         jumlah: Number(item.jumlah),
       })));
@@ -82,11 +82,11 @@ function GrafikHasilKepuasanMasyarakat() {
             </TableThead>
             <TableTbody>
               {stateGrafikKepuasan.findMany.data?.map((item) => (
-                <TableTr key={item.id}>
+                <TableTr key={item.uuid}>
                   <TableTd>{item.label}</TableTd>
                   <TableTd>{item.jumlah}</TableTd>
                   <TableTd>
-                    <Button color='green' onClick={() => router.push(`/admin/kesehatan/data-kesehatan-warga/grafik_hasil_kepuasan/${item.id}`)}>
+                    <Button color='green' onClick={() => router.push(`/admin/kesehatan/data-kesehatan-warga/grafik_hasil_kepuasan/${item.uuid}`)}>
                       <IconEdit size={20} />
                     </Button>
                   </TableTd>
@@ -95,7 +95,7 @@ function GrafikHasilKepuasanMasyarakat() {
                       color='red'
                       disabled={stateGrafikKepuasan.delete.loading}
                       onClick={() => {
-                        setSelectedId(item.id)
+                        setSelectedId(item.uuid)
                         setModalHapus(true)
                       }}>
                       <IconTrash size={20} />

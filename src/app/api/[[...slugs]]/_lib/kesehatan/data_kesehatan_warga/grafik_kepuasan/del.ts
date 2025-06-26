@@ -2,9 +2,9 @@ import prisma from "@/lib/prisma";
 import { Context } from "elysia";
 
 export default async function grafikKepuasanDelete(context: Context) {
-    const id = context.params?.id;
+    const uuid = context.params?.uuid;
     
-    if (!id) {
+    if (!uuid) {
         return {
             success: false,
             message: "ID tidak ditemukan"
@@ -13,7 +13,7 @@ export default async function grafikKepuasanDelete(context: Context) {
 
     const existing = await prisma.grafikKepuasan.findUnique({
         where: {
-            id: id,
+            uuid: uuid,
         },
     })
 
@@ -25,7 +25,7 @@ export default async function grafikKepuasanDelete(context: Context) {
     }
 
     const deleted = await prisma.grafikKepuasan.delete({
-        where: { id },
+        where: { uuid },
     })
 
     return {

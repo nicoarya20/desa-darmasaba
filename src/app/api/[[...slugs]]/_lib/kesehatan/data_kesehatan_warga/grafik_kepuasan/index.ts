@@ -9,7 +9,7 @@ const GrafikKepuasan = new Elysia({
     prefix: "/grafikkepuasan",
     tags: ["Data Kesehatan/Grafik Kepuasan"]
 })
-    .get("/:id", async (context) => {
+    .get("/:uuid", async (context) => {
         const response = await grafikKepuasanFindUnique(new Request(context.request));
         return response;
     })
@@ -20,18 +20,18 @@ const GrafikKepuasan = new Elysia({
             jumlah: t.String(),
         }),
     })
-    .put("/:id", grafikKepuasanUpdate, {
+    .put("/:uuid", grafikKepuasanUpdate, {
         params: t.Object({
-            id: t.String(),
+            uuid: t.String(),
         }),
         body: t.Object({
             label: t.String(),
             jumlah: t.String(),
         }),
     })
-    .delete("/del/:id", grafikKepuasanDelete, {
+    .delete("/del/:uuid", grafikKepuasanDelete, {
         params: t.Object({
-            id: t.String(),
+            uuid: t.String(),
         }),
     })
 export default GrafikKepuasan

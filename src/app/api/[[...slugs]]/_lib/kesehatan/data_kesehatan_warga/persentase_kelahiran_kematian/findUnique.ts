@@ -3,9 +3,9 @@ import prisma from "@/lib/prisma";
 export default async function persentaseKelahiranKematianFindUnique(request: Request) {
     const url = new URL(request.url);
     const pathSegments = url.pathname.split('/');
-    const id = pathSegments[pathSegments.length - 1];
+    const uuid = pathSegments[pathSegments.length - 1];
 
-    if (!id) {
+    if (!uuid) {
         return Response.json({
             success: false,
             message: "ID tidak boleh kosong",
@@ -13,7 +13,7 @@ export default async function persentaseKelahiranKematianFindUnique(request: Req
     }
 
     try {
-        if (typeof id !== 'string') {
+        if (typeof uuid !== 'string') {
             return Response.json({
                 success: false,
                 message: "ID tidak valid",
@@ -21,7 +21,7 @@ export default async function persentaseKelahiranKematianFindUnique(request: Req
         }
 
         const data = await prisma.dataKematian_Kelahiran.findUnique({
-            where: { id },
+            where: { uuid },
         });
 
         if (!data) {

@@ -17,7 +17,7 @@ export default async function grafikKepuasanCreate(context: Context) {
       jumlah: body.jumlah,
     },
     select: {
-      id: true,
+      uuid: true,
       label: true,
       jumlah: true,
     }

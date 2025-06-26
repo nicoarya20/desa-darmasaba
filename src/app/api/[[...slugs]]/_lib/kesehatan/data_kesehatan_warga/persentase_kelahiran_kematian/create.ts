@@ -22,7 +22,7 @@ export default async function persentaseKelahiranKematianCreate(context: Context
             kelahiranKasar: body.kelahiranKasar,
         },
         select: {
-            id: true,
+            uuid: true,
             tahun: true,
             kematianKasar: true,
             kematianBayi: true,

@@ -2,18 +2,18 @@ import prisma from "@/lib/prisma";
 import { Context } from "elysia";
 
 export default async function persentaseKelahiranKematianDelete(context: Context) {
-    const id = context.params?.id;
+    const uuid = context.params?.uuid;
 
-    if (!id) {
+    if (!uuid) {
         return {
             success: false,
-            message: "Id tidak ditemukan",
+            message: "ID tidak ditemukan",
         }
     }
 
     const existing = await prisma.dataKematian_Kelahiran.findUnique({
         where: {
-            id: id,
+            uuid: uuid,
         },
     })
 
@@ -25,7 +25,7 @@ export default async function persentaseKelahiranKematianDelete(context: Context
     }
 
     const deleted = await prisma.dataKematian_Kelahiran.delete({
-        where: { id },
+        where: { uuid },
     })
 
     return {

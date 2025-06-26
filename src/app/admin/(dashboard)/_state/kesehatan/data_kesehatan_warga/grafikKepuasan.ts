@@ -39,15 +39,15 @@ const grafikkepuasan = proxy({
         const res = await ApiFetch.api.kesehatan.grafikkepuasan["create"].post(grafikkepuasan.create.form);
     
         if (res.status === 200) {
-          const id = res.data?.data?.id;
-          if (id) {
+          const uuid = res.data?.data?.uuid;
+          if (uuid) {
             toast.success("Success create");
             grafikkepuasan.create.form = {
               label: "",
               jumlah: "",
             };
             grafikkepuasan.findMany.load();
-            return id;
+            return uuid;
           }
         }
         toast.error("failed create");
@@ -77,9 +77,9 @@ const grafikkepuasan = proxy({
     data: null as Prisma.GrafikKepuasanGetPayload<{
        omit: { isActive: true } 
       }> | null,
-    async load(id: string) {
+    async load(uuid: string) {
       try {
-        const res = await fetch(`/api/kesehatan/grafikkepuasan/${id}`);
+        const res = await fetch(`/api/kesehatan/grafikkepuasan/${uuid}`);
         if (res.ok) {
           const data = await res.json();
           grafikkepuasan.findUnique.data = data.data ?? null;
@@ -94,14 +94,14 @@ const grafikkepuasan = proxy({
     },
   },
   update: {
-    id: "",
+    uuid: "",
     form: {...defaultForm},
     loading: false,
     async byId() {
     },
   async submit() {
-    const id = this.id;
-    if (!id) {
+    const uuid = this.uuid;
+    if (!uuid) {
       toast.warn("ID tidak valid");
       return null;
     }
@@ -114,7 +114,7 @@ const grafikkepuasan = proxy({
     }
     try {
       this.loading = true;
-      const response = await fetch(`/api/kesehatan/grafikkepuasan/${id}`, {
+      const response = await fetch(`/api/kesehatan/grafikkepuasan/${uuid}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -143,14 +143,14 @@ const grafikkepuasan = proxy({
 },
 delete: {
   loading: false,
-  async byId(id: string) {
-    if (!id) {
+  async byId(uuid: string) {
+    if (!uuid) {
       return toast.warn("ID tidak valid");
     }
     try {
       grafikkepuasan.delete.loading = true;
 
-      const response = await fetch(`/api/kesehatan/grafikkepuasan/del/${id}`, {
+      const response = await fetch(`/api/kesehatan/grafikkepuasan/del/${uuid}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
