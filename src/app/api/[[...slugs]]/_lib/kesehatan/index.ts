@@ -15,6 +15,7 @@ import ProgramKesehatan from "./program-kesehatan";
 import Puskesmas from "./puskesmas";
 import FasilitasKesehatan from "./data_kesehatan_warga/fasilitas_kesehatan";
 import JadwalKegiatan from "./data_kesehatan_warga/jadwal_kegiatan";
+import ArtikelKesehatan from "./data_kesehatan_warga/artikel_kesehatan";
 
 
 const Kesehatan = new Elysia({
@@ -37,4 +38,5 @@ const Kesehatan = new Elysia({
 .use(InfoWabahPenyakit)
 .use(FasilitasKesehatan)
 .use(JadwalKegiatan)
+.use(ArtikelKesehatan);
 export default Kesehatan;

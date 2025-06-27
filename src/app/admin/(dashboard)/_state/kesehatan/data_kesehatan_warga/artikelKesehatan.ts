@@ -1,339 +1,306 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiFetch from "@/lib/api-fetch";
 import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
 import { proxy } from "valtio";
 import { z } from "zod";
 
-/* Introduction */
-const templateIntroduction = z.object({
-  content: z.string().min(3, "Content minimal 3 karakter"),
-})
+const templateForm = z.object({
+  title: z.string().min(1, "Judul harus diisi"),
+  content: z.string().min(1, "Content harus diisi"),
+  introduction: z.object({
+    content: z.string().min(1, "Content harus diisi"),
+  }),
+  symptom: z.object({
+    title: z.string().min(1, "Judul harus diisi"),
+    content: z.string().min(1, "Content harus diisi"),
+  }),
+  prevention: z.object({
+    title: z.string().min(1, "Judul harus diisi"),
+    content: z.string().min(1, "Content harus diisi"),
+  }),
+  firstAid: z.object({
+    title: z.string().min(1, "Judul harus diisi"),
+    content: z.string().min(1, "Content harus diisi"),
+  }),
+  mythVsFact: z.object({
+    title: z.string().min(1, "Judul harus diisi"),
+    mitos: z.string().min(1, "Mitos harus diisi"),
+    fakta: z.string().min(1, "Fakta harus diisi"),
+  }),
+  doctorSign: z.object({
+    content: z.string().min(1, "Content harus diisi"),
+  }),
+});
 
-type Introduction = Prisma.IntroductionGetPayload<{
-  select: {
-    content: true;
-  };
-}>;
+const defaultForm = {
+  title: "",
+  content: "",
+  introduction: {
+    content: "",
+  },
+  symptom: {
+    title: "",
+    content: "",
+  },
+  prevention: {
+    title: "",
+    content: "",
+  },
+  firstAid: {
+    title: "",
+    content: "",
+  },
+  mythVsFact: {
+    title: "",
+    mitos: "",
+    fakta: "",
+  },
+  doctorSign: {
+    content: "",
+  },
+};
 
-const introduction = proxy({
+const artikelKesehatanState = proxy({
   create: {
-    form: {} as Introduction,
+    form: { ...defaultForm },
     loading: false,
-    async create() {
-      const cek = templateIntroduction.safeParse(introduction.create.form);
+    async submit() {
+      const cek = templateForm.safeParse(this.form);
       if (!cek.success) {
-        const err = `[${cek.error.issues
-          .map((v) => `${v.path.join(".")}`)
-          .join("\n")}] required`;
-        return toast.error(err);
+        const errMsg = cek.error.issues
+          .map((v) => `${v.path.join(".")}: ${v.message}`)
+          .join("\n");
+        toast.error(errMsg);
+        return null;
       }
+
       try {
-        introduction.create.loading = true;
-        const res = await ApiFetch.api.kesehatan.introduction["create"].post(introduction.create.form);
+        this.loading = true;
+        const payload = { ...this.form };
+
+        const res = await (ApiFetch.api.kesehatan as any)[
+          "artikel-kesehatan"
+        ].create.post(payload);
+
         if (res.status === 200) {
-          introduction.findMany.load();
-          return toast.success("success create");
+          toast.success("Berhasil menambahkan artikel kesehatan");
+          this.resetForm();
+          await artikelKesehatanState.findMany.load();
+          return res.data;
         }
-        return toast.error("failed create");
-      } catch (error) {
-        console.log((error as Error).message);
+      } catch (err: any) {
+        const msg = err?.message || "Terjadi kesalahan saat mengirim data";
+        toast.error(msg);
+        console.error("SUBMIT ERROR:", err);
+        return null;
       } finally {
-        introduction.create.loading = false;
+        this.loading = false;
       }
     },
-  },
-  findMany: {
-      data: null as
-      | Prisma.IntroductionGetPayload<{ omit: { isActive: true } }>[]
-      | null,
-      async load() {
-        const res = await ApiFetch.api.kesehatan.introduction["find-many"].get();
-        if (res.status === 200) {
-          introduction.findMany.data = res.data?.data ?? [];
-        }
-      }
-  }
-});
-/* ======================================================================= */
-
-/* symptom */
-const templateSymptom = z.object({
-  title: z.string().min(3, "Title minimal 3 karakter"),
-  content: z.string().min(3, "Content minimal 3 karakter"),
-})
-
-type Symptom = Prisma.SymptomGetPayload<{
-  select: {
-    title: true;
-    content: true;
-  };
-}>;
-
-const symptom = proxy({
-  create: {
-    form: {} as Symptom,
-    loading: false,
-    async create() {
-      const cek = templateSymptom.safeParse(symptom.create.form);
-      if (!cek.success) {
-        const err = `[${cek.error.issues
-          .map((v) => `${v.path.join(".")}`)
-          .join("\n")}] required`;
-        return toast.error(err);
-      }
-      try {
-        symptom.create.loading = true;
-        const res = await ApiFetch.api.kesehatan.symptom["create"].post(symptom.create.form);
-        if (res.status === 200) {
-          symptom.findMany.load();
-          return toast.success("success create");
-        }
-        return toast.error("failed create");
-      } catch (error) {
-        console.log((error as Error).message);
-      } finally {
-        symptom.create.loading = false;
-      }
+    resetForm() {
+      this.form = { ...defaultForm };
     },
   },
   findMany: {
     data: null as
-      | Prisma.SymptomGetPayload<{ omit: { isActive: true } }>[]
+      | Prisma.ArtikelKesehatanGetPayload<{
+          include: {
+            introduction: true;
+            symptom: true;
+            prevention: true;
+            firstaid: true;
+            mythvsfact: true;
+            doctorsign: true;
+          };
+        }>[]
       | null,
+    loading: false,
     async load() {
-      const res = await ApiFetch.api.kesehatan.symptom["find-many"].get();
-      if (res.status === 200) {
-        symptom.findMany.data = res.data?.data ?? [];
+      try {
+        this.loading = true;
+        const res = await (ApiFetch.api.kesehatan as any)["artikel-kesehatan"][
+          "find-many"
+        ].get();
+
+        if (res.status === 200) {
+          this.data = res.data?.data ?? [];
+        } else {
+          toast.error("Gagal memuat data artikel kesehatan");
+        }
+
+        return res;
+      } catch (err) {
+        toast.error("Terjadi error saat load data");
+        console.error("LOAD ERROR:", err);
+        throw err;
+      } finally {
+        this.loading = false;
+      }
+    },
+  },
+  findUnique: {
+    data: null as Prisma.ArtikelKesehatanGetPayload<{
+      include: {
+        introduction: true;
+        symptom: true;
+        prevention: true;
+        firstaid: true;
+        mythvsfact: true;
+        doctorsign: true;
+      };
+    }> | null,
+    loading: false,
+    async load(id: string) {
+      const res = await fetch(`/api/kesehatan/artikel-kesehatan/${id}`);
+      if (res.ok) {
+        const data = await res.json();
+        artikelKesehatanState.findUnique.data = data.data ?? null;
+      } else {
+        toast.error("Gagal load data artikel kesehatan");
+      }
+    },
+  },
+  edit: {
+    id: "",
+    form: { ...defaultForm },
+    loading: false,
+    async load(id: string) {
+      const res = await fetch(`/api/kesehatan/artikel-kesehatan/${id}`);
+      if (!res.ok) {
+        toast.error("Gagal load data artikel kesehatan");
+        return;
+      }
+
+      const result = await res.json();
+      const data = result.data;
+
+      artikelKesehatanState.edit.id = data.id;
+      artikelKesehatanState.edit.form = {
+        title: data.title,
+        content: data.content,
+        introduction: {
+          content: data.introduction.content,
+        },
+        symptom: {
+          title: data.symptom.title,
+          content: data.symptom.content,
+        },
+        prevention: {
+          title: data.prevention.title,
+          content: data.prevention.content,
+        },
+        firstAid: {
+          title: data.firstaid.title,
+          content: data.firstaid.content,
+        },
+        mythVsFact: {
+          title: data.mythvsfact.title,
+          mitos: data.mythvsfact.mitos,
+          fakta: data.mythvsfact.fakta,
+        },
+        doctorSign: {
+          content: data.doctorsign.content,
+        },
+      };
+    },
+    async submit() {
+      const cek = templateForm.safeParse(artikelKesehatanState.edit.form);
+      if (!cek.success) {
+        const errMsg = cek.error.issues
+          .map((v) => `${v.path.join(".")}: ${v.message}`)
+          .join("\n");
+        toast.error(errMsg);
+        return null;
+      }
+
+      try {
+        artikelKesehatanState.edit.loading = true;
+        const payload = {
+          title: artikelKesehatanState.edit.form.title,
+          content: artikelKesehatanState.edit.form.content,
+          introduction: {
+            content: artikelKesehatanState.edit.form.introduction.content,
+          },
+          symptom: {
+            title: artikelKesehatanState.edit.form.symptom.title,
+            content: artikelKesehatanState.edit.form.symptom.content,
+          },
+          prevention: {
+            title: artikelKesehatanState.edit.form.prevention.title,
+            content: artikelKesehatanState.edit.form.prevention.content,
+          },
+          firstAid: {
+            title: artikelKesehatanState.edit.form.firstAid.title,
+            content: artikelKesehatanState.edit.form.firstAid.content,
+          },
+          mythVsFact: {
+            title: artikelKesehatanState.edit.form.mythVsFact.title,
+            mitos: artikelKesehatanState.edit.form.mythVsFact.mitos,
+            fakta: artikelKesehatanState.edit.form.mythVsFact.fakta,
+          },
+          doctorSign: {
+            content: artikelKesehatanState.edit.form.doctorSign.content,
+          },
+        };
+
+        const res = await fetch(
+          `/api/kesehatan/artikel-kesehatan/${artikelKesehatanState.edit.id}`,
+          {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          }
+        );
+
+        if (!res.ok) {
+          const error = await res.json();
+          throw new Error(error.message || "Update gagal");
+        }
+
+        toast.success("Berhasil update artikel kesehatan");
+        await artikelKesehatanState.findMany.load();
+        return true;
+      } catch (err) {
+        toast.error(
+          err instanceof Error ? err.message : "Terjadi kesalahan saat update"
+        );
+        return false;
+      } finally {
+        artikelKesehatanState.edit.loading = false;
+      }
+    },
+    resetForm() {
+      artikelKesehatanState.edit.id = "";
+      artikelKesehatanState.edit.form = { ...defaultForm };
+    },
+  },
+  delete: {
+    loading: false,
+    async byId(id: string) {
+      try {
+        artikelKesehatanState.delete.loading = true;
+        const res = await fetch(
+          `/api/kesehatan/artikel-kesehatan/del/${id}`,
+          {
+            method: "DELETE",
+          }
+        );
+
+        const result = await res.json();
+        if (res.ok && result.success) {
+          toast.success("Artikel kesehatan berhasil dihapus");
+          await artikelKesehatanState.findMany.load();
+        } else {
+          toast.error(result.message || "Gagal menghapus");
+        }
+      } catch {
+        toast.error("Terjadi kesalahan saat menghapus");
+      } finally {
+        artikelKesehatanState.delete.loading = false;
       }
     },
   },
 });
-/* ======================================================================= */
 
-/* Prevention */
-const templatePrevention = z.object({
-  title: z.string().min(3, "Title minimal 3 karakter"),
-  content: z.string().min(3, "Content minimal 3 karakter"),
-})
-
-type Prevention = Prisma.PreventionGetPayload<{
-  select: {
-    title: true;
-    content: true;
-  };
-}>;
-
-const prevention = proxy({
-  create: {
-    form: {} as Prevention,
-    loading: false,
-    async create() {
-      const cek = templatePrevention.safeParse(prevention.create.form);
-      if (!cek.success) {
-        const err = `[${cek.error.issues
-          .map((v) => `${v.path.join(".")}`)
-          .join("\n")}] required`;
-        return toast.error(err);
-      }
-      try {
-        prevention.create.loading = true;
-        const res = await ApiFetch.api.kesehatan.prevention["create"].post(prevention.create.form);
-        if (res.status === 200) {
-          prevention.findMany.load();
-          return toast.success("success create");
-        }
-        return toast.error("failed create");
-      } catch (error) {
-        console.log((error as Error).message);
-      } finally {
-        prevention.create.loading = false;
-      }
-    },
-  },
-  findMany: {
-    data: null as
-      | Prisma.PreventionGetPayload<{ omit: { isActive: true } }>[]
-      | null,
-    async load() {
-      const res = await ApiFetch.api.kesehatan.prevention["find-many"].get();
-      if (res.status === 200) {
-        prevention.findMany.data = res.data?.data ?? [];
-      }
-    },
-  },
-});
-/* ======================================================================= */
-
-/* First Aid */
-const templateFirstAid = z.object({
-  title: z.string().min(3, "Title minimal 3 karakter"),
-  content: z.string().min(3, "Content minimal 3 karakter"),
-})
-
-type FirstAid = Prisma.FirstAidGetPayload<{
-  select: {
-    title: true;
-    content: true;
-  };
-}>;
-
-const firstAid = proxy({
-    create: {
-        form: {} as FirstAid,
-        loading: false,
-        async create() {
-            const cek = templateFirstAid.safeParse(firstAid.create.form);
-            if (!cek.success) {
-                const err = `[${cek.error.issues
-                    .map((v) => `${v.path.join(".")}`)
-                    .join("\n")}] required`;
-                return toast.error(err);
-            }
-            try {
-                firstAid.create.loading = true;
-                const res = await ApiFetch.api.kesehatan.firstaid["create"].post(firstAid.create.form);
-                if (res.status === 200) {
-                    firstAid.findMany.load();
-                    return toast.success("success create");
-                }
-                return toast.error("failed create");
-            } catch (error) {
-                console.log((error as Error).message);
-            } finally {
-                firstAid.create.loading = false;
-            }
-        },
-    },
-    findMany: {
-        data: null as
-            | Prisma.FirstAidGetPayload<{ omit: { isActive: true } }>[]
-            | null,
-        async load() {
-            const res = await ApiFetch.api.kesehatan.firstaid["find-many"].get();
-            if (res.status === 200) {
-                firstAid.findMany.data = res.data?.data ?? [];
-            }
-        },
-    },
-})
-/* ======================================================================= */
-
-/* Myth vs Fact */
-const templateMythFact = z.object({
-  title: z.string().min(3, "Title minimal 3 karakter"),
-  mitos: z.string().min(3, "Mitos minimal 3 karakter"),
-  fakta: z.string().min(3, "Fakta minimal 3 karakter"),
-})
-
-type MythFact = Prisma.MythVsFactGetPayload<{
-  select: {
-    title: true;
-    mitos: true;
-    fakta: true;
-  };
-}>;
-
-const mythFact = proxy({
-  create: {
-    form: {} as MythFact,
-    loading: false,
-    async create() {
-      const cek = templateMythFact.safeParse(mythFact.create.form);
-      if (!cek.success) {
-        const err = `[${cek.error.issues
-          .map((v) => `${v.path.join(".")}`)
-          .join("\n")}] required`;
-        return toast.error(err);
-      }
-      try {
-        mythFact.create.loading = true;
-        const res = await ApiFetch.api.kesehatan.mythvsfact["create"].post(mythFact.create.form);
-        if (res.status === 200) {
-          mythFact.findMany.load();
-          return toast.success("success create");
-        }
-        return toast.error("failed create");
-      } catch (error) {
-        console.log((error as Error).message);
-      } finally {
-        mythFact.create.loading = false;
-      }
-    },
-  },
-  findMany: {
-    data: null as
-      | Prisma.MythVsFactGetPayload<{ omit: { isActive: true } }>[]
-      | null,
-    async load() {
-      const res = await ApiFetch.api.kesehatan.mythvsfact["find-many"].get();
-      if (res.status === 200) {
-        mythFact.findMany.data = res.data?.data ?? [];
-      }
-    },
-  },
-})
-/* ======================================================================= */
-
-/* Doctor Sign */
-const templateDoctorSign = z.object({
-  content: z.string().min(3, "Content minimal 3 karakter"),
-})
-
-type DoctorSign = Prisma.DoctorSignGetPayload<{
-    select: {
-        content: true
-    }
-}>
-
-const doctorSign = proxy({
-    create: {
-        form: {} as DoctorSign,
-        loading: false,
-        async create() {
-            const cek = templateDoctorSign.safeParse(doctorSign.create.form);
-            if (!cek.success) {
-                const err = `[${cek.error.issues
-                    .map((v) => `${v.path.join(".")}`)
-                    .join("\n")}] required`;
-                return toast.error(err);
-            }
-            try {
-                doctorSign.create.loading = true;
-                const res = await ApiFetch.api.kesehatan.doctor_sign["create"].post(doctorSign.create.form);
-                if (res.status === 200) {
-                    doctorSign.findMany.load();
-                    return toast.success("success create");
-                }
-                return toast.error("failed create");
-            } catch (error) {
-                console.log((error as Error).message);
-            } finally {
-                doctorSign.create.loading = false;
-            }
-        },
-    },
-    findMany: {
-        data: null as
-            | Prisma.DoctorSignGetPayload<{ omit: { isActive: true } }>[]
-            | null,
-        async load() {
-            const res = await ApiFetch.api.kesehatan.doctor_sign["find-many"].get();
-            if (res.status === 200) {
-                doctorSign.findMany.data = res.data?.data ?? [];
-            }
-        },
-    },
-})
-
-/* ======================================================================= */
-
-const stateArtikelKesehatan = proxy({
-  introduction,
-  symptom,
-  prevention,
-  firstAid,
-  mythFact,
-  doctorSign
-})
-
-export default stateArtikelKesehatan
+export default artikelKesehatanState;
