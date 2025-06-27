@@ -12,16 +12,16 @@ import { useProxy } from 'valtio/utils';
 
 function EditPersentaseDataKelahiranKematian() {
   const router = useRouter()
-  const params = useParams() as { uuid: string }
+  const params = useParams() as { id: string }
   const statePresentase = useProxy(persentasekelahiran)
 
-  const id = params.uuid
+  const id = params.id
 
   // Load data saat komponen mount
 // Di file page.tsx, ubah useEffect-nya menjadi:
 useEffect(() => {
   if (!id) return;
-  statePresentase.update.uuid = id;
+  statePresentase.update.id = id;
   statePresentase.findUnique.load(id)
     .then(() => {
       const data = statePresentase.findUnique.data;
@@ -43,7 +43,7 @@ useEffect(() => {
 // Di handleSubmit, ubah menjadi:
 const handleSubmit = async () => {
   try {
-    statePresentase.update.uuid = id;
+    statePresentase.update.id = id;
     await statePresentase.update.submit();
     toast.success('Data berhasil diperbarui');
     router.push('/admin/kesehatan/data-kesehatan-warga/persentase_data_kelahiran_kematian');

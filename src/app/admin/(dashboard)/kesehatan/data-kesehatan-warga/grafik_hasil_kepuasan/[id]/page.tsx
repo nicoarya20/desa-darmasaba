@@ -11,15 +11,15 @@ import { useProxy } from 'valtio/utils';
 
 function EditGrafikHasilKepuasan() {
   const router = useRouter()
-  const params = useParams() as { uuid: string }
+  const params = useParams() as { id: string }
   const stateGrafikKepuasan = useProxy(grafikkepuasan)
 
-  const uuid = params.uuid
+  const id = params.id
 
   // Load data saat komponen mount
   useEffect(() => {
-    if (uuid) {
-      stateGrafikKepuasan.findUnique.load(uuid).then(() => {
+    if (id) {
+      stateGrafikKepuasan.findUnique.load(id).then(() => {
         const data = stateGrafikKepuasan.findUnique.data
         if (data) {
           stateGrafikKepuasan.update.form = {
@@ -29,11 +29,11 @@ function EditGrafikHasilKepuasan() {
         }
       })
     }
-  }, [uuid])
+  }, [id])
 
   const handleSubmit = async () => {
     // Set the ID before submitting
-    stateGrafikKepuasan.update.uuid = uuid;
+    stateGrafikKepuasan.update.id = id;
     await stateGrafikKepuasan.update.submit();
     router.push('/admin/kesehatan/data-kesehatan-warga/grafik_hasil_kepuasan')
   }

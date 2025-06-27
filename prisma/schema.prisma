@@ -650,8 +650,7 @@ model PendaftaranJadwalKegiatan {
 
 // ========================================= PERSENTASE KELAHIRAN & KEMATIAN ========================================= //
 model DataKematian_Kelahiran {
-  id             Int      @id @default(autoincrement())
-  uuid           String   @unique @default(cuid())
+  id             String   @unique @default(cuid())
   tahun          String
   kematianKasar  String
   kematianBayi   String
@@ -664,8 +663,7 @@ model DataKematian_Kelahiran {
 
 // ========================================= GRAFIK KEPUASAN ========================================= //
 model GrafikKepuasan {
-  id        Int      @id @default(autoincrement())
-  uuid      String   @unique @default(cuid())
+  id        String   @unique @default(cuid())
   label     String
   jumlah    String
   createdAt DateTime @default(now())
@@ -708,13 +706,13 @@ model Introduction {
 }
 
 model Symptom {
-  id        String   @id @default(cuid())
-  title     String
-  content   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  deletedAt DateTime @default(now())
-  isActive  Boolean  @default(true)
+  id               String             @id @default(cuid())
+  title            String
+  content          String
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  deletedAt        DateTime           @default(now())
+  isActive         Boolean            @default(true)
   ArtikelKesehatan ArtikelKesehatan[]
 }
 

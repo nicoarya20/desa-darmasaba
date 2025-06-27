@@ -3,9 +3,9 @@ import prisma from "@/lib/prisma";
 export default async function grafikKepuasanFindUnique(request: Request) {
     const url = new URL(request.url);
     const pathSegments = url.pathname.split('/');
-    const uuid = pathSegments[pathSegments.length - 1];
+    const id = pathSegments[pathSegments.length - 1];
 
-    if (!uuid) {
+    if (!id) {
         return Response.json({
             success: false,
             message: 'ID tidak boleh kosong',
@@ -13,7 +13,7 @@ export default async function grafikKepuasanFindUnique(request: Request) {
     }
 
     try {
-        if (typeof uuid !== 'string') {
+        if (typeof id !== 'string') {
             return Response.json({
                 success: false,
                 message: "ID tidak valid",
@@ -21,7 +21,7 @@ export default async function grafikKepuasanFindUnique(request: Request) {
         }
 
         const data = await prisma.grafikKepuasan.findUnique({
-            where: { uuid },
+            where: { id },
         });
 
         if (!data) {
