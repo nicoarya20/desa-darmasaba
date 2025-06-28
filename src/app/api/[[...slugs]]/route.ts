@@ -17,6 +17,7 @@ import { uplCsvSingle } from "./_lib/upl-csv-single";
 import uplImg from "./_lib/upl-img";
 import { uplImgSingle } from "./_lib/upl-img-single";
 import FileStorage from "./_lib/fileStorage";
+import Keamanan from "./_lib/keamanan";
 
 
 const ROOT = process.cwd();
@@ -75,6 +76,7 @@ const ApiServer = new Elysia()
   .use(PPID)
   .use(Kesehatan)
   .use(Desa)
+  .use(Keamanan)
   .use(Utils)
   .use(FileStorage)
   .onError(({ code }) => {

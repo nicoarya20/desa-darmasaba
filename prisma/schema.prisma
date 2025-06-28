@@ -76,6 +76,8 @@ model FileStorage {
   KontakDarurat            KontakDarurat[]
 
   InfoWabahPenyakit InfoWabahPenyakit[]
+
+  KeamananLingkungan KeamananLingkungan[]
 }
 
 //========================================= MENU PPID ========================================= //
@@ -872,4 +874,46 @@ model InfoWabahPenyakit {
   updatedAt        DateTime    @updatedAt
   deletedAt        DateTime    @default(now())
   isActive         Boolean     @default(true)
+}
+
+// ========================================= MENU KEAMANAN ========================================= //
+// ========================================= KEAMANAN LINGKUNGAN ========================================= //
+model KeamananLingkungan {
+  id        String       @id @default(cuid())
+  name      String       @db.Text
+  deskripsi String       @db.Text
+  image     FileStorage? @relation(fields: [imageId], references: [id])
+  imageId   String?
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  deletedAt DateTime     @default(now())
+  isActive  Boolean      @default(true)
+}
+// ========================================= POLSEK TERDEKAT ========================================= //
+model PolsekTerdekat {
+  id              String   @id @default(uuid())
+  nama            String
+  jarakKeDesa     String
+  alamat          String
+  nomorTelepon    String
+  jamOperasional  String
+  embedMapUrl     String
+  namaTempatMaps  String
+  alamatMaps      String
+  linkPetunjukArah String
+  layananPolsek LayananPolsek @relation(fields: [layananPolsekId], references: [id])
+  layananPolsekId String
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  deletedAt DateTime     @default(now())
+  isActive  Boolean      @default(true)
+}
+model LayananPolsek {
+  id              String        @id @default(uuid())
+  nama            String        // contoh: "Pelayanan SKCK", "Laporan Kriminal"
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  deletedAt DateTime     @default(now())
+  isActive  Boolean      @default(true)
+  PolsekTerdekat PolsekTerdekat[]
 }
