@@ -78,6 +78,10 @@ model FileStorage {
   InfoWabahPenyakit InfoWabahPenyakit[]
 
   KeamananLingkungan KeamananLingkungan[]
+
+  MenuTipsKeamanan MenuTipsKeamanan[]
+
+  Pelapor Pelapor[]
 }
 
 //========================================= MENU PPID ========================================= //
@@ -889,31 +893,138 @@ model KeamananLingkungan {
   deletedAt DateTime     @default(now())
   isActive  Boolean      @default(true)
 }
+
 // ========================================= POLSEK TERDEKAT ========================================= //
 model PolsekTerdekat {
-  id              String   @id @default(uuid())
-  nama            String
-  jarakKeDesa     String
-  alamat          String
-  nomorTelepon    String
-  jamOperasional  String
-  embedMapUrl     String
-  namaTempatMaps  String
-  alamatMaps      String
+  id               String        @id @default(uuid())
+  nama             String
+  jarakKeDesa      String
+  alamat           String
+  nomorTelepon     String
+  jamOperasional   String
+  embedMapUrl      String
+  namaTempatMaps   String
+  alamatMaps       String
   linkPetunjukArah String
-  layananPolsek LayananPolsek @relation(fields: [layananPolsekId], references: [id])
-  layananPolsekId String
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
-  deletedAt DateTime     @default(now())
-  isActive  Boolean      @default(true)
+  layananPolsek    LayananPolsek @relation(fields: [layananPolsekId], references: [id])
+  layananPolsekId  String
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  deletedAt        DateTime      @default(now())
+  isActive         Boolean       @default(true)
 }
+
 model LayananPolsek {
-  id              String        @id @default(uuid())
-  nama            String        // contoh: "Pelayanan SKCK", "Laporan Kriminal"
+  id             String           @id @default(uuid())
+  nama           String // contoh: "Pelayanan SKCK", "Laporan Kriminal"
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  deletedAt      DateTime         @default(now())
+  isActive       Boolean          @default(true)
+  PolsekTerdekat PolsekTerdekat[]
+}
+
+// ========================================= KONTAK DARURAT ========================================= //
+model KontakDaruratKeamanan {
+  id        String   @id @default(cuid())
+  nama      String // contoh: "Polisi", "Ambulans", "Pemadam Kebakaran"
+  kontak    String // contoh: "081xxxxxxxxxx"
+  icon      String? // opsional, untuk simpan nama icon-nya jika mau
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive  Boolean  @default(true)
+}
+
+// ========================================= PENCEGAHAN KRIMINALITAS ========================================= //
+model PencegahanKriminalitas {
+  id                String          @id @default(cuid())
+  programKeamanan   ProgramKeamanan @relation(fields: [programKeamananId], references: [id])
+  programKeamananId String
+  tipsKeamanan      TipsKeamanan    @relation(fields: [tipsKeamananId], references: [id])
+  tipsKeamananId    String
+  videoKeamanan     VideoKeamanan   @relation(fields: [videoKeamananId], references: [id])
+  videoKeamananId   String
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  deletedAt         DateTime        @default(now())
+  isActive          Boolean         @default(true)
+}
+
+model ProgramKeamanan {
+  id                     String                   @id @default(cuid())
+  nama                   String // contoh: "Ronda Malam"
+  deskripsi              String? // jika mau tambahkan info detail
+  slug                   String                   @unique
+  createdAt              DateTime                 @default(now())
+  updatedAt              DateTime                 @updatedAt
+  PencegahanKriminalitas PencegahanKriminalitas[]
+}
+
+model TipsKeamanan {
+  id                     String                   @id @default(cuid())
+  judul                  String
+  konten                 String
+  slug                   String
+  createdAt              DateTime                 @default(now())
+  updatedAt              DateTime                 @updatedAt
+  PencegahanKriminalitas PencegahanKriminalitas[]
+}
+
+model VideoKeamanan {
+  id                     String                   @id @default(cuid())
+  judul                  String
+  deskripsi              String?
+  videoUrl               String // link youtube atau embed url
+  slug                   String
+  createdAt              DateTime                 @default(now())
+  updatedAt              DateTime                 @updatedAt
+  PencegahanKriminalitas PencegahanKriminalitas[]
+}
+
+// ========================================= LAPORAN PUBLIK ========================================= //
+model LaporanPublik {
+  id             String       @id @default(cuid())
+  judul          String
+  lokasi         String
+  tanggalWaktu   DateTime
+  status         StatusLaporan
+  penanganan     PenangananLaporanPublik[]
+  kronologi      String?      // Optional, bisa diisi detail kronologi
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+}
+
+model PenangananLaporanPublik {
+  id              String           @id @default(cuid())
+  laporanId       String
+  deskripsi       String
+  laporan         LaporanPublik @relation(fields: [laporanId], references: [id], onDelete: Cascade)
+}
+
+enum StatusLaporan {
+  SELESAI
+  PROSES
+  GAGAL
+}
+
+model Pelapor {
+  id             String       @id @default(cuid())
+  nama           String
+  alamat         String
+  nomorTelepon   String
+  image FileStorage @relation(fields: [imageId], references: [id])
+  imageId String
+}
+// ========================================= TIPS KEAMANAN ========================================= //
+model MenuTipsKeamanan {
+  id        String       @id @default(cuid())
+  judul     String
+  deskripsi String
+  image     FileStorage? @relation(fields: [imageId], references: [id])
+  imageId   String?
   createdAt DateTime     @default(now())
   updatedAt DateTime     @updatedAt
   deletedAt DateTime     @default(now())
   isActive  Boolean      @default(true)
-  PolsekTerdekat PolsekTerdekat[]
 }
