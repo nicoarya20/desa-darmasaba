@@ -13,7 +13,7 @@ import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
 
 function PersentaseDataKelahiranKematian() {
   type PDKMGrafik = {
-    uuid: string;
+    id: string;
     tahun: string;
     kematianKasar: number;
     kematianBayi: number;
@@ -47,7 +47,7 @@ function PersentaseDataKelahiranKematian() {
     setMounted(true);
     if (statePersentase.findMany.data) {
       setChartData(statePersentase.findMany.data.map((item) => ({
-        uuid: item.uuid,
+        id: item.id,
         tahun: item.tahun,
         kematianKasar: Number(item.kematianKasar),
         kematianBayi: Number(item.kematianBayi),
@@ -88,13 +88,13 @@ function PersentaseDataKelahiranKematian() {
             </TableThead>
             <TableTbody>
               {statePersentase.findMany.data?.map((item) => (
-                <TableTr key={item.uuid}>
+                <TableTr key={item.id}>
                   <TableTd>{item.tahun}</TableTd>
                   <TableTd>{item.kematianKasar}</TableTd>
                   <TableTd>{item.kematianBayi}</TableTd>
                   <TableTd>{item.kelahiranKasar}</TableTd>
                   <TableTd>
-                    <Button color='green' onClick={() => router.push(`/admin/kesehatan/data-kesehatan-warga/persentase_data_kelahiran_kematian/${item.uuid}`)}>
+                    <Button color='green' onClick={() => router.push(`/admin/kesehatan/data-kesehatan-warga/persentase_data_kelahiran_kematian/${item.id}`)}>
                       <IconEdit size={20} />
                     </Button>
                   </TableTd>
@@ -103,7 +103,7 @@ function PersentaseDataKelahiranKematian() {
                       color='red'
                       disabled={statePersentase.delete.loading}
                       onClick={() => {
-                        setSelectedId(item.uuid)
+                        setSelectedId(item.id)
                         setModalHapus(true)
                       }}>
                       <IconTrash size={20} />

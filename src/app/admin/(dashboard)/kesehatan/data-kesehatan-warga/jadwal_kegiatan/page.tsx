@@ -1,192 +1,82 @@
 'use client'
-import stateJadwalKegiatan from '@/app/admin/(dashboard)/_state/kesehatan/data_kesehatan_warga/jadwalKegiatan';
-import { Box, Button, Paper, SimpleGrid, Skeleton, Stack, Text, Title } from '@mantine/core';
-import { useShallowEffect } from '@mantine/hooks';
-import { useProxy } from 'valtio/utils';
-import DeskripsiKegiatan from './deskripsi_kegiatan/page';
-import DokumenYangDiperlukan from './dokumen_yang_diperlukan/page';
-import InformasiKegiatan from './informasi_kegiatan/page';
-import LayananTersedia from './layanan_yang_tersedia/page';
-import Pendaftaran from './pendaftaran/page';
-import SyaratDanKetentuan from './syarat_dan_ketentuan/page';
 import colors from '@/con/colors';
+import { Box, Button, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr } from '@mantine/core';
+import { useShallowEffect } from '@mantine/hooks';
+import { IconDeviceImacCog, IconSearch } from '@tabler/icons-react';
+import { useRouter } from 'next/navigation';
+import { useProxy } from 'valtio/utils';
+import HeaderSearch from '../../../_com/header';
+import JudulList from '../../../_com/judulList';
+import jadwalKegiatanState from '../../../_state/kesehatan/data_kesehatan_warga/jadwalKegiatan';
 
 function JadwalKegiatan() {
-  const allState = useProxy(stateJadwalKegiatan)
-  const submitAllForms = () => {
-
-    if (allState.informasiKegiatan.create.form.name &&
-      allState.informasiKegiatan.create.form.tanggal &&
-      allState.informasiKegiatan.create.form.waktu &&
-      allState.informasiKegiatan.create.form.lokasi) {
-      allState.informasiKegiatan.create.create()
-    }
-    if (allState.deskripsiKegiatan.create.form.deskripsi) {
-      allState.deskripsiKegiatan.create.create();
-    }
-
-    if (allState.layanantersedia.create.form.content) {
-      allState.layanantersedia.create.create();
-    }
-
-    if (allState.syaratketentuan.create.form.content) {
-      allState.syaratketentuan.create.create();
-    }
-
-    if (allState.dokumenjadwalkegiatan.create.form.content) {
-      allState.dokumenjadwalkegiatan.create.create();
-    }
-
-    if (allState.pendaftaranjadwal.create.form.name &&
-      allState.pendaftaranjadwal.create.form.tanggal &&
-      allState.pendaftaranjadwal.create.form.namaOrangtua &&
-      allState.pendaftaranjadwal.create.form.nomor &&
-      allState.pendaftaranjadwal.create.form.alamat &&
-      allState.pendaftaranjadwal.create.form.catatan
-    ) {
-      allState.pendaftaranjadwal.create.create();
-    }
-  }
-
-
   return (
-    <Stack py={10}>
-      <SimpleGrid cols={{
-        base: 1, md: 2
-      }}>
-        <Box>
-          <Stack gap={"xs"}>
-            <Title order={4}>Tambah Jadwal Kegiatan</Title>
-            <InformasiKegiatan />
-            <DeskripsiKegiatan />
-            <LayananTersedia />
-            <SyaratDanKetentuan />
-            <DokumenYangDiperlukan />
-            <Pendaftaran />
-            <Button mt={10} onClick={submitAllForms}>
-              Submit
-            </Button>
-          </Stack>
-        </Box>
-
-        <Box>
-          <Stack gap={"xs"}>
-            <Title order={4}>Data Jadwal Kegiatan</Title>
-            <AllList />
-          </Stack>
-        </Box>
-      </SimpleGrid>
-    </Stack>
+    <Box>
+      <HeaderSearch
+        title='Jadwal Kegiatan'
+        placeholder='pencarian'
+        searchIcon={<IconSearch size={20} />}
+      />
+      <ListJadwalKegiatan/>
+    </Box>
   );
 }
 
-function AllList() {
-  const allList = useProxy(stateJadwalKegiatan)
+function ListJadwalKegiatan() {
+  const stateJadwalKegiatan = useProxy(jadwalKegiatanState)
+  const router = useRouter();
 
   useShallowEffect(() => {
-    allList.informasiKegiatan.findMany.load()
-    allList.deskripsiKegiatan.findMany.load()
-    allList.layanantersedia.findMany.load()
-    allList.syaratketentuan.findMany.load()
-    allList.dokumenjadwalkegiatan.findMany.load()
-    allList.pendaftaranjadwal.findMany.load()
+    stateJadwalKegiatan.findMany.load()
   }, [])
 
-  const isLoading = !allList.informasiKegiatan.findMany.data ||
-    !allList.deskripsiKegiatan.findMany.data ||
-    !allList.layanantersedia.findMany.data ||
-    !allList.syaratketentuan.findMany.data ||
-    !allList.dokumenjadwalkegiatan.findMany.data ||
-    !allList.pendaftaranjadwal.findMany.data
-
-  if (isLoading) {
+  if (!stateJadwalKegiatan.findMany.data) {
     return (
-      <Stack>
-        <Title order={4}>Informasi Kegiatan</Title>
-        {Array.from({ length: 10 }).map((_, k) => <Skeleton key={k} h={40} />)}
-      </Stack>
-    );
+      <Box py={10}>
+        <Skeleton h={500}/>
+      </Box>
+    )
   }
   return (
-    <Stack gap={"xs"}>
-
-      <Paper bg={colors['white-1']} p={'md'}>
-        <Title order={4}>Informasi Kegiatan</Title>
-        {allList.informasiKegiatan.findMany.data?.map((item) => {
-          return (
-            <Box key={item.id}>
-              <Text>{item.name}</Text>
-              <Text>{item.tanggal}</Text>
-              <Text>{item.waktu}</Text>
-              <Text>{item.lokasi}</Text>
-            </Box>
-          )
-        })}
-      </Paper>
-
-      <Paper bg={colors['white-1']} p={'md'}>
-
-        <Title order={4}>Deskripsi Kegiatan</Title>
-        {allList.deskripsiKegiatan.findMany.data?.map((item) => {
-          return (
-            <Box key={item.id}>
-              <Text dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
-            </Box>
-          )
-        })}
-      </Paper>
-
-      <Paper bg={colors['white-1']} p={'md'}>
-        <Title order={4}>Layanan Yang Tersedia</Title>
-        {allList.layanantersedia.findMany.data?.map((item) => {
-          return (
-            <Box key={item.id}>
-              <Text dangerouslySetInnerHTML={{ __html: item.content }} />
-            </Box>
-          )
-        })}
-      </Paper>
-
-      <Paper bg={colors['white-1']} p={'md'}>
-        <Title order={4}>Syarat dan Ketentuan</Title>
-        {allList.syaratketentuan.findMany.data?.map((item) => {
-          return (
-            <Box key={item.id}>
-              <Text dangerouslySetInnerHTML={{ __html: item.content }} />
-            </Box>
-          )
-        })}
-      </Paper>
-
-      <Paper bg={colors['white-1']} p={'md'}>
-        <Title order={4}>Dokumen Yang Diperlukan</Title>
-        {allList.dokumenjadwalkegiatan.findMany.data?.map((item) => {
-          return (
-            <Box key={item.id}>
-              <Text dangerouslySetInnerHTML={{ __html: item.content }} />
-            </Box>
-          )
-        })}
-      </Paper>
-
-      <Paper bg={colors['white-1']} p={'md'}>
-        <Title order={4}>Pendaftaran</Title>
-        {allList.pendaftaranjadwal.findMany.data?.map((item) => {
-          return (
-            <Box key={item.id}>
-              <Text>{item.name}</Text>
-              <Text>{item.tanggal}</Text>
-              <Text>{item.namaOrangtua}</Text>
-              <Text>{item.nomor}</Text>
-              <Text>{item.alamat}</Text>
-              <Text>{item.catatan}</Text>
-            </Box>
-          )
-        })}
-      </Paper>
-    </Stack>
+    <Box py={10}>
+    <Paper bg={colors['white-1']} p={'md'}>
+      <Stack>
+        <JudulList
+          title='List Jadwal Kegiatan'
+          href='/admin/kesehatan/data-kesehatan-warga/jadwal_kegiatan/create'
+        />
+        <Box style={{ overflowX: "auto" }}>
+          <Table striped withRowBorders withTableBorder style={{ minWidth: '700px' }}>
+            <TableThead>
+              <TableTr>
+                <TableTh>Nama</TableTh>
+                <TableTh>Tanggal</TableTh>
+                <TableTh>Waktu</TableTh>
+                <TableTh>Lokasi</TableTh>
+                <TableTh>Detail</TableTh>
+              </TableTr>
+            </TableThead>
+            <TableTbody>
+              {stateJadwalKegiatan.findMany.data?.map((item) => (
+                <TableTr key={item.id}>
+                  <TableTd>{item.informasijadwalkegiatan.name}</TableTd>
+                  <TableTd>{item.informasijadwalkegiatan.tanggal}</TableTd>
+                  <TableTd>{item.informasijadwalkegiatan.waktu}</TableTd>
+                  <TableTd>{item.informasijadwalkegiatan.lokasi}</TableTd>
+                  <TableTd>
+                    <Button onClick={() => router.push(`/admin/kesehatan/data-kesehatan-warga/jadwal_kegiatan/${item.id}`)}>
+                      <IconDeviceImacCog size={25} />
+                    </Button>
+                  </TableTd>
+                </TableTr>
+              ))}
+            </TableTbody>
+          </Table>
+        </Box>
+      </Stack>
+    </Paper>
+  </Box>
   )
 }
-
 
 export default JadwalKegiatan;

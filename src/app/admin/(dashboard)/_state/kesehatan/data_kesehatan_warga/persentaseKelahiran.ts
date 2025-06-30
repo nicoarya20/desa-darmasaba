@@ -45,12 +45,12 @@ const persentasekelahiran = proxy({
         );
 
         if (res.status === 200) {
-          const uuid = res.data?.data?.uuid;
-          if (uuid) {
+          const id = res.data?.data?.id;
+          if (id) {
             toast.success("Success create");
             persentasekelahiran.create.form = { ...defaultForm };
             persentasekelahiran.findMany.load();
-            return uuid;
+            return id;
           }
         }
         toast.error("failed create");
@@ -79,9 +79,9 @@ const persentasekelahiran = proxy({
     data: null as Prisma.DataKematian_KelahiranGetPayload<{
       omit: { isActive: true };
     }> | null,
-    async load(uuid: string) {
+    async load(id: string) {
       try {
-        const res = await fetch(`/api/kesehatan/persentasekelahiran/${uuid}`);
+        const res = await fetch(`/api/kesehatan/persentasekelahiran/${id}`);
         if (res.ok) {
           const data = await res.json();
           persentasekelahiran.findUnique.data = data.data ?? null;
@@ -97,13 +97,13 @@ const persentasekelahiran = proxy({
   },
 
 update: {
-  uuid: "",
+  id: "",
   form: { ...defaultForm },
   loading: false,
   async submit() {
-    const uuid = this.uuid;
-    if (!uuid) {
-      toast.warn("UUID tidak valid");
+    const id = this.id;
+    if (!id) {
+      toast.warn("ID tidak valid");
       return null;
     }
 
@@ -125,7 +125,7 @@ update: {
 
     try {
       this.loading = true;
-      const res = await fetch(`/api/kesehatan/persentasekelahiran/${uuid}`, {
+      const res = await fetch(`/api/kesehatan/persentasekelahiran/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -155,13 +155,13 @@ update: {
 
   delete: {
     loading: false,
-    async byId(uuid: string) {
-      if (!uuid) return toast.warn("UUID tidak valid");
+    async byId(id: string) {
+      if (!id) return toast.warn("ID tidak valid");
 
       try {
         persentasekelahiran.delete.loading = true;
 
-        const response = await fetch(`/api/kesehatan/persentasekelahiran/del/${uuid}`, {
+        const response = await fetch(`/api/kesehatan/persentasekelahiran/del/${id}`, {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
@@ -175,7 +175,7 @@ update: {
         } else {
           toast.error(result?.message || "Gagal menghapus persentase kelahiran");
         }
-      } catch (error) {
+      } catch (error) { 
         console.error("Gagal delete:", error);
         toast.error("Terjadi kesalahan saat menghapus persentase kelahiran");
       } finally {

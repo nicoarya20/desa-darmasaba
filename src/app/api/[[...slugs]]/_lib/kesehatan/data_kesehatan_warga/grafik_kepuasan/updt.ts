@@ -2,9 +2,9 @@ import prisma from "@/lib/prisma";
 import { Context } from "elysia";
 
 export default async function grafikKepuasanUpdate(context: Context) {
-    const uuid = context.params?.uuid;
+    const id = context.params?.id;
     
-    if (!uuid) {
+    if (!id) {
         return {
             success: false,
             message: "ID tidak ditemukan"
@@ -18,7 +18,7 @@ export default async function grafikKepuasanUpdate(context: Context) {
     
     const existing = await prisma.grafikKepuasan.findUnique({
         where: {
-            uuid: uuid,
+            id: id,
         },
     })
 
@@ -30,7 +30,7 @@ export default async function grafikKepuasanUpdate(context: Context) {
     }
 
     const updated = await prisma.grafikKepuasan.update({
-        where: { uuid },
+        where: { id },
         data: {
             label,
             jumlah,

@@ -7,6 +7,7 @@ import { Box, Button, Paper, Stack, TextInput, Title } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
 function EditPersentaseDataKelahiranKematian() {
@@ -17,29 +18,40 @@ function EditPersentaseDataKelahiranKematian() {
   const id = params.id
 
   // Load data saat komponen mount
-  useEffect(() => {
-    if (id) {
-      statePresentase.findUnique.load(id).then(() => {
-        const data = statePresentase.findUnique.data
-        if (data) {
-          statePresentase.update.form = {
-            tahun: data.tahun || '',
-            kematianKasar: data.kematianKasar || '',
-            kelahiranKasar: data.kelahiranKasar || '',
-            kematianBayi: data.kematianBayi || '',
-          }
-        }
-      })
-    }
-  }, [id])
+// Di file page.tsx, ubah useEffect-nya menjadi:
+useEffect(() => {
+  if (!id) return;
+  statePresentase.update.id = id;
+  statePresentase.findUnique.load(id)
+    .then(() => {
+      const data = statePresentase.findUnique.data;
+      if (data) {
+        statePresentase.update.form = {
+          tahun: String(data.tahun || ''),
+          kematianKasar: String(data.kematianKasar || ''),
+          kelahiranKasar: String(data.kelahiranKasar || ''),
+          kematianBayi: String(data.kematianBayi || '')
+        };
+      }
+    })
+    .catch(error => {
+      console.error('Error loading data:', error);
+      toast.error('Gagal memuat data');
+    });
+}, [id]);
 
-  const handleSubmit = async () => {
-    // Set the ID before submitting
+// Di handleSubmit, ubah menjadi:
+const handleSubmit = async () => {
+  try {
     statePresentase.update.id = id;
     await statePresentase.update.submit();
-    router.push('/admin/kesehatan/data-kesehatan-warga/persentase_data_kelahiran_kematian')
+    toast.success('Data berhasil diperbarui');
+    router.push('/admin/kesehatan/data-kesehatan-warga/persentase_data_kelahiran_kematian');
+  } catch (error) {
+    console.error('Error updating data:', error);
+    toast.error('Gagal memperbarui data');
   }
-
+};
   return (
     <Box>
       <Box mb={10}>

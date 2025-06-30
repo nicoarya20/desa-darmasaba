@@ -2,34 +2,36 @@ import prisma from "@/lib/prisma";
 import { Context } from "elysia";
 
 export default async function grafikKepuasanDelete(context: Context) {
-    const uuid = context.params?.uuid;
-    if (!uuid) {
-        return {
-            success: false,
-            message: "ID tidak ditemukan"
-        }
-    }
 
-    const existing = await prisma.grafikKepuasan.findUnique({
-        where: {
-            uuid: uuid,
-        },
-    })
+  const id = context.params?.id;
 
-    if (!existing) {
-        return {
-            success: false,
-            message: "Data tidak ditemukan",
-        }
-    }
-
-    const deleted = await prisma.grafikKepuasan.delete({
-        where: { uuid },
-    })
-
+  if (!id) {
     return {
-        success: true,
-        message: "Data berhasil dihapus",
-        data: deleted,
-    }
+      success: false,
+      message: "ID tidak ditemukan",
+    };
+  }
+
+  const existing = await prisma.grafikKepuasan.findUnique({
+    where: {
+      id: id,
+    },
+  });
+
+  if (!existing) {
+    return {
+      success: false,
+      message: "Data tidak ditemukan",
+    };
+  }
+
+  const deleted = await prisma.grafikKepuasan.delete({
+    where: { id },
+  });
+
+  return {
+    success: true,
+    message: "Data berhasil dihapus",
+    data: deleted,
+  };
 }
