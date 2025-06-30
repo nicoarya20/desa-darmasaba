@@ -3,6 +3,7 @@ import prisma from "@/lib/prisma";
 export default async function grafikKepuasanFindUnique(request: Request) {
     const url = new URL(request.url);
     const pathSegments = url.pathname.split('/');
+
     const id = pathSegments[pathSegments.length - 1];
 
     if (!id) {
