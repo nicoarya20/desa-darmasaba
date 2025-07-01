@@ -35,9 +35,7 @@ function DetailBerita() {
   if (!beritaState.berita.findUnique.data) {
     return (
       <Stack py={10}>
-        {Array.from({ length: 10 }).map((_, k) => (
-          <Skeleton key={k} h={40} />
-        ))}
+        <Skeleton h={40} />
       </Stack>
     )
   }

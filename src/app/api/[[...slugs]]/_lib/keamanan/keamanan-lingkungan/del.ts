@@ -47,6 +47,8 @@ const keamananLingkunganDelete = async (context: Context) => {
     return {
         status: 200,
         body: deleted,
+        success: true,
+        message: "Keamanan lingkungan berhasil dihapus",
     };
 };
 export default keamananLingkunganDelete;
