@@ -82,6 +82,8 @@ model FileStorage {
   MenuTipsKeamanan MenuTipsKeamanan[]
 
   Pelapor Pelapor[]
+
+  PasarDesa PasarDesa[]
 }
 
 //========================================= MENU PPID ========================================= //
@@ -924,8 +926,6 @@ model LayananPolsek {
   PolsekTerdekat PolsekTerdekat[]
 }
 
-
-
 // ========================================= KONTAK DARURAT ========================================= //
 model KontakDaruratKeamanan {
   id        String   @id @default(cuid())
@@ -1030,4 +1030,33 @@ model MenuTipsKeamanan {
   updatedAt DateTime     @updatedAt
   deletedAt DateTime     @default(now())
   isActive  Boolean      @default(true)
+}
+
+// ========================================= MENU EKONOMI ========================================= //
+// ========================================= PASAR DESA ========================================= //
+model PasarDesa {
+  id        String                       @id @default(uuid())
+  nama      String // contoh: "Kerupuk Babi"
+  harga     Int // disimpan dalam bentuk angka: 12000
+  satuan    String // contoh: "pcs", "1 kg"
+  alamat    String // contoh: "Jl. Kenari no.7"
+  image     FileStorage                  @relation(fields: [imageId], references: [id])
+  imageId   String
+  rating    Float // contoh: 4.9
+  createdAt DateTime                     @default(now())
+  updatedAt DateTime                     @updatedAt
+  deletedAt DateTime                     @default(now())
+  isActive  Boolean                      @default(true)
+  kategori  KategoriMakanan @relation(fields: [kategoriId], references: [id])
+  kategoriId String
+}
+
+model KategoriMakanan {
+  id        String                       @id @default(uuid())
+  nama      String // contoh: "Makanan", "Bahan Bangunan", dll
+  createdAt DateTime                     @default(now())
+  updatedAt DateTime                     @updatedAt
+  deletedAt DateTime?
+  isActive  Boolean                      @default(true)
+  PasarDesa PasarDesa[]
 }
