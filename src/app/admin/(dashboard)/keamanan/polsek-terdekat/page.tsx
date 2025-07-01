@@ -1,10 +1,13 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Paper, Table, TableTbody, TableTd, TableTh, TableThead, TableTr } from '@mantine/core';
+import { Box, Button, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr } from '@mantine/core';
+import { useShallowEffect } from '@mantine/hooks';
 import { IconDeviceImac, IconSearch } from '@tabler/icons-react';
+import { useRouter } from 'next/navigation';
+import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../_com/header';
 import JudulList from '../../_com/judulList';
-import { useRouter } from 'next/navigation';
+import polsekTerdekat from '../../_state/keamanan/polsek-terdekat';
 
 function PolsekTerdekat() {
   return (
@@ -20,7 +23,20 @@ function PolsekTerdekat() {
 }
 
 function ListPolsekTerdekat() {
+  const polsekState = useProxy(polsekTerdekat)
   const router = useRouter();
+
+  useShallowEffect(() => {
+    polsekState.findMany.load()
+  }, [])
+
+  if (!polsekState.findMany.data) {
+    return (
+      <Stack py={10}>
+        <Skeleton h={500} />
+      </Stack>
+    )
+  }
   return (
     <Box py={10}>
       <Paper bg={colors['white-1']} p={'md'}>
@@ -32,22 +48,24 @@ function ListPolsekTerdekat() {
           <TableThead>
             <TableTr>
               <TableTh>Nama Polsek Terdekat</TableTh>
-              <TableTh>Nomor Polsek Terdekat</TableTh>
-              <TableTh>Deskripsi</TableTh>
+              <TableTh>Jarak Polsek</TableTh>
+              <TableTh>Alamat</TableTh>
               <TableTh>Detail</TableTh>
               </TableTr>
           </TableThead>
           <TableTbody>
-            <TableTr>
-              <TableTd>Polsek Terdekat 1</TableTd>
-              <TableTd>0896232831883</TableTd>
-              <TableTd>Polsek Terdekat 1</TableTd>
-              <TableTd>
-                <Button onClick={() => router.push('/admin/keamanan/polsek-terdekat/detail')}>
+            {polsekState.findMany.data?.map((item) => (
+              <TableTr key={item.id}>
+                <TableTd>{item.nama}</TableTd>
+                <TableTd>{item.jarakKeDesa}</TableTd>
+                <TableTd>{item.alamat}</TableTd>
+                <TableTd>
+                  <Button onClick={() => router.push(`/admin/keamanan/polsek-terdekat/${item.id}`)}>
                   <IconDeviceImac size={20} />
                 </Button>
               </TableTd>
             </TableTr>
+          ))}
           </TableTbody>
         </Table>  
       </Paper>

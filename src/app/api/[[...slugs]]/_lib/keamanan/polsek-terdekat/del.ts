@@ -30,8 +30,9 @@ const polsekTerdekatDelete = async (context: Context) => {
     });
 
     return {
+        success: true,
         status: 200,
-        body: "Polsek terdekat berhasil dihapus",
+        message: "Polsek terdekat berhasil dihapus",
     };
 };
 

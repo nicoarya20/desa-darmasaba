@@ -1,10 +1,13 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Paper, Table, TableTbody, TableTd, TableTh, TableThead, TableTr } from '@mantine/core';
+import { Box, Button, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
 import { IconDeviceImac, IconSearch } from '@tabler/icons-react';
 import HeaderSearch from '../../_com/header';
 import JudulList from '../../_com/judulList';
 import { useRouter } from 'next/navigation';
+import { useProxy } from 'valtio/utils';
+import keamananLingkunganState from '../../_state/keamanan/keamanan-lingkungan';
+import { useShallowEffect } from '@mantine/hooks';
 
 function KeamananLingkungan() {
   return (
@@ -14,13 +17,26 @@ function KeamananLingkungan() {
         placeholder='pencarian'
         searchIcon={<IconSearch size={20} />}
       />
-      <ListKeamananLingkungan/>
+      <ListKeamananLingkungan />
     </Box>
   );
 }
 
 function ListKeamananLingkungan() {
+  const keamananState = useProxy(keamananLingkunganState)
   const router = useRouter();
+
+  useShallowEffect(() => {
+    keamananState.findMany.load()
+  }, [])
+
+  if (!keamananState.findMany.data) {
+    return (
+      <Stack py={10}>
+        <Skeleton h={500} />
+      </Stack>
+    )
+  }
   return (
     <Box py={10}>
       <Paper bg={colors['white-1']} p={'md'}>
@@ -32,24 +48,26 @@ function ListKeamananLingkungan() {
           <TableThead>
             <TableTr>
               <TableTh>Nama Keamanan Lingkungan</TableTh>
-              <TableTh>Nomor Keamanan Lingkungan</TableTh>
               <TableTh>Deskripsi</TableTh>
               <TableTh>Detail</TableTh>
-              </TableTr>
+            </TableTr>
           </TableThead>
           <TableTbody>
-            <TableTr>
-              <TableTd>Keamanan Lingkungan 1</TableTd>
-              <TableTd>0896232831883</TableTd>
-              <TableTd>Keamanan Lingkungan 1</TableTd>
-              <TableTd>
-                <Button onClick={() => router.push('/admin/keamanan/keamanan-lingkungan-pecalang-patwal/detail')}>
-                  <IconDeviceImac size={20} />
-                </Button>
-              </TableTd>
-            </TableTr>
+            {keamananState.findMany.data?.map((item) => (
+              <TableTr key={item.id}>
+                <TableTd>{item.name}</TableTd>
+                <TableTd>
+                  <Text fz={"md"} dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
+                </TableTd>
+                <TableTd>
+                  <Button onClick={() => router.push(`/admin/keamanan/keamanan-lingkungan-pecalang-patwal/${item.id}`)}>
+                    <IconDeviceImac size={20} />
+                  </Button>
+                </TableTd>
+              </TableTr>
+            ))}
           </TableTbody>
-        </Table>  
+        </Table>
       </Paper>
     </Box>
   );

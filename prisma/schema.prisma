@@ -919,10 +919,12 @@ model LayananPolsek {
   nama           String // contoh: "Pelayanan SKCK", "Laporan Kriminal"
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
-  deletedAt      DateTime         @default(now())
+  deletedAt      DateTime?
   isActive       Boolean          @default(true)
   PolsekTerdekat PolsekTerdekat[]
 }
+
+
 
 // ========================================= KONTAK DARURAT ========================================= //
 model KontakDaruratKeamanan {
@@ -984,22 +986,22 @@ model VideoKeamanan {
 
 // ========================================= LAPORAN PUBLIK ========================================= //
 model LaporanPublik {
-  id             String       @id @default(cuid())
-  judul          String
-  lokasi         String
-  tanggalWaktu   DateTime
-  status         StatusLaporan
-  penanganan     PenangananLaporanPublik[]
-  kronologi      String?      // Optional, bisa diisi detail kronologi
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
+  id           String                    @id @default(cuid())
+  judul        String
+  lokasi       String
+  tanggalWaktu DateTime
+  status       StatusLaporan
+  penanganan   PenangananLaporanPublik[]
+  kronologi    String? // Optional, bisa diisi detail kronologi
+  createdAt    DateTime                  @default(now())
+  updatedAt    DateTime                  @updatedAt
 }
 
 model PenangananLaporanPublik {
-  id              String           @id @default(cuid())
-  laporanId       String
-  deskripsi       String
-  laporan         LaporanPublik @relation(fields: [laporanId], references: [id], onDelete: Cascade)
+  id        String        @id @default(cuid())
+  laporanId String
+  deskripsi String
+  laporan   LaporanPublik @relation(fields: [laporanId], references: [id], onDelete: Cascade)
 }
 
 enum StatusLaporan {
@@ -1009,13 +1011,14 @@ enum StatusLaporan {
 }
 
 model Pelapor {
-  id             String       @id @default(cuid())
-  nama           String
-  alamat         String
-  nomorTelepon   String
-  image FileStorage @relation(fields: [imageId], references: [id])
-  imageId String
+  id           String      @id @default(cuid())
+  nama         String
+  alamat       String
+  nomorTelepon String
+  image        FileStorage @relation(fields: [imageId], references: [id])
+  imageId      String
 }
+
 // ========================================= TIPS KEAMANAN ========================================= //
 model MenuTipsKeamanan {
   id        String       @id @default(cuid())

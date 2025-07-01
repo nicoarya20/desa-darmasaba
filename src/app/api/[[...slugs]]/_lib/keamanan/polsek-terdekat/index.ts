@@ -1,9 +1,10 @@
 import Elysia, { t } from "elysia";
+import polsekTerdekatCreate from "./create";
+import polsekTerdekatDelete from "./del";
 import polsekTerdekatFindMany from "./findMany";
 import polsekTerdekatFindUnique from "./findUnique";
-import polsekTerdekatDelete from "./del";
-import polsekTerdekatCreate from "./create";
 import polsekTerdekatUpdate from "./updt";
+
 
 const PolsekTerdekat = new Elysia({ prefix: "/polsekterdekat", tags: ["Keamanan/Polsek Terdekat"] })
 .get("/find-many", polsekTerdekatFindMany)
@@ -44,4 +45,5 @@ const PolsekTerdekat = new Elysia({ prefix: "/polsekterdekat", tags: ["Keamanan/
         layananPolsekId: t.String(),
     }),
 })
+
 export default PolsekTerdekat;

@@ -18,7 +18,7 @@ const MenuTipsKeamanan = new Elysia({
   })
   .post("/create", menuTipsKeamananCreate, {
     body: t.Object({
-      name: t.String(),
+      judul: t.String(),
       deskripsi: t.String(),
       imageId: t.String(),
     }),
@@ -32,7 +32,7 @@ const MenuTipsKeamanan = new Elysia({
     },
     {
       body: t.Object({
-        name: t.String(),
+        judul: t.String(),
         deskripsi: t.String(),
         imageId: t.String(),
       }),
