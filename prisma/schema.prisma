@@ -84,6 +84,10 @@ model FileStorage {
   Pelapor Pelapor[]
 
   PasarDesa PasarDesa[]
+
+  KontakDaruratKeamanan KontakDaruratKeamanan[]
+
+  KontakItem KontakItem[]
 }
 
 //========================================= MENU PPID ========================================= //
@@ -928,14 +932,25 @@ model LayananPolsek {
 
 // ========================================= KONTAK DARURAT ========================================= //
 model KontakDaruratKeamanan {
-  id        String   @id @default(cuid())
-  nama      String // contoh: "Polisi", "Ambulans", "Pemadam Kebakaran"
-  kontak    String // contoh: "081xxxxxxxxxx"
-  icon      String? // opsional, untuk simpan nama icon-nya jika mau
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  deletedAt DateTime @default(now())
-  isActive  Boolean  @default(true)
+  id          String       @id @default(uuid())
+  nama        String       // contoh: "Layanan Darurat", "Fasilitas Kesehatan"
+  image       FileStorage? @relation(fields: [imageId], references: [id])
+  imageId     String?
+  kontakItems KontakItem[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model KontakItem {
+  id              String         @id @default(uuid())
+  nama            String         // contoh: "Polisi", "Ambulans", "Puskesmas Darmasaba"
+  nomorTelepon    String
+  image           FileStorage?   @relation(fields: [imageId], references: [id])
+  imageId         String?
+  kategori        KontakDaruratKeamanan @relation(fields: [kategoriId], references: [id])
+  kategoriId      String
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
 }
 
 // ========================================= PENCEGAHAN KRIMINALITAS ========================================= //

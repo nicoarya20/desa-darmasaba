@@ -9,7 +9,7 @@ import BackButton from '../../desa/layanan/_com/BackButto';
 function Page() {
   const allList = useProxy(stateProfilePPID)
   useShallowEffect(() => {
-    allList.profile.load("1") // Assuming "1" is your default ID, adjust as needed
+    allList.profile.load("edit") // Assuming "1" is your default ID, adjust as needed
   }, [])
 
   if (!allList.profile.data) return <Stack bg={colors.Bg} py={"xl"} gap={"22"}>
@@ -47,7 +47,7 @@ function Page() {
           <Paper p={"xl"} bg={colors['white-trans-1']}>
             <Box px={{ base: "md", md: 100 }}>
               <Flex align={"center"} gap={50}>
-                <Image src={"/api/img/darmasaba-icon.png"} h={{ base: 80, md: 150 }} alt='' />
+                <Image src={"/darmasaba-icon.png"} h={{ base: 80, md: 150 }} alt='' />
                 <Text fz={{ base: "1.4rem", md: "2rem", lg: "2.5rem", xl: "3rem" }} fw={'bold'}>PROFIL PIMPINAN BADAN PUBLIK DESA DARMASABA </Text>
               </Flex>
             </Box>

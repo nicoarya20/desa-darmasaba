@@ -5,16 +5,16 @@ import { proxy } from "valtio";
 import { z } from "zod";
 
 const templateForm = z.object({
-  nama: z.string().min(3, "Nama minimal 3 karakter"),
-  jarakKeDesa: z.string().min(3, "Jarak minimal 3 karakter"),
-  alamat: z.string().min(3, "Alamat minimal 3 karakter"),
-  nomorTelepon: z.string().min(3, "Nomor Telepon minimal 3 karakter"),
-  jamOperasional: z.string().min(3, "Jam Operasional minimal 3 karakter"),
-  embedMapUrl: z.string().min(3, "Embed Map Url minimal 3 karakter"),
-  namaTempatMaps: z.string().min(3, "Nama Tempat Maps minimal 3 karakter"),
-  alamatMaps: z.string().min(3, "Alamat Maps minimal 3 karakter"),
-  linkPetunjukArah: z.string().min(3, "Link Petunjuk Arah minimal 3 karakter"),
-  layananPolsekId: z.string().min(3, "Layanan Polsek Id minimal 3 karakter"),
+  nama: z.string().min(1, "Nama minimal 1 karakter"),
+  jarakKeDesa: z.string().min(1, "Jarak minimal 1 karakter"),
+  alamat: z.string().min(1, "Alamat minimal 1 karakter"),
+  nomorTelepon: z.string().min(1, "Nomor Telepon minimal 1 karakter"),
+  jamOperasional: z.string().min(1, "Jam Operasional minimal 1 karakter"),
+  embedMapUrl: z.string().min(1, "Embed Map Url minimal 1 karakter"),
+  namaTempatMaps: z.string().min(1, "Nama Tempat Maps minimal 1 karakter"),
+  alamatMaps: z.string().min(1, "Alamat Maps minimal 1 karakter"),
+  linkPetunjukArah: z.string().min(1, "Link Petunjuk Arah minimal 1 karakter"),
+  layananPolsekId: z.string().min(1, "Layanan Polsek Id minimal 1 karakter"),
 });
 
 const defaultForm = {

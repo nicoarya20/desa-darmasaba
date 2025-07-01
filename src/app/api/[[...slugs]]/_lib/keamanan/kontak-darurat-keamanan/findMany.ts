@@ -3,7 +3,13 @@ import prisma from "@/lib/prisma";
 export default async function kontakDaruratKeamananFindMany() {
     try {
         const data = await prisma.kontakDaruratKeamanan.findMany({
-            where: { isActive: true },
+            include: {
+                kontakItems: true,
+                image: true,
+            },
+            orderBy: {
+                createdAt: "desc",
+            }
         });
 
         return {

@@ -134,7 +134,7 @@ function LandingPage() {
                       p={"sm"}
                     >
                       <Image
-                        src={"/assets/images/darmasaba-icon.png"}
+                        src={"/darmasaba-icon.png"}
                         alt="icon"
                         sizes="100%"
                       />
@@ -163,7 +163,7 @@ function LandingPage() {
                       bg={"white"}
                     >
                       <Image
-                        src={"/api/img/pudak-icon.png"}
+                        src={"/pudak-icon.png"}
                         alt="icon"
                         sizes={"100%"}
                         fit="contain"

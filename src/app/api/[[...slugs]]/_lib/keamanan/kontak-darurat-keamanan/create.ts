@@ -1,22 +1,28 @@
 import prisma from "@/lib/prisma";
-import { Prisma } from "@prisma/client";
 import { Context } from "elysia";
 
-type FormCreate = Prisma.KontakDaruratKeamananGetPayload<{
-    select: {
-        nama: true,
-        kontak: true,
-        icon: true,
-    }
-}>
+type FormCreate = {
+        nama: string,
+        imageId?: string,
+        kontakItems: {
+            nama: string,
+            nomorTelepon: string,
+            imageId?: string
+        }[]
+}
 export default async function kontakDaruratKeamananCreate(context: Context){
     const body = context.body as FormCreate
 
     await prisma.kontakDaruratKeamanan.create({
         data: {
             nama: body.nama,
-            kontak: body.kontak,
-            icon: body.icon,
+            imageId: body.imageId,
+            kontakItems: {
+                create: body.kontakItems,
+            },
+        },
+        include: {
+            kontakItems: true,
         }
     })
     return {

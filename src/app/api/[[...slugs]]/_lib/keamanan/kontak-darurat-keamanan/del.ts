@@ -11,6 +11,12 @@ export default async function kontakDaruratKeamananDelete(context: Context){
         };
     }
 
+    await prisma.kontakItem.deleteMany({
+        where: {
+          kategoriId: id,
+        },
+      });
+
     const kontakDaruratKeamanan = await prisma.kontakDaruratKeamanan.findUnique({
         where: { id },
     });
