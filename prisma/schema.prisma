@@ -1075,3 +1075,19 @@ model KategoriMakanan {
   isActive  Boolean                      @default(true)
   PasarDesa PasarDesa[]
 }
+// ========================================= LOWONGAN KERJA LOKAL ========================================= //
+model LowonganPekerjaan {
+  id          String    @id @default(uuid()) // ID unik untuk setiap lowongan
+  posisi      String    // Contoh: "Kasir"
+  namaPerusahaan String  // Contoh: "Toko Sumber Rejeki"
+  lokasi      String    // Contoh: "Desa Munggu , Badung"
+  tipePekerjaan String  // Contoh: "Full Time", "Part Time", "Contract"
+  gaji        String    // Contoh: "Rp. 2.500.000 / bulan". Menggunakan String karena formatnya bisa bervariasi
+  deskripsi   String   // Opsional: Detail deskripsi pekerjaan (tidak terlihat di UI ini, tapi umum ada)
+  kualifikasi String   // Opsional: Kualifikasi yang dibutuhkan (tidak terlihat di UI ini, tapi umum ada)
+  tanggalPosting DateTime @default(now()) // Tanggal lowongan diposting
+  isActive    Boolean   @default(true) // Menandakan apakah lowongan masih aktif
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime  @default(now())
+}
