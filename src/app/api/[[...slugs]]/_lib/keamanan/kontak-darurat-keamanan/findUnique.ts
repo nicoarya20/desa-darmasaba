@@ -31,7 +31,11 @@ export default async function kontakDaruratKeamananFindUnique(
     const data = await prisma.kontakDaruratKeamanan.findUnique({
       where: { id },
       include: {
-        kontakItems: true,
+        kontakItems: {
+          include: {
+            image: true,
+          },
+        },
         image: true,
       },
     });

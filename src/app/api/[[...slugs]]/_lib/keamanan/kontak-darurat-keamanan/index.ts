@@ -6,7 +6,7 @@ import kontakDaruratKeamananFindUnique from "./findUnique";
 import kontakDaruratKeamananUpdate from "./updt";
 
 const KontakDaruratKeamanan = new Elysia({
-  prefix: "/kontak-darurat-keamanan",
+  prefix: "/kontakdaruratkeamanan",
   tags: ["Keamanan/Kontak Darurat"],
 })
   .get("/find-many", kontakDaruratKeamananFindMany)
