@@ -102,7 +102,7 @@ function ListProgramKemiskinan() {
               {mounted && lineChart.length > 0 ? (<Box style={{ width: '100%', height: 'auto', }}>
                 <Box w={"100%"} style={{overflowX: 'auto'}}>
                   <LineChart
-                    width={650}
+                    width={820}
                     height={300}
                     data={lineChart}
                   >

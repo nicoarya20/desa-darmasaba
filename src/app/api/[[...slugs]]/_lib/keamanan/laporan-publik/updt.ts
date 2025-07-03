@@ -5,8 +5,8 @@ type LaporanPublikUpdateInput = {
   judul: string;
   lokasi: string;
   tanggalWaktu: string;
-  status: "SELESAI" | "PROSES" | "GAGAL";
-  penanganan: string[];
+  status: "Selesai" | "Proses" | "Gagal";
+  penanganan: string;
   kronologi?: string;
 };
 
@@ -32,9 +32,9 @@ const LaporanPublikUpdate = async (context: Context) => {
       status,
       kronologi,
       penanganan: {
-        create: penanganan.map((item) => ({
-          deskripsi: item,
-        })),
+        create: {
+          deskripsi: penanganan,
+        },
       },
     },
     include: {

@@ -179,17 +179,20 @@ const keamananLingkunganState = proxy({
       try {
         keamananLingkunganState.edit.loading = true;
 
-        const response = await fetch(`/api/keamanan/keamananlingkungan/${this.id}`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            name: this.form.name,
-            deskripsi: this.form.deskripsi,
-            imageId: this.form.imageId,
-          }),
-        });
+        const response = await fetch(
+          `/api/keamanan/keamananlingkungan/${this.id}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              name: this.form.name,
+              deskripsi: this.form.deskripsi,
+              imageId: this.form.imageId,
+            }),
+          }
+        );
 
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));

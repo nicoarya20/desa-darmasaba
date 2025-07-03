@@ -15,11 +15,11 @@ const LaporanPublik = new Elysia({
       lokasi: t.String(),
       tanggalWaktu: t.String(), // ISO string
       status: t.Union([
-        t.Literal("SELESAI"),
-        t.Literal("PROSES"),
-        t.Literal("GAGAL"),
+        t.Literal("Selesai"),
+        t.Literal("Proses"),
+        t.Literal("Gagal"),
       ]),
-      penanganan: t.Array(t.String()), // 🛠️ ARRAY of strings
+      penanganan: t.String(), // 🛠️ ARRAY of strings
       kronologi: t.Optional(t.String()),
     }),
   })
@@ -31,11 +31,11 @@ const LaporanPublik = new Elysia({
       lokasi: t.String(),
       tanggalWaktu: t.String(), // ISO string
       status: t.Union([
-        t.Literal("SELESAI"),
-        t.Literal("PROSES"),
-        t.Literal("GAGAL"),
+        t.Literal("Selesai"),
+        t.Literal("Proses"),
+        t.Literal("Gagal"),
       ]),
-      penanganan: t.Array(t.String()), // 🛠️ ARRAY of strings
+      penanganan: t.String(), // 🛠️ ARRAY of strings
       kronologi: t.Optional(t.String()),
     }),
   })

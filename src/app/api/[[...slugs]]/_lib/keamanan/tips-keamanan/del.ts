@@ -46,8 +46,9 @@ const menuTipsKeamananDelete = async (context: Context) => {
     });
 
     return {
-        status: 200,
-        body: deleted,
+        success: true,
+        message: "Success delete menu tips keamanan",
+        data: deleted,
     };
 };
 export default menuTipsKeamananDelete;

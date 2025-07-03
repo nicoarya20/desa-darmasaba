@@ -1020,9 +1020,9 @@ model PenangananLaporanPublik {
 }
 
 enum StatusLaporan {
-  SELESAI
-  PROSES
-  GAGAL
+  Selesai
+  Proses
+  Gagal
 }
 
 model Pelapor {
