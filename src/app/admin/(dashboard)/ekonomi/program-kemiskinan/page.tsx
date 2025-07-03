@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
+import { Box, Button, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title } from '@mantine/core';
 import { IconDeviceImac, IconSearch } from '@tabler/icons-react';
 import HeaderSearch from '../../_com/header';
 import JudulList from '../../_com/judulList';
@@ -8,6 +9,8 @@ import { useRouter } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
 import programKemiskinanState from '../../_state/ekonomi/program-kemiskinan';
 import { useShallowEffect } from '@mantine/hooks';
+import { useEffect, useState } from 'react';
+import { CartesianGrid, Legend, Line, LineChart, Tooltip, XAxis, YAxis } from 'recharts';
 
 function ProgramKemiskinan() {
   return (
@@ -25,10 +28,28 @@ function ProgramKemiskinan() {
 function ListProgramKemiskinan() {
   const programState = useProxy(programKemiskinanState)
   const router = useRouter();
+  const [lineChart, setLineChart] = useState<any[]>([]);
+  const [mounted, setMounted] = useState(false);
 
   useShallowEffect(() => {
+    setMounted(true)
     programState.findMany.load()
   }, [])
+
+  useEffect(() => {
+    if (programState.findMany.data) {
+      const chartData = programState.findMany.data
+        .filter(item => item.statistik)
+        .map(item => ({
+          tahun: item.statistik?.tahun,
+          jumlah: Number(item.statistik?.jumlah)
+        }))
+        .sort((a, b) => (a.tahun || 0) - (b.tahun || 0)); // opsional, urutkan tahun
+
+      setLineChart(chartData);
+
+    }
+  }, [programState.findMany.data])
 
   if (!programState.findMany.data) {
     return (
@@ -71,6 +92,46 @@ function ListProgramKemiskinan() {
           </TableTbody>
         </Table>
       </Paper>
+
+      {/* Chart */}
+      <Box>
+        <Paper bg={colors['white-1']} p={'md'} >
+          <Stack>
+            <Box >
+              <Title pb={10} order={3}>Grafik Berdasarkan Responden</Title>
+              {mounted && lineChart.length > 0 ? (<Box style={{ width: '100%', height: 'auto', }}>
+                <Box w={"100%"} style={{overflowX: 'auto'}}>
+                  <LineChart
+                    width={650}
+                    height={300}
+                    data={lineChart}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="tahun" />
+                    <YAxis />
+                    <Tooltip
+                      formatter={(value: any, name: string) => [`${value} orang`, name]}
+                      labelFormatter={(label: any) => `Tahun: ${label}`}
+                    />
+                    <Legend />
+                    <Line
+                      type="monotone"
+                      dataKey="jumlah"
+                      name="Jumlah per Tahun"
+                      stroke={colors['blue-button']}
+                    />
+                  </LineChart>
+                </Box>
+
+
+              </Box>
+              ) : (
+                <Text c='dimmed'>Belum ada data untuk ditampilkan dalam grafik</Text>
+              )}
+            </Box>
+          </Stack>
+        </Paper>
+      </Box>
     </Box>
   );
 }

@@ -1,12 +1,10 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 import colors from '@/con/colors';
 import { Box, Button, Flex, Paper, Skeleton, Stack, Text } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack, IconEdit, IconX } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
 import programKemiskinanState from '../../../_state/ekonomi/program-kemiskinan';
@@ -14,15 +12,12 @@ import programKemiskinanState from '../../../_state/ekonomi/program-kemiskinan';
 
 function DetailProgramKemiskinan() {
   const programState = useProxy(programKemiskinanState)
-  const [lineChart, setLineChart] = useState<any[]>([]);
-  const [mounted, setMounted] = useState(false);
   const [modalHapus, setModalHapus] = useState(false)
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const router = useRouter();
   const params = useParams()
 
   useShallowEffect(() => {
-    setMounted(true);
     programState.findUnique.load(params?.id as string)
   }, [])
 
@@ -34,12 +29,6 @@ function DetailProgramKemiskinan() {
       router.push("/admin/ekonomi/program-kemiskinan")
     }
   }
-
-  useEffect(() => {
-    if (programState.findUnique.data) {
-      setLineChart([programState.findUnique.data]);
-    }
-  }, [programState.findUnique.data])
 
   if (!programState.findUnique.data) {
     return (
@@ -62,24 +51,24 @@ function DetailProgramKemiskinan() {
             <Stack gap={"xs"}>
               <Box>
                 <Text fw={"bold"}>Judul Program</Text>
-                <Text fz={"sm"}>{programState.findUnique.data?.nama}</Text>
+                <Text fz={"md"}>{programState.findUnique.data?.nama}</Text>
               </Box>
               <Box>
                 <Text fw={"bold"}>Deskripsi Singkat</Text>
-                <Text fz={"sm"} dangerouslySetInnerHTML={{ __html: programState.findUnique.data?.deskripsi }}></Text>
+                <Text fz={"md"} dangerouslySetInnerHTML={{ __html: programState.findUnique.data?.deskripsi }}></Text>
               </Box>
               <Box>
                 <Text fw={"bold"}>Ikon URL</Text>
-                <Text fz={"sm"}>{programState.findUnique.data?.ikonUrl}</Text>
+                <Text fz={"md"}>{programState.findUnique.data?.ikonUrl}</Text>
               </Box>
               <Text fw={"bold"}>Statistik Jumlah Masyarakat Miskin</Text>
               <Box>
                 <Text fw={"bold"}>Jumlah Masyarakat Miskin</Text>
-                <Text fz={"sm"}>{programState.findUnique.data?.statistik?.jumlah}</Text>
+                <Text fz={"md"}>{programState.findUnique.data?.statistik?.jumlah}</Text>
               </Box>
               <Box>
                 <Text fw={"bold"}>Tahun</Text>
-                <Text fz={"sm"}>{programState.findUnique.data?.statistik?.tahun}</Text>
+                <Text fz={"md"}>{programState.findUnique.data?.statistik?.tahun}</Text>
               </Box>
               <Flex gap={"xs"} mt={10}>
                 <Button
