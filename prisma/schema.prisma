@@ -1091,3 +1091,27 @@ model LowonganPekerjaan {
   updatedAt   DateTime  @updatedAt
   deletedAt   DateTime  @default(now())
 }
+
+// ========================================= PROGRAM KEMISKINAN ========================================= //
+model ProgramKemiskinan {
+  id          String   @id @default(uuid())
+  nama        String
+  deskripsi   String
+  ikonUrl     String?
+  isActive    Boolean  @default(true)
+  // Tambahkan relasi one-to-one ke StatistikKemiskinan
+  statistikId String?  @unique // Foreign key ke StatistikKemiskinan, unique untuk one-to-one
+  statistik   StatistikKemiskinan? @relation(fields: [statistikId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model StatistikKemiskinan {
+  id          String   @id @default(uuid())
+  tahun       Int      @unique
+  jumlah      Int
+  // Tidak perlu foreign key di sini jika relasi di ProgramLayanan
+  programKemiskinan ProgramKemiskinan?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
