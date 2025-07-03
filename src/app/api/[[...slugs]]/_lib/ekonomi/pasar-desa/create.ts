@@ -4,11 +4,10 @@ import { Context } from "elysia";
 type FormCreate = {
   nama: string;
   harga: number;
-  satuan: string;
-  alamat: string;
+  alamatUsaha: string;
   imageId: string;
   rating: number;
-  kategoriId: string; // Array of KategoriMakanan IDs
+  kategoriId: string[]; // Array of KategoriMakanan IDs
 };
 export default async function pasarDesaCreate(context: Context) {
   const body = context.body as FormCreate;
@@ -18,11 +17,12 @@ export default async function pasarDesaCreate(context: Context) {
     data: {
       nama: body.nama,
       harga: Number(body.harga),
-      satuan: body.satuan,
-      alamat: body.alamat,
+      alamatUsaha: body.alamatUsaha,
       imageId: body.imageId,
       rating: Number(body.rating),
-      kategoriId: body.kategoriId,
+      kategori: {
+        connect: body.kategoriId.map((id) => ({ id })),
+      },
     },
     include: {
       image: true,

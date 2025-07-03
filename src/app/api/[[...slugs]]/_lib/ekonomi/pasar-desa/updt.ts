@@ -6,11 +6,10 @@ import path from "path";
 type FormUpdate = {
     nama: string;
     harga: number;
-    satuan: string;
-    alamat: string;
+    alamatUsaha: string;
     imageId: string;
     rating: number;
-    kategoriId: string; // Array of KategoriMakanan IDs
+    kategoriId: string[]; // Array of KategoriMakanan IDs
   };
 
 export default async function pasarDesaUpdate(context: Context){
@@ -18,7 +17,7 @@ export default async function pasarDesaUpdate(context: Context){
         const id = context.params?.id;
         const body = context.body as FormUpdate;
 
-        const { nama, harga, satuan, alamat, imageId, rating, kategoriId } = body;
+        const { nama, harga, alamatUsaha, imageId, rating, kategoriId } = body;
         
         if (!id) {
             return Response.json({
@@ -63,11 +62,12 @@ export default async function pasarDesaUpdate(context: Context){
             data: {
                 nama,
                 harga,
-                satuan,
-                alamat,
+                alamatUsaha,
                 imageId,
                 rating,
-                kategoriId,
+                kategori: {
+                    connect: kategoriId.map((id) => ({ id })),
+                  },
             },
         });
 

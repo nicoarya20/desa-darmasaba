@@ -18,11 +18,10 @@ const PasarDesa = new Elysia({
     body: t.Object({
       nama: t.String(),
       harga: t.Number(),
-      satuan: t.String(),
-      alamat: t.String(),
+      alamatUsaha: t.String(),
       imageId: t.String(),
       rating: t.Number(),
-      kategoriId:t.String(),
+      kategoriId:t.Array(t.String()),
     }),
   })
   .delete("/del/:id", pasarDesaDelete)
@@ -36,11 +35,10 @@ const PasarDesa = new Elysia({
       body: t.Object({
         nama: t.String(),
         harga: t.Number(),
-        satuan: t.String(),
-        alamat: t.String(),
+        alamatUsaha: t.String(),
         imageId: t.String(),
         rating: t.Number(),
-        kategoriId: t.String(),
+        kategoriId:t.Array(t.String()),
       }),
     }
   );

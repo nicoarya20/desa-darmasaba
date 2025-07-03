@@ -17,6 +17,7 @@ import visiMisiDesa from "./data/desa/profile/visi_misi_desa.json";
 import lambangDesa from "./data/desa/profile/lambang_desa.json";
 import maskotDesa from "./data/desa/profile/maskot_desa.json";
 import profilPerbekel from "./data/desa/profile/profil_perbekel.json";
+import kategoriProduk from "./data/ekonomi/pasar-desa/kategori-produk.json";
 
 (async () => {
   for (const l of layanan) {
@@ -340,6 +341,22 @@ import profilPerbekel from "./data/desa/profile/profil_perbekel.json";
     });
   }
   console.log("dasar hukum PPID success ...");
+
+  for (const k of kategoriProduk) {
+    await prisma.kategoriProduk.upsert({
+      where: {
+        id: k.id,
+      },
+      update: {
+        nama: k.nama,
+      },
+      create: {
+        id: k.id,
+        nama: k.nama,
+      },
+    });
+  }
+  console.log("kategori produk success ...");
 })()
   .then(() => prisma.$disconnect())
   .catch((e) => {

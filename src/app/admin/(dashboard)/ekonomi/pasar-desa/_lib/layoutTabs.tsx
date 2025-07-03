@@ -12,12 +12,12 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
         {
             label: "Produk Pasar Desa",
             value: "produkpasardesa",
-            href: "/admin/ekonomi/pasar-desa/pasar-desa-ui"
+            href: "/admin/ekonomi/pasar-desa/produk-pasar-desa"
         },
         {
-            label: "Kategori Makanan",
-            value: "kategorimakanan",
-            href: "/admin/ekonomi/pasar-desa/kategori-makanan"
+            label: "Kategori Produk",
+            value: "kategoriproduk",
+            href: "/admin/ekonomi/pasar-desa/kategori-produk"
         },
     ];
     const curentTab = tabs.find(tab => tab.href === pathname)

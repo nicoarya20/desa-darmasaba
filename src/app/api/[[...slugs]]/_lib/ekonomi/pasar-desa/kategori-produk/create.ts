@@ -2,7 +2,7 @@ import prisma from "@/lib/prisma";
 import { Context } from "elysia";
 
 
-export default async function kategoriMakananCreate(context: Context) {
+export default async function kategoriProdukCreate(context: Context) {
     const body = context.body as {nama: string};
 
     if (!body.nama) {
@@ -12,15 +12,14 @@ export default async function kategoriMakananCreate(context: Context) {
         };
     }
 
-    const kategoriMakanan = await prisma.kategoriMakanan.create({
+    const kategoriProduk = await prisma.kategoriProduk.create({
         data: {
             nama: body.nama,
-            deletedAt: null,
         },
     });
     return {
         success: true,
-        message: "Success create kategori makanan",
-        data: kategoriMakanan
+        message: "Success create kategori produk",
+        data: kategoriProduk
     };
 }

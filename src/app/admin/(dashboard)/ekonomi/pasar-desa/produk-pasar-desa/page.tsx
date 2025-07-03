@@ -23,7 +23,7 @@ function PasarDesa() {
 }
 
 function ListPasarDesa() {
-  const statePasar = useProxy(pasarDesaState)
+  const statePasar = useProxy(pasarDesaState.pasarDesa)
   const router = useRouter();
 
   useShallowEffect(() => {
@@ -43,7 +43,7 @@ function ListPasarDesa() {
       <Paper bg={colors['white-1']} p={'md'}>
         <JudulList
           title='List Produk Pasar Desa'
-          href='/admin/ekonomi/pasar-desa/create'
+          href='/admin/ekonomi/pasar-desa/produk-pasar-desa/create'
         />
         <Table striped withTableBorder withRowBorders>
           <TableThead>
@@ -59,11 +59,11 @@ function ListPasarDesa() {
             {statePasar.findMany.data?.map((item) => (
               <TableTr key={item.id}>
                 <TableTd>{item.nama}</TableTd>
-                <TableTd>{item.harga}</TableTd>
+                <TableTd>Rp.{item.harga}</TableTd>
                 <TableTd>{item.rating}</TableTd>
-                <TableTd>{item.alamat}</TableTd>
+                <TableTd>{item.alamatUsaha}</TableTd>
                 <TableTd>
-                  <Button onClick={() => router.push(`/admin/ekonomi/pasar-desa/${item.id}`)}>
+                  <Button onClick={() => router.push(`/admin/ekonomi/pasar-desa/produk-pasar-desa/${item.id}`)}>
                     <IconDeviceImac size={20} />
                   </Button>
                 </TableTd>

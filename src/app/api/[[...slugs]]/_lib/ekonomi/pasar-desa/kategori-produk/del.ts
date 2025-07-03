@@ -1,7 +1,7 @@
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
 
-const kategoriMakananDelete = async (context: Context) => {
+const kategoriProdukDelete = async (context: Context) => {
     const id = context.params.id;
     if (!id) {
         return {
@@ -10,24 +10,24 @@ const kategoriMakananDelete = async (context: Context) => {
         }
     }
 
-    const kategoriMakanan = await prisma.kategoriMakanan.delete({
+    const kategoriProduk = await prisma.kategoriProduk.delete({
         where: {
             id: id,
         },
     })
 
-    if(!kategoriMakanan) {
+    if(!kategoriProduk) {
         return {
             success: false,
-            message: "Kategori makanan tidak ditemukan",
+            message: "Kategori Produk tidak ditemukan",
         }
     }
 
     return {
         success: true,
-        message: "Success delete kategori makanan",
-        data: kategoriMakanan,
+        message: "Success delete kategori produk",
+        data: kategoriProduk,
     }
 }
 
-export default kategoriMakananDelete
+export default kategoriProdukDelete

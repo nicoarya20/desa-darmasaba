@@ -1,7 +1,7 @@
 import { Context } from "elysia";
 import prisma from "@/lib/prisma";
 
-export default async function kategoriMakananFindUnique(context: Context) {
+export default async function kategoriProdukFindUnique(context: Context) {
     const url = new URL(context.request.url);
     const pathSegments = url.pathname.split('/');
     const id = pathSegments[pathSegments.length - 1];
@@ -21,7 +21,7 @@ export default async function kategoriMakananFindUnique(context: Context) {
             }
         }
 
-        const data = await prisma.kategoriMakanan.findUnique({
+        const data = await prisma.kategoriProduk.findUnique({
             where: { id },
         });
 

@@ -933,7 +933,7 @@ model LayananPolsek {
 // ========================================= KONTAK DARURAT ========================================= //
 model KontakDaruratKeamanan {
   id          String       @id @default(uuid())
-  nama        String       // contoh: "Layanan Darurat", "Fasilitas Kesehatan"
+  nama        String // contoh: "Layanan Darurat", "Fasilitas Kesehatan"
   image       FileStorage? @relation(fields: [imageId], references: [id])
   imageId     String?
   kontakItems KontakItem[]
@@ -942,15 +942,15 @@ model KontakDaruratKeamanan {
 }
 
 model KontakItem {
-  id              String         @id @default(uuid())
-  nama            String         // contoh: "Polisi", "Ambulans", "Puskesmas Darmasaba"
-  nomorTelepon    String
-  image           FileStorage?   @relation(fields: [imageId], references: [id])
-  imageId         String?
-  kategori        KontakDaruratKeamanan @relation(fields: [kategoriId], references: [id])
-  kategoriId      String
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
+  id           String                @id @default(uuid())
+  nama         String // contoh: "Polisi", "Ambulans", "Puskesmas Darmasaba"
+  nomorTelepon String
+  image        FileStorage?          @relation(fields: [imageId], references: [id])
+  imageId      String?
+  kategori     KontakDaruratKeamanan @relation(fields: [kategoriId], references: [id])
+  kategoriId   String
+  createdAt    DateTime              @default(now())
+  updatedAt    DateTime              @updatedAt
 }
 
 // ========================================= PENCEGAHAN KRIMINALITAS ========================================= //
@@ -1050,68 +1050,67 @@ model MenuTipsKeamanan {
 // ========================================= MENU EKONOMI ========================================= //
 // ========================================= PASAR DESA ========================================= //
 model PasarDesa {
-  id        String                       @id @default(uuid())
-  nama      String // contoh: "Kerupuk Babi"
-  harga     Int // disimpan dalam bentuk angka: 12000
-  satuan    String // contoh: "pcs", "1 kg"
-  alamat    String // contoh: "Jl. Kenari no.7"
-  image     FileStorage                  @relation(fields: [imageId], references: [id])
-  imageId   String
-  rating    Float // contoh: 4.9
-  createdAt DateTime                     @default(now())
-  updatedAt DateTime                     @updatedAt
-  deletedAt DateTime                     @default(now())
-  isActive  Boolean                      @default(true)
-  kategori  KategoriMakanan @relation(fields: [kategoriId], references: [id])
-  kategoriId String
+  id          String           @id @default(uuid())
+  nama        String
+  image       FileStorage?     @relation(fields: [imageId], references: [id])
+  imageId     String?
+  harga       Int
+  rating      Float
+  alamatUsaha String
+  kategori    KategoriProduk[] @relation("ProdukToKategori")
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  deletedAt   DateTime         @default(now())
+  isActive    Boolean          @default(true)
 }
 
-model KategoriMakanan {
-  id        String                       @id @default(uuid())
-  nama      String // contoh: "Makanan", "Bahan Bangunan", dll
-  createdAt DateTime                     @default(now())
-  updatedAt DateTime                     @updatedAt
-  deletedAt DateTime?
-  isActive  Boolean                      @default(true)
-  PasarDesa PasarDesa[]
+model KategoriProduk {
+  id        String      @id @default(uuid())
+  nama      String
+  produk    PasarDesa[] @relation("ProdukToKategori")
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  deletedAt DateTime    @default(now())
+  isActive  Boolean     @default(true)
 }
+
 // ========================================= LOWONGAN KERJA LOKAL ========================================= //
 model LowonganPekerjaan {
-  id          String    @id @default(uuid()) // ID unik untuk setiap lowongan
-  posisi      String    // Contoh: "Kasir"
-  namaPerusahaan String  // Contoh: "Toko Sumber Rejeki"
-  lokasi      String    // Contoh: "Desa Munggu , Badung"
-  tipePekerjaan String  // Contoh: "Full Time", "Part Time", "Contract"
-  gaji        String    // Contoh: "Rp. 2.500.000 / bulan". Menggunakan String karena formatnya bisa bervariasi
-  deskripsi   String   // Opsional: Detail deskripsi pekerjaan (tidak terlihat di UI ini, tapi umum ada)
-  kualifikasi String   // Opsional: Kualifikasi yang dibutuhkan (tidak terlihat di UI ini, tapi umum ada)
+  id             String   @id @default(uuid()) // ID unik untuk setiap lowongan
+  posisi         String // Contoh: "Kasir"
+  namaPerusahaan String // Contoh: "Toko Sumber Rejeki"
+  lokasi         String // Contoh: "Desa Munggu , Badung"
+  tipePekerjaan  String // Contoh: "Full Time", "Part Time", "Contract"
+  gaji           String // Contoh: "Rp. 2.500.000 / bulan". Menggunakan String karena formatnya bisa bervariasi
+  deskripsi      String // Opsional: Detail deskripsi pekerjaan (tidak terlihat di UI ini, tapi umum ada)
+  kualifikasi    String // Opsional: Kualifikasi yang dibutuhkan (tidak terlihat di UI ini, tapi umum ada)
   tanggalPosting DateTime @default(now()) // Tanggal lowongan diposting
-  isActive    Boolean   @default(true) // Menandakan apakah lowongan masih aktif
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  deletedAt   DateTime  @default(now())
+  isActive       Boolean  @default(true) // Menandakan apakah lowongan masih aktif
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  deletedAt      DateTime @default(now())
 }
 
 // ========================================= PROGRAM KEMISKINAN ========================================= //
 model ProgramKemiskinan {
-  id          String   @id @default(uuid())
+  id          String               @id @default(uuid())
   nama        String
   deskripsi   String
   ikonUrl     String?
-  isActive    Boolean  @default(true)
+  isActive    Boolean              @default(true)
   // Tambahkan relasi one-to-one ke StatistikKemiskinan
-  statistikId String?  @unique // Foreign key ke StatistikKemiskinan, unique untuk one-to-one
+  statistikId String?              @unique // Foreign key ke StatistikKemiskinan, unique untuk one-to-one
   statistik   StatistikKemiskinan? @relation(fields: [statistikId], references: [id])
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
 }
 
 model StatistikKemiskinan {
-  id          String   @id @default(uuid())
-  tahun       Int      @unique
-  jumlah      Int
+  id                String             @id @default(uuid())
+  tahun             Int                @unique
+  jumlah            Int
   // Tidak perlu foreign key di sini jika relasi di ProgramLayanan
   programKemiskinan ProgramKemiskinan?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
 }
