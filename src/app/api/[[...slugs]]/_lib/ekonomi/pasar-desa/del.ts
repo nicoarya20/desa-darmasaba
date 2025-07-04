@@ -1,54 +1,27 @@
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
-import fs from "fs/promises";
-import path from "path";
 
-const pasarDesaDelete = async (context: Context) => {
-  const id = context.params?.id as string;
+export default async function pasarDesaDelete(context: Context) {
+  const { params } = context;
+  const id = params?.id as string;
 
   if (!id) {
-    return {
-      status: 400,
-      body: "ID tidak diberikan",
-    };
+    throw new Error("ID tidak ditemukan dalam parameter");
   }
 
-  const pasarDesa = await prisma.pasarDesa.findUnique({
-    where: { id },
-    include: {
-      image: true,
-      kategori: true,
-    },
+  // 1. Hapus relasi dari pivot
+  await prisma.kategoriToPasar.deleteMany({
+    where: { pasarDesaId: id },
   });
 
-  if (!pasarDesa) {
-    return {
-      status: 404,
-      body: "Pasar desa tidak ditemukan",
-    };
-  }
-
-  if (pasarDesa.image) {
-    try {
-      const filePath = path.join(pasarDesa.image.path, pasarDesa.image.name);
-      await fs.unlink(filePath);
-      await prisma.fileStorage.delete({
-        where: { id: pasarDesa.image.id },
-      });
-    } catch (err) {
-      console.error("Gagal hapus file image:", err);
-    }
-  }
-  
-
-  await prisma.pasarDesa.delete({
+  // 2. Hapus pasar desa utama
+  const deleted = await prisma.pasarDesa.delete({
     where: { id },
   });
 
   return {
-    status: 200,
     success: true,
-    message: "Pasar desa berhasil dihapus",
+    message: "Berhasil menghapus pasar desa",
+    data: deleted,
   };
-};
-export default pasarDesaDelete;
+}

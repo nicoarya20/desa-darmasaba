@@ -53,11 +53,18 @@ const pasarDesa = proxy({
     },
   },
   findMany: {
-    data: null as
-      | Prisma.PasarDesaGetPayload<{
-          include: { kategori: true; image: true };
-        }>[]
-      | null,
+    data: null as Array<
+      Prisma.PasarDesaGetPayload<{
+        include: {
+          image: true;
+          KategoriToPasar: {
+            include: {
+              kategori: true;
+            };
+          };
+        };
+      }>
+    > | null,
     async load() {
       const res = await ApiFetch.api.ekonomi.pasardesa["find-many"].get();
       if (res.status === 200) {
@@ -67,7 +74,14 @@ const pasarDesa = proxy({
   },
   findUnique: {
     data: null as Prisma.PasarDesaGetPayload<{
-      include: { kategori: true; image: true };
+      include: {
+        image: true;
+        KategoriToPasar: {
+          include: {
+            kategori: true;
+          };
+        };
+      };
     }> | null,
     async load(id: string) {
       try {

@@ -43,7 +43,8 @@ function EditPasarDesa() {
             alamatUsaha: data.alamatUsaha || "",
             imageId: data.imageId || "",
             rating: data.rating || 0,
-            kategoriId: data.kategori?.map((k: any) => k.nama) || [],
+            // Use the IDs from KategoriToPasar relationship
+            kategoriId: data.KategoriToPasar?.map((k: any) => k.kategoriId) || [],
           });
           // Tampilkan preview gambar
           if (data.image?.link) {
@@ -198,17 +199,19 @@ function EditPasarDesa() {
           />
           <MultiSelect
             value={formData.kategoriId}
-            onChange={(val) => {
-              setFormData({ ...formData, kategoriId: val });
-            }}
+            onChange={(val) => setFormData({ ...formData, kategoriId: val })}
             label={<Text fw={"bold"} fz={"sm"}>Kategori Produk</Text>}
             placeholder='Pilih kategori produk'
             data={
               pasarState.kategoriProduk.findMany.data?.map((v) => ({
-                value: v.id,
+                value: v.id,  // Make sure this is using the ID
                 label: v.nama
               })) || []
             }
+            clearable
+            searchable
+            required
+            error={!formData.kategoriId.length ? "Pilih minimal satu kategori" : undefined}
           />
 
           <Group>

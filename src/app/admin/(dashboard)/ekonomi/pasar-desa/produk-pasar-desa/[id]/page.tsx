@@ -17,7 +17,6 @@ function DetailPasarDesa() {
   const router = useRouter();
 
   useShallowEffect(() => {
-    statePasar.kategoriProduk.findUnique.load(params?.id as string)
     statePasar.pasarDesa.findUnique.load(params?.id as string)
   }, [])
 
@@ -73,12 +72,17 @@ function DetailPasarDesa() {
               <Box>
                 <Text fz={"lg"} fw={"bold"}>Kategori</Text>
                 <Stack gap={4}>
-                  {statePasar.pasarDesa.findUnique.data?.kategori?.length > 0 ? (
-                    statePasar.pasarDesa.findUnique.data.kategori.map((kat) => (
-                      <Text fz={"lg"} key={kat.id}>• {kat.nama}</Text>
+                  {statePasar.pasarDesa.findUnique.data?.KategoriToPasar &&
+                    statePasar.pasarDesa.findUnique.data.KategoriToPasar.length > 0 ? (
+                    statePasar.pasarDesa.findUnique.data.KategoriToPasar.map((kategori) => (
+                      <Text fz={"lg"} key={kategori.id}>
+                        • {kategori.kategori.nama}
+                      </Text>
                     ))
                   ) : (
-                    <Text fz={"lg"} c="dimmed">Tidak ada kategori</Text>
+                    <Text fz={"lg"} c="dimmed">
+                      Tidak ada kategori
+                    </Text>
                   )}
                 </Stack>
               </Box>

@@ -9,28 +9,26 @@ const PasarDesa = new Elysia({
   prefix: "/pasardesa",
   tags: ["Ekonomi/Pasar Desa"],
 })
+  // GET all
   .get("/find-many", pasarDesaFindMany)
-  .get("/:id", async (context) => {
-    const response = await pasarDesaFindUnique(new Request(context.request));
-    return response;
-  })
-  .post("/create", pasarDesaCreate, {
-    body: t.Object({
-      nama: t.String(),
-      harga: t.Number(),
-      alamatUsaha: t.String(),
-      imageId: t.String(),
-      rating: t.Number(),
-      kategoriId:t.Array(t.String()),
-    }),
-  })
-  .delete("/del/:id", pasarDesaDelete)
-  .put(
+
+  // GET by ID
+  .get(
     "/:id",
     async (context) => {
-      const response = await pasarDesaUpdate(context);
-      return response;
+      return await pasarDesaFindUnique(context);
     },
+    {
+      params: t.Object({
+        id: t.String(),
+      }),
+    }
+  )
+
+  // POST create
+  .post(
+    "/create",
+    pasarDesaCreate,
     {
       body: t.Object({
         nama: t.String(),
@@ -38,7 +36,49 @@ const PasarDesa = new Elysia({
         alamatUsaha: t.String(),
         imageId: t.String(),
         rating: t.Number(),
-        kategoriId:t.Array(t.String()),
+        kategoriId: t.Array(t.String()),
+      }),
+    }
+  )
+
+  // DELETE
+  .delete(
+    "/del/:id",
+    pasarDesaDelete,
+    {
+      params: t.Object({
+        id: t.String(),
+      }),
+    }
+  )
+
+  // PUT update
+  .put(
+    "/:id",
+    async (context) => {
+      const body = context.body;
+      const id = context.params.id;
+
+      // Gabungkan id ke body
+      return await pasarDesaUpdate({
+        ...context,
+        body: {
+          ...body,
+          id,
+        },
+      });
+    },
+    {
+      params: t.Object({
+        id: t.String(),
+      }),
+      body: t.Object({
+        nama: t.String(),
+        harga: t.Number(),
+        alamatUsaha: t.String(),
+        imageId: t.String(),
+        rating: t.Number(),
+        kategoriId: t.Array(t.String()),
       }),
     }
   );
