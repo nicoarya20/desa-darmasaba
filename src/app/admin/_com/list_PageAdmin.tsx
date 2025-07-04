@@ -215,7 +215,7 @@ export const navBar = [
       {
         id: "Ekonomi_1",
         name: "Pasar Desa",
-        path: "/admin/ekonomi/pasar-desa"
+        path: "/admin/ekonomi/pasar-desa/produk-pasar-desa"
       },
       {
         id: "Ekonomi_2",

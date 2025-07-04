@@ -1,10 +1,13 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Paper, Table, TableTbody, TableTd, TableTh, TableThead, TableTr } from '@mantine/core';
+import { Box, Button, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr } from '@mantine/core';
 import { IconDeviceImac, IconSearch } from '@tabler/icons-react';
 import HeaderSearch from '../../_com/header';
 import JudulList from '../../_com/judulList';
 import { useRouter } from 'next/navigation';
+import { useProxy } from 'valtio/utils';
+import kontakDaruratKeamananState from '../../_state/keamanan/kontak-darurat-keamanan';
+import { useShallowEffect } from '@mantine/hooks';
 
 function KontakDaurat() {
   return (
@@ -20,7 +23,20 @@ function KontakDaurat() {
 }
 
 function ListKontakDaurat() {
+  const kontakState = useProxy(kontakDaruratKeamananState)
   const router = useRouter();
+
+  useShallowEffect(() => {
+    kontakState.findMany.load()
+  }, [])
+
+  if (!kontakState.findMany.data) {
+    return (
+      <Stack py={10}>
+        <Skeleton h={500} />
+      </Stack>
+    )
+  }
   return (
     <Box py={10}>
       <Paper bg={colors['white-1']} p={'md'}>
@@ -31,23 +47,25 @@ function ListKontakDaurat() {
         <Table striped withTableBorder withRowBorders>
           <TableThead>
             <TableTr>
-              <TableTh>Nama Kontak Darurat</TableTh>
-              <TableTh>Nomor Kontak Darurat</TableTh>
-              <TableTh>Deskripsi</TableTh>
+              <TableTh>Nama Kategori Darurat</TableTh>
+              <TableTh>Nama Kontak</TableTh>
+              <TableTh>Nomor Kontak</TableTh>
               <TableTh>Detail</TableTh>
               </TableTr>
           </TableThead>
           <TableTbody>
-            <TableTr>
-              <TableTd>Kontak Darurat 1</TableTd>
-              <TableTd>0896232831883</TableTd>
-              <TableTd>Kontak Darurat 1</TableTd>
-              <TableTd>
-                <Button onClick={() => router.push('/admin/keamanan/kontak-darurat/detail')}>
-                  <IconDeviceImac size={20} />
-                </Button>
-              </TableTd>
-            </TableTr>
+            {kontakState.findMany.data?.map((item) => (
+              <TableTr key={item.id}>
+                <TableTd>{item.nama}</TableTd>
+                <TableTd>{item.kontakItems[0].nama}</TableTd>
+                <TableTd>{item.kontakItems[0].nomorTelepon}</TableTd>
+                <TableTd>
+                  <Button onClick={() => router.push(`/admin/keamanan/kontak-darurat/${item.id}`)}>
+                    <IconDeviceImac size={20} />
+                  </Button>
+                </TableTd>
+              </TableTr>
+            ))}
           </TableTbody>
         </Table>  
       </Paper>

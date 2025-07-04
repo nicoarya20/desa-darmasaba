@@ -23,7 +23,8 @@ const pencegahanKriminalitasDelete = async (context: Context) => {
     if (!pencegahanKriminalitas) {
         return {
             status: 404,
-            body: "Pencegahan kriminalitas tidak ditemukan",
+            success: false,
+            message: "Pencegahan kriminalitas tidak ditemukan",
         };
     }
 
@@ -33,7 +34,8 @@ const pencegahanKriminalitasDelete = async (context: Context) => {
 
     return {
         status: 200,
-        body: "Pencegahan kriminalitas berhasil dihapus",
+        success: true,
+        message: "Pencegahan kriminalitas berhasil dihapus",
     };
 };
 export default pencegahanKriminalitasDelete;

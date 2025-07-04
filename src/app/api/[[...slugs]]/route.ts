@@ -18,6 +18,7 @@ import uplImg from "./_lib/upl-img";
 import { uplImgSingle } from "./_lib/upl-img-single";
 import FileStorage from "./_lib/fileStorage";
 import Keamanan from "./_lib/keamanan";
+import Ekonomi from "./_lib/ekonomi";
 
 
 const ROOT = process.cwd();
@@ -79,6 +80,7 @@ const ApiServer = new Elysia()
   .use(Keamanan)
   .use(Utils)
   .use(FileStorage)
+  .use(Ekonomi)
   .onError(({ code }) => {
     if (code === "NOT_FOUND") {
       return {
