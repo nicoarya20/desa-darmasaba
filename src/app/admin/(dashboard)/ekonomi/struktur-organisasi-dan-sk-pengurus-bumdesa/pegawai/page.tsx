@@ -108,7 +108,12 @@ function ListPegawai() {
               return null;
             })()}
             {([...stateOrganisasi.findMany.data || []]
-              .sort((a, b) => Number(b.isActive) - Number(a.isActive)) // Aktif di atas
+              .sort((a, b) => {
+                if (a.isActive === b.isActive) {
+                  return a.namaLengkap.localeCompare(b.namaLengkap); // kalau status sama, urut nama
+                }
+                return Number(b.isActive) - Number(a.isActive); // aktif duluan
+              }) // Aktif di atas
             ).map((item) => (
               <TableTr key={item.id}>
                 <TableTd>{item.namaLengkap}</TableTd>

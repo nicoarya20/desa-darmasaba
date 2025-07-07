@@ -591,7 +591,7 @@ const hubunganOrganisasi = proxy({
 
     async load(id: string) {
       try {
-        const res = await fetch(`/api/ekonomi/strukturorganisasi/hubunganorganisasi/${id}`);
+        const res = await fetch(`/api/ekonomi/struktur-organisasi/hubungan-organisasi/${id}`);
         const result = await res.json();
 
         if (res.ok && result?.success) {
@@ -616,7 +616,7 @@ const hubunganOrganisasi = proxy({
       if (!id) return toast.warn("ID tidak valid");
 
       try {
-        const res = await fetch(`/api/ekonomi/strukturorganisasi/hubunganorganisasi/${id}`);
+        const res = await fetch(`/api/ekonomi/struktur-organisasi/hubungan-organisasi/${id}`);
         const result = await res.json();
 
         if (res.ok && result?.success) {
@@ -650,7 +650,7 @@ const hubunganOrganisasi = proxy({
       try {
         this.loading = true;
         const res = await fetch(
-          `/api/ekonomi/strukturorganisasi/hubunganorganisasi/${this.id}`,
+          `/api/ekonomi/struktur-organisasi/hubungan-organisasi/${this.id}`,
           {
             method: "PUT",
             headers: {
@@ -690,7 +690,7 @@ const hubunganOrganisasi = proxy({
 
       try {
         hubunganOrganisasi.delete.loading = true;
-        const res = await fetch(`/api/strukturorganisasi/hubungan-organisasi/${id}`, {
+        const res = await fetch(`/api/ekonomi/struktur-organisasi/hubungan-organisasi/del/${id}`, {
           method: "DELETE",
         });
 

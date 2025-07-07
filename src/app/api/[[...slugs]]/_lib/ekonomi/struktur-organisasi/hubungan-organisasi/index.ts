@@ -35,14 +35,13 @@ const HubunganOrganisasi = new Elysia({
         return response;
       }, {
     body: t.Object({
-      id: t.String(),
       atasanId: t.Optional(t.String()),
       bawahanId: t.Optional(t.String()),
       tipe: t.Optional(t.String()),
     }),
   })
 
-  // ❌ DELETE /:id
-  .delete("/:id", hubunganOrganisasiDelete);
+  // ❌ DELETE /del/:id
+  .delete("/del/:id", hubunganOrganisasiDelete);
 
 export default HubunganOrganisasi;

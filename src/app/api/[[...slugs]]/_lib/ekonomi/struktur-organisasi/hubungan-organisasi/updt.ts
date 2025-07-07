@@ -1,27 +1,27 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 type FormUpdateHubungan = {
-  id: string;
   atasanId?: string;
   bawahanId?: string;
   tipe?: string;
 };
 
 export default async function hubunganOrganisasiUpdate(context: Context) {
-  const body = await context.body as FormUpdateHubungan;
+  const body = await context.body as Omit<FormUpdateHubungan, 'id'>;
+  const id = context.params?.id;
 
-  if (!body?.id) {
+  if (!id) {
     return {
       success: false,
-      message: "ID wajib diisi untuk update",
+      message: "ID wajib ada di URL",
     };
   }
 
   try {
     const updated = await prisma.hubunganOrganisasi.update({
-      where: { id: body.id },
+      where: { id },
       data: {
         atasanId: body.atasanId,
         bawahanId: body.bawahanId,
