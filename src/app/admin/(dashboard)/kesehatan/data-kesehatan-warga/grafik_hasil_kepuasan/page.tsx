@@ -10,8 +10,24 @@ import { useProxy } from 'valtio/utils';
 import JudulListTab from '../../../_com/jusulListTab';
 import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
 import grafikkepuasan from '../../../_state/kesehatan/data_kesehatan_warga/grafikKepuasan';
+import HeaderSearch from '../../../_com/header';
 
 function GrafikHasilKepuasanMasyarakat() {
+  const [search, setSearch] = useState("");
+  return (
+    <Box>
+      <HeaderSearch
+        title='Grafik Hasil Kepuasan Masyarakat'
+        placeholder='pencarian'
+        searchIcon={<IconSearch size={20} />}
+        value={search}
+        onChange={(e) => setSearch(e.currentTarget.value)}
+      />
+      <ListGrafikHasilKepuasanMasyarakat search={search} />
+    </Box>
+  );
+}
+function ListGrafikHasilKepuasanMasyarakat({ search }: { search: string }) {
   type PDKMGrafik = {
     id: string;
     label: string;
@@ -52,6 +68,14 @@ function GrafikHasilKepuasanMasyarakat() {
     }
   }, [stateGrafikKepuasan.findMany.data]);
 
+  const filteredData = (stateGrafikKepuasan.findMany.data || []).filter(item => {
+    const keyword = search.toLowerCase();
+    return (
+      item.label.toLowerCase().includes(keyword) ||
+      item.jumlah.toString().toLowerCase().includes(keyword)
+    );
+  });
+
   if (!stateGrafikKepuasan.findMany.data) {
     return (
       <Stack>
@@ -81,7 +105,7 @@ function GrafikHasilKepuasanMasyarakat() {
               </TableTr>
             </TableThead>
             <TableTbody>
-              {stateGrafikKepuasan.findMany.data?.map((item) => (
+              {filteredData.map((item) => (
                 <TableTr key={item.id}>
                   <TableTd>{item.label}</TableTd>
                   <TableTd>{item.jumlah}</TableTd>

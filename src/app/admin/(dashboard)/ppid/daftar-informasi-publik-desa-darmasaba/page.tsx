@@ -1,42 +1,46 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Grid, GridCol, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, TextInput, Title } from '@mantine/core';
+import { Box, Button, Grid, GridCol, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconCircleDashedPlus, IconDeviceImacCog, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
+import HeaderSearch from '../../_com/header';
 import daftarInformasiPublik from '../../_state/ppid/daftar_informasi_publik/daftarInformasiPublik';
 
-function Page() {
+function DaftarInformasiPublik() {
+  const [search, setSearch] = useState("");
   return (
     <Box>
-      <Grid>
-        <GridCol span={{ base: 12, md: 9 }}>
-          <Title order={3}>Daftar Informasi Publik Desa Darmasaba</Title>
-        </GridCol>
-        <GridCol span={{ base: 12, md: 3 }}>
-          <Paper radius={"lg"} bg={colors['white-1']}>
-            <TextInput
-              radius={"lg"}
-              placeholder='pencarian'
-              leftSection={<IconSearch size={20} />}
-            />
-          </Paper>
-        </GridCol>
-      </Grid>
-      <ListDaftarInformasi />
+      <HeaderSearch
+        title='Posisi Organisasi'
+        placeholder='pencarian'
+        searchIcon={<IconSearch size={20} />}
+        value={search}
+        onChange={(e) => setSearch(e.currentTarget.value)}
+      />
+      <ListDaftarInformasi search={search} />
     </Box>
   );
 }
 
-function ListDaftarInformasi() {
+function ListDaftarInformasi({ search }: { search: string }) {
   const listData = useProxy(daftarInformasiPublik)
+  const router = useRouter()
 
   useShallowEffect(() => {
     listData.findMany.load()
   }, [])
 
-  const router = useRouter()
+
+  const filteredData = (listData.findMany.data || []).filter(item => {
+    const keyword = search.toLowerCase();
+    return (
+      item.jenisInformasi.toLowerCase().includes(keyword) ||
+      item.deskripsi.toLowerCase().includes(keyword)
+    );
+  });
 
   if (!listData.findMany.data) {
     return (
@@ -77,7 +81,7 @@ function ListDaftarInformasi() {
                 </TableTr>
               </TableThead>
               <TableTbody>
-                {listData.findMany.data?.map((item, index) => (
+                {filteredData.map((item, index) => (
                   <TableTr key={item.id}>
                     <TableTd>{index + 1}</TableTd>
                     <TableTd>{item.jenisInformasi}</TableTd>
@@ -98,4 +102,4 @@ function ListDaftarInformasi() {
   )
 }
 
-export default Page;
+export default DaftarInformasiPublik;

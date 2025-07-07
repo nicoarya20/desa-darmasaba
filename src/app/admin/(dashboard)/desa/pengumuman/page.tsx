@@ -11,21 +11,25 @@ import { ModalKonfirmasiHapus } from '../../_com/modalKonfirmasiHapus';
 import { useState } from 'react';
 
 
-function Page() {
+function Pengumuman() {
+  const [search, setSearch] = useState("");
   return (
     <Box>
       <HeaderSearch
-        title='Pengumuman'
+        title='Posisi Organisasi'
         placeholder='pencarian'
         searchIcon={<IconSearch size={20} />}
+        value={search}
+        onChange={(e) => setSearch(e.currentTarget.value)}
       />
-      <PengumumanList />
+      <ListPengumuman search={search} />
     </Box>
   );
 }
 
-function PengumumanList() {
+function ListPengumuman({ search }: { search: string }) {
   const pengumumanState = useProxy(stateDesaPengumuman)
+  const router = useRouter()
   const [modalHapus, setModalHapus] = useState(false)
   const [selectedId, setSelectedId] = useState<string | null>(null)
 
@@ -33,7 +37,6 @@ function PengumumanList() {
     pengumumanState.pengumuman.findMany.load()
   }, [])
 
-  const router = useRouter()
 
   const handleHapus = () => {
     if (selectedId) {
@@ -42,6 +45,14 @@ function PengumumanList() {
       setSelectedId(null)
     }
   }
+
+  const filteredData = (pengumumanState.pengumuman.findMany.data || []).filter(item => {
+    const keyword = search.toLowerCase();
+    return (
+      item.judul.toLowerCase().includes(keyword) ||
+      item.CategoryPengumuman?.name.toLowerCase().includes(keyword)
+    );
+  });
 
   if (!pengumumanState.pengumuman.findMany.data) {
     return (
@@ -76,7 +87,7 @@ function PengumumanList() {
                 </TableTr>
               </TableThead>
               <TableTbody >
-                {pengumumanState.pengumuman.findMany.data?.map((item) => (
+                {filteredData.map((item) => (
                   <TableTr key={item.id}>
                   <TableTd >
                     <Box w={100}>
@@ -108,4 +119,4 @@ function PengumumanList() {
   )
 }
 
-export default Page;
+export default Pengumuman;

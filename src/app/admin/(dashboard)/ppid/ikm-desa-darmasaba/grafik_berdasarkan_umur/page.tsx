@@ -11,8 +11,25 @@ import { Cell, Pie, PieChart } from 'recharts';
 import { useProxy } from 'valtio/utils';
 import JudulListTab from '../../../_com/jusulListTab';
 import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
+import HeaderSearch from '../../../_com/header';
 
 function GrafikBerdasarakanUmur() {
+  const [search, setSearch] = useState("");
+  return (
+    <Box>
+      <HeaderSearch
+        title='Grafik Berdasarkan Umur Responden'
+        placeholder='pencarian'
+        searchIcon={<IconSearch size={20} />}
+        value={search}
+        onChange={(e) => setSearch(e.currentTarget.value)}
+      />
+      <ListGrafikBerdasarakanUmur search={search} />
+    </Box>
+  );
+}
+
+function ListGrafikBerdasarakanUmur({ search }: { search: string }) {
   const stategrafikBerdasarkanUmur = useProxy(grafikBerdasarkanUmur)
   const [donutData, setDonutData] = useState<any[]>([]);
   const [mounted, setMounted] = useState(false);
@@ -50,6 +67,16 @@ function GrafikBerdasarakanUmur() {
     }
   }, [stategrafikBerdasarkanUmur.findMany.data])
 
+  const filteredData = (stategrafikBerdasarkanUmur.findMany.data || []).filter(item => {
+    const keyword = search.toLowerCase();
+    return (
+      item.remaja.toString().toLowerCase().includes(keyword) ||
+      item.dewasa.toString().toLowerCase().includes(keyword) ||
+      item.orangtua.toString().toLowerCase().includes(keyword) ||
+      item.lansia.toString().toLowerCase().includes(keyword)
+    );
+  });
+
   if (!stategrafikBerdasarkanUmur.findMany.data) {
     return (
       <Box>
@@ -57,7 +84,7 @@ function GrafikBerdasarakanUmur() {
       </Box>
     )
   }
- 
+
   return (
     <Box>
       <Stack gap={"xs"}>
@@ -80,14 +107,14 @@ function GrafikBerdasarakanUmur() {
               </TableTr>
             </TableThead>
             <TableTbody>
-              {stategrafikBerdasarkanUmur.findMany.data.length === 0 ? (
+              {filteredData.length === 0 ? (
                 <TableTr>
                   <TableTd colSpan={6}>
                     <Text ta='center' c='dimmed'>Belum ada data grafik responden</Text>
                   </TableTd>
                 </TableTr>
               ) : (
-                stategrafikBerdasarkanUmur.findMany.data.map((item) => (
+                filteredData.map((item) => (
                   <TableTr key={item.id}>
                     <TableTd>{item.remaja}</TableTd>
                     <TableTd>{item.dewasa}</TableTd>

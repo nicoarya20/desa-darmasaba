@@ -8,28 +8,39 @@ import { useRouter } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
 import { useShallowEffect } from '@mantine/hooks';
 import penangananDarurat from '../../_state/kesehatan/penanganan-darurat/penangananDarurat';
-
+import { useState } from 'react';
 
 function PenangananDarurat() {
+  const [search, setSearch] = useState("");
   return (
     <Box>
       <HeaderSearch
         title='PenangananDarurat'
         placeholder='pencarian'
         searchIcon={<IconSearch size={20} />}
+        value={search}
+        onChange={(e) => setSearch(e.currentTarget.value)}
       />
-      <ListPenangananDarurat/>
+      <ListPenangananDarurat search={search}/>
     </Box>
   );
 }
 
-function ListPenangananDarurat() {
+function ListPenangananDarurat({ search }: { search: string }) {
   const penangananDaruratState = useProxy(penangananDarurat)
   const router = useRouter();
 
   useShallowEffect(() => {
     penangananDaruratState.findMany.load()
   }, [])
+
+  const filteredData = (penangananDaruratState.findMany.data || []).filter(item => {
+    const keyword = search.toLowerCase();
+    return (
+      item.name.toLowerCase().includes(keyword) ||
+      item.deskripsi.toLowerCase().includes(keyword)
+    );
+  });
 
   if (!penangananDaruratState.findMany.data) {
     return (
@@ -58,7 +69,7 @@ function ListPenangananDarurat() {
               </TableTr>
             </TableThead>
             <TableTbody>
-              {penangananDaruratState.findMany.data?.map((item) => (
+              {filteredData.map((item) => (
                 <TableTr key={item.id}>
                 <TableTd>
                   <Box w={100}>

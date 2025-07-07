@@ -1,43 +1,47 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Grid, GridCol, Image, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, TextInput, Title } from '@mantine/core';
+import { Box, Button, Grid, GridCol, Image, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconCircleDashedPlus, IconDeviceImacCog, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
+import HeaderSearch from '../../_com/header';
 import stateDashboardBerita from '../../_state/desa/berita';
 
 
-function Page() {
+function Berita() {
+  const [search, setSearch] = useState("");
   return (
     <Box>
-      <Grid>
-        <GridCol span={{ base: 12, md: 9 }}>
-          <Title order={3}>Berita</Title>
-        </GridCol>
-        <GridCol span={{ base: 12, md: 3 }}>
-          <Paper radius={"lg"} bg={colors['white-1']}>
-            <TextInput
-              radius={"lg"}
-              placeholder='pencarian'
-              leftSection={<IconSearch size={20} />}
-            />
-          </Paper>
-        </GridCol>
-      </Grid>
-      <BeritaList />
+      <HeaderSearch
+        title='Berita'
+        placeholder='pencarian'
+        searchIcon={<IconSearch size={20} />}
+        value={search}
+        onChange={(e) => setSearch(e.currentTarget.value)}
+      />
+      <ListBerita search={search} />
     </Box>
   );
 }
 
-function BeritaList() {
+function ListBerita({ search }: { search: string }) {
   const beritaState = useProxy(stateDashboardBerita)
+  const router = useRouter()
 
   useShallowEffect(() => {
     beritaState.berita.findMany.load()
   }, [])
 
-  const router = useRouter()
+  const filteredData = (beritaState.berita.findMany.data || []).filter(item => {
+    const keyword = search.toLowerCase();
+    return (
+      item.judul.toLowerCase().includes(keyword) ||
+      item.kategoriBerita?.name.toLowerCase().includes(keyword)
+    );
+  });
+
 
   if (!beritaState.berita.findMany.data) {
     return (
@@ -62,7 +66,7 @@ function BeritaList() {
             </GridCol>
           </Grid>
           <Box style={{ overflowX: "auto" }}>
-            <Table striped withRowBorders withTableBorder style={{ minWidth: '700px' }}> 
+            <Table striped withRowBorders withTableBorder style={{ minWidth: '700px' }}>
               <TableThead>
                 <TableTr>
                   <TableTh w={250}>Judul</TableTh>
@@ -73,7 +77,7 @@ function BeritaList() {
                 </TableTr>
               </TableThead>
               <TableTbody >
-                {beritaState.berita.findMany.data?.map((item) => (
+                {filteredData.map((item) => (
                   <TableTr key={item.id}>
                     <TableTd >
                       <Box w={100}>
@@ -101,4 +105,4 @@ function BeritaList() {
   )
 }
 
-export default Page;
+export default Berita;

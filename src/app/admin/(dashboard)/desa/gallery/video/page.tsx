@@ -7,14 +7,40 @@ import JudulListTab from '../../../_com/jusulListTab';
 import { useProxy } from 'valtio/utils';
 import stateGallery from '../../../_state/desa/gallery';
 import { useShallowEffect } from '@mantine/hooks';
+import HeaderSearch from '../../../_com/header';
+import { useState } from 'react';
 
 function Video() {
+  const [search, setSearch] = useState("");
+  return (
+    <Box>
+      <HeaderSearch
+        title='Posisi Organisasi'
+        placeholder='pencarian'
+        searchIcon={<IconSearch size={20} />}
+        value={search}
+        onChange={(e) => setSearch(e.currentTarget.value)}
+      />
+      <ListVideo search={search} />
+    </Box>
+  );
+}
+
+function ListVideo({ search }: { search: string }) {
   const videoState = useProxy(stateGallery.video)
   const router = useRouter();
 
   useShallowEffect(() => {
     videoState.findMany.load()
   }, [])
+
+  const filteredData = (videoState.findMany.data || []).filter(item => {
+    const keyword = search.toLowerCase();
+    return (
+      item.name.toLowerCase().includes(keyword) ||
+      item.deskripsi.toLowerCase().includes(keyword)
+    );
+  });
 
   if (!videoState.findMany.data) {
     return (
@@ -43,7 +69,7 @@ function Video() {
             </TableTr>
           </TableThead>
           <TableTbody>
-            {videoState.findMany.data?.map((item) => (
+            {filteredData.map((item) => (
               <TableTr key={item.id}>
                 <TableTd>{item.name}</TableTd>
                 <TableTd>{new Date(item.createdAt).toDateString()}</TableTd>

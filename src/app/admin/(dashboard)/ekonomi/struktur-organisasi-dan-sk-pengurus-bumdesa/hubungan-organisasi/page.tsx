@@ -12,44 +12,58 @@ import { useState } from 'react';
 import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
 
 function HubunganOrganisasi() {
+  const [search, setSearch] = useState("");
+
   return (
     <Box>
       <HeaderSearch
         title='Hubungan Organisasi'
         placeholder='pencarian'
         searchIcon={<IconSearch size={20} />}
+        value={search}
+        onChange={(e) => setSearch(e.currentTarget.value)}
       />
-      <ListHubunganOrganisasi />
+      <ListHubunganOrganisasi search={search} />
     </Box>
   );
 }
 
-function ListHubunganOrganisasi() {
+
+function ListHubunganOrganisasi({ search }: { search: string }) {
   const stateOrganisasi = useProxy(strukturorganisasiState.hubunganOrganisasi);
-  const [modalHapus, setModalHapus] = useState(false)
-  const [selectedId, setSelectedId] = useState<string | null>(null)
-  // const params = useParams()
-  const router = useRouter()
+  const [modalHapus, setModalHapus] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const router = useRouter();
 
   useShallowEffect(() => {
-    stateOrganisasi.findMany.load()
-  }, [])
+    stateOrganisasi.findMany.load();
+  }, []);
 
   const handleHapus = () => {
     if (selectedId) {
-      stateOrganisasi.delete.byId(selectedId)
-      setModalHapus(false)
-      setSelectedId(null)
+      stateOrganisasi.delete.byId(selectedId);
+      setModalHapus(false);
+      setSelectedId(null);
     }
-  }
+  };
+
+  const filteredData = (stateOrganisasi.findMany.data || []).filter(item => {
+    const keyword = search.toLowerCase();
+    return (
+      item.atasan?.namaLengkap?.toLowerCase().includes(keyword) ||
+      item.bawahan?.namaLengkap?.toLowerCase().includes(keyword) ||
+      item.tipe?.toLowerCase().includes(keyword)
+    );
+  });
 
   if (!stateOrganisasi.findMany.data) {
     return (
       <Stack py={10}>
         <Skeleton h={500} />
       </Stack>
-    )
+    );
   }
+
   return (
     <Box py={10}>
       <Paper bg={colors['white-1']} p={'md'}>
@@ -68,34 +82,40 @@ function ListHubunganOrganisasi() {
             </TableTr>
           </TableThead>
           <TableTbody>
-            {([...stateOrganisasi.findMany.data || []]
-              .sort((a, b) => {
-                return a.atasan?.namaLengkap.localeCompare(b.atasan?.namaLengkap); // kalau status sama, urut nama
-              }) // Aktif di atas
-            ).map((item) => (
-              <TableTr key={item.id}>
-                <TableTd>{item.atasan?.namaLengkap}</TableTd>
-                <TableTd>{item.bawahan?.namaLengkap}</TableTd>
-                <TableTd>{item.tipe}</TableTd>
-                <TableTd>
-                  <Button bg={"green"} onClick={() => router.push(`/admin/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa/hubungan-organisasi/${item.id}`)}>
-                    <IconEdit size={25} />
-                  </Button>
-                </TableTd>
-                <TableTd>
-                  <Button color="red" onClick={() => {
-                    setSelectedId(item.id)
-                    setModalHapus(true)
-                  }}>
-                    <IconTrash size={20} />
-                  </Button>
-                </TableTd>
-              </TableTr>
-            ))}
+            {filteredData
+              .sort((a, b) =>
+                a.atasan?.namaLengkap.localeCompare(b.atasan?.namaLengkap)
+              )
+              .map((item) => (
+                <TableTr key={item.id}>
+                  <TableTd>{item.atasan?.namaLengkap}</TableTd>
+                  <TableTd>{item.bawahan?.namaLengkap}</TableTd>
+                  <TableTd>{item.tipe}</TableTd>
+                  <TableTd>
+                    <Button
+                      bg="green"
+                      onClick={() => router.push(`/admin/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa/hubungan-organisasi/${item.id}`)}
+                    >
+                      <IconEdit size={25} />
+                    </Button>
+                  </TableTd>
+                  <TableTd>
+                    <Button
+                      color="red"
+                      onClick={() => {
+                        setSelectedId(item.id);
+                        setModalHapus(true);
+                      }}
+                    >
+                      <IconTrash size={20} />
+                    </Button>
+                  </TableTd>
+                </TableTr>
+              ))}
           </TableTbody>
         </Table>
       </Paper>
-      {/* Modal Konfirmasi Hapus */}
+
       <ModalKonfirmasiHapus
         opened={modalHapus}
         onClose={() => setModalHapus(false)}
@@ -105,5 +125,6 @@ function ListHubunganOrganisasi() {
     </Box>
   );
 }
+
 
 export default HubunganOrganisasi;

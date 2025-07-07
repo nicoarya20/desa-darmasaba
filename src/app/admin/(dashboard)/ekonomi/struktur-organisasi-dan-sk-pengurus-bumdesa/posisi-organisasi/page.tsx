@@ -6,25 +6,28 @@ import { useRouter } from 'next/navigation';
 import HeaderSearch from '../../../_com/header';
 import JudulList from '../../../_com/judulList';
 import { useProxy } from 'valtio/utils';
-import { useState } from 'react';
 import { useShallowEffect } from '@mantine/hooks';
 import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
 import strukturorganisasiState from '../../../_state/ekonomi/struktur-organisasi/struktur-organisasi';
+import { useState } from 'react';
 
 function PosisiOrganisasi() {
+  const [search, setSearch] = useState("");
   return (
     <Box>
       <HeaderSearch
         title='Posisi Organisasi'
         placeholder='pencarian'
         searchIcon={<IconSearch size={20} />}
+        value={search}
+        onChange={(e) => setSearch(e.currentTarget.value)}
       />
-      <ListPosisiOrganisasi />
+      <ListPosisiOrganisasi search={search} />
     </Box>
   );
 }
 
-function ListPosisiOrganisasi() {
+function ListPosisiOrganisasi({ search }: { search: string }) {
   const stateOrganisasi = useProxy(strukturorganisasiState.posisiOrganisasi)
   const router = useRouter();
   const [modalHapus, setModalHapus] = useState(false)
@@ -41,6 +44,15 @@ function ListPosisiOrganisasi() {
       setSelectedId(null)
     }
   }
+
+  const filteredData = (stateOrganisasi.findMany.data || []).filter(item => {
+    const keyword = search.toLowerCase();
+    return (
+      item.nama?.toLowerCase().includes(keyword) ||
+      item.deskripsi?.toLowerCase().includes(keyword) ||
+      item.hierarki?.toString().toLowerCase().includes(keyword)
+    );
+  });
 
   if (!stateOrganisasi.findMany.data) {
     return (
@@ -68,7 +80,7 @@ function ListPosisiOrganisasi() {
             </TableTr>
           </TableThead>
           <TableTbody>
-            {stateOrganisasi.findMany.data?.map((item) => (
+            {filteredData.map((item) => (
               <TableTr key={item.id}>
                 <TableTd>{item.nama}</TableTd>
                 <TableTd>

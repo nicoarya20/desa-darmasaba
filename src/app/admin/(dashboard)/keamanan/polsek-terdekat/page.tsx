@@ -8,27 +8,40 @@ import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../_com/header';
 import JudulList from '../../_com/judulList';
 import polsekTerdekat from '../../_state/keamanan/polsek-terdekat';
+import { useState } from 'react';
 
 function PolsekTerdekat() {
+  const [search, setSearch] = useState("");
   return (
     <Box>
       <HeaderSearch
         title='Polsek Terdekat'
         placeholder='pencarian'
         searchIcon={<IconSearch size={20} />}
+        value={search}
+        onChange={(e) => setSearch(e.currentTarget.value)}
       />
-      <ListPolsekTerdekat/>
+      <ListPolsekTerdekat search={search}/>
     </Box>
   );
 }
 
-function ListPolsekTerdekat() {
+function ListPolsekTerdekat({ search }: { search: string }) {
   const polsekState = useProxy(polsekTerdekat)
   const router = useRouter();
 
   useShallowEffect(() => {
     polsekState.findMany.load()
   }, [])
+
+  const filteredData = (polsekState.findMany.data || []).filter(item => {
+    const keyword = search.toLowerCase();
+    return (
+      item.nama.toLowerCase().includes(keyword) ||
+      item.jarakKeDesa.toLowerCase().includes(keyword) ||
+      item.alamat.toLowerCase().includes(keyword)
+    );
+  });
 
   if (!polsekState.findMany.data) {
     return (
@@ -54,7 +67,7 @@ function ListPolsekTerdekat() {
               </TableTr>
           </TableThead>
           <TableTbody>
-            {polsekState.findMany.data?.map((item) => (
+            {filteredData.map((item) => (
               <TableTr key={item.id}>
                 <TableTd>{item.nama}</TableTd>
                 <TableTd>{item.jarakKeDesa}</TableTd>

@@ -8,28 +8,41 @@ import { useProxy } from 'valtio/utils';
 import fasilitasKesehatanState from '../../../_state/kesehatan/data_kesehatan_warga/fasilitasKesehatan';
 import HeaderSearch from '../../../_com/header';
 import JudulList from '../../../_com/judulList';
+import { useState } from 'react';
 
 
 function FasilitasKesehatan() {
+  const [search, setSearch] = useState("");
   return (
     <Box>
       <HeaderSearch
         title='Fasilitas Kesehatan'
         placeholder='pencarian'
         searchIcon={<IconSearch size={20} />}
+        value={search}
+        onChange={(e) => setSearch(e.currentTarget.value)}
       />
-      <ListFasilitasKesehatan/>
+      <ListFasilitasKesehatan search={search}/>
     </Box>
   );
 }
 
-function ListFasilitasKesehatan() {
+function ListFasilitasKesehatan({ search }: { search: string }) {
   const stateFasilitasKesehatan = useProxy(fasilitasKesehatanState)
   const router = useRouter();
 
   useShallowEffect(() => {
     stateFasilitasKesehatan.findMany.load()
   }, [])
+
+  const filteredData = (stateFasilitasKesehatan.findMany.data || []).filter(item => {
+    const keyword = search.toLowerCase();
+    return (
+      item.name.toLowerCase().includes(keyword) ||
+      item.informasiumum.alamat.toLowerCase().includes(keyword) ||
+      item.informasiumum.jamOperasional.toLowerCase().includes(keyword)
+    );
+  });
 
   if (!stateFasilitasKesehatan.findMany.data) {
     return (
@@ -57,7 +70,7 @@ function ListFasilitasKesehatan() {
               </TableTr>
             </TableThead>
             <TableTbody>
-              {stateFasilitasKesehatan.findMany.data?.map((item) => (
+              {filteredData.map((item) => (
                 <TableTr key={item.id}>
                   <TableTd>{item.name}</TableTd>
                   <TableTd>{item.informasiumum.alamat}</TableTd>

@@ -8,27 +8,40 @@ import { useRouter } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
 import laporanPublikState from '../../_state/keamanan/laporan-publik';
 import { useShallowEffect } from '@mantine/hooks';
+import { useState } from 'react';
 
 function LaporanPublik() {
+  const [search, setSearch] = useState("");
   return (
     <Box>
       <HeaderSearch
         title='Laporan Publik'
         placeholder='pencarian'
         searchIcon={<IconSearch size={20} />}
+        value={search}
+        onChange={(e) => setSearch(e.currentTarget.value)}
       />
-      <ListLaporanPublik/>
+      <ListLaporanPublik search={search}/>
     </Box>
   );
 }
 
-function ListLaporanPublik() {
+function ListLaporanPublik({ search }: { search: string }) {
   const stateLaporan = useProxy(laporanPublikState)
   const router = useRouter();
 
   useShallowEffect(() => {
     stateLaporan.findMany.load()
   }, [])
+
+  const filteredData = (stateLaporan.findMany.data || []).filter(item => {
+    const keyword = search.toLowerCase();
+    return (
+      item.judul.toLowerCase().includes(keyword) ||
+      item.status.toLowerCase().includes(keyword) ||
+      item.kronologi?.toLowerCase().includes(keyword)
+    );
+  });
 
   if (!stateLaporan.findMany.data) {
     return (
@@ -55,7 +68,7 @@ function ListLaporanPublik() {
               </TableTr>
           </TableThead>
           <TableTbody>
-            {stateLaporan.findMany.data?.map((item) => (
+            {filteredData.map((item) => (
               <TableTr key={item.id}>
                 <TableTd>{item.judul}</TableTd>
                 <TableTd>{new Date(item.tanggalWaktu).toLocaleDateString('id-ID')}</TableTd>

@@ -10,8 +10,24 @@ import { Bar, BarChart, Legend, Tooltip, XAxis, YAxis } from 'recharts';
 import { useProxy } from 'valtio/utils';
 import JudulListTab from '../../../_com/jusulListTab';
 import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
+import HeaderSearch from '../../../_com/header';
 
 function PersentaseDataKelahiranKematian() {
+  const [search, setSearch] = useState("");
+  return (
+    <Box>
+      <HeaderSearch
+        title='Persentase Data Kelahiran & Kematian'
+        placeholder='pencarian'
+        searchIcon={<IconSearch size={20} />}
+        value={search}
+        onChange={(e) => setSearch(e.currentTarget.value)}
+      />
+      <ListPersentaseDataKelahiranKematian search={search} />
+    </Box>
+  );
+}
+function ListPersentaseDataKelahiranKematian({ search }: { search: string }) {
   type PDKMGrafik = {
     id: string;
     tahun: string;
@@ -56,6 +72,16 @@ function PersentaseDataKelahiranKematian() {
     }
   }, [statePersentase.findMany.data]);
 
+  const filteredData = (statePersentase.findMany.data || []).filter(item => {
+    const keyword = search.toLowerCase();
+    return (
+      item.tahun.toLowerCase().includes(keyword) ||
+      item.kematianKasar.toString().toLowerCase().includes(keyword) ||
+      item.kematianBayi.toString().toLowerCase().includes(keyword) ||
+      item.kelahiranKasar.toString().toLowerCase().includes(keyword)
+    );
+  });
+
   if (!statePersentase.findMany.data) {
     return (
       <Stack>
@@ -87,7 +113,7 @@ function PersentaseDataKelahiranKematian() {
               </TableTr>
             </TableThead>
             <TableTbody>
-              {statePersentase.findMany.data?.map((item) => (
+              {filteredData.map((item) => (
                 <TableTr key={item.id}>
                   <TableTd>{item.tahun}</TableTd>
                   <TableTd>{item.kematianKasar}</TableTd>

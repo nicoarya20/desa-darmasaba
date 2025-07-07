@@ -8,21 +8,25 @@ import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../../_com/header';
 import JudulList from '../../../_com/judulList';
 import strukturorganisasiState from '../../../_state/ekonomi/struktur-organisasi/struktur-organisasi';
+import { useState } from 'react';
 
 function Pegawai() {
+  const [search, setSearch] = useState("");
   return (
     <Box>
       <HeaderSearch
         title='Pegawai'
         placeholder='pencarian'
         searchIcon={<IconSearch size={20} />}
+        value={search}
+        onChange={(e) => setSearch(e.currentTarget.value)}
       />
-      <ListPegawai />
+      <ListPegawai search={search} />
     </Box>
   );
 }
 
-function ListPegawai() {
+function ListPegawai({ search }: { search: string }) {
   const stateOrganisasi = useProxy(strukturorganisasiState.pegawai);
   const router = useRouter();
 
@@ -59,8 +63,15 @@ function ListPegawai() {
     };
   }, []);
 
-  // Log render cycle
-  console.log('Rendering with data:', stateOrganisasi.findMany.data);
+  const filteredData = (stateOrganisasi.findMany.data || []).filter(item => {
+    const keyword = search.toLowerCase();
+    return (
+      item.namaLengkap?.toLowerCase().includes(keyword) ||
+      item.gelarAkademik?.toLowerCase().includes(keyword) ||
+      item.telepon?.toLowerCase().includes(keyword) ||
+      item.posisi?.nama?.toLowerCase().includes(keyword)
+    );
+  });
 
   // Handle loading state
   if (stateOrganisasi.findMany.data === null) {
@@ -107,7 +118,7 @@ function ListPegawai() {
               console.log('Rendering table with items:', stateOrganisasi.findMany.data);
               return null;
             })()}
-            {([...stateOrganisasi.findMany.data || []]
+            {([...filteredData]
               .sort((a, b) => {
                 if (a.isActive === b.isActive) {
                   return a.namaLengkap.localeCompare(b.namaLengkap); // kalau status sama, urut nama

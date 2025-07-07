@@ -11,9 +11,25 @@ import { useSnapshot } from 'valtio';
 import JudulListTab from '../../../_com/jusulListTab';
 import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
 import grafikBerdasarkanResponden from '../../../_state/ppid/indeks_kepuasan_masyarakat/grafikBerdasarkanResponden';
+import HeaderSearch from '../../../_com/header';
 
 function GrafikBerdasarkanResponden() {
+  const [search, setSearch] = useState("");
+  return (
+    <Box>
+      <HeaderSearch
+        title='Grafik Berdasarkan Pilihan Responden'
+        placeholder='pencarian'
+        searchIcon={<IconSearch size={20} />}
+        value={search}
+        onChange={(e) => setSearch(e.currentTarget.value)}
+      />
+      <ListGrafikBerdasarkanResponden search={search} />
+    </Box>
+  );
+}
 
+function ListGrafikBerdasarkanResponden({ search }: { search: string }) {
   const stategrafikBerdasarkanResponden = useSnapshot(grafikBerdasarkanResponden)
   const [donutData, setDonutData] = useState<any[]>([]);
   const [mounted, setMounted] = useState(false);
@@ -37,6 +53,16 @@ function GrafikBerdasarkanResponden() {
     setMounted(true)
     stategrafikBerdasarkanResponden.findMany.load()
   }, [])
+
+  const filteredData = (stategrafikBerdasarkanResponden.findMany.data || []).filter(item => {
+    const keyword = search.toLowerCase();
+    return (
+      item.sangatbaik.toString().toLowerCase().includes(keyword) ||
+      item.baik.toString().toLowerCase().includes(keyword) ||
+      item.kurangbaik.toString().toLowerCase().includes(keyword) ||
+      item.tidakbaik.toString().toLowerCase().includes(keyword)
+    );
+  });
 
   useEffect(() => {
     if (stategrafikBerdasarkanResponden.findMany.data) {
@@ -83,14 +109,14 @@ function GrafikBerdasarkanResponden() {
               </TableTr>
             </TableThead>
             <TableTbody>
-              {stategrafikBerdasarkanResponden.findMany.data.length === 0 ? (
+              {filteredData.length === 0 ? (
                 <TableTr>
                   <TableTd colSpan={6}>
                     <Text ta='center' c='dimmed'>Belum ada data grafik responden</Text>
                   </TableTd>
                 </TableTr>
               ) : (
-                stategrafikBerdasarkanResponden.findMany.data.map((item) => (
+                filteredData.map((item) => (
                   <TableTr key={item.id}>
                     <TableTd>{item.sangatbaik}</TableTd>
                     <TableTd>{item.baik}</TableTd>

@@ -8,27 +8,39 @@ import { useRouter } from 'next/navigation';
 import programKesehatan from '../../_state/kesehatan/program-kesehatan/programKesehatan';
 import { useProxy } from 'valtio/utils';
 import { useShallowEffect } from '@mantine/hooks';
+import { useState } from 'react';
 
 function ProgramKesehatan() {
+  const [search, setSearch] = useState("");
   return (
     <Box>
       <HeaderSearch
         title='Program Kesehatan'
         placeholder='pencarian'
         searchIcon={<IconSearch size={20} />}
+        value={search}
+        onChange={(e) => setSearch(e.currentTarget.value)}
       />
-      <ListProgramKesehatan />
+      <ListProgramKesehatan search={search}/>
     </Box>
   );
 }
 
-function ListProgramKesehatan() {
+function ListProgramKesehatan({ search }: { search: string }) {
   const programKesehatanState = useProxy(programKesehatan)
   const router = useRouter()
 
   useShallowEffect(() => {
     programKesehatanState.findMany.load()
   }, [])
+
+  const filteredData = (programKesehatanState.findMany.data || []).filter(item => {
+    const keyword = search.toLowerCase();
+    return (
+      item.name.toLowerCase().includes(keyword) ||
+      item.deskripsiSingkat.toLowerCase().includes(keyword)
+    );
+  });
 
   if (!programKesehatanState.findMany.data) {
     return (
@@ -57,14 +69,16 @@ function ListProgramKesehatan() {
                 </TableTr>
               </TableThead>
               <TableTbody>
-                {programKesehatanState.findMany.data?.map((item) => (
+                {filteredData.map((item) => (
                   <TableTr key={item.id}>
                     <TableTd>
                       <Box w={100}>
                         <Text truncate="end" fz={"sm"}>{item.name}</Text>
                       </Box>
                     </TableTd>
-                    <TableTd>{item.deskripsiSingkat}</TableTd>
+                    <TableTd>
+                      <Text truncate="end" fz={"sm"} dangerouslySetInnerHTML={{ __html: item.deskripsiSingkat }} />
+                    </TableTd>
                     <TableTd>
                       <Image w={100} src={item.image?.link} alt="image" />
                     </TableTd>

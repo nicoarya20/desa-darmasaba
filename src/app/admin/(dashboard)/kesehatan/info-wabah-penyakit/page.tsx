@@ -8,27 +8,39 @@ import { useRouter } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
 import infoWabahPenyakit from '../../_state/kesehatan/info-wabah-penyakit/infoWabahPenyakit';
 import { useShallowEffect } from '@mantine/hooks';
+import { useState } from 'react';
 
 function InfoWabahPenyakit() {
+  const [search, setSearch] = useState("");
   return (
     <Box>
       <HeaderSearch
         title='Info Wabah Penyakit'
         placeholder='pencarian'
         searchIcon={<IconSearch size={20} />}
+        value={search}
+        onChange={(e) => setSearch(e.currentTarget.value)}
       />
-      <ListInfoWabahPenyakit/>
+      <ListInfoWabahPenyakit search={search}/>
     </Box>
   );
 }
 
-function ListInfoWabahPenyakit() {
+function ListInfoWabahPenyakit({ search }: { search: string }) {
   const infoWabahPenyakitState = useProxy(infoWabahPenyakit)
   const router = useRouter()
 
   useShallowEffect(() => {
     infoWabahPenyakitState.findMany.load()
   }, [])
+
+  const filteredData = (infoWabahPenyakitState.findMany.data || []).filter(item => {
+    const keyword = search.toLowerCase();
+    return (
+      item.name.toLowerCase().includes(keyword) ||
+      item.deskripsiSingkat.toLowerCase().includes(keyword)
+    );
+  });
 
   if (!infoWabahPenyakitState.findMany.data) {
     return (
@@ -56,7 +68,7 @@ function ListInfoWabahPenyakit() {
               </TableTr>
             </TableThead>
             <TableTbody>
-              {infoWabahPenyakitState.findMany.data?.map((item) => (
+              {filteredData.map((item) => (
                 <TableTr key={item.id}>
                   <TableTd>
                     <Box w={100}>

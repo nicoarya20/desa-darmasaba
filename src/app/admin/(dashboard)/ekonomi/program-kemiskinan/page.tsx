@@ -13,19 +13,22 @@ import { useEffect, useState } from 'react';
 import { CartesianGrid, Legend, Line, LineChart, Tooltip, XAxis, YAxis } from 'recharts';
 
 function ProgramKemiskinan() {
+  const [search, setSearch] = useState("");
   return (
     <Box>
       <HeaderSearch
         title='Program Kemiskinan'
         placeholder='pencarian'
         searchIcon={<IconSearch size={20} />}
+        value={search}
+        onChange={(e) => setSearch(e.currentTarget.value)}
       />
-      <ListProgramKemiskinan />
+      <ListProgramKemiskinan search={search}/>
     </Box>
   );
 }
 
-function ListProgramKemiskinan() {
+function ListProgramKemiskinan({ search }: { search: string }) {
   const programState = useProxy(programKemiskinanState)
   const router = useRouter();
   const [lineChart, setLineChart] = useState<any[]>([]);
@@ -51,6 +54,15 @@ function ListProgramKemiskinan() {
     }
   }, [programState.findMany.data])
 
+  const filteredData = (programState.findMany.data || []).filter(item => {
+    const keyword = search.toLowerCase();
+    return (
+      item.nama.toLowerCase().includes(keyword) ||
+      item.deskripsi.toLowerCase().includes(keyword) ||
+      item.statistik?.tahun.toString().includes(keyword)
+    );
+  });
+
   if (!programState.findMany.data) {
     return (
       <Stack py={10}>
@@ -75,7 +87,7 @@ function ListProgramKemiskinan() {
             </TableTr>
           </TableThead>
           <TableTbody>
-            {programState.findMany.data?.map((item) => (
+            {filteredData.map((item) => (
               <TableTr key={item.id}>
                 <TableTd>{item.nama}</TableTd>
                 <TableTd>

@@ -11,8 +11,25 @@ import { Cell, Pie, PieChart } from 'recharts';
 import { useProxy } from 'valtio/utils';
 import JudulListTab from '../../../_com/jusulListTab';
 import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
+import HeaderSearch from '../../../_com/header';
 
 function GrafikBerdasarkanJenisKelamin() {
+  const [search, setSearch] = useState("");
+  return (
+    <Box>
+      <HeaderSearch
+        title='Grafik Berdasarkan Jenis Kelamin Responden'
+        placeholder='pencarian'
+        searchIcon={<IconSearch size={20} />}
+        value={search}
+        onChange={(e) => setSearch(e.currentTarget.value)}
+      />
+      <ListGrafikBerdasarkanJenisKelamin search={search} />
+    </Box>
+  );
+}
+
+function ListGrafikBerdasarkanJenisKelamin({ search }: { search: string }) {
   const stategrafikBerdasarkanJenisKelamin = useProxy(grafikBerdasarkanJenisKelamin)
   const [donutData, setDonutData] = useState<any[]>([]);
   const [mounted, setMounted] = useState(false);
@@ -46,6 +63,14 @@ function GrafikBerdasarkanJenisKelamin() {
     }
   }, [stategrafikBerdasarkanJenisKelamin.findMany.data])
 
+  const filteredData = (stategrafikBerdasarkanJenisKelamin.findMany.data || []).filter(item => {
+    const keyword = search.toLowerCase();
+    return (
+      item.laki.toString().toLowerCase().includes(keyword) ||
+      item.perempuan.toString().toLowerCase().includes(keyword)
+    );
+  });
+
   if (!stategrafikBerdasarkanJenisKelamin.findMany.data) {
     return (
       <Box>
@@ -74,14 +99,14 @@ function GrafikBerdasarkanJenisKelamin() {
               </TableTr>
             </TableThead>
             <TableTbody>
-              {stategrafikBerdasarkanJenisKelamin.findMany.data.length === 0 ? (
+              {filteredData.length === 0 ? (
                 <TableTr>
                   <TableTd colSpan={6}>
                     <Text ta='center' c='dimmed'>Belum ada data grafik responden</Text>
                   </TableTd>
                 </TableTr>
               ) : (
-                stategrafikBerdasarkanJenisKelamin.findMany.data.map((item) => (
+                filteredData.map((item) => (
                   <TableTr key={item.id}>
                     <TableTd>{item.laki}</TableTd>
                     <TableTd>{item.perempuan}</TableTd>

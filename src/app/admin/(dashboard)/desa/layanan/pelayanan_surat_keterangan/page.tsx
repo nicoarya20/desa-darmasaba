@@ -7,14 +7,40 @@ import { useProxy } from 'valtio/utils';
 import stateLayananDesa from '../../../_state/desa/layananDesa';
 import { useShallowEffect } from '@mantine/hooks';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import HeaderSearch from '../../../_com/header';
 
 function SuratKeterangan() {
+  const [search, setSearch] = useState("");
+  return (
+    <Box>
+      <HeaderSearch
+        title='Posisi Organisasi'
+        placeholder='pencarian'
+        searchIcon={<IconSearch size={20} />}
+        value={search}
+        onChange={(e) => setSearch(e.currentTarget.value)}
+      />
+      <ListSuratKeterangan search={search} />
+    </Box>
+  );
+}
+
+function ListSuratKeterangan({ search }: { search: string }) {
   const suratKeteranganState = useProxy(stateLayananDesa.suratKeterangan)
   const router = useRouter()
 
   useShallowEffect(() => {
     suratKeteranganState.findMany.load()
   }, [])
+
+  const filteredData = (suratKeteranganState.findMany.data || []).filter(item => {
+    const keyword = search.toLowerCase();
+    return (
+      item.name.toLowerCase().includes(keyword) ||
+      item.deskripsi.toLowerCase().includes(keyword)
+    );
+  });
 
   if (!suratKeteranganState.findMany.data) {
     return (
@@ -43,7 +69,7 @@ function SuratKeterangan() {
             </TableTr>
           </TableThead>
           <TableTbody>
-            {suratKeteranganState.findMany.data?.map((item) => (
+            {filteredData.map((item) => (
               <TableTr key={item.id}>
                 <TableTd>{item.name}</TableTd>
                 <TableTd>

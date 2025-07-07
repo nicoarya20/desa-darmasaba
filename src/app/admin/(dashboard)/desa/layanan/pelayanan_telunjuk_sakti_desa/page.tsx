@@ -7,14 +7,40 @@ import { useProxy } from 'valtio/utils';
 import stateLayananDesa from '../../../_state/desa/layananDesa';
 import { useShallowEffect } from '@mantine/hooks';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import HeaderSearch from '../../../_com/header';
 
 function PelayananTelunjukSakti() {
+    const [search, setSearch] = useState("");
+    return (
+      <Box>
+        <HeaderSearch
+          title='Posisi Organisasi'
+          placeholder='pencarian'
+          searchIcon={<IconSearch size={20} />}
+          value={search}
+          onChange={(e) => setSearch(e.currentTarget.value)}
+        />
+        <ListPelayananTelunjukSakti search={search} />
+      </Box>
+    );
+}
+
+function ListPelayananTelunjukSakti({ search }: { search: string }) {
   const telunjukSaktiState = useProxy(stateLayananDesa.pelayananTelunjukSaktiDesa)
   const router = useRouter()
 
   useShallowEffect(() => {
     telunjukSaktiState.findMany.load()
   }, [])
+
+  const filteredData = (telunjukSaktiState.findMany.data || []).filter(item => {
+    const keyword = search.toLowerCase();
+    return (
+      item.name.toLowerCase().includes(keyword) ||
+      item.deskripsi.toLowerCase().includes(keyword)
+    );
+  });
 
   if (!telunjukSaktiState.findMany.data) {
     return (
@@ -42,7 +68,7 @@ function PelayananTelunjukSakti() {
             </TableTr>
           </TableThead>
           <TableTbody>
-            {telunjukSaktiState.findMany.data?.map((item) => (
+            {filteredData.map((item) => (
               <TableTr key={item.id}>
               <TableTd>{item.name}</TableTd>
               <TableTd><Text truncate="end" fz={"sm"} dangerouslySetInnerHTML={{ __html: item.deskripsi }} /></TableTd>

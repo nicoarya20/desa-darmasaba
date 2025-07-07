@@ -11,20 +11,24 @@ import JudulList from '../../../_com/judulList';
 import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
 import pasarDesaState from '../../../_state/ekonomi/pasar-desa/pasar-desa';
 
+
 function PasarDesa() {
+  const [search, setSearch] = useState("")
   return (
     <Box>
       <HeaderSearch
         title='Kategori Produk'
         placeholder='pencarian'
         searchIcon={<IconSearch size={20} />}
+        value={search}
+        onChange={(e) => setSearch(e.currentTarget.value)}
       />
-      <ListPasarDesa />
+      <ListPasarDesa search={search} />
     </Box>
   );
 }
 
-function ListPasarDesa() {
+function ListPasarDesa({ search }: { search: string }) {
   const statePasar = useProxy(pasarDesaState.kategoriProduk)
   const [modalHapus, setModalHapus] = useState(false)
   const [selectedId, setSelectedId] = useState<string | null>(null)
@@ -42,6 +46,13 @@ function ListPasarDesa() {
       setSelectedId(null)
     }
   }
+
+  const filteredData = (statePasar.findMany.data || []).filter(item => {
+    const keyword = search.toLowerCase();
+    return (
+      item.nama.toLowerCase().includes(keyword)
+    );
+  });
 
   if (!statePasar.findMany.data) {
     return (
@@ -67,11 +78,11 @@ function ListPasarDesa() {
             </TableTr>
           </TableThead>
           <TableTbody>
-            {statePasar.findMany.data?.map((item) => (
+            {filteredData.map((item) => (
               <TableTr key={item.id}>
                 <TableTd>{item.nama}</TableTd>
                 <TableTd>
-                  <Button onClick={() => router.push(`/admin/ekonomi/pasar-desa/kategori-produk/${item.id}`)}>
+                  <Button color="green" onClick={() => router.push(`/admin/ekonomi/pasar-desa/kategori-produk/${item.id}`)}>
                     <IconEdit size={20} />
                   </Button>
                 </TableTd>

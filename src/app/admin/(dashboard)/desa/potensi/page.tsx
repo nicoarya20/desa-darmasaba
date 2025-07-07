@@ -9,29 +9,40 @@ import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../_com/header';
 import JudulList from '../../_com/judulList';
 import potensiDesaState from '../../_state/desa/potensi';
+import { useState } from 'react';
 
 
 function Potensi() {
+  const [search, setSearch] = useState("");
   return (
     <Box>
       <HeaderSearch
-        title='Potensi Desa'
+        title='Posisi Organisasi'
         placeholder='pencarian'
         searchIcon={<IconSearch size={20} />}
+        value={search}
+        onChange={(e) => setSearch(e.currentTarget.value)}
       />
-      <ListPotensi />
+      <ListPotensi search={search} />
     </Box>
   );
 }
 
-function ListPotensi() {
+function ListPotensi({ search }: { search: string }) {
   const potensiState = useProxy(potensiDesaState)
+  const router = useRouter()
+
   useShallowEffect(() => {
     potensiState.findMany.load()
   }, [])
 
-  const router = useRouter()
-
+const filteredData = (potensiState.findMany.data || []).filter(item => {
+  const keyword = search.toLowerCase();
+  return (
+    item.name.toLowerCase().includes(keyword) ||
+    item.kategori.toLowerCase().includes(keyword)
+  );
+});
 
   if (!potensiState.findMany.data) {
     return (
@@ -60,7 +71,7 @@ function ListPotensi() {
                 </TableTr>
               </TableThead>
               <TableTbody>
-                {potensiState.findMany.data?.map((item) => (
+                {filteredData.map((item) => (
                   <TableTr key={item.id}>
                     <TableTd>
                       <Box w={100}>

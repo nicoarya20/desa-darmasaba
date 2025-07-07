@@ -7,13 +7,39 @@ import { IconDeviceImac, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
 import JudulListTab from '../../_com/jusulListTab';
+import { useState } from 'react';
+import HeaderSearch from '../../_com/header';
 
 function Penghargaan() {
+    const [search, setSearch] = useState("");
+    return (
+      <Box>
+        <HeaderSearch
+          title='Posisi Organisasi'
+          placeholder='pencarian'
+          searchIcon={<IconSearch size={20} />}
+          value={search}
+          onChange={(e) => setSearch(e.currentTarget.value)}
+        />
+        <ListPenghargaan search={search} />
+      </Box>
+    );
+}
+
+function ListPenghargaan({ search }: { search: string }) {
   const state = useProxy(penghargaanState)
   const router = useRouter()
   useShallowEffect(() => {
     state.findMany.load()
   }, [])
+
+  const filteredData = (state.findMany.data || []).filter(item => {
+    const keyword = search.toLowerCase();
+    return (
+      item.name.toLowerCase().includes(keyword) ||
+      item.deskripsi.toLowerCase().includes(keyword)
+    );
+  });
 
   if (!state.findMany.data) {
     return(
@@ -41,7 +67,7 @@ function Penghargaan() {
             </TableTr>
           </TableThead>
           <TableTbody>
-            {state.findMany.data?.map((item) => (
+            {filteredData.map((item) => (
               <TableTr key={item.id}>
                 <TableTd>{item.name}</TableTd>
                 <TableTd>

@@ -10,9 +10,26 @@ import { Bar, BarChart, Legend, Tooltip, XAxis, YAxis } from 'recharts';
 import { useSnapshot } from 'valtio';
 import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
 import grafikHasilKepuasanMasyarakat from '../../../_state/ppid/indeks_kepuasan_masyarakat/grafikHasilKepuasan';
+import HeaderSearch from '../../../_com/header';
 
 
 function GrafikHasilKepuasanMasyarakat() {
+  const [search, setSearch] = useState("");
+  return (
+    <Box>
+      <HeaderSearch
+        title='Grafik Hasil Kepuasan Masyarakat'
+        placeholder='pencarian'
+        searchIcon={<IconSearch size={20} />}
+        value={search}
+        onChange={(e) => setSearch(e.currentTarget.value)}
+      />
+      <ListGrafikHasilKepuasanMasyarakat search={search} />
+    </Box>
+  );
+}
+
+function ListGrafikHasilKepuasanMasyarakat({ search }: { search: string }) {
   type IKMGrafik = {
     id: string;
     label: string;
@@ -58,6 +75,14 @@ function GrafikHasilKepuasanMasyarakat() {
     }
   }, [stateGrafikHasilKepuasan.findMany.data]);
 
+  const filteredData = (stateGrafikHasilKepuasan.findMany.data || []).filter(item => {
+    const keyword = search.toLowerCase();
+    return (
+      item.label.toLowerCase().includes(keyword) ||
+      item.kepuasan.toString().toLowerCase().includes(keyword)
+    );
+  });
+
 
 
   if (!stateGrafikHasilKepuasan.findMany.data) {
@@ -87,7 +112,7 @@ function GrafikHasilKepuasanMasyarakat() {
               </TableTr>
             </TableThead>
             <TableTbody>
-              {stateGrafikHasilKepuasan.findMany.data?.map((item) => (
+              {filteredData.map((item) => (
                 <TableTr key={item.id}>
                   <TableTd>{item.label}</TableTd>
                   <TableTd>{item.kepuasan}</TableTd>

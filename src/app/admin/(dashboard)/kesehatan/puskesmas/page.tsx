@@ -8,27 +8,39 @@ import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../_com/header';
 import JudulList from '../../_com/judulList';
 import puskesmasState from '../../_state/kesehatan/puskesmas/puskesmas';
+import { useState } from 'react';
 
 function Puskesmas() {
+  const [search, setSearch] = useState("");
   return (
     <Box>
       <HeaderSearch
         title='Puskesmas'
         placeholder='pencarian'
         searchIcon={<IconSearch size={20} />}
+        value={search}
+        onChange={(e) => setSearch(e.currentTarget.value)}
       />
-      <ListPuskesmas/>
+      <ListPuskesmas search={search}/>
     </Box>
   );
 }
 
-function ListPuskesmas() {
+function ListPuskesmas({ search }: { search: string }) {
   const statePuskesmas = useProxy(puskesmasState)
   const router = useRouter();
 
   useShallowEffect(() => {
     statePuskesmas.findMany.load()
   }, [])
+
+  const filteredData = (statePuskesmas.findMany.data || []).filter(item => {
+    const keyword = search.toLowerCase();
+    return (
+      item.name.toLowerCase().includes(keyword) ||
+      item.alamat.toLowerCase().includes(keyword)
+    );
+  });
 
   if (!statePuskesmas.findMany.data) {
     return (
@@ -56,7 +68,7 @@ function ListPuskesmas() {
               </TableTr>
             </TableThead>
             <TableTbody>
-              {statePuskesmas.findMany.data?.map((item) => (
+              {filteredData.map((item) => (
                 <TableTr key={item.id}>
                   <TableTd>{item.name}</TableTd>
                   <TableTd>{item.alamat}</TableTd>

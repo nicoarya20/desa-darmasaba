@@ -8,27 +8,41 @@ import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../../_com/header';
 import JudulList from '../../../_com/judulList';
 import pasarDesaState from '../../../_state/ekonomi/pasar-desa/pasar-desa';
+import { useState } from 'react';
 
 function PasarDesa() {
+  const [search, setSearch] = useState("");
   return (
     <Box>
       <HeaderSearch
         title='Produk Pasar Desa'
         placeholder='pencarian'
         searchIcon={<IconSearch size={20} />}
+        value={search}
+        onChange={(e) => setSearch(e.currentTarget.value)}
       />
-      <ListPasarDesa />
+      <ListPasarDesa search={search} />
     </Box>
   );
 }
 
-function ListPasarDesa() {
+function ListPasarDesa({ search }: { search: string }) {
   const statePasar = useProxy(pasarDesaState.pasarDesa)
   const router = useRouter();
 
   useShallowEffect(() => {
     statePasar.findMany.load()
   }, [])
+
+  const filteredData = (statePasar.findMany.data || []).filter(item => {
+    const keyword = search.toLowerCase();
+    return (
+      item.nama.toLowerCase().includes(keyword) ||
+      item.harga.toString().toLowerCase().includes(keyword) ||
+      item.rating.toString().toLowerCase().includes(keyword) ||
+      item.alamatUsaha.toLowerCase().includes(keyword)
+    );
+  });
 
   if (!statePasar.findMany.data) {
     return (
@@ -56,7 +70,7 @@ function ListPasarDesa() {
             </TableTr>
           </TableThead>
           <TableTbody>
-            {statePasar.findMany.data?.map((item) => (
+            {filteredData.map((item) => (
               <TableTr key={item.id}>
                 <TableTd>{item.nama}</TableTd>
                 <TableTd>Rp.{item.harga}</TableTd>

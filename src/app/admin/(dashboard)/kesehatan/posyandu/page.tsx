@@ -8,27 +8,39 @@ import { useRouter } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
 import posyandustate from '../../_state/kesehatan/posyandu/posyandu';
 import { useShallowEffect } from '@mantine/hooks';
+import { useState } from 'react';
 
 function Posyandu() {
+  const [search, setSearch] = useState("");
   return (
     <Box>
       <HeaderSearch
         title='Posyandu'
         placeholder='pencarian'
         searchIcon={<IconSearch size={20} />}
+        value={search}
+        onChange={(e) => setSearch(e.currentTarget.value)}
       />
-      <ListPosyandu />
+      <ListPosyandu search={search} />
     </Box>
   );
 }
 
-function ListPosyandu() {
+function ListPosyandu({ search }: { search: string }) {
   const statePosyandu = useProxy(posyandustate)
   const router = useRouter();
 
   useShallowEffect(() => {
     statePosyandu.findMany.load()
   }, [])
+
+  const filteredData = (statePosyandu.findMany.data || []).filter(item => {
+    const keyword = search.toLowerCase();
+    return (
+      item.name.toLowerCase().includes(keyword) ||
+      item.nomor.toString().toLowerCase().includes(keyword)
+    );
+  });
 
   if (!statePosyandu.findMany.data) {
     return (
@@ -56,7 +68,7 @@ function ListPosyandu() {
               </TableTr>
             </TableThead>
             <TableTbody>
-              {statePosyandu.findMany.data?.map((item) => (
+              {filteredData.map((item) => (
                 <TableTr key={item.id}>
                   <TableTd>{item.name}</TableTd>
                   <TableTd>{item.nomor}</TableTd>
