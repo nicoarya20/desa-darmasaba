@@ -32,13 +32,13 @@ function ListPegawai() {
       try {
         // Clear existing data to ensure we see the loading state
         stateOrganisasi.findMany.data = [];
-        
+
         // Load new data
         await stateOrganisasi.findMany.load();
-        
+
         // Log the raw response and state
         console.log('2. Raw API response:', stateOrganisasi.findMany.data);
-        
+
         // Type guard to ensure data is an array
         const data = stateOrganisasi.findMany.data || [];
         console.log(`3. Loaded ${data.length} pegawai records`);
@@ -50,9 +50,9 @@ function ListPegawai() {
         stateOrganisasi.findMany.data = [];
       }
     };
-    
+
     loadData();
-    
+
     // Cleanup function
     return () => {
       console.log('Cleanup: Unmounting component');
@@ -61,7 +61,7 @@ function ListPegawai() {
 
   // Log render cycle
   console.log('Rendering with data:', stateOrganisasi.findMany.data);
-  
+
   // Handle loading state
   if (stateOrganisasi.findMany.data === null) {
     console.log('Showing loading state');
@@ -71,7 +71,7 @@ function ListPegawai() {
       </Stack>
     );
   }
-  
+
   // Check if data is an empty array
   const data = stateOrganisasi.findMany.data || [];
   if (data.length === 0) {
@@ -107,7 +107,9 @@ function ListPegawai() {
               console.log('Rendering table with items:', stateOrganisasi.findMany.data);
               return null;
             })()}
-            {(stateOrganisasi.findMany.data || []).map((item) => (
+            {([...stateOrganisasi.findMany.data || []]
+              .sort((a, b) => Number(b.isActive) - Number(a.isActive)) // Aktif di atas
+            ).map((item) => (
               <TableTr key={item.id}>
                 <TableTd>{item.namaLengkap}</TableTd>
                 <TableTd>{item.gelarAkademik}</TableTd>
