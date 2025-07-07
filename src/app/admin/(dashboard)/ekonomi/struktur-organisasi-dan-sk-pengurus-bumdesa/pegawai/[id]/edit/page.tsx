@@ -55,6 +55,11 @@ export default function EditPegawai() {
     isActive: true,
   });
 
+  const statusOptions = [
+    { value: true, label: 'Aktif' },
+    { value: false, label: 'Tidak Aktif' },
+  ];
+
   // Format date to YYYY-MM-DD for date input
   const formatDateForInput = (dateString: string) => {
     if (!dateString) return '';
@@ -249,18 +254,16 @@ export default function EditPegawai() {
           />
           <Select
             label="Status Pegawai"
-            placeholder="Pilih status"
-            data={[
-              { value: 'true', label: 'Aktif' },
-              { value: 'false', label: 'Tidak Aktif' },
-            ]}
+            data={statusOptions.map((s) => ({
+              value: String(s.value),
+              label: s.label,
+            }))}
             value={String(formData.isActive)}
             onChange={(val) => {
-              if (val !== null) {
-                setFormData({ ...formData, isActive: val === 'true' });
-              }
+              setFormData({ ...formData, isActive: val === 'true' });
             }}
           />
+
           <Group>
             <Button
               onClick={handleSubmit}

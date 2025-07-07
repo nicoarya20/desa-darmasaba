@@ -17,7 +17,7 @@ type FormCreatePegawai = {
 export default async function pegawaiCreate(context: Context) {
   const body = await context.body as FormCreatePegawai;
 
-  if (!body) {
+  if (!body || typeof body !== 'object') {
     return {
       success: false,
       message: "Data tidak valid",
@@ -42,7 +42,7 @@ export default async function pegawaiCreate(context: Context) {
         telepon: body.telepon,
         alamat: body.alamat,
         posisiId: body.posisiId,
-        isActive: body.isActive !== false // default true kalau tidak dikirim
+        isActive: body.isActive ?? true, // default true kalau tidak dikirim
 
       },
     });

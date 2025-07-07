@@ -25,6 +25,11 @@ export default async function pegawaiUpdate(context: Context) {
     };
   }
 
+  if (typeof body.isActive !== 'boolean') {
+    body.isActive = true; // fallback
+  }
+  
+
   try {
     const updated = await prisma.pegawai.update({
       where: { id: body.id },
@@ -37,7 +42,7 @@ export default async function pegawaiUpdate(context: Context) {
         telepon: body.telepon,
         alamat: body.alamat,
         posisiId: body.posisiId,
-        isActive: body.isActive === true, // Konversi ke boolean
+        isActive: body.isActive ?? true, // default true kalau tidak dikirim
         updatedAt: new Date(),
       },
       include: {
