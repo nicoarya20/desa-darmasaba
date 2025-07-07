@@ -11,15 +11,23 @@ type FormCreatePegawai = {
   telepon?: string;
   alamat?: string;
   posisiId: string;
+  isActive?: boolean;
 };
 
 export default async function pegawaiCreate(context: Context) {
   const body = await context.body as FormCreatePegawai;
 
-  if (!body || !body.namaLengkap || !body.posisiId) {
+  if (!body) {
     return {
       success: false,
-      message: "namaLengkap dan posisiId wajib diisi",
+      message: "Data tidak valid",
+    };
+  }
+
+  if (!body.namaLengkap || !body.posisiId || !body.imageId) {
+    return {
+      success: false,
+      message: "Nama lengkap, posisi, dan gambar wajib diisi",
     };
   }
 
@@ -34,7 +42,8 @@ export default async function pegawaiCreate(context: Context) {
         telepon: body.telepon,
         alamat: body.alamat,
         posisiId: body.posisiId,
-        // aktif, createdAt, updatedAt otomatis by Prisma default
+        isActive: body.isActive !== false // default true kalau tidak dikirim
+
       },
     });
 
@@ -44,10 +53,19 @@ export default async function pegawaiCreate(context: Context) {
       data: pegawai,
     };
   } catch (error: any) {
+    console.error("Error creating pegawai:", error);
+    
     if (error.code === "P2002") {
+      // Cek field mana yang duplicate
+      const target = error.meta?.target?.[0];
+      let message = "Data sudah ada";
+      
+      if (target === 'email') message = "Email sudah digunakan";
+      else if (target === 'telepon') message = "Nomor telepon sudah digunakan";
+      
       return {
         success: false,
-        message: "Email sudah digunakan",
+        message,
       };
     }
 

@@ -4,7 +4,7 @@ import prisma from "@/lib/prisma";
 export default async function pegawaiFindMany() {
   try {
     const pegawaiList = await prisma.pegawai.findMany({
-      where: { aktif: true }, // hanya yang aktif
+      where: { isActive: true }, // Using the correct field name from Prisma model
       orderBy: { createdAt: "desc" },
       include: {
         posisi: true,

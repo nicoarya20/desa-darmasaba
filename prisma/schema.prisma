@@ -1133,7 +1133,7 @@ model Pegawai {
   telepon       String?   @db.VarChar(20)
   alamat        String?   @db.Text
   posisiId      String    @db.VarChar(50)
-  aktif         Boolean   @default(true)
+  isActive      Boolean   @default(true)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { proxy } from "valtio";
 import { z } from "zod";
 import { toast } from "react-toastify";
@@ -210,12 +211,13 @@ const posisiOrganisasi = proxy({
 const templatePegawai = z.object({
     namaLengkap: z.string().min(1, "Nama wajib diisi"),
     gelarAkademik: z.string().optional(),
-    imageId: z.string().optional(),
+    imageId: z.string().nullable().optional(),
     tanggalMasuk: z.string().optional(), // ISO format
     email: z.string().email("Email tidak valid").optional(),
     telepon: z.string().optional(),
     alamat: z.string().optional(),
     posisiId: z.string().min(1, "Posisi wajib diisi"),
+    isActive: z.boolean().default(true),
   });
   
   const pegawaiDefaultForm = {
@@ -227,6 +229,7 @@ const templatePegawai = z.object({
     telepon: "",
     alamat: "",
     posisiId: "",
+    isActive: true,
   };
   
   const pegawai = proxy({
@@ -260,24 +263,36 @@ const templatePegawai = z.object({
         }
       },
     },
-  
     findMany: {
-      data: null as Prisma.PegawaiGetPayload<{ include: { posisi: true } }>[] | null,
+      data: null as (Prisma.PegawaiGetPayload<{ include: { posisi: true, image: true } }> & { isActive: boolean })[] | null,
       async load() {
-        const res = await ApiFetch.api.ekonomi["struktur-organisasi"]["pegawai"]["find-many"].get();
-        if (res.status === 200) {
-          pegawai.findMany.data = res.data?.data ?? [];
+        try {
+          const res = await ApiFetch.api.ekonomi["struktur-organisasi"]["pegawai"]["find-many"].get();
+          if (res.status === 200) {
+            pegawai.findMany.data = (res.data?.data ?? []).map((item: any) => ({
+              ...item,
+              posisi: item.posisi || { id: '', nama: '' }, // Ensure posisi exists with required fields
+              isActive: item.isActive ?? true // Default to true if not provided
+            }));
+          } else {
+            console.error('Failed to load pegawai:', res.data?.message);
+          }
+        } catch (error) {
+          console.error('Error loading pegawai:', error);
+          pegawai.findMany.data = [];
         }
       },
     },
-  
     findUnique: {
-      data: null as Prisma.PegawaiGetPayload<{ include: { posisi: true } }> | null,
+      data: null as (Prisma.PegawaiGetPayload<{ include: { posisi: true, image: true } }> & { isActive: boolean }) | null,
       async load(id: string) {
-        const res = await fetch(`/api/ekonomi/strukturorganisasi/pegawai/${id}`);
+        const res = await fetch(`/api/ekonomi/struktur-organisasi/pegawai/${id}`);
         if (res.ok) {
           const json = await res.json();
-          pegawai.findUnique.data = json.data ?? null;
+          pegawai.findUnique.data = json.data ? {
+            ...json.data,
+            isActive: json.data.isActive ?? json.data.aktif ?? true // Fallback ke aktif:true jika tidak ada data
+          } : null;
         } else {
           pegawai.findUnique.data = null;
         }
@@ -290,7 +305,7 @@ const templatePegawai = z.object({
         if (!id) return toast.warn("ID tidak valid");
         try {
           pegawai.delete.loading = true;
-          const res = await fetch(`/api/ekonomi/strukturorganisasi/pegawai/del/${id}`, {
+          const res = await fetch(`/api/ekonomi/struktur-organisasi/pegawai/del/${id}`, {
             method: "DELETE",
           });
           const json = await res.json();
@@ -309,65 +324,121 @@ const templatePegawai = z.object({
       },
     },
   
-    edit: {
-      id: "",
-      form: { ...pegawaiDefaultForm },
-      loading: false,
-      async load(id: string) {
-        const res = await fetch(`/api/organisasi/pegawai/${id}`);
-        const json = await res.json();
-        if (res.ok && json.success) {
-          pegawai.edit.id = json.data.id;
-          pegawai.edit.form = {
-            namaLengkap: json.data.namaLengkap ?? "",
-            gelarAkademik: json.data.gelarAkademik ?? "",
-            imageId: json.data.imageId ?? "",
-            tanggalMasuk: json.data.tanggalMasuk?.slice(0, 10) ?? "",
-            email: json.data.email ?? "",
-            telepon: json.data.telepon ?? "",
-            alamat: json.data.alamat ?? "",
-            posisiId: json.data.posisiId,
-          };
-        } else {
-          toast.error("Gagal memuat data");
-        }
-      },
-  
-      async submit() {
-        const cek = templatePegawai.safeParse(pegawai.edit.form);
-        if (!cek.success) {
-          const err = cek.error.issues.map(i => i.message).join("\n");
-          toast.error(err);
-          return;
-        }
-  
-        try {
-          pegawai.edit.loading = true;
-          const res = await fetch(`/api/ekonomi/strukturorganisasi/pegawai/${pegawai.edit.id}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(pegawai.edit.form),
-          });
-          const json = await res.json();
-          if (res.ok) {
-            toast.success(json.message ?? "Berhasil update pegawai");
-            await pegawai.findMany.load();
-          } else {
-            toast.error(json.message ?? "Gagal update pegawai");
-          }
-        } catch (error) {
-          console.error("Gagal update:", error);
-          toast.error("Terjadi kesalahan saat update");
-        } finally {
-          pegawai.edit.loading = false;
-        }
-      },
-  
-      reset() {
-        pegawai.edit.id = "";
-        pegawai.edit.form = { ...pegawaiDefaultForm };
-      },
-    },
+     edit: {
+       id: "",
+       form: { ...pegawaiDefaultForm },
+       loading: false,
+   
+       async load(id: string) {
+         if (!id) {
+           toast.warn("ID tidak valid");
+           return null;
+         }
+         
+         try {
+           const response = await fetch(`/api/ekonomi/struktur-organisasi/pegawai/${id}`, {
+             method: 'GET',
+             headers: {
+               'Content-Type': 'application/json',
+             },
+           });
+           
+           if (!response.ok) {
+             throw new Error(`HTTP error! status: ${response.status}`);
+           }
+           
+           const result = await response.json();
+           
+           if (result?.success) {
+             const data = result.data;
+             this.id = data.id;
+             this.form = {
+               namaLengkap: data.namaLengkap,
+               gelarAkademik: data.gelarAkademik,
+               imageId: data.imageId,
+               tanggalMasuk: data.tanggalMasuk,
+               email: data.email,
+               telepon: data.telepon,
+               alamat: data.alamat,
+               posisiId: data.posisiId,
+               isActive: data.isActive,
+             };
+             return data; // Return the loaded data
+           } else {
+             throw new Error(result?.message || "Gagal memuat data");
+           }
+         } catch (error) {
+           console.error("Error loading berita:", error);
+           toast.error(error instanceof Error ? error.message : "Gagal memuat data");
+           return null;
+         }
+       },
+   
+       async submit() {
+         const cek = templatePegawai.safeParse(pegawai.edit.form);
+         if (!cek.success) {
+           const err = `[${cek.error.issues
+             .map((v) => `${v.path.join(".")}`)
+             .join("\n")}] required`;
+           toast.error(err);
+           return false;
+         }
+       
+         try {
+           pegawai.edit.loading = true;
+           
+           // Format tanggalMasuk to ISO string if it exists
+           const formattedTanggalMasuk = this.form.tanggalMasuk 
+             ? new Date(this.form.tanggalMasuk).toISOString()
+             : undefined;
+             
+           const response = await fetch(`/api/ekonomi/struktur-organisasi/pegawai/${this.id}`, {
+             method: 'PUT',
+             headers: {
+               'Content-Type': 'application/json',
+             },
+             body: JSON.stringify({
+               id: this.id,
+               namaLengkap: this.form.namaLengkap,
+               gelarAkademik: this.form.gelarAkademik,
+               imageId: this.form.imageId || null,
+               tanggalMasuk: formattedTanggalMasuk,
+               email: this.form.email,
+               telepon: this.form.telepon,
+               alamat: this.form.alamat,
+               posisiId: this.form.posisiId,
+               isActive: this.form.isActive,
+             }),
+           });
+           
+           if (!response.ok) {
+             const errorData = await response.json().catch(() => ({}));
+             throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+           }
+           
+           const result = await response.json();
+       
+           if (result.success) {
+             toast.success("Berhasil update pegawai");
+             await pegawai.findMany.load(); // refresh list
+             return true;
+           } else {
+             throw new Error(result.message || "Gagal update pegawai");
+           }
+         } catch (error) {
+           console.error("Error updating pegawai:", error);
+           toast.error(error instanceof Error ? error.message : "Terjadi kesalahan saat update pegawai");
+           return false;
+         } finally {
+           pegawai.edit.loading = false;
+         }
+       },
+   
+       reset() {
+         pegawai.edit.id = "";
+         pegawai.edit.form = { ...pegawaiDefaultForm };
+       },
+     },
   });
 
 
@@ -411,16 +482,15 @@ const hubunganOrganisasi = proxy({
         } else {
           return toast.error(res.data?.message || "Gagal menambahkan data");
         }
-      } catch (error) {
-        console.error("Create Error:", error);
+      } catch (error) { 
+        console.error("Gagal create:", error);
         toast.error("Terjadi kesalahan saat menambahkan");
       } finally {
         hubunganOrganisasi.create.loading = false;
       }
     },
   },
-
-  findMany: {
+  findMany: {   
     data: null as Array<{
       id: string;
       atasanId: string;
@@ -436,7 +506,7 @@ const hubunganOrganisasi = proxy({
         telepon: string | null;
         alamat: string | null;
         posisiId: string;
-        aktif: boolean;
+        isActive: boolean;
         createdAt: Date;
         updatedAt: Date;
       };
@@ -450,7 +520,7 @@ const hubunganOrganisasi = proxy({
         telepon: string | null;
         alamat: string | null;
         posisiId: string;
-        aktif: boolean;
+        isActive: boolean;
         createdAt: Date;
         updatedAt: Date;
       };
@@ -460,8 +530,18 @@ const hubunganOrganisasi = proxy({
       try {
         const res = await ApiFetch.api.ekonomi["struktur-organisasi"]["hubungan-organisasi"]["find-many"].get();
 
-        if (res.status === 200 && res.data?.success) {
-          hubunganOrganisasi.findMany.data = res.data.data || [];
+        if (res.status === 200) {
+          hubunganOrganisasi.findMany.data = (res.data?.data ?? []).map((item: any) => ({
+            ...item,
+            atasan: item.atasan ? {
+              ...item.atasan,
+              isActive: item.atasan.isActive ?? item.atasan.aktif ?? true
+            } : null,
+            bawahan: item.bawahan ? {
+              ...item.bawahan,
+              isActive: item.bawahan.isActive ?? item.bawahan.aktif ?? true
+            } : null
+          }));
         } else {
           hubunganOrganisasi.findMany.data = [];
         }
@@ -631,10 +711,10 @@ const hubunganOrganisasi = proxy({
   },
 });
 
-  const strukturorganisasiState = proxy({
-    posisiOrganisasi,
-    pegawai,
-    hubunganOrganisasi
-  })
+const strukturorganisasiState = proxy({
+  posisiOrganisasi,
+  pegawai,
+  hubunganOrganisasi,
+});
 
 export default strukturorganisasiState;

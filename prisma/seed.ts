@@ -395,6 +395,7 @@ import pegawai from "./data/ekonomi/struktur-organisasi/pegawai.json";
         telepon: p.telepon,
         alamat: p.alamat,
         posisiId: p.posisiId,
+        isActive: p.isActive,
       },
       create: {
         id: p.id,
@@ -405,6 +406,7 @@ import pegawai from "./data/ekonomi/struktur-organisasi/pegawai.json";
         telepon: p.telepon,
         alamat: p.alamat,
         posisiId: p.posisiId,
+        isActive: p.isActive,
       },
     });
   }

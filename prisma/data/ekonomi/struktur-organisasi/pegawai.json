@@ -8,7 +8,7 @@
       "telepon": "081234567891",
       "alamat": "Jl. Raya Desa No. 1",
       "posisiId": "kepala_desa",
-      "aktif": true
+      "isActive": true
     },
     {
       "id": "550e8400-e29b-41d4-a716-446655440002",
@@ -19,6 +19,6 @@
       "telepon": "081234567892",
       "alamat": "Jl. Raya Desa No. 2",
       "posisiId": "sekretaris_desa",
-      "aktif": true
+      "isActive": true
     }
   ]

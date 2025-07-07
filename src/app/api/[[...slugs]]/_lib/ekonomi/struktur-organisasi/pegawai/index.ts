@@ -57,6 +57,6 @@ const Pegawai = new Elysia({
   )
 
   // ✅ Delete
-  .delete("/:id", pegawaiDelete);
+  .delete("/del/:id", pegawaiDelete);
 
 export default Pegawai;

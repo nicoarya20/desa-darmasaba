@@ -16,7 +16,7 @@ export default async function pegawaiDelete(context: Context) {
     const deleted = await prisma.pegawai.update({
       where: { id },
       data: {
-        aktif: false, // soft delete
+        isActive: false, // soft delete
         updatedAt: new Date(),
       },
     });

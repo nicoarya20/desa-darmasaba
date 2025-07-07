@@ -12,7 +12,7 @@ type FormUpdatePegawai = {
   telepon?: string;
   alamat?: string;
   posisiId?: string;
-  aktif?: boolean;
+  isActive?: boolean;
 };
 
 export default async function pegawaiUpdate(context: Context) {
@@ -37,9 +37,13 @@ export default async function pegawaiUpdate(context: Context) {
         telepon: body.telepon,
         alamat: body.alamat,
         posisiId: body.posisiId,
-        aktif: body.aktif,
+        isActive: body.isActive === true, // Konversi ke boolean
         updatedAt: new Date(),
       },
+      include: {
+        image: true,
+        posisi: true,
+      }
     });
 
     return {
