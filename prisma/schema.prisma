@@ -88,6 +88,8 @@ model FileStorage {
   KontakDaruratKeamanan KontakDaruratKeamanan[]
 
   KontakItem KontakItem[]
+
+  Pegawai Pegawai[]
 }
 
 //========================================= MENU PPID ========================================= //
@@ -1050,20 +1052,20 @@ model MenuTipsKeamanan {
 // ========================================= MENU EKONOMI ========================================= //
 // ========================================= PASAR DESA ========================================= //
 model PasarDesa {
-  id              String            @id @default(uuid())
-  nama            String
-  image           FileStorage?      @relation(fields: [imageId], references: [id])
-  imageId         String?
-  harga           Int
-  rating          Float
-  alamatUsaha     String
-  createdAt       DateTime          @default(now())
-  updatedAt       DateTime          @updatedAt
-  deletedAt       DateTime          @default(now())
-  isActive        Boolean           @default(true)
-  kategoriProduk  KategoriProduk @relation(fields: [kategoriProdukId], references: [id])
+  id               String            @id @default(uuid())
+  nama             String
+  image            FileStorage?      @relation(fields: [imageId], references: [id])
+  imageId          String?
+  harga            Int
+  rating           Float
+  alamatUsaha      String
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  deletedAt        DateTime          @default(now())
+  isActive         Boolean           @default(true)
+  kategoriProduk   KategoriProduk    @relation(fields: [kategoriProdukId], references: [id])
   kategoriProdukId String
-  KategoriToPasar KategoriToPasar[]
+  KategoriToPasar  KategoriToPasar[]
 }
 
 model KategoriProduk {
@@ -1074,7 +1076,7 @@ model KategoriProduk {
   deletedAt       DateTime          @default(now())
   isActive        Boolean           @default(true)
   KategoriToPasar KategoriToPasar[]
-  PasarDesa PasarDesa[]
+  PasarDesa       PasarDesa[]
 }
 
 model KategoriToPasar {
@@ -1091,19 +1093,91 @@ model KategoriToPasar {
 
 // ========================================= LOWONGAN KERJA LOKAL ========================================= //
 model LowonganPekerjaan {
-  id             String   @id @default(uuid()) // ID unik untuk setiap lowongan
-  posisi         String // Contoh: "Kasir"
-  namaPerusahaan String // Contoh: "Toko Sumber Rejeki"
-  lokasi         String // Contoh: "Desa Munggu , Badung"
-  tipePekerjaan  String // Contoh: "Full Time", "Part Time", "Contract"
-  gaji           String // Contoh: "Rp. 2.500.000 / bulan". Menggunakan String karena formatnya bisa bervariasi
-  deskripsi      String // Opsional: Detail deskripsi pekerjaan (tidak terlihat di UI ini, tapi umum ada)
-  kualifikasi    String // Opsional: Kualifikasi yang dibutuhkan (tidak terlihat di UI ini, tapi umum ada)
-  tanggalPosting DateTime @default(now()) // Tanggal lowongan diposting
-  isActive       Boolean  @default(true) // Menandakan apakah lowongan masih aktif
+  id             String   @id @default(uuid())
+  posisi         String
+  namaPerusahaan String
+  lokasi         String
+  tipePekerjaan  String
+  gaji           String
+  deskripsi      String
+  kualifikasi    String
+  tanggalPosting DateTime @default(now())
+  isActive       Boolean  @default(true)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
   deletedAt      DateTime @default(now())
+}
+
+// ========================================= STRUKTUR ORGANISASI ========================================= //
+
+model PosisiOrganisasi {
+  id        String  @id @default(uuid()) @db.VarChar(50)
+  nama      String  @db.VarChar(100)
+  deskripsi String? @db.Text
+  hierarki  Int
+
+  pegawai            Pegawai[]
+  strukturOrganisasi StrukturOrganisasi[] // Relasi balik
+
+  @@map("posisi_organisasi")
+}
+
+model Pegawai {
+  id            String    @id @default(uuid()) @db.Uuid
+  namaLengkap   String    @db.VarChar(255)
+  gelarAkademik String?   @db.VarChar(100)
+  image FileStorage? @relation(fields: [imageId], references: [id])
+  imageId String?
+  tanggalMasuk  DateTime? @db.Date
+  email         String?   @unique @db.VarChar(255)
+  telepon       String?   @db.VarChar(20)
+  alamat        String?   @db.Text
+  posisiId      String    @db.VarChar(50)
+  aktif         Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  posisi PosisiOrganisasi @relation(fields: [posisiId], references: [id])
+
+  sebagaiAtasan  HubunganOrganisasi[] @relation("AtasanToBawahan")
+  sebagaiBawahan HubunganOrganisasi[] @relation("BawahanToAtasan")
+
+  strukturOrganisasi StrukturOrganisasi[] // Relasi balik
+
+  @@map("pegawai")
+}
+
+model HubunganOrganisasi {
+  id        String  @id @default(uuid()) @db.Uuid
+  atasanId  String  @db.Uuid
+  bawahanId String  @db.Uuid
+  tipe      String? @db.VarChar(50)
+
+  atasan  Pegawai @relation("AtasanToBawahan", fields: [atasanId], references: [id])
+  bawahan Pegawai @relation("BawahanToAtasan", fields: [bawahanId], references: [id])
+
+  strukturOrganisasi StrukturOrganisasi[] // Relasi balik
+
+  @@unique([atasanId, bawahanId])
+  @@map("hubungan_organisasi")
+}
+
+model StrukturOrganisasi {
+  id                   String @id @default(uuid())
+  posisiOrganisasiId   String @db.VarChar(50)
+  pegawaiId            String @db.Uuid
+  hubunganOrganisasiId String @db.Uuid
+
+  posisiOrganisasi   PosisiOrganisasi   @relation(fields: [posisiOrganisasiId], references: [id])
+  pegawai            Pegawai            @relation(fields: [pegawaiId], references: [id])
+  hubunganOrganisasi HubunganOrganisasi @relation(fields: [hubunganOrganisasiId], references: [id])
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  isActive  Boolean   @default(true)
+
+  @@map("struktur_organisasi")
 }
 
 // ========================================= PROGRAM KEMISKINAN ========================================= //
@@ -1113,8 +1187,7 @@ model ProgramKemiskinan {
   deskripsi   String
   ikonUrl     String?
   isActive    Boolean              @default(true)
-  // Tambahkan relasi one-to-one ke StatistikKemiskinan
-  statistikId String?              @unique // Foreign key ke StatistikKemiskinan, unique untuk one-to-one
+  statistikId String?              @unique
   statistik   StatistikKemiskinan? @relation(fields: [statistikId], references: [id])
   createdAt   DateTime             @default(now())
   updatedAt   DateTime             @updatedAt
@@ -1124,7 +1197,6 @@ model StatistikKemiskinan {
   id                String             @id @default(uuid())
   tahun             Int                @unique
   jumlah            Int
-  // Tidak perlu foreign key di sini jika relasi di ProgramLayanan
   programKemiskinan ProgramKemiskinan?
   createdAt         DateTime           @default(now())
   updatedAt         DateTime           @updatedAt

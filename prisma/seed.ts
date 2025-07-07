@@ -18,6 +18,9 @@ import lambangDesa from "./data/desa/profile/lambang_desa.json";
 import maskotDesa from "./data/desa/profile/maskot_desa.json";
 import profilPerbekel from "./data/desa/profile/profil_perbekel.json";
 import kategoriProduk from "./data/ekonomi/pasar-desa/kategori-produk.json";
+import hubunganOrganisasi from "./data/ekonomi/struktur-organisasi/hubungan-organisasi.json";
+import posisiOrganisasi from "./data/ekonomi/struktur-organisasi/posisi-organisasi.json";
+import pegawai from "./data/ekonomi/struktur-organisasi/pegawai.json";
 
 (async () => {
   for (const l of layanan) {
@@ -357,6 +360,75 @@ import kategoriProduk from "./data/ekonomi/pasar-desa/kategori-produk.json";
     });
   }
   console.log("kategori produk success ...");
+
+
+  for (const p of posisiOrganisasi) {
+    await prisma.posisiOrganisasi.upsert({
+      where: {
+        id: p.id,
+      },
+      update: {
+        nama: p.nama,
+        deskripsi: p.deskripsi,
+        hierarki: p.hierarki,
+      },
+      create: {
+        id: p.id,
+        nama: p.nama,
+        deskripsi: p.deskripsi,
+        hierarki: p.hierarki,
+      },
+    });
+  }
+  console.log("posisi organisasi success ...");
+
+  for (const p of pegawai) {
+    await prisma.pegawai.upsert({
+      where: {
+        id: p.id,
+      },
+      update: {
+        namaLengkap: p.namaLengkap,
+        gelarAkademik: p.gelarAkademik,
+        tanggalMasuk: new Date(p.tanggalMasuk),
+        email: p.email,
+        telepon: p.telepon,
+        alamat: p.alamat,
+        posisiId: p.posisiId,
+      },
+      create: {
+        id: p.id,
+        namaLengkap: p.namaLengkap,
+        gelarAkademik: p.gelarAkademik,
+        tanggalMasuk: new Date(p.tanggalMasuk),
+        email: p.email,
+        telepon: p.telepon,
+        alamat: p.alamat,
+        posisiId: p.posisiId,
+      },
+    });
+  }
+  console.log("pegawai success ...");
+
+  for (const p of hubunganOrganisasi) {
+    await prisma.hubunganOrganisasi.upsert({
+      where: {
+        atasanId_bawahanId: {
+          atasanId: p.atasanId,
+          bawahanId: p.bawahanId,
+        },
+      },
+      update: {
+        tipe: p.tipe,
+      },
+      create: {
+        atasanId: p.atasanId,
+        bawahanId: p.bawahanId,
+        tipe: p.tipe,
+      },
+    });
+  }
+  console.log("hubungan organisasi success ...");
 })()
   .then(() => prisma.$disconnect())
   .catch((e) => {

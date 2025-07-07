@@ -1,0 +1,27 @@
+[
+    {
+        "id": "kepala_desa",
+        "nama": "Kepala Desa",
+        "deskripsi": "Kepala Desa",
+        "hierarki": 1
+    },
+    {
+        "id": "sekretaris_desa",
+        "nama": "Sekretaris Desa",
+        "deskripsi": "Sekretaris Desa",
+        "hierarki": 2
+    },
+    {
+        "id": "bendahara_desa",
+        "nama": "Bendahara Desa",
+        "deskripsi": "Bendahara Desa",
+        "hierarki": 3
+    },
+    {
+        "id": "staff_umum",
+        "nama": "Staff Umum",
+        "deskripsi": "Staff Umum",
+        "hierarki": 4
+    }
+ ]
+ 
