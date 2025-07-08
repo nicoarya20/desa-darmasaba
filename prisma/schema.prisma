@@ -1227,3 +1227,14 @@ model GrafikMenganggurBerdasarkanPendidikan {
   deletedAt DateTime @default(now())
   isActive  Boolean  @default(true)
 }
+
+// ========================================= JUMLAH PENDUDUK MISKIN ========================================= //
+model GrafikJumlahPendudukMiskin {
+  id                      String    @id @default(uuid()) @db.Uuid // Menggunakan UUID sebagai primary key
+  year                    Int       @unique                        // Tahun data (e.g., 2024, 2025)
+  totalPoorPopulation     Int                                      // Jumlah penduduk miskin (e.g., 4800000)
+  createdAt               DateTime  @default(now())
+  updatedAt               DateTime  @updatedAt
+  deletedAt DateTime @default(now())
+  isActive  Boolean  @default(true)
+}
