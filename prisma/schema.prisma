@@ -1230,23 +1230,35 @@ model GrafikMenganggurBerdasarkanPendidikan {
 
 // ========================================= JUMLAH PENDUDUK MISKIN ========================================= //
 model GrafikJumlahPendudukMiskin {
-  id                      String    @id @default(uuid()) @db.Uuid // Menggunakan UUID sebagai primary key
-  year                    Int       @unique                        // Tahun data (e.g., 2024, 2025)
-  totalPoorPopulation     Int                                      // Jumlah penduduk miskin (e.g., 4800000)
-  createdAt               DateTime  @default(now())
-  updatedAt               DateTime  @updatedAt
-  deletedAt DateTime @default(now())
-  isActive  Boolean  @default(true)
+  id                  String   @id @default(uuid()) @db.Uuid // Menggunakan UUID sebagai primary key
+  year                Int      @unique // Tahun data (e.g., 2024, 2025)
+  totalPoorPopulation Int // Jumlah penduduk miskin (e.g., 4800000)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  deletedAt           DateTime @default(now())
+  isActive            Boolean  @default(true)
 }
 
 // ========================================= SEKTOR UNGGULAN DESA ========================================= //
 model SektorUnggulanDesa {
-  id                      String    @id @default(uuid()) @db.Uuid // Menggunakan UUID sebagai primary key
-  name                    String    @unique @db.VarChar(100)       // Nama sektor (e.g., "Sektor Pertanian", "Sektor Peternakan")
-  description             String?   @db.Text                       // Deskripsi lengkap tentang sektor
-  value                   Float?                                   // Nilai kuantitatif sektor (misalnya, kontribusi PDB, jumlah produksi, dll.)
-  createdAt               DateTime  @default(now())
-  updatedAt               DateTime  @updatedAt
+  id          String   @id @default(uuid()) @db.Uuid // Menggunakan UUID sebagai primary key
+  name        String   @unique @db.VarChar(100) // Nama sektor (e.g., "Sektor Pertanian", "Sektor Peternakan")
+  description String?  @db.Text // Deskripsi lengkap tentang sektor
+  value       Float? // Nilai kuantitatif sektor (misalnya, kontribusi PDB, jumlah produksi, dll.)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  deletedAt   DateTime @default(now())
+  isActive    Boolean  @default(true)
+}
+
+// ========================================= DEMOGRAFI PEKERJAAN ========================================= //
+model DataDemografiPekerjaan {
+  id        String   @id @default(cuid())
+  pekerjaan String
+  lakiLaki  Int
+  perempuan Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   deletedAt DateTime @default(now())
   isActive  Boolean  @default(true)
 }

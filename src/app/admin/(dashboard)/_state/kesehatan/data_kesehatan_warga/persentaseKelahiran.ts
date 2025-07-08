@@ -34,15 +34,17 @@ const persentasekelahiran = proxy({
     async create() {
       const cek = templatePersentase.safeParse(persentasekelahiran.create.form);
       if (!cek.success) {
-        const err = `[${cek.error.issues.map((v) => `${v.path.join(".")}`).join("\n")}] required`;
+        const err = `[${cek.error.issues
+          .map((v) => `${v.path.join(".")}`)
+          .join("\n")}] required`;
         toast.error(err);
         return null;
       }
       try {
         persentasekelahiran.create.loading = true;
-        const res = await ApiFetch.api.kesehatan.persentasekelahiran["create"].post(
-          persentasekelahiran.create.form
-        );
+        const res = await ApiFetch.api.kesehatan.persentasekelahiran[
+          "create"
+        ].post(persentasekelahiran.create.form);
 
         if (res.status === 200) {
           const id = res.data?.data?.id;
@@ -65,11 +67,15 @@ const persentasekelahiran = proxy({
   },
 
   findMany: {
-    data: null as Prisma.DataKematian_KelahiranGetPayload<{
-      omit: { isActive: true };
-    }>[] | null,
+    data: null as
+      | Prisma.DataKematian_KelahiranGetPayload<{
+          omit: { isActive: true };
+        }>[]
+      | null,
     async load() {
-      const res = await ApiFetch.api.kesehatan.persentasekelahiran["find-many"].get();
+      const res = await ApiFetch.api.kesehatan.persentasekelahiran[
+        "find-many"
+      ].get();
       if (res.status === 200) {
         persentasekelahiran.findMany.data = res.data?.data ?? [];
       }
@@ -97,62 +103,61 @@ const persentasekelahiran = proxy({
     },
   },
 
-update: {
-  id: "",
-  form: { ...defaultForm },
-  loading: false,
-  async submit() {
-    const id = this.id;
-    if (!id) {
-      toast.warn("ID tidak valid");
-      return null;
-    }
-
-    const formData = {
-      tahun: this.form.tahun,
-      kematianKasar: this.form.kematianKasar,
-      kelahiranKasar: this.form.kelahiranKasar,
-      kematianBayi: this.form.kematianBayi,
-    };
-
-    const cek = templatePersentase.safeParse(formData);
-    if (!cek.success) {
-      const err = `[${cek.error.issues
-        .map((v) => `${v.path.join(".")}`)
-        .join("\n")}] required`;
-      toast.error(err);
-      return null;
-    }
-
-    try {
-      this.loading = true;
-      const res = await fetch(`/api/kesehatan/persentasekelahiran/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-
-      const result = await res.json();
-
-      if (!res.ok || !result?.success) {
-        throw new Error(result?.message || "Gagal update data");
+  update: {
+    id: "",
+    form: { ...defaultForm },
+    loading: false,
+    async submit() {
+      const id = this.id;
+      if (!id) {
+        toast.warn("ID tidak valid");
+        return null;
       }
 
-      toast.success("Berhasil update data!");
-      await persentasekelahiran.findMany.load();
-      return result.data;
-    } catch (error) {
-      console.error("Update error:", error);
-      toast.error("Gagal update data persentase kelahiran");
-      throw error;
-    } finally {
-      this.loading = false;
-    }
-  },
-},
+      const formData = {
+        tahun: this.form.tahun,
+        kematianKasar: this.form.kematianKasar,
+        kelahiranKasar: this.form.kelahiranKasar,
+        kematianBayi: this.form.kematianBayi,
+      };
 
+      const cek = templatePersentase.safeParse(formData);
+      if (!cek.success) {
+        const err = `[${cek.error.issues
+          .map((v) => `${v.path.join(".")}`)
+          .join("\n")}] required`;
+        toast.error(err);
+        return null;
+      }
+
+      try {
+        this.loading = true;
+        const res = await fetch(`/api/kesehatan/persentasekelahiran/${id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        });
+
+        const result = await res.json();
+
+        if (!res.ok || !result?.success) {
+          throw new Error(result?.message || "Gagal update data");
+        }
+
+        toast.success("Berhasil update data!");
+        await persentasekelahiran.findMany.load();
+        return result.data;
+      } catch (error) {
+        console.error("Update error:", error);
+        toast.error("Gagal update data persentase kelahiran");
+        throw error;
+      } finally {
+        this.loading = false;
+      }
+    },
+  },
 
   delete: {
     loading: false,
@@ -162,22 +167,29 @@ update: {
       try {
         persentasekelahiran.delete.loading = true;
 
-        const response = await fetch(`/api/kesehatan/persentasekelahiran/del/${id}`, {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        const response = await fetch(
+          `/api/kesehatan/persentasekelahiran/del/${id}`,
+          {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
 
         const result = await response.json();
 
         if (response.ok && result?.success) {
-          toast.success(result.message || "Persentase kelahiran berhasil dihapus");
+          toast.success(
+            result.message || "Persentase kelahiran berhasil dihapus"
+          );
           await persentasekelahiran.findMany.load();
         } else {
-          toast.error(result?.message || "Gagal menghapus persentase kelahiran");
+          toast.error(
+            result?.message || "Gagal menghapus persentase kelahiran"
+          );
         }
-      } catch (error) { 
+      } catch (error) {
         console.error("Gagal delete:", error);
         toast.error("Terjadi kesalahan saat menghapus persentase kelahiran");
       } finally {
