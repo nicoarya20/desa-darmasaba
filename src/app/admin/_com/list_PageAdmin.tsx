@@ -240,7 +240,7 @@ export const navBar = [
       {
         id: "Ekonomi_6",
         name: "Jumlah penduduk usia kerja yang menganggur",
-        path: "/admin/ekonomi/jumlah-penduduk-usia-kerja-yang-menganggur"
+        path: "/admin/ekonomi/jumlah-penduduk-usia-kerja-yang-menganggur/pengangguran_berdasarkan_usia"
       },
       {
         id: "Ekonomi_7",

@@ -1123,19 +1123,19 @@ model PosisiOrganisasi {
 }
 
 model Pegawai {
-  id            String    @id @default(uuid()) @db.Uuid
-  namaLengkap   String    @db.VarChar(255)
-  gelarAkademik String?   @db.VarChar(100)
-  image FileStorage? @relation(fields: [imageId], references: [id])
-  imageId String?
-  tanggalMasuk  DateTime? @db.Date
-  email         String?   @unique @db.VarChar(255)
-  telepon       String?   @db.VarChar(20)
-  alamat        String?   @db.Text
-  posisiId      String    @db.VarChar(50)
-  isActive      Boolean   @default(true)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id            String       @id @default(uuid()) @db.Uuid
+  namaLengkap   String       @db.VarChar(255)
+  gelarAkademik String?      @db.VarChar(100)
+  image         FileStorage? @relation(fields: [imageId], references: [id])
+  imageId       String?
+  tanggalMasuk  DateTime?    @db.Date
+  email         String?      @unique @db.VarChar(255)
+  telepon       String?      @db.VarChar(20)
+  alamat        String?      @db.Text
+  posisiId      String       @db.VarChar(50)
+  isActive      Boolean      @default(true)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
 
   posisi PosisiOrganisasi @relation(fields: [posisiId], references: [id])
 
@@ -1200,4 +1200,30 @@ model StatistikKemiskinan {
   programKemiskinan ProgramKemiskinan?
   createdAt         DateTime           @default(now())
   updatedAt         DateTime           @updatedAt
+}
+
+// ========================================= JUMLAH PENDUDUK USIA KERJA YANG MENGANGGUR ========================================= //
+model GrafikMenganggurBerdasarkanUsia {
+  id            String   @id @default(cuid())
+  usia18_25     String
+  usia26_35     String
+  usia36_45     String
+  usia46_keatas String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  deletedAt     DateTime @default(now())
+  isActive      Boolean  @default(true)
+}
+
+model GrafikMenganggurBerdasarkanPendidikan {
+  id        String   @id @default(cuid())
+  SD        String
+  SMP       String
+  SMA       String
+  D3        String
+  S1        String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive  Boolean  @default(true)
 }
