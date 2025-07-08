@@ -7,6 +7,7 @@ import StrukturOrganisasi from "./struktur-organisasi";
 import GrafikUsiaKerjaYangMenganggur from "./usia-kerja-yang-menganggur";
 import GrafikMenganggurBerdasarkanPendidikan from "./usia-kerja-yang-menganggur/pengangguran-berdasrkan-pendidikan";
 import JumlahPendudukMiskin from "./jumlah-penduduk-miskin";
+import SektorUnggulanDesa from "./sektor-unggulan-desa";
 
 const Ekonomi = new Elysia({
   prefix: "/api/ekonomi",
@@ -20,5 +21,6 @@ const Ekonomi = new Elysia({
 .use(GrafikUsiaKerjaYangMenganggur)
 .use(GrafikMenganggurBerdasarkanPendidikan)
 .use(JumlahPendudukMiskin)
+.use(SektorUnggulanDesa)
 
 export default Ekonomi
