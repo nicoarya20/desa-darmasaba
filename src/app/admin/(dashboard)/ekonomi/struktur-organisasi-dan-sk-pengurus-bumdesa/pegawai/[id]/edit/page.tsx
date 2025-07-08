@@ -55,10 +55,6 @@ export default function EditPegawai() {
     isActive: true,
   });
 
-  const statusOptions = [
-    { value: true, label: 'Aktif' },
-    { value: false, label: 'Tidak Aktif' },
-  ];
 
   // Format date to YYYY-MM-DD for date input
   const formatDateForInput = (dateString: string) => {
@@ -120,6 +116,8 @@ export default function EditPegawai() {
         posisiId: formData.posisiId.trim(),
         isActive: formData.isActive,
       };
+    
+
 
       if (id && !stateOrganisasi.edit.id) {
         stateOrganisasi.edit.id = id;
@@ -134,6 +132,9 @@ export default function EditPegawai() {
       console.error("Error updating pegawai:", error);
       toast.error(error instanceof Error ? error.message : "Gagal memperbarui data pegawai");
     }
+
+
+
   };
 
   return (
@@ -254,15 +255,16 @@ export default function EditPegawai() {
           />
           <Select
             label="Status Pegawai"
-            data={statusOptions.map((s) => ({
-              value: String(s.value),
-              label: s.label,
-            }))}
-            value={String(formData.isActive)}
+            data={[
+              { value: 'true', label: 'Aktif' },
+              { value: 'false', label: 'Tidak Aktif' },
+            ]}
+            value={String(formData.isActive)} // 'true' atau 'false'
             onChange={(val) => {
               setFormData({ ...formData, isActive: val === 'true' });
             }}
           />
+
 
           <Group>
             <Button

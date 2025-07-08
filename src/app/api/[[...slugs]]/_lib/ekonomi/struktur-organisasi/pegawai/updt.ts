@@ -25,10 +25,7 @@ export default async function pegawaiUpdate(context: Context) {
     };
   }
 
-  if (typeof body.isActive !== 'boolean') {
-    body.isActive = true; // fallback
-  }
-  
+  body.isActive = String(body.isActive).toLowerCase() === 'true';
 
   try {
     const updated = await prisma.pegawai.update({

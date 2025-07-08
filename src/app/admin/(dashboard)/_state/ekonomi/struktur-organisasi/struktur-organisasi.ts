@@ -348,7 +348,7 @@ const templatePegawai = z.object({
            }
            
            const result = await response.json();
-           
+          
            if (result?.success) {
              const data = result.data;
              this.id = data.id;

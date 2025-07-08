@@ -51,7 +51,7 @@ const Pegawai = new Elysia({
         telepon: t.Optional(t.String()),
         alamat: t.Optional(t.String()),
         posisiId: t.Optional(t.String()),
-        aktif: t.Optional(t.Boolean()),
+        isActive: t.Optional(t.Boolean()),
       }),
     }
   )

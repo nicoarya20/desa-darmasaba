@@ -32,7 +32,6 @@ function ListPegawai({ search }: { search: string }) {
 
   useShallowEffect(() => {
     const loadData = async () => {
-      console.log('1. Starting to load pegawai data...');
       try {
         // Clear existing data to ensure we see the loading state
         stateOrganisasi.findMany.data = [];
@@ -40,12 +39,8 @@ function ListPegawai({ search }: { search: string }) {
         // Load new data
         await stateOrganisasi.findMany.load();
 
-        // Log the raw response and state
-        console.log('2. Raw API response:', stateOrganisasi.findMany.data);
-
         // Type guard to ensure data is an array
         const data = stateOrganisasi.findMany.data || [];
-        console.log(`3. Loaded ${data.length} pegawai records`);
         if (data.length > 0) {
           console.log('4. First record sample:', data[0]);
         }
@@ -75,7 +70,6 @@ function ListPegawai({ search }: { search: string }) {
 
   // Handle loading state
   if (stateOrganisasi.findMany.data === null) {
-    console.log('Showing loading state');
     return (
       <Stack py={10}>
         <Skeleton height={300} />
@@ -86,7 +80,6 @@ function ListPegawai({ search }: { search: string }) {
   // Check if data is an empty array
   const data = stateOrganisasi.findMany.data || [];
   if (data.length === 0) {
-    console.log('No data available to display');
     return (
       <Box py={10}>
         <Paper p="md" ta="center">

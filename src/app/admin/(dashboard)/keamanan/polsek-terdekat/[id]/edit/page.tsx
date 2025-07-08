@@ -119,7 +119,6 @@ function CreatePolsekTerdekat() {
         body: JSON.stringify({ nama: namaLayananBaru }),
       });
       const data = await res.json();
-      console.log("data setelah create:", data);
 
       if (data.success) {
         const newLayanan = {
@@ -150,7 +149,6 @@ function CreatePolsekTerdekat() {
         body: JSON.stringify({ nama: namaBaru }),
       });
       const data = await res.json();
-      console.log("data setelah update:", data);
 
       if (data.success) {
         await fetchLayanan(); // Refresh list
@@ -174,7 +172,6 @@ function CreatePolsekTerdekat() {
         method: "DELETE",
       });
       const data = await res.json();
-      console.log("data setelah delete:", data);
 
       if (data.success) {
         await fetchLayanan(); // Refresh list
