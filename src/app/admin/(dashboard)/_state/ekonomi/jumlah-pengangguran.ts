@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiFetch from "@/lib/api-fetch";
 import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
@@ -36,6 +37,25 @@ const jumlahPengangguranForm: JumlahPengangguran = {
 };
 
 const jumlahPengangguran = proxy({
+  findByMonthYear: {
+    data: null as any,
+    loading: false,
+    load: async ({ month, year }: { month: string; year: number }) => {
+      jumlahPengangguran.findByMonthYear.loading = true;
+      try {
+        const res = await fetch(
+          `/api/ekonomi/jumlahpengangguran/detaildatapengangguran/month/${month}/year/${year}`
+        );
+        const json = await res.json();
+        jumlahPengangguran.findByMonthYear.data = json.data;
+        return json.data;
+      } catch (err) {
+        console.error("Gagal ambil data bulan/tahun:", err);
+      } finally {
+        jumlahPengangguran.findByMonthYear.loading = false;
+      }      
+    },
+  },
   create: {
     form: jumlahPengangguranForm,
     loading: false,

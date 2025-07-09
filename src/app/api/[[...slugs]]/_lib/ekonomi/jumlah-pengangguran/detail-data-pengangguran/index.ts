@@ -4,6 +4,7 @@ import detailDataPengangguranCreate from "./create";
 import detailDataPengangguranUpdate from "./updt";
 import detailDataPengangguranFindUnique from "./findUnique";
 import detailDataPengangguranDelete from "./del";
+import findByMonthYear from "./findByMonthYear";
 
 const DetailDataPengangguran = new Elysia({
   prefix: "/detaildatapengangguran",
@@ -42,6 +43,12 @@ const DetailDataPengangguran = new Elysia({
   .delete("/del/:id", detailDataPengangguranDelete, {
     params: t.Object({
       id: t.String(),
+    }),
+  })
+  .get("/month/:month/year/:year", findByMonthYear, {
+    params: t.Object({
+      month: t.String(),
+      year: t.String(),
     }),
   });
 
