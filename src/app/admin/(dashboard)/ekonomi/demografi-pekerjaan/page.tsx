@@ -1,11 +1,11 @@
 'use client'
 import colors from '@/con/colors';
+import { BarChart } from '@mantine/charts';
 import { Box, Button, Paper, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title } from '@mantine/core';
-import { useMediaQuery, useShallowEffect } from '@mantine/hooks';
+import { useShallowEffect } from '@mantine/hooks';
 import { IconEdit, IconSearch, IconTrash } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { Bar, BarChart, Legend, Tooltip, XAxis, YAxis } from 'recharts';
 import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../_com/header';
 import JudulList from '../../_com/judulList';
@@ -40,8 +40,6 @@ function ListDemografiPekerjaan({ search }: { search: string }) {
   const stateDemografi = useProxy(demografiPekerjaan)
   const [chartData, setChartData] = useState<DemografiPekerjaan[]>([]);
   const [mounted, setMounted] = useState(false); // untuk memastikan DOM sudah ready
-  const isTablet = useMediaQuery('(max-width: 1024px)')
-  const isMobile = useMediaQuery('(max-width: 768px)')
   const [modalHapus, setModalHapus] = useState(false)
   const [selectedId, setSelectedId] = useState<string | null>(null)
 
@@ -54,7 +52,7 @@ function ListDemografiPekerjaan({ search }: { search: string }) {
       stateDemografi.findMany.load()
     }
   }
-  
+
   useShallowEffect(() => {
     setMounted(true)
     stateDemografi.findMany.load()
@@ -104,7 +102,7 @@ function ListDemografiPekerjaan({ search }: { search: string }) {
                 <TableTd>{item.lakiLaki}</TableTd>
                 <TableTd>{item.perempuan}</TableTd>
                 <TableTd>
-                  <Button color='green' onClick={() => router.push(`/admin/kesehatan/data-kesehatan-warga/persentase_data_kelahiran_kematian/${item.id}`)}>
+                  <Button color='green' onClick={() => router.push(`/admin/ekonomi/demografi-pekerjaan/${item.id}`)}>
                     <IconEdit size={20} />
                   </Button>
                 </TableTd>
@@ -138,14 +136,18 @@ function ListDemografiPekerjaan({ search }: { search: string }) {
           <Paper bg={colors['white-1']} p={'md'}>
             <Title pb={10} order={4}>Data Kelahiran & Kematian</Title>
             {mounted && chartData.length > 0 && (
-              <BarChart width={isMobile ? 450 : isTablet ? 500 : 550} height={350} data={chartData} >
-                <XAxis dataKey="pekerjaan" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="lakiLaki" fill="#f03e3e" name="Laki - Laki" />
-                <Bar dataKey="perempuan" fill="#ff922b" name="Perempuan" />
-              </BarChart>
+              <Box w={{ base: '100%', md: '30%' }}>
+                <BarChart
+                  h={450}
+                  data={chartData}
+                  dataKey="pekerjaan"
+                  type="stacked"
+                  series={[
+                    { name: 'lakiLaki', color: 'red.6', label: 'Laki - Laki' },
+                    { name: 'perempuan', color: 'orange.6', label: 'Perempuan' },
+                  ]}
+                />
+              </Box>
             )}
           </Paper>
         </Box>

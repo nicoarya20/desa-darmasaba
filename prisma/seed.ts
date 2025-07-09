@@ -21,6 +21,9 @@ import kategoriProduk from "./data/ekonomi/pasar-desa/kategori-produk.json";
 import hubunganOrganisasi from "./data/ekonomi/struktur-organisasi/hubungan-organisasi.json";
 import posisiOrganisasi from "./data/ekonomi/struktur-organisasi/posisi-organisasi.json";
 import pegawai from "./data/ekonomi/struktur-organisasi/pegawai.json";
+import detailDataPengangguran from './data/ekonomi/jumlah-pengangguran/detail-data-pengangguran.json';
+import ringkasanDataPengangguran from './data/ekonomi/jumlah-pengangguran/ringkasan-data-pengangguran.json';
+import sedangMencariKerja from './data/ekonomi/jumlah-pengangguran/sedang-mencari-kerja.json';
 
 (async () => {
   for (const l of layanan) {
@@ -431,6 +434,75 @@ import pegawai from "./data/ekonomi/struktur-organisasi/pegawai.json";
     });
   }
   console.log("hubungan organisasi success ...");
+
+  for (const d of detailDataPengangguran) {
+    await prisma.detailDataPengangguran.upsert({
+      where: {
+        month_year: { month: d.month, year: d.year },
+      },
+      update: {
+        totalUnemployment: d.totalUnemployment,
+        educatedUnemployment: d.educatedUnemployment,
+        uneducatedUnemployment: d.uneducatedUnemployment,
+        percentageChange: d.percentageChange,
+      },
+      create: {
+        month: d.month,
+        year: d.year,
+        totalUnemployment: d.totalUnemployment,
+        educatedUnemployment: d.educatedUnemployment,
+        uneducatedUnemployment: d.uneducatedUnemployment,
+        percentageChange: d.percentageChange,
+      },
+    });
+  }
+  console.log("📊 detailDataPengangguran success ...");
+  
+  // RingkasanDataPengangguran
+  for (const r of ringkasanDataPengangguran) {
+    await prisma.ringkasanDataPengangguran.upsert({
+      where: {
+        year: r.year,
+      },
+      update: {
+        totalUnemployment: r.totalUnemployment,
+        educatedUnemployment: r.educatedUnemployment,
+        percentageEducatedOfTotal: r.percentageEducatedOfTotal,
+        productiveAgePopulation: r.productiveAgePopulation,
+        percentageProductiveOfTotal: r.percentageProductiveOfTotal,
+        percentageChangeFromPreviousYear: r.percentageChangeFromPreviousYear,
+      },
+      create: {
+        year: r.year,
+        totalUnemployment: r.totalUnemployment,
+        educatedUnemployment: r.educatedUnemployment,
+        percentageEducatedOfTotal: r.percentageEducatedOfTotal,
+        productiveAgePopulation: r.productiveAgePopulation,
+        percentageProductiveOfTotal: r.percentageProductiveOfTotal,
+        percentageChangeFromPreviousYear: r.percentageChangeFromPreviousYear,
+      },
+    });
+  }
+  console.log("📈 ringkasanDataPengangguran success ...");
+  
+  // SedangMencariKerja
+  for (const s of sedangMencariKerja) {
+    await prisma.sedangMencariKerja.upsert({
+      where: {
+        recordedDate: new Date(s.recordedDate),
+      },
+      update: {
+        count: s.count,
+        percentageOfTotal: s.percentageOfTotal,
+      },
+      create: {
+        recordedDate: new Date(s.recordedDate),
+        count: s.count,
+        percentageOfTotal: s.percentageOfTotal,
+      },
+    });
+  }
+  console.log("💼 sedangMencariKerja success ...");
 })()
   .then(() => prisma.$disconnect())
   .catch((e) => {

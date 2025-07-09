@@ -234,8 +234,8 @@ export const navBar = [
       },
       {
         id: "Ekonomi_5",
-        name: "Jumlah Pengangguran 2024-2025",
-        path: "/admin/ekonomi/jumlah-pengangguran-2024-2025"
+        name: "Jumlah Pengangguran",
+        path: "/admin/ekonomi/jumlah-pengangguran"
       },
       {
         id: "Ekonomi_6",
@@ -244,8 +244,8 @@ export const navBar = [
       },
       {
         id: "Ekonomi_7",
-        name: "Jumlah Penduduk Miskin 2024-2025",
-        path: "/admin/ekonomi/jumlah-penduduk-miskin-2024-2025"
+        name: "Jumlah Penduduk Miskin",
+        path: "/admin/ekonomi/jumlah-penduduk-miskin"
       },
       {
         id: "Ekonomi_8",
