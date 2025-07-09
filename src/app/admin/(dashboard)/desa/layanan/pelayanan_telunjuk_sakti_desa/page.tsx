@@ -1,5 +1,5 @@
 'use client'
-import JudulListTab from '@/app/admin/(dashboard)/_com/jusulListTab';
+import JudulListTab from '@/app/admin/(dashboard)/_com/judulListTab';
 import colors from '@/con/colors';
 import { Box, Button, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
 import { IconDeviceImac, IconSearch } from '@tabler/icons-react';

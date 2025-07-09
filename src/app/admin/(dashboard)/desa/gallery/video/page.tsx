@@ -3,7 +3,7 @@ import colors from '@/con/colors';
 import { Box, Button, Paper, Skeleton, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
 import { IconDeviceImac, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import JudulListTab from '../../../_com/jusulListTab';
+import JudulListTab from '../../../_com/judulListTab';
 import { useProxy } from 'valtio/utils';
 import stateGallery from '../../../_state/desa/gallery';
 import { useShallowEffect } from '@mantine/hooks';

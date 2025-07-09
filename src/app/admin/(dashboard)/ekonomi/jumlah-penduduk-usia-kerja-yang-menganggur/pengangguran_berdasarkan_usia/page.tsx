@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Cell, Pie, PieChart } from 'recharts';
 import { useProxy } from 'valtio/utils';
-import JudulListTab from '../../../_com/jusulListTab';
+import JudulListTab from '../../../_com/judulListTab';
 import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
 import grafikNganggur from '../../../_state/ekonomi/usia-kerja-nganggur';
 

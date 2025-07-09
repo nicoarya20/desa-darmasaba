@@ -1279,30 +1279,3 @@ model DetailDataPengangguran {
 
   @@unique([month, year])
 }
-
-model RingkasanDataPengangguran {
-  id                               String @id @default(uuid()) @db.Uuid
-  year                             Int    @unique
-  totalUnemployment                Int
-  educatedUnemployment             Int
-  percentageEducatedOfTotal        Float?
-  productiveAgePopulation          Int?
-  percentageProductiveOfTotal      Float?
-  percentageChangeFromPreviousYear Float?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  deletedAt DateTime @default(now())
-  isActive  Boolean  @default(true)
-}
-
-model SedangMencariKerja {
-  id                String   @id @default(uuid()) @db.Uuid
-  count             Int
-  percentageOfTotal Float?
-  recordedDate      DateTime @unique @db.Date
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-  deletedAt         DateTime @default(now())
-  isActive          Boolean  @default(true)
-}

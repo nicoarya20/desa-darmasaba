@@ -1,9 +1,8 @@
 import colors from '@/con/colors';
-import { Stack, Box, Text, Group, Flex, Button, SimpleGrid, Paper, Center, ColorSwatch, TableTd, TableTr, Table, TableTbody, TableTh, TableThead } from '@mantine/core';
-import React from 'react';
-import BackButton from '../../desa/layanan/_com/BackButto';
-import { IconBriefcase, IconChevronDown, IconDownload, IconSchool, IconUserOff, IconUsersGroup } from '@tabler/icons-react';
 import { BarChart } from '@mantine/charts';
+import { Box, Button, Center, ColorSwatch, Flex, Group, Paper, SimpleGrid, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
+import { IconChevronDown, IconDownload, IconSchool, IconSchoolOff, IconUserOff } from '@tabler/icons-react';
+import BackButton from '../../desa/layanan/_com/BackButto';
 
 const data1 = [
   {
@@ -22,17 +21,10 @@ const data1 = [
   },
   {
     id: 3,
-    icon: <IconUsersGroup size={35} />,
-    judul: 'Usia Produktif',
-    jumlah: '125',
-    persentase: <Text fz={'h4'} c={'gray'}>89.3% dari total</Text>
-  },
-  {
-    id: 4,
-    icon: <IconBriefcase size={35} />,
-    judul: 'Sedang Mencari Kerja',
-    jumlah: '95',
-    persentase: <Text fz={'h4'} c={'red'}>67.9% dari total</Text>
+    icon: <IconSchoolOff size={35} />,
+    judul: 'Pengangguran Tidak Terdidik',
+    jumlah: '60',
+    persentase: <Text fz={'h4'} c={'gray'}>42.9% dari total</Text>
   },
 ]
 

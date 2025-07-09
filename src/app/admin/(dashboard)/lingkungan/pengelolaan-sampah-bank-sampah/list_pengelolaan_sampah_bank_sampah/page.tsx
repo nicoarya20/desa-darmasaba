@@ -3,7 +3,7 @@ import colors from '@/con/colors';
 import { Box, Button, Image, Paper, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title } from '@mantine/core';
 import { IconDeviceImacCog, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import JudulListTab from '../../../_com/jusulListTab';
+import JudulListTab from '../../../_com/judulListTab';
 
 function ListPengelolaanSampahBankSampah() {
   const router = useRouter();

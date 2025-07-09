@@ -1,10 +1,10 @@
 import Elysia, { t } from "elysia";
-import detailDataPengangguranFindMany from "./findMany";
 import detailDataPengangguranCreate from "./create";
-import detailDataPengangguranUpdate from "./updt";
-import detailDataPengangguranFindUnique from "./findUnique";
 import detailDataPengangguranDelete from "./del";
 import findByMonthYear from "./findByMonthYear";
+import detailDataPengangguranFindMany from "./findMany";
+import detailDataPengangguranFindUnique from "./findUnique";
+import detailDataPengangguranUpdate from "./updt";
 
 const DetailDataPengangguran = new Elysia({
   prefix: "/detaildatapengangguran",
@@ -50,6 +50,6 @@ const DetailDataPengangguran = new Elysia({
       month: t.String(),
       year: t.String(),
     }),
-  });
+  })
 
 export default DetailDataPengangguran;

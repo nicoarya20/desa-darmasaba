@@ -1,15 +1,15 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import colors from '@/con/colors';
 import { Box, Button, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
 import { IconEdit, IconSearch, IconTrash } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../../_com/header';
 import JudulList from '../../../_com/judulList';
-import { useProxy } from 'valtio/utils';
-import { useShallowEffect } from '@mantine/hooks';
 import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
 import strukturorganisasiState from '../../../_state/ekonomi/struktur-organisasi/struktur-organisasi';
-import { useState } from 'react';
 
 function PosisiOrganisasi() {
   const [search, setSearch] = useState("");
@@ -33,7 +33,7 @@ function ListPosisiOrganisasi({ search }: { search: string }) {
   const [modalHapus, setModalHapus] = useState(false)
   const [selectedId, setSelectedId] = useState<string | null>(null)
 
-  useShallowEffect(() => {
+  useEffect(() => {
     stateOrganisasi.findMany.load()
   }, [])
 

@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Cell, Pie, PieChart } from 'recharts';
 import { useSnapshot } from 'valtio';
-import JudulListTab from '../../../_com/jusulListTab';
+import JudulListTab from '../../../_com/judulListTab';
 import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
 import grafikBerdasarkanResponden from '../../../_state/ppid/indeks_kepuasan_masyarakat/grafikBerdasarkanResponden';
 import HeaderSearch from '../../../_com/header';

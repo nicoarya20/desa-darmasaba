@@ -6,7 +6,7 @@ import { useShallowEffect } from '@mantine/hooks';
 import { IconDeviceImac, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
-import JudulListTab from '../../_com/jusulListTab';
+import JudulListTab from '../../_com/judulListTab';
 import { useState } from 'react';
 import HeaderSearch from '../../_com/header';
 

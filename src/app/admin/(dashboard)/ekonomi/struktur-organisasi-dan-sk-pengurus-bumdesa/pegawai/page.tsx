@@ -1,14 +1,14 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import colors from '@/con/colors';
 import { Badge, Box, Button, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr } from '@mantine/core';
-import { useShallowEffect } from '@mantine/hooks';
 import { IconDeviceImacCog, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../../_com/header';
 import JudulList from '../../../_com/judulList';
 import strukturorganisasiState from '../../../_state/ekonomi/struktur-organisasi/struktur-organisasi';
-import { useState } from 'react';
 
 function Pegawai() {
   const [search, setSearch] = useState("");
@@ -30,7 +30,7 @@ function ListPegawai({ search }: { search: string }) {
   const stateOrganisasi = useProxy(strukturorganisasiState.pegawai);
   const router = useRouter();
 
-  useShallowEffect(() => {
+  useEffect(() => {
     const loadData = async () => {
       try {
         // Clear existing data to ensure we see the loading state

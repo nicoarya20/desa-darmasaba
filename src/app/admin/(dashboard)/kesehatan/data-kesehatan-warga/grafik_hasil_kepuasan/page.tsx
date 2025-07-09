@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Bar, BarChart, Legend, Tooltip, XAxis, YAxis } from 'recharts';
 import { useProxy } from 'valtio/utils';
-import JudulListTab from '../../../_com/jusulListTab';
+import JudulListTab from '../../../_com/judulListTab';
 import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
 import grafikkepuasan from '../../../_state/kesehatan/data_kesehatan_warga/grafikKepuasan';
 import HeaderSearch from '../../../_com/header';

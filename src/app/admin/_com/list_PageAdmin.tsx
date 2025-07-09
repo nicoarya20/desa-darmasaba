@@ -235,7 +235,7 @@ export const navBar = [
       {
         id: "Ekonomi_5",
         name: "Jumlah Pengangguran",
-        path: "/admin/ekonomi/jumlah-pengangguran/detail-data-pengangguran"
+        path: "/admin/ekonomi/jumlah-pengangguran"
       },
       {
         id: "Ekonomi_6",
