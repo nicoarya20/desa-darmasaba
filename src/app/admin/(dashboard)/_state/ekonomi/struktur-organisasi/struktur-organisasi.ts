@@ -30,9 +30,9 @@ const posisiOrganisasi = proxy({
 
       try {
         this.loading = true;
-        const res = await ApiFetch.api.ekonomi["struktur-organisasi"]["posisi-organisasi"]["create"].post(
-          this.form
-        );
+        const res = await ApiFetch.api.ekonomi["struktur-organisasi"][
+          "posisi-organisasi"
+        ]["create"].post(this.form);
         if (res.status === 200) {
           toast.success("Berhasil menambahkan posisi organisasi");
           posisiOrganisasi.findMany.load();
@@ -62,12 +62,15 @@ const posisiOrganisasi = proxy({
         return null;
       }
       try {
-        const response = await fetch(`/api/ekonomi/struktur-organisasi/posisi-organisasi/${id}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        const response = await fetch(
+          `/api/ekonomi/struktur-organisasi/posisi-organisasi/${id}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -160,7 +163,9 @@ const posisiOrganisasi = proxy({
     }>,
     async load() {
       try {
-        const res = await ApiFetch.api.ekonomi["struktur-organisasi"]["posisi-organisasi"]["find-many"].get();
+        const res = await ApiFetch.api.ekonomi["struktur-organisasi"][
+          "posisi-organisasi"
+        ]["find-many"].get();
         if (res.status === 200) {
           // The API now returns the id field, so we can use it directly
           this.data = res.data?.data ?? [];
@@ -209,238 +214,278 @@ const posisiOrganisasi = proxy({
 });
 
 const templatePegawai = z.object({
-    namaLengkap: z.string().min(1, "Nama wajib diisi"),
-    gelarAkademik: z.string().optional(),
-    imageId: z.string().nullable().optional(),
-    tanggalMasuk: z.string().optional(), // ISO format
-    email: z.string().email("Email tidak valid").optional(),
-    telepon: z.string().optional(),
-    alamat: z.string().optional(),
-    posisiId: z.string().min(1, "Posisi wajib diisi"),
-    isActive: z.boolean().default(true),
-  });
-  
-  const pegawaiDefaultForm = {
-    namaLengkap: "",
-    gelarAkademik: "",
-    imageId: "",
-    tanggalMasuk: "",
-    email: "",
-    telepon: "",
-    alamat: "",
-    posisiId: "",
-    isActive: true,
-  };
-  
-  const pegawai = proxy({
-    create: {
-      form: { ...pegawaiDefaultForm },
-      loading: false,
-      async submit() {
-        const cek = templatePegawai.safeParse(pegawai.create.form);
-        if (!cek.success) {
-          const err = cek.error.issues.map(i => i.message).join("\n");
-          toast.error(err);
-          return;
-        }
-  
-        try {
-          pegawai.create.loading = true;
-          const res = await ApiFetch.api.ekonomi["struktur-organisasi"]["pegawai"]["create"].post(
-            pegawai.create.form
-          );
-          if (res.status === 200) {
-            toast.success("Pegawai berhasil ditambahkan");
-            await pegawai.findMany.load();
-          } else {
-            toast.error(res.data?.message ?? "Gagal tambah pegawai");
-          }
-        } catch (error) {
-          console.error("Gagal create:", error);
-          toast.error("Terjadi kesalahan saat menambahkan pegawai");
-        } finally {
-          pegawai.create.loading = false;
-        }
-      },
-    },
-    findMany: {
-      data: null as (Prisma.PegawaiGetPayload<{ include: { posisi: true, image: true } }> & { isActive: boolean })[] | null,
-      async load() {
-        try {
-          const res = await ApiFetch.api.ekonomi["struktur-organisasi"]["pegawai"]["find-many"].get();
-          if (res.status === 200) {
-            pegawai.findMany.data = (res.data?.data ?? []).map((item: any) => ({
-              ...item,
-              posisi: item.posisi || { id: '', nama: '' }, // Ensure posisi exists with required fields
-              isActive: item.isActive ?? true // Default to true if not provided
-            }));
-          } else {
-            console.error('Failed to load pegawai:', res.data?.message);
-          }
-        } catch (error) {
-          console.error('Error loading pegawai:', error);
-          pegawai.findMany.data = [];
-        }
-      },
-    },
-    findUnique: {
-      data: null as (Prisma.PegawaiGetPayload<{ include: { posisi: true, image: true } }> & { isActive: boolean }) | null,
-      async load(id: string) {
-        const res = await fetch(`/api/ekonomi/struktur-organisasi/pegawai/${id}`);
-        if (res.ok) {
-          const json = await res.json();
-          pegawai.findUnique.data = json.data ? {
-            ...json.data,
-            isActive: json.data.isActive ?? json.data.aktif ?? true // Fallback ke aktif:true jika tidak ada data
-          } : null;
-        } else {
-          pegawai.findUnique.data = null;
-        }
-      },
-    },
-  
-    delete: {
-      loading: false,
-      async byId(id: string) {
-        if (!id) return toast.warn("ID tidak valid");
-        try {
-          pegawai.delete.loading = true;
-          const res = await fetch(`/api/ekonomi/struktur-organisasi/pegawai/del/${id}`, {
-            method: "DELETE",
-          });
-          const json = await res.json();
-          if (res.ok) {
-            toast.success(json.message ?? "Berhasil hapus pegawai");
-            await pegawai.findMany.load();
-          } else {
-            toast.error(json.message ?? "Gagal hapus pegawai");
-          }
-        } catch (error) {
-          console.error("Gagal delete:", error);
-          toast.error("Terjadi kesalahan saat menghapus");
-        } finally {
-          pegawai.delete.loading = false;
-        }
-      },
-    },
-  
-     edit: {
-       id: "",
-       form: { ...pegawaiDefaultForm },
-       loading: false,
-   
-       async load(id: string) {
-         if (!id) {
-           toast.warn("ID tidak valid");
-           return null;
-         }
-         
-         try {
-           const response = await fetch(`/api/ekonomi/struktur-organisasi/pegawai/${id}`, {
-             method: 'GET',
-             headers: {
-               'Content-Type': 'application/json',
-             },
-           });
-           
-           if (!response.ok) {
-             throw new Error(`HTTP error! status: ${response.status}`);
-           }
-           
-           const result = await response.json();
-          
-           if (result?.success) {
-             const data = result.data;
-             this.id = data.id;
-             this.form = {
-               namaLengkap: data.namaLengkap,
-               gelarAkademik: data.gelarAkademik,
-               imageId: data.imageId,
-               tanggalMasuk: data.tanggalMasuk,
-               email: data.email,
-               telepon: data.telepon,
-               alamat: data.alamat,
-               posisiId: data.posisiId,
-               isActive: data.isActive,
-             };
-             return data; // Return the loaded data
-           } else {
-             throw new Error(result?.message || "Gagal memuat data");
-           }
-         } catch (error) {
-           console.error("Error loading berita:", error);
-           toast.error(error instanceof Error ? error.message : "Gagal memuat data");
-           return null;
-         }
-       },
-   
-       async submit() {
-         const cek = templatePegawai.safeParse(pegawai.edit.form);
-         if (!cek.success) {
-           const err = `[${cek.error.issues
-             .map((v) => `${v.path.join(".")}`)
-             .join("\n")}] required`;
-           toast.error(err);
-           return false;
-         }
-       
-         try {
-           pegawai.edit.loading = true;
-           
-           // Format tanggalMasuk to ISO string if it exists
-           const formattedTanggalMasuk = this.form.tanggalMasuk 
-             ? new Date(this.form.tanggalMasuk).toISOString()
-             : undefined;
-             
-           const response = await fetch(`/api/ekonomi/struktur-organisasi/pegawai/${this.id}`, {
-             method: 'PUT',
-             headers: {
-               'Content-Type': 'application/json',
-             },
-             body: JSON.stringify({
-               id: this.id,
-               namaLengkap: this.form.namaLengkap,
-               gelarAkademik: this.form.gelarAkademik,
-               imageId: this.form.imageId || null,
-               tanggalMasuk: formattedTanggalMasuk,
-               email: this.form.email,
-               telepon: this.form.telepon,
-               alamat: this.form.alamat,
-               posisiId: this.form.posisiId,
-               isActive: this.form.isActive,
-             }),
-           });
-           
-           if (!response.ok) {
-             const errorData = await response.json().catch(() => ({}));
-             throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
-           }
-           
-           const result = await response.json();
-       
-           if (result.success) {
-             toast.success("Berhasil update pegawai");
-             await pegawai.findMany.load(); // refresh list
-             return true;
-           } else {
-             throw new Error(result.message || "Gagal update pegawai");
-           }
-         } catch (error) {
-           console.error("Error updating pegawai:", error);
-           toast.error(error instanceof Error ? error.message : "Terjadi kesalahan saat update pegawai");
-           return false;
-         } finally {
-           pegawai.edit.loading = false;
-         }
-       },
-   
-       reset() {
-         pegawai.edit.id = "";
-         pegawai.edit.form = { ...pegawaiDefaultForm };
-       },
-     },
-  });
+  namaLengkap: z.string().min(1, "Nama wajib diisi"),
+  gelarAkademik: z.string().optional(),
+  imageId: z.string().nullable().optional(),
+  tanggalMasuk: z.string().optional(), // ISO format
+  email: z.string().email("Email tidak valid").optional(),
+  telepon: z.string().optional(),
+  alamat: z.string().optional(),
+  posisiId: z.string().min(1, "Posisi wajib diisi"),
+  isActive: z.boolean().default(true),
+});
 
+const pegawaiDefaultForm = {
+  namaLengkap: "",
+  gelarAkademik: "",
+  imageId: "",
+  tanggalMasuk: "",
+  email: "",
+  telepon: "",
+  alamat: "",
+  posisiId: "",
+  isActive: true,
+};
+
+const pegawai = proxy({
+  create: {
+    form: { ...pegawaiDefaultForm },
+    loading: false,
+    async submit() {
+      const cek = templatePegawai.safeParse(pegawai.create.form);
+      if (!cek.success) {
+        const err = cek.error.issues.map((i) => i.message).join("\n");
+        toast.error(err);
+        return;
+      }
+
+      try {
+        pegawai.create.loading = true;
+        const res = await ApiFetch.api.ekonomi["struktur-organisasi"][
+          "pegawai"
+        ]["create"].post(pegawai.create.form);
+        if (res.status === 200) {
+          toast.success("Pegawai berhasil ditambahkan");
+          await pegawai.findMany.load();
+        } else {
+          toast.error(res.data?.message ?? "Gagal tambah pegawai");
+        }
+      } catch (error) {
+        console.error("Gagal create:", error);
+        toast.error("Terjadi kesalahan saat menambahkan pegawai");
+      } finally {
+        pegawai.create.loading = false;
+      }
+    },
+  },
+
+  // In struktur-organisasi.ts
+findMany: {
+  data: null as any[] | null,
+  page: 1,
+  totalPages: 1,
+  total: 0,
+  loading: false,
+  load: async (page = 1, limit = 10) => {  // Change to arrow function
+    pegawai.findMany.loading = true;  // Use the full path to access the property
+    pegawai.findMany.page = page;
+    try {
+      const res = await ApiFetch.api.ekonomi["struktur-organisasi"][
+        "pegawai"
+      ]["find-many"].get({
+        query: { page, limit },
+      });
+
+      if (res.status === 200 && res.data?.success) {
+        pegawai.findMany.data = res.data.data || [];
+        pegawai.findMany.total = res.data.total || 0;
+        pegawai.findMany.totalPages = res.data.totalPages || 1;
+      } else {
+        console.error("Failed to load pegawai:", res.data?.message);
+        pegawai.findMany.data = [];
+        pegawai.findMany.total = 0;
+        pegawai.findMany.totalPages = 1;
+      }
+    } catch (error) {
+      console.error("Error loading pegawai:", error);
+      pegawai.findMany.data = [];
+      pegawai.findMany.total = 0;
+      pegawai.findMany.totalPages = 1;
+    } finally {
+      pegawai.findMany.loading = false;
+    }
+  },
+},
+  findUnique: {
+    data: null as
+      | (Prisma.PegawaiGetPayload<{
+          include: { posisi: true; image: true };
+        }> & { isActive: boolean })
+      | null,
+    async load(id: string) {
+      const res = await fetch(`/api/ekonomi/struktur-organisasi/pegawai/${id}`);
+      if (res.ok) {
+        const json = await res.json();
+        pegawai.findUnique.data = json.data
+          ? {
+              ...json.data,
+              isActive: json.data.isActive ?? json.data.aktif ?? true, // Fallback ke aktif:true jika tidak ada data
+            }
+          : null;
+      } else {
+        pegawai.findUnique.data = null;
+      }
+    },
+  },
+
+  delete: {
+    loading: false,
+    async byId(id: string) {
+      if (!id) return toast.warn("ID tidak valid");
+      try {
+        pegawai.delete.loading = true;
+        const res = await fetch(
+          `/api/ekonomi/struktur-organisasi/pegawai/del/${id}`,
+          {
+            method: "DELETE",
+          }
+        );
+        const json = await res.json();
+        if (res.ok) {
+          toast.success(json.message ?? "Berhasil hapus pegawai");
+          await pegawai.findMany.load();
+        } else {
+          toast.error(json.message ?? "Gagal hapus pegawai");
+        }
+      } catch (error) {
+        console.error("Gagal delete:", error);
+        toast.error("Terjadi kesalahan saat menghapus");
+      } finally {
+        pegawai.delete.loading = false;
+      }
+    },
+  },
+
+  edit: {
+    id: "",
+    form: { ...pegawaiDefaultForm },
+    loading: false,
+
+    async load(id: string) {
+      if (!id) {
+        toast.warn("ID tidak valid");
+        return null;
+      }
+
+      try {
+        const response = await fetch(
+          `/api/ekonomi/struktur-organisasi/pegawai/${id}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+
+        if (result?.success) {
+          const data = result.data;
+          this.id = data.id;
+          this.form = {
+            namaLengkap: data.namaLengkap,
+            gelarAkademik: data.gelarAkademik,
+            imageId: data.imageId,
+            tanggalMasuk: data.tanggalMasuk,
+            email: data.email,
+            telepon: data.telepon,
+            alamat: data.alamat,
+            posisiId: data.posisiId,
+            isActive: data.isActive,
+          };
+          return data; // Return the loaded data
+        } else {
+          throw new Error(result?.message || "Gagal memuat data");
+        }
+      } catch (error) {
+        console.error("Error loading berita:", error);
+        toast.error(
+          error instanceof Error ? error.message : "Gagal memuat data"
+        );
+        return null;
+      }
+    },
+
+    async submit() {
+      const cek = templatePegawai.safeParse(pegawai.edit.form);
+      if (!cek.success) {
+        const err = `[${cek.error.issues
+          .map((v) => `${v.path.join(".")}`)
+          .join("\n")}] required`;
+        toast.error(err);
+        return false;
+      }
+
+      try {
+        pegawai.edit.loading = true;
+
+        // Format tanggalMasuk to ISO string if it exists
+        const formattedTanggalMasuk = this.form.tanggalMasuk
+          ? new Date(this.form.tanggalMasuk).toISOString()
+          : undefined;
+
+        const response = await fetch(
+          `/api/ekonomi/struktur-organisasi/pegawai/${this.id}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              id: this.id,
+              namaLengkap: this.form.namaLengkap,
+              gelarAkademik: this.form.gelarAkademik,
+              imageId: this.form.imageId || null,
+              tanggalMasuk: formattedTanggalMasuk,
+              email: this.form.email,
+              telepon: this.form.telepon,
+              alamat: this.form.alamat,
+              posisiId: this.form.posisiId,
+              isActive: this.form.isActive,
+            }),
+          }
+        );
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(
+            errorData.message || `HTTP error! status: ${response.status}`
+          );
+        }
+
+        const result = await response.json();
+
+        if (result.success) {
+          toast.success("Berhasil update pegawai");
+          await pegawai.findMany.load(); // refresh list
+          return true;
+        } else {
+          throw new Error(result.message || "Gagal update pegawai");
+        }
+      } catch (error) {
+        console.error("Error updating pegawai:", error);
+        toast.error(
+          error instanceof Error
+            ? error.message
+            : "Terjadi kesalahan saat update pegawai"
+        );
+        return false;
+      } finally {
+        pegawai.edit.loading = false;
+      }
+    },
+
+    reset() {
+      pegawai.edit.id = "";
+      pegawai.edit.form = { ...pegawaiDefaultForm };
+    },
+  },
+});
 
 // Schema Zod untuk form validasi
 const templateHubunganOrganisasiForm = z.object({
@@ -474,7 +519,9 @@ const hubunganOrganisasi = proxy({
 
       try {
         hubunganOrganisasi.create.loading = true;
-        const res = await ApiFetch.api.ekonomi["struktur-organisasi"]["hubungan-organisasi"]["create"].post(hubunganOrganisasi.create.form);
+        const res = await ApiFetch.api.ekonomi["struktur-organisasi"][
+          "hubungan-organisasi"
+        ]["create"].post(hubunganOrganisasi.create.form);
 
         if (res.status === 200 && res.data?.success) {
           hubunganOrganisasi.findMany.load();
@@ -482,7 +529,7 @@ const hubunganOrganisasi = proxy({
         } else {
           return toast.error(res.data?.message || "Gagal menambahkan data");
         }
-      } catch (error) { 
+      } catch (error) {
         console.error("Gagal create:", error);
         toast.error("Terjadi kesalahan saat menambahkan");
       } finally {
@@ -490,7 +537,7 @@ const hubunganOrganisasi = proxy({
       }
     },
   },
-  findMany: {   
+  findMany: {
     data: null as Array<{
       id: string;
       atasanId: string;
@@ -528,20 +575,29 @@ const hubunganOrganisasi = proxy({
 
     async load() {
       try {
-        const res = await ApiFetch.api.ekonomi["struktur-organisasi"]["hubungan-organisasi"]["find-many"].get();
+        const res = await ApiFetch.api.ekonomi["struktur-organisasi"][
+          "hubungan-organisasi"
+        ]["find-many"].get();
 
         if (res.status === 200) {
-          hubunganOrganisasi.findMany.data = (res.data?.data ?? []).map((item: any) => ({
-            ...item,
-            atasan: item.atasan ? {
-              ...item.atasan,
-              isActive: item.atasan.isActive ?? item.atasan.aktif ?? true
-            } : null,
-            bawahan: item.bawahan ? {
-              ...item.bawahan,
-              isActive: item.bawahan.isActive ?? item.bawahan.aktif ?? true
-            } : null
-          }));
+          hubunganOrganisasi.findMany.data = (res.data?.data ?? []).map(
+            (item: any) => ({
+              ...item,
+              atasan: item.atasan
+                ? {
+                    ...item.atasan,
+                    isActive: item.atasan.isActive ?? item.atasan.aktif ?? true,
+                  }
+                : null,
+              bawahan: item.bawahan
+                ? {
+                    ...item.bawahan,
+                    isActive:
+                      item.bawahan.isActive ?? item.bawahan.aktif ?? true,
+                  }
+                : null,
+            })
+          );
         } else {
           hubunganOrganisasi.findMany.data = [];
         }
@@ -591,7 +647,9 @@ const hubunganOrganisasi = proxy({
 
     async load(id: string) {
       try {
-        const res = await fetch(`/api/ekonomi/struktur-organisasi/hubungan-organisasi/${id}`);
+        const res = await fetch(
+          `/api/ekonomi/struktur-organisasi/hubungan-organisasi/${id}`
+        );
         const result = await res.json();
 
         if (res.ok && result?.success) {
@@ -616,7 +674,9 @@ const hubunganOrganisasi = proxy({
       if (!id) return toast.warn("ID tidak valid");
 
       try {
-        const res = await fetch(`/api/ekonomi/struktur-organisasi/hubungan-organisasi/${id}`);
+        const res = await fetch(
+          `/api/ekonomi/struktur-organisasi/hubungan-organisasi/${id}`
+        );
         const result = await res.json();
 
         if (res.ok && result?.success) {
@@ -633,7 +693,9 @@ const hubunganOrganisasi = proxy({
         }
       } catch (error) {
         console.error("Error loading:", error);
-        toast.error(error instanceof Error ? error.message : "Gagal memuat data");
+        toast.error(
+          error instanceof Error ? error.message : "Gagal memuat data"
+        );
         return null;
       }
     },
@@ -690,9 +752,12 @@ const hubunganOrganisasi = proxy({
 
       try {
         hubunganOrganisasi.delete.loading = true;
-        const res = await fetch(`/api/ekonomi/struktur-organisasi/hubungan-organisasi/del/${id}`, {
-          method: "DELETE",
-        });
+        const res = await fetch(
+          `/api/ekonomi/struktur-organisasi/hubungan-organisasi/del/${id}`,
+          {
+            method: "DELETE",
+          }
+        );
 
         const result = await res.json();
         if (res.ok && result?.success) {

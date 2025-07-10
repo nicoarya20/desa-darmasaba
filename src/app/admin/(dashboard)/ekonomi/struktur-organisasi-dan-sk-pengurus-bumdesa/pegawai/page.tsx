@@ -1,10 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import colors from '@/con/colors';
-import { Badge, Box, Button, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr } from '@mantine/core';
-import { IconDeviceImacCog, IconSearch } from '@tabler/icons-react';
+import { Badge, Box, Button, Center, Group, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, ThemeIcon } from '@mantine/core';
+import { IconCheck, IconDeviceImacCog, IconSearch, IconX } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../../_com/header';
 import JudulList from '../../../_com/judulList';
@@ -30,46 +30,33 @@ function ListPegawai({ search }: { search: string }) {
   const stateOrganisasi = useProxy(strukturorganisasiState.pegawai);
   const router = useRouter();
 
+  const {
+    data,
+    page,
+    totalPages,
+    loading,
+    load,
+  } = stateOrganisasi.findMany;
+
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        // Clear existing data to ensure we see the loading state
-        stateOrganisasi.findMany.data = [];
+    load(page, 10);
+  }, [page]);
 
-        // Load new data
-        await stateOrganisasi.findMany.load();
-
-        // Type guard to ensure data is an array
-        const data = stateOrganisasi.findMany.data || [];
-        if (data.length > 0) {
-          console.log('4. First record sample:', data[0]);
-        }
-      } catch (error) {
-        console.error('Error loading pegawai data:', error);
-        stateOrganisasi.findMany.data = [];
-      }
-    };
-
-    loadData();
-
-    // Cleanup function
-    return () => {
-      console.log('Cleanup: Unmounting component');
-    };
-  }, []);
-
-  const filteredData = (stateOrganisasi.findMany.data || []).filter(item => {
-    const keyword = search.toLowerCase();
-    return (
-      item.namaLengkap?.toLowerCase().includes(keyword) ||
-      item.gelarAkademik?.toLowerCase().includes(keyword) ||
-      item.telepon?.toLowerCase().includes(keyword) ||
-      item.posisi?.nama?.toLowerCase().includes(keyword)
-    );
-  });
+  const filteredData = useMemo(() => {
+    if (!data) return [];
+    return data.filter(item => {
+      const keyword = search.toLowerCase();
+      return (
+        item.namaLengkap?.toLowerCase().includes(keyword) ||
+        item.gelarAkademik?.toLowerCase().includes(keyword) ||
+        item.telepon?.toLowerCase().includes(keyword) ||
+        item.posisi?.nama?.toLowerCase().includes(keyword)
+      );
+    });
+  }, [data, search]); 
 
   // Handle loading state
-  if (stateOrganisasi.findMany.data === null) {
+  if (loading || !data) {
     return (
       <Stack py={10}>
         <Skeleton height={300} />
@@ -77,8 +64,6 @@ function ListPegawai({ search }: { search: string }) {
     );
   }
 
-  // Check if data is an empty array
-  const data = stateOrganisasi.findMany.data || [];
   if (data.length === 0) {
     return (
       <Box py={10}>
@@ -95,48 +80,79 @@ function ListPegawai({ search }: { search: string }) {
           title='List Pegawai'
           href='/admin/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa/pegawai/create'
         />
-        <Table striped withTableBorder withRowBorders>
-          <TableThead>
-            <TableTr>
-              <TableTh>Nama</TableTh>
-              <TableTh>Gelar Akademik</TableTh>
-              <TableTh>Telepon</TableTh>
-              <TableTh>Posisi</TableTh>
-              <TableTh>Aktif</TableTh>
-              <TableTh>Detail</TableTh>
-            </TableTr>
-          </TableThead>
-          <TableTbody>
-            {(() => {
-              console.log('Rendering table with items:', stateOrganisasi.findMany.data);
-              return null;
-            })()}
-            {([...filteredData]
-              .sort((a, b) => {
-                if (a.isActive === b.isActive) {
-                  return a.namaLengkap.localeCompare(b.namaLengkap); // kalau status sama, urut nama
-                }
-                return Number(b.isActive) - Number(a.isActive); // aktif duluan
-              }) // Aktif di atas
-            ).map((item) => (
-              <TableTr key={item.id}>
-                <TableTd>{item.namaLengkap}</TableTd>
-                <TableTd>{item.gelarAkademik}</TableTd>
-                <TableTd>{item.telepon}</TableTd>
-                <TableTd>{item.posisi?.nama}</TableTd>
-                <TableTd>
-                  <Badge color={item.isActive ? "green" : "red"}>{item.isActive ? "Aktif" : "Tidak Aktif"}</Badge>
-                </TableTd>
-                <TableTd>
-                  <Button bg={"green"} onClick={() => router.push(`/admin/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa/pegawai/${item.id}`)}>
-                    <IconDeviceImacCog size={25} />
-                  </Button>
-                </TableTd>
+        <Box style={{ overflowX: "auto" }}>
+          <Table striped withTableBorder withRowBorders>
+            <TableThead>
+              <TableTr>
+                <TableTh>Nama</TableTh>
+                <TableTh>Gelar Akademik</TableTh>
+                <TableTh>Telepon</TableTh>
+                <TableTh>Posisi</TableTh>
+                <TableTh>Aktif</TableTh>
+                <TableTh>Detail</TableTh>
               </TableTr>
-            ))}
-          </TableTbody>
-        </Table>
+            </TableThead>
+            <TableTbody>
+              {(() => {
+                console.log('Rendering table with items:', stateOrganisasi.findMany.data);
+                return null;
+              })()}
+              {([...filteredData]
+                .sort((a, b) => {
+                  if (a.isActive === b.isActive) {
+                    return a.namaLengkap.localeCompare(b.namaLengkap); // kalau status sama, urut nama
+                  }
+                  return Number(b.isActive) - Number(a.isActive); // aktif duluan
+                }) // Aktif di atas
+              ).map((item) => (
+                <TableTr key={item.id}>
+                  <TableTd>{item.namaLengkap}</TableTd>
+                  <TableTd>{item.gelarAkademik}</TableTd>
+                  <TableTd>{item.telepon}</TableTd>
+                  <TableTd>{item.posisi?.nama}</TableTd>
+                  <TableTd>
+                    <Group gap="xs" wrap="nowrap">
+                      <Box visibleFrom="sm">
+                        <Badge color={item.isActive ? "green" : "red"}>
+                          {item.isActive ? "Aktif" : "Tidak Aktif"}
+                        </Badge>
+                      </Box>
+                      <Box hiddenFrom="sm">
+                        {item.isActive ? (
+                          <ThemeIcon color="green" variant="light" size="sm">
+                            <IconCheck size={16} />
+                          </ThemeIcon>
+                        ) : (
+                          <ThemeIcon color="red" variant="light" size="sm">
+                            <IconX size={16} />
+                          </ThemeIcon>
+                        )}
+                      </Box>
+                    </Group>
+                  </TableTd>
+                  <TableTd>
+                    <Button bg={"green"} onClick={() => router.push(`/admin/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa/pegawai/${item.id}`)}>
+                      <IconDeviceImacCog size={25} />
+                    </Button>
+                  </TableTd>
+                </TableTr>
+              ))}
+            </TableTbody>
+          </Table>
+        </Box>
       </Paper>
+     <Center>
+     <Pagination
+        value={page}
+        onChange={(newPage) => {
+          load(newPage, 10);
+          window.scrollTo(0, 0); 
+        }}
+        total={totalPages}
+        mt="md"
+        mb="md"
+      />
+     </Center>
     </Box>
   );
 }

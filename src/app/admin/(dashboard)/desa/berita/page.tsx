@@ -1,6 +1,6 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Grid, GridCol, Image, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
+import { Box, Button, Grid, GridCol, Image, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconCircleDashedPlus, IconDeviceImacCog, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
@@ -29,12 +29,21 @@ function Berita() {
 function ListBerita({ search }: { search: string }) {
   const beritaState = useProxy(stateDashboardBerita)
   const router = useRouter()
+  const {
+    data,
+    page,
+    totalPages,
+    loading,
+    load,
+  } = beritaState.berita.findMany;
 
+
+  // Fetch pertama kali
   useShallowEffect(() => {
-    beritaState.berita.findMany.load()
-  }, [])
+    load(page); // awal page = 1
+  }, []);
 
-  const filteredData = (beritaState.berita.findMany.data || []).filter(item => {
+  const filteredData = (data || []).filter((item) => {
     const keyword = search.toLowerCase();
     return (
       item.judul.toLowerCase().includes(keyword) ||
@@ -42,67 +51,84 @@ function ListBerita({ search }: { search: string }) {
     );
   });
 
-
-  if (!beritaState.berita.findMany.data) {
-    return (
-      <Stack py={10}>
-        <Skeleton h={500} />
-      </Stack>
-    )
+  if (loading || !data) {
+    return <Skeleton h={500} />;
   }
 
   return (
     <Box py={10}>
-      <Paper bg={colors['white-1']} p={'md'}>
+      <Pagination
+        value={page}
+        onChange={(newPage) => load(newPage)} // ini penting!
+        total={totalPages}
+        mt="md"
+        mb="md"
+      />
+
+      <Paper bg={colors["white-1"]} p={"md"}>
         <Stack>
           <Grid>
             <GridCol span={{ base: 12, md: 11 }}>
-              <Text fz={"xl"} fw={"bold"}>List Berita</Text>
+              <Text fz={"xl"} fw={"bold"}>
+                List Berita
+              </Text>
             </GridCol>
             <GridCol span={{ base: 12, md: 1 }}>
-              <Button onClick={() => router.push("/admin/desa/berita/create")} bg={colors['blue-button']}>
+              <Button
+                onClick={() => router.push("/admin/desa/berita/create")}
+                bg={colors["blue-button"]}
+              >
                 <IconCircleDashedPlus size={25} />
               </Button>
             </GridCol>
           </Grid>
           <Box style={{ overflowX: "auto" }}>
-            <Table striped withRowBorders withTableBorder style={{ minWidth: '700px' }}>
+            <Table
+              striped
+              withRowBorders
+              withTableBorder
+              style={{ minWidth: "700px" }}
+            >
               <TableThead>
                 <TableTr>
                   <TableTh w={250}>Judul</TableTh>
                   <TableTh w={250}>Kategori</TableTh>
                   <TableTh w={250}>Image</TableTh>
                   <TableTh w={200}>Detail</TableTh>
-
                 </TableTr>
               </TableThead>
-              <TableTbody >
+              <TableTbody>
                 {filteredData.map((item) => (
                   <TableTr key={item.id}>
-                    <TableTd >
+                    <TableTd>
                       <Box w={100}>
-                        <Text truncate="end" fz={"sm"}>{item.judul}</Text>
+                        <Text truncate="end" fz={"sm"}>
+                          {item.judul}
+                        </Text>
                       </Box>
                     </TableTd>
-                    <TableTd >{item.kategoriBerita?.name}</TableTd>
+                    <TableTd>{item.kategoriBerita?.name}</TableTd>
                     <TableTd>
                       <Image w={100} src={item.image?.link} alt="gambar" />
                     </TableTd>
                     <TableTd>
-                      <Button bg={"green"} onClick={() => router.push(`/admin/desa/berita/${item.id}`)}>
+                      <Button
+                        bg={"green"}
+                        onClick={() =>
+                          router.push(`/admin/desa/berita/${item.id}`)
+                        }
+                      >
                         <IconDeviceImacCog size={25} />
                       </Button>
                     </TableTd>
-
                   </TableTr>
                 ))}
               </TableTbody>
-            </Table> </Box>
+            </Table>
+          </Box>
         </Stack>
       </Paper>
-
     </Box>
-  )
+  );
 }
-
 export default Berita;

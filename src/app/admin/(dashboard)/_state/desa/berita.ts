@@ -80,13 +80,33 @@ const berita = proxy({
           };
         }>[]
       | null,
-    async load() {
-      const res = await ApiFetch.api.desa.berita["find-many"].get();
-      if (res.status === 200) {
-        berita.findMany.data = (res.data?.data ) ?? [];
+    page: 1,
+    totalPages: 1,
+    loading: false,
+  
+    async load(page = 1, limit = 10) {
+      berita.findMany.loading = true;
+      berita.findMany.page = page;
+      try {
+        const res = await ApiFetch.api.desa.berita["find-many"].get({
+          query: {
+            page,
+            limit,
+          },
+        });
+  
+        if (res.status === 200 && res.data?.success) {
+          berita.findMany.data = res.data.data ?? [];
+          berita.findMany.totalPages = res.data.totalPages ?? 1;
+        }
+      } catch (err) {
+        console.error("Gagal fetch berita paginated:", err);
+      } finally {
+        berita.findMany.loading = false;
       }
     },
   },
+  
   findUnique: {
     data: null as
       | Prisma.BeritaGetPayload<{

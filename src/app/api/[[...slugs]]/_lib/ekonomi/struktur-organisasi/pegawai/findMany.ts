@@ -1,26 +1,48 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import prisma from "@/lib/prisma";
+import { Context } from "elysia";
 
-export default async function pegawaiFindMany() {
+// Di findMany.ts
+export default async function pegawaiFindMany(context: Context) {
+  const page = Number(context.query.page) || 1;
+  const limit = Number(context.query.limit) || 10;
+  const skip = (page - 1) * limit;
+
   try {
-    const pegawaiList = await prisma.pegawai.findMany({
-      orderBy: { createdAt: "desc" },
-      include: {
-        posisi: true,
-        image: true,
-      },
-    });
+    const [data, total] = await Promise.all([
+      prisma.pegawai.findMany({
+        where: { isActive: true },
+        include: {
+          posisi: true,
+          image: true,
+        },
+        skip,
+        take: limit,
+        orderBy: { createdAt: 'desc' },
+      }),
+      prisma.pegawai.count({
+        where: { isActive: true }
+      })
+    ]);
+
+    const totalPages = Math.ceil(total / limit);
 
     return {
       success: true,
-      data: pegawaiList,
+      message: "Success fetch pegawai with pagination",
+      data,
+      page,
+      totalPages,
+      total,
     };
-  } catch (error: any) {
-    console.error("Error findMany pegawai:", error);
+  } catch (e) {
+    console.error("Find many paginated error:", e);
     return {
       success: false,
-      message: "Gagal mengambil data pegawai",
-      error: error.message,
+      message: "Failed fetch pegawai with pagination",
+      data: [],
+      page: 1,
+      totalPages: 1,
+      total: 0,
     };
   }
 }
