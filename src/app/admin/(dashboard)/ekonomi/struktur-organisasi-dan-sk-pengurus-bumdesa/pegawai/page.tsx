@@ -75,7 +75,7 @@ function ListPegawai({ search }: { search: string }) {
   }
   return (
     <Box py={10}>
-      <Paper bg={colors['white-1']} p={'md'}>
+      <Paper bg={colors['white-1']} p={'md'} h={{base: 770, md: 650}}>
         <JudulList
           title='List Pegawai'
           href='/admin/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa/pegawai/create'

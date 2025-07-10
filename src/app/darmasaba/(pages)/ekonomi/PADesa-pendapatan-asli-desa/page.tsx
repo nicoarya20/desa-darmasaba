@@ -1,5 +1,5 @@
 import colors from '@/con/colors';
-import { Stack, Box, Text, Image } from '@mantine/core';
+import { Stack, Box, Text, Image, Paper } from '@mantine/core';
 import React from 'react';
 import BackButton from '../../desa/layanan/_com/BackButto';
 
@@ -14,7 +14,9 @@ function Page() {
         </Text>
       <Box px={{ base: "md", md: 100 }}>
         <Stack gap={'lg'} justify='center'>
-          <Image src={'/api/img/pa-desa.png'} alt=''/>
+          <Paper bg={colors['white-1']} p={"xl"}>
+          <Image src="/pa-desa.png" alt=''/>
+          </Paper>
         </Stack>
       </Box>
     </Stack>

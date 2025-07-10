@@ -230,7 +230,7 @@ export const navBar = [
       {
         id: "Ekonomi_4",
         name: "PADesa (Pendapatan Asli Desa)",
-        path: "/admin/ekonomi/PADesa-pendapatan-asli-desa"
+        path: "/admin/ekonomi/PADesa-pendapatan-asli-desa/pendapatan"
       },
       {
         id: "Ekonomi_5",

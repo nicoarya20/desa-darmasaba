@@ -2,7 +2,7 @@
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
 
-async function beritaFindManyPaginated(context: Context) {
+async function beritaFindMany(context: Context) {
   const page = Number(context.query.page) || 1;
   const limit = Number(context.query.limit) || 10;
   const skip = (page - 1) * limit;
@@ -41,4 +41,4 @@ async function beritaFindManyPaginated(context: Context) {
   }
 }
 
-export default beritaFindManyPaginated;
+export default beritaFindMany;
