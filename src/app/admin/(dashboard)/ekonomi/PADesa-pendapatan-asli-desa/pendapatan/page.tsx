@@ -34,6 +34,14 @@ function ListPendapatan({ search }: { search: string }) {
   const [modalHapus, setModalHapus] = useState(false)
   const [selectedId, setSelectedId] = useState<string | null>(null)
   
+  const formatRupiah = (value: number) => {
+    return new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      minimumFractionDigits: 0,
+    }).format(value);
+  };
+  
 
   const handleDelete = () => {
     if (selectedId) {
@@ -83,7 +91,7 @@ function ListPendapatan({ search }: { search: string }) {
             {filteredData.map((item) => (
               <TableTr key={item.id}>
                 <TableTd>{item.name}</TableTd>
-                <TableTd>{item.value}</TableTd>
+                <TableTd>{formatRupiah(item.value)}</TableTd>
                 <TableTd>
                   <Button color='green' onClick={() => router.push(`/admin/ekonomi/PADesa-pendapatan-asli-desa/pendapatan/${item.id}`)}>
                     <IconEdit size={20} />
@@ -107,7 +115,7 @@ function ListPendapatan({ search }: { search: string }) {
                 <Text fw={'bold'}>Total</Text>
               </TableTd>
               <TableTd>
-                {pendapatanState.findMany.data.reduce((total, item) => total + item.value, 0)}
+                {formatRupiah(pendapatanState.findMany.data.reduce((total, item) => total + item.value, 0))}
               </TableTd>
             </TableTr>
           </TableTbody>

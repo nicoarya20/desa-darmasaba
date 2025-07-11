@@ -20,7 +20,7 @@ const Belanja = new Elysia({
         value: t.Number(),
     }),
 })
-.delete("/delete/:id", belanjaDelete)
+.delete("/del/:id", belanjaDelete)
 .put("/:id", async (context) => {
     const response = await belanjaUpdate(context);
     return response;

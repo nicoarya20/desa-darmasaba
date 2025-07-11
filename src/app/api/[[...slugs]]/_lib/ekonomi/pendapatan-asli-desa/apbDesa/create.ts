@@ -3,9 +3,9 @@ import { Context } from "elysia";
 
 type FormCreate = {
     tahun: number;
-    pendapatanId: string;
-    belanjaId: string;
-    pembiayaanId: string;
+    pendapatanIds: string[];
+    belanjaIds: string[];
+    pembiayaanIds: string[];
 }
 
 export default async function apbDesaCreate(context: Context) {
@@ -14,16 +14,22 @@ export default async function apbDesaCreate(context: Context) {
     const created = await prisma.apbDesa.create({
         data: {
             tahun: body.tahun,
-            pendapatanId: body.pendapatanId,
-            belanjaId: body.belanjaId,
-            pembiayaanId: body.pembiayaanId,
+            pendapatan: {
+                connect: body.pendapatanIds.map((id) => ({ id })),
+            },
+            belanja: {
+                connect: body.belanjaIds.map((id) => ({ id })),
+            },
+            pembiayaan: {
+                connect: body.pembiayaanIds.map((id) => ({ id })),
+            },
         },
         select: {
             id: true,
             tahun: true,
-            pendapatanId: true,
-            belanjaId: true,
-            pembiayaanId: true,
+            pendapatan: true,
+            belanja: true,
+            pembiayaan: true,
         }
     });
     return {

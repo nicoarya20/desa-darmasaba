@@ -26,6 +26,11 @@ export default async function apbDesaFindUnique(
   
       const data = await prisma.apbDesa.findUnique({
         where: { id },
+        include: {
+          pendapatan: true,
+          belanja: true,
+          pembiayaan: true,
+        }
       });
   
       if (!data) {

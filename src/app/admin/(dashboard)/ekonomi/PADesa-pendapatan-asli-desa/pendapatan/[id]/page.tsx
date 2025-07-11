@@ -19,6 +19,19 @@ function EditPendapatan() {
     value: pendapatanState.update.form.value || '',
   });
 
+  const formatRupiah = (value: number | string) => {
+    const number = typeof value === 'number' ? value : Number(value.replace(/\D/g, ''));
+    return new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      minimumFractionDigits: 0,
+    }).format(number);
+  };
+
+  const unformatRupiah = (value: string) => {
+    return Number(value.replace(/\D/g, ''));
+  };
+
   useEffect(() => {
     const loadPendapatan = async () => {
       const id = params?.id as string;
@@ -80,9 +93,11 @@ function EditPendapatan() {
         <TextInput
           label={<Text fw={"bold"} fz={"sm"}>Nilai</Text>}
           placeholder='Masukkan nilai'
-          value={formData.value}
+          value={formatRupiah(formData.value)}
           onChange={(val) => {
-            setFormData({ ...formData, value: val.target.value });
+            const raw = val.currentTarget.value;
+            const cleanValue = unformatRupiah(raw);
+            setFormData({ ...formData, value: cleanValue });
           }}
         />
         <Group>

@@ -17,9 +17,9 @@ const APBDesa = new Elysia({
 .post("/create", apbDesaCreate, {
     body: t.Object({
         tahun: t.Number(),
-        pendapatanId: t.String(),
-        belanjaId: t.String(),
-        pembiayaanId: t.String(),
+        pendapatanIds: t.Array(t.String()),
+        belanjaIds: t.Array(t.String()),
+        pembiayaanIds: t.Array(t.String()),
     }),
 })
 .delete("/delete/:id", apbDesaDelete)
@@ -32,9 +32,9 @@ const APBDesa = new Elysia({
     {
         body: t.Object({
             tahun: t.Number(),
-            pendapatanId: t.String(),
-            belanjaId: t.String(),
-            pembiayaanId: t.String(),
+            pendapatanIds: t.Array(t.String()),
+            belanjaIds: t.Array(t.String()),
+            pembiayaanIds: t.Array(t.String()),
         }),
     }
 );

@@ -10,24 +10,24 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const tabs = [
     {
-      label: "Pendapatan",
-      value: "pendapatan",
-      href: "/admin/ekonomi/padesa-pendapatan-asli-desa/pendapatan"
-    },
-    {
       label: "APB Desa",
       value: "apbdesa",
-      href: "/admin/ekonomi/padesa-pendapatan-asli-desa/apbdesa"
+      href: "/admin/ekonomi/PADesa-pendapatan-asli-desa/apbdesa"
+    },
+    {
+      label: "Pendapatan",
+      value: "pendapatan",
+      href: "/admin/ekonomi/PADesa-pendapatan-asli-desa/pendapatan"
     },
     {
       label: "Belanja",
       value: "belanja",
-      href: "/admin/ekonomi/padesa-pendapatan-asli-desa/belanja"
+      href: "/admin/ekonomi/PADesa-pendapatan-asli-desa/belanja"
     },
     {
       label: "Pembiayaan",
       value: "pembiayaan",
-      href: "/admin/ekonomi/padesa-pendapatan-asli-desa/pembiayaan"
+      href: "/admin/ekonomi/PADesa-pendapatan-asli-desa/pembiayaan"
     },
     
   ];

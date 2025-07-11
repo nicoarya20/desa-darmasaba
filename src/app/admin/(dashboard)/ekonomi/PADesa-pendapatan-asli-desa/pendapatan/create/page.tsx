@@ -10,6 +10,19 @@ function CreatePendapatan() {
   const pendapatanState = useProxy(PendapatanAsliDesa.pendapatan)
   const router = useRouter()
 
+  const formatRupiah = (value: number | string) => {
+    const number = typeof value === 'number' ? value : Number(value.replace(/\D/g, ''));
+    return new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      minimumFractionDigits: 0,
+    }).format(number);
+  };
+
+  const unformatRupiah = (value: string) => {
+    return Number(value.replace(/\D/g, ''));
+  };
+
   const resetForm = () => {
     pendapatanState.create.form = {
       name: "",
@@ -42,10 +55,12 @@ function CreatePendapatan() {
             placeholder='Masukkan nama jenis pendapatan'
           />
           <TextInput
-            type='number'
-            value={pendapatanState.create.form.value}
+            type='text'
+            value={formatRupiah(pendapatanState.create.form.value)}
             onChange={(val) => {
-              pendapatanState.create.form.value = Number(val.target.value);
+              const raw = val.currentTarget.value;
+              const cleanValue = unformatRupiah(raw);
+              pendapatanState.create.form.value = cleanValue;
             }}
             label={<Text fw={"bold"} fz={"sm"}>Nilai</Text>}
             placeholder='Masukkan nilai'

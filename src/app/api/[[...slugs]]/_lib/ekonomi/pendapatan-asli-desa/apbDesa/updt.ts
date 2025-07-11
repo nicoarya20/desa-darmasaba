@@ -1,26 +1,23 @@
 import prisma from "@/lib/prisma";
-import { Prisma } from "@prisma/client";
 import { Context } from "elysia";
 
-type FormUpdate = Prisma.ApbDesaGetPayload<{
-    select: {
-        id: true;
-        tahun: true;
-        pendapatanId: true;
-        belanjaId: true;
-        pembiayaanId: true;
-    };
-}>;
+type FormUpdate = {
+    id: string;
+    tahun: number;
+    pendapatanIds: string[];
+    belanjaIds: string[];
+    pembiayaanIds: string[];
+};
 export default async function apbDesaUpdate(context: Context) {
     try {
         const id = context.params?.id as string; 
-        const body = (await context.body) as Omit<FormUpdate, "id">;
+        const body = (await context.body) as FormUpdate;
         
         const {
             tahun,
-            pendapatanId,
-            belanjaId,
-            pembiayaanId,
+            pendapatanIds,
+            belanjaIds,
+            pembiayaanIds,
         } = body;
 
         if (!id) {
@@ -45,9 +42,15 @@ export default async function apbDesaUpdate(context: Context) {
             where: { id },
             data: {
                 tahun,
-                pendapatanId,
-                belanjaId,
-                pembiayaanId,
+                pendapatan: {
+                    connect: pendapatanIds.map((id) => ({ id })),
+                },
+                belanja: {
+                    connect: belanjaIds.map((id) => ({ id })),
+                },
+                pembiayaan: {
+                    connect: pembiayaanIds.map((id) => ({ id })),
+                },
             }
         });
         return {

@@ -1282,25 +1282,22 @@ model DetailDataPengangguran {
 
 // ========================================= PADESA PENDAPATAN ASLI DESA ========================================= //
 model ApbDesa {
-  id           String     @id @default(uuid())
-  tahun        Int
-  pendapatan   Pendapatan @relation(fields: [pendapatanId], references: [id])
-  pendapatanId String
-  belanja      Belanja    @relation(fields: [belanjaId], references: [id])
-  belanjaId    String
-  pembiayaan   Pembiayaan @relation(fields: [pembiayaanId], references: [id])
-  pembiayaanId String
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
-  deletedAt    DateTime   @default(now())
-  isActive     Boolean    @default(true)
+  id         String       @id @default(uuid())
+  tahun      Int
+  pembiayaan Pembiayaan[] @relation("ApbDesaPembiayaan")
+  belanja    Belanja[]    @relation("ApbDesaBelanja")
+  pendapatan Pendapatan[] @relation("ApbDesaPendapatan")
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  deletedAt  DateTime     @default(now())
+  isActive   Boolean      @default(true)
 }
 
 model Pendapatan {
   id        String    @id @default(uuid())
   name      String
   value     Int
-  ApbDesa   ApbDesa[]
+  ApbDesa   ApbDesa[] @relation("ApbDesaPendapatan")
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime  @default(now())
@@ -1311,20 +1308,20 @@ model Belanja {
   id        String    @id @default(uuid())
   name      String
   value     Int
-  ApbDesa   ApbDesa[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime  @default(now())
   isActive  Boolean   @default(true)
+  ApbDesa ApbDesa[] @relation("ApbDesaBelanja")
 }
 
 model Pembiayaan {
   id        String    @id @default(uuid())
   name      String
   value     Int
-  ApbDesa   ApbDesa[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime  @default(now())
   isActive  Boolean   @default(true)
+  ApbDesa ApbDesa[] @relation("ApbDesaPembiayaan")
 }

@@ -6,17 +6,17 @@ import { proxy } from "valtio";
 import { z } from "zod";
 
 const templateApbDesa = z.object({
-  tahun: z.number(),
-  pendapatanId: z.string(),
-  belanjaId: z.string(),
-  pembiayaanId: z.string(),
+  tahun: z.number().min(4, "Tahun minimal 4 karakter"),
+  pembiayaanIds: z.array(z.string().uuid()).nonempty("Pilih minimal 1 pembiayaan"),
+  belanjaIds: z.array(z.string().uuid()).nonempty("Pilih minimal 1 belanja"),
+  pendapatanIds: z.array(z.string().uuid()).nonempty("Pilih minimal 1 pendapatan"),
 });
 
 const ApbDesaDefaultForm = {
   tahun: 0,
-  pendapatanId: "",
-  belanjaId: "",
-  pembiayaanId: "",
+  pendapatanIds: [] as string[],
+  belanjaIds: [] as string[],
+  pembiayaanIds: [] as string[],
 };
 
 const ApbDesa = proxy({
@@ -54,13 +54,15 @@ const ApbDesa = proxy({
     },
   },
   findMany: {
-    data: [] as Array<{
-      id: string;
-      tahun: number;
-      pendapatanId: string;
-      belanjaId: string;
-      pembiayaanId: string;
-    }>,
+    data: null as 
+    | Prisma.ApbDesaGetPayload<{
+      include: {
+        pendapatan: true;
+        belanja: true;
+        pembiayaan: true;
+      };
+    }>[]
+    | null,
     loading: false,
     async load() {
       try {
@@ -105,21 +107,14 @@ const ApbDesa = proxy({
         }
         const data = await response.json();
         this.id = id;
-        this.form = data;
+        return data;
       } catch (error) {
-        console.error("Load error:", error);
-        toast.error("Gagal mengambil APB Desa");
+        console.error("Error loading APB Desa:", error);
+        toast.error("Gagal memuat data APB Desa");
+        return null;
       }
     },
     async update() {
-      const cek = templateApbDesa.safeParse(this.form);
-      if (!cek.success) {
-        const err = `[${cek.error.issues
-          .map((v) => `${v.path.join(".")}`)
-          .join("\n")}] required`;
-        return toast.error(err);
-      }
-
       try {
         this.loading = true;
         const response = await fetch(
@@ -129,34 +124,19 @@ const ApbDesa = proxy({
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({
-              tahun: this.form.tahun,
-              pendapatanId: this.form.pendapatanId,
-              belanjaId: this.form.belanjaId,
-              pembiayaanId: this.form.pembiayaanId,
-            }),
+            body: JSON.stringify(this.form),
           }
         );
         if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}));
-          throw new Error(
-            errorData.message || `HTTP error! status: ${response.status}`
-          );
+          throw new Error("Gagal memperbarui APB Desa");
         }
-        const result = await response.json();
-        if (result.success) {
-          toast.success("Berhasil update APB Desa");
-          await ApbDesa.findMany.load(); // refresh list
-          return true;
-        } else {
-          throw new Error(result.message || "Gagal mengupdate APB Desa");
-        }
+        const data = await response.json();
+        toast.success("APB Desa berhasil diperbarui");
+        return data;
       } catch (error) {
         console.error("Error updating APB Desa:", error);
-        toast.error(
-          error instanceof Error ? error.message : "Gagal mengupdate APB Desa"
-        );
-        return false;
+        toast.error("Gagal memperbarui APB Desa");
+        throw error;
       } finally {
         this.loading = false;
       }
@@ -169,55 +149,53 @@ const ApbDesa = proxy({
   delete: {
     loading: false,
     async byId(id: string) {
-      if (!id) return toast.warn("ID tidak valid");
-
       try {
-        ApbDesa.delete.loading = true;
-
+        this.loading = true;
         const response = await fetch(
-          `/api/ekonomi/pendapatanaslidesa/apbdesa/del/${id}`,
+          `/api/ekonomi/pendapatanaslidesa/apbdesa/${id}`,
           {
             method: "DELETE",
-            headers: {
-              "Content-Type": "application/json",
-            },
           }
         );
-
-        const result = await response.json();
-
-        if (response.ok && result?.success) {
-          toast.success(result.message || "APB Desa berhasil dihapus");
-          await ApbDesa.findMany.load(); // refresh list
-        } else {
-          toast.error(result?.message || "Gagal menghapus APB Desa");
+        if (!response.ok) {
+          throw new Error("Gagal menghapus APB Desa");
         }
+        toast.success("APB Desa berhasil dihapus");
+        return true;
       } catch (error) {
-        console.error("Gagal delete:", error);
-        toast.error("Terjadi kesalahan saat menghapus APB Desa");
+        console.error("Error deleting APB Desa:", error);
+        toast.error("Gagal menghapus APB Desa");
+        return false;
       } finally {
-        ApbDesa.delete.loading = false;
+        this.loading = false;
       }
     },
   },
   findUnique: {
-    data: null as
-      | (Prisma.ApbDesaGetPayload<{
-          include: { pendapatan: true; belanja: true; pembiayaan: true };
-        }> & { isActive: boolean })
-      | null,
+    data: null as Prisma.ApbDesaGetPayload<{
+      include: { pendapatan: true; belanja: true; pembiayaan: true };
+    }> | null,
+  
     async load(id: string) {
-      const res = await fetch(`/api/ekonomi/pendapatanaslidesa/apbdesa/${id}`);
-      if (res.ok) {
-        const json = await res.json();
-        ApbDesa.findUnique.data = json.data
-          ? {
-              ...json.data,
-              isActive: json.data.isActive ?? json.data.aktif ?? true, // Fallback ke aktif:true jika tidak ada data
-            }
-          : null;
-      } else {
-        ApbDesa.findUnique.data = null;
+      try {
+        const response = await fetch(
+          `/api/ekonomi/pendapatanaslidesa/apbdesa/${id}`
+        );
+        if (!response.ok) {
+          throw new Error("Gagal mengambil detail APB Desa");
+        }
+        const result = await response.json();
+  
+        if (!result.success) {
+          throw new Error(result.message || "Gagal mengambil data");
+        }
+  
+        this.data = result.data; // ✅ fix utama di sini
+        return result.data;
+      } catch (error) {
+        console.error("Error loading APB Desa detail:", error);
+        toast.error("Gagal memuat detail APB Desa");
+        return null;
       }
     },
   },
@@ -533,28 +511,38 @@ const belanja = proxy({
         return null;
       }
       try {
-        const response = await fetch(
-          `/api/ekonomi/pendapatanaslidesa/belanja/${id}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        const response = await fetch(`/api/ekonomi/pendapatanaslidesa/belanja/${id}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
         if (!response.ok) {
-          throw new Error("Gagal mengambil Belanja");
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
-        const data = await response.json();
-        this.id = id;
-        this.form = data;
+        const result = await response.json();
+        if (result?.success) {
+          const data = result.data;
+          this.id = data.id;
+          this.form = {
+            name: data.name,
+            value: data.value,
+          };
+          return data;
+        } else {
+          throw new Error(result?.message || "Gagal memuat data");
+        }
       } catch (error) {
-        console.error("Load error:", error);
-        toast.error("Gagal mengambil Belanja");
+        console.error("Error loading belanja:", error);
+        toast.error(
+          error instanceof Error ? error.message : "Gagal memuat data"
+        );
+        return null;
       }
     },
+
     async update() {
-      const cek = templateBelanja.safeParse(this.form);
+      const cek = templateBelanja.safeParse(belanja.update.form);
       if (!cek.success) {
         const err = `[${cek.error.issues
           .map((v) => `${v.path.join(".")}`)
@@ -563,20 +551,17 @@ const belanja = proxy({
       }
 
       try {
-        this.loading = true;
-        const response = await fetch(
-          `/api/ekonomi/pendapatanaslidesa/belanja/${this.id}`,
-          {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              name: this.form.name,
-              value: this.form.value,
-            }),
-          }
-        );
+        belanja.update.loading = true;
+        const response = await fetch(`/api/ekonomi/pendapatanaslidesa/belanja/${this.id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: this.form.name,
+            value: this.form.value,
+          }),
+        });
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
           throw new Error(
@@ -585,25 +570,25 @@ const belanja = proxy({
         }
         const result = await response.json();
         if (result.success) {
-          toast.success("Berhasil update Belanja");
+          toast.success("Berhasil update belanja");
           await belanja.findMany.load(); // refresh list
           return true;
         } else {
-          throw new Error(result.message || "Gagal mengupdate Belanja");
+          throw new Error(result.message || "Gagal mengupdate belanja");
         }
       } catch (error) {
-        console.error("Error updating Belanja:", error);
+        console.error("Error updating belanja:", error);
         toast.error(
-          error instanceof Error ? error.message : "Gagal mengupdate Belanja"
+          error instanceof Error ? error.message : "Gagal mengupdate belanja"
         );
         return false;
       } finally {
-        this.loading = false;
+        belanja.update.loading = false;
       }
     },
     reset() {
-      this.id = "";
-      this.form = { ...BelanjaDefaultForm };
+      belanja.update.id = "";
+      belanja.update.form = { ...BelanjaDefaultForm };
     },
   },
   delete: {
@@ -741,28 +726,38 @@ const pembiayaan = proxy({
         return null;
       }
       try {
-        const response = await fetch(
-          `/api/ekonomi/pendapatanaslidesa/pembiayaan/${id}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        const response = await fetch(`/api/ekonomi/pendapatanaslidesa/pembiayaan/${id}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
         if (!response.ok) {
-          throw new Error("Gagal mengambil Pembiayaan");
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
-        const data = await response.json();
-        this.id = id;
-        this.form = data;
+        const result = await response.json();
+        if (result?.success) {
+          const data = result.data;
+          this.id = data.id;
+          this.form = {
+            name: data.name,
+            value: data.value,
+          };
+          return data;
+        } else {
+          throw new Error(result?.message || "Gagal memuat data");
+        }
       } catch (error) {
-        console.error("Load error:", error);
-        toast.error("Gagal mengambil Pembiayaan");
+        console.error("Error loading pembiayaan:", error);
+        toast.error(
+          error instanceof Error ? error.message : "Gagal memuat data"
+        );
+        return null;
       }
     },
+
     async update() {
-      const cek = templatePembiayaan.safeParse(this.form);
+      const cek = templatePembiayaan.safeParse(pembiayaan.update.form);
       if (!cek.success) {
         const err = `[${cek.error.issues
           .map((v) => `${v.path.join(".")}`)
@@ -771,20 +766,17 @@ const pembiayaan = proxy({
       }
 
       try {
-        this.loading = true;
-        const response = await fetch(
-          `/api/ekonomi/pendapatanaslidesa/pembiayaan/${this.id}`,
-          {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              name: this.form.name,
-              value: this.form.value,
-            }),
-          }
-        );
+        pembiayaan.update.loading = true;
+        const response = await fetch(`/api/ekonomi/pendapatanaslidesa/pembiayaan/${this.id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: this.form.name,
+            value: this.form.value,
+          }),
+        });
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
           throw new Error(
@@ -793,25 +785,25 @@ const pembiayaan = proxy({
         }
         const result = await response.json();
         if (result.success) {
-          toast.success("Berhasil update Pembiayaan");
+          toast.success("Berhasil update pembiayaan");
           await pembiayaan.findMany.load(); // refresh list
           return true;
         } else {
-          throw new Error(result.message || "Gagal mengupdate Pembiayaan");
+          throw new Error(result.message || "Gagal mengupdate pembiayaan");
         }
       } catch (error) {
-        console.error("Error updating Pembiayaan:", error);
+        console.error("Error updating pembiayaan:", error);
         toast.error(
-          error instanceof Error ? error.message : "Gagal mengupdate Pembiayaan"
+          error instanceof Error ? error.message : "Gagal mengupdate pembiayaan"
         );
         return false;
       } finally {
-        this.loading = false;
+        pembiayaan.update.loading = false;
       }
     },
     reset() {
-      this.id = "";
-      this.form = { ...PembiayaanDefaultForm };
+      pembiayaan.update.id = "";
+      pembiayaan.update.form = { ...PembiayaanDefaultForm };
     },
   },
   delete: {
