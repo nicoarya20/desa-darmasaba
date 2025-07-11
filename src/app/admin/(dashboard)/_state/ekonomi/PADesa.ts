@@ -105,8 +105,22 @@ const ApbDesa = proxy({
         if (!response.ok) {
           throw new Error("Gagal mengambil APB Desa");
         }
-        const data = await response.json();
+        const result = await response.json();
+    
+        if (!result.success) {
+          throw new Error(result.message || "Gagal memuat APB Desa");
+        }
+    
+        const data = result.data;
+    
         this.id = id;
+        this.form = {
+          tahun: data.tahun || 0,
+          pendapatanIds: data.pendapatan?.map((p: any) => p.id) || [],
+          belanjaIds: data.belanja?.map((b: any) => b.id) || [],
+          pembiayaanIds: data.pembiayaan?.map((p: any) => p.id) || [],
+        };
+    
         return data;
       } catch (error) {
         console.error("Error loading APB Desa:", error);
@@ -152,7 +166,7 @@ const ApbDesa = proxy({
       try {
         this.loading = true;
         const response = await fetch(
-          `/api/ekonomi/pendapatanaslidesa/apbdesa/${id}`,
+          `/api/ekonomi/pendapatanaslidesa/apbdesa/del/${id}`,
           {
             method: "DELETE",
           }

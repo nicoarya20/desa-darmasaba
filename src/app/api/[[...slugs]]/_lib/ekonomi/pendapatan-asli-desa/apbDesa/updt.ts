@@ -41,18 +41,19 @@ export default async function apbDesaUpdate(context: Context) {
         const updated = await prisma.apbDesa.update({
             where: { id },
             data: {
-                tahun,
-                pendapatan: {
-                    connect: pendapatanIds.map((id) => ({ id })),
-                },
-                belanja: {
-                    connect: belanjaIds.map((id) => ({ id })),
-                },
-                pembiayaan: {
-                    connect: pembiayaanIds.map((id) => ({ id })),
-                },
+              tahun,
+              pendapatan: {
+                set: pendapatanIds.map((id) => ({ id })),
+              },
+              belanja: {
+                set: belanjaIds.map((id) => ({ id })),
+              },
+              pembiayaan: {
+                set: pembiayaanIds.map((id) => ({ id })),
+              },
             }
-        });
+          });
+          
         return {
             success: true,
             message: "Success update APB Desa",
