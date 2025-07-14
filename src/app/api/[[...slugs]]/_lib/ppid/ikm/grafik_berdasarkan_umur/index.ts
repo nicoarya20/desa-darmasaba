@@ -1,9 +1,9 @@
 import Elysia, { t } from "elysia";
-import { grafikBerdasarkanUmurFindMany } from "./find-many";
 import { grafikBerdasarkanUmurCreate } from "./create";
 import grafikBerdasarakanUmurUpdate from "./update";
 import grafikBerdasarakanUmurFindById from "./find-by-id";
 import grafikBerdasarkanUmurDelete from "./del";
+import grafikBerdasarkanUmurFindMany from "./find-many";
 
 const GrafikBerdasarkanUmur = new Elysia({
   prefix: "/grafikberdasarkanumur",

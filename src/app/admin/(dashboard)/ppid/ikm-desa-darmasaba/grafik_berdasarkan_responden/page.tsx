@@ -1,17 +1,17 @@
 'use client'
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import colors from '@/con/colors';
-import { Box, Button, Flex, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title } from '@mantine/core';
+import { Box, Button, Center, Flex, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconEdit, IconSearch, IconTrash } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Cell, Pie, PieChart } from 'recharts';
 import { useSnapshot } from 'valtio';
-import JudulListTab from '../../../_com/judulListTab';
+import HeaderSearch from '../../../_com/header';
+import JudulList from '../../../_com/judulList';
 import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
 import grafikBerdasarkanResponden from '../../../_state/ppid/indeks_kepuasan_masyarakat/grafikBerdasarkanResponden';
-import HeaderSearch from '../../../_com/header';
 
 function GrafikBerdasarkanResponden() {
   const [search, setSearch] = useState("");
@@ -37,24 +37,14 @@ function ListGrafikBerdasarkanResponden({ search }: { search: string }) {
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const router = useRouter();
 
-  const handleDelete = async () => {
-    if (selectedId) {
-      await stategrafikBerdasarkanResponden.delete.byId(selectedId);
-      setModalHapus(false);
-      setSelectedId(null);
-  
-      // Refresh data agar chart & tabel ikut update
-      stategrafikBerdasarkanResponden.findMany.load();
-    }
-  }
-  
+  const { data, page, totalPages, loading, load } = stategrafikBerdasarkanResponden.findMany
 
   useShallowEffect(() => {
     setMounted(true)
-    stategrafikBerdasarkanResponden.findMany.load()
-  }, [])
+    load(page, 10)
+  }, [page])
 
-  const filteredData = (stategrafikBerdasarkanResponden.findMany.data || []).filter(item => {
+  const filteredData = (data || []).filter(item => {
     const keyword = search.toLowerCase();
     return (
       item.sangatbaik.toString().toLowerCase().includes(keyword) ||
@@ -65,11 +55,11 @@ function ListGrafikBerdasarkanResponden({ search }: { search: string }) {
   });
 
   useEffect(() => {
-    if (stategrafikBerdasarkanResponden.findMany.data) {
-      const totalSangatBaik = stategrafikBerdasarkanResponden.findMany.data.reduce((acc: number, cur: any) => acc + Number(cur.sangatbaik || 0), 0);
-      const totalBaik = stategrafikBerdasarkanResponden.findMany.data.reduce((acc: number, cur: any) => acc + Number(cur.baik || 0), 0);
-      const totalKurangBaik = stategrafikBerdasarkanResponden.findMany.data.reduce((acc: number, cur: any) => acc + Number(cur.kurangbaik || 0), 0);
-      const totalTidakBaik = stategrafikBerdasarkanResponden.findMany.data.reduce((acc: number, cur: any) => acc + Number(cur.tidakbaik || 0), 0);
+    if (data) {
+      const totalSangatBaik = data.reduce((acc: number, cur: any) => acc + Number(cur.sangatbaik || 0), 0);
+      const totalBaik = data.reduce((acc: number, cur: any) => acc + Number(cur.baik || 0), 0);
+      const totalKurangBaik = data.reduce((acc: number, cur: any) => acc + Number(cur.kurangbaik || 0), 0);
+      const totalTidakBaik = data.reduce((acc: number, cur: any) => acc + Number(cur.tidakbaik || 0), 0);
       setDonutData([
         { name: 'sangatbaik', value: totalSangatBaik, color: colors['blue-button'], key: 'sangatbaik' },
         { name: 'baik', value: totalBaik, color: '#10A85AFF', key: 'baik' },
@@ -78,34 +68,72 @@ function ListGrafikBerdasarkanResponden({ search }: { search: string }) {
       ]);
     }
 
-  }, [stategrafikBerdasarkanResponden.findMany.data])
+  }, [data])
 
-  if (!stategrafikBerdasarkanResponden.findMany.data) {
+  const handleDelete = async () => {
+    if (selectedId) {
+      await stategrafikBerdasarkanResponden.delete.byId(selectedId);
+      setModalHapus(false);
+      setSelectedId(null);
+
+      // Refresh data agar chart & tabel ikut update
+      stategrafikBerdasarkanResponden.findMany.load();
+    }
+  }
+
+  if (loading || !data) {
     return (
-      <Box>
-        <Skeleton h={500} />
-      </Box>
-    )
+      <Stack py={10}>
+        <Skeleton height={730} />
+      </Stack>
+    );
+  }
+  if (data.length === 0) {
+    return (
+      <Box py={10}>
+        <Paper p="md" >
+          <Stack>
+            <JudulList
+              title='List Data Berdasarkan Responden'
+              href='/admin/ppid/ikm-desa-darmasaba/grafik_berdasarkan_responden/create'
+            />
+            <Table striped withTableBorder withRowBorders>
+              <TableThead>
+                <TableTr>
+                  <TableTh>No</TableTh>
+                  <TableTh>Sangat Baik</TableTh>
+                  <TableTh>Baik</TableTh>
+                  <TableTh>Kurang Baik</TableTh>
+                  <TableTh>Tidak Baik</TableTh>
+                  <TableTh>Edit</TableTh>
+                  <TableTh>Delete</TableTh>
+                </TableTr>
+              </TableThead>
+            </Table>
+            <Text ta="center">Tidak ada data grafik berdasarkan responden yang tersedia</Text>
+          </Stack>
+        </Paper>
+      </Box >
+    );
   }
   return (
     <Box>
       <Stack gap={"xs"}>
-        <Paper bg={colors['white-1']} p={"md"}>
-          <JudulListTab
-            title='List Grafik Berdasarkan Pilihan Responden'
+        <Paper bg={colors['white-1']} p={"md"} h={{ base: 730, md: 650 }}>
+          <JudulList
+            title='List Data Berdasarkan Pilihan Responden'
             href='/admin/ppid/ikm-desa-darmasaba/grafik_berdasarkan_responden/create'
-            placeholder='pencarian'
-            searchIcon={<IconSearch size={16} />}
           />
           <Table striped withTableBorder withRowBorders>
             <TableThead>
               <TableTr>
-                <TableTh>Sangat Baik</TableTh>
-                <TableTh>Baik</TableTh>
-                <TableTh>Kurang Baik</TableTh>
-                <TableTh>Tidak Baik</TableTh>
-                <TableTh>Edit</TableTh>
-                <TableTh>Delete</TableTh>
+                <TableTh style={{ width: '5%', textAlign: 'center' }}>No</TableTh>
+                <TableTh style={{ width: '15%', textAlign: 'center' }}>Sangat Baik</TableTh>
+                <TableTh style={{ width: '15%', textAlign: 'center' }}>Baik</TableTh>
+                <TableTh style={{ width: '15%', textAlign: 'center' }}>Kurang Baik</TableTh>
+                <TableTh style={{ width: '15%', textAlign: 'center' }}>Tidak Baik</TableTh>
+                <TableTh style={{ width: '5%', textAlign: 'center' }}>Edit</TableTh>
+                <TableTh style={{ width: '5%', textAlign: 'center' }}>Delete</TableTh>
               </TableTr>
             </TableThead>
             <TableTbody>
@@ -116,18 +144,19 @@ function ListGrafikBerdasarkanResponden({ search }: { search: string }) {
                   </TableTd>
                 </TableTr>
               ) : (
-                filteredData.map((item) => (
+                filteredData.map((item, index) => (
                   <TableTr key={item.id}>
-                    <TableTd>{item.sangatbaik}</TableTd>
-                    <TableTd>{item.baik}</TableTd>
-                    <TableTd>{item.kurangbaik}</TableTd>
-                    <TableTd>{item.tidakbaik}</TableTd>
-                    <TableTd>
+                    <TableTd style={{ width: '5%', textAlign: 'center' }}>{index + 1}</TableTd>
+                    <TableTd style={{ width: '5%', textAlign: 'center' }}>{item.sangatbaik}</TableTd>
+                    <TableTd style={{ width: '15%', textAlign: 'center' }}>{item.baik}</TableTd>
+                    <TableTd style={{ width: '15%', textAlign: 'center' }}>{item.kurangbaik}</TableTd>
+                    <TableTd style={{ width: '15%', textAlign: 'center' }}>{item.tidakbaik}</TableTd>
+                    <TableTd style={{ width: '5%', textAlign: 'center' }}>
                       <Button color='green' onClick={() => router.push(`/admin/ppid/ikm-desa-darmasaba/grafik_berdasarkan_responden/${item.id}`)}>
                         <IconEdit size={20} />
                       </Button>
                     </TableTd>
-                    <TableTd>
+                    <TableTd style={{ width: '5%', textAlign: 'center' }}>
                       <Button
                         color='red'
                         disabled={stategrafikBerdasarkanResponden.delete.loading}
@@ -145,12 +174,24 @@ function ListGrafikBerdasarkanResponden({ search }: { search: string }) {
 
           </Table>
         </Paper>
+        <Center>
+          <Pagination
+            value={page}
+            onChange={(newPage) => {
+              load(newPage, 10);
+              window.scrollTo(0, 0);
+            }}
+            total={totalPages}
+            mt="md"
+            mb="md"
+          />
+        </Center>
 
         {/* Chart */}
         <Box>
           <Paper bg={colors['white-1']} p={'md'}>
             <Stack>
-              <Title pb={10} order={3}>Grafik Berdasarkan Responden</Title>
+              <Title pb={10} order={3}>Grafik Berdasarkan Pilihan Responden</Title>
               {mounted && donutData.length > 0 ? (<Box style={{ width: '100%', height: 'auto', minHeight: 200 }}>
                 <PieChart
                   width={800} height={300}

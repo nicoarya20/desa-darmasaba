@@ -10,16 +10,28 @@ import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
+interface FormDaftarInformasi {
+  jenisInformasi: string;
+  deskripsi: string;
+  tanggal: string;
+}
+
 function EditDaftarInformasiPublik() {
   const daftarInformasi = useProxy(daftarInformasiPublik)
   const router = useRouter()
   const params = useParams()
 
-  const [formData, setFormData] = useState({
-    jenisInformasi: daftarInformasi.edit.form.jenisInformasi || '',
-    deskripsi: daftarInformasi.edit.form.deskripsi || '',
-    tanggal: daftarInformasi.edit.form.tanggal || '',
+  const [formData, setFormData] = useState<FormDaftarInformasi>({
+    jenisInformasi: '',
+    deskripsi: '',
+    tanggal: '',
   })
+
+  const formatDateForInput = (dateString: string) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toISOString().split('T')[0];
+  };
 
   useEffect(() => {
     const loadDaftarInformasi = async () => {
@@ -48,12 +60,11 @@ function EditDaftarInformasiPublik() {
     try {
       daftarInformasi.edit.form = {
         ...daftarInformasi.edit.form,
-        jenisInformasi: formData.jenisInformasi,
-        deskripsi: formData.deskripsi,
-        tanggal: formData.tanggal,
+        jenisInformasi: formData.jenisInformasi.trim(),
+        deskripsi: formData.deskripsi.trim(),
+        tanggal: formData.tanggal.trim(),
       }
       await daftarInformasi.edit.update()
-      toast.success("Berita berhasil diperbarui!");
       router.push("/admin/ppid/daftar-informasi-publik-desa-darmasaba");
     } catch (error) {
       console.error("Error updating berita:", error);
@@ -73,7 +84,7 @@ function EditDaftarInformasiPublik() {
           <Title order={3}>Edit Daftar Informasi Publik Desa Darmasaba</Title>
           <TextInput
             value={formData.jenisInformasi}
-            label="Jenis Informasi"
+            label={<Text fz={"sm"} fw={"bold"}>Jenis Informasi</Text>}
             placeholder="masukkan jenis informasi"
             onChange={(val) => {
               setFormData({
@@ -93,8 +104,9 @@ function EditDaftarInformasiPublik() {
             />
           </Box>
           <TextInput
-            value={formData.tanggal}
-            label="Tanggal Publikasi"
+            type='date'
+            value={formatDateForInput(formData.tanggal)}
+            label={<Text fz={"sm"} fw={"bold"}>Tanggal Publikasi</Text>}
             placeholder="masukkan tanggal publikasi"
             onChange={(val) => {
               setFormData({

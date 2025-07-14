@@ -1,6 +1,12 @@
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
 
+type FormEdit = {
+  jenisInformasi: string;
+  deskripsi: string;
+  tanggal: string;
+};
+
 export default async function daftarInformasiPublikEdit(context: Context) {
   const id = context.params?.id;
 
@@ -11,11 +17,7 @@ export default async function daftarInformasiPublikEdit(context: Context) {
     };
   }
 
-  const { jenisInformasi, deskripsi, tanggal } = context.body as {
-    jenisInformasi: string;
-    deskripsi: string;
-    tanggal: string;
-  };
+  const body = context.body as FormEdit;
 
   const existing = await prisma.daftarInformasiPublik.findUnique({
     where: {
@@ -33,9 +35,9 @@ export default async function daftarInformasiPublikEdit(context: Context) {
   const updated = await prisma.daftarInformasiPublik.update({
     where: { id },
     data: {
-      jenisInformasi,
-      deskripsi,
-      tanggal,
+      jenisInformasi: body.jenisInformasi,
+      deskripsi: body.deskripsi,
+      tanggal: new Date(body.tanggal),
     },
   });
 

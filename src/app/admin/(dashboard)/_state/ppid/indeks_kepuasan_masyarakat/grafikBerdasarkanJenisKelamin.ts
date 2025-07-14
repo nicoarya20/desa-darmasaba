@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiFetch from "@/lib/api-fetch";
 import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
@@ -9,71 +10,75 @@ const templateGrafikJenisKelamin = z.object({
   perempuan: z.string().min(1, "Data perempuan harus diisi"),
 }); 
 
-type GrafikJenisKelamin = Prisma.GrafikBerdasarkanJenisKelaminGetPayload<{
-  select: {
-    id: true;
-    laki: true;
-    perempuan: true;
-  };
-}>;
-
-const defaultForm: Omit<GrafikJenisKelamin, 'id'> & { id?: string } = {
+const defaultForm = {
   laki: "",
   perempuan: "",
 };
 
 const grafikBerdasarkanJenisKelamin = proxy({
   create: {
-    form: defaultForm,
+    form: {...defaultForm},
     loading: false,
-    async create() {
-      const cek = templateGrafikJenisKelamin.safeParse(
-        grafikBerdasarkanJenisKelamin.create.form
-      );
+    async create(){
+      const cek = templateGrafikJenisKelamin.safeParse(grafikBerdasarkanJenisKelamin.create.form);
       if (!cek.success) {
-        const err = `[${cek.error.issues
-          .map((v) => `${v.path.join(".")}`)
-          .join("\n")}] required`;
-        return toast.error(err);
+        const err = cek.error.issues.map((i) => i.message).join("\n");
+        toast.error(err);
+        return;
       }
+
       try {
         grafikBerdasarkanJenisKelamin.create.loading = true;
         const res = await ApiFetch.api.ppid.grafikberdasarkanjeniskelamin[
           "create"
         ].post(grafikBerdasarkanJenisKelamin.create.form);
         if (res.status === 200) {
-          const id = res.data?.data?.id;
-          if (id) {
-            toast.success("Success create");
-            grafikBerdasarkanJenisKelamin.create.form = {
-              laki: "",
-              perempuan: "",
-            };
-            grafikBerdasarkanJenisKelamin.findMany.load();
-            return id;
-          }
+          toast.success("Grafik berdasarkan jenis kelamin berhasil ditambahkan");
+          await grafikBerdasarkanJenisKelamin.findMany.load();
+        } else {
+          toast.error(res.data?.message ?? "Gagal tambah grafik berdasarkan jenis kelamin");
         }
-        return toast.error("failed create");
       } catch (error) {
-        console.log((error as Error).message);
+        console.error("Gagal create:", error);
+        toast.error("Terjadi kesalahan saat menambahkan grafik berdasarkan jenis kelamin");
       } finally {
         grafikBerdasarkanJenisKelamin.create.loading = false;
       }
     },
   },
   findMany: {
-    data: null as
-      | Prisma.GrafikBerdasarkanJenisKelaminGetPayload<{
-          omit: { isActive: true };
-        }>[]
-      | null,
+    data: null as any[] | null,
+    page: 1,
+    totalPages: 1,
+    total: 0,
     loading: false,
-    async load() {
-      const res = await ApiFetch.api.ppid.grafikberdasarkanjeniskelamin[
-        "find-many"
-      ].get();
-      if (res.status === 200) {
-        grafikBerdasarkanJenisKelamin.findMany.data = res.data?.data ?? [];
+    load: async (page = 1, limit = 10) => {  // Change to arrow function
+      grafikBerdasarkanJenisKelamin.findMany.loading = true;  // Use the full path to access the property
+      grafikBerdasarkanJenisKelamin.findMany.page = page;
+      try {
+        const res = await ApiFetch.api.ppid.grafikberdasarkanjeniskelamin[
+          "find-many"
+        ].get({
+          query: { page, limit },
+        });
+  
+        if (res.status === 200 && res.data?.success) {
+          grafikBerdasarkanJenisKelamin.findMany.data = res.data.data || [];
+          grafikBerdasarkanJenisKelamin.findMany.total = res.data.total || 0;
+          grafikBerdasarkanJenisKelamin.findMany.totalPages = res.data.totalPages || 1;
+        } else {
+          console.error("Failed to load grafik berdasarkan jenis kelamin:", res.data?.message);
+          grafikBerdasarkanJenisKelamin.findMany.data = [];
+          grafikBerdasarkanJenisKelamin.findMany.total = 0;
+          grafikBerdasarkanJenisKelamin.findMany.totalPages = 1;
+        }
+      } catch (error) {
+        console.error("Error loading grafik berdasarkan jenis kelamin:", error);
+        grafikBerdasarkanJenisKelamin.findMany.data = [];
+        grafikBerdasarkanJenisKelamin.findMany.total = 0;
+        grafikBerdasarkanJenisKelamin.findMany.totalPages = 1;
+      } finally {
+        grafikBerdasarkanJenisKelamin.findMany.loading = false;
       }
     },
   },

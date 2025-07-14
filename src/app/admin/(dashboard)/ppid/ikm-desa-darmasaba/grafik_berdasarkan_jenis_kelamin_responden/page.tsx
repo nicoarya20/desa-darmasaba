@@ -2,16 +2,16 @@
 'use client'
 import grafikBerdasarkanJenisKelamin from '@/app/admin/(dashboard)/_state/ppid/indeks_kepuasan_masyarakat/grafikBerdasarkanJenisKelamin';
 import colors from '@/con/colors';
-import { Box, Button, Flex, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title } from '@mantine/core';
+import { Box, Button, Center, Flex, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconEdit, IconSearch, IconTrash } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Cell, Pie, PieChart } from 'recharts';
 import { useProxy } from 'valtio/utils';
-import JudulListTab from '../../../_com/judulListTab';
-import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
 import HeaderSearch from '../../../_com/header';
+import JudulList from '../../../_com/judulList';
+import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
 
 function GrafikBerdasarkanJenisKelamin() {
   const [search, setSearch] = useState("");
@@ -36,6 +36,32 @@ function ListGrafikBerdasarkanJenisKelamin({ search }: { search: string }) {
   const [modalHapus, setModalHapus] = useState(false)
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const router = useRouter();
+  const { data, page, totalPages, loading, load } = stategrafikBerdasarkanJenisKelamin.findMany
+
+
+  useShallowEffect(() => {
+    setMounted(true);
+    load(page, 10)
+  }, [page]);
+
+  useEffect(() => {
+    if (data) {
+      const totalLaki = data.reduce((acc: number, cur: any) => acc + Number(cur.laki || 0), 0);
+      const totalPerempuan = data.reduce((acc: number, cur: any) => acc + Number(cur.perempuan || 0), 0);
+      setDonutData([
+        { name: 'laki', value: totalLaki, color: colors['blue-button'], key: 'laki' },
+        { name: 'perempuan', value: totalPerempuan, color: '#10A85AFF', key: 'perempuan' }
+      ]);
+    }
+  }, [data])
+
+  const filteredData = (data || []).filter(item => {
+    const keyword = search.toLowerCase();
+    return (
+      item.laki.toString().toLowerCase().includes(keyword) ||
+      item.perempuan.toString().toLowerCase().includes(keyword)
+    );
+  });
 
   const handleDelete = async () => {
     if (selectedId) {
@@ -47,55 +73,56 @@ function ListGrafikBerdasarkanJenisKelamin({ search }: { search: string }) {
     }
   }
 
-  useShallowEffect(() => {
-    setMounted(true);
-    stategrafikBerdasarkanJenisKelamin.findMany.load()
-  }, []);
-
-  useEffect(() => {
-    if (stategrafikBerdasarkanJenisKelamin.findMany.data) {
-      const totalLaki = stategrafikBerdasarkanJenisKelamin.findMany.data.reduce((acc: number, cur: any) => acc + Number(cur.laki || 0), 0);
-      const totalPerempuan = stategrafikBerdasarkanJenisKelamin.findMany.data.reduce((acc: number, cur: any) => acc + Number(cur.perempuan || 0), 0);
-      setDonutData([
-        { name: 'laki', value: totalLaki, color: colors['blue-button'], key: 'laki' },
-        { name: 'perempuan', value: totalPerempuan, color: '#10A85AFF', key: 'perempuan' }
-      ]);
-    }
-  }, [stategrafikBerdasarkanJenisKelamin.findMany.data])
-
-  const filteredData = (stategrafikBerdasarkanJenisKelamin.findMany.data || []).filter(item => {
-    const keyword = search.toLowerCase();
+  if (loading || !data) {
     return (
-      item.laki.toString().toLowerCase().includes(keyword) ||
-      item.perempuan.toString().toLowerCase().includes(keyword)
+      <Stack py={10}>
+        <Skeleton height={730} />
+      </Stack>
     );
-  });
-
-  if (!stategrafikBerdasarkanJenisKelamin.findMany.data) {
+  }
+  if (data.length === 0) {
     return (
-      <Box>
-        <Skeleton h={500} />
-      </Box>
-    )
+      <Box py={10}>
+        <Paper p="md">
+          <Stack>
+            <JudulList
+              title='List Data Berdasarkan Jenis Kelamin Responden'
+              href='/admin/ppid/ikm-desa-darmasaba/grafik_berdasarkan_jenis_kelamin_responden/create'
+            />
+            <Table striped withTableBorder withRowBorders>
+              <TableThead>
+                <TableTr>
+                  <TableTh>No</TableTh>
+                  <TableTh>Laki-laki</TableTh>
+                  <TableTh>Perempuan</TableTh>
+                  <TableTh>Edit</TableTh>
+                  <TableTh>Delete</TableTh>
+                </TableTr>
+              </TableThead>
+            </Table>
+            <Text ta="center">Tidak ada data berdasarkan jenis kelamin responden yang tersedia</Text>
+          </Stack>
+        </Paper>
+      </Box >
+    );
   }
 
   return (
     <Box>
       <Stack gap={"xs"}>
-        <Paper bg={colors['white-1']} p={"md"}>
-          <JudulListTab
-            title='List Grafik Berdasarkan Jenis Kelamin Responden'
+        <Paper bg={colors['white-1']} p={"md"} h={{ base: 730, md: 650 }}>
+          <JudulList
+            title='List Data Berdasarkan Jenis Kelamin Responden'
             href='/admin/ppid/ikm-desa-darmasaba/grafik_berdasarkan_jenis_kelamin_responden/create'
-            placeholder='pencarian'
-            searchIcon={<IconSearch size={16} />}
           />
           <Table striped withTableBorder withRowBorders>
             <TableThead>
               <TableTr>
-                <TableTh>Laki-laki</TableTh>
-                <TableTh>Perempuan</TableTh>
-                <TableTh>Edit</TableTh>
-                <TableTh>Delete</TableTh>
+                <TableTh style={{ width: '5%', textAlign: 'center' }}>No</TableTh>
+                <TableTh style={{ width: '20%', textAlign: 'center' }}>Laki-laki</TableTh>
+                <TableTh style={{ width: '20%', textAlign: 'center' }}>Perempuan</TableTh>
+                <TableTh style={{ width: '15%', textAlign: 'center' }}>Edit</TableTh>
+                <TableTh style={{ width: '15%', textAlign: 'center' }}>Delete</TableTh>
               </TableTr>
             </TableThead>
             <TableTbody>
@@ -106,16 +133,17 @@ function ListGrafikBerdasarkanJenisKelamin({ search }: { search: string }) {
                   </TableTd>
                 </TableTr>
               ) : (
-                filteredData.map((item) => (
+                filteredData.map((item, index) => (
                   <TableTr key={item.id}>
-                    <TableTd>{item.laki}</TableTd>
-                    <TableTd>{item.perempuan}</TableTd>
-                    <TableTd>
+                    <TableTd style={{ width: '5%', textAlign: 'center' }}>{index + 1}</TableTd>
+                    <TableTd style={{ width: '20%', textAlign: 'center' }}>{item.laki}</TableTd>
+                    <TableTd style={{ width: '20%', textAlign: 'center' }}>{item.perempuan}</TableTd>
+                    <TableTd style={{ width: '15%', textAlign: 'center' }}>
                       <Button color='green' onClick={() => router.push(`/admin/ppid/ikm-desa-darmasaba/grafik_berdasarkan_jenis_kelamin_responden/${item.id}`)}>
                         <IconEdit size={20} />
                       </Button>
                     </TableTd>
-                    <TableTd>
+                    <TableTd style={{ width: '15%', textAlign: 'center' }}>
                       <Button
                         color='red'
                         disabled={stategrafikBerdasarkanJenisKelamin.delete.loading}
@@ -130,16 +158,27 @@ function ListGrafikBerdasarkanJenisKelamin({ search }: { search: string }) {
                 ))
               )}
             </TableTbody>
-
           </Table>
         </Paper>
+        <Center>
+          <Pagination
+            value={page}
+            onChange={(newPage) => {
+              load(newPage, 10);
+              window.scrollTo(0, 0);
+            }}
+            total={totalPages}
+            mt="md"
+            mb="md"
+          />
+        </Center>
 
         {/* Chart */}
         <Box>
           <Paper bg={colors['white-1']} p={'md'}>
             <Stack>
-              <Title pb={10} order={3}>Grafik Berdasarkan Responden</Title>
-              {mounted && donutData.length > 0 ? (<Box style={{ width: '100%', height: 'auto', minHeight: 200 }}>
+              <Title pb={10} order={3}>Grafik Berdasarkan Jenis Kelamin Responden</Title>
+              {mounted && donutData.length === 0 ? (<Text c='dimmed'>Belum ada data untuk ditampilkan dalam grafik</Text>) : (<Box style={{ width: '100%', height: 'auto', minHeight: 200 }}>
                 <PieChart
                   width={800} height={300}
                   data={donutData}
@@ -168,8 +207,6 @@ function ListGrafikBerdasarkanJenisKelamin({ search }: { search: string }) {
                   <Text>Perempuan: {donutData.find((entry) => entry.name === 'perempuan')?.value}</Text>
                 </Flex>
               </Box>
-              ) : (
-                <Text c='dimmed'>Belum ada data untuk ditampilkan dalam grafik</Text>
               )}
             </Stack>
           </Paper>

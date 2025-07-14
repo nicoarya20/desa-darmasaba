@@ -1,21 +1,18 @@
 import prisma from "@/lib/prisma";
-import { Prisma } from "@prisma/client";
 import { Context } from "elysia";
 
-type FormCreate = Prisma.DaftarInformasiPublikGetPayload<{
-    select: {
-        jenisInformasi: true;
-        deskripsi: true;
-        tanggal: true;
-    }
-}>
+type FormCreate = {
+    jenisInformasi: string;
+    deskripsi: string;
+    tanggal: string;
+}
 export default async function daftarInformasiPublikCreate(context: Context) {
     const body = context.body as FormCreate;
     await prisma.daftarInformasiPublik.create({
         data: { 
             jenisInformasi: body.jenisInformasi,
             deskripsi: body.deskripsi,
-            tanggal: body.tanggal,
+            tanggal: new Date(body.tanggal),
         },
     })
     return {

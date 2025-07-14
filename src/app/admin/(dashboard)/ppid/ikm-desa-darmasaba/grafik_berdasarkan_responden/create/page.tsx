@@ -45,7 +45,7 @@ function GrafikBerdasarkanRespondenCreate() {
        </Box>
        <Paper bg={colors['white-1']} w={{ base: '100%', md: '50%' }} p={'md'}>
          <Stack>
-           <Title order={3}>Grafik Hasil Kepuasan Masyarakat Terhadap Pelayanan Publik</Title>
+           <Title order={3}>Grafik Hasil Kepuasan Masyarakat Berdasarkan Responden</Title>
            <TextInput
              label="Sangat Baik"
              type='number'

@@ -19,7 +19,7 @@ const HeaderSearch = ({
   onChange,
 }: HeaderSearchProps) => {
   return (
-    <Grid>
+    <Grid mb={10}>
       <GridCol span={{ base: 12, md: 9 }}>
         <Title order={3}>{title}</Title>
       </GridCol>

@@ -56,7 +56,9 @@ function DetailDaftarInformasiPublik() {
                 </Box>
                 <Box>
                   <Text fw={"bold"} fz={"lg"}>Tanggal</Text>
-                  <Text fz={"lg"}>{stateDaftarInformasi.findUnique.data?.tanggal}</Text>
+                  <Text fz={"lg"}>{stateDaftarInformasi.findUnique.data?.tanggal
+                    ? new Date(stateDaftarInformasi.findUnique.data.tanggal).toLocaleDateString()
+                    : "-"}</Text>
                 </Box>
                 <Box>
                   <Text fw={"bold"} fz={"lg"}>Deskripsi</Text>

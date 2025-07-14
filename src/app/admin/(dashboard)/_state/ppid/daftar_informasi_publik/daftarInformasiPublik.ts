@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiFetch from "@/lib/api-fetch";
 import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
@@ -16,17 +17,9 @@ const defaultForm = {
   tanggal: "",
 };
 
-type DaftarInformasi = Prisma.DaftarInformasiPublikGetPayload<{
-  select: {
-    jenisInformasi: true;
-    deskripsi: true;
-    tanggal: true;
-  };
-}>;
-
 const daftarInformasiPublik = proxy({
   create: {
-    form: {} as DaftarInformasi,
+    form: {...defaultForm},
     loading: false,
     async create() {
       const cek = templateDaftarInformasi.safeParse(
@@ -56,15 +49,38 @@ const daftarInformasiPublik = proxy({
     },
   },
   findMany: {
-    data: null as
-      | Prisma.DaftarInformasiPublikGetPayload<{ omit: { isActive: true } }>[]
-      | null,
-    async load() {
-      const res = await ApiFetch.api.ppid.daftarinformasipublik[
-        "find-many"
-      ].get();
-      if (res.status === 200) {
-        daftarInformasiPublik.findMany.data = res.data?.data ?? [];
+    data: null as any[] | null,
+    page: 1,
+    totalPages: 1,
+    total: 0,
+    loading: false,
+    load: async (page = 1, limit = 10) => {  // Change to arrow function
+      daftarInformasiPublik.findMany.loading = true;  // Use the full path to access the property
+      daftarInformasiPublik.findMany.page = page;
+      try {
+        const res = await ApiFetch.api.ppid.daftarinformasipublik[
+          "find-many"
+        ].get({
+          query: { page, limit },
+        });
+  
+        if (res.status === 200 && res.data?.success) {
+          daftarInformasiPublik.findMany.data = res.data.data || [];
+          daftarInformasiPublik.findMany.total = res.data.total || 0;
+          daftarInformasiPublik.findMany.totalPages = res.data.totalPages || 1;
+        } else {
+          console.error("Failed to load daftar informasi publik:", res.data?.message);
+          daftarInformasiPublik.findMany.data = [];
+          daftarInformasiPublik.findMany.total = 0;
+          daftarInformasiPublik.findMany.totalPages = 1;
+        }
+      } catch (error) {
+        console.error("Error loading daftar informasi publik:", error);
+        daftarInformasiPublik.findMany.data = [];
+        daftarInformasiPublik.findMany.total = 0;
+        daftarInformasiPublik.findMany.totalPages = 1;
+      } finally {
+        daftarInformasiPublik.findMany.loading = false;
       }
     },
   },
@@ -186,7 +202,9 @@ const daftarInformasiPublik = proxy({
       }
       try {
         daftarInformasiPublik.edit.loading = true;
-
+        const formattedTanggal = this.form.tanggal
+        ? new Date(this.form.tanggal).toISOString()
+        : undefined;
         const response = await fetch(
           `/api/ppid/daftarinformasipublik/${this.id}`,
           {
@@ -197,7 +215,7 @@ const daftarInformasiPublik = proxy({
             body: JSON.stringify({
               jenisInformasi: this.form.jenisInformasi,
               deskripsi: this.form.deskripsi,
-              tanggal: this.form.tanggal,
+              tanggal: formattedTanggal,
             }),
           }
         );

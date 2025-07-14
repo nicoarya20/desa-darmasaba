@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiFetch from "@/lib/api-fetch";
 import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
@@ -9,22 +10,14 @@ const templateGrafikHasilKepuasanMasyarakat = z.object({
   kepuasan: z.string().min(1, "Kepuasan harus diisi"),
 });
 
-type GrafikHasilKepuasanMasyarakat = Prisma.IndeksKepuasanMasyarakatGetPayload<{
-  select: {
-    id: true;
-    label: true;
-    kepuasan: true;
-  };
-}>;
-
-const defaultForm: Omit<GrafikHasilKepuasanMasyarakat, 'id'> & { id?: string } = {
+const defaultForm = {
   label: "",
   kepuasan: "",
 };
 
 const grafikHasilKepuasanMasyarakat = proxy({
   create: {
-    form: defaultForm,
+    form: {...defaultForm},
     loading: false,
     async create() {
       const cek = templateGrafikHasilKepuasanMasyarakat.safeParse(
@@ -38,42 +31,52 @@ const grafikHasilKepuasanMasyarakat = proxy({
       }
       try {
         grafikHasilKepuasanMasyarakat.create.loading = true;
-        const res = await ApiFetch.api.ppid.grafikhasilkepuasamanmasyarakat["create"].post(
-          grafikHasilKepuasanMasyarakat.create.form
-        );
+        const res = await ApiFetch.api.ppid.grafikhasilkepuasamanmasyarakat["create"].post(grafikHasilKepuasanMasyarakat.create.form);
         if (res.status === 200) {
-          const id = res.data?.data?.id;
-          if (id) {
-            toast.success("Success create");
-            grafikHasilKepuasanMasyarakat.create.form = {
-              label: "",
-              kepuasan: "",
-            };
-            grafikHasilKepuasanMasyarakat.findMany.load();
-            return id;
-          }
+          toast.success("Grafik hasil kepuasan masyarakat berhasil ditambahkan");
+          await grafikHasilKepuasanMasyarakat.findMany.load();
+        } else {
+          toast.error(res.data?.message ?? "Gagal tambah grafik hasil kepuasan masyarakat");
         }
-        
-        return toast.error("failed create");
       } catch (error) {
-        console.log((error as Error).message);
+        console.error("Gagal create:", error);
+        toast.error("Terjadi kesalahan saat menambahkan grafik hasil kepuasan masyarakat");
       } finally {
         grafikHasilKepuasanMasyarakat.create.loading = false;
       }
     },
   },
   findMany: {
-    data: null as
-      | Prisma.IndeksKepuasanMasyarakatGetPayload<{
-          omit: { isActive: true };
-        }>[]
-      | null,
-    async load() {
-      const res = await ApiFetch.api.ppid.grafikhasilkepuasamanmasyarakat[
-        "find-many"
-      ].get();
-      if (res.status === 200) {
-        grafikHasilKepuasanMasyarakat.findMany.data = res.data?.data ?? [];
+    data: null as any[] | null,
+    page: 1,
+    totalPages: 1,
+    total: 0,
+    loading: false,
+    load: async (page = 1, limit = 10) => {  // Change to arrow function
+      grafikHasilKepuasanMasyarakat.findMany.loading = true;  // Use the full path to access the property
+      grafikHasilKepuasanMasyarakat.findMany.page = page;
+      try {
+        const res = await ApiFetch.api.ppid.grafikhasilkepuasamanmasyarakat["find-many"].get({
+          query: { page, limit },
+        });
+  
+        if (res.status === 200 && res.data?.success) {
+          grafikHasilKepuasanMasyarakat.findMany.data = res.data.data || [];
+          grafikHasilKepuasanMasyarakat.findMany.total = res.data.total || 0;
+          grafikHasilKepuasanMasyarakat.findMany.totalPages = res.data.totalPages || 1;
+        } else {
+          console.error("Failed to load grafik hasil kepuasan masyarakat:", res.data?.message);
+          grafikHasilKepuasanMasyarakat.findMany.data = [];
+          grafikHasilKepuasanMasyarakat.findMany.total = 0;
+          grafikHasilKepuasanMasyarakat.findMany.totalPages = 1;
+        }
+      } catch (error) {
+        console.error("Error loading grafik hasil kepuasan masyarakat:", error);
+        grafikHasilKepuasanMasyarakat.findMany.data = [];
+        grafikHasilKepuasanMasyarakat.findMany.total = 0;
+        grafikHasilKepuasanMasyarakat.findMany.totalPages = 1;
+      } finally {
+        grafikHasilKepuasanMasyarakat.findMany.loading = false;
       }
     },
   },

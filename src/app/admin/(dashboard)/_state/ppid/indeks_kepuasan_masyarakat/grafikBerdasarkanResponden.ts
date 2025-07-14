@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiFetch from "@/lib/api-fetch";
 import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
@@ -11,17 +12,7 @@ const templateGrafikResponden = z.object({
   tidakbaik: z.string().min(1, "Data tidak baik harus diisi"),
 });
 
-type GrafikResponden = Prisma.GrafikBerdasarkanRespondenGetPayload<{
-  select: {
-    id: true;
-    sangatbaik: true;
-    baik: true;
-    kurangbaik: true;
-    tidakbaik: true;
-  };
-}>;
-
-const defaultForm: Omit<GrafikResponden, 'id'> & { id?: string } = {
+const defaultForm = {
   sangatbaik: "",
   baik: "",
   kurangbaik: "",
@@ -30,7 +21,7 @@ const defaultForm: Omit<GrafikResponden, 'id'> & { id?: string } = {
 
 const grafikBerdasarkanResponden = proxy({
   create: {
-    form: defaultForm,
+    form: {...defaultForm},
     loading: false,
     async create() {
       const cek = templateGrafikResponden.safeParse(
@@ -48,40 +39,52 @@ const grafikBerdasarkanResponden = proxy({
           "create"
         ].post(grafikBerdasarkanResponden.create.form);
         if (res.status === 200) {
-          const id = res.data?.data?.id;
-          if (id) {
-            toast.success("Success create");
-            grafikBerdasarkanResponden.create.form = {
-              sangatbaik: "",
-              baik: "",
-              kurangbaik: "",
-              tidakbaik: "",
-            };
-            grafikBerdasarkanResponden.findMany.load();
-            return id;
-          }
+          toast.success("Grafik berdasarkan responden berhasil ditambahkan");
+          await grafikBerdasarkanResponden.findMany.load();
+        } else {
+          toast.error(res.data?.message ?? "Gagal tambah grafik berdasarkan responden");
         }
-        return toast.error("failed create");
       } catch (error) {
-        console.log((error as Error).message);
+        console.error("Gagal create:", error);
+        toast.error("Terjadi kesalahan saat menambahkan grafik berdasarkan responden");
       } finally {
         grafikBerdasarkanResponden.create.loading = false;
       }
     },
   },
   findMany: {
-    data: null as
-      | Prisma.GrafikBerdasarkanRespondenGetPayload<{
-          omit: { isActive: true };
-        }>[]
-      | null,
+    data: null as any[] | null,
+    page: 1,
+    totalPages: 1,
+    total: 0,
     loading: false,
-    async load() {
-      const res = await ApiFetch.api.ppid.grafikberdasarkanresponden[
-        "find-many"
-      ].get();
-      if (res.status === 200) {
-        grafikBerdasarkanResponden.findMany.data = res.data?.data ?? [];
+    load: async (page = 1, limit = 10) => {  // Change to arrow function
+      grafikBerdasarkanResponden.findMany.loading = true;  // Use the full path to access the property
+      grafikBerdasarkanResponden.findMany.page = page;
+      try {
+        const res = await ApiFetch.api.ppid.grafikberdasarkanresponden[
+          "find-many"
+        ].get({
+          query: { page, limit },
+        });
+  
+        if (res.status === 200 && res.data?.success) {
+          grafikBerdasarkanResponden.findMany.data = res.data.data || [];
+          grafikBerdasarkanResponden.findMany.total = res.data.total || 0;
+          grafikBerdasarkanResponden.findMany.totalPages = res.data.totalPages || 1;
+        } else {
+          console.error("Failed to load grafik berdasarkan responden:", res.data?.message);
+          grafikBerdasarkanResponden.findMany.data = [];
+          grafikBerdasarkanResponden.findMany.total = 0;
+          grafikBerdasarkanResponden.findMany.totalPages = 1;
+        }
+      } catch (error) {
+        console.error("Error loading grafikBerdasarkanResponden:", error);
+        grafikBerdasarkanResponden.findMany.data = [];
+        grafikBerdasarkanResponden.findMany.total = 0;
+        grafikBerdasarkanResponden.findMany.totalPages = 1;
+      } finally {
+        grafikBerdasarkanResponden.findMany.loading = false;
       }
     },
   },

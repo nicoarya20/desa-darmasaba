@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiFetch from "@/lib/api-fetch";
 import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
@@ -11,17 +12,7 @@ const templateGrafikUmur = z.object({
   lansia: z.string().min(1, "Data lansia harus diisi"),
 });
 
-type GrafikUmur = Prisma.GrafikBerdasarkanUmurGetPayload<{
-  select: {
-    id: true;
-    remaja: true;
-    dewasa: true;
-    orangtua: true;
-    lansia: true;
-  };
-}>;
-
-const defaultForm: Omit<GrafikUmur, "id"> & { id?: string } = {
+const defaultForm = {
   remaja: "",
   dewasa: "",
   orangtua: "",
@@ -30,7 +21,7 @@ const defaultForm: Omit<GrafikUmur, "id"> & { id?: string } = {
 
 const grafikBerdasarkanUmur = proxy({
   create: {
-    form: defaultForm,
+    form: {...defaultForm},
     loading: false,
     async create() {
       const cek = templateGrafikUmur.safeParse(
@@ -70,18 +61,38 @@ const grafikBerdasarkanUmur = proxy({
     },
   },
   findMany: {
-    data: null as
-      | Prisma.GrafikBerdasarkanUmurGetPayload<{
-          omit: { isActive: true };
-        }>[]
-      | null,
+    data: null as any[] | null,
+    page: 1,
+    totalPages: 1,
+    total: 0,
     loading: false,
-    async load() {
-      const res = await ApiFetch.api.ppid.grafikberdasarkanumur[
-        "find-many"
-      ].get();
-      if (res.status === 200) {
-        grafikBerdasarkanUmur.findMany.data = res.data?.data ?? [];
+    load: async (page = 1, limit = 10) => {  // Change to arrow function
+      grafikBerdasarkanUmur.findMany.loading = true;  // Use the full path to access the property
+      grafikBerdasarkanUmur.findMany.page = page;
+      try {
+        const res = await ApiFetch.api.ppid.grafikberdasarkanumur[
+          "find-many"
+        ].get({
+          query: { page, limit },
+        });
+  
+        if (res.status === 200 && res.data?.success) {
+          grafikBerdasarkanUmur.findMany.data = res.data.data || [];
+          grafikBerdasarkanUmur.findMany.total = res.data.total || 0;
+          grafikBerdasarkanUmur.findMany.totalPages = res.data.totalPages || 1;
+        } else {
+          console.error("Failed to load grafik berdasarkan umur:", res.data?.message);
+          grafikBerdasarkanUmur.findMany.data = [];
+          grafikBerdasarkanUmur.findMany.total = 0;
+          grafikBerdasarkanUmur.findMany.totalPages = 1;
+        }
+      } catch (error) {
+        console.error("Error loading grafik berdasarkan umur:", error);
+        grafikBerdasarkanUmur.findMany.data = [];
+        grafikBerdasarkanUmur.findMany.total = 0;
+        grafikBerdasarkanUmur.findMany.totalPages = 1;
+      } finally {
+        grafikBerdasarkanUmur.findMany.loading = false;
       }
     },
   },

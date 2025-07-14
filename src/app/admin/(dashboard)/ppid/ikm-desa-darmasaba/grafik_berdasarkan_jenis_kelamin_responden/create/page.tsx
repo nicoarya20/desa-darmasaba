@@ -24,16 +24,20 @@ function GrafikBerdasarkanJenisKelaminRespondenCreate() {
   }
 
   const handleSubmit = async () => {
-    const id = await stategrafikBerdasarkanJenisKelamin.create.create();
-    if (id) {
-      const idStr = String(id);
-      await stategrafikBerdasarkanJenisKelamin.findUnique.load(idStr);
-      if (stategrafikBerdasarkanJenisKelamin.findUnique.data) {
-        setDonutData([stategrafikBerdasarkanJenisKelamin.findUnique.data]);
+    try {
+      const id = await stategrafikBerdasarkanJenisKelamin.create.create();
+      if (typeof id !== 'undefined') {
+        const idStr = String(id);
+        await stategrafikBerdasarkanJenisKelamin.findUnique.load(idStr);
+        if (stategrafikBerdasarkanJenisKelamin.findUnique.data) {
+          setDonutData([stategrafikBerdasarkanJenisKelamin.findUnique.data]);
+        }
       }
+      resetForm();
+      router.push("/admin/ppid/ikm-desa-darmasaba/grafik_berdasarkan_jenis_kelamin_responden");
+    } catch (error) {
+      console.error('Error submitting form:', error);
     }
-    resetForm();
-    router.push("/admin/ppid/ikm-desa-darmasaba/grafik_berdasarkan_jenis_kelamin_responden")
   }
   return (
     <Box>

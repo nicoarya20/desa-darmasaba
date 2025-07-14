@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import grafikBerdasarkanUmur from '@/app/admin/(dashboard)/_state/ppid/indeks_kepuasan_masyarakat/grafikBerdasarkanUmur';
 import colors from '@/con/colors';
-import { Box, Button, Flex, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title } from '@mantine/core';
+import { Box, Button, Center, Flex, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconEdit, IconSearch, IconTrash } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
@@ -12,6 +12,7 @@ import { useProxy } from 'valtio/utils';
 import JudulListTab from '../../../_com/judulListTab';
 import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
 import HeaderSearch from '../../../_com/header';
+import JudulList from '../../../_com/judulList';
 
 function GrafikBerdasarakanUmur() {
   const [search, setSearch] = useState("");
@@ -36,6 +37,37 @@ function ListGrafikBerdasarakanUmur({ search }: { search: string }) {
   const [modalHapus, setModalHapus] = useState(false)
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const router = useRouter()
+  const { data, page, totalPages, loading, load } = stategrafikBerdasarkanUmur.findMany
+
+  useShallowEffect(() => {
+    setMounted(true);
+    load(page, 10)
+  }, [page]);
+
+  useEffect(() => {
+    if (data) {
+      const totalRemaja = data.reduce((acc: number, cur: any) => acc + Number(cur.remaja || 0), 0);
+      const totalDewasa = data.reduce((acc: number, cur: any) => acc + Number(cur.dewasa || 0), 0);
+      const totalOrangtua = data.reduce((acc: number, cur: any) => acc + Number(cur.orangtua || 0), 0);
+      const totalLansia = data.reduce((acc: number, cur: any) => acc + Number(cur.lansia || 0), 0);
+      setDonutData([
+        { name: 'remaja', value: totalRemaja, color: colors['blue-button'], key: 'remaja' },
+        { name: 'dewasa', value: totalDewasa, color: '#D32711FF', key: 'dewasa' },
+        { name: 'orangtua', value: totalOrangtua, color: '#B46B04FF', key: 'orangtua' },
+        { name: 'lansia', value: totalLansia, color: '#038617FF', key: 'lansia' }
+      ]);
+    }
+  }, [data])
+
+  const filteredData = (data || []).filter(item => {
+    const keyword = search.toLowerCase();
+    return (
+      item.remaja.toString().toLowerCase().includes(keyword) ||
+      item.dewasa.toString().toLowerCase().includes(keyword) ||
+      item.orangtua.toString().toLowerCase().includes(keyword) ||
+      item.lansia.toString().toLowerCase().includes(keyword)
+    );
+  });
 
   const handleDelete = async () => {
     if (selectedId) {
@@ -47,50 +79,48 @@ function ListGrafikBerdasarakanUmur({ search }: { search: string }) {
     }
   }
 
-  useShallowEffect(() => {
-    setMounted(true);
-    stategrafikBerdasarkanUmur.findMany.load()
-  }, []);
-
-  useEffect(() => {
-    if (stategrafikBerdasarkanUmur.findMany.data) {
-      const totalRemaja = stategrafikBerdasarkanUmur.findMany.data.reduce((acc: number, cur: any) => acc + Number(cur.remaja || 0), 0);
-      const totalDewasa = stategrafikBerdasarkanUmur.findMany.data.reduce((acc: number, cur: any) => acc + Number(cur.dewasa || 0), 0);
-      const totalOrangtua = stategrafikBerdasarkanUmur.findMany.data.reduce((acc: number, cur: any) => acc + Number(cur.orangtua || 0), 0);
-      const totalLansia = stategrafikBerdasarkanUmur.findMany.data.reduce((acc: number, cur: any) => acc + Number(cur.lansia || 0), 0);
-      setDonutData([
-        { name: 'remaja', value: totalRemaja, color: colors['blue-button'], key: 'remaja' },
-        { name: 'dewasa', value: totalDewasa, color: '#D32711FF', key: 'dewasa' },
-        { name: 'orangtua', value: totalOrangtua, color: '#B46B04FF', key: 'orangtua' },
-        { name: 'lansia', value: totalLansia, color: '#038617FF', key: 'lansia' }
-      ]);
-    }
-  }, [stategrafikBerdasarkanUmur.findMany.data])
-
-  const filteredData = (stategrafikBerdasarkanUmur.findMany.data || []).filter(item => {
-    const keyword = search.toLowerCase();
+  if (loading || !data) {
     return (
-      item.remaja.toString().toLowerCase().includes(keyword) ||
-      item.dewasa.toString().toLowerCase().includes(keyword) ||
-      item.orangtua.toString().toLowerCase().includes(keyword) ||
-      item.lansia.toString().toLowerCase().includes(keyword)
+      <Stack py={10}>
+        <Skeleton height={730} />
+      </Stack>
     );
-  });
-
-  if (!stategrafikBerdasarkanUmur.findMany.data) {
+  }
+  if (data.length === 0) {
     return (
-      <Box>
-        <Skeleton h={500} />
-      </Box>
-    )
+      <Box py={10}>
+        <Paper p="md" >
+          <Stack>
+            <JudulList
+              title='List Data Berdasarkan Umur Responden'
+              href='/admin/ppid/ikm-desa-darmasaba/grafik_berdasarkan_umur/create'
+            />
+            <Table striped withTableBorder withRowBorders>
+              <TableThead>
+                <TableTr>
+                  <TableTh>No</TableTh>
+                  <TableTh>Remaja</TableTh>
+                  <TableTh>Dewasa</TableTh>
+                  <TableTh>Orangtua</TableTh>
+                  <TableTh>Lansia</TableTh>
+                  <TableTh>Edit</TableTh>
+                  <TableTh>Delete</TableTh>
+                </TableTr>
+              </TableThead>
+            </Table>
+            <Text ta="center">Tidak ada data grafik berdasarkan umur responden yang tersedia</Text>
+          </Stack>
+        </Paper>
+      </Box >
+    );
   }
 
   return (
     <Box>
       <Stack gap={"xs"}>
-        <Paper bg={colors['white-1']} p={"md"}>
+        <Paper bg={colors['white-1']} p={"md"} h={{ base: 730, md: 650 }}>
           <JudulListTab
-            title='List Grafik Berdasarkan Umur Responden'
+            title='List Data Berdasarkan Umur Responden'
             href='/admin/ppid/ikm-desa-darmasaba/grafik_berdasarkan_umur/create'
             placeholder='pencarian'
             searchIcon={<IconSearch size={16} />}
@@ -98,12 +128,13 @@ function ListGrafikBerdasarakanUmur({ search }: { search: string }) {
           <Table striped withTableBorder withRowBorders>
             <TableThead>
               <TableTr>
-                <TableTh>Remaja</TableTh>
-                <TableTh>Dewasa</TableTh>
-                <TableTh>Orangtua</TableTh>
-                <TableTh>Lansia</TableTh>
-                <TableTh>Edit</TableTh>
-                <TableTh>Delete</TableTh>
+                <TableTh style={{ width: '2%', textAlign: 'center' }}>No</TableTh>
+                <TableTh style={{ width: '5%', textAlign: 'center' }}>Remaja</TableTh>
+                <TableTh style={{ width: '5%', textAlign: 'center' }}>Dewasa</TableTh>
+                <TableTh style={{ width: '5%', textAlign: 'center' }}>Orangtua</TableTh>
+                <TableTh style={{ width: '5%', textAlign: 'center' }}>Lansia</TableTh>
+                <TableTh style={{ width: '5%', textAlign: 'center' }}>Edit</TableTh>
+                <TableTh style={{ width: '5%', textAlign: 'center' }}>Delete</TableTh>
               </TableTr>
             </TableThead>
             <TableTbody>
@@ -116,16 +147,17 @@ function ListGrafikBerdasarakanUmur({ search }: { search: string }) {
               ) : (
                 filteredData.map((item) => (
                   <TableTr key={item.id}>
-                    <TableTd>{item.remaja}</TableTd>
-                    <TableTd>{item.dewasa}</TableTd>
-                    <TableTd>{item.orangtua}</TableTd>
-                    <TableTd>{item.lansia}</TableTd>
-                    <TableTd>
+                    <TableTd style={{ textAlign: 'center' }}>{filteredData.indexOf(item) + 1}</TableTd>
+                    <TableTd style={{ textAlign: 'center' }}>{item.remaja}</TableTd>
+                    <TableTd style={{ textAlign: 'center' }}>{item.dewasa}</TableTd>
+                    <TableTd style={{ textAlign: 'center' }}>{item.orangtua}</TableTd>
+                    <TableTd style={{ textAlign: 'center' }}>{item.lansia}</TableTd>
+                    <TableTd style={{ textAlign: 'center' }}>
                       <Button color='green' onClick={() => router.push(`/admin/ppid/ikm-desa-darmasaba/grafik_berdasarkan_umur/${item.id}`)}>
                         <IconEdit size={20} />
                       </Button>
                     </TableTd>
-                    <TableTd>
+                    <TableTd style={{ textAlign: 'center' }}>
                       <Button
                         color='red'
                         disabled={stategrafikBerdasarkanUmur.delete.loading}
@@ -143,12 +175,24 @@ function ListGrafikBerdasarakanUmur({ search }: { search: string }) {
 
           </Table>
         </Paper>
+        <Center>
+          <Pagination
+            value={page}
+            onChange={(newPage) => {
+              load(newPage, 10);
+              window.scrollTo(0, 0);
+            }}
+            total={totalPages}
+            mt="md"
+            mb="md"
+          />
+        </Center>
 
         {/* Chart */}
         <Box>
           <Paper bg={colors['white-1']} p={'md'}>
             <Stack>
-              <Title pb={10} order={3}>Grafik Berdasarkan Responden</Title>
+              <Title pb={10} order={3}>Grafik Umur Berdasarkan Responden</Title>
               {mounted && donutData.length > 0 ? (<Box style={{ width: '100%', height: 'auto', minHeight: 200 }}>
                 <PieChart
                   width={800} height={300}

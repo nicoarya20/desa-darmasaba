@@ -152,7 +152,7 @@ model DaftarInformasiPublik {
   id             String   @id @default(cuid())
   jenisInformasi String
   deskripsi      String
-  tanggal        String
+  tanggal        DateTime @db.Date
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
   deletedAt      DateTime @default(now())
@@ -1314,7 +1314,7 @@ model Belanja {
   updatedAt DateTime  @updatedAt
   deletedAt DateTime  @default(now())
   isActive  Boolean   @default(true)
-  ApbDesa ApbDesa[] @relation("ApbDesaBelanja")
+  ApbDesa   ApbDesa[] @relation("ApbDesaBelanja")
 }
 
 model Pembiayaan {
@@ -1325,8 +1325,9 @@ model Pembiayaan {
   updatedAt DateTime  @updatedAt
   deletedAt DateTime  @default(now())
   isActive  Boolean   @default(true)
-  ApbDesa ApbDesa[] @relation("ApbDesaPembiayaan")
+  ApbDesa   ApbDesa[] @relation("ApbDesaPembiayaan")
 }
+
 // ========================================= INOVASI ========================================= //
 // ========================================= DESA DIGITAL / SMART VILLAGE ========================================= //
 model DesaDigital {

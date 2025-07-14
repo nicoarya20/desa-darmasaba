@@ -42,7 +42,7 @@ export default function CreateBerita() {
         <Stack gap={"xs"}>
           <Title order={3}>Create Daftar Informasi Publik Desa Darmasaba</Title>
           <TextInput
-            label="Jenis Informasi"
+            label={<Text fz={"sm"} fw={"bold"}>Jenis Informasi</Text>}
             placeholder="masukkan jenis informasi"
             onChange={(val) => {
               daftarInformasi.create.form.jenisInformasi = val.target.value
@@ -58,13 +58,13 @@ export default function CreateBerita() {
             />
           </Box>
           <TextInput
-            label="Tanggal Publikasi"
-            placeholder="masukkan tanggal publikasi"
-            onChange={(val) => {
-              daftarInformasi.create.form.tanggal = val.target.value
-            }}
+            label={<Text fz={"sm"} fw={"bold"}>Tanggal Publikasi</Text>}
+            type="date"
+            placeholder="Contoh: 2022-01-01"
+            value={daftarInformasi.create.form.tanggal}
+            onChange={(e) => (daftarInformasi.create.form.tanggal = e.currentTarget.value)}
           />
-          <Button bg={colors['blue-button']} onClick={handleSubmit}>Simpan Berita</Button>
+          <Button bg={colors['blue-button']} onClick={handleSubmit}>Simpan</Button>
         </Stack>
       </Paper>
     </Box>

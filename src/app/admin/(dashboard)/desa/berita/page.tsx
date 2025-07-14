@@ -1,6 +1,6 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Grid, GridCol, Image, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
+import { Box, Button, Center, Grid, GridCol, Image, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconCircleDashedPlus, IconDeviceImacCog, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
@@ -40,8 +40,8 @@ function ListBerita({ search }: { search: string }) {
 
   // Fetch pertama kali
   useShallowEffect(() => {
-    load(page); // awal page = 1
-  }, []);
+    load(page, 10); // awal page = 1
+  }, [page]);
 
   const filteredData = (data || []).filter((item) => {
     const keyword = search.toLowerCase();
@@ -57,14 +57,6 @@ function ListBerita({ search }: { search: string }) {
 
   return (
     <Box py={10}>
-      <Pagination
-        value={page}
-        onChange={(newPage) => load(newPage)} // ini penting!
-        total={totalPages}
-        mt="md"
-        mb="md"
-      />
-
       <Paper bg={colors["white-1"]} p={"md"}>
         <Stack>
           <Grid>
@@ -128,6 +120,15 @@ function ListBerita({ search }: { search: string }) {
           </Box>
         </Stack>
       </Paper>
+      <Center>
+        <Pagination
+          value={page}
+          onChange={(newPage) => load(newPage)} // ini penting!
+          total={totalPages}
+          mt="md"
+          mb="md"
+        />
+      </Center>
     </Box>
   );
 }
