@@ -90,6 +90,8 @@ model FileStorage {
   KontakItem KontakItem[]
 
   Pegawai Pegawai[]
+
+  DesaDigital DesaDigital[]
 }
 
 //========================================= MENU PPID ========================================= //
@@ -1324,4 +1326,17 @@ model Pembiayaan {
   deletedAt DateTime  @default(now())
   isActive  Boolean   @default(true)
   ApbDesa ApbDesa[] @relation("ApbDesaPembiayaan")
+}
+// ========================================= INOVASI ========================================= //
+// ========================================= DESA DIGITAL / SMART VILLAGE ========================================= //
+model DesaDigital {
+  id        String      @id @default(cuid())
+  name      String
+  deskripsi String      @db.Text
+  image     FileStorage @relation(fields: [imageId], references: [id])
+  imageId   String
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  deletedAt DateTime    @default(now())
+  isActive  Boolean     @default(true)
 }
