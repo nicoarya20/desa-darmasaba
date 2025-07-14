@@ -1,7 +1,7 @@
 'use client'
 /* eslint-disable react-hooks/exhaustive-deps */
 import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
-import desaDigitalState from '@/app/admin/(dashboard)/_state/ekonomi/desa-digital';
+import desaDigitalState from '@/app/admin/(dashboard)/_state/inovasi/desa-digital';
 import colors from '@/con/colors';
 import ApiFetch from '@/lib/api-fetch';
 import { Box, Button, Center, FileInput, Image, Paper, Stack, Text, TextInput, Title } from '@mantine/core';

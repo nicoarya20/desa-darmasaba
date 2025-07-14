@@ -7,7 +7,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
-import desaDigitalState from '../../../_state/ekonomi/desa-digital';
+import desaDigitalState from '../../../_state/inovasi/desa-digital';
 
 function DetailDesaDigital() {
   const stateDesaDigital = useProxy(desaDigitalState)

@@ -8,7 +8,7 @@ import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 import CreateEditor from '../../../_com/createEditor';
-import desaDigitalState from '../../../_state/ekonomi/desa-digital';
+import desaDigitalState from '../../../_state/inovasi/desa-digital';
 
 
 function CreateDesaDigital() {

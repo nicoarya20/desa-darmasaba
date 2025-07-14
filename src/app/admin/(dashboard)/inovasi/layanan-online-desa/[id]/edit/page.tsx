@@ -3,7 +3,7 @@ import colors from "@/con/colors";
 import { Box, Button, Paper, Stack, Title, TextInput, Group, Text } from "@mantine/core";
 import { IconArrowBack, IconImageInPicture } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
-import { KeamananEditor } from "../../../keamanan/_com/keamananEditor";
+// import { KeamananEditor } from "../../../keamanan/_com/keamananEditor";
 
 export default function EditLayananOnlineDesa() {
     const router = useRouter();
@@ -28,9 +28,9 @@ export default function EditLayananOnlineDesa() {
             />
             <Box>
               <Text fw={"bold"} fz={"sm"}>Deskripsi Layanan Online Desa</Text>
-              <KeamananEditor
+              {/* <KeamananEditor
                 showSubmit={false}
-              />
+              /> */}
             </Box>
             <Group>
               <Button bg={colors['blue-button']}>Submit</Button>

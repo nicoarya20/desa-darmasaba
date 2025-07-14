@@ -18,8 +18,6 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useProxy } from "valtio/utils";
-
-
 import EditEditor from "@/app/admin/(dashboard)/_com/editEditor";
 import colors from "@/con/colors";
 import ApiFetch from "@/lib/api-fetch";

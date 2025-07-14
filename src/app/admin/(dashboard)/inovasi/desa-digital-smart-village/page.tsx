@@ -8,7 +8,7 @@ import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../_com/header';
 import JudulList from '../../_com/judulList';
-import desaDigitalState from '../../_state/ekonomi/desa-digital';
+import desaDigitalState from '../../_state/inovasi/desa-digital';
 
 function DesaDigitalSmartVillage() {
   const [search, setSearch] = useState("");
