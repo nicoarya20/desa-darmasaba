@@ -1,26 +1,84 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Paper, Table, TableTbody, TableTd, TableTh, TableThead, TableTr } from '@mantine/core';
+import { Box, Button, Center, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
 import { IconDeviceImac, IconSearch } from '@tabler/icons-react';
 import HeaderSearch from '../../_com/header';
 import JudulList from '../../_com/judulList';
 import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import kolaborasiInovasiState from '../../_state/inovasi/kolaborasi-inovasi';
+import { useProxy } from 'valtio/utils';
 
 function KolaborasiInovasi() {
+  const [search, setSearch] = useState('');
   return (
     <Box>
       <HeaderSearch
         title='Kolaborasi Inovasi'
         placeholder='pencarian'
         searchIcon={<IconSearch size={20} />}
+        value={search}
+        onChange={(e) => setSearch(e.currentTarget.value)}
       />
-      <ListKolaborasiInovasi/>
+      <ListKolaborasiInovasi search={search} />
     </Box>
   );
 }
 
-function ListKolaborasiInovasi() {
+function ListKolaborasiInovasi({ search }: { search: string }) {
+  const listState = useProxy(kolaborasiInovasiState)
+  const { data, loading, page, totalPages, load } = listState.findMany
   const router = useRouter();
+
+  useEffect(() => {
+    load(page, 10)
+  }, [page])
+
+  const filteredData = (data || []).filter(item => {
+    const keyword = search.toLowerCase();
+    return (
+      item.name.toLowerCase().includes(keyword) ||
+      item.deskripsi.toLowerCase().includes(keyword) ||
+      item.slug.toLowerCase().includes(keyword) ||
+      item.kolaborator.toLowerCase().includes(keyword)
+    );
+  });
+
+  if (loading || !data) {
+    return (
+      <Stack py={10}>
+        <Skeleton height={650} />
+      </Stack>
+    );
+  }
+  if (data.length === 0) {
+    return (
+      <Box py={10}>
+        <Paper p="md" >
+          <Stack>
+            <JudulList
+              title='List Kolaborasi Inovasi'
+              href='/admin/inovasi/kolaborasi-inovasi/create'
+            />
+            <Table striped withTableBorder withRowBorders>
+              <TableThead>
+                <TableTr>
+                  <TableTh>No</TableTh>
+                  <TableTh>Nama Kolaborasi Inovasi</TableTh>
+                  <TableTh>Tahun</TableTh>
+                  <TableTh>Deskripsi Singkat</TableTh>
+                  <TableTh>Detail</TableTh>
+                </TableTr>
+              </TableThead>
+            </Table>
+            <Text ta="center">Tidak ada data kolaborasi inovasi yang tersedia</Text>
+          </Stack>
+        </Paper>
+      </Box >
+    );
+  }
+
   return (
     <Box py={10}>
       <Paper bg={colors['white-1']} p={'md'}>
@@ -31,26 +89,43 @@ function ListKolaborasiInovasi() {
         <Table striped withTableBorder withRowBorders>
           <TableThead>
             <TableTr>
+              <TableTh>No</TableTh>
               <TableTh>Nama Kolaborasi Inovasi</TableTh>
-              <TableTh>Image</TableTh>
+              <TableTh>Tahun</TableTh>
               <TableTh>Deskripsi Singkat</TableTh>
               <TableTh>Detail</TableTh>
-              </TableTr>
+            </TableTr>
           </TableThead>
           <TableTbody>
-            <TableTr>
-              <TableTd>Kolaborasi Inovasi 1</TableTd>
-              <TableTd>Image</TableTd>
-              <TableTd>Deskripsi Singkat</TableTd>
-              <TableTd>
-                <Button onClick={() => router.push('/admin/inovasi/kolaborasi-inovasi/detail')}>
-                  <IconDeviceImac size={20} />
-                </Button>
-              </TableTd>
-            </TableTr>
+            {filteredData.map((item, index) => (
+              <TableTr key={item.id}>
+                <TableTd>{index + 1}</TableTd>
+                <TableTd>{item.name}</TableTd>
+                <TableTd>{item.tahun}</TableTd>
+                <TableTd>{item.slug}</TableTd>
+                <TableTd>
+                  <Button onClick={() => router.push('/admin/inovasi/kolaborasi-inovasi/detail')}>
+                    <IconDeviceImac size={20} />
+                  </Button>
+                </TableTd>
+              </TableTr>
+            ))}
           </TableTbody>
-        </Table>  
+        </Table>
       </Paper>
+      <Center>
+        <Pagination
+          value={page}
+          onChange={(newPage) => {
+            load(newPage, 10);
+            window.scrollTo(0, 0);
+          }}
+          total={totalPages}
+          mt="md"
+          mb="md"
+        />
+      </Center>
+
     </Box>
   );
 }
