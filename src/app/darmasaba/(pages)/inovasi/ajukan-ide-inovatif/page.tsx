@@ -1,10 +1,40 @@
+'use client'
+import ajukanIdeInovatifState from '@/app/admin/(dashboard)/_state/inovasi/ajukan-ide-inovatif';
 import colors from '@/con/colors';
-import { Stack, Box, Text, SimpleGrid, Paper, List, ListItem, Flex, ActionIcon } from '@mantine/core';
-import React from 'react';
-import BackButton from '../../desa/layanan/_com/BackButto';
+import { ActionIcon, Box, Button, Flex, List, ListItem, Modal, Paper, SimpleGrid, Stack, Text, TextInput, Title } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import { IconArrowRight, IconBulbFilled } from '@tabler/icons-react';
+import { useProxy } from 'valtio/utils';
+import BackButton from '../../desa/layanan/_com/BackButto';
+import CreateEditor from '@/app/admin/(dashboard)/_com/createEditor';
 
 function Page() {
+  const [opened, { open, close }] = useDisclosure(false);
+  const ideInovatif = useProxy(ajukanIdeInovatifState)
+
+
+  const resetForm = () => {
+    // Reset state di valtio
+    ideInovatif.create.form = {
+      name: "",
+      deskripsi: "",
+      alamat: "",
+      namaIde: "",
+      masalah: "",
+      benefit: "",
+    };
+
+    // Reset state lokal
+  };
+
+  const handleSubmit = async () => {
+    // Submit data berita
+    await ideInovatif.create.create();
+
+    // Reset form setelah submit
+    resetForm();
+    close();
+  };
   return (
     <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"22"}>
       <Box px={{ base: 'md', md: 100 }}>
@@ -40,7 +70,7 @@ function Page() {
                   <IconArrowRight size={30} color={colors['blue-button']} />
                 </Box>
                 <Box px={{ base: 5, md: 10 }} py={5}>
-                  <ActionIcon variant="transparent" size={150}>
+                  <ActionIcon variant="transparent" size={150} onClick={open}>
                     <IconBulbFilled size={150} color={colors['blue-button']} />
                   </ActionIcon>
                 </Box>
@@ -49,6 +79,65 @@ function Page() {
           </SimpleGrid>
         </Stack>
       </Box>
+
+      <Modal
+        opened={opened}
+        onClose={close}
+        radius={0}
+        transitionProps={{ transition: 'fade', duration: 200 }}
+      >
+        <Paper p={"md"} withBorder>
+          <Stack gap={"xs"}>
+            <Title order={3}>Ajukan Ide Inovatif</Title>
+            <TextInput
+              label={<Text fz={"sm"} fw={"bold"}>Nama</Text>}
+              placeholder="masukkan nama"
+              onChange={(val) => {
+                ideInovatif.create.form.name = val.target.value
+              }}
+            />
+            <TextInput
+              label={<Text fz={"sm"} fw={"bold"}>Alamat</Text>}
+              placeholder="masukkan alamat"
+              onChange={(val) => {
+                ideInovatif.create.form.alamat = val.target.value
+              }}
+            />
+            <TextInput
+              label={<Text fz={"sm"} fw={"bold"}>Nama Ide</Text>}
+              placeholder="masukkan nama ide"
+              onChange={(val) => {
+                ideInovatif.create.form.namaIde = val.target.value
+              }}
+            />
+            <Box>
+              <Text fz={"sm"} fw={"bold"}>Deskripsi</Text>
+              <CreateEditor
+                value={ideInovatif.create.form.deskripsi}
+                onChange={(htmlContent) => {
+                  ideInovatif.create.form.deskripsi = htmlContent;
+                }}
+              />
+            </Box>
+            <TextInput
+              label={<Text fz={"sm"} fw={"bold"}>Masalah</Text>}
+              placeholder="masukkan masalah"
+              onChange={(val) => {
+                ideInovatif.create.form.masalah = val.target.value
+              }}
+            />
+            <TextInput
+              label={<Text fz={"sm"} fw={"bold"}>Benefit</Text>}
+              placeholder="masukkan benefit"
+              onChange={(val) => {
+                ideInovatif.create.form.benefit = val.target.value
+              }}
+            />
+            <Button bg={colors['blue-button']} onClick={handleSubmit}>Simpan</Button>
+          </Stack>
+        </Paper>
+      </Modal>
+
     </Stack>
   );
 }

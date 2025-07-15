@@ -1387,3 +1387,43 @@ model InfoTekno {
   deletedAt DateTime    @default(now())
   isActive  Boolean     @default(true)
 }
+
+// ========================================= AJUKAN IDE INOVATIF ========================================= //
+model AjukanIdeInovatif {
+  id        String   @id @default(cuid())
+  name      String
+  alamat    String
+  namaIde   String
+  deskripsi String   @db.Text
+  masalah   String   @db.Text
+  benefit   String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive  Boolean  @default(true)
+}
+
+// ========================================= LAYANAN ONLINE DESA ========================================= //
+model AdministrasiOnline {
+  id                               String                             @id @default(cuid())
+  name                             String
+  alamat                           String
+  nomorTelepon                     String
+  jenisLayanan                     JenisLayanan                       @relation(fields: [jenisLayananId], references: [id])
+  jenisLayananId                   String
+  createdAt                        DateTime                           @default(now())
+  updatedAt                        DateTime                           @updatedAt
+  deletedAt                        DateTime                           @default(now())
+  isActive                         Boolean                            @default(true)
+}
+
+model JenisLayanan {
+  id                               String                             @id @default(uuid())
+  nama                             String
+  deskripsi                        String                             @db.Text
+  createdAt                        DateTime                           @default(now())
+  updatedAt                        DateTime                           @updatedAt
+  deletedAt                        DateTime                           @default(now())
+  isActive                         Boolean                            @default(true)
+  AdministrasiOnline               AdministrasiOnline[]
+}

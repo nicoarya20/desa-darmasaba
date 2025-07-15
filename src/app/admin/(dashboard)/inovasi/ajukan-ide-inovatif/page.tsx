@@ -1,59 +1,91 @@
+'use client'
 import colors from '@/con/colors';
-import { Box, Paper, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Title } from '@mantine/core';
-import { IconSearch } from '@tabler/icons-react';
-import React from 'react';
+import { Box, Button, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title } from '@mantine/core';
+import { useShallowEffect } from '@mantine/hooks';
+import { IconDeviceImac, IconSearch } from '@tabler/icons-react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../_com/header';
+import ajukanIdeInovatifState from '../../_state/inovasi/ajukan-ide-inovatif';
 
-function AjukanIdeInofativ() {
+function AjukanIdeInovatif() {
+  const [search, setSearch] = useState("");
   return (
     <Box>
       <HeaderSearch
         title='Ajukan Ide Inovatif'
         placeholder='pencarian'
         searchIcon={<IconSearch size={20} />}
+        value={search}
+        onChange={(e) => setSearch(e.currentTarget.value)}
       />
-      <ListAjukanIdeInovatif />
+      <ListAjukanIdeInovatif search={search} />
     </Box>
   );
 }
 
-function ListAjukanIdeInovatif() {
+function ListAjukanIdeInovatif({ search }: { search: string }) {
+  const state = useProxy(ajukanIdeInovatifState)
+  const router = useRouter()
+  useShallowEffect(() => {
+    state.findMany.load()
+  }, [])
+
+  const filteredData = (state.findMany.data || []).filter(item => {
+    const keyword = search.toLowerCase();
+    return (
+      item.name.toLowerCase().includes(keyword) ||
+      item.deskripsi.toLowerCase().includes(keyword) ||
+      item.alamat.toLowerCase().includes(keyword) ||
+      item.namaIde.toLowerCase().includes(keyword) ||
+      item.masalah.toLowerCase().includes(keyword) ||
+      item.benefit.toLowerCase().includes(keyword)
+    );
+  });
+
+  if (!state.findMany.data) {
+    return (
+      <Stack py={10}>
+        <Skeleton h={500} />
+      </Stack>
+    )
+  }
   return (
     <Box py={10}>
       <Paper bg={colors['white-1']} p={'md'}>
-        <Stack gap={"xs"}>
-          <Title order={4}>List Ajukan Ide Inovatif</Title>
-          <Box>
-            <Table striped withRowBorders withColumnBorders withTableBorder>
-              <TableThead>
-                <TableTr>
-                  <TableTh>No</TableTh>
-                  <TableTh>Nama</TableTh>
-                  <TableTh>Alamat</TableTh>
-                  <TableTh>Nama Ide Inovatif</TableTh>
-                  <TableTh>Deskripsi</TableTh>
-                  <TableTh>Masalah yang ingin diatasi</TableTh>
-                  <TableTh>Benefit</TableTh>
-                </TableTr>
-              </TableThead>
-              <TableTbody>
-
-                <TableTr>
-                  <TableTd>1</TableTd>
-                  <TableTd>nama</TableTd>
-                  <TableTd>alamat</TableTd>
-                  <TableTd>ide inovatif</TableTd>
-                  <TableTd>deskripsi</TableTd>
-                  <TableTd>masalah</TableTd>
-                  <TableTd>benefit</TableTd>
-                </TableTr>
-
-              </TableTbody>
-            </Table> </Box>
-        </Stack>
+        <Title mb={10} order={3}>List Ajukan Ide Inovatif</Title>
+        <Table striped withTableBorder withRowBorders>
+          <TableThead>
+            <TableTr>
+              <TableTh>Nama</TableTh>
+              <TableTh>Alamat</TableTh>
+              <TableTh>Nama Ide Inovatif</TableTh>
+              <TableTh>Detail</TableTh>
+            </TableTr>
+          </TableThead>
+          <TableTbody>
+            {filteredData.map((item) => (
+              <TableTr key={item.id}>
+                <TableTd>{item.name}</TableTd>
+                <TableTd>
+                  <Text truncate="end" fz={"sm"} dangerouslySetInnerHTML={{ __html: item.alamat }} />
+                </TableTd>
+                <TableTd>
+                  <Text truncate="end" fz={"sm"} dangerouslySetInnerHTML={{ __html: item.namaIde }} />
+                </TableTd>
+              <TableTd>
+                <Button onClick={() => router.push(`/admin/inovasi/ajukan-ide-inovatif/${item.id}`)}>
+                  <IconDeviceImac size={20} />
+                </Button>
+              </TableTd>
+            </TableTr>
+          ))}
+          </TableTbody>
+        </Table>
       </Paper>
     </Box>
-  )
+  );
 }
 
-export default AjukanIdeInofativ;
+export default AjukanIdeInovatif;

@@ -275,8 +275,7 @@ const kategoriProduk = proxy({
     data: null as Array<{
       id: string;
       nama: string;
-    }>
-      | null,
+    }> | null,
     async load() {
       const res = await ApiFetch.api.ekonomi.kategoriproduk["find-many"].get();
       if (res.status === 200) {
@@ -335,125 +334,135 @@ const kategoriProduk = proxy({
       }
     },
   },
-   edit: {
-      id: "",
-      form: { ...kategoriProdukDefaultForm },
-      loading: false,
-  
-      async load(id: string) {
-        if (!id) {
-          toast.warn("ID tidak valid");
-          return null;
+  edit: {
+    id: "",
+    form: { ...kategoriProdukDefaultForm },
+    loading: false,
+
+    async load(id: string) {
+      if (!id) {
+        toast.warn("ID tidak valid");
+        return null;
+      }
+
+      try {
+        const response = await fetch(`/api/ekonomi/kategoriproduk/${id}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
-  
-        try {
-          const response = await fetch(`/api/ekonomi/kategoriproduk/${id}`, {
-            method: "GET",
+        const result = await response.json();
+        if (result?.success) {
+          const data = result.data;
+          this.id = data.id;
+          this.form = {
+            nama: data.nama,
+          };
+          return data;
+        } else {
+          throw new Error(result?.message || "Gagal memuat data");
+        }
+      } catch (error) {
+        console.error("Error loading kategori produk:", error);
+        toast.error(
+          error instanceof Error ? error.message : "Gagal memuat data"
+        );
+        return null;
+      }
+    },
+
+    async update() {
+      const cek = kategoriProdukForm.safeParse(kategoriProduk.edit.form);
+      if (!cek.success) {
+        const err = `[${cek.error.issues
+          .map((v) => `${v.path.join(".")}`)
+          .join("\n")}] required`;
+        toast.error(err);
+        return false;
+      }
+
+      try {
+        kategoriProduk.edit.loading = true;
+        const response = await fetch(
+          `/api/ekonomi/kategoriproduk/${kategoriProduk.edit.id}`,
+          {
+            method: "PUT",
             headers: {
               "Content-Type": "application/json",
             },
-          });
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            body: JSON.stringify({
+              nama: kategoriProduk.edit.form.nama,
+            }),
           }
-          const result = await response.json();
-          if (result?.success) {
-            const data = result.data;
-            this.id = data.id;
-            this.form = {
-              nama: data.nama,
-            };
-            return data;
-          } else {
-            throw new Error(result?.message || "Gagal memuat data");
-          }
-        } catch (error) {
-          console.error("Error loading kategori produk:", error);
-          toast.error(
-            error instanceof Error ? error.message : "Gagal memuat data"
-          );
-          return null;
-        }
-      },
-  
-      async update() {
-        const cek = kategoriProdukForm.safeParse(kategoriProduk.edit.form);
-        if (!cek.success) {
-          const err = `[${cek.error.issues
-            .map((v) => `${v.path.join(".")}`)
-            .join("\n")}] required`;
-          toast.error(err);
-          return false;
-        }
+        );
+
+        // Clone the response to avoid 'body already read' error
+        const responseClone = response.clone();
 
         try {
-          kategoriProduk.edit.loading = true;
-          const response = await fetch(
-            `/api/ekonomi/kategoriproduk/${kategoriProduk.edit.id}`,
-            {
-              method: "PUT",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                nama: kategoriProduk.edit.form.nama,
-              }),
-            }
-          );
-          
-          // Clone the response to avoid 'body already read' error
-          const responseClone = response.clone();
-          
-          try {
-            const result = await response.json();
-            
-            if (!response.ok) {
-              console.error('Update failed with status:', response.status, 'Response:', result);
-              throw new Error(
-                result?.message || `Gagal mengupdate kategori produk (${response.status})`
-              );
-            }
-            
-            if (result.success) {
-              toast.success(result.message || "Berhasil memperbarui kategori produk");
-              await kategoriProduk.findMany.load(); // refresh list
-              return true;
-            } else {
-              throw new Error(result.message || "Gagal mengupdate kategori produk");
-            }
-          } catch (error) {
-            // If JSON parsing fails, try to get the response text for better error messages
-            try {
-              const text = await responseClone.text();
-              console.error('Error response text:', text);
-              throw new Error(`Gagal memproses respons dari server: ${text}`);
-            } catch (textError) {
-              console.error('Error parsing response as text:', textError);
-              console.error('Original error:', error);
-              throw new Error('Gagal memproses respons dari server');
-            }
+          const result = await response.json();
+
+          if (!response.ok) {
+            console.error(
+              "Update failed with status:",
+              response.status,
+              "Response:",
+              result
+            );
+            throw new Error(
+              result?.message ||
+                `Gagal mengupdate kategori produk (${response.status})`
+            );
+          }
+
+          if (result.success) {
+            toast.success(
+              result.message || "Berhasil memperbarui kategori produk"
+            );
+            await kategoriProduk.findMany.load(); // refresh list
+            return true;
+          } else {
+            throw new Error(
+              result.message || "Gagal mengupdate kategori produk"
+            );
           }
         } catch (error) {
-          console.error("Error updating kategori produk:", error);
-          toast.error(
-            error instanceof Error
-              ? error.message
-              : "Gagal mengupdate kategori produk"
-          );
-          return false;
-        } finally {
-          kategoriProduk.edit.loading = false;
+          // If JSON parsing fails, try to get the response text for better error messages
+          try {
+            const text = await responseClone.text();
+            console.error("Error response text:", text);
+            throw new Error(`Gagal memproses respons dari server: ${text}`);
+          } catch (textError) {
+            console.error("Error parsing response as text:", textError);
+            console.error("Original error:", error);
+            throw new Error("Gagal memproses respons dari server");
+          }
         }
-      },
-      reset() {
-        kategoriProduk.edit.id = "";
-        kategoriProduk.edit.form = { ...kategoriProdukDefaultForm };
-      },
+      } catch (error) {
+        console.error("Error updating kategori produk:", error);
+        toast.error(
+          error instanceof Error
+            ? error.message
+            : "Gagal mengupdate kategori produk"
+        );
+        return false;
+      } finally {
+        kategoriProduk.edit.loading = false;
+      }
     },
+    reset() {
+      kategoriProduk.edit.id = "";
+      kategoriProduk.edit.form = { ...kategoriProdukDefaultForm };
+    },
+  },
 });
 
 const pasarDesaState = proxy({
   pasarDesa,
-  kategoriProduk
+  kategoriProduk,
 });
 export default pasarDesaState;

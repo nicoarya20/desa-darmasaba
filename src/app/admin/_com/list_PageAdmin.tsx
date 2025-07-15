@@ -276,7 +276,7 @@ export const navBar = [
       {
         id: "Inovasi_2",
         name: "Layanan Online Desa",
-        path: "/admin/inovasi/layanan-online-desa"
+        path: "/admin/inovasi/layanan-online-desa/administrasi-online"
       },
       {
         id: "Inovasi_3",
