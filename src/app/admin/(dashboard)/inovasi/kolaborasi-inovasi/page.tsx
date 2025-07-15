@@ -64,11 +64,11 @@ function ListKolaborasiInovasi({ search }: { search: string }) {
             <Table striped withTableBorder withRowBorders>
               <TableThead>
                 <TableTr>
-                  <TableTh>No</TableTh>
-                  <TableTh>Nama Kolaborasi Inovasi</TableTh>
-                  <TableTh>Tahun</TableTh>
-                  <TableTh>Deskripsi Singkat</TableTh>
-                  <TableTh>Detail</TableTh>
+                  <TableTh style={{ width: '2%', textAlign: 'center' }}>No</TableTh>
+                  <TableTh style={{ width: '15%' }}>Nama Kolaborasi Inovasi</TableTh>
+                  <TableTh style={{ width: '15%', textAlign: 'center' }}>Tahun</TableTh>
+                  <TableTh style={{ width: '20%' }}>Deskripsi Singkat</TableTh>
+                  <TableTh style={{ width: '5%', textAlign: 'center' }}>Detail</TableTh>
                 </TableTr>
               </TableThead>
             </Table>
@@ -89,22 +89,22 @@ function ListKolaborasiInovasi({ search }: { search: string }) {
         <Table striped withTableBorder withRowBorders>
           <TableThead>
             <TableTr>
-              <TableTh>No</TableTh>
-              <TableTh>Nama Kolaborasi Inovasi</TableTh>
-              <TableTh>Tahun</TableTh>
-              <TableTh>Deskripsi Singkat</TableTh>
-              <TableTh>Detail</TableTh>
+              <TableTh style={{ width: '1%', textAlign: 'center' }}>No</TableTh>
+              <TableTh style={{ width: '15%' }}>Nama Kolaborasi Inovasi</TableTh>
+              <TableTh style={{ width: '5%', textAlign: 'center' }}>Tahun</TableTh>
+              <TableTh style={{ width: '20%' }}>Deskripsi Singkat</TableTh>
+              <TableTh style={{ width: '5%', textAlign: 'center' }}>Detail</TableTh>
             </TableTr>
           </TableThead>
           <TableTbody>
             {filteredData.map((item, index) => (
               <TableTr key={item.id}>
-                <TableTd>{index + 1}</TableTd>
-                <TableTd>{item.name}</TableTd>
-                <TableTd>{item.tahun}</TableTd>
-                <TableTd>{item.slug}</TableTd>
-                <TableTd>
-                  <Button onClick={() => router.push('/admin/inovasi/kolaborasi-inovasi/detail')}>
+                <TableTd style={{ width: '1%', textAlign: 'center' }}>{index + 1}</TableTd>
+                <TableTd style={{ width: '15%' }}>{item.name}</TableTd>
+                <TableTd style={{ width: '5%', textAlign: 'center' }}>{item.tahun}</TableTd>
+                <TableTd style={{ width: '20%' }}>{item.slug}</TableTd>
+                <TableTd style={{ width: '5%', textAlign: 'center' }}>
+                  <Button onClick={() => router.push(`/admin/inovasi/kolaborasi-inovasi/${item.id}`)}>
                     <IconDeviceImac size={20} />
                   </Button>
                 </TableTd>

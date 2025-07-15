@@ -94,6 +94,8 @@ model FileStorage {
   DesaDigital DesaDigital[]
 
   KolaborasiInovasi KolaborasiInovasi[]
+
+  InfoTekno InfoTekno[]
 }
 
 //========================================= MENU PPID ========================================= //
@@ -1371,4 +1373,17 @@ model KolaborasiInovasi {
   updatedAt   DateTime    @updatedAt
   deletedAt   DateTime    @default(now())
   isActive    Boolean     @default(true)
+}
+
+// ========================================= INFO TEKHNOLOGI TEPAT GUNA ========================================= //
+model InfoTekno {
+  id        String      @id @default(cuid())
+  name      String
+  deskripsi String      @db.Text
+  image     FileStorage @relation(fields: [imageId], references: [id])
+  imageId   String
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  deletedAt DateTime    @default(now())
+  isActive  Boolean     @default(true)
 }

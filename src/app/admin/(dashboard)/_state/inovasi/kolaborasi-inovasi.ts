@@ -179,7 +179,7 @@ const kolaborasiInovasiState = proxy({
   },
   findUnique: {
     data: null as Prisma.KolaborasiInovasiGetPayload<{
-      omit: { isActive: true };
+      include: { image: true };
     }> | null,
     async load(id: string) {
       try {

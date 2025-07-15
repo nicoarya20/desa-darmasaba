@@ -1,26 +1,53 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Paper, Table, TableTbody, TableTd, TableTh, TableThead, TableTr } from '@mantine/core';
+import { Box, Button, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
+import { useShallowEffect } from '@mantine/hooks';
 import { IconDeviceImac, IconSearch } from '@tabler/icons-react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../_com/header';
 import JudulList from '../../_com/judulList';
-import { useRouter } from 'next/navigation';
+import infoTeknoState from '../../_state/inovasi/info-tekno';
 
 function InfoTeknologiTepatGuna() {
+  const [search, setSearch] = useState("");
   return (
     <Box>
       <HeaderSearch
         title='Info Teknologi Tepat Guna'
         placeholder='pencarian'
         searchIcon={<IconSearch size={20} />}
+        value={search}
+        onChange={(e) => setSearch(e.currentTarget.value)}
       />
-      <ListInfoTeknologiTepatGuna/>
+      <ListInfoTeknologiTepatGuna search={search} />
     </Box>
   );
 }
 
-function ListInfoTeknologiTepatGuna() {
-  const router = useRouter();
+function ListInfoTeknologiTepatGuna({ search }: { search: string }) {
+  const state = useProxy(infoTeknoState)
+  const router = useRouter()
+  useShallowEffect(() => {
+    state.findMany.load()
+  }, [])
+
+  const filteredData = (state.findMany.data || []).filter(item => {
+    const keyword = search.toLowerCase();
+    return (
+      item.name.toLowerCase().includes(keyword) ||
+      item.deskripsi.toLowerCase().includes(keyword)
+    );
+  });
+
+  if (!state.findMany.data) {
+    return (
+      <Stack py={10}>
+        <Skeleton h={500} />
+      </Stack>
+    )
+  }
   return (
     <Box py={10}>
       <Paper bg={colors['white-1']} p={'md'}>
@@ -32,24 +59,26 @@ function ListInfoTeknologiTepatGuna() {
           <TableThead>
             <TableTr>
               <TableTh>Nama Info Teknologi Tepat Guna</TableTh>
-              <TableTh>Image</TableTh>
-              <TableTh>Deskripsi</TableTh>
+              <TableTh>Deskripsi Singkat Info Teknologi Tepat Guna</TableTh>
               <TableTh>Detail</TableTh>
-              </TableTr>
+            </TableTr>
           </TableThead>
           <TableTbody>
-            <TableTr>
-              <TableTd>Info Teknologi Tepat Guna 1</TableTd>
-              <TableTd>Image</TableTd>
-              <TableTd>Deskripsi</TableTd>
+            {filteredData.map((item) => (
+              <TableTr key={item.id}>
+                <TableTd>{item.name}</TableTd>
+                <TableTd>
+                  <Text truncate="end" fz={"sm"} dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
+                </TableTd>
               <TableTd>
-                <Button onClick={() => router.push('/admin/inovasi/info-teknologi-tepat-guna/detail')}>
+                <Button onClick={() => router.push(`/admin/inovasi/info-teknologi-tepat-guna/${item.id}`)}>
                   <IconDeviceImac size={20} />
                 </Button>
               </TableTd>
             </TableTr>
+          ))}
           </TableTbody>
-        </Table>  
+        </Table>
       </Paper>
     </Box>
   );
