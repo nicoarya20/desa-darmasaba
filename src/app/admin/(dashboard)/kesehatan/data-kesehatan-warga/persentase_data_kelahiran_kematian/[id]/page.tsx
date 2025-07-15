@@ -52,7 +52,6 @@ const handleSubmit = async () => {
     toast.error('Gagal memperbarui data');
   }
 };
-
   return (
     <Box>
       <Box mb={10}>

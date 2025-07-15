@@ -2,6 +2,7 @@ import prisma from "@/lib/prisma";
 import { Context } from "elysia";
 
 export default async function grafikKepuasanDelete(context: Context) {
+
   const id = context.params?.id;
 
   if (!id) {

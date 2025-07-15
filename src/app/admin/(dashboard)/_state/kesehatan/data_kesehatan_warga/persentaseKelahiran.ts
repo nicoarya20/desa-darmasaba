@@ -81,7 +81,6 @@ const persentasekelahiran = proxy({
       }
     },
   },
-
   findUnique: {
     data: null as Prisma.DataKematian_KelahiranGetPayload<{
       omit: { isActive: true };
@@ -176,7 +175,6 @@ const persentasekelahiran = proxy({
             },
           }
         );
-
         const result = await response.json();
 
         if (response.ok && result?.success) {
