@@ -1,3 +1,4 @@
+
 'use client'
 import colors from '@/con/colors';
 import { Box, SimpleGrid, Stack, Text } from '@mantine/core';

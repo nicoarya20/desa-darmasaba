@@ -25,6 +25,11 @@ function LayoutTabsLayananOnlineDesa({ children }: { children: React.ReactNode }
             href: "/admin/inovasi/layanan-online-desa/pengaduan-masyarakat"
         },
         {
+            label: "Jenis Pengaduan",
+            value: "jenispengaduan",
+            href: "/admin/inovasi/layanan-online-desa/jenis-pengaduan"
+        },
+        {
             label: "Informasi Desa",
             value: "informasidesa",
             href: "/admin/inovasi/layanan-online-desa/informasi-desa"

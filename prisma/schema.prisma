@@ -74,28 +74,18 @@ model FileStorage {
   ProgramKesehatan         ProgramKesehatan[]
   PenangananDarurat        PenangananDarurat[]
   KontakDarurat            KontakDarurat[]
-
-  InfoWabahPenyakit InfoWabahPenyakit[]
-
-  KeamananLingkungan KeamananLingkungan[]
-
-  MenuTipsKeamanan MenuTipsKeamanan[]
-
-  Pelapor Pelapor[]
-
-  PasarDesa PasarDesa[]
-
-  KontakDaruratKeamanan KontakDaruratKeamanan[]
-
-  KontakItem KontakItem[]
-
-  Pegawai Pegawai[]
-
-  DesaDigital DesaDigital[]
-
-  KolaborasiInovasi KolaborasiInovasi[]
-
-  InfoTekno InfoTekno[]
+  InfoWabahPenyakit        InfoWabahPenyakit[]
+  KeamananLingkungan       KeamananLingkungan[]
+  MenuTipsKeamanan         MenuTipsKeamanan[]
+  Pelapor                  Pelapor[]
+  PasarDesa                PasarDesa[]
+  KontakDaruratKeamanan    KontakDaruratKeamanan[]
+  KontakItem               KontakItem[]
+  Pegawai                  Pegawai[]
+  DesaDigital              DesaDigital[]
+  KolaborasiInovasi        KolaborasiInovasi[]
+  InfoTekno                InfoTekno[]
+  PengaduanMasyarakat      PengaduanMasyarakat[]
 }
 
 //========================================= MENU PPID ========================================= //
@@ -1405,25 +1395,54 @@ model AjukanIdeInovatif {
 
 // ========================================= LAYANAN ONLINE DESA ========================================= //
 model AdministrasiOnline {
-  id                               String                             @id @default(cuid())
-  name                             String
-  alamat                           String
-  nomorTelepon                     String
-  jenisLayanan                     JenisLayanan                       @relation(fields: [jenisLayananId], references: [id])
-  jenisLayananId                   String
-  createdAt                        DateTime                           @default(now())
-  updatedAt                        DateTime                           @updatedAt
-  deletedAt                        DateTime                           @default(now())
-  isActive                         Boolean                            @default(true)
+  id             String       @id @default(cuid())
+  name           String
+  alamat         String
+  nomorTelepon   String
+  jenisLayanan   JenisLayanan @relation(fields: [jenisLayananId], references: [id])
+  jenisLayananId String
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  deletedAt      DateTime     @default(now())
+  isActive       Boolean      @default(true)
 }
 
 model JenisLayanan {
-  id                               String                             @id @default(uuid())
-  nama                             String
-  deskripsi                        String                             @db.Text
-  createdAt                        DateTime                           @default(now())
-  updatedAt                        DateTime                           @updatedAt
-  deletedAt                        DateTime                           @default(now())
-  isActive                         Boolean                            @default(true)
-  AdministrasiOnline               AdministrasiOnline[]
+  id                 String               @id @default(uuid())
+  nama               String
+  deskripsi          String               @db.Text
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  deletedAt          DateTime             @default(now())
+  isActive           Boolean              @default(true)
+  AdministrasiOnline AdministrasiOnline[]
+}
+
+model PengaduanMasyarakat {
+  id                 String         @id @default(cuid())
+  name               String
+  email              String
+  nomorTelepon       String
+  nik                String
+  judulPengaduan     String
+  lokasiKejadian     String
+  image              FileStorage    @relation(fields: [imageId], references: [id])
+  imageId            String
+  deskripsiPengaduan String         @db.Text
+  jenisPengaduan     JenisPengaduan @relation(fields: [jenisPengaduanId], references: [id])
+  jenisPengaduanId   String
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+  deletedAt          DateTime       @default(now())
+  isActive           Boolean        @default(true)
+}
+
+model JenisPengaduan {
+  id                  String                @id @default(uuid())
+  nama                String
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+  deletedAt           DateTime              @default(now())
+  isActive            Boolean               @default(true)
+  PengaduanMasyarakat PengaduanMasyarakat[]
 }
