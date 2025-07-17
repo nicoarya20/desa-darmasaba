@@ -82,7 +82,7 @@ function PengaduanMasyarakat() {
         >
           <Paper p={'xl'} >
             <Box>
-              <IconMessageCircleQuestion size={50} color={colors['blue-button']} />,
+              <IconMessageCircleQuestion size={50} color={colors['blue-button']} />
             </Box>
             <Text fz={'h3'} fw={'bold'} c={colors['blue-button']}>Pengaduan Masyarakat</Text>
             <Text fz={'lg'} c={'black'}>Sampaikan keluhan dan aspirasi Anda melalui platform digital kami</Text>

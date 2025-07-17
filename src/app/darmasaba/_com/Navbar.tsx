@@ -34,7 +34,7 @@ export function Navbar() {
             }}
               size={80} radius={"xl"}
             >
-              <Image src="/api/img/darmasaba-icon.png" alt="Logo Desa" width={50} height={50} />
+              <Image src="/darmasaba-icon.png" alt="Logo Desa" width={50} height={50} />
             </ActionIcon>
             <Burger onClick={() => stateNav.mobileOpen = !stateNav.mobileOpen} color={colors["blue-button"]} opened={mobileOpen} />
           </Group>

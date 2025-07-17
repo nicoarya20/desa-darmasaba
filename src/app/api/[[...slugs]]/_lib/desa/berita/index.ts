@@ -5,6 +5,8 @@ import beritaCreate from "./create";
 import beritaDelete from "./del";
 import beritaUpdate from "./updt";
 import findBeritaById from "./find-by-id";
+import beritaFindFirst from "./findFirst";
+import findRecentBerita from "./findRecent";
 
 const Berita = new Elysia({ prefix: "/berita", tags: ["Desa/Berita"] })
   .get("/category/find-many", kategoriBeritaFindMany)
@@ -22,6 +24,8 @@ const Berita = new Elysia({ prefix: "/berita", tags: ["Desa/Berita"] })
       kategoriBeritaId: t.Union([t.String(), t.Null()]),
     }),
   })
+  .get("/find-first", beritaFindFirst)
+  .get("/find-recent", findRecentBerita)
   .delete("/delete/:id", beritaDelete)
   .put(
     "/:id",
@@ -39,5 +43,6 @@ const Berita = new Elysia({ prefix: "/berita", tags: ["Desa/Berita"] })
       }),
     }
   );
+  
 
 export default Berita;

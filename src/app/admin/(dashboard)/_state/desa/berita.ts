@@ -263,6 +263,59 @@ const berita = proxy({
       berita.edit.form = { ...defaultForm };
     },
   },
+  findFirst: {
+    data: null as Prisma.BeritaGetPayload<{
+      include: {
+        image: true;
+        kategoriBerita: true;
+      };
+    }> | null,
+    loading: false,
+    async load() {
+      this.loading = true;
+      try {
+        const res = await ApiFetch.api.desa.berita["find-first"].get();
+        if (res.status === 200 && res.data?.success) {
+          // Add type assertion to ensure type safety
+          berita.findFirst.data = res.data.data as Prisma.BeritaGetPayload<{
+            include: {
+              image: true;
+              kategoriBerita: true;
+            };
+          }> | null;
+        }
+      } catch (err) {
+        console.error("Gagal fetch berita terbaru:", err);
+      } finally {
+        this.loading = false;
+      }
+    },
+  },
+  findRecent: {
+    data: [] as Prisma.BeritaGetPayload<{
+      include: {
+        image: true;
+        kategoriBerita: true;
+      };
+    }>[],
+    loading: false,
+  
+    async load() {
+      try {
+        this.loading = true;
+        const res = await ApiFetch.api.desa.berita["find-recent"].get();
+        if (res.status === 200 && res.data?.success) {
+          this.data = res.data.data ?? [];
+        }
+      } catch (error) {
+        console.error("Gagal fetch berita recent:", error);
+      } finally {
+        this.loading = false;
+      }
+    },
+  }
+   
+  
   
 });
 

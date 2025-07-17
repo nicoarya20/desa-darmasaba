@@ -6,6 +6,8 @@ import pengumumanCategoryFindMany from "./category";
 import pengumumanDelete from "./del";
 import pengumumanFindById from "./find-by-id";
 import pengumumanUpdate from "./updt";
+import pengumumanFindFirst from "./findFirst";
+import pengumumanFindRecent from "./findRecent";
 
 const Pengumuman = new Elysia({ prefix: "/pengumuman", tags: ["Desa/Pengumuman"] })
   .get("/category/find-many", pengumumanCategoryFindMany)
@@ -20,6 +22,8 @@ const Pengumuman = new Elysia({ prefix: "/pengumuman", tags: ["Desa/Pengumuman"]
       categoryPengumumanId: t.Union([t.String(), t.Null()]),
     }),
   })
+  .get("/find-first", pengumumanFindFirst)
+  .get("/find-recent", pengumumanFindRecent)
   .put("/:id", pengumumanUpdate, {
     body: t.Object({
       id: t.String(),

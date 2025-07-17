@@ -68,11 +68,11 @@ const pengumuman = proxy({
   },
   findMany: {
     data: null as
-      | Prisma.PengumumanGetPayload<{ 
-        include: {
+      | Prisma.PengumumanGetPayload<{
+          include: {
             CategoryPengumuman: true;
-        }
-       }>[]
+          };
+        }>[]
       | null,
     async load() {
       const res = await ApiFetch.api.desa.pengumuman["find-many"].get();
@@ -82,30 +82,28 @@ const pengumuman = proxy({
       }
     },
   },
-  // findUnique: {
-  //   data: null as
-  //   | Prisma.PengumumanGetPayload<{
-  //       include: {
-  //           CategoryPengumuman: true;
-  //       }
-  //   }>
-  //   | null,
-  //   async load(id: string) {
-  //     try {
-  //       const res = await fetch(`/api/desa/pengumuman/${id}`);
-  //       if (res.ok) {
-  //         const data = await res.json();
-  //         pengumuman.findUnique.data = data.data ?? null;
-  //       } else {
-  //         console.error('Failed to fetch pengumuman:', res.statusText);
-  //         pengumuman.findUnique.data = null;
-  //       }
-  //     } catch (error) {
-  //       console.error('Error fetching pengumuman:', error);
-  //       pengumuman.findUnique.data = null;
-  //     }
-  //   },
-  // },
+  findUnique: {
+    data: null as Prisma.PengumumanGetPayload<{
+      include: {
+        CategoryPengumuman: true;
+      };
+    }> | null,
+    async load(id: string) {
+      try {
+        const res = await fetch(`/api/desa/pengumuman/${id}`);
+        if (res.ok) {
+          const data = await res.json();
+          pengumuman.findUnique.data = data.data ?? null;
+        } else {
+          console.error("Failed to fetch pengumuman:", res.statusText);
+          pengumuman.findUnique.data = null;
+        }
+      } catch (error) {
+        console.error("Error fetching pengumuman:", error);
+        pengumuman.findUnique.data = null;
+      }
+    },
+  },
   delete: {
     loading: false,
     async byId(id: string) {
@@ -234,6 +232,55 @@ const pengumuman = proxy({
         return false;
       } finally {
         pengumuman.update.loading = false;
+      }
+    },
+  },
+  findFirst: {
+    data: null as Prisma.PengumumanGetPayload<{
+      include: {
+        CategoryPengumuman: true;
+      };
+    }> | null,
+    loading: false,
+    async load() {
+      this.loading = true;
+      try {
+        const res = await ApiFetch.api.desa.pengumuman["find-first"].get();
+        if (res.status === 200 && res.data?.success) {
+          // Add type assertion to ensure type safety
+          pengumuman.findFirst.data = res.data
+            .data as Prisma.PengumumanGetPayload<{
+            include: {
+              CategoryPengumuman: true;
+            };
+          }> | null;
+        }
+      } catch (err) {
+        console.error("Gagal fetch pengumuman terbaru:", err);
+      } finally {
+        this.loading = false;
+      }
+    },
+  },
+  findRecent: {
+    data: [] as Prisma.PengumumanGetPayload<{
+      include: {
+        CategoryPengumuman: true;
+      };
+    }>[],
+    loading: false,
+
+    async load() {
+      try {
+        this.loading = true;
+        const res = await ApiFetch.api.desa.pengumuman["find-recent"].get();
+        if (res.status === 200 && res.data?.success) {
+          this.data = res.data.data ?? [];
+        }
+      } catch (error) {
+        console.error("Gagal fetch pengumuman recent:", error);
+      } finally {
+        this.loading = false;
       }
     },
   },
