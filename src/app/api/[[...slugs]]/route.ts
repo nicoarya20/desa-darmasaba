@@ -20,6 +20,7 @@ import FileStorage from "./_lib/fileStorage";
 import Keamanan from "./_lib/keamanan";
 import Ekonomi from "./_lib/ekonomi";
 import Inovasi from "./_lib/inovasi";
+import Lingkungan from "./_lib/lingkungan";
 
 
 const ROOT = process.cwd();
@@ -83,6 +84,7 @@ const ApiServer = new Elysia()
   .use(FileStorage)
   .use(Ekonomi)
   .use(Inovasi)
+  .use(Lingkungan)
   .onError(({ code }) => {
     if (code === "NOT_FOUND") {
       return {

@@ -308,7 +308,7 @@ export const navBar = [
       {
         id: "Lingkungan_1",
         name: "Pengelolaan Sampah (Bank Sampah)",
-        path: "/admin/lingkungan/pengelolaan-sampah-bank-sampah"
+        path: "/admin/lingkungan/pengelolaan-sampah-bank-sampah/list-pengelolaan-sampah-bank-sampah"
       },
       {
         id: "Lingkungan_2",

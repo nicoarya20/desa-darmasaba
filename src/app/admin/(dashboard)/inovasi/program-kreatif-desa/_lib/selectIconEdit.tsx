@@ -3,10 +3,14 @@
 import { Box, rem, Select } from '@mantine/core';
 import {
   IconChartLine,
+  IconClipboardTextFilled,
   IconLeaf,
   IconRecycle,
+  IconScale,
   IconTent,
+  IconTrashFilled,
   IconTrophy,
+  IconTruckFilled,
 } from '@tabler/icons-react';
 
 const iconMap = {
@@ -15,6 +19,10 @@ const iconMap = {
   wisata: { label: 'Wisata', icon: IconTent },
   ekonomi: { label: 'Ekonomi', icon: IconChartLine },
   sampah: { label: 'Sampah', icon: IconRecycle },
+  truck: { label: 'Truck', icon: IconTruckFilled },
+  scale: { label: 'Scale', icon: IconScale },
+  clipboard: { label: 'Clipboard', icon: IconClipboardTextFilled },
+  trash: { label: 'Trash', icon: IconTrashFilled },
 };
 
 type IconKey = keyof typeof iconMap;
