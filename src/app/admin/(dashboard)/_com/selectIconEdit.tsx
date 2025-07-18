@@ -1,19 +1,21 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 
 import { Box, rem, Select } from '@mantine/core';
 import {
   IconChartLine,
+  IconChristmasTreeFilled,
   IconClipboardTextFilled,
+  IconHomeEco,
   IconLeaf,
   IconRecycle,
   IconScale,
+  IconShieldFilled,
   IconTent,
   IconTrashFilled,
+  IconTrendingUp,
   IconTrophy,
   IconTruckFilled,
 } from '@tabler/icons-react';
-import { useEffect, useState } from 'react';
 
 const iconMap = {
   ekowisata: { label: 'Ekowisata', icon: IconLeaf },
@@ -25,7 +27,10 @@ const iconMap = {
   scale: { label: 'Scale', icon: IconScale },
   clipboard: { label: 'Clipboard', icon: IconClipboardTextFilled },
   trash: { label: 'Trash', icon: IconTrashFilled },
-
+  lingkunganSehat: {label: 'Lingkungan Sehat', icon: IconHomeEco},
+  sumberOksigen: {label: 'Sumber Oksigen', icon: IconChristmasTreeFilled},
+  ekonomiBerkelanjutan: {label: 'Ekonomi Berkelanjutan', icon: IconTrendingUp},
+  mencegahBencana: {label: 'Mencegah Bencana', icon: IconShieldFilled},
 };
 
 type IconKey = keyof typeof iconMap;
@@ -35,26 +40,22 @@ const iconList = Object.entries(iconMap).map(([value, data]) => ({
   label: data.label,
 }));
 
-export default function SelectIconProgram(
-  { onChange }: { onChange: (value: IconKey) => void }) {
-  const [selectedIcon, setSelectedIcon] = useState<IconKey>('ekowisata');
-  const IconComponent = iconMap[selectedIcon]?.icon || null;
-
-  // Push default icon ke state saat render awal
-  useEffect(() => {
-    onChange(selectedIcon);
-  }, []);
+export default function SelectIconProgramEdit({
+  onChange,
+  value,
+}: {
+  onChange: (value: IconKey) => void;
+  value: IconKey;
+}) {
+  const IconComponent = iconMap[value]?.icon || null;
 
   return (
     <Box maw={300}>
       <Select
         placeholder="Pilih ikon"
-        value={selectedIcon}
+        value={value}
         onChange={(value) => {
-          if (value) {
-            setSelectedIcon(value as IconKey);
-            onChange(value as IconKey);
-          }
+          if (value) onChange(value as IconKey);
         }}
         data={iconList}
         leftSection={
@@ -82,3 +83,4 @@ export default function SelectIconProgram(
     </Box>
   );
 }
+

@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import pengelolaanSampahState from '@/app/admin/(dashboard)/_state/lingkungan/pengelolaan-sampah';
-import SelectIconProgramEdit from '@/app/admin/(dashboard)/inovasi/program-kreatif-desa/_lib/selectIconEdit';
+import SelectIconProgramEdit from '@/app/admin/(dashboard)/_com/selectIconEdit';
 import colors from '@/con/colors';
 import { Box, Button, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';

@@ -9,7 +9,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
-import SelectIconProgramEdit from '../../_lib/selectIconEdit';
+import SelectIconProgramEdit from '../../../../_com/selectIconEdit';
 
 interface FormProgramKreatif {
   name: string;

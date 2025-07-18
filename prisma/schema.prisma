@@ -1446,7 +1446,7 @@ model JenisPengaduan {
   isActive            Boolean               @default(true)
   PengaduanMasyarakat PengaduanMasyarakat[]
 }
-
+// ========================================= LINGKUNGAN ========================================= //
 // ========================================= PENGELOLAAN SAMPAH ========================================= //
 model PengelolaanSampah {
   id        String   @id @default(cuid())
@@ -1472,3 +1472,15 @@ model KeteranganBankSampahTerdekat {
   isActive         Boolean  @default(true)
 }
 
+// ========================================= PORGRAM PENGHIJAUAN ========================================= //
+model ProgramPenghijauan {
+  id        String   @id @default(cuid())
+  name      String
+  judul     String   @db.Text //deskripsi singkat
+  deskripsi String   @db.Text //deskripsi panjang
+  icon      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive  Boolean  @default(true)
+}

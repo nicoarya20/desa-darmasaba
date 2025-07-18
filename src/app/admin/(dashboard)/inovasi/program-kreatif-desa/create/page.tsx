@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
 import CreateEditor from '../../../_com/createEditor';
 import programKreatifState from '../../../_state/inovasi/program-kreatif';
-import SelectIconProgram from '../_lib/selectIcon';
+import SelectIconProgram from '../../../_com/selectIcon';
 
 
 function CreateProgramKreatifDesa() {

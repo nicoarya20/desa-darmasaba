@@ -3,7 +3,7 @@
 import colors from '@/con/colors';
 import { Box, Button, Flex, Paper, Skeleton, Stack, Text } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { IconArrowBack, IconChartLine, IconEdit, IconLeaf, IconRecycle, IconTent, IconTrophy, IconX } from '@tabler/icons-react';
+import { IconArrowBack, IconChartLine, IconChristmasTreeFilled, IconClipboard, IconEdit, IconHomeEco, IconLeaf, IconRecycle, IconScale, IconShieldFilled, IconTent, IconTrash, IconTrendingUp, IconTrophy, IconTruck, IconX } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import { useProxy } from 'valtio/utils';
@@ -25,6 +25,14 @@ function DetailProgramKreatifDesa() {
     wisata: IconTent,
     ekonomi: IconChartLine,
     sampah: IconRecycle,
+    truck: IconTruck,
+    scale: IconScale,
+    clipboard: IconClipboard,
+    trash: IconTrash,
+    lingkunganSehat: IconHomeEco,
+    sumberOksigen: IconChristmasTreeFilled,
+    ekonomiBerkelanjutan: IconTrendingUp,
+    mencegahBencana: IconShieldFilled,
   };
 
   useShallowEffect(() => {
