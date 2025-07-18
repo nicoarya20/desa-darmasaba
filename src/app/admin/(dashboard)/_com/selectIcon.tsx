@@ -6,6 +6,8 @@ import {
   IconChartLine,
   IconChristmasTreeFilled,
   IconClipboardTextFilled,
+  IconDroplet,
+  IconHome,
   IconHomeEco,
   IconLeaf,
   IconRecycle,
@@ -13,6 +15,7 @@ import {
   IconShieldFilled,
   IconTent,
   IconTrashFilled,
+  IconTree,
   IconTrendingUp,
   IconTrophy,
   IconTruckFilled,
@@ -33,6 +36,9 @@ const iconMap = {
   sumberOksigen: {label: 'Sumber Oksigen', icon: IconChristmasTreeFilled},
   ekonomiBerkelanjutan: {label: 'Ekonomi Berkelanjutan', icon: IconTrendingUp},
   mencegahBencana: {label: 'Mencegah Bencana', icon: IconShieldFilled},
+  rumah: {label: 'Rumah', icon: IconHome},
+  pohon: {label: 'Pohon', icon: IconTree},
+  air: {label: 'Air', icon: IconDroplet}
 
 };
 

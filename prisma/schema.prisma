@@ -1484,3 +1484,16 @@ model ProgramPenghijauan {
   deletedAt DateTime @default(now())
   isActive  Boolean  @default(true)
 }
+
+// ========================================= DATA LINGKUNGAN DESA ========================================= //
+model DataLingkunganDesa {
+  id        String   @id @default(cuid())
+  name      String
+  jumlah    String
+  deskripsi String   @db.Text //deskripsi panjang
+  icon      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive  Boolean  @default(true)
+}
