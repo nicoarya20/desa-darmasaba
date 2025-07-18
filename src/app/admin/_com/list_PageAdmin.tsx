@@ -328,7 +328,7 @@ export const navBar = [
       {
         id: "Lingkungan_5",
         name: "Edukasi Lingkungan",
-        path: "/admin/lingkungan/edukasi-lingkungan"
+        path: "/admin/lingkungan/edukasi-lingkungan/tujuan-edukasi-lingkungan"
       },
       {
         id: "Lingkungan_6",
