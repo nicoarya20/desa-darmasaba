@@ -19,7 +19,7 @@ type IconKey = 'ekowisata' | 'kompetisi' | 'wisata' | 'ekonomi' | 'sampah' | 'tr
 
 
 function EditProgramKreatifDesa() {
-  const stateSampah = useProxy(pengelolaanSampahState)
+  const stateSampah = useProxy(pengelolaanSampahState.pengelolaanSampah)
   const params = useParams()
   const router = useRouter();
   const [formData, setFormData] = useState<FormProgramKreatif>({

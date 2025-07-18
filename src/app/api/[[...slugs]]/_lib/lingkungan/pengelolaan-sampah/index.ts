@@ -4,6 +4,7 @@ import pengelolaanSampahDelete from "./del";
 import pengelolaanSampahFindMany from "./findMany";
 import pengelolaanSampahFindUnique from "./findUnique";
 import pengelolaanSampahUpdate from "./updt";
+import KeteranganBankSampahTerdekat from "./keterangan-bank-sampah";
 
 const PengelolaanSampah = new Elysia({
   prefix: "/pengelolaansampah",
@@ -33,5 +34,6 @@ const PengelolaanSampah = new Elysia({
       }),
     }
   )
-  .delete("/del/:id", pengelolaanSampahDelete);
+  .delete("/del/:id", pengelolaanSampahDelete)
+  .use(KeteranganBankSampahTerdekat);
 export default PengelolaanSampah;

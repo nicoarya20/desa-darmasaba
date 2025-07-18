@@ -11,7 +11,7 @@ import { useProxy } from 'valtio/utils';
 
 
 function CreatePengelolaanSampahBankSampah() {
-  const stateCreate = useProxy(pengelolaanSampahState)
+  const stateCreate = useProxy(pengelolaanSampahState.pengelolaanSampah)
   const router = useRouter();
 
   const resetForm = () => {

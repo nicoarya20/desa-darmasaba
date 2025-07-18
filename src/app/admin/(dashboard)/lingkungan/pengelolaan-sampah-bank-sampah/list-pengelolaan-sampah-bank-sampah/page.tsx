@@ -31,7 +31,7 @@ function PengelolaanSampahBankSampah() {
 }
 
 function ListPengelolaanSampahBankSampah({ search }: { search: string }) {
-  const stateList = useProxy(pengelolaanSampahState)
+  const stateList = useProxy(pengelolaanSampahState.pengelolaanSampah)
   const [modalHapus, setModalHapus] = useState(false)
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const router = useRouter()

@@ -28,13 +28,7 @@ function LayoutTabsLayananOnlineDesa({ children }: { children: React.ReactNode }
             label: "Jenis Pengaduan",
             value: "jenispengaduan",
             href: "/admin/inovasi/layanan-online-desa/jenis-pengaduan"
-        },
-        {
-            label: "Informasi Desa",
-            value: "informasidesa",
-            href: "/admin/inovasi/layanan-online-desa/informasi-desa"
         }
-        
     ];
     const curentTab = tabs.find(tab => tab.href === pathname)
     const [activeTab, setActiveTab] = useState<string | null>(curentTab?.value || tabs[0].value);

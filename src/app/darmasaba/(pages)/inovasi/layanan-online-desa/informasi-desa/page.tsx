@@ -39,96 +39,102 @@ function InformasiDesa() {
       </Box>
       <Box px={{ base: "md", md: 100 }}>
         <Stack gap={10}>
-        {dataBerita && (
-          <Paper shadow="md" radius="md" p="md">
+          {dataBerita && (
+            <Paper shadow="md" radius="md" p="md">
+              <Grid>
+                <GridCol span={{ md: 6, base: 12 }}>
+                  <Image
+                    src={dataBerita.image?.link || "/fallback.jpg"}
+                    alt={dataBerita.judul}
+                    radius="md"
+                    fit="cover"
+                    height={250}
+                    maw={600}
+                  />
+                </GridCol>
+                <GridCol span={{ md: 6, base: 12 }}>
+                  <Box>
+                    <Text fz="sm" c="dimmed">{dataBerita.kategoriBerita?.name} • {dayjs(dataBerita.createdAt).fromNow()}</Text>
+                    <Title order={1} fw="bold">{dataBerita.judul}</Title>
+                    <Text ta={"justify"} mt="xs" fz="md" dangerouslySetInnerHTML={{ __html: dataBerita.content }} />
+                  </Box>
+                </GridCol>
+              </Grid>
+            </Paper>
+          )}
+          <Stack py={10}>
+            <Title order={3}>Berita Terbaru</Title>
             <Grid>
-              <GridCol span={{ md: 6, base: 12 }}>
-                <Image
-                  src={dataBerita.image?.link || "/fallback.jpg"}
-                  alt={dataBerita.judul}
-                  radius="md"
-                  fit="cover"
-                  height={250}
-                  maw={600}
-                />
-              </GridCol>
-              <GridCol span={{ md: 6, base: 12 }}>
-                <Box>
-                  <Text fz="sm" c="dimmed">{dataBerita.kategoriBerita?.name} • {dayjs(dataBerita.createdAt).fromNow()}</Text>
-                  <Title order={1} fw="bold">{dataBerita.judul}</Title>
-                  <Text ta={"justify"} mt="xs" fz="md" dangerouslySetInnerHTML={{ __html: dataBerita.content }} />
-                </Box>
-              </GridCol>
+              {stateBerita.findRecent.data.map((item) => (
+                <GridCol span={{ base: 12, sm: 6, md: 3 }} key={item.id}>
+                  <Card shadow="sm" radius="md" withBorder h="100%">
+                    <Card.Section>
+                      <Image
+                        src={item.image?.link || "/placeholder.jpg"}
+                        alt={item.judul}
+                        height={160} // gambar fix height
+                        fit="cover"
+                      />
+                    </Card.Section>
+                    <Stack gap="xs" mt="sm">
+                      <Text fw={600} lineClamp={2}>
+                        {item.judul}
+                      </Text>
+                      <Text size="sm" color="dimmed" lineClamp={2}>
+                        {item.deskripsi}
+                      </Text>
+                      <Text size="xs" c="gray">
+                        {dayjs(item.createdAt).fromNow()}
+                      </Text>
+                    </Stack>
+                  </Card>
+                </GridCol>
+              ))}
             </Grid>
-          </Paper>
-        )}
-        <Stack py={10}>
-          <Title order={3}>Berita Terbaru</Title>
-          <Grid>
-            {stateBerita.findRecent.data.map((item) => (
-              <GridCol span={{ base: 12, sm: 6, md: 3 }} key={item.id}>
-                <Card shadow="sm" radius="md" withBorder h="100%">
-                  <Card.Section>
-                    <Image
-                      src={item.image?.link || "/placeholder.jpg"}
-                      alt={item.judul}
-                      height={160} // gambar fix height
-                      fit="cover"
-                    />
-                  </Card.Section>
-                  <Stack gap="xs" mt="sm">
-                    <Text fw={600} lineClamp={2}>
-                      {item.judul}
-                    </Text>
-                    <Text size="sm" color="dimmed" lineClamp={2}>
-                      {item.deskripsi}
-                    </Text>
-                    <Text size="xs" c="gray">
-                      {dayjs(item.createdAt).fromNow()}
-                    </Text>
-                  </Stack>
-                </Card>
-              </GridCol>
-            ))}
-          </Grid>
 
-        </Stack>
-      <Divider color={colors['blue-button']} my="md" />
-      {dataPengumuman && (
-          <Paper shadow="md" radius="md" p="md">
-            <Stack gap={"xs"}>
-              <Title order={1} fw="bold">{dataPengumuman.judul}</Title>
-              <Text fz="sm" c="dimmed">{dataPengumuman.CategoryPengumuman?.name} • {dayjs(dataPengumuman.createdAt).fromNow()}</Text>
-              <Box>
-                <Text ta={"justify"} mt="xs" fz="md" dangerouslySetInnerHTML={{ __html: dataPengumuman.content }} />
-              </Box>
-            </Stack>
-          </Paper>
-        )}
-        <Stack py={10}>
-          <Title order={3}>Pengumuman Terbaru</Title>
+          </Stack>
+          <Divider color={colors['blue-button']} my="md" />
           <Grid>
-            {statePengumuman.findRecent.data.map((item) => (
-              <GridCol span={{ base: 12, sm: 6, md: 3 }} key={item.id}>
-                <Card shadow="sm" radius="md" withBorder h="100%">
-                  <Stack gap="xs" mt="sm">
-                    <Text fw={600} lineClamp={2}>
-                      {item.judul}
-                    </Text>
-                    <Text size="sm" color="dimmed" lineClamp={2}>
-                      {item.deskripsi}
-                    </Text>
-                    <Text size="xs" c="gray">
-                      {dayjs(item.createdAt).fromNow()}
-                    </Text>
+            <GridCol span={{ md: 6, base: 12 }}>
+              {dataPengumuman && (
+                <Paper h={"97%"} shadow="md" radius="md" p="md">
+                  <Stack gap={"xs"}>
+                    <Title order={1} fw="bold">{dataPengumuman.judul}</Title>
+                    <Text fz="sm" c="dimmed">{dataPengumuman.CategoryPengumuman?.name} • {dayjs(dataPengumuman.createdAt).fromNow()}</Text>
+                    <Box>
+                      <Text ta={"justify"} mt="xs" fz="md" dangerouslySetInnerHTML={{ __html: dataPengumuman.content }} />
+                    </Box>
                   </Stack>
-                </Card>
-              </GridCol>
-            ))}
-          </Grid>
+                </Paper>
+              )}
+            </GridCol>
+            <GridCol span={{ md: 6, base: 12 }}>
+              <Stack py={10}>
+                <Title order={3}>Pengumuman Terbaru</Title>
+                <Grid>
+                  {statePengumuman.findRecent.data.map((item) => (
+                    <GridCol span={{ base: 12, sm: 8, md: 6 }} key={item.id}>
+                      <Card shadow="sm" radius="md" withBorder h="100%">
+                        <Stack gap="xs" mt="sm">
+                          <Text fw={600} lineClamp={2}>
+                            {item.judul}
+                          </Text>
+                          <Text size="sm" color="dimmed" lineClamp={2}>
+                            {item.deskripsi}
+                          </Text>
+                          <Text size="xs" c="gray">
+                            {dayjs(item.createdAt).fromNow()}
+                          </Text>
+                        </Stack>
+                      </Card>
+                    </GridCol>
+                  ))}
+                </Grid>
 
+              </Stack>
+            </GridCol>
+          </Grid>
         </Stack>
-      </Stack>
       </Box>
     </Stack>
   );
