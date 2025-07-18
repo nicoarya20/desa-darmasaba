@@ -1446,6 +1446,7 @@ model JenisPengaduan {
   isActive            Boolean               @default(true)
   PengaduanMasyarakat PengaduanMasyarakat[]
 }
+
 // ========================================= LINGKUNGAN ========================================= //
 // ========================================= PENGELOLAAN SAMPAH ========================================= //
 model PengelolaanSampah {
@@ -1492,6 +1493,37 @@ model DataLingkunganDesa {
   jumlah    String
   deskripsi String   @db.Text //deskripsi panjang
   icon      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive  Boolean  @default(true)
+}
+
+// ========================================= EDUKASI LINGKUNGAN ========================================= //
+model TujuanEdukasiLingkungan {
+  id        String   @id @default(cuid())
+  judul     String   @db.Text
+  deskripsi String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive  Boolean  @default(true)
+}
+
+model MateriEdukasiLingkungan {
+  id        String   @id @default(cuid())
+  judul     String   @db.Text
+  deskripsi String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive  Boolean  @default(true)
+}
+
+model ContohEdukasiLingkungan {
+  id        String   @id @default(cuid())
+  judul     String   @db.Text
+  deskripsi String   @db.Text
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   deletedAt DateTime @default(now())
