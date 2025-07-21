@@ -333,7 +333,7 @@ export const navBar = [
       {
         id: "Lingkungan_6",
         name: "Konservasi Adat Bali",
-        path: "/admin/lingkungan/konservasi-adat-bali"
+        path: "/admin/lingkungan/konservasi-adat-bali/filosofi-tri-hita-karana"
       }
     ]
   }, {

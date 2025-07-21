@@ -1529,3 +1529,34 @@ model ContohEdukasiLingkungan {
   deletedAt DateTime @default(now())
   isActive  Boolean  @default(true)
 }
+
+// ========================================= KONSERVASI ADAT BALI ========================================= //
+model FilosofiTriHita {
+  id        String   @id @default(cuid())
+  judul     String   @db.Text
+  deskripsi String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive  Boolean  @default(true)
+}
+
+model BentukKonservasiBerdasarkanAdat {
+  id        String   @id @default(cuid())
+  judul     String   @db.Text
+  deskripsi String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive  Boolean  @default(true)
+}
+
+model NilaiKonservasiAdat {
+  id        String   @id @default(cuid())
+  judul     String   @db.Text
+  deskripsi String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive  Boolean  @default(true)
+}

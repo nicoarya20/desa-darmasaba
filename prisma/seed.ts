@@ -25,6 +25,9 @@ import detailDataPengangguran from './data/ekonomi/jumlah-pengangguran/detail-da
 import tujuanEdukasiLingkungan from './data/lingkungan/edukasi-lingkungan/tujuan-edukasi-lingkungan.json';
 import materiEdukasiLingkungan from './data/lingkungan/edukasi-lingkungan/materi-edukasi-yang-diberikan.json';
 import contohEdukasiLingkungan from './data/lingkungan/edukasi-lingkungan/contoh-kegiatan-di-desa-darmasaba.json';
+import nilaiKonservasiAdat from './data/lingkungan/konservasi-adat-bali/nilai-konservasi-adat.json';
+import bentukKonservasiBerdasarkanAdat from './data/lingkungan/konservasi-adat-bali/bentuk-konservasi.json';
+import filosofiTriHita from './data/lingkungan/konservasi-adat-bali/filosofi-tri-hita.json';
 
 
 (async () => {
@@ -516,6 +519,64 @@ import contohEdukasiLingkungan from './data/lingkungan/edukasi-lingkungan/contoh
   }
 
   console.log("contoh edukasi lingkungan success ...");
+
+  for (const f of filosofiTriHita) {
+    await prisma.filosofiTriHita.upsert({
+      where: {
+        id: f.id,
+      },
+      update: {
+        judul: f.judul,
+        deskripsi: f.deskripsi,
+      },
+      create: {
+        id: f.id,
+        judul: f.judul,
+        deskripsi: f.deskripsi,
+      },
+    });
+  }
+
+  console.log("filosofi tri hita success ...");
+
+  for (const b of bentukKonservasiBerdasarkanAdat) {
+    await prisma.bentukKonservasiBerdasarkanAdat.upsert({
+      where: {
+        id: b.id,
+      },
+      update: {
+        judul: b.judul,
+        deskripsi: b.deskripsi,
+      },
+      create: {
+        id: b.id,
+        judul: b.judul,
+        deskripsi: b.deskripsi,
+      },
+    });
+  }
+
+  console.log("bentuk konservasi berdasarkan adat success ...");
+
+
+  for (const n of nilaiKonservasiAdat) {
+    await prisma.nilaiKonservasiAdat.upsert({
+      where: {
+        id: n.id,
+      },
+      update: {
+        judul: n.judul,
+        deskripsi: n.deskripsi,
+      },
+      create: {
+        id: n.id,
+        judul: n.judul,
+        deskripsi: n.deskripsi,
+      },
+    });
+  }
+
+  console.log("nilai konservasi adat success ...");
 
 })()
   .then(() => prisma.$disconnect())
