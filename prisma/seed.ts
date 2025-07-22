@@ -28,7 +28,7 @@ import contohEdukasiLingkungan from './data/lingkungan/edukasi-lingkungan/contoh
 import nilaiKonservasiAdat from './data/lingkungan/konservasi-adat-bali/nilai-konservasi-adat.json';
 import bentukKonservasiBerdasarkanAdat from './data/lingkungan/konservasi-adat-bali/bentuk-konservasi.json';
 import filosofiTriHita from './data/lingkungan/konservasi-adat-bali/filosofi-tri-hita.json';
-
+import profilePejabatDesa from './data/landing-page/profile.json';
 
 (async () => {
   for (const l of layanan) {
@@ -577,6 +577,22 @@ import filosofiTriHita from './data/lingkungan/konservasi-adat-bali/filosofi-tri
   }
 
   console.log("nilai konservasi adat success ...");
+
+  for (const p of profilePejabatDesa) {
+    await prisma.pejabatDesa.upsert({
+      where: { id: p.id },
+      update: {
+        name: p.name,
+        position: p.position,
+      },
+      create: {
+        id: p.id,
+        name: p.name,
+        position: p.position,
+      },
+    });
+  }
+  console.log("✅ profilePejabatDesa seeded without imageId (editable later via UI)");
 
 })()
   .then(() => prisma.$disconnect())

@@ -88,6 +88,50 @@ model FileStorage {
   PengaduanMasyarakat      PengaduanMasyarakat[]
 
   KegiatanDesa KegiatanDesa[]
+
+  ProgramInovasi ProgramInovasi[]
+
+  PejabatDesa PejabatDesa[]
+
+  MediaSosial MediaSosial[]
+}
+
+//========================================= MENU LANDING PAGE ========================================= //
+//========================================= PROFILE ========================================= //
+model PejabatDesa {
+  id        String      @id @default(cuid())
+  name      String      @unique @db.VarChar(255)
+  position  String
+  image     FileStorage? @relation(fields: [imageId], references: [id])
+  imageId   String?
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  deletedAt DateTime    @default(now())
+  isActive  Boolean     @default(true)
+}
+
+model ProgramInovasi {
+  id          String       @id @default(cuid())
+  name        String       @unique @db.VarChar(255)
+  description String?      @db.Text
+  image       FileStorage? @relation(fields: [imageId], references: [id])
+  imageId     String?
+  link        String?      @db.VarChar(255)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  deletedAt   DateTime?    @default(now())
+  isActive    Boolean      @default(true)
+}
+
+model MediaSosial {
+  id        String      @id @default(cuid())
+  image     FileStorage @relation(fields: [imageId], references: [id])
+  imageId   String
+  iconUrl   String?     @db.VarChar(255)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  deletedAt DateTime?
+  isActive  Boolean     @default(true)
 }
 
 //========================================= MENU PPID ========================================= //
@@ -1503,31 +1547,31 @@ model DataLingkunganDesa {
 
 // ========================================= GOTONG ROYONG ========================================= //
 model KegiatanDesa {
-  id                     String                   @id @default(uuid())
-  judul                  String
-  deskripsiSingkat       String
-  deskripsiLengkap       String
-  tanggal                DateTime
-  lokasi                 String
-  partisipan             Int
-  image                  FileStorage              @relation(fields: [imageId], references: [id])
-  imageId                String
-  createdAt              DateTime                 @default(now())
-  updatedAt              DateTime                 @updatedAt
-  deletedAt              DateTime                 @default(now())
-  isActive               Boolean                  @default(true)
-  kategoriKegiatan       KategoriKegiatan         @relation(fields: [kategoriKegiatanId], references: [id])
-  kategoriKegiatanId     String
+  id                 String           @id @default(uuid())
+  judul              String
+  deskripsiSingkat   String
+  deskripsiLengkap   String
+  tanggal            DateTime
+  lokasi             String
+  partisipan         Int
+  image              FileStorage      @relation(fields: [imageId], references: [id])
+  imageId            String
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+  deletedAt          DateTime         @default(now())
+  isActive           Boolean          @default(true)
+  kategoriKegiatan   KategoriKegiatan @relation(fields: [kategoriKegiatanId], references: [id])
+  kategoriKegiatanId String
 }
 
 model KategoriKegiatan {
-  id                     String                   @id @default(cuid())
-  nama                   String
-  createdAt              DateTime                 @default(now())
-  updatedAt              DateTime                 @updatedAt
-  deletedAt              DateTime                 @default(now())
-  isActive               Boolean                  @default(true)
-  KegiatanDesa           KegiatanDesa[]
+  id           String         @id @default(cuid())
+  nama         String
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  deletedAt    DateTime       @default(now())
+  isActive     Boolean        @default(true)
+  KegiatanDesa KegiatanDesa[]
 }
 
 // ========================================= EDUKASI LINGKUNGAN ========================================= //

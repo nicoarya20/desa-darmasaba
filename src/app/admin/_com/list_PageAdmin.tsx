@@ -7,7 +7,7 @@ export const navBar = [
       {
         id: "Landing_Page_1",
         name: "Profile",
-        path: "/admin/landing-page/profile"
+        path: "/admin/landing-page/profile/program-inovasi"
       },
       {
         id: "Landing_Page_2",

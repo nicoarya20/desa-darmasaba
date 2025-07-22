@@ -21,6 +21,7 @@ import Keamanan from "./_lib/keamanan";
 import Ekonomi from "./_lib/ekonomi";
 import Inovasi from "./_lib/inovasi";
 import Lingkungan from "./_lib/lingkungan";
+import LandingPage from "./_lib/landing_page";
 
 
 const ROOT = process.cwd();
@@ -85,6 +86,7 @@ const ApiServer = new Elysia()
   .use(Ekonomi)
   .use(Inovasi)
   .use(Lingkungan)
+  .use(LandingPage)
   .onError(({ code }) => {
     if (code === "NOT_FOUND") {
       return {
