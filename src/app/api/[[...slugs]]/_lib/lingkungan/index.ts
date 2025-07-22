@@ -5,6 +5,7 @@ import DataLingkunganDesa from "./data-lingkungan-desa";
 import EdukasiLingkungan from "./edukasi-lingkungan";
 import KonservasiAdatBali from "./konservasi-adat-bali";
 import KegiatanDesa from "./gotong-royong";
+import KategoriKegiatan from "./gotong-royong/kategori-kegiatan";
 
 const Lingkungan = new Elysia({
   prefix: "/api/lingkungan",
@@ -17,6 +18,7 @@ const Lingkungan = new Elysia({
 .use(EdukasiLingkungan)
 .use(KonservasiAdatBali)
 .use(KegiatanDesa)
+.use(KategoriKegiatan)
 
 
 export default Lingkungan;

@@ -22,7 +22,6 @@ const KategoriKegiatan = new Elysia({
   })
   .put("/:id", kategoriKegiatanUpdate, {
     body: t.Object({
-      id: t.String(),
       nama: t.String(),
     }),
   });

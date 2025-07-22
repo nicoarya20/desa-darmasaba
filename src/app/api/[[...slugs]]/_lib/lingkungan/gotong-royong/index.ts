@@ -4,7 +4,6 @@ import KegiatanDesaDelete from "./del";
 import KegiatanDesaFindMany from "./findMany";
 import KegiatanDesaFindUnique from "./findUnique";
 import KegiatanDesaUpdate from "./updt";
-import KategoriKegiatan from "./kategori-kegiatan";
 
 const KegiatanDesa = new Elysia({
   prefix: "/kegiatandesa",
@@ -44,11 +43,6 @@ const KegiatanDesa = new Elysia({
       kategoriKegiatanId: t.Optional(t.String()),
     }),
   })
-  
-
-  // ✅ Kategori kegiatan routes (nested)
-  .use(KategoriKegiatan)
-
   // ✅ Delete
   .delete("/del/:id", KegiatanDesaDelete);
 

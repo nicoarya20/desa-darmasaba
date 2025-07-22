@@ -41,10 +41,10 @@ const kegiatanDesa = proxy({
       try {
         kegiatanDesa.create.loading = true;
         const res = await ApiFetch.api.lingkungan.kegiatandesa["create"].post({
-            ...kegiatanDesa.create.form,
-            tanggal: kegiatanDesa.create.form.tanggal.toISOString(), // ✅ convert Date -> string
-          });
-          
+          ...kegiatanDesa.create.form,
+          tanggal: kegiatanDesa.create.form.tanggal.toISOString(), // ✅ convert Date -> string
+        });
+
         if (res.status === 200) {
           kegiatanDesa.findMany.load();
           return toast.success("Data berhasil ditambahkan");
@@ -64,7 +64,7 @@ const kegiatanDesa = proxy({
         include: {
           image: true;
           kategoriKegiatan: true;
-          };
+        };
       }>
     > | null,
     async load() {
@@ -191,24 +191,28 @@ const kegiatanDesa = proxy({
 
       try {
         kegiatanDesa.edit.loading = true;
-        const response = await fetch(`/api/lingkungan/kegiatandesa/${this.id}`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            judul: this.form.judul,
-            deskripsiSingkat: this.form.deskripsiSingkat,
-            deskripsiLengkap: this.form.deskripsiLengkap,
-            tanggal: typeof this.form.tanggal === "string"
-              ? this.form.tanggal
-              : this.form.tanggal.toISOString(),
-            lokasi: this.form.lokasi,
-            partisipan: this.form.partisipan,
-            imageId: this.form.imageId,
-            kategoriKegiatanId: this.form.kategoriKegiatanId,
-          }),
-        });
+        const response = await fetch(
+          `/api/lingkungan/kegiatandesa/${this.id}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              judul: this.form.judul,
+              deskripsiSingkat: this.form.deskripsiSingkat,
+              deskripsiLengkap: this.form.deskripsiLengkap,
+              tanggal:
+                typeof this.form.tanggal === "string"
+                  ? this.form.tanggal
+                  : this.form.tanggal.toISOString(),
+              lokasi: this.form.lokasi,
+              partisipan: this.form.partisipan,
+              imageId: this.form.imageId,
+              kategoriKegiatanId: this.form.kategoriKegiatanId,
+            }),
+          }
+        );
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
           throw new Error(
@@ -226,7 +230,9 @@ const kegiatanDesa = proxy({
       } catch (error) {
         console.error("Error updating kegiatan desa:", error);
         toast.error(
-          error instanceof Error ? error.message : "Gagal mengupdate kegiatan desa"
+          error instanceof Error
+            ? error.message
+            : "Gagal mengupdate kegiatan desa"
         );
         return false;
       } finally {
@@ -263,9 +269,9 @@ const kategoriKegiatan = proxy({
       }
       try {
         kategoriKegiatan.create.loading = true;
-        const res = await ApiFetch.api.lingkungan.kegiatandesa.kategorikegiatan["create"].post(
-          kategoriKegiatan.create.form
-        );
+        const res = await ApiFetch.api.lingkungan.kategorikegiatan[
+          "create"
+        ].post(kategoriKegiatan.create.form);
         if (res.status === 200) {
           kategoriKegiatan.findMany.load();
           return toast.success("Data berhasil ditambahkan");
@@ -285,7 +291,9 @@ const kategoriKegiatan = proxy({
       nama: string;
     }> | null,
     async load() {
-      const res = await ApiFetch.api.lingkungan.kegiatandesa.kategorikegiatan["find-many"].get();
+      const res = await ApiFetch.api.lingkungan.kategorikegiatan[
+        "find-many"
+      ].get();
       if (res.status === 200) {
         kategoriKegiatan.findMany.data = res.data?.data ?? [];
       }
@@ -297,7 +305,9 @@ const kategoriKegiatan = proxy({
     }> | null,
     async load(id: string) {
       try {
-        const res = await fetch(`/api/lingkungan/kegiatanDesa/kategorikegiatan/${id}`);
+        const res = await fetch(
+          `/api/lingkungan/kategorikegiatan/${id}`
+        );
         if (res.ok) {
           const data = await res.json();
           kategoriKegiatan.findUnique.data = data.data ?? null;
@@ -319,12 +329,15 @@ const kategoriKegiatan = proxy({
       try {
         kategoriKegiatan.delete.loading = true;
 
-        const response = await fetch(`/api/lingkungan/kegiatandesa/kategorikegiatan/del/${id}`, {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        const response = await fetch(
+          `/api/lingkungan/kategorikegiatan/del/${id}`,
+          {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
 
         const result = await response.json();
 
@@ -354,12 +367,15 @@ const kategoriKegiatan = proxy({
       }
 
       try {
-        const response = await fetch(`/api/lingkungan/kegiatandesa/kategorikegiatan/${id}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        const response = await fetch(
+          `/api/lingkungan/kategorikegiatan/${id}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -396,7 +412,7 @@ const kategoriKegiatan = proxy({
       try {
         kategoriKegiatan.edit.loading = true;
         const response = await fetch(
-          `/api/lingkungan/kegiatandesa/kategorikegiatan/${kategoriKegiatan.edit.id}`,
+          `/api/lingkungan/kategorikegiatan/${kategoriKegiatan.edit.id}`,
           {
             method: "PUT",
             headers: {
