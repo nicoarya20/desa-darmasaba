@@ -323,7 +323,7 @@ export const navBar = [
       {
         id: "Lingkungan_4",
         name: "Gotong Royong",
-        path: "/admin/lingkungan/gotong-royong"
+        path: "/admin/lingkungan/gotong-royong/kegiatan-desa"
       },
       {
         id: "Lingkungan_5",

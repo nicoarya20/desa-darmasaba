@@ -86,6 +86,8 @@ model FileStorage {
   KolaborasiInovasi        KolaborasiInovasi[]
   InfoTekno                InfoTekno[]
   PengaduanMasyarakat      PengaduanMasyarakat[]
+
+  KegiatanDesa KegiatanDesa[]
 }
 
 //========================================= MENU PPID ========================================= //
@@ -1497,6 +1499,35 @@ model DataLingkunganDesa {
   updatedAt DateTime @updatedAt
   deletedAt DateTime @default(now())
   isActive  Boolean  @default(true)
+}
+
+// ========================================= GOTONG ROYONG ========================================= //
+model KegiatanDesa {
+  id                     String                   @id @default(uuid())
+  judul                  String
+  deskripsiSingkat       String
+  deskripsiLengkap       String
+  tanggal                DateTime
+  lokasi                 String
+  partisipan             Int
+  image                  FileStorage              @relation(fields: [imageId], references: [id])
+  imageId                String
+  createdAt              DateTime                 @default(now())
+  updatedAt              DateTime                 @updatedAt
+  deletedAt              DateTime                 @default(now())
+  isActive               Boolean                  @default(true)
+  kategoriKegiatan       KategoriKegiatan         @relation(fields: [kategoriKegiatanId], references: [id])
+  kategoriKegiatanId     String
+}
+
+model KategoriKegiatan {
+  id                     String                   @id @default(cuid())
+  nama                   String
+  createdAt              DateTime                 @default(now())
+  updatedAt              DateTime                 @updatedAt
+  deletedAt              DateTime                 @default(now())
+  isActive               Boolean                  @default(true)
+  KegiatanDesa           KegiatanDesa[]
 }
 
 // ========================================= EDUKASI LINGKUNGAN ========================================= //
