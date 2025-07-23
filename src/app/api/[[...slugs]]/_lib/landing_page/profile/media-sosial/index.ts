@@ -19,6 +19,7 @@ const MediaSosial = new Elysia({
   // ✅ Create
   .post("/create", MediaSosialCreate, {
     body: t.Object({
+      name: t.String(),
       imageId: t.String(),
       iconUrl: t.String(),
     }),
@@ -27,6 +28,7 @@ const MediaSosial = new Elysia({
   // ✅ Update
   .put("/:id", MediaSosialUpdate, {
     body: t.Object({
+      name: t.String(),
       imageId: t.Optional(t.String()),
       iconUrl: t.Optional(t.String()),
     }),

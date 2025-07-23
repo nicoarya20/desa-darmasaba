@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import profileLandingPageState from '@/app/admin/(dashboard)/_state/landing-page/profile';
 import colors from '@/con/colors';
@@ -52,7 +53,7 @@ function EditProgramInovasi() {
     }
 
     loadProgramInovasi();
-  }, [params?.id, stateProgramInovasi.update]);
+  }, [params?.id]);
 
   const handleSubmit = async () => {
     try {

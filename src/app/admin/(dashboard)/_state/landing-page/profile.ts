@@ -404,11 +404,13 @@ const pejabatDesa = proxy({
 });
 
 const templateMediaSosial = z.object({
+  name: z.string().min(3, "Nama minimal 3 karakter"),
   imageId: z.string().min(1, "Gambar wajib dipilih"),
   iconUrl: z.string().min(3, "Icon URL minimal 3 karakter"),
 });
 
 type MediaSosialForm = {
+  name: string;
   imageId: string;
   iconUrl: string;
 };
@@ -420,6 +422,7 @@ const mediaSosial = proxy({
     async create() {
       // Ensure all required fields are non-null
       const formData = {
+        name: mediaSosial.create.form.name || "",
         imageId: mediaSosial.create.form.imageId || "",
         iconUrl: mediaSosial.create.form.iconUrl || "",
       };
@@ -467,6 +470,12 @@ const mediaSosial = proxy({
       };
     }> | null,
     async load(id: string) {
+      if (!id) {
+        toast.warn("ID tidak valid");
+        return null;
+      }
+    
+      mediaSosial.update.loading = true;
       try {
         const res = await fetch(`/api/landingpage/mediasosial/${id}`);
         if (res.ok) {
@@ -523,7 +532,9 @@ const mediaSosial = proxy({
           toast.warn("ID tidak valid");
           return null;
         }
-  
+      
+        mediaSosial.update.loading = true; // ✅ Tambahkan ini di awal
+      
         try {
           const response = await fetch(`/api/landingpage/mediasosial/${id}`, {
             method: "GET",
@@ -531,18 +542,20 @@ const mediaSosial = proxy({
               "Content-Type": "application/json",
             },
           });
+      
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
           }
-  
+      
           const result = await response.json();
-  
+      
           if (result?.success) {
             const data = result.data;
             this.id = data.id;
             this.form = {
-              imageId: data.imageId,
-              iconUrl: data.iconUrl,
+              name: data.name || "",
+              imageId: data.imageId || "",
+              iconUrl: data.iconUrl || "",
             };
             return data;
           } else {
@@ -552,10 +565,10 @@ const mediaSosial = proxy({
           console.error((error as Error).message);
           toast.error("Terjadi kesalahan saat mengambil data media sosial");
         } finally {
-          mediaSosial.update.loading = false;
+          mediaSosial.update.loading = false; // ✅ Supaya berhenti loading walau error
         }
       },
-  
+      
       async update() {
         const cek = templateMediaSosial.safeParse(mediaSosial.update.form);
         if (!cek.success) {
@@ -575,6 +588,7 @@ const mediaSosial = proxy({
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
+              name: this.form.name,
               imageId: this.form.imageId,
               iconUrl: this.form.iconUrl,
             }),

@@ -3,6 +3,7 @@ import prisma from "@/lib/prisma";
 import { Context } from "elysia";
 
 type FormUpdateMediaSosial = {
+  name?: string;
   imageId?: string;
   iconUrl?: string;
 };
@@ -23,6 +24,7 @@ export default async function mediaSosialUpdate(context: Context) {
     const updated = await prisma.mediaSosial.update({
       where: { id },
       data: {
+        name: body.name,
         imageId: body.imageId,
         iconUrl: body.iconUrl,
       },

@@ -2,6 +2,7 @@ import prisma from "@/lib/prisma";
 import { Context } from "elysia";
 
 type FormCreate = {
+  name: string;
   imageId: string;
   iconUrl: string;
 };
@@ -12,6 +13,7 @@ export default async function mediaSosialCreate(context: Context) {
   try {
     const result = await prisma.mediaSosial.create({
       data: {
+        name: body.name,
         imageId: body.imageId,
         iconUrl: body.iconUrl,
       },
