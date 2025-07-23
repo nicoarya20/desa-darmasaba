@@ -1,11 +1,104 @@
-import React from 'react';
+'use client'
+import colors from '@/con/colors';
+import { Box, Button, Center, Divider, Grid, GridCol, Image, Paper, Skeleton, Stack, Text, Title } from '@mantine/core';
+import { useShallowEffect } from '@mantine/hooks';
+import { IconEdit } from '@tabler/icons-react';
+import { useRouter } from 'next/navigation';
+import { useProxy } from 'valtio/utils';
+import profileLandingPageState from '@/app/admin/(dashboard)/_state/landing-page/profile';
+
 
 function Page() {
+  const router = useRouter()
+  const allList = useProxy(profileLandingPageState.pejabatDesa)
+  useShallowEffect(() => {
+    allList.findUnique.load("edit") // Assuming "1" is your default ID, adjust as needed
+  }, [])
+
+  if (!allList.findUnique.data) {
+    return <Stack>
+      <Skeleton radius={10} h={800} />
+    </Stack>
+  }
+
+  const dataArray = Array.isArray(allList.findUnique.data)
+    ? allList.findUnique.data
+    : [allList.findUnique.data];
+
   return (
-    <div>
-      Page
-    </div>
-  );
+    <Paper bg={colors['white-1']} p={'md'}>
+      <Stack gap={"xs"}>
+        <Grid>
+          <GridCol span={{ base: 12, md: 11 }}>
+            <Title order={3}>Preview Pejabat Desa</Title>
+          </GridCol>
+          <GridCol span={{ base: 12, md: 1 }}>
+            <Button bg={colors['blue-button']} onClick={() => router.push(`/admin/landing-page/profile/pejabat-desa/${allList.findUnique.data?.id}`)}>
+              <IconEdit size={16} />
+            </Button>
+          </GridCol>
+        </Grid>
+        {dataArray.map((item) => (
+          <Box key={item.id} >
+            <Paper p={"xl"} bg={colors['BG-trans']}>
+              <Box px={{ base: "md", md: 100 }}>
+                <Grid>
+                  <GridCol span={{ base: 12, md: 12 }}>
+                    <Center>
+                      <Image src={"/darmasaba-icon.png"} w={{ base: 100, md: 150 }} alt='' />
+                    </Center>
+                  </GridCol>
+                  <GridCol span={{ base: 12, md: 12 }}>
+                    <Text ta={"center"} fz={{ base: "1.2rem", md: "1.8rem" }} fw={'bold'}>PROFIL PIMPINAN BADAN PUBLIK DESA DARMASABA </Text>
+                  </GridCol>
+                </Grid>
+              </Box>
+              <Divider my={"md"} color={colors['blue-button']} />
+              {/* biodata perbekel */}
+              <Box px={{ base: 0, md: 50 }} pb={30}>
+                <Box pb={20} px={{ base: 0, md: 50 }}>
+                  <Paper bg={colors['BG-trans']} w={{ base: "100%", md: "100%" }}>
+                    <Stack gap={0}>
+                      <Center>
+                        <Image
+                          pt={{ base: 0, md: 90 }}
+                          src={item.image?.link || "/perbekel.png"}
+                          w={{ base: 250, md: 350 }}
+                          alt='Foto Profil PPID'
+                          onError={(e) => {
+                            e.currentTarget.src = "/perbekel.png";
+                          }}
+                        />
+                      </Center>
+                      <Paper
+                        bg={colors['blue-button']}
+                        py={20}
+                        className="glass3"
+                        px={{ base: 10, md: 10 }}
+
+                      >
+                        <Text ta={"center"} c={colors['white-1']} fw={"bolder"} fz={{ base: "1.2rem", md: "1.6rem" }}>
+                          {item.name}
+                        </Text>
+                      </Paper>
+                    </Stack>
+                  </Paper>
+                </Box>
+                <Box pt={10}>
+                  <Box>
+                    <Text fz={{ base: "1.125rem", md: "1.6rem" }} fw={'bold'}>Position</Text>
+                    <Text fz={{ base: "1rem", md: "1.5rem" }} ta={"justify"}>{item.position}</Text>
+                  </Box>
+                </Box>
+              </Box>
+            </Paper>
+          </Box>
+        ))}
+      </Stack>
+    </Paper>
+  )
 }
+
+
 
 export default Page;

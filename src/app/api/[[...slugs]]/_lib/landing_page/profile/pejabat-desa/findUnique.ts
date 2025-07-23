@@ -1,23 +1,9 @@
 import prisma from "@/lib/prisma";
-import { Prisma } from "@prisma/client";
 import { Context } from "elysia";
-import fs from "fs/promises";
-import path from "path";
 
-type FormUpdate = Prisma.PejabatDesaGetPayload<{
-  select: {
-    id: true;
-    name: true;
-    position: true;
-    imageId: true;
-  };
-}>;
 export default async function pejabatDesaFindUnique(context: Context) {
   try {
     const id = context.params?.id as string;
-    const body = (await context.body) as Omit<FormUpdate, "id">;
-
-    const { name, position, imageId } = body;
 
     if (!id) {
       return new Response(
@@ -35,12 +21,8 @@ export default async function pejabatDesaFindUnique(context: Context) {
     }
 
     const existing = await prisma.pejabatDesa.findUnique({
-      where: {
-        id,
-      },
-      include: {
-        image: true,
-      },
+      where: { id },
+      include: { image: true },
     });
 
     if (!existing) {
@@ -58,37 +40,11 @@ export default async function pejabatDesaFindUnique(context: Context) {
       );
     }
 
-    if (existing.imageId !== imageId) {
-      const oldImage = existing.image;
-      if (oldImage) {
-        try {
-          const filePath = path.join(oldImage.path, oldImage.name);
-          await fs.unlink(filePath);
-          await prisma.fileStorage.delete({
-            where: { id: oldImage.id },
-          });
-        } catch (error) {
-          console.error("Gagal hapus gambar lama:", error);
-        }
-      }
-    }
-
-    const updated = await prisma.pejabatDesa.update({
-      where: {
-        id,
-      },
-      data: {
-        name,
-        position,
-        imageId,
-      },
-    });
-
     return new Response(
       JSON.stringify({
         success: true,
         message: "Data pejabat desa berhasil ditemukan",
-        data: updated,
+        data: existing,
       }),
       {
         status: 200,
@@ -98,11 +54,11 @@ export default async function pejabatDesaFindUnique(context: Context) {
       }
     );
   } catch (error) {
-    console.error("Error updating pejabat desa:", error);
+    console.error("Error fetching pejabat desa:", error);
     return new Response(
       JSON.stringify({
         success: false,
-        message: "Terjadi kesalahan saat mengupdate pejabat desa",
+        message: "Terjadi kesalahan saat mengambil data pejabat desa",
       }),
       {
         status: 500,
