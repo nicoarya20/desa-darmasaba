@@ -14,27 +14,15 @@ const fileStorageCreate = async (context: Context) => {
   const file = body.file;
   const name = body.name;
 
-  if (!file) {
-    return {
-      status: 400,
-      body: "No file uploaded",
-    };
-  }
+  if (!file) return { status: 400, body: "No file uploaded" };
+  if (!name) return { status: 400, body: "No name provided" };
+  if (!UPLOAD_DIR) return { status: 500, body: "UPLOAD_DIR is not defined" };
 
-  if (!name) {
-    return {
-      status: 400,
-      body: "No name provided",
-    };
-  }
+  // Tentukan kategori berdasarkan mimeType
+  const isImage = file.type.startsWith("image/");
+  const category = isImage ? "image" : "document";
 
-  if (!UPLOAD_DIR) {
-    return {
-      status: 500,
-      body: "UPLOAD_DIR is not defined",
-    };
-  }
-  const pathName = "allFile";
+  const pathName = category === "image" ? "images" : "documents";
   const rootPath = path.join(UPLOAD_DIR, pathName);
   await fs.mkdir(rootPath, { recursive: true });
 
@@ -44,9 +32,10 @@ const fileStorageCreate = async (context: Context) => {
   const data = await prisma.fileStorage.create({
     data: {
       name: newName,
-      realName: file.name, // Add the original file name as realName
+      realName: file.name,
       path: rootPath,
       mimeType: file.type,
+      category,
       link: `/api/fileStorage/findUnique/${newName}`,
     },
   });
@@ -56,9 +45,7 @@ const fileStorageCreate = async (context: Context) => {
     Buffer.from(await file.arrayBuffer())
   );
 
-  return {
-    data,
-  };
+  return { data };
 };
 
 export default fileStorageCreate;

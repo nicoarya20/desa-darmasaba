@@ -4,18 +4,20 @@ import colors from "@/con/colors"
 import stateNav from "@/state/state-nav"
 import { ActionIcon, Button, Container, Flex, Image, Stack } from "@mantine/core"
 import { useHover } from "@mantine/hooks"
+import { IconSearch, IconUser } from "@tabler/icons-react"
 import { useTransitionRouter } from 'next-view-transitions'
 import { useSnapshot } from "valtio"
 import { MenuItem } from "../../../../types/menu-item"
 import { NavbarSearch } from "./NavBarSearch"
 import { NavbarSubMenu } from "./NavbarSubMenu"
-import { IconSearch } from "@tabler/icons-react"
+import { useRouter } from "next/navigation"
 
 export function NavbarMainMenu({ listNavbar }: {
     listNavbar: MenuItem[]
 }) {
     const { item, isSearch } = useSnapshot(stateNav)
     const router = useTransitionRouter()
+    const next = useRouter()
     return <Stack gap={0} visibleFrom="sm" bg={colors["white-trans-1"]}>
         <Container pos={"relative"} w={{
             base: '100%',
@@ -28,7 +30,7 @@ export function NavbarMainMenu({ listNavbar }: {
                 <ActionIcon radius={"100"} variant="transparent" onClick={() => {
                     router.push("/darmasaba")
                     stateNav.clear()
-                    
+
                 }} >
                     <Image radius={"100"} src={"/assets/images/darmasaba-icon.png"} alt="icon" w={24} h={24} loading="lazy" />
                 </ActionIcon>
@@ -43,6 +45,11 @@ export function NavbarMainMenu({ listNavbar }: {
                 >
                     {/* TODO: add icon search */}
                     <IconSearch size={"1.5rem"} />
+                </ActionIcon>
+                <ActionIcon onClick={() => {
+                    next.push("/admin/landing-page/profile/program-inovasi")
+                }} color={colors["blue-button"]} radius={'xl'}>
+                    <IconUser size={24} />
                 </ActionIcon>
             </Flex>
         </Container>

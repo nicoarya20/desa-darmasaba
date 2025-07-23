@@ -12,7 +12,7 @@ export const navBar = [
       {
         id: "Landing_Page_2",
         name: "Desa Anti Korupsi",
-        path: "/admin/landing-page/desa-anti-korupsi"
+        path: "/admin/landing-page/desa-anti-korupsi/list-desa-anti-korupsi"
       },
       {
         id: "Landing_Page_3",

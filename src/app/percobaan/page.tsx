@@ -14,7 +14,7 @@ function Page() {
 
   const loadListFile = async () => {
     const { data } = await ApiFetch.api.fileStorage.findMany.get()
-    setListFile(data?.map((item) => item.link) || [])
+    setListFile(data?.data?.map((item) => item.link) || [])
   }
   useShallowEffect(() => {
     loadListFile()

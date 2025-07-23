@@ -7,7 +7,9 @@ import {
   AppShellHeader,
   AppShellMain,
   AppShellNavbar,
+  Box,
   Burger,
+  Flex,
   Group,
   Image,
   NavLink,
@@ -15,16 +17,16 @@ import {
   Text
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
+import { IconChevronLeft, IconChevronRight, IconDoorExit } from "@tabler/icons-react";
 import _ from 'lodash';
 import Link from "next/link";
-import { useSelectedLayoutSegments } from "next/navigation";
+import { useRouter, useSelectedLayoutSegments } from "next/navigation";
 import { navBar } from "./_com/list_PageAdmin";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [opened, { toggle }] = useDisclosure();
   const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true);
-
+  const router = useRouter()
   // Normalisasi semua segmen jadi lowercase
   const segments = useSelectedLayoutSegments().map(s => _.lowerCase(s));
 
@@ -44,6 +46,18 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     >
       <AppShellHeader bg={colors["white-1"]}>
         <Group px={10} align="center">
+          <Flex align="center" gap={'xs'}>
+            <Image
+              py={5}
+              src={'/assets/images/darmasaba-icon.png'}
+              alt=""
+              width={50}
+              height={50}
+            />
+            <Text fw={'bold'} c={colors["blue-button"]} fz={'lg'}>
+              Dashboard Admin
+            </Text>
+          </Flex>
           {!desktopOpened && (
             <ActionIcon variant="light" onClick={toggleDesktop}>
               <IconChevronRight />
@@ -55,6 +69,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             hiddenFrom="sm"
             size={'sm'}
           />
+          <Box>
+            <ActionIcon onClick={() => {
+              router.push("/darmasaba")
+            }} color={colors["blue-button"]} radius={'xl'}>
+              <IconDoorExit size={24} />
+            </ActionIcon>
+          </Box>
           <ActionIcon
             w={50}
             h={50}
@@ -62,17 +83,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             component={Link}
             href="/admin"
           >
-            <Image
-              py={5}
-              src={'/assets/images/darmasaba-icon.png'}
-              alt=""
-              width={50}
-              height={50}
-            />
           </ActionIcon>
-          <Text fw={'bold'} c={colors["blue-button"]} fz={'lg'}>
-            Dashboard Admin
-          </Text>
         </Group>
       </AppShellHeader>
 

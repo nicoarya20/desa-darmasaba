@@ -2,7 +2,7 @@ const navbarListMenu = [
     {
         id: "1",
         name: "PPID",
-        href: "/darmasaba/ppid",
+        href: "/darmasaba/ppid/profile-ppid",
         children: [
             {
                 id: "1.1",
@@ -51,7 +51,7 @@ const navbarListMenu = [
     {
         id: "2",
         name: "Desa",
-        href: "/darmasaba/desa",
+        href: "/darmasaba/desa/profile",
         children: [
             {
                 id: "2.1",
@@ -94,7 +94,7 @@ const navbarListMenu = [
     {
         id: "3",
         name: "Kesehatan",
-        href: "/darmasaba/kesehatan",
+        href: "/darmasaba/kesehatan/posyandu",
         children: [
             {
                 id: "3.1",
@@ -136,7 +136,7 @@ const navbarListMenu = [
     {
         id: "4",
         name: "Keamanan",
-        href: "/darmasaba/keamanan",
+        href: "/darmasaba/keamanan/keamanan-lingkungan-pecalang-patwal",
         children: [
             {
                 id: "4.1",
@@ -173,7 +173,7 @@ const navbarListMenu = [
     {
         id: "5",
         name: "Ekonomi",
-        href: "/darmasaba/ekonomi",
+        href: "/darmasaba/ekonomi/pasar-desa",
         children: [
             {
                 id: "5.1",
@@ -229,7 +229,7 @@ const navbarListMenu = [
     }, {
         id: "6",
         name: "Inovasi",
-        href: "/darmasaba/inovasi",
+        href: "/darmasaba/inovasi/desa-digital-smart-village",
         children: [
             {
                 id: "6.1",
@@ -266,7 +266,7 @@ const navbarListMenu = [
     }, {
         id: "7",
         name: "Lingkungan",
-        href: "/darmasaba/lingkungan",
+        href: "/darmasaba/lingkungan/pengelolaan-sampah-bank-sampah",
         children: [
             {
                 id: "7.1",
@@ -302,7 +302,7 @@ const navbarListMenu = [
     }, {
         id: "8",
         name: "Pendidikan",
-        href: "/darmasaba/pendidikan",
+        href: "/darmasaba/pendidikan/info-sekolah-paud",
         children: [
             {
                 id: "8.1",

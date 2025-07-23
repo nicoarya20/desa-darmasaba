@@ -50,7 +50,7 @@ function DetailKegiatanDesa() {
       </Box>
       <Paper bg={colors['white-1']} w={{ base: "100%", md: "100%", lg: "50%" }} p={'md'}>
         <Stack>
-          <Text fz={"xl"} fw={"bold"}>Detail kegiatanDesa Inovasi</Text>
+          <Text fz={"xl"} fw={"bold"}>Detail Kegiatan Desa Inovasi</Text>
           {kegiatanDesaState.findUnique.data ? (
             <Paper key={kegiatanDesaState.findUnique.data.id} bg={colors['BG-trans']} p={'md'}>
               <Stack gap={"xs"}>

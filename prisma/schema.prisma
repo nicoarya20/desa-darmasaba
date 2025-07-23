@@ -60,6 +60,7 @@ model FileStorage {
   deletedAt                DateTime?
   isActive                 Boolean                    @default(true)
   link                     String
+  category                 String // "image" / "document" / "other"
   Berita                   Berita[]
   PotensiDesa              PotensiDesa[]
   Posyandu                 Posyandu[]
@@ -86,28 +87,25 @@ model FileStorage {
   KolaborasiInovasi        KolaborasiInovasi[]
   InfoTekno                InfoTekno[]
   PengaduanMasyarakat      PengaduanMasyarakat[]
-
-  KegiatanDesa KegiatanDesa[]
-
-  ProgramInovasi ProgramInovasi[]
-
-  PejabatDesa PejabatDesa[]
-
-  MediaSosial MediaSosial[]
+  KegiatanDesa             KegiatanDesa[]
+  ProgramInovasi           ProgramInovasi[]
+  PejabatDesa              PejabatDesa[]
+  MediaSosial              MediaSosial[]
+  DesaAntiKorupsi          DesaAntiKorupsi[]
 }
 
 //========================================= MENU LANDING PAGE ========================================= //
 //========================================= PROFILE ========================================= //
 model PejabatDesa {
-  id        String      @id @default(cuid())
-  name      String      @unique @db.VarChar(255)
+  id        String       @id @default(cuid())
+  name      String       @unique @db.VarChar(255)
   position  String
   image     FileStorage? @relation(fields: [imageId], references: [id])
   imageId   String?
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
-  deletedAt DateTime    @default(now())
-  isActive  Boolean     @default(true)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  deletedAt DateTime     @default(now())
+  isActive  Boolean      @default(true)
 }
 
 model ProgramInovasi {
@@ -125,7 +123,7 @@ model ProgramInovasi {
 
 model MediaSosial {
   id        String      @id @default(cuid())
-  name      String      
+  name      String
   image     FileStorage @relation(fields: [imageId], references: [id])
   imageId   String
   iconUrl   String?     @db.VarChar(255)
@@ -133,6 +131,31 @@ model MediaSosial {
   updatedAt DateTime    @updatedAt
   deletedAt DateTime?
   isActive  Boolean     @default(true)
+}
+
+//========================================= PROFILE ========================================= //
+model DesaAntiKorupsi {
+  id         String                  @id @default(cuid())
+  name       String                  @unique
+  deskripsi  String                  @db.Text
+  kategori   KategoriDesaAntiKorupsi @relation(fields: [kategoriId], references: [id])
+  kategoriId String
+  file       FileStorage             @relation(fields: [fileId], references: [id])
+  fileId     String
+  createdAt  DateTime                @default(now())
+  updatedAt  DateTime                @updatedAt
+  deletedAt  DateTime                @default(now())
+  isActive   Boolean                 @default(true)
+}
+
+model KategoriDesaAntiKorupsi {
+  id              String            @id @default(cuid())
+  name            String            @unique
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  deletedAt       DateTime          @default(now())
+  isActive        Boolean           @default(true)
+  DesaAntiKorupsi DesaAntiKorupsi[]
 }
 
 //========================================= MENU PPID ========================================= //

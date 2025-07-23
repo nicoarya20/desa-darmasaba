@@ -26,6 +26,7 @@ export function Navbar() {
         }}
       >
         <NavbarMainMenu listNavbar={navbarListMenu} />
+    
         <Stack hiddenFrom="sm" bg={colors.grey[2]}>
           <Group justify="space-between">
             <ActionIcon variant="transparent" onClick={() => {
@@ -50,6 +51,7 @@ export function Navbar() {
             <NavbarMobile listNavbar={navbarListMenu} />
           </motion.div>}
         </Stack>
+
       </Box>
       {(item || isSearch) && <Box className="glass" />}
     </Box>
