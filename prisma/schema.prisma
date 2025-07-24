@@ -92,6 +92,9 @@ model FileStorage {
   PejabatDesa              PejabatDesa[]
   MediaSosial              MediaSosial[]
   DesaAntiKorupsi          DesaAntiKorupsi[]
+  SDGSDesa                 SDGSDesa[]
+  APBDesImage              APBDes[]                   @relation("APBDesImage")
+  APBDesFile               APBDes[]                   @relation("APBDesFile")
 }
 
 //========================================= MENU LANDING PAGE ========================================= //
@@ -156,6 +159,34 @@ model KategoriDesaAntiKorupsi {
   deletedAt       DateTime          @default(now())
   isActive        Boolean           @default(true)
   DesaAntiKorupsi DesaAntiKorupsi[]
+}
+
+//========================================= SDGS Desa ========================================= //
+model SDGSDesa {
+  id        String      @id @default(cuid())
+  name      String      @unique
+  jumlah    String
+  image     FileStorage @relation(fields: [imageId], references: [id])
+  imageId   String
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  deletedAt DateTime    @default(now())
+  isActive  Boolean     @default(true)
+}
+
+//========================================= APBDes ========================================= //
+model APBDes {
+  id        String      @id @default(cuid())
+  name      String      @unique
+  jumlah    String
+  image     FileStorage @relation("APBDesImage", fields: [imageId], references: [id])
+  imageId   String
+  file      FileStorage @relation("APBDesFile", fields: [fileId], references: [id])
+  fileId    String
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  deletedAt DateTime    @default(now())
+  isActive  Boolean     @default(true)
 }
 
 //========================================= MENU PPID ========================================= //

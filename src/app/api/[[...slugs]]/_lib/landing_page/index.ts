@@ -4,6 +4,8 @@ import ProgramInovasi from "./profile/program-inovasi";
 import PejabatDesa from "./profile/pejabat-desa";
 import KategoriDesaAntiKorupsi from "./desa-anti-korupsi/kategori-dak";
 import DesaAntiKorupsi from "./desa-anti-korupsi";
+import SDGSDesa from "./sdgs-desa";
+import APBDes from "./apbdes";
 
 const LandingPage = new Elysia({
     prefix: "/api/landingpage",
@@ -15,5 +17,7 @@ const LandingPage = new Elysia({
 .use(PejabatDesa)
 .use(KategoriDesaAntiKorupsi)
 .use(DesaAntiKorupsi)
+.use(SDGSDesa)
+.use(APBDes)
 
 export default LandingPage

@@ -22,12 +22,12 @@ export const navBar = [
       {
         id: "Landing_Page_4",
         name: "SDGs Desa",
-        path: "/admin/landing-page/sdgs-desa"
+        path: "/admin/landing-page/SDGs-Desa"
       },
       {
         id: "Landing_Page_5",
         name: "APBDes",
-        path: "/admin/landing-page/apbdes"
+        path: "/admin/landing-page/APBDes"
       },
       {
         id: "Landing_Page_6",
