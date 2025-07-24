@@ -32,7 +32,7 @@ export const navBar = [
       {
         id: "Landing_Page_6",
         name: "Prestasi Desa",
-        path: "/admin/landing-page/prestasi-desa"
+        path: "/admin/landing-page/prestasi-desa/list-prestasi-desa"
       }
     ]
   },

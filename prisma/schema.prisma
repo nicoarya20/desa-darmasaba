@@ -95,6 +95,8 @@ model FileStorage {
   SDGSDesa                 SDGSDesa[]
   APBDesImage              APBDes[]                   @relation("APBDesImage")
   APBDesFile               APBDes[]                   @relation("APBDesFile")
+
+  PrestasiDesa PrestasiDesa[]
 }
 
 //========================================= MENU LANDING PAGE ========================================= //
@@ -187,6 +189,31 @@ model APBDes {
   updatedAt DateTime    @updatedAt
   deletedAt DateTime    @default(now())
   isActive  Boolean     @default(true)
+}
+
+//========================================= PRESTASI DESA ========================================= //
+model PrestasiDesa {
+  id         String               @id @default(cuid())
+  name       String               @unique
+  deskripsi  String               @db.Text
+  kategori   KategoriPrestasiDesa @relation(fields: [kategoriId], references: [id])
+  kategoriId String
+  image      FileStorage          @relation(fields: [imageId], references: [id])
+  imageId    String
+  createdAt  DateTime             @default(now())
+  updatedAt  DateTime             @updatedAt
+  deletedAt  DateTime             @default(now())
+  isActive   Boolean              @default(true)
+}
+
+model KategoriPrestasiDesa {
+  id           String         @id @default(cuid())
+  name         String         @unique
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  deletedAt    DateTime       @default(now())
+  isActive     Boolean        @default(true)
+  PrestasiDesa PrestasiDesa[]
 }
 
 //========================================= MENU PPID ========================================= //
