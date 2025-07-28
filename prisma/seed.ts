@@ -30,10 +30,14 @@ import bentukKonservasiBerdasarkanAdat from './data/lingkungan/konservasi-adat-b
 import filosofiTriHita from './data/lingkungan/konservasi-adat-bali/filosofi-tri-hita.json';
 import profilePejabatDesa from './data/landing-page/profile.json';
 import tujuanProgram from './data/pendidikan/program-pendidikan-anak/tujuan-program.json';
+import tujuanProgram2 from './data/pendidikan/pendidikan-non-formal/tujuan-program2.json';
 import programUnggulan from './data/pendidikan/program-pendidikan-anak/program-unggulan.json';
 import tujuanBimbinganBelajarDesa from './data/pendidikan/bimbingan-belajar-desa/tujuan-bimbingan-belajar-desa.json';
 import lokasiJadwalBimbinganBelajarDesa from './data/pendidikan/bimbingan-belajar-desa/lokasi-dan-jadwal.json';
 import fasilitasBimbinganBelajarDesa from './data/pendidikan/bimbingan-belajar-desa/fasilitas-yang-disediakan.json';
+import tempatKegiatan from './data/pendidikan/pendidikan-non-formal/tempat-kegiatan.json';
+import jenisProgramYangDiselenggarakan from './data/pendidikan/pendidikan-non-formal/jenis-program-yang-diselenggarakan.json';
+
 
 (async () => {
   for (const l of layanan) {
@@ -665,6 +669,54 @@ import fasilitasBimbinganBelajarDesa from './data/pendidikan/bimbingan-belajar-d
 
   for (const t of fasilitasBimbinganBelajarDesa) {
     await prisma.fasilitasBimbinganBelajarDesa.upsert({
+      where: { id: t.id },
+      update: {
+        judul: t.judul,
+        deskripsi: t.deskripsi,
+      },
+      create: {
+        id: t.id,
+        judul: t.judul,
+        deskripsi: t.deskripsi,
+      },
+    });
+  }
+  console.log("✅ fasilitas bimbingan belajar desa seeded (editable later via UI)");
+
+  for (const t of tujuanProgram2) {
+    await prisma.tujuanPendidikanNonFormal.upsert({
+      where: { id: t.id },
+      update: {
+        judul: t.judul,
+        deskripsi: t.deskripsi,
+      },
+      create: {
+        id: t.id,
+        judul: t.judul,
+        deskripsi: t.deskripsi,
+      },
+    });
+  }
+  console.log("✅ fasilitas bimbingan belajar desa seeded (editable later via UI)");
+
+  for (const t of tempatKegiatan) {
+    await prisma.tempatKegiatan.upsert({
+      where: { id: t.id },
+      update: {
+        judul: t.judul,
+        deskripsi: t.deskripsi,
+      },
+      create: {
+        id: t.id,
+        judul: t.judul,
+        deskripsi: t.deskripsi,
+      },
+    });
+  }
+  console.log("✅ fasilitas bimbingan belajar desa seeded (editable later via UI)");
+
+  for (const t of jenisProgramYangDiselenggarakan) {
+    await prisma.jenisProgramYangDiselenggarakan.upsert({
       where: { id: t.id },
       update: {
         judul: t.judul,

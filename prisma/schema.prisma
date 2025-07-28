@@ -1890,3 +1890,34 @@ model FasilitasBimbinganBelajarDesa {
   deletedAt DateTime @default(now())
   isActive  Boolean  @default(true)
 }
+
+// ========================================= PENDIDIKAN NON FORMAL ========================================= //
+model TujuanPendidikanNonFormal {
+  id        String   @id @default(cuid())
+  judul      String
+  deskripsi String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive  Boolean  @default(true)
+}
+
+model TempatKegiatan {
+  id        String   @id @default(cuid())
+  judul      String
+  deskripsi String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive  Boolean  @default(true)
+}
+
+model JenisProgramYangDiselenggarakan {
+  id        String   @id @default(cuid())
+  judul      String
+  deskripsi String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive  Boolean  @default(true)
+}

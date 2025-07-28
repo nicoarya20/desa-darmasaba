@@ -364,7 +364,7 @@ export const navBar = [
       {
         id: "Pendidikan_5",
         name: "Pendidikan Non Formal",
-        path: "/admin/pendidikan/pendidikan-non-formal"
+        path: "/admin/pendidikan/pendidikan-non-formal/tujuan-program"
       },
       {
         id: "Pendidikan_6",
