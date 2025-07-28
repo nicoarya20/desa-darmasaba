@@ -95,8 +95,7 @@ model FileStorage {
   SDGSDesa                 SDGSDesa[]
   APBDesImage              APBDes[]                   @relation("APBDesImage")
   APBDesFile               APBDes[]                   @relation("APBDesFile")
-
-  PrestasiDesa PrestasiDesa[]
+  PrestasiDesa             PrestasiDesa[]
 }
 
 //========================================= MENU LANDING PAGE ========================================= //
@@ -214,6 +213,81 @@ model KategoriPrestasiDesa {
   deletedAt    DateTime       @default(now())
   isActive     Boolean        @default(true)
   PrestasiDesa PrestasiDesa[]
+}
+
+//========================================= INDEKS KEPUASAN MASYARAKAT ========================================= //
+// Entitas Survey
+model Survey {
+  id               String        @id @default(cuid())
+  title            String // Judul survei
+  totalRespondents Int // Total jumlah responden
+  averageScore     Float // Rata-rata skor
+  monthlyStats     MonthlyStat[]
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  deletedAt        DateTime      @default(now())
+  isActive         Boolean       @default(true)
+}
+
+// Entitas Statistik Bulanan
+model MonthlyStat {
+  id               String         @id @default(cuid())
+  month            String // Nama bulan (e.g., "Januari", "Februari")
+  respondentsCount Int // Jumlah responden per bulan
+  surveyId         String         @unique(map: "monthly_stat_survey_id_month_key")
+  survey           Survey         @relation(fields: [surveyId], references: [id])
+  AgeStat          AgeStat[]
+  ResponseStat     ResponseStat[]
+  genderStat       genderStat[]
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  deletedAt        DateTime       @default(now())
+  isActive         Boolean        @default(true)
+}
+
+// Entitas Gender
+
+model genderStat {
+  id               String       @id @default(cuid())
+  laki             Int
+  perempuan        Int
+  percentLaki      Float
+  percentPerempuan Float
+  total            Int
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+  deletedAt        DateTime     @default(now())
+  isActive         Boolean      @default(true)
+  MonthlyStat      MonthlyStat? @relation(fields: [monthlyStatId], references: [id])
+  monthlyStatId    String?
+}
+
+// Entitas Age
+
+model AgeStat {
+  id            String       @id @default(cuid())
+  group         String // "18-44", "45+" dll
+  count         Int
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  deletedAt     DateTime     @default(now())
+  isActive      Boolean      @default(true)
+  MonthlyStat   MonthlyStat? @relation(fields: [monthlyStatId], references: [id])
+  monthlyStatId String?
+}
+
+// Entitas Response
+
+model ResponseStat {
+  id            String       @id @default(cuid())
+  label         String // BAIK / BURUK
+  count         Int
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  deletedAt     DateTime     @default(now())
+  isActive      Boolean      @default(true)
+  MonthlyStat   MonthlyStat? @relation(fields: [monthlyStatId], references: [id])
+  monthlyStatId String?
 }
 
 //========================================= MENU PPID ========================================= //

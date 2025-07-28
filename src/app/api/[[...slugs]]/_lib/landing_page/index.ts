@@ -8,6 +8,7 @@ import SDGSDesa from "./sdgs-desa";
 import APBDes from "./apbdes";
 import PrestasiDesa from "./prestasi-desa";
 import KategoriPrestasi from "./prestasi-desa/kategori-prestasi";
+import IndeksKepuasanMasyarakat from "./indeks-kepuasan-masyarakat";
 
 const LandingPage = new Elysia({
     prefix: "/api/landingpage",
@@ -23,5 +24,6 @@ const LandingPage = new Elysia({
 .use(APBDes)
 .use(PrestasiDesa)
 .use(KategoriPrestasi)
+.use(IndeksKepuasanMasyarakat)
 
 export default LandingPage

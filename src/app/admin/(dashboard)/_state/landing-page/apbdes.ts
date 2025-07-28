@@ -23,9 +23,7 @@ const apbdes = proxy({
     form: { ...defaultapbdesForm },
     loading: false,
     async create() {
-      const cek = templateapbDesaForm.safeParse(
-        apbdes.create.form
-      );
+      const cek = templateapbDesaForm.safeParse(apbdes.create.form);
       if (!cek.success) {
         const err = `[${cek.error.issues
           .map((v) => `${v.path.join(".")}`)
@@ -34,9 +32,7 @@ const apbdes = proxy({
       }
       try {
         apbdes.create.loading = true;
-        const res = await ApiFetch.api.landingpage.apbdes[
-          "create"
-        ].post({
+        const res = await ApiFetch.api.landingpage.apbdes["create"].post({
           ...apbdes.create.form,
         });
 
@@ -63,9 +59,7 @@ const apbdes = proxy({
       }>
     > | null,
     async load() {
-      const res = await ApiFetch.api.landingpage.apbdes[
-        "find-many"
-      ].get();
+      const res = await ApiFetch.api.landingpage.apbdes["find-many"].get();
       if (res.status === 200) {
         apbdes.findMany.data = res.data?.data ?? [];
       }
@@ -102,15 +96,12 @@ const apbdes = proxy({
       try {
         apbdes.delete.loading = true;
 
-        const response = await fetch(
-          `/api/landingpage/apbdes/del/${id}`,
-          {
-            method: "DELETE",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        const response = await fetch(`/api/landingpage/apbdes/del/${id}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
 
         const result = await response.json();
 
@@ -177,9 +168,7 @@ const apbdes = proxy({
     },
 
     async update() {
-      const cek = templateapbDesaForm.safeParse(
-        apbdes.edit.form
-      );
+      const cek = templateapbDesaForm.safeParse(apbdes.edit.form);
       if (!cek.success) {
         const err = `[${cek.error.issues
           .map((v) => `${v.path.join(".")}`)
@@ -189,21 +178,18 @@ const apbdes = proxy({
 
       try {
         apbdes.edit.loading = true;
-        const response = await fetch(
-          `/api/landingpage/apbdes/${this.id}`,
-          {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              name: this.form.name,
-              jumlah: this.form.jumlah,
-              imageId: this.form.imageId,
-              fileId: this.form.fileId,
-            }),
-          }
-        );
+        const response = await fetch(`/api/landingpage/apbdes/${this.id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: this.form.name,
+            jumlah: this.form.jumlah,
+            imageId: this.form.imageId,
+            fileId: this.form.fileId,
+          }),
+        });
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
           throw new Error(
@@ -216,16 +202,12 @@ const apbdes = proxy({
           await apbdes.findMany.load(); // refresh list
           return true;
         } else {
-          throw new Error(
-            result.message || "Gagal mengupdate apbdes"
-          );
+          throw new Error(result.message || "Gagal mengupdate apbdes");
         }
       } catch (error) {
         console.error("Error updating apbdes:", error);
         toast.error(
-          error instanceof Error
-            ? error.message
-            : "Gagal mengupdate apbdes"
+          error instanceof Error ? error.message : "Gagal mengupdate apbdes"
         );
         return false;
       } finally {
