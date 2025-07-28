@@ -22,6 +22,7 @@ import Ekonomi from "./_lib/ekonomi";
 import Inovasi from "./_lib/inovasi";
 import Lingkungan from "./_lib/lingkungan";
 import LandingPage from "./_lib/landing_page";
+import Pendidikan from "./_lib/pendidikan";
 
 
 const ROOT = process.cwd();
@@ -77,16 +78,17 @@ const ApiServer = new Elysia()
     })
   )
   .use(cors(corsConfig))
-  .use(PPID)
-  .use(Kesehatan)
-  .use(Desa)
-  .use(Keamanan)
   .use(Utils)
   .use(FileStorage)
+  .use(LandingPage)
+  .use(PPID)
+  .use(Desa)
+  .use(Kesehatan)
+  .use(Keamanan)
   .use(Ekonomi)
   .use(Inovasi)
   .use(Lingkungan)
-  .use(LandingPage)
+  .use(Pendidikan)
   .onError(({ code }) => {
     if (code === "NOT_FOUND") {
       return {

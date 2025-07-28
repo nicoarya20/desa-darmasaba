@@ -344,7 +344,7 @@ export const navBar = [
       {
         id: "Pendidikan_1",
         name: "Info Sekolah & PAUD",
-        path: "/admin/pendidikan/info-sekolah-paud"
+        path: "/admin/pendidikan/info-sekolah-paud/jenjang-pendidikan"
       },
       {
         id: "Pendidikan_2",
