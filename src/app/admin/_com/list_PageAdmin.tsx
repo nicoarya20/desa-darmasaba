@@ -354,12 +354,12 @@ export const navBar = [
       {
         id: "Pendidikan_3",
         name: "Program Pendidikan Anak",
-        path: "/admin/pendidikan/program-pendidikan-anak"
+        path: "/admin/pendidikan/program-pendidikan-anak/program-unggulan"
       },
       {
         id: "Pendidikan_4",
         name: "Bimbingan Belajar Desa",
-        path: "/admin/pendidikan/bimbingan-belajar-desa"
+        path: "/admin/pendidikan/bimbingan-belajar-desa/tujuan-program"
       },
       {
         id: "Pendidikan_5",

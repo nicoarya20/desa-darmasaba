@@ -29,6 +29,11 @@ import nilaiKonservasiAdat from './data/lingkungan/konservasi-adat-bali/nilai-ko
 import bentukKonservasiBerdasarkanAdat from './data/lingkungan/konservasi-adat-bali/bentuk-konservasi.json';
 import filosofiTriHita from './data/lingkungan/konservasi-adat-bali/filosofi-tri-hita.json';
 import profilePejabatDesa from './data/landing-page/profile.json';
+import tujuanProgram from './data/pendidikan/program-pendidikan-anak/tujuan-program.json';
+import programUnggulan from './data/pendidikan/program-pendidikan-anak/program-unggulan.json';
+import tujuanBimbinganBelajarDesa from './data/pendidikan/bimbingan-belajar-desa/tujuan-bimbingan-belajar-desa.json';
+import lokasiJadwalBimbinganBelajarDesa from './data/pendidikan/bimbingan-belajar-desa/lokasi-dan-jadwal.json';
+import fasilitasBimbinganBelajarDesa from './data/pendidikan/bimbingan-belajar-desa/fasilitas-yang-disediakan.json';
 
 (async () => {
   for (const l of layanan) {
@@ -593,6 +598,86 @@ import profilePejabatDesa from './data/landing-page/profile.json';
     });
   }
   console.log("✅ profilePejabatDesa seeded without imageId (editable later via UI)");
+
+  for (const t of tujuanProgram) {
+    await prisma.tujuanProgram.upsert({
+      where: { id: t.id },
+      update: {
+        judul: t.judul,
+        deskripsi: t.deskripsi,
+      },
+      create: {
+        id: t.id,
+        judul: t.judul,
+        deskripsi: t.deskripsi,
+      },
+    });
+  }
+  console.log("✅ tujuan program seeded (editable later via UI)");
+
+  for (const t of programUnggulan) {
+    await prisma.programUnggulan.upsert({
+      where: { id: t.id },
+      update: {
+        judul: t.judul,
+        deskripsi: t.deskripsi,
+      },
+      create: {
+        id: t.id,
+        judul: t.judul,
+        deskripsi: t.deskripsi,
+      },
+    });
+  }
+  console.log("✅ program unggulan seeded (editable later via UI)");
+
+  for (const t of tujuanBimbinganBelajarDesa) {
+    await prisma.tujuanBimbinganBelajarDesa.upsert({
+      where: { id: t.id },
+      update: {
+        judul: t.judul,
+        deskripsi: t.deskripsi,
+      },
+      create: {
+        id: t.id,
+        judul: t.judul,
+        deskripsi: t.deskripsi,
+      },
+    });
+  }
+  console.log("✅ tujuan bimbingan belajar desa seeded (editable later via UI)");
+
+  for (const t of lokasiJadwalBimbinganBelajarDesa) {
+    await prisma.lokasiJadwalBimbinganBelajarDesa.upsert({
+      where: { id: t.id },
+      update: {
+        judul: t.judul,
+        deskripsi: t.deskripsi,
+      },
+      create: {
+        id: t.id,
+        judul: t.judul,
+        deskripsi: t.deskripsi,
+      },
+    });
+  }
+  console.log("✅ lokasi jadwal bimbingan belajar desa seeded (editable later via UI)");
+
+  for (const t of fasilitasBimbinganBelajarDesa) {
+    await prisma.fasilitasBimbinganBelajarDesa.upsert({
+      where: { id: t.id },
+      update: {
+        judul: t.judul,
+        deskripsi: t.deskripsi,
+      },
+      create: {
+        id: t.id,
+        judul: t.judul,
+        deskripsi: t.deskripsi,
+      },
+    });
+  }
+  console.log("✅ fasilitas bimbingan belajar desa seeded (editable later via UI)");
 
 })()
   .then(() => prisma.$disconnect())

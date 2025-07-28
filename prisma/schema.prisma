@@ -1795,46 +1795,98 @@ model NilaiKonservasiAdat {
 // ========================================= MENU PENDIDIKAN ========================================= //
 // ========================================= INFO SEKOLAH & PAUD ========================================= //
 model JenjangPendidikan {
-  id          String     @id @default(cuid())
-  nama        String     // TK/PAUD, SD, SMP, SMA/SMK
-  lembagas    Lembaga[]  // Relasi ke lembaga
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-  deletedAt   DateTime   @default(now())
-  isActive    Boolean    @default(true)
+  id        String    @id @default(cuid())
+  nama      String // TK/PAUD, SD, SMP, SMA/SMK
+  lembagas  Lembaga[] // Relasi ke lembaga
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime  @default(now())
+  isActive  Boolean   @default(true)
 }
 
 model Lembaga {
-  id                 String     @id @default(cuid())
-  nama               String
-  jenjangPendidikan  JenjangPendidikan @relation(fields: [jenjangId], references: [id])
-  jenjangId          String
-  siswa              Siswa[]
-  pengajar           Pengajar[]
-  createdAt          DateTime   @default(now())
-  updatedAt          DateTime   @updatedAt
-  deletedAt          DateTime   @default(now())
-  isActive           Boolean    @default(true)
+  id                String            @id @default(cuid())
+  nama              String
+  jenjangPendidikan JenjangPendidikan @relation(fields: [jenjangId], references: [id])
+  jenjangId         String
+  siswa             Siswa[]
+  pengajar          Pengajar[]
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  deletedAt         DateTime          @default(now())
+  isActive          Boolean           @default(true)
 }
 
 model Siswa {
-  id         String   @id @default(cuid())
-  nama       String
-  lembaga    Lembaga  @relation(fields: [lembagaId], references: [id])
-  lembagaId  String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  deletedAt  DateTime @default(now())
-  isActive   Boolean  @default(true)
+  id        String   @id @default(cuid())
+  nama      String
+  lembaga   Lembaga  @relation(fields: [lembagaId], references: [id])
+  lembagaId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive  Boolean  @default(true)
 }
 
 model Pengajar {
-  id         String   @id @default(cuid())
-  nama       String
-  lembaga    Lembaga  @relation(fields: [lembagaId], references: [id])
-  lembagaId  String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  deletedAt  DateTime @default(now())
-  isActive   Boolean  @default(true)
+  id        String   @id @default(cuid())
+  nama      String
+  lembaga   Lembaga  @relation(fields: [lembagaId], references: [id])
+  lembagaId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive  Boolean  @default(true)
+}
+
+// ========================================= PROGRAM PENDIDIKAN ANAK ========================================= //
+model TujuanProgram {
+  id        String   @id @default(cuid())
+  judul      String
+  deskripsi String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive  Boolean  @default(true)
+}
+
+model ProgramUnggulan {
+  id        String   @id @default(cuid())
+  judul      String
+  deskripsi String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive  Boolean  @default(true)
+}
+
+// ========================================= BIMBINGAN BELAJAR DESA ========================================= //
+model TujuanBimbinganBelajarDesa {
+  id        String   @id @default(cuid())
+  judul      String
+  deskripsi String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive  Boolean  @default(true)
+}
+
+model LokasiJadwalBimbinganBelajarDesa {
+  id        String   @id @default(cuid())
+  judul      String
+  deskripsi String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive  Boolean  @default(true)
+}
+
+model FasilitasBimbinganBelajarDesa {
+  id        String   @id @default(cuid())
+  judul      String
+  deskripsi String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive  Boolean  @default(true)
 }
