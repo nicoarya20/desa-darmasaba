@@ -12,17 +12,17 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
     {
       label: "Posisi Organisasi",
       value: "posisiorganisasi",
-      href: "/admin/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa/posisi-organisasi"
+      href: "/admin/ekonomi/Struktur-Organisasi-dan-SK-Pengurus-BUMDesa/posisi-organisasi"
     },
     {
       label: "Pegawai",
       value: "pegawai",
-      href: "/admin/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa/pegawai"
+      href: "/admin/ekonomi/Struktur-Organisasi-dan-SK-Pengurus-BUMDesa/pegawai"
     },
     {
       label: "Hubungan Organisasi",
       value: "hubunganorganisasi",
-      href: "/admin/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa/hubungan-organisasi"
+      href: "/admin/ekonomi/Struktur-Organisasi-dan-SK-Pengurus-BUMDesa/hubungan-organisasi"
     },
   ];
   const curentTab = tabs.find(tab => tab.href === pathname)

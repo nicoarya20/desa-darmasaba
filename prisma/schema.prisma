@@ -96,6 +96,8 @@ model FileStorage {
   APBDesImage              APBDes[]                   @relation("APBDesImage")
   APBDesFile               APBDes[]                   @relation("APBDesFile")
   PrestasiDesa             PrestasiDesa[]
+
+  DataPerpustakaan DataPerpustakaan[]
 }
 
 //========================================= MENU LANDING PAGE ========================================= //
@@ -1851,23 +1853,23 @@ model KeunggulanProgram {
 }
 
 model BeasiswaPendaftar {
-  id                      String   @id @default(cuid())
-  namaLengkap            String
-  nik                    String   @unique
-  tempatLahir            String
-  tanggalLahir           DateTime
-  jenisKelamin           JenisKelamin
-  kewarganegaraan        String
-  agama                  Agama
-  alamatKTP              String
-  alamatDomisili         String?
-  noHp                   String
-  email                  String   @unique
-  statusPernikahan       StatusPernikahan
-  ukuranBaju             UkuranBaju?
-  isActive               Boolean    @default(true)
-  createdAt              DateTime @default(now())
-  updatedAt              DateTime @updatedAt
+  id               String           @id @default(cuid())
+  namaLengkap      String
+  nik              String           @unique
+  tempatLahir      String
+  tanggalLahir     DateTime
+  jenisKelamin     JenisKelamin
+  kewarganegaraan  String
+  agama            Agama
+  alamatKTP        String
+  alamatDomisili   String?
+  noHp             String
+  email            String           @unique
+  statusPernikahan StatusPernikahan
+  ukuranBaju       UkuranBaju?
+  isActive         Boolean          @default(true)
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
 }
 
 enum JenisKelamin {
@@ -1899,7 +1901,6 @@ enum UkuranBaju {
   XXL
   LAINNYA
 }
-
 
 // ========================================= PROGRAM PENDIDIKAN ANAK ========================================= //
 model TujuanProgram {
@@ -1982,6 +1983,31 @@ model JenisProgramYangDiselenggarakan {
   updatedAt DateTime @updatedAt
   deletedAt DateTime @default(now())
   isActive  Boolean  @default(true)
+}
+
+// ========================================= PERPUSTAKAAN ========================================= //
+model DataPerpustakaan {
+  id        String      @id @default(cuid())
+  judul     String
+  deskripsi String      @db.Text
+  kategori  KategoriBuku @relation(fields: [kategoriId], references: [id])
+  kategoriId String
+  image     FileStorage @relation(fields: [imageId], references: [id])
+  imageId   String
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  deletedAt DateTime    @default(now())
+  isActive  Boolean     @default(true)
+}
+
+model KategoriBuku {
+  id        String   @id @default(cuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive  Boolean  @default(true)
+  DataPerpustakaan DataPerpustakaan[]
 }
 
 // ========================================= DATA PENDIDIKAN ========================================= //

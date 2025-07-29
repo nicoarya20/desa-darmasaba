@@ -148,7 +148,6 @@ function Page() {
                     <Text fz={"md"} fw={"bold"}>Gambar</Text>
                     <Box w={{ base: '100%', md: '50%' }}>
                       <Dropzone
-
                         onDrop={(files) => {
                           const newImages = files.map((file) => ({
                             file,
