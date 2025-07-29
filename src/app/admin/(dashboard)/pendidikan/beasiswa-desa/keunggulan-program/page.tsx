@@ -3,13 +3,14 @@ import colors from '@/con/colors';
 import { Box, Button, Paper, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title } from '@mantine/core';
 import { IconDeviceImacCog, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import HeaderSearch from '../../_com/header';
+import HeaderSearch from '../../../_com/header';
+
 
 function BeasiswaDesa() {
   return (
     <Box>
       <HeaderSearch
-      title='Beasiswa Desa'
+      title='Keunggulan Program'
       placeholder='pencarian'
       searchIcon={<IconSearch size={20} />}
       />

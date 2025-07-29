@@ -349,7 +349,7 @@ export const navBar = [
       {
         id: "Pendidikan_2",
         name: "Beasiswa Desa",
-        path: "/admin/pendidikan/beasiswa-desa"
+        path: "/admin/pendidikan/beasiswa-desa/beasiswa-pendaftar"
       },
       {
         id: "Pendidikan_3",

@@ -1839,6 +1839,68 @@ model Pengajar {
   isActive  Boolean  @default(true)
 }
 
+// ========================================= BEASISWA DESA ========================================= //
+model KeunggulanProgram {
+  id        String   @id @default(cuid())
+  judul     String
+  deskripsi String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive  Boolean  @default(true)
+}
+
+model BeasiswaPendaftar {
+  id                      String   @id @default(cuid())
+  namaLengkap            String
+  nik                    String   @unique
+  tempatLahir            String
+  tanggalLahir           DateTime
+  jenisKelamin           JenisKelamin
+  kewarganegaraan        String
+  agama                  Agama
+  alamatKTP              String
+  alamatDomisili         String?
+  noHp                   String
+  email                  String   @unique
+  statusPernikahan       StatusPernikahan
+  ukuranBaju             UkuranBaju?
+  isActive               Boolean    @default(true)
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+}
+
+enum JenisKelamin {
+  LAKI_LAKI
+  PEREMPUAN
+}
+
+enum Agama {
+  ISLAM
+  KRISTEN_PROTESTAN
+  KRISTEN_KATOLIK
+  HINDU
+  BUDDHA
+  KONGHUCU
+  LAINNYA
+}
+
+enum StatusPernikahan {
+  BELUM_MENIKAH
+  MENIKAH
+  JANDA_DUDA
+}
+
+enum UkuranBaju {
+  S
+  M
+  L
+  XL
+  XXL
+  LAINNYA
+}
+
+
 // ========================================= PROGRAM PENDIDIKAN ANAK ========================================= //
 model TujuanProgram {
   id        String   @id @default(cuid())

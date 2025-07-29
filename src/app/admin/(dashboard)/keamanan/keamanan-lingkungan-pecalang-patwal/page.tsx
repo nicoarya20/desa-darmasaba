@@ -21,7 +21,7 @@ function KeamananLingkungan() {
         value={search}
         onChange={(e) => setSearch(e.currentTarget.value)}
       />
-      <ListKeamananLingkungan search={search}/>
+      <ListKeamananLingkungan search={search} />
     </Box>
   );
 }
