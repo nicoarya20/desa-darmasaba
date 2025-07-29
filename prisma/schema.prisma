@@ -1842,7 +1842,7 @@ model Pengajar {
 // ========================================= PROGRAM PENDIDIKAN ANAK ========================================= //
 model TujuanProgram {
   id        String   @id @default(cuid())
-  judul      String
+  judul     String
   deskripsi String   @db.Text
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -1852,7 +1852,7 @@ model TujuanProgram {
 
 model ProgramUnggulan {
   id        String   @id @default(cuid())
-  judul      String
+  judul     String
   deskripsi String   @db.Text
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -1863,7 +1863,7 @@ model ProgramUnggulan {
 // ========================================= BIMBINGAN BELAJAR DESA ========================================= //
 model TujuanBimbinganBelajarDesa {
   id        String   @id @default(cuid())
-  judul      String
+  judul     String
   deskripsi String   @db.Text
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -1873,7 +1873,7 @@ model TujuanBimbinganBelajarDesa {
 
 model LokasiJadwalBimbinganBelajarDesa {
   id        String   @id @default(cuid())
-  judul      String
+  judul     String
   deskripsi String   @db.Text
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -1883,7 +1883,7 @@ model LokasiJadwalBimbinganBelajarDesa {
 
 model FasilitasBimbinganBelajarDesa {
   id        String   @id @default(cuid())
-  judul      String
+  judul     String
   deskripsi String   @db.Text
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -1894,7 +1894,7 @@ model FasilitasBimbinganBelajarDesa {
 // ========================================= PENDIDIKAN NON FORMAL ========================================= //
 model TujuanPendidikanNonFormal {
   id        String   @id @default(cuid())
-  judul      String
+  judul     String
   deskripsi String   @db.Text
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -1904,7 +1904,7 @@ model TujuanPendidikanNonFormal {
 
 model TempatKegiatan {
   id        String   @id @default(cuid())
-  judul      String
+  judul     String
   deskripsi String   @db.Text
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -1914,8 +1914,19 @@ model TempatKegiatan {
 
 model JenisProgramYangDiselenggarakan {
   id        String   @id @default(cuid())
-  judul      String
+  judul     String
   deskripsi String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive  Boolean  @default(true)
+}
+
+// ========================================= DATA PENDIDIKAN ========================================= //
+model DataPendidikan {
+  id        String   @id @default(cuid())
+  name      String
+  jumlah    String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   deletedAt DateTime @default(now())
