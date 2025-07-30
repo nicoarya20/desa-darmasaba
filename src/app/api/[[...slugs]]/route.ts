@@ -23,6 +23,8 @@ import Inovasi from "./_lib/inovasi";
 import Lingkungan from "./_lib/lingkungan";
 import LandingPage from "./_lib/landing_page";
 import Pendidikan from "./_lib/pendidikan";
+import User from "./_lib/user";
+
 
 
 const ROOT = process.cwd();
@@ -89,6 +91,8 @@ const ApiServer = new Elysia()
   .use(Inovasi)
   .use(Lingkungan)
   .use(Pendidikan)
+  .use(User)
+  
   .onError(({ code }) => {
     if (code === "NOT_FOUND") {
       return {

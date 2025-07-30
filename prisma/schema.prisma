@@ -1987,27 +1987,49 @@ model JenisProgramYangDiselenggarakan {
 
 // ========================================= PERPUSTAKAAN ========================================= //
 model DataPerpustakaan {
-  id        String      @id @default(cuid())
-  judul     String
-  deskripsi String      @db.Text
-  kategori  KategoriBuku @relation(fields: [kategoriId], references: [id])
+  id         String       @id @default(cuid())
+  judul      String
+  deskripsi  String       @db.Text
+  kategori   KategoriBuku @relation(fields: [kategoriId], references: [id])
   kategoriId String
-  image     FileStorage @relation(fields: [imageId], references: [id])
-  imageId   String
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
-  deletedAt DateTime    @default(now())
-  isActive  Boolean     @default(true)
+  image      FileStorage  @relation(fields: [imageId], references: [id])
+  imageId    String
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  deletedAt  DateTime     @default(now())
+  isActive   Boolean      @default(true)
 }
 
 model KategoriBuku {
+  id               String             @id @default(cuid())
+  name             String
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  deletedAt        DateTime           @default(now())
+  isActive         Boolean            @default(true)
+  DataPerpustakaan DataPerpustakaan[]
+}
+
+model User {
+  id        String   @id @default(cuid())
+  nama      String
+  email     String   @unique
+  password  String
+  role      Role     @relation(fields: [roleId], references: [id])
+  roleId    String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Role {
   id        String   @id @default(cuid())
   name      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   deletedAt DateTime @default(now())
   isActive  Boolean  @default(true)
-  DataPerpustakaan DataPerpustakaan[]
+  User      User[]
 }
 
 // ========================================= DATA PENDIDIKAN ========================================= //
