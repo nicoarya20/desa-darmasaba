@@ -1,0 +1,71 @@
+import prisma from "@/lib/prisma";
+import { Context } from "elysia";
+
+export default async function posisiOrganisasiDelete(context: Context) {
+  const { id } = context.params as { id: string };
+  
+  if (!id) {
+    return new Response(
+      JSON.stringify({
+        success: false,
+        message: "ID wajib diisi",
+      }),
+      { status: 400, headers: { "Content-Type": "application/json" } }
+    );
+  }
+
+  try {
+    // Check if the position exists first
+    const existing = await prisma.posisiOrganisasiPPID.findUnique({
+      where: { id },
+    });
+
+    if (!existing) {
+      return new Response(
+        JSON.stringify({
+          success: false,
+          message: "Posisi organisasi tidak ditemukan",
+        }),
+        { status: 404, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+    // Check if there are any pegawai associated with this position
+    const pegawaiCount = await prisma.pegawaiPPID.count({
+      where: { posisiId: id },
+    });
+
+    if (pegawaiCount > 0) {
+      return new Response(
+        JSON.stringify({
+          success: false,
+          message: "Tidak dapat menghapus posisi yang masih memiliki pegawai",
+        }),
+        { status: 400, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+    // If all checks pass, delete the position
+    const deleted = await prisma.posisiOrganisasiPPID.delete({
+      where: { id },
+    });
+
+    return new Response(
+      JSON.stringify({
+        success: true,
+        message: "Posisi organisasi berhasil dihapus",
+        data: deleted,
+      }),
+      { status: 200, headers: { "Content-Type": "application/json" } }
+    );
+  } catch (error) {
+    console.error("Error delete posisi organisasi:", error);
+    return new Response(
+      JSON.stringify({
+        success: false,
+        message: "Terjadi kesalahan saat menghapus posisi organisasi",
+      }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
+    );
+  }
+}

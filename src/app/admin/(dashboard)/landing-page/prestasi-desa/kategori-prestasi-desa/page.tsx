@@ -68,35 +68,37 @@ function ListKategoriPrestasi({ search }: { search: string }) {
           title='List Kategori Prestasi Desa'
           href='/admin/landing-page/prestasi-desa/kategori-prestasi-desa/create'
         />
-        <Table striped withTableBorder withRowBorders>
-          <TableThead>
-            <TableTr>
-              <TableTh>Nama Kategori</TableTh>
-              <TableTh>Edit</TableTh>
-              <TableTh>Delete</TableTh>
-            </TableTr>
-          </TableThead>
-          <TableTbody>
-            {filteredData.map((item) => (
-              <TableTr key={item.id}>
-                <TableTd>{item.name}</TableTd>
-                <TableTd>
-                  <Button color="green" onClick={() => router.push(`/admin/landing-page/prestasi-desa/kategori-prestasi-desa/${item.id}`)}>
-                    <IconEdit size={20} />
-                  </Button>
-                </TableTd>
-                <TableTd>
-                  <Button color="red" onClick={() => {
-                    setSelectedId(item.id)
-                    setModalHapus(true)
-                  }}>
-                    <IconX size={20} />
-                  </Button>
-                </TableTd>
+        <Box style={{ overflowY: "auto" }}>
+          <Table striped withTableBorder withRowBorders>
+            <TableThead>
+              <TableTr>
+                <TableTh>Nama Kategori</TableTh>
+                <TableTh>Edit</TableTh>
+                <TableTh>Delete</TableTh>
               </TableTr>
-            ))}
-          </TableTbody>
-        </Table>
+            </TableThead>
+            <TableTbody>
+              {filteredData.map((item) => (
+                <TableTr key={item.id}>
+                  <TableTd>{item.name}</TableTd>
+                  <TableTd>
+                    <Button color="green" onClick={() => router.push(`/admin/landing-page/prestasi-desa/kategori-prestasi-desa/${item.id}`)}>
+                      <IconEdit size={20} />
+                    </Button>
+                  </TableTd>
+                  <TableTd>
+                    <Button color="red" onClick={() => {
+                      setSelectedId(item.id)
+                      setModalHapus(true)
+                    }}>
+                      <IconX size={20} />
+                    </Button>
+                  </TableTd>
+                </TableTr>
+              ))}
+            </TableTbody>
+          </Table>
+        </Box>
       </Paper>
       {/* Modal Konfirmasi Hapus */}
       <ModalKonfirmasiHapus

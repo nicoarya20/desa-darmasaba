@@ -67,7 +67,7 @@ function ListPosisiOrganisasi({ search }: { search: string }) {
       <Paper bg={colors['white-1']} p={'md'}>
         <JudulList
           title='List Posisi Organisasi'
-          href='/admin/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa/posisi-organisasi/create'
+          href='/admin/ekonomi/Struktur-Organisasi-dan-SK-Pengurus-BUMDesa/posisi-organisasi/create'
         />
         <Table striped withTableBorder withRowBorders>
           <TableThead>
@@ -91,7 +91,7 @@ function ListPosisiOrganisasi({ search }: { search: string }) {
                   <Button color="green" 
                    onClick={() => {
                     if (item) {
-                      router.push(`/admin/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa/posisi-organisasi/${item.id}`);
+                      router.push(`/admin/ekonomi/Struktur-Organisasi-dan-SK-Pengurus-BUMDesa/posisi-organisasi/${item.id}`);
                     }
                   }}
                    >

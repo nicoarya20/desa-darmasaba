@@ -9,7 +9,6 @@ import potensi from "./data/list-potensi.json";
 import dasarHukumPPID from "./data/ppid/dasar-hukum-ppid/dasarhukumPPID.json";
 import profilePPID from "./data/ppid/profile-ppid/profilePPid.json";
 import visiMisiPPID from "./data/ppid/visi-misi-ppid/visimisiPPID.json";
-import strukturPPID from "./data/ppid/struktur-ppid/strukturPPID.json";
 import pelayananPerizinanBerusaha from "./data/desa/layanan/pelayananPerizinanBerusaha.json";
 import pelayananPendudukNonPermanen from "./data/desa/layanan/pelayanaPendudukNonPermanen.json";
 import sejarahDesa from "./data/desa/profile/sejarah_desa.json";
@@ -37,6 +36,8 @@ import lokasiJadwalBimbinganBelajarDesa from './data/pendidikan/bimbingan-belaja
 import fasilitasBimbinganBelajarDesa from './data/pendidikan/bimbingan-belajar-desa/fasilitas-yang-disediakan.json';
 import tempatKegiatan from './data/pendidikan/pendidikan-non-formal/tempat-kegiatan.json';
 import jenisProgramYangDiselenggarakan from './data/pendidikan/pendidikan-non-formal/jenis-program-yang-diselenggarakan.json';
+import posisiOrganisasiPPID from "./data/ppid/struktur-ppid/posisi-organisasi-PPID.json";
+import pegawaiPPID from "./data/ppid/struktur-ppid/pegawai-PPID.json";
 
 
 (async () => {
@@ -154,6 +155,64 @@ import jenisProgramYangDiselenggarakan from './data/pendidikan/pendidikan-non-fo
 
   console.log("visi misi desa success ...");
 
+  // Flatten the nested array structure for posisiOrganisasiPPID
+  const flattenedPosisiOrganisasiPPID = posisiOrganisasiPPID.flat();
+  
+  for (const p of flattenedPosisiOrganisasiPPID) {
+    await prisma.posisiOrganisasiPPID.upsert({
+      where: {
+        id: p.id,
+      },
+      update: {
+        nama: p.nama,
+        deskripsi: p.deskripsi,
+        hierarki: p.hierarki,
+        parentId: p.parentId,
+      },
+      create: {
+        id: p.id,
+        nama: p.nama,
+        deskripsi: p.deskripsi,
+        hierarki: p.hierarki,
+        parentId: p.parentId,
+      },
+    });
+  }
+  console.log("posisi organisasi success ...");
+
+  // Flatten the nested array structure for pegawaiPPID
+  const flattenedPegawaiPPID = pegawaiPPID.flat();
+  
+  for (const p of flattenedPegawaiPPID) {
+    await prisma.pegawaiPPID.upsert({
+      where: {
+        id: p.id,
+      },
+      update: {
+        namaLengkap: p.namaLengkap,
+        tanggalMasuk: new Date(p.tanggalMasuk),
+        email: p.email,
+        gelarAkademik: p.gelarAkademik,
+        telepon: p.telepon,
+        alamat: p.alamat,
+        posisiId: p.posisiId,
+        isActive: p.isActive,
+      },
+      create: {
+        id: p.id,
+        namaLengkap: p.namaLengkap,
+        tanggalMasuk: new Date(p.tanggalMasuk),
+        email: p.email,
+        gelarAkademik: p.gelarAkademik,
+        telepon: p.telepon,
+        alamat: p.alamat,
+        posisiId: p.posisiId,
+        isActive: p.isActive,
+      },
+    });
+  }
+  console.log("pegawai success ...");
+
   for (const l of pelayananPerizinanBerusaha) {
     await prisma.pelayananPerizinanBerusaha.upsert({
       where: {
@@ -193,21 +252,6 @@ import jenisProgramYangDiselenggarakan from './data/pendidikan/pendidikan-non-fo
   }
   console.log("pelayanan penduduk non permanen success ...");
 
-  for (const s of strukturPPID) {
-    await prisma.strukturPPID.upsert({
-      where: {
-        id: s.id,
-      },
-      update: {
-        name: s.name,
-      },
-      create: {
-        id: s.id,
-        name: s.name,
-      },
-    });
-  }
-  console.log("struktur ppid success ...");
 
   for (const p of potensi) {
     await prisma.potensi.upsert({

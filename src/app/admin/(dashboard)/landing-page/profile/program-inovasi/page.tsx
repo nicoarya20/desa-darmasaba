@@ -58,30 +58,32 @@ function ListProgramInovasi({ search }: { search: string }) {
           title='List Program Inovasi'
           href='/admin/landing-page/profile/program-inovasi/create'
         />
-        <Table striped withTableBorder withRowBorders>
-          <TableThead>
-            <TableTr>
-              <TableTh>Nama Program</TableTh>
-              <TableTh>Deskripsi</TableTh>
-              <TableTh>Link</TableTh>
-              <TableTh>Detail</TableTh>
-            </TableTr>
-          </TableThead>
-          <TableTbody>
-            {filteredData.map((item) => (
-              <TableTr key={item.id}>
-                <TableTd>{item.name}</TableTd>
-                <TableTd>{item.description}</TableTd>
-                <TableTd>{item.link}</TableTd>
-                <TableTd>
-                  <Button onClick={() => router.push(`/admin/landing-page/profile/program-inovasi/${item.id}`)}>
-                    <IconDeviceImac size={20} />
-                  </Button>
-                </TableTd>
+        <Box style={{ overflowY: "auto" }}>
+          <Table striped withTableBorder withRowBorders>
+            <TableThead>
+              <TableTr>
+                <TableTh>Nama Program</TableTh>
+                <TableTh>Deskripsi</TableTh>
+                <TableTh>Link</TableTh>
+                <TableTh>Detail</TableTh>
               </TableTr>
-            ))}
-          </TableTbody>
-        </Table>
+            </TableThead>
+            <TableTbody>
+              {filteredData.map((item) => (
+                <TableTr key={item.id}>
+                  <TableTd>{item.name}</TableTd>
+                  <TableTd>{item.description}</TableTd>
+                  <TableTd>{item.link}</TableTd>
+                  <TableTd>
+                    <Button onClick={() => router.push(`/admin/landing-page/profile/program-inovasi/${item.id}`)}>
+                      <IconDeviceImac size={20} />
+                    </Button>
+                  </TableTd>
+                </TableTr>
+              ))}
+            </TableTbody>
+          </Table>
+        </Box>
       </Paper>
     </Box>
   );

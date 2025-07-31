@@ -64,7 +64,7 @@ function CreatePegawai() {
       // Reset form dan redirect
       resetForm();
       toast.success("Data pegawai berhasil ditambahkan");
-      router.push("/admin/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa/pegawai");
+      router.push("/admin/ekonomi/Struktur-Organisasi-dan-SK-Pengurus-BUMDesa/pegawai");
     } catch (error) {
       console.error("Error creating pegawai:", error);
       toast.error("Terjadi kesalahan saat menambahkan pegawai");

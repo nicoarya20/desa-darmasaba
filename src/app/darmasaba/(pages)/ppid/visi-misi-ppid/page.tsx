@@ -30,7 +30,7 @@ function Page() {
             <Paper p={"xl"} bg={colors['white-trans-1']}>
               <Box pb={30}>
                 <Center>
-                  <Image src={"/api/img/darmasaba-icon.png"} w={{ base: 100, md: 150 }} alt='' />
+                  <Image src={"/darmasaba-icon.png"} w={{ base: 100, md: 150 }} alt='' />
                 </Center>
                 <Text ta={"center"} fz={{ base: "h2", md: "2.5rem" }} fw={"bold"}>
                   MOTO PPID DESA DARMASABA

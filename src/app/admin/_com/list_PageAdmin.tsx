@@ -49,7 +49,7 @@ export const navBar = [
       {
         id: "PPID_2",
         name: "Struktur PPID",
-        path: "/admin/ppid/struktur-ppid"
+        path: "/admin/ppid/struktur-ppid/pegawai"
       },
       {
         id: "PPID_3",

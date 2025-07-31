@@ -24,6 +24,7 @@ import Lingkungan from "./_lib/lingkungan";
 import LandingPage from "./_lib/landing_page";
 import Pendidikan from "./_lib/pendidikan";
 import User from "./_lib/user";
+import Role from "./_lib/user/role";
 
 
 
@@ -92,6 +93,7 @@ const ApiServer = new Elysia()
   .use(Lingkungan)
   .use(Pendidikan)
   .use(User)
+  .use(Role)
   
   .onError(({ code }) => {
     if (code === "NOT_FOUND") {

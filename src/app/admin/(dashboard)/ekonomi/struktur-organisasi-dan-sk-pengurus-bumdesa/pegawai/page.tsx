@@ -78,7 +78,7 @@ function ListPegawai({ search }: { search: string }) {
       <Paper bg={colors['white-1']} p={'md'} h={{base: 770, md: 650}}>
         <JudulList
           title='List Pegawai'
-          href='/admin/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa/pegawai/create'
+          href='/admin/ekonomi/Struktur-Organisasi-dan-SK-Pengurus-BUMDesa/pegawai/create'
         />
         <Box style={{ overflowX: "auto" }}>
           <Table striped withTableBorder withRowBorders>
@@ -131,7 +131,7 @@ function ListPegawai({ search }: { search: string }) {
                     </Group>
                   </TableTd>
                   <TableTd>
-                    <Button bg={"green"} onClick={() => router.push(`/admin/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa/pegawai/${item.id}`)}>
+                    <Button bg={"green"} onClick={() => router.push(`/admin/ekonomi/Struktur-Organisasi-dan-SK-Pengurus-BUMDesa/pegawai/${item.id}`)}>
                       <IconDeviceImacCog size={25} />
                     </Button>
                   </TableTd>

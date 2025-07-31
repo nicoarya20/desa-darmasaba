@@ -68,6 +68,7 @@ function ListKategoriKegiatan({ search }: { search: string }) {
           title='List Kategori Kegiatan'
           href='/admin/landing-page/desa-anti-korupsi/kategori-desa-anti-korupsi/create'
         />
+        <Box style={{overflowY: "auto"}}>
         <Table striped withTableBorder withRowBorders>
           <TableThead>
             <TableTr>
@@ -97,6 +98,7 @@ function ListKategoriKegiatan({ search }: { search: string }) {
             ))}
           </TableTbody>
         </Table>
+        </Box>
       </Paper>
       {/* Modal Konfirmasi Hapus */}
       <ModalKonfirmasiHapus

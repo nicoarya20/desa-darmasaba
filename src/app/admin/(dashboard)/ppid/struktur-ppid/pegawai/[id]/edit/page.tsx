@@ -1,0 +1,275 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+'use client'
+import stateStrukturPPID from '@/app/admin/(dashboard)/_state/ppid/struktur_ppid/struktur_PPID';
+import colors from '@/con/colors';
+import ApiFetch from '@/lib/api-fetch';
+import {
+  Box,
+  Button,
+  Group,
+  Image,
+  Paper,
+  Select,
+  Stack,
+  Text,
+  TextInput,
+  Title
+} from '@mantine/core';
+import { Dropzone } from '@mantine/dropzone';
+import { IconArrowBack, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
+import { useProxy } from 'valtio/utils';
+
+
+export default function EditPegawaiPPID() {
+  const router = useRouter();
+  const { id } = useParams<{ id: string }>();
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [file, setFile] = useState<File | null>(null);
+  const stateOrganisasi = useProxy(stateStrukturPPID.pegawai);
+  const [formData, setFormData] = useState({
+    namaLengkap: stateOrganisasi.edit.form.namaLengkap,
+    gelarAkademik: stateOrganisasi.edit.form.gelarAkademik,
+    imageId: stateOrganisasi.edit.form.imageId,
+    tanggalMasuk: stateOrganisasi.edit.form.tanggalMasuk,
+    email: stateOrganisasi.edit.form.email,
+    telepon: stateOrganisasi.edit.form.telepon,
+    alamat: stateOrganisasi.edit.form.alamat,
+    posisiId: stateOrganisasi.edit.form.posisiId,
+    isActive: stateOrganisasi.edit.form.isActive,
+  });
+
+
+  // Format date to YYYY-MM-DD for date input
+  const formatDateForInput = (dateString: string) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toISOString().split('T')[0];
+  };
+
+  useEffect(() => {
+    stateStrukturPPID.posisiOrganisasi.findMany.load();
+    const loadPegawai = async () => {
+      try {
+        const data = await stateOrganisasi.edit.load(id);
+        if (data) {
+          setFormData({
+            namaLengkap: data.namaLengkap || "",
+            gelarAkademik: data.gelarAkademik || "",
+            imageId: data.imageId || "",
+            tanggalMasuk: data.tanggalMasuk || "",
+            email: data.email || "",
+            telepon: data.telepon || "",
+            alamat: data.alamat || "",
+            posisiId: data.posisiId || "",
+            isActive: data.isActive ?? true, // pakai nullish coalescing
+          });
+
+          if (data.image?.link) {
+            setPreviewImage(data.image.link);
+          } else {
+            setPreviewImage(null);
+          }
+        }
+      } catch (error) {
+        console.error("Error loading pegawai:", error);
+        toast.error(
+          error instanceof Error ? error.message : "Gagal mengambil data pegawai"
+        );
+      }
+    };
+
+    loadPegawai();
+  }, [id]);
+
+  const handleSubmit = async () => {
+    try {
+      if (!formData.namaLengkap.trim()) {
+        toast.error('Nama lengkap tidak boleh kosong');
+        return;
+      }
+
+      stateOrganisasi.edit.form = {
+        namaLengkap: formData.namaLengkap.trim(),
+        gelarAkademik: formData.gelarAkademik.trim(),
+        imageId: formData.imageId || "",
+        tanggalMasuk: formData.tanggalMasuk.trim(),
+        email: formData.email.trim(),
+        telepon: formData.telepon.trim(),
+        alamat: formData.alamat.trim(),
+        posisiId: formData.posisiId.trim(),
+        isActive: formData.isActive,
+      };
+
+      if (file) {
+        const res = await ApiFetch.api.fileStorage.create.post({ file, name: file.name });
+        const uploaded = res.data?.data;
+
+        if (!uploaded?.id) {
+          return toast.error("Gagal upload gambar");
+        }
+
+        // Update imageId in global state
+        stateOrganisasi.edit.form.imageId = uploaded.id;
+      }
+
+      if (id && !stateOrganisasi.edit.id) {
+        stateOrganisasi.edit.id = id;
+      }
+
+      const success = await stateOrganisasi.edit.submit();
+
+      if (success) {
+        router.push("/admin/ppid/struktur-ppid/pegawai");
+      }
+    } catch (error) {
+      console.error("Error updating pegawai:", error);
+      toast.error(error instanceof Error ? error.message : "Gagal memperbarui data pegawai");
+    }
+
+
+
+  };
+
+  return (
+    <Box>
+      <Box mb={10}>
+        <Button onClick={() => router.back()} variant='subtle' color={'blue'}>
+          <IconArrowBack color={colors['blue-button']} size={25} />
+        </Button>
+      </Box>
+
+      <Paper w={{ base: '100%', md: '50%' }} bg={colors['white-1']} p={'md'}>
+        <Stack gap={"xs"}>
+          <Title order={4}>Edit Data Pegawai PPID</Title>
+          <TextInput
+            label="Nama Lengkap"
+            placeholder="Masukkan nama lengkap"
+            value={formData.namaLengkap}
+            onChange={(e) => setFormData({ ...formData, namaLengkap: e.target.value })}
+          />
+          <TextInput
+            label="Gelar Akademik"
+            placeholder="Contoh: S.Kom"
+            value={formData.gelarAkademik}
+            onChange={(e) => setFormData({ ...formData, gelarAkademik: e.target.value })}
+          />
+          <Box>
+            <Text fz={"md"} fw={"bold"}>Gambar</Text>
+            <Box >
+              <Dropzone
+                onDrop={(files) => {
+                  const file = files[0]; // Hanya ambil file pertama
+                  if (file) {
+                    setFile(file);
+                    setPreviewImage(URL.createObjectURL(file)); // Buat preview
+                  }
+                }}
+                maxSize={5 * 1024 ** 2} // 5MB
+                accept={{
+                  'image/*': ['.jpeg', '.jpg', '.png', '.webp']
+                }}
+              >
+                <Group justify="center" gap="xl" mih={220} style={{ pointerEvents: 'none' }}>
+                  <Dropzone.Accept>
+                    <IconUpload size={52} color="var(--mantine-color-blue-6)" stroke={1.5} />
+                  </Dropzone.Accept>
+                  <Dropzone.Reject>
+                    <IconX size={52} color="var(--mantine-color-red-6)" stroke={1.5} />
+                  </Dropzone.Reject>
+                  <Dropzone.Idle>
+                    <IconPhoto size={52} color="var(--mantine-color-dimmed)" stroke={1.5} />
+                  </Dropzone.Idle>
+
+                  <div>
+                    <Text size="xl" inline>
+                      Drag images here or click to select files
+                    </Text>
+                    <Text size="sm" c="dimmed" inline mt={7}>
+                      Attach as many files as you like, each file should not exceed 5mb
+                    </Text>
+                  </div>
+                </Group>
+              </Dropzone>
+              {previewImage && (
+                <Image
+                  src={previewImage}
+                  alt="Preview"
+                  width={280}
+                  height={180}
+                  fit="cover"
+                  radius="sm"
+                  mt="md"
+                />
+              )}
+            </Box>
+          </Box>
+          <TextInput
+            label="Tanggal Masuk"
+            type="date"
+            placeholder="Contoh: 2022-01-01"
+            value={formatDateForInput(formData.tanggalMasuk)}
+            onChange={(e) => setFormData({ ...formData, tanggalMasuk: e.target.value })}
+          />
+          <TextInput
+            label="Email"
+            placeholder="Contoh: email@example.com"
+            value={formData.email}
+            onChange={(e) => (formData.email = e.currentTarget.value)}
+          />
+          <TextInput
+            label="Telepon"
+            placeholder="Contoh: 08123456789"
+            value={formData.telepon}
+            onChange={(e) => (formData.telepon = e.currentTarget.value)}
+          />
+          <TextInput
+            label="Alamat"
+            placeholder="Contoh: Jl. Contoh No. 1"
+            value={formData.alamat}
+            onChange={(e) => (formData.alamat = e.currentTarget.value)}
+          />
+          <Select
+            label="Posisi"
+            placeholder="Pilih posisi"
+            data={
+              stateStrukturPPID.posisiOrganisasi.findMany.data?.map((p) => ({
+                value: p.id, // harus string
+                label: p.nama,
+              })) || []
+            }
+            value={formData.posisiId}
+            onChange={(value) => {
+              if (value !== null) {
+                setFormData({ ...formData, posisiId: value }); // value harus string
+              }
+            }}
+          />
+          <Select
+            label="Status Pegawai"
+            data={[
+              { value: 'true', label: 'Aktif' },
+              { value: 'false', label: 'Tidak Aktif' },
+            ]}
+            value={String(formData.isActive)} // 'true' atau 'false'
+            onChange={(val) => {
+              setFormData({ ...formData, isActive: val === 'true' });
+            }}
+          />
+
+
+          <Group>
+            <Button
+              onClick={handleSubmit}
+              color="blue"
+            >
+              Simpan
+            </Button>
+          </Group>
+        </Stack>
+      </Paper>
+    </Box >
+  );
+}

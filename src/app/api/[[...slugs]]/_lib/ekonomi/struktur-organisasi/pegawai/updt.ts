@@ -6,7 +6,7 @@ type FormUpdatePegawai = {
   id: string;
   namaLengkap?: string;
   gelarAkademik?: string;
-  imageId: string;
+  imageId?: string;
   tanggalMasuk?: string;
   email?: string;
   telepon?: string;

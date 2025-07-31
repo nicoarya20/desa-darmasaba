@@ -98,6 +98,8 @@ model FileStorage {
   PrestasiDesa             PrestasiDesa[]
 
   DataPerpustakaan DataPerpustakaan[]
+
+  PegawaiPPID PegawaiPPID[]
 }
 
 //========================================= MENU LANDING PAGE ========================================= //
@@ -296,14 +298,61 @@ model ResponseStat {
 
 //========================================= STRUKTUR PPID ========================================= //
 model StrukturPPID {
-  id        String       @id @default(cuid())
-  name      String       @db.Text
-  image     FileStorage? @relation(fields: [imageId], references: [id])
-  imageId   String?
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
-  deletedAt DateTime     @default(now())
-  isActive  Boolean      @default(true)
+  id                     String                @id @default(cuid())
+  name                   String                @db.Text
+  image                  FileStorage?          @relation(fields: [imageId], references: [id])
+  imageId                String?
+  createdAt              DateTime              @default(now())
+  updatedAt              DateTime              @updatedAt
+  deletedAt              DateTime              @default(now())
+  isActive               Boolean               @default(true)
+  PosisiOrganisasiPPID   PosisiOrganisasiPPID? @relation(fields: [posisiOrganisasiPPIDId], references: [id])
+  posisiOrganisasiPPIDId String?
+  PegawaiPPID            PegawaiPPID?          @relation(fields: [pegawaiPPIDId], references: [id])
+  pegawaiPPIDId          String?
+}
+
+model PosisiOrganisasiPPID {
+  id                 String         @id @default(cuid())
+  nama               String         @db.VarChar(100)
+  deskripsi          String?        @db.Text
+  hierarki           Int
+  pegawai            PegawaiPPID[]
+  strukturOrganisasi StrukturPPID[] // Relasi balik
+  parentId           String?         
+  parent             PosisiOrganisasiPPID? @relation("Parent", fields: [parentId], references: [id])
+  children           PosisiOrganisasiPPID[] @relation("Parent")
+}
+
+model PegawaiPPID {
+  id                 String               @id @default(cuid())
+  namaLengkap        String               @db.VarChar(255)
+  gelarAkademik      String?              @db.VarChar(100)
+  image              FileStorage?         @relation(fields: [imageId], references: [id])
+  imageId            String?
+  tanggalMasuk       DateTime?            @db.Date
+  email              String?              @unique @db.VarChar(255)
+  telepon            String?              @db.VarChar(20)
+  alamat             String?              @db.Text
+  posisiId           String               @db.VarChar(50)
+  isActive           Boolean              @default(true)
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  posisi             PosisiOrganisasiPPID @relation(fields: [posisiId], references: [id])
+  strukturOrganisasi StrukturPPID[] // Relasi balik
+}
+
+model StrukturOrganisasiPPID {
+  id                   String           @id @default(uuid())
+  posisiOrganisasiId   String           @db.VarChar(50)
+  pegawaiId            String           @db.Uuid
+  hubunganOrganisasiId String           @db.Uuid
+  posisiOrganisasi     PosisiOrganisasi @relation(fields: [posisiOrganisasiId], references: [id])
+  pegawai              Pegawai          @relation(fields: [pegawaiId], references: [id])
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime         @updatedAt
+  deletedAt            DateTime?
+  isActive             Boolean          @default(true)
 }
 
 // ========================================= VISI MISI PPID ========================================= //
@@ -1316,8 +1365,9 @@ model PosisiOrganisasi {
   deskripsi String? @db.Text
   hierarki  Int
 
-  pegawai            Pegawai[]
-  strukturOrganisasi StrukturOrganisasi[] // Relasi balik
+  pegawai                Pegawai[]
+  strukturOrganisasi     StrukturOrganisasi[] // Relasi balik
+  StrukturOrganisasiPPID StrukturOrganisasiPPID[]
 
   @@map("posisi_organisasi")
 }
@@ -1342,7 +1392,8 @@ model Pegawai {
   sebagaiAtasan  HubunganOrganisasi[] @relation("AtasanToBawahan")
   sebagaiBawahan HubunganOrganisasi[] @relation("BawahanToAtasan")
 
-  strukturOrganisasi StrukturOrganisasi[] // Relasi balik
+  strukturOrganisasi     StrukturOrganisasi[] // Relasi balik
+  StrukturOrganisasiPPID StrukturOrganisasiPPID[]
 
   @@map("pegawai")
 }

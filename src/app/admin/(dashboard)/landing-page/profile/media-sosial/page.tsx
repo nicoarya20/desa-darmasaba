@@ -57,7 +57,8 @@ function ListMediaSosial({ search }: { search: string }) {
           title='List Media Sosial'
           href='/admin/landing-page/profile/media-sosial/create'
         />
-        <Table striped withTableBorder withRowBorders>
+       <Box style={{overflowY: "auto"}}>
+       <Table striped withTableBorder withRowBorders>
           <TableThead>
             <TableTr>
               <TableTh>Nama Media Sosial / Nama Kontak</TableTh>
@@ -85,6 +86,7 @@ function ListMediaSosial({ search }: { search: string }) {
             ))}
           </TableTbody>
         </Table>
+       </Box>
       </Paper>
     </Box>
   );

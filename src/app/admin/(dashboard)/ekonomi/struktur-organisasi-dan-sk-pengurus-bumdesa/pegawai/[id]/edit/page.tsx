@@ -126,7 +126,7 @@ export default function EditPegawai() {
       const success = await stateOrganisasi.edit.submit();
 
       if (success) {
-        router.push("/admin/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa/pegawai");
+        router.push("/admin/ekonomi/Struktur-Organisasi-dan-SK-Pengurus-BUMDesa/pegawai");
       }
     } catch (error) {
       console.error("Error updating pegawai:", error);

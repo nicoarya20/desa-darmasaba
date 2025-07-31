@@ -45,7 +45,7 @@ const Pegawai = new Elysia({
         id: t.String(),
         namaLengkap: t.Optional(t.String()),
         gelarAkademik: t.Optional(t.String()),
-        imageId: t.String(),
+        imageId: t.Optional(t.String()),
         tanggalMasuk: t.Optional(t.String()),
         email: t.Optional(t.String()),
         telepon: t.Optional(t.String()),

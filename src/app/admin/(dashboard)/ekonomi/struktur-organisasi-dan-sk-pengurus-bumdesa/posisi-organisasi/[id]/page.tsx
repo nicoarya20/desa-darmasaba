@@ -68,7 +68,7 @@ function EditPosisiOrganisasi() {
       const success = await stateOrganisasi.edit.update();
 
       if (success) {
-        router.push("/admin/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa/posisi-organisasi");
+        router.push("/admin/ekonomi/Struktur-Organisasi-dan-SK-Pengurus-BUMDesa/posisi-organisasi");
       }
     } catch (error) {
       console.error("Error updating posisi organisasi:", error);

@@ -27,7 +27,7 @@ function CreatePosisiOrganisasi() {
     const handleSubmit = async () => {
         await stateOrganisasi.create.submit();
         resetForm();
-        router.push("/admin/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa/posisi-organisasi")
+        router.push("/admin/ekonomi/Struktur-Organisasi-dan-SK-Pengurus-BUMDesa/posisi-organisasi")
     };
 
     return (
