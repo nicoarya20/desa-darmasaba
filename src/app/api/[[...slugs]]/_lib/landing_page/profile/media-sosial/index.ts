@@ -11,7 +11,7 @@ const MediaSosial = new Elysia({
 })
 
   // ✅ Find all
-  .get("/find-many", MediaSosialFindMany)
+  .get("/findMany", MediaSosialFindMany)
 
   // ✅ Find by ID
   .get("/:id", MediaSosialFindUnique)

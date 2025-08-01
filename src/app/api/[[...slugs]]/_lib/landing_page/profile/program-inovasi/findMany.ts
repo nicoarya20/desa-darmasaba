@@ -1,4 +1,4 @@
-// /api/berita/findManyPaginated.ts
+// // /api/berita/findManyPaginated.ts
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
 
@@ -16,7 +16,7 @@ async function programInovasiFindMany(context: Context) {
         },
         skip,
         take: limit,
-        orderBy: { createdAt: "desc" }, // opsional, kalau mau urut berdasarkan waktu
+        orderBy: { name: "asc" }, // opsional, kalau mau urut berdasarkan waktu
       }),
       prisma.programInovasi.count({
         where: { isActive: true },
@@ -41,3 +41,4 @@ async function programInovasiFindMany(context: Context) {
 }
 
 export default programInovasiFindMany;
+

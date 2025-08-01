@@ -9,7 +9,7 @@ const KategoriDesaAntiKorupsi = new Elysia({
   prefix: "/kategoridak",
   tags: ["Landing Page/Desa Anti Korupsi"],
 })
-  .get("/find-many", kategoriDesaAntiKorupsiFindMany)
+  .get("/findMany", kategoriDesaAntiKorupsiFindMany)
   .get("/:id", async (context) => {
     const response = await kategoriDesaAntiKorupsiFindUnique(context);
     return response;

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiFetch from "@/lib/api-fetch";
 import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
@@ -54,20 +55,38 @@ const desaAntikorupsi = proxy({
     },
   },
   findMany: {
-    data: null as Array<
-      Prisma.DesaAntiKorupsiGetPayload<{
-        include: {
-          file: true;
-          kategori: true;
-        };
-      }>
-    > | null,
-    async load() {
-      const res = await ApiFetch.api.landingpage.desaantikorupsi[
-        "find-many"
-      ].get();
-      if (res.status === 200) {
-        desaAntikorupsi.findMany.data = res.data?.data ?? [];
+    data: null as any[] | null,
+    page: 1,
+    totalPages: 1,
+    total: 0,
+    loading: false,
+    load: async (page = 1, limit = 10) => {  // Change to arrow function
+      desaAntikorupsi.findMany.loading = true;  // Use the full path to access the property
+      desaAntikorupsi.findMany.page = page;
+      try {
+        const res = await ApiFetch.api.landingpage.desaantikorupsi[
+          "findMany"
+        ].get({
+          query: { page, limit },
+        });
+  
+        if (res.status === 200 && res.data?.success) {
+          desaAntikorupsi.findMany.data = res.data.data || [];
+          desaAntikorupsi.findMany.total = res.data.total || 0;
+          desaAntikorupsi.findMany.totalPages = res.data.totalPages || 1;
+        } else {
+          console.error("Failed to load media sosial:", res.data?.message);
+          desaAntikorupsi.findMany.data = [];
+          desaAntikorupsi.findMany.total = 0;
+          desaAntikorupsi.findMany.totalPages = 1;
+        }
+      } catch (error) {
+        console.error("Error loading media sosial:", error);
+        desaAntikorupsi.findMany.data = [];
+        desaAntikorupsi.findMany.total = 0;
+        desaAntikorupsi.findMany.totalPages = 1;
+      } finally {
+        desaAntikorupsi.findMany.loading = false;
       }
     },
   },
@@ -281,14 +300,38 @@ const kategoriDesaAntiKorupsi = proxy({
     },
   },
   findMany: {
-    data: null as Array<{
-      id: string;
-      name: string;
-    }> | null,
-    async load() {
-      const res = await ApiFetch.api.landingpage.kategoridak["find-many"].get();
-      if (res.status === 200) {
-        kategoriDesaAntiKorupsi.findMany.data = res.data?.data ?? [];
+    data: null as any[] | null,
+    page: 1,
+    totalPages: 1,
+    total: 0,
+    loading: false,
+    load: async (page = 1, limit = 10) => {  // Change to arrow function
+      kategoriDesaAntiKorupsi.findMany.loading = true;  // Use the full path to access the property
+      kategoriDesaAntiKorupsi.findMany.page = page;
+      try {
+        const res = await ApiFetch.api.landingpage.kategoridak[
+          "findMany"
+        ].get({
+          query: { page, limit },
+        });
+  
+        if (res.status === 200 && res.data?.success) {
+          kategoriDesaAntiKorupsi.findMany.data = res.data.data || [];
+          kategoriDesaAntiKorupsi.findMany.total = res.data.total || 0;
+          kategoriDesaAntiKorupsi.findMany.totalPages = res.data.totalPages || 1;
+        } else {
+          console.error("Failed to load media sosial:", res.data?.message);
+          kategoriDesaAntiKorupsi.findMany.data = [];
+          kategoriDesaAntiKorupsi.findMany.total = 0;
+          kategoriDesaAntiKorupsi.findMany.totalPages = 1;
+        }
+      } catch (error) {
+        console.error("Error loading media sosial:", error);
+        kategoriDesaAntiKorupsi.findMany.data = [];
+        kategoriDesaAntiKorupsi.findMany.total = 0;
+        kategoriDesaAntiKorupsi.findMany.totalPages = 1;
+      } finally {
+        kategoriDesaAntiKorupsi.findMany.loading = false;
       }
     },
   },

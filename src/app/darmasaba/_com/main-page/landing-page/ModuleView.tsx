@@ -1,17 +1,20 @@
-import images from "@/con/images";
+import profileLandingPageState from "@/app/admin/(dashboard)/_state/landing-page/profile";
 import { Center, Image, Paper, SimpleGrid } from "@mantine/core";
+import { useShallowEffect } from "@mantine/hooks";
 import { motion } from 'framer-motion';
 import { useTransitionRouter } from 'next-view-transitions';
+import { useProxy } from "valtio/utils";
+import { Prisma } from "@prisma/client";
 
 
-const listImageModule = Object.values(images.module);
+type ProgramInovasiItem = Prisma.ProgramInovasiGetPayload<{ include: { image: true } }>;
 
-function ModuleItem({ item }: { item: string }) {
+function ModuleItem({ data }: { data: ProgramInovasiItem }) {
   const router = useTransitionRouter();
   return (
     <Paper
       onClick={() => {
-        router.push(`/module/c`);
+        router.push(`/${data.name}`);
       }}
       p={"md"}
       bg={"white"}
@@ -22,7 +25,7 @@ function ModuleItem({ item }: { item: string }) {
         <motion.div
           whileHover={{ scale: 1.05 }}
         >
-          <Image src={item} alt="icon"
+          <Image src={data.image?.link || ""} alt="icon"
             fit="contain"
             sizes="100%"
             loading="lazy"
@@ -38,6 +41,11 @@ function ModuleItem({ item }: { item: string }) {
 }
 
 function ModuleView() {
+  const listImageState = useProxy(profileLandingPageState.programInovasi)
+
+  useShallowEffect(() => {
+    listImageState.findMany.load()
+  }, [])
   return (
     <SimpleGrid
       cols={{
@@ -45,9 +53,9 @@ function ModuleView() {
         md: 3,
       }}
     >
-      {listImageModule.map((item, k) => {
-        return <ModuleItem key={k} item={item} />;
-      })}
+      {listImageState.findMany.data?.map((item) => (
+        <ModuleItem key={item.id} data={item} />
+      ))}
     </SimpleGrid>
   );
 }

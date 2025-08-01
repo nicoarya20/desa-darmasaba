@@ -11,7 +11,7 @@ const DesaAntiKorupsi = new Elysia({
 })
 
   // ✅ Find all
-  .get("/find-many", desaAntiKorupsiFindMany)
+  .get("/findMany", desaAntiKorupsiFindMany)
 
   // ✅ Find by ID
   .get("/:id", desaAntiKorupsiFindUnique)

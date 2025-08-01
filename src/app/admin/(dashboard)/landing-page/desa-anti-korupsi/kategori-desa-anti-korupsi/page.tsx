@@ -1,10 +1,10 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr } from '@mantine/core';
-import { useShallowEffect } from '@mantine/hooks';
+import { Box, Button, Center, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr } from '@mantine/core';
 import { IconEdit, IconSearch, IconX } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../../_com/header';
 import JudulList from '../../../_com/judulList';
@@ -34,6 +34,14 @@ function ListKategoriKegiatan({ search }: { search: string }) {
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const router = useRouter()
 
+  const {
+    data,
+    page,
+    totalPages,
+    loading,
+    load,
+  } = stateKategori.findMany;
+
   const handleHapus = () => {
     if (selectedId) {
       stateKategori.delete.byId(selectedId)
@@ -42,23 +50,51 @@ function ListKategoriKegiatan({ search }: { search: string }) {
     }
   }
 
-  useShallowEffect(() => {
-    stateKategori.findMany.load()
-  }, [])
+  useEffect(() => {
+    load(page, 10)
+  }, [page])
 
-  const filteredData = (stateKategori.findMany.data || []).filter(item => {
-    const keyword = search.toLowerCase();
-    return (
-      item.name.toLowerCase().includes(keyword)
-    );
-  });
+  const filteredData = useMemo(() => {
+    if (!data) return [];
+    return data.filter(item => {
+      const keyword = search.toLowerCase();
+      return (
+        item.name?.toLowerCase().includes(keyword)
+      );
+    })
+  }, [data, search]);
 
-  if (!stateKategori.findMany.data) {
+  // Handle loading state
+  if (loading || !data) {
     return (
       <Stack py={10}>
-        <Skeleton h={500} />
+        <Skeleton height={300} />
       </Stack>
-    )
+    );
+  }
+
+  if (data.length === 0) {
+    return (
+      <Box py={10}>
+        <Paper bg={colors['white-1']} p={'md'}>
+          <JudulList
+            title='List Kategori Kegiatan'
+            href='/admin/landing-page/desa-anti-korupsi/kategori-desa-anti-korupsi/create'
+          />
+          <Box style={{ overflowX: "auto" }}>
+            <Table striped withTableBorder withRowBorders>
+              <TableThead>
+                <TableTr>
+                  <TableTh>Nama</TableTh>
+                  <TableTh>Edit</TableTh>
+                  <TableTh>Delete</TableTh>
+                </TableTr>
+              </TableThead>
+            </Table>
+          </Box>
+        </Paper>
+      </Box>
+    );
   }
 
   return (
@@ -68,38 +104,50 @@ function ListKategoriKegiatan({ search }: { search: string }) {
           title='List Kategori Kegiatan'
           href='/admin/landing-page/desa-anti-korupsi/kategori-desa-anti-korupsi/create'
         />
-        <Box style={{overflowY: "auto"}}>
-        <Table striped withTableBorder withRowBorders>
-          <TableThead>
-            <TableTr>
-              <TableTh>Nama Kategori</TableTh>
-              <TableTh>Edit</TableTh>
-              <TableTh>Delete</TableTh>
-            </TableTr>
-          </TableThead>
-          <TableTbody>
-            {filteredData.map((item) => (
-              <TableTr key={item.id}>
-                <TableTd>{item.name}</TableTd>
-                <TableTd>
-                  <Button color="green" onClick={() => router.push(`/admin/landing-page/desa-anti-korupsi/kategori-desa-anti-korupsi/${item.id}`)}>
-                    <IconEdit size={20} />
-                  </Button>
-                </TableTd>
-                <TableTd>
-                  <Button color="red" onClick={() => {
-                    setSelectedId(item.id)
-                    setModalHapus(true)
-                  }}>
-                    <IconX size={20} />
-                  </Button>
-                </TableTd>
+        <Box style={{ overflowY: "auto" }}>
+          <Table striped withTableBorder withRowBorders>
+            <TableThead>
+              <TableTr>
+                <TableTh>Nama Kategori</TableTh>
+                <TableTh>Edit</TableTh>
+                <TableTh>Delete</TableTh>
               </TableTr>
-            ))}
-          </TableTbody>
-        </Table>
+            </TableThead>
+            <TableTbody>
+              {filteredData.map((item) => (
+                <TableTr key={item.id}>
+                  <TableTd>{item.name}</TableTd>
+                  <TableTd>
+                    <Button color="green" onClick={() => router.push(`/admin/landing-page/desa-anti-korupsi/kategori-desa-anti-korupsi/${item.id}`)}>
+                      <IconEdit size={20} />
+                    </Button>
+                  </TableTd>
+                  <TableTd>
+                    <Button color="red" onClick={() => {
+                      setSelectedId(item.id)
+                      setModalHapus(true)
+                    }}>
+                      <IconX size={20} />
+                    </Button>
+                  </TableTd>
+                </TableTr>
+              ))}
+            </TableTbody>
+          </Table>
         </Box>
       </Paper>
+      <Center>
+        <Pagination
+          value={page}
+          onChange={(newPage) => {
+            load(newPage, 10);
+            window.scrollTo(0, 0);
+          }}
+          total={totalPages}
+          mt="md"
+          mb="md"
+        />
+      </Center>
       {/* Modal Konfirmasi Hapus */}
       <ModalKonfirmasiHapus
         opened={modalHapus}

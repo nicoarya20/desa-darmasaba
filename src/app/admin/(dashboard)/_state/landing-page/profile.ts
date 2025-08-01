@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiFetch from "@/lib/api-fetch";
 import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
@@ -5,10 +6,10 @@ import { proxy } from "valtio";
 import { z } from "zod";
 
 const templateProgramInovasi = z.object({
-  name: z.string().min(3, "Nama minimal 3 karakter"),
-  description: z.string().min(3, "Deskripsi minimal 3 karakter"),
+  name: z.string().min(1, "Nama minimal 1 karakter"),
+  description: z.string().min(1, "Deskripsi minimal 1 karakter"),
   imageId: z.string().min(1, "Gambar wajib dipilih"),
-  link: z.string().min(3, "Link minimal 3 karakter"),
+  link: z.string().min(1, "Link minimal 1 karakter"),
 });
 
 type ProgramInovasiForm = Prisma.ProgramInovasiGetPayload<{
@@ -59,15 +60,38 @@ const programInovasi = proxy({
     },
   },
   findMany: {
-    data: null as
-      | Prisma.ProgramInovasiGetPayload<{ include: { image: true } }>[]
-      | null,
-    async load() {
-      const res = await ApiFetch.api.landingpage.programinovasi[
-        "find-many"
-      ].get();
-      if (res.status === 200) {
-        programInovasi.findMany.data = res.data?.data ?? [];
+    data: null as any[] | null,
+    page: 1,
+    totalPages: 1,
+    total: 0,
+    loading: false,
+    load: async (page = 1, limit = 10) => {  // Change to arrow function
+      programInovasi.findMany.loading = true;  // Use the full path to access the property
+      programInovasi.findMany.page = page;
+      try {
+        const res = await ApiFetch.api.landingpage.programinovasi[
+          "findMany"
+        ].get({
+          query: { page, limit },
+        });
+  
+        if (res.status === 200 && res.data?.success) {
+          programInovasi.findMany.data = res.data.data || [];
+          programInovasi.findMany.total = res.data.total || 0;
+          programInovasi.findMany.totalPages = res.data.totalPages || 1;
+        } else {
+          console.error("Failed to load pegawai:", res.data?.message);
+          programInovasi.findMany.data = [];
+          programInovasi.findMany.total = 0;
+          programInovasi.findMany.totalPages = 1;
+        }
+      } catch (error) {
+        console.error("Error loading pegawai:", error);
+        programInovasi.findMany.data = [];
+        programInovasi.findMany.total = 0;
+        programInovasi.findMany.totalPages = 1;
+      } finally {
+        programInovasi.findMany.loading = false;
       }
     },
   },
@@ -453,13 +477,38 @@ const mediaSosial = proxy({
     },
   },
   findMany: {
-    data: null as
-      | Prisma.MediaSosialGetPayload<{ include: { image: true } }>[]
-      | null,
-    async load() {
-      const res = await ApiFetch.api.landingpage.mediasosial["find-many"].get();
-      if (res.status === 200) {
-        mediaSosial.findMany.data = res.data?.data ?? [];
+    data: null as any[] | null,
+    page: 1,
+    totalPages: 1,
+    total: 0,
+    loading: false,
+    load: async (page = 1, limit = 10) => {  // Change to arrow function
+      mediaSosial.findMany.loading = true;  // Use the full path to access the property
+      mediaSosial.findMany.page = page;
+      try {
+        const res = await ApiFetch.api.landingpage.mediasosial[
+          "findMany"
+        ].get({
+          query: { page, limit },
+        });
+  
+        if (res.status === 200 && res.data?.success) {
+          mediaSosial.findMany.data = res.data.data || [];
+          mediaSosial.findMany.total = res.data.total || 0;
+          mediaSosial.findMany.totalPages = res.data.totalPages || 1;
+        } else {
+          console.error("Failed to load media sosial:", res.data?.message);
+          mediaSosial.findMany.data = [];
+          mediaSosial.findMany.total = 0;
+          mediaSosial.findMany.totalPages = 1;
+        }
+      } catch (error) {
+        console.error("Error loading media sosial:", error);
+        mediaSosial.findMany.data = [];
+        mediaSosial.findMany.total = 0;
+        mediaSosial.findMany.totalPages = 1;
+      } finally {
+        mediaSosial.findMany.loading = false;
       }
     },
   },

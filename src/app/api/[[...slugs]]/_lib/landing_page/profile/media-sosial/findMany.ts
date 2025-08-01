@@ -16,7 +16,7 @@ async function mediaSosialFindMany(context: Context) {
         },
         skip,
         take: limit,
-        orderBy: { createdAt: "desc" }, // opsional, kalau mau urut berdasarkan waktu
+        orderBy: { name: "asc" }, // opsional, kalau mau urut berdasarkan waktu
       }),
       prisma.mediaSosial.count({
         where: { isActive: true },

@@ -132,8 +132,8 @@ model ProgramInovasi {
 model MediaSosial {
   id        String      @id @default(cuid())
   name      String
-  image     FileStorage @relation(fields: [imageId], references: [id])
-  imageId   String
+  image     FileStorage? @relation(fields: [imageId], references: [id])
+  imageId   String?
   iconUrl   String?     @db.VarChar(255)
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
@@ -148,8 +148,8 @@ model DesaAntiKorupsi {
   deskripsi  String                  @db.Text
   kategori   KategoriDesaAntiKorupsi @relation(fields: [kategoriId], references: [id])
   kategoriId String
-  file       FileStorage             @relation(fields: [fileId], references: [id])
-  fileId     String
+  file       FileStorage?             @relation(fields: [fileId], references: [id])
+  fileId     String?
   createdAt  DateTime                @default(now())
   updatedAt  DateTime                @updatedAt
   deletedAt  DateTime                @default(now())

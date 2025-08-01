@@ -17,7 +17,7 @@ async function desaAntiKorupsiFindMany(context: Context) {
         },
         skip,
         take: limit,
-        orderBy: { createdAt: 'desc' }, // opsional, kalau mau urut berdasarkan waktu
+        orderBy: { name: 'asc' }, // opsional, kalau mau urut berdasarkan waktu
       }),
       prisma.desaAntiKorupsi.count({
         where: { isActive: true }

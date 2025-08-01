@@ -11,7 +11,7 @@ const ProgramInovasi = new Elysia({
 })
 
   // ✅ Find all
-  .get("/find-many", ProgramInovasiFindMany)
+  .get("/findMany", ProgramInovasiFindMany)
 
   // ✅ Find by ID
   .get("/:id", ProgramInovasiFindUnique)

@@ -59,7 +59,13 @@ function DetailProgramInovasi() {
               </Box>
               <Box>
                 <Text fz={"lg"} fw={"bold"}>Link</Text>
-                <Text fz={"lg"}>{stateProgramInovasi.findUnique.data?.link}</Text>
+                <a
+                  href={stateProgramInovasi.findUnique.data?.link || "#"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {stateProgramInovasi.findUnique.data?.link || "Tidak ada link"}
+                </a>
               </Box>
               <Box>
                 <Text fz={"lg"} fw={"bold"}>Gambar</Text>
