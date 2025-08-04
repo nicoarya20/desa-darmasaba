@@ -17,6 +17,7 @@ const pelayananSuratKeteranganDelete = async (context: Context) => {
         where: { id },
         include: {
             image: true,
+            image2: true,
         },
     });
 
@@ -34,6 +35,18 @@ const pelayananSuratKeteranganDelete = async (context: Context) => {
             await fs.unlink(filePath);
             await prisma.fileStorage.delete({
                 where: { id: pelayananSuratKeterangan.image.id },
+            });
+        } catch (err) {
+            console.error("Gagal hapus gambar lama:", err);
+        }
+    }
+
+    if (pelayananSuratKeterangan.image2) {
+        try {
+            const filePath = path.join(pelayananSuratKeterangan.image2.path, pelayananSuratKeterangan.image2.name);
+            await fs.unlink(filePath);
+            await prisma.fileStorage.delete({
+                where: { id: pelayananSuratKeterangan.image2.id },
             });
         } catch (err) {
             console.error("Gagal hapus gambar lama:", err);

@@ -18,6 +18,7 @@ const PelayananSuratKeterangan = new Elysia({ prefix: "/pelayanansuratketerangan
         name: t.String(),
         deskripsi: t.String(),
         imageId: t.String(),
+        image2Id: t.String(),
     }),
 })
 .delete("/del/:id", pelayananSuratKeteranganDelete)
@@ -30,6 +31,7 @@ const PelayananSuratKeterangan = new Elysia({ prefix: "/pelayanansuratketerangan
         name: t.String(),
         deskripsi: t.String(),
         imageId: t.String(),
+        image2Id: t.String(),
     }),
 })
 export default PelayananSuratKeterangan;

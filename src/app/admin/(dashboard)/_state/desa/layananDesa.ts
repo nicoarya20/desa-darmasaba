@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiFetch from "@/lib/api-fetch";
 import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
@@ -8,12 +9,14 @@ const templateSuratKeteranganForm = z.object({
   name: z.string().min(3, "Nama minimal 3 karakter"),
   deskripsi: z.string().min(3, "Deskripsi minimal 3 karakter"),
   imageId: z.string().nonempty(),
+  image2Id: z.string().nonempty(),
 });
 
 const suratKeteranganForm = {
   name: "",
   deskripsi: "",
   imageId: "",
+  image2Id: "",
 };
 
 const telunjukSaktiDesaForm = {
@@ -105,15 +108,38 @@ const suratKeterangan = proxy({
     },
   },
   findMany: {
-    data: [] as Prisma.PelayananSuratKeteranganGetPayload<{
-      include: { image: true };
-    }>[],
-    async load() {
-      const res = await ApiFetch.api.desa.layanan.pelayanansuratketerangan[
-        "find-many"
-      ].get();
-      if (res.status === 200) {
-        suratKeterangan.findMany.data = res.data?.data ?? [];
+    data: null as any[] | null,
+    page: 1,
+    totalPages: 1,
+    total: 0,
+    loading: false,
+    load: async (page = 1, limit = 10) => {  // Change to arrow function
+      suratKeterangan.findMany.loading = true;  // Use the full path to access the property
+      suratKeterangan.findMany.page = page;
+      try {
+        const res = await ApiFetch.api.desa.layanan.pelayanansuratketerangan[
+          "find-many"
+        ].get({
+          query: { page, limit },
+        });
+  
+        if (res.status === 200 && res.data?.success) {
+          suratKeterangan.findMany.data = res.data.data || [];
+          suratKeterangan.findMany.total = res.data.total || 0;
+          suratKeterangan.findMany.totalPages = res.data.totalPages || 1;
+        } else {
+          console.error("Failed to load surat keterangan:", res.data?.message);
+          suratKeterangan.findMany.data = [];
+          suratKeterangan.findMany.total = 0;
+          suratKeterangan.findMany.totalPages = 1;
+        }
+      } catch (error) {
+        console.error("Error loading surat keterangan:", error);
+        suratKeterangan.findMany.data = [];
+        suratKeterangan.findMany.total = 0;
+        suratKeterangan.findMany.totalPages = 1;
+      } finally {
+        suratKeterangan.findMany.loading = false;
       }
     },
   },
@@ -121,6 +147,7 @@ const suratKeterangan = proxy({
     data: null as Prisma.PelayananSuratKeteranganGetPayload<{
       include: {
         image: true;
+        image2: true;
       };
     }> | null,
     async load(id: string) {
@@ -202,6 +229,7 @@ const suratKeterangan = proxy({
             name: data.name,
             deskripsi: data.deskripsi,
             imageId: data.imageId || "",
+            image2Id: data.image2Id || "",
           };
           return data;
         } else {
@@ -238,6 +266,7 @@ const suratKeterangan = proxy({
               name: this.form.name,
               deskripsi: this.form.deskripsi,
               imageId: this.form.imageId,
+              image2Id: this.form.image2Id,
             }),
           }
         );

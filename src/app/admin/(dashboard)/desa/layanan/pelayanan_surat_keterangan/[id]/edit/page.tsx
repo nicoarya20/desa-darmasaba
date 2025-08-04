@@ -4,8 +4,9 @@ import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import stateLayananDesa from '@/app/admin/(dashboard)/_state/desa/layananDesa';
 import colors from '@/con/colors';
 import ApiFetch from '@/lib/api-fetch';
-import { Box, Button, Center, FileInput, Image, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
-import { IconArrowBack, IconImageInPicture } from '@tabler/icons-react';
+import { Box, Button, Group, Image, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
+import { Dropzone } from '@mantine/dropzone';
+import { IconArrowBack, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
@@ -16,11 +17,14 @@ function EditSuratKeterangan() {
   const params = useParams()
   const stateSurat = useProxy(stateLayananDesa.suratKeterangan)
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [previewImage2, setPreviewImage2] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
+  const [file2, setFile2] = useState<File | null>(null);
   const [formData, setFormData] = useState({
     name: stateSurat.edit.form.name,
     deskripsi: stateSurat.edit.form.deskripsi,
     imageId: stateSurat.edit.form.imageId,
+    image2Id: stateSurat.edit.form.image2Id,
   })
 
   useEffect(() => {
@@ -31,12 +35,22 @@ function EditSuratKeterangan() {
         const data = await stateSurat.edit.load(id);
         if (data) {
           setFormData({
-            name: data.name,
-            deskripsi: data.deskripsi,
-            imageId: data.imageId,
+            name: data.name || "",
+            deskripsi: data.deskripsi || "",
+            imageId: data.imageId || "",
+            image2Id: data.image2Id || "",
           });
-          if (data?.image?.link) {
+
+          if (data.image?.link) {
             setPreviewImage(data.image.link);
+          } else {
+            setPreviewImage(null);
+          }
+
+          if (data.image2?.link) {
+            setPreviewImage2(data.image2.link);
+          } else {
+            setPreviewImage2(null);
           }
         }
       } catch (error) {
@@ -54,6 +68,7 @@ function EditSuratKeterangan() {
         name: formData.name,
         deskripsi: formData.deskripsi,
         imageId: formData.imageId,
+        image2Id: formData.image2Id,
       }
       if (file) {
         const res = await ApiFetch.api.fileStorage.create.post({ file, name: file.name });
@@ -64,6 +79,17 @@ function EditSuratKeterangan() {
         }
 
         stateSurat.edit.form.imageId = uploaded.id;
+      }
+
+      if (file2) {
+        const res = await ApiFetch.api.fileStorage.create.post({ file: file2, name: file2.name });
+        const uploaded = res.data?.data;
+
+        if (!uploaded?.id) {
+          return toast.error("Gagal upload gambar");
+        }
+
+        stateSurat.edit.form.image2Id = uploaded.id;
       }
 
       await stateSurat.edit.update()
@@ -103,25 +129,106 @@ function EditSuratKeterangan() {
               }}
             />
           </Box>
-          <FileInput
-            label={<Text fz={"sm"} fw={"bold"}>Upload Gambar Konten</Text>}
-            value={file}
-            onChange={async (e) => {
-              if (!e) return;
-              setFile(e);
-              const base64 = await e.arrayBuffer().then((buf) =>
-                "data:image/png;base64," + Buffer.from(buf).toString("base64")
-              );
-              setPreviewImage(base64);
-            }}
-          />
-          {previewImage ? (
-            <Image alt="" src={previewImage} w={200} h={200} />
-          ) : (
-            <Center w={200} h={200} bg={"gray"}>
-              <IconImageInPicture />
-            </Center>
-          )}
+          <Box>
+            <Text fz={"md"} fw={"bold"}>Gambar</Text>
+            <Box >
+              <Dropzone
+                onDrop={(files) => {
+                  const file = files[0]; // Hanya ambil file pertama
+                  if (file) {
+                    setFile(file);
+                    setPreviewImage(URL.createObjectURL(file)); // Buat preview
+                  }
+                }}
+                maxSize={5 * 1024 ** 2} // 5MB
+                accept={{
+                  'image/*': ['.jpeg', '.jpg', '.png', '.webp']
+                }}
+              >
+                <Group justify="center" gap="xl" mih={220} style={{ pointerEvents: 'none' }}>
+                  <Dropzone.Accept>
+                    <IconUpload size={52} color="var(--mantine-color-blue-6)" stroke={1.5} />
+                  </Dropzone.Accept>
+                  <Dropzone.Reject>
+                    <IconX size={52} color="var(--mantine-color-red-6)" stroke={1.5} />
+                  </Dropzone.Reject>
+                  <Dropzone.Idle>
+                    <IconPhoto size={52} color="var(--mantine-color-dimmed)" stroke={1.5} />
+                  </Dropzone.Idle>
+
+                  <div>
+                    <Text size="xl" inline>
+                      Drag images here or click to select files
+                    </Text>
+                    <Text size="sm" c="dimmed" inline mt={7}>
+                      Attach as many files as you like, each file should not exceed 5mb
+                    </Text>
+                  </div>
+                </Group>
+              </Dropzone>
+              {previewImage && (
+                <Image
+                  src={previewImage}
+                  alt="Preview"
+                  width={280}
+                  height={180}
+                  fit="cover"
+                  radius="sm"
+                  mt="md"
+                />
+              )}
+            </Box>
+          </Box>
+          <Box>
+            <Text fz={"md"} fw={"bold"}>Gambar</Text>
+            <Box >
+              <Dropzone
+                onDrop={(files) => {
+                  const file = files[0]; // Hanya ambil file pertama
+                  if (file) {
+                    setFile2(file);
+                    setPreviewImage2(URL.createObjectURL(file)); // Buat preview
+                  }
+                }}
+                maxSize={5 * 1024 ** 2} // 5MB
+                accept={{
+                  'image/*': ['.jpeg', '.jpg', '.png', '.webp']
+                }}
+              >
+                <Group justify="center" gap="xl" mih={220} style={{ pointerEvents: 'none' }}>
+                  <Dropzone.Accept>
+                    <IconUpload size={52} color="var(--mantine-color-blue-6)" stroke={1.5} />
+                  </Dropzone.Accept>
+                  <Dropzone.Reject>
+                    <IconX size={52} color="var(--mantine-color-red-6)" stroke={1.5} />
+                  </Dropzone.Reject>
+                  <Dropzone.Idle>
+                    <IconPhoto size={52} color="var(--mantine-color-dimmed)" stroke={1.5} />
+                  </Dropzone.Idle>
+
+                  <div>
+                    <Text size="xl" inline>
+                      Drag images here or click to select files
+                    </Text>
+                    <Text size="sm" c="dimmed" inline mt={7}>
+                      Attach as many files as you like, each file should not exceed 5mb
+                    </Text>
+                  </div>
+                </Group>
+              </Dropzone>
+              {previewImage2 && (
+                <Image
+                  src={previewImage2}
+                  alt="Preview"
+                  width={280}
+                  height={180}
+                  fit="cover"
+                  radius="sm"
+                  mt="md"
+                />
+              )}
+            </Box>
+          </Box>
           <Button bg={colors['blue-button']} onClick={handleSubmit}>Simpan</Button>
         </Stack>
       </Paper>

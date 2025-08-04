@@ -1,24 +1,47 @@
 import prisma from "@/lib/prisma";
+import { Context } from "elysia";
 
-export default async function pelayananSuratKeteranganFindMany() {
-    try {
-        const data = await prisma.pelayananSuratKeterangan.findMany({
-            where: { isActive: true },
-            include: {
-                image: true,
-            },
-        });
+export default async function pelayananSuratKeteranganFindMany(context: Context) {
+  const page = Number(context.query.page) || 1;
+  const limit = Number(context.query.limit) || 10;
+  const skip = (page - 1) * limit;
 
-        return {
-            success: true,
-            message: "Success fetch pelayanan surat keterangan",
-            data,
-        };
-    } catch (e) {
-        console.error("Find many error:", e);
-        return {
-            success: false,
-            message: "Failed fetch pelayanan surat keterangan",
-        };
-    }
+  try {
+    const [data, total] = await Promise.all([
+      prisma.pelayananSuratKeterangan.findMany({
+        where: { isActive: true },
+        include: {
+          image: true,
+          image2: true,
+        },
+        skip,
+        take: limit,
+        orderBy: { createdAt: 'desc' },
+      }),
+      prisma.pelayananSuratKeterangan.count({
+        where: { isActive: true }
+      })
+    ]);
+
+    const totalPages = Math.ceil(total / limit);
+
+    return {
+      success: true,
+      message: "Success fetch pelayanan surat keterangan with pagination",
+      data,
+      page,
+      totalPages,
+      total,
+    };
+  } catch (e) {
+    console.error("Find many paginated error:", e);
+    return {
+      success: false,
+      message: "Failed fetch pelayanan surat keterangan with pagination",
+      data: [],
+      page: 1,
+      totalPages: 1,
+      total: 0,
+    };
+  }
 }

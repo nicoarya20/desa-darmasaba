@@ -66,7 +66,8 @@ model FileStorage {
   Posyandu                 Posyandu[]
   StrukturPPID             StrukturPPID[]
   GalleryFoto              GalleryFoto[]
-  PelayananSuratKeterangan PelayananSuratKeterangan[]
+  
+  Pelapor                  Pelapor[]
   Penghargaan              Penghargaan[]
   ProfileDesaImage         ProfileDesaImage[]
   ProfilePPID              ProfilePPID[]
@@ -78,7 +79,8 @@ model FileStorage {
   InfoWabahPenyakit        InfoWabahPenyakit[]
   KeamananLingkungan       KeamananLingkungan[]
   MenuTipsKeamanan         MenuTipsKeamanan[]
-  Pelapor                  Pelapor[]
+  PelayananSuratKeteranganImage PelayananSuratKeterangan[] @relation("PelayananSuratKeteranganImage")
+  PelayananSuratKeteranganImage2 PelayananSuratKeterangan[] @relation("PelayananSuratKeteranganImage2")
   PasarDesa                PasarDesa[]
   KontakDaruratKeamanan    KontakDaruratKeamanan[]
   KontakItem               KontakItem[]
@@ -100,6 +102,7 @@ model FileStorage {
   DataPerpustakaan DataPerpustakaan[]
 
   PegawaiPPID PegawaiPPID[]
+
 }
 
 //========================================= MENU LANDING PAGE ========================================= //
@@ -130,15 +133,15 @@ model ProgramInovasi {
 }
 
 model MediaSosial {
-  id        String      @id @default(cuid())
+  id        String       @id @default(cuid())
   name      String
   image     FileStorage? @relation(fields: [imageId], references: [id])
   imageId   String?
-  iconUrl   String?     @db.VarChar(255)
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
+  iconUrl   String?      @db.VarChar(255)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
   deletedAt DateTime?
-  isActive  Boolean     @default(true)
+  isActive  Boolean      @default(true)
 }
 
 //========================================= PROFILE ========================================= //
@@ -148,7 +151,7 @@ model DesaAntiKorupsi {
   deskripsi  String                  @db.Text
   kategori   KategoriDesaAntiKorupsi @relation(fields: [kategoriId], references: [id])
   kategoriId String
-  file       FileStorage?             @relation(fields: [fileId], references: [id])
+  file       FileStorage?            @relation(fields: [fileId], references: [id])
   fileId     String?
   createdAt  DateTime                @default(now())
   updatedAt  DateTime                @updatedAt
@@ -168,30 +171,30 @@ model KategoriDesaAntiKorupsi {
 
 //========================================= SDGS Desa ========================================= //
 model SDGSDesa {
-  id        String      @id @default(cuid())
-  name      String      @unique
+  id        String       @id @default(cuid())
+  name      String       @unique
   jumlah    String
   image     FileStorage? @relation(fields: [imageId], references: [id])
   imageId   String?
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
-  deletedAt DateTime    @default(now())
-  isActive  Boolean     @default(true)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  deletedAt DateTime     @default(now())
+  isActive  Boolean      @default(true)
 }
 
 //========================================= APBDes ========================================= //
 model APBDes {
-  id        String      @id @default(cuid())
-  name      String      @unique
+  id        String       @id @default(cuid())
+  name      String       @unique
   jumlah    String
   image     FileStorage? @relation("APBDesImage", fields: [imageId], references: [id])
   imageId   String?
   file      FileStorage? @relation("APBDesFile", fields: [fileId], references: [id])
   fileId    String?
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
-  deletedAt DateTime    @default(now())
-  isActive  Boolean     @default(true)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  deletedAt DateTime     @default(now())
+  isActive  Boolean      @default(true)
 }
 
 //========================================= PRESTASI DESA ========================================= //
@@ -313,14 +316,14 @@ model StrukturPPID {
 }
 
 model PosisiOrganisasiPPID {
-  id                 String         @id @default(cuid())
-  nama               String         @db.VarChar(100)
-  deskripsi          String?        @db.Text
+  id                 String                 @id @default(cuid())
+  nama               String                 @db.VarChar(100)
+  deskripsi          String?                @db.Text
   hierarki           Int
   pegawai            PegawaiPPID[]
   strukturOrganisasi StrukturPPID[] // Relasi balik
-  parentId           String?         
-  parent             PosisiOrganisasiPPID? @relation("Parent", fields: [parentId], references: [id])
+  parentId           String?
+  parent             PosisiOrganisasiPPID?  @relation("Parent", fields: [parentId], references: [id])
   children           PosisiOrganisasiPPID[] @relation("Parent")
 }
 
@@ -672,15 +675,17 @@ model GalleryVideo {
 
 // ========================================= LAYANAN DESA ========================================= //
 model PelayananSuratKeterangan {
-  id        String      @id @default(cuid())
+  id        String       @id @default(cuid())
   name      String
-  deskripsi String      @db.Text
-  image     FileStorage @relation(fields: [imageId], references: [id])
-  imageId   String
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
-  deletedAt DateTime    @default(now())
-  isActive  Boolean     @default(true)
+  deskripsi String       @db.Text
+  image     FileStorage? @relation("PelayananSuratKeteranganImage", fields: [imageId], references: [id])
+  imageId   String?
+  image2    FileStorage? @relation("PelayananSuratKeteranganImage2", fields: [image2Id], references: [id])
+  image2Id  String?
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  deletedAt DateTime     @default(now())
+  isActive  Boolean      @default(true)
 }
 
 model PelayananTelunjukSaktiDesa {

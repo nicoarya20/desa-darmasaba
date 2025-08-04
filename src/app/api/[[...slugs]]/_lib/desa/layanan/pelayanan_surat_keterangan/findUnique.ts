@@ -24,6 +24,7 @@ export default async function pelayananSuratKeteranganFindUnique(request: Reques
             where: { id },
             include: {
                 image: true,
+                image2: true,
             },
         });
 

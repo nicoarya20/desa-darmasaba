@@ -7,6 +7,7 @@ type FormCreate = Prisma.PelayananSuratKeteranganGetPayload<{
         name: true;
         deskripsi: true;
         imageId: true;
+        image2Id: true;
     };
 }>;
 async function createPelayananSuratKeterangan(context: Context) {
@@ -17,6 +18,7 @@ async function createPelayananSuratKeterangan(context: Context) {
             name: body.name,
             deskripsi: body.deskripsi,
             imageId: body.imageId,
+            image2Id: body.image2Id,
         },
     });
     return {
