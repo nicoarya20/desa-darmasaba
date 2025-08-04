@@ -1,47 +1,33 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+'use client'
 import colors from '@/con/colors';
-import { ActionIcon, BackgroundImage, Box, Container, Flex, Group, SimpleGrid, Stack, Text } from '@mantine/core';
+import { ActionIcon, BackgroundImage, Box, Center, Container, Flex, Group, SimpleGrid, Stack, Text } from '@mantine/core';
 import { IconDownload } from '@tabler/icons-react';
 import BackButton from '../../(pages)/desa/layanan/_com/BackButto';
+import apbdes from '@/app/admin/(dashboard)/_state/landing-page/apbdes';
+import { useProxy } from 'valtio/utils';
+import { useEffect, useState } from 'react';
+import { Link } from 'next-view-transitions';
 
-const data = [
-  {
-    id: 1,
-    title: "Pendapatan",
-    image: "/api/img/pendapatan.jpeg",
-    value: "Rp 495M"
-  },
-  {
-    id: 2,
-    title: "Belanja",
-    image: "/api/img/belanja.jpeg",
-    value: "Rp 395M"
-  },
-  {
-    id: 3,
-    title: "Pembiayaan",
-    image: "/api/img/pembiayaan.jpeg",
-    value: "Rp 295M"
-  },
-  {
-    id: 4,
-    title: "APBDesa 2025",
-    image: "/api/img/apb-des.jpg",
-    value: "Rp 500M"
-  },
-  {
-    id: 5,
-    title: "APBDesa 2024",
-    image: "/api/img/apb-des.jpg",
-    value: "Rp 450M"
-  },
-  {
-    id: 6,
-    title: "APBDesa 2023",
-    image: "/api/img/apb-des.jpg",
-    value: "Rp 400M"
-  },
-]
 function Page() {
+  const state = useProxy(apbdes);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setLoading(true);
+        await state.findMany.load();
+      } catch (error) {
+        console.error('Error loading data:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadData();
+  }, [])
+
+  const data = state.findMany.data || [];
   return (
     <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={22}>
       <Box px={{ base: "md", md: 100 }}><BackButton /></Box>
@@ -65,53 +51,59 @@ function Page() {
           sm: 3,
         }}
       >
-        {data.map((v, k) => {
-          return (
-            <BackgroundImage
-              key={k}
-              src={v.image}
-              h={350}
-              radius={16}
-              pos={"relative"}
-            >
-              <Box
-                style={{
-                  borderRadius: 16,
-                  zIndex: 0
-                }}
-                pos={"absolute"}
-                w={"100%"}
-                h={"100%"}
-                bg={colors.trans.dark[2]}
-              />
-              <Stack justify='space-between' h={"100%"} gap={0} p={"lg"} pos={"relative"}>
-                <Box p={"lg"}>
+        {loading ? (
+          <Center>
+            <Text fz={"2.4rem"}>Memuat Data...</Text>
+          </Center>
+        ) : (
+          data.map((v, k) => {
+            return (
+              <BackgroundImage
+                key={k}
+                src={v.image?.link || ''}
+                h={350}
+                radius={16}
+                pos={"relative"}
+              >
+                <Box
+                  style={{
+                    borderRadius: 16,
+                    zIndex: 0
+                  }}
+                  pos={"absolute"}
+                  w={"100%"}
+                  h={"100%"}
+                  bg={colors.trans.dark[2]}
+                />
+                <Stack justify='space-between' h={"100%"} gap={0} p={"lg"} pos={"relative"}>
+                  <Box p={"lg"}>
+                    <Text
+                      c={"white"}
+                      size={"1.5rem"}
+                      style={{
+                        textAlign: "center",
+                      }}>{v.name}</Text>
+                  </Box>
                   <Text
+                    fw={"bold"}
                     c={"white"}
-                    size={"1.5rem"}
+                    size={"3.5rem"}
                     style={{
                       textAlign: "center",
-                    }}>{v.title}</Text>
-                </Box>
-                <Text
-                  fw={"bold"}
-                  c={"white"}
-                  size={"3.5rem"}
-                  style={{
-                    textAlign: "center",
-                  }}>{v.value}</Text>
-                <Group justify="center">
-                  <ActionIcon px={70} py={20} radius={"xl"} size="md" bg={colors["blue-button"]}>
-                    <Flex gap={"md"}>
-                      <IconDownload size={20} />
-                      <Text fz={"sm"} c={"white"}>Download</Text>
-                    </Flex>
-                  </ActionIcon>
-                </Group>
-              </Stack>
-            </BackgroundImage>
-          )
-        })}
+                    }}>{v.jumlah}</Text>
+                  <Group justify="center">
+                    <ActionIcon px={70} py={20} radius={"xl"} size="md" bg={colors["blue-button"]} component={Link} href={v.file?.link || ''}>
+                      <Flex gap={"md"}>
+                        <IconDownload size={20} />
+                        <Text fz={"sm"} c={"white"}>Download</Text>
+                      </Flex>
+                    </ActionIcon>
+                  </Group>
+                </Stack>
+              </BackgroundImage>
+            )
+          })
+        )}
       </SimpleGrid>
     </Stack>
   );

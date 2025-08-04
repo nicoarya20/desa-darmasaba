@@ -17,7 +17,7 @@ async function apbdesFindMany(context: Context) {
         },
         skip,
         take: limit,
-        orderBy: { createdAt: "desc" }, // opsional, kalau mau urut berdasarkan waktu
+        orderBy: { name: "asc" }, // opsional, kalau mau urut berdasarkan waktu
       }),
       prisma.aPBDes.count({
         where: { isActive: true },

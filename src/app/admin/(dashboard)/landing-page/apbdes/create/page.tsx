@@ -195,7 +195,6 @@ function CreateAPBDes() {
             placeholder='Masukkan judul'
           />
            <TextInput
-           type='number'
             value={stateAPBDes.create.form.jumlah}
             onChange={(val) => {
               stateAPBDes.create.form.jumlah = val.target.value;
