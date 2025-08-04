@@ -1,54 +1,44 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import colors from "@/con/colors";
 import { Box, Button, Center, Container, Flex, Paper, SimpleGrid, Stack, Text, useMantineTheme } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { IconClipboardText } from "@tabler/icons-react";
 import Link from "next/link";
+import korupsiState from "@/app/admin/(dashboard)/_state/landing-page/desa-anti-korupsi";
+import { useProxy } from "valtio/utils";
+import { useEffect, useState } from "react";
 
 function DesaAntiKorupsi() {
-  const data = [
-    {
-      judul: "PENGUATAN TATA LAKSANA",
-      deskripsi: "1.1 ADANYA PERDES/KEPUTUSAN KEPALA DESA/SOP TENTANG PERENCANAAN, PELAKSANAAN, PENATAUSAHAAN DAN PERTANGGUNG JAWABAN APBDES BESERTA IMPLEMENTASINYA",
-      icon: <IconClipboardText size={100} color={colors["blue-button"]} />,
-    },
-    {
-      judul: "PENGUATAN TATA LAKSANA",
-      deskripsi: "1.2 ADANYA PERDES/KEPUTUSAN KEPALA DESA/SOP MENGENAI MEKANISME EVALUASI KINERJA PERANGKAT DESA",
-      icon: <IconClipboardText size={100} color={colors["blue-button"]} />,
-    },
-    {
-      judul: "PENGUATAN TATA LAKSANA",
-      deskripsi: "1.3 ADANYA PERDES/KEPUTUSAN KEPALA DESA/SOP TENTANG PENGENDALIAN GRATIFIKASI, SUAP DAN KONFLIK KEPENTINGAN",
-      icon: <IconClipboardText size={100} color={colors["blue-button"]} />,
-    },
-    {
-      judul: "PENGUATAN TATA LAKSANA",
-      deskripsi: "1.4 PERJANJIAN KERJA SAMA ANTARA PELAKSANA KEGIATAN  ANGGARAN DENGAN PIHAK PENYEDIA, DAN TELAH MELALUI PROSES PENGADAAN BARANG/JASA DI DESA",
-      icon: <IconClipboardText size={100} color={colors["blue-button"]} />,
-    },
-    {
-      judul: "PENGUATAN TATA LAKSANA",
-      deskripsi: "1.5 ADANYA PERDES/KEPUTUSAN KEPALA DESA/SOP TENTANG PAKTA INTEGRITAS DAN SEJENISNYA",
-      icon: <IconClipboardText size={100} color={colors["blue-button"]} />,
-    },
-    {
-      judul: "PENGUATAN TATA LAKSANA",
-      deskripsi: "1.6 ADANYA PERDES/KEPUTUSAN KEPALA DESA/SOP TENTANG PERENCANAAN, PELAKSANAAN, PENATAUSAHAAN DAN PERTANGGUNG JAWABAN APBDES BESERTA IMPLEMENTASINYA",
-      icon: <IconClipboardText size={100} color={colors["blue-button"]} />,
-    },
-  ]
+  const state = useProxy(korupsiState);
+  const [loading, setLoading] = useState(false);
   const theme = useMantineTheme();
   const mobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setLoading(true);
+        await state.desaAntikorupsi.findMany.load();
+      } catch (error) {
+        console.error('Error loading data:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadData();
+  }, [])
+
+  const data = (state.desaAntikorupsi.findMany.data || []).slice(0, 6);
   return (
-    <Stack gap={"0"} bg={colors.Bg} p={"sm"} h={mobile ? 2000 : 1150}>
+    <Stack gap={"0"} bg={colors.Bg} p={"sm"} h={mobile ? 2000 : 1050}>
       <Container w={{ base: "100%", md: "80%" }} p={"xl"} >
         <Center>
-          <Text fz={{base: "2.4rem", md: "3.4rem"}}>Desa Anti Korupsi</Text>
+          <Text fz={{ base: "2.4rem", md: "3.4rem" }}>Desa Anti Korupsi</Text>
         </Center>
-        <Text ta={"center"} fz={{base: "1.2rem", md: "1.4rem"}}>Desa antikorupsi mendorong pemerintahan jujur dan transparan. Keuangan desa dikelola terbuka dengan melibatkan warga mengawasi anggaran, sehingga digunakan tepat sasaran sesuai kebutuhan.</Text>
+        <Text ta={"center"} fz={{ base: "1.2rem", md: "1.4rem" }}>Desa antikorupsi mendorong pemerintahan jujur dan transparan. Keuangan desa dikelola terbuka dengan melibatkan warga mengawasi anggaran, sehingga digunakan tepat sasaran sesuai kebutuhan.</Text>
         <Center py={20}>
-          <Button radius={"lg"} fz={"h4"} bg={colors["blue-button"]} component={Link} href={"/darmasaba/desaantikorupsi"}>Selengkapnya</Button>
+          <Button radius={"lg"} fz={"h4"} bg={colors["blue-button"]} component={Link} href={"/darmasaba/desa-anti-korupsi/detail"}>Selengkapnya</Button>
         </Center>
       </Container>
       <SimpleGrid
@@ -57,29 +47,44 @@ function DesaAntiKorupsi() {
           sm: 2,
 
         }}>
-        {data.map((v, k) => {
-          return (
-            <Box
-              key={k}
-            >
-              <Paper p={"lg"} >
-                <Flex gap={"lg"} justify={"center"} align={"center"}>
-                  <Box >
-                    <Text fz={{base: "1.2rem", md: "lg"}} ta={"center"} c={colors["blue-button"]}>{v.judul}</Text>
-                    <Flex justify={"center"} align={"center"}>
-                      <Box>
-                        {v.icon}
-                      </Box>
-                      <Box px={20}>
-                        <Text fz={"sm"} ta={{base: "left", md: "justify"}}>{v.deskripsi}</Text>
-                      </Box>
-                    </Flex>
-                  </Box>
-                </Flex>
-              </Paper>
-            </Box>
-          )
-        })}
+        {loading ? (
+          <Center>
+            <Text fz={"2.4rem"}>Memuat Data...</Text>
+          </Center>
+        ) : (
+          data.map((v, k) => {
+            return (
+              <Box
+                key={k}
+              >
+                <Paper
+                  p={"lg"}
+                  withBorder
+                  shadow="sm"
+                  h={{ base: 250, md: 210 }}
+                >
+                  <Flex gap={"lg"} align={"center"}>
+                    <Box>
+                      <Flex justify={"center"} align={"center"}>
+                        <Box>
+                          <IconClipboardText color={colors["blue-button"]} size={50} />
+                        </Box>
+                        <Box px={20} >
+                         <Stack gap={"xs"}>
+                         <Text fz={{ base: "1.2rem", md: "lg" }} ta={"center"} c={colors["blue-button"]} fw={500}>
+                            {v.kategori?.name || v.name || 'Kategori'}
+                          </Text>
+                          <Text dangerouslySetInnerHTML={{ __html: v.name || 'Name' }} fz={{ base: "1rem", md: "lg" }} ta={"center"} c={colors["blue-button"]} fw={500} />
+                         </Stack>
+                        </Box>
+                      </Flex>
+                    </Box>
+                  </Flex>
+                </Paper>
+              </Box>
+            )
+          })
+        )}
       </SimpleGrid>
     </Stack>
   );

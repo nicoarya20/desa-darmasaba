@@ -69,7 +69,7 @@ function Page() {
                     <Box>
                       {v.icon}
                     </Box>
-                    <Button fz={"h4"} color={colors["blue-button"]} onClick={() => router.push(v.link)}>Detail</Button>
+                    <Button fz={"h4"} color={colors["blue-button"]} onClick={() => router.push("/darmasaba/desa-anti-korupsi/detail")}>Detail</Button>
                   </Stack>
                 </Box>
               </Paper>

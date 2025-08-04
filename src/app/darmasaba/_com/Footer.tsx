@@ -125,8 +125,8 @@ function Footer() {
             >
               <Box p={mobile ? 30 : 30} style={{color: "white"}}>
                 <Stack justify='space-between'>
-                  <Text fz={"md"} fw={"bold"}>Tentang Darmasaba</Text>
-                  <Text fz={"xs"} >Desa Darmasaba adalah desa
+                  <Text fz={"md"} fw={"bold"} c={"white"}>Tentang Darmasaba</Text>
+                  <Text fz={"xs"} c={"white"}>Desa Darmasaba adalah desa
                     budaya yang kaya akan tradisi dan
                     nilai-nilai luhur masyarakat Bali.</Text>
                   <Box>
@@ -149,42 +149,42 @@ function Footer() {
               </Box>
               <Box p={mobile ? 30 : 30}>
                 <Stack justify='space-between' gap={"xs"}>
-                  <Text fz={"md"} fw={"bold"}>Layanan</Text>
+                  <Text fz={"md"} fw={"bold"} c={"white"}>Layanan</Text>
                   <Anchor c={"white"} variant='transparent'>
-                    <Text fz={"xs"} >Administrasi Kependudukan</Text>
+                    <Text fz={"xs"} c={"white"}>Administrasi Kependudukan</Text>
                   </Anchor>
                   <Anchor c={"white"} variant='transparent'>
-                    <Text fz={"xs"} >Pelayanan Sosial</Text>
+                    <Text fz={"xs"} c={"white"}>Pelayanan Sosial</Text>
                   </Anchor>
                   <Anchor c={"white"} variant='transparent'>
-                    <Text fz={"xs"} >Pengaduan Masyarakat</Text>
+                    <Text fz={"xs"} c={"white"}>Pengaduan Masyarakat</Text>
                   </Anchor>
                   <Anchor c={"white"} variant='transparent'>
-                    <Text fz={"xs"} >Informasi Publik</Text>
+                    <Text fz={"xs"} c={"white"}>Informasi Publik</Text>
                   </Anchor>
                 </Stack>
               </Box>
               <Box p={mobile ? 30 : 30}>
                 <Stack justify='space-between' gap={"xs"}>
-                  <Text fz={"md"} fw={"bold"}>Tautan Penting</Text>
+                  <Text fz={"md"} fw={"bold"} c={"white"}>Tautan Penting</Text>
                   <Anchor c={"white"} variant='transparent'>
-                    <Text fz={"xs"} >Portal Badung</Text>
+                    <Text fz={"xs"} c={"white"}>Portal Badung</Text>
                   </Anchor>
                   <Anchor c={"white"} variant='transparent'>
-                    <Text fz={"xs"} >E-Government</Text>
+                    <Text fz={"xs"} c={"white"}>E-Government</Text>
                   </Anchor>
                   <Anchor c={"white"} variant='transparent'>
-                    <Text fz={"xs"} >Transparansi</Text>
+                    <Text fz={"xs"} c={"white"}>Transparansi</Text>
                   </Anchor>
                   <Anchor c={"white"} variant='transparent'>
-                    <Text fz={"xs"} >Unduhan</Text>
+                    <Text fz={"xs"} c={"white"}>Unduhan</Text>
                   </Anchor>
                 </Stack>
               </Box>
               <Box p={mobile ? 30 : 30}>
                 <Stack justify='space-between'>
-                  <Text fz={"md"} fw={"bold"}>Newsletter</Text>
-                  <Text fz={"xs"} >Dapatkan informasi terbaru
+                  <Text fz={"md"} fw={"bold"} c={"white"}>Newsletter</Text>
+                  <Text fz={"xs"} c={"white"}>Dapatkan informasi terbaru
                     tentang kegiatan dan program
                     desa</Text>
                   <TextInput
