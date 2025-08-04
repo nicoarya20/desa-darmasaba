@@ -77,8 +77,10 @@ function ListPrestasi({ search }: { search: string }) {
                         <Text truncate="end" fz={"sm"}>{item.name}</Text>
                       </Box>
                     </TableTd>
-                    <TableTd>
-                      <Text truncate="end" fz={"sm"} dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
+                    <TableTd >
+                      <Box w={150}>
+                        <Text truncate="end" fz={"sm"} dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
+                      </Box>
                     </TableTd>
                     <TableTd>{item.kategori?.name}</TableTd>
                     <TableTd>

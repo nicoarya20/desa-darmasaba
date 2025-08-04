@@ -2,6 +2,8 @@ import prisma from "@/lib/prisma";
 import profilePejabatDesa from "./data/landing-page/profile/profile.json";
 import programInovasi from "./data/landing-page/profile/programInovasi.json";
 import mediaSosial from "./data/landing-page/profile/mediaSosial.json";
+import sdgsDesa from "./data/landing-page/sdgs-desa/sdgs-desa.json";
+import apbdes from "./data/landing-page/apbdes/apbdes.json";
 import categoryPengumuman from "./data/category-pengumuman.json";
 import kategoriBerita from "./data/kategori-berita.json";
 import caraMemperolehInformasi from "./data/list-caraMemperolehInformasi.json";
@@ -114,6 +116,46 @@ import pegawaiPPID from "./data/ppid/struktur-ppid/pegawai-PPID.json";
   }
 
   console.log("layanan success ...");
+
+  // =========== SDGSDesa ===========
+  for (const l of sdgsDesa) {
+    await prisma.sDGSDesa.upsert({
+      where: {
+        name: l.name,
+        jumlah: l.jumlah,
+      },
+      update: {
+        name: l.name,
+        jumlah: l.jumlah,
+      },
+      create: {
+        name: l.name,
+        jumlah: l.jumlah,
+      },
+    });
+  }
+
+  console.log("sdgs desa success ...");
+
+  // =========== APBDes ===========
+  for (const l of apbdes) {
+    await prisma.aPBDes.upsert({
+      where: {
+        name: l.name,
+        jumlah: l.jumlah,
+      },
+      update: {
+        name: l.name,
+        jumlah: l.jumlah,
+      },
+      create: {
+        name: l.name,
+        jumlah: l.jumlah,
+      },
+    });
+  }
+
+  console.log("sdgs desa success ...");
 
   for (const l of sejarahDesa) {
     await prisma.sejarahDesa.upsert({
