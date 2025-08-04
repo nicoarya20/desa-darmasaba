@@ -59,7 +59,7 @@ function ListDesaAntiKorupsi({ search }: { search: string }) {
   if (loading || !data) {
     return (
       <Stack py={10}>
-        <Skeleton height={300} />
+        <Skeleton height={550} />
       </Stack>
     );
   }

@@ -110,7 +110,7 @@ function CreateSDGsDesa() {
                   <iframe
                     src={previewImage}
                     width="100%"
-                    height="500px"
+                    height="250px"
                     style={{ border: "1px solid #ccc", borderRadius: "8px" }}
                   />
                 ) : (

@@ -1,11 +1,14 @@
-import images from "@/con/images";
 import { ActionIcon, Flex, Image } from "@mantine/core";
+import { Prisma } from "@prisma/client";
+import { useTransitionRouter } from "next-view-transitions";
 
-function SosmedView() {
-  const listSosmed = Object.values(images.sosmed);
+
+
+function SosmedView({data} : {data : Prisma.MediaSosialGetPayload<{ include: { image: true } }>[]}) {
+  const router = useTransitionRouter();
   return (
     <Flex gap={"md"} justify={"center"} align={"center"}>
-        {listSosmed.map((item, k) => {
+        {data?.map((item, k) => {
           return (
             <ActionIcon
               variant="transparent"
@@ -13,8 +16,11 @@ function SosmedView() {
               w={32}
               h={32}
               pos={"relative"}
+              onClick={() => {
+                router.push(item.iconUrl || "");
+              }}
             >
-              <Image src={item} alt="icon" loading="lazy" />
+              <Image src={item.image?.link || ""} alt="icon" loading="lazy" />
             </ActionIcon>
           );
         })}

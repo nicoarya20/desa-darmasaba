@@ -171,8 +171,8 @@ model SDGSDesa {
   id        String      @id @default(cuid())
   name      String      @unique
   jumlah    String
-  image     FileStorage @relation(fields: [imageId], references: [id])
-  imageId   String
+  image     FileStorage? @relation(fields: [imageId], references: [id])
+  imageId   String?
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
   deletedAt DateTime    @default(now())

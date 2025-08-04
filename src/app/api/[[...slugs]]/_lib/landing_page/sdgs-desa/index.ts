@@ -11,7 +11,7 @@ const SDGSDesa = new Elysia({
 })
 
   // ✅ Find all
-  .get("/find-many", sdgsDesaFindMany)
+  .get("/findMany", sdgsDesaFindMany)
 
   // ✅ Find by ID
   .get("/:id", sdgsDesaFindUnique)

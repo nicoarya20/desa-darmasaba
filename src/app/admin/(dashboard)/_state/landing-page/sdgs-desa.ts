@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiFetch from "@/lib/api-fetch";
 import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
@@ -52,19 +53,38 @@ const sdgsDesa = proxy({
     },
   },
   findMany: {
-    data: null as Array<
-      Prisma.SDGSDesaGetPayload<{
-        include: {
-          image: true;
-        };
-      }>
-    > | null,
-    async load() {
-      const res = await ApiFetch.api.landingpage.sdgsdesa[
-        "find-many"
-      ].get();
-      if (res.status === 200) {
-        sdgsDesa.findMany.data = res.data?.data ?? [];
+    data: null as any[] | null,
+    page: 1,
+    totalPages: 1,
+    total: 0,
+    loading: false,
+    load: async (page = 1, limit = 10) => {  // Change to arrow function
+      sdgsDesa.findMany.loading = true;  // Use the full path to access the property
+      sdgsDesa.findMany.page = page;
+      try {
+        const res = await ApiFetch.api.landingpage.sdgsdesa[
+          "findMany"
+        ].get({
+          query: { page, limit },
+        });
+  
+        if (res.status === 200 && res.data?.success) {
+          sdgsDesa.findMany.data = res.data.data || [];
+          sdgsDesa.findMany.total = res.data.total || 0;
+          sdgsDesa.findMany.totalPages = res.data.totalPages || 1;
+        } else {
+          console.error("Failed to load media sosial:", res.data?.message);
+          sdgsDesa.findMany.data = [];
+          sdgsDesa.findMany.total = 0;
+          sdgsDesa.findMany.totalPages = 1;
+        }
+      } catch (error) {
+        console.error("Error loading media sosial:", error);
+        sdgsDesa.findMany.data = [];
+        sdgsDesa.findMany.total = 0;
+        sdgsDesa.findMany.totalPages = 1;
+      } finally {
+        sdgsDesa.findMany.loading = false;
       }
     },
   },

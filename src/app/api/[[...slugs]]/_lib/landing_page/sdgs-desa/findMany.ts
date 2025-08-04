@@ -16,7 +16,7 @@ async function sdgsDesaFindMany(context: Context) {
         },
         skip,
         take: limit,
-        orderBy: { createdAt: "desc" }, // opsional, kalau mau urut berdasarkan waktu
+        orderBy: { jumlah: "desc" }, // opsional, kalau mau urut berdasarkan waktu
       }),
       prisma.sDGSDesa.count({
         where: { isActive: true },

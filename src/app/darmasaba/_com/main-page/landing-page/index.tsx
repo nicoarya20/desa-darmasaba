@@ -1,8 +1,10 @@
 "use client";
 import colors from "@/con/colors";
+import { Prisma } from "@prisma/client";
 import {
   Box,
   Card,
+  Skeleton,
   Flex,
   Grid,
   GridCol,
@@ -11,9 +13,9 @@ import {
   Stack,
   Text
 } from "@mantine/core";
+import { useEffect, useState } from "react";
 import ModuleView from "./ModuleView";
 import SosmedView from "./SosmedView";
-import { useEffect, useState } from "react";
 
 const getDayOfWeek = () => {
   const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
@@ -56,6 +58,38 @@ const getWorkStatus = (day: string, currentTime: string): { status: string; mess
 
 
 function LandingPage() {
+  const [socialMedia, setSocialMedia] = useState<Prisma.MediaSosialGetPayload<{ include: { image: true } }>[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchSocialMedia = async () => {
+      try {
+        const response = await fetch('/api/landingpage/mediasosial/findMany');
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const result = await response.json();
+        // Ensure the data is an array before setting it
+        if (Array.isArray(result.data)) {
+          setSocialMedia(result.data);
+        } else if (Array.isArray(result)) {
+          // In case the API returns the array directly
+          setSocialMedia(result);
+        } else {
+          console.error('Unexpected API response format:', result);
+          setSocialMedia([]);
+        }
+      } catch (error) {
+        console.error('Error fetching social media:', error);
+        setSocialMedia([]); // Ensure we always have an array
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchSocialMedia();
+  }, []);
+
   const [workStatus, setWorkStatus] = useState<{ status: string; message: string }>
     ({ status: '', message: '' });
 
@@ -248,7 +282,13 @@ function LandingPage() {
 
               </Flex>
               <ModuleView />
-              <SosmedView />
+              {isLoading ? (
+                <Skeleton height={32} width="100%" />
+              ) : socialMedia.length > 0 ? (
+                <SosmedView data={socialMedia} />
+              ) : (
+                <div>No social media links available</div>
+              )}
               <Text c={colors.trans.dark[2]} style={{
                 textAlign: "center"
               }} >Sampaikan saran dan masukan guna kemajuan dalam pembangunan. Semua lebih mudah melalui fitur interaktif</Text>

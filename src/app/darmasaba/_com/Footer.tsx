@@ -112,7 +112,7 @@ function Footer() {
               </Box>
             </Paper>
           </Center>
-          <Box py={20}>
+          <Box py={20} >
             <SimpleGrid
               p={20}
               cols={{
@@ -123,7 +123,7 @@ function Footer() {
                 color: "white"
               }}
             >
-              <Box p={mobile ? 30 : 30}>
+              <Box p={mobile ? 30 : 30} style={{color: "white"}}>
                 <Stack justify='space-between'>
                   <Text fz={"md"} fw={"bold"}>Tentang Darmasaba</Text>
                   <Text fz={"xs"} >Desa Darmasaba adalah desa
