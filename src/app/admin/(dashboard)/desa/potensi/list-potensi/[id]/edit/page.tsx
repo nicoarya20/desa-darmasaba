@@ -84,7 +84,7 @@ function EditPotensi() {
 
       await potensiState.edit.update();
       toast.success("Potensi berhasil diperbarui!");
-      router.push("/admin/desa/potensi");
+      router.push("/admin/desa/potensi/list-potensi");
     } catch (error) {
       console.error("Error updating potensi:", error);
       toast.error("Terjadi kesalahan saat memperbarui potensi");
