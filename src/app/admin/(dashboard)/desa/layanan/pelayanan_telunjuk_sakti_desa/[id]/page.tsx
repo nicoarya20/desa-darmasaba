@@ -58,11 +58,24 @@ function DetailPelayananTelunjukSakti() {
                 </Box>
                 <Box>
                   <Text fw={"bold"} fz={"lg"}>Link</Text>
-                  <Text fz={"lg"}>{telunjukSaktiState.findUnique.data?.link}</Text>
+                  <Text
+                    component="a"
+                    href={telunjukSaktiState.findUnique.data?.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      display: 'block',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap'
+                    }}
+                  >
+                    {telunjukSaktiState.findUnique.data?.link}
+                  </Text>
                 </Box>
                 <Box>
                   <Text fw={"bold"} fz={"lg"}>Deskripsi</Text>
-                  <Text fz={"lg"}dangerouslySetInnerHTML={{ __html: telunjukSaktiState.findUnique.data?.deskripsi }}></Text>
+                  <Text fz={"lg"}>{telunjukSaktiState.findUnique.data?.deskripsi}</Text>
                 </Box>
                 <Flex gap={"xs"} mt={10}>
                   <Button

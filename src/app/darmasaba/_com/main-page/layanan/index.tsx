@@ -1,202 +1,155 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
+import stateLayananDesa from "@/app/admin/(dashboard)/_state/desa/layananDesa";
 import colors from "@/con/colors";
 import ApiFetch from "@/lib/api-fetch";
 import { Carousel } from "@mantine/carousel";
 import {
-  Box,
-  Button,
-  Container,
-  Divider,
-  Group,
-  Paper,
-  Stack,
-  Text,
-  useMantineTheme
+ Box,
+ Button,
+ Container,
+ Divider,
+ Group,
+ Paper,
+ Stack,
+ Text,
+ useMantineTheme
 } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import Autoplay from "embla-carousel-autoplay";
 import _ from "lodash";
 import { useTransitionRouter } from "next-view-transitions";
 import Link from "next/link";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import useSWR from "swr";
+import { useProxy } from "valtio/utils";
 
-const data = [
-  {
-    id: 1,
-    images: "/api/img/test.png",
-    name: "Surat Keterangan Domisili Organisasi",
-    link: "/darmasaba/desa/layanan/surat-keterangan-domisili"
-},
-{
-    id: 2,
-    images: "/api/img/test-3.jpeg",
-    name: "Surat Keterangan Penghasilan",
-    link: "/darmasaba/desa/layanan/surat-keterangan-penghasilan"
-},
-{
-    id: 3,
-    images: "/api/img/domisili.jpeg",
-    name: "Surat Keterangan Tidak Mampu",
-    link: "/darmasaba/desa/layanan/surat-keterangan-tidak-mampu"
-},
-{
-    id: 4,
-    images: "/api/img/kelahiran.jpeg",
-    name: "Surat Keterangan Kelahiran",
-    link: "/darmasaba/desa/layanan/surat-keterangan-kelahiran"
-},
-{
-    id: 5,
-    images: "/api/img/keterangan-usaha.jpeg",
-    name: "Surat Keterangan Usaha",
-    link: "/darmasaba/desa/layanan/surat-keterangan-usaha"
-},
-{
-    id: 6,
-    images: "/api/img/kematian.jpeg",
-    name: "Surat Keterangan Kematian",
-    link: "/darmasaba/desa/layanan/surat-keterangan-kematian"
-},
-{
-    id: 7,
-    images: "/api/img/tempatusaha.jpeg",
-    name: "Surat Keterangan Tempat Usaha",
-    link: "/darmasaba/desa/layanan/surat-keterangan-tempat-usaha"
-},
-{
-    id: 8,
-    images: "/api/img/belumkawin.jpeg",
-    name: "Surat Keterangan Belum Kawin",
-    link: "/darmasaba/desa/layanan/surat-keterangan-belum-kawin"
-},
-{
-    id: 9,
-    images: "/api/img/berkelakuan-baik.jpeg",
-    name: "Surat Keterangan Kelakuan Baik",
-    link: "/darmasaba/desa/layanan/surat-keterangan-kelakuan-baik"
-},
-{
-    id: 10,
-    images: "/api/img/biodata.jpeg",
-    name: "Surat Keterangan Beda Biodata Diri",
-    link: "/darmasaba/desa/layanan/surat-keterangan-beda-biodata-diri"
-},
-{
-    id: 11,
-    images: "/api/img/yatim.jpeg",
-    name: "Surat Keterangan Yatim Piatu",
-    link: "/darmasaba/desa/layanan/surat-keterangan-yatim-piatu"
-}
-
-]
 const textHeading = {
-  title: "Layanan",
-  des: "Layanan adalah fitur yang membantu warga desa mengakses berbagai kebutuhan administrasi, informasi, dan bantuan secara cepat, mudah, dan transparan. Dengan fitur ini, semua layanan desa ada dalam genggaman Anda!",
+ title: "Layanan",
+ des: "Layanan adalah fitur yang membantu warga desa mengakses berbagai kebutuhan administrasi, informasi, dan bantuan secara cepat, mudah, dan transparan. Dengan fitur ini, semua layanan desa ada dalam genggaman Anda!",
 };
 function Layanan() {
-  const { data, isLoading } = useSWR(
-    "/",
-    (url) => ApiFetch.api.layanan.get().then(({ data }) => data?.data),
-    {
-      fallbackData: [],
-    }
-  );
+ const { data, isLoading } = useSWR(
+   "/",
+   (url) => ApiFetch.api.layanan.get().then(({ data }) => data?.data),
+   {
+     fallbackData: [],
+   }
+ );
 
-  const router = useTransitionRouter()
+ const router = useTransitionRouter()
 
-  return (
-    <Stack pos={"relative"} bg={colors.grey[1]} gap={"42"} py={"xl"}>
-      <Container w={{ base: "100%", md: "50%" }} p={"xl"}>
-        <Stack align="center" gap={"0"}>
-          <Text fz={"3.4rem"} fw={"bold"}>
-            {textHeading.title}
-          </Text>
-          <Text
-            style={{
-              textAlign: "center",
-            }}
-          >
-            {textHeading.des}
-          </Text>
-          <Box p={"md"}>
-            <Button component={Link} href={"/darmasaba/desa/layanan"} variant="filled" bg={colors["blue-button"]} radius={100}>
-              Detail
-            </Button>
-          </Box>
-        </Stack>
-      </Container>
-      <Slider />
-      <Divider />
-    </Stack>
-  );
+ return (
+   <Stack pos={"relative"} bg={colors.grey[1]} gap={"42"} py={"xl"}>
+     <Container w={{ base: "100%", md: "50%" }} p={"xl"}>
+       <Stack align="center" gap={"0"}>
+         <Text fz={"3.4rem"} fw={"bold"}>
+           {textHeading.title}
+         </Text>
+         <Text
+           style={{
+             textAlign: "center",
+           }}
+         >
+           {textHeading.des}
+         </Text>
+         <Box p={"md"}>
+           <Button component={Link} href={"/darmasaba/desa/layanan"} variant="filled" bg={colors["blue-button"]} radius={100}>
+             Detail
+           </Button>
+         </Box>
+       </Stack>
+     </Container>
+     <Slider />
+     <Divider />
+   </Stack>
+ );
 }
 
 const height = 720;
 function Slider() {
-  const theme = useMantineTheme();
-  const mobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
-  const autoplay = useRef(Autoplay({ delay: 2000 }));
-  const router = useTransitionRouter()
+ const state = useProxy(stateLayananDesa)
+ const [loading, setLoading] = useState(false);
+ const theme = useMantineTheme();
+ const mobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
+ const autoplay = useRef(Autoplay({ delay: 2000 }));
+ const router = useTransitionRouter()
 
-  const slides = data.map((item) => (
-    <Carousel.Slide key={item.id} >
-      <Paper h={"100%"} pos={"relative"} style={{
-        backgroundImage: `url(${item.images}) `,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-      }}>
-        <Box
-          style={{
-            borderRadius: 16,
-            zIndex: 0,
-          }}
-          pos={"absolute"}
-          w={"100%"}
-          h={"100%"}
-          bg={colors.trans.dark[2]}
-        />
-        <Stack justify="space-between" h={"100%"} gap={0} p={"lg"} pos={"relative"} >
-          <Box p={"lg"}>
-            <Text
+ useEffect(()=> {
+   const loadData = async () => {
+     try {
+       setLoading(true);
+       await state.suratKeterangan.findMany.load()
+     } catch (error) {
+       console.error('Error loading data:', error);
+     } finally {
+       setLoading(false);
+     }
+   }
+   loadData()
+ }, [])
 
-              fw={"bold"}
-              c={"white"}
-              size={"3.5rem"}
-              style={{
-                textAlign: "center",
-              }}
-            >
-              {_.startCase(item.name)}
-            </Text>
-          </Box>
-          <Group justify="center">
-            <Button component={Link} href={item.link} px={46} radius={"100"} size="md" bg={colors["blue-button"]}>
-              Detail
-            </Button>
-          </Group>
-        </Stack>
-      </Paper>
-    </Carousel.Slide>
-  ));
+ const data = (state.suratKeterangan.findMany.data || []).slice(0, 8);
 
-  return (
-    <Carousel
-      plugins={[autoplay.current]}
-      onMouseEnter={autoplay.current.stop}
-      onMouseLeave={autoplay.current.reset}
-      height={height}
-      slideSize={{ base: "100%", sm: "50%", md: "33.333333%" }}
-      slideGap={{ base: "xl", sm: "md" }}
-      loop
-      align="start"
-      slidesToScroll={mobile ? 1 : 2}
-    >
-      {slides}
-    </Carousel>
-  );
+ const slides = data.map((item) => (
+   <Carousel.Slide key={item.id} >
+     <Paper h={"100%"} pos={"relative"} style={{
+       backgroundImage: `url(${item.image?.link})`,
+       backgroundSize: "cover",
+       backgroundPosition: "center",
+       backgroundRepeat: "no-repeat",
+     }}>
+       <Box
+         style={{
+           borderRadius: 16,
+           zIndex: 0,
+         }}
+         pos={"absolute"}
+         w={"100%"}
+         h={"100%"}
+         bg={colors.trans.dark[2]}
+       />
+       <Stack justify="space-between" h={"100%"} gap={0} p={"lg"} pos={"relative"} >
+         <Box p={"lg"}>
+           <Text
+
+             fw={"bold"}
+             c={"white"}
+             size={"3.5rem"}
+             style={{
+               textAlign: "center",
+             }}
+           >
+             {_.startCase(item.name)}
+           </Text>
+         </Box>
+         <Group justify="center">
+           <Button component={Link} href={`/darmasaba/desa/layanan/${item.id}`} px={46} radius={"100"} size="md" bg={colors["blue-button"]}>
+             Detail
+           </Button>
+         </Group>
+       </Stack>
+     </Paper>
+   </Carousel.Slide>
+ ));
+
+ return (
+   <Carousel
+     plugins={[autoplay.current]}
+     onMouseEnter={autoplay.current.stop}
+     onMouseLeave={autoplay.current.reset}
+     height={height}
+     slideSize={{ base: "100%", sm: "50%", md: "33.333333%" }}
+     slideGap={{ base: "xl", sm: "md" }}
+     loop
+     align="start"
+     slidesToScroll={mobile ? 1 : 2}
+   >
+     {slides}
+   </Carousel>
+ );
 }
 
 export default Layanan;
+

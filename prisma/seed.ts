@@ -4,6 +4,7 @@ import programInovasi from "./data/landing-page/profile/programInovasi.json";
 import mediaSosial from "./data/landing-page/profile/mediaSosial.json";
 import sdgsDesa from "./data/landing-page/sdgs-desa/sdgs-desa.json";
 import apbdes from "./data/landing-page/apbdes/apbdes.json";
+import pelayananSuratKeterangan from "./data/desa/layanan/pelayananSuratKeterangan.json";
 import categoryPengumuman from "./data/category-pengumuman.json";
 import kategoriBerita from "./data/kategori-berita.json";
 import caraMemperolehInformasi from "./data/list-caraMemperolehInformasi.json";
@@ -95,6 +96,23 @@ import pegawaiPPID from "./data/ppid/struktur-ppid/pegawai-PPID.json";
         id: p.id,
         name: p.name,
         iconUrl: p.iconUrl,
+      },
+    });
+  }
+  console.log("media sosial success ...");
+
+   // =========== LAYANAN DESA ===========
+   for (const p of pelayananSuratKeterangan) {
+    await prisma.pelayananSuratKeterangan.upsert({
+      where: { id: p.id },
+      update: {
+        name: p.name,
+        deskripsi: p.deskripsi,
+      },
+      create: {
+        id: p.id,
+        name: p.name,
+        deskripsi: p.deskripsi,
       },
     });
   }

@@ -1,6 +1,5 @@
 'use client'
 /* eslint-disable react-hooks/exhaustive-deps */
-import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import stateLayananDesa from '@/app/admin/(dashboard)/_state/desa/layananDesa';
 import colors from '@/con/colors';
 import { Box, Button, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
@@ -76,6 +75,14 @@ function EditPelayananTelunjukSakti() {
                 label={<Text fz={"sm"} fw={"bold"}>Nama Surat Keterangan</Text>}
                 placeholder="masukkan nama surat keterangan"
               />
+                <TextInput
+                   value={formData.deskripsi}
+                   onChange={(val) => {
+                     setFormData({ ...formData, deskripsi: val.target.value });
+                   }}
+                   label={<Text fz={"sm"} fw={"bold"}>Tautan Link</Text>}
+                   placeholder="masukkan tautan link"
+                 />
               <TextInput
                 value={formData.link}
                 onChange={(val) => {
@@ -84,15 +91,6 @@ function EditPelayananTelunjukSakti() {
                 label={<Text fz={"sm"} fw={"bold"}>Link</Text>}
                 placeholder="masukkan link"
               />
-              <Box>
-                <Text fz={"sm"} fw={"bold"}>Konten</Text>
-                <EditEditor
-                  value={formData.deskripsi}
-                  onChange={(htmlContent) => {
-                    setFormData({ ...formData, deskripsi: htmlContent });
-                  }}
-                />
-              </Box>
               <Button bg={colors['blue-button']} onClick={handleSubmit}>Simpan</Button>
             </Stack>
           </Paper>

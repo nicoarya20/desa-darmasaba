@@ -1,5 +1,4 @@
 'use client'
-import CreateEditor from '@/app/admin/(dashboard)/_com/createEditor';
 import stateLayananDesa from '@/app/admin/(dashboard)/_state/desa/layananDesa';
 import colors from '@/con/colors';
 import { Box, Button, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
@@ -44,6 +43,14 @@ function CreatePelayananTelunjukDesa() {
             placeholder="masukkan nama pelayanan telunjuk sakti desa"
           />
           <TextInput
+            value={stateTelunjukDesa.create.form.deskripsi}
+            onChange={(val) => {
+              stateTelunjukDesa.create.form.deskripsi = val.target.value;
+            }}
+            label={<Text fz={"sm"} fw={"bold"}>Tautan Link</Text>}
+            placeholder="masukkan tautan link"
+          />
+          <TextInput
             value={stateTelunjukDesa.create.form.link}
             onChange={(val) => {
               stateTelunjukDesa.create.form.link = val.target.value;
@@ -51,15 +58,6 @@ function CreatePelayananTelunjukDesa() {
             label={<Text fz={"sm"} fw={"bold"}>Link</Text>}
             placeholder="masukkan link"
           />
-          <Box>
-            <Text fz={"sm"} fw={"bold"}>Konten</Text>
-            <CreateEditor
-              value={stateTelunjukDesa.create.form.deskripsi}
-              onChange={(htmlContent) => {
-                stateTelunjukDesa.create.form.deskripsi = htmlContent;
-              }}
-            />
-          </Box>
           <Button bg={colors['blue-button']} onClick={handleSubmit}>Simpan</Button>
         </Stack>
       </Paper>
