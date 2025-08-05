@@ -176,7 +176,7 @@ function LandingPage() {
                   </Grid.Col>
 
                   <Grid.Col span={{
-                    base: 6,
+                    base: 3,
                     lg: 2,
                     md: 3,
                   }}>
@@ -206,7 +206,7 @@ function LandingPage() {
                   </Grid.Col>
                   <Grid.Col span={{
                     base: 12,
-                    lg: 8,
+                    lg: 12,
                     md: 12,
                   }}>
                     <Paper

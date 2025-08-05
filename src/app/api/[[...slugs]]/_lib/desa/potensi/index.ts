@@ -14,7 +14,7 @@ const PotensiDesa = new Elysia({
         body: t.Object({
             name: t.String(),
             deskripsi: t.String(),
-            kategori: t.String(),
+            kategoriId: t.String(),
             imageId: t.String(),
             content: t.String(),
         }),
@@ -35,7 +35,7 @@ const PotensiDesa = new Elysia({
             body: t.Object({
                 name: t.String(),
                 deskripsi: t.String(),
-                kategori: t.String(),
+                kategoriId: t.String(),
                 imageId: t.String(),
                 content: t.String(),
             }),

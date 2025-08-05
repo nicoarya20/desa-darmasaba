@@ -50,59 +50,58 @@ model AppMenuChild {
 // ========================================= FILE STORAGE ========================================= //
 
 model FileStorage {
-  id                       String                     @id @default(cuid())
-  name                     String                     @unique
-  realName                 String
-  path                     String
-  mimeType                 String
-  createdAt                DateTime                   @default(now())
-  updatedAt                DateTime                   @updatedAt
-  deletedAt                DateTime?
-  isActive                 Boolean                    @default(true)
-  link                     String
-  category                 String // "image" / "document" / "other"
-  Berita                   Berita[]
-  PotensiDesa              PotensiDesa[]
-  Posyandu                 Posyandu[]
-  StrukturPPID             StrukturPPID[]
-  GalleryFoto              GalleryFoto[]
-  
-  Pelapor                  Pelapor[]
-  Penghargaan              Penghargaan[]
-  ProfileDesaImage         ProfileDesaImage[]
-  ProfilePPID              ProfilePPID[]
-  ProfilPerbekel           ProfilPerbekel[]
-  Puskesmas                Puskesmas[]
-  ProgramKesehatan         ProgramKesehatan[]
-  PenangananDarurat        PenangananDarurat[]
-  KontakDarurat            KontakDarurat[]
-  InfoWabahPenyakit        InfoWabahPenyakit[]
-  KeamananLingkungan       KeamananLingkungan[]
-  MenuTipsKeamanan         MenuTipsKeamanan[]
-  PelayananSuratKeteranganImage PelayananSuratKeterangan[] @relation("PelayananSuratKeteranganImage")
+  id           String         @id @default(cuid())
+  name         String         @unique
+  realName     String
+  path         String
+  mimeType     String
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  deletedAt    DateTime?
+  isActive     Boolean        @default(true)
+  link         String
+  category     String // "image" / "document" / "other"
+  Berita       Berita[]
+  PotensiDesa  PotensiDesa[]
+  Posyandu     Posyandu[]
+  StrukturPPID StrukturPPID[]
+  GalleryFoto  GalleryFoto[]
+
+  Pelapor                        Pelapor[]
+  Penghargaan                    Penghargaan[]
+  ProfileDesaImage               ProfileDesaImage[]
+  ProfilePPID                    ProfilePPID[]
+  ProfilPerbekel                 ProfilPerbekel[]
+  Puskesmas                      Puskesmas[]
+  ProgramKesehatan               ProgramKesehatan[]
+  PenangananDarurat              PenangananDarurat[]
+  KontakDarurat                  KontakDarurat[]
+  InfoWabahPenyakit              InfoWabahPenyakit[]
+  KeamananLingkungan             KeamananLingkungan[]
+  MenuTipsKeamanan               MenuTipsKeamanan[]
+  PelayananSuratKeteranganImage  PelayananSuratKeterangan[] @relation("PelayananSuratKeteranganImage")
   PelayananSuratKeteranganImage2 PelayananSuratKeterangan[] @relation("PelayananSuratKeteranganImage2")
-  PasarDesa                PasarDesa[]
-  KontakDaruratKeamanan    KontakDaruratKeamanan[]
-  KontakItem               KontakItem[]
-  Pegawai                  Pegawai[]
-  DesaDigital              DesaDigital[]
-  KolaborasiInovasi        KolaborasiInovasi[]
-  InfoTekno                InfoTekno[]
-  PengaduanMasyarakat      PengaduanMasyarakat[]
-  KegiatanDesa             KegiatanDesa[]
-  ProgramInovasi           ProgramInovasi[]
-  PejabatDesa              PejabatDesa[]
-  MediaSosial              MediaSosial[]
-  DesaAntiKorupsi          DesaAntiKorupsi[]
-  SDGSDesa                 SDGSDesa[]
-  APBDesImage              APBDes[]                   @relation("APBDesImage")
-  APBDesFile               APBDes[]                   @relation("APBDesFile")
-  PrestasiDesa             PrestasiDesa[]
+  PasarDesa                      PasarDesa[]
+  KontakDaruratKeamanan          KontakDaruratKeamanan[]
+  KontakItem                     KontakItem[]
+  Pegawai                        Pegawai[]
+  DesaDigital                    DesaDigital[]
+  KolaborasiInovasi              KolaborasiInovasi[]
+  InfoTekno                      InfoTekno[]
+  PengaduanMasyarakat            PengaduanMasyarakat[]
+  KegiatanDesa                   KegiatanDesa[]
+  ProgramInovasi                 ProgramInovasi[]
+  PejabatDesa                    PejabatDesa[]
+  MediaSosial                    MediaSosial[]
+  DesaAntiKorupsi                DesaAntiKorupsi[]
+  SDGSDesa                       SDGSDesa[]
+  APBDesImage                    APBDes[]                   @relation("APBDesImage")
+  APBDesFile                     APBDes[]                   @relation("APBDesFile")
+  PrestasiDesa                   PrestasiDesa[]
 
   DataPerpustakaan DataPerpustakaan[]
 
   PegawaiPPID PegawaiPPID[]
-
 }
 
 //========================================= MENU LANDING PAGE ========================================= //
@@ -612,17 +611,28 @@ model KategoriBerita {
 
 // ========================================= POTENSI DESA ========================================= //
 model PotensiDesa {
-  id        String      @id @default(cuid())
-  name      String
-  deskripsi String
-  kategori  String
-  image     FileStorage @relation(fields: [imageId], references: [id])
-  imageId   String
-  content   String      @db.Text
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
-  deletedAt DateTime    @default(now())
-  isActive  Boolean     @default(true)
+  id         String           @id @default(cuid())
+  name       String
+  deskripsi  String
+  kategori   KategoriPotensi? @relation(fields: [kategoriId], references: [id])
+  kategoriId String?
+  image      FileStorage?     @relation(fields: [imageId], references: [id])
+  imageId    String?
+  content    String           @db.Text
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+  deletedAt  DateTime         @default(now())
+  isActive   Boolean          @default(true)
+}
+
+model KategoriPotensi {
+  id          String        @id @default(cuid())
+  nama        String
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  deletedAt   DateTime      @default(now())
+  isActive    Boolean       @default(true)
+  PotensiDesa PotensiDesa[]
 }
 
 // ========================================= PENGUMUMAN ========================================= //

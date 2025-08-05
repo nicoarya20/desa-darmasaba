@@ -28,7 +28,7 @@ function PelayananTelunjukSaktiDesa() {
     loadData()
   }, [])
 
-  const data = state.pelayananTelunjukSaktiDesa.findMany.data as Array<{
+  const data = (state.pelayananTelunjukSaktiDesa.findMany.data || []) as Array<{
     name: string;
     id: string;
     deskripsi: string;

@@ -336,15 +336,38 @@ const pelayananTelunjukSaktiDesa = proxy({
     },
   },
   findMany: {
-    data: [] as Prisma.PelayananTelunjukSaktiDesaGetPayload<{
-      omit: { isActive: true };
-    }>[],
-    async load() {
-      const res = await ApiFetch.api.desa.layanan.pelayanantelunjuksaktidesa[
-        "find-many"
-      ].get();
-      if (res.status === 200) {
-        pelayananTelunjukSaktiDesa.findMany.data = res.data?.data ?? [];
+    data: null as any[] | null,
+    page: 1,
+    totalPages: 1,
+    total: 0,
+    loading: false,
+    load: async (page = 1, limit = 10) => {  // Change to arrow function
+      pelayananTelunjukSaktiDesa.findMany.loading = true;  // Use the full path to access the property
+      pelayananTelunjukSaktiDesa.findMany.page = page;
+      try {
+        const res = await ApiFetch.api.desa.layanan.pelayanantelunjuksaktidesa[
+          "find-many"
+        ].get({
+          query: { page, limit },
+        });
+  
+        if (res.status === 200 && res.data?.success) {
+          pelayananTelunjukSaktiDesa.findMany.data = res.data.data || [];
+          pelayananTelunjukSaktiDesa.findMany.total = res.data.total || 0;
+          pelayananTelunjukSaktiDesa.findMany.totalPages = res.data.totalPages || 1;
+        } else {
+          console.error("Failed to load telunjuk sakti desa:", res.data?.message);
+          pelayananTelunjukSaktiDesa.findMany.data = [];
+          pelayananTelunjukSaktiDesa.findMany.total = 0;
+          pelayananTelunjukSaktiDesa.findMany.totalPages = 1;
+        }
+      } catch (error) {
+        console.error("Error loading telunjuk sakti desa:", error);
+        pelayananTelunjukSaktiDesa.findMany.data = [];
+        pelayananTelunjukSaktiDesa.findMany.total = 0;
+        pelayananTelunjukSaktiDesa.findMany.totalPages = 1;
+      } finally {
+        pelayananTelunjukSaktiDesa.findMany.loading = false;
       }
     },
   },

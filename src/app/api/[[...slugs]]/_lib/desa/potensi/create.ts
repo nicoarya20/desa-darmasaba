@@ -6,7 +6,7 @@ type FormCreate = Prisma.PotensiDesaGetPayload<{
     select: {
         name: true;
         deskripsi: true;
-        kategori: true;
+        kategoriId: true;
         imageId: true;
         content: true;
     }
@@ -18,7 +18,7 @@ export default async function potensiDesaCreate(context: Context) {
         data: {
             name: body.name,
             deskripsi: body.deskripsi,
-            kategori: body.kategori,
+            kategoriId: body.kategoriId,
             imageId: body.imageId,
             content: body.content,
         },

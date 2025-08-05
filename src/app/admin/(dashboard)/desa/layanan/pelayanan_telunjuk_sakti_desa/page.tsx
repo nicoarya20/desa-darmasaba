@@ -1,10 +1,10 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
-import { useShallowEffect } from '@mantine/hooks';
+import { Box, Button, Center, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
 import { IconDeviceImac, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../../_com/header';
 import JudulList from '../../../_com/judulList';
@@ -30,24 +30,68 @@ function ListPelayananTelunjukSakti({ search }: { search: string }) {
   const telunjukSaktiState = useProxy(stateLayananDesa.pelayananTelunjukSaktiDesa)
   const router = useRouter()
 
-  useShallowEffect(() => {
-    telunjukSaktiState.findMany.load()
+  const {
+    data,
+    page,
+    totalPages,
+    loading,
+    load,
+  } = telunjukSaktiState.findMany;
+
+  useEffect(() => {
+    load(page, 10)
   }, [])
 
-  const filteredData = (telunjukSaktiState.findMany.data || []).filter(item => {
-    const keyword = search.toLowerCase();
-    return (
-      item.name.toLowerCase().includes(keyword) ||
-      item.deskripsi.toLowerCase().includes(keyword)
-    );
-  });
+  const filteredData = useMemo(() => {
+    if (!data) return [];
+    return data.filter(item => {
+      const keyword = search.toLowerCase();
+      return (
+        item.name?.toLowerCase().includes(keyword) ||
+        item.link?.toLowerCase().includes(keyword) ||
+        item.deskripsi?.toLowerCase().includes(keyword)
+      );
+    })
+      .sort((a, b) => a.posisi?.hierarki - b.posisi?.hierarki);
+  }, [data, search]);
 
-  if (!telunjukSaktiState.findMany.data) {
+  if (loading || !data) {
     return (
       <Stack py={10}>
-        <Skeleton h={500} />
+        <Skeleton height={300} />
       </Stack>
-    )
+    );
+  }
+
+  if (data.length === 0) {
+    return (
+      <Box py={10}>
+        <Paper bg={colors['white-1']} p={'md'}>
+          <JudulList
+            title='List Pelayanan Telunjuk Sakti Desa'
+            href='/admin/desa/layanan/pelayanan_telunjuk_sakti_desa/create'
+          />
+          <Table striped withTableBorder withRowBorders>
+            <TableThead>
+              <TableTr>
+                <TableTh>Nama</TableTh>
+                <TableTh>Link</TableTh>
+                <TableTh>Detail</TableTh>
+              </TableTr>
+            </TableThead>
+            <TableTbody>
+              <TableTr>
+                <TableTd colSpan={3}>
+                  <Text fz={"sm"} color="gray.5">
+                    Tidak ada data
+                  </Text>
+                </TableTd>
+              </TableTr>
+            </TableTbody>
+          </Table>
+        </Paper>
+      </Box>
+    );
   }
 
   return (
@@ -75,9 +119,9 @@ function ListPelayananTelunjukSakti({ search }: { search: string }) {
                 </TableTd>
                 <TableTd>
                   <Box w={100}>
-                  <a href={item.link} target="_blank" rel="noopener noreferrer">
-                    <Text dangerouslySetInnerHTML={{ __html: item.deskripsi }} truncate="end" fz={"sm"} />
-                  </a>
+                    <a href={item.link} target="_blank" rel="noopener noreferrer">
+                      <Text dangerouslySetInnerHTML={{ __html: item.deskripsi }} truncate="end" fz={"sm"} />
+                    </a>
                   </Box>
                 </TableTd>
                 <TableTd>
@@ -92,6 +136,18 @@ function ListPelayananTelunjukSakti({ search }: { search: string }) {
           </TableTbody>
         </Table>
       </Paper>
+      <Center>
+        <Pagination
+          value={page}
+          onChange={(newPage) => {
+            load(newPage, 10);
+            window.scrollTo(0, 0);
+          }}
+          total={totalPages}
+          mt="md"
+          mb="md"
+        />
+      </Center>
     </Box>
   );
 }

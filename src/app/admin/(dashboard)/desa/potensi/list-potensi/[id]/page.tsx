@@ -5,18 +5,19 @@ import { IconArrowBack, IconEdit, IconX } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import React from 'react';
 import { useProxy } from 'valtio/utils';
-import potensiDesaState from '../../../../_state/desa/potensi';
 import { useShallowEffect } from '@mantine/hooks';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
 import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
+import potensiDesaState from '@/app/admin/(dashboard)/_state/desa/potensi';
+
 
 export default function DetailPotensi() {
   const router = useRouter()
   const params = useParams()
   const [modalHapus, setModalHapus] = useState(false)
   const [selectedId, setSelectedId] = useState<string | null>(null)
-  const potensiState = useProxy(potensiDesaState)
+  const potensiState = useProxy(potensiDesaState.potensiDesa)
 
   useShallowEffect(() => {
     potensiState.findUnique.load(params?.id as string)
@@ -60,7 +61,7 @@ export default function DetailPotensi() {
                 </Box>
                 <Box>
                   <Text fz={"lg"} fw={"bold"}>Kategori</Text>
-                  <Text fz={"lg"}>{potensiState.findUnique.data.kategori}</Text>
+                  <Text fz={"lg"}>{potensiState.findUnique.data.kategori?.nama}</Text>
                 </Box>
                 <Box>
                   <Text fz={"lg"} fw={"bold"}>Deskripsi</Text>
@@ -91,7 +92,7 @@ export default function DetailPotensi() {
                     <Button
                       onClick={() => {
                         if (potensiState.findUnique.data) {
-                          router.push(`/admin/desa/potensi/edit/${potensiState.findUnique.data.id}`)
+                          router.push(`/admin/desa/potensi/list-potensi/${potensiState.findUnique.data.id}/edit`)
                         }
                       }}
                       disabled={!potensiState.findUnique.data}

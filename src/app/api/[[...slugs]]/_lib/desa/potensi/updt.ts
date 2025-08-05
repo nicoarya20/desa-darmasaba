@@ -9,7 +9,7 @@ type FormUpdate = Prisma.PotensiDesaGetPayload<{
         id: true;
         name: true;
         deskripsi: true;
-        kategori: true;
+        kategoriId: true;
         imageId: true;
         content: true;
     };
@@ -23,7 +23,7 @@ export default async function potensiDesaUpdate(context: Context) {
     const {
         name,
         deskripsi,
-        kategori,
+        kategoriId,
         imageId,
         content,
         } = body;
@@ -39,6 +39,7 @@ export default async function potensiDesaUpdate(context: Context) {
             where: { id },
             include: {
                 image: true,
+                kategori: true
             }
         });
 
@@ -69,7 +70,7 @@ export default async function potensiDesaUpdate(context: Context) {
             data: {
                 name,
                 deskripsi,
-                kategori,
+                kategoriId,
                 imageId,
                 content,
             },

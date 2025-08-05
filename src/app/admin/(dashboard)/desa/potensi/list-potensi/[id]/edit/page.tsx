@@ -1,21 +1,22 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 
 import EditEditor from "@/app/admin/(dashboard)/_com/editEditor";
 import potensiDesaState from "@/app/admin/(dashboard)/_state/desa/potensi";
 import colors from "@/con/colors";
 import ApiFetch from "@/lib/api-fetch";
-import { Box, Button, Paper, Stack, Title, TextInput, FileInput, Center, Text, Image } from "@mantine/core";
-import { IconArrowBack, IconImageInPicture } from "@tabler/icons-react";
-import { useParams } from "next/navigation";
-import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { Box, Button, Group, Image, Paper, Select, Stack, Text, TextInput, Title } from "@mantine/core";
+import { Dropzone } from "@mantine/dropzone";
+import { IconArrowBack, IconPhoto, IconUpload, IconX } from "@tabler/icons-react";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useProxy } from "valtio/utils";
 
 
 
 function EditPotensi() {
-  const potensiState = useProxy(potensiDesaState)
+  const potensiState = useProxy(potensiDesaState.potensiDesa)
   const router = useRouter()
   const params = useParams()
 
@@ -24,23 +25,24 @@ function EditPotensi() {
   const [formData, setFormData] = useState({
     name: '',
     deskripsi: '',
-    kategori: '',
+    kategoriId: '',
     content: '',
     imageId: ''
   });
 
   useEffect(() => {
+    potensiDesaState.kategoriPotensi.findMany.load()
     const loadPotensi = async () => {
       const id = params?.id as string;
       if (!id) return;
 
       try {
-        const data = await potensiDesaState.edit.load(id); // ambil data dari API
+        const data = await potensiState.edit.load(id); // ambil data dari API
         if (data) {
           setFormData({
             name: data.name || '',
             deskripsi: data.deskripsi || '',
-            kategori: data.kategori || '',
+            kategoriId: data.kategoriId || '',
             content: data.content || '',
             imageId: data.imageId || '',
           });
@@ -65,7 +67,7 @@ function EditPotensi() {
         ...potensiState.edit.form,
         name: formData.name,
         deskripsi: formData.deskripsi,
-        kategori: formData.kategori,
+        kategoriId: formData.kategoriId,
         content: formData.content,
       };
 
@@ -119,40 +121,82 @@ function EditPotensi() {
             label={<Text fz={"sm"} fw={"bold"}>Deskripsi</Text>}
             placeholder="masukkan deskripsi"
           />
-          <TextInput
-            value={formData.kategori}
-            onChange={(e) => {
-              const val = e.target.value;
-              setFormData((prev) => ({ ...prev, kategori: val }));
-              potensiState.edit.form.kategori = val;
-            }}
-            label={<Text fz={"sm"} fw={"bold"}>Kategori</Text>}
-            placeholder="masukkan kategori"
+          <Select
+            value={formData.kategoriId}
+            onChange={(val) => setFormData({ ...formData, kategoriId: val || "" })}
+            label={<Text fw={"bold"} fz={"sm"}>Kategori</Text>}
+            placeholder='Pilih kategori'
+            data={
+              potensiDesaState.kategoriPotensi.findMany.data?.map((v) => ({
+                value: v.id,
+                label: v.nama
+              })) || []
+            }
+            clearable
+            searchable
+            required
+            error={!formData.kategoriId ? "Pilih kategori" : undefined}
           />
+          <Box>
+            <Text fz={"md"} fw={"bold"}>Gambar</Text>
+            <Box>
+              <Dropzone
+                onDrop={(files) => {
+                  const selectedFile = files[0]; // Ambil file pertama
+                  if (selectedFile) {
+                    setFile(selectedFile);
+                    setPreviewImage(URL.createObjectURL(selectedFile)); // Buat preview
+                  }
+                }}
+                onReject={() => toast.error('File tidak valid.')}
+                maxSize={5 * 1024 ** 2} // Maks 5MB
+                accept={{ 'image/*': [] }}
+              >
+                <Group justify="center" gap="xl" mih={220} style={{ pointerEvents: 'none' }}>
+                  <Dropzone.Accept>
+                    <IconUpload size={52} color="var(--mantine-color-blue-6)" stroke={1.5} />
+                  </Dropzone.Accept>
+                  <Dropzone.Reject>
+                    <IconX size={52} color="var(--mantine-color-red-6)" stroke={1.5} />
+                  </Dropzone.Reject>
+                  <Dropzone.Idle>
+                    <IconPhoto size={52} color="var(--mantine-color-dimmed)" stroke={1.5} />
+                  </Dropzone.Idle>
 
-          <FileInput
-            label={<Text fz={"sm"} fw={"bold"}>Upload Gambar</Text>}
-            value={file}
-            onChange={async (e) => {
-              if (!e) return;
-              setFile(e);
-              const base64 = await e.arrayBuffer().then((buf) =>
-                "data:image/png;base64," + Buffer.from(buf).toString("base64")
-              );
-              setPreviewImage(base64);
-            }}
-          />
-          {previewImage ? (
-            <Image alt="" src={previewImage} w={200} h={200} />
-          ) : (
-            <Center w={200} h={200} bg={"gray"}>
-              <IconImageInPicture />
-            </Center>
-          )}
+                  <div>
+                    <Text size="xl" inline>
+                      Drag gambar ke sini atau klik untuk pilih file
+                    </Text>
+                    <Text size="sm" c="dimmed" inline mt={7}>
+                      Maksimal 5MB dan harus format gambar
+                    </Text>
+                  </div>
+                </Group>
+              </Dropzone>
+
+              {/* Tampilkan preview kalau ada */}
+              {previewImage && (
+                <Box mt="sm">
+                  <Image
+                    src={previewImage}
+                    alt="Preview"
+                    style={{
+                      maxWidth: '100%',
+                      maxHeight: '200px',
+                      objectFit: 'contain',
+                      borderRadius: '8px',
+                      border: '1px solid #ddd',
+                    }}
+                  />
+                </Box>
+              )}
+
+            </Box>
+          </Box>
           <Box>
             <Text fz={"sm"} fw={"bold"}>Konten</Text>
             <EditEditor
-            value={formData.content}
+              value={formData.content}
               onChange={(htmlContent) => {
                 setFormData((prev) => ({ ...prev, content: htmlContent }));
                 potensiState.edit.form.content = htmlContent;

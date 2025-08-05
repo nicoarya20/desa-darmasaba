@@ -1,8 +1,8 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
+import potensiDesaState from "@/app/admin/(dashboard)/_state/desa/potensi";
 import colors from "@/con/colors";
-import images from "@/con/images";
-import ApiFetch from "@/lib/api-fetch";
 import {
   BackgroundImage,
   Box,
@@ -11,45 +11,13 @@ import {
   Group,
   SimpleGrid,
   Stack,
-  Text,
-  Title,
+  Text
 } from "@mantine/core";
 import _ from "lodash";
 import { motion } from "motion/react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import useSWR from "swr";
-
-const datamap = [
-  {
-    id: 1,
-    images: "/api/img/tps.png",
-    name: "TPS3R Pudak Mesari",
-    deskripsi: "TPS 3R Pudak Mesari Darmasaba layak mendapat penghargaan demikian apresiasi dari Delterra Sosial Indonesia nie Semeton Darmasaba!, Hal tersebut dikarenakan walaupun baru berdiri namun TPS 3R kebanggaan Desa Darmasaba tersebut sudah berjalan dengan sangat baik. ",
-    link: "/darmasaba/desa/potensi/tps3r-pudak-mesari"
-  },
-  {
-    id: 2,
-    images: "/api/img/ack.png",
-    name: "Bumdes Pudak Mesari",
-    deskripsi: "Bumdes Pudak Mesari sangat membantu warga desa Darmasaba dalam mengelola dan membangun sebuah desa yang lebih baik lagi",
-    link: "/darmasaba/desa/potensi/bumdes-pudak-mesari"
-  },
-  {
-    id: 3,
-    images: "/api/img/taman-beji.jpg",
-    name: "Taman Beji Cengana",
-    deskripsi: "Tirta Klebutan di Pura Taman Beji Cengana di Desa Adat Darmasaba, Badung, selain dipercaya nunas Taksu serta pembersihan diri. Tersemat juga asal usul cerita ditemukannya Tirta Klebutan yang tepat berada di pinggir Tukad Cengana tersebut.",
-    link: "/darmasaba/desa/potensi/taman-beji-cengana"
-  },
-  {
-    id: 4,
-    images: "/api/img/waterpark.png",
-    name: "Gumuh Sari Water Park",
-    deskripsi: "Gumuh Sari Rekreasi atau waterpark, tempat wisata yang asyik dan seru untuk kamu sekeluarga! Tempat liburan di Bali memang seakan nggak ada habisnya. Selalu ada aja destinasi wisata seru yang bisa jadi wishlist. Ada banyak banget tempat wisata yang kamu kunjungi di Bali, mulai dari wisata alam, wisata modern, sampai wisata air.",
-    link: "/darmasaba/desa/potensi/gumuh-sari-water-park"
-  },
-]
+import { useTransitionRouter } from "next-view-transitions";
+import { useEffect, useState } from "react";
+import { useProxy } from "valtio/utils";
 
 
 
@@ -59,11 +27,25 @@ const textHeading = {
 };
 
 function Potensi() {
-  const router = useRouter()
-  const { data, isLoading } = useSWR("/", (url) =>
-    ApiFetch.api.potensi.get().then(({ data }) => data?.data)
-  );
-  if (isLoading) return <Text>loading ...</Text>;
+  const router = useTransitionRouter()
+  const [loading, setLoading] = useState(false)
+  const state = useProxy(potensiDesaState.potensiDesa)
+
+  useEffect(()=> {
+    const loadData = async () => {
+      try {
+        setLoading(true);
+        await state.findMany.load()
+      } catch (error) {
+        console.error('Error loading data:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadData()
+  }, [])
+
+  const data = (state.findMany.data || []).slice(0, 4);
   return (
     <Stack p={"sm"} gap={"4rem"}>
       <Box
@@ -86,10 +68,10 @@ function Potensi() {
             key={k}
             whileHover={{ scale: 1.01 }}
             whileTap={{ scale: 0.8 }}
-            onClick={() => router.push(datamap[k].link)}
+            onClick={() => router.push(`/darmasaba/desa/potensi/${v.id}`)}
           >
             <BackgroundImage
-              src={datamap[k].images}
+              src={v.image?.link}
               h={320}
               key={k}
               radius={16}
@@ -116,7 +98,7 @@ function Potensi() {
                 }}
               >
                 <Text fw={"bold"} c={"gray.1"} size={"2.4rem"}>
-                  {datamap[k].name}
+                  {v.name}
                 </Text>
                 <Text
                   lineClamp={2}
@@ -125,7 +107,7 @@ function Potensi() {
                   }}
                   c={colors["white-1"]}
                 >
-                  {datamap[k].deskripsi}
+                  {v.deskripsi}
                 </Text>
               </Stack>
             </BackgroundImage>
@@ -134,7 +116,7 @@ function Potensi() {
       </SimpleGrid>
       <Stack align="center">
         <Group>
-          <Button component={Link} href={"/darmasaba/desa/potensi"} color={colors["blue-button"]} variant="outline" radius={100} size="md">
+          <Button onClick={()=> router.push("/darmasaba/desa/potensi")} color={colors["blue-button"]} variant="outline" radius={100} size="md">
             Selengkapnya
           </Button>
         </Group>

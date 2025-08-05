@@ -25,6 +25,7 @@ export default async function findUnique(
             where: { id },
             include: {
                 image: true,
+                kategori: true
             },
         });
 

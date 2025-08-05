@@ -17,6 +17,7 @@ const potensiDesaDelete = async (context: Context) => {
         where: { id },
         include: {
             image: true,
+            kategori: true
         },
     });
 
