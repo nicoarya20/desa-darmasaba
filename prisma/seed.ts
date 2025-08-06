@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 import profilePejabatDesa from "./data/landing-page/profile/profile.json";
+import penghargaan from "./data/landing-page/penghargaan/penghargaan.json";
 import programInovasi from "./data/landing-page/profile/programInovasi.json";
 import mediaSosial from "./data/landing-page/profile/mediaSosial.json";
 import sdgsDesa from "./data/landing-page/sdgs-desa/sdgs-desa.json";
@@ -43,6 +44,7 @@ import tempatKegiatan from "./data/pendidikan/pendidikan-non-formal/tempat-kegia
 import jenisProgramYangDiselenggarakan from "./data/pendidikan/pendidikan-non-formal/jenis-program-yang-diselenggarakan.json";
 import posisiOrganisasiPPID from "./data/ppid/struktur-ppid/posisi-organisasi-PPID.json";
 import pegawaiPPID from "./data/ppid/struktur-ppid/pegawai-PPID.json";
+import pelayananTelunjukSaktiDesa from "./data/desa/layanan/pelayananTelunjukSaktiDesa.json";
 
 (async () => {
   // =========== LANDING PAGE ===========
@@ -101,6 +103,25 @@ import pegawaiPPID from "./data/ppid/struktur-ppid/pegawai-PPID.json";
   }
   console.log("media sosial success ...");
 
+  // =========== PENGHARGAAN ===========
+  for (const p of penghargaan) {
+    await prisma.penghargaan.upsert({
+      where: { id: p.id },
+      update: {
+        name: p.name,
+        juara: p.juara,
+        deskripsi: p.deskripsi,
+      },
+      create: {
+        id: p.id,
+        name: p.name,
+        juara: p.juara,
+        deskripsi: p.deskripsi,
+      },
+    });
+  }
+  console.log("penghargaan success ...");
+
    // =========== LAYANAN DESA ===========
    for (const p of pelayananSuratKeterangan) {
     await prisma.pelayananSuratKeterangan.upsert({
@@ -116,7 +137,25 @@ import pegawaiPPID from "./data/ppid/struktur-ppid/pegawai-PPID.json";
       },
     });
   }
-  console.log("media sosial success ...");
+  console.log("pelayanan surat keterangan success ...");
+
+  for (const p of pelayananTelunjukSaktiDesa) {
+    await prisma.pelayananTelunjukSaktiDesa.upsert({
+      where: { id: p.id },
+      update: {
+        name: p.name,
+        deskripsi: p.deskripsi,
+        link: p.link,
+      },
+      create: {
+        id: p.id,
+        name: p.name,
+        deskripsi: p.deskripsi,
+        link: p.link,
+      },
+    });
+  }
+  console.log("pelayanan surat keterangan success ...");
 
   // =========== LAYANAN ===========
   for (const l of layanan) {

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiFetch from "@/lib/api-fetch";
 import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
@@ -5,10 +6,10 @@ import { proxy } from "valtio";
 import { z } from "zod";
 
 const templateForm = z.object({
-  name: z.string().min(1).max(50),
-  juara: z.string().min(1).max(50),
+  name: z.string().min(1).max(5000),
+  juara: z.string().min(1).max(5000),
   deskripsi: z.string().min(1).max(5000),
-  imageId: z.string().min(1).max(50),
+  imageId: z.string().min(1).max(5000),
 });
 
 const defaultForm = {
@@ -50,17 +51,38 @@ const penghargaanState = proxy({
     },
   },
   findMany: {
-    data: null as
-      | Prisma.PenghargaanGetPayload<{
-          include: {
-            image: true;
-          };
-        }>[]
-      | null,
-    async load() {
-      const res = await ApiFetch.api.desa.penghargaan["find-many"].get();
-      if (res.status === 200) {
-        penghargaanState.findMany.data = res.data?.data ?? [];
+    data: null as any[] | null,
+    page: 1,
+    totalPages: 1,
+    total: 0,
+    loading: false,
+    load: async (page = 1, limit = 10) => {  // Change to arrow function
+      penghargaanState.findMany.loading = true;  // Use the full path to access the property
+      penghargaanState.findMany.page = page;
+      try {
+        const res = await ApiFetch.api.desa.penghargaan[
+          "find-many"
+        ].get({
+          query: { page, limit },
+        });
+  
+        if (res.status === 200 && res.data?.success) {
+          penghargaanState.findMany.data = res.data.data || [];
+          penghargaanState.findMany.total = res.data.total || 0;
+          penghargaanState.findMany.totalPages = res.data.totalPages || 1;
+        } else {
+          console.error("Failed to load penghargaan:", res.data?.message);
+          penghargaanState.findMany.data = [];
+          penghargaanState.findMany.total = 0;
+          penghargaanState.findMany.totalPages = 1;
+        }
+      } catch (error) {
+        console.error("Error loading penghargaan:", error);
+        penghargaanState.findMany.data = [];
+        penghargaanState.findMany.total = 0;
+        penghargaanState.findMany.totalPages = 1;
+      } finally {
+        penghargaanState.findMany.loading = false;
       }
     },
   },

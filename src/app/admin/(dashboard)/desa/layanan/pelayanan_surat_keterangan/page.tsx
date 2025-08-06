@@ -51,7 +51,6 @@ function ListSuratKeterangan({ search }: { search: string }) {
           item.deskripsi?.toLowerCase().includes(keyword)
         );
       })
-      .sort((a, b) => a.posisi?.hierarki - b.posisi?.hierarki); 
     }, [data, search]); 
   
     // Handle loading state

@@ -51,6 +51,10 @@ function DetailPenghargaan() {
             <Paper key={statePenghargaan.findUnique.data.id} bg={colors['BG-trans']} p={'md'}>
               <Stack gap={"xs"}>
                 <Box>
+                  <Text fw={"bold"} fz={"lg"}>Gambar</Text>
+                  <Image w={{ base: 400, md: 400, lg: 400 }} src={statePenghargaan.findUnique.data?.image?.link} alt="gambar" />
+                </Box>
+                <Box>
                   <Text fw={"bold"} fz={"lg"}>Judul</Text>
                   <Text fz={"lg"}>{statePenghargaan.findUnique.data?.name}</Text>
                 </Box>
@@ -61,10 +65,6 @@ function DetailPenghargaan() {
                 <Box>
                   <Text fw={"bold"} fz={"lg"}>Deskripsi</Text>
                   <Text fz={"lg"} dangerouslySetInnerHTML={{ __html: statePenghargaan.findUnique.data?.deskripsi }} />
-                </Box>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Gambar</Text>
-                  <Image w={{ base: 150, md: 150, lg: 150 }} src={statePenghargaan.findUnique.data?.image?.link} alt="gambar" />
                 </Box>
                 <Flex gap={"xs"} mt={10}>
                   <Button
