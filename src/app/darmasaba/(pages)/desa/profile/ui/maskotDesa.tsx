@@ -7,7 +7,7 @@ function MaskotDesa() {
       <Stack align='center' gap={0}>
         <Box pb={30}>
           <Center>
-            <Image src={"/api/img/pudak-icon.png"} alt="" w={{ base: 200, md: 300 }} />
+            <Image src={"/pudak-icon.png"} alt="" w={{ base: 200, md: 300 }} />
           </Center>
           <Text c={colors['blue-button']} ta={"center"} fw={"bold"} fz={"2.5rem"}>Maskot Desa</Text>
         </Box>
@@ -29,7 +29,7 @@ function MaskotDesa() {
               <Center>
                 <Box>
                   <Paper p={"lg"}>
-                    <Image src={"/api/img/pohonpudak.png"} alt="" w={{ base: 150, md: 250 }} />
+                    <Image src={"/pohonpudak.png"} alt="" w={{ base: 150, md: 250 }} />
                     <Text ta={"center"} fw={"bold"} c={colors["blue-button"]} fz={{ base: "md", md: "h3" }}>Pohon Pudak</Text>
                   </Paper>
                 </Box>
@@ -37,7 +37,7 @@ function MaskotDesa() {
               <Center>
                 <Box>
                   <Paper p={"lg"}>
-                    <Image src={"/api/img/bungapudak.png"} alt="" w={{ base: 150, md: 250 }} />
+                    <Image src={"/bungapudak.png"} alt="" w={{ base: 150, md: 250 }} />
                     <Text ta={"center"} fw={"bold"} c={colors["blue-button"]} fz={{ base: "md", md: "h3" }}>Bunga Pudak</Text>
                   </Paper>
                 </Box>
@@ -64,7 +64,7 @@ function MaskotDesa() {
               <Box>
                 <Center>
                   <Paper p={"lg"}>
-                    <Image src={"/api/img/tarisekar.png"} alt="" w={{ base: 150, md: 250 }} />
+                    <Image src={"/tarisekar.png"} alt="" w={{ base: 150, md: 250 }} />
                     <Text ta={"center"} fw={"bold"} c={colors["blue-button"]} fz={{ base: "md", md: "h3" }}>Tari Sekar Pudak</Text>
                   </Paper>
                 </Center>
@@ -72,7 +72,7 @@ function MaskotDesa() {
               <Box>
                 <Center>
                   <Paper p={"lg"}>
-                    <Image src={"/api/img/klimakstari.png"} alt="" w={{ base: 150, md: 250 }} />
+                    <Image src={"/klimakstari.png"} alt="" w={{ base: 150, md: 250 }} />
                     <Text ta={"center"} fw={"bold"} c={colors["blue-button"]} fz={{ base: "md", md: "h3" }}>Pose Klimaks Tari </Text>
                     <Text ta={"center"} fw={"bold"} c={colors["blue-button"]} fz={{ base: "md", md: "h3" }}>Sekar Pudak </Text>
                   </Paper>

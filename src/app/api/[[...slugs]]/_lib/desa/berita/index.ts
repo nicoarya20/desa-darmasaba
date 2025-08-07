@@ -1,5 +1,4 @@
 import Elysia, { t } from "elysia";
-import kategoriBeritaFindMany from "./category";
 import beritaFindMany from "./find-many";
 import beritaCreate from "./create";
 import beritaDelete from "./del";
@@ -9,7 +8,6 @@ import beritaFindFirst from "./findFirst";
 import findRecentBerita from "./findRecent";
 
 const Berita = new Elysia({ prefix: "/berita", tags: ["Desa/Berita"] })
-  .get("/category/find-many", kategoriBeritaFindMany)
   .get("/find-many", beritaFindMany)
   .get("/:id", async (context) => {
       const response = await findBeritaById(new Request(context.request));

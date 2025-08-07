@@ -28,7 +28,7 @@ function Page() {
         <BackButton />
       </Box>
       <Center>
-        <Image src={"/api/img/darmasaba-icon.png"} w={{ base: 70, md: 100 }} alt='' />
+        <Image src={"/darmasaba-icon.png"} w={{ base: 70, md: 100 }} alt='' />
       </Center>
       <Text ta={"center"} fz={{ base: "h1", md: "2.5rem" }} c={colors["blue-button"]} fw={"bold"}>
         Daftar Informasi Publik Desa Darmasaba

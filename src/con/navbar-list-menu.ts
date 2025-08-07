@@ -66,7 +66,7 @@ const navbarListMenu = [
             {
                 id: "2.3",
                 name: "Berita",
-                href: "/darmasaba/desa/berita"
+                href: "/darmasaba/desa/berita/semua"
             },
             {
                 id: "2.4",

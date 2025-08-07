@@ -8,7 +8,7 @@ function SejarahDesa() {
         <Stack align='center' gap={0}>
           <Box pb={30}>
             <Center>
-              <Image src={"/api/img/darmasaba-icon.png"} alt="" w={{ base: 200, md: 300 }} />
+              <Image src={"/darmasaba-icon.png"} alt="" w={{ base: 200, md: 300 }} />
             </Center>
             <Text c={colors['blue-button']} ta={"center"} fw={"bold"} fz={"2.5rem"}>Sejarah Desa</Text>
           </Box>

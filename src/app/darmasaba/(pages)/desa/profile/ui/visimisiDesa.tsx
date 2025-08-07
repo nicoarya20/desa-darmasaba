@@ -8,7 +8,7 @@ function VisimisiDesa() {
             <Box pb={30}>
                 <Stack align='center' gap={0}>
                     <Box pb={30}>
-                        <Image src={"/api/img/darmasaba-icon.png"} alt="" w={{ base: 200, md: 300 }} />
+                        <Image src={"/darmasaba-icon.png"} alt="" w={{ base: 200, md: 300 }} />
                     </Box>
                     <Paper p={"xl"} bg={colors['white-trans-1']} w={{ base: "100%", md: "100%" }}>
                         <Text c={colors['blue-button']} ta={"center"} fw={"lighter"} fz={"2.5rem"}>Visi Desa</Text>

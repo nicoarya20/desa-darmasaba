@@ -8,6 +8,7 @@ import GalleryVideo from "./gallery/video";
 import LayananDesa from "./layanan";
 import Penghargaan from "./penghargaan";
 import KategoriPotensi from "./potensi/kategori-potensi";
+import KategoriBerita from "./berita/kategori-berita";
 
 
 const Desa = new Elysia({ prefix: "/api/desa", tags: ["Desa"] })
@@ -20,5 +21,6 @@ const Desa = new Elysia({ prefix: "/api/desa", tags: ["Desa"] })
   .use(LayananDesa)
   .use(Penghargaan)
   .use(KategoriPotensi)
+  .use(KategoriBerita)
 
 export default Desa;
