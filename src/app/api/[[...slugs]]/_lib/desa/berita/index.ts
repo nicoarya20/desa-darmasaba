@@ -9,6 +9,7 @@ import findRecentBerita from "./findRecent";
 
 const Berita = new Elysia({ prefix: "/berita", tags: ["Desa/Berita"] })
   .get("/find-many", beritaFindMany)
+  .get("/find-many-ui", beritaFindMany)
   .get("/:id", async (context) => {
       const response = await findBeritaById(new Request(context.request));
       return response;

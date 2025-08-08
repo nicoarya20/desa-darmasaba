@@ -1,9 +1,8 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import colors from '@/con/colors';
-import { Box, Container, Grid, GridCol, Stack, Tabs, TabsList, TabsPanel, TabsTab, Text, TextInput } from '@mantine/core';
+import { Box, Container, Grid, GridCol, Stack, Tabs, TabsList, TabsTab, Text, TextInput } from '@mantine/core';
 import { IconSearch } from '@tabler/icons-react';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import BackButton from '../../layanan/_com/BackButto';
 
@@ -15,15 +14,66 @@ type HeaderSearchProps = {
   children?: React.ReactNode;
 };
 
-function LayoutTabsBerita({ 
-  children, 
+function LayoutTabsBerita({
+  children,
   placeholder = "pencarian",
-  searchIcon = <IconSearch size={20} />,
-  value,
-  onChange }: HeaderSearchProps) {
+  searchIcon = <IconSearch size={20} />
+}: HeaderSearchProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  
+  // Get active tab from URL path
+  const activeTab = pathname.split('/').pop() || 'semua';
+  
+  // Get initial search value from URL
+  const initialSearch = searchParams.get('search') || '';
+  const [searchValue, setSearchValue] = useState(initialSearch);
+  const [searchTimeout, setSearchTimeout] = useState<number | null>(null);
+  
+  // Update active tab state when pathname changes
+  const [activeTabState, setActiveTabState] = useState(activeTab);
+  useEffect(() => {
+    setActiveTabState(activeTab);
+  }, [activeTab]);
 
-  const router = useRouter()
-  const pathname = usePathname()
+  // Clean up timeouts on unmount
+  useEffect(() => {
+    return () => {
+      if (searchTimeout !== null) {
+        clearTimeout(searchTimeout);
+      }
+    };
+  }, [searchTimeout]);
+
+  // Handle search input change with debounce
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    setSearchValue(value);
+    
+    // Clear previous timeout
+    if (searchTimeout !== null) {
+      clearTimeout(searchTimeout);
+    }
+    
+    // Set new timeout
+    const newTimeout = window.setTimeout(() => {
+      const params = new URLSearchParams(searchParams.toString());
+      
+      if (value) {
+        params.set('search', value);
+      } else {
+        params.delete('search');
+      }
+      
+      // Only update URL if the search value has actually changed
+      if (params.toString() !== searchParams.toString()) {
+        router.push(`/darmasaba/desa/berita/${activeTab}?${params.toString()}`);
+      }
+    }, 500); // 500ms debounce delay
+    
+    setSearchTimeout(newTimeout);
+  };
   const tabs = [
     {
       label: "Semua",
@@ -62,70 +112,68 @@ function LayoutTabsBerita({
     },
 
   ];
-  const curentTab = tabs.find(tab => tab.href === pathname)
-  const [activeTab, setActiveTab] = useState<string | null>(curentTab?.value || tabs[0].value);
-
   const handleTabChange = (value: string | null) => {
-    const tab = tabs.find(t => t.value === value)
+    if (!value) return;
+    const tab = tabs.find(t => t.value === value);
     if (tab) {
-      router.push(tab.href)
+      const params = new URLSearchParams(searchParams.toString());
+      router.push(`/darmasaba/desa/berita/${value}${params.toString() ? `?${params.toString()}` : ''}`);
     }
-    setActiveTab(value)
-  }
-
-  useEffect(() => {
-    const match = tabs.find(tab => tab.href === pathname)
-    if (match) {
-      setActiveTab(match.value)
-    }
-  }, [pathname])
+  };
 
   return (
     <Stack pos="relative" bg={colors.Bg} py="xl" gap="22">
-    {/* Header */}
-    <Box px={{ base: "md", md: 100 }}>
-      <BackButton />
-    </Box>
-    <Container size="lg" px="md">
-      <Stack align="center" gap="0" >
-        <Text fz={{ base: "2rem", md: "3.4rem" }} c={colors["blue-button"]} fw="bold" ta="center">
-          Portal Berita Darmasaba
-        </Text>
-        <Text ta="center" px="md">
-          Temukan berbagai potensi dan keunggulan yang dimiliki Desa Darmasaba
-        </Text>
-      </Stack>
-    </Container>
-      <Tabs color={colors['blue-button']} variant="pills" defaultValue="semua" value={activeTab} onChange={handleTabChange}>
-        <Box px={{ base: "md", md: 100 }} py="md" bg={colors['BG-trans']} >
+      {/* Header */}
+      <Box px={{ base: "md", md: 100 }}>
+        <BackButton />
+      </Box>
+      <Container size="lg" px="md">
+        <Stack align="center" gap="0" >
+          <Text fz={{ base: "2rem", md: "3.4rem" }} c={colors["blue-button"]} fw="bold" ta="center">
+            Portal Berita Darmasaba
+          </Text>
+          <Text ta="center" px="md">
+            Temukan berbagai potensi dan keunggulan yang dimiliki Desa Darmasaba
+          </Text>
+        </Stack>
+      </Container>
+
+      <Tabs
+        color={colors['blue-button']}
+        variant="pills"
+        value={activeTabState}
+        onChange={handleTabChange}
+      >
+        <Box px={{ base: "md", md: 100 }} py="md" bg={colors['BG-trans']}>
           <Grid>
             <GridCol span={{ base: 12, md: 9, lg: 8, xl: 9 }}>
               <TabsList>
-                {tabs.map((e, i) => (
-                  <TabsTab key={i} value={e.value}>{e.label}</TabsTab>
+                {tabs.map((tab, index) => (
+                  <TabsTab
+                    key={index}
+                    value={tab.value}
+                    onClick={() => router.push(tab.href)}
+                  >
+                    {tab.label}
+                  </TabsTab>
                 ))}
               </TabsList>
             </GridCol>
             <GridCol span={{ base: 12, md: 3, lg: 4, xl: 3 }}>
-                <TextInput
-                  radius="lg"
-                  placeholder={placeholder}
-                  leftSection={searchIcon}
-                  w="100%"
-                  value={value}
-                  onChange={onChange}
-                />
+              <TextInput
+                radius="lg"
+                placeholder={placeholder}
+                leftSection={searchIcon}
+                w="100%"
+                value={searchValue}
+                onChange={handleSearchChange}
+              />
             </GridCol>
           </Grid>
         </Box>
-        {tabs.map((e, i) => (
-          <TabsPanel key={i} value={e.value}>
-            {/* Konten dummy, bisa diganti tergantung routing */}
-            <></>
-          </TabsPanel>
-        ))}
+
+        {children}
       </Tabs>
-      {children}
     </Stack>
   );
 }

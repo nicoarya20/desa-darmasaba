@@ -1,183 +1,177 @@
-import colors from '@/con/colors';
-import { Box, Center, Container, Divider, Grid, GridCol, Group, Image, Pagination, Paper, SimpleGrid, Stack, Text } from '@mantine/core';
-import { IconCalendar, IconUser } from '@tabler/icons-react';
-import React from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+'use client'
+import stateDashboardBerita from '@/app/admin/(dashboard)/_state/desa/berita';
+import { Badge, Box, Button, Card, Center, Container, Divider, Flex, Grid, GridCol, Group, Image, Pagination, Paper, SimpleGrid, Skeleton, Stack, Text, Title } from '@mantine/core';
+import { IconArrowRight, IconCalendar } from '@tabler/icons-react';
+import { useTransitionRouter } from 'next-view-transitions';
+import { useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { useProxy } from 'valtio/utils';
 
-const dataBeritaTerbaru = [
-  {
-    id: 1,
-    judul: 'Darmasaba Luncurkan Aplikasi Smart Village untuk Pelayanan Publik',
-    image: "/api/img/berita-1.png",
-    tanggal: "Selasa, 11 Januari 2025",
-    kategori: "Teknologi"
-  },
-  {
-    id: 2,
-    judul: 'Tim Voli Darmasaba Raih Juara Turnamen Desa',
-    image: "/api/img/prestasi-voli.jpeg",
-    tanggal: "Kamis, 13 Januari 2025",
-    kategori: "Sosial"
-  },
-  {
-    id: 3,
-    judul: 'DARMASABA DIGITAL PROJECT IS COMING!',
-    image: "/api/img/teknologi-1.png",
-    tanggal: "Kamis, 13 Januari 2025",
-    kategori: "Teknologi"
-  },
-]
 function Semua() {
+  const searchParams = useSearchParams();
+  const router = useTransitionRouter();
+
+  // Parameter URL
+  const search = searchParams.get('search') || '';
+  const currentPage = parseInt(searchParams.get('page') || '1');
+  const [page, setPage] = useState(currentPage);
+
+  // Gunakan proxy untuk state
+  const state = useProxy(stateDashboardBerita.berita);
+  const featured = useProxy(stateDashboardBerita.berita.findFirst); // ✅ Berita utama
+  const loadingGrid = state.findMany.loading;
+  const loadingFeatured = featured.loading;
+
+  // Load berita utama (hanya sekali)
+  useEffect(() => {
+    if (!featured.data && !loadingFeatured) {
+      stateDashboardBerita.berita.findFirst.load();
+    }
+  }, [featured.data, loadingFeatured]);
+
+  // Load berita terbaru (untuk grid) saat page/search berubah
+  useEffect(() => {
+    const limit = 3; // Sesuaikan dengan tampilan grid
+    state.findMany.load(page, limit, search);
+  }, [page, search]);
+
+  // Update URL saat page berubah
+  useEffect(() => {
+    const url = new URLSearchParams();
+    if (search) url.set('search', search);
+    if (page > 1) url.set('page', page.toString());
+    router.replace(`?${url.toString()}`);
+  }, [search, page, router]);
+
+  const featuredData = featured.data;
+  const paginatedNews = state.findMany.data || [];
+  const totalPages = state.findMany.totalPages || 1;
+
   return (
     <Box py={20}>
       <Container size="xl" px={{ base: "md", md: "xl" }}>
-        <Grid gutter={{ base: "md", md: "xl" }} pb={70}>
-          {/* Berita Utama */}
-          <GridCol span={{ base: 12, xl: 8 }}>
-            <Paper p="md" shadow="sm" radius="md">
-              <Stack gap="md">
-                <Box>
+        {/* === Berita Utama (Tetap) === */}
+        {loadingFeatured ? (
+          <Center><Skeleton h={400} /></Center>
+        ) : featuredData ? (
+          <Box mb={50}>
+            <Text fz="h2" fw={700} mb="md">Berita Utama</Text>
+            <Paper shadow="md" radius="md" withBorder>
+              <Grid gutter={0}>
+                <GridCol span={{ base: 12, md: 6 }}>
                   <Image
-                    src="/api/img/berita-1.png"
-                    alt="Darmasaba Smart Village"
-                    radius="md"
+                    src={featuredData.image?.link || '/images/placeholder.jpg'}
+                    alt={featuredData.judul || 'Berita Utama'}
+                    height={400}
                     fit="cover"
-                    h={{ base: 450, md: 610 }}
+                    radius="md"
+                    style={{ borderBottomRightRadius: 0, borderTopRightRadius: 0 }}
                   />
-                </Box>
-                <Group>
-                  <Paper px={10} py={5} radius="xl" bg={colors['BG-trans']}>
-                    <Text size="sm">Teknologi</Text>
-                  </Paper>
-                </Group>
-                <Text fz={{ base: "xl", md: "2xl" }} fw="bold" lineClamp={2}>
-                  Darmasaba Luncurkan Aplikasi Smart Village untuk Pelayanan Publik
-                </Text>
-                <Text size="md" lineClamp={3}>
-                  Desa Darmasaba mengambil langkah maju dalam transformasi digital dengan meluncurkan aplikasi Smart Village yang memudahkan warga dalam mengakses layanan publik secara online.
-                </Text>
-                <Group>
-                  <Group gap="xs">
-                    <IconCalendar size={18} />
-                    <Text size="sm">Selasa, 11 Januari 2025</Text>
-                  </Group>
-                  <Group gap="xs">
-                    <IconUser size={18} />
-                    <Text size="sm">Admin Desa</Text>
-                  </Group>
-                </Group>
-              </Stack>
+                </GridCol>
+                <GridCol span={{ base: 12, md: 6 }} p="xl">
+                  <Stack h="100%" justify="space-between">
+                    <div>
+                      <Badge color="blue" variant="light" mb="md">
+                        {featuredData.kategoriBerita?.name || 'Berita'}
+                      </Badge>
+                      <Title order={2} mb="md">{featuredData.judul}</Title>
+                      <Text color="dimmed" lineClamp={3} mb="md">
+                        {featuredData.deskripsi}
+                      </Text>
+                    </div>
+                    <Group justify="apart" mt="auto">
+                      <Group gap="xs">
+                        <IconCalendar size={18} />
+                        <Text size="sm">
+                          {new Date(featuredData.createdAt).toLocaleDateString('id-ID', {
+                            day: 'numeric',
+                            month: 'long',
+                            year: 'numeric'
+                          })}
+                        </Text>
+                      </Group>
+                      <Button
+                        variant="light"
+                        rightSection={<IconArrowRight size={16} />}
+                        onClick={() => router.push(`/desa/berita/${featuredData.id}`)}
+                      >
+                        Baca Selengkapnya
+                      </Button>
+                    </Group>
+                  </Stack>
+                </GridCol>
+              </Grid>
             </Paper>
-          </GridCol>
+          </Box>
+        ) : null}
 
-          {/* Berita Sampingan */}
-          <GridCol span={{ base: 12, xl: 4 }}>
-            <Stack gap="md">
-              {/* Berita Sampingan 1 */}
-              <Paper p="md" shadow="sm" radius="md">
-                <Stack gap="sm">
-                  <Image
-                    radius="md"
-                    src="/api/img/pembangunan-2.jpg"
-                    alt="Prestasi Voli"
-                    fit="cover"
-                    h={180}
-                  />
-                  <Group>
-                    <Paper px={10} py={5} radius="xl" bg={colors['BG-trans']}>
-                      <Text size="sm">Pembangunan</Text>
-                    </Paper>
-                  </Group>
-                  <Text fz="lg" fw="bold" lineClamp={2}>
-                    Darmasaba Luncurkan Aplikasi Smart Village untuk Pelayanan Publik
-                  </Text>
-                  <Group>
-                    <Group gap="xs">
-                      <IconCalendar size={18} />
-                      <Text size="sm">Selasa, 11 Januari 2025</Text>
-                    </Group>
-                    <Group gap="xs">
-                      <IconUser size={18} />
-                      <Text size="sm">Admin Desa</Text>
-                    </Group>
-                  </Group>
-                </Stack>
-              </Paper>
+        {/* === Berita Terbaru (Berubah Saat Pagination) === */}
+        <Box mt={50}>
+          <Title order={2} mb="md">Berita Terbaru</Title>
+          <Divider mb="xl" />
 
-              {/* Berita Sampingan 2 */}
-              <Paper p="md" shadow="sm" radius="md">
-                <Stack gap="sm">
-                  <Image
-                    radius="md"
-                    src="/api/img/prestasi-voli.jpeg"
-                    alt="Prestasi Voli"
-                    fit="cover"
-                    h={180}
-                  />
-                  <Group>
-                    <Paper px={10} py={5} radius="xl" bg={colors['BG-trans']}>
-                      <Text size="sm">Sosial</Text>
-                    </Paper>
-                  </Group>
-                  <Text fz="lg" fw="bold" lineClamp={2}>
-                    Tim Voli Darmasaba Raih Juara Turnamen Desa
-                  </Text>
-                  <Group>
-                    <Group gap="xs">
-                      <IconCalendar size={18} />
-                      <Text size="sm">Selasa, 11 Januari 2025</Text>
-                    </Group>
-                    <Group gap="xs">
-                      <IconUser size={18} />
-                      <Text size="sm">Admin Desa</Text>
-                    </Group>
-                  </Group>
-                </Stack>
-              </Paper>
-            </Stack>
-          </GridCol>
-        </Grid>
-        <Box pb={30}>
-          <Text fz={"h1"} fw={"bold"}>Berita Terbaru</Text>
-          <Divider color={colors["blue-button"]} />
-        </Box>
-        <SimpleGrid cols={{ base: 1, xl: 3 }}>
-          {dataBeritaTerbaru.map((v, k) => {
-            return (
-              <Paper key={k} p="md" shadow="sm" radius="md">
-                <Stack gap="sm">
-                  <Image
-                    radius="md"
-                    src={v.image}
-                    alt="Prestasi Voli"
-                    fit="cover"
-                    h={{ base: 180, xl: 250 }}
-                  />
-                  <Group>
-                    <Paper px={10} py={5} radius="xl" bg={colors['BG-trans']}>
-                      <Text size="sm">{v.kategori}</Text>
-                    </Paper>
-                  </Group>
-                  <Text fz="lg" fw="bold" lineClamp={2}>
-                    {v.judul}
-                  </Text>
-                  <Group>
-                    <Group gap="xs">
-                      <IconCalendar size={18} />
-                      <Text size="sm">{v.tanggal}</Text>
-                    </Group>
-                    <Group gap="xs">
-                      <IconUser size={18} />
-                      <Text size="sm">Admin Desa</Text>
-                    </Group>
-                  </Group>
-                </Stack>
-              </Paper>
-            )
-          })}
-        </SimpleGrid>
-        <Box py={"xl"}>
-          <Center>
-            <Pagination total={10} />
+          {loadingGrid ? (
+            <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="xl">
+              {Array(3).fill(0).map((_, i) => (
+                <Skeleton key={i} h={300} radius="md" />
+              ))}
+            </SimpleGrid>
+          ) : paginatedNews.length === 0 ? (
+            <Text c="dimmed" ta="center">Tidak ada berita ditemukan.</Text>
+          ) : (
+            <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="xl" verticalSpacing="xl">
+              {paginatedNews.map((item) => (
+                <Card
+                  key={item.id}
+                  shadow="sm"
+                  p="lg"
+                  radius="md"
+                  withBorder
+                >
+                  <Card.Section>
+                    <Image
+                      src={item.image?.link || '/images/placeholder-small.jpg'}
+                      height={200}
+                      alt={item.judul}
+                      fit="cover"
+                    />
+                  </Card.Section>
+
+                  <Badge color="blue" variant="light" mt="md">
+                    {item.kategoriBerita?.name || 'Berita'}
+                  </Badge>
+
+                  <Text fw={600} size="lg" mt="sm" lineClamp={2}>{item.judul}</Text>
+
+                  <Text size="sm" color="dimmed" lineClamp={3} mt="xs">{item.deskripsi}</Text>
+
+                  <Flex align="center" justify="apart" mt="md" gap="xs">
+                    <Text size="xs" color="dimmed">
+                      {new Date(item.createdAt).toLocaleDateString('id-ID', {
+                        day: 'numeric',
+                        month: 'short',
+                        year: 'numeric'
+                      })}
+                    </Text>
+                    
+                    <Button p="xs" variant="light" rightSection={<IconArrowRight size={16} />} onClick={() => router.push(`/desa/berita/${item.id}`)}>Baca Selengkapnya</Button>
+                  </Flex>
+                </Card>
+              ))}
+            </SimpleGrid>
+          )}
+
+          {/* Pagination hanya untuk berita terbaru */}
+          <Center mt="xl">
+            <Pagination
+              total={totalPages}
+              value={page}
+              onChange={setPage}
+              siblings={1}
+              boundaries={1}
+              withEdges
+            />
           </Center>
         </Box>
       </Container>

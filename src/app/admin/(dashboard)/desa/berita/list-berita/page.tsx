@@ -39,22 +39,16 @@ function ListBerita({ search }: { search: string }) {
   } = beritaState.berita.findMany;
 
 
-  // Fetch pertama kali
+  // Fetch data when page or search changes
   useShallowEffect(() => {
-    load(page, 10); // awal page = 1
-  }, [page]);
-
-  const filteredData = (data || []).filter((item) => {
-    const keyword = search.toLowerCase();
-    return (
-      item.judul.toLowerCase().includes(keyword) ||
-      item.kategoriBerita?.name.toLowerCase().includes(keyword)
-    );
-  });
+    load(page, 10, search);
+  }, [page, search]);
 
   if (loading || !data) {
     return <Skeleton h={500} />;
   }
+  
+  const filteredData = data || [];
 
   return (
     <Box py={10}>

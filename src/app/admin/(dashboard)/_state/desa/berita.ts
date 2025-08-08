@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiFetch from "@/lib/api-fetch";
 import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
@@ -58,6 +59,8 @@ const berita = proxy({
     },
   },
 
+  // State untuk berita utama (hanya 1)
+
   findMany: {
     data: null as
       | Prisma.BeritaGetPayload<{
@@ -70,38 +73,41 @@ const berita = proxy({
     page: 1,
     totalPages: 1,
     loading: false,
-  
-    async load(page = 1, limit = 10) {
-      berita.findMany.loading = true;
-      berita.findMany.page = page;
+    search: "",
+    async load(page = 1, limit = 10, search = "", kategori = "") {
+      this.loading = true;
+      this.page = page;
       try {
-        const res = await ApiFetch.api.desa.berita["find-many"].get({
-          query: {
-            page,
-            limit,
-          },
-        });
-  
+        const query: any = { page, limit };
+        if (search) query.search = search;
+        if (kategori) query.kategori = kategori;
+    
+        const res = await ApiFetch.api.desa.berita["find-many"].get({ query });
+    
         if (res.status === 200 && res.data?.success) {
-          berita.findMany.data = res.data.data ?? [];
-          berita.findMany.totalPages = res.data.totalPages ?? 1;
+          this.data = res.data.data ?? [];
+          this.totalPages = res.data.totalPages ?? 1;
+        } else {
+          this.data = [];
+          this.totalPages = 1;
         }
       } catch (err) {
         console.error("Gagal fetch berita paginated:", err);
+        this.data = [];
+        this.totalPages = 1;
       } finally {
-        berita.findMany.loading = false;
+        this.loading = false;
       }
-    },
+    }
   },
-  
+
   findUnique: {
-    data: null as
-      | Prisma.BeritaGetPayload<{
-          include: {
-            image: true;
-            kategoriBerita: true;
-          };
-        }> | null,
+    data: null as Prisma.BeritaGetPayload<{
+      include: {
+        image: true;
+        kategoriBerita: true;
+      };
+    }> | null,
     async load(id: string) {
       try {
         const res = await fetch(`/api/desa/berita/${id}`);
@@ -109,11 +115,11 @@ const berita = proxy({
           const data = await res.json();
           berita.findUnique.data = data.data ?? null;
         } else {
-          console.error('Failed to fetch berita:', res.statusText);
+          console.error("Failed to fetch berita:", res.statusText);
           berita.findUnique.data = null;
         }
       } catch (error) {
-        console.error('Error fetching berita:', error);
+        console.error("Error fetching berita:", error);
         berita.findUnique.data = null;
       }
     },
@@ -127,14 +133,14 @@ const berita = proxy({
         berita.delete.loading = true;
 
         const response = await fetch(`/api/desa/berita/delete/${id}`, {
-          method: 'DELETE',
+          method: "DELETE",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
         });
-        
+
         const result = await response.json();
-        
+
         if (response.ok && result?.success) {
           toast.success(result.message || "Berita berhasil dihapus");
           await berita.findMany.load(); // refresh list
@@ -159,21 +165,21 @@ const berita = proxy({
         toast.warn("ID tidak valid");
         return null;
       }
-      
+
       try {
         const response = await fetch(`/api/desa/berita/${id}`, {
-          method: 'GET',
+          method: "GET",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
         });
-        
+
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-        
+
         const result = await response.json();
-        
+
         if (result?.success) {
           const data = result.data;
           this.id = data.id;
@@ -190,7 +196,9 @@ const berita = proxy({
         }
       } catch (error) {
         console.error("Error loading berita:", error);
-        toast.error(error instanceof Error ? error.message : "Gagal memuat data");
+        toast.error(
+          error instanceof Error ? error.message : "Gagal memuat data"
+        );
         return null;
       }
     },
@@ -204,14 +212,14 @@ const berita = proxy({
         toast.error(err);
         return false;
       }
-    
+
       try {
         berita.edit.loading = true;
-        
+
         const response = await fetch(`/api/desa/berita/${this.id}`, {
-          method: 'PUT',
+          method: "PUT",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({
             judul: this.form.judul,
@@ -221,14 +229,16 @@ const berita = proxy({
             imageId: this.form.imageId,
           }),
         });
-        
+
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
-          throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+          throw new Error(
+            errorData.message || `HTTP error! status: ${response.status}`
+          );
         }
-        
+
         const result = await response.json();
-    
+
         if (result.success) {
           toast.success("Berhasil update berita");
           await berita.findMany.load(); // refresh list
@@ -238,7 +248,11 @@ const berita = proxy({
         }
       } catch (error) {
         console.error("Error updating berita:", error);
-        toast.error(error instanceof Error ? error.message : "Terjadi kesalahan saat update berita");
+        toast.error(
+          error instanceof Error
+            ? error.message
+            : "Terjadi kesalahan saat update berita"
+        );
         return false;
       } finally {
         berita.edit.loading = false;
@@ -258,21 +272,22 @@ const berita = proxy({
       };
     }> | null,
     loading: false,
-    async load() {
+    // findFirst.load()
+    async load(kategori?: string) {
       this.loading = true;
       try {
-        const res = await ApiFetch.api.desa.berita["find-first"].get();
+        const res = await ApiFetch.api.desa.berita["find-first"].get({
+          query: kategori ? { kategori } : {},
+        });
+
         if (res.status === 200 && res.data?.success) {
-          // Add type assertion to ensure type safety
-          berita.findFirst.data = res.data.data as Prisma.BeritaGetPayload<{
-            include: {
-              image: true;
-              kategoriBerita: true;
-            };
-          }> | null;
+          this.data = res.data.data || null;
+        } else {
+          this.data = null;
         }
       } catch (err) {
         console.error("Gagal fetch berita terbaru:", err);
+        this.data = null;
       } finally {
         this.loading = false;
       }
@@ -286,7 +301,7 @@ const berita = proxy({
       };
     }>[],
     loading: false,
-  
+
     async load() {
       try {
         this.loading = true;
@@ -300,7 +315,7 @@ const berita = proxy({
         this.loading = false;
       }
     },
-  }
+  },
 });
 
 //=============== Kategori Berita ===============
@@ -328,10 +343,9 @@ const kategoriBerita = proxy({
 
       try {
         kategoriBerita.create.loading = true;
-        const res =
-          await ApiFetch.api.desa.kategoriberita[
-            "create"
-          ].post(kategoriBerita.create.form);
+        const res = await ApiFetch.api.desa.kategoriberita["create"].post(
+          kategoriBerita.create.form
+        );
         if (res.status === 200) {
           kategoriBerita.findMany.load();
           return toast.success("Data Kategori Berita Berhasil Dibuat");
@@ -354,10 +368,7 @@ const kategoriBerita = proxy({
     }>[],
     loading: false,
     async load() {
-      const res =
-        await ApiFetch.api.desa.kategoriberita[
-          "findMany"
-        ].get();
+      const res = await ApiFetch.api.desa.kategoriberita["findMany"].get();
       if (res.status === 200) {
         kategoriBerita.findMany.data = res.data?.data ?? [];
       }
@@ -372,9 +383,7 @@ const kategoriBerita = proxy({
     loading: false,
     async load(id: string) {
       try {
-        const res = await fetch(
-          `/api/desa/kategoriberita/${id}`
-        );
+        const res = await fetch(`/api/desa/kategoriberita/${id}`);
         if (res.ok) {
           const data = await res.json();
           kategoriBerita.findUnique.data = data.data ?? null;
@@ -396,15 +405,12 @@ const kategoriBerita = proxy({
       try {
         kategoriBerita.delete.loading = true;
 
-        const response = await fetch(
-          `/api/desa/kategoriberita/del/${id}`,
-          {
-            method: "DELETE",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        const response = await fetch(`/api/desa/kategoriberita/del/${id}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
 
         const result = await response.json();
 
@@ -414,7 +420,9 @@ const kategoriBerita = proxy({
           );
           await kategoriBerita.findMany.load(); // refresh list
         } else {
-          toast.error(result?.message || "Gagal menghapus Data Kategori Berita");
+          toast.error(
+            result?.message || "Gagal menghapus Data Kategori Berita"
+          );
         }
       } catch (error) {
         console.error("Gagal delete:", error);
@@ -435,15 +443,12 @@ const kategoriBerita = proxy({
       }
 
       try {
-        const response = await fetch(
-          `/api/desa/kategoriberita/${id}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        const response = await fetch(`/api/desa/kategoriberita/${id}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -481,18 +486,15 @@ const kategoriBerita = proxy({
       try {
         kategoriBerita.update.loading = true;
 
-        const response = await fetch(
-          `/api/desa/kategoriberita/${this.id}`,
-          {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              name: this.form.name,
-            }),
-          }
-        );
+        const response = await fetch(`/api/desa/kategoriberita/${this.id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: this.form.name,
+          }),
+        });
 
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
@@ -508,7 +510,9 @@ const kategoriBerita = proxy({
           await kategoriBerita.findMany.load(); // refresh list
           return true;
         } else {
-          throw new Error(result.message || "Gagal update data kategori berita");
+          throw new Error(
+            result.message || "Gagal update data kategori berita"
+          );
         }
       } catch (error) {
         console.error("Error updating data kategori berita:", error);
@@ -528,7 +532,6 @@ const kategoriBerita = proxy({
     },
   },
 });
-
 
 // 5. State global
 const stateDashboardBerita = proxy({

@@ -1,30 +1,41 @@
-import prisma from '@/lib/prisma';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+// find-first.ts
+import prisma from "@/lib/prisma";
+import { Context } from "elysia";
 
-export default async function beritaFindFirst() {
+async function beritaFindFirst(context: Context) {
+  const kategori = (context.query.kategori as string) || '';
+
+  const where: any = { isActive: true };
+
+  if (kategori) {
+    where.kategoriBerita = {
+      name: { equals: kategori, mode: 'insensitive' }
+    };
+  }
+
   try {
-    const result = await prisma.berita.findFirst({
-      where: {
-        isActive: true, // opsional kalau kamu punya field ini
-      },
-      orderBy: {
-        createdAt: 'desc', // ambil yang paling terbaru
-      },
+    const data = await prisma.berita.findFirst({
+      where,
       include: {
         image: true,
         kategoriBerita: true,
-      }
+      },
+      orderBy: { createdAt: 'desc' },
     });
 
     return {
       success: true,
-      message: 'Berhasil ambil berita terbaru',
-      data: result,
+      message: "Berhasil ambil berita terbaru",
+      data,
     };
-  } catch (error) {
-    console.error('[findFirstBerita] Error:', error);
+  } catch (e) {
+    console.error("Error di findFirst:", e);
     return {
       success: false,
-      message: 'Gagal ambil berita terbaru',
+      message: "Gagal ambil berita terbaru",
     };
   }
 }
+
+export default beritaFindFirst;

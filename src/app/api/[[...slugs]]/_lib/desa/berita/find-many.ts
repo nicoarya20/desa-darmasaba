@@ -1,42 +1,69 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // /api/berita/findManyPaginated.ts
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
 
 async function beritaFindMany(context: Context) {
+  // Ambil parameter dari query
   const page = Number(context.query.page) || 1;
   const limit = Number(context.query.limit) || 10;
+  const search = (context.query.search as string) || '';
+  const kategori = (context.query.kategori as string) || ''; // 🔥 Parameter kategori baru
   const skip = (page - 1) * limit;
 
+  // Buat where clause
+  const where: any = { isActive: true };
+
+  // Filter berdasarkan kategori (jika ada)
+  if (kategori) {
+    where.kategoriBerita = {
+      name: {
+        equals: kategori,
+        mode: 'insensitive' // Tidak case-sensitive
+      }
+    };
+  }
+
+  // Tambahkan pencarian (jika ada)
+  if (search) {
+    where.OR = [
+      { judul: { contains: search, mode: 'insensitive' } },
+      { deskripsi: { contains: search, mode: 'insensitive' } },
+      { content: { contains: search, mode: 'insensitive' } },
+      { kategoriBerita: { name: { contains: search, mode: 'insensitive' } } }
+    ];
+  }
+
   try {
+    // Ambil data dan total count secara paralel
     const [data, total] = await Promise.all([
       prisma.berita.findMany({
-        where: { isActive: true },
+        where,
         include: {
           image: true,
           kategoriBerita: true,
         },
         skip,
         take: limit,
-        orderBy: { createdAt: 'desc' }, // opsional, kalau mau urut berdasarkan waktu
+        orderBy: { createdAt: 'desc' },
       }),
-      prisma.berita.count({
-        where: { isActive: true }
-      })
+      prisma.berita.count({ where }),
     ]);
 
     return {
       success: true,
-      message: "Success fetch berita with pagination",
+      message: "Berhasil ambil berita dengan pagination",
       data,
       page,
-      totalPages: Math.ceil(total / limit),
+      limit,
       total,
+      totalPages: Math.ceil(total / limit),
     };
   } catch (e) {
-    console.error("Find many paginated error:", e);
+    console.error("Error di findMany paginated:", e);
     return {
       success: false,
-      message: "Failed fetch berita with pagination",
+      message: "Gagal mengambil data berita",
     };
   }
 }
