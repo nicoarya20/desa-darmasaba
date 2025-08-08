@@ -108,7 +108,7 @@ export const navBar = [
       {
         id: "Desa_4",
         name: "Pengumuman",
-        path: "/admin/desa/pengumuman"
+        path: "/admin/desa/pengumuman/list-pengumuman"
       },
       {
         id: "Desa_5",

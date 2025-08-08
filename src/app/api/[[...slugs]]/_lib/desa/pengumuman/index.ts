@@ -1,16 +1,13 @@
-import Elysia from "elysia";
+import Elysia, { t } from "elysia";
 import { pengumumanCreate } from "./create";
-import pengumumanFindMany from "./find-many";
-import { t } from "elysia";
-import pengumumanCategoryFindMany from "./category";
 import pengumumanDelete from "./del";
 import pengumumanFindById from "./find-by-id";
-import pengumumanUpdate from "./updt";
+import pengumumanFindMany from "./find-many";
 import pengumumanFindFirst from "./findFirst";
 import pengumumanFindRecent from "./findRecent";
+import pengumumanUpdate from "./updt";
 
 const Pengumuman = new Elysia({ prefix: "/pengumuman", tags: ["Desa/Pengumuman"] })
-  .get("/category/find-many", pengumumanCategoryFindMany)
   .get("/find-many", pengumumanFindMany)
   .get("/:id", pengumumanFindById)
   .delete("/delete/:id", pengumumanDelete)

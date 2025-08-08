@@ -1,4 +1,6 @@
 'use client'
+import CreateEditor from '@/app/admin/(dashboard)/_com/createEditor';
+import stateDesaPengumuman from '@/app/admin/(dashboard)/_state/desa/pengumuman';
 import colors from '@/con/colors';
 import { Box, Button, Group, Paper, Select, Stack, Text, TextInput, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
@@ -6,8 +8,7 @@ import { Prisma } from '@prisma/client';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
-import CreateEditor from '../../../_com/createEditor';
-import stateDesaPengumuman from '../../../_state/desa/pengumuman';
+
 
 function CreatePengumuman() {
   const pengumumanState = useProxy(stateDesaPengumuman)

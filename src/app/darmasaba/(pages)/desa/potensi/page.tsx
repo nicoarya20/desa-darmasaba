@@ -60,7 +60,7 @@ function Page() {
                     <Text ta={"center"} fz={"h2"} fw={"bold"} c={"white"}>
                       {data?.filter(item => item.kategori?.nama.toLowerCase() === 'wisata' ).length || 0}
                     </Text>
-                    <Text ta={"center"} fz={"sm"} c={"white"}>Destinasi Wisata</Text>
+                    <Text ta={"center"} fz={"sm"} c={"white"}>Wisata</Text>
                   </Box>
                 </Flex>
               </Paper>

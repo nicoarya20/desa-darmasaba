@@ -68,7 +68,7 @@ function Page() {
       <Box px={{ base: "md", md: 100 }}>
         <Text
           pb={20}
-          ta={"center"}
+          ta={"justify"}
           fw={"bold"}
           dangerouslySetInnerHTML={{ __html: state.findUnique.data?.deskripsi || '' }}
         />

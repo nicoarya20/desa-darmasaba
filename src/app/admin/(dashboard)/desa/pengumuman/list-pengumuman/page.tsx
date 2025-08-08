@@ -5,10 +5,10 @@ import { useShallowEffect } from '@mantine/hooks';
 import { IconCircleDashedPlus, IconDeviceImacCog, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
-import HeaderSearch from '../../_com/header';
-import stateDesaPengumuman from '../../_state/desa/pengumuman';
-import { ModalKonfirmasiHapus } from '../../_com/modalKonfirmasiHapus';
 import { useState } from 'react';
+import HeaderSearch from '../../../_com/header';
+import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
+import stateDesaPengumuman from '../../../_state/desa/pengumuman';
 
 
 function Pengumuman() {
@@ -16,7 +16,7 @@ function Pengumuman() {
   return (
     <Box>
       <HeaderSearch
-        title='Posisi Organisasi'
+        title='List Pengumuman'
         placeholder='pencarian'
         searchIcon={<IconSearch size={20} />}
         value={search}
@@ -113,7 +113,7 @@ function ListPengumuman({ search }: { search: string }) {
         opened={modalHapus}
         onClose={() => setModalHapus(false)}
         onConfirm={handleHapus}
-        text='Apakah anda yakin ingin menghapus berita ini?'
+        text='Apakah anda yakin ingin menghapus pengumuman ini?'
       />
     </Box>
   )
