@@ -74,9 +74,11 @@ const berita = proxy({
     totalPages: 1,
     loading: false,
     search: "",
-    async load(page = 1, limit = 10, search = "", kategori = "") {
-      this.loading = true;
-      this.page = page;
+   load: async (page = 1, limit = 10, search = "", kategori = "") => {
+      berita.findMany.loading = true; // ✅ Akses langsung via nama path
+      berita.findMany.page = page;
+      berita.findMany.search = search;
+  
       try {
         const query: any = { page, limit };
         if (search) query.search = search;
@@ -85,20 +87,20 @@ const berita = proxy({
         const res = await ApiFetch.api.desa.berita["find-many"].get({ query });
     
         if (res.status === 200 && res.data?.success) {
-          this.data = res.data.data ?? [];
-          this.totalPages = res.data.totalPages ?? 1;
+          berita.findMany.data = res.data.data ?? [];
+          berita.findMany.totalPages = res.data.totalPages ?? 1;
         } else {
-          this.data = [];
-          this.totalPages = 1;
+          berita.findMany.data = [];
+          berita.findMany.totalPages = 1;
         }
       } catch (err) {
         console.error("Gagal fetch berita paginated:", err);
-        this.data = [];
-        this.totalPages = 1;
+        berita.findMany.data = [];
+        berita.findMany.totalPages = 1;
       } finally {
-        this.loading = false;
+        berita.findMany.loading = false;
       }
-    }
+    },
   },
 
   findUnique: {

@@ -89,7 +89,7 @@ function DetailBerita() {
                   <Button
                     onClick={() => {
                       if (beritaState.berita.findUnique.data) {
-                        router.push(`/admin/desa/berita/${beritaState.berita.findUnique.data.id}/edit`);
+                        router.push(`/admin/desa/berita/list-berita/${beritaState.berita.findUnique.data.id}/edit`);
                       }
                     }}
                     disabled={!beritaState.berita.findUnique.data}

@@ -54,7 +54,7 @@ export default function Content({ kategori }: { kategori: string }) {
           <Center><Skeleton h={400} /></Center>
         ) : featured ? (
           <Box mb={50}>
-            <Text fz="h2" fw={700} mb="md">Berita Utama: {kategori}</Text>
+            <Text fz="h2" fw={700} mb="md">Berita Utama</Text>
             <Paper shadow="md" radius="md" withBorder>
               <Grid gutter={0}>
                 <GridCol span={{ base: 12, md: 6 }}>
@@ -90,7 +90,7 @@ export default function Content({ kategori }: { kategori: string }) {
                       <Button
                         variant="light"
                         rightSection={<IconArrowRight size={16} />}
-                        onClick={() => router.push(`/desa/berita/${featured.id}`)}
+                        onClick={() => router.push(`/darmasaba/desa/berita/${kategori}/${featured.id}`)}
                       >
                         Baca Selengkapnya
                       </Button>
@@ -104,7 +104,7 @@ export default function Content({ kategori }: { kategori: string }) {
 
         {/* === Daftar Berita === */}
         <Box mt={50}>
-          <Title order={2} mb="md">Berita {kategori}</Title>
+          <Title order={2} mb="md">Daftar Berita</Title>
           <Divider mb="xl" />
 
           {state.findMany.loading ? (
