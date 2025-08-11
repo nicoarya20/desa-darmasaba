@@ -1,13 +1,12 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Grid, GridCol, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
+import { Box, Button, Center, Grid, GridCol, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconCircleDashedPlus, IconDeviceImacCog, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import { useProxy } from 'valtio/utils';
 import { useState } from 'react';
+import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../../_com/header';
-import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
 import stateDesaPengumuman from '../../../_state/desa/pengumuman';
 
 
@@ -30,31 +29,21 @@ function Pengumuman() {
 function ListPengumuman({ search }: { search: string }) {
   const pengumumanState = useProxy(stateDesaPengumuman)
   const router = useRouter()
-  const [modalHapus, setModalHapus] = useState(false)
-  const [selectedId, setSelectedId] = useState<string | null>(null)
+  const {
+    data,
+    page,
+    totalPages,
+    loading,
+    load,
+  } = pengumumanState.pengumuman.findMany;
 
   useShallowEffect(() => {
-    pengumumanState.pengumuman.findMany.load()
-  }, [])
+    load(page, 10, search)
+  }, [page, search])
 
+  const filteredData = (data || [])
 
-  const handleHapus = () => {
-    if (selectedId) {
-      pengumumanState.pengumuman.delete.byId(selectedId)
-      setModalHapus(false)
-      setSelectedId(null)
-    }
-  }
-
-  const filteredData = (pengumumanState.pengumuman.findMany.data || []).filter(item => {
-    const keyword = search.toLowerCase();
-    return (
-      item.judul.toLowerCase().includes(keyword) ||
-      item.CategoryPengumuman?.name.toLowerCase().includes(keyword)
-    );
-  });
-
-  if (!pengumumanState.pengumuman.findMany.data) {
+  if (loading || !data) {
     return (
       <Stack py={10}>
         <Skeleton h={500} />
@@ -71,7 +60,7 @@ function ListPengumuman({ search }: { search: string }) {
               <Text fz={"xl"} fw={"bold"}>List Pengumuman</Text>
             </GridCol>
             <GridCol span={{ base: 12, md: 1 }}>
-              <Button onClick={() => router.push("/admin/desa/pengumuman/create")} bg={colors['blue-button']}>
+              <Button onClick={() => router.push("/admin/desa/pengumuman/list-pengumuman/create")} bg={colors['blue-button']}>
                 <IconCircleDashedPlus size={25} />
               </Button>
             </GridCol>
@@ -96,7 +85,7 @@ function ListPengumuman({ search }: { search: string }) {
                   </TableTd>
                   <TableTd >{item.CategoryPengumuman?.name}</TableTd>
                   <TableTd>
-                    <Button bg={"green"} onClick={() => router.push(`/admin/desa/pengumuman/detail`)}>
+                    <Button bg={"green"} onClick={() => router.push(`/admin/desa/pengumuman/list-pengumuman/${item.id}`)}>
                       <IconDeviceImacCog size={25} />
                     </Button>
                   </TableTd>
@@ -107,14 +96,15 @@ function ListPengumuman({ search }: { search: string }) {
           </Box>
         </Stack>
       </Paper>
-
-      {/* Modal Konfirmasi Hapus */}
-      <ModalKonfirmasiHapus
-        opened={modalHapus}
-        onClose={() => setModalHapus(false)}
-        onConfirm={handleHapus}
-        text='Apakah anda yakin ingin menghapus pengumuman ini?'
-      />
+      <Center>
+        <Pagination
+          value={page}
+          onChange={(newPage) => load(newPage)}
+          total={totalPages}
+          mt="md"
+          mb="md"
+        />
+      </Center>
     </Box>
   )
 }

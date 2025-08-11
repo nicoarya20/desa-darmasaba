@@ -10,7 +10,7 @@ import pengumumanUpdate from "./updt";
 const Pengumuman = new Elysia({ prefix: "/pengumuman", tags: ["Desa/Pengumuman"] })
   .get("/find-many", pengumumanFindMany)
   .get("/:id", pengumumanFindById)
-  .delete("/delete/:id", pengumumanDelete)
+  .delete("/del/:id", pengumumanDelete)
   .post("/create", pengumumanCreate, {
     body: t.Object({
       judul: t.String(),
@@ -23,7 +23,6 @@ const Pengumuman = new Elysia({ prefix: "/pengumuman", tags: ["Desa/Pengumuman"]
   .get("/find-recent", pengumumanFindRecent)
   .put("/:id", pengumumanUpdate, {
     body: t.Object({
-      id: t.String(),
       judul: t.String(),
       deskripsi: t.String(),
       content: t.String(),

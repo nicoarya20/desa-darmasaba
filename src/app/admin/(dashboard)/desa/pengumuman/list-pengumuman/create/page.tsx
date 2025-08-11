@@ -4,7 +4,6 @@ import stateDesaPengumuman from '@/app/admin/(dashboard)/_state/desa/pengumuman'
 import colors from '@/con/colors';
 import { Box, Button, Group, Paper, Select, Stack, Text, TextInput, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { Prisma } from '@prisma/client';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
@@ -14,10 +13,14 @@ function CreatePengumuman() {
   const pengumumanState = useProxy(stateDesaPengumuman)
   const router = useRouter();
 
+  useShallowEffect(() => {
+    pengumumanState.category.findMany.load()
+  }, [])
+
   const handleSubmit = async () => {
     await pengumumanState.pengumuman.create.create()
     resetForm()
-    router.push("/admin/desa/pengumuman")
+    router.push("/admin/desa/pengumuman/list-pengumuman")
   }
 
   const resetForm = () => {
@@ -46,10 +49,21 @@ function CreatePengumuman() {
               pengumumanState.pengumuman.create.form.judul = val.target.value
             }}
           />
-          <SelectCategory
+          <Select
+            label={<Text fw={"bold"} fz={"sm"}>Kategori</Text>}
+            placeholder='Pilih kategori'
+            data={pengumumanState.category.findMany.data?.map((item) => ({
+              label: item.name,
+              value: item.id,
+            }))}
             onChange={(val) => {
-              pengumumanState.pengumuman.create.form.categoryPengumumanId = val.id;
+              const selected = pengumumanState.category.findMany.data?.find((item) => item.id === val);
+              if (selected) {
+                pengumumanState.pengumuman.create.form.categoryPengumumanId = selected.id;
+              }
             }}
+            searchable
+            nothingFoundMessage="Tidak ditemukan"
           />
           <TextInput
             label={<Text fw={"bold"} fz={"sm"}>Deskripsi Singkat</Text>}
@@ -74,37 +88,6 @@ function CreatePengumuman() {
         </Stack>
       </Paper>
     </Box>
-  );
-}
-
-function SelectCategory({
-  onChange,
-}: {
-  onChange: (value: Prisma.CategoryPengumumanGetPayload<{ select: { name: true; id: true; } }>) => void;
-}) {
-  const categoryState = useProxy(stateDesaPengumuman.category);
-
-  useShallowEffect(() => {
-    categoryState.findMany.load();
-  }, []);
-
-  return (
-    <Select
-      label={<Text fw={"bold"} fz={"sm"}>Kategori</Text>}
-      placeholder='Pilih kategori'
-      data={categoryState.findMany.data?.map((item) => ({
-        label: item.name,
-        value: item.id,
-      }))}
-      onChange={(val) => {
-        const selected = categoryState.findMany.data?.find((item) => item.id === val);
-        if (selected) {
-          onChange(selected);
-        }
-      }}
-      searchable
-      nothingFoundMessage="Tidak ditemukan"
-    />
   );
 }
 

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiFetch from "@/lib/api-fetch";
 import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
@@ -110,7 +111,9 @@ const category = proxy({
         }
       } catch (error) {
         console.error("Gagal delete:", error);
-        toast.error("Terjadi kesalahan saat menghapus Data Kategori Pengumuman");
+        toast.error(
+          "Terjadi kesalahan saat menghapus Data Kategori Pengumuman"
+        );
       } finally {
         category.delete.loading = false;
       }
@@ -150,7 +153,7 @@ const category = proxy({
           throw new Error(result?.message || "Gagal memuat data");
         }
       } catch (error) {
-        console.error("Error loading kategori berita:", error);
+        console.error("Error loading kategori pengumuman:", error);
         toast.error(
           error instanceof Error ? error.message : "Gagal memuat data"
         );
@@ -170,15 +173,18 @@ const category = proxy({
       try {
         category.update.loading = true;
 
-        const response = await fetch(`/api/desa/kategoripengumuman/${this.id}`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            name: this.form.name,
-          }),
-        });
+        const response = await fetch(
+          `/api/desa/kategoripengumuman/${this.id}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              name: this.form.name,
+            }),
+          }
+        );
 
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
@@ -224,17 +230,15 @@ const templateFormPengumuman = z.object({
   categoryPengumumanId: z.string().nonempty(),
 });
 
-type PengumumanForm = Prisma.PengumumanGetPayload<{
-  select: {
-    judul: true;
-    deskripsi: true;
-    content: true;
-    categoryPengumumanId: true;
-  };
-}>;
+const defaultForm = {
+  judul: "",
+  deskripsi: "",
+  content: "",
+  categoryPengumumanId: "",
+};
 const pengumuman = proxy({
   create: {
-    form: {} as PengumumanForm,
+    form: { ...defaultForm },
     loading: false,
     async create() {
       const cek = templateFormPengumuman.safeParse(pengumuman.create.form);
@@ -270,11 +274,35 @@ const pengumuman = proxy({
           };
         }>[]
       | null,
-    async load() {
-      const res = await ApiFetch.api.desa.pengumuman["find-many"].get();
-      console.log(res);
-      if (res.status === 200) {
-        pengumuman.findMany.data = res.data?.data ?? [];
+    page: 1,
+    totalPages: 1,
+    loading: false,
+    search: "",
+   load: async (page = 1, limit = 10, search = "", kategori = "") => {
+      pengumuman.findMany.loading = true; // ✅ Akses langsung via nama path
+      pengumuman.findMany.page = page;
+      pengumuman.findMany.search = search;
+  
+      try {
+        const query: any = { page, limit };
+        if (search) query.search = search;
+        if (kategori) query.kategori = kategori;
+    
+        const res = await ApiFetch.api.desa.pengumuman["find-many"].get({ query });
+    
+        if (res.status === 200 && res.data?.success) {
+          pengumuman.findMany.data = res.data.data ?? [];
+          pengumuman.findMany.totalPages = res.data.totalPages ?? 1;
+        } else {
+          pengumuman.findMany.data = [];
+          pengumuman.findMany.totalPages = 1;
+        }
+      } catch (err) {
+        console.error("Gagal fetch pengumuman paginated:", err);
+        pengumuman.findMany.data = [];
+        pengumuman.findMany.totalPages = 1;
+      } finally {
+        pengumuman.findMany.loading = false;
       }
     },
   },
@@ -308,7 +336,7 @@ const pengumuman = proxy({
       try {
         pengumuman.delete.loading = true;
 
-        const response = await fetch(`/api/desa/pengumuman/delete/${id}`, {
+        const response = await fetch(`/api/desa/pengumuman/del/${id}`, {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
@@ -331,9 +359,9 @@ const pengumuman = proxy({
       }
     },
   },
-  update: {
+  edit: {
     id: "",
-    form: {} as PengumumanForm,
+    form: { ...defaultForm },
     loading: false,
 
     async load(id: string) {
@@ -349,6 +377,7 @@ const pengumuman = proxy({
             "Content-Type": "application/json",
           },
         });
+
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -364,20 +393,21 @@ const pengumuman = proxy({
             content: data.content,
             categoryPengumumanId: data.categoryPengumumanId || "",
           };
-          return data;
+          return data; // Return the loaded data
         } else {
-          throw new Error(result?.message || "Gagal mengambil data pengumuman");
+          throw new Error(result?.message || "Gagal memuat data");
         }
       } catch (error) {
-        console.error((error as Error).message);
-        toast.error("Terjadi kesalahan saat mengambil data pengumuman");
-      } finally {
-        pengumuman.update.loading = false;
+        console.error("Error loading pengumuman:", error);
+        toast.error(
+          error instanceof Error ? error.message : "Gagal memuat data"
+        );
+        return null;
       }
     },
 
     async update() {
-      const cek = templateFormPengumuman.safeParse(pengumuman.update.form);
+      const cek = templateFormPengumuman.safeParse(pengumuman.edit.form);
       if (!cek.success) {
         const err = `[${cek.error.issues
           .map((v) => `${v.path.join(".")}`)
@@ -387,7 +417,7 @@ const pengumuman = proxy({
       }
 
       try {
-        pengumuman.update.loading = true;
+        pengumuman.edit.loading = true;
 
         const response = await fetch(`/api/desa/pengumuman/${this.id}`, {
           method: "PUT",
@@ -398,7 +428,7 @@ const pengumuman = proxy({
             judul: this.form.judul,
             deskripsi: this.form.deskripsi,
             content: this.form.content,
-            categoryPengumumanId: this.form.categoryPengumumanId,
+            categoryPengumumanId: this.form.categoryPengumumanId || null,
           }),
         });
 
@@ -427,8 +457,13 @@ const pengumuman = proxy({
         );
         return false;
       } finally {
-        pengumuman.update.loading = false;
+        pengumuman.edit.loading = false;
       }
+    },
+
+    reset() {
+      pengumuman.edit.id = "";
+      pengumuman.edit.form = { ...defaultForm };
     },
   },
   findFirst: {
