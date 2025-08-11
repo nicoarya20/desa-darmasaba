@@ -46,11 +46,15 @@ const category = proxy({
     },
   },
   findMany: {
-    data: [] as Prisma.CategoryPengumumanGetPayload<{
+    data: [] as (Prisma.CategoryPengumumanGetPayload<{
       omit: {
         isActive: true;
       };
-    }>[],
+    }> & {
+      _count: {
+        pengumumans: number;
+      };
+    })[],
     loading: false,
     async load() {
       const res = await ApiFetch.api.desa.kategoripengumuman["findMany"].get();
