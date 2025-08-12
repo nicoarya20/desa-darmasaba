@@ -4,6 +4,7 @@ import galleryFotoDelete from "./del";
 import galleryFotoFindMany from "./find-many";
 import galleryFotoUpdate from "./updt";
 import galleryFotoFindUnique from "./findUnique";
+import galleryFotoFindRecent from "./findRecent";
 
 const GalleryFoto = new Elysia({ prefix: "/gallery/foto", tags: ["Desa/Gallery/Foto"] })
     .get("/find-many", galleryFotoFindMany)
@@ -18,6 +19,7 @@ const GalleryFoto = new Elysia({ prefix: "/gallery/foto", tags: ["Desa/Gallery/F
             imagesId: t.String(),
         }),
     })
+    .get("/find-recent", galleryFotoFindRecent)
     .delete("/del/:id", galleryFotoDelete)
     .put("/:id", async (context) => {
         const response = await galleryFotoUpdate(context);

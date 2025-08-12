@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiFetch from "@/lib/api-fetch";
 import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
@@ -68,10 +69,34 @@ const foto = proxy({
           };
         }>[]
       | null,
-    async load() {
-      const res = await ApiFetch.api.desa.gallery.foto["find-many"].get();
-      if (res.status === 200) {
-        foto.findMany.data = res.data?.data ?? [];
+    page: 1,
+    totalPages: 1,
+    loading: false,
+    search: "",
+   load: async (page = 1, limit = 10, search = "") => {
+      foto.findMany.loading = true; // ✅ Akses langsung via nama path
+      foto.findMany.page = page;
+      foto.findMany.search = search;
+  
+      try {
+        const query: any = { page, limit };
+        if (search) query.search = search;
+    
+        const res = await ApiFetch.api.desa.gallery.foto["find-many"].get({ query });
+    
+        if (res.status === 200 && res.data?.success) {
+          foto.findMany.data = res.data.data ?? [];
+          foto.findMany.totalPages = res.data.totalPages ?? 1;
+        } else {
+          foto.findMany.data = [];
+          foto.findMany.totalPages = 1;
+        }
+      } catch (err) {
+        console.error("Gagal fetch foto paginated:", err);
+        foto.findMany.data = [];
+        foto.findMany.totalPages = 1;
+      } finally {
+        foto.findMany.loading = false;
       }
     },
   },
@@ -215,6 +240,28 @@ const foto = proxy({
       foto.update.form = { ...defaultFormFoto };
     },
   },
+  findRecent: {
+      data: [] as Prisma.GalleryFotoGetPayload<{
+        include: {
+          imageGalleryFoto: true;
+        };
+      }>[],
+      loading: false,
+  
+      async load() {
+        try {
+          this.loading = true;
+          const res = await ApiFetch.api.desa.gallery.foto["find-recent"].get();
+          if (res.status === 200 && res.data?.success) {
+            this.data = res.data.data ?? [];
+          }
+        } catch (error) {
+          console.error("Gagal fetch foto recent:", error);
+        } finally {
+          this.loading = false;
+        }
+      },
+    },
 });
 
 const video = proxy({
@@ -257,10 +304,34 @@ const video = proxy({
           };
         }>[]
       | null,
-    async load() {
-      const res = await ApiFetch.api.desa.gallery.video["find-many"].get();
-      if (res.status === 200) {
-        video.findMany.data = res.data?.data ?? [];
+    page: 1,
+    totalPages: 1,
+    loading: false,
+    search: "",
+   load: async (page = 1, limit = 10, search = "") => {
+      video.findMany.loading = true; // ✅ Akses langsung via nama path
+      video.findMany.page = page;
+      video.findMany.search = search;
+  
+      try {
+        const query: any = { page, limit };
+        if (search) query.search = search;
+    
+        const res = await ApiFetch.api.desa.gallery.video["find-many"].get({ query });
+    
+        if (res.status === 200 && res.data?.success) {
+          video.findMany.data = res.data.data ?? [];
+          video.findMany.totalPages = res.data.totalPages ?? 1;
+        } else {
+          video.findMany.data = [];
+          video.findMany.totalPages = 1;
+        }
+      } catch (err) {
+        console.error("Gagal fetch video paginated:", err);
+        video.findMany.data = [];
+        video.findMany.totalPages = 1;
+      } finally {
+        video.findMany.loading = false;
       }
     },
   },

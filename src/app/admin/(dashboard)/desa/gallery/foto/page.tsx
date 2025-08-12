@@ -1,93 +1,124 @@
-'use client'
-import colors from '@/con/colors';
-import { Box, Button, Paper, Skeleton, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
-import { IconDeviceImac, IconSearch } from '@tabler/icons-react';
-import { useRouter } from 'next/navigation';
-import JudulListTab from '../../../_com/judulListTab';
-import { useProxy } from 'valtio/utils';
-import stateGallery from '../../../_state/desa/gallery';
-import { useShallowEffect } from '@mantine/hooks';
-import HeaderSearch from '../../../_com/header';
-import { useState } from 'react';
+"use client";
+import colors from "@/con/colors";
+import stateFileStorage from "@/state/state-list-image";
+import {
+  ActionIcon,
+  Box,
+  Flex,
+  Group,
+  Image,
+  Pagination,
+  Paper,
+  SimpleGrid,
+  Stack,
+  Text,
+  TextInput,
+  Title
+} from "@mantine/core";
+import { useShallowEffect } from "@mantine/hooks";
+import { IconSearch, IconTrash, IconX } from "@tabler/icons-react";
+import { motion } from "framer-motion";
+import toast from "react-simple-toasts";
+import { useSnapshot } from "valtio";
 
-function Foto() {
-  const [search, setSearch] = useState("");
-  return (
-    <Box>
-      <HeaderSearch
-        title='Posisi Organisasi'
-        placeholder='pencarian'
-        searchIcon={<IconSearch size={20} />}
-        value={search}
-        onChange={(e) => setSearch(e.currentTarget.value)}
-      />
-      <ListFoto search={search} />
-    </Box>
-  );
-}
-
-function ListFoto({ search }: { search: string }) {
-  const fotoState = useProxy(stateGallery.foto)
-  const router = useRouter();
+export default function ListImage() {
+  const { list, total } = useSnapshot(stateFileStorage);
 
   useShallowEffect(() => {
-    fotoState.findMany.load()
-  }, [])
+    stateFileStorage.load();
+  }, []);
 
-  const filteredData = (fotoState.findMany.data || []).filter(item => {
-    const keyword = search.toLowerCase();
-    return (
-      item.name.toLowerCase().includes(keyword) ||
-      item.deskripsi.toLowerCase().includes(keyword)
-    );
-  });
-
-  if (!fotoState.findMany.data) {
-    return (
-      <Box py={10}>
-        <Skeleton h={500} />
-      </Box>
-    )
-  }
-  
+  let timeOut: NodeJS.Timer;
   return (
-    <Box py={10}>
-      <Paper bg={colors['white-1']} p={'md'}>
-        <JudulListTab
-          title='List Foto'
-          href='/admin/desa/gallery/foto/create'
-          placeholder='pencarian'
-          searchIcon={<IconSearch size={16} />}
+    <Stack p={"lg"}>
+      <Flex justify="space-between">
+        <Title order={3}>List Foto</Title>
+        <TextInput
+          radius={"lg"}
+          leftSection={<IconSearch />}
+          rightSection={
+            <ActionIcon
+              variant="transparent"
+              onClick={() => {
+                stateFileStorage.load();
+              }}
+            >
+              <IconX />
+            </ActionIcon>
+          }
+          placeholder="Pencarian"
+          onChange={(e) => {
+            if (timeOut) clearTimeout(timeOut);
+            timeOut = setTimeout(() => {
+              stateFileStorage.load({ search: e.target.value });
+            }, 200);
+          }}
         />
-        <Table striped withTableBorder withRowBorders>
-          <TableThead>
-            <TableTr>
-              <TableTh>Judul Foto</TableTh>
-              <TableTh>Tanggal Foto</TableTh>
-              <TableTh>Deskripsi Foto</TableTh>
-              <TableTh>Detail</TableTh>
-            </TableTr>
-          </TableThead>
-          <TableTbody>
-            {filteredData.map((item) => (
-              <TableTr key={item.id}>
-                <TableTd>{item.name}</TableTd>
-                <TableTd>{new Date(item.createdAt).toDateString()}</TableTd>
-                <TableTd>
-                  <Text dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
-                </TableTd>
-                <TableTd>
-                  <Button onClick={() => router.push(`/admin/desa/gallery/foto/${item.id}`)}>
-                    <IconDeviceImac size={20} />
-                  </Button>
-                </TableTd>
-              </TableTr>
-            ))}
-          </TableTbody>
-        </Table>
+      </Flex>
+      <Paper bg={colors['white-1']} p={'md'}>
+        <SimpleGrid
+          cols={{
+            base: 3,
+            md: 5,
+            lg: 10,
+          }}
+        >
+          {list &&
+            list.map((v, k) => {
+              return (
+                <Paper key={k} shadow="sm">
+                  <Stack pos={"relative"} gap={0} justify="space-between">
+                    <motion.div
+                      onClick={() => {
+                        // copy to clipboard
+                        navigator.clipboard.writeText(v.url);
+                        toast("Berhasil disalin");
+                      }}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.8 }}
+                    >
+                      <Image
+                        h={100}
+                        src={v.url + "?size=100"}
+                        alt={v.name}
+                        fit="cover"
+                        loading="lazy"
+                        style={{
+                          objectFit: "cover",
+                          objectPosition: "center",
+                        }}
+                      />
+                    </motion.div>
+                    <Box p={"md"} h={54}>
+                      <Text lineClamp={2} fz={"xs"}>
+                        {v.name}
+                      </Text>
+                    </Box>
+                    <Group justify="end">
+                        <IconTrash
+                        color="red"
+                          onClick={() => {
+                            stateFileStorage.del({ name: v.name }).finally(() => {
+                              toast("Berhasil dihapus");
+                            });
+                          }}
+                        />
+                    </Group>
+                  </Stack>
+                </Paper>
+              );
+            })}
+        </SimpleGrid>
       </Paper>
-    </Box>
+      {total && (
+        <Pagination
+          total={total}
+          onChange={(e) => {
+            stateFileStorage.page = e;
+            stateFileStorage.load();
+          }}
+        />
+      )}
+    </Stack>
   );
 }
-
-export default Foto;

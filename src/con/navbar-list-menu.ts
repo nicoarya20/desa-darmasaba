@@ -76,7 +76,7 @@ const navbarListMenu = [
             {
                 id: "2.5",
                 name: "Gallery",
-                href: "/darmasaba/desa/galery"
+                href: "/darmasaba/desa/galery/foto"
             },
             {
                 id: "2.6",

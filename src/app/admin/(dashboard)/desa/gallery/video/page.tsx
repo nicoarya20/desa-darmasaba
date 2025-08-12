@@ -1,14 +1,14 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Paper, Skeleton, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
+import { Box, Button, Center, Pagination, Paper, Skeleton, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
+import { useShallowEffect } from '@mantine/hooks';
 import { IconDeviceImac, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import JudulListTab from '../../../_com/judulListTab';
-import { useProxy } from 'valtio/utils';
-import stateGallery from '../../../_state/desa/gallery';
-import { useShallowEffect } from '@mantine/hooks';
-import HeaderSearch from '../../../_com/header';
 import { useState } from 'react';
+import { useProxy } from 'valtio/utils';
+import HeaderSearch from '../../../_com/header';
+import JudulList from '../../../_com/judulList';
+import stateGallery from '../../../_state/desa/gallery';
 
 function Video() {
   const [search, setSearch] = useState("");
@@ -29,35 +29,34 @@ function Video() {
 function ListVideo({ search }: { search: string }) {
   const videoState = useProxy(stateGallery.video)
   const router = useRouter();
+  const {
+    data,
+    page,
+    totalPages,
+    loading,
+    load,
+  } = videoState.findMany;
 
   useShallowEffect(() => {
-    videoState.findMany.load()
-  }, [])
+    load(page, 10, search)
+  }, [page, search])
 
-  const filteredData = (videoState.findMany.data || []).filter(item => {
-    const keyword = search.toLowerCase();
-    return (
-      item.name.toLowerCase().includes(keyword) ||
-      item.deskripsi.toLowerCase().includes(keyword)
-    );
-  });
+  const filteredData = (data || [])
 
-  if (!videoState.findMany.data) {
+  if (loading || !data) {
     return (
       <Box py={10}>
         <Skeleton h={500} />
       </Box>
     )
   }
-  
+
   return (
     <Box py={10}>
       <Paper bg={colors['white-1']} p={'md'}>
-        <JudulListTab
+        <JudulList
           title='List Video'
           href='/admin/desa/gallery/video/create'
-          placeholder='pencarian'
-          searchIcon={<IconSearch size={16} />}
         />
         <Table striped withTableBorder withRowBorders>
           <TableThead>
@@ -71,10 +70,25 @@ function ListVideo({ search }: { search: string }) {
           <TableTbody>
             {filteredData.map((item) => (
               <TableTr key={item.id}>
-                <TableTd>{item.name}</TableTd>
-                <TableTd>{new Date(item.createdAt).toDateString()}</TableTd>
                 <TableTd>
-                  <Text dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
+                  <Box w={200}>
+                    <Text lineClamp={1}>{item.name}</Text>
+                  </Box>
+                </TableTd>
+                
+                <TableTd>
+                  <Box w={200}>
+                  {new Date(item.createdAt).toLocaleDateString('id-ID', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric',
+                  })}
+                  </Box>
+                </TableTd>
+                <TableTd>
+                  <Box w={200}>
+                    <Text lineClamp={1} dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
+                  </Box>
                 </TableTd>
                 <TableTd>
                   <Button onClick={() => router.push(`/admin/desa/gallery/video/${item.id}`)}>
@@ -86,6 +100,15 @@ function ListVideo({ search }: { search: string }) {
           </TableTbody>
         </Table>
       </Paper>
+      <Center>
+        <Pagination
+          value={page}
+          onChange={(newPage) => load(newPage)} // ini penting!
+          total={totalPages}
+          mt="md"
+          mb="md"
+        />
+      </Center>
     </Box>
   );
 }
