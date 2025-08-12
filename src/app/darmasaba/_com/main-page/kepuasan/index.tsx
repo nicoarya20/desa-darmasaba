@@ -87,9 +87,8 @@ function Kepuasan() {
             <Flex justify={"space-between"} align={"center"}>
               <Text fw={"bold"}>Pelayanan Terhadap Publik Desa Darmasaba</Text>
               <Box>
-                <Text fz={"h1"} fw={"bold"} c={colors["blue-button"]}>95.00</Text>
-                <Text >Sangat Baik</Text>
-                <Text fz={"sm"} fw={"bold"} c={colors["blue-button"]}>Total 2500 responden</Text>
+                <Text fz={"sm"} fw={"bold"} c={colors["blue-button"]}>Total Responden</Text>
+                <Text fz={"h1"} fw={"bold"} c={colors["blue-button"]}>2500</Text>
               </Box>
             </Flex>
             <BarChart

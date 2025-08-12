@@ -97,7 +97,7 @@ function PengaduanMasyarakat() {
       >
         <Paper p="md" withBorder>
           <Stack gap="xs">
-            <Title order={3}>Ajukan Administrasi Online</Title>
+            <Title order={3}>Ajukan Pengaduan Masyarakat</Title>
             <TextInput
               label={<Text fz="sm" fw="bold">Nama</Text>}
               placeholder="masukkan nama"

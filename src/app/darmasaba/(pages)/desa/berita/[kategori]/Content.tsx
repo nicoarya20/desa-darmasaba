@@ -124,7 +124,7 @@ export default function Content({ kategori }: { kategori: string }) {
                   p="lg"
                   radius="md"
                   withBorder
-                  onClick={() => router.push(`/desa/berita/${item.id}`)}
+                  onClick={() => router.push(`/darmasaba/desa/berita/${item.id}`)}
                   style={{ cursor: 'pointer' }}
                 >
                   <Card.Section>

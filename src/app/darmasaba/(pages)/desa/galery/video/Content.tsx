@@ -1,34 +1,60 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
 import stateGallery from '@/app/admin/(dashboard)/_state/desa/gallery';
 import colors from '@/con/colors';
 import { Box, Center, Pagination, Paper, SimpleGrid, Spoiler, Stack, Text } from '@mantine/core';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useSnapshot } from 'valtio';
 
 export default function VideoContent() {
   const [expanded, setExpanded] = useState(false);
-  const [currentSearch, setCurrentSearch] = useState('');
   const videoState = useSnapshot(stateGallery.video);
   const {
     data,
     page,
     totalPages,
     loading,
-    load,
   } = videoState.findMany;
 
-  // ✅ Baca dari URL hanya di client
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const urlSearch = urlParams.get('search') || '';
-    setCurrentSearch(urlSearch);
-    load(1, 10, urlSearch.trim());
+  // Handle search and pagination changes
+  const loadData = useCallback((pageNum: number, searchTerm: string) => {
+    stateGallery.video.findMany.load(pageNum, 10, searchTerm.trim());
   }, []);
 
+  // Initial load and URL change handler
+  useEffect(() => {
+    const handleRouteChange = () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const urlSearch = urlParams.get('search') || '';
+      const urlPage = parseInt(urlParams.get('page') || '1');
+      
+      loadData(urlPage, urlSearch);
+    };
+
+    // Handle search updates from the search bar
+    const handleSearchUpdate = (e: Event) => {
+      const { search } = (e as CustomEvent).detail;
+      loadData(1, search);
+    };
+
+    // Initial load
+    handleRouteChange();
+
+    // Set up event listeners
+    window.addEventListener('popstate', handleRouteChange);
+    window.addEventListener('searchUpdate', handleSearchUpdate as EventListener);
+    
+    // Cleanup
+    return () => {
+      window.removeEventListener('popstate', handleRouteChange);
+      window.removeEventListener('searchUpdate', handleSearchUpdate as EventListener);
+    };
+  }, [loadData]);
+
   const handlePageChange = (newPage: number) => {
-    load(newPage, 10, currentSearch.trim());
+    const params = new URLSearchParams(window.location.search);
+    const search = params.get('search') || '';
+    loadData(newPage, search);
   };
 
   const dataVideo = data || [];

@@ -79,7 +79,7 @@ export const navBar = [
       {
         id: "PPID_8",
         name: "IKM Desa Darmasaba",
-        path: "/admin/ppid/ikm-desa-darmasaba/grafik_hasil_kepuasan_masyarakat"
+        path: "/admin/ppid/ikm-desa-darmasaba/indeks-kepuasan-masyarakat"
       },
 
     ]

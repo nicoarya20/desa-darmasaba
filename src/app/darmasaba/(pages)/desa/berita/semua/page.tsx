@@ -94,7 +94,7 @@ function Semua() {
                       <Button
                         variant="light"
                         rightSection={<IconArrowRight size={16} />}
-                        onClick={() => router.push(`/desa/berita/${featuredData.id}`)}
+                        onClick={() => router.push(`/darmasaba/desa/berita/${featuredData.kategoriBerita?.name}/${featuredData.id}`)}
                       >
                         Baca Selengkapnya
                       </Button>
@@ -155,7 +155,7 @@ function Semua() {
                       })}
                     </Text>
                     
-                    <Button p="xs" variant="light" rightSection={<IconArrowRight size={16} />} onClick={() => router.push(`/desa/berita/${item.id}`)}>Baca Selengkapnya</Button>
+                    <Button p="xs" variant="light" rightSection={<IconArrowRight size={16} />} onClick={() => router.push(`/darmasaba/desa/berita/${item.kategoriBerita?.name}/${item.id}`)}>Baca Selengkapnya</Button>
                   </Flex>
                 </Card>
               ))}

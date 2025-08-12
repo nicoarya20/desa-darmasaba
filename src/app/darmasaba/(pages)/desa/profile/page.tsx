@@ -7,7 +7,7 @@ import VisimisiDesa from './ui/visimisiDesa';
 import LambangDesa from './ui/lambangDesa';
 import MaskotDesa from './ui/maskotDesa';
 import ProfilPerbekel from './ui/profilPerbekel';
-import LembagaDesa from './ui/lembagaDesa';
+// import LembagaDesa from './ui/lembagaDesa';
 import MotoDesa from './ui/motoDesa';
 import SemuaPerbekel from './ui/semuaPerbekel';
 
@@ -31,7 +31,7 @@ function Page() {
         <LambangDesa />
         <MaskotDesa />
         <ProfilPerbekel />
-        <LembagaDesa />
+        {/* <LembagaDesa /> */}
         <MotoDesa />
         <SemuaPerbekel/>
       </Box>

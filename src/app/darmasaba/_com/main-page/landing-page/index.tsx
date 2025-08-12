@@ -16,6 +16,7 @@ import {
 import { useEffect, useState } from "react";
 import ModuleView from "./ModuleView";
 import SosmedView from "./SosmedView";
+import ProfileView from "./ProfileView";
 
 const getDayOfWeek = () => {
   const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
@@ -59,6 +60,7 @@ const getWorkStatus = (day: string, currentTime: string): { status: string; mess
 
 function LandingPage() {
   const [socialMedia, setSocialMedia] = useState<Prisma.MediaSosialGetPayload<{ include: { image: true } }>[]>([]);
+  const [profile, setProfile] = useState<Prisma.PejabatDesaGetPayload<{ include: { image: true } }> | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -87,7 +89,21 @@ function LandingPage() {
       }
     };
 
+    const fetchProfile = async () => {
+      try {
+        const response = await fetch(`/api/landingpage/pejabatdesa/edit`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const result = await response.json();
+        setProfile(result.data || null); // Handle single object response
+      } catch (error) {
+        console.error('Error fetching profile:', error);
+        setProfile(null);
+      }
+    };
     fetchSocialMedia();
+    fetchProfile();
   }, []);
 
   const [workStatus, setWorkStatus] = useState<{ status: string; message: string }>
@@ -296,45 +312,13 @@ function LandingPage() {
           </Card>
 
         </Stack>
-        <Stack
-          justify={"end"}
-          align={"end"}
-          pos={"relative"}
-          w={{
-            base: "100%",
-            md: "40%",
-          }}
-          px={"xl"}
-        >
-          <Image
-            src={"/assets/images/perbekel.png"}
-            alt="perbekel"
-            sizes="100%"
-            fit="contain"
-          />
-          <Box
-            pos={"absolute"}
-            bottom={0}
-            p={{
-              base: "xs",
-              md: "md",
-            }}
-          >
-            <Card
-              px={"lg"}
-              radius={"32"}
-              className="glass3"
-              style={{
-                border: `1px solid white`,
-              }}
-            >
-              <Text>Perbekel Desa Darmasaba</Text>
-              <Text c={colors["blue-button"]} fw={"bolder"} fz={"1rem"}>
-                I.B. Surya Prabhawa Manuaba, S.H.,M.H.,NL.P.
-              </Text>
-            </Card>
-          </Box>
-        </Stack>
+        {isLoading ? (
+          <Skeleton height={32} width="100%" />
+        ) : profile ? (
+          <ProfileView data={profile} />
+        ) : (
+          <div>No profile available</div>
+        )}
       </Flex>
     </Stack >
   );

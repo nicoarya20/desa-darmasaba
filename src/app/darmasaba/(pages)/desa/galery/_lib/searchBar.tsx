@@ -4,8 +4,8 @@
 
 import { TextInput } from '@mantine/core';
 import { IconSearch } from '@tabler/icons-react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import React, { useState } from 'react';
+import { usePathname, useSearchParams } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
 
 export type SearchBarProps = {
   placeholder?: string;
@@ -16,30 +16,53 @@ export function SearchBar({
   placeholder = "pencarian",
   searchIcon = <IconSearch size={20} />,
 }: SearchBarProps) {
-  const router = useRouter();
   const searchParams = useSearchParams();
 
   // Get initial search value from URL
   const [searchValue, setSearchValue] = useState(searchParams.get('search') || '');
 
-  // Handle search input change with debounce
+  const pathname = usePathname();
+  const typingTimeoutRef = useRef<number | null>(null);
+
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
     setSearchValue(value);
 
-    // Update URL with debounce
-    const params = new URLSearchParams(searchParams.toString());
-    if (value) {
-      params.set('search', value);
-    } else {
-      params.delete('search');
+    // Clear previous timeout
+    if (typingTimeoutRef.current) {
+      window.clearTimeout(typingTimeoutRef.current);
     }
 
-    // Only update URL if the search value has actually changed
-    if (params.toString() !== searchParams.toString()) {
-      router.push(`?${params.toString()}`);
-    }
+    // Set new timeout
+    typingTimeoutRef.current = window.setTimeout(() => {
+      const params = new URLSearchParams(searchParams.toString());
+      
+      // Always reset to first page when search changes
+      params.set('page', '1');
+      
+      if (value) {
+        params.set('search', value);
+      } else {
+        params.delete('search');
+      }
+
+      // Update URL without adding to history
+      const newUrl = `${pathname}?${params.toString()}`;
+      window.history.replaceState({ ...window.history.state, as: newUrl, url: newUrl }, '', newUrl);
+      
+      // Dispatch a custom event that content components can listen to
+      window.dispatchEvent(new CustomEvent('searchUpdate', { detail: { search: value } }));
+    }, 500);
   };
+
+  // Clean up timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (typingTimeoutRef.current) {
+        window.clearTimeout(typingTimeoutRef.current);
+      }
+    };
+  }, []);
 
   return (
     <TextInput

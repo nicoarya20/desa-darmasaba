@@ -49,7 +49,7 @@ function Page() {
 
 
   return (
-    <Stack pos={"relative"} bg={colors['BG-trans']} py={"xl"} gap={22}>
+    <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={22}>
       <Box px={{ base: "md", md: 100 }}>
         <BackButton />
       </Box>

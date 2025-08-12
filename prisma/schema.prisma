@@ -50,23 +50,22 @@ model AppMenuChild {
 // ========================================= FILE STORAGE ========================================= //
 
 model FileStorage {
-  id           String         @id @default(cuid())
-  name         String         @unique
-  realName     String
-  path         String
-  mimeType     String
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-  deletedAt    DateTime?
-  isActive     Boolean        @default(true)
-  link         String
-  category     String // "image" / "document" / "other"
-  Berita       Berita[]
-  PotensiDesa  PotensiDesa[]
-  Posyandu     Posyandu[]
-  StrukturPPID StrukturPPID[]
-  GalleryFoto  GalleryFoto[]
-
+  id                             String                     @id @default(cuid())
+  name                           String                     @unique
+  realName                       String
+  path                           String
+  mimeType                       String
+  createdAt                      DateTime                   @default(now())
+  updatedAt                      DateTime                   @updatedAt
+  deletedAt                      DateTime?
+  isActive                       Boolean                    @default(true)
+  link                           String
+  category                       String // "image" / "document" / "other"
+  Berita                         Berita[]
+  PotensiDesa                    PotensiDesa[]
+  Posyandu                       Posyandu[]
+  StrukturPPID                   StrukturPPID[]
+  GalleryFoto                    GalleryFoto[]
   Pelapor                        Pelapor[]
   Penghargaan                    Penghargaan[]
   ProfileDesaImage               ProfileDesaImage[]
@@ -98,10 +97,8 @@ model FileStorage {
   APBDesImage                    APBDes[]                   @relation("APBDesImage")
   APBDesFile                     APBDes[]                   @relation("APBDesFile")
   PrestasiDesa                   PrestasiDesa[]
-
-  DataPerpustakaan DataPerpustakaan[]
-
-  PegawaiPPID PegawaiPPID[]
+  DataPerpustakaan               DataPerpustakaan[]
+  PegawaiPPID                    PegawaiPPID[]
 }
 
 //========================================= MENU LANDING PAGE ========================================= //
@@ -219,6 +216,53 @@ model KategoriPrestasiDesa {
   deletedAt    DateTime       @default(now())
   isActive     Boolean        @default(true)
   PrestasiDesa PrestasiDesa[]
+}
+
+//========================================= INDEKS KEPUASAAN MASYARAKAT ========================================= //
+model Responden {
+  id           String      @id @default(cuid())
+  name         String      @unique
+  tanggal      DateTime    // misal: 2025-05-01
+  jenisKelamin JenisKelaminResponden @relation(fields: [jenisKelaminId], references: [id])
+  jenisKelaminId String
+  rating       PilihanRatingResponden @relation(fields: [ratingId], references: [id])
+  ratingId     String
+  kelompokUmur UmurResponden @relation(fields: [kelompokUmurId], references: [id])
+  kelompokUmurId String
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  deletedAt    DateTime    @default(now())
+  isActive     Boolean     @default(true)
+}
+
+model JenisKelaminResponden {
+  id           String      @id @default(cuid())
+  name         String      @unique
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  deletedAt    DateTime    @default(now())
+  isActive     Boolean     @default(true)
+  Responden Responden[]
+}
+
+model PilihanRatingResponden {
+  id           String      @id @default(cuid())
+  name         String      @unique
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  deletedAt    DateTime    @default(now())
+  isActive     Boolean     @default(true)
+  Responden Responden[]
+}
+
+model UmurResponden {
+  id           String      @id @default(cuid())
+  name         String      @unique
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  deletedAt    DateTime    @default(now())
+  isActive     Boolean     @default(true)
+  Responden Responden[]
 }
 
 //========================================= MENU PPID ========================================= //

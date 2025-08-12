@@ -2,7 +2,7 @@
 
 import colors from '@/con/colors';
 import { Box, Center, Image, Pagination, Paper, SimpleGrid, Stack, Text } from '@mantine/core';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import ApiFetch from '@/lib/api-fetch';
 
 interface FileItem {
@@ -23,18 +23,20 @@ interface FileItem {
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
   
-    // ✅ Load data function
-    const load = async (pageNum: number, limit: number, searchTerm: string) => {
-      setLoading(true);
+    // Handle search and pagination changes
+  const loadData = useCallback((pageNum: number, searchTerm: string) => {
+    setLoading(true);
+    // Using the load function from the component's scope
+    const loadFn = async () => {
       try {
-        const query: Record<string, string> = {
-          category: 'image',
-          page: pageNum.toString(),
-          limit: limit.toString(),
-        };
-        if (searchTerm) query.search = searchTerm;
-
-        const response = await ApiFetch.api.fileStorage.findMany.get({ query });
+        const response = await ApiFetch.api.fileStorage.findMany.get({
+          query: {
+            category: 'image',
+            page: pageNum.toString(),
+            limit: '10',
+            ...(searchTerm && { search: searchTerm })
+          }
+        });
 
         if (response.status === 200 && response.data) {
           setFiles(response.data.data || []);
@@ -49,14 +51,44 @@ interface FileItem {
         setLoading(false);
       }
     };
-  
-    // ✅ Baca dari URL — AMAN karena ssr: false
-    useEffect(() => {
+
+    loadFn();
+  }, []);
+
+  // Initial load and URL change handler
+  useEffect(() => {
+    const handleRouteChange = () => {
       const urlParams = new URLSearchParams(window.location.search);
       const urlSearch = urlParams.get('search') || '';
+      const urlPage = parseInt(urlParams.get('page') || '1');
+      
       setSearch(urlSearch);
-      load(1, 10, urlSearch.trim());
-    }, []);
+      setPage(urlPage);
+      loadData(urlPage, urlSearch);
+    };
+
+    // Handle search updates from the search bar
+    const handleSearchUpdate = (e: Event) => {
+      const { search } = (e as CustomEvent).detail;
+      
+      setSearch(search);
+      setPage(1); // Reset to first page on new search
+      loadData(1, search);
+    };
+
+    // Initial load
+    handleRouteChange();
+
+    // Set up event listeners
+    window.addEventListener('popstate', handleRouteChange);
+    window.addEventListener('searchUpdate', handleSearchUpdate as EventListener);
+    
+    // Cleanup
+    return () => {
+      window.removeEventListener('popstate', handleRouteChange);
+      window.removeEventListener('searchUpdate', handleSearchUpdate as EventListener);
+    };
+  }, [loadData]);
 
   // ✅ Fetch data
   useEffect(() => {

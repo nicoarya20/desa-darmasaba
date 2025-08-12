@@ -50,7 +50,7 @@ function Page() {
             data={data}
             dataKey="kategori"
             series={[
-              { name: 'jumlah', color: 'violet.6' },
+              { name: 'jumlah', color: colors['blue-button'] },
             ]}
             tickLine="y"
               xAxisProps={{

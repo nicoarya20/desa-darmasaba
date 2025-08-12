@@ -1,10 +1,13 @@
 'use client'
-import LayoutTabs from "../_com/layoutTabs";
+import React from 'react';
+import LayoutTabsIKM from './_lib/layoutTabs';
 
-export default function Layout({children} : {children: React.ReactNode}) {
-    return (
-        <LayoutTabs>
-            {children}
-        </LayoutTabs>
-    )
+function Layout({ children }: { children: React.ReactNode }) {
+  return (
+    <LayoutTabsIKM>
+      {children}
+    </LayoutTabsIKM>
+  );
 }
+
+export default Layout;
