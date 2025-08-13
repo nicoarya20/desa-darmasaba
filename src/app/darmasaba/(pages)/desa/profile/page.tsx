@@ -31,7 +31,6 @@ function Page() {
         <LambangDesa />
         <MaskotDesa />
         <ProfilPerbekel />
-        {/* <LembagaDesa /> */}
         <MotoDesa />
         <SemuaPerbekel/>
       </Box>

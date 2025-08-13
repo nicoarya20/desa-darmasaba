@@ -33,7 +33,7 @@ function Page() {
           </GridCol>
         </Grid>
         {perbekel && (
-          <Box  >
+          <Box>
             <Paper p={"xl"} bg={colors['BG-trans']}>
               <Box px={{ base: "md", md: 100 }}>
                 <Grid>

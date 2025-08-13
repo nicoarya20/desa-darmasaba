@@ -10,6 +10,7 @@ import Penghargaan from "./penghargaan";
 import KategoriPotensi from "./potensi/kategori-potensi";
 import KategoriBerita from "./berita/kategori-berita";
 import KategoriPengumuman from "./pengumuman/kategori-pengumuman";
+import MantanPerbekel from "./profile/profile-mantan-perbekel";
 
 
 const Desa = new Elysia({ prefix: "/api/desa", tags: ["Desa"] })
@@ -19,10 +20,12 @@ const Desa = new Elysia({ prefix: "/api/desa", tags: ["Desa"] })
   .use(PotensiDesa)
   .use(GalleryFoto)
   .use(GalleryVideo)
+  .use(MantanPerbekel)
   .use(LayananDesa)
   .use(Penghargaan)
   .use(KategoriPotensi)
   .use(KategoriBerita)
   .use(KategoriPengumuman)
+  
 
 export default Desa;

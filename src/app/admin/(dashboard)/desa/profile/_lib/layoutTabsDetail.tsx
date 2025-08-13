@@ -18,6 +18,11 @@ function LayoutTabsDetail({ children }: { children: React.ReactNode }) {
             label: "Profile Perbekel",
             value: "profileperbekel",
             href: "/admin/desa/profile/profile-perbekel"
+        },
+        {
+            label: "Profile Perbekel Dari Masa Ke Masa",
+            value: "profile-perbekel-dari-masa-ke-masa",
+            href: "/admin/desa/profile/profile-perbekel-dari-masa-ke-masa"
         }
     ];
     const curentTab = tabs.find(tab => tab.href === pathname)

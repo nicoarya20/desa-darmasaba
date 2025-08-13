@@ -99,6 +99,7 @@ model FileStorage {
   PrestasiDesa                   PrestasiDesa[]
   DataPerpustakaan               DataPerpustakaan[]
   PegawaiPPID                    PegawaiPPID[]
+  PerbekelDariMasaKeMasa         PerbekelDariMasaKeMasa[]
 }
 
 //========================================= MENU LANDING PAGE ========================================= //
@@ -220,48 +221,48 @@ model KategoriPrestasiDesa {
 
 //========================================= INDEKS KEPUASAAN MASYARAKAT ========================================= //
 model Responden {
-  id           String      @id @default(cuid())
-  name         String      @unique
-  tanggal      DateTime    // misal: 2025-05-01
-  jenisKelamin JenisKelaminResponden @relation(fields: [jenisKelaminId], references: [id])
+  id             String                 @id @default(cuid())
+  name           String                 @unique
+  tanggal        DateTime // misal: 2025-05-01
+  jenisKelamin   JenisKelaminResponden  @relation(fields: [jenisKelaminId], references: [id])
   jenisKelaminId String
-  rating       PilihanRatingResponden @relation(fields: [ratingId], references: [id])
-  ratingId     String
-  kelompokUmur UmurResponden @relation(fields: [kelompokUmurId], references: [id])
+  rating         PilihanRatingResponden @relation(fields: [ratingId], references: [id])
+  ratingId       String
+  kelompokUmur   UmurResponden          @relation(fields: [kelompokUmurId], references: [id])
   kelompokUmurId String
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
-  deletedAt    DateTime    @default(now())
-  isActive     Boolean     @default(true)
+  createdAt      DateTime               @default(now())
+  updatedAt      DateTime               @updatedAt
+  deletedAt      DateTime               @default(now())
+  isActive       Boolean                @default(true)
 }
 
 model JenisKelaminResponden {
-  id           String      @id @default(cuid())
-  name         String      @unique
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
-  deletedAt    DateTime    @default(now())
-  isActive     Boolean     @default(true)
+  id        String      @id @default(cuid())
+  name      String      @unique
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  deletedAt DateTime    @default(now())
+  isActive  Boolean     @default(true)
   Responden Responden[]
 }
 
 model PilihanRatingResponden {
-  id           String      @id @default(cuid())
-  name         String      @unique
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
-  deletedAt    DateTime    @default(now())
-  isActive     Boolean     @default(true)
+  id        String      @id @default(cuid())
+  name      String      @unique
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  deletedAt DateTime    @default(now())
+  isActive  Boolean     @default(true)
   Responden Responden[]
 }
 
 model UmurResponden {
-  id           String      @id @default(cuid())
-  name         String      @unique
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
-  deletedAt    DateTime    @default(now())
-  isActive     Boolean     @default(true)
+  id        String      @id @default(cuid())
+  name      String      @unique
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  deletedAt DateTime    @default(now())
+  isActive  Boolean     @default(true)
   Responden Responden[]
 }
 
@@ -550,6 +551,19 @@ model ProfilPerbekel {
   updatedAt            DateTime     @updatedAt
   deletedAt            DateTime     @default(now())
   isActive             Boolean      @default(true)
+}
+
+model PerbekelDariMasaKeMasa {
+  id        String       @id @default(cuid())
+  nama      String       @db.Text
+  periode   String       @db.Text
+  image     FileStorage? @relation(fields: [imageId], references: [id])
+  imageId   String?
+  daerah    String
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  deletedAt DateTime     @default(now())
+  isActive  Boolean      @default(true)
 }
 
 // ========================================= BERITA ========================================= //
