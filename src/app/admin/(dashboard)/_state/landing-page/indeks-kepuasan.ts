@@ -117,8 +117,48 @@ const responden = proxy({
     id: "",
     form: { ...defaultFormResponden },
     loading: false,
-    async byId() {
-      // Method implementation if needed
+    async load(id: string) {
+      if (!id) {
+        toast.warn("ID tidak valid");
+        return null;
+      }
+
+      try {
+        responden.update.loading = true;
+
+        const response = await fetch(`/api/landingpage/responden/${id}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const result = await response.json();
+        if (result?.success) {
+          const data = result.data;
+          this.id = data.id;
+          this.form = {
+            name: data.name,
+            tanggal: data.tanggal,
+            jenisKelaminId: data.jenisKelaminId,
+            ratingId: data.ratingId,
+            kelompokUmurId: data.kelompokUmurId,
+          };
+          return data;
+        } else {
+          throw new Error(result?.message || "Gagal memuat data");
+        }
+      } catch (error) {
+        console.error("Error loading responden:", error);
+        toast.error(
+          error instanceof Error ? error.message : "Gagal memuat data"
+        );
+        return null;
+      } finally {
+        responden.update.loading = false;
+      }
     },
     async submit() {
       const id = this.id;

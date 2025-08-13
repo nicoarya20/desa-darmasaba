@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 import colors from '@/con/colors';
-import { PieChart } from '@mantine/charts'; // ✅ Ganti recharts dengan Mantine
+import { PieChart, BarChart } from '@mantine/charts'; // ✅ Ganti recharts dengan Mantine
 import {
   Box,
   Center,
@@ -25,12 +25,15 @@ interface ChartDataItem {
   label?: string;
 }
 
+
+
 function Page() {
   const state = useProxy(indeksKepuasanState.responden);
   const { data, loading } = state.findMany;
   const [donutDataJenisKelamin, setDonutDataJenisKelamin] = useState<ChartDataItem[]>([]);
   const [donutDataRating, setDonutDataRating] = useState<ChartDataItem[]>([]);
   const [donutDataKelompokUmur, setDonutDataKelompokUmur] = useState<ChartDataItem[]>([]);
+  const [barChartData, setBarChartData] = useState<Array<{ month: string; count: number }>>([]);
 
   useShallowEffect(() => {
     if (data) {
@@ -69,6 +72,41 @@ function Page() {
         { name: 'Dewasa', value: totalDewasa, color: '#10A85AFF' },
         { name: 'Lansia', value: totalLansia, color: '#FFA500' },
       ]);
+
+      // Process data for bar chart (group by month)
+      const monthYearMap = new Map<string, number>();
+
+      data.forEach((item: any) => {
+        // Try both createdAt and tanggal fields
+        const dateValue = item.tanggal || item.createdAt;
+        if (!dateValue) return;
+
+        const parsedDate = new Date(dateValue);
+        if (isNaN(parsedDate.getTime())) return;
+
+        const month = parsedDate.getMonth() + 1;
+        const year = parsedDate.getFullYear();
+        const monthYearKey = `${year}-${String(month).padStart(2, '0')}`;
+
+        monthYearMap.set(monthYearKey, (monthYearMap.get(monthYearKey) || 0) + 1);
+      });
+
+      // Convert map to array and sort by date
+      const barData = Array.from(monthYearMap.entries())
+        .map(([key, count]) => {
+          const [year, month] = key.split('-');
+          const monthName = new Date(Number(year), Number(month) - 1, 1)
+            .toLocaleString('id-ID', { month: 'long' });
+          return {
+            month: `${monthName} ${year}`,
+            count,
+            sortKey: parseInt(`${year}${String(month).padStart(2, '0')}`, 10)
+          };
+        })
+        .sort((a, b) => a.sortKey - b.sortKey)
+        .map(({ month, count }) => ({ month, count }));
+
+      setBarChartData(barData);
     }
   }, [data]);
 
@@ -92,105 +130,120 @@ function Page() {
 
   return (
     <Stack gap="xs">
-
-
+      {/* Bar Chart - Data per Tanggal */}
+      <Paper bg={colors['white-1']} p="md" radius="md" mb="md">
+        <Title order={4} mb="md" ta="center">Jumlah Responden per Bulan</Title>
+        <Box h={300}>
+          <BarChart
+            h={300}
+            data={barChartData}
+            dataKey="month"
+            series={[{ name: 'count', color: colors['blue-button'] }]}
+            tickLine="y"
+            xAxisLabel="Bulan"
+            yAxisLabel="Jumlah Responden"
+            withTooltip
+            tooltipAnimationDuration={200}
+          />
+        </Box>
+      </Paper>
 
       <SimpleGrid cols={{ base: 1, md: 3 }}>
-      {/* Chart Jenis Kelamin */}
-      <Paper bg={colors['white-1']} p="md" radius="md">
-        <Stack>
-          <Title order={4}>Jenis Kelamin</Title>
-          {donutDataJenisKelamin.every(item => item.value === 0) ? (
-            <Text c="dimmed" ta="center" my="md">
-              Belum ada data untuk ditampilkan dalam grafik
-            </Text>
-          ) : (
-            <Box>
-              <Center>
-                <PieChart
-                  withLabels
-                  withTooltip
-                  labelsType="percent"
-                  size={250}
-                  data={donutDataJenisKelamin}
-                />
-              </Center>
-              <Stack gap="sm" mt="md">
-                {donutDataJenisKelamin.map((entry) => (
-                  <Flex key={entry.name} gap="md" align="center">
-                    <Box bg={entry.color} w={20} h={20} style={{ flexShrink: 0 }} />
-                    <Text size="sm">{entry.name}: {entry.value}</Text>
-                  </Flex>
-                ))}
-              </Stack>
-            </Box>
-          )}
-        </Stack>
-      </Paper>
+        {/* Chart Jenis Kelamin */}
+        <Paper bg={colors['white-1']} p="md" radius="md">
+          <Stack>
+            <Title order={4}>Jenis Kelamin</Title>
+            {donutDataJenisKelamin.every(item => item.value === 0) ? (
+              <Text c="dimmed" ta="center" my="md">
+                Belum ada data untuk ditampilkan dalam grafik
+              </Text>
+            ) : (
+              <Box>
+                <Center>
+                  <PieChart
+                    withLabels
+                    withTooltip
+                    labelsType="percent"
+                    size={250}
+                    data={donutDataJenisKelamin}
+                  />
+                </Center>
+                <Stack gap="sm" mt="md">
+                  {donutDataJenisKelamin.map((entry) => (
+                    <Flex key={entry.name} gap="md" align="center">
+                      <Box bg={entry.color} w={20} h={20} style={{ flexShrink: 0 }} />
+                      <Text size="sm">{entry.name}: {entry.value}</Text>
+                    </Flex>
+                  ))}
+                </Stack>
+              </Box>
+            )}
+          </Stack>
+        </Paper>
 
-      {/* Chart Rating */}
-      <Paper bg={colors['white-1']} p="md" radius="md">
-        <Stack>
-          <Title order={4}>Pilihan</Title>
-          {donutDataRating.every(item => item.value === 0) ? (
-            <Text c="dimmed" ta="center" my="md">
-              Belum ada data untuk ditampilkan dalam grafik
-            </Text>
-          ) : (
-            <Box>
-              <Center>
-                <PieChart
-                  withLabels
-                  withTooltip
-                  labelsType="percent"
-                  size={250}
-                  data={donutDataRating}
-                />
-              </Center>
-              <Stack gap="sm" mt="md">
-                {donutDataRating.map((entry) => (
-                  <Flex key={entry.name} gap="md" align="center">
-                    <Box bg={entry.color} w={20} h={20} style={{ flexShrink: 0 }} />
-                    <Text size="sm">{entry.name}: {entry.value}</Text>
-                  </Flex>
-                ))}
-              </Stack>
-            </Box>
-          )}
-        </Stack>
-      </Paper>
+        {/* Chart Rating */}
+        <Paper bg={colors['white-1']} p="md" radius="md">
+          <Stack>
+            <Title order={4}>Pilihan</Title>
+            {donutDataRating.every(item => item.value === 0) ? (
+              <Text c="dimmed" ta="center" my="md">
+                Belum ada data untuk ditampilkan dalam grafik
+              </Text>
+            ) : (
+              <Box>
+                <Center>
+                  <PieChart
+                    withLabels
+                    withTooltip
+                    labelsType="percent"
+                    size={250}
+                    data={donutDataRating}
+                  />
+                </Center>
+                <Stack gap="sm" mt="md">
+                  {donutDataRating.map((entry) => (
+                    <Flex key={entry.name} gap="md" align="center">
+                      <Box bg={entry.color} w={20} h={20} style={{ flexShrink: 0 }} />
+                      <Text size="sm">{entry.name}: {entry.value}</Text>
+                    </Flex>
+                  ))}
+                </Stack>
+              </Box>
+            )}
+          </Stack>
+        </Paper>
 
-      {/* Chart Kelompok Umur */}
-      <Paper bg={colors['white-1']} p="md" radius="md">
-        <Stack>
-          <Title order={4}>Umur</Title>
-          {donutDataKelompokUmur.every(item => item.value === 0) ? (
-            <Text c="dimmed" ta="center" my="md">
-              Belum ada data untuk ditampilkan dalam grafik
-            </Text>
-          ) : (
-            <Box>
-              <Center>
-                <PieChart
-                  withLabels
-                  withTooltip
-                  labelsType="percent"
-                  size={250}
-                  data={donutDataKelompokUmur}
-                />
-              </Center>
-              <Stack gap="sm" mt="md">
-                {donutDataKelompokUmur.map((entry) => (
-                  <Flex key={entry.name} gap="md" align="center">
-                    <Box bg={entry.color} w={20} h={20} style={{ flexShrink: 0 }} />
-                    <Text size="sm">{entry.name}: {entry.value}</Text>
-                  </Flex>
-                ))}
-              </Stack>
-            </Box>
-          )}
-        </Stack>
-      </Paper>
+        {/* Chart Kelompok Umur */}
+        <Paper bg={colors['white-1']} p="md" radius="md">
+          <Stack>
+            <Title order={4}>Umur</Title>
+            {donutDataKelompokUmur.every(item => item.value === 0) ? (
+              <Text c="dimmed" ta="center" my="md">
+                Belum ada data untuk ditampilkan dalam grafik
+              </Text>
+            ) : (
+              <Box>
+                <Center>
+                  <PieChart
+                    withLabels
+                    withTooltip
+                    labelsType="percent"
+                    size={250}
+                    data={donutDataKelompokUmur}
+                  />
+                </Center>
+                <Stack gap="sm" mt="md">
+                  {donutDataKelompokUmur.map((entry) => (
+                    <Flex key={entry.name} gap="md" align="center">
+                      <Box bg={entry.color} w={20} h={20} style={{ flexShrink: 0 }} />
+                      <Text size="sm">{entry.name}: {entry.value}</Text>
+                    </Flex>
+                  ))}
+                </Stack>
+              </Box>
+            )}
+          </Stack>
+        </Paper>
       </SimpleGrid>
     </Stack>
   );

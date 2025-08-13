@@ -3,14 +3,14 @@
 import { ModalKonfirmasiHapus } from "@/app/admin/(dashboard)/_com/modalKonfirmasiHapus"
 import indeksKepuasanState from "@/app/admin/(dashboard)/_state/landing-page/indeks-kepuasan"
 import colors from "@/con/colors"
-import { Box, Button, Paper, Skeleton, Stack, Text } from "@mantine/core"
+import { Box, Button, Flex, Paper, Skeleton, Stack, Text } from "@mantine/core"
 import { useShallowEffect } from "@mantine/hooks"
-import { IconArrowBack } from "@tabler/icons-react"
+import { IconArrowBack, IconEdit, IconX } from "@tabler/icons-react"
 import { useRouter, useParams } from "next/navigation"
 import { useState } from "react"
 import { useProxy } from "valtio/utils"
 
-export default function DetailResponden(){
+export default function DetailResponden() {
   const [modalHapus, setModalHapus] = useState(false)
   const stateDetail = useProxy(indeksKepuasanState.responden)
   const router = useRouter()
@@ -30,17 +30,17 @@ export default function DetailResponden(){
     }
   }
 
-  if(!stateDetail.findUnique.data){
-    return(
+  if (!stateDetail.findUnique.data) {
+    return (
       <Stack>
         <Skeleton h={500} />
       </Stack>
     )
   }
-  return(
+  return (
     <Box>
       <Box mb={10}>
-      <Button variant="subtle" onClick={() => router.back()}>
+        <Button variant="subtle" onClick={() => router.back()}>
           <IconArrowBack color={colors['blue-button']} size={25} />
         </Button>
       </Box>
@@ -57,9 +57,9 @@ export default function DetailResponden(){
               <Box>
                 <Text fz={"lg"} fw={"bold"}>Tanggal</Text>
                 <Text fz={"lg"}>{
-                  stateDetail.findUnique.data?.tanggal 
+                  stateDetail.findUnique.data?.tanggal
                     ? new Date(stateDetail.findUnique.data.tanggal).toLocaleDateString('id-ID')
-                    : '-' 
+                    : '-'
                 }</Text>
               </Box>
               <Box>
@@ -74,6 +74,31 @@ export default function DetailResponden(){
                 <Text fz={"lg"} fw={"bold"}>Kelompok Umur</Text>
                 <Text fz={"lg"}>{stateDetail.findUnique.data?.kelompokUmur?.name}</Text>
               </Box>
+              <Flex gap={"xs"} mt={10}>
+                <Button
+                  onClick={() => {
+                    if (stateDetail.findUnique.data) {
+                      setSelectedId(stateDetail.findUnique.data.id);
+                      setModalHapus(true);
+                    }
+                  }}
+                  disabled={stateDetail.delete.loading || !stateDetail.findUnique.data}
+                  color={"red"}
+                >
+                  <IconX size={20} />
+                </Button>
+                <Button
+                  onClick={() => {
+                    if (stateDetail.findUnique.data) {
+                      router.push(`/admin/ppid/ikm-desa-darmasaba/responden/${stateDetail.findUnique.data.id}/edit`);
+                    }
+                  }}
+                  disabled={!stateDetail.findUnique.data}
+                  color={"green"}
+                >
+                  <IconEdit size={20} />
+                </Button>
+              </Flex>
             </Stack>
           </Paper>
         </Stack>
@@ -85,7 +110,7 @@ export default function DetailResponden(){
         onClose={() => setModalHapus(false)}
         onConfirm={handleHapus}
         text="Apakah anda yakin ingin menghapus responden ini?"
-      /> 
+      />
     </Box>
   )
 }
