@@ -53,7 +53,7 @@ function Page() {
           {gambar && <Image w={400} src={gambar || null} alt="gambar" />}
         </Card>
 
-
+        <Text>Test</Text>
         <SimpleGrid cols={6} p={"lg"}>
           {listFile.map((v) => (
             <Image key={v} src={v} alt="gambar" />
