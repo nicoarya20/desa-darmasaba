@@ -911,15 +911,42 @@ model PendaftaranJadwalKegiatan {
 
 // ========================================= PERSENTASE KELAHIRAN & KEMATIAN ========================================= //
 model DataKematian_Kelahiran {
-  id             String   @id @default(cuid())
-  tahun          String
-  kematianKasar  String
-  kematianBayi   String
-  kelahiranKasar String
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  deletedAt      DateTime @default(now())
-  isActive       Boolean  @default(true)
+  id          String    @id @default(cuid())
+  kematian    Kematian  @relation(fields: [kematianId], references: [id])
+  kematianId  String
+  kelahiran   Kelahiran @relation(fields: [kelahiranId], references: [id])
+  kelahiranId String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime  @default(now())
+  isActive    Boolean   @default(true)
+}
+
+model Kelahiran {
+  id                     String                   @id @default(cuid())
+  nama                   String
+  tanggal                DateTime
+  jenisKelamin           String
+  alamat                 String
+  createdAt              DateTime                 @default(now())
+  updatedAt              DateTime                 @updatedAt
+  deletedAt              DateTime                 @default(now())
+  isActive               Boolean                  @default(true)
+  DataKematian_Kelahiran DataKematian_Kelahiran[]
+}
+
+model Kematian {
+  id                     String                   @id @default(cuid())
+  nama                   String
+  tanggal                DateTime
+  jenisKelamin           String
+  alamat                 String
+  penyebab               String
+  createdAt              DateTime                 @default(now())
+  updatedAt              DateTime                 @updatedAt
+  deletedAt              DateTime                 @default(now())
+  isActive               Boolean                  @default(true)
+  DataKematian_Kelahiran DataKematian_Kelahiran[]
 }
 
 // ========================================= GRAFIK KEPUASAN ========================================= //

@@ -16,10 +16,8 @@ const PersentaseKelahiranKematian = new Elysia({
   .get("/find-many", persentaseKelahiranKematianFindMany)
   .post("/create", persentaseKelahiranKematianCreate, {
     body: t.Object({
-      tahun: t.String(),
-      kematianKasar: t.String(),
-      kematianBayi: t.String(),
-      kelahiranKasar: t.String(),
+      kematianId: t.String(),
+      kelahiranId: t.String(),
     }),
   })
   .put("/:id", persentaseKelahiranKematianUpdate, {
@@ -27,10 +25,8 @@ const PersentaseKelahiranKematian = new Elysia({
       id: t.String(),
     }),
     body: t.Object({
-      tahun: t.String(),
-      kematianKasar: t.String(),
-      kematianBayi: t.String(),
-      kelahiranKasar: t.String(),
+      kematianId: t.String(),
+      kelahiranId: t.String(),
     }),
   })
   .delete("/del/:id", persentaseKelahiranKematianDelete, {

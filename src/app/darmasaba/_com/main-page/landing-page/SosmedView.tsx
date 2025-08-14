@@ -1,4 +1,4 @@
-import { ActionIcon, Flex, Image } from "@mantine/core";
+import { ActionIcon, Flex, Image, Text } from "@mantine/core";
 import { Prisma } from "@prisma/client";
 import { useTransitionRouter } from "next-view-transitions";
 
@@ -20,7 +20,13 @@ function SosmedView({data} : {data : Prisma.MediaSosialGetPayload<{ include: { i
                 router.push(item.iconUrl || "");
               }}
             >
-              <Image src={item.image?.link || ""} alt="icon" loading="lazy" />
+              {item.image?.link ? (
+                <Image src={item.image.link} alt="icon" loading="lazy" />
+              ) : (
+                <Text>
+                  none
+                </Text>
+              )}
             </ActionIcon>
           );
         })}

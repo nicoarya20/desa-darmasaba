@@ -1,183 +1,229 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 import persentasekelahiran from '@/app/admin/(dashboard)/_state/kesehatan/data_kesehatan_warga/persentaseKelahiran';
 import colors from '@/con/colors';
-import { Box, Button, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title } from '@mantine/core';
+import { ActionIcon, Box, Button, Center, Flex, Paper, Skeleton, Stack, Table, Text, Title } from '@mantine/core';
 import { useMediaQuery, useShallowEffect } from '@mantine/hooks';
-import { IconEdit, IconSearch, IconTrash } from '@tabler/icons-react';
+import { IconBabyCarriage, IconGrave2 } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { Bar, BarChart, Legend, Tooltip, XAxis, YAxis } from 'recharts';
+import { Bar, BarChart, Legend, Tooltip, TooltipProps, XAxis, YAxis } from 'recharts';
 import { useProxy } from 'valtio/utils';
-import JudulListTab from '../../../_com/judulListTab';
-import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
-import HeaderSearch from '../../../_com/header';
+
+type TooltipPayload = {
+  name: string;
+  value: number;
+  payload: any;
+  color: string;
+  dataKey: string;
+};
+
+type CustomTooltipProps = TooltipProps<number, string> & {
+  active?: boolean;
+  payload?: TooltipPayload[];
+  label?: string;
+};
 
 function PersentaseDataKelahiranKematian() {
-  const [search, setSearch] = useState("");
   return (
-    <Box>
-      <HeaderSearch
-        title='Persentase Data Kelahiran & Kematian'
-        placeholder='pencarian'
-        searchIcon={<IconSearch size={20} />}
-        value={search}
-        onChange={(e) => setSearch(e.currentTarget.value)}
-      />
-      <ListPersentaseDataKelahiranKematian search={search} />
-    </Box>
+    <Stack gap={"xs"}>
+      <GrafikPersentaseKelahiranKematian />
+    </Stack>
   );
 }
-function ListPersentaseDataKelahiranKematian({ search }: { search: string }) {
-  type PDKMGrafik = {
-    id: string;
-    tahun: string;
-    kematianKasar: number;
-    kematianBayi: number;
-    kelahiranKasar: number;
-  }
-  const statePersentase = useProxy(persentasekelahiran);
-  const [chartData, setChartData] = useState<PDKMGrafik[]>([]);
-  const [mounted, setMounted] = useState(false); // untuk memastikan DOM sudah ready
-  const isTablet = useMediaQuery('(max-width: 1024px)')
-  const isMobile = useMediaQuery('(max-width: 768px)')
-  const [modalHapus, setModalHapus] = useState(false)
-  const [selectedId, setSelectedId] = useState<string | null>(null)
+function GrafikPersentaseKelahiranKematian() {
   const router = useRouter();
+  type DataTahunan = {
+    tahun: string;
+    totalKelahiran: number;
+    totalKematian: number;
+    data: Array<{
+      id: string;
+      bulan: string;
+      kelahiran: number;
+      kematian: number;
+    }>;
+  };
 
-  const handleDelete = () => {
-    if (selectedId) {
-      statePersentase.delete.byId(selectedId)
-      setModalHapus(false)
-      setSelectedId(null)
+  // Count occurrences per year
+  const countByYear = (data: any[], dateField: string) => {
+    const counts: Record<string, number> = {};
+    data?.forEach(item => {
+      const year = new Date(item[dateField]).getFullYear().toString();
+      counts[year] = (counts[year] || 0) + 1;
+    });
+    return counts;
+  };
 
-      statePersentase.findMany.load()
+  const statePersentase = useProxy(persentasekelahiran);
+  const [chartData, setChartData] = useState<DataTahunan[]>([]);
+  const isTablet = useMediaQuery('(max-width: 1024px)');
+  const isMobile = useMediaQuery('(max-width: 768px)');
+  const [selectedYear, setSelectedYear] = useState<string | null>(null);
+
+  // Format number to Indonesian locale
+  const formatNumber = (num: number) => {
+    return new Intl.NumberFormat('id-ID').format(num);
+  };
+
+  // Format tooltip
+  const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
+    if (active && payload && payload.length) {
+      return (
+        <Paper p="md" shadow="md" withBorder>
+          <Text size="sm" fw={500} mb={5}>Tahun {label}</Text>
+          <Text size="sm" c="blue">Kelahiran: {formatNumber(payload[0].value)}</Text>
+          <Text size="sm" c="red">Kematian: {formatNumber(payload[1].value)}</Text>
+        </Paper>
+      );
     }
-  }
+    return null;
+  };
 
   useShallowEffect(() => {
-    setMounted(true)
-    statePersentase.findMany.load()
-  }, [])
+    statePersentase.kelahiran.findMany.load(1, 1000); // Load all kelahiran data
+    statePersentase.kematian.findMany.load(1, 1000); // Load all kematian data
+  }, []);
 
   useEffect(() => {
-    setMounted(true);
-    if (statePersentase.findMany.data) {
-      setChartData(statePersentase.findMany.data.map((item) => ({
-        id: item.id,
-        tahun: item.tahun,
-        kematianKasar: Number(item.kematianKasar),
-        kematianBayi: Number(item.kematianBayi),
-        kelahiranKasar: Number(item.kelahiranKasar),
-      })));
+    if (statePersentase.kelahiran.findMany.data && statePersentase.kematian.findMany.data) {
+      // Count kelahiran and kematian by year
+      const kelahiranByYear = countByYear(statePersentase.kelahiran.findMany.data, 'tanggal');
+      const kematianByYear = countByYear(statePersentase.kematian.findMany.data, 'tanggal');
+
+      // Get all unique years
+      const allYears = new Set([
+        ...Object.keys(kelahiranByYear),
+        ...Object.keys(kematianByYear)
+      ]);
+
+      // Create data structure for the chart
+      const dataByYear = Array.from(allYears).reduce<Record<string, DataTahunan>>((acc, year) => {
+        acc[year] = {
+          tahun: year,
+          totalKelahiran: kelahiranByYear[year] || 0,
+          totalKematian: kematianByYear[year] || 0,
+          data: []
+        };
+        return acc;
+      }, {});
+
+      const sortedData = Object.values(dataByYear).sort((a, b) =>
+        parseInt(a.tahun) - parseInt(b.tahun)
+      );
+
+      setChartData(sortedData);
+      setSelectedYear(sortedData[0]?.tahun || '');
     }
-  }, [statePersentase.findMany.data]);
+  }, [
+    statePersentase.kelahiran.findMany.data,
+    statePersentase.kematian.findMany.data,
+  ]);
 
-  const filteredData = (statePersentase.findMany.data || []).filter(item => {
-    const keyword = search.toLowerCase();
-    return (
-      item.tahun.toLowerCase().includes(keyword) ||
-      item.kematianKasar.toString().toLowerCase().includes(keyword) ||
-      item.kematianBayi.toString().toLowerCase().includes(keyword) ||
-      item.kelahiranKasar.toString().toLowerCase().includes(keyword)
-    );
-  });
-
-  if (!statePersentase.findMany.data) {
+  if (!statePersentase.kelahiran.findMany.data || !statePersentase.kematian.findMany.data) {
     return (
       <Stack>
         <Skeleton h={500} />
       </Stack>
-    )
+    );
   }
 
+  const selectedYearData = chartData.find(d => d.tahun === selectedYear);
+
   return (
-    <Box>
+    <Paper bg={colors['white-1']} p="md">
       <Stack gap={"xs"}>
-        {/* Form Input */}
-        <Paper bg={colors['white-1']} p={'md'}>
-          <JudulListTab
-            title='List Persentase Data Kelahiran & Kematian'
-            href='/admin/kesehatan/data-kesehatan-warga/persentase_data_kelahiran_kematian/create'
-            placeholder='pencarian'
-            searchIcon={<IconSearch size={16} />}
-          />
-          <Table striped withTableBorder withRowBorders>
-            <TableThead>
-              <TableTr>
-                <TableTh>Tahun</TableTh>
-                <TableTh>Kematian Kasar</TableTh>
-                <TableTh>Kematian Bayi</TableTh>
-                <TableTh>kelahiran Kasar</TableTh>
-                <TableTh>Edit</TableTh>
-                <TableTh>Delete</TableTh>
-              </TableTr>
-            </TableThead>
-            <TableTbody>
-              {filteredData.map((item) => (
-                <TableTr key={item.id}>
-                  <TableTd>{item.tahun}</TableTd>
-                  <TableTd>{item.kematianKasar}</TableTd>
-                  <TableTd>{item.kematianBayi}</TableTd>
-                  <TableTd>{item.kelahiranKasar}</TableTd>
-                  <TableTd>
-                    <Button color='green' onClick={() => router.push(`/admin/kesehatan/data-kesehatan-warga/persentase_data_kelahiran_kematian/${item.id}`)}>
-                      <IconEdit size={20} />
-                    </Button>
-                  </TableTd>
-                  <TableTd>
-                    <Button
-                      color='red'
-                      disabled={statePersentase.delete.loading}
-                      onClick={() => {
-                        setSelectedId(item.id)
-                        setModalHapus(true)
-                      }}>
-                      <IconTrash size={20} />
-                    </Button>
-                  </TableTd>
-                </TableTr>
-              ))}
-            </TableTbody>
-          </Table>
-        </Paper>
-
-
-        {/* Chart */}
-        {!mounted && !chartData ? (
-          <Box style={{ width: '100%', minWidth: 300, height: 400, minHeight: 300 }}>
-            <Paper bg={colors['white-1']} p={'md'}>
-              <Title pb={10} order={3}>Data Kelahiran & Kematian</Title>
-              <Text c='dimmed'>Belum ada data untuk ditampilkan dalam grafik</Text>
-            </Paper>
-          </Box>
-        ) : (
-          <Box style={{ width: '100%', minWidth: 300, height: 400, minHeight: 300 }}>
-            <Paper bg={colors['white-1']} p={'md'}>
-              <Title pb={10} order={4}>Data Kelahiran & Kematian</Title>
-              {mounted && chartData.length > 0 && (
-                <BarChart width={isMobile ? 450 : isTablet ? 500 : 550} height={350} data={chartData} >
-                  <XAxis dataKey="tahun" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="kematianKasar" fill="#f03e3e" name="Kematian Kasar" />
-                  <Bar dataKey="kematianBayi" fill="#ff922b" name="Kematian Bayi" />
-                  <Bar dataKey="kelahiranKasar" fill="#4dabf7" name="Kelahiran Kasar" />
-                </BarChart>
-              )}
-            </Paper>
-          </Box>
-        )}
+        <Title order={3} mb="md">Statistik Kelahiran & Kematian</Title>
+        <Box>
+          <Flex gap={"xs"}>
+            <Box>
+              <ActionIcon size={30} color={colors['blue-button']} onClick={() => router.push('/admin/kesehatan/data-kesehatan-warga/persentase_data_kelahiran_kematian/kelahiran')}>
+                <IconBabyCarriage size={30} color={colors['white-1']} />
+              </ActionIcon>
+            </Box>
+            <Box>
+              <ActionIcon size={30} color={colors['blue-button']} onClick={() => router.push('/admin/kesehatan/data-kesehatan-warga/persentase_data_kelahiran_kematian/kematian')} >
+                <IconGrave2 size={30} color={colors['white-1']} />
+              </ActionIcon>
+            </Box>
+          </Flex>
+        </Box>
       </Stack>
 
-      {/* Modal Konfirmasi Hapus */}
-      <ModalKonfirmasiHapus
-        opened={modalHapus}
-        onClose={() => setModalHapus(false)}
-        onConfirm={handleDelete}
-        text='Apakah anda yakin ingin menghapus persentase data kelahiran & kematian ini?'
-      />
-    </Box>
+      {chartData.length === 0 ? (
+        <Text c="dimmed" ta="center" py="xl">
+          Belum ada data yang tersedia untuk ditampilkan
+        </Text>
+      ) : (
+        <>
+          {/* Year Selector */}
+          <Box mb="md">
+            <Text mb="xs" fw={500}>Pilih Tahun:</Text>
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+              {chartData.map(({ tahun }) => (
+                <Button
+                  key={tahun}
+                  variant={selectedYear === tahun ? 'filled' : 'outline'}
+                  onClick={() => setSelectedYear(tahun)}
+                  size="xs"
+                >
+                  {tahun}
+                </Button>
+              ))}
+            </div>
+          </Box>
+
+          {/* Main Chart */}
+          <Center>
+            <Box h={400}>
+              <BarChart
+                width={isMobile ? window.innerWidth * 0.9 : isTablet ? 700 : 800}
+                height={350}
+                data={chartData}
+                margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+              >
+                <XAxis dataKey="tahun" />
+                <YAxis />
+                <Tooltip content={<CustomTooltip />} />
+                <Legend />
+                <Bar dataKey="totalKelahiran" name="Total Kelahiran" fill="#4dabf7" />
+                <Bar dataKey="totalKematian" name="Total Kematian" fill="#f03e3e" />
+              </BarChart>
+            </Box>
+          </Center>
+
+          {/* Yearly Breakdown */}
+          {selectedYearData && (
+            <Box mt="xl">
+              <Title order={4} mb="md">Rincian Tahun {selectedYear}</Title>
+              <Table striped withTableBorder>
+                <Table.Thead>
+                  <Table.Tr>
+                    <Table.Th>Bulan</Table.Th>
+                    <Table.Th ta="right">Kelahiran</Table.Th>
+                    <Table.Th ta="right">Kematian</Table.Th>
+                  </Table.Tr>
+                </Table.Thead>
+                <Table.Tbody>
+                  {selectedYearData.data.map((item) => (
+                    <Table.Tr key={item.id}>
+                      <Table.Td>{item.bulan}</Table.Td>
+                      <Table.Td ta="right">{formatNumber(item.kelahiran)}</Table.Td>
+                      <Table.Td ta="right">{formatNumber(item.kematian)}</Table.Td>
+                    </Table.Tr>
+                  ))}
+                  <Table.Tr style={{ fontWeight: 'bold' }}>
+                    <Table.Td>Total</Table.Td>
+                    <Table.Td ta="right">{formatNumber(selectedYearData.totalKelahiran)}</Table.Td>
+                    <Table.Td ta="right">{formatNumber(selectedYearData.totalKematian)}</Table.Td>
+                  </Table.Tr>
+                </Table.Tbody>
+              </Table>
+            </Box>
+          )}
+        </>
+      )}
+    </Paper>
   );
 }
 

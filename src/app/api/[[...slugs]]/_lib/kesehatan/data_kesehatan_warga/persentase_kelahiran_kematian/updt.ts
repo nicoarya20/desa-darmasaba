@@ -11,11 +11,9 @@ export default async function persentaseKelahiranKematianUpdate(context: Context
         }
     }
 
-    const {tahun, kematianKasar, kematianBayi, kelahiranKasar} = context.body as {
-        tahun: string;
-        kematianKasar: string;
-        kematianBayi: string;
-        kelahiranKasar: string;
+    const {kematianId, kelahiranId} = context.body as {
+        kematianId: string;
+        kelahiranId: string;
     }
 
     const existing = await prisma.dataKematian_Kelahiran.findUnique({
@@ -34,10 +32,8 @@ export default async function persentaseKelahiranKematianUpdate(context: Context
     const updated = await prisma.dataKematian_Kelahiran.update({
         where: { id },
         data: {
-            tahun,
-            kematianKasar,
-            kematianBayi,
-            kelahiranKasar,
+            kematianId,
+            kelahiranId,
         },
     })
 

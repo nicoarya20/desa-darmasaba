@@ -1,5 +1,5 @@
 import profileLandingPageState from "@/app/admin/(dashboard)/_state/landing-page/profile";
-import { Center, Image, Paper, SimpleGrid } from "@mantine/core";
+import { Center, Image, Paper, SimpleGrid, Text } from "@mantine/core";
 import { useShallowEffect } from "@mantine/hooks";
 import { motion } from 'framer-motion';
 import { useTransitionRouter } from 'next-view-transitions';
@@ -25,15 +25,21 @@ function ModuleItem({ data }: { data: ProgramInovasiItem }) {
         <motion.div
           whileHover={{ scale: 1.05 }}
         >
-          <Image src={data.image?.link || ""} alt="icon"
-            fit="contain"
-            sizes="100%"
-            loading="lazy"
+          {data.image?.link ? (
+            <Image src={data.image.link} alt="icon"
+              fit="contain"
+              sizes="100%"
+              loading="lazy"
             style={{
               objectFit: "contain",
               objectPosition: "center"
             }}
           />
+        ) : (
+          <Text>
+            -
+          </Text>
+        )}
         </motion.div>
       </Center>
     </Paper>

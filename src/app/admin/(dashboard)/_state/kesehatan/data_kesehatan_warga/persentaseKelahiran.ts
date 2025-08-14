@@ -1,10 +1,13 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiFetch from "@/lib/api-fetch";
 import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
 import { proxy } from "valtio";
 import { z } from "zod";
 
-const templatePersentase = z.object({
+//persentase kelahiran kematian
+
+const templatePersentaseKelahiran = z.object({
   tahun: z.string().min(4, "Tahun harus diisi"),
   kematianKasar: z.string().min(1, "Kematian kasar harus diisi"),
   kelahiranKasar: z.string().min(1, "Kelahiran kasar harus diisi"),
@@ -13,18 +16,14 @@ const templatePersentase = z.object({
 
 type Persentase = Prisma.DataKematian_KelahiranGetPayload<{
   select: {
-    tahun: true;
-    kematianKasar: true;
-    kelahiranKasar: true;
-    kematianBayi: true;
+    kematianId: true;
+    kelahiranId: true;
   };
 }>;
 
 const defaultForm: Persentase = {
-  tahun: "",
-  kematianKasar: "",
-  kelahiranKasar: "",
-  kematianBayi: "",
+  kematianId: "",
+  kelahiranId: "",
 };
 
 const persentasekelahiran = proxy({
@@ -32,7 +31,9 @@ const persentasekelahiran = proxy({
     form: defaultForm,
     loading: false,
     async create() {
-      const cek = templatePersentase.safeParse(persentasekelahiran.create.form);
+      const cek = templatePersentaseKelahiran.safeParse(
+        persentasekelahiran.create.form
+      );
       if (!cek.success) {
         const err = `[${cek.error.issues
           .map((v) => `${v.path.join(".")}`)
@@ -47,7 +48,7 @@ const persentasekelahiran = proxy({
         ].post(persentasekelahiran.create.form);
 
         if (res.status === 200) {
-          const id = res.data?.data?.id;
+          const id = res.data?.data;
           if (id) {
             toast.success("Success create");
             persentasekelahiran.create.form = { ...defaultForm };
@@ -69,21 +70,51 @@ const persentasekelahiran = proxy({
   findMany: {
     data: null as
       | Prisma.DataKematian_KelahiranGetPayload<{
-          omit: { isActive: true };
+          include: {
+            kematian: true;
+            kelahiran: true;
+          };
         }>[]
       | null,
-    async load() {
-      const res = await ApiFetch.api.kesehatan.persentasekelahiran[
-        "find-many"
-      ].get();
-      if (res.status === 200) {
-        persentasekelahiran.findMany.data = res.data?.data ?? [];
+    page: 1,
+    totalPages: 1,
+    loading: false,
+    search: "",
+    load: async (page = 1, limit = 10, search = "") => {
+      persentasekelahiran.findMany.loading = true; // ✅ Akses langsung via nama path
+      persentasekelahiran.findMany.page = page;
+      persentasekelahiran.findMany.search = search;
+
+      try {
+        const query: any = { page, limit };
+        if (search) query.search = search;
+
+        const res = await ApiFetch.api.kesehatan.persentasekelahiran[
+          "find-many"
+        ].get({ query });
+
+        if (res.status === 200 && res.data?.success) {
+          persentasekelahiran.findMany.data = res.data.data ?? [];
+          persentasekelahiran.findMany.totalPages = res.data.totalPages ?? 1;
+        } else {
+          persentasekelahiran.findMany.data = [];
+          persentasekelahiran.findMany.totalPages = 1;
+        }
+      } catch (err) {
+        console.error("Gagal fetch berita paginated:", err);
+        persentasekelahiran.findMany.data = [];
+        persentasekelahiran.findMany.totalPages = 1;
+      } finally {
+        persentasekelahiran.findMany.loading = false;
       }
     },
   },
   findUnique: {
     data: null as Prisma.DataKematian_KelahiranGetPayload<{
-      omit: { isActive: true };
+      include: {
+        kematian: true;
+        kelahiran: true;
+      };
     }> | null,
     async load(id: string) {
       try {
@@ -114,13 +145,11 @@ const persentasekelahiran = proxy({
       }
 
       const formData = {
-        tahun: this.form.tahun,
-        kematianKasar: this.form.kematianKasar,
-        kelahiranKasar: this.form.kelahiranKasar,
-        kematianBayi: this.form.kematianBayi,
+        kematianId: this.form.kematianId,
+        kelahiranId: this.form.kelahiranId,
       };
 
-      const cek = templatePersentase.safeParse(formData);
+      const cek = templatePersentaseKelahiran.safeParse(formData);
       if (!cek.success) {
         const err = `[${cek.error.issues
           .map((v) => `${v.path.join(".")}`)
@@ -197,4 +226,521 @@ const persentasekelahiran = proxy({
   },
 });
 
-export default persentasekelahiran;
+// data kelahiran
+
+const templateKelahiran = z.object({
+  nama: z.string().min(1, "Nama harus diisi"),
+  tanggal: z.string().min(4, "Tahun harus diisi"),
+  jenisKelamin: z.string().min(1, "Jenis kelamin harus diisi"),
+  alamat: z.string().min(1, "Alamat harus diisi"),
+});
+
+const defaultKelahiran = {
+  nama: "",
+  tanggal: "",
+  jenisKelamin: "",
+  alamat: "",
+};
+
+const kelahiran = proxy({
+  create: {
+    form: { ...defaultKelahiran }, // ✅ ini kunci fix-nya
+    loading: false,
+    async create() {
+      const cek = templateKelahiran.safeParse(kelahiran.create.form);
+      if (!cek.success) {
+        const err = `[${cek.error.issues
+          .map((v) => `${v.path.join(".")}`)
+          .join("\n")}] required`;
+        return toast.error(err);
+      }
+
+      try {
+        kelahiran.create.loading = true;
+        const res = await ApiFetch.api.kesehatan.kelahiran["create"].post(
+          kelahiran.create.form
+        );
+        if (res.status === 200) {
+          kelahiran.findMany.load();
+          return toast.success("Kelahiran berhasil disimpan!");
+        }
+
+        return toast.error("Gagal menyimpan kelahiran");
+      } catch (error) {
+        console.log((error as Error).message);
+      } finally {
+        kelahiran.create.loading = false;
+      }
+    },
+    resetForm() {
+      kelahiran.create.form = { ...defaultKelahiran };
+    },
+  },
+  findMany: {
+    data: null as
+      | Prisma.KelahiranGetPayload<{
+          omit: {
+            isActive: true;
+          };
+        }>[]
+      | null,
+    page: 1,
+    totalPages: 1,
+    loading: false,
+    search: "",
+    load: async (page = 1, limit = 10, search = "") => {
+      kelahiran.findMany.loading = true; // ✅ Akses langsung via nama path
+      kelahiran.findMany.page = page;
+      kelahiran.findMany.search = search;
+
+      try {
+        const query: any = { page, limit };
+        if (search) query.search = search;
+
+        const res = await ApiFetch.api.kesehatan.kelahiran["findMany"].get({
+          query,
+        });
+
+        if (res.status === 200 && res.data?.success) {
+          kelahiran.findMany.data = res.data.data ?? [];
+          kelahiran.findMany.totalPages = res.data.totalPages ?? 1;
+        } else {
+          kelahiran.findMany.data = [];
+          kelahiran.findMany.totalPages = 1;
+        }
+      } catch (err) {
+        console.error("Gagal fetch kelahiran paginated:", err);
+        kelahiran.findMany.data = [];
+        kelahiran.findMany.totalPages = 1;
+      } finally {
+        kelahiran.findMany.loading = false;
+      }
+    },
+  },
+  findUnique: {
+    data: null as Prisma.KelahiranGetPayload<{
+      omit: {
+        isActive: true;
+      };
+    }> | null,
+    async load(id: string) {
+      try {
+        const res = await fetch(`/api/kesehatan/kelahiran/${id}`);
+        if (res.ok) {
+          const data = await res.json();
+          kelahiran.findUnique.data = data.data ?? null;
+        } else {
+          console.error("Failed to fetch kelahiran:", res.statusText);
+          kelahiran.findUnique.data = null;
+        }
+      } catch (error) {
+        console.error("Error fetching kelahiran:", error);
+        kelahiran.findUnique.data = null;
+      }
+    },
+  },
+  delete: {
+    loading: false,
+    async byId(id: string) {
+      if (!id) return toast.warn("ID tidak valid");
+
+      try {
+        kelahiran.delete.loading = true;
+
+        const response = await fetch(`/api/kesehatan/kelahiran/del/${id}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        const result = await response.json();
+
+        if (response.ok && result?.success) {
+          toast.success(result.message || "Kelahiran berhasil dihapus");
+          await kelahiran.findMany.load(); // refresh list
+        } else {
+          toast.error(result?.message || "Gagal menghapus kelahiran");
+        }
+      } catch (error) {
+        console.error("Gagal delete:", error);
+        toast.error("Terjadi kesalahan saat menghapus kelahiran");
+      } finally {
+        kelahiran.delete.loading = false;
+      }
+    },
+  },
+  edit: {
+    id: "",
+    form: { ...defaultKelahiran },
+    loading: false,
+
+    async load(id: string) {
+      if (!id) {
+        toast.warn("ID tidak valid");
+        return null;
+      }
+
+      try {
+        const response = await fetch(`/api/kesehatan/kelahiran/${id}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+
+        if (result?.success) {
+          const data = result.data;
+          this.id = data.id;
+          this.form = {
+            nama: data.nama,
+            tanggal: data.tanggal,
+            jenisKelamin: data.jenisKelamin,
+            alamat: data.alamat,
+          };
+          return data; // Return the loaded data
+        } else {
+          throw new Error(result?.message || "Gagal memuat data");
+        }
+      } catch (error) {
+        console.error("Error loading data kelahiran:", error);
+        toast.error(
+          error instanceof Error ? error.message : "Gagal memuat data"
+        );
+        return null;
+      }
+    },
+
+    async update() {
+      const cek = templateKelahiran.safeParse(kelahiran.edit.form);
+      if (!cek.success) {
+        const err = `[${cek.error.issues
+          .map((v) => `${v.path.join(".")}`)
+          .join("\n")}] required`;
+        toast.error(err);
+        return false;
+      }
+
+      try {
+        kelahiran.edit.loading = true;
+
+        const response = await fetch(`/api/kesehatan/kelahiran/${this.id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            nama: this.form.nama,
+            tanggal: this.form.tanggal,
+            jenisKelamin: this.form.jenisKelamin,
+            alamat: this.form.alamat,
+          }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(
+            errorData.message || `HTTP error! status: ${response.status}`
+          );
+        }
+
+        const result = await response.json();
+
+        if (result.success) {
+          toast.success("Berhasil update data kelahiran");
+          await kelahiran.findMany.load(); // refresh list
+          return true;
+        } else {
+          throw new Error(result.message || "Gagal update data kelahiran");
+        }
+      } catch (error) {
+        console.error("Error updating data kelahiran:", error);
+        toast.error(
+          error instanceof Error
+            ? error.message
+            : "Terjadi kesalahan saat update data kelahiran"
+        );
+        return false;
+      } finally {
+        kelahiran.edit.loading = false;
+      }
+    },
+
+    reset() {
+      kelahiran.edit.id = "";
+      kelahiran.edit.form = { ...defaultKelahiran };
+    },
+  },
+});
+
+
+// data kematian
+
+const templateKematian = z.object({
+  nama: z.string().min(1, "Nama harus diisi"),
+  tanggal: z.string().min(4, "Tahun harus diisi"),
+  jenisKelamin: z.string().min(1, "Jenis kelamin harus diisi"),
+  alamat: z.string().min(1, "Alamat harus diisi"),
+  penyebab: z.string().min(1, "Penyebab harus diisi"),
+});
+
+const defaultKematian = {
+  nama: "",
+  tanggal: "",
+  jenisKelamin: "",
+  alamat: "",
+  penyebab: "",
+};
+
+const kematian = proxy({
+  create: {
+    form: { ...defaultKematian }, // ✅ ini kunci fix-nya
+    loading: false,
+    async create() {
+      const cek = templateKematian.safeParse(kematian.create.form);
+      if (!cek.success) {
+        const err = `[${cek.error.issues
+          .map((v) => `${v.path.join(".")}`)
+          .join("\n")}] required`;
+        return toast.error(err);
+      }
+
+      try {
+        kematian.create.loading = true;
+        const res = await ApiFetch.api.kesehatan.kematian["create"].post(
+          kematian.create.form
+        );
+        if (res.status === 200) {
+          kematian.findMany.load();
+          return toast.success("Kematian berhasil disimpan!");
+        }
+
+        return toast.error("Gagal menyimpan kematian");
+      } catch (error) {
+        console.log((error as Error).message);
+      } finally {
+        kematian.create.loading = false;
+      }
+    },
+    resetForm() {
+      kematian.create.form = { ...defaultKematian };
+    },
+  },
+  findMany: {
+    data: null as
+      | Prisma.KematianGetPayload<{
+          omit: {
+            isActive: true;
+          };
+        }>[]
+      | null,
+    page: 1,
+    totalPages: 1,
+    loading: false,
+    search: "",
+    load: async (page = 1, limit = 10, search = "") => {
+      kematian.findMany.loading = true; // ✅ Akses langsung via nama path
+      kematian.findMany.page = page;
+      kematian.findMany.search = search;
+
+      try {
+        const query: any = { page, limit };
+        if (search) query.search = search;
+
+        const res = await ApiFetch.api.kesehatan.kematian["findMany"].get({
+          query,
+        });
+
+        if (res.status === 200 && res.data?.success) {
+          kematian.findMany.data = res.data.data ?? [];
+          kematian.findMany.totalPages = res.data.totalPages ?? 1;
+        } else {
+          kematian.findMany.data = [];
+          kematian.findMany.totalPages = 1;
+        }
+      } catch (err) {
+        console.error("Gagal fetch kematian paginated:", err);
+        kematian.findMany.data = [];
+        kematian.findMany.totalPages = 1;
+      } finally {
+        kematian.findMany.loading = false;
+      }
+    },
+  },
+  findUnique: {
+    data: null as Prisma.KematianGetPayload<{
+      omit: {
+        isActive: true;
+      };
+    }> | null,
+    async load(id: string) {
+      try {
+        const res = await fetch(`/api/kesehatan/kematian/${id}`);
+        if (res.ok) {
+          const data = await res.json();
+          kematian.findUnique.data = data.data ?? null;
+        } else {
+          console.error("Failed to fetch kematian:", res.statusText);
+          kematian.findUnique.data = null;
+        }
+      } catch (error) {
+        console.error("Error fetching kematian:", error);
+        kematian.findUnique.data = null;
+      }
+    },
+  },
+  delete: {
+    loading: false,
+    async byId(id: string) {
+      if (!id) return toast.warn("ID tidak valid");
+
+      try {
+        kematian.delete.loading = true;
+
+        const response = await fetch(`/api/kesehatan/kematian/del/${id}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        const result = await response.json();
+
+        if (response.ok && result?.success) {
+          toast.success(result.message || "Kematian berhasil dihapus");
+          await kematian.findMany.load(); // refresh list
+        } else {
+          toast.error(result?.message || "Gagal menghapus kematian");
+        }
+      } catch (error) {
+        console.error("Gagal delete:", error);
+        toast.error("Terjadi kesalahan saat menghapus kematian");
+      } finally {
+        kematian.delete.loading = false;
+      }
+    },
+  },
+  edit: {
+    id: "",
+    form: { ...defaultKematian },
+    loading: false,
+
+    async load(id: string) {
+      if (!id) {
+        toast.warn("ID tidak valid");
+        return null;
+      }
+
+      try {
+        const response = await fetch(`/api/kesehatan/kematian/${id}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+
+        if (result?.success) {
+          const data = result.data;
+          this.id = data.id;
+          this.form = {
+            nama: data.nama,
+            tanggal: data.tanggal,
+            jenisKelamin: data.jenisKelamin,
+            alamat: data.alamat,
+            penyebab: data.penyebab,
+          };
+          return data; // Return the loaded data
+        } else {
+          throw new Error(result?.message || "Gagal memuat data");
+        }
+      } catch (error) {
+        console.error("Error loading data kematian:", error);
+        toast.error(
+          error instanceof Error ? error.message : "Gagal memuat data"
+        );
+        return null;
+      }
+    },
+
+    async update() {
+      const cek = templateKematian.safeParse(kematian.edit.form);
+      if (!cek.success) {
+        const err = `[${cek.error.issues
+          .map((v) => `${v.path.join(".")}`)
+          .join("\n")}] required`;
+        toast.error(err);
+        return false;
+      }
+
+      try {
+        kematian.edit.loading = true;
+
+        const response = await fetch(`/api/kesehatan/kematian/${this.id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            nama: this.form.nama,
+            tanggal: this.form.tanggal,
+            jenisKelamin: this.form.jenisKelamin,
+            alamat: this.form.alamat,
+            penyebab: this.form.penyebab,
+          }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(
+            errorData.message || `HTTP error! status: ${response.status}`
+          );
+        }
+
+        const result = await response.json();
+
+        if (result.success) {
+          toast.success("Berhasil update data kematian");
+          await kematian.findMany.load(); // refresh list
+          return true;
+        } else {
+          throw new Error(result.message || "Gagal update data kematian");
+        }
+      } catch (error) {
+        console.error("Error updating data kematian:", error);
+        toast.error(
+          error instanceof Error
+            ? error.message
+            : "Terjadi kesalahan saat update data kematian"
+        );
+        return false;
+      } finally {
+        kematian.edit.loading = false;
+      }
+    },
+
+    reset() {
+      kematian.edit.id = "";
+      kematian.edit.form = { ...defaultKematian };
+    },
+  },
+});
+
+const persentaseKelahiranKematian = proxy({
+  persentasekelahiran,
+  kelahiran,
+  kematian
+});
+
+export default persentaseKelahiranKematian;

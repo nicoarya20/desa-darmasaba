@@ -22,6 +22,10 @@ export default async function persentaseKelahiranKematianFindUnique(request: Req
 
         const data = await prisma.dataKematian_Kelahiran.findUnique({
             where: { id },
+            include: {
+                kematian: true,
+                kelahiran: true,
+            },
         });
 
         if (!data) {

@@ -23,13 +23,17 @@ function ProfileView({ data }: ProfileViewProps) {
       }}
       px="xl"
     >
-      {data.image?.link && (
+      {data.image?.link ? (
         <Image
           src={data.image.link}
           alt={data.name || "Profile image"}
           sizes="100%"
           fit="contain"
         />
+      ): (
+        <Text>
+          -
+        </Text>
       )}
       <Box
         pos="absolute"
