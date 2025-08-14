@@ -4,8 +4,9 @@
 import puskesmasState from '@/app/admin/(dashboard)/_state/kesehatan/puskesmas/puskesmas';
 import colors from '@/con/colors';
 import ApiFetch from '@/lib/api-fetch';
-import { Box, Button, Center, FileInput, Image, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
-import { IconArrowBack, IconImageInPicture } from '@tabler/icons-react';
+import { Box, Button, Group, Image, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
+import { Dropzone } from '@mantine/dropzone';
+import { IconArrowBack, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
@@ -141,22 +142,6 @@ function EditPuskesmas() {
     }
   };
 
-  const handleFileChange = (selectedFile: File | null) => {
-    if (selectedFile) {
-      setFile(selectedFile);
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        if (e.target?.result) {
-          setPreviewImage(e.target.result as string);
-        }
-      };
-      reader.readAsDataURL(selectedFile);
-    } else {
-      setFile(null);
-      setPreviewImage(null);
-    }
-  };
-
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -186,7 +171,7 @@ function EditPuskesmas() {
         <Paper bg={colors['white-1']} p="md" w={{ base: '100%', md: '50%' }}>
           <Stack gap="xs">
             <Title order={3}>Edit Puskesmas</Title>
-            
+
             <TextInput
               label={<Text fz="sm" fw="bold">Nama Puskesmas</Text>}
               placeholder="masukkan nama puskesmas"
@@ -252,26 +237,66 @@ function EditPuskesmas() {
               onChange={(e) => handleNestedChange('kontak', 'kontakUGD', e.target.value)}
             />
 
-            <FileInput
-              placeholder="Pilih gambar"
-              label="Gambar"
-              accept="image/*"
-              leftSection={<IconImageInPicture size={16} />}
-              value={file}
-              onChange={handleFileChange}
-            />
+            <Box>
+              <Text fz={"md"} fw={"bold"}>Gambar</Text>
+              <Box>
+                <Dropzone
+                  onDrop={(files) => {
+                    const selectedFile = files[0]; // Ambil file pertama
+                    if (selectedFile) {
+                      setFile(selectedFile);
+                      setPreviewImage(URL.createObjectURL(selectedFile)); // Buat preview
+                    }
+                  }}
+                  onReject={() => toast.error('File tidak valid.')}
+                  maxSize={5 * 1024 ** 2} // Maks 5MB
+                  accept={{ 'image/*': [] }}
+                >
+                  <Group justify="center" gap="xl" mih={220} style={{ pointerEvents: 'none' }}>
+                    <Dropzone.Accept>
+                      <IconUpload size={52} color="var(--mantine-color-blue-6)" stroke={1.5} />
+                    </Dropzone.Accept>
+                    <Dropzone.Reject>
+                      <IconX size={52} color="var(--mantine-color-red-6)" stroke={1.5} />
+                    </Dropzone.Reject>
+                    <Dropzone.Idle>
+                      <IconPhoto size={52} color="var(--mantine-color-dimmed)" stroke={1.5} />
+                    </Dropzone.Idle>
 
-            {previewImage ? (
-              <Image alt="Preview" src={previewImage} w={200} h={200} />
-            ) : (
-              <Center w={200} h={200} bg="gray">
-                <IconImageInPicture />
-              </Center>
-            )}
+                    <div>
+                      <Text size="xl" inline>
+                        Drag gambar ke sini atau klik untuk pilih file
+                      </Text>
+                      <Text size="sm" c="dimmed" inline mt={7}>
+                        Maksimal 5MB dan harus format gambar
+                      </Text>
+                    </div>
+                  </Group>
+                </Dropzone>
 
-            <Button 
-              onClick={handleSubmit} 
-              bg={colors['blue-button']} 
+                {/* Tampilkan preview kalau ada */}
+                {previewImage && (
+                  <Box mt="sm">
+                    <Image
+                      src={previewImage}
+                      alt="Preview"
+                      style={{
+                        maxWidth: '100%',
+                        maxHeight: '200px',
+                        objectFit: 'contain',
+                        borderRadius: '8px',
+                        border: '1px solid #ddd',
+                      }}
+                    />
+                  </Box>
+                )}
+
+              </Box>
+            </Box>
+
+            <Button
+              onClick={handleSubmit}
+              bg={colors['blue-button']}
               loading={statePuskesmas.edit.loading}
             >
               Simpan Perubahan

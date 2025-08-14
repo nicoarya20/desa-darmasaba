@@ -3,7 +3,7 @@
 import CreateEditor from '@/app/admin/(dashboard)/_com/createEditor';
 import stateStrukturPPID from '@/app/admin/(dashboard)/_state/ppid/struktur_ppid/struktur_PPID';
 import colors from '@/con/colors';
-import { Box, Button, Paper, Stack, TextInput, Title } from '@mantine/core';
+import { Box, Button, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
@@ -46,12 +46,15 @@ function CreatePosisiOrganisasiPPID() {
                         value={stateOrganisasi.create.form.nama}
                         onChange={(e) => (stateOrganisasi.create.form.nama = e.currentTarget.value)}
                     />
-                    <CreateEditor
-                        value={stateOrganisasi.create.form.deskripsi}
-                        onChange={(htmlContent) => {
-                            stateOrganisasi.create.form.deskripsi = htmlContent;
-                        }}
-                    />
+                    <Box>
+                        <Text fz={"md"} fw={"bold"}>Deskripsi</Text>
+                        <CreateEditor
+                            value={stateOrganisasi.create.form.deskripsi}
+                            onChange={(htmlContent) => {
+                                stateOrganisasi.create.form.deskripsi = htmlContent;
+                            }}
+                        />
+                    </Box>
                     <TextInput
                         label="Hierarki"
                         type="number"

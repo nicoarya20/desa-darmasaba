@@ -116,14 +116,14 @@ function ListDetailDataPengangguran() {
         {!mounted && !chartData ? (
           <Box style={{ width: '100%', minWidth: 300, height: 400, minHeight: 300 }}>
             <Paper bg={colors['white-1']} p={'md'}>
-              <Title pb={10} order={3}>Data Kelahiran & Kematian</Title>
+              <Title pb={10} order={3}>Data Pengangguran Terdidik dan Tidak Terdidik</Title>
               <Text c='dimmed'>Belum ada data untuk ditampilkan dalam grafik</Text>
             </Paper>
           </Box>
         ) : (
           <Box style={{ width: '100%', minWidth: 300, height: 550, minHeight: 300 }}>
             <Paper bg={colors['white-1']} p={'md'}>
-              <Title pb={10} order={4}>Data Kelahiran & Kematian</Title>
+              <Title pb={10} order={4}>Data Pengangguran Terdidik dan Tidak Terdidik</Title>
               {mounted && chartData.length > 0 && (
                 <Box w={{ base: '100%', md: '70%' }}>
                   <BarChart

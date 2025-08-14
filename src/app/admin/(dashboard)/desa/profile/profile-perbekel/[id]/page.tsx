@@ -4,8 +4,9 @@ import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import stateProfileDesa from '@/app/admin/(dashboard)/_state/desa/profile';
 import colors from '@/con/colors';
 import ApiFetch from '@/lib/api-fetch';
-import { Box, Button, Center, FileInput, Group, Image, Paper, Stack, Text, Title } from '@mantine/core';
-import { IconArrowBack, IconImageInPicture } from '@tabler/icons-react';
+import { Box, Button, Center, Group, Image, Paper, Stack, Text, Title } from '@mantine/core';
+import { Dropzone } from '@mantine/dropzone';
+import { IconArrowBack, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
@@ -44,21 +45,7 @@ function ProfilePerbekel() {
       perbekelState.findUnique.reset(); // opsional: reset juga data lama
     };
   }, [params?.id, router]);
-  
-    const handleFileChange = (newFile: File | null) => {
-      if (!newFile) {
-        setFile(null);
-        return;
-      }
-  
-      setFile(newFile);
-  
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        setPreviewImage(event.target?.result as string);
-      };
-      reader.readAsDataURL(newFile);
-    };
+
 
   const handleSubmit = async () => {
     if (isSubmitting || !perbekelState.edit.form.biodata.trim()) {
@@ -128,27 +115,61 @@ function ProfilePerbekel() {
                     value={perbekelState.edit.form.biodata}
                     onChange={(val) => perbekelState.edit.form.biodata = val}
                   />
-                  {/* File Upload */}
-                  <FileInput
-                    label={<Text fz="sm" fw="bold">Upload Gambar Baru (Opsional)</Text>}
-                    value={file}
-                    onChange={handleFileChange}
-                    accept="image/*"
-                  />
-
-                  {/* Preview Gambar */}
                   <Box>
-                    <Text fz="sm" fw="bold" mb="xs">Preview Gambar</Text>
-                    {previewImage ? (
-                      <Image alt="Profile preview" src={previewImage} w={200} h={200} fit="cover" radius="md" />
-                    ) : (
-                      <Center w={200} h={200} bg="gray.2">
-                        <Stack align="center" gap="xs">
-                          <IconImageInPicture size={48} color="gray" />
-                          <Text size="sm" c="gray">Tidak ada gambar</Text>
-                        </Stack>
-                      </Center>
-                    )}
+                    <Text fz={"md"} fw={"bold"}>Gambar</Text>
+                    <Box>
+                      <Dropzone
+                        onDrop={(files) => {
+                          const selectedFile = files[0]; // Ambil file pertama
+                          if (selectedFile) {
+                            setFile(selectedFile);
+                            setPreviewImage(URL.createObjectURL(selectedFile)); // Buat preview
+                          }
+                        }}
+                        onReject={() => toast.error('File tidak valid.')}
+                        maxSize={5 * 1024 ** 2} // Maks 5MB
+                        accept={{ 'image/*': [] }}
+                      >
+                        <Group justify="center" gap="xl" mih={220} style={{ pointerEvents: 'none' }}>
+                          <Dropzone.Accept>
+                            <IconUpload size={52} color="var(--mantine-color-blue-6)" stroke={1.5} />
+                          </Dropzone.Accept>
+                          <Dropzone.Reject>
+                            <IconX size={52} color="var(--mantine-color-red-6)" stroke={1.5} />
+                          </Dropzone.Reject>
+                          <Dropzone.Idle>
+                            <IconPhoto size={52} color="var(--mantine-color-dimmed)" stroke={1.5} />
+                          </Dropzone.Idle>
+
+                          <div>
+                            <Text size="xl" inline>
+                              Drag gambar ke sini atau klik untuk pilih file
+                            </Text>
+                            <Text size="sm" c="dimmed" inline mt={7}>
+                              Maksimal 5MB dan harus format gambar
+                            </Text>
+                          </div>
+                        </Group>
+                      </Dropzone>
+
+                      {/* Tampilkan preview kalau ada */}
+                      {previewImage && (
+                        <Box mt="sm">
+                          <Image
+                            src={previewImage}
+                            alt="Preview"
+                            style={{
+                              maxWidth: '100%',
+                              maxHeight: '200px',
+                              objectFit: 'contain',
+                              borderRadius: '8px',
+                              border: '1px solid #ddd',
+                            }}
+                          />
+                        </Box>
+                      )}
+
+                    </Box>
                   </Box>
 
                   <Box>

@@ -36,6 +36,10 @@ function Page() {
   const [barChartData, setBarChartData] = useState<Array<{ month: string; count: number }>>([]);
 
   useShallowEffect(() => {
+    if (!data && !loading) {
+      state.findMany.load();
+      return;
+    }
     if (data) {
       // Hitung total berdasarkan jenis kelamin
       const totalLaki = data.filter((item: any) => item.jenisKelamin?.name?.toLowerCase() === 'laki-laki').length;

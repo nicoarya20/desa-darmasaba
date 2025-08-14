@@ -4,8 +4,9 @@ import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import infoWabahPenyakit from '@/app/admin/(dashboard)/_state/kesehatan/info-wabah-penyakit/infoWabahPenyakit';
 import colors from '@/con/colors';
 import ApiFetch from '@/lib/api-fetch';
-import { Box, Button, Center, FileInput, Image, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
-import { IconArrowBack, IconImageInPicture } from '@tabler/icons-react';
+import { Box, Button, Group, Image, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
+import { Dropzone } from '@mantine/dropzone';
+import { IconArrowBack, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
@@ -91,57 +92,91 @@ function EditInfoWabahPenyakit() {
         </Button>
       </Box>
       <Stack gap={"xs"}>
-      <Paper bg={colors['white-1']} p="md" w={{ base: '100%', md: '50%' }}>
-        <Stack gap="xs">
-          <Title order={3}>Edit Info Wabah Penyakit</Title>
-          <TextInput
-            value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            label={<Text fz="sm" fw="bold">Judul</Text>}
-            placeholder="masukkan judul"
-          />
-
-          <TextInput
-            value={formData.deskripsiSingkat}
-            onChange={(e) => setFormData({ ...formData, deskripsiSingkat: e.target.value })}
-            label={<Text fz="sm" fw="bold">Deskripsi Singkat</Text>}
-            placeholder="masukkan deskripsi"
-          />
-
-          <Box>
-            <Text fz="sm" fw="bold">Deskripsi</Text>
-            <EditEditor
-              value={formData.deskripsi}
-              onChange={(val) => setFormData({ ...formData, deskripsi: val })}
+        <Paper bg={colors['white-1']} p="md" w={{ base: '100%', md: '50%' }}>
+          <Stack gap="xs">
+            <Title order={3}>Edit Info Wabah Penyakit</Title>
+            <TextInput
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              label={<Text fz="sm" fw="bold">Judul</Text>}
+              placeholder="masukkan judul"
             />
-          </Box>
 
-          <FileInput
-            label={<Text fz="sm" fw="bold">Upload Gambar</Text>}
-            value={file}
-            onChange={async (e) => {
-              if (!e) return;
-              setFile(e);
-              const base64 = await e.arrayBuffer().then((buf) =>
-                'data:image/png;base64,' + Buffer.from(buf).toString('base64')
-              );
-              setPreviewImage(base64);
-            }}
-          />
+            <TextInput
+              value={formData.deskripsiSingkat}
+              onChange={(e) => setFormData({ ...formData, deskripsiSingkat: e.target.value })}
+              label={<Text fz="sm" fw="bold">Deskripsi Singkat</Text>}
+              placeholder="masukkan deskripsi"
+            />
 
-          {previewImage ? (
-            <Image alt="" src={previewImage} w={200} h={200} />
-          ) : (
-            <Center w={200} h={200} bg="gray">
-              <IconImageInPicture />
-            </Center>
-          )}
+            <Box>
+              <Text fz="sm" fw="bold">Deskripsi</Text>
+              <EditEditor
+                value={formData.deskripsi}
+                onChange={(val) => setFormData({ ...formData, deskripsi: val })}
+              />
+            </Box>
+            <Box>
+              <Text fz={"md"} fw={"bold"}>Gambar</Text>
+              <Box>
+                <Dropzone
+                  onDrop={(files) => {
+                    const selectedFile = files[0]; // Ambil file pertama
+                    if (selectedFile) {
+                      setFile(selectedFile);
+                      setPreviewImage(URL.createObjectURL(selectedFile)); // Buat preview
+                    }
+                  }}
+                  onReject={() => toast.error('File tidak valid.')}
+                  maxSize={5 * 1024 ** 2} // Maks 5MB
+                  accept={{ 'image/*': [] }}
+                >
+                  <Group justify="center" gap="xl" mih={220} style={{ pointerEvents: 'none' }}>
+                    <Dropzone.Accept>
+                      <IconUpload size={52} color="var(--mantine-color-blue-6)" stroke={1.5} />
+                    </Dropzone.Accept>
+                    <Dropzone.Reject>
+                      <IconX size={52} color="var(--mantine-color-red-6)" stroke={1.5} />
+                    </Dropzone.Reject>
+                    <Dropzone.Idle>
+                      <IconPhoto size={52} color="var(--mantine-color-dimmed)" stroke={1.5} />
+                    </Dropzone.Idle>
 
-          <Button onClick={handleSubmit} bg={colors['blue-button']}>
-            Simpan
-          </Button>
-        </Stack>
-      </Paper>
+                    <div>
+                      <Text size="xl" inline>
+                        Drag gambar ke sini atau klik untuk pilih file
+                      </Text>
+                      <Text size="sm" c="dimmed" inline mt={7}>
+                        Maksimal 5MB dan harus format gambar
+                      </Text>
+                    </div>
+                  </Group>
+                </Dropzone>
+
+                {/* Tampilkan preview kalau ada */}
+                {previewImage && (
+                  <Box mt="sm">
+                    <Image
+                      src={previewImage}
+                      alt="Preview"
+                      style={{
+                        maxWidth: '100%',
+                        maxHeight: '200px',
+                        objectFit: 'contain',
+                        borderRadius: '8px',
+                        border: '1px solid #ddd',
+                      }}
+                    />
+                  </Box>
+                )}
+
+              </Box>
+            </Box>
+            <Button onClick={handleSubmit} bg={colors['blue-button']}>
+              Simpan
+            </Button>
+          </Stack>
+        </Paper>
       </Stack>
     </Box >
   );

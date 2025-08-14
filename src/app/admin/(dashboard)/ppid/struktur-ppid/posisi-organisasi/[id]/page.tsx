@@ -93,12 +93,15 @@ function EditPosisiOrganisasiPPID() {
             label={<Text fw={"bold"} fz={"sm"}>Nama Posisi Organisasi</Text>}
             placeholder='Masukkan nama posisi organisasi'
           />
-          <EditEditor
-            value={formData.deskripsi}
-            onChange={(htmlContent) => {
-              setFormData({ ...formData, deskripsi: htmlContent });
-            }}
-          />
+          <Box>
+            <Text fz={"md"} fw={"bold"}>Deskripsi</Text>
+            <EditEditor
+              value={formData.deskripsi}
+              onChange={(htmlContent) => {
+                setFormData({ ...formData, deskripsi: htmlContent });
+              }}
+            />
+          </Box>
           <TextInput
             value={formData.hierarki}
             onChange={(e) => setFormData({ ...formData, hierarki: parseInt(e.target.value) })}
