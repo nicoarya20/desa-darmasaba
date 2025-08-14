@@ -125,8 +125,8 @@ import pelayananTelunjukSaktiDesa from "./data/desa/layanan/pelayananTelunjukSak
   }
   console.log("penghargaan success ...");
 
-   // =========== LAYANAN DESA ===========
-   for (const p of pelayananSuratKeterangan) {
+  // =========== LAYANAN DESA ===========
+  for (const p of pelayananSuratKeterangan) {
     await prisma.pelayananSuratKeterangan.upsert({
       where: { id: p.id },
       update: {
@@ -317,63 +317,42 @@ import pelayananTelunjukSaktiDesa from "./data/desa/layanan/pelayananTelunjukSak
 
   console.log("visi misi desa success ...");
 
-  // Flatten the nested array structure for posisiOrganisasiPPID
-  const flattenedPosisiOrganisasiPPID = posisiOrganisasiPPID.flat();
+  const flattenedPosisi = posisiOrganisasiPPID.flat();
 
-  for (const p of flattenedPosisiOrganisasiPPID) {
+  // ✅ Urutkan berdasarkan hierarki
+  const sortedPosisi = flattenedPosisi.sort((a, b) => a.hierarki - b.hierarki);
+
+  for (const p of sortedPosisi) {
+    console.log(`Seeding: ${p.nama} (id: ${p.id}, parent: ${p.parentId})`);
+
+    if (p.parentId) {
+      const parentExists = flattenedPosisi.some((pos) => pos.id === p.parentId);
+      if (!parentExists) {
+        console.warn(
+          `⚠️ Parent tidak ditemukan: ${p.parentId} untuk ${p.nama}`
+        );
+        continue;
+      }
+    }
+
     await prisma.posisiOrganisasiPPID.upsert({
-      where: {
-        id: p.id,
-      },
-      update: {
-        nama: p.nama,
-        deskripsi: p.deskripsi,
-        hierarki: p.hierarki,
-        parentId: p.parentId,
-      },
-      create: {
-        id: p.id,
-        nama: p.nama,
-        deskripsi: p.deskripsi,
-        hierarki: p.hierarki,
-        parentId: p.parentId,
-      },
+      where: { id: p.id },
+      update: p,
+      create: p,
     });
   }
-  console.log("posisi organisasi success ...");
+  console.log("✅ Posisi organisasi berhasil");
 
-  // Flatten the nested array structure for pegawaiPPID
-  const flattenedPegawaiPPID = pegawaiPPID.flat();
-
-  for (const p of flattenedPegawaiPPID) {
+  // 2. Seed Pegawai
+  const flattenedPegawai = pegawaiPPID.flat();
+  for (const p of flattenedPegawai) {
     await prisma.pegawaiPPID.upsert({
-      where: {
-        id: p.id,
-      },
-      update: {
-        namaLengkap: p.namaLengkap,
-        tanggalMasuk: new Date(p.tanggalMasuk),
-        email: p.email,
-        gelarAkademik: p.gelarAkademik,
-        telepon: p.telepon,
-        alamat: p.alamat,
-        posisiId: p.posisiId,
-        isActive: p.isActive,
-      },
-      create: {
-        id: p.id,
-        namaLengkap: p.namaLengkap,
-        tanggalMasuk: new Date(p.tanggalMasuk),
-        email: p.email,
-        gelarAkademik: p.gelarAkademik,
-        telepon: p.telepon,
-        alamat: p.alamat,
-        posisiId: p.posisiId,
-        isActive: p.isActive,
-      },
+      where: { id: p.id },
+      update: p,
+      create: p,
     });
   }
-  console.log("pegawai success ...");
+  console.log("✅ Pegawai berhasil");
 
   for (const l of pelayananPerizinanBerusaha) {
     await prisma.pelayananPerizinanBerusaha.upsert({

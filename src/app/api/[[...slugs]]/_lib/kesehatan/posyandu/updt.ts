@@ -11,6 +11,7 @@ type FormUpdate = Prisma.PosyanduGetPayload<{
         nomor: true;
         deskripsi: true;
         imageId: true;
+        jadwalPelayanan: true;
     }
 }>
 
@@ -24,6 +25,7 @@ export default async function posyanduUpdate(context: Context) {
             nomor,
             deskripsi,
             imageId,
+            jadwalPelayanan,
         } = body;
 
         if(!id) {
@@ -79,6 +81,7 @@ export default async function posyanduUpdate(context: Context) {
                 nomor,
                 deskripsi,
                 imageId,
+                jadwalPelayanan,
             }
         })
 

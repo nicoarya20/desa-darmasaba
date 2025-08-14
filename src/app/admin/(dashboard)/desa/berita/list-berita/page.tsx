@@ -47,7 +47,7 @@ function ListBerita({ search }: { search: string }) {
   if (loading || !data) {
     return <Skeleton h={500} />;
   }
-  
+
   const filteredData = data || [];
 
   return (

@@ -15,6 +15,7 @@ const Posyandu = new Elysia({
         nomor: t.String(),
         deskripsi: t.String(),
         imageId: t.String(),
+        jadwalPelayanan: t.String(),
     })
 })
 .get("/find-many", posyanduFindMany)
@@ -35,6 +36,7 @@ const Posyandu = new Elysia({
             nomor: t.String(),
             deskripsi: t.String(),
             imageId: t.String(),
+            jadwalPelayanan: t.String(),
         })
     }
 )

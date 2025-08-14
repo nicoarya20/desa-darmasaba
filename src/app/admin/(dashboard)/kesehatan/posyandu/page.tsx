@@ -1,6 +1,6 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Paper, Skeleton, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
+import { Box, Button, Center, Pagination, Paper, Skeleton, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
 import { IconDeviceImac, IconSearch } from '@tabler/icons-react';
 import HeaderSearch from '../../_com/header';
 import JudulList from '../../_com/judulList';
@@ -30,19 +30,21 @@ function ListPosyandu({ search }: { search: string }) {
   const statePosyandu = useProxy(posyandustate)
   const router = useRouter();
 
+  const {
+    data,
+    page,
+    totalPages,
+    loading,
+    load,
+  } = statePosyandu.findMany;
+
   useShallowEffect(() => {
-    statePosyandu.findMany.load()
-  }, [])
+    load(page, 10, search)
+  }, [page, search])
 
-  const filteredData = (statePosyandu.findMany.data || []).filter(item => {
-    const keyword = search.toLowerCase();
-    return (
-      item.name.toLowerCase().includes(keyword) ||
-      item.nomor.toString().toLowerCase().includes(keyword)
-    );
-  });
+  const filteredData = data || [];
 
-  if (!statePosyandu.findMany.data) {
+  if (loading || !data) {
     return (
       <Box py={10}>
         <Skeleton h={500} />
@@ -70,10 +72,20 @@ function ListPosyandu({ search }: { search: string }) {
             <TableTbody>
               {filteredData.map((item) => (
                 <TableTr key={item.id}>
-                  <TableTd>{item.name}</TableTd>
-                  <TableTd>{item.nomor}</TableTd>
                   <TableTd>
-                    <Text fz={"sm"} dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
+                    <Box w={100}>
+                      <Text truncate="end" lineClamp={1} fz={"sm"}>{item.name}</Text>
+                    </Box>
+                  </TableTd>
+                  <TableTd>
+                    <Box w={100}>
+                      <Text truncate="end" lineClamp={1} fz={"sm"}>{item.nomor}</Text>
+                    </Box>
+                  </TableTd>
+                  <TableTd>
+                    <Box w={100}>
+                      <Text truncate="end" lineClamp={1} fz={"sm"} dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
+                    </Box>
                   </TableTd>
                   <TableTd>
                     <Button onClick={() => router.push(`/admin/kesehatan/posyandu/${item.id}`)}>
@@ -86,6 +98,15 @@ function ListPosyandu({ search }: { search: string }) {
           </Table>
         </Box>
       </Paper>
+      <Center>
+        <Pagination
+          value={page}
+          onChange={(newPage) => load(newPage)} // ini penting!
+          total={totalPages}
+          mt="md"
+          mb="md"
+        />
+      </Center>
     </Box>
   );
 }

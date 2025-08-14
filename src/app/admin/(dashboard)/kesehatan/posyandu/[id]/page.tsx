@@ -64,6 +64,10 @@ function DetailPosyandu() {
                   <Text fz={"lg"} dangerouslySetInnerHTML={{ __html: statePosyandu.findUnique.data.deskripsi }} />
                 </Box>
                 <Box>
+                  <Text fz={"lg"} fw={"bold"}>Jadwal Pelayanan</Text>
+                  <Text fz={"lg"} dangerouslySetInnerHTML={{ __html: statePosyandu.findUnique.data.jadwalPelayanan }} />
+                </Box>
+                <Box>
                   <Text fz={"lg"} fw={"bold"}>Gambar</Text>
                   <Image src={statePosyandu.findUnique.data.image?.link} alt="gambar" />
                 </Box>

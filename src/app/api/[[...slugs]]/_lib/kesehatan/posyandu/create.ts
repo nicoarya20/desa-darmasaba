@@ -8,6 +8,7 @@ type FormCreate = Prisma.PosyanduGetPayload<{
         nomor: true;
         deskripsi: true;
         imageId: true;
+        jadwalPelayanan: true;
     };
 }>;
 export default async function posyanduCreate(context: Context) {
@@ -19,6 +20,7 @@ export default async function posyanduCreate(context: Context) {
             nomor: body.nomor,
             deskripsi: body.deskripsi,
             imageId: body.imageId,
+            jadwalPelayanan: body.jadwalPelayanan,
         }
     })
     return {

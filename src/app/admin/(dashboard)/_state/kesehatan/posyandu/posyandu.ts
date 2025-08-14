@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiFetch from "@/lib/api-fetch";
 import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
@@ -9,6 +10,7 @@ const templateForm = z.object({
   nomor: z.string().min(1, { message: "Nomor is required" }),
   deskripsi: z.string().min(1, { message: "Deskripsi is required" }),
   imageId: z.string().nonempty(),
+  jadwalPelayanan: z.string().min(1, { message: "Jadwal Pelayanan is required" }),
 });
 
 const defaultForm = {
@@ -16,6 +18,7 @@ const defaultForm = {
   nomor: "",
   deskripsi: "",
   imageId: "",
+  jadwalPelayanan: "",
 };
 
 const posyandustate = proxy({
@@ -50,19 +53,43 @@ const posyandustate = proxy({
     }
   },
   findMany: {
-    data: null as 
-    | Prisma.PosyanduGetPayload<{
-        include: {
+    data: null as
+      | Prisma.PosyanduGetPayload<{
+          include: {
             image: true;
+          };
+        }>[]
+      | null,
+    page: 1,
+    totalPages: 1,
+    loading: false,
+    search: "",
+   load: async (page = 1, limit = 10, search = "") => {
+      posyandustate.findMany.loading = true; // ✅ Akses langsung via nama path
+      posyandustate.findMany.page = page;
+      posyandustate.findMany.search = search;
+  
+      try {
+        const query: any = { page, limit };
+        if (search) query.search = search;
+    
+        const res = await ApiFetch.api.kesehatan.posyandu["find-many"].get({ query });
+    
+        if (res.status === 200 && res.data?.success) {
+          posyandustate.findMany.data = res.data.data ?? [];
+          posyandustate.findMany.totalPages = res.data.totalPages ?? 1;
+        } else {
+          posyandustate.findMany.data = [];
+          posyandustate.findMany.totalPages = 1;
         }
-    }>[]
-    | null,
-    async load() {
-        const res = await ApiFetch.api.kesehatan.posyandu["find-many"].get();
-        if (res.status === 200) {
-            posyandustate.findMany.data = res.data?.data ?? [];
-        }
-    }
+      } catch (err) {
+        console.error("Gagal fetch posyandu paginated:", err);
+        posyandustate.findMany.data = [];
+        posyandustate.findMany.totalPages = 1;
+      } finally {
+        posyandustate.findMany.loading = false;
+      }
+    },
   },
   findUnique: {
     data: null as 
@@ -148,6 +175,7 @@ const posyandustate = proxy({
                     nomor: data.nomor,
                     deskripsi: data.deskripsi,
                     imageId: data.imageId || "",
+                    jadwalPelayanan: data.jadwalPelayanan || "",
                 };
                 return data;
             } else {
@@ -181,6 +209,7 @@ const posyandustate = proxy({
                     nomor: this.form.nomor,
                     deskripsi: this.form.deskripsi,
                     imageId: this.form.imageId,
+                    jadwalPelayanan: this.form.jadwalPelayanan,
                 }),
             });
             

@@ -23,6 +23,7 @@ function CreatePosyandu() {
       nomor: "",
       deskripsi: "",
       imageId: "",
+      jadwalPelayanan: "",
     };
 
     setFile(null);
@@ -144,6 +145,15 @@ function CreatePosyandu() {
               value={statePosyandu.create.form.deskripsi}
               onChange={(htmlContent) => {
                 statePosyandu.create.form.deskripsi = htmlContent;
+              }}
+            />
+          </Box>
+          <Box>
+            <Text fw={"bold"} fz={"sm"}>Jadwal Pelayanan</Text>
+            <CreateEditor
+              value={statePosyandu.create.form.jadwalPelayanan}
+              onChange={(htmlContent) => {
+                statePosyandu.create.form.jadwalPelayanan = htmlContent;
               }}
             />
           </Box>

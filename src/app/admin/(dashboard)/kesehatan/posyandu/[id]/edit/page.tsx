@@ -25,6 +25,7 @@ function EditPosyandu() {
     nomor: statePosyandu.edit.form.nomor || '',
     deskripsi: statePosyandu.edit.form.deskripsi || '',
     imageId: statePosyandu.edit.form.imageId || '',
+    jadwalPelayanan: statePosyandu.edit.form.jadwalPelayanan || '',
   });
 
   useEffect(() => {
@@ -40,6 +41,7 @@ function EditPosyandu() {
             nomor: data.nomor || '',
             deskripsi: data.deskripsi || '',
             imageId: data.imageId || '',
+            jadwalPelayanan: data.jadwalPelayanan || '',
           });
 
           if (data?.image?.link) {
@@ -62,6 +64,7 @@ function EditPosyandu() {
         nomor: formData.nomor,
         deskripsi: formData.deskripsi,
         imageId: formData.imageId,
+        jadwalPelayanan: formData.jadwalPelayanan,
       }
 
       if (file) {
@@ -170,6 +173,16 @@ function EditPosyandu() {
               onChange={(htmlContent) => {
                 setFormData({ ...formData, deskripsi: htmlContent });
                 statePosyandu.edit.form.deskripsi = htmlContent;
+              }}
+            />
+          </Box>
+          <Box>
+            <Text fw={"bold"} fz={"sm"}>Jadwal Pelayanan</Text>
+            <EditEditor
+              value={formData.jadwalPelayanan}
+              onChange={(htmlContent) => {
+                setFormData({ ...formData, jadwalPelayanan: htmlContent });
+                statePosyandu.edit.form.jadwalPelayanan = htmlContent;
               }}
             />
           </Box>
