@@ -951,13 +951,16 @@ model Kematian {
 
 // ========================================= GRAFIK KEPUASAN ========================================= //
 model GrafikKepuasan {
-  id        String   @id @default(cuid())
-  label     String
-  jumlah    String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  deletedAt DateTime @default(now())
-  isActive  Boolean  @default(true)
+  id           String   @id @default(cuid())
+  nama         String
+  tanggal      DateTime
+  jenisKelamin String
+  alamat       String
+  penyakit     String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  deletedAt    DateTime @default(now())
+  isActive     Boolean  @default(true)
 }
 
 // ========================================= ARTIKEL KESEHATAN ========================================= //

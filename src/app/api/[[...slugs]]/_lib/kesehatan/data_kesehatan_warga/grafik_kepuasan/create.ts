@@ -1,25 +1,31 @@
 import prisma from "@/lib/prisma";
-import { Prisma } from "@prisma/client";
 import { Context } from "elysia";
 
-type FormCreate = Prisma.GrafikKepuasanGetPayload<{
-  select: {
-    label: true;
-    jumlah: true
-  };
-}>;
+type FormCreate = {
+  nama: string;
+  tanggal: string;
+  jenisKelamin: string;
+  alamat: string;
+  penyakit: string;
+};
+
 export default async function grafikKepuasanCreate(context: Context) {
   const body = context.body as FormCreate;
 
   const created = await prisma.grafikKepuasan.create({
     data: {
-      label: body.label,
-      jumlah: body.jumlah,
+      nama: body.nama,
+      tanggal: new Date(body.tanggal),
+      jenisKelamin: body.jenisKelamin,
+      alamat: body.alamat,
+      penyakit: body.penyakit,
     },
     select: {
-      id: true,
-      label: true,
-      jumlah: true,
+      nama: true,
+      tanggal: true,
+      jenisKelamin: true,
+      alamat: true,
+      penyakit: true,
     }
   });
   return {

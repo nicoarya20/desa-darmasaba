@@ -2,7 +2,7 @@
 import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
 import fasilitasKesehatanState from '@/app/admin/(dashboard)/_state/kesehatan/data_kesehatan_warga/fasilitasKesehatan';
 import colors from '@/con/colors';
-import { Box, Button, Flex, Paper, Skeleton, Stack, Text } from '@mantine/core';
+import { Box, Button, Flex, Grid, GridCol, Paper, Skeleton, Stack, Text } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack, IconEdit, IconX } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -12,7 +12,7 @@ import { useProxy } from 'valtio/utils';
 function DetailFasilitasKesehatan() {
   const params = useParams()
   const router = useRouter();
-  const stateFasilitasKesehatan = useProxy(fasilitasKesehatanState)
+  const stateFasilitasKesehatan = useProxy(fasilitasKesehatanState.fasilitasKesehatan)
   const [modalHapus, setModalHapus] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null)
 
@@ -45,9 +45,23 @@ function DetailFasilitasKesehatan() {
           <IconArrowBack color={colors['blue-button']} size={25} />
         </Button>
       </Box>
-      <Paper w={{ base: "100%", md: "50%" }} bg={colors['white-1']} p={'md'}>
+      <Paper bg={colors['white-1']} p={'md'}>
         <Stack>
-          <Text fz={"xl"} fw={"bold"}>Detail Fasilitas Kesehatan</Text>
+          <Grid>
+            <GridCol span={12}>
+            <Text fz={"xl"} fw={"bold"}>Detail Fasilitas Kesehatan</Text>
+            </GridCol>
+            <GridCol span={12}>
+              <Flex gap={"xs"}>
+                <Button color={colors['blue-button']} onClick={() => router.push(`/admin/kesehatan/data-kesehatan-warga/fasilitas_kesehatan/${params?.id}/dokter-tenaga-medis`)}>
+                  Tambah Dokter
+                </Button>
+                <Button color={colors['blue-button']} onClick={() => router.push(`/admin/kesehatan/data-kesehatan-warga/fasilitas_kesehatan/${params?.id}/layanan-unggulan/create`)}>
+                  Tambah Layanan
+                </Button>
+              </Flex>
+            </GridCol>
+          </Grid>
           {stateFasilitasKesehatan.findUnique.data ? (
             <Paper bg={colors['BG-trans']} p={'md'}>
               <Stack gap={"xs"}>
@@ -69,6 +83,14 @@ function DetailFasilitasKesehatan() {
                   <Text fz={"md"} dangerouslySetInnerHTML={{ __html: stateFasilitasKesehatan.findUnique.data.layananunggulan.content }} />
                 </Box>
                 <Box>
+                  <Text fz={"lg"} fw={"bold"}>Fasilitas Pendukung</Text>
+                  <Text fz={"md"} dangerouslySetInnerHTML={{ __html: stateFasilitasKesehatan.findUnique.data.fasilitaspendukung.content }} />
+                </Box>
+                <Box>
+                  <Text fz={"lg"} fw={"bold"}>Prosedur Pendaftaran</Text>
+                  <Text fz={"md"} dangerouslySetInnerHTML={{ __html: stateFasilitasKesehatan.findUnique.data.prosedurpendaftaran.content }} />
+                </Box>
+                <Box>
                   <Text fz={"md"} fw={"bold"}>Dokter dan Tenaga Medis</Text>
                   <Text fz={"md"} fw={"bold"}>Nama Dokter</Text>
                   <Text fz={"md"}>{stateFasilitasKesehatan.findUnique.data.dokterdantenagamedis.name}</Text>
@@ -76,14 +98,6 @@ function DetailFasilitasKesehatan() {
                   <Text fz={"md"}>{stateFasilitasKesehatan.findUnique.data.dokterdantenagamedis.specialist}</Text>
                   <Text fz={"md"} fw={"bold"}>Jadwal</Text>
                   <Text fz={"md"}>{stateFasilitasKesehatan.findUnique.data.dokterdantenagamedis.jadwal}</Text>
-                </Box>
-                <Box>
-                  <Text fz={"lg"} fw={"bold"}>Fasilitas Pendukung</Text>
-                  <Text fz={"md"} dangerouslySetInnerHTML={{ __html: stateFasilitasKesehatan.findUnique.data.fasilitaspendukung.content }} />
-                </Box>
-                <Box>
-                  <Text fz={"lg"} fw={"bold"}>Prosedur Pendaftaran</Text>
-                  <Text fz={"md"} dangerouslySetInnerHTML={{ __html: stateFasilitasKesehatan.findUnique.data.prosedurpendaftaran.content }} />
                 </Box>
                 <Box>
                   <Text fz={"lg"} fw={"bold"}>Tarif dan Layanan</Text>
@@ -111,6 +125,7 @@ function DetailFasilitasKesehatan() {
             </Paper>
           ) : null}
         </Stack>
+
       </Paper>
 
       {/* Modal Hapus */}

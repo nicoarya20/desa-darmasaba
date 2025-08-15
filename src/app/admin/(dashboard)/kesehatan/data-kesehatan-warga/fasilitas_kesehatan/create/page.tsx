@@ -10,7 +10,7 @@ import { useProxy } from 'valtio/utils';
 
 
 function CreateFasilitasKesehatan() {
-  const stateFasilitasKesehatan = useProxy(fasilitasKesehatanState)
+  const stateFasilitasKesehatan = useProxy(fasilitasKesehatanState.fasilitasKesehatan)
   const router = useRouter();
 
 

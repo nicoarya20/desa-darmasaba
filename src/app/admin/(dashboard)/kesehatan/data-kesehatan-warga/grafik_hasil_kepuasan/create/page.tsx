@@ -16,20 +16,16 @@ function CreateGrafikHasilKepuasanMasyarakat() {
 
   const resetForm = () => {
     stateGrafikKepuasan.create.form = {
-      label: "",
-      jumlah: "",
+      nama: "",
+      tanggal: "",
+      jenisKelamin: "",
+      alamat: "",
+      penyakit: "",
     }
   }
 
   const handleSubmit = async () => {
-    const id = await stateGrafikKepuasan.create.create();
-    if (id) {
-      const idStr = String(id);
-      await stateGrafikKepuasan.findUnique.load(idStr);
-      if (stateGrafikKepuasan.findUnique.data) {
-        setChartData([stateGrafikKepuasan.findUnique.data]);
-      }
-    }
+    await stateGrafikKepuasan.create.create();
     resetForm();
     router.push("/admin/kesehatan/data-kesehatan-warga/grafik_hasil_kepuasan");
   }
@@ -45,21 +41,48 @@ function CreateGrafikHasilKepuasanMasyarakat() {
           <Title order={4}>Tambah Grafik Hasil Kepuasan Masyarakat</Title>
           <Stack gap={"xs"}>
             <TextInput
-              label="Label"
+              label="Nama"
               type="text"
-              value={stateGrafikKepuasan.create.form.label}
-              placeholder="Masukkan label"
+              value={stateGrafikKepuasan.create.form.nama}
+              placeholder="Masukkan nama"
               onChange={(val) => {
-                stateGrafikKepuasan.create.form.label = val.currentTarget.value;
+                stateGrafikKepuasan.create.form.nama = val.currentTarget.value;
               }}
             />
             <TextInput
-              label="Jumlah"
-              type="number"
-              value={stateGrafikKepuasan.create.form.jumlah}
-              placeholder="Masukkan jumlah"
+              label="Tanggal"
+              type="date"
+              value={stateGrafikKepuasan.create.form.tanggal}
+              placeholder="Masukkan tanggal"
               onChange={(val) => {
-                stateGrafikKepuasan.create.form.jumlah = val.currentTarget.value;
+                stateGrafikKepuasan.create.form.tanggal = val.currentTarget.value;
+              }}
+            />
+            <TextInput
+              label="Jenis Kelamin"
+              type="text"
+              value={stateGrafikKepuasan.create.form.jenisKelamin}
+              placeholder="Masukkan jenis kelamin"
+              onChange={(val) => {
+                stateGrafikKepuasan.create.form.jenisKelamin = val.currentTarget.value;
+              }}
+            />
+            <TextInput
+              label="Alamat"
+              type="text"
+              value={stateGrafikKepuasan.create.form.alamat}
+              placeholder="Masukkan alamat"
+              onChange={(val) => {
+                stateGrafikKepuasan.create.form.alamat = val.currentTarget.value;
+              }}
+            />
+            <TextInput
+              label="Penyakit"
+              type="text"
+              value={stateGrafikKepuasan.create.form.penyakit}
+              placeholder="Masukkan penyakit"
+              onChange={(val) => {
+                stateGrafikKepuasan.create.form.penyakit = val.currentTarget.value;
               }}
             />
             <Group>

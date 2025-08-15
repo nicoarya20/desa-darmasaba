@@ -1,49 +1,95 @@
+'use client'
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import colors from '@/con/colors';
-import { Stack, Box, Text, Paper, Center, Flex, ColorSwatch, SimpleGrid, Anchor, Divider, Image } from '@mantine/core';
-import React from 'react';
+import { BarChart as MantineBarChart } from '@mantine/charts';
+import { Anchor, Box, Center, ColorSwatch, Divider, Flex, Image, Paper, SimpleGrid, Skeleton, Stack, Text } from '@mantine/core';
+import { useEffect, useState } from 'react';
 import BackButton from '../../desa/layanan/_com/BackButto';
-import { BarChart } from '@mantine/charts';
+
 import Link from 'next/link';
+// import { useRouter } from 'next/navigation';
+import { useMediaQuery, useShallowEffect } from '@mantine/hooks';
+
+import persentasekelahiran from '@/app/admin/(dashboard)/_state/kesehatan/data_kesehatan_warga/persentaseKelahiran';
+import { useProxy } from 'valtio/utils';
+import GrafikPenyakit from './grafik-penyakit/page';
 
 
-const dataKematian = [
-  {
-    id: 1,
-    tahun: '2023',
-    kematianKasar: '1.7',
-    kematianBayi: '1.4',
-    kelahiranKasar: '0.5'
-  },
-  {
-    id: 2,
-    tahun: '2024',
-    kematianKasar: '1.4',
-    kematianBayi: '1.8',
-    kelahiranKasar: '1.5'
-  },
-  {
-    id: 3,
-    tahun: '2025',
-    kematianKasar: '2.0',
-    kematianBayi: '1.5',
-    kelahiranKasar: '1.2'
-  },
-
-]
-
-const dataPenyakit = [
-  { penyakit: 'Covid', penderita: 335 },
-  { penyakit: 'Tuli', penderita: 105 },
-  { penyakit: 'Bisul', penderita: 98 },
-  { penyakit: 'Panas', penderita: 96 },
-  { penyakit: 'Batuk', penderita: 87 },
-  { penyakit: 'Sembelit', penderita: 72 },
-  { penyakit: 'Demam', penderita: 51 },
-  { penyakit: 'Gred', penderita: 36 },
-  { penyakit: 'Magh', penderita: 34 },
-  { penyakit: 'Farangitis Akut', penderita: 17 },
-]
 function Page() {
+  type DataTahunan = {
+    tahun: string;
+    totalKelahiran: number;
+    totalKematian: number;
+    data: Array<{
+      id: string;
+      bulan: string;
+      kelahiran: number;
+      kematian: number;
+    }>;
+  };
+
+  // Count occurrences per year
+  const countByYear = (data: any[], dateField: string) => {
+    const counts: Record<string, number> = {};
+    data?.forEach(item => {
+      const year = new Date(item[dateField]).getFullYear().toString();
+      counts[year] = (counts[year] || 0) + 1;
+    });
+    return counts;
+  };
+
+  const statePersentase = useProxy(persentasekelahiran);
+  const [chartData, setChartData] = useState<DataTahunan[]>([]);
+  const isTablet = useMediaQuery('(max-width: 1024px)');
+  const isMobile = useMediaQuery('(max-width: 768px)');
+
+
+  useShallowEffect(() => {
+    statePersentase.kelahiran.findMany.load(1, 1000); // Load all kelahiran data
+    statePersentase.kematian.findMany.load(1, 1000); // Load all kematian data
+  }, []);
+
+  useEffect(() => {
+    if (statePersentase.kelahiran.findMany.data && statePersentase.kematian.findMany.data) {
+      // Count kelahiran and kematian by year
+      const kelahiranByYear = countByYear(statePersentase.kelahiran.findMany.data, 'tanggal');
+      const kematianByYear = countByYear(statePersentase.kematian.findMany.data, 'tanggal');
+
+      // Get all unique years
+      const allYears = new Set([
+        ...Object.keys(kelahiranByYear),
+        ...Object.keys(kematianByYear)
+      ]);
+
+      // Create data structure for the chart
+      const dataByYear = Array.from(allYears).reduce<Record<string, DataTahunan>>((acc, year) => {
+        acc[year] = {
+          tahun: year,
+          totalKelahiran: kelahiranByYear[year] || 0,
+          totalKematian: kematianByYear[year] || 0,
+          data: []
+        };
+        return acc;
+      }, {});
+
+      const sortedData = Object.values(dataByYear).sort((a, b) =>
+        parseInt(a.tahun) - parseInt(b.tahun)
+      );
+
+      setChartData(sortedData);
+    }
+  }, [
+    statePersentase.kelahiran.findMany.data,
+    statePersentase.kematian.findMany.data,
+  ]);
+
+  if (!statePersentase.kelahiran.findMany.data || !statePersentase.kematian.findMany.data) {
+    return (
+      <Stack>
+        <Skeleton h={500} />
+      </Stack>
+    );
+  }
   return (
     <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"22"}>
       <Box px={{ base: 'md', md: 100 }}>
@@ -61,63 +107,50 @@ function Page() {
                 <Flex pb={30} justify={'flex-end'} gap={'xl'} align={'center'}>
                   <Box>
                     <Flex gap={{ base: 0, md: 5 }} align={'center'}>
-                      <Text fw={'bold'} fz={{ base: 'md', md: 'h4' }}>Angka Kematian Kasar</Text>
-                      <ColorSwatch color="#26308A" size={30} />
+                      <Text fw={'bold'} fz={{ base: 'md', md: 'h4' }}>Angka Kematian</Text>
+                      <ColorSwatch color="#EF3E3E" size={30} />
                     </Flex>
                   </Box>
                   <Box>
                     <Flex gap={{ base: 0, md: 5 }} align={'center'}>
-                      <Text fw={'bold'} fz={{ base: 'md', md: 'h4' }}>Angka Kematian Bayi</Text>
-                      <ColorSwatch color="#135A9B" size={30} />
-                    </Flex>
-                  </Box>
-                  <Box>
-                    <Flex gap={{ base: 0, md: 5 }} align={'center'}>
-                      <Text fw={'bold'} fz={{ base: 'md', md: 'h4' }}>Angka Kelahiran Kasar</Text>
+                      <Text fw={'bold'} fz={{ base: 'md', md: 'h4' }}>Angka Kelahiran</Text>
                       <ColorSwatch color="#3290CA" size={30} />
                     </Flex>
                   </Box>
                 </Flex>
-                <Center>
-                  <BarChart
-                    h={400}
-                    data={dataKematian}
-                    dataKey="tahun"
-                    series={[
-                      { name: 'kematianKasar', color: '#26308A' },
-                      { name: 'kematianBayi', color: '#135A9B' },
-                      { name: 'kelahiranKasar', color: '#3290CA' },
-                    ]}
-                    tickLine="y"
-                  />
-                </Center>
+                {chartData.length === 0 ? (
+                  <Text c="dimmed" ta="center" py="xl">
+                    Belum ada data yang tersedia untuk ditampilkan
+                  </Text>
+                ) : (
+                  <>
+                    {/* Main Chart */}
+                    <Center>
+                      <Box h={400}>
+                        <Box style={{
+                          width: isMobile ? '90vw' : isTablet ? '700px' : '800px',
+                          maxWidth: '100%',
+                          margin: '0 auto'
+                        }}>
+                          <MantineBarChart
+                            h={350}
+                            data={chartData}
+                            dataKey="tahun"
+                            series={[
+                              { name: 'totalKelahiran', label: 'Total Kelahiran', color: '#3290CA' },
+                              { name: 'totalKematian', label: 'Total Kematian', color: '#f03e3e' }
+                            ]}
+                            tickLine="y"
+                          />
+                        </Box>
+                      </Box>
+                    </Center>
+                  </>
+                )}
               </Box>
             </Paper>
           </Box>
-          {/* Bar Chart Penyakit */}
-          <Box>
-            <Paper p={"xl"} bg={colors['white-trans-1']}>
-              <Box pb={30}>
-                <Text pb={30} fw={"bold"} fz={{ base: 'h4', md: 'h3' }} ta={"center"}>
-                  Grafik Hasil Kepuasan Masyarakat Terhadap Pelayanan Publik
-                </Text>
-                <Center>
-                  <BarChart
-                    p={20}
-                    mb={30}
-                    h={500}
-                    data={dataPenyakit}
-                    dataKey='penyakit'
-                    orientation='vertical'
-                    yAxisProps={{ width: 80 }}
-                    barProps={{ radius: 10 }}
-                    series={[{ name: 'penderita', color: colors['blue-button'] }]}
-                  />
-                </Center>
-                <Text ta={"center"} fw={"bold"} fz={"h4"}>Jumlah Penderita</Text>
-              </Box>
-            </Paper>
-          </Box>
+          <GrafikPenyakit />
           {/* Artikel Kesehatan */}
           <Box>
             <SimpleGrid
@@ -193,7 +226,7 @@ function Page() {
                         </Text>
                       </Anchor>
                     </Box>
-                    <Divider color={colors['blue-button']} px={'xl'}/>
+                    <Divider color={colors['blue-button']} px={'xl'} />
                   </Stack>
                 </Paper>
               </Box>
@@ -233,7 +266,7 @@ function Page() {
                         09:00-14:00 WITA
                       </Text>
                       <Text fz={'h4'}>
-                      Puskesmas Abiansemal III
+                        Puskesmas Abiansemal III
                       </Text>
                       <Anchor component={Link} href={'/darmasaba/kesehatan/data-kesehatan-warga/jadwal-kegiatan'} c={colors['blue-button']} variant='transparent'>
                         <Text c={colors['blue-button']} fz={'h4'} >
@@ -249,16 +282,16 @@ function Page() {
                 <Paper p={'xl'} h={'112vh'} bg={colors['white-trans-1']}>
                   <Stack gap={'xs'}>
                     <Box>
-                    <Text ta={'center'} fw={"bold"} fz={'h3'} c={colors['blue-button']}>Artikel Kesehatan</Text>
-                    <Image pt={5} src={'/api/img/dbd.png'} alt="" />
+                      <Text ta={'center'} fw={"bold"} fz={'h3'} c={colors['blue-button']}>Artikel Kesehatan</Text>
+                      <Image pt={5} src={'/api/img/dbd.png'} alt="" />
                       <Text fz={'h4'} fw={'bold'} >
-                      Tips Mencegah Demam Berdarah Saat Musim Hujan
+                        Tips Mencegah Demam Berdarah Saat Musim Hujan
                       </Text>
                       <Text fz={'h6'} pb={10}>
-                      Diposting: 12 Februari 2025 | Dinas Kesehatan
+                        Diposting: 12 Februari 2025 | Dinas Kesehatan
                       </Text>
                       <Text fz={'h4'} pb={10}>
-                      Yuk Kenali gelaja dan cara penanganan DBD yang efektif untuk melindungi keluarga anda selama musim hujan.
+                        Yuk Kenali gelaja dan cara penanganan DBD yang efektif untuk melindungi keluarga anda selama musim hujan.
                       </Text>
                       <Anchor c={'black'} component={Link} href={'/darmasaba/kesehatan/data-kesehatan-warga/artikel-kesehatan'} variant='transparent'>
                         <Text c={colors['blue-button']} fz={'h4'} >
@@ -268,16 +301,16 @@ function Page() {
                     </Box>
                     <Divider color={colors['blue-button']} px={'xl'} />
                     <Box>
-                    <Text ta={'center'} fw={"bold"} fz={'h3'} c={colors['blue-button']}>Artikel Kesehatan</Text>
-                    <Image pt={5} src={'/api/img/dbd.png'} alt="" />
+                      <Text ta={'center'} fw={"bold"} fz={'h3'} c={colors['blue-button']}>Artikel Kesehatan</Text>
+                      <Image pt={5} src={'/api/img/dbd.png'} alt="" />
                       <Text fz={'h4'} fw={'bold'} >
-                      Tips Mencegah Demam Berdarah Saat Musim Hujan
+                        Tips Mencegah Demam Berdarah Saat Musim Hujan
                       </Text>
                       <Text fz={'h6'} pb={10}>
-                      Diposting: 12 Februari 2025 | Dinas Kesehatan
+                        Diposting: 12 Februari 2025 | Dinas Kesehatan
                       </Text>
                       <Text fz={'h4'} pb={10}>
-                      Yuk Kenali gelaja dan cara penanganan DBD yang efektif untuk melindungi keluarga anda selama musim hujan.
+                        Yuk Kenali gelaja dan cara penanganan DBD yang efektif untuk melindungi keluarga anda selama musim hujan.
                       </Text>
                       <Anchor c={'black'} href={'/darmasaba/kesehatan/data-kesehatan-warga/artikel-kesehatan'} variant='transparent'>
                         <Text c={colors['blue-button']} fz={'h4'} >

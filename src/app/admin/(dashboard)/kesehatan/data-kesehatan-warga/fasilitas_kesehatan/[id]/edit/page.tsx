@@ -39,7 +39,7 @@ interface FasilitasKesehatanFormBase {
 }
 
 function EditFasilitasKesehatan() {
-  const stateFasilitasKesehatan = useProxy(fasilitasKesehatanState);
+  const stateFasilitasKesehatan = useProxy(fasilitasKesehatanState.fasilitasKesehatan);
   const router = useRouter();
   const params = useParams();
 

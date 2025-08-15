@@ -1,80 +1,125 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
-
-import grafikkepuasan from '@/app/admin/(dashboard)/_state/kesehatan/data_kesehatan_warga/grafikKepuasan';
-import colors from '@/con/colors';
-import { Box, Button, Paper, Stack, TextInput, Title } from '@mantine/core';
-import { IconArrowBack } from '@tabler/icons-react';
-import { useParams, useRouter } from 'next/navigation';
-import { useEffect } from 'react';
 import { useProxy } from 'valtio/utils';
 
-function EditGrafikHasilKepuasan() {
+import { Box, Button, Flex, Paper, Skeleton, Stack, Text } from '@mantine/core';
+import { useShallowEffect } from '@mantine/hooks';
+import { IconArrowBack, IconEdit, IconX } from '@tabler/icons-react';
+import { useParams, useRouter } from 'next/navigation';
+import { useState } from 'react';
+
+import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
+import grafikkepuasan from '@/app/admin/(dashboard)/_state/kesehatan/data_kesehatan_warga/grafikKepuasan';
+import colors from '@/con/colors';
+
+
+function DetailGrafikHasilKepuasan() {
+  const state = useProxy(grafikkepuasan)
+  const [modalHapus, setModalHapus] = useState(false)
+  const [selectedId, setSelectedId] = useState<string | null>(null)
+  const params = useParams()
   const router = useRouter()
-  const params = useParams() as { id: string }
-  const stateGrafikKepuasan = useProxy(grafikkepuasan)
 
-  const id = params.id
+  useShallowEffect(() => {
+    state.findUnique.load(params?.id as string)
+  }, [])
 
-  // Load data saat komponen mount
-  useEffect(() => {
-    if (id) {
-      stateGrafikKepuasan.findUnique.load(id).then(() => {
-        const data = stateGrafikKepuasan.findUnique.data
-        if (data) {
-          stateGrafikKepuasan.update.form = {
-            label: data.label || '',
-            jumlah: data.jumlah || '',
-          }
-        }
-      })
+
+  const handleHapus = () => {
+    if (selectedId) {
+      state.delete.byId(selectedId)
+      setModalHapus(false)
+      setSelectedId(null)
+      router.push("/admin/kesehatan/data-kesehatan-warga/grafik_hasil_kepuasan")
     }
-  }, [id])
-
-  const handleSubmit = async () => {
-    // Set the ID before submitting
-    stateGrafikKepuasan.update.id = id;
-    await stateGrafikKepuasan.update.submit();
-    router.push('/admin/kesehatan/data-kesehatan-warga/grafik_hasil_kepuasan')
   }
-return (
+
+  if (!state.findUnique.data) {
+    return (
+      <Stack py={10}>
+        <Skeleton h={40} />
+      </Stack>
+    )
+  }
+
+  return (
     <Box>
       <Box mb={10}>
         <Button variant="subtle" onClick={() => router.back()}>
-          <IconArrowBack size={20} />
+          <IconArrowBack color={colors['blue-button']} size={25} />
         </Button>
       </Box>
-      <Paper bg={colors['white-1']} w={{ base: '100%', md: '50%' }} p={'md'}>
+      <Paper bg={colors['white-1']} w={{ base: "100%", md: "100%", lg: "50%" }} p={'md'}>
         <Stack>
-          <Title order={3}>Edit Grafik Hasil Kepuasan</Title>
-          <TextInput
-            label="Label"
-            placeholder="masukkan label"
-            value={stateGrafikKepuasan.update.form.label}
-            onChange={(val) => {
-              stateGrafikKepuasan.update.form.label = val.currentTarget.value;
-            }}
-          />
-          <TextInput
-            label="Jumlah"
-            type="number"
-            placeholder="masukkan jumlah"
-            value={stateGrafikKepuasan.update.form.jumlah}
-            onChange={(val) => {
-              stateGrafikKepuasan.update.form.jumlah = val.currentTarget.value;
-            }}
-          />
-          <Button
-            mt={10}
-            bg={colors['blue-button']}
-            onClick={handleSubmit}
-          >
-            Simpan
-          </Button>
+          <Text fz={"xl"} fw={"bold"}>Detail Data Grafik Hasil Kepuasan</Text>
+          {state.findUnique.data ? (
+            <Paper key={state.findUnique.data.id} bg={colors['BG-trans']} p={'md'}>
+              <Stack gap={"xs"}>
+                <Box>
+                  <Text fw={"bold"} fz={"lg"}>Nama</Text>
+                  <Text fz={"lg"}>{state.findUnique.data?.nama}</Text>
+                </Box>
+                <Box>
+                  <Text fw={"bold"} fz={"lg"}>Tanggal</Text>
+                  <Text fz={"lg"}>
+                    {new Date(state.findUnique.data?.tanggal).toLocaleDateString('id-ID', {
+                      day: '2-digit',
+                      month: 'long',
+                      year: 'numeric'
+                    })}
+                  </Text>
+                </Box>
+                <Box>
+                  <Text fw={"bold"} fz={"lg"}>Jenis Kelamin</Text>
+                  <Text fz={"lg"} >{state.findUnique.data?.jenisKelamin}</Text>
+                </Box>
+                <Box>
+                  <Text fw={"bold"} fz={"lg"}>Alamat</Text>
+                  <Text fz={"lg"} >{state.findUnique.data?.alamat}</Text>
+                </Box>
+                <Box>
+                  <Text fw={"bold"} fz={"lg"}>Penyakit</Text>
+                  <Text fz={"lg"} >{state.findUnique.data?.penyakit}</Text>
+                </Box>
+                <Flex gap={"xs"} mt={10}>
+                  <Button
+                    onClick={() => {
+                      if (state.findUnique.data) {
+                        setSelectedId(state.findUnique.data.id);
+                        setModalHapus(true);
+                      }
+                    }}
+                    disabled={state.delete.loading || !state.findUnique.data}
+                    color={"red"}
+                  >
+                    <IconX size={20} />
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      if (state.findUnique.data) {
+                        router.push(`/admin/kesehatan/data-kesehatan-warga/grafik_hasil_kepuasan/${state.findUnique.data.id}/edit`);
+                      }
+                    }}
+                    disabled={!state.findUnique.data}
+                    color={"green"}
+                  >
+                    <IconEdit size={20} />
+                  </Button>
+                </Flex>
+              </Stack>
+            </Paper>
+          ) : null}
         </Stack>
       </Paper>
+
+      {/* Modal Konfirmasi Hapus */}
+      <ModalKonfirmasiHapus
+        opened={modalHapus}
+        onClose={() => setModalHapus(false)}
+        onConfirm={handleHapus}
+        text='Apakah anda yakin ingin menghapus data ini?'
+      />
     </Box>
-  )
+  );
 }
 
-export default EditGrafikHasilKepuasan;
+export default DetailGrafikHasilKepuasan;

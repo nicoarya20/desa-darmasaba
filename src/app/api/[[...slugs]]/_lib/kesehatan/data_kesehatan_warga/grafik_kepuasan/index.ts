@@ -16,22 +16,21 @@ const GrafikKepuasan = new Elysia({
     .get("/find-many", grafikKepuasanFindMany)
     .post("/create", grafikKepuasanCreate, {
         body: t.Object({
-            label: t.String(),
-            jumlah: t.String(),
+            nama: t.String(),
+            tanggal: t.String(),
+            jenisKelamin: t.String(),
+            alamat: t.String(),
+            penyakit: t.String(),
         }),
     })
     .put("/:id", grafikKepuasanUpdate, {
-        params: t.Object({
-            id: t.String(),
-        }),
         body: t.Object({
-            label: t.String(),
-            jumlah: t.String(),
+            nama: t.String(),
+            tanggal: t.String(),
+            jenisKelamin: t.String(),
+            alamat: t.String(),
+            penyakit: t.String(),
         }),
     })
-    .delete("/del/:id", grafikKepuasanDelete, {
-        params: t.Object({
-            id: t.String(),
-        }),
-    })
+    .delete("/del/:id", grafikKepuasanDelete)
 export default GrafikKepuasan

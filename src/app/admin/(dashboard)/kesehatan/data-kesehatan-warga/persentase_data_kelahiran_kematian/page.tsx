@@ -2,7 +2,7 @@
 'use client'
 import persentasekelahiran from '@/app/admin/(dashboard)/_state/kesehatan/data_kesehatan_warga/persentaseKelahiran';
 import colors from '@/con/colors';
-import { ActionIcon, Box, Button, Center, Flex, Paper, Skeleton, Stack, Table, Text, Title } from '@mantine/core';
+import { ActionIcon, Box, Center, Flex, Paper, Select, Skeleton, Stack, Table, Text, Title } from '@mantine/core';
 import { useMediaQuery, useShallowEffect } from '@mantine/hooks';
 import { IconBabyCarriage, IconGrave2 } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
@@ -157,20 +157,18 @@ function GrafikPersentaseKelahiranKematian() {
       ) : (
         <>
           {/* Year Selector */}
-          <Box mb="md">
-            <Text mb="xs" fw={500}>Pilih Tahun:</Text>
-            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-              {chartData.map(({ tahun }) => (
-                <Button
-                  key={tahun}
-                  variant={selectedYear === tahun ? 'filled' : 'outline'}
-                  onClick={() => setSelectedYear(tahun)}
-                  size="xs"
-                >
-                  {tahun}
-                </Button>
-              ))}
-            </div>
+          <Box mb="md" style={{ maxWidth: '200px' }}>
+            <Select
+              label="Pilih Tahun"
+              placeholder="Pilih Tahun"
+              data={chartData.map((item) => ({
+                value: item.tahun,
+                label: item.tahun
+              }))}
+              value={selectedYear}
+              onChange={(value) => setSelectedYear(value || '')}
+              size="xs"
+            />
           </Box>
 
           {/* Main Chart */}

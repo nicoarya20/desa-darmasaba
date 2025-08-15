@@ -1,45 +1,36 @@
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
 
+type FormUpdate = {
+    nama: string;
+    tanggal: string;
+    jenisKelamin: string;
+    alamat: string;
+    penyakit: string;
+}
+
 export default async function grafikKepuasanUpdate(context: Context) {
-    const id = context.params?.id;
-    
-    if (!id) {
+    const body = (await context.body) as FormUpdate;
+    const id = context.params.id as string;
+
+    try {
+        const result = await prisma.grafikKepuasan.update({
+            where: { id },
+            data: {
+                nama: body.nama,
+                tanggal: new Date(body.tanggal),
+                jenisKelamin: body.jenisKelamin,
+                alamat: body.alamat,
+                penyakit: body.penyakit,
+            },
+        });
         return {
-            success: false,
-            message: "ID tidak ditemukan"
-        }
-    }
-
-    const {label, jumlah} = context.body as {
-        label: string;
-        jumlah: string;
-    }
-    
-    const existing = await prisma.grafikKepuasan.findUnique({
-        where: {
-            id: id,
-        },
-    })
-
-    if (!existing) {
-        return {
-            success: false,
-            message: "Data tidak ditemukan",
-        }
-    }
-
-    const updated = await prisma.grafikKepuasan.update({
-        where: { id },
-        data: {
-            label,
-            jumlah,
-        },
-    })
-
-    return {
-        success: true,
-        message: "Data berhasil diupdate",
-        data: updated,
+            success: true,
+            message: "Berhasil mengupdate data grafik kepuasan",
+            data: result,
+        };
+    } catch (error) {
+        console.error("Error updating data grafik kepuasan:", error);
+        throw new Error("Gagal mengupdate data grafik kepuasan: " + (error as Error).message);
     }
 }

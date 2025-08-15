@@ -5,7 +5,7 @@ import persentasekelahiran from '@/app/admin/(dashboard)/_state/kesehatan/data_k
 import colors from '@/con/colors';
 import { Box, Button, Center, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { IconArrowBack, IconEdit, IconSearch } from '@tabler/icons-react';
+import { IconArrowBack, IconDeviceImacCog, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
@@ -47,7 +47,7 @@ function ListKelahiran({ search }: { search: string }) {
 
   useShallowEffect(() => {
     load(page, 10, search)
-  }, [search])
+  }, [page, search])
 
   const filteredData = data || []
 
@@ -93,7 +93,7 @@ function ListKelahiran({ search }: { search: string }) {
                   <TableTd>{item.alamat}</TableTd>
                   <TableTd>
                     <Button color='green' onClick={() => router.push(`/admin/kesehatan/data-kesehatan-warga/persentase_data_kelahiran_kematian/kelahiran/${item.id}`)}>
-                      <IconEdit size={20} />
+                      <IconDeviceImacCog size={20} />
                     </Button>
                   </TableTd>
                 </TableTr>
