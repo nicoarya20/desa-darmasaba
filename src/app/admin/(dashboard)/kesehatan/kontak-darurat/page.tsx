@@ -1,6 +1,6 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Image, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
+import { Box, Button, Center, Image, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
 import { IconDeviceImacCog, IconSearch } from '@tabler/icons-react';
 import JudulList from '../../_com/judulList';
 import HeaderSearch from '../../_com/header';
@@ -21,7 +21,7 @@ function KontakDarurat() {
         value={search}
         onChange={(e) => setSearch(e.currentTarget.value)}
       />
-      <ListKontakDarurat search={search}/>
+      <ListKontakDarurat search={search} />
     </Box>
   );
 }
@@ -30,19 +30,21 @@ function ListKontakDarurat({ search }: { search: string }) {
   const kontakDaruratState = useProxy(kontakDarurat)
   const router = useRouter();
 
+  const {
+    data,
+    page,
+    totalPages,
+    loading,
+    load,
+  } = kontakDaruratState.findMany;
+
   useShallowEffect(() => {
-    kontakDaruratState.findMany.load()
-  }, [])
+    load(page, 10, search)
+  }, [page, search])
 
-  const filteredData = (kontakDaruratState.findMany.data || []).filter(item => {
-    const keyword = search.toLowerCase();
-    return (
-      item.name.toLowerCase().includes(keyword) ||
-      item.deskripsi.toLowerCase().includes(keyword)
-    );
-  });
+  const filteredData = data || []
 
-  if (!kontakDaruratState.findMany.data) {
+  if (loading || !data) {
     return (
       <Box py={10}>
         <Skeleton h={500} />
@@ -77,7 +79,9 @@ function ListKontakDarurat({ search }: { search: string }) {
                       </Box>
                     </TableTd>
                     <TableTd>
-                      <Text truncate="end" fz={"sm"} dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
+                      <Box w={100}>
+                        <Text truncate="end" lineClamp={1} fz={"sm"} dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
+                      </Box>
                     </TableTd>
                     <TableTd>
                       <Image w={100} src={item.image?.link} alt="image" />
@@ -94,6 +98,15 @@ function ListKontakDarurat({ search }: { search: string }) {
           </Box>
         </Stack>
       </Paper>
+      <Center>
+        <Pagination
+          value={page}
+          onChange={(newPage) => load(newPage)} // ini penting!
+          total={totalPages}
+          mt="md"
+          mb="md"
+        />
+      </Center>
     </Box>
   )
 }

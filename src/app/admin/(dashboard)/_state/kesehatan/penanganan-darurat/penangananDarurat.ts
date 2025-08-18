@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiFetch from "@/lib/api-fetch";
 import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
@@ -17,21 +18,45 @@ const defaultForm = {
 }
 
 const penangananDarurat = proxy({
-    findMany: {
-        data: [] as Prisma.PenangananDaruratGetPayload<{
-            include: {
-                image: true;
-            };
-        }>[],
-        async load() {
-            const res = await ApiFetch.api.kesehatan.penanganandarurat[
-                "find-many"
-            ].get();
-            if (res.status === 200) {
-                penangananDarurat.findMany.data = res.data?.data ?? [];
-            }
-        },
+  findMany: {
+    data: null as
+      | Prisma.PenangananDaruratGetPayload<{
+          include: {
+            image: true;
+          };
+        }>[]
+      | null,
+    page: 1,
+    totalPages: 1,
+    loading: false,
+    search: "",
+   load: async (page = 1, limit = 10, search = "") => {
+      penangananDarurat.findMany.loading = true; // ✅ Akses langsung via nama path
+      penangananDarurat.findMany.page = page;
+      penangananDarurat.findMany.search = search;
+  
+      try {
+        const query: any = { page, limit };
+        if (search) query.search = search;
+    
+        const res = await ApiFetch.api.kesehatan.penanganandarurat["find-many"].get({ query });
+    
+        if (res.status === 200 && res.data?.success) {
+         penangananDarurat.findMany.data = res.data.data ?? [];
+          penangananDarurat.findMany.totalPages = res.data.totalPages ?? 1;
+        } else {
+          penangananDarurat.findMany.data = [];
+          penangananDarurat.findMany.totalPages = 1;
+        }
+      } catch (err) {
+        console.error("Gagal fetch berita paginated:", err);
+        penangananDarurat.findMany.data = [];
+        penangananDarurat.findMany.totalPages = 1;
+      } finally {
+        penangananDarurat.findMany.loading = false;
+      }
     },
+  },
     create:{
         form: {...defaultForm},
         loading: false,

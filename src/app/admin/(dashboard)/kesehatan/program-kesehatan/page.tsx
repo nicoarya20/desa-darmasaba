@@ -39,7 +39,7 @@ function ListProgramKesehatan({ search }: { search: string }) {
   } = programKesehatanState.findMany;
 
   useShallowEffect(() => {
-    load(page, 3, search)
+    load(page, 10, search)
   }, [page, search])
 
   const filteredData = data || []

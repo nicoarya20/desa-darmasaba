@@ -1,25 +1,57 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+// /api/berita/findManyPaginated.ts
 import prisma from "@/lib/prisma";
+import { Context } from "elysia";
 
-export default async function kontakDaruratFindMany() {
-    try {
-        const data = await prisma.kontakDarurat.findMany({
-            where: {
-                isActive: true,
-            },
-            include: {
-                image: true,
-            }
-        })
-        return {
-            success: true,
-            message: "Success fetch kontak darurat",
-            data,
-        }
-    } catch (error) {
-        console.error("Find many error:", error);
-        return {
-            success: false,
-            message: "Failed fetch kontak darurat",
-        }
-    }
+async function kontakDaruratFindMany(context: Context) {
+  // Ambil parameter dari query
+  const page = Number(context.query.page) || 1;
+  const limit = Number(context.query.limit) || 10;
+  const search = (context.query.search as string) || '';
+  const skip = (page - 1) * limit;
+
+  // Buat where clause
+  const where: any = { isActive: true };
+
+  // Tambahkan pencarian (jika ada)
+  if (search) {
+    where.OR = [
+      { name: { contains: search, mode: 'insensitive' } },
+      { deskripsi: { contains: search, mode: 'insensitive' } },
+    ];
+  }
+
+  try {
+    // Ambil data dan total count secara paralel
+    const [data, total] = await Promise.all([
+      prisma.kontakDarurat.findMany({
+        where,
+        include: {
+          image: true,
+        },
+        skip,
+        take: limit,
+        orderBy: { createdAt: 'desc' },
+      }),
+      prisma.kontakDarurat.count({ where }),
+    ]);
+
+    return {
+      success: true,
+      message: "Berhasil ambil kontak darurat dengan pagination",
+      data,
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit),
+    };
+  } catch (e) {
+    console.error("Error di findMany paginated:", e);
+    return {
+      success: false,
+      message: "Gagal mengambil data kontak darurat",
+    };
+  }
 }
+
+export default kontakDaruratFindMany;

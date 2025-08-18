@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiFetch from "@/lib/api-fetch";
 import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
@@ -20,17 +21,41 @@ const defaultForm = {
 
 const infoWabahPenyakit = proxy({
   findMany: {
-    data: [] as Prisma.InfoWabahPenyakitGetPayload<{
-      include: {
-        image: true;
-      };
-    }>[],
-    async load() {
-      const res = await ApiFetch.api.kesehatan.infowabahpenyakit[
-        "find-many"
-      ].get();
-      if (res.status === 200) {
-        infoWabahPenyakit.findMany.data = res.data?.data ?? [];
+    data: null as
+      | Prisma.InfoWabahPenyakitGetPayload<{
+          include: {
+            image: true;
+          };
+        }>[]
+      | null,
+    page: 1,
+    totalPages: 1,
+    loading: false,
+    search: "",
+   load: async (page = 1, limit = 10, search = "") => {
+      infoWabahPenyakit.findMany.loading = true; // ✅ Akses langsung via nama path
+      infoWabahPenyakit.findMany.page = page;
+      infoWabahPenyakit.findMany.search = search;
+  
+      try {
+        const query: any = { page, limit };
+        if (search) query.search = search;
+    
+        const res = await ApiFetch.api.kesehatan.infowabahpenyakit["find-many"].get({ query });
+    
+        if (res.status === 200 && res.data?.success) {
+         infoWabahPenyakit.findMany.data = res.data.data ?? [];
+          infoWabahPenyakit.findMany.totalPages = res.data.totalPages ?? 1;
+        } else {
+          infoWabahPenyakit.findMany.data = [];
+          infoWabahPenyakit.findMany.totalPages = 1;
+        }
+      } catch (err) {
+        console.error("Gagal fetch info wabah penyakit paginated:", err);
+        infoWabahPenyakit.findMany.data = [];
+        infoWabahPenyakit.findMany.totalPages = 1;
+      } finally {
+        infoWabahPenyakit.findMany.loading = false;
       }
     },
   },

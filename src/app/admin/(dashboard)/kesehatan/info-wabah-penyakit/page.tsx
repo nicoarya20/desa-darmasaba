@@ -1,6 +1,6 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Image, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
+import { Box, Button, Center, Image, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
 import { IconDeviceImacCog, IconSearch } from '@tabler/icons-react';
 import JudulList from '../../_com/judulList';
 import HeaderSearch from '../../_com/header';
@@ -21,7 +21,7 @@ function InfoWabahPenyakit() {
         value={search}
         onChange={(e) => setSearch(e.currentTarget.value)}
       />
-      <ListInfoWabahPenyakit search={search}/>
+      <ListInfoWabahPenyakit search={search} />
     </Box>
   );
 }
@@ -30,19 +30,21 @@ function ListInfoWabahPenyakit({ search }: { search: string }) {
   const infoWabahPenyakitState = useProxy(infoWabahPenyakit)
   const router = useRouter()
 
+  const {
+    data,
+    page,
+    totalPages,
+    loading,
+    load,
+  } = infoWabahPenyakitState.findMany;
+
   useShallowEffect(() => {
-    infoWabahPenyakitState.findMany.load()
-  }, [])
+    load(page, 10, search)
+  }, [page, search])
 
-  const filteredData = (infoWabahPenyakitState.findMany.data || []).filter(item => {
-    const keyword = search.toLowerCase();
-    return (
-      item.name.toLowerCase().includes(keyword) ||
-      item.deskripsiSingkat.toLowerCase().includes(keyword)
-    );
-  });
+  const filteredData = data || []
 
-  if (!infoWabahPenyakitState.findMany.data) {
+  if (loading || !data) {
     return (
       <Box py={10}>
         <Skeleton h={500} />
@@ -51,49 +53,60 @@ function ListInfoWabahPenyakit({ search }: { search: string }) {
   }
   return (
     <Box py={10}>
-    <Paper bg={colors['white-1']} p={'md'}>
-      <Stack>
-        <JudulList
-          title='List Info Wabah Penyakit'
-          href='/admin/kesehatan/info-wabah-penyakit/create'
-        />
-        <Box style={{ overflowX: "auto" }}>
-          <Table striped withRowBorders withTableBorder style={{ minWidth: '700px' }}>
-            <TableThead>
-              <TableTr>
-                <TableTh>Judul</TableTh>
-                <TableTh>Deskripsi Singkat</TableTh>
-                <TableTh>Image</TableTh>
-                <TableTh>Detail</TableTh>
-              </TableTr>
-            </TableThead>
-            <TableTbody>
-              {filteredData.map((item) => (
-                <TableTr key={item.id}>
-                  <TableTd>
-                    <Box w={100}>
-                      <Text truncate="end" fz={"sm"}>{item.name}</Text>
-                    </Box>
-                  </TableTd>
-                  <TableTd>
-                    <Text truncate="end" fz={"sm"}>{item.deskripsiSingkat}</Text>
-                  </TableTd>
-                  <TableTd>
-                    <Image w={100} src={item.image?.link} alt="image" />
-                  </TableTd>
-                  <TableTd>
-                    <Button onClick={() => router.push(`/admin/kesehatan/info-wabah-penyakit/${item.id}`)}>
-                      <IconDeviceImacCog size={25} />
-                    </Button>
-                  </TableTd>
+      <Paper bg={colors['white-1']} p={'md'}>
+        <Stack>
+          <JudulList
+            title='List Info Wabah Penyakit'
+            href='/admin/kesehatan/info-wabah-penyakit/create'
+          />
+          <Box style={{ overflowX: "auto" }}>
+            <Table striped withRowBorders withTableBorder style={{ minWidth: '700px' }}>
+              <TableThead>
+                <TableTr>
+                  <TableTh>Judul</TableTh>
+                  <TableTh>Deskripsi Singkat</TableTh>
+                  <TableTh>Image</TableTh>
+                  <TableTh>Detail</TableTh>
                 </TableTr>
-              ))}
-            </TableTbody>
-          </Table>
-        </Box>
-      </Stack>
-    </Paper>
-  </Box>
+              </TableThead>
+              <TableTbody>
+                {filteredData.map((item) => (
+                  <TableTr key={item.id}>
+                    <TableTd>
+                      <Box w={100}>
+                        <Text truncate="end" fz={"sm"}>{item.name}</Text>
+                      </Box>
+                    </TableTd>
+                    <TableTd>
+                      <Box w={100}>
+                        <Text truncate="end" fz={"sm"}>{item.deskripsiSingkat}</Text>
+                      </Box>
+                    </TableTd>
+                    <TableTd>
+                      <Image w={100} src={item.image?.link} alt="image" />
+                    </TableTd>
+                    <TableTd>
+                      <Button onClick={() => router.push(`/admin/kesehatan/info-wabah-penyakit/${item.id}`)}>
+                        <IconDeviceImacCog size={25} />
+                      </Button>
+                    </TableTd>
+                  </TableTr>
+                ))}
+              </TableTbody>
+            </Table>
+          </Box>
+        </Stack>
+      </Paper>
+      <Center>
+        <Pagination
+          value={page}
+          onChange={(newPage) => load(newPage)} // ini penting!
+          total={totalPages}
+          mt="md"
+          mb="md"
+        />
+      </Center>
+    </Box>
   )
 }
 
