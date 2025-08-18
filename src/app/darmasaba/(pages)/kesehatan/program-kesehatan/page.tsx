@@ -1,28 +1,14 @@
+'use client'
 import colors from "@/con/colors";
-import { Box, Button, Center, Group, Image, Paper, SimpleGrid, Stack, Text } from "@mantine/core";
-import { IconBarbell, IconCalendar, IconOld, IconUser, IconUsersGroup } from "@tabler/icons-react";
+import { Box, Button, Center, Grid, GridCol, Group, Image, Pagination, Paper, SimpleGrid, Skeleton, Stack, Text, TextInput } from "@mantine/core";
+import { IconBarbell, IconCalendar, IconOld, IconSearch, IconUser, IconUsersGroup } from "@tabler/icons-react";
 import BackButton from "../../desa/layanan/_com/BackButto";
+import { useProxy } from "valtio/utils";
+import programKesehatan from "@/app/admin/(dashboard)/_state/kesehatan/program-kesehatan/programKesehatan";
+import { useState } from "react";
+import { useShallowEffect } from "@mantine/hooks";
+import { useRouter } from "next/navigation";
 
-const data1 = [
-  {
-    id: 1,
-    judul: 'Posyandu Terintegrasi',
-    image: '/api/img/pk-1.png',
-    deskripsi: 'Program pemantauan kesehatan terpadu untuk balita, ibu hamil, dan lansia di Banjar Gulingan dengan sistem pencatatan digital. Layanan meliputi penimbangan, imunisasi, dan konsultasi kesehatan'
-  },
-  {
-    id: 2,
-    judul: 'Senam Lansia',
-    image: '/api/img/pk-2.png',
-    deskripsi: 'Kegiatan olahraga teratur untuk warga lanjut usia dengan gerakan yang disesuaikan untuk menjaga kebugaran dan kesehatan. Program ini didampingi oleh instruktur profesional dan pemantauan kesehatan rutin.'
-  },
-  {
-    id: 3,
-    judul: 'Vaksinasi & Sterilasi HPR',
-    image: '/api/img/pk-3.png',
-    deskripsi: 'Program pengendalian hewan penular rabies melalui vaksinasi dan sterilisasi untuk mencegah penyebaran penyakit zoonosis. Dilengkapi dengan sistem pendataan digital untuk memantau cakupan dan efektivitas program.'
-  }
-]
 const data2 = [
   {
     id: 1,
@@ -44,21 +30,49 @@ const data2 = [
   },
 ]
 export default function Page() {
+  const state = useProxy(programKesehatan)
+  const router = useRouter()
+  const [search, setSearch] = useState('')
+  const {
+    data,
+    page,
+    totalPages,
+    loading,
+    load,
+  } = state.findMany;
+
+  useShallowEffect(() => {
+    load(page, 3, search)
+  }, [page, search])
+
+  if (loading || !data) {
+    return (
+      <Box py={10}>
+        <Skeleton h={500} />
+      </Box>
+    )
+  }
   return (
     <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"22"}>
       <Box px={{ base: 'md', md: 100 }}>
         <BackButton />
       </Box>
-      <Box>
-        <Text ta={"center"} fz={{ base: "h1", md: "2.5rem" }} c={colors["blue-button"]} fw={"bold"}>
-          Program Kesehatan Unggulan
-        </Text>
-        <Text px={{base: 20, md: 90}} ta={"center"} fz={{ base: "h4", md: "h3" }} >
-          Desa Darmasaba mengembangkan berbagai program kesehatan terpadu untuk meningkatkan kualitas
-          hidup masyarakat, dengan pendekatan preventif dan promotif bebrbasis teknologi serta prtisipasi aktif
-          warga.
-        </Text>
-      </Box>
+      <Grid px={{ base: 'md', md: 100 }} align="center">
+        <GridCol span={{ base: 12, md: 9 }}>
+          <Text fz={{ base: "h1", md: "2.5rem" }} c={colors["blue-button"]} fw={"bold"}>
+            Program Kesehatan Unggulan
+          </Text>
+        </GridCol>
+        <GridCol span={{ base: 12, md: 3 }}>
+          <TextInput
+            placeholder='Cari Program Kesehatan'
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            leftSection={<IconSearch size={20} />}
+            w={{ base: "50%", md: "100%" }}
+          />
+        </GridCol>
+      </Grid>
       <Box px={{ base: "md", md: 100 }}>
         <Stack gap={'lg'}>
           <SimpleGrid
@@ -67,27 +81,33 @@ export default function Page() {
               base: 1,
               md: 3,
             }}>
-            {data1.map((v, k) => {
+            {data.map((v, k) => {
               return (
                 <Paper radius={10} key={k} bg={colors["white-trans-1"]}>
                   <Stack gap={'xs'}>
                     <Center>
-                      <Image src={v.image} alt="" style={{ borderRadius: '14px 14px 0 0' }} />
+                      <Image src={v.image?.link} alt="" style={{ borderRadius: '14px 14px 0 0' }} />
                     </Center>
                     <Box px={'lg'}>
                       <Box>
                         <Text pb={10} c={colors["blue-button"]} fw={"bold"} fz={"h3"}>
-                          {v.judul}
+                          {v.name}
                         </Text>
-                        <Text ta={'justify'} fz={'h4'}>{v.deskripsi}</Text>
+                        <Text ta={'justify'} fz={'h4'} dangerouslySetInnerHTML={{ __html: v.deskripsi }}></Text>
                       </Box>
-                      <Box py={15}>
+                      <Box py={15} onClick={() => router.push(`/darmasaba/kesehatan/program-kesehatan/${v.id}`)}>
                         <Button fw={'bold'} fz={'h5'} c={colors["blue-button"]} bg={colors["BG-trans"]}>Detail Program</Button>
                       </Box>
                       <Group py={20}>
                         <Group gap="xs">
                           <IconCalendar size={18} />
-                          <Text size="sm">Selasa, 11 Januari 2025</Text>
+                          <Text size="sm">
+                            {v.createdAt ? new Date(v.createdAt).toLocaleDateString('id-ID', {
+                              day: 'numeric',
+                              month: 'long',
+                              year: 'numeric',
+                            }) : 'No date available'}
+                          </Text>
                         </Group>
                         <Group gap="xs">
                           <IconUser size={18} />
@@ -100,6 +120,15 @@ export default function Page() {
               )
             })}
           </SimpleGrid>
+          <Center>
+            <Pagination
+              value={page}
+              onChange={(newPage) => load(newPage)} // ini penting!
+              total={totalPages}
+              mt="md"
+              mb="md"
+            />
+          </Center>
         </Stack>
       </Box>
       <Box py={10} px={{ base: "md", md: 100 }}>
@@ -141,6 +170,5 @@ export default function Page() {
         </SimpleGrid>
       </Box>
     </Stack>
-
   )
 }

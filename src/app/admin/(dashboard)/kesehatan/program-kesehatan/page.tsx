@@ -1,6 +1,6 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Image, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
+import { Box, Button, Center, Image, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
 import { IconDeviceImacCog, IconSearch } from '@tabler/icons-react';
 import JudulList from '../../_com/judulList';
 import HeaderSearch from '../../_com/header';
@@ -21,7 +21,7 @@ function ProgramKesehatan() {
         value={search}
         onChange={(e) => setSearch(e.currentTarget.value)}
       />
-      <ListProgramKesehatan search={search}/>
+      <ListProgramKesehatan search={search} />
     </Box>
   );
 }
@@ -30,19 +30,21 @@ function ListProgramKesehatan({ search }: { search: string }) {
   const programKesehatanState = useProxy(programKesehatan)
   const router = useRouter()
 
+  const {
+    data,
+    page,
+    totalPages,
+    loading,
+    load,
+  } = programKesehatanState.findMany;
+
   useShallowEffect(() => {
-    programKesehatanState.findMany.load()
-  }, [])
+    load(page, 3, search)
+  }, [page, search])
 
-  const filteredData = (programKesehatanState.findMany.data || []).filter(item => {
-    const keyword = search.toLowerCase();
-    return (
-      item.name.toLowerCase().includes(keyword) ||
-      item.deskripsiSingkat.toLowerCase().includes(keyword)
-    );
-  });
+  const filteredData = data || []
 
-  if (!programKesehatanState.findMany.data) {
+  if (loading || !data) {
     return (
       <Box py={10}>
         <Skeleton h={500} />
@@ -77,7 +79,9 @@ function ListProgramKesehatan({ search }: { search: string }) {
                       </Box>
                     </TableTd>
                     <TableTd>
-                      <Text truncate="end" fz={"sm"} dangerouslySetInnerHTML={{ __html: item.deskripsiSingkat }} />
+                      <Box w={100}>
+                        <Text truncate="end" fz={"sm"} dangerouslySetInnerHTML={{ __html: item.deskripsiSingkat }} />
+                      </Box>
                     </TableTd>
                     <TableTd>
                       <Image w={100} src={item.image?.link} alt="image" />
@@ -94,6 +98,15 @@ function ListProgramKesehatan({ search }: { search: string }) {
           </Box>
         </Stack>
       </Paper>
+      <Center>
+        <Pagination
+          value={page}
+          onChange={(newPage) => load(newPage)} // ini penting!
+          total={totalPages}
+          mt="md"
+          mb="md"
+        />
+      </Center>
     </Box>
   )
 }

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiFetch from "@/lib/api-fetch";
 import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
@@ -163,13 +164,43 @@ const puskesmasState = proxy({
   },
 
   findMany: {
-    data: null as Prisma.PuskesmasGetPayload<{
-      include: { image: true; jam: true; kontak: true };
-    }>[] | null,
-    async load() {
-      const res = await ApiFetch.api.kesehatan.puskesmas["find-many"].get();
-      if (res.status === 200) {
-        puskesmasState.findMany.data = res.data?.data ?? [];
+    data: null as
+      | Prisma.PuskesmasGetPayload<{
+          include: {
+            image: true;
+            jam: true;
+            kontak: true;
+          };
+        }>[]
+      | null,
+    page: 1,
+    totalPages: 1,
+    loading: false,
+    search: "",
+   load: async (page = 1, limit = 10, search = "") => {
+      puskesmasState.findMany.loading = true; // ✅ Akses langsung via nama path
+      puskesmasState.findMany.page = page;
+      puskesmasState.findMany.search = search;
+  
+      try {
+        const query: any = { page, limit };
+        if (search) query.search = search;
+    
+        const res = await ApiFetch.api.kesehatan.puskesmas["find-many"].get({ query });
+    
+        if (res.status === 200 && res.data?.success) {
+          puskesmasState.findMany.data = res.data.data ?? [];
+          puskesmasState.findMany.totalPages = res.data.totalPages ?? 1;
+        } else {
+          puskesmasState.findMany.data = [];
+          puskesmasState.findMany.totalPages = 1;
+        }
+      } catch (err) {
+        console.error("Gagal fetch berita paginated:", err);
+        puskesmasState.findMany.data = [];
+        puskesmasState.findMany.totalPages = 1;
+      } finally {
+        puskesmasState.findMany.loading = false;
       }
     },
   },

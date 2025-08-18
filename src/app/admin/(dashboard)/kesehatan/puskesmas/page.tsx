@@ -1,6 +1,6 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Image, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr } from '@mantine/core';
+import { Box, Button, Center, Image, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconDeviceImacCog, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
@@ -21,7 +21,7 @@ function Puskesmas() {
         value={search}
         onChange={(e) => setSearch(e.currentTarget.value)}
       />
-      <ListPuskesmas search={search}/>
+      <ListPuskesmas search={search} />
     </Box>
   );
 }
@@ -30,64 +30,75 @@ function ListPuskesmas({ search }: { search: string }) {
   const statePuskesmas = useProxy(puskesmasState)
   const router = useRouter();
 
+  const {
+    data,
+    page,
+    totalPages,
+    loading,
+    load,
+  } = statePuskesmas.findMany;
+
   useShallowEffect(() => {
-    statePuskesmas.findMany.load()
-  }, [])
+    load(page, 3, search)
+  }, [page, search])
 
-  const filteredData = (statePuskesmas.findMany.data || []).filter(item => {
-    const keyword = search.toLowerCase();
-    return (
-      item.name.toLowerCase().includes(keyword) ||
-      item.alamat.toLowerCase().includes(keyword)
-    );
-  });
+  const filteredData = data || []
 
-  if (!statePuskesmas.findMany.data) {
+  if (loading || !data) {
     return (
       <Box py={10}>
-        <Skeleton h={500}/>
+        <Skeleton h={500} />
       </Box>
     )
   }
   return (
     <Box py={10}>
-    <Paper bg={colors['white-1']} p={'md'}>
-      <Stack>
-        <JudulList
-          title='List Puskesmas'
-          href='/admin/kesehatan/puskesmas/create'
-        />
-        <Box style={{ overflowX: "auto" }}>
-          <Table striped withRowBorders withTableBorder style={{ minWidth: '700px' }}>
-            <TableThead>
-              <TableTr>
-                <TableTh>Nama Puskesmas</TableTh>
-                <TableTh>Alamat</TableTh>
-                <TableTh>Image</TableTh>
-                <TableTh>Detail</TableTh>
-              </TableTr>
-            </TableThead>
-            <TableTbody>
-              {filteredData.map((item) => (
-                <TableTr key={item.id}>
-                  <TableTd>{item.name}</TableTd>
-                  <TableTd>{item.alamat}</TableTd>
-                  <TableTd>
-                    <Image w={100} src={item.image.link} alt="image" />
-                  </TableTd>
-                  <TableTd>
-                    <Button onClick={() => router.push(`/admin/kesehatan/puskesmas/${item.id}`)}>
-                      <IconDeviceImacCog size={25} />
-                    </Button>
-                  </TableTd>
+      <Paper bg={colors['white-1']} p={'md'}>
+        <Stack>
+          <JudulList
+            title='List Puskesmas'
+            href='/admin/kesehatan/puskesmas/create'
+          />
+          <Box style={{ overflowX: "auto" }}>
+            <Table striped withRowBorders withTableBorder style={{ minWidth: '700px' }}>
+              <TableThead>
+                <TableTr>
+                  <TableTh>Nama Puskesmas</TableTh>
+                  <TableTh>Alamat</TableTh>
+                  <TableTh>Image</TableTh>
+                  <TableTh>Detail</TableTh>
                 </TableTr>
-              ))}
-            </TableTbody>
-          </Table>
-        </Box>
-      </Stack>
-    </Paper>
-  </Box>
+              </TableThead>
+              <TableTbody>
+                {filteredData.map((item) => (
+                  <TableTr key={item.id}>
+                    <TableTd>{item.name}</TableTd>
+                    <TableTd>{item.alamat}</TableTd>
+                    <TableTd>
+                      <Image w={100} src={item.image.link} alt="image" />
+                    </TableTd>
+                    <TableTd>
+                      <Button onClick={() => router.push(`/admin/kesehatan/puskesmas/${item.id}`)}>
+                        <IconDeviceImacCog size={25} />
+                      </Button>
+                    </TableTd>
+                  </TableTr>
+                ))}
+              </TableTbody>
+            </Table>
+          </Box>
+        </Stack>
+      </Paper>
+      <Center>
+        <Pagination
+          value={page}
+          onChange={(newPage) => load(newPage)} // ini penting!
+          total={totalPages}
+          mt="md"
+          mb="md"
+        />
+      </Center>
+    </Box>
   )
 }
 
