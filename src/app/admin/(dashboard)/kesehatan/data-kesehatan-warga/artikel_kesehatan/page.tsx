@@ -1,6 +1,6 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr } from '@mantine/core';
+import { Box, Button, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconDeviceImacCog, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
@@ -22,7 +22,7 @@ function ArtikelKesehatan() {
         value={search}
         onChange={(e) => setSearch(e.currentTarget.value)}
       />
-      <ListArtikelKesehatan search={search}/>
+      <ListArtikelKesehatan search={search} />
     </Box>
   );
 }
@@ -46,45 +46,53 @@ function ListArtikelKesehatan({ search }: { search: string }) {
   if (!stateArtikelKesehatan.findMany.data) {
     return (
       <Box py={10}>
-        <Skeleton h={500}/>
+        <Skeleton h={500} />
       </Box>
     )
   }
   return (
     <Box py={10}>
-    <Paper bg={colors['white-1']} p={'md'}>
-      <Stack>
-        <JudulList
-          title='List Artikel Kesehatan'
-          href='/admin/kesehatan/data-kesehatan-warga/artikel_kesehatan/create'
-        />
-        <Box style={{ overflowX: "auto" }}>
-          <Table striped withRowBorders withTableBorder style={{ minWidth: '700px' }}>
-            <TableThead>
-              <TableTr>
-                <TableTh>Judul</TableTh>
-                <TableTh>Content</TableTh>
-                <TableTh>Detail</TableTh>
-              </TableTr>
-            </TableThead>
-            <TableTbody>
-              {filteredData.map((item) => (
-                <TableTr key={item.id}>
-                  <TableTd>{item.title}</TableTd>
-                  <TableTd>{item.content}</TableTd>
-                  <TableTd>
-                    <Button onClick={() => router.push(`/admin/kesehatan/data-kesehatan-warga/artikel_kesehatan/${item.id}`)}>
-                      <IconDeviceImacCog size={25} />
-                    </Button>
-                  </TableTd>
+      <Paper bg={colors['white-1']} p={'md'}>
+        <Stack>
+          <JudulList
+            title='List Artikel Kesehatan'
+            href='/admin/kesehatan/data-kesehatan-warga/artikel_kesehatan/create'
+          />
+          <Box style={{ overflowX: "auto" }}>
+            <Table striped withRowBorders withTableBorder style={{ minWidth: '700px' }}>
+              <TableThead>
+                <TableTr>
+                  <TableTh>Judul</TableTh>
+                  <TableTh>Content</TableTh>
+                  <TableTh>Detail</TableTh>
                 </TableTr>
-              ))}
-            </TableTbody>
-          </Table>
-        </Box>
-      </Stack>
-    </Paper>
-  </Box>
+              </TableThead>
+              <TableTbody>
+                {filteredData.map((item) => (
+                  <TableTr key={item.id}>
+                    <TableTd>
+                      <Box w={100}>
+                        <Text truncate={'end'} lineClamp={1} fz={'h5'}>{item.title}</Text>
+                      </Box>
+                    </TableTd>
+                    <TableTd>
+                      <Box w={200}>
+                        <Text truncate={'end'} lineClamp={1} fz={'h5'}>{item.content}</Text>
+                      </Box>
+                    </TableTd>
+                    <TableTd>
+                      <Button onClick={() => router.push(`/admin/kesehatan/data-kesehatan-warga/artikel_kesehatan/${item.id}`)}>
+                        <IconDeviceImacCog size={25} />
+                      </Button>
+                    </TableTd>
+                  </TableTr>
+                ))}
+              </TableTbody>
+            </Table>
+          </Box>
+        </Stack>
+      </Paper>
+    </Box>
   )
 }
 

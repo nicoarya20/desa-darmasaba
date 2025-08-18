@@ -1,22 +1,22 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Flex, Grid, GridCol, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr } from '@mantine/core';
+import { Box, Button, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { IconDeviceImacCog, IconList, IconSearch } from '@tabler/icons-react';
+import { IconDeviceImacCog, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
-import fasilitasKesehatanState from '../../../_state/kesehatan/data_kesehatan_warga/fasilitasKesehatan';
 import HeaderSearch from '../../../_com/header';
 import JudulList from '../../../_com/judulList';
-import { useState } from 'react';
+import fasilitasKesehatanState from '../../../_state/kesehatan/data_kesehatan_warga/fasilitasKesehatan';
 
 
 function FasilitasKesehatan() {
   const [search, setSearch] = useState("");
-  const router = useRouter();
+  // const router = useRouter();
   return (
     <Box>
-      <Grid>
+      {/* <Grid>
         <GridCol span={12}>
           <HeaderSearch
             title='Fasilitas Kesehatan'
@@ -36,7 +36,14 @@ function FasilitasKesehatan() {
             </Button>
           </Flex>
         </GridCol>
-      </Grid>
+      </Grid> */}
+      <HeaderSearch
+        title='Fasilitas Kesehatan'
+        placeholder='pencarian'
+        searchIcon={<IconSearch size={20} />}
+        value={search}
+        onChange={(e) => setSearch(e.currentTarget.value)}
+      />
       <ListFasilitasKesehatan search={search} />
     </Box>
   );

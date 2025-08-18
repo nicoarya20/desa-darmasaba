@@ -2,17 +2,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import colors from '@/con/colors';
 import { BarChart as MantineBarChart } from '@mantine/charts';
-import { Anchor, Box, Center, ColorSwatch, Divider, Flex, Image, Paper, SimpleGrid, Skeleton, Stack, Text } from '@mantine/core';
+import { Box, Center, ColorSwatch, Flex, Paper, SimpleGrid, Skeleton, Stack, Text } from '@mantine/core';
 import { useEffect, useState } from 'react';
 import BackButton from '../../desa/layanan/_com/BackButto';
 
-import Link from 'next/link';
 // import { useRouter } from 'next/navigation';
 import { useMediaQuery, useShallowEffect } from '@mantine/hooks';
 
 import persentasekelahiran from '@/app/admin/(dashboard)/_state/kesehatan/data_kesehatan_warga/persentaseKelahiran';
 import { useProxy } from 'valtio/utils';
+
+import FasilitasKesehatan from './fasilitas-kesehatan-page/page';
 import GrafikPenyakit from './grafik-penyakit/page';
+import JadwalKegiatan from './jadwal-kegiatan-page/page';
+import ArtikelKesehatanPage from './artikel-kesehatan-page/page';
 
 
 function Page() {
@@ -160,167 +163,11 @@ function Page() {
               }}
             >
               {/* Fasilitas Kesehatan */}
-              <Box>
-                <Paper p={'xl'} h={'112vh'} bg={colors['white-trans-1']}>
-                  <Stack gap={'xs'}>
-                    <Text ta={'center'} fw={"bold"} fz={'h3'} c={colors['blue-button']}>Fasilitas Kesehatan</Text>
-                    <Box>
-                      <Text fz={'h4'}>
-                        UPTD Puskesmas Abiansemal III
-                      </Text>
-                      <Text fz={'h4'}>
-                        Jl. Ratna, Sibang Kaja
-                      </Text>
-                      <Text fz={'h4'}>
-                        08:00-16:00 WITA
-                        (Senin-Sabtu)
-                      </Text>
-                      <Text fz={'h4'}>
-                        Layanan Unggulan: Poli Umum, Poli Gigi, Imunisasi, Ibu/KB
-                      </Text>
-                      <Anchor component={Link} href={'/darmasaba/kesehatan/data-kesehatan-warga/fasilitas-kesehatan'} c={'black'} variant='transparent'>
-                        <Text c={colors['blue-button']} fz={'h4'}>
-                          Detail Lengkap {'>>'}
-                        </Text>
-                      </Anchor>
-                    </Box>
-                    <Divider color={colors['blue-button']} px={'xl'} />
-                    <Box>
-                      <Text fz={'h4'}>
-                        UPTD Puskesmas Abiansemal III
-                      </Text>
-                      <Text fz={'h4'}>
-                        Jl. Ratna, Sibang Kaja
-                      </Text>
-                      <Text fz={'h4'}>
-                        08:00-16:00 WITA
-                        (Senin-Sabtu)
-                      </Text>
-                      <Text fz={'h4'}>
-                        Layanan Unggulan: Poli Umum, Poli Gigi, Imunisasi, Ibu/KB
-                      </Text>
-                      <Anchor component={Link} href={'/darmasaba/kesehatan/data-kesehatan-warga/fasilitas-kesehatan'} c={'black'} variant='transparent'>
-                        <Text c={colors['blue-button']} fz={'h4'}>
-                          Detail Lengkap {'>>'}
-                        </Text>
-                      </Anchor>
-                    </Box>
-                    <Divider color={colors['blue-button']} px={'xl'} />
-                    <Box>
-                      <Text fz={'h4'}>
-                        UPTD Puskesmas Abiansemal III
-                      </Text>
-                      <Text fz={'h4'}>
-                        Jl. Ratna, Sibang Kaja
-                      </Text>
-                      <Text fz={'h4'}>
-                        08:00-16:00 WITA
-                        (Senin-Sabtu)
-                      </Text>
-                      <Text fz={'h4'}>
-                        Layanan Unggulan: Poli Umum, Poli Gigi, Imunisasi, Ibu/KB
-                      </Text>
-                      <Anchor component={Link} href={'/darmasaba/kesehatan/data-kesehatan-warga/fasilitas-kesehatan'} c={'black'} variant='transparent'>
-                        <Text c={colors['blue-button']} fz={'h4'}>
-                          Detail Lengkap {'>>'}
-                        </Text>
-                      </Anchor>
-                    </Box>
-                    <Divider color={colors['blue-button']} px={'xl'} />
-                  </Stack>
-                </Paper>
-              </Box>
+              <FasilitasKesehatan/>
               {/* Jadwal Kegiatan */}
-              <Box>
-                <Paper p={'xl'} h={'112vh'} bg={colors['white-trans-1']}>
-                  <Stack gap={'xs'}>
-                    <Text ta={'center'} fw={"bold"} fz={'h3'} c={colors['blue-button']}>Jadwal Kegiatan</Text>
-                    <Box>
-                      <Text fz={'h4'} fw={'bold'} c={colors['blue-button']}>
-                        21 Februari 2025
-                      </Text>
-                      <Text fz={'h4'} fw={'bold'}>
-                        Posyandu Balita
-                      </Text>
-                      <Text fz={'h4'}>
-                        08:00-12:00 WITA
-                      </Text>
-                      <Text fz={'h4'}>
-                        Banjar Gulingan
-                      </Text>
-                      <Anchor component={Link} href={'/darmasaba/kesehatan/data-kesehatan-warga/jadwal-kegiatan'} c={colors['blue-button']} variant='transparent'>
-                        <Text c={colors['blue-button']} fz={'h4'} >
-                          Detail & Pendaftaran
-                        </Text>
-                      </Anchor>
-                    </Box>
-                    <Divider color={colors['blue-button']} px={'xl'} />
-                    <Box>
-                      <Text fz={'h4'} fw={'bold'} c={colors['blue-button']}>
-                        23 Februari 2025
-                      </Text>
-                      <Text fz={'h4'} fw={'bold'}>
-                        Donor Darah
-                      </Text>
-                      <Text fz={'h4'}>
-                        09:00-14:00 WITA
-                      </Text>
-                      <Text fz={'h4'}>
-                        Puskesmas Abiansemal III
-                      </Text>
-                      <Anchor component={Link} href={'/darmasaba/kesehatan/data-kesehatan-warga/jadwal-kegiatan'} c={colors['blue-button']} variant='transparent'>
-                        <Text c={colors['blue-button']} fz={'h4'} >
-                          Detail & Pendaftaran
-                        </Text>
-                      </Anchor>
-                    </Box>
-                  </Stack>
-                </Paper>
-              </Box>
+              <JadwalKegiatan/>
               {/* Artikel Kesehatan */}
-              <Box>
-                <Paper p={'xl'} h={'112vh'} bg={colors['white-trans-1']}>
-                  <Stack gap={'xs'}>
-                    <Box>
-                      <Text ta={'center'} fw={"bold"} fz={'h3'} c={colors['blue-button']}>Artikel Kesehatan</Text>
-                      <Image pt={5} src={'/api/img/dbd.png'} alt="" />
-                      <Text fz={'h4'} fw={'bold'} >
-                        Tips Mencegah Demam Berdarah Saat Musim Hujan
-                      </Text>
-                      <Text fz={'h6'} pb={10}>
-                        Diposting: 12 Februari 2025 | Dinas Kesehatan
-                      </Text>
-                      <Text fz={'h4'} pb={10}>
-                        Yuk Kenali gelaja dan cara penanganan DBD yang efektif untuk melindungi keluarga anda selama musim hujan.
-                      </Text>
-                      <Anchor c={'black'} component={Link} href={'/darmasaba/kesehatan/data-kesehatan-warga/artikel-kesehatan'} variant='transparent'>
-                        <Text c={colors['blue-button']} fz={'h4'} >
-                          Baca Selengkapnya {'>>'}
-                        </Text>
-                      </Anchor>
-                    </Box>
-                    <Divider color={colors['blue-button']} px={'xl'} />
-                    <Box>
-                      <Text ta={'center'} fw={"bold"} fz={'h3'} c={colors['blue-button']}>Artikel Kesehatan</Text>
-                      <Image pt={5} src={'/api/img/dbd.png'} alt="" />
-                      <Text fz={'h4'} fw={'bold'} >
-                        Tips Mencegah Demam Berdarah Saat Musim Hujan
-                      </Text>
-                      <Text fz={'h6'} pb={10}>
-                        Diposting: 12 Februari 2025 | Dinas Kesehatan
-                      </Text>
-                      <Text fz={'h4'} pb={10}>
-                        Yuk Kenali gelaja dan cara penanganan DBD yang efektif untuk melindungi keluarga anda selama musim hujan.
-                      </Text>
-                      <Anchor c={'black'} href={'/darmasaba/kesehatan/data-kesehatan-warga/artikel-kesehatan'} variant='transparent'>
-                        <Text c={colors['blue-button']} fz={'h4'} >
-                          Baca Selengkapnya {'>>'}
-                        </Text>
-                      </Anchor>
-                    </Box>
-                  </Stack>
-                </Paper>
-              </Box>
+              <ArtikelKesehatanPage/>
             </SimpleGrid>
           </Box>
         </Stack>

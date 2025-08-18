@@ -153,10 +153,262 @@ function Kepuasan() {
 
   if (data.length === 0) {
     return (
-      <Stack py={10}>
-        <Text c="dimmed" ta="center" my="md">
-          Belum ada data untuk ditampilkan
-        </Text>
+      <Stack p="sm">
+        <Container w={{ base: "100%", md: "80%" }} p={"xl"}>
+          <Center>
+            <Text ta={"center"} fz={{ base: "2.4rem", md: "3.4rem" }}>Indeks Kepuasan Masyarakat</Text>
+          </Center>
+          <Text fz={{ base: "1.2rem", md: "1.4rem" }} ta={"center"}>Ukur kebahagiaan warga, tingkatkan layanan desa! Dengan partisipasi aktif masyarakat, kami berkomitmen untuk terus memperbaiki layanan agar lebih transparan, efektif, dan sesuai dengan kebutuhan warga. Kepuasan Anda adalah prioritas utama kami dalam membangun desa yang lebih baik!</Text>
+          <Center mt={10}>
+            <Button radius={"lg"} bg={colors["blue-button"]} onClick={open}>Ajukan Responden</Button>
+          </Center>
+        </Container>
+        <Box px={"xl"}>
+          <Paper p={"lg"} bg={colors.Bg}>
+            <Paper p={"lg"}>
+              <Stack gap={"xs"}>
+                <Flex justify={"space-between"} align={"center"}>
+                  <Text fw={"bold"}>Pelayanan Terhadap Publik Desa Darmasaba</Text>
+                  <Box>
+                    <Text fz={"sm"} fw={"bold"} c={colors["blue-button"]}>Total Responden</Text>
+                    <Text ta={"end"} fz={"h1"} fw={"bold"} c={colors["blue-button"]}>
+                      {state.findMany.total.toLocaleString('id-ID')}
+                    </Text>
+                  </Box>
+                </Flex>
+                <BarChart
+                  h={300}
+                  data={barChartData}
+                  dataKey="month"
+                  series={[{ name: 'count', color: colors['blue-button'] }]}
+                  tickLine="y"
+                  xAxisLabel="Bulan"
+                  yAxisLabel="Jumlah Responden"
+                  withTooltip
+                  tooltipAnimationDuration={200}
+                />
+              </Stack>
+            </Paper>
+            <Box py={"xl"}>
+              <SimpleGrid
+                cols={{
+                  base: 1,
+                  md: 1,
+                  lg: 1,
+                  xl: 3
+                }}
+              >
+                {/* Chart Jenis Kelamin */}
+                <Paper bg={colors['white-1']} p="md" radius="md">
+                  <Stack>
+                    <Title order={4}>Jenis Kelamin</Title>
+                    {donutDataJenisKelamin.every(item => item.value === 0) ? (
+                      <Text c="dimmed" ta="center" my="md">
+                        Belum ada data untuk ditampilkan dalam grafik
+                      </Text>
+                    ) : (
+                      <Paper p="md" radius="md" withBorder>
+                        <Box style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                          <Box style={{ position: 'relative', width: '100%' }}>
+                            <Center>
+                              <PieChart
+                                withLabels
+                                withTooltip
+                                labelsType="percent"
+                                size={200}
+                                data={donutDataJenisKelamin}
+                              />
+                            </Center>
+                          </Box>
+                          <Stack gap="sm" mt="md">
+                            {donutDataJenisKelamin.map((entry) => (
+                              <Flex key={entry.name} gap="md" align="center">
+                                <Box bg={entry.color} w={20} h={20} style={{ flexShrink: 0 }} />
+                                <Text size="sm">{entry.name}: {entry.value}</Text>
+                              </Flex>
+                            ))}
+                          </Stack>
+                        </Box>
+                      </Paper>
+                    )}
+                  </Stack>
+                </Paper>
+
+                {/* Chart Rating */}
+                <Paper bg={colors['white-1']} p="md" radius="md">
+                  <Stack>
+                    <Title order={4}>Pilihan</Title>
+                    {donutDataRating.every(item => item.value === 0) ? (
+                      <Text c="dimmed" ta="center" my="md">
+                        Belum ada data untuk ditampilkan dalam grafik
+                      </Text>
+                    ) : (
+                      <Paper p="md" radius="md" withBorder>
+                        <Box style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                          <Box style={{ position: 'relative', width: '100%' }}>
+                            <Center>
+                              <PieChart
+                                withTooltip
+                                tooltipAnimationDuration={200}
+                                withLabels
+                                labelsPosition="outside"
+                                labelsType="percent"
+                                withLabelsLine
+                                size={200}
+                                data={donutDataRating}
+                              />
+                            </Center>
+                          </Box>
+                          <Box mt="md" style={{ width: '100%' }}>
+                            <SimpleGrid cols={2} spacing="xs" verticalSpacing="xs">
+                              {donutDataRating.map((entry) => (
+                                <Flex key={entry.name} gap="sm" align="center" style={{ overflow: 'hidden' }}>
+                                  <Box bg={entry.color} w={16} h={16} style={{ flexShrink: 0 }} />
+                                  <Text size="xs" lineClamp={1} style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                    {entry.name}: {entry.value}
+                                  </Text>
+                                </Flex>
+                              ))}
+                            </SimpleGrid>
+                          </Box>
+                        </Box>
+                      </Paper>
+                    )}
+                  </Stack>
+                </Paper>
+
+                {/* Chart Kelompok Umur */}
+                <Paper bg={colors['white-1']} p="md" radius="md">
+                  <Stack>
+                    <Title order={4}>Umur</Title>
+                    {donutDataKelompokUmur.every(item => item.value === 0) ? (
+                      <Text c="dimmed" ta="center" my="md">
+                        Belum ada data untuk ditampilkan dalam grafik
+                      </Text>
+                    ) : (
+                      <Paper p="md" radius="md" withBorder>
+                        <Box style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                          <Box style={{ position: 'relative', width: '100%' }}>
+                            <Center>
+                              <PieChart
+                                withTooltip
+                                tooltipAnimationDuration={200}
+                                withLabels
+                                labelsPosition="outside"
+                                labelsType="percent"
+                                withLabelsLine
+                                size={190}
+                                data={donutDataKelompokUmur}
+                              />
+                            </Center>
+                          </Box>
+                          <Box mt="md" style={{ width: '100%' }}>
+                            <SimpleGrid cols={2} spacing="xs" verticalSpacing="xs">
+                              {donutDataKelompokUmur.map((entry) => (
+                                <Flex key={entry.name} gap="sm" align="center" style={{ overflow: 'hidden' }}>
+                                  <Box bg={entry.color} w={16} h={16} style={{ flexShrink: 0 }} />
+                                  <Text size="xs" lineClamp={1} style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                    {entry.name}: {entry.value}
+                                  </Text>
+                                </Flex>
+                              ))}
+                            </SimpleGrid>
+                          </Box>
+                        </Box>
+                      </Paper>
+                    )}
+                  </Stack>
+                </Paper>
+              </SimpleGrid>
+            </Box>
+          </Paper>
+        </Box>
+        {/* Modal */}
+        <Modal opened={opened} onClose={close} title="Ajukan Responden" centered>
+          <Paper bg={colors['white-1']} p={'md'}>
+            <Stack>
+              <TextInput
+                label="Nama"
+                type='text'
+                placeholder="masukkan nama"
+                value={state.create.form.name}
+                onChange={(val) => {
+                  state.create.form.name = val.currentTarget.value;
+                }}
+              />
+              <TextInput
+                label="Tanggal"
+                type="date"
+                placeholder="masukkan tanggal"
+                value={state.create.form.tanggal}
+                onChange={(val) => {
+                  state.create.form.tanggal = val.currentTarget.value;
+                }}
+              />
+              <Select
+                key={"jenisKelamin"}
+                label={"Jenis Kelamin"}
+                placeholder={indeksKepuasanState.jenisKelaminResponden.findMany.loading ? 'Memuat...' : 'Pilih jenis kelamin'}
+                value={state.create.form.jenisKelaminId || ""}
+                onChange={(val) => {
+                  state.create.form.jenisKelaminId = val ?? "";
+                }}
+                data={
+                  (indeksKepuasanState.jenisKelaminResponden.findMany.data || [])
+                    .filter(Boolean) // Hapus null, undefined, dll
+                    .map((item) => ({
+                      value: item.id,
+                      label: item.name || 'Tanpa Nama',
+                    }))
+                }
+                disabled={indeksKepuasanState.jenisKelaminResponden.findMany.loading}
+              />
+              <Select
+                key={"rating_responden"}
+                label={"Rating"}
+                placeholder={indeksKepuasanState.pilihanRatingResponden.findMany.loading ? 'Memuat...' : 'Pilih rating'}
+                value={state.create.form.ratingId || ""}
+                onChange={(val) => {
+                  state.create.form.ratingId = val ?? "";
+                }}
+                data={
+                  (indeksKepuasanState.pilihanRatingResponden.findMany.data || [])
+                    .filter(Boolean) // Hapus null, undefined, dll
+                    .map((item) => ({
+                      value: item.id,
+                      label: item.name || 'Tanpa Nama',
+                    }))
+                }
+                disabled={indeksKepuasanState.pilihanRatingResponden.findMany.loading}
+              />
+              <Select
+                key={"kelompokUmur"}
+                label={"Kelompok Umur"}
+                placeholder={indeksKepuasanState.kelompokUmurResponden.findMany.loading ? 'Memuat...' : 'Pilih kelompok umur'}
+                value={state.create.form.kelompokUmurId || ""}
+                onChange={(val) => {
+                  state.create.form.kelompokUmurId = val ?? "";
+                }}
+                data={
+                  (indeksKepuasanState.kelompokUmurResponden.findMany.data || [])
+                    .filter(Boolean) // Hapus null, undefined, dll
+                    .map((item) => ({
+                      value: item.id,
+                      label: item.name || 'Tanpa Nama',
+                    }))
+                }
+                disabled={indeksKepuasanState.kelompokUmurResponden.findMany.loading}
+              />
+              <Button
+                mt={10}
+                bg={colors['blue-button']}
+                onClick={handleSubmit}
+              >
+                Submit
+              </Button>
+            </Stack>
+          </Paper>
+        </Modal>
       </Stack>
     );
   }

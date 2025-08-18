@@ -16,8 +16,8 @@ export default async function pegawaiFindMany(context: Context) {
           image: true,
         },
         skip,
-        take: limit,
-        orderBy: { createdAt: 'desc' },
+        take: limit,  
+        orderBy: { posisi: { hierarki: 'asc' } },
       }),
       prisma.pegawaiPPID.count({
         where: { isActive: true }

@@ -1,10 +1,14 @@
 'use client'
+import jadwalkegiatanState from '@/app/admin/(dashboard)/_state/kesehatan/data_kesehatan_warga/jadwalKegiatan';
 import BackButton from '@/app/darmasaba/(pages)/desa/layanan/_com/BackButto';
 import colors from '@/con/colors';
-import { ActionIcon, Box, Button, CheckIcon, Combobox, ComboboxChevron, ComboboxOption, ComboboxOptions, ComboboxTarget, Divider, Group, InputBase, InputPlaceholder, List, ListItem, Paper, Stack, Text, Textarea, TextInput, useCombobox } from '@mantine/core';
+import { ActionIcon, Box, Button, CheckIcon, Combobox, ComboboxChevron, ComboboxOption, ComboboxOptions, ComboboxTarget, Divider, Group, InputBase, InputPlaceholder, Paper, Skeleton, Stack, Text, Textarea, TextInput, useCombobox } from '@mantine/core';
 import { DateInput } from '@mantine/dates';
+import { useShallowEffect } from '@mantine/hooks';
 import { IconCalendar } from '@tabler/icons-react';
+import { useParams } from 'next/navigation';
 import { useState } from 'react';
+import { useProxy } from 'valtio/utils';
 
 const layanan = [
   'Penimbangan',
@@ -42,6 +46,21 @@ function Page() {
       <IconCalendar size={18} />
     </ActionIcon>
   );
+
+
+  const params = useParams()
+  const state = useProxy(jadwalkegiatanState)
+  useShallowEffect(() => {
+    state.findUnique.load(params?.id as string)
+  }, [])
+
+  if (!state.findUnique.data) {
+    return (
+      <Stack py={10}>
+        <Skeleton h={500} />
+      </Stack>
+    )
+  }
   return (
     <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"22"}>
       <Box px={{ base: 'md', md: 100 }}>
@@ -63,62 +82,41 @@ function Page() {
                 </Text>
                 <Divider />
                 <Text fz={'h4'} fw={"bold"}>
-                  Nama Kegiatan : <Text span fz={'h4'}>Posyandu Balita</Text>
+                  Nama Kegiatan : <Text span fz={'h4'}>{state.findUnique.data.informasijadwalkegiatan.name}</Text>
                 </Text>
                 <Text fz={'h4'} fw={"bold"}>
-                  Tanggal : <Text span fz={'h4'}>21 Februari 2025</Text>
+                  Tanggal : <Text span fz={'h4'}>{state.findUnique.data.informasijadwalkegiatan.tanggal}</Text>
                 </Text>
                 <Text fz={'h4'} fw={"bold"}>
-                  Waktu : <Text span fz={'h4'}>08:00-12:00 WITA</Text>
+                  Waktu : <Text span fz={'h4'}>{state.findUnique.data.informasijadwalkegiatan.waktu}</Text>
                 </Text>
                 <Text pb={10} fz={'h4'} fw={"bold"}>
-                  Lokasi : <Text span fz={'h4'}>Banjar Gulingan</Text>
+                  Lokasi : <Text span fz={'h4'}>{state.findUnique.data.informasijadwalkegiatan.lokasi}</Text>
                 </Text>
                 {/* Deskripsi Kegiatan */}
                 <Text fz={'h4'} fw={"bold"}>
                   Deskripsi Kegiatan
                 </Text>
                 <Divider />
-                <Text pb={10} ta={'justify'} fz={'h4'}>
-                  Posyandu balita adalah program kesehatan rutin untuk memantau tumbuh kembang balita. Kegiatan ini meliputi penimbangan berat badan, pengukuran tinggi badan, pemeriksaan kesehatan dasar, imunisasi, dan konsultasi gizi.
-                </Text>
+                <Text pb={10} ta={'justify'} fz={'h4'} dangerouslySetInnerHTML={{ __html: state.findUnique.data.deskripsijadwalkegiatan.deskripsi }} />
                 {/* Layanan Yang Tersedia */}
                 <Text fz={'h4'} fw={"bold"}>
                   Layanan Yang Tersedia
                 </Text>
                 <Divider />
-                <List pb={10}>
-                  <ListItem fz={'h4'}>Penimbangan berat badan</ListItem>
-                  <ListItem fz={'h4'}>Pengukuran tinggi badan</ListItem>
-                  <ListItem fz={'h4'}>Imunisasi rutin</ListItem>
-                  <ListItem fz={'h4'}>Pemberian vitamin A</ListItem>
-                  <ListItem fz={'h4'}>Konsultasi pertumbuhan dan gizi</ListItem>
-                  <ListItem fz={'h4'}>Pemeriksaan kesehatan dasar</ListItem>
-                </List>
+                <Text pb={10} ta={'justify'} fz={'h4'} dangerouslySetInnerHTML={{ __html: state.findUnique.data.layananjadwalkegiatan.content }} />
                 {/* Syarat dan Ketentuan */}
                 <Text fz={'h4'} fw={"bold"}>
                   Syarat dan Ketentuan
                 </Text>
                 <Divider />
-                <List pb={10}>
-                  <ListItem fz={'h4'}>Balita berusia 0-5 tahun</ListItem>
-                  <ListItem fz={'h4'}>Membawa KMS (Kartu Menuju Sehat)</ListItem>
-                  <ListItem fz={'h4'}>Membawa buku KIA (Kesehatan Ibu dan Anak)</ListItem>
-                  <ListItem fz={'h4'}>Orang tua/wali wajib mendampingi</ListItem>
-                  <ListItem fz={'h4'}>Balita dalam kondisi sehat (tidak demam)</ListItem>
-                </List>
+                <Text pb={10} ta={'justify'} fz={'h4'} dangerouslySetInnerHTML={{ __html: state.findUnique.data.syaratketentuanjadwalkegiatan.content }} />
                 {/* Dokumen yang Perlu Dibawa */}
                 <Text fz={'h4'} fw={"bold"}>
                   Dokumen yang Perlu Dibawa
                 </Text>
                 <Divider />
-                <List pb={10}>
-                  <ListItem fz={'h4'}>KMS (Kartu Menuju Sehat)</ListItem>
-                  <ListItem fz={'h4'}>Buku KIA (Kesehatan Ibu dan Anak)</ListItem>
-                  <ListItem fz={'h4'}>KTP orang tua/wali</ListItem>
-                  <ListItem fz={'h4'}>Kartu Keluarga</ListItem>
-                  <ListItem fz={'h4'}>Kartu BPJS (jika ada)</ListItem>
-                </List>
+                <Text pb={10} ta={'justify'} fz={'h4'} dangerouslySetInnerHTML={{ __html: state.findUnique.data.dokumenjadwalkegiatan.content }} />
                 {/* Pendaftaran */}
                 <Text fz={'h4'} fw={"bold"}>
                   Pendaftaran

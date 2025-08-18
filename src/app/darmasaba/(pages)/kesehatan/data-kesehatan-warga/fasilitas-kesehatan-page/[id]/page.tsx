@@ -1,65 +1,27 @@
+'use client'
+import fasilitasKesehatanState from '@/app/admin/(dashboard)/_state/kesehatan/data_kesehatan_warga/fasilitasKesehatan';
 import BackButton from '@/app/darmasaba/(pages)/desa/layanan/_com/BackButto';
 import colors from '@/con/colors';
-import { Box, Button, Divider, Group, List, ListItem, Paper, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
-
-const dataDokter = [
-  {
-    id: 1,
-    nama: 'dr. Adi Putra',
-    spesilisasi: 'Dokter Umum',
-    jadwal: 'Senin-Jumat, 08:00-12:00'
-  },
-  {
-    id: 2,
-    nama: 'drg. Ratna Dewi',
-    spesilisasi: 'Dokter Gigi',
-    jadwal: 'Senin, Rabu, Jumat 08:00-14:00'
-  },
-  {
-    id: 3,
-    nama: 'Bidan Komang',
-    spesilisasi: 'Kebidanan',
-    jadwal: 'Setiap hari, 08:00-16:00'
-  },
-]
-const dataBiaya = [
-  {
-    id: 1,
-    layanan: 'Poli Umum',
-    tarif: '15.000',
-  },
-  {
-    id: 2,
-    layanan: 'Poli Gigi',
-    tarif: '20.000',
-  },
-  {
-    id: 3,
-    layanan: 'Imunisasi Dasar',
-    tarif: 'Gratis',
-  },
-  {
-    id: 4,
-    layanan: 'Konsultasi KB',
-    tarif: 'Gratis',
-  },
-]
+import { Box, Button, Divider, Group, List, ListItem, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
+import { useShallowEffect } from '@mantine/hooks';
+import { useParams } from 'next/navigation';
+import { useProxy } from 'valtio/utils';
 
 function Page() {
-  const rows = dataDokter.map((element) => (
-    <TableTr key={element.nama}>
-      <TableTd fz={'h4'}>{element.nama}</TableTd>
-      <TableTd fz={'h4'}>{element.spesilisasi}</TableTd>
-      <TableTd fz={'h4'}>{element.jadwal}</TableTd>
-    </TableTr>
-  ));
+  const state = useProxy(fasilitasKesehatanState.fasilitasKesehatan)
+  const params = useParams()
 
-  const rows2 = dataBiaya.map((element2) => (
-    <TableTr key={element2.layanan}>
-      <TableTd fz={'h4'}>{element2.layanan}</TableTd>
-      <TableTd fz={'h4'}>{element2.tarif}</TableTd>
-    </TableTr>
-  ));
+  useShallowEffect(() => {
+    state.findUnique.load(params?.id as string)
+  }, [])
+
+  if (!state.findUnique.data) {
+    return (
+      <Stack py={10}>
+        <Skeleton h={500} />
+      </Stack>
+    )
+  }
 
   return (
     <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"22"}>
@@ -82,59 +44,58 @@ function Page() {
                 </Text>
                 <Divider />
                 <Text fz={'h4'} fw={"bold"}>
-                  Nama Fasilitas : <Text span fz={'h4'}>UPTD Puskesmas Abiansemal III</Text>
+                  Nama Fasilitas : <Text span fz={'h4'}>{state.findUnique.data?.name}</Text>
                 </Text>
                 <Text fz={'h4'} fw={"bold"}>
-                  Alamat : <Text span fz={'h4'}>Jl. Ratna, Sibang Kaja</Text>
+                  Alamat : <Text span fz={'h4'}>{state.findUnique.data?.informasiumum.alamat}</Text>
                 </Text>
                 <Text pb={10} fz={'h4'} fw={"bold"}>
-                  Jam Operasional: : <Text span fz={'h4'}>08:00-16:00 WITA (Senin-Sabtu)</Text>
+                  Jam Operasional: : <Text span fz={'h4'}>{state.findUnique.data?.informasiumum.jamOperasional}</Text>
                 </Text>
                 {/* Layanan Unggulan */}
                 <Text fz={'h4'} fw={"bold"}>
                   Layanan Unggulan
                 </Text>
                 <Divider />
-                <List pb={10}>
-                  <ListItem fz={'h4'}>Poli Umum</ListItem>
-                  <ListItem fz={'h4'}>Poli Gigi</ListItem>
-                  <ListItem fz={'h4'}>Imunisasi</ListItem>
-                  <ListItem fz={'h4'}>Ibu/KB</ListItem>
-                  <ListItem fz={'h4'}>Laboratorium Dasar</ListItem>
-                  <ListItem fz={'h4'}>Farmasi</ListItem>
-                  <ListItem fz={'h4'}>Konsultasi Gizi</ListItem>
-                </List>
+
                 {/* Tenaga Medis */}
                 <Text fz={'h4'} fw={"bold"}>
                   Dokter & Tenaga Medis
                 </Text>
                 <Divider />
-                <Table pb={10} highlightOnHover withTableBorder withColumnBorders>
-                  <TableThead>
-                    <TableTr>
-                      <TableTh fz={'h4'}>Nama</TableTh>
-                      <TableTh fz={'h4'}>Spesialisasi</TableTh>
-                      <TableTh fz={'h4'}>Jadwal</TableTh>
-                    </TableTr>
-                  </TableThead>
-                  <TableTbody>{rows}</TableTbody>
-                </Table>
+                <Box pb={10}>
+                  <Table highlightOnHover withTableBorder withColumnBorders>
+                    <TableThead>
+                      <TableTr>
+                        <TableTh fz={'h4'}>Nama</TableTh>
+                        <TableTh fz={'h4'}>Spesialisasi</TableTh>
+                        <TableTh fz={'h4'}>Jadwal</TableTh>
+                      </TableTr>
+                    </TableThead>
+                    <TableTbody>
+                      {state.findUnique.data?.dokterdantenagamedis ? (
+                        <TableTr>
+                          <TableTd>{state.findUnique.data.dokterdantenagamedis.name}</TableTd>
+                          <TableTd>{state.findUnique.data.dokterdantenagamedis.specialist}</TableTd>
+                          <TableTd>{state.findUnique.data.dokterdantenagamedis.jadwal}</TableTd>
+                        </TableTr>
+                      ) : (
+                        <TableTr>
+                          <TableTd colSpan={3} style={{ textAlign: 'center' }}>Tidak ada data dokter/tenaga medis</TableTd>
+                        </TableTr>
+                      )}
+                    </TableTbody>
+                  </Table>
+                </Box>
                 {/* Fasilitas Pendukung */}
                 <Text fz={'h4'} fw={"bold"}>
                   Fasilitas Pendukung
                 </Text>
                 <Divider />
-                <List pb={10}>
-                  <ListItem fz={'h4'}>Apotek dengan ketersediaan obat lengkap</ListItem>
-                  <ListItem fz={'h4'}>Ruang tunggu ber-AC</ListItem>
-                  <ListItem fz={'h4'}>Area bermain anak</ListItem>
-                  <ListItem fz={'h4'}>Ambulans 24 jam</ListItem>
-                  <ListItem fz={'h4'}>Toilet khusus disabilitas</ListItem>
-                  <ListItem fz={'h4'}>Tempat parkir luas</ListItem>
-                </List>
+                <Text fz={"lg"} dangerouslySetInnerHTML={{ __html: state.findUnique.data?.fasilitaspendukung?.content }} />
                 {/* Dokter */}
                 <Text fz={'h4'} fw={"bold"}>
-                 Layanan & Tarif
+                  Layanan & Tarif
                 </Text>
                 <Divider />
                 <Table highlightOnHover withTableBorder withColumnBorders>
@@ -144,7 +105,12 @@ function Page() {
                       <TableTh fz={'h4'}>Tarif</TableTh>
                     </TableTr>
                   </TableThead>
-                  <TableTbody>{rows2}</TableTbody>
+                  <TableTbody>
+                    <TableTr>
+                      <TableTd>{state.findUnique?.data?.tarifdanlayanan.layanan}</TableTd>
+                      <TableTd>{state.findUnique?.data?.tarifdanlayanan.tarif}</TableTd>
+                    </TableTr>
+                  </TableTbody>
                 </Table>
                 <Text fz={'h6'} pb={10} fw={"bold"}>
                   * Gratis dengan BPJS Kesehatan
@@ -174,7 +140,7 @@ function Page() {
                   </Text>
                 </Paper>
                 <Paper p={'lg'} w={{ base: "100%", md: "100%" }}>
-                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3945.272172359321!2d115.21836257533302!3d-8.569807186941553!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd23e9d99b9395f%3A0xb002795fdcb33b30!2sUPTD%20Puskesmas%20Abiansemal%20III!5e0!3m2!1sid!2sid!4v1744792682341!5m2!1sid!2sid" width="600" height="450" style={{ border: 2, width: "100%", borderRadius: 10 }} loading="lazy"></iframe>
+                  <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3945.272172359321!2d115.21836257533302!3d-8.569807186941553!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd23e9d99b9395f%3A0xb002795fdcb33b30!2sUPTD%20Puskesmas%20Abiansemal%20III!5e0!3m2!1sid!2sid!4v1744792682341!5m2!1sid!2sid" width="600" height="450" style={{ border: 2, width: "100%", borderRadius: 10 }} loading="lazy"></iframe>
                 </Paper>
                 <Group>
                   <Button fz={'lg'} bg={colors['blue-button']}>

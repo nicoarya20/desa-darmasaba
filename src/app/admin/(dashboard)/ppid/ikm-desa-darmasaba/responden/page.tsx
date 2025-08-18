@@ -1,13 +1,12 @@
 'use client';
 import colors from '@/con/colors';
-import { Box, Button, Center, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
+import { Box, Button, Center, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconDeviceImac, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../../_com/header';
-import JudulList from '../../../_com/judulList';
 import indeksKepuasanState from '../../../_state/landing-page/indeks-kepuasan';
 
 function Responden() {
@@ -60,10 +59,7 @@ function ListResponden({ search }: ListRespondenProps) {
       <Box py={10}>
         <Paper p="md">
           <Stack>
-            <JudulList
-              title='List Data Berdasarkan Jenis Kelamin Responden'
-              href='/admin/ppid/ikm-desa-darmasaba/responden/create'
-            />
+            <Title>Responden</Title>
             <Table striped withTableBorder withRowBorders>
               <TableThead>
                 <TableTr>
@@ -86,10 +82,7 @@ function ListResponden({ search }: ListRespondenProps) {
     <Box>
       <Stack gap="xs">
         <Paper bg={colors['white-1']} p="md" h={{ base: 730, md: 650 }}>
-          <JudulList
-            title='List Data Responden'
-            href='/admin/ppid/ikm-desa-darmasaba/responden/create'
-          />
+          <Title mb={10} order={3}>List Responden</Title>
           <Table striped withTableBorder withRowBorders>
             <TableThead>
               <TableTr>

@@ -16,8 +16,8 @@ function Page() {
     <Box px={{ base: 'md', md: 100 }}>
       <Skeleton h={40} />
     </Box>
-    <Skeleton h={40}/>
-    <Skeleton h={40}/>
+    <Skeleton h={40} />
+    <Skeleton h={40} />
     <Box px={{ base: 'md', md: 100 }}>
       <Skeleton h={40} />
     </Box>
@@ -56,7 +56,9 @@ function Page() {
                   <TableTd ta={'center'}>{index + 1}</TableTd>
                   <TableTd>{item.jenisInformasi}</TableTd>
                   <TableTd dangerouslySetInnerHTML={{ __html: item.deskripsi }}></TableTd>
-                  <TableTd>{item.tanggal}</TableTd>
+                  <TableTd style={{ width: '20%', textAlign: 'center' }}>{item.tanggal
+                    ? new Date(item.tanggal).toLocaleDateString('id-ID')
+                    : '-'}</TableTd>
                 </TableTr>
               ))}
             </TableTbody>
