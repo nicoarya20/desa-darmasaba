@@ -4,6 +4,7 @@ import polsekTerdekatDelete from "./del";
 import polsekTerdekatFindMany from "./findMany";
 import polsekTerdekatFindUnique from "./findUnique";
 import polsekTerdekatUpdate from "./updt";
+import polsekTerdekatFindFirst from "./findFirst";
 
 
 const PolsekTerdekat = new Elysia({ prefix: "/polsekterdekat", tags: ["Keamanan/Polsek Terdekat"] })
@@ -12,6 +13,7 @@ const PolsekTerdekat = new Elysia({ prefix: "/polsekterdekat", tags: ["Keamanan/
     const response = await polsekTerdekatFindUnique(new Request(context.request));
     return response;
 })
+.get("/find-first", polsekTerdekatFindFirst)
 .post("/create", polsekTerdekatCreate, {
     body: t.Object({
         nama: t.String(),

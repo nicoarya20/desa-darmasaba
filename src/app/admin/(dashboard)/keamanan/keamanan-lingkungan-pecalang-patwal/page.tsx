@@ -1,6 +1,6 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
+import { Box, Button, Center, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
 import { IconDeviceImac, IconSearch } from '@tabler/icons-react';
 import HeaderSearch from '../../_com/header';
 import JudulList from '../../_com/judulList';
@@ -30,19 +30,21 @@ function ListKeamananLingkungan({ search }: { search: string }) {
   const keamananState = useProxy(keamananLingkunganState)
   const router = useRouter();
 
+  const {
+    data,
+    page,
+    totalPages,
+    loading,
+    load,
+  } = keamananState.findMany;
+
   useShallowEffect(() => {
-    keamananState.findMany.load()
-  }, [])
+    load(page, 10, search)
+  }, [page, search])
 
-  const filteredData = (keamananState.findMany.data || []).filter(item => {
-    const keyword = search.toLowerCase();
-    return (
-      item.name.toLowerCase().includes(keyword) ||
-      item.deskripsi.toLowerCase().includes(keyword)
-    );
-  });
+  const filteredData = data || []
 
-  if (!keamananState.findMany.data) {
+  if (loading || !data) {
     return (
       <Stack py={10}>
         <Skeleton h={500} />
@@ -67,9 +69,15 @@ function ListKeamananLingkungan({ search }: { search: string }) {
           <TableTbody>
             {filteredData.map((item) => (
               <TableTr key={item.id}>
-                <TableTd>{item.name}</TableTd>
                 <TableTd>
-                  <Text fz={"md"} dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
+                  <Box w={180}>
+                    <Text fz={"md"} truncate={"end"} lineClamp={1}>{item.name}</Text>
+                  </Box>
+                </TableTd>
+                <TableTd>
+                  <Box w={250}>
+                    <Text fz={"md"} truncate={"end"} lineClamp={1} dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
+                  </Box>
                 </TableTd>
                 <TableTd>
                   <Button onClick={() => router.push(`/admin/keamanan/keamanan-lingkungan-pecalang-patwal/${item.id}`)}>
@@ -81,6 +89,14 @@ function ListKeamananLingkungan({ search }: { search: string }) {
           </TableTbody>
         </Table>
       </Paper>
+      <Center>
+        <Pagination
+          value={page}
+          onChange={(newPage) => load(newPage)}
+          total={totalPages}
+          my={"md"}
+        />
+      </Center>
     </Box>
   );
 }

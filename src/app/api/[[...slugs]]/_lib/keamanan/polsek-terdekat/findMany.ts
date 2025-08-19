@@ -1,24 +1,57 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+// /api/berita/findManyPaginated.ts
 import prisma from "@/lib/prisma";
+import { Context } from "elysia";
 
-export default async function polsekTerdekatFindMany() {
-    try {
-        const data = await prisma.polsekTerdekat.findMany({
-            where: { isActive: true },
-            include: {
-                layananPolsek: true,
-            },
-        });
+async function polsekTerdekatFindMany(context: Context) {
+  // Ambil parameter dari query
+  const page = Number(context.query.page) || 1;
+  const limit = Number(context.query.limit) || 10;
+  const search = (context.query.search as string) || '';
+  const skip = (page - 1) * limit;
 
-        return {
-            success: true,
-            message: "Success fetch polsek terdekat",
-            data,
-        };
-    } catch (e) {
-        console.error("Find many error:", e);
-        return {
-            success: false,
-            message: "Failed fetch polsek terdekat",
-        };
-    }
+  // Buat where clause
+  const where: any = { isActive: true };
+
+  // Tambahkan pencarian (jika ada)
+  if (search) {
+    where.OR = [
+      { nama: { contains: search, mode: 'insensitive' } },
+      { alamat: { contains: search, mode: 'insensitive' } },
+    ];
+  }
+
+  try {
+    // Ambil data dan total count secara paralel
+    const [data, total] = await Promise.all([
+      prisma.polsekTerdekat.findMany({
+        where,
+        include: {
+          layananPolsek: true,
+        },
+        skip,
+        take: limit,
+        orderBy: { createdAt: 'desc' },
+      }),
+      prisma.polsekTerdekat.count({ where }),
+    ]);
+
+    return {
+      success: true,
+      message: "Berhasil ambil polsek terdekat dengan pagination",
+      data,
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit),
+    };
+  } catch (e) {
+    console.error("Error di findMany paginated:", e);
+    return {
+      success: false,
+      message: "Gagal mengambil data polsek terdekat",
+    };
+  }
 }
+
+export default polsekTerdekatFindMany;

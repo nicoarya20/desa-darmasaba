@@ -1,10 +1,30 @@
+'use client'
+/* eslint-disable react-hooks/exhaustive-deps */
+import polsekTerdekatState from '@/app/admin/(dashboard)/_state/keamanan/polsek-terdekat';
 import colors from '@/con/colors';
-import { Badge, Box, Button, Flex, Paper, SimpleGrid, Stack, Text, TextInput } from '@mantine/core';
-import { IconArrowDown, IconClock, IconNavigation, IconPhone, IconPin, IconSearch } from '@tabler/icons-react';
+import { Badge, Box, Button, Center, Flex, Paper, SimpleGrid, Skeleton, Stack, Text } from '@mantine/core';
+import { IconArrowDown, IconClock, IconNavigation, IconPhone, IconPin } from '@tabler/icons-react';
+import { useEffect } from 'react';
+import { useProxy } from 'valtio/utils';
 import BackButton from '../../desa/layanan/_com/BackButto';
+import { useRouter } from 'next/navigation';
 
 
 function Page() {
+  const state = useProxy(polsekTerdekatState.findFirst);
+  const router = useRouter()
+  const {
+    data,
+    loading,
+    load,
+  } = state;
+
+  useEffect(() => {
+    if (!data && !loading) {
+      load();
+    }
+  }, [data, loading]);
+
   return (
     <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"22"}>
       <Box px={{ base: 'md', md: 100 }}>
@@ -17,7 +37,6 @@ function Page() {
         <Text pb={15} fz={'h4'} >
           Desa Darmasaba, Kecamatan Abiansemal, Kabupaten Badung
         </Text>
-        <TextInput radius={10} leftSection={<IconSearch size={20} />} placeholder='Cari Kantor Polisi' />
       </Box>
       <Box px={{ base: "md", md: 100 }}>
         <Stack gap={'lg'}>
@@ -30,59 +49,56 @@ function Page() {
                 }}
               >
                 {/* Content Sebelah Kiri */}
-                <Box>
-                  <Text c={colors["blue-button"]} fw={'bold'} fz={'h2'}>Polsek Abiansemal</Text>
-                  <Text c={colors["blue-button"]} fz={'sm'}>2,5 Km dari Desa Darmasaba</Text>
-                  <Flex py={10} gap={9} align={'center'}>
-                    <IconPin size={25} color={colors["blue-button"]} />
-                    <Text c={colors["blue-button"]} fz={'lg'}>Jl. Gandamayu 1 Blahkiuh</Text>
-                  </Flex>
-                  <Flex gap={9} align={'center'}>
-                    <IconPhone size={25} color={colors["blue-button"]} />
-                    <Text c={colors["blue-button"]} fz={'lg'}>08xxxxxxxx</Text>
-                  </Flex>
-                  <Flex py={10} gap={9} align={'center'}>
-                    <IconClock size={25} color={colors["blue-button"]} />
-                    <Text c={colors["blue-button"]} fz={'lg'}>24 Jam</Text>
-                  </Flex>
-                  <Box>
-                    <Text c={colors["blue-button"]} fw={'bold'} fz={'h2'}>Layanan Yang Tersedia :</Text>
-                    <SimpleGrid
-                      py={10}
-                      cols={{
-                        base: 1,
-                        md: 2,
-                      }}
-                    >
+                {loading ? (
+                  <Center><Skeleton h={400} /></Center>
+                ) : data ? (
+                  <>
+                    <Box>
+                      <Text c={colors["blue-button"]} fw={'bold'} fz={'h2'}>{data.nama}</Text>
+                      <Text c={colors["blue-button"]} fz={'sm'}>{data.jarakKeDesa}</Text>
+                      <Flex py={10} gap={9} align={'center'}>
+                        <IconPin size={25} color={colors["blue-button"]} />
+                        <Text c={colors["blue-button"]} fz={'lg'}>{data.alamat}</Text>
+                      </Flex>
+                      <Flex gap={9} align={'center'}>
+                        <IconPhone size={25} color={colors["blue-button"]} />
+                        <Text c={colors["blue-button"]} fz={'lg'}>{data.nomorTelepon}</Text>
+                      </Flex>
+                      <Flex py={10} gap={9} align={'center'}>
+                        <IconClock size={25} color={colors["blue-button"]} />
+                        <Text c={colors["blue-button"]} fz={'lg'}>{data.jamOperasional}</Text>
+                      </Flex>
                       <Box>
-                        <Text c={colors["blue-button"]} fz={'lg'}>Laporan Kehilangan</Text>
+                        <Text c={colors["blue-button"]} fw={'bold'} fz={'h2'}>Layanan Yang Tersedia :</Text>
+                        <SimpleGrid
+                          py={10}
+                          cols={{
+                            base: 1,
+                            md: 2,
+                          }}
+                        >
+                          <Box>
+                            <Text c={colors["blue-button"]} fz={'lg'}>{data.layananPolsek.nama}</Text>
+                          </Box>
+                        </SimpleGrid>
                       </Box>
                       <Box>
-                        <Text c={colors["blue-button"]} fz={'lg'}>Laporan Kriminal</Text>
+                        <Button bg={colors["blue-button"]} onClick={() => router.push(`/darmasaba/keamanan/polsek-terdekat/semua-polsek`)} rightSection={<IconArrowDown size={20} />}>Lihat Kantor Polisi Lainnya</Button>
                       </Box>
-                      <Box>
-                        <Text c={colors["blue-button"]} fz={'lg'}>Pelayanan SKCK</Text>
+                    </Box>
+                    <Box pos={'relative'}>
+                      <Box style={{ position: 'absolute', top: 0, right: 0 }}>
+                        <Badge size='lg' c={'#287407'} bg={'#A8EDC4'}>Buka</Badge>
                       </Box>
-                      <Box>
-                        <Text c={colors["blue-button"]} fz={'lg'}>Pengaduan Masyarakat</Text>
+                      <Box pt={40}>
+                        <iframe style={{ border: 2, width: "100%" }} src={data.embedMapUrl} width="550" height="300" ></iframe>
                       </Box>
-                    </SimpleGrid>
-                  </Box>
-                  <Box>
-                    <Button bg={colors["blue-button"]} rightSection={<IconArrowDown size={20}/>}>Lihat Kantor Polisi Lainnya</Button>
-                  </Box>
-                </Box>
-                <Box pos={'relative'}>
-                  <Box style={{ position: 'absolute', top: 0, right: 0 }}>
-                    <Badge size='lg' c={'#287407'} bg={'#A8EDC4'}>Buka</Badge>
-                  </Box>
-                  <Box pt={40}>
-                  <iframe style={{ border: 2, width: "100%" }} src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3945.7949871034166!2d115.20778387533218!3d-8.519275686287415!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd23ceb4f6e5363%3A0xa353662f070f47d8!2sAbian%20Semal%20Police%20Station!5e0!3m2!1sid!2sid!4v1742789148825!5m2!1sid!2sid" width="550" height="300" ></iframe>
-                  </Box>
-                  <Box pt={20}>
-                    <Button fullWidth bg={colors["blue-button"]} radius={10} leftSection={<IconNavigation size={20}/>}>Petunjuk Arah</Button>
-                  </Box>
-                </Box>
+                      <Box pt={20}>
+                        <Button onClick={() => router.push(data.linkPetunjukArah)} fullWidth bg={colors["blue-button"]} radius={10} leftSection={<IconNavigation size={20} />}>Petunjuk Arah</Button>
+                      </Box>
+                    </Box>
+                  </>
+                ) : null}
               </SimpleGrid>
             </Stack>
           </Paper>

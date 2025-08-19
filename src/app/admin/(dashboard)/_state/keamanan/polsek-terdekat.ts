@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiFetch from "@/lib/api-fetch";
 import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
@@ -63,13 +64,41 @@ const polsekTerdekatState = proxy({
   findMany: {
     data: null as
       | Prisma.PolsekTerdekatGetPayload<{
-          include: { layananPolsek: true };
+          include: {
+            layananPolsek: true;
+          };
         }>[]
       | null,
-    async load() {
-      const res = await ApiFetch.api.keamanan.polsekterdekat["find-many"].get();
-      if (res.status === 200) {
-        polsekTerdekatState.findMany.data = res.data?.data ?? [];
+    page: 1,
+    totalPages: 1,
+    loading: false,
+    search: "",
+    load: async (page = 1, limit = 10, search = "") => {
+      polsekTerdekatState.findMany.loading = true; // ✅ Akses langsung via nama path
+      polsekTerdekatState.findMany.page = page;
+      polsekTerdekatState.findMany.search = search;
+
+      try {
+        const query: any = { page, limit };
+        if (search) query.search = search;
+
+        const res = await ApiFetch.api.keamanan.polsekterdekat["find-many"].get(
+          { query }
+        );
+
+        if (res.status === 200 && res.data?.success) {
+          polsekTerdekatState.findMany.data = res.data.data ?? [];
+          polsekTerdekatState.findMany.totalPages = res.data.totalPages ?? 1;
+        } else {
+          polsekTerdekatState.findMany.data = [];
+          polsekTerdekatState.findMany.totalPages = 1;
+        }
+      } catch (err) {
+        console.error("Gagal fetch polsek terdekat paginated:", err);
+        polsekTerdekatState.findMany.data = [];
+        polsekTerdekatState.findMany.totalPages = 1;
+      } finally {
+        polsekTerdekatState.findMany.loading = false;
       }
     },
   },
@@ -237,6 +266,29 @@ const polsekTerdekatState = proxy({
       polsekTerdekatState.edit.form = { ...defaultForm };
     },
   },
+  findFirst: {
+    data: null as Prisma.PolsekTerdekatGetPayload<{
+      include: {
+        layananPolsek: true;
+      };
+    }> | null,
+    loading: false,
+    load: async () => {  // Changed to arrow function
+      polsekTerdekatState.findFirst.loading = true;
+      try {
+        const res = await ApiFetch.api.keamanan.polsekterdekat["find-first"].get();
+        if (res.status === 200 && res.data?.success) {
+          polsekTerdekatState.findFirst.data = res.data.data || null;
+        } else {
+          polsekTerdekatState.findFirst.data = null;
+        }
+      } catch (err) {
+        console.error("Gagal fetch polsek terdekat terbaru:", err);
+      } finally {
+        polsekTerdekatState.findFirst.loading = false;
+      }
+    }
+  }
 });
 
 export default polsekTerdekatState;

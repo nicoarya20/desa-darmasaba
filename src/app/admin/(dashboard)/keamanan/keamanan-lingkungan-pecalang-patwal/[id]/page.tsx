@@ -55,16 +55,16 @@ function DetailKeamananLingkungan() {
             <Paper key={keamananState.findUnique.data.id} bg={colors['BG-trans']} p={'md'}>
               <Stack gap={"xs"}>
                 <Box>
+                  <Text fw={"bold"} fz={"lg"}>Gambar</Text>
+                  <Image w={{ base: 150, md: 490}} src={keamananState.findUnique.data?.image?.link} alt="gambar" />
+                </Box>
+                <Box>
                   <Text fw={"bold"} fz={"lg"}>Judul Keamanan Lingkungan</Text>
                   <Text fz={"lg"}>{keamananState.findUnique.data?.name}</Text>
                 </Box>
                 <Box>
                   <Text fw={"bold"} fz={"lg"}>Deskripsi</Text>
                   <Text fz={"lg"} dangerouslySetInnerHTML={{ __html: keamananState.findUnique.data?.deskripsi }} />
-                </Box>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Gambar</Text>
-                  <Image w={{ base: 150, md: 150, lg: 150 }} src={keamananState.findUnique.data?.image?.link} alt="gambar" />
                 </Box>
                 <Flex gap={"xs"} mt={10}>
                   <Button

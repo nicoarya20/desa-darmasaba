@@ -1,6 +1,6 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr } from '@mantine/core';
+import { Box, Button, Center, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconDeviceImac, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
@@ -21,7 +21,7 @@ function PolsekTerdekat() {
         value={search}
         onChange={(e) => setSearch(e.currentTarget.value)}
       />
-      <ListPolsekTerdekat search={search}/>
+      <ListPolsekTerdekat search={search} />
     </Box>
   );
 }
@@ -30,20 +30,21 @@ function ListPolsekTerdekat({ search }: { search: string }) {
   const polsekState = useProxy(polsekTerdekat)
   const router = useRouter();
 
+  const {
+    data,
+    page,
+    totalPages,
+    loading,
+    load,
+  } = polsekState.findMany;
+
   useShallowEffect(() => {
-    polsekState.findMany.load()
-  }, [])
+    load(page, 10, search)
+  }, [page, search])
 
-  const filteredData = (polsekState.findMany.data || []).filter(item => {
-    const keyword = search.toLowerCase();
-    return (
-      item.nama.toLowerCase().includes(keyword) ||
-      item.jarakKeDesa.toLowerCase().includes(keyword) ||
-      item.alamat.toLowerCase().includes(keyword)
-    );
-  });
+  const filteredData = data || []
 
-  if (!polsekState.findMany.data) {
+  if (loading || !data) {
     return (
       <Stack py={10}>
         <Skeleton h={500} />
@@ -64,24 +65,44 @@ function ListPolsekTerdekat({ search }: { search: string }) {
               <TableTh>Jarak Polsek</TableTh>
               <TableTh>Alamat</TableTh>
               <TableTh>Detail</TableTh>
-              </TableTr>
+            </TableTr>
           </TableThead>
           <TableTbody>
             {filteredData.map((item) => (
               <TableTr key={item.id}>
-                <TableTd>{item.nama}</TableTd>
-                <TableTd>{item.jarakKeDesa}</TableTd>
-                <TableTd>{item.alamat}</TableTd>
+                <TableTd>
+                  <Box w={180}>
+                    <Text fz='md' truncate={"end"} lineClamp={1}>{item.nama}</Text>
+                  </Box>
+                </TableTd>
+                <TableTd>
+                  <Box w={180}>
+                    <Text fz='md' truncate={"end"} lineClamp={1}>{item.jarakKeDesa}</Text>
+                  </Box>
+                </TableTd>
+                <TableTd>
+                  <Box w={250}>
+                    <Text fz='md' truncate={"end"} lineClamp={1}>{item.alamat}</Text>
+                  </Box>
+                </TableTd>
                 <TableTd>
                   <Button onClick={() => router.push(`/admin/keamanan/polsek-terdekat/${item.id}`)}>
-                  <IconDeviceImac size={20} />
-                </Button>
-              </TableTd>
-            </TableTr>
-          ))}
+                    <IconDeviceImac size={20} />
+                  </Button>
+                </TableTd>
+              </TableTr>
+            ))}
           </TableTbody>
-        </Table>  
+        </Table>
       </Paper>
+      <Center>
+        <Pagination
+          value={page}
+          onChange={(newPage) => load(newPage)}
+          total={totalPages}
+          my="md"
+        />
+      </Center>
     </Box>
   );
 }
