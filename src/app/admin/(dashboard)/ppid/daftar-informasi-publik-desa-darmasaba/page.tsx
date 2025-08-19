@@ -106,8 +106,16 @@ function ListDaftarInformasi({ search }: { search: string }) {
                 {filteredData.map((item, index) => (
                   <TableTr key={item.id}>
                     <TableTd style={{ textAlign: 'center' }}>{index + 1}</TableTd>
-                    <TableTd style={{ wordWrap: 'break-word' }}>{item.jenisInformasi}</TableTd>
-                    <TableTd style={{ wordWrap: 'break-word' }} dangerouslySetInnerHTML={{ __html: item.deskripsi }}></TableTd>
+                    <TableTd style={{ wordWrap: 'break-word' }}>
+                      <Box w={200}>
+                        <Text fz={"md"} truncate={"end"} lineClamp={1}>{item.jenisInformasi}</Text>
+                      </Box>
+                    </TableTd>
+                    <TableTd style={{ wordWrap: 'break-word' }}>
+                      <Box w={200}>
+                        <Text fz={"md"} truncate={"end"} lineClamp={1} dangerouslySetInnerHTML={{ __html: item.deskripsi }}></Text>
+                      </Box>
+                    </TableTd>
                     <TableTd style={{ textAlign: 'center' }}>
                       <Button bg={"green"} onClick={() => router.push(`/admin/ppid/daftar-informasi-publik-desa-darmasaba/${item.id}`)}>
                         <IconDeviceImacCog size={25} />

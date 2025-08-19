@@ -1,18 +1,32 @@
 'use client'
+
 import daftarInformasiPublik from '@/app/admin/(dashboard)/_state/ppid/daftar_informasi_publik/daftarInformasiPublik';
 import colors from '@/con/colors';
-import { Box, Center, Image, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, TextInput } from '@mantine/core';
+import { Box, Center, Image, Pagination, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, TextInput } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconSearch } from '@tabler/icons-react';
+import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import BackButton from '../../desa/layanan/_com/BackButto';
 
 function Page() {
   const listData = useProxy(daftarInformasiPublik)
+  const [search, setSearch] = useState('')
+
+  const {
+    data,
+    page,
+    totalPages,
+    loading,
+    load,
+  } = listData.findMany
+
+
   useShallowEffect(() => {
-    listData.findMany.load()
-  }, [])
-  if (!listData.findMany.data) return <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"22"}>
+    load(page, 5, search)
+  }, [page, search])
+
+  if (loading || !data) return <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"22"}>
     <Box px={{ base: 'md', md: 100 }}>
       <Skeleton h={40} />
     </Box>
@@ -40,6 +54,9 @@ function Page() {
           <TextInput
             placeholder='Cari Informasi...'
             leftSection={<IconSearch size={20} />}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            style={{ marginBottom: 16 }}
           />
           <Table withRowBorders withColumnBorders withTableBorder>
             <TableThead bg={colors['blue-button']}>
@@ -54,8 +71,17 @@ function Page() {
               {listData.findMany.data?.map((item, index) => (
                 <TableTr key={item.id}>
                   <TableTd ta={'center'}>{index + 1}</TableTd>
-                  <TableTd>{item.jenisInformasi}</TableTd>
-                  <TableTd dangerouslySetInnerHTML={{ __html: item.deskripsi }}></TableTd>
+                  <TableTd>
+                    <Text fz={'md'}>
+                      {item.jenisInformasi}
+                    </Text>
+                  </TableTd>
+                  <TableTd>
+                    <Text
+                      fz={'md'}
+                      dangerouslySetInnerHTML={{ __html: item.deskripsi }}
+                    />
+                  </TableTd>
                   <TableTd style={{ width: '20%', textAlign: 'center' }}>{item.tanggal
                     ? new Date(item.tanggal).toLocaleDateString('id-ID')
                     : '-'}</TableTd>
@@ -64,6 +90,14 @@ function Page() {
             </TableTbody>
           </Table>
         </Stack>
+        <Center>
+          <Pagination
+            value={page}
+            onChange={(newPage) => load(newPage)}
+            total={totalPages}
+            my={"md"}
+          />
+        </Center>
         <Text pt={20} fz={'h4'} fw={"bold"}>Kontak PPID</Text>
         <Text fz={'sm'}>Email: ppid@desadarmasaba.id  |  WhatsApp: 081-xxx-xxx-xxx</Text>
       </Box>

@@ -41,15 +41,11 @@ function EditResponden() {
       try {
         const data = await state.update.load(id);
         if (data) {
-          const formattedDate = data.tanggal && !isNaN(new Date(data.tanggal).getTime())
-            ? new Date(data.tanggal).toISOString().split('T')[0]
-            : '';
-          // ⬇️ FIX PENTING: tambahkan ini
           state.update.id = id;
 
           state.update.form = {
             name: data.name,
-            tanggal: formattedDate,
+            tanggal: data.tanggal,
             jenisKelaminId: data.jenisKelaminId,
             ratingId: data.ratingId,
             kelompokUmurId: data.kelompokUmurId,
@@ -76,6 +72,7 @@ function EditResponden() {
 
   const handleSubmit = async () => {
     state.update.id = id;
+    state.update.form = { ...formData }; // <-- sinkronisasi manual
     await state.update.submit();
     router.push('/admin/ppid/ikm-desa-darmasaba/responden')
   }
@@ -103,12 +100,15 @@ function EditResponden() {
             }}
           />
           <TextInput
+            label="Tanggal"
             type="date"
-            value={formData.tanggal}
+            placeholder='Pilih tanggal'
+            value={formData.tanggal ? new Date(formData.tanggal).toISOString().split('T')[0] : ''}
             onChange={(e) => {
+              const selectedDate = e.currentTarget.value;
               setFormData({
                 ...formData,
-                tanggal: e.currentTarget.value, // ✅ sudah format YYYY-MM-DD
+                tanggal: selectedDate,
               });
             }}
           />

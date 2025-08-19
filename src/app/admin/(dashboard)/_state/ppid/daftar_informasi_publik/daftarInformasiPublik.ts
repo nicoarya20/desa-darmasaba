@@ -49,35 +49,38 @@ const daftarInformasiPublik = proxy({
     },
   },
   findMany: {
-    data: null as any[] | null,
+    data: null as
+      | Prisma.DaftarInformasiPublikGetPayload<{
+          omit: {
+            isActive: true;
+          };
+        }>[]
+      | null,
     page: 1,
     totalPages: 1,
-    total: 0,
     loading: false,
-    load: async (page = 1, limit = 10) => {  // Change to arrow function
-      daftarInformasiPublik.findMany.loading = true;  // Use the full path to access the property
+    search: "",
+   load: async (page = 1, limit = 10, search = "") => {
+      daftarInformasiPublik.findMany.loading = true; // ✅ Akses langsung via nama path
       daftarInformasiPublik.findMany.page = page;
-      try {
-        const res = await ApiFetch.api.ppid.daftarinformasipublik[
-          "find-many"
-        ].get({
-          query: { page, limit },
-        });
+      daftarInformasiPublik.findMany.search = search;
   
+      try {
+        const query: any = { page, limit };
+        if (search) query.search = search;
+    
+        const res = await ApiFetch.api.ppid.daftarinformasipublik["find-many"].get({ query });
+    
         if (res.status === 200 && res.data?.success) {
-          daftarInformasiPublik.findMany.data = res.data.data || [];
-          daftarInformasiPublik.findMany.total = res.data.total || 0;
-          daftarInformasiPublik.findMany.totalPages = res.data.totalPages || 1;
+          daftarInformasiPublik.findMany.data = res.data.data ?? [];
+          daftarInformasiPublik.findMany.totalPages = res.data.totalPages ?? 1;
         } else {
-          console.error("Failed to load daftar informasi publik:", res.data?.message);
           daftarInformasiPublik.findMany.data = [];
-          daftarInformasiPublik.findMany.total = 0;
           daftarInformasiPublik.findMany.totalPages = 1;
         }
-      } catch (error) {
-        console.error("Error loading daftar informasi publik:", error);
+      } catch (err) {
+        console.error("Gagal fetch daftar informasi publik paginated:", err);
         daftarInformasiPublik.findMany.data = [];
-        daftarInformasiPublik.findMany.total = 0;
         daftarInformasiPublik.findMany.totalPages = 1;
       } finally {
         daftarInformasiPublik.findMany.loading = false;

@@ -223,7 +223,7 @@ model KategoriPrestasiDesa {
 model Responden {
   id             String                 @id @default(cuid())
   name           String                 @unique
-  tanggal        DateTime // misal: 2025-05-01
+  tanggal        String // misal: 2025-05-01
   jenisKelamin   JenisKelaminResponden  @relation(fields: [jenisKelaminId], references: [id])
   jenisKelaminId String
   rating         PilihanRatingResponden @relation(fields: [ratingId], references: [id])

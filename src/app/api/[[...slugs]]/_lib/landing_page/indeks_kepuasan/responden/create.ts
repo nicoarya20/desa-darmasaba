@@ -15,16 +15,12 @@ export default async function respondenCreate(context: Context) {
     try {
         // Convert the date string to a Date object
         const tanggal = new Date(body.tanggal);
-        
-        // Validate the date
-        if (isNaN(tanggal.getTime())) {
-            throw new Error('Tanggal tidak valid');
-        }
+
 
         const result = await prisma.responden.create({
             data: {
                 name: body.name,
-                tanggal: tanggal, // Use the Date object
+                tanggal: tanggal.toISOString(), // Use the Date object
                 jenisKelaminId: body.jenisKelaminId,
                 ratingId: body.ratingId,
                 kelompokUmurId: body.kelompokUmurId,

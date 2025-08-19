@@ -181,7 +181,13 @@ const responden = proxy({
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(this.form),
+          body: JSON.stringify({
+            name: this.form.name,
+            tanggal: this.form.tanggal,
+            jenisKelaminId: this.form.jenisKelaminId,
+            ratingId: this.form.ratingId,
+            kelompokUmurId: this.form.kelompokUmurId,
+          }),
         });
         const result = await response.json();
         if (!response.ok || !result?.success) {
