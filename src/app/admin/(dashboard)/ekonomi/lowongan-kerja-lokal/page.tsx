@@ -1,6 +1,6 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr } from '@mantine/core';
+import { Box, Button, Center, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
 import { IconDeviceImac, IconSearch } from '@tabler/icons-react';
 import HeaderSearch from '../../_com/header';
 import JudulList from '../../_com/judulList';
@@ -30,20 +30,21 @@ function ListLowonganKerjaLokal({ search }: { search: string }) {
   const lowonganState = useProxy(lowonganKerjaState)
   const router = useRouter();
 
+  const {
+    data,
+    page,
+    totalPages,
+    loading,
+    load,
+  } = lowonganState.findMany
+
   useShallowEffect(() => {
-    lowonganState.findMany.load();
-  }, [])
+    load(page, 10, search)
+  }, [page, search])
 
-  const filteredData = (lowonganState.findMany.data || []).filter(item => {
-    const keyword = search.toLowerCase();
-    return (
-      item.posisi.toLowerCase().includes(keyword) ||
-      item.namaPerusahaan.toLowerCase().includes(keyword) ||
-      item.lokasi.toLowerCase().includes(keyword)
-    );
-  });
+  const filteredData = data || []
 
-  if (!lowonganState.findMany.data) {
+  if (loading || !data) {
     return (
       <Stack py={10}>
         <Skeleton h={500} />
@@ -60,18 +61,24 @@ function ListLowonganKerjaLokal({ search }: { search: string }) {
         <Table striped withTableBorder withRowBorders>
           <TableThead>
             <TableTr>
-              <TableTh>Bekerja Sebagai</TableTh>
-              <TableTh>Nama Usaha</TableTh>
-              <TableTh>Alamat Usaha</TableTh>
+              <TableTh>Pekerjaan</TableTh>
+              <TableTh>Nama Perusahaan</TableTh>
+              <TableTh>Lokasi</TableTh>
               <TableTh>Detail</TableTh>
               </TableTr>
           </TableThead>
           <TableTbody>
             {filteredData.map((item) => (
               <TableTr key={item.id}>
-                <TableTd>{item.posisi}</TableTd>
-                <TableTd>{item.namaPerusahaan}</TableTd>
-                <TableTd>{item.lokasi}</TableTd>
+                <TableTd>
+                  <Text fz={"md"}>{item.posisi}</Text>
+                </TableTd>
+                <TableTd>
+                  <Text fz={"md"}>{item.namaPerusahaan}</Text>
+                </TableTd>
+                <TableTd>
+                  <Text fz={"md"}>{item.lokasi}</Text>
+                </TableTd>
                 <TableTd>
                   <Button onClick={() => router.push(`/admin/ekonomi/lowongan-kerja-lokal/${item.id}`)}>
                   <IconDeviceImac size={20} />
@@ -82,6 +89,14 @@ function ListLowonganKerjaLokal({ search }: { search: string }) {
           </TableTbody>
         </Table>  
       </Paper>
+      <Center>
+        <Pagination
+          value={page}
+          onChange={(newPage) => load(newPage)}
+          total={totalPages}
+          my="md"
+        />
+      </Center>
     </Box>
   );
 }

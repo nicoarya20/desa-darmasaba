@@ -1,64 +1,39 @@
 'use client'
 import colors from '@/con/colors';
-import { Stack, Box, Text, TextInput, Group, SimpleGrid, Paper, Flex, Button } from '@mantine/core';
+import { Stack, Box, Text, TextInput, Group, SimpleGrid, Paper, Flex, Button, Skeleton, Center, Pagination } from '@mantine/core';
 import React from 'react';
 import BackButton from '../../desa/layanan/_com/BackButto';
 import { IconBriefcase, IconClock, IconMapPin, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
+import { useProxy } from 'valtio/utils';
+import lowonganKerjaState from '@/app/admin/(dashboard)/_state/ekonomi/lowongan-kerja';
+import { useShallowEffect } from '@mantine/hooks';
+import { useState } from 'react';
 
-const data = [
-  {
-    id: 1,
-    kerja: 'Kasir',
-    tempat: 'Toko Sumber Rejeki',
-    alamat: 'Desa Munggu , Badung',
-    gaji: 'Rp. 2.500.000 / bulan'
-
-  },
-  {
-    id: 2,
-    kerja: 'Kasir',
-    tempat: 'Toko Sumber Rejeki',
-    alamat: 'Desa Munggu , Badung',
-    gaji: 'Rp. 2.500.000 / bulan'
-
-  },
-  {
-    id: 3,
-    kerja: 'Kasir',
-    tempat: 'Toko Sumber Rejeki',
-    alamat: 'Desa Munggu , Badung',
-    gaji: 'Rp. 2.500.000 / bulan'
-
-  },
-  {
-    id: 4,
-    kerja: 'Kasir',
-    tempat: 'Toko Sumber Rejeki',
-    alamat: 'Desa Munggu , Badung',
-    gaji: 'Rp. 2.500.000 / bulan'
-
-  },
-  {
-    id: 5,
-    kerja: 'Kasir',
-    tempat: 'Toko Sumber Rejeki',
-    alamat: 'Desa Munggu , Badung',
-    gaji: 'Rp. 2.500.000 / bulan'
-
-  },
-  {
-    id: 6,
-    kerja: 'Kasir',
-    tempat: 'Toko Sumber Rejeki',
-    alamat: 'Desa Munggu , Badung',
-    gaji: 'Rp. 2.500.000 / bulan'
-
-  },
-
-]
 function Page() {
+  const state = useProxy(lowonganKerjaState)
   const router = useRouter()
+  const [search, setSearch] = useState('')
+
+  const {
+    data,
+    page,
+    totalPages,
+    loading,
+    load,
+  } = state.findMany
+
+  useShallowEffect(() => {
+    load(page, 6, search)
+  }, [page, search])
+
+  if (loading || !data) {
+    return (
+      <Stack py={10}>
+        <Skeleton h={500} />
+      </Stack>
+    )
+  }
   return (
     <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"22"}>
       <Box px={{ base: 'md', md: 100 }}>
@@ -74,6 +49,8 @@ function Page() {
             w={{ base: 500, md: 700 }}
             placeholder='Cari Pekerjaan'
             leftSection={<IconSearch size={20} />}
+            value={search}
+            onChange={(e) => setSearch(e.currentTarget.value)}
           />
         </Group>
       </Box>
@@ -93,15 +70,15 @@ function Page() {
                       <Flex gap={'xl'} align={'center'}>
                         <IconBriefcase color={colors['blue-button']} size={50} />
                         <Box>
-                          <Text fw={'bold'} fz={'h4'} c={colors['blue-button']}>{v.kerja}</Text>
-                          <Text fz={'h4'}>{v.tempat}</Text>
+                          <Text fw={'bold'} fz={'h4'} c={colors['blue-button']}>{v.posisi}</Text>
+                          <Text fz={'h4'}>{v.namaPerusahaan}</Text>
                         </Box>
                       </Flex>
                     </Box>
                     <Box>
                       <Flex gap={'xl'} align={'center'}>
                         <IconMapPin color={colors['blue-button']} size={50} />
-                        <Text fz={'h4'}>{v.alamat}</Text>
+                        <Text fz={'h4'}>{v.lokasi}</Text>
                       </Flex>
                     </Box>
                     <Box>
@@ -119,6 +96,14 @@ function Page() {
               )
             })}
           </SimpleGrid>
+          <Center>
+            <Pagination
+              value={page}
+              onChange={(newPage) => load(newPage)}
+              total={totalPages}
+              my="md"
+            />
+          </Center>
         </Stack>
       </Box >
     </Stack >
