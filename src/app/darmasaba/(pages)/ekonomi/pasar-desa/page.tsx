@@ -1,90 +1,76 @@
 'use client'
+import pasarDesaState from '@/app/admin/(dashboard)/_state/ekonomi/pasar-desa/pasar-desa';
 import colors from '@/con/colors';
-import { Box, Combobox, Flex, Image, InputBase, InputPlaceholder, Paper, SimpleGrid, Stack, Text, TextInput, useCombobox } from '@mantine/core';
+import { Box, Center, Flex, Grid, GridCol, Image, Pagination, Paper, Select, SimpleGrid, Skeleton, Stack, Text, TextInput } from '@mantine/core';
+import { useShallowEffect } from '@mantine/hooks';
 import { IconMapPinFilled, IconSearch, IconShoppingCartFilled, IconStarFilled } from '@tabler/icons-react';
 import { motion } from 'motion/react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { useProxy } from 'valtio/utils';
 import BackButton from '../../desa/layanan/_com/BackButto';
 
-const groceries = [
-  'Makanan',
-  'Minuman',
-  'Pakaian',
-  'Alat Dapur',
-  'Alat Mandi',
-  'Furniture',
-];
-
-const dataBarang = [
-  {
-    id: 1,
-    image: '/api/img/semat.png',
-    judul: 'Semat Bambu / Semat Banten',
-    harga: 'Rp. 3000 / pcs',
-    bintang: '4.9',
-    alamat: 'Jl. Kecubung no.6'
-  },
-  {
-    id: 2,
-    image: '/api/img/kerupuk.png',
-    judul: 'Kerupuk Babi',
-    harga: 'Rp. 12000 / pcs',
-    bintang: '4.9',
-    alamat: 'Jl. Kenari no.7'
-  },
-  {
-    id: 3,
-    image: '/api/img/beras.png',
-    judul: 'beras Merah Organik',
-    harga: 'Rp. 40000 / 1 kg',
-    bintang: '4.9',
-    alamat: 'Jl. Mawar no.8'
-  },
-  {
-    id: 4,
-    image: '/api/img/genteng.png',
-    judul: 'Genteng',
-    harga: 'Rp. 3600 / pcs',
-    bintang: '4.9',
-    alamat: 'Jl. Kecubung no.16'
-  },
-
-]
 function Page() {
-  const [search, setSearch] = useState('');
-  const combobox = useCombobox({
-    onDropdownClose: () => {
-      combobox.resetSelectedOption();
-      combobox.focusTarget();
-      setSearch('');
-    },
-
-    onDropdownOpen: () => {
-      combobox.focusSearchInput();
-    },
-  });
-
-  const [value, setValue] = useState<string | null>(null);
-
-  const options = groceries
-    .filter((item) => item.toLowerCase().includes(search.toLowerCase().trim()))
-    .map((item) => (
-      <Combobox.Option value={item} key={item}>
-        {item}
-      </Combobox.Option>
-    ));
   const router = useRouter()
+  const state = useProxy(pasarDesaState.pasarDesa)
+  const [search, setSearch] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const {
+    data,
+    page,
+    loading,
+    totalPages,
+    load,
+  } = state.findMany
+
+  useShallowEffect(() => {
+    pasarDesaState.kategoriProduk.findMany.load()
+  }, [])
+
+  // Filter data based on selected category
+  const filteredData = selectedCategory
+    ? data?.filter(item => 
+        item.KategoriToPasar?.some(kategori => kategori.kategoriId === selectedCategory)
+      )
+    : data;
+
+  useShallowEffect(() => {
+    load(page, 4, search, selectedCategory || undefined)
+  }, [page, search, selectedCategory])
+
+
+  if (loading || !data) {
+    return (
+      <Stack py={10}>
+        <Skeleton h={500} />
+      </Stack>
+    )
+  }
+
   return (
     <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"22"}>
       <Box px={{ base: 'md', md: 100 }}>
         <BackButton />
       </Box>
       <Box>
-        <Text ta={"center"} fz={{ base: "h1", md: "2.5rem" }} c={colors["blue-button"]} fw={"bold"}>
-          Pasar Desa
-        </Text>
-        <Text px={{ base: 20, md: 150 }} ta={"center"} fz={{ base: "h4", md: "h3" }} >
+        <Grid align='center' px={{ base: 'md', md: 100 }}>
+          <GridCol span={{ base: 12, md: 9 }}>
+            <Text fz={{ base: "h1", md: "2.5rem" }} c={colors["blue-button"]} fw={"bold"}>
+              Pasar Desa
+            </Text>
+          </GridCol>
+          <GridCol span={{ base: 12, md: 3 }}>
+            <TextInput
+              radius={"lg"}
+              placeholder='Cari Produk'
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              leftSection={<IconSearch size={20} />}
+              w={{ base: "50%", md: "100%" }}
+            />
+          </GridCol>
+        </Grid>
+        <Text px={{ base: 'md', md: 100 }} ta={"justify"} fz={{ base: "h4", md: "h3" }} >
           Pasar Desa Online merupakan Media Promosi yang bertujuan untuk membantu warga desa dalam memasarkan dan memperkenalkan produknya kepada masyarakat.
         </Text>
       </Box>
@@ -98,48 +84,23 @@ function Page() {
             }}
           >
             <Box>
-              <Combobox
-                store={combobox}
-                withinPortal={false}
-                onOptionSubmit={(val) => {
-                  setValue(val);
-                  combobox.closeDropdown();
-                }}
-              >
-                <Combobox.Target>
-                  <InputBase
-                    component="button"
-                    type="button"
-                    pointer
-                    rightSection={<Combobox.Chevron />}
-                    onClick={() => combobox.toggleDropdown()}
-                    rightSectionPointerEvents="none"
-                  >
-                    {value || <InputPlaceholder>Kategori</InputPlaceholder>}
-                  </InputBase>
-                </Combobox.Target>
-
-                <Combobox.Dropdown>
-                  <Combobox.Search
-                    value={search}
-                    onChange={(event) => setSearch(event.currentTarget.value)}
-                    placeholder="Search groceries"
-                  />
-                  <Combobox.Options>
-                    {options.length > 0 ? options : <Combobox.Empty>Nothing found</Combobox.Empty>}
-                  </Combobox.Options>
-                </Combobox.Dropdown>
-              </Combobox>
-            </Box>
-            <Box>
-              <TextInput
-                placeholder='Cari Produk'
-                leftSection={<IconSearch size={20} />}
+              <Select
+                placeholder="Pilih Kategori"
+                data={pasarDesaState.kategoriProduk.findMany.data?.map((v) => ({
+                  value: v.id,
+                  label: v.nama
+                })) || []}
+                value={selectedCategory}
+                onChange={setSelectedCategory}
+                clearable
+                searchable
+                nothingFoundMessage="Tidak ada kategori ditemukan"
+                style={{ width: '100%' }}
               />
             </Box>
           </SimpleGrid>
           <SimpleGrid cols={{ base: 1, md: 4 }}>
-            {dataBarang.map((v, k) => {
+            {filteredData?.map((v, k) => {
               return (
                 <Stack key={k}>
                   <motion.div
@@ -148,18 +109,25 @@ function Page() {
                     whileTap={{ scale: 0.8 }}
                   >
                     <Paper p={'lg'}>
-                      <Image radius={'lg'} src={v.image} alt='' />
-                      <Text py={10} fw={'bold'} fz={'lg'}>{v.judul}</Text>
-                      <Text fz={'md'}>{v.harga}</Text>
+                      <Image
+                        radius={'lg'}
+                        src={v.image?.link || '/placeholder-product.jpg'}
+                        alt={v.nama}
+                        h={200}
+                        w='100%'
+                        style={{ objectFit: 'cover' }}
+                      />
+                      <Text py={10} fw={'bold'} fz={'lg'}>{v.nama}</Text>
+                      <Text fz={'md'}>Rp {v.harga.toLocaleString('id-ID')}</Text>
                       <Flex py={10} gap={'md'}>
                         <IconStarFilled size={20} color='#EBCB09' />
-                        <Text fz={'sm'} ml={2}>{v.bintang}</Text>
+                        <Text fz={'sm'} ml={2}>{v.rating}</Text>
                       </Flex>
                       <Flex justify={'space-between'} align={'center'}>
                         <Box>
                           <Flex gap={'md'} align={'center'}>
                             <IconMapPinFilled size={20} color='red' />
-                            <Text fz={'sm'} ml={2}>{v.alamat}</Text>
+                            <Text fz={'sm'} ml={2}>{v.alamatUsaha}</Text>
                           </Flex>
                         </Box>
                         <IconShoppingCartFilled size={20} color={colors['blue-button']} />
@@ -170,6 +138,14 @@ function Page() {
               )
             })}
           </SimpleGrid>
+          <Center>
+            <Pagination
+              value={page}
+              onChange={(newPage) => load(newPage)} // ini penting!
+              total={totalPages}
+              my="md"
+            />
+          </Center>
         </Stack>
       </Box>
     </Stack>

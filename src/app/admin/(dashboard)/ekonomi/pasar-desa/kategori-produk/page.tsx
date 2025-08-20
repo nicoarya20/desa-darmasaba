@@ -1,6 +1,6 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr } from '@mantine/core';
+import { Box, Button, Center, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconEdit, IconSearch, IconX } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
@@ -13,31 +13,39 @@ import pasarDesaState from '../../../_state/ekonomi/pasar-desa/pasar-desa';
 
 
 function PasarDesa() {
-  const [search, setSearch] = useState("")
+  const [search2, setSearch2] = useState("")
   return (
     <Box>
       <HeaderSearch
         title='Kategori Produk'
         placeholder='pencarian'
         searchIcon={<IconSearch size={20} />}
-        value={search}
-        onChange={(e) => setSearch(e.currentTarget.value)}
+        value={search2}
+        onChange={(e) => setSearch2(e.currentTarget.value)}
       />
-      <ListPasarDesa search={search} />
+      <ListPasarDesa search2={search2} />
     </Box>
   );
 }
 
-function ListPasarDesa({ search }: { search: string }) {
+function ListPasarDesa({ search2 }: { search2: string }) {
   const statePasar = useProxy(pasarDesaState.kategoriProduk)
   const [modalHapus, setModalHapus] = useState(false)
   const [selectedId, setSelectedId] = useState<string | null>(null)
   // const params = useParams()
   const router = useRouter()
 
+  const {
+    data,
+    page,
+    totalPages,
+    loading,
+    load,
+  } = statePasar.findMany
+
   useShallowEffect(() => {
-    statePasar.findMany.load()
-  }, [])
+    load(page, 10, search2)
+  }, [page, search2])
 
   const handleHapus = () => {
     if (selectedId) {
@@ -47,14 +55,9 @@ function ListPasarDesa({ search }: { search: string }) {
     }
   }
 
-  const filteredData = (statePasar.findMany.data || []).filter(item => {
-    const keyword = search.toLowerCase();
-    return (
-      item.nama.toLowerCase().includes(keyword)
-    );
-  });
+  const filteredData = data || []
 
-  if (!statePasar.findMany.data) {
+  if (loading || !data) {
     return (
       <Stack py={10}>
         <Skeleton h={500} />
@@ -99,6 +102,14 @@ function ListPasarDesa({ search }: { search: string }) {
           </TableTbody>
         </Table>
       </Paper>
+      <Center>
+        <Pagination
+          value={page}
+          onChange={(newPage) => load(newPage)}
+          total={totalPages}
+          my={"md"}
+        />
+      </Center>
       {/* Modal Konfirmasi Hapus */}
       <ModalKonfirmasiHapus
         opened={modalHapus}

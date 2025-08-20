@@ -88,7 +88,7 @@ function Page() {
             })}
           </SimpleGrid>
         </Stack>
-      </Box>
+      </Box>  
       <Center>
         <Pagination
           value={page}

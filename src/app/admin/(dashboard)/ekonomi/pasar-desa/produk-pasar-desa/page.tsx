@@ -1,6 +1,6 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr } from '@mantine/core';
+import { Box, Button, Center, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr } from '@mantine/core';
 import { IconDeviceImac, IconSearch } from '@tabler/icons-react';
 import { useShallowEffect } from '@mantine/hooks';
 import { useRouter } from 'next/navigation';
@@ -30,21 +30,21 @@ function ListPasarDesa({ search }: { search: string }) {
   const statePasar = useProxy(pasarDesaState.pasarDesa)
   const router = useRouter();
 
+  const {
+    data,
+    page,
+    totalPages,
+    loading,
+    load,
+  } = statePasar.findMany
+
   useShallowEffect(() => {
-    statePasar.findMany.load()
-  }, [])
+    load(page, 10, search)
+  }, [page, search])
 
-  const filteredData = (statePasar.findMany.data || []).filter(item => {
-    const keyword = search.toLowerCase();
-    return (
-      item.nama.toLowerCase().includes(keyword) ||
-      item.harga.toString().toLowerCase().includes(keyword) ||
-      item.rating.toString().toLowerCase().includes(keyword) ||
-      item.alamatUsaha.toLowerCase().includes(keyword)
-    );
-  });
+  const filteredData = data || []
 
-  if (!statePasar.findMany.data) {
+  if (loading || !data) {
     return (
       <Stack py={10}>
         <Skeleton h={500} />
@@ -86,6 +86,14 @@ function ListPasarDesa({ search }: { search: string }) {
           </TableTbody>
         </Table>
       </Paper>
+      <Center>
+        <Pagination
+          value={page}
+          onChange={(newPage) => load(newPage)}
+          total={totalPages}
+          my={"md"}
+        />
+      </Center>
     </Box>
   );
 }

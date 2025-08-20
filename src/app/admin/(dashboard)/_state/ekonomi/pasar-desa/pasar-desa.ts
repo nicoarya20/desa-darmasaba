@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiFetch from "@/lib/api-fetch";
 import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
@@ -53,22 +54,47 @@ const pasarDesa = proxy({
     },
   },
   findMany: {
-    data: null as Array<
-      Prisma.PasarDesaGetPayload<{
-        include: {
-          image: true;
-          KategoriToPasar: {
-            include: {
-              kategori: true;
+    data: null as
+      | Prisma.PasarDesaGetPayload<{
+          include: {
+            image: true;
+            KategoriToPasar: {
+              include: {
+                kategori: true;
+              };
             };
           };
-        };
-      }>
-    > | null,
-    async load() {
-      const res = await ApiFetch.api.ekonomi.pasardesa["find-many"].get();
-      if (res.status === 200) {
-        pasarDesa.findMany.data = res.data?.data ?? [];
+        }>[]
+      | null,
+    page: 1,
+    totalPages: 1,
+    loading: false,
+    search: "",
+   load: async (page = 1, limit = 10, search = "", categoryId?: string) => {
+      pasarDesa.findMany.loading = true;
+      pasarDesa.findMany.page = page;
+      pasarDesa.findMany.search = search;
+  
+      try {
+        const query: any = { page, limit };
+        if (search) query.search = search;
+        if (categoryId) query.categoryId = categoryId;
+    
+        const res = await ApiFetch.api.ekonomi.pasardesa["find-many"].get({ query });
+    
+        if (res.status === 200 && res.data?.success) {
+          pasarDesa.findMany.data = res.data.data ?? [];
+          pasarDesa.findMany.totalPages = res.data.totalPages ?? 1;
+        } else {
+          pasarDesa.findMany.data = [];
+          pasarDesa.findMany.totalPages = 1;
+        }
+      } catch (err) {
+        console.error("Gagal fetch keamanan lingkungan paginated:", err);
+        pasarDesa.findMany.data = [];
+        pasarDesa.findMany.totalPages = 1;
+      } finally {
+        pasarDesa.findMany.loading = false;
       }
     },
   },
@@ -272,14 +298,41 @@ const kategoriProduk = proxy({
     },
   },
   findMany: {
-    data: null as Array<{
-      id: string;
-      nama: string;
-    }> | null,
-    async load() {
-      const res = await ApiFetch.api.ekonomi.kategoriproduk["find-many"].get();
-      if (res.status === 200) {
-        kategoriProduk.findMany.data = res.data?.data ?? [];
+    data: null as
+      | Prisma.KategoriProdukGetPayload<{
+          omit: {
+            isActive: true;
+          };
+        }>[]
+      | null,
+    page: 1,
+    totalPages: 1,
+    loading: false,
+    search2: "",
+   load: async (page = 1, limit = 10, search2 = "") => {
+      kategoriProduk.findMany.loading = true; // ✅ Akses langsung via nama path
+      kategoriProduk.findMany.page = page;
+      kategoriProduk.findMany.search2 = search2;
+  
+      try {
+        const query: any = { page, limit };
+        if (search2) query.search2 = search2;
+    
+        const res = await ApiFetch.api.ekonomi.kategoriproduk["find-many"].get({ query });
+    
+        if (res.status === 200 && res.data?.success) {
+          kategoriProduk.findMany.data = res.data.data ?? [];
+          kategoriProduk.findMany.totalPages = res.data.totalPages ?? 1;
+        } else {
+          kategoriProduk.findMany.data = [];
+          kategoriProduk.findMany.totalPages = 1;
+        }
+      } catch (err) {
+        console.error("Gagal fetch kategori produk paginated:", err);
+        kategoriProduk.findMany.data = [];
+        kategoriProduk.findMany.totalPages = 1;
+      } finally {
+        kategoriProduk.findMany.loading = false;
       }
     },
   },
