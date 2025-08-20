@@ -1,6 +1,6 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
+import { Box, Button, Center, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
 import { IconDeviceImac, IconSearch } from '@tabler/icons-react';
 import HeaderSearch from '../../_com/header';
 import JudulList from '../../_com/judulList';
@@ -30,19 +30,21 @@ function ListTipsKeamanan({ search }: { search: string }) {
   const stateKeamanan = useProxy(tipsKeamananState)
   const router = useRouter();
 
+  const {
+    data,
+    page,
+    totalPages,
+    loading,
+    load,
+  } = stateKeamanan.findMany
+
   useShallowEffect(() => {
-    stateKeamanan.findMany.load()
-  }, [])
+    load(page, 10, search)
+  }, [page, search])
 
-  const filteredData = (stateKeamanan.findMany.data || []).filter(item => {
-    const keyword = search.toLowerCase();
-    return (
-      item.judul.toLowerCase().includes(keyword) ||
-      item.deskripsi.toLowerCase().includes(keyword)
-    );
-  });
+  const filteredData = data || []
 
-  if (!stateKeamanan.findMany.data) {
+  if (loading || !data) {
     return (
       <Stack py={10}>
         <Skeleton h={500} />
@@ -67,9 +69,15 @@ function ListTipsKeamanan({ search }: { search: string }) {
           <TableTbody>
             {filteredData.map((item) => (
               <TableTr key={item.id}>
-                <TableTd>{item.judul}</TableTd>
                 <TableTd>
-                  <Text fz={"xs"} dangerouslySetInnerHTML={{__html: item.deskripsi}} />
+                  <Box w={150}>
+                    <Text fz={"md"} truncate={"end"} lineClamp={1}>{item.judul}</Text>
+                  </Box>
+                </TableTd>
+                <TableTd>
+                  <Box w={250}>
+                    <Text fz={"md"} truncate={"end"} lineClamp={1} dangerouslySetInnerHTML={{__html: item.deskripsi}} />
+                  </Box>
                 </TableTd>
                 <TableTd>
                   <Button onClick={() => router.push(`/admin/keamanan/tips-keamanan/${item.id}`)}>
@@ -81,6 +89,14 @@ function ListTipsKeamanan({ search }: { search: string }) {
           </TableTbody>
         </Table>  
       </Paper>
+      <Center>
+        <Pagination
+          value={page}
+          onChange={(newPage) => load(newPage)}
+          total={totalPages}
+          my="md"
+        />
+      </Center>
     </Box>
   );
 }
