@@ -1,19 +1,32 @@
 'use client'
+import lowonganKerjaState from '@/app/admin/(dashboard)/_state/ekonomi/lowongan-kerja';
 import colors from '@/con/colors';
-import { Stack, Box, Text, TextInput, Group, SimpleGrid, Paper, Flex, Button, Skeleton, Center, Pagination } from '@mantine/core';
-import React from 'react';
-import BackButton from '../../desa/layanan/_com/BackButto';
+import { Box, Button, Center, Flex, Group, Pagination, Paper, SimpleGrid, Skeleton, Stack, Text, TextInput } from '@mantine/core';
+import { useDebouncedValue } from '@mantine/hooks';
 import { IconBriefcase, IconClock, IconMapPin, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
-import lowonganKerjaState from '@/app/admin/(dashboard)/_state/ekonomi/lowongan-kerja';
-import { useShallowEffect } from '@mantine/hooks';
-import { useState } from 'react';
+import BackButton from '../../desa/layanan/_com/BackButto';
+
+const formatCurrency = (value: string | number) => {
+  // Convert to string if it's a number
+  const numStr = typeof value === 'number' ? value.toString() : value;
+  
+  // Remove all non-digit characters
+  const digitsOnly = numStr.replace(/\D/g, '');
+  
+  // Format with thousand separators
+  const formatted = digitsOnly.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  
+  return `Rp.${formatted}`;
+};
 
 function Page() {
   const state = useProxy(lowonganKerjaState)
   const router = useRouter()
   const [search, setSearch] = useState('')
+  const [debouncedSearch] = useDebouncedValue(search, 500); // 500ms delay
 
   const {
     data,
@@ -23,9 +36,9 @@ function Page() {
     load,
   } = state.findMany
 
-  useShallowEffect(() => {
-    load(page, 6, search)
-  }, [page, search])
+  useEffect(() => {
+    load(page, 6, debouncedSearch)
+  }, [page, debouncedSearch, load])
 
   if (loading || !data) {
     return (
@@ -86,7 +99,7 @@ function Page() {
                         <IconClock color={colors['blue-button']} size={50} />
                         <Box>
                           <Text fw={'bold'} fz={'h4'} c={colors['blue-button']}>Full Time</Text>
-                          <Text fz={'h4'}>{v.gaji}</Text>
+                          <Text fz={'h4'}>{formatCurrency(v.gaji)}</Text>
                         </Box>
                       </Flex>
                     </Box>

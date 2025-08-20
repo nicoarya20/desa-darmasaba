@@ -55,17 +55,17 @@ function EditLowonganKerja() {
 
   const handleSubmit = async () => {
     try {
-      lowonganKerjaState.update.form = {
-        ...lowonganKerjaState.update.form,
-        posisi: formData.posisi,
-        namaPerusahaan: formData.namaPerusahaan,
-        lokasi: formData.lokasi,
-        tipePekerjaan: formData.tipePekerjaan,
-        gaji: formData.gaji,
-        deskripsi: formData.deskripsi,
-        kualifikasi: formData.kualifikasi,
-      }
-      await lowonganState.update.update()
+      // Set the ID for the update
+      lowonganState.update.id = params?.id as string;
+      
+      // Update the form state
+      lowonganState.update.form = {
+        ...lowonganState.update.form,
+        ...formData
+      };
+      
+      // Call the update function
+      await lowonganState.update.update();
       toast.success("Lowongan kerja berhasil diperbarui!");
       router.push("/admin/ekonomi/lowongan-kerja-lokal");
     } catch (error) {
@@ -88,7 +88,7 @@ function EditLowonganKerja() {
           <TextInput
             value={formData.posisi}
             onChange={(val) => {
-              formData.posisi = val.target.value;
+              setFormData(prev => ({ ...prev, posisi: val.target.value }));
             }}
             label={<Text fw={"bold"} fz={"sm"}>Posisi</Text>}
             placeholder='Masukkan posisi'
@@ -96,7 +96,7 @@ function EditLowonganKerja() {
           <TextInput
             value={formData.namaPerusahaan}
             onChange={(val) => {
-              formData.namaPerusahaan = val.target.value;
+              setFormData(prev => ({ ...prev, namaPerusahaan: val.target.value }));
             }}
             label={<Text fw={"bold"} fz={"sm"}>Nama Perusahaan</Text>}
             placeholder='Masukkan nama perusahaan'
@@ -104,7 +104,7 @@ function EditLowonganKerja() {
           <TextInput
             value={formData.lokasi}
             onChange={(val) => {
-              formData.lokasi = val.target.value;
+              setFormData(prev => ({ ...prev, lokasi: val.target.value }));
             }}
             label={<Text fw={"bold"} fz={"sm"}>Lokasi</Text>}
             placeholder='Masukkan lokasi'
@@ -112,7 +112,7 @@ function EditLowonganKerja() {
           <TextInput
             value={formData.tipePekerjaan}
             onChange={(val) => {
-              formData.tipePekerjaan = val.target.value;
+              setFormData(prev => ({ ...prev, tipePekerjaan: val.target.value }));
             }}
             label={<Text fw={"bold"} fz={"sm"}>Tipe Pekerjaan</Text>}
             placeholder='Masukkan tipe pekerjaan'
@@ -120,7 +120,7 @@ function EditLowonganKerja() {
           <TextInput
             value={formData.gaji}
             onChange={(val) => {
-              formData.gaji = val.target.value;
+              setFormData(prev => ({ ...prev, gaji: val.target.value }));
             }}
             label={<Text fw={"bold"} fz={"sm"}>Gaji selama 1 bulan</Text>}
             placeholder='Masukkan gaji'
@@ -130,7 +130,7 @@ function EditLowonganKerja() {
             <EditEditor
               value={formData.deskripsi}
               onChange={(val) => {
-                formData.deskripsi = val;
+                setFormData(prev => ({ ...prev, deskripsi: val }));
               }}
             />
           </Box>
@@ -139,7 +139,7 @@ function EditLowonganKerja() {
             <EditEditor
               value={formData.kualifikasi}
               onChange={(val) => {
-                formData.kualifikasi = val;
+                setFormData(prev => ({ ...prev, kualifikasi: val }));
               }}
             />
           </Box>
