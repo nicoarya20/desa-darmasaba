@@ -143,8 +143,8 @@ function ListDemografiPekerjaan({ search }: { search: string }) {
                   dataKey="pekerjaan"
                   type="stacked"
                   series={[
-                    { name: 'lakiLaki', color: 'red.6', label: 'Laki - Laki' },
-                    { name: 'perempuan', color: 'orange.6', label: 'Perempuan' },
+                    { name: 'lakiLaki', color: '#5082EE', label: 'Laki - Laki' },
+                    { name: 'perempuan', color: '#6EDF9C', label: 'Perempuan' },
                   ]}
                 />
               </Box>

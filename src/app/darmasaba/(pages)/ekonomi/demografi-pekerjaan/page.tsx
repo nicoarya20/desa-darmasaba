@@ -1,192 +1,32 @@
+'use client'
 import colors from '@/con/colors';
-import { Stack, Box, Paper, Text, ColorSwatch, Flex } from '@mantine/core';
+import { Stack, Box, Paper, Text, ColorSwatch, Flex, Skeleton } from '@mantine/core';
 import React from 'react';
 import BackButton from '../../desa/layanan/_com/BackButto';
 import { BarChart } from '@mantine/charts';
+import { useProxy } from 'valtio/utils';
+import grafikDemografiPekerjaan from '@/app/admin/(dashboard)/_state/ekonomi/demografi-pekerjaan';
+import { useShallowEffect } from '@mantine/hooks';
 
-const data = [
-  {
-    id: 1,
-    Pekerjaan: 'Guru',
-    laki: 2,
-    perempuan: 3
-  },
-  {
-    id: 2,
-    Pekerjaan: 'Belajar/Mahasiswa',
-    laki: 37,
-    perempuan: 38
-  },
-  {
-    id: 3,
-    Pekerjaan: 'Karyawan Bumdn',
-    laki: 1,
-    perempuan: 0
-  },
-  {
-    id: 4,
-    Pekerjaan: 'Buruh Tani/Perkebunan',
-    laki: 1,
-    perempuan: 0
-  },
-  {
-    id: 5,
-    Pekerjaan: 'Karyawan Swasta',
-    laki: 3,
-    perempuan: 17
-  },
-  {
-    id: 6,
-    Pekerjaan: 'Karyawan Honorer',
-    laki: 2,
-    perempuan: 1
-  },
-  {
-    id: 7,
-    Pekerjaan: 'Buruh Harian Lepas',
-    laki: 8,
-    perempuan: 5
-  },
-  {
-    id: 8,
-    Pekerjaan: 'Belum/Tidak Bekerja',
-    laki: 87,
-    perempuan: 44
-  },
-  {
-    id: 9,
-    Pekerjaan: ' Kepolisian RI (Polri)',
-    laki: 4,
-    perempuan: 0
-  },
-  {
-    id: 10,
-    Pekerjaan: 'Wiraswasta Mengurus Rumah Tangga',
-    laki: 1,
-    perempuan: 7
-  },
-  {
-    id: 11,
-    Pekerjaan: 'Dosen',
-    laki: 1,
-    perempuan: 1
-  },
-  {
-    id: 12,
-    Pekerjaan: 'Perangkat Desa',
-    laki: 17,
-    perempuan: 19
-  },
-  {
-    id: 13,
-    Pekerjaan: 'Nelayan',
-    laki: 3,
-    perempuan: 0
-  },
-  {
-    id: 14,
-    Pekerjaan: 'Penyuluh Pertanian',
-    laki: 33,
-    perempuan: 24
-  },
-  {
-    id: 15,
-    Pekerjaan: 'Tukang Las/Pandai Besi',
-    laki: 5,
-    perempuan: 0
-  },
-  {
-    id: 16,
-    Pekerjaan: 'Sopir/Driver',
-    laki: 10,
-    perempuan: 3
-  },
-  {
-    id: 17,
-    Pekerjaan: 'Teknisi/Listrik',
-    laki: 25,
-    perempuan: 0
-  },
-  {
-    id: 18,
-    Pekerjaan: 'Montir/Mekanik',
-    laki: 25,
-    perempuan: 0
-  },
-  {
-    id: 19,
-    Pekerjaan: 'Karyawan Hotel/Pariwisata',
-    laki: 2,
-    perempuan: 52
-  },
-  {
-    id: 20,
-    Pekerjaan: 'Pengrajin (Batik, Anyaman, Kayu)',
-    laki: 5,
-    perempuan: 25
-  },
-  {
-    id: 21,
-    Pekerjaan: 'Tukang Bangunan',
-    laki: 25,
-    perempuan: 5
-  },
-  {
-    id: 22,
-    Pekerjaan: 'Tukang Kayu/Furnitur',
-    laki: 25,
-    perempuan: 0
-  },
-  {
-    id: 23,
-    Pekerjaan: 'Penjahit',
-    laki: 2,
-    perempuan: 35
-  },
-  {
-    id: 24,
-    Pekerjaan: 'Pedagang Pasar',
-    laki: 25,
-    perempuan: 30
-  },
-  {
-    id: 25,
-    Pekerjaan: 'Warung Makan/Penjual Makanan',
-    laki: 15,
-    perempuan: 30
-  },
-  {
-    id: 26,
-    Pekerjaan: 'Satpam/Security',
-    laki: 20,
-    perempuan: 5
-  },
-  {
-    id: 27,
-    Pekerjaan: 'Pengusaha Kecil (UMKM)',
-    laki: 5,
-    perempuan: 20
-  },
-  {
-    id: 28,
-    Pekerjaan: 'Karyawan Restoran/Kafe',
-    laki: 5,
-    perempuan: 15
-  },
-  {
-    id: 29,
-    Pekerjaan: 'Freelancer',
-    laki: 20,
-    perempuan: 10
-  },
-  {
-    id: 30,
-    Pekerjaan: 'Fotografer',
-    laki: 25,
-    perempuan: 9
-  },
-]
 function Page() {
+  const state = useProxy(grafikDemografiPekerjaan)
+
+  const {
+    data,
+  } = state.findMany
+
+  useShallowEffect(() => {
+    state.findMany.load()
+  }, [])
+
+  if (!data) {
+    return (
+      <Stack py={10}>
+        <Skeleton h={500} />
+      </Stack>
+    )
+  }
+
   return (
     <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"22"}>
       <Box px={{ base: 'md', md: 100 }}>
@@ -207,7 +47,13 @@ function Page() {
               p={10}
               mb={50}
               h={400}
-              data={data}
+              w={150}
+              data={data.map((item) => ({
+                id: item.id,
+                Pekerjaan: item.pekerjaan,
+                laki: item.lakiLaki,
+                perempuan: item.perempuan,
+              }))}
               dataKey="Pekerjaan"
               series={[
                 { name: 'laki', color: '#5082EE' },

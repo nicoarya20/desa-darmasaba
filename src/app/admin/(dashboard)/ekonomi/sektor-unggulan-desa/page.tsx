@@ -1,6 +1,6 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Paper, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title } from '@mantine/core';
+import { Box, Button, Paper, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title } from '@mantine/core';
 import { IconDeviceImac, IconSearch } from '@tabler/icons-react';
 import HeaderSearch from '../../_com/header';
 import JudulList from '../../_com/judulList';
@@ -30,7 +30,7 @@ function SektorUnggulanDesa() {
 function ListSektorUnggulanDesa({ search }: { search: string }) {
   const router = useRouter();
   const state = useProxy(grafikSektorUnggulan);
-  const [chartData, setChartData] = useState<{id: string; name: string; description: string | null; value: number | null}[]>([]);
+  const [chartData, setChartData] = useState<{ id: string; name: string; description: string | null; value: number | null }[]>([]);
   const [mounted, setMounted] = useState(false); // untuk memastikan DOM sudah ready
   const isTablet = useMediaQuery('(max-width: 1024px)')
   const isMobile = useMediaQuery('(max-width: 768px)')
@@ -61,38 +61,41 @@ function ListSektorUnggulanDesa({ search }: { search: string }) {
   }, [state.findMany.data]);
 
   return (
-    <Box py={10}>
-      <Paper bg={colors['white-1']} p={'md'}>
-        <JudulList
-          title='List Sektor Unggulan Desa'
-          href='/admin/ekonomi/sektor-unggulan-desa/create'
-        />
-        <Table striped withTableBorder withRowBorders>
-          <TableThead>
-            <TableTr>
-              <TableTh>Nama Sektor Unggulan</TableTh>
-              <TableTh>Deskripsi Sektor Unggulan</TableTh>
-              <TableTh>Detail</TableTh>
-            </TableTr>
-          </TableThead>
-          <TableTbody>
-            {filteredData.map((item) => (
-              <TableTr key={item.id}>
-                <TableTd>{item.name}</TableTd>
-                <TableTd>{item.description}</TableTd>
-                <TableTd>
-                  <Button onClick={() => router.push(`/admin/ekonomi/sektor-unggulan-desa/${item.id}`)}>
-                    <IconDeviceImac size={20} />
-                  </Button>
-                </TableTd>
+    <Box>
+      <Stack gap={"xs"}>
+        <Paper bg={colors['white-1']} p={'md'}>
+          <JudulList
+            title='List Sektor Unggulan Desa'
+            href='/admin/ekonomi/sektor-unggulan-desa/create'
+          />
+          <Table striped withTableBorder withRowBorders>
+            <TableThead>
+              <TableTr>
+                <TableTh>Nama Sektor Unggulan</TableTh>
+                <TableTh>Deskripsi Sektor Unggulan</TableTh>
+                <TableTh>Detail</TableTh>
               </TableTr>
-            ))}
-          </TableTbody>
-        </Table>
-      </Paper>
+            </TableThead>
+            <TableTbody>
+              {filteredData.map((item) => (
+                <TableTr key={item.id}>
+                  <TableTd>{item.name}</TableTd>
+                  <TableTd>
+                    <Text truncate={"end"} fz={'sm'} lineClamp={1} dangerouslySetInnerHTML={{ __html: item.description || '' }}></Text>
+                  </TableTd>
+                  <TableTd>
+                    <Button onClick={() => router.push(`/admin/ekonomi/sektor-unggulan-desa/${item.id}`)}>
+                      <IconDeviceImac size={20} />
+                    </Button>
+                  </TableTd>
+                </TableTr>
+              ))}
+            </TableTbody>
+          </Table>
+        </Paper>
 
-      {/* Chart */}
-      {!mounted && !chartData ? (
+        {/* Chart */}
+        {!mounted && !chartData ? (
           <Box style={{ width: '100%', minWidth: 300, height: 400, minHeight: 300 }}>
             <Paper bg={colors['white-1']} p={'md'}>
               <Title pb={10} order={3}>Grafik Hasil Kepuasan Masyarakat</Title>
@@ -115,6 +118,7 @@ function ListSektorUnggulanDesa({ search }: { search: string }) {
             </Paper>
           </Box>
         )}
+      </Stack>
     </Box>
   );
 }

@@ -2,15 +2,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, Stack, TextInput, Title } from '@mantine/core';
+import { Box, Button, Group, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import grafikSektorUnggulan from '../../../_state/ekonomi/sektor-unggulan-desa';
+import CreateEditor from '../../../_com/createEditor';
 
 function CreateSektorUnggulanDesa() {
-  const stateGrafik= useProxy(grafikSektorUnggulan);
+  const stateGrafik = useProxy(grafikSektorUnggulan);
   const [chartData, setChartData] = useState<any[]>([]);
   const router = useRouter()
 
@@ -54,15 +55,15 @@ function CreateSektorUnggulanDesa() {
                 stateGrafik.create.form.name = val.currentTarget.value;
               }}
             />
-            <TextInput
-              label="Deskripsi Sektor Unggulan"
-              type="text"
-              value={stateGrafik.create.form.description}
-              placeholder="Masukkan deskripsi sektor unggulan"
-              onChange={(val) => {
-                stateGrafik.create.form.description = val.currentTarget.value;
-              }}
-            />
+            <Box>
+              <Text fw={"bold"} fz={"sm"}>Deskripsi Sektor Ungggulan</Text>
+              <CreateEditor
+                value={stateGrafik.create.form.description}
+                onChange={(val) => {
+                  stateGrafik.create.form.description = val;
+                }}
+              />
+            </Box>
             <TextInput
               label="Jumlah"
               type="number"
