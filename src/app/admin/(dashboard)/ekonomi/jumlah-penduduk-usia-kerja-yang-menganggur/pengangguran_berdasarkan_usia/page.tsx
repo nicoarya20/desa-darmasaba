@@ -8,29 +8,37 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Cell, Pie, PieChart } from 'recharts';
 import { useProxy } from 'valtio/utils';
-import JudulListTab from '../../../_com/judulListTab';
+import HeaderSearch from '../../../_com/header';
+import JudulList from '../../../_com/judulList';
 import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
 import grafikNganggur from '../../../_state/ekonomi/usia-kerja-nganggur';
 
+
 function GrafikBerdasarkanUsiaKerjaYangMenganggur() {
+  const [search, setSearch] = useState("")
   return (
     <Box>
       <Stack gap={"xs"}>
-        <Title order={3}>Grafik Pengangguran Berdasarkan Usia Kerja</Title>
-        <ListGrafikBerdasarkanUsiaKerjaYangMenganggur />
+      <HeaderSearch
+        title='Detail Data Pengangguran'
+        placeholder='pencarian'
+        searchIcon={<IconSearch size={20} />}
+        value={search}
+        onChange={(e) => setSearch(e.currentTarget.value)}
+      />
+        <ListGrafikBerdasarkanUsiaKerjaYangMenganggur search={search} />
       </Stack>
     </Box>
   );
 }
 
-function ListGrafikBerdasarkanUsiaKerjaYangMenganggur() {
+function ListGrafikBerdasarkanUsiaKerjaYangMenganggur({search}: {search: string}) {
   const stategrafik = useProxy(grafikNganggur.grafikBerdasarkanUsiaKerjaNganggur)
   const [donutData, setDonutData] = useState<any[]>([]);
   const [mounted, setMounted] = useState(false);
   const [modalHapus, setModalHapus] = useState(false)
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const router = useRouter();
-  const [search, setSearch] = useState("");
 
 
   const handleDelete = async () => {
@@ -85,13 +93,9 @@ function ListGrafikBerdasarkanUsiaKerjaYangMenganggur() {
     <Box>
       <Stack gap={"xs"}>
         <Paper bg={colors['white-1']} p={"md"}>
-          <JudulListTab
-            value={search}
-            onChange={(e) => setSearch(e.currentTarget.value)}
+          <JudulList
             title='List Pengangguran Berdasarkan Usia Kerja'
             href='/admin/ekonomi/jumlah-penduduk-usia-kerja-yang-menganggur/pengangguran_berdasarkan_usia/create'
-            placeholder='pencarian'
-            searchIcon={<IconSearch size={16} />}
           />
           <Table striped withTableBorder withRowBorders>
             <TableThead>

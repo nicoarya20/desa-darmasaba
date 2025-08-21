@@ -91,7 +91,7 @@ function ListJumlahPendudukMiskin({ search }: { search: string }) {
         <Paper bg={colors['white-1']} p={'md'}>
           <JudulList
             title='List Jumlah Penduduk Miskin'
-            href='/admin/ekonomi/jumlah-penduduk-miskin-2024-2025/create'
+            href='/admin/ekonomi/jumlah-penduduk-miskin/create'
           />
           <Table striped withTableBorder withRowBorders>
             <TableThead>
@@ -108,7 +108,7 @@ function ListJumlahPendudukMiskin({ search }: { search: string }) {
                   <TableTd>{item.year}</TableTd>
                   <TableTd>{item.totalPoorPopulation}</TableTd>
                   <TableTd>
-                    <Button color='green' onClick={() => router.push(`/admin/ekonomi/jumlah-penduduk-miskin-2024-2025/${item.id}`)}>
+                    <Button color='green' onClick={() => router.push(`/admin/ekonomi/jumlah-penduduk-miskin/${item.id}`)}>
                       <IconEdit size={20} />
                     </Button>
                   </TableTd>

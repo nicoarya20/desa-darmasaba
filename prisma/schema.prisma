@@ -1550,7 +1550,7 @@ model DataDemografiPekerjaan {
 model DetailDataPengangguran {
   id                     String   @id @default(uuid()) @db.Uuid
   month                  String   @db.VarChar(20)
-  year                   Int
+  year                   DateTime
   totalUnemployment      Int
   educatedUnemployment   Int
   uneducatedUnemployment Int

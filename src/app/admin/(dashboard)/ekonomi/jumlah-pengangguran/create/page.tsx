@@ -90,7 +90,7 @@ function CreateJumlahPengangguran() {
           />
           <TextInput
             label="Tahun"
-            type="number"
+            type="date"
             value={stateDetail.create.form.year}
             onChange={(e) =>
               (stateDetail.create.form.year = Number(e.currentTarget.value))

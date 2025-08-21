@@ -8,21 +8,29 @@ import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
 
 import { BarChart } from '@mantine/charts';
+import HeaderSearch from '../../_com/header';
+import JudulList from '../../_com/judulList';
 import jumlahPengangguranState from '../../_state/ekonomi/jumlah-pengangguran';
-import JudulListTab from '../../_com/judulListTab';
 
 function DetailDataPengangguran() {
+  const [search, setSearch] = useState("")
   return (
     <Box>
       <Stack gap={"xs"}>
-        <Title order={3}>Detail Data Pengangguran</Title>
-        <ListDetailDataPengangguran />
+      <HeaderSearch
+        title='Detail Data Pengangguran'
+        placeholder='pencarian'
+        searchIcon={<IconSearch size={20} />}
+        value={search}
+        onChange={(e) => setSearch(e.currentTarget.value)}
+      />
+        <ListDetailDataPengangguran search={search} />
       </Stack>
     </Box>
   );
 }
 
-function ListDetailDataPengangguran() {
+function ListDetailDataPengangguran({search}: {search: string}) {
 
   type DetailDataPengangguran = {
     id: string;
@@ -37,7 +45,6 @@ function ListDetailDataPengangguran() {
   const [mounted, setMounted] = useState(false); // untuk memastikan DOM sudah ready
   const stateDetail = useProxy(jumlahPengangguranState.jumlahPengangguran)
   const router = useRouter();
-  const [search, setSearch] = useState("")
 
   useShallowEffect(() => {
     setMounted(true)
@@ -78,13 +85,9 @@ function ListDetailDataPengangguran() {
     <Box>
       <Stack gap={"md"}>
         <Paper bg={colors['white-1']} p={'md'}>
-          <JudulListTab
+          <JudulList
             title='List Detail Data Pengangguran'
-            href='/admin/ekonomi/jumlah-pengangguran/detail-data-pengangguran/create'
-            value={search}
-            onChange={(e) => setSearch(e.currentTarget.value)}
-            placeholder='pencarian'
-            searchIcon={<IconSearch size={16} />}
+            href='/admin/ekonomi/jumlah-pengangguran/create'
           />
           <Table striped withTableBorder withRowBorders>
             <TableThead>
@@ -102,7 +105,7 @@ function ListDetailDataPengangguran() {
                   <TableTd>{item.educatedUnemployment}</TableTd>
                   <TableTd>{item.uneducatedUnemployment}</TableTd>
                   <TableTd>
-                    <Button onClick={() => router.push(`/admin/ekonomi/jumlah-pengangguran/detail-data-pengangguran/${item.id}`)}>
+                    <Button onClick={() => router.push(`/admin/ekonomi/jumlah-pengangguran/${item.id}`)}>
                       <IconDeviceImac size={20} />
                     </Button>
                   </TableTd>

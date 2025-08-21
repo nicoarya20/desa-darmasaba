@@ -197,8 +197,8 @@ const navbarListMenu = [
             },
             {
                 id: "5.5",
-                name: "Jumlah Pengangguran 2024-2025",
-                href: "/darmasaba/ekonomi/jumlah-pengangguran-2024-2025"
+                name: "Jumlah Pengangguran",
+                href: "/darmasaba/ekonomi/jumlah-pengangguran"
             },
             {
                 id: "5.6",
@@ -207,8 +207,8 @@ const navbarListMenu = [
             },
             {
                 id: "5.7",
-                name: "Jumlah Penduduk Miskin 2024-2025",
-                href: "/darmasaba/ekonomi/jumlah-penduduk-miskin-2024-2025"
+                name: "Jumlah Penduduk Miskin",
+                href: "/darmasaba/ekonomi/jumlah-penduduk-miskin"
             },
             {
                 id: "5.8",

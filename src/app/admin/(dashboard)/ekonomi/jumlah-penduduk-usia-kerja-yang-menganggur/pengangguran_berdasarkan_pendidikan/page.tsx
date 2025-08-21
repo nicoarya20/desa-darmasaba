@@ -8,29 +8,36 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Cell, Pie, PieChart } from 'recharts';
 import { useProxy } from 'valtio/utils';
-import JudulListTab from '../../../_com/judulListTab';
+import HeaderSearch from '../../../_com/header';
+import JudulList from '../../../_com/judulList';
 import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
 import grafikNganggur from '../../../_state/ekonomi/usia-kerja-nganggur';
 
 function GrafikBerdasarkanPendidikan() {
+  const [search, setSearch] = useState("")
   return (
     <Box>
       <Stack gap={"xs"}>
-        <Title order={3}>Grafik Pengangguran Berdasarkan Pendidikan</Title>
-        <ListGrafikBerdasarkanPendidikan />
+      <HeaderSearch
+        title='Detail Data Pengangguran Berdasarkan Pendidikan'
+        placeholder='pencarian'
+        searchIcon={<IconSearch size={20} />}
+        value={search}
+        onChange={(e) => setSearch(e.currentTarget.value)}
+      />
+        <ListGrafikBerdasarkanPendidikan search={search}/>
       </Stack>
     </Box>
   );
 }
 
-function ListGrafikBerdasarkanPendidikan() {
+function ListGrafikBerdasarkanPendidikan({search}: {search: string}) {
   const stategrafik = useProxy(grafikNganggur.grafikBerdasarkanPendidikan)
   const [donutData, setDonutData] = useState<any[]>([]);
   const [mounted, setMounted] = useState(false);
   const [modalHapus, setModalHapus] = useState(false)
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const router = useRouter();
-  const [search, setSearch] = useState("");
 
 
   const handleDelete = async () => {
@@ -56,11 +63,11 @@ function ListGrafikBerdasarkanPendidikan() {
       const D3 = stategrafik.findMany.data.reduce((acc: number, cur: any) => acc + Number(cur.D3 || 0), 0);
       const S1 = stategrafik.findMany.data.reduce((acc: number, cur: any) => acc + Number(cur.S1 || 0), 0);
       setDonutData([
-        { name: 'SD', value: SD, color: colors['blue-button'], key: 'SD' },
-        { name: 'SMP', value: SMP, color: '#10A85AFF', key: 'SMP' },
-        { name: 'SMA', value: SMA, color: '#C07B13FF', key: 'SMA' },
-        { name: 'D3', value: D3, color: '#1094A8FF', key: 'D3' },
-        { name: 'S1', value: S1, color: '#A83610FF', key: 'S1' },
+        { name: 'SD', value: SD, color: '#4b6Ef5', key: 'SD' },
+        { name: 'SMP', value: SMP, color: '#14b885', key: 'SMP' },
+        { name: 'SMA', value: SMA, color: '#E6A03B', key: 'SMA' },
+        { name: 'D3', value: D3, color: '#DB524D', key: 'D3' },
+        { name: 'S1', value: S1, color: '#1018A8FF', key: 'S1' },
       ]);
     }
   }, [stategrafik.findMany.data])
@@ -88,13 +95,9 @@ function ListGrafikBerdasarkanPendidikan() {
     <Box>
       <Stack gap={"xs"}>
         <Paper bg={colors['white-1']} p={"md"}>
-          <JudulListTab
-            value={search}
-            onChange={(e) => setSearch(e.currentTarget.value)}
+          <JudulList
             title='List Grafik Pengangguran Berdasarkan Pendidikan'
             href='/admin/ekonomi/jumlah-penduduk-usia-kerja-yang-menganggur/pengangguran_berdasarkan_pendidikan/create'
-            placeholder='pencarian'
-            searchIcon={<IconSearch size={16} />}
           />
           <Table striped withTableBorder withRowBorders>
             <TableThead>

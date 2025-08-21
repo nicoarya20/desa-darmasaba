@@ -35,7 +35,7 @@ function EditJumlahPendudukMiskin() {
     // Set the ID before submitting
     stateJPM.update.id = id;
     await stateJPM.update.submit();
-    router.push('/admin/ekonomi/jumlah-penduduk-miskin-2024-2025')
+    router.push('/admin/ekonomi/jumlah-penduduk-miskin')
   }
 return (
     <Box>

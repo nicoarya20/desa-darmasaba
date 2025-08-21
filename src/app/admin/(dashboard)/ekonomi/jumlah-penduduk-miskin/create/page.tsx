@@ -32,7 +32,7 @@ function CreateJumlahPendudukMiskin() {
       }
     }
     resetForm();
-    router.push("/admin/ekonomi/jumlah-penduduk-miskin-2024-2025");
+    router.push("/admin/ekonomi/jumlah-penduduk-miskin");
   }
   return (
     <Box>

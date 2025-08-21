@@ -25,7 +25,7 @@ function DetailJumlahPengangguran() {
       stateDetail.delete.byId(selectedId)
       setModalHapus(false)
       setSelectedId(null)
-      router.push("/admin/ekonomi/jumlah-pengangguran/detail-data-pengangguran")
+      router.push("/admin/ekonomi/jumlah-pengangguran")
     }
   }
 
@@ -86,7 +86,7 @@ function DetailJumlahPengangguran() {
                   color={"red"}>
                     <IconX size={20} />
                   </Button>
-                  <Button onClick={() => router.push(`/admin/ekonomi/jumlah-pengangguran/detail-data-pengangguran/${stateDetail.findUnique.data?.id}/edit`)} color="green">
+                  <Button onClick={() => router.push(`/admin/ekonomi/jumlah-pengangguran/${stateDetail.findUnique.data?.id}/edit`)} color="green">
                     <IconEdit size={20} />
                   </Button>
                 </Flex>
