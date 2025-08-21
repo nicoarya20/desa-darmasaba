@@ -50,14 +50,6 @@ function Page() {
         </Text>
         <Group py={20} align='center' justify='space-between'>
           <Text fz={'h4'} fw={"bold"}>DATA PENGANGGURAN DESA</Text>
-          {/* <Flex gap={'xl'}>
-            <Select
-              value={selectedYear || state.findMany.data?.[0]?.year.toString()}
-              placeholder="Pilih Tahun"
-              data={Array.from(new Set(state.findMany.data?.map(item => item.year.toString()) || []))}
-              onChange={setSelectedYear}
-            />
-          </Flex> */}
         </Group>
       </Box>
       <Box px={{ base: "md", md: 100 }}>

@@ -1,54 +1,50 @@
+'use client'
 import colors from '@/con/colors';
-import { Stack, Box, Text, SimpleGrid, Paper } from '@mantine/core';
+import { Stack, Box, Text, SimpleGrid, Paper, Skeleton, Center } from '@mantine/core';
 import React from 'react';
 import BackButton from '../../desa/layanan/_com/BackButto';
-import { LineChart } from '@mantine/charts';
+import { CartesianGrid, Legend, Line, LineChart as RechartsLineChart, Tooltip, XAxis, YAxis } from 'recharts';
+import { useProxy } from 'valtio/utils';
+import programKemiskinanState from '@/app/admin/(dashboard)/_state/ekonomi/program-kemiskinan';
+import { useShallowEffect } from '@mantine/hooks';
 
-const data = [
-  {
-    id: 1,
-    judul: 'Bantuan Tunai',
-    deskripsi: 'Bantuan keuangan langsung bagi keluarga kurang mampu'
-  },
-  {
-    id: 2,
-    judul: 'Pelatihan Kerja',
-    deskripsi: 'Program pelatihan keterampilan untuk meningkatkan peluang kerja'
-  },
-  {
-    id: 3,
-    judul: 'Subsidi Pangan',
-    deskripsi: 'Distribusi bahan pangan bersubsidi bagi masyarakat kurang mampu'
-  },
-  {
-    id: 4,
-    judul: 'Layanan Kesehatan Gratis',
-    deskripsi: 'Akses kesehatan gratis bagi masyarakat kurang mampu'
-  },
-]
-const dataStatistik = [
-  {
-    id: 1,
-    tahun: '2022',
-    Kemiskinan: 400000
-  },
-  {
-    id: 2,
-    tahun: '2023',
-    Kemiskinan: 450000
-  },
-  {
-    id: 3,
-    tahun: '2024',
-    Kemiskinan: 500000
-  },
-  {
-    id: 4,
-    tahun: '2025',
-    Kemiskinan: 400000
-  },
-]
+interface StatistikData {
+  id: string;
+  tahun: number;
+  jumlah: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+interface ProgramKemiskinanData {
+  id: string;
+  nama: string;
+  deskripsi: string;
+  ikonUrl: string | null;
+  statistik: StatistikData | null;
+  isActive: boolean;
+  statistikId: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 function Page() {
+  const state = useProxy(programKemiskinanState)
+
+  useShallowEffect(() => {
+    state.findMany.load()
+  }, [])
+
+  const data = programKemiskinanState.findMany.data
+
+  if (!data) {
+    return (
+      <Stack py={10}>
+        <Skeleton h={500} />
+      </Stack>
+    )
+  }
+
   return (
     <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"22"}>
       <Box px={{ base: 'md', md: 100 }}>
@@ -69,26 +65,58 @@ function Page() {
               md: 2
             }}
           >
-            {data.map((v, k) => {
+            {state.findMany.data.map((v, k) => {
               return (
                 <Paper p={'xl'} key={k}>
-                  <Text fz={'h3'} fw={'bold'} c={colors['blue-button']}>{v.judul}</Text>
-                  <Text fz={'lg'} c={'black'}>{v.deskripsi}</Text>
+                  <Text fz={'h3'} fw={'bold'} c={colors['blue-button']}>{v.nama}</Text>
+                  <Text fz={'lg'} c={'black'} dangerouslySetInnerHTML={{ __html: v.deskripsi }}></Text>
                 </Paper>
               )
             })}
           </SimpleGrid>
           <Paper p={'xl'}>
-            <Text fz={'h4'} fw={'bold'} c={colors['blue-button']}>Statistik Kemiskinan Masyarakat</Text>
-            <LineChart
-              h={300}
-              data={dataStatistik}
-              dataKey="tahun"
-              series={[
-                { name: 'Kemiskinan', color: colors['blue-button'] },
-              ]}
-              curveType="linear"
-            />
+            <Text fz={'h3'} fw={'bold'} c={colors['blue-button']} mb="md">Statistik Kemiskinan Masyarakat</Text>
+            <Box style={{ width: '100%', height: 'auto' }}>
+              {state.findMany.data.length > 0 && state.findMany.data[0]?.statistik ? (
+                <Box w="100%" style={{ overflowX: 'auto' }}>
+                  <Center>
+                    <RechartsLineChart
+                      width={800}
+                      height={300}
+                      data={state.findMany.data
+                        .filter((item): item is ProgramKemiskinanData & { statistik: StatistikData } =>
+                          item.statistik !== null
+                        )
+                        .map(item => ({
+                          tahun: item.statistik.tahun,
+                          jumlah: item.statistik.jumlah
+                        }))
+                        .sort((a, b) => a.tahun - b.tahun)
+                      }
+                      margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="tahun" />
+                      <YAxis />
+                      <Tooltip
+                        formatter={(value: number, name: string) => [`${value} orang`, name]}
+                        labelFormatter={(label: number) => `Tahun: ${label}`}
+                      />
+                      <Legend />
+                      <Line
+                        type="monotone"
+                        dataKey="jumlah"
+                        name="Jumlah Masyarakat Miskin"
+                        stroke={colors['blue-button']}
+                        activeDot={{ r: 8 }}
+                      />
+                    </RechartsLineChart>
+                  </Center>
+                </Box>
+              ) : (
+                <Text c="dimmed">Belum ada data statistik yang tersedia</Text>
+              )}
+            </Box>
           </Paper>
         </Stack>
       </Box>

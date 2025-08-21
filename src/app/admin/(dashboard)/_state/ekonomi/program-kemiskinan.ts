@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiFetch from "@/lib/api-fetch";
 import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
@@ -11,8 +12,7 @@ const templateForm = z.object({
   statistik: z.object({
     tahun: z.string().min(1, "Tahun minimal 1 karakter"),
     jumlah: z.string().min(1, "Jumlah minimal 1 karakter"),
-  })
-    
+  }),
 });
 
 const defaultForm = {
@@ -21,8 +21,8 @@ const defaultForm = {
   ikonUrl: "",
   statistik: {
     tahun: "",
-    jumlah: ""
-  }
+    jumlah: "",
+  },
 };
 
 const programKemiskinanState = proxy({
@@ -64,12 +64,35 @@ const programKemiskinanState = proxy({
       };
     }>[],
     loading: false,
-    async load() {
-      const res = await ApiFetch.api.ekonomi.programkemiskinan[
-        "find-many"
-      ].get();
-      if (res.status === 200) {
-        programKemiskinanState.findMany.data = res.data?.data ?? [];
+    page: 1,
+    totalPages: 1,
+    search: "",
+    load: async (page = 1, limit = 10, search = "") => {
+      programKemiskinanState.findMany.loading = true; // ✅ Akses langsung via nama path
+      programKemiskinanState.findMany.page = page;
+      programKemiskinanState.findMany.search = search;
+
+      try {
+        const query: any = { page, limit };
+        if (search) query.search = search;
+
+        const res = await ApiFetch.api.ekonomi.programkemiskinan[
+          "find-many"
+        ].get({ query });
+
+        if (res.status === 200 && res.data?.success) {
+          programKemiskinanState.findMany.data = res.data.data ?? [];
+          programKemiskinanState.findMany.totalPages = res.data.totalPages ?? 1;
+        } else {
+          programKemiskinanState.findMany.data = [];
+          programKemiskinanState.findMany.totalPages = 1;
+        }
+      } catch (err) {
+        console.error("Gagal fetch program kemiskinan paginated:", err);
+        programKemiskinanState.findMany.data = [];
+        programKemiskinanState.findMany.totalPages = 1;
+      } finally {
+        programKemiskinanState.findMany.loading = false;
       }
     },
   },

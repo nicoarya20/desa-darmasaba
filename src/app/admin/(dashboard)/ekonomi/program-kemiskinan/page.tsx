@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title } from '@mantine/core';
+import { Box, Button, Center, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title } from '@mantine/core';
 import { IconDeviceImac, IconSearch } from '@tabler/icons-react';
 import HeaderSearch from '../../_com/header';
 import JudulList from '../../_com/judulList';
@@ -23,7 +23,7 @@ function ProgramKemiskinan() {
         value={search}
         onChange={(e) => setSearch(e.currentTarget.value)}
       />
-      <ListProgramKemiskinan search={search}/>
+      <ListProgramKemiskinan search={search} />
     </Box>
   );
 }
@@ -34,14 +34,22 @@ function ListProgramKemiskinan({ search }: { search: string }) {
   const [lineChart, setLineChart] = useState<any[]>([]);
   const [mounted, setMounted] = useState(false);
 
+  const {
+    data,
+    page,
+    totalPages,
+    loading,
+    load,
+  } = programState.findMany;
+
   useShallowEffect(() => {
     setMounted(true)
-    programState.findMany.load()
+    load(page, 10, search)
   }, [])
 
   useEffect(() => {
-    if (programState.findMany.data) {
-      const chartData = programState.findMany.data
+    if (data) {
+      const chartData = data
         .filter(item => item.statistik)
         .map(item => ({
           tahun: item.statistik?.tahun,
@@ -52,18 +60,11 @@ function ListProgramKemiskinan({ search }: { search: string }) {
       setLineChart(chartData);
 
     }
-  }, [programState.findMany.data])
+  }, [data])
 
-  const filteredData = (programState.findMany.data || []).filter(item => {
-    const keyword = search.toLowerCase();
-    return (
-      item.nama.toLowerCase().includes(keyword) ||
-      item.deskripsi.toLowerCase().includes(keyword) ||
-      item.statistik?.tahun.toString().includes(keyword)
-    );
-  });
+  const filteredData = data || []
 
-  if (!programState.findMany.data) {
+  if (loading || !data) {
     return (
       <Stack py={10}>
         <Skeleton h={500} />
@@ -112,7 +113,7 @@ function ListProgramKemiskinan({ search }: { search: string }) {
             <Box >
               <Title pb={10} order={3}>Grafik Berdasarkan Responden</Title>
               {mounted && lineChart.length > 0 ? (<Box style={{ width: '100%', height: 'auto', }}>
-                <Box w={"100%"} style={{overflowX: 'auto'}}>
+                <Box w={"100%"} style={{ overflowX: 'auto' }}>
                   <LineChart
                     width={820}
                     height={300}
@@ -143,6 +144,14 @@ function ListProgramKemiskinan({ search }: { search: string }) {
             </Box>
           </Stack>
         </Paper>
+        <Center>
+          <Pagination
+            value={page}
+            onChange={(newPage) => load(newPage)}
+            total={totalPages}
+            my={"md"}
+          />
+        </Center>
       </Box>
     </Box>
   );
