@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
+import { Box, Button, Center, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
 import { IconEdit, IconSearch, IconTrash } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -33,9 +33,17 @@ function ListPosisiOrganisasiPPID({ search }: { search: string }) {
   const [modalHapus, setModalHapus] = useState(false)
   const [selectedId, setSelectedId] = useState<string | null>(null)
 
+  const {
+    data,
+    page,
+    totalPages,
+    loading,
+    load,
+  } = stateOrganisasi.findMany;
+
   useEffect(() => {
-    stateOrganisasi.findMany.load()
-  }, [])
+    load(page, 10, search);
+  }, [page, search]);
 
   const handleHapus = async () => {
     if (selectedId) {
@@ -45,17 +53,9 @@ function ListPosisiOrganisasiPPID({ search }: { search: string }) {
     }
   }
 
-  const filteredData = (stateOrganisasi.findMany.data || []).filter(item => {
-    const keyword = search.toLowerCase();
-    return (
-      item.nama?.toLowerCase().includes(keyword) ||
-      item.deskripsi?.toLowerCase().includes(keyword) ||
-      item.hierarki?.toString().toLowerCase().includes(keyword)
-    );
-  })
-  .sort((a, b) => a.hierarki - b.hierarki); 
+  const filteredData = data || []
 
-  if (!stateOrganisasi.findMany.data) {
+  if (loading || !data) {
     return (
       <Stack py={10}>
         <Skeleton h={500} />
@@ -120,6 +120,14 @@ function ListPosisiOrganisasiPPID({ search }: { search: string }) {
           </Table>
         </Box>
       </Paper>
+      <Center>
+        <Pagination
+          value={page}
+          onChange={(newPage) => load(newPage)}
+          total={totalPages}
+          my={"md"}
+        />
+      </Center>
       {/* Modal Hapus */}
       <ModalKonfirmasiHapus
         opened={modalHapus}

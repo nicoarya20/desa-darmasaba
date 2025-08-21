@@ -292,6 +292,9 @@ model PosisiOrganisasiPPID {
   pegawai            PegawaiPPID[]
   strukturOrganisasi StrukturPPID[] // Relasi balik
   parentId           String?
+  isActive           Boolean              @default(true)
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
   parent             PosisiOrganisasiPPID?  @relation("Parent", fields: [parentId], references: [id])
   children           PosisiOrganisasiPPID[] @relation("Parent")
 }

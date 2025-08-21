@@ -4,7 +4,7 @@ import colors from '@/con/colors';
 import { Badge, Box, Button, Center, Group, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, ThemeIcon } from '@mantine/core';
 import { IconCheck, IconDeviceImacCog, IconSearch, IconX } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../../_com/header';
 import JudulList from '../../../_com/judulList';
@@ -39,22 +39,10 @@ function ListPegawaiPPID({ search }: { search: string }) {
   } = stateOrganisasi.findMany;
 
   useEffect(() => {
-    load(page, 10);
-  }, [page]);
+    load(page, 10, search);
+  }, [page, search]);
 
-  const filteredData = useMemo(() => {
-    if (!data) return [];
-    return data.filter(item => {
-      const keyword = search.toLowerCase();
-      return (
-        item.namaLengkap?.toLowerCase().includes(keyword) ||
-        item.gelarAkademik?.toLowerCase().includes(keyword) ||
-        item.telepon?.toLowerCase().includes(keyword) ||
-        item.posisi?.nama?.toLowerCase().includes(keyword)
-      );
-    })
-    .sort((a, b) => a.posisi?.hierarki - b.posisi?.hierarki); 
-  }, [data, search]); 
+  const filteredData = data || []
 
   // Handle loading state
   if (loading || !data) {

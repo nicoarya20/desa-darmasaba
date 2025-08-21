@@ -348,18 +348,34 @@ const posisiOrganisasi = proxy({
       deskripsi: string | null;
       hierarki: number;
     }>,
-    async load() {
+    page: 1,
+    totalPages: 1,
+    loading: false,
+    search: "",
+   load: async (page = 1, limit = 10, search = "") => {
+      posisiOrganisasi.findMany.loading = true; // ✅ Akses langsung via nama path
+      posisiOrganisasi.findMany.page = page;
+      posisiOrganisasi.findMany.search = search;
+  
       try {
-        const res = await ApiFetch.api.ppid.strukturppid.posisiorganisasi[
-          "find-many"
-        ].get();
-        if (res.status === 200) {
-          // The API now returns the id field, so we can use it directly
-          this.data = res.data?.data ?? [];
+        const query: any = { page, limit };
+        if (search) query.search = search;
+    
+        const res = await ApiFetch.api.ppid.strukturppid.posisiorganisasi["find-many"].get({ query });
+    
+        if (res.status === 200 && res.data?.success) {
+          posisiOrganisasi.findMany.data = res.data.data ?? [];
+          posisiOrganisasi.findMany.totalPages = res.data.totalPages ?? 1;
+        } else {
+          posisiOrganisasi.findMany.data = [];
+          posisiOrganisasi.findMany.totalPages = 1;
         }
-      } catch (error) {
-        console.error("Find many error:", error);
-        this.data = [];
+      } catch (err) {
+        console.error("Gagal fetch posisi organisasi paginated:", err);
+        posisiOrganisasi.findMany.data = [];
+        posisiOrganisasi.findMany.totalPages = 1;
+      } finally {
+        posisiOrganisasi.findMany.loading = false;
       }
     },
   },
@@ -438,9 +454,9 @@ const pegawai = proxy({
 
       try {
         pegawai.create.loading = true;
-        const res = await ApiFetch.api.ppid.strukturppid.pegawai[
-          "create"
-        ].post(pegawai.create.form);
+        const res = await ApiFetch.api.ppid.strukturppid.pegawai["create"].post(
+          pegawai.create.form
+        );
         if (res.status === 200) {
           toast.success("Pegawai berhasil ditambahkan");
           await pegawai.findMany.load();
@@ -457,42 +473,55 @@ const pegawai = proxy({
   },
 
   // In struktur-organisasi.ts
-findMany: {
-  data: null as any[] | null,
-  page: 1,
-  totalPages: 1,
-  total: 0,
-  loading: false,
-  load: async (page = 1, limit = 10) => {  // Change to arrow function
-    pegawai.findMany.loading = true;  // Use the full path to access the property
-    pegawai.findMany.page = page;
-    try {
-      const res = await ApiFetch.api.ppid.strukturppid.pegawai[
-        "find-many"
-      ].get({
-        query: { page, limit },
-      });
+  findMany: {
+    data: null as
+      | Prisma.PegawaiPPIDGetPayload<{
+          include: {
+            image: true;
+            posisi: true;
+          };
+        }>[]
+      | null,
+    page: 1,
+    totalPages: 1,
+    total: 0,
+    loading: false,
+    search: "",
+    load: async (page = 1, limit = 10, search = "") => {
+      // Change to arrow function
+      pegawai.findMany.loading = true; // Use the full path to access the property
+      pegawai.findMany.page = page;
+      pegawai.findMany.search = search;
+      try {
+        const query: any = { page, limit };
+        if (search) query.search = search;
 
-      if (res.status === 200 && res.data?.success) {
-        pegawai.findMany.data = res.data.data || [];
-        pegawai.findMany.total = res.data.total || 0;
-        pegawai.findMany.totalPages = res.data.totalPages || 1;
-      } else {
-        console.error("Failed to load pegawai:", res.data?.message);
+        const res = await ApiFetch.api.ppid.strukturppid.pegawai[
+          "find-many"
+        ].get({
+          query,
+        });
+
+        if (res.status === 200 && res.data?.success) {
+          pegawai.findMany.data = res.data.data || [];
+          pegawai.findMany.total = res.data.total || 0;
+          pegawai.findMany.totalPages = res.data.totalPages || 1;
+        } else {
+          console.error("Failed to load pegawai:", res.data?.message);
+          pegawai.findMany.data = [];
+          pegawai.findMany.total = 0;
+          pegawai.findMany.totalPages = 1;
+        }
+      } catch (error) {
+        console.error("Error loading pegawai:", error);
         pegawai.findMany.data = [];
         pegawai.findMany.total = 0;
         pegawai.findMany.totalPages = 1;
+      } finally {
+        pegawai.findMany.loading = false;
       }
-    } catch (error) {
-      console.error("Error loading pegawai:", error);
-      pegawai.findMany.data = [];
-      pegawai.findMany.total = 0;
-      pegawai.findMany.totalPages = 1;
-    } finally {
-      pegawai.findMany.loading = false;
-    }
+    },
   },
-},
   findUnique: {
     data: null as
       | (Prisma.PegawaiGetPayload<{
@@ -521,12 +550,9 @@ findMany: {
       if (!id) return toast.warn("ID tidak valid");
       try {
         pegawai.delete.loading = true;
-        const res = await fetch(
-          `/api/ppid/strukturppid/pegawai/del/${id}`,
-          {
-            method: "DELETE",
-          }
-        );
+        const res = await fetch(`/api/ppid/strukturppid/pegawai/del/${id}`, {
+          method: "DELETE",
+        });
         const json = await res.json();
         if (res.ok) {
           toast.success(json.message ?? "Berhasil hapus pegawai");
@@ -555,15 +581,12 @@ findMany: {
       }
 
       try {
-        const response = await fetch(
-          `/api/ppid/strukturppid/pegawai/${id}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        const response = await fetch(`/api/ppid/strukturppid/pegawai/${id}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -677,7 +700,7 @@ findMany: {
 const stateStrukturPPID = proxy({
   stateStruktur,
   posisiOrganisasi,
-  pegawai
+  pegawai,
 });
 
 export default stateStrukturPPID;

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
 
@@ -5,22 +6,34 @@ import { Context } from "elysia";
 export default async function pegawaiFindMany(context: Context) {
   const page = Number(context.query.page) || 1;
   const limit = Number(context.query.limit) || 10;
+  const search = (context.query.search as string) || '';
   const skip = (page - 1) * limit;
+
+  // Buat where clause
+  const where: any = { isActive: true };
+
+  // Tambahkan pencarian (jika ada)
+  if (search) {
+    where.OR = [
+      { namaLengkap: { contains: search, mode: 'insensitive' } },
+      { alamat: { contains: search, mode: 'insensitive' } },
+    ];
+  }
 
   try {
     const [data, total] = await Promise.all([
       prisma.pegawaiPPID.findMany({
-        where: { isActive: true },
+        where,
         include: {
           posisi: true,
           image: true,
         },
         skip,
-        take: limit,  
+        take: limit,
         orderBy: { posisi: { hierarki: 'asc' } },
       }),
       prisma.pegawaiPPID.count({
-        where: { isActive: true }
+        where,
       })
     ]);
 
