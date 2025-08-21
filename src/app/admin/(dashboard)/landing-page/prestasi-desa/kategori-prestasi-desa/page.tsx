@@ -1,6 +1,6 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr } from '@mantine/core';
+import { Box, Button, Center, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconEdit, IconSearch, IconX } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
@@ -42,18 +42,21 @@ function ListKategoriPrestasi({ search }: { search: string }) {
     }
   }
 
+  const {
+    data,
+    page,
+    totalPages,
+    loading,
+    load,
+  } = stateKategori.findMany
+
   useShallowEffect(() => {
-    stateKategori.findMany.load()
-  }, [])
+    load(page, 10, search)
+  }, [page, search])
 
-  const filteredData = (stateKategori.findMany.data || []).filter(item => {
-    const keyword = search.toLowerCase();
-    return (
-      item.name.toLowerCase().includes(keyword)
-    );
-  });
+  const filteredData = data || []
 
-  if (!stateKategori.findMany.data) {
+  if (loading || !data) {
     return (
       <Stack py={10}>
         <Skeleton h={500} />
@@ -100,6 +103,14 @@ function ListKategoriPrestasi({ search }: { search: string }) {
           </Table>
         </Box>
       </Paper>
+      <Center>
+        <Pagination
+          value={page}
+          onChange={(newPage) => load(newPage)}
+          total={totalPages}
+          my={"md"}
+        />
+      </Center>
       {/* Modal Konfirmasi Hapus */}
       <ModalKonfirmasiHapus
         opened={modalHapus}

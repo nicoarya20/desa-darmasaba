@@ -65,14 +65,19 @@ const programInovasi = proxy({
     totalPages: 1,
     total: 0,
     loading: false,
-    load: async (page = 1, limit = 10) => {  // Change to arrow function
+    search: "",
+    load: async (page = 1, limit = 10, search = "") => {  // Change to arrow function
       programInovasi.findMany.loading = true;  // Use the full path to access the property
       programInovasi.findMany.page = page;
+      programInovasi.findMany.search = search;
       try {
+        const query: any = { page, limit };
+        if (search) query.search = search;
+        
         const res = await ApiFetch.api.landingpage.programinovasi[
           "findMany"
         ].get({
-          query: { page, limit },
+          query
         });
   
         if (res.status === 200 && res.data?.success) {
@@ -482,14 +487,19 @@ const mediaSosial = proxy({
     totalPages: 1,
     total: 0,
     loading: false,
-    load: async (page = 1, limit = 10) => {  // Change to arrow function
+    search: "",
+    load: async (page = 1, limit = 10, search = "") => {  // Change to arrow function
       mediaSosial.findMany.loading = true;  // Use the full path to access the property
       mediaSosial.findMany.page = page;
-      try {
+      mediaSosial.findMany.search = search;
+      try { 
+        const query: any = { page, limit };
+        if (search) query.search = search;
+        
         const res = await ApiFetch.api.landingpage.mediasosial[
           "findMany"
         ].get({
-          query: { page, limit },
+          query,
         });
   
         if (res.status === 200 && res.data?.success) {

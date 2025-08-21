@@ -1,10 +1,10 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import colors from '@/con/colors';
 import { Box, Button, Center, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
+import { useShallowEffect } from '@mantine/hooks';
 import { IconDeviceImac, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../../_com/header';
 import JudulList from '../../../_com/judulList';
@@ -38,21 +38,11 @@ function ListProgramInovasi({ search }: { search: string }) {
     load,
   } = stateProgramInovasi.findMany;
 
-  useEffect(() => {
-    load(page, 10);
-  }, [page]);
+  useShallowEffect(() => {
+    load(page, 10, search);
+  }, [page, search]);
 
-  const filteredData = useMemo(() => {
-    if (!data) return [];
-    return data.filter(item => {
-      const keyword = search.toLowerCase();
-      return (
-        item.name?.toLowerCase().includes(keyword) ||
-        item.description?.toLowerCase().includes(keyword) ||
-        item.link?.toLowerCase().includes(keyword)
-      );
-    })
-  }, [data, search]);
+  const filteredData = data || []
 
   if (loading || !data) {
     return (

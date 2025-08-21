@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiFetch from "@/lib/api-fetch";
 import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
@@ -50,18 +51,50 @@ const apbdes = proxy({
     },
   },
   findMany: {
-    data: null as Array<
-      Prisma.APBDesGetPayload<{
-        include: {
-          image: true;
-          file: true;
-        };
-      }>
-    > | null,
-    async load() {
-      const res = await ApiFetch.api.landingpage.apbdes["find-many"].get();
-      if (res.status === 200) {
-        apbdes.findMany.data = res.data?.data ?? [];
+    data: null as
+      | Prisma.APBDesGetPayload<{
+          include: {
+            image: true;
+            file: true;
+          };
+        }>[]
+      | null,
+    page: 1,
+    totalPages: 1,
+    total: 0,
+    loading: false,
+    search: "",
+    load: async (page = 1, limit = 10, search = "") => {  // Change to arrow function
+      apbdes.findMany.loading = true;  // Use the full path to access the property
+      apbdes.findMany.page = page;
+      apbdes.findMany.search = search;
+      try {
+        const query: any = { page, limit };
+        if (search) query.search = search;
+        
+        const res = await ApiFetch.api.landingpage.apbdes[
+          "findMany"
+        ].get({
+          query
+        });
+  
+        if (res.status === 200 && res.data?.success) {
+          apbdes.findMany.data = res.data.data || [];
+          apbdes.findMany.total = res.data.total || 0;
+          apbdes.findMany.totalPages = res.data.totalPages || 1;
+        } else {
+          console.error("Failed to load pegawai:", res.data?.message);
+          apbdes.findMany.data = [];
+          apbdes.findMany.total = 0;
+          apbdes.findMany.totalPages = 1;
+        }
+      } catch (error) {
+        console.error("Error loading pegawai:", error);
+        apbdes.findMany.data = [];
+        apbdes.findMany.total = 0;
+        apbdes.findMany.totalPages = 1;
+      } finally {
+        apbdes.findMany.loading = false;
       }
     },
   },

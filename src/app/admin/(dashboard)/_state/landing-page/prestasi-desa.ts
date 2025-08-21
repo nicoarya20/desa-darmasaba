@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiFetch from "@/lib/api-fetch";
 import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
@@ -62,12 +63,34 @@ const prestasiDesa = proxy({
         };
       }>
     > | null,
-    async load() {
-      const res = await ApiFetch.api.landingpage.prestasidesa[
-        "find-many"
-      ].get();
-      if (res.status === 200) {
-        prestasiDesa.findMany.data = res.data?.data ?? [];
+    page: 1,
+    totalPages: 1,
+    loading: false,
+    search: "",
+   load: async (page = 1, limit = 10, search = "") => {
+      prestasiDesa.findMany.loading = true; // ✅ Akses langsung via nama path
+      prestasiDesa.findMany.page = page;
+      prestasiDesa.findMany.search = search;
+  
+      try {
+        const query: any = { page, limit };
+        if (search) query.search = search;
+    
+        const res = await ApiFetch.api.landingpage.prestasidesa["find-many"].get({ query });
+    
+        if (res.status === 200 && res.data?.success) {
+          prestasiDesa.findMany.data = res.data.data ?? [];
+          prestasiDesa.findMany.totalPages = res.data.totalPages ?? 1;
+        } else {
+          prestasiDesa.findMany.data = [];
+          prestasiDesa.findMany.totalPages = 1;
+        }
+      } catch (err) {
+        console.error("Gagal fetch prestasi desa paginated:", err);
+        prestasiDesa.findMany.data = [];
+        prestasiDesa.findMany.totalPages = 1;
+      } finally {
+        prestasiDesa.findMany.loading = false;
       }
     },
   },
@@ -283,12 +306,34 @@ const kategoriPrestasi = proxy({
       id: string;
       name: string;
     }> | null,
-    async load() {
-      const res = await ApiFetch.api.landingpage.kategoriprestasi[
-        "find-many"
-      ].get();
-      if (res.status === 200) {
-        kategoriPrestasi.findMany.data = res.data?.data ?? [];
+    page: 1,
+    totalPages: 1,
+    loading: false,
+    search: "",
+   load: async (page = 1, limit = 10, search = "") => {
+      kategoriPrestasi.findMany.loading = true; // ✅ Akses langsung via nama path
+      kategoriPrestasi.findMany.page = page;
+      kategoriPrestasi.findMany.search = search;
+  
+      try {
+        const query: any = { page, limit };
+        if (search) query.search = search;
+    
+        const res = await ApiFetch.api.landingpage.kategoriprestasi["find-many"].get({ query });
+    
+        if (res.status === 200 && res.data?.success) {
+          kategoriPrestasi.findMany.data = res.data.data ?? [];
+          kategoriPrestasi.findMany.totalPages = res.data.totalPages ?? 1;
+        } else {
+          kategoriPrestasi.findMany.data = [];
+          kategoriPrestasi.findMany.totalPages = 1;
+        }
+      } catch (err) {
+        console.error("Gagal fetch kategori prestasi paginated:", err);
+        kategoriPrestasi.findMany.data = [];
+        kategoriPrestasi.findMany.totalPages = 1;
+      } finally {
+        kategoriPrestasi.findMany.loading = false;
       }
     },
   },

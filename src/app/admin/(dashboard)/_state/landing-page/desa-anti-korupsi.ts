@@ -60,16 +60,22 @@ const desaAntikorupsi = proxy({
     totalPages: 1,
     total: 0,
     loading: false,
-    load: async (page = 1, limit = 10) => {  // Change to arrow function
-      desaAntikorupsi.findMany.loading = true;  // Use the full path to access the property
+    search: "",
+    load: async (page = 1, limit = 10, search = "") => {
+      // Change to arrow function
+      desaAntikorupsi.findMany.loading = true; // Use the full path to access the property
       desaAntikorupsi.findMany.page = page;
+      desaAntikorupsi.findMany.search = search;
       try {
+        const query: any = { page, limit };
+        if (search) query.search = search;
+
         const res = await ApiFetch.api.landingpage.desaantikorupsi[
           "findMany"
         ].get({
-          query: { page, limit },
+          query,
         });
-  
+
         if (res.status === 200 && res.data?.success) {
           desaAntikorupsi.findMany.data = res.data.data || [];
           desaAntikorupsi.findMany.total = res.data.total || 0;
@@ -305,20 +311,25 @@ const kategoriDesaAntiKorupsi = proxy({
     totalPages: 1,
     total: 0,
     loading: false,
-    load: async (page = 1, limit = 10) => {  // Change to arrow function
-      kategoriDesaAntiKorupsi.findMany.loading = true;  // Use the full path to access the property
+    search: "",
+    load: async (page = 1, limit = 10, search = "") => {
+      // Change to arrow function
+      kategoriDesaAntiKorupsi.findMany.loading = true; // Use the full path to access the property
       kategoriDesaAntiKorupsi.findMany.page = page;
+      kategoriDesaAntiKorupsi.findMany.search = search;
       try {
-        const res = await ApiFetch.api.landingpage.kategoridak[
-          "findMany"
-        ].get({
-          query: { page, limit },
+        const query: any = { page, limit };
+        if (search) query.search = search;
+
+        const res = await ApiFetch.api.landingpage.kategoridak["findMany"].get({
+          query,
         });
-  
+
         if (res.status === 200 && res.data?.success) {
           kategoriDesaAntiKorupsi.findMany.data = res.data.data || [];
           kategoriDesaAntiKorupsi.findMany.total = res.data.total || 0;
-          kategoriDesaAntiKorupsi.findMany.totalPages = res.data.totalPages || 1;
+          kategoriDesaAntiKorupsi.findMany.totalPages =
+            res.data.totalPages || 1;
         } else {
           console.error("Failed to load media sosial:", res.data?.message);
           kategoriDesaAntiKorupsi.findMany.data = [];
@@ -363,27 +374,30 @@ const kategoriDesaAntiKorupsi = proxy({
       try {
         kategoriDesaAntiKorupsi.delete.loading = true;
 
-        const response = await fetch(
-          `/api/landingpage/kategoridak/del/${id}`,
-          {
-            method: "DELETE",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        const response = await fetch(`/api/landingpage/kategoridak/del/${id}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
 
         const result = await response.json();
 
         if (response.ok && result?.success) {
-          toast.success(result.message || "Kategori desa anti korupsi berhasil dihapus");
+          toast.success(
+            result.message || "Kategori desa anti korupsi berhasil dihapus"
+          );
           await kategoriDesaAntiKorupsi.findMany.load(); // refresh list
         } else {
-          toast.error(result?.message || "Gagal menghapus kategori desa anti korupsi");
+          toast.error(
+            result?.message || "Gagal menghapus kategori desa anti korupsi"
+          );
         }
       } catch (error) {
         console.error("Gagal delete:", error);
-        toast.error("Terjadi kesalahan saat menghapus kategori desa anti korupsi");
+        toast.error(
+          "Terjadi kesalahan saat menghapus kategori desa anti korupsi"
+        );
       } finally {
         kategoriDesaAntiKorupsi.delete.loading = false;
       }

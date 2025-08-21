@@ -1,10 +1,10 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import colors from '@/con/colors';
 import { Box, Button, Center, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
+import { useShallowEffect } from '@mantine/hooks';
 import { IconDeviceImacCog, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../../_com/header';
 import JudulList from '../../../_com/judulList';
@@ -38,22 +38,11 @@ function ListDesaAntiKorupsi({ search }: { search: string }) {
     load,
   } = listState.findMany;
 
-  useEffect(() => {
-    load(page, 10);
-  }, [page]);
+  useShallowEffect(() => {
+    load(page, 10, search);
+  }, [page, search]);
 
-  const filteredData = useMemo(() => {
-    if (!data) return [];
-    return data.filter(item => {
-      const keyword = search.toLowerCase();
-      return (
-        item.name?.toLowerCase().includes(keyword) ||
-        item.deskripsi?.toLowerCase().includes(keyword) ||
-        item.kategori?.name?.toLowerCase().includes(keyword)
-      );
-    })
-      .sort((a, b) => b.createdAt - a.createdAt);
-  }, [data, search]);
+  const filteredData = data || []
 
   // Handle loading state
   if (loading || !data) {

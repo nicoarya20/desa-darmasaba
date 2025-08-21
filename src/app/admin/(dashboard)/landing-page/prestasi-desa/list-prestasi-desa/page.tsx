@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
+import { Box, Button, Center, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
 import { IconDeviceImacCog, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -30,20 +30,22 @@ function ListPrestasiDesa() {
 function ListPrestasi({ search }: { search: string }) {
   const listState = useProxy(prestasiState.prestasiDesa)
   const router = useRouter();
+
+  const{
+    data,
+    page,
+    totalPages,
+    loading,
+    load,
+  } = listState.findMany
+
   useEffect(() => {
-    listState.findMany.load()
-  }, [])
+    load(page, 10, search)
+  }, [page, search])
 
-  const filteredData = (listState.findMany.data || []).filter(item => {
-    const keyword = search.toLowerCase();
-    return (
-      item.name.toLowerCase().includes(keyword) ||
-      item.deskripsi.toLowerCase().includes(keyword) || 
-      item.kategori?.name?.toLowerCase().includes(keyword)
-    );
-  });
+  const filteredData = data || []
 
-  if (!listState.findMany.data) {
+  if (loading || !data) {
     return (
       <Stack py={10}>
         <Skeleton h={500} />
@@ -95,6 +97,14 @@ function ListPrestasi({ search }: { search: string }) {
           </Box>
         </Stack>
       </Paper>
+      <Center>
+        <Pagination
+          value={page}
+          onChange={(newPage) => load(newPage)}
+          total={totalPages}
+          my={"md"}
+        />
+      </Center>
     </Box>
   )
 }

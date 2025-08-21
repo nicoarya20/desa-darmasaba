@@ -1,10 +1,10 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import colors from '@/con/colors';
-import { ActionIcon, Box, Button, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
+import { ActionIcon, Box, Button, Center, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
+import { useShallowEffect } from '@mantine/hooks';
 import { IconDeviceImacCog, IconFile, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../_com/header';
 import JudulList from '../../_com/judulList';
@@ -30,19 +30,22 @@ function APBDes() {
 function ListAPBDes({ search }: { search: string }) {
   const listState = useProxy(apbdes)
   const router = useRouter();
-  useEffect(() => {
-    listState.findMany.load()
-  }, [])
 
-  const filteredData = (listState.findMany.data || []).filter(item => {
-    const keyword = search.toLowerCase();
-    return (
-      item.name.toLowerCase().includes(keyword) ||
-      item.jumlah.toLowerCase().includes(keyword)
-    )
-  });
+  const {
+    data,
+    page,
+    totalPages,
+    loading,
+    load,
+  } = listState.findMany
 
-  if (!listState.findMany.data) {
+  useShallowEffect(() => {
+    load(page, 10, search)
+  }, [page, search])
+
+  const filteredData = data || []
+
+  if (loading || !data) {
     return (
       <Stack py={10}>
         <Skeleton h={500} />
@@ -88,7 +91,7 @@ function ListAPBDes({ search }: { search: string }) {
                           rel="noopener noreferrer"
                           variant='transparent'
                         >
-                          <IconFile size={25} color={colors['blue-button']}/>
+                          <IconFile size={25} color={colors['blue-button']} />
                         </ActionIcon>
                       ) : (
                         <Text>Tidak ada dokumen tersedia</Text>
@@ -106,6 +109,14 @@ function ListAPBDes({ search }: { search: string }) {
           </Box>
         </Stack>
       </Paper>
+      <Center>
+        <Pagination
+          value={page}
+          onChange={(newPage) => load(newPage)}
+          total={totalPages}
+          my={"md"}
+        />
+      </Center>
     </Box>
   )
 }

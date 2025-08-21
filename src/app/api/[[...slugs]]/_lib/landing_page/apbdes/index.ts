@@ -11,7 +11,7 @@ const APBDes = new Elysia({
 })
 
   // ✅ Find all
-  .get("/find-many", apbdesFindMany)
+  .get("/findMany", apbdesFindMany)
 
   // ✅ Find by ID
   .get("/:id", apbdesFindUnique)
