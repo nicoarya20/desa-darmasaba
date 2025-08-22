@@ -55,7 +55,10 @@ function DetailProgramInovasi() {
               </Box>
               <Box>
                 <Text fz={"lg"} fw={"bold"}>Deskripsi</Text>
-                <Text fz={"lg"}>{stateProgramInovasi.findUnique.data?.description}</Text>
+                <Text
+                  fz={"lg"}
+                  
+                >{stateProgramInovasi.findUnique.data?.description}</Text>
               </Box>
               <Box>
                 <Text fz={"lg"} fw={"bold"}>Link</Text>
@@ -63,6 +66,12 @@ function DetailProgramInovasi() {
                   href={stateProgramInovasi.findUnique.data?.link || "#"}
                   target="_blank"
                   rel="noopener noreferrer"
+                  style={{ 
+                    wordWrap: 'break-word',
+                    whiteSpace: 'pre-wrap',
+                    overflowWrap: 'break-word',
+                    width: '100%'
+                  }}
                 >
                   {stateProgramInovasi.findUnique.data?.link || "Tidak ada link"}
                 </a>

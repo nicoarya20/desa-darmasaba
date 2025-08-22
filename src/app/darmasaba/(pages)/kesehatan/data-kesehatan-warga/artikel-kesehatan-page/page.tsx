@@ -25,9 +25,9 @@ function ArtikelKesehatanPage() {
     <Box>
       <Paper p={'xl'} h={'112vh'} bg={colors['white-trans-1']}>
         <Stack gap={'xs'}>
+          <Text ta={'center'} fw={"bold"} fz={'h3'} c={colors['blue-button']}>Artikel Kesehatan</Text>
           {state.findMany.data.map((item) => (
             <Box key={item.id}>
-              <Text ta={'center'} fw={"bold"} fz={'h3'} c={colors['blue-button']}>Artikel Kesehatan</Text>
               <Image pt={5} src={'/api/img/dbd.png'} alt="" />
               <Text fz={'h4'} fw={'bold'} >
                 {item.title}

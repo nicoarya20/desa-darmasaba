@@ -51,7 +51,7 @@ function DetailFasilitasKesehatan() {
             <GridCol span={12}>
             <Text fz={"xl"} fw={"bold"}>Detail Fasilitas Kesehatan</Text>
             </GridCol>
-            <GridCol span={12}>
+            {/* <GridCol span={12}>
               <Flex gap={"xs"}>
                 <Button color={colors['blue-button']} onClick={() => router.push(`/admin/kesehatan/data-kesehatan-warga/fasilitas_kesehatan/${params?.id}/dokter-tenaga-medis`)}>
                   Tambah Dokter
@@ -60,7 +60,7 @@ function DetailFasilitasKesehatan() {
                   Tambah Layanan
                 </Button>
               </Flex>
-            </GridCol>
+            </GridCol> */}
           </Grid>
           {stateFasilitasKesehatan.findUnique.data ? (
             <Paper bg={colors['BG-trans']} p={'md'}>

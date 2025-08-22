@@ -2,7 +2,7 @@
 import fasilitasKesehatanState from '@/app/admin/(dashboard)/_state/kesehatan/data_kesehatan_warga/fasilitasKesehatan';
 import BackButton from '@/app/darmasaba/(pages)/desa/layanan/_com/BackButto';
 import colors from '@/con/colors';
-import { Box, Button, Divider, Group, List, ListItem, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
+import { Box, Divider, List, ListItem, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { useParams } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
@@ -139,14 +139,14 @@ function Page() {
                     Email : <Text span fz={'h4'}>puskesmasabiansemal3@gmail.com</Text>
                   </Text>
                 </Paper>
-                <Paper p={'lg'} w={{ base: "100%", md: "100%" }}>
+                {/* <Paper p={'lg'} w={{ base: "100%", md: "100%" }}>
                   <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3945.272172359321!2d115.21836257533302!3d-8.569807186941553!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd23e9d99b9395f%3A0xb002795fdcb33b30!2sUPTD%20Puskesmas%20Abiansemal%20III!5e0!3m2!1sid!2sid!4v1744792682341!5m2!1sid!2sid" width="600" height="450" style={{ border: 2, width: "100%", borderRadius: 10 }} loading="lazy"></iframe>
                 </Paper>
                 <Group>
                   <Button fz={'lg'} bg={colors['blue-button']}>
                     Download Brosur Layanan (PDF)
                   </Button>
-                </Group>
+                </Group> */}
               </Stack>
             </Box>
           </Paper>
