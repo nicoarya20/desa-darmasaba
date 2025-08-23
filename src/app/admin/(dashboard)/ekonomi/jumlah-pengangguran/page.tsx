@@ -57,7 +57,7 @@ function ListDetailDataPengangguran({search}: {search: string}) {
       setChartData(stateDetail.findMany.data.map((item) => ({
         id: item.id,
         month: item.month,
-        year: item.year,
+        year: item.year instanceof Date ? item.year.getFullYear() : Number(item.year),
         educatedUnemployment: Number(item.educatedUnemployment),
         uneducatedUnemployment: Number(item.uneducatedUnemployment),
         percentageChange: Number(item.percentageChange),
