@@ -96,28 +96,36 @@ export default async function detailDataPengangguranCreate(context: Context) {
   // Cari bulan sebelumnya
   const currentMonthIndex = monthOrder.indexOf(body.month);
   const prevMonth = currentMonthIndex > 0 ? monthOrder[currentMonthIndex - 1] : "Des";
-  const prevYear = currentMonthIndex > 0 ? body.year : body.year - 1;
-
+  
+  // Handle year as number for calculations
+  const currentYear = typeof body.year === 'number' ? body.year : new Date(body.year).getFullYear();
+  const prevYear = currentMonthIndex > 0 ? currentYear : currentYear - 1;
+  
+  // Create date objects for Prisma
+  const currentYearDate = new Date(currentYear, 0, 1);
+  const prevYearDate = new Date(prevYear, 0, 1);
+  
   const prevData = await prisma.detailDataPengangguran.findFirst({
     where: {
       month: prevMonth,
-      year: prevYear,
+      year: prevYearDate,
     },
   });
 
   let percentageChange: number | null = null;
   if (prevData) {
-    const change = ((body.totalUnemployment - prevData.totalUnemployment) / prevData.totalUnemployment) * 100;
+    const change = ((Number(body.totalUnemployment) - Number(prevData.totalUnemployment)) / Number(prevData.totalUnemployment)) * 100;
     percentageChange = parseFloat(change.toFixed(1));
   }
 
+  // Create the new record with properly typed values
   const created = await prisma.detailDataPengangguran.create({
     data: {
       month: body.month,
-      year: body.year,
-      totalUnemployment: body.totalUnemployment,
-      educatedUnemployment: body.educatedUnemployment,
-      uneducatedUnemployment: body.uneducatedUnemployment,
+      year: currentYearDate,
+      totalUnemployment: Number(body.totalUnemployment),
+      educatedUnemployment: Number(body.educatedUnemployment),
+      uneducatedUnemployment: Number(body.uneducatedUnemployment),
       percentageChange,
     },
     select: {

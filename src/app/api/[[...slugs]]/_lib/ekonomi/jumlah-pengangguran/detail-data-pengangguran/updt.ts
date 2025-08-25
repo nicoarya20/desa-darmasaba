@@ -81,13 +81,18 @@ export default async function detailDataPengangguranUpdate(context: Context) {
       return { success: false, message: "ID tidak ditemukan" };
     }
   
-    const { month, year, totalUnemployment, educatedUnemployment, uneducatedUnemployment } = context.body as {
+    const { month, year: yearInput, totalUnemployment, educatedUnemployment, uneducatedUnemployment } = context.body as {
       month: string;
-      year: number;
-      totalUnemployment: number;
-      educatedUnemployment: number;
-      uneducatedUnemployment: number;
+      year: number | string | Date;
+      totalUnemployment: number | string;
+      educatedUnemployment: number | string;
+      uneducatedUnemployment: number | string;
     };
+    
+    // Normalize year to Date object
+    const year = typeof yearInput === 'number' ? new Date(yearInput, 0, 1) : 
+                yearInput instanceof Date ? yearInput : 
+                new Date(parseInt(yearInput as string), 0, 1);
   
     const duplicate = await prisma.detailDataPengangguran.findFirst({
       where: {
@@ -109,18 +114,19 @@ export default async function detailDataPengangguranUpdate(context: Context) {
   
     const currentMonthIndex = monthOrder.indexOf(month);
     const prevMonth = currentMonthIndex > 0 ? monthOrder[currentMonthIndex - 1] : "Des";
-    const prevYear = currentMonthIndex > 0 ? year : year - 1;
+    const currentYear = year.getFullYear();
+    const prevYear = currentMonthIndex > 0 ? currentYear : currentYear - 1;
   
     const prevData = await prisma.detailDataPengangguran.findFirst({
       where: {
         month: prevMonth,
-        year: prevYear,
+        year: new Date(prevYear, 0, 1),
       },
     });
   
     let percentageChange: number | null = null;
     if (prevData) {
-      const change = ((totalUnemployment - prevData.totalUnemployment) / prevData.totalUnemployment) * 100;
+      const change = ((Number(totalUnemployment) - Number(prevData.totalUnemployment)) / Number(prevData.totalUnemployment)) * 100;
       percentageChange = parseFloat(change.toFixed(1));
     }
   
@@ -128,10 +134,10 @@ export default async function detailDataPengangguranUpdate(context: Context) {
       where: { id },
       data: {
         month,
-        year,
-        totalUnemployment,
-        educatedUnemployment,
-        uneducatedUnemployment,
+        year: new Date(year), // Ensure it's a new Date instance
+        totalUnemployment: Number(totalUnemployment),
+        educatedUnemployment: Number(educatedUnemployment),
+        uneducatedUnemployment: Number(uneducatedUnemployment),
         percentageChange,
       },
     });

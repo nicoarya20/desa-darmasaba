@@ -17,7 +17,7 @@ export const navBar = [
       {
         id: "Landing_Page_3",
         name: "Indeks Kepuasan Masyarakat",
-        path: "/admin/landing-page/indeks-kepuasan-masyarakat/list-survey"
+        path: "/admin/landing-page/indeks-kepuasan-masyarakat/grafik-kepuasan-masyarakat"
       },
       {
         id: "Landing_Page_4",

@@ -39,8 +39,22 @@ function ListPrestasi({ search }: { search: string }) {
     load,
   } = listState.findMany
 
+  // Debug log
+  console.log('ListPrestasi state:', {
+    loading,
+    data: data?.length,
+    page,
+    totalPages,
+    search
+  });
+
   useEffect(() => {
-    load(page, 10, search)
+    console.log('Loading data...', { page, search });
+    load(page, 10, search).then(() => {
+      console.log('Data loaded:', listState.findMany.data);
+    }).catch(error => {
+      console.error('Error loading data:', error);
+    });
   }, [page, search])
 
   const filteredData = data || []
@@ -84,7 +98,7 @@ function ListPrestasi({ search }: { search: string }) {
                         <Text truncate="end" fz={"sm"} dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
                       </Box>
                     </TableTd>
-                    <TableTd>{item.kategori?.name}</TableTd>
+                    <TableTd>{item.kategori?.name || 'No Category'}</TableTd>
                     <TableTd>
                       <Button onClick={() => router.push(`/admin/landing-page/prestasi-desa/list-prestasi-desa/${item.id}`)}>
                         <IconDeviceImacCog size={25} />

@@ -59,7 +59,12 @@ const prestasiDesa = proxy({
       Prisma.PrestasiDesaGetPayload<{
         include: {
           image: true;
-          kategori: true;
+          kategori: {
+            select: {
+              id: true;
+              name: true;
+            };
+          };
         };
       }>
     > | null,

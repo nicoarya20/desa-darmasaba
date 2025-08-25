@@ -66,19 +66,23 @@ function EditDetailDataPengangguran() {
         const data = stateDetail.findUnique.data;
   
         if (data) {
+          // Convert year from Date to number
+          const yearValue = data.year instanceof Date ? data.year.getFullYear() : data.year;
+          
           // Set the ID for update
           stateDetail.update.id = id;
           
-          // Isi state Valtio untuk update
+          // Update Valtio state with converted year
           stateDetail.update.form = { 
             ...data,
+            year: yearValue,
             percentageChange: data.percentageChange || 0 // Ensure it's always a number
           };
   
-          // Isi local formData supaya input bisa dikontrol
+          // Update local formData with converted year
           setFormData({
             month: data.month,
-            year: data.year,
+            year: yearValue,
             totalUnemployment: data.totalUnemployment,
             educatedUnemployment: data.educatedUnemployment,
             uneducatedUnemployment: data.uneducatedUnemployment,

@@ -10,7 +10,7 @@ async function prestasiDesaFindMany(context: Context) {
   const skip = (page - 1) * limit;
 
   // Buat where clause
-  const where: any = { isActive: true };
+  const where: any = {};
 
   // Tambahkan pencarian (jika ada)
   if (search) {
@@ -19,6 +19,11 @@ async function prestasiDesaFindMany(context: Context) {
       { deskripsi: { contains: search, mode: 'insensitive' } },
       { kategori: { name: { contains: search, mode: 'insensitive' } } },
     ];
+    // Tetap filter hanya yang aktif saat melakukan pencarian
+    where.isActive = true;
+  } else {
+    // Jika tidak ada pencarian, tampilkan hanya data yang aktif
+    where.isActive = true;
   }
 
   try {
@@ -27,11 +32,16 @@ async function prestasiDesaFindMany(context: Context) {
         where,
         include: {
           image: true,
-          kategori: true,
+          kategori: {
+            select: {
+              id: true,
+              name: true
+            }
+          },
         },
         skip,
         take: limit,
-        orderBy: { createdAt: "desc" }, // opsional, kalau mau urut berdasarkan waktu
+        orderBy: { createdAt: "desc" },
       }),
       prisma.prestasiDesa.count({
         where,

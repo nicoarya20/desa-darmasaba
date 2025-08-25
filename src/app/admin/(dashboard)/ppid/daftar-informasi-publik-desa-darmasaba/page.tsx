@@ -105,10 +105,12 @@ function ListDaftarInformasi({ search }: { search: string }) {
               <TableTbody>
                 {filteredData.map((item, index) => (
                   <TableTr key={item.id}>
-                    <TableTd style={{ textAlign: 'center' }}>{index + 1}</TableTd>
+                    <TableTd style={{ textAlign: 'center' }}>
+                      <Text mt={10} fz={"md"}>{index + 1}</Text>
+                    </TableTd>
                     <TableTd style={{ wordWrap: 'break-word' }}>
                       <Box w={200}>
-                        <Text fz={"md"} truncate={"end"} lineClamp={1}>{item.jenisInformasi}</Text>
+                        <Text mt={10} fz={"md"} truncate={"end"} lineClamp={1}>{item.jenisInformasi}</Text>
                       </Box>
                     </TableTd>
                     <TableTd style={{ wordWrap: 'break-word' }}>

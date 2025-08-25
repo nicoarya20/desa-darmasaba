@@ -63,7 +63,7 @@ function DetailJumlahPengangguran() {
               </Box>
               <Box>
                 <Text fw={"bold"}>Tahun</Text>
-                <Text>{stateDetail.findUnique.data?.year}</Text>
+                <Text>{stateDetail.findUnique.data?.year ? new Date(stateDetail.findUnique.data.year).getFullYear() : ''}</Text>
               </Box>
               <Box>
                 <Text fw={"bold"}>Bulan</Text>
@@ -108,4 +108,3 @@ function DetailJumlahPengangguran() {
 }
 
 export default DetailJumlahPengangguran;
-

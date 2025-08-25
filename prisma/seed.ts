@@ -1,57 +1,62 @@
 import prisma from "@/lib/prisma";
 import profilePejabatDesa from "./data/landing-page/profile/profile.json";
-import penghargaan from "./data/landing-page/penghargaan/penghargaan.json";
 import programInovasi from "./data/landing-page/profile/programInovasi.json";
 import mediaSosial from "./data/landing-page/profile/mediaSosial.json";
+import desaAntiKorupsi from "./data/landing-page/desa-anti-korupsi/desaantiKorpusi.json";
+import kategoriDesaAntiKorupsi from "./data/landing-page/desa-anti-korupsi/kategoriDesaAntiKorupsi.json";
 import sdgsDesa from "./data/landing-page/sdgs-desa/sdgs-desa.json";
 import apbdes from "./data/landing-page/apbdes/apbdes.json";
-import pelayananSuratKeterangan from "./data/desa/layanan/pelayananSuratKeterangan.json";
-import categoryPengumuman from "./data/category-pengumuman.json";
-import kategoriBerita from "./data/kategori-berita.json";
-import caraMemperolehInformasi from "./data/list-caraMemperolehInformasi.json";
-import caraMemperolehSalinanInformasi from "./data/list-caraMemperolehSalinanInformasi.json";
-import jenisInformasiDiminta from "./data/list-jenisInfromasi.json";
-import layanan from "./data/list-layanan.json";
-import potensi from "./data/list-potensi.json";
-import dasarHukumPPID from "./data/ppid/dasar-hukum-ppid/dasarhukumPPID.json";
+import kategoriPrestasiDesa from "./data/landing-page/prestasi-desa/kategori-prestasi.json";
+import prestasiDesa from "./data/landing-page/prestasi-desa/prestasi-desa.json";
+import penghargaan from "./data/landing-page/penghargaan/penghargaan.json";
 import profilePPID from "./data/ppid/profile-ppid/profilePPid.json";
+import pegawaiPPID from "./data/ppid/struktur-ppid/pegawai-PPID.json";
+import posisiOrganisasiPPID from "./data/ppid/struktur-ppid/posisi-organisasi-PPID.json";
 import visiMisiPPID from "./data/ppid/visi-misi-ppid/visimisiPPID.json";
+import dasarHukumPPID from "./data/ppid/dasar-hukum-ppid/dasarhukumPPID.json";
 import jenisKelamin from "./data/ppid/ikm/jenis-kelamin/jenis-kelamin.json";
+import daftarInformasiPublik from "./data/ppid/daftar-informasi-publik-desa-darmasaba/daftarInformasi.json"
 import pilihanRatingResponden from "./data/ppid/ikm/pilihan-rating-responden/rating-responden.json";
 import umurResponden from "./data/ppid/ikm/umur-responden/umur-responden.json";
+import categoryPengumuman from "./data/category-pengumuman.json";
 import pelayananPerizinanBerusaha from "./data/desa/layanan/pelayananPerizinanBerusaha.json";
+import pelayananSuratKeterangan from "./data/desa/layanan/pelayananSuratKeterangan.json";
+import pelayananTelunjukSaktiDesa from "./data/desa/layanan/pelayananTelunjukSaktiDesa.json";
 import pelayananPendudukNonPermanen from "./data/desa/layanan/pelayanaPendudukNonPermanen.json";
-import sejarahDesa from "./data/desa/profile/sejarah_desa.json";
-import visiMisiDesa from "./data/desa/profile/visi_misi_desa.json";
 import lambangDesa from "./data/desa/profile/lambang_desa.json";
 import maskotDesa from "./data/desa/profile/maskot_desa.json";
 import profilPerbekel from "./data/desa/profile/profil_perbekel.json";
+import sejarahDesa from "./data/desa/profile/sejarah_desa.json";
+import visiMisiDesa from "./data/desa/profile/visi_misi_desa.json";
+import detailDataPengangguran from "./data/ekonomi/jumlah-pengangguran/detail-data-pengangguran.json";
 import kategoriProduk from "./data/ekonomi/pasar-desa/kategori-produk.json";
 import hubunganOrganisasi from "./data/ekonomi/struktur-organisasi/hubungan-organisasi.json";
-import posisiOrganisasi from "./data/ekonomi/struktur-organisasi/posisi-organisasi.json";
 import pegawai from "./data/ekonomi/struktur-organisasi/pegawai.json";
-import detailDataPengangguran from "./data/ekonomi/jumlah-pengangguran/detail-data-pengangguran.json";
-import tujuanEdukasiLingkungan from "./data/lingkungan/edukasi-lingkungan/tujuan-edukasi-lingkungan.json";
-import materiEdukasiLingkungan from "./data/lingkungan/edukasi-lingkungan/materi-edukasi-yang-diberikan.json";
+import posisiOrganisasi from "./data/ekonomi/struktur-organisasi/posisi-organisasi.json";
+import kategoriBerita from "./data/kategori-berita.json";
 import contohEdukasiLingkungan from "./data/lingkungan/edukasi-lingkungan/contoh-kegiatan-di-desa-darmasaba.json";
-import nilaiKonservasiAdat from "./data/lingkungan/konservasi-adat-bali/nilai-konservasi-adat.json";
+import materiEdukasiLingkungan from "./data/lingkungan/edukasi-lingkungan/materi-edukasi-yang-diberikan.json";
+import tujuanEdukasiLingkungan from "./data/lingkungan/edukasi-lingkungan/tujuan-edukasi-lingkungan.json";
 import bentukKonservasiBerdasarkanAdat from "./data/lingkungan/konservasi-adat-bali/bentuk-konservasi.json";
 import filosofiTriHita from "./data/lingkungan/konservasi-adat-bali/filosofi-tri-hita.json";
-import tujuanProgram from "./data/pendidikan/program-pendidikan-anak/tujuan-program.json";
+import nilaiKonservasiAdat from "./data/lingkungan/konservasi-adat-bali/nilai-konservasi-adat.json";
+import caraMemperolehInformasi from "./data/list-caraMemperolehInformasi.json";
+import caraMemperolehSalinanInformasi from "./data/list-caraMemperolehSalinanInformasi.json";
+import jenisInformasiDiminta from "./data/list-jenisInfromasi.json";
+import potensi from "./data/list-potensi.json";
+import fasilitasBimbinganBelajarDesa from "./data/pendidikan/bimbingan-belajar-desa/fasilitas-yang-disediakan.json";
+import lokasiJadwalBimbinganBelajarDesa from "./data/pendidikan/bimbingan-belajar-desa/lokasi-dan-jadwal.json";
+import tujuanBimbinganBelajarDesa from "./data/pendidikan/bimbingan-belajar-desa/tujuan-bimbingan-belajar-desa.json";
+import jenisProgramYangDiselenggarakan from "./data/pendidikan/pendidikan-non-formal/jenis-program-yang-diselenggarakan.json";
+import tempatKegiatan from "./data/pendidikan/pendidikan-non-formal/tempat-kegiatan.json";
 import tujuanProgram2 from "./data/pendidikan/pendidikan-non-formal/tujuan-program2.json";
 import programUnggulan from "./data/pendidikan/program-pendidikan-anak/program-unggulan.json";
-import tujuanBimbinganBelajarDesa from "./data/pendidikan/bimbingan-belajar-desa/tujuan-bimbingan-belajar-desa.json";
-import lokasiJadwalBimbinganBelajarDesa from "./data/pendidikan/bimbingan-belajar-desa/lokasi-dan-jadwal.json";
-import fasilitasBimbinganBelajarDesa from "./data/pendidikan/bimbingan-belajar-desa/fasilitas-yang-disediakan.json";
-import tempatKegiatan from "./data/pendidikan/pendidikan-non-formal/tempat-kegiatan.json";
-import jenisProgramYangDiselenggarakan from "./data/pendidikan/pendidikan-non-formal/jenis-program-yang-diselenggarakan.json";
-import posisiOrganisasiPPID from "./data/ppid/struktur-ppid/posisi-organisasi-PPID.json";
-import pegawaiPPID from "./data/ppid/struktur-ppid/pegawai-PPID.json";
-import pelayananTelunjukSaktiDesa from "./data/desa/layanan/pelayananTelunjukSaktiDesa.json";
+import tujuanProgram from "./data/pendidikan/program-pendidikan-anak/tujuan-program.json";
 
 (async () => {
   // =========== LANDING PAGE ===========
-  // =========== PROFILE ===========
+  // =========== SUBMENU PROFILE ===========
+  // =========== PROFILE PEJABAT DESA ===========
   for (const p of profilePejabatDesa) {
     await prisma.pejabatDesa.upsert({
       where: { id: p.id },
@@ -105,6 +110,90 @@ import pelayananTelunjukSaktiDesa from "./data/desa/layanan/pelayananTelunjukSak
     });
   }
   console.log("media sosial success ...");
+
+  // =========== SUBMENU DESA ANTI KORUPSI ===========
+  // =========== KATEGORI DESA ANTI KORUPSI ===========
+  for (const k of kategoriDesaAntiKorupsi) {
+    await prisma.kategoriDesaAntiKorupsi.upsert({
+      where: { id: k.id },
+      update: {
+        name: k.name,
+      },
+      create: {
+        id: k.id,
+        name: k.name,
+      },
+    });
+  }
+  console.log("kategori desa anti korupsi success ...");
+
+  // =========== DESA ANTI KORUPSI ===========
+  for (const p of desaAntiKorupsi) {
+    await prisma.desaAntiKorupsi.upsert({
+      where: { id: p.id },
+      update: {
+        name: p.name,
+        deskripsi: p.deskripsi,
+        kategoriId: p.kategoriId,
+      },
+      create: {
+        id: p.id,
+        name: p.name,
+        deskripsi: p.deskripsi,
+        kategoriId: p.kategoriId,
+      },
+    });
+  }
+  console.log("desa anti korupsi success ...");
+
+  // =========== KATEGORI DESA ANTI KORUPSI ===========
+  for (const p of kategoriDesaAntiKorupsi) {
+    await prisma.kategoriDesaAntiKorupsi.upsert({
+      where: { id: p.id },
+      update: {
+        name: p.name,
+      },
+      create: {
+        id: p.id,
+        name: p.name,
+      },
+    });
+  }
+  console.log("desa anti korupsi success ...");
+
+  // =========== KATEGORI PRESTASI DESA===========
+  for (const c of kategoriPrestasiDesa) {
+    await prisma.kategoriPrestasiDesa.upsert({
+      where: { id: c.id },
+      update: {
+        name: c.name,
+      },
+      create: {
+        id: c.id,
+        name: c.name,
+      },
+    });
+  }
+  console.log("kategori prestasi desa success ...");
+
+  // =========== PRESTASI DESA===========
+  for (const p of prestasiDesa) {
+    await prisma.prestasiDesa.upsert({
+      where: { id: p.id },
+      update: {
+        name: p.name,
+        deskripsi: p.deskripsi,
+        kategoriId: p.kategoriId,
+      },
+      create: {
+        id: p.id,
+        name: p.name,
+        deskripsi: p.deskripsi,
+        kategoriId: p.kategoriId,
+      },
+    });
+  }
+  console.log("prestasi desa success ...");
 
   // =========== PENGHARGAAN ===========
   for (const p of penghargaan) {
@@ -160,23 +249,6 @@ import pelayananTelunjukSaktiDesa from "./data/desa/layanan/pelayananTelunjukSak
   }
   console.log("pelayanan surat keterangan success ...");
 
-  // =========== LAYANAN ===========
-  for (const l of layanan) {
-    await prisma.layanan.upsert({
-      where: {
-        name: l.name,
-      },
-      update: {
-        name: l.name,
-      },
-      create: {
-        name: l.name,
-      },
-    });
-  }
-
-  console.log("layanan success ...");
-
   // =========== SDGSDesa ===========
   for (const l of sdgsDesa) {
     await prisma.sDGSDesa.upsert({
@@ -217,6 +289,9 @@ import pelayananTelunjukSaktiDesa from "./data/desa/layanan/pelayananTelunjukSak
 
   console.log("sdgs desa success ...");
 
+  // =========== MENU DESA ===========
+  // =========== SUBMENU PROFILE ===========
+  // =========== SEJARAH DESA ===========
   for (const l of sejarahDesa) {
     await prisma.sejarahDesa.upsert({
       where: {
@@ -236,6 +311,7 @@ import pelayananTelunjukSaktiDesa from "./data/desa/layanan/pelayananTelunjukSak
 
   console.log("sejarah desa success ...");
 
+  // =========== MASKOT DESA ===========
   for (const l of maskotDesa) {
     await prisma.maskotDesa.upsert({
       where: {
@@ -255,6 +331,7 @@ import pelayananTelunjukSaktiDesa from "./data/desa/layanan/pelayananTelunjukSak
 
   console.log("maskot desa success ...");
 
+  // =========== LAMBANG DESA ===========
   for (const l of lambangDesa) {
     await prisma.lambangDesa.upsert({
       where: {
@@ -274,6 +351,7 @@ import pelayananTelunjukSaktiDesa from "./data/desa/layanan/pelayananTelunjukSak
 
   console.log("lambang desa success ...");
 
+  // =========== PROFIL PERBEKEL ===========
   for (const c of profilPerbekel) {
     await prisma.profilPerbekel.upsert({
       where: { id: c.id },
@@ -298,6 +376,7 @@ import pelayananTelunjukSaktiDesa from "./data/desa/layanan/pelayananTelunjukSak
     "✅ profilePerbekel seeded without imageId (editable later via UI)"
   );
 
+  // =========== VISI MISI DESA ===========
   for (const l of visiMisiDesa) {
     await prisma.visiMisiDesa.upsert({
       where: {
@@ -316,6 +395,35 @@ import pelayananTelunjukSaktiDesa from "./data/desa/layanan/pelayananTelunjukSak
   }
 
   console.log("visi misi desa success ...");
+
+  // =========== MENU PPID ===========
+  // =========== SUBMENU PROFILE PPID ===========
+  for (const c of profilePPID) {
+    await prisma.profilePPID.upsert({
+      where: { id: c.id },
+      update: {
+        name: c.name,
+        biodata: c.biodata,
+        riwayat: c.riwayat,
+        pengalaman: c.pengalaman,
+        unggulan: c.unggulan,
+        // imageId tidak di-update
+      },
+      create: {
+        id: c.id,
+        name: c.name,
+        biodata: c.biodata,
+        riwayat: c.riwayat,
+        pengalaman: c.pengalaman,
+        unggulan: c.unggulan,
+        // imageId tidak di-create
+      },
+    });
+  }
+  console.log("✅ profilePPID seeded without imageId (editable later via UI)");
+
+  // =========== SUBMENU STRUKTUR PPID ===========
+  // =========== POSISI ORGANISASI PPID ===========
 
   const flattenedPosisi = posisiOrganisasiPPID.flat();
 
@@ -341,9 +449,9 @@ import pelayananTelunjukSaktiDesa from "./data/desa/layanan/pelayananTelunjukSak
       create: p,
     });
   }
-  console.log("✅ Posisi organisasi berhasil");
+  console.log("posisi organisasi berhasil");
 
-  // 2. Seed Pegawai
+  // =========== PEGAWAI PPID ===========
   const flattenedPegawai = pegawaiPPID.flat();
   for (const p of flattenedPegawai) {
     await prisma.pegawaiPPID.upsert({
@@ -352,7 +460,70 @@ import pelayananTelunjukSaktiDesa from "./data/desa/layanan/pelayananTelunjukSak
       create: p,
     });
   }
-  console.log("✅ Pegawai berhasil");
+  console.log("pegawai berhasil");
+
+  // =========== SUBMENU VISI MISI PPID ===========
+
+  for (const v of visiMisiPPID) {
+    await prisma.visiMisiPPID.upsert({
+      where: {
+        id: v.id,
+      },
+      update: {
+        misi: v.misi,
+        visi: v.visi,
+      },
+      create: {
+        id: v.id,
+        misi: v.misi,
+        visi: v.visi,
+      },
+    });
+  }
+  console.log("visi misi PPID success ...");
+
+  // =========== SUBMENU DASAR HUKUM PPID ===========
+  for (const v of dasarHukumPPID) {
+    await prisma.dasarHukumPPID.upsert({
+      where: {
+        id: v.id,
+      },
+      update: {
+        judul: v.judul,
+        content: v.content,
+      },
+      create: {
+        id: v.id,
+        judul: v.judul,
+        content: v.content,
+      },
+    });
+  }
+  console.log("dasar hukum PPID success ...");
+
+    // =========== SUBMENU DAFTAR INFORMASI PUBLIK PPID ===========
+    for (const v of daftarInformasiPublik) {
+      // Convert string date to Date object
+      const tanggal = new Date(v.tanggal);
+      
+      await prisma.daftarInformasiPublik.upsert({
+        where: {
+          id: v.id,
+        },
+        update: {
+          jenisInformasi: v.jenisInformasi,
+          deskripsi: v.deskripsi,
+          tanggal: tanggal,
+        },
+        create: {
+          id: v.id,
+          jenisInformasi: v.jenisInformasi,
+          deskripsi: v.deskripsi,
+          tanggal: tanggal,
+        },
+      });
+    }
+    console.log("daftar informasi publik PPID success ...");
 
   for (const l of pelayananPerizinanBerusaha) {
     await prisma.pelayananPerizinanBerusaha.upsert({
@@ -486,48 +657,6 @@ import pelayananTelunjukSaktiDesa from "./data/desa/layanan/pelayananTelunjukSak
   }
   console.log("cara memperoleh salinan informasi success ...");
 
-  for (const c of profilePPID) {
-    await prisma.profilePPID.upsert({
-      where: { id: c.id },
-      update: {
-        name: c.name,
-        biodata: c.biodata,
-        riwayat: c.riwayat,
-        pengalaman: c.pengalaman,
-        unggulan: c.unggulan,
-        // imageId tidak di-update
-      },
-      create: {
-        id: c.id,
-        name: c.name,
-        biodata: c.biodata,
-        riwayat: c.riwayat,
-        pengalaman: c.pengalaman,
-        unggulan: c.unggulan,
-        // imageId tidak di-create
-      },
-    });
-  }
-  console.log("✅ profilePPID seeded without imageId (editable later via UI)");
-
-  for (const v of visiMisiPPID) {
-    await prisma.visiMisiPPID.upsert({
-      where: {
-        id: v.id,
-      },
-      update: {
-        misi: v.misi,
-        visi: v.visi,
-      },
-      create: {
-        id: v.id,
-        misi: v.misi,
-        visi: v.visi,
-      },
-    });
-  }
-  console.log("visi misi PPID success ...");
-
   for (const j of jenisKelamin) {
     await prisma.jenisKelaminResponden.upsert({
       where: {
@@ -575,24 +704,6 @@ import pelayananTelunjukSaktiDesa from "./data/desa/layanan/pelayananTelunjukSak
     });
   }
   console.log("umur responden success ...");
-
-  for (const v of dasarHukumPPID) {
-    await prisma.dasarHukumPPID.upsert({
-      where: {
-        id: v.id,
-      },
-      update: {
-        judul: v.judul,
-        content: v.content,
-      },
-      create: {
-        id: v.id,
-        judul: v.judul,
-        content: v.content,
-      },
-    });
-  }
-  console.log("dasar hukum PPID success ...");
 
   for (const k of kategoriProduk) {
     await prisma.kategoriProduk.upsert({
@@ -683,7 +794,7 @@ import pelayananTelunjukSaktiDesa from "./data/desa/layanan/pelayananTelunjukSak
   for (const d of detailDataPengangguran) {
     // Convert the year to a Date object (using January 1st of the year as the date)
     const yearAsDate = new Date(d.year, 0, 1);
-    
+
     await prisma.detailDataPengangguran.upsert({
       where: {
         month_year: { month: d.month, year: yearAsDate },

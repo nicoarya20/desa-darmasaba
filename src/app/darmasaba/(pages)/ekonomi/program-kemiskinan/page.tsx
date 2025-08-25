@@ -1,12 +1,13 @@
 'use client'
 import colors from '@/con/colors';
-import { Stack, Box, Text, SimpleGrid, Paper, Skeleton, Center } from '@mantine/core';
-import React from 'react';
+import { Stack, Box, Text, SimpleGrid, Paper, Skeleton, Center, Pagination, Grid, GridCol, TextInput } from '@mantine/core';
+import React, { useState } from 'react';
 import BackButton from '../../desa/layanan/_com/BackButto';
 import { CartesianGrid, Legend, Line, LineChart as RechartsLineChart, Tooltip, XAxis, YAxis } from 'recharts';
 import { useProxy } from 'valtio/utils';
 import programKemiskinanState from '@/app/admin/(dashboard)/_state/ekonomi/program-kemiskinan';
 import { useShallowEffect } from '@mantine/hooks';
+import { IconSearch } from '@tabler/icons-react';
 
 interface StatistikData {
   id: string;
@@ -29,15 +30,22 @@ interface ProgramKemiskinanData {
 }
 
 function Page() {
+  const [search, setSearch] = useState('')
   const state = useProxy(programKemiskinanState)
 
+  const {
+    data,
+    page,
+    totalPages,
+    loading,
+    load
+  } = state.findMany
+
   useShallowEffect(() => {
-    state.findMany.load()
-  }, [])
+    load(page, 2, search)
+  }, [page, search])
 
-  const data = programKemiskinanState.findMany.data
-
-  if (!data) {
+  if (loading || !data) {
     return (
       <Stack py={10}>
         <Skeleton h={500} />
@@ -51,10 +59,24 @@ function Page() {
         <BackButton />
       </Box>
       <Box px={{ base: 'md', md: 100 }} >
-        <Text ta={"center"} fz={{ base: "h1", md: "2.5rem" }} c={colors["blue-button"]} fw={"bold"}>
-          Program Kemiskinan
-        </Text>
-        <Text ta={'center'} fz={'h4'}>Berbagai program bantuan untuk mengurangi kemiskinan dan meningkatkan kesejahteraan masyarakat</Text>
+        <Grid align='center'>
+          <GridCol span={{ base: 12, md: 9 }}>
+            <Text fz={{ base: "h1", md: "2.5rem" }} c={colors["blue-button"]} fw={"bold"}>
+              Program Kemiskinan
+            </Text>
+          </GridCol>
+          <GridCol span={{ base: 12, md: 3 }}>
+            <TextInput
+              radius={"lg"}
+              placeholder='Cari Program'
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              leftSection={<IconSearch size={20} />}
+              w={{ base: "50%", md: "100%" }}
+            />
+          </GridCol>
+        </Grid>
+        <Text fz={'h4'}>Berbagai program bantuan untuk mengurangi kemiskinan dan meningkatkan kesejahteraan masyarakat</Text>
       </Box>
       <Box px={{ base: "md", md: 100 }}>
         <Stack gap={'lg'} justify='center'>
@@ -74,10 +96,18 @@ function Page() {
               )
             })}
           </SimpleGrid>
+          <Center my={10}>
+            <Pagination
+              value={page}
+              onChange={(newPage) => load(newPage)}
+              total={totalPages}
+              my={"md"}
+            />
+          </Center>
           <Paper p={'xl'}>
             <Text fz={'h3'} fw={'bold'} c={colors['blue-button']} mb="md">Statistik Kemiskinan Masyarakat</Text>
             <Box style={{ width: '100%', height: 'auto' }}>
-              {state.findMany.data.length > 0 && state.findMany.data[0]?.statistik ? (
+              {data.length > 0 && data[0]?.statistik ? (
                 <Box w="100%" style={{ overflowX: 'auto' }}>
                   <Center>
                     <RechartsLineChart

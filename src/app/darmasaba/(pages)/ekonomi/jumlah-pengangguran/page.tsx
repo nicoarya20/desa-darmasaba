@@ -68,7 +68,7 @@ function Page() {
                     {state.findMany.data?.[0]?.totalUnemployment || 0} Orang
                   </Text>
                   <Text fz="sm" c="dimmed">
-                    Data tahun {state.findMany.data?.[0]?.year || ''}
+                    Data tahun {state.findMany.data?.[0]?.year ? new Date(state.findMany.data[0].year).getFullYear() : ''}
                   </Text>
                 </Flex>
               </Paper>
