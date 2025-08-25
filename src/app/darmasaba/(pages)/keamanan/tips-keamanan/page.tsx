@@ -4,7 +4,7 @@ import { Box, Center, Grid, GridCol, Image, Pagination, Paper, SimpleGrid, Skele
 import BackButton from '../../desa/layanan/_com/BackButto';
 import { useProxy } from 'valtio/utils';
 import tipsKeamananState from '@/app/admin/(dashboard)/_state/keamanan/tips-keamanan';
-import { useShallowEffect } from '@mantine/hooks';
+import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
 import { useState } from 'react';
 import { IconSearch } from '@tabler/icons-react';
 
@@ -12,6 +12,7 @@ import { IconSearch } from '@tabler/icons-react';
 function Page() {
   const state = useProxy(tipsKeamananState)
   const [search, setSearch] = useState('')
+  const [debouncedSearch] = useDebouncedValue(search, 500); // 500ms delay
   const {
     data,
     page,
@@ -21,8 +22,8 @@ function Page() {
   } = state.findMany;
 
   useShallowEffect(() => {
-    load(page, 3, search)
-  }, [page, search])
+    load(page, 3, debouncedSearch)
+  }, [page, debouncedSearch])
 
   if (loading || !data) {
     return (

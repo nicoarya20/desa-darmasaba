@@ -5,11 +5,12 @@ import React, { useState } from 'react';
 import BackButton from '../../desa/layanan/_com/BackButto';
 import { useProxy } from 'valtio/utils';
 import desaDigitalState from '@/app/admin/(dashboard)/_state/inovasi/desa-digital';
-import { useShallowEffect } from '@mantine/hooks';
+import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
 import { IconSearch } from '@tabler/icons-react';
 
 function Page() {
   const [search, setSearch] = useState("")
+  const [debouncedSearch] = useDebouncedValue(search, 500); // 500ms delay
   const state = useProxy(desaDigitalState)
   const {
     data,
@@ -20,8 +21,8 @@ function Page() {
   } = state.findMany
 
   useShallowEffect(() => {
-    load(page, 3, search)
-  }, [page, search])
+    load(page, 3, debouncedSearch)
+  }, [page, debouncedSearch])
 
   const filteredData = data || []
 

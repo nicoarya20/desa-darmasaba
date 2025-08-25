@@ -6,7 +6,7 @@ import BackButton from '../../desa/layanan/_com/BackButto';
 import { CartesianGrid, Legend, Line, LineChart as RechartsLineChart, Tooltip, XAxis, YAxis } from 'recharts';
 import { useProxy } from 'valtio/utils';
 import programKemiskinanState from '@/app/admin/(dashboard)/_state/ekonomi/program-kemiskinan';
-import { useShallowEffect } from '@mantine/hooks';
+import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
 import { IconSearch } from '@tabler/icons-react';
 
 interface StatistikData {
@@ -31,6 +31,7 @@ interface ProgramKemiskinanData {
 
 function Page() {
   const [search, setSearch] = useState('')
+  const [debouncedSearch] = useDebouncedValue(search, 500); // 500ms delay
   const state = useProxy(programKemiskinanState)
 
   const {
@@ -42,8 +43,8 @@ function Page() {
   } = state.findMany
 
   useShallowEffect(() => {
-    load(page, 2, search)
-  }, [page, search])
+    load(page, 2, debouncedSearch)
+  }, [page, debouncedSearch])
 
   if (loading || !data) {
     return (

@@ -2,7 +2,7 @@
 import keamananLingkunganState from '@/app/admin/(dashboard)/_state/keamanan/keamanan-lingkungan';
 import colors from '@/con/colors';
 import { Box, Center, Grid, GridCol, Image, Pagination, Paper, SimpleGrid, Skeleton, Stack, Text, TextInput } from '@mantine/core';
-import { useShallowEffect } from '@mantine/hooks';
+import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
 import { IconSearch } from '@tabler/icons-react';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
@@ -12,6 +12,7 @@ import BackButton from '../../desa/layanan/_com/BackButto';
 function Page() {
   const state = useProxy(keamananLingkunganState)
   const [search, setSearch] = useState('')
+  const [debouncedSearch] = useDebouncedValue(search, 500); // 500ms delay
   const {
     data,
     page,
@@ -21,8 +22,8 @@ function Page() {
   } = state.findMany;
 
   useShallowEffect(() => {
-    load(page, 3, search)
-  }, [page, search])
+    load(page, 3, debouncedSearch)
+  }, [page, debouncedSearch])
 
   if (loading || !data) {
     return (

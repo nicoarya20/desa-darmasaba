@@ -2,7 +2,7 @@
 import pasarDesaState from '@/app/admin/(dashboard)/_state/ekonomi/pasar-desa/pasar-desa';
 import colors from '@/con/colors';
 import { Box, Center, Flex, Grid, GridCol, Image, Pagination, Paper, Select, SimpleGrid, Skeleton, Stack, Text, TextInput } from '@mantine/core';
-import { useShallowEffect } from '@mantine/hooks';
+import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
 import { IconMapPinFilled, IconSearch, IconShoppingCartFilled, IconStarFilled } from '@tabler/icons-react';
 import { motion } from 'motion/react';
 import { useRouter } from 'next/navigation';
@@ -14,6 +14,7 @@ function Page() {
   const router = useRouter()
   const state = useProxy(pasarDesaState.pasarDesa)
   const [search, setSearch] = useState('');
+  const [debouncedSearch] = useDebouncedValue(search, 500); // 500ms delay
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const {
     data,
@@ -35,8 +36,8 @@ function Page() {
     : data;
 
   useShallowEffect(() => {
-    load(page, 4, search, selectedCategory || undefined)
-  }, [page, search, selectedCategory])
+    load(page, 4, debouncedSearch, selectedCategory || undefined)
+  }, [page, debouncedSearch, selectedCategory])
 
 
   if (loading || !data) {
