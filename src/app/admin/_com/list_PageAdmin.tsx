@@ -286,7 +286,7 @@ export const navBar = [
       {
         id: "Inovasi_4",
         name: "Kolaborasi Inovasi",
-        path: "/admin/inovasi/kolaborasi-inovasi"
+        path: "/admin/inovasi/kolaborasi-inovasi/list-kolaborasi-inovasi"
       },
       {
         id: "Inovasi_5",

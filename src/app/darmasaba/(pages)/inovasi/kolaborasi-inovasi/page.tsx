@@ -1,26 +1,51 @@
+'use client'
+import kolaborasiInovasiState from '@/app/admin/(dashboard)/_state/inovasi/kolaborasi-inovasi';
 import colors from '@/con/colors';
-import { Stack, Box, Text, Paper, Flex, Group, SimpleGrid, Button, Image, Center } from '@mantine/core';
-import React from 'react';
+import { Box, Center, Grid, GridCol, Group, Image, Pagination, Paper, Select, SimpleGrid, Skeleton, Stack, Text, TextInput } from '@mantine/core';
+import { useShallowEffect } from '@mantine/hooks';
+import { IconSearch } from '@tabler/icons-react';
+import { useState } from 'react';
+import { useProxy } from 'valtio/utils';
 import BackButton from '../../desa/layanan/_com/BackButto';
-import { IconChevronDown } from '@tabler/icons-react';
-
-const data = [
-  {
-    id: 1,
-    bulan: 'JANUARI 2025',
-    judul: 'Darmasaba Smart Waste',
-    deskripsi: 'Sistem manajemen sampah terpadu yang memudahkan warga untuk memilah dan mendaur ulang sampah.',
-    kolaborator: 'Kolaborator: DLH Kabupaten Badung, Komunitas Peduli Lingkungan, TPS3R Pudak Mesari'
-  },
-  {
-    id: 2,
-    bulan: 'FEBRUARI 2025',
-    judul: 'Darmasaba Digital Market',
-    deskripsi: 'Platform e-commerce untuk produk UMKM desa yang menghubungkan produsen lokal dengan pasar global.',
-    kolaborator: 'Kolaborator: Kementerian Desa PDTT, UMKM Darmasaba'
-  }
-]
 function Page() {
+  const state = useProxy(kolaborasiInovasiState)
+  const [search, setSearch] = useState('');
+  const [selectedYear, setSelectedYear] = useState<string | null>(null);
+
+  // Get unique years from the data
+  const years = Array.from(
+    new Set(
+      state.findMany.data?.map(item => 
+        new Date(item.createdAt).getFullYear().toString()
+      ) || []
+    )
+  )
+  .sort((a, b) => b.localeCompare(a)) // Sort descending (newest first)
+  .map(year => ({
+    value: year,
+    label: year,
+  }));
+
+  const {
+    data,
+    page,
+    totalPages,
+    loading,
+    load,
+  } = state.findMany
+
+  useShallowEffect(() => {
+    load(page, 10, search, selectedYear || '')
+  }, [page, search, selectedYear])
+
+  if (loading || !data) {
+    return (
+      <Stack py={10}>
+        <Skeleton height={650} />
+      </Stack>
+    );
+  }
+
   return (
     <>
       <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"22"}>
@@ -28,27 +53,46 @@ function Page() {
           <BackButton />
         </Box>
         <Box px={{ base: 'md', md: 100 }} >
-          <Text ta={"center"} fz={{ base: "h1", md: "2.5rem" }} c={colors["blue-button"]} fw={"bold"}>
-            Kolaborasi Inovasi
-          </Text>
+          <Grid align='center'>
+            <GridCol span={{ base: 12, md: 9 }}>
+              <Text fz={{ base: "h1", md: "2.5rem" }} c={colors["blue-button"]} fw={"bold"}>
+                Kolaborasi Inovasi
+              </Text>
+            </GridCol>
+            <GridCol span={{ base: 12, md: 3 }}>
+              <TextInput
+                radius={"lg"}
+                placeholder='Cari Kolaborasi Inovasi'
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                leftSection={<IconSearch size={20} />}
+                w={{ base: "50%", md: "100%" }}
+              />
+            </GridCol>
+          </Grid>
         </Box>
         <Box px={{ base: "md", md: 100 }}>
           <Stack gap={'lg'} justify='center'>
             <Group justify='flex-end'>
-              <Paper bg={colors['blue-button']} p={5} w={{ base: 150, md: 300 }}>
-                <Flex px={20} align={'center'} justify={'space-between'}>
-                  <Text fz={'h4'} fw={'bold'} c={colors['white-1']}>Tahun</Text>
-                  <IconChevronDown size={20} color={colors['white-1']} />
-                </Flex>
-              </Paper>
+              <Select
+                value={selectedYear}
+                onChange={setSelectedYear}
+                label={<Text fw={"bold"} fz={"sm"}>Tahun</Text>}
+                placeholder='Semua Tahun'
+                clearable
+                data={[
+                  { value: '', label: 'Semua Tahun' },
+                  ...years
+                ]}
+              />
             </Group>
             <SimpleGrid cols={{ base: 1, md: 2 }} spacing={'lg'}>
               {data.map((v, k) => {
                 return (
                   <Paper p={'xl'} key={k}>
-                    <Text fz={'h3'} fw={'bold'} c={colors['blue-button']}>{v.judul}</Text>
+                    <Text fz={'h3'} fw={'bold'} c={colors['blue-button']}>{v.name}</Text>
                     <Box pr={'lg'} pb={20}>
-                      {v.deskripsi}
+                      {v.slug}
                     </Box>
                     <Box pr={'lg'}>
                       {v.kolaborator}
@@ -57,9 +101,15 @@ function Page() {
                 );
               })}
             </SimpleGrid>
-            <Group py={40} justify='center'>
-              <Button px={80} rightSection={<IconChevronDown />} radius={6} bg={colors["blue-button"]} c={colors["white-1"]}>Lihat Laporan Lainnya</Button>
-            </Group>
+            <Center>
+              <Pagination
+                value={page}
+                onChange={(newPage) => load(newPage)} // ini penting!
+                total={totalPages}
+                mt="md"
+                mb="md"
+              />
+            </Center>
           </Stack>
         </Box>
       </Stack>
@@ -72,7 +122,7 @@ function Page() {
             <Text ta={'center'} fz={'h4'}>Kami berkolaborasi dengan berbagai mitra dari berbagai sektor untuk mewujudkan visi Smart Village Darmasaba.</Text>
           </Box>
           <Center>
-            <Image src={'/api/img/logoukm-kolaborasiinvoasi.png'} alt='' w={{base: 500, md: 650}}/>
+            <Image src={'/api/img/logoukm-kolaborasiinvoasi.png'} alt='' w={{ base: 500, md: 650 }} />
           </Center>
         </Stack>
       </Box>

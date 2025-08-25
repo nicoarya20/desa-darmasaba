@@ -9,7 +9,7 @@ type FormUpdateKolaborasiInovasi = {
     slug?: string;
     deskripsi?: string;
     kolaborator?: string;
-    imageId?: string;
+
 };
 export default async function kolaborasiInovasiUpdate(context: Context) {
     const body = context.body as FormUpdateKolaborasiInovasi;
@@ -31,7 +31,6 @@ export default async function kolaborasiInovasiUpdate(context: Context) {
           slug: body.slug,
           deskripsi: body.deskripsi,
           kolaborator: body.kolaborator,
-          imageId: body.imageId,
         },
       });
   

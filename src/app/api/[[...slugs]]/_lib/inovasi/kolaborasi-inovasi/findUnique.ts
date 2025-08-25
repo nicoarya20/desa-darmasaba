@@ -15,9 +15,6 @@ export default async function kolaborasiInovasiFindUnique(context: Context) {
     try {
         const kolaborasiInovasi = await prisma.kolaborasiInovasi.findUnique({
             where: { id },
-            include: {
-                image: true,
-            }
         });
 
         if (!kolaborasiInovasi) {

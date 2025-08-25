@@ -1,34 +1,37 @@
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
+import { Prisma } from "@prisma/client";
 
-type FormCreateKolaborasiInovasi = {
-    name: string;
-    tahun: number;
-    slug: string;
-    deskripsi: string;
-    kolaborator: string;
-    imageId: string;
-}
+// Define validation schema
+type FormCreateKolaborasiInovasi = Prisma.KolaborasiInovasiGetPayload<{
+  select: {
+    name: true;
+    tahun: true;
+    slug: true;
+    deskripsi: true;
+    kolaborator: true;
+  };
+}>;
 
-export default async function kolaborasiInovasiCreate(context: Context){
-    const body = context.body as FormCreateKolaborasiInovasi;
+export default async function kolaborasiInovasiCreate(context: Context) {
+  const body = context.body as FormCreateKolaborasiInovasi;
 
-    await prisma.kolaborasiInovasi.create({
-        data: {
-            name: body.name,
-            tahun: body.tahun,
-            slug: body.slug,
-            deskripsi: body.deskripsi,
-            kolaborator: body.kolaborator,
-            imageId: body.imageId,
-        }
-    })
+  // Create new kolaborasi inovasi
+  await prisma.kolaborasiInovasi.create({
+    data: {
+      name: body.name,
+      tahun: body.tahun,
+      slug: body.slug,
+      deskripsi: body.deskripsi,
+      kolaborator: body.kolaborator,
+    },
+  });
 
-    return {
-        success: true,
-        message: "Success create kolaborasi inovasi",
-        data: {
-            ...body,
-        }
-    }
+  return {
+    success: true,
+    message: "Berhasil membuat kolaborasi inovasi",
+    data: {
+      ...body,
+    },
+  };
 }

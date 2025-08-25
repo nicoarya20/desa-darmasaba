@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
 
@@ -5,18 +6,42 @@ import { Context } from "elysia";
 export default async function kolaborasiInovasiFindMany(context: Context) {
   const page = Number(context.query.page) || 1;
   const limit = Number(context.query.limit) || 10;
+  const search = (context.query.search as string) || '';
+  const year = (context.query.year as string) || '';
   const skip = (page - 1) * limit;
+
+  // Buat where clause
+  const where: any = { isActive: true };
+
+  // Tambahkan filter tahun (jika ada)
+  if (year) {
+    const startDate = new Date(parseInt(year), 0, 1); // 1 Januari tahun tersebut
+    const endDate = new Date(parseInt(year) + 1, 0, 1); // 1 Januari tahun berikutnya
+    where.createdAt = {
+      gte: startDate,
+      lt: endDate,
+    };
+  }
+
+  // Tambahkan pencarian (jika ada)
+  if (search) {
+    where.OR = [
+      { name: { contains: search, mode: 'insensitive' } },
+      { slug: { contains: search, mode: 'insensitive' } },
+    ];
+  }
+
 
   try {
     const [data, total] = await Promise.all([
       prisma.kolaborasiInovasi.findMany({
-        where: { isActive: true },
+        where,
         skip,
         take: limit,
         orderBy: { createdAt: 'desc' },
       }),
       prisma.kolaborasiInovasi.count({
-        where: { isActive: true }
+        where
       })
     ]);
 

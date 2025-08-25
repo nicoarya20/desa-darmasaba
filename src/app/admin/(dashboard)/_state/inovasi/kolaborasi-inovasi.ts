@@ -6,12 +6,11 @@ import { proxy } from "valtio";
 import { z } from "zod";
 
 const templateForm = z.object({
-    name: z.string().min(1, "Nama minimal 1 karakter"),
-    tahun: z.number().min(4, "Tahun minimal 4 karakter"),
-    slug: z.string().min(1, "Deskripsi singkat minimal 1 karakter"),
-    deskripsi: z.string().min(1, "Deskripsi minimal 1 karakter"),
-    kolaborator: z.string().min(1, "Kolaborator minimal 1 karakter"),
-    imageId: z.string().min(1, "Image ID minimal 1 karakter"),
+    name: z.string().min(1, "Nama kolaborasi inovasi harus diisi"),
+    tahun: z.number().min(1900, "Tahun tidak valid").max(new Date().getFullYear() + 1, "Tahun tidak boleh lebih dari tahun depan"),
+    slug: z.string().min(1, "Slug harus dihasilkan otomatis"),
+    deskripsi: z.string().min(1, "Deskripsi harus diisi"),
+    kolaborator: z.string().min(1, "Kolaborator harus diisi"),
 })
 
 const defaultForm = {
@@ -20,7 +19,6 @@ const defaultForm = {
     slug: "",
     deskripsi: "",
     kolaborator: "",
-    imageId: "",
 }
 
 const kolaborasiInovasiState = proxy({
@@ -28,27 +26,37 @@ const kolaborasiInovasiState = proxy({
     form: { ...defaultForm },
     loading: false,
     async create() {
-      const cek = templateForm.safeParse(kolaborasiInovasiState.create.form);
-      if (!cek.success) {
-        const err = `[${cek.error.issues
-          .map((v) => `${v.path.join(".")}`)
-          .join("\n")}] required`;
-        return toast.error(err);
-      }
-
       try {
+        // Validate form
+        const validation = templateForm.safeParse(kolaborasiInovasiState.create.form);
+        if (!validation.success) {
+          const errorMessages = validation.error.issues
+            .map(issue => `- ${issue.path.join('.')}: ${issue.message}`)
+            .join('\n');
+          return toast.error(`Validasi gagal:\n${errorMessages}`);
+        }
+
         kolaborasiInovasiState.create.loading = true;
+        
         const res = await ApiFetch.api.inovasi.kolaborasiinovasi["create"].post(
           kolaborasiInovasiState.create.form
         );
+        
         if (res.status === 200) {
-          kolaborasiInovasiState.findMany.load();
-          return toast.success("success create");
+          await kolaborasiInovasiState.findMany.load();
+          return { success: true, data: res.data };
         }
-        console.log(res);
-        return toast.error("failed create");
+        
+        console.error('Create failed:', res);
+        toast.error(res.data?.message || "Gagal menyimpan data");
+        return { success: false, error: res.data };
       } catch (error) {
-        console.log((error as Error).message);
+        console.error('Error in create:', error);
+        toast.error("Terjadi kesalahan saat menyimpan data");
+        return { 
+          success: false, 
+          error: error instanceof Error ? error.message : 'Unknown error' 
+        };
       } finally {
         kolaborasiInovasiState.create.loading = false;
       }
@@ -60,13 +68,21 @@ const kolaborasiInovasiState = proxy({
     totalPages: 1,
     total: 0,
     loading: false,
-    load: async (page = 1, limit = 10) => {
-      // Change to arrow function
-      kolaborasiInovasiState.findMany.loading = true; // Use the full path to access the property
+    search: "",
+    year: "",
+    load: async (page = 1, limit = 10, search = "", year?: string) => {
+      kolaborasiInovasiState.findMany.loading = true;
       kolaborasiInovasiState.findMany.page = page;
+      kolaborasiInovasiState.findMany.search = search;
+      kolaborasiInovasiState.findMany.year = year || "";
+
       try {
+        const query: any = { page, limit };
+        if (search) query.search = search;
+        if (year) query.year = year;
+        
         const res = await ApiFetch.api.inovasi.kolaborasiinovasi["find-many"].get({
-          query: { page, limit },
+          query,
         });
 
         if (res.status === 200 && res.data?.success) {
@@ -124,7 +140,6 @@ const kolaborasiInovasiState = proxy({
             slug: data.slug,
             deskripsi: data.deskripsi,
             kolaborator: data.kolaborator,
-            imageId: data.imageId,
           };
           return data;
         } else {
@@ -179,7 +194,7 @@ const kolaborasiInovasiState = proxy({
   },
   findUnique: {
     data: null as Prisma.KolaborasiInovasiGetPayload<{
-      include: { image: true };
+      omit: { isActive: true };
     }> | null,
     async load(id: string) {
       try {

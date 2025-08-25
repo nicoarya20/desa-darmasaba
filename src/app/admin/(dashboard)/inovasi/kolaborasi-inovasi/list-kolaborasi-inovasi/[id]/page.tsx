@@ -1,15 +1,15 @@
 'use client'
 import { useProxy } from 'valtio/utils';
 
-import { Box, Button, Flex, Image, Paper, Skeleton, Stack, Text } from '@mantine/core';
+import { Box, Button, Flex, Paper, Skeleton, Stack, Text } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack, IconEdit, IconX } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 
+import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
+import kolaborasiInovasiState from '@/app/admin/(dashboard)/_state/inovasi/kolaborasi-inovasi';
 import colors from '@/con/colors';
-import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
-import kolaborasiInovasiState from '../../../_state/inovasi/kolaborasi-inovasi';
 
 function DetailKolaborasiInovasi() {
   const kolaborasiState = useProxy(kolaborasiInovasiState)
@@ -68,10 +68,6 @@ function DetailKolaborasiInovasi() {
                 <Box>
                   <Text fw={"bold"} fz={"lg"}>Deskripsi</Text>
                   <Text fz={"lg"} dangerouslySetInnerHTML={{ __html: kolaborasiState.findUnique.data?.deskripsi }} />
-                </Box>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Gambar</Text>
-                  <Image w={{ base: 150, md: 150, lg: 150 }} src={kolaborasiState.findUnique.data?.image?.link} alt="gambar" />
                 </Box>
                 <Box>
                   <Text fw={"bold"} fz={"lg"}>Kolaborator</Text>

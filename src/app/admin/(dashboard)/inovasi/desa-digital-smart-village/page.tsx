@@ -1,6 +1,6 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
+import { Box, Button, Center, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Pagination } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconDeviceImac, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
@@ -29,19 +29,22 @@ function DesaDigitalSmartVillage() {
 function ListDesaDigitalSmartVillage({ search }: { search: string }) {
   const state = useProxy(desaDigitalState)
   const router = useRouter()
+
+  const {
+    data,
+    page,
+    totalPages,
+    loading,
+    load,
+  } = state.findMany
+
   useShallowEffect(() => {
-    state.findMany.load()
-  }, [])
+    load(page, 10, search)
+  }, [page, search])
 
-  const filteredData = (state.findMany.data || []).filter(item => {
-    const keyword = search.toLowerCase();
-    return (
-      item.name.toLowerCase().includes(keyword) ||
-      item.deskripsi.toLowerCase().includes(keyword)
-    );
-  });
+  const filteredData = data || []
 
-  if (!state.findMany.data) {
+  if (loading || !data) {
     return (
       <Stack py={10}>
         <Skeleton h={500} />
@@ -68,18 +71,27 @@ function ListDesaDigitalSmartVillage({ search }: { search: string }) {
               <TableTr key={item.id}>
                 <TableTd>{item.name}</TableTd>
                 <TableTd>
-                  <Text truncate="end" fz={"sm"} dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
+                  <Text lineClamp={1} truncate="end" fz={"sm"} dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
                 </TableTd>
-              <TableTd>
-                <Button onClick={() => router.push(`/admin/inovasi/desa-digital-smart-village/${item.id}`)}>
-                  <IconDeviceImac size={20} />
-                </Button>
-              </TableTd>
-            </TableTr>
-          ))}
+                <TableTd>
+                  <Button onClick={() => router.push(`/admin/inovasi/desa-digital-smart-village/${item.id}`)}>
+                    <IconDeviceImac size={20} />
+                  </Button>
+                </TableTd>
+              </TableTr>
+            ))}
           </TableTbody>
         </Table>
       </Paper>
+      <Center>
+        <Pagination
+          value={page}
+          onChange={(newPage) => load(newPage)} // ini penting!
+          total={totalPages}
+          mt="md"
+          mb="md"
+        />
+      </Center>
     </Box>
   );
 }

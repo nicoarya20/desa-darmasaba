@@ -21,7 +21,6 @@ const KolaborasiInovasi = new Elysia({
       slug: t.String(),
       deskripsi: t.String(),
       kolaborator: t.String(),
-      imageId: t.String(),
     }),
   })
   .put(
@@ -37,7 +36,7 @@ const KolaborasiInovasi = new Elysia({
         slug: t.String(),
         deskripsi: t.String(),
         kolaborator: t.String(),
-        imageId: t.String(),
+
       }),
     }
   )
