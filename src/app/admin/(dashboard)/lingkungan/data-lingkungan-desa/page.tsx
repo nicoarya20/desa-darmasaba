@@ -42,18 +42,10 @@ function ListDataLingkunganDesa({ search }: { search: string }) {
   const router = useRouter();
 
   useEffect(() => {
-    load(page, 10)
-  }, [page])
+    load(page, 10, search)
+  }, [page, search])
 
-  const filteredData = (data || []).filter(item => {
-    const keyword = search.toLowerCase();
-    return (
-      item.name.toLowerCase().includes(keyword) ||
-      item.deskripsi.toLowerCase().includes(keyword) ||
-      item.jumlah.toLowerCase().includes(keyword) ||
-      item.icon.toLowerCase().includes(keyword)
-    );
-  });
+  const filteredData = data || []
 
   const iconMap: Record<string, React.FC<any>> = {
     ekowisata: IconLeaf,

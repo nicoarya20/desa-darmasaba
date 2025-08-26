@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
 
@@ -5,18 +6,28 @@ import { Context } from "elysia";
 export default async function pengelolaanSampahFindMany(context: Context) {
   const page = Number(context.query.page) || 1;
   const limit = Number(context.query.limit) || 10;
+  const search = (context.query.search as string) || '';
   const skip = (page - 1) * limit;
+
+  const where: any = { isActive: true };
+
+  // Tambahkan pencarian (jika ada)
+  if (search) {
+    where.OR = [
+      { name: { contains: search, mode: 'insensitive' } },
+    ];
+  }
 
   try {
     const [data, total] = await Promise.all([
       prisma.pengelolaanSampah.findMany({
-        where: { isActive: true },
+        where,
         skip,
         take: limit,
         orderBy: { createdAt: 'desc' },
       }),
       prisma.pengelolaanSampah.count({
-        where: { isActive: true }
+        where,
       })
     ]);
 

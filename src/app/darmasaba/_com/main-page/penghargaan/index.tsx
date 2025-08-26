@@ -1,34 +1,33 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 import penghargaanState from "@/app/admin/(dashboard)/_state/desa/penghargaan";
-import colors from "@/con/colors";
-import { Stack, Box, Container, Button, Text } from "@mantine/core";
-import { useTransitionRouter } from 'next-view-transitions'
+import { Stack, Box, Container, Button, Text, Loader, Paper } from "@mantine/core";
+import { IconAward, IconArrowRight } from "@tabler/icons-react";
+import { useTransitionRouter } from 'next-view-transitions';
 import { useEffect, useState } from "react";
 import { useProxy } from "valtio/utils";
 
 function Penghargaan() {
-  const router = useTransitionRouter()
-  const state = useProxy(penghargaanState)
-  const [loading, setLoading] = useState(false)
+  const router = useTransitionRouter();
+  const state = useProxy(penghargaanState);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const loadData = async () => {
       try {
-        setLoading(true)
-        await state.findMany.load()
-      } catch (error) {
-        console.error('Error loading data:', error)
+        setLoading(true);
+        await state.findMany.load();
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
-    loadData()
-  }, [])
+    };
+    loadData();
+  }, []);
 
-  const data = state.findMany.data?.slice(0, 3)
+  const data = state.findMany.data?.slice(0, 3);
+
   return (
-    <Stack pos={"relative"} h={720}>
+    <Stack pos="relative" h={720}>
       <video
         width="320"
         height="240"
@@ -51,47 +50,68 @@ function Penghargaan() {
           position: "absolute",
           top: 0,
           left: 0,
-          background: "rgba(0,0,0,0.6)",
+          background: "linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,0.85))",
         }}
       >
-        <Container w={{ base: "100%", md: "80%" }} p={"xl"} h={720}>
-          <Stack justify="center" align="center">
+        <Container w={{ base: "100%", md: "80%" }} h={720} p="xl">
+          <Stack justify="center" align="center" gap="xl" h="100%">
             <Text
-              style={{
-                textAlign: "center",
-              }}
-              fw={"bold"}
-              fz={"2.4rem"}
-              c={"white"}
+              fw={900}
+              fz={{ base: "2rem", md: "2.8rem" }}
+              ta="center"
+              variant="gradient"
+              gradient={{ from: "cyan", to: "blue", deg: 60 }}
             >
-              Penghargaan
+              Penghargaan & Prestasi Desa
             </Text>
+
             {loading ? (
-              <Text
-                style={{
-                  textAlign: "center",
-                }}
-                fw={"bold"}
-                fz={"2.4rem"}
-                c={"white"}
-              >
-                Memuat Data...
-              </Text>
-            ) : (
-              data?.map((v, k) => {
-                return (
-                  <Box key={k}>
-                    <Stack align="center" gap={0}>
-                      <Text fz={"1.4rem"} c={"white"}>
+              <Stack align="center" gap="sm">
+                <Loader color="blue" size="lg" />
+                <Text c="gray.3" fz="lg">Sedang memuat data penghargaan...</Text>
+              </Stack>
+            ) : data && data.length > 0 ? (
+              <Stack gap="md" w="100%" maw={600}>
+                {data.map((v, k) => (
+                  <Paper
+                    key={k}
+                    withBorder
+                    radius="xl"
+                    p="lg"
+                    shadow="xl"
+                    style={{
+                      background: "rgba(255,255,255,0.07)",
+                      backdropFilter: "blur(12px)",
+                      transition: "all 0.3s ease",
+                    }}
+                  >
+                    <Stack align="center" gap="xs">
+                      <IconAward size={40} color="var(--mantine-color-blue-4)" />
+                      <Text fz="lg" fw={700} c="white" ta="center">
                         {v.name}
                       </Text>
                     </Stack>
-                  </Box>
-                );
-              })
+                  </Paper>
+                ))}
+              </Stack>
+            ) : (
+              <Stack align="center" gap="xs">
+                <IconAward size={48} color="var(--mantine-color-gray-5)" />
+                <Text c="gray.4" fz="lg" ta="center">
+                  Belum ada penghargaan yang tercatat
+                </Text>
+              </Stack>
             )}
-            <Button color={colors["blue-button"]} onClick={() => router.push("/darmasaba/penghargaan")} variant="white" radius={100}>
-              Selanjutnya
+
+            <Button
+              size="lg"
+              radius="xl"
+              variant="gradient"
+              gradient={{ from: "#26667F", to: "#124170", deg: 45 }}
+              rightSection={<IconArrowRight size={20} />}
+              onClick={() => router.push("/darmasaba/penghargaan")}
+            >
+              Lihat Semua Penghargaan
             </Button>
           </Stack>
         </Container>

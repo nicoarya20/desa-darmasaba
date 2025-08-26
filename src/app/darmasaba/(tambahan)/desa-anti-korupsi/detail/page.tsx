@@ -1,137 +1,136 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client';
+import React, { useEffect, useState } from 'react';
 import korupsiState from '@/app/admin/(dashboard)/_state/landing-page/desa-anti-korupsi';
 import BackButton from '@/app/darmasaba/(pages)/desa/layanan/_com/BackButto';
 import colors from '@/con/colors';
-import React, { useEffect, useState } from 'react';
-import { Box, Button, Container, Flex, Paper, SimpleGrid, Stack, Text, ActionIcon } from '@mantine/core';
-import { IconFile } from '@tabler/icons-react';
 import { useProxy } from 'valtio/utils';
-
+import {
+  Box,
+  Button,
+  Container,
+  Flex,
+  Paper,
+  SimpleGrid,
+  Stack,
+  Text,
+  ActionIcon,
+  Loader,
+  Tooltip,
+} from '@mantine/core';
+import { IconFile, IconInbox } from '@tabler/icons-react';
 
 function Lokal() {
   const [selectedKategori, setSelectedKategori] = useState<string>('PENGUATAN TATA LAKSANA');
   const [loading, setLoading] = useState(true);
   const state = useProxy(korupsiState);
-  
-  // Load data on component mount
+
   useEffect(() => {
     const loadData = async () => {
       try {
         setLoading(true);
-        await state.desaAntikorupsi.findMany.load(1, 100); // Load first 100 items
-      } catch (error) {
-        console.error('Error loading data:', error);
+        await state.desaAntikorupsi.findMany.load(1, 100);
       } finally {
         setLoading(false);
       }
     };
-    
     loadData();
   }, []);
-  
-  // Get data from state
+
   const data = state.desaAntikorupsi.findMany.data || [];
-  
-  // Debug: Log the complete data structure
-  console.log('Complete data:', JSON.parse(JSON.stringify(data)));
-  
-  // Get unique categories
-  const categories = [...new Set(
-    data
-      .filter(item => item.kategori?.name) // Only include items with a category name
-      .map(item => item.kategori.name)
-  )];
-  
-  // Filter data based on selected category
-  const filteredData = selectedKategori === 'PENGUATAN TATA LAKSANA' 
-    ? data 
-    : data.filter(item => item.kategori?.name === selectedKategori);
-    
-  // Debug: Log filtered data
-  console.log('Filtered data:', JSON.parse(JSON.stringify(filteredData)));
+  const categories = [...new Set(data.filter(i => i.kategori?.name).map(i => i.kategori.name))];
+  const filteredData =
+    selectedKategori === 'PENGUATAN TATA LAKSANA'
+      ? data
+      : data.filter(i => i.kategori?.name === selectedKategori);
+
   return (
-    <Stack pos="relative" bg={colors.Bg} py="xl" gap={22}>
-      <Box px={{ base: "md", md: 100 }}>
+    <Stack pos="relative" bg={colors.Bg} py="xl" gap={32}>
+      <Box px={{ base: 'md', md: 100 }}>
         <BackButton />
       </Box>
-      <Container w={{ base: "100%", md: "80%" }}>
-      <Stack align="center" gap={0}>
-          <Text fz={"3.4rem"} fw={"bold"}>
+
+      <Container w={{ base: '100%', md: '80%' }}>
+        <Stack align="center" gap={4}>
+          <Text fz={{ base: 32, md: 44 }} fw={700} ta="center" c={colors['blue-button']}>
             Desa Anti Korupsi
           </Text>
-          <Text
-            py={10}
-            ta={"justify"}
-          >
-            Desa antikorupsi mendorong pemerintahan jujur dan transparan. Keuangan desa dikelola terbuka dengan melibatkan warga mengawasi anggaran, sehingga digunakan tepat sasaran sesuai kebutuhan. Adapun beberapa jenis tata penguatan :
+          <Text ta="center" fz="md" c="dimmed" maw={700}>
+            Desa antikorupsi mendorong pemerintahan jujur dan transparan. Keuangan desa dikelola
+            terbuka dengan melibatkan warga untuk mengawasi anggaran sehingga tepat sasaran sesuai
+            kebutuhan.
           </Text>
         </Stack>
       </Container>
-      <Container size="lg" px={{ base: "md", md: "xl" }}>
-        {/* Category Filter Buttons */}
-        <Flex gap="md" justify="center" mb="xl" wrap="wrap">
-          {categories.map((kategori) => (
+
+      <Container size="lg" px={{ base: 'md', md: 'xl' }}>
+        <Flex gap="sm" justify="center" mb="xl" wrap="wrap">
+          {categories.map(kategori => (
             <Button
-            color={selectedKategori === kategori ? colors['blue-button'] : 'gray'}
               key={kategori}
-              variant={selectedKategori === kategori ? 'filled' : 'outline'}
               onClick={() => setSelectedKategori(kategori)}
               size="sm"
+              radius="xl"
+              variant={selectedKategori === kategori ? 'filled' : 'outline'}
+              color={selectedKategori === kategori ? colors['blue-button'] : 'gray'}
             >
               {kategori}
             </Button>
           ))}
         </Flex>
-        
-        {/* Loading State */}
+
         {loading ? (
-          <Text ta="center">Memuat data...</Text>
+          <Flex justify="center" align="center" h={200}>
+            <Loader color={colors['blue-button']} size="lg" />
+          </Flex>
+        ) : filteredData.length === 0 ? (
+          <Flex direction="column" align="center" justify="center" gap="sm" py="xl">
+            <IconInbox size={48} stroke={1.5} color={colors['blue-button']} />
+            <Text fz="lg" fw={500} c="dimmed">
+              Belum ada data untuk kategori ini
+            </Text>
+          </Flex>
         ) : (
-          <SimpleGrid
-            cols={{ base: 1, sm: 2, lg: 3 }}
-            spacing="xl"
-            verticalSpacing="xl"
-          >
-            {filteredData.map((item) => {
-              console.log('Item data:', item);
-              console.log('All item properties:', Object.keys(item).map(key => `${key}: ${item[key]}`).join(', '));
-              
-              const handleDownload = async (e: React.MouseEvent) => {
+          <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="xl">
+            {filteredData.map(item => {
+              const handleDownload = (e: React.MouseEvent) => {
                 e.stopPropagation();
                 if (!item?.file?.link) return;
-                
-                try {
-                  const fileUrl = item.file.link.startsWith('http')
-                    ? item.file.link
-                    : `${window.location.origin}${item.file.link.startsWith('/') ? '' : '/'}${item.file.link}`;
-                  
-                  window.open(fileUrl, '_blank');
-                } catch (error) {
-                  console.error('Error opening file:', error);
-                }
+                const url = item.file.link.startsWith('http')
+                  ? item.file.link
+                  : `${window.location.origin}${item.file.link.startsWith('/') ? '' : '/'}${
+                      item.file.link
+                    }`;
+                window.open(url, '_blank');
               };
-              
+
               return (
-                <Paper key={item.id} p="lg" shadow="sm" radius="md" withBorder>
+                <Paper
+                  key={item.id}
+                  p="lg"
+                  shadow="md"
+                  radius="xl"
+                  withBorder
+                  style={{
+                    background: 'linear-gradient(135deg, #ffffff, #f8fbff)',
+                  }}
+                >
                   <Stack h="100%" justify="space-between">
-                    <div>
-                      <Text fz="lg" fw={600} mb="sm" c={colors["blue-button"]}>
-                        {item.name}
-                      </Text>
-                    </div>
-                    
+                    <Text fz="lg" fw={600} c={colors['blue-button']} lineClamp={2}>
+                      {item.name}
+                    </Text>
                     {item?.file && (
-                      <ActionIcon
-                        variant="filled"
-                        color={colors["blue-button"]}
-                        size="lg"
-                        onClick={handleDownload}
-                        style={{ marginTop: 10 }}
-                        title="Unduh File"
-                      >
-                        <IconFile size={20} />
-                      </ActionIcon>
+                      <Tooltip label="Unduh file" withArrow>
+                        <ActionIcon
+                          variant="filled"
+                          color={colors['blue-button']}
+                          size="lg"
+                          radius="xl"
+                          onClick={handleDownload}
+                        >
+                          <IconFile size={20} />
+                        </ActionIcon>
+                      </Tooltip>
                     )}
                   </Stack>
                 </Paper>
@@ -141,9 +140,7 @@ function Lokal() {
         )}
       </Container>
     </Stack>
-  )
+  );
 }
 
 export default Lokal;
-
-

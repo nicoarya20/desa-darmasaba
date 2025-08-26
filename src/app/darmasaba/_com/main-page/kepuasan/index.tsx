@@ -160,7 +160,12 @@ function Kepuasan() {
           </Center>
           <Text fz={{ base: "1.2rem", md: "1.4rem" }} ta={"center"}>Ukur kebahagiaan warga, tingkatkan layanan desa! Dengan partisipasi aktif masyarakat, kami berkomitmen untuk terus memperbaiki layanan agar lebih transparan, efektif, dan sesuai dengan kebutuhan warga. Kepuasan Anda adalah prioritas utama kami dalam membangun desa yang lebih baik!</Text>
           <Center mt={10}>
-            <Button radius={"lg"} bg={colors["blue-button"]} onClick={open}>Ajukan Responden</Button>
+            <Button 
+            radius={"lg"} 
+            onClick={open}
+            variant="gradient"
+            gradient={{ from: "#26667F", to: "#124170" }}
+            >Ajukan Responden</Button>
           </Center>
         </Container>
         <Box px={"xl"}>

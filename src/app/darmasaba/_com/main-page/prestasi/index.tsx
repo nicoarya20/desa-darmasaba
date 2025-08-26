@@ -2,104 +2,124 @@
 'use client'
 import prestasiState from "@/app/admin/(dashboard)/_state/landing-page/prestasi-desa";
 import colors from "@/con/colors";
-import { BackgroundImage, Box, Button, Center, Container, Group, SimpleGrid, Stack, Text } from "@mantine/core";
+import { BackgroundImage, Box, Button, Center, Container, Group, Loader, SimpleGrid, Stack, Text } from "@mantine/core";
 import { useProxy } from "valtio/utils";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { IconTrophy } from "@tabler/icons-react";
 
 function Prestasi() {
-    const state = useProxy(prestasiState.prestasiDesa);
-    const [loading, setLoading] = useState(false);
-    const router = useRouter()
+  const state = useProxy(prestasiState.prestasiDesa);
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
-    useEffect(() => {
-        prestasiState.kategoriPrestasi.findMany.load()
-        const loadData = async () => {
-            try {
-                setLoading(true);
-                await state.findMany.load();
-            } catch (error) {
-                console.error('Error loading data:', error);
-            } finally {
-                setLoading(false);
-            }
-        }
-        loadData();
-    }, [])
+  useEffect(() => {
+    prestasiState.kategoriPrestasi.findMany.load();
+    const loadData = async () => {
+      try {
+        setLoading(true);
+        await state.findMany.load();
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadData();
+  }, []);
 
-    const data = (state.findMany.data || []).slice(0, 3);
-    return (
-        <>
-            <Stack p={"sm"}>
-                <Container w={{ base: "100%", md: "80%" }} p={"xl"}>
-                    <Text ta={"center"} fz={"3.4rem"}>Prestasi Desa</Text>
-                    <Text fz={"1.4rem"} ta={"center"}>Kami bangga dengan apa yang telah dicapai desa kita hingga saat ini. Semoga prestasi ini menjadi inspirasi untuk terus berkarya dan berinovasi demi kemajuan bersama.</Text>
-                    <Center pt={20}>
-                        <Button radius={"lg"} fz={"h4"} color={colors["blue-button"]} component={Link} href="/darmasaba/prestasi-desa">Selengkapnya</Button>
-                    </Center>
-                </Container>
-                <Box py={50}>
-                    <SimpleGrid
-                        cols={{
-                            base: 1,
-                            sm: 3
-                        }}
-                    >
-                        {loading ? (
-                            <Center>
-                                <Text fz={"2.4rem"}>Memuat Data...</Text>
-                            </Center>
-                        ) : (
-                            data.map((v, k) => {
-                                return (
-                                    <BackgroundImage
-                                        key={k}
-                                        src={v.image?.link || ''}
-                                        radius={16}
-                                        pos={"relative"}
-                                    >
-                                        <Box
-                                            style={{
-                                                borderRadius: 16,
-                                                zIndex: 0
-                                            }}
-                                            pos={"absolute"}
-                                            w={"100%"}
-                                            h={"100%"}
-                                            bg={colors.trans.dark[2]}
-                                        />
-                                        <Stack justify="space-between" h={"100%"} gap={0} p={"lg"} pos={"relative"}>
-                                            <Box p={"lg"}>
-                                                <Text
-                                                    c={"white"}
-                                                    fz={{ base: "1rem", md: "1.125rem", lg: "1.25rem", xl: "1.5rem" }}
-                                                    ta={"center"}
-                                                >
-                                                    {v.kategori.name}
-                                                </Text>
-                                            </Box>
-                                            <Text
-                                                fw={"bold"}
-                                                c={"white"}
-                                                fz={{ base: "2rem", md: "2.5rem", lg: "2.7rem", xl: "3rem" }}
-                                                ta={"center"}
-                                                dangerouslySetInnerHTML={{ __html: v.deskripsi }}
-                                            />
-                                            <Group justify="center">
-                                                <Button onClick={() => router.push(`/darmasaba/prestasi-desa/${v.id}`)} px={46} radius={"100"} size="md" bg={colors["blue-button"]}>
-                                                    Lihat Detail
-                                                </Button>
-                                            </Group>
-                                        </Stack>
-                                    </BackgroundImage>
-                                )
-                            })
-                        )}
-                    </SimpleGrid>
-                </Box>
+  const data = (state.findMany.data || []).slice(0, 3);
+
+  return (
+    <Stack p="sm" bg="linear-gradient(180deg, #ffffff 0%, #f8fbff 100%)">
+      <Container w={{ base: "100%", md: "80%" }} p="xl">
+        <Stack align="center" gap="sm">
+          <Group gap="xs">
+            <IconTrophy size={36} color={colors["blue-button"]} />
+            <Text ta="center" fz={{ base: "2rem", md: "3.4rem" }} fw={700}>
+              Prestasi Desa
+            </Text>
+          </Group>
+          <Text fz={{ base: "1rem", md: "1.3rem" }} ta="center" c="dimmed" maw={700}>
+            Kami bangga dengan pencapaian desa hingga saat ini. Semoga prestasi ini menjadi inspirasi untuk terus berkarya dan berinovasi demi kemajuan bersama.
+          </Text>
+          <Button
+            radius="xl"
+            size="lg"
+            variant="gradient"
+            gradient={{ from: "#26667F", to: "#124170" }}
+            component={Link}
+            href="/darmasaba/prestasi-desa"
+          >
+            Lihat Semua Prestasi
+          </Button>
+        </Stack>
+      </Container>
+
+      <Box py={50}>
+        {loading ? (
+          <Center mih={200}>
+            <Loader color={colors["blue-button"]} size="xl" />
+          </Center>
+        ) : data.length === 0 ? (
+          <Center mih={200}>
+            <Stack align="center" gap="xs">
+              <IconTrophy size={48} color="gray" />
+              <Text fz="1.2rem" fw={500} c="dimmed">
+                Belum ada prestasi yang ditampilkan
+              </Text>
             </Stack>
-        </>
-    )
+          </Center>
+        ) : (
+          <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }} spacing="lg">
+            {data.map((v, k) => (
+              <BackgroundImage
+                key={k}
+                src={v.image?.link || ""}
+                radius="xl"
+                pos="relative"
+              >
+                <Box
+                  pos="absolute"
+                  inset={0}
+                  bg="linear-gradient(180deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.7) 100%)"
+                  style={{ borderRadius: "1rem" }}
+                />
+                <Stack justify="space-between" h="100%" pos="relative" p="lg">
+                  <Box>
+                    <Text
+                      c="white"
+                      fz={{ base: "1rem", md: "1.25rem" }}
+                      ta="center"
+                      fw={500}
+                    >
+                      {v.kategori.name}
+                    </Text>
+                  </Box>
+                  <Text
+                    fw={700}
+                    c="white"
+                    fz={{ base: "1.5rem", md: "2rem", lg: "2.5rem" }}
+                    ta="center"
+                    dangerouslySetInnerHTML={{ __html: v.deskripsi }}
+                  />
+                  <Group justify="center">
+                    <Button
+                      onClick={() => router.push(`/darmasaba/prestasi-desa/${v.id}`)}
+                      radius="xl"
+                      size="md"
+                      color={colors["blue-button"]}
+                    >
+                      Detail Prestasi
+                    </Button>
+                  </Group>
+                </Stack>
+              </BackgroundImage>
+            ))}
+          </SimpleGrid>
+        )}
+      </Box>
+    </Stack>
+  );
 }
+
 export default Prestasi;

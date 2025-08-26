@@ -126,7 +126,9 @@ function ListProgramPenghijauan({ search }: { search: string }) {
                 <TableTr key={item.id}>
                   <TableTd style={{ width: '5%', textAlign: 'center' }}>{index + 1}</TableTd>
                   <TableTd style={{ width: '20%', wordWrap: 'break-word' }}>{item.name}</TableTd>
-                  <TableTd style={{ width: '35%', wordWrap: 'break-word' }} dangerouslySetInnerHTML={{ __html: item.judul }}></TableTd>
+                  <TableTd style={{ width: '35%', wordWrap: 'break-word' }}>
+                    <Text lineClamp={1} fz={"sm"} dangerouslySetInnerHTML={{ __html: item.judul }}/>
+                  </TableTd>
                   <TableTd style={{ width: '10%' }}>
                     {iconMap[item.icon] && (
                       <Box title={item.icon}>

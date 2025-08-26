@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
 
@@ -6,17 +7,26 @@ export default async function programPenghijauanFindMany(context: Context) {
   const page = Number(context.query.page) || 1;
   const limit = Number(context.query.limit) || 10;
   const skip = (page - 1) * limit;
+  const search = (context.query.search as string) || '';
 
+  const where: any = { isActive: true };
+
+  if (search) {
+    where.OR = [
+      { name: { contains: search, mode: 'insensitive' } },
+      { judul: { contains: search, mode: 'insensitive' } },
+    ];
+  }
   try {
     const [data, total] = await Promise.all([
       prisma.programPenghijauan.findMany({
-        where: { isActive: true },
+        where,
         skip,
         take: limit,
         orderBy: { createdAt: 'desc' },
       }),
       prisma.programPenghijauan.count({
-        where: { isActive: true }
+        where,
       })
     ]);
 

@@ -11,79 +11,77 @@ import {
   Image,
   Paper,
   Stack,
-  Text
+  Text,
+  Center,
+  Tooltip,
+  Badge,
 } from "@mantine/core";
+import { IconCalendarTime, IconInfoCircle } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import ModuleView from "./ModuleView";
 import SosmedView from "./SosmedView";
 import ProfileView from "./ProfileView";
 
 const getDayOfWeek = () => {
-  const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+  const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
   const today = new Date();
   return days[today.getDay()];
-}
+};
 
 const getCurrentTime = () => {
   const now = new Date();
-  const hours = String(now.getHours()).padStart(2, '0');
-  const minutes = String(now.getMinutes()).padStart(2, '0');
+  const hours = String(now.getHours()).padStart(2, "0");
+  const minutes = String(now.getMinutes()).padStart(2, "0");
   return `${hours}:${minutes}`;
-}
+};
 
 const isWorkingHours = (currentTime: string): boolean => {
-  const [openTime, closeTime] = ['08:00', '16:00'];
-
+  const [openTime, closeTime] = ["08:00", "16:00"];
   const compareTimes = (time1: string, time2: string) => {
-    const [hour1, minute1] = time1.split(':').map(Number);
-    const [hour2, minute2] = time2.split(':').map(Number);
-
+    const [hour1, minute1] = time1.split(":").map(Number);
+    const [hour2, minute2] = time2.split(":").map(Number);
     if (hour1 < hour2) return true;
     if (hour1 > hour2) return false;
     return minute1 <= minute2;
   };
   return compareTimes(currentTime, closeTime) && !compareTimes(currentTime, openTime);
-}
+};
+
 const getWorkStatus = (day: string, currentTime: string): { status: string; message: string } => {
-  const workingDays = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'];
-
+  const workingDays = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat"];
   if (!workingDays.includes(day)) {
-    return {
-      status: 'Tutup',
-      message: 'Sabtu - Minggu'
-    }
+    return { status: "Tutup", message: "Libur Akhir Pekan" };
   }
-  const isOpen = isWorkingHours(currentTime)
-  return isOpen ? { status: 'Buka', message: '08:00 - 16:00' } : { status: 'Tutup', message: '08:00 - 16:00' };
-}
-
+  const isOpen = isWorkingHours(currentTime);
+  return isOpen
+    ? { status: "Buka", message: "08:00 - 16:00" }
+    : { status: "Tutup", message: "08:00 - 16:00" };
+};
 
 function LandingPage() {
-  const [socialMedia, setSocialMedia] = useState<Prisma.MediaSosialGetPayload<{ include: { image: true } }>[]>([]);
-  const [profile, setProfile] = useState<Prisma.PejabatDesaGetPayload<{ include: { image: true } }> | null>(null);
+  const [socialMedia, setSocialMedia] = useState<
+    Prisma.MediaSosialGetPayload<{ include: { image: true } }>[]
+  >([]);
+  const [profile, setProfile] = useState<
+    Prisma.PejabatDesaGetPayload<{ include: { image: true } }> | null
+  >(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchSocialMedia = async () => {
       try {
-        const response = await fetch('/api/landingpage/mediasosial/findMany');
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
+        const response = await fetch("/api/landingpage/mediasosial/findMany");
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const result = await response.json();
-        // Ensure the data is an array before setting it
         if (Array.isArray(result.data)) {
           setSocialMedia(result.data);
         } else if (Array.isArray(result)) {
-          // In case the API returns the array directly
           setSocialMedia(result);
         } else {
-          console.error('Unexpected API response format:', result);
           setSocialMedia([]);
         }
-      } catch (error) {
-        console.error('Error fetching social media:', error);
-        setSocialMedia([]); // Ensure we always have an array
+      } catch {
+        setSocialMedia([]);
       } finally {
         setIsLoading(false);
       }
@@ -92,22 +90,22 @@ function LandingPage() {
     const fetchProfile = async () => {
       try {
         const response = await fetch(`/api/landingpage/pejabatdesa/edit`);
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const result = await response.json();
-        setProfile(result.data || null); // Handle single object response
-      } catch (error) {
-        console.error('Error fetching profile:', error);
+        setProfile(result.data || null);
+      } catch {
         setProfile(null);
       }
     };
+
     fetchSocialMedia();
     fetchProfile();
   }, []);
 
-  const [workStatus, setWorkStatus] = useState<{ status: string; message: string }>
-    ({ status: '', message: '' });
+  const [workStatus, setWorkStatus] = useState<{ status: string; message: string }>({
+    status: "",
+    message: "",
+  });
 
   useEffect(() => {
     const updateWorkStatus = () => {
@@ -115,212 +113,110 @@ function LandingPage() {
       const time = getCurrentTime();
       const status = getWorkStatus(day, time);
       setWorkStatus(status);
-    }
+    };
     updateWorkStatus();
     const intervalId = setInterval(updateWorkStatus, 60 * 1000);
     return () => clearInterval(intervalId);
   }, []);
+
   return (
-    <Stack bg={colors["Bg"]}>
-      <Flex
-        gap={"md"}
-        wrap={{
-          base: "wrap",
-          md: "nowrap",
-        }}
-      >
-        <Stack
-          gap={"xl"}
-          w={{
-            base: "100%",
-            md: "60%",
-          }}
-          py={{
-            base: "xs",
-            md: "40",
-          }}
-          px={{
-            base: "xs",
-            md: "100",
-          }}
-        >
-          <Card
-            radius={"32"}
-            bg={colors.grey[1]}
-            p={{
-              base: "xs",
-              md: "32",
-            }}
-          >
-            <Stack gap={42}>
-              <Flex
-                gap={"md"}
-                wrap={{
-                  base: "wrap",
-                  md: "nowrap",
-                }}
-              >
-                <Grid
-                >
-                  <Grid.Col span={{
-                    base: 3,
-                    lg: 2,
-                    md: 3,
-                  }}>
-                    <Box
-                      pos={"relative"}
-                      bg={"white"}
-                      w={{
-                        base: 64,
-                        md: 72,
-                      }}
-                      h={{
-                        base: 64,
-                        md: 72,
-                      }}
-                      style={{
-                        borderRadius: 24,
-                      }}
-                      p={"sm"}
-                    >
-                      <Image
-                        src={"/darmasaba-icon.png"}
-                        alt="icon"
-                        sizes="100%"
-                      />
+    <Stack bg={colors.Bg} p="md" gap="xl">
+      <Flex gap="lg" wrap={{ base: "wrap", md: "nowrap" }}>
+        <Stack w={{ base: "100%", md: "65%" }} gap="lg">
+          <Card radius="xl" bg={colors.grey[1]} p="lg" shadow="xl">
+            <Stack gap="xl">
+              <Flex gap="md" wrap="wrap">
+                <Grid w="100%">
+                  <Grid.Col span={{ base: 3, sm: 2 }}>
+                    <Box bg="white" w={72} h={72} p="sm" style={{ borderRadius: 24 }}>
+                      <Image src="/darmasaba-icon.png" alt="Logo Darmasaba" fit="contain" />
                     </Box>
                   </Grid.Col>
-
-                  <Grid.Col span={{
-                    base: 3,
-                    lg: 2,
-                    md: 3,
-                  }}>
-                    <Box
-                      pos={"relative"}
-                      w={{
-                        base: 64,
-                        md: 72,
-                      }}
-                      h={{
-                        base: 64,
-                        md: 72,
-                      }}
-                      style={{
-                        borderRadius: 24,
-                      }}
-                      p={"sm"}
-                      bg={"white"}
-                    >
-                      <Image
-                        src={"/pudak-icon.png"}
-                        alt="icon"
-                        sizes={"100%"}
-                        fit="contain"
-                      />
+                  <Grid.Col span={{ base: 9, sm: 10 }}>
+                    <Box bg="white" w={72} h={72} p="sm" style={{ borderRadius: 24 }}>
+                      <Image src="/pudak-icon.png" alt="Logo Pudak" fit="contain" />
                     </Box>
                   </Grid.Col>
-                  <Grid.Col span={{
-                    base: 12,
-                    lg: 12,
-                    md: 12,
-                  }}>
+                  <Grid.Col span={12}>
                     <Paper
-                      pos={"relative"}
                       bg={colors["blue-button"]}
-                      p={10}
-                      w={{ base: "100%", sm: "auto", md: "auto" }}
-                      flex={{ base: "1", sm: "1", md: "1" }}
+                      p="md"
+                      radius="lg"
+                      shadow="md"
+                      style={{ position: "relative", overflow: "hidden" }}
                     >
-                      <Grid
-                      >
-                        <GridCol span={{
-                          base: 12,
-                          lg: 6,
-                          md: 6,
-                        }}>
-                          <Box>
-                            <Text c={colors["white-1"]} fz={"sm"}>
-                              Jadwal Kerja
-                            </Text>
-                            <Paper
-                              w={{ base: "100%", sm: "100%", md: "auto" }}
-                              p={5}
-                              bg={colors["white-1"]}
-                            >
-                              <Flex justify={"space-between"} align={"center"}>
-                                <Paper
-                                  w={{ base: "100%", sm: "100%", md: "auto" }}
-                                  p={5}
-                                  bg={colors["white-1"]}
+                      <Grid gutter="md">
+                        <GridCol span={{ base: 12, md: 6 }}>
+                          <Stack gap="xs">
+                            <Flex align="center" gap="xs">
+                              <IconCalendarTime size={16} color="white" />
+                              <Text c="white" fz="sm">Jam Operasional</Text>
+                            </Flex>
+                            <Paper p="sm" radius="md" bg="white">
+                              <Tooltip label="Status saat ini berdasarkan jam operasional kantor">
+                                <Badge
+                                  color={workStatus.status === "Buka" ? "green" : "red"}
+                                  radius="sm"
+                                  variant="filled"
                                 >
-
-                                  <Box>
-                                    <Text fw="bold" fz="sm" c={workStatus.status === 'Buka' ? "black" : "red"}>
-                                      {workStatus.status}
-                                    </Text>
-                                    <Text fw="bold" fz="lg" >
-                                      {workStatus.message}
-                                    </Text>
-                                  </Box>
-                                </Paper>
-                              </Flex>
+                                  {workStatus.status}
+                                </Badge>
+                              </Tooltip>
+                              <Text fw="bold" fz="lg">{workStatus.message}</Text>
                             </Paper>
-                          </Box>
+                          </Stack>
                         </GridCol>
-                        {/* Edit yang ini */}
-                        <GridCol span={{ base: 12, lg: 6, md: 6 }}>
-                          <Box>
-                            <Text c={colors["white-1"]} fz={"sm"}>
-                              {new Intl.DateTimeFormat('id-ID', {
-                                weekday: 'long',
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric'
-                              }).format(new Date())}
-                            </Text>
-                            <Paper bg={colors["white-1"]} p={10}>
-                              <Text fz="sm" >
-                                Status
-                              </Text>
-                              <Text fw="bold" fz="lg" >
-                                {workStatus.status === 'Buka' ? 'Operasional' : 'Tutup'}
+                        <GridCol span={{ base: 12, md: 6 }}>
+                          <Stack gap="xs">
+                            <Flex align="center" gap="xs">
+                              <IconInfoCircle size={16} color="white" />
+                              <Text c="white" fz="sm">Hari Ini</Text>
+                            </Flex>
+                            <Paper p="sm" radius="md" bg="white">
+                              <Text fz="sm">Status Kantor</Text>
+                              <Text fw="bold" fz="lg">
+                                {workStatus.status === "Buka" ? "Sedang Beroperasi" : "Tidak Beroperasi"}
                               </Text>
                             </Paper>
-
-                          </Box>
+                          </Stack>
                         </GridCol>
                       </Grid>
                     </Paper>
                   </Grid.Col>
-
                 </Grid>
-
               </Flex>
+
               <ModuleView />
+
               {isLoading ? (
                 <Skeleton height={32} width="100%" />
               ) : socialMedia.length > 0 ? (
                 <SosmedView data={socialMedia} />
               ) : (
-                <div>No social media links available</div>
+                <Center>
+                  <Text c="dimmed">Belum ada tautan media sosial yang tersedia</Text>
+                </Center>
               )}
-              <Text c={colors.trans.dark[2]} style={{
-                textAlign: "center"
-              }} >Sampaikan saran dan masukan guna kemajuan dalam pembangunan. Semua lebih mudah melalui fitur interaktif</Text>
+
+              <Text ta="center" c={colors.trans.dark[2]}>
+                Bagikan ide, kritik, atau saran Anda untuk mendukung pembangunan desa. 
+                Semua lebih mudah dengan fitur interaktif yang kami sediakan.
+              </Text>
             </Stack>
           </Card>
-
         </Stack>
+
         {isLoading ? (
-          <Skeleton height={32} width="100%" />
+          <Skeleton height={300} width="100%" radius="lg" />
         ) : profile ? (
           <ProfileView data={profile} />
         ) : (
-          <div>No profile available</div>
+          <Center w="100%">
+            <Text c="dimmed">Informasi profil belum tersedia</Text>
+          </Center>
         )}
       </Flex>
-    </Stack >
+    </Stack>
   );
 }
 
