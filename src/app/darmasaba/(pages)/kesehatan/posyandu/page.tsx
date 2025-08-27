@@ -1,119 +1,166 @@
 'use client'
-import colors from "@/con/colors";
-import { Box, Center, Flex, Image, List, ListItem, Pagination, Paper, SimpleGrid, Skeleton, Spoiler, Stack, Text, TextInput } from "@mantine/core";
-import BackButton from "../../desa/layanan/_com/BackButto";
-// import { useTransitionRouter } from "next-view-transitions";
 import posyandustate from "@/app/admin/(dashboard)/_state/kesehatan/posyandu/posyandu";
+import colors from "@/con/colors";
+import { Badge, Box, Center, Flex, Image, List, ListItem, Pagination, Paper, SimpleGrid, Skeleton, Spoiler, Stack, Text, TextInput } from "@mantine/core";
 import { useShallowEffect } from "@mantine/hooks";
-import { useProxy } from "valtio/utils";
+import { IconCalendar, IconInfoCircle, IconPhone, IconSearch } from "@tabler/icons-react";
 import { useState } from "react";
-import { IconSearch } from "@tabler/icons-react";
+import { useProxy } from "valtio/utils";
+import BackButton from "../../desa/layanan/_com/BackButto";
 
 export default function Page() {
-    const state = useProxy(posyandustate)
-    // const router = useTransitionRouter()
-    const [search, setSearch] = useState("")
+  const state = useProxy(posyandustate);
+  const [search, setSearch] = useState("");
 
-    const {
-        data,
-        page,
-        totalPages,
-        loading,
-        load,
-    } = state.findMany;
+  const { data, page, totalPages, loading, load } = state.findMany;
 
+  useShallowEffect(() => {
+    load(page, 6, search);
+  }, [page, search]);
 
-    useShallowEffect(() => {
-        load(page, 3, search)
-    }, [page, search])
-
-    if (loading || !data) {
-        return (
-            <Box py={10}>
-                <Skeleton h={500} />
-            </Box>
-        )
-    }
-
+  if (loading || !data) {
     return (
-        <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"22"}>
-            <Box px={{ base: 'md', md: 100 }}>
-                <BackButton />
-                <Flex mt={10} justify={"space-between"} align={"center"}>
-                    <Text ta={"center"} fz={{ base: "h1", md: "2.5rem" }} c={colors["blue-button"]} fw={"bold"}>
-                        Posyandu Darmasaba
-                    </Text>
-                    <TextInput
-                        placeholder="Cari Posyandu"
-                        radius="lg"
-                        leftSection={<IconSearch size={20} />}
-                        w={{ base: "25%", md: "30%" }}
-                        value={search}
-                        onChange={(e) => setSearch(e.currentTarget.value)}
-                    />
-                </Flex>
-            </Box>
-            <Box px={{ base: "md", md: 100 }}>
-                <Stack gap={'lg'}>
-                    <SimpleGrid
-                        pb={10}
-                        cols={{
-                            base: 1,
-                            md: 3,
-                        }}>
-                        {data?.map((v, k) => {
-                            return (
-                                <Paper key={k} p={"xl"} bg={colors["white-trans-1"]}>
-                                    <Stack gap={'xs'}>
-                                        <Text c={colors["blue-button"]} fw={"bold"} fz={"h3"}>
-                                            {v.name}
-                                        </Text>
-                                        <Center>
-                                            <Image src={v.image.link} alt="" />
-                                        </Center>
-                                        <Text fz={'h4'}>
-                                            No.Telp : {v.nomor}
-                                        </Text>
-                                        <Box>
-                                            <Text fz={'h4'}>
-                                                Jadwal Pelayanan
-                                            </Text>
-                                            <Text fz={'h4'} dangerouslySetInnerHTML={{ __html: v.jadwalPelayanan }} />
-                                        </Box>
-                                        <Spoiler
-                                            maxHeight={60} // tinggi maksimum sebelum di-collapse
-                                            showLabel="Read more"
-                                            hideLabel="Read less"
-                                        >
-                                            <Text fz={'h4'} dangerouslySetInnerHTML={{ __html: v.deskripsi }} />
-                                        </Spoiler>
-                                    </Stack>
-                                </Paper>
-                            )
-                        })}
-                    </SimpleGrid>
-                    <Center>
-                        <Pagination
-                            value={page}
-                            onChange={(newPage) => load(newPage)} // ini penting!
-                            total={totalPages}
-                            mt="md"
-                            mb="md"
-                        />
-                    </Center>
-                    <Text fz={'h4'} fw={"bold"}>
-                        Pelayanan Posyandu
-                    </Text>
-                    <List type="ordered">
-                        <ListItem fz={'h4'}>Penimbangan bayi dan balita</ListItem>
-                        <ListItem fz={'h4'}>Pemantuan status gizi</ListItem>
-                        <ListItem fz={'h4'}>Imunisasi dasar lengkap</ListItem>
-                        <ListItem fz={'h4'}>Konseling</ListItem>
-                        <ListItem fz={'h4'}>Pemantuan kesehatan ibu hamil</ListItem>
-                    </List>
-                </Stack>
-            </Box>
-        </Stack>
+      <Box py="xl" px={{ base: "md", md: 100 }}>
+        <Skeleton h={500} radius="lg" />
+      </Box>
+    );
+  }
 
-    )
+  return (
+    <Stack pos="relative" bg={colors.Bg} py="xl" gap="xl">
+      <Box px={{ base: "md", md: 100 }}>
+        <BackButton />
+        <Flex mt="md" justify="space-between" align="center" wrap="wrap" gap="md">
+          <Text
+            ta="left"
+            fz={{ base: "1.8rem", md: "2.5rem" }}
+            c={colors["blue-button"]}
+            fw="bold"
+          >
+            Posyandu Desa Darmasaba
+          </Text>
+          <TextInput
+            placeholder="Cari posyandu berdasarkan nama..."
+            aria-label="Pencarian Posyandu"
+            radius="xl"
+            size="md"
+            leftSection={<IconSearch size={20} />}
+            w={{ base: "100%", md: "35%" }}
+            value={search}
+            onChange={(e) => setSearch(e.currentTarget.value)}
+          />
+        </Flex>
+      </Box>
+
+      <Box px={{ base: "md", md: 100 }}>
+        <Stack gap="xl">
+          <SimpleGrid
+            pb="lg"
+            cols={{ base: 1, sm: 2, md: 3 }}
+            spacing="lg"
+          >
+            {data?.map((v, k) => (
+              <Paper
+                key={k}
+                p="xl"
+                radius="lg"
+                shadow="md"
+                withBorder
+                bg={colors["white-trans-1"]}
+                style={{
+                  transition: "transform 0.2s ease, box-shadow 0.2s ease",
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLElement).style.transform = "translateY(-4px)";
+                  (e.currentTarget as HTMLElement).style.boxShadow =
+                    "0 8px 24px rgba(0,0,0,0.12)";
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLElement).style.transform = "translateY(0)";
+                  (e.currentTarget as HTMLElement).style.boxShadow =
+                    "0 4px 12px rgba(0,0,0,0.08)";
+                }}
+              >
+                <Stack gap="sm">
+                  <Flex justify="space-between" align="center">
+                    <Text c={colors["blue-button"]} fw="bold" fz="lg" lineClamp={1}>
+                      {v.name}
+                    </Text>
+                    <Badge color="blue" variant="light" size="sm" radius="sm">
+                      Aktif
+                    </Badge>
+                  </Flex>
+                  <Center>
+                    <Image
+                      src={v.image.link}
+                      alt={`Gambar ${v.name}`}
+                      radius="md"
+                      w="100%"
+                      h={180}
+                      fit="cover"
+                    />
+                  </Center>
+                  <Flex align="center" gap="xs">
+                    <IconPhone size={18} stroke={1.5} />
+                    <Text fz="sm" c="dimmed">
+                      {v.nomor || "Tidak tersedia"}
+                    </Text>
+                  </Flex>
+                  <Flex align="center" gap="xs">
+                    <IconCalendar size={18} stroke={1.5} />
+                    <Text fz="sm" c="dimmed">
+                      Jadwal:{" "}
+                      <span dangerouslySetInnerHTML={{ __html: v.jadwalPelayanan }} />
+                    </Text>
+                  </Flex>
+                  <Spoiler
+                    maxHeight={70}
+                    showLabel="Lihat selengkapnya"
+                    hideLabel="Sembunyikan"
+                    transitionDuration={300}
+                  >
+                    <Text
+                      fz="sm"
+                      lh={1.5}
+                      dangerouslySetInnerHTML={{ __html: v.deskripsi }}
+                    />
+                  </Spoiler>
+                </Stack>
+              </Paper>
+            ))}
+          </SimpleGrid>
+
+          {totalPages > 1 && (
+            <Center>
+              <Pagination
+                value={page}
+                onChange={(newPage) => load(newPage)}
+                total={totalPages}
+                radius="lg"
+                size="md"
+                withControls
+                mt="md"
+              />
+            </Center>
+          )}
+
+          <Stack gap="sm">
+            <Flex align="center" gap="xs">
+              <IconInfoCircle size={22} color={colors["blue-button"]} />
+              <Text fz="lg" fw="bold" c={colors["blue-button"]}>
+                Layanan Utama Posyandu
+              </Text>
+            </Flex>
+            <List spacing="xs" size="sm" center>
+              <ListItem>Penimbangan bayi dan balita</ListItem>
+              <ListItem>Pemantauan status gizi</ListItem>
+              <ListItem>Imunisasi dasar lengkap</ListItem>
+              <ListItem>Konseling kesehatan</ListItem>
+              <ListItem>Pemantauan kesehatan ibu hamil</ListItem>
+            </List>
+          </Stack>
+        </Stack>
+      </Box>
+    </Stack>
+  );
 }

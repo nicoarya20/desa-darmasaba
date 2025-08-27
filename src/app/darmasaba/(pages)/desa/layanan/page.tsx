@@ -12,7 +12,7 @@ import PelayananPendudukNonPermanent from "./_com/pelayananPendudukNonPermanent"
 
 export default function Page() {
     const [search, setSearch] = useState("")
-    
+
 
     return (
         <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"22"}>
@@ -40,14 +40,16 @@ export default function Page() {
                 </Stack>
             </Container>
             <Box px={{ base: "md", md: 100 }}>
-                {/* Bagian Pelayanan Surat Keterangan */}
-                <PelayananSuratKeterangan search={search} />
-                {/* Bagian Pelayanan Perizinan Berusaha */}
-                <PelayananPerizinanBerusaha/>
-                {/* Bagian Pelayanan Telunjuk Sakti Desa */}
-                <PelayananTelunjukSaktiDesa/>
-                 {/* Bagian Pelayanan Penduduk Non Permanent */}
-                 <PelayananPendudukNonPermanent/>
+                <Stack gap={"xl"}>
+                    {/* Bagian Pelayanan Surat Keterangan */}
+                    <PelayananSuratKeterangan search={search} />
+                    {/* Bagian Pelayanan Perizinan Berusaha */}
+                    <PelayananPerizinanBerusaha />
+                    {/* Bagian Pelayanan Telunjuk Sakti Desa */}
+                    <PelayananTelunjukSaktiDesa />
+                    {/* Bagian Pelayanan Penduduk Non Permanent */}
+                    <PelayananPendudukNonPermanent />
+                </Stack>
             </Box>
         </Stack>
     )

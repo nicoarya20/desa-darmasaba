@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import stateLayananDesa from '@/app/admin/(dashboard)/_state/desa/layananDesa';
-import { Box, Flex, Skeleton, Text, Title } from '@mantine/core';
+import { Box, Card, Flex, Grid, Skeleton, Stack, Text, Title } from '@mantine/core';
+import { IconExternalLink } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
 
@@ -11,22 +12,22 @@ interface ServiceItem {
 }
 
 function PelayananTelunjukSaktiDesa() {
-  const state = useProxy(stateLayananDesa)
-  const [loading, setLoading] = useState(false)
+  const state = useProxy(stateLayananDesa);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const loadData = async () => {
       try {
-        setLoading(true)
-        await state.pelayananTelunjukSaktiDesa.findMany.load()
+        setLoading(true);
+        await state.pelayananTelunjukSaktiDesa.findMany.load();
       } catch (error) {
-        console.error('Error loading data:', error);
+        console.error('Gagal memuat data:', error);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
-    loadData()
-  }, [])
+    };
+    loadData();
+  }, []);
 
   const data = (state.pelayananTelunjukSaktiDesa.findMany.data || []) as Array<{
     name: string;
@@ -37,28 +38,63 @@ function PelayananTelunjukSaktiDesa() {
     createdAt: Date;
     updatedAt: Date;
     deletedAt: Date | null;
-  }>
+  }>;
+
   return (
     <Box>
-      <Title fz="h2" py={10} mb="md">Terwujudnya Layanan umum bertajuk Sistim administrasi Kependudukan Terintegrasi di Desa berbasi Elektronik, Smart dan Aman. Layanan Telunjuk Sakti Desa meliputi :</Title>
+      <Title order={2} mb="lg" fz={{ base: 22, md: 28 }} fw={700} style={{ lineHeight: 1.4 }}>
+        Layanan Telunjuk Sakti Desa <br /> 
+        <Text span c="dimmed" fz="lg" fw={400}>
+          Terwujudnya sistem administrasi kependudukan terintegrasi berbasis elektronik, cerdas, dan aman
+        </Text>
+      </Title>
+
       {loading ? (
-        <Skeleton h={500} />
+        <Skeleton h={400} radius="lg" />
+      ) : data.length === 0 ? (
+        <Card shadow="sm" radius="lg" withBorder>
+          <Text c="dimmed" ta="center" py="xl">
+            Belum ada layanan tersedia untuk saat ini
+          </Text>
+        </Card>
       ) : (
-        data.map((v, k) => {
-          return (
-            <Box key={k}>
-              <Box py={10}>
-                <Flex gap={"3"} align={"center"}>
-                  <Text fz={{ base: "h4", md: "h3" }} fw={"bold"}>{v.name}
+        <Grid gutter="lg">
+          {data.map((v, k) => (
+            <Grid.Col span={{ base: 12, sm: 6, lg: 4 }} key={k}>
+              <Card
+                shadow="md"
+                radius="xl"
+                withBorder
+                p="lg"
+                style={{
+                  transition: 'all 0.3s ease',
+                  background: 'linear-gradient(145deg, #ffffff, #f8f9fa)',
+                }}
+              >
+                <Stack gap="sm">
+                  <Text fw={700} fz="lg" lh={1.4}>
+                    {v.name}
                   </Text>
-                  <Text span fz={{ base: "h4", md: "h3" }}>
-                    <a href={v.link} target="_blank" rel="noopener noreferrer" style={{ color: '#228be6' }}>{v.deskripsi}</a>
-                  </Text>
-                </Flex>
-              </Box>
-            </Box>
-          )
-        })
+                  <Flex gap="xs" align="center">
+                    <IconExternalLink size={18} stroke={1.5} />
+                    <Text
+                      component="a"
+                      href={v.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      fz="sm"
+                      c="blue"
+                      td="underline"
+                      style={{ cursor: 'pointer' }}
+                    >
+                      {v.deskripsi}
+                    </Text>
+                  </Flex>
+                </Stack>
+              </Card>
+            </Grid.Col>
+          ))}
+        </Grid>
       )}
     </Box>
   );

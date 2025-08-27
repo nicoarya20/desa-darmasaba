@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState } from "react"
-import { Box, Button, Center, Container, Image, Paper, SimpleGrid, Stack, Text, Title, useMantineTheme } from "@mantine/core"
+import { Box, Button, Center, Container, Image, Paper, SimpleGrid, Stack, Text, Title, useMantineTheme, Tooltip } from "@mantine/core"
 import { useMediaQuery } from "@mantine/hooks"
 import { Prisma } from "@prisma/client"
 import Link from "next/link"
@@ -37,24 +37,32 @@ export default function SDGS() {
     <Stack p="sm">
       <Container w={{ base: "100%", md: "80%" }} p="xl">
         <Center>
-          <Title order={1} fz={{ base: "2.2rem", md: "3.4rem" }} fw={900}>
+          <Title
+            order={1}
+            fz={{ base: "2.4rem", md: "3.6rem" }}
+            fw={900}
+            style={{
+              background: "linear-gradient(90deg, #1A5F7A, #159895)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+            }}
+          >
             SDGs Desa
           </Title>
         </Center>
-        <Text fz={{ base: "1rem", md: "1.3rem" }} ta="center" c="dimmed" mt="md" maw={800} mx="auto">
-          SDGs Desa adalah penerapan 17 Tujuan Pembangunan Berkelanjutan di tingkat desa. Fokus pada pengentasan kemiskinan,
-          pendidikan, kesehatan, kesetaraan gender, dan pelestarian lingkungan untuk menciptakan desa yang maju, inklusif, dan berkelanjutan.
+        <Text fz={{ base: "1rem", md: "1.2rem" }} ta="center" c="dimmed" mt="md" maw={820} mx="auto">
+          SDGs Desa merupakan langkah nyata untuk mewujudkan desa yang maju, inklusif, dan berkelanjutan melalui 17 tujuan pembangunan: dari pengentasan kemiskinan, pendidikan, kesehatan, kesetaraan gender, hingga pelestarian lingkungan.
         </Text>
 
         <Box py={50}>
           <Paper
             p={{ base: "md", md: "xl" }}
-            radius="xl"
+            radius="2xl"
             withBorder
             shadow="lg"
             style={{
-              background: "linear-gradient(145deg, #FAF6E9, #FFFDF6)",
-              border: "1px solid rgba(255,255,255,0.05)",
+              background: "linear-gradient(145deg, #FFFFFF, #F9FAFB)",
+              border: "1px solid rgba(0,0,0,0.06)",
             }}
           >
             {sdgsDesa && sdgsDesa.length > 0 ? (
@@ -63,20 +71,20 @@ export default function SDGS() {
                   <Paper
                     key={item.id}
                     p="lg"
-                    radius="lg"
+                    radius="xl"
                     shadow="sm"
+                    withBorder
                     style={{
-                      background: "linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02))",
-                      border: "1px solid rgba(255,255,255,0.08)",
+                      background: "linear-gradient(180deg, #FFFFFF, #F6F8FA)",
+                      border: "1px solid rgba(0,0,0,0.05)",
                       transition: "all 0.3s ease",
                     }}
-                    withBorder
                   >
                     <Center mb="lg">
                       <Box
                         p="md"
                         style={{
-                          background: "rgba(255,255,255,0.06)",
+                          background: "rgba(240, 249, 255, 0.8)",
                           backdropFilter: "blur(6px)",
                           width: mobile ? 140 : 160,
                           height: mobile ? 140 : 160,
@@ -84,6 +92,7 @@ export default function SDGS() {
                           alignItems: "center",
                           justifyContent: "center",
                           borderRadius: "1rem",
+                          boxShadow: "0 6px 16px rgba(0,0,0,0.06)",
                         }}
                       >
                         <Image
@@ -95,16 +104,19 @@ export default function SDGS() {
                         />
                       </Box>
                     </Center>
-                    <Text ta="center" fz={{ base: "lg", md: "xl" }} fw={700} mb="xs">
-                      {item.name}
-                    </Text>
+                    <Tooltip label="Nama tujuan SDGs Desa" position="top" withArrow>
+                      <Text ta="center" fz={{ base: "lg", md: "xl" }} fw={700} mb="xs">
+                        {item.name}
+                      </Text>
+                    </Tooltip>
                     <Title
                       order={2}
                       ta="center"
                       style={{
-                        fontSize: mobile ? "2.3rem" : "3rem",
+                        fontSize: mobile ? "2.4rem" : "3.2rem",
                         fontWeight: 900,
-                        letterSpacing: "-1px",
+                        letterSpacing: "-0.5px",
+                        color: "#124170",
                       }}
                     >
                       {item.jumlah}
@@ -116,7 +128,7 @@ export default function SDGS() {
               <Center mih={200} style={{ flexDirection: "column" }}>
                 <IconMoodSad size={48} stroke={1.5} style={{ marginBottom: "1rem" }} />
                 <Text fz="lg" c="dimmed">
-                  Belum ada data SDGs Desa
+                  Data SDGs Desa belum tersedia
                 </Text>
               </Center>
             )}
@@ -128,11 +140,12 @@ export default function SDGS() {
               href="/darmasaba/sdgs-desa"
               radius="xl"
               size="lg"
-              mt={30}
+              mt={40}
               variant="gradient"
               gradient={{ from: "#26667F", to: "#124170" }}
+              style={{ boxShadow: "0 6px 14px rgba(18,65,112,0.25)" }}
             >
-              Lihat Semua SDGs Desa
+              Jelajahi Semua Tujuan SDGs Desa
             </Button>
           </Center>
         </Box>

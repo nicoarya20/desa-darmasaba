@@ -1,8 +1,9 @@
 'use client'
 import artikelKesehatanState from '@/app/admin/(dashboard)/_state/kesehatan/data_kesehatan_warga/artikelKesehatan';
 import colors from '@/con/colors';
-import { Anchor, Box, Divider, Image, Paper, Skeleton, Stack, Text } from '@mantine/core';
+import { Anchor, Box, Card, Divider, Group, Image, Loader, Paper, Stack, Text, Title, Tooltip } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
+import { IconCalendar, IconChevronRight } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
 
@@ -16,36 +17,71 @@ function ArtikelKesehatanPage() {
 
   if(!state.findMany.data){
     return (
-      <Box py={10}>
-        <Skeleton h={500}/>
+      <Box py="xl" ta="center">
+        <Loader size="lg" color={colors['blue-button']} />
+        <Text mt="md" c="dimmed" fz="md">Memuat artikel kesehatan...</Text>
       </Box>
     )
   }
+
+  if(state.findMany.data.length === 0){
+    return (
+      <Box py="xl" ta="center">
+        <Image src="/empty-state.svg" alt="Tidak ada data" w={220} mx="auto" />
+        <Text mt="md" fw="bold" fz="lg">Belum ada artikel kesehatan</Text>
+        <Text c="dimmed" fz="sm">Artikel akan tampil di sini setelah tersedia.</Text>
+      </Box>
+    )
+  }
+
   return (
     <Box>
-      <Paper p={'xl'} h={'112vh'} bg={colors['white-trans-1']}>
-        <Stack gap={'xs'}>
-          <Text ta={'center'} fw={"bold"} fz={'h3'} c={colors['blue-button']}>Artikel Kesehatan</Text>
-          {state.findMany.data.map((item) => (
-            <Box key={item.id}>
-              <Image pt={5} src={'/api/img/dbd.png'} alt="" />
-              <Text fz={'h4'} fw={'bold'} >
-                {item.title}
-              </Text>
-            <Text fz={'h6'} pb={10}>
-              Diposting: {new Date(item.createdAt).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })} | Dinas Kesehatan
-            </Text>
-            <Text fz={'h4'} pb={10} lineClamp={2}>
-              {item.content}
-            </Text>
-            <Anchor c={'black'} onClick={()=> router.push(`/darmasaba/kesehatan/data-kesehatan-warga/artikel-kesehatan-page/${item.id}`)} variant='transparent'>
-              <Text c={colors['blue-button']} fz={'h4'} >
-                Baca Selengkapnya {'>>'}
-              </Text>
-            </Anchor>
-          </Box>
-          ))}
-          <Divider color={colors['blue-button']} px={'xl'} />
+      <Paper p="xl" bg={colors['white-trans-1']} radius="xl" shadow="md">
+        <Stack gap="xl">
+          <Title order={2} ta="center" c={colors['blue-button']}>Artikel Kesehatan</Title>
+          <Divider color={colors['blue-button']} />
+          <Stack gap="lg">
+            {state.findMany.data.map((item) => (
+              <Card 
+                key={item.id} 
+                withBorder 
+                radius="lg" 
+                shadow="sm" 
+                p="lg" 
+                style={{ transition: 'transform 200ms ease' }}
+                onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-4px)')}
+                onMouseLeave={(e) => (e.currentTarget.style.transform = 'translateY(0)')}
+              >
+                <Card.Section>
+                  <Image src={'/api/img/dbd.png'} alt={item.title} height={200} fit="cover" />
+                </Card.Section>
+                <Stack gap="xs" mt="md">
+                  <Text fw="bold" fz="xl" c="dark">{item.title}</Text>
+                  <Group gap="xs">
+                    <IconCalendar size={16} color={colors['blue-button']} />
+                    <Text fz="sm" c="dimmed">
+                      {new Date(item.createdAt).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })} • Dinas Kesehatan
+                    </Text>
+                  </Group>
+                  <Text fz="md" c="dark" lineClamp={3}>
+                    {item.content}
+                  </Text>
+                  <Tooltip label="Baca artikel lengkap">
+                    <Anchor 
+                      onClick={()=> router.push(`/darmasaba/kesehatan/data-kesehatan-warga/artikel-kesehatan-page/${item.id}`)} 
+                      variant="light" 
+                      c={colors['blue-button']}
+                    >
+                      <Group gap="xs">
+                        <Text fw="bold" fz="md">Baca Selengkapnya</Text>
+                        <IconChevronRight size={18} />
+                      </Group>
+                    </Anchor>
+                  </Tooltip>
+                </Stack>
+              </Card>
+            ))}
+          </Stack>
         </Stack>
       </Paper>
     </Box>

@@ -1,7 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import stateLayananDesa from '@/app/admin/(dashboard)/_state/desa/layananDesa';
-import { Box, Button, Center, Group, Skeleton, Stepper, StepperCompleted, StepperStep, Text } from '@mantine/core';
+import { Box, Button, Center, Group, Loader, Stack, Stepper, StepperCompleted, StepperStep, Text, Title } from '@mantine/core';
+import { IconArrowLeft, IconArrowRight, IconCheck } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
 
@@ -18,7 +19,7 @@ function PelayananPerizinanBerusaha() {
         setLoading(true);
         await state.pelayananPerizinanBerusaha.findById.load('1')
       } catch (error) {
-        console.error('Error loading data:', error);
+        console.error('Gagal memuat data:', error);
       } finally {
         setLoading(false);
       }
@@ -28,76 +29,87 @@ function PelayananPerizinanBerusaha() {
 
   const data = state.pelayananPerizinanBerusaha.findById.data;
   
-  if (!data) {
+  if (!data && !loading) {
     return (
-      <Center>
-        <Text>Data tidak tersedia</Text>
+      <Center mih={300}>
+        <Stack align="center" gap="sm">
+          <Text fz="lg" fw={500} c="dimmed">Belum ada informasi layanan yang tersedia</Text>
+          <Button component="a" href="https://oss.go.id" target="_blank" radius="xl">Kunjungi OSS</Button>
+        </Stack>
       </Center>
     );
   }
 
   return (
-    <Box>
+    <Box px={{ base: 'md', md: 'xl' }} py="lg">
       {loading ? (
-        <Center>
-          <Skeleton h={250} />
+        <Center mih={300}>
+          <Loader size="lg" color="blue" />
         </Center>
       ) : (
-        <Box>
-          <Box py={15}>
-            <Text fz={{ base: "h4", md: 'h2' }} fw={"bold"}>Pelayanan Perizinan Berusaha Berbasis Risiko Melalui Sistem ONLINE SINGLE SUBMISSION (OSS)</Text>
-          </Box>
-          <Text 
-            py={10} 
-            ta={"justify"} 
-            fz={{ base: "sm", md: 'h3' }} 
-            dangerouslySetInnerHTML={{ __html: data.deskripsi || '' }} 
-          />
-          <Text py={10} fz={{ base: "sm", md: 'h3' }}>Proses pendaftaran NIB melalui OSS mencakup beberapa langkah umum, seperti:</Text>
-          <Box p={"xl"} w={{ base: "100%", md: "100%" }}>
-            <Stepper active={active} onStepClick={setActive} orientation="vertical"
-              styles={{
-                separator: {
-                  marginLeft: 25
-                },
-                step: {
-                  padding: '12px 0'
-                }
-              }}>
-              <StepperStep label="Langkah Pertama" description="Pendaftaran Akun">
-                Pendaftaran akun pada portal OSS
-              </StepperStep>
-              <StepperStep label="Langkah Kedua" description="Pengisian Data Perusahaan">
-                Mengisi informasi perusahaan, termasuk data pemegang saham, alamat perusahaan, dan lainnya
-              </StepperStep>
-              <StepperStep label="Langkah Ketiga" description="Pemilihan KBLI">
-                Memilih KBLI dengan jenis usaha yang akan didaftarkan
-              </StepperStep>
-              <StepperStep label="Langkah Keempat" description="Pengunggahan Dokumen">
-                Mengunggah dokumen-dokumen yang diperlukan, seperti akta pendirian perusahaan, surat izin usaha, dan dokumen lainnya sesuai dengan ketentuan yang berlaku
-              </StepperStep>
-              <StepperStep label="Langkah Kelima" description="Verifikasi dan Persetujuan">
-                Proses verifikasi dan persetujuan oleh instansi terkait
-              </StepperStep>
-              <StepperStep label="Langkah Keenam" description="Penerimaan NIB">
-                Jika proses sebelumnya berhasil, perusahaan akan menerima NIB sebagai identitas resmi usaha anda
-              </StepperStep>
-              <StepperCompleted>
-                Selesai, anda telah mengikuti proses pendaftaran NIB melalui OSS
-              </StepperCompleted>
-            </Stepper>
+          <Stack gap="lg">
+            <Box>
+              <Title order={2} fw={700} fz={{ base: 22, md: 32 }} mb="sm">
+                Perizinan Berusaha Berbasis Risiko melalui OSS
+              </Title>
+              <Text fz={{ base: 'sm', md: 'md' }} c="dimmed">
+                Sistem Online Single Submission (OSS) untuk pendaftaran NIB
+              </Text>
+            </Box>
 
-            <Group justify="center" mt="xl">
-              <Button variant="default" onClick={prevStep}>Back</Button>
-              <Button onClick={nextStep}>Next step</Button>
-            </Group>
-            <Text py={35} ta={"justify"} fz={{ base: "sm", md: 'h3' }}>
-              Penting untuk diingat bahwa prosedur dan persyaratan dapat berubah
-              seiring waktu. Untuk informasi yang lebih akurat dan terkini, saya sarankan untuk mengunjungi situs
-              resmi OSS <a href="https://oss.go.id/" target="_blank" rel="noopener noreferrer">(https://oss.go.id/)</a> atau menghubungi instansi terkait di pemerintah Indonesia yang bertanggung jawab atas urusan perizinan usaha.
+            <Text fz={{ base: 'sm', md: 'md' }} ta="justify" dangerouslySetInnerHTML={{ __html: data?.deskripsi || '' }} />
+
+            <Box>
+              <Text fw={600} mb="sm" fz={{ base: 'sm', md: 'lg' }}>Alur pendaftaran NIB:</Text>
+              <Stepper active={active} onStepClick={setActive} orientation="vertical" color="blue" radius="md"
+                styles={{
+                  step: { padding: '14px 0' },
+                  stepBody: { marginLeft: 8 }
+                }}
+              >
+                <StepperStep label="Langkah 1" description="Daftar Akun">
+                  <Text fz="sm">Membuat akun di portal OSS</Text>
+                </StepperStep>
+                <StepperStep label="Langkah 2" description="Isi Data Perusahaan">
+                  <Text fz="sm">Lengkapi informasi perusahaan, data pemegang saham, dan alamat</Text>
+                </StepperStep>
+                <StepperStep label="Langkah 3" description="Pilih KBLI">
+                  <Text fz="sm">Menentukan kode KBLI sesuai jenis usaha</Text>
+                </StepperStep>
+                <StepperStep label="Langkah 4" description="Unggah Dokumen">
+                  <Text fz="sm">Unggah akta pendirian, surat izin, dan dokumen wajib lainnya</Text>
+                </StepperStep>
+                <StepperStep label="Langkah 5" description="Verifikasi Instansi">
+                  <Text fz="sm">Menunggu verifikasi dan persetujuan dari pihak berwenang</Text>
+                </StepperStep>
+                <StepperStep label="Langkah 6" description="Terbit NIB">
+                  <Text fz="sm">Menerima NIB sebagai identitas resmi usaha</Text>
+                </StepperStep>
+                <StepperCompleted>
+                  <Center>
+                    <Stack align="center" gap="xs">
+                      <IconCheck size={40} color="green" />
+                      <Text fz="sm" fw={500}>Proses pendaftaran selesai</Text>
+                    </Stack>
+                  </Center>
+                </StepperCompleted>
+              </Stepper>
+
+              <Group justify="center" mt="lg">
+                <Button variant="light" leftSection={<IconArrowLeft size={18} />} onClick={prevStep} disabled={active === 0}>
+                  Kembali
+                </Button>
+                <Button rightSection={<IconArrowRight size={18} />} onClick={nextStep}>
+                  Lanjut
+                </Button>
+              </Group>
+            </Box>
+
+            <Text fz="sm" ta="justify" c="dimmed" mt="md">
+              Catatan: Persyaratan dan prosedur dapat berubah sewaktu-waktu. Untuk informasi resmi terbaru, silakan kunjungi situs{" "}
+              <a href="https://oss.go.id/" target="_blank" rel="noopener noreferrer">oss.go.id</a> atau hubungi instansi pemerintah terkait.
             </Text>
-          </Box>
-        </Box>
+          </Stack>
       )}
     </Box>
   );

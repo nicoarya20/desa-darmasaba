@@ -6,43 +6,90 @@ import { Box, Image, Paper, Skeleton, Stack, Text } from '@mantine/core';
 import { useEffect } from 'react';
 import { useProxy } from 'valtio/utils';
 
-function VisimisiDesa() {
-    const state = useProxy(stateProfileDesa.visiMisiDesa)
+function VisiMisiDesa() {
+  const state = useProxy(stateProfileDesa.visiMisiDesa);
 
-    useEffect(() => {
-        state.findUnique.load("edit")
-    }, [])
+  useEffect(() => {
+    state.findUnique.load('edit');
+  }, []);
 
-    const { data, loading } = state.findUnique
+  const { data, loading } = state.findUnique;
 
-    if (loading || !data) {
-        return (
-            <Box py={10}>
-                <Skeleton h={500} />
-            </Box>
-        )
-    }
+  if (loading || !data) {
     return (
-        <>
-            <Box pb={30}>
-                <Stack align='center' gap={0}>
-                    <Box pb={30}>
-                        <Image src={"/darmasaba-icon.png"} alt="" w={{ base: 200, md: 300 }} />
-                    </Box>
-                    <Paper p={"xl"} bg={colors['white-trans-1']} w={{ base: "100%", md: "100%" }}>
-                        <Text c={colors['blue-button']} ta={"center"} fw={"lighter"} fz={"2.5rem"}>Visi Desa</Text>
-                        <Text fz={"1.5rem"} ta={"center"} fw={"bold"} dangerouslySetInnerHTML={{ __html: data.visi }} />
-                    </Paper>
-                    <Paper my={20} p={"xl"} bg={colors['white-trans-1']} w={{ base: "100%", md: "100%" }}>
-                        <Text c={colors['blue-button']} ta={"center"} fw={"lighter"} fz={"2.5rem"}>Misi Desa</Text>
-                        <Box>
-                            <Text fz={"1.5rem"} fw={"bold"} dangerouslySetInnerHTML={{ __html: data.misi }} />
-                        </Box>
-                    </Paper>
-                </Stack>
-            </Box >
-        </>
+      <Box py="xl">
+        <Skeleton h={500} radius="lg" />
+      </Box>
     );
+  }
+
+  return (
+    <Box py="xl">
+      <Stack align="center" gap="xl">
+        <Image
+          src="/darmasaba-icon.png"
+          alt="Lambang Desa Darmasaba"
+          w={{ base: 160, md: 240 }}
+          radius="md"
+        />
+
+        <Paper
+          p="xl"
+          radius="lg"
+          shadow="md"
+          withBorder
+          w="100%"
+          style={{
+            background: 'linear-gradient(145deg, #ffffff, #f5f7fa)',
+          }}
+        >
+          <Text
+            c={colors['blue-button']}
+            ta="center"
+            fw={700}
+            fz={{ base: '2rem', md: '2.5rem' }}
+            mb="md"
+          >
+            Visi Desa
+          </Text>
+          <Text
+            fz={{ base: '1.125rem', md: '1.375rem' }}
+            ta="center"
+            fw={500}
+            lh={1.6}
+            dangerouslySetInnerHTML={{ __html: data.visi }}
+          />
+        </Paper>
+
+        <Paper
+          p="xl"
+          radius="lg"
+          shadow="md"
+          withBorder
+          w="100%"
+          style={{
+            background: 'linear-gradient(145deg, #ffffff, #f5f7fa)',
+          }}
+        >
+          <Text
+            c={colors['blue-button']}
+            ta="center"
+            fw={700}
+            fz={{ base: '2rem', md: '2.5rem' }}
+            mb="md"
+          >
+            Misi Desa
+          </Text>
+          <Text
+            fz={{ base: '1.125rem', md: '1.375rem' }}
+            fw={500}
+            lh={1.6}
+            dangerouslySetInnerHTML={{ __html: data.misi }}
+          />
+        </Paper>
+      </Stack>
+    </Box>
+  );
 }
 
-export default VisimisiDesa;
+export default VisiMisiDesa;

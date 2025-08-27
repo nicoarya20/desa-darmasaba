@@ -1,10 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
-import colors from '@/con/colors';
-import { Box, Stack, Paper, Image, Text, Center, Skeleton } from '@mantine/core';
-import React, { useEffect } from 'react';
-import { useProxy } from 'valtio/utils';
-import stateProfileDesa from '@/app/admin/(dashboard)/_state/desa/profile';
+import stateProfileDesa from '@/app/admin/(dashboard)/_state/desa/profile'
+import colors from '@/con/colors'
+import { Box, Center, Image, Paper, Skeleton, Stack, Text, Tooltip } from '@mantine/core'
+import { useEffect } from 'react'
+import { useProxy } from 'valtio/utils'
 
 function LambangDesa() {
   const state = useProxy(stateProfileDesa.lambangDesa)
@@ -17,26 +17,60 @@ function LambangDesa() {
 
   if (loading || !data) {
     return (
-      <Box py={10}>
-        <Skeleton h={500} />
+      <Box py="lg">
+        <Skeleton h={420} radius="xl" />
       </Box>
     )
   }
+
   return (
-    <Box pb={70}>
-      <Stack align='center' gap={0}>
-        <Box pb={30}>
+    <Box pb={90}>
+      <Stack align="center" gap="lg">
+        <Box pb="lg">
           <Center>
-          <Image src={"/darmasaba-icon.png"} alt="" w={{ base: 200, md: 300 }} />
+            <Image
+              src={"/darmasaba-icon.png"}
+              alt="Lambang resmi desa"
+              w={{ base: 180, md: 280 }}
+              radius="md"
+            />
           </Center>
-          <Text c={colors['blue-button']} ta={"center"} fw={"bold"} fz={"2.5rem"}>Lambang Desa</Text>
+          <Text
+            c={colors['blue-button']}
+            ta="center"
+            fw={800}
+            fz={{ base: 28, md: 40 }}
+            mt="sm"
+            style={{ letterSpacing: '-0.5px' }}
+          >
+            Lambang Desa
+          </Text>
         </Box>
-        <Paper p={"xl"} bg={colors['white-trans-1']} w={{ base: "100%", md: "100%" }}>
-          <Text fz={{ base: "md", md: "h3"}} ta={"justify"} dangerouslySetInnerHTML={{__html: data.deskripsi}} />
+        <Paper
+          p="xl"
+          radius="xl"
+          withBorder
+          shadow="sm"
+          w="100%"
+          style={{
+            background: 'linear-gradient(135deg, #ffffff 0%, #f3f7ff 100%)',
+            borderColor: '#e0e9ff',
+          }}
+        >
+          <Tooltip label="Deskripsi lambang desa" position="top-start" withArrow>
+            <Text
+              fz={{ base: 'md', md: 'lg' }}
+              lh={1.8}
+              c="dark"
+              ta="justify"
+              style={{ fontWeight: 400 }}
+              dangerouslySetInnerHTML={{ __html: data.deskripsi }}
+            />
+          </Tooltip>
         </Paper>
       </Stack>
-    </Box >
-  );
+    </Box>
+  )
 }
 
-export default LambangDesa;
+export default LambangDesa

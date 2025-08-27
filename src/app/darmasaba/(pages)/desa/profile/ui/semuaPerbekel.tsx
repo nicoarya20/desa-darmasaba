@@ -1,59 +1,102 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
-import colors from '@/con/colors';
-import { Box, Center, Image, Paper, SimpleGrid, Skeleton, Stack, Text } from '@mantine/core';
 import stateProfileDesa from '@/app/admin/(dashboard)/_state/desa/profile';
-import { useProxy } from 'valtio/utils';
+import { Box, Center, Image, Paper, SimpleGrid, Skeleton, Stack, Text, Title, Tooltip } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
+import { IconUser } from '@tabler/icons-react';
+import { useProxy } from 'valtio/utils';
+
 function SemuaPerbekel() {
-const state = useProxy(stateProfileDesa.mantanPerbekel)
+  const state = useProxy(stateProfileDesa.mantanPerbekel);
 
-useShallowEffect(() => {
-  state.findMany.load()
-}, [])
+  useShallowEffect(() => {
+    state.findMany.load();
+  }, []);
 
-const {data, loading} = state.findMany
+  const { data, loading } = state.findMany;
 
-if (loading || !data) {
+  if (loading || !data) {
+    return (
+      <Box py="xl">
+        <Skeleton h={500} radius="xl" />
+      </Box>
+    );
+  }
+
+  if (data.length === 0) {
+    return (
+      <Center py="xl">
+        <Stack align="center" gap="sm">
+          <IconUser size={48} stroke={1.5} />
+          <Title fw="bold" order={2}>Belum ada data Perbekel</Title>
+          <Text c="dimmed" fz="sm" ta="center">Data mantan Perbekel akan muncul di sini ketika sudah tersedia</Text>
+        </Stack>
+      </Center>
+    );
+  }
+
   return (
-    <Box py={10}>
-      <Skeleton h={500} />
-    </Box>
-  )
-}
-
-  return (
-    <Box pb={50}>
-      <Stack align='center'>
-        <Box pb={30}>
-          <Text c={colors['blue-button']} ta={"center"} fw={"bold"} fz={{ base: "h1", md: "2.5rem" }}>Perbekel Dari Masa Ke Masa</Text>
+    <Box pb={80}>
+      <Stack align="center" gap="lg">
+        <Box>
+          <Text
+            ta="center"
+            fw={900}
+            fz={{ base: "2rem", md: "2.5rem" }}
+            variant="gradient"
+            gradient={{ from: "blue", to: "cyan", deg: 45 }}
+          >
+            Perbekel Dari Masa ke Masa
+          </Text>
         </Box>
-        <SimpleGrid
-          cols={{
-            base: 1,
-            md: 3,
-          }}
-        >
-          {data.map((v, k) => {
-            return (
-              <Box key={k}>
-                <Paper h={620} mb={50} radius={26} bg={colors['white-trans-1']} w={{ base: "100%", md: "100%" }}>
-                  <Box>
-                    <Center>
-                      <Image src={v.image?.link} alt='' />
-                    </Center>
-                  </Box>
-                  <Box>
-                    <Stack gap={"sm"} py={10}>
-                      <Text ta={"center"} fw={"bold"} fz={{ base: "h3", md: "h3" }}>{v.nama}</Text>
-                      <Text ta={"center"} fz={{ base: "h5", md: "h4" }}>{v.daerah}</Text>
-                      <Text ta={"center"} fz={{ base: "h5", md: "h4" }}>{v.periode}</Text>
-                    </Stack>
-                  </Box>
-                </Paper>
-              </Box>
-            )
-          })
-          }
+
+        <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }} spacing="xl" w="100%">
+          {data.map((v: any, k: number) => (
+            <Paper
+              key={k}
+              radius="2xl"
+              shadow="md"
+              withBorder
+              p="lg"
+              bg="white"
+              style={{
+                transition: "all 250ms ease",
+              }}
+              className="hover:shadow-xl hover:scale-[1.02]"
+            >
+              <Stack gap="md" align="center">
+                <Box w="100%" h={300} style={{ overflow: "hidden", borderRadius: "1rem" }}>
+                  <Image
+                    src={v.image?.link}
+                    alt={v.nama || "Foto Perbekel"}
+                    fit="cover"
+                    h="100%"
+                    w="100%"
+                  />
+                </Box>
+
+                <Stack gap={4} align="center">
+                  <Tooltip label="Nama Perbekel" withArrow>
+                    <Text fw={700} fz="lg" ta="center">
+                      {v.nama}
+                    </Text>
+                  </Tooltip>
+
+                  <Tooltip label="Wilayah menjabat" withArrow>
+                    <Text c="dimmed" fz="sm" ta="center">
+                      {v.daerah}
+                    </Text>
+                  </Tooltip>
+
+                  <Tooltip label="Periode jabatan" withArrow>
+                    <Text c="blue" fw={600} fz="sm" ta="center">
+                      {v.periode}
+                    </Text>
+                  </Tooltip>
+                </Stack>
+              </Stack>
+            </Paper>
+          ))}
         </SimpleGrid>
       </Stack>
     </Box>

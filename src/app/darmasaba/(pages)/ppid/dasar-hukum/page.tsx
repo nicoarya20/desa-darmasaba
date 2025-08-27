@@ -1,100 +1,93 @@
+'use client'
+import stateDasarHukum from '@/app/admin/(dashboard)/_state/ppid/dasar_hukum/dasarHukum';
 import colors from '@/con/colors';
-import { Box, List, ListItem, Paper, Stack, Text } from '@mantine/core';
+import { Box, Paper, Skeleton, Stack, Text, Transition } from '@mantine/core';
+import { useShallowEffect } from '@mantine/hooks';
+import { useProxy } from 'valtio/utils';
+import { IconBook2 } from '@tabler/icons-react';
 import BackButton from '../../desa/layanan/_com/BackButto';
 
 function Page() {
+  const state = useProxy(stateDasarHukum);
+
+  useShallowEffect(() => {
+    state.findById.load("1");
+  }, []);
+
+  if (!state.findById.data) {
+    return (
+      <Stack p="xl" gap="md">
+        <Skeleton h={70} radius="xl" />
+      </Stack>
+    );
+  }
+
+  const dataArray = Array.isArray(state.findById.data)
+    ? state.findById.data
+    : [state.findById.data];
+
   return (
-    <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"22"}>
+    <Stack pos="relative" bg={colors.Bg} py="xl" gap="xl">
       <Box px={{ base: 'md', md: 100 }}>
         <BackButton />
       </Box>
-      <Text ta={"center"} fz={{ base: "h1", md: "2.5rem" }} c={colors["blue-button"]} fw={"bold"}>
-        Dasar Hukum
-      </Text>
+      <Stack align="center" gap="xs">
+        <IconBook2 size={42} stroke={1.5} color={colors["blue-button"]} />
+        <Text
+          ta="center"
+          fz={{ base: "2rem", md: "2.5rem" }}
+          c={colors["blue-button"]}
+          fw="bold"
+          style={{ letterSpacing: "-0.5px" }}
+        >
+          Dasar Hukum
+        </Text>
+        <Text ta="center" fz="sm" c="dimmed">
+          Informasi regulasi dan kebijakan resmi yang menjadi dasar hukum
+        </Text>
+      </Stack>
       <Box px={{ base: "md", md: 100 }}>
-        <Paper p={"xl"} bg={colors['white-trans-1']}>
-          <Box>
-            <Text ta={"center"} fw={"bold"} fz={{ base: 'h4', md: 'h3' }}>DASAR HUKUM PEMBENTUKAN PPID DESA DARMASABA</Text>
-          </Box>
-          <List p={'lg'}>
-            <ListItem fz={{ base: 'md', md: 'h4' }}>
-              <Text ta={"justify"} fz={{ base: 'md', md: 'h4' }}>
-              <Text fw={"bold"} span>
-                UU Nomor 14 Tahun 2008
-              </Text>
-                {" "}tentang Keterbukaan Informasi Publik
-              </Text>
-            </ListItem>
-            <ListItem fz={{ base: 'md', md: 'h4' }}>
-              <Text ta={"justify"} fz={{ base: 'md', md: 'h4' }}>
-              <Text fw={"bold"} span>
-                PP Nomor 61 Tahun 2010
-              </Text>
-              {" "}tentang Pelaksanaan UU 14 Tahun 2008 tentang Keterbukaan Informasi Publik
-              </Text>
-            </ListItem>
-            <ListItem fz={{ base: 'md', md: 'h4' }}>
-              <Text ta={"justify"} fz={{ base: 'md', md: 'h4' }}>
-              <Text fw={"bold"} span>
-                Permendagri Nomor 3 Tahun 2017
-              </Text>
-              {" "}tentang Pedoman Pengelolaan Pelayanan Informasi dan Dokumentasi di Lingkungan Kemendagri
-                dan Pemerintah Daerah
-              </Text>
-            </ListItem>
-            <ListItem fz={{ base: 'md', md: 'h4' }}>
-              <Text ta={"justify"} fz={{ base: 'md', md: 'h4' }}>
-              <Text fw={"bold"} span>
-                Peraturan Komisi Informasi Nomor 1 Tahun 2010
-              </Text>
-              {" "} tentang Standar Layanan Informasi Publik
-              </Text>
-            </ListItem>
-            <ListItem fz={{ base: 'md', md: 'h4' }}>
-              <Text ta={"justify"} fz={{ base: 'md', md: 'h4' }}>
-              <Text fw={"bold"} span>
-                Peraturan Komisi Informasi Nomor 1 Tahun 2010
-              </Text>
-              {" "} tentang Standar Layanan Informasi Publik
-              </Text>
-            </ListItem>
-            <ListItem fz={{ base: 'md', md: 'h4' }}>
-              <Text ta={"justify"} fz={{ base: 'md', md: 'h4' }}>
-              <Text fw={"bold"} span>
-                Peraturan Bupati Badung No. 42 Tahun 2017
-              </Text>
-              {" "}Tentang Pedoman Pengelolaan Pelayanan Informasi Publik dan Dokumentasi
-                di Lingkungan Pemerintah Kabupaten Badung
-              </Text>
-            </ListItem>
-            <ListItem fz={{ base: 'md', md: 'h4' }}>
-              <Text ta={"justify"} fz={{ base: 'md', md: 'h4' }}>
-              <Text fw={"bold"} span>
-                Keputusan Bupati Badung Nomor 99/049/HK/2019
-              </Text>
-              {" "} Tentang Pengelola Layanan Informasi dan Dokumentasi Kabupaten Badung
-              </Text>
-            </ListItem>
-            <ListItem fz={{ base: 'md', md: 'h4' }}>
-              <Text ta={"justify"} fz={{ base: 'md', md: 'h4' }}>
-              <Text fw={"bold"} span>
-                Keputusan Perbekel Darmasaba Nomor 101 Tahun 2019
-              </Text>
-              {" "}tentang Penetapan Pelaksana Teknis/Administrasi Pengelola Layanan Informasi
-                Dan Dokumentasi Di Desa Punggul
-              </Text>
-            </ListItem>
-            <ListItem fz={{ base: 'md', md: 'h4' }}>
-              <Text ta={"justify"} fz={{ base: 'md', md: 'h4' }}>
-              <Text fw={"bold"} span>
-                Peraturan Perbekel Darmasaba Nomor 12 Tahun 2019
-              </Text>
-              {" "}tentang Pedoman Pengelolaan Pelayanan Informasi Publik Dan Dokumentasi
-                Di Lingkungan Pemerintah Desa Darmasaba
-              </Text>
-            </ListItem>
-          </List>
-        </Paper>
+        <Stack gap="lg">
+          {dataArray.map((item, k) => (
+            <Transition
+              key={k}
+              mounted={true}
+              transition="fade-up"
+              duration={400}
+              timingFunction="ease"
+            >
+              {(styles) => (
+                <Paper
+                  p="xl"
+                  radius="xl"
+                  shadow="md"
+                  bg={colors['white-trans-1']}
+                  style={{
+                    ...styles,
+                    backdropFilter: "blur(10px)",
+                    border: `1px solid ${colors["blue-button"]}20`,
+                  }}
+                >
+                  <Stack gap="md">
+                    <Text
+                      ta="center"
+                      fw="bold"
+                      fz={{ base: 'lg', md: 'xl' }}
+                      style={{ lineHeight: 1.4 }}
+                    >
+                      {item.judul}
+                    </Text>
+                    <Text
+                      fz={{ base: 'sm', md: 'md' }}
+                      style={{ lineHeight: 1.7 }}
+                      dangerouslySetInnerHTML={{ __html: item.content }}
+                    />
+                  </Stack>
+                </Paper>
+              )}
+            </Transition>
+          ))}
+        </Stack>
       </Box>
     </Stack>
   );

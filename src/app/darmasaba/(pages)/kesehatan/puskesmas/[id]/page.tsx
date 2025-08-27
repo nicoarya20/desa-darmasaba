@@ -1,10 +1,11 @@
 'use client'
 import puskesmasState from '@/app/admin/(dashboard)/_state/kesehatan/puskesmas/puskesmas';
 import colors from '@/con/colors';
-import { BackgroundImage, Box, Grid, GridCol, Paper, SimpleGrid, Skeleton, Stack, Text, Title } from '@mantine/core';
+import { BackgroundImage, Box, Grid, GridCol, Paper, SimpleGrid, Skeleton, Stack, Text, Title, Tooltip, Badge, Divider, Group } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { useParams } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
+import { IconClock, IconMapPin, IconPhone, IconMail, IconBuildingHospital } from '@tabler/icons-react';
 import BackButton from '../../../desa/layanan/_com/BackButto';
 
 function Page() {
@@ -17,95 +18,117 @@ function Page() {
 
   if (!state.findUnique.data) {
     return (
-      <Stack py={10}>
-        <Skeleton h={500} />
+      <Stack py="xl" px={{ base: 'md', md: 100 }}>
+        <Skeleton h={500} radius="lg" />
+        <Stack gap="sm">
+          <Skeleton h={20} w="40%" />
+          <Skeleton h={20} w="60%" />
+          <Skeleton h={20} w="50%" />
+        </Stack>
       </Stack>
     )
   }
+
+  const data = state.findUnique.data
+
   return (
-    <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"22"}>
+    <Stack pos="relative" bg={colors.Bg} py="xl" gap={32}>
       <Box px={{ base: 'md', md: 100 }}>
         <BackButton />
       </Box>
-      <Stack gap={'lg'} px={{ base: 'md', md: 100 }}>
-        <Box>
-          <Paper p={"xl"} bg={colors['white-trans-1']}>
-            <Box pb={30}>
-              <BackgroundImage
-                pb={30}
-                radius={16}
-                h={{ base: 250, md: 500 }}
-                src={state.findUnique.data.image.link}
-                style={{ position: 'relative' }}
+
+      <Stack gap="xl" px={{ base: 'md', md: 100 }}>
+        <Paper p="lg" radius="xl" shadow="md" bg={colors['white-trans-1']} withBorder>
+          <Box pb="xl">
+            <BackgroundImage
+              radius="lg"
+              h={{ base: 260, md: 480 }}
+              src={data.image.link}
+              style={{ position: 'relative', overflow: 'hidden' }}
+            >
+              <Box
+                pos="absolute"
+                w="100%"
+                h="100%"
+                bg={colors.trans.dark[2]}
+                style={{ borderRadius: 16 }}
+              />
+              <Stack
+                pos="absolute"
+                bottom={20}
+                left={20}
+                gap={6}
               >
-                <Box
-                  style={{
-                    borderRadius: 16,
-                    zIndex: 0
-                  }}
-                  pos={"absolute"}
-                  w={"100%"}
-                  h={"100%"}
-                  bg={colors.trans.dark[2]}
-                />
-                <Text style={{
-                  position: 'absolute',
-                  bottom: 35,
-                  left: 15,
-                }} fw={'bold'} fz={{ base: 'md', md: 'h3' }} c={colors['white-1']}>{state.findUnique.data.name}</Text>
-                <Text style={{
-                  position: 'absolute',
-                  bottom: 10,
-                  left: 15,
-                }} fw={'bold'} fz={{ base: 'md', md: 'h4' }} c={colors['white-1']}>{state.findUnique.data.alamat}</Text>
-              </BackgroundImage>
-              <Grid
-                py={20}>
-                <GridCol span={{ base: 12, md: 6 }}>
+                <Text fw="bold" fz={{ base: 'lg', md: 'h2' }} c={colors['white-1']}>
+                  {data.name}
+                </Text>
+                <Group gap={6}>
+                  <IconMapPin size={20} color="white" />
+                  <Text fz={{ base: 'sm', md: 'md' }} c={colors['white-1']}>
+                    {data.alamat}
+                  </Text>
+                </Group>
+              </Stack>
+            </BackgroundImage>
+
+            <Grid mt="xl" gutter="xl">
+              <GridCol span={{ base: 12, md: 6 }}>
+                <Stack gap="lg">
                   <Box>
-                    <Stack>
-                      <Title order={3}>Informasi</Title>
-                      <Box>
-                        <Text>Alamat: {state.findUnique.data.alamat}</Text>
-                        <Text>Telepon: {state.findUnique.data.kontak.kontakPuskesmas}</Text>
-                        <Text>Email: {state.findUnique.data.kontak.email}</Text>
-                      </Box>
-                      <Title order={3}>Jam Operasional</Title>
-                      <Box>
-                        <Text pb={10} fz={'h4'} fw={"bold"}>
-                          Senin - Kamis: <Text span fz={'h4'}>{state.findUnique.data?.jam.workDays} - {state.findUnique.data?.jam.weekDays}</Text>
-                        </Text>
-                      </Box>
+                    <Title order={3} mb={10}>Informasi Kontak</Title>
+                    <Stack gap={8}>
+                      <Group gap={8}>
+                        <IconPhone size={18} />
+                        <Text fz="md">{data.kontak.kontakPuskesmas || '-'}</Text>
+                      </Group>
+                      <Group gap={8}>
+                        <IconMail size={18} />
+                        <Text fz="md">{data.kontak.email || '-'}</Text>
+                      </Group>
                     </Stack>
                   </Box>
-                </GridCol>
-                <GridCol span={{ base: 12, md: 6 }}>
-                  <Box>
-                    <Paper p={"xl"} bg={'#B1C5F2'}>
-                      <SimpleGrid
-                        cols={{
-                          base: 1,
-                          md: 2
-                        }}>
-                        <Paper p={"xl"} bg={colors['white-trans-1']}>
-                          <Text fw={"bold"} fz={'h3'} ta={'center'}>Poliklinik Umum</Text>
-                          <Text ta={'center'} fz={{ base: 45, md: 65 }} fw={'bold'} c={colors['blue-button']}>26</Text>
-                        </Paper>
-                        <Paper p={"xl"} bg={colors['white-trans-1']}>
-                          <Text ta={'center'} fz={'h3'} fw={"bold"}>Poli Gigi</Text>
-                          <Text ta={'center'} fz={{ base: 45, md: 65 }} fw={'bold'} c={colors['blue-button']}>26</Text>
-                        </Paper>
-                      </SimpleGrid>
-                    </Paper>
-                  </Box>
-                </GridCol>
-                <Box>
-                </Box>
-              </Grid>
-            </Box>
 
-          </Paper>
-        </Box>
+                  <Divider />
+
+                  <Box>
+                    <Title order={3} mb={10}>Jam Operasional</Title>
+                    <Group gap={8}>
+                      <IconClock size={18} />
+                      <Text fw="bold" fz="md">
+                        {data.jam.workDays} - {data.jam.weekDays}
+                      </Text>
+                      <Tooltip label="Hari aktif pelayanan puskesmas" position="top" withArrow>
+                        <Badge size="sm" variant="light" color="blue">Aktif</Badge>
+                      </Tooltip>
+                    </Group>
+                  </Box>
+                </Stack>
+              </GridCol>
+
+              <GridCol span={{ base: 12, md: 6 }}>
+                <Paper p="xl" radius="lg" bg="linear-gradient(135deg, #EAF0FB, #BFD4F5)" shadow="sm">
+                  <Title order={3} mb="lg" ta="center" c="dark">Layanan Unggulan</Title>
+                  <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="lg">
+                    <Paper p="lg" radius="lg" withBorder bg={colors['white-trans-1']} shadow="xs">
+                      <Stack align="center" gap={8}>
+                        <IconBuildingHospital size={36} color={colors['blue-button']} />
+                        <Text fw="bold" fz="lg">Poliklinik Umum</Text>
+                        <Text fz={{ base: 36, md: 48 }} fw="bold" c={colors['blue-button']}>26</Text>
+                      </Stack>
+                    </Paper>
+                    <Paper p="lg" radius="lg" withBorder bg={colors['white-trans-1']} shadow="xs">
+                      <Stack align="center" gap={8}>
+                        <IconBuildingHospital size={36} color={colors['blue-button']} />
+                        <Text fw="bold" fz="lg">Poli Gigi</Text>
+                        <Text fz={{ base: 36, md: 48 }} fw="bold" c={colors['blue-button']}>26</Text>
+                      </Stack>
+                    </Paper>
+                  </SimpleGrid>
+                </Paper>
+              </GridCol>
+            </Grid>
+          </Box>
+        </Paper>
       </Stack>
     </Stack>
   );

@@ -1,62 +1,95 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+"use client";
+
 import stateLayananDesa from '@/app/admin/(dashboard)/_state/desa/layananDesa';
 import colors from '@/con/colors';
-import { ActionIcon, Box, Divider, Flex, Skeleton, Text } from '@mantine/core';
+import { ActionIcon, Box, Divider, Flex, Group, Skeleton, Stack, Text, Tooltip } from '@mantine/core';
 import { IconBrandFacebook, IconBrandInstagram, IconBrandTwitter, IconBrandWhatsapp } from '@tabler/icons-react';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
 
 function PelayananPendudukNonPermanent() {
-  const state = useProxy(stateLayananDesa)
-  const [loading, setLoading] = useState(false)
+  const state = useProxy(stateLayananDesa);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const loadData = async () => {
       try {
-        setLoading(true)
-        await state.pelayananPendudukNonPermanen.findById.load('1')
+        setLoading(true);
+        await state.pelayananPendudukNonPermanen.findById.load('1');
       } catch (error) {
-        console.error('Error loading data:', error);
+        console.error('Gagal memuat data:', error);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
-    loadData()
-  }, [])
+    };
+    loadData();
+  }, []);
 
-  const data = state.pelayananPendudukNonPermanen.findById.data
+  const data = state.pelayananPendudukNonPermanen.findById.data;
+
   return (
-    <Box>
+    <Box py="lg">
       {loading ? (
-        <Skeleton h={500} />
+        <Stack gap="lg">
+          <Skeleton height={40} radius="md" />
+          <Skeleton height={200} radius="md" />
+          <Skeleton height={30} radius="md" />
+        </Stack>
       ) : (
-        <Box>
-          <Box py={15}>
-            <Text fz={{ base: "h4", md: "h3" }} fw={"bold"}>{data?.name}</Text>
+        <Stack gap="xl">
+          <Box>
+            <Text fz={{ base: "xl", md: "2xl" }} fw={700} lh={1.3} c="dark">
+              {data?.name || "Judul belum tersedia"}
+            </Text>
           </Box>
-          <Text pb={20} fz={{ base: "sm", md: 'h3' }} ta={"justify"} dangerouslySetInnerHTML={{__html: data?.deskripsi || ''}} />
-          <Divider color={colors["blue-button"]} />
-          <Flex justify={"space-between"} py={20}>
-            <Text fz={{ base: "sm", md: 'h3' }}>25 May 2021 . Darmasaba</Text>
-            <Box>
-              <Flex gap={"lg"}>
-                <ActionIcon variant='transparent'>
-                  <IconBrandFacebook color={colors["blue-button"]} size={"30"} />
+
+          <Box>
+            {data?.deskripsi ? (
+              <Text
+                fz={{ base: "sm", md: "md" }}
+                lh={1.7}
+                ta="justify"
+                c="dimmed"
+                dangerouslySetInnerHTML={{ __html: data?.deskripsi }}
+              />
+            ) : (
+              <Text fz="sm" c="gray">Deskripsi belum tersedia.</Text>
+            )}
+          </Box>
+
+          <Divider color={colors["blue-button"]} size="sm" />
+
+          <Flex justify="space-between" align="center" wrap="wrap" gap="md">
+            <Text fz={{ base: "xs", md: "sm" }} c="dimmed">
+              25 Mei 2021 • Darmasaba
+            </Text>
+            <Group gap="md">
+              <Tooltip label="Bagikan ke Facebook" withArrow>
+                <ActionIcon size="lg" radius="xl" variant="subtle" color="blue">
+                  <IconBrandFacebook size={24} />
                 </ActionIcon>
-                <ActionIcon variant='transparent'>
-                  <IconBrandInstagram color={colors["blue-button"]} size={"30"} />
+              </Tooltip>
+              <Tooltip label="Bagikan ke Instagram" withArrow>
+                <ActionIcon size="lg" radius="xl" variant="subtle" color="pink">
+                  <IconBrandInstagram size={24} />
                 </ActionIcon>
-                <ActionIcon variant='transparent'>
-                  <IconBrandTwitter color={colors["blue-button"]} size={"30"} />
+              </Tooltip>
+              <Tooltip label="Bagikan ke Twitter" withArrow>
+                <ActionIcon size="lg" radius="xl" variant="subtle" color="blue">
+                  <IconBrandTwitter size={24} />
                 </ActionIcon>
-                <ActionIcon variant='transparent'>
-                  <IconBrandWhatsapp color={colors["blue-button"]} size={"30"} />
+              </Tooltip>
+              <Tooltip label="Bagikan ke WhatsApp" withArrow>
+                <ActionIcon size="lg" radius="xl" variant="subtle" color="green">
+                  <IconBrandWhatsapp size={24} />
                 </ActionIcon>
-              </Flex>
-            </Box>
+              </Tooltip>
+            </Group>
           </Flex>
-          <Divider color={colors["blue-button"]} pb={50} />
-        </Box>
+
+          <Divider color={colors["blue-button"]} size="sm" />
+        </Stack>
       )}
     </Box>
   );
