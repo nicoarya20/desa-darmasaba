@@ -51,7 +51,7 @@ function Page() {
         <Text ta="center" fz={{ base: '2xl', md: '3rem' }} c={colors['blue-button']} fw="bold">
           Konservasi Adat Bali
         </Text>
-        <Text px={20} ta="center" fz="lg" c="dimmed">
+        <Text px={20} ta="center" fz="lg" c="black">
           Pelestarian lingkungan di Bali yang berpijak pada kearifan lokal, menjaga harmoni antara alam, budaya, dan manusia.
         </Text>
       </Box>

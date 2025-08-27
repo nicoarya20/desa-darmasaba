@@ -286,7 +286,7 @@ const navbarListMenu = [
             {
                 id: "7.4",
                 name: "Gotong Royong",
-                href: "/darmasaba/lingkungan/gotong-royong"
+                href: "/darmasaba/lingkungan/gotong-royong/semua"
             },
             {
                 id: "7.5",

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiFetch from "@/lib/api-fetch";
 import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
@@ -51,13 +52,46 @@ const jenjangPendidikan = proxy({
       id: string;
       nama: string;
     }> | null,
-    async load() {
-      const res =
-        await ApiFetch.api.pendidikan.infosekolahpaud.jenjangpendidikan[
-          "find-many"
-        ].get();
-      if (res.status === 200) {
-        jenjangPendidikan.findMany.data = res.data?.data ?? [];
+    page: 1,
+    totalPages: 1,
+    total: 0,
+    loading: false,
+    search: "",
+    load: async (page = 1, limit = 10, search = "") => {
+      // Change to arrow function
+      jenjangPendidikan.findMany.loading = true; // Use the full path to access the property
+      jenjangPendidikan.findMany.page = page;
+      jenjangPendidikan.findMany.search = search;
+      try {
+        const query: any = { page, limit };
+        if (search) query.search = search;
+        const res =
+          await ApiFetch.api.pendidikan.infosekolahpaud.jenjangpendidikan[
+            "find-many"
+          ].get({
+            query,
+          });
+
+        if (res.status === 200 && res.data?.success) {
+          jenjangPendidikan.findMany.data = res.data.data || [];
+          jenjangPendidikan.findMany.total = res.data.total || 0;
+          jenjangPendidikan.findMany.totalPages = res.data.totalPages || 1;
+        } else {
+          console.error(
+            "Failed to load jenjang pendidikan:",
+            res.data?.message
+          );
+          jenjangPendidikan.findMany.data = [];
+          jenjangPendidikan.findMany.total = 0;
+          jenjangPendidikan.findMany.totalPages = 1;
+        }
+      } catch (error) {
+        console.error("Error loading jenjang pendidikan:", error);
+        jenjangPendidikan.findMany.data = [];
+        jenjangPendidikan.findMany.total = 0;
+        jenjangPendidikan.findMany.totalPages = 1;
+      } finally {
+        jenjangPendidikan.findMany.loading = false;
       }
     },
   },
@@ -304,13 +338,46 @@ const lembagaPendidikan = proxy({
         };
       }>
     > | null,
-    async load() {
-      const res =
-        await ApiFetch.api.pendidikan.infosekolahpaud.lembagapendidikan[
-          "find-many"
-        ].get();
-      if (res.status === 200) {
-        lembagaPendidikan.findMany.data = res.data?.data ?? [];
+    page: 1,
+    totalPages: 1,
+    total: 0,
+    loading: false,
+    search: "",
+    load: async (page = 1, limit = 10, search = "") => {
+      // Change to arrow function
+      lembagaPendidikan.findMany.loading = true; // Use the full path to access the property
+      lembagaPendidikan.findMany.page = page;
+      lembagaPendidikan.findMany.search = search;
+      try {
+        const query: any = { page, limit };
+        if (search) query.search = search;
+        const res =
+          await ApiFetch.api.pendidikan.infosekolahpaud.lembagapendidikan[
+            "find-many"
+          ].get({
+            query,
+          });
+
+        if (res.status === 200 && res.data?.success) {
+          lembagaPendidikan.findMany.data = res.data.data || [];
+          lembagaPendidikan.findMany.total = res.data.total || 0;
+          lembagaPendidikan.findMany.totalPages = res.data.totalPages || 1;
+        } else {
+          console.error(
+            "Failed to load lembaga pendidikan:",
+            res.data?.message
+          );
+          lembagaPendidikan.findMany.data = [];
+          lembagaPendidikan.findMany.total = 0;
+          lembagaPendidikan.findMany.totalPages = 1;
+        }
+      } catch (error) {
+        console.error("Error loading lembaga pendidikan:", error);
+        lembagaPendidikan.findMany.data = [];
+        lembagaPendidikan.findMany.total = 0;
+        lembagaPendidikan.findMany.totalPages = 1;
+      } finally {
+        lembagaPendidikan.findMany.loading = false;
       }
     },
   },
@@ -558,12 +625,45 @@ const siswa = proxy({
         };
       }>
     > | null,
-    async load() {
-      const res = await ApiFetch.api.pendidikan.infosekolahpaud.siswa[
-        "find-many"
-      ].get();
-      if (res.status === 200) {
-        siswa.findMany.data = res.data?.data ?? [];
+    page: 1,
+    totalPages: 1,
+    total: 0,
+    loading: false,
+    search: "",
+    load: async (page = 1, limit = 10, search = "") => {
+      // Change to arrow function
+      siswa.findMany.loading = true; // Use the full path to access the property
+      siswa.findMany.page = page;
+      siswa.findMany.search = search;
+      try {
+        const query: any = { page, limit };
+        if (search) query.search = search;
+        const res = await ApiFetch.api.pendidikan.infosekolahpaud.siswa[
+          "find-many"
+        ].get({
+          query,
+        });
+
+        if (res.status === 200 && res.data?.success) {
+          siswa.findMany.data = res.data.data || [];
+          siswa.findMany.total = res.data.total || 0;
+          siswa.findMany.totalPages = res.data.totalPages || 1;
+        } else {
+          console.error(
+            "Failed to load siswa:",
+            res.data?.message
+          );
+          siswa.findMany.data = [];
+          siswa.findMany.total = 0;
+          siswa.findMany.totalPages = 1;
+        }
+      } catch (error) {
+        console.error("Error loading siswa:", error);
+        siswa.findMany.data = [];
+        siswa.findMany.total = 0;
+        siswa.findMany.totalPages = 1;
+      } finally {
+        siswa.findMany.loading = false;
       }
     },
   },
@@ -798,12 +898,45 @@ const pengajar = proxy({
         };
       }>
     > | null,
-    async load() {
-      const res = await ApiFetch.api.pendidikan.infosekolahpaud.pengajar[
-        "find-many"
-      ].get();
-      if (res.status === 200) {
-        pengajar.findMany.data = res.data?.data ?? [];
+    page: 1,
+    totalPages: 1,
+    total: 0,
+    loading: false,
+    search: "",
+    load: async (page = 1, limit = 10, search = "") => {
+      // Change to arrow function
+      pengajar.findMany.loading = true; // Use the full path to access the property
+      pengajar.findMany.page = page;
+      pengajar.findMany.search = search;
+      try {
+        const query: any = { page, limit };
+        if (search) query.search = search;
+        const res = await ApiFetch.api.pendidikan.infosekolahpaud.pengajar[
+          "find-many"
+        ].get({
+          query,
+        });
+
+        if (res.status === 200 && res.data?.success) {
+          pengajar.findMany.data = res.data.data || [];
+          pengajar.findMany.total = res.data.total || 0;
+          pengajar.findMany.totalPages = res.data.totalPages || 1;
+        } else {
+          console.error(
+            "Failed to load pengajar:",
+            res.data?.message
+          );
+          pengajar.findMany.data = [];
+          pengajar.findMany.total = 0;
+          pengajar.findMany.totalPages = 1;
+        }
+      } catch (error) {
+        console.error("Error loading pengajar:", error);
+        pengajar.findMany.data = [];
+        pengajar.findMany.total = 0;
+        pengajar.findMany.totalPages = 1;
+      } finally {
+        pengajar.findMany.loading = false;
       }
     },
   },
@@ -815,7 +948,9 @@ const pengajar = proxy({
     }> | null,
     async load(id: string) {
       try {
-        const res = await fetch(`/api/pendidikan/infosekolahpaud/pengajar/${id}`);
+        const res = await fetch(
+          `/api/pendidikan/infosekolahpaud/pengajar/${id}`
+        );
         if (res.ok) {
           const data = await res.json();
           pengajar.findUnique.data = data.data ?? null;
@@ -948,7 +1083,8 @@ const pengajar = proxy({
               result
             );
             throw new Error(
-              result?.message || `Gagal mengupdate pengajar (${response.status})`
+              result?.message ||
+                `Gagal mengupdate pengajar (${response.status})`
             );
           }
 

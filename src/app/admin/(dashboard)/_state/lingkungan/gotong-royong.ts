@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiFetch from "@/lib/api-fetch";
 import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
@@ -67,10 +68,46 @@ const kegiatanDesa = proxy({
         };
       }>
     > | null,
-    async load() {
-      const res = await ApiFetch.api.lingkungan.kegiatandesa["find-many"].get();
-      if (res.status === 200) {
-        kegiatanDesa.findMany.data = res.data?.data ?? [];
+    page: 1,
+    totalPages: 1,
+    total: 0,
+    loading: false,
+    search: "",
+    load: async (page = 1, limit = 10, search = "", kategori = "") => {
+      // Change to arrow function
+      kegiatanDesa.findMany.loading = true; // Use the full path to access the property
+      kegiatanDesa.findMany.page = page;
+      kegiatanDesa.findMany.search = search;
+      try {
+        const query: any = { page, limit };
+        if (search) query.search = search;
+        if (kategori) query.kategori = kategori;
+        const res = await ApiFetch.api.lingkungan.kegiatandesa[
+          "find-many"
+        ].get({
+          query,
+        });
+
+        if (res.status === 200 && res.data?.success) {
+          kegiatanDesa.findMany.data = res.data.data || [];
+          kegiatanDesa.findMany.total = res.data.total || 0;
+          kegiatanDesa.findMany.totalPages = res.data.totalPages || 1;
+        } else {
+          console.error(
+            "Failed to load kegiatan desa:",
+            res.data?.message
+          );
+          kegiatanDesa.findMany.data = [];
+          kegiatanDesa.findMany.total = 0;
+          kegiatanDesa.findMany.totalPages = 1;
+        }
+      } catch (error) {
+        console.error("Error loading kegiatan desa:", error);
+        kegiatanDesa.findMany.data = [];
+        kegiatanDesa.findMany.total = 0;
+        kegiatanDesa.findMany.totalPages = 1;
+      } finally {
+        kegiatanDesa.findMany.loading = false;
       }
     },
   },
@@ -244,6 +281,35 @@ const kegiatanDesa = proxy({
       kegiatanDesa.edit.form = { ...defaultKegiatanDesaForm };
     },
   },
+  findFirst: {
+    data: null as Prisma.KegiatanDesaGetPayload<{
+      include: {
+        image: true;
+        kategoriKegiatan: true;
+      };
+    }> | null,
+    loading: false,
+    // findFirst.load()
+    async load(kategori?: string) {
+      this.loading = true;
+      try {
+        const res = await ApiFetch.api.lingkungan.kegiatandesa["find-first"].get({
+          query: kategori ? { kategori } : {},
+        });
+
+        if (res.status === 200 && res.data?.success) {
+          this.data = res.data.data || null;
+        } else {
+          this.data = null;
+        }
+      } catch (err) {
+        console.error("Gagal fetch kegiatan desa terbaru:", err);
+        this.data = null;
+      } finally {
+        this.loading = false;
+      }
+    },
+  },
 });
 
 // ========================================= KATEGORI kegiatan ========================================= //
@@ -269,9 +335,7 @@ const kategoriKegiatan = proxy({
       }
       try {
         kategoriKegiatan.create.loading = true;
-        const res = await ApiFetch.api.lingkungan.kategorikegiatan[
-          "create"
-        ].post(kategoriKegiatan.create.form);
+        const res = await ApiFetch.api.lingkungan.kategorikegiatan["create"].post(kategoriKegiatan.create.form);
         if (res.status === 200) {
           kategoriKegiatan.findMany.load();
           return toast.success("Data berhasil ditambahkan");
@@ -305,9 +369,7 @@ const kategoriKegiatan = proxy({
     }> | null,
     async load(id: string) {
       try {
-        const res = await fetch(
-          `/api/lingkungan/kategorikegiatan/${id}`
-        );
+        const res = await fetch(`/api/lingkungan/kategorikegiatan/${id}`);
         if (res.ok) {
           const data = await res.json();
           kategoriKegiatan.findUnique.data = data.data ?? null;
@@ -367,15 +429,12 @@ const kategoriKegiatan = proxy({
       }
 
       try {
-        const response = await fetch(
-          `/api/lingkungan/kategorikegiatan/${id}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        const response = await fetch(`/api/lingkungan/kategorikegiatan/${id}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }

@@ -4,6 +4,7 @@ import KegiatanDesaDelete from "./del";
 import KegiatanDesaFindMany from "./findMany";
 import KegiatanDesaFindUnique from "./findUnique";
 import KegiatanDesaUpdate from "./updt";
+import KegiatanDesaFindFirst from "./findFirst";
 
 const KegiatanDesa = new Elysia({
   prefix: "/kegiatandesa",
@@ -15,6 +16,9 @@ const KegiatanDesa = new Elysia({
 
   // ✅ Find by ID
   .get("/:id", KegiatanDesaFindUnique)
+
+  // ✅ Find First
+  .get("/find-first", KegiatanDesaFindFirst)
 
   // ✅ Create
   .post("/create", KegiatanDesaCreate, {
