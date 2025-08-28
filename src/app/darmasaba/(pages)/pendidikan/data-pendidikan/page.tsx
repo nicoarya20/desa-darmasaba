@@ -1,71 +1,102 @@
-import colors from '@/con/colors';
-import { Stack, Box, Title, Paper } from '@mantine/core';
-import React from 'react';
+'use client'
+import dataPendidikan from '@/app/admin/(dashboard)/_state/pendidikan/data-pendidikan';
+import { Box, Paper, Skeleton, Stack, Text, Title } from '@mantine/core';
+import { useShallowEffect } from '@mantine/hooks';
+import { IconSchool } from '@tabler/icons-react';
+import { useEffect, useState } from 'react';
+import { Bar, BarChart, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { useProxy } from 'valtio/utils';
 import BackButton from '../../desa/layanan/_com/BackButto';
-import { BarChart } from '@mantine/charts';
+import colors from '@/con/colors';
 
-const data = [
-  {
-    kategori: 'Jumlah penduduk usia 15-64 th yang tidak bisa baca tulis',
-    jumlah: 30
-  },
-  {
-    kategori: 'Jumlah penduduk tidak tamat SD/sederajat',
-    jumlah: 25
-  },
-  {
-    kategori: 'Jumlah penduduk tidak tamat SLTP/Sederajat',
-    jumlah: 20
-  },
-  {
-    kategori: 'Jumlah penduduk tidak tamat SLTA/Sederajat',
-    jumlah: 10
-  },
-  {
-    kategori: 'Jumlah penduduk tamat Sarjana/S1',
-    jumlah: 15
-  },
-  {
-    kategori: 'Jumlah penduduk tamat Pascsarjana',
-    jumlah: 30
-  },
-
-]
 function Page() {
+  type DPMrafik = {
+    id: string;
+    name: string;
+    jumlah: number;
+  };
+
+  const stateDPM = useProxy(dataPendidikan);
+  const [chartData, setChartData] = useState<DPMrafik[]>([]);
+  const [mounted, setMounted] = useState(false);
+
+  useShallowEffect(() => {
+    setMounted(true);
+    stateDPM.findMany.load();
+  }, []);
+
+  useEffect(() => {
+    if (stateDPM.findMany.data) {
+      setChartData(
+        stateDPM.findMany.data.map((item) => ({
+          id: item.id,
+          name: item.name,
+          jumlah: Number(item.jumlah),
+        }))
+      );
+    }
+  }, [stateDPM.findMany.data]);
+
+  if (!stateDPM.findMany.data) {
+    return (
+      <Stack px="md" py="xl">
+        <Skeleton h={400} radius="lg" />
+      </Stack>
+    );
+  }
+
   return (
-    <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"22"}>
+    <Stack bg="var(--mantine-color-gray-0)" py="xl" gap="lg" pos="relative">
       <Box px={{ base: 'md', md: 100 }}>
         <BackButton />
       </Box>
-      <Box px={{ base: 'md', md: 100 }} >
-        <Box pb={20}>
-          <Title ta={'center'} order={1} fw={'bold'} c={colors['blue-button']}>
-            Data Pendidikan
+
+      <Box px={{ base: 'md', md: 100 }}>
+        <Stack gap="xs" align="center" pb="lg">
+          <IconSchool size={48} stroke={1.5} color={colors['blue-button']} />
+          <Title order={1} fw={700} ta="center" c={colors['blue-button']}>
+            Statistik Data Pendidikan
           </Title>
-        </Box>
-        <Paper p={'xl'} radius={'md'} bg={colors['white-trans-1']}>
-          <BarChart
-            p={'100'}
-            h={600}
-            data={data}
-            dataKey="kategori"
-            series={[
-              { name: 'jumlah', color: colors['blue-button'] },
-            ]}
-            tickLine="y"
-              xAxisProps={{
-                angle: -45,  // Rotate labels by -45 degrees
-                textAnchor: 'end',  // Anchor text to the end for better alignment
-                height: 100,  // Increase height for rotated labels
-                interval: 0,  // Show all labels
-                style: { 
-                  fontSize: '12px',  // Adjust font size if needed
-                  overflow: 'visible',
-                  whiteSpace: 'nowrap'
-                }
-              }}
-          />
-        </Paper>
+          <Text c="dimmed" size="sm" ta="center">
+            Visualisasi jumlah pendidikan berdasarkan kategori yang tersedia
+          </Text>
+        </Stack>
+
+        {!mounted || chartData.length === 0 ? (
+          <Paper radius="lg" p="xl" withBorder shadow="sm" bg="var(--mantine-color-white)">
+            <Stack align="center" gap="sm" justify="center" h={350}>
+              <IconSchool size={40} stroke={1.5} color="var(--mantine-color-gray-5)" />
+              <Title order={4} fw={600}>
+                Belum Ada Data
+              </Title>
+              <Text c="dimmed" size="sm">
+                Data pendidikan belum tersedia. Silakan tambahkan data untuk melihat grafik.
+              </Text>
+            </Stack>
+          </Paper>
+        ) : (
+          <Paper radius="lg" p="xl" withBorder shadow="sm" bg="var(--mantine-color-white)">
+            <Title order={4} fw={600} mb="md">
+              Grafik Pendidikan
+            </Title>
+            <ResponsiveContainer width="100%" height={350}>
+              <BarChart data={chartData}>
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip
+                  contentStyle={{
+                    borderRadius: 12,
+                    background: 'var(--mantine-color-gray-0)',
+                    border: '1px solid var(--mantine-color-gray-3)',
+                  }}
+                  cursor={{ fill: 'var(--mantine-color-gray-1)' }}
+                />
+                <Legend />
+                <Bar dataKey="jumlah" fill={colors['blue-button']} name="Jumlah Pendidikan" radius={[8, 8, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </Paper>
+        )}
       </Box>
     </Stack>
   );

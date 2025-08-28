@@ -26,8 +26,8 @@ export function Navbar() {
       >
         <NavbarMainMenu listNavbar={navbarListMenu} />
 
-        <Stack hiddenFrom="sm" bg={colors.grey[2]} px="md" py="sm">
-          <Group justify="space-between">
+        <Box hiddenFrom="sm" bg={colors.grey[2]} px="md" py="sm">
+          <Group justify="space-between" wrap="nowrap">
             <ActionIcon
               variant="transparent"
               size="xl"
@@ -51,16 +51,23 @@ export function Navbar() {
             </Tooltip>
           </Group>
           {mobileOpen && (
-            <motion.div
-              initial={{ x: 300 }}
+            <Paper
+              component={motion.div}
+              initial={{ x: '100%' }}
               animate={{ x: 0 }}
+              exit={{ x: '100%' }}
               transition={{ duration: 0.2 }}
-              style={{ height: "100vh" }}
+              pos="absolute"
+              left={0}
+              right={0}
+              top="100%"
+              m={0}
+              radius={0}
             >
               <NavbarMobile listNavbar={navbarListMenu} />
-            </motion.div>
+            </Paper>
           )}
-        </Stack>
+        </Box>
       </Paper>
       {(item || isSearch) && <Box className="glass" />}
     </Box>
@@ -70,28 +77,34 @@ export function Navbar() {
 function NavbarMobile({ listNavbar }: { listNavbar: MenuItem[] }) {
   const router = useRouter();
   return (
-    <ScrollArea h="100vh" offsetScrollbars>
-      <Stack p="lg" gap="md" style={{ backgroundColor: "rgba(255, 255, 255, 0.25)" }}>
+    <ScrollArea.Autosize mah="calc(100vh - 80px)" offsetScrollbars>
+      <Stack p="md" gap="xs">
         {listNavbar.map((item, k) => (
-          <Stack key={k} gap={4}>
+          <Box key={k}>
             <Group
               justify="space-between"
               align="center"
+              p="xs"
               onClick={() => {
                 router.push(item.href);
                 stateNav.mobileOpen = false;
               }}
               style={{ cursor: "pointer" }}
             >
-              <Text c="dark.9" fw={600} fz="lg">
+              <Text c="dark.9" fw={600} fz="md">
                 {item.name}
               </Text>
-              <IconSquareArrowRight size={20} />
+              <IconSquareArrowRight size={18} />
             </Group>
-            {item.children && <NavbarMobile listNavbar={item.children} />}
-          </Stack>
+            {item.children && (
+              <Box pl="md">
+                <NavbarMobile listNavbar={item.children} />
+              </Box>
+            )}
+          </Box>
         ))}
       </Stack>
-    </ScrollArea>
+    </ScrollArea.Autosize>
   );
 }
+

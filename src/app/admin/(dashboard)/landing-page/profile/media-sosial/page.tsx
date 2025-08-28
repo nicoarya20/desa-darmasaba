@@ -1,13 +1,12 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Center, Image, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
+import { Box, Button, Center, Group, Image, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title, Tooltip } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { IconDeviceImac, IconSearch } from '@tabler/icons-react';
+import { IconDeviceImac, IconPlus, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../../_com/header';
-import JudulList from '../../../_com/judulList';
 import profileLandingPageState from '../../../_state/landing-page/profile';
 
 function MediaSosial() {
@@ -16,7 +15,7 @@ function MediaSosial() {
     <Box>
       <HeaderSearch
         title='Media Sosial'
-        placeholder='pencarian'
+        placeholder='Cari nama media sosial atau kontak...'
         searchIcon={<IconSearch size={20} />}
         value={search}
         onChange={(e) => setSearch(e.currentTarget.value)}
@@ -44,80 +43,77 @@ function ListMediaSosial({ search }: { search: string }) {
 
   const filteredData = data || []
 
-  // Handle loading state
   if (loading || !data) {
     return (
       <Stack py={10}>
-        <Skeleton height={550} />
+        <Skeleton height={600} radius="md" />
       </Stack>
-    );
-  }
-
-  if (data.length === 0) {
-    return (
-      <Box py={10}>
-        <Paper bg={colors['white-1']} p={'md'}>
-          <JudulList
-            title='List Media Sosial'
-            href='/admin/landing-page/profile/media-sosial/create'
-          />
-          <Box style={{ overflowX: "auto" }}>
-            <Table striped withTableBorder withRowBorders>
-              <TableThead>
-                <TableTr>
-                  <TableTh>Nama Media Sosial / Nama Kontak</TableTh>
-                  <TableTh>Image</TableTh>
-                  <TableTh>Icon URL / No Telephone</TableTh>
-                  <TableTh>Detail</TableTh>
-                </TableTr>
-              </TableThead>
-            </Table>
-          </Box>
-        </Paper>
-      </Box>
     );
   }
 
   return (
     <Box py={10}>
-      <Paper bg={colors['white-1']} p={'md'}>
-        <JudulList
-          title='List Media Sosial'
-          href='/admin/landing-page/profile/media-sosial/create'
-        />
-        <Box style={{ overflowY: "auto" }}>
-          <Table striped withTableBorder withRowBorders>
+      <Paper bg={colors['white-1']} p={'lg'} shadow="md" radius="md">
+        <Group justify="space-between" mb="md">
+          <Title order={4}>Daftar Media Sosial</Title>
+          <Tooltip label="Tambah Media Sosial" withArrow>
+            <Button leftSection={<IconPlus size={18} />} color="blue" variant="light" onClick={() => router.push('/admin/landing-page/profile/media-sosial/create')}>
+              Tambah Baru
+            </Button>
+          </Tooltip>
+        </Group>
+        <Box style={{ overflowX: "auto" }}>
+          <Table highlightOnHover>
             <TableThead>
               <TableTr>
-                <TableTh>Nama Media Sosial / Nama Kontak</TableTh>
-                <TableTh>Image</TableTh>
-                <TableTh>Icon URL / No Telephone</TableTh>
-                <TableTh>Detail</TableTh>
+                <TableTh>Nama Media Sosial / Kontak</TableTh>
+                <TableTh>Gambar</TableTh>
+                <TableTh>Icon / No. Telepon</TableTh>
+                <TableTh>Aksi</TableTh>
               </TableTr>
             </TableThead>
             <TableTbody>
-              {filteredData.map((item) => (
-                <TableTr key={item.id}>
-                  <TableTd>{item.name}</TableTd>
-                  <TableTd>
-                    <Box w={50} h={50}>
-                      <Image src={item.image?.link} alt={item.name} />
-                    </Box>
-                  </TableTd>
-                  <TableTd>
-                    <Box w={250}>
-                      <a style={{color: "black"}} href={item.iconUrl} target="_blank" rel="noopener noreferrer">
-                        <Text truncate fz={'sm'}>{item.iconUrl}</Text>
-                      </a>
-                    </Box>
-                  </TableTd>
-                  <TableTd>
-                    <Button onClick={() => router.push(`/admin/landing-page/profile/media-sosial/${item.id}`)}>
-                      <IconDeviceImac size={20} />
-                    </Button>
+              {filteredData.length > 0 ? (
+                filteredData.map((item) => (
+                  <TableTr key={item.id}>
+                    <TableTd>
+                      <Text fw={500}>{item.name}</Text>
+                    </TableTd>
+                    <TableTd>
+                      <Box w={50} h={50} style={{ borderRadius: 8, overflow: 'hidden' }}>
+                        {item.image?.link ? (
+                          <Image src={item.image.link} alt={item.name} fit="cover" />
+                        ) : (
+                          <Box bg={colors['blue-button']} w="100%" h="100%" />
+                        )}
+                      </Box>
+                    </TableTd>
+                    <TableTd>
+                      <Text truncate fz="sm" color="dimmed">
+                        {item.iconUrl || item.noTelp || '-'}
+                      </Text>
+                    </TableTd>
+                    <TableTd>
+                      <Button
+                        variant="light"
+                        color="blue"
+                        onClick={() => router.push(`/admin/landing-page/profile/media-sosial/${item.id}`)}
+                      >
+                        <IconDeviceImac size={20} />
+                        <Text ml={5}>Detail</Text>
+                      </Button>
+                    </TableTd>
+                  </TableTr>
+                ))
+              ) : (
+                <TableTr>
+                  <TableTd colSpan={4}>
+                    <Center py={20}>
+                      <Text color="dimmed">Tidak ada data media sosial yang cocok</Text>
+                    </Center>
                   </TableTd>
                 </TableTr>
-              ))}
+              )}
             </TableTbody>
           </Table>
         </Box>
@@ -127,11 +123,13 @@ function ListMediaSosial({ search }: { search: string }) {
           value={page}
           onChange={(newPage) => {
             load(newPage, 10);
-            window.scrollTo(0, 0);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
           total={totalPages}
           mt="md"
           mb="md"
+          color="blue"
+          radius="md"
         />
       </Center>
     </Box>

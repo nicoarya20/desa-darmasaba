@@ -2,103 +2,132 @@
 import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
 import profileLandingPageState from '@/app/admin/(dashboard)/_state/landing-page/profile';
 import colors from '@/con/colors';
-import { Box, Button, Flex, Image, Paper, Skeleton, Stack, Text } from '@mantine/core';
+import { Box, Button, Group, Image, Paper, Skeleton, Stack, Text, Tooltip } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { IconArrowBack, IconEdit, IconX } from '@tabler/icons-react';
+import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 
 function DetailMediaSosial() {
-  const stateMediaSosial = useProxy(profileLandingPageState.mediaSosial)
-  const [modalHapus, setModalHapus] = useState(false)
-  const [selectedId, setSelectedId] = useState<string | null>(null)
-  const params = useParams()
+  const stateMediaSosial = useProxy(profileLandingPageState.mediaSosial);
+  const [modalHapus, setModalHapus] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const params = useParams();
   const router = useRouter();
 
   useShallowEffect(() => {
-    stateMediaSosial.findUnique.load(params?.id as string)
-  }, [])
+    stateMediaSosial.findUnique.load(params?.id as string);
+  }, []);
 
   const handleHapus = () => {
     if (selectedId) {
-      stateMediaSosial.delete.byId(selectedId)
-      setModalHapus(false)
-      setSelectedId(null)
-      router.push("/admin/landing-page/profile/media-sosial")
+      stateMediaSosial.delete.byId(selectedId);
+      setModalHapus(false);
+      setSelectedId(null);
+      router.push("/admin/landing-page/profile/media-sosial");
     }
-  }
+  };
 
   if (!stateMediaSosial.findUnique.data) {
     return (
       <Stack py={10}>
-        <Skeleton h={500} />
+        <Skeleton height={500} radius="md" />
       </Stack>
-    )
+    );
   }
 
+  const data = stateMediaSosial.findUnique.data;
+
   return (
-    <Box>
-      <Box mb={10}>
-        <Button variant="subtle" onClick={() => router.back()}>
-          <IconArrowBack color={colors['blue-button']} size={25} />
-        </Button>
-      </Box>
-      <Paper w={{ base: "100%", md: "50%" }} bg={colors['white-1']} p={'md'}>
-        <Stack>
-          <Text fz={"xl"} fw={"bold"}>Detail Media Sosial</Text>
-          <Paper bg={colors['BG-trans']} p={'md'}>
-            <Stack gap={"xs"}>
+    <Box py={10}>
+      <Button
+        variant="subtle"
+        onClick={() => router.back()}
+        leftSection={<IconArrowBack size={24} color={colors['blue-button']} />}
+        mb={15}
+      >
+        Kembali
+      </Button>
+
+      <Paper
+        w={{ base: "100%", md: "60%" }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+      >
+        <Stack gap="md">
+          <Text fz="2xl" fw="bold" c={colors['blue-button']}>
+            Detail Media Sosial
+          </Text>
+
+          <Paper bg="#ECEEF8" p="md" radius="md" shadow="xs">
+            <Stack gap="sm">
               <Box>
-                <Text fz={"lg"} fw={"bold"}>Nama Media Sosial / Nama Kontak</Text>
-                <Text fz={"lg"}>{stateMediaSosial.findUnique.data?.name}</Text>
+                <Text fz="lg" fw="bold">Nama Media Sosial / Kontak</Text>
+                <Text fz="md" c="dimmed">{data.name || '-'}</Text>
               </Box>
+
               <Box>
-                <Text fz={"lg"} fw={"bold"}>Icon URL / No Telephone</Text>
-                <Text fz={"lg"}>{stateMediaSosial.findUnique.data?.iconUrl}</Text>
+                <Text fz="lg" fw="bold">Icon / Nomor Telepon</Text>
+                <Text fz="md" c="dimmed">{data.iconUrl || '-'}</Text>
               </Box>
+
               <Box>
-                <Text fz={"lg"} fw={"bold"}>Gambar</Text>
-                <Box w={100} h={100}>
-                  <Image src={stateMediaSosial.findUnique.data?.image?.link} alt="gambar" />
-                </Box>
+                <Text fz="lg" fw="bold">Gambar</Text>
+                {data.image?.link ? (
+                  <Image
+                    src={data.image.link}
+                    alt={data.name || 'Gambar Media Sosial'}
+                    w={120}
+                    h={120}
+                    radius="md"
+                    fit="cover"
+                  />
+                ) : (
+                  <Text fz="sm" c="dimmed">Tidak ada gambar</Text>
+                )}
               </Box>
-              <Box>
-                <Flex gap={"xs"}>
+
+              <Group gap="sm">
+                <Tooltip label="Hapus Media Sosial" withArrow position="top">
                   <Button
+                    color="red"
                     onClick={() => {
-                      if (stateMediaSosial.findUnique.data) {
-                        setSelectedId(stateMediaSosial.findUnique.data.id);
-                        setModalHapus(true);
-                      }
+                      setSelectedId(data.id);
+                      setModalHapus(true);
                     }}
-                    disabled={!stateMediaSosial.findUnique.data}
-                    color="red">
-                    <IconX size={20} />
+                    variant="light"
+                    radius="md"
+                    size="md"
+                  >
+                    <IconTrash size={20} />
                   </Button>
+                </Tooltip>
+
+                <Tooltip label="Edit Media Sosial" withArrow position="top">
                   <Button
-                    onClick={() => {
-                      if (stateMediaSosial.findUnique.data) {
-                        router.push(`/admin/landing-page/profile/media-sosial/${stateMediaSosial.findUnique.data.id}/edit`);
-                      }
-                    }}
-                    disabled={!stateMediaSosial.findUnique.data}
-                    color="green">
+                    color="green"
+                    onClick={() => router.push(`/admin/landing-page/profile/media-sosial/${data.id}/edit`)}
+                    variant="light"
+                    radius="md"
+                    size="md"
+                  >
                     <IconEdit size={20} />
                   </Button>
-                </Flex>
-              </Box>
+                </Tooltip>
+              </Group>
             </Stack>
           </Paper>
         </Stack>
       </Paper>
 
-      {/* Modal Hapus */}
       <ModalKonfirmasiHapus
         opened={modalHapus}
         onClose={() => setModalHapus(false)}
         onConfirm={handleHapus}
-        text="Apakah anda yakin ingin menghapus media sosial ini?"
+        text="Apakah Anda yakin ingin menghapus media sosial ini?"
       />
     </Box>
   );

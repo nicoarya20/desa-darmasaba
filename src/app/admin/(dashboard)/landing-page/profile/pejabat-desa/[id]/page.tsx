@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 import colors from '@/con/colors';
-import { Alert, Box, Button, Center, Group, Image, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
+import { Alert, Box, Button, Center, Group, Image, Paper, Stack, Text, TextInput, Title, Tooltip } from '@mantine/core';
 import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
 
@@ -144,124 +144,134 @@ function EditPejabatDesa() {
   return (
     <Box>
       <Stack gap="xs">
-        <Box>
-          <Button variant="subtle" onClick={handleBack}>
-            <IconArrowBack color={colors['blue-button']} size={20} />
-          </Button>
-        </Box>
+        <Group mb="md">
+          <Tooltip label="Kembali ke halaman sebelumnya" color="blue" withArrow>
+            <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+              <IconArrowBack color={colors['blue-button']} size={24} />
+            </Button>
+          </Tooltip>
+          <Title order={4} ml="sm" c="dark">
+            Edit Pejabat Desa
+          </Title>
+        </Group>
 
-        <Box>
-          <Paper w={{ base: "100%", md: "50%" }} bg={colors['white-1']} p="md" radius={10}>
-            <Stack gap="xs">
-              <Title order={3}>Edit Profile Pejabat Desa</Title>
+        <Paper
+          w={{ base: "100%", md: "50%" }}
+          bg={colors['white-1']}
+          p="md"
+          radius="md"
+          shadow="sm"
+          style={{ border: '1px solid #e0e0e0' }}
+        >
+          <Stack gap="xs">
+            <Title order={3}>Edit Profile Pejabat Desa</Title>
 
-              {/* Nama Field */}
-              <TextInput
-                label={<Text fw="bold">Nama Perbekel</Text>}
-                placeholder="Masukkan nama perbekel"
-                value={allState.edit.form.name}
-                onChange={(e) => handleFieldChange('name', e.currentTarget.value)}
-                error={!allState.edit.form.name && "Nama wajib diisi"}
-              />
+            {/* Nama Field */}
+            <TextInput
+              label={<Text fw="bold">Nama Perbekel</Text>}
+              placeholder="Masukkan nama perbekel"
+              value={allState.edit.form.name}
+              onChange={(e) => handleFieldChange('name', e.currentTarget.value)}
+              error={!allState.edit.form.name && "Nama wajib diisi"}
+            />
 
-              {/* Posisi Field */}
-              <TextInput
-                label={<Text fw="bold">Posisi</Text>}
-                placeholder="Masukkan posisi"
-                value={allState.edit.form.position}
-                onChange={(e) => handleFieldChange('position', e.currentTarget.value)}
-                error={!allState.edit.form.position && "Posisi wajib diisi"}
-              />
+            {/* Posisi Field */}
+            <TextInput
+              label={<Text fw="bold">Posisi</Text>}
+              placeholder="Masukkan posisi"
+              value={allState.edit.form.position}
+              onChange={(e) => handleFieldChange('position', e.currentTarget.value)}
+              error={!allState.edit.form.position && "Posisi wajib diisi"}
+            />
 
-              {/* File Upload */}
+            {/* File Upload */}
+            <Box>
+              <Text fz={"md"} fw={"bold"}>Gambar</Text>
               <Box>
-                <Text fz={"md"} fw={"bold"}>Gambar</Text>
-                <Box>
-                  <Dropzone
-                    onDrop={(files) => handleFileChange(files[0])}
-                    onReject={() => toast.error('File tidak valid.')}
-                    maxSize={5 * 1024 ** 2} // Maks 5MB
-                    accept={{ 'image/*': [] }}
-                  >
-                    <Group justify="center" gap="xl" mih={220} style={{ pointerEvents: 'none' }}>
-                      <Dropzone.Accept>
-                        <IconUpload size={52} color="var(--mantine-color-blue-6)" stroke={1.5} />
-                      </Dropzone.Accept>
-                      <Dropzone.Reject>
-                        <IconX size={52} color="var(--mantine-color-red-6)" stroke={1.5} />
-                      </Dropzone.Reject>
-                      <Dropzone.Idle>
-                        <IconPhoto size={52} color="var(--mantine-color-dimmed)" stroke={1.5} />
-                      </Dropzone.Idle>
+                <Dropzone
+                  onDrop={(files) => handleFileChange(files[0])}
+                  onReject={() => toast.error('File tidak valid.')}
+                  maxSize={5 * 1024 ** 2} // Maks 5MB
+                  accept={{ 'image/*': [] }}
+                >
+                  <Group justify="center" gap="xl" mih={220} style={{ pointerEvents: 'none' }}>
+                    <Dropzone.Accept>
+                      <IconUpload size={52} color="var(--mantine-color-blue-6)" stroke={1.5} />
+                    </Dropzone.Accept>
+                    <Dropzone.Reject>
+                      <IconX size={52} color="var(--mantine-color-red-6)" stroke={1.5} />
+                    </Dropzone.Reject>
+                    <Dropzone.Idle>
+                      <IconPhoto size={52} color="var(--mantine-color-dimmed)" stroke={1.5} />
+                    </Dropzone.Idle>
 
-                      <div>
-                        <Text size="xl" inline>
-                          Drag gambar ke sini atau klik untuk pilih file
-                        </Text>
-                        <Text size="sm" c="dimmed" inline mt={7}>
-                          Maksimal 5MB dan harus format gambar
-                        </Text>
-                      </div>
-                    </Group>
-                  </Dropzone>
+                    <div>
+                      <Text size="xl" inline>
+                        Drag gambar ke sini atau klik untuk pilih file
+                      </Text>
+                      <Text size="sm" c="dimmed" inline mt={7}>
+                        Maksimal 5MB dan harus format gambar
+                      </Text>
+                    </div>
+                  </Group>
+                </Dropzone>
 
-                  {/* Tampilkan preview kalau ada */}
-                  {previewImage && (
-                    <Box mt="sm">
-                      <Image
-                        src={previewImage}
-                        alt="Preview"
-                        style={{
-                          maxWidth: '100%',
-                          maxHeight: '200px',
-                          objectFit: 'contain',
-                          borderRadius: '8px',
-                          border: '1px solid #ddd',
-                        }}
-                      />
-                    </Box>
-                  )}
-
-                </Box>
-              </Box>
-
-              {/* Preview Gambar */}
-              <Box>
-                <Text fz="sm" fw="bold" mb="xs">Preview Gambar</Text>
-                {previewImage ? (
-                  <Image alt="Profile preview" src={previewImage} w={200} h={200} fit="cover" radius="md" />
-                ) : (
-                  <Center w={200} h={200} bg="gray.2">
-                    <Stack align="center" gap="xs">
-                      <IconImageInPicture size={48} color="gray" />
-                      <Text size="sm" c="gray">Tidak ada gambar</Text>
-                    </Stack>
-                  </Center>
+                {/* Tampilkan preview kalau ada */}
+                {previewImage && (
+                  <Box mt="sm">
+                    <Image
+                      src={previewImage}
+                      alt="Preview"
+                      style={{
+                        maxWidth: '100%',
+                        maxHeight: '200px',
+                        objectFit: 'contain',
+                        borderRadius: '8px',
+                        border: '1px solid #ddd',
+                      }}
+                    />
+                  </Box>
                 )}
+
               </Box>
+            </Box>
 
-              {/* Submit Button */}
-              <Group>
-                <Button
-                  bg={colors['blue-button']}
-                  onClick={handleSubmit}
-                  loading={isSubmitting || allState.edit.loading}
-                  disabled={!allState.edit.form.name}
-                >
-                  {isSubmitting ? 'Menyimpan...' : 'Simpan Perubahan'}
-                </Button>
+            {/* Preview Gambar */}
+            <Box>
+              <Text fz="sm" fw="bold" mb="xs">Preview Gambar</Text>
+              {previewImage ? (
+                <Image alt="Profile preview" src={previewImage} w={200} h={200} fit="cover" radius="md" />
+              ) : (
+                <Center w={200} h={200} bg="gray.2">
+                  <Stack align="center" gap="xs">
+                    <IconImageInPicture size={48} color="gray" />
+                    <Text size="sm" c="gray">Tidak ada gambar</Text>
+                  </Stack>
+                </Center>
+              )}
+            </Box>
 
-                <Button
-                  variant="outline"
-                  onClick={handleBack}
-                  disabled={isSubmitting || allState.edit.loading}
-                >
-                  Batal
-                </Button>
-              </Group>
-            </Stack>
-          </Paper>
-        </Box>
+            {/* Submit Button */}
+            <Group>
+              <Button
+                bg={colors['blue-button']}
+                onClick={handleSubmit}
+                loading={isSubmitting || allState.edit.loading}
+                disabled={!allState.edit.form.name}
+              >
+                {isSubmitting ? 'Menyimpan...' : 'Simpan Perubahan'}
+              </Button>
+
+              <Button
+                variant="outline"
+                onClick={handleBack}
+                disabled={isSubmitting || allState.edit.loading}
+              >
+                Batal
+              </Button>
+            </Group>
+          </Stack>
+        </Paper>
       </Stack>
     </Box>
   );

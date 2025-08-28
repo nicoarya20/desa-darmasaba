@@ -1,22 +1,22 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Center, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
+import { Box, Button, Center, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title, Tooltip } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { IconDeviceImac, IconSearch } from '@tabler/icons-react';
+import { IconDeviceImac, IconPlus, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../../_com/header';
-import JudulList from '../../../_com/judulList';
 import profileLandingPageState from '../../../_state/landing-page/profile';
 
 function ProgramInovasi() {
   const [search, setSearch] = useState("");
+
   return (
-    <Box>
+    <Box px="md" py="lg">
       <HeaderSearch
-        title='Program Inovasi'
-        placeholder='pencarian'
+        title="Program Inovasi"
+        placeholder="Cari program inovasi..."
         searchIcon={<IconSearch size={20} />}
         value={search}
         onChange={(e) => setSearch(e.currentTarget.value)}
@@ -27,107 +27,118 @@ function ProgramInovasi() {
 }
 
 function ListProgramInovasi({ search }: { search: string }) {
-  const stateProgramInovasi = useProxy(profileLandingPageState.programInovasi)
+  const stateProgramInovasi = useProxy(profileLandingPageState.programInovasi);
   const router = useRouter();
 
-  const {
-    data,
-    page,
-    totalPages,
-    loading,
-    load,
-  } = stateProgramInovasi.findMany;
+  const { data, page, totalPages, loading, load } = stateProgramInovasi.findMany;
 
   useShallowEffect(() => {
     load(page, 10, search);
   }, [page, search]);
 
-  const filteredData = data || []
+  const filteredData = data || [];
 
   if (loading || !data) {
     return (
-      <Stack py={10}>
-        <Skeleton height={550} />
+      <Stack py={20}>
+        <Skeleton height={500} radius="md" />
       </Stack>
     );
   }
 
-  if (data.length === 0) {
-    return (
-      <Box py={10}>
-        <Paper bg={colors['white-1']} p={'md'}>
-          <JudulList
-            title='List Program Inovasi'
-            href='/admin/landing-page/profile/program-inovasi/create'
-          />
-          <Box style={{ overflowX: "auto" }}>
-            <Table striped withTableBorder withRowBorders>
-              <TableThead>
-                <TableTr>
-                  <TableTh>Nama Program</TableTh>
-                  <TableTh>Deskripsi</TableTh>
-                  <TableTh>Link</TableTh>
-                  <TableTh>Detail</TableTh>
-                </TableTr>
-              </TableThead>
-            </Table>
-          </Box>
-        </Paper>
-      </Box>
-    );
-  }
   return (
-    <Box py={10}>
-      <Paper bg={colors['white-1']} p={'md'}>
-        <JudulList
-          title='List Program Inovasi'
-          href='/admin/landing-page/profile/program-inovasi/create'
-        />
-        <Box style={{ overflowY: "auto" }}>
-          <Table striped withTableBorder withRowBorders>
+    <Box py={15}>
+      <Paper bg={colors['white-1']} p="lg" radius="md" shadow="sm">
+        <Box mb="md" display="flex"
+          style={{ justifyContent: 'space-between', alignItems: 'center' }}
+        >
+          <Title order={4}>Daftar Program Inovasi</Title>
+          <Tooltip label="Tambah Program Inovasi" withArrow>
+            <Button
+              color="blue"
+              leftSection={<IconPlus size={18} />}
+              variant="light"
+              radius="md"
+              onClick={() => router.push('/admin/landing-page/profile/program-inovasi/create')}
+            >
+              Tambah Program
+            </Button>
+          </Tooltip>
+        </Box>
+        <Box style={{ overflowX: 'auto' }}>
+          <Table highlightOnHover striped verticalSpacing="sm">
             <TableThead>
               <TableTr>
                 <TableTh>Nama Program</TableTh>
                 <TableTh>Deskripsi</TableTh>
                 <TableTh>Link</TableTh>
-                <TableTh>Detail</TableTh>
+                <TableTh>Aksi</TableTh>
               </TableTr>
             </TableThead>
             <TableTbody>
-              {filteredData.map((item) => (
-                <TableTr key={item.id}>
-                  <TableTd>{item.name}</TableTd>
-                  <TableTd w={200}>{item.description}</TableTd>
-                  <TableTd>
-                    <Box w={250}>
-                      <a style={{ color: "black" }} href={item.link} target="_blank" rel="noopener noreferrer">
-                        <Text truncate fz={'sm'}>{item.link}</Text>
-                      </a>
-                    </Box>
-                  </TableTd>
-                  <TableTd>
-                    <Button onClick={() => router.push(`/admin/landing-page/profile/program-inovasi/${item.id}`)}>
-                      <IconDeviceImac size={20} />
-                    </Button>
+              {filteredData.length === 0 ? (
+                <TableTr>
+                  <TableTd colSpan={4}>
+                    <Center py={20}>
+                      <Text color="dimmed">Belum ada data program inovasi</Text>
+                    </Center>
                   </TableTd>
                 </TableTr>
-              ))}
+              ) : (
+                filteredData.map((item) => (
+                  <TableTr key={item.id}>
+                    <TableTd>
+                      <Text fw={500}>{item.name}</Text>
+                    </TableTd>
+                    <TableTd style={{ maxWidth: 250 }}>
+                      <Text fz="sm" lineClamp={2}>
+                        {item.description}
+                      </Text>
+                    </TableTd>
+                    <TableTd style={{ maxWidth: 250 }}>
+                      <Tooltip label="Buka tautan program" position="top" withArrow>
+                        <a
+                          href={item.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{ color: colors['blue-button'], textDecoration: 'underline' }}
+                        >
+                          <Text truncate fz="sm">{item.link}</Text>
+                        </a>
+                      </Tooltip>
+                    </TableTd>
+                    <TableTd>
+                      <Button
+                        variant="light"
+                        color="blue"
+                        radius="md"
+                        onClick={() =>
+                          router.push(`/admin/landing-page/profile/program-inovasi/${item.id}`)
+                        }
+                      >
+                        <IconDeviceImac size={20} />
+                      </Button>
+                    </TableTd>
+                  </TableTr>
+                ))
+              )}
             </TableTbody>
           </Table>
         </Box>
+        {filteredData.length > 0 && (
+          <Center mt="md">
+            <Pagination
+              value={page}
+              onChange={(newPage) => {
+                load(newPage, 10);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              total={totalPages}
+              color="blue"
+            />
+          </Center>
+        )}
       </Paper>
-      <Center>
-        <Pagination
-          value={page}
-          onChange={(newPage) => {
-            load(newPage, 10);
-            window.scrollTo(0, 0);
-          }}
-          total={totalPages}
-          mt="md"
-          mb="md"
-        />
-      </Center>
     </Box>
   );
 }

@@ -1,13 +1,12 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Center, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr } from '@mantine/core';
+import { Box, Button, Center, Group, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title, Tooltip } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { IconEdit, IconSearch, IconX } from '@tabler/icons-react';
+import { IconEdit, IconPlus, IconSearch, IconTrash } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../../_com/header';
-import JudulList from '../../../_com/judulList';
 import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
 import korupsiState from '../../../_state/landing-page/desa-anti-korupsi';
 
@@ -56,74 +55,84 @@ function ListKategoriKegiatan({ search }: { search: string }) {
 
   const filteredData = data || []
 
-  // Handle loading state
   if (loading || !data) {
     return (
       <Stack py={10}>
-        <Skeleton height={550} />
+        <Skeleton height={600} radius="md" />
       </Stack>
-    );
-  }
-
-  if (data.length === 0) {
-    return (
-      <Box py={10}>
-        <Paper bg={colors['white-1']} p={'md'}>
-          <JudulList
-            title='List Kategori Kegiatan'
-            href='/admin/landing-page/desa-anti-korupsi/kategori-desa-anti-korupsi/create'
-          />
-          <Box style={{ overflowX: "auto" }}>
-            <Table striped withTableBorder withRowBorders>
-              <TableThead>
-                <TableTr>
-                  <TableTh>Nama</TableTh>
-                  <TableTh>Edit</TableTh>
-                  <TableTh>Delete</TableTh>
-                </TableTr>
-              </TableThead>
-            </Table>
-          </Box>
-        </Paper>
-      </Box>
     );
   }
 
   return (
     <Box py={10}>
-      <Paper bg={colors['white-1']} p={'md'}>
-        <JudulList
-          title='List Kategori Kegiatan'
-          href='/admin/landing-page/desa-anti-korupsi/kategori-desa-anti-korupsi/create'
-        />
-        <Box style={{ overflowY: "auto" }}>
-          <Table striped withTableBorder withRowBorders>
+      <Paper bg={colors['white-1']} p={'lg'} shadow="md" radius="md">
+        <Group justify="space-between" mb="md">
+          <Title order={4}>Daftar Kategori Kegiatan</Title>
+          <Tooltip label="Tambah Kategori" withArrow>
+            <Button
+              leftSection={<IconPlus size={18} />}
+              color="blue"
+              variant="light"
+              onClick={() => router.push('/admin/landing-page/desa-anti-korupsi/kategori-desa-anti-korupsi/create')}
+            >
+              Tambah Baru
+            </Button>
+          </Tooltip>
+        </Group>
+        <Box style={{ overflowX: "auto" }}>
+          <Table highlightOnHover>
             <TableThead>
               <TableTr>
                 <TableTh>Nama Kategori</TableTh>
                 <TableTh>Edit</TableTh>
-                <TableTh>Delete</TableTh>
+                <TableTh>Hapus</TableTh>
               </TableTr>
             </TableThead>
             <TableTbody>
-              {filteredData.map((item) => (
-                <TableTr key={item.id}>
-                  <TableTd>{item.name}</TableTd>
-                  <TableTd>
-                    <Button color="green" onClick={() => router.push(`/admin/landing-page/desa-anti-korupsi/kategori-desa-anti-korupsi/${item.id}`)}>
-                      <IconEdit size={20} />
-                    </Button>
-                  </TableTd>
-                  <TableTd>
-                    <Button color="red" onClick={() => {
-                      setSelectedId(item.id)
-                      setModalHapus(true)
-                    }}>
-                      <IconX size={20} />
-                    </Button>
+              {filteredData.length > 0 ? (
+                filteredData.map((item) => (
+                  <TableTr key={item.id}>
+                    <TableTd>
+                      <Text fw={500}>{item.name}</Text>
+                    </TableTd>
+                    <TableTd>
+                      <Tooltip label="Edit" withArrow>
+                        <Button
+                          variant="light"
+                          color="blue"
+                          size="sm"
+                          onClick={() => router.push(`/admin/landing-page/desa-anti-korupsi/kategori-desa-anti-korupsi/${item.id}`)}
+                        >
+                          <IconEdit size={18} />
+                        </Button>
+                      </Tooltip>
+                    </TableTd>
+                    <TableTd>
+                      <Tooltip label="Hapus" withArrow>
+                        <Button
+                          variant="light"
+                          color="red"
+                          size="sm"
+                          onClick={() => {
+                            setSelectedId(item.id);
+                            setModalHapus(true);
+                          }}
+                        >
+                          <IconTrash size={18} />
+                        </Button>
+                      </Tooltip>
+                    </TableTd>
+                  </TableTr>
+                ))
+              ) : (
+                <TableTr>
+                  <TableTd colSpan={2}>
+                    <Center py={20}>
+                      <Text c="dimmed">Tidak ada data kategori yang ditemukan</Text>
+                    </Center>
                   </TableTd>
                 </TableTr>
-              ))}
+              )}
             </TableTbody>
           </Table>
         </Box>
@@ -133,11 +142,13 @@ function ListKategoriKegiatan({ search }: { search: string }) {
           value={page}
           onChange={(newPage) => {
             load(newPage, 10);
-            window.scrollTo(0, 0);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
           total={totalPages}
           mt="md"
           mb="md"
+          color="blue"
+          radius="md"
         />
       </Center>
       {/* Modal Konfirmasi Hapus */}

@@ -1,55 +1,96 @@
+'use client'
+import stateProgramPendidikanAnak from '@/app/admin/(dashboard)/_state/pendidikan/program-pendidikan-anak';
 import colors from '@/con/colors';
-import { Stack, Box, Title, Text, SimpleGrid, Paper, List, ListItem } from '@mantine/core';
-import React from 'react';
+import { Box, Paper, SimpleGrid, Skeleton, Stack, Text, Title, Tooltip, Divider, Group } from '@mantine/core';
+import { useShallowEffect } from '@mantine/hooks';
+import { useProxy } from 'valtio/utils';
+import { IconBook2, IconTargetArrow } from '@tabler/icons-react';
 import BackButton from '../../desa/layanan/_com/BackButto';
 
 function Page() {
+  const stateUnggulan = useProxy(stateProgramPendidikanAnak.programUnggulanState);
+  const stateTujuan = useProxy(stateProgramPendidikanAnak.stateTujuanProgram);
+
+  useShallowEffect(() => {
+    stateUnggulan.findById.load('edit');
+    stateTujuan.findById.load('edit');
+  }, []);
+
+  if (!stateUnggulan.findById.data || !stateTujuan.findById.data)
+    return (
+      <Stack pos="relative" bg={colors.Bg} py="xl" gap="22">
+        <Box px={{ base: 'md', md: 100 }}>
+          <BackButton />
+        </Box>
+        <Box px={{ base: 'md', md: 100 }} pb={50}>
+          <Skeleton h={50} radius="xl" />
+          <Skeleton h={150} mt="lg" radius="md" />
+        </Box>
+      </Stack>
+    );
+
   return (
-    <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"22"}>
+    <Stack pos="relative" bg={colors.Bg} py="xl" gap="22">
       <Box px={{ base: 'md', md: 100 }}>
         <BackButton />
       </Box>
+
       <Box px={{ base: 'md', md: 100 }} pb={50}>
-        <Box>
-          <Title ta={'center'} order={1} fw={'bold'} c={colors['blue-button']}>
+        <Box mb="xl">
+          <Title ta="center" order={1} fw="bold" c={colors['blue-button']} mb="sm">
             Program Pendidikan Anak
           </Title>
-          <Text pb={20} ta={'justify'} fz={'xl'} px={{ base: 'md', md: 100 }}>
-            Desa Darmasaba berkomitmen untuk menciptakan generasi muda yang cerdas, berkarakter, dan berdaya saing melalui berbagai program pendidikan yang inklusif dan berkelanjutan. Pendidikan anak menjadi pondasi utama dalam mewujudkan masa depan desa yang lebih baik.
+          <Text ta="center" fz="lg" c="black" mb="lg" maw={800} mx="auto">
+            Desa Darmasaba berkomitmen mencetak generasi muda yang cerdas, berkarakter, dan siap bersaing melalui program pendidikan yang inklusif dan berkelanjutan.
           </Text>
+          <Divider size="sm" color={colors['blue-button']} mx="auto" maw={120} />
         </Box>
+
         <SimpleGrid
-          cols={{
-            base: 1,
-            md: 2
-          }}
+          cols={{ base: 1, md: 2 }}
+          spacing="xl"
         >
-          <Box>
-            <Paper p={'xl'} radius={'md'} bg={colors['white-trans-1']}>
-              <Title order={2} fw={'bold'} c={colors['blue-button']}>
-                Tujuan Program
-              </Title>
-              <List>
-                <ListItem fz={'h4'}>Meningkatkan akses pendidikan yang merata dan berkualitas</ListItem>
-                <ListItem fz={'h4'}>Menumbuhkan semangat belajar sejak dini</ListItem>
-                <ListItem fz={'h4'}>Membentuk karakter anak yang berakhlak dan berwawasan lingkungan</ListItem>
-                <ListItem fz={'h4'}>Mendukung tumbuh kembang anak melalui pendekatan pendidikan yang holistik</ListItem>
-              </List>
-            </Paper>
-          </Box>
-          <Box>
-            <Paper h={{base: 0, md: 239}} p={'xl'} radius={'md'} bg={colors['white-trans-1']}>
-              <Title order={2} fw={'bold'} c={colors['blue-button']}>
-                Program Unggulan
-              </Title>
-              <List>
-                <ListItem fz={'h4'}>Bimbingan Belajar Gratis: Untuk siswa kurang mampu</ListItem>
-                <ListItem fz={'h4'}>Gerakan Literasi Desa: Meningkatkan minat baca sejak dini</ListItem>
-                <ListItem fz={'h4'}>Pelatihan Digital untuk Anak dan Remaja</ListItem>
-                <ListItem fz={'h4'}>Beasiswa Anak Berprestasi & Kurang Mampu</ListItem>
-              </List>
-            </Paper>
-          </Box> 
+          <Paper
+            p="xl"
+            radius="xl"
+            withBorder
+            bg="white"
+            shadow="md"
+            style={{ transition: 'transform 0.2s ease', cursor: 'default' }}
+          >
+            <Stack gap="sm">
+              <Group gap="sm">
+                <IconTargetArrow size={28} color={colors['blue-button']} />
+                <Title order={2} fw="bold" c={colors['blue-button']}>
+                  Tujuan Program
+                </Title>
+              </Group>
+              <Tooltip label="Detail tujuan program pendidikan anak" position="top-start" withArrow>
+                <Text fz="lg" lh={1.6} c="dark" dangerouslySetInnerHTML={{ __html: stateTujuan.findById.data?.deskripsi }} />
+              </Tooltip>
+            </Stack>
+          </Paper>
+
+          <Paper
+            p="xl"
+            radius="xl"
+            withBorder
+            bg="white"
+            shadow="md"
+            style={{ transition: 'transform 0.2s ease', cursor: 'default' }}
+          >
+            <Stack gap="sm">
+              <Group gap="sm">
+                <IconBook2 size={28} color={colors['blue-button']} />
+                <Title order={2} fw="bold" c={colors['blue-button']}>
+                  Program Unggulan
+                </Title>
+              </Group>
+              <Tooltip label="Detail program unggulan yang sedang berjalan" position="top-start" withArrow>
+                <Text fz="lg" lh={1.6} c="dark" dangerouslySetInnerHTML={{ __html: stateUnggulan.findById.data?.deskripsi }} />
+              </Tooltip>
+            </Stack>
+          </Paper>
         </SimpleGrid>
       </Box>
     </Stack>

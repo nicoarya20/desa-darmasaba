@@ -2,9 +2,9 @@
 import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
 import profileLandingPageState from '@/app/admin/(dashboard)/_state/landing-page/profile';
 import colors from '@/con/colors';
-import { Box, Button, Flex, Image, Paper, Skeleton, Stack, Text } from '@mantine/core';
+import { Box, Button, Group, Image, Paper, Skeleton, Stack, Text, Tooltip } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { IconArrowBack, IconEdit, IconX } from '@tabler/icons-react';
+import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
@@ -31,91 +31,116 @@ function DetailProgramInovasi() {
 
   if (!stateProgramInovasi.findUnique.data) {
     return (
-      <Stack py={10}>
-        <Skeleton h={500} />
+      <Stack py={12}>
+        <Skeleton height={520} radius="md" />
       </Stack>
     )
   }
 
+  const data = stateProgramInovasi.findUnique.data
+
   return (
-    <Box>
-      <Box mb={10}>
-        <Button variant="subtle" onClick={() => router.back()}>
-          <IconArrowBack color={colors['blue-button']} size={25} />
-        </Button>
-      </Box>
-      <Paper w={{ base: "100%", md: "50%" }} bg={colors['white-1']} p={'md'}>
-        <Stack>
-          <Text fz={"xl"} fw={"bold"}>Detail Program Inovasi</Text>
-          <Paper bg={colors['BG-trans']} p={'md'}>
-            <Stack gap={"xs"}>
+    <Box px={{ base: 'md', md: 'xl' }} py="lg">
+      <Button variant="subtle" onClick={() => router.back()} leftSection={<IconArrowBack size={22} color={colors['blue-button']} />}>
+        Kembali
+      </Button>
+
+      <Paper
+        w={{ base: "100%", md: "60%" }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+      >
+        <Stack gap="md">
+          <Text fz="2xl" fw="bold" c={colors['blue-button']}>
+            Detail Program Inovasi
+          </Text>
+
+          <Paper bg="#ECEEF8" p="md" radius="md" shadow="xs">
+            <Stack gap="sm">
               <Box>
-                <Text fz={"lg"} fw={"bold"}>Nama Program Inovasi</Text>
-                <Text fz={"lg"}>{stateProgramInovasi.findUnique.data?.name}</Text>
+                <Text fz="lg" fw="bold">Nama Program Inovasi</Text>
+                <Text fz="md" c="dimmed">{data.name || '-'}</Text>
               </Box>
+
               <Box>
-                <Text fz={"lg"} fw={"bold"}>Deskripsi</Text>
-                <Text
-                  fz={"lg"}
-                  
-                >{stateProgramInovasi.findUnique.data?.description}</Text>
+                <Text fz="lg" fw="bold">Deskripsi</Text>
+                <Text fz="md" c="dimmed" style={{ whiteSpace: 'pre-wrap' }}>{data.description || '-'}</Text>
               </Box>
+
               <Box>
-                <Text fz={"lg"} fw={"bold"}>Link</Text>
-                <a
-                  href={stateProgramInovasi.findUnique.data?.link || "#"}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{ 
-                    wordWrap: 'break-word',
-                    whiteSpace: 'pre-wrap',
-                    overflowWrap: 'break-word',
-                    width: '100%'
-                  }}
-                >
-                  {stateProgramInovasi.findUnique.data?.link || "Tidak ada link"}
-                </a>
-              </Box>
-              <Box>
-                <Text fz={"lg"} fw={"bold"}>Gambar</Text>
-                <Image src={stateProgramInovasi.findUnique.data?.image?.link} alt="gambar" />
-              </Box>
-              <Box>
-                <Flex gap={"xs"}>
-                  <Button
-                    onClick={() => {
-                      if (stateProgramInovasi.findUnique.data) {
-                        setSelectedId(stateProgramInovasi.findUnique.data.id);
-                        setModalHapus(true);
-                      }
+                <Text fz="lg" fw="bold">Link</Text>
+                {data.link ? (
+                  <a
+                    href={data.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      color: colors['blue-button'],
+                      textDecoration: 'underline',
+                      wordBreak: 'break-word',
                     }}
-                    disabled={!stateProgramInovasi.findUnique.data}
-                    color="red">
-                    <IconX size={20} />
+                  >
+                    {data.link}
+                  </a>
+                ) : (
+                  <Text fz="md" c="dimmed">-</Text>
+                )}
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">Gambar</Text>
+                {data.image?.link ? (
+                  <Image 
+                    src={data.image.link} 
+                    alt="Gambar Program" 
+                    radius="md"
+                    style={{ maxWidth: '100%', maxHeight: 300, objectFit: 'contain' }}
+                  />
+                ) : (
+                  <Text fz="md" c="dimmed">-</Text>
+                )}
+              </Box>
+
+              <Group gap="sm">
+                <Tooltip label="Hapus Program Inovasi" withArrow position="top">
+                  <Button
+                    color="red"
+                    onClick={() => {
+                      setSelectedId(data.id);
+                      setModalHapus(true);
+                    }}
+                    variant="light"
+                    radius="md"
+                    size="md"
+                  >
+                    <IconTrash size={20} />
                   </Button>
+                </Tooltip>
+
+                <Tooltip label="Edit Program Inovasi" withArrow position="top">
                   <Button
-                    onClick={() => {
-                      if (stateProgramInovasi.findUnique.data) {
-                        router.push(`/admin/landing-page/profile/program-inovasi/${stateProgramInovasi.findUnique.data.id}/edit`);
-                      }
-                    }}
-                    disabled={!stateProgramInovasi.findUnique.data}
-                    color="green">
+                    color="green"
+                    onClick={() => router.push(`/admin/landing-page/profile/program-inovasi/${data.id}/edit`)}
+                    variant="light"
+                    radius="md"
+                    size="md"
+                  >
                     <IconEdit size={20} />
                   </Button>
-                </Flex>
-              </Box>
+                </Tooltip>
+              </Group>
             </Stack>
           </Paper>
         </Stack>
       </Paper>
 
-      {/* Modal Hapus */}
       <ModalKonfirmasiHapus
         opened={modalHapus}
         onClose={() => setModalHapus(false)}
         onConfirm={handleHapus}
-        text="Apakah anda yakin ingin menghapus program inovasi ini?"
+        text="Apakah Anda yakin ingin menghapus program inovasi ini?"
       />
     </Box>
   );

@@ -1,13 +1,12 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Center, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
+import { Box, Button, Center, Group, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title, Tooltip } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { IconDeviceImacCog, IconSearch } from '@tabler/icons-react';
+import { IconDeviceImacCog, IconPlus, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../../_com/header';
-import JudulList from '../../../_com/judulList';
 import korupsiState from '../../../_state/landing-page/desa-anti-korupsi';
 
 function DesaAntiKorupsi() {
@@ -16,7 +15,7 @@ function DesaAntiKorupsi() {
     <Box>
       <HeaderSearch
         title='List Desa Anti Korupsi'
-        placeholder='pencarian'
+        placeholder='Cari nama program atau kategori...'
         searchIcon={<IconSearch size={20} />}
         value={search}
         onChange={(e) => setSearch(e.currentTarget.value)}
@@ -27,8 +26,8 @@ function DesaAntiKorupsi() {
 }
 
 function ListDesaAntiKorupsi({ search }: { search: string }) {
-  const listState = useProxy(korupsiState.desaAntikorupsi)
   const router = useRouter();
+  const listState = useProxy(korupsiState.desaAntikorupsi);
 
   const {
     data,
@@ -42,99 +41,96 @@ function ListDesaAntiKorupsi({ search }: { search: string }) {
     load(page, 10, search);
   }, [page, search]);
 
-  const filteredData = data || []
+  const filteredData = data || [];
 
-  // Handle loading state
   if (loading || !data) {
     return (
       <Stack py={10}>
-        <Skeleton height={550} />
+        <Skeleton height={600} radius="md" />
       </Stack>
     );
   }
 
-  if (data.length === 0) {
-    return (
-      <Box py={10}>
-        <Paper bg={colors['white-1']} p={'md'}>
-          <JudulList
-            title='List Desa Anti Korupsi'
-            href='/admin/landing-page/desa-anti-korupsi/list-desa-anti-korupsi/create'
-          />
-          <Box style={{ overflowX: "auto" }}>
-            <Table striped withTableBorder withRowBorders>
-              <TableThead>
-                <TableTr>
-                  <TableTh>Nama</TableTh>
-                  <TableTh>Deskripsi</TableTh>
-                  <TableTh>Kategori</TableTh>
-                  <TableTh>Detail</TableTh>
-                </TableTr>
-              </TableThead>
-            </Table>
-          </Box>
-        </Paper>
-      </Box>
-    );
-  }
   return (
     <Box py={10}>
-      <Paper bg={colors['white-1']} p={'md'}>
-        <Stack>
-          <JudulList
-            title='List Desa Anti Korupsi'
-            href='/admin/landing-page/desa-anti-korupsi/list-desa-anti-korupsi/create'
-          />
-          <Box style={{ overflowX: 'auto' }}>
-            <Table striped withRowBorders withTableBorder style={{ minWidth: '700px' }}>
-              <TableThead>
-                <TableTr>
-                  <TableTh>Nama Desa Anti Korupsi</TableTh>
-                  <TableTh>Deskripsi Desa Anti Korupsi</TableTh>
-                  <TableTh>Kategori Desa Anti Korupsi</TableTh>
-                  <TableTh>Detail</TableTh>
-                </TableTr>
-              </TableThead>
-              <TableTbody>
-                {filteredData.map((item) => (
+      <Paper bg={colors['white-1']} p={'lg'} shadow="md" radius="md">
+        <Group justify="space-between" mb="md">
+          <Title order={4}>Daftar Program Desa Anti Korupsi</Title>
+          <Tooltip label="Tambah Program Desa Anti Korupsi" withArrow>
+          <Button
+            leftSection={<IconPlus size={18} />}
+            color="blue"
+            variant="light"
+            onClick={() => router.push('/admin/landing-page/desa-anti-korupsi/list-desa-anti-korupsi/create')}
+          >
+            Tambah Baru
+          </Button>
+          </Tooltip>
+        </Group>
+        <Box style={{ overflowX: "auto" }}>
+          <Table highlightOnHover>
+            <TableThead>
+              <TableTr>
+                <TableTh>Nama Program</TableTh>
+                <TableTh>Kategori</TableTh>
+                <TableTh>Aksi</TableTh>
+              </TableTr>
+            </TableThead>
+            <TableTbody>
+              {filteredData.length > 0 ? (
+                filteredData.map((item) => (
                   <TableTr key={item.id}>
                     <TableTd>
-                      <Box w={100}>
-                        <Text truncate="end" fz={"sm"}>{item.name}</Text>
+                      <Box w={350}>
+                        <Text lineClamp={1} fw={500}>{item.name || '-'}</Text>
                       </Box>
                     </TableTd>
                     <TableTd>
-                      <Box w={200}>
-                        <Text truncate="end" fz={"sm"} dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
-                      </Box>
+                      <Text fz="sm" c="dimmed">
+                        {item.kategori?.name || '-'}
+                      </Text>
                     </TableTd>
-                    <TableTd>{item.kategori?.name}</TableTd>
                     <TableTd>
-                      <Button onClick={() => router.push(`/admin/landing-page/desa-anti-korupsi/list-desa-anti-korupsi/${item.id}`)}>
-                        <IconDeviceImacCog size={25} />
+                      <Button
+                        variant="light"
+                        color="blue"
+                        onClick={() => router.push(`/admin/landing-page/desa-anti-korupsi/list-desa-anti-korupsi/${item.id}`)}
+                      >
+                        <IconDeviceImacCog size={20} />
+                        <Text ml={5}>Detail</Text>
                       </Button>
                     </TableTd>
                   </TableTr>
-                ))}
-              </TableTbody>
-            </Table>
-          </Box>
-        </Stack>
+                ))
+              ) : (
+                <TableTr>
+                  <TableTd colSpan={4}>
+                    <Center py={20}>
+                      <Text c="dimmed">Tidak ada data program yang cocok</Text>
+                    </Center>
+                  </TableTd>
+                </TableTr>
+              )}
+            </TableTbody>
+          </Table>
+        </Box>
       </Paper>
       <Center>
         <Pagination
           value={page}
           onChange={(newPage) => {
             load(newPage, 10);
-            window.scrollTo(0, 0);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
           total={totalPages}
           mt="md"
           mb="md"
+          color="blue"
+          radius="md"
         />
       </Center>
     </Box>
-  )
+  );
 }
 
 export default DesaAntiKorupsi;

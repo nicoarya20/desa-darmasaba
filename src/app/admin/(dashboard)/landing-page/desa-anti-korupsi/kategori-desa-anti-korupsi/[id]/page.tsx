@@ -2,14 +2,14 @@
 'use client'
 import korupsiState from '@/app/admin/(dashboard)/_state/landing-page/desa-anti-korupsi';
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
+import { Box, Button, Group, Paper, Stack, TextInput, Title, Tooltip } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
-function EditKategoriDesaAntiKorupsi() {
+export default function EditKategoriDesaAntiKorupsi() {
   const router = useRouter();
   const params = useParams();
   const id = params?.id as string;
@@ -18,16 +18,17 @@ function EditKategoriDesaAntiKorupsi() {
   const [formData, setFormData] = useState({
     name: "",
   });
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    const loadKategorikegiatan = async () => {
+    const loadKategori = async () => {
       if (!id) return;
-
+      setIsLoading(true);
+      
       try {
         const data = await stateKategori.edit.load(id);
 
         if (data) {
-          // pastikan id-nya masuk ke state edit
           stateKategori.edit.id = id;
           setFormData({
             name: data.name || '',
@@ -36,63 +37,88 @@ function EditKategoriDesaAntiKorupsi() {
       } catch (error) {
         console.error("Error loading kategori desa anti korupsi:", error);
         toast.error("Gagal memuat data kategori desa anti korupsi");
+      } finally {
+        setIsLoading(false);
       }
     };
 
-    loadKategorikegiatan();
+    loadKategori();
   }, [id]);
 
   const handleSubmit = async () => {
-    try {
-      if (!formData.name.trim()) {
-        toast.error('Nama kategori desa anti korupsi tidak boleh kosong');
-        return;
-      }
+    if (!formData.name.trim()) {
+      return toast.error('Nama kategori tidak boleh kosong');
+    }
 
+    try {
+      setIsLoading(true);
       stateKategori.edit.form = {
         name: formData.name.trim(),
       };
 
-      // Safety check tambahan: pastikan ID tidak kosong
       if (!stateKategori.edit.id) {
-        stateKategori.edit.id = id; // fallback
+        stateKategori.edit.id = id;
       }
 
-      const success = await stateKategori.edit.update();
-
-      if (success) {
-        router.push("/admin/landing-page/desa-anti-korupsi/kategori-desa-anti-korupsi");
-      }
+      await stateKategori.edit.update();
+      toast.success('Kategori berhasil diperbarui');
+      router.push("/admin/landing-page/desa-anti-korupsi/kategori-desa-anti-korupsi");
     } catch (error) {
       console.error("Error updating kategori desa anti korupsi:", error);
-      // toast akan ditampilkan dari fungsi update
+      toast.error(error instanceof Error ? error.message : 'Gagal memperbarui kategori');
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <Box>
-      <Box mb={10}>
-        <Button onClick={() => router.back()} variant='subtle' color={'blue'}>
-          <IconArrowBack color={colors['blue-button']} size={25} />
-        </Button>
-      </Box>
+    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+      <Group mb="md">
+        <Tooltip label="Kembali ke halaman sebelumnya" color="blue" withArrow>
+          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+            <IconArrowBack color={colors['blue-button']} size={24} />
+          </Button>
+        </Tooltip>
+        <Title order={4} ml="sm" c="dark">
+          Edit Kategori Desa Anti Korupsi
+        </Title>
+      </Group>
 
-      <Paper w={{ base: '100%', md: '50%' }} bg={colors['white-1']} p={'md'}>
-        <Stack gap={"xs"}>
-          <Title order={4}>Edit Kategori Desa Anti Korupsi</Title>
+      <Paper
+        w={{ base: '100%', md: '50%' }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+        style={{ border: '1px solid #e0e0e0' }}
+      >
+        <Stack gap="md">
           <TextInput
+            label="Nama Kategori"
+            placeholder="Masukkan nama kategori"
             value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            label={<Text fw={"bold"} fz={"sm"}>Nama Kategori Desa Anti Korupsi</Text>}
-            placeholder='Masukkan nama kategori desa anti korupsi'
+            required
+            disabled={isLoading}
           />
-          <Group>
-            <Button bg={colors['blue-button']} onClick={handleSubmit}>Submit</Button>
+
+          <Group justify="right" mt="md">
+            <Button
+              onClick={handleSubmit}
+              radius="md"
+              size="md"
+              loading={isLoading}
+              style={{
+                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                color: '#fff',
+                boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
+              }}
+            >
+              Simpan
+            </Button>
           </Group>
         </Stack>
       </Paper>
     </Box>
   );
 }
-
-export default EditKategoriDesaAntiKorupsi;

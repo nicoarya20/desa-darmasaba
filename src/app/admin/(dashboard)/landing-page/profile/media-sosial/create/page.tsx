@@ -1,8 +1,19 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-'use client'
+'use client';
 import colors from '@/con/colors';
 import ApiFetch from '@/lib/api-fetch';
-import { Box, Button, Group, Image, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
+import {
+  Box,
+  Button,
+  Group,
+  Image,
+  Paper,
+  Stack,
+  Text,
+  TextInput,
+  Title,
+  Tooltip,
+} from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
 import { IconArrowBack, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
@@ -11,9 +22,9 @@ import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 import profileLandingPageState from '../../../../_state/landing-page/profile';
 
-function CreateMediaSosial() {
+export default function CreateMediaSosial() {
   const router = useRouter();
-  const stateMediaSosial = useProxy(profileLandingPageState.mediaSosial)
+  const stateMediaSosial = useProxy(profileLandingPageState.mediaSosial);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
 
@@ -23,27 +34,28 @@ function CreateMediaSosial() {
 
   const resetForm = () => {
     stateMediaSosial.create.form = {
-      name: "",
-      imageId: "",
-      iconUrl: "",
+      name: '',
+      imageId: '',
+      iconUrl: '',
     };
     setPreviewImage(null);
     setFile(null);
   };
+
   const handleSubmit = async () => {
     if (!file) {
-      return toast.warn("Pilih file gambar terlebih dahulu");
+      return toast.warn('Silakan pilih file gambar terlebih dahulu');
     }
 
     const res = await ApiFetch.api.fileStorage.create.post({
       file,
       name: file.name,
-    })
+    });
 
     const uploaded = res.data?.data;
 
     if (!uploaded?.id) {
-      return toast.error("Gagal mengupload file");
+      return toast.error('Gagal mengunggah gambar, silakan coba lagi');
     }
 
     stateMediaSosial.create.form.imageId = uploaded.id;
@@ -51,98 +63,108 @@ function CreateMediaSosial() {
     await stateMediaSosial.create.create();
 
     resetForm();
-    router.push("/admin/landing-page/profile/media-sosial")
-  }
+    router.push('/admin/landing-page/profile/media-sosial');
+  };
+
   return (
-    <Box>
-      <Box mb={10}>
-        <Button onClick={() => router.back()} variant='subtle' color={'blue'}>
-          <IconArrowBack color={colors['blue-button']} size={25} />
-        </Button>
-      </Box>
+    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+      <Group mb="md">
+        <Tooltip label="Kembali ke halaman sebelumnya" color="blue" withArrow>
+          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+            <IconArrowBack color={colors['blue-button']} size={24} />
+          </Button>
+        </Tooltip>
+        <Title order={4} ml="sm" c="dark">
+          Tambah Media Sosial
+        </Title>
+      </Group>
 
-      <Paper w={{ base: '100%', md: '50%' }} bg={colors['white-1']} p={'md'}>
-        <Stack gap={"xs"}>
-          <Title order={4}>Create Media Sosial</Title>
+      <Paper
+        w={{ base: '100%', md: '50%' }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+        style={{ border: '1px solid #e0e0e0' }}
+      >
+        <Stack gap="md">
           <Box>
-            <Text fz={"md"} fw={"bold"}>Gambar</Text>
-            <Box>
-              <Dropzone
-                onDrop={(files) => {
-                  const selectedFile = files[0]; // Ambil file pertama
-                  if (selectedFile) {
-                    setFile(selectedFile);
-                    setPreviewImage(URL.createObjectURL(selectedFile)); // Buat preview
-                  }
-                }}
-                onReject={() => toast.error('File tidak valid.')}
-                maxSize={5 * 1024 ** 2} // Maks 5MB
-                accept={{ 'image/*': [] }}
-              >
-                <Group justify="center" gap="xl" mih={220} style={{ pointerEvents: 'none' }}>
-                  <Dropzone.Accept>
-                    <IconUpload size={52} color="var(--mantine-color-blue-6)" stroke={1.5} />
-                  </Dropzone.Accept>
-                  <Dropzone.Reject>
-                    <IconX size={52} color="var(--mantine-color-red-6)" stroke={1.5} />
-                  </Dropzone.Reject>
-                  <Dropzone.Idle>
-                    <IconPhoto size={52} color="var(--mantine-color-dimmed)" stroke={1.5} />
-                  </Dropzone.Idle>
+            <Text fw="bold" fz="sm" mb={6}>
+              Gambar Media Sosial
+            </Text>
+            <Dropzone
+              onDrop={(files) => {
+                const selectedFile = files[0];
+                if (selectedFile) {
+                  setFile(selectedFile);
+                  setPreviewImage(URL.createObjectURL(selectedFile));
+                }
+              }}
+              onReject={() => toast.error('File tidak valid, gunakan format gambar')}
+              maxSize={5 * 1024 ** 2}
+              accept={{ 'image/*': [] }}
+              radius="md"
+              p="xl"
+            >
+              <Group justify="center" gap="xl" mih={180}>
+                <Dropzone.Accept>
+                  <IconUpload size={48} color="var(--mantine-color-blue-6)" stroke={1.5} />
+                </Dropzone.Accept>
+                <Dropzone.Reject>
+                  <IconX size={48} color="var(--mantine-color-red-6)" stroke={1.5} />
+                </Dropzone.Reject>
+                <Dropzone.Idle>
+                  <IconPhoto size={48} color="var(--mantine-color-dimmed)" stroke={1.5} />
+                </Dropzone.Idle>
+              </Group>
+              <Text ta="center" mt="sm" size="sm" color="dimmed">
+                Seret gambar atau klik untuk memilih file (maks 5MB)
+              </Text>
+            </Dropzone>
 
-                  <div>
-                    <Text size="xl" inline>
-                      Drag gambar ke sini atau klik untuk pilih file
-                    </Text>
-                    <Text size="sm" c="dimmed" inline mt={7}>
-                      Maksimal 5MB dan harus format gambar
-                    </Text>
-                  </div>
-                </Group>
-              </Dropzone>
-
-              {/* Tampilkan preview kalau ada */}
-              {previewImage && (
-                <Box mt="sm">
-                  <Image
-                    src={previewImage}
-                    alt="Preview"
-                    style={{
-                      maxWidth: '100%',
-                      maxHeight: '200px',
-                      objectFit: 'contain',
-                      borderRadius: '8px',
-                      border: '1px solid #ddd',
-                    }}
-                  />
-                </Box>
-              )}
-
-            </Box>
+            {previewImage && (
+              <Box mt="sm" style={{ textAlign: 'center' }}>
+                <Image
+                  src={previewImage}
+                  alt="Preview Gambar"
+                  radius="md"
+                  style={{ maxHeight: 200, objectFit: 'contain', border: '1px solid #ddd' }}
+                />
+              </Box>
+            )}
           </Box>
+
           <TextInput
+            label="Nama Media Sosial / Kontak"
+            placeholder="Masukkan nama media sosial atau kontak"
             value={stateMediaSosial.create.form.name || ''}
-            onChange={(val) => {
-              stateMediaSosial.create.form.name = val.target.value;
-            }}
-            label={<Text fw={"bold"} fz={"sm"}>Nama Media Sosial / Nama Kontak</Text>}
-            placeholder='Masukkan nama media sosial / nama kontak'
+            onChange={(e) => (stateMediaSosial.create.form.name = e.target.value)}
+            required
           />
           <TextInput
+            label="Link Media Sosial / Nomor Telepon"
+            placeholder="Masukkan link media sosial atau nomor telepon"
             value={stateMediaSosial.create.form.iconUrl || ''}
-            onChange={(val) => {
-              stateMediaSosial.create.form.iconUrl = val.target.value;
-            }}
-            label={<Text fw={"bold"} fz={"sm"}>Link Media Sosial / No Telephone</Text>}
-            placeholder='Masukkan link media sosial / no telephone'
+            onChange={(e) => (stateMediaSosial.create.form.iconUrl = e.target.value)}
+            required
           />
-          <Group>
-            <Button bg={colors['blue-button']} onClick={handleSubmit}>Submit</Button>
+
+          <Group justify="right">
+            <Button
+              onClick={handleSubmit}
+              radius="md"
+              size="md"
+              style={{
+                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                color: '#fff',
+                boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
+              }}
+            >
+              Simpan
+            </Button>
           </Group>
         </Stack>
       </Paper>
     </Box>
   );
 }
-
-export default CreateMediaSosial;

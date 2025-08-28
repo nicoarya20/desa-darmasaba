@@ -5,7 +5,7 @@ import { IconAt, IconBrandFacebook, IconBrandInstagram, IconBrandTwitter, IconBr
 function Footer() {
   return (
     <Stack bg="linear-gradient(180deg, #1C6EA4, #124170)" c="white">
-      <Box w="100%" p="xl" h={{ base: 1800, md: 1100 }}>
+      <Box w="100%" p="xl">
         <Center>
           <Paper w="100%" bg="transparent" shadow="md" radius="lg" p="xl">
             <Box component="footer">

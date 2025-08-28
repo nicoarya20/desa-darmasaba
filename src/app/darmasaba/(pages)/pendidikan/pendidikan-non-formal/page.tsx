@@ -1,92 +1,107 @@
+'use client'
+import pendidikanNonFormalState from '@/app/admin/(dashboard)/_state/pendidikan/pendidikan-non-formal';
 import colors from '@/con/colors';
-import { Stack, Box, Title, Text, SimpleGrid, Paper, List, ListItem } from '@mantine/core';
-import React from 'react';
+import { Box, Paper, SimpleGrid, Skeleton, Stack, Text, Title, Tooltip } from '@mantine/core';
+import { useShallowEffect } from '@mantine/hooks';
+import { useProxy } from 'valtio/utils';
+import { IconMapPin, IconTarget, IconBook2 } from '@tabler/icons-react';
 import BackButton from '../../desa/layanan/_com/BackButto';
 
 function Page() {
+  const stateTujuanPendidikanNonFormal = useProxy(pendidikanNonFormalState.stateTujuanPendidikanNonFormal);
+  const stateTempatKegiatan = useProxy(pendidikanNonFormalState.stateTempatKegiatan);
+  const stateJenisProgram = useProxy(pendidikanNonFormalState.stateJenisProgram);
+
+  useShallowEffect(() => {
+    stateTujuanPendidikanNonFormal.findById.load('edit');
+    stateTempatKegiatan.findById.load('edit');
+    stateJenisProgram.findById.load('edit');
+  }, []);
+
+  if (!stateTujuanPendidikanNonFormal.findById.data || !stateTempatKegiatan.findById.data || !stateJenisProgram.findById.data)
+    return (
+      <Stack pos="relative" bg={colors.Bg} py="xl" gap="lg" mih="100vh" justify="flex-start">
+        <Box px={{ base: 'md', md: 100 }}>
+          <BackButton />
+        </Box>
+        <Box px={{ base: 'md', md: 100 }} pb={50}>
+          <Skeleton h={50} radius="xl" />
+          <Skeleton h={150} mt="lg" radius="md" />
+          <Skeleton h={150} mt="lg" radius="md" />
+        </Box>
+      </Stack>
+    );
+
   return (
-    <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"22"}>
+    <Stack pos="relative" bg={colors.Bg} py="xl" gap="lg" mih="100vh">
       <Box px={{ base: 'md', md: 100 }}>
         <BackButton />
       </Box>
       <Box px={{ base: 'md', md: 100 }} pb={50}>
         <Box>
-          <Title ta={'center'} order={1} fw={'bold'} c={colors['blue-button']}>
+          <Title ta="center" order={1} fw="bold" c={colors['blue-button']} mb="sm">
             Pendidikan Non Formal
           </Title>
-          <Text pb={20} ta={'justify'} fz={'xl'} px={{ base: 'md', md: 100 }}>
-            Pendidikan Non Formal adalah bentuk pendidikan di luar sekolah yang diselenggarakan secara terstruktur dan bertujuan memberikan keterampilan, pengetahuan, serta pengembangan karakter masyarakat dari berbagai usia dan latar belakang.
+          <Text ta="center" fz="lg" lh={1.6} c="black" maw={800} mx="auto">
+            Bentuk pendidikan di luar sekolah yang terstruktur, bertujuan memberikan keterampilan, pengetahuan, dan pengembangan karakter masyarakat dari berbagai usia serta latar belakang.
           </Text>
         </Box>
         <SimpleGrid
-          cols={{
-            base: 1,
-            md: 2
-          }}
+          cols={{ base: 1, md: 2 }}
+          spacing="lg"
+          mt={40}
         >
-          <Box>
-            <Paper p={'xl'} radius={'md'} bg={colors['white-trans-1']}>
-              <Title order={2} fw={'bold'} c={colors['blue-button']}>
-                Tujuan Program
-              </Title>
-              <List>
-                <ListItem fz={'h4'}>Memberikan kesempatan belajar yang fleksibel bagi warga desa</ListItem>
-                <ListItem fz={'h4'}>Meningkatkan keterampilan hidup dan kemandirian ekonomi</ListItem>
-                <ListItem fz={'h4'}>Mendorong partisipasi masyarakat dalam pembangunan desa</ListItem>
-                <ListItem fz={'h4'}>Mengurangi angka putus sekolah dan meningkatkan kualitas SDM</ListItem>
-              </List>
-            </Paper>
-          </Box>
-          <Box>
-            <Paper h={{ base: 0, md: 210 }} p={'xl'} radius={'md'} bg={colors['white-trans-1']}>
-              <Title order={2} fw={'bold'} c={colors['blue-button']}>
-                Tempat Kegiatan
-              </Title>
-              <List>
-                <ListItem fz={'h4'}>Balai Desa Darmasaba</ListItem>
-                <ListItem fz={'h4'}>TPK, Perpustakaan Desa, atau Posyandu</ListItem>
-                <ListItem fz={'h4'}>Bisa juga dilakukan secara mobile atau door to door</ListItem>
-              </List>
-            </Paper>
-          </Box>
-        </SimpleGrid>
-        <Box py={20}>
-          <Paper p={'xl'} radius={'md'} bg={colors['white-trans-1']}>
-            <Title order={2} fw={'bold'} c={colors['blue-button']}>
-              Jenis Program yang Diselenggarakan
-            </Title>
-            <Text fz={'h4'}>Program Pendidikan Non Formal yang diselenggarakan di Desa Darmasaba meliputi:</Text>
+          <Paper
+            p="xl"
+            radius="lg"
+            bg={colors['white-trans-1']}
+            shadow="md"
+            withBorder
+          >
             <Stack>
-              <Box>
-                <Text fz={'h4'}> 1) Keaksaraan Fungsional</Text>
-                <List>
-                  <ListItem fz={'h4'}>Untuk warga yang belum bisa membaca dan menulis</ListItem>
-                </List>
-              </Box>
-              <Box>
-                <Text fz={'h4'}> 2) Pendidikan Kesetaraan (Paket A, B, C)</Text>
-                <List>
-                  <ListItem fz={'h4'}>Setara SD, SMP, dan SMA bagi yang tidak menyelesaikan pendidikan formal</ListItem>
-                </List>
-              </Box>
-              <Box>
-                <Text fz={'h4'}> 3) Pelatihan Keterampilan</Text>
-                <List>
-                  <ListItem fz={'h4'}>Menjahit, memasak, sablon, pertanian, peternakan, hingga teknologi digital</ListItem>
-                </List>
-              </Box>
-              <Box>
-                <Text fz={'h4'}> 4) Kursus & Pelatihan Soft Skill</Text>
-                <List>
-                  <ListItem fz={'h4'}>Public speaking, pengelolaan keuangan, kepemimpinan pemuda</ListItem>
-                </List>
-              </Box>
-              <Box>
-                <Text fz={'h4'}> 5) Pendidikan Keluarga & Parenting</Text>
-                <List>
-                  <ListItem fz={'h4'}>Untuk membekali orang tua dalam mendampingi tumbuh kembang anak</ListItem>
-                </List>
-              </Box>
+              <Tooltip label="Fokus utama program" withArrow>
+                <Title order={2} fw="bold" c={colors['blue-button']} mb="xs" flex="center">
+                  <IconTarget size={28} style={{ marginRight: 8 }} />
+                  Tujuan Program
+                </Title>
+              </Tooltip>
+              <Text fz="md" lh={1.7} c="dark" dangerouslySetInnerHTML={{ __html: stateTujuanPendidikanNonFormal.findById.data?.deskripsi }} />
+            </Stack>
+          </Paper>
+          <Paper
+            p="xl"
+            radius="lg"
+            bg={colors['white-trans-1']}
+            shadow="md"
+            withBorder
+          >
+            <Stack>
+              <Tooltip label="Lokasi pelaksanaan kegiatan" withArrow>
+                <Title order={2} fw="bold" c={colors['blue-button']} mb="xs" flex="center">
+                  <IconMapPin size={28} style={{ marginRight: 8 }} />
+                  Tempat Kegiatan
+                </Title>
+              </Tooltip>
+              <Text fz="md" lh={1.7} c="dark" dangerouslySetInnerHTML={{ __html: stateTempatKegiatan.findById.data?.deskripsi }} />
+            </Stack>
+          </Paper>
+        </SimpleGrid>
+        <Box py={40}>
+          <Paper
+            p="xl"
+            radius="lg"
+            bg={colors['white-trans-1']}
+            shadow="md"
+            withBorder
+          >
+            <Stack>
+              <Tooltip label="Ragam jenis program yang tersedia" withArrow>
+                <Title order={2} fw="bold" c={colors['blue-button']} mb="xs" flex="center">
+                  <IconBook2 size={28} style={{ marginRight: 8 }} />
+                  Jenis Program yang Diselenggarakan
+                </Title>
+              </Tooltip>
+              <Text fz="md" lh={1.7} c="dark" dangerouslySetInnerHTML={{ __html: stateJenisProgram.findById.data?.deskripsi }} />
             </Stack>
           </Paper>
         </Box>

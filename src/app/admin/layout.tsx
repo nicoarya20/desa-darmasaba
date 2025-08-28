@@ -7,18 +7,23 @@ import {
   AppShellHeader,
   AppShellMain,
   AppShellNavbar,
-  Box,
   Burger,
   Flex,
   Group,
   Image,
   NavLink,
   ScrollArea,
-  Text
+  Text,
+  Tooltip,
+  rem
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconChevronLeft, IconChevronRight, IconDoorExit } from "@tabler/icons-react";
-import _ from 'lodash';
+import {
+  IconChevronLeft,
+  IconChevronRight,
+  IconDoorExit,
+} from "@tabler/icons-react";
+import _ from "lodash";
 import Link from "next/link";
 import { useRouter, useSelectedLayoutSegments } from "next/navigation";
 import { navBar } from "./_com/list_PageAdmin";
@@ -26,69 +31,97 @@ import { navBar } from "./_com/list_PageAdmin";
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [opened, { toggle }] = useDisclosure();
   const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true);
-  const router = useRouter()
-  // Normalisasi semua segmen jadi lowercase
-  const segments = useSelectedLayoutSegments().map(s => _.lowerCase(s));
+  const router = useRouter();
+  const segments = useSelectedLayoutSegments().map((s) => _.lowerCase(s));
 
   return (
     <AppShell
       suppressHydrationWarning
-      header={{ height: 60 }}
+      header={{ height: 64 }}
       navbar={{
         width: 300,
-        breakpoint: 'sm',
+        breakpoint: "sm",
         collapsed: {
           mobile: !opened,
           desktop: !desktopOpened,
         },
       }}
-      padding={'md'}
+      padding="md"
     >
-      <AppShellHeader bg={colors["white-1"]}>
-        <Group px={10} align="center">
-          <Flex align="center" gap={'xs'}>
+      <AppShellHeader
+        style={{
+          background: "linear-gradient(90deg, #ffffff, #f9fbff)",
+          borderBottom: `1px solid ${colors["blue-button"]}20`,
+        }}
+      >
+        <Group px="md" h="100%" justify="space-between">
+          <Flex align="center" gap="sm">
             <Image
-              py={5}
-              src={'/assets/images/darmasaba-icon.png'}
-              alt=""
-              width={50}
-              height={50}
+              src="/assets/images/darmasaba-icon.png"
+              alt="Logo Darmasaba"
+              width={46}
+              height={46}
+              radius="md"
             />
-            <Text fw={'bold'} c={colors["blue-button"]} fz={'lg'}>
-              Dashboard Admin
+            <Text
+              fw={700}
+              c={colors["blue-button"]}
+              fz="lg"
+              style={{ letterSpacing: rem(0.3) }}
+            >
+              Admin Darmasaba
             </Text>
           </Flex>
-          {!desktopOpened && (
-            <ActionIcon variant="light" onClick={toggleDesktop}>
-              <IconChevronRight />
-            </ActionIcon>
-          )}
-          <Burger
-            opened={opened}
-            onClick={toggle}
-            hiddenFrom="sm"
-            size={'sm'}
-          />
-          <Box>
-            <ActionIcon onClick={() => {
-              router.push("/darmasaba")
-            }} color={colors["blue-button"]} radius={'xl'}>
-              <IconDoorExit size={24} />
-            </ActionIcon>
-          </Box>
-          <ActionIcon
-            w={50}
-            h={50}
-            variant="transparent"
-            component={Link}
-            href="/admin"
-          >
-          </ActionIcon>
+
+          <Group gap="xs">
+            {!desktopOpened && (
+              <Tooltip label="Buka Navigasi" position="bottom" withArrow>
+                <ActionIcon
+                  variant="light"
+                  radius="xl"
+                  size="lg"
+                  onClick={toggleDesktop}
+                  color={colors["blue-button"]}
+                >
+                  <IconChevronRight />
+                </ActionIcon>
+              </Tooltip>
+            )}
+
+            <Burger
+              opened={opened}
+              onClick={toggle}
+              hiddenFrom="sm"
+              size="sm"
+              color={colors["blue-button"]}
+            />
+
+            <Tooltip label="Kembali ke Website Desa" position="bottom" withArrow>
+              <ActionIcon
+                onClick={() => {
+                  router.push("/darmasaba");
+                }}
+                color={colors["blue-button"]}
+                radius="xl"
+                size="lg"
+                variant="gradient"
+                gradient={{ from: colors["blue-button"], to: "#228be6" }}
+              >
+                <IconDoorExit size={22} />
+              </ActionIcon>
+            </Tooltip>
+          </Group>
         </Group>
       </AppShellHeader>
 
-      <AppShellNavbar c={colors["blue-button"]} component={ScrollArea}>
-        <AppShell.Section>
+      <AppShellNavbar
+        component={ScrollArea}
+        style={{
+          background: "#ffffff",
+          borderRight: `1px solid ${colors["blue-button"]}20`,
+        }}
+      >
+        <AppShell.Section p="sm">
           {navBar.map((v, k) => {
             const isParentActive = segments.includes(_.lowerCase(v.name));
 
@@ -96,26 +129,42 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               <NavLink
                 key={k}
                 defaultOpened={isParentActive}
-                c={isParentActive ? colors["blue-button"] : "grey"}
+                c={isParentActive ? colors["blue-button"] : "gray"}
                 label={
-                  <Text style={{ fontWeight: isParentActive ? "bold" : "normal" }}>
+                  <Text fw={isParentActive ? 600 : 400} fz="sm">
                     {v.name}
                   </Text>
                 }
+                style={{
+                  borderRadius: rem(10),
+                  marginBottom: rem(4),
+                  transition: "background 150ms ease",
+                }}
+                variant="light"
+                active={isParentActive}
               >
                 {v.children.map((child, key) => {
-                  const isChildActive = segments.includes(_.lowerCase(child.name));
+                  const isChildActive = segments.includes(
+                    _.lowerCase(child.name)
+                  );
 
                   return (
                     <NavLink
                       key={key}
                       href={child.path}
-                      c={isChildActive ? colors["blue-button"] : "grey"}
+                      c={isChildActive ? colors["blue-button"] : "gray"}
                       label={
-                        <Text style={{ fontWeight: isChildActive ? "bold" : "normal" }}>
+                        <Text fw={isChildActive ? 600 : 400} fz="sm">
                           {child.name}
                         </Text>
                       }
+                      style={{
+                        borderRadius: rem(8),
+                        marginBottom: rem(2),
+                        transition: "background 150ms ease",
+                      }}
+                      active={isChildActive}
+                      component={Link}
                     />
                   );
                 })}
@@ -124,16 +173,35 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           })}
         </AppShell.Section>
 
-        <AppShell.Section py={20}>
-          <Group justify="end">
-            <ActionIcon variant="light" onClick={toggleDesktop}>
-              <IconChevronLeft />
-            </ActionIcon>
+        <AppShell.Section py="md">
+          <Group justify="end" pr="sm">
+            <Tooltip
+              label={desktopOpened ? "Tutup Navigasi" : "Buka Navigasi"}
+              position="top"
+              withArrow
+            >
+              <ActionIcon
+                variant="light"
+                radius="xl"
+                size="lg"
+                onClick={toggleDesktop}
+                color={colors["blue-button"]}
+              >
+                <IconChevronLeft />
+              </ActionIcon>
+            </Tooltip>
           </Group>
         </AppShell.Section>
       </AppShellNavbar>
 
-      <AppShellMain bg={colors.Bg}>{children}</AppShellMain>
+      <AppShellMain
+        style={{
+          background: "linear-gradient(180deg, #fdfdfd, #f6f9fc)",
+          minHeight: "100vh",
+        }}
+      >
+        {children}
+      </AppShellMain>
     </AppShell>
   );
 }
