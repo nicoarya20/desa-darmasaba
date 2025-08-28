@@ -1,48 +1,53 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import stateDashboardBerita from '@/app/admin/(dashboard)/_state/desa/berita';
-import { Badge, Box, Button, Card, Center, Container, Divider, Flex, Grid, GridCol, Group, Image, Pagination, Paper, SimpleGrid, Skeleton, Stack, Text, Title } from '@mantine/core';
+import {
+  Badge, Box, Button, Card, Center, Container, Divider,
+  Flex, Grid, GridCol, Group, Image, Pagination,
+  Paper, SimpleGrid, Skeleton, Stack, Text, Title
+} from '@mantine/core';
 import { IconArrowRight, IconCalendar } from '@tabler/icons-react';
 import { useTransitionRouter } from 'next-view-transitions';
 import { useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useProxy } from 'valtio/utils';
 
 function Semua() {
   const searchParams = useSearchParams();
   const router = useTransitionRouter();
 
-  // Parameter URL
+  // Ambil parameter langsung dari URL
   const search = searchParams.get('search') || '';
-  const currentPage = parseInt(searchParams.get('page') || '1');
-  const [page, setPage] = useState(currentPage);
+  const page = parseInt(searchParams.get('page') || '1');
 
-  // Gunakan proxy untuk state
+  // Gunakan proxy untuk state global
   const state = useProxy(stateDashboardBerita.berita);
-  const featured = useProxy(stateDashboardBerita.berita.findFirst); // ✅ Berita utama
+  const featured = useProxy(stateDashboardBerita.berita.findFirst);
   const loadingGrid = state.findMany.loading;
   const loadingFeatured = featured.loading;
 
-  // Load berita utama (hanya sekali)
+  // Load berita utama sekali saja
   useEffect(() => {
     if (!featured.data && !loadingFeatured) {
       stateDashboardBerita.berita.findFirst.load();
     }
   }, [featured.data, loadingFeatured]);
 
-  // Load berita terbaru (untuk grid) saat page/search berubah
+  // Load berita terbaru tiap page / search berubah
   useEffect(() => {
-    const limit = 3; // Sesuaikan dengan tampilan grid
+    const limit = 3;
     state.findMany.load(page, limit, search);
   }, [page, search]);
 
-  // Update URL saat page berubah
-  useEffect(() => {
-    const url = new URLSearchParams();
+  // Handler pagination → langsung update URL
+  const handlePageChange = (newPage: number) => {
+    const url = new URLSearchParams(searchParams.toString());
     if (search) url.set('search', search);
-    if (page > 1) url.set('page', page.toString());
+    if (newPage > 1) url.set('page', newPage.toString());
+    else url.delete('page'); // biar page=1 ga muncul di URL
+
     router.replace(`?${url.toString()}`);
-  }, [search, page, router]);
+  };
 
   const featuredData = featured.data;
   const paginatedNews = state.findMany.data || [];
@@ -51,7 +56,7 @@ function Semua() {
   return (
     <Box py={20}>
       <Container size="xl" px={{ base: "md", md: "xl" }}>
-        {/* === Berita Utama (Tetap) === */}
+        {/* === Berita Utama === */}
         {loadingFeatured ? (
           <Center><Skeleton h={400} /></Center>
         ) : featuredData ? (
@@ -94,7 +99,9 @@ function Semua() {
                       <Button
                         variant="light"
                         rightSection={<IconArrowRight size={16} />}
-                        onClick={() => router.push(`/darmasaba/desa/berita/${featuredData.kategoriBerita?.name}/${featuredData.id}`)}
+                        onClick={() =>
+                          router.push(`/darmasaba/desa/berita/${featuredData.kategoriBerita?.name}/${featuredData.id}`)
+                        }
                       >
                         Baca Selengkapnya
                       </Button>
@@ -106,7 +113,7 @@ function Semua() {
           </Box>
         ) : null}
 
-        {/* === Berita Terbaru (Berubah Saat Pagination) === */}
+        {/* === Berita Terbaru === */}
         <Box mt={50}>
           <Title order={2} mb="md">Berita Terbaru</Title>
           <Divider mb="xl" />
@@ -122,13 +129,7 @@ function Semua() {
           ) : (
             <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="xl" verticalSpacing="xl">
               {paginatedNews.map((item) => (
-                <Card
-                  key={item.id}
-                  shadow="sm"
-                  p="lg"
-                  radius="md"
-                  withBorder
-                >
+                <Card key={item.id} shadow="sm" p="lg" radius="md" withBorder>
                   <Card.Section>
                     <Image
                       src={item.image?.link || '/images/placeholder-small.jpg'}
@@ -143,7 +144,6 @@ function Semua() {
                   </Badge>
 
                   <Text fw={600} size="lg" mt="sm" lineClamp={2}>{item.judul}</Text>
-
                   <Text size="sm" color="dimmed" lineClamp={3} mt="xs">{item.deskripsi}</Text>
 
                   <Flex align="center" justify="apart" mt="md" gap="xs">
@@ -154,20 +154,28 @@ function Semua() {
                         year: 'numeric'
                       })}
                     </Text>
-                    
-                    <Button p="xs" variant="light" rightSection={<IconArrowRight size={16} />} onClick={() => router.push(`/darmasaba/desa/berita/${item.kategoriBerita?.name}/${item.id}`)}>Baca Selengkapnya</Button>
+                    <Button
+                      p="xs"
+                      variant="light"
+                      rightSection={<IconArrowRight size={16} />}
+                      onClick={() =>
+                        router.push(`/darmasaba/desa/berita/${item.kategoriBerita?.name}/${item.id}`)
+                      }
+                    >
+                      Baca Selengkapnya
+                    </Button>
                   </Flex>
                 </Card>
               ))}
             </SimpleGrid>
           )}
 
-          {/* Pagination hanya untuk berita terbaru */}
+          {/* Pagination */}
           <Center mt="xl">
             <Pagination
               total={totalPages}
               value={page}
-              onChange={setPage}
+              onChange={handlePageChange}
               siblings={1}
               boundaries={1}
               withEdges

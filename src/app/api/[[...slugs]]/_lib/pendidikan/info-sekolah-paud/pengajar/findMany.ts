@@ -1,40 +1,81 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// /api/berita/findManyPaginated.ts
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
 
 async function pengajarFindMany(context: Context) {
-  const page = Number(context.query.page) || 1;
-  const limit = Number(context.query.limit) || 10;
-  const skip = (page - 1) * limit;
-  const search = (context.query.search as string) || "";
-
-  // Buat where clause
-  const where: any = { isActive: true };
-
-  // Tambahkan pencarian (jika ada)
-  if (search) {
-    where.OR = [
-      { nama: { contains: search, mode: "insensitive" } },
-      { lembaga: { contains: search, mode: "insensitive" } },
-    ];
-  }
-
   try {
+    const page = Number(context.query.page) || 1;
+    const limit = Number(context.query.limit) || 10;
+    const skip = (page - 1) * limit;
+    const search = (context.query.search as string) || "";
+    const jenjangPendidikanName = (context.query.jenjangPendidikanId as string) || "";
+
+    console.log('Pengajar API Query Params:', { page, limit, search, jenjangPendidikanId: jenjangPendidikanName });
+
+    const where: any = { isActive: true };
+
+    // Filter berdasarkan jenjang pendidikan (jika ada)
+    if (jenjangPendidikanName) {
+      // Cari jenjang pendidikan berdasarkan nama
+      const jenjangPendidikan = await prisma.jenjangPendidikan.findFirst({
+        where: {
+          nama: {
+            equals: jenjangPendidikanName,
+            mode: 'insensitive'
+          },
+          isActive: true
+        },
+        orderBy: { nama: 'desc' },
+      });
+
+      if (jenjangPendidikan) {
+        where.lembaga = {
+          ...where.lembaga,
+          jenjangId: jenjangPendidikan.id
+        };
+      } else {
+        // Jika tidak ditemukan, return data kosong
+        return {
+          success: true,
+          message: "Jenjang pendidikan tidak ditemukan",
+          data: [],
+          page,
+          limit,
+          totalPages: 0,
+          total: 0,
+        };
+      }
+    }
+
+    // Add search condition if search term exists
+    if (search) {
+      where.OR = [
+        { nama: { contains: search, mode: 'insensitive' } },
+        { lembaga: { nama: { contains: search, mode: 'insensitive' } } }
+      ];
+    }
+
     const [data, total] = await Promise.all([
       prisma.pengajar.findMany({
         where,
         include: {
-          lembaga: true,
+          lembaga: {
+            include: {
+              jenjangPendidikan: true
+            }
+          }
         },
         skip,
         take: limit,
-        orderBy: { createdAt: 'desc' }, // opsional, kalau mau urut berdasarkan waktu
+        orderBy: { lembaga: { jenjangPendidikan: { nama: 'asc' } } }, 
       }),
       prisma.pengajar.count({
         where,
       })
     ]);
+
+    console.log('Fetched pengajar data count:', data.length);
+    console.log('Total pengajar count:', total);
 
     return {
       success: true,
@@ -45,13 +86,12 @@ async function pengajarFindMany(context: Context) {
       totalPages: Math.ceil(total / limit),
       total,
     };
-  } catch (e) {
-    console.error("Find many paginated error:", e);
+  } catch (error) {
+    console.error("Error in pengajarFindMany:", error);
     return {
       success: false,
-      message: "Failed fetch pengajar with pagination",
+      message: `Failed fetch pengajar: ${error instanceof Error ? error.message : 'Unknown error'}`,
     };
   }
 }
-
 export default pengajarFindMany;

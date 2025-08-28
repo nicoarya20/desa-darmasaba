@@ -307,7 +307,7 @@ const navbarListMenu = [
             {
                 id: "8.1",
                 name: "Info Sekolah & PAUD",
-                href: "/darmasaba/pendidikan/info-sekolah-paud"
+                href: "/darmasaba/pendidikan/info-sekolah-paud/semua"
             },
             {
                 id: "8.2",

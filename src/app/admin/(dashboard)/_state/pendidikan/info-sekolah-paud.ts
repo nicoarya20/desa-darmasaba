@@ -343,33 +343,40 @@ const lembagaPendidikan = proxy({
     total: 0,
     loading: false,
     search: "",
-    load: async (page = 1, limit = 10, search = "") => {
-      // Change to arrow function
-      lembagaPendidikan.findMany.loading = true; // Use the full path to access the property
+    load: async (page = 1, limit = 10, search = "", jenjangPendidikan = "") => {
+      lembagaPendidikan.findMany.loading = true;
       lembagaPendidikan.findMany.page = page;
       lembagaPendidikan.findMany.search = search;
+      
       try {
-        const query: any = { page, limit };
-        if (search) query.search = search;
-        const res =
-          await ApiFetch.api.pendidikan.infosekolahpaud.lembagapendidikan[
-            "find-many"
-          ].get({
-            query,
-          });
+        const query: any = { 
+          page, 
+          limit, 
+          ...(search && { search }),
+          ...(jenjangPendidikan && { jenjangPendidikanId: jenjangPendidikan })
+        };
+        
+        console.log('Fetching lembaga with query:', query);
+        
+        const res = await ApiFetch.api.pendidikan.infosekolahpaud.lembagapendidikan["find-many"].get({ query });
+        
+        console.log('API Response:', res);
 
         if (res.status === 200 && res.data?.success) {
-          lembagaPendidikan.findMany.data = res.data.data || [];
-          lembagaPendidikan.findMany.total = res.data.total || 0;
-          lembagaPendidikan.findMany.totalPages = res.data.totalPages || 1;
+          lembagaPendidikan.findMany.data = Array.isArray(res.data.data) ? res.data.data : [];
+          lembagaPendidikan.findMany.total = typeof res.data.total === 'number' ? res.data.total : 0;
+          lembagaPendidikan.findMany.totalPages = typeof res.data.totalPages === 'number' ? res.data.totalPages : 1;
+          console.log('Successfully loaded lembaga data:', {
+            count: lembagaPendidikan.findMany.data.length,
+            total: lembagaPendidikan.findMany.total,
+            totalPages: lembagaPendidikan.findMany.totalPages
+          });
         } else {
           console.error(
             "Failed to load lembaga pendidikan:",
-            res.data?.message
+            res.data?.message || 'No error message provided'
           );
-          lembagaPendidikan.findMany.data = [];
-          lembagaPendidikan.findMany.total = 0;
-          lembagaPendidikan.findMany.totalPages = 1;
+          throw new Error(res.data?.message || 'Failed to load lembaga pendidikan');
         }
       } catch (error) {
         console.error("Error loading lembaga pendidikan:", error);
@@ -621,7 +628,11 @@ const siswa = proxy({
     data: null as Array<
       Prisma.SiswaGetPayload<{
         include: {
-          lembaga: true;
+          lembaga: {
+            include: {
+              jenjangPendidikan: true;
+            };
+          };
         };
       }>
     > | null,
@@ -630,14 +641,16 @@ const siswa = proxy({
     total: 0,
     loading: false,
     search: "",
-    load: async (page = 1, limit = 10, search = "") => {
-      // Change to arrow function
-      siswa.findMany.loading = true; // Use the full path to access the property
+    jenjangPendidikan: "",
+    load: async (page = 1, limit = 10, search = "", jenjangPendidikan = "") => {
+      siswa.findMany.loading = true;
       siswa.findMany.page = page;
       siswa.findMany.search = search;
+      siswa.findMany.jenjangPendidikan = jenjangPendidikan;
       try {
         const query: any = { page, limit };
         if (search) query.search = search;
+        if (jenjangPendidikan) query.jenjangPendidikanName = jenjangPendidikan;
         const res = await ApiFetch.api.pendidikan.infosekolahpaud.siswa[
           "find-many"
         ].get({
@@ -894,7 +907,11 @@ const pengajar = proxy({
     data: null as Array<
       Prisma.PengajarGetPayload<{
         include: {
-          lembaga: true;
+          lembaga: {
+            include: {
+              jenjangPendidikan: true
+            }
+          }
         };
       }>
     > | null,
@@ -903,14 +920,17 @@ const pengajar = proxy({
     total: 0,
     loading: false,
     search: "",
-    load: async (page = 1, limit = 10, search = "") => {
+    jenjangPendidikan: "",
+    load: async (page = 1, limit = 10, search = "", jenjangPendidikan = "") => {
       // Change to arrow function
       pengajar.findMany.loading = true; // Use the full path to access the property
       pengajar.findMany.page = page;
       pengajar.findMany.search = search;
+      pengajar.findMany.jenjangPendidikan = jenjangPendidikan;
       try {
         const query: any = { page, limit };
         if (search) query.search = search;
+        if (jenjangPendidikan) query.jenjangPendidikanId = jenjangPendidikan;
         const res = await ApiFetch.api.pendidikan.infosekolahpaud.pengajar[
           "find-many"
         ].get({
