@@ -1,8 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-'use client'
+'use client';
 import pengelolaanSampahState from '@/app/admin/(dashboard)/_state/lingkungan/pengelolaan-sampah';
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
+import { Box, Button, Group, Paper, Stack, Text, TextInput, Title, Tooltip } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import dynamic from 'next/dynamic';
 import { useParams, useRouter } from 'next/navigation';
@@ -64,63 +64,97 @@ function EditKeteranganBankSampahTerdekat() {
 
   const handleSubmit = async () => {
     try {
+      if (!formData.name.trim()) {
+        return toast.error('Nama bank sampah harus diisi');
+      }
+      if (!formData.alamat.trim()) {
+        return toast.error('Alamat harus diisi');
+      }
+      if (!formData.namaTempatMaps.trim()) {
+        return toast.error('Nama tempat di Maps harus diisi');
+      }
+      if (!markerPosition) {
+        return toast.error('Silakan pilih lokasi di peta');
+      }
+
       keteranganState.edit.form = {
         ...keteranganState.edit.form,
         name: formData.name.trim(),
         alamat: formData.alamat.trim(),
         namaTempatMaps: formData.namaTempatMaps.trim(),
-        lat: formData.lat,
-        lng: formData.lng,
-      }
+        lat: markerPosition.lat,
+        lng: markerPosition.lng,
+      };
+      
       await keteranganState.edit.update();
+      toast.success('Data bank sampah berhasil diperbarui');
       keteranganState.findUnique.data = null;
       router.push("/admin/lingkungan/pengelolaan-sampah-bank-sampah/keterangan-bank-sampah-terdekat");
     } catch (error) {
       console.error("Error updating pengelolaan sampah:", error);
-      toast.error("Gagal memuat data pengelolaan sampah");
+      toast.error(error instanceof Error ? error.message : 'Gagal memperbarui data bank sampah');
     }
   }
   return (
-    <Box>
-      <Box mb={10}>
-        <Button onClick={() => router.back()} variant='subtle' color={'blue'}>
-          <IconArrowBack color={colors['blue-button']} size={25} />
-        </Button>
-      </Box>
+    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+      <Group mb="md">
+        <Tooltip label="Kembali ke halaman sebelumnya" color="blue" withArrow>
+          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+            <IconArrowBack color={colors['blue-button']} size={24} />
+          </Button>
+        </Tooltip>
+        <Title order={4} ml="sm" c="dark">
+          Edit Bank Sampah Terdekat
+        </Title>
+      </Group>
 
-      <Paper w={{ base: '100%', md: '50%' }} bg={colors['white-1']} p={'md'}>
-        <Stack gap={"xs"}>
-          <Title order={4}>Edit Keterangan Bank Sampah Terdekat</Title>
+      <Paper
+        w={{ base: '100%', md: '50%' }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+        style={{ border: '1px solid #e0e0e0' }}
+      >
+        <Stack gap="md">
           <TextInput
+            label="Nama Bank Sampah"
+            placeholder="Masukkan nama bank sampah"
             value={formData.name}
-            onChange={(val) => setFormData({ ...formData, name: val.target.value })}
-            label={<Text fw="bold" fz="sm">Nama Bank Sampah Terdekat</Text>}
-            placeholder='Masukkan nama Bank Sampah Terdekat'
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            required
           />
 
           <TextInput
+            label="Alamat"
+            placeholder="Masukkan alamat lengkap"
             value={formData.alamat}
-            onChange={(val) => setFormData({ ...formData, alamat: val.target.value })}
-            label={<Text fw="bold" fz="sm">Alamat</Text>}
-            placeholder='Masukkan alamat Bank Sampah'
+            onChange={(e) => setFormData({ ...formData, alamat: e.target.value })}
+            required
           />
 
           <TextInput
+            label="Nama Tempat di Maps"
+            placeholder="Masukkan nama tempat yang terdaftar di Google Maps"
             value={formData.namaTempatMaps}
-            onChange={(val) => setFormData({ ...formData, namaTempatMaps: val.target.value })}
-            label={<Text fw="bold" fz="sm">Nama Tempat Maps</Text>}
-            placeholder='Masukkan nama tempat maps Bank Sampah'
+            onChange={(e) => setFormData({ ...formData, namaTempatMaps: e.target.value })}
+            required
           />
 
           <Box>
-            <Text fw="bold" fz="sm">Pilih Lokasi di Peta</Text>
-            <Box style={{ height: 300, width: '100%' }}>
+            <Text fw="bold" fz="sm" mb={6}>
+              Pilih Lokasi di Peta
+            </Text>
+            <Text fz="xs" c="dimmed" mb={4}>
+              Klik pada peta untuk menandai lokasi
+            </Text>
+            <Box style={{ height: 300, width: '100%', borderRadius: '8px', overflow: 'hidden' }}>
               <LeafletMapEdit
                 key={markerPosition?.lat ?? 'default'}
                 initialPosition={markerPosition || { lat: -8.65, lng: 115.2 }}
                 onChange={(pos) => {
                   setMarkerPosition(pos);
-                  setFormData((prev) => ({
+                  setFormData(prev => ({
                     ...prev,
                     lat: pos.lat,
                     lng: pos.lng,
@@ -128,9 +162,26 @@ function EditKeteranganBankSampahTerdekat() {
                 }}
               />
             </Box>
+            {markerPosition && (
+              <Text fz="xs" mt={4} c="green">
+                Lokasi dipilih: {markerPosition.lat.toFixed(6)}, {markerPosition.lng.toFixed(6)}
+              </Text>
+            )}
           </Box>
-          <Group>
-            <Button onClick={handleSubmit} bg={colors['blue-button']}>Submit</Button>
+
+          <Group justify="right" mt="md">
+            <Button
+              onClick={handleSubmit}
+              radius="md"
+              size="md"
+              style={{
+                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                color: '#fff',
+                boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
+              }}
+            >
+              Simpan
+            </Button>
           </Group>
         </Stack>
       </Paper>

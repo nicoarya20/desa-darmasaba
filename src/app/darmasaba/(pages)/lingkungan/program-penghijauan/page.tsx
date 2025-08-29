@@ -1,14 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
-import colors from '@/con/colors';
-import { Box, Button, Center, Group, Pagination, Paper, SimpleGrid, Skeleton, Stack, Text, TextInput, Title, Tooltip } from '@mantine/core';
-import { IconSearch, IconLeaf, IconTrophy, IconTent, IconChartLine, IconRecycle, IconTruckFilled, IconScale, IconClipboardTextFilled, IconTrashFilled, IconHomeEco, IconChristmasTreeFilled, IconTrendingUp, IconShieldFilled } from '@tabler/icons-react';
-import BackButton from '../../desa/layanan/_com/BackButto';
 import programPenghijauanState from '@/app/admin/(dashboard)/_state/lingkungan/program-penghijauan';
-import { useProxy } from 'valtio/utils';
+import colors from '@/con/colors';
+import { Box, Center, Group, Pagination, Paper, SimpleGrid, Skeleton, Stack, Text, TextInput, Title, Tooltip } from '@mantine/core';
 import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
-import { useState } from 'react';
-import React from 'react';
+import { IconChartLine, IconChristmasTreeFilled, IconClipboardTextFilled, IconHomeEco, IconLeaf, IconRecycle, IconScale, IconSearch, IconShieldFilled, IconTent, IconTrashFilled, IconTrendingUp, IconTrophy, IconTruckFilled } from '@tabler/icons-react';
+import React, { useState } from 'react';
+import { useProxy } from 'valtio/utils';
+import BackButton from '../../desa/layanan/_com/BackButto';
 
 function Page() {
   const state = useProxy(programPenghijauanState);
@@ -17,7 +16,7 @@ function Page() {
   const { data, load, page, totalPages, loading } = state.findMany;
 
   useShallowEffect(() => {
-    load(page, 10, debouncedSearch);
+    load(page, 4, debouncedSearch);
   }, [page, debouncedSearch]);
 
   const iconMap: Record<string, any> = {
@@ -110,9 +109,6 @@ function Page() {
                 <Text fz="sm" ta="center" c="dimmed">
                   {v.judul}
                 </Text>
-                <Button variant="gradient" gradient={{ from: colors['blue-button'], to: 'cyan' }} size="sm" radius="xl" mt="sm">
-                  Pelajari Lebih Lanjut
-                </Button>
               </Stack>
             </Paper>
           ))}

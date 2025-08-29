@@ -87,9 +87,9 @@ function LayoutTabsGotongRoyong({
       href: "/darmasaba/lingkungan/gotong-royong/kebersihan"
     },
     {
-      label: "Infrasturktur",
-      value: "infrasturktur",
-      href: "/darmasaba/lingkungan/gotong-royong/infrasturktur"
+      label: "Infrastruktur",
+      value: "infrastruktur",
+      href: "/darmasaba/lingkungan/gotong-royong/infrastruktur"
     },
     {
       label: "Sosial",

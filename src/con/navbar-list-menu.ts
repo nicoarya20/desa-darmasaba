@@ -302,12 +302,12 @@ const navbarListMenu = [
     }, {
         id: "8",
         name: "Pendidikan",
-        href: "/darmasaba/pendidikan/info-sekolah-paud",
+        href: "/darmasaba/pendidikan/info-sekolah",
         children: [
             {
                 id: "8.1",
-                name: "Info Sekolah & PAUD",
-                href: "/darmasaba/pendidikan/info-sekolah-paud/semua"
+                name: "Info Sekolah",
+                href: "/darmasaba/pendidikan/info-sekolah/semua"
             },
             {
                 id: "8.2",

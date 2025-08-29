@@ -81,8 +81,9 @@ function Page() {
               <Box key={k} px={28}>
                 <Paper p={20} bg={colors['white-trans-1']}>
                   <Flex gap={20} align={'center'}>
+                    <Text>{k + 1}</Text>
                     <Box style={{ alignContent: 'center', alignItems: 'center' }}>
-                      {k + 1} {iconMap[v.icon] ? React.createElement(iconMap[v.icon]) : null}
+                      {iconMap[v.icon] ? React.createElement(iconMap[v.icon]) : null}
                     </Box>
                     <Text fw={'bold'} fz={{ base: "lg", md: "xl" }} c={'black'}>{v.name}</Text>
                   </Flex>

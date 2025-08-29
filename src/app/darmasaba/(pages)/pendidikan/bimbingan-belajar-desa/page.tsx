@@ -42,7 +42,7 @@ function Page() {
             Program Bimbingan Belajar Desa
           </Title>
           <Divider size="sm" my="md" mx="auto" w="60%" color={colors['blue-button']} />
-          <Text ta="center" fz="lg" c="dimmed" px={{ base: 'sm', md: 120 }}>
+          <Text ta="center" fz="lg" c="black" px={{ base: 'sm', md: 120 }}>
             Program unggulan untuk mendukung siswa Desa Darmasaba memahami pelajaran sekolah, meningkatkan prestasi akademik, dan menumbuhkan semangat belajar sejak dini.
           </Text>
         </Box>

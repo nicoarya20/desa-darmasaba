@@ -343,8 +343,8 @@ export const navBar = [
     children: [
       {
         id: "Pendidikan_1",
-        name: "Info Sekolah & PAUD",
-        path: "/admin/pendidikan/info-sekolah-paud/jenjang-pendidikan"
+        name: "Info Sekolah",
+        path: "/admin/pendidikan/info-sekolah/jenjang-pendidikan"
       },
       {
         id: "Pendidikan_2",

@@ -269,7 +269,7 @@ const keteranganSampah = proxy({
       try {
         keteranganSampah.create.loading = true;
         const res =
-          await ApiFetch.api.lingkungan.pengelolaansampah.keteranganbankterdekat[
+          await ApiFetch.api.lingkungan.keteranganbankterdekat[
             "create"
           ].post(keteranganSampah.create.form);
         if (res.status === 200) {
@@ -291,14 +291,47 @@ const keteranganSampah = proxy({
           omit: { isActive: true };
         }>[]
       | null,
-    async load() {
-      const res = await ApiFetch.api.lingkungan.pengelolaansampah.keteranganbankterdekat[
-        "find-many"
-      ].get();
-      if (res.status === 200) {
-        keteranganSampah.findMany.data = res.data?.data ?? [];
-      }
-    },
+      page: 1,
+      totalPages: 1,
+      total: 0,
+      loading: false,
+      search: "",
+      load: async (page = 1, limit = 10, search = "") => {
+        // Change to arrow function
+        keteranganSampah.findMany.loading = true; // Use the full path to access the property
+        keteranganSampah.findMany.page = page;
+        keteranganSampah.findMany.search = search;
+        try {
+          const query: any = { page, limit };
+          if (search) query.search = search;
+          const res = await ApiFetch.api.lingkungan.keteranganbankterdekat[
+            "find-many"
+          ].get({
+            query,
+          });
+  
+          if (res.status === 200 && res.data?.success) {
+            keteranganSampah.findMany.data = res.data.data || [];
+            keteranganSampah.findMany.total = res.data.total || 0;
+            keteranganSampah.findMany.totalPages = res.data.totalPages || 1;
+          } else {
+            console.error(
+              "Failed to load keterangan bank sampah terdekat:",
+              res.data?.message
+            );
+            keteranganSampah.findMany.data = [];
+            keteranganSampah.findMany.total = 0;
+            keteranganSampah.findMany.totalPages = 1;
+          }
+        } catch (error) {
+          console.error("Error loading keterangan bank sampah terdekat:", error);
+          keteranganSampah.findMany.data = [];
+          keteranganSampah.findMany.total = 0;
+          keteranganSampah.findMany.totalPages = 1;
+        } finally {
+          keteranganSampah.findMany.loading = false;
+        }
+      },
   },
   findUnique: {
       data: null as Prisma.KeteranganBankSampahTerdekatGetPayload<{
@@ -306,7 +339,7 @@ const keteranganSampah = proxy({
       }> | null,
       async load(id: string) {
         try {
-          const res = await fetch(`/api/lingkungan/pengelolaansampah/keteranganbankterdekat/${id}`);
+          const res = await fetch(`/api/lingkungan/keteranganbankterdekat/${id}`);
           if (res.ok) {
             const data = await res.json();
             keteranganSampah.findUnique.data = data.data ?? null;
@@ -328,7 +361,7 @@ const keteranganSampah = proxy({
           try {
             keteranganSampah.delete.loading = true;
     
-            const response = await fetch(`/api/lingkungan/pengelolaansampah/keteranganbankterdekat/del/${id}`, {
+            const response = await fetch(`/api/lingkungan/keteranganbankterdekat/del/${id}`, {
               method: "DELETE",
               headers: {
                 "Content-Type": "application/json",
@@ -363,7 +396,7 @@ const keteranganSampah = proxy({
             }
       
             try {
-              const response = await fetch(`/api/lingkungan/pengelolaansampah/keteranganbankterdekat/${id}`, {
+              const response = await fetch(`/api/lingkungan/keteranganbankterdekat/${id}`, {
                 method: "GET",
                 headers: {
                   "Content-Type": "application/json",
@@ -408,7 +441,7 @@ const keteranganSampah = proxy({
             try {
               keteranganSampah.edit.loading = true;
               const response = await fetch(
-                `/api/lingkungan/pengelolaansampah/keteranganbankterdekat/${this.id}`,
+                `/api/lingkungan/keteranganbankterdekat/${this.id}`,
                 {
                   method: "PUT",
                   headers: {
