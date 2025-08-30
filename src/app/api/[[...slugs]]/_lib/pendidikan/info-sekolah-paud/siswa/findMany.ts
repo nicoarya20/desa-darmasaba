@@ -47,10 +47,10 @@ async function siswaFindMany(context: Context) {
       }
     }
 
-    // Tambahkan pencarian (jika ada)
+    // Add search functionality
     if (search) {
       where.OR = [
-        { nama: { contains: search, mode: "insensitive" } },
+        { nama: { contains: search, mode: 'insensitive' } },
         { lembaga: { nama: { contains: search, mode: 'insensitive' } } }
       ];
     }
@@ -67,7 +67,7 @@ async function siswaFindMany(context: Context) {
         },
         skip,
         take: limit,
-        orderBy: { lembaga: { jenjangPendidikan: { nama: 'asc' } } }, 
+        orderBy: { nama: 'asc' },
       }),
       prisma.siswa.count({
         where,

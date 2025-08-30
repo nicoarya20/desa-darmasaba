@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiFetch from "@/lib/api-fetch";
 import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
@@ -54,23 +55,46 @@ const dataPerpustakaan = proxy({
     },
   },
   findMany: {
-    data: [] as Prisma.DataPerpustakaanGetPayload<{
-      include: {
-        kategori: true;
-        image: true;
-      };
-    }>[],
-    loading: false,
-    async load() {
-      const res =
-        await ApiFetch.api.pendidikan.perpustakaandigital.dataperpustakaan[
-          "findMany"
-        ].get();
-      if (res.status === 200) {
-        dataPerpustakaan.findMany.data = res.data?.data ?? [];
-      }
+      data: null as
+        | Prisma.DataPerpustakaanGetPayload<{
+            include: {
+              image: true;
+              kategori: true;
+            };
+          }>[]
+        | null,
+      page: 1,
+      totalPages: 1,
+      loading: false,
+      search: "",
+     load: async (page = 1, limit = 10, search = "", kategori = "") => {
+        dataPerpustakaan.findMany.loading = true; // ✅ Akses langsung via nama path
+        dataPerpustakaan.findMany.page = page;
+        dataPerpustakaan.findMany.search = search;
+    
+        try {
+          const query: any = { page, limit };
+          if (search) query.search = search;
+          if (kategori) query.kategori = kategori;
+      
+          const res = await ApiFetch.api.pendidikan.perpustakaandigital.dataperpustakaan["findMany"].get({ query });
+      
+          if (res.status === 200 && res.data?.success) {
+            dataPerpustakaan.findMany.data = res.data.data ?? [];
+            dataPerpustakaan.findMany.totalPages = res.data.totalPages ?? 1;
+          } else {
+            dataPerpustakaan.findMany.data = [];
+            dataPerpustakaan.findMany.totalPages = 1;
+          }
+        } catch (err) {
+          console.error("Gagal fetch data perpustakaan paginated:", err);
+          dataPerpustakaan.findMany.data = [];
+          dataPerpustakaan.findMany.totalPages = 1;
+        } finally {
+          dataPerpustakaan.findMany.loading = false;
+        }
+      },
     },
-  },
   findUnique: {
     data: null as Prisma.DataPerpustakaanGetPayload<{
       include: {

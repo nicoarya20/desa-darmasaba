@@ -46,13 +46,11 @@ async function lembagaPendidikanFindMany(context: Context) {
       }
     }
 
-    // Tambahkan pencarian (jika ada)
+    // Add search functionality
     if (search) {
       where.OR = [
-        { nama: { contains: search, mode: "insensitive" } },
-        { siswa: { nama: { contains: search, mode: "insensitive" } } },
-        { pengajar: { nama: { contains: search, mode: "insensitive" } } },
-        { jenjangPendidikan: { nama: { contains: search, mode: "insensitive" } } },
+        { nama: { contains: search, mode: 'insensitive' } },
+        { jenjangPendidikan: { nama: { contains: search, mode: 'insensitive' } } },
       ];
     }
 
@@ -61,12 +59,10 @@ async function lembagaPendidikanFindMany(context: Context) {
         where,
         include: {
           jenjangPendidikan: true,
-          siswa: true,
-          pengajar: true,
         },
         skip,
         take: limit,
-        orderBy: { jenjangPendidikan: { nama: 'asc' } },
+        orderBy: { nama: 'asc' },
       }),
       prisma.lembaga.count({
         where,

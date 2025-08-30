@@ -1,12 +1,15 @@
 'use client'
 import infoSekolahPaud from '@/app/admin/(dashboard)/_state/pendidikan/info-sekolah-paud';
 import colors from '@/con/colors';
-import { Box, Center, Group, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title } from '@mantine/core';
-import { IconSchool, IconLayersSubtract } from '@tabler/icons-react';
-import { useShallowEffect } from '@mantine/hooks';
+import { Box, Center, Group, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, TextInput, Title } from '@mantine/core';
+import { IconSchool, IconLayersSubtract, IconSearch } from '@tabler/icons-react';
+import { useShallowEffect, useDebouncedValue } from '@mantine/hooks';
 import { useProxy } from 'valtio/utils';
+import { useState } from 'react';
 
 function Page() {
+  const [search, setSearch] = useState("")
+  const [debouncedSearch] = useDebouncedValue(search, 500); // 500ms delay
   const stateList = useProxy(infoSekolahPaud.siswa)
 
   const {
@@ -18,8 +21,8 @@ function Page() {
   } = stateList.findMany
 
   useShallowEffect(() => {
-    load(page, 10)
-  }, [page])
+    load(page, 10, debouncedSearch)
+  }, [page, debouncedSearch])
 
   const filteredData = data || []
 
@@ -46,6 +49,12 @@ function Page() {
             <IconSchool size={28} stroke={1.5} color={colors['blue-button']} />
             <Title order={2} fz="xl">Daftar Siswa</Title>
           </Group>
+          <TextInput
+            placeholder='pencarian'
+            leftSection={<IconSearch size={20} />}
+            value={search}
+            onChange={(e) => setSearch(e.currentTarget.value)}
+          />
         </Group>
 
         {filteredData.length === 0 ? (

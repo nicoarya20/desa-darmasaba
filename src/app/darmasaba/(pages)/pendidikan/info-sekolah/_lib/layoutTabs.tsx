@@ -9,12 +9,11 @@ import {
   Paper,
   Stack,
   Text,
-  TextInput,
-  VisuallyHidden,
+  VisuallyHidden
 } from '@mantine/core';
-import { IconArrowLeft, IconSearch } from '@tabler/icons-react';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import React, { useState, useEffect } from 'react';
+import { IconArrowLeft } from '@tabler/icons-react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import React, { useState } from 'react';
 
 type LayoutSekolahProps = {
   title?: string;
@@ -29,38 +28,12 @@ export default function LayoutSekolah({
 }: LayoutSekolahProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const pathname = usePathname();
-
-  const initialQuery = searchParams.get('search') || '';
   const initialJenjangPendidikan = searchParams.get('jenjangPendidikan') || 'Semua';
 
-  const [query, setQuery] = useState(initialQuery);
   const [jenjangPendidikanAktif, setJenjangPendidikanAktif] = useState(initialJenjangPendidikan);
-  const [searchTimeout, setSearchTimeout] = useState<number | null>(null);
 
   // Cleanup timeout
-  useEffect(() => {
-    return () => {
-      if (searchTimeout) clearTimeout(searchTimeout);
-    };
-  }, [searchTimeout]);
 
-  // Handle Search with debounce
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = e.target.value;
-    
-    setQuery(val);
-
-    if (searchTimeout) clearTimeout(searchTimeout);
-    const t = window.setTimeout(() => {
-      const params = new URLSearchParams(searchParams.toString());
-      if (val) params.set('search', val);
-      else params.delete('search');
-      params.set('jenjangPendidikan', jenjangPendidikanAktif);
-      router.push(`${pathname}?${params.toString()}`);
-    }, 500);
-    setSearchTimeout(t);
-  };
 
   // Handle jenjang pendidikan click
   const handleJenjangPendidikanChange = (k: string) => {
@@ -90,15 +63,9 @@ export default function LayoutSekolah({
             <Stack gap="md">
               <Text ta="center" fw={800} fz={28}>{title}</Text>
 
-              <TextInput
-                value={query}
-                onChange={handleSearchChange}
-                placeholder="Cari sekolah..."
-                leftSection={<IconSearch size={18} />}
-                radius="xl"
-                size="md"
-              />
-
+              <Text ta="center" fz={"md"} c="black">
+              Temukan data lengkap mengenai lembaga pendidikan, jumlah siswa terdaftar, dan tenaga pengajar berdasarkan jenjang pendidikan yang tersedia (TK, SD, SMP, SMA). Gunakan tombol di bawah untuk melihat detail sesuai kebutuhanmu.
+              </Text>
               <Group justify="center" gap="xs" wrap="wrap">
                 {jenjangPendidikanList.map((k) => {
                   const aktif = k === jenjangPendidikanAktif;

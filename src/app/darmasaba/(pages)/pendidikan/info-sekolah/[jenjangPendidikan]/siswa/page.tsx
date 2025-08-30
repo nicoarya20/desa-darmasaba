@@ -1,11 +1,11 @@
 'use client'
 import infoSekolahPaud from '@/app/admin/(dashboard)/_state/pendidikan/info-sekolah-paud';
 import colors from '@/con/colors';
-import { Box, Center, Group, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title } from '@mantine/core';
-import { IconSchool, IconLayersSubtract } from '@tabler/icons-react';
-import { useShallowEffect } from '@mantine/hooks';
+import { Box, Center, Group, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, TextInput, Title } from '@mantine/core';
+import { IconSchool, IconLayersSubtract, IconSearch } from '@tabler/icons-react';
+import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
 import { useProxy } from 'valtio/utils';
-import { use } from 'react';
+import { use, useState } from 'react';
 
 
 interface PageProps {
@@ -13,6 +13,8 @@ interface PageProps {
 }
 
 function Page({ params }: PageProps) {
+  const [search, setSearch] = useState("")
+  const [debouncedSearch] = useDebouncedValue(search, 500); // 500ms delay
   const stateList = useProxy(infoSekolahPaud.siswa)
   const { jenjangPendidikan } = use(params);
 
@@ -27,8 +29,8 @@ function Page({ params }: PageProps) {
   useShallowEffect(() => {
     // Decode the URL parameter and pass it to load
     const decodedJenjang = decodeURIComponent(jenjangPendidikan).toLowerCase()
-    load(page, 10, '', decodedJenjang === 'semua' ? '' : decodedJenjang)
-  }, [page, jenjangPendidikan])
+    load(page, 10, debouncedSearch, decodedJenjang === 'semua' ? '' : decodedJenjang)
+  }, [page, jenjangPendidikan, debouncedSearch])
 
   const filteredData = data || []
 
@@ -55,6 +57,12 @@ function Page({ params }: PageProps) {
             <IconSchool size={28} stroke={1.5} color={colors['blue-button']} />
             <Title order={2} fz="xl">Daftar Siswa</Title>
           </Group>
+          <TextInput
+            placeholder='pencarian'
+            leftSection={<IconSearch size={20} />}
+            value={search}
+            onChange={(e) => setSearch(e.currentTarget.value)}
+          />
         </Group>
 
         {filteredData.length === 0 ? (

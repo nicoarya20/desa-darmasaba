@@ -1,7 +1,8 @@
 import colors from '@/con/colors';
 import { Box, Button, Center, Checkbox, Group, Image, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
 import Link from 'next/link';
-import BackButton from '../../../desa/layanan/_com/BackButto';
+import BackButton from '../(pages)/desa/layanan/_com/BackButto';
+
 
 function Page() {
   return (

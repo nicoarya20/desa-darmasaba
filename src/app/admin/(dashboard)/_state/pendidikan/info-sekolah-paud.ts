@@ -333,10 +333,11 @@ const lembagaPendidikan = proxy({
       Prisma.LembagaGetPayload<{
         include: {
           jenjangPendidikan: true;
-          siswa: true;
-          pengajar: true;
         };
-      }>
+      }> & {
+        siswa?: [];
+        pengajar?: [];
+      }
     > | null,
     page: 1,
     totalPages: 1,
@@ -363,13 +364,18 @@ const lembagaPendidikan = proxy({
         console.log('API Response:', res);
 
         if (res.status === 200 && res.data?.success) {
-          lembagaPendidikan.findMany.data = Array.isArray(res.data.data) ? res.data.data : [];
-          lembagaPendidikan.findMany.total = typeof res.data.total === 'number' ? res.data.total : 0;
-          lembagaPendidikan.findMany.totalPages = typeof res.data.totalPages === 'number' ? res.data.totalPages : 1;
+          const data = Array.isArray(res.data.data) ? res.data.data : [];
+          const total = typeof res.data.total === 'number' ? res.data.total : 0;
+          const totalPages = typeof res.data.totalPages === 'number' ? res.data.totalPages : 1;
+          
+          lembagaPendidikan.findMany.data = data;
+          lembagaPendidikan.findMany.total = total;
+          lembagaPendidikan.findMany.totalPages = totalPages;
+          
           console.log('Successfully loaded lembaga data:', {
-            count: lembagaPendidikan.findMany.data.length,
-            total: lembagaPendidikan.findMany.total,
-            totalPages: lembagaPendidikan.findMany.totalPages
+            count: data.length,
+            total,
+            totalPages
           });
         } else {
           console.error(

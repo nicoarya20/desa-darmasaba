@@ -67,7 +67,7 @@ async function pengajarFindMany(context: Context) {
         },
         skip,
         take: limit,
-        orderBy: { lembaga: { jenjangPendidikan: { nama: 'asc' } } }, 
+        orderBy: { nama: 'asc' },
       }),
       prisma.pengajar.count({
         where,
