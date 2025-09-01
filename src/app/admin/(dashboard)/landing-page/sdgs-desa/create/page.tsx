@@ -2,9 +2,9 @@
 'use client'
 import colors from '@/con/colors';
 import ApiFetch from '@/lib/api-fetch';
-import { Box, Button, Group, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
+import { Box, Button, Group, Image, Paper, Stack, Text, TextInput, Title, Tooltip } from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
-import { IconArrowBack, IconImageInPicture, IconUpload, IconX } from '@tabler/icons-react';
+import { IconArrowBack, IconDeviceFloppy, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
@@ -56,88 +56,138 @@ function CreateSDGsDesa() {
     router.push("/admin/landing-page/SDGs-Desa")
   }
   return (
-    <Box>
-      <Box mb={10}>
-        <Button onClick={() => router.back()} variant='subtle' color={'blue'}>
-          <IconArrowBack color={colors['blue-button']} size={25} />
-        </Button>
-      </Box>
+    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+      <Group mb="md">
+        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
+          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+            <IconArrowBack color={colors['blue-button']} size={24} />
+          </Button>
+        </Tooltip>
+        <Title order={4} ml="sm" c="dark">
+          Tambah SDGs Desa
+        </Title>
+      </Group>
 
-      <Paper w={{ base: '100%', md: '50%' }} bg={colors['white-1']} p={'md'}>
-        <Stack gap={"xs"}>
-          <Title order={4}>Create SDGs Desa</Title>
+      <Paper
+        w={{ base: '100%', md: '50%' }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+        style={{ border: '1px solid #e0e0e0' }}
+      >
+        <Stack gap="md">
           <Box>
-            <Text fz={"md"} fw={"bold"}>File Image</Text>
-            <Box>
-              <Dropzone
-                onDrop={(files) => {
-                  const selectedFile = files[0]; // Ambil file pertama
-                  if (selectedFile) {
-                    setFile(selectedFile);
-                    setPreviewImage(URL.createObjectURL(selectedFile)); // Buat preview
-                  }
-                }}
-                onReject={() => toast.error('File tidak valid.')}
-                maxSize={5 * 1024 ** 2} // Maks 5MB
-                accept={{
-                  'application/*': ['.jpeg', '.jpg', '.png', '.gif', '.webp', '.svg'],
-                }}
-              >
-                <Group justify="center" gap="xl" mih={220} style={{ pointerEvents: 'none' }}>
-                  <Dropzone.Accept>
-                    <IconUpload size={52} color="var(--mantine-color-blue-6)" stroke={1.5} />
-                  </Dropzone.Accept>
-                  <Dropzone.Reject>
-                    <IconX size={52} color="var(--mantine-color-red-6)" stroke={1.5} />
-                  </Dropzone.Reject>
-                  <Dropzone.Idle>
-                    <IconImageInPicture size={52} color="var(--mantine-color-dimmed)" stroke={1.5} />
-                  </Dropzone.Idle>
+            <Text fw="bold" fz="sm" mb={6}>
+              Gambar SDGs Desa
+            </Text>
+            <Dropzone
+              onDrop={(files) => {
+                const selectedFile = files[0];
+                if (selectedFile) {
+                  setFile(selectedFile);
+                  setPreviewImage(URL.createObjectURL(selectedFile));
+                }
+              }}
+              onReject={() => toast.error('File tidak valid.')}
+              maxSize={5 * 1024 ** 2}
+              accept={{
+                'image/*': ['.jpeg', '.jpg', '.png', '.gif', '.webp', '.svg'],
+              }}
+              radius="md"
+            >
+              <Group justify="center" gap="xl" mih={220} style={{ pointerEvents: 'none' }}>
+                <Dropzone.Accept>
+                  <IconUpload size={52} color={colors['blue-button']} stroke={1.5} />
+                </Dropzone.Accept>
+                <Dropzone.Reject>
+                  <IconX size={52} color="var(--mantine-color-red-6)" stroke={1.5} />
+                </Dropzone.Reject>
+                <Dropzone.Idle>
+                  <IconPhoto size={52} color="var(--mantine-color-dimmed)" stroke={1.5} />
+                </Dropzone.Idle>
 
-                  <div>
-                    <Text size="xl" inline>
-                      Drag file ke sini atau klik untuk pilih file
+                <div style={{ textAlign: 'center' }}>
+                  <Text size="xl" inline>
+                    Drag file ke sini atau klik untuk memilih
+                  </Text>
+                  <Text size="sm" c="dimmed" inline mt={7} display="block">
+                    Maksimal 5MB (JPEG, JPG, PNG, GIF, WEBP, SVG)
+                  </Text>
+                </div>
+              </Group>
+            </Dropzone>
+
+            {previewImage && (
+              <Box mt="md">
+                <Text fw={500} fz="sm" mb={4}>
+                      Pratinjau Gambar
                     </Text>
-                    <Text size="sm" c="dimmed" inline mt={7}>
-                      Maksimal 5MB dan harus format image
-                    </Text>
-                  </div>
-                </Group>
-              </Dropzone>
-              <Box>
-                <Text fw={"bold"} fz={"lg"}>Dokumen</Text>
-                {previewImage ? (
-                  <iframe
-                    src={previewImage}
-                    width="100%"
-                    height="250px"
-                    style={{ border: "1px solid #ccc", borderRadius: "8px" }}
-                  />
-                ) : (
-                  <Text>Tidak ada image tersedia</Text>
-                )}
+                    <Box
+                      style={{
+                        border: '1px solid #e0e0e0',
+                        borderRadius: '8px',
+                        overflow: 'hidden',
+                        maxWidth: '300px'
+                      }}
+                    >
+                      <Image
+                        src={previewImage}
+                        alt="Preview"
+                        style={{ width: '100%', height: 'auto' }}
+                      />
+                    </Box>
               </Box>
-            </Box>
+            )}
           </Box>
           <TextInput
+            label={
+              <Text fw="bold" fz="sm" mb={4}>
+                Nama SDGs Desa
+              </Text>
+            }
+            placeholder="Masukkan nama SDGs Desa"
             value={stateSDGSDesa.create.form.name}
             onChange={(val) => {
               stateSDGSDesa.create.form.name = val.target.value;
             }}
-            label={<Text fw={"bold"} fz={"sm"}>Judul</Text>}
-            placeholder='Masukkan judul'
+            required
+            radius="md"
           />
-           <TextInput
-           type='number'
+
+          <TextInput
+            type="number"
+            label={
+              <Text fw="bold" fz="sm" mb={4}>
+                Jumlah
+              </Text>
+            }
+            placeholder="Masukkan jumlah"
             value={stateSDGSDesa.create.form.jumlah}
             onChange={(val) => {
               stateSDGSDesa.create.form.jumlah = val.target.value;
             }}
-            label={<Text fw={"bold"} fz={"sm"}>Jumlah</Text>}
-            placeholder='Masukkan jumlah'
+            required
+            min={0}
+            radius="md"
           />
-          <Group>
-            <Button bg={colors['blue-button']} onClick={handleSubmit}>Submit</Button>
+
+          <Group justify="flex-end" mt="md">
+            <Button
+              variant="light"
+              color="red"
+              onClick={() => router.back()}
+            >
+              Batal
+            </Button>
+            <Button
+              leftSection={<IconDeviceFloppy size={20} />}
+              onClick={handleSubmit}
+              loading={stateSDGSDesa.create.loading}
+              color={colors['blue-button']}
+            >
+              Simpan
+            </Button>
           </Group>
         </Stack>
       </Paper>

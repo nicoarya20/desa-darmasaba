@@ -2,9 +2,9 @@
 import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
 import prestasiState from '@/app/admin/(dashboard)/_state/landing-page/prestasi-desa';
 import colors from '@/con/colors';
-import { Box, Button, Flex, Paper, Skeleton, Stack, Text } from '@mantine/core';
+import { Box, Button, Group, Image, Paper, Skeleton, Stack, Text, Tooltip } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { IconArrowBack, IconEdit, IconX } from '@tabler/icons-react';
+import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
@@ -40,45 +40,69 @@ function DetailPrestasiDesa() {
   }
 
   return (
-    <Box>
-      <Box mb={10}>
-        <Button variant="subtle" onClick={() => router.back()}>
-          <IconArrowBack color={colors['blue-button']} size={25} />
-        </Button>
-      </Box>
-      <Paper bg={colors['white-1']} w={{ base: "100%", md: "100%", lg: "50%" }} p={'md'}>
-        <Stack>
-          <Text fz={"xl"} fw={"bold"}>Detail List Prestasi Desa</Text>
-          {detailState.findUnique.data ? (
-            <Paper key={detailState.findUnique.data.id} bg={colors['BG-trans']} p={'md'}>
-              <Stack gap={"xs"}>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Judul</Text>
-                  <Text fz={"lg"}>{detailState.findUnique.data?.name}</Text>
-                </Box>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Deskripsi</Text>
-                  <Text fz={"lg"} dangerouslySetInnerHTML={{ __html: detailState.findUnique.data?.deskripsi }} />
-                </Box>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Kategori</Text>
-                  <Text fz={"lg"}>{detailState.findUnique.data?.kategori?.name}</Text>
-                </Box>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Image</Text>
-                  {detailState.findUnique.data?.image?.link ? (
-                    <iframe
-                      src={detailState.findUnique.data.image.link}
-                      width="100%"
-                      height="500px"
-                      style={{ border: "1px solid #ccc", borderRadius: "8px" }}
-                    />
-                  ) : (
-                    <Text>Tidak ada image tersedia</Text>
-                  )}
-                </Box>
-                <Flex gap={"xs"} mt={10}>
+    <Box py={10}>
+      <Button
+        variant="subtle"
+        onClick={() => router.back()}
+        leftSection={<IconArrowBack size={24} color={colors['blue-button']} />}
+        mb={15}
+      >
+        Kembali
+      </Button>
+
+      <Paper
+        withBorder
+        w={{ base: "100%", md: "60%" }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+      >
+        <Stack gap="md">
+          <Text fz="2xl" fw="bold" c={colors['blue-button']}>
+            Detail Prestasi Desa
+          </Text>
+
+          <Paper bg="#ECEEF8" p="md" radius="md" shadow="xs">
+            <Stack gap="sm">
+              <Box>
+                <Text fz="lg" fw="bold">Judul</Text>
+                <Text fz="md" c="dimmed">{detailState.findUnique.data?.name || '-'}</Text>
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">Kategori</Text>
+                <Text fz="md" c="dimmed">{detailState.findUnique.data?.kategori?.name || '-'}</Text>
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">Deskripsi</Text>
+                <Box 
+                  fz="md" 
+                  c="dimmed" 
+                  dangerouslySetInnerHTML={{ __html: detailState.findUnique.data?.deskripsi || '-' }}
+                />
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">Gambar</Text>
+                {detailState.findUnique.data?.image?.link ? (
+                  <Image
+                    src={detailState.findUnique.data.image.link}
+                    alt={detailState.findUnique.data.name || 'Gambar Prestasi'}
+                    w={300}
+                    fit="contain"
+                    style={{ borderRadius: '8px', border: '1px solid #e0e0e0' }}
+                  />
+                ) : (
+                  <Text fz="sm" c="dimmed">Tidak ada gambar</Text>
+                )}
+              </Box>
+
+              <Group gap="sm">
+                <Tooltip label="Hapus Prestasi" withArrow position="top">
                   <Button
+                    color="red"
                     onClick={() => {
                       if (detailState.findUnique.data) {
                         setSelectedId(detailState.findUnique.data.id);
@@ -86,25 +110,33 @@ function DetailPrestasiDesa() {
                       }
                     }}
                     disabled={detailState.delete.loading || !detailState.findUnique.data}
-                    color={"red"}
+                    variant="light"
+                    radius="md"
+                    size="md"
                   >
-                    <IconX size={20} />
+                    <IconTrash size={20} />
                   </Button>
+                </Tooltip>
+
+                <Tooltip label="Edit Prestasi" withArrow position="top">
                   <Button
+                    color="green"
                     onClick={() => {
                       if (detailState.findUnique.data) {
                         router.push(`/admin/landing-page/prestasi-desa/list-prestasi-desa/${detailState.findUnique.data.id}/edit`);
                       }
                     }}
                     disabled={!detailState.findUnique.data}
-                    color={"green"}
+                    variant="light"
+                    radius="md"
+                    size="md"
                   >
                     <IconEdit size={20} />
                   </Button>
-                </Flex>
-              </Stack>
-            </Paper>
-          ) : null}
+                </Tooltip>
+              </Group>
+            </Stack>
+          </Paper>
         </Stack>
       </Paper>
 

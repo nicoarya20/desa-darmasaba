@@ -1,13 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-'use client'
+'use client';
 import CreateEditor from '@/app/admin/(dashboard)/_com/createEditor';
 import prestasiState from '@/app/admin/(dashboard)/_state/landing-page/prestasi-desa';
-
 import colors from '@/con/colors';
 import ApiFetch from '@/lib/api-fetch';
-import { Box, Button, Group, Paper, Select, Stack, Text, TextInput, Title } from '@mantine/core';
+import { Box, Button, Group, Image, Paper, Select, Stack, Text, TextInput, Title, Tooltip } from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
-import { IconArrowBack, IconImageInPicture, IconUpload, IconX } from '@tabler/icons-react';
+import { IconArrowBack, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
@@ -60,103 +59,132 @@ function CreatePrestasiDesa() {
     router.push("/admin/landing-page/prestasi-desa/list-prestasi-desa")
   }
   return (
-    <Box>
-      <Box mb={10}>
-        <Button onClick={() => router.back()} variant='subtle' color={'blue'}>
-          <IconArrowBack color={colors['blue-button']} size={25} />
-        </Button>
-      </Box>
+    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+      <Group mb="md">
+        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
+          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+            <IconArrowBack color={colors['blue-button']} size={24} />
+          </Button>
+        </Tooltip>
+        <Title order={4} ml="sm" c="dark">
+          Tambah Prestasi Desa
+        </Title>
+      </Group>
 
-      <Paper w={{ base: '100%', md: '50%' }} bg={colors['white-1']} p={'md'}>
-        <Stack gap={"xs"}>
-          <Title order={4}>Create Prestasi Desa</Title>
+      <Paper
+        w={{ base: '100%', md: '50%' }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+        style={{ border: '1px solid #e0e0e0' }}
+      >
+        <Stack gap="md">
           <Box>
-            <Text fz={"md"} fw={"bold"}>File Image</Text>
-            <Box>
-              <Dropzone
-                onDrop={(files) => {
-                  const selectedFile = files[0]; // Ambil file pertama
-                  if (selectedFile) {
-                    setFile(selectedFile);
-                    setPreviewFile(URL.createObjectURL(selectedFile)); // Buat preview
-                  }
-                }}
-                onReject={() => toast.error('File tidak valid.')}
-                maxSize={5 * 1024 ** 2} // Maks 5MB
-                accept={{
-                  'application/*': ['.jpg', '.jpeg', '.png'],
-                }}
-              >
-                <Group justify="center" gap="xl" mih={220} style={{ pointerEvents: 'none' }}>
-                  <Dropzone.Accept>
-                    <IconUpload size={52} color="var(--mantine-color-blue-6)" stroke={1.5} />
-                  </Dropzone.Accept>
-                  <Dropzone.Reject>
-                    <IconX size={52} color="var(--mantine-color-red-6)" stroke={1.5} />
-                  </Dropzone.Reject>
-                  <Dropzone.Idle>
-                    <IconImageInPicture size={52} color="var(--mantine-color-dimmed)" stroke={1.5} />
-                  </Dropzone.Idle>
+            <Text fw="bold" fz="sm" mb={6}>
+              Gambar Prestasi
+            </Text>
+            <Dropzone
+              onDrop={(files) => {
+                const selectedFile = files[0];
+                if (selectedFile) {
+                  setFile(selectedFile);
+                  setPreviewFile(URL.createObjectURL(selectedFile));
+                }
+              }}
+              onReject={() => toast.error('File tidak valid. Hanya file gambar yang diperbolehkan.')}
+              maxSize={5 * 1024 ** 2} // 5MB
+              accept={{
+                'image/*': ['.jpg', '.jpeg', '.png', '.webp'],
+              }}
+            >
+              <Group justify="center" gap="xl" mih={220} style={{ pointerEvents: 'none' }}>
+                <Dropzone.Accept>
+                  <IconUpload size={52} color="var(--mantine-color-blue-6)" stroke={1.5} />
+                </Dropzone.Accept>
+                <Dropzone.Reject>
+                  <IconX size={52} color="var(--mantine-color-red-6)" stroke={1.5} />
+                </Dropzone.Reject>
+                <Dropzone.Idle>
+                  <IconPhoto size={52} color="var(--mantine-color-dimmed)" stroke={1.5} />
+                </Dropzone.Idle>
 
-                  <div>
-                    <Text size="xl" inline>
-                      Drag file ke sini atau klik untuk pilih file
-                    </Text>
-                    <Text size="sm" c="dimmed" inline mt={7}>
-                      Maksimal 5MB dan harus format image
-                    </Text>
-                  </div>
-                </Group>
-              </Dropzone>
-              <Box>
-                <Text fw={"bold"} fz={"lg"}>Image</Text>
-                {previewFile ? (
-                  <iframe
+                <div>
+                  <Text size="xl" inline>
+                    Seret file gambar ke sini atau klik untuk memilih
+                  </Text>
+                  <Text size="sm" c="dimmed" inline mt={7}>
+                    Unggah file gambar (maks. 5MB)
+                  </Text>
+                </div>
+              </Group>
+            </Dropzone>
+
+            {previewFile && (
+              <Box mt="md">
+                <Text size="sm" fw={500} mb={4}>
+                  Pratinjau Gambar:
+                </Text>
+                <Box style={{ maxWidth: '100%', maxHeight: '300px', overflow: 'hidden', borderRadius: '8px' }}>
+                  <Image
                     src={previewFile}
-                    width="100%"
-                    height="500px"
-                    style={{ border: "1px solid #ccc", borderRadius: "8px" }}
+                    alt="Pratinjau gambar prestasi"
+                    fit="cover"
+                    style={{ width: '100%', height: 'auto' }}
                   />
-                ) : (
-                  <Text>Tidak ada image tersedia</Text>
-                )}
+                </Box>
               </Box>
-            </Box>
+            )}
           </Box>
+
           <TextInput
+            label="Judul Prestasi"
+            placeholder="Masukkan judul prestasi"
             value={stateCreate.create.form.name}
-            onChange={(val) => {
-              stateCreate.create.form.name = val.target.value;
-            }}
-            label={<Text fw={"bold"} fz={"sm"}>Judul</Text>}
-            placeholder='Masukkan judul'
+            onChange={(e) => (stateCreate.create.form.name = e.target.value)}
+            required
           />
+
           <Box>
-            <Text fz={"sm"} fw={"bold"}>Deskripsi</Text>
+            <Text fw={500} fz="sm" mb={6}>
+              Deskripsi Prestasi
+            </Text>
             <CreateEditor
               value={stateCreate.create.form.deskripsi}
-              onChange={(val) => {
-                stateCreate.create.form.deskripsi = val;
-              }}
+              onChange={(val) => (stateCreate.create.form.deskripsi = val)}
             />
           </Box>
+
           <Select
-            value={stateCreate.create.form.kategoriId}
-            onChange={(val) => {
-              stateCreate.create.form.kategoriId = val ?? "";
-            }}
-            label={<Text fw={"bold"} fz={"sm"}>Kategori</Text>}
+            label="Kategori Prestasi"
             placeholder="Pilih kategori"
+            value={stateCreate.create.form.kategoriId}
+            onChange={(val) => (stateCreate.create.form.kategoriId = val ?? '')}
             data={
               prestasiState.kategoriPrestasi.findMany.data?.map((v) => ({
                 value: v.id,
                 label: v.name,
               })) || []
             }
+            required
           />
 
-          <Group>
-            <Button bg={colors['blue-button']} onClick={handleSubmit}>Submit</Button>
+          <Group justify="flex-end" mt="md">
+            <Button
+              variant="light"
+              color="gray"
+              onClick={() => router.back()}
+              style={{ marginRight: 'auto' }}
+            >
+              Batal
+            </Button>
+            <Button
+              onClick={handleSubmit}
+              bg={colors['blue-button']}
+              style={{ boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)' }}
+            >
+              Simpan Prestasi
+            </Button>
           </Group>
         </Stack>
       </Paper>

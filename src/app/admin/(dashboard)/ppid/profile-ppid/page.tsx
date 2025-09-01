@@ -1,6 +1,6 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Center, Divider, Grid, GridCol, Image, Paper, Skeleton, Stack, Text, Title } from '@mantine/core';
+import { Box, Button, Center, Divider, Grid, GridCol, Image, Paper, Skeleton, Stack, Text, Title, Tooltip } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconEdit } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
@@ -16,9 +16,11 @@ function Page() {
   }, [])
 
   if (!allList.profile.data) {
-    return <Stack>
-      <Skeleton radius={10} h={800} />
-    </Stack>
+    return (
+      <Stack align="center" justify="center" py="xl">
+        <Skeleton radius="md" height={800} />
+      </Stack>
+    );
   }
 
   const dataArray = Array.isArray(allList.profile.data)
@@ -26,89 +28,96 @@ function Page() {
     : [allList.profile.data];
 
   return (
-    <Paper bg={colors['white-1']} p={'md'}>
-      <Stack gap={"xs"}>
-        <Grid>
+    <Paper bg={colors['white-1']} p="lg" radius="md" shadow="sm">
+      <Stack gap="md">
+        <Grid align="center">
           <GridCol span={{ base: 12, md: 11 }}>
-            <Title order={3}>Preview Profile PPID</Title>
+            <Title order={3} c={colors['blue-button']}>Preview Profil PPID</Title>
           </GridCol>
           <GridCol span={{ base: 12, md: 1 }}>
-            <Button bg={colors['blue-button']} onClick={() => router.push(`/admin/ppid/profile-ppid/${allList.profile.data?.id}`)}>
-              <IconEdit size={16} />
-            </Button>
+            <Tooltip label="Edit Profil PPID" withArrow>
+              <Button
+                c="green"
+                variant="light"
+                leftSection={<IconEdit size={18} stroke={2} />}
+                radius="md"
+                onClick={() => router.push(`/admin/ppid/profile-ppid/${allList.profile.data?.id}`)}
+              >
+                Edit
+              </Button>
+            </Tooltip>
           </GridCol>
         </Grid>
         {dataArray.map((item) => (
-          <Box key={item.id} >
-            <Paper p={"xl"} bg={colors['BG-trans']}>
-              <Box px={{ base: "md", md: 100 }}>
-                <Grid>
-                  <GridCol span={{ base: 12, md: 12 }}>
-                    <Center>
-                      <Image src={"/darmasaba-icon.png"} w={{ base: 100, md: 150 }} alt='' />
-                    </Center>
-                  </GridCol>
-                  <GridCol span={{ base: 12, md: 12 }}>
-                    <Text ta={"center"} fz={{ base: "1.2rem", md: "1.8rem" }} fw={'bold'}>PROFIL PIMPINAN BADAN PUBLIK DESA DARMASABA </Text>
-                  </GridCol>
-                </Grid>
-              </Box>
-              <Divider my={"md"} color={colors['blue-button']} />
-              {/* biodata perbekel */}
-              <Box px={{ base: 0, md: 50 }} pb={30}>
-                <Box pb={20} px={{ base: 0, md: 50 }}>
-                  <Paper bg={colors['BG-trans']} w={{ base: "100%", md: "100%" }}>
-                    <Stack gap={0}>
-                      <Center>
-                        <Image
-                          pt={{ base: 0, md: 90 }}
-                          src={item.image?.link || "/perbekel.png"}
-                          w={{ base: 250, md: 350 }}
-                          alt='Foto Profil PPID'
-                          onError={(e) => {
-                            e.currentTarget.src = "/perbekel.png";
-                          }}
-                        />
-                      </Center>
-                      <Paper
-                        bg={colors['blue-button']}
-                        py={20}
-                        className="glass3"
-                        px={{ base: 10, md: 10 }}
-
-                      >
-                        <Text ta={"center"} c={colors['white-1']} fw={"bolder"} fz={{ base: "1.2rem", md: "1.6rem" }}>
-                          {item.name}
-                        </Text>
-                      </Paper>
-                    </Stack>
+          <Paper key={item.id} p="xl" bg={'white'} withBorder radius="md" shadow="xs">
+            <Box px={{ base: "sm", md: 100 }}>
+              <Grid>
+                <GridCol span={12}>
+                  <Center>
+                    <Image src="/darmasaba-icon.png" w={{ base: 100, md: 150 }} alt="Logo Desa" />
+                  </Center>
+                </GridCol>
+                <GridCol span={12}>
+                  <Text ta="center" fz={{ base: "1.2rem", md: "1.8rem" }} fw="bold" c={colors['blue-button']}>
+                    PROFIL PIMPINAN BADAN PUBLIK DESA DARMASABA
+                  </Text>
+                </GridCol>
+              </Grid>
+            </Box>
+            <Divider my="md" color={colors['blue-button']} />
+            <Box px={{ base: 0, md: 50 }} pb="xl">
+              <Paper bg={colors['BG-trans']} radius="md" shadow="xs" p="lg">
+                <Stack gap={0}>
+                  <Center>
+                    <Image
+                      pt={{ base: 0, md: 60 }}
+                      src={item.image?.link || "/perbekel.png"}
+                      w={{ base: 250, md: 350 }}
+                      alt="Foto Profil PPID"
+                      radius="md"
+                      onError={(e) => { e.currentTarget.src = "/perbekel.png"; }}
+                    />
+                  </Center>
+                  <Paper
+                    bg={colors['blue-button']}
+                    py="md"
+                    px="sm"
+                    radius="md"
+                    className="glass3"
+                    style={{ mt: -30, boxShadow: '0 4px 20px rgba(0,0,0,0.15)' }}
+                  >
+                    <Text ta="center" c={colors['white-1']} fw="bolder" fz={{ base: "1.2rem", md: "1.6rem" }}>
+                      {item.name}
+                    </Text>
                   </Paper>
-                </Box>
-                <Box pt={10}>
-                  <Box>
-                    <Text fz={{ base: "1.125rem", md: "1.6rem" }} fw={'bold'}>Biodata</Text>
-                    <Text fz={{ base: "1rem", md: "1.5rem" }} ta={"justify"} dangerouslySetInnerHTML={{ __html: item.biodata }} />
-                  </Box>
-                  <Box>
-                    <Text fz={{ base: "1.125rem", md: "1.6rem" }} fw={'bold'}>Riwayat Karir</Text>
-                    <Text fz={{ base: "1rem", md: "1.5rem" }} dangerouslySetInnerHTML={{ __html: item.riwayat }} />
-                  </Box>
-                </Box>
-                <Box pb={30}>
-                  <Text fz={{ base: "1.125rem", md: "1.6rem" }} fw={'bold'}>Pengalaman Organisasi</Text>
-                  <Box px={20}>
-                    <Text fz={{ base: "1rem", md: "1.5rem" }} ta={"justify"} dangerouslySetInnerHTML={{ __html: item.pengalaman }} />
-                  </Box>
-                </Box>
-                <Box pb={20}>
-                  <Text fz={{ base: "1.125rem", md: "1.6rem" }} fw={'bold'}>Program Kerja Unggulan</Text>
-                  <Box px={20}>
-                    <Text fz={{ base: "1rem", md: "1.5rem" }} ta={"justify"} dangerouslySetInnerHTML={{ __html: item.unggulan }} />
-                  </Box>
+                </Stack>
+              </Paper>
+              
+              <Box mt="lg">
+                <Text fz={{ base: "1.125rem", md: "1.5rem" }} fw="bold" mb={4}>Biodata</Text>
+                <Text fz={{ base: "1rem", md: "1.4rem" }} ta="justify" c={colors['blue-button']} dangerouslySetInnerHTML={{ __html: item.biodata }} />
+              </Box>
+              
+              <Box mt="xl">
+                <Text fz={{ base: "1.125rem", md: "1.5rem" }} fw="bold" mb={4}>Riwayat Karir</Text>
+                <Text fz={{ base: "1rem", md: "1.4rem" }} ta="justify" c={colors['blue-button']} dangerouslySetInnerHTML={{ __html: item.riwayat }} />
+              </Box>
+              
+              <Box mt="xl">
+                <Text fz={{ base: "1.125rem", md: "1.5rem" }} fw="bold" mb={4}>Pengalaman Organisasi</Text>
+                <Box px={20}>
+                  <Text fz={{ base: "1rem", md: "1.4rem" }} ta="justify" c={colors['blue-button']} dangerouslySetInnerHTML={{ __html: item.pengalaman }} />
                 </Box>
               </Box>
-            </Paper>
-          </Box>
+              
+              <Box mt="xl" mb="lg">
+                <Text fz={{ base: "1.125rem", md: "1.5rem" }} fw="bold" mb={4}>Program Kerja Unggulan</Text>
+                <Box px={20}>
+                  <Text fz={{ base: "1rem", md: "1.4rem" }} ta="justify" c={colors['blue-button']} dangerouslySetInnerHTML={{ __html: item.unggulan }} />
+                </Box>
+              </Box>
+            </Box>
+          </Paper>
         ))}
       </Stack>
     </Paper>

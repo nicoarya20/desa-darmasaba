@@ -48,7 +48,7 @@ function ListProgramInovasi({ search }: { search: string }) {
 
   return (
     <Box py={15}>
-      <Paper bg={colors['white-1']} p="lg" radius="md" shadow="sm">
+      <Paper bg={colors['white-1']} withBorder p="lg" radius="md" shadow="sm">
         <Box mb="md" display="flex"
           style={{ justifyContent: 'space-between', alignItems: 'center' }}
         >
@@ -91,9 +91,7 @@ function ListProgramInovasi({ search }: { search: string }) {
                       <Text fw={500}>{item.name}</Text>
                     </TableTd>
                     <TableTd style={{ maxWidth: 250 }}>
-                      <Text fz="sm" lineClamp={2}>
-                        {item.description}
-                      </Text>
+                      <Text fz="sm" lineClamp={1} dangerouslySetInnerHTML={{ __html: item.description || '-' }}></Text>
                     </TableTd>
                     <TableTd style={{ maxWidth: 250 }}>
                       <Tooltip label="Buka tautan program" position="top" withArrow>

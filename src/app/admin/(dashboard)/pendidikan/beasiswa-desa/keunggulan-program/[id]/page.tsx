@@ -70,7 +70,7 @@ function EditProgramKreatifDesa() {
   return (
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" color="blue" withArrow>
+        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
           <Button 
             variant="subtle" 
             onClick={() => router.back()} 

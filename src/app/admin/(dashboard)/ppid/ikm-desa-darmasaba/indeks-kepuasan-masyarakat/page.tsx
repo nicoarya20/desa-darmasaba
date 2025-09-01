@@ -116,28 +116,27 @@ function Page() {
 
   if (loading || !data) {
     return (
-      <Stack py={10}>
-        <Skeleton height={730} />
+      <Stack py="xl">
+        <Skeleton height={750} radius="lg" />
       </Stack>
     );
   }
 
   if (data.length === 0) {
     return (
-      <Stack py={10}>
-        <Text c="dimmed" ta="center" my="md">
-          Belum ada data untuk ditampilkan
+      <Stack py="xl">
+        <Text c="dimmed" ta="center" size="lg">
+          Belum ada data yang tersedia
         </Text>
       </Stack>
     );
   }
 
   return (
-    <Stack gap="xs">
-      {/* Bar Chart - Data per Tanggal */}
-      <Paper bg={colors['white-1']} p="md" radius="md" mb="md">
-        <Title order={4} mb="md" ta="center">Jumlah Responden per Bulan</Title>
-        <Box h={300}>
+    <Stack gap="lg">
+      <Paper withBorder bg={colors['white-1']} p="lg" radius="xl" shadow="sm">
+        <Title order={3} mb="md" ta="center">Tren Jumlah Responden</Title>
+        <Box h={320}>
           <BarChart
             h={300}
             data={barChartData}
@@ -152,14 +151,13 @@ function Page() {
         </Box>
       </Paper>
 
-      <SimpleGrid cols={{ base: 1, md: 3 }}>
-        {/* Chart Jenis Kelamin */}
-        <Paper bg={colors['white-1']} p="md" radius="md">
+      <SimpleGrid cols={{ base: 1, md: 3 }} spacing="lg">
+        <Paper withBorder bg={colors['white-1']} p="lg" radius="xl" shadow="sm">
           <Stack>
-            <Title order={4}>Jenis Kelamin</Title>
+            <Title order={4} ta="center">Distribusi Jenis Kelamin</Title>
             {donutDataJenisKelamin.every(item => item.value === 0) ? (
               <Text c="dimmed" ta="center" my="md">
-                Belum ada data untuk ditampilkan dalam grafik
+                Tidak ada data
               </Text>
             ) : (
               <Box>
@@ -168,15 +166,15 @@ function Page() {
                     withLabels
                     withTooltip
                     labelsType="percent"
-                    size={250}
+                    size={220}
                     data={donutDataJenisKelamin}
                   />
                 </Center>
-                <Stack gap="sm" mt="md">
+                <Stack gap="xs" mt="md">
                   {donutDataJenisKelamin.map((entry) => (
-                    <Flex key={entry.name} gap="md" align="center">
-                      <Box bg={entry.color} w={20} h={20} style={{ flexShrink: 0 }} />
-                      <Text size="sm">{entry.name}: {entry.value}</Text>
+                    <Flex key={entry.name} gap="sm" align="center">
+                      <Box bg={entry.color} w={14} h={14} style={{ borderRadius: 4, flexShrink: 0 }} />
+                      <Text size="sm" fw={500}>{entry.name}: {entry.value}</Text>
                     </Flex>
                   ))}
                 </Stack>
@@ -185,13 +183,12 @@ function Page() {
           </Stack>
         </Paper>
 
-        {/* Chart Rating */}
-        <Paper bg={colors['white-1']} p="md" radius="md">
+        <Paper withBorder bg={colors['white-1']} p="lg" radius="xl" shadow="sm">
           <Stack>
-            <Title order={4}>Pilihan</Title>
+            <Title order={4} ta="center">Distribusi Penilaian</Title>
             {donutDataRating.every(item => item.value === 0) ? (
               <Text c="dimmed" ta="center" my="md">
-                Belum ada data untuk ditampilkan dalam grafik
+                Tidak ada data
               </Text>
             ) : (
               <Box>
@@ -200,15 +197,15 @@ function Page() {
                     withLabels
                     withTooltip
                     labelsType="percent"
-                    size={250}
+                    size={220}
                     data={donutDataRating}
                   />
                 </Center>
-                <Stack gap="sm" mt="md">
+                <Stack gap="xs" mt="md">
                   {donutDataRating.map((entry) => (
-                    <Flex key={entry.name} gap="md" align="center">
-                      <Box bg={entry.color} w={20} h={20} style={{ flexShrink: 0 }} />
-                      <Text size="sm">{entry.name}: {entry.value}</Text>
+                    <Flex key={entry.name} gap="sm" align="center">
+                      <Box bg={entry.color} w={14} h={14} style={{ borderRadius: 4, flexShrink: 0 }} />
+                      <Text size="sm" fw={500}>{entry.name}: {entry.value}</Text>
                     </Flex>
                   ))}
                 </Stack>
@@ -217,13 +214,12 @@ function Page() {
           </Stack>
         </Paper>
 
-        {/* Chart Kelompok Umur */}
-        <Paper bg={colors['white-1']} p="md" radius="md">
+        <Paper withBorder bg={colors['white-1']} p="lg" radius="xl" shadow="sm">
           <Stack>
-            <Title order={4}>Umur</Title>
+            <Title order={4} ta="center">Distribusi Kelompok Umur</Title>
             {donutDataKelompokUmur.every(item => item.value === 0) ? (
               <Text c="dimmed" ta="center" my="md">
-                Belum ada data untuk ditampilkan dalam grafik
+                Tidak ada data
               </Text>
             ) : (
               <Box>
@@ -232,15 +228,15 @@ function Page() {
                     withLabels
                     withTooltip
                     labelsType="percent"
-                    size={250}
+                    size={220}
                     data={donutDataKelompokUmur}
                   />
                 </Center>
-                <Stack gap="sm" mt="md">
+                <Stack gap="xs" mt="md">
                   {donutDataKelompokUmur.map((entry) => (
-                    <Flex key={entry.name} gap="md" align="center">
-                      <Box bg={entry.color} w={20} h={20} style={{ flexShrink: 0 }} />
-                      <Text size="sm">{entry.name}: {entry.value}</Text>
+                    <Flex key={entry.name} gap="sm" align="center">
+                      <Box bg={entry.color} w={14} h={14} style={{ borderRadius: 4, flexShrink: 0 }} />
+                      <Text size="sm" fw={500}>{entry.name}: {entry.value}</Text>
                     </Flex>
                   ))}
                 </Stack>

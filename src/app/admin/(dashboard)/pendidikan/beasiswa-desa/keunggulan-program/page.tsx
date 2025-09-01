@@ -105,7 +105,7 @@ function ListKeunggulanProgram({ search }: { search: string }) {
                       <Tooltip label="Edit" withArrow>
                         <Button
                           variant="light"
-                          color="blue"
+                          color="green"
                           size="sm"
                           onClick={() => router.push(`/admin/pendidikan/beasiswa-desa/keunggulan-program/${item.id}`)}
                         >

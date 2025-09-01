@@ -1,6 +1,6 @@
-'use client'
+'use client';
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, Stack, Text, Title } from '@mantine/core';
+import { Box, Button, Group, Paper, Stack, Text, Title, Tooltip } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';
@@ -41,45 +41,70 @@ function EditDasarHukum() {
     router.push('/admin/ppid/dasar-hukum')
   }
   return (
-    <Box>
-      <Stack gap={'xs'}>
-        <Box>
-          <Button
-            variant={'subtle'}
-            onClick={() => router.back()}
-          >
-            <IconArrowBack color={colors['blue-button']} size={20} />
+    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+      <Group mb="md">
+        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
+          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+            <IconArrowBack color={colors['blue-button']} size={24} />
           </Button>
-        </Box>
-        <Box>
-          <Paper bg={colors['white-1']} p={'md'} radius={10} w={{ base: '100%', md: '50%' }}>
-            <Stack gap={'xs'}>
-              <Title order={3}>Edit Dasar Hukum PPID</Title>
-              <Text fw={"bold"}>Judul</Text>
+        </Tooltip>
+        <Title order={4} ml="sm" c="dark">
+          Edit Dasar Hukum PPID
+        </Title>
+      </Group>
+
+      <Paper
+        w={{ base: '100%', md: '50%' }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+        style={{ border: '1px solid #e0e0e0' }}
+      >
+        <Stack gap="xl">
+          <Box>
+            <Text fw="bold" fz="sm" mb={6}>
+              Judul
+            </Text>
+            <Box style={{ border: '1px solid #dee2e6', borderRadius: '0.25rem' }}>
               <PPIDTextEditor
                 showSubmit={false}
                 onChange={setJudul}
                 initialContent={judul}
               />
-              <Text fw={"bold"}>Content</Text>
+            </Box>
+          </Box>
+          
+          <Box>
+            <Text fw="bold" fz="sm" mb={6}>
+              Konten
+            </Text>
+            <Box style={{ border: '1px solid #dee2e6', borderRadius: '0.25rem' }}>
               <PPIDTextEditor
                 showSubmit={false}
                 onChange={setContent}
                 initialContent={content}
               />
-              <Group>
-                <Button
-                  bg={colors['blue-button']}
-                  onClick={submit}
-                  loading={dasarHukumState.update.loading}
-                >
-                  Submit
-                </Button>
-              </Group>
-            </Stack>
-          </Paper>
-        </Box>
-      </Stack>
+            </Box>
+          </Box>
+
+          <Group justify="flex-end" mt="md">
+            <Button
+              onClick={submit}
+              loading={dasarHukumState.update.loading}
+              radius="md"
+              size="md"
+              style={{
+                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                color: '#fff',
+                boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
+              }}
+            >
+              Simpan
+            </Button>
+          </Group>
+        </Stack>
+      </Paper>
     </Box>
   );
 }

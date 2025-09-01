@@ -1,13 +1,12 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Center, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
-import { IconEdit, IconSearch, IconTrash } from '@tabler/icons-react';
+import { Box, Button, Center, Group, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title, Tooltip } from '@mantine/core';
+import { useShallowEffect } from '@mantine/hooks';
+import { IconEdit, IconPlus, IconSearch, IconTrash } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../../_com/header';
-import JudulList from '../../../_com/judulList';
 import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
 import stateStrukturPPID from '../../../_state/ppid/struktur_ppid/struktur_PPID';
 
@@ -17,7 +16,7 @@ function PosisiOrganisasiPPID() {
     <Box>
       <HeaderSearch
         title='Posisi Organisasi PPID'
-        placeholder='pencarian'
+        placeholder='Cari posisi organisasi...'
         searchIcon={<IconSearch size={20} />}
         value={search}
         onChange={(e) => setSearch(e.currentTarget.value)}
@@ -41,7 +40,7 @@ function ListPosisiOrganisasiPPID({ search }: { search: string }) {
     load,
   } = stateOrganisasi.findMany;
 
-  useEffect(() => {
+  useShallowEffect(() => {
     load(page, 10, search);
   }, [page, search]);
 
@@ -58,64 +57,88 @@ function ListPosisiOrganisasiPPID({ search }: { search: string }) {
   if (loading || !data) {
     return (
       <Stack py={10}>
-        <Skeleton h={500} />
+        <Skeleton height={600} radius="md" />
       </Stack>
-    )
+    );
   }
 
   return (
     <Box py={10}>
-      <Paper bg={colors['white-1']} p={'md'}>
-        <JudulList
-          title='List Posisi Organisasi PPID'
-          href='/admin/ppid/struktur-ppid/posisi-organisasi/create'
-        />
-        <Box style={{ overflowY: 'auto', maxHeight: '400px' }}>
-          <Table striped withTableBorder withRowBorders>
+      <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
+        <Group justify="space-between" mb="md">
+          <Title order={4}>Daftar Posisi Organisasi PPID</Title>
+          <Tooltip label="Tambah Posisi Organisasi" withArrow>
+            <Button 
+              leftSection={<IconPlus size={18} />} 
+              color="blue" 
+              variant="light" 
+              onClick={() => router.push('/admin/ppid/struktur-ppid/posisi-organisasi/create')}
+            >
+              Tambah Baru
+            </Button>
+          </Tooltip>
+        </Group>
+        <Box style={{ overflowX: 'auto' }}>
+          <Table highlightOnHover>
             <TableThead>
               <TableTr>
-                <TableTh>Nama Posisi</TableTh>
-                <TableTh>Deskripsi</TableTh>
-                <TableTh>Hierarki</TableTh>
-                <TableTh>Edit</TableTh>
-                <TableTh>Hapus</TableTh>
+                <TableTh style={{ width: '25%' }}>Nama Posisi</TableTh>
+                <TableTh style={{ width: '45%' }}>Deskripsi</TableTh>
+                <TableTh style={{ width: '15%' }}>Hierarki</TableTh>
+                <TableTh style={{ width: '15%' }}>Aksi</TableTh>
               </TableTr>
             </TableThead>
-            <TableTbody >
-              {filteredData.map((item) => (
-                <TableTr key={item.id}>
-                  <TableTd>{item.nama}</TableTd>
-                  <TableTd>
-                    <Text truncate dangerouslySetInnerHTML={{ __html: item.deskripsi ?? "" }} />
-                  </TableTd>
-                  <TableTd>{item.hierarki}</TableTd>
-                  <TableTd>
-                    <Button color="green"
-                      onClick={() => {
-                        if (item) {
-                          router.push(`/admin/ppid/struktur-ppid/posisi-organisasi/${item.id}`);
-                        }
-                      }}
-                    >
-                      <IconEdit size={20} />
-                    </Button>
-                  </TableTd>
-                  <TableTd>
-                    <Button color="red"
-                      onClick={() => {
-                        if (item) {
-                          setSelectedId(item.id);
-                          setModalHapus(true);
-                        }
-                      }}
-                      disabled={!item}
-
-                    >
-                      <IconTrash size={20} />
-                    </Button>
+            <TableTbody>
+              {filteredData.length > 0 ? (
+                filteredData.map((item) => (
+                  <TableTr key={item.id}>
+                    <TableTd style={{ width: '25%' }}>
+                      <Text fw={500} truncate="end" lineClamp={1}>{item.nama}</Text>
+                    </TableTd>
+                    <TableTd style={{ width: '45%' }}>
+                      <Text lineClamp={2} fz="sm" c="dimmed" dangerouslySetInnerHTML={{ __html: item.deskripsi || '-' }} />
+                    </TableTd>
+                    <TableTd style={{ width: '15%' }}>
+                      <Text>{item.hierarki || '-'}</Text>
+                    </TableTd>
+                    <TableTd style={{ width: '15%' }}>
+                      <Group gap="xs">
+                        <Tooltip label="Edit" withArrow>
+                          <Button
+                            variant="light"
+                            color="green"
+                            size="sm"
+                            onClick={() => router.push(`/admin/ppid/struktur-ppid/posisi-organisasi/${item.id}`)}
+                          >
+                            <IconEdit size={18} />
+                          </Button>
+                        </Tooltip>
+                        <Tooltip label="Hapus" withArrow>
+                          <Button
+                            variant="light"
+                            color="red"
+                            size="sm"
+                            onClick={() => {
+                              setSelectedId(item.id);
+                              setModalHapus(true);
+                            }}
+                          >
+                            <IconTrash size={18} />
+                          </Button>
+                        </Tooltip>
+                      </Group>
+                    </TableTd>
+                  </TableTr>
+                ))
+              ) : (
+                <TableTr>
+                  <TableTd colSpan={4}>
+                    <Center py={20}>
+                      <Text color="dimmed">Tidak ada data posisi organisasi yang cocok</Text>
+                    </Center>
                   </TableTd>
                 </TableTr>
-              ))}
+              )}
             </TableTbody>
           </Table>
         </Box>
@@ -123,9 +146,15 @@ function ListPosisiOrganisasiPPID({ search }: { search: string }) {
       <Center>
         <Pagination
           value={page}
-          onChange={(newPage) => load(newPage)}
+          onChange={(newPage) => {
+            load(newPage, 10, search);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
           total={totalPages}
-          my={"md"}
+          mt="md"
+          mb="md"
+          color="blue"
+          radius="md"
         />
       </Center>
       {/* Modal Hapus */}

@@ -15,7 +15,7 @@ function ModuleItem({ data }: { data: ProgramInovasiItem }) {
     <motion.div whileHover={{ scale: 1.04 }}>
       <Tooltip label={`Lihat ${data.name}`} withArrow>
         <Paper
-          onClick={() => router.push(`/${data.name}`)}
+          onClick={() => router.push(`/darmasaba/program-inovasi/${data.id}`)}
           p="xl"
           radius="2xl"
           bg="white"

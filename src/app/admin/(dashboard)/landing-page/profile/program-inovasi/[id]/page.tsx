@@ -51,6 +51,7 @@ function DetailProgramInovasi() {
         p="lg"
         radius="md"
         shadow="sm"
+        withBorder
       >
         <Stack gap="md">
           <Text fz="2xl" fw="bold" c={colors['blue-button']}>
@@ -65,8 +66,22 @@ function DetailProgramInovasi() {
               </Box>
 
               <Box>
+                <Text fz="lg" fw="bold">Gambar</Text>
+                {data.image?.link ? (
+                  <Image 
+                    src={data.image.link} 
+                    alt="Gambar Program" 
+                    radius="md"
+                    style={{ maxWidth: '100%', maxHeight: 300, objectFit: 'contain' }}
+                  />
+                ) : (
+                  <Text fz="md" c="dimmed">-</Text>
+                )}
+              </Box>
+
+              <Box>
                 <Text fz="lg" fw="bold">Deskripsi</Text>
-                <Text fz="md" c="dimmed" style={{ whiteSpace: 'pre-wrap' }}>{data.description || '-'}</Text>
+                <Text fz="md" c="dimmed" style={{ whiteSpace: 'pre-wrap' }} dangerouslySetInnerHTML={{ __html: data.description || '-' }}></Text>
               </Box>
 
               <Box>
@@ -84,20 +99,6 @@ function DetailProgramInovasi() {
                   >
                     {data.link}
                   </a>
-                ) : (
-                  <Text fz="md" c="dimmed">-</Text>
-                )}
-              </Box>
-
-              <Box>
-                <Text fz="lg" fw="bold">Gambar</Text>
-                {data.image?.link ? (
-                  <Image 
-                    src={data.image.link} 
-                    alt="Gambar Program" 
-                    radius="md"
-                    style={{ maxWidth: '100%', maxHeight: 300, objectFit: 'contain' }}
-                  />
                 ) : (
                   <Text fz="md" c="dimmed">-</Text>
                 )}

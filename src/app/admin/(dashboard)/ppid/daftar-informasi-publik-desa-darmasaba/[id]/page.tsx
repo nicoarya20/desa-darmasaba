@@ -1,13 +1,13 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Flex, Paper, Skeleton, Stack, Text } from '@mantine/core';
-import { IconArrowBack, IconEdit, IconX } from '@tabler/icons-react';
+import { Box, Button, Group, Paper, Skeleton, Stack, Text, Tooltip } from '@mantine/core';
+import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
+import { useShallowEffect } from '@mantine/hooks';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
 import daftarInformasiPublik from '../../../_state/ppid/daftar_informasi_publik/daftarInformasiPublik';
-import { useShallowEffect } from '@mantine/hooks';
 
 function DetailDaftarInformasiPublik() {
   const [modalHapus, setModalHapus] = useState(false)
@@ -31,76 +31,105 @@ function DetailDaftarInformasiPublik() {
 
   if (!stateDaftarInformasi.findUnique.data) {
     return (
-      <Stack>
-        <Skeleton h={500} />
+      <Stack py={10}>
+        <Skeleton height={500} radius="md" />
       </Stack>
     )
   }
 
+  const data = stateDaftarInformasi.findUnique.data;
+
   return (
-    <Box>
-      <Box mb={10}>
-        <Button variant="subtle" onClick={() => router.back()}>
-          <IconArrowBack color={colors['blue-button']} size={25} />
-        </Button>
-      </Box>
-      <Paper bg={colors['white-1']} w={{ base: "100%", md: "100%", lg: "50%" }} p={'md'}>
-        <Stack>
-          <Text fz={"xl"} fw={"bold"}>Detail Berita</Text>
-          {stateDaftarInformasi.findUnique.data ? (
-            <Paper key={stateDaftarInformasi.findUnique.data.id} bg={colors['BG-trans']} p={'md'}>
-              <Stack gap={"xs"}>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Jenis Informasi</Text>
-                  <Text fz={"lg"}>{stateDaftarInformasi.findUnique.data?.jenisInformasi}</Text>
-                </Box>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Tanggal</Text>
-                  <Text fz={"lg"}>{stateDaftarInformasi.findUnique.data?.tanggal
-                    ? new Date(stateDaftarInformasi.findUnique.data.tanggal).toLocaleDateString()
-                    : "-"}</Text>
-                </Box>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Deskripsi</Text>
-                  <Text fz={"lg"} dangerouslySetInnerHTML={{ __html: stateDaftarInformasi.findUnique.data?.deskripsi }} />
-                </Box>
-                <Flex gap={"xs"} mt={10}>
+    <Box py="md">
+      <Button
+        variant="subtle"
+        onClick={() => router.back()}
+        leftSection={<IconArrowBack size={24} color={colors['blue-button']} />}
+        mb={15}
+      >
+        Kembali
+      </Button>
+
+      <Paper
+        withBorder
+        w={{ base: '100%', md: '60%' }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+      >
+        <Stack gap="xl">
+          <Text fz="2xl" fw="bold" c={colors['blue-button']}>
+            Detail Informasi Publik
+          </Text>
+
+          <Paper bg="#f8f9fa" p="md" radius="md" shadow="xs">
+            <Stack gap="lg">
+              <Box>
+                <Text fz="lg" fw="bold" mb={4}>Jenis Informasi</Text>
+                <Text fz="md" c="dimmed">{data.jenisInformasi || '-'}</Text>
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold" mb={4}>Tanggal Publikasi</Text>
+                <Text fz="md" c="dimmed">
+                  {data.tanggal ? new Date(data.tanggal).toLocaleDateString('id-ID', {
+                    day: '2-digit',
+                    month: 'long',
+                    year: 'numeric'
+                  }) : '-'}
+                </Text>
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold" mb={4}>Deskripsi</Text>
+                <Box 
+                  fz="md" 
+                  c="dimmed" 
+                  dangerouslySetInnerHTML={{ __html: data.deskripsi || '-' }}
+                  className="prose max-w-none"
+                />
+              </Box>
+
+              <Group gap="sm" mt="md">
+                <Tooltip label="Edit Informasi" withArrow position="top">
                   <Button
-                    onClick={() => {
-                      if (stateDaftarInformasi.findUnique.data) {
-                        setSelectedId(stateDaftarInformasi.findUnique.data.id);
-                        setModalHapus(true);
-                      }
-                    }}
-                    disabled={stateDaftarInformasi.delete.loading || !stateDaftarInformasi.findUnique.data}
-                    color={"red"}
+                    variant="light"
+                    color="green"
+                    leftSection={<IconEdit size={18} />}
+                    onClick={() => router.push(`/admin/ppid/daftar-informasi-publik-desa-darmasaba/${data.id}/edit`)}
+                    disabled={!data}
                   >
-                    <IconX size={20} />
+                    Edit
                   </Button>
+                </Tooltip>
+
+                <Tooltip label="Hapus Informasi" withArrow position="top">
                   <Button
+                    variant="light"
+                    color="red"
+                    leftSection={<IconTrash size={18} />}
                     onClick={() => {
-                      if (stateDaftarInformasi.findUnique.data) {
-                        router.push(`/admin/ppid/daftar-informasi-publik-desa-darmasaba/${stateDaftarInformasi.findUnique.data.id}/edit`);
-                      }
+                      setSelectedId(data.id);
+                      setModalHapus(true);
                     }}
-                    disabled={!stateDaftarInformasi.findUnique.data}
-                    color={"green"}
+                    disabled={stateDaftarInformasi.delete.loading || !data}
+                    loading={stateDaftarInformasi.delete.loading}
                   >
-                    <IconEdit size={20} />
+                    Hapus
                   </Button>
-                </Flex>
-              </Stack>
-            </Paper>
-          ) : null}
+                </Tooltip>
+              </Group>
+            </Stack>
+          </Paper>
         </Stack>
       </Paper>
 
-      {/* Modal Konfirmasi Hapus */}
       <ModalKonfirmasiHapus
         opened={modalHapus}
         onClose={() => setModalHapus(false)}
         onConfirm={handleHapus}
-        text='Apakah anda yakin ingin menghapus berita ini?'
+        text='Apakah Anda yakin ingin menghapus informasi ini? Tindakan ini tidak dapat dibatalkan.'
       />
     </Box>
   );

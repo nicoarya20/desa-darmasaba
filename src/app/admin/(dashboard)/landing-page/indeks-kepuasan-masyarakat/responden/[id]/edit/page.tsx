@@ -4,8 +4,8 @@ import React, { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
 import colors from '@/con/colors';
-import { Box, Button, Paper, Stack, Title, TextInput, Text, Select } from '@mantine/core';
-import { IconArrowBack } from '@tabler/icons-react';
+import { Box, Button, Group, Paper, Stack, Title, TextInput, Text, Select, Tooltip } from '@mantine/core';
+import { IconArrowBack, IconDeviceFloppy } from '@tabler/icons-react';
 import indeksKepuasanState from '@/app/admin/(dashboard)/_state/landing-page/indeks-kepuasan';
 import { toast } from 'react-toastify';
 
@@ -74,23 +74,39 @@ function EditResponden() {
     state.update.id = id;
     state.update.form = { ...formData }; // <-- sinkronisasi manual
     await state.update.submit();
-    router.push('/admin/ppid/ikm-desa-darmasaba/responden')
+    router.push('/admin/landing-page/indeks-kepuasan-masyarakat/responden')
   }
 
   return (
-    <Box>
-      <Box mb={10}>
-        <Button variant="subtle" onClick={() => router.back()}>
-          <IconArrowBack size={20} />
-        </Button>
-      </Box>
-      <Paper bg={colors['white-1']} w={{ base: '100%', md: '50%' }} p={'md'}>
-        <Stack>
-          <Title order={3}>Edit Responden</Title>
+    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+      <Group mb="md">
+        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
+          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+            <IconArrowBack color={colors['blue-button']} size={24} />
+          </Button>
+        </Tooltip>
+        <Title order={4} ml="sm" c="dark">
+          Edit Responden
+        </Title>
+      </Group>
+
+      <Paper
+        withBorder
+        w={{ base: '100%', md: '50%' }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+      >
+        <Stack gap="md">
           <TextInput
-            label="Nama"
+            label={
+              <Text fw="bold" fz="sm" mb={4}>
+                Nama Responden
+              </Text>
+            }
             type='text'
-            placeholder="masukkan nama"
+            placeholder="Masukkan nama responden"
             value={formData.name}
             onChange={(val) => {
               setFormData({
@@ -98,9 +114,15 @@ function EditResponden() {
                 name: val.currentTarget.value
               })
             }}
+            radius="md"
+            required
           />
           <TextInput
-            label="Tanggal"
+            label={
+              <Text fw="bold" fz="sm" mb={4}>
+                Tanggal
+              </Text>
+            }
             type="date"
             placeholder='Pilih tanggal'
             value={formData.tanggal ? new Date(formData.tanggal).toISOString().split('T')[0] : ''}
@@ -111,32 +133,43 @@ function EditResponden() {
                 tanggal: selectedDate,
               });
             }}
+            radius="md"
+            required
           />
           <Select
-            key={"jenisKelamin"}
-            label={<Text fw="bold" fz="sm">Jenis Kelamin</Text>}
+            key="jenisKelamin"
+            label={
+              <Text fw="bold" fz="sm" mb={4}>
+                Jenis Kelamin
+              </Text>
+            }
             placeholder="Pilih jenis kelamin"
             value={formData.jenisKelaminId}
             onChange={(val) => setFormData({ ...formData, jenisKelaminId: val || "" })}
             data={
               (indeksKepuasanState.jenisKelaminResponden.findMany.data || [])
-                .filter(Boolean) // Hapus null/undefined
+                .filter(Boolean)
                 .map((v) => ({
                   value: v.id || '',
                   label: typeof v.name === 'string' ? v.name : 'Tanpa Nama'
                 }))
             }
-            disabled={indeksKepuasanState.jenisKelaminResponden.findMany.loading} // ✅ disable saat loading
+            disabled={indeksKepuasanState.jenisKelaminResponden.findMany.loading}
             clearable
             searchable
             required
+            radius="md"
             error={!formData.jenisKelaminId ? "Pilih jenis kelamin" : undefined}
           />
           <Select
-            key={"rating"}
+            key="rating"
             value={formData.ratingId}
             onChange={(val) => setFormData({ ...formData, ratingId: val || "" })}
-            label={<Text fw={"bold"} fz={"sm"}>Rating</Text>}
+            label={
+              <Text fw="bold" fz="sm" mb={4}>
+                Rating
+              </Text>
+            }
             placeholder='Pilih rating'
             data={
               (indeksKepuasanState.pilihanRatingResponden.findMany.data || [])
@@ -150,6 +183,7 @@ function EditResponden() {
             clearable
             searchable
             required
+            radius="md"
             error={!formData.ratingId ? "Pilih rating" : undefined}
           />
 
@@ -173,14 +207,24 @@ function EditResponden() {
             required
             error={!formData.kelompokUmurId ? "Pilih kelompok umur" : undefined}
           />
-
-          <Button
-            mt={10}
-            bg={colors['blue-button']}
-            onClick={handleSubmit}
-          >
-            Submit
-          </Button>
+          
+          <Group justify="flex-end" mt="md">
+            <Button 
+              variant="light" 
+              color="red" 
+              onClick={() => router.back()}
+            >
+              Batal
+            </Button>
+            <Button 
+              leftSection={<IconDeviceFloppy size={20} />}
+              onClick={handleSubmit} 
+              loading={state.update.loading}
+              color={colors['blue-button']}
+            >
+              Simpan
+            </Button>
+          </Group>
         </Stack>
       </Paper>
     </Box>

@@ -58,6 +58,7 @@ export default function DetailKegiatanDesa() {
         p="lg"
         radius="md"
         shadow="sm"
+        withBorder
       >
         <Stack gap="md">
           <Text fz="2xl" fw="bold" c={colors['blue-button']}>

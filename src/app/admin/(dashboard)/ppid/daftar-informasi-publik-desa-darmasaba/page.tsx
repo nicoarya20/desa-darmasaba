@@ -1,13 +1,12 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Center, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
-import { IconDeviceImacCog, IconSearch } from '@tabler/icons-react';
+import { Box, Button, Center, Group, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title, Tooltip } from '@mantine/core';
+import { IconDeviceImacCog, IconPlus, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useShallowEffect, useViewportSize } from '@mantine/hooks';
+import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../_com/header';
-import JudulList from '../../_com/judulList';
 import daftarInformasiPublik from '../../_state/ppid/daftar_informasi_publik/daftarInformasiPublik';
 
 function DaftarInformasiPublik() {
@@ -16,7 +15,7 @@ function DaftarInformasiPublik() {
     <Box>
       <HeaderSearch
         title='Daftar Informasi Publik Desa Darmasaba'
-        placeholder='pencarian'
+        placeholder='Cari jenis informasi atau deskripsi...'
         searchIcon={<IconSearch size={20} />}
         value={search}
         onChange={(e) => setSearch(e.currentTarget.value)}
@@ -31,115 +30,118 @@ function ListDaftarInformasi({ search }: { search: string }) {
   const router = useRouter()
 
   const { data, page, totalPages, loading, load } = listData.findMany
+  const { width } = useViewportSize()
+  const isMobile = width < 768
 
-  useEffect(() => {
-    load(page, 10)
-  }, [page])
+  useShallowEffect(() => {
+    load(page, 10, search)
+  }, [page, search])
 
-
-  const filteredData = (data || []).filter(item => {
-    const keyword = search.toLowerCase();
-    return (
-      item.jenisInformasi.toLowerCase().includes(keyword) ||
-      item.deskripsi.toLowerCase().includes(keyword)
-    );
-  });
+  const filteredData = data || []
 
   if (loading || !data) {
     return (
       <Stack py={10}>
-        <Skeleton height={790} />
+        <Skeleton height={600} radius="md" />
       </Stack>
-    );
-  }
-  if (data.length === 0) {
-    return (
-      <Box py={10}>
-        <Paper p="md" >
-          <Stack>
-            <JudulList
-              title='List Daftar Informasi Publik Desa Darmasaba'
-              href='/admin/ppid/daftar-informasi-publik-desa-darmasaba/create'
-            />
-            <Table striped withTableBorder withRowBorders>
-              <TableThead>
-                <TableTr>
-                  <TableTh>No</TableTh>
-                  <TableTh>Jenis Informasi</TableTh>
-                  <TableTh>Deskripsi</TableTh>
-                  <TableTh>Detail</TableTh>
-                </TableTr>
-              </TableThead>
-            </Table>
-            <Text ta="center">Tidak ada data daftar informasi publik yang tersedia</Text>
-          </Stack>
-        </Paper>
-      </Box >
-    );
+    )
   }
 
   return (
-    <Box py={10}>
-      <Paper bg={colors['white-1']} p={'md'} h={{ base: 870, md: 790 }}>
-        <Stack>
-          <JudulList
-            title='List Daftar Informasi Publik Desa Darmasaba'
-            href='/admin/ppid/daftar-informasi-publik-desa-darmasaba/create'
-          />
-          <Box style={{ overflowX: "auto" }}>
+    <Box py="md">
+      <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
+        <Group justify="space-between" mb="md">
+          <Title order={4}>Daftar Informasi Publik</Title>
+          <Tooltip label="Tambah Informasi Publik" withArrow>
+            <Button
+              leftSection={<IconPlus size={18} />}
+              color="blue"
+              variant="light"
+              onClick={() => router.push('/admin/ppid/daftar-informasi-publik-desa-darmasaba/create')}
+            >
+              {isMobile ? 'Tambah' : 'Tambah Baru'}
+            </Button>
+          </Tooltip>
+        </Group>
+
+        {filteredData.length === 0 ? (
+          <Stack align="center" py="xl">
+            <IconDeviceImacCog size={40} stroke={1.5} color={colors['blue-button']} />
+            <Text fw={500} c="dimmed">Belum ada informasi publik yang tersedia</Text>
+          </Stack>
+        ) : (
+          <Box style={{ overflowX: 'auto' }}>
             <Table
-              striped
+              highlightOnHover
               withTableBorder
-              withRowBorders
-              bg={colors['white-1']}
+              withColumnBorders
+              striped
+              stickyHeader
               style={{ minWidth: '700px' }}
             >
               <TableThead>
                 <TableTr>
                   <TableTh style={{ width: '5%', textAlign: 'center' }}>No</TableTh>
-                  <TableTh style={{ width: '20%' }}>Jenis Informasi</TableTh>
-                  <TableTh style={{ width: '50%' }}>Deskripsi</TableTh>
-                  <TableTh style={{ width: '15%', textAlign: 'center' }}>Detail</TableTh>
+                  <TableTh style={{ width: '25%' }}>Jenis Informasi</TableTh>
+                  <TableTh style={{ width: '60%' }}>Deskripsi</TableTh>
+                  <TableTh style={{ width: '10%', textAlign: 'center' }}>Aksi</TableTh>
                 </TableTr>
               </TableThead>
               <TableTbody>
                 {filteredData.map((item, index) => (
                   <TableTr key={item.id}>
                     <TableTd style={{ textAlign: 'center' }}>
-                      <Text mt={10} fz={"md"}>{index + 1}</Text>
+                      <Text fz="sm">{(page - 1) * 10 + index + 1}</Text>
                     </TableTd>
-                    <TableTd style={{ wordWrap: 'break-word' }}>
-                      <Box w={200}>
-                        <Text mt={10} fz={"md"} truncate={"end"} lineClamp={1}>{item.jenisInformasi}</Text>
-                      </Box>
+                    <TableTd>
+                      <Tooltip label={item.jenisInformasi} position="top-start" openDelay={500}>
+                        <Text fw={500} lineClamp={1}>{item.jenisInformasi}</Text>
+                      </Tooltip>
                     </TableTd>
-                    <TableTd style={{ wordWrap: 'break-word' }}>
-                      <Box w={200}>
-                        <Text fz={"md"} truncate={"end"} lineClamp={1} dangerouslySetInnerHTML={{ __html: item.deskripsi }}></Text>
-                      </Box>
+                    <TableTd>
+                      <Tooltip
+                        label={item.deskripsi?.replace(/<[^>]*>?/gm, '')}
+                        position="top-start"
+                        openDelay={500}
+                        multiline
+                        maw={400}
+                      >
+                        <Text lineClamp={1} fz="sm" c="dimmed">
+                          {item.deskripsi?.replace(/<[^>]*>?/gm, '').substring(0, 80) + '...'}
+                        </Text>
+                      </Tooltip>
                     </TableTd>
                     <TableTd style={{ textAlign: 'center' }}>
-                      <Button bg={"green"} onClick={() => router.push(`/admin/ppid/daftar-informasi-publik-desa-darmasaba/${item.id}`)}>
-                        <IconDeviceImacCog size={25} />
-                      </Button>
+                      <Tooltip label="Lihat Detail" withArrow>
+                        <Button
+                          variant="light"
+                          color="blue"
+                          size="sm"
+                          onClick={() => router.push(`/admin/ppid/daftar-informasi-publik-desa-darmasaba/${item.id}`)}
+                        >
+                          <IconDeviceImacCog size={20} />
+                        </Button>
+                      </Tooltip>
                     </TableTd>
                   </TableTr>
                 ))}
               </TableTbody>
             </Table>
           </Box>
-        </Stack>
+        )}
       </Paper>
-      <Center>
+      <Center mt="lg">
         <Pagination
           value={page}
           onChange={(newPage) => {
             load(newPage, 10);
-            window.scrollTo(0, 0);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
           total={totalPages}
           mt="md"
           mb="md"
+          color="blue"
+          radius="md"
         />
       </Center>
     </Box>

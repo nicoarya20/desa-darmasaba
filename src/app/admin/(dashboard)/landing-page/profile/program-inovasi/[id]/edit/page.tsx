@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
+import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import profileLandingPageState from '@/app/admin/(dashboard)/_state/landing-page/profile';
 import colors from '@/con/colors';
 import ApiFetch from '@/lib/api-fetch';
@@ -99,7 +100,7 @@ function EditProgramInovasi() {
   return (
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" color="blue" withArrow>
+        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
           <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
             <IconArrowBack color={colors['blue-button']} size={24} />
           </Button>
@@ -176,13 +177,16 @@ function EditProgramInovasi() {
             required
           />
 
-          <TextInput
-            label="Deskripsi"
-            placeholder="Masukkan deskripsi program inovasi"
-            value={formData.description}
-            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-            required
-          />
+          <Box>
+            <Text fz={"sm"} fw={"bold"}>Deskripsi</Text>
+            <EditEditor
+              value={formData.description}
+              onChange={(htmlContent) => {
+                setFormData((prev) => ({ ...prev, description: htmlContent }));
+                stateProgramInovasi.update.form.description = htmlContent;
+              }}
+            />
+          </Box>
 
           <TextInput
             label="Link Program Inovasi"

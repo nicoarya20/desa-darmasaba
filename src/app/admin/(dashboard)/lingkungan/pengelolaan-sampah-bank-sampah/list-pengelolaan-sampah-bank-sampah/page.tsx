@@ -129,7 +129,7 @@ function ListPengelolaanSampahBankSampah({ search }: { search: string }) {
                       <Tooltip label="Edit" withArrow>
                         <Button
                           variant="light"
-                          color="blue"
+                          color="green"
                           size="sm"
                           onClick={() => router.push(`/admin/lingkungan/pengelolaan-sampah-bank-sampah/list-pengelolaan-sampah-bank-sampah/${item.id}`)}
                         >

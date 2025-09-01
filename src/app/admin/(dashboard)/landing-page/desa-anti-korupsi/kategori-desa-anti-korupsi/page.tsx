@@ -99,7 +99,7 @@ function ListKategoriKegiatan({ search }: { search: string }) {
                       <Tooltip label="Edit" withArrow>
                         <Button
                           variant="light"
-                          color="blue"
+                          color="green"
                           size="sm"
                           onClick={() => router.push(`/admin/landing-page/desa-anti-korupsi/kategori-desa-anti-korupsi/${item.id}`)}
                         >

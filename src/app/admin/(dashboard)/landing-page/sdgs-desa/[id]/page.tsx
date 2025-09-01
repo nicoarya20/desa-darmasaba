@@ -1,7 +1,6 @@
 'use client'
 import { useProxy } from 'valtio/utils';
-
-import { Box, Button, Flex, Image, Paper, Skeleton, Stack, Text } from '@mantine/core';
+import { Box, Button, Group, Image, Paper, Skeleton, Stack, Text, Tooltip } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack, IconEdit, IconX } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -12,11 +11,11 @@ import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
 import sdgsDesa from '../../../_state/landing-page/sdgs-desa';
 
 function DetailSDGSDesa() {
-  const sdgsState = useProxy(sdgsDesa)
-  const [modalHapus, setModalHapus] = useState(false)
-  const [selectedId, setSelectedId] = useState<string | null>(null)
-  const params = useParams()
-  const router = useRouter()
+  const sdgsState = useProxy(sdgsDesa);
+  const [modalHapus, setModalHapus] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const params = useParams();
+  const router = useRouter();
 
   useShallowEffect(() => {
     sdgsState.findUnique.load(params?.id as string)
@@ -35,73 +34,104 @@ function DetailSDGSDesa() {
   if (!sdgsState.findUnique.data) {
     return (
       <Stack py={10}>
-        <Skeleton h={40} />
+        <Skeleton height={500} radius="md" />
       </Stack>
-    )
+    );
   }
 
+  const data = sdgsState.findUnique.data;
+
   return (
-    <Box>
-      <Box mb={10}>
-        <Button variant="subtle" onClick={() => router.back()}>
-          <IconArrowBack color={colors['blue-button']} size={25} />
-        </Button>
-      </Box>
-      <Paper bg={colors['white-1']} w={{ base: "100%", md: "100%", lg: "50%" }} p={'md'}>
-        <Stack>
-          <Text fz={"xl"} fw={"bold"}>Detail SDGS Desa</Text>
-          {sdgsState.findUnique.data ? (
-            <Paper key={sdgsState.findUnique.data.id} bg={colors['BG-trans']} p={'md'}>
-              <Stack gap={"xs"}>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Nama SDGS Desa</Text>
-                  <Text fz={"lg"}>{sdgsState.findUnique.data?.name}</Text>
-                </Box>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Jumlah</Text>
-                  <Text fz={"lg"}>{sdgsState.findUnique.data?.jumlah}</Text>
-                </Box>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Gambar</Text>
-                  <Image w={{ base: 150, md: 150, lg: 150 }} src={sdgsState.findUnique.data?.image?.link} alt="gambar" />
-                </Box>
-                <Flex gap={"xs"} mt={10}>
+    <Box py={10}>
+      <Button
+        variant="subtle"
+        onClick={() => router.back()}
+        leftSection={<IconArrowBack size={24} color={colors['blue-button']} />}
+        mb={15}
+      >
+        Kembali
+      </Button>
+
+      <Paper
+        withBorder
+        w={{ base: '100%', md: '60%' }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+      >
+        <Stack gap="md">
+          <Text fz="2xl" fw="bold" c={colors['blue-button']}>
+            Detail SDGs Desa
+          </Text>
+
+          <Paper bg="#ECEEF8" p="md" radius="md" shadow="xs">
+            <Stack gap="md">
+              <Box>
+                <Text fz="lg" fw="bold" mb={4}>Nama SDGs Desa</Text>
+                <Text fz="md" c="dimmed">{data.name || '-'}</Text>
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold" mb={4}>Jumlah</Text>
+                <Text fz="md" c="dimmed">{data.jumlah || '-'}</Text>
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold" mb={4}>Gambar</Text>
+                {data.image?.link ? (
+                  <Image
+                    src={data.image.link}
+                    alt={data.name || 'Gambar SDGs Desa'}
+                    w={200}
+                    h={200}
+                    radius="md"
+                    fit="contain"
+                  />
+                ) : (
+                  <Text fz="sm" c="dimmed">Tidak ada gambar</Text>
+                )}
+              </Box>
+
+              <Group gap="sm" mt="md">
+                <Tooltip label="Hapus SDGs Desa" withArrow position="top">
                   <Button
+                    color="red"
                     onClick={() => {
-                      if (sdgsState.findUnique.data) {
-                        setSelectedId(sdgsState.findUnique.data.id);
-                        setModalHapus(true);
-                      }
+                      setSelectedId(data.id);
+                      setModalHapus(true);
                     }}
-                    disabled={sdgsState.delete.loading || !sdgsState.findUnique.data}
-                    color={"red"}
+                    variant="light"
+                    radius="md"
+                    size="md"
+                    disabled={sdgsState.delete.loading}
                   >
                     <IconX size={20} />
                   </Button>
+                </Tooltip>
+
+                <Tooltip label="Edit SDGs Desa" withArrow position="top">
                   <Button
-                    onClick={() => {
-                      if (sdgsState.findUnique.data) {
-                        router.push(`/admin/landing-page/SDGs-Desa/${sdgsState.findUnique.data.id}/edit`);
-                      }
-                    }}
-                    disabled={!sdgsState.findUnique.data}
-                    color={"green"}
+                    color="green"
+                    onClick={() => router.push(`/admin/landing-page/SDGs-Desa/${data.id}/edit`)}
+                    variant="light"
+                    radius="md"
+                    size="md"
                   >
                     <IconEdit size={20} />
                   </Button>
-                </Flex>
-              </Stack>
-            </Paper>
-          ) : null}
+                </Tooltip>
+              </Group>
+            </Stack>
+          </Paper>
         </Stack>
       </Paper>
 
-      {/* Modal Konfirmasi Hapus */}
       <ModalKonfirmasiHapus
         opened={modalHapus}
         onClose={() => setModalHapus(false)}
         onConfirm={handleHapus}
-        text='Apakah anda yakin ingin menghapus SDGS Desa ini?'
+        text="Apakah Anda yakin ingin menghapus SDGs Desa ini?"
       />
     </Box>
   );

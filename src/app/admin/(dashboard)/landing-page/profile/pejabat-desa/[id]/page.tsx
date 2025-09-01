@@ -145,7 +145,7 @@ function EditPejabatDesa() {
     <Box>
       <Stack gap="xs">
         <Group mb="md">
-          <Tooltip label="Kembali ke halaman sebelumnya" color="blue" withArrow>
+          <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
             <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
               <IconArrowBack color={colors['blue-button']} size={24} />
             </Button>

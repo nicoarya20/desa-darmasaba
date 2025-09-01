@@ -1,9 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-'use client'
+'use client';
 import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import stateStrukturPPID from '@/app/admin/(dashboard)/_state/ppid/struktur_ppid/struktur_PPID';
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
+import { Box, Button, Group, Paper, Stack, Text, TextInput, Title, Tooltip } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -77,24 +77,39 @@ function EditPosisiOrganisasiPPID() {
   };
 
   return (
-    <Box>
-      <Box mb={10}>
-        <Button onClick={() => router.back()} variant='subtle' color={'blue'}>
-          <IconArrowBack color={colors['blue-button']} size={25} />
-        </Button>
-      </Box>
+    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+      <Group mb="md">
+        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
+          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+            <IconArrowBack color={colors['blue-button']} size={24} />
+          </Button>
+        </Tooltip>
+        <Title order={4} ml="sm" c="dark">
+          Edit Posisi Organisasi PPID
+        </Title>
+      </Group>
 
-      <Paper w={{ base: '100%', md: '50%' }} bg={colors['white-1']} p={'md'}>
-        <Stack gap={"xs"}>
-          <Title order={4}>Edit Posisi Organisasi PPID</Title>
+      <Paper
+        w={{ base: '100%', md: '50%' }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+        style={{ border: '1px solid #e0e0e0' }}
+      >
+        <Stack gap="md">
           <TextInput
+            label="Nama Posisi Organisasi"
+            placeholder="Masukkan nama posisi organisasi"
             value={formData.nama}
             onChange={(e) => setFormData({ ...formData, nama: e.target.value })}
-            label={<Text fw={"bold"} fz={"sm"}>Nama Posisi Organisasi</Text>}
-            placeholder='Masukkan nama posisi organisasi'
+            required
           />
+          
           <Box>
-            <Text fz={"md"} fw={"bold"}>Deskripsi</Text>
+            <Text fw="bold" fz="sm" mb={6}>
+              Deskripsi
+            </Text>
             <EditEditor
               value={formData.deskripsi}
               onChange={(htmlContent) => {
@@ -102,14 +117,34 @@ function EditPosisiOrganisasiPPID() {
               }}
             />
           </Box>
+          
           <TextInput
+            label="Hierarki"
+            type="number"
+            min={0}
+            placeholder="Contoh: 1 (Angka semakin kecil, posisi semakin tinggi)"
             value={formData.hierarki}
-            onChange={(e) => setFormData({ ...formData, hierarki: parseInt(e.target.value) })}
-            label={<Text fw={"bold"} fz={"sm"}>Hierarki</Text>}
-            placeholder='Masukkan hierarki'
+            onChange={(e) => {
+              const value = parseInt(e.target.value, 10);
+              setFormData({ ...formData, hierarki: isNaN(value) ? 0 : value });
+            }}
+            required
           />
-          <Group>
-            <Button bg={colors['blue-button']} onClick={handleSubmit}>Submit</Button>
+
+          <Group justify="flex-end" mt="md">
+            <Button
+              onClick={handleSubmit}
+              loading={stateOrganisasi.edit.loading}
+              radius="md"
+              size="md"
+              style={{
+                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                color: '#fff',
+                boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
+              }}
+            >
+              Simpan
+            </Button>
           </Group>
         </Stack>
       </Paper>

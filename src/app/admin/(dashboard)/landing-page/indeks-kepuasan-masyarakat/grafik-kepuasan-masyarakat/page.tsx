@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 import colors from '@/con/colors';
-import { PieChart, BarChart } from '@mantine/charts'; // ✅ Ganti recharts dengan Mantine
+import { PieChart, BarChart } from '@mantine/charts';
 import {
   Box,
   Center,
@@ -22,10 +22,7 @@ interface ChartDataItem {
   name: string;
   value: number;
   color: string;
-  label?: string;
 }
-
-
 
 function Page() {
   const state = useProxy(indeksKepuasanState.responden);
@@ -41,28 +38,23 @@ function Page() {
       return;
     }
     if (data) {
-      // Hitung total berdasarkan jenis kelamin
       const totalLaki = data.filter((item: any) => item.jenisKelamin?.name?.toLowerCase() === 'laki-laki').length;
       const totalPerempuan = data.filter((item: any) => item.jenisKelamin?.name?.toLowerCase() === 'perempuan').length;
 
-      // Hitung total berdasarkan rating
       const totalSangatBaik = data.filter((item: any) => item.rating?.name?.toLowerCase() === 'sangat baik').length;
       const totalBaik = data.filter((item: any) => item.rating?.name?.toLowerCase() === 'baik').length;
       const totalKurangBaik = data.filter((item: any) => item.rating?.name?.toLowerCase() === 'kurang baik').length;
       const totalSangatKurangBaik = data.filter((item: any) => item.rating?.name?.toLowerCase() === 'sangat kurang baik').length;
 
-      // Hitung total berdasarkan kelompok umur
       const totalMuda = data.filter((item: any) => item.kelompokUmur?.name?.toLowerCase() === 'muda').length;
       const totalDewasa = data.filter((item: any) => item.kelompokUmur?.name?.toLowerCase() === 'dewasa').length;
       const totalLansia = data.filter((item: any) => item.kelompokUmur?.name?.toLowerCase() === 'lansia').length;
 
-      // Update gender chart data
       setDonutDataJenisKelamin([
         { name: 'Laki-laki', value: totalLaki, color: colors['blue-button'] },
         { name: 'Perempuan', value: totalPerempuan, color: '#10A85AFF' },
       ]);
 
-      // Update rating chart data
       setDonutDataRating([
         { name: 'Sangat Baik', value: totalSangatBaik, color: colors['blue-button'] },
         { name: 'Baik', value: totalBaik, color: '#10A85AFF' },
@@ -70,18 +62,15 @@ function Page() {
         { name: 'Sangat Kurang Baik', value: totalSangatKurangBaik, color: '#FF4500' },
       ]);
 
-      // Update age group chart data
       setDonutDataKelompokUmur([
         { name: 'Muda', value: totalMuda, color: colors['blue-button'] },
         { name: 'Dewasa', value: totalDewasa, color: '#10A85AFF' },
         { name: 'Lansia', value: totalLansia, color: '#FFA500' },
       ]);
 
-      // Process data for bar chart (group by month)
       const monthYearMap = new Map<string, number>();
 
       data.forEach((item: any) => {
-        // Try both createdAt and tanggal fields
         const dateValue = item.tanggal || item.createdAt;
         if (!dateValue) return;
 
@@ -95,7 +84,6 @@ function Page() {
         monthYearMap.set(monthYearKey, (monthYearMap.get(monthYearKey) || 0) + 1);
       });
 
-      // Convert map to array and sort by date
       const barData = Array.from(monthYearMap.entries())
         .map(([key, count]) => {
           const [year, month] = key.split('-');
@@ -104,7 +92,7 @@ function Page() {
           return {
             month: `${monthName} ${year}`,
             count,
-            sortKey: parseInt(`${year}${String(month).padStart(2, '0')}`, 10)
+            sortKey: parseInt(`${year}${String(month).padStart(2, '0')}`, 10),
           };
         })
         .sort((a, b) => a.sortKey - b.sortKey)
@@ -116,28 +104,27 @@ function Page() {
 
   if (loading || !data) {
     return (
-      <Stack py={10}>
-        <Skeleton height={730} />
+      <Stack py="xl">
+        <Skeleton height={750} radius="lg" />
       </Stack>
     );
   }
 
   if (data.length === 0) {
     return (
-      <Stack py={10}>
-        <Text c="dimmed" ta="center" my="md">
-          Belum ada data untuk ditampilkan
+      <Stack py="xl">
+        <Text c="dimmed" ta="center" size="lg">
+          Belum ada data yang tersedia
         </Text>
       </Stack>
     );
   }
 
   return (
-    <Stack gap="xs">
-      {/* Bar Chart - Data per Tanggal */}
-      <Paper bg={colors['white-1']} p="md" radius="md" mb="md">
-        <Title order={4} mb="md" ta="center">Jumlah Responden per Bulan</Title>
-        <Box h={300}>
+    <Stack gap="lg">
+      <Paper withBorder bg={colors['white-1']} p="lg" radius="xl" shadow="sm">
+        <Title order={3} mb="md" ta="center">Tren Jumlah Responden</Title>
+        <Box h={320}>
           <BarChart
             h={300}
             data={barChartData}
@@ -152,14 +139,13 @@ function Page() {
         </Box>
       </Paper>
 
-      <SimpleGrid cols={{ base: 1, md: 3 }}>
-        {/* Chart Jenis Kelamin */}
-        <Paper bg={colors['white-1']} p="md" radius="md">
+      <SimpleGrid cols={{ base: 1, md: 3 }} spacing="lg">
+        <Paper withBorder bg={colors['white-1']} p="lg" radius="xl" shadow="sm">
           <Stack>
-            <Title order={4}>Jenis Kelamin</Title>
+            <Title order={4} ta="center">Distribusi Jenis Kelamin</Title>
             {donutDataJenisKelamin.every(item => item.value === 0) ? (
               <Text c="dimmed" ta="center" my="md">
-                Belum ada data untuk ditampilkan dalam grafik
+                Tidak ada data
               </Text>
             ) : (
               <Box>
@@ -168,15 +154,15 @@ function Page() {
                     withLabels
                     withTooltip
                     labelsType="percent"
-                    size={250}
+                    size={220}
                     data={donutDataJenisKelamin}
                   />
                 </Center>
-                <Stack gap="sm" mt="md">
+                <Stack gap="xs" mt="md">
                   {donutDataJenisKelamin.map((entry) => (
-                    <Flex key={entry.name} gap="md" align="center">
-                      <Box bg={entry.color} w={20} h={20} style={{ flexShrink: 0 }} />
-                      <Text size="sm">{entry.name}: {entry.value}</Text>
+                    <Flex key={entry.name} gap="sm" align="center">
+                      <Box bg={entry.color} w={14} h={14} style={{ borderRadius: 4, flexShrink: 0 }} />
+                      <Text size="sm" fw={500}>{entry.name}: {entry.value}</Text>
                     </Flex>
                   ))}
                 </Stack>
@@ -185,13 +171,12 @@ function Page() {
           </Stack>
         </Paper>
 
-        {/* Chart Rating */}
-        <Paper bg={colors['white-1']} p="md" radius="md">
+        <Paper withBorder bg={colors['white-1']} p="lg" radius="xl" shadow="sm">
           <Stack>
-            <Title order={4}>Pilihan</Title>
+            <Title order={4} ta="center">Distribusi Penilaian</Title>
             {donutDataRating.every(item => item.value === 0) ? (
               <Text c="dimmed" ta="center" my="md">
-                Belum ada data untuk ditampilkan dalam grafik
+                Tidak ada data
               </Text>
             ) : (
               <Box>
@@ -200,15 +185,15 @@ function Page() {
                     withLabels
                     withTooltip
                     labelsType="percent"
-                    size={250}
+                    size={220}
                     data={donutDataRating}
                   />
                 </Center>
-                <Stack gap="sm" mt="md">
+                <Stack gap="xs" mt="md">
                   {donutDataRating.map((entry) => (
-                    <Flex key={entry.name} gap="md" align="center">
-                      <Box bg={entry.color} w={20} h={20} style={{ flexShrink: 0 }} />
-                      <Text size="sm">{entry.name}: {entry.value}</Text>
+                    <Flex key={entry.name} gap="sm" align="center">
+                      <Box bg={entry.color} w={14} h={14} style={{ borderRadius: 4, flexShrink: 0 }} />
+                      <Text size="sm" fw={500}>{entry.name}: {entry.value}</Text>
                     </Flex>
                   ))}
                 </Stack>
@@ -217,13 +202,12 @@ function Page() {
           </Stack>
         </Paper>
 
-        {/* Chart Kelompok Umur */}
-        <Paper bg={colors['white-1']} p="md" radius="md">
+        <Paper withBorder bg={colors['white-1']} p="lg" radius="xl" shadow="sm">
           <Stack>
-            <Title order={4}>Umur</Title>
+            <Title order={4} ta="center">Distribusi Kelompok Umur</Title>
             {donutDataKelompokUmur.every(item => item.value === 0) ? (
               <Text c="dimmed" ta="center" my="md">
-                Belum ada data untuk ditampilkan dalam grafik
+                Tidak ada data
               </Text>
             ) : (
               <Box>
@@ -232,15 +216,15 @@ function Page() {
                     withLabels
                     withTooltip
                     labelsType="percent"
-                    size={250}
+                    size={220}
                     data={donutDataKelompokUmur}
                   />
                 </Center>
-                <Stack gap="sm" mt="md">
+                <Stack gap="xs" mt="md">
                   {donutDataKelompokUmur.map((entry) => (
-                    <Flex key={entry.name} gap="md" align="center">
-                      <Box bg={entry.color} w={20} h={20} style={{ flexShrink: 0 }} />
-                      <Text size="sm">{entry.name}: {entry.value}</Text>
+                    <Flex key={entry.name} gap="sm" align="center">
+                      <Box bg={entry.color} w={14} h={14} style={{ borderRadius: 4, flexShrink: 0 }} />
+                      <Text size="sm" fw={500}>{entry.name}: {entry.value}</Text>
                     </Flex>
                   ))}
                 </Stack>

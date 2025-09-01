@@ -65,7 +65,7 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
                     }}
                 >
                     {tabs.map((tab, i) => (
-                        <Tooltip key={i} label={tab.tooltip} position="bottom" withArrow>
+                        <Tooltip key={i} label={tab.tooltip} position="bottom" withArrow transitionProps={{ transition: 'pop', duration: 200 }}>
                             <TabsTab
                                 value={tab.value}
                                 leftSection={tab.icon}

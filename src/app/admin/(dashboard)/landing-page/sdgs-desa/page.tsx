@@ -1,13 +1,12 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Center, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
+import { Box, Button, Center, Group, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title, Tooltip } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { IconDeviceImacCog, IconSearch } from '@tabler/icons-react';
+import { IconDeviceImacCog, IconPlus, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../_com/header';
-import JudulList from '../../_com/judulList';
 import sdgsDesa from '../../_state/landing-page/sdgs-desa';
 
 
@@ -17,7 +16,7 @@ function SdgsDesa() {
     <Box>
       <HeaderSearch
         title='SDGs Desa'
-        placeholder='pencarian'
+        placeholder='Cari SDGs Desa...'
         searchIcon={<IconSearch size={20} />}
         value={search}
         onChange={(e) => setSearch(e.currentTarget.value)}
@@ -57,20 +56,36 @@ function ListSdgsDesa({ search }: { search: string }) {
   if (data.length === 0) {
     return (
       <Box py={10}>
-        <Paper bg={colors['white-1']} p={'md'}>
-          <JudulList
-            title='List Desa Anti Korupsi'
-            href='/admin/landing-page/desa-anti-korupsi/list-desa-anti-korupsi/create'
-          />
-          <Box style={{ overflowX: "auto" }}>
-            <Table striped withTableBorder withRowBorders>
+        <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
+          <Group justify="space-between" mb="md">
+            <Title order={4}>Daftar SDGs Desa</Title>
+            <Tooltip label="Tambah SDGs Desa" withArrow>
+              <Button 
+                leftSection={<IconPlus size={18} />} 
+                color={colors['blue-button']} 
+                variant="light"
+                onClick={() => router.push('/admin/landing-page/SDGs-Desa/create')}
+              >
+                Tambah Baru
+              </Button>
+            </Tooltip>
+          </Group>
+          <Box style={{ overflowX: 'auto' }}>
+            <Table>
               <TableThead>
                 <TableTr>
-                  <TableTh>Nama SDGs Desa</TableTh>
-                  <TableTh>Jumlah SDGs Desa</TableTh>
-                  <TableTh>Detail</TableTh>
+                  <TableTh style={{ width: '60%' }}>Nama SDGs Desa</TableTh>
+                  <TableTh style={{ width: '20%' }}>Jumlah</TableTh>
+                  <TableTh style={{ width: '20%', textAlign: 'center' }}>Aksi</TableTh>
                 </TableTr>
               </TableThead>
+              <TableTbody>
+                <TableTr>
+                  <TableTd colSpan={3} style={{ textAlign: 'center', padding: '2rem' }}>
+                    <Text c="dimmed">Tidak ada data SDGs Desa</Text>
+                  </TableTd>
+                </TableTr>
+              </TableTbody>
             </Table>
           </Box>
         </Paper>
@@ -80,54 +95,70 @@ function ListSdgsDesa({ search }: { search: string }) {
 
   return (
     <Box py={10}>
-      <Paper bg={colors['white-1']} p={'md'}>
-        <Stack>
-          <JudulList
-            title='SDGs Desa'
-            href='/admin/landing-page/SDGs-Desa/create'
-          />
-          <Box style={{ overflowX: 'auto' }}>
-            <Table striped withRowBorders withTableBorder style={{ minWidth: '700px' }}>
-              <TableThead>
-                <TableTr>
-                  <TableTh>Nama SDGs Desa</TableTh>
-                  <TableTh>Jumlah SDGs Desa</TableTh>
-                  <TableTh>Detail</TableTh>
-                </TableTr>
-              </TableThead>
-              <TableTbody>
-                {filteredData.map((item) => (
-                  <TableTr key={item.id}>
-                    <TableTd>
-                      <Box w={100}>
-                        <Text truncate="end" fz={"sm"}>{item.name}</Text>
-                      </Box>
-                    </TableTd>
-                    <TableTd>
-                      <Text truncate="end" fz={"sm"}>{item.jumlah}</Text>
-                    </TableTd>
-                    <TableTd>
-                      <Button onClick={() => router.push(`/admin/landing-page/SDGs-Desa/${item.id}`)}>
-                        <IconDeviceImacCog size={25} />
+      <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
+        <Group justify="space-between" mb="md">
+          <Title order={4}>Daftar SDGs Desa</Title>
+          <Tooltip label="Tambah SDGs Desa" withArrow>
+            <Button 
+              leftSection={<IconPlus size={18} />} 
+              color={colors['blue-button']} 
+              variant="light" 
+              onClick={() => router.push('/admin/landing-page/SDGs-Desa/create')}
+            >
+              Tambah Baru
+            </Button>
+          </Tooltip>
+        </Group>
+        <Box style={{ overflowX: 'auto' }}>
+          <Table highlightOnHover>
+            <TableThead>
+              <TableTr>
+                <TableTh style={{ width: '60%' }}>Nama SDGs Desa</TableTh>
+                <TableTh style={{ width: '20%' }}>Jumlah</TableTh>
+                <TableTh style={{ width: '20%', textAlign: 'center' }}>Aksi</TableTh>
+              </TableTr>
+            </TableThead>
+            <TableTbody>
+              {filteredData.map((item) => (
+                <TableTr key={item.id}>
+                  <TableTd style={{ width: '60%' }}>
+                    <Text fw={500} truncate="end" lineClamp={1}>
+                      {item.name}
+                    </Text>
+                  </TableTd>
+                  <TableTd style={{ width: '20%' }}>
+                    <Text fz="sm" c="dimmed">
+                      {item.jumlah || '0'}
+                    </Text>
+                  </TableTd>
+                  <TableTd style={{ width: '20%', textAlign: 'center' }}>
+                    <Tooltip label="Lihat Detail" withArrow>
+                      <Button 
+                        variant="light" 
+                        color="blue" 
+                        size="sm"
+                        onClick={() => router.push(`/admin/landing-page/SDGs-Desa/${item.id}`)}
+                      >
+                        <IconDeviceImacCog size={18} />
                       </Button>
-                    </TableTd>
-                  </TableTr>
-                ))}
-              </TableTbody>
-            </Table>
-          </Box>
-        </Stack>
+                    </Tooltip>
+                  </TableTd>
+                </TableTr>
+              ))}
+            </TableTbody>
+          </Table>
+        </Box>
       </Paper>
-      <Center>
+      <Center mt="lg">
         <Pagination
           value={page}
           onChange={(newPage) => {
             load(newPage, 10);
             window.scrollTo(0, 0);
           }}
-          total={totalPages}
-          mt="md"
-          mb="md"
+          total={Math.max(1, totalPages)}
+          withEdges
+          radius="md"
         />
       </Center>
     </Box>

@@ -37,7 +37,7 @@ function Page() {
           <GridCol span={{ base: 12, md: 1 }}>
             <Tooltip label="Edit Profil Pejabat" withArrow>
               <Button
-                c="blue"
+                c="green"
                 variant="light"
                 leftSection={<IconEdit size={18} stroke={2} />}
                 radius="md"
@@ -49,7 +49,7 @@ function Page() {
           </GridCol>
         </Grid>
         {dataArray.map((item) => (
-          <Paper key={item.id} p="xl" bg={colors['BG-trans']} radius="md" shadow="xs">
+          <Paper key={item.id} p="xl" bg={'white'} withBorder radius="md" shadow="xs">
             <Box px={{ base: "sm", md: 100 }}>
               <Grid>
                 <GridCol span={12}>

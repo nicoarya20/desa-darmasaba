@@ -1,5 +1,5 @@
 'use client'
-import colors from '@/con/colors';
+
 import { Box, Button, Center, Group, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title, Tooltip } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconDeviceImacCog, IconPlus, IconSearch } from '@tabler/icons-react';
@@ -14,9 +14,9 @@ function DesaAntiKorupsi() {
   return (
     <Box>
       <HeaderSearch
-        title='List Desa Anti Korupsi'
-        placeholder='Cari nama program atau kategori...'
-        searchIcon={<IconSearch size={20} />}
+        title="Program Desa Anti Korupsi"
+        placeholder="Cari nama program atau kategori..."
+        searchIcon={<IconSearch size={18} />}
         value={search}
         onChange={(e) => setSearch(e.currentTarget.value)}
       />
@@ -28,14 +28,7 @@ function DesaAntiKorupsi() {
 function ListDesaAntiKorupsi({ search }: { search: string }) {
   const router = useRouter();
   const listState = useProxy(korupsiState.desaAntikorupsi);
-
-  const {
-    data,
-    page,
-    totalPages,
-    loading,
-    load,
-  } = listState.findMany;
+  const { data, page, totalPages, loading, load } = listState.findMany;
 
   useShallowEffect(() => {
     load(page, 10, search);
@@ -45,90 +38,117 @@ function ListDesaAntiKorupsi({ search }: { search: string }) {
 
   if (loading || !data) {
     return (
-      <Stack py={10}>
-        <Skeleton height={600} radius="md" />
+      <Stack py="md">
+        <Skeleton height={650} radius="lg" />
       </Stack>
     );
   }
 
+  if (data.length === 0) {
+    return (
+      <Box py="md">
+        <Paper p="lg" radius="lg" shadow="md" withBorder>
+          <Stack align="center" gap="sm">
+            <Title order={4}>Data Program Desa Anti Korupsi</Title>
+            <Text c="dimmed" ta="center">
+              Belum ada data program yang tersedia
+            </Text>
+          </Stack>
+        </Paper>
+      </Box>
+    );
+  }
+
   return (
-    <Box py={10}>
-      <Paper bg={colors['white-1']} p={'lg'} shadow="md" radius="md">
-        <Group justify="space-between" mb="md">
-          <Title order={4}>Daftar Program Desa Anti Korupsi</Title>
-          <Tooltip label="Tambah Program Desa Anti Korupsi" withArrow>
-          <Button
-            leftSection={<IconPlus size={18} />}
-            color="blue"
-            variant="light"
-            onClick={() => router.push('/admin/landing-page/desa-anti-korupsi/list-desa-anti-korupsi/create')}
+    <Box>
+      <Stack gap="md">
+        <Paper p="lg" radius="lg" shadow="md" withBorder>
+          <Group justify="space-between" mb="md">
+            <Title order={4}>Daftar Program Desa Anti Korupsi</Title>
+            <Tooltip label="Tambah Program Baru" withArrow>
+              <Button
+                leftSection={<IconPlus size={18} />}
+                color="blue"
+                onClick={() => router.push('/admin/landing-page/desa-anti-korupsi/list-desa-anti-korupsi/create')}
+              >
+                Tambah Baru
+              </Button>
+            </Tooltip>
+          </Group>
+
+          <Table
+            striped
+            highlightOnHover
+            
+            withRowBorders
+            verticalSpacing="sm"
           >
-            Tambah Baru
-          </Button>
-          </Tooltip>
-        </Group>
-        <Box style={{ overflowX: "auto" }}>
-          <Table highlightOnHover>
             <TableThead>
               <TableTr>
-                <TableTh>Nama Program</TableTh>
-                <TableTh>Kategori</TableTh>
-                <TableTh>Aksi</TableTh>
+                <TableTh style={{ width: '50%' }}>Nama Program</TableTh>
+                <TableTh style={{ width: '30%' }}>Kategori</TableTh>
+                <TableTh style={{ width: '20%', textAlign: 'center' }}>Aksi</TableTh>
               </TableTr>
             </TableThead>
             <TableTbody>
               {filteredData.length > 0 ? (
                 filteredData.map((item) => (
                   <TableTr key={item.id}>
-                    <TableTd>
-                      <Box w={350}>
-                        <Text lineClamp={1} fw={500}>{item.name || '-'}</Text>
-                      </Box>
+                    <TableTd style={{ width: '50%' }}>
+                      <Text fw={500} lineClamp={1}>
+                        {item.name || '-'}
+                      </Text>
                     </TableTd>
-                    <TableTd>
+                    <TableTd style={{ width: '30%' }}>
                       <Text fz="sm" c="dimmed">
                         {item.kategori?.name || '-'}
                       </Text>
                     </TableTd>
-                    <TableTd>
+                    <TableTd style={{ width: '20%', textAlign: 'center' }}>
                       <Button
+                        size="xs"
+                        radius="md"
                         variant="light"
                         color="blue"
-                        onClick={() => router.push(`/admin/landing-page/desa-anti-korupsi/list-desa-anti-korupsi/${item.id}`)}
+                        leftSection={<IconDeviceImacCog size={16} />}
+                        onClick={() =>
+                          router.push(
+                            `/admin/landing-page/desa-anti-korupsi/list-desa-anti-korupsi/${item.id}`
+                          )
+                        }
                       >
-                        <IconDeviceImacCog size={20} />
-                        <Text ml={5}>Detail</Text>
+                        Detail
                       </Button>
                     </TableTd>
                   </TableTr>
                 ))
               ) : (
                 <TableTr>
-                  <TableTd colSpan={4}>
-                    <Center py={20}>
-                      <Text c="dimmed">Tidak ada data program yang cocok</Text>
-                    </Center>
+                  <TableTd colSpan={3}>
+                    <Text ta="center" c="dimmed">
+                      Tidak ditemukan data dengan kata kunci pencarian
+                    </Text>
                   </TableTd>
                 </TableTr>
               )}
             </TableTbody>
           </Table>
-        </Box>
-      </Paper>
-      <Center>
-        <Pagination
-          value={page}
-          onChange={(newPage) => {
-            load(newPage, 10);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }}
-          total={totalPages}
-          mt="md"
-          mb="md"
-          color="blue"
-          radius="md"
-        />
-      </Center>
+        </Paper>
+
+        <Center>
+          <Pagination
+            value={page}
+            total={totalPages}
+            onChange={(newPage) => {
+              load(newPage, 10, search);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            size="md"
+            radius="md"
+            mt="md"
+          />
+        </Center>
+      </Stack>
     </Box>
   );
 }

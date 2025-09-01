@@ -1,9 +1,9 @@
 'use client'
 import { useProxy } from 'valtio/utils';
 
-import { ActionIcon, Box, Button, Flex, Image, Paper, Skeleton, Stack, Text } from '@mantine/core';
+import { Box, Button, Group, Image, Paper, Skeleton, Stack, Text, Tooltip } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { IconArrowBack, IconEdit, IconFile, IconX } from '@tabler/icons-react';
+import { IconArrowBack, IconEdit, IconFile, IconTrash } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 
@@ -35,89 +35,125 @@ function DetailAPBDes() {
   if (!apbdesState.findUnique.data) {
     return (
       <Stack py={10}>
-        <Skeleton h={40} />
+        <Skeleton height={600} radius="md" />
       </Stack>
-    )
+    );
   }
 
+  const data = apbdesState.findUnique.data;
+
   return (
-    <Box>
-      <Box mb={10}>
-        <Button variant="subtle" onClick={() => router.back()}>
-          <IconArrowBack color={colors['blue-button']} size={25} />
-        </Button>
-      </Box>
-      <Paper bg={colors['white-1']} w={{ base: "100%", md: "100%", lg: "50%" }} p={'md'}>
-        <Stack>
-          <Text fz={"xl"} fw={"bold"}>Detail APBDes</Text>
-          {apbdesState.findUnique.data ? (
-            <Paper key={apbdesState.findUnique.data.id} bg={colors['BG-trans']} p={'md'}>
-              <Stack gap={"xs"}>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Nama APBDes</Text>
-                  <Text fz={"lg"}>{apbdesState.findUnique.data?.name}</Text>
-                </Box>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Jumlah</Text>
-                  <Text fz={"lg"}>{apbdesState.findUnique.data?.jumlah}</Text>
-                </Box>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Gambar</Text>
-                  <Image w={{ base: 150, md: 150, lg: 150 }} src={apbdesState.findUnique.data?.image?.link} alt="gambar" />
-                </Box>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Dokumen</Text>
-                  {apbdesState.findUnique.data?.file?.link ? (
-                    <ActionIcon
-                      component="a"
-                      href={apbdesState.findUnique.data.file.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      variant="transparent"
-                    >
-                      <IconFile size={25} color={colors['blue-button']}/>
-                    </ActionIcon>
-                  ) : (
-                    <Text>Tidak ada dokumen tersedia</Text>
-                  )}
-                </Box>
-                <Flex gap={"xs"} mt={10}>
+    <Box py={10}>
+      <Button
+        variant="subtle"
+        onClick={() => router.back()}
+        leftSection={<IconArrowBack size={24} color={colors['blue-button']} />}
+        mb={15}
+      >
+        Kembali
+      </Button>
+
+      <Paper
+        withBorder
+        w={{ base: "100%", md: "60%" }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+      >
+        <Stack gap="md">
+          <Text fz="2xl" fw="bold" c={colors['blue-button']}>
+            Detail APBDes
+          </Text>
+
+          <Paper bg="#ECEEF8" p="md" radius="md" shadow="xs">
+            <Stack gap="md">
+              <Box>
+                <Text fz="lg" fw="bold">Nama APBDes</Text>
+                <Text fz="md" c="dimmed">{data.name || '-'}</Text>
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">Jumlah Anggaran</Text>
+                <Text fz="md" c="dimmed">Rp. {data.jumlah || '-'}</Text>
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">Gambar</Text>
+                {data.image?.link ? (
+                  <Image
+                    src={data.image.link}
+                    alt={data.name || 'Gambar APBDes'}
+                    w={200}
+                    height={150}
+                    radius="md"
+                    fit="contain"
+                    style={{ border: '1px solid #ddd' }}
+                  />
+                ) : (
+                  <Text fz="sm" c="dimmed">Tidak ada gambar</Text>
+                )}
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">Dokumen</Text>
+                {data.file?.link ? (
                   <Button
-                    onClick={() => {
-                      if (apbdesState.findUnique.data) {
-                        setSelectedId(apbdesState.findUnique.data.id);
-                        setModalHapus(true);
-                      }
-                    }}
-                    disabled={apbdesState.delete.loading || !apbdesState.findUnique.data}
-                    color={"red"}
+                    component="a"
+                    href={data.file.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    variant="light"
+                    leftSection={<IconFile size={18} />}
+                    size="sm"
+                    mt="xs"
                   >
-                    <IconX size={20} />
+                    Lihat Dokumen
                   </Button>
+                ) : (
+                  <Text fz="sm" c="dimmed">Tidak ada dokumen</Text>
+                )}
+              </Box>
+
+              <Group gap="sm" mt="md">
+                <Tooltip label="Hapus APBDes" withArrow position="top">
                   <Button
+                    color="red"
                     onClick={() => {
-                      if (apbdesState.findUnique.data) {
-                        router.push(`/admin/landing-page/APBDes/${apbdesState.findUnique.data.id}/edit`);
-                      }
+                      setSelectedId(data.id);
+                      setModalHapus(true);
                     }}
-                    disabled={!apbdesState.findUnique.data}
-                    color={"green"}
+                    disabled={apbdesState.delete.loading}
+                    variant="light"
+                    radius="md"
+                    size="md"
+                  >
+                    <IconTrash size={20} />
+                  </Button>
+                </Tooltip>
+
+                <Tooltip label="Edit APBDes" withArrow position="top">
+                  <Button
+                    color="green"
+                    onClick={() => router.push(`/admin/landing-page/APBDes/${data.id}/edit`)}
+                    variant="light"
+                    radius="md"
+                    size="md"
                   >
                     <IconEdit size={20} />
                   </Button>
-                </Flex>
-              </Stack>
-            </Paper>
-          ) : null}
+                </Tooltip>
+              </Group>
+            </Stack>
+          </Paper>
         </Stack>
       </Paper>
 
-      {/* Modal Konfirmasi Hapus */}
       <ModalKonfirmasiHapus
         opened={modalHapus}
         onClose={() => setModalHapus(false)}
         onConfirm={handleHapus}
-        text='Apakah anda yakin ingin menghapus APBDes ini?'
+        text="Apakah Anda yakin ingin menghapus APBDes ini?"
       />
     </Box>
   );

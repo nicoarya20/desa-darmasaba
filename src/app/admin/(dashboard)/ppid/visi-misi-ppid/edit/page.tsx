@@ -1,11 +1,6 @@
-'use client'
+'use client';
 import colors from '@/con/colors';
-import {
-  Box,
-  Button, Group, Paper,
-  Stack,
-  Title
-} from '@mantine/core';
+import { Box, Button, Group, Paper, Stack, Title, Tooltip } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
@@ -46,35 +41,52 @@ function VisiMisiPPIDEdit() {
   };
 
   return (
-    <Box>
-      <Stack gap={'xs'}>
-        <Box>
-          <Button
-            variant={'subtle'}
-            onClick={() => router.back()}
-          >
-            <IconArrowBack color={colors['blue-button']} size={20} />
+    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+      <Group mb="md">
+        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
+          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+            <IconArrowBack color={colors['blue-button']} size={24} />
           </Button>
-        </Box>
-        <Box>
-          <Paper bg={colors['white-1']} p={'md'} radius={10} w={{ base: '100%', md: '50%' }}>
-            <Stack gap={'xs'}>
-              <Title order={3}>Edit Visi Misi PPID</Title>
-              <VisiPPID value={draftVisi} onChange={setDraftVisi} />
-              <MisiPPID value={draftMisi} onChange={setDraftMisi} />
-              <Group>
-                <Button
-                  bg={colors['blue-button']}
-                  onClick={submit}
-                  loading={visiMisi.update.loading}
-                >
-                  Submit
-                </Button>
-              </Group>
-            </Stack>
-          </Paper>
-        </Box>
-      </Stack>
+        </Tooltip>
+        <Title order={4} ml="sm" c="dark">
+          Edit Visi Misi PPID
+        </Title>
+      </Group>
+
+      <Paper
+        w={{ base: '100%', md: '50%' }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+        style={{ border: '1px solid #e0e0e0' }}
+      >
+        <Stack gap="xl">
+          <Box>
+            <VisiPPID value={draftVisi} onChange={setDraftVisi} />
+          </Box>
+          
+          <Box>
+            <MisiPPID value={draftMisi} onChange={setDraftMisi} />
+          </Box>
+
+          <Group justify="flex-end" mt="md">
+            <Button
+              onClick={submit}
+              loading={visiMisi.update.loading}
+              radius="md"
+              size="md"
+              style={{
+                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                color: '#fff',
+                boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
+              }}
+            >
+              Simpan
+            </Button>
+          </Group>
+        </Stack>
+      </Paper>
     </Box>
   );
 }

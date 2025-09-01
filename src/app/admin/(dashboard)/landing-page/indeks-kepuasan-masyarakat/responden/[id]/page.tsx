@@ -3,10 +3,10 @@
 import { ModalKonfirmasiHapus } from "@/app/admin/(dashboard)/_com/modalKonfirmasiHapus"
 import indeksKepuasanState from "@/app/admin/(dashboard)/_state/landing-page/indeks-kepuasan"
 import colors from "@/con/colors"
-import { Box, Button, Flex, Paper, Skeleton, Stack, Text } from "@mantine/core"
+import { Box, Button, Group, Paper, Skeleton, Stack, Text, Tooltip } from "@mantine/core"
 import { useShallowEffect } from "@mantine/hooks"
-import { IconArrowBack, IconEdit, IconX } from "@tabler/icons-react"
-import { useRouter, useParams } from "next/navigation"
+import { IconArrowBack, IconEdit, IconTrash } from "@tabler/icons-react"
+import { useParams, useRouter } from "next/navigation"
 import { useState } from "react"
 import { useProxy } from "valtio/utils"
 
@@ -38,67 +38,89 @@ export default function DetailResponden() {
     )
   }
   return (
-    <Box>
-      <Box mb={10}>
-        <Button variant="subtle" onClick={() => router.back()}>
-          <IconArrowBack color={colors['blue-button']} size={25} />
-        </Button>
-      </Box>
-      <Paper w={{ base: "100%", md: "50%" }} bg={colors['white-1']} p={'md'}>
-        <Stack>
-          <Text fz={"xl"} fw={"bold"}>Detail Responden</Text>
+    <Box py={10}>
+      <Button
+        variant="subtle"
+        onClick={() => router.back()}
+        leftSection={<IconArrowBack size={24} color={colors['blue-button']} />}
+        mb={15}
+      >
+        Kembali
+      </Button>
 
-          <Paper bg={colors['BG-trans']} p={'md'}>
-            <Stack gap={"xs"}>
+      <Paper
+        withBorder
+        w={{ base: "100%", md: "60%" }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+      >
+        <Stack gap="md">
+          <Text fz="2xl" fw="bold" c={colors['blue-button']}>
+            Detail Responden
+          </Text>
+
+          <Paper bg="#ECEEF8" p="md" radius="md" shadow="xs">
+            <Stack gap="sm">
               <Box>
-                <Text fz={"lg"} fw={"bold"}>Nama Responden</Text>
-                <Text fz={"lg"}>{stateDetail.findUnique.data?.name}</Text>
+                <Text fz="lg" fw="bold">Nama Responden</Text>
+                <Text fz="md" c="dimmed">{stateDetail.findUnique.data?.name || '-'}</Text>
               </Box>
               <Box>
-                <Text fz={"lg"} fw={"bold"}>Tanggal</Text>
-                <Text fz={"lg"}>{
+                <Text fz="lg" fw="bold">Tanggal</Text>
+                <Text fz="md" c="dimmed">{
                   stateDetail.findUnique.data?.tanggal
                     ? new Date(stateDetail.findUnique.data.tanggal).toLocaleDateString('id-ID')
                     : '-'
                 }</Text>
               </Box>
               <Box>
-                <Text fz={"lg"} fw={"bold"}>Jenis Kelamin</Text>
-                <Text fz={"lg"}>{stateDetail.findUnique.data?.jenisKelamin?.name}</Text>
+                <Text fz="lg" fw="bold">Jenis Kelamin</Text>
+                <Text fz="md" c="dimmed">{stateDetail.findUnique.data?.jenisKelamin?.name || '-'}</Text>
               </Box>
               <Box>
-                <Text fz={"lg"} fw={"bold"}>Rating</Text>
-                <Text fz={"lg"}>{stateDetail.findUnique.data?.rating?.name}</Text>
+                <Text fz="lg" fw="bold">Rating</Text>
+                <Text fz="md" c="dimmed">{stateDetail.findUnique.data?.rating?.name || '-'}</Text>
               </Box>
               <Box>
-                <Text fz={"lg"} fw={"bold"}>Kelompok Umur</Text>
-                <Text fz={"lg"}>{stateDetail.findUnique.data?.kelompokUmur?.name}</Text>
+                <Text fz="lg" fw="bold">Kelompok Umur</Text>
+                <Text fz="md" c="dimmed">{stateDetail.findUnique.data?.kelompokUmur?.name || '-'}</Text>
               </Box>
-              <Flex gap={"xs"} mt={10}>
-                <Button
-                  onClick={() => {
-                    if (stateDetail.findUnique.data) {
-                      setSelectedId(stateDetail.findUnique.data.id);
-                      setModalHapus(true);
-                    }
-                  }}
-                  disabled={stateDetail.delete.loading || !stateDetail.findUnique.data}
-                  color={"red"}
-                >
-                  <IconX size={20} />
-                </Button>
-                <Button
-                  onClick={() => {
-                    if (stateDetail.findUnique.data) {
-                      router.push(`/admin/ppid/ikm-desa-darmasaba/responden/${stateDetail.findUnique.data.id}/edit`);
-                    }
-                  }}
-                  disabled={!stateDetail.findUnique.data}
-                  color={"green"}
-                >
-                  <IconEdit size={20} />
-                </Button>
-              </Flex>
+              
+              <Group gap="sm" mt="md">
+                <Tooltip label="Hapus Responden" withArrow position="top">
+                  <Button
+                    color="red"
+                    variant="light"
+                    onClick={() => {
+                      if (stateDetail.findUnique.data) {
+                        setSelectedId(stateDetail.findUnique.data.id);
+                        setModalHapus(true);
+                      }
+                    }}
+                    disabled={stateDetail.delete.loading || !stateDetail.findUnique.data}
+                    leftSection={<IconTrash size={20} />}
+                  >
+                    Hapus
+                  </Button>
+                </Tooltip>
+                <Tooltip label="Edit Responden" withArrow position="top">
+                  <Button
+                    color="green"
+                    variant="light"
+                    onClick={() => {
+                      if (stateDetail.findUnique.data) {
+                        router.push(`/admin/landing-page/indeks-kepuasan-masyarakat/responden/${stateDetail.findUnique.data.id}/edit`);
+                      }
+                    }}
+                    disabled={!stateDetail.findUnique.data}
+                    leftSection={<IconEdit size={20} />}
+                  >
+                    Edit
+                  </Button>
+                </Tooltip>
+              </Group>
             </Stack>
           </Paper>
         </Stack>

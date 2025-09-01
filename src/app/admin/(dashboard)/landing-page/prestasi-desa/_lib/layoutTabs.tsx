@@ -1,62 +1,103 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
-import colors from '@/con/colors';
-import { Stack, Tabs, TabsList, TabsPanel, TabsTab, Title } from '@mantine/core';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
+import { Stack, Tabs, TabsList, TabsPanel, TabsTab, Title, Tooltip } from '@mantine/core';
+import { IconCategory, IconListDetails } from '@tabler/icons-react';
 
 function LayoutTabs({ children }: { children: React.ReactNode }) {
-    const router = useRouter()
-    const pathname = usePathname()
-    const tabs = [
-        {
-            label: "List Prestasi Desa",
-            value: "listPrestasiDesa",
-            href: "/admin/landing-page/prestasi-desa/list-prestasi-desa"
-        },
-        {
-            label: "Kategori Prestasi Desa",
-            value: "kategoriPrestasiDesa",
-            href: "/admin/landing-page/prestasi-desa/kategori-prestasi-desa"
-        },
-    ];
-    const curentTab = tabs.find(tab => tab.href === pathname)
-    const [activeTab, setActiveTab] = useState<string | null>(curentTab?.value || tabs[0].value);
+  const router = useRouter();
+  const pathname = usePathname();
 
-    const handleTabChange = (value: string | null) => {
-        const tab = tabs.find(t => t.value === value)
-        if (tab) {
-            router.push(tab.href)
-        }
-        setActiveTab(value)
+  const tabs = [
+    {
+      label: "Daftar Prestasi",
+      value: "listPrestasiDesa",
+      href: "/admin/landing-page/prestasi-desa/list-prestasi-desa",
+      icon: <IconListDetails size={18} stroke={1.8} />,
+      tooltip: "Kelola daftar prestasi desa",
+    },
+    {
+      label: "Kategori Prestasi",
+      value: "kategoriPrestasiDesa",
+      href: "/admin/landing-page/prestasi-desa/kategori-prestasi-desa",
+      icon: <IconCategory size={18} stroke={1.8} />,
+      tooltip: "Kelola kategori prestasi desa",
+    },
+  ];
+
+  const currentTab = tabs.find(tab => tab.href === pathname);
+  const [activeTab, setActiveTab] = useState<string | null>(currentTab?.value || tabs[0].value);
+
+  const handleTabChange = (value: string | null) => {
+    const tab = tabs.find(t => t.value === value);
+    if (tab) {
+      router.push(tab.href);
     }
+    setActiveTab(value);
+  };
 
-    useEffect(() => {
-        const match = tabs.find(tab => tab.href === pathname)
-        if (match) {
-            setActiveTab(match.value)
-        }
-    }, [pathname])
+  useEffect(() => {
+    const match = tabs.find(tab => tab.href === pathname);
+    if (match) {
+      setActiveTab(match.value);
+    }
+  }, [pathname]);
 
-    return (
-        <Stack>
-            <Title order={3}>Prestasi Desa</Title>
-            <Tabs color={colors['blue-button']} variant='pills' value={activeTab} onChange={handleTabChange}>
-                <TabsList p={"xs"} bg={"#BBC8E7FF"}>
-                    {tabs.map((e, i) => (
-                        <TabsTab key={i} value={e.value}>{e.label}</TabsTab>
-                    ))}
-                </TabsList>
-                {tabs.map((e, i) => (
-                    <TabsPanel key={i} value={e.value}>
-                        {/* Konten dummy, bisa diganti tergantung routing */}
-                        <></>
-                    </TabsPanel>
-                ))}
-            </Tabs>
+  return (
+    <Stack gap="lg">
+      <Title order={2} fw={700} style={{ color: "#1A1B1E" }}>
+        Prestasi Desa
+      </Title>
+      <Tabs
+        variant="pills"
+        value={activeTab}
+        onChange={handleTabChange}
+        radius="lg"
+        keepMounted={false}
+      >
+        <TabsList
+          p="sm"
+          style={{
+            background: "linear-gradient(135deg, #e7ebf7, #f9faff)",
+            borderRadius: "1rem",
+            boxShadow: "inset 0 0 10px rgba(0,0,0,0.05)",
+          }}
+        >
+          {tabs.map((tab, i) => (
+            <Tooltip key={i} label={tab.tooltip} position="bottom" withArrow transitionProps={{ transition: 'pop', duration: 200 }}>
+              <TabsTab
+                value={tab.value}
+                leftSection={tab.icon}
+                style={{
+                  fontWeight: 600,
+                  fontSize: "0.9rem",
+                  transition: "all 0.2s ease",
+                }}
+              >
+                {tab.label}
+              </TabsTab>
+            </Tooltip>
+          ))}
+        </TabsList>
+
+        {tabs.map((tab, i) => (
+          <TabsPanel
+            key={i}
+            value={tab.value}
+            style={{
+              padding: "1.5rem",
+              background: "linear-gradient(180deg, #ffffff, #f5f6fa)",
+              borderRadius: "1rem",
+              boxShadow: "0 4px 16px rgba(0,0,0,0.05)",
+            }}
+          >
             {children}
-        </Stack>
-    );
+          </TabsPanel>
+        ))}
+      </Tabs>
+    </Stack>
+  );
 }
 
 export default LayoutTabs;

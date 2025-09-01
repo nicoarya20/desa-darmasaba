@@ -12,10 +12,12 @@ import {
   Stack,
   Text,
   TextInput,
-  Title
+  Title,
+  Tooltip,
+  Image
 } from "@mantine/core";
 import { Dropzone } from "@mantine/dropzone";
-import { IconArrowBack, IconImageInPicture, IconUpload, IconX } from "@tabler/icons-react";
+import { IconArrowBack, IconDeviceFloppy, IconPhoto, IconUpload, IconX } from "@tabler/icons-react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
@@ -97,82 +99,111 @@ function EditKolaborasiInovasi() {
   };
 
   return (
-    <Box>
-      <Box mb={10}>
-        <Button variant="subtle" onClick={() => router.back()}>
-          <IconArrowBack color={colors["blue-button"]} size={30} />
-        </Button>
-      </Box>
-      <Paper bg={"white"} p={"md"} w={{ base: "100%", md: "50%" }}>
-        <Stack gap={"xs"}>
-          <Title order={3}>Edit SDGs Desa</Title>
+    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+      <Group mb="md">
+        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
+          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+            <IconArrowBack color={colors['blue-button']} size={24} />
+          </Button>
+        </Tooltip>
+        <Title order={4} ml="sm" c="dark">
+          Edit SDGs Desa
+        </Title>
+      </Group>
+
+      <Paper
+        w={{ base: '100%', md: '50%' }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+        style={{ border: '1px solid #e0e0e0' }}
+      >
+        <Stack gap="md">
+          <Box>
+            <Text fw="bold" fz="sm" mb={6}>
+              Gambar SDGs Desa
+            </Text>
+            <Dropzone
+              onDrop={(files) => {
+                const selectedFile = files[0];
+                if (selectedFile) {
+                  setFile(selectedFile);
+                  setPreviewImage(URL.createObjectURL(selectedFile));
+                }
+              }}
+              onReject={() => toast.error('File tidak valid, gunakan format gambar')}
+              maxSize={5 * 1024 ** 2}
+              accept={{ 'image/*': [] }}
+              radius="md"
+              p="xl"
+            >
+              <Group justify="center" gap="xl" mih={180}>
+                <Dropzone.Accept>
+                  <IconUpload size={48} color={colors['blue-button']} stroke={1.5} />
+                </Dropzone.Accept>
+                <Dropzone.Reject>
+                  <IconX size={48} color="red" stroke={1.5} />
+                </Dropzone.Reject>
+                <Dropzone.Idle>
+                  <IconPhoto size={48} color="#868e96" stroke={1.5} />
+                </Dropzone.Idle>
+                <Stack gap="xs" align="center">
+                  <Text size="md" fw={500}>
+                    Seret gambar atau klik untuk memilih file
+                  </Text>
+                  <Text size="sm" c="dimmed">
+                    Maksimal 5MB, format gambar wajib
+                  </Text>
+                </Stack>
+              </Group>
+            </Dropzone>
+
+            {previewImage && (
+              <Box mt="sm" style={{ display: 'flex', justifyContent: 'center' }}>
+                <Image
+                  src={previewImage}
+                  alt="Preview Gambar"
+                  radius="md"
+                  style={{ maxHeight: 220, objectFit: 'contain', border: `1px solid ${colors['blue-button']}` }}
+                />
+              </Box>
+            )}
+          </Box>
+
           <TextInput
+            label="Nama SDGs Desa"
+            placeholder="Masukkan nama SDGs Desa"
             value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            label={<Text fz={"sm"} fw={"bold"}>Nama</Text>}
-            placeholder="masukkan nama"
+            required
           />
 
           <TextInput
+            label="Jumlah"
+            placeholder="Masukkan jumlah"
             value={formData.jumlah}
             onChange={(e) => setFormData({ ...formData, jumlah: e.target.value })}
-            label={<Text fz={"sm"} fw={"bold"}>Jumlah</Text>}
-            placeholder="masukkan jumlah"
+            required
+            type="number"
           />
-          <Box>
-            <Text fz={"md"} fw={"bold"}>File Image</Text>
-            <Box>
-              <Dropzone
-                onDrop={(files) => {
-                  const selectedFile = files[0]; // Ambil file pertama
-                  if (selectedFile) {
-                    setFile(selectedFile);
-                    setPreviewImage(URL.createObjectURL(selectedFile)); // Buat preview
-                  }
-                }}
-                onReject={() => toast.error('File tidak valid.')}
-                maxSize={5 * 1024 ** 2} // Maks 5MB
-                accept={{
-                  'application/*': ['.jpeg', '.jpg', '.png', '.gif', '.webp', '.svg'],
-                }}
-              >
-                <Group justify="center" gap="xl" mih={220} style={{ pointerEvents: 'none' }}>
-                  <Dropzone.Accept>
-                    <IconUpload size={52} color="var(--mantine-color-blue-6)" stroke={1.5} />
-                  </Dropzone.Accept>
-                  <Dropzone.Reject>
-                    <IconX size={52} color="var(--mantine-color-red-6)" stroke={1.5} />
-                  </Dropzone.Reject>
-                  <Dropzone.Idle>
-                    <IconImageInPicture size={52} color="var(--mantine-color-dimmed)" stroke={1.5} />
-                  </Dropzone.Idle>
 
-                  <div>
-                    <Text size="xl" inline>
-                      Drag file ke sini atau klik untuk pilih file
-                    </Text>
-                    <Text size="sm" c="dimmed" inline mt={7}>
-                      Maksimal 5MB dan harus format image
-                    </Text>
-                  </div>
-                </Group>
-              </Dropzone>
-              <Box>
-                <Text fw={"bold"} fz={"lg"}>Dokumen</Text>
-                {previewImage ? (
-                  <iframe
-                    src={previewImage}
-                    width="100%"
-                    height="250px"
-                    style={{ border: "1px solid #ccc", borderRadius: "8px" }}
-                  />
-                ) : (
-                  <Text>Tidak ada image tersedia</Text>
-                )}
-              </Box>
-            </Box>
-          </Box>
-          <Button onClick={handleSubmit}>Simpan</Button>
+          <Group justify="right">
+            <Button
+              onClick={handleSubmit}
+              leftSection={<IconDeviceFloppy size={20} />}
+              loading={sdgsState.edit.loading}
+              radius="md"
+              size="md"
+              style={{
+                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                color: '#fff',
+                boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
+              }}
+            >
+              Simpan
+            </Button>
+          </Group>
         </Stack>
       </Paper>
     </Box>

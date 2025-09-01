@@ -51,6 +51,7 @@ function DetailMediaSosial() {
       </Button>
 
       <Paper
+      withBorder
         w={{ base: "100%", md: "60%" }}
         bg={colors['white-1']}
         p="lg"

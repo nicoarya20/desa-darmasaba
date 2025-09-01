@@ -1,22 +1,37 @@
 'use client';
-import colors from '@/con/colors';
-import { Box, Button, Center, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title } from '@mantine/core';
-import { useShallowEffect } from '@mantine/hooks';
-import { IconDeviceImac, IconSearch } from '@tabler/icons-react';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
+import { useShallowEffect } from '@mantine/hooks';
+import {
+  Box,
+  Button,
+  Center,
+  Pagination,
+  Paper,
+  Skeleton,
+  Stack,
+  Table,
+  TableTbody,
+  TableTd,
+  TableTh,
+  TableThead,
+  TableTr,
+  Text,
+  Title,
+} from '@mantine/core';
+import { IconDeviceImac, IconSearch } from '@tabler/icons-react';
 import HeaderSearch from '../../../_com/header';
 import indeksKepuasanState from '../../../_state/landing-page/indeks-kepuasan';
 
 function Responden() {
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
   return (
     <Box>
       <HeaderSearch
-        title='Responden'
-        placeholder='pencarian'
-        searchIcon={<IconSearch size={20} />}
+        title="Data Responden"
+        placeholder="Cari nama responden..."
+        searchIcon={<IconSearch size={18} />}
         value={search}
         onChange={(e) => setSearch(e.currentTarget.value)}
       />
@@ -34,84 +49,99 @@ function ListResponden({ search }: ListRespondenProps) {
   const router = useRouter();
   const { data, page, totalPages, loading, load } = state.findMany;
 
-
   useShallowEffect(() => {
-    load(page, 10)
+    load(page, 10);
   }, [page]);
 
-
-  const filteredData = (data || []).filter(item => {
+  const filteredData = (data || []).filter((item) => {
     const keyword = search.toLowerCase();
-    return (
-      item.name.toLowerCase().includes(keyword)
-    );
+    return item.name.toLowerCase().includes(keyword);
   });
 
   if (loading || !data) {
     return (
-      <Stack py={10}>
-        <Skeleton height={730} />
+      <Stack py="md">
+        <Skeleton height={650} radius="lg" />
       </Stack>
     );
   }
+
   if (data.length === 0) {
     return (
-      <Box py={10}>
-        <Paper p="md">
-          <Stack>
-            <Title>Responden</Title>
-            <Table striped withTableBorder withRowBorders>
-              <TableThead>
-                <TableTr>
-                  <TableTh>No</TableTh>
-                  <TableTh>Nama</TableTh>
-                  <TableTh>Tanggal</TableTh>
-                  <TableTh>Jenis Kelamin</TableTh>
-                  <TableTh>Detail</TableTh>
-                </TableTr>
-              </TableThead>
-            </Table>
-            <Text ta="center">Tidak ada data berdasarkan jenis kelamin responden yang tersedia</Text>
+      <Box py="md">
+        <Paper p="lg" radius="lg" shadow="md" withBorder>
+          <Stack align="center" gap="sm">
+            <Title order={4}>Data Responden</Title>
+            <Text c="dimmed" ta="center">
+              Belum ada data responden yang tersedia
+            </Text>
           </Stack>
         </Paper>
-      </Box >
+      </Box>
     );
   }
 
   return (
     <Box>
-      <Stack gap="xs">
-        <Paper bg={colors['white-1']} p="md" h={{ base: 730, md: 650 }}>
-          <Title mb={10} order={3}>List Responden</Title>
-          <Table striped withTableBorder withRowBorders>
+      <Stack gap="md">
+        <Paper p="lg" radius="lg" shadow="md" withBorder>
+          <Title order={4} mb="sm">
+            Daftar Responden
+          </Title>
+          <Table
+            striped
+            highlightOnHover
+            withTableBorder
+            withRowBorders
+            verticalSpacing="sm"
+          >
             <TableThead>
               <TableTr>
                 <TableTh style={{ width: '5%', textAlign: 'center' }}>No</TableTh>
-                <TableTh style={{ width: '20%', textAlign: 'center' }}>Nama</TableTh>
+                <TableTh style={{ width: '25%', textAlign: 'center' }}>Nama</TableTh>
                 <TableTh style={{ width: '20%', textAlign: 'center' }}>Tanggal</TableTh>
                 <TableTh style={{ width: '20%', textAlign: 'center' }}>Jenis Kelamin</TableTh>
-                <TableTh style={{ width: '15%', textAlign: 'center' }}>Detail</TableTh>
+                <TableTh style={{ width: '15%', textAlign: 'center' }}>Aksi</TableTh>
               </TableTr>
             </TableThead>
             <TableTbody>
               {filteredData.length === 0 ? (
                 <TableTr>
-                  <TableTd colSpan={6}>
-                    <Text ta='center' c='dimmed'>Belum ada data responden</Text>
+                  <TableTd colSpan={5}>
+                    <Text ta="center" c="dimmed">
+                      Tidak ditemukan data dengan kata kunci pencarian
+                    </Text>
                   </TableTd>
                 </TableTr>
               ) : (
                 filteredData.map((item, index) => (
                   <TableTr key={item.id}>
-                    <TableTd style={{ width: '5%', textAlign: 'center' }}>{index + 1}</TableTd>
-                    <TableTd style={{ width: '20%', textAlign: 'center' }}>{item.name}</TableTd>
-                    <TableTd style={{ width: '20%', textAlign: 'center' }}>{item.tanggal
-                      ? new Date(item.tanggal).toLocaleDateString('id-ID')
-                      : '-'}</TableTd>
-                    <TableTd style={{ width: '20%', textAlign: 'center' }}>{item.jenisKelamin.name}</TableTd>
-                    <TableTd style={{ width: '15%', textAlign: 'center' }}>
-                      <Button color='green' onClick={() => router.push(`/admin/ppid/ikm-desa-darmasaba/responden/${item.id}`)}>
-                        <IconDeviceImac size={20} />
+                    <TableTd ta="center">{index + 1}</TableTd>
+                    <TableTd ta="center">{item.name}</TableTd>
+                    <TableTd ta="center">
+                      {item.tanggal
+                        ? new Date(item.tanggal).toLocaleDateString('id-ID', {
+                            day: '2-digit',
+                            month: 'long',
+                            year: 'numeric',
+                          })
+                        : '-'}
+                    </TableTd>
+                    <TableTd ta="center">{item.jenisKelamin.name}</TableTd>
+                    <TableTd ta="center">
+                      <Button
+                        size="xs"
+                        radius="md"
+                        variant="light"
+                        color="blue"
+                        leftSection={<IconDeviceImac size={16} />}
+                        onClick={() =>
+                          router.push(
+                            `/admin/landing-page/indeks-kepuasan-masyarakat/responden/${item.id}`
+                          )
+                        }
+                      >
+                        Detail
                       </Button>
                     </TableTd>
                   </TableTr>
@@ -123,22 +153,19 @@ function ListResponden({ search }: ListRespondenProps) {
         <Center>
           <Pagination
             value={page}
+            total={totalPages}
             onChange={(newPage) => {
               load(newPage, 10);
-              window.scrollTo(0, 0);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
-            total={totalPages}
+            size="md"
+            radius="md"
             mt="md"
-            mb="md"
           />
         </Center>
-
-       
       </Stack>
     </Box>
   );
 }
 
 export default Responden;
-
-

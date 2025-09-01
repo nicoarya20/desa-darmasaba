@@ -1,5 +1,4 @@
 'use client';
-import colors from '@/con/colors';
 import { Box, Button, Center, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconDeviceImac, IconSearch } from '@tabler/icons-react';
@@ -14,9 +13,9 @@ function Responden() {
   return (
     <Box>
       <HeaderSearch
-        title='Responden'
-        placeholder='pencarian'
-        searchIcon={<IconSearch size={20} />}
+        title="Data Responden"
+        placeholder="Cari nama responden..."
+        searchIcon={<IconSearch size={18} />}
         value={search}
         onChange={(e) => setSearch(e.currentTarget.value)}
       />
@@ -49,93 +48,99 @@ function ListResponden({ search }: ListRespondenProps) {
 
   if (loading || !data) {
     return (
-      <Stack py={10}>
-        <Skeleton height={730} />
+      <Stack py="xl">
+        <Skeleton height={750} radius="lg" />
       </Stack>
     );
   }
+
   if (data.length === 0) {
     return (
-      <Box py={10}>
-        <Paper p="md">
-          <Stack>
-            <Title>Responden</Title>
-            <Table striped withTableBorder withRowBorders>
-              <TableThead>
-                <TableTr>
-                  <TableTh>No</TableTh>
-                  <TableTh>Nama</TableTh>
-                  <TableTh>Tanggal</TableTh>
-                  <TableTh>Jenis Kelamin</TableTh>
-                  <TableTh>Detail</TableTh>
-                </TableTr>
-              </TableThead>
-            </Table>
-            <Text ta="center">Tidak ada data berdasarkan jenis kelamin responden yang tersedia</Text>
-          </Stack>
-        </Paper>
-      </Box >
+      <Paper withBorder bg="white" p="lg" radius="md" shadow="sm">
+        <Stack gap="md">
+          <Title order={3}>Data Responden</Title>
+          <Table striped withTableBorder withRowBorders>
+            <TableThead>
+              <TableTr>
+                <TableTh style={{ textAlign: 'center' }}>No</TableTh>
+                <TableTh>Nama</TableTh>
+                <TableTh>Tanggal</TableTh>
+                <TableTh>Jenis Kelamin</TableTh>
+                <TableTh style={{ textAlign: 'center' }}>Aksi</TableTh>
+              </TableTr>
+            </TableThead>
+          </Table>
+          <Text c="dimmed" ta="center" py="md">
+            Belum ada data responden yang tersedia
+          </Text>
+        </Stack>
+      </Paper>
     );
   }
 
   return (
-    <Box>
-      <Stack gap="xs">
-        <Paper bg={colors['white-1']} p="md" h={{ base: 730, md: 650 }}>
-          <Title mb={10} order={3}>List Responden</Title>
-          <Table striped withTableBorder withRowBorders>
-            <TableThead>
+    <Paper withBorder bg="white" p="lg" radius="md" shadow="sm">
+      <Stack gap="md">
+        <Title order={3}>Data Responden</Title>
+        <Table striped withTableBorder withRowBorders>
+          <TableThead>
+            <TableTr>
+              <TableTh style={{ width: '5%', textAlign: 'center' }}>No</TableTh>
+              <TableTh style={{ width: '25%' }}>Nama</TableTh>
+              <TableTh style={{ width: '25%' }}>Tanggal</TableTh>
+              <TableTh style={{ width: '20%' }}>Jenis Kelamin</TableTh>
+              <TableTh style={{ width: '15%', textAlign: 'center' }}>Aksi</TableTh>
+            </TableTr>
+          </TableThead>
+          <TableTbody>
+            {filteredData.length === 0 ? (
               <TableTr>
-                <TableTh style={{ width: '5%', textAlign: 'center' }}>No</TableTh>
-                <TableTh style={{ width: '20%', textAlign: 'center' }}>Nama</TableTh>
-                <TableTh style={{ width: '20%', textAlign: 'center' }}>Tanggal</TableTh>
-                <TableTh style={{ width: '20%', textAlign: 'center' }}>Jenis Kelamin</TableTh>
-                <TableTh style={{ width: '15%', textAlign: 'center' }}>Detail</TableTh>
+                <TableTd colSpan={5}>
+                  <Text c="dimmed" ta="center" py="md">
+                    Tidak ada data yang cocok dengan pencarian
+                  </Text>
+                </TableTd>
               </TableTr>
-            </TableThead>
-            <TableTbody>
-              {filteredData.length === 0 ? (
-                <TableTr>
-                  <TableTd colSpan={6}>
-                    <Text ta='center' c='dimmed'>Belum ada data responden</Text>
+            ) : (
+              filteredData.map((item, index) => (
+                <TableTr key={item.id}>
+                  <TableTd style={{ width: '5%', textAlign: 'center' }}>{index + 1}</TableTd>
+                  <TableTd style={{ width: '25%' }}>{item.name}</TableTd>
+                  <TableTd style={{ width: '25%' }}>
+                    {item.tanggal ? new Date(item.tanggal).toLocaleDateString('id-ID') : '-'}
+                  </TableTd>
+                  <TableTd style={{ width: '20%' }}>{item.jenisKelamin.name}</TableTd>
+                  <TableTd style={{ width: '15%', textAlign: 'center' }}>
+                    <Button
+                      variant="light"
+                      size="xs"
+                      onClick={() => router.push(`/admin/ppid/ikm-desa-darmasaba/responden/${item.id}`)}
+                    >
+                      <IconDeviceImac size={20} />
+                    </Button>
                   </TableTd>
                 </TableTr>
-              ) : (
-                filteredData.map((item, index) => (
-                  <TableTr key={item.id}>
-                    <TableTd style={{ width: '5%', textAlign: 'center' }}>{index + 1}</TableTd>
-                    <TableTd style={{ width: '20%', textAlign: 'center' }}>{item.name}</TableTd>
-                    <TableTd style={{ width: '20%', textAlign: 'center' }}>{item.tanggal
-                      ? new Date(item.tanggal).toLocaleDateString('id-ID')
-                      : '-'}</TableTd>
-                    <TableTd style={{ width: '20%', textAlign: 'center' }}>{item.jenisKelamin.name}</TableTd>
-                    <TableTd style={{ width: '15%', textAlign: 'center' }}>
-                      <Button color='green' onClick={() => router.push(`/admin/ppid/ikm-desa-darmasaba/responden/${item.id}`)}>
-                        <IconDeviceImac size={20} />
-                      </Button>
-                    </TableTd>
-                  </TableTr>
-                ))
-              )}
-            </TableTbody>
-          </Table>
-        </Paper>
-        <Center>
-          <Pagination
-            value={page}
-            onChange={(newPage) => {
-              load(newPage, 10);
-              window.scrollTo(0, 0);
-            }}
-            total={totalPages}
-            mt="md"
-            mb="md"
-          />
-        </Center>
-
-       
+              ))
+            )}
+          </TableTbody>
+        </Table>
+        {filteredData.length > 0 && (
+          <Center>
+            <Pagination
+              value={page}
+              total={totalPages}
+              onChange={(newPage) => {
+                load(newPage, 10);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              size="md"
+              radius="md"
+              mt="md"
+            />
+          </Center>
+        )}
       </Stack>
-    </Box>
+    </Paper>
   );
 }
 
