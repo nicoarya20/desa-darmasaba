@@ -2,133 +2,150 @@
 import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
 import beasiswaDesaState from '@/app/admin/(dashboard)/_state/pendidikan/beasiswa-desa';
 import colors from '@/con/colors';
-import { Box, Button, Flex, Paper, Skeleton, Stack, Text } from '@mantine/core';
+import { Box, Button, Group, Paper, Skeleton, Stack, Text, Tooltip } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { IconArrowBack, IconX } from '@tabler/icons-react';
+import { IconArrowBack, IconTrash } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 
-
 function DetailBeasiswaPendaftar() {
-  const state = useProxy(beasiswaDesaState.beasiswaPendaftar)
+  const state = useProxy(beasiswaDesaState.beasiswaPendaftar);
   const [modalHapus, setModalHapus] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const router = useRouter()
-  const params = useParams()
+  const params = useParams();
+  const router = useRouter();
 
   useShallowEffect(() => {
-    state.findUnique.load(params?.id as string)
-  }, [])
+    state.findUnique.load(params?.id as string);
+  }, []);
 
   const handleHapus = () => {
     if (selectedId) {
-      state.delete.delete(selectedId)
-      setModalHapus(false)
-      setSelectedId(null)
-      router.push("/admin/pendidikan/beasiswa-desa/beasiswa-pendaftar")
+      state.delete.delete(selectedId);
+      setModalHapus(false);
+      setSelectedId(null);
+      router.push("/admin/pendidikan/beasiswa-desa/beasiswa-pendaftar");
     }
-  }
+  };
 
   if (!state.findUnique.data) {
     return (
       <Stack py={10}>
-        <Skeleton h={500} />
+        <Skeleton height={500} radius="md" />
       </Stack>
-    )
+    );
   }
 
+  const data = state.findUnique.data;
+
   return (
-    <Box>
-      <Box mb={10}>
-        <Button variant="subtle" onClick={() => router.back()}>
-          <IconArrowBack color={colors['blue-button']} size={25} />
-        </Button>
-      </Box>
-      <Paper bg={colors['white-1']} w={{ base: "100%", md: "100%", lg: "50%" }} p={'md'}>
-        <Stack>
-          <Flex justify="space-between" gap={"xs"}>
-            <Text fz={"xl"} fw={"bold"}>Detail Beasiswa Pendaftar</Text>
-            <Button
-              onClick={() => {
-                if (state.findUnique.data) {
-                  setSelectedId(state.findUnique.data.id);
-                  setModalHapus(true);
-                }
-              }}
-              disabled={state.delete.loading || !state.findUnique.data}
-              color={"red"}
-            >
-              <IconX size={20} />
-            </Button>
-          </Flex>
-          {state.findUnique.data ? (
-            <Paper key={state.findUnique.data.id} bg={colors['BG-trans']} p={'md'}>
-              <Stack gap={"xs"}>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Nama Lengkap</Text>
-                  <Text fz={"lg"}>{state.findUnique.data?.namaLengkap}</Text>
-                </Box>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>NIK</Text>
-                  <Text fz={"lg"}>{state.findUnique.data?.nik}</Text>
-                </Box>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Tempat Lahir</Text>
-                  <Text fz={"lg"}>{state.findUnique.data?.tempatLahir}</Text>
-                </Box>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Tanggal Lahir</Text>
-                  <Text fz={"lg"}>{state.findUnique.data?.tanggalLahir ? new Date(state.findUnique.data.tanggalLahir).toLocaleDateString() : '-'}</Text>
-                </Box>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Jenis Kelamin</Text>
-                  <Text fz={"lg"}>{state.findUnique.data?.jenisKelamin}</Text>
-                </Box>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Kewarganegaraan</Text>
-                  <Text fz={"lg"}>{state.findUnique.data?.kewarganegaraan}</Text>
-                </Box>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Agama</Text>
-                  <Text fz={"lg"}>{state.findUnique.data?.agama}</Text>
-                </Box>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Alamat KTP</Text>
-                  <Text fz={"lg"}>{state.findUnique.data?.alamatKTP}</Text>
-                </Box>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Alamat Domisili</Text>
-                  <Text fz={"lg"}>{state.findUnique.data?.alamatDomisili}</Text>
-                </Box>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>No HP</Text>
-                  <Text fz={"lg"}>{state.findUnique.data?.noHp}</Text>
-                </Box>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Email</Text>
-                  <Text fz={"lg"}>{state.findUnique.data?.email}</Text>
-                </Box>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Status Pernikahan</Text>
-                  <Text fz={"lg"}>{state.findUnique.data?.statusPernikahan}</Text>
-                </Box>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Ukuran Baju</Text>
-                  <Text fz={"lg"}>{state.findUnique.data?.ukuranBaju}</Text>
-                </Box>
-              </Stack>
-            </Paper>
-          ) : null}
+    <Box py={10}>
+      <Button
+        variant="subtle"
+        onClick={() => router.back()}
+        leftSection={<IconArrowBack size={24} color={colors['blue-button']} />}
+        mb={15}
+      >
+        Kembali
+      </Button>
+
+      <Paper
+        withBorder
+        w={{ base: "100%", md: "70%" }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+      >
+        <Stack gap="md">
+          <Text fz="2xl" fw="bold" c={colors['blue-button']}>
+            Detail Beasiswa Pendaftar
+          </Text>
+
+          <Paper bg="#ECEEF8" p="md" radius="md" shadow="xs">
+            <Stack gap="sm">
+              <Box>
+                <Text fz="lg" fw="bold">Nama Lengkap</Text>
+                <Text fz="md" c="dimmed">{data.namaLengkap || '-'}</Text>
+              </Box>
+              <Box>
+                <Text fz="lg" fw="bold">NIK</Text>
+                <Text fz="md" c="dimmed">{data.nik || '-'}</Text>
+              </Box>
+              <Box>
+                <Text fz="lg" fw="bold">Tempat Lahir</Text>
+                <Text fz="md" c="dimmed">{data.tempatLahir || '-'}</Text>
+              </Box>
+              <Box>
+                <Text fz="lg" fw="bold">Tanggal Lahir</Text>
+                <Text fz="md" c="dimmed">
+                  {data.tanggalLahir ? new Date(data.tanggalLahir).toLocaleDateString() : '-'}
+                </Text>
+              </Box>
+              <Box>
+                <Text fz="lg" fw="bold">Jenis Kelamin</Text>
+                <Text fz="md" c="dimmed">{data.jenisKelamin || '-'}</Text>
+              </Box>
+              <Box>
+                <Text fz="lg" fw="bold">Kewarganegaraan</Text>
+                <Text fz="md" c="dimmed">{data.kewarganegaraan || '-'}</Text>
+              </Box>
+              <Box>
+                <Text fz="lg" fw="bold">Agama</Text>
+                <Text fz="md" c="dimmed">{data.agama || '-'}</Text>
+              </Box>
+              <Box>
+                <Text fz="lg" fw="bold">Alamat KTP</Text>
+                <Text fz="md" c="dimmed">{data.alamatKTP || '-'}</Text>
+              </Box>
+              <Box>
+                <Text fz="lg" fw="bold">Alamat Domisili</Text>
+                <Text fz="md" c="dimmed">{data.alamatDomisili || '-'}</Text>
+              </Box>
+              <Box>
+                <Text fz="lg" fw="bold">No HP</Text>
+                <Text fz="md" c="dimmed">{data.noHp || '-'}</Text>
+              </Box>
+              <Box>
+                <Text fz="lg" fw="bold">Email</Text>
+                <Text fz="md" c="dimmed">{data.email || '-'}</Text>
+              </Box>
+              <Box>
+                <Text fz="lg" fw="bold">Status Pernikahan</Text>
+                <Text fz="md" c="dimmed">{data.statusPernikahan || '-'}</Text>
+              </Box>
+              <Box>
+                <Text fz="lg" fw="bold">Ukuran Baju</Text>
+                <Text fz="md" c="dimmed">{data.ukuranBaju || '-'}</Text>
+              </Box>
+
+              <Group gap="sm" mt="md">
+                <Tooltip label="Hapus Pendaftar" withArrow position="top">
+                  <Button
+                    color="red"
+                    onClick={() => {
+                      setSelectedId(data.id);
+                      setModalHapus(true);
+                    }}
+                    variant="light"
+                    radius="md"
+                    size="md"
+                  >
+                    <IconTrash size={20} />
+                  </Button>
+                </Tooltip>
+              </Group>
+            </Stack>
+          </Paper>
         </Stack>
       </Paper>
 
-      {/* Modal Konfirmasi Hapus */}
       <ModalKonfirmasiHapus
         opened={modalHapus}
         onClose={() => setModalHapus(false)}
         onConfirm={handleHapus}
-        text='Apakah anda yakin ingin menghapus beasiswa desa ini?'
+        text="Apakah Anda yakin ingin menghapus data pendaftar ini?"
       />
     </Box>
   );

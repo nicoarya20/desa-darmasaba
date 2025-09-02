@@ -317,14 +317,34 @@ const kategoriBuku = proxy({
         isActive: true;
       };
     }>[],
+    page: 1,
+    totalPages: 1,
     loading: false,
-    async load() {
-      const res =
-        await ApiFetch.api.pendidikan.perpustakaandigital.kategoribuku[
-          "findMany"
-        ].get();
-      if (res.status === 200) {
-        kategoriBuku.findMany.data = res.data?.data ?? [];
+    search: "",
+   load: async (page = 1, limit = 10, search = "") => {
+      kategoriBuku.findMany.loading = true; // ✅ Akses langsung via nama path
+      kategoriBuku.findMany.page = page;
+      kategoriBuku.findMany.search = search;
+  
+      try {
+        const query: any = { page, limit };
+        if (search) query.search = search;
+    
+        const res = await ApiFetch.api.pendidikan.perpustakaandigital.kategoribuku["findMany"].get({ query });
+    
+        if (res.status === 200 && res.data?.success) {
+          kategoriBuku.findMany.data = res.data.data ?? [];
+          kategoriBuku.findMany.totalPages = res.data.totalPages ?? 1;
+        } else {
+          kategoriBuku.findMany.data = [];
+          kategoriBuku.findMany.totalPages = 1;
+        }
+      } catch (err) {
+        console.error("Gagal fetch data kategori buku paginated:", err);
+        kategoriBuku.findMany.data = [];
+        kategoriBuku.findMany.totalPages = 1;
+      } finally {
+        kategoriBuku.findMany.loading = false;
       }
     },
   },

@@ -52,8 +52,52 @@ import tempatKegiatan from "./data/pendidikan/pendidikan-non-formal/tempat-kegia
 import tujuanProgram2 from "./data/pendidikan/pendidikan-non-formal/tujuan-program2.json";
 import programUnggulan from "./data/pendidikan/program-pendidikan-anak/program-unggulan.json";
 import tujuanProgram from "./data/pendidikan/program-pendidikan-anak/tujuan-program.json";
+import roles from "./data/user/roles.json";
+import users from "./data/user/users.json";
 
 (async () => {
+  // =========== USER & ROLE ===========
+  for (const r of roles) {
+    await prisma.role.upsert({
+      where: { id: r.id },
+      update: {
+        name: r.name,
+        description: r.description,
+        permissions: r.permissions,
+        isActive: true,
+      },
+      create: {
+        id: r.id,
+        name: r.name,
+        description: r.description,
+        permissions: r.permissions,
+        isActive: true,
+      },
+    });
+  }
+  console.log("✅ Roles seeded");
+  //users
+  for (const u of users) {
+    await prisma.user.upsert({
+      where: { id: u.id },
+      update: {
+        nama: u.nama,
+        email: u.email,
+        password: u.password,
+        roleId: u.roleId,
+        isActive: true,
+      },
+      create: {
+        id: u.id,
+        nama: u.nama,
+        email: u.email,
+        password: u.password,
+        roleId: u.roleId,
+        isActive: true,
+      },
+    });
+  }
+  console.log("✅ Users seeded");
   // =========== LANDING PAGE ===========
   // =========== SUBMENU PROFILE ===========
   // =========== PROFILE PEJABAT DESA ===========

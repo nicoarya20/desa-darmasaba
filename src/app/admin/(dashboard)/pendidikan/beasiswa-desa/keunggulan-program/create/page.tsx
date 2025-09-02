@@ -34,7 +34,7 @@ function CreateKeunggulanProgram() {
   return (
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" color="blue" position="bottom">
+        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
           <Button
             variant="subtle"
             onClick={() => router.back()}

@@ -2,7 +2,7 @@
 import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
 import perpustakaanDigitalState from '@/app/admin/(dashboard)/_state/pendidikan/perpustakaan-digital';
 import colors from '@/con/colors';
-import { Box, Button, Flex, Image, Paper, Skeleton, Stack, Text } from '@mantine/core';
+import { Box, Button, Group, Image, Paper, Skeleton, Stack, Text, Tooltip } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack, IconEdit, IconX } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -10,97 +10,130 @@ import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 
 function DetailDataPerpustakaan() {
-  const stateDetail = useProxy(perpustakaanDigitalState.dataPerpustakaan)
-  const [modalHapus, setModalHapus] = useState(false)
-  const [selectedId, setSelectedId] = useState<string | null>(null)
-  const params = useParams()
+  const stateDetail = useProxy(perpustakaanDigitalState.dataPerpustakaan);
+  const [modalHapus, setModalHapus] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const params = useParams();
   const router = useRouter();
 
   useShallowEffect(() => {
-    stateDetail.findUnique.load(params?.id as string)
-  }, [])
+    stateDetail.findUnique.load(params?.id as string);
+  }, []);
 
   const handleHapus = () => {
     if (selectedId) {
-      stateDetail.delete.delete(selectedId)
-      setModalHapus(false)
-      setSelectedId(null)
-      router.push("/admin/pendidikan/perpustakaan-digital/data-perpustakaan")
+      stateDetail.delete.delete(selectedId);
+      setModalHapus(false);
+      setSelectedId(null);
+      router.push("/admin/pendidikan/perpustakaan-digital/data-perpustakaan");
     }
-  }
+  };
 
   if (!stateDetail.findUnique.data) {
     return (
       <Stack py={10}>
-        <Skeleton h={500} />
+        <Skeleton height={500} radius="md" />
       </Stack>
-    )
+    );
   }
 
+  const data = stateDetail.findUnique.data;
+
   return (
-    <Box>
-      <Box mb={10}>
-        <Button variant="subtle" onClick={() => router.back()}>
-          <IconArrowBack color={colors['blue-button']} size={25} />
-        </Button>
-      </Box>
-      <Paper w={{ base: "100%", md: "50%" }} bg={colors['white-1']} p={'md'}>
-        <Stack>
-          <Text fz={"xl"} fw={"bold"}>Detail Data Perpustakaan</Text>
-          <Paper bg={colors['BG-trans']} p={'md'}>
-            <Stack gap={"xs"}>
+    <Box py={10}>
+      <Button
+        variant="subtle"
+        onClick={() => router.back()}
+        leftSection={<IconArrowBack size={24} color={colors['blue-button']} />}
+        mb={15}
+      >
+        Kembali
+      </Button>
+
+      <Paper
+        withBorder
+        w={{ base: "100%", md: "60%" }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+      >
+        <Stack gap="md">
+          <Text fz="2xl" fw="bold" c={colors['blue-button']}>
+            Detail Data Perpustakaan
+          </Text>
+
+          <Paper bg="#ECEEF8" p="md" radius="md" shadow="xs">
+            <Stack gap="sm">
               <Box>
-                <Text fz={"lg"} fw={"bold"}>Judul</Text>
-                <Text fz={"lg"}>{stateDetail.findUnique.data?.judul}</Text>
+                <Text fz="lg" fw="bold">Judul</Text>
+                <Text fz="md" c="dimmed">{data.judul || '-'}</Text>
               </Box>
+
               <Box>
-                <Text fz={"lg"} fw={"bold"}>Deskripsi</Text>
-                <Text fz={"lg"} dangerouslySetInnerHTML={{ __html: stateDetail.findUnique.data?.deskripsi }} />
+                <Text fz="lg" fw="bold">Deskripsi</Text>
+                <Text fz="md" dangerouslySetInnerHTML={{ __html: data.deskripsi || '-' }} />
               </Box>
+
               <Box>
-                <Text fz={"lg"} fw={"bold"}>Kategori</Text>
-                <Text fz={"lg"}>{stateDetail.findUnique.data?.kategori.name}</Text>
+                <Text fz="lg" fw="bold">Kategori</Text>
+                <Text fz="md" c="dimmed">{data.kategori?.name || '-'}</Text>
               </Box>
+
               <Box>
-                <Text fz={"lg"} fw={"bold"}>Gambar</Text>
-                <Image src={stateDetail.findUnique.data?.image.link} alt="gambar" />
+                <Text fz="lg" fw="bold">Gambar</Text>
+                {data.image?.link ? (
+                  <Image
+                    src={data.image.link}
+                    alt={data.judul || 'Gambar Perpustakaan'}
+                    w={120}
+                    h={120}
+                    radius="md"
+                    fit="cover"
+                  />
+                ) : (
+                  <Text fz="sm" c="dimmed">Tidak ada gambar</Text>
+                )}
               </Box>
-              <Box>
-                <Flex gap={"xs"}>
+
+              <Group gap="sm">
+                <Tooltip label="Hapus Data Perpustakaan" withArrow position="top">
                   <Button
+                    color="red"
                     onClick={() => {
-                      if (stateDetail.findUnique.data) {
-                        setSelectedId(stateDetail.findUnique.data.id);
-                        setModalHapus(true);
-                      }
+                      setSelectedId(data.id);
+                      setModalHapus(true);
                     }}
-                    disabled={!stateDetail.findUnique.data}
-                    color="red">
+                    variant="light"
+                    radius="md"
+                    size="md"
+                  >
                     <IconX size={20} />
                   </Button>
+                </Tooltip>
+
+                <Tooltip label="Edit Data Perpustakaan" withArrow position="top">
                   <Button
-                    onClick={() => {
-                      if (stateDetail.findUnique.data) {
-                        router.push(`/admin/pendidikan/perpustakaan-digital/data-perpustakaan/${stateDetail.findUnique.data.id}/edit`);
-                      }
-                    }}
-                    disabled={!stateDetail.findUnique.data}
-                    color="green">
+                    color="green"
+                    onClick={() => router.push(`/admin/pendidikan/perpustakaan-digital/data-perpustakaan/${data.id}/edit`)}
+                    variant="light"
+                    radius="md"
+                    size="md"
+                  >
                     <IconEdit size={20} />
                   </Button>
-                </Flex>
-              </Box>
+                </Tooltip>
+              </Group>
             </Stack>
           </Paper>
         </Stack>
       </Paper>
 
-      {/* Modal Hapus */}
       <ModalKonfirmasiHapus
         opened={modalHapus}
         onClose={() => setModalHapus(false)}
         onConfirm={handleHapus}
-        text="Apakah anda yakin ingin menghapus data ini?"
+        text="Apakah Anda yakin ingin menghapus data ini?"
       />
     </Box>
   );

@@ -1,16 +1,14 @@
 'use client'
-import { useProxy } from 'valtio/utils';
+import { Box, Button, Group, Paper, Skeleton, Stack, Text, Tooltip } from '@mantine/core'
+import { useShallowEffect } from '@mantine/hooks'
+import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react'
+import { useParams, useRouter } from 'next/navigation'
+import { useState } from 'react'
+import { useProxy } from 'valtio/utils'
 
-import { Box, Button, Flex, Paper, Skeleton, Stack, Text } from '@mantine/core';
-import { useShallowEffect } from '@mantine/hooks';
-import { IconArrowBack, IconEdit, IconX } from '@tabler/icons-react';
-import { useParams, useRouter } from 'next/navigation';
-import { useState } from 'react';
-
-import colors from '@/con/colors';
-
-import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
-import infoSekolahPaud from '@/app/admin/(dashboard)/_state/pendidikan/info-sekolah-paud';
+import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus'
+import infoSekolahPaud from '@/app/admin/(dashboard)/_state/pendidikan/info-sekolah-paud'
+import colors from '@/con/colors'
 
 function DetailSiswa() {
   const detailState = useProxy(infoSekolahPaud.siswa)
@@ -22,7 +20,6 @@ function DetailSiswa() {
   useShallowEffect(() => {
     detailState.findUnique.load(params?.id as string)
   }, [])
-
 
   const handleHapus = () => {
     if (selectedId) {
@@ -36,60 +33,83 @@ function DetailSiswa() {
   if (!detailState.findUnique.data) {
     return (
       <Stack py={10}>
-        <Skeleton h={40} />
+        <Skeleton height={500} radius="md" />
       </Stack>
     )
   }
 
+  const data = detailState.findUnique.data
+
   return (
-    <Box>
-      <Box mb={10}>
-        <Button variant="subtle" onClick={() => router.back()}>
-          <IconArrowBack color={colors['blue-button']} size={25} />
-        </Button>
-      </Box>
-      <Paper bg={colors['white-1']} w={{ base: "100%", md: "100%", lg: "50%" }} p={'md'}>
-        <Stack>
-          <Text fz={"xl"} fw={"bold"}>Detail Siswa</Text>
-          {detailState.findUnique.data ? (
-            <Paper key={detailState.findUnique.data.id} bg={colors['BG-trans']} p={'md'}>
-              <Stack gap={"xs"}>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Nama</Text>
-                  <Text fz={"lg"}>{detailState.findUnique.data?.nama}</Text>
-                </Box>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Lembaga</Text>
-                  <Text fz={"lg"} >{detailState.findUnique.data?.lembaga?.nama}</Text>
-                </Box>
-                <Flex gap={"xs"} mt={10}>
+    <Box py={10}>
+      {/* Tombol Kembali */}
+      <Button
+        variant="subtle"
+        onClick={() => router.back()}
+        leftSection={<IconArrowBack size={24} color={colors['blue-button']} />}
+        mb={15}
+      >
+        Kembali
+      </Button>
+
+      {/* Card Utama */}
+      <Paper
+        withBorder
+        w={{ base: "100%", md: "60%" }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+      >
+        <Stack gap="md">
+          <Text fz="2xl" fw="bold" c={colors['blue-button']}>
+            Detail Siswa
+          </Text>
+
+          <Paper bg="#ECEEF8" p="md" radius="md" shadow="xs">
+            <Stack gap="sm">
+              <Box>
+                <Text fz="lg" fw="bold">Nama</Text>
+                <Text fz="md" c="dimmed">{data?.nama || '-'}</Text>
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">Lembaga</Text>
+                <Text fz="md" c="dimmed">{data?.lembaga?.nama || '-'}</Text>
+              </Box>
+
+              <Group gap="sm">
+                <Tooltip label="Hapus Siswa" withArrow position="top">
                   <Button
+                    color="red"
                     onClick={() => {
-                      if (detailState.findUnique.data) {
-                        setSelectedId(detailState.findUnique.data.id);
-                        setModalHapus(true);
-                      }
+                      setSelectedId(data.id)
+                      setModalHapus(true)
                     }}
-                    disabled={detailState.delete.loading || !detailState.findUnique.data}
-                    color={"red"}
+                    variant="light"
+                    radius="md"
+                    size="md"
                   >
-                    <IconX size={20} />
+                    <IconTrash size={20} />
                   </Button>
+                </Tooltip>
+
+                <Tooltip label="Edit Siswa" withArrow position="top">
                   <Button
-                    onClick={() => {
-                      if (detailState.findUnique.data) {
-                        router.push(`/admin/pendidikan/info-sekolah/siswa/${detailState.findUnique.data.id}/edit`);
-                      }
-                    }}
-                    disabled={!detailState.findUnique.data}
-                    color={"green"}
+                    color="green"
+                    onClick={() =>
+                      router.push(`/admin/pendidikan/info-sekolah/siswa/${data.id}/edit`)
+                    }
+                    variant="light"
+                    radius="md"
+                    size="md"
                   >
                     <IconEdit size={20} />
                   </Button>
-                </Flex>
-              </Stack>
-            </Paper>
-          ) : null}
+                </Tooltip>
+              </Group>
+            </Stack>
+          </Paper>
         </Stack>
       </Paper>
 
@@ -98,10 +118,10 @@ function DetailSiswa() {
         opened={modalHapus}
         onClose={() => setModalHapus(false)}
         onConfirm={handleHapus}
-        text='Apakah anda yakin ingin menghapus siswa ini?'
+        text="Apakah Anda yakin ingin menghapus siswa ini?"
       />
     </Box>
-  );
+  )
 }
 
-export default DetailSiswa;
+export default DetailSiswa

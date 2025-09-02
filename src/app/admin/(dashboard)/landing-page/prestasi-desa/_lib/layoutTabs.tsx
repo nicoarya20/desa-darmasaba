@@ -4,6 +4,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { Stack, Tabs, TabsList, TabsPanel, TabsTab, Title, Tooltip } from '@mantine/core';
 import { IconCategory, IconListDetails } from '@tabler/icons-react';
+import colors from '@/con/colors';
 
 function LayoutTabs({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -50,6 +51,7 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
         Prestasi Desa
       </Title>
       <Tabs
+        color={colors['blue-button']}
         variant="pills"
         value={activeTab}
         onChange={handleTabChange}

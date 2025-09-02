@@ -10,8 +10,6 @@ async function pengajarFindMany(context: Context) {
     const search = (context.query.search as string) || "";
     const jenjangPendidikanName = (context.query.jenjangPendidikanId as string) || "";
 
-    console.log('Pengajar API Query Params:', { page, limit, search, jenjangPendidikanId: jenjangPendidikanName });
-
     const where: any = { isActive: true };
 
     // Filter berdasarkan jenjang pendidikan (jika ada)

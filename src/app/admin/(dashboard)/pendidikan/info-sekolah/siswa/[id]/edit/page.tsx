@@ -2,13 +2,23 @@
 'use client'
 import infoSekolahPaud from '@/app/admin/(dashboard)/_state/pendidikan/info-sekolah-paud';
 import colors from '@/con/colors';
-import { Box, Button, Paper, Select, Stack, Text, TextInput, Title } from '@mantine/core';
+import {
+  Box,
+  Button,
+  Group,
+  Paper,
+  Select,
+  Stack,
+  Text,
+  TextInput,
+  Title,
+  Tooltip,
+} from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
-
 
 interface FormSiswa {
   nama: string;
@@ -16,14 +26,14 @@ interface FormSiswa {
 }
 
 function EditSiswa() {
-  const siswaState = useProxy(infoSekolahPaud.siswa)
-  const params = useParams()
-  const router = useRouter()
+  const siswaState = useProxy(infoSekolahPaud.siswa);
+  const params = useParams();
+  const router = useRouter();
 
   const [formData, setFormData] = useState<FormSiswa>({
     nama: '',
-    lembagaId: ''
-  })
+    lembagaId: '',
+  });
 
   useEffect(() => {
     const loadSiswa = async () => {
@@ -39,11 +49,11 @@ function EditSiswa() {
           });
         }
       } catch (error) {
-        console.error("Error loading siswa:", error);
-        toast.error("Gagal memuat data siswa");
+        console.error('Error loading siswa:', error);
+        toast.error('Gagal memuat data siswa');
       }
-    }
-    infoSekolahPaud.lembagaPendidikan.findMany.load()
+    };
+    infoSekolahPaud.lembagaPendidikan.findMany.load();
     loadSiswa();
   }, [params?.id]);
 
@@ -53,44 +63,76 @@ function EditSiswa() {
         ...siswaState.edit.form,
         nama: formData.nama.trim(),
         lembagaId: formData.lembagaId.trim(),
-      }
-      await siswaState.edit.update()
-      router.push("/admin/pendidikan/info-sekolah/siswa");
+      };
+      await siswaState.edit.update();
+      toast.success('Data siswa berhasil diperbarui!');
+      router.push('/admin/pendidikan/info-sekolah/siswa');
     } catch (error) {
-      console.error("Error updating siswa:", error);
-      toast.error("Terjadi kesalahan saat memperbarui siswa");
+      console.error('Error updating siswa:', error);
+      toast.error('Terjadi kesalahan saat memperbarui siswa');
     }
-  }
+  };
 
   return (
-    <Box>
-      <Box mb={10}>
-        <Button variant="subtle" onClick={() => router.back()}>
-          <IconArrowBack color={colors['blue-button']} size={25} />
-        </Button>
-      </Box>
+    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+      {/* Header dengan tombol kembali */}
+      <Group mb="md">
+        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
+          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+            <IconArrowBack color={colors['blue-button']} size={24} />
+          </Button>
+        </Tooltip>
+        <Title order={4} ml="sm" c="dark">
+          Edit Siswa
+        </Title>
+      </Group>
 
-      <Paper bg={colors['white-1']} p="md" w={{ base: '100%', md: '50%' }}>
-        <Stack gap="xs">
-          <Title order={3}>Edit Siswa</Title>
+      {/* Card Form */}
+      <Paper
+        w={{ base: '100%', md: '50%' }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+        style={{ border: '1px solid #e0e0e0' }}
+      >
+        <Stack gap="md">
           <TextInput
-            value={formData.nama}
             label={<Text fz="sm" fw="bold">Nama Siswa</Text>}
-            placeholder="masukkan nama siswa"
+            placeholder="Masukkan nama siswa"
+            value={formData.nama}
             onChange={(e) => setFormData({ ...formData, nama: e.target.value })}
+            required
           />
+
           <Select
-            label="Lembaga Pendidikan"
-            data={infoSekolahPaud.lembagaPendidikan.findMany.data?.map(k => ({
-              value: k.id,
-              label: k.nama
-            })) ?? []}
+            label={<Text fz="sm" fw="bold">Lembaga Pendidikan</Text>}
+            placeholder="Pilih lembaga pendidikan"
+            data={
+              infoSekolahPaud.lembagaPendidikan.findMany.data?.map((k) => ({
+                value: k.id,
+                label: k.nama,
+              })) ?? []
+            }
             value={formData.lembagaId}
             onChange={(val) => setFormData({ ...formData, lembagaId: val ?? '' })}
+            required
           />
-          <Button bg={colors['blue-button']} onClick={handleSubmit} >
-            Simpan
-          </Button>
+
+          <Group justify="right">
+            <Button
+              onClick={handleSubmit}
+              radius="md"
+              size="md"
+              style={{
+                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                color: '#fff',
+                boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
+              }}
+            >
+              Simpan
+            </Button>
+          </Group>
         </Stack>
       </Paper>
     </Box>

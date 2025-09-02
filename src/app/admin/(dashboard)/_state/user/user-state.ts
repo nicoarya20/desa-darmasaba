@@ -1,124 +1,43 @@
-import { proxy } from 'valtio'
-import { toast } from 'react-toastify'
-import ApiFetch from '@/lib/api-fetch'
-import { Prisma } from '@prisma/client'
-import { z } from 'zod'
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { proxy } from "valtio";
+import { toast } from "react-toastify";
+import ApiFetch from "@/lib/api-fetch";
+import { Prisma } from "@prisma/client";
+import { z } from "zod";
 
-// 1. Validasi Zod
-const userSchema = z.object({
-  nama: z.string().min(1, 'Nama harus diisi'),
-  email: z.string().email('Email tidak valid'),
-  password: z.string().min(6, 'Password minimal 6 karakter'),
-  roleId: z.string().optional(),
-})
-
-const defaultForm = { nama: '', email: '', password: '', roleId: '' }
-
-// 2. State Valtio
+// State Valtio
 const userState = proxy({
-  // Register
-  register: {
-    form: { ...defaultForm },
-    loading: false,
-    async submit() {
-      const valid = userSchema.omit({ roleId: true }).safeParse(userState.register.form)
-      if (!valid.success) {
-        const err = valid.error.issues.map(i => i.message).join(', ')
-        return toast.error(err)
-      }
-      try {
-        userState.register.loading = true
-        const res = await ApiFetch.api.user.register.post(userState.register.form)
-        if (res.status === 200) {
-          toast.success('Registrasi berhasil, silakan login')
-          userState.register.form = { ...defaultForm } // reset
-        } else {
-          toast.error(res.data?.message || 'Gagal registrasi')
-        }
-      } catch (e) {
-        console.error(e)
-        toast.error('Terjadi kesalahan saat registrasi')
-      } finally {
-        userState.register.loading = false
-      }
-    },
-  },
-
-  // Login
-  login: {
-    form: { email: '', password: '' },
-    loading: false,
-    async submit() {
-      try {
-        userState.login.loading = true
-        const res = await ApiFetch.api.user.login.post(userState.login.form)
-        if (res.status === 200) {
-          toast.success('Login berhasil')
-          const token = res.data?.data?.token
-          if (typeof token === 'string') {
-            localStorage.setItem('token', token)
-            // Optional: simpan user role untuk otorisasi
-            const user = res.data?.data?.user
-            localStorage.setItem('user', JSON.stringify(user))
-          }
-        } else {
-          toast.error(res.data?.message || 'Login gagal')
-        }
-      } catch (e) {
-        console.error(e)
-        toast.error('Terjadi kesalahan saat login')
-      } finally {
-        userState.login.loading = false
-      }
-    },
-  },
-
-  // CRUD User (untuk admin)
-  create: {
-    form: { ...defaultForm },
-    loading: false,
-    async create(isAdmin = false) {
-      const valid = userSchema.safeParse(userState.create.form)
-      if (!valid.success) {
-        const err = valid.error.issues.map(i => i.message).join(', ')
-        return toast.error(err)
-      }
-      try {
-        userState.create.loading = true
-        const endpoint = isAdmin ? 'create' : 'register'
-        const res = await ApiFetch.api.user[endpoint].post(userState.create.form)
-        if (res.status === 200) {
-          toast.success('User berhasil dibuat')
-          userState.findMany.load() // refresh list
-          userState.create.form = { ...defaultForm } // reset form
-        } else {
-          toast.error(res.data?.message || 'Gagal membuat user')
-        }
-      } catch (e) {
-        console.error(e)
-        toast.error('Gagal membuat user')
-      } finally {
-        userState.create.loading = false
-      }
-    },
-  },
-
   // Find Many
   findMany: {
     data: [] as Prisma.UserGetPayload<{ include: { role: true } }>[],
+    page: 1,
+    totalPages: 1,
     loading: false,
-    async load() {
-      this.loading = true
+    search: "",
+    load: async (page = 1, limit = 10, search = "") => {
+      userState.findMany.loading = true; // ✅ Akses langsung via nama path
+      userState.findMany.page = page;
+      userState.findMany.search = search;
+
       try {
-        const res = await ApiFetch.api.user.findMany.get()
-        if (res.status === 200) {
-          this.data = res.data?.data || []
+        const query: any = { page, limit };
+        if (search) query.search = search;
+
+        const res = await ApiFetch.api.user["findMany"].get({ query });
+
+        if (res.status === 200 && res.data?.success) {
+          userState.findMany.data = res.data.data ?? [];
+          userState.findMany.totalPages = res.data.totalPages ?? 1;
+        } else {
+          userState.findMany.data = [];
+          userState.findMany.totalPages = 1;
         }
-      } catch (e) {
-        console.error(e)
-        toast.error('Gagal muat data user')
+      } catch (err) {
+        console.error("Gagal fetch user paginated:", err);
+        userState.findMany.data = [];
+        userState.findMany.totalPages = 1;
       } finally {
-        this.loading = false
+        userState.findMany.loading = false;
       }
     },
   },
@@ -128,71 +47,20 @@ const userState = proxy({
     data: null as Prisma.UserGetPayload<{ include: { role: true } }> | null,
     loading: false,
     async load(id: string) {
-      this.loading = true
+      this.loading = true;
       try {
-        const res = await fetch(`/api/user/findUnique/${id}`)
-        const data = await res.json()
+        const res = await fetch(`/api/user/findUnique/${id}`);
+        const data = await res.json();
         if (res.status === 200) {
-          this.data = data.data
+          this.data = data.data;
         } else {
-          toast.error(data.message)
+          toast.error(data.message);
         }
       } catch (e) {
-        console.error(e)
-        toast.error('Gagal ambil data user')
+        console.error(e);
+        toast.error("Gagal ambil data user");
       } finally {
-        this.loading = false
-      }
-    },
-  },
-
-  // Update
-  update: {
-    id: '',
-    form: { ...defaultForm },
-    loading: false,
-    async load(id: string) {
-      this.loading = true
-      try {
-        const res = await fetch(`/api/user/findUnique/${id}`)
-        const data = await res.json()
-        if (res.status === 200) {
-          const user = data.data
-          this.id = user.id
-          this.form = {
-            nama: user.nama,
-            email: user.email,
-            password: '', // jangan kirim password lama
-            roleId: user.roleId,
-          }
-        }
-      } catch (e) {
-        console.error(e)
-        toast.error('Gagal muat data')
-      } finally {
-        this.loading = false
-      }
-    },
-    async submit() {
-      this.loading = true
-      try {
-        const res = await fetch(`/api/user/update/${this.id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(this.form),
-        })
-        const data = await res.json()
-        if (res.status === 200) {
-          toast.success('Update berhasil')
-          userState.findMany.load()
-        } else {
-          toast.error(data.message || 'Gagal update')
-        }
-      } catch (e) {
-        console.error(e)
-        toast.error('Gagal update user')
-      } finally {
-        this.loading = false
+        this.loading = false;
       }
     },
   },
@@ -201,35 +69,37 @@ const userState = proxy({
   delete: {
     loading: false,
     async submit(id: string) {
-      this.loading = true
+      this.loading = true;
       try {
         const res = await fetch(`/api/user/del/${id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-        })
-        const data = await res.json()
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+        });
+        const data = await res.json();
         if (res.status === 200) {
-          toast.success('User dinonaktifkan')
-          userState.findMany.load()
+          toast.success("User dinonaktifkan");
+          userState.findMany.load();
         } else {
-          toast.error(data.message || 'Gagal hapus')
+          toast.error(data.message || "Gagal hapus");
         }
       } catch (e) {
-        console.error(e)
-        toast.error('Gagal hapus user')
+        console.error(e);
+        toast.error("Gagal hapus user");
       } finally {
-        this.loading = false
+        this.loading = false;
       }
     },
   },
-})
+});
 
 const templateRole = z.object({
   name: z.string().min(1, "Nama harus diisi"),
+  permissions: z.array(z.string()).min(1, "Permission harus diisi"),
 });
 
 const defaultRole = {
   name: "",
+  permissions: [] as string[],
 };
 
 const roleState = proxy({
@@ -247,10 +117,9 @@ const roleState = proxy({
 
       try {
         roleState.create.loading = true;
-        const res =
-          await ApiFetch.api.role[
-            "create"
-          ].post(roleState.create.form);
+        const res = await ApiFetch.api.role["create"].post(
+          roleState.create.form
+        );
         if (res.status === 200) {
           roleState.findMany.load();
           return toast.success("Data role Berhasil Dibuat");
@@ -273,10 +142,7 @@ const roleState = proxy({
     }>[],
     loading: false,
     async load() {
-      const res =
-        await ApiFetch.api.role[
-          "findMany"
-        ].get();
+      const res = await ApiFetch.api.role["findMany"].get();
       if (res.status === 200) {
         roleState.findMany.data = res.data?.data ?? [];
       }
@@ -291,9 +157,7 @@ const roleState = proxy({
     loading: false,
     async load(id: string) {
       try {
-        const res = await fetch(
-          `/api/role/${id}`
-        );
+        const res = await fetch(`/api/role/${id}`);
         if (res.ok) {
           const data = await res.json();
           roleState.findUnique.data = data.data ?? null;
@@ -315,22 +179,17 @@ const roleState = proxy({
       try {
         roleState.delete.loading = true;
 
-        const response = await fetch(
-          `/api/role/del/${id}`,
-          {
-            method: "DELETE",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        const response = await fetch(`/api/role/del/${id}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
 
         const result = await response.json();
 
         if (response.ok && result?.success) {
-          toast.success(
-            result.message || "Data role berhasil dihapus"
-          );
+          toast.success(result.message || "Data role berhasil dihapus");
           await roleState.findMany.load(); // refresh list
         } else {
           toast.error(result?.message || "Gagal menghapus Data role");
@@ -354,15 +213,12 @@ const roleState = proxy({
       }
 
       try {
-        const response = await fetch(
-          `/api/role/${id}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        const response = await fetch(`/api/role/${id}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -374,6 +230,7 @@ const roleState = proxy({
           this.id = data.id;
           this.form = {
             name: data.name,
+            permissions: data.permissions,
           };
           return data; // Return the loaded data
         } else {
@@ -400,18 +257,16 @@ const roleState = proxy({
       try {
         roleState.update.loading = true;
 
-        const response = await fetch(
-          `/api/role/${this.id}`,
-          {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              name: this.form.name,
-            }),
-          }
-        );
+        const response = await fetch(`/api/role/${this.id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: this.form.name,
+            permissions: this.form.permissions,
+          }),
+        });
 
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
@@ -451,6 +306,6 @@ const roleState = proxy({
 const user = proxy({
   userState,
   roleState,
-})
+});
 
-export default user
+export default user;

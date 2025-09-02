@@ -1,6 +1,6 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Grid, GridCol, Paper, Skeleton, Stack, Text, Title } from '@mantine/core';
+import { Box, Button, Divider, Grid, GridCol, Paper, Skeleton, Stack, Text, Title, Tooltip } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconEdit } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
@@ -8,47 +8,86 @@ import { useProxy } from 'valtio/utils';
 import stateProgramPendidikanAnak from '../../../_state/pendidikan/program-pendidikan-anak';
 
 function Page() {
-  const router = useRouter()
-  const listPreview = useProxy(stateProgramPendidikanAnak.programUnggulanState)
+  const router = useRouter();
+  const listPreview = useProxy(stateProgramPendidikanAnak.programUnggulanState);
+
   useShallowEffect(() => {
-    listPreview.findById.load('edit')
-  }, [])
+    listPreview.findById.load('edit');
+  }, []);
 
   if (!listPreview.findById.data) {
     return (
-      <Stack>
-        <Skeleton radius={10} h={800} />
+      <Stack align="center" justify="center" py="xl">
+        <Skeleton radius="md" height={400} w="90%" />
       </Stack>
-    )
+    );
   }
+
+  const data = listPreview.findById.data;
+
   return (
-    <Paper bg={colors['white-1']} p={'md'} radius={10}>
-      <Stack gap={"22"}>
-        <Grid>
+    <Paper bg={colors['white-1']} p="lg" radius="md" shadow="sm">
+      <Stack gap="md">
+        {/* Header */}
+        <Grid align="center">
           <GridCol span={{ base: 12, md: 11 }}>
-            <Title order={2}>Preview Program Unggulan</Title>
+            <Title order={3} c={colors['blue-button']}>
+              Pratinjau Program Unggulan
+            </Title>
           </GridCol>
           <GridCol span={{ base: 12, md: 1 }}>
-            <Button bg={colors['blue-button']} onClick={() => router.push('/admin/pendidikan/program-pendidikan-anak/program-unggulan/edit')}>
-              <IconEdit size={16} />
-            </Button>
+            <Tooltip label="Edit Program" withArrow>
+              <Button
+                c="green"
+                variant="light"
+                leftSection={<IconEdit size={18} stroke={2} />}
+                radius="md"
+                onClick={() =>
+                  router.push(
+                    '/admin/pendidikan/program-pendidikan-anak/program-unggulan/edit'
+                  )
+                }
+              >
+                Edit
+              </Button>
+            </Tooltip>
           </GridCol>
         </Grid>
-        <Box>
-          <Stack gap={'lg'}>
-            <Paper p={"xl"} bg={colors['BG-trans']}>
-              <Box px={{ base: 0, md: 30 }}>
-                <Text fz={{ base: "h3", md: "h2" }} fw={"bold"} dangerouslySetInnerHTML={{ __html: listPreview.findById.data.judul }} />
-              </Box>
-              <Box px={{ base: 0, md: 30 }}>
-                <Text fz={{ base: "md", md: "h3" }} ta={"justify"} dangerouslySetInnerHTML={{ __html: listPreview.findById.data.deskripsi }} />
-              </Box>
-            </Paper>
-          </Stack>
-        </Box>
+
+        {/* Konten Preview */}
+        <Paper
+          p="xl"
+          bg={colors['white-1']}
+          withBorder
+          radius="md"
+          shadow="xs"
+        >
+          <Box px={{ base: 'sm', md: 50 }}>
+            <Stack gap="lg">
+              {/* Judul */}
+              <Text
+                ta="center"
+                fz={{ base: '1.3rem', md: '1.8rem' }}
+                fw="bold"
+                c={colors['blue-button']}
+                dangerouslySetInnerHTML={{ __html: data.judul }}
+              />
+              <Divider my="md" color={colors['blue-button']} />
+
+              {/* Deskripsi */}
+              <Text
+                fz={{ base: '1rem', md: '1.2rem' }}
+                lh={1.7}
+                ta="justify"
+                c="dimmed"
+                dangerouslySetInnerHTML={{ __html: data.deskripsi }}
+              />
+            </Stack>
+          </Box>
+        </Paper>
       </Stack>
     </Paper>
-  )
+  );
 }
 
 export default Page;

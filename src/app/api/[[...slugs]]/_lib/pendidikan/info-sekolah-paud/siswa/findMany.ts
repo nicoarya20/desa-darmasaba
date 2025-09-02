@@ -10,8 +10,6 @@ async function siswaFindMany(context: Context) {
     const search = (context.query.search as string) || "";
     const jenjangPendidikanName = (context.query.jenjangPendidikanName as string) || "";
 
-    console.log('Siswa API Query Params:', { page, limit, search, jenjangPendidikanId: jenjangPendidikanName });
-
     // Buat where clause
     const where: any = { isActive: true };
 

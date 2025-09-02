@@ -2,19 +2,16 @@
 import colors from '@/con/colors';
 import { Box, Button, Center, Checkbox, Group, Image, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
 import BackButton from '../darmasaba/(pages)/desa/layanan/_com/BackButto';
-import { useRouter } from 'next/navigation';
-import { useSnapshot } from 'valtio';
-import userState from '../admin/(dashboard)/_state/user/user-state';
 
 
 
 function Page() {
-  const router = useRouter()
-  const registrerState = useSnapshot(userState.userState)
-  const handleSubmit = async () => {
-    router.push("/login")
-    await registrerState.register.submit()
-  }
+  // const router = useRouter()
+  // const registrerState = useSnapshot(userState.userState)
+  // const handleSubmit = async () => {
+  //   router.push("/login")
+  //   await registrerState.register.submit()
+  // }
   return (
     <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"22"}>
       <Box px={{ base: 'md', md: 100 }}>
@@ -43,28 +40,28 @@ function Page() {
               <Box>
                 <TextInput placeholder='Nama Lengkap'
                   label='Nama Lengkap'
-                  value={registrerState.register.form.nama}
-                  onChange={(e) => {
-                    userState.userState.register.form.nama = e.target.value
-                  }}
+                  // value={registrerState.register.form.nama}
+                  // onChange={(e) => {
+                  //   userState.userState.register.form.nama = e.target.value
+                  // }}
                   required
 
                 />
                 <TextInput py={10} placeholder='Email'
                   label='Email'
-                  value={registrerState.register.form.email}
-                  onChange={(e) => {
-                    userState.userState.register.form.email = e.target.value
-                  }}
+                  // value={registrerState.register.form.email}
+                  // onChange={(e) => {
+                  //   userState.userState.register.form.email = e.target.value
+                  // }}
                   required
                 />
                 <TextInput pb={10} placeholder='Password'
                 type='password'
                   label='Password'
-                  value={registrerState.register.form.password}
-                  onChange={(e) => {
-                    userState.userState.register.form.password = e.target.value
-                  }}
+                  // value={registrerState.register.form.password}
+                  // onChange={(e) => {
+                  //   userState.userState.register.form.password = e.target.value
+                  // }}
                   required
                 />
                 <Box pb={10}>
@@ -73,7 +70,7 @@ function Page() {
                   />
                 </Box>
                 <Box pb={20} >
-                  <Button onClick={handleSubmit} fullWidth bg={colors['blue-button']} radius={'xl'}>Daftar</Button>
+                  <Button fullWidth bg={colors['blue-button']} radius={'xl'}>Daftar</Button>
                 </Box>
               </Box>
             </Stack>

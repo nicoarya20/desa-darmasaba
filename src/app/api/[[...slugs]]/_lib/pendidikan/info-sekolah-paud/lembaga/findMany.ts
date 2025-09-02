@@ -10,9 +10,6 @@ async function lembagaPendidikanFindMany(context: Context) {
     const search = (context.query.search as string) || "";
     const skip = (page - 1) * limit;
     const jenjangPendidikanName = (context.query.jenjangPendidikanId as string) || "";
-
-    console.log('Lembaga API Query Params:', { page, limit, search, jenjangPendidikanName });
-
     // Buat where clause
     const where: any = { isActive: true };
 

@@ -1,6 +1,24 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Center, Group, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title, Tooltip } from '@mantine/core';
+import {
+  Box,
+  Button,
+  Center,
+  Group,
+  Pagination,
+  Paper,
+  Skeleton,
+  Stack,
+  Table,
+  TableTbody,
+  TableTd,
+  TableTh,
+  TableThead,
+  TableTr,
+  Text,
+  Title,
+  Tooltip
+} from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconEdit, IconPlus, IconSearch, IconTrashFilled } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
@@ -10,14 +28,13 @@ import HeaderSearch from '../../../_com/header';
 import beasiswaDesaState from '../../../_state/pendidikan/beasiswa-desa';
 import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
 
-
 function KeunggulanProgram() {
   const [search, setSearch] = useState("");
   return (
     <Box>
       <HeaderSearch
-        title='List Keunggulan Program'
-        placeholder='Cari keunggulan program...'
+        title="List Keunggulan Program"
+        placeholder="Cari keunggulan program..."
         searchIcon={<IconSearch size={20} />}
         value={search}
         onChange={(e) => setSearch(e.currentTarget.value)}
@@ -28,45 +45,38 @@ function KeunggulanProgram() {
 }
 
 function ListKeunggulanProgram({ search }: { search: string }) {
-  const stateList = useProxy(beasiswaDesaState.keunggulanProgram)
-  const router = useRouter()
-  const [modalHapus, setModalHapus] = useState(false)
-  const [selectedId, setSelectedId] = useState<string | null>(null)
+  const stateList = useProxy(beasiswaDesaState.keunggulanProgram);
+  const router = useRouter();
+  const [modalHapus, setModalHapus] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
 
-  const {
-    data,
-    page,
-    totalPages,
-    loading,
-    load,
-  } = stateList.findMany
+  const { data, page, totalPages, loading, load } = stateList.findMany;
 
   useShallowEffect(() => {
-    load(page, 10, search)
-  }, [page, search])
+    load(page, 10, search);
+  }, [page, search]);
 
   const handleHapus = () => {
     if (selectedId) {
-      stateList.delete.delete(selectedId)
-      setModalHapus(false)
-      setSelectedId(null)
+      stateList.delete.delete(selectedId);
+      setModalHapus(false);
+      setSelectedId(null);
     }
-  }
+  };
 
-
-  const filteredData = data || []
+  const filteredData = data || [];
 
   if (loading || !data) {
     return (
       <Stack py={10}>
-        <Skeleton h={500} />
+        <Skeleton height={600} radius="md" />
       </Stack>
-    )
+    );
   }
 
   return (
     <Box py={10}>
-      <Paper bg={colors['white-1']} p="lg" shadow="md" radius="md">
+      <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
         <Group justify="space-between" mb="md">
           <Title order={4}>Daftar Keunggulan Program</Title>
           <Tooltip label="Tambah Keunggulan Program" withArrow>
@@ -74,7 +84,11 @@ function ListKeunggulanProgram({ search }: { search: string }) {
               leftSection={<IconPlus size={18} />}
               color="blue"
               variant="light"
-              onClick={() => router.push('/admin/pendidikan/beasiswa-desa/keunggulan-program/create')}
+              onClick={() =>
+                router.push(
+                  '/admin/pendidikan/beasiswa-desa/keunggulan-program/create'
+                )
+              }
             >
               Tambah Baru
             </Button>
@@ -85,10 +99,10 @@ function ListKeunggulanProgram({ search }: { search: string }) {
           <Table highlightOnHover>
             <TableThead>
               <TableTr>
-                <TableTh>Nama Keunggulan Program</TableTh>
-                <TableTh>Deskripsi</TableTh>
-                <TableTh>Edit</TableTh>
-                <TableTh>Delete</TableTh>
+                <TableTh style={{ width: '30%' }}>Nama Keunggulan Program</TableTh>
+                <TableTh style={{ width: '35%' }}>Deskripsi</TableTh>
+                <TableTh style={{ width: '15%' }}>Edit</TableTh>
+                <TableTh style={{ width: '15%' }}>Delete</TableTh>
               </TableTr>
             </TableThead>
             <TableTbody>
@@ -96,10 +110,17 @@ function ListKeunggulanProgram({ search }: { search: string }) {
                 filteredData.map((item) => (
                   <TableTr key={item.id}>
                     <TableTd>
-                      <Text lineClamp={1} truncate="end" fw={500}>{item.judul}</Text>
+                      <Text fw={500} truncate="end" lineClamp={1}>
+                        {item.judul}
+                      </Text>
                     </TableTd>
                     <TableTd>
-                      <Text lineClamp={1} truncate="end" fw={500} dangerouslySetInnerHTML={{ __html: item.deskripsi }}></Text>
+                      <Text
+                        fw={500}
+                        truncate="end"
+                        lineClamp={1}
+                        dangerouslySetInnerHTML={{ __html: item.deskripsi }}
+                      />
                     </TableTd>
                     <TableTd>
                       <Tooltip label="Edit" withArrow>
@@ -107,7 +128,11 @@ function ListKeunggulanProgram({ search }: { search: string }) {
                           variant="light"
                           color="green"
                           size="sm"
-                          onClick={() => router.push(`/admin/pendidikan/beasiswa-desa/keunggulan-program/${item.id}`)}
+                          onClick={() =>
+                            router.push(
+                              `/admin/pendidikan/beasiswa-desa/keunggulan-program/${item.id}`
+                            )
+                          }
                         >
                           <IconEdit size={18} />
                         </Button>
@@ -132,34 +157,43 @@ function ListKeunggulanProgram({ search }: { search: string }) {
                 ))
               ) : (
                 <TableTr>
-                  <TableTd colSpan={3} align="center" py="xl">
-                    <Text c="dimmed">Tidak ada data pengelolaan sampah</Text>
+                  <TableTd colSpan={4}>
+                    <Center py={20}>
+                      <Text c="dimmed">
+                        Tidak ada data keunggulan program yang cocok
+                      </Text>
+                    </Center>
                   </TableTd>
                 </TableTr>
               )}
             </TableTbody>
           </Table>
         </Box>
-
-        {totalPages > 1 && (
-          <Center mt="xl">
-            <Pagination
-              value={page}
-              onChange={(newPage) => load(newPage)}
-              total={totalPages}
-              siblings={1}
-              boundaries={1}
-              withEdges
-            />
-          </Center>
-        )}
       </Paper>
+
+      {totalPages > 1 && (
+        <Center>
+          <Pagination
+            value={page}
+            onChange={(newPage) => {
+              load(newPage, 10);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            total={totalPages}
+            mt="md"
+            mb="md"
+            color="blue"
+            radius="md"
+          />
+        </Center>
+      )}
+
       {/* Modal Konfirmasi Hapus */}
       <ModalKonfirmasiHapus
         opened={modalHapus}
         onClose={() => setModalHapus(false)}
         onConfirm={handleHapus}
-        text='Apakah anda yakin ingin menghapus pengelolaan sampah bank sampah ini?'
+        text="Apakah anda yakin ingin menghapus keunggulan program ini?"
       />
     </Box>
   );

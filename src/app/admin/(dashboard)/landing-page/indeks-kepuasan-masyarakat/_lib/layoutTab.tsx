@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
+import colors from '@/con/colors';
 import { Stack, Tabs, TabsList, TabsPanel, TabsTab, Title, Tooltip } from '@mantine/core';
 import { IconChartBar, IconUsers } from '@tabler/icons-react';
 import { usePathname, useRouter } from 'next/navigation';
@@ -46,7 +47,7 @@ function LayoutTabsKepuasan({ children }: { children: React.ReactNode }) {
       </Title>
       <Tabs
         radius="xl"
-        color="blue"
+        color={colors['blue-button']}
         variant="pills"
         value={activeTab}
         onChange={handleTabChange}

@@ -2,7 +2,16 @@
 'use client'
 import infoSekolahPaud from '@/app/admin/(dashboard)/_state/pendidikan/info-sekolah-paud';
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
+import {
+  Box,
+  Button,
+  Group,
+  Paper,
+  Stack,
+  TextInput,
+  Title,
+  Tooltip
+} from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -27,7 +36,6 @@ function EditJenjangPendidikan() {
         const data = await stateJenjang.edit.load(id);
 
         if (data) {
-          // pastikan id-nya masuk ke state edit
           stateJenjang.edit.id = id;
           setFormData({
             nama: data.nama || '',
@@ -53,41 +61,67 @@ function EditJenjangPendidikan() {
         nama: formData.nama.trim(),
       };
 
-      // Safety check tambahan: pastikan ID tidak kosong
       if (!stateJenjang.edit.id) {
-        stateJenjang.edit.id = id; // fallback
+        stateJenjang.edit.id = id;
       }
 
       const success = await stateJenjang.edit.update();
 
       if (success) {
+        toast.success("Jenjang pendidikan berhasil diperbarui!");
         router.push("/admin/pendidikan/info-sekolah/jenjang-pendidikan");
       }
     } catch (error) {
       console.error("Error updating jenjang pendidikan:", error);
-      // toast akan ditampilkan dari fungsi update
+      toast.error("Terjadi kesalahan saat memperbarui jenjang pendidikan");
     }
   };
 
   return (
-    <Box>
-      <Box mb={10}>
-        <Button onClick={() => router.back()} variant='subtle' color={'blue'}>
-          <IconArrowBack color={colors['blue-button']} size={25} />
-        </Button>
-      </Box>
+    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+      {/* Header Back + Title */}
+      <Group mb="md">
+        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
+          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+            <IconArrowBack color={colors['blue-button']} size={24} />
+          </Button>
+        </Tooltip>
+        <Title order={4} ml="sm" c="dark">
+          Edit Jenjang Pendidikan
+        </Title>
+      </Group>
 
-      <Paper w={{ base: '100%', md: '50%' }} bg={colors['white-1']} p={'md'}>
-        <Stack gap={"xs"}>
-          <Title order={4}>Edit Jenjang Pendidikan</Title>
+      {/* Form Container */}
+      <Paper
+        w={{ base: '100%', md: '50%' }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+        style={{ border: '1px solid #e0e0e0' }}
+      >
+        <Stack gap="md">
           <TextInput
+            label="Nama Jenjang Pendidikan"
+            placeholder="Masukkan nama jenjang pendidikan"
             value={formData.nama}
             onChange={(e) => setFormData({ ...formData, nama: e.target.value })}
-            label={<Text fw={"bold"} fz={"sm"}>Nama Jenjang Pendidikan</Text>}
-            placeholder='Masukkan nama jenjang pendidikan'
+            required
           />
-          <Group>
-            <Button bg={colors['blue-button']} onClick={handleSubmit}>Submit</Button>
+
+          <Group justify="right">
+            <Button
+              onClick={handleSubmit}
+              radius="md"
+              size="md"
+              style={{
+                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                color: '#fff',
+                boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
+              }}
+            >
+              Simpan
+            </Button>
           </Group>
         </Stack>
       </Paper>

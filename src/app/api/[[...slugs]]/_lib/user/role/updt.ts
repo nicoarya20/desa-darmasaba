@@ -3,6 +3,7 @@ import { Context } from "elysia";
 
 type FormUpdate = {
     name: string;
+    permissions: string[];
 }
 
 export default async function roleUpdate(context: Context) {
@@ -14,6 +15,7 @@ export default async function roleUpdate(context: Context) {
             where: { id },
             data: {
                 name: body.name,
+                permissions: body.permissions,
             },
         });
         return {

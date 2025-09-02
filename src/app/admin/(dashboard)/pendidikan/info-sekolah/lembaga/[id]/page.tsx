@@ -1,112 +1,131 @@
 'use client'
 import { useProxy } from 'valtio/utils';
-
-import { Box, Button, Flex, Paper, Skeleton, Stack, Text } from '@mantine/core';
+import { Box, Button, Group, Paper, Skeleton, Stack, Text, Tooltip } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { IconArrowBack, IconEdit, IconX } from '@tabler/icons-react';
+import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import colors from '@/con/colors';
-
 import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
 import infoSekolahPaud from '@/app/admin/(dashboard)/_state/pendidikan/info-sekolah-paud';
 
 function DetailLembaga() {
-  const detailState = useProxy(infoSekolahPaud.lembagaPendidikan)
-  const [modalHapus, setModalHapus] = useState(false)
-  const [selectedId, setSelectedId] = useState<string | null>(null)
-  const params = useParams()
-  const router = useRouter()
+  const detailState = useProxy(infoSekolahPaud.lembagaPendidikan);
+  const [modalHapus, setModalHapus] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const params = useParams();
+  const router = useRouter();
 
   useShallowEffect(() => {
-    detailState.findUnique.load(params?.id as string)
-  }, [])
-
+    detailState.findUnique.load(params?.id as string);
+  }, []);
 
   const handleHapus = () => {
     if (selectedId) {
-      detailState.delete.byId(selectedId)
-      setModalHapus(false)
-      setSelectedId(null)
-      router.push("/admin/pendidikan/info-sekolah/lembaga")
+      detailState.delete.byId(selectedId);
+      setModalHapus(false);
+      setSelectedId(null);
+      router.push("/admin/pendidikan/info-sekolah/lembaga");
     }
-  }
+  };
 
   if (!detailState.findUnique.data) {
     return (
       <Stack py={10}>
-        <Skeleton h={40} />
+        <Skeleton height={500} radius="md" />
       </Stack>
-    )
+    );
   }
 
+  const data = detailState.findUnique.data;
+
   return (
-    <Box>
-      <Box mb={10}>
-        <Button variant="subtle" onClick={() => router.back()}>
-          <IconArrowBack color={colors['blue-button']} size={25} />
-        </Button>
-      </Box>
-      <Paper bg={colors['white-1']} w={{ base: "100%", md: "100%", lg: "50%" }} p={'md'}>
-        <Stack>
-          <Text fz={"xl"} fw={"bold"}>Detail Lembaga</Text>
-          {detailState.findUnique.data ? (
-            <Paper key={detailState.findUnique.data.id} bg={colors['BG-trans']} p={'md'}>
-              <Stack gap={"xs"}>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Nama</Text>
-                  <Text fz={"lg"}>{detailState.findUnique.data?.nama}</Text>
-                </Box>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Jenjang Pendidikan</Text>
-                  <Text fz={"lg"} >{detailState.findUnique.data?.jenjangPendidikan?.nama}</Text>
-                </Box>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Jumlah Siswa</Text>
-                  <Text fz={"lg"} >{detailState.findUnique.data?.siswa?.length}</Text>
-                </Box>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Jumlah Pengajar</Text>
-                  <Text fz={"lg"} >{detailState.findUnique.data?.pengajar?.length}</Text>
-                </Box>
-                <Flex gap={"xs"} mt={10}>
+    <Box py={10}>
+      <Button
+        variant="subtle"
+        onClick={() => router.back()}
+        leftSection={<IconArrowBack size={24} color={colors['blue-button']} />}
+        mb={15}
+      >
+        Kembali
+      </Button>
+
+      <Paper
+        withBorder
+        w={{ base: "100%", md: "60%" }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+      >
+        <Stack gap="md">
+          <Text fz="2xl" fw="bold" c={colors['blue-button']}>
+            Detail Lembaga
+          </Text>
+
+          <Paper bg="#ECEEF8" p="md" radius="md" shadow="xs">
+            <Stack gap="sm">
+              <Box>
+                <Text fz="lg" fw="bold">Nama</Text>
+                <Text fz="md" c="dimmed">{data?.nama || '-'}</Text>
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">Jenjang Pendidikan</Text>
+                <Text fz="md" c="dimmed">{data?.jenjangPendidikan?.nama || '-'}</Text>
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">Jumlah Siswa</Text>
+                <Text fz="md" c="dimmed">{data?.siswa?.length ?? 0}</Text>
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">Jumlah Pengajar</Text>
+                <Text fz="md" c="dimmed">{data?.pengajar?.length ?? 0}</Text>
+              </Box>
+
+              <Group gap="sm">
+                <Tooltip label="Hapus Lembaga" withArrow position="top">
                   <Button
+                    color="red"
                     onClick={() => {
-                      if (detailState.findUnique.data) {
-                        setSelectedId(detailState.findUnique.data.id);
-                        setModalHapus(true);
-                      }
+                      setSelectedId(data.id);
+                      setModalHapus(true);
                     }}
-                    disabled={detailState.delete.loading || !detailState.findUnique.data}
-                    color={"red"}
+                    variant="light"
+                    radius="md"
+                    size="md"
                   >
-                    <IconX size={20} />
+                    <IconTrash size={20} />
                   </Button>
+                </Tooltip>
+
+                <Tooltip label="Edit Lembaga" withArrow position="top">
                   <Button
-                    onClick={() => {
-                      if (detailState.findUnique.data) {
-                        router.push(`/admin/pendidikan/info-sekolah/lembaga/${detailState.findUnique.data.id}/edit`);
-                      }
-                    }}
-                    disabled={!detailState.findUnique.data}
-                    color={"green"}
+                    color="green"
+                    onClick={() =>
+                      router.push(`/admin/pendidikan/info-sekolah/lembaga/${data.id}/edit`)
+                    }
+                    variant="light"
+                    radius="md"
+                    size="md"
                   >
                     <IconEdit size={20} />
                   </Button>
-                </Flex>
-              </Stack>
-            </Paper>
-          ) : null}
+                </Tooltip>
+              </Group>
+            </Stack>
+          </Paper>
         </Stack>
       </Paper>
 
-      {/* Modal Konfirmasi Hapus */}
       <ModalKonfirmasiHapus
         opened={modalHapus}
         onClose={() => setModalHapus(false)}
         onConfirm={handleHapus}
-        text='Apakah anda yakin ingin menghapus lembaga ini?'
+        text="Apakah anda yakin ingin menghapus lembaga ini?"
       />
     </Box>
   );

@@ -3,6 +3,7 @@ import { Context } from "elysia";
 
 type FormCreate = {
     name: string;
+    permissions: string[];  
 }
 
 export default async function roleCreate(context: Context) {
@@ -12,6 +13,7 @@ export default async function roleCreate(context: Context) {
         const result = await prisma.role.create({
             data: {
                 name: body.name,
+                permissions: body.permissions,
             },
         });
         return {

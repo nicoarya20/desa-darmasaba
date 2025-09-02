@@ -1,0 +1,35 @@
+[
+    {
+      "id": "user_admin_desa",
+      "nama": "Admin Desa",
+      "email": "admin.desa@example.com",
+      "password": "$2b$10$XFDWYOJFxQ7ZM5bA0N4Z0O8u0eKYv58wLsaR7h6XK9bqWJ1YQJQ9q",
+      "roleId": "role_admin_desa",
+      "isActive": true,
+      "lastLogin": "2025-08-31T10:00:00.000Z",
+      "createdAt": "2025-09-01T00:00:00.000Z",
+      "updatedAt": "2025-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "user_admin_puskesmas",
+      "nama": "Admin Kesehatan",
+      "email": "admin.kesehatan@example.com",
+      "password": "$2b$10$XFDWYOJFxQ7ZM5bA0N4Z0O8u0eKYv58wLsaR7h6XK9bqWJ1YQJQ9q",
+      "roleId": "role_admin_kesehatan",
+      "isActive": true,
+      "lastLogin": null,
+      "createdAt": "2025-09-01T00:00:00.000Z",
+      "updatedAt": "2025-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "user_admin_sekolah",
+      "nama": "Admin Sekolah",
+      "email": "admin.sekolah@example.com",
+      "password": "$2b$10$XFDWYOJFxQ7ZM5bA0N4Z0O8u0eKYv58wLsaR7h6XK9bqWJ1YQJQ9q",
+      "roleId": "role_admin_sekolah",
+      "isActive": true,
+      "lastLogin": null,
+      "createdAt": "2025-09-01T00:00:00.000Z",
+      "updatedAt": "2025-09-01T00:00:00.000Z"
+    }
+  ]
