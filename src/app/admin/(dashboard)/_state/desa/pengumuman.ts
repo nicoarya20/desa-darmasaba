@@ -55,11 +55,39 @@ const category = proxy({
         pengumumans: number;
       };
     })[],
+    page: 1,
+    totalPages: 1,
+    total: 0,
     loading: false,
-    async load() {
-      const res = await ApiFetch.api.desa.kategoripengumuman["findMany"].get();
-      if (res.status === 200) {
-        category.findMany.data = res.data?.data ?? [];
+    search: "",
+    load: async (page = 1, limit = 10, search = "") => {  // Change to arrow function
+      category.findMany.loading = true;  // Use the full path to access the property
+      category.findMany.page = page;
+      category.findMany.search = search;
+      try {
+        const res = await ApiFetch.api.desa.kategoripengumuman[
+          "findMany"
+        ].get({
+          query: { page, limit },
+        });
+  
+        if (res.status === 200 && res.data?.success) {
+          category.findMany.data = res.data.data || [];
+          category.findMany.total = res.data.total || 0;
+          category.findMany.totalPages = res.data.totalPages || 1;
+        } else {
+          console.error("Failed to load potensi desa:", res.data?.message);
+          category.findMany.data = [];
+          category.findMany.total = 0;
+          category.findMany.totalPages = 1;
+        }
+      } catch (error) {
+        console.error("Error loading potensi desa:", error);
+        category.findMany.data = [];
+        category.findMany.total = 0;
+        category.findMany.totalPages = 1;
+      } finally {
+        category.findMany.loading = false;
       }
     },
   },

@@ -73,8 +73,6 @@ function ListDaftarInformasi({ search }: { search: string }) {
           <Box style={{ overflowX: 'auto' }}>
             <Table
               highlightOnHover
-              withTableBorder
-              withColumnBorders
               striped
               stickyHeader
               style={{ minWidth: '700px' }}

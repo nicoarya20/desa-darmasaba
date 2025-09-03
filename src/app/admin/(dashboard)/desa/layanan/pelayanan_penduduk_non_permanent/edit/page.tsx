@@ -3,7 +3,7 @@
 import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import stateLayananDesa from '@/app/admin/(dashboard)/_state/desa/layananDesa';
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
+import { Box, Button, Group, Paper, Stack, Text, TextInput, Title, Tooltip } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -49,52 +49,74 @@ function EditPelayananPendudukNonPermanent() {
   }
   return (
     <Box>
-      <Stack gap={'xs'}>
-        <Box>
-          <Button
-            variant={'subtle'}
-            onClick={() => router.back()}
-          >
-            <IconArrowBack color={colors['blue-button']} size={20} />
-          </Button>
-        </Box>
-        <Box>
-          <Paper bg={colors['white-1']} p={'md'} radius={10} w={{ base: '100%', md: '50%' }}>
-            <Stack gap={'xs'}>
-              <Title order={3}>Edit Pelayanan Penduduk Non Permanent</Title>
-              <Text fw={"bold"}>Judul</Text>
-              <TextInput
-                value={formData.name}
-                onChange={(val) => {
-                  setFormData({
-                    ...formData,
-                    name: val.target.value,
-                  })
-                }}
-              />
-              <Text fw={"bold"}>Deskripsi</Text>
+      <Stack gap="xs">
+        <Group mb="md">
+          <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
+            <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+              <IconArrowBack color={colors['blue-button']} size={24} />
+            </Button>
+          </Tooltip>
+          <Title order={4} ml="sm" c="dark">
+            Edit Pelayanan Penduduk Non Permanent
+          </Title>
+        </Group>
+
+        <Paper
+          w={{ base: "100%", md: "50%" }}
+          bg={colors['white-1']}
+          p="md"
+          radius="md"
+          shadow="sm"
+          style={{ border: '1px solid #e0e0e0' }}
+        >
+          <Stack gap="xs">
+            <Title order={3}>Edit Pelayanan Penduduk Non Permanent</Title>
+
+            {/* Nama Field */}
+            <TextInput
+              label="Judul"
+              placeholder="Masukkan judul"
+              value={formData.name}
+              onChange={(e) =>
+                setFormData({ ...formData, name: e.target.value })
+              }
+              required
+            />
+
+            {/* Posisi Field */}
+            <Box>
+              <Text fz="sm" fw="bold">
+                Deskripsi
+              </Text>
               <EditEditor
                 value={formData.deskripsi}
-                onChange={(val) => {
-                  setFormData({
-                    ...formData,
-                    deskripsi: val,
-                  })
+                onChange={(htmlContent) => {
+                  setFormData((prev) => ({ ...prev, deskripsi: htmlContent }));
                 }}
               />
-              
-              <Group>
-                <Button
-                  bg={colors['blue-button']}
-                  onClick={handleSubmit}
-                  loading={statePendudukNonPermanent.update.loading}
-                >
-                  Submit
-                </Button>
-              </Group>
-            </Stack>
-          </Paper>
-        </Box>
+            </Box>
+
+            {/* Submit Button */}
+            <Group>
+              <Button
+                bg={colors['blue-button']}
+                onClick={handleSubmit}
+                loading={statePendudukNonPermanent.update.loading}
+                disabled={!formData.name}
+              >
+                {statePendudukNonPermanent.update.loading ? 'Menyimpan...' : 'Simpan Perubahan'}
+              </Button>
+
+              <Button
+                variant="outline"
+                onClick={() => router.back()}
+                disabled={statePendudukNonPermanent.update.loading}
+              >
+                Batal
+              </Button>
+            </Group>
+          </Stack>
+        </Paper>
       </Stack>
     </Box>
   );

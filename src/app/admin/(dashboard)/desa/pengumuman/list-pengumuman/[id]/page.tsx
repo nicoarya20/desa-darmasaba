@@ -1,116 +1,163 @@
 'use client'
 
-import { Box, Button, Flex, Paper, Skeleton, Stack, Text } from '@mantine/core';
-import { IconArrowBack, IconEdit, IconX } from '@tabler/icons-react';
-import { useRouter } from 'next/navigation';
-
 import colors from '@/con/colors';
-import { useProxy } from 'valtio/utils';
-import stateDesaPengumuman from '@/app/admin/(dashboard)/_state/desa/pengumuman';
+import {
+  Box,
+  Button,
+  Group,
+  Paper,
+  Skeleton,
+  Stack,
+  Text,
+  Tooltip,
+} from '@mantine/core';
+import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
+import { useRouter, useParams } from 'next/navigation';
 import { useState } from 'react';
+import { useProxy } from 'valtio/utils';
 import { useShallowEffect } from '@mantine/hooks';
-import { useParams } from 'next/navigation';
 import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
+import stateDesaPengumuman from '@/app/admin/(dashboard)/_state/desa/pengumuman';
 
-
-function DetailPengumuman() {
-  const pengumumanState = useProxy(stateDesaPengumuman)
-  const [modalHapus, setModalHapus] = useState(false)
-  const [selectedId, setSelectedId] = useState<string | null>(null)
-  const params = useParams()
-  const router = useRouter()
+export default function DetailPengumuman() {
+  const pengumumanState = useProxy(stateDesaPengumuman);
+  const [modalHapus, setModalHapus] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const params = useParams();
+  const router = useRouter();
 
   useShallowEffect(() => {
-    pengumumanState.pengumuman.findUnique.load(params?.id as string)
-  }, [])
-
+    pengumumanState.pengumuman.findUnique.load(params?.id as string);
+  }, []);
 
   const handleHapus = () => {
     if (selectedId) {
-      pengumumanState.pengumuman.delete.byId(selectedId)
-      setModalHapus(false)
-      setSelectedId(null)
-      router.push("/admin/desa/pengumuman/list-pengumuman")
+      pengumumanState.pengumuman.delete.byId(selectedId);
+      setModalHapus(false);
+      setSelectedId(null);
+      router.push('/admin/desa/pengumuman/list-pengumuman');
     }
-  }
+  };
 
   if (!pengumumanState.pengumuman.findUnique.data) {
     return (
       <Stack py={10}>
-        <Skeleton h={400} />
+        <Skeleton height={500} radius="md" />
       </Stack>
-    )
+    );
   }
 
+  const data = pengumumanState.pengumuman.findUnique.data;
+
   return (
-    <Box>
-      <Box mb={10}>
-        <Button variant="subtle" onClick={() => router.back()}>
-          <IconArrowBack color={colors['blue-button']} size={25} />
-        </Button>
-      </Box>
-      <Paper bg={colors['white-1']} w={{ base: "100%", md: "100%", lg: "50%" }} p={'md'}>
-        <Stack>
-          <Text fz={"xl"} fw={"bold"}>Detail Pengumuman</Text>
-          {pengumumanState.pengumuman.findUnique.data ? (
-            <Paper key={pengumumanState.pengumuman.findUnique.data.id} bg={colors['BG-trans']} p={'md'}>
-              <Stack gap={"xs"}>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Kategori</Text>
-                  <Text fz={"lg"}>{pengumumanState.pengumuman.findUnique.data?.CategoryPengumuman?.name}</Text>
-                </Box>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Judul</Text>
-                  <Text fz={"lg"}>{pengumumanState.pengumuman.findUnique.data?.judul}</Text>
-                </Box>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Deskripsi</Text>
-                  <Text fz={"lg"}>{pengumumanState.pengumuman.findUnique.data?.deskripsi}</Text>
-                </Box>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Konten</Text>
-                  <Text fz={"lg"} dangerouslySetInnerHTML={{ __html: pengumumanState.pengumuman.findUnique.data?.content }} />
-                </Box>
-                <Flex gap={"xs"} mt={10}>
+    <Box py={10}>
+      <Button
+        variant="subtle"
+        onClick={() => router.back()}
+        leftSection={<IconArrowBack size={24} color={colors['blue-button']} />}
+        mb={15}
+      >
+        Kembali
+      </Button>
+
+      <Paper
+        withBorder
+        w={{ base: '100%', md: '60%' }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+      >
+        <Stack gap="md">
+          <Text fz="2xl" fw="bold" c={colors['blue-button']}>
+            Detail Pengumuman
+          </Text>
+
+          <Paper bg="#ECEEF8" p="md" radius="md" shadow="xs">
+            <Stack gap="sm">
+              <Box>
+                <Text fz="lg" fw="bold">
+                  Kategori
+                </Text>
+                <Text fz="md" c="dimmed">
+                  {data?.CategoryPengumuman?.name || '-'}
+                </Text>
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">
+                  Judul
+                </Text>
+                <Text fz="md" c="dimmed">
+                  {data?.judul || '-'}
+                </Text>
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">
+                  Deskripsi
+                </Text>
+                <Text fz="md" c="dimmed">
+                  {data?.deskripsi || '-'}
+                </Text>
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">
+                  Konten
+                </Text>
+                <Text
+                  fz="md"
+                  c="dimmed"
+                  dangerouslySetInnerHTML={{
+                    __html: data?.content || '-',
+                  }}
+                />
+              </Box>
+
+              <Group gap="sm">
+                <Tooltip label="Hapus Pengumuman" withArrow position="top">
                   <Button
+                    color="red"
                     onClick={() => {
-                      if (pengumumanState.pengumuman.findUnique.data) {
-                        setSelectedId(pengumumanState.pengumuman.findUnique.data.id);
-                        setModalHapus(true);
-                      }
+                      setSelectedId(data.id);
+                      setModalHapus(true);
                     }}
-                    disabled={pengumumanState.pengumuman.delete.loading || !pengumumanState.pengumuman.findUnique.data}
-                    color={"red"}
+                    variant="light"
+                    radius="md"
+                    size="md"
                   >
-                    <IconX size={20} />
+                    <IconTrash size={20} />
                   </Button>
+                </Tooltip>
+
+                <Tooltip label="Edit Pengumuman" withArrow position="top">
                   <Button
-                    onClick={() => {
-                      if (pengumumanState.pengumuman.findUnique.data) {
-                        router.push(`/admin/desa/pengumuman/list-pengumuman/${pengumumanState.pengumuman.findUnique.data.id}/edit`);
-                      }
-                    }}
-                    disabled={!pengumumanState.pengumuman.findUnique.data}
-                    color={"green"}
+                    color="green"
+                    onClick={() =>
+                      router.push(
+                        `/admin/desa/pengumuman/list-pengumuman/${data.id}/edit`
+                      )
+                    }
+                    variant="light"
+                    radius="md"
+                    size="md"
                   >
                     <IconEdit size={20} />
                   </Button>
-                </Flex>
-              </Stack>
-            </Paper>
-          ) : null}
+                </Tooltip>
+              </Group>
+            </Stack>
+          </Paper>
         </Stack>
       </Paper>
 
-      {/* Modal Konfirmasi Hapus */}
       <ModalKonfirmasiHapus
         opened={modalHapus}
         onClose={() => setModalHapus(false)}
         onConfirm={handleHapus}
-        text='Apakah anda yakin ingin menghapus pengumuman ini?'
+        text="Apakah anda yakin ingin menghapus pengumuman ini?"
       />
     </Box>
   );
 }
-
-export default DetailPengumuman;

@@ -2,100 +2,177 @@
 import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
 import stateLayananDesa from '@/app/admin/(dashboard)/_state/desa/layananDesa';
 import colors from '@/con/colors';
-import { Box, Button, Flex, Image, Paper, Skeleton, Stack, Text } from '@mantine/core';
+import {
+  Box,
+  Button,
+  Group,
+  Image,
+  Paper,
+  Skeleton,
+  Stack,
+  Text,
+  Tooltip,
+} from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { IconArrowBack, IconEdit, IconX } from '@tabler/icons-react';
+import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 
 function DetailSuratKeterangan() {
-  const suratKeteranganState = useProxy(stateLayananDesa.suratKeterangan)
-  const [modalHapus, setModalHapus] = useState(false)
-  const [selectedId, setSelectedId] = useState<string | null>(null)
-  const params = useParams()
-  const router = useRouter()
+  const suratKeteranganState = useProxy(stateLayananDesa.suratKeterangan);
+  const [modalHapus, setModalHapus] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const params = useParams();
+  const router = useRouter();
 
   useShallowEffect(() => {
-    suratKeteranganState.findUnique.load(params?.id as string)
-  }, [])
+    suratKeteranganState.findUnique.load(params?.id as string);
+  }, []);
 
   const handleHapus = () => {
     if (selectedId) {
-      suratKeteranganState.delete.byId(selectedId)
-      setModalHapus(false)
-      setSelectedId(null)
-      router.push("/admin/desa/layanan/pelayanan_surat_keterangan")
+      suratKeteranganState.delete.byId(selectedId);
+      setModalHapus(false);
+      setSelectedId(null);
+      router.push('/admin/desa/layanan/pelayanan_surat_keterangan');
     }
-  }
+  };
 
   if (!suratKeteranganState.findUnique.data) {
     return (
       <Stack py={10}>
-        {Array.from({ length: 10 }).map((_, k) => (
-          <Skeleton key={k} h={40} />
-        ))}
+        <Skeleton height={500} radius="md" />
       </Stack>
-    )
+    );
   }
 
+  const data = suratKeteranganState.findUnique.data;
+
   return (
-    <Box>
-      <Box mb={10}>
-        <Button variant="subtle" onClick={() => router.back()}>
-          <IconArrowBack color={colors['blue-button']} size={25} />
-        </Button>
-      </Box>
-      <Paper bg={colors['white-1']} w={{ base: "100%", md: "100%", lg: "50%" }} p={'md'}>
-        <Stack>
-          <Text fz={"xl"} fw={"bold"}>Detail Surat Keterangan</Text>
-          {suratKeteranganState.findUnique.data ? (
-            <Paper key={suratKeteranganState.findUnique.data.id} bg={colors['BG-trans']} p={'md'}>
-              <Stack gap={"xs"}>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Nama</Text>
-                  <Text fz={"lg"}>{suratKeteranganState.findUnique.data?.name}</Text>
-                </Box>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Deskripsi</Text>
-                  <Text fz={"lg"}dangerouslySetInnerHTML={{ __html: suratKeteranganState.findUnique.data?.deskripsi }}></Text>
-                </Box>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Gambar</Text>
-                  <Image w={{ base: 150, md: 150, lg: 150 }} src={suratKeteranganState.findUnique.data?.image?.link} alt="gambar" />
-                </Box>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Gambar</Text>
-                  <Image w={{ base: 150, md: 150, lg: 150 }} src={suratKeteranganState.findUnique.data?.image2?.link} alt="gambar" />
-                </Box>
-                <Flex gap={"xs"} mt={10}>
+    <Box py={10}>
+      {/* Tombol Kembali */}
+      <Button
+        variant="subtle"
+        onClick={() => router.back()}
+        leftSection={<IconArrowBack size={24} color={colors['blue-button']} />}
+        mb={15}
+      >
+        Kembali
+      </Button>
+
+      <Paper
+        withBorder
+        w={{ base: '100%', md: '60%' }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+      >
+        <Stack gap="md">
+          <Text fz="2xl" fw="bold" c={colors['blue-button']}>
+            Detail Surat Keterangan
+          </Text>
+
+          <Paper bg="#ECEEF8" p="md" radius="md" shadow="xs">
+            <Stack gap="sm">
+              <Box>
+                <Text fz="lg" fw="bold">
+                  Nama
+                </Text>
+                <Text fz="md" c="dimmed">
+                  {data?.name || '-'}
+                </Text>
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">
+                  Deskripsi
+                </Text>
+                <Text
+                  fz="md"
+                  c="dimmed"
+                  dangerouslySetInnerHTML={{
+                    __html: data?.deskripsi || '-',
+                  }}
+                />
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">
+                  Gambar
+                </Text>
+                {data?.image?.link ? (
+                  <Image
+                    src={data.image.link}
+                    alt="gambar"
+                    w={200}
+                    h={200}
+                    radius="md"
+                    fit="cover"
+                  />
+                ) : (
+                  <Text fz="sm" c="dimmed">
+                    Tidak ada gambar
+                  </Text>
+                )}
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">
+                  Gambar 2
+                </Text>
+                {data?.image2?.link ? (
+                  <Image
+                    src={data.image2.link}
+                    alt="gambar"
+                    w={200}
+                    h={200}
+                    radius="md"
+                    fit="cover"
+                  />
+                ) : (
+                  <Text fz="sm" c="dimmed">
+                    Tidak ada gambar
+                  </Text>
+                )}
+              </Box>
+
+              <Group gap="sm">
+                <Tooltip label="Hapus Surat" withArrow position="top">
                   <Button
+                    color="red"
                     onClick={() => {
-                      if (suratKeteranganState.findUnique.data) {
-                        setSelectedId(suratKeteranganState.findUnique.data.id);
-                        setModalHapus(true);
-                      }
+                      setSelectedId(data.id);
+                      setModalHapus(true);
                     }}
-                    disabled={suratKeteranganState.delete.loading || !suratKeteranganState.findUnique.data}
-                    color={"red"}
+                    variant="light"
+                    radius="md"
+                    size="md"
+                    disabled={suratKeteranganState.delete.loading}
                   >
-                    <IconX size={20} />
+                    <IconTrash size={20} />
                   </Button>
+                </Tooltip>
+
+                <Tooltip label="Edit Surat" withArrow position="top">
                   <Button
-                    onClick={() => {
-                      if (suratKeteranganState.findUnique.data) {
-                        router.push(`/admin/desa/layanan/pelayanan_surat_keterangan/${suratKeteranganState.findUnique.data.id}/edit`);
-                      }
-                    }}
-                    disabled={!suratKeteranganState.findUnique.data}
-                    color={"green"}
+                    color="green"
+                    onClick={() =>
+                      router.push(
+                        `/admin/desa/layanan/pelayanan_surat_keterangan/${data.id}/edit`
+                      )
+                    }
+                    variant="light"
+                    radius="md"
+                    size="md"
                   >
                     <IconEdit size={20} />
                   </Button>
-                </Flex>
-              </Stack>
-            </Paper>
-          ) : null}
+                </Tooltip>
+              </Group>
+            </Stack>
+          </Paper>
         </Stack>
       </Paper>
 
@@ -104,7 +181,7 @@ function DetailSuratKeterangan() {
         opened={modalHapus}
         onClose={() => setModalHapus(false)}
         onConfirm={handleHapus}
-        text='Apakah anda yakin ingin menghapus berita ini?'
+        text="Apakah Anda yakin ingin menghapus surat keterangan ini?"
       />
     </Box>
   );

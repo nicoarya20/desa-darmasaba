@@ -3,7 +3,16 @@
 import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import stateGallery from '@/app/admin/(dashboard)/_state/desa/gallery';
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
+import {
+  Box,
+  Button,
+  Group,
+  Paper,
+  Stack,
+  TextInput,
+  Title,
+  Tooltip
+} from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -12,9 +21,9 @@ import { useProxy } from 'valtio/utils';
 import { convertYoutubeUrlToEmbed } from '../../../lib/youtube-utils';
 
 function EditVideo() {
-  const router = useRouter(); 
-  const videoState = useProxy(stateGallery.video)
-  const params = useParams()
+  const router = useRouter();
+  const videoState = useProxy(stateGallery.video);
+  const params = useParams();
 
   const [formData, setFormData] = useState({
     name: '',
@@ -30,7 +39,7 @@ function EditVideo() {
         const data = await videoState.update.load(id);
         if (data) {
           setFormData({
-            name: data.name || '',    
+            name: data.name || '',
             deskripsi: data.deskripsi || '',
             linkVideo: data.linkVideo || '',
           });
@@ -66,27 +75,36 @@ function EditVideo() {
       console.error('Error updating video:', error);
       toast.error('Terjadi kesalahan saat memperbarui video');
     }
-  }
+  };
 
   return (
-    <Box>
-      <Box mb={10}>
-        <Button onClick={() => router.back()} variant='subtle' color={'blue'}>
-          <IconArrowBack color={colors['blue-button']} size={25} />
-        </Button>
-      </Box>
+    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+      <Group mb="md">
+        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
+          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+            <IconArrowBack color={colors['blue-button']} size={24} />
+          </Button>
+        </Tooltip>
+        <Title order={4} ml="sm" c="dark">
+          Edit Video
+        </Title>
+      </Group>
 
-      <Paper w={{ base: '100%', md: '50%' }} bg={colors['white-1']} p={'md'}>
-        <Stack gap={"xs"}>
-          <Title order={4}>Edit Video</Title>
-
+      <Paper
+        w={{ base: '100%', md: '50%' }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+        style={{ border: '1px solid #e0e0e0' }}
+      >
+        <Stack gap="md">
           <TextInput
-            label={<Text fw={"bold"} fz={"sm"}>Judul Video</Text>}
-            placeholder='Masukkan judul video'
+            label="Judul Video"
+            placeholder="Masukkan judul video"
             value={formData.name}
-            onChange={(val) => {
-              setFormData({ ...formData, name: val.target.value });
-            }}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            required
           />
 
           <Box>
@@ -94,36 +112,46 @@ function EditVideo() {
               label="Link Video YouTube"
               placeholder="https://www.youtube.com/watch?v=abc123"
               value={formData.linkVideo}
-              onChange={(e) => {
-                setFormData({ ...formData, linkVideo: e.currentTarget.value });
-              }}
+              onChange={(e) => setFormData({ ...formData, linkVideo: e.currentTarget.value })}
               required
             />
-
             {embedLink && (
-              <iframe
-                className="rounded"
-                width="100%"
-                height="200"
-                src={embedLink}
-                title="Preview Video"
-                allowFullScreen
-              ></iframe>
+              <Box mt="sm" style={{ display: 'flex', justifyContent: 'center' }}>
+                <iframe
+                  className="rounded"
+                  width="100%"
+                  height="220"
+                  src={embedLink}
+                  title="Preview Video"
+                  allowFullScreen
+                ></iframe>
+              </Box>
             )}
           </Box>
 
           <Box>
-            <Text fw={"bold"} fz={"sm"}>Deskripsi Video</Text>
+            <Title order={6} fw="bold" fz="sm" mb={6}>
+              Deskripsi Video
+            </Title>
             <EditEditor
               value={formData.deskripsi}
-              onChange={(val) => {
-                setFormData({ ...formData, deskripsi: val });
-              }}
+              onChange={(val) => setFormData({ ...formData, deskripsi: val })}
             />
           </Box>
 
-          <Group>
-            <Button onClick={handleSubmit} bg={colors['blue-button']}>Submit</Button>
+          <Group justify="right">
+            <Button
+              onClick={handleSubmit}
+              radius="md"
+              size="md"
+              style={{
+                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                color: '#fff',
+                boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
+              }}
+            >
+              Simpan
+            </Button>
           </Group>
         </Stack>
       </Paper>

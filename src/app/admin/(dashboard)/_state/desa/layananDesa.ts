@@ -30,7 +30,6 @@ const templateTelunjukSaktiDesaForm = z.object({
   deskripsi: z.string().min(3, "Deskripsi minimal 3 karakter"),
 });
 
-
 const templatePelayananPerizinanBerusaha = z.object({
   name: z.string().min(3, "Nama minimal 3 karakter"),
   deskripsi: z.string().min(3, "Deskripsi minimal 3 karakter"),
@@ -72,7 +71,6 @@ const pelayananPendudukNonPermanenForm = {
   deskripsi: "",
 };
 
-
 const suratKeterangan = proxy({
   create: {
     form: { ...suratKeteranganForm },
@@ -113,16 +111,21 @@ const suratKeterangan = proxy({
     totalPages: 1,
     total: 0,
     loading: false,
-    load: async (page = 1, limit = 10) => {  // Change to arrow function
-      suratKeterangan.findMany.loading = true;  // Use the full path to access the property
+    search: "",
+    load: async (page = 1, limit = 10, search = "") => {
+      // Change to arrow function
+      suratKeterangan.findMany.loading = true; // Use the full path to access the property
       suratKeterangan.findMany.page = page;
+      suratKeterangan.findMany.search = search;
       try {
+        const query: any = { page, limit };
+        if (search) query.search = search;
         const res = await ApiFetch.api.desa.layanan.pelayanansuratketerangan[
           "find-many"
         ].get({
-          query: { page, limit },
+          query,
         });
-  
+
         if (res.status === 200 && res.data?.success) {
           suratKeterangan.findMany.data = res.data.data || [];
           suratKeterangan.findMany.total = res.data.total || 0;
@@ -341,28 +344,34 @@ const pelayananTelunjukSaktiDesa = proxy({
     totalPages: 1,
     total: 0,
     loading: false,
-    load: async (page = 1, limit = 10) => {  // Change to arrow function
-      pelayananTelunjukSaktiDesa.findMany.loading = true;  // Use the full path to access the property
+    search: "",
+    load: async (page = 1, limit = 10, search = "") => {
+      // Change to arrow function
+      pelayananTelunjukSaktiDesa.findMany.loading = true; // Use the full path to access the property
       pelayananTelunjukSaktiDesa.findMany.page = page;
+      pelayananTelunjukSaktiDesa.findMany.search = search;
       try {
+        const query: any = { page, limit };
+        if (search) query.search = search;
         const res = await ApiFetch.api.desa.layanan.pelayanantelunjuksaktidesa[
           "find-many"
         ].get({
-          query: { page, limit },
+          query,
         });
-  
+
         if (res.status === 200 && res.data?.success) {
           pelayananTelunjukSaktiDesa.findMany.data = res.data.data || [];
           pelayananTelunjukSaktiDesa.findMany.total = res.data.total || 0;
-          pelayananTelunjukSaktiDesa.findMany.totalPages = res.data.totalPages || 1;
+          pelayananTelunjukSaktiDesa.findMany.totalPages =
+            res.data.totalPages || 1;
         } else {
-          console.error("Failed to load telunjuk sakti desa:", res.data?.message);
+          console.error("Failed to load surat keterangan:", res.data?.message);
           pelayananTelunjukSaktiDesa.findMany.data = [];
-          pelayananTelunjukSaktiDesa.findMany.total = 0;
-          pelayananTelunjukSaktiDesa.findMany.totalPages = 1;
+          suratKeterangan.findMany.total = 0;
+          suratKeterangan.findMany.totalPages = 1;
         }
       } catch (error) {
-        console.error("Error loading telunjuk sakti desa:", error);
+        console.error("Error loading surat keterangan:", error);
         pelayananTelunjukSaktiDesa.findMany.data = [];
         pelayananTelunjukSaktiDesa.findMany.total = 0;
         pelayananTelunjukSaktiDesa.findMany.totalPages = 1;
@@ -410,7 +419,9 @@ const pelayananTelunjukSaktiDesa = proxy({
         );
         const result = await response.json();
         if (response.ok) {
-          toast.success(result.message || "Telunjuk Sakti Desa berhasil dihapus");
+          toast.success(
+            result.message || "Telunjuk Sakti Desa berhasil dihapus"
+          );
           await pelayananTelunjukSaktiDesa.findMany.load(); // refresh list
         } else {
           toast.error(result.message || "Gagal menghapus telunjuk sakti desa");
@@ -501,7 +512,9 @@ const pelayananTelunjukSaktiDesa = proxy({
         }
         const result = await response.json();
         if (result.success) {
-          toast.success(result.message || "Telunjuk Sakti Desa berhasil diupdate");
+          toast.success(
+            result.message || "Telunjuk Sakti Desa berhasil diupdate"
+          );
           await pelayananTelunjukSaktiDesa.findMany.load(); // refresh list
           return true;
         } else {
@@ -522,7 +535,7 @@ const pelayananTelunjukSaktiDesa = proxy({
       }
     },
   },
-})
+});
 
 const pelayananPerizinanBerusaha = proxy({
   findById: {
@@ -596,9 +609,7 @@ const pelayananPerizinanBerusaha = proxy({
       } catch (error) {
         console.error("Error fetching pelayanan perizinan berusaha:", error);
         toast.error(
-          error instanceof Error
-            ? error.message
-            : "Gagal memuat data"
+          error instanceof Error ? error.message : "Gagal memuat data"
         );
         return null;
       }
@@ -713,9 +724,7 @@ const pelayananPendudukNonPermanen = proxy({
       } catch (error) {
         console.error("Error fetching pelayanan penduduk non permanen:", error);
         toast.error(
-          error instanceof Error
-            ? error.message
-            : "Gagal memuat data"
+          error instanceof Error ? error.message : "Gagal memuat data"
         );
         return null;
       }

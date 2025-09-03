@@ -3,17 +3,27 @@
 import stateProfileDesa from '@/app/admin/(dashboard)/_state/desa/profile';
 import colors from '@/con/colors';
 import ApiFetch from '@/lib/api-fetch';
-import { Box, Button, Center, Group, Image, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
+import {
+  Box,
+  Button,
+  Group,
+  Image,
+  Paper,
+  Stack,
+  Text,
+  TextInput,
+  Title,
+  Tooltip
+} from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
-import { IconArrowBack, IconImageInPicture, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
+import { IconArrowBack, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
-
 function EditPerbekelDariMasaKeMasa() {
-  const state = useProxy(stateProfileDesa.mantanPerbekel)
+  const state = useProxy(stateProfileDesa.mantanPerbekel);
   const router = useRouter();
   const params = useParams();
   const [previewImage, setPreviewImage] = useState<string | null>(null);
@@ -38,9 +48,7 @@ function EditPerbekelDariMasaKeMasa() {
             periode: data.periode || '',
             imageId: data.imageId || ''
           });
-          if (data?.imageGalleryFoto?.link) {
-            setPreviewImage(data.imageGalleryFoto.link);
-          }
+          if (data?.imageGalleryFoto?.link) setPreviewImage(data.imageGalleryFoto.link);
         }
       } catch (error) {
         console.error('Error loading foto:', error);
@@ -52,24 +60,18 @@ function EditPerbekelDariMasaKeMasa() {
 
   const handleSubmit = async () => {
     try {
-      state.update.form = {
-        ...state.update.form,
-        nama: formData.nama,
-        daerah: formData.daerah,
-        periode: formData.periode,
-        imageId: formData.imageId
-      };
+      state.update.form = { ...state.update.form, ...formData };
+
       if (file) {
         const res = await ApiFetch.api.fileStorage.create.post({
           file,
           name: file.name,
         });
         const uploaded = res.data?.data;
-        if (!uploaded?.id) {
-          return toast.error("Gagal upload gambar");
-        }
+        if (!uploaded?.id) return toast.error("Gagal upload gambar");
         state.update.form.imageId = uploaded.id;
       }
+
       await state.update.update();
       toast.success('Perbekel dari masa ke masa berhasil diperbarui!');
       router.push('/admin/desa/profile/profile-perbekel-dari-masa-ke-masa');
@@ -80,86 +82,119 @@ function EditPerbekelDariMasaKeMasa() {
   };
 
   return (
-    <Box>
-      <Box mb={10}>
-        <Button onClick={() => router.back()} variant='subtle' color={'blue'}>
-          <IconArrowBack color={colors['blue-button']} size={25} />
-        </Button>
-      </Box>
+    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+      <Group mb="md">
+        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
+          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+            <IconArrowBack color={colors['blue-button']} size={24} />
+          </Button>
+        </Tooltip>
+        <Title order={4} ml="sm" c="dark">
+          Edit Perbekel Dari Masa Ke Masa
+        </Title>
+      </Group>
 
-      <Paper w={{ base: '100%', md: '50%' }} bg={colors['white-1']} p={'md'}>
-        <Stack gap={"xs"}>
-          <Title order={4}>Edit Perbekel Dari Masa Ke Masa</Title>
+      <Paper
+        w={{ base: '100%', md: '50%' }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+        style={{ border: '1px solid #e0e0e0' }}
+      >
+        <Stack gap="md">
           <TextInput
-            label={<Text fw={"bold"} fz={"sm"}>Nama</Text>}
-            placeholder='Masukkan nama'
+            label="Nama"
+            placeholder="Masukkan nama"
             value={formData.nama}
-            onChange={(e) =>
-              (formData.nama = e.target.value)
-            }
+            onChange={(e) => setFormData({ ...formData, nama: e.target.value })}
+            required
           />
+
           <Box>
-            <Text>Upload Foto</Text>
+            <Text fw="bold" fz="sm" mb={6}>
+              Foto Perbekel
+            </Text>
             <Dropzone
               onDrop={(files) => {
-                const selectedFile = files[0]; // Ambil file pertama
+                const selectedFile = files[0];
                 if (selectedFile) {
                   setFile(selectedFile);
-                  setPreviewImage(URL.createObjectURL(selectedFile)); // Buat preview
+                  setPreviewImage(URL.createObjectURL(selectedFile));
                 }
               }}
-              onReject={() => toast.error('File tidak valid.')}
-              maxSize={5 * 1024 ** 2} // Maks 5MB
+              onReject={() => toast.error('File tidak valid, gunakan format gambar')}
+              maxSize={5 * 1024 ** 2}
               accept={{ 'image/*': [] }}
+              radius="md"
+              p="xl"
             >
-              <Group justify="center" gap="xl" mih={220} style={{ pointerEvents: 'none' }}>
+              <Group justify="center" gap="xl" mih={180}>
                 <Dropzone.Accept>
-                  <IconUpload size={52} color="var(--mantine-color-blue-6)" stroke={1.5} />
+                  <IconUpload size={48} color={colors['blue-button']} stroke={1.5} />
                 </Dropzone.Accept>
                 <Dropzone.Reject>
-                  <IconX size={52} color="var(--mantine-color-red-6)" stroke={1.5} />
+                  <IconX size={48} color="red" stroke={1.5} />
                 </Dropzone.Reject>
                 <Dropzone.Idle>
-                  <IconPhoto size={52} color="var(--mantine-color-dimmed)" stroke={1.5} />
+                  <IconPhoto size={48} color="#868e96" stroke={1.5} />
                 </Dropzone.Idle>
-
-                <div>
-                  <Text size="xl" inline>
-                    Drag gambar ke sini atau klik untuk pilih file
+                <Stack gap="xs" align="center">
+                  <Text size="md" fw={500}>
+                    Seret gambar atau klik untuk memilih file
                   </Text>
-                  <Text size="sm" c="dimmed" inline mt={7}>
-                    Maksimal 5MB dan harus format gambar
+                  <Text size="sm" c="dimmed">
+                    Maksimal 5MB, format gambar wajib
                   </Text>
-                </div>
+                </Stack>
               </Group>
             </Dropzone>
 
-            {previewImage ? (
-              <Image alt="" src={previewImage} w={200} h={200} />
-            ) : (
-              <Center w={200} h={200} bg={"gray"}>
-                <IconImageInPicture />
-              </Center>
+            {previewImage && (
+              <Box mt="sm" style={{ display: 'flex', justifyContent: 'center' }}>
+                <Image
+                  src={previewImage}
+                  alt="Preview Gambar"
+                  radius="md"
+                  style={{
+                    maxHeight: 220,
+                    objectFit: 'contain',
+                    border: `1px solid ${colors['blue-button']}`,
+                  }}
+                />
+              </Box>
             )}
           </Box>
+
           <TextInput
-            label={<Text fw={"bold"} fz={"sm"}>Daerah</Text>}
-            placeholder='Masukkan daerah'
+            label="Daerah"
+            placeholder="Masukkan daerah"
             value={formData.daerah}
-            onChange={(e) =>
-              (formData.daerah = e.target.value)
-            }
+            onChange={(e) => setFormData({ ...formData, daerah: e.target.value })}
+            required
           />
+
           <TextInput
-            label={<Text fw={"bold"} fz={"sm"}>Periode</Text>}
-            placeholder='Masukkan periode'
+            label="Periode"
+            placeholder="Masukkan periode"
             value={formData.periode}
-            onChange={(e) =>
-              (formData.periode = e.target.value)
-            }
+            onChange={(e) => setFormData({ ...formData, periode: e.target.value })}
+            required
           />
-          <Group>
-            <Button onClick={handleSubmit} bg={colors['blue-button']}>Submit</Button>
+
+          <Group justify="right">
+            <Button
+              onClick={handleSubmit}
+              radius="md"
+              size="md"
+              style={{
+                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                color: '#fff',
+                boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
+              }}
+            >
+              Simpan
+            </Button>
           </Group>
         </Stack>
       </Paper>

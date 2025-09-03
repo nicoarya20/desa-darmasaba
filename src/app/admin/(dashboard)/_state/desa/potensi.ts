@@ -56,9 +56,11 @@ const potensiDesa = proxy({
     totalPages: 1,
     total: 0,
     loading: false,
-    load: async (page = 1, limit = 10) => {  // Change to arrow function
+    search: "",
+    load: async (page = 1, limit = 10, search = "") => {  // Change to arrow function
       potensiDesa.findMany.loading = true;  // Use the full path to access the property
       potensiDesa.findMany.page = page;
+      potensiDesa.findMany.search = search;
       try {
         const res = await ApiFetch.api.desa.potensi[
           "find-many"
@@ -298,11 +300,34 @@ const kategoriPotensi = proxy({
         isActive: true;
       };
     }>[],
+    page: 1,
+    totalPages: 1,
     loading: false,
-    async load() {
-      const res = await ApiFetch.api.desa.kategoripotensi["findMany"].get();
-      if (res.status === 200) {
-        kategoriPotensi.findMany.data = res.data?.data ?? [];
+    search: "",
+   load: async (page = 1, limit = 10, search = "") => {
+      kategoriPotensi.findMany.loading = true; // ✅ Akses langsung via nama path
+      kategoriPotensi.findMany.page = page;
+      kategoriPotensi.findMany.search = search;
+  
+      try {
+        const query: any = { page, limit };
+        if (search) query.search = search;
+    
+        const res = await ApiFetch.api.desa.kategoripotensi["findMany"].get({ query });
+    
+        if (res.status === 200 && res.data?.success) {
+          kategoriPotensi.findMany.data = res.data.data ?? [];
+          kategoriPotensi.findMany.totalPages = res.data.totalPages ?? 1;
+        } else {
+          kategoriPotensi.findMany.data = [];
+          kategoriPotensi.findMany.totalPages = 1;
+        }
+      } catch (err) {
+        console.error("Gagal fetch kategori potensi paginated:", err);
+        kategoriPotensi.findMany.data = [];
+        kategoriPotensi.findMany.totalPages = 1;
+      } finally {
+        kategoriPotensi.findMany.loading = false;
       }
     },
   },

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
 
@@ -5,43 +6,44 @@ export default async function pelayananSuratKeteranganFindMany(context: Context)
   const page = Number(context.query.page) || 1;
   const limit = Number(context.query.limit) || 10;
   const skip = (page - 1) * limit;
+  const search = (context.query.search as string) || '';
+
+  const where: any = { isActive: true };
+
+  // Tambahkan pencarian (jika ada)
+  if (search) {
+    where.OR = [
+      { name: { contains: search, mode: 'insensitive' } },
+    ];
+  }
+
 
   try {
+    // Ambil data dan total count secara paralel
     const [data, total] = await Promise.all([
       prisma.pelayananSuratKeterangan.findMany({
-        where: { isActive: true },
-        include: {
-          image: true,
-          image2: true,
-        },
+        where,
         skip,
         take: limit,
         orderBy: { createdAt: 'desc' },
       }),
-      prisma.pelayananSuratKeterangan.count({
-        where: { isActive: true }
-      })
+      prisma.pelayananSuratKeterangan.count({ where }),
     ]);
-
-    const totalPages = Math.ceil(total / limit);
 
     return {
       success: true,
-      message: "Success fetch pelayanan surat keterangan with pagination",
+      message: "Berhasil ambil pelayanan surat keterangan dengan pagination",
       data,
       page,
-      totalPages,
+      limit,
       total,
+      totalPages: Math.ceil(total / limit),
     };
   } catch (e) {
-    console.error("Find many paginated error:", e);
+    console.error("Error di findMany paginated:", e);
     return {
       success: false,
-      message: "Failed fetch pelayanan surat keterangan with pagination",
-      data: [],
-      page: 1,
-      totalPages: 1,
-      total: 0,
+      message: "Gagal mengambil data pelayanan surat keterangan",
     };
   }
 }

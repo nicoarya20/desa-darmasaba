@@ -91,7 +91,6 @@ function ListResponden({ search }: ListRespondenProps) {
           <Table
             striped
             highlightOnHover
-            withTableBorder
             withRowBorders
             verticalSpacing="sm"
           >

@@ -1,64 +1,117 @@
-'use client'
+'use client';
+
 import stateLayananDesa from '@/app/admin/(dashboard)/_state/desa/layananDesa';
 import colors from '@/con/colors';
-import { Box, Button, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
+import {
+  Box,
+  Button,
+  Group,
+  Paper,
+  Stack,
+  Text,
+  TextInput,
+  Title,
+  Tooltip,
+} from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
+import { toast } from 'react-toastify';
 
 function CreatePelayananTelunjukDesa() {
-  const stateTelunjukDesa = useProxy(stateLayananDesa.pelayananTelunjukSaktiDesa)
-  const router = useRouter()
+  const stateTelunjukDesa = useProxy(stateLayananDesa.pelayananTelunjukSaktiDesa);
+  const router = useRouter();
 
   const resetForm = () => {
     stateTelunjukDesa.create.form = {
-      name: "",
-      deskripsi: "",
-      link: "",
-    }
-  }
+      name: '',
+      deskripsi: '',
+      link: '',
+    };
+  };
 
   const handleSubmit = async () => {
-    await stateTelunjukDesa.create.create()
-    resetForm()
-    router.push("/admin/desa/layanan/pelayanan_telunjuk_sakti_desa")
+    try {
+      await stateTelunjukDesa.create.create();
+      resetForm();
+      toast.success('Data pelayanan telunjuk sakti berhasil ditambahkan');
+      router.push('/admin/desa/layanan/pelayanan_telunjuk_sakti_desa');
+    } catch (error) {
+      console.error('Error create pelayanan telunjuk sakti:', error);
+      toast.error('Terjadi kesalahan saat menambahkan data');
+    }
+  };
 
-  }
   return (
-    <Box>
-      <Box mb={10}>
-        <Button variant="subtle" onClick={() => router.back()}>
-          <IconArrowBack color={colors['blue-button']} size={25} />
-        </Button>
-      </Box>
-      <Paper bg={colors["white-1"]} p={"md"} w={{ base: "100%", md: "50%" }}>
-        <Stack gap={"xs"}>
-          <Title order={3}>Create Pelayanan Telunjuk Sakti Desa</Title>
+    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+      {/* Header */}
+      <Group mb="md">
+        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
+          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+            <IconArrowBack color={colors['blue-button']} size={24} />
+          </Button>
+        </Tooltip>
+        <Title order={4} ml="sm" c="dark">
+          Tambah Pelayanan Telunjuk Sakti Desa
+        </Title>
+      </Group>
+
+      {/* Form */}
+      <Paper
+        w={{ base: '100%', md: '50%' }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+        style={{ border: '1px solid #e0e0e0' }}
+      >
+        <Stack gap="md">
+          {/* Nama */}
           <TextInput
             value={stateTelunjukDesa.create.form.name}
             onChange={(val) => {
               stateTelunjukDesa.create.form.name = val.target.value;
             }}
-            label={<Text fz={"sm"} fw={"bold"}>Nama Pelayanan Telunjuk Sakti Desa</Text>}
-            placeholder="masukkan nama pelayanan telunjuk sakti desa"
+            label={<Text fz="sm" fw="bold">Nama Pelayanan</Text>}
+            placeholder="Masukkan nama pelayanan telunjuk sakti desa"
+            required
           />
+
+          {/* Deskripsi */}
           <TextInput
             value={stateTelunjukDesa.create.form.deskripsi}
             onChange={(val) => {
               stateTelunjukDesa.create.form.deskripsi = val.target.value;
             }}
-            label={<Text fz={"sm"} fw={"bold"}>Tautan Link</Text>}
-            placeholder="masukkan tautan link"
+            label={<Text fz="sm" fw="bold">Deskripsi</Text>}
+            placeholder="Masukkan deskripsi pelayanan"
           />
+
+          {/* Link */}
           <TextInput
             value={stateTelunjukDesa.create.form.link}
             onChange={(val) => {
               stateTelunjukDesa.create.form.link = val.target.value;
             }}
-            label={<Text fz={"sm"} fw={"bold"}>Link</Text>}
-            placeholder="masukkan link"
+            label={<Text fz="sm" fw="bold">Link</Text>}
+            placeholder="Masukkan link pelayanan"
           />
-          <Button bg={colors['blue-button']} onClick={handleSubmit}>Simpan</Button>
+
+          {/* Tombol Simpan */}
+          <Group justify="right">
+            <Button
+              onClick={handleSubmit}
+              radius="md"
+              size="md"
+              style={{
+                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                color: '#fff',
+                boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
+              }}
+            >
+              Simpan
+            </Button>
+          </Group>
         </Stack>
       </Paper>
     </Box>

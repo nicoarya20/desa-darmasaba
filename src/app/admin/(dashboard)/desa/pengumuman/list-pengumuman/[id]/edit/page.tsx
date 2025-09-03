@@ -7,12 +7,14 @@ import colors from "@/con/colors";
 import {
   Box,
   Button,
+  Group,
   Paper,
   Select,
   Stack,
   Text,
   TextInput,
-  Title
+  Title,
+  Tooltip,
 } from "@mantine/core";
 import { IconArrowBack } from "@tabler/icons-react";
 import { useParams, useRouter } from "next/navigation";
@@ -20,34 +22,34 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useProxy } from "valtio/utils";
 
-
 function EditPengumuman() {
   const editState = useProxy(stateDesaPengumuman);
   const router = useRouter();
   const params = useParams();
 
   const [formData, setFormData] = useState({
-    judul: editState.pengumuman.edit.form.judul || '',
-    deskripsi: editState.pengumuman.edit.form.deskripsi || '',
-    categoryPengumumanId: editState.pengumuman.edit.form.categoryPengumumanId || '',
-    content: editState.pengumuman.edit.form.content || ''
+    judul: editState.pengumuman.edit.form.judul || "",
+    deskripsi: editState.pengumuman.edit.form.deskripsi || "",
+    categoryPengumumanId:
+      editState.pengumuman.edit.form.categoryPengumumanId || "",
+    content: editState.pengumuman.edit.form.content || "",
   });
 
   // Load pengumuman by id saat pertama kali
   useEffect(() => {
-    editState.category.findMany.load()
+    editState.category.findMany.load();
     const loadpengumuman = async () => {
       const id = params?.id as string;
       if (!id) return;
 
       try {
-        const data = await stateDesaPengumuman.pengumuman.edit.load(id); // akses langsung, bukan dari proxy
+        const data = await stateDesaPengumuman.pengumuman.edit.load(id);
         if (data) {
           setFormData({
-            judul: data.judul || '',
-            deskripsi: data.deskripsi || '',
-            categoryPengumumanId: data.categoryPengumumanId || '',
-            content: data.content || '',
+            judul: data.judul || "",
+            deskripsi: data.deskripsi || "",
+            categoryPengumumanId: data.categoryPengumumanId || "",
+            content: data.content || "",
           });
         }
       } catch (error) {
@@ -57,21 +59,18 @@ function EditPengumuman() {
     };
 
     loadpengumuman();
-  }, [params?.id]); // ✅ hapus editState dari dependency
+  }, [params?.id]);
 
   const handleSubmit = async () => {
-
     try {
-      // edit global state with form data
+      // update global state
       editState.pengumuman.edit.form = {
         ...editState.pengumuman.edit.form,
-        judul: formData.judul,
-        deskripsi: formData.deskripsi,
-        content: formData.content,
-        categoryPengumumanId: formData.categoryPengumumanId || ''
+        ...formData,
       };
+
       await editState.pengumuman.edit.update();
-      toast.success("pengumuman berhasil diperbarui!");
+      toast.success("Pengumuman berhasil diperbarui!");
       router.push("/admin/desa/pengumuman/list-pengumuman");
     } catch (error) {
       console.error("Error updating pengumuman:", error);
@@ -80,57 +79,97 @@ function EditPengumuman() {
   };
 
   return (
-    <Box>
-      <Box mb={10}>
-        <Button variant="subtle" onClick={() => router.back()}>
-          <IconArrowBack color={colors["blue-button"]} size={30} />
-        </Button>
-      </Box>
-      <Paper bg={"white"} p={"md"} w={{ base: "100%", md: "50%" }}>
-        <Stack gap={"xs"}>
-          <Title order={3}>Edit pengumuman</Title>
+    <Box px={{ base: "sm", md: "lg" }} py="md">
+      <Group mb="md">
+        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
+          <Button
+            variant="subtle"
+            onClick={() => router.back()}
+            p="xs"
+            radius="md"
+          >
+            <IconArrowBack color={colors["blue-button"]} size={24} />
+          </Button>
+        </Tooltip>
+        <Title order={4} ml="sm" c="dark">
+          Edit Pengumuman
+        </Title>
+      </Group>
+
+      <Paper
+        w={{ base: "100%", md: "50%" }}
+        bg={colors["white-1"]}
+        p="lg"
+        radius="md"
+        shadow="sm"
+        style={{ border: "1px solid #e0e0e0" }}
+      >
+        <Stack gap="md">
           <TextInput
+            label="Judul Pengumuman"
+            placeholder="Masukkan judul"
             value={formData.judul}
             onChange={(e) => setFormData({ ...formData, judul: e.target.value })}
-            label={<Text fz={"sm"} fw={"bold"}>Judul</Text>}
-            placeholder="masukkan judul"
+            required
           />
 
           <TextInput
+            label="Deskripsi Singkat"
+            placeholder="Masukkan deskripsi"
             value={formData.deskripsi}
-            onChange={(e) => setFormData({ ...formData, deskripsi: e.target.value })}
-            label={<Text fz={"sm"} fw={"bold"}>Deskripsi</Text>}
-            placeholder="masukkan deskripsi"
+            onChange={(e) =>
+              setFormData({ ...formData, deskripsi: e.target.value })
+            }
+            required
           />
-          <Box>
-            <Text fz={"sm"} fw={"bold"}>Konten</Text>
-            <EditEditor
-              value={formData.content}
-              onChange={(htmlContent) => {
-                setFormData((prev) => ({ ...prev, content: htmlContent }));
-                editState.pengumuman.edit.form.content = htmlContent;
-              }}
-            />
-          </Box>
 
           <Select
             value={formData.categoryPengumumanId}
-            onChange={(val) => setFormData({ ...formData, categoryPengumumanId: val || "" })}
-            label={<Text fw={"bold"} fz={"sm"}>Kategori</Text>}
-            placeholder='Pilih kategori'
+            onChange={(val) =>
+              setFormData({ ...formData, categoryPengumumanId: val || "" })
+            }
+            label="Kategori"
+            placeholder="Pilih kategori"
             data={
               editState.category.findMany.data?.map((v) => ({
                 value: v.id,
-                label: v.name
+                label: v.name,
               })) || []
             }
             clearable
             searchable
             required
-            error={!formData.categoryPengumumanId ? "Pilih kategori" : undefined}
+            error={
+              !formData.categoryPengumumanId ? "Pilih kategori" : undefined
+            }
           />
 
-          <Button onClick={handleSubmit}>Edit pengumuman</Button>
+          <Box>
+            <Text fz="sm" fw="bold" mb={6}>
+              Konten Lengkap
+            </Text>
+            <EditEditor
+              value={formData.content}
+              onChange={(htmlContent) =>
+                setFormData({ ...formData, content: htmlContent })
+              }
+            />
+          </Box>
+
+          <Group justify="right">
+            <Button
+              onClick={handleSubmit}
+              radius="md"
+              size="md"
+              style={{
+                background: `linear-gradient(135deg, ${colors["blue-button"]}, #4facfe)`,
+                color: "#fff",
+                boxShadow: "0 4px 15px rgba(79, 172, 254, 0.4)",
+              }}
+            >
+              Simpan
+            </Button>
+          </Group>
         </Stack>
       </Paper>
     </Box>

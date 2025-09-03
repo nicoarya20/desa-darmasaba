@@ -56,16 +56,21 @@ const penghargaanState = proxy({
     totalPages: 1,
     total: 0,
     loading: false,
-    load: async (page = 1, limit = 10) => {  // Change to arrow function
-      penghargaanState.findMany.loading = true;  // Use the full path to access the property
+    search: "",
+    load: async (page = 1, limit = 10, search = "") => {
+      // Change to arrow function
+      penghargaanState.findMany.loading = true; // Use the full path to access the property
       penghargaanState.findMany.page = page;
+      penghargaanState.findMany.search = search;
       try {
+        const query: any = { page, limit };
+        if (search) query.search = search;
         const res = await ApiFetch.api.desa.penghargaan[
           "find-many"
         ].get({
-          query: { page, limit },
+          query,
         });
-  
+
         if (res.status === 200 && res.data?.success) {
           penghargaanState.findMany.data = res.data.data || [];
           penghargaanState.findMany.total = res.data.total || 0;

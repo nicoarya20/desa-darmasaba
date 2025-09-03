@@ -2,7 +2,7 @@
 import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
 import stateProfileDesa from '@/app/admin/(dashboard)/_state/desa/profile';
 import colors from '@/con/colors';
-import { Box, Button, Flex, Image, Paper, Skeleton, Stack, Text } from '@mantine/core';
+import { Box, Button, Group, Image, Paper, Skeleton, Stack, Text, Tooltip } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack, IconEdit, IconX } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -10,99 +10,130 @@ import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 
 function DetailPerbekelDariMasa() {
-  const state = useProxy(stateProfileDesa.mantanPerbekel)
+  const state = useProxy(stateProfileDesa.mantanPerbekel);
   const [modalHapus, setModalHapus] = useState(false);
-  const [selectedId, setSelectedId] = useState<string | null>(null)
-  const params = useParams()
-  const router = useRouter()
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const params = useParams();
+  const router = useRouter();
 
   useShallowEffect(() => {
-    state.findUnique.load(params?.id as string)
-  }, [])
+    state.findUnique.load(params?.id as string);
+  }, []);
 
   const handleHapus = () => {
     if (selectedId) {
-      state.delete.byId(selectedId)
-      setModalHapus(false)
-      setSelectedId(null)
-      router.push("/admin/desa/profile/profile-perbekel-dari-masa-ke-masa")
+      state.delete.byId(selectedId);
+      setModalHapus(false);
+      setSelectedId(null);
+      router.push("/admin/desa/profile/profile-perbekel-dari-masa-ke-masa");
     }
-  }
+  };
 
   if (!state.findUnique.data) {
     return (
       <Stack py={10}>
-        <Skeleton h={500} />
+        <Skeleton height={500} radius="md" />
       </Stack>
-    )
+    );
   }
 
+  const data = state.findUnique.data;
+
   return (
-    <Box>
-      <Box mb={10}>
-        <Button variant="subtle" onClick={() => router.back()}>
-          <IconArrowBack color={colors['blue-button']} size={25} />
-        </Button>
-      </Box>
-      <Paper bg={colors['white-1']} w={{ base: "100%", md: "100%", lg: "50%" }} p={'md'}>
-        <Stack>
-          <Text fz={"xl"} fw={"bold"}>Detail Perbekel Dari Masa Ke Masa</Text>
-          {state.findUnique.data ? (
-            <Paper key={state.findUnique.data.id} bg={colors['BG-trans']} p={'md'}>
-              <Stack gap={"xs"}>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Nama Perbekel</Text>
-                  <Text fz={"lg"}>{state.findUnique.data?.nama}</Text>
-                </Box>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Daerah</Text>
-                  <Text fz={"lg"}>{state.findUnique.data?.daerah}</Text>
-                </Box>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Periode</Text>
-                  <Text fz={"lg"}>{state.findUnique.data?.periode}</Text>
-                </Box>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Gambar</Text>
-                  <Image w={{ base: 300, md: 350}} src={state.findUnique.data?.image?.link} alt="gambar" />
-                </Box>
-                <Flex gap={"xs"} mt={10}>
+    <Box py={10}>
+      <Button
+        variant="subtle"
+        onClick={() => router.back()}
+        leftSection={<IconArrowBack size={24} color={colors['blue-button']} />}
+        mb={15}
+      >
+        Kembali
+      </Button>
+
+      <Paper
+        withBorder
+        w={{ base: "100%", md: "60%" }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+      >
+        <Stack gap="md">
+          <Text fz="2xl" fw="bold" c={colors['blue-button']}>
+            Detail Perbekel Dari Masa Ke Masa
+          </Text>
+
+          <Paper bg="#ECEEF8" p="md" radius="md" shadow="xs">
+            <Stack gap="sm">
+            <Box>
+                <Text fz="lg" fw="bold">Gambar</Text>
+                {data.image?.link ? (
+                  <Image
+                    src={data.image.link}
+                    alt={data.nama || 'Gambar Perbekel'}
+                    w={150}
+                    h={150}
+                    radius="md"
+                    fit="cover"
+                  />
+                ) : (
+                  <Text fz="sm" c="dimmed">Tidak ada gambar</Text>
+                )}
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">Nama Perbekel</Text>
+                <Text fz="md" c="dimmed">{data.nama || '-'}</Text>
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">Daerah</Text>
+                <Text fz="md" c="dimmed">{data.daerah || '-'}</Text>
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">Periode</Text>
+                <Text fz="md" c="dimmed">{data.periode || '-'}</Text>
+              </Box>
+
+              <Group gap="sm">
+                <Tooltip label="Hapus Perbekel" withArrow position="top">
                   <Button
+                    color="red"
                     onClick={() => {
-                      if (state.findUnique.data) {
-                        setSelectedId(state.findUnique.data.id);
-                        setModalHapus(true);
-                      }
+                      setSelectedId(data.id);
+                      setModalHapus(true);
                     }}
-                    disabled={state.delete.loading || !state.findUnique.data}
-                    color={"red"}
+                    variant="light"
+                    radius="md"
+                    size="md"
                   >
                     <IconX size={20} />
                   </Button>
+                </Tooltip>
+
+                <Tooltip label="Edit Perbekel" withArrow position="top">
                   <Button
-                    onClick={() => {
-                      if (state.findUnique.data) {
-                        router.push(`/admin/desa/profile/profile-perbekel-dari-masa-ke-masa/${state.findUnique.data.id}/edit`);
-                      }
-                    }}
-                    disabled={!state.findUnique.data}
-                    color={"green"}
+                    color="green"
+                    onClick={() => router.push(`/admin/desa/profile/profile-perbekel-dari-masa-ke-masa/${data.id}/edit`)}
+                    variant="light"
+                    radius="md"
+                    size="md"
                   >
                     <IconEdit size={20} />
                   </Button>
-                </Flex>
-              </Stack>
-            </Paper>
-          ) : null}
+                </Tooltip>
+              </Group>
+            </Stack>
+          </Paper>
         </Stack>
       </Paper>
 
-      {/* Modal Konfirmasi Hapus */}
       <ModalKonfirmasiHapus
         opened={modalHapus}
         onClose={() => setModalHapus(false)}
         onConfirm={handleHapus}
-        text='Apakah anda yakin ingin menghapus perbekel dari masa ke masa ini?'
+        text="Apakah Anda yakin ingin menghapus perbekel dari masa ke masa ini?"
       />
     </Box>
   );

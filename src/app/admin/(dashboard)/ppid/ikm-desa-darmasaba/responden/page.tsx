@@ -59,7 +59,7 @@ function ListResponden({ search }: ListRespondenProps) {
       <Paper withBorder bg="white" p="lg" radius="md" shadow="sm">
         <Stack gap="md">
           <Title order={3}>Data Responden</Title>
-          <Table striped withTableBorder withRowBorders>
+          <Table striped withRowBorders>
             <TableThead>
               <TableTr>
                 <TableTh style={{ textAlign: 'center' }}>No</TableTh>
@@ -82,7 +82,7 @@ function ListResponden({ search }: ListRespondenProps) {
     <Paper withBorder bg="white" p="lg" radius="md" shadow="sm">
       <Stack gap="md">
         <Title order={3}>Data Responden</Title>
-        <Table striped withTableBorder withRowBorders>
+        <Table striped withRowBorders>
           <TableThead>
             <TableTr>
               <TableTh style={{ width: '5%', textAlign: 'center' }}>No</TableTh>

@@ -1,51 +1,103 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Grid, GridCol, Paper, Skeleton, Stack, Text } from '@mantine/core';
+import {
+  Box,
+  Button,
+  Center,
+  Divider,
+  Grid,
+  GridCol,
+  Paper,
+  Skeleton,
+  Stack,
+  Text,
+  Title,
+  Tooltip,
+} from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconEdit } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
 import stateLayananDesa from '../../../_state/desa/layananDesa';
 
-function SuratKeterangan() {
-  const router = useRouter()
-  const pelayananPendudukNonPermanen = useProxy(stateLayananDesa.pelayananPendudukNonPermanen)
+function PelayananPendudukNonPermanent() {
+  const router = useRouter();
+  const pelayananPendudukNonPermanen = useProxy(
+    stateLayananDesa.pelayananPendudukNonPermanen
+  );
 
   useShallowEffect(() => {
-    pelayananPendudukNonPermanen.findById.load('1')
-  }, [])
+    pelayananPendudukNonPermanen.findById.load('1');
+  }, []);
 
   if (!pelayananPendudukNonPermanen.findById.data) {
     return (
-      <Stack>
-        <Skeleton radius={10} h={800} />
+      <Stack align="center" justify="center" py="xl">
+        <Skeleton radius="md" height={800} />
       </Stack>
-    )
+    );
   }
+
+  const data = pelayananPendudukNonPermanen.findById.data;
+
   return (
-    <Box py={10}>
-      <Paper bg={colors['white-1']} p={'md'}>
-        <Paper bg={colors['BG-trans']} p={'md'}>
-          <Box py={15}>
-            <Stack gap={"xs"}>
-              <Grid>
-                <GridCol span={{ base: 12, md: 11 }}>
-                  <Text fz={"h4"} fw={"bold"}>Preview Pelayanan Perizinan Berusaha</Text>
-                </GridCol>
-                <GridCol span={{ base: 12, md: 1 }}>
-                  <Button bg={colors['blue-button']} onClick={() => router.push('/admin/desa/layanan/pelayanan_penduduk_non_permanent/edit')}>
-                    <IconEdit size={16} />
-                  </Button>
-                </GridCol>
-              </Grid>
-            </Stack>
+    <Paper bg={colors['white-1']} p="lg" radius="md" shadow="sm">
+      <Stack gap="md">
+        {/* Header */}
+        <Grid align="center">
+          <GridCol span={{ base: 12, md: 11 }}>
+            <Title order={3} c={colors['blue-button']}>
+              Preview Pelayanan Penduduk Non Permanen
+            </Title>
+          </GridCol>
+          <GridCol span={{ base: 12, md: 1 }}>
+            <Tooltip label="Edit Data Pelayanan" withArrow>
+              <Button
+                c="green"
+                variant="light"
+                leftSection={<IconEdit size={18} stroke={2} />}
+                radius="md"
+                onClick={() =>
+                  router.push(
+                    '/admin/desa/layanan/pelayanan_penduduk_non_permanent/edit'
+                  )
+                }
+              >
+                Edit
+              </Button>
+            </Tooltip>
+          </GridCol>
+        </Grid>
+
+        {/* Content */}
+        <Paper p="xl" bg={'white'} withBorder radius="md" shadow="xs">
+          <Box px={{ base: 0, md: 50 }} pb="xl">
+            <Center>
+              <Text
+                ta="center"
+                fz={{ base: '1.2rem', md: '1.8rem' }}
+                fw="bold"
+                c={colors['blue-button']}
+              >
+                {data.name}
+              </Text>
+            </Center>
+
+            <Divider my="md" color={colors['blue-button']} />
+
+            <Box mt="lg">
+              <Text
+                py={10}
+                ta="justify"
+                fz={{ base: '1rem', md: '1.2rem' }}
+                dangerouslySetInnerHTML={{ __html: data.deskripsi }}
+              />
+            </Box>
           </Box>
-          <Text fz={{ base: "h4", md: 'h2' }} fw={"bold"}>{pelayananPendudukNonPermanen.findById.data.name}</Text>
-          <Text py={10} ta={"justify"} fz={{ base: "sm", md: 'h3' }} dangerouslySetInnerHTML={{ __html: pelayananPendudukNonPermanen.findById.data.deskripsi }} />
         </Paper>
-      </Paper>
-    </Box>
+      </Stack>
+    </Paper>
   );
 }
 
-export default SuratKeterangan;
+export default PelayananPendudukNonPermanent;

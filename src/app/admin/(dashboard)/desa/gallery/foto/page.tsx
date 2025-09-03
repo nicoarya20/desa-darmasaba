@@ -1,9 +1,9 @@
 "use client";
-import colors from "@/con/colors";
 import stateFileStorage from "@/state/state-list-image";
 import {
   ActionIcon,
   Box,
+  Card,
   Flex,
   Group,
   Image,
@@ -13,7 +13,8 @@ import {
   Stack,
   Text,
   TextInput,
-  Title
+  Title,
+  Tooltip,
 } from "@mantine/core";
 import { useShallowEffect } from "@mantine/hooks";
 import { IconSearch, IconTrash, IconX } from "@tabler/icons-react";
@@ -29,95 +30,128 @@ export default function ListImage() {
   }, []);
 
   let timeOut: NodeJS.Timer;
+
   return (
-    <Stack p={"lg"}>
-      <Flex justify="space-between">
-        <Title order={3}>List Foto</Title>
+    <Stack p="lg" gap="lg">
+      <Flex justify="space-between" align="center" wrap="wrap" gap="md">
+        <Title order={2} fw={700}>
+          Galeri Foto
+        </Title>
         <TextInput
-          radius={"lg"}
-          leftSection={<IconSearch />}
+          radius="xl"
+          size="md"
+          placeholder="Cari foto berdasarkan nama..."
+          leftSection={<IconSearch size={18} />}
           rightSection={
             <ActionIcon
-              variant="transparent"
-              onClick={() => {
-                stateFileStorage.load();
-              }}
+              variant="light"
+              color="gray"
+              radius="xl"
+              onClick={() => stateFileStorage.load()}
             >
-              <IconX />
+              <IconX size={18} />
             </ActionIcon>
           }
-          placeholder="Pencarian"
           onChange={(e) => {
             if (timeOut) clearTimeout(timeOut);
             timeOut = setTimeout(() => {
               stateFileStorage.load({ search: e.target.value });
-            }, 200);
+            }, 300);
           }}
         />
       </Flex>
-      <Paper bg={colors['white-1']} p={'md'}>
-        <SimpleGrid
-          cols={{
-            base: 3,
-            md: 5,
-            lg: 10,
-          }}
-        >
-          {list &&
-            list.map((v, k) => {
-              return (
-                <Paper key={k} shadow="sm">
-                  <Stack pos={"relative"} gap={0} justify="space-between">
-                    <motion.div
-                      onClick={() => {
-                        // copy to clipboard
-                        navigator.clipboard.writeText(v.url);
-                        toast("Berhasil disalin");
-                      }}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.8 }}
-                    >
-                      <Image
-                        h={100}
-                        src={v.url + "?size=100"}
-                        alt={v.name}
-                        fit="cover"
-                        loading="lazy"
-                        style={{
-                          objectFit: "cover",
-                          objectPosition: "center",
-                        }}
-                      />
-                    </motion.div>
-                    <Box p={"md"} h={54}>
-                      <Text lineClamp={2} fz={"xs"}>
-                        {v.name}
-                      </Text>
-                    </Box>
-                    <Group justify="end">
-                        <IconTrash
+
+      <Paper withBorder radius="lg" p="md" shadow="sm">
+        {list && list.length > 0 ? (
+          <SimpleGrid
+            cols={{ base: 2, sm: 3, md: 5, lg: 8 }}
+            spacing="md"
+            verticalSpacing="md"
+          >
+            {list.map((v, k) => (
+              <Card
+                key={k}
+                withBorder
+                radius="md"
+                shadow="sm"
+                className="hover:shadow-md transition-all duration-200"
+              >
+                <Stack gap="xs">
+                  <motion.div
+                    onClick={() => {
+                      navigator.clipboard.writeText(v.url);
+                      toast("Tautan foto berhasil disalin");
+                    }}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <Image
+                      src={`${v.url}?size=200`}
+                      alt={v.name}
+                      radius="md"
+                      h={120}
+                      fit="cover"
+                      loading="lazy"
+                    />
+                  </motion.div>
+
+                  <Box>
+                    <Text size="sm" fw={500} lineClamp={2}>
+                      {v.name}
+                    </Text>
+                  </Box>
+
+                  <Group justify="space-between" align="center" pt="xs">
+                    <Tooltip label="Hapus foto" withArrow>
+                      <ActionIcon
+                        variant="subtle"
                         color="red"
-                          onClick={() => {
-                            stateFileStorage.del({ name: v.name }).finally(() => {
-                              toast("Berhasil dihapus");
-                            });
-                          }}
-                        />
-                    </Group>
-                  </Stack>
-                </Paper>
-              );
-            })}
-        </SimpleGrid>
+                        radius="md"
+                        onClick={() => {
+                          stateFileStorage
+                            .del({ name: v.name })
+                            .finally(() => toast("Foto berhasil dihapus"));
+                        }}
+                      >
+                        <IconTrash size={18} />
+                      </ActionIcon>
+                    </Tooltip>
+                  </Group>
+                </Stack>
+              </Card>
+            ))}
+          </SimpleGrid>
+        ) : (
+          <Stack align="center" justify="center" py="xl" gap="sm">
+            <Image
+              src="https://cdn-icons-png.flaticon.com/512/4076/4076549.png"
+              alt="Kosong"
+              w={120}
+              h={120}
+              fit="contain"
+              opacity={0.7}
+            />
+            <Text c="dimmed" ta="center">
+              Belum ada foto yang tersedia
+            </Text>
+          </Stack>
+        )}
       </Paper>
-      {total && (
-        <Pagination
-          total={total}
-          onChange={(e) => {
-            stateFileStorage.page = e;
-            stateFileStorage.load();
-          }}
-        />
+
+      {total && total > 1 && (
+        <Flex justify="center">
+          <Pagination
+            total={total}
+            size="md"
+            radius="md"
+            withEdges
+            onChange={(page) => {
+              stateFileStorage.page = page;
+              stateFileStorage.load();
+            }}
+          />
+        </Flex>
       )}
     </Stack>
   );

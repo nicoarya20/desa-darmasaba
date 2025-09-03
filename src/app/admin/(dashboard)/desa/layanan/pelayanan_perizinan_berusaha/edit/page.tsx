@@ -3,7 +3,7 @@
 import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import stateLayananDesa from '@/app/admin/(dashboard)/_state/desa/layananDesa';
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
+import { Box, Button, Group, Paper, Stack, TextInput, Title, Tooltip } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -14,6 +14,7 @@ function EditPelayananPerizinanBerusaha() {
   const router = useRouter();
   const params = useParams()
   const statePerizinanBerusaha = useProxy(stateLayananDesa.pelayananPerizinanBerusaha)
+
   const [formData, setFormData] = useState({
     name: statePerizinanBerusaha.findById.data?.name || '',
     deskripsi: statePerizinanBerusaha.findById.data?.deskripsi || '',
@@ -50,64 +51,81 @@ function EditPelayananPerizinanBerusaha() {
     }
     router.push('/admin/desa/layanan/pelayanan_perizinan_berusaha')
   }
+
   return (
     <Box>
-      <Stack gap={'xs'}>
-        <Box>
-          <Button
-            variant={'subtle'}
-            onClick={() => router.back()}
-          >
-            <IconArrowBack color={colors['blue-button']} size={20} />
-          </Button>
-        </Box>
-        <Box>
-          <Paper bg={colors['white-1']} p={'md'} radius={10} w={{ base: '100%', md: '50%' }}>
-            <Stack gap={'xs'}>
-              <Title order={3}>Edit Pelayanan Perizinan Berusaha</Title>
-              <Text fw={"bold"}>Judul</Text>
-              <TextInput
-                value={formData.name}
-                onChange={(val) => {
-                  setFormData({
-                    ...formData,
-                    name: val.target.value,
-                  })
-                }}
-              />
-              <Text fw={"bold"}>Link</Text>
-              <TextInput
-                value={formData.link}
-                onChange={(val) => {
-                  setFormData({
-                    ...formData,
-                    link: val.target.value,
-                  })
-                }}
-              />
-              <Text fw={"bold"}>Deskripsi</Text>
+      <Stack gap="xs">
+        {/* Header Section */}
+        <Group mb="md">
+          <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
+            <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+              <IconArrowBack color={colors['blue-button']} size={24} />
+            </Button>
+          </Tooltip>
+          <Title order={4} ml="sm" c="dark">
+            Edit Pelayanan Perizinan Berusaha
+          </Title>
+        </Group>
+
+        {/* Form Section */}
+        <Paper
+          w={{ base: "100%", md: "50%" }}
+          bg={colors['white-1']}
+          p="md"
+          radius="md"
+          shadow="sm"
+          style={{ border: '1px solid #e0e0e0' }}
+        >
+          <Stack gap="xs">
+            <Title order={3}>Edit Pelayanan Perizinan Berusaha</Title>
+
+            {/* Nama Field */}
+            <TextInput
+              label="Judul"
+              placeholder="Masukkan judul"
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              required
+            />
+
+            {/* Link Field */}
+            <TextInput
+              label="Link"
+              placeholder="Masukkan link terkait"
+              value={formData.link}
+              onChange={(e) => setFormData({ ...formData, link: e.target.value })}
+            />
+
+            {/* Deskripsi Field */}
+            <Box>
+              <Title order={6}>Deskripsi</Title>
               <EditEditor
                 value={formData.deskripsi}
-                onChange={(val) => {
-                  setFormData({
-                    ...formData,
-                    deskripsi: val,
-                  })
-                }}
+                onChange={(val) => setFormData({ ...formData, deskripsi: val })}
               />
-              
-              <Group>
-                <Button
-                  bg={colors['blue-button']}
-                  onClick={handleSubmit}
-                  loading={statePerizinanBerusaha.update.loading}
-                >
-                  Submit
-                </Button>
-              </Group>
-            </Stack>
-          </Paper>
-        </Box>
+            </Box>
+
+            {/* Action Buttons */}
+            <Group>
+              <Button
+                bg={colors['blue-button']}
+                onClick={handleSubmit}
+                loading={statePerizinanBerusaha.update.loading}
+                disabled={!formData.name}
+              >
+                {statePerizinanBerusaha.update.loading ? 'Menyimpan...' : 'Simpan Perubahan'}
+              </Button>
+
+              <Button
+                variant="outline"
+                onClick={() => router.back()}
+                disabled={statePerizinanBerusaha.update.loading}
+              >
+                Batal
+              </Button>
+            </Group>
+          </Stack>
+        </Paper>
       </Stack>
     </Box>
   );

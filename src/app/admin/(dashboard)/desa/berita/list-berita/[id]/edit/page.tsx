@@ -15,7 +15,8 @@ import {
   Stack,
   Text,
   TextInput,
-  Title
+  Title,
+  Tooltip,
 } from "@mantine/core";
 import { Dropzone } from "@mantine/dropzone";
 import { IconArrowBack, IconPhoto, IconUpload, IconX } from "@tabler/icons-react";
@@ -23,7 +24,6 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useProxy } from "valtio/utils";
-
 
 function EditBerita() {
   const beritaState = useProxy(stateDashboardBerita);
@@ -33,29 +33,29 @@ function EditBerita() {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [formData, setFormData] = useState({
-    judul: beritaState.berita.edit.form.judul || '',
-    deskripsi: beritaState.berita.edit.form.deskripsi || '',
-    kategoriBeritaId: beritaState.berita.edit.form.kategoriBeritaId || '',
-    content: beritaState.berita.edit.form.content || '',
-    imageId: beritaState.berita.edit.form.imageId || ''
+    judul: beritaState.berita.edit.form.judul || "",
+    deskripsi: beritaState.berita.edit.form.deskripsi || "",
+    kategoriBeritaId: beritaState.berita.edit.form.kategoriBeritaId || "",
+    content: beritaState.berita.edit.form.content || "",
+    imageId: beritaState.berita.edit.form.imageId || "",
   });
 
   // Load berita by id saat pertama kali
   useEffect(() => {
-    beritaState.kategoriBerita.findMany.load()
+    beritaState.kategoriBerita.findMany.load();
     const loadBerita = async () => {
       const id = params?.id as string;
       if (!id) return;
 
       try {
-        const data = await stateDashboardBerita.berita.edit.load(id); // akses langsung, bukan dari proxy
+        const data = await stateDashboardBerita.berita.edit.load(id);
         if (data) {
           setFormData({
-            judul: data.judul || '',
-            deskripsi: data.deskripsi || '',
-            kategoriBeritaId: data.kategoriBeritaId || '',
-            content: data.content || '',
-            imageId: data.imageId || '',
+            judul: data.judul || "",
+            deskripsi: data.deskripsi || "",
+            kategoriBeritaId: data.kategoriBeritaId || "",
+            content: data.content || "",
+            imageId: data.imageId || "",
           });
 
           if (data?.image?.link) {
@@ -69,31 +69,26 @@ function EditBerita() {
     };
 
     loadBerita();
-  }, [params?.id]); // ✅ hapus beritaState dari dependency
+  }, [params?.id]);
 
   const handleSubmit = async () => {
-
     try {
-      // Update global state with form data
       beritaState.berita.edit.form = {
         ...beritaState.berita.edit.form,
-        judul: formData.judul,
-        deskripsi: formData.deskripsi,
-        content: formData.content,
-        kategoriBeritaId: formData.kategoriBeritaId || '',
-        imageId: formData.imageId // Keep existing imageId if not changed
+        ...formData,
       };
 
-      // Jika ada file baru, upload
       if (file) {
-        const res = await ApiFetch.api.fileStorage.create.post({ file, name: file.name });
+        const res = await ApiFetch.api.fileStorage.create.post({
+          file,
+          name: file.name,
+        });
         const uploaded = res.data?.data;
 
         if (!uploaded?.id) {
           return toast.error("Gagal upload gambar");
         }
 
-        // Update imageId in global state
         beritaState.berita.edit.form.imageId = uploaded.id;
       }
 
@@ -107,87 +102,111 @@ function EditBerita() {
   };
 
   return (
-    <Box>
-      <Box mb={10}>
-        <Button variant="subtle" onClick={() => router.back()}>
-          <IconArrowBack color={colors["blue-button"]} size={30} />
-        </Button>
-      </Box>
-      <Paper bg={"white"} p={"md"} w={{ base: "100%", md: "50%" }}>
-        <Stack gap={"xs"}>
-          <Title order={3}>Edit Berita</Title>
+    <Box px={{ base: "sm", md: "lg" }} py="md">
+      <Group mb="md">
+        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
+          <Button
+            variant="subtle"
+            onClick={() => router.back()}
+            p="xs"
+            radius="md"
+          >
+            <IconArrowBack color={colors["blue-button"]} size={24} />
+          </Button>
+        </Tooltip>
+        <Title order={4} ml="sm" c="dark">
+          Edit Berita
+        </Title>
+      </Group>
+
+      <Paper
+        w={{ base: "100%", md: "50%" }}
+        bg={colors["white-1"]}
+        p="lg"
+        radius="md"
+        shadow="sm"
+        style={{ border: "1px solid #e0e0e0" }}
+      >
+        <Stack gap="md">
           <TextInput
+            label="Judul"
+            placeholder="Masukkan judul"
             value={formData.judul}
-            onChange={(e) => setFormData({ ...formData, judul: e.target.value })}
-            label={<Text fz={"sm"} fw={"bold"}>Judul</Text>}
-            placeholder="masukkan judul"
+            onChange={(e) =>
+              setFormData({ ...formData, judul: e.target.value })
+            }
+            required
           />
 
           <TextInput
+            label="Deskripsi"
+            placeholder="Masukkan deskripsi"
             value={formData.deskripsi}
-            onChange={(e) => setFormData({ ...formData, deskripsi: e.target.value })}
-            label={<Text fz={"sm"} fw={"bold"}>Deskripsi</Text>}
-            placeholder="masukkan deskripsi"
+            onChange={(e) =>
+              setFormData({ ...formData, deskripsi: e.target.value })
+            }
+            required
           />
 
           <Box>
-            <Text fz={"md"} fw={"bold"}>Gambar</Text>
-            <Box>
-              <Dropzone
-                onDrop={(files) => {
-                  const selectedFile = files[0]; // Ambil file pertama
-                  if (selectedFile) {
-                    setFile(selectedFile);
-                    setPreviewImage(URL.createObjectURL(selectedFile)); // Buat preview
-                  }
-                }}
-                onReject={() => toast.error('File tidak valid.')}
-                maxSize={5 * 1024 ** 2} // Maks 5MB
-                accept={{ 'image/*': [] }}
-              >
-                <Group justify="center" gap="xl" mih={220} style={{ pointerEvents: 'none' }}>
-                  <Dropzone.Accept>
-                    <IconUpload size={52} color="var(--mantine-color-blue-6)" stroke={1.5} />
-                  </Dropzone.Accept>
-                  <Dropzone.Reject>
-                    <IconX size={52} color="var(--mantine-color-red-6)" stroke={1.5} />
-                  </Dropzone.Reject>
-                  <Dropzone.Idle>
-                    <IconPhoto size={52} color="var(--mantine-color-dimmed)" stroke={1.5} />
-                  </Dropzone.Idle>
+            <Text fw="bold" fz="sm" mb={6}>
+              Gambar Berita
+            </Text>
+            <Dropzone
+              onDrop={(files) => {
+                const selectedFile = files[0];
+                if (selectedFile) {
+                  setFile(selectedFile);
+                  setPreviewImage(URL.createObjectURL(selectedFile));
+                }
+              }}
+              onReject={() => toast.error("File tidak valid, gunakan format gambar")}
+              maxSize={5 * 1024 ** 2}
+              accept={{ "image/*": [] }}
+              radius="md"
+              p="xl"
+            >
+              <Group justify="center" gap="xl" mih={180}>
+                <Dropzone.Accept>
+                  <IconUpload size={48} color={colors["blue-button"]} stroke={1.5} />
+                </Dropzone.Accept>
+                <Dropzone.Reject>
+                  <IconX size={48} color="red" stroke={1.5} />
+                </Dropzone.Reject>
+                <Dropzone.Idle>
+                  <IconPhoto size={48} color="#868e96" stroke={1.5} />
+                </Dropzone.Idle>
+                <Stack gap="xs" align="center">
+                  <Text size="md" fw={500}>
+                    Seret gambar atau klik untuk memilih file
+                  </Text>
+                  <Text size="sm" c="dimmed">
+                    Maksimal 5MB, format gambar wajib
+                  </Text>
+                </Stack>
+              </Group>
+            </Dropzone>
 
-                  <div>
-                    <Text size="xl" inline>
-                      Drag gambar ke sini atau klik untuk pilih file
-                    </Text>
-                    <Text size="sm" c="dimmed" inline mt={7}>
-                      Maksimal 5MB dan harus format gambar
-                    </Text>
-                  </div>
-                </Group>
-              </Dropzone>
-
-              {/* Tampilkan preview kalau ada */}
-              {previewImage && (
-                <Box mt="sm">
-                  <Image
-                    src={previewImage}
-                    alt="Preview"
-                    style={{
-                      maxWidth: '100%',
-                      maxHeight: '200px',
-                      objectFit: 'contain',
-                      borderRadius: '8px',
-                      border: '1px solid #ddd',
-                    }}
-                  />
-                </Box>
-              )}
-
-            </Box>
+            {previewImage && (
+              <Box mt="sm" style={{ display: "flex", justifyContent: "center" }}>
+                <Image
+                  src={previewImage}
+                  alt="Preview Gambar"
+                  radius="md"
+                  style={{
+                    maxHeight: 220,
+                    objectFit: "contain",
+                    border: `1px solid ${colors["blue-button"]}`,
+                  }}
+                />
+              </Box>
+            )}
           </Box>
+
           <Box>
-            <Text fz={"sm"} fw={"bold"}>Konten</Text>
+            <Text fz="sm" fw="bold">
+              Konten
+            </Text>
             <EditEditor
               value={formData.content}
               onChange={(htmlContent) => {
@@ -199,13 +218,15 @@ function EditBerita() {
 
           <Select
             value={formData.kategoriBeritaId}
-            onChange={(val) => setFormData({ ...formData, kategoriBeritaId: val || "" })}
-            label={<Text fw={"bold"} fz={"sm"}>Kategori</Text>}
-            placeholder='Pilih kategori'
+            onChange={(val) =>
+              setFormData({ ...formData, kategoriBeritaId: val || "" })
+            }
+            label="Kategori"
+            placeholder="Pilih kategori"
             data={
               beritaState.kategoriBerita.findMany.data?.map((v) => ({
                 value: v.id,
-                label: v.name
+                label: v.name,
               })) || []
             }
             clearable
@@ -214,7 +235,20 @@ function EditBerita() {
             error={!formData.kategoriBeritaId ? "Pilih kategori" : undefined}
           />
 
-          <Button onClick={handleSubmit}>Edit Berita</Button>
+          <Group justify="right">
+            <Button
+              onClick={handleSubmit}
+              radius="md"
+              size="md"
+              style={{
+                background: `linear-gradient(135deg, ${colors["blue-button"]}, #4facfe)`,
+                color: "#fff",
+                boxShadow: "0 4px 15px rgba(79, 172, 254, 0.4)",
+              }}
+            >
+              Simpan
+            </Button>
+          </Group>
         </Stack>
       </Paper>
     </Box>

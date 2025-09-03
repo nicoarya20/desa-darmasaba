@@ -2,109 +2,166 @@
 import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
 import stateLayananDesa from '@/app/admin/(dashboard)/_state/desa/layananDesa';
 import colors from '@/con/colors';
-import { Box, Button, Flex, Paper, Skeleton, Stack, Text } from '@mantine/core';
+import {
+  Box,
+  Button,
+  Group,
+  Paper,
+  Skeleton,
+  Stack,
+  Text,
+  Tooltip,
+} from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { IconArrowBack, IconEdit, IconX } from '@tabler/icons-react';
+import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 
 function DetailPelayananTelunjukSakti() {
-  const telunjukSaktiState = useProxy(stateLayananDesa.pelayananTelunjukSaktiDesa)
-  const [modalHapus, setModalHapus] = useState(false)
-  const [selectedId, setSelectedId] = useState<string | null>(null)
-  const params = useParams()
-  const router = useRouter()
+  const telunjukSaktiState = useProxy(
+    stateLayananDesa.pelayananTelunjukSaktiDesa
+  );
+  const [modalHapus, setModalHapus] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const params = useParams();
+  const router = useRouter();
 
   useShallowEffect(() => {
-    telunjukSaktiState.findUnique.load(params?.id as string)
-  }, [])
+    telunjukSaktiState.findUnique.load(params?.id as string);
+  }, []);
 
   const handleHapus = () => {
     if (selectedId) {
-      telunjukSaktiState.delete.byId(selectedId)
-      setModalHapus(false)
-      setSelectedId(null)
-      router.push("/admin/desa/layanan/pelayanan_telunjuk_sakti_desa")
+      telunjukSaktiState.delete.byId(selectedId);
+      setModalHapus(false);
+      setSelectedId(null);
+      router.push('/admin/desa/layanan/pelayanan_telunjuk_sakti_desa');
     }
-  }
+  };
 
   if (!telunjukSaktiState.findUnique.data) {
     return (
       <Stack py={10}>
-        {Array.from({ length: 10 }).map((_, k) => (
-          <Skeleton key={k} h={40} />
-        ))}
+        <Skeleton height={500} radius="md" />
       </Stack>
-    )
+    );
   }
 
+  const data = telunjukSaktiState.findUnique.data;
+
   return (
-    <Box>
-      <Box mb={10}>
-        <Button variant="subtle" onClick={() => router.back()}>
-          <IconArrowBack color={colors['blue-button']} size={25} />
-        </Button>
-      </Box>
-      <Paper bg={colors['white-1']} w={{ base: "100%", md: "100%", lg: "50%" }} p={'md'}>
-        <Stack>
-          <Text fz={"xl"} fw={"bold"}>Detail Pelayanan Telunjuk Sakti Desa</Text>
-          {telunjukSaktiState.findUnique.data ? (
-            <Paper key={telunjukSaktiState.findUnique.data.id} bg={colors['BG-trans']} p={'md'}>
-              <Stack gap={"xs"}>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Nama</Text>
-                  <Text fz={"lg"}>{telunjukSaktiState.findUnique.data?.name}</Text>
-                </Box>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Link</Text>
+    <Box py={10}>
+      {/* Tombol Kembali */}
+      <Button
+        variant="subtle"
+        onClick={() => router.back()}
+        leftSection={<IconArrowBack size={24} color={colors['blue-button']} />}
+        mb={15}
+      >
+        Kembali
+      </Button>
+
+      <Paper
+        withBorder
+        w={{ base: '100%', md: '60%' }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+      >
+        <Stack gap="md">
+          <Text fz="2xl" fw="bold" c={colors['blue-button']}>
+            Detail Pelayanan Telunjuk Sakti Desa
+          </Text>
+
+          <Paper bg="#ECEEF8" p="md" radius="md" shadow="xs">
+            <Stack gap="sm">
+              <Box>
+                <Text fz="lg" fw="bold">
+                  Nama
+                </Text>
+                <Text fz="md" c="dimmed">
+                  {data?.name || '-'}
+                </Text>
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">
+                  Link
+                </Text>
+                {data?.link ? (
                   <Text
+                    fz="md"
                     component="a"
-                    href={telunjukSaktiState.findUnique.data?.link}
+                    href={data.link}
                     target="_blank"
                     rel="noopener noreferrer"
+                    c="blue"
                     style={{
                       display: 'block',
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap'
+                      whiteSpace: 'nowrap',
                     }}
                   >
-                    {telunjukSaktiState.findUnique.data?.link}
+                    {data.link}
                   </Text>
-                </Box>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Deskripsi</Text>
-                  <Text fz={"lg"}>{telunjukSaktiState.findUnique.data?.deskripsi}</Text>
-                </Box>
-                <Flex gap={"xs"} mt={10}>
+                ) : (
+                  <Text fz="sm" c="dimmed">
+                    Tidak ada link
+                  </Text>
+                )}
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">
+                  Deskripsi
+                </Text>
+                <Text
+                  fz="md"
+                  c="dimmed"
+                  dangerouslySetInnerHTML={{
+                    __html: data?.deskripsi || '-',
+                  }}
+                />
+              </Box>
+
+              <Group gap="sm">
+                <Tooltip label="Hapus Layanan" withArrow position="top">
                   <Button
+                    color="red"
                     onClick={() => {
-                      if (telunjukSaktiState.findUnique.data) {
-                        setSelectedId(telunjukSaktiState.findUnique.data.id);
-                        setModalHapus(true);
-                      }
+                      setSelectedId(data.id);
+                      setModalHapus(true);
                     }}
-                    disabled={telunjukSaktiState.delete.loading || !telunjukSaktiState.findUnique.data}
-                    color={"red"}
+                    variant="light"
+                    radius="md"
+                    size="md"
+                    disabled={telunjukSaktiState.delete.loading}
                   >
-                    <IconX size={20} />
+                    <IconTrash size={20} />
                   </Button>
+                </Tooltip>
+
+                <Tooltip label="Edit Layanan" withArrow position="top">
                   <Button
-                    onClick={() => {
-                      if (telunjukSaktiState.findUnique.data) {
-                        router.push(`/admin/desa/layanan/pelayanan_telunjuk_sakti_desa/${telunjukSaktiState.findUnique.data.id}/edit`);
-                      }
-                    }}
-                    disabled={!telunjukSaktiState.findUnique.data}
-                    color={"green"}
+                    color="green"
+                    onClick={() =>
+                      router.push(
+                        `/admin/desa/layanan/pelayanan_telunjuk_sakti_desa/${data.id}/edit`
+                      )
+                    }
+                    variant="light"
+                    radius="md"
+                    size="md"
                   >
                     <IconEdit size={20} />
                   </Button>
-                </Flex>
-              </Stack>
-            </Paper>
-          ) : null}
+                </Tooltip>
+              </Group>
+            </Stack>
+          </Paper>
         </Stack>
       </Paper>
 
@@ -113,7 +170,7 @@ function DetailPelayananTelunjukSakti() {
         opened={modalHapus}
         onClose={() => setModalHapus(false)}
         onConfirm={handleHapus}
-        text='Apakah anda yakin ingin menghapus berita ini?'
+        text="Apakah Anda yakin ingin menghapus layanan ini?"
       />
     </Box>
   );

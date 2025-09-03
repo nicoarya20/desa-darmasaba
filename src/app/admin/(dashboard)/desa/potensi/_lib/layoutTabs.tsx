@@ -1,7 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import colors from '@/con/colors';
-import { Stack, Tabs, TabsList, TabsPanel, TabsTab, Title } from '@mantine/core';
+import { Stack, Tabs, TabsList, TabsPanel, TabsTab, Title, Tooltip } from '@mantine/core';
+import { IconCategory, IconListCheck } from '@tabler/icons-react';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
@@ -12,17 +13,21 @@ function LayoutTabsPotensi({ children }: { children: React.ReactNode }) {
         {
             label: "List Potensi",
             value: "list_potensi",
-            href: "/admin/desa/potensi/list-potensi"
+            href: "/admin/desa/potensi/list-potensi",
+            icon: <IconListCheck size={18} stroke={1.8} />,
+            tooltip: "Lihat semua potensi desa"
         },
         {
             label: "Kategori Potensi",
             value: "kategori_potensi",
-            href: "/admin/desa/potensi/kategori-potensi"
+            href: "/admin/desa/potensi/kategori-potensi",
+            icon: <IconCategory size={18} stroke={1.8} />,
+            tooltip: "Kelola kategori potensi"
         },
-        
     ];
-    const curentTab = tabs.find(tab => tab.href === pathname)
-    const [activeTab, setActiveTab] = useState<string | null>(curentTab?.value || tabs[0].value);
+
+    const currentTab = tabs.find(tab => tab.href === pathname)
+    const [activeTab, setActiveTab] = useState<string | null>(currentTab?.value || tabs[0].value);
 
     const handleTabChange = (value: string | null) => {
         const tab = tabs.find(t => t.value === value)
@@ -40,22 +45,57 @@ function LayoutTabsPotensi({ children }: { children: React.ReactNode }) {
     }, [pathname])
 
     return (
-        <Stack>
-            <Title order={3}>Potensi</Title>
-            <Tabs color={colors['blue-button']} variant='pills' value={activeTab} onChange={handleTabChange}>
-                <TabsList p={"xs"} bg={"#BBC8E7FF"}>
-                    {tabs.map((e, i) => (
-                        <TabsTab key={i} value={e.value}>{e.label}</TabsTab>
+        <Stack gap="lg">
+            <Title order={3} fw={700} style={{ color: "#1A1B1E" }}>Potensi</Title>
+            <Tabs
+                color={colors['blue-button']}
+                variant='pills'
+                value={activeTab}
+                onChange={handleTabChange}
+                radius="lg"
+                keepMounted={false}
+            >
+                <TabsList
+                    p="sm"
+                    style={{
+                        background: "linear-gradient(135deg, #e7ebf7, #f9faff)",
+                        borderRadius: "1rem",
+                        boxShadow: "inset 0 0 10px rgba(0,0,0,0.05)",
+                    }}
+                >
+                    {tabs.map((tab, i) => (
+                        <Tooltip key={i} label={tab.tooltip} position="bottom" withArrow transitionProps={{ transition: 'pop', duration: 200 }}>
+                            <TabsTab
+                                value={tab.value}
+                                leftSection={tab.icon}
+                                style={{
+                                    fontWeight: 600,
+                                    fontSize: "0.9rem",
+                                    transition: "all 0.2s ease",
+                                }}
+                            >
+                                {tab.label}
+                            </TabsTab>
+                        </Tooltip>
                     ))}
                 </TabsList>
-                {tabs.map((e, i) => (
-                    <TabsPanel key={i} value={e.value}>
-                        {/* Konten dummy, bisa diganti tergantung routing */}
-                        <></>
+
+                {tabs.map((tab, i) => (
+                    <TabsPanel
+                        key={i}
+                        value={tab.value}
+                        style={{
+                            padding: "1.5rem",
+                            background: "linear-gradient(180deg, #ffffff, #f5f6fa)",
+                            borderRadius: "1rem",
+                            boxShadow: "0 4px 16px rgba(0,0,0,0.05)",
+                        }}
+                    >
+                        {/* Konten dummy, bisa diganti sesuai routing */}
+                        <>{children}</>
                     </TabsPanel>
                 ))}
             </Tabs>
-            {children}
         </Stack>
     );
 }

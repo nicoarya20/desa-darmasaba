@@ -2,21 +2,38 @@
 'use client'
 import penghargaanState from '@/app/admin/(dashboard)/_state/desa/penghargaan';
 import colors from '@/con/colors';
-import { Box, Button, Center, Image, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
-import { IconDeviceImac, IconSearch } from '@tabler/icons-react';
+import {
+  Box,
+  Button,
+  Center,
+  Group,
+  Pagination,
+  Paper,
+  Skeleton,
+  Stack,
+  Table,
+  TableTbody,
+  TableTd,
+  TableTh,
+  TableThead,
+  TableTr,
+  Text,
+  Title,
+  Tooltip
+} from '@mantine/core';
+import { IconDeviceImac, IconPlus, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../_com/header';
-import JudulList from '../../_com/judulList';
 
 function Penghargaan() {
   const [search, setSearch] = useState("");
   return (
     <Box>
       <HeaderSearch
-        title='Penghargaan'
-        placeholder='pencarian'
+        title="Penghargaan"
+        placeholder="Cari nama atau deskripsi..."
         searchIcon={<IconSearch size={20} />}
         value={search}
         onChange={(e) => setSearch(e.currentTarget.value)}
@@ -27,125 +44,114 @@ function Penghargaan() {
 }
 
 function ListPenghargaan({ search }: { search: string }) {
-  const state = useProxy(penghargaanState)
-  const router = useRouter()
+  const state = useProxy(penghargaanState);
+  const router = useRouter();
 
-  const {
-    data,
-    page,
-    totalPages,
-    loading,
-    load,
-  } = state.findMany;
+  const { data, page, totalPages, loading, load } = state.findMany;
 
   useEffect(() => {
-    load(page, 10)
-  }, [])
+    load(page, 10, search);
+  }, [page, search]);
 
-  const filteredData = useMemo(() => {
-    if (!data) return [];
-    return data.filter(item => {
-      const keyword = search.toLowerCase();
-      return (
-        item.name?.toLowerCase().includes(keyword) ||
-        item.deskripsi?.toLowerCase().includes(keyword)
-      );
-    })
-  }, [data, search]);
+  const filteredData = data || []
 
-  // Handle loading state
+  // Loading state
   if (loading || !data) {
     return (
       <Stack py={10}>
-        <Skeleton height={300} />
+        <Skeleton height={600} radius="md" />
       </Stack>
     );
   }
 
-  if (data.length === 0) {
-    return (
-      <Box py={10}>
-        <Paper bg={colors['white-1']} p={'md'}>
-          <JudulList
-            title='List Penghargaan'
-            href='/admin/desa/penghargaan/create'
-          />
-          <Table striped withTableBorder withRowBorders>
+  return (
+    <Box py={10}>
+      <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
+        <Group justify="space-between" mb="md">
+          <Title order={4}>List Penghargaan</Title>
+          <Tooltip label="Tambah Penghargaan" withArrow>
+            <Button
+              leftSection={<IconPlus size={18} />}
+              color="blue"
+              variant="light"
+              onClick={() => router.push('/admin/desa/penghargaan/create')}
+            >
+              Tambah Baru
+            </Button>
+          </Tooltip>
+        </Group>
+        <Box style={{ overflowX: 'auto' }}>
+          <Table highlightOnHover>
             <TableThead>
               <TableTr>
-                <TableTh>Nama</TableTh>
-                <TableTh>Deskripsi</TableTh>
-                <TableTh>Image</TableTh>
-                <TableTh>Detail</TableTh>
+                <TableTh style={{ width: '35%' }}>Nama</TableTh>
+                <TableTh style={{ width: '35%' }}>Deskripsi</TableTh>
+                <TableTh style={{ width: '30%' }}>Aksi</TableTh>
               </TableTr>
             </TableThead>
             <TableTbody>
-              <TableTr>
-                <TableTd colSpan={4}>
-                  <Text ta="center">Tidak ada data</Text>
-                </TableTd>
-              </TableTr>
+              {filteredData.length > 0 ? (
+                filteredData.map((item) => (
+                  <TableTr key={item.id}>
+                    <TableTd>
+                      <Box w={200}>
+                        <Text fw={500} truncate="end" lineClamp={1}>
+                          {item.name}
+                        </Text>
+                      </Box>
+                    </TableTd>
+                    <TableTd>
+                      <Box w={200}>
+                        <Text
+                          truncate="end"
+                          lineClamp={1}
+                          fz="sm"
+                          c="dimmed"
+                          dangerouslySetInnerHTML={{ __html: item.deskripsi }}
+                        />
+                      </Box>
+                    </TableTd>
+                    <TableTd>
+                      <Button
+                        variant="light"
+                        color="blue"
+                        onClick={() =>
+                          router.push(`/admin/desa/penghargaan/${item.id}`)
+                        }
+                      >
+                        <IconDeviceImac size={20} />
+                        <Text ml={5}>Detail</Text>
+                      </Button>
+                    </TableTd>
+                  </TableTr>
+                ))
+              ) : (
+                <TableTr>
+                  <TableTd colSpan={4}>
+                    <Center py={20}>
+                      <Text color="dimmed">
+                        Tidak ada data penghargaan yang cocok
+                      </Text>
+                    </Center>
+                  </TableTd>
+                </TableTr>
+              )}
             </TableTbody>
           </Table>
-        </Paper>
-      </Box>
-    )
-  }
-
-  return (
-    <Box py={10}>
-      <Paper bg={colors['white-1']} p={'md'}>
-        <JudulList
-          title='List Penghargaan'
-          href='/admin/desa/penghargaan/create'
-        />
-        <Table striped withTableBorder withRowBorders>
-          <TableThead>
-            <TableTr>
-              <TableTh>Nama</TableTh>
-              <TableTh>Deskripsi</TableTh>
-              <TableTh>Image</TableTh>
-              <TableTh>Detail</TableTh>
-            </TableTr>
-          </TableThead>
-          <TableTbody>
-            {filteredData.map((item) => (
-              <TableTr key={item.id}>
-                <TableTd>
-                  <Box w={100}>
-                    <Text lineClamp={1} truncate="end" fz={"sm"}>{item.name}</Text>
-                  </Box>
-                </TableTd>
-                <TableTd>
-                  <Box w={100}>
-                    <Text lineClamp={1} truncate="end" fz={"sm"} dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
-                  </Box>
-                </TableTd>
-                <TableTd>
-                  <Image w={100} src={item.image?.link} alt="gambar" />
-                </TableTd>
-                <TableTd>
-                  <Text>
-                    <Button onClick={() => router.push(`/admin/desa/penghargaan/${item.id}`)}>
-                      <IconDeviceImac size={20} />
-                    </Button>
-                  </Text>
-                </TableTd>
-              </TableTr>
-            ))}
-          </TableTbody>
-        </Table>
+        </Box>
       </Paper>
       <Center>
         <Pagination
           value={page}
           onChange={(newPage) => {
-            load(newPage, 10);
-            window.scrollTo(0, 0);
+            load(newPage, 10, search);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
           total={totalPages}
           mt="md"
           mb="md"
+          color="blue"
+          radius="md"
         />
       </Center>
     </Box>

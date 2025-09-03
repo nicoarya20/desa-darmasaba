@@ -74,18 +74,18 @@ const berita = proxy({
     totalPages: 1,
     loading: false,
     search: "",
-   load: async (page = 1, limit = 10, search = "", kategori = "") => {
+    load: async (page = 1, limit = 10, search = "", kategori = "") => {
       berita.findMany.loading = true; // ✅ Akses langsung via nama path
       berita.findMany.page = page;
       berita.findMany.search = search;
-  
+
       try {
         const query: any = { page, limit };
         if (search) query.search = search;
         if (kategori) query.kategori = kategori;
-    
+
         const res = await ApiFetch.api.desa.berita["find-many"].get({ query });
-    
+
         if (res.status === 200 && res.data?.success) {
           berita.findMany.data = res.data.data ?? [];
           berita.findMany.totalPages = res.data.totalPages ?? 1;
@@ -368,11 +368,37 @@ const kategoriBerita = proxy({
         isActive: true;
       };
     }>[],
+    page: 1,
+    totalPages: 1,
     loading: false,
-    async load() {
-      const res = await ApiFetch.api.desa.kategoriberita["findMany"].get();
-      if (res.status === 200) {
-        kategoriBerita.findMany.data = res.data?.data ?? [];
+    search: "",
+    load: async (page = 1, limit = 10, search = "") => {
+      kategoriBerita.findMany.loading = true; // ✅ Akses langsung via nama path
+      kategoriBerita.findMany.page = page;
+      kategoriBerita.findMany.search = search;
+
+      try {
+        const query: any = { page, limit };
+        if (search) query.search = search;
+
+        const res = await ApiFetch.api.desa.kategoriberita[
+          "findMany"
+        ].get({ query });
+
+        if (res.status === 200 && res.data?.success) {
+          kategoriBerita.findMany.data = res.data.data ?? [];
+          kategoriBerita.findMany.totalPages =
+            res.data.totalPages ?? 1;
+        } else {
+          kategoriBerita.findMany.data = [];
+          kategoriBerita.findMany.totalPages = 1;
+        }
+      } catch (err) {
+        console.error("Gagal fetch kategori berita paginated:", err);
+        kategoriBerita.findMany.data = [];
+        kategoriBerita.findMany.totalPages = 1;
+      } finally {
+        kategoriBerita.findMany.loading = false;
       }
     },
   },
