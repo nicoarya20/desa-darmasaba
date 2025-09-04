@@ -12,6 +12,11 @@ import { NavbarSearch } from "./NavBarSearch"
 import { NavbarSubMenu } from "./NavbarSubMenu"
 import { useRouter } from "next/navigation"
 
+// contoh state auth (dummy aja dulu, bisa diganti sesuai sistem auth kamu)
+const stateAuth = {
+  role: "admin", // coba ubah ke "user" buat test
+}
+
 export function NavbarMainMenu({ listNavbar }: { listNavbar: MenuItem[] }) {
   const { item, isSearch } = useSnapshot(stateNav)
   const router = useTransitionRouter()
@@ -40,9 +45,11 @@ export function NavbarMainMenu({ listNavbar }: { listNavbar: MenuItem[] }) {
               />
             </ActionIcon>
           </Tooltip>
+
           {listNavbar.map((item, k) => (
             <MenuItemCom key={k} item={item} />
           ))}
+
           <Tooltip label="Search content" position="bottom" withArrow>
             <ActionIcon
               variant="transparent"
@@ -56,20 +63,25 @@ export function NavbarMainMenu({ listNavbar }: { listNavbar: MenuItem[] }) {
               <IconSearch size="1.5rem" />
             </ActionIcon>
           </Tooltip>
-          <Tooltip label="My Profile" position="bottom" withArrow>
-            <ActionIcon
-              onClick={() => {
-                next.push("/admin/landing-page/profile/program-inovasi")
-              }}
-              color={colors["blue-button"]}
-              radius="xl"
-              variant="light"
-            >
-              <IconUser size={22} />
-            </ActionIcon>
-          </Tooltip>
+
+          {/* hanya tampil kalau role = admin */}
+          {stateAuth.role === "admin" && (
+            <Tooltip label="My Profile" position="bottom" withArrow>
+              <ActionIcon
+                onClick={() => {
+                  next.push("/admin/landing-page/profile/program-inovasi")
+                }}
+                color={colors["blue-button"]}
+                radius="xl"
+                variant="light"
+              >
+                <IconUser size={22} />
+              </ActionIcon>
+            </Tooltip>
+          )}
         </Flex>
       </Container>
+
       {item && <NavbarSubMenu item={item as MenuItem[]} />}
       {isSearch && <NavbarSearch />}
     </Stack>

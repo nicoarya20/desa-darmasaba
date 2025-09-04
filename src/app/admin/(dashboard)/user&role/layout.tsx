@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
+import colors from '@/con/colors';
 import { Stack, Tabs, TabsList, TabsPanel, TabsTab, Title, Tooltip } from '@mantine/core';
 import { IconForms, IconUser } from '@tabler/icons-react';
 import { usePathname, useRouter } from 'next/navigation';
@@ -50,6 +51,7 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
         User & Role
       </Title>
       <Tabs
+        color={colors['blue-button']}
         variant="pills"
         value={activeTab}
         onChange={handleTabChange}

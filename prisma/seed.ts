@@ -57,47 +57,60 @@ import users from "./data/user/users.json";
 
 (async () => {
   // =========== USER & ROLE ===========
-  for (const r of roles) {
-    await prisma.role.upsert({
-      where: { id: r.id },
-      update: {
-        name: r.name,
-        description: r.description,
-        permissions: r.permissions,
-        isActive: true,
-      },
-      create: {
-        id: r.id,
-        name: r.name,
-        description: r.description,
-        permissions: r.permissions,
-        isActive: true,
-      },
-    });
+  // In your seed.ts
+// =========== ROLES ===========
+console.log("🔄 Seeding roles...");
+for (const r of roles) {
+  await prisma.role.upsert({
+    where: { id: r.id },
+    update: {
+      name: r.name,
+      description: r.description,
+      permissions: r.permissions,
+      isActive: r.isActive,
+    },
+    create: {
+      id: r.id,
+      name: r.name,
+      description: r.description,
+      permissions: r.permissions,
+      isActive: r.isActive,
+    },
+  });
+}
+console.log("✅ Roles seeded");
+
+// =========== USERS ===========
+console.log("🔄 Seeding users...");
+for (const u of users) {
+  // First verify the role exists
+  const roleExists = await prisma.role.findUnique({
+    where: { id: u.roleId }
+  });
+  
+  if (!roleExists) {
+    console.error(`❌ Role with id ${u.roleId} not found for user ${u.nama}`);
+    continue;
   }
-  console.log("✅ Roles seeded");
-  //users
-  for (const u of users) {
-    await prisma.user.upsert({
-      where: { id: u.id },
-      update: {
-        nama: u.nama,
-        email: u.email,
-        password: u.password,
-        roleId: u.roleId,
-        isActive: true,
-      },
-      create: {
-        id: u.id,
-        nama: u.nama,
-        email: u.email,
-        password: u.password,
-        roleId: u.roleId,
-        isActive: true,
-      },
-    });
-  }
-  console.log("✅ Users seeded");
+
+  await prisma.user.upsert({
+    where: { id: u.id },
+    update: {
+      username: u.nama,
+      nomor: u.nomor,
+      roleId: u.roleId,
+      isActive: u.isActive,
+    },
+    create: {
+      id: u.id,
+      username: u.nama,
+      nomor: u.nomor,
+      roleId: u.roleId,
+      isActive: u.isActive,
+    },
+  });
+}
+console.log("✅ Users seeded");
   // =========== LANDING PAGE ===========
   // =========== SUBMENU PROFILE ===========
   // =========== PROFILE PEJABAT DESA ===========

@@ -85,11 +85,11 @@ function ListUser({ search }: { search: string }) {
                 filteredData.map((item) => (
                   <TableTr key={item.id}>
                     <TableTd style={{ width: '25%', }}>
-                      <Text fw={500} truncate="end" lineClamp={1}>{item.nama}</Text>
+                      <Text fw={500} truncate="end" lineClamp={1}>{item.username}</Text>
                     </TableTd>
                     <TableTd style={{ width: '20%', }}>
                       <Text truncate fz="sm" c="dimmed">
-                        {item.email}
+                        {item.nomor}
                       </Text>
                     </TableTd>
                     <TableTd style={{ width: '20%', }}>

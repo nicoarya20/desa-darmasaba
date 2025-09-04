@@ -88,12 +88,13 @@ function ListRole({ search }: { search: string }) {
                   <TableTr key={item.id}>
                     <TableTd>{item.name}</TableTd>
                     <TableTd>
-                      <Button color='green' onClick={() => router.push(`/admin/user&role/role/${item.id}`)}>
+                      <Button variant="light" color='green' onClick={() => router.push(`/admin/user&role/role/${item.id}`)}>
                         <IconEdit size={20} />
                       </Button>
                     </TableTd>
                     <TableTd>
                       <Button
+                        variant="light"
                         color='red'
                         disabled={listDataState.delete.loading}
                         onClick={() => {
