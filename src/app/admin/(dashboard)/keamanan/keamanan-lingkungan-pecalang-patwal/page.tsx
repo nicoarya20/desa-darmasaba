@@ -1,26 +1,46 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Center, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
-import { IconDeviceImac, IconSearch } from '@tabler/icons-react';
-import HeaderSearch from '../../_com/header';
-import JudulList from '../../_com/judulList';
-import { useRouter } from 'next/navigation';
-import { useProxy } from 'valtio/utils';
-import keamananLingkunganState from '../../_state/keamanan/keamanan-lingkungan';
+import {
+  Box,
+  Button,
+  Center,
+  Group,
+  Pagination,
+  Paper,
+  Skeleton,
+  Stack,
+  Table,
+  TableTbody,
+  TableTd,
+  TableTh,
+  TableThead,
+  TableTr,
+  Text,
+  Title,
+  Tooltip,
+} from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
+import { IconDeviceImacCog, IconPlus, IconSearch } from '@tabler/icons-react';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { useProxy } from 'valtio/utils';
+import HeaderSearch from '../../_com/header';
+import keamananLingkunganState from '../../_state/keamanan/keamanan-lingkungan';
 
 function KeamananLingkungan() {
   const [search, setSearch] = useState("");
+
   return (
     <Box>
+      {/* Header Search */}
       <HeaderSearch
         title='Keamanan Lingkungan'
-        placeholder='pencarian'
+        placeholder='Cari nama atau deskripsi...'
         searchIcon={<IconSearch size={20} />}
         value={search}
         onChange={(e) => setSearch(e.currentTarget.value)}
       />
+
       <ListKeamananLingkungan search={search} />
     </Box>
   );
@@ -47,54 +67,94 @@ function ListKeamananLingkungan({ search }: { search: string }) {
   if (loading || !data) {
     return (
       <Stack py={10}>
-        <Skeleton h={500} />
+        <Skeleton height={600} radius="md" />
       </Stack>
     )
   }
+
   return (
     <Box py={10}>
-      <Paper bg={colors['white-1']} p={'md'}>
-        <JudulList
-          title='List Keamanan Lingkungan'
-          href='/admin/keamanan/keamanan-lingkungan-pecalang-patwal/create'
-        />
-        <Table striped withTableBorder withRowBorders>
-          <TableThead>
-            <TableTr>
-              <TableTh>Nama Keamanan Lingkungan</TableTh>
-              <TableTh>Deskripsi</TableTh>
-              <TableTh>Detail</TableTh>
-            </TableTr>
-          </TableThead>
-          <TableTbody>
-            {filteredData.map((item) => (
-              <TableTr key={item.id}>
-                <TableTd>
-                  <Box w={180}>
-                    <Text fz={"md"} truncate={"end"} lineClamp={1}>{item.name}</Text>
-                  </Box>
-                </TableTd>
-                <TableTd>
-                  <Box w={250}>
-                    <Text fz={"md"} truncate={"end"} lineClamp={1} dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
-                  </Box>
-                </TableTd>
-                <TableTd>
-                  <Button onClick={() => router.push(`/admin/keamanan/keamanan-lingkungan-pecalang-patwal/${item.id}`)}>
-                    <IconDeviceImac size={20} />
-                  </Button>
-                </TableTd>
+      <Paper withBorder bg={colors['white-1']} p={'lg'} shadow="md" radius="md">
+        {/* Judul + Tombol Tambah */}
+        <Group justify="space-between" mb="md">
+          <Title order={4}>Daftar Keamanan Lingkungan</Title>
+          <Tooltip label="Tambah Data Keamanan" withArrow>
+            <Button
+              leftSection={<IconPlus size={18} />}
+              color="blue"
+              variant="light"
+              onClick={() =>
+                router.push('/admin/keamanan/keamanan-lingkungan-pecalang-patwal/create')
+              }
+            >
+              Tambah Baru
+            </Button>
+          </Tooltip>
+        </Group>
+
+        {/* Tabel */}
+        <Box style={{ overflowX: "auto" }}>
+          <Table highlightOnHover>
+            <TableThead>
+              <TableTr>
+                <TableTh>Nama</TableTh>
+                <TableTh>Deskripsi</TableTh>
+                <TableTh>Aksi</TableTh>
               </TableTr>
-            ))}
-          </TableTbody>
-        </Table>
+            </TableThead>
+            <TableTbody>
+              {filteredData.length > 0 ? (
+                filteredData.map((item) => (
+                  <TableTr key={item.id}>
+                    <TableTd>
+                      <Text fw={500} truncate="end" lineClamp={1}>
+                        {item.name}
+                      </Text>
+                    </TableTd>
+                    <TableTd>
+                      <Text fz="sm" c="dimmed" truncate lineClamp={1} dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
+                    </TableTd>
+                    <TableTd>
+                      <Button
+                        variant="light"
+                        color="blue"
+                        onClick={() => router.push(`/admin/keamanan/keamanan-lingkungan-pecalang-patwal/${item.id}`)}
+                      >
+                        <IconDeviceImacCog size={20} />
+                        <Text ml={5}>Detail</Text>
+                      </Button>
+                    </TableTd>
+                  </TableTr>
+                ))
+              ) : (
+                <TableTr>
+                  <TableTd colSpan={3}>
+                    <Center py={20}>
+                      <Text color="dimmed">
+                        Tidak ada data keamanan lingkungan yang cocok
+                      </Text>
+                    </Center>
+                  </TableTd>
+                </TableTr>
+              )}
+            </TableTbody>
+          </Table>
+        </Box>
       </Paper>
+
+      {/* Pagination */}
       <Center>
         <Pagination
           value={page}
-          onChange={(newPage) => load(newPage)}
+          onChange={(newPage) => {
+            load(newPage, 10);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
           total={totalPages}
-          my={"md"}
+          mt="md"
+          mb="md"
+          color="blue"
+          radius="md"
         />
       </Center>
     </Box>

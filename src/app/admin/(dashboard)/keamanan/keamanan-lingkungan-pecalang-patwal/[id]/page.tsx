@@ -1,9 +1,9 @@
 'use client'
 import { useProxy } from 'valtio/utils';
 
-import { Box, Button, Flex, Image, Paper, Skeleton, Stack, Text } from '@mantine/core';
+import { Box, Button, Group, Image, Paper, Skeleton, Stack, Text, Tooltip } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { IconArrowBack, IconEdit, IconX } from '@tabler/icons-react';
+import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 
@@ -36,64 +36,95 @@ function DetailKeamananLingkungan() {
   if (!keamananState.findUnique.data) {
     return (
       <Stack py={10}>
-        <Skeleton h={40} />
+        <Skeleton height={500} radius="md" />
       </Stack>
     )
   }
 
+  const data = keamananState.findUnique.data
+
   return (
-    <Box>
-      <Box mb={10}>
-        <Button variant="subtle" onClick={() => router.back()}>
-          <IconArrowBack color={colors['blue-button']} size={25} />
-        </Button>
-      </Box>
-      <Paper bg={colors['white-1']} w={{ base: "100%", md: "100%", lg: "50%" }} p={'md'}>
-        <Stack>
-          <Text fz={"xl"} fw={"bold"}>Detail Keamanan Lingkungan</Text>
-          {keamananState.findUnique.data ? (
-            <Paper key={keamananState.findUnique.data.id} bg={colors['BG-trans']} p={'md'}>
-              <Stack gap={"xs"}>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Gambar</Text>
-                  <Image w={{ base: 150, md: 490}} src={keamananState.findUnique.data?.image?.link} alt="gambar" />
-                </Box>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Judul Keamanan Lingkungan</Text>
-                  <Text fz={"lg"}>{keamananState.findUnique.data?.name}</Text>
-                </Box>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Deskripsi</Text>
-                  <Text fz={"lg"} dangerouslySetInnerHTML={{ __html: keamananState.findUnique.data?.deskripsi }} />
-                </Box>
-                <Flex gap={"xs"} mt={10}>
+    <Box py={10}>
+      {/* Tombol Back */}
+      <Button
+        variant="subtle"
+        onClick={() => router.back()}
+        leftSection={<IconArrowBack size={24} color={colors['blue-button']} />}
+        mb={15}
+      >
+        Kembali
+      </Button>
+
+      {/* Wrapper Detail */}
+      <Paper
+        withBorder
+        w={{ base: "100%", md: "50%" }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+      >
+        <Stack gap="md">
+          <Text fz="2xl" fw="bold" c={colors['blue-button']}>
+            Detail Keamanan Lingkungan
+          </Text>
+
+          <Paper bg="#ECEEF8" p="md" radius="md" shadow="xs">
+            <Stack gap="sm">
+              <Box>
+                <Text fz="lg" fw="bold">Gambar</Text>
+                <Image
+                  w={{ base: 150, md: 490 }}
+                  src={data?.image?.link}
+                  alt="gambar keamanan lingkungan"
+                />
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">Judul Keamanan Lingkungan</Text>
+                <Text fz="md" c="dimmed">{data?.name || '-'}</Text>
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">Deskripsi</Text>
+                <Text fz="md" c="dimmed" dangerouslySetInnerHTML={{ __html: data?.deskripsi }} />
+              </Box>
+
+              {/* Aksi */}
+              <Group gap="sm">
+                <Tooltip label="Hapus Data" withArrow position="top">
                   <Button
+                    color="red"
                     onClick={() => {
-                      if (keamananState.findUnique.data) {
-                        setSelectedId(keamananState.findUnique.data.id);
-                        setModalHapus(true);
-                      }
+                      setSelectedId(data.id);
+                      setModalHapus(true);
                     }}
-                    disabled={keamananState.delete.loading || !keamananState.findUnique.data}
-                    color={"red"}
+                    variant="light"
+                    radius="md"
+                    size="md"
                   >
-                    <IconX size={20} />
+                    <IconTrash size={20} />
                   </Button>
+                </Tooltip>
+
+                <Tooltip label="Edit Data" withArrow position="top">
                   <Button
-                    onClick={() => {
-                      if (keamananState.findUnique.data) {
-                        router.push(`/admin/keamanan/keamanan-lingkungan-pecalang-patwal/${keamananState.findUnique.data.id}/edit`);
-                      }
-                    }}
-                    disabled={!keamananState.findUnique.data}
-                    color={"green"}
+                    color="green"
+                    onClick={() =>
+                      router.push(
+                        `/admin/keamanan/keamanan-lingkungan-pecalang-patwal/${data.id}/edit`
+                      )
+                    }
+                    variant="light"
+                    radius="md"
+                    size="md"
                   >
                     <IconEdit size={20} />
                   </Button>
-                </Flex>
-              </Stack>
-            </Paper>
-          ) : null}
+                </Tooltip>
+              </Group>
+            </Stack>
+          </Paper>
         </Stack>
       </Paper>
 
@@ -102,7 +133,7 @@ function DetailKeamananLingkungan() {
         opened={modalHapus}
         onClose={() => setModalHapus(false)}
         onConfirm={handleHapus}
-        text='Apakah anda yakin ingin menghapus keamanan lingkungan ini?'
+        text="Apakah anda yakin ingin menghapus keamanan lingkungan ini?"
       />
     </Box>
   );

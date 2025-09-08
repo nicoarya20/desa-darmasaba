@@ -11,14 +11,20 @@ import {
   Stack,
   Text,
   TextInput,
-  Title
+  Title,
+  Tooltip,
 } from "@mantine/core";
-import { IconArrowBack, IconImageInPicture, IconPhoto, IconUpload, IconX } from "@tabler/icons-react";
+import {
+  IconArrowBack,
+  IconImageInPicture,
+  IconPhoto,
+  IconUpload,
+  IconX,
+} from "@tabler/icons-react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useProxy } from "valtio/utils";
-
 
 import EditEditor from "@/app/admin/(dashboard)/_com/editEditor";
 import colors from "@/con/colors";
@@ -34,24 +40,24 @@ function EditKeamananLingkungan() {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [formData, setFormData] = useState({
-    name: keamananState.edit.form.name || '',
-    deskripsi: keamananState.edit.form.deskripsi || '',
-    imageId: keamananState.edit.form.imageId || ''
+    name: keamananState.edit.form.name || "",
+    deskripsi: keamananState.edit.form.deskripsi || "",
+    imageId: keamananState.edit.form.imageId || "",
   });
 
-  // Load berita by id saat pertama kali
+  // Load data by id
   useEffect(() => {
-    const loadBerita = async () => {
+    const loadData = async () => {
       const id = params?.id as string;
       if (!id) return;
 
       try {
-        const data = await keamananState.edit.load(id); // akses langsung, bukan dari proxy
+        const data = await keamananState.edit.load(id);
         if (data) {
           setFormData({
-            name: data.name || '',
-            deskripsi: data.deskripsi || '',
-            imageId: data.imageId || '',
+            name: data.name || "",
+            deskripsi: data.deskripsi || "",
+            imageId: data.imageId || "",
           });
 
           if (data?.image?.link) {
@@ -64,30 +70,29 @@ function EditKeamananLingkungan() {
       }
     };
 
-    loadBerita();
-  }, [params?.id]); // ✅ hapus beritaState dari dependency
+    loadData();
+  }, [params?.id]);
 
   const handleSubmit = async () => {
-
     try {
-      // Update global state with form data
       keamananState.edit.form = {
         ...keamananState.edit.form,
         name: formData.name,
         deskripsi: formData.deskripsi,
-        imageId: formData.imageId // Keep existing imageId if not changed
+        imageId: formData.imageId,
       };
 
-      // Jika ada file baru, upload
       if (file) {
-        const res = await ApiFetch.api.fileStorage.create.post({ file, name: file.name });
+        const res = await ApiFetch.api.fileStorage.create.post({
+          file,
+          name: file.name,
+        });
         const uploaded = res.data?.data;
 
         if (!uploaded?.id) {
           return toast.error("Gagal upload gambar");
         }
 
-        // Update imageId in global state
         keamananState.edit.form.imageId = uploaded.id;
       }
 
@@ -101,36 +106,72 @@ function EditKeamananLingkungan() {
   };
 
   return (
-    <Box>
-      <Box mb={10}>
-        <Button variant="subtle" onClick={() => router.back()}>
-          <IconArrowBack color={colors["blue-button"]} size={30} />
-        </Button>
-      </Box>
-      <Paper bg={"white"} p={"md"} w={{ base: "100%", md: "50%" }}>
-        <Stack gap={"xs"}>
-          <Title order={3}>Edit Keamanan Lingkungan</Title>
+    <Box px={{ base: "sm", md: "lg" }} py="md">
+      {/* Header */}
+      <Group mb="md">
+        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
+          <Button
+            variant="subtle"
+            onClick={() => router.back()}
+            p="xs"
+            radius="md"
+          >
+            <IconArrowBack color={colors["blue-button"]} size={24} />
+          </Button>
+        </Tooltip>
+        <Title order={4} ml="sm" c="dark">
+          Edit Keamanan Lingkungan
+        </Title>
+      </Group>
+
+      {/* Form */}
+      <Paper
+        w={{ base: "100%", md: "50%" }}
+        bg={colors["white-1"]}
+        p="lg"
+        radius="md"
+        shadow="sm"
+        style={{ border: "1px solid #e0e0e0" }}
+      >
+        <Stack gap="md">
           <Dropzone
             onDrop={(files) => {
-              const selectedFile = files[0]; // Ambil file pertama
+              const selectedFile = files[0];
               if (selectedFile) {
                 setFile(selectedFile);
-                setPreviewImage(URL.createObjectURL(selectedFile)); // Buat preview
+                setPreviewImage(URL.createObjectURL(selectedFile));
               }
             }}
-            onReject={() => toast.error('File tidak valid.')}
-            maxSize={5 * 1024 ** 2} // Maks 5MB
-            accept={{ 'image/*': [] }}
+            onReject={() => toast.error("File tidak valid.")}
+            maxSize={5 * 1024 ** 2}
+            accept={{ "image/*": [] }}
           >
-            <Group justify="center" gap="xl" mih={220} style={{ pointerEvents: 'none' }}>
+            <Group
+              justify="center"
+              gap="xl"
+              mih={220}
+              style={{ pointerEvents: "none" }}
+            >
               <Dropzone.Accept>
-                <IconUpload size={52} color="var(--mantine-color-blue-6)" stroke={1.5} />
+                <IconUpload
+                  size={52}
+                  color="var(--mantine-color-blue-6)"
+                  stroke={1.5}
+                />
               </Dropzone.Accept>
               <Dropzone.Reject>
-                <IconX size={52} color="var(--mantine-color-red-6)" stroke={1.5} />
+                <IconX
+                  size={52}
+                  color="var(--mantine-color-red-6)"
+                  stroke={1.5}
+                />
               </Dropzone.Reject>
               <Dropzone.Idle>
-                <IconPhoto size={52} color="var(--mantine-color-dimmed)" stroke={1.5} />
+                <IconPhoto
+                  size={52}
+                  color="var(--mantine-color-dimmed)"
+                  stroke={1.5}
+                />
               </Dropzone.Idle>
 
               <div>
@@ -151,15 +192,21 @@ function EditKeamananLingkungan() {
               <IconImageInPicture />
             </Center>
           )}
+
           <TextInput
             value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            label={<Text fz={"sm"} fw={"bold"}>Judul Keamanan Lingkungan</Text>}
-            placeholder="masukkan judul"
+            onChange={(e) =>
+              setFormData({ ...formData, name: e.target.value })
+            }
+            label="Judul Keamanan Lingkungan"
+            placeholder="Masukkan judul"
+            required
           />
 
           <Box>
-            <Text fz={"sm"} fw={"bold"}>Deskripsi</Text>
+            <Text fz="sm" fw="bold">
+              Deskripsi
+            </Text>
             <EditEditor
               value={formData.deskripsi}
               onChange={(htmlContent) => {
@@ -169,7 +216,20 @@ function EditKeamananLingkungan() {
             />
           </Box>
 
-          <Button onClick={handleSubmit}>Simpan</Button>
+          <Group justify="right">
+            <Button
+              onClick={handleSubmit}
+              radius="md"
+              size="md"
+              style={{
+                background: `linear-gradient(135deg, ${colors["blue-button"]}, #4facfe)`,
+                color: "#fff",
+                boxShadow: "0 4px 15px rgba(79, 172, 254, 0.4)",
+              }}
+            >
+              Simpan
+            </Button>
+          </Group>
         </Stack>
       </Paper>
     </Box>
