@@ -1,7 +1,7 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Paper, Stack, Flex, Text, Image, Skeleton } from '@mantine/core';
-import { IconArrowBack, IconX, IconEdit } from '@tabler/icons-react';
+import { Box, Button, Group, Paper, Skeleton, Stack, Text, Tooltip, Image } from '@mantine/core';
+import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import programKesehatan from '../../../_state/kesehatan/program-kesehatan/programKesehatan';
@@ -10,82 +10,116 @@ import { useShallowEffect } from '@mantine/hooks';
 import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
 
 function DetailProgramKesehatan() {
-  const programKesehatanState = useProxy(programKesehatan)
-  const [modalHapus, setModalHapus] = useState(false)
-  const [selectedId, setSelectedId] = useState<string | null>(null)
+  const state = useProxy(programKesehatan);
+  const [modalHapus, setModalHapus] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const router = useRouter();
-  const params = useParams()
+  const params = useParams();
 
   useShallowEffect(() => {
-    programKesehatanState.findUnique.load(params?.id as string)
-  }, [])
+    state.findUnique.load(params?.id as string);
+  }, []);
 
   const handleHapus = () => {
     if (selectedId) {
-      programKesehatanState.delete.byId(selectedId)
-      setModalHapus(false)
-      setSelectedId(null)
-      router.push("/admin/kesehatan/program-kesehatan")
+      state.delete.byId(selectedId);
+      setModalHapus(false);
+      setSelectedId(null);
+      router.push("/admin/kesehatan/program-kesehatan");
     }
-  }
+  };
 
-  if (!programKesehatanState.findUnique.data) {
+  if (!state.findUnique.data) {
     return (
       <Stack py={10}>
-        <Skeleton h={400} />
+        <Skeleton height={500} radius="md" />
       </Stack>
-    )
+    );
   }
 
+  const data = state.findUnique.data;
+
   return (
-    <Box>
-      <Box mb={10}>
-        <Button variant="subtle" onClick={() => router.back()}>
-          <IconArrowBack color={colors['blue-button']} size={25} />
-        </Button>
-      </Box>
-      <Paper w={{ base: "100%", md: "50%" }} bg={colors['white-1']} p={'md'}>
-        <Stack>
-          <Text fz={"xl"} fw={"bold"}>Detail Program Kesehatan</Text>
-          {programKesehatanState.findUnique.data ? (
-            <Paper bg={colors['BG-trans']} p={'md'}>
-              <Stack gap={"xs"}>
-                <Box>
-                  <Text fz={"lg"} fw={"bold"}>Judul</Text>
-                  <Text fz={"lg"}>{programKesehatanState.findUnique.data.name}</Text>
-                </Box>
-                <Box>
-                  <Text fz={"lg"} fw={"bold"}>Deskripsi Singkat</Text>
-                  <Text fz={"lg"}>{programKesehatanState.findUnique.data.deskripsiSingkat}</Text>
-                </Box>
-                <Box>
-                  <Text fz={"lg"} fw={"bold"}>Deskripsi</Text>
-                  <Text fz={"lg"} dangerouslySetInnerHTML={{ __html: programKesehatanState.findUnique.data.deskripsi }} />
-                </Box>
-                <Box>
-                  <Text fz={"lg"} fw={"bold"}>Gambar</Text>
-                  <Image src={programKesehatanState.findUnique.data.image?.link} alt="gambar" />
-                </Box>
-                <Box>
-                  <Flex gap={"xs"}>
-                    <Button color="red" onClick={() => {
-                      if (programKesehatanState.findUnique.data) {
-                        setSelectedId(programKesehatanState.findUnique.data.id)
-                        setModalHapus(true)
-                      }
+    <Box py={10}>
+      {/* Tombol kembali */}
+      <Button
+        variant="subtle"
+        onClick={() => router.back()}
+        leftSection={<IconArrowBack size={24} color={colors['blue-button']} />}
+        mb={15}
+      >
+        Kembali
+      </Button>
+
+      <Paper
+        withBorder
+        w={{ base: "100%", md: "50%" }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+      >
+        <Stack gap="md">
+          <Text fz="2xl" fw="bold" c={colors['blue-button']}>
+            Detail Program Kesehatan
+          </Text>
+
+          <Paper bg="#ECEEF8" p="md" radius="md" shadow="xs">
+            <Stack gap="sm">
+              <Box>
+                <Text fz="lg" fw="bold">Judul</Text>
+                <Text fz="md" c="dimmed">{data?.name || '-'}</Text>
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">Deskripsi Singkat</Text>
+                <Text fz="md" c="dimmed">{data?.deskripsiSingkat || '-'}</Text>
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">Deskripsi</Text>
+                <Text fz="md" c="dimmed" dangerouslySetInnerHTML={{ __html: data?.deskripsi || '-' }} />
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">Gambar</Text>
+                {data?.image?.link ? (
+                  <Image src={data.image.link} alt="gambar program kesehatan" radius="md" />
+                ) : (
+                  <Text fz="md" c="dimmed">-</Text>
+                )}
+              </Box>
+
+              <Group gap="sm">
+                <Tooltip label="Hapus Data" withArrow position="top">
+                  <Button
+                    color="red"
+                    onClick={() => {
+                      setSelectedId(data.id);
+                      setModalHapus(true);
                     }}
-                      disabled={programKesehatanState.delete.loading || !programKesehatanState.findUnique.data}
-                    >
-                      <IconX size={20} />
-                    </Button>
-                    <Button onClick={() => router.push(`/admin/kesehatan/program-kesehatan/${programKesehatanState.findUnique.data?.id}/edit`)} color="green">
-                      <IconEdit size={20} />
-                    </Button>
-                  </Flex>
-                </Box>
-              </Stack>
-            </Paper>
-          ) : null}
+                    variant="light"
+                    radius="md"
+                    size="md"
+                  >
+                    <IconTrash size={20} />
+                  </Button>
+                </Tooltip>
+
+                <Tooltip label="Edit Data" withArrow position="top">
+                  <Button
+                    color="green"
+                    onClick={() => router.push(`/admin/kesehatan/program-kesehatan/${data?.id}/edit`)}
+                    variant="light"
+                    radius="md"
+                    size="md"
+                  >
+                    <IconEdit size={20} />
+                  </Button>
+                </Tooltip>
+              </Group>
+            </Stack>
+          </Paper>
         </Stack>
       </Paper>
 
@@ -94,7 +128,7 @@ function DetailProgramKesehatan() {
         opened={modalHapus}
         onClose={() => setModalHapus(false)}
         onConfirm={handleHapus}
-        text="Apakah anda yakin ingin menghapus program kesehatan ini?"
+        text="Apakah Anda yakin ingin menghapus program kesehatan ini?"
       />
     </Box>
   );

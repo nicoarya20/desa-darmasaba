@@ -1,93 +1,134 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Paper, Stack, Flex, Text, Image } from '@mantine/core';
-import { IconArrowBack, IconX, IconEdit } from '@tabler/icons-react';
-import { useRouter } from 'next/navigation';
+import { Box, Button, Group, Paper, Skeleton, Stack, Text, Tooltip, Image } from '@mantine/core';
+import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
+import { useRouter, useParams } from 'next/navigation';
 import React, { useState } from 'react';
-// import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
-import penangananDarurat from '../../../_state/kesehatan/penanganan-darurat/penangananDarurat';
 import { useProxy } from 'valtio/utils';
 import { useShallowEffect } from '@mantine/hooks';
-import { useParams } from 'next/navigation';
-import { Skeleton } from '@mantine/core';
 import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
+import penangananDarurat from '../../../_state/kesehatan/penanganan-darurat/penangananDarurat';
 
 function DetailPenangananDarurat() {
-  const penangananDaruratState = useProxy(penangananDarurat)
-  const [modalHapus, setModalHapus] = useState(false)
-  const [selectedId, setSelectedId] = useState<string | null>(null)
+  const state = useProxy(penangananDarurat);
+  const [modalHapus, setModalHapus] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const router = useRouter();
-  const params = useParams()
+  const params = useParams();
 
   useShallowEffect(() => {
-    penangananDaruratState.findUnique.load(params?.id as string)
-  }, [])
+    state.findUnique.load(params?.id as string);
+  }, []);
 
   const handleHapus = () => {
     if (selectedId) {
-      penangananDaruratState.delete.byId(selectedId)
-      setModalHapus(false)
-      setSelectedId(null)
-      router.push("/admin/kesehatan/penanganan-darurat")
+      state.delete.byId(selectedId);
+      setModalHapus(false);
+      setSelectedId(null);
+      router.push("/admin/kesehatan/penanganan-darurat");
     }
+  };
+
+  if (!state.findUnique.data) {
+    return (
+      <Stack py={10}>
+        <Skeleton height={500} radius="md" />
+      </Stack>
+    );
   }
 
-  if (!penangananDaruratState.findUnique.data) {
-    return (
-      <Box py={10}>
-        <Skeleton h={500} />
-      </Box>
-    )
-  }
+  const data = state.findUnique.data;
 
   return (
-    <Box>
-      <Box mb={10}>
-        <Button variant="subtle" onClick={() => router.back()}>
-          <IconArrowBack color={colors['blue-button']} size={25} />
-        </Button>
-      </Box>
-      <Paper w={{ base: "100%", md: "50%" }} bg={colors['white-1']} p={'md'}>
-        <Stack>
-          <Text fz={"xl"} fw={"bold"}>Detail Penanganan Darurat</Text>
-          {penangananDaruratState.findUnique.data ? (
-            <Paper bg={colors['BG-trans']} p={'md'}>
-              <Stack gap={"xs"}>
-                <Box>
-                  <Text fz={"lg"} fw={"bold"}>Nama Penanganan Darurat</Text>
-                  <Text fz={"lg"}>{penangananDaruratState.findUnique.data.name}</Text>
-                </Box>
-                <Box>
-                  <Text fz={"lg"} fw={"bold"}>Deskripsi</Text>
-                  <Text fz={"lg"} dangerouslySetInnerHTML={{ __html: penangananDaruratState.findUnique.data.deskripsi }} />
-                </Box>
-                <Box>
-                  <Text fz={"lg"} fw={"bold"}>Gambar</Text>
-                  <Image src={penangananDaruratState.findUnique.data.image?.link} alt="gambar" />
-                </Box>
-                <Box>
-                  <Flex gap={"xs"}>
-                    <Button color="red" onClick={() => {
-                      if (penangananDaruratState.findUnique.data) {
-                        setSelectedId(penangananDaruratState.findUnique.data.id)
-                        setModalHapus(true)
-                      }
+    <Box py={10}>
+      {/* Tombol Back */}
+      <Button
+        variant="subtle"
+        onClick={() => router.back()}
+        leftSection={<IconArrowBack size={24} color={colors['blue-button']} />}
+        mb={15}
+      >
+        Kembali
+      </Button>
+
+      {/* Wrapper Detail */}
+      <Paper
+        withBorder
+        w={{ base: "100%", md: "50%" }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+      >
+        <Stack gap="md">
+          <Text fz="2xl" fw="bold" c={colors['blue-button']}>
+            Detail Penanganan Darurat
+          </Text>
+
+          <Paper bg="#ECEEF8" p="md" radius="md" shadow="xs">
+            <Stack gap="sm">
+              <Box>
+                <Text fz="lg" fw="bold">Nama Penanganan Darurat</Text>
+                <Text fz="md" c="dimmed">{data.name || '-'}</Text>
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">Deskripsi</Text>
+                <Text
+                  fz="md"
+                  c="dimmed"
+                  dangerouslySetInnerHTML={{ __html: data.deskripsi }}
+                />
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">Gambar</Text>
+                <Image
+                  src={data.image?.link}
+                  alt="gambar penanganan darurat"
+                  radius="md"
+                  mah={250}
+                  fit="contain"
+                />
+              </Box>
+
+              {/* Aksi */}
+              <Group gap="sm">
+                <Tooltip label="Hapus Data" withArrow position="top">
+                  <Button
+                    color="red"
+                    onClick={() => {
+                      setSelectedId(data.id);
+                      setModalHapus(true);
                     }}
-                      disabled={penangananDaruratState.delete.loading || !penangananDaruratState.findUnique.data}>
-                      <IconX size={20} />
-                    </Button>
-                    <Button onClick={() => router.push(`/admin/kesehatan/penanganan-darurat/${penangananDaruratState.findUnique.data?.id}/edit`)} color="green">
-                      <IconEdit size={20} />
-                    </Button>
-                  </Flex>
-                </Box>
-              </Stack>
-            </Paper>
-          ) : null}
+                    variant="light"
+                    radius="md"
+                    size="md"
+                  >
+                    <IconTrash size={20} />
+                  </Button>
+                </Tooltip>
+
+                <Tooltip label="Edit Data" withArrow position="top">
+                  <Button
+                    color="green"
+                    onClick={() =>
+                      router.push(`/admin/kesehatan/penanganan-darurat/${data.id}/edit`)
+                    }
+                    variant="light"
+                    radius="md"
+                    size="md"
+                  >
+                    <IconEdit size={20} />
+                  </Button>
+                </Tooltip>
+              </Group>
+            </Stack>
+          </Paper>
         </Stack>
       </Paper>
 
-      {/* Modal Hapus */}
+      {/* Modal Konfirmasi Hapus */}
       <ModalKonfirmasiHapus
         opened={modalHapus}
         onClose={() => setModalHapus(false)}

@@ -2,133 +2,169 @@
 import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
 import fasilitasKesehatanState from '@/app/admin/(dashboard)/_state/kesehatan/data_kesehatan_warga/fasilitasKesehatan';
 import colors from '@/con/colors';
-import { Box, Button, Flex, Grid, GridCol, Paper, Skeleton, Stack, Text } from '@mantine/core';
+import {
+  Box,
+  Button,
+  Group,
+  Paper,
+  Skeleton,
+  Stack,
+  Text,
+  Tooltip,
+} from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { IconArrowBack, IconEdit, IconX } from '@tabler/icons-react';
+import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 
 function DetailFasilitasKesehatan() {
-  const params = useParams()
+  const params = useParams();
   const router = useRouter();
-  const stateFasilitasKesehatan = useProxy(fasilitasKesehatanState.fasilitasKesehatan)
+  const state = useProxy(fasilitasKesehatanState.fasilitasKesehatan);
   const [modalHapus, setModalHapus] = useState(false);
-  const [selectedId, setSelectedId] = useState<string | null>(null)
+  const [selectedId, setSelectedId] = useState<string | null>(null);
 
   useShallowEffect(() => {
-    stateFasilitasKesehatan.findUnique.load(params?.id as string)
-  }, [])
+    state.findUnique.load(params?.id as string);
+  }, []);
 
   const handleHapus = () => {
     if (selectedId) {
-      stateFasilitasKesehatan.delete.byId(selectedId)
-      setModalHapus(false)
-      setSelectedId(null)
-      router.push("/admin/kesehatan/data-kesehatan-warga/fasilitas_kesehatan")
+      state.delete.byId(selectedId);
+      setModalHapus(false);
+      setSelectedId(null);
+      router.push(
+        '/admin/kesehatan/data-kesehatan-warga/fasilitas_kesehatan'
+      );
     }
-  }
+  };
 
-  if (!stateFasilitasKesehatan.findUnique.data) {
+  if (!state.findUnique.data) {
     return (
       <Stack py={10}>
-        <Skeleton h={500} />
+        <Skeleton height={500} radius="md" />
       </Stack>
-    )
+    );
   }
 
+  const data = state.findUnique.data;
 
   return (
-    <Box>
-      <Box mb={10}>
-        <Button variant="subtle" onClick={() => router.back()}>
-          <IconArrowBack color={colors['blue-button']} size={25} />
-        </Button>
-      </Box>
-      <Paper bg={colors['white-1']} p={'md'}>
-        <Stack>
-          <Grid>
-            <GridCol span={12}>
-            <Text fz={"xl"} fw={"bold"}>Detail Fasilitas Kesehatan</Text>
-            </GridCol>
-            {/* <GridCol span={12}>
-              <Flex gap={"xs"}>
-                <Button color={colors['blue-button']} onClick={() => router.push(`/admin/kesehatan/data-kesehatan-warga/fasilitas_kesehatan/${params?.id}/dokter-tenaga-medis`)}>
-                  Tambah Dokter
-                </Button>
-                <Button color={colors['blue-button']} onClick={() => router.push(`/admin/kesehatan/data-kesehatan-warga/fasilitas_kesehatan/${params?.id}/layanan-unggulan/create`)}>
-                  Tambah Layanan
-                </Button>
-              </Flex>
-            </GridCol> */}
-          </Grid>
-          {stateFasilitasKesehatan.findUnique.data ? (
-            <Paper bg={colors['BG-trans']} p={'md'}>
-              <Stack gap={"xs"}>
-                <Box>
-                  <Text fz={"lg"} fw={"bold"}>Nama Fasilitas Kesehatan</Text>
-                  <Text fz={"md"}>{stateFasilitasKesehatan.findUnique.data.name}</Text>
-                </Box>
-                <Box>
-                  <Text fz={"lg"} fw={"bold"}>Informasi Umum</Text>
-                  <Text fz={"md"} fw={"bold"}>Fasilitas</Text>
-                  <Text fz={"md"}>{stateFasilitasKesehatan.findUnique.data.informasiumum.fasilitas}</Text>
-                  <Text fz={"md"} fw={"bold"}>Alamat</Text>
-                  <Text fz={"md"}>{stateFasilitasKesehatan.findUnique.data.informasiumum.alamat}</Text>
-                  <Text fz={"md"} fw={"bold"}>Jam Operasional</Text>
-                  <Text fz={"md"}>{stateFasilitasKesehatan.findUnique.data.informasiumum.jamOperasional}</Text>
-                </Box>
-                <Box>
-                  <Text fz={"md"} fw={"bold"}>Layanan Unggulan</Text>
-                  <Text fz={"md"} dangerouslySetInnerHTML={{ __html: stateFasilitasKesehatan.findUnique.data.layananunggulan.content }} />
-                </Box>
-                <Box>
-                  <Text fz={"lg"} fw={"bold"}>Fasilitas Pendukung</Text>
-                  <Text fz={"md"} dangerouslySetInnerHTML={{ __html: stateFasilitasKesehatan.findUnique.data.fasilitaspendukung.content }} />
-                </Box>
-                <Box>
-                  <Text fz={"lg"} fw={"bold"}>Prosedur Pendaftaran</Text>
-                  <Text fz={"md"} dangerouslySetInnerHTML={{ __html: stateFasilitasKesehatan.findUnique.data.prosedurpendaftaran.content }} />
-                </Box>
-                <Box>
-                  <Text fz={"md"} fw={"bold"}>Dokter dan Tenaga Medis</Text>
-                  <Text fz={"md"} fw={"bold"}>Nama Dokter</Text>
-                  <Text fz={"md"}>{stateFasilitasKesehatan.findUnique.data.dokterdantenagamedis.name}</Text>
-                  <Text fz={"md"} fw={"bold"}>Specialist</Text>
-                  <Text fz={"md"}>{stateFasilitasKesehatan.findUnique.data.dokterdantenagamedis.specialist}</Text>
-                  <Text fz={"md"} fw={"bold"}>Jadwal</Text>
-                  <Text fz={"md"}>{stateFasilitasKesehatan.findUnique.data.dokterdantenagamedis.jadwal}</Text>
-                </Box>
-                <Box>
-                  <Text fz={"lg"} fw={"bold"}>Tarif dan Layanan</Text>
-                  <Text fz={"md"} fw={"bold"}>Layanan</Text>
-                  <Text fz={"md"}>{stateFasilitasKesehatan.findUnique.data.tarifdanlayanan.layanan}</Text>
-                  <Text fz={"md"} fw={"bold"}>Tarif</Text>
-                  <Text fz={"md"}>{stateFasilitasKesehatan.findUnique.data.tarifdanlayanan.tarif}</Text>
-                </Box>
-                <Box>
-                  <Flex gap={"xs"}>
-                    <Button color="red" onClick={() => {
-                      if (stateFasilitasKesehatan.findUnique.data) {
-                        setSelectedId(stateFasilitasKesehatan.findUnique.data.id)
-                        setModalHapus(true)
-                      }
-                    }}>
-                      <IconX size={20} />
-                    </Button>
-                    <Button onClick={() => router.push(`/admin/kesehatan/data-kesehatan-warga/fasilitas_kesehatan/${stateFasilitasKesehatan.findUnique.data?.id}/edit`)} color="green">
-                      <IconEdit size={20} />
-                    </Button>
-                  </Flex>
-                </Box>
-              </Stack>
-            </Paper>
-          ) : null}
-        </Stack>
+    <Box py={10}>
+      {/* Tombol Back */}
+      <Button
+        variant="subtle"
+        onClick={() => router.back()}
+        leftSection={<IconArrowBack size={24} color={colors['blue-button']} />}
+        mb={15}
+      >
+        Kembali
+      </Button>
 
+      {/* Wrapper Detail */}
+      <Paper
+        withBorder
+        w={{ base: '100%', md: '70%' }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+      >
+        <Stack gap="md">
+          <Text fz="2xl" fw="bold" c={colors['blue-button']}>
+            Detail Fasilitas Kesehatan
+          </Text>
+
+          <Paper bg="#ECEEF8" p="md" radius="md" shadow="xs">
+            <Stack gap="sm">
+              <Box>
+                <Text fz="lg" fw="bold">Nama Fasilitas</Text>
+                <Text fz="md" c="dimmed">{data.name || '-'}</Text>
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">Informasi Umum</Text>
+                <Text fz="md" fw="bold">Fasilitas</Text>
+                <Text fz="md" c="dimmed">{data.informasiumum?.fasilitas || '-'}</Text>
+                <Text fz="md" fw="bold">Alamat</Text>
+                <Text fz="md" c="dimmed">{data.informasiumum?.alamat || '-'}</Text>
+                <Text fz="md" fw="bold">Jam Operasional</Text>
+                <Text fz="md" c="dimmed">{data.informasiumum?.jamOperasional || '-'}</Text>
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">Layanan Unggulan</Text>
+                <Text fz="md" c="dimmed" dangerouslySetInnerHTML={{ __html: data.layananunggulan?.content || '-' }} />
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">Fasilitas Pendukung</Text>
+                <Text fz="md" c="dimmed" dangerouslySetInnerHTML={{ __html: data.fasilitaspendukung?.content || '-' }} />
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">Prosedur Pendaftaran</Text>
+                <Text fz="md" c="dimmed" dangerouslySetInnerHTML={{ __html: data.prosedurpendaftaran?.content || '-' }} />
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">Dokter & Tenaga Medis</Text>
+                <Text fz="md" fw="bold">Nama</Text>
+                <Text fz="md" c="dimmed">{data.dokterdantenagamedis?.name || '-'}</Text>
+                <Text fz="md" fw="bold">Spesialis</Text>
+                <Text fz="md" c="dimmed">{data.dokterdantenagamedis?.specialist || '-'}</Text>
+                <Text fz="md" fw="bold">Jadwal</Text>
+                <Text fz="md" c="dimmed">{data.dokterdantenagamedis?.jadwal || '-'}</Text>
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">Tarif & Layanan</Text>
+                <Text fz="md" fw="bold">Layanan</Text>
+                <Text fz="md" c="dimmed">{data.tarifdanlayanan?.layanan || '-'}</Text>
+                <Text fz="md" fw="bold">Tarif</Text>
+                <Text fz="md" c="dimmed">{data.tarifdanlayanan?.tarif || '-'}</Text>
+              </Box>
+
+              {/* Aksi */}
+              <Group gap="sm">
+                <Tooltip label="Hapus Data" withArrow position="top">
+                  <Button
+                    color="red"
+                    onClick={() => {
+                      setSelectedId(data.id);
+                      setModalHapus(true);
+                    }}
+                    variant="light"
+                    radius="md"
+                    size="md"
+                  >
+                    <IconTrash size={20} />
+                  </Button>
+                </Tooltip>
+
+                <Tooltip label="Edit Data" withArrow position="top">
+                  <Button
+                    color="green"
+                    onClick={() =>
+                      router.push(
+                        `/admin/kesehatan/data-kesehatan-warga/fasilitas_kesehatan/${data.id}/edit`
+                      )
+                    }
+                    variant="light"
+                    radius="md"
+                    size="md"
+                  >
+                    <IconEdit size={20} />
+                  </Button>
+                </Tooltip>
+              </Group>
+            </Stack>
+          </Paper>
+        </Stack>
       </Paper>
 
-      {/* Modal Hapus */}
+      {/* Modal Konfirmasi Hapus */}
       <ModalKonfirmasiHapus
         opened={modalHapus}
         onClose={() => setModalHapus(false)}

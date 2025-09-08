@@ -2,134 +2,181 @@
 import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
 import artikelKesehatanState from '@/app/admin/(dashboard)/_state/kesehatan/data_kesehatan_warga/artikelKesehatan';
 import colors from '@/con/colors';
-import { Box, Button, Flex, Paper, Skeleton, Stack, Text } from '@mantine/core';
+import {
+  Box,
+  Button,
+  Group,
+  Paper,
+  Skeleton,
+  Stack,
+  Text,
+  Tooltip,
+} from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { IconArrowBack, IconEdit, IconX } from '@tabler/icons-react';
+import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 
 function DetailArtikelKesehatan() {
-  const params = useParams()
+  const params = useParams();
   const router = useRouter();
-  const stateArtikelKesehatan = useProxy(artikelKesehatanState)
+  const state = useProxy(artikelKesehatanState);
   const [modalHapus, setModalHapus] = useState(false);
-  const [selectedId, setSelectedId] = useState<string | null>(null)
+  const [selectedId, setSelectedId] = useState<string | null>(null);
 
   useShallowEffect(() => {
-    stateArtikelKesehatan.findUnique.load(params?.id as string)
-  }, [])
+    state.findUnique.load(params?.id as string);
+  }, []);
 
   const handleHapus = () => {
     if (selectedId) {
-      stateArtikelKesehatan.delete.byId(selectedId)
-      setModalHapus(false)
-      setSelectedId(null)
-      router.push("/admin/kesehatan/data-kesehatan-warga/artikel_kesehatan")
+      state.delete.byId(selectedId);
+      setModalHapus(false);
+      setSelectedId(null);
+      router.push('/admin/kesehatan/data-kesehatan-warga/artikel_kesehatan');
     }
-  }
+  };
 
-  if (!stateArtikelKesehatan.findUnique.data) {
+  if (!state.findUnique.data) {
     return (
       <Stack py={10}>
-        <Skeleton h={500} />
+        <Skeleton height={500} radius="md" />
       </Stack>
-    )
+    );
   }
 
+  const data = state.findUnique.data;
 
   return (
-    <Box>
-      <Box mb={10}>
-        <Button variant="subtle" onClick={() => router.back()}>
-          <IconArrowBack color={colors['blue-button']} size={25} />
-        </Button>
-      </Box>
-      <Paper w={{ base: "100%", md: "50%" }} bg={colors['white-1']} p={'md'}>
-        <Stack>
-          <Text fz={"xl"} fw={"bold"}>Detail Artikel Kesehatan</Text>
-          {stateArtikelKesehatan.findUnique.data ? (
-            <Paper bg={colors['BG-trans']} p={'md'}>
-              <Stack gap={"xs"}>
-                <Box>
-                  <Text fz={"lg"} fw={"bold"}>Judul</Text>
-                  <Text fz={"md"}>{stateArtikelKesehatan.findUnique.data.title}</Text>
-                </Box>
-                <Box>
-                  <Text fz={"lg"} fw={"bold"}>Deskripsi</Text>
-                  <Text fz={"md"} dangerouslySetInnerHTML={{ __html: stateArtikelKesehatan.findUnique.data.content }} />
-                </Box>
-                <Box>
-                  <Text fz={"lg"} fw={"bold"}>Pendahuluan</Text>
-                  <Text fz={"md"} dangerouslySetInnerHTML={{ __html: stateArtikelKesehatan.findUnique.data.introduction.content }} />
-                </Box>
-                <Box>
-                  <Stack gap={"xs"}>
-                    <Text fz={"lg"} fw={"bold"}>Gejala</Text>
-                    <Text fz={"md"} fw={"bold"}>Judul Gejala</Text>
-                    <Text fz={"md"}>{stateArtikelKesehatan.findUnique.data.symptom.title}</Text>
-                    <Text fz={"md"} fw={"bold"}>Deskripsi Gejala</Text>
-                    <Text fz={"md"} dangerouslySetInnerHTML={{ __html: stateArtikelKesehatan.findUnique.data.symptom.content }} />
-                  </Stack>
-                </Box>
-                <Box>
-                  <Stack gap={"xs"}>
-                    <Text fz={"lg"} fw={"bold"}>Pencegahan</Text>
-                    <Text fz={"md"} fw={"bold"}>Judul Pencegahan</Text>
-                    <Text fz={"md"}>{stateArtikelKesehatan.findUnique.data.prevention.title}</Text>
-                    <Text fz={"md"} fw={"bold"}>Deskripsi Pencegahan</Text>
-                    <Text fz={"md"} dangerouslySetInnerHTML={{ __html: stateArtikelKesehatan.findUnique.data.prevention.content }} />
-                  </Stack>
-                </Box>
-                <Box>
-                  <Stack gap={"xs"}>
-                    <Text fz={"lg"} fw={"bold"}>Pertolongan Pertama</Text>
-                    <Text fz={"md"} fw={"bold"}>Judul Pertolongan Pertama</Text>
-                    <Text fz={"md"}>{stateArtikelKesehatan.findUnique.data.firstaid.title}</Text>
-                    <Text fz={"md"} fw={"bold"}>Deskripsi Pertolongan Pertama</Text>
-                    <Text fz={"md"} dangerouslySetInnerHTML={{ __html: stateArtikelKesehatan.findUnique.data.firstaid.content }} />
-                  </Stack>
-                </Box>
-                <Box>
-                  <Stack gap={"xs"}>
-                    <Text fz={"lg"} fw={"bold"}>Mitos dan Fakta</Text>
-                    <Text fz={"md"} fw={"bold"}>Judul Mitos dan Fakta</Text>
-                    <Text fz={"md"}>{stateArtikelKesehatan.findUnique.data.mythvsfact.title}</Text>
-                    <Text fz={"md"} fw={"bold"}>Deskripsi Mitos</Text>
-                    <Text fz={"md"} dangerouslySetInnerHTML={{ __html: stateArtikelKesehatan.findUnique.data.mythvsfact.mitos }} />
-                    <Text fz={"md"} fw={"bold"}>Deskripsi Fakta</Text>
-                    <Text fz={"md"} dangerouslySetInnerHTML={{ __html: stateArtikelKesehatan.findUnique.data.mythvsfact.fakta }} />
-                  </Stack>
-                </Box>
-                <Box>
-                  <Stack gap={"xs"}>
-                    <Text fz={"lg"} fw={"bold"}>Kapan Harus ke Dokter</Text>
-                    <Text fz={"md"} fw={"bold"}>Deskripsi Kapan Harus ke Dokter</Text>
-                    <Text fz={"md"} dangerouslySetInnerHTML={{ __html: stateArtikelKesehatan.findUnique.data.doctorsign.content }} />
-                  </Stack>
-                </Box>
-                <Box>
-                  <Flex gap={"xs"}>
-                    <Button color="red" onClick={() => {
-                      if (stateArtikelKesehatan.findUnique.data) {
-                        setSelectedId(stateArtikelKesehatan.findUnique.data.id)
-                        setModalHapus(true)
-                      }
-                    }}>
-                      <IconX size={20} />
-                    </Button>
-                    <Button onClick={() => router.push(`/admin/kesehatan/data-kesehatan-warga/artikel_kesehatan/${stateArtikelKesehatan.findUnique.data?.id}/edit`)} color="green">
-                      <IconEdit size={20} />
-                    </Button>
-                  </Flex>
-                </Box>
-              </Stack>
-            </Paper>
-          ) : null}
+    <Box py={10}>
+      {/* Tombol Back */}
+      <Button
+        variant="subtle"
+        onClick={() => router.back()}
+        leftSection={<IconArrowBack size={24} color={colors['blue-button']} />}
+        mb={15}
+      >
+        Kembali
+      </Button>
+
+      {/* Wrapper Detail */}
+      <Paper
+        withBorder
+        w={{ base: '100%', md: '50%' }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+      >
+        <Stack gap="md">
+          <Text fz="2xl" fw="bold" c={colors['blue-button']}>
+            Detail Artikel Kesehatan
+          </Text>
+
+          <Paper bg="#ECEEF8" p="md" radius="md" shadow="xs">
+            <Stack gap="sm">
+              {/* Judul */}
+              <Box>
+                <Text fz="lg" fw="bold">Judul</Text>
+                <Text fz="md" c="dimmed">{data.title}</Text>
+              </Box>
+
+              {/* Deskripsi */}
+              <Box>
+                <Text fz="lg" fw="bold">Deskripsi</Text>
+                <Text fz="md" c="dimmed" dangerouslySetInnerHTML={{ __html: data.content }} />
+              </Box>
+
+              {/* Pendahuluan */}
+              <Box>
+                <Text fz="lg" fw="bold">Pendahuluan</Text>
+                <Text fz="md" c="dimmed" dangerouslySetInnerHTML={{ __html: data.introduction?.content }} />
+              </Box>
+
+              {/* Gejala */}
+              <Box>
+                <Text fz="lg" fw="bold">Gejala</Text>
+                <Text fz="md" fw="bold">Judul</Text>
+                <Text fz="md" c="dimmed">{data.symptom?.title}</Text>
+                <Text fz="md" fw="bold">Deskripsi</Text>
+                <Text fz="md" c="dimmed" dangerouslySetInnerHTML={{ __html: data.symptom?.content }} />
+              </Box>
+
+              {/* Pencegahan */}
+              <Box>
+                <Text fz="lg" fw="bold">Pencegahan</Text>
+                <Text fz="md" fw="bold">Judul</Text>
+                <Text fz="md" c="dimmed">{data.prevention?.title}</Text>
+                <Text fz="md" fw="bold">Deskripsi</Text>
+                <Text fz="md" c="dimmed" dangerouslySetInnerHTML={{ __html: data.prevention?.content }} />
+              </Box>
+
+              {/* Pertolongan Pertama */}
+              <Box>
+                <Text fz="lg" fw="bold">Pertolongan Pertama</Text>
+                <Text fz="md" fw="bold">Judul</Text>
+                <Text fz="md" c="dimmed">{data.firstaid?.title}</Text>
+                <Text fz="md" fw="bold">Deskripsi</Text>
+                <Text fz="md" c="dimmed" dangerouslySetInnerHTML={{ __html: data.firstaid?.content }} />
+              </Box>
+
+              {/* Mitos vs Fakta */}
+              <Box>
+                <Text fz="lg" fw="bold">Mitos dan Fakta</Text>
+                <Text fz="md" fw="bold">Judul</Text>
+                <Text fz="md" c="dimmed">{data.mythvsfact?.title}</Text>
+                <Text fz="md" fw="bold">Mitos</Text>
+                <Text fz="md" c="dimmed" dangerouslySetInnerHTML={{ __html: data.mythvsfact?.mitos }} />
+                <Text fz="md" fw="bold">Fakta</Text>
+                <Text fz="md" c="dimmed" dangerouslySetInnerHTML={{ __html: data.mythvsfact?.fakta }} />
+              </Box>
+
+              {/* Kapan ke Dokter */}
+              <Box>
+                <Text fz="lg" fw="bold">Kapan Harus ke Dokter</Text>
+                <Text fz="md" c="dimmed" dangerouslySetInnerHTML={{ __html: data.doctorsign?.content }} />
+              </Box>
+
+              {/* Aksi */}
+              <Group gap="sm">
+                <Tooltip label="Hapus Artikel" withArrow position="top">
+                  <Button
+                    color="red"
+                    onClick={() => {
+                      setSelectedId(data.id);
+                      setModalHapus(true);
+                    }}
+                    variant="light"
+                    radius="md"
+                    size="md"
+                  >
+                    <IconTrash size={20} />
+                  </Button>
+                </Tooltip>
+
+                <Tooltip label="Edit Artikel" withArrow position="top">
+                  <Button
+                    color="green"
+                    onClick={() =>
+                      router.push(
+                        `/admin/kesehatan/data-kesehatan-warga/artikel_kesehatan/${data.id}/edit`
+                      )
+                    }
+                    variant="light"
+                    radius="md"
+                    size="md"
+                  >
+                    <IconEdit size={20} />
+                  </Button>
+                </Tooltip>
+              </Group>
+            </Stack>
+          </Paper>
         </Stack>
       </Paper>
 
-      {/* Modal Hapus */}
+      {/* Modal Konfirmasi Hapus */}
       <ModalKonfirmasiHapus
         opened={modalHapus}
         onClose={() => setModalHapus(false)}

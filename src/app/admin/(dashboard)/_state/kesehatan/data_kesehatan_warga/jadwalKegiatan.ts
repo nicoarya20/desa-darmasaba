@@ -120,27 +120,36 @@ const jadwalkegiatanState = proxy({
           };
         }>[]
       | null,
+    page: 1,
+    totalPages: 1,
     loading: false,
-    async load() {
+    search: "",
+    load: async (page = 1, limit = 10, search = "") => {
+      jadwalkegiatanState.findMany.loading = true; // ✅ Akses langsung via nama path
+      jadwalkegiatanState.findMany.page = page;
+      jadwalkegiatanState.findMany.search = search;
+
       try {
-        this.loading = true;
-        const res = await (ApiFetch.api.kesehatan as any)[
-          "jadwal-kegiatan"
-        ]["find-many"].get();
+        const query: any = { page, limit };
+        if (search) query.search = search;
 
-        if (res.status === 200) {
-          this.data = res.data?.data ?? [];
+        const res = await ApiFetch.api.kesehatan["jadwal-kegiatan"][
+          "find-many"
+        ].get({ query });
+
+        if (res.status === 200 && res.data?.success) {
+          jadwalkegiatanState.findMany.data = res.data.data ?? [];
+          jadwalkegiatanState.findMany.totalPages = res.data.totalPages ?? 1;
         } else {
-          toast.error("Gagal memuat data jadwal kegiatan");
+          jadwalkegiatanState.findMany.data = [];
+          jadwalkegiatanState.findMany.totalPages = 1;
         }
-
-        return res;
       } catch (err) {
-        toast.error("Terjadi error saat load data");
-        console.error("LOAD ERROR:", err);
-        throw err;
+        console.error("Gagal fetch jadwal kegiatan paginated:", err);
+        jadwalkegiatanState.findMany.data = [];
+        jadwalkegiatanState.findMany.totalPages = 1;
       } finally {
-        this.loading = false;
+        jadwalkegiatanState.findMany.loading = false;
       }
     },
   },
@@ -227,29 +236,42 @@ const jadwalkegiatanState = proxy({
           content: jadwalkegiatanState.edit.form.content,
           informasiJadwalKegiatan: {
             name: jadwalkegiatanState.edit.form.informasiJadwalKegiatan.name,
-            tanggal: jadwalkegiatanState.edit.form.informasiJadwalKegiatan.tanggal,
+            tanggal:
+              jadwalkegiatanState.edit.form.informasiJadwalKegiatan.tanggal,
             waktu: jadwalkegiatanState.edit.form.informasiJadwalKegiatan.waktu,
-            lokasi: jadwalkegiatanState.edit.form.informasiJadwalKegiatan.lokasi,
+            lokasi:
+              jadwalkegiatanState.edit.form.informasiJadwalKegiatan.lokasi,
           },
           layananJadwalKegiatan: {
-            content: jadwalkegiatanState.edit.form.layananJadwalKegiatan.content,
+            content:
+              jadwalkegiatanState.edit.form.layananJadwalKegiatan.content,
           },
           deskripsiJadwalKegiatan: {
-            deskripsi: jadwalkegiatanState.edit.form.deskripsiJadwalKegiatan.deskripsi,
+            deskripsi:
+              jadwalkegiatanState.edit.form.deskripsiJadwalKegiatan.deskripsi,
           },
           syaratKetentuanJadwalKegiatan: {
-            content: jadwalkegiatanState.edit.form.syaratKetentuanJadwalKegiatan.content,
+            content:
+              jadwalkegiatanState.edit.form.syaratKetentuanJadwalKegiatan
+                .content,
           },
           dokumenJadwalKegiatan: {
-            content: jadwalkegiatanState.edit.form.dokumenJadwalKegiatan.content,
+            content:
+              jadwalkegiatanState.edit.form.dokumenJadwalKegiatan.content,
           },
           pendaftaranJadwalKegiatan: {
             name: jadwalkegiatanState.edit.form.pendaftaranJadwalKegiatan.name,
-            tanggal: jadwalkegiatanState.edit.form.pendaftaranJadwalKegiatan.tanggal,
-            namaOrangtua: jadwalkegiatanState.edit.form.pendaftaranJadwalKegiatan.namaOrangtua,
-            nomor: jadwalkegiatanState.edit.form.pendaftaranJadwalKegiatan.nomor,
-            alamat: jadwalkegiatanState.edit.form.pendaftaranJadwalKegiatan.alamat,
-            catatan: jadwalkegiatanState.edit.form.pendaftaranJadwalKegiatan.catatan,
+            tanggal:
+              jadwalkegiatanState.edit.form.pendaftaranJadwalKegiatan.tanggal,
+            namaOrangtua:
+              jadwalkegiatanState.edit.form.pendaftaranJadwalKegiatan
+                .namaOrangtua,
+            nomor:
+              jadwalkegiatanState.edit.form.pendaftaranJadwalKegiatan.nomor,
+            alamat:
+              jadwalkegiatanState.edit.form.pendaftaranJadwalKegiatan.alamat,
+            catatan:
+              jadwalkegiatanState.edit.form.pendaftaranJadwalKegiatan.catatan,
           },
         };
 
@@ -286,7 +308,7 @@ const jadwalkegiatanState = proxy({
   },
   delete: {
     loading: false,
-    async byId(id: string){
+    async byId(id: string) {
       try {
         jadwalkegiatanState.delete.loading = true;
         const res = await fetch(`/api/kesehatan/jadwal-kegiatan/del/${id}`, {
@@ -305,7 +327,7 @@ const jadwalkegiatanState = proxy({
       } finally {
         jadwalkegiatanState.delete.loading = false;
       }
-    }
+    },
   },
 });
 

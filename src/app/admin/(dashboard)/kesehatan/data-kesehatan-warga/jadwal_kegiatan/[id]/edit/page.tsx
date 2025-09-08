@@ -4,7 +4,17 @@
 import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import jadwalKegiatanState from '@/app/admin/(dashboard)/_state/kesehatan/data_kesehatan_warga/jadwalKegiatan';
 import colors from '@/con/colors';
-import { Box, Button, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
+import {
+  Box,
+  Button,
+  Group,
+  Paper,
+  Stack,
+  Text,
+  TextInput,
+  Title,
+  Tooltip,
+} from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -128,33 +138,14 @@ function EditJadwalKegiatan() {
       stateJadwalKegiatan.edit.form = {
         ...stateJadwalKegiatan.edit.form,
         content: formData.content,
-        informasiJadwalKegiatan: {
-          name: formData.informasiJadwalKegiatan.name,
-          tanggal: formData.informasiJadwalKegiatan.tanggal,
-          waktu: formData.informasiJadwalKegiatan.waktu,
-          lokasi: formData.informasiJadwalKegiatan.lokasi,
-        },
-        deskripsiJadwalKegiatan: {
-          deskripsi: formData.deskripsiJadwalKegiatan.deskripsi,
-        },
-        layananJadwalKegiatan: {
-          content: formData.layananJadwalKegiatan.content,
-        },
-        syaratKetentuanJadwalKegiatan: {
-          content: formData.syaratKetentuanJadwalKegiatan.content,
-        },
-        dokumenJadwalKegiatan: {
-          content: formData.dokumenJadwalKegiatan.content,
-        },
-        pendaftaranJadwalKegiatan: {
-          name: formData.pendaftaranJadwalKegiatan.name,
-          tanggal: formData.pendaftaranJadwalKegiatan.tanggal,
-          namaOrangtua: formData.pendaftaranJadwalKegiatan.namaOrangtua,
-          nomor: formData.pendaftaranJadwalKegiatan.nomor,
-          alamat: formData.pendaftaranJadwalKegiatan.alamat,
-          catatan: formData.pendaftaranJadwalKegiatan.catatan,
-        },
+        informasiJadwalKegiatan: { ...formData.informasiJadwalKegiatan },
+        deskripsiJadwalKegiatan: { ...formData.deskripsiJadwalKegiatan },
+        layananJadwalKegiatan: { ...formData.layananJadwalKegiatan },
+        syaratKetentuanJadwalKegiatan: { ...formData.syaratKetentuanJadwalKegiatan },
+        dokumenJadwalKegiatan: { ...formData.dokumenJadwalKegiatan },
+        pendaftaranJadwalKegiatan: { ...formData.pendaftaranJadwalKegiatan },
       };
+
       const success = await stateJadwalKegiatan.edit.submit();
       if (success) {
         toast.success("Jadwal kegiatan berhasil diperbarui!");
@@ -165,241 +156,164 @@ function EditJadwalKegiatan() {
       toast.error(error instanceof Error ? error.message : "Gagal memperbarui data jadwal kegiatan");
     }
   };
+
   return (
-    <Box>
-      <Box mb={10}>
-        <Button onClick={() => router.back()} variant="subtle" color="blue">
-          <IconArrowBack color={colors['blue-button']} size={25} />
-        </Button>
-      </Box>
-      <Stack gap="xs">
-        <Paper bg={colors['white-1']} p="md" w={{ base: '100%', md: '50%' }}>
-        <Stack gap="xs">
-          <Title order={3}>Edit Jadwal Kegiatan</Title>
+    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+      {/* Header */}
+      <Group mb="md">
+        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
+          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+            <IconArrowBack color={colors['blue-button']} size={24} />
+          </Button>
+        </Tooltip>
+        <Title order={4} ml="sm" c="dark">
+          Edit Jadwal Kegiatan
+        </Title>
+      </Group>
+
+      {/* Form */}
+      <Paper
+        w={{ base: '100%', md: '50%' }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+        style={{ border: '1px solid #e0e0e0' }}
+      >
+        <Stack gap="md">
+          {/* Nama Jadwal */}
           <TextInput
-            label={<Text fz="sm" fw="bold">Nama Jadwal Kegiatan</Text>}
-            placeholder="masukkan nama jadwal kegiatan"
+            label="Nama Jadwal Kegiatan"
+            placeholder="Masukkan nama jadwal kegiatan"
             value={formData.content}
-            onChange={(e) => {
-              setFormData(prev => ({
-                ...prev,
-                content: e.target.value
-              }));
-            }}
+            onChange={(e) => setFormData((prev) => ({ ...prev, content: e.target.value }))}
           />
-         <Box>
-         <Text fz="sm" fw="bold">Deskripsi Jadwal Kegiatan</Text>
-          <EditEditor
-            value={formData.deskripsiJadwalKegiatan.deskripsi}
-            onChange={(e) => {
-              setFormData(prev => ({
-                ...prev,
-                deskripsiJadwalKegiatan: {
-                  ...prev.deskripsiJadwalKegiatan,
-                  deskripsi: e
-                }
-              }));
-            }}
-          />
-         </Box>
+
+          {/* Deskripsi */}
           <Box>
-            <Text fz="md" fw="bold">Informasi Jadwal Kegiatan</Text>
-            <TextInput
-              label={<Text fz="sm" fw="bold">Nama</Text>}
-              placeholder="masukkan nama"
-              value={formData.informasiJadwalKegiatan.name}
-              onChange={(e) => {
-                setFormData(prev => ({
-                  ...prev,
-                  informasiJadwalKegiatan: {
-                    ...prev.informasiJadwalKegiatan,
-                    name: e.target.value
-                  }
-                }));
-              }}
-            />
-            <TextInput
-              label={<Text fz="sm" fw="bold">Tanggal</Text>}
-              placeholder="masukkan tanggal"
-              value={formData.informasiJadwalKegiatan.tanggal}
-              onChange={(e) => {
-                setFormData(prev => ({
-                  ...prev,
-                  informasiJadwalKegiatan: {
-                    ...prev.informasiJadwalKegiatan,
-                    tanggal: e.target.value
-                  }
-                }));
-              }}
-            />
-            <TextInput
-              label={<Text fz="sm" fw="bold">Waktu</Text>}
-              placeholder="masukkan waktu"
-              value={formData.informasiJadwalKegiatan.waktu}
-              onChange={(e) => {
-                setFormData(prev => ({
-                  ...prev,
-                  informasiJadwalKegiatan: {
-                    ...prev.informasiJadwalKegiatan,
-                    waktu: e.target.value
-                  }
-                }));
-              }}
-            />
-            <TextInput
-              label={<Text fz="sm" fw="bold">Lokasi</Text>}
-              placeholder="masukkan lokasi"
-              value={formData.informasiJadwalKegiatan.lokasi}
-              onChange={(e) => {
-                setFormData(prev => ({
-                  ...prev,
-                  informasiJadwalKegiatan: {
-                    ...prev.informasiJadwalKegiatan,
-                    lokasi: e.target.value
-                  }
-                }));
-              }}
+            <Text fz="sm" fw="bold">Deskripsi Jadwal Kegiatan</Text>
+            <EditEditor
+              value={formData.deskripsiJadwalKegiatan.deskripsi}
+              onChange={(val) => setFormData((prev) => ({
+                ...prev,
+                deskripsiJadwalKegiatan: { deskripsi: val }
+              }))}
             />
           </Box>
+
+          {/* Informasi Jadwal */}
+          <Box>
+            <Text fz="md" fw="bold">Informasi Jadwal Kegiatan</Text>
+            <TextInput label="Nama" value={formData.informasiJadwalKegiatan.name}
+              onChange={(e) => setFormData((prev) => ({
+                ...prev, informasiJadwalKegiatan: { ...prev.informasiJadwalKegiatan, name: e.target.value }
+              }))}
+            />
+            <TextInput type="date" label="Tanggal" value={formData.informasiJadwalKegiatan.tanggal}
+              onChange={(e) => setFormData((prev) => ({
+                ...prev, informasiJadwalKegiatan: { ...prev.informasiJadwalKegiatan, tanggal: e.target.value }
+              }))}
+            />
+            <TextInput label="Waktu" value={formData.informasiJadwalKegiatan.waktu}
+              onChange={(e) => setFormData((prev) => ({
+                ...prev, informasiJadwalKegiatan: { ...prev.informasiJadwalKegiatan, waktu: e.target.value }
+              }))}
+            />
+            <TextInput label="Lokasi" value={formData.informasiJadwalKegiatan.lokasi}
+              onChange={(e) => setFormData((prev) => ({
+                ...prev, informasiJadwalKegiatan: { ...prev.informasiJadwalKegiatan, lokasi: e.target.value }
+              }))}
+            />
+          </Box>
+
+          {/* Layanan */}
           <Box>
             <Text fz="md" fw="bold">Layanan Jadwal Kegiatan</Text>
             <EditEditor
               value={formData.layananJadwalKegiatan.content}
-              onChange={(e) => {
-                setFormData(prev => ({
-                  ...prev,
-                  layananJadwalKegiatan: {
-                    ...prev.layananJadwalKegiatan,
-                    content: e
-                  }
-                }));
-              }}
+              onChange={(val) => setFormData((prev) => ({
+                ...prev,
+                layananJadwalKegiatan: { content: val }
+              }))}
             />
           </Box>
+
+          {/* Syarat */}
           <Box>
-            <Text fz="md" fw="bold">Syarat dan Ketentuan Jadwal Kegiatan</Text>
+            <Text fz="md" fw="bold">Syarat dan Ketentuan</Text>
             <EditEditor
               value={formData.syaratKetentuanJadwalKegiatan.content}
-              onChange={(e) => {
-                setFormData(prev => ({
-                  ...prev,
-                  syaratKetentuanJadwalKegiatan: {
-                    ...prev.syaratKetentuanJadwalKegiatan,
-                    content: e
-                  }
-                }));
-              }}
+              onChange={(val) => setFormData((prev) => ({
+                ...prev,
+                syaratKetentuanJadwalKegiatan: { content: val }
+              }))}
             />
           </Box>
+
+          {/* Dokumen */}
           <Box>
             <Text fz="md" fw="bold">Dokumen Jadwal Kegiatan</Text>
             <EditEditor
               value={formData.dokumenJadwalKegiatan.content}
-              onChange={(e) => {
-                setFormData(prev => ({
-                  ...prev,
-                  dokumenJadwalKegiatan: {
-                    ...prev.dokumenJadwalKegiatan,
-                    content: e
-                  }
-                }));
-              }}
-            />
-          </Box>
-          <Box>
-            <Text fz="md" fw="bold">Pendaftaran Jadwal Kegiatan</Text>
-            <TextInput
-              label={<Text fz="sm" fw="bold">Nama</Text>}
-              placeholder="masukkan nama"
-              value={formData.pendaftaranJadwalKegiatan.name}
-              onChange={(e) => {
-                setFormData(prev => ({
-                  ...prev,
-                  pendaftaranJadwalKegiatan: {
-                    ...prev.pendaftaranJadwalKegiatan,
-                    name: e.target.value
-                  }
-                }));
-              }}
-            />
-            <TextInput
-              label={<Text fz="sm" fw="bold">Tanggal</Text>}
-              placeholder="masukkan tanggal"
-              value={formData.pendaftaranJadwalKegiatan.tanggal}
-              onChange={(e) => {
-                setFormData(prev => ({
-                  ...prev,
-                  pendaftaranJadwalKegiatan: {
-                    ...prev.pendaftaranJadwalKegiatan,
-                    tanggal: e.target.value
-                  }
-                }));
-              }}
-            />
-            <TextInput
-              label={<Text fz="sm" fw="bold">Nama Orangtua</Text>}
-              placeholder="masukkan nama orangtua"
-              value={formData.pendaftaranJadwalKegiatan.namaOrangtua}
-              onChange={(e) => {
-                setFormData(prev => ({
-                  ...prev,
-                  pendaftaranJadwalKegiatan: {
-                    ...prev.pendaftaranJadwalKegiatan,
-                    namaOrangtua: e.target.value
-                  }
-                }));
-              }}
-            />
-            <TextInput
-              label={<Text fz="sm" fw="bold">Nomor</Text>}
-              placeholder="masukkan nomor"
-              value={formData.pendaftaranJadwalKegiatan.nomor}
-              onChange={(e) => {
-                setFormData(prev => ({
-                  ...prev,
-                  pendaftaranJadwalKegiatan: {
-                    ...prev.pendaftaranJadwalKegiatan,
-                    nomor: e.target.value
-                  }
-                }));
-              }}
-            />
-            <TextInput
-              label={<Text fz="sm" fw="bold">Alamat</Text>}
-              placeholder="masukkan alamat"
-              value={formData.pendaftaranJadwalKegiatan.alamat}
-              onChange={(e) => {
-                setFormData(prev => ({
-                  ...prev,
-                  pendaftaranJadwalKegiatan: {
-                    ...prev.pendaftaranJadwalKegiatan,
-                    alamat: e.target.value
-                  }
-                }));
-              }}
-            />
-            <TextInput
-              label={<Text fz="sm" fw="bold">Catatan</Text>}
-              placeholder="masukkan catatan"
-              value={formData.pendaftaranJadwalKegiatan.catatan}
-              onChange={(e) => {
-                setFormData(prev => ({
-                  ...prev,
-                  pendaftaranJadwalKegiatan: {
-                    ...prev.pendaftaranJadwalKegiatan,
-                    catatan: e.target.value
-                  }
-                }));
-              }}
+              onChange={(val) => setFormData((prev) => ({
+                ...prev,
+                dokumenJadwalKegiatan: { content: val }
+              }))}
             />
           </Box>
 
-          <Button onClick={handleSubmit} bg={colors['blue-button']}>
-            Simpan
-          </Button>
+          {/* Pendaftaran */}
+          <Box>
+            <Text fz="md" fw="bold">Pendaftaran Jadwal Kegiatan</Text>
+            <TextInput label="Nama" value={formData.pendaftaranJadwalKegiatan.name}
+              onChange={(e) => setFormData((prev) => ({
+                ...prev, pendaftaranJadwalKegiatan: { ...prev.pendaftaranJadwalKegiatan, name: e.target.value }
+              }))}
+            />
+            <TextInput type="date" label="Tanggal" value={formData.pendaftaranJadwalKegiatan.tanggal}
+              onChange={(e) => setFormData((prev) => ({
+                ...prev, pendaftaranJadwalKegiatan: { ...prev.pendaftaranJadwalKegiatan, tanggal: e.target.value }
+              }))}
+            />
+            <TextInput label="Nama Orangtua" value={formData.pendaftaranJadwalKegiatan.namaOrangtua}
+              onChange={(e) => setFormData((prev) => ({
+                ...prev, pendaftaranJadwalKegiatan: { ...prev.pendaftaranJadwalKegiatan, namaOrangtua: e.target.value }
+              }))}
+            />
+            <TextInput label="Nomor" value={formData.pendaftaranJadwalKegiatan.nomor}
+              onChange={(e) => setFormData((prev) => ({
+                ...prev, pendaftaranJadwalKegiatan: { ...prev.pendaftaranJadwalKegiatan, nomor: e.target.value }
+              }))}
+            />
+            <TextInput label="Alamat" value={formData.pendaftaranJadwalKegiatan.alamat}
+              onChange={(e) => setFormData((prev) => ({
+                ...prev, pendaftaranJadwalKegiatan: { ...prev.pendaftaranJadwalKegiatan, alamat: e.target.value }
+              }))}
+            />
+            <TextInput label="Catatan" value={formData.pendaftaranJadwalKegiatan.catatan}
+              onChange={(e) => setFormData((prev) => ({
+                ...prev, pendaftaranJadwalKegiatan: { ...prev.pendaftaranJadwalKegiatan, catatan: e.target.value }
+              }))}
+            />
+          </Box>
+
+          {/* Submit */}
+          <Group justify="right">
+            <Button
+              onClick={handleSubmit}
+              radius="md"
+              size="md"
+              style={{
+                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                color: '#fff',
+                boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
+              }}
+            >
+              Simpan
+            </Button>
+          </Group>
         </Stack>
-        </Paper>
-      </Stack>
+      </Paper>
     </Box>
   );
 }

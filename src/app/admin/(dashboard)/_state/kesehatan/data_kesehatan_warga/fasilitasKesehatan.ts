@@ -116,27 +116,38 @@ const fasilitasKesehatan = proxy({
           };
         }>[]
       | null,
+    page: 1,
+    totalPages: 1,
     loading: false,
-    async load() {
+    search: "",
+    load: async (page = 1, limit = 10, search = "") => {
+      fasilitasKesehatanState.fasilitasKesehatan.findMany.loading = true; // ✅ Akses langsung via nama path
+      fasilitasKesehatanState.fasilitasKesehatan.findMany.page = page;
+      fasilitasKesehatanState.fasilitasKesehatan.findMany.search = search;
+
       try {
-        this.loading = true;
-        const res = await (ApiFetch.api.kesehatan as any)[
-          "fasilitas-kesehatan"
-        ]["find-many"].get();
+        const query: any = { page, limit };
+        if (search) query.search = search;
 
-        if (res.status === 200) {
-          this.data = res.data?.data ?? [];
+        const res = await ApiFetch.api.kesehatan["fasilitas-kesehatan"][
+          "find-many"
+        ].get({ query });
+
+        if (res.status === 200 && res.data?.success) {
+          fasilitasKesehatanState.fasilitasKesehatan.findMany.data =
+            res.data.data ?? [];
+          fasilitasKesehatanState.fasilitasKesehatan.findMany.totalPages =
+            res.data.totalPages ?? 1;
         } else {
-          toast.error("Gagal memuat data fasilitas kesehatan");
+          fasilitasKesehatanState.fasilitasKesehatan.findMany.data = [];
+          fasilitasKesehatanState.fasilitasKesehatan.findMany.totalPages = 1;
         }
-
-        return res;
       } catch (err) {
-        toast.error("Terjadi error saat load data");
-        console.error("LOAD ERROR:", err);
-        throw err;
+        console.error("Gagal fetch fasilitas kesehatan paginated:", err);
+        fasilitasKesehatanState.fasilitasKesehatan.findMany.data = [];
+        fasilitasKesehatanState.fasilitasKesehatan.findMany.totalPages = 1;
       } finally {
-        this.loading = false;
+        fasilitasKesehatanState.fasilitasKesehatan.findMany.loading = false;
       }
     },
   },
@@ -558,7 +569,7 @@ const dokter = proxy({
 
 const fasilitasKesehatanState = proxy({
   fasilitasKesehatan,
-  dokter
+  dokter,
 });
 
 export default fasilitasKesehatanState;

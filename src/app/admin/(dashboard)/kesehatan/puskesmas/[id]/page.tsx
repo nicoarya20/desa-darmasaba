@@ -1,7 +1,7 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Paper, Stack, Flex, Text, Image, Skeleton } from '@mantine/core';
-import { IconArrowBack, IconX, IconEdit } from '@tabler/icons-react';
+import { Box, Button, Paper, Stack, Text, Image, Skeleton, Group, Tooltip } from '@mantine/core';
+import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import puskesmasState from '../../../_state/kesehatan/puskesmas/puskesmas';
@@ -10,90 +10,128 @@ import { useShallowEffect } from '@mantine/hooks';
 import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
 
 function DetailPuskesmas() {
-  const params = useParams()
+  const params = useParams();
   const router = useRouter();
-  const statePuskesmas = useProxy(puskesmasState)
+  const statePuskesmas = useProxy(puskesmasState);
   const [modalHapus, setModalHapus] = useState(false);
-  const [selectedId, setSelectedId] = useState<string | null>(null)
+  const [selectedId, setSelectedId] = useState<string | null>(null);
 
   useShallowEffect(() => {
-    statePuskesmas.findUnique.load(params?.id as string)
-  }, [])
+    statePuskesmas.findUnique.load(params?.id as string);
+  }, []);
 
   const handleHapus = () => {
     if (selectedId) {
-      statePuskesmas.delete.byId(selectedId)
-      setModalHapus(false)
-      setSelectedId(null)
-      router.push("/admin/kesehatan/puskesmas")
+      statePuskesmas.delete.byId(selectedId);
+      setModalHapus(false);
+      setSelectedId(null);
+      router.push("/admin/kesehatan/puskesmas");
     }
-  }
+  };
 
   if (!statePuskesmas.findUnique.data) {
     return (
       <Stack py={10}>
-        <Skeleton h={500} />
+        <Skeleton height={500} radius="md" />
       </Stack>
-    )
+    );
   }
 
+  const data = statePuskesmas.findUnique.data;
 
   return (
-    <Box>
-      <Box mb={10}>
-        <Button variant="subtle" onClick={() => router.back()}>
-          <IconArrowBack color={colors['blue-button']} size={25} />
-        </Button>
-      </Box>
-      <Paper w={{ base: "100%", md: "50%" }} bg={colors['white-1']} p={'md'}>
-        <Stack>
-          <Text fz={"xl"} fw={"bold"}>Detail Puskesmas</Text>
-          {statePuskesmas.findUnique.data ? (
-            <Paper bg={colors['BG-trans']} p={'md'}>
-              <Stack gap={"xs"}>
-                <Box>
-                  <Text fz={"lg"} fw={"bold"}>Nama Puskesmas</Text>
-                  <Text fz={"lg"}>{statePuskesmas.findUnique.data.name}</Text>
-                </Box>
-                <Box>
-                  <Text fz={"lg"} fw={"bold"}>Alamat</Text>
-                  <Text fz={"lg"}>{statePuskesmas.findUnique.data.alamat}</Text>
-                </Box>
-                <Box>
-                  <Text fz={"lg"} fw={"bold"}>Jam Operasional</Text>
-                  <Text fz={"lg"}>{statePuskesmas.findUnique.data.jam.workDays}</Text>
-                  <Text fz={"lg"}>{statePuskesmas.findUnique.data.jam.weekDays}</Text>
-                  <Text fz={"lg"}>{statePuskesmas.findUnique.data.jam.holiday}</Text>
-                </Box>
-                <Box>
-                  <Text fz={"lg"} fw={"bold"}>Gambar</Text>
-                  <Image src={statePuskesmas.findUnique.data.image?.link} alt="gambar" />
-                </Box>
-                <Box>
-                  <Text fz={"lg"} fw={"bold"}>Kontak</Text>
-                  <Text fz={"lg"} >{statePuskesmas.findUnique.data.kontak.kontakPuskesmas}</Text>
-                  <Text fz={"lg"} >{statePuskesmas.findUnique.data.kontak.email}</Text>
-                  <Text fz={"lg"} >{statePuskesmas.findUnique.data.kontak.facebook}</Text>
-                  <Text fz={"lg"} >{statePuskesmas.findUnique.data.kontak.kontakUGD}</Text>
-                </Box>
-                <Box>
-                  <Flex gap={"xs"}>
-                    <Button color="red" onClick={() => {
-                      if (statePuskesmas.findUnique.data) {
-                        setSelectedId(statePuskesmas.findUnique.data.id)
-                        setModalHapus(true)
-                      }
-                    }}>
-                      <IconX size={20} />
-                    </Button>
-                    <Button onClick={() => router.push(`/admin/kesehatan/puskesmas/${statePuskesmas.findUnique.data?.id}/edit`)} color="green">
-                      <IconEdit size={20} />
-                    </Button>
-                  </Flex>
-                </Box>
-              </Stack>
-            </Paper>
-          ) : null}
+    <Box py={10}>
+      {/* Tombol kembali */}
+      <Button
+        variant="subtle"
+        onClick={() => router.back()}
+        leftSection={<IconArrowBack size={24} color={colors['blue-button']} />}
+        mb={15}
+      >
+        Kembali
+      </Button>
+
+      <Paper
+        withBorder
+        w={{ base: "100%", md: "50%" }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+      >
+        <Stack gap="md">
+          <Text fz="2xl" fw="bold" c={colors['blue-button']}>
+            Detail Puskesmas
+          </Text>
+
+          <Paper bg="#ECEEF8" p="md" radius="md" shadow="xs">
+            <Stack gap="sm">
+              <Box>
+                <Text fz="lg" fw="bold">Nama Puskesmas</Text>
+                <Text fz="md" c="dimmed">{data?.name || '-'}</Text>
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">Alamat</Text>
+                <Text fz="md" c="dimmed">{data?.alamat || '-'}</Text>
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">Jam Operasional</Text>
+                <Text fz="md" c="dimmed">{data?.jam?.workDays || '-'}</Text>
+                <Text fz="md" c="dimmed">{data?.jam?.weekDays || '-'}</Text>
+                <Text fz="md" c="dimmed">{data?.jam?.holiday || '-'}</Text>
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">Gambar</Text>
+                {data?.image?.link ? (
+                  <Image src={data.image.link} alt="gambar" radius="md" />
+                ) : (
+                  <Text fz="md" c="dimmed">-</Text>
+                )}
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">Kontak</Text>
+                <Text fz="md" c="dimmed">{data?.kontak?.kontakPuskesmas || '-'}</Text>
+                <Text fz="md" c="dimmed">{data?.kontak?.email || '-'}</Text>
+                <Text fz="md" c="dimmed">{data?.kontak?.facebook || '-'}</Text>
+                <Text fz="md" c="dimmed">{data?.kontak?.kontakUGD || '-'}</Text>
+              </Box>
+
+              <Group gap="sm">
+                <Tooltip label="Hapus Data" withArrow position="top">
+                  <Button
+                    color="red"
+                    onClick={() => {
+                      setSelectedId(data.id);
+                      setModalHapus(true);
+                    }}
+                    variant="light"
+                    radius="md"
+                    size="md"
+                  >
+                    <IconTrash size={20} />
+                  </Button>
+                </Tooltip>
+
+                <Tooltip label="Edit Data" withArrow position="top">
+                  <Button
+                    color="green"
+                    onClick={() =>
+                      router.push(`/admin/kesehatan/puskesmas/${data.id}/edit`)
+                    }
+                    variant="light"
+                    radius="md"
+                    size="md"
+                  >
+                    <IconEdit size={20} />
+                  </Button>
+                </Tooltip>
+              </Group>
+            </Stack>
+          </Paper>
         </Stack>
       </Paper>
 
@@ -102,7 +140,7 @@ function DetailPuskesmas() {
         opened={modalHapus}
         onClose={() => setModalHapus(false)}
         onConfirm={handleHapus}
-        text="Apakah anda yakin ingin menghapus potensi ini?"
+        text="Apakah anda yakin ingin menghapus data ini?"
       />
     </Box>
   );

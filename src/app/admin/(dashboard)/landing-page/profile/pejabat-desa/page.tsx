@@ -66,7 +66,7 @@ function Page() {
             </Box>
             <Divider my="md" color={colors['blue-button']} />
             <Box px={{ base: 0, md: 50 }} pb="xl">
-              <Paper bg={colors['BG-trans']} radius="md" shadow="xs" p="lg">
+              <Paper withBorder bg={"#fff"} radius="md" shadow="xs" p="lg">
                 <Stack gap={0}>
                   <Center>
                     <Image

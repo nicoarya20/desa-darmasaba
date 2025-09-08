@@ -4,6 +4,7 @@ import { Elysia, t } from "elysia";
 import userFindMany from "./findMany";
 import userFindUnique from "./findUnique";
 import userDelete from "./del"; // `delete` nggak boleh jadi nama file JS langsung, jadi biasanya `del.ts`
+import userUpdate from "./updt";
 
 const User = new Elysia({ prefix: "/api/user" })
   .get("/findMany", userFindMany)
@@ -12,6 +13,7 @@ const User = new Elysia({ prefix: "/api/user" })
     params: t.Object({
       id: t.String(),
     }),
-  }); // pakai PUT untuk soft delete
+  }) // pakai PUT untuk soft delete
+  .put("/updt", userUpdate);
 
 export default User;

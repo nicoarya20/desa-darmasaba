@@ -1,8 +1,8 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Flex, Image, Paper, Skeleton, Stack, Text } from '@mantine/core';
+import { Box, Button, Group, Image, Paper, Skeleton, Stack, Text, Tooltip } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { IconArrowBack, IconEdit, IconX } from '@tabler/icons-react';
+import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
@@ -10,82 +10,129 @@ import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
 import kontakDarurat from '../../../_state/kesehatan/kontak-darurat/kontakDarurat';
 
 function DetailKontakDarurat() {
-  const kontakDaruratState = useProxy(kontakDarurat)
-  const [modalHapus, setModalHapus] = useState(false)
-  const [selectedId, setSelectedId] = useState<string | null>(null)
+  const state = useProxy(kontakDarurat);
+  const [modalHapus, setModalHapus] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const router = useRouter();
-  const params = useParams()
+  const params = useParams();
 
   useShallowEffect(() => {
-    kontakDaruratState.findUnique.load(params?.id as string)
-  }, [])
+    state.findUnique.load(params?.id as string);
+  }, []);
 
   const handleHapus = () => {
     if (selectedId) {
-      kontakDaruratState.delete.byId(selectedId)
-      setModalHapus(false)
-      setSelectedId(null)
-      router.push("/admin/kesehatan/kontak-darurat")
+      state.delete.byId(selectedId);
+      setModalHapus(false);
+      setSelectedId(null);
+      router.push("/admin/kesehatan/kontak-darurat");
     }
-  }
+  };
 
-  if (!kontakDaruratState.findUnique.data) {
+  if (!state.findUnique.data) {
     return (
       <Stack py={10}>
-        <Skeleton h={400} />
+        <Skeleton height={500} radius="md" />
       </Stack>
-    )
+    );
   }
 
+  const data = state.findUnique.data;
+
   return (
-    <Box>
-      <Box mb={10}>
-        <Button variant="subtle" onClick={() => router.back()}>
-          <IconArrowBack color={colors['blue-button']} size={25} />
-        </Button>
-      </Box>
-      <Paper w={{ base: "100%", md: "50%" }} bg={colors['white-1']} p={'md'}>
-        <Stack>
-          <Text fz={"xl"} fw={"bold"}>Detail Kontak Darurat</Text>
-          {kontakDaruratState.findUnique.data ? (
-            <Paper bg={colors['BG-trans']} p={'md'}>
-              <Stack gap={"xs"}>
-                <Box>
-                  <Text fz={"lg"} fw={"bold"}>Judul</Text>
-                  <Text fz={"lg"}>{kontakDaruratState.findUnique.data.name}</Text>
-                </Box>
-                <Box>
-                  <Text fz={"lg"} fw={"bold"}>Deskripsi</Text>
-                  <Text fz={"lg"} dangerouslySetInnerHTML={{ __html: kontakDaruratState.findUnique.data.deskripsi }} />
-                </Box>
-                <Box>
-                  <Text fz={"lg"} fw={"bold"}>Gambar</Text>
-                  <Image src={kontakDaruratState.findUnique.data.image?.link} alt="gambar" />
-                </Box>
-                <Box>
-                  <Flex gap={"xs"}>
-                    <Button color="red" onClick={() => {
-                      if (kontakDaruratState.findUnique.data) {
-                        setSelectedId(kontakDaruratState.findUnique.data.id)
-                        setModalHapus(true)
-                      }
+    <Box py={10}>
+      {/* Tombol Back */}
+      <Button
+        variant="subtle"
+        onClick={() => router.back()}
+        leftSection={<IconArrowBack size={24} color={colors['blue-button']} />}
+        mb={15}
+      >
+        Kembali
+      </Button>
+
+      {/* Wrapper Detail */}
+      <Paper
+        withBorder
+        w={{ base: "100%", md: "50%" }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+      >
+        <Stack gap="md">
+          <Text fz="2xl" fw="bold" c={colors['blue-button']}>
+            Detail Kontak Darurat
+          </Text>
+
+          <Paper bg="#ECEEF8" p="md" radius="md" shadow="xs">
+            <Stack gap="sm">
+              <Box>
+                <Text fz="lg" fw="bold">Judul</Text>
+                <Text fz="md" c="dimmed">{data.name || '-'}</Text>
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">Deskripsi</Text>
+                <Text
+                  fz="md"
+                  c="dimmed"
+                  dangerouslySetInnerHTML={{ __html: data.deskripsi || '-' }}
+                />
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">Gambar</Text>
+                {data.image?.link ? (
+                  <Image
+                    src={data.image.link}
+                    alt="gambar"
+                    radius="md"
+                    maw={300}
+                  />
+                ) : (
+                  <Text fz="md" c="dimmed">-</Text>
+                )}
+              </Box>
+
+              {/* Aksi */}
+              <Group gap="sm">
+                <Tooltip label="Hapus Data" withArrow position="top">
+                  <Button
+                    color="red"
+                    onClick={() => {
+                      setSelectedId(data.id);
+                      setModalHapus(true);
                     }}
-                      disabled={kontakDaruratState.delete.loading || !kontakDaruratState.findUnique.data}
-                    >
-                      <IconX size={20} />
-                    </Button>
-                    <Button onClick={() => router.push(`/admin/kesehatan/kontak-darurat/${kontakDaruratState.findUnique.data?.id}/edit`)} color="green">
-                      <IconEdit size={20} />
-                    </Button>
-                  </Flex>
-                </Box>
-              </Stack>
-            </Paper>
-          ) : null}
+                    variant="light"
+                    radius="md"
+                    size="md"
+                    disabled={state.delete.loading}
+                  >
+                    <IconTrash size={20} />
+                  </Button>
+                </Tooltip>
+
+                <Tooltip label="Edit Data" withArrow position="top">
+                  <Button
+                    color="green"
+                    onClick={() =>
+                      router.push(`/admin/kesehatan/kontak-darurat/${data.id}/edit`)
+                    }
+                    variant="light"
+                    radius="md"
+                    size="md"
+                  >
+                    <IconEdit size={20} />
+                  </Button>
+                </Tooltip>
+              </Group>
+            </Stack>
+          </Paper>
         </Stack>
       </Paper>
 
-      {/* Modal Hapus */}
+      {/* Modal Konfirmasi Hapus */}
       <ModalKonfirmasiHapus
         opened={modalHapus}
         onClose={() => setModalHapus(false)}

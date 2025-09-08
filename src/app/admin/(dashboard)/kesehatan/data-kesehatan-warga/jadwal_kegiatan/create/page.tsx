@@ -2,127 +2,158 @@
 import CreateEditor from '@/app/admin/(dashboard)/_com/createEditor';
 import jadwalKegiatanState from '@/app/admin/(dashboard)/_state/kesehatan/data_kesehatan_warga/jadwalKegiatan';
 import colors from '@/con/colors';
-import { Box, Button, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
+import {
+  Box,
+  Button,
+  Group,
+  Paper,
+  Stack,
+  Text,
+  TextInput,
+  Title,
+  Tooltip,
+} from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
-
 function CreateJadwalKegiatan() {
-  const stateJadwalKegiatan = useProxy(jadwalKegiatanState)
+  const stateJadwalKegiatan = useProxy(jadwalKegiatanState);
   const router = useRouter();
 
-
   const resetForm = () => {
-    stateJadwalKegiatan.edit.form = {
-      content: "",
+    stateJadwalKegiatan.create.form = {
+      content: '',
       informasiJadwalKegiatan: {
-        name: "",
-        tanggal: "",
-        waktu: "",
-        lokasi: "",
+        name: '',
+        tanggal: '',
+        waktu: '',
+        lokasi: '',
       },
       deskripsiJadwalKegiatan: {
-        deskripsi: "",
+        deskripsi: '',
       },
       layananJadwalKegiatan: {
-        content: "",
+        content: '',
       },
       syaratKetentuanJadwalKegiatan: {
-        content: "",
+        content: '',
       },
       dokumenJadwalKegiatan: {
-        content: "",
+        content: '',
       },
       pendaftaranJadwalKegiatan: {
-        name: "",
-        tanggal: "",
-        namaOrangtua: "",
-        nomor: "",
-        alamat: "",
-        catatan: "",
+        name: '',
+        tanggal: '',
+        namaOrangtua: '',
+        nomor: '',
+        alamat: '',
+        catatan: '',
       },
     };
   };
-
-
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     await stateJadwalKegiatan.create.submit();
 
-    toast.success("Data berhasil disimpan");
+    toast.success('Data berhasil disimpan');
     resetForm();
-    // After successful submission, redirect to the list page
     router.push('/admin/kesehatan/data-kesehatan-warga/jadwal_kegiatan');
-  }
+  };
 
   return (
-    <Box component="form" onSubmit={handleSubmit}>
-      <Box mb={10}>
-        <Button variant="subtle" onClick={() => router.back()}>
-          <IconArrowBack color={colors['blue-button']} size={25} />
-        </Button>
-      </Box>
+    <Box px={{ base: 'sm', md: 'lg' }} py="md" component="form" onSubmit={handleSubmit}>
+      {/* Header */}
+      <Group mb="md">
+        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
+          <Button
+            variant="subtle"
+            onClick={() => router.back()}
+            p="xs"
+            radius="md"
+          >
+            <IconArrowBack color={colors['blue-button']} size={24} />
+          </Button>
+        </Tooltip>
+        <Title order={4} ml="sm" c="dark">
+          Tambah Jadwal Kegiatan
+        </Title>
+      </Group>
 
-      <Paper bg={colors['white-1']} p="md" w={{ base: '100%', md: '50%' }}>
-        <Stack gap="xs">
-          <Title order={3}>Create Jadwal Kegiatan</Title>
+      {/* Form */}
+      <Paper
+        w={{ base: '100%', md: '50%' }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+        style={{ border: '1px solid #e0e0e0' }}
+      >
+        <Stack gap="md">
           <TextInput
-            label={<Text fz="sm" fw="bold">Nama Jadwal Kegiatan</Text>}
-            placeholder="masukkan nama jadwal kegiatan"
+            label="Nama Jadwal Kegiatan"
+            placeholder="Masukkan nama jadwal kegiatan"
             value={stateJadwalKegiatan.create.form.content}
             onChange={(e) => {
               stateJadwalKegiatan.create.form.content = e.target.value;
             }}
+            required
           />
-         <Box>
-         <Text fz="sm" fw="bold">Deskripsi Jadwal Kegiatan</Text>
-          <CreateEditor
-            value={stateJadwalKegiatan.create.form.deskripsiJadwalKegiatan.deskripsi}
-            onChange={(e) => {
-              stateJadwalKegiatan.create.form.deskripsiJadwalKegiatan.deskripsi = e;
-            }}
-          />
-         </Box>
+
           <Box>
-            <Text fz="md" fw="bold">Informasi Jadwal Kegiatan</Text>
+            <Text fz="sm" fw="bold" mb={4}>Deskripsi Jadwal Kegiatan</Text>
+            <CreateEditor
+              value={stateJadwalKegiatan.create.form.deskripsiJadwalKegiatan.deskripsi}
+              onChange={(e) => {
+                stateJadwalKegiatan.create.form.deskripsiJadwalKegiatan.deskripsi = e;
+              }}
+            />
+          </Box>
+
+          <Box>
+            <Text fz="md" fw="bold" mb="sm">Informasi Jadwal Kegiatan</Text>
             <TextInput
-              label={<Text fz="sm" fw="bold">Nama</Text>}
-              placeholder="masukkan nama"
+              label="Nama"
+              required
+              placeholder="Masukkan nama"
               value={stateJadwalKegiatan.create.form.informasiJadwalKegiatan.name}
               onChange={(e) => {
                 stateJadwalKegiatan.create.form.informasiJadwalKegiatan.name = e.target.value;
               }}
             />
             <TextInput
-              label={<Text fz="sm" fw="bold">Tanggal</Text>}
-              placeholder="masukkan tanggal"
+              type="date"
+              required
+              label="Tanggal"
               value={stateJadwalKegiatan.create.form.informasiJadwalKegiatan.tanggal}
               onChange={(e) => {
                 stateJadwalKegiatan.create.form.informasiJadwalKegiatan.tanggal = e.target.value;
               }}
             />
             <TextInput
-              label={<Text fz="sm" fw="bold">Waktu</Text>}
-              placeholder="masukkan waktu"
+              label="Waktu"
+              required
+              placeholder="Masukkan waktu"
               value={stateJadwalKegiatan.create.form.informasiJadwalKegiatan.waktu}
               onChange={(e) => {
                 stateJadwalKegiatan.create.form.informasiJadwalKegiatan.waktu = e.target.value;
               }}
             />
             <TextInput
-              label={<Text fz="sm" fw="bold">Lokasi</Text>}
-              placeholder="masukkan lokasi"
+              label="Lokasi"
+              required
+              placeholder="Masukkan lokasi"
               value={stateJadwalKegiatan.create.form.informasiJadwalKegiatan.lokasi}
               onChange={(e) => {
                 stateJadwalKegiatan.create.form.informasiJadwalKegiatan.lokasi = e.target.value;
               }}
             />
           </Box>
+
           <Box>
-            <Text fz="md" fw="bold">Layanan Jadwal Kegiatan</Text>
+            <Text fz="md" fw="bold" mb="sm">Layanan Jadwal Kegiatan</Text>
             <CreateEditor
               value={stateJadwalKegiatan.create.form.layananJadwalKegiatan.content}
               onChange={(e) => {
@@ -130,8 +161,9 @@ function CreateJadwalKegiatan() {
               }}
             />
           </Box>
+
           <Box>
-            <Text fz="md" fw="bold">Syarat dan Ketentuan Jadwal Kegiatan</Text>
+            <Text fz="md" fw="bold" mb="sm">Syarat & Ketentuan</Text>
             <CreateEditor
               value={stateJadwalKegiatan.create.form.syaratKetentuanJadwalKegiatan.content}
               onChange={(e) => {
@@ -139,8 +171,9 @@ function CreateJadwalKegiatan() {
               }}
             />
           </Box>
+
           <Box>
-            <Text fz="md" fw="bold">Dokumen Jadwal Kegiatan</Text>
+            <Text fz="md" fw="bold" mb="sm">Dokumen</Text>
             <CreateEditor
               value={stateJadwalKegiatan.create.form.dokumenJadwalKegiatan.content}
               onChange={(e) => {
@@ -148,51 +181,58 @@ function CreateJadwalKegiatan() {
               }}
             />
           </Box>
+
           <Box>
-            <Text fz="md" fw="bold">Pendaftaran Jadwal Kegiatan</Text>
+            <Text fz="md" fw="bold" mb="sm">Pendaftaran Jadwal Kegiatan</Text>
             <TextInput
-              label={<Text fz="sm" fw="bold">Nama</Text>}
-              placeholder="masukkan nama"
+              label="Nama"
+              required
+              placeholder="Masukkan nama"
               value={stateJadwalKegiatan.create.form.pendaftaranJadwalKegiatan.name}
               onChange={(e) => {
                 stateJadwalKegiatan.create.form.pendaftaranJadwalKegiatan.name = e.target.value;
               }}
             />
             <TextInput
-              label={<Text fz="sm" fw="bold">Tanggal</Text>}
-              placeholder="masukkan tanggal"
+              type="date"
+              required
+              label="Tanggal"
               value={stateJadwalKegiatan.create.form.pendaftaranJadwalKegiatan.tanggal}
               onChange={(e) => {
                 stateJadwalKegiatan.create.form.pendaftaranJadwalKegiatan.tanggal = e.target.value;
               }}
             />
             <TextInput
-              label={<Text fz="sm" fw="bold">Nama Orangtua</Text>}
-              placeholder="masukkan nama orangtua"
+              label="Nama Orangtua"
+              required
+              placeholder="Masukkan nama orangtua"
               value={stateJadwalKegiatan.create.form.pendaftaranJadwalKegiatan.namaOrangtua}
               onChange={(e) => {
                 stateJadwalKegiatan.create.form.pendaftaranJadwalKegiatan.namaOrangtua = e.target.value;
               }}
             />
             <TextInput
-              label={<Text fz="sm" fw="bold">Nomor</Text>}
-              placeholder="masukkan nomor"
+              label="Nomor"
+              required
+              placeholder="Masukkan nomor"
               value={stateJadwalKegiatan.create.form.pendaftaranJadwalKegiatan.nomor}
               onChange={(e) => {
                 stateJadwalKegiatan.create.form.pendaftaranJadwalKegiatan.nomor = e.target.value;
               }}
             />
             <TextInput
-              label={<Text fz="sm" fw="bold">Alamat</Text>}
-              placeholder="masukkan alamat"
+              label="Alamat"
+              required
+              placeholder="Masukkan alamat"
               value={stateJadwalKegiatan.create.form.pendaftaranJadwalKegiatan.alamat}
               onChange={(e) => {
                 stateJadwalKegiatan.create.form.pendaftaranJadwalKegiatan.alamat = e.target.value;
               }}
             />
             <TextInput
-              label={<Text fz="sm" fw="bold">Catatan</Text>}
-              placeholder="masukkan catatan"
+              label="Catatan"
+              required
+              placeholder="Masukkan catatan"
               value={stateJadwalKegiatan.create.form.pendaftaranJadwalKegiatan.catatan}
               onChange={(e) => {
                 stateJadwalKegiatan.create.form.pendaftaranJadwalKegiatan.catatan = e.target.value;
@@ -200,9 +240,21 @@ function CreateJadwalKegiatan() {
             />
           </Box>
 
-          <Button onClick={handleSubmit} bg={colors['blue-button']}>
-            Simpan
-          </Button>
+          {/* Save Button */}
+          <Group justify="right">
+            <Button
+              type="submit"
+              radius="md"
+              size="md"
+              style={{
+                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                color: '#fff',
+                boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
+              }}
+            >
+              Simpan
+            </Button>
+          </Group>
         </Stack>
       </Paper>
     </Box>

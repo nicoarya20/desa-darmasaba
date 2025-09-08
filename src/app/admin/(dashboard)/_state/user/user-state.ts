@@ -90,6 +90,32 @@ const userState = proxy({
       }
     },
   },
+  updateActive: {
+    loading: false,
+    async submit(id: string, isActive: boolean) {
+      this.loading = true;
+      try {
+        const res = await fetch(`/api/user/updt`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id, isActive }),
+        });
+
+        const data = await res.json();
+        if (res.status === 200 && data.success) {
+          toast.success(data.message);
+          userState.findMany.load(userState.findMany.page, 10, userState.findMany.search);
+        } else {
+          toast.error(data.message || "Gagal update status user");
+        }
+      } catch (e) {
+        console.error(e);
+        toast.error("Gagal update status user");
+      } finally {
+        this.loading = false;
+      }
+    },
+  },
 });
 
 const templateRole = z.object({

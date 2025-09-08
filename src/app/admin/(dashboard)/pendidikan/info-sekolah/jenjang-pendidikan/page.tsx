@@ -1,33 +1,33 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Center, Group, Paper, Pagination, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title, Tooltip } from '@mantine/core';
+import { Box, Button, Center, Group, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title, Tooltip } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { IconEdit, IconPlus, IconSearch, IconX } from '@tabler/icons-react';
+import { IconEdit, IconPlus, IconX } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
-import HeaderSearch from '../../../_com/header';
 import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
 import infoSekolahPaud from '../../../_state/pendidikan/info-sekolah-paud';
 
 
 function JenjangPendidikan() {
-  const [search, setSearch] = useState("")
+  // const [search, setSearch] = useState("")
   return (
     <Box>
-      <HeaderSearch
+      <Title order={4}>Jenjang Pendidikan</Title>
+      {/* <HeaderSearch
         title='Jenjang Pendidikan'
         placeholder='Cari jenjang pendidikan...'
         searchIcon={<IconSearch size={20} />}
         value={search}
         onChange={(e) => setSearch(e.currentTarget.value)}
-      />
-      <ListJenjangPendidikan search={search} />
+      /> */}
+      <ListJenjangPendidikan />
     </Box>
   );
 }
 
-function ListJenjangPendidikan({ search }: { search: string }) {
+function ListJenjangPendidikan() {
   const stateList = useProxy(infoSekolahPaud.jenjangPendidikan)
   const [modalHapus, setModalHapus] = useState(false)
   const [selectedId, setSelectedId] = useState<string | null>(null)
@@ -50,8 +50,8 @@ function ListJenjangPendidikan({ search }: { search: string }) {
   }
 
   useShallowEffect(() => {
-    load(page, 10, search)
-  }, [page, search])
+    load(page, 10)
+  }, [page])
 
   const filteredData = data || []
 

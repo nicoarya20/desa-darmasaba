@@ -2,7 +2,7 @@
 import colors from '@/con/colors';
 import { Box, Button, Center, Group, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title, Tooltip } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { IconSearch, IconTrash } from '@tabler/icons-react';
+import { IconCheck, IconSearch, IconX } from '@tabler/icons-react';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../_com/header';
@@ -75,9 +75,9 @@ function ListUser({ search }: { search: string }) {
             <TableThead>
               <TableTr>
                 <TableTh style={{ width: '25%' }}>Nama User</TableTh>
-                <TableTh style={{ width: '20%' }}>Email</TableTh>
+                <TableTh style={{ width: '20%' }}>Nomor</TableTh>
                 <TableTh style={{ width: '20%' }}>Role</TableTh>
-                <TableTh style={{ width: '15%' }}>Hapus</TableTh>
+                <TableTh style={{ width: '15%' }}>Aktif / Nonaktif</TableTh>
               </TableTr>
             </TableThead>
             <TableTbody>
@@ -98,16 +98,19 @@ function ListUser({ search }: { search: string }) {
                       </Text>
                     </TableTd>
                     <TableTd style={{ width: '15%' }}>
-                      <Tooltip label="Hapus user" withArrow>
+                      <Tooltip
+                        label={item.isActive ? "Nonaktifkan user" : "Aktifkan user"}
+                        withArrow
+                      >
                         <Button
                           variant="light"
-                          color="red"
-                          onClick={() => {
-                            setSelectedId(item.id)
-                            setModalHapus(true)
+                          color={item.isActive ? "green" : "red"}
+                          onClick={async () => {
+                            await stateUser.updateActive.submit(item.id, !item.isActive)
+                            stateUser.findMany.load(page, 10, search)
                           }}
                         >
-                          <IconTrash size={20} />
+                          {item.isActive ? <IconCheck size={20} /> : <IconX size={20} />}
                         </Button>
                       </Tooltip>
                     </TableTd>

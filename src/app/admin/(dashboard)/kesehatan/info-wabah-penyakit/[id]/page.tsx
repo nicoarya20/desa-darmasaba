@@ -1,7 +1,17 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Paper, Stack, Flex, Text, Image, Skeleton } from '@mantine/core';
-import { IconArrowBack, IconX, IconEdit } from '@tabler/icons-react';
+import {
+  Box,
+  Button,
+  Paper,
+  Stack,
+  Text,
+  Skeleton,
+  Tooltip,
+  Group,
+  Image,
+} from '@mantine/core';
+import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import infoWabahPenyakit from '../../../_state/kesehatan/info-wabah-penyakit/infoWabahPenyakit';
@@ -10,86 +20,135 @@ import { useShallowEffect } from '@mantine/hooks';
 import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
 
 function DetailInfoWabahPenyakit() {
-  const infoWabahPenyakitState = useProxy(infoWabahPenyakit)
-  const [modalHapus, setModalHapus] = useState(false)
-  const [selectedId, setSelectedId] = useState<string | null>(null)
+  const state = useProxy(infoWabahPenyakit);
+  const [modalHapus, setModalHapus] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const router = useRouter();
-  const params = useParams()
+  const params = useParams();
 
   useShallowEffect(() => {
-    infoWabahPenyakitState.findUnique.load(params?.id as string)
-  }, [])
+    state.findUnique.load(params?.id as string);
+  }, []);
 
   const handleHapus = () => {
     if (selectedId) {
-      infoWabahPenyakitState.delete.byId(selectedId)
-      setModalHapus(false)
-      setSelectedId(null)
-      router.push("/admin/kesehatan/info-wabah-penyakit")
+      state.delete.byId(selectedId);
+      setModalHapus(false);
+      setSelectedId(null);
+      router.push('/admin/kesehatan/info-wabah-penyakit');
     }
-  }
+  };
 
-  if (!infoWabahPenyakitState.findUnique.data) {
+  if (!state.findUnique.data) {
     return (
       <Stack py={10}>
-        <Skeleton h={400} />
+        <Skeleton height={500} radius="md" />
       </Stack>
-    )
+    );
   }
 
+  const data = state.findUnique.data;
+
   return (
-    <Box>
-      <Box mb={10}>
-        <Button variant="subtle" onClick={() => router.back()}>
-          <IconArrowBack color={colors['blue-button']} size={25} />
-        </Button>
-      </Box>
-      <Paper w={{ base: "100%", md: "50%" }} bg={colors['white-1']} p={'md'}>
-        <Stack>
-          <Text fz={"xl"} fw={"bold"}>Detail Info Wabah Penyakit</Text>
-          {infoWabahPenyakitState.findUnique.data ? (
-            <Paper bg={colors['BG-trans']} p={'md'}>
-              <Stack gap={"xs"}>
-                <Box>
-                  <Text fz={"lg"} fw={"bold"}>Judul</Text>
-                  <Text fz={"lg"}>{infoWabahPenyakitState.findUnique.data.name}</Text>
-                </Box>
-                <Box>
-                  <Text fz={"lg"} fw={"bold"}>Deskripsi Singkat</Text>
-                  <Text fz={"lg"}>{infoWabahPenyakitState.findUnique.data.deskripsiSingkat}</Text>
-                </Box>
-                <Box>
-                  <Text fz={"lg"} fw={"bold"}>Deskripsi</Text>
-                  <Text fz={"lg"} dangerouslySetInnerHTML={{ __html: infoWabahPenyakitState.findUnique.data.deskripsiLengkap }} />
-                </Box>
-                <Box>
-                  <Text fz={"lg"} fw={"bold"}>Gambar</Text>
-                  <Image src={infoWabahPenyakitState.findUnique.data.image?.link} alt="gambar" />
-                </Box>
-                <Box>
-                  <Flex gap={"xs"}>
-                    <Button color="red" onClick={() => {
-                      if (infoWabahPenyakitState.findUnique.data) {
-                        setSelectedId(infoWabahPenyakitState.findUnique.data.id)
-                        setModalHapus(true)
-                      }
+    <Box py={10}>
+      {/* Tombol Back */}
+      <Button
+        variant="subtle"
+        onClick={() => router.back()}
+        leftSection={<IconArrowBack size={24} color={colors['blue-button']} />}
+        mb={15}
+      >
+        Kembali
+      </Button>
+
+      {/* Wrapper Detail */}
+      <Paper
+        withBorder
+        w={{ base: '100%', md: '50%' }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+      >
+        <Stack gap="md">
+          <Text fz="2xl" fw="bold" c={colors['blue-button']}>
+            Detail Info Wabah Penyakit
+          </Text>
+
+          <Paper bg="#ECEEF8" p="md" radius="md" shadow="xs">
+            <Stack gap="sm">
+              <Box>
+                <Text fz="lg" fw="bold">Judul</Text>
+                <Text fz="md" c="dimmed">{data.name || '-'}</Text>
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">Deskripsi Singkat</Text>
+                <Text fz="md" c="dimmed">{data.deskripsiSingkat || '-'}</Text>
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">Deskripsi Lengkap</Text>
+                <Text
+                  fz="md"
+                  c="dimmed"
+                  dangerouslySetInnerHTML={{ __html: data.deskripsiLengkap }}
+                />
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">Gambar</Text>
+                {data.image?.link ? (
+                  <Image
+                    src={data.image.link}
+                    alt="gambar wabah"
+                    radius="md"
+                    mt="xs"
+                  />
+                ) : (
+                  <Text fz="md" c="dimmed">-</Text>
+                )}
+              </Box>
+
+              {/* Aksi */}
+              <Group gap="sm">
+                <Tooltip label="Hapus Data" withArrow position="top">
+                  <Button
+                    color="red"
+                    onClick={() => {
+                      setSelectedId(data.id);
+                      setModalHapus(true);
                     }}
-                      disabled={infoWabahPenyakitState.delete.loading || !infoWabahPenyakitState.findUnique.data}
-                    >
-                      <IconX size={20} />
-                    </Button>
-                    <Button onClick={() => router.push(`/admin/kesehatan/info-wabah-penyakit/${infoWabahPenyakitState.findUnique.data?.id}/edit`)} color="green">
-                      <IconEdit size={20} />
-                    </Button>
-                  </Flex>
-                </Box>
-              </Stack>
-            </Paper>
-          ) : null}
+                    variant="light"
+                    radius="md"
+                    size="md"
+                  >
+                    <IconTrash size={20} />
+                  </Button>
+                </Tooltip>
+
+                <Tooltip label="Edit Data" withArrow position="top">
+                  <Button
+                    color="green"
+                    onClick={() =>
+                      router.push(
+                        `/admin/kesehatan/info-wabah-penyakit/${data.id}/edit`
+                      )
+                    }
+                    variant="light"
+                    radius="md"
+                    size="md"
+                  >
+                    <IconEdit size={20} />
+                  </Button>
+                </Tooltip>
+              </Group>
+            </Stack>
+          </Paper>
         </Stack>
       </Paper>
 
-      {/* Modal Hapus */}
+      {/* Modal Konfirmasi Hapus */}
       <ModalKonfirmasiHapus
         opened={modalHapus}
         onClose={() => setModalHapus(false)}

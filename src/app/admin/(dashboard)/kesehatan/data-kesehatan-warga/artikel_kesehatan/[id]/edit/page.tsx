@@ -4,7 +4,17 @@
 import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import artikelKesehatanState from '@/app/admin/(dashboard)/_state/kesehatan/data_kesehatan_warga/artikelKesehatan';
 import colors from '@/con/colors';
-import { Box, Button, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
+import {
+  Box,
+  Button,
+  Group,
+  Paper,
+  Stack,
+  Text,
+  TextInput,
+  Title,
+  Tooltip
+} from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -14,29 +24,12 @@ import { useProxy } from 'valtio/utils';
 interface ArtikelKesehatanFormBase {
   title: string;
   content: string;
-  introduction: {
-    content: string;
-  };
-  symptom: {
-    title: string;
-    content: string;
-  };
-  prevention: {
-    title: string;
-    content: string;
-  };
-  firstAid: {
-    title: string;
-    content: string;
-  };
-  mythVsFact: {
-    title: string;
-    mitos: string;
-    fakta: string;
-  };
-  doctorSign: {
-    content: string;
-  };
+  introduction: { content: string };
+  symptom: { title: string; content: string };
+  prevention: { title: string; content: string };
+  firstAid: { title: string; content: string };
+  mythVsFact: { title: string; mitos: string; fakta: string };
+  doctorSign: { content: string };
 }
 
 function EditArtikelKesehatan() {
@@ -47,29 +40,27 @@ function EditArtikelKesehatan() {
   const [formData, setFormData] = useState<ArtikelKesehatanFormBase>({
     title: stateArtikelKesehatan.edit.form.title || '',
     content: stateArtikelKesehatan.edit.form.content || '',
-    introduction: {
-      content: stateArtikelKesehatan.edit.form.introduction?.content || '',
-    },
+    introduction: { content: stateArtikelKesehatan.edit.form.introduction?.content || '' },
     symptom: {
       title: stateArtikelKesehatan.edit.form.symptom?.title || '',
-      content: stateArtikelKesehatan.edit.form.symptom?.content || '',
+      content: stateArtikelKesehatan.edit.form.symptom?.content || ''
     },
     prevention: {
       title: stateArtikelKesehatan.edit.form.prevention?.title || '',
-      content: stateArtikelKesehatan.edit.form.prevention?.content || '',
+      content: stateArtikelKesehatan.edit.form.prevention?.content || ''
     },
     firstAid: {
       title: stateArtikelKesehatan.edit.form.firstAid?.title || '',
-      content: stateArtikelKesehatan.edit.form.firstAid?.content || '',
+      content: stateArtikelKesehatan.edit.form.firstAid?.content || ''
     },
     mythVsFact: {
       title: stateArtikelKesehatan.edit.form.mythVsFact?.title || '',
       mitos: stateArtikelKesehatan.edit.form.mythVsFact?.mitos || '',
-      fakta: stateArtikelKesehatan.edit.form.mythVsFact?.fakta || '',
+      fakta: stateArtikelKesehatan.edit.form.mythVsFact?.fakta || ''
     },
     doctorSign: {
-      content: stateArtikelKesehatan.edit.form.doctorSign?.content || '',
-    },
+      content: stateArtikelKesehatan.edit.form.doctorSign?.content || ''
+    }
   });
 
   useEffect(() => {
@@ -84,29 +75,27 @@ function EditArtikelKesehatan() {
           setFormData({
             title: form.title,
             content: form.content,
-            introduction: {
-              content: form.introduction?.content || '',
-            },
+            introduction: { content: form.introduction?.content || '' },
             symptom: {
               title: form.symptom?.title || '',
-              content: form.symptom?.content || '',
+              content: form.symptom?.content || ''
             },
             prevention: {
               title: form.prevention?.title || '',
-              content: form.prevention?.content || '',
+              content: form.prevention?.content || ''
             },
             firstAid: {
               title: form.firstAid?.title || '',
-              content: form.firstAid?.content || '',
+              content: form.firstAid?.content || ''
             },
             mythVsFact: {
               title: form.mythVsFact?.title || '',
               mitos: form.mythVsFact?.mitos || '',
-              fakta: form.mythVsFact?.fakta || '',
+              fakta: form.mythVsFact?.fakta || ''
             },
             doctorSign: {
-              content: form.doctorSign?.content || '',
-            },
+              content: form.doctorSign?.content || ''
+            }
           });
         }
       } catch (error) {
@@ -119,34 +108,7 @@ function EditArtikelKesehatan() {
 
   const handleSubmit = async () => {
     try {
-      stateArtikelKesehatan.edit.form = {
-        ...stateArtikelKesehatan.edit.form,
-        title: formData.title,
-        content: formData.content,
-        introduction: {
-          content: formData.introduction.content,
-        },
-        symptom: {
-          title: formData.symptom.title,
-          content: formData.symptom.content,
-        },
-        prevention: {
-          title: formData.prevention.title,
-          content: formData.prevention.content,
-        },
-        firstAid: {
-          title: formData.firstAid.title,
-          content: formData.firstAid.content,
-        },
-        mythVsFact: {
-          title: formData.mythVsFact.title,
-          mitos: formData.mythVsFact.mitos,
-          fakta: formData.mythVsFact.fakta,
-        },
-        doctorSign: {
-          content: formData.doctorSign.content,
-        },
-      };
+      stateArtikelKesehatan.edit.form = { ...formData };
       const success = await stateArtikelKesehatan.edit.submit();
       if (success) {
         toast.success("Artikel kesehatan berhasil diperbarui!");
@@ -157,214 +119,196 @@ function EditArtikelKesehatan() {
       toast.error(error instanceof Error ? error.message : "Gagal memperbarui data artikel kesehatan");
     }
   };
+
   return (
-    <Box>
-      <Box mb={10}>
-        <Button onClick={() => router.back()} variant="subtle" color="blue">
-          <IconArrowBack color={colors['blue-button']} size={25} />
-        </Button>
-      </Box>
-      <Paper bg={colors['white-1']} p="md" w={{ base: '100%', md: '50%' }}>
-        <Stack gap="xs">
-          <Title order={3}>Edit Artikel Kesehatan</Title>
+    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+      {/* Header */}
+      <Group mb="md">
+        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
+          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+            <IconArrowBack color={colors['blue-button']} size={24} />
+          </Button>
+        </Tooltip>
+        <Title order={4} ml="sm" c="dark">
+          Edit Artikel Kesehatan
+        </Title>
+      </Group>
+
+      {/* Form */}
+      <Paper
+        w={{ base: '100%', md: '50%' }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+        style={{ border: '1px solid #e0e0e0' }}
+      >
+        <Stack gap="md">
           <TextInput
-            label={<Text fz="sm" fw="bold">Judul</Text>}
-            placeholder="masukkan judul"
+            label="Judul"
+            placeholder="Masukkan judul artikel"
             value={formData.title}
-            onChange={(e) => {
-              setFormData(prev => ({
-                ...prev,
-                title: e.target.value
-              }));
-            }}
+            onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
+            required
           />
           <TextInput
-            label={<Text fz="sm" fw="bold">Deskripsi</Text>}
-            placeholder="masukkan deskripsi"
+            label="Deskripsi"
+            placeholder="Masukkan deskripsi artikel"
             value={formData.content}
-            onChange={(e) => {
-              setFormData(prev => ({
-                ...prev,
-                content: e.target.value
-              }));
-            }}
+            onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
+            required
           />
           <TextInput
-            label={<Text fz="sm" fw="bold">Pendahuluan</Text>}
-            placeholder="masukkan pendahuluan"
+            label="Pendahuluan"
+            placeholder="Masukkan pendahuluan"
             value={formData.introduction.content}
-            onChange={(e) => {
+            onChange={(e) =>
               setFormData(prev => ({
                 ...prev,
-                introduction: {
-                  ...prev.introduction,
-                  content: e.target.value
-                }
-              }));
-            }}
+                introduction: { ...prev.introduction, content: e.target.value }
+              }))
+            }
           />
+
+          {/* Gejala */}
           <Box>
-            <Text fz="md" fw="bold">Gejala</Text>
+            <Text fw="bold">Gejala</Text>
             <Stack gap="xs">
               <TextInput
-                label={<Text fz="sm" fw="bold">Judul</Text>}
-                placeholder="masukkan judul gejala penyakit"
+                label="Judul Gejala"
+                placeholder="Masukkan judul gejala"
                 value={formData.symptom.title}
-                onChange={(e) => {
+                onChange={(e) =>
                   setFormData(prev => ({
                     ...prev,
-                    symptom: {
-                      ...prev.symptom,
-                      title: e.target.value
-                    }
-                  }));
-                }}
+                    symptom: { ...prev.symptom, title: e.target.value }
+                  }))
+                }
               />
-              <Box>
-                <Text fz="sm" fw="bold">Deskripsi Gejala</Text>
-                <EditEditor
-                  value={formData.symptom.content}
-                  onChange={(e) => {
-                    setFormData(prev => ({
-                      ...prev,
-                      symptom: {
-                        ...prev.symptom,
-                        content: e
-                      }
-                    }));
-                  }}
-                />
-              </Box>
+              <EditEditor
+                value={formData.symptom.content}
+                onChange={(e) =>
+                  setFormData(prev => ({
+                    ...prev,
+                    symptom: { ...prev.symptom, content: e }
+                  }))
+                }
+              />
             </Stack>
           </Box>
 
+          {/* Pencegahan */}
           <Box>
-            <Text fz="md" fw="bold">Pencegahan</Text>
+            <Text fw="bold">Pencegahan</Text>
             <TextInput
-              label={<Text fz="sm" fw="bold">Judul</Text>}
-              placeholder="masukkan judul"
+              label="Judul"
               value={formData.prevention.title}
-              onChange={(e) => {
+              onChange={(e) =>
                 setFormData(prev => ({
                   ...prev,
-                  prevention: {
-                    ...prev.prevention,
-                    title: e.target.value
-                  }
-                }));
-              }}
+                  prevention: { ...prev.prevention, title: e.target.value }
+                }))
+              }
             />
             <EditEditor
               value={formData.prevention.content}
-              onChange={(e) => {
+              onChange={(e) =>
                 setFormData(prev => ({
                   ...prev,
-                  prevention: {
-                    ...prev.prevention,
-                    content: e
-                  }
-                }));
-              }}
+                  prevention: { ...prev.prevention, content: e }
+                }))
+              }
             />
           </Box>
+
+          {/* Pertolongan Pertama */}
           <Box>
-            <Text fz="md" fw="bold">Pertolongan Pertama</Text>
+            <Text fw="bold">Pertolongan Pertama</Text>
             <TextInput
-              label={<Text fz="sm" fw="bold">Judul</Text>}
-              placeholder="masukkan judul"
+              label="Judul"
               value={formData.firstAid.title}
-              onChange={(e) => {
+              onChange={(e) =>
                 setFormData(prev => ({
                   ...prev,
-                  firstAid: {
-                    ...prev.firstAid,
-                    title: e.target.value
-                  }
-                }));
-              }}
+                  firstAid: { ...prev.firstAid, title: e.target.value }
+                }))
+              }
             />
             <EditEditor
               value={formData.firstAid.content}
-              onChange={(e) => {
+              onChange={(e) =>
                 setFormData(prev => ({
                   ...prev,
-                  firstAid: {
-                    ...prev.firstAid,
-                    content: e
-                  }
-                }));
-              }}
+                  firstAid: { ...prev.firstAid, content: e }
+                }))
+              }
             />
           </Box>
+
+          {/* Mitos vs Fakta */}
           <Box>
-            <Text fz="md" fw="bold">Mitos dan Fakta</Text>
+            <Text fw="bold">Mitos vs Fakta</Text>
             <TextInput
-              label={<Text fz="sm" fw="bold">Judul</Text>}
-              placeholder="masukkan judul"
+              label="Judul"
               value={formData.mythVsFact.title}
-              onChange={(e) => {
+              onChange={(e) =>
                 setFormData(prev => ({
                   ...prev,
-                  mythVsFact: {
-                    ...prev.mythVsFact,
-                    title: e.target.value
-                  }
-                }));
-              }}
+                  mythVsFact: { ...prev.mythVsFact, title: e.target.value }
+                }))
+              }
             />
-            <Box>
-              <Text>
-                Mitos
-              </Text>
-              <EditEditor
-                value={formData.mythVsFact.mitos}
-                onChange={(e) => {
-                  setFormData(prev => ({
-                    ...prev,
-                    mythVsFact: {
-                      ...prev.mythVsFact,
-                      mitos: e
-                    }
-                  }));
-                }}
-              />
-            </Box>
-            <Box>
-              <Text>
-                Fakta
-              </Text>
-              <EditEditor
-                value={formData.mythVsFact.fakta}
-                onChange={(e) => {
-                  setFormData(prev => ({
-                    ...prev,
-                    mythVsFact: {
-                      ...prev.mythVsFact,
-                      fakta: e
-                    }
-                  }));
-                }}
-              />
-            </Box>
+            <Text fw="500">Mitos</Text>
+            <EditEditor
+              value={formData.mythVsFact.mitos}
+              onChange={(e) =>
+                setFormData(prev => ({
+                  ...prev,
+                  mythVsFact: { ...prev.mythVsFact, mitos: e }
+                }))
+              }
+            />
+            <Text fw="500">Fakta</Text>
+            <EditEditor
+              value={formData.mythVsFact.fakta}
+              onChange={(e) =>
+                setFormData(prev => ({
+                  ...prev,
+                  mythVsFact: { ...prev.mythVsFact, fakta: e }
+                }))
+              }
+            />
           </Box>
+
+          {/* Kapan harus ke dokter */}
           <Box>
-            <Text fz="md" fw="bold">Kapan Harus Ke Dokter</Text>
+            <Text fw="bold">Kapan Harus Ke Dokter</Text>
             <EditEditor
               value={formData.doctorSign.content}
-              onChange={(e) => {
+              onChange={(e) =>
                 setFormData(prev => ({
                   ...prev,
-                  doctorSign: {
-                    ...prev.doctorSign,
-                    content: e
-                  }
-                }));
-              }}
+                  doctorSign: { ...prev.doctorSign, content: e }
+                }))
+              }
             />
           </Box>
-          <Button onClick={handleSubmit} bg={colors['blue-button']}>
-            Simpan
-          </Button>
+
+          {/* Save button */}
+          <Group justify="right">
+            <Button
+              onClick={handleSubmit}
+              radius="md"
+              size="md"
+              style={{
+                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                color: '#fff',
+                boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)'
+              }}
+            >
+              Simpan
+            </Button>
+          </Group>
         </Stack>
       </Paper>
     </Box>

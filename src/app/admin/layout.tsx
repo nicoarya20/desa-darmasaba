@@ -21,7 +21,7 @@ import { useDisclosure } from "@mantine/hooks";
 import {
   IconChevronLeft,
   IconChevronRight,
-  IconDoorExit,
+  IconLogout2
 } from "@tabler/icons-react";
 import _ from "lodash";
 import Link from "next/link";
@@ -107,7 +107,21 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 variant="gradient"
                 gradient={{ from: colors["blue-button"], to: "#228be6" }}
               >
-                <IconDoorExit size={22} />
+                <Image src="/assets/images/darmasaba-icon.png" alt="Logo Darmasaba" w={25} h={25} radius="md" />
+              </ActionIcon>
+            </Tooltip>
+            <Tooltip label="Keluar" position="bottom" withArrow>
+              <ActionIcon
+                onClick={() => {
+                  router.push("/login");
+                }}
+                color={colors["blue-button"]}
+                radius="xl"
+                size="lg"
+                variant="gradient"
+                gradient={{ from: colors["blue-button"], to: "#228be6" }}
+              >
+                <IconLogout2 size={22} />
               </ActionIcon>
             </Tooltip>
           </Group>

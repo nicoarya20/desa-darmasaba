@@ -1,11 +1,11 @@
 'use client'
-import { useProxy } from 'valtio/utils';
-
-import { Box, Button, Flex, Paper, Skeleton, Stack, Text } from '@mantine/core';
+import { Box, Button, Group, Paper, Skeleton, Stack, Text, Tooltip } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { IconArrowBack, IconEdit, IconX } from '@tabler/icons-react';
+import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { useProxy } from 'valtio/utils';
+
 
 import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
 import persentaseKelahiranKematian from '@/app/admin/(dashboard)/_state/kesehatan/data_kesehatan_warga/persentaseKelahiran';
@@ -13,109 +13,152 @@ import colors from '@/con/colors';
 
 
 function DetailKelahiran() {
-  const state = useProxy(persentaseKelahiranKematian.kelahiran)
-  const [modalHapus, setModalHapus] = useState(false)
-  const [selectedId, setSelectedId] = useState<string | null>(null)
-  const params = useParams()
-  const router = useRouter()
-
-  useShallowEffect(() => {
-    state.findUnique.load(params?.id as string)
-  }, [])
+ const state = useProxy(persentaseKelahiranKematian.kelahiran);
+ const [modalHapus, setModalHapus] = useState(false);
+ const [selectedId, setSelectedId] = useState<string | null>(null);
+ const params = useParams();
+ const router = useRouter();
 
 
-  const handleHapus = () => {
-    if (selectedId) {
-      state.delete.byId(selectedId)
-      setModalHapus(false)
-      setSelectedId(null)
-      router.push("/admin/kesehatan/data-kesehatan-warga/persentase_data_kelahiran_kematian/kelahiran")
-    }
-  }
+ useShallowEffect(() => {
+   state.findUnique.load(params?.id as string);
+ }, []);
 
-  if (!state.findUnique.data) {
-    return (
-      <Stack py={10}>
-        <Skeleton h={40} />
-      </Stack>
-    )
-  }
 
-  return (
-    <Box>
-      <Box mb={10}>
-        <Button variant="subtle" onClick={() => router.back()}>
-          <IconArrowBack color={colors['blue-button']} size={25} />
-        </Button>
-      </Box>
-      <Paper bg={colors['white-1']} w={{ base: "100%", md: "100%", lg: "50%" }} p={'md'}>
-        <Stack>
-          <Text fz={"xl"} fw={"bold"}>Detail Data Kelahiran</Text>
-          {state.findUnique.data ? (
-            <Paper key={state.findUnique.data.id} bg={colors['BG-trans']} p={'md'}>
-              <Stack gap={"xs"}>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Nama</Text>
-                  <Text fz={"lg"}>{state.findUnique.data?.nama}</Text>
-                </Box>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Tanggal</Text>
-                  <Text fz={"lg"}>
-                    {new Date(state.findUnique.data?.tanggal).toLocaleDateString('id-ID', {
-                      day: '2-digit',
-                      month: 'long',
-                      year: 'numeric'
-                    })}
-                  </Text>
-                </Box>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Jenis Kelamin</Text>
-                  <Text fz={"lg"} >{state.findUnique.data?.jenisKelamin}</Text>
-                </Box>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Alamat</Text>
-                  <Text fz={"lg"} >{state.findUnique.data?.alamat}</Text>
-                </Box>
-                <Flex gap={"xs"} mt={10}>
-                  <Button
-                    onClick={() => {
-                      if (state.findUnique.data) {
-                        setSelectedId(state.findUnique.data.id);
-                        setModalHapus(true);
-                      }
-                    }}
-                    disabled={state.delete.loading || !state.findUnique.data}
-                    color={"red"}
-                  >
-                    <IconX size={20} />
-                  </Button>
-                  <Button
-                    onClick={() => {
-                      if (state.findUnique.data) {
-                        router.push(`/admin/kesehatan/data-kesehatan-warga/persentase_data_kelahiran_kematian/kelahiran/${state.findUnique.data.id}/edit`);
-                      }
-                    }}
-                    disabled={!state.findUnique.data}
-                    color={"green"}
-                  >
-                    <IconEdit size={20} />
-                  </Button>
-                </Flex>
-              </Stack>
-            </Paper>
-          ) : null}
-        </Stack>
-      </Paper>
+ const handleHapus = () => {
+   if (selectedId) {
+     state.delete.byId(selectedId);
+     setModalHapus(false);
+     setSelectedId(null);
+     router.push(
+       "/admin/kesehatan/data-kesehatan-warga/persentase_data_kelahiran_kematian/kelahiran"
+     );
+   }
+ };
 
-      {/* Modal Konfirmasi Hapus */}
-      <ModalKonfirmasiHapus
-        opened={modalHapus}
-        onClose={() => setModalHapus(false)}
-        onConfirm={handleHapus}
-        text='Apakah anda yakin ingin menghapus data ini?'
-      />
-    </Box>
-  );
+
+ if (!state.findUnique.data) {
+   return (
+     <Stack py={10}>
+       <Skeleton height={500} radius="md" />
+     </Stack>
+   );
+ }
+
+
+ const data = state.findUnique.data;
+
+
+ return (
+   <Box py={10}>
+     {/* Tombol Back */}
+     <Button
+       variant="subtle"
+       onClick={() => router.back()}
+       leftSection={<IconArrowBack size={24} color={colors['blue-button']} />}
+       mb={15}
+     >
+       Kembali
+     </Button>
+
+
+     {/* Wrapper Detail */}
+     <Paper
+       withBorder
+       w={{ base: "100%", md: "50%" }}
+       bg={colors['white-1']}
+       p="lg"
+       radius="md"
+       shadow="sm"
+     >
+       <Stack gap="md">
+         <Text fz="2xl" fw="bold" c={colors['blue-button']}>
+           Detail Data Kelahiran
+         </Text>
+
+
+         <Paper bg="#ECEEF8" p="md" radius="md" shadow="xs">
+           <Stack gap="sm">
+             <Box>
+               <Text fz="lg" fw="bold">Nama</Text>
+               <Text fz="md" c="dimmed">{data.nama || '-'}</Text>
+             </Box>
+
+
+             <Box>
+               <Text fz="lg" fw="bold">Tanggal</Text>
+               <Text fz="md" c="dimmed">
+                 {new Date(data.tanggal).toLocaleDateString("id-ID", {
+                   day: "2-digit",
+                   month: "long",
+                   year: "numeric",
+                 })}
+               </Text>
+             </Box>
+
+
+             <Box>
+               <Text fz="lg" fw="bold">Jenis Kelamin</Text>
+               <Text fz="md" c="dimmed">{data.jenisKelamin || '-'}</Text>
+             </Box>
+
+
+             <Box>
+               <Text fz="lg" fw="bold">Alamat</Text>
+               <Text fz="md" c="dimmed">{data.alamat || '-'}</Text>
+             </Box>
+
+
+             {/* Aksi */}
+             <Group gap="sm">
+               <Tooltip label="Hapus Data" withArrow position="top">
+                 <Button
+                   color="red"
+                   onClick={() => {
+                     setSelectedId(data.id);
+                     setModalHapus(true);
+                   }}
+                   variant="light"
+                   radius="md"
+                   size="md"
+                 >
+                   <IconTrash size={20} />
+                 </Button>
+               </Tooltip>
+
+
+               <Tooltip label="Edit Data" withArrow position="top">
+                 <Button
+                   color="green"
+                   onClick={() =>
+                     router.push(
+                       `/admin/kesehatan/data-kesehatan-warga/persentase_data_kelahiran_kematian/kelahiran/${data.id}/edit`
+                     )
+                   }
+                   variant="light"
+                   radius="md"
+                   size="md"
+                 >
+                   <IconEdit size={20} />
+                 </Button>
+               </Tooltip>
+             </Group>
+           </Stack>
+         </Paper>
+       </Stack>
+     </Paper>
+
+
+     {/* Modal Konfirmasi Hapus */}
+     <ModalKonfirmasiHapus
+       opened={modalHapus}
+       onClose={() => setModalHapus(false)}
+       onConfirm={handleHapus}
+       text="Apakah anda yakin ingin menghapus data ini?"
+     />
+   </Box>
+ );
 }
+
 
 export default DetailKelahiran;

@@ -1,99 +1,164 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
+import {
+  Box,
+  Button,
+  Center,
+  Group,
+  Paper,
+  Pagination,
+  Skeleton,
+  Stack,
+  Table,
+  TableTbody,
+  TableTd,
+  TableTh,
+  TableThead,
+  TableTr,
+  Text,
+  Title,
+  Tooltip,
+} from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { IconDeviceImacCog, IconSearch } from '@tabler/icons-react';
+import { IconArrowBack, IconDeviceImacCog, IconPlus, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../../_com/header';
-import JudulList from '../../../_com/judulList';
 import artikelKesehatanState from '../../../_state/kesehatan/data_kesehatan_warga/artikelKesehatan';
 import { useState } from 'react';
 
-
 function ArtikelKesehatan() {
+  const router = useRouter();
   const [search, setSearch] = useState("");
+
   return (
     <Box>
+      {/* Tombol Back */}
+      <Box mb={10}>
+        <Button variant="subtle" onClick={() => router.back()}>
+          <IconArrowBack color={colors["blue-button"]} size={25} />
+        </Button>
+      </Box>
+
+      {/* Header Search */}
       <HeaderSearch
         title='Artikel Kesehatan'
-        placeholder='pencarian'
+        placeholder='Cari judul atau konten...'
         searchIcon={<IconSearch size={20} />}
         value={search}
         onChange={(e) => setSearch(e.currentTarget.value)}
       />
+
       <ListArtikelKesehatan search={search} />
     </Box>
   );
 }
 
 function ListArtikelKesehatan({ search }: { search: string }) {
-  const stateArtikelKesehatan = useProxy(artikelKesehatanState)
+  const stateArtikel = useProxy(artikelKesehatanState);
   const router = useRouter();
 
+  const { data, page, totalPages, loading, load } = stateArtikel.findMany;
+
   useShallowEffect(() => {
-    stateArtikelKesehatan.findMany.load()
-  }, [])
+    load(page, 10, search);
+  }, [page, search]);
 
-  const filteredData = (stateArtikelKesehatan.findMany.data || []).filter(item => {
-    const keyword = search.toLowerCase();
+  const filteredData = data || [];
+
+  if (loading || !data) {
     return (
-      item.title.toLowerCase().includes(keyword) ||
-      item.content.toLowerCase().includes(keyword)
+      <Stack py={10}>
+        <Skeleton height={600} radius="md" />
+      </Stack>
     );
-  });
-
-  if (!stateArtikelKesehatan.findMany.data) {
-    return (
-      <Box py={10}>
-        <Skeleton h={500} />
-      </Box>
-    )
   }
+
   return (
     <Box py={10}>
-      <Paper bg={colors['white-1']} p={'md'}>
-        <Stack>
-          <JudulList
-            title='List Artikel Kesehatan'
-            href='/admin/kesehatan/data-kesehatan-warga/artikel_kesehatan/create'
-          />
-          <Box style={{ overflowX: "auto" }}>
-            <Table striped withRowBorders withTableBorder style={{ minWidth: '700px' }}>
-              <TableThead>
-                <TableTr>
-                  <TableTh>Judul</TableTh>
-                  <TableTh>Content</TableTh>
-                  <TableTh>Detail</TableTh>
-                </TableTr>
-              </TableThead>
-              <TableTbody>
-                {filteredData.map((item) => (
+      <Paper withBorder bg={colors['white-1']} p={'lg'} shadow="md" radius="md">
+        {/* Judul + Tombol Tambah */}
+        <Group justify="space-between" mb="md">
+          <Title order={4}>Daftar Artikel Kesehatan</Title>
+          <Tooltip label="Tambah Artikel Kesehatan" withArrow>
+            <Button
+              leftSection={<IconPlus size={18} />}
+              color="blue"
+              variant="light"
+              onClick={() => router.push('/admin/kesehatan/data-kesehatan-warga/artikel_kesehatan/create')}
+            >
+              Tambah Baru
+            </Button>
+          </Tooltip>
+        </Group>
+
+        {/* Tabel */}
+        <Box style={{ overflowX: "auto" }}>
+          <Table highlightOnHover>
+            <TableThead>
+              <TableTr>
+                <TableTh>Judul</TableTh>
+                <TableTh>Konten</TableTh>
+                <TableTh>Aksi</TableTh>
+              </TableTr>
+            </TableThead>
+            <TableTbody>
+              {filteredData.length > 0 ? (
+                filteredData.map((item) => (
                   <TableTr key={item.id}>
                     <TableTd>
-                      <Box w={100}>
-                        <Text truncate={'end'} lineClamp={1} fz={'h5'}>{item.title}</Text>
-                      </Box>
+                      <Text fw={500} truncate="end" lineClamp={1}>
+                        {item.title}
+                      </Text>
                     </TableTd>
                     <TableTd>
-                      <Box w={200}>
-                        <Text truncate={'end'} lineClamp={1} fz={'h5'}>{item.content}</Text>
-                      </Box>
+                      <Text truncate fz="sm" c="dimmed" lineClamp={1}>
+                        {item.content}
+                      </Text>
                     </TableTd>
                     <TableTd>
-                      <Button onClick={() => router.push(`/admin/kesehatan/data-kesehatan-warga/artikel_kesehatan/${item.id}`)}>
-                        <IconDeviceImacCog size={25} />
+                      <Button
+                        variant="light"
+                        color="blue"
+                        onClick={() => router.push(`/admin/kesehatan/data-kesehatan-warga/artikel_kesehatan/${item.id}`)}
+                      >
+                        <IconDeviceImacCog size={20} />
+                        <Text ml={5}>Detail</Text>
                       </Button>
                     </TableTd>
                   </TableTr>
-                ))}
-              </TableTbody>
-            </Table>
-          </Box>
-        </Stack>
+                ))
+              ) : (
+                <TableTr>
+                  <TableTd colSpan={3}>
+                    <Center py={20}>
+                      <Text color="dimmed">Tidak ada artikel yang cocok</Text>
+                    </Center>
+                  </TableTd>
+                </TableTr>
+              )}
+            </TableTbody>
+          </Table>
+        </Box>
       </Paper>
+
+      {/* Pagination */}
+      <Center>
+        <Pagination
+          value={page}
+          onChange={(newPage) => {
+            load(newPage, 10);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          total={totalPages}
+          mt="md"
+          mb="md"
+          color="blue"
+          radius="md"
+        />
+      </Center>
     </Box>
-  )
+  );
 }
 
 export default ArtikelKesehatan;

@@ -2,9 +2,9 @@
 import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
 import jadwalKegiatanState from '@/app/admin/(dashboard)/_state/kesehatan/data_kesehatan_warga/jadwalKegiatan';
 import colors from '@/con/colors';
-import { Box, Button, Flex, Paper, Skeleton, Stack, Text } from '@mantine/core';
+import { Box, Button, Group, Paper, Skeleton, Stack, Text, Tooltip } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { IconArrowBack, IconEdit, IconX } from '@tabler/icons-react';
+import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
@@ -32,83 +32,128 @@ function DetailJadwalKegiatan() {
   if (!stateJadwalKegiatan.findUnique.data) {
     return (
       <Stack py={10}>
-        <Skeleton h={500} />
+        <Skeleton height={500} radius="md" />
       </Stack>
     )
   }
 
+  const data = stateJadwalKegiatan.findUnique.data
 
   return (
-    <Box>
-      <Box mb={10}>
-        <Button variant="subtle" onClick={() => router.back()}>
-          <IconArrowBack color={colors['blue-button']} size={25} />
-        </Button>
-      </Box>
-      <Paper w={{ base: "100%", md: "50%" }} bg={colors['white-1']} p={'md'}>
-        <Stack>
-          <Text fz={"xl"} fw={"bold"}>Detail Jadwal Kegiatan</Text>
-          {stateJadwalKegiatan.findUnique.data ? (
-            <Paper bg={colors['BG-trans']} p={'md'}>
-              <Stack gap={"xs"}>
-                <Box>
-                  <Text fz={"lg"} fw={"bold"}>Nama Kegiatan</Text>
-                  <Text fz={"md"}>{stateJadwalKegiatan.findUnique.data.content}</Text>
-                </Box>
-                <Box>
-                  <Text fz={"lg"} fw={"bold"}>Informasi</Text>
-                  <Text fz={"md"} fw={"bold"}>Nama</Text>
-                  <Text fz={"md"}>{stateJadwalKegiatan.findUnique.data.informasijadwalkegiatan.name}</Text>
-                  <Text fz={"md"} fw={"bold"}>Tanggal</Text>
-                  <Text fz={"md"}>{stateJadwalKegiatan.findUnique.data.informasijadwalkegiatan.tanggal}</Text>
-                  <Text fz={"md"} fw={"bold"}>Waktu</Text>
-                  <Text fz={"md"}>{stateJadwalKegiatan.findUnique.data.informasijadwalkegiatan.waktu}</Text>
-                  <Text fz={"md"} fw={"bold"}>Lokasi</Text>
-                  <Text fz={"md"}>{stateJadwalKegiatan.findUnique.data.informasijadwalkegiatan.lokasi}</Text>
-                </Box>
-                <Box>
-                  <Text fz={"lg"} fw={"bold"}>Deskripsi</Text>
-                  <Text fz={"md"} dangerouslySetInnerHTML={{ __html: stateJadwalKegiatan.findUnique.data.deskripsijadwalkegiatan.deskripsi }} />
-                </Box>
-                <Box>
-                  <Text fz={"lg"} fw={"bold"}>Layanan</Text>
-                  <Text fz={"md"} dangerouslySetInnerHTML={{ __html: stateJadwalKegiatan.findUnique.data.layananjadwalkegiatan.content }} />
-                </Box>
-                <Box>
-                  <Text fz={"lg"} fw={"bold"}>Syarat Ketentuan</Text>
-                  <Text fz={"md"} dangerouslySetInnerHTML={{ __html: stateJadwalKegiatan.findUnique.data.syaratketentuanjadwalkegiatan.content}} />
-                </Box>
-                <Box>
-                  <Text fz={"lg"} fw={"bold"}>Dokumen</Text>
-                  <Text fz={"md"} dangerouslySetInnerHTML={{ __html: stateJadwalKegiatan.findUnique.data.dokumenjadwalkegiatan.content }} />
-                </Box>
-                <Box>
-                  <Text fz={"lg"} fw={"bold"}>Prosedur Pendaftaran</Text>
-                  <Text fz={"md"}>{stateJadwalKegiatan.findUnique.data.pendaftaranjadwalkegiatan.name}</Text>
-                  <Text fz={"md"}>{stateJadwalKegiatan.findUnique.data.pendaftaranjadwalkegiatan.tanggal}</Text>
-                  <Text fz={"md"}>{stateJadwalKegiatan.findUnique.data.pendaftaranjadwalkegiatan.namaOrangtua}</Text>
-                  <Text fz={"md"}>{stateJadwalKegiatan.findUnique.data.pendaftaranjadwalkegiatan.nomor}</Text>
-                  <Text fz={"md"}>{stateJadwalKegiatan.findUnique.data.pendaftaranjadwalkegiatan.alamat}</Text>
-                  <Text fz={"md"} dangerouslySetInnerHTML={{ __html: stateJadwalKegiatan.findUnique.data.pendaftaranjadwalkegiatan.catatan }} />
-                </Box>
-                <Box>
-                  <Flex gap={"xs"}>
-                    <Button color="red" onClick={() => {
-                      if (stateJadwalKegiatan.findUnique.data) {
-                        setSelectedId(stateJadwalKegiatan.findUnique.data.id)
-                        setModalHapus(true)
-                      }
-                    }}>
-                      <IconX size={20} />
-                    </Button>
-                    <Button onClick={() => router.push(`/admin/kesehatan/data-kesehatan-warga/jadwal_kegiatan/${stateJadwalKegiatan.findUnique.data?.id}/edit`)} color="green">
-                      <IconEdit size={20} />
-                    </Button>
-                  </Flex>
-                </Box>
-              </Stack>
-            </Paper>
-          ) : null}
+    <Box py={10}>
+      {/* Tombol Back */}
+      <Button
+        variant="subtle"
+        onClick={() => router.back()}
+        leftSection={<IconArrowBack size={24} color={colors['blue-button']} />}
+        mb={15}
+      >
+        Kembali
+      </Button>
+
+      {/* Wrapper Detail */}
+      <Paper
+        withBorder
+        w={{ base: "100%", md: "50%" }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+      >
+        <Stack gap="md">
+          <Text fz="2xl" fw="bold" c={colors['blue-button']}>
+            Detail Jadwal Kegiatan
+          </Text>
+
+          <Paper bg="#ECEEF8" p="md" radius="md" shadow="xs">
+            <Stack gap="sm">
+              {/* Nama Kegiatan */}
+              <Box>
+                <Text fz="lg" fw="bold">Nama Kegiatan</Text>
+                <Text fz="md" c="dimmed">{data.content || '-'}</Text>
+              </Box>
+
+              {/* Informasi */}
+              <Box>
+                <Text fz="lg" fw="bold">Informasi</Text>
+                <Text fz="md" fw="bold">Nama</Text>
+                <Text fz="md" c="dimmed">{data.informasijadwalkegiatan.name || '-'}</Text>
+                <Text fz="md" fw="bold">Tanggal</Text>
+                <Text fz="md" c="dimmed">{data.informasijadwalkegiatan.tanggal || '-'}</Text>
+                <Text fz="md" fw="bold">Waktu</Text>
+                <Text fz="md" c="dimmed">{data.informasijadwalkegiatan.waktu || '-'}</Text>
+                <Text fz="md" fw="bold">Lokasi</Text>
+                <Text fz="md" c="dimmed">{data.informasijadwalkegiatan.lokasi || '-'}</Text>
+              </Box>
+
+              {/* Deskripsi */}
+              <Box>
+                <Text fz="lg" fw="bold">Deskripsi</Text>
+                <Text fz="md" c="dimmed" dangerouslySetInnerHTML={{ __html: data.deskripsijadwalkegiatan.deskripsi }} />
+              </Box>
+
+              {/* Layanan */}
+              <Box>
+                <Text fz="lg" fw="bold">Layanan</Text>
+                <Text fz="md" c="dimmed" dangerouslySetInnerHTML={{ __html: data.layananjadwalkegiatan.content }} />
+              </Box>
+
+              {/* Syarat Ketentuan */}
+              <Box>
+                <Text fz="lg" fw="bold">Syarat Ketentuan</Text>
+                <Text fz="md" c="dimmed" dangerouslySetInnerHTML={{ __html: data.syaratketentuanjadwalkegiatan.content }} />
+              </Box>
+
+              {/* Dokumen */}
+              <Box>
+                <Text fz="lg" fw="bold">Dokumen</Text>
+                <Text fz="md" c="dimmed" dangerouslySetInnerHTML={{ __html: data.dokumenjadwalkegiatan.content }} />
+              </Box>
+
+              {/* Prosedur Pendaftaran */}
+              <Box>
+                <Text fz="lg" fw="bold">Prosedur Pendaftaran</Text>
+                <Text fz="md" c="dimmed">{data.pendaftaranjadwalkegiatan.name}</Text>
+                <Text fz="md" c="dimmed">{data.pendaftaranjadwalkegiatan.tanggal}</Text>
+                <Text fz="md" c="dimmed">{data.pendaftaranjadwalkegiatan.namaOrangtua}</Text>
+                <Text fz="md" c="dimmed">{data.pendaftaranjadwalkegiatan.nomor}</Text>
+                <Text fz="md" c="dimmed">{data.pendaftaranjadwalkegiatan.alamat}</Text>
+                <Text fz="md" c="dimmed" dangerouslySetInnerHTML={{ __html: data.pendaftaranjadwalkegiatan.catatan }} />
+              </Box>
+
+              {/* Aksi */}
+              <Group gap="sm">
+                <Tooltip label="Hapus Data" withArrow position="top">
+                  <Button
+                    color="red"
+                    onClick={() => {
+                      setSelectedId(data.id)
+                      setModalHapus(true)
+                    }}
+                    variant="light"
+                    radius="md"
+                    size="md"
+                  >
+                    <IconTrash size={20} />
+                  </Button>
+                </Tooltip>
+
+                <Tooltip label="Edit Data" withArrow position="top">
+                  <Button
+                    color="green"
+                    onClick={() =>
+                      router.push(`/admin/kesehatan/data-kesehatan-warga/jadwal_kegiatan/${data.id}/edit`)
+                    }
+                    variant="light"
+                    radius="md"
+                    size="md"
+                  >
+                    <IconEdit size={20} />
+                  </Button>
+                </Tooltip>
+              </Group>
+            </Stack>
+          </Paper>
         </Stack>
       </Paper>
 

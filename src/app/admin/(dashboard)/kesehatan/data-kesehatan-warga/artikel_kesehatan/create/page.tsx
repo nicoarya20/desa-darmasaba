@@ -2,101 +2,129 @@
 import CreateEditor from '@/app/admin/(dashboard)/_com/createEditor';
 import artikelKesehatanState from '@/app/admin/(dashboard)/_state/kesehatan/data_kesehatan_warga/artikelKesehatan';
 import colors from '@/con/colors';
-import { Box, Button, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
+import {
+  Box,
+  Button,
+  Group,
+  Paper,
+  Stack,
+  Text,
+  TextInput,
+  Title,
+  Tooltip,
+} from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
-
 function CreateArtikelKesehatan() {
-  const stateArtikelKesehatan = useProxy(artikelKesehatanState)
+  const stateArtikelKesehatan = useProxy(artikelKesehatanState);
   const router = useRouter();
-
 
   const resetForm = () => {
     stateArtikelKesehatan.create.form = {
-      title: "",
-      content: "",
+      title: '',
+      content: '',
       introduction: {
-        content: "",
+        content: '',
       },
       symptom: {
-        title: "",
-        content: "",
+        title: '',
+        content: '',
       },
       prevention: {
-        title: "",
-        content: "",
+        title: '',
+        content: '',
       },
       firstAid: {
-        title: "",
-        content: "",
+        title: '',
+        content: '',
       },
       mythVsFact: {
-        title: "",
-        mitos: "",
-        fakta: "",
+        title: '',
+        mitos: '',
+        fakta: '',
       },
       doctorSign: {
-        content: ""
-      }
+        content: '',
+      },
     };
   };
 
-
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (e?: React.FormEvent) => {
+    e?.preventDefault();
     await stateArtikelKesehatan.create.submit();
-
-    toast.success("Data berhasil disimpan");
+    toast.success('Data berhasil disimpan');
     resetForm();
-    // After successful submission, redirect to the list page
     router.push('/admin/kesehatan/data-kesehatan-warga/artikel_kesehatan');
-  }
+  };
 
   return (
-    <Box component="form" onSubmit={handleSubmit}>
-      <Box mb={10}>
-        <Button variant="subtle" onClick={() => router.back()}>
-          <IconArrowBack color={colors['blue-button']} size={25} />
-        </Button>
-      </Box>
+    <Box px={{ base: 'sm', md: 'lg' }} py="md" component="form" onSubmit={handleSubmit}>
+      {/* Header */}
+      <Group mb="md">
+        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
+          <Button
+            variant="subtle"
+            onClick={() => router.back()}
+            p="xs"
+            radius="md"
+          >
+            <IconArrowBack color={colors['blue-button']} size={24} />
+          </Button>
+        </Tooltip>
+        <Title order={4} ml="sm" c="dark">
+          Tambah Artikel Kesehatan
+        </Title>
+      </Group>
 
-      <Paper bg={colors['white-1']} p="md" w={{ base: '100%', md: '50%' }}>
-        <Stack gap="xs">
-          <Title order={3}>Create Artikel Kesehatan</Title>
+      {/* Form */}
+      <Paper
+        w={{ base: '100%', md: '50%' }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+        style={{ border: '1px solid #e0e0e0' }}
+      >
+        <Stack gap="md">
           <TextInput
-            label={<Text fz="sm" fw="bold">Judul</Text>}
-            placeholder="masukkan judul"
+            label={"Judul"}
+            placeholder="Masukkan judul"
             value={stateArtikelKesehatan.create.form.title}
             onChange={(e) => {
               stateArtikelKesehatan.create.form.title = e.target.value;
             }}
+            required
           />
           <TextInput
-            label={<Text fz="sm" fw="bold">Deskripsi</Text>}
-            placeholder="masukkan deskripsi"
+            label={"Deskripsi"}
+            placeholder="Masukkan deskripsi"
             value={stateArtikelKesehatan.create.form.content}
             onChange={(e) => {
               stateArtikelKesehatan.create.form.content = e.target.value;
             }}
+            required
           />
           <TextInput
-            label={<Text fz="sm" fw="bold">Pendahuluan</Text>}
-            placeholder="masukkan pendahuluan"
+            label={"Pendahuluan"}
+            placeholder="Masukkan pendahuluan"
+            required
             value={stateArtikelKesehatan.create.form.introduction.content}
             onChange={(e) => {
               stateArtikelKesehatan.create.form.introduction.content = e.target.value;
             }}
           />
+
+          {/* Gejala */}
           <Box>
-          <Text fz="md" fw="bold">Gejala</Text>
-            <Stack gap="xs">
+            <Text fz="md" fw="bold">Gejala</Text>
+            <Stack gap="sm">
               <TextInput
-                label={<Text fz="sm" fw="bold">Judul</Text>}
-                placeholder="masukkan judul gejala penyakit"
+                label={"Judul Gejala"}
+                required
+                placeholder="Masukkan judul gejala penyakit"
                 value={stateArtikelKesehatan.create.form.symptom.title}
                 onChange={(e) => {
                   stateArtikelKesehatan.create.form.symptom.title = e.target.value;
@@ -114,54 +142,62 @@ function CreateArtikelKesehatan() {
             </Stack>
           </Box>
 
-          <Box>
+          {/* Pencegahan */}
+          <Stack gap="xs">
             <Text fz="md" fw="bold">Pencegahan</Text>
             <TextInput
-              label={<Text fz="sm" fw="bold">Judul</Text>}
-              placeholder="masukkan judul"
+              label={"Judul Pencegahan"}
+              required
+              placeholder="Masukkan judul"
               value={stateArtikelKesehatan.create.form.prevention.title}
               onChange={(e) => {
                 stateArtikelKesehatan.create.form.prevention.title = e.target.value;
               }}
             />
+            <Text fz="sm">Deskripsi Pencegahan</Text>
             <CreateEditor
               value={stateArtikelKesehatan.create.form.prevention.content}
               onChange={(e) => {
                 stateArtikelKesehatan.create.form.prevention.content = e;
               }}
             />
-          </Box>
-          <Box>
+          </Stack>
+
+          {/* Pertolongan Pertama */}
+          <Stack gap={"xs"}>
             <Text fz="md" fw="bold">Pertolongan Pertama</Text>
             <TextInput
-              label={<Text fz="sm" fw="bold">Judul</Text>}
-              placeholder="masukkan judul"
+              label={"Judul Pertolongan Pertama"}
+              required
+              placeholder="Masukkan judul"
               value={stateArtikelKesehatan.create.form.firstAid.title}
               onChange={(e) => {
                 stateArtikelKesehatan.create.form.firstAid.title = e.target.value;
               }}
             />
+            <Text fz="sm">Deskripsi Pertolongan Pertama</Text>
             <CreateEditor
               value={stateArtikelKesehatan.create.form.firstAid.content}
               onChange={(e) => {
                 stateArtikelKesehatan.create.form.firstAid.content = e;
               }}
             />
-          </Box>
+          </Stack>
+
+          {/* Mitos vs Fakta */}
           <Box>
             <Text fz="md" fw="bold">Mitos dan Fakta</Text>
             <TextInput
-              label={<Text fz="sm" fw="bold">Judul</Text>}
-              placeholder="masukkan judul"
+              label={"Judul Mitos dan Fakta"}
+              required
+              placeholder="Masukkan judul"
               value={stateArtikelKesehatan.create.form.mythVsFact.title}
               onChange={(e) => {
                 stateArtikelKesehatan.create.form.mythVsFact.title = e.target.value;
               }}
             />
-            <Box>
-              <Text>
-                Mitos
-              </Text>
+            <Box mt="sm">
+              <Text fz="sm" fw="bold">Mitos</Text>
               <CreateEditor
                 value={stateArtikelKesehatan.create.form.mythVsFact.mitos}
                 onChange={(e) => {
@@ -169,10 +205,8 @@ function CreateArtikelKesehatan() {
                 }}
               />
             </Box>
-            <Box>
-              <Text>
-                Fakta
-              </Text>
+            <Box mt="sm">
+              <Text fz="sm" fw="bold">Fakta</Text>
               <CreateEditor
                 value={stateArtikelKesehatan.create.form.mythVsFact.fakta}
                 onChange={(e) => {
@@ -181,8 +215,10 @@ function CreateArtikelKesehatan() {
               />
             </Box>
           </Box>
+
+          {/* Kapan Harus ke Dokter */}
           <Box>
-            <Text fz="md" fw="bold">Kapan Harus Ke Dokter</Text>
+            <Text fz="md" fw="bold">Kapan Harus ke Dokter</Text>
             <CreateEditor
               value={stateArtikelKesehatan.create.form.doctorSign.content}
               onChange={(e) => {
@@ -191,9 +227,21 @@ function CreateArtikelKesehatan() {
             />
           </Box>
 
-          <Button onClick={handleSubmit} bg={colors['blue-button']}>
-            Simpan
-          </Button>
+          {/* Submit Button */}
+          <Group justify="right">
+            <Button
+              type="submit"
+              radius="md"
+              size="md"
+              style={{
+                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                color: '#fff',
+                boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
+              }}
+            >
+              Simpan
+            </Button>
+          </Group>
         </Stack>
       </Paper>
     </Box>

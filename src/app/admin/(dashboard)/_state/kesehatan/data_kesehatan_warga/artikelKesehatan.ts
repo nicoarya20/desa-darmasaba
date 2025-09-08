@@ -115,27 +115,38 @@ const artikelKesehatanState = proxy({
           };
         }>[]
       | null,
+    page: 1,
+    totalPages: 1,
     loading: false,
-    async load() {
+    search: "",
+    load: async (page = 1, limit = 10, search = "") => {
+      artikelKesehatanState.findMany.loading = true; // ✅ Akses langsung via nama path
+      artikelKesehatanState.findMany.page = page;
+      artikelKesehatanState.findMany.search = search;
+
       try {
-        this.loading = true;
-        const res = await (ApiFetch.api.kesehatan as any)["artikel-kesehatan"][
+        const query: any = { page, limit };
+        if (search) query.search = search;
+
+        const res = await ApiFetch.api.kesehatan["artikel-kesehatan"][
           "find-many"
-        ].get();
+        ].get({ query });
 
-        if (res.status === 200) {
-          this.data = res.data?.data ?? [];
+        if (res.status === 200 && res.data?.success) {
+          artikelKesehatanState.findMany.data =
+            res.data.data ?? [];
+          artikelKesehatanState.findMany.totalPages =
+            res.data.totalPages ?? 1;
         } else {
-          toast.error("Gagal memuat data artikel kesehatan");
+          artikelKesehatanState.findMany.data = [];
+          artikelKesehatanState.findMany.totalPages = 1;
         }
-
-        return res;
       } catch (err) {
-        toast.error("Terjadi error saat load data");
-        console.error("LOAD ERROR:", err);
-        throw err;
+        console.error("Gagal fetch artikel kesehatan paginated:", err);
+        artikelKesehatanState.findMany.data = [];
+        artikelKesehatanState.findMany.totalPages = 1;
       } finally {
-        this.loading = false;
+        artikelKesehatanState.findMany.loading = false;
       }
     },
   },
@@ -280,12 +291,9 @@ const artikelKesehatanState = proxy({
     async byId(id: string) {
       try {
         artikelKesehatanState.delete.loading = true;
-        const res = await fetch(
-          `/api/kesehatan/artikel-kesehatan/del/${id}`,
-          {
-            method: "DELETE",
-          }
-        );
+        const res = await fetch(`/api/kesehatan/artikel-kesehatan/del/${id}`, {
+          method: "DELETE",
+        });
 
         const result = await res.json();
         if (res.ok && result.success) {

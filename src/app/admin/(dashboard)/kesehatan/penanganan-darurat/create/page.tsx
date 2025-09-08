@@ -1,9 +1,25 @@
 'use client'
 import colors from '@/con/colors';
 import ApiFetch from '@/lib/api-fetch';
-import { Box, Button, Group, Image, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
+import {
+  Box,
+  Button,
+  Group,
+  Image,
+  Paper,
+  Stack,
+  Text,
+  TextInput,
+  Title,
+  Tooltip,
+} from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
-import { IconArrowBack, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
+import {
+  IconArrowBack,
+  IconPhoto,
+  IconUpload,
+  IconX,
+} from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
@@ -11,18 +27,17 @@ import { useProxy } from 'valtio/utils';
 import CreateEditor from '../../../_com/createEditor';
 import penangananDarurat from '../../../_state/kesehatan/penanganan-darurat/penangananDarurat';
 
-
 function CreatePenangananDarurat() {
   const router = useRouter();
-  const penangananDaruratState = useProxy(penangananDarurat)
+  const penangananDaruratState = useProxy(penangananDarurat);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
 
   const resetForm = () => {
     penangananDaruratState.create.form = {
-      name: "",
-      deskripsi: "",
-      imageId: "",
+      name: '',
+      deskripsi: '',
+      imageId: '',
     };
     setPreviewImage(null);
     setFile(null);
@@ -30,7 +45,7 @@ function CreatePenangananDarurat() {
 
   const handleSubmit = async () => {
     if (!file) {
-      return toast.warn("Pilih file gambar terlebih dahulu");
+      return toast.warn('Pilih file gambar terlebih dahulu');
     }
 
     const res = await ApiFetch.api.fileStorage.create.post({
@@ -40,7 +55,7 @@ function CreatePenangananDarurat() {
 
     const uploaded = res.data?.data;
     if (!uploaded?.id) {
-      return toast.error("Gagal upload gambar");
+      return toast.error('Gagal upload gambar');
     }
 
     penangananDaruratState.create.form.imageId = uploaded.id;
@@ -48,31 +63,52 @@ function CreatePenangananDarurat() {
     await penangananDaruratState.create.create();
 
     resetForm();
-    router.push("/admin/kesehatan/penanganan-darurat")
-  }
+    router.push('/admin/kesehatan/penanganan-darurat');
+  };
+
   return (
-    <Box>
-      <Box mb={10}>
-        <Button variant="subtle" onClick={() => router.back()}>
-          <IconArrowBack color={colors['blue-button']} size={25} />
-        </Button>
-      </Box>
+    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+      {/* Header */}
+      <Group mb="md">
+        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
+          <Button
+            variant="subtle"
+            onClick={() => router.back()}
+            p="xs"
+            radius="md"
+          >
+            <IconArrowBack color={colors['blue-button']} size={24} />
+          </Button>
+        </Tooltip>
+        <Title order={4} ml="sm" c="dark">
+          Tambah Penanganan Darurat
+        </Title>
+      </Group>
 
-      <Paper bg={colors['white-1']} p="md" w={{ base: '100%', md: '50%' }}>
-        <Stack gap="xs">
-          <Title order={3}>Create Penanganan Darurat</Title>
-
+      {/* Form */}
+      <Paper
+        w={{ base: '100%', md: '50%' }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+        style={{ border: '1px solid #e0e0e0' }}
+      >
+        <Stack gap="md">
+          {/* Judul */}
           <TextInput
+            label={<Text fw="bold" fz="sm">Judul</Text>}
+            placeholder="Masukkan judul"
             value={penangananDaruratState.create.form.name}
             onChange={(val) => {
               penangananDaruratState.create.form.name = val.target.value;
             }}
-            label={<Text fz="sm" fw="bold">Judul</Text>}
-            placeholder="masukkan judul"
+            required
           />
 
+          {/* Deskripsi */}
           <Box>
-            <Text fz="sm" fw="bold">Deskripsi</Text>
+            <Text fw="bold" fz="sm">Deskripsi</Text>
             <CreateEditor
               value={penangananDaruratState.create.form.deskripsi}
               onChange={(val) => {
@@ -80,30 +116,49 @@ function CreatePenangananDarurat() {
               }}
             />
           </Box>
+
+          {/* Upload Gambar */}
           <Box>
-            <Text fz={"md"} fw={"bold"}>Gambar</Text>
+            <Text fw="bold" fz="sm">Gambar</Text>
             <Box>
               <Dropzone
                 onDrop={(files) => {
-                  const selectedFile = files[0]; // Ambil file pertama
+                  const selectedFile = files[0];
                   if (selectedFile) {
                     setFile(selectedFile);
-                    setPreviewImage(URL.createObjectURL(selectedFile)); // Buat preview
+                    setPreviewImage(URL.createObjectURL(selectedFile));
                   }
                 }}
                 onReject={() => toast.error('File tidak valid.')}
-                maxSize={5 * 1024 ** 2} // Maks 5MB
+                maxSize={5 * 1024 ** 2}
                 accept={{ 'image/*': [] }}
               >
-                <Group justify="center" gap="xl" mih={220} style={{ pointerEvents: 'none' }}>
+                <Group
+                  justify="center"
+                  gap="xl"
+                  mih={220}
+                  style={{ pointerEvents: 'none' }}
+                >
                   <Dropzone.Accept>
-                    <IconUpload size={52} color="var(--mantine-color-blue-6)" stroke={1.5} />
+                    <IconUpload
+                      size={52}
+                      color="var(--mantine-color-blue-6)"
+                      stroke={1.5}
+                    />
                   </Dropzone.Accept>
                   <Dropzone.Reject>
-                    <IconX size={52} color="var(--mantine-color-red-6)" stroke={1.5} />
+                    <IconX
+                      size={52}
+                      color="var(--mantine-color-red-6)"
+                      stroke={1.5}
+                    />
                   </Dropzone.Reject>
                   <Dropzone.Idle>
-                    <IconPhoto size={52} color="var(--mantine-color-dimmed)" stroke={1.5} />
+                    <IconPhoto
+                      size={52}
+                      color="var(--mantine-color-dimmed)"
+                      stroke={1.5}
+                    />
                   </Dropzone.Idle>
 
                   <div>
@@ -117,7 +172,6 @@ function CreatePenangananDarurat() {
                 </Group>
               </Dropzone>
 
-              {/* Tampilkan preview kalau ada */}
               {previewImage && (
                 <Box mt="sm">
                   <Image
@@ -133,12 +187,24 @@ function CreatePenangananDarurat() {
                   />
                 </Box>
               )}
-
             </Box>
           </Box>
-          <Button onClick={handleSubmit} bg={colors['blue-button']}>
-            Simpan
-          </Button>
+
+          {/* Button Simpan */}
+          <Group justify="right">
+            <Button
+              onClick={handleSubmit}
+              radius="md"
+              size="md"
+              style={{
+                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                color: '#fff',
+                boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
+              }}
+            >
+              Simpan
+            </Button>
+          </Group>
         </Stack>
       </Paper>
     </Box>
