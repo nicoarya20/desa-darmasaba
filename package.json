@@ -3,11 +3,9 @@
   "version": "0.1.5",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
-    "prisma:seed": "bun run prisma/seed.ts"
+    "dev": "bun --bun next dev",
+    "build": "bun --bun next build",
+    "start": "bun --bun next start"
   },
   "prisma": {
     "seed": "bun run prisma/seed.ts"
