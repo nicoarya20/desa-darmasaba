@@ -100,7 +100,7 @@ function DetailSuratKeterangan() {
 
               <Box>
                 <Text fz="lg" fw="bold">
-                  Gambar
+                Gambar Konten Pelayanan
                 </Text>
                 {data?.image?.link ? (
                   <Image
@@ -120,7 +120,7 @@ function DetailSuratKeterangan() {
 
               <Box>
                 <Text fz="lg" fw="bold">
-                  Gambar 2
+                Gambar Alur Pelayanan Surat
                 </Text>
                 {data?.image2?.link ? (
                   <Image

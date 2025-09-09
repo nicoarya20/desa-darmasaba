@@ -91,7 +91,7 @@ function EditKolaborasiInovasi() {
 
       await sdgsState.edit.update();
       toast.success("sdgs desa berhasil diperbarui!");
-      router.push("/admin/landing-page/SDGs-Desa");
+      router.push("/admin/landing-page/sdgs");
     } catch (error) {
       console.error("Error updating sdgs desa:", error);
       toast.error("Terjadi kesalahan saat memperbarui sdgs desa");

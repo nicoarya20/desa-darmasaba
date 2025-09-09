@@ -91,7 +91,7 @@ function Lokal() {
             </Text>
           </Flex>
         ) : (
-          <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="xl">
+          <SimpleGrid cols={{ base: 1, lg: 2 }} spacing="xl">
             {filteredData.map(item => {
               const handleDownload = (e: React.MouseEvent) => {
                 e.stopPropagation();
@@ -116,7 +116,7 @@ function Lokal() {
                   }}
                 >
                   <Stack h="100%" justify="space-between">
-                    <Text fz="lg" fw={600} c={colors['blue-button']} lineClamp={2}>
+                    <Text fz="lg" fw={600} c={colors['blue-button']}>
                       {item.name}
                     </Text>
                     {item?.file && (

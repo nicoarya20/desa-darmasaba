@@ -64,7 +64,7 @@ function ListSdgsDesa({ search }: { search: string }) {
                 leftSection={<IconPlus size={18} />} 
                 color={colors['blue-button']} 
                 variant="light"
-                onClick={() => router.push('/admin/landing-page/SDGs-Desa/create')}
+                onClick={() => router.push('/admin/landing-page/sdgs/create')}
               >
                 Tambah Baru
               </Button>
@@ -103,7 +103,7 @@ function ListSdgsDesa({ search }: { search: string }) {
               leftSection={<IconPlus size={18} />} 
               color={colors['blue-button']} 
               variant="light" 
-              onClick={() => router.push('/admin/landing-page/SDGs-Desa/create')}
+              onClick={() => router.push('/admin/landing-page/sdgs/create')}
             >
               Tambah Baru
             </Button>
@@ -137,7 +137,7 @@ function ListSdgsDesa({ search }: { search: string }) {
                         variant="light" 
                         color="blue" 
                         size="sm"
-                        onClick={() => router.push(`/admin/landing-page/SDGs-Desa/${item.id}`)}
+                        onClick={() => router.push(`/admin/landing-page/sdgs/${item.id}`)}
                       >
                         <IconDeviceImacCog size={18} />
                       </Button>

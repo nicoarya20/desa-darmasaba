@@ -12,6 +12,7 @@ import korupsiState from '@/app/admin/(dashboard)/_state/landing-page/desa-anti-
 import ApiFetch from '@/lib/api-fetch';
 import { Dropzone } from '@mantine/dropzone';
 import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
+import { useShallowEffect } from '@mantine/hooks';
 
 interface FormDesaAntiKorupsi {
   name: string;
@@ -34,6 +35,10 @@ export default function EditDesaAntiKorupsi() {
     kategoriId: '',
     fileId: '',
   });
+
+  useShallowEffect(() => {
+    korupsiState.kategoriDesaAntiKorupsi.findMany.load();
+  }, []);
 
   useEffect(() => {
     const loadDesaAntiKorupsi = async () => {

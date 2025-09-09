@@ -27,7 +27,7 @@ function DetailSDGSDesa() {
       sdgsState.delete.byId(selectedId)
       setModalHapus(false)
       setSelectedId(null)
-      router.push("/admin/landing-page/SDGs-Desa")
+      router.push("/admin/landing-page/sdgs")
     }
   }
 
@@ -113,7 +113,7 @@ function DetailSDGSDesa() {
                 <Tooltip label="Edit SDGs Desa" withArrow position="top">
                   <Button
                     color="green"
-                    onClick={() => router.push(`/admin/landing-page/SDGs-Desa/${data.id}/edit`)}
+                    onClick={() => router.push(`/admin/landing-page/sdgs/${data.id}/edit`)}
                     variant="light"
                     radius="md"
                     size="md"

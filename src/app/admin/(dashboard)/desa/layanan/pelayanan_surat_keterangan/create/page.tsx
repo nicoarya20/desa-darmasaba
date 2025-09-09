@@ -126,10 +126,10 @@ function CreateSuratKeterangan() {
             />
           </Box>
 
-          {/* Gambar Utama */}
+          {/* Gambar Konten Pelayanan */}
           <Box>
             <Text fw="bold" fz="sm" mb={6}>
-              Gambar Utama
+              Gambar Konten Pelayanan
             </Text>
             <Dropzone
               onDrop={(files) => {
@@ -175,10 +175,10 @@ function CreateSuratKeterangan() {
             )}
           </Box>
 
-          {/* Gambar Tambahan */}
+          {/* Gambar Alur Pelayanan Surat */}
           <Box>
             <Text fw="bold" fz="sm" mb={6}>
-              Gambar Tambahan (Opsional)
+              Gambar Alur Pelayanan Surat
             </Text>
             <Dropzone
               onDrop={(files) => {

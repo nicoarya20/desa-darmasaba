@@ -53,7 +53,7 @@ function CreateSDGsDesa() {
     await stateSDGSDesa.create.create();
 
     resetForm();
-    router.push("/admin/landing-page/SDGs-Desa")
+    router.push("/admin/landing-page/sdgs")
   }
   return (
     <Box px={{ base: 'sm', md: 'lg' }} py="md">

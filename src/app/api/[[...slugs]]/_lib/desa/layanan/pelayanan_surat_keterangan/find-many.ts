@@ -26,6 +26,10 @@ export default async function pelayananSuratKeteranganFindMany(context: Context)
         skip,
         take: limit,
         orderBy: { createdAt: 'desc' },
+        include: {
+          image: true,
+          image2: true,
+        },
       }),
       prisma.pelayananSuratKeterangan.count({ where }),
     ]);

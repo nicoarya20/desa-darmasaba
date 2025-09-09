@@ -140,7 +140,7 @@ function EditSuratKeterangan() {
           {/* Upload Gambar 1 */}
           <Box>
             <Text fw="bold" fz="sm" mb={6}>
-              Gambar 1
+            Gambar Konten Pelayanan
             </Text>
             <Dropzone
               onDrop={(files) => {
@@ -196,7 +196,7 @@ function EditSuratKeterangan() {
           {/* Upload Gambar 2 */}
           <Box>
             <Text fw="bold" fz="sm" mb={6}>
-              Gambar 2
+              Gambar Alur Pelayanan Surat
             </Text>
             <Dropzone
               onDrop={(files) => {

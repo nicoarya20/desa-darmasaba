@@ -83,7 +83,7 @@ function Slider() {
 
  const slides = data.map((item) => (
    <Carousel.Slide key={item.id} >
-     <Paper h={"100%"} pos={"relative"} style={{
+     <Paper h={height} pos={"relative"} style={{
        backgroundImage: `url(${item.image?.link})`,
        backgroundSize: "cover",
        backgroundPosition: "center",

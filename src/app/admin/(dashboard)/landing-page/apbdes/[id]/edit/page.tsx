@@ -107,7 +107,7 @@ function EditAPBDes() {
 
       await apbdesState.edit.update();
       toast.success('APBDes berhasil diperbarui!');
-      router.push('/admin/landing-page/APBDes');
+      router.push('/admin/landing-page/apbdes');
     } catch (error) {
       console.error('Error updating APBDes:', error);
       toast.error('Terjadi kesalahan saat memperbarui APBDes');
