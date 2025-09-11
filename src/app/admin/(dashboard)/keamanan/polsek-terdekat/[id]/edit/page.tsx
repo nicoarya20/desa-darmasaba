@@ -1,25 +1,43 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-'use client'
-import colors from '@/con/colors';
-import { Box, Button, Card, Group, Modal, Paper, Select, Stack, Text, TextInput, Title } from '@mantine/core';
-import { IconArrowBack } from '@tabler/icons-react';
-import { useParams, useRouter } from 'next/navigation';
-import { useProxy } from 'valtio/utils';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
-import polsekTerdekat from '@/app/admin/(dashboard)/_state/keamanan/polsek-terdekat';
+import colors from "@/con/colors";
+import {
+  Box,
+  Button,
+  Card,
+  Group,
+  Modal,
+  Paper,
+  Select,
+  Stack,
+  Text,
+  TextInput,
+  Title,
+  Tooltip,
+} from "@mantine/core";
+import { IconArrowBack } from "@tabler/icons-react";
+import { useParams, useRouter } from "next/navigation";
+import { useProxy } from "valtio/utils";
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import polsekTerdekat from "@/app/admin/(dashboard)/_state/keamanan/polsek-terdekat";
 
-function CreatePolsekTerdekat() {
-  const polsekState = useProxy(polsekTerdekat)
+function EditPolsekTerdekat() {
+  const polsekState = useProxy(polsekTerdekat);
   const params = useParams();
   const router = useRouter();
-  const [layananOptions, setLayananOptions] = useState<{ value: string; label: string }[]>([]);
+
+  const [layananOptions, setLayananOptions] = useState<
+    { value: string; label: string }[]
+  >([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalUpdateOpen, setModalUpdateOpen] = useState(false);
   const [namaLayananBaru, setNamaLayananBaru] = useState("");
-  const [selectedLayananId, setSelectedLayananId] = useState<string | null>(null);
+  const [selectedLayananId, setSelectedLayananId] = useState<string | null>(
+    null
+  );
   const [namaLayananUpdate, setNamaLayananUpdate] = useState("");
   const [formData, setFormData] = useState({
     nama: "",
@@ -32,7 +50,7 @@ function CreatePolsekTerdekat() {
     alamatMaps: "",
     linkPetunjukArah: "",
     layananPolsekId: "",
-  })
+  });
 
   useEffect(() => {
     const loadPolsekTerdekat = async () => {
@@ -43,16 +61,16 @@ function CreatePolsekTerdekat() {
         const data = await polsekState.edit.load(id);
         if (data) {
           setFormData({
-            nama: data.nama || '',
-            jarakKeDesa: data.jarakKeDesa || '',
-            alamat: data.alamat || '',
-            nomorTelepon: data.nomorTelepon || '',
-            jamOperasional: data.jamOperasional || '',
-            embedMapUrl: data.embedMapUrl || '',
-            namaTempatMaps: data.namaTempatMaps || '',
-            alamatMaps: data.alamatMaps || '',
-            linkPetunjukArah: data.linkPetunjukArah || '',
-            layananPolsekId: data.layananPolsekId || '',
+            nama: data.nama || "",
+            jarakKeDesa: data.jarakKeDesa || "",
+            alamat: data.alamat || "",
+            nomorTelepon: data.nomorTelepon || "",
+            jamOperasional: data.jamOperasional || "",
+            embedMapUrl: data.embedMapUrl || "",
+            namaTempatMaps: data.namaTempatMaps || "",
+            alamatMaps: data.alamatMaps || "",
+            linkPetunjukArah: data.linkPetunjukArah || "",
+            layananPolsekId: data.layananPolsekId || "",
           });
         }
       } catch (error) {
@@ -64,53 +82,41 @@ function CreatePolsekTerdekat() {
     loadPolsekTerdekat();
   }, [params?.id]);
 
-
   const handleSubmit = async () => {
     try {
       polsekState.edit.form = {
         ...polsekState.edit.form,
-        nama: formData.nama,
-        jarakKeDesa: formData.jarakKeDesa,
-        alamat: formData.alamat,
-        nomorTelepon: formData.nomorTelepon,
-        jamOperasional: formData.jamOperasional,
-        embedMapUrl: formData.embedMapUrl,
-        namaTempatMaps: formData.namaTempatMaps,
-        alamatMaps: formData.alamatMaps,
-        linkPetunjukArah: formData.linkPetunjukArah,
-        layananPolsekId: formData.layananPolsekId,
-      }
-      await polsekState.edit.update()
-      toast.success("Polsek terdekat berhasil diperbarui!")
-      router.push("/admin/keamanan/polsek-terdekat")
+        ...formData,
+      };
+      await polsekState.edit.update();
+      toast.success("Polsek terdekat berhasil diperbarui!");
+      router.push("/admin/keamanan/polsek-terdekat");
     } catch (error) {
       console.error("Error updating polsek terdekat:", error);
-      toast.error("Gagal memuat data polsek terdekat");
+      toast.error("Gagal memperbarui data polsek terdekat");
     }
-  }
+  };
 
   const fetchLayanan = async () => {
     try {
-      const res = await fetch("/api/keamanan/layanan-polsek/find-many")
-      const data = await res.json()
+      const res = await fetch("/api/keamanan/layanan-polsek/find-many");
+      const data = await res.json();
 
       if (data.success) {
-        const options = data.data.map((item: any) => {
-          return {
-            value: item.id,
-            label: item.nama
-          }
-        })
-        setLayananOptions(options)
+        const options = data.data.map((item: any) => ({
+          value: item.id,
+          label: item.nama,
+        }));
+        setLayananOptions(options);
       }
     } catch {
-      toast.error("Gagal memuat layanan polsek")
+      toast.error("Gagal memuat layanan polsek");
     }
-  }
-
+  };
 
   const handleTambahLayanan = async () => {
-    if (!namaLayananBaru.trim()) return toast.warn("Nama layanan tidak boleh kosong");
+    if (!namaLayananBaru.trim())
+      return toast.warn("Nama layanan tidak boleh kosong");
 
     try {
       const res = await fetch("/api/keamanan/layanan-polsek/create", {
@@ -140,7 +146,8 @@ function CreatePolsekTerdekat() {
   };
 
   const handleUpdateLayanan = async (id: string, namaBaru: string) => {
-    if (!namaBaru.trim()) return toast.warn("Nama layanan tidak boleh kosong");
+    if (!namaBaru.trim())
+      return toast.warn("Nama layanan tidak boleh kosong");
 
     try {
       const res = await fetch(`/api/keamanan/layanan-polsek/update/${id}`, {
@@ -151,7 +158,7 @@ function CreatePolsekTerdekat() {
       const data = await res.json();
 
       if (data.success) {
-        await fetchLayanan(); // Refresh list
+        await fetchLayanan();
         toast.success("Layanan berhasil diupdate!");
         setModalUpdateOpen(false);
         setNamaLayananUpdate("");
@@ -174,8 +181,10 @@ function CreatePolsekTerdekat() {
       const data = await res.json();
 
       if (data.success) {
-        await fetchLayanan(); // Refresh list
-        setLayananOptions((prev) => prev.filter((layanan) => layanan.value !== id));
+        await fetchLayanan();
+        setLayananOptions((prev) =>
+          prev.filter((layanan) => layanan.value !== id)
+        );
         toast.success("Layanan berhasil dihapus!");
       } else {
         toast.error(data.message || "Gagal menghapus layanan");
@@ -185,13 +194,13 @@ function CreatePolsekTerdekat() {
     }
   };
 
-
   useEffect(() => {
     fetchLayanan();
   }, []);
 
   return (
-    <Box>
+    <Box px={{ base: "sm", md: "lg" }} py="md">
+      {/* Modal Tambah */}
       <Modal
         opened={modalOpen}
         onClose={() => setModalOpen(false)}
@@ -209,10 +218,11 @@ function CreatePolsekTerdekat() {
         </Stack>
       </Modal>
 
+      {/* Modal Update */}
       <Modal
         opened={modalUpdateOpen}
         onClose={() => setModalUpdateOpen(false)}
-        title="Tambah Layanan Polsek"
+        title="Update Layanan Polsek"
         centered
       >
         <Stack>
@@ -222,148 +232,197 @@ function CreatePolsekTerdekat() {
             value={namaLayananUpdate}
             onChange={(e) => setNamaLayananUpdate(e.currentTarget.value)}
           />
-          <Button onClick={() => {
-            if (!selectedLayananId) return toast.warn("ID layanan tidak ditemukan");
-            handleUpdateLayanan(selectedLayananId, namaLayananUpdate);
-          }}>Simpan</Button>
+          <Button
+            onClick={() => {
+              if (!selectedLayananId)
+                return toast.warn("ID layanan tidak ditemukan");
+              handleUpdateLayanan(selectedLayananId, namaLayananUpdate);
+            }}
+          >
+            Simpan
+          </Button>
         </Stack>
       </Modal>
 
-      <Box mb={10}>
-        <Button onClick={() => router.back()} variant='subtle' color={'blue'}>
-          <IconArrowBack color={colors['blue-button']} size={25} />
-        </Button>
-      </Box>
+      {/* Header */}
+      <Group mb="md">
+        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
+          <Button
+            variant="subtle"
+            onClick={() => router.back()}
+            p="xs"
+            radius="md"
+          >
+            <IconArrowBack color={colors["blue-button"]} size={24} />
+          </Button>
+        </Tooltip>
+        <Title order={4} ml="sm" c="dark">
+          Edit Polsek Terdekat
+        </Title>
+      </Group>
 
-      <Paper w={{ base: '100%', md: '50%' }} bg={colors['white-1']} p={'md'}>
-        <Stack gap={"xs"}>
-          <Title order={4}>Create Polsek Terdekat</Title>
+      {/* Form utama */}
+      <Paper
+        w={{ base: "100%", md: "50%" }}
+        bg={colors["white-1"]}
+        p="lg"
+        radius="md"
+        shadow="sm"
+        style={{ border: "1px solid #e0e0e0" }}
+      >
+        <Stack gap="md">
+          {/* Input fields */}
           <TextInput
             value={formData.nama}
-            onChange={(val) => {
-              formData.nama = val.target.value
-            }}
-            label={<Text fw={"bold"} fz={"sm"}>Nama Polsek Terdekat</Text>}
-            placeholder='Masukkan nama Polsek Terdekat'
+            onChange={(val) =>
+              setFormData({ ...formData, nama: val.target.value })
+            }
+            label="Nama Polsek Terdekat"
+            placeholder="Masukkan nama Polsek Terdekat"
+            required
           />
           <TextInput
             value={formData.jarakKeDesa}
-            onChange={(val) => {
-              formData.jarakKeDesa = val.target.value
-            }}
-            label={<Text fw={"bold"} fz={"sm"}>Jarak Polsek Terdekat</Text>}
-            placeholder='Masukkan jarak Polsek Terdekat'
+            onChange={(val) =>
+              setFormData({ ...formData, jarakKeDesa: val.target.value })
+            }
+            label="Jarak Polsek Terdekat"
+            placeholder="Masukkan jarak Polsek Terdekat"
           />
           <TextInput
             value={formData.alamat}
-            onChange={(val) => {
-              formData.alamat = val.target.value
-            }}
-            label={<Text fw={"bold"} fz={"sm"}>Alamat Polsek Terdekat</Text>}
-            placeholder='Masukkan alamat Polsek Terdekat'
+            onChange={(val) =>
+              setFormData({ ...formData, alamat: val.target.value })
+            }
+            label="Alamat Polsek Terdekat"
+            placeholder="Masukkan alamat Polsek Terdekat"
           />
           <TextInput
             value={formData.nomorTelepon}
-            onChange={(val) => {
-              formData.nomorTelepon = val.target.value
-            }}
-            label={<Text fw={"bold"} fz={"sm"}>Nomor Telepon Polsek Terdekat</Text>}
-            placeholder='Masukkan nomor telepon Polsek Terdekat'
+            onChange={(val) =>
+              setFormData({ ...formData, nomorTelepon: val.target.value })
+            }
+            label="Nomor Telepon"
+            placeholder="Masukkan nomor telepon Polsek Terdekat"
           />
           <TextInput
             value={formData.jamOperasional}
-            onChange={(val) => {
-              formData.jamOperasional = val.target.value
-            }}
-            label={<Text fw={"bold"} fz={"sm"}>Jam Operasional Polsek Terdekat</Text>}
-            placeholder='Masukkan jam operasional Polsek Terdekat'
+            onChange={(val) =>
+              setFormData({ ...formData, jamOperasional: val.target.value })
+            }
+            label="Jam Operasional"
+            placeholder="Masukkan jam operasional Polsek Terdekat"
           />
           <TextInput
             value={formData.embedMapUrl}
-            onChange={(val) => {
-              formData.embedMapUrl = val.target.value
-            }}
-            label={<Text fw={"bold"} fz={"sm"}>Embed Map URL Polsek Terdekat</Text>}
-            placeholder='Masukkan embed map url Polsek Terdekat'
+            onChange={(val) =>
+              setFormData({ ...formData, embedMapUrl: val.target.value })
+            }
+            label="Embed Map URL"
+            placeholder="Masukkan embed map url"
           />
           <TextInput
             value={formData.namaTempatMaps}
-            onChange={(val) => {
-              formData.namaTempatMaps = val.target.value
-            }}
-            label={<Text fw={"bold"} fz={"sm"}>Nama Tempat Maps Polsek Terdekat</Text>}
-            placeholder='Masukkan nama tempat maps Polsek Terdekat'
+            onChange={(val) =>
+              setFormData({ ...formData, namaTempatMaps: val.target.value })
+            }
+            label="Nama Tempat Maps"
+            placeholder="Masukkan nama tempat di maps"
           />
           <TextInput
             value={formData.alamatMaps}
-            onChange={(val) => {
-              formData.alamatMaps = val.target.value
-            }}
-            label={<Text fw={"bold"} fz={"sm"}>Alamat Maps Polsek Terdekat</Text>}
-            placeholder='Masukkan alamat maps Polsek Terdekat'
+            onChange={(val) =>
+              setFormData({ ...formData, alamatMaps: val.target.value })
+            }
+            label="Alamat Maps"
+            placeholder="Masukkan alamat di maps"
           />
           <TextInput
             value={formData.linkPetunjukArah}
-            onChange={(val) => {
-              formData.linkPetunjukArah = val.target.value
-            }}
-            label={<Text fw={"bold"} fz={"sm"}>Link Petunjuk Arah Polsek Terdekat</Text>}
-            placeholder='Masukkan link petunjuk arah Polsek Terdekat'
+            onChange={(val) =>
+              setFormData({ ...formData, linkPetunjukArah: val.target.value })
+            }
+            label="Link Petunjuk Arah"
+            placeholder="Masukkan link petunjuk arah"
           />
-          {/* Tambah Dropdown Select */}
-          <Select
 
+          {/* Dropdown Layanan */}
+          <Select
             label="Layanan Polsek"
             placeholder="Pilih layanan polsek"
             data={layananOptions}
-
             value={polsekState.create.form.layananPolsekId}
             onChange={(val) => {
               polsekState.create.form.layananPolsekId = val || "";
             }}
           />
-          <Button variant="light" size="xs" onClick={() => setModalOpen(true)}>
+          <Button
+            variant="light"
+            size="xs"
+            onClick={() => setModalOpen(true)}
+          >
             + Tambah Layanan Baru
           </Button>
 
-          <Text>Daftar Layanan Polsek</Text>
+          {/* List layanan */}
+          <Text fw="bold" fz="sm">
+            Daftar Layanan Polsek
+          </Text>
           {layananOptions.map((item) => (
-            <Card style={{border: '1px solid #ccc'}} bg={colors['white-1']} p={'md'} key={item.value}>
-              <Group>
-              <Text>{item.label}</Text>
-              <Button
-                variant="light"
-                size="xs"
-                onClick={() => {
-                  setSelectedLayananId(item.value);
-                  setNamaLayananUpdate(item.label);
-                  setModalUpdateOpen(true);
-                }}
-              >
-                Edit
-              </Button>
-              <Button
-                variant="outline"
-                color="red"
-                size="xs"
-                onClick={() => handleDeleteLayanan(item.value)}
-              >
-                Hapus
-              </Button>
-            </Group>
+            <Card
+              key={item.value}
+              style={{ border: "1px solid #ccc" }}
+              bg={colors["white-1"]}
+              p="md"
+              radius="md"
+              shadow="sm"
+            >
+              <Group justify="space-between">
+                <Text>{item.label}</Text>
+                <Group>
+                  <Button
+                    variant="light"
+                    size="xs"
+                    onClick={() => {
+                      setSelectedLayananId(item.value);
+                      setNamaLayananUpdate(item.label);
+                      setModalUpdateOpen(true);
+                    }}
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    variant="outline"
+                    color="red"
+                    size="xs"
+                    onClick={() => handleDeleteLayanan(item.value)}
+                  >
+                    Hapus
+                  </Button>
+                </Group>
+              </Group>
             </Card>
           ))}
 
-
-          {/* Tambah field lainnya di sini... */}
-          <Group>
-            <Button onClick={handleSubmit} bg={colors['blue-button']}>Submit</Button>
+          {/* Submit */}
+          <Group justify="right">
+            <Button
+              onClick={handleSubmit}
+              radius="md"
+              size="md"
+              style={{
+                background: `linear-gradient(135deg, ${colors["blue-button"]}, #4facfe)`,
+                color: "#fff",
+                boxShadow: "0 4px 15px rgba(79, 172, 254, 0.4)",
+              }}
+            >
+              Simpan
+            </Button>
           </Group>
         </Stack>
       </Paper>
-    </Box >
+    </Box>
   );
-
 }
 
-export default CreatePolsekTerdekat;
+export default EditPolsekTerdekat;

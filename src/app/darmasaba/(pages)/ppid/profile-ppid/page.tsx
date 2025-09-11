@@ -65,7 +65,7 @@ function Page() {
                     <Stack gap="md">
                       <Center>
                         <Image
-                          src={item.imageUrl ? `${item.imageUrl}?t=${Date.now()}` : "/api/img/perbekel.png"}
+                          src={item.image.link ? `${item.image.link}?t=${Date.now()}` : "/perbekel.png"}
                           w={{ base: 220, md: 330 }}
                           alt="Leader photo"
                           radius="md"

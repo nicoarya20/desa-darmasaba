@@ -1216,25 +1216,40 @@ model LayananPolsek {
 
 // ========================================= KONTAK DARURAT ========================================= //
 model KontakDaruratKeamanan {
-  id          String       @id @default(uuid())
-  nama        String // contoh: "Layanan Darurat", "Fasilitas Kesehatan"
-  image       FileStorage? @relation(fields: [imageId], references: [id])
+  id          String                @id @default(uuid())
+  nama        String
+  image       FileStorage?          @relation(fields: [imageId], references: [id])
   imageId     String?
-  kontakItems KontakItem[]
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  kategori    KontakItem            @relation(fields: [kategoriId], references: [id])
+  kategoriId  String
+  kontakItems KontakDaruratToItem[]
+  createdAt   DateTime              @default(now())
+  updatedAt   DateTime              @updatedAt
+  deletedAt   DateTime?
+  isActive    Boolean               @default(true)
 }
 
 model KontakItem {
-  id           String                @id @default(uuid())
-  nama         String // contoh: "Polisi", "Ambulans", "Puskesmas Darmasaba"
-  nomorTelepon String
-  image        FileStorage?          @relation(fields: [imageId], references: [id])
-  imageId      String?
-  kategori     KontakDaruratKeamanan @relation(fields: [kategoriId], references: [id])
-  kategoriId   String
-  createdAt    DateTime              @default(now())
-  updatedAt    DateTime              @updatedAt
+  id                    String                  @id @default(uuid())
+  nama                  String
+  nomorTelepon          String
+  image                 FileStorage?            @relation(fields: [imageId], references: [id])
+  imageId               String?
+  createdAt             DateTime                @default(now())
+  updatedAt             DateTime                @updatedAt
+  deletedAt             DateTime                @default(now())
+  isActive              Boolean                 @default(true)
+  KontakDaruratToItem   KontakDaruratToItem[]
+  KontakDaruratKeamanan KontakDaruratKeamanan[]
+}
+
+model KontakDaruratToItem {
+  id              String                @id @default(uuid())
+  kontakDaruratId String
+  kontakItemId    String
+  kontakDarurat   KontakDaruratKeamanan @relation(fields: [kontakDaruratId], references: [id])
+  kontakItem      KontakItem            @relation(fields: [kontakItemId], references: [id])
+  createdAt       DateTime              @default(now())
 }
 
 // ========================================= PENCEGAHAN KRIMINALITAS ========================================= //
@@ -2106,18 +2121,18 @@ model KategoriBuku {
 // ========================================= USER ========================================= //
 
 model User {
-  id        String    @id @default(cuid())
-  username  String
-  nomor     String    @unique
-  role      Role      @relation(fields: [roleId], references: [id])
-  roleId    String    @default("1")
-  instansi  String?
+  id          String       @id @default(cuid())
+  username    String
+  nomor       String       @unique
+  role        Role         @relation(fields: [roleId], references: [id])
+  roleId      String       @default("1")
+  instansi    String?
   UserSession UserSession? // Nama instansi (Puskesmas, Sekolah, dll)
-  isActive  Boolean   @default(true)
-  lastLogin DateTime?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
+  isActive    Boolean      @default(true)
+  lastLogin   DateTime?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  deletedAt   DateTime?
 }
 
 model Role {

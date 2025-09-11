@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiFetch from "@/lib/api-fetch";
 import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
@@ -88,12 +89,37 @@ const pencegahanKriminalitasState = proxy({
           };
         }>[]
       | null,
-    async load() {
-      const res = await ApiFetch.api.keamanan.pencegahankriminalitas[
-        "find-many"
-      ].get();
-      if (res.status === 200) {
-        pencegahanKriminalitasState.findMany.data = res.data?.data ?? [];
+    page: 1,
+    totalPages: 1,
+    loading: false,
+    search: "",
+    load: async (page = 1, limit = 10, search = "") => {
+      pencegahanKriminalitasState.findMany.loading = true; // ✅ Akses langsung via nama path
+      pencegahanKriminalitasState.findMany.page = page;
+      pencegahanKriminalitasState.findMany.search = search;
+
+      try {
+        const query: any = { page, limit };
+        if (search) query.search = search;
+
+        const res = await ApiFetch.api.keamanan.pencegahankriminalitas[
+          "find-many"
+        ].get({ query });
+
+        if (res.status === 200 && res.data?.success) {
+          pencegahanKriminalitasState.findMany.data = res.data.data ?? [];
+          pencegahanKriminalitasState.findMany.totalPages =
+            res.data.totalPages ?? 1;
+        } else {
+          pencegahanKriminalitasState.findMany.data = [];
+          pencegahanKriminalitasState.findMany.totalPages = 1;
+        }
+      } catch (err) {
+        console.error("Gagal fetch pencegahan kriminalitas paginated:", err);
+        pencegahanKriminalitasState.findMany.data = [];
+        pencegahanKriminalitasState.findMany.totalPages = 1;
+      } finally {
+        pencegahanKriminalitasState.findMany.loading = false;
       }
     },
   },

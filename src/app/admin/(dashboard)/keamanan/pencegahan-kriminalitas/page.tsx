@@ -1,9 +1,26 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Paper, Skeleton, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
-import { IconDeviceImac, IconSearch } from '@tabler/icons-react';
+import {
+  Box,
+  Button,
+  Center,
+  Group,
+  Pagination,
+  Paper,
+  Skeleton,
+  Stack,
+  Table,
+  TableTbody,
+  TableTd,
+  TableTh,
+  TableThead,
+  TableTr,
+  Text,
+  Title,
+  Tooltip,
+} from '@mantine/core';
+import { IconDeviceImacCog, IconPlus, IconSearch } from '@tabler/icons-react';
 import HeaderSearch from '../../_com/header';
-import JudulList from '../../_com/judulList';
 import { useRouter } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
 import pencegahanKriminalitasState from '../../_state/keamanan/pencegahan-kriminalitas';
@@ -12,16 +29,19 @@ import { useState } from 'react';
 
 function PencegahanKriminalitas() {
   const [search, setSearch] = useState("");
+
   return (
     <Box>
+      {/* Header Search */}
       <HeaderSearch
         title='Pencegahan Kriminalitas'
-        placeholder='pencarian'
+        placeholder='Cari nama, slug, atau deskripsi...'
         searchIcon={<IconSearch size={20} />}
         value={search}
         onChange={(e) => setSearch(e.currentTarget.value)}
       />
-      <ListPencegahanKriminalitas search={search}/>
+
+      <ListPencegahanKriminalitas search={search} />
     </Box>
   );
 }
@@ -30,11 +50,19 @@ function ListPencegahanKriminalitas({ search }: { search: string }) {
   const kriminalitasState = useProxy(pencegahanKriminalitasState)
   const router = useRouter();
 
-  useShallowEffect(() => {
-    kriminalitasState.findMany.load()
-  }, [])
+  const {
+    data,
+    page,
+    totalPages,
+    loading,
+    load,
+  } = kriminalitasState.findMany;
 
-  const filteredData = (kriminalitasState.findMany.data || []).filter(item => {
+  useShallowEffect(() => {
+    load(page, 10, search);
+  }, [page, search]);
+
+  const filteredData = (data || []).filter(item => {
     const keyword = search.toLowerCase();
     return (
       item.programKeamanan.nama.toLowerCase().includes(keyword) ||
@@ -43,48 +71,111 @@ function ListPencegahanKriminalitas({ search }: { search: string }) {
     );
   });
 
-  if (!kriminalitasState.findMany.data) {
+  if (loading || !data) {
     return (
-      <Box py={10}>
-        <Skeleton h={500}/>
-      </Box>
+      <Stack py={10}>
+        <Skeleton height={600} radius="md" />
+      </Stack>
     )
   }
 
   return (
-      <Box py={10}>
-        <Paper bg={colors['white-1']} p={'md'}>
-          <JudulList
-            title='List Pencegahan Kriminalitas'
-          href='/admin/keamanan/pencegahan-kriminalitas/create'
-        />
-        <Table striped withTableBorder withRowBorders>
-          <TableThead>
-            <TableTr>
-              <TableTh>Nama Pencegahan Kriminalitas</TableTh>
-              <TableTh>Slug</TableTh>
-              <TableTh>Deskripsi</TableTh>
-              <TableTh>Detail</TableTh>
+    <Box py={10}>
+      <Paper withBorder bg={colors['white-1']} p={'lg'} shadow="md" radius="md">
+        {/* Judul + Tombol Tambah */}
+        <Group justify="space-between" mb="md">
+          <Title order={4}>Daftar Pencegahan Kriminalitas</Title>
+          <Tooltip label="Tambah Program Pencegahan" withArrow>
+            <Button
+              leftSection={<IconPlus size={18} />}
+              color="blue"
+              variant="light"
+              onClick={() => router.push('/admin/keamanan/pencegahan-kriminalitas/create')}
+            >
+              Tambah Baru
+            </Button>
+          </Tooltip>
+        </Group>
+
+        {/* Tabel */}
+        <Box style={{ overflowX: "auto" }}>
+          <Table highlightOnHover>
+            <TableThead>
+              <TableTr>
+                <TableTh>Nama Pencegahan</TableTh>
+                <TableTh>Slug</TableTh>
+                <TableTh>Deskripsi</TableTh>
+                <TableTh>Aksi</TableTh>
               </TableTr>
-          </TableThead>
-          <TableTbody>
-            {filteredData.map((item) => (
-              <TableTr key={item.id}>
-                <TableTd>{item.programKeamanan.nama}</TableTd>
-                <TableTd>{item.programKeamanan.slug}</TableTd>
-                <TableTd>
-                  <Text fz={'sm'} dangerouslySetInnerHTML={{__html: item.programKeamanan.deskripsi || ''}} />
-                </TableTd>
-                <TableTd>
-                  <Button onClick={() => router.push(`/admin/keamanan/pencegahan-kriminalitas/${item.id}`)}>
-                  <IconDeviceImac size={20} />
-                </Button>
-              </TableTd>
-            </TableTr>
-          ))}
-          </TableTbody>
-        </Table>  
+            </TableThead>
+            <TableTbody>
+              {filteredData.length > 0 ? (
+                filteredData.map((item) => (
+                  <TableTr key={item.id}>
+                    <TableTd>
+                      <Text fw={500} truncate="end" lineClamp={1}>
+                        {item.programKeamanan.nama}
+                      </Text>
+                    </TableTd>
+                    <TableTd>
+                      <Text fz="sm" c="dimmed" truncate lineClamp={1}>
+                        {item.programKeamanan.slug}
+                      </Text>
+                    </TableTd>
+                    <TableTd>
+                      <Text
+                        fz="sm"
+                        c="dimmed"
+                        truncate
+                        lineClamp={1}
+                        dangerouslySetInnerHTML={{
+                          __html: item.programKeamanan.deskripsi || ''
+                        }}
+                      />
+                    </TableTd>
+                    <TableTd>
+                      <Button
+                        variant="light"
+                        color="blue"
+                        onClick={() => router.push(`/admin/keamanan/pencegahan-kriminalitas/${item.id}`)}
+                      >
+                        <IconDeviceImacCog size={20} />
+                        <Text ml={5}>Detail</Text>
+                      </Button>
+                    </TableTd>
+                  </TableTr>
+                ))
+              ) : (
+                <TableTr>
+                  <TableTd colSpan={4}>
+                    <Center py={20}>
+                      <Text color="dimmed">
+                        Tidak ada data pencegahan kriminalitas yang cocok
+                      </Text>
+                    </Center>
+                  </TableTd>
+                </TableTr>
+              )}
+            </TableTbody>
+          </Table>
+        </Box>
       </Paper>
+
+      {/* Pagination */}
+      <Center>
+        <Pagination
+          value={page}
+          onChange={(newPage) => {
+            load(newPage, 10);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          total={totalPages}
+          mt="md"
+          mb="md"
+          color="blue"
+          radius="md"
+        />
+      </Center>
     </Box>
   );
 }

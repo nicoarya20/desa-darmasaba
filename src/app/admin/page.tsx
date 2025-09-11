@@ -1,9 +1,7 @@
-import { Text } from "@mantine/core";
+import ProgramInovasi from "./(dashboard)/landing-page/profile/program-inovasi/page";
 
 export default function Page() {
     return(
-      <Text>
-        Test
-      </Text>
+      <ProgramInovasi/>
     )
 }

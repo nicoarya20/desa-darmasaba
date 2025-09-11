@@ -28,8 +28,8 @@ async function desaAntiKorupsiFindMany(context: Context) {
           kategori: true,
           file: true,
         },
-        skip,
-        take: limit,
+        skip: limit === 0 ? undefined : skip,
+        take: limit === 0 ? undefined : limit,
         orderBy: { name: "asc" }, // opsional, kalau mau urut berdasarkan waktu
       }),
       prisma.desaAntiKorupsi.count({

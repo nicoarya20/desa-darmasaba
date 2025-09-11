@@ -103,12 +103,18 @@ function ListPolsekTerdekat({ search }: { search: string }) {
                 filteredData.map((item) => (
                   <TableTr key={item.id}>
                     <TableTd>
-                      <Text fw={500} truncate="end" lineClamp={1}>
-                        {item.nama}
-                      </Text>
+                      <Box w={150}>
+                        <Text fw={500} truncate="end" lineClamp={1}>
+                          {item.nama}
+                        </Text>
+                      </Box>
                     </TableTd>
                     <TableTd>{item.jarakKeDesa}</TableTd>
-                    <TableTd>{item.alamat}</TableTd>
+                      <TableTd>
+                    <Box w={150}>
+                        <Text truncate="end" lineClamp={1}>{item.alamat}</Text>
+                    </Box>
+                      </TableTd>
                     <TableTd>
                       <Button
                         variant="light"

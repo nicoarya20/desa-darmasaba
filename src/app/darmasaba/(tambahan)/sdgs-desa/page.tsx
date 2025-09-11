@@ -13,7 +13,7 @@ function Page() {
   useEffect(() => {
     const fetchSdgsDesa = async () => {
       try {
-        const response = await fetch('/api/landingpage/sdgsdesa/findMany');
+        const response = await fetch('/api/landingpage/sdgsdesa/findMany?limit=50&page=1');
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const result = await response.json();
         let data = [];

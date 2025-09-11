@@ -9,24 +9,23 @@ const KontakDaruratKeamanan = new Elysia({
   prefix: "/kontakdaruratkeamanan",
   tags: ["Keamanan/Kontak Darurat"],
 })
-  .get("/find-many", kontakDaruratKeamananFindMany)
-  .get("/:id", async (context) => {
-    const response = await kontakDaruratKeamananFindUnique(
-      new Request(context.request)
-    );
-    return response;
-  })
+  .get("/findMany", kontakDaruratKeamananFindMany)
+  .get(
+    "/:id",
+    async (context) => {
+      return await kontakDaruratKeamananFindUnique(context);
+    },
+    {
+      params: t.Object({
+        id: t.String(),
+      }),
+    }
+  )
   .post("/create", kontakDaruratKeamananCreate, {
     body: t.Object({
       nama: t.String(),
       imageId: t.Optional(t.String()),
-      kontakItems: t.Array(
-        t.Object({
-          nama: t.String(),
-          nomorTelepon: t.String(),
-          imageId: t.Optional(t.String()),
-        })
-      ),
+      kategoriId: t.Array(t.String()),
     }),
   })
   .delete("/del/:id", kontakDaruratKeamananDelete)
@@ -37,16 +36,13 @@ const KontakDaruratKeamanan = new Elysia({
       return response;
     },
     {
+      params: t.Object({
+        id: t.String(),
+      }),
       body: t.Object({
         nama: t.String(),
         imageId: t.Optional(t.String()),
-        kontakItems: t.Array(
-          t.Object({
-            nama: t.String(),
-            nomorTelepon: t.String(),
-            imageId: t.Optional(t.String()),
-          })
-        ),
+        kategoriId: t.Array(t.String()),
       }),
     }
   );

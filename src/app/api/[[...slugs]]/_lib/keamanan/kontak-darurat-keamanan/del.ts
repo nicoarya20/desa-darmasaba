@@ -3,56 +3,56 @@ import { Context } from "elysia";
 import fs from "fs/promises";
 import path from "path";
 
-export default async function kontakDaruratKeamananDelete(context: Context){
-    const id = context.params?.id as string;
+export default async function kontakDaruratKeamananDelete(context: Context) {
+  const { params } = context;
+  const id = params?.id as string;
 
-    if (!id) {
-        return {
-            status: 400,
-            body: "ID tidak diberikan",
-        };
-    }
+  if (!id) {
+    throw new Error("ID tidak diberikan");
+  }
 
-    await prisma.kontakItem.deleteMany({
-        where: {
-          kategoriId: id,
-        },
-      });
+  await prisma.kontakDaruratToItem.deleteMany({
+    where: {
+      kontakDaruratId: id,
+    },
+  });
 
-    const kontakDaruratKeamanan = await prisma.kontakDaruratKeamanan.findUnique({
-        where: { id },
-        include: {
-            kontakItems: true,
-            image: true,
-        }
-    });
+  const kontakDaruratKeamanan = await prisma.kontakDaruratKeamanan.findUnique({
+    where: { id },
+    include: {
+      image: true,
+    },
+  });
 
-    if (!kontakDaruratKeamanan) {
-        return {
-            status: 404,
-            body: "Kontak darurat keamanan tidak ditemukan",
-        };
-    }
-
-    if (kontakDaruratKeamanan.image) {
-        try {
-            const filePath = path.join(kontakDaruratKeamanan.image.path, kontakDaruratKeamanan.image.name);
-            await fs.unlink(filePath);
-            await prisma.fileStorage.delete({
-              where: { id: kontakDaruratKeamanan.image.id },
-            });
-          } catch (err) {
-            console.error("Gagal hapus file image:", err);
-          }
-    }
-
-    await prisma.kontakDaruratKeamanan.delete({
-        where: { id },
-    });
-
+  if (!kontakDaruratKeamanan) {
     return {
-        status: 200,
-        success: true,
-        message: "Kontak darurat keamanan berhasil dihapus",
+      status: 404,
+      body: "Kontak darurat keamanan tidak ditemukan",
     };
+  }
+
+  if (kontakDaruratKeamanan.image) {
+    try {
+      const filePath = path.join(
+        kontakDaruratKeamanan.image.path,
+        kontakDaruratKeamanan.image.name
+      );
+      await fs.unlink(filePath);
+      await prisma.fileStorage.delete({
+        where: { id: kontakDaruratKeamanan.image.id },
+      });
+    } catch (err) {
+      console.error("Gagal hapus file image:", err);
+    }
+  }
+
+  await prisma.kontakDaruratKeamanan.delete({
+    where: { id },
+  });
+
+  return {
+    status: 200,
+    success: true,
+    message: "Kontak darurat keamanan berhasil dihapus",
+  };
 }

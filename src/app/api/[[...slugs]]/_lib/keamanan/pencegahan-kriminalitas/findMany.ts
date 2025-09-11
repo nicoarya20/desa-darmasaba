@@ -1,27 +1,66 @@
 import prisma from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
+import { Context } from "elysia";
 
-export default async function pencegahanKriminalitasFindMany() {
-    try {
-        const data = await prisma.pencegahanKriminalitas.findMany({
-            where: {
-                isActive: true,
-            },
-            include: {
-                programKeamanan: true,
-                tipsKeamanan: true,
-                videoKeamanan: true,
-            }
-        })
-        return {
-            success: true,
-            message: "Success fetch pencegahan kriminalitas",
-            data,
-        }
-    } catch (error) {
-        console.error("Find many error:", error);
-        return {
-            success: false,
-            message: "Failed fetch pencegahan kriminalitas",
-        }
-    }
+export default async function pencegahanKriminalitasFindMany(context: Context) {
+  // Ambil parameter dari query
+  const page = Number(context.query.page) || 1;
+  const limit = Number(context.query.limit) || 10;
+  const search = (context.query.search as string) || "";
+  const skip = (page - 1) * limit;
+
+  // Buat where clause dengan tipe yang benar
+  const where: Prisma.PencegahanKriminalitasWhereInput = { isActive: true };
+
+  // Tambahkan pencarian (jika ada)
+  if (search) {
+    where.OR = [
+      {
+        programKeamanan: {
+          nama: { contains: search, mode: "insensitive" as const },
+        },
+      },
+      {
+        tipsKeamanan: {
+          judul: { contains: search, mode: "insensitive" as const },
+        },
+      },
+      {
+        videoKeamanan: {
+          judul: { contains: search, mode: "insensitive" as const },
+        },
+      },
+    ];
+  }
+  try {
+    const [data, total] = await Promise.all([
+      prisma.pencegahanKriminalitas.findMany({
+        where,
+        include: {
+          programKeamanan: true,
+          tipsKeamanan: true,
+          videoKeamanan: true,
+        },
+        skip,
+        take: limit,
+        orderBy: { createdAt: "desc" },
+      }),
+      prisma.pencegahanKriminalitas.count({ where }),
+    ]);
+    return {
+      success: true,
+      message: "Success fetch pencegahan kriminalitas",
+      data,
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit),
+    };
+  } catch (error) {
+    console.error("Find many error:", error);
+    return {
+      success: false,
+      message: "Failed fetch pencegahan kriminalitas",
+    };
+  }
 }

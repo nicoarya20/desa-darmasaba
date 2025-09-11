@@ -2,56 +2,59 @@ import prisma from "@/lib/prisma";
 import { Context } from "elysia";
 
 type FormUpdate = {
-    nama: string;
-    imageId?: string;
-    kontakItems: {
-      nama: string;
-      nomorTelepon: string;
-      imageId?: string;
-    }[];
-  };
+  id: string;
+  nama: string;
+  imageId?: string;
+  kategoriId: string[];
+};
 
-export default async function kontakDaruratKeamananUpdate(context: Context){
-    try {
-        const { id } = context.params as { id: string };
-        const body = context.body as FormUpdate;
-      
-        // Hapus kontakItems lama
-        await prisma.kontakItem.deleteMany({
-          where: {
-            kategoriId: id,
-          },
-        });
-      
-        // Update utama
-        const updated = await prisma.kontakDaruratKeamanan.update({
-          where: { id },
-          data: {
-            nama: body.nama,
-            imageId: body.imageId,
-            kontakItems: {
-              create: body.kontakItems,
-            },
-          },
-          include: {
-            kontakItems: true,
-          },
-        });
-      
-        return {
-          success: true,
-          message: "Success update kontak darurat keamanan",
-          data: updated,
-        };
-    } catch (error) {
-        console.error("Error updating kontak darurat keamanan:", error);
-        return Response.json({
-            success: false,
-            message: "Terjadi kesalahan saat mengupdate kontak darurat keamanan",
-        }, { status: 500 ,
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
-    }
+export default async function kontakDaruratKeamananUpdate(context: Context) {
+  const body = context.body as FormUpdate;
+
+  if (!body.id) {
+    throw new Error("ID pasar desa tidak boleh kosong");
+  }
+
+  if (!body.kategoriId || body.kategoriId.length === 0) {
+    throw new Error("Minimal 1 kategori harus dipilih");
+  }
+
+  await prisma.kontakDaruratKeamanan.update({
+    where: { id: body.id },
+    data: {
+      nama: body.nama,
+      imageId: body.imageId,
+      kategoriId: body.kategoriId[0],
+    },
+  });
+
+  await prisma.kontakDaruratToItem.deleteMany({
+    where: { kontakDaruratId: body.id },
+  });
+
+  await prisma.kontakDaruratToItem.createMany({
+    data: body.kategoriId.map((kategoriId) => ({
+      kontakDaruratId: body.id,
+      kontakItemId: kategoriId,
+    })),
+  });
+
+  const updated = await prisma.kontakDaruratKeamanan.findUnique({
+    where: { id: body.id },
+    include: {
+      image: true,
+      kategori: true,
+      kontakItems: {
+        include: {
+          kontakItem: true,
+        },
+      },
+    },
+  });
+
+  return {
+    success: true,
+    message: "Success update kontak darurat keamanan",
+    data: updated,
+  };
 }

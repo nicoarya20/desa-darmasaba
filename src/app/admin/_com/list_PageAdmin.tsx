@@ -188,7 +188,7 @@ export const navBar = [
       {
         id: "Keamanan_3",
         name: "Kontak Darurat",
-        path: "/admin/keamanan/kontak-darurat"
+        path: "/admin/keamanan/kontak-darurat/kontak-darurat-keamanan"
       },
       {
         id: "Keamanan_4",
