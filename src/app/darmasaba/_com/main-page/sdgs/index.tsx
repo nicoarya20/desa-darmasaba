@@ -9,7 +9,7 @@ import { IconMoodSad } from "@tabler/icons-react"
 export default function SDGS() {
   const theme = useMantineTheme()
   const mobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`)
-  const [sdgsDesa, setSdgsDesa] = useState<Prisma.SDGSDesaGetPayload<{ include: { image: true } }>[] | null>(null)
+  const [sdgsDesa, setSdgsDesa] = useState<Prisma.SdgsDesaGetPayload<{ include: { image: true } }>[] | null>(null)
 
   useEffect(() => {
     const fetchSdgsDesa = async () => {

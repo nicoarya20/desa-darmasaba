@@ -11,7 +11,7 @@ export default async function sdgsDesaCreate(context: Context) {
   const body = context.body as FormCreate;
 
   try {
-    const result = await prisma.sDGSDesa.create({
+    const result = await prisma.sdgsDesa.create({
       data: {
         name: body.name,
         jumlah: body.jumlah,

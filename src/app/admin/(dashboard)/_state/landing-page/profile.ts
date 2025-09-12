@@ -23,7 +23,12 @@ type ProgramInovasiForm = Prisma.ProgramInovasiGetPayload<{
 
 const programInovasi = proxy({
   create: {
-    form: {} as ProgramInovasiForm,
+    form: {
+      name: "",
+      description: "",
+      imageId: "",
+      link: ""
+    } as ProgramInovasiForm,
     loading: false,
     async create() {
       // Ensure all required fields are non-null

@@ -72,7 +72,7 @@ const sdgsDesa = proxy({
         ].get({
           query,
         });
-  
+        
         if (res.status === 200 && res.data?.success) {
           sdgsDesa.findMany.data = res.data.data || [];
           sdgsDesa.findMany.total = res.data.total || 0;
@@ -94,7 +94,7 @@ const sdgsDesa = proxy({
     },
   },
   findUnique: {
-    data: null as Prisma.SDGSDesaGetPayload<{
+    data: null as Prisma.SdgsDesaGetPayload<{
       include: {
         image: true;
       };

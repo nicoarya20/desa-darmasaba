@@ -9,7 +9,7 @@ export default async function sdgsDesaFindUnique(context: Context) {
     throw new Error("ID tidak ditemukan dalam parameter");
   }
 
-  const data = await prisma.sDGSDesa.findUnique({
+  const data = await prisma.sdgsDesa.findUnique({
     where: { id },
     include: {
       image: true,

@@ -21,7 +21,7 @@ export default async function sdgsDesaUpdate(context: Context) {
   }
 
   try {
-    const updated = await prisma.sDGSDesa.update({
+    const updated = await prisma.sdgsDesa.update({
       where: { id },
       data: {
         name: body.name,

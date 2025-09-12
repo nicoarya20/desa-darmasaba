@@ -53,7 +53,7 @@ function CreateSDGsDesa() {
     await stateSDGSDesa.create.create();
 
     resetForm();
-    router.push("/admin/landing-page/sdgs")
+    router.push("/admin/landing-page/sdgs-desa")
   }
   return (
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
@@ -64,7 +64,7 @@ function CreateSDGsDesa() {
           </Button>
         </Tooltip>
         <Title order={4} ml="sm" c="dark">
-          Tambah SDGs Desa
+          Tambah Sdgs Desa
         </Title>
       </Group>
 
@@ -79,7 +79,7 @@ function CreateSDGsDesa() {
         <Stack gap="md">
           <Box>
             <Text fw="bold" fz="sm" mb={6}>
-              Gambar SDGs Desa
+              Gambar Sdgs Desa
             </Text>
             <Dropzone
               onDrop={(files) => {
@@ -143,10 +143,10 @@ function CreateSDGsDesa() {
           <TextInput
             label={
               <Text fw="bold" fz="sm" mb={4}>
-                Nama SDGs Desa
+                Nama Sdgs Desa
               </Text>
             }
-            placeholder="Masukkan nama SDGs Desa"
+            placeholder="Masukkan nama Sdgs Desa"
             value={stateSDGSDesa.create.form.name}
             onChange={(val) => {
               stateSDGSDesa.create.form.name = val.target.value;

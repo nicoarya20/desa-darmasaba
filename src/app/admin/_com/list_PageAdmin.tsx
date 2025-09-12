@@ -21,8 +21,8 @@ export const navBar = [
       },
       {
         id: "Landing_Page_4",
-        name: "SDGs Desa",
-        path: "/admin/landing-page/sdgs"
+        name: "Sdgs Desa",
+        path: "/admin/landing-page/sdgs-desa"
       },
       {
         id: "Landing_Page_5",

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import prisma from "@/lib/prisma";
 import profilePejabatDesa from "./data/landing-page/profile/profile.json";
 import programInovasi from "./data/landing-page/profile/programInovasi.json";
@@ -15,7 +16,7 @@ import posisiOrganisasiPPID from "./data/ppid/struktur-ppid/posisi-organisasi-PP
 import visiMisiPPID from "./data/ppid/visi-misi-ppid/visimisiPPID.json";
 import dasarHukumPPID from "./data/ppid/dasar-hukum-ppid/dasarhukumPPID.json";
 import jenisKelamin from "./data/ppid/ikm/jenis-kelamin/jenis-kelamin.json";
-import daftarInformasiPublik from "./data/ppid/daftar-informasi-publik-desa-darmasaba/daftarInformasi.json"
+import daftarInformasiPublik from "./data/ppid/daftar-informasi-publik-desa-darmasaba/daftarInformasi.json";
 import pilihanRatingResponden from "./data/ppid/ikm/pilihan-rating-responden/rating-responden.json";
 import umurResponden from "./data/ppid/ikm/umur-responden/umur-responden.json";
 import categoryPengumuman from "./data/category-pengumuman.json";
@@ -54,63 +55,90 @@ import programUnggulan from "./data/pendidikan/program-pendidikan-anak/program-u
 import tujuanProgram from "./data/pendidikan/program-pendidikan-anak/tujuan-program.json";
 import roles from "./data/user/roles.json";
 import users from "./data/user/users.json";
+import fileStorage from "./data/file-storage.json";
 
 (async () => {
   // =========== USER & ROLE ===========
   // In your seed.ts
-// =========== ROLES ===========
-console.log("🔄 Seeding roles...");
-for (const r of roles) {
-  await prisma.role.upsert({
-    where: { id: r.id },
-    update: {
-      name: r.name,
-      description: r.description,
-      permissions: r.permissions,
-      isActive: r.isActive,
-    },
-    create: {
-      id: r.id,
-      name: r.name,
-      description: r.description,
-      permissions: r.permissions,
-      isActive: r.isActive,
-    },
-  });
-}
-console.log("✅ Roles seeded");
-
-// =========== USERS ===========
-console.log("🔄 Seeding users...");
-for (const u of users) {
-  // First verify the role exists
-  const roleExists = await prisma.role.findUnique({
-    where: { id: u.roleId }
-  });
-  
-  if (!roleExists) {
-    console.error(`❌ Role with id ${u.roleId} not found for user ${u.nama}`);
-    continue;
+  // =========== ROLES ===========
+  console.log("🔄 Seeding roles...");
+  for (const r of roles) {
+    await prisma.role.upsert({
+      where: { id: r.id },
+      update: {
+        name: r.name,
+        description: r.description,
+        permissions: r.permissions,
+        isActive: r.isActive,
+      },
+      create: {
+        id: r.id,
+        name: r.name,
+        description: r.description,
+        permissions: r.permissions,
+        isActive: r.isActive,
+      },
+    });
   }
+  console.log("✅ Roles seeded");
 
-  await prisma.user.upsert({
-    where: { id: u.id },
-    update: {
-      username: u.nama,
-      nomor: u.nomor,
-      roleId: u.roleId,
-      isActive: u.isActive,
-    },
-    create: {
-      id: u.id,
-      username: u.nama,
-      nomor: u.nomor,
-      roleId: u.roleId,
-      isActive: u.isActive,
-    },
-  });
-}
-console.log("✅ Users seeded");
+  // =========== USERS ===========
+  console.log("🔄 Seeding users...");
+  for (const u of users) {
+    // First verify the role exists
+    const roleExists = await prisma.role.findUnique({
+      where: { id: u.roleId },
+    });
+
+    if (!roleExists) {
+      console.error(`❌ Role with id ${u.roleId} not found for user ${u.nama}`);
+      continue;
+    }
+
+    await prisma.user.upsert({
+      where: { id: u.id },
+      update: {
+        username: u.nama,
+        nomor: u.nomor,
+        roleId: u.roleId,
+        isActive: u.isActive,
+      },
+      create: {
+        id: u.id,
+        username: u.nama,
+        nomor: u.nomor,
+        roleId: u.roleId,
+        isActive: u.isActive,
+      },
+    });
+  }
+  console.log("✅ Users seeded");
+
+  // =========== FILE STORAGE ===========
+  console.log("🔄 Seeding file storage...");
+  for (const f of fileStorage) {
+    await prisma.fileStorage.upsert({
+      where: { id: f.id },
+      update: {
+        name: f.name,
+        realName: f.realName,
+        path: f.path,
+        mimeType: f.mimeType,
+        link: f.link,
+        category: f.category,
+      },
+      create: {
+        id: f.id,
+        name: f.name,
+        realName: f.realName,
+        path: f.path,
+        mimeType: f.mimeType,
+        link: f.link,
+        category: f.category,
+      },
+    });
+  }
+  console.log("✅ File storage seeded");
   // =========== LANDING PAGE ===========
   // =========== SUBMENU PROFILE ===========
   // =========== PROFILE PEJABAT DESA ===========
@@ -120,11 +148,13 @@ console.log("✅ Users seeded");
       update: {
         name: p.name,
         position: p.position,
+        imageId: p.imageId,
       },
       create: {
         id: p.id,
         name: p.name,
         position: p.position,
+        imageId: p.imageId,
       },
     });
   }
@@ -134,18 +164,35 @@ console.log("✅ Users seeded");
 
   // =========== PROGRAM INOVASI ===========
   for (const p of programInovasi) {
+    let imageId: string | null = null;
+
+    if (p.imageId) {
+      const imageExists = await prisma.fileStorage.findUnique({
+        where: { id: p.imageId },
+      });
+
+      if (imageExists) {
+        imageId = p.imageId;
+      } else {
+        console.warn(
+          `⚠️ imageId ${p.imageId} tidak ditemukan untuk ProgramInovasi ${p.name}`
+        );
+      }
+    }
     await prisma.programInovasi.upsert({
       where: { id: p.id },
       update: {
         name: p.name,
         description: p.description,
         link: p.link,
+        imageId: p.imageId,
       },
       create: {
         id: p.id,
         name: p.name,
         description: p.description,
         link: p.link,
+        imageId: p.imageId,
       },
     });
   }
@@ -158,11 +205,13 @@ console.log("✅ Users seeded");
       update: {
         name: p.name,
         iconUrl: p.iconUrl,
+        imageId: p.imageId,
       },
       create: {
         id: p.id,
         name: p.name,
         iconUrl: p.iconUrl,
+        imageId: p.imageId,
       },
     });
   }
@@ -308,11 +357,8 @@ console.log("✅ Users seeded");
 
   // =========== SDGSDesa ===========
   for (const l of sdgsDesa) {
-    await prisma.sDGSDesa.upsert({
-      where: {
-        name: l.name,
-        jumlah: l.jumlah,
-      },
+    await prisma.sdgsDesa.upsert({
+      where: { id: l.id },
       update: {
         name: l.name,
         jumlah: l.jumlah,
@@ -558,29 +604,29 @@ console.log("✅ Users seeded");
   }
   console.log("dasar hukum PPID success ...");
 
-    // =========== SUBMENU DAFTAR INFORMASI PUBLIK PPID ===========
-    for (const v of daftarInformasiPublik) {
-      // Convert string date to Date object
-      const tanggal = new Date(v.tanggal);
-      
-      await prisma.daftarInformasiPublik.upsert({
-        where: {
-          id: v.id,
-        },
-        update: {
-          jenisInformasi: v.jenisInformasi,
-          deskripsi: v.deskripsi,
-          tanggal: tanggal,
-        },
-        create: {
-          id: v.id,
-          jenisInformasi: v.jenisInformasi,
-          deskripsi: v.deskripsi,
-          tanggal: tanggal,
-        },
-      });
-    }
-    console.log("daftar informasi publik PPID success ...");
+  // =========== SUBMENU DAFTAR INFORMASI PUBLIK PPID ===========
+  for (const v of daftarInformasiPublik) {
+    // Convert string date to Date object
+    const tanggal = new Date(v.tanggal);
+
+    await prisma.daftarInformasiPublik.upsert({
+      where: {
+        id: v.id,
+      },
+      update: {
+        jenisInformasi: v.jenisInformasi,
+        deskripsi: v.deskripsi,
+        tanggal: tanggal,
+      },
+      create: {
+        id: v.id,
+        jenisInformasi: v.jenisInformasi,
+        deskripsi: v.deskripsi,
+        tanggal: tanggal,
+      },
+    });
+  }
+  console.log("daftar informasi publik PPID success ...");
 
   for (const l of pelayananPerizinanBerusaha) {
     await prisma.pelayananPerizinanBerusaha.upsert({

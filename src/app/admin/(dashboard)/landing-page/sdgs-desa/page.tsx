@@ -15,8 +15,8 @@ function SdgsDesa() {
   return (
     <Box>
       <HeaderSearch
-        title='SDGs Desa'
-        placeholder='Cari SDGs Desa...'
+        title='Sdgs Desa'
+        placeholder='Cari Sdgs Desa...'
         searchIcon={<IconSearch size={20} />}
         value={search}
         onChange={(e) => setSearch(e.currentTarget.value)}
@@ -58,13 +58,13 @@ function ListSdgsDesa({ search }: { search: string }) {
       <Box py={10}>
         <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
           <Group justify="space-between" mb="md">
-            <Title order={4}>Daftar SDGs Desa</Title>
-            <Tooltip label="Tambah SDGs Desa" withArrow>
+            <Title order={4}>Daftar Sdgs Desa</Title>
+            <Tooltip label="Tambah Sdgs Desa" withArrow>
               <Button 
                 leftSection={<IconPlus size={18} />} 
                 color={colors['blue-button']} 
                 variant="light"
-                onClick={() => router.push('/admin/landing-page/sdgs/create')}
+                onClick={() => router.push('/admin/landing-page/sdgs-desa/create')}
               >
                 Tambah Baru
               </Button>
@@ -74,7 +74,7 @@ function ListSdgsDesa({ search }: { search: string }) {
             <Table>
               <TableThead>
                 <TableTr>
-                  <TableTh style={{ width: '60%' }}>Nama SDGs Desa</TableTh>
+                  <TableTh style={{ width: '60%' }}>Nama Sdgs Desa</TableTh>
                   <TableTh style={{ width: '20%' }}>Jumlah</TableTh>
                   <TableTh style={{ width: '20%', textAlign: 'center' }}>Aksi</TableTh>
                 </TableTr>
@@ -82,7 +82,7 @@ function ListSdgsDesa({ search }: { search: string }) {
               <TableTbody>
                 <TableTr>
                   <TableTd colSpan={3} style={{ textAlign: 'center', padding: '2rem' }}>
-                    <Text c="dimmed">Tidak ada data SDGs Desa</Text>
+                    <Text c="dimmed">Tidak ada data Sdgs Desa</Text>
                   </TableTd>
                 </TableTr>
               </TableTbody>
@@ -97,13 +97,13 @@ function ListSdgsDesa({ search }: { search: string }) {
     <Box py={10}>
       <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
         <Group justify="space-between" mb="md">
-          <Title order={4}>Daftar SDGs Desa</Title>
-          <Tooltip label="Tambah SDGs Desa" withArrow>
+          <Title order={4}>Daftar Sdgs Desa</Title>
+          <Tooltip label="Tambah Sdgs Desa" withArrow>
             <Button 
               leftSection={<IconPlus size={18} />} 
               color={colors['blue-button']} 
               variant="light" 
-              onClick={() => router.push('/admin/landing-page/sdgs/create')}
+              onClick={() => router.push('/admin/landing-page/sdgs-desa/create')}
             >
               Tambah Baru
             </Button>
@@ -113,7 +113,7 @@ function ListSdgsDesa({ search }: { search: string }) {
           <Table highlightOnHover>
             <TableThead>
               <TableTr>
-                <TableTh style={{ width: '60%' }}>Nama SDGs Desa</TableTh>
+                <TableTh style={{ width: '60%' }}>Nama Sdgs Desa</TableTh>
                 <TableTh style={{ width: '20%' }}>Jumlah</TableTh>
                 <TableTh style={{ width: '20%', textAlign: 'center' }}>Aksi</TableTh>
               </TableTr>
@@ -137,7 +137,7 @@ function ListSdgsDesa({ search }: { search: string }) {
                         variant="light" 
                         color="blue" 
                         size="sm"
-                        onClick={() => router.push(`/admin/landing-page/sdgs/${item.id}`)}
+                        onClick={() => router.push(`/admin/landing-page/sdgs-desa/${item.id}`)}
                       >
                         <IconDeviceImacCog size={18} />
                       </Button>

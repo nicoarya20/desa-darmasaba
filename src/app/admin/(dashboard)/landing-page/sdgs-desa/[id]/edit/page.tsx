@@ -91,7 +91,7 @@ function EditKolaborasiInovasi() {
 
       await sdgsState.edit.update();
       toast.success("sdgs desa berhasil diperbarui!");
-      router.push("/admin/landing-page/sdgs");
+      router.push("/admin/landing-page/sdgs-desa");
     } catch (error) {
       console.error("Error updating sdgs desa:", error);
       toast.error("Terjadi kesalahan saat memperbarui sdgs desa");
@@ -107,7 +107,7 @@ function EditKolaborasiInovasi() {
           </Button>
         </Tooltip>
         <Title order={4} ml="sm" c="dark">
-          Edit SDGs Desa
+          Edit Sdgs Desa
         </Title>
       </Group>
 
@@ -122,7 +122,7 @@ function EditKolaborasiInovasi() {
         <Stack gap="md">
           <Box>
             <Text fw="bold" fz="sm" mb={6}>
-              Gambar SDGs Desa
+              Gambar Sdgs Desa
             </Text>
             <Dropzone
               onDrop={(files) => {
@@ -172,8 +172,8 @@ function EditKolaborasiInovasi() {
           </Box>
 
           <TextInput
-            label="Nama SDGs Desa"
-            placeholder="Masukkan nama SDGs Desa"
+            label="Nama Sdgs Desa"
+            placeholder="Masukkan nama Sdgs Desa"
             value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             required

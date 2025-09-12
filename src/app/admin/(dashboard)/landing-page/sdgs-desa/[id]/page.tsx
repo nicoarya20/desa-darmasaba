@@ -27,7 +27,7 @@ function DetailSDGSDesa() {
       sdgsState.delete.byId(selectedId)
       setModalHapus(false)
       setSelectedId(null)
-      router.push("/admin/landing-page/sdgs")
+      router.push("/admin/landing-page/sdgs-desa")
     }
   }
 
@@ -62,13 +62,13 @@ function DetailSDGSDesa() {
       >
         <Stack gap="md">
           <Text fz="2xl" fw="bold" c={colors['blue-button']}>
-            Detail SDGs Desa
+            Detail Sdgs Desa
           </Text>
 
           <Paper bg="#ECEEF8" p="md" radius="md" shadow="xs">
             <Stack gap="md">
               <Box>
-                <Text fz="lg" fw="bold" mb={4}>Nama SDGs Desa</Text>
+                <Text fz="lg" fw="bold" mb={4}>Nama Sdgs Desa</Text>
                 <Text fz="md" c="dimmed">{data.name || '-'}</Text>
               </Box>
 
@@ -82,7 +82,7 @@ function DetailSDGSDesa() {
                 {data.image?.link ? (
                   <Image
                     src={data.image.link}
-                    alt={data.name || 'Gambar SDGs Desa'}
+                    alt={data.name || 'Gambar Sdgs Desa'}
                     w={200}
                     h={200}
                     radius="md"
@@ -94,7 +94,7 @@ function DetailSDGSDesa() {
               </Box>
 
               <Group gap="sm" mt="md">
-                <Tooltip label="Hapus SDGs Desa" withArrow position="top">
+                <Tooltip label="Hapus Sdgs Desa" withArrow position="top">
                   <Button
                     color="red"
                     onClick={() => {
@@ -110,10 +110,10 @@ function DetailSDGSDesa() {
                   </Button>
                 </Tooltip>
 
-                <Tooltip label="Edit SDGs Desa" withArrow position="top">
+                <Tooltip label="Edit Sdgs Desa" withArrow position="top">
                   <Button
                     color="green"
-                    onClick={() => router.push(`/admin/landing-page/sdgs/${data.id}/edit`)}
+                    onClick={() => router.push(`/admin/landing-page/sdgs-desa/${data.id}/edit`)}
                     variant="light"
                     radius="md"
                     size="md"
@@ -131,7 +131,7 @@ function DetailSDGSDesa() {
         opened={modalHapus}
         onClose={() => setModalHapus(false)}
         onConfirm={handleHapus}
-        text="Apakah Anda yakin ingin menghapus SDGs Desa ini?"
+        text="Apakah Anda yakin ingin menghapus Sdgs Desa ini?"
       />
     </Box>
   );

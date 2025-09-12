@@ -7,7 +7,7 @@ import BackButton from '../../(pages)/desa/layanan/_com/BackButto';
 import colors from '@/con/colors';
 
 function Page() {
-  const [sdgsDesa, setSdgsDesa] = useState<Prisma.SDGSDesaGetPayload<{ include: { image: true } }>[]>([]);
+  const [sdgsDesa, setSdgsDesa] = useState<Prisma.SdgsDesaGetPayload<{ include: { image: true } }>[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

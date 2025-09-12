@@ -9,7 +9,7 @@ export default async function sdgsDesaDelete(context: Context) {
     throw new Error("ID tidak ditemukan dalam parameter");
   }
 
-  const deleted = await prisma.sDGSDesa.delete({
+  const deleted = await prisma.sdgsDesa.delete({
     where: { id },
   });
 

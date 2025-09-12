@@ -21,7 +21,7 @@ async function sdgsDesaFindMany(context: Context) {
 
   try {
     const [data, total] = await Promise.all([
-      prisma.sDGSDesa.findMany({
+      prisma.sdgsDesa.findMany({
         where,
         include: {
           image: true,
@@ -30,7 +30,7 @@ async function sdgsDesaFindMany(context: Context) {
         take: limit,
         orderBy: { jumlah: "desc" }, // opsional, kalau mau urut berdasarkan waktu
       }),
-      prisma.sDGSDesa.count({
+      prisma.sdgsDesa.count({
         where,
       }),
     ]);

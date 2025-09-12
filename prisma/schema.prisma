@@ -92,7 +92,7 @@ model FileStorage {
   PejabatDesa                    PejabatDesa[]
   MediaSosial                    MediaSosial[]
   DesaAntiKorupsi                DesaAntiKorupsi[]
-  SDGSDesa                       SDGSDesa[]
+  SDGSDesa                       SdgsDesa[]
   APBDesImage                    APBDes[]                   @relation("APBDesImage")
   APBDesFile                     APBDes[]                   @relation("APBDesFile")
   PrestasiDesa                   PrestasiDesa[]
@@ -168,7 +168,7 @@ model KategoriDesaAntiKorupsi {
 }
 
 //========================================= SDGS Desa ========================================= //
-model SDGSDesa {
+model SdgsDesa {
   id        String       @id @default(cuid())
   name      String       @unique
   jumlah    String
