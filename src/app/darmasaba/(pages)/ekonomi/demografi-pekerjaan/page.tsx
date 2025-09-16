@@ -41,37 +41,39 @@ function Page() {
       <Box px={{ base: "md", md: 100 }}>
         <Stack gap={'lg'} justify='center'>
           <Paper p={'xl'}>
-            <Text fw={'bold'} fz={'h4'}>Statistik Demografi Pekerjaan Di Desa Darmasaba</Text>
-            <BarChart
-              type='stacked'
-              p={10}
-              mb={50}
-              h={400}
-              w={150}
-              data={data.map((item) => ({
-                id: item.id,
-                Pekerjaan: item.pekerjaan,
-                laki: item.lakiLaki,
-                perempuan: item.perempuan,
-              }))}
-              dataKey="Pekerjaan"
-              series={[
-                { name: 'laki', color: '#5082EE' },
-                { name: 'perempuan', color: '#6EDF9C' },
-              ]}
-              tickLine="y"
-              xAxisProps={{
-                angle: -45,  // Rotate labels by -45 degrees
-                textAnchor: 'end',  // Anchor text to the end for better alignment
-                height: 100,  // Increase height for rotated labels
-                interval: 0,  // Show all labels
-                style: { 
-                  fontSize: '12px',  // Adjust font size if needed
-                  overflow: 'visible',
-                  whiteSpace: 'nowrap'
-                }
-              }}
-            />
+            <Box style={{overflowX: 'scroll'}}>
+              <Text pb={5} fw={'bold'} fz={'h4'}>Statistik Demografi Pekerjaan Di Desa Darmasaba</Text>
+              <BarChart
+                type='stacked'
+                p={10}
+                mb={50}
+                h={400}
+                w={150}
+                data={data.map((item) => ({
+                  id: item.id,
+                  Pekerjaan: item.pekerjaan,
+                  laki: item.lakiLaki,
+                  perempuan: item.perempuan,
+                }))}
+                dataKey="Pekerjaan"
+                series={[
+                  { name: 'laki', color: '#5082EE' },
+                  { name: 'perempuan', color: '#6EDF9C' },
+                ]}
+                tickLine="y"
+                xAxisProps={{
+                  angle: -45,  // Rotate labels by -45 degrees
+                  textAnchor: 'end',  // Anchor text to the end for better alignment
+                  height: 100,  // Increase height for rotated labels
+                  interval: 0,  // Show all labels
+                  style: {
+                    fontSize: '12px',  // Adjust font size if needed
+                    overflow: 'visible',
+                    whiteSpace: 'nowrap'
+                  }
+                }}
+              />
+            </Box>
             <Flex pb={30} justify={'center'} gap={'xl'} align={'center'}>
               <Box>
                 <Flex gap={{ base: 0, md: 5 }} align={'center'}>

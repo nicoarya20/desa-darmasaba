@@ -3,87 +3,138 @@
 
 import grafikSektorUnggulan from '@/app/admin/(dashboard)/_state/ekonomi/sektor-unggulan-desa';
 import colors from '@/con/colors';
-import { Box, Button, Paper, Stack, TextInput, Title } from '@mantine/core';
+import {
+  Box,
+  Button,
+  Group,
+  Paper,
+  Stack,
+  Text,
+  TextInput,
+  Title,
+  Tooltip,
+} from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { useProxy } from 'valtio/utils';
+import { toast } from 'react-toastify';
+import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 
 function EditSektorUnggulanDesa() {
-  const router = useRouter()
-  const params = useParams() as { id: string }
-  const stateGrafik = useProxy(grafikSektorUnggulan)
+  const router = useRouter();
+  const params = useParams() as { id: string };
+  const stateGrafik = useProxy(grafikSektorUnggulan);
 
-  const id = params.id
+  const id = params.id;
 
   // Load data saat komponen mount
   useEffect(() => {
     if (id) {
       stateGrafik.findUnique.load(id).then(() => {
-        const data = stateGrafik.findUnique.data
+        const data = stateGrafik.findUnique.data;
         if (data) {
           stateGrafik.update.form = {
             name: data.name || '',
             description: data.description || '',
             value: data.value || 0,
-          }
+          };
         }
-      })
+      }).catch((err) => {
+        console.error('Error load sektor unggulan:', err);
+        toast.error('Gagal mengambil data sektor unggulan');
+      });
     }
-  }, [id])
+  }, [id]);
 
   const handleSubmit = async () => {
-    // Set the ID before submitting
-    stateGrafik.update.id = id;
-    await stateGrafik.update.submit();
-    router.push('/admin/ekonomi/sektor-unggulan-desa')
-  }
-return (
-    <Box>
-      <Box mb={10}>
-        <Button variant="subtle" onClick={() => router.back()}>
-          <IconArrowBack size={20} />
-        </Button>
-      </Box>
-      <Paper bg={colors['white-1']} w={{ base: '100%', md: '50%' }} p={'md'}>
-        <Stack>
-          <Title order={3}>Edit Sektor Unggulan Desa</Title>
+    try {
+      stateGrafik.update.id = id;
+      await stateGrafik.update.submit();
+      toast.success('Sektor unggulan berhasil diperbarui!');
+      router.push('/admin/ekonomi/sektor-unggulan-desa');
+    } catch (error) {
+      console.error('Error update sektor unggulan:', error);
+      toast.error('Terjadi kesalahan saat memperbarui sektor unggulan');
+    }
+  };
+
+  return (
+    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+      <Group mb="md">
+        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
+          <Button
+            variant="subtle"
+            onClick={() => router.back()}
+            p="xs"
+            radius="md"
+          >
+            <IconArrowBack color={colors['blue-button']} size={22} />
+          </Button>
+        </Tooltip>
+        <Title order={4} ml="sm" c="dark">
+          Edit Sektor Unggulan Desa
+        </Title>
+      </Group>
+
+      <Paper
+        w={{ base: '100%', md: '50%' }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+        style={{ border: '1px solid #e0e0e0' }}
+      >
+        <Stack gap="md">
           <TextInput
             label="Nama Sektor Unggulan"
-            placeholder="masukkan nama sektor unggulan"
+            placeholder="Masukkan nama sektor unggulan"
             value={stateGrafik.update.form.name}
             onChange={(val) => {
               stateGrafik.update.form.name = val.currentTarget.value;
             }}
+            required
           />
-          <TextInput
-            label="Deskripsi Sektor Unggulan"
-            placeholder="masukkan deskripsi sektor unggulan"
-            value={stateGrafik.update.form.description}
-            onChange={(val) => {
-              stateGrafik.update.form.description = val.currentTarget.value;
-            }}
-          />
+          <Box>
+            <Text fz="sm" fw="bold">
+              Konten
+            </Text>
+            <EditEditor
+              value={stateGrafik.update.form.description}
+              onChange={(htmlContent) => {
+                stateGrafik.update.form.description = htmlContent;
+              }}
+            />
+          </Box>
           <TextInput
             label="Jumlah"
             type="number"
-            placeholder="masukkan jumlah"
+            placeholder="Masukkan jumlah"
             value={stateGrafik.update.form.value}
             onChange={(val) => {
               stateGrafik.update.form.value = Number(val.currentTarget.value);
             }}
+            required
           />
-          <Button
-            mt={10}
-            bg={colors['blue-button']}
-            onClick={handleSubmit}
-          >
-            Simpan
-          </Button>
+
+          <Group justify="right">
+            <Button
+              onClick={handleSubmit}
+              radius="md"
+              size="md"
+              style={{
+                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                color: '#fff',
+                boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
+              }}
+            >
+              Simpan
+            </Button>
+          </Group>
         </Stack>
       </Paper>
     </Box>
-  )
+  );
 }
 
 export default EditSektorUnggulanDesa;

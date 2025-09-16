@@ -10,6 +10,7 @@ import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 import SelectIconProgramEdit from '../../../../_com/selectIconEdit';
+import { IconKey } from '@/app/admin/(dashboard)/_com/iconMap';
 
 interface FormProgramKreatif {
   name: string;
@@ -17,8 +18,6 @@ interface FormProgramKreatif {
   slug: string;
   icon: string;
 }
-
-type IconKey = 'ekowisata' | 'kompetisi' | 'wisata' | 'ekonomi' | 'sampah';
 
 
 function EditProgramKreatifDesa() {

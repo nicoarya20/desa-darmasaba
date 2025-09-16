@@ -3,16 +3,20 @@
 
 import { Box, rem, Select } from '@mantine/core';
 import {
+  IconCash,
   IconChartLine,
   IconChristmasTreeFilled,
   IconClipboardTextFilled,
   IconDroplet,
   IconHome,
   IconHomeEco,
+  IconHospital,
   IconLeaf,
   IconRecycle,
   IconScale,
+  IconSchool,
   IconShieldFilled,
+  IconShoppingCart,
   IconTent,
   IconTrashFilled,
   IconTree,
@@ -32,13 +36,17 @@ const iconMap = {
   scale: { label: 'Scale', icon: IconScale },
   clipboard: { label: 'Clipboard', icon: IconClipboardTextFilled },
   trash: { label: 'Trash', icon: IconTrashFilled },
-  lingkunganSehat: {label: 'Lingkungan Sehat', icon: IconHomeEco},
-  sumberOksigen: {label: 'Sumber Oksigen', icon: IconChristmasTreeFilled},
-  ekonomiBerkelanjutan: {label: 'Ekonomi Berkelanjutan', icon: IconTrendingUp},
-  mencegahBencana: {label: 'Mencegah Bencana', icon: IconShieldFilled},
-  rumah: {label: 'Rumah', icon: IconHome},
-  pohon: {label: 'Pohon', icon: IconTree},
-  air: {label: 'Air', icon: IconDroplet}
+  lingkunganSehat: { label: 'Lingkungan Sehat', icon: IconHomeEco },
+  sumberOksigen: { label: 'Sumber Oksigen', icon: IconChristmasTreeFilled },
+  ekonomiBerkelanjutan: { label: 'Ekonomi Berkelanjutan', icon: IconTrendingUp },
+  mencegahBencana: { label: 'Mencegah Bencana', icon: IconShieldFilled },
+  rumah: { label: 'Rumah', icon: IconHome },
+  pohon: { label: 'Pohon', icon: IconTree },
+  air: { label: 'Air', icon: IconDroplet },
+  bantuan: { label: 'Bantuan', icon: IconCash },
+  pelatihan: { label: 'Pelatihan', icon: IconSchool },
+  subsidi: { label: 'Subsidi', icon: IconShoppingCart },
+  layananKesehatan: { label: 'Layanan Kesehatan', icon: IconHospital },
 
 };
 

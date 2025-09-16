@@ -4,7 +4,7 @@ import { Context } from "elysia";
 type FormCreate = {
   nama: string;
   deskripsi: string;
-  ikonUrl?: string; // optional karena boleh null
+  icon: string;
   statistik?: {
     tahun: number;
     jumlah: number;
@@ -18,7 +18,7 @@ export default async function programKemiskinanCreate(context: Context) {
     data: {
       nama: body.nama,
       deskripsi: body.deskripsi,
-      ikonUrl: body.ikonUrl,
+      icon: body.icon,
       statistik: body.statistik
         ? {
             create: {

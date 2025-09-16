@@ -3,14 +3,25 @@
 'use client'
 import jumlahPengangguranState from '@/app/admin/(dashboard)/_state/ekonomi/jumlah-pengangguran';
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, Stack, Text, TextInput, Title, Select, NumberInput } from '@mantine/core';
+import {
+  Box,
+  Button,
+  Group,
+  Paper,
+  Stack,
+  Text,
+  NumberInput,
+  Title,
+  Select,
+  Tooltip,
+} from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 
 function CreateJumlahPengangguran() {
-  const stateDetail = useProxy(jumlahPengangguranState.jumlahPengangguran)
+  const stateDetail = useProxy(jumlahPengangguranState.jumlahPengangguran);
   const [chartData, setChartData] = useState<any[]>([]);
   const router = useRouter();
 
@@ -21,14 +32,14 @@ function CreateJumlahPengangguran() {
 
   const resetForm = () => {
     stateDetail.create.form = {
-      month: monthOptions[new Date().getMonth()], // Default to current month
-      year: new Date().getFullYear(), // Default to current year
+      month: monthOptions[new Date().getMonth()], // default bulan sekarang
+      year: new Date().getFullYear(), // default tahun sekarang
       totalUnemployment: 0,
       educatedUnemployment: 0,
       uneducatedUnemployment: 0,
       percentageChange: 0,
-    }
-  }
+    };
+  };
 
   const calculateTotalAndChange = async () => {
     const total =
@@ -37,11 +48,8 @@ function CreateJumlahPengangguran() {
 
     stateDetail.create.form.totalUnemployment = total;
 
-    // Ambil data bulan sebelumnya
-    const monthOrder = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun',
-      'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'
-    ];
+    // hitung perubahan dibanding bulan sebelumnya
+    const monthOrder = monthOptions;
     const currentIndex = monthOrder.findIndex(
       (m) => m.toLowerCase() === stateDetail.create.form.month.toLowerCase()
     );
@@ -78,15 +86,34 @@ function CreateJumlahPengangguran() {
   };
 
   return (
-    <Box>
-      <Box mb={10}>
-        <Button onClick={() => router.back()} variant='subtle' color={'blue'}>
-          <IconArrowBack color={colors['blue-button']} size={25} />
-        </Button>
-      </Box>
-      <Paper w={{ base: '100%', md: '50%' }} bg={colors['white-1']} p={'md'}>
-        <Title order={4}>Tambah Data Pengangguran</Title>
-        <Stack gap="xs" mt="md">
+    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+      {/* Header */}
+      <Group mb="md">
+        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
+          <Button
+            variant="subtle"
+            onClick={() => router.back()}
+            p="xs"
+            radius="md"
+          >
+            <IconArrowBack color={colors['blue-button']} size={24} />
+          </Button>
+        </Tooltip>
+        <Title order={4} ml="sm" c="dark">
+          Tambah Data Pengangguran
+        </Title>
+      </Group>
+
+      {/* Form Card */}
+      <Paper
+        w={{ base: '100%', md: '50%' }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+        style={{ border: '1px solid #e0e0e0' }}
+      >
+        <Stack gap="md">
           <Select
             label="Bulan"
             placeholder="Pilih bulan"
@@ -98,6 +125,7 @@ function CreateJumlahPengangguran() {
             }}
             required
           />
+
           <NumberInput
             label="Tahun"
             value={stateDetail.create.form.year}
@@ -109,6 +137,7 @@ function CreateJumlahPengangguran() {
             max={2100}
             required
           />
+
           <NumberInput
             label="Pengangguran Terdidik"
             value={stateDetail.create.form.educatedUnemployment}
@@ -119,6 +148,7 @@ function CreateJumlahPengangguran() {
             min={0}
             required
           />
+
           <NumberInput
             label="Pengangguran Tidak Terdidik"
             value={stateDetail.create.form.uneducatedUnemployment}
@@ -129,15 +159,36 @@ function CreateJumlahPengangguran() {
             min={0}
             required
           />
-          <Text fz="sm" fw={500}>
-            Total Otomatis: {stateDetail.create.form.totalUnemployment.toLocaleString()}
-          </Text>
-          <Text fz="sm" fw={500}>
-            Perubahan Otomatis: {stateDetail.create.form.percentageChange.toFixed(1)}%
-          </Text>
-          <Group mt="md">
+
+          <Box>
+            <Text fz="sm" fw={500} mb={4}>
+              Total Otomatis:
+            </Text>
+            <Text fz="sm" c="dimmed">
+              {stateDetail.create.form.totalUnemployment.toLocaleString()}
+            </Text>
+          </Box>
+
+          <Box>
+            <Text fz="sm" fw={500} mb={4}>
+              Perubahan Otomatis:
+            </Text>
+            <Text fz="sm" c="dimmed">
+              {stateDetail.create.form.percentageChange.toFixed(1)}%
+            </Text>
+          </Box>
+
+          {/* Action Button */}
+          <Group justify="right" mt="md">
             <Button
               onClick={handleSubmit}
+              radius="md"
+              size="md"
+              style={{
+                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                color: '#fff',
+                boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
+              }}
               disabled={!stateDetail.create.form.month || !stateDetail.create.form.year}
             >
               Simpan

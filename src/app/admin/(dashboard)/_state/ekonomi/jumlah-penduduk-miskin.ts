@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiFetch from "@/lib/api-fetch";
 import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
@@ -69,16 +70,37 @@ const jumlahPendudukMiskin = proxy({
           select: { id: true; year: true; totalPoorPopulation: true };
         }>[]
       | null,
-    loading: false,
-    async load() {
-      const res = await ApiFetch.api.ekonomi.jumlahpendudukmiskin[
-        "find-many"
-      ].get();
-      if (res.status === 200) {
-        jumlahPendudukMiskin.findMany.data = res.data?.data ?? [];
-      }
+      page: 1,
+      totalPages: 1,
+      loading: false,
+      search: "",
+     load: async (page = 1, limit = 10, search = "") => {
+        jumlahPendudukMiskin.findMany.loading = true; // ✅ Akses langsung via nama path
+        jumlahPendudukMiskin.findMany.page = page;
+        jumlahPendudukMiskin.findMany.search = search;
+    
+        try {
+          const query: any = { page, limit };
+          if (search) query.search = search;
+      
+          const res = await ApiFetch.api.ekonomi.jumlahpendudukmiskin["find-many"].get({ query });
+      
+          if (res.status === 200 && res.data?.success) {
+            jumlahPendudukMiskin.findMany.data = res.data.data ?? [];
+            jumlahPendudukMiskin.findMany.totalPages = res.data.totalPages ?? 1;
+          } else {
+            jumlahPendudukMiskin.findMany.data = [];
+            jumlahPendudukMiskin.findMany.totalPages = 1;
+          }
+        } catch (err) {
+          console.error("Gagal fetch jumlah penduduk miskin paginated:", err);
+          jumlahPendudukMiskin.findMany.data = [];
+          jumlahPendudukMiskin.findMany.totalPages = 1;
+        } finally {
+          jumlahPendudukMiskin.findMany.loading = false;
+        }
+      },
     },
-  },
   findUnique: {
     data: null as Prisma.GrafikJumlahPendudukMiskinGetPayload<{
       select: { id: true; year: true; totalPoorPopulation: true };

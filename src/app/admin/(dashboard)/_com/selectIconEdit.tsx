@@ -2,16 +2,20 @@
 
 import { Box, rem, Select } from '@mantine/core';
 import {
+  IconCash,
   IconChartLine,
   IconChristmasTreeFilled,
   IconClipboardTextFilled,
   IconDroplet,
   IconHome,
   IconHomeEco,
+  IconHospital,
   IconLeaf,
   IconRecycle,
   IconScale,
+  IconSchool,
   IconShieldFilled,
+  IconShoppingCart,
   IconTent,
   IconTrashFilled,
   IconTree,
@@ -36,7 +40,11 @@ const iconMap = {
   mencegahBencana: {label: 'Mencegah Bencana', icon: IconShieldFilled},
   rumah: {label: 'Rumah', icon: IconHome},
   pohon: {label: 'Pohon', icon: IconTree},
-  air: {label: 'Air', icon: IconDroplet}
+  air: {label: 'Air', icon: IconDroplet},
+  bantuan: {label: 'Bantuan', icon: IconCash},
+  pelatihan: {label: 'Pelatihan', icon: IconSchool},
+  subsidi: {label: 'Subsidi', icon: IconShoppingCart},
+  layananKesehatan: {label: 'Layanan Kesehatan', icon: IconHospital},
 };
 
 type IconKey = keyof typeof iconMap;

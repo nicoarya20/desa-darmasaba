@@ -8,7 +8,7 @@ import { z } from "zod";
 const templateForm = z.object({
   nama: z.string().min(1, "Nama minimal 1 karakter"),
   deskripsi: z.string().min(1, "Deskripsi minimal 1 karakter"),
-  ikonUrl: z.string().optional(),
+  icon: z.string().min(1, "Icon minimal 1 karakter"),
   statistik: z.object({
     tahun: z.string().min(1, "Tahun minimal 1 karakter"),
     jumlah: z.string().min(1, "Jumlah minimal 1 karakter"),
@@ -18,7 +18,7 @@ const templateForm = z.object({
 const defaultForm = {
   nama: "",
   deskripsi: "",
-  ikonUrl: "",
+  icon: "",
   statistik: {
     tahun: "",
     jumlah: "",
@@ -148,7 +148,7 @@ const programKemiskinanState = proxy({
           this.form = {
             nama: data.nama,
             deskripsi: data.deskripsi,
-            ikonUrl: data.ikonUrl || "",
+            icon: data.icon,
             statistik: {
               tahun: data.statistik.tahun,
               jumlah: data.statistik.jumlah,
@@ -189,7 +189,7 @@ const programKemiskinanState = proxy({
             body: JSON.stringify({
               nama: this.form.nama,
               deskripsi: this.form.deskripsi,
-              ikonUrl: this.form.ikonUrl,
+              icon: this.form.icon,
               statistik: {
                 tahun: this.form.statistik.tahun,
                 jumlah: this.form.statistik.jumlah,

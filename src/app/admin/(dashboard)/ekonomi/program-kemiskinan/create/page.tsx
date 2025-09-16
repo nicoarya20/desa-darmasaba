@@ -1,34 +1,50 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-'use client'
+'use client';
+
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
+import {
+  Box,
+  Button,
+  Group,
+  Paper,
+  Stack,
+  Text,
+  TextInput,
+  Title,
+  Tooltip,
+} from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
 import programKemiskinanState from '../../../_state/ekonomi/program-kemiskinan';
 import CreateEditor from '../../../_com/createEditor';
+import SelectIconProgram from '../../../_com/selectIcon';
 import { useState } from 'react';
-
+import { toast } from 'react-toastify';
 
 function CreateProgramKemiskinan() {
-  const programState = useProxy(programKemiskinanState)
+  const programState = useProxy(programKemiskinanState);
   const router = useRouter();
   const [lineChart, setLineChart] = useState<any[]>([]);
 
   const resetForm = () => {
     programState.create.form = {
-      nama: "",
-      deskripsi: "",
-      ikonUrl: "",
+      nama: '',
+      deskripsi: '',
+      icon: '',
       statistik: {
-        tahun: "",
-        jumlah: "",
-      }
-    }
-  }
+        tahun: '',
+        jumlah: '',
+      },
+    };
+  };
 
   const handleSubmit = async () => {
+    if (!programState.create.form.nama || !programState.create.form.deskripsi) {
+      return toast.warn('Judul dan deskripsi wajib diisi');
+    }
+
     const id = await programState.create.create();
     if (id) {
       const idStr = String(id);
@@ -36,68 +52,116 @@ function CreateProgramKemiskinan() {
       if (programState.findUnique.data) {
         setLineChart([programState.findUnique.data]);
       }
+      toast.success('Program berhasil ditambahkan');
+    } else {
+      toast.error('Gagal menambahkan program, coba lagi');
     }
-    resetForm()
-    router.push("/admin/ekonomi/program-kemiskinan")
-  }
+
+    resetForm();
+    router.push('/admin/ekonomi/program-kemiskinan');
+  };
 
   return (
-    <Box>
-      <Box mb={10}>
-        <Button onClick={() => router.back()} variant='subtle' color={'blue'}>
-          <IconArrowBack color={colors['blue-button']} size={25} />
-        </Button>
-      </Box>
+    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+      {/* Header dengan tombol back */}
+      <Group mb="md">
+        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
+          <Button
+            variant="subtle"
+            onClick={() => router.back()}
+            p="xs"
+            radius="md"
+          >
+            <IconArrowBack color={colors['blue-button']} size={24} />
+          </Button>
+        </Tooltip>
+        <Title order={4} ml="sm" c="dark">
+          Tambah Program Kemiskinan
+        </Title>
+      </Group>
 
-      <Paper w={{ base: '100%', md: '50%' }} bg={colors['white-1']} p={'md'}>
-        <Stack gap={"xs"}>
-          <Title order={4}>Create Program Kemiskinan</Title>
+      <Paper
+        w={{ base: '100%', md: '50%' }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+        style={{ border: '1px solid #e0e0e0' }}
+      >
+        <Stack gap="md">
+          {/* Judul Program */}
           <TextInput
+            label="Judul Program"
+            placeholder="Masukkan judul program"
             value={programState.create.form.nama}
-            onChange={(val) => {
-              programState.create.form.nama = val.target.value;
-            }}
-            label={<Text fw={"bold"} fz={"md"}>Judul Program</Text>}
-            placeholder='Masukkan judul program'
+            onChange={(val) => (programState.create.form.nama = val.target.value)}
+            required
           />
-         <Box>
-          <Text fw={"bold"} fz={"md"}>Deskripsi</Text>
-         <CreateEditor
-            value={programState.create.form.deskripsi}
-            onChange={(val) => {
-              programState.create.form.deskripsi = val;
-            }}
-          />
-         </Box>
-          <TextInput
-            value={programState.create.form.ikonUrl}
-            onChange={(val) => {
-              programState.create.form.ikonUrl = val.target.value;
-            }}
-            label={<Text fw={"bold"} fz={"md"}>Ikon URL</Text>}
-            placeholder='Masukkan ikon url'
-          />
-          <Text fw={"bold"} fz={"md"}>Statistik Jumlah Masyarakat Miskin</Text>
-          <TextInput
-            type='number'
-            value={programState.create.form.statistik.jumlah}
-            onChange={(val) => {
-              programState.create.form.statistik.jumlah = val.target.value;
-            }}
-            label={<Text fw={"bold"} fz={"md"}>Jumlah Masyarakat Miskin</Text>}
-            placeholder='Masukkan jumlah masyarakat miskin'
-          />
-          <TextInput
-            type='number'
-            value={programState.create.form.statistik.tahun}
-            onChange={(val) => {
-              programState.create.form.statistik.tahun = val.target.value;
-            }}
-            label={<Text fw={"bold"} fz={"md"}>Tahun</Text>}
-            placeholder='Masukkan tahun'
-          />
-          <Group>
-            <Button bg={colors['blue-button']} onClick={handleSubmit}>Submit</Button>
+
+          {/* Ikon Program */}
+          <Box>
+            <Text fw="bold" fz="sm" mb={6}>
+              Ikon Program Kreatif Desa
+            </Text>
+            <SelectIconProgram
+              onChange={(value) => (programState.create.form.icon = value)}
+            />
+          </Box>
+
+          {/* Deskripsi */}
+          <Box>
+            <Text fw="bold" fz="sm" mb={6}>
+              Deskripsi
+            </Text>
+            <CreateEditor
+              value={programState.create.form.deskripsi}
+              onChange={(val) => {
+                programState.create.form.deskripsi = val;
+              }}
+            />
+          </Box>
+
+          {/* Statistik */}
+          <Text fw="bold" fz="sm">
+            Statistik Jumlah Masyarakat Miskin
+          </Text>
+          <Group grow>
+            <TextInput
+              type="number"
+              value={programState.create.form.statistik.jumlah}
+              onChange={(val) =>
+                (programState.create.form.statistik.jumlah = val.target.value)
+              }
+              label="Jumlah"
+              placeholder="Masukkan jumlah masyarakat miskin"
+              required
+            />
+            <TextInput
+              type="number"
+              value={programState.create.form.statistik.tahun}
+              onChange={(val) =>
+                (programState.create.form.statistik.tahun = val.target.value)
+              }
+              label="Tahun"
+              placeholder="Masukkan tahun"
+              required
+            />
+          </Group>
+
+          {/* Tombol Submit */}
+          <Group justify="right" mt="sm">
+            <Button
+              onClick={handleSubmit}
+              radius="md"
+              size="md"
+              style={{
+                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                color: '#fff',
+                boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
+              }}
+            >
+              Simpan
+            </Button>
           </Group>
         </Stack>
       </Paper>

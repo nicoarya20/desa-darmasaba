@@ -1,14 +1,14 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 import colors from '@/con/colors';
 import { Box, Button, Flex, Paper, Skeleton, Stack, Text } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { IconArrowBack, IconChartLine, IconChristmasTreeFilled, IconClipboard, IconEdit, IconHomeEco, IconLeaf, IconRecycle, IconScale, IconShieldFilled, IconTent, IconTrash, IconTrendingUp, IconTrophy, IconTruck, IconX } from '@tabler/icons-react';
+import { IconArrowBack, IconEdit, IconX } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
-import programKreatifState from '../../../_state/inovasi/program-kreatif';
+import { IconKey, IconMapper } from '../../../_com/iconMap';
 import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
+import programKreatifState from '../../../_state/inovasi/program-kreatif';
 
 // import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
 
@@ -18,22 +18,6 @@ function DetailProgramKreatifDesa() {
   const router = useRouter()
   const params = useParams()
   const [selectedId, setSelectedId] = useState<string | null>(null)
-
-  const iconMap: Record<string, React.FC<any>> = {
-    ekowisata: IconLeaf,
-    kompetisi: IconTrophy,
-    wisata: IconTent,
-    ekonomi: IconChartLine,
-    sampah: IconRecycle,
-    truck: IconTruck,
-    scale: IconScale,
-    clipboard: IconClipboard,
-    trash: IconTrash,
-    lingkunganSehat: IconHomeEco,
-    sumberOksigen: IconChristmasTreeFilled,
-    ekonomiBerkelanjutan: IconTrendingUp,
-    mencegahBencana: IconShieldFilled,
-  };
 
   useShallowEffect(() => {
     stateProgramKreatif.findUnique.load(params?.id as string)
@@ -75,10 +59,12 @@ function DetailProgramKreatifDesa() {
               </Box>
               <Box>
                 <Text fz={"lg"} fw={"bold"}>Ikon Program Kreatif Desa</Text>
-                {iconMap[stateProgramKreatif.findUnique.data?.icon] && (
-                  <Box title={stateProgramKreatif.findUnique.data?.icon}>
-                    {React.createElement(iconMap[stateProgramKreatif.findUnique.data?.icon], { size: 24 })}
-                  </Box>
+                {stateProgramKreatif.findUnique.data?.icon && (
+                  <IconMapper
+                    name={stateProgramKreatif.findUnique.data?.icon as IconKey}
+                    size={32}
+                    color={colors['blue-button']}
+                  />
                 )}
               </Box>
               <Box>
@@ -127,7 +113,7 @@ function DetailProgramKreatifDesa() {
         onClose={() => setModalHapus(false)}
         onConfirm={handleHapus}
         text="Apakah anda yakin ingin menghapus program kreatif desa ini?"
-      /> 
+      />
     </Box>
   );
 }

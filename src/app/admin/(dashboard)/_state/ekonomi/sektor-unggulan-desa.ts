@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiFetch from "@/lib/api-fetch";
 import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
@@ -76,13 +77,37 @@ const grafikSektorUnggulan = proxy({
           };
         }>[]
       | null,
+    page: 1,
+    totalPages: 1,
     loading: false,
-    async load() {
-      const res = await ApiFetch.api.ekonomi.sektourunggulandesa[
-        "find-many"
-      ].get();
-      if (res.status === 200) {
-        grafikSektorUnggulan.findMany.data = res.data?.data ?? [];
+    search: "",
+    load: async (page = 1, limit = 10, search = "") => {
+      grafikSektorUnggulan.findMany.loading = true; // ✅ Akses langsung via nama path
+      grafikSektorUnggulan.findMany.page = page;
+      grafikSektorUnggulan.findMany.search = search;
+
+      try {
+        const query: any = { page, limit };
+        if (search) query.search = search;
+
+        const res = await ApiFetch.api.ekonomi.sektourunggulandesa[
+          "find-many"
+        ].get({ query });
+
+        if (res.status === 200 && res.data?.success) {
+          grafikSektorUnggulan.findMany.data = res.data.data ?? [];
+          grafikSektorUnggulan.findMany.totalPages =
+            res.data.totalPages ?? 1;
+        } else {
+          grafikSektorUnggulan.findMany.data = [];
+          grafikSektorUnggulan.findMany.totalPages = 1;
+        }
+      } catch (err) {
+        console.error("Gagal fetch sektor unggulan desa paginated:", err);
+        grafikSektorUnggulan.findMany.data = [];
+        grafikSektorUnggulan.findMany.totalPages = 1;
+      } finally {
+        grafikSektorUnggulan.findMany.loading = false;
       }
     },
   },

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiFetch from "@/lib/api-fetch";
 import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
@@ -71,12 +72,37 @@ const demografiPekerjaan = proxy({
           omit: { isActive: true };
         }>[]
       | null,
-    async load() {
-      const res = await ApiFetch.api.ekonomi.demografipekerjaan[
-        "find-many"
-      ].get();
-      if (res.status === 200) {
-        demografiPekerjaan.findMany.data = res.data?.data ?? [];
+    page: 1,
+    totalPages: 1,
+    loading: false,
+    search: "",
+    load: async (page = 1, limit = 10, search = "") => {
+      demografiPekerjaan.findMany.loading = true; // ✅ Akses langsung via nama path
+      demografiPekerjaan.findMany.page = page;
+      demografiPekerjaan.findMany.search = search;
+
+      try {
+        const query: any = { page, limit };
+        if (search) query.search = search;
+
+        const res = await ApiFetch.api.ekonomi.demografipekerjaan[
+          "find-many"
+        ].get({ query });
+
+        if (res.status === 200 && res.data?.success) {
+          demografiPekerjaan.findMany.data = res.data.data ?? [];
+          demografiPekerjaan.findMany.totalPages =
+            res.data.totalPages ?? 1;
+        } else {
+          demografiPekerjaan.findMany.data = [];
+          demografiPekerjaan.findMany.totalPages = 1;
+        }
+      } catch (err) {
+        console.error("Gagal fetch demografi pekerjaan paginated:", err);
+        demografiPekerjaan.findMany.data = [];
+        demografiPekerjaan.findMany.totalPages = 1;
+      } finally {
+        demografiPekerjaan.findMany.loading = false;
       }
     },
   },
@@ -194,4 +220,4 @@ const demografiPekerjaan = proxy({
     },
   },
 });
-export default demografiPekerjaan
+export default demografiPekerjaan;

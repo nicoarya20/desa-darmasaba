@@ -12,7 +12,7 @@ const ProgramKemiskinan = new Elysia({
     body: t.Object({
         nama: t.String(),
         deskripsi: t.String(),
-        ikonUrl: t.String(),
+        icon: t.String(),
         statistik: t.Object({
             tahun: t.String(),
             jumlah: t.String(),
@@ -32,7 +32,7 @@ const ProgramKemiskinan = new Elysia({
     body: t.Object({
         nama: t.String(),
         deskripsi: t.String(),
-        ikonUrl: t.String(),
+        icon: t.String(),
         statistik: t.Object({
             tahun: t.String(),
             jumlah: t.String(),

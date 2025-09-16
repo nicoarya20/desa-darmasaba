@@ -4,7 +4,7 @@
 import React from 'react';
 import colors from '@/con/colors';
 import { Box, Button, Center, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
-import { IconDeviceImac, IconSearch } from '@tabler/icons-react';
+import { IconCash, IconChristmasTreeFilled, IconClipboard, IconDeviceImac, IconDroplet, IconHome, IconHomeEco, IconHospital, IconScale, IconSchool, IconSearch, IconShieldFilled, IconShoppingCart, IconTrash, IconTree, IconTrendingUp, IconTruck } from '@tabler/icons-react';
 import HeaderSearch from '../../_com/header';
 import JudulList from '../../_com/judulList';
 import { useRouter } from 'next/navigation';
@@ -60,6 +60,21 @@ function ListProgramKreatifDesa({ search }: { search: string }) {
     wisata: IconTent,
     ekonomi: IconChartLine,
     sampah: IconRecycle,
+    truck: IconTruck,
+    scale: IconScale,
+    clipboard: IconClipboard,
+    trash: IconTrash,
+    lingkunganSehat: IconHomeEco,
+    sumberOksigen: IconChristmasTreeFilled,
+    ekonomiBerkelanjutan: IconTrendingUp,
+    mencegahBencana: IconShieldFilled,
+    rumah: IconHome,
+    pohon: IconTree,
+    air: IconDroplet,
+    bantuan: IconCash,
+    pelatihan: IconSchool,
+    subsidi: IconShoppingCart,
+    layananKesehatan: IconHospital
   };
 
   if (loading || !data) {

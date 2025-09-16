@@ -1,97 +1,134 @@
 'use client'
 import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
 import colors from '@/con/colors';
-import { Box, Button, Flex, Paper, Skeleton, Stack, Text } from '@mantine/core';
+import {
+  Box,
+  Button,
+  Group,
+  Paper,
+  Skeleton,
+  Stack,
+  Text,
+  Tooltip,
+} from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { IconArrowBack, IconEdit, IconX } from '@tabler/icons-react';
+import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import grafikSektorUnggulan from '../../../_state/ekonomi/sektor-unggulan-desa';
 
 function DetailSektorUnggulanDesa() {
-  const stateGrafik = useProxy(grafikSektorUnggulan)
-  const [modalHapus, setModalHapus] = useState(false)
-  const [selectedId, setSelectedId] = useState<string | null>(null)
-  const params = useParams()
+  const stateGrafik = useProxy(grafikSektorUnggulan);
+  const [modalHapus, setModalHapus] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const params = useParams();
   const router = useRouter();
 
   useShallowEffect(() => {
-    stateGrafik.findUnique.load(params?.id as string)
-  }, [])
+    stateGrafik.findUnique.load(params?.id as string);
+  }, []);
 
   const handleHapus = () => {
     if (selectedId) {
-      stateGrafik.delete.byId(selectedId)
-      setModalHapus(false)
-      setSelectedId(null)
-      router.push("/admin/ekonomi/sektor-unggulan-desa")
+      stateGrafik.delete.byId(selectedId);
+      setModalHapus(false);
+      setSelectedId(null);
+      router.push('/admin/ekonomi/sektor-unggulan-desa');
     }
-  }
+  };
 
   if (!stateGrafik.findUnique.data) {
     return (
       <Stack py={10}>
-        <Skeleton h={500} />
+        <Skeleton height={500} radius="md" />
       </Stack>
-    )
+    );
   }
 
+  const data = stateGrafik.findUnique.data;
+
   return (
-    <Box>
-      <Box mb={10}>
-        <Button variant="subtle" onClick={() => router.back()}>
-          <IconArrowBack color={colors['blue-button']} size={25} />
-        </Button>
-      </Box>
-      <Paper w={{ base: "100%", md: "50%" }} bg={colors['white-1']} p={'md'}>
-        <Stack>
-          <Text fz={"xl"} fw={"bold"}>Detail Sektor Unggulan Desa</Text>
-          <Paper bg={colors['BG-trans']} p={'md'}>
-            <Stack gap={"xs"}>
+    <Box py={10}>
+      {/* Tombol kembali */}
+      <Button
+        variant="subtle"
+        onClick={() => router.back()}
+        leftSection={<IconArrowBack size={24} color={colors['blue-button']} />}
+        mb={15}
+      >
+        Kembali
+      </Button>
+
+      <Paper
+        withBorder
+        w={{ base: '100%', md: '60%' }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+      >
+        <Stack gap="md">
+          <Text fz="2xl" fw="bold" c={colors['blue-button']}>
+            Detail Sektor Unggulan Desa
+          </Text>
+
+          <Paper bg="#ECEEF8" p="md" radius="md" shadow="xs">
+            <Stack gap="sm">
               <Box>
-                <Text fz={"lg"} fw={"bold"}>Nama Sektor Unggulan</Text>
-                <Text fz={"lg"}>{stateGrafik.findUnique.data?.name}</Text>
+                <Text fz="lg" fw="bold">Nama Sektor Unggulan</Text>
+                <Text fz="md" c="dimmed">{data.name || '-'}</Text>
               </Box>
+
               <Box>
-                <Text fz={"lg"} fw={"bold"}>Deskripsi Sektor Unggulan</Text>
-                <Text fz={"lg"}>{stateGrafik.findUnique.data?.description}</Text>
+                <Text fz="lg" fw="bold">Deskripsi</Text>
+                <Text ta={"justify"} fz="md" c="dimmed" dangerouslySetInnerHTML={{ __html: data.description || '-' }} />
               </Box>
+
               <Box>
-                <Text fz={"lg"} fw={"bold"}>Jumlah Sektor Unggulan</Text>
-                <Text fz={"lg"}>{stateGrafik.findUnique.data?.value}</Text>
+                <Text fz="lg" fw="bold">Jumlah</Text>
+                <Text fz="md" c="dimmed">{data.value ?? '-'}</Text>
               </Box>
-              <Box>
-                <Flex gap={"xs"}>
+
+              {/* Tombol Aksi */}
+              <Group gap="sm">
+                <Tooltip label="Hapus Sektor Unggulan" withArrow position="top">
                   <Button
+                    color="red"
                     onClick={() => {
-                      if (stateGrafik.findUnique.data) {
-                        setSelectedId(stateGrafik.findUnique.data.id);
-                        setModalHapus(true);
-                      }
+                      setSelectedId(data.id);
+                      setModalHapus(true);
                     }}
-                    disabled={!stateGrafik.findUnique.data}
-                    color="red">
-                    <IconX size={20} />
+                    variant="light"
+                    radius="md"
+                    size="md"
+                  >
+                    <IconTrash size={20} />
                   </Button>
+                </Tooltip>
+
+                <Tooltip label="Edit Sektor Unggulan" withArrow position="top">
                   <Button
-                    onClick={() => {
-                      if (stateGrafik.findUnique.data) {
-                        router.push(`/admin/ekonomi/sektor-unggulan-desa/${stateGrafik.findUnique.data.id}/edit`);
-                      }
-                    }}
-                    disabled={!stateGrafik.findUnique.data}
-                    color="green">
+                    color="green"
+                    onClick={() =>
+                      router.push(
+                        `/admin/ekonomi/sektor-unggulan-desa/${data.id}/edit`
+                      )
+                    }
+                    variant="light"
+                    radius="md"
+                    size="md"
+                  >
                     <IconEdit size={20} />
                   </Button>
-                </Flex>
-              </Box>
+                </Tooltip>
+              </Group>
             </Stack>
           </Paper>
         </Stack>
       </Paper>
 
-      {/* Modal Hapus */}
+      {/* Modal Konfirmasi Hapus */}
       <ModalKonfirmasiHapus
         opened={modalHapus}
         onClose={() => setModalHapus(false)}

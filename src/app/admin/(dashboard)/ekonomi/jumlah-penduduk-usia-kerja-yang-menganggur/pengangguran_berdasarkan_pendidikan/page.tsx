@@ -1,59 +1,62 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Flex, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title } from '@mantine/core';
+import { Box, Button, Center, Flex, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title, Tooltip } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { IconEdit, IconSearch, IconTrash } from '@tabler/icons-react';
+import { IconEdit, IconPlus, IconSearch, IconTrash } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Cell, Pie, PieChart } from 'recharts';
 import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../../_com/header';
-import JudulList from '../../../_com/judulList';
 import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
 import grafikNganggur from '../../../_state/ekonomi/usia-kerja-nganggur';
 
 function GrafikBerdasarkanPendidikan() {
-  const [search, setSearch] = useState("")
+  const [search, setSearch] = useState("");
   return (
     <Box>
-      <Stack gap={"xs"}>
       <HeaderSearch
         title='Detail Data Pengangguran Berdasarkan Pendidikan'
-        placeholder='pencarian'
+        placeholder='Cari data pendidikan...'
         searchIcon={<IconSearch size={20} />}
         value={search}
         onChange={(e) => setSearch(e.currentTarget.value)}
       />
-        <ListGrafikBerdasarkanPendidikan search={search}/>
-      </Stack>
+      <ListGrafikBerdasarkanPendidikan search={search} />
     </Box>
   );
 }
 
-function ListGrafikBerdasarkanPendidikan({search}: {search: string}) {
-  const stategrafik = useProxy(grafikNganggur.grafikBerdasarkanPendidikan)
+function ListGrafikBerdasarkanPendidikan({ search }: { search: string }) {
+  const stategrafik = useProxy(grafikNganggur.grafikBerdasarkanPendidikan);
   const [donutData, setDonutData] = useState<any[]>([]);
   const [mounted, setMounted] = useState(false);
-  const [modalHapus, setModalHapus] = useState(false)
-  const [selectedId, setSelectedId] = useState<string | null>(null)
+  const [modalHapus, setModalHapus] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const router = useRouter();
-
 
   const handleDelete = async () => {
     if (selectedId) {
-      await stategrafik.delete.byId(selectedId)
-      setModalHapus(false)
-      setSelectedId(null)
-
-      stategrafik.findMany.load()
+      await stategrafik.delete.byId(selectedId);
+      setModalHapus(false);
+      setSelectedId(null);
+      stategrafik.findMany.load();
     }
-  }
+  };
+
+  const {
+    data,
+    page,
+    totalPages,
+    loading,
+    load,
+  } = stategrafik.findMany;
 
   useShallowEffect(() => {
     setMounted(true);
-    stategrafik.findMany.load()
-  }, []);
+    load(page, 10, search);
+  }, [page, search]);
 
   useEffect(() => {
     if (stategrafik.findMany.data) {
@@ -70,36 +73,37 @@ function ListGrafikBerdasarkanPendidikan({search}: {search: string}) {
         { name: 'S1', value: S1, color: '#1018A8FF', key: 'S1' },
       ]);
     }
-  }, [stategrafik.findMany.data])
+  }, [stategrafik.findMany.data]);
 
-  const filteredData = (stategrafik.findMany.data || []).filter(item => {
-    const keyword = search.toLowerCase();
+  const filteredData = data || []
+
+  if (loading || !data) {
     return (
-      item.SD.toString().toLowerCase().includes(keyword) ||
-      item.SMP.toString().toLowerCase().includes(keyword) ||
-      item.SMA.toString().toLowerCase().includes(keyword) ||
-      item.D3.toString().toLowerCase().includes(keyword) ||
-      item.S1.toString().toLowerCase().includes(keyword)
+      <Stack py={10}>
+        <Skeleton height={500} radius="md" />
+      </Stack>
     );
-  });
-
-  if (!stategrafik.findMany.data) {
-    return (
-      <Box>
-        <Skeleton h={500} />
-      </Box>
-    )
   }
 
   return (
-    <Box>
-      <Stack gap={"xs"}>
-        <Paper bg={colors['white-1']} p={"md"}>
-          <JudulList
-            title='List Grafik Pengangguran Berdasarkan Pendidikan'
-            href='/admin/ekonomi/jumlah-penduduk-usia-kerja-yang-menganggur/pengangguran_berdasarkan_pendidikan/create'
-          />
-          <Table striped withTableBorder withRowBorders>
+    <Box py={10}>
+      <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
+        {/* Header */}
+        <Flex justify="space-between" align="center" mb="md">
+          <Title order={4}>List Pengangguran Berdasarkan Usia Kerja</Title>
+          <Tooltip label="Tambah Data" withArrow>
+            <Button
+              leftSection={<IconPlus size={18} />}
+              color="blue"
+              variant="light"
+              onClick={() => router.push('/admin/ekonomi/jumlah-penduduk-usia-kerja-yang-menganggur/pengangguran_berdasarkan_usia/create')}
+            >
+              Tambah Baru
+            </Button>
+          </Tooltip>
+        </Flex>
+        <Box style={{ overflowX: 'auto' }}>
+          <Table highlightOnHover>
             <TableThead>
               <TableTr>
                 <TableTh>SD</TableTh>
@@ -114,8 +118,10 @@ function ListGrafikBerdasarkanPendidikan({search}: {search: string}) {
             <TableTbody>
               {filteredData.length === 0 ? (
                 <TableTr>
-                  <TableTd colSpan={6}>
-                    <Text ta='center' c='dimmed'>Belum ada data grafik responden</Text>
+                  <TableTd colSpan={7}>
+                    <Center py={20}>
+                      <Text color="dimmed">Belum ada data grafik responden</Text>
+                    </Center>
                   </TableTd>
                 </TableTr>
               ) : (
@@ -127,82 +133,87 @@ function ListGrafikBerdasarkanPendidikan({search}: {search: string}) {
                     <TableTd>{item.D3}</TableTd>
                     <TableTd>{item.S1}</TableTd>
                     <TableTd>
-                      <Button color='green' onClick={() => router.push(`/admin/ekonomi/jumlah-penduduk-usia-kerja-yang-menganggur/pengangguran_berdasarkan_pendidikan/${item.id}`)}>
-                        <IconEdit size={20} />
-                      </Button>
+                      <Tooltip label="Edit Data" withArrow>
+                        <Button color="green" variant="light" onClick={() => router.push(`/admin/ekonomi/jumlah-penduduk-usia-kerja-yang-menganggur/pengangguran_berdasarkan_pendidikan/${item.id}`)}>
+                          <IconEdit size={18} />
+                        </Button>
+                      </Tooltip>
                     </TableTd>
                     <TableTd>
-                      <Button
-                        color='red'
-                        disabled={stategrafik.delete.loading}
-                        onClick={() => {
-                          setSelectedId(item.id)
-                          setModalHapus(true)
-                        }}>
-                        <IconTrash size={20} />
-                      </Button>
+                      <Tooltip label="Hapus Data" withArrow>
+                        <Button
+                          color="red"
+                          variant="light"
+                          disabled={stategrafik.delete.loading}
+                          onClick={() => {
+                            setSelectedId(item.id);
+                            setModalHapus(true);
+                          }}>
+                          <IconTrash size={18} />
+                        </Button>
+                      </Tooltip>
                     </TableTd>
                   </TableTr>
                 ))
               )}
             </TableTbody>
-
           </Table>
-        </Paper>
+        </Box>
+      </Paper>
 
-        {/* Chart */}
-        <Box>
-          <Paper bg={colors['white-1']} p={'md'}>
-            <Stack>
-              <Title pb={10} order={3}>Grafik Pengangguran Berdasarkan Pendidikan</Title>
-              {mounted && donutData.length > 0 ? (<Box style={{ width: '100%', height: 'auto', minHeight: 200 }}>
-                <PieChart
-                  width={800} height={300}
-                  data={donutData}
-                >
+      <Center>
+        <Pagination
+          value={page}
+          onChange={(newPage) => {
+            load(newPage, 10);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          total={totalPages}
+          mt="md"
+          mb="md"
+          color="blue"
+          radius="md"
+        />
+      </Center>
+
+      {/* Chart */}
+      <Box mt="md">
+        <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
+          <Stack>
+            <Title order={3} pb={10}>Grafik Pengangguran Berdasarkan Pendidikan</Title>
+            {mounted && donutData.length > 0 ? (
+              <Box style={{ width: '100%', minHeight: 250 }}>
+                <PieChart width={800} height={300} data={donutData}>
                   <Pie
                     dataKey="value"
                     nameKey="name"
                     data={donutData}
-                    cx={500}
+                    cx={400}
                     cy={150}
                     innerRadius={60}
                     outerRadius={115}
-                    label={true}
+                    label
                   >
                     {donutData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
                 </PieChart>
-                <Flex gap={"md"} align={"center"}>
-                  <Box bg={colors['blue-button']} w={20} h={20} />
-                  <Text>SD : {donutData.find((entry) => entry.name === 'SD')?.value}</Text>
-                </Flex>
-                <Flex gap={"md"} align={"center"}>
-                  <Box bg={'#10A85AFF'} w={20} h={20} />
-                  <Text>SMP : {donutData.find((entry) => entry.name === 'SMP')?.value}</Text>
-                </Flex>
-                <Flex gap={"md"} align={"center"}>
-                  <Box bg={'#C07B13FF'} w={20} h={20} />
-                  <Text>SMA : {donutData.find((entry) => entry.name === 'SMA')?.value}</Text>
-                </Flex>
-                <Flex gap={"md"} align={"center"}>
-                  <Box bg={'#1094A8FF'} w={20} h={20} />
-                  <Text>D3 : {donutData.find((entry) => entry.name === 'D3')?.value}</Text>
-                </Flex>
-                <Flex gap={"md"} align={"center"}>
-                  <Box bg={'#A83610FF'} w={20} h={20} />
-                  <Text>S1 : {donutData.find((entry) => entry.name === 'S1')?.value}</Text>
-                </Flex>
+                <Stack gap="xs" mt="sm">
+                  {donutData.map((entry) => (
+                    <Flex key={entry.key} gap="sm" align="center">
+                      <Box w={20} h={20} bg={entry.color} />
+                      <Text>{entry.name} : {entry.value}</Text>
+                    </Flex>
+                  ))}
+                </Stack>
               </Box>
-              ) : (
-                <Text c='dimmed'>Belum ada data untuk ditampilkan dalam grafik</Text>
-              )}
-            </Stack>
-          </Paper>
-        </Box>
-      </Stack>
+            ) : (
+              <Text color="dimmed">Belum ada data untuk ditampilkan dalam grafik</Text>
+            )}
+          </Stack>
+        </Paper>
+      </Box>
 
       {/* Modal Konfirmasi Hapus */}
       <ModalKonfirmasiHapus

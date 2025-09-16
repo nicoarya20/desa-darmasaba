@@ -12,27 +12,33 @@ export default async function detailDataPengangguranFindMany(context: Context) {
 
   // Tambahkan pencarian (jika ada)
   if (search) {
+    const yearSearch = Number(search);
+  
     where.OR = [
-      { year: { contains: search, mode: "insensitive" } },
+      // kalau search bisa diparse jadi number → cocokin year
+      ...(isNaN(yearSearch) ? [] : [{ year: yearSearch }]),
+      // selalu cocokin month pakai contains
       { month: { contains: search, mode: "insensitive" } },
     ];
   }
   try {
+    const monthOrder = ["Jan","Feb","Mar","Apr","Mei","Jun","Jul","Agu","Sep","Okt","Nov","Des"];
     const [data, total] = await Promise.all([
       prisma.detailDataPengangguran.findMany({
         where,
         skip,
         take: limit,
-        orderBy: [{ year: "desc" }, { month: "asc" }],
+        orderBy: { year: "asc" }, // urut tahun dulu
       }),
       prisma.detailDataPengangguran.count({
         where,
       }),
     ]);
-
+    data.sort((a, b) => monthOrder.indexOf(a.month) - monthOrder.indexOf(b.month)); 
+    
     return {
       success: true,
-      message: "Success fetch apb desa with pagination",
+      message: "Success fetch detail data pengangguran with pagination",
       data,
       page,
       totalPages: Math.ceil(total / limit),

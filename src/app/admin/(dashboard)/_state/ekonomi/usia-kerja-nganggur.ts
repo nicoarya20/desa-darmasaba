@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiFetch from "@/lib/api-fetch";
 import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
@@ -75,16 +76,37 @@ const grafikBerdasarkanUsiaKerjaNganggur = proxy({
           omit: { isActive: true };
         }>[]
       | null,
-    loading: false,
-    async load() {
-      const res = await ApiFetch.api.ekonomi.grafikusiakerjayangmenganggur[
-        "find-many"
-      ].get();
-      if (res.status === 200) {
-        grafikBerdasarkanUsiaKerjaNganggur.findMany.data = res.data?.data ?? [];
-      }
+      page: 1,
+      totalPages: 1,
+      loading: false,
+      search: "",
+     load: async (page = 1, limit = 10, search = "") => {
+        grafikBerdasarkanUsiaKerjaNganggur.findMany.loading = true; // ✅ Akses langsung via nama path
+        grafikBerdasarkanUsiaKerjaNganggur.findMany.page = page;
+        grafikBerdasarkanUsiaKerjaNganggur.findMany.search = search;
+    
+        try {
+          const query: any = { page, limit };
+          if (search) query.search = search;
+      
+          const res = await ApiFetch.api.ekonomi.grafikusiakerjayangmenganggur["find-many"].get({ query });
+      
+          if (res.status === 200 && res.data?.success) {
+            grafikBerdasarkanUsiaKerjaNganggur.findMany.data = res.data.data ?? [];
+            grafikBerdasarkanUsiaKerjaNganggur.findMany.totalPages = res.data.totalPages ?? 1;
+          } else {
+            grafikBerdasarkanUsiaKerjaNganggur.findMany.data = [];
+            grafikBerdasarkanUsiaKerjaNganggur.findMany.totalPages = 1;
+          }
+        } catch (err) {
+          console.error("Gagal fetch grafik berdasarkan usia kerja yang menganggur paginated:", err);
+          grafikBerdasarkanUsiaKerjaNganggur.findMany.data = [];
+          grafikBerdasarkanUsiaKerjaNganggur.findMany.totalPages = 1;
+        } finally {
+          grafikBerdasarkanUsiaKerjaNganggur.findMany.loading = false;
+        }
+      },
     },
-  },
   findUnique: {
     data: null as Prisma.GrafikMenganggurBerdasarkanUsiaGetPayload<{
       omit: { isActive: true };
@@ -259,15 +281,36 @@ const grafikBerdasarkanPendidikan = proxy({
           omit: { isActive: true };
         }>[]
       | null,
-    loading: false,
-    async load() {
-      const res = await ApiFetch.api.ekonomi.grafikmenganggurberdasarkanpendidikan[
-        "find-many"
-      ].get();
-      if (res.status === 200) {
-        grafikBerdasarkanPendidikan.findMany.data = res.data?.data ?? [];
-      }
-    },
+      page: 1,
+      totalPages: 1,
+      loading: false,
+      search: "",
+     load: async (page = 1, limit = 10, search = "") => {
+        grafikBerdasarkanPendidikan.findMany.loading = true; // ✅ Akses langsung via nama path
+        grafikBerdasarkanPendidikan.findMany.page = page;
+        grafikBerdasarkanPendidikan.findMany.search = search;
+    
+        try {
+          const query: any = { page, limit };
+          if (search) query.search = search;
+      
+          const res = await ApiFetch.api.ekonomi.grafikmenganggurberdasarkanpendidikan["find-many"].get({ query });
+      
+          if (res.status === 200 && res.data?.success) {
+            grafikBerdasarkanPendidikan.findMany.data = res.data.data ?? [];
+            grafikBerdasarkanPendidikan.findMany.totalPages = res.data.totalPages ?? 1;
+          } else {
+            grafikBerdasarkanPendidikan.findMany.data = [];
+            grafikBerdasarkanPendidikan.findMany.totalPages = 1;
+          }
+        } catch (err) {
+          console.error("Gagal fetch grafik berdasarkan pendidikan paginated:", err);
+          grafikBerdasarkanPendidikan.findMany.data = [];
+          grafikBerdasarkanPendidikan.findMany.totalPages = 1;
+        } finally {
+          grafikBerdasarkanPendidikan.findMany.loading = false;
+        }
+      },
   },
   findUnique: {
     data: null as Prisma.GrafikMenganggurBerdasarkanPendidikanGetPayload<{

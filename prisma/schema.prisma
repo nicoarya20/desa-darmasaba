@@ -1487,7 +1487,7 @@ model ProgramKemiskinan {
   id          String               @id @default(uuid())
   nama        String
   deskripsi   String
-  ikonUrl     String?
+  icon        String
   isActive    Boolean              @default(true)
   statistikId String?              @unique
   statistik   StatistikKemiskinan? @relation(fields: [statistikId], references: [id])

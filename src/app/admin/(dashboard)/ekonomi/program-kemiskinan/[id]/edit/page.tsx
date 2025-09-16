@@ -2,6 +2,8 @@
 'use client'
 
 import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
+import { IconKey } from '@/app/admin/(dashboard)/_com/iconMap';
+import SelectIconProgramEdit from '@/app/admin/(dashboard)/_com/selectIconEdit';
 import programKemiskinanState from '@/app/admin/(dashboard)/_state/ekonomi/program-kemiskinan';
 import colors from '@/con/colors';
 import {
@@ -13,11 +15,13 @@ import {
   Text,
   TextInput,
   Title,
+  Tooltip,
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
-import { useRouter, useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { useProxy } from 'valtio/utils';
+import { toast } from 'react-toastify';
 
 function EditProgramKemiskinan() {
   const router = useRouter();
@@ -33,46 +37,74 @@ function EditProgramKemiskinan() {
           stateProgram.update.form = {
             nama: data.nama || '',
             deskripsi: data.deskripsi || '',
-            ikonUrl: data.ikonUrl || '',
+            icon: data.icon || '',
             statistik: {
               tahun: data.statistik?.tahun?.toString() || '',
               jumlah: data.statistik?.jumlah?.toString() || '',
             },
           };
         }
+      }).catch((err) => {
+        console.error("Error load data:", err);
+        toast.error("Gagal mengambil data program");
       });
     }
   }, [id]);
 
   const handleSubmit = async () => {
-    stateProgram.update.id = id;
-    await stateProgram.update.update();
-    router.push('/admin/ekonomi/program-kemiskinan');
+    try {
+      stateProgram.update.id = id;
+      await stateProgram.update.update();
+      toast.success("Program berhasil diperbarui!");
+      router.push('/admin/ekonomi/program-kemiskinan');
+    } catch (error) {
+      console.error("Error update program:", error);
+      toast.error("Terjadi kesalahan saat memperbarui program");
+    }
   };
 
   return (
-    <Box>
-      <Box mb={10}>
-        <Button onClick={() => router.back()} variant="subtle" color="blue">
-          <IconArrowBack color={colors['blue-button']} size={25} />
-        </Button>
-      </Box>
+    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+      {/* Header dengan tombol kembali */}
+      <Group mb="md">
+        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
+          <Button
+            variant="subtle"
+            onClick={() => router.back()}
+            p="xs"
+            radius="md"
+          >
+            <IconArrowBack color={colors['blue-button']} size={24} />
+          </Button>
+        </Tooltip>
+        <Title order={4} ml="sm" c="dark">
+          Edit Program Kemiskinan
+        </Title>
+      </Group>
 
-      <Paper w={{ base: '100%', md: '50%' }} bg={colors['white-1']} p="md">
-        <Stack gap="xs">
-          <Title order={4}>Edit Program Kemiskinan</Title>
-
+      <Paper
+        w={{ base: '100%', md: '50%' }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+        style={{ border: '1px solid #e0e0e0' }}
+      >
+        <Stack gap="md">
           <TextInput
             value={stateProgram.update.form.nama}
             onChange={(e) => {
               stateProgram.update.form.nama = e.target.value;
             }}
-            label={<Text fw="bold" fz="md">Judul Program</Text>}
+            label={<Text fw="bold" fz="sm">Judul Program</Text>}
             placeholder="Masukkan judul program"
+            required
           />
 
           <Box>
-            <Text fw="bold" fz="md">Deskripsi</Text>
+            <Text fw="bold" fz="sm" mb={6}>
+              Deskripsi
+            </Text>
             <EditEditor
               value={stateProgram.update.form.deskripsi}
               onChange={(val) => {
@@ -81,40 +113,58 @@ function EditProgramKemiskinan() {
             />
           </Box>
 
-          <TextInput
-            value={stateProgram.update.form.ikonUrl}
-            onChange={(e) => {
-              stateProgram.update.form.ikonUrl = e.target.value;
-            }}
-            label={<Text fw="bold" fz="md">Ikon URL</Text>}
-            placeholder="Masukkan ikon url"
-          />
+          <Box>
+            <Text fw="bold" fz="sm" mb={6}>
+              Ikon Program Kreatif Desa
+            </Text>
+            <SelectIconProgramEdit
+              value={stateProgram.update.form.icon as IconKey}
+              onChange={(value) => {
+                stateProgram.update.form.icon = value;
+              }}
+            />
+          </Box>
 
-          <Text fw="bold" fz="md">Statistik Jumlah Masyarakat Miskin</Text>
+          <Box>
+            <Text fw="bold" fz="sm" mb={6}>
+              Statistik Jumlah Masyarakat Miskin
+            </Text>
+            <TextInput
+              type="number"
+              value={stateProgram.update.form.statistik.jumlah}
+              onChange={(e) => {
+                stateProgram.update.form.statistik.jumlah = e.target.value;
+              }}
+              label="Jumlah Masyarakat Miskin"
+              placeholder="Masukkan jumlah masyarakat miskin"
+              required
+            />
 
-          <TextInput
-            type="number"
-            value={stateProgram.update.form.statistik.jumlah}
-            onChange={(e) => {
-              stateProgram.update.form.statistik.jumlah = e.target.value;
-            }}
-            label={<Text fw="bold" fz="md">Jumlah Masyarakat Miskin</Text>}
-            placeholder="Masukkan jumlah masyarakat miskin"
-          />
+            <TextInput
+              type="number"
+              value={stateProgram.update.form.statistik.tahun}
+              onChange={(e) => {
+                stateProgram.update.form.statistik.tahun = e.target.value;
+              }}
+              label="Tahun"
+              placeholder="Masukkan tahun"
+              required
+              mt="sm"
+            />
+          </Box>
 
-          <TextInput
-            type="number"
-            value={stateProgram.update.form.statistik.tahun}
-            onChange={(e) => {
-              stateProgram.update.form.statistik.tahun = e.target.value;
-            }}
-            label={<Text fw="bold" fz="md">Tahun</Text>}
-            placeholder="Masukkan tahun"
-          />
-
-          <Group>
-            <Button bg={colors['blue-button']} onClick={handleSubmit}>
-              Submit
+          <Group justify="right" mt="md">
+            <Button
+              onClick={handleSubmit}
+              radius="md"
+              size="md"
+              style={{
+                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                color: '#fff',
+                boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
+              }}
+            >
+              Simpan
             </Button>
           </Group>
         </Stack>

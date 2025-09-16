@@ -1,18 +1,19 @@
 'use client'
-import colors from '@/con/colors';
-import { Stack, Box, Text, SimpleGrid, Paper, Skeleton, Center, Pagination, Grid, GridCol, TextInput } from '@mantine/core';
-import React, { useState } from 'react';
-import BackButton from '../../desa/layanan/_com/BackButto';
-import { CartesianGrid, Legend, Line, LineChart as RechartsLineChart, Tooltip, XAxis, YAxis } from 'recharts';
-import { useProxy } from 'valtio/utils';
 import programKemiskinanState from '@/app/admin/(dashboard)/_state/ekonomi/program-kemiskinan';
+import colors from '@/con/colors';
+import { Box, Center, Grid, GridCol, Pagination, Paper, SimpleGrid, Skeleton, Stack, Text, TextInput } from '@mantine/core';
 import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
 import { IconSearch } from '@tabler/icons-react';
+import { useState } from 'react';
+import { CartesianGrid, Line, LineChart as RechartsLineChart, Tooltip, XAxis, YAxis } from 'recharts';
+import { useProxy } from 'valtio/utils';
+import BackButton from '../../desa/layanan/_com/BackButto';
 
 interface StatistikData {
   id: string;
   tahun: number;
   jumlah: number;
+  icon: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -21,7 +22,7 @@ interface ProgramKemiskinanData {
   id: string;
   nama: string;
   deskripsi: string;
-  ikonUrl: string | null;
+  icon: string;
   statistik: StatistikData | null;
   isActive: boolean;
   statistikId: string | null;
@@ -33,6 +34,20 @@ function Page() {
   const [search, setSearch] = useState('')
   const [debouncedSearch] = useDebouncedValue(search, 500); // 500ms delay
   const state = useProxy(programKemiskinanState)
+
+  // 🔧 Get valid statistics data with proper type checking
+  const statistikData = state.findMany.data
+    .filter((item): item is ProgramKemiskinanData & { statistik: StatistikData } => {
+      return !!item?.statistik && 
+             item.statistik.tahun !== undefined && 
+             item.statistik.jumlah !== undefined;
+    })
+    .map(item => ({
+      tahun: Number(item.statistik.tahun) || 0, // Ensure tahun is a number
+      jumlah: Number(item.statistik.jumlah) || 0, // Ensure jumlah is a number
+    }))
+    .sort((a, b) => a.tahun - b.tahun)
+    .filter(item => !isNaN(item.tahun) && !isNaN(item.jumlah)); // Remove any invalid entries
 
   const {
     data,
@@ -88,9 +103,9 @@ function Page() {
               md: 2
             }}
           >
-            {state.findMany.data.map((v, k) => {
+            {state.findMany.data.map(v => {
               return (
-                <Paper p={'xl'} key={k}>
+                <Paper p={'xl'} key={v.id}>
                   <Text fz={'h3'} fw={'bold'} c={colors['blue-button']}>{v.nama}</Text>
                   <Text fz={'lg'} c={'black'} dangerouslySetInnerHTML={{ __html: v.deskripsi }}></Text>
                 </Paper>
@@ -100,7 +115,10 @@ function Page() {
           <Center my={10}>
             <Pagination
               value={page}
-              onChange={(newPage) => load(newPage)}
+              onChange={(newPage) => {
+                load(newPage)
+                window.scrollTo({ top: 0, behavior: 'smooth' })
+              }}
               total={totalPages}
               my={"md"}
             />
@@ -108,44 +126,48 @@ function Page() {
           <Paper p={'xl'}>
             <Text fz={'h3'} fw={'bold'} c={colors['blue-button']} mb="md">Statistik Kemiskinan Masyarakat</Text>
             <Box style={{ width: '100%', height: 'auto' }}>
-              {data.length > 0 && data[0]?.statistik ? (
+              {statistikData.length > 0 ? (
                 <Box w="100%" style={{ overflowX: 'auto' }}>
                   <Center>
-                    <RechartsLineChart
-                      width={800}
-                      height={300}
-                      data={state.findMany.data
-                        .filter((item): item is ProgramKemiskinanData & { statistik: StatistikData } =>
-                          item.statistik !== null
-                        )
-                        .map(item => ({
-                          tahun: item.statistik.tahun,
-                          jumlah: item.statistik.jumlah
-                        }))
-                        .sort((a, b) => a.tahun - b.tahun)
-                      }
+                    <RechartsLineChart 
+                      width={Math.min(800, window.innerWidth - 100)} 
+                      height={400}
+                      data={statistikData}
                       margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
                     >
                       <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="tahun" />
-                      <YAxis />
-                      <Tooltip
-                        formatter={(value: number, name: string) => [`${value} orang`, name]}
-                        labelFormatter={(label: number) => `Tahun: ${label}`}
+                      <XAxis 
+                        dataKey="tahun" 
+                        label={{ value: 'Tahun', position: 'insideBottomRight', offset: -5 }} 
                       />
-                      <Legend />
-                      <Line
-                        type="monotone"
-                        dataKey="jumlah"
-                        name="Jumlah Masyarakat Miskin"
-                        stroke={colors['blue-button']}
-                        activeDot={{ r: 8 }}
+                      <YAxis 
+                        label={{ value: 'Jumlah', angle: -90, position: 'insideLeft' }}
+                        domain={[0, 'auto']}
+                      />
+                      <Tooltip
+                        formatter={(value) => [`${value} orang`, 'Jumlah']}
+                        labelFormatter={(label) => `Tahun ${label}`}
+                      />
+                      <Line 
+                        type="monotone" 
+                        dataKey="jumlah" 
+                        name="Jumlah"
+                        stroke="#228be6" 
+                        strokeWidth={2} 
+                        dot={{ r: 4 }} 
+                        activeDot={{ r: 6 }}
                       />
                     </RechartsLineChart>
                   </Center>
                 </Box>
               ) : (
-                <Text c="dimmed">Belum ada data statistik yang tersedia</Text>
+                <Box p="md" ta="center" bg="gray.0" style={{ borderRadius: '8px' }}>
+                  <Text c="dimmed">
+                    {state.findMany.loading 
+                      ? 'Memuat data statistik...' 
+                      : 'Belum ada data statistik yang tersedia atau data tidak valid'}
+                  </Text>
+                </Box>
               )}
             </Box>
           </Paper>
