@@ -1,16 +1,26 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-'use client'
-import React, { useEffect } from 'react';
+'use client';
+import colors from '@/con/colors';
+import {
+  Box,
+  Button,
+  Group,
+  Paper,
+  Stack,
+  TextInput,
+  Title,
+  Tooltip
+} from '@mantine/core';
+import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 import pasarDesaState from '../../../../_state/ekonomi/pasar-desa/pasar-desa';
-import colors from '@/con/colors';
-import { Box, Button, Paper, Stack, Title, TextInput, Group, Text } from '@mantine/core';
-import { IconArrowBack } from '@tabler/icons-react';
 
 function CreateKategoriProduk() {
   const router = useRouter();
-  const statePasar = useProxy(pasarDesaState.kategoriProduk)
+  const statePasar = useProxy(pasarDesaState.kategoriProduk);
 
   useEffect(() => {
     statePasar.findMany.load();
@@ -18,42 +28,73 @@ function CreateKategoriProduk() {
 
   const resetForm = () => {
     statePasar.create.form = {
-      nama: "",
+      nama: '',
     };
-  }
+  };
 
   const handleSubmit = async () => {
+    if (!statePasar.create.form.nama) {
+      return toast.warn('Nama kategori produk wajib diisi');
+    }
+
     await statePasar.create.create();
     resetForm();
-    router.push("/admin/ekonomi/pasar-desa/kategori-produk")
-  }
+    router.push('/admin/ekonomi/pasar-desa/kategori-produk');
+  };
 
   return (
-    <Box>
-      <Box>
-        <Box mb={10}>
-          <Button onClick={() => router.back()} variant='subtle' color={'blue'}>
-            <IconArrowBack color={colors['blue-button']} size={25} />
+    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+      {/* Header dengan tombol kembali */}
+      <Group mb="md">
+        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
+          <Button
+            variant="subtle"
+            onClick={() => router.back()}
+            p="xs"
+            radius="md"
+          >
+            <IconArrowBack color={colors['blue-button']} size={24} />
           </Button>
-        </Box>
+        </Tooltip>
+        <Title order={4} ml="sm" c="dark">
+          Tambah Kategori Produk
+        </Title>
+      </Group>
 
-        <Paper w={{ base: '100%', md: '50%' }} bg={colors['white-1']} p={'md'}>
-          <Stack gap={"xs"}>
-            <Title order={4}>Create Kategori Produk</Title>
-            <TextInput
-              value={statePasar.create.form.nama}
-              onChange={(val) => {
-                statePasar.create.form.nama = val.target.value;
+      {/* Card form */}
+      <Paper
+        w={{ base: '100%', md: '50%' }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+        style={{ border: '1px solid #e0e0e0' }}
+      >
+        <Stack gap="md">
+          <TextInput
+            label="Nama Kategori Produk"
+            placeholder="Masukkan nama kategori produk"
+            value={statePasar.create.form.nama || ''}
+            onChange={(e) => (statePasar.create.form.nama = e.target.value)}
+            required
+          />
+
+          <Group justify="right">
+            <Button
+              onClick={handleSubmit}
+              radius="md"
+              size="md"
+              style={{
+                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                color: '#fff',
+                boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
-              label={<Text fw={"bold"} fz={"sm"}>Nama Kategori Produk</Text>}
-              placeholder='Masukkan nama kategori produk'
-            />
-            <Group>
-              <Button bg={colors['blue-button']} onClick={handleSubmit}>Submit</Button>
-            </Group>
-          </Stack>
-        </Paper>
-      </Box>
+            >
+              Simpan
+            </Button>
+          </Group>
+        </Stack>
+      </Paper>
     </Box>
   );
 }

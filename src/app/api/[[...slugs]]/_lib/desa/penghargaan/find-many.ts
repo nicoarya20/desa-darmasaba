@@ -27,6 +27,9 @@ export default async function penghargaanFindMany(context: Context) {
         skip,
         take: limit,
         orderBy: { createdAt: "desc" },
+        include: {
+          image: true,
+        },
       }),
       prisma.penghargaan.count({ where }),
     ]);

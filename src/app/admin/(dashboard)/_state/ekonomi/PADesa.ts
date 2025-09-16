@@ -7,9 +7,13 @@ import { z } from "zod";
 
 const templateApbDesa = z.object({
   tahun: z.number().min(4, "Tahun minimal 4 karakter"),
-  pembiayaanIds: z.array(z.string().uuid()).nonempty("Pilih minimal 1 pembiayaan"),
+  pembiayaanIds: z
+    .array(z.string().uuid())
+    .nonempty("Pilih minimal 1 pembiayaan"),
   belanjaIds: z.array(z.string().uuid()).nonempty("Pilih minimal 1 belanja"),
-  pendapatanIds: z.array(z.string().uuid()).nonempty("Pilih minimal 1 pendapatan"),
+  pendapatanIds: z
+    .array(z.string().uuid())
+    .nonempty("Pilih minimal 1 pendapatan"),
 });
 
 const ApbDesaDefaultForm = {
@@ -54,32 +58,46 @@ const ApbDesa = proxy({
     },
   },
   findMany: {
-    data: null as 
-    | Prisma.ApbDesaGetPayload<{
-      include: {
-        pendapatan: true;
-        belanja: true;
-        pembiayaan: true;
-      };
-    }>[]
-    | null,
+    data: null as
+      | Prisma.ApbDesaGetPayload<{
+          include: {
+            pendapatan: true;
+            belanja: true;
+            pembiayaan: true;
+          };
+        }>[]
+      | null,
+    page: 1,
+    totalPages: 1,
     loading: false,
-    async load() {
+    search: "",
+    load: async (page = 1, limit = 10, search = "") => {
+      ApbDesa.findMany.loading = true; // ✅ Akses langsung via nama path
+      ApbDesa.findMany.page = page;
+      ApbDesa.findMany.search = search;
+
       try {
-        this.loading = true;
+        const query: any = { page, limit };
+        if (search) query.search = search;
+
         const res = await ApiFetch.api.ekonomi.pendapatanaslidesa.apbdesa[
           "find-many"
-        ].get();
-        if (res.status === 200) {
-          this.data = res.data?.data ?? [];
+        ].get({ query });
+
+        if (res.status === 200 && res.data?.success) {
+          ApbDesa.findMany.data = res.data.data ?? [];
+          ApbDesa.findMany.totalPages =
+            res.data.totalPages ?? 1;
         } else {
-          toast.error(res.data?.message || "Gagal mengambil APB Desa");
+          ApbDesa.findMany.data = [];
+          ApbDesa.findMany.totalPages = 1;
         }
-      } catch (error) {
-        console.error("Find many error:", error);
-        toast.error("Gagal mengambil APB Desa");
+      } catch (err) {
+        console.error("Gagal fetch APB Desa paginated:", err);
+        ApbDesa.findMany.data = [];
+        ApbDesa.findMany.totalPages = 1;
       } finally {
-        this.loading = false;
+        ApbDesa.findMany.loading = false;
       }
     },
   },
@@ -106,13 +124,13 @@ const ApbDesa = proxy({
           throw new Error("Gagal mengambil APB Desa");
         }
         const result = await response.json();
-    
+
         if (!result.success) {
           throw new Error(result.message || "Gagal memuat APB Desa");
         }
-    
+
         const data = result.data;
-    
+
         this.id = id;
         this.form = {
           tahun: data.tahun || 0,
@@ -120,7 +138,7 @@ const ApbDesa = proxy({
           belanjaIds: data.belanja?.map((b: any) => b.id) || [],
           pembiayaanIds: data.pembiayaan?.map((p: any) => p.id) || [],
         };
-    
+
         return data;
       } catch (error) {
         console.error("Error loading APB Desa:", error);
@@ -189,7 +207,7 @@ const ApbDesa = proxy({
     data: null as Prisma.ApbDesaGetPayload<{
       include: { pendapatan: true; belanja: true; pembiayaan: true };
     }> | null,
-  
+
     async load(id: string) {
       try {
         const response = await fetch(
@@ -199,11 +217,11 @@ const ApbDesa = proxy({
           throw new Error("Gagal mengambil detail APB Desa");
         }
         const result = await response.json();
-  
+
         if (!result.success) {
           throw new Error(result.message || "Gagal mengambil data");
         }
-  
+
         this.data = result.data; // ✅ fix utama di sini
         return result.data;
       } catch (error) {
@@ -264,34 +282,32 @@ const pendapatan = proxy({
     data: null as any[] | null,
     page: 1,
     totalPages: 1,
-    total: 0,
     loading: false,
-    load: async (page = 1, limit = 10) => {
-      // Change to arrow function
-      pendapatan.findMany.loading = true; // Use the full path to access the property
+    search: "",
+    load: async (page = 1, limit = 10, search = "") => {
+      pendapatan.findMany.loading = true; // ✅ Akses langsung via nama path
       pendapatan.findMany.page = page;
+      pendapatan.findMany.search = search;
+
       try {
-        const res =
-          await ApiFetch.api.ekonomi.pendapatanaslidesa.pendapatanasli[
-            "find-many"
-          ].get({
-            query: { page, limit },
-          });
+        const query: any = { page, limit };
+        if (search) query.search = search;
+
+        const res = await ApiFetch.api.ekonomi.pendapatanaslidesa.pendapatanasli[
+          "find-many"
+        ].get({ query });
 
         if (res.status === 200 && res.data?.success) {
-          pendapatan.findMany.data = res.data.data || [];
-          pendapatan.findMany.total = res.data.total || 0;
-          pendapatan.findMany.totalPages = res.data.totalPages || 1;
+          pendapatan.findMany.data = res.data.data ?? [];
+          pendapatan.findMany.totalPages =
+            res.data.totalPages ?? 1;
         } else {
-          console.error("Failed to load pendapatan:", res.data?.message);
           pendapatan.findMany.data = [];
-          pendapatan.findMany.total = 0;
           pendapatan.findMany.totalPages = 1;
         }
-      } catch (error) {
-        console.error("Error loading pendapatan:", error);
+      } catch (err) {
+        console.error("Gagal fetch pendapatan asli desa paginated:", err);
         pendapatan.findMany.data = [];
-        pendapatan.findMany.total = 0;
         pendapatan.findMany.totalPages = 1;
       } finally {
         pendapatan.findMany.loading = false;
@@ -308,12 +324,15 @@ const pendapatan = proxy({
         return null;
       }
       try {
-        const response = await fetch(`/api/ekonomi/pendapatanaslidesa/pendapatanasli/${id}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        const response = await fetch(
+          `/api/ekonomi/pendapatanaslidesa/pendapatanasli/${id}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -349,16 +368,19 @@ const pendapatan = proxy({
 
       try {
         pendapatan.update.loading = true;
-        const response = await fetch(`/api/ekonomi/pendapatanaslidesa/pendapatanasli/${this.id}`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            name: this.form.name,
-            value: this.form.value,
-          }),
-        });
+        const response = await fetch(
+          `/api/ekonomi/pendapatanaslidesa/pendapatanasli/${this.id}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              name: this.form.name,
+              value: this.form.value,
+            }),
+          }
+        );
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
           throw new Error(
@@ -495,23 +517,37 @@ const belanja = proxy({
       name: string;
       value: number;
     }>,
+    page: 1,
+    totalPages: 1,
     loading: false,
-    async load() {
+    search: "",
+    load: async (page = 1, limit = 10, search = "") => {
+      belanja.findMany.loading = true; // ✅ Akses langsung via nama path
+      belanja.findMany.page = page;
+      belanja.findMany.search = search;
+
       try {
-        this.loading = true;
+        const query: any = { page, limit };
+        if (search) query.search = search;
+
         const res = await ApiFetch.api.ekonomi.pendapatanaslidesa.belanja[
           "find-many"
-        ].get();
-        if (res.status === 200) {
-          this.data = res.data?.data ?? [];
+        ].get({ query });
+
+        if (res.status === 200 && res.data?.success) {
+          belanja.findMany.data = res.data.data ?? [];
+          belanja.findMany.totalPages =
+            res.data.totalPages ?? 1;
         } else {
-          toast.error(res.data?.message || "Gagal mengambil Belanja");
+          belanja.findMany.data = [];
+          belanja.findMany.totalPages = 1;
         }
-      } catch (error) {
-        console.error("Find many error:", error);
-        toast.error("Gagal mengambil Belanja");
+      } catch (err) {
+        console.error("Gagal fetch Belanja paginated:", err);
+        belanja.findMany.data = [];
+        belanja.findMany.totalPages = 1;
       } finally {
-        this.loading = false;
+        belanja.findMany.loading = false;
       }
     },
   },
@@ -525,12 +561,15 @@ const belanja = proxy({
         return null;
       }
       try {
-        const response = await fetch(`/api/ekonomi/pendapatanaslidesa/belanja/${id}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        const response = await fetch(
+          `/api/ekonomi/pendapatanaslidesa/belanja/${id}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -566,16 +605,19 @@ const belanja = proxy({
 
       try {
         belanja.update.loading = true;
-        const response = await fetch(`/api/ekonomi/pendapatanaslidesa/belanja/${this.id}`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            name: this.form.name,
-            value: this.form.value,
-          }),
-        });
+        const response = await fetch(
+          `/api/ekonomi/pendapatanaslidesa/belanja/${this.id}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              name: this.form.name,
+              value: this.form.value,
+            }),
+          }
+        );
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
           throw new Error(
@@ -710,23 +752,37 @@ const pembiayaan = proxy({
       name: string;
       value: number;
     }>,
+    page: 1,
+    totalPages: 1,
     loading: false,
-    async load() {
+    search: "",
+    load: async (page = 1, limit = 10, search = "") => {
+      pembiayaan.findMany.loading = true; // ✅ Akses langsung via nama path
+      pembiayaan.findMany.page = page;
+      pembiayaan.findMany.search = search;
+
       try {
-        this.loading = true;
+        const query: any = { page, limit };
+        if (search) query.search = search;
+
         const res = await ApiFetch.api.ekonomi.pendapatanaslidesa.pembiayaan[
           "find-many"
-        ].get();
-        if (res.status === 200) {
-          this.data = res.data?.data ?? [];
+        ].get({ query });
+
+        if (res.status === 200 && res.data?.success) {
+          pembiayaan.findMany.data = res.data.data ?? [];
+          pembiayaan.findMany.totalPages =
+            res.data.totalPages ?? 1;
         } else {
-          toast.error(res.data?.message || "Gagal mengambil Pembiayaan");
+          pembiayaan.findMany.data = [];
+          pembiayaan.findMany.totalPages = 1;
         }
-      } catch (error) {
-        console.error("Find many error:", error);
-        toast.error("Gagal mengambil Pembiayaan");
+      } catch (err) {
+        console.error("Gagal fetch Pembiayaan paginated:", err);
+        pembiayaan.findMany.data = [];
+        pembiayaan.findMany.totalPages = 1;
       } finally {
-        this.loading = false;
+        pembiayaan.findMany.loading = false;
       }
     },
   },
@@ -740,12 +796,15 @@ const pembiayaan = proxy({
         return null;
       }
       try {
-        const response = await fetch(`/api/ekonomi/pendapatanaslidesa/pembiayaan/${id}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        const response = await fetch(
+          `/api/ekonomi/pendapatanaslidesa/pembiayaan/${id}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -781,16 +840,19 @@ const pembiayaan = proxy({
 
       try {
         pembiayaan.update.loading = true;
-        const response = await fetch(`/api/ekonomi/pendapatanaslidesa/pembiayaan/${this.id}`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            name: this.form.name,
-            value: this.form.value,
-          }),
-        });
+        const response = await fetch(
+          `/api/ekonomi/pendapatanaslidesa/pembiayaan/${this.id}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              name: this.form.name,
+              value: this.form.value,
+            }),
+          }
+        );
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
           throw new Error(

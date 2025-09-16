@@ -1,5 +1,19 @@
+"use client";
+
 import profileLandingPageState from "@/app/admin/(dashboard)/_state/landing-page/profile";
-import { Box, Center, Image, Paper, SimpleGrid, Stack, Text, Tooltip } from "@mantine/core";
+import {
+  Box,
+  Center,
+  Image,
+  Paper,
+  SimpleGrid,
+  Stack,
+  Text,
+  Tooltip,
+  Skeleton,
+  useMantineColorScheme,
+  ScrollArea,
+} from "@mantine/core";
 import { useShallowEffect } from "@mantine/hooks";
 import { motion } from "framer-motion";
 import { useTransitionRouter } from "next-view-transitions";
@@ -11,29 +25,36 @@ type ProgramInovasiItem = Prisma.ProgramInovasiGetPayload<{ include: { image: tr
 
 function ModuleItem({ data }: { data: ProgramInovasiItem }) {
   const router = useTransitionRouter();
+  const { colorScheme } = useMantineColorScheme();
+  const isDark = colorScheme === "dark";
+
   return (
-    <motion.div whileHover={{ scale: 1.04 }}>
+    <motion.div whileHover={{ scale: 1.03 }}>
       <Tooltip label={`Lihat ${data.name}`} withArrow>
         <Paper
           onClick={() => router.push(`/darmasaba/program-inovasi/${data.id}`)}
-          p="xl"
-          radius="2xl"
-          bg="white"
-          className="cursor-pointer transition-all shadow-md hover:shadow-xl"
+          p="lg"
+          radius="xl"
+          shadow="sm"
+          role="button"
+          tabIndex={0}
+          className="cursor-pointer transition-all"
+          bg={isDark ? "dark.6" : "white"}
         >
-          <Center h={180}>
+          <Center h={160}>
             {data.image?.link ? (
               <Image
                 src={data.image.link}
                 alt={data.name}
-                fit="contain"
-                radius="lg"
+                radius="md"
+                fit="cover"
+                h={140}
+                w="100%"
                 loading="lazy"
-                style={{ objectFit: "contain", objectPosition: "center" }}
               />
             ) : (
               <Stack align="center" gap="xs">
-                <IconPhotoOff size={40} stroke={1.5} />
+                <IconPhotoOff size={38} stroke={1.5} />
                 <Text size="sm" c="dimmed">
                   Belum ada gambar
                 </Text>
@@ -41,7 +62,7 @@ function ModuleItem({ data }: { data: ProgramInovasiItem }) {
             )}
           </Center>
           <Box mt="md">
-            <Text fw={600} ta="center" size="lg" c="black">
+            <Text fw={600} ta="center" size="md">
               {data.name}
             </Text>
           </Box>
@@ -58,12 +79,22 @@ function ModuleView() {
     listImageState.findMany.load();
   }, []);
 
-  if (!listImageState.findMany.loading && !listImageState.findMany.data?.length) {
+  if (listImageState.findMany.loading) {
+    return (
+      <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }} spacing="lg" mt="lg">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <Skeleton key={i} height={220} radius="xl" />
+        ))}
+      </SimpleGrid>
+    );
+  }
+
+  if (!listImageState.findMany.data?.length) {
     return (
       <Center h={320}>
         <Stack align="center" gap="sm">
           <IconPhotoOff size={54} stroke={1.5} />
-          <Text size="lg" fw={600} c="white">
+          <Text size="lg" fw={600}>
             Belum ada program inovasi
           </Text>
           <Text size="sm" c="dimmed">
@@ -75,11 +106,20 @@ function ModuleView() {
   }
 
   return (
-    <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }} spacing="xl" mt="lg">
+    <ScrollArea h={280} // ✅ tinggi fixed, bisa disesuaikan
+      scrollbarSize={8}
+      offsetScrollbars
+      type="auto"
+      styles={{
+        viewport: { paddingRight: 8 }, // kasih jarak biar scroll nggak dempet
+      }}
+    >
+    <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }} spacing="lg" mt="lg">
       {listImageState.findMany.data?.map((item) => (
         <ModuleItem key={item.id} data={item} />
       ))}
     </SimpleGrid>
+    </ScrollArea>
   );
 }
 

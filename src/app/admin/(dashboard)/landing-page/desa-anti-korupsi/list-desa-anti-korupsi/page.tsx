@@ -75,64 +75,65 @@ function ListDesaAntiKorupsi({ search }: { search: string }) {
               </Button>
             </Tooltip>
           </Group>
+          <Box style={{ overflowX: 'auto' }}>
+            <Table
+              striped
+              highlightOnHover
 
-          <Table
-            striped
-            highlightOnHover
-            
-            withRowBorders
-            verticalSpacing="sm"
-          >
-            <TableThead>
-              <TableTr>
-                <TableTh style={{ width: '50%' }}>Nama Program</TableTh>
-                <TableTh style={{ width: '30%' }}>Kategori</TableTh>
-                <TableTh style={{ width: '20%', textAlign: 'center' }}>Aksi</TableTh>
-              </TableTr>
-            </TableThead>
-            <TableTbody>
-              {filteredData.length > 0 ? (
-                filteredData.map((item) => (
-                  <TableTr key={item.id}>
-                    <TableTd style={{ width: '50%' }}>
-                      <Text fw={500} lineClamp={1}>
-                        {item.name || '-'}
+              withRowBorders
+              verticalSpacing="sm"
+            >
+              <TableThead>
+                <TableTr>
+                  <TableTh style={{ width: '50%' }}>Nama Program</TableTh>
+                  <TableTh style={{ width: '30%' }}>Kategori</TableTh>
+                  <TableTh style={{ width: '20%', textAlign: 'center' }}>Aksi</TableTh>
+                </TableTr>
+              </TableThead>
+              <TableTbody>
+                {filteredData.length > 0 ? (
+                  filteredData.map((item) => (
+                    <TableTr key={item.id}>
+                      <TableTd style={{ width: '50%' }}>
+                        <Text fw={500} lineClamp={1}>
+                          {item.name || '-'}
+                        </Text>
+                      </TableTd>
+                      <TableTd style={{ width: '30%' }}>
+                        <Text fz="sm" c="dimmed">
+                          {item.kategori?.name || '-'}
+                        </Text>
+                      </TableTd>
+                      <TableTd style={{ width: '20%', textAlign: 'center' }}>
+                        <Button
+                          size="xs"
+                          radius="md"
+                          variant="light"
+                          color="blue"
+                          leftSection={<IconDeviceImacCog size={16} />}
+                          onClick={() =>
+                            router.push(
+                              `/admin/landing-page/desa-anti-korupsi/list-desa-anti-korupsi/${item.id}`
+                            )
+                          }
+                        >
+                          Detail
+                        </Button>
+                      </TableTd>
+                    </TableTr>
+                  ))
+                ) : (
+                  <TableTr>
+                    <TableTd colSpan={3}>
+                      <Text ta="center" c="dimmed">
+                        Tidak ditemukan data dengan kata kunci pencarian
                       </Text>
-                    </TableTd>
-                    <TableTd style={{ width: '30%' }}>
-                      <Text fz="sm" c="dimmed">
-                        {item.kategori?.name || '-'}
-                      </Text>
-                    </TableTd>
-                    <TableTd style={{ width: '20%', textAlign: 'center' }}>
-                      <Button
-                        size="xs"
-                        radius="md"
-                        variant="light"
-                        color="blue"
-                        leftSection={<IconDeviceImacCog size={16} />}
-                        onClick={() =>
-                          router.push(
-                            `/admin/landing-page/desa-anti-korupsi/list-desa-anti-korupsi/${item.id}`
-                          )
-                        }
-                      >
-                        Detail
-                      </Button>
                     </TableTd>
                   </TableTr>
-                ))
-              ) : (
-                <TableTr>
-                  <TableTd colSpan={3}>
-                    <Text ta="center" c="dimmed">
-                      Tidak ditemukan data dengan kata kunci pencarian
-                    </Text>
-                  </TableTd>
-                </TableTr>
-              )}
-            </TableTbody>
-          </Table>
+                )}
+              </TableTbody>
+            </Table>
+          </Box>
         </Paper>
 
         <Center>

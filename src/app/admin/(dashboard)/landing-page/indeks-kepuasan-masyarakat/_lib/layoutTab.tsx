@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import colors from '@/con/colors';
-import { Stack, Tabs, TabsList, TabsPanel, TabsTab, Title, Tooltip } from '@mantine/core';
+import { ScrollArea, Stack, Tabs, TabsList, TabsPanel, TabsTab, Title, Tooltip } from '@mantine/core';
 import { IconChartBar, IconUsers } from '@tabler/icons-react';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
@@ -46,36 +46,44 @@ function LayoutTabsKepuasan({ children }: { children: React.ReactNode }) {
         Indeks Kepuasan Masyarakat
       </Title>
       <Tabs
-        radius="xl"
-        color={colors['blue-button']}
+        color={colors["blue-button"]}
         variant="pills"
         value={activeTab}
         onChange={handleTabChange}
+        radius="lg"
+        keepMounted={false}
       >
-        <TabsList
-          p="sm"
-          style={{
-            background: "#F3F4FB",
-            borderRadius: "1rem",
-            
-          }}
-        >
-          {tabs.map((e, i) => (
-            <Tooltip key={i} label={e.description} withArrow position="bottom" transitionProps={{ transition: 'pop', duration: 200 }}>
-              <TabsTab
-                value={e.value}
-                leftSection={e.icon}
-                style={{
-                  fontWeight: 500,
-                  fontSize: "0.9rem",
-                  transition: "all 0.2s ease",
-                }}
-              >
-                {e.label}
-              </TabsTab>
-            </Tooltip>
-          ))}
-        </TabsList>
+        {/* ✅ Scroll horizontal wrapper */}
+        <ScrollArea type="auto" offsetScrollbars>
+          <TabsList
+            p="sm"
+            style={{
+              background: "linear-gradient(135deg, #e7ebf7, #f9faff)",
+              borderRadius: "1rem",
+              boxShadow: "inset 0 0 10px rgba(0,0,0,0.05)",
+              display: "flex",
+              flexWrap: "nowrap",
+              gap: "0.5rem",
+              paddingInline: "0.5rem", // ✅ biar nggak nempel ke tepi
+            }}
+          >
+            {tabs.map((e, i) => (
+              <Tooltip key={i} label={e.description} withArrow position="bottom" transitionProps={{ transition: 'pop', duration: 200 }}>
+                <TabsTab
+                  value={e.value}
+                  leftSection={e.icon}
+                  style={{
+                    fontWeight: 500,
+                    fontSize: "0.9rem",
+                    transition: "all 0.2s ease",
+                  }}
+                >
+                  {e.label}
+                </TabsTab>
+              </Tooltip>
+            ))}
+          </TabsList>
+        </ScrollArea>
         {tabs.map((e, i) => (
           <TabsPanel key={i} value={e.value} mt="md">
             <></>

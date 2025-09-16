@@ -3,7 +3,19 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import PendapatanAsliDesa from '@/app/admin/(dashboard)/_state/ekonomi/PADesa';
 import colors from '@/con/colors';
-import { Box, Button, MultiSelect, Paper, Skeleton, Stack, Text, TextInput, Title } from '@mantine/core';
+import {
+  Box,
+  Button,
+  MultiSelect,
+  Paper,
+  Skeleton,
+  Stack,
+  Text,
+  TextInput,
+  Title,
+  Tooltip,
+  Group,
+} from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -23,7 +35,7 @@ function EditAPBDesa() {
     pembiayaanIds: apbState.update.form.pembiayaanIds || [],
   });
 
-  // Load APB desa by id saat pertama kali
+  // Load APB desa by id
   useEffect(() => {
     const loadAPBdesa = async () => {
       const id = params?.id as string;
@@ -46,12 +58,10 @@ function EditAPBDesa() {
     };
 
     loadAPBdesa();
-  }, [params?.id]); // ✅ hapus beritaState dari dependency
+  }, [params?.id]);
 
   const handleSubmit = async () => {
-
     try {
-      // Update global state with form data
       apbState.update.form = {
         ...apbState.update.form,
         tahun: Number(formData.tahun),
@@ -70,65 +80,95 @@ function EditAPBDesa() {
   };
 
   return (
-    <Box>
-      <Box mb={10}>
-        <Button variant="subtle" onClick={() => router.back()}>
-          <IconArrowBack color={colors["blue-button"]} size={30} />
-        </Button>
-      </Box>
-      <Paper bg={"white"} p={"md"} w={{ base: "100%", md: "50%" }}>
-        <Stack gap={"xs"}>
-          <Title order={3}>Edit APB Desa</Title>
+    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+      {/* Header */}
+      <Group mb="md">
+        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
+          <Button
+            variant="subtle"
+            onClick={() => router.back()}
+            p="xs"
+            radius="md"
+          >
+            <IconArrowBack color={colors['blue-button']} size={24} />
+          </Button>
+        </Tooltip>
+        <Title order={4} ml="sm" c="dark">
+          Edit APB Desa
+        </Title>
+      </Group>
+
+      {/* Form Card */}
+      <Paper
+        w={{ base: '100%', md: '50%' }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+        style={{ border: '1px solid #e0e0e0' }}
+      >
+        <Stack gap="md">
+          {/* Tahun */}
           <TextInput
-            type='number'
+            type="number"
             value={formData.tahun}
-            onChange={(val) => {
-              setFormData({ ...formData, tahun: val.target.value });
-            }}
-            label={<Text fz={"sm"} fw={"bold"}>Tahun</Text>}
-            placeholder="masukkan tahun"
+            onChange={(e) =>
+              setFormData({ ...formData, tahun: e.target.value })
+            }
+            label={<Text fz="sm" fw="bold">Tahun</Text>}
+            placeholder="Masukkan tahun anggaran"
+            required
           />
+
+          {/* Selects */}
           <SelectPendapatan
             selectedIds={formData.pendapatanIds}
-            onSelectionChange={(ids) => {
-              setFormData({ ...formData, pendapatanIds: ids });
-            }}
+            onSelectionChange={(ids) =>
+              setFormData({ ...formData, pendapatanIds: ids })
+            }
           />
+
           <SelectBelanja
             selectedIds={formData.belanjaIds}
-            onSelectionChange={(ids) => {
-              setFormData({ ...formData, belanjaIds: ids });
-            }}
+            onSelectionChange={(ids) =>
+              setFormData({ ...formData, belanjaIds: ids })
+            }
           />
+
           <SelectPembiayaan
             selectedIds={formData.pembiayaanIds}
-            onSelectionChange={(ids) => {
-              setFormData({ ...formData, pembiayaanIds: ids });
-            }}
+            onSelectionChange={(ids) =>
+              setFormData({ ...formData, pembiayaanIds: ids })
+            }
           />
-          <Button onClick={handleSubmit}>Simpan</Button>
+
+          {/* Save Button */}
+          <Group justify="right">
+            <Button
+              onClick={handleSubmit}
+              radius="md"
+              size="md"
+              style={{
+                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                color: '#fff',
+                boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
+              }}
+            >
+              Simpan
+            </Button>
+          </Group>
         </Stack>
       </Paper>
     </Box>
   );
 
+  /* --- Sub Components --- */
 
-  /* Select Pendapatan */
-  interface SelectPendapatanProps {
-    selectedIds: string[];
-    onSelectionChange: (ids: string[]) => void;
-  }
-
-  function SelectPendapatan({
-    selectedIds = [],
-    onSelectionChange,
-  }: SelectPendapatanProps) {
+  function SelectPendapatan({ selectedIds, onSelectionChange }: { selectedIds: string[]; onSelectionChange: (ids: string[]) => void }) {
     const pendapatanState = useProxy(PendapatanAsliDesa.pendapatan);
 
     useShallowEffect(() => {
-      pendapatanState.findMany.load().then(() => {
-        console.log("Pendapatan berhasil dimuat:", pendapatanState.findMany.data);
-      });
+      pendapatanState.findMany.load();
     }, []);
 
     if (!pendapatanState.findMany.data) {
@@ -137,10 +177,10 @@ function EditAPBDesa() {
 
     return (
       <MultiSelect
-        label={<Text fz={"sm"} fw={"bold"}>Pendapatan</Text>}
-        data={pendapatanState.findMany.data.map(p => ({
+        label={<Text fz="sm" fw="bold">Pendapatan</Text>}
+        data={pendapatanState.findMany.data.map((p: any) => ({
           value: p.id,
-          label: p.name
+          label: p.name,
         }))}
         value={selectedIds}
         onChange={onSelectionChange}
@@ -152,22 +192,11 @@ function EditAPBDesa() {
     );
   }
 
-  /* Select Belanja */
-  interface SelectBelanjaProps {
-    selectedIds: string[];
-    onSelectionChange: (ids: string[]) => void;
-  }
-
-  function SelectBelanja({
-    selectedIds = [],
-    onSelectionChange,
-  }: SelectBelanjaProps) {
+  function SelectBelanja({ selectedIds, onSelectionChange }: { selectedIds: string[]; onSelectionChange: (ids: string[]) => void }) {
     const belanjaState = useProxy(PendapatanAsliDesa.belanja);
 
     useShallowEffect(() => {
-      belanjaState.findMany.load().then(() => {
-        console.log("Belanja berhasil dimuat:", belanjaState.findMany.data);
-      });
+      belanjaState.findMany.load();
     }, []);
 
     if (!belanjaState.findMany.data) {
@@ -176,10 +205,10 @@ function EditAPBDesa() {
 
     return (
       <MultiSelect
-        label={<Text fz={"sm"} fw={"bold"}>Belanja</Text>}
-        data={belanjaState.findMany.data.map(b => ({
+        label={<Text fz="sm" fw="bold">Belanja</Text>}
+        data={belanjaState.findMany.data.map((b: any) => ({
           value: b.id,
-          label: b.name
+          label: b.name,
         }))}
         value={selectedIds}
         onChange={onSelectionChange}
@@ -191,22 +220,11 @@ function EditAPBDesa() {
     );
   }
 
-  /* Select Pembiayaan */
-  interface SelectPembiayaanProps {
-    selectedIds: string[];
-    onSelectionChange: (ids: string[]) => void;
-  }
-
-  function SelectPembiayaan({
-    selectedIds = [],
-    onSelectionChange,
-  }: SelectPembiayaanProps) {
+  function SelectPembiayaan({ selectedIds, onSelectionChange }: { selectedIds: string[]; onSelectionChange: (ids: string[]) => void }) {
     const pembiayaanState = useProxy(PendapatanAsliDesa.pembiayaan);
 
     useShallowEffect(() => {
-      pembiayaanState.findMany.load().then(() => {
-        console.log("Pembiayaan berhasil dimuat:", pembiayaanState.findMany.data);
-      });
+      pembiayaanState.findMany.load();
     }, []);
 
     if (!pembiayaanState.findMany.data) {
@@ -215,10 +233,10 @@ function EditAPBDesa() {
 
     return (
       <MultiSelect
-        label={<Text fz={"sm"} fw={"bold"}>Pembiayaan</Text>}
-        data={pembiayaanState.findMany.data.map(b => ({
-          value: b.id,
-          label: b.name
+        label={<Text fz="sm" fw="bold">Pembiayaan</Text>}
+        data={pembiayaanState.findMany.data.map((p: any) => ({
+          value: p.id,
+          label: p.name,
         }))}
         value={selectedIds}
         onChange={onSelectionChange}

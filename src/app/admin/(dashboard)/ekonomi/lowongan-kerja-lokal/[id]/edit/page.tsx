@@ -3,16 +3,25 @@
 import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import lowonganKerjaState from '@/app/admin/(dashboard)/_state/ekonomi/lowongan-kerja';
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
+import {
+  Box,
+  Button,
+  Group,
+  Paper,
+  Stack,
+  Text,
+  TextInput,
+  Title,
+  Tooltip,
+} from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
-
 function EditLowonganKerja() {
-  const lowonganState = useProxy(lowonganKerjaState)
+  const lowonganState = useProxy(lowonganKerjaState);
   const router = useRouter();
   const params = useParams();
 
@@ -24,7 +33,7 @@ function EditLowonganKerja() {
     gaji: lowonganKerjaState.update.form.gaji,
     deskripsi: lowonganKerjaState.update.form.deskripsi,
     kualifikasi: lowonganKerjaState.update.form.kualifikasi,
-  })
+  });
 
   useEffect(() => {
     const loadLowongan = async () => {
@@ -32,7 +41,7 @@ function EditLowonganKerja() {
       if (!id) return;
 
       try {
-        const data = await lowonganState.update.load(id); // akses langsung, bukan dari proxy
+        const data = await lowonganState.update.load(id);
         if (data) {
           setFormData({
             posisi: data.posisi || '',
@@ -51,20 +60,17 @@ function EditLowonganKerja() {
     };
 
     loadLowongan();
-  }, [params?.id])
+  }, [params?.id]);
 
   const handleSubmit = async () => {
     try {
-      // Set the ID for the update
       lowonganState.update.id = params?.id as string;
-      
-      // Update the form state
+
       lowonganState.update.form = {
         ...lowonganState.update.form,
-        ...formData
+        ...formData,
       };
-      
-      // Call the update function
+
       await lowonganState.update.update();
       toast.success("Lowongan kerja berhasil diperbarui!");
       router.push("/admin/ekonomi/lowongan-kerja-lokal");
@@ -72,79 +78,105 @@ function EditLowonganKerja() {
       console.error("Error updating lowongan kerja:", error);
       toast.error("Terjadi kesalahan saat memperbarui lowongan kerja");
     }
-  }
+  };
 
   return (
-    <Box>
-      <Box mb={10}>
-        <Button onClick={() => router.back()} variant='subtle' color={'blue'}>
-          <IconArrowBack color={colors['blue-button']} size={25} />
-        </Button>
-      </Box>
+    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+      {/* Header dengan tombol back */}
+      <Group mb="md">
+        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
+          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+            <IconArrowBack color={colors['blue-button']} size={24} />
+          </Button>
+        </Tooltip>
+        <Title order={4} ml="sm" c="dark">
+          Edit Lowongan Kerja Lokal
+        </Title>
+      </Group>
 
-      <Paper w={{ base: '100%', md: '50%' }} bg={colors['white-1']} p={'md'}>
-        <Stack gap={"xs"}>
-          <Title order={4}>Edit Lowongan Kerja Lokal</Title>
+      {/* Card Form */}
+      <Paper
+        w={{ base: '100%', md: '60%' }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+        style={{ border: '1px solid #e0e0e0' }}
+      >
+        <Stack gap="md">
           <TextInput
+            label="Posisi"
+            placeholder="Masukkan posisi"
             value={formData.posisi}
-            onChange={(val) => {
-              setFormData(prev => ({ ...prev, posisi: val.target.value }));
-            }}
-            label={<Text fw={"bold"} fz={"sm"}>Posisi</Text>}
-            placeholder='Masukkan posisi'
+            onChange={(e) => setFormData({ ...formData, posisi: e.target.value })}
+            required
           />
+
           <TextInput
+            label="Nama Perusahaan"
+            placeholder="Masukkan nama perusahaan"
             value={formData.namaPerusahaan}
-            onChange={(val) => {
-              setFormData(prev => ({ ...prev, namaPerusahaan: val.target.value }));
-            }}
-            label={<Text fw={"bold"} fz={"sm"}>Nama Perusahaan</Text>}
-            placeholder='Masukkan nama perusahaan'
+            onChange={(e) => setFormData({ ...formData, namaPerusahaan: e.target.value })}
+            required
           />
+
           <TextInput
+            label="Lokasi"
+            placeholder="Masukkan lokasi"
             value={formData.lokasi}
-            onChange={(val) => {
-              setFormData(prev => ({ ...prev, lokasi: val.target.value }));
-            }}
-            label={<Text fw={"bold"} fz={"sm"}>Lokasi</Text>}
-            placeholder='Masukkan lokasi'
+            onChange={(e) => setFormData({ ...formData, lokasi: e.target.value })}
+            required
           />
+
           <TextInput
+            label="Tipe Pekerjaan"
+            placeholder="Masukkan tipe pekerjaan"
             value={formData.tipePekerjaan}
-            onChange={(val) => {
-              setFormData(prev => ({ ...prev, tipePekerjaan: val.target.value }));
-            }}
-            label={<Text fw={"bold"} fz={"sm"}>Tipe Pekerjaan</Text>}
-            placeholder='Masukkan tipe pekerjaan'
+            onChange={(e) => setFormData({ ...formData, tipePekerjaan: e.target.value })}
+            required
           />
+
           <TextInput
+            label="Gaji (per bulan)"
+            placeholder="Masukkan gaji"
             value={formData.gaji}
-            onChange={(val) => {
-              setFormData(prev => ({ ...prev, gaji: val.target.value }));
-            }}
-            label={<Text fw={"bold"} fz={"sm"}>Gaji selama 1 bulan</Text>}
-            placeholder='Masukkan gaji'
+            onChange={(e) => setFormData({ ...formData, gaji: e.target.value })}
+            required
           />
+
           <Box>
-            <Text fw={"bold"} fz={"sm"}>Deskripsi Lowongan Kerja</Text>
+            <Text fw="bold" fz="sm" mb={6}>
+              Deskripsi Lowongan Kerja
+            </Text>
             <EditEditor
               value={formData.deskripsi}
-              onChange={(val) => {
-                setFormData(prev => ({ ...prev, deskripsi: val }));
-              }}
+              onChange={(val) => setFormData({ ...formData, deskripsi: val })}
             />
           </Box>
+
           <Box>
-            <Text fw={"bold"} fz={"sm"}>Kualifikasi Lowongan Kerja</Text>
+            <Text fw="bold" fz="sm" mb={6}>
+              Kualifikasi Lowongan Kerja
+            </Text>
             <EditEditor
               value={formData.kualifikasi}
-              onChange={(val) => {
-                setFormData(prev => ({ ...prev, kualifikasi: val }));
-              }}
+              onChange={(val) => setFormData({ ...formData, kualifikasi: val })}
             />
           </Box>
-          <Group>
-            <Button onClick={handleSubmit} bg={colors['blue-button']}>Submit</Button>
+
+          <Group justify="right">
+            <Button
+              onClick={handleSubmit}
+              radius="md"
+              size="md"
+              style={{
+                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                color: '#fff',
+                boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
+              }}
+            >
+              Simpan
+            </Button>
           </Group>
         </Stack>
       </Paper>

@@ -3,7 +3,7 @@
 'use client'
 import jumlahPengangguranState from '@/app/admin/(dashboard)/_state/ekonomi/jumlah-pengangguran';
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
+import { Box, Button, Group, Paper, Stack, Text, TextInput, Title, Select, NumberInput } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -14,10 +14,15 @@ function CreateJumlahPengangguran() {
   const [chartData, setChartData] = useState<any[]>([]);
   const router = useRouter();
 
+  const monthOptions = [
+    'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun',
+    'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'
+  ];
+
   const resetForm = () => {
     stateDetail.create.form = {
-      month: "",
-      year: 0,
+      month: monthOptions[new Date().getMonth()], // Default to current month
+      year: new Date().getFullYear(), // Default to current year
       totalUnemployment: 0,
       educatedUnemployment: 0,
       uneducatedUnemployment: 0,
@@ -68,7 +73,7 @@ function CreateJumlahPengangguran() {
         setChartData([stateDetail.findUnique.data]);
       }
       resetForm();
-      router.push('/admin/ekonomi/jumlah-pengangguran/detail-data-pengangguran');
+      router.push('/admin/ekonomi/jumlah-pengangguran');
     }
   };
 
@@ -76,58 +81,66 @@ function CreateJumlahPengangguran() {
     <Box>
       <Box mb={10}>
         <Button onClick={() => router.back()} variant='subtle' color={'blue'}>
-          <IconArrowBack color={colors['blue-button']} size={25}/>
+          <IconArrowBack color={colors['blue-button']} size={25} />
         </Button>
       </Box>
       <Paper w={{ base: '100%', md: '50%' }} bg={colors['white-1']} p={'md'}>
-        <Title order={4}>Tambah Detail Data Pengangguran</Title>
-        <Stack gap="xs">
-          <TextInput
+        <Title order={4}>Tambah Data Pengangguran</Title>
+        <Stack gap="xs" mt="md">
+          <Select
             label="Bulan"
+            placeholder="Pilih bulan"
+            data={monthOptions}
             value={stateDetail.create.form.month}
-            placeholder="Contoh: Jan, Feb, Mar"
-            onChange={(e) => (stateDetail.create.form.month = e.currentTarget.value)}
+            onChange={(value) => {
+              stateDetail.create.form.month = value || '';
+              calculateTotalAndChange();
+            }}
+            required
           />
-          <TextInput
+          <NumberInput
             label="Tahun"
-            type="date"
             value={stateDetail.create.form.year}
-            onChange={(e) =>
-              (stateDetail.create.form.year = Number(e.currentTarget.value))
-            }
+            onChange={(value) => {
+              stateDetail.create.form.year = Number(value) || new Date().getFullYear();
+              calculateTotalAndChange();
+            }}
+            min={2000}
+            max={2100}
+            required
           />
-          <TextInput
+          <NumberInput
             label="Pengangguran Terdidik"
-            type="number"
             value={stateDetail.create.form.educatedUnemployment}
-            onChange={(e) => {
-              stateDetail.create.form.educatedUnemployment = Number(
-                e.currentTarget.value,
-              );
+            onChange={(value) => {
+              stateDetail.create.form.educatedUnemployment = Number(value) || 0;
+              calculateTotalAndChange();
             }}
+            min={0}
+            required
           />
-          <TextInput
+          <NumberInput
             label="Pengangguran Tidak Terdidik"
-            type="number"
             value={stateDetail.create.form.uneducatedUnemployment}
-            onChange={(e) => {
-              stateDetail.create.form.uneducatedUnemployment = Number(
-                e.currentTarget.value,
-              );
+            onChange={(value) => {
+              stateDetail.create.form.uneducatedUnemployment = Number(value) || 0;
+              calculateTotalAndChange();
             }}
+            min={0}
+            required
           />
           <Text fz="sm" fw={500}>
-            Total Otomatis: {stateDetail.create.form.totalUnemployment}
+            Total Otomatis: {stateDetail.create.form.totalUnemployment.toLocaleString()}
           </Text>
           <Text fz="sm" fw={500}>
-            Perubahan Otomatis:{" "}
-            {stateDetail.create.form.percentageChange !== null
-              ? `${stateDetail.create.form.percentageChange}%`
-              : '-'}
+            Perubahan Otomatis: {stateDetail.create.form.percentageChange.toFixed(1)}%
           </Text>
-          <Group>
-            <Button bg={colors['blue-button']} mt={10} onClick={handleSubmit}>
-              Submit
+          <Group mt="md">
+            <Button
+              onClick={handleSubmit}
+              disabled={!stateDetail.create.form.month || !stateDetail.create.form.year}
+            >
+              Simpan
             </Button>
           </Group>
         </Stack>

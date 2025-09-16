@@ -3,7 +3,17 @@
 import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import strukturorganisasiState from '@/app/admin/(dashboard)/_state/ekonomi/struktur-organisasi/struktur-organisasi';
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
+import {
+  Box,
+  Button,
+  Group,
+  Paper,
+  Stack,
+  Text,
+  TextInput,
+  Title,
+  Tooltip,
+} from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -17,8 +27,8 @@ function EditPosisiOrganisasi() {
   const stateOrganisasi = useProxy(strukturorganisasiState.posisiOrganisasi);
 
   const [formData, setFormData] = useState({
-    nama: "",
-    deskripsi: "",
+    nama: '',
+    deskripsi: '',
     hierarki: 0,
   });
 
@@ -30,7 +40,6 @@ function EditPosisiOrganisasi() {
         const data = await stateOrganisasi.edit.load(id);
 
         if (data) {
-          // pastikan id-nya masuk ke state edit
           stateOrganisasi.edit.id = id;
           setFormData({
             nama: data.nama || '',
@@ -39,8 +48,8 @@ function EditPosisiOrganisasi() {
           });
         }
       } catch (error) {
-        console.error("Error loading posisi organisasi:", error);
-        toast.error("Gagal memuat data posisi organisasi");
+        console.error('Error loading posisi organisasi:', error);
+        toast.error('Gagal memuat data posisi organisasi');
       }
     };
 
@@ -60,7 +69,6 @@ function EditPosisiOrganisasi() {
         hierarki: formData.hierarki,
       };
 
-      // Safety check tambahan: pastikan ID tidak kosong
       if (!stateOrganisasi.edit.id) {
         stateOrganisasi.edit.id = id; // fallback
       }
@@ -68,45 +76,92 @@ function EditPosisiOrganisasi() {
       const success = await stateOrganisasi.edit.update();
 
       if (success) {
-        router.push("/admin/ekonomi/Struktur-Organisasi-dan-SK-Pengurus-BUMDesa/posisi-organisasi");
+        toast.success('Posisi organisasi berhasil diperbarui!');
+        router.push(
+          '/admin/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa/posisi-organisasi'
+        );
       }
     } catch (error) {
-      console.error("Error updating posisi organisasi:", error);
-      // toast akan ditampilkan dari fungsi update
+      console.error('Error updating posisi organisasi:', error);
     }
   };
 
   return (
-    <Box>
-      <Box mb={10}>
-        <Button onClick={() => router.back()} variant='subtle' color={'blue'}>
-          <IconArrowBack color={colors['blue-button']} size={25} />
-        </Button>
-      </Box>
+    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+      <Group mb="md">
+        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
+          <Button
+            variant="subtle"
+            onClick={() => router.back()}
+            p="xs"
+            radius="md"
+          >
+            <IconArrowBack color={colors['blue-button']} size={24} />
+          </Button>
+        </Tooltip>
+        <Title order={4} ml="sm" c="dark">
+          Edit Posisi Organisasi
+        </Title>
+      </Group>
 
-      <Paper w={{ base: '100%', md: '50%' }} bg={colors['white-1']} p={'md'}>
-        <Stack gap={"xs"}>
-          <Title order={4}>Edit Posisi Organisasi</Title>
+      <Paper
+        w={{ base: '100%', md: '50%' }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+        style={{ border: '1px solid #e0e0e0' }}
+      >
+        <Stack gap="md">
           <TextInput
             value={formData.nama}
-            onChange={(e) => setFormData({ ...formData, nama: e.target.value })}
-            label={<Text fw={"bold"} fz={"sm"}>Nama Posisi Organisasi</Text>}
-            placeholder='Masukkan nama posisi organisasi'
+            onChange={(e) =>
+              setFormData({ ...formData, nama: e.target.value })
+            }
+            label="Nama Posisi Organisasi"
+            placeholder="Masukkan nama posisi organisasi"
+            required
           />
-          <EditEditor
-            value={formData.deskripsi}
-            onChange={(htmlContent) => {
-              setFormData({ ...formData, deskripsi: htmlContent });
-            }}
-          />
+
+          <Box>
+            <Text fz="sm" mb={6}>
+              Deskripsi
+            </Text>
+            <EditEditor
+              value={formData.deskripsi}
+              onChange={(htmlContent) =>
+                setFormData({ ...formData, deskripsi: htmlContent })
+              }
+            />
+          </Box>
+
           <TextInput
+            type="number"
             value={formData.hierarki}
-            onChange={(e) => setFormData({ ...formData, hierarki: parseInt(e.target.value) })}
-            label={<Text fw={"bold"} fz={"sm"}>Hierarki</Text>}
-            placeholder='Masukkan hierarki'
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                hierarki: parseInt(e.target.value) || 0,
+              })
+            }
+            label="Hierarki"
+            placeholder="Masukkan hierarki"
+            required
           />
-          <Group>
-            <Button bg={colors['blue-button']} onClick={handleSubmit}>Submit</Button>
+
+          <Group justify="right">
+            <Button
+              onClick={handleSubmit}
+              radius="md"
+              size="md"
+              style={{
+                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                color: '#fff',
+                boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
+              }}
+            >
+              Simpan
+            </Button>
           </Group>
         </Stack>
       </Paper>

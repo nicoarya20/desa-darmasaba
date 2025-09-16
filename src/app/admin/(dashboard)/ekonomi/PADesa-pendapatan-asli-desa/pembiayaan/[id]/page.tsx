@@ -2,7 +2,16 @@
 'use client'
 import PendapatanAsliDesa from '@/app/admin/(dashboard)/_state/ekonomi/PADesa';
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
+import {
+  Box,
+  Button,
+  Group,
+  Paper,
+  Stack,
+  TextInput,
+  Title,
+  Tooltip
+} from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -20,7 +29,7 @@ function EditPembiayaan() {
   });
 
   const formatRupiah = (value: number | string) => {
-    const number = typeof value === 'number' ? value : Number(value.replace(/\D/g, ''));
+    const number = typeof value === 'number' ? value : Number(value.toString().replace(/\D/g, ''));
     return new Intl.NumberFormat('id-ID', {
       style: 'currency',
       currency: 'IDR',
@@ -46,8 +55,8 @@ function EditPembiayaan() {
           });
         }
       } catch (error) {
-        console.error("Error loading pembiayaan:", error);
-        toast.error("Gagal memuat data pembiayaan");
+        console.error('Error loading pembiayaan:', error);
+        toast.error('Gagal memuat data pembiayaan');
       }
     };
 
@@ -60,52 +69,83 @@ function EditPembiayaan() {
         ...pembiayaanState.update.form,
         name: formData.name,
         value: Number(formData.value),
-      }
+      };
 
       await pembiayaanState.update.update();
-      toast.success("Jenis Pembiayaan berhasil diperbarui!");
-      router.push("/admin/ekonomi/PADesa-pendapatan-asli-desa/pembiayaan");
+      toast.success('Jenis Pembiayaan berhasil diperbarui!');
+      router.push('/admin/ekonomi/PADesa-pendapatan-asli-desa/pembiayaan');
     } catch (error) {
-      console.error("Error updating jenis pembiayaan:", error);
-      toast.error("Terjadi kesalahan saat memperbarui jenis pembiayaan");
+      console.error('Error updating jenis pembiayaan:', error);
+      toast.error('Terjadi kesalahan saat memperbarui jenis pembiayaan');
     }
-  }
+  };
 
   return (
-    <Box>
-    <Box mb={10}>
-      <Button onClick={() => router.back()} variant='subtle' color={'blue'}>
-        <IconArrowBack color={colors['blue-button']} size={25} />
-      </Button>
-    </Box>
+    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+      {/* Header dengan Back Button */}
+      <Group mb="md">
+        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
+          <Button
+            variant="subtle"
+            onClick={() => router.back()}
+            p="xs"
+            radius="md"
+          >
+            <IconArrowBack color={colors['blue-button']} size={24} />
+          </Button>
+        </Tooltip>
+        <Title order={4} ml="sm" c="dark">
+          Edit Jenis Pembiayaan
+        </Title>
+      </Group>
 
-    <Paper w={{ base: '100%', md: '50%' }} bg={colors['white-1']} p={'md'}>
-      <Stack gap={"xs"}>
-        <Title order={4}>Edit Jenis Pembiayaan</Title>
-        <TextInput
-          value={formData.name}
-          onChange={(val) => {
-            setFormData({ ...formData, name: val.target.value });
-          }}
-          label={<Text fw={"bold"} fz={"sm"}>Nama Jenis Pembiayaan</Text>}
-          placeholder='Masukkan nama Jenis Pembiayaan'
-        />
-        <TextInput
-          label={<Text fw={"bold"} fz={"sm"}>Nilai</Text>}
-          placeholder='Masukkan nilai'
-          value={formatRupiah(formData.value)}
-          onChange={(val) => {
-            const raw = val.currentTarget.value;
-            const cleanValue = unformatRupiah(raw);
-            setFormData({ ...formData, value: cleanValue });
-          }}
-        />
-        <Group>
-          <Button bg={colors['blue-button']} onClick={handleSubmit}>Submit</Button>
-        </Group>
-      </Stack>
-    </Paper>
-  </Box>
+      {/* Card Form */}
+      <Paper
+        w={{ base: '100%', md: '50%' }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+        style={{ border: '1px solid #e0e0e0' }}
+      >
+        <Stack gap="md">
+          <TextInput
+            label="Nama Jenis Pembiayaan"
+            placeholder="Masukkan nama jenis pembiayaan"
+            value={formData.name}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            required
+          />
+
+          <TextInput
+            label="Nilai"
+            placeholder="Masukkan nilai"
+            value={formatRupiah(formData.value)}
+            onChange={(e) => {
+              const raw = e.currentTarget.value;
+              const cleanValue = unformatRupiah(raw);
+              setFormData({ ...formData, value: cleanValue });
+            }}
+            required
+          />
+
+          <Group justify="right">
+            <Button
+              onClick={handleSubmit}
+              radius="md"
+              size="md"
+              style={{
+                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                color: '#fff',
+                boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
+              }}
+            >
+              Simpan
+            </Button>
+          </Group>
+        </Stack>
+      </Paper>
+    </Box>
   );
 }
 

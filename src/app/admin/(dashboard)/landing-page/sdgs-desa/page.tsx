@@ -71,7 +71,7 @@ function ListSdgsDesa({ search }: { search: string }) {
             </Tooltip>
           </Group>
           <Box style={{ overflowX: 'auto' }}>
-            <Table>
+            <Table highlightOnHover striped verticalSpacing="sm">
               <TableThead>
                 <TableTr>
                   <TableTh style={{ width: '60%' }}>Nama Sdgs Desa</TableTh>

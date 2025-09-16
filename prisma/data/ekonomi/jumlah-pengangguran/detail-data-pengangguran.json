@@ -1,51 +1,99 @@
 [
-    {
-      "month": "Jan",
-      "year": 2025,
-      "totalUnemployment": 160,
-      "educatedUnemployment": 95,
-      "uneducatedUnemployment": 65,
-      "percentageChange": null
-    },
-    {
-      "month": "Feb",
-      "year": 2025,
-      "totalUnemployment": 155,
-      "educatedUnemployment": 90,
-      "uneducatedUnemployment": 65,
-      "percentageChange": -3.1
-    },
-    {
-      "month": "Mar",
-      "year": 2025,
-      "totalUnemployment": 150,
-      "educatedUnemployment": 88,
-      "uneducatedUnemployment": 62,
-      "percentageChange": -3.2
-    },
-    {
-      "month": "Apr",
-      "year": 2025,
-      "totalUnemployment": 148,
-      "educatedUnemployment": 85,
-      "uneducatedUnemployment": 63,
-      "percentageChange": -1.3
-    },
-    {
-      "month": "Mei",
-      "year": 2025,
-      "totalUnemployment": 145,
-      "educatedUnemployment": 82,
-      "uneducatedUnemployment": 63,
-      "percentageChange": -2.0
-    },
-    {
-      "month": "Jun",
-      "year": 2025,
-      "totalUnemployment": 140,
-      "educatedUnemployment": 80,
-      "uneducatedUnemployment": 60,
-      "percentageChange": -3.4
-    }
-  ]
+  {
+    "month": "Jan",
+    "year": 2025,
+    "totalUnemployment": 160,
+    "educatedUnemployment": 95,
+    "uneducatedUnemployment": 65,
+    "percentageChange": 0.0
+  },
+  {
+    "month": "Feb",
+    "year": 2025,
+    "totalUnemployment": 158,
+    "educatedUnemployment": 93,
+    "uneducatedUnemployment": 65,
+    "percentageChange": -1.25
+  },
+  {
+    "month": "Mar",
+    "year": 2025,
+    "totalUnemployment": 155,
+    "educatedUnemployment": 91,
+    "uneducatedUnemployment": 64,
+    "percentageChange": -1.90
+  },
+  {
+    "month": "Apr",
+    "year": 2025,
+    "totalUnemployment": 152,
+    "educatedUnemployment": 89,
+    "uneducatedUnemployment": 63,
+    "percentageChange": -1.94
+  },
+  {
+    "month": "Mei",
+    "year": 2025,
+    "totalUnemployment": 150,
+    "educatedUnemployment": 88,
+    "uneducatedUnemployment": 62,
+    "percentageChange": -1.32
+  },
+  {
+    "month": "Jun",
+    "year": 2025,
+    "totalUnemployment": 148,
+    "educatedUnemployment": 87,
+    "uneducatedUnemployment": 61,
+    "percentageChange": -1.33
+  },
+  {
+    "month": "Jul",
+    "year": 2025,
+    "totalUnemployment": 145,
+    "educatedUnemployment": 85,
+    "uneducatedUnemployment": 60,
+    "percentageChange": -2.03
+  },
+  {
+    "month": "Agu",
+    "year": 2025,
+    "totalUnemployment": 142,
+    "educatedUnemployment": 84,
+    "uneducatedUnemployment": 58,
+    "percentageChange": -2.07
+  },
+  {
+    "month": "Sep",
+    "year": 2025,
+    "totalUnemployment": 140,
+    "educatedUnemployment": 83,
+    "uneducatedUnemployment": 57,
+    "percentageChange": -1.41
+  },
+  {
+    "month": "Okt",
+    "year": 2025,
+    "totalUnemployment": 138,
+    "educatedUnemployment": 82,
+    "uneducatedUnemployment": 56,
+    "percentageChange": -1.43
+  },
+  {
+    "month": "Nov",
+    "year": 2025,
+    "totalUnemployment": 135,
+    "educatedUnemployment": 80,
+    "uneducatedUnemployment": 55,
+    "percentageChange": -2.17
+  },
+  {
+    "month": "Des",
+    "year": 2025,
+    "totalUnemployment": 132,
+    "educatedUnemployment": 78,
+    "uneducatedUnemployment": 54,
+    "percentageChange": -2.22
+  }
+]
   

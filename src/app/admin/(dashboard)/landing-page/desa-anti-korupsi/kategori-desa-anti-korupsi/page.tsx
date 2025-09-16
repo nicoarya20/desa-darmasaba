@@ -80,7 +80,7 @@ function ListKategoriKegiatan({ search }: { search: string }) {
           </Tooltip>
         </Group>
         <Box style={{ overflowX: "auto" }}>
-          <Table highlightOnHover>
+          <Table highlightOnHover striped verticalSpacing="sm">
             <TableThead>
               <TableTr>
                 <TableTh>Nama Kategori</TableTh>

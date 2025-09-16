@@ -15,7 +15,8 @@ const templateJumlahPengngguran = z.object({
   uneducatedUnemployment: z
     .number()
     .min(1, "Pengangguran tidak pendidikan harus diisi"),
-  percentageChange: z.number().min(0, "Persentase perubahan harus diisi"),
+    percentageChange: z.number({ invalid_type_error: "Persentase perubahan harus angka" }),
+
 });
 
 type JumlahPengangguran = {
@@ -29,7 +30,7 @@ type JumlahPengangguran = {
 
 const jumlahPengangguranForm: JumlahPengangguran = {
   month: "",
-  year: 0,
+  year: new Date().getFullYear(), // Default to current year
   totalUnemployment: 0,
   educatedUnemployment: 0,
   uneducatedUnemployment: 0,
@@ -60,13 +61,21 @@ const jumlahPengangguran = proxy({
     form: jumlahPengangguranForm,
     loading: false,
     async create() {
-      const cek = templateJumlahPengngguran.safeParse(
-        jumlahPengangguran.create.form
-      );
+      // Ensure all number fields are actual numbers
+      const formData = {
+        ...jumlahPengangguran.create.form,
+        year: Number(jumlahPengangguran.create.form.year) || new Date().getFullYear(),
+        totalUnemployment: Number(jumlahPengangguran.create.form.totalUnemployment) || 0,
+        educatedUnemployment: Number(jumlahPengangguran.create.form.educatedUnemployment) || 0,
+        uneducatedUnemployment: Number(jumlahPengangguran.create.form.uneducatedUnemployment) || 0,
+        percentageChange: Number(jumlahPengangguran.create.form.percentageChange) || 0,
+      };
+
+      const cek = templateJumlahPengngguran.safeParse(formData);
       if (!cek.success) {
         const err = `[${cek.error.issues
-          .map((v) => `${v.path.join(".")}`)
-          .join("\n")}] required`;
+          .map((v) => `${v.path.join(".")} (${v.message})`)
+          .join("\n")}]`;
         toast.error(err);
         return null;
       }
@@ -78,7 +87,7 @@ const jumlahPengangguran = proxy({
           ].post(jumlahPengangguran.create.form);
 
         if (res.status === 200) {
-          const id = res.data?.data?.id;
+          const id = res.data?.id;
           if (id) {
             toast.success("Success create");
             jumlahPengangguran.create.form = { ...jumlahPengangguranForm };
@@ -103,16 +112,40 @@ const jumlahPengangguran = proxy({
           omit: { isActive: true };
         }>[]
       | null,
-    async load() {
-      const res =
-        await ApiFetch.api.ekonomi.jumlahpengangguran.detaildatapengangguran[
-          "find-many"
-        ].get();
-      if (res.status === 200) {
-        jumlahPengangguran.findMany.data = res.data?.data ?? [];
-      }
+      page: 1,
+      totalPages: 1,
+      loading: false,
+      search: "",
+      load: async (page = 1, limit = 10, search = "") => {
+        jumlahPengangguran.findMany.loading = true; // ✅ Akses langsung via nama path
+        jumlahPengangguran.findMany.page = page;
+        jumlahPengangguran.findMany.search = search;
+  
+        try {
+          const query: any = { page, limit };
+          if (search) query.search = search;
+  
+          const res = await ApiFetch.api.ekonomi.jumlahpengangguran.detaildatapengangguran[
+            "find-many"
+          ].get({ query });
+  
+          if (res.status === 200 && res.data?.success) {
+            jumlahPengangguran.findMany.data = res.data.data ?? [];
+            jumlahPengangguran.findMany.totalPages =
+              res.data.totalPages ?? 1;
+          } else {
+            jumlahPengangguran.findMany.data = [];
+            jumlahPengangguran.findMany.totalPages = 1;
+          }
+        } catch (err) {
+          console.error("Gagal fetch jumlah pengangguran paginated:", err);
+          jumlahPengangguran.findMany.data = [];
+          jumlahPengangguran.findMany.totalPages = 1;
+        } finally {
+          jumlahPengangguran.findMany.loading = false;
+        }
+      },
     },
-  },
 
   findUnique: {
     data: null as Prisma.DetailDataPengangguranGetPayload<{

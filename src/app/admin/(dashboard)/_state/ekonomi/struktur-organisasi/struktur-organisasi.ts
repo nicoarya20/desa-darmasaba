@@ -161,18 +161,34 @@ const posisiOrganisasi = proxy({
       deskripsi: string | null;
       hierarki: number;
     }>,
-    async load() {
+    page: 1,
+    totalPages: 1,
+    loading: false,
+    search: "",
+    load: async (page = 1, limit = 10, search = "") => {
+      posisiOrganisasi.findMany.loading = true; // ✅ Akses langsung via nama path
+      posisiOrganisasi.findMany.page = page;
+      posisiOrganisasi.findMany.search = search;
+  
       try {
-        const res = await ApiFetch.api.ekonomi["struktur-organisasi"][
-          "posisi-organisasi"
-        ]["find-many"].get();
-        if (res.status === 200) {
-          // The API now returns the id field, so we can use it directly
-          this.data = res.data?.data ?? [];
+        const query: any = { page, limit };
+        if (search) query.search = search;
+    
+        const res = await ApiFetch.api.ekonomi["struktur-organisasi"]["posisi-organisasi"]["find-many"].get({ query });
+    
+        if (res.status === 200 && res.data?.success) {
+          posisiOrganisasi.findMany.data = res.data.data ?? [];
+          posisiOrganisasi.findMany.totalPages = res.data.totalPages ?? 1;
+        } else {
+          posisiOrganisasi.findMany.data = [];
+          posisiOrganisasi.findMany.totalPages = 1;
         }
-      } catch (error) {
-        console.error("Find many error:", error);
-        this.data = [];
+      } catch (err) {
+        console.error("Gagal fetch posisi organisasi paginated:", err);
+        posisiOrganisasi.findMany.data = [];
+        posisiOrganisasi.findMany.totalPages = 1;
+      } finally {
+        posisiOrganisasi.findMany.loading = false;
       }
     },
   },

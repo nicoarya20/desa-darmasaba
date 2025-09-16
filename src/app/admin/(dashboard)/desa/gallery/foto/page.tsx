@@ -110,7 +110,7 @@ export default function ListImage() {
                         radius="md"
                         onClick={() => {
                           stateFileStorage
-                            .del({ name: v.name })
+                            .del({ id: v.id })
                             .finally(() => toast("Foto berhasil dihapus"));
                         }}
                       >
@@ -143,14 +143,15 @@ export default function ListImage() {
         <Flex justify="center">
           <Pagination
             total={total}
+            value={stateFileStorage.page}  // Changed from page to value
             size="md"
             radius="md"
             withEdges
             onChange={(page) => {
-              stateFileStorage.page = page;
-              stateFileStorage.load();
+              stateFileStorage.load({ page });
             }}
           />
+
         </Flex>
       )}
     </Stack>

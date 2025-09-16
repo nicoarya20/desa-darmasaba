@@ -376,8 +376,7 @@ import fileStorage from "./data/file-storage.json";
   for (const l of apbdes) {
     await prisma.aPBDes.upsert({
       where: {
-        name: l.name,
-        jumlah: l.jumlah,
+        id: l.id,
       },
       update: {
         name: l.name,
@@ -895,12 +894,9 @@ import fileStorage from "./data/file-storage.json";
   console.log("hubungan organisasi success ...");
 
   for (const d of detailDataPengangguran) {
-    // Convert the year to a Date object (using January 1st of the year as the date)
-    const yearAsDate = new Date(d.year, 0, 1);
-
     await prisma.detailDataPengangguran.upsert({
       where: {
-        month_year: { month: d.month, year: yearAsDate },
+        month_year: { month: d.month, year: d.year },
       },
       update: {
         totalUnemployment: d.totalUnemployment,
@@ -910,7 +906,7 @@ import fileStorage from "./data/file-storage.json";
       },
       create: {
         month: d.month,
-        year: yearAsDate,
+        year: d.year,
         totalUnemployment: d.totalUnemployment,
         educatedUnemployment: d.educatedUnemployment,
         uneducatedUnemployment: d.uneducatedUnemployment,

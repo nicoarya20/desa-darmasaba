@@ -17,7 +17,7 @@ function CreateJumlahPendudukMiskin() {
 
   const resetForm = () => {
     stateJPM.create.form = {
-      year: 0,
+      year: new Date().getFullYear(), // Default to current year
       totalPoorPopulation: 0,
     }
   }
@@ -48,10 +48,11 @@ function CreateJumlahPendudukMiskin() {
             <TextInput
               label="Tahun"
               type="number"
-              value={stateJPM.create.form.year}
+              value={stateJPM.create.form.year || ''}
               placeholder="Masukkan tahun"
               onChange={(val) => {
-                stateJPM.create.form.year = Number(val.currentTarget.value);
+                const value = val.currentTarget.value;
+                stateJPM.create.form.year = value ? Number(value) : 0;
               }}
             />
             <TextInput

@@ -19,8 +19,14 @@ type DataPengangguran = {
 function Page() {
   const [chartData, setChartData] = useState<DataPengangguran[]>([])
   const [mounted, setMounted] = useState(false)
+  const [yearlyData, setYearlyData] = useState<{
+    total: number;
+    educated: number;
+    uneducated: number;
+    year: number;
+  } | null>(null);
   const state = useProxy(jumlahPengangguranState.jumlahPengangguran)
-  // const [selectedYear, setSelectedYear] = useState<string | null>(null);
+  const currentYear = new Date().getFullYear();
 
   useShallowEffect(() => {
     setMounted(true)
@@ -30,14 +36,36 @@ function Page() {
   useEffect(() => {
     setMounted(true);
     if (state.findMany.data) {
+      // Set chart data
       setChartData(state.findMany.data.map((item) => ({
         id: item.id,
         bulan: item.month,
         berpendidikan: Number(item.educatedUnemployment),
         takberpendidikan: Number(item.uneducatedUnemployment),
       })));
+
+      // Calculate yearly totals
+      const currentYearData = state.findMany.data.filter(item => item.year === currentYear);
+      if (currentYearData.length > 0) {
+        const yearlyTotal = {
+          total: 0,
+          educated: 0,
+          uneducated: 0,
+          year: currentYear
+        };
+
+        currentYearData.forEach(item => {
+          yearlyTotal.total += Number(item.totalUnemployment) || 0;
+          yearlyTotal.educated += Number(item.educatedUnemployment) || 0;
+          yearlyTotal.uneducated += Number(item.uneducatedUnemployment) || 0;
+        });
+
+        setYearlyData(yearlyTotal);
+      } else {
+        setYearlyData(null);
+      }
     }
-  }, [state.findMany.data]);
+  }, [state.findMany.data, currentYear]);
 
   return (
     <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"22"}>
@@ -65,10 +93,10 @@ function Page() {
                   <IconUserOff size={35} color={colors['blue-button']} />
                   <Text fz="h4" fw={600}>Total Pengangguran</Text>
                   <Text fz="h2" fw={700} c={colors['blue-button']}>
-                    {state.findMany.data?.[0]?.totalUnemployment || 0} Orang
+                    {yearlyData?.total.toLocaleString() || 0} Orang
                   </Text>
                   <Text fz="sm" c="dimmed">
-                    Data tahun {state.findMany.data?.[0]?.year ? new Date(state.findMany.data[0].year).getFullYear() : ''}
+                    Total data tahun {currentYear}
                   </Text>
                 </Flex>
               </Paper>
@@ -79,12 +107,14 @@ function Page() {
                   <IconSchool size={35} color="#5082EE" />
                   <Text fz="h4" fw={600}>Pengangguran Terdidik</Text>
                   <Text fz="h2" fw={700} c="#5082EE">
-                    {state.findMany.data?.[0]?.educatedUnemployment || 0} Orang
+                    {yearlyData?.educated.toLocaleString() || 0} Orang
                   </Text>
                   <Text fz="sm" c="dimmed">
-                    {state.findMany.data?.[0]?.totalUnemployment ?
-                      `${Math.round((state.findMany.data[0].educatedUnemployment / state.findMany.data[0].totalUnemployment) * 100)}% dari total` :
-                      '0% dari total'}
+                    {yearlyData ?
+                      <>
+                        {((yearlyData.educated / yearlyData.total) * 100).toFixed(1)}%
+                        dari total pengangguran
+                      </> : 'Tidak ada data'}
                   </Text>
                 </Flex>
               </Paper>
@@ -95,12 +125,14 @@ function Page() {
                   <IconSchoolOff size={35} color="#DA524C" />
                   <Text fz="h4" fw={600}>Pengangguran Tidak Terdidik</Text>
                   <Text fz="h2" fw={700} c="#DA524C">
-                    {state.findMany.data?.[0]?.uneducatedUnemployment || 0} Orang
+                    {yearlyData?.uneducated.toLocaleString() || 0} Orang
                   </Text>
                   <Text fz="sm" c="dimmed">
-                    {state.findMany.data?.[0]?.totalUnemployment ?
-                      `${Math.round((state.findMany.data[0].uneducatedUnemployment / state.findMany.data[0].totalUnemployment) * 100)}% dari total` :
-                      '0% dari total'}
+                    {yearlyData ?
+                      <>
+                        {((yearlyData.uneducated / yearlyData.total) * 100).toFixed(1)}%
+                        dari total pengangguran
+                      </> : 'Tidak ada data'}
                   </Text>
                 </Flex>
               </Paper>

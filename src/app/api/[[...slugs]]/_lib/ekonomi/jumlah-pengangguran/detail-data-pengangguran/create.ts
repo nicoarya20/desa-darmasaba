@@ -1,132 +1,71 @@
-// import prisma from "@/lib/prisma";
-// import { Prisma } from "@prisma/client";
-// import { Context } from "elysia";
-
-// type FormCreate = Prisma.DetailDataPengangguranGetPayload<{
-//   select: {
-//     month: true;
-//     year: true;
-//     totalUnemployment: true;
-//     educatedUnemployment: true;
-//     uneducatedUnemployment: true;
-//     percentageChange: true;
-//   };
-// }>;
-
-// export default async function detailDataPengangguranCreate(context: Context) {
-//   const body = context.body as FormCreate;
-
-//   // Cek apakah data untuk bulan & tahun tersebut sudah ada
-//   const existing = await prisma.detailDataPengangguran.findFirst({
-//     where: {
-//       month: body.month,
-//       year: body.year,
-//     },
-//   });
-
-//   if (existing) {
-//     return {
-//       success: false,
-//       message: `Data bulan ${body.month} ${body.year} sudah ada.`,
-//       data: null,
-//     };
-//   }
-
-//   const created = await prisma.detailDataPengangguran.create({
-//     data: {
-//       month: body.month,
-//       year: body.year,
-//       totalUnemployment: body.totalUnemployment,
-//       educatedUnemployment: body.educatedUnemployment,
-//       uneducatedUnemployment: body.uneducatedUnemployment,
-//       percentageChange: body.percentageChange ?? null,
-//     },
-//     select: {
-//       id: true,
-//       month: true,
-//       year: true,
-//       totalUnemployment: true,
-//       educatedUnemployment: true,
-//       uneducatedUnemployment: true,
-//       percentageChange: true,
-//     },
-//   });
-
-//   return {
-//     success: true,
-//     message: "Berhasil menambahkan data pengangguran bulanan",
-//     data: created,
-//   };
-// }
-
 import prisma from "@/lib/prisma";
-import { Prisma } from "@prisma/client";
 import { Context } from "elysia";
 
-type FormCreate = Prisma.DetailDataPengangguranGetPayload<{
-  select: {
-    month: true;
-    year: true;
-    totalUnemployment: true;
-    educatedUnemployment: true;
-    uneducatedUnemployment: true;
-  };
-}>;
-
+// Define month order for calculation
 const monthOrder = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
 
-export default async function detailDataPengangguranCreate(context: Context) {
+type FormCreate = {
+  month: string;
+  year: number;
+  totalUnemployment: number;
+  educatedUnemployment: number;
+  uneducatedUnemployment: number;
+  percentageChange?: number; // Make it optional since we'll calculate it
+};
+
+export default async function createDetailDataPengangguran(context: Context) {
   const body = context.body as FormCreate;
+  const yearNumber = parseInt(body.year.toString(), 10);
 
-  const existing = await prisma.detailDataPengangguran.findFirst({
-    where: {
-      month: body.month,
-      year: body.year,
-    },
-  });
-
-  if (existing) {
-    return {
-      success: false,
-      message: `Data bulan ${body.month} ${body.year} sudah ada.`,
-      data: null,
-    };
+  if (isNaN(yearNumber)) {
+    throw new Error("Year harus berupa angka");
   }
 
-  // Cari bulan sebelumnya
+  // Find current month's index
   const currentMonthIndex = monthOrder.indexOf(body.month);
-  const prevMonth = currentMonthIndex > 0 ? monthOrder[currentMonthIndex - 1] : "Des";
+  if (currentMonthIndex === -1) {
+    throw new Error("Bulan tidak valid");
+  }
+
+  // Calculate previous month and year
+  let prevMonthIndex = currentMonthIndex - 1;
+  let prevYear = yearNumber;
   
-  // Handle year as number for calculations
-  const currentYear = typeof body.year === 'number' ? body.year : new Date(body.year).getFullYear();
-  const prevYear = currentMonthIndex > 0 ? currentYear : currentYear - 1;
+  if (prevMonthIndex < 0) {
+    prevMonthIndex = 11; // December of previous year
+    prevYear--; // Decrement year
+  }
   
-  // Create date objects for Prisma
-  const currentYearDate = new Date(currentYear, 0, 1);
-  const prevYearDate = new Date(prevYear, 0, 1);
-  
-  const prevData = await prisma.detailDataPengangguran.findFirst({
+  const prevMonth = monthOrder[prevMonthIndex];
+
+  // Find previous month's data
+  const prevMonthData = await prisma.detailDataPengangguran.findFirst({
     where: {
       month: prevMonth,
-      year: prevYearDate,
+      year: prevYear,
     },
+    orderBy: { year: 'desc' },
   });
 
-  let percentageChange: number | null = null;
-  if (prevData) {
-    const change = ((Number(body.totalUnemployment) - Number(prevData.totalUnemployment)) / Number(prevData.totalUnemployment)) * 100;
-    percentageChange = parseFloat(change.toFixed(1));
+  // Calculate percentage change if previous data exists
+  let percentageChange = 0;
+  if (prevMonthData && prevMonthData.totalUnemployment > 0) {
+    const change = ((body.totalUnemployment - prevMonthData.totalUnemployment) / 
+                   prevMonthData.totalUnemployment) * 100;
+    percentageChange = parseFloat(change.toFixed(1)); // Round to 1 decimal place
+  } else if (body.percentageChange !== undefined) {
+    // Fallback to provided value if no previous data
+    percentageChange = Number(body.percentageChange) || 0;
   }
 
-  // Create the new record with properly typed values
   const created = await prisma.detailDataPengangguran.create({
     data: {
       month: body.month,
-      year: currentYearDate,
+      year: yearNumber,
       totalUnemployment: Number(body.totalUnemployment),
       educatedUnemployment: Number(body.educatedUnemployment),
       uneducatedUnemployment: Number(body.uneducatedUnemployment),
-      percentageChange,
+      percentageChange, // This is now calculated based on previous month's data
     },
     select: {
       id: true,
@@ -136,12 +75,9 @@ export default async function detailDataPengangguranCreate(context: Context) {
       educatedUnemployment: true,
       uneducatedUnemployment: true,
       percentageChange: true,
+      createdAt: true,
     },
   });
 
-  return {
-    success: true,
-    message: "Berhasil menambahkan data pengangguran bulanan",
-    data: created,
-  };
+  return created;
 }

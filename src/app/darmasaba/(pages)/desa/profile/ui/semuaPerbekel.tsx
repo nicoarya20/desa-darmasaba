@@ -54,7 +54,7 @@ function SemuaPerbekel() {
           {data.map((v: any, k: number) => (
             <Paper
               key={k}
-              radius="2xl"
+              radius="xl"
               shadow="md"
               withBorder
               p="lg"
@@ -65,7 +65,7 @@ function SemuaPerbekel() {
               className="hover:shadow-xl hover:scale-[1.02]"
             >
               <Stack gap="md" align="center">
-                <Box w="100%" h={300} style={{ overflow: "hidden", borderRadius: "1rem" }}>
+                <Box w="100%" h={500} style={{ overflow: "hidden", borderRadius: "1rem" }}>
                   <Image
                     src={v.image?.link}
                     alt={v.nama || "Foto Perbekel"}

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiFetch from "@/lib/api-fetch";
 import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
@@ -97,13 +98,37 @@ const laporanPublikState = proxy({
           include: { penanganan: true };
         }>[]
       | null,
-    async load() {
-      const res = await ApiFetch.api.keamanan.laporanpublik["find-many"].get();
-      if (res.status === 200) {
-        laporanPublikState.findMany.data = res.data?.data ?? [];
-      }
+      page: 1,
+      totalPages: 1,
+      loading: false,
+      search: "",
+     load: async (page = 1, limit = 10, search = "") => {
+        laporanPublikState.findMany.loading = true; // ✅ Akses langsung via nama path
+        laporanPublikState.findMany.page = page;
+        laporanPublikState.findMany.search = search;
+    
+        try {
+          const query: any = { page, limit };
+          if (search) query.search = search;
+      
+          const res = await ApiFetch.api.keamanan.laporanpublik["find-many"].get({ query });
+      
+          if (res.status === 200 && res.data?.success) {
+            laporanPublikState.findMany.data = res.data.data ?? [];
+            laporanPublikState.findMany.totalPages = res.data.totalPages ?? 1;
+          } else {
+            laporanPublikState.findMany.data = [];
+            laporanPublikState.findMany.totalPages = 1;
+          }
+        } catch (err) {
+          console.error("Gagal fetch laporan publik paginated:", err);
+          laporanPublikState.findMany.data = [];
+          laporanPublikState.findMany.totalPages = 1;
+        } finally {
+          laporanPublikState.findMany.loading = false;
+        }
+      },
     },
-  },
   findUnique: {
     data: null as Prisma.LaporanPublikGetPayload<{
       include: { penanganan: true };

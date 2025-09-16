@@ -54,7 +54,7 @@ function Page() {
   const tarif = (data?.tarifdanlayanan as TarifDanLayanan) || null;
   const kontak = (data?.kontak as Kontak) || { 
     telepon: '(0361) 123456', 
-    whatsapp: '081234567890', 
+    whatsapp: '6289647037426', 
     email: 'info@fasilitas-kesehatan.id' 
   };
   const lokasi = (data?.lokasi as Lokasi) || { 

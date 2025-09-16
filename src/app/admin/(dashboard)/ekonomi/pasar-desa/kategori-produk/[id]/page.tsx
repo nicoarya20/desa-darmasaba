@@ -5,7 +5,17 @@ import { useParams, useRouter } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
 import pasarDesaState from '../../../../_state/ekonomi/pasar-desa/pasar-desa';
 import colors from '@/con/colors';
-import { Box, Button, Paper, Stack, Title, TextInput, Group, Text } from '@mantine/core';
+import {
+  Box,
+  Button,
+  Group,
+  Paper,
+  Stack,
+  Title,
+  TextInput,
+  Tooltip,
+  Text,
+} from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { toast } from 'react-toastify';
 
@@ -16,7 +26,7 @@ function EditKategoriProduk() {
   const statePasar = useProxy(pasarDesaState.kategoriProduk);
 
   const [formData, setFormData] = useState({
-    nama: "",
+    nama: '',
   });
 
   useEffect(() => {
@@ -34,8 +44,8 @@ function EditKategoriProduk() {
           });
         }
       } catch (error) {
-        console.error("Error loading kategori produk:", error);
-        toast.error("Gagal memuat data kategori produk");
+        console.error('Error loading kategori produk:', error);
+        toast.error('Gagal memuat data kategori produk');
       }
     };
 
@@ -53,7 +63,6 @@ function EditKategoriProduk() {
         nama: formData.nama.trim(),
       };
 
-      // Safety check tambahan: pastikan ID tidak kosong
       if (!statePasar.edit.id) {
         statePasar.edit.id = id; // fallback
       }
@@ -61,33 +70,60 @@ function EditKategoriProduk() {
       const success = await statePasar.edit.update();
 
       if (success) {
-        router.push("/admin/ekonomi/pasar-desa/kategori-produk");
+        toast.success('Kategori produk berhasil diperbarui!');
+        router.push('/admin/ekonomi/pasar-desa/kategori-produk');
       }
     } catch (error) {
-      console.error("Error updating kategori produk:", error);
-      // toast akan ditampilkan dari fungsi update
+      console.error('Error updating kategori produk:', error);
+      toast.error('Terjadi kesalahan saat memperbarui kategori produk');
     }
   };
 
   return (
-    <Box>
-      <Box mb={10}>
-        <Button onClick={() => router.back()} variant='subtle' color={'blue'}>
-          <IconArrowBack color={colors['blue-button']} size={25} />
-        </Button>
-      </Box>
+    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+      {/* Header dengan tombol back */}
+      <Group mb="md">
+        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
+          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+            <IconArrowBack color={colors['blue-button']} size={24} />
+          </Button>
+        </Tooltip>
+        <Title order={4} ml="sm" c="dark">
+          Edit Kategori Produk
+        </Title>
+      </Group>
 
-      <Paper w={{ base: '100%', md: '50%' }} bg={colors['white-1']} p={'md'}>
-        <Stack gap={"xs"}>
-          <Title order={4}>Edit Kategori Produk</Title>
+      {/* Card form */}
+      <Paper
+        w={{ base: '100%', md: '50%' }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+        style={{ border: '1px solid #e0e0e0' }}
+      >
+        <Stack gap="md">
           <TextInput
+            label={<Text fw="bold" fz="sm">Nama Kategori Produk</Text>}
+            placeholder="Masukkan nama kategori produk"
             value={formData.nama}
             onChange={(e) => setFormData({ ...formData, nama: e.target.value })}
-            label={<Text fw={"bold"} fz={"sm"}>Nama Kategori Produk</Text>}
-            placeholder='Masukkan nama kategori produk'
+            required
           />
-          <Group>
-            <Button bg={colors['blue-button']} onClick={handleSubmit}>Submit</Button>
+
+          <Group justify="right">
+            <Button
+              onClick={handleSubmit}
+              radius="md"
+              size="md"
+              style={{
+                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                color: '#fff',
+                boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
+              }}
+            >
+              Simpan
+            </Button>
           </Group>
         </Stack>
       </Paper>

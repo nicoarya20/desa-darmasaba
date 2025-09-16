@@ -111,7 +111,7 @@ export default function ListImage() {
                         loading={loading}
                         size="compact-xs"
                         onClick={() => {
-                          stateListImage.del({ name: v.name }).finally(() => {
+                          stateListImage.del({ id: v.id }).finally(() => {
                             setLoading(false);
                           });
                         }}

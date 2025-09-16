@@ -76,7 +76,7 @@ function Page() {
           </Paper>
         </Flex>
 
-        <SimpleGrid py={48} cols={{ base: 1, sm: 2, lg: 3 }} spacing="2xl">
+        <SimpleGrid py={48} cols={{ base: 1, sm: 2, lg: 3 }} spacing="xl">
           {loading ? (
             Array.from({ length: 6 }).map((_, i) => (
               <Skeleton key={i} h={360} radius="xl" />

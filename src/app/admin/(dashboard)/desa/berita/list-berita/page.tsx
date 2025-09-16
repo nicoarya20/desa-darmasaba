@@ -96,9 +96,11 @@ function ListBerita({ search }: { search: string }) {
                 filteredData.map((item) => (
                   <TableTr key={item.id}>
                     <TableTd style={{ width: '30%' }}>
-                      <Text fw={500} truncate="end" lineClamp={1}>
-                        {item.judul}
-                      </Text>
+                      <Box w={200}>
+                        <Text fw={500} truncate="end" lineClamp={1}>
+                          {item.judul}
+                        </Text>
+                      </Box>
                     </TableTd>
                     <TableTd style={{ width: '20%' }}>
                       <Text fz="sm" c="dimmed">

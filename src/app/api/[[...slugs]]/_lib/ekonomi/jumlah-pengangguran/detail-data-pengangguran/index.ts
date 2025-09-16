@@ -10,13 +10,13 @@ const DetailDataPengangguran = new Elysia({
   prefix: "/detaildatapengangguran",
   tags: ["Ekonomi/Jumlah Pengangguran/Detail Data Pengangguran"],
 })
-  .get("/:id", async (context) => {
-    const response = await detailDataPengangguranFindUnique(
-      new Request(context.request)
-    );
-    return response;
-  })
   .get("/find-many", detailDataPengangguranFindMany)
+  .get("/month/:month/year/:year", findByMonthYear, {
+    params: t.Object({
+      month: t.String(),
+      year: t.Number(),
+    }),
+  })
   .post("/create", detailDataPengangguranCreate, {
     body: t.Object({
       month: t.String(),
@@ -24,7 +24,7 @@ const DetailDataPengangguran = new Elysia({
       totalUnemployment: t.Number(),
       educatedUnemployment: t.Number(),
       uneducatedUnemployment: t.Number(),
-      percentageChange: t.Number(),
+      percentageChange: t.Optional(t.Number()),
     }),
   })
   .put("/:id", detailDataPengangguranUpdate, {
@@ -37,19 +37,19 @@ const DetailDataPengangguran = new Elysia({
       totalUnemployment: t.Number(),
       educatedUnemployment: t.Number(),
       uneducatedUnemployment: t.Number(),
-      percentageChange: t.Number(),
+      percentageChange: t.Optional(t.Number()),
     }),
   })
-  .delete("/del/:id", detailDataPengangguranDelete, {
+  .delete("/:id", detailDataPengangguranDelete, {
     params: t.Object({
       id: t.String(),
     }),
   })
-  .get("/month/:month/year/:year", findByMonthYear, {
-    params: t.Object({
-      month: t.String(),
-      year: t.String(),
-    }),
-  })
+  .get("/:id", async (context) => {
+    const response = await detailDataPengangguranFindUnique(
+      new Request(context.request)
+    );
+    return response;
+  });
 
 export default DetailDataPengangguran;

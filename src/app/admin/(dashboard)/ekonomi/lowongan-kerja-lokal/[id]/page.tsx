@@ -1,125 +1,145 @@
 'use client'
-import { useProxy } from 'valtio/utils';
 
-import { Box, Button, Flex, Paper, Skeleton, Stack, Text } from '@mantine/core';
+import { Box, Button, Group, Paper, Skeleton, Stack, Text, Tooltip } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { IconArrowBack, IconEdit, IconX } from '@tabler/icons-react';
+import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { useProxy } from 'valtio/utils';
 
 import colors from '@/con/colors';
 import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
 import lowonganKerjaState from '../../../_state/ekonomi/lowongan-kerja';
 
-
-
 function DetailLowonganKerjaLokal() {
-  const lowonganState = useProxy(lowonganKerjaState)
-  const [modalHapus, setModalHapus] = useState(false)
-  const [selectedId, setSelectedId] = useState<string | null>(null)
-  const params = useParams()
-  const router = useRouter()
+  const lowonganState = useProxy(lowonganKerjaState);
+  const [modalHapus, setModalHapus] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const params = useParams();
+  const router = useRouter();
 
   useShallowEffect(() => {
-    lowonganState.findUnique.load(params?.id as string)
-  }, [])
-
+    lowonganState.findUnique.load(params?.id as string);
+  }, []);
 
   const handleHapus = () => {
     if (selectedId) {
-      lowonganState.delete.byId(selectedId)
-      setModalHapus(false)
-      setSelectedId(null)
-      router.push("/admin/ekonomi/lowongan-kerja-lokal")
+      lowonganState.delete.byId(selectedId);
+      setModalHapus(false);
+      setSelectedId(null);
+      router.push("/admin/ekonomi/lowongan-kerja-lokal");
     }
-  }
+  };
 
   if (!lowonganState.findUnique.data) {
     return (
       <Stack py={10}>
-        <Skeleton h={40} />
+        <Skeleton height={500} radius="md" />
       </Stack>
-    )
+    );
   }
 
+  const data = lowonganState.findUnique.data;
+
   return (
-    <Box>
-      <Box mb={10}>
-        <Button variant="subtle" onClick={() => router.back()}>
-          <IconArrowBack color={colors['blue-button']} size={25} />
-        </Button>
-      </Box>
-      <Paper bg={colors['white-1']} w={{ base: "100%", md: "100%", lg: "50%" }} p={'md'}>
-        <Stack>
-          <Text fz={"xl"} fw={"bold"}>Detail Lowongan Kerja Lokal</Text>
-          {lowonganState.findUnique.data ? (
-            <Paper key={lowonganState.findUnique.data.id} bg={colors['BG-trans']} p={'md'}>
-              <Stack gap={"xs"}>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Bekerja Sebagai</Text>
-                  <Text fz={"lg"}>{lowonganState.findUnique.data?.posisi}</Text>
-                </Box>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Nama Usaha</Text>
-                  <Text fz={"lg"}>{lowonganState.findUnique.data?.namaPerusahaan}</Text>
-                </Box>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Lokasi</Text>
-                  <Text fz={"lg"}>{lowonganState.findUnique.data?.lokasi}</Text>
-                </Box>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Tipe Pekerjaan</Text>
-                  <Text fz={"lg"}>{lowonganState.findUnique.data?.tipePekerjaan}</Text>
-                </Box>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Gaji</Text>
-                  <Text fz={"lg"}>{lowonganState.findUnique.data?.gaji}</Text>
-                </Box>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Deskripsi</Text>
-                  <Text fz={"lg"} dangerouslySetInnerHTML={{ __html: lowonganState.findUnique.data?.deskripsi }} />
-                </Box>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Kualifikasi</Text>
-                  <Text fz={"lg"} dangerouslySetInnerHTML={{ __html: lowonganState.findUnique.data?.kualifikasi }} />
-                </Box>
-                <Flex gap={"xs"} mt={10}>
+    <Box py={10}>
+      <Button
+        variant="subtle"
+        onClick={() => router.back()}
+        leftSection={<IconArrowBack size={24} color={colors['blue-button']} />}
+        mb={15}
+      >
+        Kembali
+      </Button>
+
+      <Paper
+        withBorder
+        w={{ base: "100%", md: "70%" }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+      >
+        <Stack gap="md">
+          <Text fz="2xl" fw="bold" c={colors['blue-button']}>
+            Detail Lowongan Kerja Lokal
+          </Text>
+
+          <Paper bg="#ECEEF8" p="md" radius="md" shadow="xs">
+            <Stack gap="sm">
+              <Box>
+                <Text fz="lg" fw="bold">Bekerja Sebagai</Text>
+                <Text fz="md" c="dimmed">{data.posisi || '-'}</Text>
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">Nama Usaha</Text>
+                <Text fz="md" c="dimmed">{data.namaPerusahaan || '-'}</Text>
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">Lokasi</Text>
+                <Text fz="md" c="dimmed">{data.lokasi || '-'}</Text>
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">Tipe Pekerjaan</Text>
+                <Text fz="md" c="dimmed">{data.tipePekerjaan || '-'}</Text>
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">Gaji</Text>
+                <Text fz="md" c="dimmed">{data.gaji || '-'}</Text>
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">Deskripsi</Text>
+                <Text fz="md" c="dimmed" dangerouslySetInnerHTML={{ __html: data.deskripsi || '-' }} />
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">Kualifikasi</Text>
+                <Text fz="md" c="dimmed" dangerouslySetInnerHTML={{ __html: data.kualifikasi || '-' }} />
+              </Box>
+
+              <Group gap="sm" mt="sm">
+                <Tooltip label="Hapus Lowongan" withArrow position="top">
                   <Button
+                    color="red"
                     onClick={() => {
-                      if (lowonganState.findUnique.data) {
-                        setSelectedId(lowonganState.findUnique.data.id);
-                        setModalHapus(true);
-                      }
+                      setSelectedId(data.id);
+                      setModalHapus(true);
                     }}
-                    disabled={lowonganState.delete.loading || !lowonganState.findUnique.data}
-                    color={"red"}
+                    variant="light"
+                    radius="md"
+                    size="md"
                   >
-                    <IconX size={20} />
+                    <IconTrash size={20} />
                   </Button>
+                </Tooltip>
+
+                <Tooltip label="Edit Lowongan" withArrow position="top">
                   <Button
-                    onClick={() => {
-                      if (lowonganState.findUnique.data) {
-                        router.push(`/admin/ekonomi/lowongan-kerja-lokal/${lowonganState.findUnique.data.id}/edit`);
-                      }
-                    }}
-                    disabled={!lowonganState.findUnique.data}
-                    color={"green"}
+                    color="green"
+                    onClick={() => router.push(`/admin/ekonomi/lowongan-kerja-lokal/${data.id}/edit`)}
+                    variant="light"
+                    radius="md"
+                    size="md"
                   >
                     <IconEdit size={20} />
                   </Button>
-                </Flex>
-              </Stack>
-            </Paper>
-          ) : null}
+                </Tooltip>
+              </Group>
+            </Stack>
+          </Paper>
         </Stack>
       </Paper>
 
-      {/* Modal Konfirmasi Hapus */}
       <ModalKonfirmasiHapus
         opened={modalHapus}
         onClose={() => setModalHapus(false)}
         onConfirm={handleHapus}
-        text='Apakah anda yakin ingin menghapus lowongan kerja ini?'
+        text="Apakah Anda yakin ingin menghapus lowongan kerja ini?"
       />
     </Box>
   );

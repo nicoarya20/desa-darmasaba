@@ -1,38 +1,36 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Center, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr } from '@mantine/core';
+import { Box, Button, Center, Group, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title, Tooltip } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { IconEdit, IconSearch, IconX } from '@tabler/icons-react';
+import { IconEdit, IconPlus, IconSearch, IconX } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../../_com/header';
-import JudulList from '../../../_com/judulList';
 import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
 import pasarDesaState from '../../../_state/ekonomi/pasar-desa/pasar-desa';
 
 
-function PasarDesa() {
+function KategoriProduk() {
   const [search2, setSearch2] = useState("")
   return (
     <Box>
       <HeaderSearch
         title='Kategori Produk'
-        placeholder='pencarian'
+        placeholder='Cari nama kategori produk...'
         searchIcon={<IconSearch size={20} />}
         value={search2}
         onChange={(e) => setSearch2(e.currentTarget.value)}
       />
-      <ListPasarDesa search2={search2} />
+      <ListKategoriProduk search2={search2} />
     </Box>
   );
 }
 
-function ListPasarDesa({ search2 }: { search2: string }) {
+function ListKategoriProduk({ search2 }: { search2: string }) {
   const statePasar = useProxy(pasarDesaState.kategoriProduk)
   const [modalHapus, setModalHapus] = useState(false)
   const [selectedId, setSelectedId] = useState<string | null>(null)
-  // const params = useParams()
   const router = useRouter()
 
   const {
@@ -60,56 +58,102 @@ function ListPasarDesa({ search2 }: { search2: string }) {
   if (loading || !data) {
     return (
       <Stack py={10}>
-        <Skeleton h={500} />
+        <Skeleton height={500} radius="md" />
       </Stack>
     )
   }
 
   return (
     <Box py={10}>
-      <Paper bg={colors['white-1']} p={'md'}>
-        <JudulList
-          title='List Produk Pasar Desa'
-          href='/admin/ekonomi/pasar-desa/kategori-produk/create'
-        />
-        <Table striped withTableBorder withRowBorders>
-          <TableThead>
-            <TableTr>
-              <TableTh>Nama Kategori</TableTh>
-              <TableTh>Edit</TableTh>
-              <TableTh>Delete</TableTh>
-            </TableTr>
-          </TableThead>
-          <TableTbody>
-            {filteredData.map((item) => (
-              <TableTr key={item.id}>
-                <TableTd>{item.nama}</TableTd>
-                <TableTd>
-                  <Button color="green" onClick={() => router.push(`/admin/ekonomi/pasar-desa/kategori-produk/${item.id}`)}>
-                    <IconEdit size={20} />
-                  </Button>
-                </TableTd>
-                <TableTd>
-                  <Button color="red" onClick={() => {
-                    setSelectedId(item.id)
-                    setModalHapus(true)
-                  }}>
-                    <IconX size={20} />
-                  </Button>
-                </TableTd>
+      <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
+        <Group justify="space-between" mb="md">
+          <Title order={4}>Daftar Kategori Produk</Title>
+          <Tooltip label="Tambah Kategori Produk" withArrow>
+            <Button
+              leftSection={<IconPlus size={18} />}
+              color="blue"
+              variant="light"
+              onClick={() => router.push('/admin/ekonomi/pasar-desa/kategori-produk/create')}
+            >
+              Tambah Baru
+            </Button>
+          </Tooltip>
+        </Group>
+
+        <Box style={{ overflowX: 'auto' }}>
+          <Table highlightOnHover>
+            <TableThead>
+              <TableTr>
+                <TableTh style={{ width: '60%' }}>Nama Kategori</TableTh>
+                <TableTh style={{ width: '20%' }}>Edit</TableTh>
+                <TableTh style={{ width: '20%' }}>Delete</TableTh>
               </TableTr>
-            ))}
-          </TableTbody>
-        </Table>
+            </TableThead>
+            <TableTbody>
+              {filteredData.length > 0 ? (
+                filteredData.map((item) => (
+                  <TableTr key={item.id}>
+                    <TableTd>
+                      <Text fw={500} truncate="end" lineClamp={1}>
+                        {item.nama}
+                      </Text>
+                    </TableTd>
+                    <TableTd>
+                      <Tooltip label="Edit Kategori Produk" withArrow>
+                        <Button
+                          color="green"
+                          variant="light"
+                          onClick={() => router.push(`/admin/ekonomi/pasar-desa/kategori-produk/${item.id}`)}
+                        >
+                          <IconEdit size={18} />
+                        </Button>
+                      </Tooltip>
+                    </TableTd>
+                    <TableTd>
+                      <Tooltip label="Hapus Kategori Produk" withArrow>
+                        <Button
+                          color="red"
+                          variant="light"
+                          onClick={() => {
+                            setSelectedId(item.id)
+                            setModalHapus(true)
+                          }}
+                        >
+                          <IconX size={18} />
+                        </Button>
+                      </Tooltip>
+                    </TableTd>
+                  </TableTr>
+                ))
+              ) : (
+                <TableTr>
+                  <TableTd colSpan={3}>
+                    <Center py={20}>
+                      <Text color="dimmed">Tidak ada data kategori produk yang cocok</Text>
+                    </Center>
+                  </TableTd>
+                </TableTr>
+              )}
+            </TableTbody>
+          </Table>
+        </Box>
       </Paper>
+
       <Center>
         <Pagination
           value={page}
-          onChange={(newPage) => load(newPage)}
+          onChange={(newPage) => {
+            load(newPage, 10)
+            window.scrollTo({ top: 0, behavior: 'smooth' })
+          }}
           total={totalPages}
-          my={"md"}
+          mt="md"
+          mb="md"
+          color="blue"
+          radius="md"
         />
       </Center>
+
       {/* Modal Konfirmasi Hapus */}
       <ModalKonfirmasiHapus
         opened={modalHapus}
@@ -118,7 +162,7 @@ function ListPasarDesa({ search2 }: { search2: string }) {
         text='Apakah anda yakin ingin menghapus kategori produk ini?'
       />
     </Box>
-  );
+  )
 }
 
-export default PasarDesa;
+export default KategoriProduk;

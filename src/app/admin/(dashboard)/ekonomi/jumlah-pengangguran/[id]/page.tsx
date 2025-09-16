@@ -59,11 +59,16 @@ function DetailJumlahPengangguran() {
               </Box>
               <Box>
                 <Text fw={"bold"}>Perubahan</Text>
-                <Text>{stateDetail.findUnique.data?.percentageChange}</Text>
+                <Text>
+                  {stateDetail.findUnique.data?.percentageChange !== null &&
+                    stateDetail.findUnique.data?.percentageChange !== undefined
+                    ? `${stateDetail.findUnique.data.percentageChange}%`
+                    : 'Tidak ada data perubahan'}
+                </Text>
               </Box>
               <Box>
                 <Text fw={"bold"}>Tahun</Text>
-                <Text>{stateDetail.findUnique.data?.year ? new Date(stateDetail.findUnique.data.year).getFullYear() : ''}</Text>
+                <Text>{stateDetail.findUnique.data?.year || ''}</Text>
               </Box>
               <Box>
                 <Text fw={"bold"}>Bulan</Text>
@@ -76,14 +81,14 @@ function DetailJumlahPengangguran() {
               <Box>
                 <Flex gap={"xs"}>
                   <Button
-                  onClick={() => {
-                    if (stateDetail.findUnique.data) {
-                      setSelectedId(stateDetail.findUnique.data.id);
-                      setModalHapus(true);
-                    }
-                  }}
-                  disabled={stateDetail.delete.loading || !stateDetail.findUnique.data}
-                  color={"red"}>
+                    onClick={() => {
+                      if (stateDetail.findUnique.data) {
+                        setSelectedId(stateDetail.findUnique.data.id);
+                        setModalHapus(true);
+                      }
+                    }}
+                    disabled={stateDetail.delete.loading || !stateDetail.findUnique.data}
+                    color={"red"}>
                     <IconX size={20} />
                   </Button>
                   <Button onClick={() => router.push(`/admin/ekonomi/jumlah-pengangguran/${stateDetail.findUnique.data?.id}/edit`)} color="green">

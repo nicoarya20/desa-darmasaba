@@ -15,7 +15,7 @@ export default async function findByMonthYear(context: Context) {
   const data = await prisma.detailDataPengangguran.findFirst({
     where: {
       month,
-      year: new Date(Number(year), 0, 1), // Convert year number to Date object for Prisma
+      year: Number(year),
     },
   });
 

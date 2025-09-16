@@ -170,7 +170,7 @@ model KategoriDesaAntiKorupsi {
 //========================================= SDGS Desa ========================================= //
 model SdgsDesa {
   id        String       @id @default(cuid())
-  name      String       @unique
+  name      String
   jumlah    String
   image     FileStorage? @relation(fields: [imageId], references: [id])
   imageId   String?
@@ -183,7 +183,7 @@ model SdgsDesa {
 //========================================= APBDes ========================================= //
 model APBDes {
   id        String       @id @default(cuid())
-  name      String       @unique
+  name      String
   jumlah    String
   image     FileStorage? @relation("APBDesImage", fields: [imageId], references: [id])
   imageId   String?
@@ -198,7 +198,7 @@ model APBDes {
 //========================================= PRESTASI DESA ========================================= //
 model PrestasiDesa {
   id         String               @id @default(cuid())
-  name       String               @unique
+  name       String
   deskripsi  String               @db.Text
   kategori   KategoriPrestasiDesa @relation(fields: [kategoriId], references: [id])
   kategoriId String
@@ -1416,6 +1416,9 @@ model PosisiOrganisasi {
   pegawai                Pegawai[]
   strukturOrganisasi     StrukturOrganisasi[] // Relasi balik
   StrukturOrganisasiPPID StrukturOrganisasiPPID[]
+  isActive               Boolean                  @default(true)
+  createdAt              DateTime                 @default(now())
+  updatedAt              DateTime                 @updatedAt
 
   @@map("posisi_organisasi")
 }
@@ -1566,7 +1569,7 @@ model DataDemografiPekerjaan {
 model DetailDataPengangguran {
   id                     String   @id @default(uuid()) @db.Uuid
   month                  String   @db.VarChar(20)
-  year                   DateTime
+  year                   Int
   totalUnemployment      Int
   educatedUnemployment   Int
   uneducatedUnemployment Int

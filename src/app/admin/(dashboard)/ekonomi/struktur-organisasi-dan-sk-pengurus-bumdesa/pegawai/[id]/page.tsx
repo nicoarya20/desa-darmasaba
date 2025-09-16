@@ -25,7 +25,7 @@ function DetailPegawai() {
       statePegawai.delete.byId(selectedId)
       setModalHapus(false)
       setSelectedId(null)
-      router.push("/admin/ekonomi/Struktur-Organisasi-dan-SK-Pengurus-BUMDesa/pegawai")
+      router.push("/admin/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa/pegawai")
     }
   }
 
@@ -120,7 +120,7 @@ function DetailPegawai() {
                   <Button
                     onClick={() => {
                       if (statePegawai.findUnique.data) {
-                        router.push(`/admin/ekonomi/Struktur-Organisasi-dan-SK-Pengurus-BUMDesa/pegawai/${statePegawai.findUnique.data.id}/edit`);
+                        router.push(`/admin/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa/pegawai/${statePegawai.findUnique.data.id}/edit`);
                       }
                     }}
                     disabled={!statePegawai.findUnique.data}

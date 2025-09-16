@@ -2,7 +2,16 @@
 'use client'
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
-import { Stack, Tabs, TabsList, TabsPanel, TabsTab, Title, Tooltip } from '@mantine/core';
+import {
+  Stack,
+  Tabs,
+  TabsList,
+  TabsPanel,
+  TabsTab,
+  Title,
+  Tooltip,
+  ScrollArea,
+} from '@mantine/core';
 import { IconBulb, IconUsers, IconBrandFacebook } from '@tabler/icons-react';
 import colors from '@/con/colors';
 
@@ -34,11 +43,13 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
     },
   ];
 
-  const currentTab = tabs.find(tab => tab.href === pathname);
-  const [activeTab, setActiveTab] = useState<string | null>(currentTab?.value || tabs[0].value);
+  const currentTab = tabs.find((tab) => tab.href === pathname);
+  const [activeTab, setActiveTab] = useState<string | null>(
+    currentTab?.value || tabs[0].value
+  );
 
   const handleTabChange = (value: string | null) => {
-    const tab = tabs.find(t => t.value === value);
+    const tab = tabs.find((t) => t.value === value);
     if (tab) {
       router.push(tab.href);
     }
@@ -46,7 +57,7 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
   };
 
   useEffect(() => {
-    const match = tabs.find(tab => tab.href === pathname);
+    const match = tabs.find((tab) => tab.href === pathname);
     if (match) {
       setActiveTab(match.value);
     }
@@ -57,38 +68,53 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
       <Title order={2} fw={700} style={{ color: "#1A1B1E" }}>
         Profil Desa
       </Title>
+
       <Tabs
-        color={colors['blue-button']}
-        variant='pills'
+        color={colors["blue-button"]}
+        variant="pills"
         value={activeTab}
         onChange={handleTabChange}
         radius="lg"
         keepMounted={false}
       >
-        <TabsList
-          p="sm"
-          style={{
-            background: "linear-gradient(135deg, #e7ebf7, #f9faff)",
-            borderRadius: "1rem",
-            boxShadow: "inset 0 0 10px rgba(0,0,0,0.05)",
-          }}
-        >
-          {tabs.map((tab, i) => (
-            <Tooltip key={i} label={tab.tooltip} position="bottom" withArrow transitionProps={{ transition: 'pop', duration: 200 }}>
-              <TabsTab
-                value={tab.value}
-                leftSection={tab.icon}
-                style={{
-                  fontWeight: 600,
-                  fontSize: "0.9rem",
-                  transition: "all 0.2s ease",
-                }}
+        {/* ✅ Scroll horizontal wrapper */}
+        <ScrollArea type="auto" offsetScrollbars>
+          <TabsList
+            p="sm"
+            style={{
+              background: "linear-gradient(135deg, #e7ebf7, #f9faff)",
+              borderRadius: "1rem",
+              boxShadow: "inset 0 0 10px rgba(0,0,0,0.05)",
+              display: "flex",
+              flexWrap: "nowrap",
+              gap: "0.5rem",
+              paddingInline: "0.5rem", // ✅ biar nggak nempel ke tepi
+            }}
+          >
+            {tabs.map((tab, i) => (
+              <Tooltip
+                key={i}
+                label={tab.tooltip}
+                position="bottom"
+                withArrow
+                transitionProps={{ transition: "pop", duration: 200 }}
               >
-                {tab.label}
-              </TabsTab>
-            </Tooltip>
-          ))}
-        </TabsList>
+                <TabsTab
+                  value={tab.value}
+                  leftSection={tab.icon}
+                  style={{
+                    fontWeight: 600,
+                    fontSize: "0.9rem",
+                    transition: "all 0.2s ease",
+                    flexShrink: 0, // ✅ jangan mengecil aneh-aneh
+                  }}
+                >
+                  {tab.label}
+                </TabsTab>
+              </Tooltip>
+            ))}
+          </TabsList>
+        </ScrollArea>
 
         {tabs.map((tab, i) => (
           <TabsPanel

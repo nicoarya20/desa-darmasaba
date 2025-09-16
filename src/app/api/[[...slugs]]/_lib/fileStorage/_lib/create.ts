@@ -55,14 +55,18 @@ const fileStorageCreate = async (context: Context) => {
     finalName = desktopName;
     finalMimeType = "image/webp";
   } else {
-    // Kompres dokumen (opsional pakai gzip)
-    const gzBuffer = zlib.gzipSync(buffer);
-    const docName = `${finalName}.gz`;
-
-    await fs.writeFile(path.join(rootPath, docName), gzBuffer);
-
-    finalName = docName;
-    finalMimeType = "application/gzip";
+    // Jika file adalah PDF, simpan tanpa kompresi
+    if (file.type === "application/pdf") {
+      await fs.writeFile(path.join(rootPath, finalName), buffer);
+    }
+    // Jika file lain, kompres dengan gzip
+    else {
+      const gzBuffer = zlib.gzipSync(buffer);
+      const compressedName = `${finalName}.gz`;
+      await fs.writeFile(path.join(rootPath, compressedName), gzBuffer);
+      finalName = compressedName;
+      finalMimeType = "application/gzip";
+    }
   }
 
   const data = await prisma.fileStorage.create({

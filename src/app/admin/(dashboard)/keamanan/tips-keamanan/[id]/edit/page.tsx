@@ -4,21 +4,26 @@
 import {
   Box,
   Button,
-  Center,
   Group,
   Image,
   Paper,
   Stack,
   Text,
   TextInput,
-  Title
+  Title,
+  Tooltip,
 } from "@mantine/core";
-import { IconArrowBack, IconImageInPicture, IconPhoto, IconUpload, IconX } from "@tabler/icons-react";
+import {
+  IconArrowBack,
+  IconImageInPicture,
+  IconPhoto,
+  IconUpload,
+  IconX,
+} from "@tabler/icons-react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useProxy } from "valtio/utils";
-
 
 import EditEditor from "@/app/admin/(dashboard)/_com/editEditor";
 import colors from "@/con/colors";
@@ -34,24 +39,24 @@ function EditTipsKeamanan() {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [formData, setFormData] = useState({
-    judul: keamananState.update.form.judul || '',
-    deskripsi: keamananState.update.form.deskripsi || '',
-    imageId: keamananState.update.form.imageId || ''
+    judul: keamananState.update.form.judul || "",
+    deskripsi: keamananState.update.form.deskripsi || "",
+    imageId: keamananState.update.form.imageId || "",
   });
 
-  // Load berita by id saat pertama kali
+  // Load data saat pertama kali
   useEffect(() => {
-    const loadBerita = async () => {
+    const loadData = async () => {
       const id = params?.id as string;
       if (!id) return;
 
       try {
-        const data = await keamananState.update.load(id); // akses langsung, bukan dari proxy
+        const data = await keamananState.update.load(id);
         if (data) {
           setFormData({
-            judul: data.judul || '',
-            deskripsi: data.deskripsi || '',
-            imageId: data.imageId || '',
+            judul: data.judul || "",
+            deskripsi: data.deskripsi || "",
+            imageId: data.imageId || "",
           });
 
           if (data?.image?.link) {
@@ -59,35 +64,30 @@ function EditTipsKeamanan() {
           }
         }
       } catch (error) {
-        console.error("Error loading keamananLingkungan:", error);
-        toast.error("Gagal memuat data keamananLingkungan");
+        console.error("Error loading tips keamanan:", error);
+        toast.error("Gagal memuat data tips keamanan");
       }
     };
 
-    loadBerita();
-  }, [params?.id]); // ✅ hapus beritaState dari dependency
+    loadData();
+  }, [params?.id]);
 
   const handleSubmit = async () => {
-
     try {
-      // Update global state with form data
       keamananState.update.form = {
         ...keamananState.update.form,
-        judul: formData.judul,
-        deskripsi: formData.deskripsi,
-        imageId: formData.imageId // Keep existing imageId if not changed
+        ...formData,
       };
 
-      // Jika ada file baru, upload
       if (file) {
-        const res = await ApiFetch.api.fileStorage.create.post({ file, name: file.name });
+        const res = await ApiFetch.api.fileStorage.create.post({
+          file,
+          name: file.name,
+        });
         const uploaded = res.data?.data;
 
-        if (!uploaded?.id) {
-          return toast.error("Gagal upload gambar");
-        }
+        if (!uploaded?.id) return toast.error("Gagal upload gambar");
 
-        // Update imageId in global state
         keamananState.update.form.imageId = uploaded.id;
       }
 
@@ -95,71 +95,119 @@ function EditTipsKeamanan() {
       toast.success("Tips Keamanan berhasil diperbarui!");
       router.push("/admin/keamanan/tips-keamanan");
     } catch (error) {
-      console.error("Error updating keamananLingkungan:", error);
-      toast.error("Terjadi kesalahan saat memperbarui keamananLingkungan");
+      console.error("Error updating tips keamanan:", error);
+      toast.error("Terjadi kesalahan saat memperbarui tips keamanan");
     }
   };
 
   return (
-    <Box>
-      <Box mb={10}>
-        <Button variant="subtle" onClick={() => router.back()}>
-          <IconArrowBack color={colors["blue-button"]} size={30} />
-        </Button>
-      </Box>
-      <Paper bg={"white"} p={"md"} w={{ base: "100%", md: "50%" }}>
-        <Stack gap={"xs"}>
-          <Title order={3}>Edit Tips Keamanan</Title>
-          <Dropzone
-            onDrop={(files) => {
-              const selectedFile = files[0]; // Ambil file pertama
-              if (selectedFile) {
-                setFile(selectedFile);
-                setPreviewImage(URL.createObjectURL(selectedFile)); // Buat preview
-              }
-            }}
-            onReject={() => toast.error('File tidak valid.')}
-            maxSize={5 * 1024 ** 2} // Maks 5MB
-            accept={{ 'image/*': [] }}
-          >
-            <Group justify="center" gap="xl" mih={220} style={{ pointerEvents: 'none' }}>
-              <Dropzone.Accept>
-                <IconUpload size={52} color="var(--mantine-color-blue-6)" stroke={1.5} />
-              </Dropzone.Accept>
-              <Dropzone.Reject>
-                <IconX size={52} color="var(--mantine-color-red-6)" stroke={1.5} />
-              </Dropzone.Reject>
-              <Dropzone.Idle>
-                <IconPhoto size={52} color="var(--mantine-color-dimmed)" stroke={1.5} />
-              </Dropzone.Idle>
+    <Box px={{ base: "sm", md: "lg" }} py="md">
+      {/* Header */}
+      <Group mb="md">
+        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
+          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+            <IconArrowBack color={colors["blue-button"]} size={24} />
+          </Button>
+        </Tooltip>
+        <Title order={4} ml="sm" c="dark">
+          Edit Tips Keamanan
+        </Title>
+      </Group>
 
-              <div>
-                <Text size="xl" inline>
-                  Drag gambar ke sini atau klik untuk pilih file
-                </Text>
-                <Text size="sm" c="dimmed" inline mt={7}>
-                  Maksimal 5MB dan harus format gambar
-                </Text>
-              </div>
-            </Group>
-          </Dropzone>
+      {/* Form Card */}
+      <Paper
+        w={{ base: "100%", md: "60%" }}
+        bg={colors["white-1"]}
+        p="lg"
+        radius="md"
+        shadow="sm"
+        style={{ border: "1px solid #e0e0e0" }}
+      >
+        <Stack gap="md">
+          {/* Dropzone Upload */}
+          <Box>
+            <Text fw="bold" fz="sm" mb={6}>
+              Gambar Tips Keamanan
+            </Text>
+            <Dropzone
+              onDrop={(files) => {
+                const selectedFile = files[0];
+                if (selectedFile) {
+                  setFile(selectedFile);
+                  setPreviewImage(URL.createObjectURL(selectedFile));
+                }
+              }}
+              onReject={() => toast.error("File tidak valid, gunakan format gambar")}
+              maxSize={5 * 1024 ** 2}
+              accept={{ "image/*": [] }}
+              radius="md"
+              p="xl"
+            >
+              <Group justify="center" gap="xl" mih={180}>
+                <Dropzone.Accept>
+                  <IconUpload size={48} color={colors["blue-button"]} stroke={1.5} />
+                </Dropzone.Accept>
+                <Dropzone.Reject>
+                  <IconX size={48} color="red" stroke={1.5} />
+                </Dropzone.Reject>
+                <Dropzone.Idle>
+                  <IconPhoto size={48} color="#868e96" stroke={1.5} />
+                </Dropzone.Idle>
+                <Stack gap="xs" align="center">
+                  <Text size="md" fw={500}>
+                    Seret gambar atau klik untuk memilih file
+                  </Text>
+                  <Text size="sm" c="dimmed">
+                    Maksimal 5MB, format gambar wajib
+                  </Text>
+                </Stack>
+              </Group>
+            </Dropzone>
 
-          {previewImage ? (
-            <Image alt="" src={previewImage} w={200} h={200} />
-          ) : (
-            <Center w={200} h={200} bg={"gray"}>
-              <IconImageInPicture />
-            </Center>
-          )}
+            {previewImage ? (
+              <Box mt="sm" style={{ display: "flex", justifyContent: "center" }}>
+                <Image
+                  src={previewImage}
+                  alt="Preview Gambar"
+                  radius="md"
+                  style={{
+                    maxHeight: 220,
+                    objectFit: "contain",
+                    border: `1px solid ${colors["blue-button"]}`,
+                  }}
+                />
+              </Box>
+            ) : (
+              <Box
+                mt="sm"
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: 200,
+                  border: "1px dashed #ccc",
+                  borderRadius: 8,
+                }}
+              >
+                <IconImageInPicture size={48} color="#868e96" />
+              </Box>
+            )}
+          </Box>
+
+          {/* Input Judul */}
           <TextInput
+            label="Nama Tips Keamanan"
+            placeholder="Masukkan nama tips keamanan"
             value={formData.judul}
             onChange={(e) => setFormData({ ...formData, judul: e.target.value })}
-            label={<Text fz={"sm"} fw={"bold"}>Nama Tips Keamanan</Text>}
-            placeholder="masukkan nama tips keamanan"
+            required
           />
 
+          {/* Input Deskripsi */}
           <Box>
-            <Text fz={"sm"} fw={"bold"}>Deskripsi</Text>
+            <Text fz="sm" fw="bold" mb={6}>
+              Deskripsi
+            </Text>
             <EditEditor
               value={formData.deskripsi}
               onChange={(htmlContent) => {
@@ -169,7 +217,21 @@ function EditTipsKeamanan() {
             />
           </Box>
 
-          <Button onClick={handleSubmit}>Simpan</Button>
+          {/* Button Simpan */}
+          <Group justify="right">
+            <Button
+              onClick={handleSubmit}
+              radius="md"
+              size="md"
+              style={{
+                background: `linear-gradient(135deg, ${colors["blue-button"]}, #4facfe)`,
+                color: "#fff",
+                boxShadow: "0 4px 15px rgba(79, 172, 254, 0.4)",
+              }}
+            >
+              Simpan
+            </Button>
+          </Group>
         </Stack>
       </Paper>
     </Box>

@@ -25,10 +25,12 @@ import { IconSearch, IconFileInfo, IconMail, IconBrandWhatsapp } from '@tabler/i
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import BackButton from '../../desa/layanan/_com/BackButto';
+import { useDebouncedValue } from '@mantine/hooks';
 
 function Page() {
   const listData = useProxy(daftarInformasiPublik)
   const [search, setSearch] = useState('')
+  const [debouncedSearch] = useDebouncedValue(search, 500); // 500ms delay
 
   const {
     data,
@@ -39,8 +41,8 @@ function Page() {
   } = listData.findMany
 
   useShallowEffect(() => {
-    load(page, 5, search)
-  }, [page, search])
+    load(page, 5, debouncedSearch)
+  }, [page, debouncedSearch])
 
   if (loading || !data) {
     return (
