@@ -14,7 +14,10 @@ export default async function kontakDaruratKeamananFindMany(context: Context) {
 
   // Tambahkan pencarian (jika ada)
   if (search) {
-    where.OR = [{ nama: { contains: search, mode: "insensitive" } }];
+    where.OR = [
+      { nama: { contains: search, mode: "insensitive" } },
+      { kontakItems: { some: { kontakItem: { nama: { contains: search, mode: "insensitive" } } } } },
+    ];
   }
 
   try {
@@ -27,7 +30,6 @@ export default async function kontakDaruratKeamananFindMany(context: Context) {
               
             },
           },
-          image: true,
           kategori: true,
         },
         skip,

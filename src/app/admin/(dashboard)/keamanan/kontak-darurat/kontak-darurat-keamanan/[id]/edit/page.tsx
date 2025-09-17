@@ -1,30 +1,24 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
+import { IconKey } from "@/app/admin/(dashboard)/_com/iconMap";
+import SelectIconProgramEdit from "@/app/admin/(dashboard)/_com/selectIconEdit";
 import kontakDarurat from "@/app/admin/(dashboard)/_state/keamanan/kontak-darurat-keamanan";
 import colors from "@/con/colors";
-import ApiFetch from "@/lib/api-fetch";
 import {
   Box,
   Button,
-  Center,
   Group,
-  Image,
   MultiSelect,
   Paper,
   Stack,
   Text,
   TextInput,
   Title,
-  Tooltip,
+  Tooltip
 } from "@mantine/core";
-import { Dropzone } from "@mantine/dropzone";
 import {
-  IconArrowBack,
-  IconImageInPicture,
-  IconPhoto,
-  IconUpload,
-  IconX,
+  IconArrowBack
 } from "@tabler/icons-react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -35,12 +29,9 @@ function EditKontakDaruratKeamanan() {
   const router = useRouter();
   const kontakState = useProxy(kontakDarurat.kontakDaruratKeamananState);
   const params = useParams();
-
-  const [previewUtama, setPreviewUtama] = useState<string | null>(null);
-  const [fileUtama, setFileUtama] = useState<File | null>(null);
   const [formData, setFormData] = useState({
     name: kontakState.update.form.nama || "",
-    imageId: kontakState.update.form.imageId || "",
+    icon: kontakState.update.form.icon || "",
     kategoriId: kontakState.update.form.kategoriId || [],
   });
 
@@ -56,11 +47,9 @@ function EditKontakDaruratKeamanan() {
         if (data) {
           setFormData({
             name: data.nama || "",
-            imageId: data.imageId || "",
+            icon: data.icon || "",
             kategoriId: data.kategoriId || [],
           });
-
-          if (data?.image?.link) setPreviewUtama(data.image.link);
         }
       } catch (error) {
         console.error("Error loading kontak darurat:", error);
@@ -77,20 +66,9 @@ function EditKontakDaruratKeamanan() {
       kontakState.update.form = {
         ...kontakState.update.form,
         nama: formData.name,
-        imageId: formData.imageId,
+        icon: formData.icon,
         kategoriId: formData.kategoriId,
       };
-
-      if (fileUtama) {
-        const res = await ApiFetch.api.fileStorage.create.post({
-          file: fileUtama,
-          name: fileUtama.name,
-        });
-        const uploaded = res.data?.data;
-        if (!uploaded?.id) return toast.error("Gagal upload gambar utama");
-        kontakState.update.form.imageId = uploaded.id;
-      }
-
       await kontakState.update.update();
       toast.success("Kontak Darurat berhasil diperbarui!");
       router.push("/admin/keamanan/kontak-darurat");
@@ -155,52 +133,15 @@ function EditKontakDaruratKeamanan() {
             error={!formData.kategoriId.length ? "Pilih minimal satu kategori" : undefined}
           />
 
-          {/* Gambar utama */}
           <Box>
-            <Text fz="sm" fw="bold">
-              Masukkan Gambar
-            </Text>
-            <Dropzone
-              onDrop={(files) => {
-                const selectedFile = files[0];
-                if (selectedFile) {
-                  setFileUtama(selectedFile);
-                  setPreviewUtama(URL.createObjectURL(selectedFile));
-                }
+            <Text fz={"sm"} fw={"bold"}>Ikon Program Kreatif Desa</Text>
+            <SelectIconProgramEdit
+              value={formData.icon as IconKey}
+              onChange={(value) => {
+                setFormData((prev) => ({ ...prev, icon: value }));
+                kontakState.update.form.icon = value;
               }}
-              onReject={() => toast.error("File tidak valid.")}
-              maxSize={5 * 1024 ** 2}
-              accept={{ "image/*": [] }}
-            >
-              <Group justify="center" gap="xl" mih={220} style={{ pointerEvents: "none" }}>
-                <Dropzone.Accept>
-                  <IconUpload size={52} color="var(--mantine-color-blue-6)" stroke={1.5} />
-                </Dropzone.Accept>
-                <Dropzone.Reject>
-                  <IconX size={52} color="var(--mantine-color-red-6)" stroke={1.5} />
-                </Dropzone.Reject>
-                <Dropzone.Idle>
-                  <IconPhoto size={52} color="var(--mantine-color-dimmed)" stroke={1.5} />
-                </Dropzone.Idle>
-
-                <div>
-                  <Text size="xl" inline>
-                    Drag gambar ke sini atau klik untuk pilih file
-                  </Text>
-                  <Text size="sm" c="dimmed" inline mt={7}>
-                    Maksimal 5MB dan harus format gambar
-                  </Text>
-                </div>
-              </Group>
-            </Dropzone>
-
-            {previewUtama ? (
-              <Image alt="" src={previewUtama} w={200} h={200} mt="sm" />
-            ) : (
-              <Center w={200} h={200} bg={"gray"} mt="sm">
-                <IconImageInPicture />
-              </Center>
-            )}
+            />
           </Box>
 
           {/* Submit */}

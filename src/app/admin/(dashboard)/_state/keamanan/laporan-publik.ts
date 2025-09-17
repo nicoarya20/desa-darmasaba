@@ -11,12 +11,24 @@ const templateForm = z.object({
   judul: z.string().min(3, "Judul minimal 3 karakter"),
   lokasi: z.string().min(3, "Lokasi minimal 3 karakter"),
   tanggalWaktu: z.string().min(3, "Tanggal Waktu minimal 3 karakter"),
-  status: z.enum(["Selesai", "Proses", "Gagal"]),
-  penanganan: z.string(),
   kronologi: z.string().optional(),
 });
 
 interface FormData {
+  judul: string;
+  lokasi: string;
+  tanggalWaktu: string;
+  kronologi: string;
+}
+
+const defaultForm: FormData = {
+  judul: "",
+  lokasi: "",
+  tanggalWaktu: new Date().toISOString(),
+  kronologi: "",
+};
+
+interface FormEditData {
   judul: string;
   lokasi: string;
   tanggalWaktu: string;
@@ -25,14 +37,15 @@ interface FormData {
   kronologi: string;
 }
 
-const defaultForm: FormData = {
+const editForm: FormEditData = {
   judul: "",
   lokasi: "",
   tanggalWaktu: new Date().toISOString(),
+  kronologi: "",
   status: "Proses",
   penanganan: "",
-  kronologi: "",
 };
+
 
 const laporanPublikState = proxy({
   create: {
@@ -185,7 +198,7 @@ const laporanPublikState = proxy({
   },
   edit: {
     id: "",
-    form: { ...defaultForm },
+    form: { ...editForm },
     loading: false,
     async load(id: string) {
       if (!id) {
@@ -291,7 +304,7 @@ const laporanPublikState = proxy({
          },
          reset() {
            laporanPublikState.edit.id = "";
-           laporanPublikState.edit.form = { ...defaultForm };
+           laporanPublikState.edit.form = { ...editForm };
          },
   }
 });

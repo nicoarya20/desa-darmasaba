@@ -30,9 +30,6 @@ export default async function kontakItemFindUnique(
 
     const data = await prisma.kontakItem.findUnique({
       where: { id },
-      include: {
-        image: true,
-      },
     });
 
     if (!data) {

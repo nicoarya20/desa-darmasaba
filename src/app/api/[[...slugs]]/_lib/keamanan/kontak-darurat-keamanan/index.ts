@@ -24,7 +24,7 @@ const KontakDaruratKeamanan = new Elysia({
   .post("/create", kontakDaruratKeamananCreate, {
     body: t.Object({
       nama: t.String(),
-      imageId: t.Optional(t.String()),
+      icon: t.String(),
       kategoriId: t.Array(t.String()),
     }),
   })
@@ -41,7 +41,7 @@ const KontakDaruratKeamanan = new Elysia({
       }),
       body: t.Object({
         nama: t.String(),
-        imageId: t.Optional(t.String()),
+        icon: t.String(),
         kategoriId: t.Array(t.String()),
       }),
     }

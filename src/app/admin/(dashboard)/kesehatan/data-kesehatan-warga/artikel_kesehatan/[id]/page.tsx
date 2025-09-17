@@ -6,6 +6,7 @@ import {
   Box,
   Button,
   Group,
+  Image,
   Paper,
   Skeleton,
   Stack,
@@ -80,6 +81,22 @@ function DetailArtikelKesehatan() {
               <Box>
                 <Text fz="lg" fw="bold">Judul</Text>
                 <Text fz="md" c="dimmed">{data.title}</Text>
+              </Box>
+              {/* Gambar */}
+              <Box>
+                <Text fz="lg" fw="bold">Gambar</Text>
+                {data.image?.link ? (
+                  <Image
+                    src={data.image.link}
+                    alt={data.title || 'Gambar Berita'}
+                    w={200}
+                    h={200}
+                    radius="md"
+                    fit="cover"
+                  />
+                ) : (
+                  <Text fz="sm" c="dimmed">Tidak ada gambar</Text>
+                )}
               </Box>
 
               {/* Deskripsi */}

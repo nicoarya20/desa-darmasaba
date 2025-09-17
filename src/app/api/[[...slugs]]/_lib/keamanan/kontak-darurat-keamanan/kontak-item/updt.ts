@@ -4,7 +4,7 @@ import { Context } from "elysia";
 type FormUpdate = {
   nama: string;
   nomorTelepon: string;
-  imageId?: string;
+  icon: string;
 };
 
 export default async function kontakItemUpdate(context: Context){
@@ -18,10 +18,7 @@ export default async function kontakItemUpdate(context: Context){
           data: {
             nama: body.nama,
             nomorTelepon: body.nomorTelepon,
-            imageId: body.imageId,
-          },
-          include: {
-            image: true,
+            icon: body.icon,
           },
         });
       

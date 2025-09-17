@@ -31,11 +31,13 @@ const templateForm = z.object({
   doctorSign: z.object({
     content: z.string().min(1, "Content harus diisi"),
   }),
+  imageId: z.string().min(1, "Image ID harus diisi"),
 });
 
 const defaultForm = {
   title: "",
   content: "",
+  imageId: "",
   introduction: {
     content: "",
   },
@@ -59,6 +61,7 @@ const defaultForm = {
   doctorSign: {
     content: "",
   },
+
 };
 
 const artikelKesehatanState = proxy({
@@ -112,6 +115,7 @@ const artikelKesehatanState = proxy({
             firstaid: true;
             mythvsfact: true;
             doctorsign: true;
+            image: true;
           };
         }>[]
       | null,
@@ -159,6 +163,7 @@ const artikelKesehatanState = proxy({
         firstaid: true;
         mythvsfact: true;
         doctorsign: true;
+        image: true;
       };
     }> | null,
     loading: false,
@@ -213,6 +218,7 @@ const artikelKesehatanState = proxy({
         doctorSign: {
           content: data.doctorsign.content,
         },
+        imageId: data.imageId,
       };
     },
     async submit() {
@@ -253,6 +259,7 @@ const artikelKesehatanState = proxy({
           doctorSign: {
             content: artikelKesehatanState.edit.form.doctorSign.content,
           },
+          imageId: artikelKesehatanState.edit.form.imageId,
         };
 
         const res = await fetch(

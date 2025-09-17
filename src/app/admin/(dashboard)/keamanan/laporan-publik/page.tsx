@@ -111,12 +111,34 @@ function ListLaporanPublik({ search }: { search: string }) {
                       </Text>
                     </TableTd>
                     <TableTd>
-                      <Text fz="sm">{item.status}</Text>
+                      <Box
+                        style={{
+                          display: 'inline-block',
+                          padding: '4px 12px',
+                          borderRadius: '16px',
+                          backgroundColor:
+                            item.status === 'Selesai' ? '#94EF95FF' :
+                              item.status === 'Proses' ? '#F1D295FF' :
+                                '#F38E8EFF',
+                          color:
+                            item.status === 'Selesai' ? '#01BA01FF' :
+                              item.status === 'Proses' ? '#B67A00FF' :
+                                '#AE1700FF',
+                          fontWeight: 900,
+                          fontSize: '0.75rem',
+                          textAlign: 'center',
+                          minWidth: '80px',
+                        }}
+                      >
+                        {item.status}
+                      </Box>
                     </TableTd>
                     <TableTd>
-                      <Text truncate fz="sm" c="dimmed" lineClamp={1}>
-                        {item.kronologi}
-                      </Text>
+                      <Box w={200}>
+                        <Text truncate fz="sm" c="dimmed" lineClamp={1}>
+                          {item.kronologi}
+                        </Text>
+                      </Box>
                     </TableTd>
                     <TableTd>
                       <Button

@@ -4,10 +4,12 @@
 import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import artikelKesehatanState from '@/app/admin/(dashboard)/_state/kesehatan/data_kesehatan_warga/artikelKesehatan';
 import colors from '@/con/colors';
+import ApiFetch from '@/lib/api-fetch';
 import {
   Box,
   Button,
   Group,
+  Image,
   Paper,
   Stack,
   Text,
@@ -15,7 +17,8 @@ import {
   Title,
   Tooltip
 } from '@mantine/core';
-import { IconArrowBack } from '@tabler/icons-react';
+import { Dropzone } from '@mantine/dropzone';
+import { IconArrowBack, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
@@ -24,6 +27,7 @@ import { useProxy } from 'valtio/utils';
 interface ArtikelKesehatanFormBase {
   title: string;
   content: string;
+  imageId: string;
   introduction: { content: string };
   symptom: { title: string; content: string };
   prevention: { title: string; content: string };
@@ -37,29 +41,32 @@ function EditArtikelKesehatan() {
   const router = useRouter();
   const params = useParams();
 
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [file, setFile] = useState<File | null>(null);
   const [formData, setFormData] = useState<ArtikelKesehatanFormBase>({
-    title: stateArtikelKesehatan.edit.form.title || '',
-    content: stateArtikelKesehatan.edit.form.content || '',
-    introduction: { content: stateArtikelKesehatan.edit.form.introduction?.content || '' },
+    title: stateArtikelKesehatan.edit.form.title,
+    content: stateArtikelKesehatan.edit.form.content,
+    imageId: stateArtikelKesehatan.edit.form.imageId,
+    introduction: { content: stateArtikelKesehatan.edit.form.introduction?.content },
     symptom: {
-      title: stateArtikelKesehatan.edit.form.symptom?.title || '',
-      content: stateArtikelKesehatan.edit.form.symptom?.content || ''
+      title: stateArtikelKesehatan.edit.form.symptom?.title,
+      content: stateArtikelKesehatan.edit.form.symptom?.content
     },
     prevention: {
-      title: stateArtikelKesehatan.edit.form.prevention?.title || '',
-      content: stateArtikelKesehatan.edit.form.prevention?.content || ''
+      title: stateArtikelKesehatan.edit.form.prevention?.title,
+      content: stateArtikelKesehatan.edit.form.prevention?.content
     },
     firstAid: {
-      title: stateArtikelKesehatan.edit.form.firstAid?.title || '',
-      content: stateArtikelKesehatan.edit.form.firstAid?.content || ''
+      title: stateArtikelKesehatan.edit.form.firstAid?.title,
+      content: stateArtikelKesehatan.edit.form.firstAid?.content
     },
     mythVsFact: {
-      title: stateArtikelKesehatan.edit.form.mythVsFact?.title || '',
-      mitos: stateArtikelKesehatan.edit.form.mythVsFact?.mitos || '',
-      fakta: stateArtikelKesehatan.edit.form.mythVsFact?.fakta || ''
+      title: stateArtikelKesehatan.edit.form.mythVsFact?.title,
+      mitos: stateArtikelKesehatan.edit.form.mythVsFact?.mitos,
+      fakta: stateArtikelKesehatan.edit.form.mythVsFact?.fakta
     },
     doctorSign: {
-      content: stateArtikelKesehatan.edit.form.doctorSign?.content || ''
+      content: stateArtikelKesehatan.edit.form.doctorSign?.content
     }
   });
 
@@ -76,6 +83,7 @@ function EditArtikelKesehatan() {
             title: form.title,
             content: form.content,
             introduction: { content: form.introduction?.content || '' },
+            imageId: form.imageId,
             symptom: {
               title: form.symptom?.title || '',
               content: form.symptom?.content || ''
@@ -97,6 +105,10 @@ function EditArtikelKesehatan() {
               content: form.doctorSign?.content || ''
             }
           });
+
+          if (form?.imageId) {
+            setPreviewImage(`${process.env.NEXT_PUBLIC_API_URL}/file/${form.imageId}`);
+          }          
         }
       } catch (error) {
         console.error("Error loading artikel kesehatan:", error);
@@ -109,6 +121,20 @@ function EditArtikelKesehatan() {
   const handleSubmit = async () => {
     try {
       stateArtikelKesehatan.edit.form = { ...formData };
+      if (file) {
+        const res = await ApiFetch.api.fileStorage.create.post({
+          file,
+          name: file.name,
+        });
+        const uploaded = res.data?.data;
+
+        if (!uploaded?.id) {
+          return toast.error("Gagal upload gambar");
+        }
+
+        stateArtikelKesehatan.edit.form.imageId = uploaded.id;
+      }
+
       const success = await stateArtikelKesehatan.edit.submit();
       if (success) {
         toast.success("Artikel kesehatan berhasil diperbarui!");
@@ -151,6 +177,60 @@ function EditArtikelKesehatan() {
             onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
             required
           />
+          <Box>
+            <Text fw="bold" fz="sm" mb={6}>
+              Gambar Berita
+            </Text>
+            <Dropzone
+              onDrop={(files) => {
+                const selectedFile = files[0];
+                if (selectedFile) {
+                  setFile(selectedFile);
+                  setPreviewImage(URL.createObjectURL(selectedFile));
+                }
+              }}
+              onReject={() => toast.error("File tidak valid, gunakan format gambar")}
+              maxSize={5 * 1024 ** 2}
+              accept={{ "image/*": [] }}
+              radius="md"
+              p="xl"
+            >
+              <Group justify="center" gap="xl" mih={180}>
+                <Dropzone.Accept>
+                  <IconUpload size={48} color={colors["blue-button"]} stroke={1.5} />
+                </Dropzone.Accept>
+                <Dropzone.Reject>
+                  <IconX size={48} color="red" stroke={1.5} />
+                </Dropzone.Reject>
+                <Dropzone.Idle>
+                  <IconPhoto size={48} color="#868e96" stroke={1.5} />
+                </Dropzone.Idle>
+                <Stack gap="xs" align="center">
+                  <Text size="md" fw={500}>
+                    Seret gambar atau klik untuk memilih file
+                  </Text>
+                  <Text size="sm" c="dimmed">
+                    Maksimal 5MB, format gambar wajib
+                  </Text>
+                </Stack>
+              </Group>
+            </Dropzone>
+
+            {previewImage && (
+              <Box mt="sm" style={{ display: "flex", justifyContent: "center" }}>
+                <Image
+                  src={previewImage}
+                  alt="Preview Gambar"
+                  radius="md"
+                  style={{
+                    maxHeight: 220,
+                    objectFit: "contain",
+                    border: `1px solid ${colors["blue-button"]}`,
+                  }}
+                />
+              </Box>
+            )}
+          </Box>
           <TextInput
             label="Deskripsi"
             placeholder="Masukkan deskripsi artikel"

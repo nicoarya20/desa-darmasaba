@@ -16,15 +16,11 @@ export default async function kontakDaruratKeamananFindUnique(
       include: {
         kontakItems: {
           include: {
-            kontakItem: {
-              include: {
-                image: true
-              }
-            },
+            kontakItem: true,
             
           },
         },
-        image: true,
+        kategori: true,
       },
     });
 

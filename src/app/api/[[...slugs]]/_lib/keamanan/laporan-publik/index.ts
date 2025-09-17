@@ -14,12 +14,6 @@ const LaporanPublik = new Elysia({
       judul: t.String(),
       lokasi: t.String(),
       tanggalWaktu: t.String(), // ISO string
-      status: t.Union([
-        t.Literal("Selesai"),
-        t.Literal("Proses"),
-        t.Literal("Gagal"),
-      ]),
-      penanganan: t.String(), // 🛠️ ARRAY of strings
       kronologi: t.Optional(t.String()),
     }),
   })

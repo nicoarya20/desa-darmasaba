@@ -17,7 +17,7 @@ const KontakItem = new Elysia({
   .post("/create", kontakItemCreate, {
     body: t.Object({
       nama: t.String(),
-      imageId: t.Optional(t.String()),
+      icon: t.String(),
       nomorTelepon: t.String(),
     }),
   })
@@ -31,7 +31,7 @@ const KontakItem = new Elysia({
     {
       body: t.Object({
         nama: t.String(),
-        imageId: t.Optional(t.String()),
+        icon: t.String(),
         nomorTelepon: t.String(),
 
       }),

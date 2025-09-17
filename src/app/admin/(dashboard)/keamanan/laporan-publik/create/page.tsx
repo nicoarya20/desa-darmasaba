@@ -5,18 +5,16 @@ import {
   Button,
   Group,
   Paper,
-  Select,
   Stack,
   Text,
   TextInput,
   Title,
-  Tooltip,
+  Tooltip
 } from '@mantine/core';
 import { DateTimePicker } from '@mantine/dates';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
-import CreateEditor from '../../../_com/createEditor';
 import laporanPublikState from '../../../_state/keamanan/laporan-publik';
 
 export type Status = 'Selesai' | 'Proses' | 'Gagal';
@@ -30,8 +28,6 @@ function CreateLaporanPublik() {
       judul: '',
       lokasi: '',
       tanggalWaktu: '',
-      status: 'Proses' as Status,
-      penanganan: '',
       kronologi: '',
     };
   };
@@ -94,18 +90,6 @@ function CreateLaporanPublik() {
             }}
           />
 
-          <Select
-            value={stateLaporan.create.form.status}
-            onChange={(e) => (stateLaporan.create.form.status = e?.valueOf() as Status)}
-            label={<Text fw="bold" fz="sm">Status Laporan Publik</Text>}
-            placeholder="Pilih status laporan publik"
-            data={[
-              { value: 'Selesai', label: 'Selesai' },
-              { value: 'Proses', label: 'Proses' },
-              { value: 'Gagal', label: 'Gagal' },
-            ]}
-          />
-
           <TextInput
             value={stateLaporan.create.form.kronologi}
             onChange={(e) => (stateLaporan.create.form.kronologi = e.target.value)}
@@ -113,16 +97,6 @@ function CreateLaporanPublik() {
             placeholder="Masukkan kronologi laporan publik"
             required
           />
-
-          <Box>
-            <Text fw="bold" fz="sm" mb={6}>
-              Penanganan Laporan Publik
-            </Text>
-            <CreateEditor
-              value={stateLaporan.create.form.penanganan}
-              onChange={(e) => (stateLaporan.create.form.penanganan = e)}
-            />
-          </Box>
 
           <Group justify="right">
             <Button

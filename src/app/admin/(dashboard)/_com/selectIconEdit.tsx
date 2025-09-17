@@ -2,11 +2,13 @@
 
 import { Box, rem, Select } from '@mantine/core';
 import {
+  IconAmbulance,
   IconCash,
   IconChartLine,
   IconChristmasTreeFilled,
   IconClipboardTextFilled,
   IconDroplet,
+  IconFiretruck,
   IconHome,
   IconHomeEco,
   IconHospital,
@@ -22,6 +24,8 @@ import {
   IconTrendingUp,
   IconTrophy,
   IconTruckFilled,
+  IconBuilding,
+  IconAlertTriangle
 } from '@tabler/icons-react';
 
 const iconMap = {
@@ -45,6 +49,12 @@ const iconMap = {
   pelatihan: {label: 'Pelatihan', icon: IconSchool},
   subsidi: {label: 'Subsidi', icon: IconShoppingCart},
   layananKesehatan: {label: 'Layanan Kesehatan', icon: IconHospital},
+  polisi: {label: 'Polisi', icon: IconShieldFilled},
+  ambulans: {label: 'Ambulans', icon: IconAmbulance},
+  pemadam: {label: 'Pemadam', icon: IconFiretruck},
+  rumahSakit: {label: 'Rumah Sakit', icon: IconHospital},
+  bangunan: {label: 'Bangunan', icon: IconBuilding},
+  darurat: {label: 'Darurat', icon: IconAlertTriangle},
 };
 
 type IconKey = keyof typeof iconMap;

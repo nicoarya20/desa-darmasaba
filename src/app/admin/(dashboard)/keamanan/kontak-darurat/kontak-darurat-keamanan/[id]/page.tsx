@@ -1,11 +1,12 @@
 'use client'
-import colors from '@/con/colors';
-import { Box, Button, Group, Image, Paper, Skeleton, Stack, Text, Tooltip } from '@mantine/core';
-import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
-import { useParams, useRouter } from 'next/navigation';
+import { IconKey, IconMapper } from '@/app/admin/(dashboard)/_com/iconMap';
 import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
 import kontakDarurat from '@/app/admin/(dashboard)/_state/keamanan/kontak-darurat-keamanan';
+import colors from '@/con/colors';
+import { Box, Button, Group, Paper, Skeleton, Stack, Text, Tooltip } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
+import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
+import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 
@@ -17,7 +18,7 @@ function DetailKontakDaruratKeamanan() {
   const kontakState = useProxy(kontakDarurat.kontakDaruratKeamananState);
 
   useShallowEffect(() => {
-    kontakDarurat.kontakDaruratItem.findUnique.load(params?.id as string);
+    kontakDarurat.kontakDaruratItem.findMany.load();
     kontakState.findUnique.load(params?.id as string);
   }, []);
 
@@ -74,14 +75,15 @@ function DetailKontakDaruratKeamanan() {
                 <Text fz="md" c="dimmed">{data?.nama || '-'}</Text>
               </Box>
 
-              {/* Gambar Utama */}
               <Box>
-                <Text fz="lg" fw="bold">Gambar</Text>
-                <Image
-                  w={{ base: 150, md: 490 }}
-                  src={data?.image?.link}
-                  alt="gambar kontak darurat"
-                />
+                <Text fz={"lg"} fw={"bold"}>Ikon Program Kreatif Desa</Text>
+                {data?.icon && (
+                  <IconMapper
+                    name={data?.icon as IconKey}
+                    size={32}
+                    color={colors['blue-button']}
+                  />
+                )}
               </Box>
 
               {/* Kontak Items */}
@@ -92,11 +94,11 @@ function DetailKontakDaruratKeamanan() {
                     <Box key={index}>
                       <Text fz="md" fw="bold">{item.kontakItem.nama}</Text>
                       <Text fz="md" c="dimmed">{item.kontakItem.nomorTelepon}</Text>
-                      {item.kontakItem.image?.link && (
-                        <Image
-                          w={{ base: 120, md: 200 }}
-                          src={item.kontakItem.image.link}
-                          alt={`gambar kontak`}
+                      {item.kontakItem.icon && (
+                        <IconMapper
+                          name={item.kontakItem.icon as IconKey}
+                          size={32}
+                          color={colors['blue-button']}
                         />
                       )}
                     </Box>

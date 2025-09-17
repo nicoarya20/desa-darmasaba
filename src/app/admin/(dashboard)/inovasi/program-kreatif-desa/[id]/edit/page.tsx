@@ -35,20 +35,20 @@ function EditProgramKreatifDesa() {
     const loadProgramKreatif = async () => {
       const id = params?.id as string;
       if (!id) return;
-  
+
       try {
         const data = await stateProgramKreatif.update.load(id);
         if (data) {
           // ⬇️ FIX PENTING: tambahkan ini
           stateProgramKreatif.update.id = id;
-  
+
           stateProgramKreatif.update.form = {
             name: data.name,
             slug: data.slug,
             deskripsi: data.deskripsi,
             icon: data.icon,
           };
-  
+
           setFormData({
             name: data.name,
             slug: data.slug,
@@ -61,10 +61,10 @@ function EditProgramKreatifDesa() {
         toast.error("Gagal memuat data program kreatif");
       }
     }
-  
+
     loadProgramKreatif();
   }, [params?.id]);
-  
+
 
 
   const handleSubmit = async () => {
@@ -134,7 +134,7 @@ function EditProgramKreatifDesa() {
                 setFormData((prev) => ({ ...prev, icon: value }));
                 stateProgramKreatif.update.form.icon = value;
               }}
-/>
+            />
 
 
           </Box>

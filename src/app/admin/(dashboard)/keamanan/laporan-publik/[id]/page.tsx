@@ -73,7 +73,7 @@ function DetailLaporanPublik() {
             Detail Laporan Publik
           </Text>
 
-          <Paper bg={colors['BG-trans']} p="md" radius="md" shadow="xs">
+          <Paper bg="#ECEEF8" p="md" radius="md" shadow="xs">
             <Stack gap="sm">
               <Box>
                 <Text fz="lg" fw="bold">Judul Laporan Publik</Text>
@@ -96,7 +96,27 @@ function DetailLaporanPublik() {
 
               <Box>
                 <Text fz="lg" fw="bold">Status</Text>
-                <Text fz="md" c="dimmed">{data.status || '-'}</Text>
+                <Box
+                  style={{
+                    display: 'inline-block',
+                    padding: '4px 12px',
+                    borderRadius: '16px',
+                    backgroundColor:
+                     data.status === 'Selesai' ? '#94EF95FF' :
+                       data.status === 'Proses' ? '#F1D295FF' :
+                          '#F38E8EFF',
+                    color:
+                     data.status === 'Selesai' ? '#01BA01FF' :
+                       data.status === 'Proses' ? '#B67A00FF' :
+                          '#AE1700FF',
+                    fontWeight: 900,
+                    fontSize: '0.75rem',
+                    textAlign: 'center',
+                    minWidth: '80px',
+                  }}
+                >
+                  {data.status || '-'}
+                </Box>
               </Box>
 
               <Box>
@@ -109,7 +129,6 @@ function DetailLaporanPublik() {
                 {data.penanganan?.length ? (
                   data.penanganan.map((item, index) => (
                     <Box key={index} pl="sm">
-                      <Text fz="md" fw="bold">Deskripsi Penanganan</Text>
                       <Text
                         fz="md"
                         c="dimmed"

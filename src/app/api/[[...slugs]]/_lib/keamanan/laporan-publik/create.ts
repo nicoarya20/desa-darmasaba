@@ -5,13 +5,11 @@ type LaporanPublikInput = {
   judul: string;
   lokasi: string;
   tanggalWaktu: string;
-  status: "Selesai" | "Proses" | "Gagal";
-  penanganan: string;
   kronologi?: string;
 };
 
 const laporanPublikCreate = async (context: Context) => {
-  const { judul, lokasi, tanggalWaktu, status, penanganan, kronologi } =
+  const { judul, lokasi, tanggalWaktu, kronologi } =
     (await context.body) as LaporanPublikInput;
 
     const createdLaporanPublik = await prisma.laporanPublik.create({
@@ -19,16 +17,7 @@ const laporanPublikCreate = async (context: Context) => {
             judul,
             lokasi,
             tanggalWaktu: new Date(tanggalWaktu),
-            status,
-            penanganan: {
-                create: {
-                    deskripsi: penanganan,
-                },
-            },
             kronologi,
-        },
-        include: {
-            penanganan: true,
         }
     })
 

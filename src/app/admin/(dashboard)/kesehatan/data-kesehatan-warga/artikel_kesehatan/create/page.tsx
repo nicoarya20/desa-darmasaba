@@ -2,10 +2,12 @@
 import CreateEditor from '@/app/admin/(dashboard)/_com/createEditor';
 import artikelKesehatanState from '@/app/admin/(dashboard)/_state/kesehatan/data_kesehatan_warga/artikelKesehatan';
 import colors from '@/con/colors';
+import ApiFetch from '@/lib/api-fetch';
 import {
   Box,
   Button,
   Group,
+  Image,
   Paper,
   Stack,
   Text,
@@ -13,19 +15,24 @@ import {
   Title,
   Tooltip,
 } from '@mantine/core';
-import { IconArrowBack } from '@tabler/icons-react';
+import { Dropzone } from '@mantine/dropzone';
+import { IconArrowBack, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
 function CreateArtikelKesehatan() {
   const stateArtikelKesehatan = useProxy(artikelKesehatanState);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [file, setFile] = useState<File | null>(null);
   const router = useRouter();
 
   const resetForm = () => {
     stateArtikelKesehatan.create.form = {
       title: '',
       content: '',
+      imageId: '',
       introduction: {
         content: '',
       },
@@ -50,10 +57,27 @@ function CreateArtikelKesehatan() {
         content: '',
       },
     };
+    setPreviewImage(null);
+    setFile(null);
   };
 
   const handleSubmit = async (e?: React.FormEvent) => {
     e?.preventDefault();
+    if (!file) {
+      return toast.warn('Silakan pilih file gambar terlebih dahulu');
+    }
+
+    const res = await ApiFetch.api.fileStorage.create.post({
+      file,
+      name: file.name,
+    });
+
+    const uploaded = res.data?.data;
+    if (!uploaded?.id) {
+      return toast.error('Gagal mengunggah gambar, silakan coba lagi');
+    }
+
+    stateArtikelKesehatan.create.form.imageId = uploaded.id;
     await stateArtikelKesehatan.create.submit();
     toast.success('Data berhasil disimpan');
     resetForm();
@@ -89,6 +113,56 @@ function CreateArtikelKesehatan() {
         style={{ border: '1px solid #e0e0e0' }}
       >
         <Stack gap="md">
+          <Box>
+            <Text fw="bold" fz="sm" mb={6}>
+              Gambar Berita
+            </Text>
+            <Dropzone
+              onDrop={(files) => {
+                const selectedFile = files[0];
+                if (selectedFile) {
+                  setFile(selectedFile);
+                  setPreviewImage(URL.createObjectURL(selectedFile));
+                }
+              }}
+              onReject={() => toast.error('File tidak valid, gunakan format gambar')}
+              maxSize={5 * 1024 ** 2}
+              accept={{ 'image/*': [] }}
+              radius="md"
+              p="xl"
+            >
+              <Group justify="center" gap="xl" mih={180}>
+                <Dropzone.Accept>
+                  <IconUpload size={48} color="var(--mantine-color-blue-6)" stroke={1.5} />
+                </Dropzone.Accept>
+                <Dropzone.Reject>
+                  <IconX size={48} color="var(--mantine-color-red-6)" stroke={1.5} />
+                </Dropzone.Reject>
+                <Dropzone.Idle>
+                  <IconPhoto size={48} color="var(--mantine-color-dimmed)" stroke={1.5} />
+                </Dropzone.Idle>
+              </Group>
+              <Text ta="center" mt="sm" size="sm" color="dimmed">
+                Seret gambar atau klik untuk memilih file (maks 5MB)
+              </Text>
+            </Dropzone>
+
+            {previewImage && (
+              <Box mt="sm" style={{ textAlign: 'center' }}>
+                <Image
+                  src={previewImage}
+                  alt="Preview Gambar"
+                  radius="md"
+                  style={{
+                    maxHeight: 200,
+                    objectFit: 'contain',
+                    border: '1px solid #ddd',
+                  }}
+                />
+              </Box>
+            )}
+          </Box>
+          
           <TextInput
             label={"Judul"}
             placeholder="Masukkan judul"

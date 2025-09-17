@@ -36,6 +36,7 @@ const ArtikelKesehatan = new Elysia({
       doctorSign: t.Object({
         content: t.String(),
       }),
+      imageId: t.String(),
     }),
   })
   .get("/find-many", artikelKesehatanFindMany)
@@ -79,6 +80,7 @@ const ArtikelKesehatan = new Elysia({
         doctorSign: t.Object({
           content: t.String(),
         }),
+        imageId: t.String(),
       }),
     }
   );

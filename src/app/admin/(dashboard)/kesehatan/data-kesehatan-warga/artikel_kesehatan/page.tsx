@@ -5,8 +5,8 @@ import {
   Button,
   Center,
   Group,
-  Paper,
   Pagination,
+  Paper,
   Skeleton,
   Stack,
   Table,
@@ -20,26 +20,18 @@ import {
   Tooltip,
 } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { IconArrowBack, IconDeviceImacCog, IconPlus, IconSearch } from '@tabler/icons-react';
+import { IconDeviceImacCog, IconPlus, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../../_com/header';
 import artikelKesehatanState from '../../../_state/kesehatan/data_kesehatan_warga/artikelKesehatan';
-import { useState } from 'react';
 
 function ArtikelKesehatan() {
-  const router = useRouter();
   const [search, setSearch] = useState("");
 
   return (
     <Box>
-      {/* Tombol Back */}
-      <Box mb={10}>
-        <Button variant="subtle" onClick={() => router.back()}>
-          <IconArrowBack color={colors["blue-button"]} size={25} />
-        </Button>
-      </Box>
-
       {/* Header Search */}
       <HeaderSearch
         title='Artikel Kesehatan'

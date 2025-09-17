@@ -29,14 +29,21 @@ function FasilitasKesehatanPage() {
 
   return (
     <Box>
-      <Paper p="xl" radius="xl" shadow="md" h="100%" bg="white">
+      <Paper bg={colors['white-trans-1']} p="xl" radius="xl" shadow="md" h="100%">
         <Stack gap="lg">
           <Text ta="center" fw={700} fz="32px" c={colors['blue-button']}>
             Fasilitas Kesehatan
           </Text>
           <Divider size="sm" color={colors['blue-button']} />
           <Stack gap="lg">
-            {state.findMany.data.map((item) => (
+          {state.findMany.data.length === 0 ? (
+            <Box py="xl" ta="center">
+              <Text fz="lg" c="dimmed">
+                Belum ada fasilitas kesehatan yang tersedia
+              </Text>
+            </Box>
+          ) : (
+            state.findMany.data.map((item) => (
               <Card
                 key={item.id}
                 withBorder
@@ -93,7 +100,8 @@ function FasilitasKesehatanPage() {
                   </Anchor>
                 </Stack>
               </Card>
-            ))}
+            ))
+          )}
           </Stack>
         </Stack>
       </Paper>

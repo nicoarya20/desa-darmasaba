@@ -29,6 +29,7 @@ export async function artikelKesehatanFindUnique(request: Request) {
                 firstaid: true,
                 mythvsfact: true,
                 doctorsign: true,
+                image: true,
             }
         })
         if (!data) {

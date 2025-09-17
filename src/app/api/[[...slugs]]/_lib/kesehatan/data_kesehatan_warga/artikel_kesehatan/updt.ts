@@ -4,6 +4,7 @@ import { Context } from "elysia";
 type ArtikelKesehatanInput = {
   title: string;
   content: string;
+  imageId: string;
   introduction: { content: string };
   symptom: { title: string; content: string };
   prevention: { title: string; content: string };
@@ -51,6 +52,7 @@ const artikelKesehatanUpdate = async (context: Context) => {
     firstAid,
     mythVsFact,
     doctorSign,
+    imageId,
   } = body;
 
   await Promise.all([
@@ -84,7 +86,8 @@ const artikelKesehatanUpdate = async (context: Context) => {
     where: { id },
     data: {
       title,
-      content
+      content,
+      imageId,
     },
     include: {
       introduction: true,
@@ -93,6 +96,7 @@ const artikelKesehatanUpdate = async (context: Context) => {
       firstaid: true,
       mythvsfact: true,
       doctorsign: true,
+      image: true,
     },
   });
 

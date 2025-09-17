@@ -4,7 +4,7 @@ import { Context } from "elysia";
 type FormUpdate = {
   id: string;
   nama: string;
-  imageId?: string;
+  icon: string;
   kategoriId: string[];
 };
 
@@ -23,7 +23,7 @@ export default async function kontakDaruratKeamananUpdate(context: Context) {
     where: { id: body.id },
     data: {
       nama: body.nama,
-      imageId: body.imageId,
+      icon: body.icon,
       kategoriId: body.kategoriId[0],
     },
   });
@@ -42,7 +42,6 @@ export default async function kontakDaruratKeamananUpdate(context: Context) {
   const updated = await prisma.kontakDaruratKeamanan.findUnique({
     where: { id: body.id },
     include: {
-      image: true,
       kategori: true,
       kontakItems: {
         include: {

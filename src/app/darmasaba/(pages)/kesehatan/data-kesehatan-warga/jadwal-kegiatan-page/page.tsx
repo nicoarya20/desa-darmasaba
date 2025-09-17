@@ -25,12 +25,12 @@ function JadwalKegiatanPage() {
 
   return (
     <Box>
-      <Paper p="xl" bg={colors['white-trans-1']} radius="xl" shadow="md" h="auto" mih="100vh">
+      <Paper bg={colors['white-trans-1']} p="xl" radius="xl" shadow="md" h="auto" mih="100vh">
         <Stack gap="lg">
           <Text ta="center" fw={700} fz="32px" c={colors['blue-button']}>
             Jadwal Kegiatan Warga
           </Text>
-
+          <Divider size="sm" color={colors['blue-button']} />
           {state.findMany.data.length === 0 ? (
             <Box py="xl" ta="center">
               <Text fz="lg" c="dimmed">

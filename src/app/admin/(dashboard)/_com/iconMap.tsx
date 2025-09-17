@@ -23,6 +23,10 @@ import {
   IconSchool,
   IconShoppingCart,
   IconHospital,
+  IconAmbulance,
+  IconFiretruck,
+  IconBuilding,
+  IconAlertTriangle,
 } from '@tabler/icons-react'
 
 export type IconKey =
@@ -46,6 +50,13 @@ export type IconKey =
   | 'pelatihan'
   | 'subsidi'
   | 'layananKesehatan'
+  | 'polisi'
+  | 'ambulans'
+  | 'pemadam'
+  | 'rumahSakit'
+  | 'bangunan'
+  | 'darurat'
+
 
 const iconMap: Record<IconKey, React.FC<any>> = {
   ekowisata: IconLeaf,
@@ -68,6 +79,12 @@ const iconMap: Record<IconKey, React.FC<any>> = {
   pelatihan: IconSchool,
   subsidi: IconShoppingCart,
   layananKesehatan: IconHospital,
+  polisi: IconShieldFilled,
+  ambulans: IconAmbulance,
+  pemadam: IconFiretruck,
+  rumahSakit: IconHospital,
+  bangunan: IconBuilding,
+  darurat: IconAlertTriangle
 }
 
 type Props = {

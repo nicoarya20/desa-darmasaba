@@ -1,13 +1,14 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
 
 type LaporanPublikUpdateInput = {
-  judul: string;
-  lokasi: string;
-  tanggalWaktu: string;
-  status: "Selesai" | "Proses" | "Gagal";
-  penanganan: string;
+  judul?: string;
+  lokasi?: string;
+  tanggalWaktu?: string;
+  status?: "Selesai" | "Proses" | "Gagal";
   kronologi?: string;
+  penanganan?: string;
 };
 
 const LaporanPublikUpdate = async (context: Context) => {
@@ -15,28 +16,35 @@ const LaporanPublikUpdate = async (context: Context) => {
   const { judul, lokasi, tanggalWaktu, status, penanganan, kronologi } =
     (await context.body) as LaporanPublikUpdateInput;
 
-  await prisma.penangananLaporanPublik.deleteMany({
-    where: {
-      laporanId: id,
-    },
-  });
+  // Prepare update data with only provided fields
+  const updateData: any = {};
+  
+  if (judul !== undefined) updateData.judul = judul;
+  if (lokasi !== undefined) updateData.lokasi = lokasi;
+  if (tanggalWaktu !== undefined) updateData.tanggalWaktu = new Date(tanggalWaktu);
+  if (status !== undefined) updateData.status = status;
+  if (kronologi !== undefined) updateData.kronologi = kronologi;
 
-  const updated = await prisma.laporanPublik.update({
-    where: {
-      id,
-    },
-    data: {
-      judul,
-      lokasi,
-      tanggalWaktu: new Date(tanggalWaktu),
-      status,
-      kronologi,
-      penanganan: {
+  // Handle penanganan update if provided
+  if (penanganan !== undefined) {
+    // Delete existing penanganan
+    await prisma.penangananLaporanPublik.deleteMany({
+      where: { laporanId: id },
+    });
+
+    // Add new penanganan if not empty
+    if (penanganan.trim()) {
+      updateData.penanganan = {
         create: {
           deskripsi: penanganan,
         },
-      },
-    },
+      };
+    }
+  }
+
+  const updated = await prisma.laporanPublik.update({
+    where: { id },
+    data: updateData,
     include: {
       penanganan: true,
     },

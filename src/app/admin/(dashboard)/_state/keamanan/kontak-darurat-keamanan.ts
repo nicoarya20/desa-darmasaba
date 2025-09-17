@@ -7,13 +7,13 @@ import { z } from "zod";
 
 const templateForm = z.object({
   nama: z.string().min(1, "Nama minimal 1 karakter"),
-  imageId: z.string().nonempty(),
+  icon: z.string().nonempty(),
   kategoriId: z.array(z.string()).min(1, "Minimal pilih satu kategori"),
 });
 
 const defaultForm = {
   nama: "",
-  imageId: "",
+  icon: "",
   kategoriId: [] as string[],
 };
 
@@ -54,7 +54,6 @@ const kontakDaruratKeamananState = proxy({
       Prisma.KontakDaruratKeamananGetPayload<{
         include: {
           kategori: true;
-          image: true;
           kontakItems: {
             include: {
               kontakItem: true;
@@ -102,14 +101,9 @@ const kontakDaruratKeamananState = proxy({
       include: {
         kontakItems: {
           include: {
-            kontakItem: {
-              include: {
-                image: true;
-              }
-            };
+            kontakItem: true;
           };
         };
-        image: true;
         kategori: true;
       };
     }> | null,
@@ -192,8 +186,9 @@ const kontakDaruratKeamananState = proxy({
           this.id = data.id;
           this.form = {
             nama: data.nama,
-            imageId: data.imageId || '',
-            kategoriId: data.kontakItems?.map((item: any) => item.kontakItemId) || []
+            icon: data.icon || "",
+            kategoriId:
+              data.kontakItems?.map((item: any) => item.kontakItemId) || [],
           };
           return data;
         } else {
@@ -230,7 +225,7 @@ const kontakDaruratKeamananState = proxy({
             },
             body: JSON.stringify({
               nama: this.form.nama,
-              imageId: this.form.imageId,
+              icon: this.form.icon,
               kategoriId: this.form.kategoriId,
             }),
           }
@@ -271,13 +266,13 @@ const kontakDaruratKeamananState = proxy({
 const templateFormItem = z.object({
   nama: z.string().min(1, "Nama minimal 1 karakter"),
   nomorTelepon: z.string().min(1, "Nomor Telepon minimal 1 karakter"),
-  imageId: z.string().nonempty(),
+  icon: z.string().nonempty(),
 });
 
 const defaultFormItem = {
   nama: "",
   nomorTelepon: "",
-  imageId: "",
+  icon: "",
 };
 
 const kontakDaruratItem = proxy({
@@ -285,9 +280,7 @@ const kontakDaruratItem = proxy({
     form: { ...defaultFormItem },
     loading: false,
     async create() {
-      const cek = templateFormItem.safeParse(
-        kontakDaruratItem.create.form
-      );
+      const cek = templateFormItem.safeParse(kontakDaruratItem.create.form);
       if (!cek.success) {
         const err = `[${cek.error.issues
           .map((v) => `${v.path.join(".")}`)
@@ -296,9 +289,9 @@ const kontakDaruratItem = proxy({
       }
       try {
         kontakDaruratItem.create.loading = true;
-        const res = await ApiFetch.api.keamanan.kontakitem[
-          "create"
-        ].post(kontakDaruratItem.create.form);
+        const res = await ApiFetch.api.keamanan.kontakitem["create"].post(
+          kontakDaruratItem.create.form
+        );
         if (res.status === 200) {
           kontakDaruratItem.findMany.load();
           return toast.success("success create");
@@ -315,8 +308,8 @@ const kontakDaruratItem = proxy({
   findMany: {
     data: null as Array<
       Prisma.KontakItemGetPayload<{
-        include: {
-          image: true;
+        omit: {
+          isActive: true;
         };
       }>
     > | null,
@@ -333,14 +326,13 @@ const kontakDaruratItem = proxy({
         const query: any = { page, limit };
         if (search) query.search = search;
 
-        const res = await ApiFetch.api.keamanan.kontakitem[
-          "find-many"
-        ].get({ query });
+        const res = await ApiFetch.api.keamanan.kontakitem["find-many"].get({
+          query,
+        });
 
         if (res.status === 200 && res.data?.success) {
           kontakDaruratItem.findMany.data = res.data.data ?? [];
-          kontakDaruratItem.findMany.totalPages =
-            res.data.totalPages ?? 1;
+          kontakDaruratItem.findMany.totalPages = res.data.totalPages ?? 1;
         } else {
           kontakDaruratItem.findMany.data = [];
           kontakDaruratItem.findMany.totalPages = 1;
@@ -356,9 +348,8 @@ const kontakDaruratItem = proxy({
   },
   findUnique: {
     data: null as Prisma.KontakItemGetPayload<{
-      include: {
-        kategori: true;
-        image: true;
+      omit: {
+        isActive: true;
       };
     }> | null,
     loading: false,
@@ -384,15 +375,12 @@ const kontakDaruratItem = proxy({
       if (!id) return toast.warn("ID tidak valid");
       try {
         kontakDaruratItem.delete.loading = true;
-        const response = await fetch(
-          `/api/keamanan/kontakitem/del/${id}`,
-          {
-            method: "DELETE",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        const response = await fetch(`/api/keamanan/kontakitem/del/${id}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
 
         const result = await response.json();
 
@@ -422,15 +410,12 @@ const kontakDaruratItem = proxy({
       }
 
       try {
-        const response = await fetch(
-          `/api/keamanan/kontakitem/${id}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        const response = await fetch(`/api/keamanan/kontakitem/${id}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -441,7 +426,7 @@ const kontakDaruratItem = proxy({
           this.form = {
             nama: data.nama,
             nomorTelepon: data.nomorTelepon,
-            imageId: data.imageId,
+            icon: data.icon,
           };
           return data;
         } else {
@@ -457,9 +442,7 @@ const kontakDaruratItem = proxy({
     },
 
     async update() {
-      const cek = templateFormItem.safeParse(
-        kontakDaruratItem.update.form
-      );
+      const cek = templateFormItem.safeParse(kontakDaruratItem.update.form);
       if (!cek.success) {
         const err = `[${cek.error.issues
           .map((v) => `${v.path.join(".")}`)
@@ -469,20 +452,17 @@ const kontakDaruratItem = proxy({
 
       try {
         kontakDaruratItem.update.loading = true;
-        const response = await fetch(
-          `/api/keamanan/kontakitem/${this.id}`,
-          {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              nama: this.form.nama,
-              nomorTelepon: this.form.nomorTelepon,
-              imageId: this.form.imageId,
-            }),
-          }
-        );
+        const response = await fetch(`/api/keamanan/kontakitem/${this.id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            nama: this.form.nama,
+            nomorTelepon: this.form.nomorTelepon,
+            icon: this.form.icon,
+          }),
+        });
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
           throw new Error(
@@ -514,7 +494,7 @@ const kontakDaruratItem = proxy({
       kontakDaruratItem.update.form = { ...defaultFormItem };
     },
   },
-})
+});
 
 const kontakDarurat = proxy({
   kontakDaruratKeamananState,

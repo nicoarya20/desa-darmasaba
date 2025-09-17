@@ -4,7 +4,7 @@ import { Context } from "elysia";
 type FormCreate = {
   nama: string;
   nomorTelepon: string;
-  imageId?: string;
+  icon: string;
 };
 export default async function kontakItemCreate(context: Context){
     const body = context.body as FormCreate
@@ -13,7 +13,7 @@ export default async function kontakItemCreate(context: Context){
         data: {
             nama: body.nama,
             nomorTelepon: body.nomorTelepon,
-            imageId: body.imageId,
+            icon: body.icon,
         },
     })
     return {

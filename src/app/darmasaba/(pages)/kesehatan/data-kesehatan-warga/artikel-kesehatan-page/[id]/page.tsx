@@ -56,6 +56,7 @@ function Page() {
                 </Group>
 
                 <Stack gap="lg">
+                  
                   <Box>
                     <Text fz="h4" fw="bold">Pendahuluan</Text>
                     <Divider my="xs" />

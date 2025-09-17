@@ -11,11 +11,11 @@ function ArtikelKesehatanPage() {
   const state = useProxy(artikelKesehatanState)
   const router = useRouter()
 
-  useShallowEffect(()=> {
+  useShallowEffect(() => {
     state.findMany.load()
   }, [])
 
-  if(!state.findMany.data){
+  if (!state.findMany.data) {
     return (
       <Box py="xl" ta="center">
         <Loader size="lg" color={colors['blue-button']} />
@@ -24,36 +24,34 @@ function ArtikelKesehatanPage() {
     )
   }
 
-  if(state.findMany.data.length === 0){
-    return (
-      <Box py="xl" ta="center">
-        <Image src="/empty-state.svg" alt="Tidak ada data" w={220} mx="auto" />
-        <Text mt="md" fw="bold" fz="lg">Belum ada artikel kesehatan</Text>
-        <Text c="dimmed" fz="sm">Artikel akan tampil di sini setelah tersedia.</Text>
-      </Box>
-    )
-  }
-
   return (
     <Box>
       <Paper p="xl" bg={colors['white-trans-1']} radius="xl" shadow="md">
-        <Stack gap="xl">
-          <Title order={2} ta="center" c={colors['blue-button']}>Artikel Kesehatan</Title>
-          <Divider color={colors['blue-button']} />
-          <Stack gap="lg">
-            {state.findMany.data.map((item) => (
-              <Card 
-                key={item.id} 
-                withBorder 
-                radius="lg" 
-                shadow="sm" 
-                p="lg" 
+        <Stack gap="lg">
+          <Title order={2} ta="center" c={colors['blue-button']}>
+            Artikel Kesehatan
+          </Title>
+          <Divider size="sm" color={colors['blue-button']} />
+          {state.findMany.data.length === 0 ? (
+            <Box py="xl" ta="center">
+              <Text fz="lg" c="dimmed">
+                Belum ada artikel kesehatan yang tersedia
+              </Text>
+            </Box>
+          ) : (
+            state.findMany.data.map((item) => (
+              <Card
+                key={item.id}
+                withBorder
+                radius="lg"
+                shadow="sm"
+                p="lg"
                 style={{ transition: 'transform 200ms ease' }}
                 onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-4px)')}
                 onMouseLeave={(e) => (e.currentTarget.style.transform = 'translateY(0)')}
               >
                 <Card.Section>
-                  <Image src={'/api/img/dbd.png'} alt={item.title} height={200} fit="cover" />
+                  <Image src={item.image?.link} alt={item.title} height={200} fit="cover" />
                 </Card.Section>
                 <Stack gap="xs" mt="md">
                   <Text fw="bold" fz="xl" c="dark">{item.title}</Text>
@@ -67,9 +65,9 @@ function ArtikelKesehatanPage() {
                     {item.content}
                   </Text>
                   <Tooltip label="Baca artikel lengkap">
-                    <Anchor 
-                      onClick={()=> router.push(`/darmasaba/kesehatan/data-kesehatan-warga/artikel-kesehatan-page/${item.id}`)} 
-                      variant="light" 
+                    <Anchor
+                      onClick={() => router.push(`/darmasaba/kesehatan/data-kesehatan-warga/artikel-kesehatan-page/${item.id}`)}
+                      variant="light"
                       c={colors['blue-button']}
                     >
                       <Group gap="xs">
@@ -80,8 +78,8 @@ function ArtikelKesehatanPage() {
                   </Tooltip>
                 </Stack>
               </Card>
-            ))}
-          </Stack>
+            ))
+          )}
         </Stack>
       </Paper>
     </Box>

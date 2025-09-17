@@ -4,6 +4,7 @@ import { Context } from "elysia";
 type ArtikelKesehatanInput = {
     title: string;
     content: string;
+    imageId: string;
     introduction: {content: string};
     symptom: {title: string; content: string};
     prevention: {title: string; content: string};
@@ -14,7 +15,7 @@ type ArtikelKesehatanInput = {
 
 const artikelKesehatanCreate = async (context: Context) => {
     const body = await context.body as ArtikelKesehatanInput;
-    const { title, content, introduction, symptom, prevention, firstAid, mythVsFact, doctorSign } = body;
+    const { title, content, introduction, symptom, prevention, firstAid, mythVsFact, doctorSign, imageId } = body;
 
     const [createdIntroduction, createdSymptom, createdPrevention, createdFirstAid, createdMythVsFact, createdDoctorSign] = await Promise.all([
         prisma.introduction.create({ data: introduction }),
@@ -29,6 +30,7 @@ const artikelKesehatanCreate = async (context: Context) => {
         data: {
             title,
             content,
+            imageId,
             introductionId: createdIntroduction.id,
             symptomId: createdSymptom.id,
             preventionId: createdPrevention.id,
@@ -37,6 +39,7 @@ const artikelKesehatanCreate = async (context: Context) => {
             doctorSignId: createdDoctorSign.id,
         },
         include: {
+            image: true,
             introduction: true,
             symptom: true,
             prevention: true,

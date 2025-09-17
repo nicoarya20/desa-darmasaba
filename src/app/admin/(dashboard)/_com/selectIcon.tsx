@@ -3,11 +3,15 @@
 
 import { Box, rem, Select } from '@mantine/core';
 import {
+  IconAlertTriangle,
+  IconAmbulance,
+  IconBuilding,
   IconCash,
   IconChartLine,
   IconChristmasTreeFilled,
   IconClipboardTextFilled,
   IconDroplet,
+  IconFiretruck,
   IconHome,
   IconHomeEco,
   IconHospital,
@@ -47,6 +51,12 @@ const iconMap = {
   pelatihan: { label: 'Pelatihan', icon: IconSchool },
   subsidi: { label: 'Subsidi', icon: IconShoppingCart },
   layananKesehatan: { label: 'Layanan Kesehatan', icon: IconHospital },
+  polisi: { label: 'Polisi', icon: IconShieldFilled },
+  ambulans: { label: 'Ambulans', icon: IconAmbulance },
+  pemadam: { label: 'Pemadam', icon: IconFiretruck },
+  rumahSakit: { label: 'Rumah Sakit', icon: IconHospital },
+  bangunan: { label: 'Bangunan', icon: IconBuilding },
+  darurat: { label: 'Darurat', icon: IconAlertTriangle },
 
 };
 

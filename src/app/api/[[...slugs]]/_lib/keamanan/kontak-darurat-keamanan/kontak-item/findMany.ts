@@ -22,9 +22,6 @@ export default async function kontakItemFindMany(context: Context) {
   try {
     const [data, total] = await Promise.all([
       prisma.kontakItem.findMany({
-        include: {
-          image: true,
-        },
         skip,
         take: limit,
         orderBy: { createdAt: "desc" },

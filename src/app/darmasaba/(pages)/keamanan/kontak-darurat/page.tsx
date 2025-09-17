@@ -1,72 +1,60 @@
+'use client'
+import kontakDarurat from '@/app/admin/(dashboard)/_state/keamanan/kontak-darurat-keamanan';
 import colors from '@/con/colors';
-import { Avatar, Box, Flex, Group, Paper, SimpleGrid, Stack, Text } from '@mantine/core';
-import { IconAmbulance, IconBadge, IconBuildingBank, IconBuildingSkyscraper, IconFiretruck, IconFirstAidKit, IconPhoneCall, IconUser } from '@tabler/icons-react';
+import { Avatar, Box, Center, Flex, Group, Pagination, Paper, SimpleGrid, Skeleton, Stack, Text, TextInput } from '@mantine/core';
+import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
+import { IconPhoneCall, IconSearch } from '@tabler/icons-react';
+import { useState } from 'react';
+import { useProxy } from 'valtio/utils';
 import BackButton from '../../desa/layanan/_com/BackButto';
+import { IconKey, IconMapper } from '@/app/admin/(dashboard)/_com/iconMap';
 
-const emergencyServices = [
-  {
-    id: 1,
-    name: "Polisi",
-    icon: <IconBadge size={24} color={colors['blue-button']} />,
-    nomor: '081xxxxxxxxx'
-  },
-  {
-    id: 2,
-    name: "Ambulans",
-    icon: <IconAmbulance size={24} color={colors['blue-button']} />,
-    nomor: '081xxxxxxxxx'
-  },
-  {
-    id: 3,
-    name: "Pemadam Kebakaran",
-    icon: <IconFiretruck size={24} color={colors['blue-button']} />,
-    nomor: '081xxxxxxxxx'
-  }
-];
-
-const healthFacilities = [
-  {
-    id: 4,
-    name: "Puskesmas Darmasaba",
-    icon: <IconFirstAidKit size={24} color={colors['blue-button']} />,
-    nomor: '081xxxxxxxxx'
-  },
-  {
-    id: 5,
-    name: "UGD Terdekat",
-    icon: <IconAmbulance size={24} color={colors['blue-button']} />,
-    nomor: '081xxxxxxxxx'
-  }
-];
-
-const villageGovernment = [
-  {
-    id: 6,
-    name: "Kantor Desa Darmasaba",
-    icon: <IconBuildingSkyscraper size={24} color={colors['blue-button']} />,
-    nomor: '081xxxxxxxxx'
-  },
-  {
-    id: 7,
-    name: "Kepala Desa",
-    icon: <IconUser size={24} color={colors['blue-button']} />,
-    nomor: '081xxxxxxxxx'
-  }
-];
 function Page() {
+  const kontakState = useProxy(kontakDarurat.kontakDaruratKeamananState);
+  const [search, setSearch] = useState("");
+  const [debouncedSearch] = useDebouncedValue(search, 500);
+  const {
+    data,
+    page,
+    totalPages,
+    loading,
+    load,
+  } = kontakState.findMany;
+
+  useShallowEffect(() => {
+    load(page, 4, debouncedSearch);
+    kontakDarurat.kontakDaruratItem.findMany.load();
+  }, [page, debouncedSearch]);
+
+  if (loading || !data) {
+    return (
+      <Stack py={10}>
+        <Skeleton height={600} radius="md" />
+      </Stack>
+    );
+  }
+
   return (
     <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"22"}>
       <Box px={{ base: 'md', md: 100 }}>
         <BackButton />
       </Box>
-      <Box>
-        <Text ta={"center"} fz={{ base: "h1", md: "2.5rem" }} c={colors["blue-button"]} fw={"bold"}>
-          Kontak Darurat
-        </Text>
-        <Text px={{ base: 20, md: 150 }} ta={"center"} fz={{ base: "h4", md: "h3" }} >
-          Desa Darmasaba, Kecamatan Abiansemal, Kabupaten Badung.
-        </Text>
-      </Box>
+      <Group px={{ base: 'md', md: 100 }} justify={'space-between'} align='center'>
+        <Box>
+          <Text fz={{ base: "h1", md: "2.5rem" }} c={colors["blue-button"]} fw={"bold"}>
+            Kontak Darurat
+          </Text>
+          <Text fz={{ base: "h4", md: "h3" }} >
+            Desa Darmasaba, Kecamatan Abiansemal, Kabupaten Badung.
+          </Text>
+        </Box>
+        <TextInput
+          placeholder='Cari kontak darurat, nama, atau nomor...'
+          leftSection={<IconSearch size={20} />}
+          value={search}
+          onChange={(e) => setSearch(e.currentTarget.value)}
+        />
+      </Group>
       <Box px={{ base: "md", md: 100 }}>
         <Stack gap={'lg'}>
           <Paper p={"xl"} bg={colors['white-trans-1']} w={{ base: "100%", md: "100%" }}>
@@ -87,71 +75,74 @@ function Page() {
       <Box px={{ base: "md", md: 100 }}>
         <SimpleGrid cols={{ base: 1, md: 2 }} spacing="xl">
           {/* Layanan Darurat */}
-          <Paper p="lg" radius="md" bg={colors['white-trans-1']}>
-            <Group pb="md" align="center">
-              <Avatar radius={"xl"} size={'lg'} bg={colors['BG-trans']}>
-                <IconFirstAidKit size={30} color={colors["blue-button"]} />
-              </Avatar>
-              <Text fw="bold" fz={{ base: "lg", md: "xl" }} c={colors["blue-button"]}>
-                Layanan Darurat
-              </Text>
-            </Group>
-
-            {emergencyServices.map((v, k) => (
-              <Group key={k} px="md" py="sm" bg={colors['BG-trans']} mb="xs" justify="space-between" style={{ borderRadius: 8 }}>
-                <Group>
-                  {v.icon}
-                  <Text>{v.name}</Text>
-                </Group>
-                <Text>{v.nomor}</Text>
+          {data.map((item) => (
+            <Paper
+              key={item.id}
+              p="lg"
+              radius="md"
+              bg={colors['white-trans-1']}
+            >
+              <Group pb="md" align="center">
+                <Avatar radius="xl" size="lg" bg={colors['BG-trans']}>
+                  {item.icon && (
+                    <IconMapper
+                      name={item.icon as IconKey}
+                      size={32}
+                      color={colors['blue-button']}
+                    />
+                  )}
+                </Avatar>
+                <Text fw="bold" fz={{ base: "lg", md: "xl" }} c={colors["blue-button"]}>
+                  {item.nama}
+                </Text>
               </Group>
-            ))}
-          </Paper>
 
-          {/* Fasilitas Kesehatan */}
-          <Paper p="lg" radius="md" bg={colors['white-trans-1']}>
-            <Group pb="md" align="center">
-              <Avatar radius={"xl"} size={'lg'} bg={colors['BG-trans']}>
-                <IconBuildingSkyscraper size={30} color={colors["blue-button"]} />
-              </Avatar>
-              <Text fw="bold" fz={{ base: "lg", md: "xl" }} c={colors["blue-button"]}>
-                Fasilitas Kesehatan
-              </Text>
-            </Group>
-
-            {healthFacilities.map((v, k) => (
-              <Group key={k} px="md" py="sm" bg={colors['BG-trans']} mb="xs" justify="space-between" style={{ borderRadius: 8 }}>
-                <Group>
-                  {v.icon}
-                  <Text>{v.name}</Text>
-                </Group>
-                <Text>{v.nomor}</Text>
-              </Group>
-            ))}
-          </Paper>
-
-          {/* Pemerintah Desa */}
-          <Paper p="lg" radius="md" bg={colors['white-trans-1']}>
-            <Group pb="md" align="center">
-              <Avatar radius={"xl"} size={'lg'} bg={colors['BG-trans']}>
-                <IconBuildingBank size={30} color={colors["blue-button"]} />
-              </Avatar>
-              <Text fw="bold" fz={{ base: "lg", md: "xl" }} c={colors["blue-button"]}>
-                Pemerintah Desa
-              </Text>
-            </Group>
-
-            {villageGovernment.map((v, k) => (
-              <Group key={k} px="md" py="sm" bg={colors['BG-trans']} mb="xs" justify="space-between" style={{ borderRadius: 8 }}>
-                <Group>
-                  {v.icon}
-                  <Text>{v.name}</Text>
-                </Group>
-                <Text>{v.nomor}</Text>
-              </Group>
-            ))}
-          </Paper>
+              {/* Kontak Items */}
+              {item.kontakItems?.map((kontak) => (
+                <Paper
+                  key={kontak.id}
+                  p="lg"
+                  bg={colors['BG-trans']}
+                  radius="md"
+                  shadow="xs"
+                  mt="sm"
+                >
+                  <Group align="center" justify="space-between">
+                    <Group align="center">
+                      {kontak.kontakItem?.icon && (
+                        <IconMapper
+                          name={kontak.kontakItem.icon as IconKey}
+                          size={24}
+                          color={colors['blue-button']}
+                        />
+                      )}
+                      <Text fw="bold" fz={{ base: "sm", md: "md" }} c={colors["blue-button"]}>
+                        {kontak.kontakItem?.nama}
+                      </Text>
+                    </Group>
+                    <Text fw="bold" fz={{ base: "sm", md: "md" }} c={colors["blue-button"]}>
+                      {kontak.kontakItem?.nomorTelepon}
+                    </Text>
+                  </Group>
+                </Paper>
+              ))}
+            </Paper>
+          ))}
         </SimpleGrid>
+        <Center>
+          <Pagination
+            value={page}
+            onChange={(newPage) => {
+              load(newPage, 4, search);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            total={totalPages}
+            mt="md"
+            mb="md"
+            color="blue"
+            radius="md"
+          />
+        </Center>
       </Box>
     </Stack>
   );

@@ -3,7 +3,7 @@ import { Context } from "elysia";
 
 type FormCreate = {
   nama: string;
-  imageId?: string;
+  icon: string;
   kategoriId: string[];
 };
 export default async function kontakDaruratKeamananCreate(context: Context) {
@@ -18,7 +18,7 @@ export default async function kontakDaruratKeamananCreate(context: Context) {
       const kontakDaruratKeamanan = await prisma.kontakDaruratKeamanan.create({
         data: {
           nama: body.nama,
-          imageId: body.imageId,
+          icon: body.icon,
           kategoriId: body.kategoriId[0],
         },
       });
@@ -33,7 +33,6 @@ export default async function kontakDaruratKeamananCreate(context: Context) {
       return await prisma.kontakDaruratKeamanan.findUnique({
         where: { id: kontakDaruratKeamanan.id },
         include: {
-          image: true,
           kategori: true,
           kontakItems: {
             include: {

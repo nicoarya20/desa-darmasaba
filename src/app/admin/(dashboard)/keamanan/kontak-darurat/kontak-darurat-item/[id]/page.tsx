@@ -1,11 +1,12 @@
 'use client'
-import colors from '@/con/colors';
-import { Box, Button, Group, Image, Paper, Skeleton, Stack, Text, Tooltip } from '@mantine/core';
-import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
-import { useParams, useRouter } from 'next/navigation';
+import { IconKey, IconMapper } from '@/app/admin/(dashboard)/_com/iconMap';
 import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
 import kontakDarurat from '@/app/admin/(dashboard)/_state/keamanan/kontak-darurat-keamanan';
+import colors from '@/con/colors';
+import { Box, Button, Group, Paper, Skeleton, Stack, Text, Tooltip } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
+import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
+import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 
@@ -62,48 +63,31 @@ function DetailKontakDarurat() {
       >
         <Stack gap="md">
           <Text fz="2xl" fw="bold" c={colors['blue-button']}>
-            Detail Kontak Darurat
+            Detail Kontak Darurat Item
           </Text>
 
           <Paper bg="#ECEEF8" p="md" radius="md" shadow="xs">
             <Stack gap="sm">
               {/* Judul */}
               <Box>
-                <Text fz="lg" fw="bold">Judul Kontak Darurat</Text>
+                <Text fz="lg" fw="bold">Judul Kontak Darurat Item</Text>
                 <Text fz="md" c="dimmed">{data?.nama || '-'}</Text>
               </Box>
 
               <Box>
-                <Text fz="lg" fw="bold">Judul Kontak Darurat</Text>
-                <Text fz="md" c="dimmed">{data?.nama || '-'}</Text>
+                <Text fz="lg" fw="bold">Nomor Telepon Kontak Darurat Item</Text>
+                <Text fz="md" c="dimmed">{data?.nomorTelepon || '-'}</Text>
               </Box>
 
-              {/* Gambar Utama */}
               <Box>
-                <Text fz="lg" fw="bold">Gambar</Text>
-                <Image
-                  w={{ base: 150, md: 490 }}
-                  src={data?.image?.link}
-                  alt="gambar kontak darurat"
-                />
-              </Box>
-
-              {/* Kontak Item */}
-              <Box>
-                <Text fz="lg" fw="bold">Kontak</Text>
-                <Stack>
-                  <Box>
-                    <Text fz="md" fw="bold">{data.nama}</Text>
-                    <Text fz="md" c="dimmed">{data.nomorTelepon}</Text>
-                    {data.image?.link && (
-                      <Image
-                        w={{ base: 120, md: 200 }}
-                        src={data.image.link}
-                        alt={`gambar kontak ${data.nama}`}
-                      />
-                    )}
-                  </Box>
-                </Stack>
+                <Text fz={"lg"} fw={"bold"}>Ikon Kontak Darurat</Text>
+                {data?.icon && (
+                  <IconMapper
+                    name={data?.icon as IconKey}
+                    size={32}
+                    color={colors['blue-button']}
+                  />
+                )}
               </Box>
 
               {/* Aksi */}
@@ -126,7 +110,7 @@ function DetailKontakDarurat() {
                 <Tooltip label="Edit Data" withArrow position="top">
                   <Button
                     color="green"
-                    onClick={() => router.push(`/admin/keamanan/kontak-darurat/${data.id}/edit`)}
+                    onClick={() => router.push(`/admin/keamanan/kontak-darurat/kontak-darurat-item/${data.id}/edit`)}
                     variant="light"
                     radius="md"
                     size="md"

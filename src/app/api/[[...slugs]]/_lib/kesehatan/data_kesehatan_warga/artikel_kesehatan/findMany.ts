@@ -37,6 +37,7 @@ export default async function artikelKesehatanFindMany(context: Context) {
           firstaid: true,
           mythvsfact: true,
           doctorsign: true,
+          image: true,
         },
         skip,
         take: limit,
