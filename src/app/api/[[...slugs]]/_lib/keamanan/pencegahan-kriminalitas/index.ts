@@ -4,6 +4,7 @@ import pencegahanKriminalitasFindUnique from "./findUnique";
 import pencegahanKriminalitasFindMany from "./findMany";
 import pencegahanKriminalitasDelete from "./del";
 import pencegahanKriminalitasUpdate from "./updt";
+import pencegahanKriminalitasFindFirst from "./findFirst";
 
 const PencegahanKriminalitas = new Elysia({
   prefix: "pencegahankriminalitas",
@@ -11,22 +12,10 @@ const PencegahanKriminalitas = new Elysia({
 })
   .post("/create", pencegahanKriminalitasCreate, {
     body: t.Object({
-      programKeamanan: t.Object({
-        nama: t.String(),
-        deskripsi: t.String(),
-        slug: t.String(),
-      }),
-      tipsKeamanan: t.Object({
-        judul: t.String(),
-        konten: t.String(),
-        slug: t.String(),
-      }),
-      videoKeamanan: t.Object({
-        judul: t.String(),
-        deskripsi: t.String(),
-        videoUrl: t.String(),
-        slug: t.String(),
-      }),
+      judul: t.String(),
+      deskripsi: t.String(),
+      deskripsiSingkat: t.String(),
+      linkVideo: t.String(),
     }),
   })
   .get("/find-many", pencegahanKriminalitasFindMany)
@@ -36,31 +25,20 @@ const PencegahanKriminalitas = new Elysia({
     );
     return response;
   })
+  .get("/find-first", pencegahanKriminalitasFindFirst)
   .delete("/del/:id", pencegahanKriminalitasDelete)
   .put(
-    ":/id",
+    "/:id",
     async (context) => {
       const response = await pencegahanKriminalitasUpdate(context);
       return response;
     },
     {
       body: t.Object({
-        programKeamanan: t.Object({
-          nama: t.String(),
-          deskripsi: t.String(),
-          slug: t.String(),
-        }),
-        tipsKeamanan: t.Object({
-          judul: t.String(),
-          konten: t.String(),
-          slug: t.String(),
-        }),
-        videoKeamanan: t.Object({
-          judul: t.String(),
-          deskripsi: t.String(),
-          videoUrl: t.String(),
-          slug: t.String(),
-        }),
+        judul: t.String(),
+        deskripsi: t.String(),
+        deskripsiSingkat: t.String(),
+        linkVideo: t.String(),
       }),
     }
   );

@@ -2,39 +2,35 @@
 'use client'
 import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import pencegahanKriminalitasState from '@/app/admin/(dashboard)/_state/keamanan/pencegahan-kriminalitas';
+import { convertYoutubeUrlToEmbed } from '@/app/admin/(dashboard)/desa/gallery/lib/youtube-utils';
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
+import {
+  Box,
+  Button,
+  Group,
+  Paper,
+  Stack,
+  TextInput,
+  Title,
+  Tooltip
+} from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
-
 function EditPencegahanKriminalitas() {
   const router = useRouter();
-  const params = useParams()
-  const kriminalitasState = useProxy(pencegahanKriminalitasState)
+  const params = useParams();
+  const kriminalitasState = useProxy(pencegahanKriminalitasState);
+
   const [formData, setFormData] = useState({
-    pencegahanKriminalitas: {
-      programKeamanan: {
-        nama: kriminalitasState.update.form.pencegahanKriminalitas.programKeamanan.nama,
-        deskripsi: kriminalitasState.update.form.pencegahanKriminalitas.programKeamanan.deskripsi,
-        slug: kriminalitasState.update.form.pencegahanKriminalitas.programKeamanan.slug,
-      },
-      tipsKeamanan: {
-        judul: kriminalitasState.update.form.pencegahanKriminalitas.tipsKeamanan.judul,
-        konten: kriminalitasState.update.form.pencegahanKriminalitas.tipsKeamanan.konten,
-        slug: kriminalitasState.update.form.pencegahanKriminalitas.tipsKeamanan.slug,
-      },
-      videoKeamanan: {
-        judul: kriminalitasState.update.form.pencegahanKriminalitas.videoKeamanan.judul,
-        deskripsi: kriminalitasState.update.form.pencegahanKriminalitas.videoKeamanan.deskripsi,
-        videoUrl: kriminalitasState.update.form.pencegahanKriminalitas.videoKeamanan.videoUrl,
-        slug: kriminalitasState.update.form.pencegahanKriminalitas.videoKeamanan.slug,
-      },
-    },
-  })
+    judul: '',
+    deskripsi: '',
+    deskripsiSingkat: '',
+    linkVideo: '',
+  });
 
   useEffect(() => {
     const loadKriminalitas = async () => {
@@ -43,167 +39,154 @@ function EditPencegahanKriminalitas() {
 
       try {
         const data = await kriminalitasState.update.load(id);
-        if (data && data.pencegahanKriminalitas) {
-          const { programKeamanan, tipsKeamanan, videoKeamanan } = data.pencegahanKriminalitas;
-        
+        if (data) {
           setFormData({
-            pencegahanKriminalitas: {
-              programKeamanan: {
-                nama: programKeamanan?.nama || "",
-                deskripsi: programKeamanan?.deskripsi || "",
-                slug: programKeamanan?.slug || "",
-              },
-              tipsKeamanan: {
-                judul: tipsKeamanan?.judul || "",
-                konten: tipsKeamanan?.konten || "",
-                slug: tipsKeamanan?.slug || "",
-              },
-              videoKeamanan: {
-                judul: videoKeamanan?.judul || "",
-                deskripsi: videoKeamanan?.deskripsi || "",
-                videoUrl: videoKeamanan?.videoUrl || "",
-                slug: videoKeamanan?.slug || "",
-              },
-            },
+            judul: data.judul || '',
+            deskripsi: data.deskripsi || '',
+            deskripsiSingkat: data.deskripsiSingkat || '',
+            linkVideo: data.linkVideo || '',
           });
         }
-        
       } catch (error) {
-        console.error("Error loading pencegahan kriminalitas:", error);
-        toast.error("Gagal memuat data pencegahan kriminalitas");
+        console.error('Error loading pencegahan kriminalitas:', error);
+        toast.error('Gagal memuat data pencegahan kriminalitas');
       }
-    }
+    };
 
     loadKriminalitas();
-  }, [params.id]);
+  }, [params?.id]);
+
+  const embedLink = convertYoutubeUrlToEmbed(formData.linkVideo);
 
   const handleSubmit = async () => {
+    const converted = convertYoutubeUrlToEmbed(formData.linkVideo);
+    if (!converted) {
+      toast.error('Link YouTube tidak valid. Pastikan formatnya benar.');
+      return;
+    }
+
     try {
+      // Update the form data first
       kriminalitasState.update.form = {
         ...kriminalitasState.update.form,
-        pencegahanKriminalitas: {
-          programKeamanan: {
-            nama: formData.pencegahanKriminalitas.programKeamanan.nama,
-            deskripsi: formData.pencegahanKriminalitas.programKeamanan.deskripsi,
-            slug: formData.pencegahanKriminalitas.programKeamanan.slug,
-          },
-          tipsKeamanan: {
-            judul: formData.pencegahanKriminalitas.tipsKeamanan.judul,
-            konten: formData.pencegahanKriminalitas.tipsKeamanan.konten,
-            slug: formData.pencegahanKriminalitas.tipsKeamanan.slug,
-          },
-          videoKeamanan: {
-            judul: formData.pencegahanKriminalitas.videoKeamanan.judul,
-            deskripsi: formData.pencegahanKriminalitas.videoKeamanan.deskripsi,
-            videoUrl: formData.pencegahanKriminalitas.videoKeamanan.videoUrl,
-            slug: formData.pencegahanKriminalitas.videoKeamanan.slug,
-          },
-        },
-      }
-      await kriminalitasState.update.update();
-      toast.success("Pencegahan Kriminalitas berhasil diperbarui!");
-      router.push("/admin/keamanan/pencegahan-kriminalitas");
-    } catch (error) {
-      console.error("Error updating pencegahan kriminalitas:", error);
-      toast.error("Gagal memuat data pencegahan kriminalitas");
-    }
-  }
-  return (
-    <Box>
-      <Box mb={10}>
-        <Button onClick={() => router.back()} variant='subtle' color={'blue'}>
-          <IconArrowBack color={colors['blue-button']} size={25} />
-        </Button>
-      </Box>
+        judul: formData.judul,
+        deskripsi: formData.deskripsi,
+        deskripsiSingkat: formData.deskripsiSingkat,
+        linkVideo: formData.linkVideo,
+      };
 
-      <Paper w={{ base: '100%', md: '50%' }} bg={colors['white-1']} p={'md'}>
-        <Stack gap={"xs"}>
-          <Title order={4}>Edit Pencegahan Kriminalitas</Title>
+      // Set the ID and then call update
+      kriminalitasState.update.id = params?.id as string;
+
+      await kriminalitasState.update.update();
+      toast.success('Pencegahan Kriminalitas berhasil diperbarui!');
+      router.push('/admin/keamanan/pencegahan-kriminalitas');
+    } catch (error) {
+      console.error('Error updating pencegahan kriminalitas:', error);
+      toast.error('Terjadi kesalahan saat memperbarui data');
+    }
+  };
+
+  return (
+    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+      {/* Back button + Title */}
+      <Group mb="md">
+        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
+          <Button
+            variant="subtle"
+            onClick={() => router.back()}
+            p="xs"
+            radius="md"
+          >
+            <IconArrowBack color={colors['blue-button']} size={24} />
+          </Button>
+        </Tooltip>
+        <Title order={4} ml="sm" c="dark">
+          Edit Pencegahan Kriminalitas
+        </Title>
+      </Group>
+
+      {/* Form container */}
+      <Paper
+        w={{ base: '100%', md: '50%' }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+        style={{ border: '1px solid #e0e0e0' }}
+      >
+        <Stack gap="md">
           <TextInput
-            value={formData.pencegahanKriminalitas.programKeamanan.nama}
-            onChange={(val) => {
-              formData.pencegahanKriminalitas.programKeamanan.nama = val.target.value;
-            }}
-            label={<Text fw={"bold"} fz={"sm"}>Judul Program Keamanan</Text>}
-            placeholder='Masukkan judul Program Keamanan'
+            label="Judul"
+            placeholder="Masukkan judul"
+            value={formData.judul}
+            onChange={(e) => setFormData({ ...formData, judul: e.target.value })}
+            required
           />
+
           <TextInput
-            value={formData.pencegahanKriminalitas.programKeamanan.slug}
-            onChange={(val) => {
-              formData.pencegahanKriminalitas.programKeamanan.slug = val.target.value;
-            }}
-            label={<Text fw={"bold"} fz={"sm"}>Slug Program Keamanan</Text>}
-            placeholder='Masukkan slug Program Keamanan'
+            label="Deskripsi Singkat"
+            placeholder="Masukkan deskripsi singkat"
+            value={formData.deskripsiSingkat}
+            onChange={(e) =>
+              setFormData({ ...formData, deskripsiSingkat: e.target.value })
+            }
+            required
           />
+
           <Box>
-            <Text fw={"bold"} fz={"sm"}>Deskripsi Program Keamanan</Text>
+            <Title order={6} fw="bold" fz="sm" mb={6}>
+              Deskripsi Lengkap
+            </Title>
             <EditEditor
-              value={formData.pencegahanKriminalitas.programKeamanan.deskripsi}
-              onChange={(val) => {
-                formData.pencegahanKriminalitas.programKeamanan.deskripsi = val;
-              }}
+              value={formData.deskripsi}
+              onChange={(val) =>
+                setFormData({ ...formData, deskripsi: val })
+              }
             />
           </Box>
-          <TextInput
-            value={formData.pencegahanKriminalitas.tipsKeamanan.judul}
-            onChange={(val) => {
-              formData.pencegahanKriminalitas.tipsKeamanan.judul = val.target.value;
-            }}
-            label={<Text fw={"bold"} fz={"sm"}>Judul Tips Keamanan</Text>}
-            placeholder='Masukkan judul Tips Keamanan'
-          />
-          <TextInput
-            value={formData.pencegahanKriminalitas.tipsKeamanan.slug}
-            onChange={(val) => {
-              formData.pencegahanKriminalitas.tipsKeamanan.slug = val.target.value;
-            }}
-            label={<Text fw={"bold"} fz={"sm"}>Slug Tips Keamanan</Text>}
-            placeholder='Masukkan slug Tips Keamanan'
-          />
+
           <Box>
-            <Text fw={"bold"} fz={"sm"}>Deskripsi Tips Keamanan</Text>
-            <EditEditor
-              value={formData.pencegahanKriminalitas.tipsKeamanan.konten}
-              onChange={(val) => {
-                formData.pencegahanKriminalitas.tipsKeamanan.konten = val;
-              }}
+            <TextInput
+              label="Link Video YouTube"
+              placeholder="https://www.youtube.com/watch?v=abc123"
+              value={formData.linkVideo}
+              onChange={(e) =>
+                setFormData({ ...formData, linkVideo: e.currentTarget.value })
+              }
+              required
             />
+            {embedLink && (
+              <Box
+                mt="sm"
+                style={{ display: 'flex', justifyContent: 'center' }}
+              >
+                <iframe
+                  className="rounded"
+                  width="100%"
+                  height="220"
+                  src={embedLink}
+                  title="Preview Video"
+                  allowFullScreen
+                ></iframe>
+              </Box>
+            )}
           </Box>
-          <TextInput
-            value={formData.pencegahanKriminalitas.videoKeamanan.judul}
-            onChange={(val) => {
-              formData.pencegahanKriminalitas.videoKeamanan.judul = val.target.value;
-            }}
-            label={<Text fw={"bold"} fz={"sm"}>Judul Video Keamanan</Text>}
-            placeholder='Masukkan judul Video Keamanan'
-          />
-          <TextInput
-            value={formData.pencegahanKriminalitas.videoKeamanan.slug}
-            onChange={(val) => {
-              formData.pencegahanKriminalitas.videoKeamanan.slug = val.target.value;
-            }}
-            label={<Text fw={"bold"} fz={"sm"}>Slug Video Keamanan</Text>}
-            placeholder='Masukkan slug Video Keamanan'
-          />
-          <Box>
-            <Text fw={"bold"} fz={"sm"}>Deskripsi Tips Keamanan</Text>
-            <EditEditor
-              value={formData.pencegahanKriminalitas.videoKeamanan.deskripsi}
-              onChange={(val) => {
-                formData.pencegahanKriminalitas.videoKeamanan.deskripsi = val;
+
+          {/* Action button */}
+          <Group justify="right">
+            <Button
+              onClick={handleSubmit}
+              radius="md"
+              size="md"
+              style={{
+                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                color: '#fff',
+                boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
-            />
-          </Box>
-          <TextInput
-            value={formData.pencegahanKriminalitas.videoKeamanan.videoUrl}
-            onChange={(val) => {
-              formData.pencegahanKriminalitas.videoKeamanan.videoUrl = val.target.value;
-            }}
-            label={<Text fw={"bold"} fz={"sm"}>Video URL</Text>}
-            placeholder='Masukkan video URL'
-          />
-          <Group>
-            <Button bg={colors['blue-button']} onClick={handleSubmit}>Submit</Button>
+            >
+              Simpan
+            </Button>
           </Group>
         </Stack>
       </Paper>

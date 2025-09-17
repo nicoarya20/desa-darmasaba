@@ -16,18 +16,21 @@ export default async function pencegahanKriminalitasFindMany(context: Context) {
   if (search) {
     where.OR = [
       {
-        programKeamanan: {
-          nama: { contains: search, mode: "insensitive" as const },
+        judul: {
+          contains: search,
+          mode: "insensitive" as const,
         },
       },
       {
-        tipsKeamanan: {
-          judul: { contains: search, mode: "insensitive" as const },
+        deskripsi: {
+          contains: search,
+          mode: "insensitive" as const,
         },
       },
       {
-        videoKeamanan: {
-          judul: { contains: search, mode: "insensitive" as const },
+        deskripsiSingkat: {
+          contains: search,
+          mode: "insensitive" as const,
         },
       },
     ];
@@ -36,11 +39,6 @@ export default async function pencegahanKriminalitasFindMany(context: Context) {
     const [data, total] = await Promise.all([
       prisma.pencegahanKriminalitas.findMany({
         where,
-        include: {
-          programKeamanan: true,
-          tipsKeamanan: true,
-          videoKeamanan: true,
-        },
         skip,
         take: limit,
         orderBy: { createdAt: "desc" },

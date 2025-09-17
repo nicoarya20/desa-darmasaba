@@ -22,11 +22,6 @@ export default async function pencegahanKriminalitasFindUnique(request: Request)
 
         const data = await prisma.pencegahanKriminalitas.findUnique({
             where: {id},
-            include: {
-                programKeamanan: true,
-                tipsKeamanan: true,
-                videoKeamanan: true,
-            }
         })
 
         if (!data) {

@@ -135,9 +135,7 @@ function ListLaporanPublik({ search }: { search: string }) {
                     </TableTd>
                     <TableTd>
                       <Box w={200}>
-                        <Text truncate fz="sm" c="dimmed" lineClamp={1}>
-                          {item.kronologi}
-                        </Text>
+                        <Text truncate fz="sm" c="dimmed" lineClamp={1} dangerouslySetInnerHTML={{ __html: item.kronologi || '' }} />
                       </Box>
                     </TableTd>
                     <TableTd>

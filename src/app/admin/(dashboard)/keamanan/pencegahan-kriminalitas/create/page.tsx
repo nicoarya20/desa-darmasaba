@@ -1,141 +1,158 @@
 'use client'
+
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
+import {
+  Box,
+  Button,
+  Group,
+  Paper,
+  Stack,
+  Text,
+  TextInput,
+  Title,
+  Tooltip,
+} from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
 import CreateEditor from '../../../_com/createEditor';
 import pencegahanKriminalitasState from '../../../_state/keamanan/pencegahan-kriminalitas';
-
+import { useState } from 'react';
+import { convertYoutubeUrlToEmbed } from '../../../desa/gallery/lib/youtube-utils';
+import { toast } from 'react-toastify';
 
 function CreatePencegahanKriminalitas() {
   const router = useRouter();
-  const kriminalitasState = useProxy(pencegahanKriminalitasState)
+  const kriminalitasState = useProxy(pencegahanKriminalitasState);
+  const [link, setLink] = useState('');
+  const embedLink = convertYoutubeUrlToEmbed(link);
 
   const resetForm = () => {
     kriminalitasState.create.form = {
-      pencegahanKriminalitas: {
-        programKeamanan: {
-          nama: "",
-          deskripsi: "",
-          slug: "",
-        },
-        tipsKeamanan: {
-          judul: "",
-          konten: "",
-          slug: "",
-        },
-        videoKeamanan: {
-          judul: "",
-          deskripsi: "",
-          videoUrl: "",
-          slug: "",
-        },
-      },
-    }
-  }
+      judul: "",
+      deskripsi: "",
+      deskripsiSingkat: "",
+      linkVideo: "",
+    };
+    setLink('');
+  };
 
   const handleSubmit = async () => {
+    if (!embedLink) {
+      toast.error('Link YouTube tidak valid. Pastikan formatnya benar.');
+      return;
+    }
+
+    kriminalitasState.create.form.linkVideo = embedLink;
     await kriminalitasState.create.create();
     resetForm();
     router.push('/admin/keamanan/pencegahan-kriminalitas');
-  }
-  return (
-    <Box>
-      <Box mb={10}>
-        <Button onClick={() => router.back()} variant='subtle' color={'blue'}>
-          <IconArrowBack color={colors['blue-button']} size={25} />
-        </Button>
-      </Box>
+  };
 
-      <Paper w={{ base: '100%', md: '50%' }} bg={colors['white-1']} p={'md'}>
-        <Stack gap={"xs"}>
-          <Title order={4}>Create Pencegahan Kriminalitas</Title>
+  return (
+    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+      {/* Header Back Button + Title */}
+      <Group mb="md">
+        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
+          <Button
+            variant="subtle"
+            onClick={() => router.back()}
+            p="xs"
+            radius="md"
+          >
+            <IconArrowBack color={colors['blue-button']} size={24} />
+          </Button>
+        </Tooltip>
+        <Title order={4} ml="sm" c="dark">
+          Tambah Pencegahan Kriminalitas
+        </Title>
+      </Group>
+
+      {/* Card Form */}
+      <Paper
+        w={{ base: '100%', md: '50%' }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+        style={{ border: '1px solid #e0e0e0' }}
+      >
+        <Stack gap="md">
+          {/* Judul */}
           <TextInput
-            value={kriminalitasState.create.form.pencegahanKriminalitas.programKeamanan.nama}
-            onChange={(val) => {
-              kriminalitasState.create.form.pencegahanKriminalitas.programKeamanan.nama = val.target.value;
+            label="Judul Pencegahan Kriminalitas"
+            placeholder="Masukkan judul Pencegahan Kriminalitas"
+            value={kriminalitasState.create.form.judul}
+            onChange={(e) => {
+              kriminalitasState.create.form.judul = e.currentTarget.value;
             }}
-            label={<Text fw={"bold"} fz={"sm"}>Judul Program Keamanan</Text>}
-            placeholder='Masukkan judul Program Keamanan'
+            required
           />
+
+          {/* Deskripsi Singkat */}
           <TextInput
-            value={kriminalitasState.create.form.pencegahanKriminalitas.programKeamanan.slug}
-            onChange={(val) => {
-              kriminalitasState.create.form.pencegahanKriminalitas.programKeamanan.slug = val.target.value;
+            label="Deskripsi Singkat"
+            placeholder="Masukkan deskripsi singkat"
+            value={kriminalitasState.create.form.deskripsiSingkat}
+            onChange={(e) => {
+              kriminalitasState.create.form.deskripsiSingkat = e.currentTarget.value;
             }}
-            label={<Text fw={"bold"} fz={"sm"}>Slug Program Keamanan</Text>}
-            placeholder='Masukkan slug Program Keamanan'
+            required
           />
+
+          {/* Deskripsi Panjang */}
           <Box>
-            <Text fw={"bold"} fz={"sm"}>Deskripsi Program Keamanan</Text>
+            <Text fw="bold" fz="sm" mb={6}>
+              Deskripsi
+            </Text>
             <CreateEditor
-              value={kriminalitasState.create.form.pencegahanKriminalitas.programKeamanan.deskripsi}
+              value={kriminalitasState.create.form.deskripsi}
               onChange={(val) => {
-                kriminalitasState.create.form.pencegahanKriminalitas.programKeamanan.deskripsi = val;
+                kriminalitasState.create.form.deskripsi = val;
               }}
             />
           </Box>
+
+          {/* Link YouTube */}
           <TextInput
-            value={kriminalitasState.create.form.pencegahanKriminalitas.tipsKeamanan.judul}
-            onChange={(val) => {
-              kriminalitasState.create.form.pencegahanKriminalitas.tipsKeamanan.judul = val.target.value;
-            }}
-            label={<Text fw={"bold"} fz={"sm"}>Judul Tips Keamanan</Text>}
-            placeholder='Masukkan judul Tips Keamanan'
+            label="Link Video YouTube"
+            placeholder="https://www.youtube.com/watch?v=abc123"
+            value={link}
+            onChange={(e) => setLink(e.currentTarget.value)}
+            required
           />
-          <TextInput
-            value={kriminalitasState.create.form.pencegahanKriminalitas.tipsKeamanan.slug}
-            onChange={(val) => {
-              kriminalitasState.create.form.pencegahanKriminalitas.tipsKeamanan.slug = val.target.value;
-            }}
-            label={<Text fw={"bold"} fz={"sm"}>Slug Tips Keamanan</Text>}
-            placeholder='Masukkan slug Tips Keamanan'
-          />
-          <Box>
-            <Text fw={"bold"} fz={"sm"}>Deskripsi Tips Keamanan</Text>
-            <CreateEditor
-              value={kriminalitasState.create.form.pencegahanKriminalitas.tipsKeamanan.konten}
-              onChange={(val) => {
-                kriminalitasState.create.form.pencegahanKriminalitas.tipsKeamanan.konten = val;
+
+          {/* Preview Video */}
+          {embedLink && (
+            <Box mt="sm">
+              <iframe
+                style={{
+                  borderRadius: 10,
+                  width: '100%',
+                  height: 400,
+                  border: '1px solid #ddd',
+                }}
+                src={embedLink}
+                title="Preview Video"
+                allowFullScreen
+              ></iframe>
+            </Box>
+          )}
+
+          {/* Button Submit */}
+          <Group justify="right">
+            <Button
+              onClick={handleSubmit}
+              radius="md"
+              size="md"
+              style={{
+                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                color: '#fff',
+                boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
-            />
-          </Box>
-          <TextInput
-            value={kriminalitasState.create.form.pencegahanKriminalitas.videoKeamanan.judul}
-            onChange={(val) => {
-              kriminalitasState.create.form.pencegahanKriminalitas.videoKeamanan.judul = val.target.value;
-            }}
-            label={<Text fw={"bold"} fz={"sm"}>Judul Video Keamanan</Text>}
-            placeholder='Masukkan judul Video Keamanan'
-          />
-          <TextInput
-            value={kriminalitasState.create.form.pencegahanKriminalitas.videoKeamanan.slug}
-            onChange={(val) => {
-              kriminalitasState.create.form.pencegahanKriminalitas.videoKeamanan.slug = val.target.value;
-            }}
-            label={<Text fw={"bold"} fz={"sm"}>Slug Video Keamanan</Text>}
-            placeholder='Masukkan slug Video Keamanan'
-          />
-          <Box>
-            <Text fw={"bold"} fz={"sm"}>Deskripsi Tips Keamanan</Text>
-            <CreateEditor
-              value={kriminalitasState.create.form.pencegahanKriminalitas.videoKeamanan.deskripsi}
-              onChange={(val) => {
-                kriminalitasState.create.form.pencegahanKriminalitas.videoKeamanan.deskripsi = val;
-              }}
-            />
-          </Box>
-          <TextInput
-            value={kriminalitasState.create.form.pencegahanKriminalitas.videoKeamanan.videoUrl}
-            onChange={(val) => {
-              kriminalitasState.create.form.pencegahanKriminalitas.videoKeamanan.videoUrl = val.target.value;
-            }}
-            label={<Text fw={"bold"} fz={"sm"}>Video URL</Text>}
-            placeholder='Masukkan video URL'
-          />
-          <Group>
-            <Button onClick={handleSubmit} bg={colors['blue-button']}>Submit</Button>
+            >
+              Simpan
+            </Button>
           </Group>
         </Stack>
       </Paper>

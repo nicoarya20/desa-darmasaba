@@ -62,14 +62,6 @@ function ListPencegahanKriminalitas({ search }: { search: string }) {
     load(page, 10, search);
   }, [page, search]);
 
-  const filteredData = (data || []).filter(item => {
-    const keyword = search.toLowerCase();
-    return (
-      item.programKeamanan.nama.toLowerCase().includes(keyword) ||
-      item.programKeamanan.slug.toLowerCase().includes(keyword) ||
-      item.programKeamanan.deskripsi?.toLowerCase().includes(keyword)
-    );
-  });
 
   if (loading || !data) {
     return (
@@ -103,35 +95,43 @@ function ListPencegahanKriminalitas({ search }: { search: string }) {
             <TableThead>
               <TableTr>
                 <TableTh>Nama Pencegahan</TableTh>
-                <TableTh>Slug</TableTh>
                 <TableTh>Deskripsi</TableTh>
+                <TableTh>Deskripsi Singkat</TableTh>
                 <TableTh>Aksi</TableTh>
               </TableTr>
             </TableThead>
             <TableTbody>
-              {filteredData.length > 0 ? (
-                filteredData.map((item) => (
+              {data.length > 0 ? (
+                data.map((item) => (
                   <TableTr key={item.id}>
                     <TableTd>
                       <Text fw={500} truncate="end" lineClamp={1}>
-                        {item.programKeamanan.nama}
+                        {item.judul}
                       </Text>
                     </TableTd>
                     <TableTd>
-                      <Text fz="sm" c="dimmed" truncate lineClamp={1}>
-                        {item.programKeamanan.slug}
-                      </Text>
+                      <Box w={200}>
+                        <Text
+                          dangerouslySetInnerHTML={{ __html: item.deskripsi }}
+                          fz="sm"
+                          c="dimmed"
+                          truncate
+                          lineClamp={1}
+                        />
+                      </Box>
                     </TableTd>
                     <TableTd>
-                      <Text
-                        fz="sm"
-                        c="dimmed"
-                        truncate
-                        lineClamp={1}
-                        dangerouslySetInnerHTML={{
-                          __html: item.programKeamanan.deskripsi || ''
-                        }}
-                      />
+                      <Box w={200}>
+                        <Text
+                          fz="sm"
+                          c="dimmed"
+                          truncate
+                          lineClamp={1}
+                          dangerouslySetInnerHTML={{
+                            __html: item.deskripsiSingkat || ''
+                          }}
+                        />
+                      </Box>
                     </TableTd>
                     <TableTd>
                       <Button

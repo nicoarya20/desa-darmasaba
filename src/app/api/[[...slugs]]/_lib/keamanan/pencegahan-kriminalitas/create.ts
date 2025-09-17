@@ -1,81 +1,35 @@
 import prisma from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
 import { Context } from "elysia";
 
-type ProgramKeamananInput = {
-  nama: string;
-  deskripsi: string;
-  slug: string;
-};
-
-type TipsKeamanan = {
-  judul: string;
-  konten: string;
-  slug: string;
-};
-
-type VideoKeamanan = {
-  judul: string;
-  deskripsi: string;
-  videoUrl: string;
-  slug: string;
-};
-
-type createdPencegahanKriminalitas = {
-  programKeamanan: ProgramKeamananInput;
-  tipsKeamanan: TipsKeamanan;
-  videoKeamanan: VideoKeamanan;
-};
+type FormCreate = Prisma.PencegahanKriminalitasGetPayload<{
+  select: {
+    judul: true;
+    deskripsi: true;
+    deskripsiSingkat: true;
+    linkVideo: true;
+  };
+}>;
 
 const pencegahanKriminalitasCreate = async (context: Context) => {
-  const { programKeamanan, tipsKeamanan, videoKeamanan } =
-    (await context.body) as createdPencegahanKriminalitas;
+  const body = context.body as FormCreate;
 
-  const createdProgram = await prisma.programKeamanan.create({
+  await prisma.pencegahanKriminalitas.create({
     data: {
-      nama: programKeamanan.nama,
-      deskripsi: programKeamanan.deskripsi,
-      slug: programKeamanan.slug,
+      judul: body.judul,
+      deskripsi: body.deskripsi,
+      deskripsiSingkat: body.deskripsiSingkat,
+      linkVideo: body.linkVideo,
     },
   });
 
-  const createdTips = await prisma.tipsKeamanan.create({
+  return {
+    success: true,
+    message: "Success create pencegahan kriminalitas",
     data: {
-      judul: tipsKeamanan.judul,
-      konten: tipsKeamanan.konten,
-      slug: tipsKeamanan.slug,
+      ...body,
     },
-  });
-
-  const createdVideo = await prisma.videoKeamanan.create({
-    data: {
-      judul: videoKeamanan.judul,
-      deskripsi: videoKeamanan.deskripsi,
-      videoUrl: videoKeamanan.videoUrl,
-      slug: videoKeamanan.slug,
-    },
-  });
-
-  const createdPencegahanKriminalitas =
-    await prisma.pencegahanKriminalitas.create({
-      data: {
-        programKeamananId: createdProgram.id,
-        tipsKeamananId: createdTips.id,
-        videoKeamananId: createdVideo.id,
-      },
-      include: {
-        programKeamanan: true,
-        tipsKeamanan: true,
-        videoKeamanan: true,
-      },
-    });
-
-  return Response.json(
-    {
-      success: true,
-      message: "Success create program keamanan",
-      data: createdPencegahanKriminalitas,
-    },
-    { status: 200 }
-  );
+    status: 200,
+  };
 };
 export default pencegahanKriminalitasCreate;

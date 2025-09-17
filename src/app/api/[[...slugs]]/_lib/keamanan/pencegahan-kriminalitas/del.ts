@@ -13,11 +13,6 @@ const pencegahanKriminalitasDelete = async (context: Context) => {
 
     const pencegahanKriminalitas = await prisma.pencegahanKriminalitas.findUnique({
         where: { id },
-        include: {
-            programKeamanan: true,
-            tipsKeamanan: true,
-            videoKeamanan: true,
-        }
     });
 
     if (!pencegahanKriminalitas) {

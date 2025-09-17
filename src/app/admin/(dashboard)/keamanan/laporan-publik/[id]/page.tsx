@@ -121,7 +121,7 @@ function DetailLaporanPublik() {
 
               <Box>
                 <Text fz="lg" fw="bold">Kronologi</Text>
-                <Text fz="md" c="dimmed">{data.kronologi || '-'}</Text>
+                <Text fz="md" c="dimmed" dangerouslySetInnerHTML={{ __html: data.kronologi || '' }} />
               </Box>
 
               <Box>

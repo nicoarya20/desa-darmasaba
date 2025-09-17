@@ -1,141 +1,138 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+'use client'
+import pencegahanKriminalitasState from '@/app/admin/(dashboard)/_state/keamanan/pencegahan-kriminalitas';
 import colors from '@/con/colors';
-import { Box, Button, Flex, Group, Paper, SimpleGrid, Stack, Text } from '@mantine/core';
-import BackButton from '../../desa/layanan/_com/BackButto';
+import { Box, Button, Center, Flex, Paper, SimpleGrid, Skeleton, Stack, Text } from '@mantine/core';
+import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowRight } from '@tabler/icons-react';
+import { useTransitionRouter } from 'next-view-transitions';
+import { useEffect } from 'react';
+import { useProxy } from 'valtio/utils';
+
 
 function Page() {
+  const kriminalitasState = useProxy(pencegahanKriminalitasState);
+  const findFirst = useProxy(pencegahanKriminalitasState.findFirst);
+  const router = useTransitionRouter();
+
+  const {
+    data,
+    loading,
+    page,
+    load,
+  } = kriminalitasState.findMany;
+
+  useEffect(() => {
+    if (!findFirst.data && !findFirst.loading) {
+      kriminalitasState.findFirst.load();
+    }
+  }, [findFirst.data, findFirst.loading]);
+
+  useShallowEffect(() => {
+    const LIMIT = 3;
+    load(page, LIMIT);
+  }, [page]);
+
+  if (loading || !data) {
+    return (
+      <Stack py={10}>
+        <Skeleton height={600} radius="md" />
+      </Stack>
+    )
+  }
+
   return (
     <Stack pos="relative" bg={colors.Bg} py="xl" gap={22}>
       <Box px={{ base: 'md', md: 100 }}>
-        <BackButton />
+        <Text fz={{ base: 'h1', md: '2.5rem' }} c={colors['blue-button']} fw="bold">
+          Pencegahan Kriminalitas
+        </Text>
+        <Text c={colors['blue-button']} fz={{ base: 'h4', md: 'h3' }}>
+          Keamanan Komunitas & Pencegahan Kriminal
+        </Text>
       </Box>
       <SimpleGrid
         px={{ base: 20, md: 100 }}
         cols={{ base: 1, md: 2 }}
         spacing="xl"
       >
-        <Box pt={{ base: 0, md: 35 }}>
-          <Text c={colors['blue-button']} fz={{ base: 'h4', md: 'h3' }}>
-            Community Safety & Crime Prevention
+        <Paper p="xl" radius="xl" shadow="lg" >
+          <Text fz={{ base: 'h3', md: 'h2' }} c={colors['blue-button']} fw="bold">
+            Program Keamanan Berjalan
           </Text>
-          <Text fz={{ base: 'h1', md: '2.5rem' }} c={colors['blue-button']} fw="bold">
-            Emergency Contacts
-          </Text>
-          <Group>
+          <Stack pt={30} gap="lg">
+            {data.length > 0 ? (
+              data.map((item) => (
+                <Paper key={item.id} p="md" bg={colors['blue-button']} radius="md" shadow="sm" onClick={() => router.push(`/darmasaba/keamanan/pencegahan-kriminalitas/${item.id}`)}>
+                  <Stack gap={"xs"}>
+                    <Flex align="center" justify="space-between">
+                      <Text fz="h3" c={colors['white-1']}>
+                        {item.judul}
+                      </Text>
+                      <IconArrowRight size={28} color={colors['white-1']} />
+                    </Flex>
+                  </Stack>
+                </Paper>
+              ))
+            ) : (
+              <Text color="dimmed">
+                Tidak ada data pencegahan kriminalitas yang cocok
+              </Text>
+            )}
             <Button
-              rightSection={<IconArrowRight />}
               mt={20}
+              fullWidth
               radius="xl"
               size="md"
               bg={colors['blue-button']}
-              c={colors['white-1']}
+              rightSection={<IconArrowRight size={20} color={colors['white-1']} />}
+              onClick={() => router.push(`/darmasaba/keamanan/pencegahan-kriminalitas/program-lainnya`)}
             >
-              View Details
+              Jelajahi Program Lainnya
             </Button>
-          </Group>
-        </Box>
-        <SimpleGrid cols={{ base: 1, md: 2 }} spacing="lg">
-          <Paper p="lg" radius="xl" shadow="md">
-            <Text c={colors['blue-button']} fw="bold" fz={{ base: 'h4', md: 'h3' }}>
-              How to Keep Your Neighborhood Safe
-            </Text>
-            <Text fz={{ base: 'h5', md: 'h4' }} c={colors['blue-button']} mt="sm">
-              Practical safety habits everyone can apply daily to reduce risks.
-            </Text>
-            <Group>
-              <Button
-                rightSection={<IconArrowRight />}
-                mt={20}
-                radius="xl"
-                size="md"
-                bg={colors['blue-button']}
-                c={colors['white-1']}
-              >
-                Learn More
-              </Button>
-            </Group>
-          </Paper>
-          <Paper p="lg" radius="xl" shadow="md">
-            <Text c={colors['blue-button']} fw="bold" fz={{ base: 'h4', md: 'h3' }}>
-              Recognizing Criminal Activities
-            </Text>
-            <Text fz={{ base: 'h5', md: 'h4' }} c={colors['blue-button']} mt="sm">
-              Key warning signs and behavior patterns you should stay aware of.
-            </Text>
-            <Group>
-              <Button
-                rightSection={<IconArrowRight />}
-                mt={20}
-                radius="xl"
-                size="md"
-                bg={colors['blue-button']}
-                c={colors['white-1']}
-              >
-                Learn More
-              </Button>
-            </Group>
-          </Paper>
-        </SimpleGrid>
-        <Paper p="xl" radius="xl" shadow="lg">
-          <Text fz={{ base: 'h3', md: 'h2' }} c={colors['blue-button']} fw="bold">
-            Ongoing Security Programs
-          </Text>
-          <Stack pt={30} gap="lg">
-            {['Night Patrol', 'Neighborhood Watch', 'Emergency Preparedness'].map((program, i) => (
-              <Paper key={i} p="md" bg={colors['blue-button']} radius="md" shadow="sm">
-                <Flex align="center" justify="space-between">
-                  <Text fz="h3" c={colors['white-1']}>
-                    {program}
-                  </Text>
-                  <IconArrowRight size={28} color={colors['white-1']} />
-                </Flex>
-              </Paper>
-            ))}
-            <Box pt={25}>
-              <Button
-                fullWidth
-                radius="xl"
-                size="md"
-                bg={colors['blue-button']}
-                rightSection={<IconArrowRight size={20} color={colors['white-1']} />}
-              >
-                Explore More Programs
-              </Button>
-            </Box>
           </Stack>
         </Paper>
         <Box>
-          <Paper p="xl" radius="xl" shadow="lg">
-            <Box style={{ maxWidth: 560, width: '100%', aspectRatio: '16/9' }}>
-              <iframe
-                width="100%"
-                height="100%"
-                src="https://www.youtube.com/embed/p5OkdBgasWA?si=6lFKXeE9LN5zcJQq"
-                title="Community Safety Patrol"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              />
-            </Box>
-            <Text py={10} fz={{ base: 'h3', md: 'h2' }} fw="bold" c={colors['blue-button']}>
-              Darmasaba Night Patrol
-            </Text>
-            <Text fz="h4" c={colors['blue-button']}>
-              A closer look at how the community works together to maintain safety.
-            </Text>
-            <Box pt={10}>
-              <Button
-                radius="xl"
-                size="md"
-                bg={colors['blue-button']}
-                rightSection={<IconArrowRight size={20} color={colors['white-1']} />}
-              >
-                Watch More Videos
-              </Button>
-            </Box>
-          </Paper>
+          {findFirst.loading ? (
+            <Center><Skeleton h={400} /></Center>
+          ) : findFirst.data ? (
+            <Paper p="xl" radius="xl" shadow="lg">
+              {findFirst.data?.linkVideo ? (
+                <Box
+                  component="iframe"
+                  src={convertToEmbedUrl(findFirst.data.linkVideo)}
+                  width="100%"
+                  height={300}
+                  allowFullScreen
+                  style={{ borderRadius: 8 }}
+                />
+              ) : (
+                <Text fz="sm" c="dimmed">Tidak ada video</Text>
+              )}
+              <Text py={10} fz={{ base: 'h3', md: 'h2' }} fw="bold" c={colors['blue-button']}>
+                {findFirst.data?.judul}
+              </Text>
+              <Text fz="h4" c={colors['blue-button']}>
+                {findFirst.data?.deskripsiSingkat}
+              </Text>
+            </Paper>
+          ) : null}
         </Box>
       </SimpleGrid>
     </Stack>
   );
+
+  function convertToEmbedUrl(youtubeUrl: string): string {
+    try {
+      const url = new URL(youtubeUrl);
+      const videoId = url.searchParams.get("v");
+      if (!videoId) return youtubeUrl;
+      return `https://www.youtube.com/embed/${videoId}`;
+    } catch (err) {
+      console.error("Error converting YouTube URL to embed:", err);
+      return youtubeUrl;
+    }
+  }
 }
 
 export default Page;

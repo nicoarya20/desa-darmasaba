@@ -6,45 +6,17 @@ import { proxy } from "valtio";
 import { z } from "zod";
 
 const templateForm = z.object({
-  pencegahanKriminalitas: z.object({
-    programKeamanan: z.object({
-      nama: z.string().min(1, "Nama minimal 1 karakter"),
-      deskripsi: z.string().min(1, "Deskripsi minimal 1 karakter"),
-      slug: z.string().min(1, "Slug minimal 1 karakter"),
-    }),
-    tipsKeamanan: z.object({
-      judul: z.string().min(1, "Judul minimal 1 karakter"),
-      konten: z.string().min(1, "Konten minimal 1 karakter"),
-      slug: z.string().min(1, "Slug minimal 1 karakter"),
-    }),
-    videoKeamanan: z.object({
-      judul: z.string().min(1, "Judul minimal 1 karakter"),
-      deskripsi: z.string().min(1, "Deskripsi minimal 1 karakter"),
-      videoUrl: z.string().min(1, "Video URL minimal 1 karakter"),
-      slug: z.string().min(1, "Slug minimal 1 karakter"),
-    }),
-  }),
+  judul: z.string().min(1, "Judul minimal 1 karakter"),
+  deskripsi: z.string().min(1, "Deskripsi minimal 1 karakter"),
+  deskripsiSingkat: z.string().min(1, "Deskripsi singkat minimal 1 karakter"),
+  linkVideo: z.string().min(1, "Link video minimal 1 karakter"),
 });
 
 const defaultForm = {
-  pencegahanKriminalitas: {
-    programKeamanan: {
-      nama: "",
-      deskripsi: "",
-      slug: "",
-    },
-    tipsKeamanan: {
-      judul: "",
-      konten: "",
-      slug: "",
-    },
-    videoKeamanan: {
-      judul: "",
-      deskripsi: "",
-      videoUrl: "",
-      slug: "",
-    },
-  },
+  judul: "",
+  deskripsi: "",
+  deskripsiSingkat: "",
+  linkVideo: "",
 };
 
 const pencegahanKriminalitasState = proxy({
@@ -65,7 +37,7 @@ const pencegahanKriminalitasState = proxy({
         pencegahanKriminalitasState.create.loading = true;
         const res = await ApiFetch.api.keamanan.pencegahankriminalitas[
           "create"
-        ].post(pencegahanKriminalitasState.create.form.pencegahanKriminalitas);
+        ].post(pencegahanKriminalitasState.create.form);
         if (res.status === 200) {
           pencegahanKriminalitasState.findMany.load();
           return toast.success("success create");
@@ -82,11 +54,7 @@ const pencegahanKriminalitasState = proxy({
   findMany: {
     data: null as
       | Prisma.PencegahanKriminalitasGetPayload<{
-          include: {
-            programKeamanan: true;
-            tipsKeamanan: true;
-            videoKeamanan: true;
-          };
+          omit: { isActive: true };
         }>[]
       | null,
     page: 1,
@@ -125,11 +93,7 @@ const pencegahanKriminalitasState = proxy({
   },
   findUnique: {
     data: null as Prisma.PencegahanKriminalitasGetPayload<{
-      include: {
-        programKeamanan: true;
-        tipsKeamanan: true;
-        videoKeamanan: true;
-      };
+      omit: { isActive: true };
     }> | null,
     loading: false,
     async load(id: string) {
@@ -145,6 +109,30 @@ const pencegahanKriminalitasState = proxy({
       } catch (error) {
         console.error("Error fetching data:", error);
         pencegahanKriminalitasState.findUnique.data = null;
+      }
+    },
+  },
+  findFirst: {
+    data: null as Prisma.PencegahanKriminalitasGetPayload<{
+      omit: { isActive: true };
+    }> | null,
+    loading: false,
+    // findFirst.load()
+    async load() {
+      this.loading = true;
+      try {
+        const res = await ApiFetch.api.keamanan.pencegahankriminalitas["find-first"].get();
+
+        if (res.status === 200 && res.data?.success) {
+          this.data = res.data.data || null;
+        } else {
+          this.data = null;
+        }
+      } catch (err) {
+        console.error("Gagal fetch pencegahan kriminalitas terbaru:", err);
+        this.data = null;
+      } finally {
+        this.loading = false;
       }
     },
   },
@@ -213,24 +201,10 @@ const pencegahanKriminalitasState = proxy({
           const data = result.data;
           pencegahanKriminalitasState.update.id = data.id;
           pencegahanKriminalitasState.update.form = {
-            pencegahanKriminalitas: {
-              programKeamanan: {
-                nama: data.programKeamanan.nama,
-                deskripsi: data.programKeamanan.deskripsi,
-                slug: data.programKeamanan.slug,
-              },
-              tipsKeamanan: {
-                judul: data.tipsKeamanan.judul,
-                konten: data.tipsKeamanan.konten,
-                slug: data.tipsKeamanan.slug,
-              },
-              videoKeamanan: {
-                judul: data.videoKeamanan.judul,
-                deskripsi: data.videoKeamanan.deskripsi,
-                videoUrl: data.videoKeamanan.videoUrl,
-                slug: data.videoKeamanan.slug,
-              },
-            },
+            judul: data.judul,
+            deskripsi: data.deskripsi,
+            deskripsiSingkat: data.deskripsiSingkat,
+            linkVideo: data.linkVideo,
           };
           return data;
         } else {
@@ -266,40 +240,11 @@ const pencegahanKriminalitasState = proxy({
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              pencegahanKriminalitas: {
-                programKeamanan: {
-                  nama: pencegahanKriminalitasState.update.form
-                    .pencegahanKriminalitas.programKeamanan.nama,
-                  deskripsi:
-                    pencegahanKriminalitasState.update.form
-                      .pencegahanKriminalitas.programKeamanan.deskripsi,
-                  slug: pencegahanKriminalitasState.update.form
-                    .pencegahanKriminalitas.programKeamanan.slug,
-                },
-                tipsKeamanan: {
-                  judul:
-                    pencegahanKriminalitasState.update.form
-                      .pencegahanKriminalitas.tipsKeamanan.judul,
-                  konten:
-                    pencegahanKriminalitasState.update.form
-                      .pencegahanKriminalitas.tipsKeamanan.konten,
-                  slug: pencegahanKriminalitasState.update.form
-                    .pencegahanKriminalitas.tipsKeamanan.slug,
-                },
-                videoKeamanan: {
-                  judul:
-                    pencegahanKriminalitasState.update.form
-                      .pencegahanKriminalitas.videoKeamanan.judul,
-                  deskripsi:
-                    pencegahanKriminalitasState.update.form
-                      .pencegahanKriminalitas.videoKeamanan.deskripsi,
-                  videoUrl:
-                    pencegahanKriminalitasState.update.form
-                      .pencegahanKriminalitas.videoKeamanan.videoUrl,
-                  slug: pencegahanKriminalitasState.update.form
-                    .pencegahanKriminalitas.videoKeamanan.slug,
-                },
-              },
+              judul: pencegahanKriminalitasState.update.form.judul,
+              deskripsi: pencegahanKriminalitasState.update.form.deskripsi,
+              deskripsiSingkat:
+                pencegahanKriminalitasState.update.form.deskripsiSingkat,
+              linkVideo: pencegahanKriminalitasState.update.form.linkVideo,
             }),
           }
         );

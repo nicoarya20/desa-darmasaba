@@ -1,113 +1,146 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Flex, Paper, Skeleton, Stack, Text } from '@mantine/core';
-import { IconArrowBack, IconEdit, IconX } from '@tabler/icons-react';
-import { useRouter } from 'next/navigation';
+import { Box, Button, Flex, Paper, Skeleton, Stack, Text, Tooltip } from '@mantine/core';
+import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
+import { useRouter, useParams } from 'next/navigation';
 import { useState } from 'react';
 import { useShallowEffect } from '@mantine/hooks';
-import { useParams } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
 import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
 import pencegahanKriminalitasState from '../../../_state/keamanan/pencegahan-kriminalitas';
 
 function DetailPencegahanKriminalitas() {
-  const [modalHapus, setModalHapus] = useState(false)
-  const [selectedId, setSelectedId] = useState<string | null>(null)
+  const [modalHapus, setModalHapus] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const router = useRouter();
-  const params = useParams()
-  const kriminalitasState = useProxy(pencegahanKriminalitasState)
+  const params = useParams();
+  const kriminalitasState = useProxy(pencegahanKriminalitasState);
 
   useShallowEffect(() => {
-    kriminalitasState.findUnique.load(params?.id as string)
-  }, [])
+    kriminalitasState.findUnique.load(params?.id as string);
+  }, []);
 
   const handleDelete = () => {
     if (selectedId) {
-      kriminalitasState.delete.byId(selectedId)
-      setModalHapus(false)
-      setSelectedId(null)
-      router.push("/admin/keamanan/pencegahan-kriminalitas")
+      kriminalitasState.delete.byId(selectedId);
+      setModalHapus(false);
+      setSelectedId(null);
+      router.push("/admin/keamanan/pencegahan-kriminalitas");
     }
-  }
+  };
 
   if (!kriminalitasState.findUnique.data) {
     return (
       <Stack py={10}>
-        <Skeleton h={40} />
+        <Skeleton height={500} radius="md" />
       </Stack>
-    )
+    );
   }
+
+  const data = kriminalitasState.findUnique.data;
+
   return (
-    <Box>
-      <Box mb={10}>
-        <Button variant="subtle" onClick={() => router.back()}>
-          <IconArrowBack color={colors['blue-button']} size={25} />
-        </Button>
-      </Box>
-      <Paper w={{ base: "100%", md: "50%" }} bg={colors['white-1']} p={'md'}>
-        <Stack>
-          <Paper bg={colors['BG-trans']} p={'md'}>
-            <Text fz={"xl"} fw={"bold"}>Detail Pencegahan Kriminalitas</Text>
-            {kriminalitasState.findUnique.data ? (
-              <Paper key={kriminalitasState.findUnique.data.id} bg={colors['BG-trans']}>
-                <Stack gap={"xs"} py={'md'}>
-                  <Box>
-                    <Text fw={"bold"} fz={"lg"}>Judul Program Keamanan</Text>
-                    <Text fz={"lg"}>{kriminalitasState.findUnique.data?.programKeamanan.nama}</Text>
-                  </Box>
-                  <Box>
-                    <Text fw={"bold"} fz={"lg"}>Slug</Text>
-                    <Text fz={"lg"}>{kriminalitasState.findUnique.data?.programKeamanan.slug}</Text>
-                  </Box>
-                  <Box>
-                    <Text fw={"bold"} fz={"lg"}>Deskripsi</Text>
-                    <Text fz={"lg"} dangerouslySetInnerHTML={{ __html: kriminalitasState.findUnique.data?.programKeamanan.deskripsi || '' }} />
-                  </Box>
-                  <Box>
-                    <Text fw={"bold"} fz={"lg"}>Judul Tips Keamanan</Text>
-                    <Text fz={"lg"}>{kriminalitasState.findUnique.data?.tipsKeamanan.judul}</Text>
-                  </Box>
-                  <Box>
-                    <Text fw={"bold"} fz={"lg"}>Slug Tips Keamanan</Text>
-                    <Text fz={"lg"}>{kriminalitasState.findUnique.data?.tipsKeamanan.slug}</Text>
-                  </Box>
-                  <Box>
-                    <Text fw={"bold"} fz={"lg"}>Deskripsi Tips Keamanan</Text>
-                    <Text fz={"lg"} dangerouslySetInnerHTML={{ __html: kriminalitasState.findUnique.data?.tipsKeamanan.konten || '' }} />
-                  </Box>
-                  <Flex gap={"xs"} mt={10}>
-                    <Button
-                      onClick={() => {
-                        if (kriminalitasState.findUnique.data) {
-                          setSelectedId(kriminalitasState.findUnique.data.id);
-                          setModalHapus(true);
-                        }
-                      }}
-                      disabled={kriminalitasState.delete.loading || !kriminalitasState.findUnique.data}
-                      color={"red"}
-                    >
-                      <IconX size={20} />
-                    </Button>
-                    <Button
-                      onClick={() => {
-                        if (kriminalitasState.findUnique.data) {
-                          router.push(`/admin/keamanan/pencegahan-kriminalitas/${kriminalitasState.findUnique.data.id}/edit`);
-                        }
-                      }}
-                      disabled={!kriminalitasState.findUnique.data}
-                      color={"green"}
-                    >
-                      <IconEdit size={20} />
-                    </Button>
-                  </Flex>
-                </Stack>
-              </Paper>
-            ) : null}
+    <Box py={10}>
+      {/* Tombol Kembali */}
+      <Button
+        variant="subtle"
+        onClick={() => router.back()}
+        leftSection={<IconArrowBack size={24} color={colors['blue-button']} />}
+        mb={15}
+      >
+        Kembali
+      </Button>
+
+      {/* Detail */}
+      <Paper
+        withBorder
+        w={{ base: "100%", md: "50%" }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+      >
+        <Stack gap="md">
+          <Text fz="2xl" fw="bold" c={colors['blue-button']}>
+            Detail Pencegahan Kriminalitas
+          </Text>
+
+          <Paper bg="#ECEEF8" p="md" radius="md" shadow="xs">
+            <Stack gap="sm">
+              <Box>
+                <Text fz="lg" fw="bold">Judul</Text>
+                <Text fz="md" c="dimmed">{data?.judul || '-'}</Text>
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">Deskripsi Singkat</Text>
+                {data?.deskripsiSingkat ? (
+                  <Text fz="md" c="dimmed" dangerouslySetInnerHTML={{ __html: data.deskripsiSingkat }} />
+                ) : (
+                  <Text fz="sm" c="dimmed">Tidak ada deskripsi singkat</Text>
+                )}
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">Deskripsi</Text>
+                {data?.deskripsi ? (
+                  <Text fz="md" c="dimmed" dangerouslySetInnerHTML={{ __html: data.deskripsi }} />
+                ) : (
+                  <Text fz="sm" c="dimmed">Tidak ada deskripsi</Text>
+                )}
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">Video</Text>
+                {data?.linkVideo ? (
+                  <Box
+                    component="iframe"
+                    src={convertToEmbedUrl(data.linkVideo)}
+                    width="100%"
+                    height={300}
+                    allowFullScreen
+                    style={{ borderRadius: 8 }}
+                  />
+                ) : (
+                  <Text fz="sm" c="dimmed">Tidak ada video</Text>
+                )}
+              </Box>
+
+              {/* Tombol Aksi */}
+              <Flex gap="sm" mt="sm">
+                <Tooltip label="Hapus" withArrow position="top">
+                  <Button
+                    color="red"
+                    onClick={() => {
+                      setSelectedId(data.id);
+                      setModalHapus(true);
+                    }}
+                    variant="light"
+                    radius="md"
+                    size="md"
+                  >
+                    <IconTrash size={20} />
+                  </Button>
+                </Tooltip>
+
+                <Tooltip label="Edit" withArrow position="top">
+                  <Button
+                    color="green"
+                    onClick={() => router.push(`/admin/keamanan/pencegahan-kriminalitas/${data.id}/edit`)}
+                    variant="light"
+                    radius="md"
+                    size="md"
+                  >
+                    <IconEdit size={20} />
+                  </Button>
+                </Tooltip>
+              </Flex>
+            </Stack>
           </Paper>
         </Stack>
       </Paper>
 
-      {/* Modal Hapus */}
+      {/* Modal Konfirmasi Hapus */}
       <ModalKonfirmasiHapus
         opened={modalHapus}
         onClose={() => setModalHapus(false)}
@@ -116,6 +149,18 @@ function DetailPencegahanKriminalitas() {
       />
     </Box>
   );
+
+  function convertToEmbedUrl(youtubeUrl: string): string {
+    try {
+      const url = new URL(youtubeUrl);
+      const videoId = url.searchParams.get("v");
+      if (!videoId) return youtubeUrl;
+      return `https://www.youtube.com/embed/${videoId}`;
+    } catch (err) {
+      console.error("Error converting YouTube URL to embed:", err);
+      return youtubeUrl;
+    }
+  }
 }
 
 export default DetailPencegahanKriminalitas;

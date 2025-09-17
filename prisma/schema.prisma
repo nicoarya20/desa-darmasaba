@@ -1254,48 +1254,15 @@ model KontakDaruratToItem {
 
 // ========================================= PENCEGAHAN KRIMINALITAS ========================================= //
 model PencegahanKriminalitas {
-  id                String          @id @default(cuid())
-  programKeamanan   ProgramKeamanan @relation(fields: [programKeamananId], references: [id])
-  programKeamananId String
-  tipsKeamanan      TipsKeamanan    @relation(fields: [tipsKeamananId], references: [id])
-  tipsKeamananId    String
-  videoKeamanan     VideoKeamanan   @relation(fields: [videoKeamananId], references: [id])
-  videoKeamananId   String
-  createdAt         DateTime        @default(now())
-  updatedAt         DateTime        @updatedAt
-  deletedAt         DateTime        @default(now())
-  isActive          Boolean         @default(true)
-}
-
-model ProgramKeamanan {
-  id                     String                   @id @default(cuid())
-  nama                   String // contoh: "Ronda Malam"
-  deskripsi              String? // jika mau tambahkan info detail
-  slug                   String                   @unique
-  createdAt              DateTime                 @default(now())
-  updatedAt              DateTime                 @updatedAt
-  PencegahanKriminalitas PencegahanKriminalitas[]
-}
-
-model TipsKeamanan {
-  id                     String                   @id @default(cuid())
-  judul                  String
-  konten                 String
-  slug                   String
-  createdAt              DateTime                 @default(now())
-  updatedAt              DateTime                 @updatedAt
-  PencegahanKriminalitas PencegahanKriminalitas[]
-}
-
-model VideoKeamanan {
-  id                     String                   @id @default(cuid())
-  judul                  String
-  deskripsi              String?
-  videoUrl               String // link youtube atau embed url
-  slug                   String
-  createdAt              DateTime                 @default(now())
-  updatedAt              DateTime                 @updatedAt
-  PencegahanKriminalitas PencegahanKriminalitas[]
+  id                String           @id @default(cuid())
+  judul             String
+  deskripsi         String
+  deskripsiSingkat  String
+  linkVideo         String
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  deletedAt         DateTime         @default(now())
+  isActive          Boolean          @default(true)
 }
 
 // ========================================= LAPORAN PUBLIK ========================================= //
