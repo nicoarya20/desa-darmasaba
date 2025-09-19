@@ -55,7 +55,7 @@ function Page() {
               <Paper bg={colors['white-1']} withBorder radius="md" shadow="xs" p="lg">
                 <Stack gap={0}>
                   <Center>
-                    <Image src="/darmasaba-icon.png" w={{ base: 150, md: 250 }} alt="Logo Desa" />
+                    <Image loading='lazy' src="/darmasaba-icon.png" w={{ base: 150, md: 250 }} alt="Logo Desa" />
                   </Center>
                   <Paper
                     bg={colors['blue-button']}
@@ -102,7 +102,7 @@ function Page() {
               <Paper bg={colors['white-1']} withBorder radius="md" shadow="xs" p="lg">
                 <Stack gap={0}>
                   <Center>
-                    <Image src="/darmasaba-icon.png" w={{ base: 150, md: 250 }} alt="Logo Desa" />
+                    <Image loading='lazy' src="/darmasaba-icon.png" w={{ base: 150, md: 250 }} alt="Logo Desa" />
                   </Center>
                   <Paper
                     bg={colors['blue-button']}
@@ -152,7 +152,7 @@ function Page() {
               <Paper bg={colors['white-1']} withBorder radius="md" shadow="xs" p="lg">
                 <Stack gap={0}>
                   <Center>
-                    <Image src="/darmasaba-icon.png" w={{ base: 150, md: 250 }} alt="Logo Desa" />
+                    <Image loading='lazy' src="/darmasaba-icon.png" w={{ base: 150, md: 250 }} alt="Logo Desa" />
                   </Center>
                   <Paper
                     bg={colors['blue-button']}
@@ -199,7 +199,7 @@ function Page() {
               <Paper bg={colors['white-1']} withBorder radius="md" shadow="xs" p="lg">
                 <Stack gap={0}>
                   <Center>
-                    <Image src="/pudak-icon.png" w={{ base: 150, md: 250 }} alt="Maskot Desa" />
+                    <Image loading='lazy' src="/pudak-icon.png" w={{ base: 150, md: 250 }} alt="Maskot Desa" />
                   </Center>
                   <Paper
                     bg={colors['blue-button']}
@@ -228,6 +228,7 @@ function Page() {
                             fit="cover"
                             radius="md"
                             style={{ border: '1px solid #ccc' }}
+                            loading='lazy'
                           />
                         </Center>
                         <Text ta="center" mt="xs" fw="bold">{img.label}</Text>

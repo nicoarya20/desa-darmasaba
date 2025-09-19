@@ -135,6 +135,7 @@ function CreateProgramInovasi() {
                   alt="Preview Gambar"
                   radius="md"
                   style={{ maxHeight: 200, objectFit: 'contain', border: '1px solid #ddd' }}
+                  loading="lazy"
                 />
               </Box>
             )}

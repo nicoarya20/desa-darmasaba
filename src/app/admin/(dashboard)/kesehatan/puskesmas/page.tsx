@@ -105,7 +105,7 @@ function ListPuskesmas({ search }: { search: string }) {
                     </TableTd>
                     <TableTd>{item.alamat}</TableTd>
                     <TableTd>
-                      <Image w={100} src={item.image.link} alt="image" radius="md" />
+                      <Image w={100} src={item.image.link} alt="image" radius="md" loading="lazy"/>
                     </TableTd>
                     <TableTd>
                       <Button

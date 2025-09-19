@@ -20,14 +20,18 @@ async function posisiOrganisasiFindMany(context: Context) {
   try {
     const whereClause = {
       ...where,
-      isActive: true
+      isActive: true,
     };
 
     const [data, total] = await Promise.all([
       prisma.posisiOrganisasiPPID.findMany({
         where: whereClause,
-        skip: (page - 1) * limit,
-        take: limit,
+        ...(limit === 0
+          ? {} // kalau limit = 0 → ambil semua data (tanpa skip & take)
+          : {
+              skip: (page - 1) * limit,
+              take: limit,
+            }),
         orderBy: { hierarki: "asc" },
       }),
       prisma.posisiOrganisasiPPID.count({ where: whereClause }),
@@ -35,15 +39,18 @@ async function posisiOrganisasiFindMany(context: Context) {
 
     return {
       success: true,
-      message: "Berhasil mengambil data posisi organisasi dengan pagination",
+      message:
+        limit === 0
+          ? "Berhasil mengambil semua data posisi organisasi"
+          : "Berhasil mengambil data posisi organisasi dengan pagination",
       data: data.map((item: any) => ({
         id: item.id,
         nama: item.nama,
         deskripsi: item.deskripsi,
         hierarki: item.hierarki,
       })),
-      page,
-      totalPages: Math.ceil(total / limit),
+      page: limit === 0 ? 1 : page,
+      totalPages: limit === 0 ? 1 : Math.ceil(total / limit),
       total,
     };
   } catch (e) {

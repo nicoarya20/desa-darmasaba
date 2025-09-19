@@ -2,7 +2,7 @@
 import colors from '@/con/colors';
 import { Box, Button, Center, Group, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title, Tooltip } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { IconDeviceImac, IconPlus, IconSearch } from '@tabler/icons-react';
+import { IconDeviceImacCog, IconPlus, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
@@ -82,12 +82,14 @@ function ListPerbekelDariMasaKeMasa({ search }: { search: string }) {
                     </TableTd>
                     <TableTd>
                       <Button
+                        size="xs"
+                        radius="md"
                         variant="light"
                         color="blue"
+                        leftSection={<IconDeviceImacCog size={16} />}
                         onClick={() => router.push(`/admin/desa/profile/profile-perbekel-dari-masa-ke-masa/${item.id}`)}
                       >
-                        <IconDeviceImac size={20} />
-                        <Text ml={5}>Detail</Text>
+                        Detail
                       </Button>
                     </TableTd>
                   </TableTr>

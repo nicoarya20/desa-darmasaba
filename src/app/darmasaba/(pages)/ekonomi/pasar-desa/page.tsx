@@ -117,6 +117,7 @@ function Page() {
                         h={200}
                         w='100%'
                         style={{ objectFit: 'cover' }}
+                        loading="lazy"
                       />
                       <Text py={10} fw={'bold'} fz={'lg'}>{v.nama}</Text>
                       <Text fz={'md'}>Rp {v.harga.toLocaleString('id-ID')}</Text>

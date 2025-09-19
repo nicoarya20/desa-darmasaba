@@ -170,6 +170,7 @@ function CreateSuratKeterangan() {
                   alt="Preview Gambar Utama"
                   radius="md"
                   style={{ maxHeight: 200, objectFit: 'contain', border: '1px solid #ddd' }}
+                  loading="lazy"
                 />
               </Box>
             )}
@@ -219,6 +220,7 @@ function CreateSuratKeterangan() {
                   alt="Preview Gambar Tambahan"
                   radius="md"
                   style={{ maxHeight: 200, objectFit: 'contain', border: '1px solid #ddd' }}
+                  loading="lazy"
                 />
               </Box>
             ) : (

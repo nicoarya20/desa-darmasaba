@@ -90,6 +90,7 @@ function DetailTipsKeamanan() {
                     h={150}
                     radius="md"
                     fit="cover"
+                    loading="lazy"
                   />
                 ) : (
                   <Text fz="sm" c="dimmed">Tidak ada gambar</Text>

@@ -72,6 +72,7 @@ function Page() {
                 alt={state.findUnique.data.name || 'Prestasi'} 
                 w={"100%"} 
                 style={{ maxHeight: '500px', objectFit: 'cover' }}
+                loading="lazy"
               />
             )}
             <Box mt="md">

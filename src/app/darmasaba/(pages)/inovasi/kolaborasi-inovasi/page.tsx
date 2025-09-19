@@ -122,7 +122,7 @@ function Page() {
             <Text ta={'center'} fz={'h4'}>Kami berkolaborasi dengan berbagai mitra dari berbagai sektor untuk mewujudkan visi Smart Village Darmasaba.</Text>
           </Box>
           <Center>
-            <Image src={'/api/img/logoukm-kolaborasiinvoasi.png'} alt='' w={{ base: 500, md: 650 }} />
+            <Image src={'/api/img/logoukm-kolaborasiinvoasi.png'} alt='' w={{ base: 500, md: 650 }} loading="lazy"/>
           </Center>
         </Stack>
       </Box>

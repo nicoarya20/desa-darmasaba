@@ -73,6 +73,7 @@ function DetailProgramInovasi() {
                     alt="Gambar Program" 
                     radius="md"
                     style={{ maxWidth: '100%', maxHeight: 300, objectFit: 'contain' }}
+                    loading="lazy"
                   />
                 ) : (
                   <Text fz="md" c="dimmed">-</Text>

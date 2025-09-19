@@ -78,6 +78,7 @@ function Page() {
               style={{
                 boxShadow: '0 0 25px rgba(0, 190, 255, 0.25)',
               }}
+              loading="lazy"
             />
           )}
 

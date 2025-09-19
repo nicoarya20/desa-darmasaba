@@ -50,6 +50,7 @@ function InformasiDesa() {
                     fit="cover"
                     height={250}
                     maw={600}
+                    loading="lazy"
                   />
                 </GridCol>
                 <GridCol span={{ md: 6, base: 12 }}>
@@ -74,6 +75,7 @@ function InformasiDesa() {
                         alt={item.judul}
                         height={160} // gambar fix height
                         fit="cover"
+                        loading="lazy"
                       />
                     </Card.Section>
                     <Stack gap="xs" mt="sm">

@@ -77,6 +77,7 @@ function DetailKeamananLingkungan() {
                   w={{ base: 150, md: 490 }}
                   src={data?.image?.link}
                   alt="gambar keamanan lingkungan"
+                  loading="lazy"
                 />
               </Box>
 

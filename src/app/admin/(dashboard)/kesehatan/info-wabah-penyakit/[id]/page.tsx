@@ -104,6 +104,7 @@ function DetailInfoWabahPenyakit() {
                     alt="gambar wabah"
                     radius="md"
                     mt="xs"
+                    loading="lazy"
                   />
                 ) : (
                   <Text fz="md" c="dimmed">-</Text>

@@ -110,7 +110,7 @@ function ListKontakDarurat({ search }: { search: string }) {
                       <Text truncate fz="sm" c="dimmed" lineClamp={1} dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
                     </TableTd>
                     <TableTd>
-                      <Image w={100} src={item.image?.link} alt="image" radius="md" />
+                      <Image w={100} src={item.image?.link} alt="image" radius="md" loading="lazy"/>
                     </TableTd>
                     <TableTd>
                       <Button

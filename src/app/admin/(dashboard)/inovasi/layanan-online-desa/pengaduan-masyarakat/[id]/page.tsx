@@ -102,7 +102,7 @@ function DetailPengaduanMasyarakat() {
                 </Box>
                 <Box>
                   <Text fw={"bold"} fz={"lg"}>Gambar</Text>
-                  <Image w={{ base: 150, md: 150, lg: 150 }} src={pengaduanState.pengaduanMasyarakat.findUnique.data?.image?.link} alt="gambar" />
+                  <Image w={{ base: 150, md: 150, lg: 150 }} src={pengaduanState.pengaduanMasyarakat.findUnique.data?.image?.link} alt="gambar" loading="lazy"/>
                 </Box>
               </Stack>
             </Paper>

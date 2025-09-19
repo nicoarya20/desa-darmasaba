@@ -69,7 +69,7 @@ function Content({ searchQuery }: ContentProps) {
         state.dataPerpustakaan.findMany.data.length === 0 ? (
           <Center py="xl">
             <Stack gap="xs" align="center">
-              <Image src="/empty-books.svg" alt="Kosong" w={140} h="auto" />
+              <Image loading="lazy" src="/empty-books.svg" alt="Kosong" w={140} h="auto" />
               <Text c="dimmed" fz="sm">Belum ada buku yang tersedia</Text>
             </Stack>
           </Center>
@@ -108,6 +108,7 @@ function Content({ searchQuery }: ContentProps) {
                         fit="contain"
                         fallbackSrc="/placeholder-book.jpg"
                         radius="md"
+                        loading="lazy"
                       />
                     </Center>
                     <Stack gap={4} align="center">

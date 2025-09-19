@@ -101,7 +101,7 @@ function ListKategoriPrestasi({ search }: { search: string }) {
                       <Tooltip label="Edit" withArrow position="top">
                         <Button
                           variant="light"
-                          color="blue"
+                          color="green"
                           size="sm"
                           onClick={() => router.push(`/admin/landing-page/prestasi-desa/kategori-prestasi-desa/${item.id}`)}
                         >

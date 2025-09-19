@@ -87,6 +87,7 @@ function DetailSDGSDesa() {
                     h={200}
                     radius="md"
                     fit="contain"
+                    loading="lazy"
                   />
                 ) : (
                   <Text fz="sm" c="dimmed">Tidak ada gambar</Text>

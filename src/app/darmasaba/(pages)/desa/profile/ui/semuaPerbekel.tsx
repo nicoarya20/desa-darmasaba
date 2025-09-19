@@ -72,6 +72,7 @@ function SemuaPerbekel() {
                     fit="cover"
                     h="100%"
                     w="100%"
+                    loading="lazy"
                   />
                 </Box>
 

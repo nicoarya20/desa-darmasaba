@@ -129,6 +129,7 @@ function ListMitraKolaborasi({ search }: { search: string }) {
                         objectFit: 'cover',
                         objectPosition: 'center'
                       }}
+                      loading="lazy"
                     />
                   </Box>
                 </TableTd>

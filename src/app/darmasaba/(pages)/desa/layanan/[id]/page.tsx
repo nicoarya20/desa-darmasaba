@@ -95,6 +95,7 @@ function Page() {
                 maw={500}
                 mx="auto"
                 style={{ boxShadow: '0 0 20px rgba(28,110,164,0.2)' }}
+                loading="lazy"
               />
             </Center>
           )}

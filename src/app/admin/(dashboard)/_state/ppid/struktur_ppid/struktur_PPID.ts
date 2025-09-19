@@ -352,17 +352,19 @@ const posisiOrganisasi = proxy({
     totalPages: 1,
     loading: false,
     search: "",
-   load: async (page = 1, limit = 10, search = "") => {
-      posisiOrganisasi.findMany.loading = true; // ✅ Akses langsung via nama path
+    load: async (page = 1, limit?: number, search = "") => {
+      const appliedLimit = limit ?? 10;
       posisiOrganisasi.findMany.page = page;
       posisiOrganisasi.findMany.search = search;
-  
+
       try {
-        const query: any = { page, limit };
+        const query: any = { page, limit: appliedLimit };
         if (search) query.search = search;
-    
-        const res = await ApiFetch.api.ppid.strukturppid.posisiorganisasi["find-many"].get({ query });
-    
+
+        const res = await ApiFetch.api.ppid.strukturppid.posisiorganisasi[
+          "find-many"
+        ].get({ query });
+
         if (res.status === 200 && res.data?.success) {
           posisiOrganisasi.findMany.data = res.data.data ?? [];
           posisiOrganisasi.findMany.totalPages = res.data.totalPages ?? 1;

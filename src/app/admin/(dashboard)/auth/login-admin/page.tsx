@@ -51,7 +51,7 @@ function Login() {
                   Login
                 </Title>
                 <Center>
-                  <Image src={"/darmasaba-icon.png"} alt="" w={80} />
+                  <Image loading="lazy" src={"/darmasaba-icon.png"} alt="" w={80} />
                 </Center>
               </Box>
               <Box>

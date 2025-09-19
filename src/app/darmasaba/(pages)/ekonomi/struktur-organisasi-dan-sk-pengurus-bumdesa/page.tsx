@@ -14,7 +14,7 @@ function Page() {
       </Text>
       <Box px={{ base: "md", md: 100 }}>
         <Stack gap={'lg'} justify='center'>
-          <Image src={'/api/img/bpddarmasaba.png'} alt='' />
+          <Image src={'/api/img/bpddarmasaba.png'} alt='' loading="lazy"/>
         </Stack>
       </Box>
     </Stack>

@@ -46,7 +46,7 @@ function Footer() {
                   <Group justify="apart" align="center" mt="lg">
                     <Text c="#F3F2EC" ta="center" fz="md" fw={700} style={{ fontStyle: 'italic' }}>&quot;Desa Kuat, Warga Sejahtera!&quot;</Text>
                     <ActionIcon size={80} radius="xl" variant="transparent">
-                      <Image src="/chatbot-removebg-preview.png" alt="Logo Desa" width={80} height={80} />
+                      <Image src="/chatbot-removebg-preview.png" alt="Logo Desa" width={80} height={80} loading="lazy"/>
                     </ActionIcon>
                   </Group>
                 </Stack>

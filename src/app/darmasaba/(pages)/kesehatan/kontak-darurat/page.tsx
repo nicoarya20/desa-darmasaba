@@ -107,6 +107,7 @@ function Page() {
                     h={140}
                     fit="contain"
                     radius="md"
+                    loading="lazy"
                   />
                   <Text ta="center" fw={700} fz="lg" c={colors['blue-button']}>
                     {v.name}

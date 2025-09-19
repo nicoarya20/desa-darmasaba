@@ -131,6 +131,7 @@ function CreatePrestasiDesa() {
                     alt="Pratinjau gambar prestasi"
                     fit="cover"
                     style={{ width: '100%', height: 'auto' }}
+                    loading='lazy'
                   />
                 </Box>
               </Box>

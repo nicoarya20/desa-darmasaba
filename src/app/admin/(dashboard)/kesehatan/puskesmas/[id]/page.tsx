@@ -86,7 +86,7 @@ function DetailPuskesmas() {
               <Box>
                 <Text fz="lg" fw="bold">Gambar</Text>
                 {data?.image?.link ? (
-                  <Image src={data.image.link} alt="gambar" radius="md" />
+                  <Image src={data.image.link} alt="gambar" radius="md" loading="lazy"/>
                 ) : (
                   <Text fz="md" c="dimmed">-</Text>
                 )}

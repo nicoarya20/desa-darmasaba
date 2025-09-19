@@ -114,7 +114,7 @@ function ListBerita({ search }: { search: string }) {
                         style={{ borderRadius: 8, overflow: 'hidden' }}
                       >
                         {item.image?.link ? (
-                          <Image src={item.image.link} alt="gambar" fit="cover" />
+                          <Image loading='lazy' src={item.image.link} alt="gambar" fit="cover" />
                         ) : (
                           <Box bg={colors['blue-button']} w="100%" h="100%" />
                         )}

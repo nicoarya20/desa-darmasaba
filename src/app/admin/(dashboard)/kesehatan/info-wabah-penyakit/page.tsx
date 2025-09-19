@@ -115,7 +115,7 @@ function ListInfoWabahPenyakit({ search }: { search: string }) {
                       </Text>
                     </TableTd>
                     <TableTd>
-                      <Image w={100} src={item.image?.link} alt="image" radius="md" />
+                      <Image w={100} src={item.image?.link} alt="image" radius="md" loading="lazy"/>
                     </TableTd>
                     <TableTd>
                       <Button

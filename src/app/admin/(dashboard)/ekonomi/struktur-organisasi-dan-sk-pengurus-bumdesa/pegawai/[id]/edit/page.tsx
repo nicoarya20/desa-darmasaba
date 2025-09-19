@@ -208,6 +208,7 @@ export default function EditPegawai() {
                   fit="cover"
                   radius="sm"
                   mt="md"
+                  loading="lazy"
                 />
               )}
             </Box>

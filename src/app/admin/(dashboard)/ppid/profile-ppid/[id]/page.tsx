@@ -28,6 +28,7 @@ function EditProfilePPID() {
 
   // Load data on mount
   useEffect(() => {
+
     const loadData = async () => {
       const id = params?.id as string;
       if (!id) {
@@ -230,6 +231,7 @@ function EditProfilePPID() {
                         borderRadius: '8px',
                         border: '1px solid #ddd',
                       }}
+                      loading='lazy'
                     />
                   </Box>
                 )}

@@ -60,7 +60,7 @@ function DetailPegawai() {
               <Box>
                 <Text fz={"lg"} fw={"bold"}>Image</Text>
                 {statePegawai.findUnique.data?.image?.link ? (
-                  <Image src={statePegawai.findUnique.data?.image?.link} alt='' />
+                  <Image src={statePegawai.findUnique.data?.image?.link} alt='' loading="lazy" />
                 ) : (
                   <Text fz={"md"} c="dimmed">Tidak ada gambar</Text>
                 )}

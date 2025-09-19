@@ -2,7 +2,7 @@
 import colors from '@/con/colors';
 import { Box, Button, Center, Group, Image, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title, Tooltip } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { IconDeviceImac, IconPlus, IconSearch } from '@tabler/icons-react';
+import { IconDeviceImacCog, IconPlus, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
@@ -68,7 +68,7 @@ function ListMediaSosial({ search }: { search: string }) {
               <TableTr>
                 <TableTh style={{ width: '25%' }}>Nama Media Sosial / Kontak</TableTh>
                 <TableTh style={{ width: '20%' }}>Gambar</TableTh>
-                <TableTh style={{ width: '20%' }}>Icon / No. Telepon</TableTh>
+                <TableTh style={{ width: '20%' }}>Link / No. Telepon</TableTh>
                 <TableTh style={{ width: '15%' }}>Aksi</TableTh>
               </TableTr>
             </TableThead>
@@ -76,31 +76,35 @@ function ListMediaSosial({ search }: { search: string }) {
               {filteredData.length > 0 ? (
                 filteredData.map((item) => (
                   <TableTr key={item.id}>
-                    <TableTd style={{ width: '25%',  }}>
+                    <TableTd style={{ width: '25%', }}>
                       <Text fw={500} truncate="end" lineClamp={1}>{item.name}</Text>
                     </TableTd>
-                    <TableTd style={{ width: '20%',  }}>
-                        <Box w={50} h={50} style={{ borderRadius: 8, overflow: 'hidden',  }}>
-                          {item.image?.link ? (
-                            <Image src={item.image.link} alt={item.name} fit="cover" />
-                          ) : (
-                            <Box bg={colors['blue-button']} w="100%" h="100%" />
-                          )}
-                        </Box>
+                    <TableTd style={{ width: '20%', }}>
+                      <Box w={50} h={50} style={{ borderRadius: 8, overflow: 'hidden', }}>
+                        {item.image?.link ? (
+                          <Image loading='lazy' src={item.image.link} alt={item.name} fit="cover" />
+                        ) : (
+                          <Box bg={colors['blue-button']} w="100%" h="100%" />
+                        )}
+                      </Box>
                     </TableTd>
-                    <TableTd style={{ width: '20%',  }}>
-                      <Text truncate fz="sm" c="dimmed">
-                        {item.iconUrl || item.noTelp || '-'}
-                      </Text>
+                    <TableTd style={{ width: '20%', }}>
+                      <Box w={250}>
+                        <Text truncate fz="sm" c="dimmed" lineClamp={1}>
+                          {item.iconUrl || item.noTelp || '-'}
+                        </Text>
+                      </Box>
                     </TableTd>
-                    <TableTd style={{ width: '15%'}}>
+                    <TableTd style={{ width: '15%' }}>
                       <Button
+                        size="xs"
+                        radius="md"
                         variant="light"
                         color="blue"
+                        leftSection={<IconDeviceImacCog size={16} />}
                         onClick={() => router.push(`/admin/landing-page/profile/media-sosial/${item.id}`)}
                       >
-                        <IconDeviceImac size={20} />
-                        <Text ml={5}>Detail</Text>
+                        Detail
                       </Button>
                     </TableTd>
                   </TableTr>

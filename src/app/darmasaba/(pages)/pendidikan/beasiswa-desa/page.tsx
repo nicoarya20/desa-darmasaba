@@ -76,7 +76,7 @@ function Page() {
             </Group>
           </Box>
           <Box>
-            <Image alt="Beasiswa Desa" src="/api/img/beasiswa-siswa.png" radius="lg" />
+            <Image alt="Beasiswa Desa" src="/api/img/beasiswa-siswa.png" radius="lg" loading="lazy"/>
           </Box>
         </SimpleGrid>
 

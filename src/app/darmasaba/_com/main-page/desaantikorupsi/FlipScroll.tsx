@@ -28,7 +28,7 @@ const FlipOnScroll = () => {
 
         }}
       >
-        <Image src={"https://awsimages.detik.net.id/community/media/visual/2023/04/14/gambar-pemandangan-6_169.jpeg?w=1200"} alt="a" />
+        <Image src={"https://awsimages.detik.net.id/community/media/visual/2023/04/14/gambar-pemandangan-6_169.jpeg?w=1200"} alt="a" loading="lazy"/>
       </motion.div>
 
     </div>

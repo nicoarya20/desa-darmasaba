@@ -101,6 +101,7 @@ export default function SDGS() {
                           w={mobile ? 90 : 110}
                           h={mobile ? 90 : 110}
                           fit="contain"
+                          loading="lazy"
                         />
                       </Box>
                     </Center>

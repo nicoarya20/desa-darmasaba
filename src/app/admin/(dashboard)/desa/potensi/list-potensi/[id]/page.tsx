@@ -90,6 +90,7 @@ export default function DetailPotensi() {
                     h={200}
                     radius="md"
                     fit="cover"
+                    loading='lazy'
                   />
                 ) : (
                   <Text fz="sm" c="dimmed">Tidak ada gambar</Text>

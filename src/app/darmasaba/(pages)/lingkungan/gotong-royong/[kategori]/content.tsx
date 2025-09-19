@@ -65,6 +65,7 @@ export default function Content({ kategori }: { kategori: string }) {
                     fit="cover"
                     radius="md"
                     style={{ borderBottomRightRadius: 0, borderTopRightRadius: 0 }}
+                    loading="lazy"
                   />
                 </GridCol>
                 <GridCol span={{ base: 12, md: 6 }} p="xl">
@@ -128,7 +129,7 @@ export default function Content({ kategori }: { kategori: string }) {
                   style={{ cursor: 'pointer' }}
                 >
                   <Card.Section>
-                    <Image src={item.image?.link} height={200} alt={item.judul} fit="cover" />
+                    <Image src={item.image?.link} height={200} alt={item.judul} fit="cover" loading="lazy"/>
                   </Card.Section>
                   <Badge color="blue" variant="light" mt="md">
                     {item.kategoriKegiatan?.nama || kategori}

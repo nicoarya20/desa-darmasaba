@@ -31,6 +31,7 @@ function VisiMisiDesa() {
           alt="Lambang Desa Darmasaba"
           w={{ base: 160, md: 240 }}
           radius="md"
+          loading="lazy"
         />
 
         <Paper

@@ -95,6 +95,7 @@ function DetailPasarDesa() {
                     h={120}
                     radius="md"
                     fit="cover"
+                    loading="lazy"
                   />
                 ) : (
                   <Text fz="sm" c="dimmed">Tidak ada gambar</Text>

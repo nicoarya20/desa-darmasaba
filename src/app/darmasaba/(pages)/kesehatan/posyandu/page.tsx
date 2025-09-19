@@ -98,6 +98,7 @@ export default function Page() {
                       w="100%"
                       h={180}
                       fit="cover"
+                      loading="lazy"
                     />
                   </Center>
                   <Flex align="center" gap="xs">

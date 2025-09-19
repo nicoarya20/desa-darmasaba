@@ -141,6 +141,7 @@ function CreatePegawai() {
                   fit="cover"
                   radius="sm"
                   mt="md"
+                  loading="lazy"
                 />
               )}
             </Box>

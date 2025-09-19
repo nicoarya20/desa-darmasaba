@@ -48,7 +48,7 @@ function Page() {
                 <Stack gap="xl">
                   <Box>
                     <Center mb="md">
-                      <Image src="/darmasaba-icon.png" w={{ base: 80, md: 130 }} alt="Logo Desa Darmasaba" />
+                      <Image src="/darmasaba-icon.png" w={{ base: 80, md: 130 }} alt="Logo Desa Darmasaba" loading='lazy' />
                     </Center>
                     <Text
                       ta="center"

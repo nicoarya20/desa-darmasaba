@@ -74,6 +74,7 @@ function Page() {
             fit="contain"
             mah={400}
             fallbackSrc="https://placehold.co/600x400?text=Tidak+Ada+Gambar"
+            loading="lazy"
           />
         </Stack>
       </Container>

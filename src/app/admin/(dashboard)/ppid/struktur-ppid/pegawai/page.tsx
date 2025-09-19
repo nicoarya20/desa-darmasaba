@@ -59,10 +59,10 @@ function ListPegawaiPPID({ search }: { search: string }) {
           <Group justify="space-between" mb="md">
             <Title order={4}>Daftar Pegawai PPID</Title>
             <Tooltip label="Tambah Pegawai Baru" withArrow>
-              <Button 
-                leftSection={<IconPlus size={18} />} 
-                color="blue" 
-                variant="light" 
+              <Button
+                leftSection={<IconPlus size={18} />}
+                color="blue"
+                variant="light"
                 onClick={() => router.push('/admin/ppid/struktur-ppid/pegawai/create')}
               >
                 Tambah Baru
@@ -82,10 +82,10 @@ function ListPegawaiPPID({ search }: { search: string }) {
         <Group justify="space-between" mb="md">
           <Title order={4}>Daftar Pegawai PPID</Title>
           <Tooltip label="Tambah Pegawai Baru" withArrow>
-            <Button 
-              leftSection={<IconPlus size={18} />} 
-              color="blue" 
-              variant="light" 
+            <Button
+              leftSection={<IconPlus size={18} />}
+              color="blue"
+              variant="light"
               onClick={() => router.push('/admin/ppid/struktur-ppid/pegawai/create')}
             >
               Tambah Baru
@@ -152,12 +152,14 @@ function ListPegawaiPPID({ search }: { search: string }) {
                   </TableTd>
                   <TableTd>
                     <Button
+                      size="xs"
+                      radius="md"
                       variant="light"
                       color="blue"
+                      leftSection={<IconDeviceImacCog size={16} />}
                       onClick={() => router.push(`/admin/ppid/struktur-ppid/pegawai/${item.id}`)}
-                      size="sm"
                     >
-                      <IconDeviceImacCog size={20} />
+                      Detail
                     </Button>
                   </TableTd>
                 </TableTr>

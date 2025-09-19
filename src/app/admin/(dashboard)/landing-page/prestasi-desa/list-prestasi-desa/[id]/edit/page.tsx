@@ -36,6 +36,7 @@ function EditPrestasiDesa() {
   })
 
   useEffect(() => {
+    prestasiState.kategoriPrestasi.findMany.load()
     const loadDesaAntiKorupsi = async () => {
       const id = params?.id as string;
       if (!id) return;
@@ -223,6 +224,7 @@ function EditPrestasiDesa() {
                   alt="Preview Gambar"
                   radius="md"
                   style={{ maxHeight: 220, objectFit: 'contain', border: `1px solid ${colors['blue-button']}` }}
+                  loading='lazy'
                 />
               </Box>
             )}

@@ -34,6 +34,7 @@ export default async function pegawaiUpdate(context: Context) {
       imageId,
       alamat,
       posisiId,
+      isActive,
     } = body;
 
     if (!id) {
@@ -102,7 +103,8 @@ export default async function pegawaiUpdate(context: Context) {
         imageId,
         telepon,
         alamat,
-        posisiId
+        posisiId,
+        isActive,
       },
       include: {
         image: true,

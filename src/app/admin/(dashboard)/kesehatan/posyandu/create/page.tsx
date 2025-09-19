@@ -144,6 +144,7 @@ function CreatePosyandu() {
                    objectFit: 'contain',
                    border: '1px solid #ddd',
                  }}
+                 loading="lazy"
                />
              </Box>
            )}

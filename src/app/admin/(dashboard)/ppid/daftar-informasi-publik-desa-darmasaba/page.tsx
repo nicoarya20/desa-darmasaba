@@ -81,8 +81,8 @@ function ListDaftarInformasi({ search }: { search: string }) {
                 <TableTr>
                   <TableTh style={{ width: '5%', textAlign: 'center' }}>No</TableTh>
                   <TableTh style={{ width: '25%' }}>Jenis Informasi</TableTh>
-                  <TableTh style={{ width: '60%' }}>Deskripsi</TableTh>
-                  <TableTh style={{ width: '10%', textAlign: 'center' }}>Aksi</TableTh>
+                  <TableTh style={{ width: '40%' }}>Deskripsi</TableTh>
+                  <TableTh style={{ width: '20%', textAlign: 'center' }}>Aksi</TableTh>
                 </TableTr>
               </TableThead>
               <TableTbody>
@@ -93,7 +93,9 @@ function ListDaftarInformasi({ search }: { search: string }) {
                     </TableTd>
                     <TableTd>
                       <Tooltip label={item.jenisInformasi} position="top-start" openDelay={500}>
-                        <Text fw={500} lineClamp={1}>{item.jenisInformasi}</Text>
+                        <Box w={200}>
+                          <Text fw={500} lineClamp={1}>{item.jenisInformasi}</Text>
+                        </Box>
                       </Tooltip>
                     </TableTd>
                     <TableTd>
@@ -104,20 +106,24 @@ function ListDaftarInformasi({ search }: { search: string }) {
                         multiline
                         maw={400}
                       >
-                        <Text lineClamp={1} fz="sm" c="dimmed">
-                          {item.deskripsi?.replace(/<[^>]*>?/gm, '').substring(0, 80) + '...'}
-                        </Text>
+                        <Box w={200}>
+                          <Text lineClamp={1} fz="sm" c="dimmed">
+                            {item.deskripsi?.replace(/<[^>]*>?/gm, '').substring(0, 80) + '...'}
+                          </Text>
+                        </Box>
                       </Tooltip>
                     </TableTd>
                     <TableTd style={{ textAlign: 'center' }}>
                       <Tooltip label="Lihat Detail" withArrow>
                         <Button
+                          size="xs"
+                          radius="md"
                           variant="light"
                           color="blue"
-                          size="sm"
+                          leftSection={<IconDeviceImacCog size={16} />}
                           onClick={() => router.push(`/admin/ppid/daftar-informasi-publik-desa-darmasaba/${item.id}`)}
                         >
-                          <IconDeviceImacCog size={20} />
+                          Detail
                         </Button>
                       </Tooltip>
                     </TableTd>

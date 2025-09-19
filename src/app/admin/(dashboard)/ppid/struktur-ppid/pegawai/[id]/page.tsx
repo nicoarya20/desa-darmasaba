@@ -17,6 +17,7 @@ function DetailPegawai() {
   const router = useRouter();
 
   useShallowEffect(() => {
+    stateStrukturPPID.posisiOrganisasi.findMany.load();
     statePegawai.findUnique.load(params?.id as string);
   }, []);
 
@@ -117,6 +118,7 @@ function DetailPegawai() {
                       border: '1px solid #e0e0e0',
                       borderRadius: '8px',
                     }}
+                    loading='lazy'
                   />
                 ) : (
                   <Text fz="sm" c="dimmed" mt="sm">Tidak ada foto profil</Text>

@@ -60,7 +60,7 @@ function VisiMisiPPIDList() {
             <Grid>
               <GridCol span={12}>
                 <Center>
-                  <Image src="/darmasaba-icon.png" w={{ base: 100, md: 150 }} alt="Logo PPID" />
+                  <Image loading='lazy' src="/darmasaba-icon.png" w={{ base: 100, md: 150 }} alt="Logo PPID" />
                 </Center>
               </GridCol>
               <GridCol span={12}>

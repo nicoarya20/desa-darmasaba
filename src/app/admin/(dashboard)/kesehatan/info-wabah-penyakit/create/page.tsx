@@ -168,6 +168,7 @@ function CreateInfoWabahPenyakit() {
                     borderRadius: '8px',
                     border: '1px solid #ddd',
                   }}
+                  loading="lazy"
                 />
               </Box>
             )}

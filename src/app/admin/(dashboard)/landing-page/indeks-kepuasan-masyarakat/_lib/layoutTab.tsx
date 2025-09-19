@@ -85,7 +85,7 @@ function LayoutTabsKepuasan({ children }: { children: React.ReactNode }) {
           </TabsList>
         </ScrollArea>
         {tabs.map((e, i) => (
-          <TabsPanel key={i} value={e.value} mt="md">
+          <TabsPanel key={i} value={e.value}>
             <></>
           </TabsPanel>
         ))}

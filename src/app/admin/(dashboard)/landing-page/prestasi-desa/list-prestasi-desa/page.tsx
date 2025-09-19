@@ -109,12 +109,14 @@ function ListPrestasi({ search }: { search: string }) {
                     <TableTd style={{ width: '25%', textAlign: 'center' }}>
                       <Tooltip label="Kelola Prestasi" withArrow>
                         <Button
+                          size="xs"
+                          radius="md"
                           variant="light"
                           color="blue"
+                          leftSection={<IconDeviceImacCog size={16} />}
                           onClick={() => router.push(`/admin/landing-page/prestasi-desa/list-prestasi-desa/${item.id}`)}
-                          size="sm"
                         >
-                          <IconDeviceImacCog size={20} />
+                          Detail
                         </Button>
                       </Tooltip>
                     </TableTd>

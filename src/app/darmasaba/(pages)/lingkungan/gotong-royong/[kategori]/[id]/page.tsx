@@ -66,7 +66,7 @@ function Page() {
             Informasi Kegiatan Gotong Royong
           </Text>
         </Box>
-        <Image src={state.findUnique.data?.image?.link || ''} alt='' w={"100%"} />
+        <Image src={state.findUnique.data?.image?.link || ''} alt='' w={"100%"} loading="lazy"/>
       </Container>
       <Box px={{ base: "md", md: 100 }}>
         <Stack gap={"xs"}>

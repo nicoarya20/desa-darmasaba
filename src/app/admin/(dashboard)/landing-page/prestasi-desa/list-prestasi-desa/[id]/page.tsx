@@ -18,6 +18,7 @@ function DetailPrestasiDesa() {
   const router = useRouter()
 
   useShallowEffect(() => {
+    prestasiState.kategoriPrestasi.findMany.load()
     detailState.findUnique.load(params?.id as string)
   }, [])
 
@@ -93,6 +94,7 @@ function DetailPrestasiDesa() {
                     w={300}
                     fit="contain"
                     style={{ borderRadius: '8px', border: '1px solid #e0e0e0' }}
+                    loading='lazy'
                   />
                 ) : (
                   <Text fz="sm" c="dimmed">Tidak ada gambar</Text>

@@ -89,6 +89,7 @@ function DetailPenangananDarurat() {
                   radius="md"
                   mah={250}
                   fit="contain"
+                  loading="lazy"
                 />
               </Box>
 

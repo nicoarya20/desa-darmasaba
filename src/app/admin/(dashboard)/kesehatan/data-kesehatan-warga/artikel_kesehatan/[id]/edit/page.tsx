@@ -227,6 +227,7 @@ function EditArtikelKesehatan() {
                     objectFit: "contain",
                     border: `1px solid ${colors["blue-button"]}`,
                   }}
+                  loading="lazy"
                 />
               </Box>
             )}

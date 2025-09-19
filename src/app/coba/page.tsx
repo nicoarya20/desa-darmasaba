@@ -1,156 +1,62 @@
 import colors from '@/con/colors';
-import { Avatar, Box, Flex, Group, Paper, SimpleGrid, Stack, Text } from '@mantine/core';
-import { IconAmbulance, IconBadge, IconBuildingBank, IconBuildingSkyscraper, IconFiretruck, IconFirstAidKit, IconPhoneCall, IconUser } from '@tabler/icons-react';
+import { Stack, Container, Box, List, ListItem, Text, Image } from '@mantine/core';
+import React from 'react';
+import BackButton from '../darmasaba/(pages)/desa/layanan/_com/BackButto';
 
-
-const emergencyServices = [
-  {
-    id: 1,
-    name: "Polisi",
-    icon: <IconBadge size={24} color={colors['blue-button']} />,
-    nomor: '081xxxxxxxxx'
-  },
-  {
-    id: 2,
-    name: "Ambulans",
-    icon: <IconAmbulance size={24} color={colors['blue-button']} />,
-    nomor: '081xxxxxxxxx'
-  },
-  {
-    id: 3,
-    name: "Pemadam Kebakaran",
-    icon: <IconFiretruck size={24} color={colors['blue-button']} />,
-    nomor: '081xxxxxxxxx'
-  }
-];
-
-const healthFacilities = [
-  {
-    id: 4,
-    name: "Puskesmas Darmasaba",
-    icon: <IconFirstAidKit size={24} color={colors['blue-button']} />,
-    nomor: '081xxxxxxxxx'
-  },
-  {
-    id: 5,
-    name: "UGD Terdekat",
-    icon: <IconAmbulance size={24} color={colors['blue-button']} />,
-    nomor: '081xxxxxxxxx'
-  }
-];
-
-const villageGovernment = [
-  {
-    id: 6,
-    name: "Kantor Desa Darmasaba",
-    icon: <IconBuildingSkyscraper size={24} color={colors['blue-button']} />,
-    nomor: '081xxxxxxxxx'
-  },
-  {
-    id: 7,
-    name: "Kepala Desa",
-    icon: <IconUser size={24} color={colors['blue-button']} />,
-    nomor: '081xxxxxxxxx'
-  }
-];
 function Page() {
   return (
-    <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"22"}>
-      <Box>
-        <Text ta={"center"} fz={{ base: "h1", md: "2.5rem" }} c={colors["blue-button"]} fw={"bold"}>
-          Kontak Darurat
-        </Text>
-        <Text px={{ base: 20, md: 150 }} ta={"center"} fz={{ base: "h4", md: "h3" }} >
-          Desa Darmasaba, Kecamatan Abiansemal, Kabupaten Badung.
-        </Text>
-      </Box>
-      <Box px={{ base: "md", md: 100 }}>
-        <Stack gap={'lg'}>
-          <Paper p={"xl"} bg={colors['white-trans-1']} w={{ base: "100%", md: "100%" }}>
-            <Flex justify={'center'} gap={'lg'} align={'center'}>
-              <Avatar radius={"xl"} size={'lg'} bg={colors['BG-trans']}>
-                <IconPhoneCall size={30} color={colors["blue-button"]} />
-              </Avatar>
-              <Box>
-                <Text ta={'center'} c={colors['blue-button']} py={10} fz={{ base: "md", md: "h4" }} fw={"bold"} >
-                  Nomor Darurat Utama
-                </Text>
-                <Text ta={'center'} fw={"bold"} fz={'h2'} c={colors["blue-button"]}>112</Text>
+      <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"22"} px={{ base: "md", md: 0 }}>
+          <Box px={{ base: "md", md: 100 }}><BackButton /></Box>
+          <Container w={{ base: "100%", md: "50%" }} >
+              <Box pb={20}>
+                  <Text ta={"center"} fz={"3.4rem"} c={colors["blue-button"]} fw={"bold"}>
+                      IKM Berbasis Pengolahan Pangan
+                  </Text>
+                  <Text
+                      ta={"center"}
+                      fw={"bold"}
+                      fz={"1.4rem"}
+                  >
+                      Informasi dan Pelayanan Administrasi Digital
+                  </Text>
               </Box>
-            </Flex>
-          </Paper>
-        </Stack>
-      </Box>
-      <Box px={{ base: "md", md: 100 }}>
-        <SimpleGrid cols={{ base: 1, md: 2 }} spacing="xl">
-          {/* Layanan Darurat */}
-          <Paper p="lg" radius="md" bg={colors['white-trans-1']}>
-            <Group pb="md" align="center">
-              <Avatar radius={"xl"} size={'lg'} bg={colors['BG-trans']}>
-                <IconFirstAidKit size={30} color={colors["blue-button"]} />
-              </Avatar>
-              <Text fw="bold" fz={{ base: "lg", md: "xl" }} c={colors["blue-button"]}>
-                Layanan Darurat
+              <Image src="/api/img/ikm.png" alt='' w={"100%"} loading="lazy"/>
+          </Container>
+          <Box px={{ base: "md", md: 100 }}>
+              <Text py={20} fz={{ base: "sm", md: "lg" }} ta={"justify"}>
+                  Desa Darmasaba, yang terletak di Kecamatan Abiansemal, Kabupaten Badung, memiliki potensi besar dalam Industri Kecil dan Menengah (IKM) berbasis pengolahan pangan. Dengan sumber daya alam yang melimpah dan warisan kuliner khas Bali, Darmasaba dapat mengembangkan sektor ini untuk meningkatkan kesejahteraan masyarakat dan menciptakan lapangan kerja baru.
               </Text>
-            </Group>
-
-            {emergencyServices.map((v, k) => (
-              <Group key={k} px="md" py="sm" bg={colors['BG-trans']} mb="xs" justify="space-between" style={{ borderRadius: 8 }}>
-                <Group>
-                  {v.icon}
-                  <Text>{v.name}</Text>
-                </Group>
-                <Text>{v.nomor}</Text>
-              </Group>
-            ))}
-          </Paper>
-
-          {/* Fasilitas Kesehatan */}
-          <Paper p="lg" radius="md" bg={colors['white-trans-1']}>
-            <Group pb="md" align="center">
-              <Avatar radius={"xl"} size={'lg'} bg={colors['BG-trans']}>
-                <IconBuildingSkyscraper size={30} color={colors["blue-button"]} />
-              </Avatar>
-              <Text fw="bold" fz={{ base: "lg", md: "xl" }} c={colors["blue-button"]}>
-                Fasilitas Kesehatan
+              <Text fz={{ base: "sm", md: "lg" }} ta={"justify"}>
+                  Potensi dan Peran IKM Berbasis Pengolahan Pangan:
               </Text>
-            </Group>
-
-            {healthFacilities.map((v, k) => (
-              <Group key={k} px="md" py="sm" bg={colors['BG-trans']} mb="xs" justify="space-between" style={{ borderRadius: 8 }}>
-                <Group>
-                  {v.icon}
-                  <Text>{v.name}</Text>
-                </Group>
-                <Text>{v.nomor}</Text>
-              </Group>
-            ))}
-          </Paper>
-
-          {/* Pemerintah Desa */}
-          <Paper p="lg" radius="md" bg={colors['white-trans-1']}>
-            <Group pb="md" align="center">
-              <Avatar radius={"xl"} size={'lg'} bg={colors['BG-trans']}>
-                <IconBuildingBank size={30} color={colors["blue-button"]} />
-              </Avatar>
-              <Text fw="bold" fz={{ base: "lg", md: "xl" }} c={colors["blue-button"]}>
-                Pemerintah Desa
+              <List py={20} type='ordered'>
+                  <ListItem fz={{ base: "sm", md: "lg" }} ta={"justify"}>
+                      <Text fz={{ base: "sm", md: "lg" }} fw={"bold"}>Produk Unggulan Pengolahan Pangan</Text>
+                      <Text fz={{ base: "sm", md: "lg" }} ta={"justify"}>Beberapa produk olahan pangan yang potensial dikembangkan di Darmasaba meliputi:</Text>
+                      <Text fz={{ base: "sm", md: "lg" }} ta={"justify"}> - Keripik dan Snack Tradisional : Seperti keripik pisang, keripik singkong, dan rengginang.</Text>
+                      <Text fz={{ base: "sm", md: "lg" }} ta={"justify"}> - Sambal Khas Bali : Seperti sambal matah dan sambal embe yang banyak diminati pasar lokal dan nasional.</Text>
+                      <Text fz={{ base: "sm", md: "lg" }} ta={"justify"}> - Minuman Herbal dan Jamu : Berbasis rempah seperti kunyit asam, beras kencur, dan wedang jahe.</Text>
+                      <Text fz={{ base: "sm", md: "lg" }} ta={"justify"}> - Olahan Makanan Berbasis Kelapa : Seperti virgin coconut oil (VCO), serundeng, dan gula aren.</Text>
+                      <Text fz={{ base: "sm", md: "lg" }} ta={"justify"}> - Kue Tradisional Bali : Seperti jaje laklak, jaje uli, dan klepon yang dapat dikemas secara modern.</Text>
+                  </ListItem>
+                  <ListItem fz={{ base: "sm", md: "lg" }} ta={"justify"}>
+                      <Text fz={{ base: "sm", md: "lg" }} fw={"bold"}>Peluang Ekonomi dan Pemberdayaan UMKM:</Text>IKM berbasis pengolahan pangan dapat membuka peluang bagi masyarakat, terutama ibu rumah tangga dan pemuda desa, untuk berwirausaha. Dengan dukungan modal dan pelatihan dari pemerintah desa atau BUMDes Pudak Mesari, usaha kecil ini dapat berkembang menjadi industri yang lebih besar.
+                  </ListItem>
+                  <ListItem fz={{ base: "sm", md: "lg" }} ta={"justify"}>
+                      <Text fz={{ base: "sm", md: "lg" }} fw={"bold"}>Digitalisasi dan Pemasaran Online:</Text>Darmasaba dapat mengembangkan kawasan sentra IKM sebagai pusat produksi, pelatihan, dan pemasaran produk olahan pangan. Dengan adanya fasilitas ini, para pelaku usaha dapat lebih mudah berkolaborasi, meningkatkan kualitas produk, serta mendapatkan akses ke permodalan dan distribusi yang lebih luas.
+                  </ListItem>
+                  <ListItem fz={{ base: "sm", md: "lg" }} ta={"justify"}>
+                      <Text fz={{ base: "sm", md: "lg" }} fw={"bold"}>Pengembangan Kawasan Sentra IKM:</Text>Dengan berkembangnya sektor kuliner, banyak pelaku UMKM di Darmasaba mulai merintis usaha makanan, baik dalam bentuk warung makan, katering, hingga produksi makanan ringan seperti keripik, sambal, dan minuman tradisional. Potensi ini dapat terus dikembangkan dengan dukungan pemerintah desa dan promosi melalui media sosial.
+                  </ListItem>
+                  <ListItem fz={{ base: "sm", md: "lg" }} ta={"justify"}>
+                      <Text fz={{ base: "sm", md: "lg" }} fw={"bold"}>Sinergi dengan Pariwisata dan Agrowisata:</Text>Dengan berkembangnya sektor wisata di Darmasaba, produk olahan pangan dapat dijadikan suvenir khas desa. Pengunjung dapat membeli oleh-oleh seperti sambal kemasan, jajanan khas, atau minuman herbal sebagai bagian dari pengalaman wisata mereka.
+                  </ListItem>
+              </List>
+              <Text fz={{ base: "sm", md: "lg" }} ta={"justify"}>
+                  IKM berbasis pengolahan pangan memiliki potensi besar untuk menjadi sektor unggulan di Desa Darmasaba. Dengan inovasi, dukungan teknologi, serta pemasaran yang baik, produk-produk lokal dapat bersaing di pasar yang lebih luas, meningkatkan kesejahteraan masyarakat, dan menjadikan Darmasaba sebagai pusat industri pangan kreatif di Kabupaten Badung.
               </Text>
-            </Group>
-
-            {villageGovernment.map((v, k) => (
-              <Group key={k} px="md" py="sm" bg={colors['BG-trans']} mb="xs" justify="space-between" style={{ borderRadius: 8 }}>
-                <Group>
-                  {v.icon}
-                  <Text>{v.name}</Text>
-                </Group>
-                <Text>{v.nomor}</Text>
-              </Group>
-            ))}
-          </Paper>
-        </SimpleGrid>
-      </Box>
-    </Stack>
+          </Box>
+      </Stack>
   );
 }
 

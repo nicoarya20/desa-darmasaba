@@ -131,6 +131,7 @@ export default function ListImage() {
               h={120}
               fit="contain"
               opacity={0.7}
+              loading="lazy"
             />
             <Text c="dimmed" ta="center">
               Belum ada foto yang tersedia

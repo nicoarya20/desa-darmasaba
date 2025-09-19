@@ -17,7 +17,7 @@ export default function Page() {
                    &quot;Dharma Temaja&quot;
                 </Text>
             </Stack>
-            <Image py={20} src="/api/img/darmasaba.jpeg" w={"100%"} h={"50%"} alt="" />
+            <Image py={20} src="/api/img/darmasaba.jpeg" w={"100%"} h={"50%"} alt="" loading="lazy"/>
             <Text  fz={"sm"} ta={"justify"}>
             Desa Darmasaba adalah desa yang terletak di Kecamatan Abiansemal, Kabupaten Badung, Provinsi Bali. Desa ini merupakan wilayah paling selatan di Kecamatan Abiansemal.
             </Text>

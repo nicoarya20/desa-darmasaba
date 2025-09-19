@@ -156,6 +156,7 @@ interface FileItem {
                 height={250}
                 width="100%"
                 style={{ objectFit: 'cover', height: '100%', width: '100%' }}
+                loading="lazy"
               />
             </Box>
             <Box>

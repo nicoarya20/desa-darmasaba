@@ -42,7 +42,7 @@ function Page() {
       </Box>
       <Box px={{ base: 'md', md: 100 }}>
         <Text ta="center" fz={{ base: "2rem", md: "2.5rem", lg: "3rem", xl: "3.4rem" }} c={colors["blue-button"]} fw="bold">
-          PPID Desa Darmasaba Profile
+          Profil PPID Desa Darmasaba
         </Text>
       </Box>
       {dataArray.map((item) => (
@@ -50,9 +50,9 @@ function Page() {
           <Paper p="xl" bg={colors['white-trans-1']} radius="lg" shadow="xl">
             <Box px={{ base: "md", md: 100 }}>
               <Flex align="center" gap={40} justify="center">
-                <Image src="/darmasaba-icon.png" h={{ base: 70, md: 120 }} alt="Village logo" />
+                <Image loading='lazy' src="/darmasaba-icon.png" h={{ base: 70, md: 120 }} alt="Logo Desa" />
                 <Text fz={{ base: "1.5rem", md: "2rem", lg: "2.5rem", xl: "3rem" }} fw="bold">
-                  Public Information Officer
+                  Pejabat Pengelola Informasi Publik
                 </Text>
               </Flex>
             </Box>
@@ -65,9 +65,10 @@ function Page() {
                     <Stack gap="md">
                       <Center>
                         <Image
-                          src={item.image.link ? `${item.image.link}?t=${Date.now()}` : "/perbekel.png"}
+                          loading='lazy'
+                          src={item.image?.link ? `${item.image.link}?t=${Date.now()}` : "/perbekel.png"}
                           w={{ base: 220, md: 330 }}
-                          alt="Leader photo"
+                          alt="Foto Pimpinan"
                           radius="md"
                         />
                       </Center>
@@ -85,14 +86,14 @@ function Page() {
                     <Box>
                       <Flex align="center" gap="sm" mb="sm">
                         <IconUser size={28} />
-                        <Text fz={{ base: "1.25rem", md: "1.5rem" }} fw="bold">Biography</Text>
+                        <Text fz={{ base: "1.25rem", md: "1.5rem" }} fw="bold">Biografi</Text>
                       </Flex>
                       <Text fz={{ base: "1rem", md: "1.125rem", lg: "1.25rem" }} ta="justify" dangerouslySetInnerHTML={{ __html: item.biodata }} />
                     </Box>
                     <Box>
                       <Flex align="center" gap="sm" mb="sm">
                         <IconTimeline size={28} />
-                        <Text fz={{ base: "1.25rem", md: "1.5rem" }} fw="bold">Career History</Text>
+                        <Text fz={{ base: "1.25rem", md: "1.5rem" }} fw="bold">Riwayat Karir</Text>
                       </Flex>
                       <Text fz={{ base: "1rem", md: "1.125rem", lg: "1.25rem" }} dangerouslySetInnerHTML={{ __html: item.riwayat }} />
                     </Box>
@@ -104,7 +105,7 @@ function Page() {
             <Box pb={40}>
               <Flex align="center" gap="sm" mb="sm">
                 <IconBuildingCommunity size={28} />
-                <Text fz={{ base: "1.25rem", md: "1.5rem" }} fw="bold">Organizational Experience</Text>
+                <Text fz={{ base: "1.25rem", md: "1.5rem" }} fw="bold">Pengalaman Organisasi</Text>
               </Flex>
               <List spacing="xs" size="sm">
                 <Box px={20}>
@@ -116,7 +117,7 @@ function Page() {
             <Box>
               <Flex align="center" gap="sm" mb="sm">
                 <IconTargetArrow size={28} />
-                <Text fz={{ base: "1.25rem", md: "1.5rem" }} fw="bold">Flagship Programs</Text>
+                <Text fz={{ base: "1.25rem", md: "1.5rem" }} fw="bold">Program Unggulan</Text>
               </Flex>
               <List spacing="xs" size="sm">
                 <Box px={20}>

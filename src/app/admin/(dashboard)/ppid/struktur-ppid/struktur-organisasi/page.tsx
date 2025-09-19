@@ -118,6 +118,7 @@ function nodeTemplate(node: any) {
           style={{
             border: '1px solid #D3D1D1FF',
           }}
+          loading='lazy'
         />
       </Tooltip>
       <Text fw={600} ta="center" size="sm">{name}</Text>

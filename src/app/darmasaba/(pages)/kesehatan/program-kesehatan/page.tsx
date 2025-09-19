@@ -131,6 +131,7 @@ export default function Page() {
                       radius="xl"
                       height={180}
                       fit="cover"
+                      loading="lazy"
                     />
                     <Box px="lg" pb="lg">
                       <Text

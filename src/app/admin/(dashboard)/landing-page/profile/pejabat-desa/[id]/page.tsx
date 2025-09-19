@@ -229,6 +229,7 @@ function EditPejabatDesa() {
                         borderRadius: '8px',
                         border: '1px solid #ddd',
                       }}
+                      loading="lazy"
                     />
                   </Box>
                 )}
@@ -240,7 +241,7 @@ function EditPejabatDesa() {
             <Box>
               <Text fz="sm" fw="bold" mb="xs">Preview Gambar</Text>
               {previewImage ? (
-                <Image alt="Profile preview" src={previewImage} w={200} h={200} fit="cover" radius="md" />
+                <Image alt="Profile preview" src={previewImage} w={200} h={200} fit="cover" radius="md" loading="lazy"/>
               ) : (
                 <Center w={200} h={200} bg="gray.2">
                   <Stack align="center" gap="xs">

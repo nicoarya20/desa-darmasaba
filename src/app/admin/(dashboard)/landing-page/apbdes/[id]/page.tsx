@@ -89,6 +89,7 @@ function DetailAPBDes() {
                     radius="md"
                     fit="contain"
                     style={{ border: '1px solid #ddd' }}
+                    loading="lazy"
                   />
                 ) : (
                   <Text fz="sm" c="dimmed">Tidak ada gambar</Text>

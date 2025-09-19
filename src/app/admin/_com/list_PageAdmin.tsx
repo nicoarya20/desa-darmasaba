@@ -26,7 +26,7 @@ export const navBar = [
       },
       {
         id: "Landing_Page_5",
-        name: "APBDes",
+        name: "Apbdes",
         path: "/admin/landing-page/apbdes"
       },
       {

@@ -91,6 +91,7 @@ function Page() {
                     radius="md"
                     height={160}
                     fit="cover"
+                    loading="lazy"
                   />
                   <Group justify="space-between">
                     <Text fw={600} fz="lg" lineClamp={1}>{v.name}</Text>

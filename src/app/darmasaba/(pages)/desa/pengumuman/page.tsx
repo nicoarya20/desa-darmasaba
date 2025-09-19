@@ -130,7 +130,7 @@ function Page() {
                       <Text fz="sm" fw="bold" c="black" style={{ textTransform: 'uppercase' }}>
                         {item.judul}
                       </Text>
-                      <Text ta="justify" fz="sm" c="black" lineClamp={3} dangerouslySetInnerHTML={{ __html: item.content }} />
+                      <Text ta="justify" fz="sm" c="black" lineClamp={3} dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
                     </Stack>
                     <Flex pt={20} gap="md" justify="space-between">
                       <Group style={{ color: 'black' }}>
@@ -241,7 +241,7 @@ function Page() {
                         fz="sm"
                         c="dimmed"
                         lineClamp={4}
-                        dangerouslySetInnerHTML={{ __html: item.content }}
+                        dangerouslySetInnerHTML={{ __html: item.deskripsi }}
                         mb="md"
                       />
                     </div>

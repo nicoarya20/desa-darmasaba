@@ -51,9 +51,9 @@ export default function EditPegawaiPPID() {
   };
 
   useEffect(() => {
-    stateStrukturPPID.posisiOrganisasi.findMany.load();
     const loadPegawai = async () => {
       try {
+        await stateStrukturPPID.posisiOrganisasi.findMany.load(1, 0); // ambil semua data
         const data = await stateOrganisasi.edit.load(id);
         if (data) {
           setFormData({
@@ -81,6 +81,8 @@ export default function EditPegawaiPPID() {
         );
       }
     };
+    console.log('Current posisiId:', formData.posisiId);
+    console.log('Available positions:', stateStrukturPPID.posisiOrganisasi.findMany.data?.map(p => p.id));
 
     loadPegawai();
   }, [id]);
@@ -223,6 +225,7 @@ export default function EditPegawaiPPID() {
                   alt="Preview Gambar"
                   radius="md"
                   style={{ maxHeight: 220, objectFit: 'contain', border: `1px solid ${colors['blue-button']}` }}
+                  loading='lazy'
                 />
               </Box>
             )}
@@ -314,7 +317,7 @@ export default function EditPegawaiPPID() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan Perubahan
+              Simpan
             </Button>
           </Group>
         </Stack>

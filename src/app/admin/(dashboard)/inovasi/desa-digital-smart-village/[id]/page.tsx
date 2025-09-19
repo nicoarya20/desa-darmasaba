@@ -60,7 +60,7 @@ function DetailDesaDigital() {
                 </Box>
                 <Box>
                   <Text fw={"bold"} fz={"lg"}>Gambar</Text>
-                  <Image w={{ base: 150, md: 150, lg: 150 }} src={stateDesaDigital.findUnique.data?.image?.link} alt="gambar" />
+                  <Image w={{ base: 150, md: 150, lg: 150 }} src={stateDesaDigital.findUnique.data?.image?.link} alt="gambar" loading="lazy"/>
                 </Box>
                 <Flex gap={"xs"} mt={10}>
                   <Button

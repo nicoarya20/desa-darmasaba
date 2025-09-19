@@ -62,6 +62,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               width={46}
               height={46}
               radius="md"
+              loading="lazy"
             />
             <Text
               fw={700}
@@ -107,7 +108,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 variant="gradient"
                 gradient={{ from: colors["blue-button"], to: "#228be6" }}
               >
-                <Image src="/assets/images/darmasaba-icon.png" alt="Logo Darmasaba" w={25} h={25} radius="md" />
+                <Image src="/assets/images/darmasaba-icon.png" alt="Logo Darmasaba" w={25} h={25} radius="md" loading="lazy" />
               </ActionIcon>
             </Tooltip>
             <Tooltip label="Keluar" position="bottom" withArrow>

@@ -135,6 +135,7 @@ function CreateSDGsDesa() {
                         src={previewImage}
                         alt="Preview"
                         style={{ width: '100%', height: 'auto' }}
+                        loading="lazy"
                       />
                     </Box>
               </Box>

@@ -16,7 +16,7 @@ function CreatePegawaiPPID() {
   const [previewImage, setPreviewImage] = useState<{ preview: string; file: File } | null>(null);
   const stateOrganisasi = useProxy(stateStrukturPPID.pegawai)
   useEffect(() => {
-    stateStrukturPPID.posisiOrganisasi.findMany.load();
+    stateStrukturPPID.posisiOrganisasi.findMany.load(1, 0);
     resetForm();
   }, []);
 
@@ -183,6 +183,7 @@ function CreatePegawaiPPID() {
                     border: '1px solid #e0e0e0',
                     borderRadius: '8px',
                   }}
+                  loading='lazy'
                 />
               </Box>
             )}

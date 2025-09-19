@@ -99,10 +99,7 @@ function ListSdgsDesa({ search }: { search: string }) {
         <Group justify="space-between" mb="md">
           <Title order={4}>Daftar Sdgs Desa</Title>
           <Tooltip label="Tambah Sdgs Desa" withArrow>
-            <Button 
-              leftSection={<IconPlus size={18} />} 
-              color={colors['blue-button']} 
-              variant="light" 
+            <Button leftSection={<IconPlus size={18} />} color="blue" variant="light"
               onClick={() => router.push('/admin/landing-page/sdgs-desa/create')}
             >
               Tambah Baru
@@ -134,12 +131,14 @@ function ListSdgsDesa({ search }: { search: string }) {
                   <TableTd style={{ width: '20%', textAlign: 'center' }}>
                     <Tooltip label="Lihat Detail" withArrow>
                       <Button 
-                        variant="light" 
-                        color="blue" 
-                        size="sm"
+                        size="xs"
+                        radius="md"
+                        variant="light"
+                        color="blue"
+                        leftSection={<IconDeviceImacCog size={16} />}
                         onClick={() => router.push(`/admin/landing-page/sdgs-desa/${item.id}`)}
                       >
-                        <IconDeviceImacCog size={18} />
+                        Detail
                       </Button>
                     </Tooltip>
                   </TableTd>

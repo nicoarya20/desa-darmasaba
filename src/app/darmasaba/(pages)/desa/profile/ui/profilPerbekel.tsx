@@ -58,6 +58,7 @@ function ProfilPerbekel() {
                 onError={(e) => {
                   e.currentTarget.src = "/perbekel.png";
                 }}
+                loading="lazy"
               />
               <Paper
                 bg={colors['blue-button']}

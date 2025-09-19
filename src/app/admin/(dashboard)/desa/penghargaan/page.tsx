@@ -21,7 +21,7 @@ import {
   Title,
   Tooltip
 } from '@mantine/core';
-import { IconDeviceImac, IconPlus, IconSearch } from '@tabler/icons-react';
+import { IconDeviceImacCog, IconPlus, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
@@ -113,14 +113,16 @@ function ListPenghargaan({ search }: { search: string }) {
                     </TableTd>
                     <TableTd>
                       <Button
-                        variant="light"
-                        color="blue"
+                       size="xs"
+                       radius="md"
+                       variant="light"
+                       color="blue"
+                       leftSection={<IconDeviceImacCog size={16} />}
                         onClick={() =>
                           router.push(`/admin/desa/penghargaan/${item.id}`)
                         }
                       >
-                        <IconDeviceImac size={20} />
-                        <Text ml={5}>Detail</Text>
+                        Detail
                       </Button>
                     </TableTd>
                   </TableTr>

@@ -49,6 +49,7 @@ function Page() {
                 w="100%"
                 maw={800}
                 fit="cover"
+                loading="lazy"
               />
             ) : (
               <Skeleton h={300} w="100%" radius="xl" />

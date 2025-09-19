@@ -241,6 +241,7 @@ function Page() {
                         height={180}
                         fit="cover"
                         radius="sm"
+                        loading='lazy'
                       />
                       <TextInput
                         label={`Label Gambar ${index + 1}`}

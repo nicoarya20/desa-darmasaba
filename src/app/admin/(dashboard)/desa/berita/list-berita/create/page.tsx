@@ -183,6 +183,7 @@ export default function CreateBerita() {
                     objectFit: 'contain',
                     border: '1px solid #ddd',
                   }}
+                  loading="lazy"
                 />
               </Box>
             )}

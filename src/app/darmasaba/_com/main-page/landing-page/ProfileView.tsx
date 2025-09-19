@@ -39,6 +39,7 @@ export default function ProfileView({ data }: ProfileViewProps) {
           alt={data.name || 'Foto profil'}
           fit="cover"
           radius="lg"
+          loading="lazy"
         />
       ) : (
         <Stack align="center" gap="xs" w="100%" py="xl">

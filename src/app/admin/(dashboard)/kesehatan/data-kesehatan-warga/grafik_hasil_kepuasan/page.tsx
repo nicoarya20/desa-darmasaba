@@ -22,7 +22,7 @@ import {
   Tooltip
 } from '@mantine/core';
 import { useMediaQuery, useShallowEffect } from '@mantine/hooks';
-import { IconArrowBack, IconDeviceImacCog, IconPlus, IconSearch } from '@tabler/icons-react';
+import { IconDeviceImacCog, IconPlus, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Bar, BarChart, Tooltip as ChartTooltip, Legend, XAxis, YAxis } from 'recharts';
@@ -32,17 +32,9 @@ import grafikkepuasan from '../../../_state/kesehatan/data_kesehatan_warga/grafi
 
 function GrafikHasilKepuasanMasyarakat() {
   const [search, setSearch] = useState("");
-  const router = useRouter();
 
   return (
     <Box>
-      {/* Tombol Back */}
-      <Box mb={10}>
-        <Button variant="subtle" onClick={() => router.back()}>
-          <IconArrowBack color={colors["blue-button"]} size={25} />
-        </Button>
-      </Box>
-
       {/* Header Search */}
       <HeaderSearch
         title='Grafik Hasil Kepuasan Masyarakat'

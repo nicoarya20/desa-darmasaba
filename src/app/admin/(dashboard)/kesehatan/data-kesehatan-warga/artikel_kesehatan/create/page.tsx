@@ -158,6 +158,7 @@ function CreateArtikelKesehatan() {
                     objectFit: 'contain',
                     border: '1px solid #ddd',
                   }}
+                  loading="lazy"
                 />
               </Box>
             )}

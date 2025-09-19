@@ -120,12 +120,14 @@ function ListPotensi({ search }: { search: string }) {
                     </TableTd>
                     <TableTd>
                       <Button
+                        size="xs"
+                        radius="md"
                         variant="light"
                         color="blue"
+                        leftSection={<IconDeviceImacCog size={16} />}
                         onClick={() => router.push(`/admin/desa/potensi/list-potensi/${item.id}`)}
                       >
-                        <IconDeviceImacCog size={20} />
-                        <Text ml={5}>Detail</Text>
+                        Detail
                       </Button>
                     </TableTd>
                   </TableTr>

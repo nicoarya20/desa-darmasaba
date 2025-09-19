@@ -65,6 +65,7 @@ export default function Content({ kategori }: { kategori: string }) {
                     fit="cover"
                     radius="md"
                     style={{ borderBottomRightRadius: 0, borderTopRightRadius: 0 }}
+                    loading="lazy"
                   />
                 </GridCol>
                 <GridCol span={{ base: 12, md: 6 }} p="xl">
@@ -124,11 +125,11 @@ export default function Content({ kategori }: { kategori: string }) {
                   p="lg"
                   radius="md"
                   withBorder
-                  onClick={() => router.push(`/darmasaba/desa/berita/${item.id}`)}
+                  onClick={() => router.push(`/darmasaba/desa/berita/${kategori}/${item.id}`)}
                   style={{ cursor: 'pointer' }}
                 >
                   <Card.Section>
-                    <Image src={item.image?.link} height={200} alt={item.judul} fit="cover" />
+                    <Image src={item.image?.link} height={200} alt={item.judul} fit="cover" loading="lazy"/>
                   </Card.Section>
                   <Badge color="blue" variant="light" mt="md">
                     {item.kategoriBerita?.name || kategori}

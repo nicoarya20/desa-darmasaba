@@ -51,7 +51,7 @@ function ArtikelKesehatanPage() {
                 onMouseLeave={(e) => (e.currentTarget.style.transform = 'translateY(0)')}
               >
                 <Card.Section>
-                  <Image src={item.image?.link} alt={item.title} height={200} fit="cover" />
+                  <Image src={item.image?.link} alt={item.title} height={200} fit="cover" loading="lazy"/>
                 </Card.Section>
                 <Stack gap="xs" mt="md">
                   <Text fw="bold" fz="xl" c="dark">{item.title}</Text>

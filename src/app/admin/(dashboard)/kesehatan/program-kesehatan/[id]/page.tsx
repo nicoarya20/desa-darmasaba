@@ -84,7 +84,7 @@ function DetailProgramKesehatan() {
               <Box>
                 <Text fz="lg" fw="bold">Gambar</Text>
                 {data?.image?.link ? (
-                  <Image src={data.image.link} alt="gambar program kesehatan" radius="md" />
+                  <Image src={data.image.link} alt="gambar program kesehatan" radius="md" loading="lazy"/>
                 ) : (
                   <Text fz="md" c="dimmed">-</Text>
                 )}

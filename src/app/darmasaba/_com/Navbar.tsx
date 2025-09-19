@@ -38,7 +38,7 @@ export function Navbar() {
               }}
             >
               <Tooltip label="Go to homepage" position="bottom" withArrow>
-                <Image src="/darmasaba-icon.png" alt="Village Logo" width={48} height={48} />
+                <Image src="/darmasaba-icon.png" alt="Village Logo" width={48} height={48} loading="lazy"/>
               </Tooltip>
             </ActionIcon>
             <Tooltip label={mobileOpen ? "Close menu" : "Open menu"} position="bottom" withArrow>

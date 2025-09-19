@@ -54,7 +54,7 @@ function Page() {
               <Grid>
                 <GridCol span={12}>
                   <Center>
-                    <Image src="/darmasaba-icon.png" w={{ base: 100, md: 150 }} alt="Logo Desa" />
+                    <Image loading='lazy' src="/darmasaba-icon.png" w={{ base: 100, md: 150 }} alt="Logo Desa" />
                   </Center>
                 </GridCol>
                 <GridCol span={12}>
@@ -76,6 +76,7 @@ function Page() {
                       alt="Foto Profil PPID"
                       radius="md"
                       onError={(e) => { e.currentTarget.src = "/perbekel.png"; }}
+                      loading='lazy'
                     />
                   </Center>
                   <Paper

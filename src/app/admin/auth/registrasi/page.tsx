@@ -20,7 +20,7 @@ function Page() {
       </Box>
       <Box px={{ base: 'md', md: 100 }} >
         <Center>
-          <Image src={"/darmasaba-icon.png"} alt="" w={80} />
+          <Image src={"/darmasaba-icon.png"} alt="" w={80} loading="lazy"/>
         </Center>
         <Box>
           <Title ta={'center'} order={1} fw={'bold'} c={colors['blue-button']}>

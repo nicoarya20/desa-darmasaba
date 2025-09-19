@@ -31,7 +31,7 @@ function MaskotDesa() {
     <Box pb={80}>
       <Stack align="center" gap="xl">
         <Stack align="center" gap={10}>
-          <Image src="/pudak-icon.png" alt="Ikon Desa" w={{ base: 160, md: 240 }} />
+          <Image src="/pudak-icon.png" alt="Ikon Desa" w={{ base: 160, md: 240 }} loading="lazy"/>
           <Text c={colors['blue-button']} ta="center" fw={700} fz={{ base: 28, md: 36 }}>Maskot Desa</Text>
         </Stack>
 
@@ -72,6 +72,7 @@ function MaskotDesa() {
                       h={200}
                       fit="cover"
                       radius="md"
+                      loading="lazy"
                     />
                     <Text ta="center" mt="sm" fw={600} fz="sm" c="dark">
                       {img.label}

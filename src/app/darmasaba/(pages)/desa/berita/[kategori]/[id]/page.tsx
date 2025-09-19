@@ -64,7 +64,7 @@ function Page() {
             Informasi dan Pelayanan Administrasi Digital
           </Text>
         </Box>
-        <Image src={state.findUnique.data?.image?.link || ''} alt='' w={"100%"} />
+        <Image src={state.findUnique.data?.image?.link || ''} alt='' w={"100%"} loading="lazy"/>
       </Container>
       <Box px={{ base: "md", md: 100 }}>
         <Stack gap={"xs"}>

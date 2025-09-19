@@ -108,6 +108,7 @@ function Page() {
                       h={160}
                       fit="contain"
                       radius="md"
+                      loading="lazy"
                     />
                   </Center>
                   <Stack gap={4} w="100%">

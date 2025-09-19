@@ -1,7 +1,7 @@
 'use client';
 import { Box, Button, Center, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { IconDeviceImac, IconSearch } from '@tabler/icons-react';
+import { IconDeviceImacCog, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
@@ -112,11 +112,14 @@ function ListResponden({ search }: ListRespondenProps) {
                   <TableTd style={{ width: '20%' }}>{item.jenisKelamin.name}</TableTd>
                   <TableTd style={{ width: '15%', textAlign: 'center' }}>
                     <Button
-                      variant="light"
                       size="xs"
+                      radius="md"
+                      variant="light"
+                      color="blue"
+                      leftSection={<IconDeviceImacCog size={16} />}
                       onClick={() => router.push(`/admin/ppid/ikm-desa-darmasaba/responden/${item.id}`)}
                     >
-                      <IconDeviceImac size={20} />
+                      Detail
                     </Button>
                   </TableTd>
                 </TableTr>

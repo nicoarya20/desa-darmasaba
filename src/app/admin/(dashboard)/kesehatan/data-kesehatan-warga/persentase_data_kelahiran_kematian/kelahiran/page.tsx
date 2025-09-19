@@ -37,7 +37,7 @@ function Kelahiran() {
    <Box>
      {/* Tombol Back */}
      <Box mb={10}>
-       <Button variant="subtle" onClick={() => router.back()}>
+       <Button variant="subtle" onClick={() => router.push('/admin/kesehatan/data-kesehatan-warga/persentase_data_kelahiran_kematian')}>
          <IconArrowBack color={colors["blue-button"]} size={25} />
        </Button>
      </Box>

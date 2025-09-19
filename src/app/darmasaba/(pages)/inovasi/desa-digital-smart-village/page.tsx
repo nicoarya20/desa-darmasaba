@@ -70,7 +70,7 @@ function Page() {
             {filteredData.map((v, k) => {
               return (
                 <Paper p={'xl'} key={k}>
-                  <Image src={v.image.link? v.image.link : ''} pb={10} radius={10} alt='' />
+                  <Image src={v.image.link? v.image.link : ''} pb={10} radius={10} alt='' loading="lazy"/>
                   <Text fz={'h3'} fw={'bold'} c={colors['blue-button']}>{v.name}</Text>
                   <Box>
                     <Text fz={"md"} dangerouslySetInnerHTML={{ __html: v.deskripsi }} />

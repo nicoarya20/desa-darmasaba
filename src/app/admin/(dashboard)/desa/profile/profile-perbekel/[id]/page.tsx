@@ -145,7 +145,7 @@ function ProfilePerbekel() {
               {/* Preview */}
               <Box mt="sm">
                 {previewImage ? (
-                  <Image src={previewImage} alt="Preview" w={200} h={200} fit="cover" radius="md" />
+                  <Image loading='lazy' src={previewImage} alt="Preview" w={200} h={200} fit="cover" radius="md" />
                 ) : (
                   <Center w={200} h={200} bg="gray.2">
                     <Stack align="center" gap="xs">

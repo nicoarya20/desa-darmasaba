@@ -129,7 +129,7 @@ function EditFoto() {
             </Dropzone>
 
             {previewImage ? (
-              <Image alt="" src={previewImage} w={200} h={200} />
+              <Image alt="" src={previewImage} w={200} h={200} loading="lazy"/>
             ) : (
               <Center w={200} h={200} bg={"gray"}>
                 <IconImageInPicture />

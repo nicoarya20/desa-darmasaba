@@ -6,17 +6,22 @@ import { Context } from "elysia";
 export default async function pegawaiFindMany(context: Context) {
   const page = Number(context.query.page) || 1;
   const limit = Number(context.query.limit) || 10;
-  const search = (context.query.search as string) || '';
+  const search = (context.query.search as string) || "";
   const skip = (page - 1) * limit;
 
   // Buat where clause
-  const where: any = { isActive: true };
+  const isActiveParam = context.query.isActive;
+
+  const where: any = {};
+  if (isActiveParam !== undefined) {
+    where.isActive = isActiveParam === "true";
+  }
 
   // Tambahkan pencarian (jika ada)
   if (search) {
     where.OR = [
-      { namaLengkap: { contains: search, mode: 'insensitive' } },
-      { alamat: { contains: search, mode: 'insensitive' } },
+      { namaLengkap: { contains: search, mode: "insensitive" } },
+      { alamat: { contains: search, mode: "insensitive" } },
     ];
   }
 
@@ -30,11 +35,11 @@ export default async function pegawaiFindMany(context: Context) {
         },
         skip,
         take: limit,
-        orderBy: { posisi: { hierarki: 'asc' } },
+        orderBy: { posisi: { hierarki: "asc" } },
       }),
       prisma.pegawaiPPID.count({
         where,
-      })
+      }),
     ]);
 
     const totalPages = Math.ceil(total / limit);

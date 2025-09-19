@@ -114,7 +114,7 @@ function ListPenangananDarurat({ search }: { search: string }) {
                       />
                     </TableTd>
                     <TableTd>
-                      <Image w={100} src={item.image?.link} alt="image" />
+                      <Image w={100} src={item.image?.link} alt="image" loading="lazy"/>
                     </TableTd>
                     <TableTd>
                       <Button

@@ -129,12 +129,12 @@ function LandingPage() {
                 <Grid w="100%">
                   <Grid.Col span={{ base: 3, sm: 2 }}>
                     <Box bg="white" w={72} h={72} p="sm" style={{ borderRadius: 24 }}>
-                      <Image src="/darmasaba-icon.png" alt="Logo Darmasaba" fit="contain" />
+                      <Image loading="lazy" src="/darmasaba-icon.png" alt="Logo Darmasaba" fit="contain" />
                     </Box>
                   </Grid.Col>
                   <Grid.Col span={{ base: 9, sm: 10 }}>
                     <Box bg="white" w={72} h={72} p="sm" style={{ borderRadius: 24 }}>
-                      <Image src="/pudak-icon.png" alt="Logo Pudak" fit="contain" />
+                      <Image loading="lazy" src="/pudak-icon.png" alt="Logo Pudak" fit="contain" />
                     </Box>
                   </Grid.Col>
                   <Grid.Col span={12}>

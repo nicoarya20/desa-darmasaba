@@ -66,9 +66,7 @@ function ListDesaAntiKorupsi({ search }: { search: string }) {
           <Group justify="space-between" mb="md">
             <Title order={4}>Daftar Program Desa Anti Korupsi</Title>
             <Tooltip label="Tambah Program Baru" withArrow>
-              <Button
-                leftSection={<IconPlus size={18} />}
-                color="blue"
+              <Button leftSection={<IconPlus size={18} />} color="blue" variant="light"
                 onClick={() => router.push('/admin/landing-page/desa-anti-korupsi/list-desa-anti-korupsi/create')}
               >
                 Tambah Baru

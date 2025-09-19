@@ -50,13 +50,13 @@ function Page() {
             }} />
             <Button onClick={submit}>submit</Button>
           </Flex>
-          {gambar && <Image w={400} src={gambar || null} alt="gambar" />}
+          {gambar && <Image w={400} src={gambar || null} alt="gambar" loading="lazy"/>}
         </Card>
 
         <Text>Test</Text>
         <SimpleGrid cols={6} p={"lg"}>
           {listFile.map((v) => (
-            <Image key={v} src={v} alt="gambar" />
+            <Image loading="lazy" key={v} src={v} alt="gambar" />
           ))}
         </SimpleGrid>
       </Stack>

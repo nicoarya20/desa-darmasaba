@@ -2,7 +2,7 @@
 import colors from '@/con/colors';
 import { Box, Button, Center, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title, Tooltip } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { IconDeviceImac, IconPlus, IconSearch } from '@tabler/icons-react';
+import { IconDeviceImacCog, IconPlus, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
@@ -107,14 +107,16 @@ function ListProgramInovasi({ search }: { search: string }) {
                     </TableTd>
                     <TableTd>
                       <Button
+                        size="xs"
+                        radius="md"
                         variant="light"
                         color="blue"
-                        radius="md"
+                        leftSection={<IconDeviceImacCog size={16} />}
                         onClick={() =>
                           router.push(`/admin/landing-page/profile/program-inovasi/${item.id}`)
                         }
                       >
-                        <IconDeviceImac size={20} />
+                        Detail
                       </Button>
                     </TableTd>
                   </TableTr>

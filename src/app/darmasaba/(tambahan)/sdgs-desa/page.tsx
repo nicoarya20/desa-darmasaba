@@ -110,6 +110,7 @@ function Page() {
                       height={120}
                       fit="contain"
                       style={{ filter: 'drop-shadow(0px 2px 6px rgba(0,0,0,0.1))' }}
+                      loading="lazy"
                     />
                   </Box>
                   <Stack gap="xs" align="center" style={{ width: '100%' }}>

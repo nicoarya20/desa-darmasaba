@@ -34,6 +34,7 @@ function SejarahDesa() {
               w={{ base: 180, md: 260 }}
               radius="md"
               style={{ filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.15))' }}
+              loading="lazy"
             />
           </Center>
           <Center>

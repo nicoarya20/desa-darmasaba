@@ -108,6 +108,7 @@ function Page() {
                     src={v.image.link}
                     alt={v.name}
                     fit="cover"
+                    loading="lazy"
                   />
                   <Group justify="space-between" mt="sm">
                     <Text fw={700} fz="lg" c={colors['blue-button']}>

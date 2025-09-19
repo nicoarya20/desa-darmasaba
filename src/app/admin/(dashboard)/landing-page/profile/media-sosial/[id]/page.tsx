@@ -71,7 +71,7 @@ function DetailMediaSosial() {
               </Box>
 
               <Box>
-                <Text fz="lg" fw="bold">Icon / Nomor Telepon</Text>
+                <Text fz="lg" fw="bold">Link / Nomor Telepon</Text>
                 <Text fz="md" c="dimmed">{data.iconUrl || '-'}</Text>
               </Box>
 
@@ -85,6 +85,7 @@ function DetailMediaSosial() {
                     h={120}
                     radius="md"
                     fit="cover"
+                    loading="lazy"
                   />
                 ) : (
                   <Text fz="sm" c="dimmed">Tidak ada gambar</Text>

@@ -362,6 +362,7 @@ function nodeTemplate(node: any) {
               border: '2px solid rgba(255,255,255,0.2)',
               marginBottom: 12,
             }}
+            loading='lazy'
           />
           <Text fw={700}>{name}</Text>
           <Text size="sm" c="dimmed" mt={4}>

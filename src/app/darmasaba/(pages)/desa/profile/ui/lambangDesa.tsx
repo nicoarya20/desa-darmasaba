@@ -33,6 +33,7 @@ function LambangDesa() {
               alt="Lambang resmi desa"
               w={{ base: 180, md: 280 }}
               radius="md"
+              loading="lazy"
             />
           </Center>
           <Text

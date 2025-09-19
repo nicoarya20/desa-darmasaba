@@ -89,6 +89,7 @@ function DetailKontakDarurat() {
                     alt="gambar"
                     radius="md"
                     maw={300}
+                    loading="lazy"
                   />
                 ) : (
                   <Text fz="md" c="dimmed">-</Text>

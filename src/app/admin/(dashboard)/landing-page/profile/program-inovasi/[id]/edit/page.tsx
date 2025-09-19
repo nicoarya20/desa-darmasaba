@@ -165,6 +165,7 @@ function EditProgramInovasi() {
                   alt="Preview Gambar"
                   radius="md"
                   style={{ maxHeight: 220, objectFit: 'contain', border: `1px solid ${colors['blue-button']}` }}
+                  loading="lazy"
                 />
               </Box>
             )}

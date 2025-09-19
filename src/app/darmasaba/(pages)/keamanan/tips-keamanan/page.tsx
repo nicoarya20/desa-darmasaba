@@ -73,7 +73,7 @@ function Page() {
                 <Paper radius={10} key={k} bg={colors["white-trans-1"]}>
                   <Stack gap={'xs'}>
                     <Center p={10}>
-                      <Image src={v.image?.link} radius={10}
+                      <Image src={v.image?.link} radius={10} loading="lazy"
                         alt='' />
                     </Center>
                     <Box px={'xl'}>

@@ -165,6 +165,7 @@ function CreatePotensi() {
                   alt="Preview Gambar"
                   radius="md"
                   style={{ maxHeight: 200, objectFit: 'contain', border: '1px solid #ddd' }}
+                  loading='lazy'
                 />
               </Box>
             )}
@@ -195,7 +196,7 @@ function CreatePotensi() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan Potensi
+              Simpan
             </Button>
           </Group>
         </Stack>
