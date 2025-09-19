@@ -109,7 +109,7 @@ function ModuleView() {
     <ScrollArea h={280} // ✅ tinggi fixed, bisa disesuaikan
       scrollbarSize={8}
       offsetScrollbars
-      type="auto"
+      type="never"
       styles={{
         viewport: { paddingRight: 8 }, // kasih jarak biar scroll nggak dempet
       }}

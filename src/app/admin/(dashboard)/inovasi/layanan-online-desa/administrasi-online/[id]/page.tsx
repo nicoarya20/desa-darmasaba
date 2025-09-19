@@ -1,92 +1,111 @@
 'use client'
-import { useProxy } from 'valtio/utils';
 
-import { Box, Button, Flex, Paper, Skeleton, Stack, Text } from '@mantine/core';
+import { Box, Button, Group, Paper, Skeleton, Stack, Text, Tooltip } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack, IconTrash } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { useProxy } from 'valtio/utils';
 
 import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
 import layananonlineDesa from '@/app/admin/(dashboard)/_state/inovasi/layanan-online-desa';
 import colors from '@/con/colors';
 
-
 function DetailAdministrasiOnline() {
-  const beritaState = useProxy(layananonlineDesa)
-  const [modalHapus, setModalHapus] = useState(false)
-  const [selectedId, setSelectedId] = useState<string | null>(null)
-  const params = useParams()
-  const router = useRouter()
+  const stateAdminOnline = useProxy(layananonlineDesa.administrasiOnline);
+  const [modalHapus, setModalHapus] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const params = useParams();
+  const router = useRouter();
 
   useShallowEffect(() => {
-    beritaState.administrasiOnline.findUnique.load(params?.id as string)
-  }, [])
-
+    stateAdminOnline.findUnique.load(params?.id as string);
+  }, []);
 
   const handleHapus = () => {
     if (selectedId) {
-      beritaState.administrasiOnline.delete.byId(selectedId)
-      setModalHapus(false)
-      setSelectedId(null)
-      router.push("/admin/inovasi/layanan-online-desa/administrasi-online")
+      stateAdminOnline.delete.byId(selectedId);
+      setModalHapus(false);
+      setSelectedId(null);
+      router.push("/admin/inovasi/layanan-online-desa/administrasi-online");
     }
-  }
+  };
 
-  if (!beritaState.administrasiOnline.findUnique.data) {
+  if (!stateAdminOnline.findUnique.data) {
     return (
       <Stack py={10}>
-        <Skeleton h={40} />
+        <Skeleton height={500} radius="md" />
       </Stack>
-    )
+    );
   }
 
+  const data = stateAdminOnline.findUnique.data;
+
   return (
-    <Box>
-      <Box mb={10}>
-        <Button variant="subtle" onClick={() => router.back()}>
-          <IconArrowBack color={colors['blue-button']} size={25} />
+    <Box py={10}>
+      <Group justify='space-between' align='center' w={{ base: "100%", md: "50%" }} mb={10}>
+        {/* Tombol Kembali */}
+        <Button
+          variant="subtle"
+          onClick={() => router.back()}
+          leftSection={<IconArrowBack size={24} color={colors['blue-button']} />}
+        >
+          Kembali
         </Button>
-      </Box>
-      <Paper bg={colors['white-1']} w={{ base: "100%", md: "100%", lg: "50%" }} p={'md'}>
-        <Stack>
-          <Flex gap={"xs"} justify={"space-between"} mt={10}>
-            <Text fz={"xl"} fw={"bold"}>Detail Administrasi Online</Text>
-            <Button
-              onClick={() => {
-                if (beritaState.administrasiOnline.findUnique.data) {
-                  setSelectedId(beritaState.administrasiOnline.findUnique.data.id);
-                  setModalHapus(true);
-                }
-              }}
-              disabled={beritaState.administrasiOnline.delete.loading || !beritaState.administrasiOnline.findUnique.data}
-              color={"red"}
-            >
-              <IconTrash size={20} />
-            </Button>
-          </Flex>
-          {beritaState.administrasiOnline.findUnique.data ? (
-            <Paper key={beritaState.administrasiOnline.findUnique.data.id} bg={colors['BG-trans']} p={'md'}>
-              <Stack gap={"xs"}>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Nama</Text>
-                  <Text fz={"lg"}>{beritaState.administrasiOnline.findUnique.data?.name}</Text>
-                </Box>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Alamat</Text>
-                  <Text fz={"lg"}>{beritaState.administrasiOnline.findUnique.data?.alamat}</Text>
-                </Box>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Nomor Telepon</Text>
-                  <Text fz={"lg"} >{beritaState.administrasiOnline.findUnique.data?.nomorTelepon}</Text>
-                </Box>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Jenis Layanan</Text>
-                  <Text fz={"lg"} >{beritaState.administrasiOnline.findUnique.data?.jenisLayanan?.nama}</Text>
-                </Box>
-              </Stack>
-            </Paper>
-          ) : null}
+
+        <Tooltip label="Hapus Data" withArrow position="top">
+          <Button
+            color="red"
+            onClick={() => {
+              setSelectedId(data.id);
+              setModalHapus(true);
+            }}
+            variant="light"
+            radius="md"
+            size="md"
+          >
+            <IconTrash size={20} />
+          </Button>
+        </Tooltip>
+      </Group>
+      {/* Konten Detail */}
+      <Paper
+        withBorder
+        w={{ base: "100%", md: "50%" }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+      >
+        <Stack gap="md">
+          <Text fz="2xl" fw="bold" c={colors['blue-button']}>
+            Detail Administrasi Online
+          </Text>
+
+          <Paper bg="#ECEEF8" p="md" radius="md" shadow="xs">
+            <Stack gap="sm">
+              <Box>
+                <Text fz="lg" fw="bold">Nama</Text>
+                <Text fz="md" c="dimmed">{data.name || '-'}</Text>
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">Alamat</Text>
+                <Text fz="md" c="dimmed">{data.alamat || '-'}</Text>
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">Nomor Telepon</Text>
+                <Text fz="md" c="dimmed">{data.nomorTelepon || '-'}</Text>
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">Jenis Layanan</Text>
+                <Text fz="md" c="dimmed">{data.jenisLayanan?.nama || '-'}</Text>
+              </Box>
+
+            </Stack>
+          </Paper>
         </Stack>
       </Paper>
 
@@ -95,7 +114,7 @@ function DetailAdministrasiOnline() {
         opened={modalHapus}
         onClose={() => setModalHapus(false)}
         onConfirm={handleHapus}
-        text='Apakah anda yakin ingin menghapus administrasi online ini?'
+        text="Apakah Anda yakin ingin menghapus administrasi online ini?"
       />
     </Box>
   );

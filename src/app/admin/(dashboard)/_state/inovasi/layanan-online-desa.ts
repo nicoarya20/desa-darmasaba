@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiFetch from "@/lib/api-fetch";
 import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
@@ -54,19 +55,20 @@ const administrasiOnline = proxy({
   },
   findMany: {
     data: null as Array<
-    Prisma.AdministrasiOnlineGetPayload<{
-      include: {
-        jenisLayanan: true;
-      };
-    }>
-  > | null,
+      Prisma.AdministrasiOnlineGetPayload<{
+        include: {
+          jenisLayanan: true;
+        };
+      }>
+    > | null,
     page: 1,
     totalPages: 1,
     loading: false,
-
-    async load(page = 1, limit = 10) {
+    search: '',
+    async load(page = 1, limit = 10, search = '') {
       administrasiOnline.findMany.loading = true;
       administrasiOnline.findMany.page = page;
+      administrasiOnline.findMany.search = search;
       try {
         const res =
           await ApiFetch.api.inovasi.layananonlinedesa.administrasionline[
@@ -75,6 +77,7 @@ const administrasiOnline = proxy({
             query: {
               page,
               limit,
+              search,
             },
           });
 
@@ -91,10 +94,10 @@ const administrasiOnline = proxy({
   },
   findUnique: {
     data: null as Prisma.AdministrasiOnlineGetPayload<{
-        include: {
-          jenisLayanan: true;
-        };
-      }> | null,
+      include: {
+        jenisLayanan: true;
+      };
+    }> | null,
     async load(id: string) {
       try {
         const res = await fetch(
@@ -199,13 +202,37 @@ const jenisLayanan = proxy({
       nama: string;
       deskripsi: string;
     }> | null,
-    async load() {
-      const res =
-        await ApiFetch.api.inovasi.layananonlinedesa.administrasionline.jenislayanan[
+    page: 1,
+    totalPages: 1,
+    loading: false,
+    search: "",
+    load: async (page = 1, limit = 10, search = "") => {
+      jenisLayanan.findMany.loading = true; // ✅ Akses langsung via nama path
+      jenisLayanan.findMany.page = page;
+      jenisLayanan.findMany.search = search;
+
+      try {
+        const query: any = { page, limit };
+        if (search) query.search = search;
+
+        const res = await ApiFetch.api.inovasi.layananonlinedesa.administrasionline.jenislayanan[
           "find-many"
-        ].get();
-      if (res.status === 200) {
-        jenisLayanan.findMany.data = res.data?.data ?? [];
+        ].get({ query });
+
+        if (res.status === 200 && res.data?.success) {
+          jenisLayanan.findMany.data = res.data.data ?? [];
+          jenisLayanan.findMany.totalPages =
+            res.data.totalPages ?? 1;
+        } else {
+          jenisLayanan.findMany.data = [];
+          jenisLayanan.findMany.totalPages = 1;
+        }
+      } catch (err) {
+        console.error("Gagal fetch jenis layanan paginated:", err);
+        jenisLayanan.findMany.data = [];
+        jenisLayanan.findMany.totalPages = 1;
+      } finally {
+        jenisLayanan.findMany.loading = false;
       }
     },
   },
@@ -403,7 +430,9 @@ const templatePengaduanMasyarakatForm = z.object({
   nik: z.string().min(1, "NIK minimal 1 karakter"),
   judulPengaduan: z.string().min(1, "Judul pengaduan minimal 1 karakter"),
   lokasiKejadian: z.string().min(1, "Lokasi kejadian minimal 1 karakter"),
-  deskripsiPengaduan: z.string().min(1, "Deskripsi pengaduan minimal 1 karakter"),
+  deskripsiPengaduan: z
+    .string()
+    .min(1, "Deskripsi pengaduan minimal 1 karakter"),
   jenisPengaduanId: z.string().min(1, "Jenis pengaduan minimal 1 karakter"),
   imageId: z.string().min(1, "Image minimal 1 karakter"),
 });
@@ -455,13 +484,13 @@ const pengaduanMasyarakat = proxy({
   },
   findMany: {
     data: null as Array<
-    Prisma.PengaduanMasyarakatGetPayload<{
-      include: {
-        jenisPengaduan: true;
-        image: true;
-      };
-    }>
-  > | null,
+      Prisma.PengaduanMasyarakatGetPayload<{
+        include: {
+          jenisPengaduan: true;
+          image: true;
+        };
+      }>
+    > | null,
     page: 1,
     totalPages: 1,
     loading: false,
@@ -493,11 +522,11 @@ const pengaduanMasyarakat = proxy({
   },
   findUnique: {
     data: null as Prisma.PengaduanMasyarakatGetPayload<{
-        include: {
-          jenisPengaduan: true;
-          image: true;
-        };
-      }> | null,
+      include: {
+        jenisPengaduan: true;
+        image: true;
+      };
+    }> | null,
     async load(id: string) {
       try {
         const res = await fetch(
@@ -507,7 +536,10 @@ const pengaduanMasyarakat = proxy({
           const data = await res.json();
           pengaduanMasyarakat.findUnique.data = data.data ?? null;
         } else {
-          console.error("Failed to fetch pengaduan masyarakat:", res.statusText);
+          console.error(
+            "Failed to fetch pengaduan masyarakat:",
+            res.statusText
+          );
           pengaduanMasyarakat.findUnique.data = null;
         }
       } catch (error) {
@@ -542,7 +574,9 @@ const pengaduanMasyarakat = proxy({
           );
           await pengaduanMasyarakat.findMany.load(); // refresh list
         } else {
-          toast.error(result?.message || "Gagal menghapus pengaduan masyarakat");
+          toast.error(
+            result?.message || "Gagal menghapus pengaduan masyarakat"
+          );
         }
       } catch (error) {
         console.error("Gagal delete:", error);
@@ -567,7 +601,9 @@ const jenisPengaduan = proxy({
     form: { ...defaultJenisPengaduanForm },
     loading: false,
     async create() {
-      const cek = templateJenisPengaduanForm.safeParse(jenisPengaduan.create.form);
+      const cek = templateJenisPengaduanForm.safeParse(
+        jenisPengaduan.create.form
+      );
       if (!cek.success) {
         const err = `[${cek.error.issues
           .map((v) => `${v.path.join(".")}`)
@@ -693,7 +729,7 @@ const jenisPengaduan = proxy({
           const data = result.data;
           this.id = data.id;
           this.form = {
-            nama: data.nama
+            nama: data.nama,
           };
           return data;
         } else {
@@ -709,7 +745,9 @@ const jenisPengaduan = proxy({
     },
 
     async update() {
-      const cek = templateJenisPengaduanForm.safeParse(jenisPengaduan.edit.form);
+      const cek = templateJenisPengaduanForm.safeParse(
+        jenisPengaduan.edit.form
+      );
       if (!cek.success) {
         const err = `[${cek.error.issues
           .map((v) => `${v.path.join(".")}`)
@@ -759,7 +797,9 @@ const jenisPengaduan = proxy({
             await jenisPengaduan.findMany.load(); // refresh list
             return true;
           } else {
-            throw new Error(result.message || "Gagal mengupdate jenis pengaduan");
+            throw new Error(
+              result.message || "Gagal mengupdate jenis pengaduan"
+            );
           }
         } catch (error) {
           // If JSON parsing fails, try to get the response text for better error messages
@@ -791,7 +831,6 @@ const jenisPengaduan = proxy({
     },
   },
 });
-
 
 const layananonlineDesa = proxy({
   administrasiOnline,

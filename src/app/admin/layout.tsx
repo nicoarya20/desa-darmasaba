@@ -39,8 +39,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       suppressHydrationWarning
       header={{ height: 64 }}
       navbar={{
-        width: 300,
-        breakpoint: "sm",
+        width: { base: 260, sm: 280, lg: 300 },
+        breakpoint: 'sm',
         collapsed: {
           mobile: !opened,
           desktop: !desktopOpened,
@@ -52,23 +52,29 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         style={{
           background: "linear-gradient(90deg, #ffffff, #f9fbff)",
           borderBottom: `1px solid ${colors["blue-button"]}20`,
+          padding: '0 16px',
         }}
+        px={{ base: 'sm', sm: 'md' }}
+        py={{ base: 'xs', sm: 'sm' }}
       >
-        <Group px="md" h="100%" justify="space-between">
+        <Group w="100%" h="100%" justify="space-between" wrap="nowrap">
           <Flex align="center" gap="sm">
             <Image
               src="/assets/images/darmasaba-icon.png"
               alt="Logo Darmasaba"
-              width={46}
-              height={46}
+              w={{ base: 32, sm: 40 }}
+              h={{ base: 32, sm: 40 }}
               radius="md"
               loading="lazy"
+              style={{
+                minWidth: '32px',
+                height: 'auto',
+              }}
             />
             <Text
               fw={700}
               c={colors["blue-button"]}
-              fz="lg"
-              style={{ letterSpacing: rem(0.3) }}
+              fz={{ base: 'md', sm: 'xl' }}
             >
               Admin Darmasaba
             </Text>
@@ -93,8 +99,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               opened={opened}
               onClick={toggle}
               hiddenFrom="sm"
-              size="sm"
+              size="md"
               color={colors["blue-button"]}
+              mr="xs"
             />
 
             <Tooltip label="Kembali ke Website Desa" position="bottom" withArrow>
@@ -108,7 +115,18 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 variant="gradient"
                 gradient={{ from: colors["blue-button"], to: "#228be6" }}
               >
-                <Image src="/assets/images/darmasaba-icon.png" alt="Logo Darmasaba" w={25} h={25} radius="md" loading="lazy" />
+                <Image 
+                  src="/assets/images/darmasaba-icon.png" 
+                  alt="Logo Darmasaba" 
+                  w={20} 
+                  h={20} 
+                  radius="md" 
+                  loading="lazy" 
+                  style={{
+                    minWidth: '20px',
+                    height: 'auto',
+                  }}
+                />
               </ActionIcon>
             </Tooltip>
             <Tooltip label="Keluar" position="bottom" withArrow>
@@ -135,6 +153,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           background: "#ffffff",
           borderRight: `1px solid ${colors["blue-button"]}20`,
         }}
+        p={{ base: 'xs', sm: 'sm' }}
       >
         <AppShell.Section p="sm">
           {navBar.map((v, k) => {
@@ -155,6 +174,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   marginBottom: rem(4),
                   transition: "background 150ms ease",
                 }}
+                styles={{
+                  root: {
+                    '&:hover': {
+                      backgroundColor: 'rgba(25, 113, 194, 0.05)',
+                    },
+                  },
+                }}
                 variant="light"
                 active={isParentActive}
               >
@@ -173,10 +199,19 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                           {child.name}
                         </Text>
                       }
-                      style={{
-                        borderRadius: rem(8),
-                        marginBottom: rem(2),
-                        transition: "background 150ms ease",
+                      styles={{
+                        root: {
+                          borderRadius: rem(8),
+                          marginBottom: rem(2),
+                          transition: 'background 150ms ease',
+                          padding: '6px 12px',
+                          '&:hover': {
+                            backgroundColor: isChildActive ? 'rgba(25, 113, 194, 0.15)' : 'rgba(25, 113, 194, 0.05)',
+                          },
+                          ...(isChildActive && {
+                            backgroundColor: 'rgba(25, 113, 194, 0.1)',
+                          }),
+                        },
                       }}
                       active={isChildActive}
                       component={Link}

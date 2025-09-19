@@ -1,63 +1,58 @@
 import colors from '@/con/colors';
-import { Stack, Container, Box, List, ListItem, Text, Image } from '@mantine/core';
+import { Stack, Box, Container, Text, Image, ListItem, List } from '@mantine/core';
 import React from 'react';
 import BackButton from '../darmasaba/(pages)/desa/layanan/_com/BackButto';
 
+
 function Page() {
-  return (
+    return (
       <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"22"} px={{ base: "md", md: 0 }}>
-          <Box px={{ base: "md", md: 100 }}><BackButton /></Box>
-          <Container w={{ base: "100%", md: "50%" }} >
-              <Box pb={20}>
-                  <Text ta={"center"} fz={"3.4rem"} c={colors["blue-button"]} fw={"bold"}>
-                      IKM Berbasis Pengolahan Pangan
-                  </Text>
-                  <Text
-                      ta={"center"}
-                      fw={"bold"}
-                      fz={"1.4rem"}
-                  >
-                      Informasi dan Pelayanan Administrasi Digital
-                  </Text>
-              </Box>
-              <Image src="/api/img/ikm.png" alt='' w={"100%"} loading="lazy"/>
-          </Container>
-          <Box px={{ base: "md", md: 100 }}>
-              <Text py={20} fz={{ base: "sm", md: "lg" }} ta={"justify"}>
-                  Desa Darmasaba, yang terletak di Kecamatan Abiansemal, Kabupaten Badung, memiliki potensi besar dalam Industri Kecil dan Menengah (IKM) berbasis pengolahan pangan. Dengan sumber daya alam yang melimpah dan warisan kuliner khas Bali, Darmasaba dapat mengembangkan sektor ini untuk meningkatkan kesejahteraan masyarakat dan menciptakan lapangan kerja baru.
-              </Text>
-              <Text fz={{ base: "sm", md: "lg" }} ta={"justify"}>
-                  Potensi dan Peran IKM Berbasis Pengolahan Pangan:
-              </Text>
-              <List py={20} type='ordered'>
-                  <ListItem fz={{ base: "sm", md: "lg" }} ta={"justify"}>
-                      <Text fz={{ base: "sm", md: "lg" }} fw={"bold"}>Produk Unggulan Pengolahan Pangan</Text>
-                      <Text fz={{ base: "sm", md: "lg" }} ta={"justify"}>Beberapa produk olahan pangan yang potensial dikembangkan di Darmasaba meliputi:</Text>
-                      <Text fz={{ base: "sm", md: "lg" }} ta={"justify"}> - Keripik dan Snack Tradisional : Seperti keripik pisang, keripik singkong, dan rengginang.</Text>
-                      <Text fz={{ base: "sm", md: "lg" }} ta={"justify"}> - Sambal Khas Bali : Seperti sambal matah dan sambal embe yang banyak diminati pasar lokal dan nasional.</Text>
-                      <Text fz={{ base: "sm", md: "lg" }} ta={"justify"}> - Minuman Herbal dan Jamu : Berbasis rempah seperti kunyit asam, beras kencur, dan wedang jahe.</Text>
-                      <Text fz={{ base: "sm", md: "lg" }} ta={"justify"}> - Olahan Makanan Berbasis Kelapa : Seperti virgin coconut oil (VCO), serundeng, dan gula aren.</Text>
-                      <Text fz={{ base: "sm", md: "lg" }} ta={"justify"}> - Kue Tradisional Bali : Seperti jaje laklak, jaje uli, dan klepon yang dapat dikemas secara modern.</Text>
-                  </ListItem>
-                  <ListItem fz={{ base: "sm", md: "lg" }} ta={"justify"}>
-                      <Text fz={{ base: "sm", md: "lg" }} fw={"bold"}>Peluang Ekonomi dan Pemberdayaan UMKM:</Text>IKM berbasis pengolahan pangan dapat membuka peluang bagi masyarakat, terutama ibu rumah tangga dan pemuda desa, untuk berwirausaha. Dengan dukungan modal dan pelatihan dari pemerintah desa atau BUMDes Pudak Mesari, usaha kecil ini dapat berkembang menjadi industri yang lebih besar.
-                  </ListItem>
-                  <ListItem fz={{ base: "sm", md: "lg" }} ta={"justify"}>
-                      <Text fz={{ base: "sm", md: "lg" }} fw={"bold"}>Digitalisasi dan Pemasaran Online:</Text>Darmasaba dapat mengembangkan kawasan sentra IKM sebagai pusat produksi, pelatihan, dan pemasaran produk olahan pangan. Dengan adanya fasilitas ini, para pelaku usaha dapat lebih mudah berkolaborasi, meningkatkan kualitas produk, serta mendapatkan akses ke permodalan dan distribusi yang lebih luas.
-                  </ListItem>
-                  <ListItem fz={{ base: "sm", md: "lg" }} ta={"justify"}>
-                      <Text fz={{ base: "sm", md: "lg" }} fw={"bold"}>Pengembangan Kawasan Sentra IKM:</Text>Dengan berkembangnya sektor kuliner, banyak pelaku UMKM di Darmasaba mulai merintis usaha makanan, baik dalam bentuk warung makan, katering, hingga produksi makanan ringan seperti keripik, sambal, dan minuman tradisional. Potensi ini dapat terus dikembangkan dengan dukungan pemerintah desa dan promosi melalui media sosial.
-                  </ListItem>
-                  <ListItem fz={{ base: "sm", md: "lg" }} ta={"justify"}>
-                      <Text fz={{ base: "sm", md: "lg" }} fw={"bold"}>Sinergi dengan Pariwisata dan Agrowisata:</Text>Dengan berkembangnya sektor wisata di Darmasaba, produk olahan pangan dapat dijadikan suvenir khas desa. Pengunjung dapat membeli oleh-oleh seperti sambal kemasan, jajanan khas, atau minuman herbal sebagai bagian dari pengalaman wisata mereka.
-                  </ListItem>
-              </List>
-              <Text fz={{ base: "sm", md: "lg" }} ta={"justify"}>
-                  IKM berbasis pengolahan pangan memiliki potensi besar untuk menjadi sektor unggulan di Desa Darmasaba. Dengan inovasi, dukungan teknologi, serta pemasaran yang baik, produk-produk lokal dapat bersaing di pasar yang lebih luas, meningkatkan kesejahteraan masyarakat, dan menjadikan Darmasaba sebagai pusat industri pangan kreatif di Kabupaten Badung.
-              </Text>
+        <Box px={{ base: "md", md: 100 }}><BackButton /></Box>
+        <Container w={{ base: "100%", md: "50%" }} >
+          <Box pb={20}>
+            <Text ta={"center"} fz={"3.4rem"} c={colors["blue-button"]} fw={"bold"}>
+              Taman Beji Cengana
+            </Text>
+            <Text
+              ta={"center"}
+              fw={"bold"}
+              fz={"1.5rem"}
+            >
+              Informasi dan Pelayanan Administrasi Digital
+            </Text>
           </Box>
+          <Image src="/api/img/taman-beji.jpg" alt='' w={"100%"} h={400} />
+        </Container>
+        <Box px={{ base: "md", md: 100 }}>
+          <Text py={20} fz={{ base: "sm", md: "lg" }} ta={"justify"}>
+            Taman Beji Cengana, terletak di Desa Darmasaba, Kecamatan Abiansemal, Kabupaten Badung, Bali, adalah situs suci yang memiliki nilai spiritual dan sejarah yang tinggi. Tempat ini dikenal sebagai lokasi untuk ritual pembersihan diri (melukat) dan peribadatan oleh umat Hindu Bali. Keberadaan mata air suci (Tirta Klebutan) di Taman Beji Cengana dipercaya memberikan berkah dan penyucian bagi mereka yang datang untuk berdoa dan melakukan ritual.
+          </Text>
+          <Text fz={{ base: "sm", md: "lg" }} ta={"justify"}>
+            Potensi Desa melalui Taman Beji Cengana:
+          </Text>
+          <List py={20} type='ordered'>
+            <ListItem fz={{ base: "sm", md: "lg" }} ta={"justify"}>
+              <Text fz={{ base: "sm", md: "lg" }} fw={"bold"}>Pengembangan Pariwisata Spiritual:</Text> Taman Beji Cengana memiliki potensi besar sebagai destinasi wisata spiritual. Wisatawan yang mencari pengalaman spiritual dan ketenangan batin dapat tertarik untuk mengunjungi tempat ini, mengikuti ritual melukat, dan merasakan suasana sakral yang ditawarkan.
+            </ListItem>
+            <ListItem fz={{ base: "sm", md: "lg" }} ta={"justify"}>
+              <Text fz={{ base: "sm", md: "lg" }} fw={"bold"}>Pelestarian Budaya dan Tradisi:</Text>Dengan mempromosikan Taman Beji Cengana sebagai pusat kegiatan budaya dan ritual tradisional, desa dapat memastikan bahwa warisan budaya dan tradisi lokal tetap lestari.
+            </ListItem>
+            <ListItem fz={{ base: "sm", md: "lg" }} ta={"justify"}>
+              <Text fz={{ base: "sm", md: "lg" }} fw={"bold"}>Pendidikan dan Penelitian:</Text>Taman Beji Cengana dapat dijadikan sebagai pusat pendidikan dan penelitian bagi akademisi, peneliti, dan pelajar yang tertarik mempelajari budaya, agama, dan sejarah Bali.
+            </ListItem>
+            <ListItem fz={{ base: "sm", md: "lg" }} ta={"justify"}>
+              <Text fz={{ base: "sm", md: "lg" }} fw={"bold"}>Pengembangan Ekonomi Kreatif:</Text>Dengan meningkatnya jumlah pengunjung ke Taman Beji Cengana, peluang bagi pengembangan ekonomi kreatif juga terbuka lebar. Masyarakat lokal dapat mengembangkan produk kerajinan tangan, kuliner khas, dan suvenir yang mencerminkan budaya dan tradisi desa.
+            </ListItem>
+            <ListItem fz={{ base: "sm", md: "lg" }} ta={"justify"}>
+              <Text fz={{ base: "sm", md: "lg" }} fw={"bold"}>Konservasi Lingkungan:</Text>Sebagai situs suci dengan mata air alami, Taman Beji Cengana memiliki peran penting dalam konservasi lingkungan. Upaya menjaga kebersihan dan kelestarian mata air serta lingkungan sekitarnya dapat menjadi contoh praktik konservasi yang baik.
+            </ListItem>
+          </List>
+          <Text fz={{ base: "sm", md: "lg" }} ta={"justify"}>
+            Dengan memanfaatkan potensi yang dimiliki Taman Beji Cengana, Desa Darmasaba dapat mengembangkan sektor pariwisata, budaya, pendidikan, ekonomi, dan lingkungan secara berkelanjutan, yang pada gilirannya akan meningkatkan kesejahteraan masyarakat dan pelestarian warisan budaya.
+          </Text>
+        </Box>
       </Stack>
-  );
-}
+    );
+  }
 
 export default Page;

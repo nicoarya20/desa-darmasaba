@@ -6,7 +6,6 @@ import { Box, Center, Container, Image, Skeleton, Stack, Text } from '@mantine/c
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
-import BackButton from '../../../layanan/_com/BackButto';
 
 
 
@@ -50,7 +49,6 @@ function Page() {
 
   return (
     <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"22"} px={{ base: "md", md: 0 }}>
-      <Box px={{ base: "md", md: 100 }}><BackButton /></Box>
       <Container w={{ base: "100%", md: "50%" }} >
         <Box pb={20}>
           <Text ta={"center"} fz={"2.4rem"} c={colors["blue-button"]} fw={"bold"}>

@@ -35,12 +35,12 @@ function Apbdes() {
 
   return (
     <Stack p="lg" gap="4rem" bg={colors.Bg}>
-      <Box w={{ base: '100%', sm: '70%' }}>
+      <Box>
         <Stack gap="sm">
-          <Text fz={{ base: '2.4rem', sm: '4rem' }} fw="bold" lh={1.2}>
+          <Text ta={"center"} fz={{ base: '2.4rem', sm: '4rem' }} fw="bold" lh={1.2}>
             {textHeading.title}
           </Text>
-          <Text fz={{ base: '1rem', sm: '1.3rem' }} c="dimmed">
+          <Text ta={"center"} fz={{ base: '1rem', sm: '1.3rem' }} c="dimmed">
             {textHeading.des}
           </Text>
         </Stack>

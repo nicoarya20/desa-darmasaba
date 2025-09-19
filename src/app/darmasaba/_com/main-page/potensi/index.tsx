@@ -49,11 +49,11 @@ function Potensi() {
 
   return (
     <Stack p="sm" gap="4rem">
-      <Box w={{ base: "100%", sm: "60%" }}>
-        <Text fz="4.4rem" fw={700} c={colors["blue-button"]}>
+      <Box>
+        <Text ta={"center"} fz={{ base: "2.4rem", md: "3.4rem" }} fw={700} c={colors["blue-button"]}>
           {textHeading.title}
         </Text>
-        <Text size="1.4rem" c="black">
+        <Text ta={"center"} fz={{ base: "1.4rem", md: "1.6rem" }} c="black">
           {textHeading.des}
         </Text>
       </Box>

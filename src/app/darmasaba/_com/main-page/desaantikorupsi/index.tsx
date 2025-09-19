@@ -1,19 +1,17 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
+import korupsiState from "@/app/admin/(dashboard)/_state/landing-page/desa-anti-korupsi";
 import colors from "@/con/colors";
-import { Box, Button, Center, Container, Flex, Paper, SimpleGrid, Stack, Text, useMantineTheme } from "@mantine/core";
-import { useMediaQuery } from "@mantine/hooks";
+import { Button, Center, Container, Flex, Paper, SimpleGrid, Stack, Text } from "@mantine/core";
 import { IconClipboardText } from "@tabler/icons-react";
 import Link from "next/link";
-import korupsiState from "@/app/admin/(dashboard)/_state/landing-page/desa-anti-korupsi";
-import { useProxy } from "valtio/utils";
 import { useEffect, useState } from "react";
+import { useProxy } from "valtio/utils";
 
 function DesaAntiKorupsi() {
   const state = useProxy(korupsiState);
   const [loading, setLoading] = useState(false);
-  const theme = useMantineTheme();
-  const mobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
+ 
 
   useEffect(() => {
     const loadData = async () => {
@@ -31,7 +29,7 @@ function DesaAntiKorupsi() {
 
   const data = (state.desaAntikorupsi.findMany.data || []).slice(0, 6);
   return (
-    <Stack gap={"0"} bg={colors.Bg} p={"sm"} h={mobile ? 2000 : 1050}>
+    <Stack gap={"0"} bg={colors.Bg} p={"sm"}>
       <Container w={{ base: "100%", md: "80%" }} p={"xl"} >
         <Center>
           <Text fz={{ base: "2.4rem", md: "3.4rem" }}>Desa Anti Korupsi</Text>
@@ -41,51 +39,60 @@ function DesaAntiKorupsi() {
           <Button radius={"lg"} fz={"h4"} bg={colors["blue-button"]} component={Link} href={"/darmasaba/desa-anti-korupsi/detail"}>Selengkapnya</Button>
         </Center>
       </Container>
-      <SimpleGrid
-        cols={{
-          base: 1,
-          sm: 2,
-
-        }}>
+      <Container w="100%" maw="80rem" px="md">
         {loading ? (
-          <Center>
-            <Text fz={"2.4rem"}>Memuat Data...</Text>
+          <Center mih={200}>
+            <Text fz="lg">Memuat Data...</Text>
           </Center>
         ) : (
-          data.map((v, k) => {
-            return (
-              <Box
+          <SimpleGrid
+            cols={{ base: 1, sm: 2, md: 3 }}
+            spacing="lg"
+            mt="lg"
+          >
+            {data.map((v, k) => (
+              <Paper
                 key={k}
+                p="md"
+                withBorder
+                shadow="sm"
+                radius="md"
+                h="100%"
               >
-                <Paper
-                  p={"lg"}
-                  withBorder
-                  shadow="sm"
-                  h={{ base: 250, md: 210 }}
-                >
-                  <Flex gap={"lg"} align={"center"}>
-                    <Box>
-                      <Flex justify={"center"} align={"center"}>
-                        <Box>
-                          <IconClipboardText color={colors["blue-button"]} size={50} />
-                        </Box>
-                        <Box px={20} >
-                         <Stack gap={"xs"}>
-                         <Text fz={{ base: "1.2rem", md: "lg" }} ta={"center"} c={colors["blue-button"]} fw={500}>
-                            {v.kategori?.name || v.name || 'Kategori'}
-                          </Text>
-                          <Text dangerouslySetInnerHTML={{ __html: v.name || 'Name' }} fz={{ base: "1rem", md: "lg" }} ta={"center"} c={colors["blue-button"]} fw={500} />
-                         </Stack>
-                        </Box>
-                      </Flex>
-                    </Box>
-                  </Flex>
-                </Paper>
-              </Box>
-            )
-          })
+                <Flex gap="md" align="flex-start">
+                  <IconClipboardText
+                    color={colors["blue-button"]}
+                    size={40}
+                    style={{ flexShrink: 0 }} // biar icon nggak ketekan
+                  />
+                  <Stack gap={2} style={{ flex: 1, minWidth: 0 }}>
+                    <Text
+                      fz={{ base: "sm", sm: "md", md: "lg", lg: "xl" }} // lebih besar di desktop
+                      c={colors["blue-button"]}
+                      fw={600}
+                      style={{ wordBreak: "break-word", whiteSpace: "normal" }}
+                    >
+                      {v.kategori?.name || "Kategori"}
+                    </Text>
+                    <Text
+                      dangerouslySetInnerHTML={{
+                        __html: v.name || "Name",
+                      }}
+                      fz={{ base: "sm", sm: "md", md: "lg", lg: "xl" }} // sama, scaling responsif
+                      c="dark"
+                      style={{
+                        wordBreak: "break-word",
+                        whiteSpace: "normal",
+                      }}
+                    />
+                  </Stack>
+                </Flex>
+              </Paper>
+            ))}
+          </SimpleGrid>
+
         )}
-      </SimpleGrid>
+      </Container>
     </Stack>
   );
 }
