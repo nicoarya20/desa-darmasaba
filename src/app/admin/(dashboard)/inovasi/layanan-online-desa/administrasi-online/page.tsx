@@ -4,7 +4,6 @@ import {
   Box,
   Button,
   Center,
-  Group,
   Pagination,
   Paper,
   Skeleton,
@@ -16,11 +15,10 @@ import {
   TableThead,
   TableTr,
   Text,
-  Title,
-  Tooltip
+  Title
 } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { IconDeviceImac, IconPlus, IconSearch } from '@tabler/icons-react';
+import { IconDeviceImac, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
@@ -66,27 +64,13 @@ function ListAdministrasiOnline({ search }: { search: string }) {
   return (
     <Box py={10}>
       <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
-        <Group justify="space-between" mb="md">
           <Title order={4}>Daftar Administrasi Online</Title>
-          <Tooltip label="Tambah Layanan Baru" withArrow>
-            <Button
-              leftSection={<IconPlus size={18} />}
-              color="blue"
-              variant="light"
-              onClick={() =>
-                router.push('/admin/inovasi/layanan-online-desa/administrasi-online/create')
-              }
-            >
-              Tambah Baru
-            </Button>
-          </Tooltip>
-        </Group>
 
         <Box style={{ overflowX: 'auto' }}>
           <Table highlightOnHover>
             <TableThead>
               <TableTr>
-                <TableTh style={{ width: '25%' }}>Nama Layanan</TableTh>
+                <TableTh style={{ width: '25%' }}>Nama</TableTh>
                 <TableTh style={{ width: '25%' }}>Alamat</TableTh>
                 <TableTh style={{ width: '20%' }}>Nomor Telepon</TableTh>
                 <TableTh style={{ width: '15%' }}>Aksi</TableTh>

@@ -2,7 +2,16 @@
 'use client'
 import layananonlineDesa from '@/app/admin/(dashboard)/_state/inovasi/layanan-online-desa';
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
+import {
+  Box,
+  Button,
+  Group,
+  Paper,
+  Stack,
+  TextInput,
+  Title,
+  Tooltip
+} from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
@@ -10,7 +19,7 @@ import { useProxy } from 'valtio/utils';
 
 function CreateJenisPengaduan() {
   const router = useRouter();
-  const state = useProxy(layananonlineDesa.jenisPengaduan)
+  const state = useProxy(layananonlineDesa.jenisPengaduan);
 
   useEffect(() => {
     state.findMany.load();
@@ -18,42 +27,64 @@ function CreateJenisPengaduan() {
 
   const resetForm = () => {
     state.create.form = {
-      nama: "",
+      nama: '',
     };
-  }
+  };
 
   const handleSubmit = async () => {
     await state.create.create();
     resetForm();
-    router.push("/admin/inovasi/layanan-online-desa/jenis-pengaduan")
-  }
+    router.push('/admin/inovasi/layanan-online-desa/jenis-pengaduan');
+  };
 
   return (
-    <Box>
-      <Box>
-        <Box mb={10}>
-          <Button onClick={() => router.back()} variant='subtle' color={'blue'}>
-            <IconArrowBack color={colors['blue-button']} size={25} />
+    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+      {/* Header */}
+      <Group mb="md">
+        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
+          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+            <IconArrowBack color={colors['blue-button']} size={24} />
           </Button>
-        </Box>
+        </Tooltip>
+        <Title order={4} ml="sm" c="dark">
+          Tambah Jenis Pengaduan
+        </Title>
+      </Group>
 
-        <Paper w={{ base: '100%', md: '50%' }} bg={colors['white-1']} p={'md'}>
-          <Stack gap={"xs"}>
-            <Title order={4}>Create Jenis Pengaduan</Title>
-            <TextInput
-              value={state.create.form.nama}
-              onChange={(val) => {
-                state.create.form.nama = val.target.value;
+      {/* Form */}
+      <Paper
+        w={{ base: '100%', md: '50%' }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+        style={{ border: '1px solid #e0e0e0' }}
+      >
+        <Stack gap="md">
+          <TextInput
+            label="Nama Jenis Pengaduan"
+            placeholder="Masukkan nama jenis pengaduan"
+            value={state.create.form.nama || ''}
+            onChange={(e) => (state.create.form.nama = e.target.value)}
+            required
+          />
+
+          <Group justify="right">
+            <Button
+              onClick={handleSubmit}
+              radius="md"
+              size="md"
+              style={{
+                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                color: '#fff',
+                boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
-              label={<Text fw={"bold"} fz={"sm"}>Nama Jenis Pengaduan</Text>}
-              placeholder='Masukkan nama jenis pengaduan'
-            />
-            <Group>
-              <Button bg={colors['blue-button']} onClick={handleSubmit}>Submit</Button>
-            </Group>
-          </Stack>
-        </Paper>
-      </Box>
+            >
+              Simpan
+            </Button>
+          </Group>
+        </Stack>
+      </Paper>
     </Box>
   );
 }

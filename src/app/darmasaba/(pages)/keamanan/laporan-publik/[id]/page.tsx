@@ -120,7 +120,7 @@ function Page() {
 
               <Box>
                 <Text fw={600} fz="lg" >Kronologi</Text>
-                <Text fz="sm" c="dimmed">{data.kronologi || '-'}</Text>
+                <Text fz="sm" c="dimmed" dangerouslySetInnerHTML={{ __html: data.kronologi || '-' }} />
               </Box>
 
               <Divider />

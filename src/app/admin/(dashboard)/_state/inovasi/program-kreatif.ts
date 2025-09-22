@@ -54,34 +54,32 @@ const programKreatifState = proxy({
     data: null as any[] | null,
     page: 1,
     totalPages: 1,
-    total: 0,
     loading: false,
-    load: async (page = 1, limit = 10) => {
-      // Change to arrow function
-      programKreatifState.findMany.loading = true; // Use the full path to access the property
+    search: "",
+    load: async (page = 1, limit = 10, search = "") => {
+      programKreatifState.findMany.loading = true; // ✅ Akses langsung via nama path
       programKreatifState.findMany.page = page;
+      programKreatifState.findMany.search = search;
+
       try {
-        const res = await ApiFetch.api.inovasi.programkreatif["find-many"].get({
-          query: { page, limit },
-        });
+        const query: any = { page, limit };
+        if (search) query.search = search;
+
+        const res = await ApiFetch.api.inovasi.programkreatif[
+          "find-many"
+        ].get({ query });
 
         if (res.status === 200 && res.data?.success) {
-          programKreatifState.findMany.data = res.data.data || [];
-          programKreatifState.findMany.total = res.data.total || 0;
-          programKreatifState.findMany.totalPages = res.data.totalPages || 1;
+          programKreatifState.findMany.data = res.data.data ?? [];
+          programKreatifState.findMany.totalPages =
+            res.data.totalPages ?? 1;
         } else {
-          console.error(
-            "Failed to load grafik berdasarkan jenis kelamin:",
-            res.data?.message
-          );
           programKreatifState.findMany.data = [];
-          programKreatifState.findMany.total = 0;
           programKreatifState.findMany.totalPages = 1;
         }
-      } catch (error) {
-        console.error("Error loading grafik berdasarkan jenis kelamin:", error);
+      } catch (err) {
+        console.error("Gagal fetch program kreatif paginated:", err);
         programKreatifState.findMany.data = [];
-        programKreatifState.findMany.total = 0;
         programKreatifState.findMany.totalPages = 1;
       } finally {
         programKreatifState.findMany.loading = false;

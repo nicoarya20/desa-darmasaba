@@ -1,115 +1,140 @@
 'use client'
-import { useProxy } from 'valtio/utils';
-
-import { Box, Button, Flex, Paper, Skeleton, Stack, Text } from '@mantine/core';
+import { Box, Button, Group, Paper, Skeleton, Stack, Text, Tooltip } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { IconArrowBack, IconEdit, IconX } from '@tabler/icons-react';
+import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { useProxy } from 'valtio/utils';
 
 import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
 import kolaborasiInovasiState from '@/app/admin/(dashboard)/_state/inovasi/kolaborasi-inovasi';
 import colors from '@/con/colors';
 
 function DetailKolaborasiInovasi() {
-  const kolaborasiState = useProxy(kolaborasiInovasiState)
-  const [modalHapus, setModalHapus] = useState(false)
-  const [selectedId, setSelectedId] = useState<string | null>(null)
-  const params = useParams()
-  const router = useRouter()
+  const kolaborasiState = useProxy(kolaborasiInovasiState);
+  const [modalHapus, setModalHapus] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const params = useParams();
+  const router = useRouter();
 
   useShallowEffect(() => {
-    kolaborasiState.findUnique.load(params?.id as string)
-  }, [])
-
+    kolaborasiState.findUnique.load(params?.id as string);
+  }, []);
 
   const handleHapus = () => {
     if (selectedId) {
-      kolaborasiState.delete.byId(selectedId)
-      setModalHapus(false)
-      setSelectedId(null)
-      router.push("/admin/inovasi/kolaborasi-inovasi")
+      kolaborasiState.delete.byId(selectedId);
+      setModalHapus(false);
+      setSelectedId(null);
+      router.push("/admin/inovasi/kolaborasi-inovasi/list-kolaborasi-inovasi");
     }
-  }
+  };
 
   if (!kolaborasiState.findUnique.data) {
     return (
       <Stack py={10}>
-        <Skeleton h={40} />
+        <Skeleton height={500} radius="md" />
       </Stack>
-    )
+    );
   }
 
+  const data = kolaborasiState.findUnique.data;
+
   return (
-    <Box>
-      <Box mb={10}>
-        <Button variant="subtle" onClick={() => router.back()}>
-          <IconArrowBack color={colors['blue-button']} size={25} />
-        </Button>
-      </Box>
-      <Paper bg={colors['white-1']} w={{ base: "100%", md: "100%", lg: "50%" }} p={'md'}>
-        <Stack>
-          <Text fz={"xl"} fw={"bold"}>Detail Kolaborasi Inovasi</Text>
-          {kolaborasiState.findUnique.data ? (
-            <Paper key={kolaborasiState.findUnique.data.id} bg={colors['BG-trans']} p={'md'}>
-              <Stack gap={"xs"}>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Nama Kolaborasi Inovasi</Text>
-                  <Text fz={"lg"}>{kolaborasiState.findUnique.data?.name}</Text>
-                </Box>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Tahun</Text>
-                  <Text fz={"lg"}>{kolaborasiState.findUnique.data?.tahun}</Text>
-                </Box>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Deskripsi Singkat</Text>
-                  <Text fz={"lg"} >{kolaborasiState.findUnique.data?.slug}</Text>
-                </Box>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Deskripsi</Text>
-                  <Text fz={"lg"} dangerouslySetInnerHTML={{ __html: kolaborasiState.findUnique.data?.deskripsi }} />
-                </Box>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Kolaborator</Text>
-                  <Text fz={"lg"}>{kolaborasiState.findUnique.data?.kolaborator}</Text>
-                </Box>
-                <Flex gap={"xs"} mt={10}>
+    <Box py={10}>
+      {/* Tombol kembali */}
+      <Button
+        variant="subtle"
+        onClick={() => router.back()}
+        leftSection={<IconArrowBack size={24} color={colors['blue-button']} />}
+        mb={15}
+      >
+        Kembali
+      </Button>
+
+      {/* Card utama */}
+      <Paper
+        withBorder
+        w={{ base: "100%", md: "70%" }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+      >
+        <Stack gap="md">
+          <Text fz="2xl" fw="bold" c={colors['blue-button']}>
+            Detail Kolaborasi Inovasi
+          </Text>
+
+          {/* Isi detail */}
+          <Paper bg="#ECEEF8" p="md" radius="md" shadow="xs">
+            <Stack gap="sm">
+              <Box>
+                <Text fz="lg" fw="bold">Nama Kolaborasi Inovasi</Text>
+                <Text fz="md" c="dimmed">{data?.name || '-'}</Text>
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">Tahun</Text>
+                <Text fz="md" c="dimmed">{data?.tahun || '-'}</Text>
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">Deskripsi Singkat</Text>
+                <Text fz="md" c="dimmed">{data?.slug || '-'}</Text>
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">Deskripsi</Text>
+                <Text fz="md" c="dimmed" dangerouslySetInnerHTML={{ __html: data?.deskripsi || '-' }} />
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">Kolaborator</Text>
+                <Text fz="md" c="dimmed">{data?.kolaborator || '-'}</Text>
+              </Box>
+
+              {/* Tombol aksi */}
+              <Group gap="sm">
+                <Tooltip label="Hapus Kolaborasi Inovasi" withArrow position="top">
                   <Button
+                    color="red"
                     onClick={() => {
-                      if (kolaborasiState.findUnique.data) {
-                        setSelectedId(kolaborasiState.findUnique.data.id);
-                        setModalHapus(true);
-                      }
+                      setSelectedId(data.id);
+                      setModalHapus(true);
                     }}
-                    disabled={kolaborasiState.delete.loading || !kolaborasiState.findUnique.data}
-                    color={"red"}
+                    variant="light"
+                    radius="md"
+                    size="md"
+                    disabled={kolaborasiState.delete.loading}
                   >
-                    <IconX size={20} />
+                    <IconTrash size={20} />
                   </Button>
+                </Tooltip>
+
+                <Tooltip label="Edit Kolaborasi Inovasi" withArrow position="top">
                   <Button
-                    onClick={() => {
-                      if (kolaborasiState.findUnique.data) {
-                        router.push(`/admin/inovasi/kolaborasi-inovasi/${kolaborasiState.findUnique.data.id}/edit`);
-                      }
-                    }}
-                    disabled={!kolaborasiState.findUnique.data}
-                    color={"green"}
+                    color="green"
+                    onClick={() => router.push(`/admin/inovasi/kolaborasi-inovasi/list-kolaborasi-inovasi/${data.id}/edit`)}
+                    variant="light"
+                    radius="md"
+                    size="md"
                   >
                     <IconEdit size={20} />
                   </Button>
-                </Flex>
-              </Stack>
-            </Paper>
-          ) : null}
+                </Tooltip>
+              </Group>
+            </Stack>
+          </Paper>
         </Stack>
       </Paper>
 
-      {/* Modal Konfirmasi Hapus */}
+      {/* Modal konfirmasi hapus */}
       <ModalKonfirmasiHapus
         opened={modalHapus}
         onClose={() => setModalHapus(false)}
         onConfirm={handleHapus}
-        text='Apakah anda yakin ingin menghapus kolaborasi inovasi ini?'
+        text="Apakah anda yakin ingin menghapus kolaborasi inovasi ini?"
       />
     </Box>
   );

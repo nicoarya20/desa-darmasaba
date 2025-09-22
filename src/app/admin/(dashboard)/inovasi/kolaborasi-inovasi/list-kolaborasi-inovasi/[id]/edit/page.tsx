@@ -7,11 +7,13 @@ import colors from "@/con/colors";
 import {
   Box,
   Button,
+  Group,
   Paper,
   Stack,
   Text,
   TextInput,
-  Title
+  Title,
+  Tooltip,
 } from "@mantine/core";
 import { IconArrowBack } from "@tabler/icons-react";
 import { useParams, useRouter } from "next/navigation";
@@ -25,33 +27,33 @@ function EditKolaborasiInovasi() {
   const params = useParams();
 
   const [formData, setFormData] = useState({
-    name: kolaborasiState.update.form.name || '',
-    deskripsi: kolaborasiState.update.form.deskripsi || '',
-    tahun: kolaborasiState.update.form.tahun || '',
-    slug: kolaborasiState.update.form.slug || '',
-    kolaborator: kolaborasiState.update.form.kolaborator || '',
+    name: kolaborasiState.update.form.name || "",
+    deskripsi: kolaborasiState.update.form.deskripsi || "",
+    tahun: kolaborasiState.update.form.tahun || "",
+    slug: kolaborasiState.update.form.slug || "",
+    kolaborator: kolaborasiState.update.form.kolaborator || "",
   });
 
-  // Load berita by id saat pertama kali
+  // Load data
   useEffect(() => {
     const loadKolaborasi = async () => {
       const id = params?.id as string;
       if (!id) return;
 
       try {
-        const data = await kolaborasiState.update.load(id); // akses langsung, bukan dari proxy
+        const data = await kolaborasiState.update.load(id);
         if (data) {
           setFormData({
-            name: data.name || '',
-            deskripsi: data.deskripsi || '',
-            tahun: data.tahun || '',
-            slug: data.slug || '',
-            kolaborator: data.kolaborator || '',
+            name: data.name || "",
+            deskripsi: data.deskripsi || "",
+            tahun: data.tahun || "",
+            slug: data.slug || "",
+            kolaborator: data.kolaborator || "",
           });
         }
       } catch (error) {
-        console.error("Error loading berita:", error);
-        toast.error("Gagal memuat data berita");
+        console.error("Error loading kolaborasi:", error);
+        toast.error("Gagal memuat data kolaborasi inovasi");
       }
     };
 
@@ -59,9 +61,7 @@ function EditKolaborasiInovasi() {
   }, [params?.id]);
 
   const handleSubmit = async () => {
-
     try {
-      // Update global state with form data
       kolaborasiState.update.form = {
         ...kolaborasiState.update.form,
         name: formData.name,
@@ -71,53 +71,72 @@ function EditKolaborasiInovasi() {
         kolaborator: formData.kolaborator,
       };
       await kolaborasiState.update.submit();
-      toast.success("Berita berhasil diperbarui!");
+      toast.success("Kolaborasi inovasi berhasil diperbarui!");
       router.push("/admin/inovasi/kolaborasi-inovasi");
     } catch (error) {
-      console.error("Error updating berita:", error);
-      toast.error("Terjadi kesalahan saat memperbarui berita");
+      console.error("Error updating kolaborasi:", error);
+      toast.error("Terjadi kesalahan saat memperbarui data");
     }
   };
 
   return (
-    <Box>
-      <Box mb={10}>
-        <Button variant="subtle" onClick={() => router.back()}>
-          <IconArrowBack color={colors["blue-button"]} size={30} />
-        </Button>
-      </Box>
-      <Paper bg={"white"} p={"md"} w={{ base: "100%", md: "50%" }}>
-        <Stack gap={"xs"}>
-          <Title order={3}>Edit Kolaborasi Inovasi</Title>
+    <Box px={{ base: "sm", md: "lg" }} py="md">
+      <Group mb="md">
+        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
+          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+            <IconArrowBack color={colors["blue-button"]} size={24} />
+          </Button>
+        </Tooltip>
+        <Title order={4} ml="sm" c="dark">
+          Edit Kolaborasi Inovasi
+        </Title>
+      </Group>
+
+      <Paper
+        w={{ base: "100%", md: "60%" }}
+        bg={colors["white-1"]}
+        p="lg"
+        radius="md"
+        shadow="sm"
+        style={{ border: "1px solid #e0e0e0" }}
+      >
+        <Stack gap="md">
           <TextInput
+            label="Nama Kolaborasi"
+            placeholder="Masukkan nama kolaborasi"
             value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            label={<Text fz={"sm"} fw={"bold"}>Nama</Text>}
-            placeholder="masukkan nama"
+            required
           />
 
           <TextInput
+            label="Deskripsi Singkat"
+            placeholder="Masukkan deskripsi singkat"
             value={formData.slug}
             onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-            label={<Text fz={"sm"} fw={"bold"}>Deskripsi Singkat</Text>}
-            placeholder="masukkan deskripsi singkat"
+            required
           />
 
           <TextInput
+            label="Tahun"
+            placeholder="Masukkan tahun"
             value={formData.tahun}
             onChange={(e) => setFormData({ ...formData, tahun: e.target.value })}
-            label={<Text fz={"sm"} fw={"bold"}>Tahun</Text>}
-            placeholder="masukkan tahun"
+            required
           />
 
           <TextInput
+            label="Kolaborator"
+            placeholder="Masukkan nama kolaborator"
             value={formData.kolaborator}
             onChange={(e) => setFormData({ ...formData, kolaborator: e.target.value })}
-            label={<Text fz={"sm"} fw={"bold"}>Kolaborator</Text>}
-            placeholder="masukkan kolaborator"
+            required
           />
+
           <Box>
-            <Text fz={"sm"} fw={"bold"}>Konten</Text>
+            <Text fw="bold" fz="sm" mb={6}>
+              Konten
+            </Text>
             <EditEditor
               value={formData.deskripsi}
               onChange={(htmlContent) => {
@@ -126,7 +145,21 @@ function EditKolaborasiInovasi() {
               }}
             />
           </Box>
-          <Button onClick={handleSubmit}>Simpan</Button>
+
+          <Group justify="right">
+            <Button
+              onClick={handleSubmit}
+              radius="md"
+              size="md"
+              style={{
+                background: `linear-gradient(135deg, ${colors["blue-button"]}, #4facfe)`,
+                color: "#fff",
+                boxShadow: "0 4px 15px rgba(79, 172, 254, 0.4)",
+              }}
+            >
+              Simpan
+            </Button>
+          </Group>
         </Stack>
       </Paper>
     </Box>

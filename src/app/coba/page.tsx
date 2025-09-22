@@ -1,58 +1,108 @@
 import colors from '@/con/colors';
-import { Stack, Box, Container, Text, Image, ListItem, List } from '@mantine/core';
-import React from 'react';
+import { Box, Center, Image, List, ListItem, Paper, SimpleGrid, Stack, Text } from '@mantine/core';
 import BackButton from '../darmasaba/(pages)/desa/layanan/_com/BackButto';
 
 
-function Page() {
-    return (
-      <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"22"} px={{ base: "md", md: 0 }}>
-        <Box px={{ base: "md", md: 100 }}><BackButton /></Box>
-        <Container w={{ base: "100%", md: "50%" }} >
-          <Box pb={20}>
-            <Text ta={"center"} fz={"3.4rem"} c={colors["blue-button"]} fw={"bold"}>
-              Taman Beji Cengana
-            </Text>
-            <Text
-              ta={"center"}
-              fw={"bold"}
-              fz={"1.5rem"}
-            >
-              Informasi dan Pelayanan Administrasi Digital
-            </Text>
-          </Box>
-          <Image src="/api/img/taman-beji.jpg" alt='' w={"100%"} h={400} />
-        </Container>
-        <Box px={{ base: "md", md: 100 }}>
-          <Text py={20} fz={{ base: "sm", md: "lg" }} ta={"justify"}>
-            Taman Beji Cengana, terletak di Desa Darmasaba, Kecamatan Abiansemal, Kabupaten Badung, Bali, adalah situs suci yang memiliki nilai spiritual dan sejarah yang tinggi. Tempat ini dikenal sebagai lokasi untuk ritual pembersihan diri (melukat) dan peribadatan oleh umat Hindu Bali. Keberadaan mata air suci (Tirta Klebutan) di Taman Beji Cengana dipercaya memberikan berkah dan penyucian bagi mereka yang datang untuk berdoa dan melakukan ritual.
-          </Text>
-          <Text fz={{ base: "sm", md: "lg" }} ta={"justify"}>
-            Potensi Desa melalui Taman Beji Cengana:
-          </Text>
-          <List py={20} type='ordered'>
-            <ListItem fz={{ base: "sm", md: "lg" }} ta={"justify"}>
-              <Text fz={{ base: "sm", md: "lg" }} fw={"bold"}>Pengembangan Pariwisata Spiritual:</Text> Taman Beji Cengana memiliki potensi besar sebagai destinasi wisata spiritual. Wisatawan yang mencari pengalaman spiritual dan ketenangan batin dapat tertarik untuk mengunjungi tempat ini, mengikuti ritual melukat, dan merasakan suasana sakral yang ditawarkan.
-            </ListItem>
-            <ListItem fz={{ base: "sm", md: "lg" }} ta={"justify"}>
-              <Text fz={{ base: "sm", md: "lg" }} fw={"bold"}>Pelestarian Budaya dan Tradisi:</Text>Dengan mempromosikan Taman Beji Cengana sebagai pusat kegiatan budaya dan ritual tradisional, desa dapat memastikan bahwa warisan budaya dan tradisi lokal tetap lestari.
-            </ListItem>
-            <ListItem fz={{ base: "sm", md: "lg" }} ta={"justify"}>
-              <Text fz={{ base: "sm", md: "lg" }} fw={"bold"}>Pendidikan dan Penelitian:</Text>Taman Beji Cengana dapat dijadikan sebagai pusat pendidikan dan penelitian bagi akademisi, peneliti, dan pelajar yang tertarik mempelajari budaya, agama, dan sejarah Bali.
-            </ListItem>
-            <ListItem fz={{ base: "sm", md: "lg" }} ta={"justify"}>
-              <Text fz={{ base: "sm", md: "lg" }} fw={"bold"}>Pengembangan Ekonomi Kreatif:</Text>Dengan meningkatnya jumlah pengunjung ke Taman Beji Cengana, peluang bagi pengembangan ekonomi kreatif juga terbuka lebar. Masyarakat lokal dapat mengembangkan produk kerajinan tangan, kuliner khas, dan suvenir yang mencerminkan budaya dan tradisi desa.
-            </ListItem>
-            <ListItem fz={{ base: "sm", md: "lg" }} ta={"justify"}>
-              <Text fz={{ base: "sm", md: "lg" }} fw={"bold"}>Konservasi Lingkungan:</Text>Sebagai situs suci dengan mata air alami, Taman Beji Cengana memiliki peran penting dalam konservasi lingkungan. Upaya menjaga kebersihan dan kelestarian mata air serta lingkungan sekitarnya dapat menjadi contoh praktik konservasi yang baik.
-            </ListItem>
-          </List>
-          <Text fz={{ base: "sm", md: "lg" }} ta={"justify"}>
-            Dengan memanfaatkan potensi yang dimiliki Taman Beji Cengana, Desa Darmasaba dapat mengembangkan sektor pariwisata, budaya, pendidikan, ekonomi, dan lingkungan secara berkelanjutan, yang pada gilirannya akan meningkatkan kesejahteraan masyarakat dan pelestarian warisan budaya.
-          </Text>
-        </Box>
-      </Stack>
-    );
+const data1 = [
+  {
+    id: 1,
+    judul: 'Peran Pecalang dalam Keamanan Desa',
+    image: '/api/img/pecalang.png',
+    pengertian: 'Pecalang adalah petugas keamanan adat di Bali yang memiliki peran penting dalam menjaga ketertiban dan budaya lokal. Tugas mereka meliputi:',
+    deskripsi: <List>
+      <ListItem fz={{ base: 'h4', md: 'lg' }}>Mengamankan upacara adat dan kegiatan keagamaan.</ListItem>
+      <ListItem fz={{ base: 'h4', md: 'lg' }}>Mengatur lalu lintas saat ada perayaan atau kegiatan besar.</ListItem>
+      <ListItem fz={{ base: 'h4', md: 'lg' }}>Berpatroli untuk mencegah gangguan keamanan di lingkungan desa.</ListItem>
+      <ListItem fz={{ base: 'h4', md: 'lg' }}>Berkoordinasi dengan aparat desa dan kepolisian dalam penanganan situasi darurat.</ListItem>
+    </List>
+  },
+  {
+    id: 2,
+    judul: 'Patwal (Patroli Pengawal) Desa',
+    image: '/api/img/patwal-1.png',
+    pengertian: 'Selain Pecalang, Desa Darmasaba juga memiliki Patwal yang bertugas menjaga keamanan sehari-hari. Peran mereka antara lain:',
+    deskripsi: <List>
+      <ListItem fz={{ base: 'h4', md: 'lg' }}>Berpatroli secara rutin untuk memastikan lingkungan tetap aman.</ListItem>
+      <ListItem fz={{ base: 'h4', md: 'lg' }}>Menjaga ketertiban lalu lintas di area desa.</ListItem>
+      <ListItem fz={{ base: 'h4', md: 'lg' }}>Melakukan tindakan preventif terhadap potensi gangguan keamanan.</ListItem>
+      <ListItem fz={{ base: 'h4', md: 'lg' }}>Siap siaga dalam keadaan darurat untuk membantu warga.</ListItem>
+    </List>
+  },
+  {
+    id: 3,
+    judul: 'Layanan Keamanan yang Tersedia',
+    image: '/api/img/pospecalang.png',
+    pengertian: 'Jika terjadi keadaan darurat atau membutuhkan bantuan keamanan, warga dapat menghubungi:',
+    deskripsi: <List>
+      <ListItem fz={{ base: 'h4', md: 'lg' }}>Pos Pecalang Desa: [Masukkan Nomor Kontak].</ListItem>
+      <ListItem fz={{ base: 'h4', md: 'lg' }}>Patwal Desa Darmasaba: [Masukkan Nomor Kontak].</ListItem>
+      <ListItem fz={{ base: 'h4', md: 'lg' }}>Polsek Terdekat: 110 (Layanan Kepolisian).</ListItem>
+    </List>
+  },
+  {
+    id: 4,
+    judul: 'Program Keamanan Desa',
+    image: '/api/img/rond.png',
+    pengertian: 'Untuk meningkatkan keamanan, Desa Darmasaba menjalankan berbagai program, seperti:',
+    deskripsi: <List>
+      <ListItem fz={{ base: 'h4', md: 'lg' }}>Ronda Malam Warga: Kegiatan jaga malam secara bergilir oleh warga bersama Pecalang dan Patwal.</ListItem>
+      <ListItem fz={{ base: 'h4', md: 'lg' }}>Sosialisasi Keamanan: Edukasi bagi warga tentang cara menjaga keamanan lingkungan.</ListItem>
+      <ListItem fz={{ base: 'h4', md: 'lg' }}> Pengawasan Kamera CCTV: Memantau titik- titik strategis untuk mencegah tindak kejahatan.</ListItem>
+    </List>
   }
+]
+
+function Page() {
+  return (
+    <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"22"}>
+      <Box px={{ base: 'md', md: 100 }}>
+        <BackButton />
+      </Box>
+      <Box>
+        <Text ta={"center"} fz={{ base: "h1", md: "2.5rem" }} c={colors["blue-button"]} fw={"bold"}>
+          Keamanan Lingkungan (Pecalang / Patwal)
+        </Text>
+        <Text px={{ base: 20, md: 150 }} ta={"center"} fz={{ base: "h4", md: "h3" }} >
+          Keamanan dan ketertiban lingkungan di Desa Darmasaba dijaga melalui peran aktif Pecalang dan Patwal (Patroli Pengawal). Mereka bertugas memastikan desa tetap aman, tertib, dan kondusif bagi seluruh warga.
+        </Text>
+      </Box>
+      <Box px={{ base: "md", md: 100 }}>
+        <Stack gap={'lg'}>
+          <SimpleGrid
+            pb={10}
+            cols={{
+              base: 1,
+              md: 3,
+            }}>
+            {data1.map((v, k) => {
+              return (
+                <Paper radius={10} key={k} bg={colors["white-trans-1"]}>
+                  <Stack gap={'xs'}>
+                    <Center px={10} py={20}>
+                      <Image src={v.image} alt='' />
+                    </Center>
+                    <Box px={'lg'}>
+                      <Box pb={20}>
+                        <Text pb={10} c={colors["blue-button"]} fw={"bold"} fz={"h3"}>
+                          {v.judul}
+                        </Text>
+                        <Text pb={10} fz={"h4"} ta={'justify'}>
+                          {v.pengertian}
+                        </Text>
+                        <Box px={10}>
+                          {v.deskripsi}
+                        </Box>
+                      </Box>
+                    </Box>
+                  </Stack>
+                </Paper>
+              )
+            })}
+          </SimpleGrid>
+        </Stack>
+      </Box>
+    </Stack>
+  );
+}
 
 export default Page;

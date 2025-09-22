@@ -26,6 +26,7 @@ import { toast } from "react-toastify";
 import { useProxy } from "valtio/utils";
 
 function EditKontakDaruratKeamanan() {
+  const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
   const kontakState = useProxy(kontakDarurat.kontakDaruratKeamananState);
   const params = useParams();
@@ -37,29 +38,31 @@ function EditKontakDaruratKeamanan() {
 
   // Load data
   useEffect(() => {
-    kontakDarurat.kontakDaruratItem.findMany.load();
-    const loadKontakDarurat = async () => {
-      const id = params?.id as string;
-      if (!id) return;
-
+    const loadData = async () => {
       try {
-        const data = await kontakState.update.load(id);
-        if (data) {
-          setFormData({
-            name: data.nama || "",
-            icon: data.icon || "",
-            kategoriId: data.kategoriId || [],
-          });
+        setIsLoading(true);
+        await kontakDarurat.kontakDaruratItem.findMany.load();
+        const id = params?.id as string;
+        if (id) {
+          const data = await kontakState.update.load(id);
+          if (data) {
+            setFormData({
+              name: data.nama || "",
+              icon: data.icon || "",
+              kategoriId: data.kategoriId || [],
+            });
+          }
         }
       } catch (error) {
-        console.error("Error loading kontak darurat:", error);
-        toast.error("Gagal memuat data kontak darurat");
+        console.error("Error loading data:", error);
+        toast.error("Gagal memuat data");
+      } finally {
+        setIsLoading(false);
       }
     };
 
-    loadKontakDarurat();
+    loadData();
   }, [params?.id]);
-
   // Handle submit
   const handleSubmit = async () => {
     try {
@@ -120,17 +123,20 @@ function EditKontakDaruratKeamanan() {
             value={formData.kategoriId}
             onChange={(val) => setFormData({ ...formData, kategoriId: val })}
             label={<Text fw={"bold"} fz={"sm"}>Kontak Item</Text>}
-            placeholder='Pilih kontak item'
+            placeholder={isLoading ? "Memuat data..." : "Pilih kontak item"}
             data={
-              kontakDarurat.kontakDaruratItem.findMany.data?.map((v) => ({
-                value: v.id,  // Make sure this is using the ID
-                label: v.nama
-              })) || []
+              Array.isArray(kontakDarurat.kontakDaruratItem.findMany.data)
+                ? kontakDarurat.kontakDaruratItem.findMany.data.map((v) => ({
+                  value: v.id,
+                  label: v.nama
+                }))
+                : []
             }
             clearable
             searchable
             required
             error={!formData.kategoriId.length ? "Pilih minimal satu kategori" : undefined}
+            disabled={isLoading}
           />
 
           <Box>

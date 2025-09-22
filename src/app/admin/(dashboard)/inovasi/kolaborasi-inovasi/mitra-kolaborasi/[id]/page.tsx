@@ -3,24 +3,41 @@
 import mitraKolaborasi from '@/app/admin/(dashboard)/_state/inovasi/mitra-kolaborasi';
 import colors from '@/con/colors';
 import ApiFetch from '@/lib/api-fetch';
-import { Box, Button, Center, Group, Image, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
+import {
+  Box,
+  Button,
+  Center,
+  Group,
+  Image,
+  Paper,
+  Stack,
+  Text,
+  TextInput,
+  Title,
+  Tooltip,
+} from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
-import { IconArrowBack, IconImageInPicture, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
+import {
+  IconArrowBack,
+  IconImageInPicture,
+  IconPhoto,
+  IconUpload,
+  IconX,
+} from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
-
-function EditFoto() {
-  const state = useProxy(mitraKolaborasi)
+function EditMitraKolaborasi() {
+  const state = useProxy(mitraKolaborasi);
   const router = useRouter();
   const params = useParams();
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [formData, setFormData] = useState({
     name: state.update.form.name || '',
-    imageId: state.update.form.imageId || ''
+    imageId: state.update.form.imageId || '',
   });
 
   useEffect(() => {
@@ -32,7 +49,7 @@ function EditFoto() {
         if (data) {
           setFormData({
             name: data.name || '',
-            imageId: data.imageId || ''
+            imageId: data.imageId || '',
           });
           if (data?.image?.link) {
             setPreviewImage(data.image.link);
@@ -51,7 +68,7 @@ function EditFoto() {
       state.update.form = {
         ...state.update.form,
         name: formData.name,
-        imageId: formData.imageId
+        imageId: formData.imageId,
       };
       if (file) {
         const res = await ApiFetch.api.fileStorage.create.post({
@@ -60,7 +77,7 @@ function EditFoto() {
         });
         const uploaded = res.data?.data;
         if (!uploaded?.id) {
-          return toast.error("Gagal upload gambar");
+          return toast.error('Gagal upload gambar');
         }
         state.update.form.imageId = uploaded.id;
       }
@@ -74,70 +91,114 @@ function EditFoto() {
   };
 
   return (
-    <Box>
-      <Box mb={10}>
-        <Button onClick={() => router.back()} variant='subtle' color={'blue'}>
-          <IconArrowBack color={colors['blue-button']} size={25} />
-        </Button>
-      </Box>
+    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+      {/* Header */}
+      <Group mb="md">
+        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
+          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+            <IconArrowBack color={colors['blue-button']} size={24} />
+          </Button>
+        </Tooltip>
+        <Title order={4} ml="sm" c="dark">
+          Edit Mitra
+        </Title>
+      </Group>
 
-      <Paper w={{ base: '100%', md: '50%' }} bg={colors['white-1']} p={'md'}>
-        <Stack gap={"xs"}>
-          <Title order={4}>Edit Mitra</Title>
+      {/* Form Card */}
+      <Paper
+        w={{ base: '100%', md: '50%' }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+        style={{ border: '1px solid #e0e0e0' }}
+      >
+        <Stack gap="md">
+          {/* Input Nama */}
           <TextInput
-            label={<Text fw={"bold"} fz={"sm"}>Nama Mitra</Text>}
-            placeholder='Masukkan nama mitra'
+            label="Nama Mitra"
+            placeholder="Masukkan nama mitra"
             value={formData.name}
-            onChange={(e) =>
-              (formData.name = e.target.value)
-            }
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            required
           />
+
+          {/* Upload Foto */}
           <Box>
-            <Text>Upload Foto</Text>
+            <Text fw="bold" fz="sm" mb={6}>
+              Upload Foto
+            </Text>
             <Dropzone
               onDrop={(files) => {
-                const selectedFile = files[0]; // Ambil file pertama
+                const selectedFile = files[0];
                 if (selectedFile) {
                   setFile(selectedFile);
-                  setPreviewImage(URL.createObjectURL(selectedFile)); // Buat preview
+                  setPreviewImage(URL.createObjectURL(selectedFile));
                 }
               }}
-              onReject={() => toast.error('File tidak valid.')}
-              maxSize={5 * 1024 ** 2} // Maks 5MB
+              onReject={() => toast.error('File tidak valid, gunakan format gambar')}
+              maxSize={5 * 1024 ** 2}
               accept={{ 'image/*': [] }}
+              radius="md"
+              p="xl"
             >
-              <Group justify="center" gap="xl" mih={220} style={{ pointerEvents: 'none' }}>
+              <Group justify="center" gap="xl" mih={180}>
                 <Dropzone.Accept>
-                  <IconUpload size={52} color="var(--mantine-color-blue-6)" stroke={1.5} />
+                  <IconUpload size={48} color={colors['blue-button']} stroke={1.5} />
                 </Dropzone.Accept>
                 <Dropzone.Reject>
-                  <IconX size={52} color="var(--mantine-color-red-6)" stroke={1.5} />
+                  <IconX size={48} color="red" stroke={1.5} />
                 </Dropzone.Reject>
                 <Dropzone.Idle>
-                  <IconPhoto size={52} color="var(--mantine-color-dimmed)" stroke={1.5} />
+                  <IconPhoto size={48} color="#868e96" stroke={1.5} />
                 </Dropzone.Idle>
-
-                <div>
-                  <Text size="xl" inline>
-                    Drag gambar ke sini atau klik untuk pilih file
+                <Stack gap="xs" align="center">
+                  <Text size="md" fw={500}>
+                    Seret gambar atau klik untuk memilih file
                   </Text>
-                  <Text size="sm" c="dimmed" inline mt={7}>
-                    Maksimal 5MB dan harus format gambar
+                  <Text size="sm" c="dimmed">
+                    Maksimal 5MB, format gambar wajib
                   </Text>
-                </div>
+                </Stack>
               </Group>
             </Dropzone>
 
+            {/* Preview Foto */}
             {previewImage ? (
-              <Image alt="" src={previewImage} w={200} h={200} loading="lazy"/>
+              <Box mt="sm" style={{ display: 'flex', justifyContent: 'center' }}>
+                <Image
+                  src={previewImage}
+                  alt="Preview Gambar"
+                  radius="md"
+                  style={{
+                    maxHeight: 220,
+                    objectFit: 'contain',
+                    border: `1px solid ${colors['blue-button']}`,
+                  }}
+                  loading="lazy"
+                />
+              </Box>
             ) : (
-              <Center w={200} h={200} bg={"gray"}>
-                <IconImageInPicture />
+              <Center w={200} h={200} bg="gray.1" mt="sm" style={{ borderRadius: 8 }}>
+                <IconImageInPicture size={48} color="#868e96" />
               </Center>
             )}
           </Box>
-          <Group>
-            <Button onClick={handleSubmit} bg={colors['blue-button']}>Submit</Button>
+
+          {/* Submit */}
+          <Group justify="right">
+            <Button
+              onClick={handleSubmit}
+              radius="md"
+              size="md"
+              style={{
+                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                color: '#fff',
+                boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
+              }}
+            >
+              Simpan
+            </Button>
           </Group>
         </Stack>
       </Paper>
@@ -145,4 +206,4 @@ function EditFoto() {
   );
 }
 
-export default EditFoto;
+export default EditMitraKolaborasi;

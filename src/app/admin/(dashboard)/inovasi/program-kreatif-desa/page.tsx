@@ -1,31 +1,64 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
-import React from 'react';
 import colors from '@/con/colors';
-import { Box, Button, Center, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
-import { IconCash, IconChristmasTreeFilled, IconClipboard, IconDeviceImac, IconDroplet, IconHome, IconHomeEco, IconHospital, IconScale, IconSchool, IconSearch, IconShieldFilled, IconShoppingCart, IconTrash, IconTree, IconTrendingUp, IconTruck } from '@tabler/icons-react';
-import HeaderSearch from '../../_com/header';
-import JudulList from '../../_com/judulList';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import programKreatifState from '../../_state/inovasi/program-kreatif';
-import { useProxy } from 'valtio/utils';
 import {
+  Box,
+  Button,
+  Center,
+  Group,
+  Pagination,
+  Paper,
+  Skeleton,
+  Stack,
+  Table,
+  TableTbody,
+  TableTd,
+  TableTh,
+  TableThead,
+  TableTr,
+  Text,
+  Title,
+  Tooltip
+} from '@mantine/core';
+import {
+  IconCash,
   IconChartLine,
+  IconChristmasTreeFilled,
+  IconClipboard,
+  IconDeviceImac,
+  IconDroplet,
+  IconHome,
+  IconHomeEco,
+  IconHospital,
   IconLeaf,
+  IconPlus,
   IconRecycle,
+  IconScale,
+  IconSchool,
+  IconSearch,
+  IconShieldFilled,
+  IconShoppingCart,
   IconTent,
+  IconTrash,
+  IconTree,
+  IconTrendingUp,
   IconTrophy,
+  IconTruck,
 } from '@tabler/icons-react';
+import { useRouter } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
+import { useProxy } from 'valtio/utils';
+import HeaderSearch from '../../_com/header';
+import programKreatifState from '../../_state/inovasi/program-kreatif';
 
 function ProgramKreatifDesa() {
   const [search, setSearch] = useState("");
   return (
     <Box>
       <HeaderSearch
-        title='Program Kreatif Desa'
-        placeholder='pencarian'
+        title="Program Kreatif Desa"
+        placeholder="Cari program kreatif..."
         searchIcon={<IconSearch size={20} />}
         value={search}
         onChange={(e) => setSearch(e.currentTarget.value)}
@@ -36,23 +69,15 @@ function ProgramKreatifDesa() {
 }
 
 function ListProgramKreatifDesa({ search }: { search: string }) {
-  const listState = useProxy(programKreatifState)
-  const { data, loading, page, totalPages, load } = listState.findMany
+  const listState = useProxy(programKreatifState);
+  const { data, loading, page, totalPages, load } = listState.findMany;
   const router = useRouter();
 
   useEffect(() => {
-    load(page, 10)
-  }, [page])
+    load(page, 10, search);
+  }, [page, search]);
 
-  const filteredData = (data || []).filter(item => {
-    const keyword = search.toLowerCase();
-    return (
-      item.name.toLowerCase().includes(keyword) ||
-      item.deskripsi.toLowerCase().includes(keyword) ||
-      item.slug.toLowerCase().includes(keyword) ||
-      item.icon.toLowerCase().includes(keyword)
-    );
-  });
+  const filteredData = data || []
 
   const iconMap: Record<string, React.FC<any>> = {
     ekowisata: IconLeaf,
@@ -74,26 +99,40 @@ function ListProgramKreatifDesa({ search }: { search: string }) {
     bantuan: IconCash,
     pelatihan: IconSchool,
     subsidi: IconShoppingCart,
-    layananKesehatan: IconHospital
+    layananKesehatan: IconHospital,
   };
 
   if (loading || !data) {
     return (
       <Stack py={10}>
-        <Skeleton height={650} />
+        <Skeleton height={650} radius="md" />
       </Stack>
     );
   }
+
   if (data.length === 0) {
     return (
       <Box py={10}>
-        <Paper p="md" >
+        <Paper p="md" radius="md" shadow="sm" withBorder>
           <Stack>
-            <JudulList
-              title='List Program Kreatif Desa'
-              href='/admin/inovasi/program-kreatif-desa/create'
-            />
-            <Table striped withTableBorder withRowBorders>
+            <Group justify="space-between" mb="md">
+              <Title order={4}>Daftar Program Kreatif Desa</Title>
+              <Tooltip label="Tambah Program Kreatif Desa" withArrow>
+                <Button
+                  leftSection={<IconPlus size={18} />}
+                  color="blue"
+                  variant="light"
+                  onClick={() =>
+                    router.push(
+                      '/admin/inovasi/program-kreatif-desa/create'
+                    )
+                  }
+                >
+                  Tambah Baru
+                </Button>
+              </Tooltip>
+            </Group>
+            <Table highlightOnHover striped>
               <TableThead>
                 <TableTr>
                   <TableTh>No</TableTh>
@@ -104,27 +143,52 @@ function ListProgramKreatifDesa({ search }: { search: string }) {
                 </TableTr>
               </TableThead>
             </Table>
-            <Text ta="center">Tidak ada data program kreatif desa yang tersedia</Text>
+            <Text ta="center" c="dimmed" py="lg">
+              Tidak ada data program kreatif desa yang tersedia
+            </Text>
           </Stack>
         </Paper>
-      </Box >
+      </Box>
     );
   }
+
   return (
     <Box py={10}>
-      <Paper bg={colors['white-1']} p={'md'} h={{ base: 'auto', md: 650 }}>
-        <JudulList
-          title='List Program Kreatif Desa'
-          href='/admin/inovasi/program-kreatif-desa/create'
-        />
+      <Paper
+        withBorder
+        bg={colors['white-1']}
+        p="lg"
+        shadow="md"
+        radius="md"
+        h={{ base: 'auto', md: 650 }}
+      >
+        <Group justify="space-between" mb="md">
+          <Title order={4}>Daftar Program Kreatif Desa</Title>
+          <Tooltip label="Tambah Program Kreatif Desa" withArrow>
+            <Button
+              leftSection={<IconPlus size={18} />}
+              color="blue"
+              variant="light"
+              onClick={() =>
+                router.push(
+                  '/admin/inovasi/program-kreatif-desa/create'
+                )
+              }
+            >
+              Tambah Baru
+            </Button>
+          </Tooltip>
+        </Group>
         <Box style={{ overflowY: 'auto' }}>
-          <Table striped withTableBorder withRowBorders>
+          <Table highlightOnHover striped >
             <TableThead>
               <TableTr>
                 <TableTh style={{ width: '5%', textAlign: 'center' }}>No</TableTh>
-                <TableTh style={{ width: '20%' }}>Nama Program Kreatif Desa</TableTh>
+                <TableTh style={{ width: '20%' }}>
+                  <Text lineClamp={1} fw={"bold"} fz="sm">Nama Program Kreatif Desa</Text>
+                </TableTh>
                 <TableTh style={{ width: '35%' }}>Deskripsi Singkat</TableTh>
-                <TableTh style={{ width: '10%' }}>Ikon</TableTh>
+                <TableTh style={{ width: '10%', textAlign: 'center' }}>Ikon</TableTh>
                 <TableTh style={{ width: '15%', textAlign: 'center' }}>Detail</TableTh>
               </TableTr>
             </TableThead>
@@ -132,9 +196,19 @@ function ListProgramKreatifDesa({ search }: { search: string }) {
               {filteredData.map((item, index) => (
                 <TableTr key={item.id}>
                   <TableTd style={{ width: '5%', textAlign: 'center' }}>{index + 1}</TableTd>
-                  <TableTd style={{ width: '20%', wordWrap: 'break-word' }}>{item.name}</TableTd>
-                  <TableTd style={{ width: '35%', wordWrap: 'break-word' }} dangerouslySetInnerHTML={{ __html: item.slug }}></TableTd>
-                  <TableTd style={{ width: '10%' }}>
+                  <TableTd style={{ width: '20%', wordWrap: 'break-word' }}>
+                    <Box w={200}>
+                      <Text fw={500} lineClamp={1}>{item.name}</Text>
+                    </Box>
+                  </TableTd>
+                  <TableTd style={{ width: '35%', wordWrap: 'break-word' }}>
+                    <Box w={150}>
+                      <Text fz="sm" c="dimmed" lineClamp={1}>
+                        {item.slug}
+                      </Text>
+                    </Box>
+                  </TableTd>
+                  <TableTd style={{ width: '10%', textAlign: 'center' }}>
                     {iconMap[item.icon] && (
                       <Box title={item.icon}>
                         {React.createElement(iconMap[item.icon], { size: 24 })}
@@ -142,8 +216,17 @@ function ListProgramKreatifDesa({ search }: { search: string }) {
                     )}
                   </TableTd>
                   <TableTd style={{ width: '15%', textAlign: 'center' }}>
-                    <Button onClick={() => router.push(`/admin/inovasi/program-kreatif-desa/${item.id}`)}>
-                      <IconDeviceImac size={25} />
+                    <Button
+                      size="xs"
+                      radius="md"
+                      variant="light"
+                      color="blue"
+                      onClick={() =>
+                        router.push(`/admin/inovasi/program-kreatif-desa/${item.id}`)
+                      }
+                    >
+                      <IconDeviceImac size={18} />
+                      <Text ml={6}>Detail</Text>
                     </Button>
                   </TableTd>
                 </TableTr>
@@ -157,14 +240,17 @@ function ListProgramKreatifDesa({ search }: { search: string }) {
           value={page}
           onChange={(newPage) => {
             load(newPage, 10);
-            window.scrollTo(0, 0);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
           total={totalPages}
           mt="md"
           mb="md"
+          color="blue"
+          radius="md"
         />
       </Center>
     </Box>
   );
 }
+
 export default ProgramKreatifDesa;

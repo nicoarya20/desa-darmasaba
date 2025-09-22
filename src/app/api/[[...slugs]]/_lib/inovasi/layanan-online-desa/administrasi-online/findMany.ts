@@ -23,16 +23,16 @@ async function administrasiOnlineFindMany(context: Context) {
   try {
     const [data, total] = await Promise.all([
       prisma.administrasiOnline.findMany({
-        where: { isActive: true },
+        where: where,  // Use the where clause that includes search conditions
         include: {
           jenisLayanan: true,
         },
         skip,
         take: limit,
-        orderBy: { createdAt: 'desc' }, // opsional, kalau mau urut berdasarkan waktu
+        orderBy: { createdAt: 'desc' },
       }),
       prisma.administrasiOnline.count({
-        where: { isActive: true }
+        where: where  // Also update the count query to use the same where clause
       })
     ]);
 

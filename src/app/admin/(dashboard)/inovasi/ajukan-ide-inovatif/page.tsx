@@ -1,8 +1,26 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title } from '@mantine/core';
+import {
+  Box,
+  Button,
+  Center,
+  Group,
+  Pagination,
+  Paper,
+  Skeleton,
+  Stack,
+  Table,
+  TableTbody,
+  TableTd,
+  TableTh,
+  TableThead,
+  TableTr,
+  Text,
+  Title,
+  Tooltip,
+} from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { IconDeviceImac, IconSearch } from '@tabler/icons-react';
+import { IconDeviceImac, IconSearch, IconPlus } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
@@ -15,7 +33,7 @@ function AjukanIdeInovatif() {
     <Box>
       <HeaderSearch
         title='Ajukan Ide Inovatif'
-        placeholder='pencarian'
+        placeholder='Cari ide inovatif...'
         searchIcon={<IconSearch size={20} />}
         value={search}
         onChange={(e) => setSearch(e.currentTarget.value)}
@@ -28,62 +46,110 @@ function AjukanIdeInovatif() {
 function ListAjukanIdeInovatif({ search }: { search: string }) {
   const state = useProxy(ajukanIdeInovatifState)
   const router = useRouter()
+
+  const {
+    data,
+    page,
+    totalPages,
+    loading,
+    load,
+  } = state.findMany;
+
   useShallowEffect(() => {
-    state.findMany.load()
-  }, [])
+    load(page, 10, search)
+  }, [page, search])
 
-  const filteredData = (state.findMany.data || []).filter(item => {
-    const keyword = search.toLowerCase();
-    return (
-      item.name.toLowerCase().includes(keyword) ||
-      item.deskripsi.toLowerCase().includes(keyword) ||
-      item.alamat.toLowerCase().includes(keyword) ||
-      item.namaIde.toLowerCase().includes(keyword) ||
-      item.masalah.toLowerCase().includes(keyword) ||
-      item.benefit.toLowerCase().includes(keyword)
-    );
-  });
+  const filteredData = data || []
 
-  if (!state.findMany.data) {
+  if (loading || !data) {
     return (
       <Stack py={10}>
-        <Skeleton h={500} />
+        <Skeleton height={500} radius="md" />
       </Stack>
     )
   }
+
   return (
     <Box py={10}>
-      <Paper bg={colors['white-1']} p={'md'}>
-        <Title mb={10} order={3}>List Ajukan Ide Inovatif</Title>
-        <Table striped withTableBorder withRowBorders>
-          <TableThead>
-            <TableTr>
-              <TableTh>Nama</TableTh>
-              <TableTh>Alamat</TableTh>
-              <TableTh>Nama Ide Inovatif</TableTh>
-              <TableTh>Detail</TableTh>
-            </TableTr>
-          </TableThead>
-          <TableTbody>
-            {filteredData.map((item) => (
-              <TableTr key={item.id}>
-                <TableTd>{item.name}</TableTd>
-                <TableTd>
-                  <Text truncate="end" fz={"sm"} dangerouslySetInnerHTML={{ __html: item.alamat }} />
-                </TableTd>
-                <TableTd>
-                  <Text truncate="end" fz={"sm"} dangerouslySetInnerHTML={{ __html: item.namaIde }} />
-                </TableTd>
-              <TableTd>
-                <Button onClick={() => router.push(`/admin/inovasi/ajukan-ide-inovatif/${item.id}`)}>
-                  <IconDeviceImac size={20} />
-                </Button>
-              </TableTd>
-            </TableTr>
-          ))}
-          </TableTbody>
-        </Table>
+      <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
+        <Group justify="space-between" mb="md">
+          <Title order={4}>Daftar Ide Inovatif</Title>
+          <Tooltip label="Ajukan Ide Baru" withArrow>
+            <Button
+              leftSection={<IconPlus size={18} />}
+              color="blue"
+              variant="light"
+              onClick={() => router.push('/admin/inovasi/ajukan-ide-inovatif/create')}
+            >
+              Tambah Baru
+            </Button>
+          </Tooltip>
+        </Group>
+
+        <Box style={{ overflowX: "auto" }}>
+          <Table highlightOnHover>
+            <TableThead>
+              <TableTr>
+                <TableTh style={{ width: '20%' }}>Nama</TableTh>
+                <TableTh style={{ width: '30%' }}>Alamat</TableTh>
+                <TableTh style={{ width: '30%' }}>Nama Ide Inovatif</TableTh>
+                <TableTh style={{ width: '15%' }}>Aksi</TableTh>
+              </TableTr>
+            </TableThead>
+            <TableTbody>
+              {filteredData.length > 0 ? (
+                filteredData.map((item) => (
+                  <TableTr key={item.id}>
+                    <TableTd>
+                      <Text fw={500} truncate lineClamp={1}>{item.name}</Text>
+                    </TableTd>
+                    <TableTd>
+                      <Text truncate fz="sm" c="dimmed" lineClamp={1} dangerouslySetInnerHTML={{ __html: item.alamat }} />
+                    </TableTd>
+                    <TableTd>
+                      <Text truncate fz="sm" lineClamp={1} dangerouslySetInnerHTML={{ __html: item.namaIde }} />
+                    </TableTd>
+                    <TableTd>
+                      <Button
+                        size="xs"
+                        radius="md"
+                        variant="light"
+                        color="blue"
+                        leftSection={<IconDeviceImac size={16} />}
+                        onClick={() => router.push(`/admin/inovasi/ajukan-ide-inovatif/${item.id}`)}
+                      >
+                        Detail
+                      </Button>
+                    </TableTd>
+                  </TableTr>
+                ))
+              ) : (
+                <TableTr>
+                  <TableTd colSpan={4}>
+                    <Center py={20}>
+                      <Text color="dimmed">Tidak ada ide inovatif yang cocok</Text>
+                    </Center>
+                  </TableTd>
+                </TableTr>
+              )}
+            </TableTbody>
+          </Table>
+        </Box>
       </Paper>
+      <Center>
+        <Pagination
+          value={page}
+          onChange={(newPage) => {
+            load(newPage, 10);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          total={totalPages}
+          mt="md"
+          mb="md"
+          color="blue"
+          radius="md"
+        />
+      </Center>
     </Box>
   );
 }

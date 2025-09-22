@@ -64,8 +64,8 @@ const administrasiOnline = proxy({
     page: 1,
     totalPages: 1,
     loading: false,
-    search: '',
-    async load(page = 1, limit = 10, search = '') {
+    search: "",
+    async load(page = 1, limit = 10, search = "") {
       administrasiOnline.findMany.loading = true;
       administrasiOnline.findMany.page = page;
       administrasiOnline.findMany.search = search;
@@ -215,14 +215,14 @@ const jenisLayanan = proxy({
         const query: any = { page, limit };
         if (search) query.search = search;
 
-        const res = await ApiFetch.api.inovasi.layananonlinedesa.administrasionline.jenislayanan[
-          "find-many"
-        ].get({ query });
+        const res =
+          await ApiFetch.api.inovasi.layananonlinedesa.administrasionline.jenislayanan[
+            "find-many"
+          ].get({ query });
 
         if (res.status === 200 && res.data?.success) {
           jenisLayanan.findMany.data = res.data.data ?? [];
-          jenisLayanan.findMany.totalPages =
-            res.data.totalPages ?? 1;
+          jenisLayanan.findMany.totalPages = res.data.totalPages ?? 1;
         } else {
           jenisLayanan.findMany.data = [];
           jenisLayanan.findMany.totalPages = 1;
@@ -494,27 +494,32 @@ const pengaduanMasyarakat = proxy({
     page: 1,
     totalPages: 1,
     loading: false,
-
-    async load(page = 1, limit = 10) {
-      pengaduanMasyarakat.findMany.loading = true;
+    search: "",
+    load: async (page = 1, limit = 10, search = "") => {
+      pengaduanMasyarakat.findMany.loading = true; // ✅ Akses langsung via nama path
       pengaduanMasyarakat.findMany.page = page;
+      pengaduanMasyarakat.findMany.search = search;
+
       try {
+        const query: any = { page, limit };
+        if (search) query.search = search;
+
         const res =
           await ApiFetch.api.inovasi.layananonlinedesa.pengaduanmasyarakat[
             "find-many"
-          ].get({
-            query: {
-              page,
-              limit,
-            },
-          });
+          ].get({ query });
 
         if (res.status === 200 && res.data?.success) {
           pengaduanMasyarakat.findMany.data = res.data.data ?? [];
           pengaduanMasyarakat.findMany.totalPages = res.data.totalPages ?? 1;
+        } else {
+          pengaduanMasyarakat.findMany.data = [];
+          pengaduanMasyarakat.findMany.totalPages = 1;
         }
       } catch (err) {
         console.error("Gagal fetch pengaduan masyarakat paginated:", err);
+        pengaduanMasyarakat.findMany.data = [];
+        pengaduanMasyarakat.findMany.totalPages = 1;
       } finally {
         pengaduanMasyarakat.findMany.loading = false;
       }
@@ -634,13 +639,37 @@ const jenisPengaduan = proxy({
       id: string;
       nama: string;
     }> | null,
-    async load() {
-      const res =
-        await ApiFetch.api.inovasi.layananonlinedesa.pengaduanmasyarakat.jenispengaduan[
-          "find-many"
-        ].get();
-      if (res.status === 200) {
-        jenisPengaduan.findMany.data = res.data?.data ?? [];
+    page: 1,
+    totalPages: 1,
+    loading: false,
+    search: "",
+    load: async (page = 1, limit = 10, search = "") => {
+      jenisPengaduan.findMany.loading = true; // ✅ Akses langsung via nama path
+      jenisPengaduan.findMany.page = page;
+      jenisPengaduan.findMany.search = search;
+
+      try {
+        const query: any = { page, limit };
+        if (search) query.search = search;
+
+        const res =
+          await ApiFetch.api.inovasi.layananonlinedesa.pengaduanmasyarakat.jenispengaduan[
+            "find-many"
+          ].get({ query });
+
+        if (res.status === 200 && res.data?.success) {
+          jenisPengaduan.findMany.data = res.data.data ?? [];
+          jenisPengaduan.findMany.totalPages = res.data.totalPages ?? 1;
+        } else {
+          jenisPengaduan.findMany.data = [];
+          jenisPengaduan.findMany.totalPages = 1;
+        }
+      } catch (err) {
+        console.error("Gagal fetch jenis pengaduan paginated:", err);
+        jenisPengaduan.findMany.data = [];
+        jenisPengaduan.findMany.totalPages = 1;
+      } finally {
+        jenisPengaduan.findMany.loading = false;
       }
     },
   },

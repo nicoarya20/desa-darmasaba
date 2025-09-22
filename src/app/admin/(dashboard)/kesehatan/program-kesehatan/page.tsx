@@ -104,7 +104,9 @@ function ListProgramKesehatan({ search }: { search: string }) {
                       </Text>
                     </TableTd>
                     <TableTd>
-                      <Text fz="sm" truncate="end" lineClamp={2} dangerouslySetInnerHTML={{ __html: item.deskripsiSingkat }} />
+                      <Box w={200}>
+                        <Text fz="sm" truncate="end" lineClamp={2} dangerouslySetInnerHTML={{ __html: item.deskripsiSingkat }} />
+                      </Box>
                     </TableTd>
                     <TableTd>
                       <Image w={100} src={item.image?.link} alt="image" radius="md" loading="lazy"/>

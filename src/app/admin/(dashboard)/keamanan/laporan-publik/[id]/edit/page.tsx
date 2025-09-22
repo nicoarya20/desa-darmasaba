@@ -148,12 +148,16 @@ function EditLaporanPublik() {
             required
           />
 
-          <TextInput
-            value={formData.kronologi}
-            onChange={(e) => setFormData({ ...formData, kronologi: e.target.value })}
-            label={<Text fw="bold" fz="sm">Kronologi Laporan Publik</Text>}
-            placeholder="Masukkan kronologi laporan publik"
-          />
+          <Box>
+            <Text fw="bold" fz="sm" mb={6}>Kronologi Laporan Publik</Text>
+            <EditEditor
+              value={formData.kronologi}
+              onChange={(htmlContent) => {
+                setFormData((prev) => ({ ...prev, kronologi: htmlContent }));
+                stateLaporan.edit.form.kronologi = htmlContent;
+              }}
+            />
+          </Box>
 
           <Box>
             <Text fw="bold" fz="sm" mb={6}>Penanganan Laporan Publik</Text>

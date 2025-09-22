@@ -55,27 +55,28 @@ function Page() {
       <Box px={{ base: 'md', md: 100 }}>
         <Flex justify="space-between" align="center">
           <BackButton />
-          <Flex gap={"xs"} align={"center"}>
-            <TextInput
-              placeholder="Cari laporan"
-              value={search}
-              onChange={(e) => setSearch(e.currentTarget.value)}
-            />
-            <Button
-              onClick={open}
-              bg={colors['blue-button']}
-              size="md"
-              radius="md"
-            >
-              <IconPlus size={20} />
-            </Button>
-          </Flex>
+          <TextInput
+            placeholder="Cari laporan"
+            value={search}
+            onChange={(e) => setSearch(e.currentTarget.value)}
+          />
         </Flex>
       </Box>
-      <Box>
-        <Text ta={"center"} fz={{ base: "h1", md: "2.5rem" }} c={colors["blue-button"]} fw={"bold"}>
-          Laporan Keamanan Lingkungan
-        </Text>
+      <Box px={{ base: 'md', md: 100 }}>
+        <Group justify="space-between">
+          <Text ta={"center"} fz={{ base: "h1", md: "2.5rem" }} c={colors["blue-button"]} fw={"bold"}>
+            Laporan Keamanan Lingkungan
+          </Text>
+          <Button
+            onClick={open}
+            bg={colors['blue-button']}
+            size="md"
+            radius="md"
+            rightSection={<IconPlus size={20} />}
+          >
+            Tambah Laporan
+          </Button>
+        </Group>
       </Box>
       <Box px={{ base: "md", md: 100 }}>
         <Stack gap={'lg'}>
