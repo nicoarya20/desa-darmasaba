@@ -354,14 +354,39 @@ const kategoriKegiatan = proxy({
       id: string;
       nama: string;
     }> | null,
-    async load() {
-      const res = await ApiFetch.api.lingkungan.kategorikegiatan[
-        "find-many"
-      ].get();
-      if (res.status === 200) {
-        kategoriKegiatan.findMany.data = res.data?.data ?? [];
-      }
-    },
+     page: 1,
+        totalPages: 1,
+        loading: false,
+        search: "",
+        load: async (page = 1, limit = 10, search = "") => {
+          kategoriKegiatan.findMany.loading = true; // ✅ Akses langsung via nama path
+          kategoriKegiatan.findMany.page = page;
+          kategoriKegiatan.findMany.search = search;
+    
+          try {
+            const query: any = { page, limit };
+            if (search) query.search = search;
+    
+            const res =
+              await ApiFetch.api.lingkungan.kategorikegiatan[
+                "find-many"
+              ].get({ query });
+    
+            if (res.status === 200 && res.data?.success) {
+              kategoriKegiatan.findMany.data = res.data.data ?? [];
+              kategoriKegiatan.findMany.totalPages = res.data.totalPages ?? 1;
+            } else {
+              kategoriKegiatan.findMany.data = [];
+              kategoriKegiatan.findMany.totalPages = 1;
+            }
+          } catch (err) {
+            console.error("Gagal fetch kategori kegiatan paginated:", err);
+            kategoriKegiatan.findMany.data = [];
+            kategoriKegiatan.findMany.totalPages = 1;
+          } finally {
+            kategoriKegiatan.findMany.loading = false;
+          }
+        },
   },
   findUnique: {
     data: null as Prisma.KategoriKegiatanGetPayload<{

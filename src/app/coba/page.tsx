@@ -1,105 +1,83 @@
 import colors from '@/con/colors';
-import { Box, Center, Image, List, ListItem, Paper, SimpleGrid, Stack, Text } from '@mantine/core';
-import BackButton from '../darmasaba/(pages)/desa/layanan/_com/BackButto';
+import { Stack, Box, Container, Grid, GridCol, Group, Paper, TextInput, Text, Image, Flex, Button } from '@mantine/core';
+import { IconCalendar, IconMapPin, IconSearch, IconUsersGroup } from '@tabler/icons-react';
+import React from 'react';
 
-
-const data1 = [
-  {
-    id: 1,
-    judul: 'Peran Pecalang dalam Keamanan Desa',
-    image: '/api/img/pecalang.png',
-    pengertian: 'Pecalang adalah petugas keamanan adat di Bali yang memiliki peran penting dalam menjaga ketertiban dan budaya lokal. Tugas mereka meliputi:',
-    deskripsi: <List>
-      <ListItem fz={{ base: 'h4', md: 'lg' }}>Mengamankan upacara adat dan kegiatan keagamaan.</ListItem>
-      <ListItem fz={{ base: 'h4', md: 'lg' }}>Mengatur lalu lintas saat ada perayaan atau kegiatan besar.</ListItem>
-      <ListItem fz={{ base: 'h4', md: 'lg' }}>Berpatroli untuk mencegah gangguan keamanan di lingkungan desa.</ListItem>
-      <ListItem fz={{ base: 'h4', md: 'lg' }}>Berkoordinasi dengan aparat desa dan kepolisian dalam penanganan situasi darurat.</ListItem>
-    </List>
-  },
-  {
-    id: 2,
-    judul: 'Patwal (Patroli Pengawal) Desa',
-    image: '/api/img/patwal-1.png',
-    pengertian: 'Selain Pecalang, Desa Darmasaba juga memiliki Patwal yang bertugas menjaga keamanan sehari-hari. Peran mereka antara lain:',
-    deskripsi: <List>
-      <ListItem fz={{ base: 'h4', md: 'lg' }}>Berpatroli secara rutin untuk memastikan lingkungan tetap aman.</ListItem>
-      <ListItem fz={{ base: 'h4', md: 'lg' }}>Menjaga ketertiban lalu lintas di area desa.</ListItem>
-      <ListItem fz={{ base: 'h4', md: 'lg' }}>Melakukan tindakan preventif terhadap potensi gangguan keamanan.</ListItem>
-      <ListItem fz={{ base: 'h4', md: 'lg' }}>Siap siaga dalam keadaan darurat untuk membantu warga.</ListItem>
-    </List>
-  },
-  {
-    id: 3,
-    judul: 'Layanan Keamanan yang Tersedia',
-    image: '/api/img/pospecalang.png',
-    pengertian: 'Jika terjadi keadaan darurat atau membutuhkan bantuan keamanan, warga dapat menghubungi:',
-    deskripsi: <List>
-      <ListItem fz={{ base: 'h4', md: 'lg' }}>Pos Pecalang Desa: [Masukkan Nomor Kontak].</ListItem>
-      <ListItem fz={{ base: 'h4', md: 'lg' }}>Patwal Desa Darmasaba: [Masukkan Nomor Kontak].</ListItem>
-      <ListItem fz={{ base: 'h4', md: 'lg' }}>Polsek Terdekat: 110 (Layanan Kepolisian).</ListItem>
-    </List>
-  },
-  {
-    id: 4,
-    judul: 'Program Keamanan Desa',
-    image: '/api/img/rond.png',
-    pengertian: 'Untuk meningkatkan keamanan, Desa Darmasaba menjalankan berbagai program, seperti:',
-    deskripsi: <List>
-      <ListItem fz={{ base: 'h4', md: 'lg' }}>Ronda Malam Warga: Kegiatan jaga malam secara bergilir oleh warga bersama Pecalang dan Patwal.</ListItem>
-      <ListItem fz={{ base: 'h4', md: 'lg' }}>Sosialisasi Keamanan: Edukasi bagi warga tentang cara menjaga keamanan lingkungan.</ListItem>
-      <ListItem fz={{ base: 'h4', md: 'lg' }}> Pengawasan Kamera CCTV: Memantau titik- titik strategis untuk mencegah tindak kejahatan.</ListItem>
-    </List>
-  }
-]
+import Link from 'next/link';
 
 function Page() {
   return (
-    <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"22"}>
-      <Box px={{ base: 'md', md: 100 }}>
-        <BackButton />
-      </Box>
-      <Box>
-        <Text ta={"center"} fz={{ base: "h1", md: "2.5rem" }} c={colors["blue-button"]} fw={"bold"}>
-          Keamanan Lingkungan (Pecalang / Patwal)
-        </Text>
-        <Text px={{ base: 20, md: 150 }} ta={"center"} fz={{ base: "h4", md: "h3" }} >
-          Keamanan dan ketertiban lingkungan di Desa Darmasaba dijaga melalui peran aktif Pecalang dan Patwal (Patroli Pengawal). Mereka bertugas memastikan desa tetap aman, tertib, dan kondusif bagi seluruh warga.
-        </Text>
-      </Box>
-      <Box px={{ base: "md", md: 100 }}>
-        <Stack gap={'lg'}>
-          <SimpleGrid
-            pb={10}
-            cols={{
-              base: 1,
-              md: 3,
-            }}>
-            {data1.map((v, k) => {
-              return (
-                <Paper radius={10} key={k} bg={colors["white-trans-1"]}>
-                  <Stack gap={'xs'}>
-                    <Center px={10} py={20}>
-                      <Image src={v.image} alt='' />
-                    </Center>
-                    <Box px={'lg'}>
-                      <Box pb={20}>
-                        <Text pb={10} c={colors["blue-button"]} fw={"bold"} fz={"h3"}>
-                          {v.judul}
-                        </Text>
-                        <Text pb={10} fz={"h4"} ta={'justify'}>
-                          {v.pengertian}
-                        </Text>
-                        <Box px={10}>
-                          {v.deskripsi}
-                        </Box>
-                      </Box>
-                    </Box>
-                  </Stack>
-                </Paper>
-              )
-            })}
-          </SimpleGrid>
+    <Stack pos="relative" bg={colors.Bg} py="xl" gap="md">
+      {/* Header */}
+      <Container size="lg" px="md">
+        <Stack align="center" gap={0} mb="xl">
+          <Text fz={{ base: "2rem", md: "3.4rem" }} c={colors["blue-button"]} fw="bold" ta="center">
+            Program Gotong Royong
+          </Text>
+          <Text fz={{ base: "2rem", md: "3.4rem" }} c={colors["blue-button"]} fw="bold" ta="center">
+            Desa Darmasaba
+          </Text>
         </Stack>
+      </Container>
+
+      {/* Tabs Menu */}
+      <Box px={{ base: "md", md: "xl" }} py="md" bg={colors['BG-trans']} mb="md">
+        <Grid align="center" justify="space-between" mb={20}>
+          <GridCol span={{ base: 12, md: 8 }}>
+            <Group gap="md" wrap="wrap">
+              <Paper bg={colors['blue-button']} radius="xl" py={5} px={20}>
+                <Text c={colors['white-1']} size="sm">
+                  Semua
+                </Text>
+              </Paper>
+              {['Kebersihan', 'Infrastruktur', 'Sosial', 'Lingkungan'].map((kategori) => (
+                <Paper key={kategori} bg={colors['blue-button-trans']} radius="xl" py={5} px={20}>
+                  <Text size="sm">
+                    {kategori}
+                  </Text>
+                </Paper>
+              ))}
+            </Group>
+          </GridCol>
+          <GridCol span={{ base: 12, md: 4 }}>
+            <TextInput
+              radius="lg"
+              placeholder="Cari Program Gotong Royong"
+              leftSection={<IconSearch size={18} />}
+              w="100%"
+            />
+          </GridCol>
+        </Grid>
+        <Paper p={"xl"} bg={colors['white-trans-1']} w={{ base: "100%", md: "100%" }}>
+          <Stack gap={'xs'}>
+            <Image radius={20} src={'/api/img/gotong-royong.png'} w={'100%'} alt='' />
+            <Text fw={"bold"} fz={{ base: "h2", md: "h1" }}>Membangun Fasilitas Desa</Text>
+            <Group>
+              <Paper py={5} px={20} bg={colors['blue-button-trans']} radius={20}>
+                <Text c={colors['white-1']}>Sosial</Text>
+              </Paper>
+            </Group>
+            <Text fz={{ base: "h4", md: "h3" }}>
+              Program Pembangunan Fasilitas Desa Maju, Masyarakat Sejahtera.
+            </Text>
+            <Flex gap={5} align={'center'}>
+              <IconCalendar color={colors['blue-button-trans']} size={45} />
+              <Text fz={{ base: "h4", md: "h3" }}>1 April 2025</Text>
+            </Flex>
+            <Flex gap={5} align={'center'}>
+              <IconMapPin color={colors['blue-button-trans']} size={45} />
+              <Text fz={{ base: "h4", md: "h3" }}>Banjar Desa Darmasaba</Text>
+            </Flex>
+            <Flex gap={5} align={'center'}>
+              <IconUsersGroup color={colors['blue-button-trans']} size={45} />
+              <Text fz={{ base: "h4", md: "h3" }}>30 Partisipan</Text>
+            </Flex>
+            <Text fw={'bold'} fz={'md'}>Deskripsi : Program pembangunan Pura sebagai pusat spiritual dan budaya desa, melibatkan gotong royong masyarakat dalam pembangunan struktur utama serta ornamen tradisional.</Text>
+            <Group py={20} justify='center'>
+              <Button component={Link} href={'https://www.whatsapp.com/?lang=id'} bg={colors['blue-button']} >Daftar Sebagai Relawan</Button>
+            </Group>
+          </Stack>
+        </Paper>
       </Box>
     </Stack>
   );

@@ -2,7 +2,7 @@
 'use client'
 import gotongRoyongState from '@/app/admin/(dashboard)/_state/lingkungan/gotong-royong';
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
+import { Box, Button, Group, Paper, Stack, Text, TextInput, Title, Tooltip } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -16,7 +16,7 @@ function EditKategoriKegiatan() {
   const stateKategori = useProxy(gotongRoyongState.kategoriKegiatan);
 
   const [formData, setFormData] = useState({
-    nama: "",
+    nama: '',
   });
 
   useEffect(() => {
@@ -27,15 +27,14 @@ function EditKategoriKegiatan() {
         const data = await stateKategori.edit.load(id);
 
         if (data) {
-          // pastikan id-nya masuk ke state edit
           stateKategori.edit.id = id;
           setFormData({
             nama: data.nama || '',
           });
         }
       } catch (error) {
-        console.error("Error loading kategori kegiatan:", error);
-        toast.error("Gagal memuat data kategori kegiatan");
+        console.error('Error loading kategori kegiatan:', error);
+        toast.error('Gagal memuat data kategori kegiatan');
       }
     };
 
@@ -49,45 +48,63 @@ function EditKategoriKegiatan() {
         return;
       }
 
-      stateKategori.edit.form = {
-        nama: formData.nama.trim(),
-      };
-
-      // Safety check tambahan: pastikan ID tidak kosong
-      if (!stateKategori.edit.id) {
-        stateKategori.edit.id = id; // fallback
-      }
+      stateKategori.edit.form = { nama: formData.nama.trim() };
+      if (!stateKategori.edit.id) stateKategori.edit.id = id;
 
       const success = await stateKategori.edit.update();
 
       if (success) {
-        router.push("/admin/lingkungan/gotong-royong/kategori-kegiatan");
+        toast.success('Kategori kegiatan berhasil diperbarui!');
+        router.push('/admin/lingkungan/gotong-royong/kategori-kegiatan');
       }
     } catch (error) {
-      console.error("Error updating kategori kegiatan:", error);
-      // toast akan ditampilkan dari fungsi update
+      console.error('Error updating kategori kegiatan:', error);
     }
   };
 
   return (
-    <Box>
-      <Box mb={10}>
-        <Button onClick={() => router.back()} variant='subtle' color={'blue'}>
-          <IconArrowBack color={colors['blue-button']} size={25} />
-        </Button>
-      </Box>
+    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+      <Group mb="md" align="center">
+        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
+          <Button variant="subtle" p="xs" radius="md" onClick={() => router.back()}>
+            <IconArrowBack color={colors['blue-button']} size={24} />
+          </Button>
+        </Tooltip>
+        <Title order={4} ml="sm" c="dark">
+          Edit Kategori Kegiatan
+        </Title>
+      </Group>
 
-      <Paper w={{ base: '100%', md: '50%' }} bg={colors['white-1']} p={'md'}>
-        <Stack gap={"xs"}>
-          <Title order={4}>Edit Kategori kegiatan</Title>
+      <Paper
+        w={{ base: '100%', md: '50%' }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+        style={{ border: '1px solid #e0e0e0' }}
+      >
+        <Stack gap="md">
           <TextInput
             value={formData.nama}
             onChange={(e) => setFormData({ ...formData, nama: e.target.value })}
-            label={<Text fw={"bold"} fz={"sm"}>Nama Kategori kegiatan</Text>}
-            placeholder='Masukkan nama kategori kegiatan'
+            label={<Text fw="bold" fz="sm">Nama Kategori Kegiatan</Text>}
+            placeholder="Masukkan nama kategori kegiatan"
+            required
           />
-          <Group>
-            <Button bg={colors['blue-button']} onClick={handleSubmit}>Submit</Button>
+
+          <Group justify="right">
+            <Button
+              onClick={handleSubmit}
+              radius="md"
+              size="md"
+              style={{
+                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                color: '#fff',
+                boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
+              }}
+            >
+              Simpan
+            </Button>
           </Group>
         </Stack>
       </Paper>

@@ -2,22 +2,47 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Center, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
 import {
-  IconChartLine, IconChristmasTreeFilled, IconClipboardTextFilled, IconDeviceImac, IconHomeEco, IconLeaf,
-  IconRecycle, IconScale, IconSearch, IconShieldFilled, IconTent,
+  Box,
+  Button,
+  Center,
+  Pagination,
+  Paper,
+  Skeleton,
+  Stack,
+  Table,
+  TableTbody,
+  TableTd,
+  TableTh,
+  TableThead,
+  TableTr,
+  Text,
+  Title,
+  Tooltip
+} from '@mantine/core';
+import {
+  IconChartLine,
+  IconChristmasTreeFilled,
+  IconClipboardTextFilled,
+  IconDeviceImac,
+  IconHomeEco,
+  IconLeaf,
+  IconRecycle,
+  IconScale,
+  IconSearch,
+  IconShieldFilled,
+  IconTent,
   IconTrashFilled,
   IconTrendingUp,
   IconTrophy,
-  IconTruckFilled
+  IconTruckFilled,
+  IconPlus,
 } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../_com/header';
-import JudulList from '../../_com/judulList';
 import programPenghijauanState from '../../_state/lingkungan/program-penghijauan';
-
 
 function ProgramPenghijauan() {
   const [search, setSearch] = useState("");
@@ -25,7 +50,7 @@ function ProgramPenghijauan() {
     <Box>
       <HeaderSearch
         title='Program Penghijauan'
-        placeholder='pencarian'
+        placeholder='Cari program penghijauan...'
         searchIcon={<IconSearch size={20} />}
         value={search}
         onChange={(e) => setSearch(e.currentTarget.value)}
@@ -41,18 +66,10 @@ function ListProgramPenghijauan({ search }: { search: string }) {
   const router = useRouter();
 
   useEffect(() => {
-    load(page, 10)
-  }, [page])
+    load(page, 10, search)
+  }, [page, search])
 
-  const filteredData = (data || []).filter(item => {
-    const keyword = search.toLowerCase();
-    return (
-      item.name.toLowerCase().includes(keyword) ||
-      item.deskripsi.toLowerCase().includes(keyword) ||
-      item.judul.toLowerCase().includes(keyword) ||
-      item.icon.toLowerCase().includes(keyword)
-    );
-  });
+  const filteredData = data || []
 
   const iconMap: Record<string, React.FC<any>> = {
     ekowisata: IconLeaf,
@@ -73,93 +90,104 @@ function ListProgramPenghijauan({ search }: { search: string }) {
   if (loading || !data) {
     return (
       <Stack py={10}>
-        <Skeleton height={650} />
+        <Skeleton height={600} radius="md" />
       </Stack>
     );
   }
-  if (data.length === 0) {
-    return (
-      <Box py={10}>
-        <Paper p="md" >
-          <Stack>
-            <JudulList
-              title='List Program Penghijauan'
-              href='/admin/lingkungan/program-penghijauan/create'
-            />
-            <Table striped withTableBorder withRowBorders>
-              <TableThead>
-                <TableTr>
-                  <TableTh>No</TableTh>
-                  <TableTh>Nama Program Penghijauan</TableTh>
-                  <TableTh>Judul Deskripsi Program Penghijauan</TableTh>
-                  <TableTh>Ikon</TableTh>
-                  <TableTh>Detail</TableTh>
-                </TableTr>
-              </TableThead>
-            </Table>
-            <Text ta="center">Tidak ada data program penghijauan yang tersedia</Text>
-          </Stack>
-        </Paper>
-      </Box >
-    );
-  }
+
   return (
     <Box py={10}>
-      <Paper bg={colors['white-1']} p={'md'} h={{ base: 'auto', md: 650 }}>
-        <JudulList
-          title='List Program Penghijauan'
-          href='/admin/lingkungan/program-penghijauan/create'
-        />
-        <Box style={{ overflowY: 'auto' }}>
-          <Table striped withTableBorder withRowBorders>
+      <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
+        {/* Header Section */}
+        <Box mb="md" display="flex" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
+          <Title order={4}>Daftar Program Penghijauan</Title>
+          <Tooltip label="Tambah Program Penghijauan" withArrow>
+            <Button
+              leftSection={<IconPlus size={18} />}
+              color="blue"
+              variant="light"
+              onClick={() => router.push('/admin/lingkungan/program-penghijauan/create')}
+            >
+              Tambah Baru
+            </Button>
+          </Tooltip>
+        </Box>
+
+        {/* Table Section */}
+        <Box style={{ overflowX: 'auto' }}>
+          <Table highlightOnHover>
             <TableThead>
               <TableTr>
                 <TableTh style={{ width: '5%', textAlign: 'center' }}>No</TableTh>
-                <TableTh style={{ width: '20%' }}>Nama Program Penghijauan</TableTh>
-                <TableTh style={{ width: '35%' }}>Judul Deskripsi Program Penghijauan</TableTh>
-                <TableTh style={{ width: '10%' }}>Ikon</TableTh>
-                <TableTh style={{ width: '15%', textAlign: 'center' }}>Detail</TableTh>
+                <TableTh style={{ width: '25%' }}>Nama Program</TableTh>
+                <TableTh style={{ width: '35%' }}>Judul / Deskripsi</TableTh>
+                <TableTh style={{ width: '15%', textAlign: 'center' }}>Ikon</TableTh>
+                <TableTh style={{ width: '15%', textAlign: 'center' }}>Aksi</TableTh>
               </TableTr>
             </TableThead>
             <TableTbody>
-              {filteredData.map((item, index) => (
-                <TableTr key={item.id}>
-                  <TableTd style={{ width: '5%', textAlign: 'center' }}>{index + 1}</TableTd>
-                  <TableTd style={{ width: '20%', wordWrap: 'break-word' }}>{item.name}</TableTd>
-                  <TableTd style={{ width: '35%', wordWrap: 'break-word' }}>
-                    <Text lineClamp={1} fz={"sm"} dangerouslySetInnerHTML={{ __html: item.judul }}/>
-                  </TableTd>
-                  <TableTd style={{ width: '10%' }}>
-                    {iconMap[item.icon] && (
-                      <Box title={item.icon}>
-                        {React.createElement(iconMap[item.icon], { size: 24 })}
-                      </Box>
-                    )}
-                  </TableTd>
-                  <TableTd style={{ width: '15%', textAlign: 'center' }}>
-                    <Button onClick={() => router.push(`/admin/lingkungan/program-penghijauan/${item.id}`)}>
-                      <IconDeviceImac size={25} />
-                    </Button>
+              {filteredData.length > 0 ? (
+                filteredData.map((item, index) => (
+                  <TableTr key={item.id}>
+                    <TableTd style={{ textAlign: 'center' }}>{index + 1}</TableTd>
+                    <TableTd>
+                      <Text fw={500} truncate="end" lineClamp={1}>{item.name}</Text>
+                    </TableTd>
+                    <TableTd>
+                      <Text lineClamp={1} fz="sm" c="dimmed" dangerouslySetInnerHTML={{ __html: item.judul }} />
+                    </TableTd>
+                    <TableTd style={{ textAlign: 'center' }}>
+                      {iconMap[item.icon] && (
+                        <Box title={item.icon} mx="auto">
+                          {React.createElement(iconMap[item.icon], { size: 22 })}
+                        </Box>
+                      )}
+                    </TableTd>
+                    <TableTd style={{ textAlign: 'center' }}>
+                      <Button
+                        size="xs"
+                        radius="md"
+                        variant="light"
+                        color="blue"
+                        leftSection={<IconDeviceImac size={16} />}
+                        onClick={() => router.push(`/admin/lingkungan/program-penghijauan/${item.id}`)}
+                      >
+                        Detail
+                      </Button>
+                    </TableTd>
+                  </TableTr>
+                ))
+              ) : (
+                <TableTr>
+                  <TableTd colSpan={5}>
+                    <Center py={20}>
+                      <Text c="dimmed">Tidak ada data program penghijauan yang cocok</Text>
+                    </Center>
                   </TableTd>
                 </TableTr>
-              ))}
+              )}
             </TableTbody>
           </Table>
         </Box>
       </Paper>
+
+      {/* Pagination */}
       <Center>
         <Pagination
           value={page}
           onChange={(newPage) => {
             load(newPage, 10);
-            window.scrollTo(0, 0);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
           total={totalPages}
           mt="md"
           mb="md"
+          color="blue"
+          radius="md"
         />
       </Center>
     </Box>
   );
 }
+
 export default ProgramPenghijauan;

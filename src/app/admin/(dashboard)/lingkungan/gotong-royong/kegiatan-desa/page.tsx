@@ -1,13 +1,29 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
-import { IconDeviceImacCog, IconSearch } from '@tabler/icons-react';
+import {
+  Box,
+  Button,
+  Center,
+  Group,
+  Pagination,
+  Paper,
+  Skeleton,
+  Stack,
+  Table,
+  TableTbody,
+  TableTd,
+  TableTh,
+  TableThead,
+  TableTr,
+  Text,
+  Title,
+} from '@mantine/core';
+import { useShallowEffect } from '@mantine/hooks';
+import { IconDeviceImacCog, IconPlus, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import HeaderSearch from '../../../_com/header';
-import JudulList from '../../../_com/judulList';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
+import HeaderSearch from '../../../_com/header';
 import gotongRoyongState from '../../../_state/lingkungan/gotong-royong';
 
 function KegiatanDesa() {
@@ -15,8 +31,8 @@ function KegiatanDesa() {
   return (
     <Box>
       <HeaderSearch
-        title='Kegiatan Desa'
-        placeholder='pencarian'
+        title="Kegiatan Desa"
+        placeholder="Cari judul, lokasi, atau kategori kegiatan..."
         searchIcon={<IconSearch size={20} />}
         value={search}
         onChange={(e) => setSearch(e.currentTarget.value)}
@@ -27,71 +43,123 @@ function KegiatanDesa() {
 }
 
 function ListKegiatanDesa({ search }: { search: string }) {
-  const listState = useProxy(gotongRoyongState.kegiatanDesa)
+  const listState = useProxy(gotongRoyongState.kegiatanDesa);
   const router = useRouter();
-  useEffect(() => {
-    listState.findMany.load()
-  }, [])
 
-  const filteredData = (listState.findMany.data || []).filter(item => {
-    const keyword = search.toLowerCase();
-    return (
-      item.judul.toLowerCase().includes(keyword) ||
-      item.lokasi.toLowerCase().includes(keyword) || 
-      item.kategoriKegiatan?.nama?.toLowerCase().includes(keyword)
-    );
-  });
+  const {
+    data,
+    page,
+    totalPages,
+    loading,
+    load,
+  } = listState.findMany;
 
-  if (!listState.findMany.data) {
+  useShallowEffect(() => {
+    load(page, 10, search)
+  }, [page, search])
+
+  const filteredData = data || []
+
+  if (loading || !data) {
     return (
       <Stack py={10}>
-        <Skeleton h={500} />
+        <Skeleton height={600} radius="md" />
       </Stack>
-    )
+    );
   }
 
   return (
     <Box py={10}>
-      <Paper bg={colors['white-1']} p={'md'}>
-        <Stack>
-          <JudulList
-            title='List Kegiatan Desa'
-            href='/admin/lingkungan/gotong-royong/kegiatan-desa/create'
-          />
-          <Box style={{ overflowX: 'auto' }}>
-            <Table striped withRowBorders withTableBorder style={{ minWidth: '700px' }}>
-              <TableThead>
-                <TableTr>
-                  <TableTh>Judul Kegiatan Desa</TableTh>
-                  <TableTh>Kategori Kegiatan Desa</TableTh>
-                  <TableTh>Lokasi Kegiatan Desa</TableTh>
-                  <TableTh>Detail</TableTh>
-                </TableTr>
-              </TableThead>
-              <TableTbody>
-                {filteredData.map((item) => (
+      <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
+        <Group justify="space-between" mb="md">
+          <Title order={4}>Daftar Kegiatan Desa</Title>
+          <Button
+            leftSection={<IconPlus size={18} />}
+            color="blue"
+            variant="light"
+            onClick={() =>
+              router.push('/admin/lingkungan/gotong-royong/kegiatan-desa/create')
+            }
+          >
+            Tambah Baru
+          </Button>
+        </Group>
+        <Box style={{ overflowX: 'auto' }}>
+          <Table highlightOnHover>
+            <TableThead>
+              <TableTr>
+                <TableTh style={{ width: '30%' }}>Judul</TableTh>
+                <TableTh style={{ width: '25%' }}>Kategori</TableTh>
+                <TableTh style={{ width: '25%' }}>Lokasi</TableTh>
+                <TableTh style={{ width: '15%' }}>Aksi</TableTh>
+              </TableTr>
+            </TableThead>
+            <TableTbody>
+              {filteredData.length > 0 ? (
+                filteredData.map((item) => (
                   <TableTr key={item.id}>
                     <TableTd>
-                      <Box w={100}>
-                        <Text truncate="end" fz={"sm"}>{item.judul}</Text>
-                      </Box>
+                      <Text fw={500} truncate="end" lineClamp={1}>
+                        {item.judul}
+                      </Text>
                     </TableTd>
-                    <TableTd>{item.kategoriKegiatan?.nama}</TableTd>
-                    <TableTd>{item.lokasi}</TableTd>
                     <TableTd>
-                      <Button onClick={() => router.push(`/admin/lingkungan/gotong-royong/kegiatan-desa/${item.id}`)}>
-                        <IconDeviceImacCog size={25} />
+                      <Text fz="sm" c="dimmed">
+                        {item.kategoriKegiatan?.nama || '-'}
+                      </Text>
+                    </TableTd>
+                    <TableTd>
+                      <Text fz="sm">{item.lokasi}</Text>
+                    </TableTd>
+                    <TableTd>
+                      <Button
+                        size="xs"
+                        radius="md"
+                        variant="light"
+                        color="blue"
+                        leftSection={<IconDeviceImacCog size={16} />}
+                        onClick={() =>
+                          router.push(
+                            `/admin/lingkungan/gotong-royong/kegiatan-desa/${item.id}`
+                          )
+                        }
+                      >
+                        Detail
                       </Button>
                     </TableTd>
                   </TableTr>
-                ))}
-              </TableTbody>
-            </Table>
-          </Box>
-        </Stack>
+                ))
+              ) : (
+                <TableTr>
+                  <TableTd colSpan={4}>
+                    <Center py={20}>
+                      <Text c="dimmed">
+                        Tidak ada kegiatan desa yang cocok dengan pencarian
+                      </Text>
+                    </Center>
+                  </TableTd>
+                </TableTr>
+              )}
+            </TableTbody>
+          </Table>
+        </Box>
       </Paper>
+      <Center>
+        <Pagination
+          value={page}
+          onChange={(newPage) => {
+            load(newPage, 10);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          total={totalPages}
+          mt="md"
+          mb="md"
+          color="blue"
+          radius="md"
+        />
+      </Center>
     </Box>
-  )
+  );
 }
 
 export default KegiatanDesa;

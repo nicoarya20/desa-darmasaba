@@ -1,5 +1,4 @@
 'use client'
-import colors from '@/con/colors';
 import { Box, Button, Grid, GridCol, Paper, Skeleton, Stack, Text, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconEdit } from '@tabler/icons-react';
@@ -7,49 +6,73 @@ import { useRouter } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
 import stateKonservasiAdatBali from '../../../_state/lingkungan/konservasi-adat-bali';
 
-
 function Page() {
-  const router = useRouter()
-  const listFilosofi = useProxy(stateKonservasiAdatBali.stateFilosofiTriHita)
+  const router = useRouter();
+  const listFilosofi = useProxy(stateKonservasiAdatBali.stateFilosofiTriHita);
+
   useShallowEffect(() => {
-    listFilosofi.findById.load('edit')
-  }, [])
+    listFilosofi.findById.load('edit');
+  }, []);
 
   if (!listFilosofi.findById.data) {
     return (
-      <Stack>
-        <Skeleton radius={10} h={800} />
+      <Stack py={20}>
+        <Skeleton radius="md" height={600} />
       </Stack>
-    )
+    );
   }
+
   return (
-    <Paper bg={colors['white-1']} p={'md'} radius={10}>
-      <Stack gap={"22"}>
-        <Grid>
+    <Box p="md">
+      <Paper withBorder p={{ base: 'md', md: 'lg' }} radius="md">
+        <Grid align="center" mb={{ base: 'md', md: 'lg' }}>
           <GridCol span={{ base: 12, md: 11 }}>
-            <Title order={2}>Preview Filosofi Tri Hita Karana</Title>
+            <Title order={3} fw={600}>
+              Preview Filosofi Tri Hita Karana
+            </Title>
           </GridCol>
-          <GridCol span={{ base: 12, md: 1 }}>
-            <Button bg={colors['blue-button']} onClick={() => router.push('/admin/lingkungan/konservasi-adat-bali/filosofi-tri-hita-karana/edit')}>
-              <IconEdit size={16} />
+          <GridCol span={{ base: 12, md: 1 }} style={{ textAlign: 'right' }}>
+            <Button
+              size="sm"
+              variant="light"
+              color="green"
+              radius="md"
+              leftSection={<IconEdit size={16} />}
+              onClick={() =>
+                router.push(
+                  '/admin/lingkungan/konservasi-adat-bali/filosofi-tri-hita-karana/edit'
+                )
+              }
+            >
+              Edit
             </Button>
           </GridCol>
         </Grid>
-        <Box>
-          <Stack gap={'lg'}>
-            <Paper p={"xl"} bg={colors['BG-trans']}>
-              <Box px={{ base: 0, md: 30 }}>
-                <Text fz={{ base: "h3", md: "h2" }} fw={"bold"} dangerouslySetInnerHTML={{ __html: listFilosofi.findById.data.judul }} />
-              </Box>
-              <Box px={{ base: 0, md: 30 }}>
-                <Text fz={{ base: "md", md: "h3" }} ta={"justify"} dangerouslySetInnerHTML={{ __html: listFilosofi.findById.data.deskripsi }} />
-              </Box>
-            </Paper>
-          </Stack>
-        </Box>
-      </Stack>
-    </Paper>
-  )
+
+        <Stack gap="md">
+          <Paper p={{ base: 'md', md: 'xl' }} bg="#ECEEF8" radius="md">
+            <Box mb="md" px={{ base: 0, md: 20 }}>
+              <Text
+                fz={{ base: 'xl', md: '2xl' }}
+                fw={600}
+                c="black"
+                dangerouslySetInnerHTML={{ __html: listFilosofi.findById.data.judul }}
+              />
+            </Box>
+            <Box px={{ base: 0, md: 20 }}>
+              <Text
+                fz={{ base: 'md', md: 'lg' }}
+                ta="justify"
+                c="dimmed"
+                lineClamp={10}
+                dangerouslySetInnerHTML={{ __html: listFilosofi.findById.data.deskripsi }}
+              />
+            </Box>
+          </Paper>
+        </Stack>
+      </Paper>
+    </Box>
+  );
 }
 
 export default Page;

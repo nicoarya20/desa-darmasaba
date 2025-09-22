@@ -8,11 +8,13 @@ import { IconChartLine, IconChristmasTreeFilled, IconClipboardTextFilled, IconHo
 import React, { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import BackButton from '../../desa/layanan/_com/BackButto';
+import { useTransitionRouter } from 'next-view-transitions';
 
 function Page() {
   const state = useProxy(programPenghijauanState);
   const [search, setSearch] = useState("");
   const [debouncedSearch] = useDebouncedValue(search, 500);
+  const router = useTransitionRouter()
   const { data, load, page, totalPages, loading } = state.findMany;
 
   useShallowEffect(() => {
@@ -96,6 +98,7 @@ function Page() {
                 el.style.transform = 'translateY(0)';
                 el.style.boxShadow = '0 4px 10px rgba(0,0,0,0.1)';
               }}
+              onClick={() => router.push(`/darmasaba/lingkungan/program-penghijauan/${v.id}`)}
             >
               <Stack align="center" gap="sm">
                 <Center>

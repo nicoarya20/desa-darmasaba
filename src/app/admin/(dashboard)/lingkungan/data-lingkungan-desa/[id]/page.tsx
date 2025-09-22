@@ -1,23 +1,40 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Flex, Paper, Skeleton, Stack, Text } from '@mantine/core';
+import { Box, Button, Group, Paper, Skeleton, Stack, Text, Tooltip } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { IconArrowBack, IconChartLine, IconChristmasTreeFilled, IconClipboard, IconDroplet, IconEdit, IconHome, IconHomeEco, IconLeaf, IconRecycle, IconScale, IconShieldFilled, IconTent, IconTrash, IconTree, IconTrendingUp, IconTrophy, IconTruck, IconX } from '@tabler/icons-react';
+import {
+  IconArrowBack,
+  IconChartLine,
+  IconChristmasTreeFilled,
+  IconClipboard,
+  IconDroplet,
+  IconEdit,
+  IconHome,
+  IconHomeEco,
+  IconLeaf,
+  IconRecycle,
+  IconScale,
+  IconShieldFilled,
+  IconTent,
+  IconTrash,
+  IconTree,
+  IconTrendingUp,
+  IconTrophy,
+  IconTruck,
+} from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import { useProxy } from 'valtio/utils';
-import dataLingkunganDesaState from '../../../_state/lingkungan/data-lingkungan-desa';
 import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
-
-// import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
+import dataLingkunganDesaState from '../../../_state/lingkungan/data-lingkungan-desa';
 
 function DetailDataLingkunganDesa() {
-  const [modalHapus, setModalHapus] = useState(false)
-  const stateDataLingkungan = useProxy(dataLingkunganDesaState)
-  const router = useRouter()
-  const params = useParams()
-  const [selectedId, setSelectedId] = useState<string | null>(null)
+  const [modalHapus, setModalHapus] = useState(false);
+  const stateDataLingkungan = useProxy(dataLingkunganDesaState);
+  const router = useRouter();
+  const params = useParams();
+  const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const iconMap: Record<string, React.FC<any>> = {
     ekowisata: IconLeaf,
@@ -35,90 +52,117 @@ function DetailDataLingkunganDesa() {
     mencegahBencana: IconShieldFilled,
     rumah: IconHome,
     pohon: IconTree,
-    air: IconDroplet
+    air: IconDroplet,
   };
 
   useShallowEffect(() => {
-    stateDataLingkungan.findUnique.load(params?.id as string)
-  }, [params?.id])
+    stateDataLingkungan.findUnique.load(params?.id as string);
+  }, [params?.id]);
 
   const handleHapus = () => {
     if (selectedId) {
-      stateDataLingkungan.delete.byId(selectedId)
-      setModalHapus(false)
-      setSelectedId(null)
-      router.push("/admin/lingkungan/data-lingkungan-desa")
+      stateDataLingkungan.delete.byId(selectedId);
+      setModalHapus(false);
+      setSelectedId(null);
+      router.push('/admin/lingkungan/data-lingkungan-desa');
     }
-  }
+  };
 
   if (!stateDataLingkungan.findUnique.data) {
     return (
-      <Stack>
-        <Skeleton h={500} />
+      <Stack py={10}>
+        <Skeleton height={500} radius="md" />
       </Stack>
-    )
+    );
   }
 
-  return (
-    <Box>
-      <Box mb={10}>
-        <Button variant="subtle" onClick={() => router.back()}>
-          <IconArrowBack color={colors['blue-button']} size={25} />
-        </Button>
-      </Box>
-      <Paper w={{ base: "100%", md: "50%" }} bg={colors['white-1']} p={'md'}>
-        <Stack>
-          <Text fz={"xl"} fw={"bold"}>Detail Data Lingkungan Desa</Text>
+  const data = stateDataLingkungan.findUnique.data;
 
-          <Paper bg={colors['BG-trans']} p={'md'}>
-            <Stack gap={"xs"}>
+  return (
+    <Box py={10}>
+      {/* Back Button */}
+      <Button
+        variant="subtle"
+        onClick={() => router.back()}
+        leftSection={<IconArrowBack size={24} color={colors['blue-button']} />}
+        mb={15}
+      >
+        Kembali
+      </Button>
+
+      {/* Main Card */}
+      <Paper
+        withBorder
+        w={{ base: '100%', md: '60%' }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+      >
+        <Stack gap="md">
+          {/* Title */}
+          <Text fz="2xl" fw="bold" c={colors['blue-button']}>
+            Detail Data Lingkungan Desa
+          </Text>
+
+          {/* Content Card */}
+          <Paper bg="#ECEEF8" p="md" radius="md" shadow="xs">
+            <Stack gap="sm">
               <Box>
-                <Text fz={"lg"} fw={"bold"}>Nama Data Lingkungan Desa</Text>
-                <Text fz={"lg"}>{stateDataLingkungan.findUnique.data?.name}</Text>
+                <Text fz="lg" fw="bold">Nama Data Lingkungan Desa</Text>
+                <Text fz="md" c="dimmed">{data?.name || '-'}</Text>
               </Box>
+
               <Box>
-                <Text fz={"lg"} fw={"bold"}>Jumlah Data Lingkungan Desa</Text>
-                <Text fz={"lg"}>{stateDataLingkungan.findUnique.data?.jumlah}</Text>
+                <Text fz="lg" fw="bold">Jumlah Data Lingkungan Desa</Text>
+                <Text fz="md" c="dimmed">{data?.jumlah || '-'}</Text>
               </Box>
+
               <Box>
-                <Text fz={"lg"} fw={"bold"}>Ikon Data Lingkungan Desa</Text>
-                {iconMap[stateDataLingkungan.findUnique.data?.icon] && (
-                  <Box title={stateDataLingkungan.findUnique.data?.icon}>
-                    {React.createElement(iconMap[stateDataLingkungan.findUnique.data?.icon], { size: 24 })}
+                <Text fz="lg" fw="bold">Ikon Data Lingkungan Desa</Text>
+                {iconMap[data?.icon] ? (
+                  <Box title={data?.icon}>
+                    {React.createElement(iconMap[data.icon], { size: 28, color: colors['blue-button'] })}
                   </Box>
+                ) : (
+                  <Text fz="sm" c="dimmed">Tidak ada ikon</Text>
                 )}
               </Box>
+
               <Box>
-                <Text fz={"lg"} fw={"bold"}>Deskripsi</Text>
-                <Text fz={"lg"} dangerouslySetInnerHTML={{ __html: stateDataLingkungan.findUnique.data?.deskripsi }}></Text>
+                <Text fz="lg" fw="bold">Deskripsi</Text>
+                <Text fz="md" c="dimmed" dangerouslySetInnerHTML={{ __html: data?.deskripsi || '-' }} />
               </Box>
-              <Box>
-                <Flex gap={"xs"} mt={10}>
+
+              {/* Action Buttons */}
+              <Group gap="sm" mt="sm">
+                <Tooltip label="Hapus Data Lingkungan Desa" withArrow position="top">
                   <Button
+                    color="red"
                     onClick={() => {
-                      if (stateDataLingkungan.findUnique.data) {
-                        setSelectedId(stateDataLingkungan.findUnique.data.id);
-                        setModalHapus(true);
-                      }
+                      setSelectedId(data.id);
+                      setModalHapus(true);
                     }}
-                    disabled={stateDataLingkungan.delete.loading || !stateDataLingkungan.findUnique.data}
-                    color={"red"}
+                    variant="light"
+                    radius="md"
+                    size="md"
                   >
-                    <IconX size={20} />
+                    <IconTrash size={20} />
                   </Button>
+                </Tooltip>
+
+                <Tooltip label="Edit Data Lingkungan Desa" withArrow position="top">
                   <Button
-                    onClick={() => {
-                      if (stateDataLingkungan.findUnique.data) {
-                        router.push(`/admin/lingkungan/data-lingkungan-desa/${stateDataLingkungan.findUnique.data.id}/edit`);
-                      }
-                    }}
-                    disabled={!stateDataLingkungan.findUnique.data}
-                    color={"green"}
+                    color="green"
+                    onClick={() => router.push(`/admin/lingkungan/data-lingkungan-desa/${data.id}/edit`)}
+                    variant="light"
+                    radius="md"
+                    size="md"
                   >
                     <IconEdit size={20} />
                   </Button>
-                </Flex>
-              </Box>
+                </Tooltip>
+              </Group>
             </Stack>
           </Paper>
         </Stack>
@@ -130,7 +174,7 @@ function DetailDataLingkunganDesa() {
         onClose={() => setModalHapus(false)}
         onConfirm={handleHapus}
         text="Apakah anda yakin ingin menghapus data lingkungan desa ini?"
-      /> 
+      />
     </Box>
   );
 }

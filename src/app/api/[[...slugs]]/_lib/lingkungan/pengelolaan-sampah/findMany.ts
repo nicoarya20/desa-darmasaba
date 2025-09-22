@@ -24,7 +24,7 @@ export default async function pengelolaanSampahFindMany(context: Context) {
         where,
         skip,
         take: limit,
-        orderBy: { createdAt: 'desc' },
+        orderBy: { createdAt: 'asc' },
       }),
       prisma.pengelolaanSampah.count({
         where,

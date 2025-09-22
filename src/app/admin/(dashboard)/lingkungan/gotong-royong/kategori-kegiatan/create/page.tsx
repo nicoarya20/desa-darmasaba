@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
+import { Box, Button, Group, Paper, Stack, Text, TextInput, Title, Tooltip } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
@@ -29,31 +29,53 @@ function CreateKategoriKegiatan() {
   }
 
   return (
-    <Box>
-      <Box>
-        <Box mb={10}>
-          <Button onClick={() => router.back()} variant='subtle' color={'blue'}>
-            <IconArrowBack color={colors['blue-button']} size={25} />
+    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+      {/* Header */}
+      <Group mb="md" align="center">
+        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
+          <Button variant="subtle" p="xs" radius="md" onClick={() => router.back()}>
+            <IconArrowBack color={colors['blue-button']} size={24} />
           </Button>
-        </Box>
+        </Tooltip>
+        <Title order={4} ml="sm" c="dark">
+          Tambah Kategori Kegiatan
+        </Title>
+      </Group>
 
-        <Paper w={{ base: '100%', md: '50%' }} bg={colors['white-1']} p={'md'}>
-          <Stack gap={"xs"}>
-            <Title order={4}>Create Kategori Kegiatan</Title>
-            <TextInput
-              value={stateKategori.create.form.nama}
-              onChange={(val) => {
-                stateKategori.create.form.nama = val.target.value;
+      {/* Form */}
+      <Paper
+        w={{ base: '100%', md: '50%' }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+        style={{ border: '1px solid #e0e0e0' }}
+      >
+        <Stack gap="md">
+          <TextInput
+            value={stateKategori.create.form.nama}
+            onChange={(val) => (stateKategori.create.form.nama = val.target.value)}
+            label={<Text fw="bold" fz="sm">Nama Kategori Kegiatan</Text>}
+            placeholder="Masukkan nama kategori kegiatan"
+            required
+          />
+
+          <Group justify="right">
+            <Button
+              onClick={handleSubmit}
+              radius="md"
+              size="md"
+              style={{
+                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                color: '#fff',
+                boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
-              label={<Text fw={"bold"} fz={"sm"}>Nama Kategori Kegiatan</Text>}
-              placeholder='Masukkan nama kategori kegiatan'
-            />
-            <Group>
-              <Button bg={colors['blue-button']} onClick={handleSubmit}>Submit</Button>
-            </Group>
-          </Stack>
-        </Paper>
-      </Box>
+            >
+              Simpan
+            </Button>
+          </Group>
+        </Stack>
+      </Paper>
     </Box>
   );
 }

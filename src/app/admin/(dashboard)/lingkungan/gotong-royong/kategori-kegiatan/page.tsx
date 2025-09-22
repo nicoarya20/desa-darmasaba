@@ -1,16 +1,32 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr } from '@mantine/core';
+import {
+  Box,
+  Button,
+  Center,
+  Group,
+  Pagination,
+  Paper,
+  Skeleton,
+  Stack,
+  Table,
+  TableTbody,
+  TableTd,
+  TableTh,
+  TableThead,
+  TableTr,
+  Text,
+  Title,
+  Tooltip,
+} from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { IconEdit, IconSearch, IconX } from '@tabler/icons-react';
+import { IconEdit, IconPlus, IconSearch, IconTrash } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../../_com/header';
-import JudulList from '../../../_com/judulList';
 import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
 import gotongRoyongState from '../../../_state/lingkungan/gotong-royong';
-
 
 function KategoriKegiatan() {
   const [search, setSearch] = useState("")
@@ -18,7 +34,7 @@ function KategoriKegiatan() {
     <Box>
       <HeaderSearch
         title='Kategori Kegiatan'
-        placeholder='pencarian'
+        placeholder='Cari kategori kegiatan...'
         searchIcon={<IconSearch size={20} />}
         value={search}
         onChange={(e) => setSearch(e.currentTarget.value)}
@@ -34,6 +50,14 @@ function ListKategoriKegiatan({ search }: { search: string }) {
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const router = useRouter()
 
+  const {
+    data,
+    page,
+    totalPages,
+    loading,
+    load,
+  } = stateKategori.findMany
+
   const handleHapus = () => {
     if (selectedId) {
       stateKategori.delete.byId(selectedId)
@@ -43,61 +67,110 @@ function ListKategoriKegiatan({ search }: { search: string }) {
   }
 
   useShallowEffect(() => {
-    stateKategori.findMany.load()
-  }, [])
+    load(page, 10, search)
+  }, [page, search])
 
-  const filteredData = (stateKategori.findMany.data || []).filter(item => {
-    const keyword = search.toLowerCase();
-    return (
-      item.nama.toLowerCase().includes(keyword)
-    );
-  });
+  const filteredData = data || []
 
-  if (!stateKategori.findMany.data) {
+  if (loading || !data) {
     return (
       <Stack py={10}>
-        <Skeleton h={500} />
+        <Skeleton height={500} radius="md" />
       </Stack>
     )
   }
 
   return (
     <Box py={10}>
-      <Paper bg={colors['white-1']} p={'md'}>
-        <JudulList
-          title='List Kategori Kegiatan'
-          href='/admin/lingkungan/gotong-royong/kategori-kegiatan/create'
-        />
-        <Table striped withTableBorder withRowBorders>
-          <TableThead>
-            <TableTr>
-              <TableTh>Nama Kategori</TableTh>
-              <TableTh>Edit</TableTh>
-              <TableTh>Delete</TableTh>
-            </TableTr>
-          </TableThead>
-          <TableTbody>
-            {filteredData.map((item) => (
-              <TableTr key={item.id}>
-                <TableTd>{item.nama}</TableTd>
-                <TableTd>
-                  <Button color="green" onClick={() => router.push(`/admin/lingkungan/gotong-royong/kategori-kegiatan/${item.id}`)}>
-                    <IconEdit size={20} />
-                  </Button>
-                </TableTd>
-                <TableTd>
-                  <Button color="red" onClick={() => {
-                    setSelectedId(item.id)
-                    setModalHapus(true)
-                  }}>
-                    <IconX size={20} />
-                  </Button>
-                </TableTd>
+      <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
+        <Group justify="space-between" mb="md">
+          <Title order={4}>Daftar Kategori Kegiatan</Title>
+          <Tooltip label="Tambah Kategori Baru" withArrow>
+            <Button
+              leftSection={<IconPlus size={18} />}
+              color="blue"
+              variant="light"
+              onClick={() => router.push('/admin/lingkungan/gotong-royong/kategori-kegiatan/create')}
+            >
+              Tambah Baru
+            </Button>
+          </Tooltip>
+        </Group>
+
+        <Box style={{ overflowX: 'auto' }}>
+          <Table highlightOnHover>
+            <TableThead>
+              <TableTr>
+                <TableTh style={{ width: '60%' }}>Nama Kategori</TableTh>
+                <TableTh style={{ width: '20%' }}>Edit</TableTh>
+                <TableTh style={{ width: '20%' }}>Delete</TableTh>
               </TableTr>
-            ))}
-          </TableTbody>
-        </Table>
+            </TableThead>
+            <TableTbody>
+              {filteredData.length > 0 ? (
+                filteredData.map((item) => (
+                  <TableTr key={item.id}>
+                    <TableTd>
+                      <Text fw={500} truncate="end" lineClamp={1}>{item.nama}</Text>
+                    </TableTd>
+                    <TableTd>
+                      <Button
+                        size="xs"
+                        radius="md"
+                        variant="light"
+                        color="green"
+                        leftSection={<IconEdit size={16} />}
+                        onClick={() => router.push(`/admin/lingkungan/gotong-royong/kategori-kegiatan/${item.id}`)}
+                      >
+                        Edit
+                      </Button>
+                    </TableTd>
+                    <TableTd>
+                      <Button
+                        size="xs"
+                        radius="md"
+                        variant="light"
+                        color="red"
+                        leftSection={<IconTrash size={16} />}
+                        onClick={() => {
+                          setSelectedId(item.id)
+                          setModalHapus(true)
+                        }}
+                      >
+                        Hapus
+                      </Button>
+                    </TableTd>
+                  </TableTr>
+                ))
+              ) : (
+                <TableTr>
+                  <TableTd colSpan={3}>
+                    <Center py={20}>
+                      <Text c="dimmed">Tidak ada kategori kegiatan yang cocok</Text>
+                    </Center>
+                  </TableTd>
+                </TableTr>
+              )}
+            </TableTbody>
+          </Table>
+        </Box>
       </Paper>
+
+      <Center>
+        <Pagination
+          value={page}
+          onChange={(newPage) => {
+            load(newPage, 10);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          total={totalPages}
+          mt="md"
+          mb="md"
+          color="blue"
+          radius="md"
+        />
+      </Center>
+
       {/* Modal Konfirmasi Hapus */}
       <ModalKonfirmasiHapus
         opened={modalHapus}

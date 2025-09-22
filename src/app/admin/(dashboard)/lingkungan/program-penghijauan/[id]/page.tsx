@@ -1,16 +1,19 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Flex, Paper, Skeleton, Stack, Text } from '@mantine/core';
+import { Box, Button, Group, Paper, Skeleton, Stack, Text, Tooltip } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { IconArrowBack, IconChartLine, IconChristmasTreeFilled, IconClipboard, IconEdit, IconHomeEco, IconLeaf, IconRecycle, IconScale, IconShieldFilled, IconTent, IconTrash, IconTrendingUp, IconTrophy, IconTruck, IconX } from '@tabler/icons-react';
+import {
+  IconArrowBack, IconChartLine, IconChristmasTreeFilled, IconClipboard,
+  IconEdit, IconHomeEco, IconLeaf, IconRecycle, IconScale,
+  IconShieldFilled, IconTent, IconTrash, IconTrendingUp,
+  IconTrophy, IconTruck
+} from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
 import programPenghijauanState from '../../../_state/lingkungan/program-penghijauan';
-
-// import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
 
 function DetailProgramPenghijauan() {
   const [modalHapus, setModalHapus] = useState(false)
@@ -50,72 +53,97 @@ function DetailProgramPenghijauan() {
 
   if (!stateProgramPenghijauan.findUnique.data) {
     return (
-      <Stack>
-        <Skeleton h={500} />
+      <Stack py={10}>
+        <Skeleton height={500} radius="md" />
       </Stack>
     )
   }
 
-  return (
-    <Box>
-      <Box mb={10}>
-        <Button variant="subtle" onClick={() => router.back()}>
-          <IconArrowBack color={colors['blue-button']} size={25} />
-        </Button>
-      </Box>
-      <Paper w={{ base: "100%", md: "50%" }} bg={colors['white-1']} p={'md'}>
-        <Stack>
-          <Text fz={"xl"} fw={"bold"}>Detail Program Penghijauan</Text>
+  const data = stateProgramPenghijauan.findUnique.data
 
-          <Paper bg={colors['BG-trans']} p={'md'}>
-            <Stack gap={"xs"}>
+  return (
+    <Box py={10}>
+      {/* Tombol kembali */}
+      <Button
+        variant="subtle"
+        onClick={() => router.back()}
+        leftSection={<IconArrowBack size={24} color={colors['blue-button']} />}
+        mb={15}
+      >
+        Kembali
+      </Button>
+
+      {/* Konten detail */}
+      <Paper
+        withBorder
+        w={{ base: "100%", md: "60%" }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+      >
+        <Stack gap="md">
+          <Text fz="2xl" fw="bold" c={colors['blue-button']}>
+            Detail Program Penghijauan
+          </Text>
+
+          <Paper bg="#ECEEF8" p="md" radius="md" shadow="xs">
+            <Stack gap="sm">
               <Box>
-                <Text fz={"lg"} fw={"bold"}>Nama Program Penghijauan</Text>
-                <Text fz={"lg"}>{stateProgramPenghijauan.findUnique.data?.name}</Text>
+                <Text fz="lg" fw="bold">Nama Program</Text>
+                <Text fz="md" c="dimmed">{data?.name || '-'}</Text>
               </Box>
+
               <Box>
-                <Text fz={"lg"} fw={"bold"}>Ikon Program Penghijauan</Text>
-                {iconMap[stateProgramPenghijauan.findUnique.data?.icon] && (
-                  <Box title={stateProgramPenghijauan.findUnique.data?.icon}>
-                    {React.createElement(iconMap[stateProgramPenghijauan.findUnique.data?.icon], { size: 24 })}
+                <Text fz="lg" fw="bold">Ikon Program</Text>
+                {iconMap[data?.icon] ? (
+                  <Box title={data?.icon}>
+                    {React.createElement(iconMap[data.icon], { size: 28, color: colors['blue-button'] })}
                   </Box>
+                ) : (
+                  <Text fz="sm" c="dimmed">Tidak ada ikon</Text>
                 )}
               </Box>
+
               <Box>
-                <Text fz={"lg"} fw={"bold"}>Judul Deskripsi Program Penghijauan</Text>
-                <Text fz={"lg"}>{stateProgramPenghijauan.findUnique.data?.judul}</Text>
+                <Text fz="lg" fw="bold">Judul Deskripsi</Text>
+                <Text fz="md" c="dimmed">{data?.judul || '-'}</Text>
               </Box>
+
               <Box>
-                <Text fz={"lg"} fw={"bold"}>Deskripsi Program Penghijauan</Text>
-                <Text fz={"lg"} dangerouslySetInnerHTML={{ __html: stateProgramPenghijauan.findUnique.data?.deskripsi }}></Text>
+                <Text fz="lg" fw="bold">Deskripsi</Text>
+                <Text fz="md" c="dimmed" dangerouslySetInnerHTML={{ __html: data?.deskripsi || '-' }} />
               </Box>
-              <Box>
-                <Flex gap={"xs"} mt={10}>
+
+              {/* Tombol aksi */}
+              <Group gap="sm" mt="md">
+                <Tooltip label="Hapus Program" withArrow position="top">
                   <Button
+                    color="red"
                     onClick={() => {
-                      if (stateProgramPenghijauan.findUnique.data) {
-                        setSelectedId(stateProgramPenghijauan.findUnique.data.id);
-                        setModalHapus(true);
-                      }
+                      setSelectedId(data.id);
+                      setModalHapus(true);
                     }}
-                    disabled={stateProgramPenghijauan.delete.loading || !stateProgramPenghijauan.findUnique.data}
-                    color={"red"}
+                    variant="light"
+                    radius="md"
+                    size="md"
                   >
-                    <IconX size={20} />
+                    <IconTrash size={20} />
                   </Button>
+                </Tooltip>
+
+                <Tooltip label="Edit Program" withArrow position="top">
                   <Button
-                    onClick={() => {
-                      if (stateProgramPenghijauan.findUnique.data) {
-                        router.push(`/admin/lingkungan/program-penghijauan/${stateProgramPenghijauan.findUnique.data.id}/edit`);
-                      }
-                    }}
-                    disabled={!stateProgramPenghijauan.findUnique.data}
-                    color={"green"}
+                    color="green"
+                    onClick={() => router.push(`/admin/lingkungan/program-penghijauan/${data.id}/edit`)}
+                    variant="light"
+                    radius="md"
+                    size="md"
                   >
                     <IconEdit size={20} />
                   </Button>
-                </Flex>
-              </Box>
+                </Tooltip>
+              </Group>
             </Stack>
           </Paper>
         </Stack>
@@ -126,7 +154,7 @@ function DetailProgramPenghijauan() {
         opened={modalHapus}
         onClose={() => setModalHapus(false)}
         onConfirm={handleHapus}
-        text="Apakah anda yakin ingin menghapus program penghijauan ini?"
+        text="Apakah Anda yakin ingin menghapus program penghijauan ini?"
       /> 
     </Box>
   );

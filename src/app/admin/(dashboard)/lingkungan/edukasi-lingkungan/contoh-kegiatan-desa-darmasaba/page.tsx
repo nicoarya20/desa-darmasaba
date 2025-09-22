@@ -1,5 +1,4 @@
 'use client'
-import colors from '@/con/colors';
 import { Box, Button, Grid, GridCol, Paper, Skeleton, Stack, Text, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconEdit } from '@tabler/icons-react';
@@ -8,47 +7,72 @@ import { useProxy } from 'valtio/utils';
 import stateEdukasiLingkungan from '../../../_state/lingkungan/edukasi-lingkungan';
 
 function Page() {
-  const router = useRouter()
-  const listContohEdukasi = useProxy(stateEdukasiLingkungan.stateContohEdukasiLingkungan)
+  const router = useRouter();
+  const listContohEdukasi = useProxy(stateEdukasiLingkungan.stateContohEdukasiLingkungan);
+
   useShallowEffect(() => {
-    listContohEdukasi.findById.load('edit')
-  }, [])
+    listContohEdukasi.findById.load('edit');
+  }, []);
 
   if (!listContohEdukasi.findById.data) {
     return (
-      <Stack>
-        <Skeleton radius={10} h={800} />
+      <Stack py={20}>
+        <Skeleton radius="md" height={600} />
       </Stack>
-    )
+    );
   }
+
   return (
-    <Paper bg={colors['white-1']} p={'md'} radius={10}>
-      <Stack gap={"22"}>
-        <Grid>
+    <Box p="md">
+      <Paper withBorder p={{ base: 'md', md: 'lg' }} radius="md">
+        <Grid align="center" mb={{ base: 'md', md: 'lg' }}>
           <GridCol span={{ base: 12, md: 11 }}>
-            <Title order={2}>Preview Contoh Kegiatan Di Desa Darmasaba</Title>
+            <Title order={3} fw={600}>
+              Preview Contoh Kegiatan Di Desa Darmasaba
+            </Title>
           </GridCol>
-          <GridCol span={{ base: 12, md: 1 }}>
-            <Button bg={colors['blue-button']} onClick={() => router.push('/admin/lingkungan/edukasi-lingkungan/contoh-kegiatan-desa-darmasaba/edit')}>
-              <IconEdit size={16} />
+          <GridCol span={{ base: 12, md: 1 }} style={{ textAlign: 'right' }}>
+            <Button
+              size="sm"
+              variant="light"
+              color="green"
+              radius="md"
+              leftSection={<IconEdit size={16} />}
+              onClick={() =>
+                router.push(
+                  '/admin/lingkungan/edukasi-lingkungan/contoh-kegiatan-desa-darmasaba/edit'
+                )
+              }
+            >
+              Edit
             </Button>
           </GridCol>
         </Grid>
-        <Box>
-          <Stack gap={'lg'}>
-            <Paper p={"xl"} bg={colors['BG-trans']}>
-              <Box px={{ base: 0, md: 30 }}>
-                <Text fz={{ base: "h3", md: "h2" }} fw={"bold"} dangerouslySetInnerHTML={{ __html: listContohEdukasi.findById.data.judul }} />
-              </Box>
-              <Box px={{ base: 0, md: 30 }}>
-                <Text fz={{ base: "md", md: "h3" }} ta={"justify"} dangerouslySetInnerHTML={{ __html: listContohEdukasi.findById.data.deskripsi }} />
-              </Box>
-            </Paper>
-          </Stack>
-        </Box>
-      </Stack>
-    </Paper>
-  )
+
+        <Stack gap="md">
+          <Paper p={{ base: 'md', md: 'xl' }} bg="#ECEEF8" radius="md">
+            <Box mb="md">
+              <Text
+                fz={{ base: 'xl', md: '2xl' }}
+                fw={600}
+                c="black"
+                dangerouslySetInnerHTML={{ __html: listContohEdukasi.findById.data.judul }}
+              />
+            </Box>
+            <Box>
+              <Text
+                fz={{ base: 'md', md: 'lg' }}
+                ta="justify"
+                c="dimmed"
+                lineClamp={10}
+                dangerouslySetInnerHTML={{ __html: listContohEdukasi.findById.data.deskripsi }}
+              />
+            </Box>
+          </Paper>
+        </Stack>
+      </Paper>
+    </Box>
+  );
 }
 
 export default Page;
