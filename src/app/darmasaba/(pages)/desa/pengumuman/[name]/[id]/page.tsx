@@ -1,7 +1,7 @@
 'use client'
 import stateDesaPengumuman from '@/app/admin/(dashboard)/_state/desa/pengumuman';
 import colors from '@/con/colors';
-import { Box, Container, Flex, Group, Paper, Skeleton, Stack, Text } from '@mantine/core';
+import { Box, Container, Group, Paper, Skeleton, Stack, Text } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { useParams } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
@@ -31,7 +31,7 @@ function Page() {
       </Box>
       <Container size="lg" px="md">
         <Stack gap="xs" >
-            <Flex justify={"space-between"} align={"center"}>
+            <Group justify={"space-between"} align={"center"}>
               <Text fz={{ base: "2rem", md: "2rem" }} c={colors["blue-button"]} fw="bold" >
                 {detail.data?.judul}
               </Text>
@@ -40,7 +40,7 @@ function Page() {
                   <Text  c={colors['white-1']}>{detail.data?.CategoryPengumuman?.name}</Text>
                 </Paper>
               </Group>
-            </Flex>
+            </Group>
           <Paper bg={colors["white-1"]} p="md">
             <Text fz={"md"} dangerouslySetInnerHTML={{ __html: detail.data?.content }} />
             <Text fz={"md"} c={colors["blue-button"]} fw="bold" >

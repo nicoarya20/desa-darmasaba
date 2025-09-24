@@ -2,7 +2,7 @@
 
 'use client';
 
-import { TextInput } from '@mantine/core';
+import { Group, TextInput } from '@mantine/core';
 import { IconSearch } from '@tabler/icons-react';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
@@ -65,13 +65,15 @@ export function SearchBar({
   }, []);
 
   return (
-    <TextInput
+    <Group justify='center'>
+      <TextInput
       radius="lg"
       placeholder={placeholder}
       leftSection={searchIcon}
-      w="100%"
+      w={{ base: '100%', md: '50%' }}
       value={searchValue}
       onChange={handleSearchChange}
     />
+    </Group>
   );
 }

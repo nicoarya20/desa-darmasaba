@@ -87,7 +87,9 @@ function ListAPBDes({ search }: { search: string }) {
                       <Text fw={500} truncate="end">{item.name}</Text>
                     </TableTd>
                     <TableTd>
-                      <Text>Rp. {item.jumlah}</Text>
+                      <Box w={150}>
+                        <Text>Rp. {item.jumlah}</Text>
+                      </Box>
                     </TableTd>
                     <TableTd>
                       {item.file?.link ? (

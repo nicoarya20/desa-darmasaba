@@ -2,11 +2,12 @@
 'use client'
 import stateLayananDesa from '@/app/admin/(dashboard)/_state/desa/layananDesa';
 import colors from '@/con/colors';
-import { Box, Button, Center, Container, Group, Image, Skeleton, Stack, Text } from '@mantine/core';
+import { Box, Button, Center, Container, Group, Image, Modal, Paper, Select, Skeleton, Stack, Text, TextInput, Title } from '@mantine/core';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import BackButton from '../_com/BackButto';
+import { useDisclosure } from '@mantine/hooks';
 
 interface LayananData {
   id: string;
@@ -31,7 +32,12 @@ function Page() {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<LayananData | null>(null);
 
+  const [opened, { open, close }] = useDisclosure(false);
+  const stateCreate = useProxy(stateLayananDesa.ajukanPermohonan);
+
+
   useEffect(() => {
+    state.suratKeterangan.findManyAll.load()
     const loadData = async () => {
       if (!id) return;
       try {
@@ -47,6 +53,22 @@ function Page() {
     };
     loadData();
   }, [id]);
+
+  const resetForm = () => {
+    stateCreate.create.form = {
+      nama: '',
+      nik: '',
+      alamat: '',
+      nomorKk: '',
+      kategoriId: '',
+    }
+  }
+
+  const handleSubmit = async () => {
+    await stateCreate.create.create();
+    resetForm();
+    close();
+  }
 
   if (loading) {
     return (
@@ -105,12 +127,76 @@ function Page() {
               size="lg"
               variant="gradient"
               gradient={{ from: '#1C6EA4', to: '#63B3ED' }}
+              onClick={open}
             >
               Ajukan Permohonan
             </Button>
           </Group>
         </Stack>
       </Box>
+      <Modal
+        opened={opened}
+        onClose={close}
+        radius={0}
+        transitionProps={{ transition: 'fade', duration: 200 }}
+      >
+        <Paper p="md" withBorder>
+          <Stack gap="xs">
+            <Title order={3}>Ajukan Permohonan</Title>
+            <TextInput
+              label={<Text fz="sm" fw="bold">Nama</Text>}
+              placeholder="masukkan nama"
+              onChange={(val) => (stateCreate.create.form.nama = val.target.value)}
+            />
+            <TextInput
+              type="number"
+              label={<Text fz="sm" fw="bold">NIK</Text>}
+              placeholder="masukkan NIK"
+              onChange={(val) => (stateCreate.create.form.nik = val.target.value)}
+            />
+            <TextInput
+              label={<Text fz="sm" fw="bold">Alamat</Text>}
+              placeholder="masukkan alamat"
+              onChange={(val) => (stateCreate.create.form.alamat = val.target.value)}
+            />
+            <TextInput
+              type="number"
+              label={<Text fz="sm" fw="bold">Nomor KK</Text>}
+              placeholder="masukkan Nomor KK"
+              onChange={(val) => (stateCreate.create.form.nomorKk = val.target.value)}
+            />
+            <Select
+              label="Kategori"
+              placeholder="Pilih kategori"
+              data={stateLayananDesa.suratKeterangan.findManyAll.data?.map((item) => ({
+                label: item.name,
+                value: item.id,
+              }))}
+              value={stateCreate.create.form.kategoriId || null}
+              onChange={(val: string | null) => {
+                if (val) {
+                  const selected = stateLayananDesa.suratKeterangan.findMany.data?.find(
+                    (item) => item.id === val
+                  );
+                  if (selected) {
+                    stateCreate.create.form.kategoriId = selected.id;
+                  }
+                } else {
+                  stateCreate.create.form.kategoriId = '';
+                }
+              }}
+              searchable
+              clearable
+              nothingFoundMessage="Tidak ditemukan"
+              required
+            />
+
+            <Button bg={colors['blue-button']} onClick={handleSubmit}>
+              Simpan
+            </Button>
+          </Stack>
+        </Paper>
+      </Modal>
     </Stack>
   );
 }

@@ -4,7 +4,7 @@ import indeksKepuasanState from "@/app/admin/(dashboard)/_state/landing-page/ind
 import colors from "@/con/colors";
 import { BarChart, PieChart } from '@mantine/charts';
 import { Box, Button, Center, Container, Flex, Group, Modal, Paper, Select, SimpleGrid, Skeleton, Stack, Text, TextInput, Title } from "@mantine/core";
-import { useDisclosure, useShallowEffect } from "@mantine/hooks";
+import { useDisclosure, useMediaQuery, useShallowEffect } from "@mantine/hooks";
 import { useState } from "react";
 import { useProxy } from "valtio/utils";
 
@@ -24,7 +24,8 @@ function Kepuasan() {
   const [donutDataRating, setDonutDataRating] = useState<ChartDataItem[]>([]);
   const [donutDataKelompokUmur, setDonutDataKelompokUmur] = useState<ChartDataItem[]>([]);
   const [barChartData, setBarChartData] = useState<Array<{ month: string; count: number }>>([]);
-  const [opened, { open, close }] = useDisclosure(false)
+  const [opened, { open, close }] = useDisclosure(false);
+  const isMobile = useMediaQuery("(max-width: 768px)");
 
   const resetForm = () => {
     state.create.form = {
@@ -140,12 +141,12 @@ function Kepuasan() {
 
   if ((loading && !data) || !data) {
     return (
-      <Stack py={10} px="xl">
-        <Skeleton height={300} mb="md" />
-        <SimpleGrid cols={{ base: 1, md: 3 }}>
-          <Skeleton height={300} />
-          <Skeleton height={300} />
-          <Skeleton height={300} />
+      <Stack py={10} px="sm">
+        <Skeleton height={200} mb="md" />
+        <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }} spacing="md">
+          <Skeleton height={200} />
+          <Skeleton height={200} />
+          <Skeleton height={200} />
         </SimpleGrid>
       </Stack>
     );
@@ -412,50 +413,41 @@ function Kepuasan() {
     );
   }
   return (
-    <Stack p={"sm"}>
-      <Container w={{ base: "100%", md: "80%" }} p={"xl"}>
-        <Stack gap={"xs"}>
-          <Text ta={"center"} fz={{ base: "2.4rem", md: "3.4rem" }}>Indeks Kepuasan Masyarakat</Text>
-          <Group justify={"center"}>
-            <Button radius={"lg"} bg={colors["blue-button"]} onClick={open}>Ajukan Responden</Button>
+    <Stack p="sm">
+      <Container w={{ base: "100%", md: "80%" }} p={isMobile ? "md" : "xl"}>
+        <Stack gap="xs">
+          <Text ta="center" fz={{ base: "2rem", md: "3rem" }}>Indeks Kepuasan Masyarakat</Text>
+          <Group justify="center">
+            <Button radius="lg" bg={colors["blue-button"]} onClick={open}>
+              Ajukan Responden
+            </Button>
           </Group>
         </Stack>
       </Container>
-      <Box px={"xl"}>
-        <Paper p={"lg"} bg={colors.Bg}>
-          <Paper p={"lg"}>
-            <Stack gap={"xs"}>
-              <Flex justify={"space-between"} align={"center"}>
-                <Text fw={"bold"}>Pelayanan Terhadap Publik Desa Darmasaba</Text>
+      <Box px={isMobile ? "sm" : "xl"}>
+        <Paper p="lg" bg={colors.Bg}>
+          <Paper p={isMobile ? "sm" : "lg"}>
+            <Stack gap="xs">
+              <Flex direction={isMobile ? "column" : "row"} justify="space-between" align={isMobile ? "start" : "center"}>
+                <Text fw="bold" mb={isMobile ? "sm" : 0}>Pelayanan Terhadap Publik Desa Darmasaba</Text>
                 <Box>
-                  <Text fz={"sm"} fw={"bold"} c={colors["blue-button"]}>Total Responden</Text>
-                  <Text ta={"end"} fz={"h1"} fw={"bold"} c={colors["blue-button"]}>
-                    {state.findMany.total.toLocaleString('id-ID')}
+                  <Text fz="sm" fw="bold" c={colors["blue-button"]}>Total Responden</Text>
+                  <Text ta="end" fz="h1" fw="bold" c={colors["blue-button"]}>
+                    {state.findMany.total.toLocaleString("id-ID")}
                   </Text>
                 </Box>
               </Flex>
               <BarChart
-                h={300}
+                h={isMobile ? 200 : 300}
                 data={barChartData}
                 dataKey="month"
-                series={[{ name: 'count', color: colors['blue-button'] }]}
-                tickLine="y"
-                xAxisLabel="Bulan"
-                yAxisLabel="Jumlah Responden"
+                series={[{ name: "count", color: colors["blue-button"] }]}
                 withTooltip
-                tooltipAnimationDuration={200}
               />
             </Stack>
           </Paper>
-          <Box py={"xl"}>
-            <SimpleGrid
-              cols={{
-                base: 1,
-                md: 1,
-                lg: 1,
-                xl: 3
-              }}
-            >
+          <Box py="xl">
+            <SimpleGrid cols={{ base: 1, sm: 2, xl: 3 }} spacing="lg">
               {/* Chart Jenis Kelamin */}
               <Paper bg={colors['white-1']} p="md" radius="md">
                 <Stack>
@@ -465,28 +457,17 @@ function Kepuasan() {
                       Belum ada data untuk ditampilkan dalam grafik
                     </Text>
                   ) : (
-                    <Paper p="md" radius="md" withBorder>
-                      <Box style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                        <Box style={{ position: 'relative', width: '100%' }}>
-                          <Center>
-                            <PieChart
-                              withLabels
-                              withTooltip
-                              labelsType="percent"
-                              size={200}
-                              data={donutDataJenisKelamin}
-                            />
-                          </Center>
-                        </Box>
-                        <Stack gap="sm" mt="md">
-                          {donutDataJenisKelamin.map((entry) => (
-                            <Flex key={entry.name} gap="md" align="center">
-                              <Box bg={entry.color} w={20} h={20} style={{ flexShrink: 0 }} />
-                              <Text size="sm">{entry.name}: {entry.value}</Text>
-                            </Flex>
-                          ))}
-                        </Stack>
-                      </Box>
+                    <Paper p="md" radius="md">
+                      <Stack>
+                        <Center>
+                          <PieChart
+                            size={isMobile ? 150 : 200}
+                            withLabels
+                            data={donutDataJenisKelamin}
+                            withTooltip
+                          />
+                        </Center>
+                      </Stack>
                     </Paper>
                   )}
                 </Stack>
@@ -501,35 +482,18 @@ function Kepuasan() {
                       Belum ada data untuk ditampilkan dalam grafik
                     </Text>
                   ) : (
-                    <Paper p="md" radius="md" withBorder>
-                      <Box style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                        <Box style={{ position: 'relative', width: '100%' }}>
-                          <Center>
-                            <PieChart
-                              withTooltip
-                              tooltipAnimationDuration={200}
-                              withLabels
-                              labelsPosition="outside"
-                              labelsType="percent"
-                              withLabelsLine
-                              size={200}
-                              data={donutDataRating}
-                            />
-                          </Center>
-                        </Box>
-                        <Box mt="md" style={{ width: '100%' }}>
-                          <SimpleGrid cols={2} spacing="xs" verticalSpacing="xs">
-                            {donutDataRating.map((entry) => (
-                              <Flex key={entry.name} gap="sm" align="center" style={{ overflow: 'hidden' }}>
-                                <Box bg={entry.color} w={16} h={16} style={{ flexShrink: 0 }} />
-                                <Text size="xs" lineClamp={1} style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                                  {entry.name}: {entry.value}
-                                </Text>
-                              </Flex>
-                            ))}
-                          </SimpleGrid>
-                        </Box>
-                      </Box>
+                    <Paper p="md" radius="md">
+                      <Stack>
+                        <Center>
+                          <PieChart
+                            size={isMobile ? 150 : 200}
+                            withLabels
+                            labelsPosition="outside"
+                            withLabelsLine
+                            data={donutDataRating}
+                          />
+                        </Center>
+                      </Stack>
                     </Paper>
                   )}
                 </Stack>
@@ -544,35 +508,18 @@ function Kepuasan() {
                       Belum ada data untuk ditampilkan dalam grafik
                     </Text>
                   ) : (
-                    <Paper p="md" radius="md" withBorder>
-                      <Box style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                        <Box style={{ position: 'relative', width: '100%' }}>
-                          <Center>
-                            <PieChart
-                              withTooltip
-                              tooltipAnimationDuration={200}
-                              withLabels
-                              labelsPosition="outside"
-                              labelsType="percent"
-                              withLabelsLine
-                              size={190}
-                              data={donutDataKelompokUmur}
-                            />
-                          </Center>
-                        </Box>
-                        <Box mt="md" style={{ width: '100%' }}>
-                          <SimpleGrid cols={2} spacing="xs" verticalSpacing="xs">
-                            {donutDataKelompokUmur.map((entry) => (
-                              <Flex key={entry.name} gap="sm" align="center" style={{ overflow: 'hidden' }}>
-                                <Box bg={entry.color} w={16} h={16} style={{ flexShrink: 0 }} />
-                                <Text size="xs" lineClamp={1} style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                                  {entry.name}: {entry.value}
-                                </Text>
-                              </Flex>
-                            ))}
-                          </SimpleGrid>
-                        </Box>
-                      </Box>
+                    <Paper p="md" radius="md">
+                      <Stack>
+                        <Center>
+                          <PieChart
+                            size={isMobile ? 150 : 200}
+                            withLabels
+                            labelsPosition="outside"
+                            withLabelsLine
+                            data={donutDataKelompokUmur}
+                          />
+                        </Center>
+                      </Stack>
                     </Paper>
                   )}
                 </Stack>

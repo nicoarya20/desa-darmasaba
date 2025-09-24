@@ -117,14 +117,14 @@ function ListPegawaiPPID({ search }: { search: string }) {
               ).map((item) => (
                 <TableTr key={item.id}>
                   <TableTd>
-                    <Box w={200}>
+                    <Box w={150}>
                       <Text fw={500} truncate="end" lineClamp={1}>
                         {item.namaLengkap}
                       </Text>
                     </Box>
                   </TableTd>
                   <TableTd>
-                    <Box w={200}>
+                    <Box w={150}>
                       <Badge variant="light" color="blue">
                         {item.posisi?.nama || 'Belum diatur'}
                       </Badge>

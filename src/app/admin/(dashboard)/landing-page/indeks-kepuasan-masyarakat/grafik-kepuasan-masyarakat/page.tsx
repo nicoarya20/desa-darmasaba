@@ -154,7 +154,7 @@ function Page() {
                     withLabels
                     withTooltip
                     labelsType="percent"
-                    size={220}
+                    size={180}
                     data={donutDataJenisKelamin}
                   />
                 </Center>
@@ -185,7 +185,7 @@ function Page() {
                     withLabels
                     withTooltip
                     labelsType="percent"
-                    size={220}
+                    size={180}
                     data={donutDataRating}
                   />
                 </Center>
@@ -216,7 +216,7 @@ function Page() {
                     withLabels
                     withTooltip
                     labelsType="percent"
-                    size={220}
+                    size={180}
                     data={donutDataKelompokUmur}
                   />
                 </Center>

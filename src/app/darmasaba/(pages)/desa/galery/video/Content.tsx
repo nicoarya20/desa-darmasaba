@@ -2,19 +2,24 @@
 
 import stateGallery from '@/app/admin/(dashboard)/_state/desa/gallery';
 import colors from '@/con/colors';
-import { Box, Center, Pagination, Paper, SimpleGrid, Spoiler, Stack, Text } from '@mantine/core';
+import {
+  Box,
+  Center,
+  Pagination,
+  Paper,
+  SimpleGrid,
+  Spoiler,
+  Stack,
+  Text,
+} from '@mantine/core';
 import { useCallback, useEffect, useState } from 'react';
 import { useSnapshot } from 'valtio';
 
 export default function VideoContent() {
-  const [expanded, setExpanded] = useState(false);
+  // ✅ expanded state per index
+  const [expandedMap, setExpandedMap] = useState<Record<number, boolean>>({});
   const videoState = useSnapshot(stateGallery.video);
-  const {
-    data,
-    page,
-    totalPages,
-    loading,
-  } = videoState.findMany;
+  const { data, page, totalPages, loading } = videoState.findMany;
 
   // Handle search and pagination changes
   const loadData = useCallback((pageNum: number, searchTerm: string) => {
@@ -27,24 +32,18 @@ export default function VideoContent() {
       const urlParams = new URLSearchParams(window.location.search);
       const urlSearch = urlParams.get('search') || '';
       const urlPage = parseInt(urlParams.get('page') || '1');
-      
       loadData(urlPage, urlSearch);
     };
 
-    // Handle search updates from the search bar
     const handleSearchUpdate = (e: Event) => {
       const { search } = (e as CustomEvent).detail;
       loadData(1, search);
     };
 
-    // Initial load
     handleRouteChange();
-
-    // Set up event listeners
     window.addEventListener('popstate', handleRouteChange);
     window.addEventListener('searchUpdate', handleSearchUpdate as EventListener);
-    
-    // Cleanup
+
     return () => {
       window.removeEventListener('popstate', handleRouteChange);
       window.removeEventListener('searchUpdate', handleSearchUpdate as EventListener);
@@ -55,6 +54,13 @@ export default function VideoContent() {
     const params = new URLSearchParams(window.location.search);
     const search = params.get('search') || '';
     loadData(newPage, search);
+  };
+
+  const toggleExpanded = (index: number, value: boolean) => {
+    setExpandedMap((prev) => ({
+      ...prev,
+      [index]: value,
+    }));
   };
 
   const dataVideo = data || [];
@@ -72,7 +78,13 @@ export default function VideoContent() {
       <SimpleGrid cols={{ base: 1, md: 3 }}>
         {dataVideo.map((v, k) => (
           <Box key={k}>
-            <Paper mb={50} p="md" radius={26} bg={colors['white-trans-1']} w={{ base: '100%', md: '100%' }}>
+            <Paper
+              mb={50}
+              p="md"
+              radius={26}
+              bg={colors['white-trans-1']}
+              w={{ base: '100%', md: '100%' }}
+            >
               <Box>
                 <Center>
                   <Box
@@ -109,8 +121,8 @@ export default function VideoContent() {
                         Hide details
                       </Text>
                     }
-                    expanded={expanded}
-                    onExpandedChange={setExpanded}
+                    expanded={expandedMap[k] || false}
+                    onExpandedChange={(val) => toggleExpanded(k, val)}
                   >
                     <Text
                       ta="justify"
@@ -137,13 +149,13 @@ export default function VideoContent() {
   );
 }
 
-// ✅ Fix: HAPUS SPASI BERLEBIH DI URL
+// ✅ Fix: convert YouTube URL ke embed
 function convertToEmbedUrl(youtubeUrl: string): string {
   try {
     const url = new URL(youtubeUrl);
     const videoId = url.searchParams.get('v');
     if (!videoId) return youtubeUrl;
-    return `https://www.youtube.com/embed/${videoId}`; // ✅ tanpa spasi!
+    return `https://www.youtube.com/embed/${videoId}`;
   } catch (err) {
     console.error('Error converting YouTube URL to embed:', err);
     return youtubeUrl;

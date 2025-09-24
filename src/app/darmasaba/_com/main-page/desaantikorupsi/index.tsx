@@ -32,9 +32,9 @@ function DesaAntiKorupsi() {
     <Stack gap={"0"} bg={colors.Bg} p={"sm"}>
       <Container w={{ base: "100%", md: "80%" }} p={"xl"} >
         <Center>
-          <Text fz={{ base: "2.4rem", md: "3.4rem" }}>Desa Anti Korupsi</Text>
+          <Text fw={"bold"} fz={{ base: "1.8rem", md: "3.4rem" }}>Desa Anti Korupsi</Text>
         </Center>
-        <Text ta={"center"} fz={{ base: "1.2rem", md: "1.4rem" }}>Desa antikorupsi mendorong pemerintahan jujur dan transparan. Keuangan desa dikelola terbuka dengan melibatkan warga mengawasi anggaran, sehingga digunakan tepat sasaran sesuai kebutuhan.</Text>
+        <Text ta={"center"} fz={{ base: "1rem", md: "1.3rem" }}>Desa antikorupsi mendorong pemerintahan jujur dan transparan. Keuangan desa dikelola terbuka dengan melibatkan warga mengawasi anggaran, sehingga digunakan tepat sasaran sesuai kebutuhan.</Text>
         <Center py={20}>
           <Button radius={"lg"} fz={"h4"} bg={colors["blue-button"]} component={Link} href={"/darmasaba/desa-anti-korupsi/detail"}>Selengkapnya</Button>
         </Center>
@@ -49,6 +49,7 @@ function DesaAntiKorupsi() {
             cols={{ base: 1, sm: 2, md: 3 }}
             spacing="lg"
             mt="lg"
+            mb="xl"
           >
             {data.map((v, k) => (
               <Paper

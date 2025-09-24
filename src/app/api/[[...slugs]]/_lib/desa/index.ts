@@ -11,6 +11,7 @@ import KategoriPotensi from "./potensi/kategori-potensi";
 import KategoriBerita from "./berita/kategori-berita";
 import KategoriPengumuman from "./pengumuman/kategori-pengumuman";
 import MantanPerbekel from "./profile/profile-mantan-perbekel";
+import AjukanPermohonan from "./layanan/ajukan_permohonan";
 
 
 const Desa = new Elysia({ prefix: "/api/desa", tags: ["Desa"] })
@@ -26,6 +27,7 @@ const Desa = new Elysia({ prefix: "/api/desa", tags: ["Desa"] })
   .use(KategoriPotensi)
   .use(KategoriBerita)
   .use(KategoriPengumuman)
+  .use(AjukanPermohonan)
   
 
 export default Desa;

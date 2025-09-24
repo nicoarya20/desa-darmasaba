@@ -22,7 +22,7 @@ export default function Page() {
             <Container w={{ base: "100%", md: "50%" }} >
                 <Stack align="center" gap={0}>
                     {/* Bagian Layanan */}
-                    <Text fz={{ base: "2rem", md: "2.5rem", lg: "3rem", xl: "3.5rem" }} c={colors["blue-button"]} fw={"bold"}>
+                    <Text fz={{ base: "1.8rem", md: "2.5rem", lg: "3rem", xl: "3.5rem" }} c={colors["blue-button"]} fw={"bold"}>
                         Layanan Desa Darmasaba
                     </Text>
                     <Text

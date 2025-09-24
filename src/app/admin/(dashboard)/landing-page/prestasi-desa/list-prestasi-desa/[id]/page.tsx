@@ -78,9 +78,9 @@ function DetailPrestasiDesa() {
 
               <Box>
                 <Text fz="lg" fw="bold">Deskripsi</Text>
-                <Box 
-                  fz="md" 
-                  c="dimmed" 
+                <Box
+                  fz="md"
+                  c="dimmed"
                   dangerouslySetInnerHTML={{ __html: detailState.findUnique.data?.deskripsi || '-' }}
                 />
               </Box>
@@ -91,10 +91,11 @@ function DetailPrestasiDesa() {
                   <Image
                     src={detailState.findUnique.data.image.link}
                     alt={detailState.findUnique.data.name || 'Gambar Prestasi'}
-                    w={300}
+                    w="100%"
+                    maw={300} // max width 300px
                     fit="contain"
                     style={{ borderRadius: '8px', border: '1px solid #e0e0e0' }}
-                    loading='lazy'
+                    loading="lazy"
                   />
                 ) : (
                   <Text fz="sm" c="dimmed">Tidak ada gambar</Text>

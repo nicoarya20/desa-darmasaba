@@ -104,7 +104,9 @@ function ListPrestasi({ search }: { search: string }) {
                       <Text lineClamp={1} fz="sm" c="dimmed" dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
                     </TableTd>
                     <TableTd style={{ width: '25%' }}>
-                      <Text truncate="end" fz={"sm"}>{item.kategori?.name || 'Tidak ada kategori'}</Text>
+                      <Box w={150}>
+                        <Text truncate="end" fz={"sm"}>{item.kategori?.name || 'Tidak ada kategori'}</Text>
+                      </Box>
                     </TableTd>
                     <TableTd style={{ width: '25%', textAlign: 'center' }}>
                       <Tooltip label="Kelola Prestasi" withArrow>

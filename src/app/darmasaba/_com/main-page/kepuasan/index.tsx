@@ -160,11 +160,11 @@ function Kepuasan() {
           </Center>
           <Text fz={{ base: "1.2rem", md: "1.4rem" }} ta={"center"}>Ukur kebahagiaan warga, tingkatkan layanan desa! Dengan partisipasi aktif masyarakat, kami berkomitmen untuk terus memperbaiki layanan agar lebih transparan, efektif, dan sesuai dengan kebutuhan warga. Kepuasan Anda adalah prioritas utama kami dalam membangun desa yang lebih baik!</Text>
           <Center mt={10}>
-            <Button 
-            radius={"lg"} 
-            onClick={open}
-            variant="gradient"
-            gradient={{ from: "#26667F", to: "#124170" }}
+            <Button
+              radius={"lg"}
+              onClick={open}
+              variant="gradient"
+              gradient={{ from: "#26667F", to: "#124170" }}
             >Ajukan Responden</Button>
           </Center>
         </Container>
@@ -182,7 +182,7 @@ function Kepuasan() {
                   </Box>
                 </Flex>
                 <BarChart
-                  h={300}
+                  h={window.innerWidth < 480 ? 200 : 300}
                   data={barChartData}
                   dataKey="month"
                   series={[{ name: 'count', color: colors['blue-button'] }]}
@@ -196,12 +196,9 @@ function Kepuasan() {
             </Paper>
             <Box py={"xl"}>
               <SimpleGrid
-                cols={{
-                  base: 1,
-                  md: 1,
-                  lg: 1,
-                  xl: 3
-                }}
+                cols={{ base: 1, sm: 2, lg: 3 }}
+                spacing="md"
+                verticalSpacing="md"
               >
                 {/* Chart Jenis Kelamin */}
                 <Paper bg={colors['white-1']} p="md" radius="md">
@@ -220,7 +217,7 @@ function Kepuasan() {
                                 withLabels
                                 withTooltip
                                 labelsType="percent"
-                                size={200}
+                                size={250} // Fixed size in pixels
                                 data={donutDataJenisKelamin}
                               />
                             </Center>
@@ -259,7 +256,7 @@ function Kepuasan() {
                                 labelsPosition="outside"
                                 labelsType="percent"
                                 withLabelsLine
-                                size={200}
+                                size={250}
                                 data={donutDataRating}
                               />
                             </Center>
@@ -302,7 +299,7 @@ function Kepuasan() {
                                 labelsPosition="outside"
                                 labelsType="percent"
                                 withLabelsLine
-                                size={190}
+                                size={250}
                                 data={donutDataKelompokUmur}
                               />
                             </Center>
@@ -419,7 +416,7 @@ function Kepuasan() {
   }
   return (
     <Stack p={"sm"}>
-      <Container w={{ base: "100%", md: "80%" }} p={"xl"}>
+     <Container size="lg" px="md">
         <Center>
           <Text ta={"center"} fz={{ base: "2.4rem", md: "3.4rem" }}>Indeks Kepuasan Masyarakat</Text>
         </Center>
@@ -432,9 +429,15 @@ function Kepuasan() {
         <Paper p={"lg"} bg={colors.Bg}>
           <Paper p={"lg"}>
             <Stack gap={"xs"}>
-              <Flex justify={"space-between"} align={"center"}>
-                <Text fw={"bold"}>Pelayanan Terhadap Publik Desa Darmasaba</Text>
-                <Box>
+              <Flex
+                direction={{ base: "column", sm: "row" }}
+                justify="space-between"
+                align={{ base: "flex-start", sm: "center" }}
+              >
+                <Text fw="bold" ta={{ base: "center", sm: "left" }}>
+                  Pelayanan Terhadap Publik Desa Darmasaba
+                </Text>
+                <Box mt={{ base: "sm", sm: 0 }}>
                   <Text fz={"sm"} fw={"bold"} c={colors["blue-button"]}>Total Responden</Text>
                   <Text ta={"end"} fz={"h1"} fw={"bold"} c={colors["blue-button"]}>
                     {state.findMany.total.toLocaleString('id-ID')}

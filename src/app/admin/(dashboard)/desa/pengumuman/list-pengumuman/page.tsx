@@ -94,9 +94,11 @@ function ListPengumuman({ search }: { search: string }) {
                 filteredData.map((item) => (
                   <TableTr key={item.id}>
                     <TableTd>
-                      <Text fw={500} truncate="end" lineClamp={1}>
-                        {item.judul}
-                      </Text>
+                      <Box w={150}>
+                        <Text fw={500} truncate="end" lineClamp={1}>
+                          {item.judul}
+                        </Text>
+                      </Box>
                     </TableTd>
                     <TableTd>
                       <Text fz="sm" c="dimmed">

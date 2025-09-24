@@ -51,8 +51,10 @@ function DetailMediaSosial() {
       </Button>
 
       <Paper
-      withBorder
-        w={{ base: "100%", md: "60%" }}
+        withBorder
+        w="100%"
+        maw={500} // <= tambahkan ini, biar tidak lebih dari 500px
+        mx="auto" // center di layar
         bg={colors['white-1']}
         p="lg"
         radius="md"
@@ -70,9 +72,9 @@ function DetailMediaSosial() {
                 <Text fz="md" c="dimmed">{data.name || '-'}</Text>
               </Box>
 
-              <Box>
+              <Box >
                 <Text fz="lg" fw="bold">Link / Nomor Telepon</Text>
-                <Text fz="md" c="dimmed">{data.iconUrl || '-'}</Text>
+                <Text fz="md" c="dimmed" style={{ wordBreak: "break-all", whiteSpace: "pre-wrap" }}>{data.iconUrl || '-'}</Text>
               </Box>
 
               <Box>
@@ -81,12 +83,14 @@ function DetailMediaSosial() {
                   <Image
                     src={data.image.link}
                     alt={data.name || 'Gambar Media Sosial'}
-                    w={120}
-                    h={120}
+                    w="100%"
+                    maw={120} // max width biar tidak keluar layar
+                    h="auto"
                     radius="md"
                     fit="cover"
                     loading="lazy"
                   />
+
                 ) : (
                   <Text fz="sm" c="dimmed">Tidak ada gambar</Text>
                 )}

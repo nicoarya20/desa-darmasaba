@@ -100,11 +100,11 @@ function Potensi() {
                   style={{ zIndex: 1 }}
                 >
                   <Tooltip label={v.name} position="top-start">
-                    <Text fw={700} c="white" size="2.2rem" truncate>
+                    <Text fw={700} c="white" fz={{ base: "1.2rem", md: "1.4rem" }} truncate>
                       {v.name}
                     </Text>
                   </Tooltip>
-                  <Text lineClamp={2} c="gray.2" size="sm">
+                  <Text lineClamp={2} c="gray.2" fz={{ base: "0.8rem", md: "1rem" }}>
                     {v.deskripsi}
                   </Text>
                 </Stack>

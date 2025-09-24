@@ -5,7 +5,6 @@ import {
   Button,
   Center,
   Group,
-  Image,
   Pagination,
   Paper,
   Skeleton,
@@ -18,7 +17,7 @@ import {
   TableTr,
   Text,
   Title,
-  Tooltip,
+  Tooltip
 } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconCircleDashedPlus, IconDeviceImacCog, IconSearch } from '@tabler/icons-react';
@@ -87,7 +86,6 @@ function ListBerita({ search }: { search: string }) {
               <TableTr>
                 <TableTh style={{ width: '30%' }}>Judul</TableTh>
                 <TableTh style={{ width: '20%' }}>Kategori</TableTh>
-                <TableTh style={{ width: '25%' }}>Gambar</TableTh>
                 <TableTh style={{ width: '15%' }}>Aksi</TableTh>
               </TableTr>
             </TableThead>
@@ -96,7 +94,7 @@ function ListBerita({ search }: { search: string }) {
                 filteredData.map((item) => (
                   <TableTr key={item.id}>
                     <TableTd style={{ width: '30%' }}>
-                      <Box w={200}>
+                      <Box w={150}>
                         <Text fw={500} truncate="end" lineClamp={1}>
                           {item.judul}
                         </Text>
@@ -106,19 +104,6 @@ function ListBerita({ search }: { search: string }) {
                       <Text fz="sm" c="dimmed">
                         {item.kategoriBerita?.name || '-'}
                       </Text>
-                    </TableTd>
-                    <TableTd style={{ width: '25%' }}>
-                      <Box
-                        w={80}
-                        h={80}
-                        style={{ borderRadius: 8, overflow: 'hidden' }}
-                      >
-                        {item.image?.link ? (
-                          <Image loading='lazy' src={item.image.link} alt="gambar" fit="cover" />
-                        ) : (
-                          <Box bg={colors['blue-button']} w="100%" h="100%" />
-                        )}
-                      </Box>
                     </TableTd>
                     <TableTd style={{ width: '15%' }}>
                       <Button

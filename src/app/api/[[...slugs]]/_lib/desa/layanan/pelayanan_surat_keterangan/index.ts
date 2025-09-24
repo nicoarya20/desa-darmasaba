@@ -4,11 +4,12 @@ import pelayananSuratKeteranganFindUnique from "./findUnique";
 import pelayananSuratKeteranganCreate from "./create";
 import pelayananSuratKeteranganUpdate from "./updt";
 import pelayananSuratKeteranganDelete from "./del";
-
+import pelayananSuratKeteranganFindManyAll from "./findManyAll";
 import { t } from "elysia";
 
 const PelayananSuratKeterangan = new Elysia({ prefix: "/pelayanansuratketerangan", tags: ["Desa/Layanan/Pelayanan Surat Keterangan"] })
 .get("/find-many", pelayananSuratKeteranganFindMany)
+.get("/findManyAll", pelayananSuratKeteranganFindManyAll)
 .get("/:id", async (context) => {
     const response = await pelayananSuratKeteranganFindUnique(new Request(context.request));
     return response;

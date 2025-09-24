@@ -96,7 +96,11 @@ function ListKategoriPrestasi({ search }: { search: string }) {
               ) : (
                 filteredData.map((item) => (
                   <TableTr key={item.id}>
-                    <TableTd>{item.name}</TableTd>
+                    <TableTd>
+                      <Box w={200}>
+                        <Text truncate="end" fz={"sm"}>{item.name}</Text>
+                      </Box>
+                    </TableTd>
                     <TableTd style={{ textAlign: 'center', width: '120px' }}>
                       <Tooltip label="Edit" withArrow position="top">
                         <Button

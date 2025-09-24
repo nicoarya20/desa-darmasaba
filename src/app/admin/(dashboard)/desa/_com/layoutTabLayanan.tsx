@@ -4,7 +4,7 @@ import colors from '@/con/colors';
 import { ScrollArea, Stack, Tabs, TabsList, TabsPanel, TabsTab, Title, Tooltip } from '@mantine/core';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
-import { IconFileText, IconBuildingStore, IconSparkles, IconUsers } from '@tabler/icons-react';
+import { IconFileText, IconBuildingStore, IconSparkles, IconUsers, IconUsersPlus } from '@tabler/icons-react';
 
 function LayoutTabsLayanan({ children }: { children: React.ReactNode }) {
     const router = useRouter()
@@ -37,6 +37,13 @@ function LayoutTabsLayanan({ children }: { children: React.ReactNode }) {
             href: "/admin/desa/layanan/pelayanan_penduduk_non_permanent",
             icon: <IconUsers size={18} stroke={1.8} />,
             tooltip: "Pendataan penduduk non-permanent"
+        },
+        {
+            label: "Ajukan Permohonan",
+            value: "ajukanpermohonan",
+            href: "/admin/desa/layanan/ajukan_permohonan",
+            icon: <IconUsersPlus size={18} stroke={1.8} />,
+            tooltip: "Ajukan permohonan"
         }
     ];
 

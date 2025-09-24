@@ -3,10 +3,13 @@
 import daftarInformasiPublik from '@/app/admin/(dashboard)/_state/ppid/daftar_informasi_publik/daftarInformasiPublik';
 import colors from '@/con/colors';
 import {
+  Badge,
   Box,
+  Button,
   Center,
   Image,
   Pagination,
+  Paper,
   Skeleton,
   Stack,
   Table,
@@ -17,21 +20,20 @@ import {
   TableTr,
   Text,
   TextInput,
-  Paper,
-  Badge,
+  Tooltip
 } from '@mantine/core';
-import { useShallowEffect } from '@mantine/hooks';
-import { IconSearch, IconFileInfo, IconMail, IconBrandWhatsapp } from '@tabler/icons-react';
+import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
+import { IconBrandWhatsapp, IconDeviceImacCog, IconFileInfo, IconMail, IconSearch } from '@tabler/icons-react';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import BackButton from '../../desa/layanan/_com/BackButto';
-import { useDebouncedValue } from '@mantine/hooks';
+import { useTransitionRouter } from 'next-view-transitions';
 
 function Page() {
   const listData = useProxy(daftarInformasiPublik)
   const [search, setSearch] = useState('')
   const [debouncedSearch] = useDebouncedValue(search, 500); // 500ms delay
-
+  const router = useTransitionRouter()
   const {
     data,
     page,
@@ -63,7 +65,7 @@ function Page() {
         <BackButton />
       </Box>
       <Center>
-        <Image src="/darmasaba-icon.png" w={{ base: 70, md: 100 }} alt="Logo Desa Darmasaba" loading="lazy"/>
+        <Image src="/darmasaba-icon.png" w={{ base: 70, md: 100 }} alt="Logo Desa Darmasaba" loading="lazy" />
       </Center>
       <Text ta="center" fz={{ base: "1.8rem", md: "2.5rem" }} c={colors["blue-button"]} fw="bold" lh={1.4}>
         Daftar Informasi Publik Desa Darmasaba
@@ -99,38 +101,63 @@ function Page() {
               </Stack>
             </Center>
           ) : (
-            <Table withRowBorders withColumnBorders withTableBorder highlightOnHover verticalSpacing="md">
-              <TableThead bg={colors['blue-button']}>
-                <TableTr c={colors['white-1']}>
-                  <TableTh fz="sm" ta="center" w="5%">No</TableTh>
-                  <TableTh fz="sm" ta="center" w="25%">Jenis Informasi</TableTh>
-                  <TableTh fz="sm" ta="center" w="40%">Deskripsi</TableTh>
-                  <TableTh fz="sm" ta="center" w="20%">Tanggal Publikasi</TableTh>
-                </TableTr>
-              </TableThead>
-              <TableTbody bg={colors['white-1']}>
-                {data.map((item, index) => (
-                  <TableTr key={item.id}>
-                    <TableTd ta="center">{(page - 1) * 5 + index + 1}</TableTd>
-                    <TableTd>
-                      <Badge variant="light" size="lg" color="blue">
-                        {item.jenisInformasi}
-                      </Badge>
-                    </TableTd>
-                    <TableTd>
-                      <Text fz="sm" c="dark" dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
-                    </TableTd>
-                    <TableTd ta="center">
-                      {item.tanggal ? new Date(item.tanggal).toLocaleDateString('id-ID', {
-                        day: '2-digit',
-                        month: 'long',
-                        year: 'numeric'
-                      }) : '-'}
-                    </TableTd>
+            <Box style={{ overflowX: 'auto' }}>
+              <Table withRowBorders withColumnBorders withTableBorder highlightOnHover verticalSpacing="md">
+                <TableThead bg={colors['blue-button']}>
+                  <TableTr c={colors['white-1']}>
+                    <TableTh fz="sm" ta="center" w="5%">No</TableTh>
+                    <TableTh fz="sm" ta="center" w="25%">Jenis Informasi</TableTh>
+                    <TableTh fz="sm" ta="center" w="40%">Deskripsi</TableTh>
+                    <TableTh fz="sm" ta="center" w="20%">Tanggal Publikasi</TableTh>
+                    <TableTh fz="sm" ta="center" w="15%">Aksi</TableTh>
                   </TableTr>
-                ))}
-              </TableTbody>
-            </Table>
+                </TableThead>
+                <TableTbody bg={colors['white-1']}>
+                  {data.map((item, index) => (
+                    <TableTr key={item.id}>
+                      <TableTd ta="center">{(page - 1) * 5 + index + 1}</TableTd>
+                      <TableTd>
+                        <Box w={150}>
+                          <Badge variant="light" size="lg" color="blue">
+                            {item.jenisInformasi}
+                          </Badge>
+                        </Box>
+                      </TableTd>
+                      <TableTd>
+                        <Box w={150}>
+                          <Text lineClamp={1} fz="sm" c="dark" dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
+                        </Box>
+                      </TableTd>
+                      <TableTd ta="center">
+                        <Box w={150}>
+                          {item.tanggal ? new Date(item.tanggal).toLocaleDateString('id-ID', {
+                            day: '2-digit',
+                            month: 'long',
+                            year: 'numeric'
+                          }) : '-'}
+                        </Box>
+                      </TableTd>
+                      <TableTd style={{ textAlign: 'center' }}>
+                        <Box w={150}>
+                          <Tooltip label="Lihat Detail" withArrow>
+                            <Button
+                              size="xs"
+                              radius="md"
+                              variant="light"
+                            color="blue"
+                            leftSection={<IconDeviceImacCog size={16} />}
+                            onClick={() => router.push(`/darmasaba/ppid/daftar-informasi-publik-desa-darmasaba/${item.id}`)}
+                          >
+                            Detail
+                          </Button>
+                        </Tooltip>
+                      </Box>
+                      </TableTd>
+                    </TableTr>
+                  ))}
+                </TableTbody>
+              </Table>
+            </Box>
           )}
 
           <Center>

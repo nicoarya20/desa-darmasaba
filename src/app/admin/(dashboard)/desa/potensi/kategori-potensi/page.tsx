@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Center, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title, Tooltip, Pagination } from '@mantine/core';
+import { Box, Button, Center, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title, Tooltip, Pagination, Group } from '@mantine/core';
 import { IconEdit, IconSearch, IconTrash, IconPlus } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -60,7 +60,7 @@ function ListKategoriPotensi({ search }: { search: string }) {
     <Box py={10}>
       <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
         <Stack>
-          <Box style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 15 }}>
+          <Group justify="space-between">
             <Title order={4}>List Kategori Potensi</Title>
             <Tooltip label="Tambah Kategori Potensi" withArrow>
               <Button
@@ -72,7 +72,7 @@ function ListKategoriPotensi({ search }: { search: string }) {
                 Tambah Baru
               </Button>
             </Tooltip>
-          </Box>
+          </Group>
 
           <Box style={{ overflowX: 'auto' }}>
             <Table highlightOnHover striped withRowBorders style={{ minWidth: '700px' }}>

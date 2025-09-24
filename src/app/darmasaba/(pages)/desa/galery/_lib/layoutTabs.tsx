@@ -1,12 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
-import { Box, Container, Grid, GridCol, Stack, Tabs, TabsList, TabsTab, Text } from '@mantine/core';
-import BackButton from '../../layanan/_com/BackButto';
-import dynamic from 'next/dynamic';
-import type { SearchBarProps } from './searchBar';
 import colors from '@/con/colors';
+import { Box, Container, Stack, Tabs, TabsList, TabsTab, Text } from '@mantine/core';
+import dynamic from 'next/dynamic';
+import { usePathname, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import BackButton from '../../layanan/_com/BackButto';
+import type { SearchBarProps } from './searchBar';
 
 // Define tabs outside the component to ensure consistency between server and client
 const TABS = [
@@ -35,7 +35,7 @@ function LayoutTabsGalery({ children }: HeaderSearchProps) {
   const router = useRouter();
   const pathname = usePathname();
   const [isClient, setIsClient] = useState(false);
-  
+
   // Set default active tab to empty string to prevent hydration mismatch
   const [activeTab, setActiveTab] = useState('');
 
@@ -47,7 +47,7 @@ function LayoutTabsGalery({ children }: HeaderSearchProps) {
   // Update active tab based on current route - only on client side
   useEffect(() => {
     if (!isClient) return;
-    
+
     const currentTab = TABS.find(tab => pathname.includes(tab.value));
     if (currentTab) {
       setActiveTab(currentTab.value);
@@ -75,42 +75,38 @@ function LayoutTabsGalery({ children }: HeaderSearchProps) {
       <Box px={{ base: "md", md: 100 }}>
         <BackButton />
       </Box>
-      <Container size="lg" px="md">
+      <Box px={{ base: "md", md: 100 }}>
         <Stack align="center" gap="0">
           <Text fz={{ base: "2rem", md: "3.4rem" }} c={colors["blue-button"]} fw="bold" ta="center">
             Galeri Kegiatan Desa Darmasaba
           </Text>
         </Stack>
-      </Container>
+        <Box>
+          <SearchBar />
+        </Box>
+      </Box>
 
-      <Tabs 
+      <Tabs
         value={isClient ? activeTab : undefined}
         defaultValue={TABS[0].value}
         onChange={handleTabChange}
-        color={colors['blue-button']} 
+        color={colors['blue-button']}
         variant="pills"
         keepMounted={false}
       >
         <Box px={{ base: "md", md: 100 }} py="md" bg={colors['BG-trans']}>
-          <Grid>
-            <GridCol span={{ base: 12, md: 9, lg: 8, xl: 9 }}>
-              <TabsList>
-                {TABS.map((tab) => (
-                  <TabsTab 
-                    key={tab.value} 
-                    value={tab.value}
-                    component="button"
-                    type="button"
-                  >
-                    {tab.label}
-                  </TabsTab>
-                ))}
-              </TabsList>
-            </GridCol>
-            <GridCol span={{ base: 12, md: 3, lg: 4, xl: 3 }}>
-              <SearchBar />
-            </GridCol>
-          </Grid>
+          <TabsList>
+            {TABS.map((tab) => (
+              <TabsTab
+                key={tab.value}
+                value={tab.value}
+                component="button"
+                type="button"
+              >
+                {tab.label}
+              </TabsTab>
+            ))}
+          </TabsList>
         </Box>
 
         <Container size={'xl'}>

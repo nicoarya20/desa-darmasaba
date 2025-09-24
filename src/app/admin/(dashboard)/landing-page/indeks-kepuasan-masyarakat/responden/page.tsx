@@ -88,66 +88,74 @@ function ListResponden({ search }: ListRespondenProps) {
           <Title order={4} mb="sm">
             Daftar Responden
           </Title>
-          <Table
-            striped
-            highlightOnHover
-            withRowBorders
-            verticalSpacing="sm"
-          >
-            <TableThead>
-              <TableTr>
-                <TableTh style={{ width: '5%', textAlign: 'center' }}>No</TableTh>
-                <TableTh style={{ width: '25%', textAlign: 'center' }}>Nama</TableTh>
-                <TableTh style={{ width: '20%', textAlign: 'center' }}>Tanggal</TableTh>
-                <TableTh style={{ width: '20%', textAlign: 'center' }}>Jenis Kelamin</TableTh>
-                <TableTh style={{ width: '15%', textAlign: 'center' }}>Aksi</TableTh>
-              </TableTr>
-            </TableThead>
-            <TableTbody>
-              {filteredData.length === 0 ? (
+          <Box style={{ overflowX: 'auto' }}>
+            <Table
+              striped
+              highlightOnHover
+              withRowBorders
+              verticalSpacing="sm"
+            >
+              <TableThead>
                 <TableTr>
-                  <TableTd colSpan={5}>
-                    <Text ta="center" c="dimmed">
-                      Tidak ditemukan data dengan kata kunci pencarian
-                    </Text>
-                  </TableTd>
+                  <TableTh style={{ width: '5%', textAlign: 'center' }}>No</TableTh>
+                  <TableTh style={{ width: '25%', textAlign: 'center' }}>Nama</TableTh>
+                  <TableTh style={{ width: '20%', textAlign: 'center' }}>Tanggal</TableTh>
+                  <TableTh style={{ width: '20%', textAlign: 'center' }}>Jenis Kelamin</TableTh>
+                  <TableTh style={{ width: '15%', textAlign: 'center' }}>Aksi</TableTh>
                 </TableTr>
-              ) : (
-                filteredData.map((item, index) => (
-                  <TableTr key={item.id}>
-                    <TableTd ta="center">{index + 1}</TableTd>
-                    <TableTd ta="center">{item.name}</TableTd>
-                    <TableTd ta="center">
-                      {item.tanggal
-                        ? new Date(item.tanggal).toLocaleDateString('id-ID', {
+              </TableThead>
+              <TableTbody>
+                {filteredData.length === 0 ? (
+                  <TableTr>
+                    <TableTd colSpan={5}>
+                      <Text ta="center" c="dimmed">
+                        Tidak ditemukan data dengan kata kunci pencarian
+                      </Text>
+                    </TableTd>
+                  </TableTr>
+                ) : (
+                  filteredData.map((item, index) => (
+                    <TableTr key={item.id}>
+                      <TableTd ta="center">{index + 1}</TableTd>
+                      <TableTd ta="center">{item.name}</TableTd>
+                      <TableTd ta="center">
+                        <Box w={150}>
+                        {item.tanggal
+                          ? new Date(item.tanggal).toLocaleDateString('id-ID', {
                             day: '2-digit',
                             month: 'long',
                             year: 'numeric',
                           })
-                        : '-'}
-                    </TableTd>
-                    <TableTd ta="center">{item.jenisKelamin.name}</TableTd>
-                    <TableTd ta="center">
-                      <Button
-                        size="xs"
-                        radius="md"
-                        variant="light"
-                        color="blue"
-                        leftSection={<IconDeviceImac size={16} />}
-                        onClick={() =>
-                          router.push(
-                            `/admin/landing-page/indeks-kepuasan-masyarakat/responden/${item.id}`
-                          )
-                        }
-                      >
-                        Detail
-                      </Button>
-                    </TableTd>
-                  </TableTr>
-                ))
-              )}
-            </TableTbody>
-          </Table>
+                          : '-'}
+                        </Box>
+                      </TableTd>
+                      <TableTd ta="center">
+                        <Box w={100}>
+                        {item.jenisKelamin.name}
+                        </Box>
+                      </TableTd>
+                      <TableTd ta="center">
+                        <Button
+                          size="xs"
+                          radius="md"
+                          variant="light"
+                          color="blue"
+                          leftSection={<IconDeviceImac size={16} />}
+                          onClick={() =>
+                            router.push(
+                              `/admin/landing-page/indeks-kepuasan-masyarakat/responden/${item.id}`
+                            )
+                          }
+                        >
+                          Detail
+                        </Button>
+                      </TableTd>
+                    </TableTr>
+                  ))
+                )}
+              </TableTbody>
+            </Table>
+          </Box>
         </Paper>
         <Center>
           <Pagination

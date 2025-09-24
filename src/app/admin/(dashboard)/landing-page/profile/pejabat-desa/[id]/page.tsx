@@ -224,7 +224,7 @@ function EditPejabatDesa() {
                       alt="Preview"
                       style={{
                         maxWidth: '100%',
-                        maxHeight: '200px',
+                        maxHeight: '150px',
                         objectFit: 'contain',
                         borderRadius: '8px',
                         border: '1px solid #ddd',

@@ -1,6 +1,6 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Center, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title, Tooltip } from '@mantine/core';
+import { Box, Button, Center, Group, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title, Tooltip } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconDeviceImacCog, IconPlus, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
@@ -49,9 +49,7 @@ function ListProgramInovasi({ search }: { search: string }) {
   return (
     <Box py={15}>
       <Paper bg={colors['white-1']} withBorder p="lg" radius="md" shadow="sm">
-        <Box mb="md" display="flex"
-          style={{ justifyContent: 'space-between', alignItems: 'center' }}
-        >
+        <Group justify='space-between'>
           <Title order={4}>Daftar Program Inovasi</Title>
           <Tooltip label="Tambah Program Inovasi" withArrow>
             <Button
@@ -64,7 +62,7 @@ function ListProgramInovasi({ search }: { search: string }) {
               Tambah Program
             </Button>
           </Tooltip>
-        </Box>
+        </Group>
         <Box style={{ overflowX: 'auto' }}>
           <Table highlightOnHover striped verticalSpacing="sm">
             <TableThead>

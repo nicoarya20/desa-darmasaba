@@ -68,10 +68,10 @@ function ListPosisiOrganisasiPPID({ search }: { search: string }) {
         <Group justify="space-between" mb="md">
           <Title order={4}>Daftar Posisi Organisasi PPID</Title>
           <Tooltip label="Tambah Posisi Organisasi" withArrow>
-            <Button 
-              leftSection={<IconPlus size={18} />} 
-              color="blue" 
-              variant="light" 
+            <Button
+              leftSection={<IconPlus size={18} />}
+              color="blue"
+              variant="light"
               onClick={() => router.push('/admin/ppid/struktur-ppid/posisi-organisasi/create')}
             >
               Tambah Baru
@@ -82,51 +82,54 @@ function ListPosisiOrganisasiPPID({ search }: { search: string }) {
           <Table highlightOnHover>
             <TableThead>
               <TableTr>
-                <TableTh style={{ width: '25%' }}>Nama Posisi</TableTh>
-                <TableTh style={{ width: '45%' }}>Deskripsi</TableTh>
-                <TableTh style={{ width: '15%' }}>Hierarki</TableTh>
-                <TableTh style={{ width: '15%' }}>Aksi</TableTh>
+                <TableTh style={{ width: '20%' }}>Nama Posisi</TableTh>
+                <TableTh style={{ width: '20%' }}>Deskripsi</TableTh>
+                <TableTh style={{ width: '20%' }}>Hierarki</TableTh>
+                <TableTh style={{ width: '20%' }}>Edit</TableTh>
+                <TableTh style={{ width: '20%' }}>Hapus</TableTh>
               </TableTr>
             </TableThead>
             <TableTbody>
               {filteredData.length > 0 ? (
                 filteredData.map((item) => (
                   <TableTr key={item.id}>
-                    <TableTd style={{ width: '25%' }}>
+                    <TableTd style={{ width: '20%' }}>
                       <Text fw={500} truncate="end" lineClamp={1}>{item.nama}</Text>
                     </TableTd>
-                    <TableTd style={{ width: '45%' }}>
-                      <Text lineClamp={2} fz="sm" c="dimmed" dangerouslySetInnerHTML={{ __html: item.deskripsi || '-' }} />
+                    <TableTd style={{ width: '20%' }}>
+                      <Box w={200}>
+                        <Text lineClamp={1} fz="sm" c="dimmed" dangerouslySetInnerHTML={{ __html: item.deskripsi || '-' }} />
+                      </Box>
                     </TableTd>
-                    <TableTd style={{ width: '15%' }}>
+                    <TableTd style={{ width: '20%' }}>
                       <Text>{item.hierarki || '-'}</Text>
                     </TableTd>
-                    <TableTd style={{ width: '15%' }}>
-                      <Group gap="xs">
-                        <Tooltip label="Edit" withArrow>
-                          <Button
-                            variant="light"
-                            color="green"
-                            size="sm"
-                            onClick={() => router.push(`/admin/ppid/struktur-ppid/posisi-organisasi/${item.id}`)}
-                          >
-                            <IconEdit size={18} />
-                          </Button>
-                        </Tooltip>
-                        <Tooltip label="Hapus" withArrow>
-                          <Button
-                            variant="light"
-                            color="red"
-                            size="sm"
-                            onClick={() => {
-                              setSelectedId(item.id);
-                              setModalHapus(true);
-                            }}
-                          >
-                            <IconTrash size={18} />
-                          </Button>
-                        </Tooltip>
-                      </Group>
+                    <TableTd style={{ width: '20%' }}>
+                      <Tooltip label="Edit" withArrow>
+                        <Button
+                          variant="light"
+                          color="green"
+                          size="sm"
+                          onClick={() => router.push(`/admin/ppid/struktur-ppid/posisi-organisasi/${item.id}`)}
+                        >
+                          <IconEdit size={18} />
+                        </Button>
+                      </Tooltip>
+                    </TableTd>
+                    <TableTd style={{ width: '20%' }}>
+                    <Tooltip label="Hapus" withArrow>
+                      <Button
+                        variant="light"
+                        color="red"
+                        size="sm"
+                        onClick={() => {
+                          setSelectedId(item.id);
+                          setModalHapus(true);
+                        }}
+                      >
+                        <IconTrash size={18} />
+                      </Button>
+                    </Tooltip>
                     </TableTd>
                   </TableTr>
                 ))

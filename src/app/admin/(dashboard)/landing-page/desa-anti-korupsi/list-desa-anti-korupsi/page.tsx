@@ -98,9 +98,11 @@ function ListDesaAntiKorupsi({ search }: { search: string }) {
                         </Text>
                       </TableTd>
                       <TableTd style={{ width: '30%' }}>
-                        <Text fz="sm" c="dimmed">
+                        <Box w={200}>
+                        <Text fz="sm" c="dimmed" lineClamp={1}>
                           {item.kategori?.name || '-'}
                         </Text>
+                        </Box>
                       </TableTd>
                       <TableTd style={{ width: '20%', textAlign: 'center' }}>
                         <Button

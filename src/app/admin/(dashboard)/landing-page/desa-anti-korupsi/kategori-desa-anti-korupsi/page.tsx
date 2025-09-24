@@ -93,7 +93,9 @@ function ListKategoriKegiatan({ search }: { search: string }) {
                 filteredData.map((item) => (
                   <TableTr key={item.id}>
                     <TableTd>
-                      <Text fw={500}>{item.name}</Text>
+                      <Box w={200}>
+                        <Text fw={500} lineClamp={1}>{item.name}</Text>
+                      </Box>
                     </TableTd>
                     <TableTd>
                       <Tooltip label="Edit" withArrow>

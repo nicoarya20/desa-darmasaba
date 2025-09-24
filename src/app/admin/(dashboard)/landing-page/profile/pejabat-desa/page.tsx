@@ -72,7 +72,7 @@ function Page() {
                     <Image
                       pt={{ base: 0, md: 60 }}
                       src={item.image?.link || "/perbekel.png"}
-                      w={{ base: 250, md: 350 }}
+                      w={{ base: 150, md: 350 }}
                       alt="Foto Profil Pejabat"
                       radius="md"
                       onError={(e) => { e.currentTarget.src = "/perbekel.png"; }}
@@ -87,7 +87,7 @@ function Page() {
                     className="glass3"
                     style={{ mt: -30, boxShadow: '0 4px 20px rgba(0,0,0,0.15)' }}
                   >
-                    <Text ta="center" c={colors['white-1']} fw="bolder" fz={{ base: "1.2rem", md: "1.6rem" }}>
+                    <Text ta="center" c={colors['white-1']} fw="bolder" fz={{ base: "1rem", md: "1.6rem" }}>
                       {item.name}
                     </Text>
                   </Paper>

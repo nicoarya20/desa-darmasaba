@@ -72,7 +72,8 @@ function Page() {
                     <Image
                       pt={{ base: 0, md: 60 }}
                       src={item.image?.link || "/perbekel.png"}
-                      w={{ base: 250, md: 350 }}
+                      w="100%"
+                      maw={300}
                       alt="Foto Profil PPID"
                       radius="md"
                       onError={(e) => { e.currentTarget.src = "/perbekel.png"; }}
