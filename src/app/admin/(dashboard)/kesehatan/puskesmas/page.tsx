@@ -5,7 +5,6 @@ import {
   Button,
   Center,
   Group,
-  Image,
   Pagination,
   Paper,
   Skeleton,
@@ -18,7 +17,7 @@ import {
   TableTr,
   Text,
   Title,
-  Tooltip,
+  Tooltip
 } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconDeviceImacCog, IconPlus, IconSearch } from '@tabler/icons-react';
@@ -90,7 +89,7 @@ function ListPuskesmas({ search }: { search: string }) {
               <TableTr>
                 <TableTh>Nama Puskesmas</TableTh>
                 <TableTh>Alamat</TableTh>
-                <TableTh>Image</TableTh>
+                <TableTh>Kontak</TableTh>
                 <TableTh>Aksi</TableTh>
               </TableTr>
             </TableThead>
@@ -99,13 +98,25 @@ function ListPuskesmas({ search }: { search: string }) {
                 filteredData.map((item) => (
                   <TableTr key={item.id}>
                     <TableTd>
-                      <Text fw={500} truncate="end" lineClamp={1}>
-                        {item.name}
-                      </Text>
+                      <Box w={150}>
+                        <Text fw={500} truncate="end" lineClamp={1}>
+                          {item.name}
+                        </Text>
+                      </Box>
                     </TableTd>
-                    <TableTd>{item.alamat}</TableTd>
                     <TableTd>
-                      <Image w={100} src={item.image.link} alt="image" radius="md" loading="lazy"/>
+                      <Box w={150}>
+                        <Text truncate fz="sm" c="dimmed" lineClamp={1}>
+                          {item.alamat}
+                        </Text>
+                      </Box>
+                    </TableTd>
+                    <TableTd>
+                      <Box w={150}>
+                        <Text truncate fz="sm" c="dimmed" lineClamp={1}>
+                          {item.kontak.kontakPuskesmas}
+                        </Text>
+                      </Box>
                     </TableTd>
                     <TableTd>
                       <Button

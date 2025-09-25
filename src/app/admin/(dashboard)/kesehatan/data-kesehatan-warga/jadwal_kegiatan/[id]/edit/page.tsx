@@ -41,14 +41,6 @@ interface JadwalKegiatanFormBase {
   dokumenJadwalKegiatan: {
     content: string;
   };
-  pendaftaranJadwalKegiatan: {
-    name: string;
-    tanggal: string;
-    namaOrangtua: string;
-    nomor: string;
-    alamat: string;
-    catatan: string;
-  };
 }
 
 function EditJadwalKegiatan() {
@@ -75,14 +67,6 @@ function EditJadwalKegiatan() {
     },
     dokumenJadwalKegiatan: {
       content: stateJadwalKegiatan.edit.form.dokumenJadwalKegiatan?.content || '',
-    },
-    pendaftaranJadwalKegiatan: {
-      name: stateJadwalKegiatan.edit.form.pendaftaranJadwalKegiatan?.name || '',
-      tanggal: stateJadwalKegiatan.edit.form.pendaftaranJadwalKegiatan?.tanggal || '',
-      namaOrangtua: stateJadwalKegiatan.edit.form.pendaftaranJadwalKegiatan?.namaOrangtua || '',
-      nomor: stateJadwalKegiatan.edit.form.pendaftaranJadwalKegiatan?.nomor || '',
-      alamat: stateJadwalKegiatan.edit.form.pendaftaranJadwalKegiatan?.alamat || '',
-      catatan: stateJadwalKegiatan.edit.form.pendaftaranJadwalKegiatan?.catatan || '',
     },
   });
 
@@ -115,14 +99,6 @@ function EditJadwalKegiatan() {
             dokumenJadwalKegiatan: {
               content: form.dokumenJadwalKegiatan?.content || '',
             },
-            pendaftaranJadwalKegiatan: {
-              name: form.pendaftaranJadwalKegiatan?.name || '',
-              tanggal: form.pendaftaranJadwalKegiatan?.tanggal || '',
-              namaOrangtua: form.pendaftaranJadwalKegiatan?.namaOrangtua || '',
-              nomor: form.pendaftaranJadwalKegiatan?.nomor || '',
-              alamat: form.pendaftaranJadwalKegiatan?.alamat || '',
-              catatan: form.pendaftaranJadwalKegiatan?.catatan || '',
-            },
           });
         }
       } catch (error) {
@@ -142,8 +118,7 @@ function EditJadwalKegiatan() {
         deskripsiJadwalKegiatan: { ...formData.deskripsiJadwalKegiatan },
         layananJadwalKegiatan: { ...formData.layananJadwalKegiatan },
         syaratKetentuanJadwalKegiatan: { ...formData.syaratKetentuanJadwalKegiatan },
-        dokumenJadwalKegiatan: { ...formData.dokumenJadwalKegiatan },
-        pendaftaranJadwalKegiatan: { ...formData.pendaftaranJadwalKegiatan },
+        dokumenJadwalKegiatan: { ...formData.dokumenJadwalKegiatan }
       };
 
       const success = await stateJadwalKegiatan.edit.submit();
@@ -252,47 +227,12 @@ function EditJadwalKegiatan() {
 
           {/* Dokumen */}
           <Box>
-            <Text fz="md" fw="bold">Dokumen Jadwal Kegiatan</Text>
+            <Text fz="md" fw="bold">Dokumen Yang Perlu Dibawa</Text>
             <EditEditor
               value={formData.dokumenJadwalKegiatan.content}
               onChange={(val) => setFormData((prev) => ({
                 ...prev,
                 dokumenJadwalKegiatan: { content: val }
-              }))}
-            />
-          </Box>
-
-          {/* Pendaftaran */}
-          <Box>
-            <Text fz="md" fw="bold">Pendaftaran Jadwal Kegiatan</Text>
-            <TextInput label="Nama" value={formData.pendaftaranJadwalKegiatan.name}
-              onChange={(e) => setFormData((prev) => ({
-                ...prev, pendaftaranJadwalKegiatan: { ...prev.pendaftaranJadwalKegiatan, name: e.target.value }
-              }))}
-            />
-            <TextInput type="date" label="Tanggal" value={formData.pendaftaranJadwalKegiatan.tanggal}
-              onChange={(e) => setFormData((prev) => ({
-                ...prev, pendaftaranJadwalKegiatan: { ...prev.pendaftaranJadwalKegiatan, tanggal: e.target.value }
-              }))}
-            />
-            <TextInput label="Nama Orangtua" value={formData.pendaftaranJadwalKegiatan.namaOrangtua}
-              onChange={(e) => setFormData((prev) => ({
-                ...prev, pendaftaranJadwalKegiatan: { ...prev.pendaftaranJadwalKegiatan, namaOrangtua: e.target.value }
-              }))}
-            />
-            <TextInput label="Nomor" value={formData.pendaftaranJadwalKegiatan.nomor}
-              onChange={(e) => setFormData((prev) => ({
-                ...prev, pendaftaranJadwalKegiatan: { ...prev.pendaftaranJadwalKegiatan, nomor: e.target.value }
-              }))}
-            />
-            <TextInput label="Alamat" value={formData.pendaftaranJadwalKegiatan.alamat}
-              onChange={(e) => setFormData((prev) => ({
-                ...prev, pendaftaranJadwalKegiatan: { ...prev.pendaftaranJadwalKegiatan, alamat: e.target.value }
-              }))}
-            />
-            <TextInput label="Catatan" value={formData.pendaftaranJadwalKegiatan.catatan}
-              onChange={(e) => setFormData((prev) => ({
-                ...prev, pendaftaranJadwalKegiatan: { ...prev.pendaftaranJadwalKegiatan, catatan: e.target.value }
               }))}
             />
           </Box>

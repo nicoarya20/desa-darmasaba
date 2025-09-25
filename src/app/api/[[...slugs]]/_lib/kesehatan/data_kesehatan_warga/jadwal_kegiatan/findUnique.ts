@@ -28,7 +28,6 @@ export default async function jadwalKegiatanFindUnique(request: Request) {
                 layananjadwalkegiatan: true,
                 syaratketentuanjadwalkegiatan: true,
                 dokumenjadwalkegiatan: true,
-                pendaftaranjadwalkegiatan: true,
             }
         })
 

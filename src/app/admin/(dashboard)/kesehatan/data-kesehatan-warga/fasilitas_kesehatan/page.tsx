@@ -114,12 +114,22 @@ function ListFasilitasKesehatan({ search }: { search: string }) {
                 filteredData.map((item) => (
                   <TableTr key={item.id}>
                     <TableTd>
-                      <Text fw={500} truncate="end" lineClamp={1}>
-                        {item.name}
-                      </Text>
+                      <Box w={150}>
+                        <Text fw={500} truncate="end" lineClamp={1}>
+                          {item.name}
+                        </Text>
+                      </Box>
                     </TableTd>
-                    <TableTd>{item.dokterdantenagamedis?.name || '-'}</TableTd>
-                    <TableTd>{item.tarifdanlayanan?.layanan || '-'}</TableTd>
+                    <TableTd>
+                      <Box w={150}>
+                        {item.dokterdantenagamedis?.name || '-'}
+                      </Box>
+                    </TableTd>
+                    <TableTd>
+                      <Box w={150}>
+                        {item.tarifdanlayanan?.layanan || '-'}
+                      </Box>
+                    </TableTd>
                     <TableTd>
                       <Button
                         variant="light"

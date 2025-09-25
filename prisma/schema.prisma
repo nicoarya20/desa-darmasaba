@@ -850,8 +850,8 @@ model JadwalKegiatan {
   syaratKetentuanJadwalKegiatanId String
   dokumenjadwalkegiatan           DokumenJadwalKegiatan         @relation(fields: [dokumenJadwalKegiatanId], references: [id])
   dokumenJadwalKegiatanId         String
-  pendaftaranjadwalkegiatan       PendaftaranJadwalKegiatan     @relation(fields: [pendaftaranJadwalKegiatanId], references: [id])
-  pendaftaranJadwalKegiatanId     String
+  pendaftaranjadwalkegiatan       PendaftaranJadwalKegiatan?     @relation(fields: [pendaftaranJadwalKegiatanId], references: [id])
+  pendaftaranJadwalKegiatanId     String?
   createdAt                       DateTime                      @default(now())
   updatedAt                       DateTime                      @updatedAt
   deletedAt                       DateTime                      @default(now())

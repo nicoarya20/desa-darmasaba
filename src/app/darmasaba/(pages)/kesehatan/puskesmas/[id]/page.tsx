@@ -90,18 +90,25 @@ function Page() {
 
                   <Divider />
 
-                  <Box>
+                  <Stack gap={"xs"}>
                     <Title order={3} mb={10}>Jam Operasional</Title>
+                    <Text fw="bold" fz="md">Senin - Jumat</Text>
                     <Group gap={8}>
                       <IconClock size={18} />
-                      <Text fw="bold" fz="md">
-                        {data.jam.workDays} - {data.jam.weekDays}
-                      </Text>
+                      <Text fw="bold" fz="md">{data.jam.workDays} - {data.jam.weekDays}</Text>
                       <Tooltip label="Hari aktif pelayanan puskesmas" position="top" withArrow>
                         <Badge size="sm" variant="light" color="blue">Aktif</Badge>
                       </Tooltip>
                     </Group>
-                  </Box>
+                    <Text fw="bold" fz="md">Sabtu - Minggu / Hari Libur</Text>
+                    <Group gap={8}>
+                      <IconClock size={18} />
+                      <Text fw="bold" fz="md">{data.jam.holiday}</Text>
+                      <Tooltip label="Hari aktif pelayanan puskesmas" position="top" withArrow>
+                      <Badge size="sm" variant="light" color="blue">Aktif</Badge>
+                      </Tooltip>
+                    </Group>
+                  </Stack>
                 </Stack>
               </GridCol>
 

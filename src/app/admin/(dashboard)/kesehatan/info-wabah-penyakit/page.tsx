@@ -4,7 +4,7 @@ import {
   Box,
   Button,
   Center,
-  Image,
+  Group,
   Pagination,
   Paper,
   Skeleton,
@@ -17,16 +17,15 @@ import {
   TableTr,
   Text,
   Title,
-  Tooltip,
-  Group,
+  Tooltip
 } from '@mantine/core';
-import { IconDeviceImacCog, IconPlus, IconSearch } from '@tabler/icons-react';
-import HeaderSearch from '../../_com/header';
-import { useRouter } from 'next/navigation';
-import { useProxy } from 'valtio/utils';
-import infoWabahPenyakit from '../../_state/kesehatan/info-wabah-penyakit/infoWabahPenyakit';
 import { useShallowEffect } from '@mantine/hooks';
+import { IconDeviceImacCog, IconPlus, IconSearch } from '@tabler/icons-react';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { useProxy } from 'valtio/utils';
+import HeaderSearch from '../../_com/header';
+import infoWabahPenyakit from '../../_state/kesehatan/info-wabah-penyakit/infoWabahPenyakit';
 
 function InfoWabahPenyakit() {
   const [search, setSearch] = useState("");
@@ -96,7 +95,6 @@ function ListInfoWabahPenyakit({ search }: { search: string }) {
               <TableTr>
                 <TableTh>Judul</TableTh>
                 <TableTh>Deskripsi Singkat</TableTh>
-                <TableTh>Image</TableTh>
                 <TableTh>Aksi</TableTh>
               </TableTr>
             </TableThead>
@@ -105,17 +103,18 @@ function ListInfoWabahPenyakit({ search }: { search: string }) {
                 filteredData.map((item) => (
                   <TableTr key={item.id}>
                     <TableTd>
-                      <Text fw={500} truncate="end" lineClamp={1}>
-                        {item.name}
-                      </Text>
+                      <Box w={200}>
+                        <Text fw={500} truncate="end" lineClamp={1}>
+                          {item.name}
+                        </Text>
+                      </Box>
                     </TableTd>
                     <TableTd>
-                      <Text truncate fz="sm" c="dimmed">
-                        {item.deskripsiSingkat}
-                      </Text>
-                    </TableTd>
-                    <TableTd>
-                      <Image w={100} src={item.image?.link} alt="image" radius="md" loading="lazy"/>
+                      <Box w={200}>
+                        <Text truncate fz="sm" c="dimmed">
+                          {item.deskripsiSingkat}
+                        </Text>
+                      </Box>
                     </TableTd>
                     <TableTd>
                       <Button

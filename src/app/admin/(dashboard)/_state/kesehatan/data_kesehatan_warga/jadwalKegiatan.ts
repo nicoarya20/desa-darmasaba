@@ -26,14 +26,6 @@ const templateForm = z.object({
   dokumenJadwalKegiatan: z.object({
     content: z.string().min(1, "Content minimal 1 karakter"),
   }),
-  pendaftaranJadwalKegiatan: z.object({
-    name: z.string().min(1, "Name minimal 1 karakter"),
-    tanggal: z.string().min(1, "Tanggal minimal 1 karakter"),
-    namaOrangtua: z.string().min(1, "Nama Orangtua minimal 1 karakter"),
-    nomor: z.string().min(1, "Nomor minimal 1 karakter"),
-    alamat: z.string().min(1, "Alamat minimal 1 karakter"),
-    catatan: z.string().min(1, "Catatan minimal 1 karakter"),
-  }),
 });
 
 const defaultForm = {
@@ -55,15 +47,7 @@ const defaultForm = {
   },
   dokumenJadwalKegiatan: {
     content: "",
-  },
-  pendaftaranJadwalKegiatan: {
-    name: "",
-    tanggal: "",
-    namaOrangtua: "",
-    nomor: "",
-    alamat: "",
-    catatan: "",
-  },
+  }
 };
 
 const jadwalkegiatanState = proxy({
@@ -116,7 +100,6 @@ const jadwalkegiatanState = proxy({
             deskripsijadwalkegiatan: true;
             layananjadwalkegiatan: true;
             dokumenjadwalkegiatan: true;
-            pendaftaranjadwalkegiatan: true;
           };
         }>[]
       | null,
@@ -161,7 +144,6 @@ const jadwalkegiatanState = proxy({
         layananjadwalkegiatan: true;
         syaratketentuanjadwalkegiatan: true;
         dokumenjadwalkegiatan: true;
-        pendaftaranjadwalkegiatan: true;
       };
     }> | null,
     loading: false,
@@ -209,15 +191,7 @@ const jadwalkegiatanState = proxy({
         },
         dokumenJadwalKegiatan: {
           content: data.dokumenjadwalkegiatan.content,
-        },
-        pendaftaranJadwalKegiatan: {
-          name: data.pendaftaranjadwalkegiatan.name,
-          tanggal: data.pendaftaranjadwalkegiatan.tanggal,
-          namaOrangtua: data.pendaftaranjadwalkegiatan.namaOrangtua,
-          nomor: data.pendaftaranjadwalkegiatan.nomor,
-          alamat: data.pendaftaranjadwalkegiatan.alamat,
-          catatan: data.pendaftaranjadwalkegiatan.catatan,
-        },
+        }
       };
     },
     async submit() {
@@ -258,20 +232,6 @@ const jadwalkegiatanState = proxy({
           dokumenJadwalKegiatan: {
             content:
               jadwalkegiatanState.edit.form.dokumenJadwalKegiatan.content,
-          },
-          pendaftaranJadwalKegiatan: {
-            name: jadwalkegiatanState.edit.form.pendaftaranJadwalKegiatan.name,
-            tanggal:
-              jadwalkegiatanState.edit.form.pendaftaranJadwalKegiatan.tanggal,
-            namaOrangtua:
-              jadwalkegiatanState.edit.form.pendaftaranJadwalKegiatan
-                .namaOrangtua,
-            nomor:
-              jadwalkegiatanState.edit.form.pendaftaranJadwalKegiatan.nomor,
-            alamat:
-              jadwalkegiatanState.edit.form.pendaftaranJadwalKegiatan.alamat,
-            catatan:
-              jadwalkegiatanState.edit.form.pendaftaranJadwalKegiatan.catatan,
           },
         };
 

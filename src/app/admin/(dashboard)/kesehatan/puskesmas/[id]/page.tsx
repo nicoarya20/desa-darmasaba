@@ -78,8 +78,9 @@ function DetailPuskesmas() {
 
               <Box>
                 <Text fz="lg" fw="bold">Jam Operasional</Text>
-                <Text fz="md" c="dimmed">{data?.jam?.workDays || '-'}</Text>
-                <Text fz="md" c="dimmed">{data?.jam?.weekDays || '-'}</Text>
+                <Text fz="md" c="dimmed">Senin - Jumat</Text>
+                <Text fz="md" c="dimmed">{data?.jam?.workDays || '-'} - {data?.jam?.weekDays || '-'}</Text>
+                <Text fz="md" c="dimmed">Sabtu - Minggu / Hari Libur</Text>
                 <Text fz="md" c="dimmed">{data?.jam?.holiday || '-'}</Text>
               </Box>
 
@@ -94,9 +95,13 @@ function DetailPuskesmas() {
 
               <Box>
                 <Text fz="lg" fw="bold">Kontak</Text>
+                <Text fz="md" c="dimmed">Kontak Puskesmas</Text>
                 <Text fz="md" c="dimmed">{data?.kontak?.kontakPuskesmas || '-'}</Text>
+                <Text fz="md" c="dimmed">Email</Text>
                 <Text fz="md" c="dimmed">{data?.kontak?.email || '-'}</Text>
+                <Text fz="md" c="dimmed">Facebook</Text>
                 <Text fz="md" c="dimmed">{data?.kontak?.facebook || '-'}</Text>
+                <Text fz="md" c="dimmed">Kontak UGD</Text>
                 <Text fz="md" c="dimmed">{data?.kontak?.kontakUGD || '-'}</Text>
               </Box>
 

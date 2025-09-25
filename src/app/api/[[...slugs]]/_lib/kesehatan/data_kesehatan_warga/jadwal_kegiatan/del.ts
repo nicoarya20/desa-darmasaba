@@ -19,7 +19,6 @@ const jadwalKegiatanDelete = async (context: Context) => {
             layananjadwalkegiatan: true,
             syaratketentuanjadwalkegiatan: true,
             dokumenjadwalkegiatan: true,
-            pendaftaranjadwalkegiatan: true,
         }
     })
 

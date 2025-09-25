@@ -20,7 +20,6 @@ export default async function jadwalKegiatanFindMany(context: Context) {
       {layananjadwalkegiatan: { content: { contains: search, mode: "insensitive" } } },
       {syaratketentuanjadwalkegiatan: { content: { contains: search, mode: "insensitive" } } },
       {dokumenjadwalkegiatan: { content: { contains: search, mode: "insensitive" } } },
-      {pendaftaranjadwalkegiatan: { content: { contains: search, mode: "insensitive" } } },
     ];
   }
   try {
@@ -33,8 +32,7 @@ export default async function jadwalKegiatanFindMany(context: Context) {
           layananjadwalkegiatan: true,
           syaratketentuanjadwalkegiatan: true,
           dokumenjadwalkegiatan: true,
-          pendaftaranjadwalkegiatan: true,
-        },
+          },
         skip,
         take: limit,
         orderBy: { createdAt: "desc" },

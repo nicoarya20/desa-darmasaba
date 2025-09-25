@@ -1,7 +1,7 @@
 'use client'
 import posyandustate from "@/app/admin/(dashboard)/_state/kesehatan/posyandu/posyandu";
 import colors from "@/con/colors";
-import { Badge, Box, Center, Flex, Image, List, ListItem, Pagination, Paper, SimpleGrid, Skeleton, Spoiler, Stack, Text, TextInput } from "@mantine/core";
+import { Badge, Box, Center, Flex, Group, Image, List, ListItem, Pagination, Paper, SimpleGrid, Skeleton, Spoiler, Stack, Text, TextInput } from "@mantine/core";
 import { useShallowEffect } from "@mantine/hooks";
 import { IconCalendar, IconInfoCircle, IconPhone, IconSearch } from "@tabler/icons-react";
 import { useState } from "react";
@@ -82,14 +82,14 @@ export default function Page() {
                 }}
               >
                 <Stack gap="sm">
-                  <Flex justify="space-between" align="center">
+                  <Group justify="space-between" align="center">
                     <Text c={colors["blue-button"]} fw="bold" fz="lg" lineClamp={1}>
                       {v.name}
                     </Text>
                     <Badge color="blue" variant="light" size="sm" radius="sm">
                       Aktif
                     </Badge>
-                  </Flex>
+                  </Group>
                   <Center>
                     <Image
                       src={v.image.link}

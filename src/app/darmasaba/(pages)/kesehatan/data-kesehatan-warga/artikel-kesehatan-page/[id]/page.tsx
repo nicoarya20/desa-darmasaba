@@ -2,7 +2,7 @@
 import artikelKesehatanState from '@/app/admin/(dashboard)/_state/kesehatan/data_kesehatan_warga/artikelKesehatan';
 import BackButton from '@/app/darmasaba/(pages)/desa/layanan/_com/BackButto';
 import colors from '@/con/colors';
-import { Box, Divider, Group, List, ListItem, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
+import { Box, Divider, Group, Image, List, ListItem, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconAlertCircle, IconCalendar, IconInfoCircle } from '@tabler/icons-react';
 import { useParams } from 'next/navigation';
@@ -43,6 +43,24 @@ function Page() {
             </Box>
 
             <Box p="lg">
+              <Box style={{ position: 'relative', width: '100%', maxWidth: '800px', margin: '0 auto' }}>
+                <Image 
+                  src={state.findUnique.data.image?.link} 
+                  alt={state.findUnique.data.title} 
+                  height={0}
+                  style={{ 
+                    height: 'auto',
+                    width: '100%',
+                    maxHeight: '500px',
+                    objectFit: 'contain',
+                    borderRadius: '8px'
+                  }}
+                  loading="lazy" 
+                />
+              </Box>
+            </Box>
+
+            <Box p="lg">
               <Stack gap="lg">
                 <Group gap="xs">
                   <IconCalendar size={18} color={colors['blue-button']} />
@@ -56,7 +74,7 @@ function Page() {
                 </Group>
 
                 <Stack gap="lg">
-                  
+
                   <Box>
                     <Text fz="h4" fw="bold">Pendahuluan</Text>
                     <Divider my="xs" />

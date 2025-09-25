@@ -27,11 +27,7 @@ function Page() {
   if (loading || !data) {
     return (
       <Box py="xl" px={{ base: 'md', md: 100 }}>
-        <SimpleGrid cols={{ base: 1, md: 3 }} spacing="lg">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <Skeleton key={i} height={320} radius="lg" />
-          ))}
-        </SimpleGrid>
+        <Skeleton height={500} radius="lg" />
       </Box>
     )
   }

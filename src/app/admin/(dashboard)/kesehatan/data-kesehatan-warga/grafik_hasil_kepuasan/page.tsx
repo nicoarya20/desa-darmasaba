@@ -149,16 +149,30 @@ function ListGrafikHasilKepuasanMasyarakat({ search }: { search: string }) {
               {filteredData.length > 0 ? (
                 filteredData.map((item) => (
                   <TableTr key={item.id}>
-                    <TableTd>{item.nama}</TableTd>
                     <TableTd>
-                      {new Date(item.tanggal).toLocaleDateString('id-ID', {
-                        day: '2-digit',
-                        month: 'long',
-                        year: 'numeric',
-                      })}
+                      <Box w={150}>
+                        {item.nama}
+                      </Box>
                     </TableTd>
-                    <TableTd>{item.jenisKelamin}</TableTd>
-                    <TableTd>{item.penyakit}</TableTd>
+                    <TableTd>
+                      <Box w={150}>
+                        {new Date(item.tanggal).toLocaleDateString('id-ID', {
+                          day: '2-digit',
+                          month: 'long',
+                          year: 'numeric',
+                        })}
+                      </Box>
+                    </TableTd>
+                    <TableTd>
+                      <Box w={150}>
+                        {item.jenisKelamin}
+                      </Box>
+                    </TableTd>
+                    <TableTd>
+                      <Box w={150}>
+                        {item.penyakit}
+                      </Box>
+                    </TableTd>
                     <TableTd>
                       <Button
                         variant="light"
@@ -212,24 +226,26 @@ function ListGrafikHasilKepuasanMasyarakat({ search }: { search: string }) {
         <Paper bg={colors['white-1']} p={'md'}>
           <Title pb={10} order={4}>Grafik Hasil Kepuasan Masyarakat</Title>
           {mounted && diseaseChartData.length > 0 ? (
-            <BarChart
-              width={isMobile ? 450 : isTablet ? 500 : 550}
-              height={350}
-              data={diseaseChartData}
-            >
-              <XAxis
-                dataKey="name"
-                tick={{ fontSize: 12 }}
-                interval={0}
-                angle={-45}
-                textAnchor="end"
-                height={70}
-              />
-              <YAxis />
-              <ChartTooltip />
-              <Legend />
-              <Bar dataKey="count" fill={colors['blue-button']} name="Jumlah Kasus" />
-            </BarChart>
+            <Center>
+              <BarChart
+                width={isMobile ? 320 : isTablet ? 600 : 800} // kecilin biar muat
+                height={350}
+                data={diseaseChartData}
+              >
+                <XAxis
+                  dataKey="name"
+                  tick={{ fontSize: 12 }}
+                  interval={0}
+                  angle={-45}
+                  textAnchor="end"
+                  height={70}
+                />
+                <YAxis />
+                <ChartTooltip />
+                <Legend />
+                <Bar dataKey="count" fill={colors['blue-button']} name="Jumlah Kasus" />
+              </BarChart>
+            </Center>
           ) : (
             <Text c="dimmed">Belum ada data untuk ditampilkan dalam grafik</Text>
           )}

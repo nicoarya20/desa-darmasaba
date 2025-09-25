@@ -111,11 +111,14 @@ function ListJadwalKegiatan({ search }: { search: string }) {
                 filteredData.map((item) => (
                   <TableTr key={item.id}>
                     <TableTd>
-                      <Text fw={500} truncate="end" lineClamp={1}>
-                        {item.informasijadwalkegiatan.name}
-                      </Text>
+                      <Box w={150}>
+                        <Text fw={500} truncate="end" lineClamp={1}>
+                          {item.informasijadwalkegiatan.name}
+                        </Text>
+                      </Box>
                     </TableTd>
                     <TableTd>
+                      <Box w={150}>
                       {new Date(item.informasijadwalkegiatan.tanggal).toLocaleDateString(
                         'id-ID',
                         {
@@ -124,12 +127,19 @@ function ListJadwalKegiatan({ search }: { search: string }) {
                           year: 'numeric',
                         }
                       )}
+                      </Box>
                     </TableTd>
-                    <TableTd>{item.informasijadwalkegiatan.waktu}</TableTd>
                     <TableTd>
-                      <Text truncate fz="sm" c="dimmed">
-                        {item.informasijadwalkegiatan.lokasi}
-                      </Text>
+                      <Box w={150}>
+                        {item.informasijadwalkegiatan.waktu}
+                      </Box>
+                    </TableTd>
+                    <TableTd>
+                      <Box w={150}>
+                        <Text truncate fz="sm" c="dimmed">
+                          {item.informasijadwalkegiatan.lokasi}
+                        </Text>
+                      </Box>
                     </TableTd>
                     <TableTd>
                       <Button

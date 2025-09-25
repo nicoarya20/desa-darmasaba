@@ -4,7 +4,7 @@ import {
   Box,
   Button,
   Center,
-  Image,
+  Group,
   Pagination,
   Paper,
   Skeleton,
@@ -17,7 +17,7 @@ import {
   TableTr,
   Text,
   Title,
-  Tooltip,
+  Tooltip
 } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconDeviceImacCog, IconPlus, IconSearch } from '@tabler/icons-react';
@@ -71,7 +71,7 @@ function ListKontakDarurat({ search }: { search: string }) {
       <Paper withBorder bg={colors['white-1']} p={'lg'} shadow="md" radius="md">
         {/* Judul + Tombol Tambah */}
         <Stack mb="md" gap="sm">
-          <Box display="flex" style={{ justifyContent: "space-between", alignItems: "center" }}>
+          <Group justify="space-between">
             <Title order={4}>Daftar Kontak Darurat</Title>
             <Tooltip label="Tambah Kontak Darurat" withArrow>
               <Button
@@ -83,7 +83,7 @@ function ListKontakDarurat({ search }: { search: string }) {
                 Tambah Baru
               </Button>
             </Tooltip>
-          </Box>
+          </Group>
         </Stack>
 
         {/* Tabel */}
@@ -93,7 +93,6 @@ function ListKontakDarurat({ search }: { search: string }) {
               <TableTr>
                 <TableTh>Judul</TableTh>
                 <TableTh>Deskripsi</TableTh>
-                <TableTh>Image</TableTh>
                 <TableTh>Aksi</TableTh>
               </TableTr>
             </TableThead>
@@ -102,15 +101,16 @@ function ListKontakDarurat({ search }: { search: string }) {
                 filteredData.map((item) => (
                   <TableTr key={item.id}>
                     <TableTd>
-                      <Text fw={500} truncate="end" lineClamp={1}>
-                        {item.name}
-                      </Text>
+                      <Box w={150}>
+                        <Text fw={500} truncate="end" lineClamp={1}>
+                          {item.name}
+                        </Text>
+                      </Box>
                     </TableTd>
                     <TableTd>
-                      <Text truncate fz="sm" c="dimmed" lineClamp={1} dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
-                    </TableTd>
-                    <TableTd>
-                      <Image w={100} src={item.image?.link} alt="image" radius="md" loading="lazy"/>
+                      <Box w={200}>
+                        <Text truncate fz="sm" c="dimmed" lineClamp={1} dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
+                      </Box>
                     </TableTd>
                     <TableTd>
                       <Button

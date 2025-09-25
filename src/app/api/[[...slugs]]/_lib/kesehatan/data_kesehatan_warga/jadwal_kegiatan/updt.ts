@@ -13,14 +13,6 @@ type JadwalKegiatanUpdateInput = {
   layananJadwalKegiatan: { content: string };
   syaratKetentuanJadwalKegiatan: { content: string };
   dokumenJadwalKegiatan: { content: string };
-  pendaftaranJadwalKegiatan: {
-    name: string;
-    tanggal: string;
-    namaOrangtua: string;
-    nomor: string;
-    alamat: string;
-    catatan: string;
-  };
 };
 
 const jadwalKegiatanUpdate = async (context: Context) => {
@@ -50,7 +42,6 @@ const jadwalKegiatanUpdate = async (context: Context) => {
     layananJadwalKegiatan,
     syaratKetentuanJadwalKegiatan,
     dokumenJadwalKegiatan,
-    pendaftaranJadwalKegiatan,
   } = body;
 
  await Promise.all([
@@ -74,10 +65,6 @@ const jadwalKegiatanUpdate = async (context: Context) => {
         where: { id: existing.dokumenJadwalKegiatanId }, 
         data: dokumenJadwalKegiatan 
     }),
-    prisma.pendaftaranJadwalKegiatan.update({
-      where: { id: existing.pendaftaranJadwalKegiatanId },
-      data: pendaftaranJadwalKegiatan,
-    }),
   ]);
 
   const updated = await prisma.jadwalKegiatan.update({
@@ -91,7 +78,6 @@ const jadwalKegiatanUpdate = async (context: Context) => {
       layananjadwalkegiatan: true,
       syaratketentuanjadwalkegiatan: true,
       dokumenjadwalkegiatan: true,
-      pendaftaranjadwalkegiatan: true,
     },
   });
   return {

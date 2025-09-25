@@ -109,18 +109,7 @@ function DetailJadwalKegiatan() {
                 <Text fz="lg" fw="bold">Dokumen</Text>
                 <Text fz="md" c="dimmed" dangerouslySetInnerHTML={{ __html: data.dokumenjadwalkegiatan.content }} />
               </Box>
-
-              {/* Prosedur Pendaftaran */}
-              <Box>
-                <Text fz="lg" fw="bold">Prosedur Pendaftaran</Text>
-                <Text fz="md" c="dimmed">{data.pendaftaranjadwalkegiatan.name}</Text>
-                <Text fz="md" c="dimmed">{data.pendaftaranjadwalkegiatan.tanggal}</Text>
-                <Text fz="md" c="dimmed">{data.pendaftaranjadwalkegiatan.namaOrangtua}</Text>
-                <Text fz="md" c="dimmed">{data.pendaftaranjadwalkegiatan.nomor}</Text>
-                <Text fz="md" c="dimmed">{data.pendaftaranjadwalkegiatan.alamat}</Text>
-                <Text fz="md" c="dimmed" dangerouslySetInnerHTML={{ __html: data.pendaftaranjadwalkegiatan.catatan }} />
-              </Box>
-
+              
               {/* Aksi */}
               <Group gap="sm">
                 <Tooltip label="Hapus Data" withArrow position="top">

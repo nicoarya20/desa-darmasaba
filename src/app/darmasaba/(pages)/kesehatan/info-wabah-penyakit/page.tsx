@@ -32,7 +32,7 @@ function Page() {
   const { data, page, totalPages, loading, load } = state.findMany;
 
   useShallowEffect(() => {
-    load(page, 6, search);
+    load(page, 3, search);
   }, [page, search]);
 
   if (loading || !data) {
@@ -153,7 +153,7 @@ function Page() {
         )}
       </Box>
 
-      {totalPages > 1 && (
+     
         <Center>
           <Pagination
             value={page}
@@ -164,7 +164,7 @@ function Page() {
             mt="lg"
           />
         </Center>
-      )}
+
     </Stack>
   );
 }

@@ -144,9 +144,9 @@ export default function SDGS() {
               mt={40}
               variant="gradient"
               gradient={{ from: "#26667F", to: "#124170" }}
-              style={{ boxShadow: "0 6px 14px rgba(18,65,112,0.25)" }}
+              style={{ boxShadow: "0 6px 14px rgba(18,65,112,0.25)"}}
             >
-              Jelajahi Semua Tujuan SDGs Desa
+              <Text c="white" fz={{ base: "md", md: "lg" }} fw="bold">Jelajahi Semua Tujuan SDGs Desa</Text>
             </Button>
           </Center>
         </Box>

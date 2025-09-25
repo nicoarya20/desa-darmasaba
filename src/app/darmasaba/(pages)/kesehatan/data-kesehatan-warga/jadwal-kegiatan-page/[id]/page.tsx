@@ -4,7 +4,6 @@ import BackButton from '@/app/darmasaba/(pages)/desa/layanan/_com/BackButto';
 import colors from '@/con/colors';
 import {
   Box,
-  Button,
   Divider,
   Group,
   Paper,
@@ -13,7 +12,7 @@ import {
   Text
 } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { IconDownload, IconMail, IconPhone, IconUser } from '@tabler/icons-react';
+import { IconMail, IconPhone, IconUser } from '@tabler/icons-react';
 import { useParams } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
 import CreatePendaftaran from '../create/page';
@@ -107,12 +106,6 @@ function Page() {
                     </Group>
                   </Stack>
                 </Paper>
-
-                <Group>
-                  <Button size="md" radius="lg" leftSection={<IconDownload size={18} />} color="green">
-                    Unduh Jadwal Posyandu 2025 (PDF)
-                  </Button>
-                </Group>
               </Stack>
             </Box>
           </Paper>

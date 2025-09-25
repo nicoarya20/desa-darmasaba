@@ -30,14 +30,6 @@ const JadwalKegiatan = new Elysia({
       dokumenJadwalKegiatan: t.Object({
         content: t.String(),
       }),
-      pendaftaranJadwalKegiatan: t.Object({
-        name: t.String(),
-        tanggal: t.String(),
-        namaOrangtua: t.String(),
-        nomor: t.String(),
-        alamat: t.String(),
-        catatan: t.String(),
-      }),
     }),
   })
   .get("/find-many", jadwalKegiatanFindMany)
@@ -74,14 +66,6 @@ const JadwalKegiatan = new Elysia({
         }),
         dokumenJadwalKegiatan: t.Object({
           content: t.String(),
-        }),
-        pendaftaranJadwalKegiatan: t.Object({
-          name: t.String(),
-          tanggal: t.String(),
-          namaOrangtua: t.String(),
-          nomor: t.String(),
-          alamat: t.String(),
-          catatan: t.String(),
         }),
       }),
     }

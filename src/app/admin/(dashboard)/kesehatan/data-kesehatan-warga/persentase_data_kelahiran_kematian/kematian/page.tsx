@@ -122,19 +122,33 @@ function ListKematian({ search }: { search: string }) {
                filteredData.map((item) => (
                  <TableTr key={item.id}>
                    <TableTd>
+                    <Box w={150}>
                      <Text fw={500} truncate="end" lineClamp={1}>
                        {item.nama}
                      </Text>
+                     </Box>
                    </TableTd>
                    <TableTd>
+                    <Box w={150}> 
                      {new Date(item.tanggal).toLocaleDateString('id-ID', {
                        day: '2-digit',
                        month: 'long',
                        year: 'numeric',
                      })}
+                     </Box>
                    </TableTd>
-                   <TableTd>{item.jenisKelamin}</TableTd>
-                   <TableTd>{item.alamat}</TableTd>
+                   <TableTd>
+                    <Box w={150}>
+                     {item.jenisKelamin}
+                     </Box>
+                   </TableTd>
+                   <TableTd>
+                    <Box w={150}>
+                     <Text truncate fz="sm" c="dimmed">
+                       {item.alamat}
+                     </Text>
+                     </Box>
+                   </TableTd>
                    <TableTd>
                      <Button
                        variant="light"

@@ -107,21 +107,28 @@ function ListPosyandu({ search }: { search: string }) {
                filteredData.map((item) => (
                  <TableTr key={item.id}>
                    <TableTd style={{ width: '25%' }}>
+                    <Box w={150}>
                      <Text fw={500} truncate="end" lineClamp={1}>
                        {item.name}
                      </Text>
+                     </Box>
                    </TableTd>
                    <TableTd style={{ width: '20%' }}>
+                    <Box w={150}>
                      <Text truncate fz="sm" c="dimmed">
                        {item.nomor || '-'}
                      </Text>
+                     </Box>
                    </TableTd>
                    <TableTd style={{ width: '30%' }}>
+                    <Box w={150}>
                      <Text
+                     lineClamp={1}
                        truncate
                        fz="sm"
                        dangerouslySetInnerHTML={{ __html: item.deskripsi }}
                      />
+                     </Box>
                    </TableTd>
                    <TableTd style={{ width: '15%' }}>
                      <Button

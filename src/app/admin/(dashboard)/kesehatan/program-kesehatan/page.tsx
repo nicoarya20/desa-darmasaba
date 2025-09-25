@@ -5,7 +5,6 @@ import {
   Button,
   Center,
   Group,
-  Image,
   Pagination,
   Paper,
   Skeleton,
@@ -18,15 +17,15 @@ import {
   TableTr,
   Text,
   Title,
-  Tooltip,
+  Tooltip
 } from '@mantine/core';
-import { IconDeviceImacCog, IconPlus, IconSearch } from '@tabler/icons-react';
-import HeaderSearch from '../../_com/header';
-import { useRouter } from 'next/navigation';
-import programKesehatan from '../../_state/kesehatan/program-kesehatan/programKesehatan';
-import { useProxy } from 'valtio/utils';
 import { useShallowEffect } from '@mantine/hooks';
+import { IconDeviceImacCog, IconPlus, IconSearch } from '@tabler/icons-react';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { useProxy } from 'valtio/utils';
+import HeaderSearch from '../../_com/header';
+import programKesehatan from '../../_state/kesehatan/program-kesehatan/programKesehatan';
 
 function ProgramKesehatan() {
   const [search, setSearch] = useState("");
@@ -90,7 +89,7 @@ function ListProgramKesehatan({ search }: { search: string }) {
               <TableTr>
                 <TableTh>Judul</TableTh>
                 <TableTh>Deskripsi Singkat</TableTh>
-                <TableTh>Image</TableTh>
+                <TableTh>Deskripsi</TableTh>
                 <TableTh>Aksi</TableTh>
               </TableTr>
             </TableThead>
@@ -105,11 +104,13 @@ function ListProgramKesehatan({ search }: { search: string }) {
                     </TableTd>
                     <TableTd>
                       <Box w={200}>
-                        <Text fz="sm" truncate="end" lineClamp={2} dangerouslySetInnerHTML={{ __html: item.deskripsiSingkat }} />
+                        <Text fz="sm" truncate="end" lineClamp={1} dangerouslySetInnerHTML={{ __html: item.deskripsiSingkat }} />
                       </Box>
                     </TableTd>
                     <TableTd>
-                      <Image w={100} src={item.image?.link} alt="image" radius="md" loading="lazy"/>
+                      <Box w={200}>
+                        <Text fz="sm" truncate="end" lineClamp={1} dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
+                      </Box>
                     </TableTd>
                     <TableTd>
                       <Button

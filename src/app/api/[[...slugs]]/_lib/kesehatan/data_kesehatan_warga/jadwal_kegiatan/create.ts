@@ -8,7 +8,6 @@ type JadwalKegiatanInput = {
     layananJadwalKegiatan: { content: string };
     syaratKetentuanJadwalKegiatan: { content: string };
     dokumenJadwalKegiatan: { content: string };
-    pendaftaranJadwalKegiatan: { name: string, tanggal: string, namaOrangtua: string, nomor: string, alamat: string, catatan: string };
 }
 
 const jadwalKegiatanCreate = async (context: Context) => {
@@ -21,16 +20,14 @@ const jadwalKegiatanCreate = async (context: Context) => {
         layananJadwalKegiatan,
         syaratKetentuanJadwalKegiatan,
         dokumenJadwalKegiatan,
-        pendaftaranJadwalKegiatan,
     } = body;
 
-    const [createdInformasiJadwalKegiatan, createdDeskripsiJadwalKegiatan, createdLayananJadwalKegiatan, createdSyaratKetentuanJadwalKegiatan, createdDokumenJadwalKegiatan, createdPendaftaranJadwalKegiatan] = await Promise.all([
+    const [createdInformasiJadwalKegiatan, createdDeskripsiJadwalKegiatan, createdLayananJadwalKegiatan, createdSyaratKetentuanJadwalKegiatan, createdDokumenJadwalKegiatan] = await Promise.all([
         prisma.informasiJadwalKegiatan.create({ data: informasiJadwalKegiatan }),
         prisma.deskripsiJadwalKegiatan.create({ data: deskripsiJadwalKegiatan }),
         prisma.layananJadwalKegiatan.create({ data: layananJadwalKegiatan }),
         prisma.syaratKetentuanJadwalKegiatan.create({ data: syaratKetentuanJadwalKegiatan }),
         prisma.dokumenJadwalKegiatan.create({ data: dokumenJadwalKegiatan }),
-        prisma.pendaftaranJadwalKegiatan.create({ data: pendaftaranJadwalKegiatan }),
     ])
 
     const jadwalKegiatan = await prisma.jadwalKegiatan.create({
@@ -41,7 +38,6 @@ const jadwalKegiatanCreate = async (context: Context) => {
             layananJadwalKegiatanId: createdLayananJadwalKegiatan.id,
             syaratKetentuanJadwalKegiatanId: createdSyaratKetentuanJadwalKegiatan.id,
             dokumenJadwalKegiatanId: createdDokumenJadwalKegiatan.id,
-            pendaftaranJadwalKegiatanId: createdPendaftaranJadwalKegiatan.id,
         },
         include: {
             informasijadwalkegiatan: true,
@@ -49,7 +45,6 @@ const jadwalKegiatanCreate = async (context: Context) => {
             layananjadwalkegiatan: true,
             syaratketentuanjadwalkegiatan: true,
             dokumenjadwalkegiatan: true,
-            pendaftaranjadwalkegiatan: true,
         }
     })
     return {

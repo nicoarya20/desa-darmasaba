@@ -3,9 +3,9 @@
 import fasilitasKesehatanState from '@/app/admin/(dashboard)/_state/kesehatan/data_kesehatan_warga/fasilitasKesehatan';
 import BackButton from '@/app/darmasaba/(pages)/desa/layanan/_com/BackButto';
 import colors from '@/con/colors';
-import { ActionIcon, Anchor, AspectRatio, Badge, Box, Button, Card, Chip, CopyButton, Divider, Grid, Group, List, ListItem, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, ThemeIcon, Title, Tooltip } from '@mantine/core';
+import { ActionIcon, Anchor, AspectRatio, Badge, Box, Button, Card, Chip, CopyButton, Divider, Grid, Group, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, ThemeIcon, Title, Tooltip } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { IconArrowRight, IconBrandWhatsapp, IconCheck, IconCopy, IconDeviceLandlinePhone, IconFileDownload, IconHeart, IconInfoCircle, IconMail, IconMapPin, IconMoodEmpty, IconSearch, IconStethoscope, IconUser, IconUsersGroup, IconWallet } from '@tabler/icons-react';
+import { IconBrandWhatsapp, IconCheck, IconCopy, IconDeviceLandlinePhone, IconHeart, IconInfoCircle, IconMail, IconMapPin, IconMoodEmpty, IconSearch, IconStethoscope, IconUser, IconUsersGroup, IconWallet } from '@tabler/icons-react';
 import { useParams } from 'next/navigation';
 import { useMemo } from 'react';
 import { useProxy } from 'valtio/utils';
@@ -16,14 +16,6 @@ interface Kontak {
   email: string;
 }
 
-interface LayananItem {
-  nama: string;
-  keterangan?: string;
-}
-
-interface LayananUnggulan {
-  items: LayananItem[];
-}
 
 interface Lokasi {
   mapsEmbed: string;
@@ -46,21 +38,23 @@ function Page() {
   const data = state.findUnique.data as any; // Temporary any to fix type issues
 
   const nama = data?.name || 'Fasilitas Kesehatan';
+  const prosedur = data?.prosedurpendaftaran.content || '';
+  console.log("Prosedur:", data?.prosedurpendaftaran);
   const alamat = data?.informasiumum?.alamat || '-';
   const jam = data?.informasiumum?.jamOperasional || '-';
-  const layananUnggulan = (data?.layananunggulan as LayananUnggulan)?.items || [];
+  const layananUnggulan = data?.layananunggulan || '';
   const tenaga = data?.dokterdantenagamedis || null;
   const fasilitasPendukungHtml = data?.fasilitaspendukung?.content || '';
   const tarif = (data?.tarifdanlayanan as TarifDanLayanan) || null;
-  const kontak = (data?.kontak as Kontak) || { 
-    telepon: '(0361) 123456', 
-    whatsapp: '6289647037426', 
-    email: 'info@fasilitas-kesehatan.id' 
+  const kontak = (data?.kontak as Kontak) || {
+    telepon: '(0361) 123456',
+    whatsapp: '6289647037426',
+    email: 'info@fasilitas-kesehatan.id'
   };
-  const lokasi = (data?.lokasi as Lokasi) || { 
+  const lokasi = (data?.lokasi as Lokasi) || {
     mapsEmbed: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3945.272172359321!2d115.21836257533302!3d-8.569807186941553!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd23e9d99b9395f%3A0xb002795fdcb33b30!2sUPTD%20Puskesmas%20Abiansemal%20III!5e0!3m2!1sid!2sid!4v1744792682341!5m2!1sid!2sid'
   };
-  
+
   const gratisBpjs = (data?.tarifdanlayanan as TarifDanLayanan)?.gratisBpjs ?? true;
 
   const formatRupiah = useMemo(
@@ -187,22 +181,14 @@ function Page() {
                 </Group>
                 <Divider />
                 <Title order={4}>Layanan Unggulan</Title>
-                {Array.isArray(layananUnggulan) && layananUnggulan.length > 0 ? (
-                  <List spacing="xs" icon={<ThemeIcon variant="light" radius="xl"><IconArrowRight size={16} /></ThemeIcon>}>
-                    {layananUnggulan.map((x: any, idx: number) => (
-                      <ListItem key={idx}>
-                        <Group gap="xs" wrap="wrap">
-                          <Text fw={600}>{x?.nama || 'Layanan'}</Text>
-                          {x?.keterangan && <Badge variant="light" radius="sm">{x.keterangan}</Badge>}
-                        </Group>
-                      </ListItem>
-                    ))}
-                  </List>
+                <Divider />
+                {layananUnggulan ? (
+                  <Text fz="md" style={{ lineHeight: 1.7 }} dangerouslySetInnerHTML={{ __html: layananUnggulan }} />
                 ) : (
                   <Paper withBorder radius="md" p="md">
                     <Group gap="sm">
                       <IconMoodEmpty />
-                      <Text>Tidak ada layanan unggulan yang tercatat.</Text>
+                      <Text>Belum ada informasi fasilitas pendukung.</Text>
                     </Group>
                   </Paper>
                 )}
@@ -322,9 +308,6 @@ function Page() {
                     <Text fw={600}>Gratis dengan BPJS Kesehatan</Text>
                   </Group>
                 )}
-                <Group>
-                  <Button variant="gradient" gradient={{ from: 'blue', to: 'cyan' }} leftSection={<IconFileDownload size={18} />}>Unduh Brosur (PDF)</Button>
-                </Group>
               </Stack>
             </Card>
           </Grid.Col>
@@ -336,13 +319,11 @@ function Page() {
           <Stack gap="md">
             <Title order={3}>Prosedur Pendaftaran</Title>
             <Divider />
-            <List type="ordered" spacing="xs" icon={<ThemeIcon variant="light" radius="xl"><IconArrowRight size={16} /></ThemeIcon>}>
-              <ListItem>Pendaftaran dibuka pukul 07.30 WITA</ListItem>
-              <ListItem>Bawa KTP dan Kartu BPJS (jika ada)</ListItem>
-              <ListItem>Ambil nomor antrian di loket pendaftaran</ListItem>
-              <ListItem>Pengunjung baru mengisi formulir pendaftaran</ListItem>
-              <ListItem>Pendaftaran online tersedia melalui aplikasi S-Sehat</ListItem>
-            </List>
+            {prosedur ? (
+              <Text fz="md" style={{ lineHeight: 1.7 }} dangerouslySetInnerHTML={{ __html: prosedur }} />
+            ) : (
+              <Text fz="md" c="dimmed">Belum ada prosedur pendaftaran</Text>
+            )}
           </Stack>
         </Paper>
       </Box>
