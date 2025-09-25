@@ -121,39 +121,34 @@ function CreateSDGsDesa() {
             {previewImage && (
               <Box mt="md">
                 <Text fw={500} fz="sm" mb={4}>
-                      Pratinjau Gambar
-                    </Text>
-                    <Box
-                      style={{
-                        border: '1px solid #e0e0e0',
-                        borderRadius: '8px',
-                        overflow: 'hidden',
-                        maxWidth: '300px'
-                      }}
-                    >
-                      <Image
-                        src={previewImage}
-                        alt="Preview"
-                        style={{ width: '100%', height: 'auto' }}
-                        loading="lazy"
-                      />
-                    </Box>
+                  Pratinjau Gambar
+                </Text>
+                <Box
+                  style={{
+                    border: '1px solid #e0e0e0',
+                    borderRadius: '8px',
+                    overflow: 'hidden',
+                    maxWidth: '300px'
+                  }}
+                >
+                  <Image
+                    src={previewImage}
+                    alt="Preview"
+                    style={{ width: '100%', height: 'auto' }}
+                    loading="lazy"
+                  />
+                </Box>
               </Box>
             )}
           </Box>
           <TextInput
-            label={
-              <Text fw="bold" fz="sm" mb={4}>
-                Nama Sdgs Desa
-              </Text>
-            }
+            label="Nama Sdgs Desa"
             placeholder="Masukkan nama Sdgs Desa"
-            value={stateSDGSDesa.create.form.name}
-            onChange={(val) => {
-              stateSDGSDesa.create.form.name = val.target.value;
+            defaultValue={stateSDGSDesa.create.form.name}
+            onChange={(e) => {
+              stateSDGSDesa.create.form.name = e.currentTarget.value;
             }}
             required
-            radius="md"
           />
 
           <TextInput
@@ -171,6 +166,13 @@ function CreateSDGsDesa() {
             required
             min={0}
             radius="md"
+          />
+          <TextInput
+            label="Test"
+            onChange={(val) => {
+              console.log(val.target.value)
+            }}
+
           />
 
           <Group justify="flex-end" mt="md">
