@@ -83,7 +83,8 @@ export default function DetailKegiatanDesa() {
                   fz="md" 
                   c="dimmed" 
                   dangerouslySetInnerHTML={{ __html: data.deskripsi || '-' }}
-                  style={{ lineHeight: 1.6 }}
+                  style={{ wordBreak: "break-word", whiteSpace: "normal", lineHeight: 1.6 }}
+                  
                 />
               </Box>
 

@@ -155,14 +155,14 @@ function CreatePosyandu() {
          <TextInput
            label="Nama Posyandu"
            placeholder="Masukkan nama posyandu"
-           value={statePosyandu.create.form.name || ''}
+           defaultValue={statePosyandu.create.form.name || ''}
            onChange={(e) => (statePosyandu.create.form.name = e.target.value)}
            required
          />
          <TextInput
            label="Telepon Posyandu"
            placeholder="Masukkan telepon posyandu"
-           value={statePosyandu.create.form.nomor || ''}
+           defaultValue={statePosyandu.create.form.nomor || ''}
            onChange={(e) => (statePosyandu.create.form.nomor = e.target.value)}
            required
          />

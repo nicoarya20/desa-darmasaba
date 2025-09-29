@@ -75,7 +75,7 @@ function DetailPencegahanKriminalitas() {
               <Box>
                 <Text fz="lg" fw="bold">Deskripsi Singkat</Text>
                 {data?.deskripsiSingkat ? (
-                  <Text fz="md" c="dimmed" dangerouslySetInnerHTML={{ __html: data.deskripsiSingkat }} />
+                  <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data.deskripsiSingkat }} />
                 ) : (
                   <Text fz="sm" c="dimmed">Tidak ada deskripsi singkat</Text>
                 )}
@@ -84,7 +84,7 @@ function DetailPencegahanKriminalitas() {
               <Box>
                 <Text fz="lg" fw="bold">Deskripsi</Text>
                 {data?.deskripsi ? (
-                  <Text fz="md" c="dimmed" dangerouslySetInnerHTML={{ __html: data.deskripsi }} />
+                  <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data.deskripsi }} />
                 ) : (
                   <Text fz="sm" c="dimmed">Tidak ada deskripsi</Text>
                 )}

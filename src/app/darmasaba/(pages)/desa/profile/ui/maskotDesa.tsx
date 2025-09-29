@@ -48,6 +48,7 @@ function MaskotDesa() {
             ta="justify"
             c="dark"
             dangerouslySetInnerHTML={{ __html: data.deskripsi }}
+            style={{wordBreak: "break-word", whiteSpace: "normal"}}
           />
 
           <Group justify="center" gap="lg" mt="lg">

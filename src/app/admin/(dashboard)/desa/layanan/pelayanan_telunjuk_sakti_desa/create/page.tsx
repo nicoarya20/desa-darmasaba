@@ -8,15 +8,14 @@ import {
   Group,
   Paper,
   Stack,
-  Text,
   TextInput,
   Title,
-  Tooltip,
+  Tooltip
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import { useProxy } from 'valtio/utils';
 import { toast } from 'react-toastify';
+import { useProxy } from 'valtio/utils';
 
 function CreatePelayananTelunjukDesa() {
   const stateTelunjukDesa = useProxy(stateLayananDesa.pelayananTelunjukSaktiDesa);
@@ -68,33 +67,35 @@ function CreatePelayananTelunjukDesa() {
         <Stack gap="md">
           {/* Nama */}
           <TextInput
-            value={stateTelunjukDesa.create.form.name}
+            defaultValue={stateTelunjukDesa.create.form.name}
             onChange={(val) => {
               stateTelunjukDesa.create.form.name = val.target.value;
             }}
-            label={<Text fz="sm" fw="bold">Nama Pelayanan</Text>}
+            label="Nama Pelayanan"
             placeholder="Masukkan nama pelayanan telunjuk sakti desa"
             required
           />
 
           {/* Deskripsi */}
           <TextInput
-            value={stateTelunjukDesa.create.form.deskripsi}
+            defaultValue={stateTelunjukDesa.create.form.deskripsi}
             onChange={(val) => {
               stateTelunjukDesa.create.form.deskripsi = val.target.value;
             }}
-            label={<Text fz="sm" fw="bold">Deskripsi</Text>}
+            label="Deskripsi"
             placeholder="Masukkan deskripsi pelayanan"
+            required
           />
 
           {/* Link */}
           <TextInput
-            value={stateTelunjukDesa.create.form.link}
+            defaultValue={stateTelunjukDesa.create.form.link}
             onChange={(val) => {
               stateTelunjukDesa.create.form.link = val.target.value;
             }}
-            label={<Text fz="sm" fw="bold">Link</Text>}
+            label="Link"
             placeholder="Masukkan link pelayanan"
+            required
           />
 
           {/* Tombol Simpan */}

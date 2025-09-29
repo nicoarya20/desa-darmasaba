@@ -97,7 +97,7 @@ function EditDaftarInformasiPublik() {
           <TextInput
             label="Jenis Informasi"
             placeholder="Masukkan jenis informasi"
-            value={formData.jenisInformasi}
+            defaultValue={formData.jenisInformasi}
             onChange={(val) => {
               setFormData({
                 ...formData,
@@ -124,7 +124,7 @@ function EditDaftarInformasiPublik() {
             type="date"
             label="Tanggal Publikasi"
             placeholder="Pilih tanggal publikasi"
-            value={formatDateForInput(formData.tanggal)}
+            defaultValue={formatDateForInput(formData.tanggal)}
             onChange={(val) => {
               setFormData({
                 ...formData,

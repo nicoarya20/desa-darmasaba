@@ -218,14 +218,14 @@ function CreateAPBDes() {
           <TextInput
             label="Nama APBDes"
             placeholder="Masukkan nama APBDes"
-            value={stateAPBDes.create.form.name || ''}
+            defaultValue={stateAPBDes.create.form.name || ''}
             onChange={(e) => (stateAPBDes.create.form.name = e.target.value)}
             required
           />
           <TextInput
             label="Jumlah Anggaran"
             placeholder="Masukkan jumlah anggaran"
-            value={stateAPBDes.create.form.jumlah || ''}
+            defaultValue={stateAPBDes.create.form.jumlah || ''}
             onChange={(e) => (stateAPBDes.create.form.jumlah = e.target.value)}
             required
           />

@@ -144,7 +144,7 @@ export default function EditDesaAntiKorupsi() {
           <TextInput
             label="Judul Dokumen"
             placeholder="Masukkan judul dokumen"
-            value={formData.name}
+            defaultValue={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             required
           />

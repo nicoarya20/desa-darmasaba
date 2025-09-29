@@ -125,7 +125,7 @@ function Page() {
                       </TableTd>
                       <TableTd>
                         <Box w={150}>
-                          <Text lineClamp={1} fz="sm" c="dark" dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
+                          <Text lineClamp={1} fz="sm" c="dark" style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
                         </Box>
                       </TableTd>
                       <TableTd ta="center">

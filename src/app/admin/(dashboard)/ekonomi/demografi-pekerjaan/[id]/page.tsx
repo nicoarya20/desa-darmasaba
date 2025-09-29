@@ -91,7 +91,7 @@ function EditDemografiPekerjaan() {
           <TextInput
             label="Pekerjaan"
             placeholder="Masukkan jenis pekerjaan"
-            value={stateDemografi.update.form.pekerjaan}
+            defaultValue={stateDemografi.update.form.pekerjaan}
             onChange={(e) =>
               (stateDemografi.update.form.pekerjaan = e.currentTarget.value)
             }
@@ -102,7 +102,7 @@ function EditDemografiPekerjaan() {
             label="Jumlah Pekerja Laki-laki"
             type="number"
             placeholder="Masukkan jumlah pekerja laki-laki"
-            value={stateDemografi.update.form.lakiLaki}
+            defaultValue={stateDemografi.update.form.lakiLaki}
             onChange={(e) =>
               (stateDemografi.update.form.lakiLaki = Number(
                 e.currentTarget.value
@@ -115,7 +115,7 @@ function EditDemografiPekerjaan() {
             label="Jumlah Pekerja Perempuan"
             type="number"
             placeholder="Masukkan jumlah pekerja perempuan"
-            value={stateDemografi.update.form.perempuan}
+            defaultValue={stateDemografi.update.form.perempuan}
             onChange={(e) =>
               (stateDemografi.update.form.perempuan = Number(
                 e.currentTarget.value

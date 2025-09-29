@@ -87,19 +87,19 @@ function Page() {
                     <Text fz="h4" fw="bold">Kenali Gejala DBD</Text>
                     <Divider my="xs" />
                     <Text fz="md" fw="semibold">{state.findUnique.data.symptom?.title}</Text>
-                    <Text fz="md" lh={1.6} ta="justify" dangerouslySetInnerHTML={{ __html: state.findUnique.data.symptom?.content }} />
+                    <Text fz="md" lh={1.6} ta="justify" style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: state.findUnique.data.symptom?.content }} />
                   </Box>
 
                   <Box>
                     <Text fz="h4" fw="bold">{state.findUnique.data.prevention?.title}</Text>
                     <Divider my="xs" />
-                    <Text fz="md" lh={1.6} ta="justify" dangerouslySetInnerHTML={{ __html: state.findUnique.data.prevention?.content }} />
+                    <Text fz="md" lh={1.6} ta="justify" style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: state.findUnique.data.prevention?.content }} />
                   </Box>
 
                   <Box>
                     <Text fz="h4" fw="bold">{state.findUnique.data.firstaid?.title}</Text>
                     <Divider my="xs" />
-                    <Text fz="md" lh={1.6} ta="justify" dangerouslySetInnerHTML={{ __html: state.findUnique.data.firstaid?.content }} />
+                    <Text fz="md" lh={1.6} ta="justify" style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: state.findUnique.data.firstaid?.content }} />
                   </Box>
 
                   <Box>
@@ -117,10 +117,10 @@ function Page() {
                           {state.findUnique.data?.mythvsfact ? (
                             <TableTr>
                               <TableTd>
-                                <Text fz="sm" lh={1.6} dangerouslySetInnerHTML={{ __html: state.findUnique.data.mythvsfact.mitos }} />
+                                <Text fz="sm" lh={1.6} style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: state.findUnique.data.mythvsfact.mitos }} />
                               </TableTd>
                               <TableTd>
-                                <Text fz="sm" lh={1.6} dangerouslySetInnerHTML={{ __html: state.findUnique.data.mythvsfact.fakta }} />
+                                <Text fz="sm" lh={1.6} style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: state.findUnique.data.mythvsfact.fakta }} />
                               </TableTd>
                             </TableTr>
                           ) : (

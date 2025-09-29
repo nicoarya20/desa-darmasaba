@@ -118,6 +118,7 @@ export default function DetailInformasiPublikUser() {
               <Box
                 className="prose max-w-none leading-relaxed"
                 dangerouslySetInnerHTML={{ __html: data.deskripsi || '-' }}
+                style={{wordBreak: "break-word", whiteSpace: "normal"}}
               />
             </Box>
           </Stack>

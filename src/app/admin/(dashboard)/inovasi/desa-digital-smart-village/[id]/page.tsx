@@ -56,7 +56,7 @@ function DetailDesaDigital() {
                 </Box>
                 <Box>
                   <Text fw={"bold"} fz={"lg"}>Deskripsi</Text>
-                  <Text fz={"lg"} dangerouslySetInnerHTML={{ __html: stateDesaDigital.findUnique.data?.deskripsi }} />
+                  <Text fz={"lg"} style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: stateDesaDigital.findUnique.data?.deskripsi }} />
                 </Box>
                 <Box>
                   <Text fw={"bold"} fz={"lg"}>Gambar</Text>

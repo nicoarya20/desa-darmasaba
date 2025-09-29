@@ -69,7 +69,7 @@ function CreateProgramPenghijauan() {
           <TextInput
             label={<Text fz="sm" fw="bold">Nama Program Penghijauan</Text>}
             placeholder="Masukkan nama program penghijauan"
-            value={stateCreate.create.form.name || ''}
+            defaultValue={stateCreate.create.form.name || ''}
             onChange={(e) => (stateCreate.create.form.name = e.target.value)}
             required
           />
@@ -86,7 +86,7 @@ function CreateProgramPenghijauan() {
           <TextInput
             label={<Text fz="sm" fw="bold">Judul Deskripsi Program Penghijauan</Text>}
             placeholder="Masukkan judul deskripsi program penghijauan"
-            value={stateCreate.create.form.judul || ''}
+            defaultValue={stateCreate.create.form.judul || ''}
             onChange={(e) => (stateCreate.create.form.judul = e.target.value)}
             required
           />

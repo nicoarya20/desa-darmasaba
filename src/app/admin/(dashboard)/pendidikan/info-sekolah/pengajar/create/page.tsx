@@ -74,7 +74,7 @@ function CreatePengajar() {
           <TextInput
             label={<Text fw="bold" fz="sm">Nama</Text>}
             placeholder="Masukkan nama pengajar"
-            value={stateCreate.create.form.nama}
+            defaultValue={stateCreate.create.form.nama}
             onChange={(e) => (stateCreate.create.form.nama = e.target.value)}
             required
           />

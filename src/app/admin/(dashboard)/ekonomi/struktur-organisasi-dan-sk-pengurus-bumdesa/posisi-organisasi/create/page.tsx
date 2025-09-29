@@ -75,7 +75,7 @@ function CreatePosisiOrganisasi() {
                     <TextInput
                         label="Nama Posisi"
                         placeholder="Contoh: Kepala Desa"
-                        value={stateOrganisasi.create.form.nama}
+                        defaultValue={stateOrganisasi.create.form.nama}
                         onChange={(e) => (stateOrganisasi.create.form.nama = e.currentTarget.value)}
                         required
                     />
@@ -94,7 +94,7 @@ function CreatePosisiOrganisasi() {
                         label="Hierarki"
                         type="number"
                         placeholder="Contoh: 1"
-                        value={stateOrganisasi.create.form.hierarki}
+                        defaultValue={stateOrganisasi.create.form.hierarki}
                         onChange={(e) => {
                             const value = parseInt(e.currentTarget.value, 10);
                             if (!isNaN(value)) {

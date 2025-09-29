@@ -77,7 +77,7 @@ function CreateProgramKreatifDesa() {
           <TextInput
             label={<Text fz="sm" fw="bold">Nama Kolaborasi Inovasi</Text>}
             placeholder="Masukkan nama kolaborasi inovasi"
-            value={stateCreate.create.form.name || ''}
+            defaultValue={stateCreate.create.form.name || ''}
             onChange={(val) => stateCreate.create.form.name = val.target.value}
             required
           />
@@ -106,7 +106,7 @@ function CreateProgramKreatifDesa() {
           <TextInput
             label={<Text fz="sm" fw="bold">Kolaborator</Text>}
             placeholder="Masukkan kolaborator"
-            value={stateCreate.create.form.kolaborator || ''}
+            defaultValue={stateCreate.create.form.kolaborator || ''}
             onChange={(e) => stateCreate.create.form.kolaborator = e.currentTarget.value}
           />
 

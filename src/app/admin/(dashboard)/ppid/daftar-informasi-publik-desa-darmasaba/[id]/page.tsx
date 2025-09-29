@@ -88,6 +88,7 @@ function DetailDaftarInformasiPublik() {
                   c="dimmed" 
                   dangerouslySetInnerHTML={{ __html: data.deskripsi || '-' }}
                   className="prose max-w-none"
+                  style={{ wordBreak: "break-word", whiteSpace: "normal" }}
                 />
               </Box>
 

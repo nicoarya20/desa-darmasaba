@@ -79,7 +79,7 @@ function Page() {
                     </Text>
                     <Text
                       fz={{ base: 'sm', md: 'md' }}
-                      style={{ lineHeight: 1.7 }}
+                      style={{ lineHeight: 1.7, wordBreak: "break-word", whiteSpace: "normal" }}
                       dangerouslySetInnerHTML={{ __html: item.content }}
                     />
                   </Stack>

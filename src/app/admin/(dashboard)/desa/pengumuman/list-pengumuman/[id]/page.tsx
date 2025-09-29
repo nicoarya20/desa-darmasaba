@@ -97,7 +97,7 @@ export default function DetailPengumuman() {
                 <Text fz="lg" fw="bold">
                   Deskripsi
                 </Text>
-                <Text fz="md" c="dimmed">
+                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }}>
                   {data?.deskripsi || '-'}
                 </Text>
               </Box>
@@ -112,6 +112,7 @@ export default function DetailPengumuman() {
                   dangerouslySetInnerHTML={{
                     __html: data?.content || '-',
                   }}
+                  style={{ wordBreak: "break-word", whiteSpace: "normal" }}
                 />
               </Box>
 

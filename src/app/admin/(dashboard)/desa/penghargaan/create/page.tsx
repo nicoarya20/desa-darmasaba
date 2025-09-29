@@ -87,17 +87,17 @@ function CreatePenghargaan() {
       >
         <Stack gap="md">
           <TextInput
-            value={statePenghargaan.create.form.name}
+            defaultValue={statePenghargaan.create.form.name}
             onChange={(val) => (statePenghargaan.create.form.name = val.target.value)}
-            label={<Text fz="sm" fw="bold">Nama Penghargaan</Text>}
+            label="Nama Penghargaan"
             placeholder="Masukkan nama penghargaan"
             required
           />
 
           <TextInput
-            value={statePenghargaan.create.form.juara}
+            defaultValue={statePenghargaan.create.form.juara}
             onChange={(val) => (statePenghargaan.create.form.juara = val.target.value)}
-            label={<Text fz="sm" fw="bold">Juara</Text>}
+            label="Juara"
             placeholder="Masukkan juara"
             required
           />

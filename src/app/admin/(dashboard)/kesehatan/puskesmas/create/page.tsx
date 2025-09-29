@@ -100,40 +100,40 @@ function CreatePuskesmas() {
           <TextInput
             label="Nama Puskesmas"
             placeholder="Masukkan nama puskesmas"
-            value={statePuskesmas.create.form.name}
+            defaultValue={statePuskesmas.create.form.name}
             onChange={(e) => (statePuskesmas.create.form.name = e.target.value)}
             required
           />
           <TextInput
             label="Alamat"
             placeholder="Masukkan alamat"
-            value={statePuskesmas.create.form.alamat}
+            defaultValue={statePuskesmas.create.form.alamat}
             onChange={(e) => (statePuskesmas.create.form.alamat = e.target.value)}
             required
           />
           <TextInput
             label="Jam Buka"
             placeholder="Masukkan jam buka"
-            value={statePuskesmas.create.form.jam.workDays}
+            defaultValue={statePuskesmas.create.form.jam.workDays}
             onChange={(e) => (statePuskesmas.create.form.jam.workDays = e.target.value)}
           />
           <TextInput
             label="Jam Tutup"
             placeholder="Masukkan jam tutup"
-            value={statePuskesmas.create.form.jam.weekDays}
+            defaultValue={statePuskesmas.create.form.jam.weekDays}
             onChange={(e) => (statePuskesmas.create.form.jam.weekDays = e.target.value)}
           />
           <TextInput
             label="Holiday"
             placeholder="Masukkan hari libur"
-            value={statePuskesmas.create.form.jam.holiday}
+            defaultValue={statePuskesmas.create.form.jam.holiday}
             onChange={(e) => (statePuskesmas.create.form.jam.holiday = e.target.value)}
           />
 
           <TextInput
             label="Kontak Puskesmas"
             placeholder="Masukkan kontak puskesmas"
-            value={statePuskesmas.create.form.kontak.kontakPuskesmas}
+            defaultValue={statePuskesmas.create.form.kontak.kontakPuskesmas}
             onChange={(e) =>
               (statePuskesmas.create.form.kontak.kontakPuskesmas = e.target.value)
             }
@@ -141,19 +141,19 @@ function CreatePuskesmas() {
           <TextInput
             label="Email"
             placeholder="Masukkan email"
-            value={statePuskesmas.create.form.kontak.email}
+            defaultValue={statePuskesmas.create.form.kontak.email}
             onChange={(e) => (statePuskesmas.create.form.kontak.email = e.target.value)}
           />
           <TextInput
             label="Facebook"
             placeholder="Masukkan facebook"
-            value={statePuskesmas.create.form.kontak.facebook}
+            defaultValue={statePuskesmas.create.form.kontak.facebook}
             onChange={(e) => (statePuskesmas.create.form.kontak.facebook = e.target.value)}
           />
           <TextInput
             label="Kontak UGD"
             placeholder="Masukkan kontak UGD"
-            value={statePuskesmas.create.form.kontak.kontakUGD}
+            defaultValue={statePuskesmas.create.form.kontak.kontakUGD}
             onChange={(e) => (statePuskesmas.create.form.kontak.kontakUGD = e.target.value)}
           />
 

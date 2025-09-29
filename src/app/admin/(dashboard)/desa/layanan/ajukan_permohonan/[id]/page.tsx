@@ -3,14 +3,14 @@ import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirma
 import stateLayananDesa from '@/app/admin/(dashboard)/_state/desa/layananDesa';
 import colors from '@/con/colors';
 import {
-    Box,
-    Button,
-    Group,
-    Paper,
-    Skeleton,
-    Stack,
-    Text,
-    Tooltip
+  Box,
+  Button,
+  Group,
+  Paper,
+  Skeleton,
+  Stack,
+  Text,
+  Tooltip
 } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
@@ -79,7 +79,7 @@ function DetailAjukanPermohonan() {
                 <Text fz="lg" fw="bold">
                   Nama
                 </Text>
-                <Text fz="md" c="dimmed">
+                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }}>
                   {data?.nama || '-'}
                 </Text>
               </Box>
@@ -97,7 +97,7 @@ function DetailAjukanPermohonan() {
                 <Text fz="lg" fw="bold">
                   Alamat
                 </Text>
-                <Text fz="md" c="dimmed">
+                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }}>
                   {data?.alamat || '-'}
                 </Text>
               </Box>

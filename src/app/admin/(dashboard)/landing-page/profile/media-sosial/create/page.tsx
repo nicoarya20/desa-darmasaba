@@ -138,14 +138,14 @@ export default function CreateMediaSosial() {
           <TextInput
             label="Nama Media Sosial / Kontak"
             placeholder="Masukkan nama media sosial atau kontak"
-            value={stateMediaSosial.create.form.name || ''}
+            defaultValue={stateMediaSosial.create.form.name || ''}
             onChange={(e) => (stateMediaSosial.create.form.name = e.target.value)}
             required
           />
           <TextInput
             label="Link Media Sosial / Nomor Telepon"
             placeholder="Masukkan link media sosial atau nomor telepon"
-            value={stateMediaSosial.create.form.iconUrl || ''}
+            defaultValue={stateMediaSosial.create.form.iconUrl || ''}
             onChange={(e) => (stateMediaSosial.create.form.iconUrl = e.target.value)}
             required
           />

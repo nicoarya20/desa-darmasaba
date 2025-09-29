@@ -100,7 +100,7 @@ function EditSiswa() {
           <TextInput
             label={<Text fz="sm" fw="bold">Nama Siswa</Text>}
             placeholder="Masukkan nama siswa"
-            value={formData.nama}
+            defaultValue={formData.nama}
             onChange={(e) => setFormData({ ...formData, nama: e.target.value })}
             required
           />

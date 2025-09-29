@@ -101,7 +101,7 @@ function EditPosisiOrganisasiPPID() {
           <TextInput
             label="Nama Posisi Organisasi"
             placeholder="Masukkan nama posisi organisasi"
-            value={formData.nama}
+            defaultValue={formData.nama}
             onChange={(e) => setFormData({ ...formData, nama: e.target.value })}
             required
           />
@@ -123,7 +123,7 @@ function EditPosisiOrganisasiPPID() {
             type="number"
             min={0}
             placeholder="Contoh: 1 (Angka semakin kecil, posisi semakin tinggi)"
-            value={formData.hierarki}
+            defaultValue={formData.hierarki}
             onChange={(e) => {
               const value = parseInt(e.target.value, 10);
               setFormData({ ...formData, hierarki: isNaN(value) ? 0 : value });

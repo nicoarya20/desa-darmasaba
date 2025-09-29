@@ -103,13 +103,13 @@ function DetailArtikelKesehatan() {
               {/* Deskripsi */}
               <Box>
                 <Text fz="lg" fw="bold">Deskripsi</Text>
-                <Text fz="md" c="dimmed" dangerouslySetInnerHTML={{ __html: data.content }} />
+                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data.content }} />
               </Box>
 
               {/* Pendahuluan */}
               <Box>
                 <Text fz="lg" fw="bold">Pendahuluan</Text>
-                <Text fz="md" c="dimmed" dangerouslySetInnerHTML={{ __html: data.introduction?.content }} />
+                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data.introduction?.content }} />
               </Box>
 
               {/* Gejala */}
@@ -118,7 +118,7 @@ function DetailArtikelKesehatan() {
                 <Text fz="md" fw="bold">Judul</Text>
                 <Text fz="md" c="dimmed">{data.symptom?.title}</Text>
                 <Text fz="md" fw="bold">Deskripsi</Text>
-                <Text fz="md" c="dimmed" dangerouslySetInnerHTML={{ __html: data.symptom?.content }} />
+                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data.symptom?.content }} />
               </Box>
 
               {/* Pencegahan */}
@@ -127,7 +127,7 @@ function DetailArtikelKesehatan() {
                 <Text fz="md" fw="bold">Judul</Text>
                 <Text fz="md" c="dimmed">{data.prevention?.title}</Text>
                 <Text fz="md" fw="bold">Deskripsi</Text>
-                <Text fz="md" c="dimmed" dangerouslySetInnerHTML={{ __html: data.prevention?.content }} />
+                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data.prevention?.content }} />
               </Box>
 
               {/* Pertolongan Pertama */}
@@ -136,7 +136,7 @@ function DetailArtikelKesehatan() {
                 <Text fz="md" fw="bold">Judul</Text>
                 <Text fz="md" c="dimmed">{data.firstaid?.title}</Text>
                 <Text fz="md" fw="bold">Deskripsi</Text>
-                <Text fz="md" c="dimmed" dangerouslySetInnerHTML={{ __html: data.firstaid?.content }} />
+                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data.firstaid?.content }} />
               </Box>
 
               {/* Mitos vs Fakta */}
@@ -145,15 +145,15 @@ function DetailArtikelKesehatan() {
                 <Text fz="md" fw="bold">Judul</Text>
                 <Text fz="md" c="dimmed">{data.mythvsfact?.title}</Text>
                 <Text fz="md" fw="bold">Mitos</Text>
-                <Text fz="md" c="dimmed" dangerouslySetInnerHTML={{ __html: data.mythvsfact?.mitos }} />
+                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data.mythvsfact?.mitos }} />
                 <Text fz="md" fw="bold">Fakta</Text>
-                <Text fz="md" c="dimmed" dangerouslySetInnerHTML={{ __html: data.mythvsfact?.fakta }} />
+                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data.mythvsfact?.fakta }} />
               </Box>
 
               {/* Kapan ke Dokter */}
               <Box>
                 <Text fz="lg" fw="bold">Kapan Harus ke Dokter</Text>
-                <Text fz="md" c="dimmed" dangerouslySetInnerHTML={{ __html: data.doctorsign?.content }} />
+                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data.doctorsign?.content }} />
               </Box>
 
               {/* Aksi */}

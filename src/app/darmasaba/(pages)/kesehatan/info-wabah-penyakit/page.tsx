@@ -143,6 +143,7 @@ function Page() {
                         dangerouslySetInnerHTML={{
                           __html: v.deskripsiLengkap,
                         }}
+                        style={{wordBreak: "break-word", whiteSpace: "normal"}}
                       />
                     </HoverCard.Dropdown>
                   </HoverCard>

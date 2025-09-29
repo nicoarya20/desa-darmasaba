@@ -68,7 +68,7 @@ function DetailTipsKeamanan() {
             <Stack gap="sm">
               <Box>
                 <Text fz="lg" fw="bold">Nama Tips Keamanan</Text>
-                <Text fz="md" c="dimmed">{data.judul || '-'}</Text>
+                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }}>{data.judul || '-'}</Text>
               </Box>
 
               <Box>
@@ -76,6 +76,7 @@ function DetailTipsKeamanan() {
                 <Text
                   fz="md"
                   c="dimmed"
+                  style={{ wordBreak: "break-word", whiteSpace: "normal" }}
                   dangerouslySetInnerHTML={{ __html: data.deskripsi || '-' }}
                 />
               </Box>

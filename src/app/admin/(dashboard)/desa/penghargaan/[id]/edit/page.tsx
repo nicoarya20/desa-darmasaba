@@ -122,7 +122,7 @@ function EditPenghargaan() {
           <TextInput
             label="Judul"
             placeholder="Masukkan judul penghargaan"
-            value={formData.name}
+            defaultValue={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             required
           />
@@ -131,7 +131,7 @@ function EditPenghargaan() {
           <TextInput
             label="Juara"
             placeholder="Masukkan juara"
-            value={formData.juara}
+            defaultValue={formData.juara}
             onChange={(e) => setFormData({ ...formData, juara: e.target.value })}
             required
           />

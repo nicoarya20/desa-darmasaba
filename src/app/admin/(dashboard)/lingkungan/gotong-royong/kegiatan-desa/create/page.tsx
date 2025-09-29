@@ -155,21 +155,21 @@ function CreateKegiatanDesa() {
           <TextInput
             label="Judul Kegiatan"
             placeholder="Masukkan judul kegiatan"
-            value={stateKegiatanDesa.create.form.judul}
+            defaultValue={stateKegiatanDesa.create.form.judul}
             onChange={(e) => (stateKegiatanDesa.create.form.judul = e.target.value)}
             required
           />
           <TextInput
             label="Deskripsi Singkat"
             placeholder="Masukkan deskripsi singkat"
-            value={stateKegiatanDesa.create.form.deskripsiSingkat}
+            defaultValue={stateKegiatanDesa.create.form.deskripsiSingkat}
             onChange={(e) => (stateKegiatanDesa.create.form.deskripsiSingkat = e.target.value)}
             required
           />
           <TextInput
             type="number"
             min={0}
-            value={stateKegiatanDesa.create.form.partisipan}
+            defaultValue={stateKegiatanDesa.create.form.partisipan}
             onChange={(e) => {
               const value = Number(e.target.value);
               if (value >= 0) {
@@ -184,7 +184,7 @@ function CreateKegiatanDesa() {
             label="Tanggal"
             type="date"
             placeholder="Contoh: 2022-01-01"
-            value={
+            defaultValue={
               stateKegiatanDesa.create.form.tanggal
                 ? stateKegiatanDesa.create.form.tanggal.toISOString().split('T')[0]
                 : ''
@@ -198,7 +198,7 @@ function CreateKegiatanDesa() {
           <TextInput
             label="Lokasi"
             placeholder="Masukkan lokasi kegiatan"
-            value={stateKegiatanDesa.create.form.lokasi}
+            defaultValue={stateKegiatanDesa.create.form.lokasi}
             onChange={(e) => (stateKegiatanDesa.create.form.lokasi = e.target.value)}
             required
           />

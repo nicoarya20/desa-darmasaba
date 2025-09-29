@@ -53,7 +53,7 @@ function CreateKategoriKegiatan() {
       >
         <Stack gap="md">
           <TextInput
-            value={stateKategori.create.form.nama}
+            defaultValue={stateKategori.create.form.nama}
             onChange={(val) => (stateKategori.create.form.nama = val.target.value)}
             label={<Text fw="bold" fz="sm">Nama Kategori Kegiatan</Text>}
             placeholder="Masukkan nama kategori kegiatan"

@@ -115,6 +115,7 @@ function ListPotensi({ search }: { search: string }) {
                           truncate
                           fz="sm"
                           dangerouslySetInnerHTML={{ __html: item.deskripsi }}
+                          style={{wordBreak: "break-word", whiteSpace: "normal"}}
                         />
                       </Box>
                     </TableTd>

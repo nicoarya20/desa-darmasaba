@@ -95,7 +95,7 @@ export default function EditLembaga() {
           <TextInput
             label="Nama Lembaga"
             placeholder="Masukkan nama lembaga"
-            value={form.nama}
+            defaultValue={form.nama}
             onChange={(e) => setForm({ ...form, nama: e.currentTarget.value })}
             required
           />

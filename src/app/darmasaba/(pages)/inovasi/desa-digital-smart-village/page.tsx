@@ -73,7 +73,7 @@ function Page() {
                   <Image src={v.image.link? v.image.link : ''} pb={10} radius={10} alt='' loading="lazy"/>
                   <Text fz={'h3'} fw={'bold'} c={colors['blue-button']}>{v.name}</Text>
                   <Box>
-                    <Text fz={"md"} dangerouslySetInnerHTML={{ __html: v.deskripsi }} />
+                    <Text fz={"md"} style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: v.deskripsi }} />
                   </Box>
                 </Paper>
               )

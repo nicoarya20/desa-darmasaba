@@ -99,7 +99,7 @@ function EditKontakItem() {
           <TextInput
             label="Nama Kontak"
             placeholder="Masukkan nama kontak"
-            value={formData.name}
+            defaultValue={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             required
           />
@@ -107,7 +107,7 @@ function EditKontakItem() {
           <TextInput
             label="Nomor Telepon"
             placeholder="Masukkan nomor telepon"
-            value={formData.nomorTelepon}
+            defaultValue={formData.nomorTelepon}
             onChange={(e) => setFormData({ ...formData, nomorTelepon: e.target.value })}
             required
           />

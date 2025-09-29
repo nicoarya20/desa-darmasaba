@@ -85,13 +85,13 @@ function DetailKegiatanDesa() {
               {/* Deskripsi Singkat */}
               <Box>
                 <Text fz="lg" fw="bold">Deskripsi Singkat</Text>
-                <Text fz="md" c="dimmed">{data.deskripsiSingkat || '-'}</Text>
+                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }}>{data.deskripsiSingkat || '-'}</Text>
               </Box>
 
               {/* Deskripsi Lengkap */}
               <Box>
                 <Text fz="lg" fw="bold">Deskripsi</Text>
-                <Text fz="md" c="dimmed" dangerouslySetInnerHTML={{ __html: data.deskripsiLengkap || '-' }} />
+                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data.deskripsiLengkap || '-' }} />
               </Box>
 
               {/* Kategori */}
@@ -109,7 +109,7 @@ function DetailKegiatanDesa() {
               {/* Lokasi */}
               <Box>
                 <Text fz="lg" fw="bold">Lokasi</Text>
-                <Text fz="md" c="dimmed">{data.lokasi || '-'}</Text>
+                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }}>{data.lokasi || '-'}</Text>
               </Box>
 
               {/* Gambar */}

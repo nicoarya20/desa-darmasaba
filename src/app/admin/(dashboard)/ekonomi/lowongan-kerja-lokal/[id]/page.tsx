@@ -94,12 +94,12 @@ function DetailLowonganKerjaLokal() {
 
               <Box>
                 <Text fz="lg" fw="bold">Deskripsi</Text>
-                <Text fz="md" c="dimmed" dangerouslySetInnerHTML={{ __html: data.deskripsi || '-' }} />
+                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data.deskripsi || '-' }} />
               </Box>
 
               <Box>
                 <Text fz="lg" fw="bold">Kualifikasi</Text>
-                <Text fz="md" c="dimmed" dangerouslySetInnerHTML={{ __html: data.kualifikasi || '-' }} />
+                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data.kualifikasi || '-' }} />
               </Box>
 
               <Group gap="sm" mt="sm">

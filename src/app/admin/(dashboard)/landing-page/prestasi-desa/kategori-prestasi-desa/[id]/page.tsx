@@ -94,7 +94,7 @@ function EditKategoriPrestasi() {
           <TextInput
             label="Nama Kategori Prestasi"
             placeholder="Masukkan nama kategori prestasi"
-            value={formData.name}
+            defaultValue={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             required
           />

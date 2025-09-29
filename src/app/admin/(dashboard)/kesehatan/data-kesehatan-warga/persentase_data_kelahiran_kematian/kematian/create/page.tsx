@@ -83,7 +83,7 @@ function CreateKematian() {
          <TextInput
            label="Nama"
            placeholder="Masukkan nama"
-           value={createState.create.form.nama}
+           defaultValue={createState.create.form.nama}
            onChange={(e) => (createState.create.form.nama = e.target.value)}
            required
          />
@@ -91,21 +91,21 @@ function CreateKematian() {
            type="date"
            label="Tanggal"
            placeholder="Masukkan tanggal"
-           value={createState.create.form.tanggal}
+           defaultValue={createState.create.form.tanggal}
            onChange={(e) => (createState.create.form.tanggal = e.target.value)}
            required
          />
          <TextInput
            label="Jenis Kelamin"
            placeholder="Masukkan jenis kelamin"
-           value={createState.create.form.jenisKelamin}
+           defaultValue={createState.create.form.jenisKelamin}
            onChange={(e) => (createState.create.form.jenisKelamin = e.target.value)}
            required
          />
          <TextInput
            label="Alamat"
            placeholder="Masukkan alamat"
-           value={createState.create.form.alamat}
+           defaultValue={createState.create.form.alamat}
            onChange={(e) => (createState.create.form.alamat = e.target.value)}
            required
          />

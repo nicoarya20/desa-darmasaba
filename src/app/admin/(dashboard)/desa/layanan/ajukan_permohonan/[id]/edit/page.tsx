@@ -98,7 +98,7 @@ function EditAjukanPermohonan() {
                     <TextInput
                         label="Nama"
                         placeholder="Masukkan nama"
-                        value={formData.nama}
+                        defaultValue={formData.nama}
                         onChange={(e) => setFormData({ ...formData, nama: e.target.value })}
                         required
                     />
@@ -107,7 +107,7 @@ function EditAjukanPermohonan() {
                         type="number"
                         label="NIK"
                         placeholder="Masukkan NIK"
-                        value={formData.nik}
+                        defaultValue={formData.nik}
                         onChange={(e) => setFormData({ ...formData, nik: e.target.value })}
                         required
                     />
@@ -115,7 +115,7 @@ function EditAjukanPermohonan() {
                     <TextInput
                         label="Alamat"
                         placeholder="Masukkan alamat"
-                        value={formData.alamat}
+                        defaultValue={formData.alamat}
                         onChange={(e) => setFormData({ ...formData, alamat: e.target.value })}
                         required
                     />
@@ -124,7 +124,7 @@ function EditAjukanPermohonan() {
                         type="number"
                         label="Nomor KK"
                         placeholder="Masukkan nomor KK"
-                        value={formData.nomorKk}
+                        defaultValue={formData.nomorKk}
                         onChange={(e) => setFormData({ ...formData, nomorKk: e.target.value })}
                         required
                     />

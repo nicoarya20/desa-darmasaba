@@ -57,7 +57,7 @@ function InformasiDesa() {
                   <Box>
                     <Text fz="sm" c="dimmed">{dataBerita.kategoriBerita?.name} • {dayjs(dataBerita.createdAt).fromNow()}</Text>
                     <Title order={1} fw="bold">{dataBerita.judul}</Title>
-                    <Text ta={"justify"} mt="xs" fz="md" dangerouslySetInnerHTML={{ __html: dataBerita.content }} />
+                    <Text ta={"justify"} mt="xs" fz="md" style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: dataBerita.content }} />
                   </Box>
                 </GridCol>
               </Grid>
@@ -104,7 +104,7 @@ function InformasiDesa() {
                     <Title order={1} fw="bold">{dataPengumuman.judul}</Title>
                     <Text fz="sm" c="dimmed">{dataPengumuman.CategoryPengumuman?.name} • {dayjs(dataPengumuman.createdAt).fromNow()}</Text>
                     <Box>
-                      <Text ta={"justify"} mt="xs" fz="md" dangerouslySetInnerHTML={{ __html: dataPengumuman.content }} />
+                      <Text ta={"justify"} mt="xs" fz="md" style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: dataPengumuman.content }} />
                     </Box>
                   </Stack>
                 </Paper>

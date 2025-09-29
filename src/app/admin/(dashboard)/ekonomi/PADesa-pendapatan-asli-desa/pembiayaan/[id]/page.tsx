@@ -112,7 +112,7 @@ function EditPembiayaan() {
           <TextInput
             label="Nama Jenis Pembiayaan"
             placeholder="Masukkan nama jenis pembiayaan"
-            value={formData.name}
+            defaultValue={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             required
           />
@@ -120,7 +120,7 @@ function EditPembiayaan() {
           <TextInput
             label="Nilai"
             placeholder="Masukkan nilai"
-            value={formatRupiah(formData.value)}
+            defaultValue={formatRupiah(formData.value)}
             onChange={(e) => {
               const raw = e.currentTarget.value;
               const cleanValue = unformatRupiah(raw);

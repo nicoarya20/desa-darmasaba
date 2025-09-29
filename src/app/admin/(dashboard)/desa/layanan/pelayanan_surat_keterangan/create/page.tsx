@@ -106,9 +106,9 @@ function CreateSuratKeterangan() {
         <Stack gap="md">
           {/* Nama Surat */}
           <TextInput
-            value={stateSurat.create.form.name}
+            defaultValue={stateSurat.create.form.name}
             onChange={(val) => (stateSurat.create.form.name = val.target.value)}
-            label={<Text fz="sm" fw="bold">Nama Surat Keterangan</Text>}
+            label="Nama Surat Keterangan"
             placeholder="Masukkan nama surat keterangan"
             required
           />

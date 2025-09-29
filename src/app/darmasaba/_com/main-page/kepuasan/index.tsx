@@ -599,7 +599,7 @@ function Kepuasan() {
               label="Nama"
               type='text'
               placeholder="masukkan nama"
-              value={state.create.form.name}
+              defaultValue={state.create.form.name}
               onChange={(val) => {
                 state.create.form.name = val.currentTarget.value;
               }}
@@ -608,7 +608,7 @@ function Kepuasan() {
               label="Tanggal"
               type="date"
               placeholder="masukkan tanggal"
-              value={state.create.form.tanggal}
+              defaultValue={state.create.form.tanggal}
               onChange={(val) => {
                 state.create.form.tanggal = val.currentTarget.value;
               }}
@@ -617,7 +617,7 @@ function Kepuasan() {
               key={"jenisKelamin"}
               label={"Jenis Kelamin"}
               placeholder={indeksKepuasanState.jenisKelaminResponden.findMany.loading ? 'Memuat...' : 'Pilih jenis kelamin'}
-              value={state.create.form.jenisKelaminId || ""}
+              defaultValue={state.create.form.jenisKelaminId || ""}
               onChange={(val) => {
                 state.create.form.jenisKelaminId = val ?? "";
               }}
@@ -635,7 +635,7 @@ function Kepuasan() {
               key={"rating_responden"}
               label={"Rating"}
               placeholder={indeksKepuasanState.pilihanRatingResponden.findMany.loading ? 'Memuat...' : 'Pilih rating'}
-              value={state.create.form.ratingId || ""}
+              defaultValue={state.create.form.ratingId || ""}
               onChange={(val) => {
                 state.create.form.ratingId = val ?? "";
               }}
@@ -653,7 +653,7 @@ function Kepuasan() {
               key={"kelompokUmur"}
               label={"Kelompok Umur"}
               placeholder={indeksKepuasanState.kelompokUmurResponden.findMany.loading ? 'Memuat...' : 'Pilih kelompok umur'}
-              value={state.create.form.kelompokUmurId || ""}
+              defaultValue={state.create.form.kelompokUmurId || ""}
               onChange={(val) => {
                 state.create.form.kelompokUmurId = val ?? "";
               }}

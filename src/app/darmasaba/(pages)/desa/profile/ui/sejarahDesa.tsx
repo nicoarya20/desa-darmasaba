@@ -64,7 +64,7 @@ function SejarahDesa() {
               fz={{ base: 'md', md: 'lg' }}
               lh={1.8}
               ta="justify"
-              style={{ color: '#2a2a2a' }}
+              style={{ color: '#2a2a2a', wordBreak: "break-word", whiteSpace: "normal" }}
               dangerouslySetInnerHTML={{ __html: data.deskripsi }}
             />
           </Stack>

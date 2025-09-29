@@ -63,35 +63,35 @@ function EditGrafikBerdasarkanPendidikan() {
             label="SD"
             type="number"
             placeholder="Masukkan jumlah"
-            value={stategrafik.update.form.SD}
+            defaultValue={stategrafik.update.form.SD}
             onChange={(val) => (stategrafik.update.form.SD = val.currentTarget.value)}
           />
           <TextInput
             label="SMP"
             type="number"
             placeholder="Masukkan jumlah"
-            value={stategrafik.update.form.SMP}
+            defaultValue={stategrafik.update.form.SMP}
             onChange={(val) => (stategrafik.update.form.SMP = val.currentTarget.value)}
           />
           <TextInput
             label="SMA"
             type="number"
             placeholder="Masukkan jumlah"
-            value={stategrafik.update.form.SMA}
+            defaultValue={stategrafik.update.form.SMA}
             onChange={(val) => (stategrafik.update.form.SMA = val.currentTarget.value)}
           />
           <TextInput
             label="D3"
             type="number"
             placeholder="Masukkan jumlah"
-            value={stategrafik.update.form.D3}
+            defaultValue={stategrafik.update.form.D3}
             onChange={(val) => (stategrafik.update.form.D3 = val.currentTarget.value)}
           />
           <TextInput
             label="S1"
             type="number"
             placeholder="Masukkan jumlah"
-            value={stategrafik.update.form.S1}
+            defaultValue={stategrafik.update.form.S1}
             onChange={(val) => (stategrafik.update.form.S1 = val.currentTarget.value)}
           />
 

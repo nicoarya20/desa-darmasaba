@@ -81,12 +81,12 @@ function DetailKolaborasiInovasi() {
 
               <Box>
                 <Text fz="lg" fw="bold">Deskripsi Singkat</Text>
-                <Text fz="md" c="dimmed">{data?.slug || '-'}</Text>
+                <Text fz="md" style={{ wordBreak: "break-word", whiteSpace: "normal" }} c="dimmed">{data?.slug || '-'}</Text>
               </Box>
 
               <Box>
                 <Text fz="lg" fw="bold">Deskripsi</Text>
-                <Text fz="md" c="dimmed" dangerouslySetInnerHTML={{ __html: data?.deskripsi || '-' }} />
+                <Text fz="md" style={{ wordBreak: "break-word", whiteSpace: "normal" }} c="dimmed" dangerouslySetInnerHTML={{ __html: data?.deskripsi || '-' }} />
               </Box>
 
               <Box>

@@ -69,7 +69,7 @@ function CreateDataLingkunganDesa() {
           <TextInput
             label={<Text fw="bold" fz="sm">Nama Data Lingkungan Desa</Text>}
             placeholder="Masukkan nama data lingkungan desa"
-            value={stateCreate.create.form.name || ''}
+            defaultValue={stateCreate.create.form.name || ''}
             onChange={(val) => (stateCreate.create.form.name = val.target.value)}
             required
           />
@@ -86,7 +86,7 @@ function CreateDataLingkunganDesa() {
           <TextInput
             label={<Text fw="bold" fz="sm">Jumlah Data Lingkungan Desa</Text>}
             placeholder="Masukkan jumlah data lingkungan desa"
-            value={stateCreate.create.form.jumlah || ''}
+            defaultValue={stateCreate.create.form.jumlah || ''}
             onChange={(e) => (stateCreate.create.form.jumlah = e.currentTarget.value)}
             required
           />

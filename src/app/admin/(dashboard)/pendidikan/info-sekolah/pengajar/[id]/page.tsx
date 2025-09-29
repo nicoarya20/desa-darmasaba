@@ -73,7 +73,7 @@ function DetailPengajar() {
 
               <Box>
                 <Text fz="lg" fw="bold">Lembaga</Text>
-                <Text fz="md" c="dimmed">{data.lembaga?.nama || '-'}</Text>
+                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }}>{data.lembaga?.nama || '-'}</Text>
               </Box>
 
               <Group gap="sm" mt="sm">

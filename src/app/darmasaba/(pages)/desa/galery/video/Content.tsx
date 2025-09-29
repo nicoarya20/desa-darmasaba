@@ -128,6 +128,7 @@ export default function VideoContent() {
                       ta="justify"
                       fz="sm"
                       dangerouslySetInnerHTML={{ __html: v.deskripsi }}
+                      style={{wordBreak: "break-word", whiteSpace: "normal"}}
                     />
                   </Spoiler>
                 </Stack>

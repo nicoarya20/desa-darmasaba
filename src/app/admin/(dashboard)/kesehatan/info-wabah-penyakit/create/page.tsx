@@ -91,7 +91,7 @@ function CreateInfoWabahPenyakit() {
       >
         <Stack gap="md">
           <TextInput
-            value={infoWabahPenyakitState.create.form.name}
+            defaultValue={infoWabahPenyakitState.create.form.name}
             onChange={(val) => {
               infoWabahPenyakitState.create.form.name = val.target.value;
             }}
@@ -101,7 +101,7 @@ function CreateInfoWabahPenyakit() {
           />
 
           <TextInput
-            value={infoWabahPenyakitState.create.form.deskripsiSingkat}
+            defaultValue={infoWabahPenyakitState.create.form.deskripsiSingkat}
             onChange={(val) => {
               infoWabahPenyakitState.create.form.deskripsiSingkat = val.target.value;
             }}

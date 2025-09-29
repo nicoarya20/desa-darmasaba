@@ -85,7 +85,7 @@ function CreateMitraKolaborasi() {
           <TextInput
             label="Nama Mitra"
             placeholder="Masukkan nama mitra"
-            value={state.create.form.name || ''}
+            defaultValue={state.create.form.name || ''}
             onChange={(e) => (state.create.form.name = e.target.value)}
             required
           />

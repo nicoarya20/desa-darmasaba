@@ -67,7 +67,7 @@ function DetailBeasiswaPendaftar() {
             <Stack gap="sm">
               <Box>
                 <Text fz="lg" fw="bold">Nama Lengkap</Text>
-                <Text fz="md" c="dimmed">{data.namaLengkap || '-'}</Text>
+                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }}>{data.namaLengkap || '-'}</Text>
               </Box>
               <Box>
                 <Text fz="lg" fw="bold">NIK</Text>
@@ -75,7 +75,7 @@ function DetailBeasiswaPendaftar() {
               </Box>
               <Box>
                 <Text fz="lg" fw="bold">Tempat Lahir</Text>
-                <Text fz="md" c="dimmed">{data.tempatLahir || '-'}</Text>
+                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }}>{data.tempatLahir || '-'}</Text>
               </Box>
               <Box>
                 <Text fz="lg" fw="bold">Tanggal Lahir</Text>
@@ -97,11 +97,11 @@ function DetailBeasiswaPendaftar() {
               </Box>
               <Box>
                 <Text fz="lg" fw="bold">Alamat KTP</Text>
-                <Text fz="md" c="dimmed">{data.alamatKTP || '-'}</Text>
+                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }}>{data.alamatKTP || '-'}</Text>
               </Box>
               <Box>
                 <Text fz="lg" fw="bold">Alamat Domisili</Text>
-                <Text fz="md" c="dimmed">{data.alamatDomisili || '-'}</Text>
+                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }}>{data.alamatDomisili || '-'}</Text>
               </Box>
               <Box>
                 <Text fz="lg" fw="bold">No HP</Text>

@@ -97,16 +97,16 @@ function Page() {
           {/* Biodata & Info */}
           <Box mt="lg">
             <Text fz={{ base: "1.125rem", md: "1.5rem" }} fw="bold" mb={4}>Biodata</Text>
-            <Text fz={{ base: "1rem", md: "1.4rem" }} ta="justify" dangerouslySetInnerHTML={{ __html: perbekel.biodata }} />
+            <Text fz={{ base: "1rem", md: "1.4rem" }} ta="justify" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: perbekel.biodata }} />
 
             <Text fz={{ base: "1.125rem", md: "1.5rem" }} fw="bold" mt="md" mb={4}>Pengalaman</Text>
-            <Text fz={{ base: "1rem", md: "1.4rem" }} ta="justify" dangerouslySetInnerHTML={{ __html: perbekel.pengalaman }} />
+            <Text fz={{ base: "1rem", md: "1.4rem" }} ta="justify" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: perbekel.pengalaman }} />
 
             <Text fz={{ base: "1.125rem", md: "1.5rem" }} fw="bold" mt="md" mb={4}>Pengalaman Organisasi</Text>
-            <Text fz={{ base: "1rem", md: "1.4rem" }} ta="justify" dangerouslySetInnerHTML={{ __html: perbekel.pengalamanOrganisasi }} />
+            <Text fz={{ base: "1rem", md: "1.4rem" }} ta="justify" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: perbekel.pengalamanOrganisasi }} />
 
             <Text fz={{ base: "1.125rem", md: "1.5rem" }} fw="bold" mt="md" mb={4}>Program Kerja Unggulan</Text>
-            <Text fz={{ base: "1rem", md: "1.4rem" }} ta="justify" dangerouslySetInnerHTML={{ __html: perbekel.programUnggulan }} />
+            <Text fz={{ base: "1rem", md: "1.4rem" }} ta="justify" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: perbekel.programUnggulan }} />
           </Box>
         </Paper>
       </Stack>

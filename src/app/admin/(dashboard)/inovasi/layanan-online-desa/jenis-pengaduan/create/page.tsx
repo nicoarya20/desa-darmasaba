@@ -64,7 +64,7 @@ function CreateJenisPengaduan() {
           <TextInput
             label="Nama Jenis Pengaduan"
             placeholder="Masukkan nama jenis pengaduan"
-            value={state.create.form.nama || ''}
+            defaultValue={state.create.form.nama || ''}
             onChange={(e) => (state.create.form.nama = e.target.value)}
             required
           />

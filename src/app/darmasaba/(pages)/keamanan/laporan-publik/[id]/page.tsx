@@ -120,7 +120,7 @@ function Page() {
 
               <Box>
                 <Text fw={600} fz="lg" >Kronologi</Text>
-                <Text fz="sm" c="dimmed" dangerouslySetInnerHTML={{ __html: data.kronologi || '-' }} />
+                <Text fz="sm" c="dimmed" style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: data.kronologi || '-' }} />
               </Box>
 
               <Divider />
@@ -142,6 +142,7 @@ function Page() {
                           fz="sm"
                           c="dimmed"
                           dangerouslySetInnerHTML={{ __html: item.deskripsi || '-' }}
+                          style={{wordBreak: "break-word", whiteSpace: "normal"}}
                         />
                       </Paper>
                     ))}

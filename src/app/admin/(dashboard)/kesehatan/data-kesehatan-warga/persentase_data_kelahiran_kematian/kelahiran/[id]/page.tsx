@@ -105,7 +105,7 @@ function DetailKelahiran() {
 
              <Box>
                <Text fz="lg" fw="bold">Alamat</Text>
-               <Text fz="md" c="dimmed">{data.alamat || '-'}</Text>
+               <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }}>{data.alamat || '-'}</Text>
              </Box>
 
 

@@ -122,7 +122,7 @@ function EditTujuanProgram() {
             <TextInput
               label={<Text fw="bold">Judul</Text>}
               placeholder="Masukkan judul program"
-              value={judul}
+              defaultValue={judul}
               onChange={(e) => setJudul(e.currentTarget.value)}
               error={!judul && 'Judul wajib diisi'}
             />

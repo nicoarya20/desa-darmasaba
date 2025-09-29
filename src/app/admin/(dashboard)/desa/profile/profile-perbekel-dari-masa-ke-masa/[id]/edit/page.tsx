@@ -106,7 +106,7 @@ function EditPerbekelDariMasaKeMasa() {
           <TextInput
             label="Nama"
             placeholder="Masukkan nama"
-            value={formData.nama}
+            defaultValue={formData.nama}
             onChange={(e) => setFormData({ ...formData, nama: e.target.value })}
             required
           />
@@ -170,7 +170,7 @@ function EditPerbekelDariMasaKeMasa() {
           <TextInput
             label="Daerah"
             placeholder="Masukkan daerah"
-            value={formData.daerah}
+            defaultValue={formData.daerah}
             onChange={(e) => setFormData({ ...formData, daerah: e.target.value })}
             required
           />
@@ -178,7 +178,7 @@ function EditPerbekelDariMasaKeMasa() {
           <TextInput
             label="Periode"
             placeholder="Masukkan periode"
-            value={formData.periode}
+            defaultValue={formData.periode}
             onChange={(e) => setFormData({ ...formData, periode: e.target.value })}
             required
           />

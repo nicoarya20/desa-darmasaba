@@ -243,6 +243,7 @@ function Page() {
                         lineClamp={4}
                         dangerouslySetInnerHTML={{ __html: item.deskripsi }}
                         mb="md"
+                        style={{wordBreak: "break-word", whiteSpace: "normal"}}
                       />
                     </div>
                     <div>

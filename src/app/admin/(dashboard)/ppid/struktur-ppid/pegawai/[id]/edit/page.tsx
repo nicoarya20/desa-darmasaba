@@ -159,23 +159,19 @@ export default function EditPegawaiPPID() {
       >
         <Stack gap="md">
           <Box>
-            <Text fw="bold" fz="sm" mb={6}>
-              Nama Lengkap
-            </Text>
             <TextInput
+              label="Nama Lengkap"
               placeholder="Masukkan nama lengkap"
-              value={formData.namaLengkap}
+              defaultValue={formData.namaLengkap}
               onChange={(e) => setFormData({ ...formData, namaLengkap: e.target.value })}
               required
             />
           </Box>
           <Box>
-            <Text fw="bold" fz="sm" mb={6}>
-              Gelar Akademik
-            </Text>
             <TextInput
+              label="Gelar Akademik"
               placeholder="Contoh: S.Kom"
-              value={formData.gelarAkademik}
+              defaultValue={formData.gelarAkademik}
               onChange={(e) => setFormData({ ...formData, gelarAkademik: e.target.value })}
             />
           </Box>
@@ -231,44 +227,36 @@ export default function EditPegawaiPPID() {
             )}
           </Box>
           <Box>
-            <Text fw="bold" fz="sm" mb={6}>
-              Tanggal Masuk
-            </Text>
             <TextInput
+              label="Tanggal Masuk"
               type="date"
               placeholder="Contoh: 2022-01-01"
-              value={formatDateForInput(formData.tanggalMasuk)}
+              defaultValue={formatDateForInput(formData.tanggalMasuk)}
               onChange={(e) => setFormData({ ...formData, tanggalMasuk: e.target.value })}
             />
           </Box>
           <Box>
-            <Text fw="bold" fz="sm" mb={6}>
-              Email
-            </Text>
             <TextInput
+              label="Email"
               type="email"
               placeholder="contoh@email.com"
-              value={formData.email}
+              defaultValue={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
             />
           </Box>
           <Box>
-            <Text fw="bold" fz="sm" mb={6}>
-              Telepon
-            </Text>
             <TextInput
+              label="Telepon"
               placeholder="08123456789"
-              value={formData.telepon}
+              defaultValue={formData.telepon}
               onChange={(e) => setFormData({ ...formData, telepon: e.target.value })}
             />
           </Box>
           <Box>
-            <Text fw="bold" fz="sm" mb={6}>
-              Alamat
-            </Text>
             <TextInput
+              label="Alamat"
               placeholder="Jl. Contoh No. 123"
-              value={formData.alamat}
+              defaultValue={formData.alamat}
               onChange={(e) => setFormData({ ...formData, alamat: e.target.value })}
             />
           </Box>

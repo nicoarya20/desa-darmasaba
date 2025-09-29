@@ -116,7 +116,7 @@ function Page() {
                         <TextInput
                             label={<Text fw="bold">Judul</Text>}
                             placeholder="Judul sejarah"
-                            value={sejarahState.update.form.judul}
+                            defaultValue={sejarahState.update.form.judul}
                             onChange={(e) => sejarahState.update.form.judul = e.currentTarget.value}
                             error={!sejarahState.update.form.judul && "Judul wajib diisi"}
                         />

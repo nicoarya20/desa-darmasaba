@@ -104,7 +104,7 @@ function Page() {
                 <Text fw="bold" fz="xl" c={colors['blue-button']}>
                 ± {item.jumlah}
                 </Text>
-                <Text ta="center" fz="md" c={"black"} dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
+                <Text ta="center" fz="md" style={{wordBreak: "break-word", whiteSpace: "normal"}} c={"black"} dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
                 <Badge variant="gradient" gradient={{ from: '#1C6EA4', to: '#69C0FF' }} size="sm">
                   {item.name}
                 </Badge>

@@ -67,7 +67,7 @@ function CreateGrafikBerdasarkanPendidikan() {
             label="SD"
             type="number"
             placeholder="Masukkan jumlah"
-            value={stategrafik.create.form.SD}
+            defaultValue={stategrafik.create.form.SD}
             onChange={(val) => (stategrafik.create.form.SD = val.currentTarget.value)}
             required
           />
@@ -75,7 +75,7 @@ function CreateGrafikBerdasarkanPendidikan() {
             label="SMP"
             type="number"
             placeholder="Masukkan jumlah"
-            value={stategrafik.create.form.SMP}
+            defaultValue={stategrafik.create.form.SMP}
             onChange={(val) => (stategrafik.create.form.SMP = val.currentTarget.value)}
             required
           />
@@ -83,7 +83,7 @@ function CreateGrafikBerdasarkanPendidikan() {
             label="SMA"
             type="number"
             placeholder="Masukkan jumlah"
-            value={stategrafik.create.form.SMA}
+            defaultValue={stategrafik.create.form.SMA}
             onChange={(val) => (stategrafik.create.form.SMA = val.currentTarget.value)}
             required
           />
@@ -91,7 +91,7 @@ function CreateGrafikBerdasarkanPendidikan() {
             label="D3"
             type="number"
             placeholder="Masukkan jumlah"
-            value={stategrafik.create.form.D3}
+            defaultValue={stategrafik.create.form.D3}
             onChange={(val) => (stategrafik.create.form.D3 = val.currentTarget.value)}
             required
           />
@@ -99,7 +99,7 @@ function CreateGrafikBerdasarkanPendidikan() {
             label="S1"
             type="number"
             placeholder="Masukkan jumlah"
-            value={stategrafik.create.form.S1}
+            defaultValue={stategrafik.create.form.S1}
             onChange={(val) => (stategrafik.create.form.S1 = val.currentTarget.value)}
             required
           />

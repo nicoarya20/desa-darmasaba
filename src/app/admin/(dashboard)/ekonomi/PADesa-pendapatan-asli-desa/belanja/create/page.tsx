@@ -85,7 +85,7 @@ function CreateBelanja() {
           <TextInput
             label={<Text fw="bold" fz="sm">Nama Jenis Belanja</Text>}
             placeholder="Masukkan nama jenis belanja"
-            value={belanjaState.create.form.name}
+            defaultValue={belanjaState.create.form.name}
             onChange={(e) => (belanjaState.create.form.name = e.target.value)}
             required
           />
@@ -94,7 +94,7 @@ function CreateBelanja() {
             type="text"
             label={<Text fw="bold" fz="sm">Nilai</Text>}
             placeholder="Masukkan nilai belanja"
-            value={formatRupiah(belanjaState.create.form.value)}
+            defaultValue={formatRupiah(belanjaState.create.form.value)}
             onChange={(e) => {
               const raw = e.currentTarget.value;
               belanjaState.create.form.value = unformatRupiah(raw);

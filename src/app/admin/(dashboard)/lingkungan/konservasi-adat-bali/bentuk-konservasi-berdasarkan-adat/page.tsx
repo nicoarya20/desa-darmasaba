@@ -64,6 +64,7 @@ function Page() {
                 dangerouslySetInnerHTML={{
                   __html: listBentukKonservasiBerdasarkanAdat.findById.data.judul,
                 }}
+                style={{ wordBreak: "break-word", whiteSpace: "normal" }}
               />
             </Box>
             <Box>
@@ -75,6 +76,7 @@ function Page() {
                 dangerouslySetInnerHTML={{
                   __html: listBentukKonservasiBerdasarkanAdat.findById.data.deskripsi,
                 }}
+                style={{ wordBreak: "break-word", whiteSpace: "normal" }}
               />
             </Box>
           </Paper>

@@ -70,7 +70,7 @@ function Page() {
       </Container>
       <Box px={{ base: "md", md: 100 }}>
         <Stack gap={"xs"}>
-          <Text py={20} fz={{ base: "sm", md: "lg" }} ta={"justify"} dangerouslySetInnerHTML={{ __html: state.findUnique.data?.deskripsiLengkap || '' }} />
+          <Text py={20} style={{wordBreak: "break-word", whiteSpace: "normal"}} fz={{ base: "sm", md: "lg" }} ta={"justify"} dangerouslySetInnerHTML={{ __html: state.findUnique.data?.deskripsiLengkap || '' }} />
         </Stack>
       </Box>
     </Stack>

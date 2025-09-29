@@ -104,7 +104,7 @@ function EditKolaborasiInovasi() {
           <TextInput
             label="Nama Kolaborasi"
             placeholder="Masukkan nama kolaborasi"
-            value={formData.name}
+            defaultValue={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             required
           />
@@ -112,7 +112,7 @@ function EditKolaborasiInovasi() {
           <TextInput
             label="Deskripsi Singkat"
             placeholder="Masukkan deskripsi singkat"
-            value={formData.slug}
+            defaultValue={formData.slug}
             onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
             required
           />
@@ -120,7 +120,7 @@ function EditKolaborasiInovasi() {
           <TextInput
             label="Tahun"
             placeholder="Masukkan tahun"
-            value={formData.tahun}
+            defaultValue={formData.tahun}
             onChange={(e) => setFormData({ ...formData, tahun: e.target.value })}
             required
           />
@@ -128,7 +128,7 @@ function EditKolaborasiInovasi() {
           <TextInput
             label="Kolaborator"
             placeholder="Masukkan nama kolaborator"
-            value={formData.kolaborator}
+            defaultValue={formData.kolaborator}
             onChange={(e) => setFormData({ ...formData, kolaborator: e.target.value })}
             required
           />

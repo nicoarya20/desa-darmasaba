@@ -85,7 +85,7 @@ function EditKategoriKegiatan() {
       >
         <Stack gap="md">
           <TextInput
-            value={formData.nama}
+            defaultValue={formData.nama}
             onChange={(e) => setFormData({ ...formData, nama: e.target.value })}
             label={<Text fw="bold" fz="sm">Nama Kategori Kegiatan</Text>}
             placeholder="Masukkan nama kategori kegiatan"

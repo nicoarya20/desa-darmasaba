@@ -103,6 +103,7 @@ function DetailPelayananTelunjukSakti() {
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
                       whiteSpace: 'nowrap',
+                      wordBreak: "break-word",
                     }}
                   >
                     {data.link}
@@ -124,6 +125,7 @@ function DetailPelayananTelunjukSakti() {
                   dangerouslySetInnerHTML={{
                     __html: data?.deskripsi || '-',
                   }}
+                  style={{ wordBreak: "break-word", whiteSpace: "normal" }}
                 />
               </Box>
 

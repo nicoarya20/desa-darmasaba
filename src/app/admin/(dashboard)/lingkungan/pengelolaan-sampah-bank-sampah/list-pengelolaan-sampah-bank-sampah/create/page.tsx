@@ -61,7 +61,7 @@ function CreatePengelolaanSampahBankSampah() {
           <TextInput
             label="Nama Pengelolaan Sampah"
             placeholder="Masukkan nama pengelolaan sampah"
-            value={stateCreate.create.form.name || ''}
+            defaultValue={stateCreate.create.form.name || ''}
             onChange={(e) => (stateCreate.create.form.name = e.target.value)}
             required
           />

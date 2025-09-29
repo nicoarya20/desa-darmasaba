@@ -74,7 +74,7 @@ function CreateKategoriProduk() {
           <TextInput
             label="Nama Kategori Produk"
             placeholder="Masukkan nama kategori produk"
-            value={statePasar.create.form.nama || ''}
+            defaultValue={statePasar.create.form.nama || ''}
             onChange={(e) => (statePasar.create.form.nama = e.target.value)}
             required
           />

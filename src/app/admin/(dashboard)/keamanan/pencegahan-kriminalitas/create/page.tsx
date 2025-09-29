@@ -82,7 +82,7 @@ function CreatePencegahanKriminalitas() {
           <TextInput
             label="Judul Pencegahan Kriminalitas"
             placeholder="Masukkan judul Pencegahan Kriminalitas"
-            value={kriminalitasState.create.form.judul}
+            defaultValue={kriminalitasState.create.form.judul}
             onChange={(e) => {
               kriminalitasState.create.form.judul = e.currentTarget.value;
             }}
@@ -93,7 +93,7 @@ function CreatePencegahanKriminalitas() {
           <TextInput
             label="Deskripsi Singkat"
             placeholder="Masukkan deskripsi singkat"
-            value={kriminalitasState.create.form.deskripsiSingkat}
+            defaultValue={kriminalitasState.create.form.deskripsiSingkat}
             onChange={(e) => {
               kriminalitasState.create.form.deskripsiSingkat = e.currentTarget.value;
             }}
@@ -117,7 +117,7 @@ function CreatePencegahanKriminalitas() {
           <TextInput
             label="Link Video YouTube"
             placeholder="https://www.youtube.com/watch?v=abc123"
-            value={link}
+            defaultValue={link}
             onChange={(e) => setLink(e.currentTarget.value)}
             required
           />

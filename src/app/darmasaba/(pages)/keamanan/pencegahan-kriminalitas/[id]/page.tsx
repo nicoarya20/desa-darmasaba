@@ -77,7 +77,7 @@ function DetailPencegahanKriminalitas() {
               <Stack gap={4}>
                 <Text fz="sm" c="dimmed">Deskripsi Singkat</Text>
                 {data?.deskripsiSingkat ? (
-                  <Text fz="md" dangerouslySetInnerHTML={{ __html: data.deskripsiSingkat }} />
+                  <Text fz="md" style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: data.deskripsiSingkat }} />
                 ) : (
                   <Text fz="sm" c="dimmed">Belum ada deskripsi singkat</Text>
                 )}
@@ -86,7 +86,7 @@ function DetailPencegahanKriminalitas() {
               <Stack gap={4}>
                 <Text fz="sm" c="dimmed">Deskripsi Lengkap</Text>
                 {data?.deskripsi ? (
-                  <Text fz="md" dangerouslySetInnerHTML={{ __html: data.deskripsi }} />
+                  <Text fz="md" style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: data.deskripsi }} />
                 ) : (
                   <Text fz="sm" c="dimmed">Belum ada deskripsi</Text>
                 )}

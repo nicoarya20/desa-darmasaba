@@ -108,7 +108,7 @@ function EditJenisPengaduan() {
       >
         <Stack gap="md">
           <TextInput
-            value={formData.nama}
+            defaultValue={formData.nama}
             onChange={(e) => setFormData({ ...formData, nama: e.target.value })}
             label="Nama Jenis Pengaduan"
             placeholder="Masukkan nama jenis pengaduan"

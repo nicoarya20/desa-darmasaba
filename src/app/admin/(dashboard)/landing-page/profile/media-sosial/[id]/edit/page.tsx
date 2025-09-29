@@ -161,7 +161,7 @@ function EditMediaSosial() {
           <TextInput
             label="Nama Media Sosial / Kontak"
             placeholder="Masukkan nama media sosial atau kontak"
-            value={formData.name}
+            defaultValue={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             required
           />
@@ -169,7 +169,7 @@ function EditMediaSosial() {
           <TextInput
             label="Link Media Sosial / Nomor Telepon"
             placeholder="Masukkan link media sosial atau nomor telepon"
-            value={formData.iconUrl}
+            defaultValue={formData.iconUrl}
             onChange={(e) => setFormData({ ...formData, iconUrl: e.target.value })}
             required
           />

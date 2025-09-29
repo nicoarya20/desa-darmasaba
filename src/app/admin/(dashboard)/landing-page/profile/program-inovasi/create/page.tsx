@@ -144,7 +144,7 @@ function CreateProgramInovasi() {
           <TextInput
             label="Nama Program Inovasi"
             placeholder="Masukkan nama program inovasi"
-            value={stateProgramInovasi.create.form.name}
+            defaultValue={stateProgramInovasi.create.form.name}
             onChange={(e) => (stateProgramInovasi.create.form.name = e.target.value)}
             required
           />
@@ -162,7 +162,7 @@ function CreateProgramInovasi() {
           <TextInput
             label="Link Program Inovasi"
             placeholder="Masukkan link program inovasi (opsional)"
-            value={stateProgramInovasi.create.form.link || ''}
+            defaultValue={stateProgramInovasi.create.form.link || ''}
             onChange={(e) => (stateProgramInovasi.create.form.link = e.target.value)}
           />
 

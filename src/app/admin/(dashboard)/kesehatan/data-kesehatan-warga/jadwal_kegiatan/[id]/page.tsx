@@ -83,31 +83,31 @@ function DetailJadwalKegiatan() {
                 <Text fz="md" fw="bold">Waktu</Text>
                 <Text fz="md" c="dimmed">{data.informasijadwalkegiatan.waktu || '-'}</Text>
                 <Text fz="md" fw="bold">Lokasi</Text>
-                <Text fz="md" c="dimmed">{data.informasijadwalkegiatan.lokasi || '-'}</Text>
+                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }}>{data.informasijadwalkegiatan.lokasi || '-'}</Text>
               </Box>
 
               {/* Deskripsi */}
               <Box>
                 <Text fz="lg" fw="bold">Deskripsi</Text>
-                <Text fz="md" c="dimmed" dangerouslySetInnerHTML={{ __html: data.deskripsijadwalkegiatan.deskripsi }} />
+                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data.deskripsijadwalkegiatan.deskripsi }} />
               </Box>
 
               {/* Layanan */}
               <Box>
                 <Text fz="lg" fw="bold">Layanan</Text>
-                <Text fz="md" c="dimmed" dangerouslySetInnerHTML={{ __html: data.layananjadwalkegiatan.content }} />
+                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data.layananjadwalkegiatan.content }} />
               </Box>
 
               {/* Syarat Ketentuan */}
               <Box>
                 <Text fz="lg" fw="bold">Syarat Ketentuan</Text>
-                <Text fz="md" c="dimmed" dangerouslySetInnerHTML={{ __html: data.syaratketentuanjadwalkegiatan.content }} />
+                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data.syaratketentuanjadwalkegiatan.content }} />
               </Box>
 
               {/* Dokumen */}
               <Box>
                 <Text fz="lg" fw="bold">Dokumen</Text>
-                <Text fz="md" c="dimmed" dangerouslySetInnerHTML={{ __html: data.dokumenjadwalkegiatan.content }} />
+                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data.dokumenjadwalkegiatan.content }} />
               </Box>
               
               {/* Aksi */}

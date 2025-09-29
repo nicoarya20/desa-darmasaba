@@ -91,7 +91,7 @@ function EditPenghargaan() {
         <Stack gap={"xs"}>
           <Title order={3}>Edit Desa Digital Smart Village</Title>
           <TextInput
-            value={formData.name}
+            defaultValue={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             label={<Text fz={"sm"} fw={"bold"}>Judul</Text>}
             placeholder="masukkan judul"

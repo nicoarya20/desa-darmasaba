@@ -64,6 +64,7 @@ function Page() {
               fz="md"
               lh={1.6}
               dangerouslySetInnerHTML={{ __html: state.findUnique.data.deskripsi }}
+              style={{wordBreak: "break-word", whiteSpace: "normal"}}
             />
           </Box>
           <Group gap="xl">

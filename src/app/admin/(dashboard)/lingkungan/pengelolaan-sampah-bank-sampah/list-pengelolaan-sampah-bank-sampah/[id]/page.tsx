@@ -105,7 +105,7 @@ function EditProgramKreatifDesa() {
           <TextInput
             label="Nama Pengelolaan Sampah"
             placeholder="Masukkan nama pengelolaan sampah"
-            value={formData.name}
+            defaultValue={formData.name}
             onChange={(e) => {
               const value = e.target.value;
               setFormData(prev => ({

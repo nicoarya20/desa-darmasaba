@@ -97,7 +97,7 @@ function EditProgramKreatifDesa() {
           <TextInput
             label="Judul"
             placeholder="Masukkan judul"
-            value={formData.judul}
+            defaultValue={formData.judul}
             onChange={(e) => {
               const value = e.target.value;
               setFormData(prev => ({

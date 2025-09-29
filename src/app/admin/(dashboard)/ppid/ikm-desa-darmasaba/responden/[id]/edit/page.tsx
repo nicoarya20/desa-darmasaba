@@ -1,13 +1,13 @@
 'use client'
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useState } from 'react';
-import { useRouter, useParams } from 'next/navigation';
-import { useProxy } from 'valtio/utils';
-import colors from '@/con/colors';
-import { Box, Button, Group, Paper, Stack, Title, TextInput, Text, Select, Tooltip } from '@mantine/core';
-import { IconArrowBack, IconDeviceFloppy } from '@tabler/icons-react';
 import indeksKepuasanState from '@/app/admin/(dashboard)/_state/landing-page/indeks-kepuasan';
+import colors from '@/con/colors';
+import { Box, Button, Group, Paper, Select, Stack, TextInput, Title, Tooltip } from '@mantine/core';
+import { IconArrowBack, IconDeviceFloppy } from '@tabler/icons-react';
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
+import { useProxy } from 'valtio/utils';
 
 interface FormResponden {
   name: string;
@@ -100,14 +100,10 @@ function EditResponden() {
       >
         <Stack gap="md">
           <TextInput
-            label={
-              <Text fw="bold" fz="sm" mb={4}>
-                Nama Responden
-              </Text>
-            }
+            label="Nama Responden"
             type='text'
             placeholder="Masukkan nama responden"
-            value={formData.name}
+            defaultValue={formData.name}
             onChange={(val) => {
               setFormData({
                 ...formData,
@@ -118,14 +114,10 @@ function EditResponden() {
             required
           />
           <TextInput
-            label={
-              <Text fw="bold" fz="sm" mb={4}>
-                Tanggal
-              </Text>
-            }
+            label="Tanggal"
             type="date"
             placeholder='Pilih tanggal'
-            value={formData.tanggal ? new Date(formData.tanggal).toISOString().split('T')[0] : ''}
+            defaultValue={formData.tanggal ? new Date(formData.tanggal).toISOString().split('T')[0] : ''}
             onChange={(e) => {
               const selectedDate = e.currentTarget.value;
               setFormData({
@@ -138,11 +130,7 @@ function EditResponden() {
           />
           <Select
             key="jenisKelamin"
-            label={
-              <Text fw="bold" fz="sm" mb={4}>
-                Jenis Kelamin
-              </Text>
-            }
+            label="Jenis Kelamin"
             placeholder="Pilih jenis kelamin"
             value={formData.jenisKelaminId}
             onChange={(val) => setFormData({ ...formData, jenisKelaminId: val || "" })}
@@ -165,11 +153,7 @@ function EditResponden() {
             key="rating"
             value={formData.ratingId}
             onChange={(val) => setFormData({ ...formData, ratingId: val || "" })}
-            label={
-              <Text fw="bold" fz="sm" mb={4}>
-                Rating
-              </Text>
-            }
+            label="Rating"
             placeholder='Pilih rating'
             data={
               (indeksKepuasanState.pilihanRatingResponden.findMany.data || [])
@@ -191,7 +175,7 @@ function EditResponden() {
             key={"kelompokUmur"}
             value={formData.kelompokUmurId}
             onChange={(val) => setFormData({ ...formData, kelompokUmurId: val || "" })}
-            label={<Text fw={"bold"} fz={"sm"}>Kelompok Umur</Text>}
+            label="Kelompok Umur"
             placeholder='Pilih kelompok umur'
             data={
               (indeksKepuasanState.kelompokUmurResponden.findMany.data || [])

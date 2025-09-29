@@ -93,25 +93,25 @@ function CreatePotensi() {
         <Stack gap="md">
           {/* Judul */}
           <TextInput
-            value={potensiState.create.form.name}
+            defaultValue={potensiState.create.form.name}
             onChange={(val) => (potensiState.create.form.name = val.target.value)}
-            label={<Text fz="sm" fw="bold">Judul</Text>}
+            label="Judul"
             placeholder="Masukkan judul potensi"
             required
           />
 
           {/* Deskripsi */}
           <TextInput
-            value={potensiState.create.form.deskripsi}
+            defaultValue={potensiState.create.form.deskripsi}
             onChange={(val) => (potensiState.create.form.deskripsi = val.target.value)}
-            label={<Text fz="sm" fw="bold">Deskripsi</Text>}
+            label="Deskripsi"
             placeholder="Masukkan deskripsi singkat"
             required
           />
 
           {/* Kategori */}
           <Select
-            label={<Text fz="sm" fw="bold">Kategori</Text>}
+            label="Kategori"
             placeholder="Pilih kategori"
             value={potensiState.create.form.kategoriId || ""}
             onChange={(val) => {

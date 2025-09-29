@@ -113,7 +113,7 @@ function CreatePolsekTerdekat() {
           <TextInput
             label="Nama Layanan"
             placeholder="Masukkan nama layanan"
-            value={namaLayananBaru}
+            defaultValue={namaLayananBaru}
             onChange={(e) => setNamaLayananBaru(e.currentTarget.value)}
           />
           <Button onClick={handleTambahLayanan}>Simpan</Button>
@@ -148,59 +148,59 @@ function CreatePolsekTerdekat() {
       >
         <Stack gap="md">
           <TextInput
-            value={polsekState.create.form.nama}
+            defaultValue={polsekState.create.form.nama}
             onChange={(val) => (polsekState.create.form.nama = val.target.value)}
             label={<Text fw="bold" fz="sm">Nama Polsek Terdekat</Text>}
             placeholder="Masukkan nama Polsek Terdekat"
             required
           />
           <TextInput
-            value={polsekState.create.form.jarakKeDesa}
+            defaultValue={polsekState.create.form.jarakKeDesa}
             onChange={(val) => (polsekState.create.form.jarakKeDesa = val.target.value)}
             label={<Text fw="bold" fz="sm">Jarak Polsek Terdekat</Text>}
             placeholder="Masukkan jarak Polsek Terdekat"
             required
           />
           <TextInput
-            value={polsekState.create.form.alamat}
+            defaultValue={polsekState.create.form.alamat}
             onChange={(val) => (polsekState.create.form.alamat = val.target.value)}
             label={<Text fw="bold" fz="sm">Alamat Polsek Terdekat</Text>}
             placeholder="Masukkan alamat Polsek Terdekat"
             required
           />
           <TextInput
-            value={polsekState.create.form.nomorTelepon}
+            defaultValue={polsekState.create.form.nomorTelepon}
             onChange={(val) => (polsekState.create.form.nomorTelepon = val.target.value)}
             label={<Text fw="bold" fz="sm">Nomor Telepon Polsek Terdekat</Text>}
             placeholder="Masukkan nomor telepon Polsek Terdekat"
             required
           />
           <TextInput
-            value={polsekState.create.form.jamOperasional}
+            defaultValue={polsekState.create.form.jamOperasional}
             onChange={(val) => (polsekState.create.form.jamOperasional = val.target.value)}
             label={<Text fw="bold" fz="sm">Jam Operasional Polsek Terdekat</Text>}
             placeholder="Masukkan jam operasional Polsek Terdekat"
           />
           <TextInput
-            value={polsekState.create.form.embedMapUrl}
+            defaultValue={polsekState.create.form.embedMapUrl}
             onChange={(val) => (polsekState.create.form.embedMapUrl = val.target.value)}
             label={<Text fw="bold" fz="sm">Embed Map URL</Text>}
             placeholder="Masukkan embed map url"
           />
           <TextInput
-            value={polsekState.create.form.namaTempatMaps}
+            defaultValue={polsekState.create.form.namaTempatMaps}
             onChange={(val) => (polsekState.create.form.namaTempatMaps = val.target.value)}
             label={<Text fw="bold" fz="sm">Nama Tempat Maps</Text>}
             placeholder="Masukkan nama tempat maps"
           />
           <TextInput
-            value={polsekState.create.form.alamatMaps}
+            defaultValue={polsekState.create.form.alamatMaps}
             onChange={(val) => (polsekState.create.form.alamatMaps = val.target.value)}
             label={<Text fw="bold" fz="sm">Alamat Maps</Text>}
             placeholder="Masukkan alamat maps"
           />
           <TextInput
-            value={polsekState.create.form.linkPetunjukArah}
+            defaultValue={polsekState.create.form.linkPetunjukArah}
             onChange={(val) => (polsekState.create.form.linkPetunjukArah = val.target.value)}
             label={<Text fw="bold" fz="sm">Link Petunjuk Arah</Text>}
             placeholder="Masukkan link petunjuk arah"

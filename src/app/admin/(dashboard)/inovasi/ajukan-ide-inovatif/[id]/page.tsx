@@ -94,7 +94,7 @@ function DetailAjukanIdeInofativDesa() {
 
               <Box>
                 <Text fz="lg" fw="bold">Alamat</Text>
-                <Text fz="md" c="dimmed" dangerouslySetInnerHTML={{ __html: data?.alamat || '-' }} />
+                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data?.alamat || '-' }} />
               </Box>
 
               <Box>
@@ -104,12 +104,12 @@ function DetailAjukanIdeInofativDesa() {
 
               <Box>
                 <Text fz="lg" fw="bold">Deskripsi</Text>
-                <Text fz="md" c="dimmed" dangerouslySetInnerHTML={{ __html: data?.deskripsi || '-' }} />
+                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }}  dangerouslySetInnerHTML={{ __html: data?.deskripsi || '-' }} />
               </Box>
 
               <Box>
                 <Text fz="lg" fw="bold">Masalah</Text>
-                <Text fz="md" c="dimmed">{data?.masalah || '-'}</Text>
+                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }}>{data?.masalah || '-'}</Text>
               </Box>
 
               <Box>

@@ -66,7 +66,7 @@ function EditJenisLayanan() {
         <Stack gap={"xs"}>
           <Title order={3}>Edit Jenis Layanan</Title>
           <TextInput
-            value={formData.nama}
+            defaultValue={formData.nama}
             onChange={(val) => {
               setFormData({ ...formData, nama: val.target.value });
             }}

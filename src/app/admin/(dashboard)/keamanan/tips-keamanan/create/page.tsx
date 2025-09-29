@@ -138,7 +138,7 @@ function CreateKeamananLingkungan() {
           <TextInput
             label="Judul Tips Keamanan"
             placeholder="Masukkan judul tips keamanan"
-            value={stateKeamanan.create.form.judul || ''}
+            defaultValue={stateKeamanan.create.form.judul || ''}
             onChange={(e) => (stateKeamanan.create.form.judul = e.target.value)}
             required
           />

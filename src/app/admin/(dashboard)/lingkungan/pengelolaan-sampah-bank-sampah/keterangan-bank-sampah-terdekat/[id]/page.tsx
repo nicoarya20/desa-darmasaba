@@ -78,12 +78,12 @@ function DetailKeteranganBankSampahTerdekat() {
 
               <Box>
                 <Text fz="sm" c="dimmed">Alamat</Text>
-                <Text fz="lg">{keteranganState.findUnique.data?.alamat}</Text>
+                <Text fz="lg" style={{ wordBreak: "break-word", whiteSpace: "normal" }}>{keteranganState.findUnique.data?.alamat}</Text>
               </Box>
 
               <Box>
                 <Text fz="sm" c="dimmed">Nama Tempat di Maps</Text>
-                <Text fz="lg">{keteranganState.findUnique.data?.namaTempatMaps}</Text>
+                <Text fz="lg" style={{ wordBreak: "break-word", whiteSpace: "normal" }}>{keteranganState.findUnique.data?.namaTempatMaps}</Text>
               </Box>
 
               <Box>

@@ -123,7 +123,7 @@ function EditFasilitasYangDisediakan() {
             <TextInput
               label={<Text fw="bold">Judul</Text>}
               placeholder="Masukkan judul fasilitas"
-              value={judul}
+              defaultValue={judul}
               onChange={(e) => setJudul(e.currentTarget.value)}
               error={!judul && 'Judul wajib diisi'}
             />

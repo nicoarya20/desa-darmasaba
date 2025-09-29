@@ -72,7 +72,7 @@ function CreateGrafikHasilKepuasanMasyarakat() {
           <TextInput
             label="Nama"
             placeholder="Masukkan nama"
-            value={stateGrafikKepuasan.create.form.nama}
+            defaultValue={stateGrafikKepuasan.create.form.nama}
             onChange={(e) => (stateGrafikKepuasan.create.form.nama = e.target.value)}
             required
           />
@@ -80,28 +80,28 @@ function CreateGrafikHasilKepuasanMasyarakat() {
             type="date"
             label="Tanggal"
             placeholder="Masukkan tanggal"
-            value={stateGrafikKepuasan.create.form.tanggal}
+            defaultValue={stateGrafikKepuasan.create.form.tanggal}
             onChange={(e) => (stateGrafikKepuasan.create.form.tanggal = e.target.value)}
             required
           />
           <TextInput
             label="Jenis Kelamin"
             placeholder="Masukkan jenis kelamin"
-            value={stateGrafikKepuasan.create.form.jenisKelamin}
+            defaultValue={stateGrafikKepuasan.create.form.jenisKelamin}
             onChange={(e) => (stateGrafikKepuasan.create.form.jenisKelamin = e.target.value)}
             required
           />
           <TextInput
             label="Alamat"
             placeholder="Masukkan alamat"
-            value={stateGrafikKepuasan.create.form.alamat}
+            defaultValue={stateGrafikKepuasan.create.form.alamat}
             onChange={(e) => (stateGrafikKepuasan.create.form.alamat = e.target.value)}
             required
           />
           <TextInput
             label="Penyakit"
             placeholder="Masukkan penyakit"
-            value={stateGrafikKepuasan.create.form.penyakit}
+            defaultValue={stateGrafikKepuasan.create.form.penyakit}
             onChange={(e) => (stateGrafikKepuasan.create.form.penyakit = e.target.value)}
             required
           />

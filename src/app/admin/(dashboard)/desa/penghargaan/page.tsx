@@ -108,6 +108,7 @@ function ListPenghargaan({ search }: { search: string }) {
                           fz="sm"
                           c="dimmed"
                           dangerouslySetInnerHTML={{ __html: item.deskripsi }}
+                          style={{wordBreak: "break-word", whiteSpace: "normal"}}
                         />
                       </Box>
                     </TableTd>

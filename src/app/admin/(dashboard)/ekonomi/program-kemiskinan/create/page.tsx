@@ -93,7 +93,7 @@ function CreateProgramKemiskinan() {
           <TextInput
             label="Judul Program"
             placeholder="Masukkan judul program"
-            value={programState.create.form.nama}
+            defaultValue={programState.create.form.nama}
             onChange={(val) => (programState.create.form.nama = val.target.value)}
             required
           />
@@ -128,7 +128,7 @@ function CreateProgramKemiskinan() {
           <Group grow>
             <TextInput
               type="number"
-              value={programState.create.form.statistik.jumlah}
+              defaultValue={programState.create.form.statistik.jumlah}
               onChange={(val) =>
                 (programState.create.form.statistik.jumlah = val.target.value)
               }
@@ -138,7 +138,7 @@ function CreateProgramKemiskinan() {
             />
             <TextInput
               type="number"
-              value={programState.create.form.statistik.tahun}
+              defaultValue={programState.create.form.statistik.tahun}
               onChange={(val) =>
                 (programState.create.form.statistik.tahun = val.target.value)
               }

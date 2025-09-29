@@ -107,7 +107,7 @@ function EditKematian() {
          <TextInput
            label="Nama"
            placeholder="Masukkan nama"
-           value={formData.nama}
+          defaultValue={formData.nama}
            onChange={(e) => setFormData({ ...formData, nama: e.target.value })}
            required
          />
@@ -117,7 +117,7 @@ function EditKematian() {
            type="date"
            label="Tanggal"
            placeholder="Masukkan tanggal"
-           value={formData.tanggal}
+           defaultValue={formData.tanggal}
            onChange={(e) => setFormData({ ...formData, tanggal: e.target.value })}
            required
          />
@@ -126,7 +126,7 @@ function EditKematian() {
          <TextInput
            label="Jenis Kelamin"
            placeholder="Masukkan jenis kelamin"
-           value={formData.jenisKelamin}
+           defaultValue={formData.jenisKelamin}
            onChange={(e) => setFormData({ ...formData, jenisKelamin: e.target.value })}
            required
          />
@@ -135,7 +135,7 @@ function EditKematian() {
          <TextInput
            label="Alamat"
            placeholder="Masukkan alamat"
-           value={formData.alamat}
+           defaultValue={formData.alamat}
            onChange={(e) => setFormData({ ...formData, alamat: e.target.value })}
            required
          />

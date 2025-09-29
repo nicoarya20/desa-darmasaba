@@ -70,7 +70,7 @@ function Page() {
                   </Paper>
                 </Stack>
                 <Divider my="md" color={colors['blue-button']} />
-                <Text fz={{ base: "md", md: "h3" }} ta="justify" dangerouslySetInnerHTML={{ __html: sejarah.deskripsi }} />
+                <Text fz={{ base: "md", md: "h3" }} style={{wordBreak: "break-word", whiteSpace: "normal"}} ta="justify" dangerouslySetInnerHTML={{ __html: sejarah.deskripsi }} />
               </Paper>
             </Box>
           </Paper>
@@ -118,9 +118,9 @@ function Page() {
                 </Stack>
                 <Divider my="md" color={colors['blue-button']} />
                 <Text fw="bold" fz={{ base: "lg", md: "h2" }}>Visi Desa</Text>
-                <Text fz={{ base: "md", md: "h3" }} ta="justify" dangerouslySetInnerHTML={{ __html: visiMisi.visi }} />
+                <Text fz={{ base: "md", md: "h3" }} ta="justify" style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: visiMisi.visi }} />
                 <Text fw="bold" fz={{ base: "lg", md: "h2" }}>Misi Desa</Text>
-                <Text fz={{ base: "md", md: "h3" }} ta="justify" dangerouslySetInnerHTML={{ __html: visiMisi.misi }} />
+                <Text fz={{ base: "md", md: "h3" }} ta="justify" style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: visiMisi.misi }} />
               </Paper>
             </Box>
           </Paper>
@@ -167,7 +167,7 @@ function Page() {
                   </Paper>
                 </Stack>
                 <Divider my="md" color={colors['blue-button']} />
-                <Text fz={{ base: "md", md: "h3" }} ta="justify" dangerouslySetInnerHTML={{ __html: lambang.deskripsi }} />
+                <Text fz={{ base: "md", md: "h3" }} ta="justify" style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: lambang.deskripsi }} />
               </Paper>
             </Box>
           </Paper>
@@ -214,7 +214,7 @@ function Page() {
                   </Paper>
                 </Stack>
                 <Divider my="md" color={colors['blue-button']} />
-                <Text fz={{ base: "md", md: "h3" }} ta="justify" dangerouslySetInnerHTML={{ __html: maskot.deskripsi }} />
+                <Text fz={{ base: "md", md: "h3" }} ta="justify" style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: maskot.deskripsi }} />
                 <Stack mt="md" gap="sm">
                   <SimpleGrid cols={{ base: 2, md: 4 }} spacing="md">
                     {maskot.images.map((img, idx) => (

@@ -96,7 +96,7 @@ export default function EditKategoriDesaAntiKorupsi() {
           <TextInput
             label="Nama Kategori"
             placeholder="Masukkan nama kategori"
-            value={formData.name}
+            defaultValue={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             required
             disabled={isLoading}

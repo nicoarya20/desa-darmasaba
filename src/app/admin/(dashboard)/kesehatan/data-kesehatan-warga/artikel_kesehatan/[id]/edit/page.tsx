@@ -173,7 +173,7 @@ function EditArtikelKesehatan() {
           <TextInput
             label="Judul"
             placeholder="Masukkan judul artikel"
-            value={formData.title}
+            defaultValue={formData.title}
             onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
             required
           />
@@ -235,14 +235,14 @@ function EditArtikelKesehatan() {
           <TextInput
             label="Deskripsi"
             placeholder="Masukkan deskripsi artikel"
-            value={formData.content}
+            defaultValue={formData.content}
             onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
             required
           />
           <TextInput
             label="Pendahuluan"
             placeholder="Masukkan pendahuluan"
-            value={formData.introduction.content}
+            defaultValue={formData.introduction.content}
             onChange={(e) =>
               setFormData(prev => ({
                 ...prev,
@@ -258,7 +258,7 @@ function EditArtikelKesehatan() {
               <TextInput
                 label="Judul Gejala"
                 placeholder="Masukkan judul gejala"
-                value={formData.symptom.title}
+                defaultValue={formData.symptom.title}
                 onChange={(e) =>
                   setFormData(prev => ({
                     ...prev,
@@ -283,7 +283,7 @@ function EditArtikelKesehatan() {
             <Text fw="bold">Pencegahan</Text>
             <TextInput
               label="Judul"
-              value={formData.prevention.title}
+              defaultValue={formData.prevention.title}
               onChange={(e) =>
                 setFormData(prev => ({
                   ...prev,
@@ -307,7 +307,7 @@ function EditArtikelKesehatan() {
             <Text fw="bold">Pertolongan Pertama</Text>
             <TextInput
               label="Judul"
-              value={formData.firstAid.title}
+              defaultValue={formData.firstAid.title}
               onChange={(e) =>
                 setFormData(prev => ({
                   ...prev,
@@ -331,7 +331,7 @@ function EditArtikelKesehatan() {
             <Text fw="bold">Mitos vs Fakta</Text>
             <TextInput
               label="Judul"
-              value={formData.mythVsFact.title}
+              defaultValue={formData.mythVsFact.title}
               onChange={(e) =>
                 setFormData(prev => ({
                   ...prev,

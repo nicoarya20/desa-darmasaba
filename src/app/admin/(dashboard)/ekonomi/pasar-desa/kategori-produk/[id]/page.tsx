@@ -106,7 +106,7 @@ function EditKategoriProduk() {
           <TextInput
             label={<Text fw="bold" fz="sm">Nama Kategori Produk</Text>}
             placeholder="Masukkan nama kategori produk"
-            value={formData.nama}
+            defaultValue={formData.nama}
             onChange={(e) => setFormData({ ...formData, nama: e.target.value })}
             required
           />

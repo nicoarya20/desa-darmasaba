@@ -85,7 +85,7 @@ function CreatePembiayaan() {
           <TextInput
             label={<Text fw="bold" fz="sm">Nama Jenis Pembiayaan</Text>}
             placeholder="Masukkan nama jenis pembiayaan"
-            value={pembiayaanState.create.form.name}
+            defaultValue={pembiayaanState.create.form.name}
             onChange={(e) => {
               pembiayaanState.create.form.name = e.currentTarget.value;
             }}
@@ -96,7 +96,7 @@ function CreatePembiayaan() {
             type="text"
             label={<Text fw="bold" fz="sm">Nilai</Text>}
             placeholder="Masukkan nilai"
-            value={formatRupiah(pembiayaanState.create.form.value)}
+            defaultValue={formatRupiah(pembiayaanState.create.form.value)}
             onChange={(e) => {
               const raw = e.currentTarget.value;
               pembiayaanState.create.form.value = unformatRupiah(raw);

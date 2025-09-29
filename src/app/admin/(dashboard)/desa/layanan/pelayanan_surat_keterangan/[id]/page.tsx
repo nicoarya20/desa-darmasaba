@@ -95,6 +95,7 @@ function DetailSuratKeterangan() {
                   dangerouslySetInnerHTML={{
                     __html: data?.deskripsi || '-',
                   }}
+                  style={{ wordBreak: "break-word", whiteSpace: "normal" }}
                 />
               </Box>
 

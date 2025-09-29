@@ -131,17 +131,36 @@ function EditBerita() {
           <TextInput
             label="Judul"
             placeholder="Masukkan judul"
-            value={formData.judul}
+            defaultValue={formData.judul}
             onChange={(e) =>
               setFormData({ ...formData, judul: e.target.value })
             }
             required
           />
 
+          <Select
+            value={formData.kategoriBeritaId}
+            onChange={(val) =>
+              setFormData({ ...formData, kategoriBeritaId: val || "" })
+            }
+            label="Kategori"
+            placeholder="Pilih kategori"
+            data={
+              beritaState.kategoriBerita.findMany.data?.map((v) => ({
+                value: v.id,
+                label: v.name,
+              })) || []
+            }
+            clearable
+            searchable
+            required
+            error={!formData.kategoriBeritaId ? "Pilih kategori" : undefined}
+          />
+
           <TextInput
-            label="Deskripsi"
-            placeholder="Masukkan deskripsi"
-            value={formData.deskripsi}
+            label="Deskripsi Singkat"
+            placeholder="Masukkan deskripsi singkat"
+            defaultValue={formData.deskripsi}
             onChange={(e) =>
               setFormData({ ...formData, deskripsi: e.target.value })
             }
@@ -216,26 +235,6 @@ function EditBerita() {
               }}
             />
           </Box>
-
-          <Select
-            value={formData.kategoriBeritaId}
-            onChange={(val) =>
-              setFormData({ ...formData, kategoriBeritaId: val || "" })
-            }
-            label="Kategori"
-            placeholder="Pilih kategori"
-            data={
-              beritaState.kategoriBerita.findMany.data?.map((v) => ({
-                value: v.id,
-                label: v.name,
-              })) || []
-            }
-            clearable
-            searchable
-            required
-            error={!formData.kategoriBeritaId ? "Pilih kategori" : undefined}
-          />
-
           <Group justify="right">
             <Button
               onClick={handleSubmit}

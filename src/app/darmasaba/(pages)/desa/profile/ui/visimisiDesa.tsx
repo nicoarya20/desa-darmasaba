@@ -59,6 +59,7 @@ function VisiMisiDesa() {
             fw={500}
             lh={1.6}
             dangerouslySetInnerHTML={{ __html: data.visi }}
+            style={{wordBreak: "break-word", whiteSpace: "normal"}}
           />
         </Paper>
 
@@ -86,6 +87,7 @@ function VisiMisiDesa() {
             fw={500}
             lh={1.6}
             dangerouslySetInnerHTML={{ __html: data.misi }}
+            style={{wordBreak: "break-word", whiteSpace: "normal"}}
           />
         </Paper>
       </Stack>

@@ -170,7 +170,7 @@ function EditPejabatDesa() {
             <TextInput
               label={<Text fw="bold">Nama Perbekel</Text>}
               placeholder="Masukkan nama perbekel"
-              value={allState.edit.form.name}
+              defaultValue={allState.edit.form.name}
               onChange={(e) => handleFieldChange('name', e.currentTarget.value)}
               error={!allState.edit.form.name && "Nama wajib diisi"}
             />
@@ -179,7 +179,7 @@ function EditPejabatDesa() {
             <TextInput
               label={<Text fw="bold">Posisi</Text>}
               placeholder="Masukkan posisi"
-              value={allState.edit.form.position}
+              defaultValue={allState.edit.form.position}
               onChange={(e) => handleFieldChange('position', e.currentTarget.value)}
               error={!allState.edit.form.position && "Posisi wajib diisi"}
             />

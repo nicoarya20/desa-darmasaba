@@ -94,23 +94,19 @@ function CreatePegawaiPPID() {
       >
         <Stack gap="md">
           <Box>
-            <Text fw="bold" fz="sm" mb={6}>
-              Nama Lengkap
-            </Text>
             <TextInput
+              label="Nama Lengkap"
               placeholder="Masukkan nama lengkap"
-              value={stateOrganisasi.create.form.namaLengkap}
+              defaultValue={stateOrganisasi.create.form.namaLengkap}
               onChange={(e) => (stateOrganisasi.create.form.namaLengkap = e.currentTarget.value)}
               required
             />
           </Box>
           <Box>
-            <Text fw="bold" fz="sm" mb={6}>
-              Gelar Akademik
-            </Text>
             <TextInput
+              label="Gelar Akademik"
               placeholder="Contoh: S.Kom"
-              value={stateOrganisasi.create.form.gelarAkademik}
+              defaultValue={stateOrganisasi.create.form.gelarAkademik}
               onChange={(e) => (stateOrganisasi.create.form.gelarAkademik = e.currentTarget.value)}
             />
           </Box>
@@ -189,47 +185,39 @@ function CreatePegawaiPPID() {
             )}
           </Box>
           <Box>
-            <Text fw="bold" fz="sm" mb={6}>
-              Tanggal Masuk
-            </Text>
             <TextInput
+              label="Tanggal Masuk"
               type="date"
               placeholder="Contoh: 2022-01-01"
-              value={stateOrganisasi.create.form.tanggalMasuk}
+              defaultValue={stateOrganisasi.create.form.tanggalMasuk}
               onChange={(e) => (stateOrganisasi.create.form.tanggalMasuk = e.currentTarget.value)}
             />
           </Box>
 
           <Box>
-            <Text fw="bold" fz="sm" mb={6}>
-              Email
-            </Text>
             <TextInput
+              label="Email"
               type="email"
               placeholder="Contoh: email@example.com"
-              value={stateOrganisasi.create.form.email}
+              defaultValue={stateOrganisasi.create.form.email}
               onChange={(e) => (stateOrganisasi.create.form.email = e.currentTarget.value)}
             />
           </Box>
 
           <Box>
-            <Text fw="bold" fz="sm" mb={6}>
-              Nomor Telepon
-            </Text>
             <TextInput
+              label="Nomor Telepon"
               placeholder="Contoh: 08123456789"
-              value={stateOrganisasi.create.form.telepon}
+              defaultValue={stateOrganisasi.create.form.telepon}
               onChange={(e) => (stateOrganisasi.create.form.telepon = e.currentTarget.value)}
             />
           </Box>
 
           <Box>
-            <Text fw="bold" fz="sm" mb={6}>
-              Alamat
-            </Text>
             <TextInput
+              label="Alamat"
               placeholder="Contoh: Jl. Contoh No. 1"
-              value={stateOrganisasi.create.form.alamat}
+              defaultValue={stateOrganisasi.create.form.alamat}
               onChange={(e) => (stateOrganisasi.create.form.alamat = e.currentTarget.value)}
             />
           </Box>

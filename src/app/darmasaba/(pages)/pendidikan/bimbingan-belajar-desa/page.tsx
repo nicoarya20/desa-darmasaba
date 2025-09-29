@@ -59,7 +59,7 @@ function Page() {
                   </Box>
                 </Tooltip>
               </Box>
-              <Text fz="md" lh={1.6} dangerouslySetInnerHTML={{ __html: stateTujuanProgram.findById.data?.deskripsi }} />
+              <Text fz="md" style={{wordBreak: "break-word", whiteSpace: "normal"}} lh={1.6} dangerouslySetInnerHTML={{ __html: stateTujuanProgram.findById.data?.deskripsi }} />
             </Stack>
           </Paper>
           <Paper p="xl" radius="lg" shadow="md" withBorder bg={colors['white-trans-1']}>
@@ -74,7 +74,7 @@ function Page() {
                   </Box>
                 </Tooltip>
               </Box>
-              <Text fz="md" lh={1.6} dangerouslySetInnerHTML={{ __html: stateLokasiDanJadwal.findById.data?.deskripsi }} />
+              <Text fz="md" lh={1.6} style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: stateLokasiDanJadwal.findById.data?.deskripsi }} />
             </Stack>
           </Paper>
           <Paper p="xl" radius="lg" shadow="md" withBorder bg={colors['white-trans-1']}>
@@ -89,7 +89,7 @@ function Page() {
                   </Box>
                 </Tooltip>
               </Box>
-              <Text fz="md" lh={1.6} dangerouslySetInnerHTML={{ __html: stateFasilitas.findById.data?.deskripsi }} />
+              <Text fz="md" lh={1.6} style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: stateFasilitas.findById.data?.deskripsi }} />
             </Stack>
           </Paper>
         </SimpleGrid>

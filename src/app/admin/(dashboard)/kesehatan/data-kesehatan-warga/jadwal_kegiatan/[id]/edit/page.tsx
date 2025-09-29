@@ -160,7 +160,7 @@ function EditJadwalKegiatan() {
           <TextInput
             label="Nama Jadwal Kegiatan"
             placeholder="Masukkan nama jadwal kegiatan"
-            value={formData.content}
+            defaultValue={formData.content}
             onChange={(e) => setFormData((prev) => ({ ...prev, content: e.target.value }))}
           />
 
@@ -179,22 +179,31 @@ function EditJadwalKegiatan() {
           {/* Informasi Jadwal */}
           <Box>
             <Text fz="md" fw="bold">Informasi Jadwal Kegiatan</Text>
-            <TextInput label="Nama" value={formData.informasiJadwalKegiatan.name}
+            <TextInput 
+            label="Nama" 
+            defaultValue={formData.informasiJadwalKegiatan.name}
               onChange={(e) => setFormData((prev) => ({
                 ...prev, informasiJadwalKegiatan: { ...prev.informasiJadwalKegiatan, name: e.target.value }
               }))}
             />
-            <TextInput type="date" label="Tanggal" value={formData.informasiJadwalKegiatan.tanggal}
+            <TextInput 
+            type="date" 
+            label="Tanggal" 
+            defaultValue={formData.informasiJadwalKegiatan.tanggal}
               onChange={(e) => setFormData((prev) => ({
                 ...prev, informasiJadwalKegiatan: { ...prev.informasiJadwalKegiatan, tanggal: e.target.value }
               }))}
             />
-            <TextInput label="Waktu" value={formData.informasiJadwalKegiatan.waktu}
+            <TextInput 
+            label="Waktu" 
+            defaultValue={formData.informasiJadwalKegiatan.waktu}
               onChange={(e) => setFormData((prev) => ({
                 ...prev, informasiJadwalKegiatan: { ...prev.informasiJadwalKegiatan, waktu: e.target.value }
               }))}
             />
-            <TextInput label="Lokasi" value={formData.informasiJadwalKegiatan.lokasi}
+            <TextInput 
+            label="Lokasi" 
+            defaultValue={formData.informasiJadwalKegiatan.lokasi}
               onChange={(e) => setFormData((prev) => ({
                 ...prev, informasiJadwalKegiatan: { ...prev.informasiJadwalKegiatan, lokasi: e.target.value }
               }))}

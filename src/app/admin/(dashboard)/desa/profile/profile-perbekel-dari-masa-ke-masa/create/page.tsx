@@ -70,23 +70,23 @@ function CreatePerbekelDariMasaKeMasa() {
       >
         <Stack gap="md">
           <TextInput
-            label={<Text fw="bold" fz="sm">Nama Perbekel</Text>}
+            label="Nama Perbekel"
             placeholder="Masukkan nama perbekel"
-            value={state.create.form.nama}
+            defaultValue={state.create.form.nama}
             onChange={(e) => (state.create.form.nama = e.target.value)}
             required
           />
           <TextInput
-            label={<Text fw="bold" fz="sm">Daerah</Text>}
+            label="Daerah"
             placeholder="Masukkan daerah"
-            value={state.create.form.daerah}
+            defaultValue={state.create.form.daerah}
             onChange={(e) => (state.create.form.daerah = e.target.value)}
             required
           />
           <TextInput
-            label={<Text fw="bold" fz="sm">Periode</Text>}
+            label="Periode"
             placeholder="Masukkan periode"
-            value={state.create.form.periode}
+            defaultValue={state.create.form.periode}
             onChange={(e) => (state.create.form.periode = e.target.value)}
             required
           />

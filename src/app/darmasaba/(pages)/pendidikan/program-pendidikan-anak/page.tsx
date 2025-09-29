@@ -66,7 +66,7 @@ function Page() {
                 </Title>
               </Group>
               <Tooltip label="Detail tujuan program pendidikan anak" position="top-start" withArrow>
-                <Text fz="lg" lh={1.6} c="dark" dangerouslySetInnerHTML={{ __html: stateTujuan.findById.data?.deskripsi }} />
+                <Text fz="lg" lh={1.6} c="dark" style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: stateTujuan.findById.data?.deskripsi }} />
               </Tooltip>
             </Stack>
           </Paper>
@@ -87,7 +87,7 @@ function Page() {
                 </Title>
               </Group>
               <Tooltip label="Detail program unggulan yang sedang berjalan" position="top-start" withArrow>
-                <Text fz="lg" lh={1.6} c="dark" dangerouslySetInnerHTML={{ __html: stateUnggulan.findById.data?.deskripsi }} />
+                <Text fz="lg" lh={1.6} c="dark" style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: stateUnggulan.findById.data?.deskripsi }} />
               </Tooltip>
             </Stack>
           </Paper>

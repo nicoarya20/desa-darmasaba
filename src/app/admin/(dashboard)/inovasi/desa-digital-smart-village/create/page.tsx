@@ -98,7 +98,7 @@ function CreateDesaDigital() {
           <TextInput
             label="Nama Desa Digital Smart Village"
             placeholder="Masukkan nama desa digital smart village"
-            value={stateDesaDigital.create.form.name}
+            defaultValue={stateDesaDigital.create.form.name}
             onChange={(e) => (stateDesaDigital.create.form.name = e.target.value)}
             required
           />

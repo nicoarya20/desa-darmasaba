@@ -153,6 +153,7 @@ function Content({ kategoriBuku }: { kategoriBuku: string }) {
                         lh={1.5}
                         c="dimmed"
                         dangerouslySetInnerHTML={{ __html: v.deskripsi }}
+                        style={{wordBreak: "break-word", whiteSpace: "normal"}}
                       />
                     </Spoiler>
                   </Stack>

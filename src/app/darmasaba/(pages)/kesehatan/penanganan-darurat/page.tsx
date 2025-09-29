@@ -127,6 +127,7 @@ function Page() {
                         c="dimmed"
                         lineClamp={4}
                         dangerouslySetInnerHTML={{ __html: v.deskripsi }}
+                        style={{wordBreak: "break-word", whiteSpace: "normal"}}
                       />
                     </Box>
                   </Stack>

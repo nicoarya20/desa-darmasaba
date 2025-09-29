@@ -57,6 +57,7 @@ function Page() {
                 fw={600}
                 c="black"
                 dangerouslySetInnerHTML={{ __html: listFilosofi.findById.data.judul }}
+                style={{ wordBreak: "break-word", whiteSpace: "normal" }}
               />
             </Box>
             <Box px={{ base: 0, md: 20 }}>
@@ -66,6 +67,7 @@ function Page() {
                 c="dimmed"
                 lineClamp={10}
                 dangerouslySetInnerHTML={{ __html: listFilosofi.findById.data.deskripsi }}
+                style={{ wordBreak: "break-word", whiteSpace: "normal" }}
               />
             </Box>
           </Paper>

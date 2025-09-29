@@ -89,7 +89,7 @@ function EditSektorUnggulanDesa() {
           <TextInput
             label="Nama Sektor Unggulan"
             placeholder="Masukkan nama sektor unggulan"
-            value={stateGrafik.update.form.name}
+            defaultValue={stateGrafik.update.form.name}
             onChange={(val) => {
               stateGrafik.update.form.name = val.currentTarget.value;
             }}
@@ -110,7 +110,7 @@ function EditSektorUnggulanDesa() {
             label="Jumlah"
             type="number"
             placeholder="Masukkan jumlah"
-            value={stateGrafik.update.form.value}
+            defaultValue={stateGrafik.update.form.value}
             onChange={(val) => {
               stateGrafik.update.form.value = Number(val.currentTarget.value);
             }}

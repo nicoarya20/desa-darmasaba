@@ -77,7 +77,7 @@ function DetailLaporanPublik() {
             <Stack gap="sm">
               <Box>
                 <Text fz="lg" fw="bold">Judul Laporan Publik</Text>
-                <Text fz="md" c="dimmed">{data.judul || '-'}</Text>
+                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }}>{data.judul || '-'}</Text>
               </Box>
 
               <Box>
@@ -91,7 +91,7 @@ function DetailLaporanPublik() {
 
               <Box>
                 <Text fz="lg" fw="bold">Lokasi</Text>
-                <Text fz="md" c="dimmed">{data.lokasi || '-'}</Text>
+                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }}>{data.lokasi || '-'}</Text>
               </Box>
 
               <Box>
@@ -121,7 +121,7 @@ function DetailLaporanPublik() {
 
               <Box>
                 <Text fz="lg" fw="bold">Kronologi</Text>
-                <Text fz="md" c="dimmed" dangerouslySetInnerHTML={{ __html: data.kronologi || '' }} />
+                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data.kronologi || '' }} />
               </Box>
 
               <Box>
@@ -133,6 +133,7 @@ function DetailLaporanPublik() {
                         fz="md"
                         c="dimmed"
                         dangerouslySetInnerHTML={{ __html: item.deskripsi || '-' }}
+                        style={{ wordBreak: "break-word", whiteSpace: "normal" }}
                       />
                     </Box>
                   ))

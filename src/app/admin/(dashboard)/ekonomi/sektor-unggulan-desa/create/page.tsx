@@ -78,7 +78,7 @@ function CreateSektorUnggulanDesa() {
           <TextInput
             label="Nama Sektor Unggulan"
             placeholder="Masukkan nama sektor unggulan"
-            value={stateGrafik.create.form.name}
+            defaultValue={stateGrafik.create.form.name}
             onChange={(e) => {
               stateGrafik.create.form.name = e.currentTarget.value;
             }}
@@ -101,7 +101,7 @@ function CreateSektorUnggulanDesa() {
             label="Jumlah"
             type="number"
             placeholder="Masukkan jumlah"
-            value={stateGrafik.create.form.value}
+            defaultValue={stateGrafik.create.form.value}
             onChange={(e) => {
               stateGrafik.create.form.value = Number(e.currentTarget.value);
             }}

@@ -102,6 +102,7 @@ function DetailVideo() {
                     fz="md"
                     c="dimmed"
                     dangerouslySetInnerHTML={{ __html: data.deskripsi }}
+                    style={{ wordBreak: "break-word", whiteSpace: "normal" }}
                   />
                 ) : (
                   <Text fz="sm" c="dimmed">Tidak ada deskripsi</Text>

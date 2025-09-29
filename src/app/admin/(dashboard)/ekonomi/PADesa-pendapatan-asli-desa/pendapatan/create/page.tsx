@@ -7,10 +7,9 @@ import {
   Group,
   Paper,
   Stack,
-  Text,
   TextInput,
   Title,
-  Tooltip,
+  Tooltip
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
@@ -76,32 +75,24 @@ function CreatePendapatan() {
       >
         <Stack gap="md">
           <TextInput
-            value={pendapatanState.create.form.name}
+            defaultValue={pendapatanState.create.form.name}
             onChange={(val) => {
               pendapatanState.create.form.name = val.target.value;
             }}
-            label={
-              <Text fw="bold" fz="sm">
-                Nama Jenis Pendapatan
-              </Text>
-            }
+            label="Nama Jenis Pendapatan"
             placeholder="Masukkan nama jenis pendapatan"
             required
           />
 
           <TextInput
             type="text"
-            value={formatRupiah(pendapatanState.create.form.value)}
+            defaultValue={formatRupiah(pendapatanState.create.form.value)}
             onChange={(val) => {
               const raw = val.currentTarget.value;
               const cleanValue = unformatRupiah(raw);
               pendapatanState.create.form.value = cleanValue;
             }}
-            label={
-              <Text fw="bold" fz="sm">
-                Nilai
-              </Text>
-            }
+            label="Nilai"
             placeholder="Masukkan nilai"
             required
           />

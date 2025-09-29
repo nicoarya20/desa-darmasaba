@@ -99,7 +99,7 @@ function CreatePenangananDarurat() {
           <TextInput
             label={<Text fw="bold" fz="sm">Judul</Text>}
             placeholder="Masukkan judul"
-            value={penangananDaruratState.create.form.name}
+            defaultValue={penangananDaruratState.create.form.name}
             onChange={(val) => {
               penangananDaruratState.create.form.name = val.target.value;
             }}

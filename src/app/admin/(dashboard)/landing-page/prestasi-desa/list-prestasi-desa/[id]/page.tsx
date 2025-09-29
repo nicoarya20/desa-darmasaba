@@ -82,6 +82,7 @@ function DetailPrestasiDesa() {
                   fz="md"
                   c="dimmed"
                   dangerouslySetInnerHTML={{ __html: detailState.findUnique.data?.deskripsi || '-' }}
+                  style={{ wordBreak: "break-word", whiteSpace: "normal" }}
                 />
               </Box>
 

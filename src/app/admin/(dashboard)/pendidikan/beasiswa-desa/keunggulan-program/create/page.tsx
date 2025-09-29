@@ -61,7 +61,7 @@ function CreateKeunggulanProgram() {
           <TextInput
             label="Judul"
             placeholder="Masukkan judul"
-            value={stateCreate.create.form.judul || ''}
+            defaultValue={stateCreate.create.form.judul || ''}
             onChange={(e) => (stateCreate.create.form.judul = e.target.value)}
             required
           />

@@ -211,7 +211,7 @@ function EditPolsekTerdekat() {
           <TextInput
             label="Nama Layanan"
             placeholder="Masukkan nama layanan"
-            value={namaLayananBaru}
+            defaultValue={namaLayananBaru}
             onChange={(e) => setNamaLayananBaru(e.currentTarget.value)}
           />
           <Button onClick={handleTambahLayanan}>Simpan</Button>
@@ -229,7 +229,7 @@ function EditPolsekTerdekat() {
           <TextInput
             label="Nama Layanan"
             placeholder="Masukkan nama layanan"
-            value={namaLayananUpdate}
+            defaultValue={namaLayananUpdate}
             onChange={(e) => setNamaLayananUpdate(e.currentTarget.value)}
           />
           <Button
@@ -273,7 +273,7 @@ function EditPolsekTerdekat() {
         <Stack gap="md">
           {/* Input fields */}
           <TextInput
-            value={formData.nama}
+            defaultValue={formData.nama}
             onChange={(val) =>
               setFormData({ ...formData, nama: val.target.value })
             }
@@ -282,7 +282,7 @@ function EditPolsekTerdekat() {
             required
           />
           <TextInput
-            value={formData.jarakKeDesa}
+            defaultValue={formData.jarakKeDesa}
             onChange={(val) =>
               setFormData({ ...formData, jarakKeDesa: val.target.value })
             }
@@ -290,7 +290,7 @@ function EditPolsekTerdekat() {
             placeholder="Masukkan jarak Polsek Terdekat"
           />
           <TextInput
-            value={formData.alamat}
+            defaultValue={formData.alamat}
             onChange={(val) =>
               setFormData({ ...formData, alamat: val.target.value })
             }
@@ -298,7 +298,7 @@ function EditPolsekTerdekat() {
             placeholder="Masukkan alamat Polsek Terdekat"
           />
           <TextInput
-            value={formData.nomorTelepon}
+            defaultValue={formData.nomorTelepon}
             onChange={(val) =>
               setFormData({ ...formData, nomorTelepon: val.target.value })
             }
@@ -306,7 +306,7 @@ function EditPolsekTerdekat() {
             placeholder="Masukkan nomor telepon Polsek Terdekat"
           />
           <TextInput
-            value={formData.jamOperasional}
+            defaultValue={formData.jamOperasional}
             onChange={(val) =>
               setFormData({ ...formData, jamOperasional: val.target.value })
             }
@@ -314,7 +314,7 @@ function EditPolsekTerdekat() {
             placeholder="Masukkan jam operasional Polsek Terdekat"
           />
           <TextInput
-            value={formData.embedMapUrl}
+            defaultValue={formData.embedMapUrl}
             onChange={(val) =>
               setFormData({ ...formData, embedMapUrl: val.target.value })
             }
@@ -322,7 +322,7 @@ function EditPolsekTerdekat() {
             placeholder="Masukkan embed map url"
           />
           <TextInput
-            value={formData.namaTempatMaps}
+            defaultValue={formData.namaTempatMaps}
             onChange={(val) =>
               setFormData({ ...formData, namaTempatMaps: val.target.value })
             }
@@ -330,7 +330,7 @@ function EditPolsekTerdekat() {
             placeholder="Masukkan nama tempat di maps"
           />
           <TextInput
-            value={formData.alamatMaps}
+            defaultValue={formData.alamatMaps}
             onChange={(val) =>
               setFormData({ ...formData, alamatMaps: val.target.value })
             }
@@ -338,7 +338,7 @@ function EditPolsekTerdekat() {
             placeholder="Masukkan alamat di maps"
           />
           <TextInput
-            value={formData.linkPetunjukArah}
+            defaultValue={formData.linkPetunjukArah}
             onChange={(val) =>
               setFormData({ ...formData, linkPetunjukArah: val.target.value })
             }

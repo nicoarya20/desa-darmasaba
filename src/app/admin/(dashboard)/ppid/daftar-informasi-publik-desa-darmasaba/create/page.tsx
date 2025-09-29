@@ -68,7 +68,7 @@ export default function CreateDaftarInformasi() {
             </Text>
             <TextInput
               placeholder="Contoh: Profil Desa, Laporan Keuangan, dll"
-              value={daftarInformasi.create.form.jenisInformasi}
+              defaultValue={daftarInformasi.create.form.jenisInformasi}
               onChange={(e) => {
                 daftarInformasi.create.form.jenisInformasi = e.target.value;
               }}
@@ -96,7 +96,7 @@ export default function CreateDaftarInformasi() {
             </Text>
             <TextInput
               type="date"
-              value={daftarInformasi.create.form.tanggal}
+              defaultValue={daftarInformasi.create.form.tanggal}
               onChange={(e) => {
                 daftarInformasi.create.form.tanggal = e.target.value;
               }}

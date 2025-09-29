@@ -102,13 +102,13 @@ function DetailKematian() {
 
               <Box>
                 <Text fz="lg" fw="bold">Alamat</Text>
-                <Text fz="md" c="dimmed">{data?.alamat || '-'}</Text>
+                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }}>{data?.alamat || '-'}</Text>
               </Box>
 
 
               <Box>
                 <Text fz="lg" fw="bold">Penyebab</Text>
-                <Text fz="md" c="dimmed" dangerouslySetInnerHTML={{ __html: data?.penyebab || '-' }} />
+                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data?.penyebab || '-' }} />
               </Box>
 
 

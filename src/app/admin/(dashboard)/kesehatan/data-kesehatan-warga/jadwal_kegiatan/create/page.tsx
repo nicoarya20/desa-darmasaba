@@ -87,7 +87,7 @@ function CreateJadwalKegiatan() {
           <TextInput
             label="Nama Jadwal Kegiatan"
             placeholder="Masukkan nama jadwal kegiatan"
-            value={stateJadwalKegiatan.create.form.content}
+            defaultValue={stateJadwalKegiatan.create.form.content}
             onChange={(e) => {
               stateJadwalKegiatan.create.form.content = e.target.value;
             }}
@@ -110,7 +110,7 @@ function CreateJadwalKegiatan() {
               label="Nama"
               required
               placeholder="Masukkan nama"
-              value={stateJadwalKegiatan.create.form.informasiJadwalKegiatan.name}
+              defaultValue={stateJadwalKegiatan.create.form.informasiJadwalKegiatan.name}
               onChange={(e) => {
                 stateJadwalKegiatan.create.form.informasiJadwalKegiatan.name = e.target.value;
               }}
@@ -119,7 +119,7 @@ function CreateJadwalKegiatan() {
               type="date"
               required
               label="Tanggal"
-              value={stateJadwalKegiatan.create.form.informasiJadwalKegiatan.tanggal}
+              defaultValue={stateJadwalKegiatan.create.form.informasiJadwalKegiatan.tanggal}
               onChange={(e) => {
                 stateJadwalKegiatan.create.form.informasiJadwalKegiatan.tanggal = e.target.value;
               }}
@@ -128,7 +128,7 @@ function CreateJadwalKegiatan() {
               label="Waktu"
               required
               placeholder="Masukkan waktu"
-              value={stateJadwalKegiatan.create.form.informasiJadwalKegiatan.waktu}
+              defaultValue={stateJadwalKegiatan.create.form.informasiJadwalKegiatan.waktu}
               onChange={(e) => {
                 stateJadwalKegiatan.create.form.informasiJadwalKegiatan.waktu = e.target.value;
               }}
@@ -137,7 +137,7 @@ function CreateJadwalKegiatan() {
               label="Lokasi"
               required
               placeholder="Masukkan lokasi"
-              value={stateJadwalKegiatan.create.form.informasiJadwalKegiatan.lokasi}
+              defaultValue={stateJadwalKegiatan.create.form.informasiJadwalKegiatan.lokasi}
               onChange={(e) => {
                 stateJadwalKegiatan.create.form.informasiJadwalKegiatan.lokasi = e.target.value;
               }}

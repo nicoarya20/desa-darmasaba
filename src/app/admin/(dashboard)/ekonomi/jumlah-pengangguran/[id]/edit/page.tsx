@@ -139,20 +139,23 @@ function EditDetailDataPengangguran() {
           />
           <NumberInput
             label="Tahun"
-            value={formData.year}
+            defaultValue={formData.year}
             onChange={(val) => updateFormData({ year: Number(val) })}
+            required
           />
           <TextInput
             label="Pengangguran Terdidik"
             type="number"
-            value={formData.educatedUnemployment}
+            defaultValue={formData.educatedUnemployment}
             onChange={(val) => updateFormData({ educatedUnemployment: Number(val.currentTarget.value) || 0 })}
+            required
           />
           <TextInput
             label="Pengangguran Tidak Terdidik"
             type="number"
-            value={formData.uneducatedUnemployment}
+            defaultValue={formData.uneducatedUnemployment}
             onChange={(val) => updateFormData({ uneducatedUnemployment: Number(val.currentTarget.value) || 0 })}
+            required
           />
           <Text fz="sm" fw={500}>Total Otomatis: {formData.totalUnemployment}</Text>
           <Text fz="sm" fw={500}>Perubahan Otomatis: {formData.percentageChange !== null ? `${formData.percentageChange}%` : '-'}</Text>

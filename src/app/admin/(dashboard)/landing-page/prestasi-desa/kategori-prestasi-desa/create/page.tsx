@@ -54,7 +54,7 @@ function CreateKategoriPrestasi() {
           <TextInput
             label="Nama Kategori Prestasi"
             placeholder="Masukkan nama kategori prestasi"
-            value={stateKategori.create.form.name || ''}
+            defaultValue={stateKategori.create.form.name || ''}
             onChange={(val) => (stateKategori.create.form.name = val.target.value)}
             required
           />

@@ -147,6 +147,7 @@ export default function Page() {
                         c="dimmed"
                         lineClamp={3}
                         dangerouslySetInnerHTML={{ __html: v.deskripsi }}
+                        style={{wordBreak: "break-word", whiteSpace: "normal"}}
                       />
                       <Group justify="space-between" mt="md">
                         <Group gap="xs">

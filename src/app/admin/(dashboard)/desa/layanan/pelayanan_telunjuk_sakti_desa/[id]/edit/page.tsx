@@ -94,7 +94,7 @@ function EditPelayananTelunjukSakti() {
           <TextInput
             label="Nama Pelayanan"
             placeholder="Masukkan nama pelayanan"
-            value={formData.name}
+            defaultValue={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             required
           />
@@ -114,7 +114,7 @@ function EditPelayananTelunjukSakti() {
           <TextInput
             label="Link"
             placeholder="Masukkan link terkait"
-            value={formData.link}
+            defaultValue={formData.link}
             onChange={(e) => setFormData({ ...formData, link: e.target.value })}
           />
 

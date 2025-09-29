@@ -88,6 +88,7 @@ function Page() {
             mt="sm"
             lh={1.7}
             dangerouslySetInnerHTML={{ __html: data?.description || '-' }}
+            style={{ wordBreak: "break-word", whiteSpace: "normal" }}
           />
         </Stack>
       </Paper>

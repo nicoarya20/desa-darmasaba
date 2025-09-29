@@ -74,7 +74,7 @@ function CreateJenjangPendidikan() {
           <TextInput
             label="Nama Jenjang Pendidikan"
             placeholder="Masukkan nama jenjang pendidikan"
-            value={stateJenjang.create.form.nama || ''}
+            defaultValue={stateJenjang.create.form.nama || ''}
             onChange={(e) => (stateJenjang.create.form.nama = e.target.value)}
             required
           />

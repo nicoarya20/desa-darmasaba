@@ -67,7 +67,7 @@ function CreateSiswa() {
       >
         <Stack gap="md">
           <TextInput
-            value={stateCreate.create.form.nama}
+            defaultValue={stateCreate.create.form.nama}
             onChange={(val) => {
               stateCreate.create.form.nama = val.target.value;
             }}

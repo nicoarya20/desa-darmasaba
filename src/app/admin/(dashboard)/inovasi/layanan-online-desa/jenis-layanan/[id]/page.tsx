@@ -79,6 +79,7 @@ function DetailJenisLayanan() {
                   fz="md"
                   c="dimmed"
                   dangerouslySetInnerHTML={{ __html: data?.deskripsi || '-' }}
+                  style={{ wordBreak: "break-word", whiteSpace: "normal" }}
                 />
               </Box>
 

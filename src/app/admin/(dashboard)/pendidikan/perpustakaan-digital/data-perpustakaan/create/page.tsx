@@ -80,7 +80,7 @@ function CreateDataPerpustakaan() {
           <TextInput
             label={<Text fw="bold" fz="sm">Judul</Text>}
             placeholder='Masukkan judul'
-            value={createState.create.form.judul}
+            defaultValue={createState.create.form.judul}
             onChange={(val) => {
               createState.create.form.judul = val.target.value;
             }}

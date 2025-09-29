@@ -97,25 +97,25 @@ function Page() {
               
               <Box mt="lg">
                 <Text fz={{ base: "1.125rem", md: "1.5rem" }} fw="bold" mb={4}>Biodata</Text>
-                <Text fz={{ base: "1rem", md: "1.4rem" }} ta="justify" c={colors['blue-button']} dangerouslySetInnerHTML={{ __html: item.biodata }} />
+                <Text fz={{ base: "1rem", md: "1.4rem" }} ta="justify" c={colors['blue-button']} style={{wordBreak: "break-word", whiteSpace: "normal"}}  dangerouslySetInnerHTML={{ __html: item.biodata }} />
               </Box>
               
               <Box mt="xl">
                 <Text fz={{ base: "1.125rem", md: "1.5rem" }} fw="bold" mb={4}>Riwayat Karir</Text>
-                <Text fz={{ base: "1rem", md: "1.4rem" }} ta="justify" c={colors['blue-button']} dangerouslySetInnerHTML={{ __html: item.riwayat }} />
+                <Text fz={{ base: "1rem", md: "1.4rem" }} ta="justify" c={colors['blue-button']} style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: item.riwayat }} />
               </Box>
               
               <Box mt="xl">
                 <Text fz={{ base: "1.125rem", md: "1.5rem" }} fw="bold" mb={4}>Pengalaman Organisasi</Text>
                 <Box px={20}>
-                  <Text fz={{ base: "1rem", md: "1.4rem" }} ta="justify" c={colors['blue-button']} dangerouslySetInnerHTML={{ __html: item.pengalaman }} />
+                  <Text fz={{ base: "1rem", md: "1.4rem" }} ta="justify" c={colors['blue-button']} style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: item.pengalaman }} />
                 </Box>
               </Box>
               
               <Box mt="xl" mb="lg">
                 <Text fz={{ base: "1.125rem", md: "1.5rem" }} fw="bold" mb={4}>Program Kerja Unggulan</Text>
                 <Box px={20}>
-                  <Text fz={{ base: "1rem", md: "1.4rem" }} ta="justify" c={colors['blue-button']} dangerouslySetInnerHTML={{ __html: item.unggulan }} />
+                  <Text fz={{ base: "1rem", md: "1.4rem" }} ta="justify" c={colors['blue-button']} style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: item.unggulan }} />
                 </Box>
               </Box>
             </Box>

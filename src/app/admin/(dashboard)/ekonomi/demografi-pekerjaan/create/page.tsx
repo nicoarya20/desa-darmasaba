@@ -77,7 +77,7 @@ function CreateDemografiPekerjaan() {
           <TextInput
             label="Pekerjaan"
             type="text"
-            value={stateDemografi.create.form.pekerjaan}
+            defaultValue={stateDemografi.create.form.pekerjaan}
             placeholder="Masukkan pekerjaan"
             onChange={(val) => {
               stateDemografi.create.form.pekerjaan = val.currentTarget.value;
@@ -87,7 +87,7 @@ function CreateDemografiPekerjaan() {
           <TextInput
             label="Jumlah Pekerja Laki-Laki"
             type="number"
-            value={stateDemografi.create.form.lakiLaki}
+            defaultValue={stateDemografi.create.form.lakiLaki}
             placeholder="Masukkan jumlah pekerja laki-laki"
             onChange={(val) => {
               stateDemografi.create.form.lakiLaki = Number(val.currentTarget.value);
@@ -97,7 +97,7 @@ function CreateDemografiPekerjaan() {
           <TextInput
             label="Jumlah Pekerja Perempuan"
             type="number"
-            value={stateDemografi.create.form.perempuan}
+            defaultValue={stateDemografi.create.form.perempuan}
             placeholder="Masukkan jumlah pekerja perempuan"
             onChange={(val) => {
               stateDemografi.create.form.perempuan = Number(val.currentTarget.value);

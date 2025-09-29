@@ -57,7 +57,7 @@ export default function CreateKategoriDesaAntiKorupsi() {
           <TextInput
             label="Nama Kategori"
             placeholder="Masukkan nama kategori"
-            value={stateKategori.create.form.name || ''}
+            defaultValue={stateKategori.create.form.name || ''}
             onChange={(e) => (stateKategori.create.form.name = e.target.value)}
             required
           />

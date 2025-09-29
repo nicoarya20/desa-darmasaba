@@ -80,7 +80,7 @@ function DetailBerita() {
 
               <Box>
                 <Text fz="lg" fw="bold">Deskripsi</Text>
-                <Text fz="md" c="dimmed">{data.deskripsi || '-'}</Text>
+                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }}>{data.deskripsi || '-'}</Text>
               </Box>
 
               <Box>

@@ -78,15 +78,17 @@ function Page() {
                           <div 
                             style={{ 
                               maxWidth: '300px',
-                              whiteSpace: 'nowrap',
                               overflow: 'hidden',
-                              textOverflow: 'ellipsis' 
+                              textOverflow: 'ellipsis', 
+                              wordBreak: "break-word",
+                              whiteSpace: "normal" 
                             }}
                             dangerouslySetInnerHTML={{ 
                               __html: item.alasan ? 
                                 item.alasan.replace(/<[^>]*>?/gm, '').substring(0, 50) + '...' : 
                                 '-' 
                             }} 
+                            
                           />
                         </Tooltip>
                       </TableTd>

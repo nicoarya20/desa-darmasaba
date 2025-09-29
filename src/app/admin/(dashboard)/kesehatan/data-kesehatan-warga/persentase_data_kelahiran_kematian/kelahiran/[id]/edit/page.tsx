@@ -109,7 +109,7 @@ function EditKelahiran() {
      >
        <Stack gap="md">
          <TextInput
-           value={formData.nama}
+           defaultValue={formData.nama}
            onChange={(e) => setFormData({ ...formData, nama: e.target.value })}
            label="Nama"
            placeholder="Masukkan nama"
@@ -117,21 +117,21 @@ function EditKelahiran() {
          />
          <TextInput
            type="date"
-           value={formData.tanggal}
+           defaultValue={formData.tanggal}
            onChange={(e) => setFormData({ ...formData, tanggal: e.target.value })}
            label="Tanggal"
            placeholder="Masukkan tanggal"
            required
          />
          <TextInput
-           value={formData.jenisKelamin}
+           defaultValue={formData.jenisKelamin}
            onChange={(e) => setFormData({ ...formData, jenisKelamin: e.target.value })}
            label="Jenis Kelamin"
            placeholder="Masukkan jenis kelamin"
            required
          />
          <TextInput
-           value={formData.alamat}
+           defaultValue={formData.alamat}
            onChange={(e) => setFormData({ ...formData, alamat: e.target.value })}
            label="Alamat"
            placeholder="Masukkan alamat"

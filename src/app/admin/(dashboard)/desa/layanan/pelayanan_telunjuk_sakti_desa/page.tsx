@@ -261,7 +261,7 @@ function ListPelayananTelunjukSakti({ search }: { search: string }) {
                     <TableTd>
                       <Box w={200}>
                         <a href={item.link} target="_blank" rel="noopener noreferrer">
-                          <Text lineClamp={1} dangerouslySetInnerHTML={{ __html: item.deskripsi }} truncate="end" fz={"sm"} />
+                          <Text lineClamp={1} dangerouslySetInnerHTML={{ __html: item.deskripsi }} style={{wordBreak: "break-word", whiteSpace: "normal"}} truncate="end" fz={"sm"} />
                         </a>
                       </Box>
                     </TableTd>

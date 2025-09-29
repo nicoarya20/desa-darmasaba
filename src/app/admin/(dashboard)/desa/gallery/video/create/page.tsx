@@ -80,7 +80,7 @@ function CreateVideo() {
           <TextInput
             label="Judul Video"
             placeholder="Masukkan judul video"
-            value={videoState.create.form.name}
+            defaultValue={videoState.create.form.name}
             onChange={(e) => {
               videoState.create.form.name = e.currentTarget.value;
             }}
@@ -91,7 +91,7 @@ function CreateVideo() {
           <TextInput
             label="Link Video YouTube"
             placeholder="https://www.youtube.com/watch?v=abc123"
-            value={link}
+            defaultValue={link}
             onChange={(e) => setLink(e.currentTarget.value)}
             required
           />

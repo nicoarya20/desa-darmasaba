@@ -119,7 +119,7 @@ function EditPencegahanKriminalitas() {
           <TextInput
             label="Judul"
             placeholder="Masukkan judul"
-            value={formData.judul}
+            defaultValue={formData.judul}
             onChange={(e) => setFormData({ ...formData, judul: e.target.value })}
             required
           />
@@ -127,7 +127,7 @@ function EditPencegahanKriminalitas() {
           <TextInput
             label="Deskripsi Singkat"
             placeholder="Masukkan deskripsi singkat"
-            value={formData.deskripsiSingkat}
+            defaultValue={formData.deskripsiSingkat}
             onChange={(e) =>
               setFormData({ ...formData, deskripsiSingkat: e.target.value })
             }
@@ -150,7 +150,7 @@ function EditPencegahanKriminalitas() {
             <TextInput
               label="Link Video YouTube"
               placeholder="https://www.youtube.com/watch?v=abc123"
-              value={formData.linkVideo}
+              defaultValue={formData.linkVideo}
               onChange={(e) =>
                 setFormData({ ...formData, linkVideo: e.currentTarget.value })
               }

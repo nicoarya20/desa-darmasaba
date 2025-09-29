@@ -65,7 +65,7 @@ function CreateKontakItem() {
         <Stack gap="md">
           {/* Input Nama Kategori */}
           <TextInput
-            value={kontakState.create.form.nama}
+            defaultValue={kontakState.create.form.nama}
             onChange={(val) => {
               kontakState.create.form.nama = val.target.value;
             }}
@@ -77,7 +77,7 @@ function CreateKontakItem() {
           <TextInput
             label={<Text fw="bold" fz="sm">Nomor Telepon Kontak</Text>}
             placeholder="Masukkan nomor telepon"
-            value={kontakState.create.form.nomorTelepon}
+            defaultValue={kontakState.create.form.nomorTelepon}
             onChange={(val) => {
               kontakState.create.form.nomorTelepon = val.target.value;
             }}

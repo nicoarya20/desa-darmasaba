@@ -82,6 +82,7 @@ function ListPencegahanKriminalitas({ search }: { search: string }) {
                   c="dimmed"
                   lineClamp={2}
                   dangerouslySetInnerHTML={{ __html: item.deskripsiSingkat || '' }}
+                  style={{wordBreak: "break-word", whiteSpace: "normal"}}
                 />
                 <Group justify="flex-end" mt="sm">
                   <Tooltip label="Lihat detail program" withArrow>

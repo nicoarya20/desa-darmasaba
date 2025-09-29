@@ -66,7 +66,7 @@ function CreateLembaga() {
       >
         <Stack gap="md">
           <TextInput
-            value={stateLembaga.create.form.nama}
+            defaultValue={stateLembaga.create.form.nama}
             onChange={(val) => {
               stateLembaga.create.form.nama = val.target.value;
             }}

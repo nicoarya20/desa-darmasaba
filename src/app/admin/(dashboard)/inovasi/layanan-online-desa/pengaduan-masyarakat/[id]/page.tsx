@@ -102,7 +102,7 @@ function DetailPengaduanMasyarakat() {
 
               <Box>
                 <Text fz="lg" fw="bold">Deskripsi Pengaduan</Text>
-                <Text fz="md" c="dimmed" dangerouslySetInnerHTML={{ __html: data?.deskripsiPengaduan || '-' }} />
+                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data?.deskripsiPengaduan || '-' }} />
               </Box>
 
               <Box>

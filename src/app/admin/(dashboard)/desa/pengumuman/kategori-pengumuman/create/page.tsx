@@ -7,10 +7,9 @@ import {
   Group,
   Paper,
   Stack,
-  Text,
   TextInput,
   Title,
-  Tooltip,
+  Tooltip
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
@@ -62,9 +61,9 @@ function CreateKategoriPengumuman() {
       >
         <Stack gap="md">
           <TextInput
-            label={<Text fw="bold" fz="sm">Nama Kategori Pengumuman</Text>}
+            label="Nama Kategori Pengumuman"
             placeholder="Masukkan nama kategori pengumuman"
-            value={createState.create.form.name || ''}
+            defaultValue={createState.create.form.name || ''}
             onChange={(e) => (createState.create.form.name = e.target.value)}
             required
           />

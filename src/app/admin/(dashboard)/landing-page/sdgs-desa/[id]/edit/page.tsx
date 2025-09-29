@@ -175,7 +175,7 @@ function EditKolaborasiInovasi() {
           <TextInput
             label="Nama Sdgs Desa"
             placeholder="Masukkan nama Sdgs Desa"
-            value={formData.name}
+            defaultValue={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             required
           />
@@ -183,7 +183,7 @@ function EditKolaborasiInovasi() {
           <TextInput
             label="Jumlah"
             placeholder="Masukkan jumlah"
-            value={formData.jumlah}
+            defaultValue={formData.jumlah}
             onChange={(e) => setFormData({ ...formData, jumlah: e.target.value })}
             required
             type="number"

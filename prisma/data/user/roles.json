@@ -1,29 +1,23 @@
 [
     {
-      "id": "1",
+      "id": "role-1",
       "name": "ADMIN DESA",
       "description": "Administrator Desa",
       "permissions": ["manage_users", "manage_content", "view_reports"],
-      "isActive": true,
-      "createdAt": "2025-09-01T00:00:00.000Z",
-      "updatedAt": "2025-09-01T00:00:00.000Z"
+      "isActive": true
     },
     {
-      "id": "2",
+      "id": "role-2",
       "name": "ADMIN KESEHATAN",
       "description": "Administrator Bidang Kesehatan",
       "permissions": ["manage_health_data", "view_reports"],
-      "isActive": true,
-      "createdAt": "2025-09-01T00:00:00.000Z",
-      "updatedAt": "2025-09-01T00:00:00.000Z"
+      "isActive": true
     },
     {
-      "id": "3",
+      "id": "role-3",
       "name": "ADMIN SEKOLAH",
       "description": "Administrator Sekolah",
       "permissions": ["manage_school_data", "view_reports"],
-      "isActive": true,
-      "createdAt": "2025-09-01T00:00:00.000Z",
-      "updatedAt": "2025-09-01T00:00:00.000Z"
+      "isActive": true
     }
   ]

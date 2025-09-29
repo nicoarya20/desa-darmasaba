@@ -59,7 +59,7 @@ export default function EditDataPendidikan() {
           <TextInput
             label="Nama Pendidikan"
             placeholder="Contoh: SD, SMP, SMA"
-            value={stateDPM.update.form.name}
+            defaultValue={stateDPM.update.form.name}
             onChange={(e) => (stateDPM.update.form.name = e.currentTarget.value)}
             radius="md"
             required
@@ -68,7 +68,7 @@ export default function EditDataPendidikan() {
             label="Jumlah Peserta"
             type="number"
             placeholder="Masukkan jumlah peserta"
-            value={stateDPM.update.form.jumlah}
+            defaultValue={stateDPM.update.form.jumlah}
             onChange={(e) => (stateDPM.update.form.jumlah = e.currentTarget.value)}
             radius="md"
             required

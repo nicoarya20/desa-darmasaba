@@ -100,7 +100,9 @@ function Page() {
                         minHeight: '5.4rem',
                         display: 'flex',
                         alignItems: 'center',
-                        justifyContent: 'center'
+                        justifyContent: 'center',
+                        wordBreak: "break-word", 
+                        whiteSpace: "normal"
                       }}
                       lineClamp={3}
                       dangerouslySetInnerHTML={{ __html: v.deskripsi }}

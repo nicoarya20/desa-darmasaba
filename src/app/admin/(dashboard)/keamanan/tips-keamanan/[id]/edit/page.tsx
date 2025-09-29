@@ -199,7 +199,7 @@ function EditTipsKeamanan() {
           <TextInput
             label="Nama Tips Keamanan"
             placeholder="Masukkan nama tips keamanan"
-            value={formData.judul}
+            defaultValue={formData.judul}
             onChange={(e) => setFormData({ ...formData, judul: e.target.value })}
             required
           />

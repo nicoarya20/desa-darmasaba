@@ -104,7 +104,7 @@ function EditJenjangPendidikan() {
           <TextInput
             label="Nama Jenjang Pendidikan"
             placeholder="Masukkan nama jenjang pendidikan"
-            value={formData.nama}
+            defaultValue={formData.nama}
             onChange={(e) => setFormData({ ...formData, nama: e.target.value })}
             required
           />

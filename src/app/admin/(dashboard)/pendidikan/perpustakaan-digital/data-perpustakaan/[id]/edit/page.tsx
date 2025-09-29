@@ -140,7 +140,7 @@ function EditPerpustakaanDigital() {
           <TextInput
             label="Judul"
             placeholder="Masukkan judul"
-            value={formData.judul}
+            defaultValue={formData.judul}
             onChange={(e) => setFormData({ ...formData, judul: e.target.value })}
             required
           />

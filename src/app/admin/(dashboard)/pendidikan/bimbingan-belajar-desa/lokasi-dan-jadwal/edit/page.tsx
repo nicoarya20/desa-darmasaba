@@ -125,7 +125,7 @@ function EditLokasiDanJadwal() {
             <TextInput
               label={<Text fw="bold">Judul</Text>}
               placeholder="Masukkan judul lokasi/jadwal"
-              value={judul}
+              defaultValue={judul}
               onChange={(e) => setJudul(e.currentTarget.value)}
               error={!judul && 'Judul wajib diisi'}
             />

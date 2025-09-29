@@ -167,7 +167,7 @@ function CreateArtikelKesehatan() {
           <TextInput
             label={"Judul"}
             placeholder="Masukkan judul"
-            value={stateArtikelKesehatan.create.form.title}
+            defaultValue={stateArtikelKesehatan.create.form.title}
             onChange={(e) => {
               stateArtikelKesehatan.create.form.title = e.target.value;
             }}
@@ -176,7 +176,7 @@ function CreateArtikelKesehatan() {
           <TextInput
             label={"Deskripsi"}
             placeholder="Masukkan deskripsi"
-            value={stateArtikelKesehatan.create.form.content}
+            defaultValue={stateArtikelKesehatan.create.form.content}
             onChange={(e) => {
               stateArtikelKesehatan.create.form.content = e.target.value;
             }}
@@ -186,7 +186,7 @@ function CreateArtikelKesehatan() {
             label={"Pendahuluan"}
             placeholder="Masukkan pendahuluan"
             required
-            value={stateArtikelKesehatan.create.form.introduction.content}
+            defaultValue={stateArtikelKesehatan.create.form.introduction.content}
             onChange={(e) => {
               stateArtikelKesehatan.create.form.introduction.content = e.target.value;
             }}
@@ -200,7 +200,7 @@ function CreateArtikelKesehatan() {
                 label={"Judul Gejala"}
                 required
                 placeholder="Masukkan judul gejala penyakit"
-                value={stateArtikelKesehatan.create.form.symptom.title}
+                defaultValue={stateArtikelKesehatan.create.form.symptom.title}
                 onChange={(e) => {
                   stateArtikelKesehatan.create.form.symptom.title = e.target.value;
                 }}
@@ -224,7 +224,7 @@ function CreateArtikelKesehatan() {
               label={"Judul Pencegahan"}
               required
               placeholder="Masukkan judul"
-              value={stateArtikelKesehatan.create.form.prevention.title}
+              defaultValue={stateArtikelKesehatan.create.form.prevention.title}
               onChange={(e) => {
                 stateArtikelKesehatan.create.form.prevention.title = e.target.value;
               }}
@@ -245,7 +245,7 @@ function CreateArtikelKesehatan() {
               label={"Judul Pertolongan Pertama"}
               required
               placeholder="Masukkan judul"
-              value={stateArtikelKesehatan.create.form.firstAid.title}
+              defaultValue={stateArtikelKesehatan.create.form.firstAid.title}
               onChange={(e) => {
                 stateArtikelKesehatan.create.form.firstAid.title = e.target.value;
               }}
@@ -266,7 +266,7 @@ function CreateArtikelKesehatan() {
               label={"Judul Mitos dan Fakta"}
               required
               placeholder="Masukkan judul"
-              value={stateArtikelKesehatan.create.form.mythVsFact.title}
+              defaultValue={stateArtikelKesehatan.create.form.mythVsFact.title}
               onChange={(e) => {
                 stateArtikelKesehatan.create.form.mythVsFact.title = e.target.value;
               }}

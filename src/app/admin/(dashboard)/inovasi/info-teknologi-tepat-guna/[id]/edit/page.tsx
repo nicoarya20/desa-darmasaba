@@ -119,7 +119,7 @@ function EditInfoTeknologiTepatGuna() {
           <TextInput
             label="Judul"
             placeholder="Masukkan judul info teknologi tepat guna"
-            value={formData.name}
+            defaultValue={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             required
           />

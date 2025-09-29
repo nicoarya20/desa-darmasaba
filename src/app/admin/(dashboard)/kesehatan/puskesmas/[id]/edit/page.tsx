@@ -183,7 +183,7 @@ function EditPuskesmas() {
             label="Nama Puskesmas"
             placeholder="Masukkan nama puskesmas"
             name="name"
-            value={formData.name}
+            defaultValue={formData.name}
             onChange={handleInputChange}
             required
           />
@@ -192,7 +192,7 @@ function EditPuskesmas() {
             label="Alamat"
             placeholder="Masukkan alamat"
             name="alamat"
-            value={formData.alamat}
+            defaultValue={formData.alamat}
             onChange={handleInputChange}
             required
           />
@@ -200,7 +200,7 @@ function EditPuskesmas() {
           <TextInput
             label="Jam Buka"
             placeholder="Masukkan jam buka"
-            value={formData.jam.workDays}
+            defaultValue={formData.jam.workDays}
             onChange={(e) => handleNestedChange('jam', 'workDays', e.target.value)}
             required
           />
@@ -208,7 +208,7 @@ function EditPuskesmas() {
           <TextInput
             label="Jam Tutup"
             placeholder="Masukkan jam tutup"
-            value={formData.jam.weekDays}
+            defaultValue={formData.jam.weekDays}
             onChange={(e) => handleNestedChange('jam', 'weekDays', e.target.value)}
             required
           />
@@ -216,7 +216,7 @@ function EditPuskesmas() {
           <TextInput
             label="Jam Libur"
             placeholder="Masukkan jam libur"
-            value={formData.jam.holiday}
+            defaultValue={formData.jam.holiday}
             onChange={(e) => handleNestedChange('jam', 'holiday', e.target.value)}
             required
           />
@@ -224,28 +224,28 @@ function EditPuskesmas() {
           <TextInput
             label="Kontak Puskesmas"
             placeholder="Masukkan kontak puskesmas"
-            value={formData.kontak.kontakPuskesmas}
+            defaultValue={formData.kontak.kontakPuskesmas}
             onChange={(e) => handleNestedChange('kontak', 'kontakPuskesmas', e.target.value)}
           />
 
           <TextInput
             label="Email"
             placeholder="Masukkan email"
-            value={formData.kontak.email}
+            defaultValue={formData.kontak.email}
             onChange={(e) => handleNestedChange('kontak', 'email', e.target.value)}
           />
 
           <TextInput
             label="Facebook"
             placeholder="Masukkan facebook"
-            value={formData.kontak.facebook}
+            defaultValue={formData.kontak.facebook}
             onChange={(e) => handleNestedChange('kontak', 'facebook', e.target.value)}
           />
 
           <TextInput
             label="Kontak UGD"
             placeholder="Masukkan kontak UGD"
-            value={formData.kontak.kontakUGD}
+            defaultValue={formData.kontak.kontakUGD}
             onChange={(e) => handleNestedChange('kontak', 'kontakUGD', e.target.value)}
           />
 

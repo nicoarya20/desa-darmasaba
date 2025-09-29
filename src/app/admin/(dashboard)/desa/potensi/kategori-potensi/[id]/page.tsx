@@ -89,7 +89,7 @@ function EditKategoriPotensi() {
           <TextInput
             label="Nama Kategori Potensi"
             placeholder="Masukkan nama kategori potensi"
-            value={formData.nama}
+            defaultValue={formData.nama}
             onChange={(e) => setFormData({ ...formData, nama: e.target.value })}
             required
           />

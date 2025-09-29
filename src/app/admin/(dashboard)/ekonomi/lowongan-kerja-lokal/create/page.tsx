@@ -69,7 +69,7 @@ function CreateLowonganKerja() {
       >
         <Stack gap="md">
           <TextInput
-            value={lowonganState.create.form.posisi}
+            defaultValue={lowonganState.create.form.posisi}
             onChange={(val) =>
               (lowonganState.create.form.posisi = val.target.value)
             }
@@ -78,7 +78,7 @@ function CreateLowonganKerja() {
             required
           />
           <TextInput
-            value={lowonganState.create.form.namaPerusahaan}
+            defaultValue={lowonganState.create.form.namaPerusahaan}
             onChange={(val) =>
               (lowonganState.create.form.namaPerusahaan = val.target.value)
             }
@@ -87,7 +87,7 @@ function CreateLowonganKerja() {
             required
           />
           <TextInput
-            value={lowonganState.create.form.lokasi}
+            defaultValue={lowonganState.create.form.lokasi}
             onChange={(val) =>
               (lowonganState.create.form.lokasi = val.target.value)
             }
@@ -96,7 +96,7 @@ function CreateLowonganKerja() {
             required
           />
           <TextInput
-            value={lowonganState.create.form.tipePekerjaan}
+            defaultValue={lowonganState.create.form.tipePekerjaan}
             onChange={(val) =>
               (lowonganState.create.form.tipePekerjaan = val.target.value)
             }
@@ -105,7 +105,7 @@ function CreateLowonganKerja() {
             required
           />
           <TextInput
-            value={lowonganState.create.form.gaji}
+            defaultValue={lowonganState.create.form.gaji}
             onChange={(val) =>
               (lowonganState.create.form.gaji = val.target.value)
             }

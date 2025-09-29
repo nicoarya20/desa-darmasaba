@@ -173,7 +173,7 @@ function EditProgramInovasi() {
           <TextInput
             label="Nama Program Inovasi"
             placeholder="Masukkan nama program inovasi"
-            value={formData.name}
+            defaultValue={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             required
           />
@@ -192,7 +192,7 @@ function EditProgramInovasi() {
           <TextInput
             label="Link Program Inovasi"
             placeholder="Masukkan link program inovasi (opsional)"
-            value={formData.link}
+            defaultValue={formData.link}
             onChange={(e) => setFormData({ ...formData, link: e.target.value })}
           />
 

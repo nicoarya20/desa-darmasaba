@@ -76,7 +76,7 @@ function Page() {
               />
             )}
             <Box mt="md">
-              <Text dangerouslySetInnerHTML={{ __html: state.findUnique.data.deskripsi || '' }} />
+              <Text style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: state.findUnique.data.deskripsi || '' }} />
               <Text mt="md" c="dimmed" size="sm">
                 Dibuat pada: {new Date(state.findUnique.data.createdAt).toLocaleDateString('id-ID')}
               </Text>

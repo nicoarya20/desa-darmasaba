@@ -120,7 +120,7 @@ function EditKeteranganBankSampahTerdekat() {
           <TextInput
             label="Nama Bank Sampah"
             placeholder="Masukkan nama bank sampah"
-            value={formData.name}
+            defaultValue={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             required
           />
@@ -128,7 +128,7 @@ function EditKeteranganBankSampahTerdekat() {
           <TextInput
             label="Alamat"
             placeholder="Masukkan alamat lengkap"
-            value={formData.alamat}
+            defaultValue={formData.alamat}
             onChange={(e) => setFormData({ ...formData, alamat: e.target.value })}
             required
           />
@@ -136,7 +136,7 @@ function EditKeteranganBankSampahTerdekat() {
           <TextInput
             label="Nama Tempat di Maps"
             placeholder="Masukkan nama tempat yang terdaftar di Google Maps"
-            value={formData.namaTempatMaps}
+            defaultValue={formData.namaTempatMaps}
             onChange={(e) => setFormData({ ...formData, namaTempatMaps: e.target.value })}
             required
           />

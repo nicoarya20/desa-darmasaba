@@ -165,7 +165,7 @@ export default function CreateDesaAntiKorupsi() {
           <TextInput
             label="Judul Dokumen"
             placeholder="Masukkan judul dokumen"
-            value={stateKorupsi.create.form.name || ''}
+            defaultValue={stateKorupsi.create.form.name || ''}
             onChange={(e) => (stateKorupsi.create.form.name = e.target.value)}
             required
           />

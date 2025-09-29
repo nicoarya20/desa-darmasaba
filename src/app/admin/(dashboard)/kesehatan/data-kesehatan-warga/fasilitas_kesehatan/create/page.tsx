@@ -92,7 +92,7 @@ function CreateFasilitasKesehatan() {
           <TextInput
             label={"Nama Fasilitas Kesehatan"}
             placeholder="Masukkan nama fasilitas kesehatan"
-            value={stateFasilitasKesehatan.create.form.name}
+            defaultValue={stateFasilitasKesehatan.create.form.name}
             onChange={(e) => (stateFasilitasKesehatan.create.form.name = e.target.value)}
             required
           />
@@ -103,21 +103,21 @@ function CreateFasilitasKesehatan() {
             <TextInput
               label="Fasilitas"
               placeholder="Masukkan fasilitas"
-              value={stateFasilitasKesehatan.create.form.informasiUmum.fasilitas}
+              defaultValue={stateFasilitasKesehatan.create.form.informasiUmum.fasilitas}
               onChange={(e) => (stateFasilitasKesehatan.create.form.informasiUmum.fasilitas = e.target.value)}
               required
             />
             <TextInput
               label="Alamat"
               placeholder="Masukkan alamat"
-              value={stateFasilitasKesehatan.create.form.informasiUmum.alamat}
+              defaultValue={stateFasilitasKesehatan.create.form.informasiUmum.alamat}
               onChange={(e) => (stateFasilitasKesehatan.create.form.informasiUmum.alamat = e.target.value)}
               required
             />
             <TextInput
               label="Jam Operasional"
               placeholder="Masukkan jam operasional"
-              value={stateFasilitasKesehatan.create.form.informasiUmum.jamOperasional}
+              defaultValue={stateFasilitasKesehatan.create.form.informasiUmum.jamOperasional}
               onChange={(e) => (stateFasilitasKesehatan.create.form.informasiUmum.jamOperasional = e.target.value)}
               required
             />
@@ -138,21 +138,21 @@ function CreateFasilitasKesehatan() {
             <TextInput
               label="Nama Dokter"
               placeholder="Masukkan nama dokter"
-              value={stateFasilitasKesehatan.create.form.dokterdanTenagaMedis.name}
+              defaultValue={stateFasilitasKesehatan.create.form.dokterdanTenagaMedis.name}
               onChange={(e) => (stateFasilitasKesehatan.create.form.dokterdanTenagaMedis.name = e.target.value)}
               required
             />
             <TextInput
               label="Spesialis"
               placeholder="Masukkan spesialis"
-              value={stateFasilitasKesehatan.create.form.dokterdanTenagaMedis.specialist}
+              defaultValue={stateFasilitasKesehatan.create.form.dokterdanTenagaMedis.specialist}
               onChange={(e) => (stateFasilitasKesehatan.create.form.dokterdanTenagaMedis.specialist = e.target.value)}
               required
             />
             <TextInput
               label="Jadwal"
               placeholder="Masukkan jadwal"
-              value={stateFasilitasKesehatan.create.form.dokterdanTenagaMedis.jadwal}
+              defaultValue={stateFasilitasKesehatan.create.form.dokterdanTenagaMedis.jadwal}
               onChange={(e) => (stateFasilitasKesehatan.create.form.dokterdanTenagaMedis.jadwal = e.target.value)}
               required
             />
@@ -182,14 +182,14 @@ function CreateFasilitasKesehatan() {
             <TextInput
               label="Tarif"
               placeholder="Masukkan tarif"
-              value={stateFasilitasKesehatan.create.form.tarifDanLayanan.tarif}
+              defaultValue={stateFasilitasKesehatan.create.form.tarifDanLayanan.tarif}
               onChange={(e) => (stateFasilitasKesehatan.create.form.tarifDanLayanan.tarif = e.target.value)}
               required
             />
             <TextInput
               label="Layanan"
               placeholder="Masukkan layanan"
-              value={stateFasilitasKesehatan.create.form.tarifDanLayanan.layanan}
+              defaultValue={stateFasilitasKesehatan.create.form.tarifDanLayanan.layanan}
               onChange={(e) => (stateFasilitasKesehatan.create.form.tarifDanLayanan.layanan = e.target.value)}
               required
             />

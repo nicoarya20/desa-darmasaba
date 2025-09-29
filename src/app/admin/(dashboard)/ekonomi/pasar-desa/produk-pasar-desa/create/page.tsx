@@ -144,7 +144,7 @@ export default function CreatePasarDesa() {
           <TextInput
             label="Nama Produk"
             placeholder="Masukkan nama produk"
-            value={statePasar.pasarDesa.create.form.nama}
+            defaultValue={statePasar.pasarDesa.create.form.nama}
             onChange={(e) => (statePasar.pasarDesa.create.form.nama = e.target.value)}
             required
           />
@@ -154,7 +154,7 @@ export default function CreatePasarDesa() {
             type="number"
             label="Harga Produk"
             placeholder="Masukkan harga produk"
-            value={statePasar.pasarDesa.create.form.harga}
+            defaultValue={statePasar.pasarDesa.create.form.harga}
             onChange={(e) => (statePasar.pasarDesa.create.form.harga = Number(e.target.value))}
             required
           />
@@ -167,7 +167,7 @@ export default function CreatePasarDesa() {
             step={0.1}
             label="Rating Produk (0–5)"
             placeholder="Masukkan rating produk"
-            value={statePasar.pasarDesa.create.form.rating}
+            defaultValue={statePasar.pasarDesa.create.form.rating}
             onChange={(e) => {
               const value = Number(e.target.value);
               if (value >= 0 && value <= 5) {
@@ -180,7 +180,7 @@ export default function CreatePasarDesa() {
           <TextInput
             label="Alamat Usaha"
             placeholder="Masukkan alamat usaha"
-            value={statePasar.pasarDesa.create.form.alamatUsaha}
+            defaultValue={statePasar.pasarDesa.create.form.alamatUsaha}
             onChange={(e) => (statePasar.pasarDesa.create.form.alamatUsaha = e.target.value)}
           />
 

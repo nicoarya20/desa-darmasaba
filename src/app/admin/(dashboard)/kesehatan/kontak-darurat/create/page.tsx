@@ -96,7 +96,7 @@ function CreateKontakDarurat() {
       >
         <Stack gap="md">
           <TextInput
-            value={kontakDaruratState.create.form.name}
+            defaultValue={kontakDaruratState.create.form.name}
             onChange={(val) => {
               kontakDaruratState.create.form.name = val.target.value;
             }}

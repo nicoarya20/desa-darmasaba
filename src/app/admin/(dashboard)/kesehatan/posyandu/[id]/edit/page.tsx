@@ -192,7 +192,7 @@ function EditPosyandu() {
          <TextInput
            label="Nama Posyandu"
            placeholder="Masukkan nama posyandu"
-           value={formData.name}
+           defaultValue={formData.name}
            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
            required
          />
@@ -201,7 +201,7 @@ function EditPosyandu() {
          <TextInput
            label="Nomor Posyandu"
            placeholder="Masukkan nomor posyandu"
-           value={formData.nomor}
+           defaultValue={formData.nomor}
            onChange={(e) => setFormData({ ...formData, nomor: e.target.value })}
            required
          />

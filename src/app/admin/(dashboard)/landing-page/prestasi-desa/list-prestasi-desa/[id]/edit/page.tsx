@@ -134,7 +134,7 @@ function EditPrestasiDesa() {
           <TextInput
             label="Judul Prestasi"
             placeholder="Masukkan judul prestasi"
-            value={formData.name}
+            defaultValue={formData.name}
             onChange={(val) => {
               setFormData({
                 ...formData,

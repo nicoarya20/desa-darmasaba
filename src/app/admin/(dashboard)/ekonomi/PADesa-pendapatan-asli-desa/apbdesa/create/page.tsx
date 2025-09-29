@@ -65,7 +65,7 @@ function CreateAPBDesa() {
         <Stack gap="md">
           <TextInput
             type="number"
-            value={apbDesaState.create.form.tahun}
+            defaultValue={apbDesaState.create.form.tahun}
             onChange={(val) => {
               apbDesaState.create.form.tahun = Number(val.target.value);
             }}

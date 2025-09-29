@@ -63,7 +63,7 @@ function CreateLaporanPublik() {
       >
         <Stack gap="md">
           <TextInput
-            value={stateLaporan.create.form.judul}
+            defaultValue={stateLaporan.create.form.judul}
             onChange={(e) => (stateLaporan.create.form.judul = e.target.value)}
             label={<Text fw="bold" fz="sm">Judul Laporan Publik</Text>}
             placeholder="Masukkan judul laporan publik"
@@ -71,7 +71,7 @@ function CreateLaporanPublik() {
           />
 
           <TextInput
-            value={stateLaporan.create.form.lokasi}
+            defaultValue={stateLaporan.create.form.lokasi}
             onChange={(e) => (stateLaporan.create.form.lokasi = e.target.value)}
             label={<Text fw="bold" fz="sm">Lokasi Laporan Publik</Text>}
             placeholder="Masukkan lokasi laporan publik"
@@ -91,7 +91,7 @@ function CreateLaporanPublik() {
           />
 
           <TextInput
-            value={stateLaporan.create.form.kronologi}
+            defaultValue={stateLaporan.create.form.kronologi}
             onChange={(e) => (stateLaporan.create.form.kronologi = e.target.value)}
             label={<Text fw="bold" fz="sm">Kronologi Laporan Publik</Text>}
             placeholder="Masukkan kronologi laporan publik"

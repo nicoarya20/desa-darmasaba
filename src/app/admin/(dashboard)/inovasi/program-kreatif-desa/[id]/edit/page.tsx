@@ -114,7 +114,7 @@ function EditProgramKreatifDesa() {
           <TextInput
             label="Nama Program Kreatif Desa"
             placeholder="Masukkan nama program kreatif desa"
-            value={formData.name}
+            defaultValue={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             required
           />
@@ -122,7 +122,7 @@ function EditProgramKreatifDesa() {
           <TextInput
             label="Deskripsi Singkat Program Kreatif Desa"
             placeholder="Masukkan deskripsi singkat program kreatif desa"
-            value={formData.slug}
+            defaultValue={formData.slug}
             onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
             required
           />

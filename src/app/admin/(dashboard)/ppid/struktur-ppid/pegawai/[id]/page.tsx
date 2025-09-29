@@ -64,7 +64,7 @@ function DetailPegawai() {
             <Stack gap="md">
               <Box>
                 <Text fz="lg" fw="bold">Nama Lengkap</Text>
-                <Text fz="md" c="dimmed">
+                <Text fz="md" c="dimmed" style={{wordBreak: "break-word", whiteSpace: "normal"}}>
                   {data.namaLengkap || '-'} {data.gelarAkademik || ''}
                 </Text>
               </Box>
@@ -86,7 +86,7 @@ function DetailPegawai() {
 
               <Box>
                 <Text fz="lg" fw="bold">Alamat</Text>
-                <Text fz="md" c="dimmed">{data.alamat || '-'}</Text>
+                <Text fz="md" c="dimmed" style={{wordBreak: "break-word", whiteSpace: "normal"}}>{data.alamat || '-'}</Text>
               </Box>
 
               <Box>

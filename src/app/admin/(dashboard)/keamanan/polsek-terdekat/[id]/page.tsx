@@ -82,7 +82,7 @@ function DetailPolsekTerdekat() {
               {/* Alamat */}
               <Box>
                 <Text fz="lg" fw="bold">Alamat Polsek</Text>
-                <Text fz="md" c="dimmed">{data?.alamat || "-"}</Text>
+                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }}>{data?.alamat || "-"}</Text>
               </Box>
 
               {/* Nomor */}
@@ -125,19 +125,19 @@ function DetailPolsekTerdekat() {
               {/* Nama Tempat Maps */}
               <Box>
                 <Text fz="lg" fw="bold">Nama Tempat Maps</Text>
-                <Text fz="md" c="dimmed">{data?.namaTempatMaps || "-"}</Text>
+                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }}>{data?.namaTempatMaps || "-"}</Text>
               </Box>
 
               {/* Alamat Maps */}
               <Box>
                 <Text fz="lg" fw="bold">Alamat Maps</Text>
-                <Text fz="md" c="dimmed">{data?.alamatMaps || "-"}</Text>
+                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }}>{data?.alamatMaps || "-"}</Text>
               </Box>
 
               {/* Link Petunjuk Arah */}
               <Box>
-                <Text fz="lg" fw="bold">Link Petunjuk Arah</Text>
-                <Text fz="md">
+                <Text fz="lg" fw="bold" >Link Petunjuk Arah</Text>
+                <Text fz="md" style={{ wordBreak: "break-word", whiteSpace: "normal" }}>
                   <a
                     href={data?.linkPetunjukArah || "#"}
                     target="_blank"

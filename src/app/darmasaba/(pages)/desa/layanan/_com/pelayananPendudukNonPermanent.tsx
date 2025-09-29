@@ -52,6 +52,7 @@ function PelayananPendudukNonPermanent() {
                 ta="justify"
                 c="dimmed"
                 dangerouslySetInnerHTML={{ __html: data?.deskripsi }}
+                style={{wordBreak: "break-word", whiteSpace: "normal"}}
               />
             ) : (
               <Text fz="sm" c="gray">Deskripsi belum tersedia.</Text>

@@ -107,7 +107,7 @@ function EditLowonganKerja() {
           <TextInput
             label="Posisi"
             placeholder="Masukkan posisi"
-            value={formData.posisi}
+            defaultValue={formData.posisi}
             onChange={(e) => setFormData({ ...formData, posisi: e.target.value })}
             required
           />
@@ -115,7 +115,7 @@ function EditLowonganKerja() {
           <TextInput
             label="Nama Perusahaan"
             placeholder="Masukkan nama perusahaan"
-            value={formData.namaPerusahaan}
+            defaultValue={formData.namaPerusahaan}
             onChange={(e) => setFormData({ ...formData, namaPerusahaan: e.target.value })}
             required
           />
@@ -123,7 +123,7 @@ function EditLowonganKerja() {
           <TextInput
             label="Lokasi"
             placeholder="Masukkan lokasi"
-            value={formData.lokasi}
+            defaultValue={formData.lokasi}
             onChange={(e) => setFormData({ ...formData, lokasi: e.target.value })}
             required
           />
@@ -131,7 +131,7 @@ function EditLowonganKerja() {
           <TextInput
             label="Tipe Pekerjaan"
             placeholder="Masukkan tipe pekerjaan"
-            value={formData.tipePekerjaan}
+            defaultValue={formData.tipePekerjaan}
             onChange={(e) => setFormData({ ...formData, tipePekerjaan: e.target.value })}
             required
           />
@@ -139,7 +139,7 @@ function EditLowonganKerja() {
           <TextInput
             label="Gaji (per bulan)"
             placeholder="Masukkan gaji"
-            value={formData.gaji}
+            defaultValue={formData.gaji}
             onChange={(e) => setFormData({ ...formData, gaji: e.target.value })}
             required
           />

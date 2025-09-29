@@ -64,7 +64,7 @@ function CreateProgramKreatifDesa() {
           <TextInput
             label={<Text fw="bold" fz="sm">Nama Program Kreatif Desa</Text>}
             placeholder="Masukkan nama program kreatif desa"
-            value={stateCreate.create.form.name || ""}
+            defaultValue={stateCreate.create.form.name || ""}
             onChange={(e) => (stateCreate.create.form.name = e.currentTarget.value)}
             required
           />
@@ -81,7 +81,7 @@ function CreateProgramKreatifDesa() {
           <TextInput
             label={<Text fw="bold" fz="sm">Deskripsi Singkat Program Kreatif Desa</Text>}
             placeholder="Masukkan deskripsi singkat program kreatif desa"
-            value={stateCreate.create.form.slug || ""}
+            defaultValue={stateCreate.create.form.slug || ""}
             onChange={(e) => (stateCreate.create.form.slug = e.currentTarget.value)}
             required
           />

@@ -104,6 +104,7 @@ function ProfilPerbekel() {
                     ta="justify" 
                     lh={1.6}
                     dangerouslySetInnerHTML={{ __html: data.biodata }} 
+                    style={{wordBreak: "break-word", whiteSpace: "normal"}}
                   />
                 </Stack>
               </Tooltip>
@@ -121,6 +122,7 @@ function ProfilPerbekel() {
                     ta="justify" 
                     lh={1.6}
                     dangerouslySetInnerHTML={{ __html: data.pengalaman }} 
+                    style={{wordBreak: "break-word", whiteSpace: "normal"}}
                   />
                 </Stack>
               </Tooltip>
@@ -148,6 +150,7 @@ function ProfilPerbekel() {
               ta="justify" 
               lh={1.6}
               dangerouslySetInnerHTML={{ __html: data.pengalamanOrganisasi }} 
+              style={{wordBreak: "break-word", whiteSpace: "normal"}}
             />
           </Box>
 
@@ -162,6 +165,7 @@ function ProfilPerbekel() {
                 ta="justify" 
                 lh={1.6}
                 dangerouslySetInnerHTML={{ __html: data.programUnggulan }} 
+                style={{wordBreak: "break-word", whiteSpace: "normal"}}
               />
             </Box>
           </Box>

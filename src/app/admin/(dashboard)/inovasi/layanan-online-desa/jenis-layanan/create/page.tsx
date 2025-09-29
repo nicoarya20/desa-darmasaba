@@ -69,7 +69,7 @@ function CreateJenisLayanan() {
       >
         <Stack gap="md">
           <TextInput
-            value={statePasar.create.form.nama}
+            defaultValue={statePasar.create.form.nama}
             onChange={(val) => {
               statePasar.create.form.nama = val.target.value;
             }}
@@ -78,7 +78,7 @@ function CreateJenisLayanan() {
             required
           />
           <TextInput
-            value={statePasar.create.form.deskripsi}
+            defaultValue={statePasar.create.form.deskripsi}
             onChange={(val) => {
               statePasar.create.form.deskripsi = val.target.value;
             }}

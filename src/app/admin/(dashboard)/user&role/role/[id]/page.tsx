@@ -84,7 +84,7 @@ function EditRole() {
         <Stack gap={"xs"}>
           <Title order={4}>Edit Role</Title>
           <TextInput
-            value={formData.name}
+            defaultValue={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             label={<Text fw={"bold"} fz={"sm"}>Nama Role</Text>}
             placeholder='Masukkan nama role'

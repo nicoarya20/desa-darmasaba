@@ -61,7 +61,7 @@ export default function CreateJumlahPendudukMiskin() {
           <TextInput
             label="Tahun"
             type="number"
-            value={stateJPM.create.form.year || ''}
+            defaultValue={stateJPM.create.form.year || ''}
             placeholder="Masukkan tahun"
             onChange={(e) => {
               const value = e.currentTarget.value;
@@ -73,7 +73,7 @@ export default function CreateJumlahPendudukMiskin() {
           <TextInput
             label="Jumlah Penduduk Miskin"
             type="number"
-            value={stateJPM.create.form.totalPoorPopulation}
+            defaultValue={stateJPM.create.form.totalPoorPopulation}
             placeholder="Masukkan jumlah penduduk miskin"
             onChange={(e) => {
               stateJPM.create.form.totalPoorPopulation = Number(e.currentTarget.value);

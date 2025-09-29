@@ -119,6 +119,7 @@ function ListSuratKeterangan({ search }: { search: string }) {
                       <Box w={200}>
                         <Text truncate="end" lineClamp={1} fz="sm" c="dimmed"
                           dangerouslySetInnerHTML={{ __html: item.deskripsi }}
+                          style={{wordBreak: "break-word", whiteSpace: "normal"}}
                         />
                       </Box>
                     </TableTd>

@@ -100,7 +100,7 @@ export default function CreateBerita() {
           <TextInput
             label="Judul"
             placeholder="Masukkan judul berita"
-            value={beritaState.berita.create.form.judul}
+            defaultValue={beritaState.berita.create.form.judul}
             onChange={(e) => (beritaState.berita.create.form.judul = e.target.value)}
             required
           />
@@ -112,7 +112,7 @@ export default function CreateBerita() {
               label: item.name,
               value: item.id,
             }))}
-            value={beritaState.berita.create.form.kategoriBeritaId || null}
+            defaultValue={beritaState.berita.create.form.kategoriBeritaId || null}
             onChange={(val: string | null) => {
               if (val) {
                 const selected = beritaState.kategoriBerita.findMany.data?.find(
@@ -133,8 +133,9 @@ export default function CreateBerita() {
 
           <TextInput
             label="Deskripsi Singkat"
+            required
             placeholder="Masukkan deskripsi berita"
-            value={beritaState.berita.create.form.deskripsi}
+            defaultValue={beritaState.berita.create.form.deskripsi}
             onChange={(e) => (beritaState.berita.create.form.deskripsi = e.target.value)}
           />
 

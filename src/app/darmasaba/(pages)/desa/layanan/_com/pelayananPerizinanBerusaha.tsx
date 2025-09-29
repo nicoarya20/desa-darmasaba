@@ -57,7 +57,7 @@ function PelayananPerizinanBerusaha() {
               </Text>
             </Box>
 
-            <Text fz={{ base: 'sm', md: 'md' }} ta="justify" dangerouslySetInnerHTML={{ __html: data?.deskripsi || '' }} />
+            <Text fz={{ base: 'sm', md: 'md' }} ta="justify" style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: data?.deskripsi || '' }} />
 
             <Box>
               <Text fw={600} mb="sm" fz={{ base: 'sm', md: 'lg' }}>Alur pendaftaran NIB:</Text>

@@ -72,7 +72,7 @@ function DetailDataPerpustakaan() {
 
               <Box>
                 <Text fz="lg" fw="bold">Deskripsi</Text>
-                <Text fz="md" dangerouslySetInnerHTML={{ __html: data.deskripsi || '-' }} />
+                <Text fz="md" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data.deskripsi || '-' }} />
               </Box>
 
               <Box>

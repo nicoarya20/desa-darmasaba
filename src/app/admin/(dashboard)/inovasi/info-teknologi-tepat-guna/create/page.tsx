@@ -94,7 +94,7 @@ function CreateInfoTeknologiTepatGuna() {
         <Stack gap="md">
           {/* Nama */}
           <TextInput
-            value={stateInfoTekno.create.form.name}
+            defaultValue={stateInfoTekno.create.form.name}
             onChange={(val) => {
               stateInfoTekno.create.form.name = val.target.value;
             }}

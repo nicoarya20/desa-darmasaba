@@ -135,7 +135,7 @@ function EditProgramPenghijauan() {
       >
         <Stack gap="md">
           <TextInput
-            value={formData.name}
+            defaultValue={formData.name}
             label="Nama Program Penghijauan"
             placeholder="Masukkan nama program penghijauan"
             onChange={(val) =>
@@ -148,7 +148,7 @@ function EditProgramPenghijauan() {
           />
 
           <TextInput
-            value={formData.judul}
+            defaultValue={formData.judul}
             label="Judul Deskripsi Program Penghijauan"
             placeholder="Masukkan judul deskripsi program penghijauan"
             onChange={(val) =>

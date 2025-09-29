@@ -77,7 +77,7 @@ export default function DetailPotensi() {
 
               <Box>
                 <Text fz="lg" fw="bold">Deskripsi</Text>
-                <Text fz="md" c="dimmed">{data.deskripsi || '-'}</Text>
+                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }}>{data.deskripsi || '-'}</Text>
               </Box>
 
               <Box>
@@ -103,6 +103,7 @@ export default function DetailPotensi() {
                   fz="md"
                   c="dimmed"
                   dangerouslySetInnerHTML={{ __html: data.content || '-' }}
+                  style={{ wordBreak: "break-word", whiteSpace: "normal" }}
                 />
               </Box>
 

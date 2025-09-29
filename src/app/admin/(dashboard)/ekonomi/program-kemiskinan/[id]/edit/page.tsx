@@ -92,7 +92,7 @@ function EditProgramKemiskinan() {
       >
         <Stack gap="md">
           <TextInput
-            value={stateProgram.update.form.nama}
+            defaultValue={stateProgram.update.form.nama}
             onChange={(e) => {
               stateProgram.update.form.nama = e.target.value;
             }}
@@ -131,7 +131,7 @@ function EditProgramKemiskinan() {
             </Text>
             <TextInput
               type="number"
-              value={stateProgram.update.form.statistik.jumlah}
+              defaultValue={stateProgram.update.form.statistik.jumlah}
               onChange={(e) => {
                 stateProgram.update.form.statistik.jumlah = e.target.value;
               }}
@@ -142,7 +142,7 @@ function EditProgramKemiskinan() {
 
             <TextInput
               type="number"
-              value={stateProgram.update.form.statistik.tahun}
+              defaultValue={stateProgram.update.form.statistik.tahun}
               onChange={(e) => {
                 stateProgram.update.form.statistik.tahun = e.target.value;
               }}

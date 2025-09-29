@@ -64,7 +64,7 @@ function LambangDesa() {
               lh={1.8}
               c="dark"
               ta="justify"
-              style={{ fontWeight: 400 }}
+              style={{ fontWeight: 400, wordBreak: "break-word", whiteSpace: "normal", }}
               dangerouslySetInnerHTML={{ __html: data.deskripsi }}
             />
           </Tooltip>

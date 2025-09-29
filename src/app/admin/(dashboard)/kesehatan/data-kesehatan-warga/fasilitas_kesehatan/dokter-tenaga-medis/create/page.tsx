@@ -40,7 +40,7 @@ function CreateDokter() {
           <TextInput
             label={<Text fz="sm" fw="bold">Nama Dokter</Text>}
             placeholder="masukkan nama dokter"
-            value={createState.create.create.form.name}
+            defaultValue={createState.create.create.form.name}
             onChange={(e) => {
               createState.create.create.form.name = e.target.value;
             }}
@@ -49,7 +49,7 @@ function CreateDokter() {
           <TextInput
             label={<Text fz="sm" fw="bold">Specialist</Text>}
             placeholder="masukkan specialist"
-            value={createState.create.create.form.specialist}
+            defaultValue={createState.create.create.form.specialist}
             onChange={(e) => {
               createState.create.create.form.specialist = e.target.value;
             }}

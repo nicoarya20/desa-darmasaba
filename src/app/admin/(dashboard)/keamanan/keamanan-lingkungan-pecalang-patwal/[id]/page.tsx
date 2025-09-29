@@ -88,7 +88,7 @@ function DetailKeamananLingkungan() {
 
               <Box>
                 <Text fz="lg" fw="bold">Deskripsi</Text>
-                <Text fz="md" c="dimmed" dangerouslySetInnerHTML={{ __html: data?.deskripsi }} />
+                <Text fz="md" c="dimmed" dangerouslySetInnerHTML={{ __html: data?.deskripsi }} style={{ wordBreak: "break-word", whiteSpace: "normal" }} />
               </Box>
 
               {/* Aksi */}

@@ -114,7 +114,7 @@ function EditPosisiOrganisasi() {
       >
         <Stack gap="md">
           <TextInput
-            value={formData.nama}
+            defaultValue={formData.nama}
             onChange={(e) =>
               setFormData({ ...formData, nama: e.target.value })
             }
@@ -137,7 +137,7 @@ function EditPosisiOrganisasi() {
 
           <TextInput
             type="number"
-            value={formData.hierarki}
+            defaultValue={formData.hierarki}
             onChange={(e) =>
               setFormData({
                 ...formData,

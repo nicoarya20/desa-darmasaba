@@ -55,6 +55,7 @@ function Page() {
                 fw={600}
                 c="black"
                 dangerouslySetInnerHTML={{ __html: listNilaiKonservasiAdat.findById.data.judul }}
+                style={{ wordBreak: "break-word", whiteSpace: "normal" }}
               />
             </Box>
             <Box>
@@ -64,6 +65,7 @@ function Page() {
                 c="dimmed"
                 lineClamp={10}
                 dangerouslySetInnerHTML={{ __html: listNilaiKonservasiAdat.findById.data.deskripsi }}
+                style={{ wordBreak: "break-word", whiteSpace: "normal" }}
               />
             </Box>
           </Paper>

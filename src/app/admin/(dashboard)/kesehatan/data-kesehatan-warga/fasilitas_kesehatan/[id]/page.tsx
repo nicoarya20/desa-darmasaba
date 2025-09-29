@@ -88,24 +88,24 @@ function DetailFasilitasKesehatan() {
                 <Text fz="md" fw="bold">Fasilitas</Text>
                 <Text fz="md" c="dimmed">{data.informasiumum?.fasilitas || '-'}</Text>
                 <Text fz="md" fw="bold">Alamat</Text>
-                <Text fz="md" c="dimmed">{data.informasiumum?.alamat || '-'}</Text>
+                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }}>{data.informasiumum?.alamat || '-'}</Text>
                 <Text fz="md" fw="bold">Jam Operasional</Text>
                 <Text fz="md" c="dimmed">{data.informasiumum?.jamOperasional || '-'}</Text>
               </Box>
 
               <Box>
                 <Text fz="lg" fw="bold">Layanan Unggulan</Text>
-                <Text fz="md" c="dimmed" dangerouslySetInnerHTML={{ __html: data.layananunggulan?.content || '-' }} />
+                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data.layananunggulan?.content || '-' }} />
               </Box>
 
               <Box>
                 <Text fz="lg" fw="bold">Fasilitas Pendukung</Text>
-                <Text fz="md" c="dimmed" dangerouslySetInnerHTML={{ __html: data.fasilitaspendukung?.content || '-' }} />
+                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data.fasilitaspendukung?.content || '-' }} />
               </Box>
 
               <Box>
                 <Text fz="lg" fw="bold">Prosedur Pendaftaran</Text>
-                <Text fz="md" c="dimmed" dangerouslySetInnerHTML={{ __html: data.prosedurpendaftaran?.content || '-' }} />
+                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data.prosedurpendaftaran?.content || '-' }} />
               </Box>
 
               <Box>

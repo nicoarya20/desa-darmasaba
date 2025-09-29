@@ -82,7 +82,7 @@ function DetailSektorUnggulanDesa() {
 
               <Box>
                 <Text fz="lg" fw="bold">Deskripsi</Text>
-                <Text ta={"justify"} fz="md" c="dimmed" dangerouslySetInnerHTML={{ __html: data.description || '-' }} />
+                <Text ta={"justify"} fz="md" c="dimmed" dangerouslySetInnerHTML={{ __html: data.description || '-' }} style={{ wordBreak: "break-word", whiteSpace: "normal" }} />
               </Box>
 
               <Box>

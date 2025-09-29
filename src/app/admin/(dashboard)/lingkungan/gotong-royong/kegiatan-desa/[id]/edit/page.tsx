@@ -126,14 +126,14 @@ function EditGotongRoyong() {
       >
         <Stack gap="md">
           <TextInput
-            value={formData.judul}
+            defaultValue={formData.judul}
             label={<Text fz="sm" fw="bold">Judul Kegiatan Desa</Text>}
             placeholder="masukkan judul kegiatan desa"
             onChange={(e) => setFormData({ ...formData, judul: e.target.value })}
             required
           />
           <TextInput
-            value={formData.deskripsiSingkat}
+            defaultValue={formData.deskripsiSingkat}
             label={<Text fz="sm" fw="bold">Deskripsi Singkat Kegiatan Desa</Text>}
             placeholder="masukkan deskripsi singkat kegiatan desa"
             onChange={(e) => setFormData({ ...formData, deskripsiSingkat: e.target.value })}
@@ -164,17 +164,17 @@ function EditGotongRoyong() {
             label={<Text fz="sm" fw="bold">Tanggal Kegiatan Desa</Text>}
             placeholder="masukkan tanggal kegiatan desa"
             type="date"
-            value={formatDateForInput(formData.tanggal)}
+            defaultValue={formatDateForInput(formData.tanggal)}
             onChange={(e) => setFormData({ ...formData, tanggal: e.target.value })}
           />
           <TextInput
-            value={formData.lokasi}
+            defaultValue={formData.lokasi}
             label={<Text fz="sm" fw="bold">Lokasi Kegiatan Desa</Text>}
             placeholder="masukkan lokasi kegiatan desa"
             onChange={(e) => setFormData({ ...formData, lokasi: e.target.value })}
           />
           <TextInput
-            value={formData.partisipan}
+            defaultValue={formData.partisipan}
             label={<Text fz="sm" fw="bold">Partisipan Kegiatan Desa</Text>}
             placeholder="masukkan partisipan kegiatan desa"
             onChange={(e) => {

@@ -172,7 +172,7 @@ function CreateKeamananLingkungan() {
 
           {/* Input Nama */}
           <TextInput
-            value={keamananState.create.form.name}
+            defaultValue={keamananState.create.form.name}
             onChange={(val) => {
               keamananState.create.form.name = val.target.value;
             }}

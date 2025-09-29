@@ -83,6 +83,7 @@ function Page() {
                 fw="bold"
                 c={colors['blue-button']}
                 dangerouslySetInnerHTML={{ __html: data.judul }}
+                style={{ wordBreak: "break-word", whiteSpace: "normal" }}
               />
               <Divider my="md" color={colors['blue-button']} />
 
@@ -93,6 +94,7 @@ function Page() {
                 ta="justify"
                 c="dimmed"
                 dangerouslySetInnerHTML={{ __html: data.deskripsi }}
+                style={{ wordBreak: "break-word", whiteSpace: "normal" }}
               />
             </Stack>
           </Box>

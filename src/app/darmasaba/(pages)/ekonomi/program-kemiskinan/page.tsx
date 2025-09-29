@@ -107,7 +107,7 @@ function Page() {
               return (
                 <Paper p={'xl'} key={v.id}>
                   <Text fz={'h3'} fw={'bold'} c={colors['blue-button']}>{v.nama}</Text>
-                  <Text fz={'lg'} c={'black'} dangerouslySetInnerHTML={{ __html: v.deskripsi }}></Text>
+                  <Text fz={'lg'} c={'black'} style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: v.deskripsi }}></Text>
                 </Paper>
               )
             })}

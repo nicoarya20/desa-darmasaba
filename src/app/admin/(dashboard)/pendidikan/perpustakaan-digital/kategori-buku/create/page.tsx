@@ -49,7 +49,7 @@ function CreateKategoriBuku() {
           <TextInput
             label={<Text fw="bold" fz="sm">Nama Kategori Buku</Text>}
             placeholder='Masukkan nama kategori buku'
-            value={createState.create.form.name}
+            defaultValue={createState.create.form.name}
             onChange={(val) => {
               createState.create.form.name = val.target.value;
             }}

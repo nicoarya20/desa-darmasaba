@@ -65,7 +65,7 @@ function Page() {
                   Tujuan Program
                 </Title>
               </Tooltip>
-              <Text fz="md" lh={1.7} c="dark" dangerouslySetInnerHTML={{ __html: stateTujuanPendidikanNonFormal.findById.data?.deskripsi }} />
+              <Text fz="md" lh={1.7} c="dark" style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: stateTujuanPendidikanNonFormal.findById.data?.deskripsi }} />
             </Stack>
           </Paper>
           <Paper
@@ -82,7 +82,7 @@ function Page() {
                   Tempat Kegiatan
                 </Title>
               </Tooltip>
-              <Text fz="md" lh={1.7} c="dark" dangerouslySetInnerHTML={{ __html: stateTempatKegiatan.findById.data?.deskripsi }} />
+              <Text fz="md" style={{wordBreak: "break-word", whiteSpace: "normal"}} lh={1.7} c="dark" dangerouslySetInnerHTML={{ __html: stateTempatKegiatan.findById.data?.deskripsi }} />
             </Stack>
           </Paper>
         </SimpleGrid>
@@ -101,7 +101,7 @@ function Page() {
                   Jenis Program yang Diselenggarakan
                 </Title>
               </Tooltip>
-              <Text fz="md" lh={1.7} c="dark" dangerouslySetInnerHTML={{ __html: stateJenisProgram.findById.data?.deskripsi }} />
+              <Text fz="md" lh={1.7} c="dark" style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: stateJenisProgram.findById.data?.deskripsi }} />
             </Stack>
           </Paper>
         </Box>

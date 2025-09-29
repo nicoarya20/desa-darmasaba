@@ -112,7 +112,7 @@ function EditKontakDaruratKeamanan() {
         <Stack gap="md">
           {/* Nama kategori */}
           <TextInput
-            value={formData.name}
+            defaultValue={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             label="Nama Kontak Darurat"
             placeholder="Masukkan nama kontak darurat"

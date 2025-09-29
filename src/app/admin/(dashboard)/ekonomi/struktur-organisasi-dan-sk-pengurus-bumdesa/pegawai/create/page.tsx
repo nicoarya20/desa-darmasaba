@@ -84,13 +84,13 @@ function CreatePegawai() {
           <TextInput
             label="Nama Lengkap"
             placeholder="Masukkan nama lengkap"
-            value={stateOrganisasi.pegawai.create.form.namaLengkap}
+            defaultValue={stateOrganisasi.pegawai.create.form.namaLengkap}
             onChange={(e) => (stateOrganisasi.pegawai.create.form.namaLengkap = e.currentTarget.value)}
           />
           <TextInput
             label="Gelar Akademik"
             placeholder="Contoh: S.Kom"
-            value={stateOrganisasi.pegawai.create.form.gelarAkademik}
+            defaultValue={stateOrganisasi.pegawai.create.form.gelarAkademik}
             onChange={(e) => (stateOrganisasi.pegawai.create.form.gelarAkademik = e.currentTarget.value)}
           />
           <Box>
@@ -150,25 +150,25 @@ function CreatePegawai() {
             label="Tanggal Masuk"
             type="date"
             placeholder="Contoh: 2022-01-01"
-            value={stateOrganisasi.pegawai.create.form.tanggalMasuk}
+            defaultValue={stateOrganisasi.pegawai.create.form.tanggalMasuk}
             onChange={(e) => (stateOrganisasi.pegawai.create.form.tanggalMasuk = e.currentTarget.value)}
           />
           <TextInput
             label="Email"
             placeholder="Contoh: email@example.com"
-            value={stateOrganisasi.pegawai.create.form.email}
+            defaultValue={stateOrganisasi.pegawai.create.form.email}
             onChange={(e) => (stateOrganisasi.pegawai.create.form.email = e.currentTarget.value)}
           />
           <TextInput
             label="Telepon"
             placeholder="Contoh: 08123456789"
-            value={stateOrganisasi.pegawai.create.form.telepon}
+            defaultValue={stateOrganisasi.pegawai.create.form.telepon}
             onChange={(e) => (stateOrganisasi.pegawai.create.form.telepon = e.currentTarget.value)}
           />
           <TextInput
             label="Alamat"
             placeholder="Contoh: Jl. Contoh No. 1"
-            value={stateOrganisasi.pegawai.create.form.alamat}
+            defaultValue={stateOrganisasi.pegawai.create.form.alamat}
             onChange={(e) => (stateOrganisasi.pegawai.create.form.alamat = e.currentTarget.value)}
           />
           <Select
@@ -178,7 +178,7 @@ function CreatePegawai() {
               value: p.id,
               label: p.nama
             })) || []}
-            value={stateOrganisasi.pegawai.create.form.posisiId}
+            defaultValue={stateOrganisasi.pegawai.create.form.posisiId}
             onChange={(value) => {
               if (value) stateOrganisasi.pegawai.create.form.posisiId = value;
             }}

@@ -67,7 +67,7 @@ export default function CreateHubunganOrganisasi() {
           <TextInput
             label="Tipe"
             placeholder="Contoh: langsung_melapor"
-            value={form.tipe}
+            defaultValue={form.tipe}
             onChange={(e) => setForm({ ...form, tipe: e.currentTarget.value })}
           />
           <Button onClick={handleSubmit} color="blue">Simpan</Button>

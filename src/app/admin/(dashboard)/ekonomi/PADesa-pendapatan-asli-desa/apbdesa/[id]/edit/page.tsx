@@ -111,7 +111,7 @@ function EditAPBDesa() {
           {/* Tahun */}
           <TextInput
             type="number"
-            value={formData.tahun}
+            defaultValue={formData.tahun}
             onChange={(e) =>
               setFormData({ ...formData, tahun: e.target.value })
             }

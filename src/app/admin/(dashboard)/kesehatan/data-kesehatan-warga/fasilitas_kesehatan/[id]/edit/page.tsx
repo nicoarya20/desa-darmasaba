@@ -156,7 +156,7 @@ function EditFasilitasKesehatan() {
           <TextInput
             label="Nama Fasilitas Kesehatan"
             placeholder="Masukkan nama fasilitas kesehatan"
-            value={formData.name}
+            defaultValue={formData.name}
             onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
             required
           />
@@ -166,7 +166,7 @@ function EditFasilitasKesehatan() {
             <Text fw="bold" mb={5}>Informasi Umum</Text>
             <TextInput
               label="Fasilitas"
-              value={formData.informasiUmum.fasilitas}
+              defaultValue={formData.informasiUmum.fasilitas}
               onChange={(e) =>
                 setFormData(prev => ({
                   ...prev,
@@ -176,7 +176,7 @@ function EditFasilitasKesehatan() {
             />
             <TextInput
               label="Alamat"
-              value={formData.informasiUmum.alamat}
+              defaultValue={formData.informasiUmum.alamat}
               onChange={(e) =>
                 setFormData(prev => ({
                   ...prev,
@@ -186,7 +186,7 @@ function EditFasilitasKesehatan() {
             />
             <TextInput
               label="Jam Operasional"
-              value={formData.informasiUmum.jamOperasional}
+              defaultValue={formData.informasiUmum.jamOperasional}
               onChange={(e) =>
                 setFormData(prev => ({
                   ...prev,
@@ -215,7 +215,7 @@ function EditFasilitasKesehatan() {
             <Text fw="bold" mb={5}>Dokter dan Tenaga Medis</Text>
             <TextInput
               label="Nama Dokter"
-              value={formData.dokterdanTenagaMedis.name}
+              defaultValue={formData.dokterdanTenagaMedis.name}
               onChange={(e) =>
                 setFormData(prev => ({
                   ...prev,
@@ -225,7 +225,7 @@ function EditFasilitasKesehatan() {
             />
             <TextInput
               label="Specialist"
-              value={formData.dokterdanTenagaMedis.specialist}
+              defaultValue={formData.dokterdanTenagaMedis.specialist}
               onChange={(e) =>
                 setFormData(prev => ({
                   ...prev,
@@ -235,7 +235,7 @@ function EditFasilitasKesehatan() {
             />
             <TextInput
               label="Jadwal"
-              value={formData.dokterdanTenagaMedis.jadwal}
+              defaultValue={formData.dokterdanTenagaMedis.jadwal}
               onChange={(e) =>
                 setFormData(prev => ({
                   ...prev,
@@ -278,7 +278,7 @@ function EditFasilitasKesehatan() {
             <Text fw="bold" mb={5}>Tarif dan Layanan</Text>
             <TextInput
               label="Tarif"
-              value={formData.tarifDanLayanan.tarif}
+              defaultValue={formData.tarifDanLayanan.tarif}
               onChange={(e) =>
                 setFormData(prev => ({
                   ...prev,
@@ -288,7 +288,7 @@ function EditFasilitasKesehatan() {
             />
             <TextInput
               label="Layanan"
-              value={formData.tarifDanLayanan.layanan}
+              defaultValue={formData.tarifDanLayanan.layanan}
               onChange={(e) =>
                 setFormData(prev => ({
                   ...prev,

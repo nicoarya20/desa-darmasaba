@@ -64,7 +64,7 @@ function RespondenCreate() {
             label="Nama"
             type='text'
             placeholder="masukkan nama"
-            value={stategrafikBerdasarkanResponden.create.form.name}
+            defaultValue={stategrafikBerdasarkanResponden.create.form.name}
             onChange={(val) => {
               stategrafikBerdasarkanResponden.create.form.name = val.currentTarget.value;
             }}
@@ -73,7 +73,7 @@ function RespondenCreate() {
             label="Tanggal"
             type="date"
             placeholder="masukkan tanggal"
-            value={stategrafikBerdasarkanResponden.create.form.tanggal}
+            defaultValue={stategrafikBerdasarkanResponden.create.form.tanggal}
             onChange={(val) => {
               stategrafikBerdasarkanResponden.create.form.tanggal = val.currentTarget.value;
             }}

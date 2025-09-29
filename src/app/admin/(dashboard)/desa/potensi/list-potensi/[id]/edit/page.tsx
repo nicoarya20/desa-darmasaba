@@ -122,7 +122,7 @@ function EditPotensi() {
           <TextInput
             label="Judul Potensi"
             placeholder="Masukkan judul"
-            value={formData.name}
+            defaultValue={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             required
           />
@@ -130,7 +130,7 @@ function EditPotensi() {
           <TextInput
             label="Deskripsi Singkat"
             placeholder="Masukkan deskripsi"
-            value={formData.deskripsi}
+            defaultValue={formData.deskripsi}
             onChange={(e) => setFormData({ ...formData, deskripsi: e.target.value })}
             required
           />

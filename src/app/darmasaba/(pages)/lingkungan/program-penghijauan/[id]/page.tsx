@@ -100,6 +100,7 @@ function Page() {
                 lh={1.7}
                 ta="justify"
                 dangerouslySetInnerHTML={{ __html: data.deskripsi }}
+                style={{wordBreak: "break-word", whiteSpace: "normal"}}
               />
             ) : (
               <Text c="dimmed" fz="sm" ta="center">

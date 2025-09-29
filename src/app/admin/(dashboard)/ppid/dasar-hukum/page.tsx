@@ -69,6 +69,7 @@ function Page() {
                   fw="bold" 
                   c={colors['blue-button']}
                   dangerouslySetInnerHTML={{ __html: listDasarHukum.findById.data.judul }} 
+                  style={{ wordBreak: "break-word", whiteSpace: "normal" }}
                 />
               </GridCol>
             </Grid>
@@ -78,11 +79,7 @@ function Page() {
             <Box 
               className="prose max-w-none"
               dangerouslySetInnerHTML={{ __html: listDasarHukum.findById.data.content }}
-              style={{
-                fontSize: '1.1rem',
-                lineHeight: 1.7,
-                textAlign: 'justify'
-              }}
+              style={{ wordBreak: "break-word", whiteSpace: "normal", fontSize: '1.1rem', lineHeight: 1.7, textAlign: 'justify' }}
             />
           </Box>
         </Paper>

@@ -66,7 +66,7 @@ function CreateGrafikBerdasarkanUsiaKerjaYangMenganggur() {
             label="Usia 18 - 25"
             type="number"
             placeholder="Masukkan jumlah"
-            value={stategrafik.create.form.usia18_25}
+            defaultValue={stategrafik.create.form.usia18_25}
             onChange={(val) => (stategrafik.create.form.usia18_25 = val.currentTarget.value)}
             required
           />
@@ -74,7 +74,7 @@ function CreateGrafikBerdasarkanUsiaKerjaYangMenganggur() {
             label="Usia 26 - 35"
             type="number"
             placeholder="Masukkan jumlah"
-            value={stategrafik.create.form.usia26_35}
+            defaultValue={stategrafik.create.form.usia26_35}
             onChange={(val) => (stategrafik.create.form.usia26_35 = val.currentTarget.value)}
             required
           />
@@ -82,7 +82,7 @@ function CreateGrafikBerdasarkanUsiaKerjaYangMenganggur() {
             label="Usia 36 - 45"
             type="number"
             placeholder="Masukkan jumlah"
-            value={stategrafik.create.form.usia36_45}
+            defaultValue={stategrafik.create.form.usia36_45}
             onChange={(val) => (stategrafik.create.form.usia36_45 = val.currentTarget.value)}
             required
           />
@@ -90,7 +90,7 @@ function CreateGrafikBerdasarkanUsiaKerjaYangMenganggur() {
             label="Usia 46 +"
             type="number"
             placeholder="Masukkan jumlah"
-            value={stategrafik.create.form.usia46_keatas}
+            defaultValue={stategrafik.create.form.usia46_keatas}
             onChange={(val) => (stategrafik.create.form.usia46_keatas = val.currentTarget.value)}
             required
           />

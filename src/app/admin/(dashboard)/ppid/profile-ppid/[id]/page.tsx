@@ -175,7 +175,7 @@ function EditProfilePPID() {
             <TextInput
               label={<Text fw="bold">Nama Perbekel</Text>}
               placeholder="Masukkan nama perbekel"
-              value={allState.editForm.form.name}
+              defaultValue={allState.editForm.form.name}
               onChange={(e) => handleFieldChange('name', e.currentTarget.value)}
               error={!allState.editForm.form.name && "Nama wajib diisi"}
             />

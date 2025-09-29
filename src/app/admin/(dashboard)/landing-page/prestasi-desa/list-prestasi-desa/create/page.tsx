@@ -141,7 +141,7 @@ function CreatePrestasiDesa() {
           <TextInput
             label="Judul Prestasi"
             placeholder="Masukkan judul prestasi"
-            value={stateCreate.create.form.name}
+            defaultValue={stateCreate.create.form.name}
             onChange={(e) => (stateCreate.create.form.name = e.target.value)}
             required
           />

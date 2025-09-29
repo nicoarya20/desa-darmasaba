@@ -73,7 +73,7 @@ function CreatePosisiOrganisasiPPID() {
           <TextInput
             label="Nama Posisi"
             placeholder="Contoh: Kepala Desa"
-            value={stateOrganisasi.create.form.nama}
+            defaultValue={stateOrganisasi.create.form.nama}
             onChange={(e) => (stateOrganisasi.create.form.nama = e.target.value)}
             required
           />
@@ -95,7 +95,7 @@ function CreatePosisiOrganisasiPPID() {
             type="number"
             min={0}
             placeholder="Contoh: 1 (Angka semakin kecil, posisi semakin tinggi)"
-            value={stateOrganisasi.create.form.hierarki || ''}
+            defaultValue={stateOrganisasi.create.form.hierarki || ''}
             onChange={(e) => {
               const value = parseInt(e.target.value, 10);
               stateOrganisasi.create.form.hierarki = isNaN(value) ? 0 : value;

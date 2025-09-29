@@ -132,7 +132,7 @@ function EditDataLingkunganDesa() {
       >
         <Stack gap="md">
           <TextInput
-            value={formData.name}
+            defaultValue={formData.name}
             label={<Text fz="sm" fw="bold">Nama Data Lingkungan Desa</Text>}
             placeholder="Masukkan nama data lingkungan desa"
             onChange={(val) =>
@@ -145,7 +145,7 @@ function EditDataLingkunganDesa() {
           />
 
           <TextInput
-            value={formData.jumlah}
+            defaultValue={formData.jumlah}
             label={<Text fz="sm" fw="bold">Jumlah Data Lingkungan Desa</Text>}
             placeholder="Masukkan jumlah data lingkungan desa"
             onChange={(val) =>

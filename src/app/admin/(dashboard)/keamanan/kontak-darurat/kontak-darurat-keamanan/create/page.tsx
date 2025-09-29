@@ -72,7 +72,7 @@ function CreateKontakDaruratKeamanan() {
         <Stack gap="md">
           {/* Input Nama Kategori */}
           <TextInput
-            value={kontakState.create.form.nama}
+            defaultValue={kontakState.create.form.nama}
             onChange={(val) => {
               kontakState.create.form.nama = val.target.value;
             }}

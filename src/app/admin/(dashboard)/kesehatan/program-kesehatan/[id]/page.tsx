@@ -73,12 +73,12 @@ function DetailProgramKesehatan() {
 
               <Box>
                 <Text fz="lg" fw="bold">Deskripsi Singkat</Text>
-                <Text fz="md" c="dimmed">{data?.deskripsiSingkat || '-'}</Text>
+                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }}>{data?.deskripsiSingkat || '-'}</Text>
               </Box>
 
               <Box>
                 <Text fz="lg" fw="bold">Deskripsi</Text>
-                <Text fz="md" c="dimmed" dangerouslySetInnerHTML={{ __html: data?.deskripsi || '-' }} />
+                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data?.deskripsi || '-' }} />
               </Box>
 
               <Box>

@@ -117,7 +117,7 @@ function EditTempatKegiatan() {
             <TextInput
               label={<Text fz="sm" fw="bold">Judul</Text>}
               placeholder="Masukkan judul tempat kegiatan"
-              value={judul}
+              defaultValue={judul}
               onChange={(e) => setJudul(e.currentTarget.value)}
               error={!judul && 'Judul wajib diisi'}
             />

@@ -45,7 +45,7 @@ function Page() {
             return (
               <Paper p={'xl'} key={k}>
                 <Text fw={'bold'} fz={'h4'}>{v.name}</Text>
-                <Text fz={'h4'} ta={'justify'} dangerouslySetInnerHTML={{ __html: v.description || '' }} />
+                <Text fz={'h4'} ta={'justify'} style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: v.description || '' }} />
               </Paper>
             )
           })}

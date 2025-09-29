@@ -118,7 +118,7 @@ function EditMitraKolaborasi() {
           <TextInput
             label="Nama Mitra"
             placeholder="Masukkan nama mitra"
-            value={formData.name}
+            defaultValue={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             required
           />

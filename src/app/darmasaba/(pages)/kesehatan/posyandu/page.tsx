@@ -111,7 +111,7 @@ export default function Page() {
                     <IconCalendar size={18} stroke={1.5} />
                     <Text fz="sm" c="dimmed">
                       Jadwal:{" "}
-                      <span dangerouslySetInnerHTML={{ __html: v.jadwalPelayanan }} />
+                      <span style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: v.jadwalPelayanan }} />
                     </Text>
                   </Flex>
                   <Spoiler
@@ -124,6 +124,7 @@ export default function Page() {
                       fz="sm"
                       lh={1.5}
                       dangerouslySetInnerHTML={{ __html: v.deskripsi }}
+                      style={{wordBreak: "break-word", whiteSpace: "normal"}}
                     />
                   </Spoiler>
                 </Stack>

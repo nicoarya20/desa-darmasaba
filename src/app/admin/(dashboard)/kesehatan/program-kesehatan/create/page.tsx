@@ -92,7 +92,7 @@ function CreateProgramKesehatan() {
       >
         <Stack gap="md">
           <TextInput
-            value={programKesehatanState.create.form.name}
+            defaultValue={programKesehatanState.create.form.name}
             onChange={(val) => {
               programKesehatanState.create.form.name = val.target.value;
             }}
@@ -102,7 +102,7 @@ function CreateProgramKesehatan() {
           />
 
           <TextInput
-            value={programKesehatanState.create.form.deskripsiSingkat}
+            defaultValue={programKesehatanState.create.form.deskripsiSingkat}
             onChange={(val) => {
               programKesehatanState.create.form.deskripsiSingkat = val.target.value;
             }}

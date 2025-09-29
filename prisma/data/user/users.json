@@ -1,32 +1,23 @@
 [
-    {
-      "id": "1",
-      "nama": "Admin Desa",
-      "nomor": "089647037426",
-      "roleId": "1",
-      "isActive": true,
-      "lastLogin": "2025-08-31T10:00:00.000Z",
-      "createdAt": "2025-09-01T00:00:00.000Z",
-      "updatedAt": "2025-09-01T00:00:00.000Z"
-    },
-    {
-      "id": "2",
-      "nama": "Admin Kesehatan",
-      "nomor": "082339004198",
-      "roleId": "2",
-      "isActive": true,
-      "lastLogin": null,
-      "createdAt": "2025-09-01T00:00:00.000Z",
-      "updatedAt": "2025-09-01T00:00:00.000Z"
-    },
-    {
-      "id": "3",
-      "nama": "Admin Sekolah",
-      "nomor": "085237157222",
-      "roleId": "3",
-      "isActive": true,
-      "lastLogin": null,
-      "createdAt": "2025-09-01T00:00:00.000Z",
-      "updatedAt": "2025-09-01T00:00:00.000Z"
-    }
-  ]
+  {
+    "id": "user-1",
+    "nama": "Admin Desa",
+    "nomor": "089647037426",
+    "roleId": "role-1",
+    "isActive": true
+  },
+  {
+    "id": "user-2",
+    "nama": "Admin Kesehatan",
+    "nomor": "082339004198",
+    "roleId": "role-2",
+    "isActive": true
+  },
+  {
+    "id": "user-3",
+    "nama": "Admin Sekolah",
+    "nomor": "085237157222",
+    "roleId": "role-3",
+    "isActive": true
+  }
+]

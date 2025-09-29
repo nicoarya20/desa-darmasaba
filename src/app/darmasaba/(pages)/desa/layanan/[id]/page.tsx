@@ -107,6 +107,7 @@ function Page() {
             fz={{ base: "md", md: "lg" }}
             c="dark.7"
             ta="justify"
+            style={{wordBreak: "break-word", whiteSpace: "normal"}}
           />
           {data.image2?.link && (
             <Center>

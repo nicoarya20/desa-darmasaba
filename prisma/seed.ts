@@ -56,6 +56,8 @@ import tujuanProgram from "./data/pendidikan/program-pendidikan-anak/tujuan-prog
 import roles from "./data/user/roles.json";
 import users from "./data/user/users.json";
 import fileStorage from "./data/file-storage.json";
+import seedAssets from "./seed_assets";
+import { safeSeedUnique } from "./safeseedUnique";
 
 (async () => {
   // =========== USER & ROLE ===========
@@ -63,23 +65,14 @@ import fileStorage from "./data/file-storage.json";
   // =========== ROLES ===========
   console.log("🔄 Seeding roles...");
   for (const r of roles) {
-    await prisma.role.upsert({
-      where: { id: r.id },
-      update: {
-        name: r.name,
-        description: r.description,
-        permissions: r.permissions,
-        isActive: r.isActive,
-      },
-      create: {
-        id: r.id,
-        name: r.name,
-        description: r.description,
-        permissions: r.permissions,
-        isActive: r.isActive,
-      },
+    await safeSeedUnique("role", { id: r.id }, {
+      name: r.name,
+      description: r.description,
+      permissions: r.permissions,
+      isActive: r.isActive,
     });
   }
+
   console.log("✅ Roles seeded");
 
   // =========== USERS ===========
@@ -95,22 +88,12 @@ import fileStorage from "./data/file-storage.json";
       continue;
     }
 
-    await prisma.user.upsert({
-      where: { id: u.id },
-      update: {
-        username: u.nama,
-        nomor: u.nomor,
-        roleId: u.roleId,
+    await safeSeedUnique("user", { id: u.id }, {
+      username: u.nama,
+      nomor: u.nomor,
+      roleId: u.roleId,
         isActive: u.isActive,
-      },
-      create: {
-        id: u.id,
-        username: u.nama,
-        nomor: u.nomor,
-        roleId: u.roleId,
-        isActive: u.isActive,
-      },
-    });
+      });
   }
   console.log("✅ Users seeded");
 
@@ -364,6 +347,7 @@ import fileStorage from "./data/file-storage.json";
         jumlah: l.jumlah,
       },
       create: {
+        id: l.id,
         name: l.name,
         jumlah: l.jumlah,
       },
@@ -1169,6 +1153,10 @@ import fileStorage from "./data/file-storage.json";
   console.log(
     "✅ fasilitas bimbingan belajar desa seeded (editable later via UI)"
   );
+
+  // seed assets
+  await seedAssets();
+
 })()
   .then(() => prisma.$disconnect())
   .catch((e) => {

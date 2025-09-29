@@ -175,7 +175,7 @@ function Page() {
             <TextInput
               label={<Text fw="bold">Judul</Text>}
               placeholder="Masukkan judul maskot"
-              value={formData.judul}
+              defaultValue={formData.judul}
               onChange={(e) => setFormData({ ...formData, judul: e.currentTarget.value })}
               error={!formData.judul && "Judul wajib diisi"}
             />

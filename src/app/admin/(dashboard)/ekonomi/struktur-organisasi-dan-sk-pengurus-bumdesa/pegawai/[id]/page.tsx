@@ -75,7 +75,7 @@ function DetailPegawai() {
               </Box>
               <Box>
                 <Text fz={"lg"} fw={"bold"}>Email</Text>
-                <Text fz={"lg"}>{statePegawai.findUnique.data?.email}</Text>
+                <Text fz={"lg"} style={{ wordBreak: "break-word", whiteSpace: "normal" }}>{statePegawai.findUnique.data?.email}</Text>
               </Box>
               <Box>
                 <Text fz={"lg"} fw={"bold"}>Telepon</Text>
@@ -83,7 +83,7 @@ function DetailPegawai() {
               </Box>
               <Box>
                 <Text fz={"lg"} fw={"bold"}>Alamat</Text>
-                <Text fz={"lg"}>{statePegawai.findUnique.data?.alamat}</Text>
+                <Text fz={"lg"} style={{ wordBreak: "break-word", whiteSpace: "normal" }}>{statePegawai.findUnique.data?.alamat}</Text>
               </Box>
               <Box>
                 <Text fz={"lg"} fw={"bold"}>Posisi</Text>

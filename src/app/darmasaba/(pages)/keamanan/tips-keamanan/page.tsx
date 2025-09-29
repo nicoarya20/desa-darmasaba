@@ -82,7 +82,7 @@ function Page() {
                           {v.judul}
                         </Text>
                         <Box>
-                          <Text pb={10} fz={"md"} dangerouslySetInnerHTML={{ __html: v.deskripsi }} />
+                          <Text pb={10} fz={"md"} style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: v.deskripsi }} />
                         </Box>
                       </Box>
                     </Box>

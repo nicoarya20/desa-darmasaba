@@ -102,7 +102,7 @@ function EditVideo() {
           <TextInput
             label="Judul Video"
             placeholder="Masukkan judul video"
-            value={formData.name}
+            defaultValue={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             required
           />
@@ -111,7 +111,7 @@ function EditVideo() {
             <TextInput
               label="Link Video YouTube"
               placeholder="https://www.youtube.com/watch?v=abc123"
-              value={formData.linkVideo}
+              defaultValue={formData.linkVideo}
               onChange={(e) => setFormData({ ...formData, linkVideo: e.currentTarget.value })}
               required
             />

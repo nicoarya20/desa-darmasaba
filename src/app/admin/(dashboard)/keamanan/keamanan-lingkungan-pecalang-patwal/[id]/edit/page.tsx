@@ -194,7 +194,7 @@ function EditKeamananLingkungan() {
           )}
 
           <TextInput
-            value={formData.name}
+            defaultValue={formData.name}
             onChange={(e) =>
               setFormData({ ...formData, name: e.target.value })
             }

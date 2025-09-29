@@ -100,14 +100,10 @@ function EditResponden() {
       >
         <Stack gap="md">
           <TextInput
-            label={
-              <Text fw="bold" fz="sm" mb={4}>
-                Nama Responden
-              </Text>
-            }
+            label="Nama Responden"
             type='text'
             placeholder="Masukkan nama responden"
-            value={formData.name}
+            defaultValue={formData.name}
             onChange={(val) => {
               setFormData({
                 ...formData,
@@ -118,14 +114,10 @@ function EditResponden() {
             required
           />
           <TextInput
-            label={
-              <Text fw="bold" fz="sm" mb={4}>
-                Tanggal
-              </Text>
-            }
+            label="Tanggal"
             type="date"
             placeholder='Pilih tanggal'
-            value={formData.tanggal ? new Date(formData.tanggal).toISOString().split('T')[0] : ''}
+            defaultValue={formData.tanggal ? new Date(formData.tanggal).toISOString().split('T')[0] : ''}
             onChange={(e) => {
               const selectedDate = e.currentTarget.value;
               setFormData({

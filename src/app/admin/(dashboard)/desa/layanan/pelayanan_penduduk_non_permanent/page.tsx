@@ -91,6 +91,7 @@ function PelayananPendudukNonPermanent() {
                 ta="justify"
                 fz={{ base: '1rem', md: '1.2rem' }}
                 dangerouslySetInnerHTML={{ __html: data.deskripsi }}
+                style={{wordBreak: "break-word", whiteSpace: "normal"}}
               />
             </Box>
           </Box>

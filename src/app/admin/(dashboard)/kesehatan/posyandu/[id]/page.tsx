@@ -93,6 +93,7 @@ function DetailPosyandu() {
                  fz="md"
                  c="dimmed"
                  dangerouslySetInnerHTML={{ __html: data.deskripsi || '-' }}
+                 style={{ wordBreak: "break-word", whiteSpace: "normal" }}
                />
              </Box>
 
@@ -103,6 +104,7 @@ function DetailPosyandu() {
                  fz="md"
                  c="dimmed"
                  dangerouslySetInnerHTML={{ __html: data.jadwalPelayanan || '-' }}
+                 style={{ wordBreak: "break-word", whiteSpace: "normal" }}
                />
              </Box>
 

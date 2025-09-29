@@ -93,6 +93,7 @@ function Page() {
                 ta="justify"
                 c="dimmed"
                 dangerouslySetInnerHTML={{ __html: data.deskripsi }}
+                style={{ wordBreak: "break-word", whiteSpace: "normal" }}
               />
             </Stack>
           </Box>

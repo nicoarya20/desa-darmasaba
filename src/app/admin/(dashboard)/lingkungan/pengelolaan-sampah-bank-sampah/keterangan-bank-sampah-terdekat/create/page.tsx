@@ -76,7 +76,7 @@ function CreateKeteranganBankSampahTerdekat() {
           <TextInput
             label="Nama Bank Sampah"
             placeholder="Masukkan nama bank sampah"
-            value={keteranganState.create.form.name}
+            defaultValue={keteranganState.create.form.name}
             onChange={(e) => (keteranganState.create.form.name = e.target.value)}
             required
           />
@@ -84,7 +84,7 @@ function CreateKeteranganBankSampahTerdekat() {
           <TextInput
             label="Alamat"
             placeholder="Masukkan alamat lengkap"
-            value={keteranganState.create.form.alamat}
+            defaultValue={keteranganState.create.form.alamat}
             onChange={(e) => (keteranganState.create.form.alamat = e.target.value)}
             required
           />
@@ -92,7 +92,7 @@ function CreateKeteranganBankSampahTerdekat() {
           <TextInput
             label="Nama Tempat di Maps"
             placeholder="Masukkan nama tempat yang terdaftar di Google Maps"
-            value={keteranganState.create.form.namaTempatMaps}
+            defaultValue={keteranganState.create.form.namaTempatMaps}
             onChange={(e) => (keteranganState.create.form.namaTempatMaps = e.target.value)}
             required
           />

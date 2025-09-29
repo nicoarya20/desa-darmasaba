@@ -113,7 +113,7 @@ function Page() {
                     {v.name}
                   </Text>
                   <Text fz="sm" c="dimmed" ta="center" lineClamp={3}>
-                    <span dangerouslySetInnerHTML={{ __html: v.deskripsi }} />
+                    <span style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: v.deskripsi }} />
                   </Text>
                   <Badge
                     color="blue"

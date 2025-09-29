@@ -10,8 +10,7 @@ import {
   Stack,
   TextInput,
   Title,
-  Tooltip,
-  Text,
+  Tooltip
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -95,11 +94,7 @@ function EditKategoriPengumuman() {
       >
         <Stack gap="md">
           <TextInput
-            label={
-              <Text fz="sm" fw="bold">
-                Nama Kategori Pengumuman
-              </Text>
-            }
+            label="Nama Kategori Pengumuman"
             placeholder="Masukkan nama kategori Pengumuman"
             value={formData.name}
             onChange={(e) =>

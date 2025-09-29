@@ -66,7 +66,7 @@ export default function CreateRole() {
             <TextInput
               label="Nama Role"
               placeholder="Masukkan nama role"
-              value={stateRole.create.form.name || ''}
+              defaultValue={stateRole.create.form.name || ''}
               onChange={(e) => (stateRole.create.form.name = e.target.value)}
               required
             />

@@ -82,11 +82,7 @@ function VisiMisiPPIDList() {
               <Box 
                 className="prose max-w-none"
                 dangerouslySetInnerHTML={{ __html: listVisiMisi.findById.data.visi }}
-                style={{
-                  fontSize: '1.1rem',
-                  lineHeight: 1.7,
-                  textAlign: 'justify'
-                }}
+                style={{wordBreak: "break-word", whiteSpace: "normal", textAlign: "justify"}}
               />
             </Box>
 
@@ -99,11 +95,7 @@ function VisiMisiPPIDList() {
               <Box 
                 className="prose max-w-none"
                 dangerouslySetInnerHTML={{ __html: listVisiMisi.findById.data.misi }}
-                style={{
-                  fontSize: '1.1rem',
-                  lineHeight: 1.7,
-                  textAlign: 'justify'
-                }}
+                style={{wordBreak: "break-word", whiteSpace: "normal", textAlign: "justify"}}
               />
             </Box>
           </Box>

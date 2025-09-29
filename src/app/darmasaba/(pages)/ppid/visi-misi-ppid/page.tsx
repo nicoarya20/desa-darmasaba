@@ -75,6 +75,7 @@ function Page() {
                       lh={1.7}
                       ta="justify"
                       dangerouslySetInnerHTML={{ __html: item.visi }}
+                      style={{wordBreak: "break-word", whiteSpace: "normal"}}
                     />
                   </Box>
 
@@ -89,6 +90,7 @@ function Page() {
                       lh={1.7}
                       ta="justify"
                       dangerouslySetInnerHTML={{ __html: item.misi }}
+                      style={{wordBreak: "break-word", whiteSpace: "normal"}}
                     />
                   </Box>
                 </Stack>

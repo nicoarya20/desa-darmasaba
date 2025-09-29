@@ -80,7 +80,7 @@ function Page() {
                         <Text pb={10} c={colors["blue-button"]} fw={"bold"} fz={"h3"}>
                           {v.name}
                         </Text>
-                        <Text pb={10} fz={"h4"} ta={'justify'} dangerouslySetInnerHTML={{ __html: v.deskripsi }} />
+                        <Text pb={10} fz={"h4"} ta={'justify'} style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: v.deskripsi }} />
                       </Box>
                     </Box>
                   </Stack>

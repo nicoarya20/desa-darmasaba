@@ -78,7 +78,7 @@ function EditJumlahPendudukMiskin() {
             placeholder="Masukkan tahun"
             type="number"
             required
-            value={stateJPM.update.form.year}
+            defaultValue={stateJPM.update.form.year}
             onChange={(val) => {
               stateJPM.update.form.year = Number(val.currentTarget.value);
             }}
@@ -89,7 +89,7 @@ function EditJumlahPendudukMiskin() {
             placeholder="Masukkan jumlah penduduk miskin"
             type="number"
             required
-            value={stateJPM.update.form.totalPoorPopulation}
+            defaultValue={stateJPM.update.form.totalPoorPopulation}
             onChange={(val) => {
               stateJPM.update.form.totalPoorPopulation = Number(val.currentTarget.value);
             }}

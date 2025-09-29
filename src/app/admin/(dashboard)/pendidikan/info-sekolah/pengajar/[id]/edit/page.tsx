@@ -99,7 +99,7 @@ function EditPengajar() {
           <TextInput
             label="Nama Pengajar"
             placeholder="Masukkan nama pengajar"
-            value={formData.nama}
+            defaultValue={formData.nama}
             onChange={(e) => setFormData({ ...formData, nama: e.target.value })}
             required
           />

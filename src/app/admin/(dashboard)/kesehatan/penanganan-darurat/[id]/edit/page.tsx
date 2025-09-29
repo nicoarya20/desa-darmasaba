@@ -117,7 +117,7 @@ function EditPenangananDarurat() {
       >
         <Stack gap="md">
           <TextInput
-            value={formData.name}
+            defaultValue={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             label="Judul"
             placeholder="Masukkan judul"

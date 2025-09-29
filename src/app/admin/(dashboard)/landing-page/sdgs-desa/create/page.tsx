@@ -159,7 +159,7 @@ function CreateSDGsDesa() {
               </Text>
             }
             placeholder="Masukkan jumlah"
-            value={stateSDGSDesa.create.form.jumlah}
+            defaultValue={stateSDGSDesa.create.form.jumlah}
             onChange={(val) => {
               stateSDGSDesa.create.form.jumlah = val.target.value;
             }}
@@ -167,14 +167,6 @@ function CreateSDGsDesa() {
             min={0}
             radius="md"
           />
-          <TextInput
-            label="Test"
-            onChange={(val) => {
-              console.log(val.target.value)
-            }}
-
-          />
-
           <Group justify="flex-end" mt="md">
             <Button
               variant="light"

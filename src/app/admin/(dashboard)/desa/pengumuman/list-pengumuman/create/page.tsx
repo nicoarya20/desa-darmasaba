@@ -68,16 +68,16 @@ function CreatePengumuman() {
         <Stack gap="md">
           {/* Judul */}
           <TextInput
-            value={pengumumanState.pengumuman.create.form.judul}
+            defaultValue={pengumumanState.pengumuman.create.form.judul}
             onChange={(val) => (pengumumanState.pengumuman.create.form.judul = val.target.value)}
-            label={<Text fz="sm" fw="bold">Judul</Text>}
+            label="Judul"
             placeholder="Masukkan judul pengumuman"
             required
           />
 
           {/* Kategori */}
           <Select
-            label={<Text fz="sm" fw="bold">Kategori</Text>}
+            label="Kategori"
             placeholder="Pilih kategori"
             value={pengumumanState.pengumuman.create.form.categoryPengumumanId || ""}
             onChange={(val) => {
@@ -93,9 +93,9 @@ function CreatePengumuman() {
 
           {/* Deskripsi Singkat */}
           <TextInput
-            value={pengumumanState.pengumuman.create.form.deskripsi}
+            defaultValue={pengumumanState.pengumuman.create.form.deskripsi}
             onChange={(val) => (pengumumanState.pengumuman.create.form.deskripsi = val.target.value)}
-            label={<Text fz="sm" fw="bold">Deskripsi Singkat</Text>}
+            label="Deskripsi Singkat"
             placeholder="Masukkan deskripsi singkat"
             required
           />

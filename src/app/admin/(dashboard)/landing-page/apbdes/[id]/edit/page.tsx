@@ -139,7 +139,7 @@ function EditAPBDes() {
           <TextInput
             label="Nama APBDes"
             placeholder="Masukkan nama APBDes"
-            value={formData.name}
+            defaultValue={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             required
           />
@@ -147,7 +147,7 @@ function EditAPBDes() {
           <TextInput
             label="Jumlah Anggaran"
             placeholder="Masukkan jumlah anggaran"
-            value={formData.jumlah}
+            defaultValue={formData.jumlah}
             onChange={(e) => setFormData({ ...formData, jumlah: e.target.value })}
             required
           />

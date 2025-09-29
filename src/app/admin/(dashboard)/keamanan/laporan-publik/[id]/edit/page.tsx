@@ -111,7 +111,7 @@ function EditLaporanPublik() {
       >
         <Stack gap="md">
           <TextInput
-            value={formData.judul}
+            defaultValue={formData.judul}
             onChange={(e) => setFormData({ ...formData, judul: e.target.value })}
             label={<Text fw="bold" fz="sm">Judul Laporan Publik</Text>}
             placeholder="Masukkan judul laporan publik"
@@ -119,7 +119,7 @@ function EditLaporanPublik() {
           />
 
           <TextInput
-            value={formData.lokasi}
+            defaultValue={formData.lokasi}
             onChange={(e) => setFormData({ ...formData, lokasi: e.target.value })}
             label={<Text fw="bold" fz="sm">Lokasi Laporan Publik</Text>}
             placeholder="Masukkan lokasi laporan publik"

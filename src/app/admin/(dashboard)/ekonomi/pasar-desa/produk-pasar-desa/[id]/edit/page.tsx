@@ -173,7 +173,7 @@ function EditPasarDesa() {
           <TextInput
             label="Nama Produk"
             placeholder="Masukkan nama produk"
-            value={formData.nama}
+            defaultValue={formData.nama}
             onChange={(e) => setFormData({ ...formData, nama: e.target.value })}
             required
           />
@@ -182,7 +182,7 @@ function EditPasarDesa() {
             type="number"
             label="Harga Produk"
             placeholder="Masukkan harga produk"
-            value={formData.harga}
+            defaultValue={formData.harga}
             onChange={(e) => setFormData({ ...formData, harga: Number(e.target.value) })}
             required
           />
@@ -194,7 +194,7 @@ function EditPasarDesa() {
             step={0.1}
             label="Rating Produk"
             placeholder="Masukkan rating produk (0-5)"
-            value={formData.rating}
+            defaultValue={formData.rating}
             onChange={(e) => setFormData({ ...formData, rating: Number(e.target.value) })}
             required
           />
@@ -202,7 +202,7 @@ function EditPasarDesa() {
           <TextInput
             label="Alamat Usaha"
             placeholder="Masukkan alamat usaha"
-            value={formData.alamatUsaha}
+            defaultValue={formData.alamatUsaha}
             onChange={(e) => setFormData({ ...formData, alamatUsaha: e.target.value })}
             required
           />

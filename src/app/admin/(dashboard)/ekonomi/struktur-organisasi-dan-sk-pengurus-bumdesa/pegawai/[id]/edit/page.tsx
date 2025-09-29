@@ -151,13 +151,13 @@ export default function EditPegawai() {
           <TextInput
             label="Nama Lengkap"
             placeholder="Masukkan nama lengkap"
-            value={formData.namaLengkap}
+            defaultValue={formData.namaLengkap}
             onChange={(e) => setFormData({ ...formData, namaLengkap: e.target.value })}
           />
           <TextInput
             label="Gelar Akademik"
             placeholder="Contoh: S.Kom"
-            value={formData.gelarAkademik}
+            defaultValue={formData.gelarAkademik}
             onChange={(e) => setFormData({ ...formData, gelarAkademik: e.target.value })}
           />
           <Box>
@@ -217,25 +217,25 @@ export default function EditPegawai() {
             label="Tanggal Masuk"
             type="date"
             placeholder="Contoh: 2022-01-01"
-            value={formatDateForInput(formData.tanggalMasuk)}
+            defaultValue={formatDateForInput(formData.tanggalMasuk)}
             onChange={(e) => setFormData({ ...formData, tanggalMasuk: e.target.value })}
           />
           <TextInput
             label="Email"
             placeholder="Contoh: email@example.com"
-            value={formData.email}
+            defaultValue={formData.email}
             onChange={(e) => (formData.email = e.currentTarget.value)}
           />
           <TextInput
             label="Telepon"
             placeholder="Contoh: 08123456789"
-            value={formData.telepon}
+            defaultValue={formData.telepon}
             onChange={(e) => (formData.telepon = e.currentTarget.value)}
           />
           <TextInput
             label="Alamat"
             placeholder="Contoh: Jl. Contoh No. 1"
-            value={formData.alamat}
+            defaultValue={formData.alamat}
             onChange={(e) => (formData.alamat = e.currentTarget.value)}
           />
           <Select
