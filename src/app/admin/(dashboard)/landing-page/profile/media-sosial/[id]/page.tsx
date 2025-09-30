@@ -52,9 +52,7 @@ function DetailMediaSosial() {
 
       <Paper
         withBorder
-        w="100%"
-        maw={500} // <= tambahkan ini, biar tidak lebih dari 500px
-        mx="auto" // center di layar
+        w={{ base: "100%", md: "50%" }}
         bg={colors['white-1']}
         p="lg"
         radius="md"

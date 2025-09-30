@@ -1,8 +1,8 @@
 import prisma from "@/lib/prisma";
-import { Context } from "elysia";
 
-export default async function findByMonthYear(context: Context) {
-  const { month, year } = context.params as { month: string; year: string };
+
+export default async function findByMonthYear({ params }: { params: { month: string; year: number } }) {
+  const { month, year } = params;
 
   if (!month || !year) {
     return {

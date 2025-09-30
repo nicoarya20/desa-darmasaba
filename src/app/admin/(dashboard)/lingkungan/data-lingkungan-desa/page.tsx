@@ -115,7 +115,7 @@ function ListDataLingkunganDesa({ search }: { search: string }) {
         <Group justify="space-between" mb="md">
           <Title order={4}>Daftar Data Lingkungan Desa</Title>
           <Tooltip label="Tambah Data Lingkungan Desa" withArrow>
-            <Button leftSection={<IconPlus size={18} />} color="blue" variant="light" onClick={() => router.push('/admin/lingkungan/data-lingkungan/create')}>
+            <Button leftSection={<IconPlus size={18} />} color="blue" variant="light" onClick={() => router.push('/admin/lingkungan/data-lingkungan-desa/create')}>
               Tambah Baru
             </Button>
           </Tooltip>

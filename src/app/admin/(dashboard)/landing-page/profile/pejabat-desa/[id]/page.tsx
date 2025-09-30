@@ -1,7 +1,10 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
+
 import colors from '@/con/colors';
-import { Alert, Box, Button, Center, Group, Image, Paper, Stack, Text, TextInput, Title, Tooltip } from '@mantine/core';
+import {
+  Alert, Box, Button, Center, Group, Image,
+  Paper, Stack, Text, TextInput, Title, Tooltip
+} from '@mantine/core';
 import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
 
@@ -17,7 +20,14 @@ function EditPejabatDesa() {
   const params = useParams();
   const router = useRouter();
 
-  // UI States
+  // Local form state
+  const [formData, setFormData] = useState({
+    name: '',
+    position: '',
+    imageId: null as string | null,
+  });
+
+  // UI states
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -34,11 +44,17 @@ function EditPejabatDesa() {
 
       try {
         const profileData = await profileLandingPageState.pejabatDesa.findUnique.load(id);
-        profileLandingPageState.pejabatDesa.edit.initialize(profileData);
 
+        if (profileData) {
+          setFormData({
+            name: profileData.name || '',
+            position: profileData.position || '',
+            imageId: profileData.imageId || null,
+          });
 
-        if (profileData && profileData.image?.link) {
-          setPreviewImage(profileData.image.link);
+          if (profileData.image?.link) {
+            setPreviewImage(profileData.image.link);
+          }
         }
       } catch (error) {
         console.error("Error loading profile:", error);
@@ -47,16 +63,15 @@ function EditPejabatDesa() {
     };
 
     loadData();
-
-    return () => {
-      profileLandingPageState.pejabatDesa.edit.reset(); // cleanup form
-    };
+    return () => profileLandingPageState.pejabatDesa.edit.reset();
   }, [params?.id, router]);
 
-  const handleFieldChange = (field: string, value: string) => {
-    profileLandingPageState.pejabatDesa.edit.updateField(field as any, value);
+  // Handle input change
+  const handleChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
   };
 
+  // Handle file change
   const handleFileChange = (newFile: File | null) => {
     if (!newFile) {
       setFile(null);
@@ -72,15 +87,17 @@ function EditPejabatDesa() {
     reader.readAsDataURL(newFile);
   };
 
+  // Submit form
   const handleSubmit = async () => {
-    if (isSubmitting || !profileLandingPageState.pejabatDesa.edit.form.name.trim()) {
+    if (isSubmitting || !formData.name.trim()) {
       toast.error("Nama wajib diisi");
       return;
     }
 
     setIsSubmitting(true);
-
     try {
+      let imageId = formData.imageId;
+
       // Upload file jika ada
       if (file) {
         const uploadResponse = await ApiFetch.api.fileStorage.create.post({ file, name: file.name });
@@ -90,13 +107,16 @@ function EditPejabatDesa() {
           toast.error("Gagal upload gambar");
           return;
         }
-
-        profileLandingPageState.pejabatDesa.edit.form.imageId = uploaded.id;
+        imageId = uploaded.id;
       }
 
-      // Submit form
-      const success = await profileLandingPageState.pejabatDesa.edit.submit();
+      // Update global state only on submit
+      profileLandingPageState.pejabatDesa.edit.form = {
+        ...formData,
+        imageId: imageId || '', // Ensure imageId is always a string
+      };
 
+      const success = await profileLandingPageState.pejabatDesa.edit.submit();
       if (success) {
         toast.success("Berhasil menyimpan perubahan");
         router.push("/admin/landing-page/profile/pejabat-desa");
@@ -109,11 +129,9 @@ function EditPejabatDesa() {
     }
   };
 
-  const handleBack = () => {
-    router.back();
-  };
+  const handleBack = () => router.back();
 
-  // Loading state
+  // Loading
   if (allState.edit.loading) {
     return (
       <Box>
@@ -124,7 +142,7 @@ function EditPejabatDesa() {
     );
   }
 
-  // Error state
+  // Error
   if (allState.edit.error) {
     return (
       <Box>
@@ -146,7 +164,7 @@ function EditPejabatDesa() {
       <Stack gap="xs">
         <Group mb="md">
           <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-            <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+            <Button variant="subtle" onClick={handleBack} p="xs" radius="md">
               <IconArrowBack color={colors['blue-button']} size={24} />
             </Button>
           </Tooltip>
@@ -170,74 +188,70 @@ function EditPejabatDesa() {
             <TextInput
               label={<Text fw="bold">Nama Perbekel</Text>}
               placeholder="Masukkan nama perbekel"
-              defaultValue={allState.edit.form.name}
-              onChange={(e) => handleFieldChange('name', e.currentTarget.value)}
-              error={!allState.edit.form.name && "Nama wajib diisi"}
+              value={formData.name}
+              onChange={(e) => handleChange('name', e.currentTarget.value)}
+              error={!formData.name && "Nama wajib diisi"}
             />
 
             {/* Posisi Field */}
             <TextInput
               label={<Text fw="bold">Posisi</Text>}
               placeholder="Masukkan posisi"
-              defaultValue={allState.edit.form.position}
-              onChange={(e) => handleFieldChange('position', e.currentTarget.value)}
-              error={!allState.edit.form.position && "Posisi wajib diisi"}
+              value={formData.position}
+              onChange={(e) => handleChange('position', e.currentTarget.value)}
+              error={!formData.position && "Posisi wajib diisi"}
             />
 
             {/* File Upload */}
             <Box>
               <Text fz={"md"} fw={"bold"}>Gambar</Text>
-              <Box>
-                <Dropzone
-                  onDrop={(files) => handleFileChange(files[0])}
-                  onReject={() => toast.error('File tidak valid.')}
-                  maxSize={5 * 1024 ** 2} // Maks 5MB
-                  accept={{ 'image/*': [] }}
-                >
-                  <Group justify="center" gap="xl" mih={220} style={{ pointerEvents: 'none' }}>
-                    <Dropzone.Accept>
-                      <IconUpload size={52} color="var(--mantine-color-blue-6)" stroke={1.5} />
-                    </Dropzone.Accept>
-                    <Dropzone.Reject>
-                      <IconX size={52} color="var(--mantine-color-red-6)" stroke={1.5} />
-                    </Dropzone.Reject>
-                    <Dropzone.Idle>
-                      <IconPhoto size={52} color="var(--mantine-color-dimmed)" stroke={1.5} />
-                    </Dropzone.Idle>
+              <Dropzone
+                onDrop={(files) => handleFileChange(files[0])}
+                onReject={() => toast.error('File tidak valid.')}
+                maxSize={5 * 1024 ** 2}
+                accept={{ 'image/*': [] }}
+              >
+                <Group justify="center" gap="xl" mih={220} style={{ pointerEvents: 'none' }}>
+                  <Dropzone.Accept>
+                    <IconUpload size={52} color="var(--mantine-color-blue-6)" stroke={1.5} />
+                  </Dropzone.Accept>
+                  <Dropzone.Reject>
+                    <IconX size={52} color="var(--mantine-color-red-6)" stroke={1.5} />
+                  </Dropzone.Reject>
+                  <Dropzone.Idle>
+                    <IconPhoto size={52} color="var(--mantine-color-dimmed)" stroke={1.5} />
+                  </Dropzone.Idle>
 
-                    <div>
-                      <Text size="xl" inline>
-                        Drag gambar ke sini atau klik untuk pilih file
-                      </Text>
-                      <Text size="sm" c="dimmed" inline mt={7}>
-                        Maksimal 5MB dan harus format gambar
-                      </Text>
-                    </div>
-                  </Group>
-                </Dropzone>
+                  <div>
+                    <Text size="xl" inline>
+                      Drag gambar ke sini atau klik untuk pilih file
+                    </Text>
+                    <Text size="sm" c="dimmed" inline mt={7}>
+                      Maksimal 5MB dan harus format gambar
+                    </Text>
+                  </div>
+                </Group>
+              </Dropzone>
 
-                {/* Tampilkan preview kalau ada */}
-                {previewImage && (
-                  <Box mt="sm">
-                    <Image
-                      src={previewImage}
-                      alt="Preview"
-                      style={{
-                        maxWidth: '100%',
-                        maxHeight: '150px',
-                        objectFit: 'contain',
-                        borderRadius: '8px',
-                        border: '1px solid #ddd',
-                      }}
-                      loading="lazy"
-                    />
-                  </Box>
-                )}
-
-              </Box>
+              {previewImage && (
+                <Box mt="sm">
+                  <Image
+                    src={previewImage}
+                    alt="Preview"
+                    style={{
+                      maxWidth: '100%',
+                      maxHeight: '150px',
+                      objectFit: 'contain',
+                      borderRadius: '8px',
+                      border: '1px solid #ddd',
+                    }}
+                    loading="lazy"
+                  />
+                </Box>
+              )}
             </Box>
 
-            {/* Preview Gambar */}
+            {/* Preview */}
             <Box>
               <Text fz="sm" fw="bold" mb="xs">Preview Gambar</Text>
               {previewImage ? (
@@ -252,13 +266,13 @@ function EditPejabatDesa() {
               )}
             </Box>
 
-            {/* Submit Button */}
+            {/* Submit */}
             <Group>
               <Button
                 bg={colors['blue-button']}
                 onClick={handleSubmit}
                 loading={isSubmitting || allState.edit.loading}
-                disabled={!allState.edit.form.name}
+                disabled={!formData.name}
               >
                 {isSubmitting ? 'Menyimpan...' : 'Simpan Perubahan'}
               </Button>

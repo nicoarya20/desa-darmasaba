@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
+
 import stateDashboardBerita from '@/app/admin/(dashboard)/_state/desa/berita';
 import colors from '@/con/colors';
 import {
@@ -10,7 +11,7 @@ import {
   Stack,
   TextInput,
   Title,
-  Tooltip
+  Tooltip,
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -24,7 +25,7 @@ function EditKategoriBerita() {
   const params = useParams();
 
   const [formData, setFormData] = useState({
-    name: editState.update.form.name || '',
+    name: '',
   });
 
   useEffect(() => {
@@ -48,8 +49,16 @@ function EditKategoriBerita() {
     loadKategori();
   }, [params?.id]);
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  };
+
   const handleSubmit = async () => {
     try {
+      // update global state hanya saat submit
       editState.update.form = {
         ...editState.update.form,
         name: formData.name,
@@ -94,10 +103,11 @@ function EditKategoriBerita() {
       >
         <Stack gap="md">
           <TextInput
+            name="name"
             label="Nama Kategori Berita"
             placeholder="Masukkan nama kategori berita"
-            defaultValue={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            value={formData.name}
+            onChange={handleChange}
             required
           />
 

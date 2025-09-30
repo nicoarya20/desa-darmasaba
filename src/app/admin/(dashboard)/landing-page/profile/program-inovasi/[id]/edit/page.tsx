@@ -31,10 +31,10 @@ function EditProgramInovasi() {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [formData, setFormData] = useState({
-    name: stateProgramInovasi.update.form.name || "",
-    description: stateProgramInovasi.update.form.description || "",
-    imageId: stateProgramInovasi.update.form.imageId || "",
-    link: stateProgramInovasi.update.form.link || "",
+    name: "",
+    description: "",
+    imageId: "",
+    link: "",
   })
 
   useEffect(() => {
@@ -51,9 +51,12 @@ function EditProgramInovasi() {
             imageId: data.imageId || "",
             link: data.link || ""
           });
-          // Tampilkan preview gambar
+
+          // Preview image
           if (data.image?.link) {
             setPreviewImage(data.image.link);
+          } else {
+            setPreviewImage(null);
           }
         }
       } catch (error) {
@@ -69,23 +72,24 @@ function EditProgramInovasi() {
 
   const handleSubmit = async () => {
     try {
+      // Upload file kalau ada file baru
+      let imageId = formData.imageId;
+      if (file) {
+        const res = await ApiFetch.api.fileStorage.create.post({ file, name: file.name });
+        const uploaded = res.data?.data;
+        if (!uploaded?.id) {
+          return toast.error("Gagal upload gambar");
+        }
+        imageId = uploaded.id;
+      }
+
+      // Update global state form (baru di sini)
       stateProgramInovasi.update.form = {
         ...stateProgramInovasi.update.form,
         name: formData.name,
         description: formData.description,
-        imageId: formData.imageId,
+        imageId,
         link: formData.link,
-      }
-      if (file) {
-        const res = await ApiFetch.api.fileStorage.create.post({ file, name: file.name });
-        const uploaded = res.data?.data;
-
-        if (!uploaded?.id) {
-          return toast.error("Gagal upload gambar");
-        }
-
-        // Update imageId in global state
-        stateProgramInovasi.update.form.imageId = uploaded.id;
       }
 
       await stateProgramInovasi.update.update();
@@ -170,29 +174,31 @@ function EditProgramInovasi() {
               </Box>
             )}
           </Box>
+
           <TextInput
+            key={String(params.id)} // Convert to string to ensure valid key
             label="Nama Program Inovasi"
             placeholder="Masukkan nama program inovasi"
-            defaultValue={formData.name}
+            value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             required
           />
 
           <Box>
-            <Text fz={"sm"} fw={"bold"}>Deskripsi</Text>
+            <Text fz="sm" fw="bold">Deskripsi</Text>
             <EditEditor
               value={formData.description}
-              onChange={(htmlContent) => {
-                setFormData((prev) => ({ ...prev, description: htmlContent }));
-                stateProgramInovasi.update.form.description = htmlContent;
-              }}
+              onChange={(htmlContent) =>
+                setFormData((prev) => ({ ...prev, description: htmlContent }))
+              }
             />
           </Box>
 
           <TextInput
+            key={`${params.id}-link`}
             label="Link Program Inovasi"
             placeholder="Masukkan link program inovasi (opsional)"
-            defaultValue={formData.link}
+            value={formData.link}
             onChange={(e) => setFormData({ ...formData, link: e.target.value })}
           />
 

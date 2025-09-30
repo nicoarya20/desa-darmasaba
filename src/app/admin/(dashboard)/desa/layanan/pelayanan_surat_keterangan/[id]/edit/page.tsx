@@ -1,5 +1,4 @@
 'use client'
-/* eslint-disable react-hooks/exhaustive-deps */
 import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import stateLayananDesa from '@/app/admin/(dashboard)/_state/desa/layananDesa';
 import colors from '@/con/colors';
@@ -19,7 +18,7 @@ import {
 import { Dropzone } from '@mantine/dropzone';
 import { IconArrowBack, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
@@ -28,17 +27,23 @@ function EditSuratKeterangan() {
   const params = useParams();
   const stateSurat = useProxy(stateLayananDesa.suratKeterangan);
 
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
-  const [previewImage2, setPreviewImage2] = useState<string | null>(null);
-  const [file, setFile] = useState<File | null>(null);
-  const [file2, setFile2] = useState<File | null>(null);
+  // state lokal untuk form
   const [formData, setFormData] = useState({
-    name: stateSurat.edit.form.name,
-    deskripsi: stateSurat.edit.form.deskripsi,
-    imageId: stateSurat.edit.form.imageId,
-    image2Id: stateSurat.edit.form.image2Id,
+    name: '',
+    deskripsi: '',
+    imageId: '',
+    image2Id: '',
   });
 
+  // state file upload
+  const [file, setFile] = useState<File | null>(null);
+  const [file2, setFile2] = useState<File | null>(null);
+
+  // state preview gambar
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [previewImage2, setPreviewImage2] = useState<string | null>(null);
+
+  // load data awal
   useEffect(() => {
     const loadSurat = async () => {
       const id = params?.id as string;
@@ -64,15 +69,15 @@ function EditSuratKeterangan() {
     };
 
     loadSurat();
-  }, [params?.id]);
+  }, [params?.id, stateSurat.edit]);
 
-  const handleSubmit = async () => {
+  // handler untuk submit
+  const handleSubmit = useCallback(async () => {
     try {
-      stateSurat.edit.form = {
-        ...stateSurat.edit.form,
-        ...formData,
-      };
+      // update form global hanya saat submit
+      stateSurat.edit.form = { ...stateSurat.edit.form, ...formData };
 
+      // upload file 1
       if (file) {
         const res = await ApiFetch.api.fileStorage.create.post({ file, name: file.name });
         const uploaded = res.data?.data;
@@ -80,6 +85,7 @@ function EditSuratKeterangan() {
         stateSurat.edit.form.imageId = uploaded.id;
       }
 
+      // upload file 2
       if (file2) {
         const res = await ApiFetch.api.fileStorage.create.post({ file: file2, name: file2.name });
         const uploaded = res.data?.data;
@@ -94,7 +100,7 @@ function EditSuratKeterangan() {
       console.error('Error updating surat:', error);
       toast.error('Terjadi kesalahan saat memperbarui surat');
     }
-  };
+  }, [formData, file, file2, router, stateSurat.edit]);
 
   return (
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
@@ -119,28 +125,32 @@ function EditSuratKeterangan() {
         style={{ border: '1px solid #e0e0e0' }}
       >
         <Stack gap="md">
+          {/* Input nama */}
           <TextInput
             label="Nama Surat Keterangan"
             placeholder="Masukkan nama surat keterangan"
-            defaultValue={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            value={formData.name}
+            onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
             required
           />
 
+          {/* Input deskripsi */}
           <Box>
             <Text fz="sm" fw="bold" mb={6}>
               Konten
             </Text>
             <EditEditor
               value={formData.deskripsi}
-              onChange={(htmlContent) => setFormData({ ...formData, deskripsi: htmlContent })}
+              onChange={(htmlContent) =>
+                setFormData((prev) => ({ ...prev, deskripsi: htmlContent }))
+              }
             />
           </Box>
 
           {/* Upload Gambar 1 */}
           <Box>
             <Text fw="bold" fz="sm" mb={6}>
-            Gambar Konten Pelayanan
+              Gambar Konten Pelayanan
             </Text>
             <Dropzone
               onDrop={(files) => {

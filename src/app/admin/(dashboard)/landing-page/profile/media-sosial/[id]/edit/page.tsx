@@ -30,16 +30,17 @@ function EditMediaSosial() {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [formData, setFormData] = useState({
-    name: stateMediaSosial.update.form.name || '',
-    iconUrl: stateMediaSosial.update.form.iconUrl || '',
-    imageId: stateMediaSosial.update.form.imageId || '',
+    name: '',
+    iconUrl: '',
+    imageId: '',
   });
 
+  // Load data by ID
   useEffect(() => {
     const id = params?.id as string;
     if (!id) return;
 
-    const loadMediaSosial = async () => {
+    const loadData = async () => {
       try {
         const data = await stateMediaSosial.update.load(id);
 
@@ -59,11 +60,16 @@ function EditMediaSosial() {
       }
     };
 
-    loadMediaSosial();
+    loadData();
   }, [params?.id]);
+
+  const handleChange = (field: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
 
   const handleSubmit = async () => {
     try {
+      // update global state hanya saat submit
       stateMediaSosial.update.form = { ...stateMediaSosial.update.form, ...formData };
 
       if (file) {
@@ -85,7 +91,10 @@ function EditMediaSosial() {
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box
+      px={{ base: 'sm', md: 'lg' }}
+      py="md"
+    >
       <Group mb="md">
         <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
           <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
@@ -106,6 +115,7 @@ function EditMediaSosial() {
         style={{ border: '1px solid #e0e0e0' }}
       >
         <Stack gap="md">
+          {/* Upload Gambar */}
           <Box>
             <Text fw="bold" fz="sm" mb={6}>
               Gambar Media Sosial
@@ -151,26 +161,32 @@ function EditMediaSosial() {
                   src={previewImage}
                   alt="Preview Gambar"
                   radius="md"
-                  style={{ maxHeight: 220, objectFit: 'contain', border: `1px solid ${colors['blue-button']}` }}
+                  style={{
+                    maxHeight: 220,
+                    objectFit: 'contain',
+                    border: `1px solid ${colors['blue-button']}`,
+                  }}
                   loading="lazy"
                 />
               </Box>
             )}
           </Box>
 
+          {/* Nama Media Sosial */}
           <TextInput
             label="Nama Media Sosial / Kontak"
             placeholder="Masukkan nama media sosial atau kontak"
-            defaultValue={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            value={formData.name}
+            onChange={(e) => handleChange('name', e.target.value)}
             required
           />
 
+          {/* Link Media Sosial */}
           <TextInput
             label="Link Media Sosial / Nomor Telepon"
             placeholder="Masukkan link media sosial atau nomor telepon"
-            defaultValue={formData.iconUrl}
-            onChange={(e) => setFormData({ ...formData, iconUrl: e.target.value })}
+            value={formData.iconUrl}
+            onChange={(e) => handleChange('iconUrl', e.target.value)}
             required
           />
 

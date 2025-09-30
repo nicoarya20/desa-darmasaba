@@ -1,9 +1,20 @@
-'use client'
 /* eslint-disable react-hooks/exhaustive-deps */
+'use client'
+
 import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import stateLayananDesa from '@/app/admin/(dashboard)/_state/desa/layananDesa';
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, Stack, Text, TextInput, Title, Tooltip } from '@mantine/core';
+import {
+  Box,
+  Button,
+  Group,
+  Paper,
+  Stack,
+  Text,
+  TextInput,
+  Title,
+  Tooltip,
+} from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -12,17 +23,22 @@ import { useProxy } from 'valtio/utils';
 
 function EditPelayananPendudukNonPermanent() {
   const router = useRouter();
-  const params = useParams()
-  const statePendudukNonPermanent = useProxy(stateLayananDesa.pelayananPendudukNonPermanen)
-  const [formData, setFormData] = useState({
-    name: statePendudukNonPermanent.findById.data?.name || '',
-    deskripsi: statePendudukNonPermanent.findById.data?.deskripsi || '',
-  })
+  const params = useParams();
+  const statePendudukNonPermanent = useProxy(
+    stateLayananDesa.pelayananPendudukNonPermanen
+  );
 
+  const [formData, setFormData] = useState({
+    name: '',
+    deskripsi: '',
+  });
+
+  // Load data sekali dari backend
   useEffect(() => {
-    const loadPelayananPerizinan = async () => {
+    const loadData = async () => {
       const id = params?.id as string;
       if (!id) return;
+
       try {
         const data = await statePendudukNonPermanent.update.load(id);
         if (data) {
@@ -32,27 +48,48 @@ function EditPelayananPendudukNonPermanent() {
           });
         }
       } catch (error) {
-        console.error("Error loading pelayanan perizinan berusaha:", error);
-        toast.error("Gagal memuat data pelayanan perizinan berusaha");
+        console.error('Error loading data:', error);
+        toast.error('Gagal memuat data pelayanan penduduk non permanent');
       }
     };
-    loadPelayananPerizinan();
+
+    loadData();
   }, [params?.id]);
 
+  const handleChange =
+    (field: keyof typeof formData) =>
+    (value: string) => {
+      setFormData((prev) => ({
+        ...prev,
+        [field]: value,
+      }));
+    };
+
   const handleSubmit = async () => {
-    if (statePendudukNonPermanent.findById.data) {
-      statePendudukNonPermanent.findById.data.name = formData.name;
-      statePendudukNonPermanent.findById.data.deskripsi = formData.deskripsi;
-      statePendudukNonPermanent.update.update(statePendudukNonPermanent.findById.data)
-    }
-    router.push('/admin/desa/layanan/pelayanan_penduduk_non_permanent')
-  }
+    if (!statePendudukNonPermanent.findById.data) return;
+
+    // Update global state hanya di submit
+    const updated = {
+      ...statePendudukNonPermanent.findById.data,
+      name: formData.name,
+      deskripsi: formData.deskripsi,
+    };
+
+    await statePendudukNonPermanent.update.update(updated);
+    router.push('/admin/desa/layanan/pelayanan_penduduk_non_permanent');
+  };
+
   return (
     <Box>
       <Stack gap="xs">
         <Group mb="md">
           <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-            <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+            <Button
+              variant="subtle"
+              onClick={() => router.back()}
+              p="xs"
+              radius="md"
+            >
               <IconArrowBack color={colors['blue-button']} size={24} />
             </Button>
           </Tooltip>
@@ -62,7 +99,7 @@ function EditPelayananPendudukNonPermanent() {
         </Group>
 
         <Paper
-          w={{ base: "100%", md: "50%" }}
+          w={{ base: '100%', md: '50%' }}
           bg={colors['white-1']}
           p="md"
           radius="md"
@@ -76,23 +113,19 @@ function EditPelayananPendudukNonPermanent() {
             <TextInput
               label="Judul"
               placeholder="Masukkan judul"
-              defaultValue={formData.name}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
+              value={formData.name}
+              onChange={(e) => handleChange('name')(e.target.value)}
               required
             />
 
-            {/* Posisi Field */}
+            {/* Deskripsi Field */}
             <Box>
               <Text fz="sm" fw="bold">
                 Deskripsi
               </Text>
               <EditEditor
                 value={formData.deskripsi}
-                onChange={(htmlContent) => {
-                  setFormData((prev) => ({ ...prev, deskripsi: htmlContent }));
-                }}
+                onChange={handleChange('deskripsi')}
               />
             </Box>
 
@@ -104,7 +137,9 @@ function EditPelayananPendudukNonPermanent() {
                 loading={statePendudukNonPermanent.update.loading}
                 disabled={!formData.name}
               >
-                {statePendudukNonPermanent.update.loading ? 'Menyimpan...' : 'Simpan Perubahan'}
+                {statePendudukNonPermanent.update.loading
+                  ? 'Menyimpan...'
+                  : 'Simpan Perubahan'}
               </Button>
 
               <Button

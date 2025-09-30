@@ -97,17 +97,21 @@ function ListDesaDigitalSmartVillage({ search }: { search: string }) {
                 filteredData.map((item) => (
                   <TableTr key={item.id}>
                     <TableTd>
-                      <Text fw={500} truncate="end" lineClamp={1}>
-                        {item.name}
-                      </Text>
+                      <Box w={200}>
+                        <Text fw={500} truncate="end" lineClamp={1}>
+                          {item.name}
+                        </Text>
+                      </Box>
                     </TableTd>
                     <TableTd>
-                      <Text
-                        fz="sm"
-                        c="dimmed"
-                        lineClamp={2}
-                        dangerouslySetInnerHTML={{ __html: item.deskripsi }}
-                      />
+                      <Box w={200}>
+                        <Text
+                          fz="sm"
+                          c="dimmed"
+                          lineClamp={1}
+                          dangerouslySetInnerHTML={{ __html: item.deskripsi }}
+                        />
+                      </Box>
                     </TableTd>
                     <TableTd>
                       <Button

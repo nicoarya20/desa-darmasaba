@@ -15,7 +15,7 @@ import {
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 import { convertYoutubeUrlToEmbed } from '../../../lib/youtube-utils';
@@ -31,17 +31,19 @@ function EditVideo() {
     linkVideo: '',
   });
 
+  // load data video sekali saat id ada
   useEffect(() => {
     const loadVideo = async () => {
       const id = params?.id as string;
       if (!id) return;
+
       try {
         const data = await videoState.update.load(id);
         if (data) {
           setFormData({
-            name: data.name || '',
-            deskripsi: data.deskripsi || '',
-            linkVideo: data.linkVideo || '',
+            name: data.name ?? '',
+            deskripsi: data.deskripsi ?? '',
+            linkVideo: data.linkVideo ?? '',
           });
         }
       } catch (error) {
@@ -49,10 +51,16 @@ function EditVideo() {
         toast.error('Gagal memuat data video');
       }
     };
+
     loadVideo();
   }, [params?.id]);
 
-  const embedLink = convertYoutubeUrlToEmbed(formData.linkVideo);
+  const handleChange = useCallback(
+    (field: keyof typeof formData, value: string) => {
+      setFormData((prev) => ({ ...prev, [field]: value }));
+    },
+    []
+  );
 
   const handleSubmit = async () => {
     const converted = convertYoutubeUrlToEmbed(formData.linkVideo);
@@ -63,7 +71,6 @@ function EditVideo() {
 
     try {
       videoState.update.form = {
-        ...videoState.update.form,
         name: formData.name,
         deskripsi: formData.deskripsi,
         linkVideo: formData.linkVideo,
@@ -77,11 +84,18 @@ function EditVideo() {
     }
   };
 
+  const embedLink = convertYoutubeUrlToEmbed(formData.linkVideo);
+
   return (
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
       <Group mb="md">
         <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+          <Button
+            variant="subtle"
+            onClick={() => router.back()}
+            p="xs"
+            radius="md"
+          >
             <IconArrowBack color={colors['blue-button']} size={24} />
           </Button>
         </Tooltip>
@@ -102,8 +116,8 @@ function EditVideo() {
           <TextInput
             label="Judul Video"
             placeholder="Masukkan judul video"
-            defaultValue={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            value={formData.name}
+            onChange={(e) => handleChange('name', e.currentTarget.value)}
             required
           />
 
@@ -111,8 +125,8 @@ function EditVideo() {
             <TextInput
               label="Link Video YouTube"
               placeholder="https://www.youtube.com/watch?v=abc123"
-              defaultValue={formData.linkVideo}
-              onChange={(e) => setFormData({ ...formData, linkVideo: e.currentTarget.value })}
+              value={formData.linkVideo}
+              onChange={(e) => handleChange('linkVideo', e.currentTarget.value)}
               required
             />
             {embedLink && (
@@ -135,7 +149,7 @@ function EditVideo() {
             </Title>
             <EditEditor
               value={formData.deskripsi}
-              onChange={(val) => setFormData({ ...formData, deskripsi: val })}
+              onChange={(val) => handleChange('deskripsi', val)}
             />
           </Box>
 

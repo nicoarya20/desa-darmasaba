@@ -1,9 +1,7 @@
 import prisma from "@/lib/prisma";
 
-export default async function pengaduanMasyarakatFindUnique(request: Request) {
-    const url = new URL(request.url);
-    const pathSegments = url.pathname.split("/");
-    const id = pathSegments[pathSegments.length - 1];
+export default async function pengaduanMasyarakatFindUnique({ params }: { params: { id: string } }) {
+    const { id } = params;
 
     if (!id) {
         return Response.json({

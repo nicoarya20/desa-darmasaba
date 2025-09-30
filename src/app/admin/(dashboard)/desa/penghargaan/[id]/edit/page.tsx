@@ -24,18 +24,22 @@ import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
 function EditPenghargaan() {
-  const statePenghargaan = useProxy(penghargaanState)
-  const router = useRouter()
-  const params = useParams()
-  const [previewImage, setPreviewImage] = useState<string | null>(null)
-  const [file, setFile] = useState<File | null>(null)
-  const [formData, setFormData] = useState({
-    name: statePenghargaan.findUnique.data?.name || '',
-    juara: statePenghargaan.findUnique.data?.juara || '',
-    deskripsi: statePenghargaan.findUnique.data?.deskripsi || '',
-    imageId: statePenghargaan.findUnique.data?.imageId || '',
-  })
+  const statePenghargaan = useProxy(penghargaanState);
+  const router = useRouter();
+  const params = useParams();
 
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [file, setFile] = useState<File | null>(null);
+
+  // Lokal formData
+  const [formData, setFormData] = useState({
+    name: '',
+    juara: '',
+    deskripsi: '',
+    imageId: '',
+  });
+
+  // Load data pertama kali
   useEffect(() => {
     const loadPenghargaan = async () => {
       const id = params?.id as string;
@@ -56,43 +60,43 @@ function EditPenghargaan() {
           }
         }
       } catch (error) {
-        console.error("Error loading penghargaan:", error);
-        toast.error("Gagal memuat data penghargaan");
+        console.error('Error loading penghargaan:', error);
+        toast.error('Gagal memuat data penghargaan');
       }
     };
 
     loadPenghargaan();
   }, [params?.id]);
 
+  // Submit
   const handleSubmit = async () => {
     try {
+      // Sync ke global state saat submit
       statePenghargaan.edit.form = {
         ...statePenghargaan.edit.form,
-        name: formData.name,
-        juara: formData.juara,
-        deskripsi: formData.deskripsi,
-        imageId: formData.imageId,
-      }
+        ...formData,
+      };
 
+      // Upload file baru (kalau ada)
       if (file) {
         const res = await ApiFetch.api.fileStorage.create.post({ file, name: file.name });
         const uploaded = res.data?.data;
 
         if (!uploaded?.id) {
-          return toast.error("Gagal upload gambar");
+          return toast.error('Gagal upload gambar');
         }
 
         statePenghargaan.edit.form.imageId = uploaded.id;
       }
 
       await statePenghargaan.edit.update();
-      toast.success("Penghargaan berhasil diperbarui!");
-      router.push("/admin/desa/penghargaan");
+      toast.success('Penghargaan berhasil diperbarui!');
+      router.push('/admin/desa/penghargaan');
     } catch (error) {
-      console.error("Error updating penghargaan:", error);
-      toast.error("Terjadi kesalahan saat memperbarui penghargaan");
+      console.error('Error updating penghargaan:', error);
+      toast.error('Terjadi kesalahan saat memperbarui penghargaan');
     }
-  }
+  };
 
   return (
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
@@ -122,8 +126,8 @@ function EditPenghargaan() {
           <TextInput
             label="Judul"
             placeholder="Masukkan judul penghargaan"
-            defaultValue={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            value={formData.name}
+            onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
             required
           />
 
@@ -131,8 +135,8 @@ function EditPenghargaan() {
           <TextInput
             label="Juara"
             placeholder="Masukkan juara"
-            defaultValue={formData.juara}
-            onChange={(e) => setFormData({ ...formData, juara: e.target.value })}
+            value={formData.juara}
+            onChange={(e) => setFormData((prev) => ({ ...prev, juara: e.target.value }))}
             required
           />
 
@@ -182,7 +186,11 @@ function EditPenghargaan() {
                   src={previewImage}
                   alt="Preview Gambar"
                   radius="md"
-                  style={{ maxHeight: 220, objectFit: 'contain', border: `1px solid ${colors['blue-button']}` }}
+                  style={{
+                    maxHeight: 220,
+                    objectFit: 'contain',
+                    border: `1px solid ${colors['blue-button']}`,
+                  }}
                   loading="lazy"
                 />
               </Box>
@@ -196,10 +204,9 @@ function EditPenghargaan() {
             </Text>
             <EditEditor
               value={formData.deskripsi}
-              onChange={(htmlContent) => {
-                setFormData((prev) => ({ ...prev, deskripsi: htmlContent }));
-                statePenghargaan.edit.form.deskripsi = htmlContent;
-              }}
+              onChange={(htmlContent) =>
+                setFormData((prev) => ({ ...prev, deskripsi: htmlContent }))
+              }
             />
           </Box>
 

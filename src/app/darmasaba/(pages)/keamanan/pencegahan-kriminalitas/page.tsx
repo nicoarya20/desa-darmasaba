@@ -2,7 +2,7 @@
 'use client'
 import pencegahanKriminalitasState from '@/app/admin/(dashboard)/_state/keamanan/pencegahan-kriminalitas';
 import colors from '@/con/colors';
-import { Box, Button, Center, Flex, Paper, SimpleGrid, Skeleton, Stack, Text } from '@mantine/core';
+import { ActionIcon, Box, Button, Center, Paper, SimpleGrid, Skeleton, Stack, Text } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowRight } from '@tabler/icons-react';
 import { useTransitionRouter } from 'next-view-transitions';
@@ -63,16 +63,15 @@ function Page() {
           <Stack pt={30} gap="lg">
             {data.length > 0 ? (
               data.map((item) => (
-                <Paper key={item.id} p="md" bg={colors['blue-button']} radius="md" shadow="sm" onClick={() => router.push(`/darmasaba/keamanan/pencegahan-kriminalitas/${item.id}`)}>
-                  <Stack gap={"xs"}>
-                    <Flex align="center" justify="space-between">
+                <ActionIcon key={item.id} variant='transparent' onClick={() => router.push(`/darmasaba/keamanan/pencegahan-kriminalitas/${item.id}`)}>
+                  <Paper p="md" bg={colors['blue-button']} radius="md" shadow="sm">
+                    <Stack gap={"xs"}>
                       <Text fz="h3" c={colors['white-1']}>
                         {item.judul}
                       </Text>
-                      <IconArrowRight size={28} color={colors['white-1']} />
-                    </Flex>
-                  </Stack>
-                </Paper>
+                    </Stack>
+                  </Paper>
+                </ActionIcon>
               ))
             ) : (
               <Text color="dimmed">

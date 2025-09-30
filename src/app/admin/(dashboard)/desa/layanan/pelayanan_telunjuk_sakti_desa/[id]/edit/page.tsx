@@ -15,7 +15,7 @@ import {
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
@@ -26,22 +26,24 @@ function EditPelayananTelunjukSakti() {
   const params = useParams();
 
   const [formData, setFormData] = useState({
-    name: stateTelunjukDesa.edit.form.name,
-    deskripsi: stateTelunjukDesa.edit.form.deskripsi,
-    link: stateTelunjukDesa.edit.form.link,
+    name: '',
+    deskripsi: '',
+    link: '',
   });
 
+  // Load data awal hanya sekali (pas ada id)
   useEffect(() => {
-    const loadPelayananTelunjukSakti = async () => {
+    const loadData = async () => {
       const id = params?.id as string;
       if (!id) return;
+
       try {
         const data = await stateTelunjukDesa.edit.load(id);
         if (data) {
           setFormData({
-            name: data.name || '',
-            deskripsi: data.deskripsi || '',
-            link: data.link || '',
+            name: data.name ?? '',
+            deskripsi: data.deskripsi ?? '',
+            link: data.link ?? '',
           });
         }
       } catch (error) {
@@ -49,9 +51,19 @@ function EditPelayananTelunjukSakti() {
         toast.error('Gagal memuat data pelayanan telunjuk sakti');
       }
     };
-    loadPelayananTelunjukSakti();
+
+    loadData();
   }, [params?.id]);
 
+  // Handler input controlled
+  const handleChange = useCallback(
+    (field: keyof typeof formData, value: string) => {
+      setFormData((prev) => ({ ...prev, [field]: value }));
+    },
+    []
+  );
+
+  // Submit: update global state hanya saat simpan
   const handleSubmit = async () => {
     try {
       stateTelunjukDesa.edit.form = {
@@ -94,8 +106,8 @@ function EditPelayananTelunjukSakti() {
           <TextInput
             label="Nama Pelayanan"
             placeholder="Masukkan nama pelayanan"
-            defaultValue={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            value={formData.name}
+            onChange={(e) => handleChange('name', e.target.value)}
             required
           />
 
@@ -106,7 +118,7 @@ function EditPelayananTelunjukSakti() {
             </Text>
             <EditEditor
               value={formData.deskripsi}
-              onChange={(htmlContent) => setFormData({ ...formData, deskripsi: htmlContent })}
+              onChange={(htmlContent) => handleChange('deskripsi', htmlContent)}
             />
           </Box>
 
@@ -114,8 +126,8 @@ function EditPelayananTelunjukSakti() {
           <TextInput
             label="Link"
             placeholder="Masukkan link terkait"
-            defaultValue={formData.link}
-            onChange={(e) => setFormData({ ...formData, link: e.target.value })}
+            value={formData.link}
+            onChange={(e) => handleChange('link', e.target.value)}
           />
 
           {/* Tombol Simpan */}

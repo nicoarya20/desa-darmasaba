@@ -1,7 +1,7 @@
 'use client'
 import keamananLingkunganState from '@/app/admin/(dashboard)/_state/keamanan/keamanan-lingkungan';
 import colors from '@/con/colors';
-import { Box, Center, Grid, GridCol, Image, Pagination, Paper, SimpleGrid, Skeleton, Stack, Text, TextInput } from '@mantine/core';
+import { Box, Center, Grid, GridCol, Image, Pagination, Paper, SimpleGrid, Skeleton, Spoiler, Stack, Text, TextInput } from '@mantine/core';
 import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
 import { IconSearch } from '@tabler/icons-react';
 import { useState } from 'react';
@@ -11,6 +11,7 @@ import BackButton from '../../desa/layanan/_com/BackButto';
 
 function Page() {
   const state = useProxy(keamananLingkunganState)
+    const [expandedMap, setExpandedMap] = useState<Record<number, boolean>>({});
   const [search, setSearch] = useState('')
   const [debouncedSearch] = useDebouncedValue(search, 500); // 500ms delay
   const {
@@ -24,6 +25,13 @@ function Page() {
   useShallowEffect(() => {
     load(page, 3, debouncedSearch)
   }, [page, debouncedSearch])
+
+  const toggleExpanded = (index: number, value: boolean) => {
+    setExpandedMap((prev) => ({
+      ...prev,
+      [index]: value,
+    }));
+  };
 
   if (loading || !data) {
     return (
@@ -80,7 +88,22 @@ function Page() {
                         <Text pb={10} c={colors["blue-button"]} fw={"bold"} fz={"h3"}>
                           {v.name}
                         </Text>
-                        <Text pb={10} fz={"h4"} ta={'justify'} style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: v.deskripsi }} />
+                        <Spoiler
+                          showLabel={
+                            <Text fw="bold" fz="sm" c={colors['blue-button']}>
+                              Show more
+                            </Text>
+                          }
+                          hideLabel={
+                            <Text fw="bold" fz="sm" c={colors['blue-button']}>
+                              Hide details
+                            </Text>
+                          }
+                          expanded={expandedMap[k] || false}
+                          onExpandedChange={(val) => toggleExpanded(k, val)}
+                        >
+                          <Text pb={10} fz={"h4"} ta={'justify'} style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: v.deskripsi }} />
+                        </Spoiler>
                       </Box>
                     </Box>
                   </Stack>
@@ -89,7 +112,7 @@ function Page() {
             })}
           </SimpleGrid>
         </Stack>
-      </Box>  
+      </Box>
       <Center>
         <Pagination
           value={page}

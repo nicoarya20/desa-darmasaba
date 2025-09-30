@@ -96,7 +96,7 @@ function ListGrafikBerdasarkanPendidikan({ search }: { search: string }) {
               leftSection={<IconPlus size={18} />}
               color="blue"
               variant="light"
-              onClick={() => router.push('/admin/ekonomi/jumlah-penduduk-usia-kerja-yang-menganggur/pengangguran_berdasarkan_usia/create')}
+              onClick={() => router.push('/admin/ekonomi/jumlah-penduduk-usia-kerja-yang-menganggur/pengangguran_berdasarkan_pendidikan/create')}
             >
               Tambah Baru
             </Button>

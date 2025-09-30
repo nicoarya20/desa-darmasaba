@@ -19,7 +19,12 @@ import {
   Tooltip,
 } from "@mantine/core";
 import { Dropzone } from "@mantine/dropzone";
-import { IconArrowBack, IconPhoto, IconUpload, IconX } from "@tabler/icons-react";
+import {
+  IconArrowBack,
+  IconPhoto,
+  IconUpload,
+  IconX,
+} from "@tabler/icons-react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
@@ -33,16 +38,17 @@ function EditBerita() {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [formData, setFormData] = useState({
-    judul: beritaState.berita.edit.form.judul || "",
-    deskripsi: beritaState.berita.edit.form.deskripsi || "",
-    kategoriBeritaId: beritaState.berita.edit.form.kategoriBeritaId || "",
-    content: beritaState.berita.edit.form.content || "",
-    imageId: beritaState.berita.edit.form.imageId || "",
+    judul: "",
+    deskripsi: "",
+    kategoriBeritaId: "",
+    content: "",
+    imageId: "",
   });
 
-  // Load berita by id saat pertama kali
+  // Load kategori + berita
   useEffect(() => {
     beritaState.kategoriBerita.findMany.load();
+
     const loadBerita = async () => {
       const id = params?.id as string;
       if (!id) return;
@@ -71,8 +77,13 @@ function EditBerita() {
     loadBerita();
   }, [params?.id]);
 
+  const handleChange = (field: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
   const handleSubmit = async () => {
     try {
+      // Update global state hanya sekali di sini
       beritaState.berita.edit.form = {
         ...beritaState.berita.edit.form,
         ...formData,
@@ -103,6 +114,7 @@ function EditBerita() {
 
   return (
     <Box px={{ base: "sm", md: "lg" }} py="md">
+      {/* Header */}
       <Group mb="md">
         <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
           <Button
@@ -119,6 +131,7 @@ function EditBerita() {
         </Title>
       </Group>
 
+      {/* Form */}
       <Paper
         w={{ base: "100%", md: "50%" }}
         bg={colors["white-1"]}
@@ -131,18 +144,14 @@ function EditBerita() {
           <TextInput
             label="Judul"
             placeholder="Masukkan judul"
-            defaultValue={formData.judul}
-            onChange={(e) =>
-              setFormData({ ...formData, judul: e.target.value })
-            }
+            value={formData.judul}
+            onChange={(e) => handleChange("judul", e.target.value)}
             required
           />
 
           <Select
             value={formData.kategoriBeritaId}
-            onChange={(val) =>
-              setFormData({ ...formData, kategoriBeritaId: val || "" })
-            }
+            onChange={(val) => handleChange("kategoriBeritaId", val || "")}
             label="Kategori"
             placeholder="Pilih kategori"
             data={
@@ -160,13 +169,12 @@ function EditBerita() {
           <TextInput
             label="Deskripsi Singkat"
             placeholder="Masukkan deskripsi singkat"
-            defaultValue={formData.deskripsi}
-            onChange={(e) =>
-              setFormData({ ...formData, deskripsi: e.target.value })
-            }
+            value={formData.deskripsi}
+            onChange={(e) => handleChange("deskripsi", e.target.value)}
             required
           />
 
+          {/* Upload Gambar */}
           <Box>
             <Text fw="bold" fz="sm" mb={6}>
               Gambar Berita
@@ -179,7 +187,9 @@ function EditBerita() {
                   setPreviewImage(URL.createObjectURL(selectedFile));
                 }
               }}
-              onReject={() => toast.error("File tidak valid, gunakan format gambar")}
+              onReject={() =>
+                toast.error("File tidak valid, gunakan format gambar")
+              }
               maxSize={5 * 1024 ** 2}
               accept={{ "image/*": [] }}
               radius="md"
@@ -187,7 +197,11 @@ function EditBerita() {
             >
               <Group justify="center" gap="xl" mih={180}>
                 <Dropzone.Accept>
-                  <IconUpload size={48} color={colors["blue-button"]} stroke={1.5} />
+                  <IconUpload
+                    size={48}
+                    color={colors["blue-button"]}
+                    stroke={1.5}
+                  />
                 </Dropzone.Accept>
                 <Dropzone.Reject>
                   <IconX size={48} color="red" stroke={1.5} />
@@ -223,18 +237,20 @@ function EditBerita() {
             )}
           </Box>
 
+          {/* Konten */}
           <Box>
             <Text fz="sm" fw="bold">
               Konten
             </Text>
             <EditEditor
               value={formData.content}
-              onChange={(htmlContent) => {
-                setFormData((prev) => ({ ...prev, content: htmlContent }));
-                beritaState.berita.edit.form.content = htmlContent;
-              }}
+              onChange={(htmlContent) =>
+                setFormData((prev) => ({ ...prev, content: htmlContent }))
+              }
             />
           </Box>
+
+          {/* Action */}
           <Group justify="right">
             <Button
               onClick={handleSubmit}
