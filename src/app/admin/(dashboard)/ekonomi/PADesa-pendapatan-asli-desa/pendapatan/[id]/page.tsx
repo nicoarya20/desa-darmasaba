@@ -24,12 +24,16 @@ function EditPendapatan() {
   const params = useParams();
 
   const [formData, setFormData] = useState({
-    name: pendapatanState.update.form.name || '',
-    value: pendapatanState.update.form.value || '',
+    name: '',
+    value: '',
   });
 
+  // helper format
   const formatRupiah = (value: number | string) => {
-    const number = typeof value === 'number' ? value : Number(value.toString().replace(/\D/g, ''));
+    const number = typeof value === 'number'
+      ? value
+      : Number(value.toString().replace(/\D/g, ''));
+
     return new Intl.NumberFormat('id-ID', {
       style: 'currency',
       currency: 'IDR',
@@ -39,6 +43,7 @@ function EditPendapatan() {
 
   const unformatRupiah = (value: string) => Number(value.replace(/\D/g, ''));
 
+  // load data once
   useEffect(() => {
     const id = params?.id as string;
     if (!id) return;
@@ -48,8 +53,8 @@ function EditPendapatan() {
         const data = await pendapatanState.update.load(id);
         if (data) {
           setFormData({
-            name: data.name || '',
-            value: data.value || '',
+            name: data.name ?? '',
+            value: data.value?.toString() ?? '',
           });
         }
       } catch (error) {
@@ -60,6 +65,13 @@ function EditPendapatan() {
 
     loadPendapatan();
   }, [params?.id]);
+
+  const handleChange = (field: string, value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
 
   const handleSubmit = async () => {
     try {
@@ -110,19 +122,19 @@ function EditPendapatan() {
           <TextInput
             label="Nama Jenis Pendapatan"
             placeholder="Masukkan nama jenis pendapatan"
-            defaultValue={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            value={formData.name}
+            onChange={(e) => handleChange('name', e.target.value)}
             required
           />
 
           <TextInput
             label="Nilai"
             placeholder="Masukkan nilai"
-            defaultValue={formatRupiah(formData.value)}
+            value={formData.value ? formatRupiah(formData.value) : ''}
             onChange={(e) => {
               const raw = e.currentTarget.value;
-              const cleanValue = unformatRupiah(raw);
-              setFormData({ ...formData, value: cleanValue });
+              const cleanValue = unformatRupiah(raw).toString();
+              handleChange('value', cleanValue);
             }}
             required
           />

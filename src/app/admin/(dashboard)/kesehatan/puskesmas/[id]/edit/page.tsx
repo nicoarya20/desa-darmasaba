@@ -54,20 +54,11 @@ function EditPuskesmas() {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [formData, setFormData] = useState<PuskesmasFormData>({
-    name: statePuskesmas.edit.form.name || '',
-    alamat: statePuskesmas.edit.form.alamat || '',
-    jam: {
-      workDays: statePuskesmas.edit.form.jam?.workDays || '',
-      weekDays: statePuskesmas.edit.form.jam?.weekDays || '',
-      holiday: statePuskesmas.edit.form.jam?.holiday || '',
-    },
-    kontak: {
-      kontakPuskesmas: statePuskesmas.edit.form.kontak?.kontakPuskesmas || '',
-      email: statePuskesmas.edit.form.kontak?.email || '',
-      facebook: statePuskesmas.edit.form.kontak?.facebook || '',
-      kontakUGD: statePuskesmas.edit.form.kontak?.kontakUGD || '',
-    },
-    imageId: statePuskesmas.edit.form.imageId || '',
+    name: '',
+    alamat: '',
+    jam: { workDays: '', weekDays: '', holiday: '' },
+    kontak: { kontakPuskesmas: '', email: '', facebook: '', kontakUGD: '' },
+    imageId: '',
   });
 
   useEffect(() => {
@@ -183,7 +174,7 @@ function EditPuskesmas() {
             label="Nama Puskesmas"
             placeholder="Masukkan nama puskesmas"
             name="name"
-            defaultValue={formData.name}
+            value={formData.name}
             onChange={handleInputChange}
             required
           />
@@ -192,7 +183,7 @@ function EditPuskesmas() {
             label="Alamat"
             placeholder="Masukkan alamat"
             name="alamat"
-            defaultValue={formData.alamat}
+            value={formData.alamat}
             onChange={handleInputChange}
             required
           />
@@ -200,7 +191,7 @@ function EditPuskesmas() {
           <TextInput
             label="Jam Buka"
             placeholder="Masukkan jam buka"
-            defaultValue={formData.jam.workDays}
+            value={formData.jam.workDays}
             onChange={(e) => handleNestedChange('jam', 'workDays', e.target.value)}
             required
           />
@@ -208,7 +199,7 @@ function EditPuskesmas() {
           <TextInput
             label="Jam Tutup"
             placeholder="Masukkan jam tutup"
-            defaultValue={formData.jam.weekDays}
+            value={formData.jam.weekDays}
             onChange={(e) => handleNestedChange('jam', 'weekDays', e.target.value)}
             required
           />
@@ -216,7 +207,7 @@ function EditPuskesmas() {
           <TextInput
             label="Jam Libur"
             placeholder="Masukkan jam libur"
-            defaultValue={formData.jam.holiday}
+            value={formData.jam.holiday}
             onChange={(e) => handleNestedChange('jam', 'holiday', e.target.value)}
             required
           />
@@ -224,28 +215,28 @@ function EditPuskesmas() {
           <TextInput
             label="Kontak Puskesmas"
             placeholder="Masukkan kontak puskesmas"
-            defaultValue={formData.kontak.kontakPuskesmas}
+            value={formData.kontak.kontakPuskesmas}
             onChange={(e) => handleNestedChange('kontak', 'kontakPuskesmas', e.target.value)}
           />
 
           <TextInput
             label="Email"
             placeholder="Masukkan email"
-            defaultValue={formData.kontak.email}
+            value={formData.kontak.email}
             onChange={(e) => handleNestedChange('kontak', 'email', e.target.value)}
           />
 
           <TextInput
             label="Facebook"
             placeholder="Masukkan facebook"
-            defaultValue={formData.kontak.facebook}
+            value={formData.kontak.facebook}
             onChange={(e) => handleNestedChange('kontak', 'facebook', e.target.value)}
           />
 
           <TextInput
             label="Kontak UGD"
             placeholder="Masukkan kontak UGD"
-            defaultValue={formData.kontak.kontakUGD}
+            value={formData.kontak.kontakUGD}
             onChange={(e) => handleNestedChange('kontak', 'kontakUGD', e.target.value)}
           />
 

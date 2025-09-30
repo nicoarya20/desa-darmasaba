@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import {
@@ -40,12 +39,12 @@ function EditKeamananLingkungan() {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [formData, setFormData] = useState({
-    name: keamananState.edit.form.name || "",
-    deskripsi: keamananState.edit.form.deskripsi || "",
-    imageId: keamananState.edit.form.imageId || "",
+    name: "",
+    deskripsi: "",
+    imageId: "",
   });
 
-  // Load data by id
+  // Load data sekali pas mount
   useEffect(() => {
     const loadData = async () => {
       const id = params?.id as string;
@@ -71,16 +70,16 @@ function EditKeamananLingkungan() {
     };
 
     loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params?.id]);
+
+  const handleChange = (field: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
 
   const handleSubmit = async () => {
     try {
-      keamananState.edit.form = {
-        ...keamananState.edit.form,
-        name: formData.name,
-        deskripsi: formData.deskripsi,
-        imageId: formData.imageId,
-      };
+      let imageId = formData.imageId;
 
       if (file) {
         const res = await ApiFetch.api.fileStorage.create.post({
@@ -93,8 +92,16 @@ function EditKeamananLingkungan() {
           return toast.error("Gagal upload gambar");
         }
 
-        keamananState.edit.form.imageId = uploaded.id;
+        imageId = uploaded.id;
       }
+
+      // update global state hanya sekali pas submit
+      keamananState.edit.form = {
+        ...keamananState.edit.form,
+        name: formData.name,
+        deskripsi: formData.deskripsi,
+        imageId,
+      };
 
       await keamananState.edit.update();
       toast.success("Keamanan Lingkungan berhasil diperbarui!");
@@ -186,7 +193,7 @@ function EditKeamananLingkungan() {
           </Dropzone>
 
           {previewImage ? (
-            <Image alt="" src={previewImage} w={200} h={200} loading="lazy"/>
+            <Image alt="" src={previewImage} w={200} h={200} loading="lazy" />
           ) : (
             <Center w={200} h={200} bg={"gray"}>
               <IconImageInPicture />
@@ -194,10 +201,8 @@ function EditKeamananLingkungan() {
           )}
 
           <TextInput
-            defaultValue={formData.name}
-            onChange={(e) =>
-              setFormData({ ...formData, name: e.target.value })
-            }
+            value={formData.name}
+            onChange={(e) => handleChange("name", e.target.value)}
             label="Judul Keamanan Lingkungan"
             placeholder="Masukkan judul"
             required
@@ -209,10 +214,7 @@ function EditKeamananLingkungan() {
             </Text>
             <EditEditor
               value={formData.deskripsi}
-              onChange={(htmlContent) => {
-                setFormData((prev) => ({ ...prev, deskripsi: htmlContent }));
-                keamananState.edit.form.deskripsi = htmlContent;
-              }}
+              onChange={(htmlContent) => handleChange("deskripsi", htmlContent)}
             />
           </Box>
 

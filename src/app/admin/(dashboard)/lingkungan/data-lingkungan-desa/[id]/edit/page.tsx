@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-'use client'
+'use client';
+
 import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import dataLingkunganDesaState from '@/app/admin/(dashboard)/_state/lingkungan/data-lingkungan-desa';
 import colors from '@/con/colors';
@@ -46,7 +47,7 @@ type IconKey =
   | 'pohon'
   | 'air';
 
-function EditDataLingkunganDesa() {
+export default function EditDataLingkunganDesa() {
   const stateDataLingkunganDesa = useProxy(dataLingkunganDesaState);
   const params = useParams();
   const router = useRouter();
@@ -58,8 +59,9 @@ function EditDataLingkunganDesa() {
     icon: '',
   });
 
+  // Load data saat komponen mount
   useEffect(() => {
-    const loadProgramKreatif = async () => {
+    const loadData = async () => {
       const id = params?.id as string;
       if (!id) return;
 
@@ -67,14 +69,6 @@ function EditDataLingkunganDesa() {
         const data = await stateDataLingkunganDesa.update.load(id);
         if (data) {
           stateDataLingkunganDesa.update.id = id;
-
-          stateDataLingkunganDesa.update.form = {
-            name: data.name,
-            deskripsi: data.deskripsi,
-            jumlah: data.jumlah,
-            icon: data.icon,
-          };
-
           setFormData({
             name: data.name,
             deskripsi: data.deskripsi,
@@ -88,13 +82,14 @@ function EditDataLingkunganDesa() {
       }
     };
 
-    loadProgramKreatif();
+    loadData();
   }, [params?.id]);
 
   const handleSubmit = async () => {
     try {
+      // Update global state hanya saat submit
       stateDataLingkunganDesa.update.form = {
-        ...stateDataLingkunganDesa.update.form,
+        ...formData,
         name: formData.name.trim(),
         deskripsi: formData.deskripsi.trim(),
         jumlah: formData.jumlah.trim(),
@@ -132,27 +127,21 @@ function EditDataLingkunganDesa() {
       >
         <Stack gap="md">
           <TextInput
-            defaultValue={formData.name}
+            value={formData.name}
             label={<Text fz="sm" fw="bold">Nama Data Lingkungan Desa</Text>}
             placeholder="Masukkan nama data lingkungan desa"
-            onChange={(val) =>
-              setFormData({
-                ...formData,
-                name: val.target.value,
-              })
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, name: e.target.value }))
             }
             required
           />
 
           <TextInput
-            defaultValue={formData.jumlah}
+            value={formData.jumlah}
             label={<Text fz="sm" fw="bold">Jumlah Data Lingkungan Desa</Text>}
             placeholder="Masukkan jumlah data lingkungan desa"
-            onChange={(val) =>
-              setFormData({
-                ...formData,
-                jumlah: val.target.value,
-              })
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, jumlah: e.target.value }))
             }
             required
           />
@@ -163,10 +152,9 @@ function EditDataLingkunganDesa() {
             </Text>
             <EditEditor
               value={formData.deskripsi}
-              onChange={(htmlContent) => {
-                setFormData((prev) => ({ ...prev, deskripsi: htmlContent }));
-                stateDataLingkunganDesa.update.form.deskripsi = htmlContent;
-              }}
+              onChange={(htmlContent) =>
+                setFormData((prev) => ({ ...prev, deskripsi: htmlContent }))
+              }
             />
           </Box>
 
@@ -176,10 +164,9 @@ function EditDataLingkunganDesa() {
             </Text>
             <SelectIconProgramEdit
               value={formData.icon as IconKey}
-              onChange={(value) => {
-                setFormData((prev) => ({ ...prev, icon: value }));
-                stateDataLingkunganDesa.update.form.icon = value;
-              }}
+              onChange={(value) =>
+                setFormData((prev) => ({ ...prev, icon: value }))
+              }
             />
           </Box>
 
@@ -202,5 +189,3 @@ function EditDataLingkunganDesa() {
     </Box>
   );
 }
-
-export default EditDataLingkunganDesa;

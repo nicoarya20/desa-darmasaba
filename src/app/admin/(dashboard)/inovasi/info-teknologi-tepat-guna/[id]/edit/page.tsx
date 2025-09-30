@@ -30,17 +30,19 @@ function EditInfoTeknologiTepatGuna() {
 
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
+
   const [formData, setFormData] = useState({
-    name: stateInfoTekno.findUnique.data?.name || '',
-    deskripsi: stateInfoTekno.findUnique.data?.deskripsi || '',
-    imageId: stateInfoTekno.findUnique.data?.imageId || '',
+    name: '',
+    deskripsi: '',
+    imageId: '',
   });
 
+  // Load data pertama kali
   useEffect(() => {
     const id = params?.id as string;
     if (!id) return;
 
-    const loadPenghargaan = async () => {
+    const loadData = async () => {
       try {
         const data = await stateInfoTekno.edit.load(id);
         if (data) {
@@ -58,16 +60,19 @@ function EditInfoTeknologiTepatGuna() {
       }
     };
 
-    loadPenghargaan();
+    loadData();
   }, [params?.id]);
 
+  // Submit form
   const handleSubmit = async () => {
     try {
+      // sync local → global pas submit
       stateInfoTekno.edit.form = {
         ...stateInfoTekno.edit.form,
         ...formData,
       };
 
+      // upload file kalau ada
       if (file) {
         const res = await ApiFetch.api.fileStorage.create.post({
           file,
@@ -119,8 +124,8 @@ function EditInfoTeknologiTepatGuna() {
           <TextInput
             label="Judul"
             placeholder="Masukkan judul info teknologi tepat guna"
-            defaultValue={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            value={formData.name}
+            onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
             required
           />
 
@@ -188,10 +193,9 @@ function EditInfoTeknologiTepatGuna() {
             </Text>
             <EditEditor
               value={formData.deskripsi}
-              onChange={(htmlContent) => {
-                setFormData((prev) => ({ ...prev, deskripsi: htmlContent }));
-                stateInfoTekno.edit.form.deskripsi = htmlContent;
-              }}
+              onChange={(htmlContent) =>
+                setFormData((prev) => ({ ...prev, deskripsi: htmlContent }))
+              }
             />
           </Box>
 

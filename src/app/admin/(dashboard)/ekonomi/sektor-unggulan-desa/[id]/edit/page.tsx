@@ -16,7 +16,7 @@ import {
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import { toast } from 'react-toastify';
 import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
@@ -28,28 +28,46 @@ function EditSektorUnggulanDesa() {
 
   const id = params.id;
 
+  // state lokal buat form
+  const [formData, setFormData] = useState({
+    name: '',
+    description: '',
+    value: 0,
+  });
+
   // Load data saat komponen mount
   useEffect(() => {
     if (id) {
-      stateGrafik.findUnique.load(id).then(() => {
-        const data = stateGrafik.findUnique.data;
-        if (data) {
-          stateGrafik.update.form = {
-            name: data.name || '',
-            description: data.description || '',
-            value: data.value || 0,
-          };
-        }
-      }).catch((err) => {
-        console.error('Error load sektor unggulan:', err);
-        toast.error('Gagal mengambil data sektor unggulan');
-      });
+      stateGrafik.findUnique
+        .load(id)
+        .then(() => {
+          const data = stateGrafik.findUnique.data;
+          if (data) {
+            setFormData({
+              name: data.name || '',
+              description: data.description || '',
+              value: data.value || 0,
+            });
+          }
+        })
+        .catch((err) => {
+          console.error('Error load sektor unggulan:', err);
+          toast.error('Gagal mengambil data sektor unggulan');
+        });
     }
   }, [id]);
+
+  const handleChange =
+    (field: keyof typeof formData) =>
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = field === 'value' ? Number(e.currentTarget.value) : e.currentTarget.value;
+      setFormData((prev) => ({ ...prev, [field]: value }));
+    };
 
   const handleSubmit = async () => {
     try {
       stateGrafik.update.id = id;
+      stateGrafik.update.form = { ...formData }; // update global pas submit
       await stateGrafik.update.submit();
       toast.success('Sektor unggulan berhasil diperbarui!');
       router.push('/admin/ekonomi/sektor-unggulan-desa');
@@ -89,10 +107,8 @@ function EditSektorUnggulanDesa() {
           <TextInput
             label="Nama Sektor Unggulan"
             placeholder="Masukkan nama sektor unggulan"
-            defaultValue={stateGrafik.update.form.name}
-            onChange={(val) => {
-              stateGrafik.update.form.name = val.currentTarget.value;
-            }}
+            value={formData.name}
+            onChange={handleChange('name')}
             required
           />
           <Box>
@@ -100,20 +116,18 @@ function EditSektorUnggulanDesa() {
               Konten
             </Text>
             <EditEditor
-              value={stateGrafik.update.form.description}
-              onChange={(htmlContent) => {
-                stateGrafik.update.form.description = htmlContent;
-              }}
+              value={formData.description}
+              onChange={(htmlContent) =>
+                setFormData((prev) => ({ ...prev, description: htmlContent }))
+              }
             />
           </Box>
           <TextInput
             label="Jumlah"
             type="number"
             placeholder="Masukkan jumlah"
-            defaultValue={stateGrafik.update.form.value}
-            onChange={(val) => {
-              stateGrafik.update.form.value = Number(val.currentTarget.value);
-            }}
+            value={formData.value}
+            onChange={handleChange('value')}
             required
           />
 

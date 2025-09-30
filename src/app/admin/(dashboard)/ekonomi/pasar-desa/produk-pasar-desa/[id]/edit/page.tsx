@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 import pasarDesaState from '@/app/admin/(dashboard)/_state/ekonomi/pasar-desa/pasar-desa';
 import colors from '@/con/colors';
@@ -24,6 +24,15 @@ import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
+type FormData = {
+  nama: string;
+  harga: number;
+  alamatUsaha: string;
+  imageId: string;
+  rating: number;
+  kategoriId: string[];
+};
+
 function EditPasarDesa() {
   const pasarState = useProxy(pasarDesaState);
   const router = useRouter();
@@ -31,17 +40,19 @@ function EditPasarDesa() {
 
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
-  const [formData, setFormData] = useState({
-    nama: pasarState.pasarDesa.edit.form.nama || '',
-    harga: pasarState.pasarDesa.edit.form.harga || 0,
-    alamatUsaha: pasarState.pasarDesa.edit.form.alamatUsaha || '',
-    imageId: pasarState.pasarDesa.edit.form.imageId || '',
-    rating: pasarState.pasarDesa.edit.form.rating || 0,
-    kategoriId: pasarState.pasarDesa.edit.form.kategoriId || [],
+  const [formData, setFormData] = useState<FormData>({
+    nama: '',
+    harga: 0,
+    alamatUsaha: '',
+    imageId: '',
+    rating: 0,
+    kategoriId: [],
   });
 
+  // load data awal
   useEffect(() => {
     pasarState.kategoriProduk.findMany.load();
+
     const loadPasarDesa = async () => {
       const id = params?.id as string;
       if (!id) return;
@@ -70,18 +81,26 @@ function EditPasarDesa() {
     loadPasarDesa();
   }, [params?.id]);
 
+  const handleChange = (key: keyof FormData, value: any) => {
+    setFormData((prev) => ({ ...prev, [key]: value }));
+  };
+
   const handleSubmit = async () => {
     try {
-      pasarState.pasarDesa.edit.form = { ...pasarState.pasarDesa.edit.form, ...formData };
-
+      // upload image kalau ada file baru
+      let imageId = formData.imageId;
       if (file) {
         const res = await ApiFetch.api.fileStorage.create.post({ file, name: file.name });
         const uploaded = res.data?.data;
-
         if (!uploaded?.id) return toast.error('Gagal upload gambar');
-
-        pasarState.pasarDesa.edit.form.imageId = uploaded.id;
+        imageId = uploaded.id;
       }
+
+      // update global state hanya saat submit
+      pasarState.pasarDesa.edit.form = {
+        ...formData,
+        imageId,
+      };
 
       await pasarState.pasarDesa.edit.update();
       toast.success('Pasar desa berhasil diperbarui!');
@@ -114,6 +133,7 @@ function EditPasarDesa() {
         style={{ border: '1px solid #e0e0e0' }}
       >
         <Stack gap="md">
+          {/* Dropzone upload */}
           <Box>
             <Text fw="bold" fz="sm" mb={6}>
               Gambar Produk
@@ -170,11 +190,12 @@ function EditPasarDesa() {
             )}
           </Box>
 
+          {/* Controlled Inputs */}
           <TextInput
             label="Nama Produk"
             placeholder="Masukkan nama produk"
-            defaultValue={formData.nama}
-            onChange={(e) => setFormData({ ...formData, nama: e.target.value })}
+            value={formData.nama}
+            onChange={(e) => handleChange('nama', e.target.value)}
             required
           />
 
@@ -182,8 +203,8 @@ function EditPasarDesa() {
             type="number"
             label="Harga Produk"
             placeholder="Masukkan harga produk"
-            defaultValue={formData.harga}
-            onChange={(e) => setFormData({ ...formData, harga: Number(e.target.value) })}
+            value={formData.harga}
+            onChange={(e) => handleChange('harga', Number(e.target.value))}
             required
           />
 
@@ -194,16 +215,16 @@ function EditPasarDesa() {
             step={0.1}
             label="Rating Produk"
             placeholder="Masukkan rating produk (0-5)"
-            defaultValue={formData.rating}
-            onChange={(e) => setFormData({ ...formData, rating: Number(e.target.value) })}
+            value={formData.rating}
+            onChange={(e) => handleChange('rating', Number(e.target.value))}
             required
           />
 
           <TextInput
             label="Alamat Usaha"
             placeholder="Masukkan alamat usaha"
-            defaultValue={formData.alamatUsaha}
-            onChange={(e) => setFormData({ ...formData, alamatUsaha: e.target.value })}
+            value={formData.alamatUsaha}
+            onChange={(e) => handleChange('alamatUsaha', e.target.value)}
             required
           />
 
@@ -211,7 +232,7 @@ function EditPasarDesa() {
             label="Kategori Produk"
             placeholder="Pilih kategori produk"
             value={formData.kategoriId}
-            onChange={(val) => setFormData({ ...formData, kategoriId: val })}
+            onChange={(val) => handleChange('kategoriId', val)}
             data={
               pasarState.kategoriProduk.findMany.data?.map((v) => ({
                 value: v.id,

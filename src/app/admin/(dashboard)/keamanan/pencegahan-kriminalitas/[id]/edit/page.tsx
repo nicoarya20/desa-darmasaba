@@ -12,7 +12,7 @@ import {
   Stack,
   TextInput,
   Title,
-  Tooltip
+  Tooltip,
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -32,6 +32,7 @@ function EditPencegahanKriminalitas() {
     linkVideo: '',
   });
 
+  // load data hanya sekali pas id berubah
   useEffect(() => {
     const loadKriminalitas = async () => {
       const id = params?.id as string;
@@ -41,10 +42,10 @@ function EditPencegahanKriminalitas() {
         const data = await kriminalitasState.update.load(id);
         if (data) {
           setFormData({
-            judul: data.judul || '',
-            deskripsi: data.deskripsi || '',
-            deskripsiSingkat: data.deskripsiSingkat || '',
-            linkVideo: data.linkVideo || '',
+            judul: data.judul ?? '',
+            deskripsi: data.deskripsi ?? '',
+            deskripsiSingkat: data.deskripsiSingkat ?? '',
+            linkVideo: data.linkVideo ?? '',
           });
         }
       } catch (error) {
@@ -58,6 +59,12 @@ function EditPencegahanKriminalitas() {
 
   const embedLink = convertYoutubeUrlToEmbed(formData.linkVideo);
 
+  const handleChange =
+    (field: keyof typeof formData) =>
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setFormData((prev) => ({ ...prev, [field]: e.target.value }));
+    };
+
   const handleSubmit = async () => {
     const converted = convertYoutubeUrlToEmbed(formData.linkVideo);
     if (!converted) {
@@ -66,16 +73,13 @@ function EditPencegahanKriminalitas() {
     }
 
     try {
-      // Update the form data first
+      // update global state saat submit
       kriminalitasState.update.form = {
-        ...kriminalitasState.update.form,
         judul: formData.judul,
         deskripsi: formData.deskripsi,
         deskripsiSingkat: formData.deskripsiSingkat,
         linkVideo: formData.linkVideo,
       };
-
-      // Set the ID and then call update
       kriminalitasState.update.id = params?.id as string;
 
       await kriminalitasState.update.update();
@@ -119,18 +123,16 @@ function EditPencegahanKriminalitas() {
           <TextInput
             label="Judul"
             placeholder="Masukkan judul"
-            defaultValue={formData.judul}
-            onChange={(e) => setFormData({ ...formData, judul: e.target.value })}
+            value={formData.judul}
+            onChange={handleChange('judul')}
             required
           />
 
           <TextInput
             label="Deskripsi Singkat"
             placeholder="Masukkan deskripsi singkat"
-            defaultValue={formData.deskripsiSingkat}
-            onChange={(e) =>
-              setFormData({ ...formData, deskripsiSingkat: e.target.value })
-            }
+            value={formData.deskripsiSingkat}
+            onChange={handleChange('deskripsiSingkat')}
             required
           />
 
@@ -141,7 +143,7 @@ function EditPencegahanKriminalitas() {
             <EditEditor
               value={formData.deskripsi}
               onChange={(val) =>
-                setFormData({ ...formData, deskripsi: val })
+                setFormData((prev) => ({ ...prev, deskripsi: val }))
               }
             />
           </Box>
@@ -150,10 +152,8 @@ function EditPencegahanKriminalitas() {
             <TextInput
               label="Link Video YouTube"
               placeholder="https://www.youtube.com/watch?v=abc123"
-              defaultValue={formData.linkVideo}
-              onChange={(e) =>
-                setFormData({ ...formData, linkVideo: e.currentTarget.value })
-              }
+              value={formData.linkVideo}
+              onChange={handleChange('linkVideo')}
               required
             />
             {embedLink && (

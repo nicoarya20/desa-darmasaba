@@ -25,9 +25,8 @@ function EditKategoriProduk() {
   const id = params?.id as string;
   const statePasar = useProxy(pasarDesaState.kategoriProduk);
 
-  const [formData, setFormData] = useState({
-    nama: '',
-  });
+  const [formData, setFormData] = useState({ nama: '' });
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const loadKategoriProduk = async () => {
@@ -37,20 +36,29 @@ function EditKategoriProduk() {
         const data = await statePasar.edit.load(id);
 
         if (data) {
-          // pastikan id-nya masuk ke state edit
+          // simpan id ke state global hanya untuk referensi
           statePasar.edit.id = id;
-          setFormData({
-            nama: data.nama || '',
-          });
+
+          // simpan data ke state lokal
+          setFormData({ nama: data.nama || '' });
         }
       } catch (error) {
         console.error('Error loading kategori produk:', error);
         toast.error('Gagal memuat data kategori produk');
+      } finally {
+        setLoading(false);
       }
     };
 
     loadKategoriProduk();
   }, [id]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  };
 
   const handleSubmit = async () => {
     try {
@@ -59,10 +67,8 @@ function EditKategoriProduk() {
         return;
       }
 
-      statePasar.edit.form = {
-        nama: formData.nama.trim(),
-      };
-
+      // update global state hanya saat submit
+      statePasar.edit.form = { nama: formData.nama.trim() };
       if (!statePasar.edit.id) {
         statePasar.edit.id = id; // fallback
       }
@@ -79,12 +85,21 @@ function EditKategoriProduk() {
     }
   };
 
+  if (loading) {
+    return <Text>Loading...</Text>;
+  }
+
   return (
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
       {/* Header dengan tombol back */}
       <Group mb="md">
         <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+          <Button
+            variant="subtle"
+            onClick={() => router.back()}
+            p="xs"
+            radius="md"
+          >
             <IconArrowBack color={colors['blue-button']} size={24} />
           </Button>
         </Tooltip>
@@ -104,10 +119,11 @@ function EditKategoriProduk() {
       >
         <Stack gap="md">
           <TextInput
+            name="nama"
             label={<Text fw="bold" fz="sm">Nama Kategori Produk</Text>}
             placeholder="Masukkan nama kategori produk"
-            defaultValue={formData.nama}
-            onChange={(e) => setFormData({ ...formData, nama: e.target.value })}
+            value={formData.nama}
+            onChange={handleChange}
             required
           />
 

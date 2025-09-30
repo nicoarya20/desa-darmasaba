@@ -17,15 +17,16 @@ interface FormProgramKreatif {
 
 type IconKey = 'ekowisata' | 'kompetisi' | 'wisata' | 'ekonomi' | 'sampah' | 'truck' | 'scale' | 'clipboard' | 'trash';
 
-
 function EditProgramKreatifDesa() {
   const stateSampah = useProxy(pengelolaanSampahState.pengelolaanSampah)
   const params = useParams()
   const router = useRouter();
+
+  // State lokal untuk form controlled
   const [formData, setFormData] = useState<FormProgramKreatif>({
     name: '',
     icon: '',
-  })
+  });
 
   useEffect(() => {
     const loadProgramKreatif = async () => {
@@ -35,14 +36,7 @@ function EditProgramKreatifDesa() {
       try {
         const data = await stateSampah.update.load(id);
         if (data) {
-          // ⬇️ FIX PENTING: tambahkan ini
-          stateSampah.update.id = id;
-
-          stateSampah.update.form = {
-            name: data.name,
-            icon: data.icon,
-          };
-
+          stateSampah.update.id = id; // simpan id di global state
           setFormData({
             name: data.name,
             icon: data.icon,
@@ -52,21 +46,19 @@ function EditProgramKreatifDesa() {
         console.error("Error loading pengelolaan sampah:", error);
         toast.error("Gagal memuat data pengelolaan sampah");
       }
-    }
+    };
 
     loadProgramKreatif();
   }, [params?.id]);
 
-
-
   const handleSubmit = async () => {
     try {
+      // Update global state HANYA saat submit
       stateSampah.update.form = {
-        ...stateSampah.update.form,
         name: formData.name.trim(),
         icon: formData.icon.trim(),
       };
-      
+
       await stateSampah.update.submit();
       toast.success('Data pengelolaan sampah berhasil diperbarui!');
       router.push("/admin/lingkungan/pengelolaan-sampah-bank-sampah/list-pengelolaan-sampah-bank-sampah");
@@ -74,17 +66,13 @@ function EditProgramKreatifDesa() {
       console.error("Error updating pengelolaan sampah:", error);
       toast.error(error instanceof Error ? error.message : "Gagal memperbarui data pengelolaan sampah");
     }
-  }
+  };
+
   return (
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
       <Group mb="md">
         <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button 
-            variant="subtle" 
-            onClick={() => router.back()} 
-            p="xs" 
-            radius="md"
-          >
+          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
             <IconArrowBack color={colors['blue-button']} size={24} />
           </Button>
         </Tooltip>
@@ -105,15 +93,8 @@ function EditProgramKreatifDesa() {
           <TextInput
             label="Nama Pengelolaan Sampah"
             placeholder="Masukkan nama pengelolaan sampah"
-            defaultValue={formData.name}
-            onChange={(e) => {
-              const value = e.target.value;
-              setFormData(prev => ({
-                ...prev,
-                name: value
-              }));
-              stateSampah.update.form.name = value;
-            }}
+            value={formData.name}
+            onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
             required
           />
 
@@ -123,10 +104,7 @@ function EditProgramKreatifDesa() {
             </Text>
             <SelectIconProgramEdit
               value={formData.icon as IconKey}
-              onChange={(value) => {
-                setFormData(prev => ({ ...prev, icon: value }));
-                stateSampah.update.form.icon = value;
-              }}
+              onChange={(value) => setFormData(prev => ({ ...prev, icon: value }))}
             />
           </Box>
 

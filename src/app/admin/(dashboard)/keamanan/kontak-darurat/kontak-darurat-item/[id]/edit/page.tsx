@@ -27,11 +27,12 @@ function EditKontakItem() {
   const params = useParams();
 
   const [formData, setFormData] = useState({
-    name: kontakState.update.form.nama || '',
-    nomorTelepon: kontakState.update.form.nomorTelepon || '',
-    icon: kontakState.update.form.icon || '',
+    name: '',
+    nomorTelepon: '',
+    icon: '',
   });
 
+  // Load data sekali dari global state
   useEffect(() => {
     const loadKontakDarurat = async () => {
       const id = params?.id as string;
@@ -55,14 +56,23 @@ function EditKontakItem() {
     loadKontakDarurat();
   }, [params?.id]);
 
+  const handleChange = (field: keyof typeof formData, value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
   const handleSubmit = async () => {
     try {
+      // Update global state sekali pas submit
       kontakState.update.form = {
         ...kontakState.update.form,
         nama: formData.name,
         nomorTelepon: formData.nomorTelepon,
         icon: formData.icon,
       };
+
       await kontakState.update.update();
       toast.success('Kontak Darurat berhasil diperbarui!');
       router.push('/admin/keamanan/kontak-darurat/kontak-darurat-item');
@@ -99,16 +109,16 @@ function EditKontakItem() {
           <TextInput
             label="Nama Kontak"
             placeholder="Masukkan nama kontak"
-            defaultValue={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            value={formData.name}
+            onChange={(e) => handleChange('name', e.target.value)}
             required
           />
 
           <TextInput
             label="Nomor Telepon"
             placeholder="Masukkan nomor telepon"
-            defaultValue={formData.nomorTelepon}
-            onChange={(e) => setFormData({ ...formData, nomorTelepon: e.target.value })}
+            value={formData.nomorTelepon}
+            onChange={(e) => handleChange('nomorTelepon', e.target.value)}
             required
           />
 
@@ -118,10 +128,7 @@ function EditKontakItem() {
             </Text>
             <SelectIconProgramEdit
               value={formData.icon as IconKey}
-              onChange={(value) => {
-                setFormData((prev) => ({ ...prev, icon: value }));
-                kontakState.update.form.icon = value;
-              }}
+              onChange={(value) => handleChange('icon', value)}
             />
           </Box>
 

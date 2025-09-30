@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client';
+
 import stateDesaPengumuman from '@/app/admin/(dashboard)/_state/desa/pengumuman';
 import colors from '@/con/colors';
 import {
@@ -10,7 +11,7 @@ import {
   Stack,
   TextInput,
   Title,
-  Tooltip
+  Tooltip,
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -23,10 +24,9 @@ function EditKategoriPengumuman() {
   const router = useRouter();
   const params = useParams();
 
-  const [formData, setFormData] = useState({
-    name: editState.update.form.name || '',
-  });
+  const [formData, setFormData] = useState({ name: '' });
 
+  // Load data awal sekali aja
   useEffect(() => {
     const loadKategori = async () => {
       const id = params?.id as string;
@@ -35,9 +35,7 @@ function EditKategoriPengumuman() {
       try {
         const data = await editState.update.load(id);
         if (data) {
-          setFormData({
-            name: data.name || '',
-          });
+          setFormData({ name: data.name || '' });
         }
       } catch (error) {
         console.error('Error loading kategori Pengumuman:', error);
@@ -48,8 +46,16 @@ function EditKategoriPengumuman() {
     loadKategori();
   }, [params?.id]);
 
+  const handleChange = (field: string, value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
   const handleSubmit = async () => {
     try {
+      // Update global state hanya di sini
       editState.update.form = {
         ...editState.update.form,
         name: formData.name,
@@ -97,9 +103,7 @@ function EditKategoriPengumuman() {
             label="Nama Kategori Pengumuman"
             placeholder="Masukkan nama kategori Pengumuman"
             value={formData.name}
-            onChange={(e) =>
-              setFormData({ ...formData, name: e.target.value })
-            }
+            onChange={(e) => handleChange('name', e.target.value)}
             required
           />
 

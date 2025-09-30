@@ -52,50 +52,36 @@ function EditPolsekTerdekat() {
     layananPolsekId: "",
   });
 
-  useEffect(() => {
-    const loadPolsekTerdekat = async () => {
-      const id = params?.id as string;
-      if (!id) return;
-
-      try {
-        const data = await polsekState.edit.load(id);
-        if (data) {
-          setFormData({
-            nama: data.nama || "",
-            jarakKeDesa: data.jarakKeDesa || "",
-            alamat: data.alamat || "",
-            nomorTelepon: data.nomorTelepon || "",
-            jamOperasional: data.jamOperasional || "",
-            embedMapUrl: data.embedMapUrl || "",
-            namaTempatMaps: data.namaTempatMaps || "",
-            alamatMaps: data.alamatMaps || "",
-            linkPetunjukArah: data.linkPetunjukArah || "",
-            layananPolsekId: data.layananPolsekId || "",
-          });
+    // load data untuk form edit
+    useEffect(() => {
+      const loadPolsekTerdekat = async () => {
+        const id = params?.id as string;
+        if (!id) return;
+  
+        try {
+          const data = await polsekState.edit.load(id);
+          if (data) {
+            setFormData({
+              nama: data.nama || "",
+              jarakKeDesa: data.jarakKeDesa || "",
+              alamat: data.alamat || "",
+              nomorTelepon: data.nomorTelepon || "",
+              jamOperasional: data.jamOperasional || "",
+              embedMapUrl: data.embedMapUrl || "",
+              namaTempatMaps: data.namaTempatMaps || "",
+              alamatMaps: data.alamatMaps || "",
+              linkPetunjukArah: data.linkPetunjukArah || "",
+              layananPolsekId: data.layananPolsekId || "",
+            });
+          }
+        } catch (error) {
+          console.error("Error loading polsek terdekat:", error);
+          toast.error("Gagal memuat data polsek terdekat");
         }
-      } catch (error) {
-        console.error("Error loading polsek terdekat:", error);
-        toast.error("Gagal memuat data polsek terdekat");
-      }
-    };
-
-    loadPolsekTerdekat();
-  }, [params?.id]);
-
-  const handleSubmit = async () => {
-    try {
-      polsekState.edit.form = {
-        ...polsekState.edit.form,
-        ...formData,
       };
-      await polsekState.edit.update();
-      toast.success("Polsek terdekat berhasil diperbarui!");
-      router.push("/admin/keamanan/polsek-terdekat");
-    } catch (error) {
-      console.error("Error updating polsek terdekat:", error);
-      toast.error("Gagal memperbarui data polsek terdekat");
-    }
-  };
+  
+      loadPolsekTerdekat();
+    }, [params?.id]);
 
   const fetchLayanan = async () => {
     try {
@@ -198,6 +184,22 @@ function EditPolsekTerdekat() {
     fetchLayanan();
   }, []);
 
+  const handleChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleSubmit = async () => {
+    try {
+      polsekState.edit.form = { ...formData }; // update global state hanya di sini
+      await polsekState.edit.update();
+      toast.success("Polsek terdekat berhasil diperbarui!");
+      router.push("/admin/keamanan/polsek-terdekat");
+    } catch (error) {
+      console.error("Error updating polsek terdekat:", error);
+      toast.error("Gagal memperbarui data polsek terdekat");
+    }
+  };
+
   return (
     <Box px={{ base: "sm", md: "lg" }} py="md">
       {/* Modal Tambah */}
@@ -273,88 +275,59 @@ function EditPolsekTerdekat() {
         <Stack gap="md">
           {/* Input fields */}
           <TextInput
-            defaultValue={formData.nama}
-            onChange={(val) =>
-              setFormData({ ...formData, nama: val.target.value })
-            }
+            value={formData.nama}
+            onChange={(e) => handleChange("nama", e.currentTarget.value)}
             label="Nama Polsek Terdekat"
             placeholder="Masukkan nama Polsek Terdekat"
             required
           />
           <TextInput
-            defaultValue={formData.jarakKeDesa}
-            onChange={(val) =>
-              setFormData({ ...formData, jarakKeDesa: val.target.value })
-            }
+            value={formData.jarakKeDesa}
+            onChange={(e) => handleChange("jarakKeDesa", e.currentTarget.value)}
             label="Jarak Polsek Terdekat"
-            placeholder="Masukkan jarak Polsek Terdekat"
           />
           <TextInput
-            defaultValue={formData.alamat}
-            onChange={(val) =>
-              setFormData({ ...formData, alamat: val.target.value })
-            }
+            value={formData.alamat}
+            onChange={(e) => handleChange("alamat", e.currentTarget.value)}
             label="Alamat Polsek Terdekat"
-            placeholder="Masukkan alamat Polsek Terdekat"
           />
           <TextInput
-            defaultValue={formData.nomorTelepon}
-            onChange={(val) =>
-              setFormData({ ...formData, nomorTelepon: val.target.value })
-            }
+            value={formData.nomorTelepon}
+            onChange={(e) => handleChange("nomorTelepon", e.currentTarget.value)}
             label="Nomor Telepon"
-            placeholder="Masukkan nomor telepon Polsek Terdekat"
           />
           <TextInput
-            defaultValue={formData.jamOperasional}
-            onChange={(val) =>
-              setFormData({ ...formData, jamOperasional: val.target.value })
-            }
+            value={formData.jamOperasional}
+            onChange={(e) => handleChange("jamOperasional", e.currentTarget.value)}
             label="Jam Operasional"
-            placeholder="Masukkan jam operasional Polsek Terdekat"
           />
           <TextInput
-            defaultValue={formData.embedMapUrl}
-            onChange={(val) =>
-              setFormData({ ...formData, embedMapUrl: val.target.value })
-            }
+            value={formData.embedMapUrl}
+            onChange={(e) => handleChange("embedMapUrl", e.currentTarget.value)}
             label="Embed Map URL"
-            placeholder="Masukkan embed map url"
           />
           <TextInput
-            defaultValue={formData.namaTempatMaps}
-            onChange={(val) =>
-              setFormData({ ...formData, namaTempatMaps: val.target.value })
-            }
+            value={formData.namaTempatMaps}
+            onChange={(e) => handleChange("namaTempatMaps", e.currentTarget.value)}
             label="Nama Tempat Maps"
-            placeholder="Masukkan nama tempat di maps"
           />
           <TextInput
-            defaultValue={formData.alamatMaps}
-            onChange={(val) =>
-              setFormData({ ...formData, alamatMaps: val.target.value })
-            }
+            value={formData.alamatMaps}
+            onChange={(e) => handleChange("alamatMaps", e.currentTarget.value)}
             label="Alamat Maps"
-            placeholder="Masukkan alamat di maps"
           />
           <TextInput
-            defaultValue={formData.linkPetunjukArah}
-            onChange={(val) =>
-              setFormData({ ...formData, linkPetunjukArah: val.target.value })
-            }
+            value={formData.linkPetunjukArah}
+            onChange={(e) => handleChange("linkPetunjukArah", e.currentTarget.value)}
             label="Link Petunjuk Arah"
-            placeholder="Masukkan link petunjuk arah"
           />
 
-          {/* Dropdown Layanan */}
           <Select
             label="Layanan Polsek"
             placeholder="Pilih layanan polsek"
             data={layananOptions}
-            value={polsekState.create.form.layananPolsekId}
-            onChange={(val) => {
-              polsekState.create.form.layananPolsekId = val || "";
-            }}
+            value={formData.layananPolsekId}
+            onChange={(val) => handleChange("layananPolsekId", val || "")}
           />
           <Button
             variant="light"

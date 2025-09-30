@@ -11,24 +11,28 @@ import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
 function EditJenisLayanan() {
-  const state = useProxy(layananonlineDesa.jenisLayanan)
-  const router = useRouter()
-  const params = useParams()
-  const [formData, setFormData] = useState({
-    nama: state.edit.form.nama,
-    deskripsi: state.edit.form.deskripsi,
-  })
+  const state = useProxy(layananonlineDesa.jenisLayanan);
+  const router = useRouter();
+  const params = useParams();
 
+  // state lokal untuk form
+  const [formData, setFormData] = useState({
+    nama: "",
+    deskripsi: "",
+  });
+
+  // load data dari backend ke local state
   useEffect(() => {
     const loadJenisLayanan = async () => {
       const id = params?.id as string;
       if (!id) return;
+
       try {
         const data = await state.edit.load(id);
         if (data) {
           setFormData({
-            nama: data.nama,
-            deskripsi: data.deskripsi,
+            nama: data.nama ?? "",
+            deskripsi: data.deskripsi ?? "",
           });
         }
       } catch (error) {
@@ -36,24 +40,26 @@ function EditJenisLayanan() {
         toast.error("Gagal memuat data jenis layanan");
       }
     };
+
     loadJenisLayanan();
   }, [params?.id]);
 
+  // submit update → baru sync ke global state
   const handleSubmit = async () => {
     try {
       state.edit.form = {
         ...state.edit.form,
-        nama: formData.nama,
-        deskripsi: formData.deskripsi,
-      }
-      await state.edit.update()
-      toast.success("Jenis layanan berhasil diperbarui!")
-      router.push("/admin/inovasi/layanan-online-desa/jenis-layanan")
+        ...formData,
+      };
+
+      await state.edit.update();
+      toast.success("Jenis layanan berhasil diperbarui!");
+      router.push("/admin/inovasi/layanan-online-desa/jenis-layanan");
     } catch (error) {
       console.error("Error updating jenis layanan:", error);
       toast.error("Terjadi kesalahan saat memperbarui jenis layanan");
     }
-  }
+  };
 
   return (
     <Box>
@@ -62,27 +68,33 @@ function EditJenisLayanan() {
           <IconArrowBack color={colors['blue-button']} size={25} />
         </Button>
       </Box>
-      <Paper bg={colors["white-1"]} p={"md"} w={{ base: "100%", md: "50%" }}>
-        <Stack gap={"xs"}>
+
+      <Paper bg={colors["white-1"]} p="md" w={{ base: "100%", md: "50%" }}>
+        <Stack gap="xs">
           <Title order={3}>Edit Jenis Layanan</Title>
+
           <TextInput
-            defaultValue={formData.nama}
-            onChange={(val) => {
-              setFormData({ ...formData, nama: val.target.value });
-            }}
-            label={<Text fz={"sm"} fw={"bold"}>Nama Jenis Layanan</Text>}
+            value={formData.nama}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, nama: e.target.value }))
+            }
+            label={<Text fz="sm" fw="bold">Nama Jenis Layanan</Text>}
             placeholder="masukkan nama jenis layanan"
           />
+
           <Box>
-            <Text fz={"sm"} fw={"bold"}>Deskripsi</Text>
+            <Text fz="sm" fw="bold">Deskripsi</Text>
             <EditEditor
               value={formData.deskripsi}
-              onChange={(htmlContent) => {
-                setFormData({ ...formData, deskripsi: htmlContent });
-              }}
+              onChange={(htmlContent) =>
+                setFormData((prev) => ({ ...prev, deskripsi: htmlContent }))
+              }
             />
           </Box>
-          <Button bg={colors['blue-button']} onClick={handleSubmit}>Simpan</Button>
+
+          <Button bg={colors['blue-button']} onClick={handleSubmit}>
+            Simpan
+          </Button>
         </Stack>
       </Paper>
     </Box>

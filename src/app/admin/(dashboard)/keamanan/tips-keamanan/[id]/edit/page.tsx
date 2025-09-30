@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import {
@@ -39,9 +38,9 @@ function EditTipsKeamanan() {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [formData, setFormData] = useState({
-    judul: keamananState.update.form.judul || "",
-    deskripsi: keamananState.update.form.deskripsi || "",
-    imageId: keamananState.update.form.imageId || "",
+    judul: "",
+    deskripsi: "",
+    imageId: "",
   });
 
   // Load data saat pertama kali
@@ -70,14 +69,12 @@ function EditTipsKeamanan() {
     };
 
     loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params?.id]);
 
   const handleSubmit = async () => {
     try {
-      keamananState.update.form = {
-        ...keamananState.update.form,
-        ...formData,
-      };
+      let imageId = formData.imageId;
 
       if (file) {
         const res = await ApiFetch.api.fileStorage.create.post({
@@ -87,9 +84,13 @@ function EditTipsKeamanan() {
         const uploaded = res.data?.data;
 
         if (!uploaded?.id) return toast.error("Gagal upload gambar");
-
-        keamananState.update.form.imageId = uploaded.id;
+        imageId = uploaded.id;
       }
+
+      keamananState.update.form = {
+        ...formData,
+        imageId,
+      };
 
       await keamananState.update.update();
       toast.success("Tips Keamanan berhasil diperbarui!");
@@ -105,7 +106,12 @@ function EditTipsKeamanan() {
       {/* Header */}
       <Group mb="md">
         <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+          <Button
+            variant="subtle"
+            onClick={() => router.back()}
+            p="xs"
+            radius="md"
+          >
             <IconArrowBack color={colors["blue-button"]} size={24} />
           </Button>
         </Tooltip>
@@ -137,7 +143,9 @@ function EditTipsKeamanan() {
                   setPreviewImage(URL.createObjectURL(selectedFile));
                 }
               }}
-              onReject={() => toast.error("File tidak valid, gunakan format gambar")}
+              onReject={() =>
+                toast.error("File tidak valid, gunakan format gambar")
+              }
               maxSize={5 * 1024 ** 2}
               accept={{ "image/*": [] }}
               radius="md"
@@ -145,7 +153,11 @@ function EditTipsKeamanan() {
             >
               <Group justify="center" gap="xl" mih={180}>
                 <Dropzone.Accept>
-                  <IconUpload size={48} color={colors["blue-button"]} stroke={1.5} />
+                  <IconUpload
+                    size={48}
+                    color={colors["blue-button"]}
+                    stroke={1.5}
+                  />
                 </Dropzone.Accept>
                 <Dropzone.Reject>
                   <IconX size={48} color="red" stroke={1.5} />
@@ -199,8 +211,10 @@ function EditTipsKeamanan() {
           <TextInput
             label="Nama Tips Keamanan"
             placeholder="Masukkan nama tips keamanan"
-            defaultValue={formData.judul}
-            onChange={(e) => setFormData({ ...formData, judul: e.target.value })}
+            value={formData.judul}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, judul: e.target.value }))
+            }
             required
           />
 
@@ -211,10 +225,9 @@ function EditTipsKeamanan() {
             </Text>
             <EditEditor
               value={formData.deskripsi}
-              onChange={(htmlContent) => {
-                setFormData((prev) => ({ ...prev, deskripsi: htmlContent }));
-                keamananState.update.form.deskripsi = htmlContent;
-              }}
+              onChange={(htmlContent) =>
+                setFormData((prev) => ({ ...prev, deskripsi: htmlContent }))
+              }
             />
           </Box>
 

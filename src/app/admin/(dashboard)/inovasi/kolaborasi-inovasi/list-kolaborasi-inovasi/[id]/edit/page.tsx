@@ -27,14 +27,14 @@ function EditKolaborasiInovasi() {
   const params = useParams();
 
   const [formData, setFormData] = useState({
-    name: kolaborasiState.update.form.name || "",
-    deskripsi: kolaborasiState.update.form.deskripsi || "",
-    tahun: kolaborasiState.update.form.tahun || "",
-    slug: kolaborasiState.update.form.slug || "",
-    kolaborator: kolaborasiState.update.form.kolaborator || "",
+    name: "",
+    deskripsi: "",
+    tahun: "",
+    slug: "",
+    kolaborator: "",
   });
 
-  // Load data
+  // Load data awal dari server
   useEffect(() => {
     const loadKolaborasi = async () => {
       const id = params?.id as string;
@@ -44,11 +44,11 @@ function EditKolaborasiInovasi() {
         const data = await kolaborasiState.update.load(id);
         if (data) {
           setFormData({
-            name: data.name || "",
-            deskripsi: data.deskripsi || "",
-            tahun: data.tahun || "",
-            slug: data.slug || "",
-            kolaborator: data.kolaborator || "",
+            name: data.name ?? "",
+            deskripsi: data.deskripsi ?? "",
+            tahun: data.tahun?.toString() ?? "",
+            slug: data.slug ?? "",
+            kolaborator: data.kolaborator ?? "",
           });
         }
       } catch (error) {
@@ -60,6 +60,7 @@ function EditKolaborasiInovasi() {
     loadKolaborasi();
   }, [params?.id]);
 
+  // Handler submit → baru update global state
   const handleSubmit = async () => {
     try {
       kolaborasiState.update.form = {
@@ -70,6 +71,7 @@ function EditKolaborasiInovasi() {
         slug: formData.slug,
         kolaborator: formData.kolaborator,
       };
+
       await kolaborasiState.update.submit();
       toast.success("Kolaborasi inovasi berhasil diperbarui!");
       router.push("/admin/inovasi/kolaborasi-inovasi");
@@ -77,6 +79,11 @@ function EditKolaborasiInovasi() {
       console.error("Error updating kolaborasi:", error);
       toast.error("Terjadi kesalahan saat memperbarui data");
     }
+  };
+
+  // Handler input (biar lebih DRY)
+  const handleChange = (field: keyof typeof formData, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   return (
@@ -104,32 +111,32 @@ function EditKolaborasiInovasi() {
           <TextInput
             label="Nama Kolaborasi"
             placeholder="Masukkan nama kolaborasi"
-            defaultValue={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            value={formData.name}
+            onChange={(e) => handleChange("name", e.target.value)}
             required
           />
 
           <TextInput
             label="Deskripsi Singkat"
             placeholder="Masukkan deskripsi singkat"
-            defaultValue={formData.slug}
-            onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+            value={formData.slug}
+            onChange={(e) => handleChange("slug", e.target.value)}
             required
           />
 
           <TextInput
             label="Tahun"
             placeholder="Masukkan tahun"
-            defaultValue={formData.tahun}
-            onChange={(e) => setFormData({ ...formData, tahun: e.target.value })}
+            value={formData.tahun}
+            onChange={(e) => handleChange("tahun", e.target.value)}
             required
           />
 
           <TextInput
             label="Kolaborator"
             placeholder="Masukkan nama kolaborator"
-            defaultValue={formData.kolaborator}
-            onChange={(e) => setFormData({ ...formData, kolaborator: e.target.value })}
+            value={formData.kolaborator}
+            onChange={(e) => handleChange("kolaborator", e.target.value)}
             required
           />
 
@@ -139,10 +146,7 @@ function EditKolaborasiInovasi() {
             </Text>
             <EditEditor
               value={formData.deskripsi}
-              onChange={(htmlContent) => {
-                setFormData((prev) => ({ ...prev, deskripsi: htmlContent }));
-                kolaborasiState.update.form.deskripsi = htmlContent;
-              }}
+              onChange={(htmlContent) => handleChange("deskripsi", htmlContent)}
             />
           </Box>
 

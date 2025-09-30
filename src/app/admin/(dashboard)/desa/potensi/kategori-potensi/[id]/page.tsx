@@ -24,9 +24,10 @@ function EditKategoriPotensi() {
   const params = useParams();
 
   const [formData, setFormData] = useState({
-    nama: editState.update.form.nama || '',
+    nama: '',
   });
 
+  // Load data dari backend -> isi ke formData lokal
   useEffect(() => {
     const loadKategori = async () => {
       const id = params?.id as string;
@@ -48,8 +49,16 @@ function EditKategoriPotensi() {
     loadKategori();
   }, [params?.id]);
 
+  const handleChange = (field: string, value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
   const handleSubmit = async () => {
     try {
+      // Update global state hanya pas submit
       editState.update.form = {
         ...editState.update.form,
         nama: formData.nama,
@@ -68,7 +77,12 @@ function EditKategoriPotensi() {
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
       <Group mb="md">
         <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+          <Button
+            variant="subtle"
+            onClick={() => router.back()}
+            p="xs"
+            radius="md"
+          >
             <IconArrowBack color={colors['blue-button']} size={24} />
           </Button>
         </Tooltip>
@@ -89,12 +103,12 @@ function EditKategoriPotensi() {
           <TextInput
             label="Nama Kategori Potensi"
             placeholder="Masukkan nama kategori potensi"
-            defaultValue={formData.nama}
-            onChange={(e) => setFormData({ ...formData, nama: e.target.value })}
+            value={formData.nama}
+            onChange={(e) => handleChange('nama', e.currentTarget.value)}
             required
           />
 
-          <Group justify="right">
+          <Group justify="flex-end">
             <Button
               onClick={handleSubmit}
               radius="md"

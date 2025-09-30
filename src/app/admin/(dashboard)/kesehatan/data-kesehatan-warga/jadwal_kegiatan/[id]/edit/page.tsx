@@ -4,17 +4,7 @@
 import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import jadwalKegiatanState from '@/app/admin/(dashboard)/_state/kesehatan/data_kesehatan_warga/jadwalKegiatan';
 import colors from '@/con/colors';
-import {
-  Box,
-  Button,
-  Group,
-  Paper,
-  Stack,
-  Text,
-  TextInput,
-  Title,
-  Tooltip,
-} from '@mantine/core';
+import { Box, Button, Group, Paper, Stack, Text, TextInput, Title, Tooltip } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -29,46 +19,49 @@ interface JadwalKegiatanFormBase {
     waktu: string;
     lokasi: string;
   };
-  deskripsiJadwalKegiatan: {
-    deskripsi: string;
-  };
-  layananJadwalKegiatan: {
-    content: string;
-  };
-  syaratKetentuanJadwalKegiatan: {
-    content: string;
-  };
-  dokumenJadwalKegiatan: {
-    content: string;
-  };
+  deskripsiJadwalKegiatan: { deskripsi: string };
+  layananJadwalKegiatan: { content: string };
+  syaratKetentuanJadwalKegiatan: { content: string };
+  dokumenJadwalKegiatan: { content: string };
 }
+
+const emptyForm = (): JadwalKegiatanFormBase => ({
+  content: '',
+  informasiJadwalKegiatan: { name: '', tanggal: '', waktu: '', lokasi: '' },
+  deskripsiJadwalKegiatan: { deskripsi: '' },
+  layananJadwalKegiatan: { content: '' },
+  syaratKetentuanJadwalKegiatan: { content: '' },
+  dokumenJadwalKegiatan: { content: '' },
+});
 
 function EditJadwalKegiatan() {
   const stateJadwalKegiatan = useProxy(jadwalKegiatanState);
   const router = useRouter();
   const params = useParams();
 
-  const [formData, setFormData] = useState<JadwalKegiatanFormBase>({
-    content: stateJadwalKegiatan.edit.form.content || '',
-    informasiJadwalKegiatan: {
-      name: stateJadwalKegiatan.edit.form.informasiJadwalKegiatan?.name || '',
-      tanggal: stateJadwalKegiatan.edit.form.informasiJadwalKegiatan?.tanggal || '',
-      waktu: stateJadwalKegiatan.edit.form.informasiJadwalKegiatan?.waktu || '',
-      lokasi: stateJadwalKegiatan.edit.form.informasiJadwalKegiatan?.lokasi || '',
-    },
-    deskripsiJadwalKegiatan: {
-      deskripsi: stateJadwalKegiatan.edit.form.deskripsiJadwalKegiatan?.deskripsi || '',
-    },
-    layananJadwalKegiatan: {
-      content: stateJadwalKegiatan.edit.form.layananJadwalKegiatan?.content || '',
-    },
-    syaratKetentuanJadwalKegiatan: {
-      content: stateJadwalKegiatan.edit.form.syaratKetentuanJadwalKegiatan?.content || '',
-    },
-    dokumenJadwalKegiatan: {
-      content: stateJadwalKegiatan.edit.form.dokumenJadwalKegiatan?.content || '',
-    },
-  });
+  const [formData, setFormData] = useState<JadwalKegiatanFormBase>(emptyForm());
+
+  // Helper untuk update nested state
+  const updateNested = <
+    K extends keyof JadwalKegiatanFormBase,
+    N extends keyof JadwalKegiatanFormBase[K]
+  >(
+    key: K,
+    subKey: N,
+    value: string
+  ) => {
+    setFormData(prev => ({
+      ...prev,
+      [key]: {
+        ...(prev[key] as Record<string, unknown>),
+        [subKey]: value
+      }
+    }));
+  };
+
+  const updateSimple = (key: keyof JadwalKegiatanFormBase, value: string) => {
+    setFormData(prev => ({ ...prev, [key]: value }));
+  };
 
   useEffect(() => {
     const loadJadwalKegiatan = async () => {
@@ -80,25 +73,17 @@ function EditJadwalKegiatan() {
         const { form } = stateJadwalKegiatan.edit;
         if (form) {
           setFormData({
-            content: form.content,
+            content: form.content || '',
             informasiJadwalKegiatan: {
               name: form.informasiJadwalKegiatan?.name || '',
               tanggal: form.informasiJadwalKegiatan?.tanggal || '',
               waktu: form.informasiJadwalKegiatan?.waktu || '',
               lokasi: form.informasiJadwalKegiatan?.lokasi || '',
             },
-            deskripsiJadwalKegiatan: {
-              deskripsi: form.deskripsiJadwalKegiatan?.deskripsi || '',
-            },
-            layananJadwalKegiatan: {
-              content: form.layananJadwalKegiatan?.content || '',
-            },
-            syaratKetentuanJadwalKegiatan: {
-              content: form.syaratKetentuanJadwalKegiatan?.content || '',
-            },
-            dokumenJadwalKegiatan: {
-              content: form.dokumenJadwalKegiatan?.content || '',
-            },
+            deskripsiJadwalKegiatan: { deskripsi: form.deskripsiJadwalKegiatan?.deskripsi || '' },
+            layananJadwalKegiatan: { content: form.layananJadwalKegiatan?.content || '' },
+            syaratKetentuanJadwalKegiatan: { content: form.syaratKetentuanJadwalKegiatan?.content || '' },
+            dokumenJadwalKegiatan: { content: form.dokumenJadwalKegiatan?.content || '' },
           });
         }
       } catch (error) {
@@ -111,16 +96,7 @@ function EditJadwalKegiatan() {
 
   const handleSubmit = async () => {
     try {
-      stateJadwalKegiatan.edit.form = {
-        ...stateJadwalKegiatan.edit.form,
-        content: formData.content,
-        informasiJadwalKegiatan: { ...formData.informasiJadwalKegiatan },
-        deskripsiJadwalKegiatan: { ...formData.deskripsiJadwalKegiatan },
-        layananJadwalKegiatan: { ...formData.layananJadwalKegiatan },
-        syaratKetentuanJadwalKegiatan: { ...formData.syaratKetentuanJadwalKegiatan },
-        dokumenJadwalKegiatan: { ...formData.dokumenJadwalKegiatan }
-      };
-
+      stateJadwalKegiatan.edit.form = { ...stateJadwalKegiatan.edit.form, ...formData };
       const success = await stateJadwalKegiatan.edit.submit();
       if (success) {
         toast.success("Jadwal kegiatan berhasil diperbarui!");
@@ -160,8 +136,8 @@ function EditJadwalKegiatan() {
           <TextInput
             label="Nama Jadwal Kegiatan"
             placeholder="Masukkan nama jadwal kegiatan"
-            defaultValue={formData.content}
-            onChange={(e) => setFormData((prev) => ({ ...prev, content: e.target.value }))}
+            value={formData.content}
+            onChange={(e) => updateSimple('content', e.target.value)}
           />
 
           {/* Deskripsi */}
@@ -169,45 +145,22 @@ function EditJadwalKegiatan() {
             <Text fz="sm" fw="bold">Deskripsi Jadwal Kegiatan</Text>
             <EditEditor
               value={formData.deskripsiJadwalKegiatan.deskripsi}
-              onChange={(val) => setFormData((prev) => ({
-                ...prev,
-                deskripsiJadwalKegiatan: { deskripsi: val }
-              }))}
+              onChange={(val) => updateNested('deskripsiJadwalKegiatan', 'deskripsi', val)}
             />
           </Box>
 
           {/* Informasi Jadwal */}
           <Box>
             <Text fz="md" fw="bold">Informasi Jadwal Kegiatan</Text>
-            <TextInput 
-            label="Nama" 
-            defaultValue={formData.informasiJadwalKegiatan.name}
-              onChange={(e) => setFormData((prev) => ({
-                ...prev, informasiJadwalKegiatan: { ...prev.informasiJadwalKegiatan, name: e.target.value }
-              }))}
-            />
-            <TextInput 
-            type="date" 
-            label="Tanggal" 
-            defaultValue={formData.informasiJadwalKegiatan.tanggal}
-              onChange={(e) => setFormData((prev) => ({
-                ...prev, informasiJadwalKegiatan: { ...prev.informasiJadwalKegiatan, tanggal: e.target.value }
-              }))}
-            />
-            <TextInput 
-            label="Waktu" 
-            defaultValue={formData.informasiJadwalKegiatan.waktu}
-              onChange={(e) => setFormData((prev) => ({
-                ...prev, informasiJadwalKegiatan: { ...prev.informasiJadwalKegiatan, waktu: e.target.value }
-              }))}
-            />
-            <TextInput 
-            label="Lokasi" 
-            defaultValue={formData.informasiJadwalKegiatan.lokasi}
-              onChange={(e) => setFormData((prev) => ({
-                ...prev, informasiJadwalKegiatan: { ...prev.informasiJadwalKegiatan, lokasi: e.target.value }
-              }))}
-            />
+            {(['name', 'tanggal', 'waktu', 'lokasi'] as const).map((field) => (
+              <TextInput
+                key={field}
+                label={field === 'name' ? 'Nama' : field.charAt(0).toUpperCase() + field.slice(1)}
+                type={field === 'tanggal' ? 'date' : 'text'}
+                value={formData.informasiJadwalKegiatan[field]}
+                onChange={(e) => updateNested('informasiJadwalKegiatan', field, e.target.value)}
+              />
+            ))}
           </Box>
 
           {/* Layanan */}
@@ -215,10 +168,7 @@ function EditJadwalKegiatan() {
             <Text fz="md" fw="bold">Layanan Jadwal Kegiatan</Text>
             <EditEditor
               value={formData.layananJadwalKegiatan.content}
-              onChange={(val) => setFormData((prev) => ({
-                ...prev,
-                layananJadwalKegiatan: { content: val }
-              }))}
+              onChange={(val) => updateNested('layananJadwalKegiatan', 'content', val)}
             />
           </Box>
 
@@ -227,10 +177,7 @@ function EditJadwalKegiatan() {
             <Text fz="md" fw="bold">Syarat dan Ketentuan</Text>
             <EditEditor
               value={formData.syaratKetentuanJadwalKegiatan.content}
-              onChange={(val) => setFormData((prev) => ({
-                ...prev,
-                syaratKetentuanJadwalKegiatan: { content: val }
-              }))}
+              onChange={(val) => updateNested('syaratKetentuanJadwalKegiatan', 'content', val)}
             />
           </Box>
 
@@ -239,10 +186,7 @@ function EditJadwalKegiatan() {
             <Text fz="md" fw="bold">Dokumen Yang Perlu Dibawa</Text>
             <EditEditor
               value={formData.dokumenJadwalKegiatan.content}
-              onChange={(val) => setFormData((prev) => ({
-                ...prev,
-                dokumenJadwalKegiatan: { content: val }
-              }))}
+              onChange={(val) => updateNested('dokumenJadwalKegiatan', 'content', val)}
             />
           </Box>
 

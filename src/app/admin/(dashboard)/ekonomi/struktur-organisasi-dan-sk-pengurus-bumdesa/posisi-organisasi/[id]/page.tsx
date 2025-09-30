@@ -32,6 +32,7 @@ function EditPosisiOrganisasi() {
     hierarki: 0,
   });
 
+  // Load data awal sekali saja
   useEffect(() => {
     const loadPosisiOrganisasi = async () => {
       if (!id) return;
@@ -42,9 +43,9 @@ function EditPosisiOrganisasi() {
         if (data) {
           stateOrganisasi.edit.id = id;
           setFormData({
-            nama: data.nama || '',
-            deskripsi: data.deskripsi || '',
-            hierarki: data.hierarki || 0,
+            nama: data.nama ?? '',
+            deskripsi: data.deskripsi ?? '',
+            hierarki: data.hierarki ?? 0,
           });
         }
       } catch (error) {
@@ -56,6 +57,10 @@ function EditPosisiOrganisasi() {
     loadPosisiOrganisasi();
   }, [id]);
 
+  const handleChange = (field: string, value: string | number) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
   const handleSubmit = async () => {
     try {
       if (!formData.nama.trim()) {
@@ -63,6 +68,7 @@ function EditPosisiOrganisasi() {
         return;
       }
 
+      // update global state HANYA saat submit
       stateOrganisasi.edit.form = {
         nama: formData.nama.trim(),
         deskripsi: formData.deskripsi.trim(),
@@ -114,10 +120,8 @@ function EditPosisiOrganisasi() {
       >
         <Stack gap="md">
           <TextInput
-            defaultValue={formData.nama}
-            onChange={(e) =>
-              setFormData({ ...formData, nama: e.target.value })
-            }
+            value={formData.nama}
+            onChange={(e) => handleChange('nama', e.target.value)}
             label="Nama Posisi Organisasi"
             placeholder="Masukkan nama posisi organisasi"
             required
@@ -130,19 +134,16 @@ function EditPosisiOrganisasi() {
             <EditEditor
               value={formData.deskripsi}
               onChange={(htmlContent) =>
-                setFormData({ ...formData, deskripsi: htmlContent })
+                handleChange('deskripsi', htmlContent)
               }
             />
           </Box>
 
           <TextInput
             type="number"
-            defaultValue={formData.hierarki}
+            value={formData.hierarki}
             onChange={(e) =>
-              setFormData({
-                ...formData,
-                hierarki: parseInt(e.target.value) || 0,
-              })
+              handleChange('hierarki', parseInt(e.target.value) || 0)
             }
             label="Hierarki"
             placeholder="Masukkan hierarki"

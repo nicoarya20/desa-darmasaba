@@ -17,26 +17,36 @@ const KonservasiAdatBaliTextEditor = dynamic(
 function EditNilaiKonservasiAdat() {
   const router = useRouter();
   const nilaiKonservasiState = useProxy(stateKonservasiAdatBali.stateNilaiKonservasiAdat);
-  const [judul, setJudul] = useState('');
-  const [content, setContent] = useState('');
 
+  // state lokal untuk form
+  const [formData, setFormData] = useState({ judul: '', deskripsi: '' });
+
+  // load data awal
   useShallowEffect(() => {
     if (!nilaiKonservasiState.findById.data) {
       nilaiKonservasiState.findById.initialize();
     }
   }, []);
 
+  // sync state lokal saat data backend siap
   useEffect(() => {
     if (nilaiKonservasiState.findById.data) {
-      setJudul(nilaiKonservasiState.findById.data.judul ?? '');
-      setContent(nilaiKonservasiState.findById.data.deskripsi ?? '');
+      setFormData({
+        judul: nilaiKonservasiState.findById.data.judul ?? '',
+        deskripsi: nilaiKonservasiState.findById.data.deskripsi ?? '',
+      });
     }
   }, [nilaiKonservasiState.findById.data]);
 
+  const handleChange = (field: 'judul' | 'deskripsi', value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
   const submit = () => {
     if (nilaiKonservasiState.findById.data) {
-      nilaiKonservasiState.findById.data.judul = judul;
-      nilaiKonservasiState.findById.data.deskripsi = content;
+      // update global state saat submit
+      nilaiKonservasiState.findById.data.judul = formData.judul;
+      nilaiKonservasiState.findById.data.deskripsi = formData.deskripsi;
       nilaiKonservasiState.update.save(nilaiKonservasiState.findById.data);
     }
     router.push('/admin/lingkungan/konservasi-adat-bali/nilai-konservasi-adat');
@@ -46,12 +56,7 @@ function EditNilaiKonservasiAdat() {
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
       {/* Header */}
       <Group mb="md">
-        <Button
-          variant="subtle"
-          onClick={() => router.back()}
-          p="xs"
-          radius="md"
-        >
+        <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
           <IconArrowBack color={colors['blue-button']} size={24} />
         </Button>
         <Title order={4} ml="sm" c="dark">
@@ -75,8 +80,8 @@ function EditNilaiKonservasiAdat() {
             </Text>
             <KonservasiAdatBaliTextEditor
               showSubmit={false}
-              onChange={setJudul}
-              initialContent={judul}
+              onChange={val => handleChange('judul', val)}
+              initialContent={formData.judul}
             />
           </Box>
 
@@ -86,8 +91,8 @@ function EditNilaiKonservasiAdat() {
             </Text>
             <KonservasiAdatBaliTextEditor
               showSubmit={false}
-              onChange={setContent}
-              initialContent={content}
+              onChange={val => handleChange('deskripsi', val)}
+              initialContent={formData.deskripsi}
             />
           </Box>
 

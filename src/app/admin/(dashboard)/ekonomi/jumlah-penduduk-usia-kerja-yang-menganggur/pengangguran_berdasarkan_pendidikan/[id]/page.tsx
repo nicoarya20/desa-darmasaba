@@ -1,11 +1,11 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 import grafikNganggur from '@/app/admin/(dashboard)/_state/ekonomi/usia-kerja-nganggur';
-/* eslint-disable react-hooks/exhaustive-deps */
 import colors from '@/con/colors';
 import { Box, Button, Group, Paper, Stack, TextInput, Title, Tooltip } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
 
 function EditGrafikBerdasarkanPendidikan() {
@@ -14,34 +14,59 @@ function EditGrafikBerdasarkanPendidikan() {
   const stategrafik = useProxy(grafikNganggur.grafikBerdasarkanPendidikan);
   const id = params.id;
 
+  // state lokal untuk form
+  const [formData, setFormData] = useState({
+    SD: '',
+    SMP: '',
+    SMA: '',
+    D3: '',
+    S1: '',
+  });
+
   useEffect(() => {
     if (id) {
       stategrafik.findUnique.load(id).then(() => {
         const data = stategrafik.findUnique.data;
         if (data) {
-          stategrafik.update.form = {
+          setFormData({
             SD: data.SD || '',
             SMP: data.SMP || '',
             SMA: data.SMA || '',
             D3: data.D3 || '',
             S1: data.S1 || '',
-          };
+          });
         }
       });
     }
   }, [id]);
 
+  const handleChange = (field: keyof typeof formData) => 
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setFormData((prev) => ({
+        ...prev,
+        [field]: e.currentTarget.value,
+      }));
+    };
+
   const handleSubmit = async () => {
     stategrafik.update.id = id;
+    stategrafik.update.form = { ...formData }; // update global state pas submit aja
     await stategrafik.update.submit();
-    router.push('/admin/ekonomi/jumlah-penduduk-usia-kerja-yang-menganggur/pengangguran_berdasarkan_pendidikan');
+    router.push(
+      '/admin/ekonomi/jumlah-penduduk-usia-kerja-yang-menganggur/pengangguran_berdasarkan_pendidikan'
+    );
   };
 
   return (
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
       <Group mb="md">
         <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+          <Button
+            variant="subtle"
+            onClick={() => router.back()}
+            p="xs"
+            radius="md"
+          >
             <IconArrowBack color={colors['blue-button']} size={24} />
           </Button>
         </Tooltip>
@@ -63,36 +88,36 @@ function EditGrafikBerdasarkanPendidikan() {
             label="SD"
             type="number"
             placeholder="Masukkan jumlah"
-            defaultValue={stategrafik.update.form.SD}
-            onChange={(val) => (stategrafik.update.form.SD = val.currentTarget.value)}
+            value={formData.SD}
+            onChange={handleChange('SD')}
           />
           <TextInput
             label="SMP"
             type="number"
             placeholder="Masukkan jumlah"
-            defaultValue={stategrafik.update.form.SMP}
-            onChange={(val) => (stategrafik.update.form.SMP = val.currentTarget.value)}
+            value={formData.SMP}
+            onChange={handleChange('SMP')}
           />
           <TextInput
             label="SMA"
             type="number"
             placeholder="Masukkan jumlah"
-            defaultValue={stategrafik.update.form.SMA}
-            onChange={(val) => (stategrafik.update.form.SMA = val.currentTarget.value)}
+            value={formData.SMA}
+            onChange={handleChange('SMA')}
           />
           <TextInput
             label="D3"
             type="number"
             placeholder="Masukkan jumlah"
-            defaultValue={stategrafik.update.form.D3}
-            onChange={(val) => (stategrafik.update.form.D3 = val.currentTarget.value)}
+            value={formData.D3}
+            onChange={handleChange('D3')}
           />
           <TextInput
             label="S1"
             type="number"
             placeholder="Masukkan jumlah"
-            defaultValue={stategrafik.update.form.S1}
-            onChange={(val) => (stategrafik.update.form.S1 = val.currentTarget.value)}
+            value={formData.S1}
+            onChange={handleChange('S1')}
           />
 
           <Group justify="right">

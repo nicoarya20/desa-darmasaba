@@ -3,10 +3,19 @@
 
 import jumlahPendudukMiskin from '@/app/admin/(dashboard)/_state/ekonomi/jumlah-penduduk-miskin';
 import colors from '@/con/colors';
-import { Box, Button, Paper, Stack, TextInput, Title, Group, Tooltip } from '@mantine/core';
+import {
+  Box,
+  Button,
+  Paper,
+  Stack,
+  TextInput,
+  Title,
+  Group,
+  Tooltip,
+} from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import { toast } from 'react-toastify';
 
@@ -17,6 +26,13 @@ function EditJumlahPendudukMiskin() {
 
   const id = params.id;
 
+  // 🔹 State lokal untuk form
+  const [formData, setFormData] = useState({
+    year: 0,
+    totalPoorPopulation: 0,
+  });
+
+  // 🔹 Load data awal dari backend
   useEffect(() => {
     if (!id) return;
 
@@ -25,10 +41,10 @@ function EditJumlahPendudukMiskin() {
         await stateJPM.findUnique.load(id);
         const data = stateJPM.findUnique.data;
         if (data) {
-          stateJPM.update.form = {
+          setFormData({
             year: data.year || 0,
             totalPoorPopulation: data.totalPoorPopulation || 0,
-          };
+          });
         }
       } catch (error) {
         console.error('Gagal memuat data:', error);
@@ -39,9 +55,21 @@ function EditJumlahPendudukMiskin() {
     loadData();
   }, [id]);
 
+  // 🔹 Handler input controlled
+  const handleChange = (field: keyof typeof formData, value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: Number(value),
+    }));
+  };
+
+  // 🔹 Submit form
   const handleSubmit = async () => {
     try {
       stateJPM.update.id = id;
+      // update global state cuma saat submit
+      stateJPM.update.form = { ...formData };
+
       await stateJPM.update.submit();
       toast.success('Data jumlah penduduk miskin berhasil diperbarui!');
       router.push('/admin/ekonomi/jumlah-penduduk-miskin');
@@ -55,7 +83,12 @@ function EditJumlahPendudukMiskin() {
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
       <Group mb="md">
         <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+          <Button
+            variant="subtle"
+            onClick={() => router.back()}
+            p="xs"
+            radius="md"
+          >
             <IconArrowBack color={colors['blue-button']} size={24} />
           </Button>
         </Tooltip>
@@ -78,10 +111,8 @@ function EditJumlahPendudukMiskin() {
             placeholder="Masukkan tahun"
             type="number"
             required
-            defaultValue={stateJPM.update.form.year}
-            onChange={(val) => {
-              stateJPM.update.form.year = Number(val.currentTarget.value);
-            }}
+            value={formData.year}
+            onChange={(e) => handleChange('year', e.currentTarget.value)}
           />
 
           <TextInput
@@ -89,10 +120,10 @@ function EditJumlahPendudukMiskin() {
             placeholder="Masukkan jumlah penduduk miskin"
             type="number"
             required
-            defaultValue={stateJPM.update.form.totalPoorPopulation}
-            onChange={(val) => {
-              stateJPM.update.form.totalPoorPopulation = Number(val.currentTarget.value);
-            }}
+            value={formData.totalPoorPopulation}
+            onChange={(e) =>
+              handleChange('totalPoorPopulation', e.currentTarget.value)
+            }
           />
 
           <Group justify="right">

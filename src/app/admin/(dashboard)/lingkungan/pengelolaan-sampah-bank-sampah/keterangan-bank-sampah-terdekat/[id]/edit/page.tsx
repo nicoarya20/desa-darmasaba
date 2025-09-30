@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client';
+
 import pengelolaanSampahState from '@/app/admin/(dashboard)/_state/lingkungan/pengelolaan-sampah';
 import colors from '@/con/colors';
 import { Box, Button, Group, Paper, Stack, Text, TextInput, Title, Tooltip } from '@mantine/core';
@@ -13,9 +14,9 @@ import { useProxy } from 'valtio/utils';
 const LeafletMapEdit = dynamic(() => import('@/app/admin/(dashboard)/_com/leafletMapEdit'), { ssr: false });
 
 function EditKeteranganBankSampahTerdekat() {
-  const keteranganState = useProxy(pengelolaanSampahState.keteranganSampah)
+  const keteranganState = useProxy(pengelolaanSampahState.keteranganSampah);
   const router = useRouter();
-  const params = useParams()
+  const params = useParams();
   const [markerPosition, setMarkerPosition] = useState<{ lat: number; lng: number } | null>(null);
 
   const [formData, setFormData] = useState({
@@ -24,10 +25,11 @@ function EditKeteranganBankSampahTerdekat() {
     namaTempatMaps: '',
     lat: 0,
     lng: 0,
-  })
+  });
 
+  // Load data ketika component mount
   useEffect(() => {
-    const loadKeteranganBankSampahTerdekat = async () => {
+    const loadKeterangan = async () => {
       const id = params?.id as string;
       if (!id) return;
 
@@ -35,14 +37,8 @@ function EditKeteranganBankSampahTerdekat() {
         const data = await keteranganState.edit.load(id);
         if (data) {
           keteranganState.edit.id = id;
-          keteranganState.edit.form = {
-            name: data.name,
-            alamat: data.alamat,
-            namaTempatMaps: data.namaTempatMaps,
-            lat: data.lat,
-            lng: data.lng,
-          };
 
+          // Update local formData dan markerPosition
           setFormData({
             name: data.name,
             alamat: data.alamat,
@@ -50,51 +46,47 @@ function EditKeteranganBankSampahTerdekat() {
             lat: data.lat,
             lng: data.lng,
           });
-
           setMarkerPosition({ lat: data.lat, lng: data.lng });
         }
       } catch (error) {
-        console.error("Error loading pengelolaan sampah:", error);
-        toast.error("Gagal memuat data pengelolaan sampah");
+        console.error(error);
+        toast.error('Gagal memuat data pengelolaan sampah');
       }
-    }
+    };
 
-    loadKeteranganBankSampahTerdekat();
+    loadKeterangan();
   }, [params?.id]);
+
+  const handleInputChange = (field: keyof typeof formData, value: string | number) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
 
   const handleSubmit = async () => {
     try {
-      if (!formData.name.trim()) {
-        return toast.error('Nama bank sampah harus diisi');
-      }
-      if (!formData.alamat.trim()) {
-        return toast.error('Alamat harus diisi');
-      }
-      if (!formData.namaTempatMaps.trim()) {
-        return toast.error('Nama tempat di Maps harus diisi');
-      }
-      if (!markerPosition) {
-        return toast.error('Silakan pilih lokasi di peta');
-      }
+      if (!formData.name.trim()) return toast.error('Nama bank sampah harus diisi');
+      if (!formData.alamat.trim()) return toast.error('Alamat harus diisi');
+      if (!formData.namaTempatMaps.trim()) return toast.error('Nama tempat di Maps harus diisi');
+      if (!markerPosition) return toast.error('Silakan pilih lokasi di peta');
 
+      // Update global state hanya saat submit
       keteranganState.edit.form = {
-        ...keteranganState.edit.form,
         name: formData.name.trim(),
         alamat: formData.alamat.trim(),
         namaTempatMaps: formData.namaTempatMaps.trim(),
         lat: markerPosition.lat,
         lng: markerPosition.lng,
       };
-      
+
       await keteranganState.edit.update();
       toast.success('Data bank sampah berhasil diperbarui');
       keteranganState.findUnique.data = null;
       router.push("/admin/lingkungan/pengelolaan-sampah-bank-sampah/keterangan-bank-sampah-terdekat");
     } catch (error) {
-      console.error("Error updating pengelolaan sampah:", error);
+      console.error(error);
       toast.error(error instanceof Error ? error.message : 'Gagal memperbarui data bank sampah');
     }
-  }
+  };
+
   return (
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
       <Group mb="md">
@@ -120,45 +112,35 @@ function EditKeteranganBankSampahTerdekat() {
           <TextInput
             label="Nama Bank Sampah"
             placeholder="Masukkan nama bank sampah"
-            defaultValue={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            value={formData.name}
+            onChange={(e) => handleInputChange('name', e.target.value)}
             required
           />
-
           <TextInput
             label="Alamat"
             placeholder="Masukkan alamat lengkap"
-            defaultValue={formData.alamat}
-            onChange={(e) => setFormData({ ...formData, alamat: e.target.value })}
+            value={formData.alamat}
+            onChange={(e) => handleInputChange('alamat', e.target.value)}
             required
           />
-
           <TextInput
             label="Nama Tempat di Maps"
             placeholder="Masukkan nama tempat yang terdaftar di Google Maps"
-            defaultValue={formData.namaTempatMaps}
-            onChange={(e) => setFormData({ ...formData, namaTempatMaps: e.target.value })}
+            value={formData.namaTempatMaps}
+            onChange={(e) => handleInputChange('namaTempatMaps', e.target.value)}
             required
           />
 
           <Box>
-            <Text fw="bold" fz="sm" mb={6}>
-              Pilih Lokasi di Peta
-            </Text>
-            <Text fz="xs" c="dimmed" mb={4}>
-              Klik pada peta untuk menandai lokasi
-            </Text>
+            <Text fw="bold" fz="sm" mb={6}>Pilih Lokasi di Peta</Text>
+            <Text fz="xs" c="dimmed" mb={4}>Klik pada peta untuk menandai lokasi</Text>
             <Box style={{ height: 300, width: '100%', borderRadius: '8px', overflow: 'hidden' }}>
               <LeafletMapEdit
-                key={markerPosition?.lat ?? 'default'}
                 initialPosition={markerPosition || { lat: -8.65, lng: 115.2 }}
                 onChange={(pos) => {
                   setMarkerPosition(pos);
-                  setFormData(prev => ({
-                    ...prev,
-                    lat: pos.lat,
-                    lng: pos.lng,
-                  }));
+                  handleInputChange('lat', pos.lat);
+                  handleInputChange('lng', pos.lng);
                 }}
               />
             </Box>

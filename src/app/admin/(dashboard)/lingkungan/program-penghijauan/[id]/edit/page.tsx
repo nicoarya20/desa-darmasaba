@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-'use client'
+'use client';
+
 import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import SelectIconProgramEdit from '@/app/admin/(dashboard)/_com/selectIconEdit';
 import programPenghijauanState from '@/app/admin/(dashboard)/_state/lingkungan/program-penghijauan';
@@ -50,13 +51,14 @@ function EditProgramPenghijauan() {
 
   const [formData, setFormData] = useState<FormProgramPenghijauan>({
     name: '',
-    deskripsi: '',
     judul: '',
+    deskripsi: '',
     icon: '',
   });
 
+  // Load data program penghijauan
   useEffect(() => {
-    const loadProgramPenghijauan = async () => {
+    const loadProgram = async () => {
       const id = params?.id as string;
       if (!id) return;
 
@@ -64,14 +66,6 @@ function EditProgramPenghijauan() {
         const data = await stateProgramPenghijauan.update.load(id);
         if (data) {
           stateProgramPenghijauan.update.id = id;
-
-          stateProgramPenghijauan.update.form = {
-            name: data.name,
-            judul: data.judul,
-            deskripsi: data.deskripsi,
-            icon: data.icon,
-          };
-
           setFormData({
             name: data.name,
             judul: data.judul,
@@ -85,19 +79,21 @@ function EditProgramPenghijauan() {
       }
     };
 
-    loadProgramPenghijauan();
+    loadProgram();
   }, [params?.id]);
 
+  // Hanya update global state saat submit
   const handleSubmit = async () => {
     try {
       stateProgramPenghijauan.update.form = {
-        ...stateProgramPenghijauan.update.form,
         name: formData.name.trim(),
-        deskripsi: formData.deskripsi.trim(),
         judul: formData.judul.trim(),
+        deskripsi: formData.deskripsi.trim(),
         icon: formData.icon.trim(),
       };
+
       await stateProgramPenghijauan.update.submit();
+      toast.success('Program penghijauan berhasil diperbarui');
       router.push('/admin/lingkungan/program-penghijauan');
     } catch (error) {
       console.error('Error updating program penghijauan:', error);
@@ -107,7 +103,7 @@ function EditProgramPenghijauan() {
 
   return (
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
-      {/* Header dengan back button */}
+      {/* Header */}
       <Group mb="md">
         <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
           <Button
@@ -135,27 +131,21 @@ function EditProgramPenghijauan() {
       >
         <Stack gap="md">
           <TextInput
-            defaultValue={formData.name}
+            value={formData.name}
             label="Nama Program Penghijauan"
             placeholder="Masukkan nama program penghijauan"
-            onChange={(val) =>
-              setFormData({
-                ...formData,
-                name: val.target.value,
-              })
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, name: e.target.value }))
             }
             required
           />
 
           <TextInput
-            defaultValue={formData.judul}
+            value={formData.judul}
             label="Judul Deskripsi Program Penghijauan"
             placeholder="Masukkan judul deskripsi program penghijauan"
-            onChange={(val) =>
-              setFormData({
-                ...formData,
-                judul: val.target.value,
-              })
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, judul: e.target.value }))
             }
             required
           />
@@ -166,10 +156,9 @@ function EditProgramPenghijauan() {
             </Text>
             <EditEditor
               value={formData.deskripsi}
-              onChange={(htmlContent) => {
-                setFormData((prev) => ({ ...prev, deskripsi: htmlContent }));
-                stateProgramPenghijauan.update.form.deskripsi = htmlContent;
-              }}
+              onChange={(htmlContent) =>
+                setFormData((prev) => ({ ...prev, deskripsi: htmlContent }))
+              }
             />
           </Box>
 
@@ -179,10 +168,9 @@ function EditProgramPenghijauan() {
             </Text>
             <SelectIconProgramEdit
               value={formData.icon as IconKey}
-              onChange={(value) => {
-                setFormData((prev) => ({ ...prev, icon: value }));
-                stateProgramPenghijauan.update.form.icon = value;
-              }}
+              onChange={(value) =>
+                setFormData((prev) => ({ ...prev, icon: value }))
+              }
             />
           </Box>
 

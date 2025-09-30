@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
+
 import prestasiState from '@/app/admin/(dashboard)/_state/landing-page/prestasi-desa';
 import colors from '@/con/colors';
 import { Box, Button, Group, Paper, Stack, TextInput, Title, Tooltip } from '@mantine/core';
@@ -15,57 +16,51 @@ function EditKategoriPrestasi() {
   const id = params?.id as string;
   const stateKategori = useProxy(prestasiState.kategoriPrestasi);
 
-  const [formData, setFormData] = useState({
-    name: "",
-  });
+  const [formData, setFormData] = useState({ name: '' });
+  const [loading, setLoading] = useState(false);
 
+  // Load data kategori prestasi saat component mount
   useEffect(() => {
-    const loadKategoriprestasi = async () => {
-      if (!id) return;
+    if (!id) return;
 
+    const loadKategori = async () => {
+      setLoading(true);
       try {
         const data = await stateKategori.edit.load(id);
-
         if (data) {
-          // pastikan id-nya masuk ke state edit
           stateKategori.edit.id = id;
-          setFormData({
-            name: data.name || '',
-          });
+          setFormData({ name: data.name || '' });
         }
-      } catch (error) {
-        console.error("Error loading kategori prestasi desa:", error);
-        toast.error("Gagal memuat data kategori prestasi desa");
+      } catch (err) {
+        console.error(err);
+        toast.error('Gagal memuat data kategori prestasi desa');
+      } finally {
+        setLoading(false);
       }
     };
 
-    loadKategoriprestasi();
+    loadKategori();
   }, [id]);
 
+  // Submit: update global state hanya saat submit
   const handleSubmit = async () => {
+    if (!formData.name.trim()) {
+      toast.error('Nama kategori prestasi tidak boleh kosong');
+      return;
+    }
+
     try {
-      if (!formData.name.trim()) {
-        toast.error('Nama kategori prestasi tidak boleh kosong');
-        return;
-      }
-
-      stateKategori.edit.form = {
-        name: formData.name.trim(),
-      };
-
-      // Safety check tambahan: pastikan ID tidak kosong
-      if (!stateKategori.edit.id) {
-        stateKategori.edit.id = id; // fallback
-      }
+      stateKategori.edit.form = { name: formData.name.trim() };
+      stateKategori.edit.id ||= id; // fallback jika id belum ada
 
       const success = await stateKategori.edit.update();
-
       if (success) {
-        router.push("/admin/landing-page/prestasi-desa/kategori-prestasi-desa");
+        toast.success('Kategori prestasi berhasil diperbarui');
+        router.push('/admin/landing-page/prestasi-desa/kategori-prestasi-desa');
       }
-    } catch (error) {
-      console.error("Error updating kategori prestasi desa:", error);
-      // toast akan ditampilkan dari fungsi update
+    } catch (err) {
+      console.error(err);
+      toast.error('Gagal memperbarui kategori prestasi desa');
     }
   };
 
@@ -94,9 +89,10 @@ function EditKategoriPrestasi() {
           <TextInput
             label="Nama Kategori Prestasi"
             placeholder="Masukkan nama kategori prestasi"
-            defaultValue={formData.name}
+            value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             required
+            disabled={loading}
           />
 
           <Group justify="right">
@@ -104,6 +100,7 @@ function EditKategoriPrestasi() {
               onClick={handleSubmit}
               radius="md"
               size="md"
+              loading={loading}
               style={{
                 background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',

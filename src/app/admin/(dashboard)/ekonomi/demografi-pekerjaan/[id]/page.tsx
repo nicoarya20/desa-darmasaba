@@ -10,14 +10,20 @@ import {
   Stack,
   TextInput,
   Title,
-  Tooltip
+  Tooltip,
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 import demografiPekerjaan from '../../../_state/ekonomi/demografi-pekerjaan';
+
+interface FormData {
+  pekerjaan: string;
+  lakiLaki: number;
+  perempuan: number;
+}
 
 function EditDemografiPekerjaan() {
   const router = useRouter();
@@ -26,19 +32,27 @@ function EditDemografiPekerjaan() {
 
   const id = params.id;
 
+  const [formData, setFormData] = useState<FormData>({
+    pekerjaan: '',
+    lakiLaki: 0,
+    perempuan: 0,
+  });
+
+  // Load data sekali waktu
   useEffect(() => {
     if (!id) return;
     stateDemografi.update.id = id;
+
     stateDemografi.findUnique
       .load(id)
       .then(() => {
         const data = stateDemografi.findUnique.data;
         if (data) {
-          stateDemografi.update.form = {
+          setFormData({
             pekerjaan: String(data.pekerjaan || ''),
             lakiLaki: Number(data.lakiLaki || 0),
             perempuan: Number(data.perempuan || 0),
-          };
+          });
         }
       })
       .catch((error) => {
@@ -47,9 +61,22 @@ function EditDemografiPekerjaan() {
       });
   }, [id]);
 
+  const handleChange =
+    (field: keyof FormData) =>
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setFormData((prev) => ({
+        ...prev,
+        [field]:
+          field === 'lakiLaki' || field === 'perempuan'
+            ? Number(e.currentTarget.value)
+            : e.currentTarget.value,
+      }));
+    };
+
   const handleSubmit = async () => {
     try {
       stateDemografi.update.id = id;
+      stateDemografi.update.form = { ...formData };
       await stateDemografi.update.submit();
       toast.success('Data berhasil diperbarui');
       router.push('/admin/ekonomi/demografi-pekerjaan');
@@ -91,10 +118,8 @@ function EditDemografiPekerjaan() {
           <TextInput
             label="Pekerjaan"
             placeholder="Masukkan jenis pekerjaan"
-            defaultValue={stateDemografi.update.form.pekerjaan}
-            onChange={(e) =>
-              (stateDemografi.update.form.pekerjaan = e.currentTarget.value)
-            }
+            value={formData.pekerjaan}
+            onChange={handleChange('pekerjaan')}
             required
           />
 
@@ -102,12 +127,8 @@ function EditDemografiPekerjaan() {
             label="Jumlah Pekerja Laki-laki"
             type="number"
             placeholder="Masukkan jumlah pekerja laki-laki"
-            defaultValue={stateDemografi.update.form.lakiLaki}
-            onChange={(e) =>
-              (stateDemografi.update.form.lakiLaki = Number(
-                e.currentTarget.value
-              ))
-            }
+            value={formData.lakiLaki}
+            onChange={handleChange('lakiLaki')}
             required
           />
 
@@ -115,12 +136,8 @@ function EditDemografiPekerjaan() {
             label="Jumlah Pekerja Perempuan"
             type="number"
             placeholder="Masukkan jumlah pekerja perempuan"
-            defaultValue={stateDemografi.update.form.perempuan}
-            onChange={(e) =>
-              (stateDemografi.update.form.perempuan = Number(
-                e.currentTarget.value
-              ))
-            }
+            value={formData.perempuan}
+            onChange={handleChange('perempuan')}
             required
           />
 

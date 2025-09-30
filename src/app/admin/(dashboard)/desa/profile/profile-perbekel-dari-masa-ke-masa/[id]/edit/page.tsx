@@ -26,15 +26,17 @@ function EditPerbekelDariMasaKeMasa() {
   const state = useProxy(stateProfileDesa.mantanPerbekel);
   const router = useRouter();
   const params = useParams();
+
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [formData, setFormData] = useState({
-    nama: state.update.form.nama || '',
-    daerah: state.update.form.daerah || '',
-    periode: state.update.form.periode || '',
-    imageId: state.update.form.imageId || ''
+    nama: '',
+    daerah: '',
+    periode: '',
+    imageId: ''
   });
 
+  // load data pertama kali
   useEffect(() => {
     const loadFoto = async () => {
       const id = params?.id as string;
@@ -48,7 +50,9 @@ function EditPerbekelDariMasaKeMasa() {
             periode: data.periode || '',
             imageId: data.imageId || ''
           });
-          if (data?.imageGalleryFoto?.link) setPreviewImage(data.imageGalleryFoto.link);
+          if (data?.imageGalleryFoto?.link) {
+            setPreviewImage(data.imageGalleryFoto.link);
+          }
         }
       } catch (error) {
         console.error('Error loading foto:', error);
@@ -58,8 +62,17 @@ function EditPerbekelDariMasaKeMasa() {
     loadFoto();
   }, [params?.id]);
 
+  // helper ubah state formData
+  const handleChange = (field: keyof typeof formData, value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
   const handleSubmit = async () => {
     try {
+      // update global state hanya sekali pas submit
       state.update.form = { ...state.update.form, ...formData };
 
       if (file) {
@@ -106,8 +119,8 @@ function EditPerbekelDariMasaKeMasa() {
           <TextInput
             label="Nama"
             placeholder="Masukkan nama"
-            defaultValue={formData.nama}
-            onChange={(e) => setFormData({ ...formData, nama: e.target.value })}
+            value={formData.nama}
+            onChange={(e) => handleChange('nama', e.target.value)}
             required
           />
 
@@ -161,7 +174,7 @@ function EditPerbekelDariMasaKeMasa() {
                     objectFit: 'contain',
                     border: `1px solid ${colors['blue-button']}`,
                   }}
-                  loading='lazy'
+                  loading="lazy"
                 />
               </Box>
             )}
@@ -170,16 +183,16 @@ function EditPerbekelDariMasaKeMasa() {
           <TextInput
             label="Daerah"
             placeholder="Masukkan daerah"
-            defaultValue={formData.daerah}
-            onChange={(e) => setFormData({ ...formData, daerah: e.target.value })}
+            value={formData.daerah}
+            onChange={(e) => handleChange('daerah', e.target.value)}
             required
           />
 
           <TextInput
             label="Periode"
             placeholder="Masukkan periode"
-            defaultValue={formData.periode}
-            onChange={(e) => setFormData({ ...formData, periode: e.target.value })}
+            value={formData.periode}
+            onChange={(e) => handleChange('periode', e.target.value)}
             required
           />
 

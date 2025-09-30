@@ -1,4 +1,5 @@
 'use client'
+
 import stateEdukasiLingkungan from '@/app/admin/(dashboard)/_state/lingkungan/edukasi-lingkungan';
 import colors from '@/con/colors';
 import { Box, Button, Group, Paper, Stack, Text, Title } from '@mantine/core';
@@ -14,30 +15,44 @@ const EdukasiLingkunganTextEditor = dynamic(
   { ssr: false }
 );
 
-function EditTujuanEdukasiLingkungan() {
+export default function EditTujuanEdukasiLingkungan() {
   const router = useRouter();
   const tujuanEdukasiState = useProxy(stateEdukasiLingkungan.stateTujuanEdukasi);
-  const [judul, setJudul] = useState('');
-  const [content, setContent] = useState('');
 
+  // State lokal untuk form, gak tergantung global state
+  const [formData, setFormData] = useState({ judul: '', deskripsi: '' });
+
+  // Initialize global state
   useShallowEffect(() => {
     if (!tujuanEdukasiState.findById.data) {
       tujuanEdukasiState.findById.initialize();
     }
   }, []);
 
+  // Sync initial values dari global state ke form lokal
   useEffect(() => {
     if (tujuanEdukasiState.findById.data) {
-      setJudul(tujuanEdukasiState.findById.data.judul ?? '');
-      setContent(tujuanEdukasiState.findById.data.deskripsi ?? '');
+      setFormData({
+        judul: tujuanEdukasiState.findById.data.judul ?? '',
+        deskripsi: tujuanEdukasiState.findById.data.deskripsi ?? '',
+      });
     }
   }, [tujuanEdukasiState.findById.data]);
 
+  // Handler input
+  const handleChange = (field: 'judul' | 'deskripsi', value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
   const submit = () => {
     if (tujuanEdukasiState.findById.data) {
-      tujuanEdukasiState.findById.data.judul = judul;
-      tujuanEdukasiState.findById.data.deskripsi = content;
-      tujuanEdukasiState.update.save(tujuanEdukasiState.findById.data);
+      // Update global state hanya saat submit
+      const updatedData = {
+        ...tujuanEdukasiState.findById.data,
+        judul: formData.judul,
+        deskripsi: formData.deskripsi,
+      };
+      tujuanEdukasiState.update.save(updatedData);
     }
     router.push('/admin/lingkungan/edukasi-lingkungan/tujuan-edukasi-lingkungan');
   };
@@ -73,8 +88,8 @@ function EditTujuanEdukasiLingkungan() {
             </Text>
             <EdukasiLingkunganTextEditor
               showSubmit={false}
-              onChange={setJudul}
-              initialContent={judul}
+              onChange={(value) => handleChange('judul', value)}
+              initialContent={formData.judul}
             />
           </Box>
 
@@ -84,8 +99,8 @@ function EditTujuanEdukasiLingkungan() {
             </Text>
             <EdukasiLingkunganTextEditor
               showSubmit={false}
-              onChange={setContent}
-              initialContent={content}
+              onChange={(value) => handleChange('deskripsi', value)}
+              initialContent={formData.deskripsi}
             />
           </Box>
 
@@ -109,5 +124,3 @@ function EditTujuanEdukasiLingkungan() {
     </Box>
   );
 }
-
-export default EditTujuanEdukasiLingkungan;

@@ -40,8 +40,14 @@ function EditPotensi() {
     imageId: "",
   });
 
+  // handle input changes
+  const handleChange = (field: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
   useEffect(() => {
     potensiDesaState.kategoriPotensi.findMany.load();
+
     const loadPotensi = async () => {
       const id = params?.id as string;
       if (!id) return;
@@ -72,21 +78,26 @@ function EditPotensi() {
 
   const handleSubmit = async () => {
     try {
-      potensiState.edit.form = {
-        ...potensiState.edit.form,
-        ...formData,
-      };
+      let imageId = formData.imageId;
 
       if (file) {
-        const res = await ApiFetch.api.fileStorage.create.post({ file, name: file.name });
+        const res = await ApiFetch.api.fileStorage.create.post({
+          file,
+          name: file.name,
+        });
         const uploaded = res.data?.data;
 
         if (!uploaded?.id) {
           return toast.error("Gagal upload gambar");
         }
 
-        potensiState.edit.form.imageId = uploaded.id;
+        imageId = uploaded.id;
       }
+
+      potensiState.edit.form = {
+        ...formData,
+        imageId,
+      };
 
       await potensiState.edit.update();
       toast.success("Potensi berhasil diperbarui!");
@@ -101,7 +112,12 @@ function EditPotensi() {
     <Box px={{ base: "sm", md: "lg" }} py="md">
       <Group mb="md">
         <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+          <Button
+            variant="subtle"
+            onClick={() => router.back()}
+            p="xs"
+            radius="md"
+          >
             <IconArrowBack color={colors["blue-button"]} size={24} />
           </Button>
         </Tooltip>
@@ -122,22 +138,22 @@ function EditPotensi() {
           <TextInput
             label="Judul Potensi"
             placeholder="Masukkan judul"
-            defaultValue={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            value={formData.name}
+            onChange={(e) => handleChange("name", e.target.value)}
             required
           />
 
           <TextInput
             label="Deskripsi Singkat"
             placeholder="Masukkan deskripsi"
-            defaultValue={formData.deskripsi}
-            onChange={(e) => setFormData({ ...formData, deskripsi: e.target.value })}
+            value={formData.deskripsi}
+            onChange={(e) => handleChange("deskripsi", e.target.value)}
             required
           />
 
           <Select
             value={formData.kategoriId}
-            onChange={(val) => setFormData({ ...formData, kategoriId: val || "" })}
+            onChange={(val) => handleChange("kategoriId", val || "")}
             label="Kategori"
             placeholder="Pilih kategori"
             data={
@@ -164,7 +180,9 @@ function EditPotensi() {
                   setPreviewImage(URL.createObjectURL(selectedFile));
                 }
               }}
-              onReject={() => toast.error("File tidak valid, gunakan format gambar")}
+              onReject={() =>
+                toast.error("File tidak valid, gunakan format gambar")
+              }
               maxSize={5 * 1024 ** 2}
               accept={{ "image/*": [] }}
               radius="md"
@@ -172,7 +190,11 @@ function EditPotensi() {
             >
               <Group justify="center" gap="xl" mih={180}>
                 <Dropzone.Accept>
-                  <IconUpload size={48} color={colors["blue-button"]} stroke={1.5} />
+                  <IconUpload
+                    size={48}
+                    color={colors["blue-button"]}
+                    stroke={1.5}
+                  />
                 </Dropzone.Accept>
                 <Dropzone.Reject>
                   <IconX size={48} color="red" stroke={1.5} />
@@ -214,7 +236,9 @@ function EditPotensi() {
             </Text>
             <EditEditor
               value={formData.content}
-              onChange={(htmlContent) => setFormData({ ...formData, content: htmlContent })}
+              onChange={(htmlContent) =>
+                handleChange("content", htmlContent)
+              }
             />
           </Box>
 

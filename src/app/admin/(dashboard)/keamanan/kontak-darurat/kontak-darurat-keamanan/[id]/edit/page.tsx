@@ -15,40 +15,40 @@ import {
   Text,
   TextInput,
   Title,
-  Tooltip
+  Tooltip,
 } from "@mantine/core";
-import {
-  IconArrowBack
-} from "@tabler/icons-react";
+import { IconArrowBack } from "@tabler/icons-react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useProxy } from "valtio/utils";
 
 function EditKontakDaruratKeamanan() {
-  const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
-  const kontakState = useProxy(kontakDarurat.kontakDaruratKeamananState);
   const params = useParams();
+  const kontakState = useProxy(kontakDarurat.kontakDaruratKeamananState);
+
+  const [isLoading, setIsLoading] = useState(true);
   const [formData, setFormData] = useState({
-    name: kontakState.update.form.nama || "",
-    icon: kontakState.update.form.icon || "",
-    kategoriId: kontakState.update.form.kategoriId || [],
+    name: "",
+    icon: "" as IconKey | "",
+    kategoriId: [] as string[],
   });
 
-  // Load data
+  // Load data dari backend
   useEffect(() => {
     const loadData = async () => {
       try {
         setIsLoading(true);
         await kontakDarurat.kontakDaruratItem.findMany.load();
+
         const id = params?.id as string;
         if (id) {
           const data = await kontakState.update.load(id);
           if (data) {
             setFormData({
               name: data.nama || "",
-              icon: data.icon || "",
+              icon: (data.icon as IconKey) || "",
               kategoriId: data.kategoriId || [],
             });
           }
@@ -63,6 +63,7 @@ function EditKontakDaruratKeamanan() {
 
     loadData();
   }, [params?.id]);
+
   // Handle submit
   const handleSubmit = async () => {
     try {
@@ -72,6 +73,7 @@ function EditKontakDaruratKeamanan() {
         icon: formData.icon,
         kategoriId: formData.kategoriId,
       };
+
       await kontakState.update.update();
       toast.success("Kontak Darurat berhasil diperbarui!");
       router.push("/admin/keamanan/kontak-darurat");
@@ -110,43 +112,54 @@ function EditKontakDaruratKeamanan() {
         style={{ border: "1px solid #e0e0e0" }}
       >
         <Stack gap="md">
-          {/* Nama kategori */}
+          {/* Nama Kontak */}
           <TextInput
-            defaultValue={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            value={formData.name}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, name: e.target.value }))
+            }
             label="Nama Kontak Darurat"
             placeholder="Masukkan nama kontak darurat"
             required
           />
 
+          {/* MultiSelect */}
           <MultiSelect
             value={formData.kategoriId}
-            onChange={(val) => setFormData({ ...formData, kategoriId: val })}
+            onChange={(val) =>
+              setFormData((prev) => ({ ...prev, kategoriId: val }))
+            }
             label={<Text fw={"bold"} fz={"sm"}>Kontak Item</Text>}
             placeholder={isLoading ? "Memuat data..." : "Pilih kontak item"}
             data={
               Array.isArray(kontakDarurat.kontakDaruratItem.findMany.data)
                 ? kontakDarurat.kontakDaruratItem.findMany.data.map((v) => ({
-                  value: v.id,
-                  label: v.nama
-                }))
+                    value: v.id,
+                    label: v.nama,
+                  }))
                 : []
             }
             clearable
             searchable
             required
-            error={!formData.kategoriId.length ? "Pilih minimal satu kategori" : undefined}
+            error={
+              !formData.kategoriId.length
+                ? "Pilih minimal satu kategori"
+                : undefined
+            }
             disabled={isLoading}
           />
 
+          {/* Icon Select */}
           <Box>
-            <Text fz={"sm"} fw={"bold"}>Ikon Program Kreatif Desa</Text>
+            <Text fz={"sm"} fw={"bold"}>
+              Ikon Program Kreatif Desa
+            </Text>
             <SelectIconProgramEdit
               value={formData.icon as IconKey}
-              onChange={(value) => {
-                setFormData((prev) => ({ ...prev, icon: value }));
-                kontakState.update.form.icon = value;
-              }}
+              onChange={(value) =>
+                setFormData((prev) => ({ ...prev, icon: value }))
+              }
             />
           </Box>
 

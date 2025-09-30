@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-'use client'
+'use client';
+
 import gotongRoyongState from '@/app/admin/(dashboard)/_state/lingkungan/gotong-royong';
 import colors from '@/con/colors';
 import { Box, Button, Group, Paper, Stack, Text, TextInput, Title, Tooltip } from '@mantine/core';
@@ -15,52 +16,58 @@ function EditKategoriKegiatan() {
   const id = params?.id as string;
   const stateKategori = useProxy(gotongRoyongState.kategoriKegiatan);
 
-  const [formData, setFormData] = useState({
-    nama: '',
-  });
+  const [formData, setFormData] = useState({ nama: '' });
+  const [loading, setLoading] = useState(true);
 
+  // Load data once
   useEffect(() => {
-    const loadKategorikegiatan = async () => {
-      if (!id) return;
+    if (!id) return;
 
+    const loadKategori = async () => {
       try {
         const data = await stateKategori.edit.load(id);
-
         if (data) {
           stateKategori.edit.id = id;
-          setFormData({
-            nama: data.nama || '',
-          });
+          setFormData({ nama: data.nama || '' });
         }
-      } catch (error) {
-        console.error('Error loading kategori kegiatan:', error);
+      } catch (err) {
+        console.error('Error loading kategori kegiatan:', err);
         toast.error('Gagal memuat data kategori kegiatan');
+      } finally {
+        setLoading(false);
       }
     };
 
-    loadKategorikegiatan();
+    loadKategori();
   }, [id]);
 
-  const handleSubmit = async () => {
-    try {
-      if (!formData.nama.trim()) {
-        toast.error('Nama kategori kegiatan tidak boleh kosong');
-        return;
-      }
+  const handleChange = (field: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
 
-      stateKategori.edit.form = { nama: formData.nama.trim() };
+  const handleSubmit = async () => {
+    const trimmedNama = formData.nama.trim();
+    if (!trimmedNama) {
+      toast.error('Nama kategori kegiatan tidak boleh kosong');
+      return;
+    }
+
+    try {
+      stateKategori.edit.form = { nama: trimmedNama };
       if (!stateKategori.edit.id) stateKategori.edit.id = id;
 
       const success = await stateKategori.edit.update();
-
       if (success) {
         toast.success('Kategori kegiatan berhasil diperbarui!');
         router.push('/admin/lingkungan/gotong-royong/kategori-kegiatan');
       }
-    } catch (error) {
-      console.error('Error updating kategori kegiatan:', error);
+    } catch (err) {
+      console.error('Error updating kategori kegiatan:', err);
+      toast.error('Gagal memperbarui kategori kegiatan');
     }
   };
+
+  if (loading) return <Text>Loading...</Text>;
 
   return (
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
@@ -85,8 +92,8 @@ function EditKategoriKegiatan() {
       >
         <Stack gap="md">
           <TextInput
-            defaultValue={formData.nama}
-            onChange={(e) => setFormData({ ...formData, nama: e.target.value })}
+            value={formData.nama}
+            onChange={(e) => handleChange('nama', e.target.value)}
             label={<Text fw="bold" fz="sm">Nama Kategori Kegiatan</Text>}
             placeholder="Masukkan nama kategori kegiatan"
             required

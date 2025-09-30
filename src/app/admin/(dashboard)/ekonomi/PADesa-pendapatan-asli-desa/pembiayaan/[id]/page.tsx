@@ -24,12 +24,15 @@ function EditPembiayaan() {
   const params = useParams();
 
   const [formData, setFormData] = useState({
-    name: pembiayaanState.update.form.name || '',
-    value: pembiayaanState.update.form.value || '',
+    name: '',
+    value: '',
   });
 
   const formatRupiah = (value: number | string) => {
-    const number = typeof value === 'number' ? value : Number(value.toString().replace(/\D/g, ''));
+    const number =
+      typeof value === 'number'
+        ? value
+        : Number(value.toString().replace(/\D/g, '')) || 0;
     return new Intl.NumberFormat('id-ID', {
       style: 'currency',
       currency: 'IDR',
@@ -38,7 +41,7 @@ function EditPembiayaan() {
   };
 
   const unformatRupiah = (value: string) => {
-    return Number(value.replace(/\D/g, ''));
+    return Number(value.replace(/\D/g, '')) || 0;
   };
 
   useEffect(() => {
@@ -51,7 +54,7 @@ function EditPembiayaan() {
         if (data) {
           setFormData({
             name: data.name || '',
-            value: data.value || '',
+            value: String(data.value || ''),
           });
         }
       } catch (error) {
@@ -68,7 +71,7 @@ function EditPembiayaan() {
       pembiayaanState.update.form = {
         ...pembiayaanState.update.form,
         name: formData.name,
-        value: Number(formData.value),
+        value: unformatRupiah(formData.value),
       };
 
       await pembiayaanState.update.update();
@@ -82,7 +85,7 @@ function EditPembiayaan() {
 
   return (
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
-      {/* Header dengan Back Button */}
+      {/* Header */}
       <Group mb="md">
         <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
           <Button
@@ -112,19 +115,21 @@ function EditPembiayaan() {
           <TextInput
             label="Nama Jenis Pembiayaan"
             placeholder="Masukkan nama jenis pembiayaan"
-            defaultValue={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            value={formData.name}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, name: e.target.value }))
+            }
             required
           />
 
           <TextInput
             label="Nilai"
             placeholder="Masukkan nilai"
-            defaultValue={formatRupiah(formData.value)}
+            value={formData.value ? formatRupiah(formData.value) : ''}
             onChange={(e) => {
               const raw = e.currentTarget.value;
               const cleanValue = unformatRupiah(raw);
-              setFormData({ ...formData, value: cleanValue });
+              setFormData((prev) => ({ ...prev, value: String(cleanValue) }));
             }}
             required
           />

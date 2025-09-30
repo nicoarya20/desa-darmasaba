@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import laporanPublikState from '@/app/admin/(dashboard)/_state/keamanan/laporan-publik';
@@ -30,13 +28,20 @@ function EditLaporanPublik() {
   const router = useRouter();
   const params = useParams();
 
-  const [formData, setFormData] = useState({
-    judul: stateLaporan.edit.form.judul || '',
-    lokasi: stateLaporan.edit.form.lokasi || '',
-    tanggalWaktu: stateLaporan.edit.form.tanggalWaktu || '',
-    status: stateLaporan.edit.form.status || '',
-    penanganan: stateLaporan.edit.form.penanganan || '',
-    kronologi: stateLaporan.edit.form.kronologi || '',
+  const [formData, setFormData] = useState<{
+    judul: string;
+    lokasi: string;
+    tanggalWaktu: string;
+    status: Status;
+    penanganan: string;
+    kronologi: string;
+  }>({
+    judul: '',
+    lokasi: '',
+    tanggalWaktu: '',
+    status: 'Proses', // Default status
+    penanganan: '',
+    kronologi: '',
   });
 
   useEffect(() => {
@@ -52,7 +57,7 @@ function EditLaporanPublik() {
             lokasi: data.lokasi || '',
             tanggalWaktu: data.tanggalWaktu || '',
             status: data.status || '',
-            penanganan: data.penanganan?.map((p: any) => p.deskripsi)[0] || '',
+            penanganan: data.penanganan?.[0]?.deskripsi || '',
             kronologi: data.kronologi || '',
           });
         }
@@ -63,18 +68,17 @@ function EditLaporanPublik() {
     };
 
     loadLaporanPublik();
-  }, [params?.id]);
+  }, [params?.id, stateLaporan.edit]);
+
+  const handleChange = (field: string, value: string | Status) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
 
   const handleSubmit = async () => {
     try {
       stateLaporan.edit.form = {
         ...stateLaporan.edit.form,
-        judul: formData.judul,
-        lokasi: formData.lokasi,
-        tanggalWaktu: formData.tanggalWaktu,
-        status: formData.status,
-        penanganan: formData.penanganan,
-        kronologi: formData.kronologi,
+        ...formData,
       };
 
       await stateLaporan.edit.update();
@@ -111,16 +115,16 @@ function EditLaporanPublik() {
       >
         <Stack gap="md">
           <TextInput
-            defaultValue={formData.judul}
-            onChange={(e) => setFormData({ ...formData, judul: e.target.value })}
+            value={formData.judul}
+            onChange={(e) => handleChange('judul', e.target.value)}
             label={<Text fw="bold" fz="sm">Judul Laporan Publik</Text>}
             placeholder="Masukkan judul laporan publik"
             required
           />
 
           <TextInput
-            defaultValue={formData.lokasi}
-            onChange={(e) => setFormData({ ...formData, lokasi: e.target.value })}
+            value={formData.lokasi}
+            onChange={(e) => handleChange('lokasi', e.target.value)}
             label={<Text fw="bold" fz="sm">Lokasi Laporan Publik</Text>}
             placeholder="Masukkan lokasi laporan publik"
             required
@@ -129,15 +133,20 @@ function EditLaporanPublik() {
           <DateTimePicker
             label="Tanggal & Waktu Laporan Publik"
             value={formData.tanggalWaktu ? new Date(formData.tanggalWaktu) : null}
-            onChange={(val) =>
-              setFormData({ ...formData, tanggalWaktu: val ? val.toString() : '' })
-            }
+            onChange={(value: string | null) => {
+              if (value) {
+                const date = new Date(value);
+                handleChange('tanggalWaktu', date.toISOString());
+              } else {
+                handleChange('tanggalWaktu', '');
+              }
+            }}
             required
           />
 
           <Select
             value={formData.status}
-            onChange={(e) => setFormData({ ...formData, status: e as Status })}
+            onChange={(val) => handleChange('status', val as Status)}
             label={<Text fw="bold" fz="sm">Status Laporan Publik</Text>}
             placeholder="Pilih status laporan publik"
             data={[
@@ -152,10 +161,7 @@ function EditLaporanPublik() {
             <Text fw="bold" fz="sm" mb={6}>Kronologi Laporan Publik</Text>
             <EditEditor
               value={formData.kronologi}
-              onChange={(htmlContent) => {
-                setFormData((prev) => ({ ...prev, kronologi: htmlContent }));
-                stateLaporan.edit.form.kronologi = htmlContent;
-              }}
+              onChange={(htmlContent) => handleChange('kronologi', htmlContent)}
             />
           </Box>
 
@@ -163,10 +169,7 @@ function EditLaporanPublik() {
             <Text fw="bold" fz="sm" mb={6}>Penanganan Laporan Publik</Text>
             <EditEditor
               value={formData.penanganan}
-              onChange={(htmlContent) => {
-                setFormData((prev) => ({ ...prev, penanganan: htmlContent }));
-                stateLaporan.edit.form.penanganan = htmlContent;
-              }}
+              onChange={(htmlContent) => handleChange('penanganan', htmlContent)}
             />
           </Box>
 

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-'use client'
 /* eslint-disable react-hooks/exhaustive-deps */
+'use client'
 import PendapatanAsliDesa from '@/app/admin/(dashboard)/_state/ekonomi/PADesa';
 import colors from '@/con/colors';
 import {
@@ -29,13 +29,13 @@ function EditAPBDesa() {
   const params = useParams();
 
   const [formData, setFormData] = useState({
-    tahun: apbState.update.form.tahun || '',
-    pendapatanIds: apbState.update.form.pendapatanIds || [],
-    belanjaIds: apbState.update.form.belanjaIds || [],
-    pembiayaanIds: apbState.update.form.pembiayaanIds || [],
+    tahun: '',
+    pendapatanIds: [] as string[],
+    belanjaIds: [] as string[],
+    pembiayaanIds: [] as string[],
   });
 
-  // Load APB desa by id
+  // Load APB desa by id → hanya update formData, bukan global state
   useEffect(() => {
     const loadAPBdesa = async () => {
       const id = params?.id as string;
@@ -45,7 +45,7 @@ function EditAPBDesa() {
         const data = await apbState.update.load(id);
         if (data) {
           setFormData({
-            tahun: data.tahun || 0,
+            tahun: String(data.tahun || ''),
             pendapatanIds: data.pendapatan?.map((p: any) => p.id) || [],
             belanjaIds: data.belanja?.map((b: any) => b.id) || [],
             pembiayaanIds: data.pembiayaan?.map((p: any) => p.id) || [],
@@ -60,8 +60,13 @@ function EditAPBDesa() {
     loadAPBdesa();
   }, [params?.id]);
 
+  const handleChange = (field: keyof typeof formData, value: any) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
   const handleSubmit = async () => {
     try {
+      // update global state cuma pas submit
       apbState.update.form = {
         ...apbState.update.form,
         tahun: Number(formData.tahun),
@@ -111,10 +116,8 @@ function EditAPBDesa() {
           {/* Tahun */}
           <TextInput
             type="number"
-            defaultValue={formData.tahun}
-            onChange={(e) =>
-              setFormData({ ...formData, tahun: e.target.value })
-            }
+            value={formData.tahun}
+            onChange={(e) => handleChange("tahun", e.target.value)}
             label={<Text fz="sm" fw="bold">Tahun</Text>}
             placeholder="Masukkan tahun anggaran"
             required
@@ -123,23 +126,17 @@ function EditAPBDesa() {
           {/* Selects */}
           <SelectPendapatan
             selectedIds={formData.pendapatanIds}
-            onSelectionChange={(ids) =>
-              setFormData({ ...formData, pendapatanIds: ids })
-            }
+            onSelectionChange={(ids) => handleChange("pendapatanIds", ids)}
           />
 
           <SelectBelanja
             selectedIds={formData.belanjaIds}
-            onSelectionChange={(ids) =>
-              setFormData({ ...formData, belanjaIds: ids })
-            }
+            onSelectionChange={(ids) => handleChange("belanjaIds", ids)}
           />
 
           <SelectPembiayaan
             selectedIds={formData.pembiayaanIds}
-            onSelectionChange={(ids) =>
-              setFormData({ ...formData, pembiayaanIds: ids })
-            }
+            onSelectionChange={(ids) => handleChange("pembiayaanIds", ids)}
           />
 
           {/* Save Button */}
@@ -164,7 +161,13 @@ function EditAPBDesa() {
 
   /* --- Sub Components --- */
 
-  function SelectPendapatan({ selectedIds, onSelectionChange }: { selectedIds: string[]; onSelectionChange: (ids: string[]) => void }) {
+  function SelectPendapatan({
+    selectedIds,
+    onSelectionChange,
+  }: {
+    selectedIds: string[];
+    onSelectionChange: (ids: string[]) => void;
+  }) {
     const pendapatanState = useProxy(PendapatanAsliDesa.pendapatan);
 
     useShallowEffect(() => {
@@ -192,7 +195,13 @@ function EditAPBDesa() {
     );
   }
 
-  function SelectBelanja({ selectedIds, onSelectionChange }: { selectedIds: string[]; onSelectionChange: (ids: string[]) => void }) {
+  function SelectBelanja({
+    selectedIds,
+    onSelectionChange,
+  }: {
+    selectedIds: string[];
+    onSelectionChange: (ids: string[]) => void;
+  }) {
     const belanjaState = useProxy(PendapatanAsliDesa.belanja);
 
     useShallowEffect(() => {
@@ -220,7 +229,13 @@ function EditAPBDesa() {
     );
   }
 
-  function SelectPembiayaan({ selectedIds, onSelectionChange }: { selectedIds: string[]; onSelectionChange: (ids: string[]) => void }) {
+  function SelectPembiayaan({
+    selectedIds,
+    onSelectionChange,
+  }: {
+    selectedIds: string[];
+    onSelectionChange: (ids: string[]) => void;
+  }) {
     const pembiayaanState = useProxy(PendapatanAsliDesa.pembiayaan);
 
     useShallowEffect(() => {

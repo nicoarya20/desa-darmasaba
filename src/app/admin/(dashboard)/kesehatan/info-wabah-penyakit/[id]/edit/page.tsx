@@ -19,7 +19,7 @@ import {
 import { Dropzone } from '@mantine/dropzone';
 import { IconArrowBack, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, ChangeEvent } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
@@ -28,15 +28,21 @@ function EditInfoWabahPenyakit() {
   const router = useRouter();
   const params = useParams();
 
+  const [formData, setFormData] = useState({
+    name: '',
+    deskripsiSingkat: '',
+    deskripsi: '',
+    imageId: '',
+  });
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
-  const [formData, setFormData] = useState({
-    name: infoWabahPenyakitState.edit.form.name || '',
-    deskripsiSingkat: infoWabahPenyakitState.edit.form.deskripsiSingkat || '',
-    deskripsi: infoWabahPenyakitState.edit.form.deskripsiLengkap || '',
-    imageId: infoWabahPenyakitState.edit.form.imageId || '',
-  });
 
+  // Helper untuk update field formData
+  const updateField = (field: keyof typeof formData, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  // Load data edit
   useEffect(() => {
     const loadInfoWabahPenyakit = async () => {
       const id = params?.id as string;
@@ -52,12 +58,10 @@ function EditInfoWabahPenyakit() {
             imageId: data.imageId || '',
           });
 
-          if (data?.image?.link) {
-            setPreviewImage(data.image.link);
-          }
+          if (data.image?.link) setPreviewImage(data.image.link);
         }
       } catch (error) {
-        console.error('Error loading info wabah penyakit:', error);
+        console.error(error);
         toast.error('Gagal memuat data info wabah penyakit');
       }
     };
@@ -67,31 +71,40 @@ function EditInfoWabahPenyakit() {
 
   const handleSubmit = async () => {
     try {
+      let uploadedImageId = formData.imageId;
+
+      // Upload file kalau ada
+      if (file) {
+        const res = await ApiFetch.api.fileStorage.create.post({ file, name: file.name });
+        const uploaded = res.data?.data;
+
+        if (!uploaded?.id) return toast.error('Gagal upload gambar');
+        uploadedImageId = uploaded.id;
+      }
+
+      // Update global state
       infoWabahPenyakitState.edit.form = {
         ...infoWabahPenyakitState.edit.form,
         name: formData.name,
         deskripsiSingkat: formData.deskripsiSingkat,
         deskripsiLengkap: formData.deskripsi,
-        imageId: formData.imageId,
+        imageId: uploadedImageId,
       };
-
-      if (file) {
-        const res = await ApiFetch.api.fileStorage.create.post({ file, name: file.name });
-        const uploaded = res.data?.data;
-
-        if (!uploaded?.id) {
-          return toast.error('Gagal upload gambar');
-        }
-
-        infoWabahPenyakitState.edit.form.imageId = uploaded.id;
-      }
 
       await infoWabahPenyakitState.edit.update();
       toast.success('Info wabah penyakit berhasil diperbarui!');
       router.push('/admin/kesehatan/info-wabah-penyakit');
     } catch (error) {
-      console.error('Error updating info wabah penyakit:', error);
+      console.error(error);
       toast.error('Terjadi kesalahan saat memperbarui info wabah penyakit');
+    }
+  };
+
+  const handleDrop = (files: File[]) => {
+    const selectedFile = files[0];
+    if (selectedFile) {
+      setFile(selectedFile);
+      setPreviewImage(URL.createObjectURL(selectedFile));
     }
   };
 
@@ -120,16 +133,18 @@ function EditInfoWabahPenyakit() {
       >
         <Stack gap="md">
           <TextInput
-            defaultValue={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            value={formData.name}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => updateField('name', e.target.value)}
             label="Judul"
             placeholder="Masukkan judul"
             required
           />
 
           <TextInput
-            defaultValue={formData.deskripsiSingkat}
-            onChange={(e) => setFormData({ ...formData, deskripsiSingkat: e.target.value })}
+            value={formData.deskripsiSingkat}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              updateField('deskripsiSingkat', e.target.value)
+            }
             label="Deskripsi Singkat"
             placeholder="Masukkan deskripsi singkat"
             required
@@ -141,7 +156,7 @@ function EditInfoWabahPenyakit() {
             </Text>
             <EditEditor
               value={formData.deskripsi}
-              onChange={(val) => setFormData({ ...formData, deskripsi: val })}
+              onChange={(val) => updateField('deskripsi', val)}
             />
           </Box>
 
@@ -150,13 +165,7 @@ function EditInfoWabahPenyakit() {
               Gambar
             </Text>
             <Dropzone
-              onDrop={(files) => {
-                const selectedFile = files[0];
-                if (selectedFile) {
-                  setFile(selectedFile);
-                  setPreviewImage(URL.createObjectURL(selectedFile));
-                }
-              }}
+              onDrop={handleDrop}
               onReject={() => toast.error('File tidak valid.')}
               maxSize={5 * 1024 ** 2}
               accept={{ 'image/*': [] }}

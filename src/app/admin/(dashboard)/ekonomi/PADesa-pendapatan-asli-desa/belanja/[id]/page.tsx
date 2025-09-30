@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
+
 import PendapatanAsliDesa from '@/app/admin/(dashboard)/_state/ekonomi/PADesa';
 import colors from '@/con/colors';
 import {
@@ -24,12 +25,16 @@ function EditBelanja() {
   const params = useParams();
 
   const [formData, setFormData] = useState({
-    name: belanjaState.update.form.name || '',
-    value: belanjaState.update.form.value || '',
+    name: '',
+    value: '',
   });
 
+  // format angka ke rupiah
   const formatRupiah = (value: number | string) => {
-    const number = typeof value === 'number' ? value : Number(value.replace(/\D/g, ''));
+    const number =
+      typeof value === 'number'
+        ? value
+        : Number(value.replace(/\D/g, '')) || 0;
     return new Intl.NumberFormat('id-ID', {
       style: 'currency',
       currency: 'IDR',
@@ -37,8 +42,9 @@ function EditBelanja() {
     }).format(number);
   };
 
+  // buang semua simbol jadi angka murni
   const unformatRupiah = (value: string) => {
-    return Number(value.replace(/\D/g, ''));
+    return Number(value.replace(/\D/g, '')) || 0;
   };
 
   useEffect(() => {
@@ -51,7 +57,7 @@ function EditBelanja() {
         if (data) {
           setFormData({
             name: data.name || '',
-            value: data.value || '',
+            value: String(data.value || ''),
           });
         }
       } catch (error) {
@@ -69,7 +75,7 @@ function EditBelanja() {
         ...belanjaState.update.form,
         name: formData.name,
         value: Number(formData.value),
-      }
+      };
 
       await belanjaState.update.update();
       toast.success("Jenis Belanja berhasil diperbarui!");
@@ -78,7 +84,7 @@ function EditBelanja() {
       console.error("Error updating jenis belanja:", error);
       toast.error("Terjadi kesalahan saat memperbarui jenis belanja");
     }
-  }
+  };
 
   return (
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
@@ -112,19 +118,21 @@ function EditBelanja() {
           <TextInput
             label="Nama Jenis Belanja"
             placeholder="Masukkan nama jenis belanja"
-            defaultValue={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            value={formData.name}
+            onChange={(e) =>
+              setFormData({ ...formData, name: e.target.value })
+            }
             required
           />
 
           <TextInput
             label="Nilai"
             placeholder="Masukkan nilai"
-            defaultValue={formatRupiah(formData.value)}
+            value={formData.value ? formatRupiah(formData.value) : ''}
             onChange={(e) => {
               const raw = e.currentTarget.value;
               const cleanValue = unformatRupiah(raw);
-              setFormData({ ...formData, value: cleanValue });
+              setFormData({ ...formData, value: String(cleanValue) });
             }}
             required
           />

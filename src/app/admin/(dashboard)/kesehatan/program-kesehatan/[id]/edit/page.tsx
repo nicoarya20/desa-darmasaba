@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-'use client'
+'use client';
 import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import programKesehatan from '@/app/admin/(dashboard)/_state/kesehatan/program-kesehatan/programKesehatan';
 import colors from '@/con/colors';
@@ -31,73 +31,70 @@ function EditProgramKesehatan() {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [formData, setFormData] = useState({
-    name: programKesehatanState.edit.form.name || '',
-    deskripsiSingkat: programKesehatanState.edit.form.deskripsiSingkat || '',
-    deskripsi: programKesehatanState.edit.form.deskripsi || '',
-    imageId: programKesehatanState.edit.form.imageId || '',
+    name: '',
+    deskripsiSingkat: '',
+    deskripsi: '',
+    imageId: '',
   });
 
+  // Load data awal
   useEffect(() => {
-    const loadProgramKesehatan = async () => {
+    const loadData = async () => {
       const id = params?.id as string;
       if (!id) return;
 
       try {
         const data = await programKesehatanState.edit.load(id);
-        if (data) {
-          setFormData({
-            name: data.name || '',
-            deskripsiSingkat: data.deskripsiSingkat || '',
-            deskripsi: data.deskripsi || '',
-            imageId: data.imageId || '',
-          });
+        if (!data) return;
 
-          if (data?.image?.link) {
-            setPreviewImage(data.image.link);
-          }
-        }
-      } catch (error) {
-        console.error('Error loading program kesehatan:', error);
+        setFormData({
+          name: data.name || '',
+          deskripsiSingkat: data.deskripsiSingkat || '',
+          deskripsi: data.deskripsi || '',
+          imageId: data.imageId || '',
+        });
+
+        if (data?.image?.link) setPreviewImage(data.image.link);
+      } catch (err) {
+        console.error(err);
         toast.error('Gagal memuat data program kesehatan');
       }
     };
 
-    loadProgramKesehatan();
+    loadData();
   }, [params?.id]);
 
+  // Handler input controlled
+  const handleChange = (key: keyof typeof formData, value: string) => {
+    setFormData((prev) => ({ ...prev, [key]: value }));
+  };
+
+  // Submit form
   const handleSubmit = async () => {
     try {
-      programKesehatanState.edit.form = {
-        ...programKesehatanState.edit.form,
-        name: formData.name,
-        deskripsiSingkat: formData.deskripsiSingkat,
-        deskripsi: formData.deskripsi,
-        imageId: formData.imageId,
-      };
+      const updatedForm = { ...programKesehatanState.edit.form, ...formData };
 
+      // Upload file kalau ada
       if (file) {
         const res = await ApiFetch.api.fileStorage.create.post({ file, name: file.name });
         const uploaded = res.data?.data;
+        if (!uploaded?.id) return toast.error('Gagal upload gambar');
 
-        if (!uploaded?.id) {
-          return toast.error('Gagal upload gambar');
-        }
-
-        programKesehatanState.edit.form.imageId = uploaded.id;
+        updatedForm.imageId = uploaded.id;
       }
 
+      programKesehatanState.edit.form = updatedForm;
       await programKesehatanState.edit.update();
       toast.success('Program kesehatan berhasil diperbarui!');
       router.push('/admin/kesehatan/program-kesehatan');
-    } catch (error) {
-      console.error('Error updating program kesehatan:', error);
+    } catch (err) {
+      console.error(err);
       toast.error('Terjadi kesalahan saat memperbarui program kesehatan');
     }
   };
 
   return (
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
-      {/* Header dengan tombol back */}
       <Group mb="md">
         <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
           <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
@@ -109,7 +106,6 @@ function EditProgramKesehatan() {
         </Title>
       </Group>
 
-      {/* Card Form */}
       <Paper
         w={{ base: '100%', md: '50%' }}
         bg={colors['white-1']}
@@ -119,21 +115,19 @@ function EditProgramKesehatan() {
         style={{ border: '1px solid #e0e0e0' }}
       >
         <Stack gap="md">
-          <TextInput
-            defaultValue={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            label="Judul"
-            placeholder="Masukkan judul"
-            required
-          />
-
-          <TextInput
-            defaultValue={formData.deskripsiSingkat}
-            onChange={(e) => setFormData({ ...formData, deskripsiSingkat: e.target.value })}
-            label="Deskripsi Singkat"
-            placeholder="Masukkan deskripsi singkat"
-            required
-          />
+          {[
+            { label: 'Judul', key: 'name', placeholder: 'Masukkan judul' },
+            { label: 'Deskripsi Singkat', key: 'deskripsiSingkat', placeholder: 'Masukkan deskripsi singkat' },
+          ].map((field) => (
+            <TextInput
+              key={field.key}
+              label={field.label}
+              placeholder={field.placeholder}
+              value={formData[field.key as keyof typeof formData]}
+              onChange={(e) => handleChange(field.key as keyof typeof formData, e.target.value)}
+              required
+            />
+          ))}
 
           <Box>
             <Text fz="sm" fw="bold" mb={6}>
@@ -141,7 +135,7 @@ function EditProgramKesehatan() {
             </Text>
             <EditEditor
               value={formData.deskripsi}
-              onChange={(val) => setFormData({ ...formData, deskripsi: val })}
+              onChange={(val) => handleChange('deskripsi', val)}
             />
           </Box>
 
@@ -152,10 +146,9 @@ function EditProgramKesehatan() {
             <Dropzone
               onDrop={(files) => {
                 const selectedFile = files[0];
-                if (selectedFile) {
-                  setFile(selectedFile);
-                  setPreviewImage(URL.createObjectURL(selectedFile));
-                }
+                if (!selectedFile) return;
+                setFile(selectedFile);
+                setPreviewImage(URL.createObjectURL(selectedFile));
               }}
               onReject={() => toast.error('File tidak valid.')}
               maxSize={5 * 1024 ** 2}

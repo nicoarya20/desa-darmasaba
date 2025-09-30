@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-'use client'
+'use client';
 
 import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import artikelKesehatanState from '@/app/admin/(dashboard)/_state/kesehatan/data_kesehatan_warga/artikelKesehatan';
@@ -15,7 +15,7 @@ import {
   Text,
   TextInput,
   Title,
-  Tooltip
+  Tooltip,
 } from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
 import { IconArrowBack, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
@@ -44,32 +44,18 @@ function EditArtikelKesehatan() {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [formData, setFormData] = useState<ArtikelKesehatanFormBase>({
-    title: stateArtikelKesehatan.edit.form.title,
-    content: stateArtikelKesehatan.edit.form.content,
-    imageId: stateArtikelKesehatan.edit.form.imageId,
-    introduction: { content: stateArtikelKesehatan.edit.form.introduction?.content },
-    symptom: {
-      title: stateArtikelKesehatan.edit.form.symptom?.title,
-      content: stateArtikelKesehatan.edit.form.symptom?.content
-    },
-    prevention: {
-      title: stateArtikelKesehatan.edit.form.prevention?.title,
-      content: stateArtikelKesehatan.edit.form.prevention?.content
-    },
-    firstAid: {
-      title: stateArtikelKesehatan.edit.form.firstAid?.title,
-      content: stateArtikelKesehatan.edit.form.firstAid?.content
-    },
-    mythVsFact: {
-      title: stateArtikelKesehatan.edit.form.mythVsFact?.title,
-      mitos: stateArtikelKesehatan.edit.form.mythVsFact?.mitos,
-      fakta: stateArtikelKesehatan.edit.form.mythVsFact?.fakta
-    },
-    doctorSign: {
-      content: stateArtikelKesehatan.edit.form.doctorSign?.content
-    }
+    title: '',
+    content: '',
+    imageId: '',
+    introduction: { content: '' },
+    symptom: { title: '', content: '' },
+    prevention: { title: '', content: '' },
+    firstAid: { title: '', content: '' },
+    mythVsFact: { title: '', mitos: '', fakta: '' },
+    doctorSign: { content: '' },
   });
 
+  // Load data artikel
   useEffect(() => {
     const loadArtikelKesehatan = async () => {
       const id = params?.id as string;
@@ -78,73 +64,88 @@ function EditArtikelKesehatan() {
       try {
         await stateArtikelKesehatan.edit.load(id);
         const { form } = stateArtikelKesehatan.edit;
-        if (form) {
-          setFormData({
-            title: form.title,
-            content: form.content,
-            introduction: { content: form.introduction?.content || '' },
-            imageId: form.imageId,
-            symptom: {
-              title: form.symptom?.title || '',
-              content: form.symptom?.content || ''
-            },
-            prevention: {
-              title: form.prevention?.title || '',
-              content: form.prevention?.content || ''
-            },
-            firstAid: {
-              title: form.firstAid?.title || '',
-              content: form.firstAid?.content || ''
-            },
-            mythVsFact: {
-              title: form.mythVsFact?.title || '',
-              mitos: form.mythVsFact?.mitos || '',
-              fakta: form.mythVsFact?.fakta || ''
-            },
-            doctorSign: {
-              content: form.doctorSign?.content || ''
-            }
-          });
+        if (!form) return;
 
-          if (form?.imageId) {
-            setPreviewImage(`${process.env.NEXT_PUBLIC_API_URL}/file/${form.imageId}`);
-          }          
+        setFormData({
+          title: form.title || '',
+          content: form.content || '',
+          imageId: form.imageId || '',
+          introduction: { content: form.introduction?.content || '' },
+          symptom: { title: form.symptom?.title || '', content: form.symptom?.content || '' },
+          prevention: { title: form.prevention?.title || '', content: form.prevention?.content || '' },
+          firstAid: { title: form.firstAid?.title || '', content: form.firstAid?.content || '' },
+          mythVsFact: {
+            title: form.mythVsFact?.title || '',
+            mitos: form.mythVsFact?.mitos || '',
+            fakta: form.mythVsFact?.fakta || '',
+          },
+          doctorSign: { content: form.doctorSign?.content || '' },
+        });
+
+        if (form.imageId) {
+          setPreviewImage(`${process.env.NEXT_PUBLIC_API_URL}/file/${form.imageId}`);
         }
       } catch (error) {
-        console.error("Error loading artikel kesehatan:", error);
-        toast.error("Gagal memuat data artikel kesehatan");
+        console.error('Error loading artikel kesehatan:', error);
+        toast.error('Gagal memuat data artikel kesehatan');
       }
     };
+
     loadArtikelKesehatan();
   }, [params?.id]);
 
+  const handleFileChange = (files: File[]) => {
+    const selectedFile = files[0];
+    if (!selectedFile) return;
+    setFile(selectedFile);
+    setPreviewImage(URL.createObjectURL(selectedFile));
+  };
+
   const handleSubmit = async () => {
     try {
+      // Copy formData ke global state
       stateArtikelKesehatan.edit.form = { ...formData };
+
+      // Upload gambar kalau ada
       if (file) {
-        const res = await ApiFetch.api.fileStorage.create.post({
-          file,
-          name: file.name,
-        });
+        const res = await ApiFetch.api.fileStorage.create.post({ file, name: file.name });
         const uploaded = res.data?.data;
-
-        if (!uploaded?.id) {
-          return toast.error("Gagal upload gambar");
-        }
-
+        if (!uploaded?.id) return toast.error('Gagal upload gambar');
         stateArtikelKesehatan.edit.form.imageId = uploaded.id;
       }
 
       const success = await stateArtikelKesehatan.edit.submit();
       if (success) {
-        toast.success("Artikel kesehatan berhasil diperbarui!");
-        router.push("/admin/kesehatan/data-kesehatan-warga/artikel_kesehatan");
+        toast.success('Artikel kesehatan berhasil diperbarui!');
+        router.push('/admin/kesehatan/data-kesehatan-warga/artikel_kesehatan');
       }
     } catch (error) {
-      console.error("Error updating artikel kesehatan:", error);
-      toast.error(error instanceof Error ? error.message : "Gagal memperbarui data artikel kesehatan");
+      console.error('Error updating artikel kesehatan:', error);
+      toast.error(error instanceof Error ? error.message : 'Gagal memperbarui data artikel kesehatan');
     }
   };
+
+  const InputText = ({
+    label,
+    value,
+    onChange,
+    placeholder,
+    required,
+  }: {
+    label: string;
+    value: string;
+    onChange: (v: string) => void;
+    placeholder?: string;
+    required?: boolean;
+  }) => (
+    <TextInput
+      label={label}
+      value={value}
+      placeholder={placeholder}
+      onChange={(e) => onChange(e.target.value)}
+      required={required}
+    />
+  );
 
   return (
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
@@ -170,34 +171,31 @@ function EditArtikelKesehatan() {
         style={{ border: '1px solid #e0e0e0' }}
       >
         <Stack gap="md">
-          <TextInput
+          {/* Judul */}
+          <InputText
             label="Judul"
+            value={formData.title}
+            onChange={(value) => setFormData((prev) => ({ ...prev, title: value }))}
             placeholder="Masukkan judul artikel"
-            defaultValue={formData.title}
-            onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
             required
           />
+
+          {/* Gambar */}
           <Box>
             <Text fw="bold" fz="sm" mb={6}>
               Gambar Berita
             </Text>
             <Dropzone
-              onDrop={(files) => {
-                const selectedFile = files[0];
-                if (selectedFile) {
-                  setFile(selectedFile);
-                  setPreviewImage(URL.createObjectURL(selectedFile));
-                }
-              }}
-              onReject={() => toast.error("File tidak valid, gunakan format gambar")}
+              onDrop={handleFileChange}
+              onReject={() => toast.error('File tidak valid, gunakan format gambar')}
               maxSize={5 * 1024 ** 2}
-              accept={{ "image/*": [] }}
+              accept={{ 'image/*': [] }}
               radius="md"
               p="xl"
             >
               <Group justify="center" gap="xl" mih={180}>
                 <Dropzone.Accept>
-                  <IconUpload size={48} color={colors["blue-button"]} stroke={1.5} />
+                  <IconUpload size={48} color={colors['blue-button']} stroke={1.5} />
                 </Dropzone.Accept>
                 <Dropzone.Reject>
                   <IconX size={48} color="red" stroke={1.5} />
@@ -215,64 +213,57 @@ function EditArtikelKesehatan() {
                 </Stack>
               </Group>
             </Dropzone>
-
             {previewImage && (
-              <Box mt="sm" style={{ display: "flex", justifyContent: "center" }}>
+              <Box mt="sm" style={{ display: 'flex', justifyContent: 'center' }}>
                 <Image
                   src={previewImage}
                   alt="Preview Gambar"
                   radius="md"
                   style={{
                     maxHeight: 220,
-                    objectFit: "contain",
-                    border: `1px solid ${colors["blue-button"]}`,
+                    objectFit: 'contain',
+                    border: `1px solid ${colors['blue-button']}`,
                   }}
                   loading="lazy"
                 />
               </Box>
             )}
           </Box>
-          <TextInput
+
+          {/* Konten */}
+          <InputText
             label="Deskripsi"
+            value={formData.content}
+            onChange={(value) => setFormData((prev) => ({ ...prev, content: value }))}
             placeholder="Masukkan deskripsi artikel"
-            defaultValue={formData.content}
-            onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
             required
           />
-          <TextInput
+
+          {/* Pendahuluan */}
+          <InputText
             label="Pendahuluan"
-            placeholder="Masukkan pendahuluan"
-            defaultValue={formData.introduction.content}
-            onChange={(e) =>
-              setFormData(prev => ({
-                ...prev,
-                introduction: { ...prev.introduction, content: e.target.value }
-              }))
+            value={formData.introduction.content}
+            onChange={(value) =>
+              setFormData((prev) => ({ ...prev, introduction: { content: value } }))
             }
+            placeholder="Masukkan pendahuluan"
           />
 
           {/* Gejala */}
           <Box>
             <Text fw="bold">Gejala</Text>
             <Stack gap="xs">
-              <TextInput
+              <InputText
                 label="Judul Gejala"
-                placeholder="Masukkan judul gejala"
-                defaultValue={formData.symptom.title}
-                onChange={(e) =>
-                  setFormData(prev => ({
-                    ...prev,
-                    symptom: { ...prev.symptom, title: e.target.value }
-                  }))
+                value={formData.symptom.title}
+                onChange={(value) =>
+                  setFormData((prev) => ({ ...prev, symptom: { ...prev.symptom, title: value } }))
                 }
               />
               <EditEditor
                 value={formData.symptom.content}
-                onChange={(e) =>
-                  setFormData(prev => ({
-                    ...prev,
-                    symptom: { ...prev.symptom, content: e }
-                  }))
+                onChange={(value) =>
+                  setFormData((prev) => ({ ...prev, symptom: { ...prev.symptom, content: value } }))
                 }
               />
             </Stack>
@@ -281,23 +272,17 @@ function EditArtikelKesehatan() {
           {/* Pencegahan */}
           <Box>
             <Text fw="bold">Pencegahan</Text>
-            <TextInput
+            <InputText
               label="Judul"
-              defaultValue={formData.prevention.title}
-              onChange={(e) =>
-                setFormData(prev => ({
-                  ...prev,
-                  prevention: { ...prev.prevention, title: e.target.value }
-                }))
+              value={formData.prevention.title}
+              onChange={(value) =>
+                setFormData((prev) => ({ ...prev, prevention: { ...prev.prevention, title: value } }))
               }
             />
             <EditEditor
               value={formData.prevention.content}
-              onChange={(e) =>
-                setFormData(prev => ({
-                  ...prev,
-                  prevention: { ...prev.prevention, content: e }
-                }))
+              onChange={(value) =>
+                setFormData((prev) => ({ ...prev, prevention: { ...prev.prevention, content: value } }))
               }
             />
           </Box>
@@ -305,23 +290,17 @@ function EditArtikelKesehatan() {
           {/* Pertolongan Pertama */}
           <Box>
             <Text fw="bold">Pertolongan Pertama</Text>
-            <TextInput
+            <InputText
               label="Judul"
-              defaultValue={formData.firstAid.title}
-              onChange={(e) =>
-                setFormData(prev => ({
-                  ...prev,
-                  firstAid: { ...prev.firstAid, title: e.target.value }
-                }))
+              value={formData.firstAid.title}
+              onChange={(value) =>
+                setFormData((prev) => ({ ...prev, firstAid: { ...prev.firstAid, title: value } }))
               }
             />
             <EditEditor
               value={formData.firstAid.content}
-              onChange={(e) =>
-                setFormData(prev => ({
-                  ...prev,
-                  firstAid: { ...prev.firstAid, content: e }
-                }))
+              onChange={(value) =>
+                setFormData((prev) => ({ ...prev, firstAid: { ...prev.firstAid, content: value } }))
               }
             />
           </Box>
@@ -329,48 +308,36 @@ function EditArtikelKesehatan() {
           {/* Mitos vs Fakta */}
           <Box>
             <Text fw="bold">Mitos vs Fakta</Text>
-            <TextInput
+            <InputText
               label="Judul"
-              defaultValue={formData.mythVsFact.title}
-              onChange={(e) =>
-                setFormData(prev => ({
-                  ...prev,
-                  mythVsFact: { ...prev.mythVsFact, title: e.target.value }
-                }))
+              value={formData.mythVsFact.title}
+              onChange={(value) =>
+                setFormData((prev) => ({ ...prev, mythVsFact: { ...prev.mythVsFact, title: value } }))
               }
             />
             <Text fw="500">Mitos</Text>
             <EditEditor
               value={formData.mythVsFact.mitos}
-              onChange={(e) =>
-                setFormData(prev => ({
-                  ...prev,
-                  mythVsFact: { ...prev.mythVsFact, mitos: e }
-                }))
+              onChange={(value) =>
+                setFormData((prev) => ({ ...prev, mythVsFact: { ...prev.mythVsFact, mitos: value } }))
               }
             />
             <Text fw="500">Fakta</Text>
             <EditEditor
               value={formData.mythVsFact.fakta}
-              onChange={(e) =>
-                setFormData(prev => ({
-                  ...prev,
-                  mythVsFact: { ...prev.mythVsFact, fakta: e }
-                }))
+              onChange={(value) =>
+                setFormData((prev) => ({ ...prev, mythVsFact: { ...prev.mythVsFact, fakta: value } }))
               }
             />
           </Box>
 
-          {/* Kapan harus ke dokter */}
+          {/* Dokter */}
           <Box>
             <Text fw="bold">Kapan Harus Ke Dokter</Text>
             <EditEditor
               value={formData.doctorSign.content}
-              onChange={(e) =>
-                setFormData(prev => ({
-                  ...prev,
-                  doctorSign: { ...prev.doctorSign, content: e }
-                }))
+              onChange={(value) =>
+                setFormData((prev) => ({ ...prev, doctorSign: { content: value } }))
               }
             />
           </Box>
@@ -384,7 +351,7 @@ function EditArtikelKesehatan() {
               style={{
                 background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
-                boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)'
+                boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
               Simpan

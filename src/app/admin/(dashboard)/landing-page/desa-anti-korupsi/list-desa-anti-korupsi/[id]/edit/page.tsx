@@ -1,18 +1,19 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client';
+
 import { Box, Button, Group, Paper, Select, Stack, Text, TextInput, Title, Tooltip } from '@mantine/core';
 import { IconArrowBack, IconFile, IconUpload, IconX } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, ChangeEvent } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
+import { Dropzone } from '@mantine/dropzone';
+import { useShallowEffect } from '@mantine/hooks';
 
 import colors from '@/con/colors';
 import korupsiState from '@/app/admin/(dashboard)/_state/landing-page/desa-anti-korupsi';
 import ApiFetch from '@/lib/api-fetch';
-import { Dropzone } from '@mantine/dropzone';
 import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
-import { useShallowEffect } from '@mantine/hooks';
 
 interface FormDesaAntiKorupsi {
   name: string;
@@ -23,12 +24,9 @@ interface FormDesaAntiKorupsi {
 
 export default function EditDesaAntiKorupsi() {
   const desaAntiKorupsiState = useProxy(korupsiState.desaAntikorupsi);
-  const [previewFile, setPreviewFile] = useState<string | null>(null);
-  const [file, setFile] = useState<File | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
   const params = useParams();
   const router = useRouter();
-  
+
   const [formData, setFormData] = useState<FormDesaAntiKorupsi>({
     name: '',
     deskripsi: '',
@@ -36,10 +34,16 @@ export default function EditDesaAntiKorupsi() {
     fileId: '',
   });
 
+  const [previewFile, setPreviewFile] = useState<string | null>(null);
+  const [file, setFile] = useState<File | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Load kategori
   useShallowEffect(() => {
     korupsiState.kategoriDesaAntiKorupsi.findMany.load();
   }, []);
 
+  // Load data existing
   useEffect(() => {
     const loadDesaAntiKorupsi = async () => {
       const id = params?.id as string;
@@ -47,29 +51,21 @@ export default function EditDesaAntiKorupsi() {
 
       try {
         const data = await desaAntiKorupsiState.edit.load(id);
-        if (data) {
-          desaAntiKorupsiState.edit.id = id;
+        if (!data) return;
 
-          desaAntiKorupsiState.edit.form = {
-            name: data.name,
-            deskripsi: data.deskripsi,
-            kategoriId: data.kategoriId,
-            fileId: data.fileId,
-          };
+        desaAntiKorupsiState.edit.id = id;
+        desaAntiKorupsiState.edit.form = { ...data };
 
-          setFormData({
-            name: data.name,
-            deskripsi: data.deskripsi,
-            kategoriId: data.kategoriId,
-            fileId: data.fileId,
-          });
+        setFormData({
+          name: data.name,
+          deskripsi: data.deskripsi,
+          kategoriId: data.kategoriId,
+          fileId: data.fileId,
+        });
 
-          if (data?.file?.link) {
-            setPreviewFile(data.file.link);
-          }
-        }
-      } catch (error) {
-        console.error('Error loading data:', error);
+        if (data.file?.link) setPreviewFile(data.file.link);
+      } catch (err) {
+        console.error(err);
         toast.error('Gagal memuat data Desa Anti Korupsi');
       }
     };
@@ -77,42 +73,47 @@ export default function EditDesaAntiKorupsi() {
     loadDesaAntiKorupsi();
   }, [params?.id]);
 
+  // Generic handler input
+  const handleInputChange = (key: keyof FormDesaAntiKorupsi) => (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | string | null) => {
+    const value = typeof e === 'string' ? e : e?.target?.value ?? '';
+    setFormData((prev) => ({ ...prev, [key]: value || '' }));
+  };
+
+  // Special handler for Select component
+  const handleSelectChange = (key: keyof FormDesaAntiKorupsi) => (value: string | null) => {
+    setFormData((prev) => ({ ...prev, [key]: value || '' }));
+  };
+
+  const handleDrop = (files: File[]) => {
+    if (!files.length) return;
+    const selectedFile = files[0];
+    setFile(selectedFile);
+    setPreviewFile(URL.createObjectURL(selectedFile));
+  };
+
   const handleSubmit = async () => {
-    if (!formData.name) {
-      return toast.warn('Masukkan judul dokumen');
-    }
-    if (!formData.kategoriId) {
-      return toast.warn('Pilih kategori dokumen');
-    }
+    if (!formData.name) return toast.warn('Masukkan judul dokumen');
+    if (!formData.kategoriId) return toast.warn('Pilih kategori dokumen');
 
     setIsLoading(true);
     try {
-      // Update global state with form data
-      desaAntiKorupsiState.edit.form = {
-        ...desaAntiKorupsiState.edit.form,
-        ...formData,
-        kategoriId: formData.kategoriId || '',
-      };
+      // Update global state
+      desaAntiKorupsiState.edit.form = { ...desaAntiKorupsiState.edit.form, ...formData };
 
-      // Upload new file if exists
+      // Upload file jika ada
       if (file) {
-        const res = await ApiFetch.api.fileStorage.create.post({ 
-          file, 
-          name: file.name 
-        });
+        const res = await ApiFetch.api.fileStorage.create.post({ file, name: file.name });
         const uploaded = res.data?.data;
+        if (!uploaded?.id) throw new Error('Gagal mengunggah dokumen');
 
-        if (!uploaded?.id) {
-          throw new Error('Gagal mengunggah dokumen');
-        }
         desaAntiKorupsiState.edit.form.fileId = uploaded.id;
       }
 
       await desaAntiKorupsiState.edit.update();
       toast.success('Data berhasil diperbarui');
       router.push('/admin/landing-page/desa-anti-korupsi/list-desa-anti-korupsi');
-    } catch (error) {
-      console.error('Error updating data:', error);
+    } catch (err) {
+      console.error(err);
       toast.error('Terjadi kesalahan saat memperbarui data');
     } finally {
       setIsLoading(false);
@@ -144,8 +145,8 @@ export default function EditDesaAntiKorupsi() {
           <TextInput
             label="Judul Dokumen"
             placeholder="Masukkan judul dokumen"
-            defaultValue={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            value={formData.name}
+            onChange={handleInputChange('name')}
             required
           />
 
@@ -153,23 +154,18 @@ export default function EditDesaAntiKorupsi() {
             <Text fw="bold" fz="sm" mb={6}>
               Deskripsi
             </Text>
-            <EditEditor
-              value={formData.deskripsi}
-              onChange={(val) => setFormData({ ...formData, deskripsi: val })}
-            />
+            <EditEditor value={formData.deskripsi} onChange={handleInputChange('deskripsi')} />
           </Box>
 
           <Select
             label="Kategori"
             placeholder="Pilih kategori"
             value={formData.kategoriId}
-            onChange={(val) => setFormData({ ...formData, kategoriId: val || '' })}
-            data={
-              korupsiState.kategoriDesaAntiKorupsi.findMany.data?.map((v) => ({
-                value: v.id,
-                label: v.name,
-              })) || []
-            }
+            onChange={handleSelectChange('kategoriId')}
+            data={korupsiState.kategoriDesaAntiKorupsi.findMany.data?.map((v) => ({
+              value: v.id,
+              label: v.name,
+            })) || []}
             required
             searchable
             clearable
@@ -180,13 +176,7 @@ export default function EditDesaAntiKorupsi() {
               Dokumen
             </Text>
             <Dropzone
-              onDrop={(files) => {
-                const selectedFile = files[0];
-                if (selectedFile) {
-                  setFile(selectedFile);
-                  setPreviewFile(URL.createObjectURL(selectedFile));
-                }
-              }}
+              onDrop={handleDrop}
               onReject={() => toast.error('File tidak valid, gunakan format dokumen')}
               maxSize={5 * 1024 ** 2}
               accept={{
@@ -229,12 +219,7 @@ export default function EditDesaAntiKorupsi() {
                     width: '100%',
                   }}
                 >
-                  <iframe
-                    src={previewFile}
-                    width="100%"
-                    height="100%"
-                    style={{ border: 'none' }}
-                  />
+                  <iframe src={previewFile} width="100%" height="100%" style={{ border: 'none' }} />
                 </Box>
               </Box>
             )}

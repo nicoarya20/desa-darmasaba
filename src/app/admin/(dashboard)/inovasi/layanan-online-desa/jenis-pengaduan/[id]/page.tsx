@@ -10,7 +10,7 @@ import {
   Stack,
   TextInput,
   Title,
-  Tooltip
+  Tooltip,
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -25,9 +25,10 @@ function EditJenisPengaduan() {
   const state = useProxy(layananonlineDesa.jenisPengaduan);
 
   const [formData, setFormData] = useState({
-    nama: "",
+    nama: '',
   });
 
+  // Load data sekali aja
   useEffect(() => {
     const loadJenisPengaduan = async () => {
       if (!id) return;
@@ -36,51 +37,58 @@ function EditJenisPengaduan() {
         const data = await state.edit.load(id);
 
         if (data) {
-          // pastikan id-nya masuk ke state edit
-          state.edit.id = id;
+          state.edit.id = id; // inject id ke state global (hanya sekali)
           setFormData({
             nama: data.nama || '',
           });
         }
       } catch (error) {
-        console.error("Error loading jenis pengaduan:", error);
-        toast.error("Gagal memuat data jenis pengaduan");
+        console.error('Error loading jenis pengaduan:', error);
+        toast.error('Gagal memuat data jenis pengaduan');
       }
     };
 
     loadJenisPengaduan();
   }, [id]);
 
+  const handleChange = (field: keyof typeof formData, value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
   const handleSubmit = async () => {
+    if (!formData.nama.trim()) {
+      toast.error('Nama jenis pengaduan tidak boleh kosong');
+      return;
+    }
+
+    // Update ke global state HANYA pas submit
+    state.edit.form = {
+      nama: formData.nama.trim(),
+    };
+
+    // Safety fallback kalau ID belum ada
+    if (!state.edit.id) {
+      state.edit.id = id;
+    }
+
     try {
-      if (!formData.nama.trim()) {
-        toast.error('Nama jenis pengaduan tidak boleh kosong');
-        return;
-      }
-
-      state.edit.form = {
-        nama: formData.nama.trim(),
-      };
-
-      // Safety check tambahan: pastikan ID tidak kosong
-      if (!state.edit.id) {
-        state.edit.id = id; // fallback
-      }
-
       const success = await state.edit.update();
 
       if (success) {
-        router.push("/admin/inovasi/layanan-online-desa/jenis-pengaduan");
+        router.push('/admin/inovasi/layanan-online-desa/jenis-pengaduan');
       }
     } catch (error) {
-      console.error("Error updating jenis pengaduan:", error);
-      // toast akan ditampilkan dari fungsi update
+      console.error('Error updating jenis pengaduan:', error);
+      // toast ditangani di dalam state.update
     }
   };
 
   return (
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
-      {/* Header + tombol back */}
+      {/* Header */}
       <Group mb="md">
         <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
           <Button
@@ -97,7 +105,7 @@ function EditJenisPengaduan() {
         </Title>
       </Group>
 
-      {/* Card Form */}
+      {/* Form */}
       <Paper
         w={{ base: '100%', md: '50%' }}
         bg={colors['white-1']}
@@ -108,8 +116,8 @@ function EditJenisPengaduan() {
       >
         <Stack gap="md">
           <TextInput
-            defaultValue={formData.nama}
-            onChange={(e) => setFormData({ ...formData, nama: e.target.value })}
+            value={formData.nama}
+            onChange={(e) => handleChange('nama', e.target.value)}
             label="Nama Jenis Pengaduan"
             placeholder="Masukkan nama jenis pengaduan"
             required

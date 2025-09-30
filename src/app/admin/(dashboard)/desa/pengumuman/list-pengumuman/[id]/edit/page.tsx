@@ -28,16 +28,16 @@ function EditPengumuman() {
   const params = useParams();
 
   const [formData, setFormData] = useState({
-    judul: editState.pengumuman.edit.form.judul || "",
-    deskripsi: editState.pengumuman.edit.form.deskripsi || "",
-    categoryPengumumanId:
-      editState.pengumuman.edit.form.categoryPengumumanId || "",
-    content: editState.pengumuman.edit.form.content || "",
+    judul: "",
+    deskripsi: "",
+    categoryPengumumanId: "",
+    content: "",
   });
 
-  // Load pengumuman by id saat pertama kali
+  // Load kategori & pengumuman by id saat pertama kali
   useEffect(() => {
     editState.category.findMany.load();
+
     const loadpengumuman = async () => {
       const id = params?.id as string;
       if (!id) return;
@@ -61,9 +61,13 @@ function EditPengumuman() {
     loadpengumuman();
   }, [params?.id]);
 
+  const handleChange = (field: keyof typeof formData, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
   const handleSubmit = async () => {
     try {
-      // update global state
+      // update global state hanya sekali pas submit
       editState.pengumuman.edit.form = {
         ...editState.pengumuman.edit.form,
         ...formData,
@@ -108,26 +112,22 @@ function EditPengumuman() {
           <TextInput
             label="Judul Pengumuman"
             placeholder="Masukkan judul"
-            defaultValue={formData.judul}
-            onChange={(e) => setFormData({ ...formData, judul: e.target.value })}
+            value={formData.judul}
+            onChange={(e) => handleChange("judul", e.target.value)}
             required
           />
 
           <TextInput
             label="Deskripsi Singkat"
             placeholder="Masukkan deskripsi"
-            defaultValue={formData.deskripsi}
-            onChange={(e) =>
-              setFormData({ ...formData, deskripsi: e.target.value })
-            }
+            value={formData.deskripsi}
+            onChange={(e) => handleChange("deskripsi", e.target.value)}
             required
           />
 
           <Select
             value={formData.categoryPengumumanId}
-            onChange={(val) =>
-              setFormData({ ...formData, categoryPengumumanId: val || "" })
-            }
+            onChange={(val) => handleChange("categoryPengumumanId", val || "")}
             label="Kategori"
             placeholder="Pilih kategori"
             data={
@@ -150,9 +150,7 @@ function EditPengumuman() {
             </Text>
             <EditEditor
               value={formData.content}
-              onChange={(htmlContent) =>
-                setFormData({ ...formData, content: htmlContent })
-              }
+              onChange={(htmlContent) => handleChange("content", htmlContent)}
             />
           </Box>
 

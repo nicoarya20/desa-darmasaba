@@ -1,5 +1,4 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-'use client'
+'use client';
 import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import kontakDarurat from '@/app/admin/(dashboard)/_state/kesehatan/kontak-darurat/kontakDarurat';
 import colors from '@/con/colors';
@@ -23,7 +22,6 @@ import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
-
 function EditKontakDarurat() {
   const kontakDaruratState = useProxy(kontakDarurat);
   const router = useRouter();
@@ -32,11 +30,13 @@ function EditKontakDarurat() {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [formData, setFormData] = useState({
-    name: kontakDaruratState.edit.form.name || '',
-    deskripsi: kontakDaruratState.edit.form.deskripsi || '',
-    imageId: kontakDaruratState.edit.form.imageId || '',
+    name: '',
+    deskripsi: '',
+    imageId: '',
   });
+  const [loading, setLoading] = useState(true);
 
+  // Load data sekali saat mount
   useEffect(() => {
     const loadKontakDarurat = async () => {
       const id = params?.id as string;
@@ -50,39 +50,37 @@ function EditKontakDarurat() {
             deskripsi: data.deskripsi || '',
             imageId: data.imageId || '',
           });
-
-          if (data?.image?.link) {
-            setPreviewImage(data.image.link);
-          }
+          if (data?.image?.link) setPreviewImage(data.image.link);
         }
       } catch (error) {
         console.error("Error loading kontak darurat:", error);
         toast.error("Gagal memuat data kontak darurat");
+      } finally {
+        setLoading(false);
       }
     };
 
     loadKontakDarurat();
-  }, [params?.id]);
+  }, [params?.id, kontakDaruratState.edit]);
 
   const handleSubmit = async () => {
     try {
-      kontakDaruratState.edit.form = {
-        ...kontakDaruratState.edit.form,
-        name: formData.name,
-        deskripsi: formData.deskripsi,
-        imageId: formData.imageId,
-      };
+      let imageId = formData.imageId;
 
+      // Upload file baru jika ada
       if (file) {
         const res = await ApiFetch.api.fileStorage.create.post({ file, name: file.name });
         const uploaded = res.data?.data;
-
-        if (!uploaded?.id) {
-          return toast.error("Gagal upload gambar");
-        }
-
-        kontakDaruratState.edit.form.imageId = uploaded.id;
+        if (!uploaded?.id) return toast.error("Gagal upload gambar");
+        imageId = uploaded.id;
       }
+
+      // Update global state sekaligus submit
+      kontakDaruratState.edit.form = {
+        ...kontakDaruratState.edit.form,
+        ...formData,
+        imageId,
+      };
 
       await kontakDaruratState.edit.update();
       toast.success("Kontak darurat berhasil diperbarui!");
@@ -93,9 +91,10 @@ function EditKontakDarurat() {
     }
   };
 
+  if (loading) return <Text>Loading...</Text>;
+
   return (
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
-      {/* Header */}
       <Group mb="md">
         <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
           <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
@@ -107,7 +106,6 @@ function EditKontakDarurat() {
         </Title>
       </Group>
 
-      {/* Form */}
       <Paper
         w={{ base: '100%', md: '50%' }}
         bg={colors['white-1']}
@@ -117,9 +115,10 @@ function EditKontakDarurat() {
         style={{ border: '1px solid #e0e0e0' }}
       >
         <Stack gap="md">
+          {/* Controlled Input */}
           <TextInput
-            defaultValue={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            value={formData.name}
+            onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
             label="Judul"
             placeholder="Masukkan judul"
             required
@@ -129,7 +128,7 @@ function EditKontakDarurat() {
             <Text fz="sm" fw="bold">Deskripsi</Text>
             <EditEditor
               value={formData.deskripsi}
-              onChange={(val) => setFormData({ ...formData, deskripsi: val })}
+              onChange={(val) => setFormData(prev => ({ ...prev, deskripsi: val }))}
             />
           </Box>
 

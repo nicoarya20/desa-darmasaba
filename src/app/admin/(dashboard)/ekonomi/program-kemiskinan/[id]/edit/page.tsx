@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 
 import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
@@ -19,9 +18,19 @@ import {
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import { toast } from 'react-toastify';
+
+type FormData = {
+  nama: string;
+  deskripsi: string;
+  icon: string;
+  statistik: {
+    tahun: string;
+    jumlah: string;
+  };
+};
 
 function EditProgramKemiskinan() {
   const router = useRouter();
@@ -29,43 +38,75 @@ function EditProgramKemiskinan() {
   const stateProgram = useProxy(programKemiskinanState);
   const id = params.id;
 
+  const [formData, setFormData] = useState<FormData>({
+    nama: '',
+    deskripsi: '',
+    icon: '',
+    statistik: {
+      tahun: '',
+      jumlah: '',
+    },
+  });
+
+  // load data ke local state sekali aja
   useEffect(() => {
     if (id) {
-      stateProgram.findUnique.load(id).then(() => {
-        const data = stateProgram.findUnique.data;
-        if (data) {
-          stateProgram.update.form = {
-            nama: data.nama || '',
-            deskripsi: data.deskripsi || '',
-            icon: data.icon || '',
-            statistik: {
-              tahun: data.statistik?.tahun?.toString() || '',
-              jumlah: data.statistik?.jumlah?.toString() || '',
-            },
-          };
-        }
-      }).catch((err) => {
-        console.error("Error load data:", err);
-        toast.error("Gagal mengambil data program");
-      });
+      stateProgram.findUnique
+        .load(id)
+        .then(() => {
+          const data = stateProgram.findUnique.data;
+          if (data) {
+            setFormData({
+              nama: data.nama || '',
+              deskripsi: data.deskripsi || '',
+              icon: data.icon || '',
+              statistik: {
+                tahun: data.statistik?.tahun?.toString() || '',
+                jumlah: data.statistik?.jumlah?.toString() || '',
+              },
+            });
+          }
+        })
+        .catch((err) => {
+          console.error('Error load data:', err);
+          toast.error('Gagal mengambil data program');
+        });
     }
-  }, [id]);
+  }, [id, stateProgram.findUnique]);
+
+  const handleChange = (field: keyof FormData, value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const handleStatistikChange = (field: keyof FormData['statistik'], value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      statistik: {
+        ...prev.statistik,
+        [field]: value,
+      },
+    }));
+  };
 
   const handleSubmit = async () => {
     try {
       stateProgram.update.id = id;
+      stateProgram.update.form = formData;
       await stateProgram.update.update();
-      toast.success("Program berhasil diperbarui!");
+      toast.success('Program berhasil diperbarui!');
       router.push('/admin/ekonomi/program-kemiskinan');
     } catch (error) {
-      console.error("Error update program:", error);
-      toast.error("Terjadi kesalahan saat memperbarui program");
+      console.error('Error update program:', error);
+      toast.error('Terjadi kesalahan saat memperbarui program');
     }
   };
 
   return (
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
-      {/* Header dengan tombol kembali */}
+      {/* Header */}
       <Group mb="md">
         <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
           <Button
@@ -92,10 +133,8 @@ function EditProgramKemiskinan() {
       >
         <Stack gap="md">
           <TextInput
-            defaultValue={stateProgram.update.form.nama}
-            onChange={(e) => {
-              stateProgram.update.form.nama = e.target.value;
-            }}
+            value={formData.nama}
+            onChange={(e) => handleChange('nama', e.target.value)}
             label={<Text fw="bold" fz="sm">Judul Program</Text>}
             placeholder="Masukkan judul program"
             required
@@ -106,10 +145,8 @@ function EditProgramKemiskinan() {
               Deskripsi
             </Text>
             <EditEditor
-              value={stateProgram.update.form.deskripsi}
-              onChange={(val) => {
-                stateProgram.update.form.deskripsi = val;
-              }}
+              value={formData.deskripsi}
+              onChange={(val) => handleChange('deskripsi', val)}
             />
           </Box>
 
@@ -118,10 +155,8 @@ function EditProgramKemiskinan() {
               Ikon Program Kreatif Desa
             </Text>
             <SelectIconProgramEdit
-              value={stateProgram.update.form.icon as IconKey}
-              onChange={(value) => {
-                stateProgram.update.form.icon = value;
-              }}
+              value={formData.icon as IconKey}
+              onChange={(val) => handleChange('icon', val)}
             />
           </Box>
 
@@ -131,10 +166,8 @@ function EditProgramKemiskinan() {
             </Text>
             <TextInput
               type="number"
-              defaultValue={stateProgram.update.form.statistik.jumlah}
-              onChange={(e) => {
-                stateProgram.update.form.statistik.jumlah = e.target.value;
-              }}
+              value={formData.statistik.jumlah}
+              onChange={(e) => handleStatistikChange('jumlah', e.target.value)}
               label="Jumlah Masyarakat Miskin"
               placeholder="Masukkan jumlah masyarakat miskin"
               required
@@ -142,10 +175,8 @@ function EditProgramKemiskinan() {
 
             <TextInput
               type="number"
-              defaultValue={stateProgram.update.form.statistik.tahun}
-              onChange={(e) => {
-                stateProgram.update.form.statistik.tahun = e.target.value;
-              }}
+              value={formData.statistik.tahun}
+              onChange={(e) => handleStatistikChange('tahun', e.target.value)}
               label="Tahun"
               placeholder="Masukkan tahun"
               required

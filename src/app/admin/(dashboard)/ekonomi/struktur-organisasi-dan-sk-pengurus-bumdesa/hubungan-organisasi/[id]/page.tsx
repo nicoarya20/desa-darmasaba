@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -20,36 +19,49 @@ export default function EditHubunganOrganisasi() {
     tipe: '',
   });
 
+  // load data awal sekali aja
   useEffect(() => {
     strukturorganisasiState.pegawai.findMany.load();
 
     if (id) {
-      state.edit.load(id).then(data => {
+      (async () => {
+        const data = await state.edit.load(id);
         if (data) {
           setForm({
-            atasanId: data.atasanId,
-            bawahanId: data.bawahanId,
-            tipe: data.tipe || '',
+            atasanId: data.atasanId ?? '',
+            bawahanId: data.bawahanId ?? '',
+            tipe: data.tipe ?? '',
           });
         }
-      });
+      })();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
+
+  const handleChange = (field: keyof typeof form, value: string) => {
+    setForm(prev => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
 
   const handleSubmit = async () => {
     if (!form.atasanId || !form.bawahanId) {
-      toast.warn("Atasan dan bawahan harus diisi");
+      toast.warn('Atasan dan bawahan harus diisi');
       return;
     }
 
+    // update global state cuma pas submit
     state.edit.id = id;
     state.edit.form = form;
 
     const result = await state.edit.update();
 
     if (result) {
-      toast.success("Data berhasil diperbarui");
-      router.push('/admin/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa/hubungan-organisasi');
+      toast.success('Data berhasil diperbarui');
+      router.push(
+        '/admin/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa/hubungan-organisasi'
+      );
     }
   };
 
@@ -58,35 +70,45 @@ export default function EditHubunganOrganisasi() {
       <Paper p="md" w={{ base: '100%', md: '50%' }}>
         <Stack>
           <Title order={3}>Edit Hubungan Organisasi</Title>
+
           <Select
             label="Atasan"
             placeholder="Pilih atasan"
             searchable
-            data={pegawaiList?.map(p => ({
-              value: p.id,
-              label: p.namaLengkap,
-            })) || []}
+            data={
+              pegawaiList?.map(p => ({
+                value: p.id,
+                label: p.namaLengkap,
+              })) || []
+            }
             value={form.atasanId}
-            onChange={(val) => setForm({ ...form, atasanId: val || '' })}
+            onChange={val => handleChange('atasanId', val || '')}
           />
+
           <Select
             label="Bawahan"
             placeholder="Pilih bawahan"
             searchable
-            data={pegawaiList?.map(p => ({
-              value: p.id,
-              label: p.namaLengkap,
-            })) || []}
+            data={
+              pegawaiList?.map(p => ({
+                value: p.id,
+                label: p.namaLengkap,
+              })) || []
+            }
             value={form.bawahanId}
-            onChange={(val) => setForm({ ...form, bawahanId: val || '' })}
+            onChange={val => handleChange('bawahanId', val || '')}
           />
+
           <TextInput
             label="Tipe"
             placeholder="Contoh: langsung_melapor"
-            defaultValue={form.tipe}
-            onChange={(e) => setForm({ ...form, tipe: e.currentTarget.value })}
+            value={form.tipe}
+            onChange={e => handleChange('tipe', e.currentTarget.value)}
           />
-          <Button onClick={handleSubmit} color="blue">Simpan</Button>
+
+          <Button onClick={handleSubmit} color="blue">
+            Simpan
+          </Button>
         </Stack>
       </Paper>
     </Box>

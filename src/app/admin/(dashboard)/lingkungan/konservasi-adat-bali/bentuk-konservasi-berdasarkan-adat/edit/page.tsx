@@ -17,9 +17,11 @@ const KonservasiAdatBaliTextEditor = dynamic(
 function EditBentukKonservasiBerdasarkanAdat() {
   const router = useRouter();
   const bentukKonservasiState = useProxy(stateKonservasiAdatBali.stateBentukKonservasiBerdasarkanAdat);
-  const [judul, setJudul] = useState('');
-  const [content, setContent] = useState('');
 
+  // Gabung semua field form jadi satu object
+  const [formData, setFormData] = useState({ judul: '', deskripsi: '' });
+
+  // Initialize data dari global state
   useShallowEffect(() => {
     if (!bentukKonservasiState.findById.data) {
       bentukKonservasiState.findById.initialize();
@@ -28,16 +30,22 @@ function EditBentukKonservasiBerdasarkanAdat() {
 
   useEffect(() => {
     if (bentukKonservasiState.findById.data) {
-      setJudul(bentukKonservasiState.findById.data.judul ?? '');
-      setContent(bentukKonservasiState.findById.data.deskripsi ?? '');
+      setFormData({
+        judul: bentukKonservasiState.findById.data.judul ?? '',
+        deskripsi: bentukKonservasiState.findById.data.deskripsi ?? '',
+      });
     }
   }, [bentukKonservasiState.findById.data]);
 
+  const handleChange = (field: 'judul' | 'deskripsi', value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
   const submit = () => {
     if (bentukKonservasiState.findById.data) {
-      bentukKonservasiState.findById.data.judul = judul;
-      bentukKonservasiState.findById.data.deskripsi = content;
-      bentukKonservasiState.update.save(bentukKonservasiState.findById.data);
+      // Update global state cuma pas submit
+      const updatedData = { ...bentukKonservasiState.findById.data, ...formData };
+      bentukKonservasiState.update.save(updatedData);
     }
     router.push('/admin/lingkungan/konservasi-adat-bali/bentuk-konservasi-berdasarkan-adat');
   };
@@ -46,12 +54,7 @@ function EditBentukKonservasiBerdasarkanAdat() {
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
       {/* Header */}
       <Group mb="md">
-        <Button
-          variant="subtle"
-          onClick={() => router.back()}
-          p="xs"
-          radius="md"
-        >
+        <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
           <IconArrowBack color={colors['blue-button']} size={24} />
         </Button>
         <Title order={4} ml="sm" c="dark">
@@ -75,8 +78,8 @@ function EditBentukKonservasiBerdasarkanAdat() {
             </Text>
             <KonservasiAdatBaliTextEditor
               showSubmit={false}
-              onChange={setJudul}
-              initialContent={judul}
+              onChange={(value: string) => handleChange('judul', value)}
+              initialContent={formData.judul}
             />
           </Box>
 
@@ -86,8 +89,8 @@ function EditBentukKonservasiBerdasarkanAdat() {
             </Text>
             <KonservasiAdatBaliTextEditor
               showSubmit={false}
-              onChange={setContent}
-              initialContent={content}
+              onChange={(value: string) => handleChange('deskripsi', value)}
+              initialContent={formData.deskripsi}
             />
           </Box>
 

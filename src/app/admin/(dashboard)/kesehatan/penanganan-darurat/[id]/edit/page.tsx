@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
+
 import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import penangananDarurat from '@/app/admin/(dashboard)/_state/kesehatan/penanganan-darurat/penangananDarurat';
 import colors from '@/con/colors';
@@ -28,16 +29,19 @@ function EditPenangananDarurat() {
   const router = useRouter();
   const params = useParams()
 
+  const [formData, setFormData] = useState({
+    name: '',
+    deskripsi: '',
+    imageId: '',
+  });
+
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
-  const [formData, setFormData] = useState({
-    name: penangananDaruratState.edit.form.name || '',
-    deskripsi: penangananDaruratState.edit.form.deskripsi || '',
-    imageId: penangananDaruratState.edit.form.imageId || '',
-  })
+  const [loading, setLoading] = useState(true);
 
+  // Load data satu kali saat component mount
   useEffect(() => {
-    const loadPenangananDarurat = async () => {
+    const loadData = async () => {
       const id = params?.id as string;
       if (!id) return;
 
@@ -48,49 +52,66 @@ function EditPenangananDarurat() {
             name: data.name || '',
             deskripsi: data.deskripsi || '',
             imageId: data.imageId || '',
-          })
+          });
 
-          if (data?.image?.link) {
+          if (data.image?.link) {
             setPreviewImage(data.image.link);
           }
         }
-      } catch (error) {
-        console.error('Error loading penanganan darurat:', error);
+      } catch (err) {
+        console.error('Error loading penanganan darurat:', err);
         toast.error('Gagal memuat data penanganan darurat');
+      } finally {
+        setLoading(false);
       }
     }
 
-    loadPenangananDarurat();
-  }, [params?.id])
+    loadData();
+  }, [params?.id]);
+
+  const handleChange = (key: keyof typeof formData, value: string) => {
+    setFormData(prev => ({ ...prev, [key]: value }));
+  };
+
+  const handleDrop = (files: File[]) => {
+    const selected = files[0];
+    if (!selected) return;
+
+    setFile(selected);
+    setPreviewImage(URL.createObjectURL(selected));
+  };
 
   const handleSubmit = async () => {
     try {
-      penangananDaruratState.edit.form = {
-        ...penangananDaruratState.edit.form,
-        name: formData.name,
-        deskripsi: formData.deskripsi,
-        imageId: formData.imageId,
-      }
+      let imageId = formData.imageId;
 
       if (file) {
         const res = await ApiFetch.api.fileStorage.create.post({ file, name: file.name });
         const uploaded = res.data?.data;
 
-        if (!uploaded?.id) {
-          return toast.error("Gagal upload gambar");
-        }
+        if (!uploaded?.id) return toast.error("Gagal upload gambar");
 
-        penangananDaruratState.edit.form.imageId = uploaded.id;
+        imageId = uploaded.id;
       }
+
+      // update global state sekali saat submit
+      penangananDaruratState.edit.form = {
+        ...penangananDaruratState.edit.form,
+        name: formData.name,
+        deskripsi: formData.deskripsi,
+        imageId,
+      };
 
       await penangananDaruratState.edit.update();
       toast.success("Penanganan darurat berhasil diperbarui!");
       router.push("/admin/kesehatan/penanganan-darurat");
-    } catch (error) {
-      console.error("Error updating penanganan darurat:", error);
+    } catch (err) {
+      console.error("Error updating penanganan darurat:", err);
       toast.error("Gagal memperbarui data penanganan darurat");
     }
-  }
+  };
+
+  if (loading) return <Text>Loading...</Text>;
 
   return (
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
@@ -117,8 +138,8 @@ function EditPenangananDarurat() {
       >
         <Stack gap="md">
           <TextInput
-            defaultValue={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            value={formData.name}
+            onChange={(e) => handleChange('name', e.target.value)}
             label="Judul"
             placeholder="Masukkan judul"
             required
@@ -128,20 +149,14 @@ function EditPenangananDarurat() {
             <Text fz="sm" fw="bold">Deskripsi</Text>
             <EditEditor
               value={formData.deskripsi}
-              onChange={(val) => setFormData({ ...formData, deskripsi: val })}
+              onChange={(val) => handleChange('deskripsi', val)}
             />
           </Box>
 
           <Box>
             <Text fz="sm" fw="bold">Gambar</Text>
             <Dropzone
-              onDrop={(files) => {
-                const selectedFile = files[0];
-                if (selectedFile) {
-                  setFile(selectedFile);
-                  setPreviewImage(URL.createObjectURL(selectedFile));
-                }
-              }}
+              onDrop={handleDrop}
               onReject={() => toast.error('File tidak valid.')}
               maxSize={5 * 1024 ** 2}
               accept={{ 'image/*': [] }}

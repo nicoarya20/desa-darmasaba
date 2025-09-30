@@ -1,4 +1,5 @@
 'use client'
+
 import stateKonservasiAdatBali from '@/app/admin/(dashboard)/_state/lingkungan/konservasi-adat-bali';
 import colors from '@/con/colors';
 import { Box, Button, Group, Paper, Stack, Text, Title } from '@mantine/core';
@@ -20,26 +21,35 @@ const KonservasiAdatBaliTextEditor = dynamic(
 function EditFilosofiTriHitaKarana() {
   const router = useRouter();
   const filosofiTriHitaState = useProxy(stateKonservasiAdatBali.stateFilosofiTriHita);
-  const [judul, setJudul] = useState('');
-  const [content, setContent] = useState('');
 
+  // Local state form
+  const [formData, setFormData] = useState({ judul: '', content: '' });
+
+  // Load data dari global state kalau belum ada
   useShallowEffect(() => {
     if (!filosofiTriHitaState.findById.data) {
       filosofiTriHitaState.findById.initialize();
     }
   }, []);
 
+  // Set formData dari global state saat data tersedia
   useEffect(() => {
     if (filosofiTriHitaState.findById.data) {
-      setJudul(filosofiTriHitaState.findById.data.judul ?? '');
-      setContent(filosofiTriHitaState.findById.data.deskripsi ?? '');
+      setFormData({
+        judul: filosofiTriHitaState.findById.data.judul ?? '',
+        content: filosofiTriHitaState.findById.data.deskripsi ?? '',
+      });
     }
   }, [filosofiTriHitaState.findById.data]);
 
-  const submit = () => {
+  const handleChange = (field: 'judul' | 'content', value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleSubmit = () => {
     if (filosofiTriHitaState.findById.data) {
-      filosofiTriHitaState.findById.data.judul = judul;
-      filosofiTriHitaState.findById.data.deskripsi = content;
+      filosofiTriHitaState.findById.data.judul = formData.judul;
+      filosofiTriHitaState.findById.data.deskripsi = formData.content;
       filosofiTriHitaState.update.save(filosofiTriHitaState.findById.data);
     }
     router.push('/admin/lingkungan/konservasi-adat-bali/filosofi-tri-hita-karana');
@@ -49,12 +59,7 @@ function EditFilosofiTriHitaKarana() {
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
       {/* Header */}
       <Group mb="md">
-        <Button
-          variant="subtle"
-          onClick={() => router.back()}
-          p="xs"
-          radius="md"
-        >
+        <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
           <IconArrowBack color={colors['blue-button']} size={24} />
         </Button>
         <Title order={4} ml="sm" c="dark">
@@ -78,8 +83,8 @@ function EditFilosofiTriHitaKarana() {
             </Text>
             <KonservasiAdatBaliTextEditor
               showSubmit={false}
-              onChange={setJudul}
-              initialContent={judul}
+              onChange={(val) => handleChange('judul', val)}
+              initialContent={formData.judul}
             />
           </Box>
 
@@ -89,14 +94,14 @@ function EditFilosofiTriHitaKarana() {
             </Text>
             <KonservasiAdatBaliTextEditor
               showSubmit={false}
-              onChange={setContent}
-              initialContent={content}
+              onChange={(val) => handleChange('content', val)}
+              initialContent={formData.content}
             />
           </Box>
 
           <Group justify="right" mt="md">
             <Button
-              onClick={submit}
+              onClick={handleSubmit}
               radius="md"
               size="md"
               style={{

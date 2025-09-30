@@ -1,4 +1,5 @@
 'use client'
+
 import stateEdukasiLingkungan from '@/app/admin/(dashboard)/_state/lingkungan/edukasi-lingkungan';
 import colors from '@/con/colors';
 import { Box, Button, Group, Paper, Stack, Text, Title } from '@mantine/core';
@@ -10,48 +11,67 @@ import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
 
 const EdukasiLingkunganTextEditor = dynamic(
-  () => import('../../_lib/edukasiLingkunganTextEditor').then(mod => mod.EdukasiLingkunganTextEditor),
+  () =>
+    import('../../_lib/edukasiLingkunganTextEditor').then(
+      (mod) => mod.EdukasiLingkunganTextEditor
+    ),
   { ssr: false }
 );
 
-function EditContohKegiatanDesaDarmasaba() {
+export default function EditContohKegiatanDesaDarmasaba() {
   const router = useRouter();
-  const contohEdukasiState = useProxy(stateEdukasiLingkungan.stateContohEdukasiLingkungan);
-  const [judul, setJudul] = useState('');
-  const [content, setContent] = useState('');
+  const contohEdukasiState = useProxy(
+    stateEdukasiLingkungan.stateContohEdukasiLingkungan
+  );
 
+  // state lokal untuk form
+  const [formData, setFormData] = useState({
+    judul: '',
+    deskripsi: '',
+  });
+
+  // load data awal
   useShallowEffect(() => {
     if (!contohEdukasiState.findById.data) {
       contohEdukasiState.findById.initialize();
     }
   }, []);
 
+  // update state lokal saat data global sudah ada
   useEffect(() => {
     if (contohEdukasiState.findById.data) {
-      setJudul(contohEdukasiState.findById.data.judul ?? '');
-      setContent(contohEdukasiState.findById.data.deskripsi ?? '');
+      setFormData({
+        judul: contohEdukasiState.findById.data.judul ?? '',
+        deskripsi: contohEdukasiState.findById.data.deskripsi ?? '',
+      });
     }
   }, [contohEdukasiState.findById.data]);
 
-  const submit = () => {
+  // handler perubahan input
+  const handleChange = (field: 'judul' | 'deskripsi', value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  // submit update
+  const handleSubmit = () => {
     if (contohEdukasiState.findById.data) {
-      contohEdukasiState.findById.data.judul = judul;
-      contohEdukasiState.findById.data.deskripsi = content;
-      contohEdukasiState.update.save(contohEdukasiState.findById.data);
+      const updatedData = {
+        ...contohEdukasiState.findById.data,
+        judul: formData.judul,
+        deskripsi: formData.deskripsi,
+      };
+      contohEdukasiState.update.save(updatedData);
     }
-    router.push('/admin/lingkungan/edukasi-lingkungan/contoh-kegiatan-desa-darmasaba');
+    router.push(
+      '/admin/lingkungan/edukasi-lingkungan/contoh-kegiatan-desa-darmasaba'
+    );
   };
 
   return (
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
       {/* Header */}
       <Group mb="md">
-        <Button
-          variant="subtle"
-          onClick={() => router.back()}
-          p="xs"
-          radius="md"
-        >
+        <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
           <IconArrowBack color={colors['blue-button']} size={24} />
         </Button>
         <Title order={4} ml="sm" c="dark">
@@ -75,8 +95,8 @@ function EditContohKegiatanDesaDarmasaba() {
             </Text>
             <EdukasiLingkunganTextEditor
               showSubmit={false}
-              onChange={setJudul}
-              initialContent={judul}
+              onChange={(value) => handleChange('judul', value)}
+              initialContent={formData.judul}
             />
           </Box>
 
@@ -86,14 +106,14 @@ function EditContohKegiatanDesaDarmasaba() {
             </Text>
             <EdukasiLingkunganTextEditor
               showSubmit={false}
-              onChange={setContent}
-              initialContent={content}
+              onChange={(value) => handleChange('deskripsi', value)}
+              initialContent={formData.deskripsi}
             />
           </Box>
 
           <Group justify="right" mt="md">
             <Button
-              onClick={submit}
+              onClick={handleSubmit}
               radius="md"
               size="md"
               style={{
@@ -111,5 +131,3 @@ function EditContohKegiatanDesaDarmasaba() {
     </Box>
   );
 }
-
-export default EditContohKegiatanDesaDarmasaba;

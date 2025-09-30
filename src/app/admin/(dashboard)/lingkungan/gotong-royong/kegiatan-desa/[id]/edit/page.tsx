@@ -4,7 +4,19 @@ import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import gotongRoyongState from '@/app/admin/(dashboard)/_state/lingkungan/gotong-royong';
 import colors from '@/con/colors';
 import ApiFetch from '@/lib/api-fetch';
-import { Box, Button, Group, Image, Paper, Select, Stack, Text, TextInput, Title, Tooltip } from '@mantine/core';
+import {
+  Box,
+  Button,
+  Group,
+  Image,
+  Paper,
+  Select,
+  Stack,
+  Text,
+  TextInput,
+  Title,
+  Tooltip,
+} from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
 import { IconArrowBack, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -23,12 +35,10 @@ interface FormKegiatanDesa {
   kategoriKegiatanId: string;
 }
 
-function EditGotongRoyong() {
-  const kegiatanDesaState = useProxy(gotongRoyongState.kegiatanDesa)
-  const params = useParams()
-  const router = useRouter()
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
-  const [file, setFile] = useState<File | null>(null);
+export default function EditKegiatanDesa() {
+  const kegiatanDesaState = useProxy(gotongRoyongState.kegiatanDesa);
+  const params = useParams();
+  const router = useRouter();
 
   const [formData, setFormData] = useState<FormKegiatanDesa>({
     judul: '',
@@ -39,16 +49,19 @@ function EditGotongRoyong() {
     partisipan: 0,
     imageId: '',
     kategoriKegiatanId: '',
-  })
+  });
+  const [file, setFile] = useState<File | null>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   const formatDateForInput = (dateString: string) => {
     if (!dateString) return '';
-    const date = new Date(dateString);
-    return date.toISOString().split('T')[0];
+    return new Date(dateString).toISOString().split('T')[0];
   };
 
+  // Load kategori & data kegiatan
   useEffect(() => {
-    const loadKegiatanDesa = async () => {
+    const loadData = async () => {
+      gotongRoyongState.kategoriKegiatan.findMany.load();
       const id = params?.id as string;
       if (!id) return;
 
@@ -65,43 +78,48 @@ function EditGotongRoyong() {
             imageId: data.imageId || '',
             kategoriKegiatanId: data.kategoriKegiatanId || '',
           });
+          if (data.imageId) {
+            // Optional: bisa fetch URL image dari backend
+            setPreviewImage(`/api/file/${data.imageId}`);
+          }
         }
       } catch (error) {
-        console.error("Error loading kegiatan desa:", error);
-        toast.error("Gagal memuat data kegiatan desa");
+        console.error(error);
+        toast.error('Gagal memuat data kegiatan desa');
       }
-    }
-    gotongRoyongState.kategoriKegiatan.findMany.load()
-    loadKegiatanDesa();
+    };
+    loadData();
   }, [params?.id]);
 
   const handleSubmit = async () => {
     try {
-      kegiatanDesaState.edit.form = {
-        ...kegiatanDesaState.edit.form,
-        judul: formData.judul.trim(),
-        deskripsiSingkat: formData.deskripsiSingkat.trim(),
-        deskripsiLengkap: formData.deskripsiLengkap.trim(),
-        tanggal: new Date(formData.tanggal.trim()),
-        lokasi: formData.lokasi.trim(),
-        partisipan: formData.partisipan,
-        imageId: formData.imageId,
-        kategoriKegiatanId: formData.kategoriKegiatanId,
-      }
+      let imageId = formData.imageId;
       if (file) {
         const res = await ApiFetch.api.fileStorage.create.post({ file, name: file.name });
         const uploaded = res.data?.data;
-        if (!uploaded?.id) return toast.error("Gagal upload gambar");
-        kegiatanDesaState.edit.form.imageId = uploaded.id;
+        if (!uploaded?.id) return toast.error('Gagal upload gambar');
+        imageId = uploaded.id;
       }
-      await kegiatanDesaState.edit.update()
-      toast.success("Kegiatan desa berhasil diperbarui!")
-      router.push("/admin/lingkungan/gotong-royong/kegiatan-desa");
+
+      kegiatanDesaState.edit.form = {
+        judul: formData.judul.trim(),
+        deskripsiSingkat: formData.deskripsiSingkat.trim(),
+        deskripsiLengkap: formData.deskripsiLengkap.trim(),
+        tanggal: new Date(formData.tanggal),
+        lokasi: formData.lokasi.trim(),
+        partisipan: formData.partisipan,
+        imageId,
+        kategoriKegiatanId: formData.kategoriKegiatanId,
+      };
+
+      await kegiatanDesaState.edit.update();
+      toast.success('Kegiatan desa berhasil diperbarui!');
+      router.push('/admin/lingkungan/gotong-royong/kegiatan-desa');
     } catch (error) {
-      console.error("Error updating kegiatan desa:", error);
-      toast.error("Terjadi kesalahan saat memperbarui kegiatan desa");
+      console.error(error);
+      toast.error('Terjadi kesalahan saat memperbarui kegiatan desa');
     }
-  }
+  };
 
   return (
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
@@ -126,14 +144,14 @@ function EditGotongRoyong() {
       >
         <Stack gap="md">
           <TextInput
-            defaultValue={formData.judul}
+            value={formData.judul}
             label={<Text fz="sm" fw="bold">Judul Kegiatan Desa</Text>}
             placeholder="masukkan judul kegiatan desa"
             onChange={(e) => setFormData({ ...formData, judul: e.target.value })}
             required
           />
           <TextInput
-            defaultValue={formData.deskripsiSingkat}
+            value={formData.deskripsiSingkat}
             label={<Text fz="sm" fw="bold">Deskripsi Singkat Kegiatan Desa</Text>}
             placeholder="masukkan deskripsi singkat kegiatan desa"
             onChange={(e) => setFormData({ ...formData, deskripsiSingkat: e.target.value })}
@@ -148,33 +166,27 @@ function EditGotongRoyong() {
             value={formData.kategoriKegiatanId}
             onChange={(val) => setFormData({ ...formData, kategoriKegiatanId: val ?? '' })}
           />
-
           <Box>
             <Text fw="bold" fz="sm">Deskripsi Lengkap Kegiatan Desa</Text>
             <EditEditor
               value={formData.deskripsiLengkap}
-              onChange={(htmlContent) => {
-                setFormData((prev) => ({ ...prev, deskripsiLengkap: htmlContent }));
-                kegiatanDesaState.edit.form.deskripsiLengkap = htmlContent;
-              }}
+              onChange={(htmlContent) => setFormData(prev => ({ ...prev, deskripsiLengkap: htmlContent }))}
             />
           </Box>
-
           <TextInput
-            label={<Text fz="sm" fw="bold">Tanggal Kegiatan Desa</Text>}
-            placeholder="masukkan tanggal kegiatan desa"
             type="date"
-            defaultValue={formatDateForInput(formData.tanggal)}
+            label={<Text fz="sm" fw="bold">Tanggal Kegiatan Desa</Text>}
+            value={formatDateForInput(formData.tanggal)}
             onChange={(e) => setFormData({ ...formData, tanggal: e.target.value })}
           />
           <TextInput
-            defaultValue={formData.lokasi}
+            value={formData.lokasi}
             label={<Text fz="sm" fw="bold">Lokasi Kegiatan Desa</Text>}
             placeholder="masukkan lokasi kegiatan desa"
             onChange={(e) => setFormData({ ...formData, lokasi: e.target.value })}
           />
           <TextInput
-            defaultValue={formData.partisipan}
+            value={formData.partisipan}
             label={<Text fz="sm" fw="bold">Partisipan Kegiatan Desa</Text>}
             placeholder="masukkan partisipan kegiatan desa"
             onChange={(e) => {
@@ -187,11 +199,10 @@ function EditGotongRoyong() {
             <Text fw="bold" fz="sm" mb={6}>Gambar Kegiatan Desa</Text>
             <Dropzone
               onDrop={(files) => {
-                const selectedFile = files[0];
-                if (selectedFile) {
-                  setFile(selectedFile);
-                  setPreviewImage(URL.createObjectURL(selectedFile));
-                }
+                const selected = files[0];
+                if (!selected) return;
+                setFile(selected);
+                setPreviewImage(URL.createObjectURL(selected));
               }}
               onReject={() => toast.error('File tidak valid.')}
               maxSize={5 * 1024 ** 2}
@@ -248,5 +259,3 @@ function EditGotongRoyong() {
     </Box>
   );
 }
-
-export default EditGotongRoyong;

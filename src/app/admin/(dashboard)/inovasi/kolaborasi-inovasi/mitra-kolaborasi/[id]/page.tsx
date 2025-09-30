@@ -33,17 +33,22 @@ function EditMitraKolaborasi() {
   const state = useProxy(mitraKolaborasi);
   const router = useRouter();
   const params = useParams();
+
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
+
+  // Local form state (controlled)
   const [formData, setFormData] = useState({
-    name: state.update.form.name || '',
-    imageId: state.update.form.imageId || '',
+    name: '',
+    imageId: '',
   });
 
+  // Load data ke state lokal sekali saja
   useEffect(() => {
-    const loadFoto = async () => {
+    const loadData = async () => {
       const id = params?.id as string;
       if (!id) return;
+
       try {
         const data = await state.update.load(id);
         if (data) {
@@ -51,25 +56,31 @@ function EditMitraKolaborasi() {
             name: data.name || '',
             imageId: data.imageId || '',
           });
+
           if (data?.image?.link) {
             setPreviewImage(data.image.link);
           }
         }
       } catch (error) {
-        console.error('Error loading foto:', error);
-        toast.error('Gagal memuat data foto');
+        console.error('Error loading data:', error);
+        toast.error('Gagal memuat data mitra');
       }
     };
-    loadFoto();
+
+    loadData();
   }, [params?.id]);
+
+  const handleChange = (key: string, value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
+  };
 
   const handleSubmit = async () => {
     try {
-      state.update.form = {
-        ...state.update.form,
-        name: formData.name,
-        imageId: formData.imageId,
-      };
+      // upload file jika ada
+      let imageId = formData.imageId;
       if (file) {
         const res = await ApiFetch.api.fileStorage.create.post({
           file,
@@ -79,8 +90,16 @@ function EditMitraKolaborasi() {
         if (!uploaded?.id) {
           return toast.error('Gagal upload gambar');
         }
-        state.update.form.imageId = uploaded.id;
+        imageId = uploaded.id;
       }
+
+      // update global state hanya saat submit
+      state.update.form = {
+        ...state.update.form,
+        name: formData.name,
+        imageId,
+      };
+
       await state.update.update();
       toast.success('Mitra berhasil diperbarui!');
       router.push('/admin/inovasi/kolaborasi-inovasi/mitra-kolaborasi');
@@ -118,8 +137,8 @@ function EditMitraKolaborasi() {
           <TextInput
             label="Nama Mitra"
             placeholder="Masukkan nama mitra"
-            defaultValue={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            value={formData.name}
+            onChange={(e) => handleChange('name', e.target.value)}
             required
           />
 

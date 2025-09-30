@@ -14,7 +14,7 @@ import {
   TextInput,
   Title,
   Tooltip,
-  Image
+  Image,
 } from "@mantine/core";
 import { Dropzone } from "@mantine/dropzone";
 import { IconArrowBack, IconDeviceFloppy, IconPhoto, IconUpload, IconX } from "@tabler/icons-react";
@@ -23,37 +23,35 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useProxy } from "valtio/utils";
 
-function EditKolaborasiInovasi() {
+export default function EditKolaborasiInovasi() {
   const sdgsState = useProxy(sdgsDesa);
   const router = useRouter();
   const params = useParams();
 
+  const [formData, setFormData] = useState({
+    name: "",
+    jumlah: "",
+    imageId: "",
+  });
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
-  const [formData, setFormData] = useState({
-    name: sdgsState.edit.form.name || '',
-    jumlah: sdgsState.edit.form.jumlah || '',
-    imageId: sdgsState.edit.form.imageId || ''
-  });
 
-  // Load sdgs desa by id saat pertama kali
+  // Load data sdgs desa by id
   useEffect(() => {
     const loadKolaborasi = async () => {
       const id = params?.id as string;
       if (!id) return;
 
       try {
-        const data = await sdgsState.edit.load(id); // akses langsung, bukan dari proxy
+        const data = await sdgsState.edit.load(id);
         if (data) {
           setFormData({
-            name: data.name || '',
-            jumlah: data.jumlah || '',
-            imageId: data.imageId || '',
+            name: data.name || "",
+            jumlah: data.jumlah || "",
+            imageId: data.imageId || "",
           });
-          if (data.image) {
-            if (data?.image?.link) {
-              setPreviewImage(data.image.link);
-            }
+          if (data.image?.link) {
+            setPreviewImage(data.image.link);
           }
         }
       } catch (error) {
@@ -65,31 +63,26 @@ function EditKolaborasiInovasi() {
     loadKolaborasi();
   }, [params?.id]);
 
+  const handleInputChange = (field: keyof typeof formData, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
   const handleSubmit = async () => {
-
     try {
-      // edit global state with form data
-      sdgsState.edit.form = {
-        ...sdgsState.edit.form,
-        name: formData.name,
-        jumlah: formData.jumlah,
-        imageId: formData.imageId // Keep existing imageId if not changed
-      };
+      let imageId = formData.imageId;
 
-      // Jika ada file baru, upload
+      // Upload file baru jika ada
       if (file) {
         const res = await ApiFetch.api.fileStorage.create.post({ file, name: file.name });
         const uploaded = res.data?.data;
-
-        if (!uploaded?.id) {
-          return toast.error("Gagal upload gambar");
-        }
-
-        // edit imageId in global state
-        sdgsState.edit.form.imageId = uploaded.id;
+        if (!uploaded?.id) return toast.error("Gagal upload gambar");
+        imageId = uploaded.id;
       }
 
+      // Update global state hanya saat submit
+      sdgsState.edit.form = { ...sdgsState.edit.form, ...formData, imageId };
       await sdgsState.edit.update();
+
       toast.success("sdgs desa berhasil diperbarui!");
       router.push("/admin/landing-page/sdgs-desa");
     } catch (error) {
@@ -99,11 +92,11 @@ function EditKolaborasiInovasi() {
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: "sm", md: "lg" }} py="md">
       <Group mb="md">
         <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
           <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
-            <IconArrowBack color={colors['blue-button']} size={24} />
+            <IconArrowBack color={colors["blue-button"]} size={24} />
           </Button>
         </Tooltip>
         <Title order={4} ml="sm" c="dark">
@@ -112,12 +105,12 @@ function EditKolaborasiInovasi() {
       </Group>
 
       <Paper
-        w={{ base: '100%', md: '50%' }}
-        bg={colors['white-1']}
+        w={{ base: "100%", md: "50%" }}
+        bg={colors["white-1"]}
         p="lg"
         radius="md"
         shadow="sm"
-        style={{ border: '1px solid #e0e0e0' }}
+        style={{ border: "1px solid #e0e0e0" }}
       >
         <Stack gap="md">
           <Box>
@@ -132,15 +125,15 @@ function EditKolaborasiInovasi() {
                   setPreviewImage(URL.createObjectURL(selectedFile));
                 }
               }}
-              onReject={() => toast.error('File tidak valid, gunakan format gambar')}
+              onReject={() => toast.error("File tidak valid, gunakan format gambar")}
               maxSize={5 * 1024 ** 2}
-              accept={{ 'image/*': [] }}
+              accept={{ "image/*": [] }}
               radius="md"
               p="xl"
             >
               <Group justify="center" gap="xl" mih={180}>
                 <Dropzone.Accept>
-                  <IconUpload size={48} color={colors['blue-button']} stroke={1.5} />
+                  <IconUpload size={48} color={colors["blue-button"]} stroke={1.5} />
                 </Dropzone.Accept>
                 <Dropzone.Reject>
                   <IconX size={48} color="red" stroke={1.5} />
@@ -160,12 +153,12 @@ function EditKolaborasiInovasi() {
             </Dropzone>
 
             {previewImage && (
-              <Box mt="sm" style={{ display: 'flex', justifyContent: 'center' }}>
+              <Box mt="sm" style={{ display: "flex", justifyContent: "center" }}>
                 <Image
                   src={previewImage}
                   alt="Preview Gambar"
                   radius="md"
-                  style={{ maxHeight: 220, objectFit: 'contain', border: `1px solid ${colors['blue-button']}` }}
+                  style={{ maxHeight: 220, objectFit: "contain", border: `1px solid ${colors["blue-button"]}` }}
                   loading="lazy"
                 />
               </Box>
@@ -175,16 +168,16 @@ function EditKolaborasiInovasi() {
           <TextInput
             label="Nama Sdgs Desa"
             placeholder="Masukkan nama Sdgs Desa"
-            defaultValue={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            value={formData.name}
+            onChange={(e) => handleInputChange("name", e.target.value)}
             required
           />
 
           <TextInput
             label="Jumlah"
             placeholder="Masukkan jumlah"
-            defaultValue={formData.jumlah}
-            onChange={(e) => setFormData({ ...formData, jumlah: e.target.value })}
+            value={formData.jumlah}
+            onChange={(e) => handleInputChange("jumlah", e.target.value)}
             required
             type="number"
           />
@@ -197,9 +190,9 @@ function EditKolaborasiInovasi() {
               radius="md"
               size="md"
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
-                color: '#fff',
-                boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
+                background: `linear-gradient(135deg, ${colors["blue-button"]}, #4facfe)`,
+                color: "#fff",
+                boxShadow: "0 4px 15px rgba(79, 172, 254, 0.4)",
               }}
             >
               Simpan
@@ -210,5 +203,3 @@ function EditKolaborasiInovasi() {
     </Box>
   );
 }
-
-export default EditKolaborasiInovasi;

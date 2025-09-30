@@ -12,18 +12,22 @@ import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
-function EditPenghargaan() {
-  const stateDesaDigital = useProxy(desaDigitalState)
-  const router = useRouter()
-  const params = useParams()
-  const [previewImage, setPreviewImage] = useState<string | null>(null)
-  const [file, setFile] = useState<File | null>(null)
-  const [formData, setFormData] = useState({
-    name: stateDesaDigital.findUnique.data?.name || '',
-    deskripsi: stateDesaDigital.findUnique.data?.deskripsi || '',
-    imageId: stateDesaDigital.findUnique.data?.imageId || '',
-  })
+function EditDigitalSmartVillage() {
+  const stateDesaDigital = useProxy(desaDigitalState);
+  const router = useRouter();
+  const params = useParams();
 
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [file, setFile] = useState<File | null>(null);
+
+  // ✅ hanya lokal state untuk form
+  const [formData, setFormData] = useState({
+    name: '',
+    deskripsi: '',
+    imageId: '',
+  });
+
+  // load data sekali saat mount
   useEffect(() => {
     const loadPenghargaan = async () => {
       const id = params?.id as string;
@@ -53,12 +57,11 @@ function EditPenghargaan() {
 
   const handleSubmit = async () => {
     try {
+      // ✅ update global state hanya saat submit
       stateDesaDigital.edit.form = {
         ...stateDesaDigital.edit.form,
-        name: formData.name,
-        deskripsi: formData.deskripsi,
-        imageId: formData.imageId,
-      }
+        ...formData,
+      };
 
       if (file) {
         const res = await ApiFetch.api.fileStorage.create.post({ file, name: file.name });
@@ -78,7 +81,7 @@ function EditPenghargaan() {
       console.error("Error updating desa digital smart village:", error);
       toast.error("Terjadi kesalahan saat memperbarui desa digital smart village");
     }
-  }
+  };
 
   return (
     <Box>
@@ -87,78 +90,80 @@ function EditPenghargaan() {
           <IconArrowBack color={colors["blue-button"]} size={30} />
         </Button>
       </Box>
+
       <Paper bg={"white"} p={"md"} w={{ base: "100%", md: "50%" }}>
         <Stack gap={"xs"}>
           <Title order={3}>Edit Desa Digital Smart Village</Title>
+
+          {/* ✅ controlled input */}
           <TextInput
-            defaultValue={formData.name}
+            value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             label={<Text fz={"sm"} fw={"bold"}>Judul</Text>}
             placeholder="masukkan judul"
           />
+
           <Box>
             <Text fz={"md"} fw={"bold"}>Gambar</Text>
-            <Box>
-              <Dropzone
-                onDrop={(files) => {
-                  const selectedFile = files[0]; // Ambil file pertama
-                  if (selectedFile) {
-                    setFile(selectedFile);
-                    setPreviewImage(URL.createObjectURL(selectedFile)); // Buat preview
-                  }
-                }}
-                onReject={() => toast.error('File tidak valid.')}
-                maxSize={5 * 1024 ** 2} // Maks 5MB
-                accept={{ 'image/*': [] }}
-              >
-                <Group justify="center" gap="xl" mih={220} style={{ pointerEvents: 'none' }}>
-                  <Dropzone.Accept>
-                    <IconUpload size={52} color="var(--mantine-color-blue-6)" stroke={1.5} />
-                  </Dropzone.Accept>
-                  <Dropzone.Reject>
-                    <IconX size={52} color="var(--mantine-color-red-6)" stroke={1.5} />
-                  </Dropzone.Reject>
-                  <Dropzone.Idle>
-                    <IconPhoto size={52} color="var(--mantine-color-dimmed)" stroke={1.5} />
-                  </Dropzone.Idle>
+            <Dropzone
+              onDrop={(files) => {
+                const selectedFile = files[0];
+                if (selectedFile) {
+                  setFile(selectedFile);
+                  setPreviewImage(URL.createObjectURL(selectedFile));
+                }
+              }}
+              onReject={() => toast.error('File tidak valid.')}
+              maxSize={5 * 1024 ** 2}
+              accept={{ 'image/*': [] }}
+            >
+              <Group justify="center" gap="xl" mih={220} style={{ pointerEvents: 'none' }}>
+                <Dropzone.Accept>
+                  <IconUpload size={52} color="var(--mantine-color-blue-6)" stroke={1.5} />
+                </Dropzone.Accept>
+                <Dropzone.Reject>
+                  <IconX size={52} color="var(--mantine-color-red-6)" stroke={1.5} />
+                </Dropzone.Reject>
+                <Dropzone.Idle>
+                  <IconPhoto size={52} color="var(--mantine-color-dimmed)" stroke={1.5} />
+                </Dropzone.Idle>
 
-                  <div>
-                    <Text size="xl" inline>
-                      Drag gambar ke sini atau klik untuk pilih file
-                    </Text>
-                    <Text size="sm" c="dimmed" inline mt={7}>
-                      Maksimal 5MB dan harus format gambar
-                    </Text>
-                  </div>
-                </Group>
-              </Dropzone>
+                <div>
+                  <Text size="xl" inline>
+                    Drag gambar ke sini atau klik untuk pilih file
+                  </Text>
+                  <Text size="sm" c="dimmed" inline mt={7}>
+                    Maksimal 5MB dan harus format gambar
+                  </Text>
+                </div>
+              </Group>
+            </Dropzone>
 
-              {/* Tampilkan preview kalau ada */}
-              {previewImage && (
-                <Box mt="sm">
-                  <Image
-                    src={previewImage}
-                    alt="Preview"
-                    style={{
-                      maxWidth: '100%',
-                      maxHeight: '200px',
-                      objectFit: 'contain',
-                      borderRadius: '8px',
-                      border: '1px solid #ddd',
-                    }}
-                    loading="lazy"
-                  />
-                </Box>
-              )}
-            </Box>
+            {previewImage && (
+              <Box mt="sm">
+                <Image
+                  src={previewImage}
+                  alt="Preview"
+                  style={{
+                    maxWidth: '100%',
+                    maxHeight: '200px',
+                    objectFit: 'contain',
+                    borderRadius: '8px',
+                    border: '1px solid #ddd',
+                  }}
+                  loading="lazy"
+                />
+              </Box>
+            )}
           </Box>
+
           <Box>
             <Text fz={"sm"} fw={"bold"}>Deskripsi</Text>
+            {/* ✅ controlled editor */}
             <EditEditor
               value={formData.deskripsi}
               onChange={(htmlContent) => {
                 setFormData((prev) => ({ ...prev, deskripsi: htmlContent }));
-                stateDesaDigital.edit.form.deskripsi = htmlContent;
               }}
             />
           </Box>
@@ -170,4 +175,4 @@ function EditPenghargaan() {
   );
 }
 
-export default EditPenghargaan;
+export default EditDigitalSmartVillage;

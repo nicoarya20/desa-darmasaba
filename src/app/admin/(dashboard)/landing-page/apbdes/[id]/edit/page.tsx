@@ -28,20 +28,21 @@ function EditAPBDes() {
   const router = useRouter();
   const params = useParams();
 
+  const [formData, setFormData] = useState({
+    name: '',
+    jumlah: '',
+    imageId: '',
+    fileId: ''
+  });
+
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [previewDoc, setPreviewDoc] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [docFile, setDocFile] = useState<File | null>(null);
-  const [formData, setFormData] = useState({
-    name: apbdesState.edit.form.name || '',
-    jumlah: apbdesState.edit.form.jumlah || '',
-    imageId: apbdesState.edit.form.imageId || '',
-    fileId: apbdesState.edit.form.fileId || ''
-  });
 
-  // Load APBDes data by id
+  // Load data on mount
   useEffect(() => {
-    const loadAPBDes = async () => {
+    const loadData = async () => {
       const id = params?.id as string;
       if (!id) return;
 
@@ -54,62 +55,58 @@ function EditAPBDes() {
             imageId: data.imageId || '',
             fileId: data.fileId || ''
           });
-          
-          if (data.image?.link) setPreviewImage(data.image.link);
-          if (data.file?.link) setPreviewDoc(data.file.link);
+          setPreviewImage(data.image?.link || null);
+          setPreviewDoc(data.file?.link || null);
         }
-      } catch (error) {
-        console.error('Error loading APBDes:', error);
+      } catch (err) {
+        console.error(err);
         toast.error('Gagal memuat data APBDes');
       }
     };
 
-    loadAPBDes();
+    loadData();
   }, [params?.id]);
+
+  // Generic Dropzone handler
+  const handleDrop = (fileType: 'image' | 'doc') => (files: File[]) => {
+    const file = files[0];
+    if (!file) return;
+
+    if (fileType === 'image') {
+      setImageFile(file);
+      setPreviewImage(URL.createObjectURL(file));
+    } else {
+      setDocFile(file);
+      setPreviewDoc(URL.createObjectURL(file));
+    }
+  };
 
   const handleSubmit = async () => {
     try {
-      // Update global state with form data
-      apbdesState.edit.form = {
-        ...apbdesState.edit.form,
-        ...formData,
+      // Update global state with local form data first
+      apbdesState.edit.form = { ...apbdesState.edit.form, ...formData };
+
+      // Helper function for uploading file
+      const uploadFile = async (file: File | null) => {
+        if (!file) return null;
+        const res = await ApiFetch.api.fileStorage.create.post({ file, name: file.name });
+        const uploaded = res.data?.data;
+        if (!uploaded?.id) throw new Error('Upload gagal');
+        return uploaded.id;
       };
 
-      // Upload new image if exists
-      if (imageFile) {
-        const res = await ApiFetch.api.fileStorage.create.post({ 
-          file: imageFile, 
-          name: imageFile.name 
-        });
-        const uploaded = res.data?.data;
+      // Upload files if selected
+      const uploadedImageId = await uploadFile(imageFile);
+      const uploadedDocId = await uploadFile(docFile);
 
-        if (!uploaded?.id) {
-          return toast.error('Gagal upload gambar');
-        }
-
-        apbdesState.edit.form.imageId = uploaded.id;
-      }
-
-      // Upload new document if exists
-      if (docFile) {
-        const res = await ApiFetch.api.fileStorage.create.post({ 
-          file: docFile, 
-          name: docFile.name 
-        });
-        const uploaded = res.data?.data;
-
-        if (!uploaded?.id) {
-          return toast.error('Gagal upload dokumen');
-        }
-
-        apbdesState.edit.form.fileId = uploaded.id;
-      }
+      if (uploadedImageId) apbdesState.edit.form.imageId = uploadedImageId;
+      if (uploadedDocId) apbdesState.edit.form.fileId = uploadedDocId;
 
       await apbdesState.edit.update();
       toast.success('APBDes berhasil diperbarui!');
       router.push('/admin/landing-page/apbdes');
-    } catch (error) {
-      console.error('Error updating APBDes:', error);
+    } catch (err) {
+      console.error(err);
       toast.error('Terjadi kesalahan saat memperbarui APBDes');
     }
   };
@@ -127,19 +124,13 @@ function EditAPBDes() {
         </Title>
       </Group>
 
-      <Paper
-        w={{ base: '100%', md: '50%' }}
-        bg={colors['white-1']}
-        p="lg"
-        radius="md"
-        shadow="sm"
-        style={{ border: '1px solid #e0e0e0' }}
-      >
+      <Paper w={{ base: '100%', md: '50%' }} bg={colors['white-1']} p="lg" radius="md" shadow="sm" style={{ border: '1px solid #e0e0e0' }}>
         <Stack gap="md">
+          {/* Controlled Inputs */}
           <TextInput
             label="Nama APBDes"
             placeholder="Masukkan nama APBDes"
-            defaultValue={formData.name}
+            value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             required
           />
@@ -147,23 +138,16 @@ function EditAPBDes() {
           <TextInput
             label="Jumlah Anggaran"
             placeholder="Masukkan jumlah anggaran"
-            defaultValue={formData.jumlah}
+            value={formData.jumlah}
             onChange={(e) => setFormData({ ...formData, jumlah: e.target.value })}
             required
           />
 
+          {/* Image Dropzone */}
           <Box>
-            <Text fw="bold" fz="sm" mb={6}>
-              Gambar APBDes
-            </Text>
+            <Text fw="bold" fz="sm" mb={6}>Gambar APBDes</Text>
             <Dropzone
-              onDrop={(files) => {
-                const selectedFile = files[0];
-                if (selectedFile) {
-                  setImageFile(selectedFile);
-                  setPreviewImage(URL.createObjectURL(selectedFile));
-                }
-              }}
+              onDrop={handleDrop('image')}
               onReject={() => toast.error('File tidak valid, gunakan format gambar')}
               maxSize={5 * 1024 ** 2}
               accept={{ 'image/*': [] }}
@@ -171,57 +155,29 @@ function EditAPBDes() {
               p="xl"
             >
               <Group justify="center" gap="xl" mih={180}>
-                <Dropzone.Accept>
-                  <IconUpload size={48} color={colors['blue-button']} stroke={1.5} />
-                </Dropzone.Accept>
-                <Dropzone.Reject>
-                  <IconX size={48} color="red" stroke={1.5} />
-                </Dropzone.Reject>
-                <Dropzone.Idle>
-                  <IconPhoto size={48} color="#868e96" stroke={1.5} />
-                </Dropzone.Idle>
+                <Dropzone.Accept><IconUpload size={48} color={colors['blue-button']} stroke={1.5} /></Dropzone.Accept>
+                <Dropzone.Reject><IconX size={48} color="red" stroke={1.5} /></Dropzone.Reject>
+                <Dropzone.Idle><IconPhoto size={48} color="#868e96" stroke={1.5} /></Dropzone.Idle>
                 <Stack gap="xs" align="center">
-                  <Text size="md" fw={500}>
-                    Seret gambar atau klik untuk memilih file
-                  </Text>
-                  <Text size="sm" c="dimmed">
-                    Maksimal 5MB, format gambar wajib
-                  </Text>
+                  <Text size="md" fw={500}>Seret gambar atau klik untuk memilih file</Text>
+                  <Text size="sm" c="dimmed">Maksimal 5MB, format gambar wajib</Text>
                 </Stack>
               </Group>
             </Dropzone>
-
             {previewImage && (
               <Box mt="sm" style={{ display: 'flex', justifyContent: 'center' }}>
-                <Image
-                  src={previewImage}
-                  alt="Preview Gambar"
-                  radius="md"
-                  style={{ 
-                    maxHeight: 300, 
-                    objectFit: 'contain', 
-                    border: `1px solid ${colors['blue-button']}` 
-                  }}
-                  loading="lazy"
-                />
+                <Image src={previewImage} alt="Preview Gambar" radius="md" style={{ maxHeight: 300, objectFit: 'contain', border: `1px solid ${colors['blue-button']}` }} loading="lazy" />
               </Box>
             )}
           </Box>
 
+          {/* Document Dropzone */}
           <Box>
-            <Text fw="bold" fz="sm" mb={6}>
-              Dokumen APBDes
-            </Text>
+            <Text fw="bold" fz="sm" mb={6}>Dokumen APBDes</Text>
             <Dropzone
-              onDrop={(files) => {
-                const selectedFile = files[0];
-                if (selectedFile) {
-                  setDocFile(selectedFile);
-                  setPreviewDoc(URL.createObjectURL(selectedFile));
-                }
-              }}
+              onDrop={handleDrop('doc')}
               onReject={() => toast.error('File tidak valid, gunakan format dokumen')}
-              maxSize={10 * 1024 ** 2} // 10MB
+              maxSize={10 * 1024 ** 2}
               accept={{
                 'application/pdf': ['.pdf'],
                 'application/msword': ['.doc'],
@@ -233,40 +189,19 @@ function EditAPBDes() {
               p="xl"
             >
               <Group justify="center" gap="xl" mih={150}>
-                <Dropzone.Accept>
-                  <IconUpload size={48} color={colors['blue-button']} stroke={1.5} />
-                </Dropzone.Accept>
-                <Dropzone.Reject>
-                  <IconX size={48} color="red" stroke={1.5} />
-                </Dropzone.Reject>
-                <Dropzone.Idle>
-                  <IconFile size={48} color="#868e96" stroke={1.5} />
-                </Dropzone.Idle>
+                <Dropzone.Accept><IconUpload size={48} color={colors['blue-button']} stroke={1.5} /></Dropzone.Accept>
+                <Dropzone.Reject><IconX size={48} color="red" stroke={1.5} /></Dropzone.Reject>
+                <Dropzone.Idle><IconFile size={48} color="#868e96" stroke={1.5} /></Dropzone.Idle>
                 <Stack gap="xs" align="center">
-                  <Text size="md" fw={500}>
-                    Seret dokumen atau klik untuk memilih file
-                  </Text>
-                  <Text size="sm" c="dimmed">
-                    Maksimal 10MB, format PDF/DOC/DOCX/XLS/XLSX
-                  </Text>
+                  <Text size="md" fw={500}>Seret dokumen atau klik untuk memilih file</Text>
+                  <Text size="sm" c="dimmed">Maksimal 10MB, format PDF/DOC/DOCX/XLS/XLSX</Text>
                 </Stack>
               </Group>
             </Dropzone>
-
             {previewDoc && (
               <Box mt="sm">
-                <Text size="sm" c="dimmed" mb="xs">
-                  Dokumen terpilih: {docFile?.name || 'Dokumen'}
-                </Text>
-                <Button
-                  component="a"
-                  href={previewDoc}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  variant="light"
-                  leftSection={<IconFile size={16} />}
-                  size="sm"
-                >
+                <Text size="sm" c="dimmed" mb="xs">Dokumen terpilih: {docFile?.name || 'Dokumen'}</Text>
+                <Button component="a" href={previewDoc} target="_blank" rel="noopener noreferrer" variant="light" leftSection={<IconFile size={16} />} size="sm">
                   Lihat Dokumen
                 </Button>
               </Box>

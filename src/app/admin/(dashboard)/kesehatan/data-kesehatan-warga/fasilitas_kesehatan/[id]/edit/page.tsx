@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-'use client'
+'use client';
 
 import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import fasilitasKesehatanState from '@/app/admin/(dashboard)/_state/kesehatan/data_kesehatan_warga/fasilitasKesehatan';
@@ -43,89 +43,64 @@ interface FasilitasKesehatanFormBase {
 }
 
 function EditFasilitasKesehatan() {
-  const stateFasilitasKesehatan = useProxy(fasilitasKesehatanState.fasilitasKesehatan);
+  const state = useProxy(fasilitasKesehatanState.fasilitasKesehatan);
   const router = useRouter();
   const params = useParams();
 
   const [formData, setFormData] = useState<FasilitasKesehatanFormBase>({
-    name: stateFasilitasKesehatan.edit.form.name || '',
-    informasiUmum: {
-      fasilitas: stateFasilitasKesehatan.edit.form.informasiUmum?.fasilitas || '',
-      alamat: stateFasilitasKesehatan.edit.form.informasiUmum?.alamat || '',
-      jamOperasional: stateFasilitasKesehatan.edit.form.informasiUmum?.jamOperasional || '',
-    },
-    layananUnggulan: {
-      content: stateFasilitasKesehatan.edit.form.layananUnggulan?.content || '',
-    },
-    dokterdanTenagaMedis: {
-      name: stateFasilitasKesehatan.edit.form.dokterdanTenagaMedis?.name || '',
-      specialist: stateFasilitasKesehatan.edit.form.dokterdanTenagaMedis?.specialist || '',
-      jadwal: stateFasilitasKesehatan.edit.form.dokterdanTenagaMedis?.jadwal || '',
-    },
-    fasilitasPendukung: {
-      content: stateFasilitasKesehatan.edit.form.fasilitasPendukung?.content || '',
-    },
-    prosedurPendaftaran: {
-      content: stateFasilitasKesehatan.edit.form.prosedurPendaftaran?.content || '',
-    },
-    tarifDanLayanan: {
-      layanan: stateFasilitasKesehatan.edit.form.tarifDanLayanan?.layanan || '',
-      tarif: stateFasilitasKesehatan.edit.form.tarifDanLayanan?.tarif || '',
-    },
+    name: '',
+    informasiUmum: { fasilitas: '', alamat: '', jamOperasional: '' },
+    layananUnggulan: { content: '' },
+    dokterdanTenagaMedis: { name: '', specialist: '', jadwal: '' },
+    fasilitasPendukung: { content: '' },
+    prosedurPendaftaran: { content: '' },
+    tarifDanLayanan: { layanan: '', tarif: '' },
   });
 
+  // Helper untuk update nested state
+  const updateForm = <K extends keyof FasilitasKesehatanFormBase>(
+    key: K,
+    value: FasilitasKesehatanFormBase[K]
+  ) => setFormData(prev => ({ ...prev, [key]: value }));
+
+  const updateNested = <
+    K extends keyof FasilitasKesehatanFormBase,
+    N extends keyof FasilitasKesehatanFormBase[K]
+  >(key: K, nestedKey: N, value: FasilitasKesehatanFormBase[K][N]) =>
+    setFormData(prev => ({
+      ...prev,
+      [key]: { ...prev[key] as object, [nestedKey]: value },
+    }));
+
+  // Load data
   useEffect(() => {
-    const loadFasilitasKesehatan = async () => {
+    const load = async () => {
       const id = params?.id as string;
       if (!id) return;
-
       try {
-        await stateFasilitasKesehatan.edit.load(id);
-        const { form } = stateFasilitasKesehatan.edit;
-        if (form) {
-          setFormData({
-            name: form.name,
-            informasiUmum: {
-              fasilitas: form.informasiUmum?.fasilitas || '',
-              alamat: form.informasiUmum?.alamat || '',
-              jamOperasional: form.informasiUmum?.jamOperasional || '',
-            },
-            layananUnggulan: { content: form.layananUnggulan?.content || '' },
-            dokterdanTenagaMedis: {
-              name: form.dokterdanTenagaMedis?.name || '',
-              specialist: form.dokterdanTenagaMedis?.specialist || '',
-              jadwal: form.dokterdanTenagaMedis?.jadwal || '',
-            },
-            fasilitasPendukung: { content: form.fasilitasPendukung?.content || '' },
-            prosedurPendaftaran: { content: form.prosedurPendaftaran?.content || '' },
-            tarifDanLayanan: {
-              layanan: form.tarifDanLayanan?.layanan || '',
-              tarif: form.tarifDanLayanan?.tarif || '',
-            },
-          });
-        }
-      } catch (error) {
-        console.error("Error loading fasilitas kesehatan:", error);
-        toast.error("Gagal memuat data fasilitas kesehatan");
+        await state.edit.load(id);
+        const form = state.edit.form;
+        if (form) setFormData(form as FasilitasKesehatanFormBase);
+      } catch (err) {
+        console.error(err);
+        toast.error('Gagal memuat data fasilitas kesehatan');
       }
     };
-    loadFasilitasKesehatan();
+    load();
   }, [params?.id]);
 
+  // Submit
   const handleSubmit = async () => {
     try {
-      stateFasilitasKesehatan.edit.form = {
-        ...stateFasilitasKesehatan.edit.form,
-        ...formData,
-      };
-      const success = await stateFasilitasKesehatan.edit.submit();
+      state.edit.form = { ...state.edit.form, ...formData };
+      const success = await state.edit.submit();
       if (success) {
-        toast.success("Fasilitas kesehatan berhasil diperbarui!");
-        router.push("/admin/kesehatan/data-kesehatan-warga/fasilitas_kesehatan");
+        toast.success('Fasilitas kesehatan berhasil diperbarui!');
+        router.push('/admin/kesehatan/data-kesehatan-warga/fasilitas_kesehatan');
       }
-    } catch (error) {
-      console.error("Error updating fasilitas kesehatan:", error);
-      toast.error("Terjadi kesalahan saat memperbarui data fasilitas kesehatan");
+    } catch (err) {
+      console.error(err);
+      toast.error('Terjadi kesalahan saat memperbarui data fasilitas kesehatan');
     }
   };
 
@@ -156,145 +131,104 @@ function EditFasilitasKesehatan() {
           <TextInput
             label="Nama Fasilitas Kesehatan"
             placeholder="Masukkan nama fasilitas kesehatan"
-            defaultValue={formData.name}
-            onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+            value={formData.name}
+            onChange={(e) => updateForm('name', e.target.value)}
             required
           />
 
           {/* Informasi Umum */}
           <Box>
-            <Text fw="bold" mb={5}>Informasi Umum</Text>
+            <Text fw="bold" mb={5}>
+              Informasi Umum
+            </Text>
             <TextInput
               label="Fasilitas"
-              defaultValue={formData.informasiUmum.fasilitas}
-              onChange={(e) =>
-                setFormData(prev => ({
-                  ...prev,
-                  informasiUmum: { ...prev.informasiUmum, fasilitas: e.target.value },
-                }))
-              }
+              value={formData.informasiUmum.fasilitas}
+              onChange={(e) => updateNested('informasiUmum', 'fasilitas', e.target.value)}
             />
             <TextInput
               label="Alamat"
-              defaultValue={formData.informasiUmum.alamat}
-              onChange={(e) =>
-                setFormData(prev => ({
-                  ...prev,
-                  informasiUmum: { ...prev.informasiUmum, alamat: e.target.value },
-                }))
-              }
+              value={formData.informasiUmum.alamat}
+              onChange={(e) => updateNested('informasiUmum', 'alamat', e.target.value)}
             />
             <TextInput
               label="Jam Operasional"
-              defaultValue={formData.informasiUmum.jamOperasional}
-              onChange={(e) =>
-                setFormData(prev => ({
-                  ...prev,
-                  informasiUmum: { ...prev.informasiUmum, jamOperasional: e.target.value },
-                }))
-              }
+              value={formData.informasiUmum.jamOperasional}
+              onChange={(e) => updateNested('informasiUmum', 'jamOperasional', e.target.value)}
             />
           </Box>
 
           {/* Layanan Unggulan */}
           <Box>
-            <Text fw="bold" mb={5}>Layanan Unggulan</Text>
+            <Text fw="bold" mb={5}>
+              Layanan Unggulan
+            </Text>
             <EditEditor
               value={formData.layananUnggulan.content}
-              onChange={(e) =>
-                setFormData(prev => ({
-                  ...prev,
-                  layananUnggulan: { content: e },
-                }))
-              }
+              onChange={(v) => updateNested('layananUnggulan', 'content', v)}
             />
           </Box>
 
           {/* Dokter dan Tenaga Medis */}
           <Box>
-            <Text fw="bold" mb={5}>Dokter dan Tenaga Medis</Text>
+            <Text fw="bold" mb={5}>
+              Dokter dan Tenaga Medis
+            </Text>
             <TextInput
               label="Nama Dokter"
-              defaultValue={formData.dokterdanTenagaMedis.name}
-              onChange={(e) =>
-                setFormData(prev => ({
-                  ...prev,
-                  dokterdanTenagaMedis: { ...prev.dokterdanTenagaMedis, name: e.target.value },
-                }))
-              }
+              value={formData.dokterdanTenagaMedis.name}
+              onChange={(e) => updateNested('dokterdanTenagaMedis', 'name', e.target.value)}
             />
             <TextInput
               label="Specialist"
-              defaultValue={formData.dokterdanTenagaMedis.specialist}
+              value={formData.dokterdanTenagaMedis.specialist}
               onChange={(e) =>
-                setFormData(prev => ({
-                  ...prev,
-                  dokterdanTenagaMedis: { ...prev.dokterdanTenagaMedis, specialist: e.target.value },
-                }))
+                updateNested('dokterdanTenagaMedis', 'specialist', e.target.value)
               }
             />
             <TextInput
               label="Jadwal"
-              defaultValue={formData.dokterdanTenagaMedis.jadwal}
-              onChange={(e) =>
-                setFormData(prev => ({
-                  ...prev,
-                  dokterdanTenagaMedis: { ...prev.dokterdanTenagaMedis, jadwal: e.target.value },
-                }))
-              }
+              value={formData.dokterdanTenagaMedis.jadwal}
+              onChange={(e) => updateNested('dokterdanTenagaMedis', 'jadwal', e.target.value)}
             />
           </Box>
 
           {/* Fasilitas Pendukung */}
           <Box>
-            <Text fw="bold" mb={5}>Fasilitas Pendukung</Text>
+            <Text fw="bold" mb={5}>
+              Fasilitas Pendukung
+            </Text>
             <EditEditor
               value={formData.fasilitasPendukung.content}
-              onChange={(e) =>
-                setFormData(prev => ({
-                  ...prev,
-                  fasilitasPendukung: { content: e },
-                }))
-              }
+              onChange={(v) => updateNested('fasilitasPendukung', 'content', v)}
             />
           </Box>
 
           {/* Prosedur Pendaftaran */}
           <Box>
-            <Text fw="bold" mb={5}>Prosedur Pendaftaran</Text>
+            <Text fw="bold" mb={5}>
+              Prosedur Pendaftaran
+            </Text>
             <EditEditor
               value={formData.prosedurPendaftaran.content}
-              onChange={(e) =>
-                setFormData(prev => ({
-                  ...prev,
-                  prosedurPendaftaran: { content: e },
-                }))
-              }
+              onChange={(v) => updateNested('prosedurPendaftaran', 'content', v)}
             />
           </Box>
 
           {/* Tarif dan Layanan */}
           <Box>
-            <Text fw="bold" mb={5}>Tarif dan Layanan</Text>
+            <Text fw="bold" mb={5}>
+              Tarif dan Layanan
+            </Text>
             <TextInput
               label="Tarif"
-              defaultValue={formData.tarifDanLayanan.tarif}
-              onChange={(e) =>
-                setFormData(prev => ({
-                  ...prev,
-                  tarifDanLayanan: { ...prev.tarifDanLayanan, tarif: e.target.value },
-                }))
-              }
+              value={formData.tarifDanLayanan.tarif}
+              onChange={(e) => updateNested('tarifDanLayanan', 'tarif', e.target.value)}
             />
             <TextInput
               label="Layanan"
-              defaultValue={formData.tarifDanLayanan.layanan}
-              onChange={(e) =>
-                setFormData(prev => ({
-                  ...prev,
-                  tarifDanLayanan: { ...prev.tarifDanLayanan, layanan: e.target.value },
-                }))
-              }
+              value={formData.tarifDanLayanan.layanan}
+              onChange={(e) => updateNested('tarifDanLayanan', 'layanan', e.target.value)}
             />
           </Box>
 
@@ -304,7 +238,7 @@ function EditFasilitasKesehatan() {
               onClick={handleSubmit}
               radius="md"
               size="md"
-              loading={stateFasilitasKesehatan.edit.loading}
+              loading={state.edit.loading}
               style={{
                 background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',

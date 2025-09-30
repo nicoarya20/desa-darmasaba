@@ -41,6 +41,7 @@ function EditProgramKreatifDesa() {
     icon: '',
   });
 
+  // Load data hanya sekali berdasarkan params.id
   useEffect(() => {
     const loadProgramKreatif = async () => {
       const id = params?.id as string;
@@ -50,17 +51,11 @@ function EditProgramKreatifDesa() {
         const data = await stateProgramKreatif.update.load(id);
         if (data) {
           stateProgramKreatif.update.id = id;
-          stateProgramKreatif.update.form = {
-            name: data.name,
-            slug: data.slug,
-            deskripsi: data.deskripsi,
-            icon: data.icon,
-          };
           setFormData({
-            name: data.name,
-            slug: data.slug,
-            deskripsi: data.deskripsi,
-            icon: data.icon,
+            name: data.name || '',
+            slug: data.slug || '',
+            deskripsi: data.deskripsi || '',
+            icon: data.icon || '',
           });
         }
       } catch (error) {
@@ -72,10 +67,15 @@ function EditProgramKreatifDesa() {
     loadProgramKreatif();
   }, [params?.id]);
 
+  const handleChange =
+    (field: keyof FormProgramKreatif) =>
+    (value: string) => {
+      setFormData((prev) => ({ ...prev, [field]: value }));
+    };
+
   const handleSubmit = async () => {
     try {
       stateProgramKreatif.update.form = {
-        ...stateProgramKreatif.update.form,
         name: formData.name.trim(),
         deskripsi: formData.deskripsi.trim(),
         slug: formData.slug.trim(),
@@ -85,7 +85,7 @@ function EditProgramKreatifDesa() {
       router.push('/admin/inovasi/program-kreatif-desa');
     } catch (error) {
       console.error('Error updating program kreatif:', error);
-      toast.error('Gagal memuat data program kreatif');
+      toast.error('Gagal menyimpan program kreatif');
     }
   };
 
@@ -93,7 +93,12 @@ function EditProgramKreatifDesa() {
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
       <Group mb="md">
         <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+          <Button
+            variant="subtle"
+            onClick={() => router.back()}
+            p="xs"
+            radius="md"
+          >
             <IconArrowBack color={colors['blue-button']} size={24} />
           </Button>
         </Tooltip>
@@ -114,16 +119,16 @@ function EditProgramKreatifDesa() {
           <TextInput
             label="Nama Program Kreatif Desa"
             placeholder="Masukkan nama program kreatif desa"
-            defaultValue={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            value={formData.name}
+            onChange={(e) => handleChange('name')(e.target.value)}
             required
           />
 
           <TextInput
             label="Deskripsi Singkat Program Kreatif Desa"
             placeholder="Masukkan deskripsi singkat program kreatif desa"
-            defaultValue={formData.slug}
-            onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+            value={formData.slug}
+            onChange={(e) => handleChange('slug')(e.target.value)}
             required
           />
 
@@ -133,10 +138,7 @@ function EditProgramKreatifDesa() {
             </Text>
             <EditEditor
               value={formData.deskripsi}
-              onChange={(htmlContent) => {
-                setFormData((prev) => ({ ...prev, deskripsi: htmlContent }));
-                stateProgramKreatif.update.form.deskripsi = htmlContent;
-              }}
+              onChange={handleChange('deskripsi')}
             />
           </Box>
 
@@ -146,10 +148,7 @@ function EditProgramKreatifDesa() {
             </Text>
             <SelectIconProgramEdit
               value={formData.icon as IconKey}
-              onChange={(value) => {
-                setFormData((prev) => ({ ...prev, icon: value }));
-                stateProgramKreatif.update.form.icon = value;
-              }}
+              onChange={handleChange('icon')}
             />
           </Box>
 

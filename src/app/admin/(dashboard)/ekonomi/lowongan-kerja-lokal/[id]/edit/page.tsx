@@ -26,15 +26,16 @@ function EditLowonganKerja() {
   const params = useParams();
 
   const [formData, setFormData] = useState({
-    posisi: lowonganKerjaState.update.form.posisi,
-    namaPerusahaan: lowonganKerjaState.update.form.namaPerusahaan,
-    lokasi: lowonganKerjaState.update.form.lokasi,
-    tipePekerjaan: lowonganKerjaState.update.form.tipePekerjaan,
-    gaji: lowonganKerjaState.update.form.gaji,
-    deskripsi: lowonganKerjaState.update.form.deskripsi,
-    kualifikasi: lowonganKerjaState.update.form.kualifikasi,
+    posisi: '',
+    namaPerusahaan: '',
+    lokasi: '',
+    tipePekerjaan: '',
+    gaji: '',
+    deskripsi: '',
+    kualifikasi: '',
   });
 
+  // load data sekali aja ketika mount / id berubah
   useEffect(() => {
     const loadLowongan = async () => {
       const id = params?.id as string;
@@ -62,14 +63,17 @@ function EditLowonganKerja() {
     loadLowongan();
   }, [params?.id]);
 
+  const handleChange = (field: string, value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
   const handleSubmit = async () => {
     try {
       lowonganState.update.id = params?.id as string;
-
-      lowonganState.update.form = {
-        ...lowonganState.update.form,
-        ...formData,
-      };
+      lowonganState.update.form = { ...formData };
 
       await lowonganState.update.update();
       toast.success("Lowongan kerja berhasil diperbarui!");
@@ -107,40 +111,40 @@ function EditLowonganKerja() {
           <TextInput
             label="Posisi"
             placeholder="Masukkan posisi"
-            defaultValue={formData.posisi}
-            onChange={(e) => setFormData({ ...formData, posisi: e.target.value })}
+            value={formData.posisi}
+            onChange={(e) => handleChange("posisi", e.target.value)}
             required
           />
 
           <TextInput
             label="Nama Perusahaan"
             placeholder="Masukkan nama perusahaan"
-            defaultValue={formData.namaPerusahaan}
-            onChange={(e) => setFormData({ ...formData, namaPerusahaan: e.target.value })}
+            value={formData.namaPerusahaan}
+            onChange={(e) => handleChange("namaPerusahaan", e.target.value)}
             required
           />
 
           <TextInput
             label="Lokasi"
             placeholder="Masukkan lokasi"
-            defaultValue={formData.lokasi}
-            onChange={(e) => setFormData({ ...formData, lokasi: e.target.value })}
+            value={formData.lokasi}
+            onChange={(e) => handleChange("lokasi", e.target.value)}
             required
           />
 
           <TextInput
             label="Tipe Pekerjaan"
             placeholder="Masukkan tipe pekerjaan"
-            defaultValue={formData.tipePekerjaan}
-            onChange={(e) => setFormData({ ...formData, tipePekerjaan: e.target.value })}
+            value={formData.tipePekerjaan}
+            onChange={(e) => handleChange("tipePekerjaan", e.target.value)}
             required
           />
 
           <TextInput
             label="Gaji (per bulan)"
             placeholder="Masukkan gaji"
-            defaultValue={formData.gaji}
-            onChange={(e) => setFormData({ ...formData, gaji: e.target.value })}
+            value={formData.gaji}
+            onChange={(e) => handleChange("gaji", e.target.value)}
             required
           />
 
@@ -150,7 +154,7 @@ function EditLowonganKerja() {
             </Text>
             <EditEditor
               value={formData.deskripsi}
-              onChange={(val) => setFormData({ ...formData, deskripsi: val })}
+              onChange={(val) => handleChange("deskripsi", val)}
             />
           </Box>
 
@@ -160,7 +164,7 @@ function EditLowonganKerja() {
             </Text>
             <EditEditor
               value={formData.kualifikasi}
-              onChange={(val) => setFormData({ ...formData, kualifikasi: val })}
+              onChange={(val) => handleChange("kualifikasi", val)}
             />
           </Box>
 

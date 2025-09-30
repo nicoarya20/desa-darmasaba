@@ -14,30 +14,43 @@ const EdukasiLingkunganTextEditor = dynamic(
   { ssr: false }
 );
 
-function EditMateriEdukasiYangDiberikan() {
+export default function EditMateriEdukasiYangDiberikan() {
   const router = useRouter();
   const materiEdukasiState = useProxy(stateEdukasiLingkungan.stateMateriEdukasiLingkungan);
-  const [judul, setJudul] = useState('');
-  const [content, setContent] = useState('');
 
+  // State lokal gabungan untuk form
+  const [formData, setFormData] = useState({ judul: '', content: '' });
+
+  // Initialize data kalau belum ada
   useShallowEffect(() => {
     if (!materiEdukasiState.findById.data) {
       materiEdukasiState.findById.initialize();
     }
   }, []);
 
+  // Set formData saat data tersedia
   useEffect(() => {
     if (materiEdukasiState.findById.data) {
-      setJudul(materiEdukasiState.findById.data.judul ?? '');
-      setContent(materiEdukasiState.findById.data.deskripsi ?? '');
+      setFormData({
+        judul: materiEdukasiState.findById.data.judul ?? '',
+        content: materiEdukasiState.findById.data.deskripsi ?? '',
+      });
     }
   }, [materiEdukasiState.findById.data]);
 
+  // Handler perubahan form
+  const handleChange = (field: 'judul' | 'content', value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
   const submit = () => {
     if (materiEdukasiState.findById.data) {
-      materiEdukasiState.findById.data.judul = judul;
-      materiEdukasiState.findById.data.deskripsi = content;
-      materiEdukasiState.update.save(materiEdukasiState.findById.data);
+      const updatedData = {
+        ...materiEdukasiState.findById.data,
+        judul: formData.judul,
+        deskripsi: formData.content,
+      };
+      materiEdukasiState.update.save(updatedData);
     }
     router.push('/admin/lingkungan/edukasi-lingkungan/materi-edukasi-yang-diberikan');
   };
@@ -66,14 +79,22 @@ function EditMateriEdukasiYangDiberikan() {
             <Text fw="bold" mb={6}>
               Judul
             </Text>
-            <EdukasiLingkunganTextEditor showSubmit={false} onChange={setJudul} initialContent={judul} />
+            <EdukasiLingkunganTextEditor
+              showSubmit={false}
+              onChange={(val) => handleChange('judul', val)}
+              initialContent={formData.judul}
+            />
           </Box>
 
           <Box>
             <Text fw="bold" mb={6}>
               Konten
             </Text>
-            <EdukasiLingkunganTextEditor showSubmit={false} onChange={setContent} initialContent={content} />
+            <EdukasiLingkunganTextEditor
+              showSubmit={false}
+              onChange={(val) => handleChange('content', val)}
+              initialContent={formData.content}
+            />
           </Box>
 
           <Group justify="right" mt="md">
@@ -96,5 +117,3 @@ function EditMateriEdukasiYangDiberikan() {
     </Box>
   );
 }
-
-export default EditMateriEdukasiYangDiberikan;
