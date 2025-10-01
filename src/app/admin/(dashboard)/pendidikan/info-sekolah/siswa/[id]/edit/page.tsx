@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
+
 import infoSekolahPaud from '@/app/admin/(dashboard)/_state/pendidikan/info-sekolah-paud';
 import colors from '@/con/colors';
 import {
@@ -35,6 +36,7 @@ function EditSiswa() {
     lembagaId: '',
   });
 
+  // Load data siswa
   useEffect(() => {
     const loadSiswa = async () => {
       const id = params?.id as string;
@@ -53,10 +55,20 @@ function EditSiswa() {
         toast.error('Gagal memuat data siswa');
       }
     };
+
     infoSekolahPaud.lembagaPendidikan.findMany.load();
     loadSiswa();
   }, [params?.id]);
 
+  // Handler update local formData
+  const handleChange = (field: keyof FormSiswa, value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  // Submit ke global state
   const handleSubmit = async () => {
     try {
       siswaState.edit.form = {
@@ -75,7 +87,7 @@ function EditSiswa() {
 
   return (
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
-      {/* Header dengan tombol kembali */}
+      {/* Header */}
       <Group mb="md">
         <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
           <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
@@ -87,7 +99,7 @@ function EditSiswa() {
         </Title>
       </Group>
 
-      {/* Card Form */}
+      {/* Form Card */}
       <Paper
         w={{ base: '100%', md: '50%' }}
         bg={colors['white-1']}
@@ -100,8 +112,8 @@ function EditSiswa() {
           <TextInput
             label={<Text fz="sm" fw="bold">Nama Siswa</Text>}
             placeholder="Masukkan nama siswa"
-            defaultValue={formData.nama}
-            onChange={(e) => setFormData({ ...formData, nama: e.target.value })}
+            value={formData.nama}
+            onChange={(e) => handleChange('nama', e.target.value)}
             required
           />
 
@@ -115,7 +127,7 @@ function EditSiswa() {
               })) ?? []
             }
             value={formData.lembagaId}
-            onChange={(val) => setFormData({ ...formData, lembagaId: val ?? '' })}
+            onChange={(val) => handleChange('lembagaId', val ?? '')}
             required
           />
 

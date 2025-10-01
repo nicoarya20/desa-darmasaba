@@ -2,8 +2,9 @@ import Elysia, { t } from "elysia";
 import pegawaiFindMany from "./findMany";
 import pegawaiFindUnique from "./findUnique";
 import pegawaiCreate from "./create";
-import pegawaiDelete from "./del";
+import pegawaiNonActive from "./nonActive";
 import pegawaiUpdate from "./updt";
+import pegawaiDelete from "./del";
 
 
 const Pegawai = new Elysia({
@@ -58,6 +59,7 @@ const Pegawai = new Elysia({
   )
 
   // ✅ Delete
+  .delete("/non-active/:id", pegawaiNonActive)
   .delete("/del/:id", pegawaiDelete);
 
 export default Pegawai;

@@ -18,7 +18,9 @@ function Page() {
   const router = useRouter();
   const params = useParams();
 
-  const [images, setImages] = useState<Array<{ file: File | null; preview: string; label: string }>>([]);
+  const [images, setImages] = useState<
+  Array<{ file: File | null; preview: string; label: string; imageId?: string }>
+>([]);
   const [formData, setFormData] = useState({
     judul: '',
     deskripsi: '',
@@ -55,6 +57,7 @@ function Page() {
               file: null,
               preview: img.image.link,
               label: img.label,
+              imageId: img.image.id, // simpan id lama
             })));
           }
         }
@@ -88,25 +91,24 @@ function Page() {
       // Upload semua gambar baru
       for (const img of images) {
         if (!img.file) {
-          // Kalau gambar lama, skip upload
-          if (!img.preview) continue;
-          uploadedImages.push({ imageId: '', label: img.label });
+          if (!img.imageId) continue; // kalau benar2 kosong, skip
+          uploadedImages.push({ imageId: img.imageId, label: img.label });
           continue;
         }
-
+      
+        // upload baru
         const res = await ApiFetch.api.fileStorage.create.post({
           file: img.file,
           name: img.file.name,
         });
-
         const uploaded = res.data?.data;
         if (!uploaded?.id) {
           toast.error("Gagal upload salah satu gambar");
           return;
         }
-
-        uploadedImages.push({ imageId: uploaded.id, label: img.label || 'main' });
+        uploadedImages.push({ imageId: uploaded.id, label: img.label || "main" });
       }
+      
 
       // Update ke global state
       maskotState.update.updateField("judul", formData.judul);

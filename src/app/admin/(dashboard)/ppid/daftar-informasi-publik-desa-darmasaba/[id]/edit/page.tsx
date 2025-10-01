@@ -1,5 +1,6 @@
-'use client';
 /* eslint-disable react-hooks/exhaustive-deps */
+'use client';
+
 import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import daftarInformasiPublik from '@/app/admin/(dashboard)/_state/ppid/daftar_informasi_publik/daftarInformasiPublik';
 import colors from '@/con/colors';
@@ -17,15 +18,15 @@ interface FormDaftarInformasi {
 }
 
 function EditDaftarInformasiPublik() {
-  const daftarInformasi = useProxy(daftarInformasiPublik)
-  const router = useRouter()
-  const params = useParams()
+  const daftarInformasi = useProxy(daftarInformasiPublik);
+  const router = useRouter();
+  const params = useParams();
 
   const [formData, setFormData] = useState<FormDaftarInformasi>({
     jenisInformasi: '',
     deskripsi: '',
     tanggal: '',
-  })
+  });
 
   const formatDateForInput = (dateString: string) => {
     if (!dateString) return '';
@@ -33,6 +34,7 @@ function EditDaftarInformasiPublik() {
     return date.toISOString().split('T')[0];
   };
 
+  // Load data once on mount / when ID changes
   useEffect(() => {
     const loadDaftarInformasi = async () => {
       const id = params?.id as string;
@@ -48,13 +50,17 @@ function EditDaftarInformasiPublik() {
           });
         }
       } catch (error) {
-        console.error("Error loading daftar informasi:", error);
-        toast.error("Gagal memuat data daftar informasi");
+        console.error('Error loading daftar informasi:', error);
+        toast.error('Gagal memuat data daftar informasi');
       }
-    }
+    };
 
     loadDaftarInformasi();
   }, [params?.id]);
+
+  const handleChange = (field: keyof FormDaftarInformasi, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
 
   const handleSubmit = async () => {
     try {
@@ -63,14 +69,14 @@ function EditDaftarInformasiPublik() {
         jenisInformasi: formData.jenisInformasi.trim(),
         deskripsi: formData.deskripsi.trim(),
         tanggal: formData.tanggal.trim(),
-      }
-      await daftarInformasi.edit.update()
-      router.push("/admin/ppid/daftar-informasi-publik-desa-darmasaba");
+      };
+      await daftarInformasi.edit.update();
+      router.push('/admin/ppid/daftar-informasi-publik-desa-darmasaba');
     } catch (error) {
-      console.error("Error updating berita:", error);
-      toast.error("Terjadi kesalahan saat memperbarui berita");
+      console.error('Error updating berita:', error);
+      toast.error('Terjadi kesalahan saat memperbarui berita');
     }
-  }
+  };
 
   return (
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
@@ -97,13 +103,8 @@ function EditDaftarInformasiPublik() {
           <TextInput
             label="Jenis Informasi"
             placeholder="Masukkan jenis informasi"
-            defaultValue={formData.jenisInformasi}
-            onChange={(val) => {
-              setFormData({
-                ...formData,
-                jenisInformasi: val.target.value
-              });
-            }}
+            value={formData.jenisInformasi}
+            onChange={(e) => handleChange('jenisInformasi', e.target.value)}
             required
           />
 
@@ -113,10 +114,7 @@ function EditDaftarInformasiPublik() {
             </Text>
             <EditEditor
               value={formData.deskripsi}
-              onChange={(htmlContent) => {
-                setFormData((prev) => ({ ...prev, deskripsi: htmlContent }));
-                daftarInformasi.edit.form.deskripsi = htmlContent;
-              }}
+              onChange={(htmlContent) => handleChange('deskripsi', htmlContent)}
             />
           </Box>
 
@@ -124,13 +122,8 @@ function EditDaftarInformasiPublik() {
             type="date"
             label="Tanggal Publikasi"
             placeholder="Pilih tanggal publikasi"
-            defaultValue={formatDateForInput(formData.tanggal)}
-            onChange={(val) => {
-              setFormData({
-                ...formData,
-                tanggal: val.target.value
-              });
-            }}
+            value={formatDateForInput(formData.tanggal)}
+            onChange={(e) => handleChange('tanggal', e.target.value)}
             required
           />
 

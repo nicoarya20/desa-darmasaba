@@ -44,32 +44,40 @@ function EditSuratKeterangan() {
   const [previewImage2, setPreviewImage2] = useState<string | null>(null);
 
   // load data awal
-  useEffect(() => {
-    const loadSurat = async () => {
-      const id = params?.id as string;
-      if (!id) return;
+useEffect(() => {
+  const loadSurat = async () => {
+    const id = params?.id as string;
+    if (!id) return;
 
-      try {
-        const data = await stateSurat.edit.load(id);
-        if (data) {
-          setFormData({
-            name: data.name || '',
-            deskripsi: data.deskripsi || '',
-            imageId: data.imageId || '',
-            image2Id: data.image2Id || '',
-          });
+    try {
+      const data = await stateSurat.edit.load(id);
+      if (data) {
+        // merge style -> isi hanya field kosong
+        setFormData((prev) => ({
+          ...prev,
+          name: prev.name || data.name || '',
+          deskripsi: prev.deskripsi || data.deskripsi || '',
+          imageId: prev.imageId || data.imageId || '',
+          image2Id: prev.image2Id || data.image2Id || '',
+        }));
 
-          setPreviewImage(data.image?.link || null);
-          setPreviewImage2(data.image2?.link || null);
+        if (data.image?.link && !previewImage) {
+          setPreviewImage(data.image.link);
         }
-      } catch (error) {
-        console.error('Error loading surat:', error);
-        toast.error('Gagal memuat data surat');
+        if (data.image2?.link && !previewImage2) {
+          setPreviewImage2(data.image2.link);
+        }
       }
-    };
+    } catch (error) {
+      console.error("Error loading surat:", error);
+      toast.error("Gagal memuat data surat");
+    }
+  };
 
-    loadSurat();
-  }, [params?.id, stateSurat.edit]);
+  loadSurat();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+}, [params?.id]);
+
 
   // handler untuk submit
   const handleSubmit = useCallback(async () => {

@@ -5,7 +5,7 @@ import colors from '@/con/colors';
 import { Box, Button, Group, Paper, Stack, TextInput, Title, Tooltip } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import dataPendidikan from '../../../_state/pendidikan/data-pendidikan';
 
@@ -15,23 +15,35 @@ export default function EditDataPendidikan() {
   const stateDPM = useProxy(dataPendidikan);
   const id = params.id;
 
+  // state lokal untuk form
+  const [formData, setFormData] = useState({
+    name: '',
+    jumlah: '',
+  });
+
   // Load data saat mount
   useEffect(() => {
     if (id) {
       stateDPM.findUnique.load(id).then(() => {
         const data = stateDPM.findUnique.data;
         if (data) {
-          stateDPM.update.form = {
+          setFormData({
             name: data.name || '',
             jumlah: data.jumlah || '',
-          };
+          });
         }
       });
     }
   }, [id]);
 
+  const handleChange = (field: 'name' | 'jumlah', value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
   const handleSubmit = async () => {
+    // update global state hanya saat submit
     stateDPM.update.id = id;
+    stateDPM.update.form = { ...formData };
     await stateDPM.update.submit();
     router.push('/admin/pendidikan/data-pendidikan');
   };
@@ -59,8 +71,8 @@ export default function EditDataPendidikan() {
           <TextInput
             label="Nama Pendidikan"
             placeholder="Contoh: SD, SMP, SMA"
-            defaultValue={stateDPM.update.form.name}
-            onChange={(e) => (stateDPM.update.form.name = e.currentTarget.value)}
+            value={formData.name}
+            onChange={(e) => handleChange('name', e.currentTarget.value)}
             radius="md"
             required
           />
@@ -68,8 +80,8 @@ export default function EditDataPendidikan() {
             label="Jumlah Peserta"
             type="number"
             placeholder="Masukkan jumlah peserta"
-            defaultValue={stateDPM.update.form.jumlah}
-            onChange={(e) => (stateDPM.update.form.jumlah = e.currentTarget.value)}
+            value={formData.jumlah}
+            onChange={(e) => handleChange('jumlah', e.currentTarget.value)}
             radius="md"
             required
           />

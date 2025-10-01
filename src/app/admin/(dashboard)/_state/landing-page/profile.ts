@@ -388,16 +388,15 @@ const pejabatDesa = proxy({
       this.error = null;
 
       try {
-        const response = await fetch(
-          `/api/landingpage/pejabatdesa/${this.id}`,
-          {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(this.form),
-          }
-        );
+        // Ensure ID is properly encoded in the URL
+        const url = new URL(`/api/landingpage/pejabatdesa/${encodeURIComponent(this.id)}`, window.location.origin);
+        const response = await fetch(url.toString(), {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(this.form),
+        });
 
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));

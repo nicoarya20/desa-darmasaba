@@ -162,7 +162,7 @@ function Page() {
                     style={{ mt: -30, boxShadow: '0 4px 20px rgba(0,0,0,0.15)' }}
                   >
                     <Text ta="center" c={colors['white-1']} fw="bolder" fz={{ base: "1.2rem", md: "1.6rem" }}>
-                      Lambang Desa
+                      {lambang.judul}
                     </Text>
                   </Paper>
                 </Stack>
@@ -216,7 +216,7 @@ function Page() {
                 <Divider my="md" color={colors['blue-button']} />
                 <Text fz={{ base: "md", md: "h3" }} ta="justify" style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: maskot.deskripsi }} />
                 <Stack mt="md" gap="sm">
-                  <SimpleGrid cols={{ base: 2, md: 4 }} spacing="md">
+                  <SimpleGrid cols={{ base: 1, md: 4 }} spacing="md">
                     {maskot.images.map((img, idx) => (
                       <Card withBorder key={idx} p="xs" w={{ base: '100%', md: 180 }}>
                         <Center>

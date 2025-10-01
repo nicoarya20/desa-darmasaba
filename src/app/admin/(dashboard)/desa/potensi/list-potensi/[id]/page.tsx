@@ -25,7 +25,7 @@ export default function DetailPotensi() {
       potensiState.delete.byId(selectedId);
       setModalHapus(false);
       setSelectedId(null);
-      router.push("/admin/desa/potensi");
+      router.push("/admin/desa/potensi/list-potensi");
     }
   };
 
@@ -77,7 +77,7 @@ export default function DetailPotensi() {
 
               <Box>
                 <Text fz="lg" fw="bold">Deskripsi</Text>
-                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }}>{data.deskripsi || '-'}</Text>
+                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data.deskripsi || '-' }}></Text>
               </Box>
 
               <Box>

@@ -1,4 +1,5 @@
 'use client'
+
 import stateBimbinganBelajarDesa from '@/app/admin/(dashboard)/_state/pendidikan/bimbingan-belajar-desa';
 import colors from '@/con/colors';
 import {
@@ -33,8 +34,8 @@ function EditFasilitasYangDisediakan() {
   const router = useRouter();
   const editState = useProxy(stateBimbinganBelajarDesa.fasilitasYangDisediakanState);
 
-  const [judul, setJudul] = useState('');
-  const [content, setContent] = useState('');
+  // === State lokal form ===
+  const [formData, setFormData] = useState({ judul: '', deskripsi: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Load data pertama kali
@@ -44,16 +45,22 @@ function EditFasilitasYangDisediakan() {
     }
   }, []);
 
-  // Sinkronkan state dengan data yang sudah di-load
+  // Sinkronkan formData saat data load
   useEffect(() => {
     if (editState.findById.data) {
-      setJudul(editState.findById.data.judul ?? '');
-      setContent(editState.findById.data.deskripsi ?? '');
+      setFormData({
+        judul: editState.findById.data.judul ?? '',
+        deskripsi: editState.findById.data.deskripsi ?? ''
+      });
     }
   }, [editState.findById.data]);
 
+  const handleChange = (field: 'judul' | 'deskripsi', value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
   const handleSubmit = async () => {
-    if (!judul.trim()) {
+    if (!formData.judul.trim()) {
       toast.error('Judul wajib diisi');
       return;
     }
@@ -61,9 +68,13 @@ function EditFasilitasYangDisediakan() {
     setIsSubmitting(true);
     try {
       if (editState.findById.data) {
-        editState.findById.data.judul = judul;
-        editState.findById.data.deskripsi = content;
-        await editState.update.save(editState.findById.data);
+        // Update global state hanya saat submit
+        const payload = {
+          ...editState.findById.data,
+          judul: formData.judul,
+          deskripsi: formData.deskripsi
+        };
+        await editState.update.save(payload);
 
         toast.success('Berhasil menyimpan perubahan');
         router.push('/admin/pendidikan/bimbingan-belajar-desa/fasilitas-yang-disediakan');
@@ -78,7 +89,6 @@ function EditFasilitasYangDisediakan() {
 
   const handleBack = () => router.back();
 
-  // Loading state
   if (editState.findById.loading) {
     return (
       <Box>
@@ -123,9 +133,9 @@ function EditFasilitasYangDisediakan() {
             <TextInput
               label={<Text fw="bold">Judul</Text>}
               placeholder="Masukkan judul fasilitas"
-              defaultValue={judul}
-              onChange={(e) => setJudul(e.currentTarget.value)}
-              error={!judul && 'Judul wajib diisi'}
+              value={formData.judul}
+              onChange={(e) => handleChange('judul', e.currentTarget.value)}
+              error={!formData.judul && 'Judul wajib diisi'}
             />
 
             {/* Deskripsi */}
@@ -133,8 +143,8 @@ function EditFasilitasYangDisediakan() {
               <Text fz="sm" fw="bold" mb="xs">Deskripsi</Text>
               <BimbinganBelajarDesaTextEditor
                 showSubmit={false}
-                onChange={setContent}
-                initialContent={content}
+                onChange={(value) => handleChange('deskripsi', value)}
+                initialContent={formData.deskripsi}
               />
             </Box>
 
@@ -144,7 +154,7 @@ function EditFasilitasYangDisediakan() {
                 bg={colors['blue-button']}
                 onClick={handleSubmit}
                 loading={isSubmitting || editState.update.loading}
-                disabled={!judul}
+                disabled={!formData.judul}
               >
                 {isSubmitting ? 'Menyimpan...' : 'Simpan Perubahan'}
               </Button>

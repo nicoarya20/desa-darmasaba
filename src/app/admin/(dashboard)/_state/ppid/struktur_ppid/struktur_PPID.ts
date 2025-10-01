@@ -381,7 +381,44 @@ const posisiOrganisasi = proxy({
       }
     },
   },
+  findManyAll: {
+    data: [] as Array<{
+      id: string;
+      nama: string;
+      deskripsi: string | null;
+      hierarki: number;
+    }>,
+    loading: false,
+    search: "",
+    load: async (search = "") => {
+      // Change to arrow function
+      posisiOrganisasi.findManyAll.loading = true; // Use the full path to access the property
+      posisiOrganisasi.findManyAll.search = search;
+      try {
+        const query: any = { search };
+        if (search) query.search = search;
 
+        const res = await ApiFetch.api.ppid.strukturppid.posisiorganisasi[
+          "find-many-all"
+        ].get({
+          query,
+        });
+
+        if (res.status === 200 && res.data?.success) {
+          posisiOrganisasi.findManyAll.data = res.data.data || [];
+
+        } else {
+          console.error("Failed to load posisiOrganisasi:", res.data?.message);
+          posisiOrganisasi.findManyAll.data = [];
+        }
+      } catch (error) {
+        console.error("Error loading posisiOrganisasi:", error);
+        posisiOrganisasi.findManyAll.data = [];
+      } finally {
+        posisiOrganisasi.findManyAll.loading = false;
+      }
+    },
+  },
   delete: {
     loading: false,
     async byId(id: string) {
@@ -567,6 +604,31 @@ const pegawai = proxy({
         toast.error("Terjadi kesalahan saat menghapus");
       } finally {
         pegawai.delete.loading = false;
+      }
+    },
+  },
+
+  nonActive: {
+    loading: false,
+    async byId(id: string) {
+      if (!id) return toast.warn("ID tidak valid");
+      try {
+        pegawai.nonActive.loading = true;
+        const res = await fetch(`/api/ppid/strukturppid/pegawai/non-active/${id}`, {
+          method: "DELETE", // biasanya nonActive pakai PATCH
+        });
+        const json = await res.json();
+        if (res.ok) {
+          toast.success(json.message ?? "Pegawai berhasil dinonaktifkan");
+          await pegawai.findMany.load(); // refresh data
+        } else {
+          toast.error(json.message ?? "Gagal menonaktifkan pegawai");
+        }
+      } catch (error) {
+        console.error("Gagal nonActive:", error);
+        toast.error("Terjadi kesalahan saat menonaktifkan pegawai");
+      } finally {
+        pegawai.nonActive.loading = false;
       }
     },
   },

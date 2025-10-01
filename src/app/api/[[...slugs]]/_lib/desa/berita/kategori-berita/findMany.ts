@@ -27,7 +27,7 @@ async function kategoriBeritaFindMany(context: Context) {
         where,
         skip,
         take: limit,
-        orderBy: { createdAt: 'desc' },
+        orderBy: { createdAt: 'asc' },
       }),
       prisma.kategoriBerita.count({ where }),
     ]);

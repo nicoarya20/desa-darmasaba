@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client';
+
 import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import stateStrukturPPID from '@/app/admin/(dashboard)/_state/ppid/struktur_ppid/struktur_PPID';
 import colors from '@/con/colors';
@@ -17,20 +19,23 @@ function EditPosisiOrganisasiPPID() {
   const stateOrganisasi = useProxy(stateStrukturPPID.posisiOrganisasi);
 
   const [formData, setFormData] = useState({
-    nama: "",
-    deskripsi: "",
+    nama: '',
+    deskripsi: '',
     hierarki: 0,
   });
 
-  useEffect(() => {
-    const loadPosisiOrganisasi = async () => {
-      if (!id) return;
+  // Fungsi generik untuk update formData
+  const handleChange = (field: keyof typeof formData, value: any) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
 
+  useEffect(() => {
+    if (!id) return;
+
+    const loadPosisiOrganisasi = async () => {
       try {
         const data = await stateOrganisasi.edit.load(id);
-
         if (data) {
-          // pastikan id-nya masuk ke state edit
           stateOrganisasi.edit.id = id;
           setFormData({
             nama: data.nama || '',
@@ -38,9 +43,9 @@ function EditPosisiOrganisasiPPID() {
             hierarki: data.hierarki || 0,
           });
         }
-      } catch (error) {
-        console.error("Error loading posisi organisasi:", error);
-        toast.error("Gagal memuat data posisi organisasi");
+      } catch (err) {
+        console.error('Error loading posisi organisasi:', err);
+        toast.error('Gagal memuat data posisi organisasi');
       }
     };
 
@@ -48,31 +53,31 @@ function EditPosisiOrganisasiPPID() {
   }, [id]);
 
   const handleSubmit = async () => {
-    try {
-      if (!formData.nama.trim()) {
-        toast.error('Nama posisi organisasi tidak boleh kosong');
-        return;
-      }
+    if (!formData.nama.trim()) {
+      toast.error('Nama posisi organisasi tidak boleh kosong');
+      return;
+    }
 
+    try {
+      // Update global state hanya saat submit
       stateOrganisasi.edit.form = {
         nama: formData.nama.trim(),
         deskripsi: formData.deskripsi.trim(),
         hierarki: formData.hierarki,
       };
 
-      // Safety check tambahan: pastikan ID tidak kosong
       if (!stateOrganisasi.edit.id) {
-        stateOrganisasi.edit.id = id; // fallback
+        stateOrganisasi.edit.id = id;
       }
 
       const success = await stateOrganisasi.edit.update();
 
       if (success) {
-        router.push("/admin/ppid/struktur-ppid/posisi-organisasi");
+        router.push('/admin/ppid/struktur-ppid/posisi-organisasi');
       }
-    } catch (error) {
-      console.error("Error updating posisi organisasi:", error);
-      // toast akan ditampilkan dari fungsi update
+    } catch (err) {
+      console.error('Error updating posisi organisasi:', err);
+      // toast error biasanya sudah ada di update
     }
   };
 
@@ -101,32 +106,30 @@ function EditPosisiOrganisasiPPID() {
           <TextInput
             label="Nama Posisi Organisasi"
             placeholder="Masukkan nama posisi organisasi"
-            defaultValue={formData.nama}
-            onChange={(e) => setFormData({ ...formData, nama: e.target.value })}
+            value={formData.nama}
+            onChange={(e) => handleChange('nama', e.target.value)}
             required
           />
-          
+
           <Box>
             <Text fw="bold" fz="sm" mb={6}>
               Deskripsi
             </Text>
             <EditEditor
               value={formData.deskripsi}
-              onChange={(htmlContent) => {
-                setFormData({ ...formData, deskripsi: htmlContent });
-              }}
+              onChange={(html) => handleChange('deskripsi', html)}
             />
           </Box>
-          
+
           <TextInput
             label="Hierarki"
             type="number"
             min={0}
             placeholder="Contoh: 1 (Angka semakin kecil, posisi semakin tinggi)"
-            defaultValue={formData.hierarki}
+            value={formData.hierarki}
             onChange={(e) => {
               const value = parseInt(e.target.value, 10);
-              setFormData({ ...formData, hierarki: isNaN(value) ? 0 : value });
+              handleChange('hierarki', isNaN(value) ? 0 : value);
             }}
             required
           />

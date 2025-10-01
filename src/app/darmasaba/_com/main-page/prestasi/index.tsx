@@ -102,6 +102,7 @@ function Prestasi() {
                     ta="center"
                     dangerouslySetInnerHTML={{ __html: v.deskripsi }}
                     style={{ wordBreak: "break-word", whiteSpace: "normal" }}
+                    lineClamp={5}
                   />
                   <Group justify="center">
                     <Button

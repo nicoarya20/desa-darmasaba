@@ -26,7 +26,7 @@ export default function DetailResponden() {
       stateDetail.delete.byId(selectedId)
       setModalHapus(false)
       setSelectedId(null)
-      router.push("/admin/ppid/ikm-desa-darmasaba/responden")
+      router.push("/admin/landing-page/indeks-kepuasan-masyarakat/responden")
     }
   }
 

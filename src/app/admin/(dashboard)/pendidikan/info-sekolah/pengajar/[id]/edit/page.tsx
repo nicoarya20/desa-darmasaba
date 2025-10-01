@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
+
 import infoSekolahPaud from '@/app/admin/(dashboard)/_state/pendidikan/info-sekolah-paud';
 import colors from '@/con/colors';
 import {
@@ -25,21 +26,22 @@ interface FormPengajar {
 }
 
 function EditPengajar() {
-  const pengajarState = useProxy(infoSekolahPaud.pengajar)
-  const params = useParams()
-  const router = useRouter()
+  const pengajarState = useProxy(infoSekolahPaud.pengajar);
+  const params = useParams();
+  const router = useRouter();
 
   const [formData, setFormData] = useState<FormPengajar>({
     nama: '',
     lembagaId: ''
-  })
+  });
 
   useEffect(() => {
-    const loadPengajar = async () => {
+    const loadData = async () => {
       const id = params?.id as string;
       if (!id) return;
 
       try {
+        infoSekolahPaud.lembagaPendidikan.findMany.load();
         const data = await pengajarState.edit.load(id);
         if (data) {
           setFormData({
@@ -47,30 +49,35 @@ function EditPengajar() {
             lembagaId: data.lembagaId || '',
           });
         }
-      } catch (error) {
-        console.error("Error loading pengajar:", error);
+      } catch (err) {
+        console.error(err);
         toast.error("Gagal memuat data pengajar");
       }
-    }
-    infoSekolahPaud.lembagaPendidikan.findMany.load()
-    loadPengajar();
+    };
+
+    loadData();
   }, [params?.id]);
+
+  const handleChange = (field: keyof FormPengajar, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
 
   const handleSubmit = async () => {
     try {
+      // update global state hanya saat submit
       pengajarState.edit.form = {
         ...pengajarState.edit.form,
         nama: formData.nama.trim(),
-        lembagaId: formData.lembagaId.trim(),
-      }
-      await pengajarState.edit.update()
-      toast.success("Data pengajar berhasil diperbarui!")
+        lembagaId: formData.lembagaId.trim()
+      };
+      await pengajarState.edit.update();
+      toast.success("Data pengajar berhasil diperbarui!");
       router.push("/admin/pendidikan/info-sekolah/pengajar");
-    } catch (error) {
-      console.error("Error updating pengajar:", error);
+    } catch (err) {
+      console.error(err);
       toast.error("Terjadi kesalahan saat memperbarui pengajar");
     }
-  }
+  };
 
   return (
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
@@ -99,8 +106,8 @@ function EditPengajar() {
           <TextInput
             label="Nama Pengajar"
             placeholder="Masukkan nama pengajar"
-            defaultValue={formData.nama}
-            onChange={(e) => setFormData({ ...formData, nama: e.target.value })}
+            value={formData.nama}
+            onChange={(e) => handleChange('nama', e.target.value)}
             required
           />
 
@@ -112,7 +119,7 @@ function EditPengajar() {
               label: k.nama
             })) ?? []}
             value={formData.lembagaId}
-            onChange={(val) => setFormData({ ...formData, lembagaId: val ?? '' })}
+            onChange={(val) => handleChange('lembagaId', val ?? '')}
             required
           />
 

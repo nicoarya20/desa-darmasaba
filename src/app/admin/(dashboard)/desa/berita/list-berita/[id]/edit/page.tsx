@@ -166,13 +166,18 @@ function EditBerita() {
             error={!formData.kategoriBeritaId ? "Pilih kategori" : undefined}
           />
 
-          <TextInput
-            label="Deskripsi Singkat"
-            placeholder="Masukkan deskripsi singkat"
-            value={formData.deskripsi}
-            onChange={(e) => handleChange("deskripsi", e.target.value)}
-            required
-          />
+          <Box>
+            <Text fz="sm" fw="bold">
+              Deskripsi Singkat
+            </Text>
+            <EditEditor
+              value={formData.deskripsi}
+              onChange={(htmlContent) =>
+                setFormData((prev) => ({ ...prev, deskripsi: htmlContent }))
+              }
+            />
+          </Box>
+
 
           {/* Upload Gambar */}
           <Box>

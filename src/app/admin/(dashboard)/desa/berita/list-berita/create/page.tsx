@@ -131,13 +131,17 @@ export default function CreateBerita() {
             required
           />
 
-          <TextInput
-            label="Deskripsi Singkat"
-            required
-            placeholder="Masukkan deskripsi berita"
-            defaultValue={beritaState.berita.create.form.deskripsi}
-            onChange={(e) => (beritaState.berita.create.form.deskripsi = e.target.value)}
-          />
+          <Box>
+            <Text fz="sm" fw="bold" mb={6}>
+              Deskripsi Singkat
+            </Text>
+            <CreateEditor
+              value={beritaState.berita.create.form.deskripsi}
+              onChange={(htmlContent) => {
+                beritaState.berita.create.form.deskripsi = htmlContent;
+              }}
+            />
+          </Box>
 
           <Box>
             <Text fw="bold" fz="sm" mb={6}>

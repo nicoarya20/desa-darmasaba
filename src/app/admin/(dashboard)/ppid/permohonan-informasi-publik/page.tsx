@@ -1,13 +1,15 @@
 'use client'
-import { useProxy } from 'valtio/utils'
-import { useShallowEffect } from '@mantine/hooks'
-import { Box, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Title, Text, Group, Tooltip, Badge } from '@mantine/core'
-import { IconInfoCircle, IconUser, IconMail, IconPhone, IconId } from '@tabler/icons-react'
-import statepermohonanInformasiPublikForm from '../../_state/ppid/permohonan_informasi_publik/permohonanInformasiPublik'
 import colors from '@/con/colors'
+import { Box, Button, Group, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title, Tooltip } from '@mantine/core'
+import { useShallowEffect } from '@mantine/hooks'
+import { IconDeviceImacCog, IconId, IconInfoCircle, IconPhone, IconUser } from '@tabler/icons-react'
+import { useRouter } from 'next/navigation'
+import { useProxy } from 'valtio/utils'
+import statepermohonanInformasiPublikForm from '../../_state/ppid/permohonan_informasi_publik/permohonanInformasiPublik'
 
 function Page() {
   const permohonanInformasiPublikState = useProxy(statepermohonanInformasiPublikForm)
+  const router = useRouter()
 
   useShallowEffect(() => {
     permohonanInformasiPublikState.statepermohonanInformasiPublik.findMany.load()
@@ -56,10 +58,7 @@ function Page() {
                     <TableTh><Group gap={5}><IconUser size={16} /> Nama</Group></TableTh>
                     <TableTh><Group gap={5}><IconId size={16} /> NIK</Group></TableTh>
                     <TableTh><Group gap={5}><IconPhone size={16} /> Telepon</Group></TableTh>
-                    <TableTh><Group gap={5}><IconMail size={16} /> Email</Group></TableTh>
-                    <TableTh>Jenis Informasi</TableTh>
-                    <TableTh>Cara Akses Informasi</TableTh>
-                    <TableTh>Salinan Informasi</TableTh>
+                    <TableTh><Group gap={5}><IconInfoCircle size={16} /> Detail</Group></TableTh>
                   </TableTr>
                 </TableThead>
                 <TableTbody>
@@ -67,27 +66,31 @@ function Page() {
                     <TableTr key={item.id}>
                       <TableTd>{index + 1}</TableTd>
                       <TableTd>
-                        <Tooltip label={item.name}>
+                        <Box w={200}>
                           <Text lineClamp={1} fw={500}>{item.name}</Text>
-                        </Tooltip>
-                      </TableTd>
-                      <TableTd>{item.nik}</TableTd>
-                      <TableTd>{item.notelp}</TableTd>
-                      <TableTd>{item.email}</TableTd>
-                      <TableTd>
-                        <Badge variant="light" radius="sm" color="blue">
-                          {item.jenisInformasiDiminta?.name || '-'}
-                        </Badge>
+                        </Box>
                       </TableTd>
                       <TableTd>
-                        <Tooltip label={item.caraMemperolehInformasi?.name}>
-                          <Text lineClamp={1} size="sm">{item.caraMemperolehInformasi?.name || '-'}</Text>
-                        </Tooltip>
+                        <Box w={200}>
+                          {item.nik}
+                        </Box>
                       </TableTd>
                       <TableTd>
-                        <Tooltip label={item.caraMemperolehSalinanInformasi?.name}>
-                          <Text lineClamp={1} size="sm">{item.caraMemperolehSalinanInformasi?.name || '-'}</Text>
-                        </Tooltip>
+                        <Box w={200}>
+                          {item.notelp}
+                        </Box>
+                      </TableTd>
+                      <TableTd>
+                        <Button
+                          size="xs"
+                          radius="md"
+                          variant="light"
+                          color="blue"
+                          leftSection={<IconDeviceImacCog size={16} />}
+                          onClick={() => router.push(`/admin/ppid/permohonan-informasi-publik/${item.id}`)}
+                        >
+                          Detail
+                        </Button>
                       </TableTd>
                     </TableTr>
                   ))}

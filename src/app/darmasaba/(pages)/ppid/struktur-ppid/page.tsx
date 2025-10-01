@@ -262,16 +262,19 @@ function StrukturOrganisasiPPID() {
   }
 
   const posisiMap = new Map<string, any>()
-  for (const pegawai of stateOrganisasi.findMany.data) {
-    const posisiId = pegawai.posisi.id
+
+  const aktifPegawai = stateOrganisasi.findMany.data.filter((p: any) => p.isActive);
+
+  for (const pegawai of aktifPegawai) {
+    const posisiId = pegawai.posisi.id;
     if (!posisiMap.has(posisiId)) {
       posisiMap.set(posisiId, {
         ...pegawai.posisi,
         pegawaiList: [],
         children: [],
-      })
+      });
     }
-    posisiMap.get(posisiId)!.pegawaiList.push(pegawai)
+    posisiMap.get(posisiId)!.pegawaiList.push(pegawai);
   }
 
   const root: any[] = []
@@ -371,7 +374,7 @@ function nodeTemplate(node: any) {
           <Text size="xs" c="dimmed" mt={8} lineClamp={3}>
             {description || 'Belum ada deskripsi.'}
           </Text>
-          <Tooltip label="Lihat detail" withArrow position="bottom">
+          <Tooltip label="Kembali ke struktur organisasi" withArrow position="bottom">
             <Button
               variant="light"
               size="xs"
@@ -383,7 +386,7 @@ function nodeTemplate(node: any) {
                 }
               }}
             >
-              Detail
+              Kembali
             </Button>
           </Tooltip>
         </Card>

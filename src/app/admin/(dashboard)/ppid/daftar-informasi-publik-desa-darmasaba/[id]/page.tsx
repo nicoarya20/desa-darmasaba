@@ -63,7 +63,7 @@ function DetailDaftarInformasiPublik() {
             Detail Informasi Publik
           </Text>
 
-          <Paper bg="#f8f9fa" p="md" radius="md" shadow="xs">
+          <Paper bg="#ECEEF8" p="md" radius="md" shadow="xs">
             <Stack gap="lg">
               <Box>
                 <Text fz="lg" fw="bold" mb={4}>Jenis Informasi</Text>

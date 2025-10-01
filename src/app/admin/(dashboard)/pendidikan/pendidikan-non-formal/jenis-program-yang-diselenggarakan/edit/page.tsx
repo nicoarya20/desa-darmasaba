@@ -33,8 +33,7 @@ function EditJenisProgramYangDiselenggarakan() {
   const router = useRouter();
   const editState = useProxy(pendidikanNonFormalState.stateJenisProgram);
 
-  const [judul, setJudul] = useState('');
-  const [content, setContent] = useState('');
+  const [formData, setFormData] = useState({ judul: '', content: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Load data pertama kali
@@ -44,16 +43,22 @@ function EditJenisProgramYangDiselenggarakan() {
     }
   }, []);
 
-  // Sync state dengan data hasil fetch
+  // Sync state lokal dengan data hasil fetch
   useEffect(() => {
     if (editState.findById.data) {
-      setJudul(editState.findById.data.judul ?? '');
-      setContent(editState.findById.data.deskripsi ?? '');
+      setFormData({
+        judul: editState.findById.data.judul ?? '',
+        content: editState.findById.data.deskripsi ?? '',
+      });
     }
   }, [editState.findById.data]);
 
+  const handleChange = (field: 'judul' | 'content', value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
   const handleSubmit = async () => {
-    if (!judul.trim()) {
+    if (!formData.judul.trim()) {
       toast.error('Judul wajib diisi');
       return;
     }
@@ -61,11 +66,15 @@ function EditJenisProgramYangDiselenggarakan() {
     setIsSubmitting(true);
     try {
       if (editState.findById.data) {
-        editState.findById.data.judul = judul;
-        editState.findById.data.deskripsi = content;
-        await editState.update.save(editState.findById.data);
+        const updatedData = {
+          ...editState.findById.data,
+          judul: formData.judul,
+          deskripsi: formData.content,
+        };
 
+        await editState.update.save(updatedData);
         toast.success('Berhasil menyimpan perubahan');
+
         router.push(
           '/admin/pendidikan/pendidikan-non-formal/jenis-program-yang-diselenggarakan'
         );
@@ -117,17 +126,17 @@ function EditJenisProgramYangDiselenggarakan() {
             <TextInput
               label={<Text fz="sm" fw="bold">Judul</Text>}
               placeholder="Masukkan judul program"
-              defaultValue={judul}
-              onChange={(e) => setJudul(e.currentTarget.value)}
-              error={!judul && 'Judul wajib diisi'}
+              value={formData.judul}
+              onChange={(e) => handleChange('judul', e.currentTarget.value)}
+              error={!formData.judul && 'Judul wajib diisi'}
             />
 
             <Box>
               <Text fz="sm" fw="bold" mb="xs">Deskripsi</Text>
               <JenisProgramYangDiselenggarakanTextEditor
                 showSubmit={false}
-                onChange={setContent}
-                initialContent={content}
+                onChange={(value: string) => handleChange('content', value)}
+                initialContent={formData.content}
               />
             </Box>
 
@@ -136,7 +145,7 @@ function EditJenisProgramYangDiselenggarakan() {
                 bg={colors['blue-button']}
                 onClick={handleSubmit}
                 loading={isSubmitting || editState.update.loading}
-                disabled={!judul}
+                disabled={!formData.judul}
               >
                 {isSubmitting ? 'Menyimpan...' : 'Simpan Perubahan'}
               </Button>

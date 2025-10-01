@@ -42,7 +42,10 @@ function ListStrukturOrganisasiPPID() {
   }
 
   const posisiMap = new Map<string, any>();
-  for (const pegawai of stateOrganisasi.findMany.data) {
+
+  const aktifPegawai = stateOrganisasi.findMany.data.filter(p => p.isActive);
+
+  for (const pegawai of aktifPegawai) {
     const posisiId = pegawai.posisi.id;
     if (!posisiMap.has(posisiId)) {
       posisiMap.set(posisiId, {

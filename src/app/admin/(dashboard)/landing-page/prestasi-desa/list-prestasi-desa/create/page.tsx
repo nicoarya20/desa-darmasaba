@@ -170,12 +170,11 @@ function CreatePrestasiDesa() {
             required
           />
 
-          <Group justify="flex-end" mt="md">
+          <Group justify="space-between" mt="md">
             <Button
               variant="light"
               color="gray"
               onClick={() => router.back()}
-              style={{ marginRight: 'auto' }}
             >
               Batal
             </Button>

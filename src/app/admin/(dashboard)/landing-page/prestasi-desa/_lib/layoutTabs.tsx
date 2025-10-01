@@ -2,7 +2,7 @@
 'use client'
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
-import { Stack, Tabs, TabsList, TabsPanel, TabsTab, Title, Tooltip } from '@mantine/core';
+import { ScrollArea, Stack, Tabs, TabsList, TabsPanel, TabsTab, Title, Tooltip } from '@mantine/core';
 import { IconCategory, IconListDetails } from '@tabler/icons-react';
 import colors from '@/con/colors';
 
@@ -58,6 +58,7 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
         radius="lg"
         keepMounted={false}
       >
+        <ScrollArea type="auto" offsetScrollbars>
         <TabsList
           p="sm"
           style={{
@@ -82,6 +83,7 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
             </Tooltip>
           ))}
         </TabsList>
+        </ScrollArea>
 
         {tabs.map((tab, i) => (
           <TabsPanel

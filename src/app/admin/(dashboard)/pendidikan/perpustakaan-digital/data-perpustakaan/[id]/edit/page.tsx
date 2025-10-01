@@ -1,74 +1,86 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
+
+import { useEffect, useState } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+import { useProxy } from 'valtio/utils';
+import { toast } from 'react-toastify';
+import { Box, Button, Group, Image, Paper, Select, Stack, Text, TextInput, Title, Tooltip } from '@mantine/core';
+import { Dropzone } from '@mantine/dropzone';
+import { IconArrowBack, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
+
 import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import perpustakaanDigitalState from '@/app/admin/(dashboard)/_state/pendidikan/perpustakaan-digital';
 import colors from '@/con/colors';
 import ApiFetch from '@/lib/api-fetch';
-import { Box, Button, Group, Image, Paper, Select, Stack, Text, TextInput, Title, Tooltip } from '@mantine/core';
-import { Dropzone } from '@mantine/dropzone';
-import { IconArrowBack, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
-import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
-import { useProxy } from 'valtio/utils';
 
 function EditPerpustakaanDigital() {
-  const editState = useProxy(perpustakaanDigitalState.dataPerpustakaan)
   const router = useRouter();
   const params = useParams();
+  const editState = useProxy(perpustakaanDigitalState.dataPerpustakaan);
+
+  const [formData, setFormData] = useState({
+    judul: '',
+    deskripsi: '',
+    kategoriId: '',
+    imageId: '',
+  });
 
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
-  const [formData, setFormData] = useState({
-    judul: editState.update.form.judul || "",
-    deskripsi: editState.update.form.deskripsi || "",
-    imageId: editState.update.form.imageId || "",
-    kategoriId: editState.update.form.kategoriId || "",
-  })
 
+  // Load kategori & data awal
   useEffect(() => {
     perpustakaanDigitalState.kategoriBuku.findMany.load();
-    const loadDataPerpustakaan = async () => {
-      const id = params?.id as string;
+
+    const loadData = async () => {
+      const id = Array.isArray(params?.id) ? params.id[0] : params?.id;
       if (!id) return;
 
       try {
         const data = await editState.update.load(id);
-        if (data) {
-          setFormData({
-            judul: data.judul || "",
-            deskripsi: data.deskripsi || "",
-            imageId: data.imageId || "",
-            kategoriId: data.kategoriId || "",
-          });
-          if (data.image?.link) setPreviewImage(data.image.link);
-        }
-      } catch (error) {
-        console.error("Error loading data perpustakaan:", error);
-        toast.error(error instanceof Error ? error.message : "Gagal mengambil data perpustakaan");
-      }
-    }
+        if (!data) return;
 
-    loadDataPerpustakaan();
+        setFormData({
+          judul: data.judul || '',
+          deskripsi: data.deskripsi || '',
+          kategoriId: data.kategoriId || '',
+          imageId: data.imageId || '',
+        });
+
+        if (data.image?.link) setPreviewImage(data.image.link);
+      } catch (error) {
+        console.error(error);
+        toast.error(error instanceof Error ? error.message : 'Gagal memuat data perpustakaan');
+      }
+    };
+
+    loadData();
   }, [params?.id]);
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
 
   const handleSubmit = async () => {
     try {
-      editState.update.form = { ...editState.update.form, ...formData }
+      // Update global state hanya pas submit
+      editState.update.form = { ...editState.update.form, ...formData };
 
+      // Upload file jika ada
       if (file) {
         const res = await ApiFetch.api.fileStorage.create.post({ file, name: file.name });
         const uploaded = res.data?.data;
-        if (!uploaded?.id) return toast.error("Gagal upload gambar");
+        if (!uploaded?.id) return toast.error('Gagal upload gambar');
         editState.update.form.imageId = uploaded.id;
       }
 
       await editState.update.update();
-      toast.success("Data perpustakaan berhasil diperbarui!");
-      router.push("/admin/pendidikan/perpustakaan-digital/data-perpustakaan");
+      toast.success('Data perpustakaan berhasil diperbarui!');
+      router.push('/admin/pendidikan/perpustakaan-digital/data-perpustakaan');
     } catch (error) {
-      console.error("Error updating data perpustakaan:", error);
-      toast.error("Terjadi kesalahan saat memperbarui data perpustakaan");
+      console.error(error);
+      toast.error('Terjadi kesalahan saat memperbarui data perpustakaan');
     }
   };
 
@@ -86,18 +98,26 @@ function EditPerpustakaanDigital() {
         </Title>
       </Group>
 
-      {/* Form Paper */}
-      <Paper w={{ base: '100%', md: '50%' }} bg={colors['white-1']} p="lg" radius="md" shadow="sm" style={{ border: '1px solid #e0e0e0' }}>
+      <Paper
+        w={{ base: '100%', md: '50%' }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+        style={{ border: '1px solid #e0e0e0' }}
+      >
         <Stack gap="md">
           {/* Dropzone Image */}
           <Box>
-            <Text fw="bold" fz="sm" mb={6}>Gambar</Text>
+            <Text fw="bold" fz="sm" mb={6}>
+              Gambar
+            </Text>
             <Dropzone
               onDrop={(files) => {
-                const selectedFile = files[0];
-                if (selectedFile) {
-                  setFile(selectedFile);
-                  setPreviewImage(URL.createObjectURL(selectedFile));
+                const selected = files[0];
+                if (selected) {
+                  setFile(selected);
+                  setPreviewImage(URL.createObjectURL(selected));
                 }
               }}
               onReject={() => toast.error('File tidak valid.')}
@@ -117,8 +137,12 @@ function EditPerpustakaanDigital() {
                   <IconPhoto size={48} color="#868e96" stroke={1.5} />
                 </Dropzone.Idle>
                 <Stack gap="xs" align="center">
-                  <Text size="md" fw={500}>Seret gambar atau klik untuk memilih file</Text>
-                  <Text size="sm" c="dimmed">Maksimal 5MB, format gambar wajib</Text>
+                  <Text size="md" fw={500}>
+                    Seret gambar atau klik untuk memilih file
+                  </Text>
+                  <Text size="sm" c="dimmed">
+                    Maksimal 5MB, format gambar wajib
+                  </Text>
                 </Stack>
               </Group>
             </Dropzone>
@@ -140,28 +164,30 @@ function EditPerpustakaanDigital() {
           <TextInput
             label="Judul"
             placeholder="Masukkan judul"
-            defaultValue={formData.judul}
-            onChange={(e) => setFormData({ ...formData, judul: e.target.value })}
+            value={formData.judul}
+            onChange={(e) => handleInputChange('judul', e.target.value)}
             required
           />
 
           {/* Deskripsi */}
           <Box>
-            <Text fw="bold" fz="sm" mb={6}>Deskripsi</Text>
-            <EditEditor value={formData.deskripsi} onChange={(val) => setFormData({ ...formData, deskripsi: val })} />
+            <Text fw="bold" fz="sm" mb={6}>
+              Deskripsi
+            </Text>
+            <EditEditor value={formData.deskripsi} onChange={(val) => handleInputChange('deskripsi', val)} />
           </Box>
 
           {/* Kategori */}
           <Select
             value={formData.kategoriId}
-            onChange={(val) => setFormData({ ...formData, kategoriId: val || "" })}
+            onChange={(val) => handleInputChange('kategoriId', val || '')}
             label="Kategori"
-            placeholder='Pilih kategori'
-            data={perpustakaanDigitalState.kategoriBuku.findMany.data?.map(v => ({ value: v.id, label: v.name })) || []}
+            placeholder="Pilih kategori"
+            data={perpustakaanDigitalState.kategoriBuku.findMany.data?.map((v) => ({ value: v.id, label: v.name })) || []}
             clearable
             searchable
             required
-            error={!formData.kategoriId ? "Pilih kategori" : undefined}
+            error={!formData.kategoriId ? 'Pilih kategori' : undefined}
           />
 
           {/* Submit Button */}

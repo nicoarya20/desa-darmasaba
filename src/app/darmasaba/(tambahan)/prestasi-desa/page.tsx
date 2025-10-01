@@ -91,21 +91,17 @@ function Page() {
                   </Group>
                   <Box p={"lg"}>
                     <Text
+                      ta={"center"}
                       fw={"bold"}
                       c={"white"}
                       size={"1.8rem"}
                       style={{
-                        textAlign: "center",
-                        lineHeight: 1.4,
-                        minHeight: '5.4rem',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
                         wordBreak: "break-word", 
                         whiteSpace: "normal"
                       }}
-                      lineClamp={3}
+                      lineClamp={5}
                       dangerouslySetInnerHTML={{ __html: v.deskripsi }}
+                      truncate={'end'}
                     />
                   </Box>
                   <Group justify="center">

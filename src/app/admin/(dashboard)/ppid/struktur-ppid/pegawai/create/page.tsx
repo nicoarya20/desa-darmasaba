@@ -16,7 +16,7 @@ function CreatePegawaiPPID() {
   const [previewImage, setPreviewImage] = useState<{ preview: string; file: File } | null>(null);
   const stateOrganisasi = useProxy(stateStrukturPPID.pegawai)
   useEffect(() => {
-    stateStrukturPPID.posisiOrganisasi.findMany.load(1, 0);
+    stateStrukturPPID.posisiOrganisasi.findManyAll.load();
     resetForm();
   }, []);
 
@@ -228,7 +228,7 @@ function CreatePegawaiPPID() {
             </Text>
             <Select
               placeholder="Pilih posisi"
-              data={stateStrukturPPID.posisiOrganisasi.findMany.data?.map(p => ({
+              data={stateStrukturPPID.posisiOrganisasi.findManyAll.data?.map(p => ({
                 value: p.id,
                 label: p.nama
               })) || []}

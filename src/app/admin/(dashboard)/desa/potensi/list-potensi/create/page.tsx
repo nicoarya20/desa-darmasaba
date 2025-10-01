@@ -101,13 +101,17 @@ function CreatePotensi() {
           />
 
           {/* Deskripsi */}
-          <TextInput
-            defaultValue={potensiState.create.form.deskripsi}
-            onChange={(val) => (potensiState.create.form.deskripsi = val.target.value)}
-            label="Deskripsi"
-            placeholder="Masukkan deskripsi singkat"
-            required
-          />
+          <Box>
+            <Text fz="sm" fw="bold" mb={6}>
+              Deskripsi Singkat
+            </Text>
+            <CreateEditor
+              value={potensiState.create.form.deskripsi}
+              onChange={(htmlContent) => {
+                potensiState.create.form.deskripsi = htmlContent;
+              }}
+            />
+          </Box>
 
           {/* Kategori */}
           <Select

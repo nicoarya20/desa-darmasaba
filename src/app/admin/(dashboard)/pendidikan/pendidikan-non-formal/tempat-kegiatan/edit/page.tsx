@@ -1,4 +1,5 @@
 'use client'
+
 import pendidikanNonFormalState from '@/app/admin/(dashboard)/_state/pendidikan/pendidikan-non-formal';
 import colors from '@/con/colors';
 import {
@@ -33,8 +34,11 @@ function EditTempatKegiatan() {
   const router = useRouter();
   const editState = useProxy(pendidikanNonFormalState.stateTempatKegiatan);
 
-  const [judul, setJudul] = useState('');
-  const [content, setContent] = useState('');
+  // state lokal form
+  const [formData, setFormData] = useState({
+    judul: '',
+    deskripsi: '',
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // load data pertama kali
@@ -44,16 +48,22 @@ function EditTempatKegiatan() {
     }
   }, []);
 
-  // sync state dengan data hasil fetch
+  // sync state lokal ketika data fetch selesai
   useEffect(() => {
     if (editState.findById.data) {
-      setJudul(editState.findById.data.judul ?? '');
-      setContent(editState.findById.data.deskripsi ?? '');
+      setFormData({
+        judul: editState.findById.data.judul ?? '',
+        deskripsi: editState.findById.data.deskripsi ?? '',
+      });
     }
   }, [editState.findById.data]);
 
+  const handleChange = (field: 'judul' | 'deskripsi', value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
   const handleSubmit = async () => {
-    if (!judul.trim()) {
+    if (!formData.judul.trim()) {
       toast.error('Judul wajib diisi');
       return;
     }
@@ -61,10 +71,13 @@ function EditTempatKegiatan() {
     setIsSubmitting(true);
     try {
       if (editState.findById.data) {
-        editState.findById.data.judul = judul;
-        editState.findById.data.deskripsi = content;
-        await editState.update.save(editState.findById.data);
+        const updatedData = {
+          ...editState.findById.data,
+          judul: formData.judul,
+          deskripsi: formData.deskripsi,
+        };
 
+        await editState.update.save(updatedData);
         toast.success('Berhasil menyimpan perubahan');
         router.push(
           '/admin/pendidikan/pendidikan-non-formal/tempat-kegiatan'
@@ -117,9 +130,9 @@ function EditTempatKegiatan() {
             <TextInput
               label={<Text fz="sm" fw="bold">Judul</Text>}
               placeholder="Masukkan judul tempat kegiatan"
-              defaultValue={judul}
-              onChange={(e) => setJudul(e.currentTarget.value)}
-              error={!judul && 'Judul wajib diisi'}
+              value={formData.judul}
+              onChange={(e) => handleChange('judul', e.currentTarget.value)}
+              error={!formData.judul && 'Judul wajib diisi'}
             />
 
             <Box>
@@ -128,8 +141,8 @@ function EditTempatKegiatan() {
               </Text>
               <TempatKegiatanTextEditor
                 showSubmit={false}
-                onChange={setContent}
-                initialContent={content}
+                onChange={(value) => handleChange('deskripsi', value)}
+                initialContent={formData.deskripsi}
               />
             </Box>
 
@@ -138,7 +151,7 @@ function EditTempatKegiatan() {
                 bg={colors['blue-button']}
                 onClick={handleSubmit}
                 loading={isSubmitting || editState.update.loading}
-                disabled={!judul}
+                disabled={!formData.judul}
               >
                 {isSubmitting ? 'Menyimpan...' : 'Simpan Perubahan'}
               </Button>

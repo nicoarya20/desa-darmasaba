@@ -46,10 +46,17 @@ function EditPejabatDesa() {
         const profileData = await profileLandingPageState.pejabatDesa.findUnique.load(id);
 
         if (profileData) {
+          // Initialize form data
           setFormData({
             name: profileData.name || '',
             position: profileData.position || '',
             imageId: profileData.imageId || null,
+          });
+
+          // Initialize edit state with profile data
+          profileLandingPageState.pejabatDesa.edit.initialize({
+            ...profileData,
+            imageId: profileData.imageId || ''
           });
 
           if (profileData.image?.link) {
@@ -110,7 +117,14 @@ function EditPejabatDesa() {
         imageId = uploaded.id;
       }
 
-      // Update global state only on submit
+      // Ensure we have the ID from the URL
+      const id = params?.id as string;
+      if (!id) {
+        throw new Error("ID tidak ditemukan");
+      }
+
+      // Update global state with the ID and form data
+      profileLandingPageState.pejabatDesa.edit.id = id;
       profileLandingPageState.pejabatDesa.edit.form = {
         ...formData,
         imageId: imageId || '', // Ensure imageId is always a string

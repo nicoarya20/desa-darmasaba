@@ -1,13 +1,15 @@
 'use client'
 import colors from '@/con/colors'
-import { Box, Group, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title, Tooltip } from '@mantine/core'
+import { Box, Button, Group, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title, Tooltip } from '@mantine/core'
 import { useShallowEffect } from '@mantine/hooks'
-import { IconInfoCircle, IconMail, IconMessage, IconPhone, IconUser } from '@tabler/icons-react'
+import { IconDeviceImacCog, IconInfoCircle, IconMail, IconPhone, IconUser } from '@tabler/icons-react'
 import { useProxy } from 'valtio/utils'
 import statePermohonanKeberatan from '../../_state/ppid/permohonan_keberatan_informasi_publik/permohonanKeberatanInformasi'
+import { useRouter } from 'next/navigation'
 
 function Page() {
   const listState = useProxy(statePermohonanKeberatan)
+  const router = useRouter()
   useShallowEffect(() => {
     listState.findMany.load()
   }, [])
@@ -55,7 +57,7 @@ function Page() {
                     <TableTh><Group gap={5}><IconUser size={16} /> Nama</Group></TableTh>
                     <TableTh><Group gap={5}><IconMail size={16} /> Email</Group></TableTh>
                     <TableTh><Group gap={5}><IconPhone size={16} /> Telepon</Group></TableTh>
-                    <TableTh><Group gap={5}><IconMessage size={16} /> Alasan Keberatan</Group></TableTh>
+                    <TableTh><Group gap={5}><IconInfoCircle size={16} /> Detail</Group></TableTh>
                   </TableTr>
                 </TableThead>
                 <TableTbody>
@@ -74,23 +76,16 @@ function Page() {
                         <Text>{item.notelp || '-'}</Text>
                       </TableTd>
                       <TableTd>
-                        <Tooltip label={item.alasan?.replace(/<[^>]*>?/gm, '')}>
-                          <div 
-                            style={{ 
-                              maxWidth: '300px',
-                              overflow: 'hidden',
-                              textOverflow: 'ellipsis', 
-                              wordBreak: "break-word",
-                              whiteSpace: "normal" 
-                            }}
-                            dangerouslySetInnerHTML={{ 
-                              __html: item.alasan ? 
-                                item.alasan.replace(/<[^>]*>?/gm, '').substring(0, 50) + '...' : 
-                                '-' 
-                            }} 
-                            
-                          />
-                        </Tooltip>
+                        <Button
+                          size="xs"
+                          radius="md"
+                          variant="light"
+                          color="blue"
+                          leftSection={<IconDeviceImacCog size={16} />}
+                          onClick={() => router.push(`/admin/ppid/permohonan-keberatan-informasi-publik/${item.id}`)}
+                        >
+                          Detail
+                        </Button>
                       </TableTd>
                     </TableTr>
                   ))}

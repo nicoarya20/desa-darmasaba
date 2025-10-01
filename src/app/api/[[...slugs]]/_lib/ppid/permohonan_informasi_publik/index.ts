@@ -4,6 +4,7 @@ import permohonanInformasiPublikFindMany from "./find-many";
 import jenisInformasiFindMany from "./jenisInformasi";
 import memperolehInformasiFindMany from "./memperolehInformasi";
 import salinanInformasiFindMany from "./salinanInformasi";
+import permohonanInformasiPublikFindUnique from "./findUnique";
 
 const PermohonanInformasiPublik = new Elysia({
     prefix: "/permohonaninformasipublik",
@@ -12,6 +13,10 @@ const PermohonanInformasiPublik = new Elysia({
     .get("/jenisInformasi/find-many", jenisInformasiFindMany)
     .get("/memperolehInformasi/find-many", memperolehInformasiFindMany)
     .get("/salinanInformasi/find-many", salinanInformasiFindMany)
+    .get("/:id", async (context) => {
+        const response = await permohonanInformasiPublikFindUnique(context);
+        return response;
+    })
     .get("/find-many", permohonanInformasiPublikFindMany)
     .post("/create", permohonanInformasiPublikCreate, {
         body: t.Object({

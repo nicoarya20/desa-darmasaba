@@ -112,7 +112,32 @@ const statepermohonanInformasiPublik = proxy({
                 statepermohonanInformasiPublik.findMany.data = res.data?.data ?? [];
             }
         }
-    }
+    },
+    findUnique: {
+        data: null as Prisma.PermohonanInformasiPublikGetPayload<{
+          include: {
+            jenisInformasiDiminta: true,
+            caraMemperolehInformasi: true,
+            caraMemperolehSalinanInformasi: true,
+          };
+        }> | null,
+        async load(id: string) {
+          try {
+            const res = await fetch(`/api/ppid/permohonaninformasipublik/${id}`);
+            if (res.ok) {
+              const data = await res.json();
+              statepermohonanInformasiPublik.findUnique.data = data.data ?? null;
+            } else {
+              console.error("Failed to fetch program inovasi:", res.statusText);
+              statepermohonanInformasiPublik.findUnique.data = null;
+            }
+          } catch (error) {
+            console.error("Error fetching program inovasi:", error);
+            statepermohonanInformasiPublik.findUnique.data = null;
+          }
+        },
+      },
+    
 })
 
 const statepermohonanInformasiPublikForm = proxy({

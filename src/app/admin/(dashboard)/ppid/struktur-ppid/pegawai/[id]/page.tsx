@@ -12,6 +12,7 @@ import { useProxy } from 'valtio/utils';
 function DetailPegawai() {
   const statePegawai = useProxy(stateStrukturPPID.pegawai);
   const [modalHapus, setModalHapus] = useState(false);
+  const [modalNonActive, setModalNonActive] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const params = useParams();
   const router = useRouter();
@@ -25,6 +26,15 @@ function DetailPegawai() {
     if (selectedId) {
       statePegawai.delete.byId(selectedId);
       setModalHapus(false);
+      setSelectedId(null);
+      router.push("/admin/ppid/struktur-ppid/pegawai");
+    }
+  };
+
+  const handleNonActive = () => {
+    if (selectedId) {
+      statePegawai.nonActive.byId(selectedId);
+      setModalNonActive(false);
       setSelectedId(null);
       router.push("/admin/ppid/struktur-ppid/pegawai");
     }
@@ -64,7 +74,7 @@ function DetailPegawai() {
             <Stack gap="md">
               <Box>
                 <Text fz="lg" fw="bold">Nama Lengkap</Text>
-                <Text fz="md" c="dimmed" style={{wordBreak: "break-word", whiteSpace: "normal"}}>
+                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }}>
                   {data.namaLengkap || '-'} {data.gelarAkademik || ''}
                 </Text>
               </Box>
@@ -86,7 +96,7 @@ function DetailPegawai() {
 
               <Box>
                 <Text fz="lg" fw="bold">Alamat</Text>
-                <Text fz="md" c="dimmed" style={{wordBreak: "break-word", whiteSpace: "normal"}}>{data.alamat || '-'}</Text>
+                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }}>{data.alamat || '-'}</Text>
               </Box>
 
               <Box>
@@ -124,6 +134,19 @@ function DetailPegawai() {
                   <Text fz="sm" c="dimmed" mt="sm">Tidak ada foto profil</Text>
                 )}
               </Box>
+
+              <Button
+                color={data.isActive ? "green" : "gray"}
+                onClick={() => {
+                  setSelectedId(data.id || null);
+                  setModalNonActive(true);
+                }}
+                variant="light"
+                radius="md"
+                size="md"
+              >
+                {data.isActive ? "Aktif" : "Nonaktif"}
+              </Button>
 
               <Group gap="sm" mt="md">
                 <Tooltip label="Hapus Pegawai" withArrow position="top">
@@ -164,6 +187,14 @@ function DetailPegawai() {
         onClose={() => setModalHapus(false)}
         onConfirm={handleHapus}
         text="Apakah Anda yakin ingin menghapus data pegawai ini?"
+      />
+
+      {/* Modal NonActive */}
+      <ModalKonfirmasiHapus
+        opened={modalNonActive}
+        onClose={() => setModalNonActive(false)}
+        onConfirm={handleNonActive}
+        text="Apakah Anda yakin ingin menonaktifkan pegawai ini?"
       />
     </Box>
   );

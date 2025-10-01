@@ -10,13 +10,14 @@ import stateVisiMisiPPID from '../../../_state/ppid/visi_misi_ppid/visimisiPPID'
 import MisiPPID from '../misiPPID/misi-PPID';
 import VisiPPID from '../visiPPID/visi-PPID';
 
-
 function VisiMisiPPIDEdit() {
-  const router = useRouter()
+  const router = useRouter();
   const visiMisi = useProxy(stateVisiMisiPPID);
-  const [draftVisi, setDraftVisi] = useState('');
-  const [draftMisi, setDraftMisi] = useState('');
 
+  // Gabung state lokal menjadi satu object
+  const [formData, setFormData] = useState({ visi: '', misi: '' });
+
+  // Initialize global data ke state lokal saat pertama load
   useShallowEffect(() => {
     if (!visiMisi.findById.data) {
       visiMisi.findById.initialize();
@@ -25,19 +26,25 @@ function VisiMisiPPIDEdit() {
 
   useEffect(() => {
     if (visiMisi.findById.data) {
-      setDraftVisi(visiMisi.findById.data.visi ?? '');
-      setDraftMisi(visiMisi.findById.data.misi ?? '');
+      setFormData({
+        visi: visiMisi.findById.data.visi ?? '',
+        misi: visiMisi.findById.data.misi ?? '',
+      });
     }
   }, [visiMisi.findById.data]);
 
+  const handleChange = (key: 'visi' | 'misi', value: string) => {
+    setFormData(prev => ({ ...prev, [key]: value }));
+  };
+
   const submit = () => {
     if (visiMisi.findById.data) {
-      // update nilai di state global hanya saat submit
-      visiMisi.findById.data.visi = draftVisi;
-      visiMisi.findById.data.misi = draftMisi;
+      // update nilai global hanya saat submit
+      visiMisi.findById.data.visi = formData.visi;
+      visiMisi.findById.data.misi = formData.misi;
       visiMisi.update.save(visiMisi.findById.data);
     }
-    router.push('/admin/ppid/visi-misi-ppid')
+    router.push('/admin/ppid/visi-misi-ppid');
   };
 
   return (
@@ -63,11 +70,11 @@ function VisiMisiPPIDEdit() {
       >
         <Stack gap="xl">
           <Box>
-            <VisiPPID value={draftVisi} onChange={setDraftVisi} />
+            <VisiPPID value={formData.visi} onChange={value => handleChange('visi', value)} />
           </Box>
-          
+
           <Box>
-            <MisiPPID value={draftMisi} onChange={setDraftMisi} />
+            <MisiPPID value={formData.misi} onChange={value => handleChange('misi', value)} />
           </Box>
 
           <Group justify="flex-end" mt="md">

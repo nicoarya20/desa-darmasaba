@@ -57,7 +57,29 @@ const permohonanKeberatanInformasi = proxy({
                 permohonanKeberatanInformasi.findMany.data = res.data?.data ?? [];
             }
         }
-    }
+    },
+    findUnique: {
+        data: null as Prisma.FormulirPermohonanKeberatanGetPayload<{
+          omit: {
+            isActive: true;
+          };
+        }> | null,
+        async load(id: string) {
+          try {
+            const res = await fetch(`/api/ppid/permohonankeberataninformasipublik/${id}`);
+            if (res.ok) {
+              const data = await res.json();
+              permohonanKeberatanInformasi.findUnique.data = data.data ?? null;
+            } else {
+              console.error("Failed to fetch permohonan keberatan informasi:", res.statusText);
+              permohonanKeberatanInformasi.findUnique.data = null;
+            }
+          } catch (error) {
+            console.error("Error fetching permohonan keberatan informasi:", error);
+            permohonanKeberatanInformasi.findUnique.data = null;
+          }
+        },
+      }
 });
 
 export default permohonanKeberatanInformasi;

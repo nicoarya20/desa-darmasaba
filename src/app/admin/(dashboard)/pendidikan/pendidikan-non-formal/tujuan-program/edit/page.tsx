@@ -1,4 +1,5 @@
 'use client'
+
 import pendidikanNonFormalState from '@/app/admin/(dashboard)/_state/pendidikan/pendidikan-non-formal';
 import colors from '@/con/colors';
 import {
@@ -30,41 +31,49 @@ function EditTujuanProgram() {
   const router = useRouter();
   const editState = useProxy(pendidikanNonFormalState.stateTujuanPendidikanNonFormal);
 
-  const [judul, setJudul] = useState('');
-  const [content, setContent] = useState('');
+  const [formData, setFormData] = useState({ judul: '', deskripsi: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // load data pertama kali
+  // Load data pertama kali
   useShallowEffect(() => {
     if (!editState.findById.data) {
       editState.findById.initialize();
     }
   }, []);
 
-  // sync data hasil fetch ke local state
+  // Sync hasil fetch ke local state (sekali)
   useEffect(() => {
     if (editState.findById.data) {
-      setJudul(editState.findById.data.judul ?? '');
-      setContent(editState.findById.data.deskripsi ?? '');
+      setFormData({
+        judul: editState.findById.data.judul ?? '',
+        deskripsi: editState.findById.data.deskripsi ?? ''
+      });
     }
   }, [editState.findById.data]);
 
+  const handleChange = (field: 'judul' | 'deskripsi', value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
   const handleSubmit = async () => {
-    if (!judul.trim()) {
+    if (!formData.judul.trim()) {
       toast.error('Judul wajib diisi');
       return;
     }
 
+    if (!editState.findById.data) return;
+
     setIsSubmitting(true);
     try {
-      if (editState.findById.data) {
-        editState.findById.data.judul = judul;
-        editState.findById.data.deskripsi = content;
-        await editState.update.save(editState.findById.data);
+      const payload = {
+        ...editState.findById.data,
+        judul: formData.judul,
+        deskripsi: formData.deskripsi
+      };
 
-        toast.success('Berhasil menyimpan perubahan');
-        router.push('/admin/pendidikan/pendidikan-non-formal/tujuan-program');
-      }
+      await editState.update.save(payload);
+      toast.success('Berhasil menyimpan perubahan');
+      router.push('/admin/pendidikan/pendidikan-non-formal/tujuan-program');
     } catch (err) {
       console.error('Error saving:', err);
       toast.error('Gagal menyimpan data');
@@ -88,16 +97,13 @@ function EditTujuanProgram() {
   return (
     <Box>
       <Stack gap="xs">
-        {/* Back Button + Title */}
         <Group mb="md">
           <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
             <Button variant="subtle" onClick={handleBack} p="xs" radius="md">
               <IconArrowBack color={colors['blue-button']} size={22} />
             </Button>
           </Tooltip>
-          <Title order={4} ml="sm" c="dark">
-            Edit Tujuan Program
-          </Title>
+          <Title order={4} ml="sm" c="dark">Edit Tujuan Program</Title>
         </Group>
 
         <Paper
@@ -112,17 +118,17 @@ function EditTujuanProgram() {
             <TextInput
               label={<Text fz="sm" fw="bold">Judul</Text>}
               placeholder="Masukkan judul program"
-              defaultValue={judul}
-              onChange={(e) => setJudul(e.currentTarget.value)}
-              error={!judul && 'Judul wajib diisi'}
+              value={formData.judul}
+              onChange={(e) => handleChange('judul', e.currentTarget.value)}
+              error={!formData.judul && 'Judul wajib diisi'}
             />
 
             <Box>
               <Text fz="sm" fw="bold" mb="xs">Deskripsi</Text>
               <PendidikanNonFormalTextEditor
                 showSubmit={false}
-                onChange={setContent}
-                initialContent={content}
+                onChange={(value) => handleChange('deskripsi', value)}
+                initialContent={formData.deskripsi}
               />
             </Box>
 
@@ -131,7 +137,7 @@ function EditTujuanProgram() {
                 bg={colors['blue-button']}
                 onClick={handleSubmit}
                 loading={isSubmitting || editState.update.loading}
-                disabled={!judul}
+                disabled={!formData.judul}
               >
                 {isSubmitting ? 'Menyimpan...' : 'Simpan Perubahan'}
               </Button>

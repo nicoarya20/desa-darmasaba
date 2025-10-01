@@ -102,20 +102,25 @@ function ListPotensi({ search }: { search: string }) {
                 filteredData.map((item) => (
                   <TableTr key={item.id}>
                     <TableTd>
-                      <Text fw={500} truncate="end" lineClamp={1}>
-                        {item.name}
-                      </Text>
+                      <Box w={200}>
+                        <Text fw={500} truncate="end" lineClamp={1}>
+                          {item.name}
+                        </Text>
+                      </Box>
                     </TableTd>
                     <TableTd>
-                      <Text fz="sm" c="dimmed">{item.kategori?.nama || '-'}</Text>
+                      <Box w={200}>
+                        <Text fz="sm" c="dimmed">{item.kategori?.nama || '-'}</Text>
+                      </Box>
                     </TableTd>
                     <TableTd>
                       <Box w={300}>
                         <Text
+                          lineClamp={1}
                           truncate
                           fz="sm"
                           dangerouslySetInnerHTML={{ __html: item.deskripsi }}
-                          style={{wordBreak: "break-word", whiteSpace: "normal"}}
+                          style={{ wordBreak: "break-word", whiteSpace: "normal" }}
                         />
                       </Box>
                     </TableTd>

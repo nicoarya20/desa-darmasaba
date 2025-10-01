@@ -31,6 +31,7 @@ export default function EditLembaga() {
     jenjangId: '',
   });
 
+  // Load jenjang pendidikan dan data lembaga
   useEffect(() => {
     infoSekolahPaud.jenjangPendidikan.findMany.load();
 
@@ -46,12 +47,17 @@ export default function EditLembaga() {
     }
   }, [id]);
 
+  const handleChange = (field: 'nama' | 'jenjangId', value: string) => {
+    setForm((prev) => ({ ...prev, [field]: value }));
+  };
+
   const handleSubmit = async () => {
     if (!form.nama || !form.jenjangId) {
       toast.warn('Nama dan jenjang pendidikan harus diisi');
       return;
     }
 
+    // Update global state hanya saat submit
     state.edit.id = id;
     state.edit.form = form;
 
@@ -65,7 +71,7 @@ export default function EditLembaga() {
 
   return (
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
-      {/* Header dengan back button */}
+      {/* Header */}
       <Group mb="md">
         <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
           <Button
@@ -82,7 +88,7 @@ export default function EditLembaga() {
         </Title>
       </Group>
 
-      {/* Card Form */}
+      {/* Form Card */}
       <Paper
         w={{ base: '100%', md: '50%' }}
         bg={colors['white-1']}
@@ -95,8 +101,8 @@ export default function EditLembaga() {
           <TextInput
             label="Nama Lembaga"
             placeholder="Masukkan nama lembaga"
-            defaultValue={form.nama}
-            onChange={(e) => setForm({ ...form, nama: e.currentTarget.value })}
+            value={form.nama}
+            onChange={(e) => handleChange('nama', e.currentTarget.value)}
             required
           />
 
@@ -111,7 +117,7 @@ export default function EditLembaga() {
               })) || []
             }
             value={form.jenjangId}
-            onChange={(val) => setForm({ ...form, jenjangId: val || '' })}
+            onChange={(val) => handleChange('jenjangId', val || '')}
             required
           />
 

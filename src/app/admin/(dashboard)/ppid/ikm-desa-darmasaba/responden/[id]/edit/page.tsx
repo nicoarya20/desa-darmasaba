@@ -1,11 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
-/* eslint-disable react-hooks/exhaustive-deps */
 import indeksKepuasanState from '@/app/admin/(dashboard)/_state/landing-page/indeks-kepuasan';
 import colors from '@/con/colors';
 import { Box, Button, Group, Paper, Select, Stack, TextInput, Title, Tooltip } from '@mantine/core';
 import { IconArrowBack, IconDeviceFloppy } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, ChangeEvent } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
@@ -18,24 +18,35 @@ interface FormResponden {
 }
 
 function EditResponden() {
-  const router = useRouter()
-  const params = useParams() as { id: string }
-  const state = useProxy(indeksKepuasanState.responden)
-  const id = params.id
+  const router = useRouter();
+  const params = useParams() as { id: string };
+  const state = useProxy(indeksKepuasanState.responden);
+  const id = params.id;
+
   const [formData, setFormData] = useState<FormResponden>({
     name: '',
     tanggal: '',
     jenisKelaminId: '',
     ratingId: '',
     kelompokUmurId: '',
-  })
+  });
+
+  // Helper untuk membuat data Select dari state
+  const mapSelectData = (data: any[] | null | undefined) =>
+    (data || [])
+      .filter(Boolean)
+      .map((v: any) => ({
+        value: v.id || '',
+        label: typeof v.name === 'string' ? v.name : 'Tanpa Nama',
+      }));
+
   useEffect(() => {
+    // Load opsi dropdown
     indeksKepuasanState.jenisKelaminResponden.findMany.load();
     indeksKepuasanState.pilihanRatingResponden.findMany.load();
     indeksKepuasanState.kelompokUmurResponden.findMany.load();
 
     const loadResponden = async () => {
-      const id = params?.id as string;
       if (!id) return;
 
       try {
@@ -43,39 +54,35 @@ function EditResponden() {
         if (data) {
           state.update.id = id;
 
-          state.update.form = {
-            name: data.name,
-            tanggal: data.tanggal,
-            jenisKelaminId: data.jenisKelaminId,
-            ratingId: data.ratingId,
-            kelompokUmurId: data.kelompokUmurId,
-          };
-
+          // **formData lokal tetap controlled**, tidak overwrite tiap render
           setFormData({
-            name: data.name,
-            tanggal: data.tanggal,
-            jenisKelaminId: data.jenisKelaminId,
-            ratingId: data.ratingId,
-            kelompokUmurId: data.kelompokUmurId,
+            name: data.name || '',
+            tanggal: data.tanggal || '',
+            jenisKelaminId: data.jenisKelaminId || '',
+            ratingId: data.ratingId || '',
+            kelompokUmurId: data.kelompokUmurId || '',
           });
-
-
         }
       } catch (error) {
-        console.error("Error loading program penghijauan:", error);
-        toast.error("Gagal memuat data program penghijauan");
+        console.error("Error loading responden:", error);
+        toast.error("Gagal memuat data responden");
       }
-    }
+    };
 
     loadResponden();
-  }, [params?.id]);
+  }, [id, state.update]);
+
+  const handleChange = (field: keyof FormResponden) => (e: ChangeEvent<HTMLInputElement> | string | null) => {
+    const value = typeof e === 'string' || e === null ? e || '' : e.currentTarget.value;
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
 
   const handleSubmit = async () => {
     state.update.id = id;
-    state.update.form = { ...formData }; // <-- sinkronisasi manual
+    state.update.form = { ...formData }; // hanya update global state saat submit
     await state.update.submit();
-    router.push('/admin/ppid/ikm-desa-darmasaba/responden')
-  }
+    router.push('/admin/ppid/ikm-desa-darmasaba/responden');
+  };
 
   return (
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
@@ -101,47 +108,27 @@ function EditResponden() {
         <Stack gap="md">
           <TextInput
             label="Nama Responden"
-            type='text'
             placeholder="Masukkan nama responden"
-            defaultValue={formData.name}
-            onChange={(val) => {
-              setFormData({
-                ...formData,
-                name: val.currentTarget.value
-              })
-            }}
+            value={formData.name}
+            onChange={handleChange('name')}
             radius="md"
             required
           />
           <TextInput
             label="Tanggal"
             type="date"
-            placeholder='Pilih tanggal'
-            defaultValue={formData.tanggal ? new Date(formData.tanggal).toISOString().split('T')[0] : ''}
-            onChange={(e) => {
-              const selectedDate = e.currentTarget.value;
-              setFormData({
-                ...formData,
-                tanggal: selectedDate,
-              });
-            }}
+            value={formData.tanggal ? new Date(formData.tanggal).toISOString().split('T')[0] : ''}
+            onChange={handleChange('tanggal')}
             radius="md"
             required
           />
+
           <Select
-            key="jenisKelamin"
             label="Jenis Kelamin"
             placeholder="Pilih jenis kelamin"
             value={formData.jenisKelaminId}
-            onChange={(val) => setFormData({ ...formData, jenisKelaminId: val || "" })}
-            data={
-              (indeksKepuasanState.jenisKelaminResponden.findMany.data || [])
-                .filter(Boolean)
-                .map((v) => ({
-                  value: v.id || '',
-                  label: typeof v.name === 'string' ? v.name : 'Tanpa Nama'
-                }))
-            }
+            onChange={handleChange('jenisKelaminId')}
+            data={mapSelectData(indeksKepuasanState.jenisKelaminResponden.findMany.data)}
             disabled={indeksKepuasanState.jenisKelaminResponden.findMany.loading}
             clearable
             searchable
@@ -149,20 +136,13 @@ function EditResponden() {
             radius="md"
             error={!formData.jenisKelaminId ? "Pilih jenis kelamin" : undefined}
           />
+
           <Select
-            key="rating"
-            value={formData.ratingId}
-            onChange={(val) => setFormData({ ...formData, ratingId: val || "" })}
             label="Rating"
-            placeholder='Pilih rating'
-            data={
-              (indeksKepuasanState.pilihanRatingResponden.findMany.data || [])
-                .filter(Boolean)
-                .map((v) => ({
-                  value: v.id || '',
-                  label: typeof v.name === 'string' ? v.name : 'Tanpa Nama'
-                }))
-            }
+            placeholder="Pilih rating"
+            value={formData.ratingId}
+            onChange={handleChange('ratingId')}
+            data={mapSelectData(indeksKepuasanState.pilihanRatingResponden.findMany.data)}
             disabled={indeksKepuasanState.pilihanRatingResponden.findMany.loading}
             clearable
             searchable
@@ -172,37 +152,26 @@ function EditResponden() {
           />
 
           <Select
-            key={"kelompokUmur"}
-            value={formData.kelompokUmurId}
-            onChange={(val) => setFormData({ ...formData, kelompokUmurId: val || "" })}
             label="Kelompok Umur"
-            placeholder='Pilih kelompok umur'
-            data={
-              (indeksKepuasanState.kelompokUmurResponden.findMany.data || [])
-                .filter(Boolean)
-                .map((v) => ({
-                  value: v.id || '',
-                  label: typeof v.name === 'string' ? v.name : 'Tanpa Nama'
-                }))
-            }
+            placeholder="Pilih kelompok umur"
+            value={formData.kelompokUmurId}
+            onChange={handleChange('kelompokUmurId')}
+            data={mapSelectData(indeksKepuasanState.kelompokUmurResponden.findMany.data)}
             disabled={indeksKepuasanState.kelompokUmurResponden.findMany.loading}
             clearable
             searchable
             required
+            radius="md"
             error={!formData.kelompokUmurId ? "Pilih kelompok umur" : undefined}
           />
-          
+
           <Group justify="flex-end" mt="md">
-            <Button 
-              variant="light" 
-              color="red" 
-              onClick={() => router.back()}
-            >
+            <Button variant="light" color="red" onClick={() => router.back()}>
               Batal
             </Button>
-            <Button 
+            <Button
               leftSection={<IconDeviceFloppy size={20} />}
-              onClick={handleSubmit} 
+              onClick={handleSubmit}
               loading={state.update.loading}
               color={colors['blue-button']}
             >

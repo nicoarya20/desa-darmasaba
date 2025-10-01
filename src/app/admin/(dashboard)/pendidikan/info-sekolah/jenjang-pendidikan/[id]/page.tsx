@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
+
 import infoSekolahPaud from '@/app/admin/(dashboard)/_state/pendidikan/info-sekolah-paud';
 import colors from '@/con/colors';
 import {
@@ -22,64 +23,62 @@ function EditJenjangPendidikan() {
   const router = useRouter();
   const params = useParams();
   const id = params?.id as string;
+
   const stateJenjang = useProxy(infoSekolahPaud.jenjangPendidikan);
 
-  const [formData, setFormData] = useState({
-    nama: "",
-  });
+  const [formData, setFormData] = useState({ nama: '' });
+  const [loading, setLoading] = useState(true);
 
+  // Load data sekali saat component mount
   useEffect(() => {
-    const loadJenjangPendidikan = async () => {
-      if (!id) return;
+    if (!id) return;
 
+    const loadJenjang = async () => {
       try {
         const data = await stateJenjang.edit.load(id);
-
         if (data) {
-          stateJenjang.edit.id = id;
-          setFormData({
-            nama: data.nama || '',
-          });
+          stateJenjang.edit.id = id; // tetap simpan di global state
+          setFormData({ nama: data.nama || '' });
         }
       } catch (error) {
-        console.error("Error loading jenjang pendidikan:", error);
-        toast.error("Gagal memuat data jenjang pendidikan");
+        console.error('Error loading jenjang pendidikan:', error);
+        toast.error('Gagal memuat data jenjang pendidikan');
+      } finally {
+        setLoading(false);
       }
     };
 
-    loadJenjangPendidikan();
+    loadJenjang();
   }, [id]);
 
+  const handleChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
   const handleSubmit = async () => {
+    if (!formData.nama.trim()) {
+      toast.error('Nama jenjang pendidikan tidak boleh kosong');
+      return;
+    }
+
     try {
-      if (!formData.nama.trim()) {
-        toast.error('Nama jenjang pendidikan tidak boleh kosong');
-        return;
-      }
-
-      stateJenjang.edit.form = {
-        nama: formData.nama.trim(),
-      };
-
-      if (!stateJenjang.edit.id) {
-        stateJenjang.edit.id = id;
-      }
+      stateJenjang.edit.form = { nama: formData.nama.trim() };
+      if (!stateJenjang.edit.id) stateJenjang.edit.id = id;
 
       const success = await stateJenjang.edit.update();
-
       if (success) {
-        toast.success("Jenjang pendidikan berhasil diperbarui!");
-        router.push("/admin/pendidikan/info-sekolah/jenjang-pendidikan");
+        toast.success('Jenjang pendidikan berhasil diperbarui!');
+        router.push('/admin/pendidikan/info-sekolah/jenjang-pendidikan');
       }
     } catch (error) {
-      console.error("Error updating jenjang pendidikan:", error);
-      toast.error("Terjadi kesalahan saat memperbarui jenjang pendidikan");
+      console.error('Error updating jenjang pendidikan:', error);
+      toast.error('Terjadi kesalahan saat memperbarui jenjang pendidikan');
     }
   };
 
   return (
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
-      {/* Header Back + Title */}
+      {/* Header */}
       <Group mb="md">
         <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
           <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
@@ -91,7 +90,7 @@ function EditJenjangPendidikan() {
         </Title>
       </Group>
 
-      {/* Form Container */}
+      {/* Form */}
       <Paper
         w={{ base: '100%', md: '50%' }}
         bg={colors['white-1']}
@@ -104,9 +103,10 @@ function EditJenjangPendidikan() {
           <TextInput
             label="Nama Jenjang Pendidikan"
             placeholder="Masukkan nama jenjang pendidikan"
-            defaultValue={formData.nama}
-            onChange={(e) => setFormData({ ...formData, nama: e.target.value })}
+            value={formData.nama}
+            onChange={(e) => handleChange('nama', e.target.value)}
             required
+            disabled={loading}
           />
 
           <Group justify="right">

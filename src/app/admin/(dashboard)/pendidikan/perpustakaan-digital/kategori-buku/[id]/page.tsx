@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client';
+
 import perpustakaanDigitalState from '@/app/admin/(dashboard)/_state/pendidikan/perpustakaan-digital';
 import colors from '@/con/colors';
 import { Box, Button, Group, Paper, Stack, TextInput, Title, Tooltip } from '@mantine/core';
@@ -14,9 +15,8 @@ function EditKategoriBuku() {
   const router = useRouter();
   const params = useParams();
 
-  const [formData, setFormData] = useState({
-    name: editState.update.form.name || '',
-  });
+  const [formData, setFormData] = useState({ name: '' });
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const loadKategori = async () => {
@@ -26,21 +26,26 @@ function EditKategoriBuku() {
       try {
         const data = await editState.update.load(id);
         if (data) {
-          setFormData({
-            name: data.name || '',
-          });
+          setFormData({ name: data.name || '' });
         }
       } catch (error) {
         console.error('Error loading kategori buku:', error);
         toast.error('Gagal memuat data kategori buku');
+      } finally {
+        setLoading(false);
       }
     };
 
     loadKategori();
   }, [params?.id]);
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData((prev) => ({ ...prev, name: e.target.value }));
+  };
+
   const handleSubmit = async () => {
     try {
+      // Update global state hanya saat submit
       editState.update.form = { ...editState.update.form, name: formData.name };
       await editState.update.update();
       toast.success('Kategori Buku berhasil diperbarui!');
@@ -76,9 +81,10 @@ function EditKategoriBuku() {
           <TextInput
             label="Nama Kategori Buku"
             placeholder="Masukkan nama kategori buku"
-            defaultValue={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            value={formData.name}
+            onChange={handleChange}
             required
+            disabled={loading}
           />
 
           <Group justify="right">
@@ -91,6 +97,7 @@ function EditKategoriBuku() {
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
+              disabled={loading || !formData.name.trim()}
             >
               Simpan
             </Button>

@@ -74,9 +74,8 @@ function Page() {
                       fw="bold"
                       fz={{ base: 'lg', md: 'xl' }}
                       style={{ lineHeight: 1.4 }}
-                    >
-                      {item.judul}
-                    </Text>
+                      dangerouslySetInnerHTML={{ __html: item.judul }}
+                    />
                     <Text
                       fz={{ base: 'sm', md: 'md' }}
                       style={{ lineHeight: 1.7, wordBreak: "break-word", whiteSpace: "normal" }}

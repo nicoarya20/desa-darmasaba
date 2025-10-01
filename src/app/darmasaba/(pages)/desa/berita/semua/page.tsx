@@ -82,9 +82,7 @@ function Semua() {
                         {featuredData.kategoriBerita?.name || 'Berita'}
                       </Badge>
                       <Title order={2} mb="md">{featuredData.judul}</Title>
-                      <Text color="dimmed" lineClamp={3} mb="md">
-                        {featuredData.deskripsi}
-                      </Text>
+                      <Text c="dimmed" lineClamp={3} mb="md" dangerouslySetInnerHTML={{ __html: featuredData.deskripsi }} />
                     </div>
                     <Group justify="apart" mt="auto">
                       <Group gap="xs">
@@ -146,10 +144,10 @@ function Semua() {
                   </Badge>
 
                   <Text fw={600} size="lg" mt="sm" lineClamp={2}>{item.judul}</Text>
-                  <Text size="sm" color="dimmed" lineClamp={3} mt="xs">{item.deskripsi}</Text>
+                  <Text size="sm" c="dimmed" lineClamp={3} mt="xs" dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
 
                   <Flex align="center" justify="apart" mt="md" gap="xs">
-                    <Text size="xs" color="dimmed">
+                    <Text size="xs" c="dimmed">
                       {new Date(item.createdAt).toLocaleDateString('id-ID', {
                         day: 'numeric',
                         month: 'short',

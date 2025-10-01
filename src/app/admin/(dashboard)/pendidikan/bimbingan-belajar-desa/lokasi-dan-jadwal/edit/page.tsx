@@ -1,4 +1,5 @@
 'use client'
+
 import stateBimbinganBelajarDesa from '@/app/admin/(dashboard)/_state/pendidikan/bimbingan-belajar-desa';
 import colors from '@/con/colors';
 import {
@@ -33,27 +34,33 @@ function EditLokasiDanJadwal() {
   const router = useRouter();
   const editState = useProxy(stateBimbinganBelajarDesa.lokasiDanJadwalState);
 
-  const [judul, setJudul] = useState('');
-  const [content, setContent] = useState('');
+  // state lokal untuk form, tidak langsung merubah global state
+  const [formData, setFormData] = useState({ judul: '', deskripsi: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // load data sekali
+  // Load data sekali
   useShallowEffect(() => {
     if (!editState.findById.data) {
       editState.findById.initialize();
     }
   }, []);
 
-  // isi state ketika data loaded
+  // Isi state lokal setelah data global ter-load
   useEffect(() => {
     if (editState.findById.data) {
-      setJudul(editState.findById.data.judul ?? '');
-      setContent(editState.findById.data.deskripsi ?? '');
+      setFormData({
+        judul: editState.findById.data.judul ?? '',
+        deskripsi: editState.findById.data.deskripsi ?? ''
+      });
     }
   }, [editState.findById.data]);
 
+  const handleChange = (field: 'judul' | 'deskripsi', value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
   const handleSubmit = async () => {
-    if (!judul.trim()) {
+    if (!formData.judul.trim()) {
       toast.error('Judul wajib diisi');
       return;
     }
@@ -61,9 +68,13 @@ function EditLokasiDanJadwal() {
     setIsSubmitting(true);
     try {
       if (editState.findById.data) {
-        editState.findById.data.judul = judul;
-        editState.findById.data.deskripsi = content;
-        await editState.update.save(editState.findById.data);
+        // update global state hanya saat submit
+        const updatedData = {
+          ...editState.findById.data,
+          judul: formData.judul,
+          deskripsi: formData.deskripsi
+        };
+        await editState.update.save(updatedData);
 
         toast.success('Berhasil menyimpan perubahan');
         router.push('/admin/pendidikan/bimbingan-belajar-desa/lokasi-dan-jadwal');
@@ -78,7 +89,6 @@ function EditLokasiDanJadwal() {
 
   const handleBack = () => router.back();
 
-  // loading state
   if (editState.findById.loading) {
     return (
       <Box>
@@ -92,15 +102,10 @@ function EditLokasiDanJadwal() {
   return (
     <Box>
       <Stack gap="xs">
-        {/* Header dengan tombol kembali */}
+        {/* Header */}
         <Group mb="md">
           <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-            <Button
-              variant="subtle"
-              onClick={handleBack}
-              p="xs"
-              radius="md"
-            >
+            <Button variant="subtle" onClick={handleBack} p="xs" radius="md">
               <IconArrowBack color={colors['blue-button']} size={24} />
             </Button>
           </Tooltip>
@@ -125,9 +130,9 @@ function EditLokasiDanJadwal() {
             <TextInput
               label={<Text fw="bold">Judul</Text>}
               placeholder="Masukkan judul lokasi/jadwal"
-              defaultValue={judul}
-              onChange={(e) => setJudul(e.currentTarget.value)}
-              error={!judul && 'Judul wajib diisi'}
+              value={formData.judul}
+              onChange={(e) => handleChange('judul', e.currentTarget.value)}
+              error={!formData.judul && 'Judul wajib diisi'}
             />
 
             {/* Deskripsi Field */}
@@ -135,8 +140,8 @@ function EditLokasiDanJadwal() {
               <Text fz="sm" fw="bold" mb="xs">Deskripsi</Text>
               <BimbinganBelajarDesaTextEditor
                 showSubmit={false}
-                onChange={setContent}
-                initialContent={content}
+                onChange={(value) => handleChange('deskripsi', value)}
+                initialContent={formData.deskripsi}
               />
             </Box>
 
@@ -146,7 +151,7 @@ function EditLokasiDanJadwal() {
                 bg={colors['blue-button']}
                 onClick={handleSubmit}
                 loading={isSubmitting || editState.update.loading}
-                disabled={!judul}
+                disabled={!formData.judul}
               >
                 {isSubmitting ? 'Menyimpan...' : 'Simpan Perubahan'}
               </Button>

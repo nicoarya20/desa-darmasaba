@@ -47,11 +47,11 @@ function EditPotensi() {
 
   useEffect(() => {
     potensiDesaState.kategoriPotensi.findMany.load();
-
+  
     const loadPotensi = async () => {
       const id = params?.id as string;
       if (!id) return;
-
+  
       try {
         const data = await potensiState.edit.load(id);
         if (data) {
@@ -62,7 +62,17 @@ function EditPotensi() {
             content: data.content || "",
             imageId: data.imageId || "",
           });
-
+          
+          // // merge, bukan replace
+          // setFormData((prev) => ({
+          //   ...prev,
+          //   name: data.name ?? prev.name,
+          //   deskripsi: data.deskripsi ?? prev.deskripsi,
+          //   kategoriId: data.kategoriId ?? prev.kategoriId,
+          //   content: data.content ?? prev.content,
+          //   imageId: data.imageId ?? prev.imageId,
+          // }));
+  
           if (data?.image?.link) {
             setPreviewImage(data.image.link);
           }
@@ -72,9 +82,10 @@ function EditPotensi() {
         toast.error("Gagal memuat data potensi");
       }
     };
-
+  
     loadPotensi();
   }, [params?.id]);
+  
 
   const handleSubmit = async () => {
     try {
@@ -143,13 +154,17 @@ function EditPotensi() {
             required
           />
 
-          <TextInput
-            label="Deskripsi Singkat"
-            placeholder="Masukkan deskripsi"
-            value={formData.deskripsi}
-            onChange={(e) => handleChange("deskripsi", e.target.value)}
-            required
-          />
+          <Box>
+            <Text fz="sm" fw="bold" mb={6}>
+              Deskripsi Singkat
+            </Text>
+            <EditEditor
+              value={formData.deskripsi}
+              onChange={(htmlContent) =>
+                handleChange("deskripsi", htmlContent)
+              }
+            />
+          </Box>
 
           <Select
             value={formData.kategoriId}

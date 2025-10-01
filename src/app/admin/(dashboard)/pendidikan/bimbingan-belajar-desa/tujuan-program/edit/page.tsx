@@ -1,4 +1,5 @@
 'use client'
+
 import stateBimbinganBelajarDesa from '@/app/admin/(dashboard)/_state/pendidikan/bimbingan-belajar-desa';
 import colors from '@/con/colors';
 import {
@@ -33,26 +34,31 @@ function EditTujuanProgram() {
   const router = useRouter();
   const editState = useProxy(stateBimbinganBelajarDesa.stateTujuanProgram);
 
-  const [judul, setJudul] = useState('');
-  const [content, setContent] = useState('');
+  // gabung judul & content jadi formData
+  const [formData, setFormData] = useState({ judul: '', deskripsi: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // load data once
+  // load data sekali
   useShallowEffect(() => {
-    if (!editState.findById.data) {
-      editState.findById.initialize();
-    }
+    if (!editState.findById.data) editState.findById.initialize();
   }, []);
 
+  // sync data dari global state ke local formData sekali setelah load
   useEffect(() => {
     if (editState.findById.data) {
-      setJudul(editState.findById.data.judul ?? '');
-      setContent(editState.findById.data.deskripsi ?? '');
+      setFormData({
+        judul: editState.findById.data.judul ?? '',
+        deskripsi: editState.findById.data.deskripsi ?? '',
+      });
     }
   }, [editState.findById.data]);
 
+  const handleChange = (field: 'judul' | 'deskripsi', value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
   const handleSubmit = async () => {
-    if (!judul.trim()) {
+    if (!formData.judul.trim()) {
       toast.error('Judul wajib diisi');
       return;
     }
@@ -60,8 +66,9 @@ function EditTujuanProgram() {
     setIsSubmitting(true);
     try {
       if (editState.findById.data) {
-        editState.findById.data.judul = judul;
-        editState.findById.data.deskripsi = content;
+        // update global state hanya saat submit
+        editState.findById.data.judul = formData.judul;
+        editState.findById.data.deskripsi = formData.deskripsi;
         await editState.update.save(editState.findById.data);
 
         toast.success('Berhasil menyimpan perubahan');
@@ -117,18 +124,20 @@ function EditTujuanProgram() {
             <TextInput
               label={<Text fw="bold">Judul</Text>}
               placeholder="Masukkan judul program"
-              defaultValue={judul}
-              onChange={(e) => setJudul(e.currentTarget.value)}
-              error={!judul && 'Judul wajib diisi'}
+              value={formData.judul}
+              onChange={(e) => handleChange('judul', e.currentTarget.value)}
+              error={!formData.judul && 'Judul wajib diisi'}
             />
 
             {/* Deskripsi Field */}
             <Box>
-              <Text fz="sm" fw="bold" mb="xs">Deskripsi</Text>
+              <Text fz="sm" fw="bold" mb="xs">
+                Deskripsi
+              </Text>
               <BimbinganBelajarDesaTextEditor
                 showSubmit={false}
-                onChange={setContent}
-                initialContent={content}
+                initialContent={formData.deskripsi}
+                onChange={(value) => handleChange('deskripsi', value)}
               />
             </Box>
 
@@ -138,7 +147,7 @@ function EditTujuanProgram() {
                 bg={colors['blue-button']}
                 onClick={handleSubmit}
                 loading={isSubmitting || editState.update.loading}
-                disabled={!judul}
+                disabled={!formData.judul}
               >
                 {isSubmitting ? 'Menyimpan...' : 'Simpan Perubahan'}
               </Button>

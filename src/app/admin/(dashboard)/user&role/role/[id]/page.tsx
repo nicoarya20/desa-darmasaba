@@ -1,62 +1,71 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
+
 import colors from '@/con/colors';
 import { Box, Button, Group, MultiSelect, Paper, Stack, Text, TextInput, Title, Tooltip } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 import user from '../../../_state/user/user-state';
 
 function EditRole() {
-  const stateRole = useProxy(user.roleState)
+  const stateRole = useProxy(user.roleState);
   const router = useRouter();
   const params = useParams();
 
+  // Controlled local state
   const [formData, setFormData] = useState({
-    name: stateRole.update.form.name || "",
-    permissions: stateRole.update.form.permissions || [],
-  })
+    name: '',
+    permissions: [] as string[],
+  });
+
+  // Load role data
+  const loadRole = useCallback(async (id: string) => {
+    try {
+      const data = await stateRole.update.load(id);
+      if (data) {
+        setFormData({
+          name: data.name || '',
+          permissions: data.permissions || [],
+        });
+      }
+    } catch (error) {
+      console.error('Error loading role:', error);
+      toast.error(error instanceof Error ? error.message : 'Gagal mengambil data role');
+    }
+  }, [stateRole.update]);
 
   useEffect(() => {
-    stateRole.findMany.load();
-    const loadRole = async () => {
-      const id = params?.id as string;
-      if (!id) return;
+    stateRole.findMany.load(); // Load permissions/options
+    const id = params?.id as string;
+    if (id) loadRole(id);
+  }, [params?.id, loadRole, stateRole.findMany]);
 
-      try {
-        const data = await stateRole.update.load(id);
-        if (data) {
-          setFormData({
-            name: data.name || "",
-            permissions: data.permissions || [],
-          });
-        }
-      } catch (error) {
-        console.error("Error loading role:", error);
-        toast.error(
-          error instanceof Error ? error.message : "Gagal mengambil data role"
-        );
-      }
+  // Submit handler
+  const handleSubmit = async () => {
+    if (!formData.name.trim()) {
+      toast.error('Nama role tidak boleh kosong');
+      return;
+    }
+    if (!formData.permissions.length) {
+      toast.error('Pilih minimal satu permission');
+      return;
     }
 
-    loadRole();
-  }, [params?.id]);
-
-  const handleSubmit = async () => {
     try {
+      // Update global state only on submit
       stateRole.update.form = {
         ...stateRole.update.form,
         name: formData.name,
         permissions: formData.permissions,
-      }
+      };
       await stateRole.update.update();
-      toast.success("Role berhasil diperbarui!");
-      router.push("/admin/user&role/role");
+      toast.success('Role berhasil diperbarui!');
+      router.push('/admin/user&role/role');
     } catch (error) {
-      console.error("Error updating role:", error);
-      toast.error("Terjadi kesalahan saat memperbarui role");
+      console.error('Error updating role:', error);
+      toast.error('Terjadi kesalahan saat memperbarui role');
     }
   };
 
@@ -76,47 +85,48 @@ function EditRole() {
       <Paper
         w={{ base: '100%', md: '50%' }}
         bg={colors['white-1']}
-        p={'md'}
+        p="md"
         radius="md"
         shadow="sm"
         style={{ border: '1px solid #e0e0e0' }}
       >
-        <Stack gap={"xs"}>
-          <Title order={4}>Edit Role</Title>
+        <Stack gap="xs">
           <TextInput
-            defaultValue={formData.name}
+            value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            label={<Text fw={"bold"} fz={"sm"}>Nama Role</Text>}
-            placeholder='Masukkan nama role'
+            label={<Text fw="bold" fz="sm">Nama Role</Text>}
+            placeholder="Masukkan nama role"
           />
           <MultiSelect
             value={formData.permissions}
             onChange={(val) => setFormData({ ...formData, permissions: val })}
-            label={<Text fw={"bold"} fz={"sm"}>Permission</Text>}
-            placeholder='Pilih permission'
+            label={<Text fw="bold" fz="sm">Permission</Text>}
+            placeholder="Pilih permission"
             data={
               stateRole.findMany.data?.map((v) => ({
-                value: v.id,  // Make sure this is using the ID
-                label: v.name
+                value: v.id,
+                label: v.name,
               })) || []
             }
             clearable
             searchable
             required
-            error={!formData.permissions.length ? "Pilih minimal satu permission" : undefined}
+            error={!formData.permissions.length ? 'Pilih minimal satu permission' : undefined}
           />
 
           <Group justify="right">
-            <Button 
-            radius="md"
-            size="md"
-            onClick={handleSubmit}
-            style={{
-              background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
-              color: '#fff',
-              boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
-            }}
-            >Submit</Button>
+            <Button
+              radius="md"
+              size="md"
+              onClick={handleSubmit}
+              style={{
+                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                color: '#fff',
+                boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
+              }}
+            >
+              Submit
+            </Button>
           </Group>
         </Stack>
       </Paper>

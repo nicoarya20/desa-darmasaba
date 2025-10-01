@@ -9,37 +9,44 @@ import stateDasarHukumPPID from '../../../_state/ppid/dasar_hukum/dasarHukum';
 import { useRouter } from 'next/navigation';
 import { IconArrowBack } from '@tabler/icons-react';
 
-const PPIDTextEditor = dynamic(() => import('../../_com/PPIDTextEditor').then(mod => mod.PPIDTextEditor), {
-  ssr: false,
-});
+const PPIDTextEditor = dynamic(
+  () => import('../../_com/PPIDTextEditor').then(mod => mod.PPIDTextEditor),
+  { ssr: false }
+);
 
 function EditDasarHukum() {
-  const router = useRouter()
-  const dasarHukumState = useProxy(stateDasarHukumPPID)
-  const [judul, setJudul] = useState('');
-  const [content, setContent] = useState('');
+  const router = useRouter();
+  const dasarHukumState = useProxy(stateDasarHukumPPID);
 
+  // Gabungkan judul & content jadi satu state lokal
+  const [formData, setFormData] = useState({ judul: '', content: '' });
+
+  // Load data awal sekali
   useShallowEffect(() => {
     if (!dasarHukumState.findById.data) {
-      dasarHukumState.findById.initialize(); // biar masuk ke `findFirst` route kamu
+      dasarHukumState.findById.initialize();
     }
   }, []);
 
+  // Set state lokal saat data global sudah tersedia
   useEffect(() => {
     if (dasarHukumState.findById.data) {
-      setJudul(dasarHukumState.findById.data.judul ?? '')
-      setContent(dasarHukumState.findById.data.content ?? '')
+      setFormData({
+        judul: dasarHukumState.findById.data.judul ?? '',
+        content: dasarHukumState.findById.data.content ?? '',
+      });
     }
-  }, [dasarHukumState.findById.data])
+  }, [dasarHukumState.findById.data]);
 
-  const submit = () => {
+  const handleSubmit = () => {
     if (dasarHukumState.findById.data) {
-      dasarHukumState.findById.data.judul = judul;
-      dasarHukumState.findById.data.content = content;
-      dasarHukumState.update.save(dasarHukumState.findById.data)
+      // Update global state hanya saat submit
+      const updated = { ...dasarHukumState.findById.data, ...formData };
+      dasarHukumState.update.save(updated);
     }
-    router.push('/admin/ppid/dasar-hukum')
-  }
+    router.push('/admin/ppid/dasar-hukum');
+  };
+
   return (
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
       <Group mb="md">
@@ -69,12 +76,12 @@ function EditDasarHukum() {
             <Box style={{ border: '1px solid #dee2e6', borderRadius: '0.25rem' }}>
               <PPIDTextEditor
                 showSubmit={false}
-                onChange={setJudul}
-                initialContent={judul}
+                initialContent={formData.judul}
+                onChange={value => setFormData(prev => ({ ...prev, judul: value }))}
               />
             </Box>
           </Box>
-          
+
           <Box>
             <Text fw="bold" fz="sm" mb={6}>
               Konten
@@ -82,15 +89,15 @@ function EditDasarHukum() {
             <Box style={{ border: '1px solid #dee2e6', borderRadius: '0.25rem' }}>
               <PPIDTextEditor
                 showSubmit={false}
-                onChange={setContent}
-                initialContent={content}
+                initialContent={formData.content}
+                onChange={value => setFormData(prev => ({ ...prev, content: value }))}
               />
             </Box>
           </Box>
 
           <Group justify="flex-end" mt="md">
             <Button
-              onClick={submit}
+              onClick={handleSubmit}
               loading={dasarHukumState.update.loading}
               radius="md"
               size="md"

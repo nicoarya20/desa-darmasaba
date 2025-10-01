@@ -75,22 +75,28 @@ function ListPerbekelDariMasaKeMasa({ search }: { search: string }) {
                 filteredData.map((item) => (
                   <TableTr key={item.id}>
                     <TableTd>
-                      <Text fw={500} lineClamp={1}>{item.nama}</Text>
+                      <Box w={200}>
+                        <Text fw={500} lineClamp={1}>{item.nama}</Text>
+                      </Box>
                     </TableTd>
                     <TableTd>
-                      <Text lineClamp={1}>{item.periode}</Text>
+                      <Box w={200}>
+                        <Text lineClamp={1}>{item.periode}</Text>
+                      </Box>
                     </TableTd>
                     <TableTd>
-                      <Button
-                        size="xs"
-                        radius="md"
-                        variant="light"
-                        color="blue"
-                        leftSection={<IconDeviceImacCog size={16} />}
-                        onClick={() => router.push(`/admin/desa/profile/profile-perbekel-dari-masa-ke-masa/${item.id}`)}
-                      >
-                        Detail
-                      </Button>
+                      <Box w={200}>
+                        <Button
+                          size="xs"
+                          radius="md"
+                          variant="light"
+                          color="blue"
+                          leftSection={<IconDeviceImacCog size={16} />}
+                          onClick={() => router.push(`/admin/desa/profile/profile-perbekel-dari-masa-ke-masa/${item.id}`)}
+                        >
+                          Detail
+                        </Button>
+                      </Box>
                     </TableTd>
                   </TableTr>
                 ))

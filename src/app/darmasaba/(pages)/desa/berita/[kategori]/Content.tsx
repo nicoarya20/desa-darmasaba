@@ -75,7 +75,7 @@ export default function Content({ kategori }: { kategori: string }) {
                         {featured.kategoriBerita?.name || kategori}
                       </Badge>
                       <Title order={2} mb="md">{featured.judul}</Title>
-                      <Text color="dimmed" lineClamp={3} mb="md">{featured.deskripsi}</Text>
+                      <Text c="dimmed" lineClamp={3} mb="md" dangerouslySetInnerHTML={{ __html: featured.deskripsi }} />
                     </div>
                     <Group justify="apart" mt="auto">
                       <Group gap="xs">
@@ -135,9 +135,9 @@ export default function Content({ kategori }: { kategori: string }) {
                     {item.kategoriBerita?.name || kategori}
                   </Badge>
                   <Text fw={600} size="lg" mt="sm" lineClamp={2}>{item.judul}</Text>
-                  <Text size="sm" color="dimmed" lineClamp={3} mt="xs">{item.deskripsi}</Text>
+                  <Text size="sm" c="dimmed" lineClamp={3} mt="xs" dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
                   <Group justify="apart" mt="md" gap="xs">
-                    <Text size="xs" color="dimmed">
+                    <Text size="xs" c="dimmed">
                       {new Date(item.createdAt).toLocaleDateString('id-ID', {
                         day: 'numeric',
                         month: 'short',
