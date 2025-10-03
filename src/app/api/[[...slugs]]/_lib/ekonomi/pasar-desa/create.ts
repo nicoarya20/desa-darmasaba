@@ -7,7 +7,9 @@ type FormCreate = {
   alamatUsaha: string;
   imageId: string;
   rating: number;
-  kategoriId: string[]; // Array of KategoriProduk IDs
+  kategoriId: string[];
+  kontak: string;
+  // Array of KategoriProduk IDs
 };
 
 export default async function pasarDesaCreate(context: Context) {
@@ -28,7 +30,9 @@ export default async function pasarDesaCreate(context: Context) {
           alamatUsaha: body.alamatUsaha,
           imageId: body.imageId,
           rating: Number(body.rating),
-          kategoriProdukId: body.kategoriId[0], // Use the first category as the main one
+          kategoriProdukId: body.kategoriId[0],
+          kontak: body.kontak 
+          // Use the first category as the main one
         },
       });
 

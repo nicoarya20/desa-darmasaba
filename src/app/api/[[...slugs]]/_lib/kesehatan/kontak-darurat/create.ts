@@ -7,6 +7,7 @@ type FormCreate = Prisma.KontakDaruratGetPayload<{
         name: true;
         deskripsi: true;
         imageId: true;
+        whatsapp: true;
     };
 }>;
 export default async function kontakDaruratCreate(context: Context) {
@@ -17,6 +18,7 @@ export default async function kontakDaruratCreate(context: Context) {
             name: body.name,
             deskripsi: body.deskripsi,
             imageId: body.imageId,
+            whatsapp: body.whatsapp,
         }
     })
     return {

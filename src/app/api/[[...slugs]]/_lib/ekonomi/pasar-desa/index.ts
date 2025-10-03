@@ -37,6 +37,7 @@ const PasarDesa = new Elysia({
         imageId: t.String(),
         rating: t.Number(),
         kategoriId: t.Array(t.String()),
+        kontak: t.String(),
       }),
     }
   )
@@ -79,6 +80,7 @@ const PasarDesa = new Elysia({
         imageId: t.String(),
         rating: t.Number(),
         kategoriId: t.Array(t.String()),
+        kontak: t.String(),
       }),
     }
   );

@@ -73,7 +73,7 @@ function DetailProgramKesehatan() {
 
               <Box>
                 <Text fz="lg" fw="bold">Deskripsi Singkat</Text>
-                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }}>{data?.deskripsiSingkat || '-'}</Text>
+                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data?.deskripsiSingkat || '-' }} />
               </Box>
 
               <Box>

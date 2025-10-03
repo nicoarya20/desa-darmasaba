@@ -1,9 +1,9 @@
 'use client'
-import { useState } from 'react';
-import { useProxy } from 'valtio/utils';
-import { useShallowEffect } from '@mantine/hooks';
+import kontakDarurat from '@/app/admin/(dashboard)/_state/kesehatan/kontak-darurat/kontakDarurat';
+import colors from '@/con/colors';
 import {
   Box,
+  Button,
   Center,
   Grid,
   GridCol,
@@ -15,23 +15,24 @@ import {
   Stack,
   Text,
   TextInput,
-  Tooltip,
-  Badge,
+  Tooltip
 } from '@mantine/core';
-import { IconSearch, IconPhone } from '@tabler/icons-react';
+import { useShallowEffect } from '@mantine/hooks';
+import { IconBrandWhatsapp, IconSearch } from '@tabler/icons-react';
+import { useState } from 'react';
+import { useProxy } from 'valtio/utils';
 import BackButton from '../../desa/layanan/_com/BackButto';
-import kontakDarurat from '@/app/admin/(dashboard)/_state/kesehatan/kontak-darurat/kontakDarurat';
-import colors from '@/con/colors';
+import { useDebouncedValue } from '@mantine/hooks';
 
 function Page() {
   const state = useProxy(kontakDarurat);
   const [search, setSearch] = useState('');
-
+  const [debouncedSearch] = useDebouncedValue(search, 500)
   const { data, page, totalPages, loading, load } = state.findMany;
 
   useShallowEffect(() => {
-    load(page, 6, search);
-  }, [page, search]);
+    load(page, 3, debouncedSearch);
+  }, [page, debouncedSearch]);
 
   if (loading || !data) {
     return (
@@ -113,16 +114,16 @@ function Page() {
                     {v.name}
                   </Text>
                   <Text fz="sm" c="dimmed" ta="center" lineClamp={3}>
-                    <span style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: v.deskripsi }} />
+                    <span style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: v.deskripsi }} />
                   </Text>
-                  <Badge
-                    color="blue"
-                    leftSection={<IconPhone size={14} />}
-                    variant="light"
-                    mt="sm"
-                  >
-                    Panggil Sekarang
-                  </Badge>
+                  <Button 
+                    variant="light" 
+                    leftSection={<IconBrandWhatsapp size={18} />} 
+                    component="a" 
+                    href={`https://wa.me/${v.whatsapp.replace(/\D/g, '')}`} 
+                    target="_blank" 
+                    aria-label="Hubungi WhatsApp"
+                  >WhatsApp</Button>
                 </Stack>
               </Paper>
             ))}
@@ -130,22 +131,20 @@ function Page() {
         )}
       </Box>
 
-      {totalPages > 1 && (
-        <Center mt="xl">
-          <Pagination
-            value={page}
-            onChange={(newPage) => load(newPage, 6, search)}
-            total={totalPages}
-            radius="xl"
-            size="md"
-            styles={{
-              control: {
-                borderRadius: '999px',
-              },
-            }}
-          />
-        </Center>
-      )}
+      <Center mt="xl">
+        <Pagination
+          value={page}
+          onChange={(newPage) => load(newPage, 3, search)}
+          total={totalPages}
+          size="lg"
+          radius="xl"
+          styles={{
+            control: {
+              border: `1px solid ${colors['blue-button']}`,
+            },
+          }}
+        />
+      </Center>
     </Stack>
   );
 }

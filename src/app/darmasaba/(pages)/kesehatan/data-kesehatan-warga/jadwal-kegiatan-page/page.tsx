@@ -53,7 +53,11 @@ function JadwalKegiatanPage() {
                       {item.informasijadwalkegiatan.name}
                     </Text>
                     <Text fw={600} fz="sm" c={colors['blue-button']}>
-                      {item.informasijadwalkegiatan.tanggal}
+                      {new Date(item.informasijadwalkegiatan.tanggal).toLocaleDateString('id-ID', {
+                        day: '2-digit',
+                        month: 'long',
+                        year: 'numeric'
+                      })}
                     </Text>
                   </Group>
 

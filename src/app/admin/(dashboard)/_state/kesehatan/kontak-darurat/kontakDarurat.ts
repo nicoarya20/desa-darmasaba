@@ -9,12 +9,14 @@ const templateForm = z.object({
   name: z.string().min(3, "Judul minimal 3 karakter"),
   deskripsi: z.string().min(3, "Deskripsi minimal 3 karakter"),
   imageId: z.string().nonempty(),
+  whatsapp: z.string().min(10, "Whatsapp minimal 10 karakter"),
 });
 
 const defaultForm = {
   name: "",
   deskripsi: "",
   imageId: "",
+  whatsapp: "",
 };
 
 const kontakDarurat = proxy({
@@ -171,6 +173,7 @@ const kontakDarurat = proxy({
             name: data.name,
             deskripsi: data.deskripsi,
             imageId: data.imageId,
+            whatsapp: data.whatsapp,
           };
           return data; // Return the loaded data
         } else {
@@ -207,6 +210,7 @@ const kontakDarurat = proxy({
               name: this.form.name,
               deskripsi: this.form.deskripsi,
               imageId: this.form.imageId,
+              whatsapp: this.form.whatsapp,
             }),
           }
         );

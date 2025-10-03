@@ -30,7 +30,7 @@ import BackButton from "../../desa/layanan/_com/BackButto";
 import { useProxy } from "valtio/utils";
 import programKesehatan from "@/app/admin/(dashboard)/_state/kesehatan/program-kesehatan/programKesehatan";
 import { useState } from "react";
-import { useShallowEffect } from "@mantine/hooks";
+import { useDebouncedValue, useShallowEffect } from "@mantine/hooks";
 import { useRouter } from "next/navigation";
 
 const manfaatProgram = [
@@ -58,11 +58,12 @@ export default function Page() {
   const state = useProxy(programKesehatan);
   const router = useRouter();
   const [search, setSearch] = useState("");
+  const [debouncedSearch] = useDebouncedValue(search, 500); // 500ms delay
   const { data, page, totalPages, loading, load } = state.findMany;
 
   useShallowEffect(() => {
-    load(page, 3, search);
-  }, [page, search]);
+    load(page, 3, debouncedSearch);
+  }, [page, debouncedSearch]);
 
   if (loading || !data) {
     return (
@@ -125,14 +126,18 @@ export default function Page() {
                   className="hover-scale"
                 >
                   <Stack gap="md">
-                    <Image
-                      src={v.image?.link}
-                      alt={v.name}
-                      radius="xl"
-                      height={180}
-                      fit="cover"
-                      loading="lazy"
-                    />
+                    <Box h={180} w="100%">
+                      <Image
+                        src={v.image?.link}
+                        alt={v.name}
+                        radius="xl"
+                        w="100%"
+                        h="100%"
+                        fit="cover"
+                        loading="lazy"
+                      />
+                    </Box>
+
                     <Box px="lg" pb="lg">
                       <Text
                         fw="bold"
@@ -147,7 +152,7 @@ export default function Page() {
                         c="dimmed"
                         lineClamp={3}
                         dangerouslySetInnerHTML={{ __html: v.deskripsi }}
-                        style={{wordBreak: "break-word", whiteSpace: "normal"}}
+                        style={{ wordBreak: "break-word", whiteSpace: "normal" }}
                       />
                       <Group justify="space-between" mt="md">
                         <Group gap="xs">
@@ -155,13 +160,13 @@ export default function Page() {
                           <Text size="sm">
                             {v.createdAt
                               ? new Date(v.createdAt).toLocaleDateString(
-                                  "id-ID",
-                                  {
-                                    day: "numeric",
-                                    month: "long",
-                                    year: "numeric",
-                                  }
-                                )
+                                "id-ID",
+                                {
+                                  day: "numeric",
+                                  month: "long",
+                                  year: "numeric",
+                                }
+                              )
                               : "Tanggal tidak tersedia"}
                           </Text>
                         </Group>

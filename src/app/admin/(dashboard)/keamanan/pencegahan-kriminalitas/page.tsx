@@ -105,9 +105,11 @@ function ListPencegahanKriminalitas({ search }: { search: string }) {
                 data.map((item) => (
                   <TableTr key={item.id}>
                     <TableTd>
-                      <Text fw={500} truncate="end" lineClamp={1}>
+                      <Box w={200}>
+                       <Text fw={500} truncate="end" lineClamp={1}>
                         {item.judul}
                       </Text>
+                      </Box>
                     </TableTd>
                     <TableTd>
                       <Box w={200}>

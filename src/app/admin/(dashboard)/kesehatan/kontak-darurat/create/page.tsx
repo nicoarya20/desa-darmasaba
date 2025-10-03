@@ -38,6 +38,7 @@ function CreateKontakDarurat() {
       name: '',
       deskripsi: '',
       imageId: '',
+      whatsapp: '',
     };
     setPreviewImage(null);
     setFile(null);
@@ -102,6 +103,17 @@ function CreateKontakDarurat() {
             }}
             label={<Text fz="sm" fw="bold">Judul</Text>}
             placeholder="Masukkan judul"
+            required
+          />
+
+          <TextInput
+          type='number'
+            defaultValue={kontakDaruratState.create.form.whatsapp}
+            onChange={(val) => {
+              kontakDaruratState.create.form.whatsapp = val.target.value;
+            }}
+            label={<Text fz="sm" fw="bold">Whatsapp</Text>}
+            placeholder="Masukkan whatsapp"
             required
           />
 

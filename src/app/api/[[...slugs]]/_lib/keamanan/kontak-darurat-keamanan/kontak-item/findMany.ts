@@ -25,6 +25,7 @@ export default async function kontakItemFindMany(context: Context) {
         skip,
         take: limit,
         orderBy: { createdAt: "desc" },
+        where,
       }),
       prisma.kontakItem.count({ where }),
     ]);

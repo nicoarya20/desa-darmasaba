@@ -2,10 +2,14 @@
 import infoWabahPenyakit from '@/app/admin/(dashboard)/_state/kesehatan/info-wabah-penyakit/infoWabahPenyakit';
 import colors from '@/con/colors';
 import {
+  Badge,
   Box,
+  Button,
   Center,
+  Divider,
   Grid,
   GridCol,
+  Group,
   Image,
   Pagination,
   Paper,
@@ -13,27 +17,25 @@ import {
   Skeleton,
   Stack,
   Text,
-  TextInput,
-  Badge,
-  HoverCard,
-  Divider,
-  Group,
+  TextInput
 } from '@mantine/core';
-import { useShallowEffect } from '@mantine/hooks';
-import { IconSearch, IconInfoCircle } from '@tabler/icons-react';
+import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
+import { IconInfoCircle, IconSearch } from '@tabler/icons-react';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import BackButton from '../../desa/layanan/_com/BackButto';
+import { useTransitionRouter } from 'next-view-transitions';
 
 function Page() {
   const state = useProxy(infoWabahPenyakit);
+  const router = useTransitionRouter();
   const [search, setSearch] = useState('');
-
+  const [debouncedSearch] = useDebouncedValue(search, 500)
   const { data, page, totalPages, loading, load } = state.findMany;
 
   useShallowEffect(() => {
-    load(page, 3, search);
-  }, [page, search]);
+    load(page, 3, debouncedSearch);
+  }, [page, debouncedSearch]);
 
   if (loading || !data) {
     return (
@@ -125,28 +127,9 @@ function Page() {
                   <Text fz="sm" lh={1.5}>
                     {v.deskripsiSingkat}
                   </Text>
-                  <HoverCard shadow="md" position="bottom" radius="md" width={300}>
-                    <HoverCard.Target>
-                      <Text
-                        fz="sm"
-                        fw={500}
-                        c={colors['blue-button']}
-                        style={{ cursor: 'pointer' }}
-                      >
-                        Lihat detail lengkap
-                      </Text>
-                    </HoverCard.Target>
-                    <HoverCard.Dropdown>
-                      <Text
-                        fz="sm"
-                        lh={1.6}
-                        dangerouslySetInnerHTML={{
-                          __html: v.deskripsiLengkap,
-                        }}
-                        style={{wordBreak: "break-word", whiteSpace: "normal"}}
-                      />
-                    </HoverCard.Dropdown>
-                  </HoverCard>
+                  <Button variant="light" radius="md" size="md" onClick={() => router.push(`/admin/kesehatan/info-wabah-penyakit/${v.id}`)}>
+                    Selengkapnya
+                  </Button>
                 </Stack>
               </Paper>
             ))}
@@ -154,17 +137,17 @@ function Page() {
         )}
       </Box>
 
-     
-        <Center>
-          <Pagination
-            value={page}
-            onChange={(newPage) => load(newPage)}
-            total={totalPages}
-            radius="xl"
-            size="md"
-            mt="lg"
-          />
-        </Center>
+
+      <Center>
+        <Pagination
+          value={page}
+          onChange={(newPage) => load(newPage)}
+          total={totalPages}
+          radius="xl"
+          size="md"
+          mt="lg"
+        />
+      </Center>
 
     </Stack>
   );

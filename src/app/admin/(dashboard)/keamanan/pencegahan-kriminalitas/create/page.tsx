@@ -90,15 +90,17 @@ function CreatePencegahanKriminalitas() {
           />
 
           {/* Deskripsi Singkat */}
-          <TextInput
-            label="Deskripsi Singkat"
-            placeholder="Masukkan deskripsi singkat"
-            defaultValue={kriminalitasState.create.form.deskripsiSingkat}
-            onChange={(e) => {
-              kriminalitasState.create.form.deskripsiSingkat = e.currentTarget.value;
-            }}
-            required
-          />
+          <Box>
+            <Text fw="bold" fz="sm" mb={6}>
+              Deskripsi Singkat
+            </Text>
+            <CreateEditor
+              value={kriminalitasState.create.form.deskripsiSingkat}
+              onChange={(val) => {
+                kriminalitasState.create.form.deskripsiSingkat = val;
+              }}
+            />
+          </Box>
 
           {/* Deskripsi Panjang */}
           <Box>

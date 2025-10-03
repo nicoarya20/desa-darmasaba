@@ -10,6 +10,7 @@ import {
   Group,
   Paper,
   Stack,
+  Text,
   TextInput,
   Title,
   Tooltip,
@@ -61,9 +62,9 @@ function EditPencegahanKriminalitas() {
 
   const handleChange =
     (field: keyof typeof formData) =>
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setFormData((prev) => ({ ...prev, [field]: e.target.value }));
-    };
+      (e: React.ChangeEvent<HTMLInputElement>) => {
+        setFormData((prev) => ({ ...prev, [field]: e.target.value }));
+      };
 
   const handleSubmit = async () => {
     const converted = convertYoutubeUrlToEmbed(formData.linkVideo);
@@ -128,13 +129,17 @@ function EditPencegahanKriminalitas() {
             required
           />
 
-          <TextInput
-            label="Deskripsi Singkat"
-            placeholder="Masukkan deskripsi singkat"
-            value={formData.deskripsiSingkat}
-            onChange={handleChange('deskripsiSingkat')}
-            required
-          />
+          <Box>
+            <Text fw="bold" fz="sm" mb={6}>
+              Deskripsi
+            </Text>
+            <EditEditor
+              value={formData.deskripsiSingkat}
+              onChange={(val) =>
+                setFormData((prev) => ({ ...prev, deskripsiSingkat: val }))
+              }
+            />
+          </Box>
 
           <Box>
             <Title order={6} fw="bold" fz="sm" mb={6}>

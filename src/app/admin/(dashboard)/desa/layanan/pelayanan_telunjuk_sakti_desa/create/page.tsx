@@ -82,8 +82,8 @@ function CreatePelayananTelunjukDesa() {
             onChange={(val) => {
               stateTelunjukDesa.create.form.deskripsi = val.target.value;
             }}
-            label="Deskripsi"
-            placeholder="Masukkan deskripsi pelayanan"
+            label="Judul Link"
+            placeholder="Masukkan judul link"
             required
           />
 

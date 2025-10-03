@@ -26,6 +26,16 @@ export default function Page() {
     );
   }
 
+  if (data.length === 0) {
+    return (
+      <Box py="xl" px={{ base: "md", md: 100 }}>
+        <Text fz="lg" fw="bold" c={colors["blue-button"]}>
+          Tidak ada posyandu yang ditemukan
+        </Text>
+      </Box>
+    );
+  }
+
   return (
     <Stack pos="relative" bg={colors.Bg} py="xl" gap="xl">
       <Box px={{ base: "md", md: 100 }}>
@@ -111,10 +121,11 @@ export default function Page() {
                     <IconCalendar size={18} stroke={1.5} />
                     <Text fz="sm" c="dimmed">
                       Jadwal:{" "}
-                      <span style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: v.jadwalPelayanan }} />
+                      <span style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: v.jadwalPelayanan }} />
                     </Text>
                   </Flex>
                   <Spoiler
+                    key={`spoiler-${v.id}`}
                     maxHeight={70}
                     showLabel="Lihat selengkapnya"
                     hideLabel="Sembunyikan"
@@ -124,7 +135,7 @@ export default function Page() {
                       fz="sm"
                       lh={1.5}
                       dangerouslySetInnerHTML={{ __html: v.deskripsi }}
-                      style={{wordBreak: "break-word", whiteSpace: "normal"}}
+                      style={{ wordBreak: "break-word", whiteSpace: "normal" }}
                     />
                   </Spoiler>
                 </Stack>

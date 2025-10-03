@@ -101,15 +101,17 @@ function CreateProgramKesehatan() {
             required
           />
 
-          <TextInput
-            defaultValue={programKesehatanState.create.form.deskripsiSingkat}
-            onChange={(val) => {
-              programKesehatanState.create.form.deskripsiSingkat = val.target.value;
-            }}
-            label="Deskripsi Singkat"
-            placeholder="Masukkan deskripsi singkat"
-            required
-          />
+          <Box>
+            <Title order={6} mb={6}>
+              Deskripsi Singkat
+            </Title>
+            <CreateEditor
+              value={programKesehatanState.create.form.deskripsiSingkat}
+              onChange={(val) => {
+                programKesehatanState.create.form.deskripsiSingkat = val;
+              }}
+            />
+          </Box>
 
           <Box>
             <Title order={6} mb={6}>

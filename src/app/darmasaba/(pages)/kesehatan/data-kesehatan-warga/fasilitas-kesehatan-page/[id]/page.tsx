@@ -39,10 +39,9 @@ function Page() {
 
   const nama = data?.name || 'Fasilitas Kesehatan';
   const prosedur = data?.prosedurpendaftaran.content || '';
-  console.log("Prosedur:", data?.prosedurpendaftaran);
   const alamat = data?.informasiumum?.alamat || '-';
   const jam = data?.informasiumum?.jamOperasional || '-';
-  const layananUnggulan = data?.layananunggulan || '';
+  const layananUnggulan = data?.layananunggulan?.content || '';
   const tenaga = data?.dokterdantenagamedis || null;
   const fasilitasPendukungHtml = data?.fasilitaspendukung?.content || '';
   const tarif = (data?.tarifdanlayanan as TarifDanLayanan) || null;

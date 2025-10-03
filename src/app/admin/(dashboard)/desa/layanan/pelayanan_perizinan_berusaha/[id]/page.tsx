@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
+
 import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import stateLayananDesa from '@/app/admin/(dashboard)/_state/desa/layananDesa';
 import colors from '@/con/colors';
@@ -8,6 +9,7 @@ import {
   Button,
   Group,
   Paper,
+  Skeleton,
   Stack,
   TextInput,
   Title,
@@ -21,66 +23,82 @@ import { useProxy } from 'valtio/utils';
 
 function EditPelayananPerizinanBerusaha() {
   const router = useRouter();
-  const params = useParams();
-  const statePerizinanBerusaha = useProxy(
-    stateLayananDesa.pelayananPerizinanBerusaha
-  );
+  const params = useParams<{ id: string }>();
+  const id = params?.id; // ini langsung string
+  const state = useProxy(stateLayananDesa.pelayananPerizinanBerusaha);
 
+  const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState({
+    id: '',
     name: '',
     deskripsi: '',
     link: '',
   });
 
-  // load data pertama kali
+  // Load data detail
   useEffect(() => {
-    const loadPelayananPerizinan = async () => {
-      const id = params?.id as string;
-      if (!id) return;
+    if (!id) {
+      toast.error("ID tidak valid");
+      return;
+    }
+  
+    const loadData = async () => {
       try {
-        const data = await statePerizinanBerusaha.update.load(id);
+        setLoading(true);
+        const data = await state.findById.load(id);
         if (data) {
           setFormData({
-            name: data.name || '',
-            deskripsi: data.deskripsi || '',
-            link: data.link || '',
+            id: data.id,
+            name: data.name || "",
+            deskripsi: data.deskripsi || "",
+            link: data.link || "",
           });
+        } else {
+          toast.error("Data tidak ditemukan");
         }
       } catch (error) {
-        console.error('Error loading pelayanan perizinan berusaha:', error);
-        toast.error('Gagal memuat data pelayanan perizinan berusaha');
+        console.error("Error loading data:", error);
+        toast.error("Gagal memuat data");
+      } finally {
+        setLoading(false);
       }
     };
-    loadPelayananPerizinan();
-  }, [params?.id]);
+  
+    loadData();
+  }, [id]);
+  
 
   const handleChange =
     (field: keyof typeof formData) =>
-    (value: string) => {
-      setFormData((prev) => ({
-        ...prev,
-        [field]: value,
-      }));
-    };
+      (value: string) => {
+        setFormData((prev) => ({
+          ...prev,
+          [field]: value,
+        }));
+      };
 
   const handleSubmit = async () => {
-    const { name, deskripsi, link } = formData;
-    if (statePerizinanBerusaha.findById.data) {
-      const updatedData = {
-        ...statePerizinanBerusaha.findById.data,
-        name,
-        deskripsi,
-        link,
-      };
-      await statePerizinanBerusaha.update.update(updatedData);
+    try {
+      await state.update.update(formData);
       router.push('/admin/desa/layanan/pelayanan_perizinan_berusaha');
+    } catch (error) {
+      console.error('Error updating pelayanan perizinan berusaha:', error);
+      toast.error('Terjadi kesalahan saat update data');
     }
   };
+
+  if (loading) {
+    return (
+      <Stack align="center" justify="center" py="xl">
+        <Skeleton height={800} radius="md" />
+      </Stack>
+    );
+  }
 
   return (
     <Box>
       <Stack gap="xs">
-        {/* Header Section */}
+        {/* Header */}
         <Group mb="md">
           <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
             <Button
@@ -97,7 +115,7 @@ function EditPelayananPerizinanBerusaha() {
           </Title>
         </Group>
 
-        {/* Form Section */}
+        {/* Form */}
         <Paper
           w={{ base: '100%', md: '50%' }}
           bg={colors['white-1']}
@@ -109,7 +127,6 @@ function EditPelayananPerizinanBerusaha() {
           <Stack gap="xs">
             <Title order={3}>Edit Pelayanan Perizinan Berusaha</Title>
 
-            {/* Nama Field */}
             <TextInput
               label="Judul"
               placeholder="Masukkan judul"
@@ -118,7 +135,6 @@ function EditPelayananPerizinanBerusaha() {
               required
             />
 
-            {/* Link Field */}
             <TextInput
               label="Link"
               placeholder="Masukkan link terkait"
@@ -126,7 +142,6 @@ function EditPelayananPerizinanBerusaha() {
               onChange={(e) => handleChange('link')(e.target.value)}
             />
 
-            {/* Deskripsi Field */}
             <Box>
               <Title order={6}>Deskripsi</Title>
               <EditEditor
@@ -135,23 +150,20 @@ function EditPelayananPerizinanBerusaha() {
               />
             </Box>
 
-            {/* Action Buttons */}
             <Group>
               <Button
                 bg={colors['blue-button']}
                 onClick={handleSubmit}
-                loading={statePerizinanBerusaha.update.loading}
+                loading={state.update.loading}
                 disabled={!formData.name}
               >
-                {statePerizinanBerusaha.update.loading
-                  ? 'Menyimpan...'
-                  : 'Simpan Perubahan'}
+                {state.update.loading ? 'Menyimpan...' : 'Simpan Perubahan'}
               </Button>
 
               <Button
                 variant="outline"
                 onClick={() => router.back()}
-                disabled={statePerizinanBerusaha.update.loading}
+                disabled={state.update.loading}
               >
                 Batal
               </Button>

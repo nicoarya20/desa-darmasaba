@@ -9,6 +9,7 @@ type FormUpdate = {
   imageId: string;
   rating: number;
   kategoriId: string[]; // Array of KategoriProduk IDs
+  kontak: string;
 };
 
 export default async function pasarDesaUpdate(context: Context) {
@@ -31,6 +32,7 @@ export default async function pasarDesaUpdate(context: Context) {
       alamatUsaha: body.alamatUsaha,
       imageId: body.imageId,
       rating: Number(body.rating),
+      kontak: body.kontak
     },
   });
 

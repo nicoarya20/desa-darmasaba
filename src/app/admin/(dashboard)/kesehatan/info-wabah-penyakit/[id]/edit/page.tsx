@@ -140,15 +140,15 @@ function EditInfoWabahPenyakit() {
             required
           />
 
-          <TextInput
-            value={formData.deskripsiSingkat}
-            onChange={(e: ChangeEvent<HTMLInputElement>) =>
-              updateField('deskripsiSingkat', e.target.value)
-            }
-            label="Deskripsi Singkat"
-            placeholder="Masukkan deskripsi singkat"
-            required
-          />
+          <Box>
+            <Text fz="sm" fw="bold">
+              Deskripsi Singkat
+            </Text>
+            <EditEditor
+              value={formData.deskripsiSingkat}
+              onChange={(val) => updateField('deskripsiSingkat', val)}
+            />
+          </Box>
 
           <Box>
             <Text fz="sm" fw="bold">

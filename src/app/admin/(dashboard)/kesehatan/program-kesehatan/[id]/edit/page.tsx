@@ -117,7 +117,6 @@ function EditProgramKesehatan() {
         <Stack gap="md">
           {[
             { label: 'Judul', key: 'name', placeholder: 'Masukkan judul' },
-            { label: 'Deskripsi Singkat', key: 'deskripsiSingkat', placeholder: 'Masukkan deskripsi singkat' },
           ].map((field) => (
             <TextInput
               key={field.key}
@@ -128,6 +127,16 @@ function EditProgramKesehatan() {
               required
             />
           ))}
+
+          <Box>
+            <Text fz="sm" fw="bold" mb={6}>
+              Deskripsi Singkat
+            </Text>
+            <EditEditor
+              value={formData.deskripsiSingkat}
+              onChange={(val) => handleChange('deskripsiSingkat', val)}
+            />
+          </Box>
 
           <Box>
             <Text fz="sm" fw="bold" mb={6}>

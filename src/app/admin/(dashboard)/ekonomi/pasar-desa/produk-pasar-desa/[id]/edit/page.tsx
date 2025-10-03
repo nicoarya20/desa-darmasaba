@@ -31,6 +31,7 @@ type FormData = {
   imageId: string;
   rating: number;
   kategoriId: string[];
+  kontak: string;
 };
 
 function EditPasarDesa() {
@@ -47,6 +48,7 @@ function EditPasarDesa() {
     imageId: '',
     rating: 0,
     kategoriId: [],
+    kontak: '',
   });
 
   // load data awal
@@ -67,6 +69,7 @@ function EditPasarDesa() {
             imageId: data.imageId || '',
             rating: data.rating || 0,
             kategoriId: data.KategoriToPasar?.map((k: any) => k.kategoriId) || [],
+            kontak: data.kontak || '',
           });
           if (data.image?.link) setPreviewImage(data.image.link);
         }
@@ -225,6 +228,14 @@ function EditPasarDesa() {
             placeholder="Masukkan alamat usaha"
             value={formData.alamatUsaha}
             onChange={(e) => handleChange('alamatUsaha', e.target.value)}
+            required
+          />
+
+          <TextInput
+            label="Kontak"
+            placeholder="Masukkan kontak"
+            value={formData.kontak}
+            onChange={(e) => handleChange('kontak', e.target.value)}
             required
           />
 

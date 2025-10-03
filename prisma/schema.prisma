@@ -1167,6 +1167,7 @@ model KontakDarurat {
   deskripsi String
   image     FileStorage @relation(fields: [imageId], references: [id])
   imageId   String
+  whatsapp  String
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
   deletedAt DateTime    @default(now())
@@ -1340,6 +1341,7 @@ model PasarDesa {
   harga            Int
   rating           Float
   alamatUsaha      String
+  kontak           String
   createdAt        DateTime          @default(now())
   updatedAt        DateTime          @updatedAt
   deletedAt        DateTime          @default(now())

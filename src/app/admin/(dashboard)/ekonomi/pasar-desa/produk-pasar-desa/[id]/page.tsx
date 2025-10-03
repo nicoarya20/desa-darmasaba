@@ -86,6 +86,11 @@ function DetailPasarDesa() {
               </Box>
 
               <Box>
+                <Text fz="lg" fw="bold">Kontak</Text>
+                <Text fz="md" c="dimmed">{data.kontak || '-'}</Text>
+              </Box>
+
+              <Box>
                 <Text fz="lg" fw="bold">Gambar</Text>
                 {data.image?.link ? (
                   <Image

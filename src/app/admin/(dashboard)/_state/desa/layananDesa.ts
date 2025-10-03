@@ -581,33 +581,24 @@ const pelayananPerizinanBerusaha = proxy({
   findById: {
     data: null as pelayananPerizinanBerusahaForm | null,
     loading: false,
-    initialize() {
-      pelayananPerizinanBerusaha.findById.data = {
-        id: "",
-        name: "",
-        deskripsi: "",
-        link: "",
-      } as pelayananPerizinanBerusahaForm;
-    },
     async load(id: string) {
       try {
-        pelayananPerizinanBerusaha.findById.loading = true;
-        const res = await fetch(
-          `/api/desa/layanan/pelayananperizinanberusaha/${id}`
-        );
-        if (res.ok) {
-          const data = await res.json();
-          pelayananPerizinanBerusaha.findById.data = data.data ?? null;
-        } else {
-          console.error(
-            "Failed to fetch pelayanan perizinan berusaha:",
-            res.statusText
-          );
-          pelayananPerizinanBerusaha.findById.data = null;
+        this.loading = true;
+        const response = await fetch(`/api/desa/layanan/pelayananperizinanberusaha/${id}`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
+        const result = await response.json();
+        if (result?.success) {
+          this.data = result.data;  // Make sure this matches your API response structure
+        }
+        return result?.data || null;
       } catch (error) {
-        console.error("Error fetching pelayanan perizinan berusaha:", error);
-        pelayananPerizinanBerusaha.findById.data = null;
+        console.error('Error loading data:', error);
+        toast.error('Gagal memuat data');
+        return null;
+      } finally {
+        this.loading = false;
       }
     },
   },

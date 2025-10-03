@@ -12,6 +12,7 @@ const templatePasarDesaForm = z.object({
   imageId: z.string().min(1, "Gambar wajib dipilih"),
   rating: z.number().min(1, "Rating minimal 1"),
   kategoriId: z.array(z.string()).min(1, "Minimal pilih satu kategori"),
+  kontak: z.string().min(1, "Kontak wajib diisi"),
 });
 
 const defaultPasarDesaForm = {
@@ -21,6 +22,7 @@ const defaultPasarDesaForm = {
   imageId: "",
   rating: 0,
   kategoriId: [] as string[],
+  kontak: "",
 };
 
 const pasarDesa = proxy({
@@ -188,6 +190,7 @@ const pasarDesa = proxy({
             imageId: data.imageId,
             rating: data.rating,
             kategoriId: data.kategoriId,
+            kontak: data.kontak,
           };
           return data;
         } else {
@@ -225,6 +228,7 @@ const pasarDesa = proxy({
             imageId: this.form.imageId,
             rating: this.form.rating,
             kategoriId: this.form.kategoriId,
+            kontak: this.form.kontak,
           }),
         });
         if (!response.ok) {
@@ -333,6 +337,40 @@ const kategoriProduk = proxy({
         kategoriProduk.findMany.totalPages = 1;
       } finally {
         kategoriProduk.findMany.loading = false;
+      }
+    },
+  },
+  // ✅ Versi findManyAll (ambil semua tanpa pagination)
+  findManyAll: {
+    data: null as
+      | Prisma.KategoriProdukGetPayload<{
+          omit: { isActive: true };
+        }>[]
+      | null,
+    loading: false,
+    search: "",
+    load: async (search = "") => {
+      kategoriProduk.findManyAll.loading = true;
+      kategoriProduk.findManyAll.search = search;
+
+      try {
+        const query: any = {};
+        if (search) query.search = search;
+
+        const res = await ApiFetch.api.ekonomi.kategoriproduk["find-many-all"].get({
+          query,
+        });
+
+        if (res.status === 200 && res.data?.success) {
+          kategoriProduk.findManyAll.data = res.data.data ?? [];
+        } else {
+          kategoriProduk.findManyAll.data = [];
+        }
+      } catch (err) {
+        console.error("Gagal fetch kategori produk (all):", err);
+        kategoriProduk.findManyAll.data = [];
+      } finally {
+        kategoriProduk.findManyAll.loading = false;
       }
     },
   },

@@ -3,7 +3,7 @@ import pasarDesaState from '@/app/admin/(dashboard)/_state/ekonomi/pasar-desa/pa
 import colors from '@/con/colors';
 import { Box, Center, Flex, Grid, GridCol, Image, Pagination, Paper, Select, SimpleGrid, Skeleton, Stack, Text, TextInput } from '@mantine/core';
 import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
-import { IconMapPinFilled, IconSearch, IconShoppingCartFilled, IconStarFilled } from '@tabler/icons-react';
+import { IconBrandWhatsapp, IconMapPinFilled, IconSearch, IconStarFilled } from '@tabler/icons-react';
 import { motion } from 'motion/react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -25,7 +25,7 @@ function Page() {
   } = state.findMany
 
   useShallowEffect(() => {
-    pasarDesaState.kategoriProduk.findMany.load()
+    pasarDesaState.kategoriProduk.findManyAll.load()
   }, [])
 
   // Filter data based on selected category
@@ -105,7 +105,7 @@ function Page() {
               return (
                 <Stack key={k}>
                   <motion.div
-                    onClick={() => router.push('https://www.whatsapp.com/?lang=id')}
+                    onClick={() => router.push(`https://wa.me/${v.kontak?.replace(/\D/g, '')}`)}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.8 }}
                   >
@@ -132,7 +132,7 @@ function Page() {
                             <Text fz={'sm'} ml={2}>{v.alamatUsaha}</Text>
                           </Flex>
                         </Box>
-                        <IconShoppingCartFilled size={20} color={colors['blue-button']} />
+                        <IconBrandWhatsapp size={20} color={colors['blue-button']} />
                       </Flex>
                     </Paper>
                   </motion.div>

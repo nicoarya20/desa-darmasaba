@@ -48,27 +48,29 @@ function EditLaporanPublik() {
     const loadLaporanPublik = async () => {
       const id = params?.id as string;
       if (!id) return;
-
+  
       try {
         const data = await stateLaporan.edit.load(id);
         if (data) {
-          setFormData({
-            judul: data.judul || '',
-            lokasi: data.lokasi || '',
-            tanggalWaktu: data.tanggalWaktu || '',
-            status: data.status || '',
-            penanganan: data.penanganan?.[0]?.deskripsi || '',
-            kronologi: data.kronologi || '',
-          });
+          setFormData((prev) => ({
+            ...prev,
+            judul: data.judul ?? prev.judul,
+            lokasi: data.lokasi ?? prev.lokasi,
+            tanggalWaktu: data.tanggalWaktu ?? prev.tanggalWaktu,
+            status: (data.status as Status) ?? prev.status,
+            penanganan: data.penanganan?.[0]?.deskripsi ?? prev.penanganan,
+            kronologi: data.kronologi ?? prev.kronologi,
+          }));
         }
       } catch (error) {
-        console.error('Error loading laporan publik:', error);
+        console.error("Error loading laporan publik:", error);
         toast.error("Gagal mengambil data laporan publik");
       }
     };
-
+  
     loadLaporanPublik();
   }, [params?.id, stateLaporan.edit]);
+  
 
   const handleChange = (field: string, value: string | Status) => {
     setFormData((prev) => ({ ...prev, [field]: value }));

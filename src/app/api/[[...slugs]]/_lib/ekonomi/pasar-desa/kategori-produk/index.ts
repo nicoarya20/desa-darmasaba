@@ -5,12 +5,14 @@ import kategoriProdukDelete from "./del";
 import kategoriProdukCreate from "./create";
 import kategoriProdukUpdate from "./updt";
 import { t } from "elysia";
+import kategoriProdukFindManyAll from "./findManyAll";
 
 const KategoriProduk = new Elysia({
     prefix: "/kategoriproduk",
     tags: ["Ekonomi/Kategori Produk"],
 })
     .get("/find-many", kategoriProdukFindMany)
+    .get("/find-many-all", kategoriProdukFindManyAll)
     .get("/:id", async (context) => {
         const response = await kategoriProdukFindUnique(context);
         return response;

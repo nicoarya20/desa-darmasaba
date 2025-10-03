@@ -10,6 +10,7 @@ type FormUpdate = Prisma.KontakDaruratGetPayload<{
         name: true;
         deskripsi: true;
         imageId: true;
+        whatsapp: true;
     }
 }>
 export default async function kontakDaruratUpdate(context: Context) {
@@ -21,6 +22,7 @@ export default async function kontakDaruratUpdate(context: Context) {
             name,
             deskripsi,
             imageId,
+            whatsapp,
         } = body;
 
         if(!id) {
@@ -75,6 +77,7 @@ export default async function kontakDaruratUpdate(context: Context) {
                 name,
                 deskripsi,
                 imageId,
+                whatsapp,
             }
         })
 

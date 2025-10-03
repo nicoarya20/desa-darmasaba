@@ -59,7 +59,7 @@ function PelayananPendudukNonPermanent() {
                 radius="md"
                 onClick={() =>
                   router.push(
-                    '/admin/desa/layanan/pelayanan_penduduk_non_permanent/edit'
+                    `/admin/desa/layanan/pelayanan_penduduk_non_permanent/${data.id}`
                   )
                 }
               >

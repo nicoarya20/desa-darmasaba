@@ -8,17 +8,15 @@ import {
   Group,
   Paper,
   Stack,
-  Text,
   TextInput,
   Title,
-  Tooltip,
+  Tooltip
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState, useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
-import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 
 function EditPelayananTelunjukSakti() {
   const stateTelunjukDesa = useProxy(stateLayananDesa.pelayananTelunjukSaktiDesa);
@@ -111,21 +109,19 @@ function EditPelayananTelunjukSakti() {
             required
           />
 
-          {/* Deskripsi pakai editor */}
-          <Box>
-            <Text fz="sm" fw="bold" mb={6}>
-              Deskripsi
-            </Text>
-            <EditEditor
-              value={formData.deskripsi}
-              onChange={(htmlContent) => handleChange('deskripsi', htmlContent)}
-            />
-          </Box>
+          {/* Deskripsi */}
+          <TextInput
+            value={formData.deskripsi}
+            onChange={(e) => handleChange('deskripsi', e.target.value)}
+            label="Judul Link"
+            placeholder="Masukkan judul link"
+            required
+          />
 
           {/* Link */}
           <TextInput
             label="Link"
-            placeholder="Masukkan link terkait"
+            placeholder="Masukkan alamat link"
             value={formData.link}
             onChange={(e) => handleChange('link', e.target.value)}
           />

@@ -14,6 +14,7 @@ const KontakDarurat = new Elysia({
         name: t.String(),
         deskripsi: t.String(),
         imageId: t.String(),
+        whatsapp: t.String(),
     })
 })
 .get("/find-many", kontakDaruratFindMany)
@@ -33,6 +34,7 @@ const KontakDarurat = new Elysia({
             name: t.String(),
             deskripsi: t.String(),
             imageId: t.String(),
+            whatsapp: t.String(),
         })
     }
 )

@@ -33,6 +33,7 @@ function EditKontakDarurat() {
     name: '',
     deskripsi: '',
     imageId: '',
+    whatsapp: '',
   });
   const [loading, setLoading] = useState(true);
 
@@ -49,6 +50,7 @@ function EditKontakDarurat() {
             name: data.name || '',
             deskripsi: data.deskripsi || '',
             imageId: data.imageId || '',
+            whatsapp: data.whatsapp || '',
           });
           if (data?.image?.link) setPreviewImage(data.image.link);
         }
@@ -121,6 +123,14 @@ function EditKontakDarurat() {
             onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
             label="Judul"
             placeholder="Masukkan judul"
+            required
+          />
+
+          <TextInput
+            value={formData.whatsapp}
+            onChange={(e) => setFormData(prev => ({ ...prev, whatsapp: e.target.value }))}
+            label="Whatsapp"
+            placeholder="Masukkan whatsapp"
             required
           />
 

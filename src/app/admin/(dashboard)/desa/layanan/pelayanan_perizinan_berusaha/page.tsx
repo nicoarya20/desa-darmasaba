@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import colors from '@/con/colors';
 import {
@@ -19,32 +20,55 @@ import {
   Tooltip,
 } from '@mantine/core';
 import { IconEdit } from '@tabler/icons-react';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import stateLayananDesa from '../../../_state/desa/layananDesa';
 import { useProxy } from 'valtio/utils';
-import { useShallowEffect } from '@mantine/hooks';
+import { useRouter } from 'next/navigation';
 
 function PerizinanBerusaha() {
   const router = useRouter();
   const pelayananPerizinanBerusaha = useProxy(
     stateLayananDesa.pelayananPerizinanBerusaha
   );
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const [active, setActive] = useState(1);
   const nextStep = () =>
     setActive((current) => (current < 6 ? current + 1 : current));
   const prevStep = () =>
     setActive((current) => (current > 0 ? current - 1 : current));
 
-  useShallowEffect(() => {
-    pelayananPerizinanBerusaha.findById.load('1');
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setLoading(true);
+        // You should get the ID from your router query or params
+        const id = '1'; // Replace with actual ID or get from URL params
+        await pelayananPerizinanBerusaha.findById.load(id);
+      } catch (err) {
+        setError('Gagal memuat data');
+        console.error('Error:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
   }, []);
 
-  if (!pelayananPerizinanBerusaha.findById.data) {
+  if (loading) {
     return (
       <Stack align="center" justify="center" py="xl">
-        <Skeleton radius="md" height={800} />
+        <Skeleton height={800} radius="md" />
       </Stack>
+    );
+  }
+
+  if (error || !pelayananPerizinanBerusaha.findById.data) {
+    return (
+      <Center h={200}>
+        <Text>{error || 'Data tidak ditemukan'}</Text>
+      </Center>
     );
   }
 
@@ -69,7 +93,7 @@ function PerizinanBerusaha() {
                 radius="md"
                 onClick={() =>
                   router.push(
-                    '/admin/desa/layanan/pelayanan_perizinan_berusaha/edit'
+                    `/admin/desa/layanan/pelayanan_perizinan_berusaha/${data.id}`
                   )
                 }
               >
@@ -183,3 +207,4 @@ function PerizinanBerusaha() {
 }
 
 export default PerizinanBerusaha;
+

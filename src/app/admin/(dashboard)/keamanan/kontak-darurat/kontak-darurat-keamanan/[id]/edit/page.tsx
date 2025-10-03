@@ -29,10 +29,11 @@ function EditKontakDaruratKeamanan() {
   const kontakState = useProxy(kontakDarurat.kontakDaruratKeamananState);
 
   const [isLoading, setIsLoading] = useState(true);
+  // Remove the dependency on data in the initial state
   const [formData, setFormData] = useState({
     name: "",
     icon: "" as IconKey | "",
-    kategoriId: [] as string[],
+    kategoriId: [] as string[],  // Initialize as empty array
   });
 
   // Load data dari backend
@@ -41,7 +42,7 @@ function EditKontakDaruratKeamanan() {
       try {
         setIsLoading(true);
         await kontakDarurat.kontakDaruratItem.findMany.load();
-
+    
         const id = params?.id as string;
         if (id) {
           const data = await kontakState.update.load(id);
@@ -49,7 +50,7 @@ function EditKontakDaruratKeamanan() {
             setFormData({
               name: data.nama || "",
               icon: (data.icon as IconKey) || "",
-              kategoriId: data.kategoriId || [],
+              kategoriId: Array.isArray(data.kategoriId) ? data.kategoriId : [],
             });
           }
         }
@@ -134,9 +135,9 @@ function EditKontakDaruratKeamanan() {
             data={
               Array.isArray(kontakDarurat.kontakDaruratItem.findMany.data)
                 ? kontakDarurat.kontakDaruratItem.findMany.data.map((v) => ({
-                    value: v.id,
-                    label: v.nama,
-                  }))
+                  value: v.id,
+                  label: v.nama,
+                }))
                 : []
             }
             clearable

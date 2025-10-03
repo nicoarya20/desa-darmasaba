@@ -127,7 +127,9 @@ function ListFasilitasKesehatan({ search }: { search: string }) {
                     </TableTd>
                     <TableTd>
                       <Box w={150}>
-                        {item.tarifdanlayanan?.layanan || '-'}
+                        <Text truncate="end" lineClamp={1}>
+                          {item.tarifdanlayanan?.layanan || '-'}
+                        </Text>
                       </Box>
                     </TableTd>
                     <TableTd>

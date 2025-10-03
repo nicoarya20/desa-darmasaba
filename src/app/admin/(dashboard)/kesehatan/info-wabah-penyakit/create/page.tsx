@@ -100,15 +100,15 @@ function CreateInfoWabahPenyakit() {
             required
           />
 
-          <TextInput
-            defaultValue={infoWabahPenyakitState.create.form.deskripsiSingkat}
-            onChange={(val) => {
-              infoWabahPenyakitState.create.form.deskripsiSingkat = val.target.value;
-            }}
-            label={<Text fz="sm" fw="bold">Deskripsi Singkat</Text>}
-            placeholder="Masukkan deskripsi singkat"
-            required
-          />
+          <Box>
+            <Text fz="sm" fw="bold">Deskripsi Singkat</Text>
+            <CreateEditor
+              value={infoWabahPenyakitState.create.form.deskripsiSingkat}
+              onChange={(val) => {
+                infoWabahPenyakitState.create.form.deskripsiSingkat = val;
+              }}
+            />
+          </Box>
 
           <Box>
             <Text fz="sm" fw="bold">Deskripsi</Text>

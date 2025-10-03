@@ -17,7 +17,7 @@ import {
   TextInput,
   Tooltip
 } from '@mantine/core'
-import { useShallowEffect } from '@mantine/hooks'
+import { useDebouncedValue, useShallowEffect } from '@mantine/hooks'
 import { IconSearch } from '@tabler/icons-react'
 import { useState } from 'react'
 import { useProxy } from 'valtio/utils'
@@ -26,12 +26,12 @@ import BackButton from '../../desa/layanan/_com/BackButto'
 function Page() {
   const state = useProxy(penangananDarurat)
   const [search, setSearch] = useState('')
-
+  const [debouncedSearch] = useDebouncedValue(search, 500)
   const { data, page, totalPages, loading, load } = state.findMany
 
   useShallowEffect(() => {
-    load(page, 6, search)
-  }, [page, search])
+    load(page, 3, debouncedSearch)
+  }, [page, debouncedSearch])
 
   if (loading || !data) {
     return (
@@ -127,7 +127,7 @@ function Page() {
                         c="dimmed"
                         lineClamp={4}
                         dangerouslySetInnerHTML={{ __html: v.deskripsi }}
-                        style={{wordBreak: "break-word", whiteSpace: "normal"}}
+                        style={{ wordBreak: "break-word", whiteSpace: "normal" }}
                       />
                     </Box>
                   </Stack>
@@ -141,22 +141,21 @@ function Page() {
         )}
       </Box>
 
-      {totalPages > 1 && (
-        <Center mt="xl">
-          <Pagination
-            value={page}
-            onChange={(newPage) => load(newPage, 6, search)}
-            total={totalPages}
-            size="lg"
-            radius="xl"
-            styles={{
-              control: {
-                border: `1px solid ${colors['blue-button']}`,
-              },
-            }}
-          />
-        </Center>
-      )}
+      <Center mt="xl">
+        <Pagination
+          value={page}
+          onChange={(newPage) => load(newPage, 3, search)}
+          total={totalPages}
+          size="lg"
+          radius="xl"
+          styles={{
+            control: {
+              border: `1px solid ${colors['blue-button']}`,
+            },
+          }}
+        />
+      </Center>
+
     </Stack>
   )
 }

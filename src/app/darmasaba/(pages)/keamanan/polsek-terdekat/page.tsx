@@ -20,10 +20,41 @@ function Page() {
   } = state;
 
   useEffect(() => {
-    if (!data && !loading) {
-      load();
-    }
-  }, [data, loading]);
+    load();
+  }, []);
+
+  // kalau masih loading
+  if (loading) {
+    return (
+      <Stack py={10}>
+        <Skeleton h={500} />
+      </Stack>
+    );
+  }
+
+  // kalau data kosong
+  if (!data) {
+    return (
+      <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"22"}>
+         <Box px={{ base: 'md', md: 100 }}>
+        <BackButton />
+      </Box>
+      <Box pb={10} px={{ base: 20, md: 100 }}>
+        <Text fz={{ base: "h1", md: "2.5rem" }} c={colors["blue-button"]} fw={"bold"}>
+          Kantor Polisi Terdekat
+        </Text>
+        <Text pb={15} fz={'h4'} >
+          Desa Darmasaba, Kecamatan Abiansemal, Kabupaten Badung
+        </Text>
+      </Box>
+      <Center py="xl">
+        <Text fz="lg" fw="bold" c="red">
+          Data Polsek tidak ada
+        </Text>
+      </Center>
+      </Stack >
+    );
+  }
 
   return (
     <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"22"}>

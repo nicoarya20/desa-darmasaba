@@ -23,6 +23,7 @@ export default async function kontakDaruratKeamananFindMany(context: Context) {
   try {
     const [data, total] = await Promise.all([
       prisma.kontakDaruratKeamanan.findMany({
+        where,
         include: {
           kontakItems: {
             include: {

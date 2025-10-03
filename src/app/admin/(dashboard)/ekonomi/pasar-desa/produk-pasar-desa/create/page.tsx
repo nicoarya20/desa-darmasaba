@@ -41,6 +41,7 @@ export default function CreatePasarDesa() {
       imageId: '',
       rating: 0,
       kategoriId: [],
+      kontak: '',
     };
     setPreviewImage(null);
     setFile(null);
@@ -182,6 +183,15 @@ export default function CreatePasarDesa() {
             placeholder="Masukkan alamat usaha"
             defaultValue={statePasar.pasarDesa.create.form.alamatUsaha}
             onChange={(e) => (statePasar.pasarDesa.create.form.alamatUsaha = e.target.value)}
+          />
+
+          {/* Kontak */}
+          <TextInput
+            label="Kontak"
+            type="number"
+            placeholder="Masukkan kontak"
+            defaultValue={statePasar.pasarDesa.create.form.kontak}
+            onChange={(e) => (statePasar.pasarDesa.create.form.kontak = e.target.value)}
           />
 
           {/* Kategori Produk */}

@@ -56,7 +56,7 @@ function Page() {
           <GridCol span={{ base: 12, md: 3 }}>
             <TextInput
               radius={"lg"}
-              placeholder='Cari Puskesmas'
+              placeholder='Cari Keamanan Lingkungan'
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               leftSection={<IconSearch size={20} />}

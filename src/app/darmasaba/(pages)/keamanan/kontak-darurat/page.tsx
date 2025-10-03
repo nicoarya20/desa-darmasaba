@@ -34,6 +34,52 @@ function Page() {
     );
   }
 
+  if (data.length === 0) {
+    return (
+      <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"22"}>
+        <Box px={{ base: 'md', md: 100 }}>
+          <BackButton />
+        </Box>
+        <Group px={{ base: 'md', md: 100 }} justify={'space-between'} align='center'>
+          <Box>
+            <Text fz={{ base: "h1", md: "2.5rem" }} c={colors["blue-button"]} fw={"bold"}>
+              Kontak Darurat
+            </Text>
+            <Text fz={{ base: "h4", md: "h3" }} >
+              Desa Darmasaba, Kecamatan Abiansemal, Kabupaten Badung.
+            </Text>
+          </Box>
+          <TextInput
+            placeholder='Cari kontak darurat, nama, atau nomor...'
+            leftSection={<IconSearch size={20} />}
+            value={search}
+            onChange={(e) => setSearch(e.currentTarget.value)}
+          />
+        </Group>
+        <Box px={{ base: "md", md: 100 }}>
+          <Stack gap={'lg'}>
+            <Paper p={"xl"} bg={colors['white-trans-1']} w={{ base: "100%", md: "100%" }}>
+              <Flex justify={'center'} gap={'lg'} align={'center'}>
+                <Avatar radius={"xl"} size={'lg'} bg={colors['BG-trans']}>
+                  <IconPhoneCall size={30} color={colors["blue-button"]} />
+                </Avatar>
+                <Box>
+                  <Text ta={'center'} c={colors['blue-button']} py={10} fz={{ base: "md", md: "h4" }} fw={"bold"} >
+                    Nomor Darurat Utama
+                  </Text>
+                  <Text ta={'center'} fw={"bold"} fz={'h2'} c={colors["blue-button"]}>112</Text>
+                </Box>
+              </Flex>
+            </Paper>
+          </Stack>
+        </Box>
+        <Center>
+          <Text fz={"h1"} c={colors["blue-button"]} fw={"bold"}>Tidak ada kontak darurat yang ditemukan</Text>
+        </Center>
+      </Stack>
+    );
+  }
+
   return (
     <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"22"}>
       <Box px={{ base: 'md', md: 100 }}>
@@ -76,57 +122,63 @@ function Page() {
         <SimpleGrid cols={{ base: 1, md: 2 }} spacing="xl">
           {/* Layanan Darurat */}
           {data.map((item) => (
-            <Paper
+            <a
               key={item.id}
-              p="lg"
-              radius="md"
-              bg={colors['white-trans-1']}
+              href={`tel:${item.kontakItems[0]?.kontakItem?.nomorTelepon || '112'}`}
+              style={{ textDecoration: 'none' }}
             >
-              <Group pb="md" align="center">
-                <Avatar radius="xl" size="lg" bg={colors['BG-trans']}>
-                  {item.icon && (
-                    <IconMapper
-                      name={item.icon as IconKey}
-                      size={32}
-                      color={colors['blue-button']}
-                    />
-                  )}
-                </Avatar>
-                <Text fw="bold" fz={{ base: "lg", md: "xl" }} c={colors["blue-button"]}>
-                  {item.nama}
-                </Text>
-              </Group>
+              <Paper
 
-              {/* Kontak Items */}
-              {item.kontakItems?.map((kontak) => (
-                <Paper
-                  key={kontak.id}
-                  p="lg"
-                  bg={colors['BG-trans']}
-                  radius="md"
-                  shadow="xs"
-                  mt="sm"
-                >
-                  <Group align="center" justify="space-between">
-                    <Group align="center">
-                      {kontak.kontakItem?.icon && (
-                        <IconMapper
-                          name={kontak.kontakItem.icon as IconKey}
-                          size={24}
-                          color={colors['blue-button']}
-                        />
-                      )}
+                p="lg"
+                radius="md"
+                bg={colors['white-trans-1']}
+              >
+                <Group pb="md" align="center">
+                  <Avatar radius="xl" size="lg" bg={colors['BG-trans']}>
+                    {item.icon && (
+                      <IconMapper
+                        name={item.icon as IconKey}
+                        size={32}
+                        color={colors['blue-button']}
+                      />
+                    )}
+                  </Avatar>
+                  <Text fw="bold" fz={{ base: "lg", md: "xl" }} c={colors["blue-button"]}>
+                    {item.nama}
+                  </Text>
+                </Group>
+
+                {/* Kontak Items */}
+                {item.kontakItems?.map((kontak) => (
+                  <Paper
+                    key={kontak.id}
+                    p="lg"
+                    bg={colors['BG-trans']}
+                    radius="md"
+                    shadow="xs"
+                    mt="sm"
+                  >
+                    <Group align="center" justify="space-between">
+                      <Group align="center">
+                        {kontak.kontakItem?.icon && (
+                          <IconMapper
+                            name={kontak.kontakItem.icon as IconKey}
+                            size={24}
+                            color={colors['blue-button']}
+                          />
+                        )}
+                        <Text fw="bold" fz={{ base: "sm", md: "md" }} c={colors["blue-button"]}>
+                          {kontak.kontakItem?.nama}
+                        </Text>
+                      </Group>
                       <Text fw="bold" fz={{ base: "sm", md: "md" }} c={colors["blue-button"]}>
-                        {kontak.kontakItem?.nama}
+                        {kontak.kontakItem?.nomorTelepon}
                       </Text>
                     </Group>
-                    <Text fw="bold" fz={{ base: "sm", md: "md" }} c={colors["blue-button"]}>
-                      {kontak.kontakItem?.nomorTelepon}
-                    </Text>
-                  </Group>
-                </Paper>
-              ))}
-            </Paper>
+                  </Paper>
+                ))}
+              </Paper>
+            </a>
           ))}
         </SimpleGrid>
         <Center>
