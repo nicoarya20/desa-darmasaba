@@ -18,84 +18,90 @@ import {
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useProxy } from 'valtio/utils';
 import { toast } from 'react-toastify';
+
+type Statistik = {
+  tahun: string;
+  jumlah: string;
+};
 
 type FormData = {
   nama: string;
   deskripsi: string;
   icon: string;
+  statistik: Statistik;
+};
+
+const initialForm: FormData = {
+  nama: '',
+  deskripsi: '',
+  icon: '',
   statistik: {
-    tahun: string;
-    jumlah: string;
-  };
+    tahun: '',
+    jumlah: '',
+  },
 };
 
 function EditProgramKemiskinan() {
   const router = useRouter();
-  const params = useParams() as { id: string };
+  const { id } = useParams() as { id: string };
   const stateProgram = useProxy(programKemiskinanState);
-  const id = params.id;
 
-  const [formData, setFormData] = useState<FormData>({
-    nama: '',
-    deskripsi: '',
-    icon: '',
-    statistik: {
-      tahun: '',
-      jumlah: '',
-    },
-  });
+  const [formData, setFormData] = useState<FormData>(initialForm);
 
-  // load data ke local state sekali aja
+  // Load data 1x dari global state → isi local state
   useEffect(() => {
-    if (id) {
-      stateProgram.findUnique
-        .load(id)
-        .then(() => {
-          const data = stateProgram.findUnique.data;
-          if (data) {
-            setFormData({
-              nama: data.nama || '',
-              deskripsi: data.deskripsi || '',
-              icon: data.icon || '',
-              statistik: {
-                tahun: data.statistik?.tahun?.toString() || '',
-                jumlah: data.statistik?.jumlah?.toString() || '',
-              },
-            });
-          }
-        })
-        .catch((err) => {
-          console.error('Error load data:', err);
-          toast.error('Gagal mengambil data program');
-        });
-    }
+    if (!id) return;
+
+    stateProgram.findUnique
+      .load(id)
+      .then(() => {
+        const data = stateProgram.findUnique.data;
+        if (data) {
+          setFormData({
+            nama: data.nama ?? '',
+            deskripsi: data.deskripsi ?? '',
+            icon: data.icon ?? '',
+            statistik: {
+              tahun: data.statistik?.tahun?.toString() ?? '',
+              jumlah: data.statistik?.jumlah?.toString() ?? '',
+            },
+          });
+        }
+      })
+      .catch((err) => {
+        console.error('Error load data:', err);
+        toast.error('Gagal mengambil data program');
+      });
   }, [id, stateProgram.findUnique]);
 
-  const handleChange = (field: keyof FormData, value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
+  // generic handler untuk field top-level
+  const handleChange = useCallback(
+    (field: keyof FormData, value: string) => {
+      setFormData((prev) => ({ ...prev, [field]: value }));
+    },
+    []
+  );
 
-  const handleStatistikChange = (field: keyof FormData['statistik'], value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      statistik: {
-        ...prev.statistik,
-        [field]: value,
-      },
-    }));
-  };
+  // khusus nested statistik
+  const handleStatistikChange = useCallback(
+    (field: keyof Statistik, value: string) => {
+      setFormData((prev) => ({
+        ...prev,
+        statistik: { ...prev.statistik, [field]: value },
+      }));
+    },
+    []
+  );
 
   const handleSubmit = async () => {
     try {
       stateProgram.update.id = id;
       stateProgram.update.form = formData;
       await stateProgram.update.update();
+
       toast.success('Program berhasil diperbarui!');
       router.push('/admin/ekonomi/program-kemiskinan');
     } catch (error) {

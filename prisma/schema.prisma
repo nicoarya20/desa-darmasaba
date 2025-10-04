@@ -1384,6 +1384,7 @@ model LowonganPekerjaan {
   gaji           String
   deskripsi      String
   kualifikasi    String
+  notelp         String
   tanggalPosting DateTime @default(now())
   isActive       Boolean  @default(true)
   createdAt      DateTime @default(now())

@@ -104,9 +104,7 @@ function Potensi() {
                       {v.name}
                     </Text>
                   </Tooltip>
-                  <Text lineClamp={2} c="gray.2" fz={{ base: "0.8rem", md: "1rem" }}>
-                    {v.deskripsi}
-                  </Text>
+                  <Text lineClamp={2} c="gray.2" fz={{ base: "0.8rem", md: "1rem" }} dangerouslySetInnerHTML={{ __html: v.deskripsi }} />
                 </Stack>
               </BackgroundImage>
             </motion.div>

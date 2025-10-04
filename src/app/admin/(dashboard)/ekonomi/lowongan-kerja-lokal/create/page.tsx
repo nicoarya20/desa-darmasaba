@@ -30,6 +30,7 @@ function CreateLowonganKerja() {
       gaji: '',
       deskripsi: '',
       kualifikasi: '',
+      notelp: '',
     };
   };
 
@@ -84,6 +85,15 @@ function CreateLowonganKerja() {
             }
             label="Nama Perusahaan"
             placeholder="Masukkan nama perusahaan"
+            required
+          />
+          <TextInput
+            defaultValue={lowonganState.create.form.notelp}
+            onChange={(val) =>
+              (lowonganState.create.form.notelp = val.target.value)
+            }
+            label="Nomor Yang Dapat Dihubungi"
+            placeholder="Masukkan nomor yang dapat dihubungi"
             required
           />
           <TextInput

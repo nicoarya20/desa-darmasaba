@@ -1,23 +1,43 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Center, Group, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title, Tooltip } from '@mantine/core';
-import { IconEdit, IconSearch, IconTrash } from '@tabler/icons-react';
-import HeaderSearch from '../../_com/header';
+import {
+  Box,
+  Button,
+  Center,
+  Group,
+  Pagination,
+  Paper,
+  Skeleton,
+  Stack,
+  Table,
+  TableTbody,
+  TableTd,
+  TableTh,
+  TableThead,
+  TableTr,
+  Text,
+  Title,
+  Tooltip,
+} from '@mantine/core';
+import { useShallowEffect } from '@mantine/hooks';
+import { IconEdit, IconSearch, IconTrash, IconPlus } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { useShallowEffect, useMediaQuery } from '@mantine/hooks';
 import { useProxy } from 'valtio/utils';
-import jumlahPendudukMiskin from '../../_state/ekonomi/jumlah-penduduk-miskin';
-import { Bar, BarChart, Legend, XAxis, YAxis, Tooltip as RechartsTooltip } from 'recharts';
+import HeaderSearch from '../../_com/header';
 import { ModalKonfirmasiHapus } from '../../_com/modalKonfirmasiHapus';
+import jumlahPendudukMiskin from '../../_state/ekonomi/jumlah-penduduk-miskin';
+
+// ✅ BarChart Mantine
+import { BarChart } from '@mantine/charts';
 
 function JumlahPendudukMiskin() {
   const [search, setSearch] = useState("");
   return (
     <Box>
       <HeaderSearch
-        title='Jumlah Penduduk Miskin'
-        placeholder='Cari tahun atau jumlah penduduk miskin...'
+        title="Jumlah Penduduk Miskin"
+        placeholder="Cari tahun atau jumlah penduduk miskin..."
         searchIcon={<IconSearch size={20} />}
         value={search}
         onChange={(e) => setSearch(e.currentTarget.value)}
@@ -28,7 +48,7 @@ function JumlahPendudukMiskin() {
 }
 
 function ListJumlahPendudukMiskin({ search }: { search: string }) {
-  type JPMGrafik = { id: string; year: number; totalPoorPopulation: number }
+  type JPMGrafik = { year: number; totalPoorPopulation: number };
   const stateJPM = useProxy(jumlahPendudukMiskin);
   const [chartData, setChartData] = useState<JPMGrafik[]>([]);
   const [mounted, setMounted] = useState(false);
@@ -36,33 +56,27 @@ function ListJumlahPendudukMiskin({ search }: { search: string }) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const router = useRouter();
 
-  const isTablet = useMediaQuery('(max-width:1024px)');
-  const isMobile = useMediaQuery('(max-width:768px)');
+  const { data, page, loading, load, totalPages } = stateJPM.findMany;
 
-  const {
-    data,
-    page,
-    loading,
-    load,
-    totalPages,
-  } = stateJPM.findMany;
-  // Load data
+  // Load data awal
   useShallowEffect(() => {
     setMounted(true);
     load(page, 10, search);
   }, [page, search]);
 
+  // Update chart data
   useEffect(() => {
     if (stateJPM.findMany.data) {
-      setChartData(stateJPM.findMany.data.map(item => ({
-        id: item.id,
-        year: Number(item.year),
-        totalPoorPopulation: Number(item.totalPoorPopulation)
-      })));
+      setChartData(
+        stateJPM.findMany.data.map((item) => ({
+          year: Number(item.year),
+          totalPoorPopulation: Number(item.totalPoorPopulation),
+        }))
+      );
     }
   }, [stateJPM.findMany.data]);
 
-  const filteredData = data || []
+  const filteredData = data || [];
 
   const handleDelete = () => {
     if (selectedId) {
@@ -71,7 +85,7 @@ function ListJumlahPendudukMiskin({ search }: { search: string }) {
       setSelectedId(null);
       stateJPM.findMany.load();
     }
-  }
+  };
 
   if (loading || !data) {
     return (
@@ -83,15 +97,18 @@ function ListJumlahPendudukMiskin({ search }: { search: string }) {
 
   return (
     <Box py={10}>
+      {/* Tabel */}
       <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
         <Group justify="space-between" mb="md">
           <Title order={4}>Daftar Jumlah Penduduk Miskin</Title>
           <Tooltip label="Tambah Data" withArrow>
             <Button
-              leftSection={<IconEdit size={18} />}
+              leftSection={<IconPlus size={18} />}
               color="blue"
               variant="light"
-              onClick={() => router.push('/admin/ekonomi/jumlah-penduduk-miskin/create')}
+              onClick={() =>
+                router.push('/admin/ekonomi/jumlah-penduduk-miskin/create')
+              }
             >
               Tambah Baru
             </Button>
@@ -109,22 +126,38 @@ function ListJumlahPendudukMiskin({ search }: { search: string }) {
               </TableTr>
             </TableThead>
             <TableTbody>
-              {filteredData.length > 0 ? filteredData.map(item => (
-                <TableTr key={item.id}>
-                  <TableTd>{item.year}</TableTd>
-                  <TableTd>{item.totalPoorPopulation}</TableTd>
-                  <TableTd>
-                    <Button variant='light' color="green" onClick={() => router.push(`/admin/ekonomi/jumlah-penduduk-miskin/${item.id}`)}>
-                      <IconEdit size={20} />
-                    </Button>
-                  </TableTd>
-                  <TableTd>
-                    <Button variant='light' color="red" disabled={stateJPM.delete.loading} onClick={() => { setSelectedId(item.id); setModalHapus(true) }}>
-                      <IconTrash size={20} />
-                    </Button>
-                  </TableTd>
-                </TableTr>
-              )) : (
+              {filteredData.length > 0 ? (
+                filteredData.map((item) => (
+                  <TableTr key={item.id}>
+                    <TableTd>{item.year}</TableTd>
+                    <TableTd>{item.totalPoorPopulation}</TableTd>
+                    <TableTd>
+                      <Button
+                        variant="light"
+                        color="green"
+                        onClick={() =>
+                          router.push(`/admin/ekonomi/jumlah-penduduk-miskin/${item.id}`)
+                        }
+                      >
+                        <IconEdit size={20} />
+                      </Button>
+                    </TableTd>
+                    <TableTd>
+                      <Button
+                        variant="light"
+                        color="red"
+                        disabled={stateJPM.delete.loading}
+                        onClick={() => {
+                          setSelectedId(item.id);
+                          setModalHapus(true);
+                        }}
+                      >
+                        <IconTrash size={20} />
+                      </Button>
+                    </TableTd>
+                  </TableTr>
+                ))
+              ) : (
                 <TableTr>
                   <TableTd colSpan={4}>
                     <Center py={20}>
@@ -138,6 +171,7 @@ function ListJumlahPendudukMiskin({ search }: { search: string }) {
         </Box>
       </Paper>
 
+      {/* Pagination */}
       <Center>
         <Pagination
           value={page}
@@ -153,33 +187,38 @@ function ListJumlahPendudukMiskin({ search }: { search: string }) {
         />
       </Center>
 
-      {/* Chart */}
+      {/* Bar Chart */}
       <Paper bg={colors['white-1']} p="md" mt="lg" withBorder radius="md">
         <Stack>
-          <Box mt="lg" style={{ width: '100%', minHeight: 350 }}>
-            <Title order={4} mb="sm">Grafik Jumlah Penduduk Miskin</Title>
-            {mounted && chartData.length > 0 ? (
-              <BarChart width={isMobile ? 450 : isTablet ? 500 : 550} height={350} data={chartData}>
-                <XAxis dataKey="year" />
-                <YAxis />
-                <RechartsTooltip />
-                <Legend />
-                <Bar dataKey="totalPoorPopulation" fill={colors['blue-button']} name="Jumlah Penduduk Miskin" />
-              </BarChart>
-            ) : (
-              <Text c="dimmed">Belum ada data untuk ditampilkan dalam grafik</Text>
-            )}
-          </Box>
+          <Title order={4} mb="sm">
+            Grafik Jumlah Penduduk Miskin
+          </Title>
+          {mounted && chartData.length > 0 ? (
+            <BarChart
+              h={300}
+              data={chartData.map((item) => ({
+                name: item.year.toString(),
+                value: item.totalPoorPopulation,
+              }))}
+              dataKey="name"
+              series={[
+                { name: 'value', color: colors['blue-button'] },
+              ]}
+              withTooltip
+              valueFormatter={(v) => `${v.toLocaleString()} jiwa`}
+            />
+          ) : (
+            <Text c="dimmed">Belum ada data untuk ditampilkan dalam grafik</Text>
+          )}
         </Stack>
       </Paper>
-
 
       {/* Modal Hapus */}
       <ModalKonfirmasiHapus
         opened={modalHapus}
         onClose={() => setModalHapus(false)}
         onConfirm={handleDelete}
-        text='Apakah anda yakin ingin menghapus data ini?'
+        text="Apakah anda yakin ingin menghapus data ini?"
       />
     </Box>
   );

@@ -9,6 +9,7 @@ type FormUpdate = {
     gaji: string;
     deskripsi: string;
     kualifikasi: string;
+    notelp: string;
 }
 
 export default async function lowonganKerjaUpdate(context: Context){
@@ -16,7 +17,7 @@ export default async function lowonganKerjaUpdate(context: Context){
         const id = context.params?.id;
         const body = context.body as FormUpdate;
 
-        const { posisi, namaPerusahaan, lokasi, tipePekerjaan, gaji, deskripsi, kualifikasi } = body;
+        const { posisi, namaPerusahaan, lokasi, tipePekerjaan, gaji, deskripsi, kualifikasi, notelp } = body;
         
         if (!id) {
             return Response.json({
@@ -46,6 +47,7 @@ export default async function lowonganKerjaUpdate(context: Context){
                 gaji,
                 deskripsi,
                 kualifikasi,
+                notelp,
             },
         });
 

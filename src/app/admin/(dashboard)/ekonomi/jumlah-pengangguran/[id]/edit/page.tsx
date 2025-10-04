@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client';
+
 import jumlahPengangguranState from '@/app/admin/(dashboard)/_state/ekonomi/jumlah-pengangguran';
 import colors from '@/con/colors';
 import {
@@ -20,11 +21,18 @@ import { useEffect, useState, useCallback } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
+// --- Helper konstanta
+const MONTHS = [
+  'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun',
+  'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des',
+];
+
 function EditDetailDataPengangguran() {
   const stateDetail = useProxy(jumlahPengangguranState.jumlahPengangguran);
   const router = useRouter();
   const params = useParams();
 
+  // --- state lokal form
   const [formData, setFormData] = useState({
     month: '',
     year: new Date().getFullYear(),
@@ -34,18 +42,13 @@ function EditDetailDataPengangguran() {
     percentageChange: 0,
   });
 
-  // Hitung total & perubahan otomatis
+  // --- hitung total + persentase perubahan
   const calculateTotalAndChange = useCallback(
     async (data: typeof formData) => {
       const total = data.educatedUnemployment + data.uneducatedUnemployment;
-
       let percentageChange = 0;
-      const monthOrder = [
-        'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun',
-        'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des',
-      ];
-      const currentMonthIndex = monthOrder.indexOf(data.month);
 
+      const currentMonthIndex = MONTHS.indexOf(data.month);
       if (currentMonthIndex !== -1) {
         let prevMonthIndex = currentMonthIndex - 1;
         let prevYear = data.year;
@@ -55,17 +58,15 @@ function EditDetailDataPengangguran() {
           prevYear--;
         }
 
-        const prevMonth = monthOrder[prevMonthIndex];
         const prevData = await stateDetail.findByMonthYear.load({
-          month: prevMonth,
+          month: MONTHS[prevMonthIndex],
           year: prevYear,
         });
 
         if (prevData && prevData.totalUnemployment > 0) {
           const change =
             ((total - prevData.totalUnemployment) /
-              prevData.totalUnemployment) *
-            100;
+              prevData.totalUnemployment) * 100;
           percentageChange = parseFloat(change.toFixed(1));
         }
       }
@@ -75,67 +76,66 @@ function EditDetailDataPengangguran() {
     [stateDetail.findByMonthYear]
   );
 
+  // --- update state lokal
   const updateFormData = async (updates: Partial<typeof formData>) => {
     const newData = { ...formData, ...updates };
     const { total, percentageChange } = await calculateTotalAndChange(newData);
-    setFormData({
-      ...newData,
-      totalUnemployment: total,
-      percentageChange,
-    });
+    setFormData({ ...newData, totalUnemployment: total, percentageChange });
   };
 
-  // Load detail hanya sekali
+  // --- load detail by ID (sekali)
   useEffect(() => {
     const loadDetail = async () => {
       const id = params?.id as string;
       if (!id) return;
 
       try {
-        await stateDetail.findUnique.load(id); // ambil by ID
+        await stateDetail.findUnique.load(id);
         const data = stateDetail.findUnique.data;
+        if (!data) return;
 
-        if (data) {
-          const yearValue =
-            data.year && typeof data.year === 'object' && 'getFullYear' in data.year
-              ? (data.year as Date).getFullYear()
-              : Number(data.year);
+        const yearValue = 
+          data.year && typeof data.year === 'object' && 'getFullYear' in data.year
+            ? (data.year as Date).getFullYear()
+            : Number(data.year);
 
-          stateDetail.update.id = id; // set ID untuk update
+        stateDetail.update.id = id; // simpan id untuk update
 
-          setFormData({
-            month: data.month,
-            year: yearValue,
-            totalUnemployment: data.totalUnemployment,
-            educatedUnemployment: data.educatedUnemployment,
-            uneducatedUnemployment: data.uneducatedUnemployment,
-            percentageChange: data.percentageChange || 0,
-          });
-        }
-      } catch (error) {
-        console.error('Error loading detail:', error);
+        setFormData({
+          month: data.month,
+          year: yearValue,
+          educatedUnemployment: data.educatedUnemployment,
+          uneducatedUnemployment: data.uneducatedUnemployment,
+          totalUnemployment: data.totalUnemployment,
+          percentageChange: data.percentageChange || 0,
+        });
+      } catch (err) {
+        console.error('Error loading detail:', err);
         toast.error('Gagal memuat data detail');
       }
     };
 
     loadDetail();
-  }, [params?.id, stateDetail.findUnique]);
+  }, [params?.id]);
 
+  // --- submit form
   const handleSubmit = async () => {
-    const { total, percentageChange } = await calculateTotalAndChange(formData);
     try {
+      const { total, percentageChange } = await calculateTotalAndChange(formData);
+
       stateDetail.update.form = {
         ...formData,
         totalUnemployment: total,
         percentageChange,
       };
+
       const success = await stateDetail.update.submit();
       if (success) {
         toast.success('Detail data pengangguran berhasil diperbarui!');
         router.push('/admin/ekonomi/jumlah-pengangguran');
       }
-    } catch (error) {
-      console.error('Error updating:', error);
+    } catch (err) {
+      console.error('Error updating:', err);
       toast.error('Terjadi kesalahan saat memperbarui data');
     }
   };
@@ -143,12 +143,7 @@ function EditDetailDataPengangguran() {
   return (
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
       <Group mb="md">
-        <Button
-          variant="subtle"
-          onClick={() => router.back()}
-          p="xs"
-          radius="md"
-        >
+        <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
           <IconArrowBack color={colors['blue-button']} size={24} />
         </Button>
         <Title order={4} ml="sm">
@@ -167,10 +162,7 @@ function EditDetailDataPengangguran() {
         <Stack gap="md">
           <Select
             label="Bulan"
-            data={[
-              'Jan','Feb','Mar','Apr','Mei','Jun',
-              'Jul','Agu','Sep','Okt','Nov','Des',
-            ]}
+            data={MONTHS}
             value={formData.month}
             onChange={(val) => updateFormData({ month: val || '' })}
           />
@@ -184,8 +176,10 @@ function EditDetailDataPengangguran() {
             label="Pengangguran Terdidik"
             type="number"
             value={formData.educatedUnemployment}
-            onChange={(val) =>
-              updateFormData({ educatedUnemployment: Number(val.currentTarget.value) || 0 })
+            onChange={(e) =>
+              updateFormData({
+                educatedUnemployment: Number(e.currentTarget.value) || 0,
+              })
             }
             required
           />
@@ -193,8 +187,10 @@ function EditDetailDataPengangguran() {
             label="Pengangguran Tidak Terdidik"
             type="number"
             value={formData.uneducatedUnemployment}
-            onChange={(val) =>
-              updateFormData({ uneducatedUnemployment: Number(val.currentTarget.value) || 0 })
+            onChange={(e) =>
+              updateFormData({
+                uneducatedUnemployment: Number(e.currentTarget.value) || 0,
+              })
             }
             required
           />

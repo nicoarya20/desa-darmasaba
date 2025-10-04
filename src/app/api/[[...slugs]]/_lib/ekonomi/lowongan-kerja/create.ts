@@ -9,6 +9,7 @@ type FormCreate = {
     gaji: string;
     deskripsi: string;
     kualifikasi: string;
+    notelp: string;
 }
 
 export default async function lowonganKerjaCreate(context: Context) {
@@ -23,6 +24,7 @@ export default async function lowonganKerjaCreate(context: Context) {
             gaji: body.gaji,
             deskripsi: body.deskripsi,
             kualifikasi: body.kualifikasi,
+            notelp: body.notelp,
         },
     });
 

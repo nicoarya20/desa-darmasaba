@@ -103,7 +103,7 @@ function Page() {
                         </Box>
                       </Flex>
                     </Box>
-                    <Button onClick={() => router.push('https://www.whatsapp.com/?lang=id')} bg={colors['blue-button']}>Lamar Sekarang</Button>
+                    <Button onClick={() => router.push(`https://wa.me/${v.notelp?.replace(/\D/g, '')}`)}>Lamar Sekarang</Button>
                   </Stack>
                 </Paper>
               )

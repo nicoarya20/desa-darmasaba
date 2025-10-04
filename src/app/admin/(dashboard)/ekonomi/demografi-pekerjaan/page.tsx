@@ -126,9 +126,9 @@ function ListDemografiPekerjaan({ search }: { search: string }) {
           <Table highlightOnHover>
             <TableThead>
               <TableTr>
-                <TableTh>Pekerjaan</TableTh>
-                <TableTh>Laki - Laki</TableTh>
-                <TableTh>Perempuan</TableTh>
+                <TableTh style={{ minWidth: 200 }}>Pekerjaan</TableTh>
+                <TableTh style={{ minWidth: 200 }}>Laki - Laki</TableTh>
+                <TableTh style={{ minWidth: 200 }}>Perempuan</TableTh>
                 <TableTh>Edit</TableTh>
                 <TableTh>Hapus</TableTh>
               </TableTr>
@@ -137,9 +137,9 @@ function ListDemografiPekerjaan({ search }: { search: string }) {
               {filteredData.length > 0 ? (
                 filteredData.map((item) => (
                   <TableTr key={item.id}>
-                    <TableTd>{item.pekerjaan}</TableTd>
-                    <TableTd>{item.lakiLaki}</TableTd>
-                    <TableTd>{item.perempuan}</TableTd>
+                    <TableTd style={{ minWidth: 200 }}>{item.pekerjaan}</TableTd>
+                    <TableTd style={{ minWidth: 200 }}>{item.lakiLaki}</TableTd>
+                    <TableTd style={{ minWidth: 200 }}>{item.perempuan}</TableTd>
                     <TableTd>
                       <Button
                         variant="light"

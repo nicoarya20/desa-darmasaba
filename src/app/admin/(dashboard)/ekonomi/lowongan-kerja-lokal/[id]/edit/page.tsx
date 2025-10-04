@@ -33,6 +33,7 @@ function EditLowonganKerja() {
     gaji: '',
     deskripsi: '',
     kualifikasi: '',
+    notelp: '',
   });
 
   // load data sekali aja ketika mount / id berubah
@@ -52,6 +53,7 @@ function EditLowonganKerja() {
             gaji: data.gaji || '',
             deskripsi: data.deskripsi || '',
             kualifikasi: data.kualifikasi || '',
+            notelp: data.notelp || '',
           });
         }
       } catch (error) {
@@ -129,6 +131,14 @@ function EditLowonganKerja() {
             placeholder="Masukkan lokasi"
             value={formData.lokasi}
             onChange={(e) => handleChange("lokasi", e.target.value)}
+            required
+          />
+
+          <TextInput
+            label="Nomor Yang Dapat Dihubungi"
+            placeholder="Masukkan nomor yang dapat dihubungi"
+            value={formData.notelp}
+            onChange={(e) => handleChange("notelp", e.target.value)}
             required
           />
 

@@ -1,83 +1,52 @@
 import colors from '@/con/colors';
-import { Stack, Box, Container, Grid, GridCol, Group, Paper, TextInput, Text, Image, Flex, Button } from '@mantine/core';
-import { IconCalendar, IconMapPin, IconSearch, IconUsersGroup } from '@tabler/icons-react';
+import { Stack, Container, Box, List, ListItem, Text, Image } from '@mantine/core';
 import React from 'react';
+import BackButton from '../darmasaba/(pages)/desa/layanan/_com/BackButto';
 
-import Link from 'next/link';
 
 function Page() {
   return (
-    <Stack pos="relative" bg={colors.Bg} py="xl" gap="md">
-      {/* Header */}
-      <Container size="lg" px="md">
-        <Stack align="center" gap={0} mb="xl">
-          <Text fz={{ base: "2rem", md: "3.4rem" }} c={colors["blue-button"]} fw="bold" ta="center">
-            Program Gotong Royong
+    <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"22"} px={{ base: "md", md: 0 }}>
+      <Box px={{ base: "md", md: 100 }}><BackButton /></Box>
+      <Container w={{ base: "100%", md: "50%" }} >
+        <Box pb={20}>
+          <Text ta={"center"} fz={"3.4rem"} c={colors["blue-button"]} fw={"bold"}>
+            Bumdes Pudak Mesari
           </Text>
-          <Text fz={{ base: "2rem", md: "3.4rem" }} c={colors["blue-button"]} fw="bold" ta="center">
-            Desa Darmasaba
+          <Text
+            ta={"center"}
+            fw={"bold"}
+            fz={"1.5rem"}
+          >
+            Informasi dan Pelayanan Administrasi Digital
           </Text>
-        </Stack>
+        </Box>
+        <Image src="/api/img/ack.png" alt='' w={"100%"} />
       </Container>
-
-      {/* Tabs Menu */}
-      <Box px={{ base: "md", md: "xl" }} py="md" bg={colors['BG-trans']} mb="md">
-        <Grid align="center" justify="space-between" mb={20}>
-          <GridCol span={{ base: 12, md: 8 }}>
-            <Group gap="md" wrap="wrap">
-              <Paper bg={colors['blue-button']} radius="xl" py={5} px={20}>
-                <Text c={colors['white-1']} size="sm">
-                  Semua
-                </Text>
-              </Paper>
-              {['Kebersihan', 'Infrastruktur', 'Sosial', 'Lingkungan'].map((kategori) => (
-                <Paper key={kategori} bg={colors['blue-button-trans']} radius="xl" py={5} px={20}>
-                  <Text size="sm">
-                    {kategori}
-                  </Text>
-                </Paper>
-              ))}
-            </Group>
-          </GridCol>
-          <GridCol span={{ base: 12, md: 4 }}>
-            <TextInput
-              radius="lg"
-              placeholder="Cari Program Gotong Royong"
-              leftSection={<IconSearch size={18} />}
-              w="100%"
-            />
-          </GridCol>
-        </Grid>
-        <Paper p={"xl"} bg={colors['white-trans-1']} w={{ base: "100%", md: "100%" }}>
-          <Stack gap={'xs'}>
-            <Image radius={20} src={'/api/img/gotong-royong.png'} w={'100%'} alt='' />
-            <Text fw={"bold"} fz={{ base: "h2", md: "h1" }}>Membangun Fasilitas Desa</Text>
-            <Group>
-              <Paper py={5} px={20} bg={colors['blue-button-trans']} radius={20}>
-                <Text c={colors['white-1']}>Sosial</Text>
-              </Paper>
-            </Group>
-            <Text fz={{ base: "h4", md: "h3" }}>
-              Program Pembangunan Fasilitas Desa Maju, Masyarakat Sejahtera.
-            </Text>
-            <Flex gap={5} align={'center'}>
-              <IconCalendar color={colors['blue-button-trans']} size={45} />
-              <Text fz={{ base: "h4", md: "h3" }}>1 April 2025</Text>
-            </Flex>
-            <Flex gap={5} align={'center'}>
-              <IconMapPin color={colors['blue-button-trans']} size={45} />
-              <Text fz={{ base: "h4", md: "h3" }}>Banjar Desa Darmasaba</Text>
-            </Flex>
-            <Flex gap={5} align={'center'}>
-              <IconUsersGroup color={colors['blue-button-trans']} size={45} />
-              <Text fz={{ base: "h4", md: "h3" }}>30 Partisipan</Text>
-            </Flex>
-            <Text fw={'bold'} fz={'md'}>Deskripsi : Program pembangunan Pura sebagai pusat spiritual dan budaya desa, melibatkan gotong royong masyarakat dalam pembangunan struktur utama serta ornamen tradisional.</Text>
-            <Group py={20} justify='center'>
-              <Button component={Link} href={'https://www.whatsapp.com/?lang=id'} bg={colors['blue-button']} >Daftar Sebagai Relawan</Button>
-            </Group>
-          </Stack>
-        </Paper>
+      <Box px={{ base: "md", md: 100 }}>
+        <Text py={20} fz={{ base: "sm", md: "lg" }} ta={"justify"}>
+          Badan Usaha Milik Desa (BUMDes) Pudak Mesari adalah lembaga ekonomi desa yang berperan penting dalam pengembangan potensi dan kesejahteraan masyarakat Desa Darmasaba, Kecamatan Abiansemal, Kabupaten Badung, Bali. BUMDes ini berfungsi sebagai motor penggerak perekonomian desa melalui berbagai unit usaha yang dikelola secara profesional.
+        </Text>
+        <Text fz={{ base: "sm", md: "lg" }} ta={"justify"}>
+          Potensi dan Peran BUMDes Pudak Mesari:
+        </Text>
+        <List py={20} type='ordered'>
+          <ListItem fz={{ base: "sm", md: "lg" }} ta={"justify"}>
+            <Text fz={{ base: "sm", md: "lg" }} fw={"bold"}>Pengembangan Usaha Mikro dan Kecil:</Text>BUMDes Pudak Mesari menyediakan layanan bagi pelaku usaha mikro dan kecil di desa, seperti penyediaan konsumsi dan snack kotak untuk berbagai acara.
+          </ListItem>
+          <ListItem fz={{ base: "sm", md: "lg" }} ta={"justify"}>
+            <Text fz={{ base: "sm", md: "lg" }} fw={"bold"}>Pengelolaan Sampah Berbasis Masyarakat:</Text>Melalui kolaborasi dengan komunitas pemuda peduli lingkungan, BUMDes Pudak Mesari aktif dalam pengelolaan sampah berbasis masyarakat.
+          </ListItem>
+          <ListItem fz={{ base: "sm", md: "lg" }} ta={"justify"}>
+            <Text fz={{ base: "sm", md: "lg" }} fw={"bold"}>Peningkatan Kapasitas dan Transparansi:</Text>Untuk memastikan pengelolaan yang akuntabel, BUMDes Pudak Mesari rutin mengadakan rapat koordinasi dan pendampingan penyusunan laporan pertanggungjawaban.
+          </ListItem>
+          <ListItem fz={{ base: "sm", md: "lg" }} ta={"justify"}>
+            <Text fz={{ base: "sm", md: "lg" }} fw={"bold"}>Kolaborasi Internasional:</Text>Desa Darmasaba, melalui BUMDes Pudak Mesari, menerima kunjungan dari tim Osaki Jepang untuk memperkuat pengelolaan sampah dan lingkungan.
+          </ListItem>
+        </List>
+        <Text fz={{ base: "sm", md: "lg" }} ta={"justify"}>
+          Dengan berbagai inisiatif tersebut, BUMDes Pudak Mesari menunjukkan perannya sebagai pilar utama dalam pengembangan ekonomi dan kesejahteraan masyarakat Desa Darmasaba, sekaligus menjaga kelestarian lingkungan melalui program-program inovatif dan kolaboratif.
+        </Text>
       </Box>
     </Stack>
   );

@@ -40,7 +40,7 @@ const DetailDataPengangguran = new Elysia({
       percentageChange: t.Optional(t.Number()),
     }),
   })
-  .delete("/:id", detailDataPengangguranDelete, {
+  .delete("/del/:id", detailDataPengangguranDelete, {
     params: t.Object({
       id: t.String(),
     }),

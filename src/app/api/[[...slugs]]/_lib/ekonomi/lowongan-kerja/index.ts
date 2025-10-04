@@ -15,6 +15,7 @@ const LowonganKerja = new Elysia({prefix: "/lowongankerja", tags: ["Ekonomi/Lowo
         gaji: t.String(),
         deskripsi: t.String(),
         kualifikasi: t.String(),
+        notelp: t.String(),
     })
 })
 .get("/find-many", lowonganKerjaFindMany)
@@ -35,6 +36,7 @@ const LowonganKerja = new Elysia({prefix: "/lowongankerja", tags: ["Ekonomi/Lowo
         gaji: t.String(),
         deskripsi: t.String(),
         kualifikasi: t.String(),
+        notelp: t.String(),
     })
 })
 

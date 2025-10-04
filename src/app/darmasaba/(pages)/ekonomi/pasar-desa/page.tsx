@@ -87,7 +87,7 @@ function Page() {
             <Box>
               <Select
                 placeholder="Pilih Kategori"
-                data={pasarDesaState.kategoriProduk.findMany.data?.map((v) => ({
+                data={pasarDesaState.kategoriProduk.findManyAll.data?.map((v) => ({
                   value: v.id,
                   label: v.nama
                 })) || []}

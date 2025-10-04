@@ -165,7 +165,7 @@
 'use client'
 import PendapatanAsliDesa from '@/app/admin/(dashboard)/_state/ekonomi/PADesa';
 import colors from '@/con/colors';
-import { Box, Paper, SimpleGrid, Stack, Table, Text, Title } from '@mantine/core';
+import { Box, Grid, GridCol, Paper, SimpleGrid, Stack, Table, Text, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { useProxy } from 'valtio/utils';
 import BackButton from '../../desa/layanan/_com/BackButto';
@@ -206,8 +206,117 @@ function Page() {
         <Stack gap="lg" justify="center">
           <Paper bg={colors['white-1']} p="xl">
             <SimpleGrid cols={{ base: 1, md: 3 }} spacing="md">
-              {/* Pendapatan, Belanja, Pembiayaan Card sama seperti sebelumnya */}
-              {/* ... */}
+             {/* Pendapatan Card */}
+             <Box p="md" style={{ border: '1px solid #e9ecef', borderRadius: '8px' }}>
+                <Stack gap={"xs"}>
+                  <Title order={3}>Pendapatan</Title>
+                  {PendapatanAsliDesa.pendapatan.findMany.data?.map((item) => (
+                    <Box key={item.id}>
+                      <Grid>
+                        <GridCol span={{ base: 12, md: 6 }}>
+                          <Text fz="md" fw={500}>{item.name}</Text>
+                        </GridCol>
+                        <GridCol span={{ base: 12, md: 6 }}>
+                          <Text fz="md" fw={500}>{new Intl.NumberFormat('id-ID', {
+                            style: 'currency',
+                            currency: 'IDR',
+                            minimumFractionDigits: 0
+                          }).format(item.value)}</Text>
+                        </GridCol>
+                      </Grid>
+                    </Box>
+                  ))}
+                  <Grid>
+                    <GridCol span={{ base: 12, md: 6 }}>
+                      <Text fz="lg" fw={600} mb="xs">Total Pendapatan</Text>
+                    </GridCol>
+                    <GridCol span={{ base: 12, md: 6 }}>
+                      <Text fz="xl" fw={700} c={colors['blue-button']}>
+                        {new Intl.NumberFormat('id-ID', {
+                          style: 'currency',
+                          currency: 'IDR',
+                          minimumFractionDigits: 0
+                        }).format(totalPendapatan)}
+                      </Text>
+                    </GridCol>
+                  </Grid>
+                </Stack>
+              </Box>
+
+              {/* Belanja Card */}
+              <Box p="md" style={{ border: '1px solid #e9ecef', borderRadius: '8px' }}>
+                <Stack gap={"xs"}>
+                  <Title order={3}>Belanja</Title>
+                  {PendapatanAsliDesa.belanja.findMany.data?.map((item) => (
+                    <Box key={item.id}>
+                      <Grid>
+                        <GridCol span={{ base: 12, md: 6 }}>
+                          <Text fz="md" fw={500}>{item.name}</Text>
+                        </GridCol>
+                        <GridCol span={{ base: 12, md: 6 }}>
+                          <Text fz="md" fw={500}>{new Intl.NumberFormat('id-ID', {
+                            style: 'currency',
+                            currency: 'IDR',
+                            minimumFractionDigits: 0
+                          }).format(item.value)}</Text>
+                        </GridCol>
+                      </Grid>
+                    </Box>
+                  ))}
+                  <Grid>
+                    <GridCol span={{ base: 12, md: 6 }}>
+                      <Text fz="lg" fw={600} mb="xs">Total Belanja</Text>
+                    </GridCol>
+                    <GridCol span={{ base: 12, md: 6 }}>
+                      <Text fz="xl" fw={700} c="orange">
+                        {new Intl.NumberFormat('id-ID', {
+                          style: 'currency',
+                          currency: 'IDR',
+                          minimumFractionDigits: 0
+                        }).format(totalBelanja)}
+                      </Text>
+                    </GridCol>
+                  </Grid>
+                </Stack>
+              </Box>
+
+              {/* Pembiayaan Card */}
+              <Box p="md" style={{ border: '1px solid #e9ecef', borderRadius: '8px' }}>
+                <Stack gap={"xs"}>
+                  <Title order={3}>Pembiayaan</Title>
+                  {PendapatanAsliDesa.pembiayaan.findMany.data?.map((item) => (
+                    <Box key={item.id}>
+                      <Grid>
+                        <GridCol span={{ base: 12, md: 6 }}>
+                          <Text fz="md" fw={500}>{item.name}</Text>
+                        </GridCol>
+                        <GridCol span={{ base: 12, md: 6 }}>
+                          <Text fz="md" fw={500}>{new Intl.NumberFormat('id-ID', {
+                            style: 'currency',
+                            currency: 'IDR',
+                            minimumFractionDigits: 0
+                          }).format(item.value)}</Text>
+                        </GridCol>
+                      </Grid>
+                    </Box>
+                  ))}
+                  <Grid>
+                    <GridCol span={{ base: 12, md: 6 }}>
+                      <Text fz="lg" fw={600} mb="xs">Total Pembiayaan</Text>
+                    </GridCol>
+                    <GridCol span={{ base: 12, md: 6 }}>
+                      <Text fz="xl" fw={700} c="green">
+                        {new Intl.NumberFormat('id-ID', {
+                          style: 'currency',
+                          currency: 'IDR',
+                          minimumFractionDigits: 0
+                        }).format(totalPembiayaan)}
+                      </Text>
+                    </GridCol>
+                  </Grid>
+                </Stack>
+              </Box>
+
             </SimpleGrid>
           </Paper>
 
@@ -218,7 +327,7 @@ function Page() {
               <Table.Thead>
                 <Table.Tr>
                   <Table.Th>Keterangan</Table.Th>
-                  <Table.Th align="right">Jumlah</Table.Th>
+                  <Table.Th ta={"right"}>Jumlah</Table.Th>
                 </Table.Tr>
               </Table.Thead>
               <Table.Tbody>

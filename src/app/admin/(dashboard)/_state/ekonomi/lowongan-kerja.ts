@@ -13,6 +13,7 @@ const templateForm = z.object({
   gaji: z.string(),
   deskripsi: z.string(),
   kualifikasi: z.string(),
+  notelp: z.string(),
 });
 
 const defaultForm = {
@@ -23,6 +24,7 @@ const defaultForm = {
   gaji: "",
   deskripsi: "",
   kualifikasi: "",
+  notelp: "",
 };
 
 const lowonganKerjaState = proxy({
@@ -179,6 +181,7 @@ const lowonganKerjaState = proxy({
             gaji: data.gaji,
             deskripsi: data.deskripsi,
             kualifikasi: data.kualifikasi,
+            notelp: data.notelp,
           };
           return data;
         } else {
@@ -218,6 +221,7 @@ const lowonganKerjaState = proxy({
             gaji: this.form.gaji,
             deskripsi: this.form.deskripsi,
             kualifikasi: this.form.kualifikasi,
+            notelp: this.form.notelp,
           }),
         });
         if (!response.ok) {

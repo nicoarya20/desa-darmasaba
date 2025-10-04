@@ -14,7 +14,7 @@ import {
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 import demografiPekerjaan from '../../../_state/ekonomi/demografi-pekerjaan';
@@ -25,12 +25,10 @@ interface FormData {
   perempuan: number;
 }
 
-function EditDemografiPekerjaan() {
+export default function EditDemografiPekerjaan() {
   const router = useRouter();
-  const params = useParams() as { id: string };
+  const { id } = useParams() as { id: string };
   const stateDemografi = useProxy(demografiPekerjaan);
-
-  const id = params.id;
 
   const [formData, setFormData] = useState<FormData>({
     pekerjaan: '',
@@ -38,46 +36,54 @@ function EditDemografiPekerjaan() {
     perempuan: 0,
   });
 
-  // Load data sekali waktu
+  // ✅ Load data hanya sekali di awal (tidak reset form)
   useEffect(() => {
     if (!id) return;
-    stateDemografi.update.id = id;
 
-    stateDemografi.findUnique
-      .load(id)
-      .then(() => {
+    const loadData = async () => {
+      try {
+        stateDemografi.update.id = id;
+        await stateDemografi.findUnique.load(id);
+
         const data = stateDemografi.findUnique.data;
         if (data) {
           setFormData({
-            pekerjaan: String(data.pekerjaan || ''),
-            lakiLaki: Number(data.lakiLaki || 0),
-            perempuan: Number(data.perempuan || 0),
+            pekerjaan: data.pekerjaan ?? '',
+            lakiLaki: Number(data.lakiLaki ?? 0),
+            perempuan: Number(data.perempuan ?? 0),
           });
         }
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error('Error loading data:', error);
         toast.error('Gagal memuat data');
-      });
-  }, [id]);
-
-  const handleChange =
-    (field: keyof FormData) =>
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setFormData((prev) => ({
-        ...prev,
-        [field]:
-          field === 'lakiLaki' || field === 'perempuan'
-            ? Number(e.currentTarget.value)
-            : e.currentTarget.value,
-      }));
+      }
     };
 
+    loadData();
+  }, [id]);
+
+  // ✅ Handler input terkontrol (tidak buat re-render berlebihan)
+  const handleChange = useCallback(
+    (field: keyof FormData) =>
+      (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value =
+          field === 'lakiLaki' || field === 'perempuan'
+            ? Number(e.currentTarget.value)
+            : e.currentTarget.value;
+
+        setFormData((prev) => ({ ...prev, [field]: value }));
+      },
+    []
+  );
+
+  // ✅ Submit hanya update global state sekali
   const handleSubmit = async () => {
     try {
       stateDemografi.update.id = id;
       stateDemografi.update.form = { ...formData };
+
       await stateDemografi.update.submit();
+
       toast.success('Data berhasil diperbarui');
       router.push('/admin/ekonomi/demografi-pekerjaan');
     } catch (error) {
@@ -160,5 +166,3 @@ function EditDemografiPekerjaan() {
     </Box>
   );
 }
-
-export default EditDemografiPekerjaan;

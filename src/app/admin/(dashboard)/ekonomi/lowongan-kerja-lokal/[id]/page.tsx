@@ -83,6 +83,11 @@ function DetailLowonganKerjaLokal() {
               </Box>
 
               <Box>
+                <Text fz="lg" fw="bold">Nomor Yang Dapat Dihubungi</Text>
+                <Text fz="md" c="dimmed">{data.notelp || '-'}</Text>
+              </Box>
+
+              <Box>
                 <Text fz="lg" fw="bold">Tipe Pekerjaan</Text>
                 <Text fz="md" c="dimmed">{data.tipePekerjaan || '-'}</Text>
               </Box>

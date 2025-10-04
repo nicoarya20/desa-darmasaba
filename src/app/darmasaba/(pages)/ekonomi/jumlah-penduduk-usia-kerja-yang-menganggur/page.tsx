@@ -86,38 +86,41 @@ function Page() {
           <Paper p={'lg'}>
             <Text fw={'bold'} fz={'h3'}>Pengangguran Berdasarkan Usia</Text>
             {mounted && donutGrafikNganggurData.length > 0 ? (<Box style={{ width: '100%', height: 'auto', minHeight: 200 }}>
-              <PieChart
-                size={300}
-                withLabelsLine
-                labelsPosition="outside"
-                labelsType="percent"
-                withLabels
-                data={donutGrafikNganggurData}
-                withTooltip
-                tooltipDataSource="segment"
-                mx="auto" />
+              <Box w="100%" style={{ maxWidth: 400, margin: "0 auto" }}>
+                <PieChart
+                  w="100%"
+                  h={250} // lebih kecil biar aman di mobile
+                  withLabelsLine
+                  labelsPosition="outside"
+                  labelsType="percent"
+                  withLabels
+                  data={donutGrafikNganggurData}
+                  withTooltip
+                  tooltipDataSource="segment"
+                />
+              </Box>
             </Box>) : <Skeleton h={500} />}
-            <Flex pb={30} justify={'center'} gap={'xl'} align={'center'}>
+            <Flex pb={30} justify={'center'} gap={'xl'} align={'center'} wrap="wrap">
               <Box>
-                <Flex gap={{ base: 5, md: 8 }} align={'center'}>
+                <Flex gap={{ base: 5, md: 8 }} align={'center'} wrap="wrap">
                   <Text fw={'bold'} fz={{ base: 'md', md: 'h4' }}>18-25</Text>
                   <ColorSwatch color="#4b6Ef5" size={30} />
                 </Flex>
               </Box>
               <Box>
-                <Flex gap={{ base: 5, md: 8 }} align={'center'}>
+                <Flex gap={{ base: 5, md: 8 }} align={'center'} wrap="wrap">
                   <Text fw={'bold'} fz={{ base: 'md', md: 'h4' }}>26-35</Text>
                   <ColorSwatch color="#14b885" size={30} />
                 </Flex>
               </Box>
               <Box>
-                <Flex gap={{ base: 5, md: 8 }} align={'center'}>
+                <Flex gap={{ base: 5, md: 8 }} align={'center'} wrap="wrap">
                   <Text fw={'bold'} fz={{ base: 'md', md: 'h4' }}>36-45</Text>
                   <ColorSwatch color="#E6A03B" size={30} />
                 </Flex>
               </Box>
               <Box>
-                <Flex gap={{ base: 5, md: 8 }} align={'center'}>
+                <Flex gap={{ base: 5, md: 8 }} align={'center'} wrap="wrap">
                   <Text fw={'bold'} fz={{ base: 'md', md: 'h4' }}>46+</Text>
                   <ColorSwatch color="#DB524D" size={30} />
                 </Flex>
@@ -127,44 +130,47 @@ function Page() {
           <Paper p={'lg'}>
             <Text fw={'bold'} fz={'h3'}>Pengangguran Berdasarkan Pendidikan</Text>
             {mounted2 && donutGrafikNganggurDataPendidikan.length > 0 ? (<Center>
-              <PieChart
-                size={300}
-                withLabelsLine
-                labelsPosition="outside"
-                labelsType="percent"
-                withLabels
-                data={donutGrafikNganggurDataPendidikan}
-                withTooltip
-                tooltipDataSource="segment"
-                mx="auto" />
+              <Box w="100%" style={{ maxWidth: 400, margin: "0 auto" }}>
+                <PieChart
+                  w="100%"
+                  h={250} // lebih kecil biar aman di mobile
+                  withLabelsLine
+                  labelsPosition="outside"
+                  labelsType="percent"
+                  withLabels
+                  data={donutGrafikNganggurDataPendidikan}
+                  withTooltip
+                  tooltipDataSource="segment"
+                />
+              </Box>
             </Center>) : <Skeleton h={500} />}
-            <Flex pb={30} justify={'center'} gap={'xl'} align={'center'}>
+            <Flex pb={30} justify={'center'} gap={'xl'} align={'center'} wrap="wrap">
               <Box>
-                <Flex gap={{ base: 5, md: 8 }} align={'center'}>
+                <Flex gap={{ base: 5, md: 8 }} align={'center'} wrap="wrap">
                   <Text fw={'bold'} fz={{ base: 'md', md: 'h4' }}>SD</Text>
                   <ColorSwatch color="#4b6Ef5" size={30} />
                 </Flex>
               </Box>
               <Box>
-                <Flex gap={{ base: 5, md: 8 }} align={'center'}>
+                <Flex gap={{ base: 5, md: 8 }} align={'center'} wrap="wrap">
                   <Text fw={'bold'} fz={{ base: 'md', md: 'h4' }}>SMP</Text>
                   <ColorSwatch color="#14b885" size={30} />
                 </Flex>
               </Box>
               <Box>
-                <Flex gap={{ base: 5, md: 8 }} align={'center'}>
+                <Flex gap={{ base: 5, md: 8 }} align={'center'} wrap="wrap">
                   <Text fw={'bold'} fz={{ base: 'md', md: 'h4' }}>SMA/SMK</Text>
                   <ColorSwatch color="#E6A03B" size={30} />
                 </Flex>
               </Box>
               <Box>
-                <Flex gap={{ base: 5, md: 8 }} align={'center'}>
+                <Flex gap={{ base: 5, md: 8 }} align={'center'} wrap="wrap">
                   <Text fw={'bold'} fz={{ base: 'md', md: 'h4' }}>D3</Text>
                   <ColorSwatch color="#DB524D" size={30} />
                 </Flex>
               </Box>
               <Box>
-                <Flex gap={{ base: 5, md: 8 }} align={'center'}>
+                <Flex gap={{ base: 5, md: 8 }} align={'center'} wrap="wrap">
                   <Text fw={'bold'} fz={{ base: 'md', md: 'h4' }}>S1</Text>
                   <ColorSwatch color="#1018A8FF" size={30} />
                 </Flex>
