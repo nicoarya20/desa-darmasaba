@@ -30,9 +30,9 @@ function Page() {
 
   // Filter data based on selected category
   const filteredData = selectedCategory
-    ? data?.filter(item => 
-        item.KategoriToPasar?.some(kategori => kategori.kategoriId === selectedCategory)
-      )
+    ? data?.filter(item =>
+      item.KategoriToPasar?.some(kategori => kategori.kategoriId === selectedCategory)
+    )
     : data;
 
   useShallowEffect(() => {

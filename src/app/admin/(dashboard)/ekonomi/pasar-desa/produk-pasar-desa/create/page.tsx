@@ -30,7 +30,7 @@ export default function CreatePasarDesa() {
   const [file, setFile] = useState<File | null>(null);
 
   useEffect(() => {
-    statePasar.kategoriProduk.findMany.load();
+    statePasar.kategoriProduk.findManyAll.load();
   }, []);
 
   const resetForm = () => {
@@ -201,7 +201,7 @@ export default function CreatePasarDesa() {
             value={statePasar.pasarDesa.create.form.kategoriId}
             onChange={(val) => (statePasar.pasarDesa.create.form.kategoriId = val)}
             data={
-              statePasar.kategoriProduk.findMany.data?.map((v) => ({
+              statePasar.kategoriProduk.findManyAll.data?.map((v) => ({
                 value: v.id,
                 label: v.nama,
               })) || []

@@ -53,7 +53,7 @@ function EditPasarDesa() {
 
   // load data awal
   useEffect(() => {
-    pasarState.kategoriProduk.findMany.load();
+    pasarState.kategoriProduk.findManyAll.load();
 
     const loadPasarDesa = async () => {
       const id = params?.id as string;
@@ -245,7 +245,7 @@ function EditPasarDesa() {
             value={formData.kategoriId}
             onChange={(val) => handleChange('kategoriId', val)}
             data={
-              pasarState.kategoriProduk.findMany.data?.map((v) => ({
+              pasarState.kategoriProduk.findManyAll.data?.map((v) => ({
                 value: v.id,
                 label: v.nama,
               })) || []
