@@ -225,7 +225,7 @@ export const navBar = [
       {
         id: "Ekonomi_3",
         name: "Struktur Organisasi Dan Sk Pengurus Bumdesa",
-        path: "/admin/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa/posisi-organisasi"
+        path: "/admin/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa/pegawai"
       },
       {
         id: "Ekonomi_4",

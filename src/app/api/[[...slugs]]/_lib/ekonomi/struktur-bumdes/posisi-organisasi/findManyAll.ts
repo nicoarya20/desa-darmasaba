@@ -1,18 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+// /api/posisi-organisasi/findManyAll.ts
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
 
-export default async function posisiOrganisasiFindMany(context: Context) {
-  // Ambil parameter dari query
-  const page = Number(context.query.page) || 1;
-  const limit = Number(context.query.limit) || 10;
+async function posisiOrganisasiFindManyAll(context: Context) {
   const search = (context.query.search as string) || "";
-  const skip = (page - 1) * limit;
 
-  // Buat where clause
+  // filter default
   const where: any = { isActive: true };
 
-  // Tambahkan pencarian (jika ada)
   if (search) {
     where.OR = [
       { nama: { contains: search, mode: "insensitive" } },
@@ -21,16 +17,10 @@ export default async function posisiOrganisasiFindMany(context: Context) {
   }
 
   try {
-    // Ambil data dan total count secara paralel
-    const [data, total] = await Promise.all([
-      prisma.posisiOrganisasi.findMany({
-        where,
-        skip,
-        take: limit,
-        orderBy: { createdAt: "asc" },
-      }),
-      prisma.posisiOrganisasi.count({ where }),
-    ]);
+    const data = await prisma.posisiOrganisasiPPID.findMany({
+      where,
+      orderBy: { hierarki: "asc" },
+    });
 
     return {
       success: true,
@@ -41,16 +31,15 @@ export default async function posisiOrganisasiFindMany(context: Context) {
         deskripsi: item.deskripsi,
         hierarki: item.hierarki,
       })),
-      page,
-      limit,
-      total,
-      totalPages: Math.ceil(total / limit),
+      total: data.length,
     };
   } catch (e) {
-    console.error("Error di findMany paginated:", e);
+    console.error("Find many all error:", e);
     return {
       success: false,
       message: "Gagal mengambil data posisi organisasi",
     };
   }
 }
+
+export default posisiOrganisasiFindManyAll;

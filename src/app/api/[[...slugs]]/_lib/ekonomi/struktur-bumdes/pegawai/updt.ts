@@ -28,7 +28,7 @@ export default async function pegawaiUpdate(context: Context) {
   body.isActive = String(body.isActive).toLowerCase() === 'true';
 
   try {
-    const updated = await prisma.pegawai.update({
+    const updated = await prisma.pegawaiBumDes.update({
       where: { id: body.id },
       data: {
         namaLengkap: body.namaLengkap,

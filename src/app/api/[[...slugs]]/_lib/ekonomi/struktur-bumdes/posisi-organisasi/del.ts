@@ -16,7 +16,7 @@ export default async function posisiOrganisasiDelete(context: Context) {
 
   try {
     // Check if the position exists first
-    const existing = await prisma.posisiOrganisasi.findUnique({
+    const existing = await prisma.posisiOrganisasiBumDes.findUnique({
       where: { id },
     });
 
@@ -31,7 +31,7 @@ export default async function posisiOrganisasiDelete(context: Context) {
     }
 
     // Check if there are any pegawai associated with this position
-    const pegawaiCount = await prisma.pegawai.count({
+    const pegawaiCount = await prisma.pegawaiBumDes.count({
       where: { posisiId: id },
     });
 
@@ -45,28 +45,8 @@ export default async function posisiOrganisasiDelete(context: Context) {
       );
     }
 
-    // Check if this position is used in any hubungan organisasi
-    const hubunganCount = await prisma.hubunganOrganisasi.count({
-      where: {
-        OR: [
-          { atasanId: id },
-          { bawahanId: id },
-        ],
-      },
-    });
-
-    if (hubunganCount > 0) {
-      return new Response(
-        JSON.stringify({
-          success: false,
-          message: "Tidak dapat menghapus posisi yang masih terdaftar dalam struktur organisasi",
-        }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
-      );
-    }
-
     // If all checks pass, delete the position
-    const deleted = await prisma.posisiOrganisasi.delete({
+    const deleted = await prisma.posisiOrganisasiBumDes.delete({
       where: { id },
     });
 

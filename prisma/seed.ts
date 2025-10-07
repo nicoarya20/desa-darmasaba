@@ -31,9 +31,8 @@ import sejarahDesa from "./data/desa/profile/sejarah_desa.json";
 import visiMisiDesa from "./data/desa/profile/visi_misi_desa.json";
 import detailDataPengangguran from "./data/ekonomi/jumlah-pengangguran/detail-data-pengangguran.json";
 import kategoriProduk from "./data/ekonomi/pasar-desa/kategori-produk.json";
-import hubunganOrganisasi from "./data/ekonomi/struktur-organisasi/hubungan-organisasi.json";
-import pegawai from "./data/ekonomi/struktur-organisasi/pegawai.json";
-import posisiOrganisasi from "./data/ekonomi/struktur-organisasi/posisi-organisasi.json";
+import pegawai from "./data/ekonomi/struktur-organisasi/pegawai-bumdes.json";
+import posisiOrganisasi from "./data/ekonomi/struktur-organisasi/posisi-organisasi-bumdes.json";
 import kategoriBerita from "./data/kategori-berita.json";
 import contohEdukasiLingkungan from "./data/lingkungan/edukasi-lingkungan/contoh-kegiatan-di-desa-darmasaba.json";
 import materiEdukasiLingkungan from "./data/lingkungan/edukasi-lingkungan/materi-edukasi-yang-diberikan.json";
@@ -807,28 +806,34 @@ import { safeSeedUnique } from "./safeseedUnique";
   }
   console.log("kategori produk success ...");
 
-  for (const p of posisiOrganisasi) {
-    await prisma.posisiOrganisasi.upsert({
-      where: {
-        id: p.id,
-      },
-      update: {
-        nama: p.nama,
-        deskripsi: p.deskripsi,
-        hierarki: p.hierarki,
-      },
-      create: {
-        id: p.id,
-        nama: p.nama,
-        deskripsi: p.deskripsi,
-        hierarki: p.hierarki,
-      },
+  const flattenedPosisiBumdes = posisiOrganisasi.flat();
+
+  // ✅ Urutkan berdasarkan hierarki
+  const sortedPosisiBumdes = flattenedPosisiBumdes.sort((a, b) => a.hierarki - b.hierarki);
+
+  for (const p of sortedPosisiBumdes) {
+    console.log(`Seeding: ${p.nama} (id: ${p.id}, parent: ${p.parentId})`);
+
+    if (p.parentId) {
+      const parentExists = flattenedPosisi.some((pos) => pos.id === p.parentId);
+      if (!parentExists) {
+        console.warn(
+          `⚠️ Parent tidak ditemukan: ${p.parentId} untuk ${p.nama}`
+        );
+        continue;
+      }
+    }
+
+    await prisma.posisiOrganisasiBumDes.upsert({
+      where: { id: p.id },
+      update: p,
+      create: p,
     });
   }
-  console.log("posisi organisasi success ...");
+  console.log("posisi organisasi berhasil");
 
   for (const p of pegawai) {
-    await prisma.pegawai.upsert({
+    await prisma.pegawaiBumDes.upsert({
       where: {
         id: p.id,
       },
@@ -856,26 +861,6 @@ import { safeSeedUnique } from "./safeseedUnique";
     });
   }
   console.log("pegawai success ...");
-
-  for (const p of hubunganOrganisasi) {
-    await prisma.hubunganOrganisasi.upsert({
-      where: {
-        atasanId_bawahanId: {
-          atasanId: p.atasanId,
-          bawahanId: p.bawahanId,
-        },
-      },
-      update: {
-        tipe: p.tipe,
-      },
-      create: {
-        atasanId: p.atasanId,
-        bawahanId: p.bawahanId,
-        tipe: p.tipe,
-      },
-    });
-  }
-  console.log("hubungan organisasi success ...");
 
   for (const d of detailDataPengangguran) {
     await prisma.detailDataPengangguran.upsert({

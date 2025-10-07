@@ -18,7 +18,7 @@ export default async function posisiOrganisasiCreate(context: Context) {
     }
 
     try {
-        const posisiOrganisasi = await prisma.posisiOrganisasi.create({
+        const posisiOrganisasi = await prisma.posisiOrganisasiBumDes.create({
             data: {
                 nama: body.nama,
                 deskripsi: body.deskripsi,

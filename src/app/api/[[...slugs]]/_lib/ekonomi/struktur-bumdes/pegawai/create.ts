@@ -32,7 +32,7 @@ export default async function pegawaiCreate(context: Context) {
   }
 
   try {
-    const pegawai = await prisma.pegawai.create({
+    const pegawai = await prisma.pegawaiBumDes.create({
       data: {
         namaLengkap: body.namaLengkap,
         gelarAkademik: body.gelarAkademik,

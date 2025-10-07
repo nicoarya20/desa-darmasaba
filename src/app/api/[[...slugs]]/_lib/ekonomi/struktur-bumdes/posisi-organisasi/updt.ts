@@ -20,7 +20,7 @@ export default async function posisiOrganisasiUpdate(context: Context) {
   }
 
   try {
-    await prisma.posisiOrganisasi.update({
+    await prisma.posisiOrganisasiBumDes.update({
       where: { id },
       data: {
         nama: body.nama,
@@ -29,7 +29,7 @@ export default async function posisiOrganisasiUpdate(context: Context) {
       },
     });
 
-    const updated = await prisma.posisiOrganisasi.findUnique({
+    const updated = await prisma.posisiOrganisasiBumDes.findUnique({
       where: { id },
     });
 

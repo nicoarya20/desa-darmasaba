@@ -1,30 +1,22 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
-'use client'
+'use client';
+
 import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
-import strukturorganisasiState from '@/app/admin/(dashboard)/_state/ekonomi/struktur-organisasi/struktur-organisasi';
+import stateStrukturBumDes from '@/app/admin/(dashboard)/_state/ekonomi/struktur-organisasi/struktur-organisasi';
 import colors from '@/con/colors';
-import {
-  Box,
-  Button,
-  Group,
-  Paper,
-  Stack,
-  Text,
-  TextInput,
-  Title,
-  Tooltip,
-} from '@mantine/core';
+import { Box, Button, Group, Paper, Stack, Text, TextInput, Title, Tooltip } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
-function EditPosisiOrganisasi() {
+function EditPosisiOrganisasiBumDes() {
   const router = useRouter();
   const params = useParams();
   const id = params?.id as string;
-  const stateOrganisasi = useProxy(strukturorganisasiState.posisiOrganisasi);
+  const stateOrganisasi = useProxy(stateStrukturBumDes.posisiOrganisasi);
 
   const [formData, setFormData] = useState({
     nama: '',
@@ -32,24 +24,27 @@ function EditPosisiOrganisasi() {
     hierarki: 0,
   });
 
-  // Load data awal sekali saja
-  useEffect(() => {
-    const loadPosisiOrganisasi = async () => {
-      if (!id) return;
+  // Fungsi generik untuk update formData
+  const handleChange = (field: keyof typeof formData, value: any) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
 
+  useEffect(() => {
+    if (!id) return;
+
+    const loadPosisiOrganisasi = async () => {
       try {
         const data = await stateOrganisasi.edit.load(id);
-
         if (data) {
           stateOrganisasi.edit.id = id;
           setFormData({
-            nama: data.nama ?? '',
-            deskripsi: data.deskripsi ?? '',
-            hierarki: data.hierarki ?? 0,
+            nama: data.nama || '',
+            deskripsi: data.deskripsi || '',
+            hierarki: data.hierarki || 0,
           });
         }
-      } catch (error) {
-        console.error('Error loading posisi organisasi:', error);
+      } catch (err) {
+        console.error('Error loading posisi organisasi:', err);
         toast.error('Gagal memuat data posisi organisasi');
       }
     };
@@ -57,18 +52,14 @@ function EditPosisiOrganisasi() {
     loadPosisiOrganisasi();
   }, [id]);
 
-  const handleChange = (field: string, value: string | number) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
-
   const handleSubmit = async () => {
-    try {
-      if (!formData.nama.trim()) {
-        toast.error('Nama posisi organisasi tidak boleh kosong');
-        return;
-      }
+    if (!formData.nama.trim()) {
+      toast.error('Nama posisi organisasi tidak boleh kosong');
+      return;
+    }
 
-      // update global state HANYA saat submit
+    try {
+      // Update global state hanya saat submit
       stateOrganisasi.edit.form = {
         nama: formData.nama.trim(),
         deskripsi: formData.deskripsi.trim(),
@@ -76,19 +67,17 @@ function EditPosisiOrganisasi() {
       };
 
       if (!stateOrganisasi.edit.id) {
-        stateOrganisasi.edit.id = id; // fallback
+        stateOrganisasi.edit.id = id;
       }
 
       const success = await stateOrganisasi.edit.update();
 
       if (success) {
-        toast.success('Posisi organisasi berhasil diperbarui!');
-        router.push(
-          '/admin/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa/posisi-organisasi'
-        );
+        router.push('/admin/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa/posisi-organisasi');
       }
-    } catch (error) {
-      console.error('Error updating posisi organisasi:', error);
+    } catch (err) {
+      console.error('Error updating posisi organisasi:', err);
+      // toast error biasanya sudah ada di update
     }
   };
 
@@ -96,17 +85,12 @@ function EditPosisiOrganisasi() {
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
       <Group mb="md">
         <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button
-            variant="subtle"
-            onClick={() => router.back()}
-            p="xs"
-            radius="md"
-          >
+          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
             <IconArrowBack color={colors['blue-button']} size={24} />
           </Button>
         </Tooltip>
         <Title order={4} ml="sm" c="dark">
-          Edit Posisi Organisasi
+          Edit Posisi Organisasi BUMDes
         </Title>
       </Group>
 
@@ -120,39 +104,40 @@ function EditPosisiOrganisasi() {
       >
         <Stack gap="md">
           <TextInput
-            value={formData.nama}
-            onChange={(e) => handleChange('nama', e.target.value)}
             label="Nama Posisi Organisasi"
             placeholder="Masukkan nama posisi organisasi"
+            value={formData.nama}
+            onChange={(e) => handleChange('nama', e.target.value)}
             required
           />
 
           <Box>
-            <Text fz="sm" mb={6}>
+            <Text fw="bold" fz="sm" mb={6}>
               Deskripsi
             </Text>
             <EditEditor
               value={formData.deskripsi}
-              onChange={(htmlContent) =>
-                handleChange('deskripsi', htmlContent)
-              }
+              onChange={(html) => handleChange('deskripsi', html)}
             />
           </Box>
 
           <TextInput
-            type="number"
-            value={formData.hierarki}
-            onChange={(e) =>
-              handleChange('hierarki', parseInt(e.target.value) || 0)
-            }
             label="Hierarki"
-            placeholder="Masukkan hierarki"
+            type="number"
+            min={0}
+            placeholder="Contoh: 1 (Angka semakin kecil, posisi semakin tinggi)"
+            value={formData.hierarki}
+            onChange={(e) => {
+              const value = parseInt(e.target.value, 10);
+              handleChange('hierarki', isNaN(value) ? 0 : value);
+            }}
             required
           />
 
-          <Group justify="right">
+          <Group justify="flex-end" mt="md">
             <Button
               onClick={handleSubmit}
+              loading={stateOrganisasi.edit.loading}
               radius="md"
               size="md"
               style={{
@@ -170,4 +155,4 @@ function EditPosisiOrganisasi() {
   );
 }
 
-export default EditPosisiOrganisasi;
+export default EditPosisiOrganisasiBumDes;

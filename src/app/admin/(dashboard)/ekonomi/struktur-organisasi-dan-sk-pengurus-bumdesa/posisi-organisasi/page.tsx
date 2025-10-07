@@ -1,58 +1,37 @@
 'use client'
 import colors from '@/con/colors';
-import {
-  Box,
-  Button,
-  Center,
-  Group,
-  Paper,
-  Pagination,
-  Skeleton,
-  Stack,
-  Table,
-  TableTbody,
-  TableTd,
-  TableTh,
-  TableThead,
-  TableTr,
-  Text,
-  Title,
-  Tooltip,
-} from '@mantine/core';
+import { Box, Button, Center, Group, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title, Tooltip } from '@mantine/core';
+import { useShallowEffect } from '@mantine/hooks';
 import { IconEdit, IconPlus, IconSearch, IconTrash } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import { useShallowEffect } from '@mantine/hooks';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../../_com/header';
 import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
-import strukturorganisasiState from '../../../_state/ekonomi/struktur-organisasi/struktur-organisasi';
+import stateStrukturBumDes from '../../../_state/ekonomi/struktur-organisasi/struktur-organisasi';
 
-function PosisiOrganisasi() {
+
+function PosisiOrganisasiBumDes() {
   const [search, setSearch] = useState("");
   return (
     <Box>
-      {/* Search Bar */}
       <HeaderSearch
-        title="Posisi Organisasi"
-        placeholder="Cari nama, deskripsi, atau hierarki..."
+        title='Posisi Organisasi BUMDes'
+        placeholder='Cari posisi organisasi...'
         searchIcon={<IconSearch size={20} />}
         value={search}
         onChange={(e) => setSearch(e.currentTarget.value)}
       />
-
-      {/* List Table */}
-      <ListPosisiOrganisasi search={search} />
+      <ListPosisiOrganisasiBumDes search={search} />
     </Box>
   );
 }
 
-function ListPosisiOrganisasi({ search }: { search: string }) {
-  const stateOrganisasi = useProxy(strukturorganisasiState.posisiOrganisasi);
+function ListPosisiOrganisasiBumDes({ search }: { search: string }) {
+  const stateOrganisasi = useProxy(stateStrukturBumDes.posisiOrganisasi)
   const router = useRouter();
-
-  const [modalHapus, setModalHapus] = useState(false);
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [modalHapus, setModalHapus] = useState(false)
+  const [selectedId, setSelectedId] = useState<string | null>(null)
 
   const {
     data,
@@ -66,21 +45,20 @@ function ListPosisiOrganisasi({ search }: { search: string }) {
     load(page, 10, search);
   }, [page, search]);
 
-  const filteredData = data || [];
-
   const handleHapus = async () => {
     if (selectedId) {
       await stateOrganisasi.delete.byId(selectedId);
-      setModalHapus(false);
-      setSelectedId(null);
-      load(page, 10, search); // refresh
+      setModalHapus(false)
+      setSelectedId(null)
     }
-  };
+  }
+
+  const filteredData = data || []
 
   if (loading || !data) {
     return (
       <Stack py={10}>
-        <Skeleton height={500} radius="md" />
+        <Skeleton height={600} radius="md" />
       </Stack>
     );
   }
@@ -89,71 +67,70 @@ function ListPosisiOrganisasi({ search }: { search: string }) {
     <Box py={10}>
       <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
         <Group justify="space-between" mb="md">
-          <Title order={4}>Daftar Posisi Organisasi</Title>
-          <Tooltip label="Tambah Posisi Baru" withArrow>
+          <Title order={4}>Daftar Posisi Organisasi BumDes</Title>
+          <Tooltip label="Tambah Posisi Organisasi" withArrow>
             <Button
               leftSection={<IconPlus size={18} />}
               color="blue"
               variant="light"
-              onClick={() =>
-                router.push(
-                  '/admin/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa/posisi-organisasi/create'
-                )
-              }
+              onClick={() => router.push('/admin/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa/posisi-organisasi/create')}
             >
               Tambah Baru
             </Button>
           </Tooltip>
         </Group>
-
         <Box style={{ overflowX: 'auto' }}>
           <Table highlightOnHover>
             <TableThead>
               <TableTr>
-                <TableTh style={{ width: '25%' }}>Nama Posisi</TableTh>
-                <TableTh style={{ width: '15%' }}>Hierarki</TableTh>
-                <TableTh style={{ width: '25%' }}>Edit</TableTh>
-                <TableTh style={{ width: '25%' }}>Hapus</TableTh>
+                <TableTh style={{ width: '20%' }}>Nama Posisi</TableTh>
+                <TableTh style={{ width: '20%' }}>Deskripsi</TableTh>
+                <TableTh style={{ width: '20%' }}>Hierarki</TableTh>
+                <TableTh style={{ width: '20%' }}>Edit</TableTh>
+                <TableTh style={{ width: '20%' }}>Hapus</TableTh>
               </TableTr>
             </TableThead>
             <TableTbody>
               {filteredData.length > 0 ? (
                 filteredData.map((item) => (
                   <TableTr key={item.id}>
-                    <TableTd style={{ width: '25%' }}>
+                    <TableTd style={{ width: '20%' }}>
                       <Text fw={500} truncate="end" lineClamp={1}>{item.nama}</Text>
                     </TableTd>
-                    <TableTd style={{ width: '15%' }}>
-                      <Text fz="sm">{item.hierarki ?? '-'}</Text>
+                    <TableTd style={{ width: '20%' }}>
+                      <Box w={200}>
+                        <Text lineClamp={1} fz="sm" c="dimmed" dangerouslySetInnerHTML={{ __html: item.deskripsi || '-' }} />
+                      </Box>
                     </TableTd>
-                    <TableTd style={{ width: '25%' }}>
-                      <Tooltip label="Ubah Posisi Organisasi" withArrow>
+                    <TableTd style={{ width: '20%' }}>
+                      <Text>{item.hierarki || '-'}</Text>
+                    </TableTd>
+                    <TableTd style={{ width: '20%' }}>
+                      <Tooltip label="Edit" withArrow>
                         <Button
                           variant="light"
                           color="green"
-                          onClick={() =>
-                            router.push(
-                              `/admin/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa/posisi-organisasi/${item.id}`
-                            )
-                          }
+                          size="sm"
+                          onClick={() => router.push(`/admin/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa/posisi-organisasi/${item.id}`)}
                         >
                           <IconEdit size={18} />
                         </Button>
                       </Tooltip>
                     </TableTd>
-                    <TableTd style={{ width: '25%' }}>
-                      <Tooltip label="Hapus Posisi Organisasi" withArrow>
-                        <Button
-                          variant="light"
-                          color="red"
-                          onClick={() => {
-                            setSelectedId(item.id);
-                            setModalHapus(true);
-                          }}
-                        >
-                          <IconTrash size={18} />
-                        </Button>
-                      </Tooltip>
+                    <TableTd style={{ width: '20%' }}>
+                    <Tooltip label="Hapus" withArrow>
+                      <Button
+                        variant="light"
+                        color="red"
+                        size="sm"
+                        onClick={() => {
+                          setSelectedId(item.id);
+                          setModalHapus(true);
+                        }}
+                      >
+                        <IconTrash size={18} />
+                      </Button>
+                    </Tooltip>
                     </TableTd>
                   </TableTr>
                 ))
@@ -170,8 +147,6 @@ function ListPosisiOrganisasi({ search }: { search: string }) {
           </Table>
         </Box>
       </Paper>
-
-      {/* Pagination */}
       <Center>
         <Pagination
           value={page}
@@ -186,16 +161,15 @@ function ListPosisiOrganisasi({ search }: { search: string }) {
           radius="md"
         />
       </Center>
-
       {/* Modal Hapus */}
       <ModalKonfirmasiHapus
         opened={modalHapus}
         onClose={() => setModalHapus(false)}
         onConfirm={handleHapus}
-        text="Apakah anda yakin ingin menghapus posisi organisasi ini?"
+        text="Apakah anda yakin ingin menghapus posisi organisasi BumDes ini?"
       />
     </Box>
   );
 }
 
-export default PosisiOrganisasi;
+export default PosisiOrganisasiBumDes;

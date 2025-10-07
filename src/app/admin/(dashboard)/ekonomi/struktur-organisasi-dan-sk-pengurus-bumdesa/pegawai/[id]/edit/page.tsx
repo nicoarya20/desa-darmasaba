@@ -1,8 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
-import strukturorganisasiState from '@/app/admin/(dashboard)/_state/ekonomi/struktur-organisasi/struktur-organisasi';
+
+import stateStrukturBumDes from '@/app/admin/(dashboard)/_state/ekonomi/struktur-organisasi/struktur-organisasi';
 import colors from '@/con/colors';
+import ApiFetch from '@/lib/api-fetch';
 import {
   Box,
   Button,
@@ -13,7 +14,8 @@ import {
   Stack,
   Text,
   TextInput,
-  Title
+  Title,
+  Tooltip
 } from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
 import { IconArrowBack, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
@@ -22,30 +24,12 @@ import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
-interface PreviewImage {
-  file?: File;
-  preview: string;
-}
-
-interface PegawaiFormData {
-  namaLengkap: string;
-  gelarAkademik: string;
-  imageId: string | null;
-  tanggalMasuk: string;
-  email: string;
-  telepon: string;
-  alamat: string;
-  posisiId: string;
-  isActive: boolean;
-}
-
-export default function EditPegawai() {
+export default function EditPegawaiBumDes() {
   const router = useRouter();
   const { id } = useParams<{ id: string }>();
-  const stateOrganisasi = useProxy(strukturorganisasiState.pegawai);
+  const stateOrganisasi = useProxy(stateStrukturBumDes.pegawai);
 
-  const [previewImage, setPreviewImage] = useState<PreviewImage | string | null>(null);
-  const [formData, setFormData] = useState<PegawaiFormData>({
+  const [formData, setFormData] = useState({
     namaLengkap: '',
     gelarAkademik: '',
     imageId: '',
@@ -56,16 +40,10 @@ export default function EditPegawai() {
     posisiId: '',
     isActive: true,
   });
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [file, setFile] = useState<File | null>(null);
 
-  // helper buat update state formData
-  const updateForm = (field: keyof PegawaiFormData, value: any) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
-
-  // Format date to YYYY-MM-DD for date input
+  // Format date for <input type="date">
   const formatDateForInput = (dateString: string) => {
     if (!dateString) return '';
     const date = new Date(dateString);
@@ -73,10 +51,10 @@ export default function EditPegawai() {
   };
 
   useEffect(() => {
-    strukturorganisasiState.posisiOrganisasi.findMany.load();
-
     const loadPegawai = async () => {
       try {
+        await stateStrukturBumDes.posisiOrganisasi.findManyAll.load();
+
         const data = await stateOrganisasi.edit.load(id);
         if (data) {
           setFormData({
@@ -95,9 +73,7 @@ export default function EditPegawai() {
         }
       } catch (error) {
         console.error('Error loading pegawai:', error);
-        toast.error(
-          error instanceof Error ? error.message : 'Gagal mengambil data pegawai'
-        );
+        toast.error(error instanceof Error ? error.message : 'Gagal mengambil data pegawai');
       }
     };
 
@@ -107,204 +83,182 @@ export default function EditPegawai() {
   const handleSubmit = async () => {
     try {
       if (!formData.namaLengkap.trim()) {
-        toast.error('Nama lengkap tidak boleh kosong');
-        return;
+        return toast.error('Nama lengkap tidak boleh kosong');
       }
 
-      stateOrganisasi.edit.form = {
-        ...formData,
-        namaLengkap: formData.namaLengkap.trim(),
-        gelarAkademik: formData.gelarAkademik.trim(),
-        imageId: formData.imageId ? formData.imageId.trim() : '',
-        tanggalMasuk: formData.tanggalMasuk.trim(),
-        email: formData.email.trim(),
-        telepon: formData.telepon.trim(),
-        alamat: formData.alamat.trim(),
-        posisiId: formData.posisiId.trim(),
-      };
+      // Update global state only on submit
+      const updatedForm = { ...formData };
 
-      if (id && !stateOrganisasi.edit.id) {
-        stateOrganisasi.edit.id = id;
+      if (file) {
+        const res = await ApiFetch.api.fileStorage.create.post({ file, name: file.name });
+        const uploaded = res.data?.data;
+        if (!uploaded?.id) return toast.error('Gagal upload gambar');
+        updatedForm.imageId = uploaded.id;
       }
+
+      stateOrganisasi.edit.form = updatedForm;
+      if (id && !stateOrganisasi.edit.id) stateOrganisasi.edit.id = id;
 
       const success = await stateOrganisasi.edit.submit();
-
-      if (success) {
-        router.push(
-          '/admin/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa/pegawai'
-        );
-      }
+      if (success) router.push('/admin/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa/pegawai');
     } catch (error) {
       console.error('Error updating pegawai:', error);
-      toast.error(
-        error instanceof Error ? error.message : 'Gagal memperbarui data pegawai'
-      );
+      toast.error(error instanceof Error ? error.message : 'Gagal memperbarui data pegawai');
     }
   };
 
   return (
-    <Box>
-      <Box mb={10}>
-        <Button onClick={() => router.back()} variant="subtle" color={'blue'}>
-          <IconArrowBack color={colors['blue-button']} size={25} />
-        </Button>
-      </Box>
+    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+      <Group mb="md">
+        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
+          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+            <IconArrowBack color={colors['blue-button']} size={24} />
+          </Button>
+        </Tooltip>
+        <Title order={4} ml="sm" c="dark">Edit Data Pegawai PPID</Title>
+      </Group>
 
-      <Paper w={{ base: '100%', md: '50%' }} bg={colors['white-1']} p={'md'}>
-        <Stack gap={'xs'}>
-          <Title order={4}>Edit Data Pegawai</Title>
-
+      <Paper
+        w={{ base: '100%', md: '50%' }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+        style={{ border: '1px solid #e0e0e0' }}
+      >
+        <Stack gap="md">
+          {/* Nama Lengkap */}
           <TextInput
             label="Nama Lengkap"
             placeholder="Masukkan nama lengkap"
             value={formData.namaLengkap}
-            onChange={(e) => updateForm('namaLengkap', e.target.value)}
+            onChange={(e) => setFormData({ ...formData, namaLengkap: e.target.value })}
+            required
           />
 
+          {/* Gelar Akademik */}
           <TextInput
             label="Gelar Akademik"
             placeholder="Contoh: S.Kom"
             value={formData.gelarAkademik}
-            onChange={(e) => updateForm('gelarAkademik', e.target.value)}
+            onChange={(e) => setFormData({ ...formData, gelarAkademik: e.target.value })}
           />
 
+          {/* Foto Profil */}
           <Box>
-            <Text fz={'md'} fw={'bold'}>
-              Gambar
-            </Text>
-            <Box>
-              <Dropzone
-                onDrop={(files) => {
-                  const file = files[0];
-                  if (file) {
-                    setPreviewImage({
-                      file,
-                      preview: URL.createObjectURL(file),
-                    });
-                  }
-                }}
-                maxSize={5 * 1024 ** 2}
-                accept={{
-                  'image/*': ['.jpeg', '.jpg', '.png', '.webp'],
-                }}
-              >
-                <Group
-                  justify="center"
-                  gap="xl"
-                  mih={220}
-                  style={{ pointerEvents: 'none' }}
-                >
-                  <Dropzone.Accept>
-                    <IconUpload
-                      size={52}
-                      color="var(--mantine-color-blue-6)"
-                      stroke={1.5}
-                    />
-                  </Dropzone.Accept>
-                  <Dropzone.Reject>
-                    <IconX
-                      size={52}
-                      color="var(--mantine-color-red-6)"
-                      stroke={1.5}
-                    />
-                  </Dropzone.Reject>
-                  <Dropzone.Idle>
-                    <IconPhoto
-                      size={52}
-                      color="var(--mantine-color-dimmed)"
-                      stroke={1.5}
-                    />
-                  </Dropzone.Idle>
+            <Text fw="bold" fz="sm" mb={6}>Foto Profil</Text>
+            <Dropzone
+              onDrop={(files) => {
+                const selectedFile = files[0];
+                if (selectedFile) {
+                  setFile(selectedFile);
+                  setPreviewImage(URL.createObjectURL(selectedFile));
+                }
+              }}
+              onReject={() => toast.error('File tidak valid, gunakan format gambar')}
+              maxSize={5 * 1024 ** 2}
+              accept={{ 'image/*': ['.jpeg', '.jpg', '.png', '.webp'] }}
+              radius="md"
+              p="xl"
+            >
+              <Group justify="center" gap="xl" mih={180}>
+                <Dropzone.Accept><IconUpload size={48} color={colors['blue-button']} stroke={1.5} /></Dropzone.Accept>
+                <Dropzone.Reject><IconX size={48} color="red" stroke={1.5} /></Dropzone.Reject>
+                <Dropzone.Idle><IconPhoto size={48} color="#868e96" stroke={1.5} /></Dropzone.Idle>
+                <Stack gap="xs" align="center">
+                  <Text size="md" fw={500}>Seret gambar atau klik untuk memilih file</Text>
+                  <Text size="sm" c="dimmed">Maksimal 5MB, format gambar wajib</Text>
+                </Stack>
+              </Group>
+            </Dropzone>
 
-                  <div>
-                    <Text size="xl" inline>
-                      Drag images here or click to select files
-                    </Text>
-                    <Text size="sm" c="dimmed" inline mt={7}>
-                      Attach as many files as you like, each file should not
-                      exceed 5mb
-                    </Text>
-                  </div>
-                </Group>
-              </Dropzone>
-
-              {previewImage && (
+            {previewImage && (
+              <Box mt="sm" style={{ display: 'flex', justifyContent: 'center' }}>
                 <Image
-                  src={
-                    typeof previewImage === 'string'
-                      ? previewImage
-                      : previewImage?.preview
-                  }
-                  alt="Preview"
-                  width={280}
-                  height={180}
-                  fit="cover"
-                  radius="sm"
-                  mt="md"
+                  src={previewImage}
+                  alt="Preview Gambar"
+                  radius="md"
+                  style={{ maxHeight: 220, objectFit: 'contain', border: `1px solid ${colors['blue-button']}` }}
                   loading="lazy"
                 />
-              )}
-            </Box>
+              </Box>
+            )}
           </Box>
 
+          {/* Tanggal Masuk */}
           <TextInput
             label="Tanggal Masuk"
             type="date"
             placeholder="Contoh: 2022-01-01"
             value={formatDateForInput(formData.tanggalMasuk)}
-            onChange={(e) => updateForm('tanggalMasuk', e.target.value)}
+            onChange={(e) => setFormData({ ...formData, tanggalMasuk: e.target.value })}
           />
 
+          {/* Email */}
           <TextInput
             label="Email"
-            placeholder="Contoh: email@example.com"
+            type="email"
+            placeholder="contoh@email.com"
             value={formData.email}
-            onChange={(e) => updateForm('email', e.currentTarget.value)}
+            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
           />
 
+          {/* Telepon */}
           <TextInput
             label="Telepon"
-            placeholder="Contoh: 08123456789"
+            placeholder="08123456789"
             value={formData.telepon}
-            onChange={(e) => updateForm('telepon', e.currentTarget.value)}
+            onChange={(e) => setFormData({ ...formData, telepon: e.target.value })}
           />
 
+          {/* Alamat */}
           <TextInput
             label="Alamat"
-            placeholder="Contoh: Jl. Contoh No. 1"
+            placeholder="Jl. Contoh No. 123"
             value={formData.alamat}
-            onChange={(e) => updateForm('alamat', e.currentTarget.value)}
+            onChange={(e) => setFormData({ ...formData, alamat: e.target.value })}
           />
 
-          <Select
-            label="Posisi"
-            placeholder="Pilih posisi"
-            data={
-              strukturorganisasiState.posisiOrganisasi.findMany.data?.map(
-                (p) => ({
-                  value: p.id,
-                  label: p.nama,
-                })
-              ) || []
-            }
-            value={formData.posisiId}
-            onChange={(value) => {
-              if (value !== null) updateForm('posisiId', value);
-            }}
-          />
+          {/* Posisi */}
+          <Box>
+            <Text fw="bold" fz="sm" mb={6}>Posisi</Text>
+            <Select
+              placeholder="Pilih posisi"
+              data={stateStrukturBumDes.posisiOrganisasi.findManyAll.data?.map(p => ({ value: p.id, label: p.nama })) || []}
+              value={formData.posisiId}
+              onChange={(value) => value && setFormData({ ...formData, posisiId: value })}
+              searchable
+              clearable
+            />
+          </Box>
 
-          <Select
-            label="Status Pegawai"
-            data={[
-              { value: 'true', label: 'Aktif' },
-              { value: 'false', label: 'Tidak Aktif' },
-            ]}
-            value={String(formData.isActive)}
-            onChange={(val) => updateForm('isActive', val === 'true')}
-          />
+          {/* Status Pegawai */}
+          <Box>
+            <Text fw="bold" fz="sm" mb={6}>Status Pegawai</Text>
+            <Select
+              data={[
+                { value: 'true', label: 'Aktif' },
+                { value: 'false', label: 'Tidak Aktif' },
+              ]}
+              value={String(formData.isActive)}
+              onChange={(val) => setFormData({ ...formData, isActive: val === 'true' })}
+              clearable
+            />
+          </Box>
 
-          <Group>
-            <Button onClick={handleSubmit} color="blue">
+          {/* Submit Button */}
+          <Group justify="flex-end" mt="md">
+            <Button
+              onClick={handleSubmit}
+              loading={stateOrganisasi.edit.loading}
+              radius="md"
+              size="md"
+              style={{
+                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                color: '#fff',
+                boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
+              }}
+            >
               Simpan
             </Button>
           </Group>

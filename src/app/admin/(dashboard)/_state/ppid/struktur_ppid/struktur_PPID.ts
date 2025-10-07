@@ -563,7 +563,7 @@ const pegawai = proxy({
   },
   findUnique: {
     data: null as
-      | (Prisma.PegawaiGetPayload<{
+      | (Prisma.PegawaiPPIDGetPayload<{
           include: { posisi: true; image: true };
         }> & { isActive: boolean })
       | null,

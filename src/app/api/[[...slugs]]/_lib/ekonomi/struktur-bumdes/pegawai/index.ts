@@ -7,7 +7,7 @@ import pegawaiUpdate from "./updt";
 
 const Pegawai = new Elysia({
   prefix: "/pegawai",
-  tags: ["Ekonomi/Struktur Organisasi/Pegawai"],
+  tags: ["Ekonomi/Struktur BUMDes/Pegawai"],
 })
 
   // ✅ Find all

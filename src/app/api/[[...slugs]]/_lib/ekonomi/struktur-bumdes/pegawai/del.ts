@@ -13,17 +13,13 @@ export default async function pegawaiDelete(context: Context) {
   }
 
   try {
-    const deleted = await prisma.pegawai.update({
-      where: { id },
-      data: {
-        isActive: false, // soft delete
-        updatedAt: new Date(),
-      },
+    const deleted = await prisma.pegawaiBumDes.delete({
+      where: { id },  
     });
 
     return {
       success: true,
-      message: "Pegawai berhasil di-nonaktifkan",
+      message: "Pegawai berhasil dihapus",
       data: deleted,
     };
   } catch (error: any) {

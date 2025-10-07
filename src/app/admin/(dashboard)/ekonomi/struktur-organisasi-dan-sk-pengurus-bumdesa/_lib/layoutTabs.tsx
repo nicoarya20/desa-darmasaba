@@ -2,6 +2,7 @@
 'use client'
 import colors from '@/con/colors';
 import {
+  ScrollArea,
   Stack,
   Tabs,
   TabsList,
@@ -9,28 +10,20 @@ import {
   TabsTab,
   Title,
   Tooltip,
-  ScrollArea,
 } from '@mantine/core';
+import {
+  IconBuildingCommunity,
+  IconHierarchy,
+  IconUsers
+} from '@tabler/icons-react';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
-import {
-  IconHierarchy,
-  IconUsers,
-  IconGitBranch,
-} from '@tabler/icons-react';
 
 function LayoutTabs({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
 
   const tabs = [
-    {
-      label: "Posisi Organisasi",
-      value: "posisiorganisasi",
-      href: "/admin/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa/posisi-organisasi",
-      icon: <IconHierarchy size={18} stroke={1.8} />,
-      tooltip: "Kelola daftar posisi organisasi",
-    },
     {
       label: "Pegawai",
       value: "pegawai",
@@ -39,12 +32,19 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
       tooltip: "Kelola data pegawai BUMDesa",
     },
     {
-      label: "Hubungan Organisasi",
-      value: "hubunganorganisasi",
-      href: "/admin/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa/hubungan-organisasi",
-      icon: <IconGitBranch size={18} stroke={1.8} />,
-      tooltip: "Atur hubungan antar posisi organisasi",
+      label: "Posisi Organisasi",
+      value: "posisiorganisasi",
+      href: "/admin/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa/posisi-organisasi",
+      icon: <IconHierarchy size={18} stroke={1.8} />,
+      tooltip: "Kelola daftar posisi organisasi",
     },
+    {
+      label: "Struktur Organisasi",
+      value: "strukturorganisasi",
+      href: "/admin/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa/struktur-organisasi",
+      icon: <IconBuildingCommunity size={18} stroke={1.8} />,
+      tooltip: "Kelola struktur organisasi BUMDesa"
+    }
   ];
 
   const currentTab = tabs.find((tab) => tab.href === pathname);

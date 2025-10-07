@@ -81,7 +81,7 @@ model FileStorage {
   PelayananSuratKeteranganImage  PelayananSuratKeterangan[] @relation("PelayananSuratKeteranganImage")
   PelayananSuratKeteranganImage2 PelayananSuratKeterangan[] @relation("PelayananSuratKeteranganImage2")
   PasarDesa                      PasarDesa[]
-  Pegawai                        Pegawai[]
+  PegawaiBumDes                  PegawaiBumDes[]
   DesaDigital                    DesaDigital[]
   InfoTekno                      InfoTekno[]
   PengaduanMasyarakat            PengaduanMasyarakat[]
@@ -101,6 +101,7 @@ model FileStorage {
   MitraKolaborasi MitraKolaborasi[]
 
   ArtikelKesehatan ArtikelKesehatan[]
+  StrukturBumDes   StrukturBumDes[]
 }
 
 //========================================= MENU LANDING PAGE ========================================= //
@@ -286,49 +287,51 @@ model StrukturPPID {
 }
 
 model PosisiOrganisasiPPID {
-  id                 String                 @id @default(cuid())
-  nama               String                 @db.VarChar(100)
-  deskripsi          String?                @db.Text
-  hierarki           Int
-  pegawai            PegawaiPPID[]
-  strukturOrganisasi StrukturPPID[] // Relasi balik
-  parentId           String?
-  isActive           Boolean                @default(true)
-  createdAt          DateTime               @default(now())
-  updatedAt          DateTime               @updatedAt
-  parent             PosisiOrganisasiPPID?  @relation("Parent", fields: [parentId], references: [id])
-  children           PosisiOrganisasiPPID[] @relation("Parent")
+  id                     String                   @id @default(cuid())
+  nama                   String                   @db.VarChar(100)
+  deskripsi              String?                  @db.Text
+  hierarki               Int
+  pegawai                PegawaiPPID[]
+  strukturOrganisasi     StrukturPPID[] // Relasi balik
+  parentId               String?
+  isActive               Boolean                  @default(true)
+  createdAt              DateTime                 @default(now())
+  updatedAt              DateTime                 @updatedAt
+  parent                 PosisiOrganisasiPPID?    @relation("Parent", fields: [parentId], references: [id])
+  children               PosisiOrganisasiPPID[]   @relation("Parent")
+  StrukturOrganisasiPPID StrukturOrganisasiPPID[]
 }
 
 model PegawaiPPID {
-  id                 String               @id @default(cuid())
-  namaLengkap        String               @db.VarChar(255)
-  gelarAkademik      String?              @db.VarChar(100)
-  image              FileStorage?         @relation(fields: [imageId], references: [id])
-  imageId            String?
-  tanggalMasuk       DateTime?            @db.Date
-  email              String?              @unique @db.VarChar(255)
-  telepon            String?              @db.VarChar(20)
-  alamat             String?              @db.Text
-  posisiId           String               @db.VarChar(50)
-  isActive           Boolean              @default(true)
-  createdAt          DateTime             @default(now())
-  updatedAt          DateTime             @updatedAt
-  posisi             PosisiOrganisasiPPID @relation(fields: [posisiId], references: [id])
-  strukturOrganisasi StrukturPPID[] // Relasi balik
+  id                     String                   @id @default(cuid())
+  namaLengkap            String                   @db.VarChar(255)
+  gelarAkademik          String?                  @db.VarChar(100)
+  image                  FileStorage?             @relation(fields: [imageId], references: [id])
+  imageId                String?
+  tanggalMasuk           DateTime?                @db.Date
+  email                  String?                  @unique @db.VarChar(255)
+  telepon                String?                  @db.VarChar(20)
+  alamat                 String?                  @db.Text
+  posisiId               String                   @db.VarChar(50)
+  isActive               Boolean                  @default(true)
+  createdAt              DateTime                 @default(now())
+  updatedAt              DateTime                 @updatedAt
+  posisi                 PosisiOrganisasiPPID     @relation(fields: [posisiId], references: [id])
+  strukturOrganisasi     StrukturPPID[] // Relasi balik
+  StrukturOrganisasiPPID StrukturOrganisasiPPID[]
 }
 
 model StrukturOrganisasiPPID {
-  id                   String           @id @default(uuid())
-  posisiOrganisasiId   String           @db.VarChar(50)
-  pegawaiId            String           @db.Uuid
-  hubunganOrganisasiId String           @db.Uuid
-  posisiOrganisasi     PosisiOrganisasi @relation(fields: [posisiOrganisasiId], references: [id])
-  pegawai              Pegawai          @relation(fields: [pegawaiId], references: [id])
-  createdAt            DateTime         @default(now())
-  updatedAt            DateTime         @updatedAt
+  id                   String               @id @default(uuid())
+  posisiOrganisasiId   String               @db.VarChar(50)
+  pegawaiId            String               
+  hubunganOrganisasiId String               
+  posisiOrganisasi     PosisiOrganisasiPPID @relation(fields: [posisiOrganisasiId], references: [id])
+  pegawai              PegawaiPPID          @relation(fields: [pegawaiId], references: [id])
+  createdAt            DateTime             @default(now())
+  updatedAt            DateTime             @updatedAt
   deletedAt            DateTime?
-  isActive             Boolean          @default(true)
+  isActive             Boolean              @default(true)
 }
 
 // ========================================= VISI MISI PPID ========================================= //
@@ -850,7 +853,7 @@ model JadwalKegiatan {
   syaratKetentuanJadwalKegiatanId String
   dokumenjadwalkegiatan           DokumenJadwalKegiatan         @relation(fields: [dokumenJadwalKegiatanId], references: [id])
   dokumenJadwalKegiatanId         String
-  pendaftaranjadwalkegiatan       PendaftaranJadwalKegiatan?     @relation(fields: [pendaftaranJadwalKegiatanId], references: [id])
+  pendaftaranjadwalkegiatan       PendaftaranJadwalKegiatan?    @relation(fields: [pendaftaranJadwalKegiatanId], references: [id])
   pendaftaranJadwalKegiatanId     String?
   createdAt                       DateTime                      @default(now())
   updatedAt                       DateTime                      @updatedAt
@@ -1394,79 +1397,67 @@ model LowonganPekerjaan {
 
 // ========================================= STRUKTUR ORGANISASI ========================================= //
 
-model PosisiOrganisasi {
-  id        String  @id @default(uuid()) @db.VarChar(50)
-  nama      String  @db.VarChar(100)
-  deskripsi String? @db.Text
-  hierarki  Int
-
-  pegawai                Pegawai[]
-  strukturOrganisasi     StrukturOrganisasi[] // Relasi balik
-  StrukturOrganisasiPPID StrukturOrganisasiPPID[]
-  isActive               Boolean                  @default(true)
-  createdAt              DateTime                 @default(now())
-  updatedAt              DateTime                 @updatedAt
-
-  @@map("posisi_organisasi")
+model StrukturBumDes {
+  id                       String                  @id @default(cuid())
+  name                     String                  @db.Text
+  image                    FileStorage?            @relation(fields: [imageId], references: [id])
+  imageId                  String?
+  createdAt                DateTime                @default(now())
+  updatedAt                DateTime                @updatedAt
+  deletedAt                DateTime                @default(now())
+  isActive                 Boolean                 @default(true)
+  PosisiOrganisasiBumDes   PosisiOrganisasiBumDes? @relation(fields: [posisiOrganisasiBumDesId], references: [id])
+  posisiOrganisasiBumDesId String?
+  PegawaiBumDes            PegawaiBumDes?          @relation(fields: [pegawaiBumDesId], references: [id])
+  pegawaiBumDesId          String?
 }
 
-model Pegawai {
-  id            String       @id @default(uuid()) @db.Uuid
-  namaLengkap   String       @db.VarChar(255)
-  gelarAkademik String?      @db.VarChar(100)
-  image         FileStorage? @relation(fields: [imageId], references: [id])
-  imageId       String?
-  tanggalMasuk  DateTime?    @db.Date
-  email         String?      @unique @db.VarChar(255)
-  telepon       String?      @db.VarChar(20)
-  alamat        String?      @db.Text
-  posisiId      String       @db.VarChar(50)
-  isActive      Boolean      @default(true)
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
-
-  posisi PosisiOrganisasi @relation(fields: [posisiId], references: [id])
-
-  sebagaiAtasan  HubunganOrganisasi[] @relation("AtasanToBawahan")
-  sebagaiBawahan HubunganOrganisasi[] @relation("BawahanToAtasan")
-
-  strukturOrganisasi     StrukturOrganisasi[] // Relasi balik
-  StrukturOrganisasiPPID StrukturOrganisasiPPID[]
-
-  @@map("pegawai")
+model PosisiOrganisasiBumDes {
+  id                       String                     @id @default(cuid())
+  nama                     String                     @db.VarChar(100)
+  deskripsi                String?                    @db.Text
+  hierarki                 Int
+  pegawai                  PegawaiBumDes[]
+  strukturOrganisasi       StrukturBumDes[] // Relasi balik
+  parentId                 String?
+  isActive                 Boolean                    @default(true)
+  createdAt                DateTime                   @default(now())
+  updatedAt                DateTime                   @updatedAt
+  parent                   PosisiOrganisasiBumDes?    @relation("Parent", fields: [parentId], references: [id])
+  children                 PosisiOrganisasiBumDes[]   @relation("Parent")
+  StrukturOrganisasiBumDes StrukturOrganisasiBumDes[]
 }
 
-model HubunganOrganisasi {
-  id        String  @id @default(uuid()) @db.Uuid
-  atasanId  String  @db.Uuid
-  bawahanId String  @db.Uuid
-  tipe      String? @db.VarChar(50)
-
-  atasan  Pegawai @relation("AtasanToBawahan", fields: [atasanId], references: [id])
-  bawahan Pegawai @relation("BawahanToAtasan", fields: [bawahanId], references: [id])
-
-  strukturOrganisasi StrukturOrganisasi[] // Relasi balik
-
-  @@unique([atasanId, bawahanId])
-  @@map("hubungan_organisasi")
+model PegawaiBumDes {
+  id                       String                     @id @default(cuid())
+  namaLengkap              String                     @db.VarChar(255)
+  gelarAkademik            String?                    @db.VarChar(100)
+  image                    FileStorage?               @relation(fields: [imageId], references: [id])
+  imageId                  String?
+  tanggalMasuk             DateTime?                  @db.Date
+  email                    String?                    @unique @db.VarChar(255)
+  telepon                  String?                    @db.VarChar(20)
+  alamat                   String?                    @db.Text
+  posisiId                 String                     @db.VarChar(50)
+  isActive                 Boolean                    @default(true)
+  createdAt                DateTime                   @default(now())
+  updatedAt                DateTime                   @updatedAt
+  posisi                   PosisiOrganisasiBumDes     @relation(fields: [posisiId], references: [id])
+  strukturOrganisasi       StrukturBumDes[] // Relasi balik
+  StrukturOrganisasiBumDes StrukturOrganisasiBumDes[]
 }
 
-model StrukturOrganisasi {
-  id                   String @id @default(uuid())
-  posisiOrganisasiId   String @db.VarChar(50)
-  pegawaiId            String @db.Uuid
-  hubunganOrganisasiId String @db.Uuid
-
-  posisiOrganisasi   PosisiOrganisasi   @relation(fields: [posisiOrganisasiId], references: [id])
-  pegawai            Pegawai            @relation(fields: [pegawaiId], references: [id])
-  hubunganOrganisasi HubunganOrganisasi @relation(fields: [hubunganOrganisasiId], references: [id])
-
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
-  isActive  Boolean   @default(true)
-
-  @@map("struktur_organisasi")
+model StrukturOrganisasiBumDes {
+  id                   String                 @id @default(uuid())
+  posisiOrganisasiId   String                 @db.VarChar(50)
+  pegawaiId            String                 
+  hubunganOrganisasiId String                 
+  posisiOrganisasi     PosisiOrganisasiBumDes @relation(fields: [posisiOrganisasiId], references: [id])
+  pegawai              PegawaiBumDes          @relation(fields: [pegawaiId], references: [id])
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+  deletedAt            DateTime?
+  isActive             Boolean                @default(true)
 }
 
 // ========================================= PROGRAM KEMISKINAN ========================================= //

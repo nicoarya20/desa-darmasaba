@@ -9,7 +9,7 @@ export default async function pegawaiFindMany(context: Context) {
 
   try {
     const [data, total] = await Promise.all([
-      prisma.pegawai.findMany({
+      prisma.pegawaiBumDes.findMany({
         where: { isActive: true },
         include: {
           posisi: true,
@@ -19,7 +19,7 @@ export default async function pegawaiFindMany(context: Context) {
         take: limit,
         orderBy: { createdAt: 'desc' },
       }),
-      prisma.pegawai.count({
+      prisma.pegawaiBumDes.count({
         where: { isActive: true }
       })
     ]);

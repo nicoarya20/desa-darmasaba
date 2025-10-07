@@ -1,33 +1,33 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import colors from '@/con/colors';
-import { Badge, Box, Button, Center, Group, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, ThemeIcon } from '@mantine/core';
-import { IconCheck, IconDeviceImacCog, IconSearch, IconX } from '@tabler/icons-react';
+import { Badge, Box, Button, Center, Group, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, ThemeIcon, Title, Tooltip } from '@mantine/core';
+import { IconCheck, IconDeviceImacCog, IconPlus, IconSearch, IconX } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../../_com/header';
-import JudulList from '../../../_com/judulList';
-import strukturorganisasiState from '../../../_state/ekonomi/struktur-organisasi/struktur-organisasi';
+import stateStrukturBumDes from '../../../_state/ekonomi/struktur-organisasi/struktur-organisasi';
 
-function Pegawai() {
+
+function PegawaiBumDes() {
   const [search, setSearch] = useState("");
   return (
     <Box>
       <HeaderSearch
-        title='Pegawai'
+        title='Pegawai BUMDesa'
         placeholder='pencarian'
         searchIcon={<IconSearch size={20} />}
         value={search}
         onChange={(e) => setSearch(e.currentTarget.value)}
       />
-      <ListPegawai search={search} />
+      <ListPegawaiBumdes search={search} />
     </Box>
   );
 }
 
-function ListPegawai({ search }: { search: string }) {
-  const stateOrganisasi = useProxy(strukturorganisasiState.pegawai);
+function ListPegawaiBumdes({ search }: { search: string }) {
+  const stateOrganisasi = useProxy(stateStrukturBumDes.pegawai);
   const router = useRouter();
 
   const {
@@ -39,21 +39,10 @@ function ListPegawai({ search }: { search: string }) {
   } = stateOrganisasi.findMany;
 
   useEffect(() => {
-    load(page, 10);
-  }, [page]);
+    load(page, 10, search);
+  }, [page, search]);
 
-  const filteredData = useMemo(() => {
-    if (!data) return [];
-    return data.filter(item => {
-      const keyword = search.toLowerCase();
-      return (
-        item.namaLengkap?.toLowerCase().includes(keyword) ||
-        item.gelarAkademik?.toLowerCase().includes(keyword) ||
-        item.telepon?.toLowerCase().includes(keyword) ||
-        item.posisi?.nama?.toLowerCase().includes(keyword)
-      );
-    });
-  }, [data, search]); 
+  const filteredData = data || []
 
   // Handle loading state
   if (loading || !data) {
@@ -67,29 +56,51 @@ function ListPegawai({ search }: { search: string }) {
   if (data.length === 0) {
     return (
       <Box py={10}>
-        <Paper p="md" ta="center">
-          <p>Tidak ada data pegawai yang tersedia</p>
+        <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
+          <Group justify="space-between" mb="md">
+            <Title order={4}>Daftar Pegawai BUMDesa</Title>
+            <Tooltip label="Tambah Pegawai Baru" withArrow>
+              <Button
+                leftSection={<IconPlus size={18} />}
+                color="blue"
+                variant="light"
+                onClick={() => router.push('/admin/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa/pegawai/create')}
+              >
+                Tambah Baru
+              </Button>
+            </Tooltip>
+          </Group>
+          <Center py="xl">
+            <Text c="dimmed">Tidak ada data pegawai yang ditemukan</Text>
+          </Center>
         </Paper>
       </Box>
     );
   }
   return (
     <Box py={10}>
-      <Paper bg={colors['white-1']} p={'md'} h={{base: 770, md: 650}}>
-        <JudulList
-          title='List Pegawai'
-          href='/admin/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa/pegawai/create'
-        />
+      <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
+        <Group justify="space-between" mb="md">
+          <Title order={4}>Daftar Pegawai BUMDesa</Title>
+          <Tooltip label="Tambah Pegawai Baru" withArrow>
+            <Button
+              leftSection={<IconPlus size={18} />}
+              color="blue"
+              variant="light"
+              onClick={() => router.push('/admin/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa/pegawai/create')}
+            >
+              Tambah Baru
+            </Button>
+          </Tooltip>
+        </Group>
         <Box style={{ overflowX: "auto" }}>
-          <Table striped withTableBorder withRowBorders>
+          <Table highlightOnHover>
             <TableThead>
               <TableTr>
-                <TableTh>Nama</TableTh>
-                <TableTh>Gelar Akademik</TableTh>
-                <TableTh>Telepon</TableTh>
-                <TableTh>Posisi</TableTh>
-                <TableTh>Aktif</TableTh>
-                <TableTh>Detail</TableTh>
+                <TableTh style={{ width: '25%' }}>Nama Lengkap</TableTh>
+                <TableTh style={{ width: '20%' }}>Posisi</TableTh>
+                <TableTh style={{ width: '10%' }}>Status</TableTh>
+                <TableTh style={{ width: '10%' }}>Aksi</TableTh>
               </TableTr>
             </TableThead>
             <TableTbody>
@@ -106,10 +117,20 @@ function ListPegawai({ search }: { search: string }) {
                 }) // Aktif di atas
               ).map((item) => (
                 <TableTr key={item.id}>
-                  <TableTd>{item.namaLengkap}</TableTd>
-                  <TableTd>{item.gelarAkademik}</TableTd>
-                  <TableTd>{item.telepon}</TableTd>
-                  <TableTd>{item.posisi?.nama}</TableTd>
+                  <TableTd>
+                    <Box w={150}>
+                      <Text fw={500} truncate="end" lineClamp={1}>
+                        {item.namaLengkap}
+                      </Text>
+                    </Box>
+                  </TableTd>
+                  <TableTd>
+                    <Box w={150}>
+                      <Badge variant="light" color="blue">
+                        {item.posisi?.nama || 'Belum diatur'}
+                      </Badge>
+                    </Box>
+                  </TableTd>
                   <TableTd>
                     <Group gap="xs" wrap="nowrap">
                       <Box visibleFrom="sm">
@@ -131,8 +152,15 @@ function ListPegawai({ search }: { search: string }) {
                     </Group>
                   </TableTd>
                   <TableTd>
-                    <Button bg={"green"} onClick={() => router.push(`/admin/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa/pegawai/${item.id}`)}>
-                      <IconDeviceImacCog size={25} />
+                    <Button
+                      size="xs"
+                      radius="md"
+                      variant="light"
+                      color="blue"
+                      leftSection={<IconDeviceImacCog size={16} />}
+                      onClick={() => router.push(`/admin/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa/pegawai/${item.id}`)}
+                    >
+                      Detail
                     </Button>
                   </TableTd>
                 </TableTr>
@@ -140,21 +168,22 @@ function ListPegawai({ search }: { search: string }) {
             </TableTbody>
           </Table>
         </Box>
+        <Center mt="lg">
+          <Pagination
+            value={page}
+            onChange={(newPage) => {
+              load(newPage, 10);
+              window.scrollTo(0, 0);
+            }}
+            total={totalPages}
+            withEdges
+            withControls
+            radius="md"
+          />
+        </Center>
       </Paper>
-     <Center>
-     <Pagination
-        value={page}
-        onChange={(newPage) => {
-          load(newPage, 10);
-          window.scrollTo(0, 0); 
-        }}
-        total={totalPages}
-        mt="md"
-        mb="md"
-      />
-     </Center>
     </Box>
   );
 }
 
-export default Pegawai;
+export default PegawaiBumDes;

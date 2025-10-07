@@ -21,7 +21,7 @@ export default async function posisiOrganisasiFindUnique(context: Context) {
             }
         }
 
-        const data = await prisma.posisiOrganisasi.findUnique({
+        const data = await prisma.posisiOrganisasiBumDes.findUnique({
             where: { id },
         });
 

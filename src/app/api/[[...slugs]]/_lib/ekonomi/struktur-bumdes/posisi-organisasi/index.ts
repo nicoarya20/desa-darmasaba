@@ -4,6 +4,7 @@ import posisiOrganisasiFindUnique from "./findUnique";
 import posisiOrganisasiCreate from "./create";
 import posisiOrganisasiUpdate from "./updt";
 import posisiOrganisasiDelete from "./del";
+import posisiOrganisasiFindManyAll from "./findManyAll";
 
 const PosisiOrganisasi = new Elysia({
     prefix: "/posisi-organisasi",
@@ -11,6 +12,7 @@ const PosisiOrganisasi = new Elysia({
 })
 
 .get("/find-many", posisiOrganisasiFindMany)
+.get("/find-many-all", posisiOrganisasiFindManyAll)
 .get("/:id", async (context) => {
     const response = await posisiOrganisasiFindUnique(context);
     return response;

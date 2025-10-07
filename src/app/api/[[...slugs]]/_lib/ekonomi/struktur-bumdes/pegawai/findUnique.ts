@@ -13,7 +13,7 @@ export default async function pegawaiFindUnique(context: Context) {
   }
 
   try {
-    const pegawai = await prisma.pegawai.findUnique({
+    const pegawai = await prisma.pegawaiBumDes.findUnique({
       where: { id },
       include: {
         posisi: true,
