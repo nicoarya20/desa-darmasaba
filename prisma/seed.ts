@@ -56,6 +56,7 @@ import tujuanProgram from "./data/pendidikan/program-pendidikan-anak/tujuan-prog
 import roles from "./data/user/roles.json";
 import users from "./data/user/users.json";
 import fileStorage from "./data/file-storage.json";
+import jenjangPendidikan from "./data/pendidikan/info-sekolah/jenjang-pendidikan.json";
 import seedAssets from "./seed_assets";
 import { safeSeedUnique } from "./safeseedUnique";
 
@@ -1163,6 +1164,22 @@ import { safeSeedUnique } from "./safeseedUnique";
   console.log(
     "✅ fasilitas bimbingan belajar desa seeded (editable later via UI)"
   );
+
+  for (const j of jenjangPendidikan) {
+    await prisma.jenjangPendidikan.upsert({
+      where: {
+        id: j.id || undefined,
+      },
+      update: {
+        nama: j.nama,
+      },
+      create: {
+        nama: j.nama,
+      },
+    });
+  }
+
+  console.log("✅ Jenjang Pendidikan seeded successfully");
 
   // seed assets
   await seedAssets();

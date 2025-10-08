@@ -332,7 +332,7 @@ const keunggulanProgram = proxy({
         ].post(keunggulanProgram.create.form);
         if (res.status === 200) {
           keunggulanProgram.findMany.load();
-          return toast.success("Data Berhasil Dibuat, Silahkan Menunggu Konfirmasi dari Admin di WhatsApp");
+          return toast.success("Data Berhasil Dibuat");
         }
         console.log(res);
         return toast.error("failed create");

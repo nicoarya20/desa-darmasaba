@@ -99,22 +99,22 @@ function ListKeunggulanProgram({ search }: { search: string }) {
           <Table highlightOnHover>
             <TableThead>
               <TableTr>
-                <TableTh style={{ width: '30%' }}>Nama Keunggulan Program</TableTh>
-                <TableTh style={{ width: '35%' }}>Deskripsi</TableTh>
-                <TableTh style={{ width: '15%' }}>Edit</TableTh>
-                <TableTh style={{ width: '15%' }}>Delete</TableTh>
+              <TableTh style={{ minWidth: 200 }}>Nama Keunggulan Program</TableTh>
+              <TableTh style={{ minWidth: 200 }}>Deskripsi</TableTh>
+              <TableTh style={{ minWidth: 200 }}>Edit</TableTh>
+              <TableTh style={{ minWidth: 200 }}>Delete</TableTh>
               </TableTr>
             </TableThead>
             <TableTbody>
               {filteredData.length > 0 ? (
                 filteredData.map((item) => (
                   <TableTr key={item.id}>
-                    <TableTd>
+                    <TableTd style={{ minWidth: 200 }}>
                       <Text fw={500} truncate="end" lineClamp={1}>
                         {item.judul}
                       </Text>
                     </TableTd>
-                    <TableTd>
+                    <TableTd style={{ minWidth: 200 }}>
                       <Text
                         fw={500}
                         truncate="end"
@@ -122,7 +122,7 @@ function ListKeunggulanProgram({ search }: { search: string }) {
                         dangerouslySetInnerHTML={{ __html: item.deskripsi }}
                       />
                     </TableTd>
-                    <TableTd>
+                    <TableTd style={{ minWidth: 200 }}>
                       <Tooltip label="Edit" withArrow>
                         <Button
                           variant="light"
@@ -138,7 +138,7 @@ function ListKeunggulanProgram({ search }: { search: string }) {
                         </Button>
                       </Tooltip>
                     </TableTd>
-                    <TableTd>
+                    <TableTd style={{ minWidth: 200 }}>
                       <Tooltip label="Hapus" withArrow>
                         <Button
                           variant="light"

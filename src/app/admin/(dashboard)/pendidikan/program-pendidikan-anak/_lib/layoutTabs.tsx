@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import colors from '@/con/colors';
-import { Stack, Tabs, TabsList, TabsPanel, TabsTab, Title, Tooltip } from '@mantine/core';
+import { ScrollArea, Stack, Tabs, TabsList, TabsPanel, TabsTab, Title, Tooltip } from '@mantine/core';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { IconSchool, IconTarget } from '@tabler/icons-react';
@@ -12,19 +12,19 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
 
   const tabs = [
     {
-      label: "Program Unggulan",
-      value: "program-unggulan",
-      href: "/admin/pendidikan/program-pendidikan-anak/program-unggulan",
-      icon: <IconSchool size={18} stroke={1.8} />,
-      tooltip: "Lihat dan kelola program unggulan pendidikan anak",
-    },
-    {
       label: "Tujuan Program",
       value: "tujuan-program",
       href: "/admin/pendidikan/program-pendidikan-anak/tujuan-program",
       icon: <IconTarget size={18} stroke={1.8} />,
       tooltip: "Atur tujuan program pendidikan anak",
     },
+    {
+      label: "Program Unggulan",
+      value: "program-unggulan",
+      href: "/admin/pendidikan/program-pendidikan-anak/program-unggulan",
+      icon: <IconSchool size={18} stroke={1.8} />,
+      tooltip: "Lihat dan kelola program unggulan pendidikan anak",
+    }
   ];
 
   const currentTab = tabs.find(tab => tab.href === pathname);
@@ -59,36 +59,38 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
         radius="lg"
         keepMounted={false}
       >
-        <TabsList
-          p="sm"
-          style={{
-            background: "linear-gradient(135deg, #e7ebf7, #f9faff)",
-            borderRadius: "1rem",
-            boxShadow: "inset 0 0 10px rgba(0,0,0,0.05)",
-          }}
-        >
-          {tabs.map((tab, i) => (
-            <Tooltip
-              key={i}
-              label={tab.tooltip}
-              position="bottom"
-              withArrow
-              transitionProps={{ transition: 'pop', duration: 200 }}
-            >
-              <TabsTab
-                value={tab.value}
-                leftSection={tab.icon}
-                style={{
-                  fontWeight: 600,
-                  fontSize: "0.9rem",
-                  transition: "all 0.2s ease",
-                }}
+        <ScrollArea type="auto" offsetScrollbars>
+          <TabsList
+            p="sm"
+            style={{
+              background: "linear-gradient(135deg, #e7ebf7, #f9faff)",
+              borderRadius: "1rem",
+              boxShadow: "inset 0 0 10px rgba(0,0,0,0.05)",
+            }}
+          >
+            {tabs.map((tab, i) => (
+              <Tooltip
+                key={i}
+                label={tab.tooltip}
+                position="bottom"
+                withArrow
+                transitionProps={{ transition: 'pop', duration: 200 }}
               >
-                {tab.label}
-              </TabsTab>
-            </Tooltip>
-          ))}
-        </TabsList>
+                <TabsTab
+                  value={tab.value}
+                  leftSection={tab.icon}
+                  style={{
+                    fontWeight: 600,
+                    fontSize: "0.9rem",
+                    transition: "all 0.2s ease",
+                  }}
+                >
+                  {tab.label}
+                </TabsTab>
+              </Tooltip>
+            ))}
+          </TabsList>
+        </ScrollArea>
 
         {tabs.map((tab, i) => (
           <TabsPanel

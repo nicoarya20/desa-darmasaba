@@ -1,12 +1,13 @@
 'use client'
 import beasiswaDesaState from '@/app/admin/(dashboard)/_state/pendidikan/beasiswa-desa';
 import colors from '@/con/colors';
-import { Box, Button, Center, Group, Image, Modal, Paper, Select, SimpleGrid, Stack, Stepper, StepperStep, Text, TextInput, Title } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
+import { Box, Button, Center, Group, Image, Modal, Pagination, Paper, Select, SimpleGrid, Skeleton, Stack, Stepper, StepperStep, Text, TextInput, Title } from '@mantine/core';
+import { useDisclosure, useShallowEffect } from '@mantine/hooks';
 import { IconArrowRight, IconCoin, IconInfoCircle, IconSchool, IconUsers } from '@tabler/icons-react';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import BackButton from '../../desa/layanan/_com/BackButto';
+import { useTransitionRouter } from 'next-view-transitions';
 
 const dataBeasiswa = [
   { id: 1, nama: 'Penerima Beasiswa', jumlah: '250+', icon: IconUsers },
@@ -14,15 +15,11 @@ const dataBeasiswa = [
   { id: 3, nama: 'Dana Tersalurkan', jumlah: '1.5M', icon: IconCoin },
 ];
 
-const dataProgram = [
-  { id: 1, judul: "Pelatihan SoftSkill", deskripsi: "Pengembangan diri untuk mempersiapkan karir masa depan." },
-  { id: 2, judul: "Peningkatan Akses Pendidikan", deskripsi: "Memberi kesempatan bagi masyarakat kurang mampu untuk tetap sekolah." },
-  { id: 3, judul: "Pendampingan Intensif", deskripsi: "Bimbingan dari mentor berpengalaman untuk mendukung akademik." },
-];
-
 function Page() {
   const beasiswaDesa = useProxy(beasiswaDesaState.beasiswaPendaftar)
+  const ungggulanDesa = useProxy(beasiswaDesaState.keunggulanProgram)
   const [opened, { open, close }] = useDisclosure(false);
+  const router = useTransitionRouter()
   const resetForm = () => {
     beasiswaDesa.create.form = {
       namaLengkap: "",
@@ -41,6 +38,12 @@ function Page() {
     };
   };
 
+  const { data, page, totalPages, loading, load } = ungggulanDesa.findMany;
+
+  useShallowEffect(() => {
+    load(page, 3, "");
+  }, [page])
+
   const handleSubmit = async () => {
     await beasiswaDesa.create.create();
     resetForm();
@@ -50,6 +53,14 @@ function Page() {
   const [active, setActive] = useState(1);
   const nextStep = () => setActive((current) => (current < 5 ? current + 1 : current));
   const prevStep = () => setActive((current) => (current > 0 ? current - 1 : current));
+
+  if (loading || !data) {
+    return (
+      <Stack py={10}>
+        <Skeleton height={200} radius="md" />
+      </Stack>
+    );
+  }
 
   return (
     <Stack pos="relative" bg={colors.Bg} py="xl" gap={40}>
@@ -70,13 +81,13 @@ function Page() {
               <Button size="lg" radius="xl" bg={colors['blue-button']} rightSection={<IconArrowRight size={20} />} onClick={open}>
                 Daftar Sekarang
               </Button>
-              <Button size="lg" radius="xl" variant="light" color={colors['blue-button']} rightSection={<IconInfoCircle size={20} />}>
+              <Button onClick={() => router.push('/darmasaba/pendidikan/beasiswa-desa/pelajari-lebih-lanjut')} size="lg" radius="xl" variant="light" color={colors['blue-button']} rightSection={<IconInfoCircle size={20} />}>
                 Pelajari Lebih Lanjut
               </Button>
             </Group>
           </Box>
           <Box>
-            <Image alt="Beasiswa Desa" src="/beasiswa-siswa.png" radius="lg" loading="lazy"/>
+            <Image alt="Beasiswa Desa" src="/beasiswa-siswa.png" radius="lg" loading="lazy" />
           </Box>
         </SimpleGrid>
 
@@ -101,13 +112,28 @@ function Page() {
           Keunggulan Program
         </Title>
         <SimpleGrid cols={{ base: 1, md: 3 }} spacing="lg">
-          {dataProgram.map((v, k) => (
+          {data.map((v, k) => (
             <Paper key={k} p="xl" radius="xl" shadow="sm" bg={colors['white-trans-1']}>
               <Title order={3} fw={700} c={colors['blue-button']} mb="xs">{v.judul}</Title>
-              <Text fz="sm" c="dimmed">{v.deskripsi}</Text>
+              <Text fz="sm" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: v.deskripsi }}/>
             </Paper>
           ))}
         </SimpleGrid>
+
+        <Center>
+          <Pagination
+            value={page}
+            onChange={(newPage) => {
+              load(newPage, 10);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            total={totalPages}
+            mt="md"
+            mb="md"
+            color="blue"
+            radius="md"
+          />
+        </Center>
 
         <Title py={40} ta="center" order={1} fw={900} c={colors['blue-button']}>
           Timeline Pendaftaran
@@ -142,66 +168,66 @@ function Page() {
       >
         <Paper p="lg" radius="xl" withBorder shadow="sm">
           <Stack gap="sm">
-            <TextInput 
-            label="Nama Lengkap" 
-            placeholder="Masukkan nama lengkap" 
-            onChange={(val) => { beasiswaDesa.create.form.namaLengkap = val.target.value }} />
-            <TextInput 
-            type="number" 
-            label="NIK" 
-            placeholder="Masukkan NIK" 
-            onChange={(val) => { beasiswaDesa.create.form.nik = val.target.value }} />
-            <TextInput 
-            label="Tempat Lahir" 
-            placeholder="Masukkan tempat lahir" 
-            onChange={(val) => { beasiswaDesa.create.form.tempatLahir = val.target.value }} />
-            <TextInput 
-            type="date" 
-            label="Tanggal Lahir" 
-            placeholder="Pilih tanggal lahir" 
-            onChange={(val) => { beasiswaDesa.create.form.tanggalLahir = val.target.value }} />
-            <Select 
-            label="Jenis Kelamin" 
-            placeholder="Pilih jenis kelamin" 
-            data={[{ value: "LAKI_LAKI", label: "Laki-laki" }, { value: "PEREMPUAN", label: "Perempuan" }]}
-            onChange={(val) => { if (val) beasiswaDesa.create.form.jenisKelamin = val }} />
-            <TextInput 
-            label="Kewarganegaraan" 
-            placeholder="Masukkan kewarganegaraan" 
-            onChange={(val) => { beasiswaDesa.create.form.kewarganegaraan = val.target.value }} />
-            <Select 
-            label="Agama" 
-            placeholder="Pilih agama" 
-            data={[{ value: "ISLAM", label: "Islam" }, { value: "KRISTEN_PROTESTAN", label: "Kristen Protestan" }, { value: "KRISTEN_KATOLIK", label: "Kristen Katolik" }, { value: "HINDU", label: "Hindu" }, { value: "BUDDHA", label: "Buddha" }, { value: "KONGHUCU", label: "Konghucu" }, { value: "LAINNYA", label: "Lainnya" }]}
-            onChange={(val) => { if (val) beasiswaDesa.create.form.agama = val }} />
-            <TextInput 
-            label="Alamat KTP" 
-            placeholder="Masukkan alamat sesuai KTP" 
-            onChange={(val) => { beasiswaDesa.create.form.alamatKTP = val.target.value }} />
-            <TextInput 
-            label="Alamat Domisili" 
-            placeholder="Masukkan alamat domisili" 
-            onChange={(val) => { beasiswaDesa.create.form.alamatDomisili = val.target.value }} />
-            <TextInput 
-            type="number" 
-            label="Nomor HP" 
-            placeholder="Masukkan nomor HP" 
-            onChange={(val) => { beasiswaDesa.create.form.noHp = val.target.value }} />
-            <TextInput 
-            type="email" 
-            label="Email" 
-            placeholder="Masukkan alamat email" 
-            onChange={(val) => { beasiswaDesa.create.form.email = val.target.value }} />
-            <Select 
-            label="Status Pernikahan" 
-            placeholder="Pilih status pernikahan" 
-            data={[{ value: "BELUM_MENIKAH", label: "Belum Menikah" }, { value: "MENIKAH", label: "Menikah" }, { value: "JANDA_DUDA", label: "Janda/Duda" }]}
-            onChange={(val) => { if (val) beasiswaDesa.create.form.statusPernikahan = val }} />
-            <Select 
-            label="Ukuran Baju" 
-            placeholder="Pilih ukuran baju" 
-            data={[{ value: "S", label: "S" }, { value: "M", label: "M" }, { value: "L", label: "L" }, { value: "XL", label: "XL" }, { value: "XXL", label: "XXL" }, { value: "LAINNYA", label: "Lainnya" }]}
-            onChange={(val) => { if (val) beasiswaDesa.create.form.ukuranBaju = val }} />
+            <TextInput
+              label="Nama Lengkap"
+              placeholder="Masukkan nama lengkap"
+              onChange={(val) => { beasiswaDesa.create.form.namaLengkap = val.target.value }} />
+            <TextInput
+              type="number"
+              label="NIK"
+              placeholder="Masukkan NIK"
+              onChange={(val) => { beasiswaDesa.create.form.nik = val.target.value }} />
+            <TextInput
+              label="Tempat Lahir"
+              placeholder="Masukkan tempat lahir"
+              onChange={(val) => { beasiswaDesa.create.form.tempatLahir = val.target.value }} />
+            <TextInput
+              type="date"
+              label="Tanggal Lahir"
+              placeholder="Pilih tanggal lahir"
+              onChange={(val) => { beasiswaDesa.create.form.tanggalLahir = val.target.value }} />
+            <Select
+              label="Jenis Kelamin"
+              placeholder="Pilih jenis kelamin"
+              data={[{ value: "LAKI_LAKI", label: "Laki-laki" }, { value: "PEREMPUAN", label: "Perempuan" }]}
+              onChange={(val) => { if (val) beasiswaDesa.create.form.jenisKelamin = val }} />
+            <TextInput
+              label="Kewarganegaraan"
+              placeholder="Masukkan kewarganegaraan"
+              onChange={(val) => { beasiswaDesa.create.form.kewarganegaraan = val.target.value }} />
+            <Select
+              label="Agama"
+              placeholder="Pilih agama"
+              data={[{ value: "ISLAM", label: "Islam" }, { value: "KRISTEN_PROTESTAN", label: "Kristen Protestan" }, { value: "KRISTEN_KATOLIK", label: "Kristen Katolik" }, { value: "HINDU", label: "Hindu" }, { value: "BUDDHA", label: "Buddha" }, { value: "KONGHUCU", label: "Konghucu" }, { value: "LAINNYA", label: "Lainnya" }]}
+              onChange={(val) => { if (val) beasiswaDesa.create.form.agama = val }} />
+            <TextInput
+              label="Alamat KTP"
+              placeholder="Masukkan alamat sesuai KTP"
+              onChange={(val) => { beasiswaDesa.create.form.alamatKTP = val.target.value }} />
+            <TextInput
+              label="Alamat Domisili"
+              placeholder="Masukkan alamat domisili"
+              onChange={(val) => { beasiswaDesa.create.form.alamatDomisili = val.target.value }} />
+            <TextInput
+              type="number"
+              label="Nomor HP"
+              placeholder="Masukkan nomor HP"
+              onChange={(val) => { beasiswaDesa.create.form.noHp = val.target.value }} />
+            <TextInput
+              type="email"
+              label="Email"
+              placeholder="Masukkan alamat email"
+              onChange={(val) => { beasiswaDesa.create.form.email = val.target.value }} />
+            <Select
+              label="Status Pernikahan"
+              placeholder="Pilih status pernikahan"
+              data={[{ value: "BELUM_MENIKAH", label: "Belum Menikah" }, { value: "MENIKAH", label: "Menikah" }, { value: "JANDA_DUDA", label: "Janda/Duda" }]}
+              onChange={(val) => { if (val) beasiswaDesa.create.form.statusPernikahan = val }} />
+            <Select
+              label="Ukuran Baju"
+              placeholder="Pilih ukuran baju"
+              data={[{ value: "S", label: "S" }, { value: "M", label: "M" }, { value: "L", label: "L" }, { value: "XL", label: "XL" }, { value: "XXL", label: "XXL" }, { value: "LAINNYA", label: "Lainnya" }]}
+              onChange={(val) => { if (val) beasiswaDesa.create.form.ukuranBaju = val }} />
             <Group justify="flex-end" mt="md">
               <Button variant="default" radius="xl" onClick={close}>Batal</Button>
               <Button radius="xl" bg={colors['blue-button']} onClick={handleSubmit}>Kirim</Button>

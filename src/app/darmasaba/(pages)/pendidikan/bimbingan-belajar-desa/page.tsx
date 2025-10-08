@@ -51,7 +51,7 @@ function Page() {
             <Stack gap="sm">
               <Box>
                 <Badge variant="gradient" gradient={{ from: colors['blue-button'], to: 'cyan' }} size="lg" radius="sm" mb="sm">
-                  Tujuan Program
+                  {stateTujuanProgram.findById.data?.judul}
                 </Badge>
                 <Tooltip label="Gambaran manfaat utama program" position="top-start" withArrow>
                   <Box>
@@ -66,7 +66,7 @@ function Page() {
             <Stack gap="sm">
               <Box>
                 <Badge variant="gradient" gradient={{ from: colors['blue-button'], to: 'cyan' }} size="lg" radius="sm" mb="sm">
-                  Lokasi & Jadwal
+                  {stateLokasiDanJadwal.findById.data?.judul}
                 </Badge>
                 <Tooltip label="Tempat dan waktu pelaksanaan" position="top-start" withArrow>
                   <Box>
@@ -81,7 +81,7 @@ function Page() {
             <Stack gap="sm">
               <Box>
                 <Badge variant="gradient" gradient={{ from: colors['blue-button'], to: 'cyan' }} size="lg" radius="sm" mb="sm">
-                  Fasilitas
+                  {stateFasilitas.findById.data?.judul}
                 </Badge>
                 <Tooltip label="Sarana yang disediakan untuk peserta" position="top-start" withArrow>
                   <Box>

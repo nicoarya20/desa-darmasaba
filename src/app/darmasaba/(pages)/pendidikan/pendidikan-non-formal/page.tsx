@@ -62,7 +62,7 @@ function Page() {
               <Tooltip label="Fokus utama program" withArrow>
                 <Title order={2} fw="bold" c={colors['blue-button']} mb="xs" flex="center">
                   <IconTarget size={28} style={{ marginRight: 8 }} />
-                  Tujuan Program
+                  {stateTujuanPendidikanNonFormal.findById.data?.judul}
                 </Title>
               </Tooltip>
               <Text fz="md" lh={1.7} c="dark" style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: stateTujuanPendidikanNonFormal.findById.data?.deskripsi }} />
@@ -79,7 +79,7 @@ function Page() {
               <Tooltip label="Lokasi pelaksanaan kegiatan" withArrow>
                 <Title order={2} fw="bold" c={colors['blue-button']} mb="xs" flex="center">
                   <IconMapPin size={28} style={{ marginRight: 8 }} />
-                  Tempat Kegiatan
+                  {stateTempatKegiatan.findById.data?.judul}
                 </Title>
               </Tooltip>
               <Text fz="md" style={{wordBreak: "break-word", whiteSpace: "normal"}} lh={1.7} c="dark" dangerouslySetInnerHTML={{ __html: stateTempatKegiatan.findById.data?.deskripsi }} />
@@ -98,7 +98,7 @@ function Page() {
               <Tooltip label="Ragam jenis program yang tersedia" withArrow>
                 <Title order={2} fw="bold" c={colors['blue-button']} mb="xs" flex="center">
                   <IconBook2 size={28} style={{ marginRight: 8 }} />
-                  Jenis Program yang Diselenggarakan
+                  {stateJenisProgram.findById.data?.judul}
                 </Title>
               </Tooltip>
               <Text fz="md" lh={1.7} c="dark" style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: stateJenisProgram.findById.data?.deskripsi }} />

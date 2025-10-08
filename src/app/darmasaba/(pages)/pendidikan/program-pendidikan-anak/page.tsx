@@ -62,7 +62,7 @@ function Page() {
               <Group gap="sm">
                 <IconTargetArrow size={28} color={colors['blue-button']} />
                 <Title order={2} fw="bold" c={colors['blue-button']}>
-                  Tujuan Program
+                  {stateTujuan.findById.data?.judul}
                 </Title>
               </Group>
               <Tooltip label="Detail tujuan program pendidikan anak" position="top-start" withArrow>
@@ -83,7 +83,7 @@ function Page() {
               <Group gap="sm">
                 <IconBook2 size={28} color={colors['blue-button']} />
                 <Title order={2} fw="bold" c={colors['blue-button']}>
-                  Program Unggulan
+                  {stateUnggulan.findById.data?.judul}
                 </Title>
               </Group>
               <Tooltip label="Detail program unggulan yang sedang berjalan" position="top-start" withArrow>
