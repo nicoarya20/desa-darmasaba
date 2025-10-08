@@ -159,13 +159,15 @@ function CreateKegiatanDesa() {
             onChange={(e) => (stateKegiatanDesa.create.form.judul = e.target.value)}
             required
           />
-          <TextInput
-            label="Deskripsi Singkat"
-            placeholder="Masukkan deskripsi singkat"
-            defaultValue={stateKegiatanDesa.create.form.deskripsiSingkat}
-            onChange={(e) => (stateKegiatanDesa.create.form.deskripsiSingkat = e.target.value)}
-            required
-          />
+         <Box>
+            <Text fw="bold" fz="sm" mb={6}>
+              Deskripsi Singkat
+            </Text>
+            <CreateEditor
+              value={stateKegiatanDesa.create.form.deskripsiSingkat}
+              onChange={(val) => (stateKegiatanDesa.create.form.deskripsiSingkat = val)}
+            />
+          </Box>
           <TextInput
             type="number"
             min={0}

@@ -1,8 +1,18 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Flex, Image, Paper, Skeleton, Stack, Text } from '@mantine/core';
+import {
+  Box,
+  Button,
+  Group,
+  Image,
+  Paper,
+  Skeleton,
+  Stack,
+  Text,
+  Tooltip,
+} from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { IconArrowBack, IconEdit, IconX } from '@tabler/icons-react';
+import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
@@ -10,95 +20,136 @@ import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
 import desaDigitalState from '../../../_state/inovasi/desa-digital';
 
 function DetailDesaDigital() {
-  const stateDesaDigital = useProxy(desaDigitalState)
+  const stateDesaDigital = useProxy(desaDigitalState);
   const [modalHapus, setModalHapus] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const router = useRouter()
-  const params = useParams()
+  const router = useRouter();
+  const params = useParams();
 
   useShallowEffect(() => {
-    stateDesaDigital.findUnique.load(params?.id as string)
-  }, [])
+    stateDesaDigital.findUnique.load(params?.id as string);
+  }, []);
 
   const handleHapus = () => {
     if (selectedId) {
-      stateDesaDigital.delete.byId(selectedId)
-      setModalHapus(false)
-      setSelectedId(null)
-      router.push("/admin/inovasi/desa-digital-smart-village")
+      stateDesaDigital.delete.byId(selectedId);
+      setModalHapus(false);
+      setSelectedId(null);
+      router.push("/admin/inovasi/desa-digital-smart-village");
     }
-  }
+  };
 
   if (!stateDesaDigital.findUnique.data) {
     return (
       <Stack py={10}>
-        <Skeleton h={500} />
+        <Skeleton height={500} radius="md" />
       </Stack>
-    )
+    );
   }
 
+  const data = stateDesaDigital.findUnique.data;
+
   return (
-    <Box>
-      <Box mb={10}>
-        <Button variant="subtle" onClick={() => router.back()}>
-          <IconArrowBack color={colors['blue-button']} size={25} />
-        </Button>
-      </Box>
-      <Paper bg={colors['white-1']} w={{ base: "100%", md: "100%", lg: "50%" }} p={'md'}>
-        <Stack>
-          <Text fz={"xl"} fw={"bold"}>Detail Desa Digital Smart Village</Text>
-          {stateDesaDigital.findUnique.data ? (
-            <Paper key={stateDesaDigital.findUnique.data.id} bg={colors['BG-trans']} p={'md'}>
-              <Stack gap={"xs"}>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Judul</Text>
-                  <Text fz={"lg"}>{stateDesaDigital.findUnique.data?.name}</Text>
-                </Box>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Deskripsi</Text>
-                  <Text fz={"lg"} style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: stateDesaDigital.findUnique.data?.deskripsi }} />
-                </Box>
-                <Box>
-                  <Text fw={"bold"} fz={"lg"}>Gambar</Text>
-                  <Image w={{ base: 150, md: 150, lg: 150 }} src={stateDesaDigital.findUnique.data?.image?.link} alt="gambar" loading="lazy"/>
-                </Box>
-                <Flex gap={"xs"} mt={10}>
+    <Box py={10}>
+      {/* Tombol Kembali */}
+      <Button
+        variant="subtle"
+        onClick={() => router.back()}
+        leftSection={<IconArrowBack size={24} color={colors['blue-button']} />}
+        mb={15}
+      >
+        Kembali
+      </Button>
+
+      {/* Card Utama */}
+      <Paper
+        withBorder
+        w={{ base: "100%", md: "60%" }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+      >
+        <Stack gap="md">
+          <Text fz="2xl" fw="bold" c={colors['blue-button']}>
+            Detail Desa Digital Smart Village
+          </Text>
+
+          {/* Sub Card Detail */}
+          <Paper bg="#ECEEF8" p="md" radius="md" shadow="xs">
+            <Stack gap="sm">
+              <Box>
+                <Text fz="lg" fw="bold">Judul</Text>
+                <Text fz="md" c="dimmed">{data?.name || '-'}</Text>
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">Deskripsi</Text>
+                <Text
+                  fz="md"
+                  c="dimmed"
+                  style={{ wordBreak: "break-word", whiteSpace: "normal" }}
+                  dangerouslySetInnerHTML={{ __html: data?.deskripsi || '-' }}
+                />
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">Gambar</Text>
+                {data?.image?.link ? (
+                  <Image
+                    src={data.image.link}
+                    alt={data.name || 'Gambar Desa Digital'}
+                    w={200}
+                    h={200}
+                    radius="md"
+                    fit="cover"
+                    loading="lazy"
+                  />
+                ) : (
+                  <Text fz="sm" c="dimmed">Tidak ada gambar</Text>
+                )}
+              </Box>
+
+              {/* Tombol Aksi */}
+              <Group gap="sm">
+                <Tooltip label="Hapus Data" withArrow position="top">
                   <Button
+                    color="red"
                     onClick={() => {
-                      if (stateDesaDigital.findUnique.data) {
-                        setSelectedId(stateDesaDigital.findUnique.data.id);
-                        setModalHapus(true);
-                      }
+                      setSelectedId(data.id);
+                      setModalHapus(true);
                     }}
-                    disabled={stateDesaDigital.delete.loading || !stateDesaDigital.findUnique.data}
-                    color={"red"}
+                    variant="light"
+                    radius="md"
+                    size="md"
                   >
-                    <IconX size={20} />
+                    <IconTrash size={20} />
                   </Button>
+                </Tooltip>
+
+                <Tooltip label="Edit Data" withArrow position="top">
                   <Button
-                    onClick={() => {
-                      if (stateDesaDigital.findUnique.data) {
-                        router.push(`/admin/inovasi/desa-digital-smart-village/${stateDesaDigital.findUnique.data.id}/edit`);
-                      }
-                    }}
-                    disabled={!stateDesaDigital.findUnique.data}
-                    color={"green"}
+                    color="green"
+                    onClick={() => router.push(`/admin/inovasi/desa-digital-smart-village/${data.id}/edit`)}
+                    variant="light"
+                    radius="md"
+                    size="md"
                   >
                     <IconEdit size={20} />
                   </Button>
-                </Flex>
-              </Stack>
-            </Paper>
-          ) : null}
+                </Tooltip>
+              </Group>
+            </Stack>
+          </Paper>
         </Stack>
       </Paper>
 
-      {/* Modal Konfirmasi Hapus */}
+      {/* Modal Konfirmasi */}
       <ModalKonfirmasiHapus
         opened={modalHapus}
         onClose={() => setModalHapus(false)}
         onConfirm={handleHapus}
-        text='Apakah anda yakin ingin menghapus desa digital smart village ini?'
+        text="Apakah Anda yakin ingin menghapus desa digital smart village ini?"
       />
     </Box>
   );

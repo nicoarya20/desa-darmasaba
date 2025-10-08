@@ -9,7 +9,7 @@ export default async function KegiatanDesaFindFirst(context: Context) {
 
     if (kategori) {
       where.kategoriKegiatan = {
-        name: { equals: kategori, mode: 'insensitive' }
+        nama: { equals: kategori, mode: 'insensitive' }
       };
     }
 

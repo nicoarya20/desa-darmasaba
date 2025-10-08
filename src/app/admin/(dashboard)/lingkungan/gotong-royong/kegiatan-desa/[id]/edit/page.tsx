@@ -150,13 +150,13 @@ export default function EditKegiatanDesa() {
             onChange={(e) => setFormData({ ...formData, judul: e.target.value })}
             required
           />
-          <TextInput
-            value={formData.deskripsiSingkat}
-            label={<Text fz="sm" fw="bold">Deskripsi Singkat Kegiatan Desa</Text>}
-            placeholder="masukkan deskripsi singkat kegiatan desa"
-            onChange={(e) => setFormData({ ...formData, deskripsiSingkat: e.target.value })}
-            required
-          />
+          <Box>
+            <Text fw="bold" fz="sm">Deskripsi Singkat Kegiatan Desa</Text>
+            <EditEditor
+              value={formData.deskripsiSingkat}
+              onChange={(htmlContent) => setFormData(prev => ({ ...prev, deskripsiSingkat: htmlContent }))}
+            />
+          </Box>
           <Select
             label="Kategori Kegiatan"
             data={gotongRoyongState.kategoriKegiatan.findMany.data?.map(k => ({

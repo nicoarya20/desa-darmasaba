@@ -1,47 +1,30 @@
+'use client'
+import stateKonservasiAdatBali from '@/app/admin/(dashboard)/_state/lingkungan/konservasi-adat-bali';
 import colors from '@/con/colors';
-import { Box, Center, List, ListItem, Paper, SimpleGrid, Stack, Text } from '@mantine/core';
+import { Box, Center, Paper, SimpleGrid, Skeleton, Stack, Text } from '@mantine/core';
+import { useShallowEffect } from '@mantine/hooks';
+import { useProxy } from 'valtio/utils';
 import BackButton from '../../desa/layanan/_com/BackButto';
 
-const data = [
-  {
-    id: 1,
-    title: 'Filosofi Tri Hita Karana',
-    listDeskripsi: (
-      <List fz={'lg'} spacing="sm" ta={'justify'}>
-        <ListItem>Parahyangan: Hubungan manusia dengan Tuhan yang dijaga penuh kesadaran spiritual</ListItem>
-        <ListItem>Pawongan: Harmoni dan kerja sama antar manusia dalam masyarakat</ListItem>
-        <ListItem>Palemahan: Pelestarian lingkungan dan hubungan manusia dengan alam</ListItem>
-      </List>
-    ),
-  },
-  {
-    id: 2,
-    title: 'Bentuk Konservasi Berdasarkan Adat',
-    listDeskripsi: (
-      <List fz={'lg'} spacing="sm" ta={'justify'}>
-        <ListItem>Pelestarian Hutan Adat seperti Alas Pala Sangeh dan Wana Kerthi</ListItem>
-        <ListItem>Subak: Sistem irigasi tradisional yang menekankan kebersamaan dan keberlanjutan</ListItem>
-        <ListItem>Hari Raya Tumpek Uduh: Perayaan untuk menghormati pohon dan tumbuhan</ListItem>
-        <ListItem>Perarem & Awig-Awig: Aturan adat untuk menjaga lingkungan dari kerusakan</ListItem>
-        <ListItem>Ritual penyucian alam seperti Melasti dan Piodalan Segara</ListItem>
-      </List>
-    ),
-  },
-  {
-    id: 3,
-    title: 'Nilai Konservasi Adat',
-    listDeskripsi: (
-      <List fz={'lg'} spacing="sm" ta={'justify'}>
-        <ListItem>Menjaga keseimbangan ekosistem dan lingkungan hidup</ListItem>
-        <ListItem>Melestarikan spiritualitas lokal dan kesucian alam</ListItem>
-        <ListItem>Meningkatkan kesadaran kolektif untuk hidup selaras dengan alam</ListItem>
-        <ListItem>Menjamin keberlanjutan sumber daya alam untuk generasi mendatang</ListItem>
-      </List>
-    ),
-  },
-];
-
 function Page() {
+  const filosofi = useProxy(stateKonservasiAdatBali.stateFilosofiTriHita.findById)
+  const nilai = useProxy(stateKonservasiAdatBali.stateNilaiKonservasiAdat.findById)
+  const bentuk = useProxy(stateKonservasiAdatBali.stateBentukKonservasiBerdasarkanAdat.findById)
+
+  useShallowEffect(() => {
+    filosofi.load('edit')
+    nilai.load('edit')
+    bentuk.load('edit')
+  }, [])
+
+  if (filosofi.loading || !filosofi.data || nilai.loading || !nilai.data || bentuk.loading || !bentuk.data) {
+    return (
+      <Stack py={20} align="center">
+        <Skeleton radius="md" height={600} width="100%" />
+      </Stack>
+    );
+  }
+
   return (
     <Stack pos="relative" bg={colors.Bg} py="xl" gap="24">
       <Box px={{ base: 'md', md: 100 }}>
@@ -56,24 +39,99 @@ function Page() {
         </Text>
       </Box>
       <Box px={{ base: 'md', md: 100 }}>
-        <SimpleGrid cols={{ base: 1, md: 3 }} spacing="lg">
-          {data.map((item) => (
+        <SimpleGrid cols={{ base: 1, md: 3 }} spacing="lg" style={{ alignItems: 'stretch' }}>
+          {/* Filsosofi */}
+          <Box style={{ display: 'flex', height: '100%' }}>
             <Paper
-              key={item.id}
               p="lg"
               bg="linear-gradient(145deg, #DFE3E8FF 0%, #EFF1F4FF 100%)"
-              style={{ borderRadius: 16, boxShadow: '0 0 20px rgba(28, 110, 164, 0.5)' }}
+              style={{ 
+                borderRadius: 16, 
+                boxShadow: '0 0 20px rgba(28, 110, 164, 0.5)',
+                width: '100%',
+                display: 'flex',
+                flexDirection: 'column'
+              }}
             >
-              <Stack gap="md" px={20}>
+              <Stack gap="md" px={20} style={{ height: '100%' }}>
                 <Center>
                   <Text fz="xl" fw="bold" c="black">
-                    {item.title}
-                  </Text>
+                    {filosofi.data?.judul}
+                  </Text> 
                 </Center>
-                {item.listDeskripsi}
+                <div 
+                  style={{ 
+                    wordBreak: "break-word", 
+                    whiteSpace: "normal",
+                    flexGrow: 1
+                  }} 
+                  dangerouslySetInnerHTML={{ __html: filosofi.data?.deskripsi || '' }} 
+                />
               </Stack>
             </Paper>
-          ))}
+         </Box>
+         {/* Nilai */}
+         <Box style={{ display: 'flex', height: '100%' }}>
+         <Paper
+              p="lg"
+              bg="linear-gradient(145deg, #DFE3E8FF 0%, #EFF1F4FF 100%)"
+              style={{ 
+                borderRadius: 16, 
+                boxShadow: '0 0 20px rgba(28, 110, 164, 0.5)',
+                width: '100%',
+                display: 'flex',
+                flexDirection: 'column'
+              }}
+            >
+              <Stack gap="md" px={20} style={{ height: '100%' }}>
+                <Center>
+                  <Text fz="xl" fw="bold" c="black">
+                    {nilai.data?.judul}
+                  </Text> 
+                </Center>
+                <div 
+                  style={{ 
+                    wordBreak: "break-word", 
+                    whiteSpace: "normal",
+                    flexGrow: 1,
+                    minHeight: 0
+                  }} 
+                  dangerouslySetInnerHTML={{ __html: nilai.data?.deskripsi || '' }} 
+                />
+              </Stack>
+            </Paper>
+         </Box>
+         {/* Bentuk */}
+         <Box>
+            <Paper
+              p="lg"
+              bg="linear-gradient(145deg, #DFE3E8FF 0%, #EFF1F4FF 100%)"
+              style={{ 
+                borderRadius: 16, 
+                boxShadow: '0 0 20px rgba(28, 110, 164, 0.5)',
+                width: '100%',
+                display: 'flex',
+                flexDirection: 'column'
+              }}
+            >
+              <Stack gap="md" px={20} style={{ height: '100%' }}>
+                <Center>
+                  <Text fz="xl" fw="bold" c="black">
+                    {bentuk.data?.judul}
+                  </Text> 
+                </Center>
+                <div 
+                  style={{ 
+                    wordBreak: "break-word", 
+                    whiteSpace: "normal",
+                    flexGrow: 1,
+                    minHeight: 0
+                  }} 
+                  dangerouslySetInnerHTML={{ __html: bentuk.data?.deskripsi || '' }} 
+                />
+              </Stack>
+            </Paper>
+         </Box>
         </SimpleGrid>
       </Box>
     </Stack>

@@ -33,11 +33,12 @@ import detailDataPengangguran from "./data/ekonomi/jumlah-pengangguran/detail-da
 import kategoriProduk from "./data/ekonomi/pasar-desa/kategori-produk.json";
 import pegawai from "./data/ekonomi/struktur-organisasi/pegawai-bumdes.json";
 import posisiOrganisasi from "./data/ekonomi/struktur-organisasi/posisi-organisasi-bumdes.json";
-import kategoriBerita from "./data/kategori-berita.json";
+import kategoriBerita from "./data/desa/berita/kategori-berita.json";
 import contohEdukasiLingkungan from "./data/lingkungan/edukasi-lingkungan/contoh-kegiatan-di-desa-darmasaba.json";
 import materiEdukasiLingkungan from "./data/lingkungan/edukasi-lingkungan/materi-edukasi-yang-diberikan.json";
 import tujuanEdukasiLingkungan from "./data/lingkungan/edukasi-lingkungan/tujuan-edukasi-lingkungan.json";
 import bentukKonservasiBerdasarkanAdat from "./data/lingkungan/konservasi-adat-bali/bentuk-konservasi.json";
+import kategoriKegiatanData from "./data/lingkungan/gotong-royong/kategori-gotong-royong.json";
 import filosofiTriHita from "./data/lingkungan/konservasi-adat-bali/filosofi-tri-hita.json";
 import nilaiKonservasiAdat from "./data/lingkungan/konservasi-adat-bali/nilai-konservasi-adat.json";
 import caraMemperolehInformasi from "./data/list-caraMemperolehInformasi.json";
@@ -884,6 +885,30 @@ import { safeSeedUnique } from "./safeseedUnique";
     });
   }
   console.log("📊 detailDataPengangguran success ...");
+
+  // =========== KATEGORI GOTONG ROYONG ===========
+  // Add IDs to the kategoriKegiatan data
+  const kategoriKegiatan = kategoriKegiatanData.map((k, index) => ({
+    ...k,
+    id: `kategori-${index + 1}`
+  }));
+
+  for (const k of kategoriKegiatan) {
+    await prisma.kategoriKegiatan.upsert({
+      where: {
+        id: k.id,
+      },
+      update: {
+        nama: k.nama,
+      },
+      create: {
+        id: k.id,
+        nama: k.nama,
+      },
+    });
+  }
+
+  console.log("kategori kegiatan success ...");
 
   for (const e of tujuanEdukasiLingkungan) {
     await prisma.tujuanEdukasiLingkungan.upsert({

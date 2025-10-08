@@ -55,7 +55,7 @@ function DetailInfoTeknologiTepatGuna() {
       <Paper
         withBorder
         w={{ base: "100%", md: "70%", lg: "60%" }}
-        bg={colors['white-1']}
+        bg="#ECEEF8"
         p="lg"
         radius="md"
         shadow="sm"

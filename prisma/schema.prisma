@@ -1820,7 +1820,7 @@ model KategoriKegiatan {
   isActive     Boolean        @default(true)
   KegiatanDesa KegiatanDesa[]
 }
-
+  
 // ========================================= EDUKASI LINGKUNGAN ========================================= //
 model TujuanEdukasiLingkungan {
   id        String   @id @default(cuid())

@@ -4,7 +4,6 @@ import {
   Box,
   Button,
   Center,
-  Group,
   Pagination,
   Paper,
   Skeleton,
@@ -16,11 +15,10 @@ import {
   TableThead,
   TableTr,
   Text,
-  Title,
-  Tooltip,
+  Title
 } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { IconDeviceImac, IconSearch, IconPlus } from '@tabler/icons-react';
+import { IconDeviceImac, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
@@ -72,20 +70,7 @@ function ListAjukanIdeInovatif({ search }: { search: string }) {
   return (
     <Box py={10}>
       <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
-        <Group justify="space-between" mb="md">
-          <Title order={4}>Daftar Ide Inovatif</Title>
-          <Tooltip label="Ajukan Ide Baru" withArrow>
-            <Button
-              leftSection={<IconPlus size={18} />}
-              color="blue"
-              variant="light"
-              onClick={() => router.push('/admin/inovasi/ajukan-ide-inovatif/create')}
-            >
-              Tambah Baru
-            </Button>
-          </Tooltip>
-        </Group>
-
+        <Title order={4}>Daftar Ide Inovatif</Title>
         <Box style={{ overflowX: "auto" }}>
           <Table highlightOnHover>
             <TableThead>

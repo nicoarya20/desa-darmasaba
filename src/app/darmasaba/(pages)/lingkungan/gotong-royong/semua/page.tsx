@@ -5,7 +5,7 @@ import { Badge, Box, Button, Card, Center, Container, Divider, Flex, Grid, GridC
 import { IconArrowRight, IconCalendar } from '@tabler/icons-react';
 import { useTransitionRouter } from 'next-view-transitions';
 import { useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useProxy } from 'valtio/utils';
 
 function Page() {
@@ -14,8 +14,7 @@ function Page() {
 
   // Parameter URL
   const search = searchParams.get('search') || '';
-  const currentPage = parseInt(searchParams.get('page') || '1');
-  const [page, setPage] = useState(currentPage);
+  const page = parseInt(searchParams.get('page') || '1');
 
   // Gunakan proxy untuk state
   const state = useProxy(gotongRoyongState.kegiatanDesa);
@@ -37,12 +36,14 @@ function Page() {
   }, [page, search]);
 
   // Update URL saat page berubah
-  useEffect(() => {
-    const url = new URLSearchParams();
+  const handlePageChange = (newPage: number) => {
+    const url = new URLSearchParams(searchParams.toString());
     if (search) url.set('search', search);
-    if (page > 1) url.set('page', page.toString());
+    if (newPage > 1) url.set('page', newPage.toString());
+    else url.delete('page'); // biar page=1 ga muncul di URL
+
     router.replace(`?${url.toString()}`);
-  }, [page, search]);
+  };
 
   const featuredData = featured.data;
   const paginatedNews = state.findMany.data || [];
@@ -77,9 +78,7 @@ function Page() {
                         {featuredData.kategoriKegiatan?.nama || 'Gotong royong'}
                       </Badge>
                       <Title order={2} mb="md">{featuredData.judul}</Title>
-                      <Text c="dimmed" lineClamp={3} mb="md">
-                        {featuredData.deskripsiSingkat}
-                      </Text>
+                      <Text c="dimmed" lineClamp={3} mb="md" dangerouslySetInnerHTML={{ __html: featuredData.deskripsiSingkat }} />
                     </div>
                     <Group justify="apart" mt="auto">
                       <Group gap="xs">
@@ -146,7 +145,7 @@ function Page() {
 
                   <Text fw={600} size="lg" mt="sm" lineClamp={2}>{item.judul}</Text>
 
-                  <Text size="sm" c="dimmed" lineClamp={3} mt="xs">{item.deskripsiSingkat}</Text>
+                  <Text size="sm" c="dimmed" lineClamp={3} mt="xs" dangerouslySetInnerHTML={{ __html: item.deskripsiSingkat }} />
 
                   <Flex align="center" justify="apart" mt="md" gap="xs">
                     <Text size="xs" c="dimmed">
@@ -169,7 +168,7 @@ function Page() {
             <Pagination
               total={totalPages}
               value={page}
-              onChange={setPage}
+              onChange={handlePageChange}
               siblings={1}
               boundaries={1}
               withEdges

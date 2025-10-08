@@ -1,4 +1,3 @@
-// src/app/darmasaba/(pages)/desa/berita/[kategori]/page.tsx
 import { Suspense } from "react";
 import Content from "./content";
 

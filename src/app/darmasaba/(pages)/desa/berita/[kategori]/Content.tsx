@@ -135,7 +135,7 @@ export default function Content({ kategori }: { kategori: string }) {
                     {item.kategoriBerita?.name || kategori}
                   </Badge>
                   <Text fw={600} size="lg" mt="sm" lineClamp={2}>{item.judul}</Text>
-                  <Text size="sm" c="dimmed" lineClamp={3} mt="xs" dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
+                  <Text size="sm" c="dimmed" lineClamp={3} style={{wordBreak: "break-word", whiteSpace: "normal"}} mt="xs" dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
                   <Group justify="apart" mt="md" gap="xs">
                     <Text size="xs" c="dimmed">
                       {new Date(item.createdAt).toLocaleDateString('id-ID', {

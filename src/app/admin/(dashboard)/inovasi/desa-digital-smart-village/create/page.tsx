@@ -22,7 +22,7 @@ import CreateEditor from '../../../_com/createEditor';
 import desaDigitalState from '../../../_state/inovasi/desa-digital';
 import { Dropzone } from '@mantine/dropzone';
 
-function CreateDesaDigital() {
+export default function CreateDesaDigital() {
   const stateDesaDigital = useProxy(desaDigitalState);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
@@ -44,7 +44,6 @@ function CreateDesaDigital() {
     }
 
     try {
-      // Upload gambar dulu
       const uploadRes = await ApiFetch.api.fileStorage.create.post({
         file,
         name: file.name,
@@ -55,10 +54,8 @@ function CreateDesaDigital() {
         return toast.error('Gagal mengunggah gambar');
       }
 
-      // Set imageId ke form
       stateDesaDigital.create.form.imageId = uploaded.id;
 
-      // Submit form
       const success = await stateDesaDigital.create.create();
       if (success) {
         resetForm();
@@ -72,10 +69,16 @@ function CreateDesaDigital() {
 
   return (
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
-      {/* Header */}
-      <Group mb="md">
+      {/* Header dengan tombol kembali */}
+      <Group mb="md" align="center">
         <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+          <Button
+            variant="subtle"
+            onClick={() => router.back()}
+            p="xs"
+            radius="md"
+            style={{ transition: 'background 0.2s ease' }}
+          >
             <IconArrowBack color={colors['blue-button']} size={24} />
           </Button>
         </Tooltip>
@@ -84,28 +87,32 @@ function CreateDesaDigital() {
         </Title>
       </Group>
 
-      {/* Card */}
+      {/* Card Form */}
       <Paper
         w={{ base: '100%', md: '60%' }}
         bg={colors['white-1']}
-        p="lg"
-        radius="md"
-        shadow="sm"
-        style={{ border: '1px solid #e0e0e0' }}
+        p={{ base: 'md', md: 'xl' }}
+        radius="lg"
+        shadow="md"
+        style={{
+          border: '1px solid #eaeaea',
+          transition: 'box-shadow 0.3s ease',
+        }}
       >
-        <Stack gap="md">
-          {/* Nama */}
+        <Stack gap="lg">
+          {/* Input Nama */}
           <TextInput
-            label="Nama Desa Digital Smart Village"
-            placeholder="Masukkan nama desa digital smart village"
+            label="Nama Desa Digital"
+            placeholder="Masukkan nama desa digital"
             defaultValue={stateDesaDigital.create.form.name}
             onChange={(e) => (stateDesaDigital.create.form.name = e.target.value)}
-            required
+            radius="md"
+            withAsterisk
           />
 
           {/* Deskripsi */}
           <Box>
-            <Text fw="bold" fz="sm" mb={6}>
+            <Text fw={500} fz="sm" mb={6}>
               Deskripsi
             </Text>
             <CreateEditor
@@ -118,8 +125,8 @@ function CreateDesaDigital() {
 
           {/* Upload Gambar */}
           <Box>
-            <Text fw="bold" fz="sm" mb={6}>
-              Gambar
+            <Text fw={500} fz="sm" mb={6}>
+              Gambar Desa Digital
             </Text>
             <Dropzone
               onDrop={(files) => {
@@ -134,6 +141,11 @@ function CreateDesaDigital() {
               accept={{ 'image/*': [] }}
               radius="md"
               p="xl"
+              style={{
+                border: '2px dashed #cfd8dc',
+                backgroundColor: '#fafafa',
+                transition: 'background-color 0.2s ease, border-color 0.2s ease',
+              }}
             >
               <Group justify="center" gap="xl" mih={180}>
                 <Dropzone.Accept>
@@ -153,15 +165,22 @@ function CreateDesaDigital() {
 
             {/* Preview */}
             {previewImage && (
-              <Box mt="sm" style={{ textAlign: 'center' }}>
+              <Box
+                mt="sm"
+                style={{
+                  textAlign: 'center',
+                  borderRadius: 12,
+                  overflow: 'hidden',
+                }}
+              >
                 <Image
                   src={previewImage}
                   alt="Preview"
                   radius="md"
                   style={{
-                    maxHeight: 200,
-                    objectFit: 'contain',
-                    border: '1px solid #ddd',
+                    maxHeight: 220,
+                    objectFit: 'cover',
+                    border: '1px solid #e0e0e0',
                   }}
                   loading="lazy"
                 />
@@ -170,7 +189,7 @@ function CreateDesaDigital() {
           </Box>
 
           {/* Tombol Submit */}
-          <Group justify="right">
+          <Group justify="flex-end" mt="sm">
             <Button
               onClick={handleSubmit}
               radius="md"
@@ -179,6 +198,17 @@ function CreateDesaDigital() {
                 background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
+                transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget.style.transform = 'translateY(-2px)');
+                (e.currentTarget.style.boxShadow =
+                  '0 6px 20px rgba(79, 172, 254, 0.5)');
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget.style.transform = 'translateY(0)');
+                (e.currentTarget.style.boxShadow =
+                  '0 4px 15px rgba(79, 172, 254, 0.4)');
               }}
             >
               Simpan
@@ -189,5 +219,3 @@ function CreateDesaDigital() {
     </Box>
   );
 }
-
-export default CreateDesaDigital;

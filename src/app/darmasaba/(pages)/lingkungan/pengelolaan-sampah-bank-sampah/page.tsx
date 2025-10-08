@@ -1,10 +1,10 @@
 'use client'
 import pengelolaanSampahState from '@/app/admin/(dashboard)/_state/lingkungan/pengelolaan-sampah';
 import colors from '@/con/colors';
-import { Box, Flex, Paper, SimpleGrid, Skeleton, Stack, Text, TextInput } from '@mantine/core';
-import { useShallowEffect } from '@mantine/hooks';
+import { Box, Center, Flex, Pagination, Paper, SimpleGrid, Skeleton, Stack, Text, TextInput } from '@mantine/core';
+import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
 import { Icon, IconChartLine, IconClipboardTextFilled, IconLeaf, IconRecycle, IconScale, IconSearch, IconTent, IconTrashFilled, IconTrophy, IconTruckFilled } from '@tabler/icons-react';
-import React from 'react';
+import React, { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import BackButton from '../../desa/layanan/_com/BackButto';
 import dynamic from 'next/dynamic';
@@ -20,20 +20,26 @@ function Page() {
   const state = useProxy(pengelolaanSampahState.pengelolaanSampah)
   const state2 = useProxy(pengelolaanSampahState.keteranganSampah)
 
+  const [search, setSearch] = useState('')
+  const [debouncedSearch] = useDebouncedValue(search, 500);
+
   const {
     data,
-    load
+    load,
+
   } = state.findMany
 
   const {
     data: data2,
-    load: load2
+    load: load2,
+    page,
+    totalPages,
   } = state2.findMany
 
   useShallowEffect(() => {
     load()
-    load2()
-  }, [])
+    load2(page, 3, debouncedSearch)
+  }, [page, debouncedSearch])
 
   const iconMap: Record<string, Icon> = {
     ekowisata: IconLeaf,
@@ -104,8 +110,10 @@ function Page() {
           px={{ base: 70, md: 150 }}
           leftSection={<IconSearch size={20} />}
           placeholder='Cari Bank Sampah Terdekat'
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
         />
-        
+
         <SimpleGrid cols={{ base: 1, md: 2 }} spacing="lg">
           {/* Left side - List of bank locations */}
           <Box>
@@ -131,9 +139,17 @@ function Page() {
                   </Paper>
                 ))}
               </Stack>
+              <Center>
+                <Pagination
+                  value={page}
+                  onChange={(newPage) => load(newPage)} // ini penting!
+                  total={totalPages}
+                  my="md"
+                />
+              </Center>
             </Paper>
           </Box>
-          
+
           {/* Right side - Single map showing all locations */}
           <Box style={{ position: 'sticky', top: '20px' }}>
             <Paper p="md" bg={colors['white-trans-1']} radius="lg" h="100%">

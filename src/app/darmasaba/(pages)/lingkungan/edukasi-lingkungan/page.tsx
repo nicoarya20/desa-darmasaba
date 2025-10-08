@@ -1,48 +1,31 @@
 'use client'
+import stateEdukasiLingkungan from '@/app/admin/(dashboard)/_state/lingkungan/edukasi-lingkungan';
 import colors from '@/con/colors';
-import { Box, List, ListItem, Paper, SimpleGrid, Stack, Text, Tooltip } from '@mantine/core';
+import { Box, Paper, SimpleGrid, Skeleton, Stack, Text, Tooltip } from '@mantine/core';
+import { useShallowEffect } from '@mantine/hooks';
 import { IconLeaf, IconPlant2, IconRecycle } from '@tabler/icons-react';
+import { useProxy } from 'valtio/utils';
 import BackButton from '../../desa/layanan/_com/BackButto';
 
-const data = [
-  {
-    id: 1,
-    title: 'Tujuan Edukasi Lingkungan',
-    icon: <IconLeaf size={28} color={colors['blue-button']} />,
-    listDeskripsi: [
-      'Meningkatkan kesadaran masyarakat akan pentingnya lingkungan bersih dan sehat',
-      'Mendorong partisipasi warga dalam pengelolaan sampah, penghijauan, dan konservasi',
-      'Mengurangi dampak negatif kegiatan manusia terhadap lingkungan',
-      'Membentuk generasi muda peduli isu-isu lingkungan',
-    ],
-  },
-  {
-    id: 2,
-    title: 'Materi Edukasi yang Diberikan',
-    icon: <IconRecycle size={28} color={colors['blue-button']} />,
-    listDeskripsi: [
-      'Pengelolaan sampah: pilah organik & anorganik',
-      'Pencegahan pencemaran lingkungan (air, udara, tanah)',
-      'Pemanfaatan lahan hijau dan penghijauan desa',
-      'Daur ulang dan kreativitas dari sampah',
-      'Bahaya pembakaran sampah sembarangan',
-    ],
-  },
-  {
-    id: 3,
-    title: 'Contoh Kegiatan di Desa Darmasaba',
-    icon: <IconPlant2 size={28} color={colors['blue-button']} />,
-    listDeskripsi: [
-      'Pelatihan membuat kompos dari sampah rumah tangga',
-      'Gerakan "Jumat Bersih" rutin',
-      'Workshop pembuatan ecobrick',
-      'Lomba kebersihan antar banjar',
-      'Sosialisasi lingkungan di sekolah dan posyandu',
-    ],
-  },
-];
-
 function Page() {
+  const tujuan = useProxy(stateEdukasiLingkungan.stateTujuanEdukasi.findById)
+  const materi = useProxy(stateEdukasiLingkungan.stateMateriEdukasiLingkungan.findById)
+  const contoh = useProxy(stateEdukasiLingkungan.stateContohEdukasiLingkungan.findById)
+
+  useShallowEffect(() => {
+    tujuan.load('edit')
+    materi.load('edit')
+    contoh.load('edit')
+  }, [])
+
+  if (tujuan.loading || !tujuan.data || materi.loading || !materi.data || contoh.loading || !contoh.data) {
+    return (
+      <Stack py={20}>
+        <Skeleton radius="md" height={600} />
+      </Stack>
+    );
+  }
+
   return (
     <Stack pos="relative" bg={colors.Bg} py="xl" gap="22">
       <Box px={{ base: 'md', md: 100 }}>
@@ -60,28 +43,84 @@ function Page() {
       </Box>
 
       <Box px={{ base: 'md', md: 100 }}>
-        <SimpleGrid cols={{ base: 1, md: 3 }} spacing="lg">
-          {data.map((item) => (
-            <Paper key={item.id} p={20} bg={colors['white-trans-1']} shadow="md" radius="md">
+        <SimpleGrid cols={{ base: 1, md: 3 }} spacing="lg" style={{ alignItems: 'stretch' }}>
+          {/* Tujuan Edukasi Lingkungan */}
+         <Box style={{ display: 'flex', height: '100%' }}>
+            <Paper p={20} bg={colors['white-trans-1']} shadow="md" radius="md" style={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
               <Stack gap="md">
                 <Box>
-                  <Tooltip label={item.title} position="top" withArrow>
+                  <Tooltip label={tujuan.data?.judul} position="top" withArrow>
                     <Stack gap={4} align="center">
-                      {item.icon}
+                    <IconLeaf size={28} color={colors['blue-button']} />
                       <Text fz="h3" fw="bold" c={colors['blue-button']} ta="center">
-                        {item.title}
+                        {tujuan.data?.judul}
                       </Text>
                     </Stack>
                   </Tooltip>
                 </Box>
-                <List fz="h4" spacing="sm" withPadding>
-                  {item.listDeskripsi.map((desc, idx) => (
-                    <ListItem key={idx}>{desc}</ListItem>
-                  ))}
-                </List>
+                <Text 
+                  style={{ 
+                    wordBreak: "break-word", 
+                    whiteSpace: "normal",
+                    flexGrow: 1
+                  }} 
+                  dangerouslySetInnerHTML={{ __html: tujuan.data?.deskripsi || '' }} 
+                />
+                <Box style={{ flexGrow: 1 }} />
               </Stack>
             </Paper>
-          ))}
+          </Box>
+          {/* Materi Edukasi Lingkungan */}
+          <Box style={{ display: 'flex', height: '100%' }}>
+            <Paper p={20} bg={colors['white-trans-1']} shadow="md" radius="md">
+              <Stack gap="md">
+                <Box>
+                  <Tooltip label={materi.data?.judul} position="top" withArrow>
+                    <Stack gap={4} align="center">
+                    <IconRecycle size={28} color={colors['blue-button']} />
+                      <Text fz="h3" fw="bold" c={colors['blue-button']} ta="center">
+                        {materi.data?.judul}
+                      </Text>
+                    </Stack>
+                  </Tooltip>
+                </Box>
+                <Text 
+                  style={{ 
+                    wordBreak: "break-word", 
+                    whiteSpace: "normal",
+                    flexGrow: 1
+                  }} 
+                  dangerouslySetInnerHTML={{ __html: materi.data?.deskripsi || '' }} 
+                />
+                <Box style={{ flexGrow: 1 }} />
+              </Stack>
+            </Paper>
+          </Box>
+          {/* Contoh Edukasi Lingkungan */}
+          <Box style={{ display: 'flex', height: '100%' }}>
+            <Paper p={20} bg={colors['white-trans-1']} shadow="md" radius="md">
+              <Stack gap="md">
+                <Box>
+                  <Tooltip label={contoh.data?.judul} position="top" withArrow>
+                    <Stack gap={4} align="center">
+                    <IconPlant2  size={28} color={colors['blue-button']} />
+                      <Text fz="h3" fw="bold" c={colors['blue-button']} ta="center">
+                        {contoh.data?.judul}
+                      </Text>
+                    </Stack>
+                  </Tooltip>
+                </Box>
+                <Text 
+                  style={{ 
+                    wordBreak: "break-word", 
+                    whiteSpace: "normal",
+                    flexGrow: 1
+                  }} 
+                  dangerouslySetInnerHTML={{ __html: contoh.data?.deskripsi || '' }} 
+                />
+              </Stack>
+            </Paper>
+          </Box>
         </SimpleGrid>
       </Box>
     </Stack>

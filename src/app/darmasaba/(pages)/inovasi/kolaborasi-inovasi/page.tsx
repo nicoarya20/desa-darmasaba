@@ -46,7 +46,7 @@ function Page() {
 
   useShallowEffect(() => {
     mitraState.findMany.load(page, 10);
-    load(page, 10, search, selectedYear || '');
+    load(page, 10, search, selectedYear ? `year:${selectedYear}` : '');
   }, [page, search, selectedYear]);
 
   const mitraData = mitraState.findMany.data || [];
