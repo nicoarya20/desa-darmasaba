@@ -1,45 +1,89 @@
-'use client'
+/* eslint-disable react-hooks/exhaustive-deps */
+'use client';
+
 import perpustakaanDigitalState from '@/app/admin/(dashboard)/_state/pendidikan/perpustakaan-digital';
 import colors from '@/con/colors';
-import { Badge, Box, Center, Group, Image, Paper, SimpleGrid, Skeleton, Spoiler, Stack, Text, Tooltip } from '@mantine/core';
-import { useShallowEffect } from '@mantine/hooks';
-import { motion } from 'framer-motion';
-import { useCallback, useState } from 'react';
-import { useProxy } from 'valtio/utils';
+import {
+  Badge,
+  Box,
+  Button,
+  Center,
+  Group,
+  Image,
+  Paper,
+  SimpleGrid,
+  Skeleton,
+  Stack,
+  Text,
+  Tooltip
+} from '@mantine/core';
 import { IconBook2, IconInfoCircle } from '@tabler/icons-react';
+import { Pagination } from '@mantine/core';
+import { motion } from 'framer-motion';
 
-type ContentProps = {
-  searchQuery: string;
-};
+import { useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { useProxy } from 'valtio/utils';
+import ModalPeminjaman from '../_lib/modalPeminjaman';
+import { useTransitionRouter } from 'next-view-transitions';
 
-function Content({ searchQuery }: ContentProps) {
+export default function Content() {
   const state = useProxy(perpustakaanDigitalState);
-  const [expandedId, setExpandedId] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const router = useTransitionRouter()
+  const [opened, setOpened] = useState(false);
+  const searchParams = useSearchParams();
+  const searchQuery = searchParams.get('search') || '';
+  const [currentPage, setCurrentPage] = useState(1);
+  
+  const { data: books = [], loading, totalPages } = state.dataPerpustakaan.findMany;
 
-  const loadData = useCallback(
-    async (query: string = '') => {
+  const [selectedBook, setSelectedBook] = useState<{
+    id: string;
+    judul: string;
+    deskripsi?: string;
+    image?: { link?: string };
+    kategori?: { name?: string };
+  } | null>(null);
+
+  // Handle data loading and search
+  useEffect(() => {
+    let isMounted = true;
+    const controller = new AbortController();
+
+    const loadData = async () => {
+      if (!isMounted) return;
+      
       try {
-        setIsLoading(true);
-        await state.dataPerpustakaan.findMany.load(1, 100, query, '');
+        await state.dataPerpustakaan.findMany.load(
+          currentPage, 
+          10, 
+          searchQuery, 
+          ''
+        );
       } catch (error) {
-        console.error('Gagal memuat data:', error);
-      } finally {
-        setIsLoading(false);
+        if (!controller.signal.aborted) {
+          console.error('Gagal memuat data:', error);
+        }
       }
-    },
-    [state.dataPerpustakaan.findMany]
-  );
+    };
 
-  useShallowEffect(() => {
-    loadData(searchQuery);
-  }, [searchQuery, loadData]);
+    const timer = setTimeout(loadData, 300);
+    
+    return () => {
+      isMounted = false;
+      controller.abort();
+      clearTimeout(timer);
+    };
+  }, [searchQuery, currentPage]);
 
-  if (
-    isLoading ||
-    !state.dataPerpustakaan.findMany.load ||
-    !state.dataPerpustakaan.findMany.data
-  ) {
+  // Handle page change
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Loading state
+  if (loading || !books) {
     return (
       <Stack pos="relative" bg={colors.Bg} py="xl" gap="22">
         <Box px={{ base: 'md', md: 100 }} pb={50}>
@@ -53,6 +97,7 @@ function Content({ searchQuery }: ContentProps) {
   return (
     <Stack pos="relative" bg={colors.Bg} py="xl" gap="22">
       <Box px={{ base: 'md', md: 100 }} pb={20}>
+        {/* 🔹 Header */}
         <Group justify="space-between" mb="lg">
           <Group gap="xs">
             <IconBook2 size={28} color={colors['blue-button']} />
@@ -65,101 +110,152 @@ function Content({ searchQuery }: ContentProps) {
           </Tooltip>
         </Group>
 
-        {!state.dataPerpustakaan.findMany.data ||
-        state.dataPerpustakaan.findMany.data.length === 0 ? (
+        {/* 📚 Empty State */}
+        {books.length === 0 ? (
           <Center py="xl">
             <Stack gap="xs" align="center">
-              <Image loading="lazy" src="/empty-books.svg" alt="Kosong" w={140} h="auto" />
-              <Text c="dimmed" fz="sm">Belum ada buku yang tersedia</Text>
+              <Image
+                loading="lazy"
+                src="/empty-books.svg"
+                alt="Kosong"
+                w={140}
+                h="auto"
+              />
+              <Text c="dimmed" fz="sm">
+                Belum ada buku yang tersedia
+              </Text>
             </Stack>
           </Center>
         ) : (
+          // 📘 Daftar Buku
           <SimpleGrid
             cols={{ base: 1, sm: 2, md: 3 }}
             spacing="lg"
             verticalSpacing="lg"
+            style={{ alignItems: 'stretch' }}
           >
-            {state.dataPerpustakaan.findMany.data?.map((v, k) => (
+            {books.map((v) => (
               <motion.div
-                key={k}
+                key={v.id}
                 whileHover={{ scale: 1.03 }}
                 transition={{ duration: 0.2 }}
-                style={{ width: '100%', height: '100%' }}
+                style={{ height: '100%' }}
               >
-                <Paper 
-                  p="lg" 
+                <Paper
+                  p="lg"
                   radius="2xl"
                   shadow="md"
                   bg="white"
                   style={{
-                    height: '100%',
                     display: 'flex',
                     flexDirection: 'column',
-                    justifyContent: 'space-between'
+                    justifyContent: 'space-between',
+                    height: '100%',
+                    minHeight: 440,
                   }}
                 >
-                  <Stack gap="md" style={{ flex: 1 }}>
+                  <Stack gap="md" style={{ flexGrow: 1 }}>
+                    {/* 🖼 Gambar Buku */}
                     <Center>
-                      <Image 
-                        src={v.image?.link} 
-                        alt={v.judul} 
+                      <Image
+                        src={v.image?.link}
+                        alt={v.judul}
                         h={180}
                         w="auto"
                         fit="contain"
-                        fallbackSrc="/placeholder-book.jpg"
                         radius="md"
+                        fallbackSrc="/placeholder-book.jpg"
                         loading="lazy"
                       />
                     </Center>
-                    <Stack gap={4} align="center">
-                      <Text 
-                        c={colors["blue-button"]} 
-                        ta="center" 
-                        fw={700} 
-                        fz={{ base: "md", md: "lg" }}
+
+                    {/* 📖 Judul & Kategori */}
+                    <Stack gap={4} align="center" px="sm">
+                      <Text
+                        c={colors['blue-button']}
+                        ta="center"
+                        fw={700}
+                        fz={{ base: 'md', md: 'lg' }}
                         lineClamp={2}
                       >
                         {v.judul}
                       </Text>
                       {v.kategori && (
-                        <Badge color="cyan" radius="sm" variant="light" size="sm">
+                        <Badge
+                          color="cyan"
+                          radius="sm"
+                          variant="light"
+                          size="sm"
+                        >
                           {v.kategori.name}
                         </Badge>
                       )}
                     </Stack>
-                    <Spoiler
-                      maxHeight={80}
-                      showLabel={
-                        <Text fw={600} fz="sm" c={colors['blue-button']} ta="center" mt="xs">
-                          Lihat deskripsi
-                        </Text>
-                      }
-                      hideLabel={
-                        <Text fw={600} fz="sm" c={colors['blue-button']} ta="center" mt="xs">
-                          Sembunyikan deskripsi
-                        </Text>
-                      }
-                      expanded={expandedId === v.id}
-                      onExpandedChange={(isExpanded) => setExpandedId(isExpanded ? v.id : null)}
-                    >
-                      <Text
-                        ta="justify"
-                        fz="sm"
-                        lh={1.5}
-                        c="dimmed"
-                        dangerouslySetInnerHTML={{ __html: v.deskripsi }}
-                        style={{wordBreak: "break-word", whiteSpace: "normal"}}
-                      />
-                    </Spoiler>
+
+                    {/* 📝 Deskripsi */}
+                    <Text
+                      ta="justify"
+                      fz="sm"
+                      lh={1.5}
+                      lineClamp={5}
+                      truncate="end"
+                      c="dimmed"
+                      dangerouslySetInnerHTML={{ __html: v.deskripsi }}
+                      style={{
+                        wordBreak: 'break-word',
+                        whiteSpace: 'normal',
+                      }}
+                    />
                   </Stack>
+                  
+                  {/* 📗 Tombol Detail */}
+                  <Button variant='light' color='blue' onClick={() => router.push(`/darmasaba/pendidikan/perpustakaan-digital/${v.kategori?.name}/${v.id}`)}>
+                    Lihat Detail
+                  </Button>
+
+                  {/* 📗 Tombol Peminjaman */}
+                  <Button
+                    mt="md"
+                    variant="outline"
+                    color="blue"
+                    radius="xl"
+                    size="md"
+                    fullWidth
+                    leftSection={<IconBook2 size={20} />}
+                    onClick={() => {
+                      setSelectedBook(v);
+                      setOpened(true);
+                    }}
+                  >
+                    Peminjaman
+                  </Button>
                 </Paper>
               </motion.div>
             ))}
           </SimpleGrid>
         )}
+        
+        
+          <Center mt="lg">
+            <Pagination
+              value={currentPage}
+              onChange={handlePageChange}
+              total={totalPages}
+              color="blue"
+              radius="md"
+            />
+          </Center>
       </Box>
+
+      {/* 🔸 Modal Peminjaman */}
+      <ModalPeminjaman
+        opened={opened}
+        onClose={() => {
+          setOpened(false);
+          setSelectedBook(null);
+        }}
+        buku={selectedBook}
+      />
     </Stack>
   );
 }
-
-export default Content;

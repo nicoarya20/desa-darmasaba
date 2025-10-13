@@ -66,9 +66,6 @@ async function lembagaPendidikanFindMany(context: Context) {
       })
     ]);
 
-    console.log('Fetched data count:', data.length);
-    console.log('Total count:', total);
-
     return {
       success: true,
       message: "Success fetch lembaga pendidikan with pagination",

@@ -1,42 +1,52 @@
 'use client'
 import perpustakaanDigitalState from '@/app/admin/(dashboard)/_state/pendidikan/perpustakaan-digital';
 import colors from '@/con/colors';
-import { ActionIcon, Box, Center, Group, Image, Paper, SimpleGrid, Skeleton, Spoiler, Stack, Text, Tooltip, Badge } from '@mantine/core';
+import { ActionIcon, Badge, Box, Button, Center, Group, Image, Pagination, Paper, SimpleGrid, Skeleton, Stack, Text, Tooltip } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconBook2, IconRefresh } from '@tabler/icons-react';
 import { motion } from 'framer-motion';
+import { useTransitionRouter } from 'next-view-transitions';
 import { useSearchParams } from 'next/navigation';
 import { useCallback, useState } from 'react';
 import { useProxy } from 'valtio/utils';
 
 function Content({ kategoriBuku }: { kategoriBuku: string }) {
   const state = useProxy(perpustakaanDigitalState);
-  const [expandedId, setExpandedId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const searchParams = useSearchParams();
   const searchQuery = searchParams.get('search') || '';
+  const router = useTransitionRouter()
 
   const decodedKategoriBuku = decodeURIComponent(kategoriBuku);
-  const kategoriFilter = decodedKategoriBuku.toLowerCase() === 'semua' ? '' : decodedKategoriBuku;
 
-  const loadData = useCallback(async (searchQuery: string = '') => {
+  const loadData = useCallback(async (searchQuery: string = '', page: number = 1) => {
     try {
       setIsLoading(true);
-      await state.dataPerpustakaan.findMany.load(1, 100, searchQuery, kategoriFilter);
+      const currentKategoriFilter = decodedKategoriBuku.toLowerCase() === 'semua' ? '' : decodedKategoriBuku;
+      await state.dataPerpustakaan.findMany.load(page, 3, searchQuery, currentKategoriFilter);
+      setCurrentPage(page);
+      setTotalPages(state.dataPerpustakaan.findMany.totalPages);
     } finally {
       setIsLoading(false);
     }
-  }, [kategoriFilter, state.dataPerpustakaan.findMany]);
+  }, [state.dataPerpustakaan.findMany, decodedKategoriBuku]);
 
   useShallowEffect(() => {
     loadData(searchQuery);
-  }, [searchQuery, loadData]);
+  }, [searchQuery, loadData, kategoriBuku]);
 
   const handleRefresh = () => {
     loadData();
   };
 
-  if (isLoading || !state.dataPerpustakaan.findMany.load || !state.dataPerpustakaan.findMany.data) {
+  const handlePageChange = (newPage: number) => {
+    loadData(searchQuery, newPage);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  if ((isLoading && !state.dataPerpustakaan.findMany.data) || !state.dataPerpustakaan.findMany.load) {
     return (
       <Stack pos="relative" bg={colors.Bg} py="xl" gap="22">
         <Box px={{ base: 'md', md: 100 }} pb={50}>
@@ -57,18 +67,23 @@ function Content({ kategoriBuku }: { kategoriBuku: string }) {
               Koleksi Buku
             </Text>
           </Group>
-          <Tooltip label="Muat ulang koleksi" withArrow>
-            <ActionIcon
-              variant="gradient"
-              gradient={{ from: 'blue', to: 'cyan' }}
-              onClick={handleRefresh}
-              loading={isLoading}
-              radius="xl"
-              size="lg"
-            >
-              <IconRefresh size={20} />
-            </ActionIcon>
-          </Tooltip>
+          <Group>
+            <Text size="sm" c="dimmed">
+              Halaman {currentPage} dari {totalPages}
+            </Text>
+            <Tooltip label="Muat ulang koleksi" withArrow>
+              <ActionIcon
+                variant="gradient"
+                gradient={{ from: 'blue', to: 'cyan' }}
+                onClick={handleRefresh}
+                loading={isLoading}
+                radius="xl"
+                size="lg"
+              >
+                <IconRefresh size={20} />
+              </ActionIcon>
+            </Tooltip>
+          </Group>
         </Group>
 
         {!state.dataPerpustakaan.findMany.data || state.dataPerpustakaan.findMany.data.length === 0 ? (
@@ -132,30 +147,23 @@ function Content({ kategoriBuku }: { kategoriBuku: string }) {
                         </Badge>
                       )}
                     </Stack>
-                    <Spoiler
-                      maxHeight={80}
-                      showLabel={
-                        <Text fw={600} fz="sm" c={colors['blue-button']} ta="center" mt="xs">
-                          Lihat deskripsi
-                        </Text>
-                      }
-                      hideLabel={
-                        <Text fw={600} fz="sm" c={colors['blue-button']} ta="center" mt="xs">
-                          Sembunyikan deskripsi
-                        </Text>
-                      }
-                      expanded={expandedId === v.id}
-                      onExpandedChange={(isExpanded) => setExpandedId(isExpanded ? v.id : null)}
-                    >
-                      <Text
-                        ta="justify"
-                        fz="sm"
-                        lh={1.5}
-                        c="dimmed"
-                        dangerouslySetInnerHTML={{ __html: v.deskripsi }}
-                        style={{wordBreak: "break-word", whiteSpace: "normal"}}
-                      />
-                    </Spoiler>
+                    <Text
+                     ta="justify"
+                     fz="sm"
+                     lh={1.5}
+                     lineClamp={5}
+                     truncate="end"
+                     c="dimmed"
+                     dangerouslySetInnerHTML={{ __html: v.deskripsi }}
+                     style={{
+                       wordBreak: 'break-word',
+                       whiteSpace: 'normal',
+                     }}
+                    />
+                    {/* 📗 Tombol Detail */}
+                    <Button variant='light' color='blue' onClick={() => router.push(`/darmasaba/pendidikan/perpustakaan-digital/${v.kategori?.name}/${v.id}`)}>
+                      Lihat Detail
+                    </Button>
                   </Stack>
                 </Paper>
               </motion.div>
@@ -163,6 +171,15 @@ function Content({ kategoriBuku }: { kategoriBuku: string }) {
           </SimpleGrid>
         )}
       </Box>
+      <Center mt="lg">
+        <Pagination
+          value={currentPage}
+          onChange={handlePageChange}
+          total={totalPages}
+          color="blue"
+          radius="md"
+        />
+      </Center>
     </Stack>
   );
 }

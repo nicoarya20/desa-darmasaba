@@ -324,8 +324,8 @@ model PegawaiPPID {
 model StrukturOrganisasiPPID {
   id                   String               @id @default(uuid())
   posisiOrganisasiId   String               @db.VarChar(50)
-  pegawaiId            String               
-  hubunganOrganisasiId String               
+  pegawaiId            String
+  hubunganOrganisasiId String
   posisiOrganisasi     PosisiOrganisasiPPID @relation(fields: [posisiOrganisasiId], references: [id])
   pegawai              PegawaiPPID          @relation(fields: [pegawaiId], references: [id])
   createdAt            DateTime             @default(now())
@@ -1450,8 +1450,8 @@ model PegawaiBumDes {
 model StrukturOrganisasiBumDes {
   id                   String                 @id @default(uuid())
   posisiOrganisasiId   String                 @db.VarChar(50)
-  pegawaiId            String                 
-  hubunganOrganisasiId String                 
+  pegawaiId            String
+  hubunganOrganisasiId String
   posisiOrganisasi     PosisiOrganisasiBumDes @relation(fields: [posisiOrganisasiId], references: [id])
   pegawai              PegawaiBumDes          @relation(fields: [pegawaiId], references: [id])
   createdAt            DateTime               @default(now())
@@ -1820,7 +1820,7 @@ model KategoriKegiatan {
   isActive     Boolean        @default(true)
   KegiatanDesa KegiatanDesa[]
 }
-  
+
 // ========================================= EDUKASI LINGKUNGAN ========================================= //
 model TujuanEdukasiLingkungan {
   id        String   @id @default(cuid())
@@ -2087,6 +2087,9 @@ model DataPerpustakaan {
   updatedAt  DateTime     @updatedAt
   deletedAt  DateTime     @default(now())
   isActive   Boolean      @default(true)
+
+  // relasi baru ke peminjaman
+  peminjamanBuku PeminjamanBuku[]
 }
 
 model KategoriBuku {
@@ -2097,6 +2100,31 @@ model KategoriBuku {
   deletedAt        DateTime           @default(now())
   isActive         Boolean            @default(true)
   DataPerpustakaan DataPerpustakaan[]
+}
+
+model PeminjamanBuku {
+  id             String           @id @default(cuid())
+  nama           String
+  noTelp         String
+  alamat         String
+  bukuId         String
+  tanggalPinjam  DateTime         @default(now())
+  batasKembali   DateTime // tenggat waktu pengembalian
+  tanggalKembali DateTime? // diisi saat dikembalikan
+  status         StatusPeminjaman @default(Dipinjam)
+  catatan        String? // opsional, misal: kondisi buku
+  buku           DataPerpustakaan @relation(fields: [bukuId], references: [id])
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  deletedAt      DateTime         @default(now())
+  isActive       Boolean          @default(true)
+}
+
+enum StatusPeminjaman {
+  Dipinjam
+  Dikembalikan
+  Terlambat
+  Dibatalkan
 }
 
 // ========================================= USER ========================================= //

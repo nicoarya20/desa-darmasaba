@@ -4,7 +4,7 @@ import colors from '@/con/colors';
 import { ScrollArea, Stack, Tabs, TabsList, TabsPanel, TabsTab, Title, Tooltip } from '@mantine/core';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
-import { IconBook2, IconCategory } from '@tabler/icons-react';
+import { IconBook2, IconCategory, IconUser } from '@tabler/icons-react';
 
 function LayoutTabs({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -24,6 +24,13 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
       href: "/admin/pendidikan/perpustakaan-digital/kategori-buku",
       icon: <IconCategory size={18} stroke={1.8} />,
       tooltip: "Atur kategori untuk buku digital",
+    },
+    {
+      label: "Peminjam",
+      value: "peminjam",
+      href: "/admin/pendidikan/perpustakaan-digital/peminjam",
+      icon: <IconUser size={18} stroke={1.8} />,
+      tooltip: "Data Peminjam Buku",
     },
   ];
 

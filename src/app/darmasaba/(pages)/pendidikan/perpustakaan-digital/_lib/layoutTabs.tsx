@@ -1,11 +1,24 @@
-'use client'
-import { useEffect, useState } from 'react';
-import { ActionIcon, Box, Flex, Grid, GridCol, Stack, Tabs, TabsList, TabsTab, Text, TextInput } from '@mantine/core';
-import { IconSearch, IconUser } from '@tabler/icons-react';
-import Link from 'next/link';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import BackButton from '../../../desa/layanan/_com/BackButto';
+'use client';
+
+import perpustakaanDigitalState from '@/app/admin/(dashboard)/_state/pendidikan/perpustakaan-digital';
 import colors from '@/con/colors';
+import {
+  Box,
+  Grid,
+  GridCol,
+  Stack,
+  Tabs,
+  TabsList,
+  TabsTab,
+  Text,
+  TextInput
+} from '@mantine/core';
+import { IconSearch } from '@tabler/icons-react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { useSnapshot } from 'valtio';
+import BackButton from '../../../desa/layanan/_com/BackButto';
+
 
 type LayoutBukuProps = {
   placeholder?: string;
@@ -15,7 +28,7 @@ type LayoutBukuProps = {
   children?: React.ReactNode;
 };
 
-function LayoutTabs({
+export default function LayoutTabs({
   placeholder = 'Cari buku digital...',
   searchIcon = <IconSearch size={20} />,
   children,
@@ -23,12 +36,18 @@ function LayoutTabs({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const snap = useSnapshot(perpustakaanDigitalState);
 
   const activeTab = pathname.split('/').pop() || 'semua';
   const initialSearch = searchParams.get('search') || '';
   const [searchValue, setSearchValue] = useState(initialSearch);
   const [searchTimeout, setSearchTimeout] = useState<number | null>(null);
   const [activeTabState, setActiveTabState] = useState(activeTab);
+
+  // 🟦 Ambil kategori buku saat mount
+  useEffect(() => {
+    perpustakaanDigitalState.kategoriBuku.findMany.load();
+  }, []);
 
   useEffect(() => {
     setActiveTabState(activeTab);
@@ -51,7 +70,9 @@ function LayoutTabs({
       if (value) params.set('search', value);
 
       router.push(
-        `/darmasaba/pendidikan/perpustakaan-digital/${activeTab}${params.toString() ? `?${params.toString()}` : ''}`
+        `/darmasaba/pendidikan/perpustakaan-digital/${activeTab}${
+          params.toString() ? `?${params.toString()}` : ''
+        }`
       );
     };
 
@@ -63,41 +84,40 @@ function LayoutTabs({
     }
   };
 
+  // 🟩 Tabs dinamis berdasarkan kategori dari state
+  const kategoriTabs =
+    snap.kategoriBuku.findMany.data?.map((item) => ({
+      label: item.name,
+      value: item.name.toLowerCase().replace(/\s+/g, '-'),
+      href: `/darmasaba/pendidikan/perpustakaan-digital/${encodeURIComponent(item.name.toLowerCase().replace(/\s+/g, '-'))}`,
+    })) ?? [];
+
   const tabs = [
     { label: 'Semua', value: 'semua', href: '/darmasaba/pendidikan/perpustakaan-digital/semua' },
-    { label: 'Dokumenter', value: 'dokumenter', href: '/darmasaba/pendidikan/perpustakaan-digital/dokumenter' },
-    { label: 'Sayuran', value: 'sayuran', href: '/darmasaba/pendidikan/perpustakaan-digital/sayuran' },
-    { label: 'Dongeng', value: 'dongeng', href: '/darmasaba/pendidikan/perpustakaan-digital/dongeng' },
+    ...kategoriTabs,
   ];
 
   const handleTabChange = (value: string | null) => {
     if (!value) return;
     const params = new URLSearchParams(searchParams.toString());
-    router.push(`/darmasaba/pendidikan/perpustakaan-digital/${value}${params.toString() ? `?${params.toString()}` : ''}`);
+    router.push(
+      `/darmasaba/pendidikan/perpustakaan-digital/${value}${
+        params.toString() ? `?${params.toString()}` : ''
+      }`
+    );
   };
 
   return (
     <Stack pos="relative" bg="var(--mantine-color-gray-0)" py="xl" gap="22">
       <Box px={{ base: 'md', md: 100 }}>
-        <Flex justify="space-between" align="center">
           <BackButton />
-          <ActionIcon
-            variant="light"
-            component={Link}
-            href="/login"
-            radius="xl"
-            size="lg"
-            aria-label="Masuk ke akun"
-          >
-            <IconUser size={26} stroke={1.5} />
-          </ActionIcon>
-        </Flex>
       </Box>
 
       <Box pb={20}>
         <Text ta="center" fz={{ base: '1.6rem', md: '2.4rem' }} fw={700} c={colors['blue-button']}>
           Perpustakaan Digital Darmasaba
         </Text>
+
         <Tabs color="blue" variant="pills" value={activeTabState} onChange={handleTabChange}>
           <Box px={{ base: 'md', md: 100 }} py="md" bg="var(--mantine-color-gray-1)" style={{ borderRadius: 16 }}>
             <Grid align="center" gutter="md">
@@ -116,6 +136,7 @@ function LayoutTabs({
                   ))}
                 </TabsList>
               </GridCol>
+
               <GridCol span={{ base: 12, md: 3 }}>
                 <TextInput
                   radius="xl"
@@ -130,11 +151,10 @@ function LayoutTabs({
               </GridCol>
             </Grid>
           </Box>
+
           {children}
         </Tabs>
       </Box>
     </Stack>
   );
 }
-
-export default LayoutTabs;
