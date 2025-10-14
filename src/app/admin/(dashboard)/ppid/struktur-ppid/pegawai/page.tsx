@@ -103,18 +103,7 @@ function ListPegawaiPPID({ search }: { search: string }) {
               </TableTr>
             </TableThead>
             <TableTbody>
-              {(() => {
-                console.log('Rendering table with items:', stateOrganisasi.findMany.data);
-                return null;
-              })()}
-              {([...filteredData]
-                .sort((a, b) => {
-                  if (a.isActive === b.isActive) {
-                    return a.namaLengkap.localeCompare(b.namaLengkap); // kalau status sama, urut nama
-                  }
-                  return Number(b.isActive) - Number(a.isActive); // aktif duluan
-                }) // Aktif di atas
-              ).map((item) => (
+              {filteredData.map((item) => (
                 <TableTr key={item.id}>
                   <TableTd>
                     <Box w={150}>

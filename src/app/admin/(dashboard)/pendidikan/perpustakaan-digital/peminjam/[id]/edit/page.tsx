@@ -17,6 +17,7 @@ import {
   Tooltip,
 } from '@mantine/core';
 import { DateInput } from '@mantine/dates';
+import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -55,6 +56,10 @@ function EditPeminjam() {
     status: 'Dipinjam', // Default status
     catatan: '',
   });
+
+  useShallowEffect(() => {
+    perpustakaanDigitalState.dataPerpustakaan.findManyAll.load()
+  })
 
   useEffect(() => {
     const loadPeminjam = async () => {
@@ -159,13 +164,17 @@ function EditPeminjam() {
             required
           />
 
-          <TextInput
-            value={formData.buku?.judul || ''}
-            label={<Text fw="bold" fz="sm">Buku</Text>}
-            placeholder="Buku"
-            required
-            readOnly
-          />
+          <Box>
+            <Text fw="bold" fz="sm" mb={6}>Buku</Text>
+            <Select
+              placeholder="Pilih buku"
+              data={perpustakaanDigitalState.dataPerpustakaan.findManyAll.data?.map(p => ({ value: p.id, label: p.judul })) || []}
+              value={formData.bukuId}
+              onChange={(value) => value && setFormData({ ...formData, bukuId: value })}
+              searchable
+              clearable
+            />
+          </Box>
 
           <DateInput
             value={formData.tanggalPinjam}

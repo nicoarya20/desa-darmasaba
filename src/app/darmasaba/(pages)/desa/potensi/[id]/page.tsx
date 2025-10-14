@@ -77,9 +77,7 @@ function Page() {
               fallbackSrc="https://placehold.co/800x400?text=Gambar+tidak+tersedia"
               loading="lazy"
             />
-            <Text py="md" fz={{ base: "sm", md: "md" }} ta="justify" lh={1.8}>
-              {state.findUnique.data?.deskripsi || 'Belum ada deskripsi untuk potensi desa ini.'}
-            </Text>
+            <Text py="md" fz={{ base: "sm", md: "md" }} ta="justify" lh={1.8} dangerouslySetInnerHTML={{ __html: state.findUnique.data?.deskripsi || 'Belum ada deskripsi untuk potensi desa ini.' }} />
           </Stack>
         </Paper>
       </Container>

@@ -5,6 +5,7 @@ import pegawaiCreate from "./create";
 import pegawaiNonActive from "./nonActive";
 import pegawaiUpdate from "./updt";
 import pegawaiDelete from "./del";
+import pegawaiFindManyAll from "./findManyAll";
 
 
 const Pegawai = new Elysia({
@@ -14,6 +15,9 @@ const Pegawai = new Elysia({
 
   // ✅ Find all
   .get("/find-many", pegawaiFindMany)
+
+  // ✅ Find all (non-paginated)
+  .get("/find-many-all", pegawaiFindManyAll)
 
   // ✅ Find by ID
   .get("/:id", async (context) => {

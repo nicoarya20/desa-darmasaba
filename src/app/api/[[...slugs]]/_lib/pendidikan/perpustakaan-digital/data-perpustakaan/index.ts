@@ -4,6 +4,7 @@ import dataPerpustakaanDelete from "./del";
 import dataPerpustakaanFindMany from "./findMany";
 import dataPerpustakaanFindUnique from "./findUnique";
 import dataPerpustakaanUpdate from "./updt";
+import dataPerpustakaanFindManyAll from "./findManyAll";
 
 const DataPerpustakaan = new Elysia({
   prefix: "/dataperpustakaan",
@@ -18,7 +19,7 @@ const DataPerpustakaan = new Elysia({
       kategoriId: t.String(),
     }),
   })
-
+  .get("/findManyAll", dataPerpustakaanFindManyAll)
   .get("/findMany", dataPerpustakaanFindMany)
   .get("/:id", async (context) => {
     const response = await dataPerpustakaanFindUnique(

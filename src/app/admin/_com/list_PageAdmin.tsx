@@ -377,22 +377,5 @@ export const navBar = [
         path: "/admin/pendidikan/data-pendidikan"
       }
     ]
-  },
-  {
-    id: "User & Role",
-    name: "User & Role",
-    path: "",
-    children: [
-      {
-        id: "User",
-        name: "User",
-        path: "/admin/user&role/user"
-      },
-      {
-        id: "Role",
-        name: "Role",
-        path: "/admin/user&role/role"
-      },
-    ]
-  },
+  }
 ]

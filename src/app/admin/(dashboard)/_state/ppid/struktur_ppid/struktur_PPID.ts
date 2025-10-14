@@ -561,6 +561,45 @@ const pegawai = proxy({
       }
     },
   },
+  findManyAll: {
+    data: null as
+      | Prisma.PegawaiPPIDGetPayload<{
+          include: {
+            image: true;
+            posisi: true;
+          };
+        }>[]
+      | null,
+    loading: false,
+    search: "",
+    load: async (search = "") => {
+      // Change to arrow function
+      pegawai.findManyAll.loading = true; // Use the full path to access the property
+      pegawai.findManyAll.search = search;
+      try {
+        const query: any = { search };
+        if (search) query.search = search;
+
+        const res = await ApiFetch.api.ppid.strukturppid.pegawai[
+          "find-many-all"
+        ].get({
+          query,
+        });
+
+        if (res.status === 200 && res.data?.success) {
+          pegawai.findManyAll.data = res.data.data || [];
+        } else {
+          console.error("Failed to load pegawai:", res.data?.message);
+          pegawai.findManyAll.data = [];
+        }
+      } catch (error) {
+        console.error("Error loading pegawai:", error);
+        pegawai.findManyAll.data = [];
+      } finally {
+        pegawai.findManyAll.loading = false;
+      }
+    },
+  }, 
   findUnique: {
     data: null as
       | (Prisma.PegawaiPPIDGetPayload<{

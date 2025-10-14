@@ -17,7 +17,7 @@ function PelayananPerizinanBerusaha() {
     const loadData = async () => {
       try {
         setLoading(true);
-        await state.pelayananPerizinanBerusaha.findById.load('1')
+        await state.pelayananPerizinanBerusaha.findById.load('edit')
       } catch (error) {
         console.error('Gagal memuat data:', error);
       } finally {

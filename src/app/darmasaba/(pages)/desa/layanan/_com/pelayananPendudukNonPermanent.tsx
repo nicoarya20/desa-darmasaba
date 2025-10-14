@@ -16,7 +16,7 @@ function PelayananPendudukNonPermanent() {
     const loadData = async () => {
       try {
         setLoading(true);
-        await state.pelayananPendudukNonPermanen.findById.load('1');
+        await state.pelayananPendudukNonPermanen.findById.load('edit');
       } catch (error) {
         console.error('Gagal memuat data:', error);
       } finally {

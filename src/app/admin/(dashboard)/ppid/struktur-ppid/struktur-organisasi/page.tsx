@@ -21,10 +21,10 @@ function ListStrukturOrganisasiPPID() {
   const stateOrganisasi = useProxy(stateStrukturPPID.pegawai);
 
   useEffect(() => {
-    stateOrganisasi.findMany.load();
+    stateOrganisasi.findManyAll.load();
   }, []);
 
-  if (stateOrganisasi.findMany.loading) {
+  if (stateOrganisasi.findManyAll.loading) {
     return (
       <Center py={40}>
         <Loader size="lg" />
@@ -32,7 +32,7 @@ function ListStrukturOrganisasiPPID() {
     );
   }
 
-  if (!stateOrganisasi.findMany.data || stateOrganisasi.findMany.data.length === 0) {
+  if (!stateOrganisasi.findManyAll.data || stateOrganisasi.findManyAll.data.length === 0) {
     return (
       <Stack align="center" py={60} gap="sm">
         <IconUsers size={60} stroke={1.5} color="var(--mantine-color-gray-6)" />
@@ -43,7 +43,7 @@ function ListStrukturOrganisasiPPID() {
 
   const posisiMap = new Map<string, any>();
 
-  const aktifPegawai = stateOrganisasi.findMany.data.filter(p => p.isActive);
+  const aktifPegawai = stateOrganisasi.findManyAll.data?.filter(p => p.isActive);
 
   for (const pegawai of aktifPegawai) {
     const posisiId = pegawai.posisi.id;

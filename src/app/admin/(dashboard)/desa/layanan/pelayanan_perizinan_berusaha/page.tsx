@@ -43,7 +43,7 @@ function PerizinanBerusaha() {
       try {
         setLoading(true);
         // You should get the ID from your router query or params
-        const id = '1'; // Replace with actual ID or get from URL params
+        const id = 'edit'; // Replace with actual ID or get from URL params
         await pelayananPerizinanBerusaha.findById.load(id);
       } catch (err) {
         setError('Gagal memuat data');

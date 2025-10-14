@@ -95,6 +95,41 @@ const dataPerpustakaan = proxy({
         }
       },
     },
+    findManyAll: {
+      data: null as
+        | Prisma.DataPerpustakaanGetPayload<{
+            include: {
+              image: true;
+              kategori: true;
+            };
+          }>[]
+        | null,
+      loading: false,
+      search: "",
+     load: async (search = "", kategori = "") => {
+        dataPerpustakaan.findMany.loading = true; // ✅ Akses langsung via nama path
+        dataPerpustakaan.findMany.search = search;
+    
+        try {
+          const query: any = {};
+          if (search) query.search = search;
+          if (kategori) query.kategori = kategori;
+      
+          const res = await ApiFetch.api.pendidikan.perpustakaandigital.dataperpustakaan["findManyAll"].get({ query });
+      
+          if (res.status === 200 && res.data?.success) {
+            dataPerpustakaan.findManyAll.data = res.data.data ?? [];
+          } else {
+            dataPerpustakaan.findManyAll.data = [];
+          }
+        } catch (err) {
+          console.error("Gagal fetch data perpustakaan paginated:", err);
+          dataPerpustakaan.findManyAll.data = [];
+        } finally {
+          dataPerpustakaan.findManyAll.loading = false;
+        }
+      },
+    },
   findUnique: {
     data: null as Prisma.DataPerpustakaanGetPayload<{
       include: {

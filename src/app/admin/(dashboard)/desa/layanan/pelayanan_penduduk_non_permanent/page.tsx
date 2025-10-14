@@ -27,7 +27,7 @@ function PelayananPendudukNonPermanent() {
   );
 
   useShallowEffect(() => {
-    pelayananPendudukNonPermanen.findById.load('1');
+    pelayananPendudukNonPermanen.findById.load('edit');
   }, []);
 
   if (!pelayananPendudukNonPermanen.findById.data) {

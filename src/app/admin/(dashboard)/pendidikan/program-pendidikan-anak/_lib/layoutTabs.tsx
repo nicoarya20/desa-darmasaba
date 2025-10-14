@@ -66,7 +66,11 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
               background: "linear-gradient(135deg, #e7ebf7, #f9faff)",
               borderRadius: "1rem",
               boxShadow: "inset 0 0 10px rgba(0,0,0,0.05)",
-            }}
+              display: "flex",
+              flexWrap: "nowrap",
+              gap: "0.5rem",
+              paddingInline: "0.5rem", // ✅ biar nggak nempel ke tepi
+          }}
           >
             {tabs.map((tab, i) => (
               <Tooltip
