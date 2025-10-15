@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import colors from '@/con/colors';
 import { BarChart as MantineBarChart } from '@mantine/charts';
-import { Box, Center, ColorSwatch, Flex, Paper, SimpleGrid, Skeleton, Stack, Text } from '@mantine/core';
+import { Box, Center, ColorSwatch, Flex, Paper, SimpleGrid, Skeleton, Stack, Text, Title } from '@mantine/core';
 import { useEffect, useState } from 'react';
 import BackButton from '../../desa/layanan/_com/BackButto';
 
@@ -107,20 +107,7 @@ function Page() {
           <Box>
             <Paper p={"xl"} bg={colors['white-trans-1']}>
               <Box pb={30}>
-                <Flex pb={30} justify={'flex-end'} gap={'xl'} align={'center'}>
-                  <Box>
-                    <Flex gap={{ base: 0, md: 5 }} align={'center'}>
-                      <Text fw={'bold'} fz={{ base: 'md', md: 'h4' }}>Angka Kematian</Text>
-                      <ColorSwatch color="#EF3E3E" size={30} />
-                    </Flex>
-                  </Box>
-                  <Box>
-                    <Flex gap={{ base: 0, md: 5 }} align={'center'}>
-                      <Text fw={'bold'} fz={{ base: 'md', md: 'h4' }}>Angka Kelahiran</Text>
-                      <ColorSwatch color="#3290CA" size={30} />
-                    </Flex>
-                  </Box>
-                </Flex>
+                <Title order={2} mb="md">Data Kematian dan Kelahiran</Title>
                 {chartData.length === 0 ? (
                   <Text c="dimmed" ta="center" py="xl">
                     Belum ada data yang tersedia untuk ditampilkan
@@ -150,6 +137,20 @@ function Page() {
                     </Center>
                   </>
                 )}
+                <Flex pb={30} justify={'center'} gap={'xl'} align={'center'}>
+                  <Box>
+                    <Flex gap={{ base: 0, md: 5 }} align={'center'}>
+                      <Text fw={'bold'} fz={{ base: 'md', md: 'h4' }}>Angka Kematian</Text>
+                      <ColorSwatch color="#EF3E3E" size={30} />
+                    </Flex>
+                  </Box>
+                  <Box>
+                    <Flex gap={{ base: 0, md: 5 }} align={'center'}>
+                      <Text fw={'bold'} fz={{ base: 'md', md: 'h4' }}>Angka Kelahiran</Text>
+                      <ColorSwatch color="#3290CA" size={30} />
+                    </Flex>
+                  </Box>
+                </Flex>
               </Box>
             </Paper>
           </Box>
@@ -163,11 +164,11 @@ function Page() {
               }}
             >
               {/* Fasilitas Kesehatan */}
-              <FasilitasKesehatan/>
+              <FasilitasKesehatan />
               {/* Jadwal Kegiatan */}
-              <JadwalKegiatan/>
+              <JadwalKegiatan />
               {/* Artikel Kesehatan */}
-              <ArtikelKesehatanPage/>
+              <ArtikelKesehatanPage />
             </SimpleGrid>
           </Box>
         </Stack>

@@ -1,53 +1,17 @@
 'use client';
-import { TextInput, Loader, Stack, Box, Text } from '@mantine/core';
-import { useSnapshot } from 'valtio';
-import { useRouter } from 'next/navigation';
+import searchState, { debouncedFetch } from '@/app/api/[[...slugs]]/_lib/search/searchState';
+import { Box, Center, Loader, Stack, Text, TextInput } from '@mantine/core';
+import { IconX } from '@tabler/icons-react';
 import { useEffect } from 'react';
-import searchState from '@/app/api/[[...slugs]]/_lib/search/searchState';
+import { useSnapshot } from 'valtio';
+import getDetailUrl from './searchUrl';
 
-// Mapping type ke URL
-const getDetailUrl = (item: { type?: string; id: string | number; [key: string]: unknown }) => {
-  const { type, id, kategori } = item;
-
-  const typeUrlMap: Record<string, string> = {
-    programinovasi: `/darmasaba/program-inovasi/${id}`,
-    desaantikorupsi: '/darmasaba/desa-anti-korupsi',
-    sdgsdesa: '/darmasaba/sdgs-desa',
-    apbdes: '/darmasaba/apbdes',
-    prestasidesa: '/darmasaba/prestasi-desa',
-    pejabatdesa: '/darmasaba/profile/pejabat-desa',
-    strukturppid: '/darmasaba/ppid/struktur-ppid',
-    visimisippid: '/darmasaba/ppid/visi-misi',
-    dasarhukumppid: '/darmasaba/ppid/dasar-hukum',
-    profileppid: '/darmasaba/ppid/profile',
-    daftarinformasipublik: '/darmasaba/ppid/daftar-informasi-publik',
-    perbekeldarmasaba: '/darmasaba/desa/profile',
-    berita: `/darmasaba/desa/berita/${kategori}/${id}`,
-    pengumuman: `/darmasaba/desa/pengumuman/${kategori}/${id}`,
-    sejarahdesa: '/darmasaba/desa/profile',
-    visimisidesa: '/darmasaba/desa/profile',
-    lambangdesa: '/darmasaba/desa/profile',
-    maskotdesa: '/darmasaba/desa/profile',
-    profilperbekel: '/darmasaba/desa/profile',
-    potensi: '/darmasaba/desa/potensi-desa',
-    galleryFoto: '/darmasaba/desa/gallery/foto',
-    galleryVideo: '/darmasaba/desa/gallery/video',
-    pelayananSuratKeterangan: '/darmasaba/desa/layanan',
-    pelayananPerizinanBerusaha: '/darmasaba/desa/layanan',
-    pelayananTelunjukSaktiDesa: '/darmasaba/desa/layanan',
-    pelayananPendudukNonPermanent: '/darmasaba/desa/layanan',
-    penghargaan: '/darmasaba/desa/penghargaan',
-  };
-
-  return type ? typeUrlMap[type] || '/darmasaba' : '/darmasaba';
-};
 
 
 export default function GlobalSearch() {
   const snap = useSnapshot(searchState);
-  const router = useRouter();
 
-  // Infinite scroll listener
+  // Infinite scroll
   useEffect(() => {
     const handleScroll = () => {
       const bottom =
@@ -59,13 +23,32 @@ export default function GlobalSearch() {
   }, [snap.loading]);
 
   return (
-    <Stack>
+    <Stack maw={800} mx="auto">
+      {/* 🔍 Search input */}
       <TextInput
         placeholder="Cari apapun..."
         value={snap.query}
-        onChange={(e) => (searchState.query = e.currentTarget.value)}
+        onChange={(e) => (
+          searchState.query = e.currentTarget.value,
+          debouncedFetch()
+        )}
+        radius="xl"
+        rightSection={
+          snap.query ? (
+            <IconX
+              size={16}
+              style={{ cursor: 'pointer' }}
+              onClick={() => {
+                searchState.query = '';
+                searchState.results = [];
+              }}
+            />
+          ) : undefined
+        }
       />
 
+      {/* 📄 Hasil pencarian */}
+      <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
       {snap.results.map((item, i) => (
         <Box
           key={i}
@@ -74,12 +57,16 @@ export default function GlobalSearch() {
             borderBottom: '1px solid #eee',
             cursor: 'pointer',
             transition: 'background 0.2s',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+            maxWidth: '100%'
           }}
           onMouseEnter={(e) => (e.currentTarget.style.background = '#f5f5f5')}
           onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
           onClick={() => {
             const url = getDetailUrl(item);
-            router.push(url);
+            window.location.href = url;
           }}
         >
           <Text size="sm" fw={500}>
@@ -90,8 +77,15 @@ export default function GlobalSearch() {
           </Text>
         </Box>
       ))}
+      </div>
 
-      {snap.loading && <Loader size="sm" />}
+      {/* ⏳ Loader di bawah hasil */}
+      {snap.loading && (
+        <Center py="md">
+          <Loader size="sm" />
+        </Center>
+      )}
     </Stack>
   );
 }
+

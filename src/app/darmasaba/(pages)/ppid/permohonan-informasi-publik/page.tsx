@@ -12,10 +12,9 @@ import {
   SimpleGrid,
   Stack,
   Text,
-  TextInput,
-  Tooltip,
+  TextInput
 } from '@mantine/core';
-import { IconDownload, IconSend2 } from '@tabler/icons-react';
+import { IconSend2 } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
 import BackButton from '../../desa/layanan/_com/BackButto';
@@ -150,23 +149,6 @@ function Page() {
                 </Paper>
               ))}
             </SimpleGrid>
-
-            <Center pb={30}>
-              <Tooltip label="Unduh dokumen tata cara permohonan" withArrow>
-                <Button
-                  fz="sm"
-                  size="md"
-                  radius="md"
-                  bg={colors['blue-button']}
-                  leftSection={
-                    <IconDownload size={20} color={colors['white-1']} />
-                  }
-                >
-                  Unduh Tata Cara
-                </Button>
-              </Tooltip>
-            </Center>
-
             <Group justify="center">
               <Paper
                 p="xl"

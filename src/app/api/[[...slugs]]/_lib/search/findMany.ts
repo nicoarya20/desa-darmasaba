@@ -4,7 +4,7 @@ import prisma from "@/lib/prisma";
 
 export default async function searchFindMany(context: Context) {
   const { query, page = 1, limit = 10, type } = context.query as any;
-  
+
   // Convert to numbers
   const pageNum = parseInt(String(page), 10) || 1;
   const limitNum = parseInt(String(limit), 10) || 10;
@@ -304,6 +304,403 @@ export default async function searchFindMany(context: Context) {
     return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
   }
 
+  // ========================================= LAYANAN DESA ========================================= //
+  if (type === "pelayananSuratKeterangan") {
+    const data = await prisma.pelayananSuratKeterangan.findMany({
+      where: { name: { contains: query, mode: "insensitive" } },
+      skip,
+      take: limitNum,
+    });
+    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
+  }
+
+  if (type === "pelayananPerizinanBerusaha") {
+    const data = await prisma.pelayananPerizinanBerusaha.findMany({
+      where: { name: { contains: query, mode: "insensitive" } },
+      skip,
+      take: limitNum,
+    });
+    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
+  }
+
+  if (type === "pelayananTelunjukSaktiDesa") {
+    const data = await prisma.pelayananTelunjukSaktiDesa.findMany({
+      where: { name: { contains: query, mode: "insensitive" } },
+      skip,
+      take: limitNum,
+    });
+    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
+  }
+
+  if (type === "pelayananPendudukNonPermanen") {
+    const data = await prisma.pelayananPendudukNonPermanen.findMany({
+      where: { name: { contains: query, mode: "insensitive" } },
+      skip,
+      take: limitNum,
+    });
+    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
+  }
+
+  // ========================================= PENGHARGAAN ========================================= //
+  if (type === "penghargaan") {
+    const data = await prisma.penghargaan.findMany({
+      where: { name: { contains: query, mode: "insensitive" } },
+      skip,
+      take: limitNum,
+    });
+    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
+  }
+
+  // ========================================= MENU KESEHATAN ========================================= //
+  // ========================================= POSYANDU ========================================= //
+  if (type === "posyandu") {
+    const data = await prisma.posyandu.findMany({
+      where: { name: { contains: query, mode: "insensitive" } },
+      skip,
+      take: limitNum,
+    });
+    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
+  }
+  // ========================================= DATA KESEHATAN WARGA ========================================= //
+  // ========================================= FASILITAS KESEHATAN ========================================= //
+  if (type === "fasilitasKesehatan") {
+    const data = await prisma.fasilitasKesehatan.findMany({
+      where: {
+        name: { contains: query, mode: "insensitive" },
+        informasiumum: { fasilitas: { contains: query, mode: "insensitive" } },
+        layananunggulan: { content: { contains: query, mode: "insensitive" } },
+        dokterdantenagamedis: {
+          name: { contains: query, mode: "insensitive" },
+        },
+        fasilitaspendukung: {
+          content: { contains: query, mode: "insensitive" },
+        },
+        prosedurpendaftaran: {
+          content: { contains: query, mode: "insensitive" },
+        },
+        tarifdanlayanan: { layanan: { contains: query, mode: "insensitive" } },
+      },
+      skip,
+      take: limitNum,
+    });
+    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
+  }
+
+  // ========================================= JADWAL KEGIATAN ========================================= //
+  if (type === "jadwalKegiatan") {
+    const data = await prisma.jadwalKegiatan.findMany({
+      where: {
+        content: { contains: query, mode: "insensitive" },
+        informasijadwalkegiatan: {
+          name: { contains: query, mode: "insensitive" },
+        },
+        deskripsijadwalkegiatan: {
+          deskripsi: { contains: query, mode: "insensitive" },
+        },
+        layananjadwalkegiatan: {
+          content: { contains: query, mode: "insensitive" },
+        },
+        syaratketentuanjadwalkegiatan: {
+          content: { contains: query, mode: "insensitive" },
+        },
+        dokumenjadwalkegiatan: {
+          content: { contains: query, mode: "insensitive" },
+        },
+        pendaftaranjadwalkegiatan: {
+          name: { contains: query, mode: "insensitive" },
+        },
+      },
+      skip,
+      take: limitNum,
+    });
+    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
+  }
+
+  // ========================================= ARTIKEL KESEHATAN ========================================= //
+  if (type === "artikelKesehatan") {
+    const data = await prisma.artikelKesehatan.findMany({
+      where: {
+        title: { contains: query, mode: "insensitive" },
+        content: { contains: query, mode: "insensitive" },
+        introduction: {
+          content: { contains: query, mode: "insensitive" },
+        },
+        symptom: {
+          title: { contains: query, mode: "insensitive" },
+        },
+        prevention: {
+          title: { contains: query, mode: "insensitive" },
+        },
+        firstaid: {
+          title: { contains: query, mode: "insensitive" },
+        },
+        mythvsfact: {
+          title: { contains: query, mode: "insensitive" },
+        },
+        doctorsign: {
+          content: { contains: query, mode: "insensitive" },
+        },
+      },
+      skip,
+      take: limitNum,
+    });
+    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
+  }
+
+  // ========================================= PUSKESMAS ========================================= //
+  if (type === "puskesmas") {
+    const data = await prisma.puskesmas.findMany({
+      where: { name: { contains: query, mode: "insensitive" } },
+      skip,
+      take: limitNum,
+    });
+    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
+  }
+
+  // ========================================= PROGRAM KESEHATAN ========================================= //
+  if (type === "programKesehatan") {
+    const data = await prisma.programKesehatan.findMany({
+      where: { name: { contains: query, mode: "insensitive" } },
+      skip,
+      take: limitNum,
+    });
+    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
+  }
+
+  // ========================================= PENANGANAN DARURAT ========================================= //
+  if (type === "penangananDarurat") {
+    const data = await prisma.penangananDarurat.findMany({
+      where: { name: { contains: query, mode: "insensitive" } },
+      skip,
+      take: limitNum,
+    });
+    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
+  }
+
+  // ========================================= KONTAK DARURAT ========================================= //
+  if (type === "kontakDarurat") {
+    const data = await prisma.kontakDarurat.findMany({
+      where: { name: { contains: query, mode: "insensitive" } },
+      skip,
+      take: limitNum,
+    });
+    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
+  }
+
+  // ========================================= INFO WABAH PENYAKIT ========================================= //
+  if (type === "infoWabahPenyakit") {
+    const data = await prisma.infoWabahPenyakit.findMany({
+      where: { name: { contains: query, mode: "insensitive" } },
+      skip,
+      take: limitNum,
+    });
+    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
+  }
+
+  // ========================================= MENU KEAMANAN ========================================= //
+  // ========================================= KEAMANAN LINGKUNGAN ========================================= //
+  if (type === "keamananLingkungan") {
+    const data = await prisma.keamananLingkungan.findMany({
+      where: { name: { contains: query, mode: "insensitive" } },
+      skip,
+      take: limitNum,
+    });
+    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
+  }
+
+  // ========================================= POLSEK TERDEKAT ========================================= //
+  if (type === "polsekTerdekat") {
+    const data = await prisma.polsekTerdekat.findMany({
+      where: { nama: { contains: query, mode: "insensitive" } },
+      skip,
+      take: limitNum,
+    });
+    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
+  }
+
+  // ========================================= KONTAK DARURAT ========================================= //
+  if (type === "kontakDaruratKeamanan") {
+    const data = await prisma.kontakDaruratKeamanan.findMany({
+      where: { nama: { contains: query, mode: "insensitive" } },
+      skip,
+      take: limitNum,
+    });
+    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
+  }
+
+  // ========================================= PENCEGAHAN KRIMINALITAS ========================================= //
+  if (type === "pencegahanKriminalitas") {
+    const data = await prisma.pencegahanKriminalitas.findMany({
+      where: { judul: { contains: query, mode: "insensitive" } },
+      skip,
+      take: limitNum,
+    });
+    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
+  }
+
+  // ========================================= LAPORAN PUBLIK ========================================= //
+  if (type === "laporanPublik") {
+    const data = await prisma.laporanPublik.findMany({
+      where: { judul: { contains: query, mode: "insensitive" } },
+      skip,
+      take: limitNum,
+    });
+    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
+  }
+
+  // ========================================= TIPS KEAMANAN ========================================= //
+  if (type === "tipsKeamanan") {
+    const data = await prisma.menuTipsKeamanan.findMany({
+      where: { judul: { contains: query, mode: "insensitive" } },
+      skip,
+      take: limitNum,
+    });
+    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
+  }
+
+  // ========================================= MENU EKONOMI ========================================= //
+  // ========================================= PASAR DESA ========================================= //
+  if (type === "pasarDesa") {
+    const data = await prisma.pasarDesa.findMany({
+      where: { nama: { contains: query, mode: "insensitive" } },
+      skip,
+      take: limitNum,
+    });
+    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
+  }
+
+  // ========================================= LOWONGAN KERJA LOKAL ========================================= //
+  if (type === "lowonganKerjaLokal") {
+    const data = await prisma.lowonganPekerjaan.findMany({
+      where: { 
+        OR: [
+          { posisi: { contains: query, mode: "insensitive" } },
+          { namaPerusahaan: { contains: query, mode: "insensitive" } },
+          { lokasi: { contains: query, mode: "insensitive" } },
+          { tipePekerjaan: { contains: query, mode: "insensitive" } },
+          { gaji: { contains: query, mode: "insensitive" } },
+          { deskripsi: { contains: query, mode: "insensitive" } },
+          { kualifikasi: { contains: query, mode: "insensitive" } },
+          { notelp: { contains: query, mode: "insensitive" } },
+        ],
+      },
+      skip,
+      take: limitNum,
+    });
+    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
+  }
+  // ========================================= STRUKTUR ORGANISASI ========================================= //
+  if (type === "strukturOrganisasi") {
+    const data = await prisma.strukturBumDes.findMany({
+      where: { 
+        OR: [
+          { name: { contains: query, mode: "insensitive" } },
+          { PosisiOrganisasiBumDes: { nama: { contains: query, mode: "insensitive" } } },
+          { PegawaiBumDes: { namaLengkap: { contains: query, mode: "insensitive" } } },
+        ],
+      },
+      skip,
+      take: limitNum,
+    });
+    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
+  }
+ 
+  // ========================================= JUMLAH PENDUDUK USIA KERJA YANG MENGANGGUR ========================================= //
+  if (type === "jumlahPendudukUsiaKerjaYangMenganggurUsia") {
+    const data = await prisma.grafikMenganggurBerdasarkanUsia.findMany({
+      where: { 
+        OR: [
+          { usia18_25: { contains: query, mode: "insensitive" } },
+          { usia26_35: { contains: query, mode: "insensitive" } },
+          { usia36_45: { contains: query, mode: "insensitive" } },
+          { usia46_keatas: { contains: query, mode: "insensitive" } },
+        ],
+      },
+      skip,
+      take: limitNum,
+    });
+    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
+  }
+
+  // ========================================= JUMLAH PENDUDUK USIA KERJA YANG MENGANGGUR ========================================= //
+  if (type === "jumlahPendudukUsiaKerjaYangMenganggurPendidikan") {
+    const data = await prisma.grafikMenganggurBerdasarkanPendidikan.findMany({
+      where: { 
+        OR: [
+          { SD: { contains: query, mode: "insensitive" } },
+          { SMP: { contains: query, mode: "insensitive" } },
+          { SMA: { contains: query, mode: "insensitive" } },
+          { D3: { contains: query, mode: "insensitive" } },
+          { S1: { contains: query, mode: "insensitive" } },
+        ],
+      },
+      skip,
+      take: limitNum,
+    });
+    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
+  }
+
+  // ========================================= JUMLAH PENDUDUK MISKIN ========================================= //
+  if (type === "jumlahPendudukMiskin") {
+    const data = await prisma.grafikJumlahPendudukMiskin.findMany({
+      where: {
+        OR: [
+          // Convert year to string for partial matching
+          ...(isNaN(Number(query)) ? [] : [
+            { year: { equals: Number(query) } }
+          ]),
+          // Convert totalPoorPopulation to string for partial matching
+          ...(isNaN(Number(query)) ? [] : [
+            { totalPoorPopulation: { equals: Number(query) } }
+          ])
+        ].filter(Boolean), // Remove any empty arrays from the spread
+      },
+      skip,
+      take: limitNum,
+    });
+    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
+  }
+  // ========================================= PROGRAM KEMISKINAN ========================================= //
+  if (type === "programKemiskinan") {
+    const data = await prisma.programKemiskinan.findMany({
+      where: { 
+        OR: [
+          { nama: { contains: query, mode: "insensitive" } },
+          { deskripsi: { contains: query, mode: "insensitive" } },
+        ],
+      },
+      skip,
+      take: limitNum,
+    });
+    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
+  }
+
+
+  // ========================================= SEKTOR UNGGULAN DESA ========================================= //
+  if (type === "sektorUnggulanDesa") {
+    const data = await prisma.sektorUnggulanDesa.findMany({
+      where: { 
+        OR: [
+          { name: { contains: query, mode: "insensitive" } },
+          { description: { contains: query, mode: "insensitive" } }
+        ],
+      },
+      skip,
+      take: limitNum,
+    });
+    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
+  }
+
+  // ========================================= DEMOGRAFI PEKERJAAN ========================================= //
+  if (type === "demografiPekerjaan") {
+    const data = await prisma.dataDemografiPekerjaan.findMany({
+      where: { pekerjaan: { contains: query, mode: "insensitive" } },
+      skip,
+      take: limitNum,
+    });
+    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
+  }
+
   // 🌍 GLOBAL SEARCH — cari di beberapa modul sekaligus
   const [
     pejabatdesa,
@@ -337,8 +734,32 @@ export default async function searchFindMany(context: Context) {
     pelayananSuratKeterangan,
     pelayananPerizinanBerusaha,
     pelayananTelunjukSaktiDesa,
-    pelayananPendudukNonPermanent,
-    penghargaan
+    pelayananPendudukNonPermanen,
+    penghargaan,
+    posyandu,
+    fasilitasKesehatan,
+    jadwalKegiatan,
+    artikelKesehatan,
+    puskesmas,
+    programKesehatan,
+    penangananDarurat,
+    kontakDarurat,
+    infoWabahPenyakit,
+    keamananLingkungan,
+    polsekTerdekat,
+    kontakDaruratKeamanan,
+    pencegahanKriminalitas,
+    laporanPublik,
+    tipsKeamanan,
+    pasarDesa,
+    lowonganKerjaLokal,
+    strukturOrganisasi,
+    jumlahPendudukUsiaKerjaYangMenganggurUsia,
+    jumlahPendudukUsiaKerjaYangMenganggurPendidikan,
+    jumlahPendudukMiskin,
+    programKemiskinan,
+    sektorUnggulanDesa,
+    demografiPekerjaan,
   ] = await Promise.all([
     prisma.pejabatDesa.findMany({
       where: { name: { contains: query, mode: "insensitive" } },
@@ -486,6 +907,197 @@ export default async function searchFindMany(context: Context) {
       where: { name: { contains: query, mode: "insensitive" } },
       take: limitNum,
     }),
+    prisma.posyandu.findMany({
+      where: { name: { contains: query, mode: "insensitive" } },
+      take: limitNum,
+    }),
+    prisma.fasilitasKesehatan.findMany({
+      where: {
+        name: { contains: query, mode: "insensitive" },
+        informasiumum: { fasilitas: { contains: query, mode: "insensitive" } },
+        layananunggulan: { content: { contains: query, mode: "insensitive" } },
+        dokterdantenagamedis: {
+          name: { contains: query, mode: "insensitive" },
+        },
+        fasilitaspendukung: {
+          content: { contains: query, mode: "insensitive" },
+        },
+        prosedurpendaftaran: {
+          content: { contains: query, mode: "insensitive" },
+        },
+        tarifdanlayanan: { layanan: { contains: query, mode: "insensitive" } },
+      },
+      take: limitNum,
+    }),
+    prisma.jadwalKegiatan.findMany({
+      where: {
+        content: { contains: query, mode: "insensitive" },
+        informasijadwalkegiatan: {
+          name: { contains: query, mode: "insensitive" },
+        },
+        deskripsijadwalkegiatan: {
+          deskripsi: { contains: query, mode: "insensitive" },
+        },
+        layananjadwalkegiatan: {
+          content: { contains: query, mode: "insensitive" },
+        },
+        syaratketentuanjadwalkegiatan: {
+          content: { contains: query, mode: "insensitive" },
+        },
+        dokumenjadwalkegiatan: {
+          content: { contains: query, mode: "insensitive" },
+        },
+        pendaftaranjadwalkegiatan: {
+          name: { contains: query, mode: "insensitive" },
+        },
+      },
+      take: limitNum,
+    }),
+    prisma.artikelKesehatan.findMany({
+      where: {
+        title: { contains: query, mode: "insensitive" },
+        content: { contains: query, mode: "insensitive" },
+        introduction: {
+          content: { contains: query, mode: "insensitive" },
+        },
+        symptom: {
+          title: { contains: query, mode: "insensitive" },
+        },
+        prevention: {
+          title: { contains: query, mode: "insensitive" },
+        },
+        firstaid: {
+          title: { contains: query, mode: "insensitive" },
+        },
+        mythvsfact: {
+          title: { contains: query, mode: "insensitive" },
+        },
+        doctorsign: {
+          content: { contains: query, mode: "insensitive" },
+        },
+      },
+      take: limitNum,
+    }),
+    prisma.puskesmas.findMany({
+      where: { name: { contains: query, mode: "insensitive" } },
+      take: limitNum,
+    }),
+    prisma.programKesehatan.findMany({
+      where: { name: { contains: query, mode: "insensitive" } },
+      take: limitNum,
+    }),
+    prisma.penangananDarurat.findMany({
+      where: { name: { contains: query, mode: "insensitive" } },
+      take: limitNum,
+    }),
+    prisma.kontakDarurat.findMany({
+      where: { name: { contains: query, mode: "insensitive" } },
+      take: limitNum,
+    }),
+    prisma.infoWabahPenyakit.findMany({
+      where: { name: { contains: query, mode: "insensitive" } },
+      take: limitNum,
+    }),
+    prisma.keamananLingkungan.findMany({
+      where: { name: { contains: query, mode: "insensitive" } },
+      take: limitNum,
+    }),
+    prisma.polsekTerdekat.findMany({
+      where: { nama: { contains: query, mode: "insensitive" } },
+      take: limitNum,
+    }),
+    prisma.kontakDaruratKeamanan.findMany({
+      where: { nama: { contains: query, mode: "insensitive" } },
+      take: limitNum,
+    }),
+    prisma.pencegahanKriminalitas.findMany({
+      where: { judul: { contains: query, mode: "insensitive" } },
+      take: limitNum,
+    }),
+    prisma.laporanPublik.findMany({
+      where: { judul: { contains: query, mode: "insensitive" } },
+      take: limitNum,
+    }),
+    prisma.menuTipsKeamanan.findMany({
+      where: { judul: { contains: query, mode: "insensitive" } },
+      take: limitNum,
+    }),
+    prisma.pasarDesa.findMany({
+      where: { nama: { contains: query, mode: "insensitive" } },
+      take: limitNum,
+    }),
+    prisma.lowonganPekerjaan.findMany({
+      where: { posisi: { contains: query, mode: "insensitive" } },
+      take: limitNum,
+    }),
+    prisma.strukturBumDes.findMany({
+      where: { 
+        OR: [
+          { name: { contains: query, mode: "insensitive" } },
+          { PosisiOrganisasiBumDes: { nama: { contains: query, mode: "insensitive" } } },
+          { PegawaiBumDes: { namaLengkap: { contains: query, mode: "insensitive" } } },
+        ],
+      },
+      take: limitNum,
+    }),
+    prisma.grafikMenganggurBerdasarkanUsia.findMany({
+      where: { 
+        OR: [
+          { usia18_25: { contains: query, mode: "insensitive" } },
+          { usia26_35: { contains: query, mode: "insensitive" } },
+          { usia36_45: { contains: query, mode: "insensitive" } },
+          { usia46_keatas: { contains: query, mode: "insensitive" } },
+        ],
+      },
+      take: limitNum,
+    }),
+    prisma.grafikMenganggurBerdasarkanPendidikan.findMany({
+      where: { 
+        OR: [
+          { SD: { contains: query, mode: "insensitive" } },
+          { SMP: { contains: query, mode: "insensitive" } },
+          { SMA: { contains: query, mode: "insensitive" } },
+          { D3: { contains: query, mode: "insensitive" } },
+          { S1: { contains: query, mode: "insensitive" } },
+        ],
+      },
+      take: limitNum,
+    }),
+    prisma.grafikJumlahPendudukMiskin.findMany({
+      where: { 
+        OR: [
+          ...(isNaN(Number(query)) ? [] : [
+            { year: { equals: Number(query) } },
+            { totalPoorPopulation: { equals: Number(query) } }
+          ])
+        ].filter(Boolean),
+      },
+      take: limitNum,
+    }),
+    prisma.programKemiskinan.findMany({
+      where: { 
+        OR: [
+          { nama: { contains: query, mode: "insensitive" } },
+          { deskripsi: { contains: query, mode: "insensitive" } },
+        ],
+      },
+      take: limitNum,
+    }),
+    prisma.sektorUnggulanDesa.findMany({
+      where: { 
+        OR: [
+          { name: { contains: query, mode: "insensitive" } },
+          { description: { contains: query, mode: "insensitive" } }
+        ],
+      },
+      take: limitNum,
+    }),
+    prisma.dataDemografiPekerjaan.findMany({
+      where: { 
+        pekerjaan: { contains: query, mode: "insensitive" } 
+      },
+      take: limitNum,
+    })
   ]);
 
   return {
@@ -527,11 +1139,48 @@ export default async function searchFindMany(context: Context) {
       ...pengumuman.map((b) => ({ type: "pengumuman", ...b })),
       ...galleryFoto.map((b) => ({ type: "galleryFoto", ...b })),
       ...galleryVideo.map((b) => ({ type: "galleryVideo", ...b })),
-      ...pelayananSuratKeterangan.map((b) => ({ type: "pelayananSuratKeterangan", ...b })),
-      ...pelayananPerizinanBerusaha.map((b) => ({ type: "pelayananPerizinanBerusaha", ...b })),
-      ...pelayananTelunjukSaktiDesa.map((b) => ({ type: "pelayananTelunjukSaktiDesa", ...b })),
-      ...pelayananPendudukNonPermanent.map((b) => ({ type: "pelayananPendudukNonPermanent", ...b })),
+      ...pelayananSuratKeterangan.map((b) => ({
+        type: "pelayananSuratKeterangan",
+        ...b,
+      })),
+      ...pelayananPerizinanBerusaha.map((b) => ({
+        type: "pelayananPerizinanBerusaha",
+        ...b,
+      })),
+      ...pelayananTelunjukSaktiDesa.map((b) => ({
+        type: "pelayananTelunjukSaktiDesa",
+        ...b,
+      })),
+      ...pelayananPendudukNonPermanen.map((b) => ({
+        type: "pelayananPendudukNonPermanen",
+        ...b,
+      })),
       ...penghargaan.map((b) => ({ type: "penghargaan", ...b })),
+      ...posyandu.map((b) => ({ type: "posyandu", ...b })),
+      ...fasilitasKesehatan.map((b) => ({ type: "fasilitasKesehatan", ...b })),
+      ...jadwalKegiatan.map((b) => ({ type: "jadwalKegiatan", ...b })),
+      ...artikelKesehatan.map((b) => ({ type: "artikelKesehatan", ...b })),
+      ...puskesmas.map((b) => ({ type: "puskesmas", ...b })),
+      ...programKesehatan.map((b) => ({ type: "programKesehatan", ...b })),
+      ...penangananDarurat.map((b) => ({ type: "penangananDarurat", ...b })),
+      ...kontakDarurat.map((b) => ({ type: "kontakDarurat", ...b })),
+      ...infoWabahPenyakit.map((b) => ({ type: "infoWabahPenyakit", ...b })),
+      ...keamananLingkungan.map((b) => ({ type: "keamananLingkungan", ...b })),
+      ...polsekTerdekat.map((b) => ({ type: "polsekTerdekat", ...b })),
+      ...kontakDaruratKeamanan.map((b) => ({ type: "kontakDaruratKeamanan", ...b })),
+      ...pencegahanKriminalitas.map((b) => ({ type: "pencegahanKriminalitas", ...b })),
+      ...laporanPublik.map((b) => ({ type: "laporanPublik", ...b })),
+      ...tipsKeamanan.map((b) => ({ type: "tipsKeamanan", ...b })),
+      ...pasarDesa.map((b) => ({ type: "pasarDesa", ...b })),
+      ...lowonganKerjaLokal.map((b) => ({ type: "lowonganKerjaLokal", ...b })),
+      ...strukturOrganisasi.map((b) => ({ type: "strukturOrganisasi", ...b })),
+      ...jumlahPendudukUsiaKerjaYangMenganggurUsia.map((b) => ({ type: "jumlahPendudukUsiaKerjaYangMenganggurUsia", ...b })),
+      ...jumlahPendudukUsiaKerjaYangMenganggurPendidikan.map((b) => ({ type: "jumlahPendudukUsiaKerjaYangMenganggurPendidikan", ...b })),
+      ...jumlahPendudukMiskin.map((b) => ({ type: "jumlahPendudukMiskin", ...b })),
+      ...programKemiskinan.map((b) => ({ type: "programKemiskinan", ...b })),
+      ...sektorUnggulanDesa.map((b) => ({ type: "sektorUnggulanDesa", ...b })),
+      ...demografiPekerjaan.map((b) => ({ type: "demografiPekerjaan", ...b })),
+
     ],
     nextPage: null, // bisa dibuat lebih kompleks kalau perlu
   };

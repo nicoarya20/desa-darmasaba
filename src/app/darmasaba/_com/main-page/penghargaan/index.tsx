@@ -68,7 +68,7 @@ function Penghargaan() {
               variant="gradient"
               gradient={{ from: "cyan", to: "blue", deg: 60 }}
             >
-              Penghargaan & Prestasi Desa
+              Penghargaan Desa
             </Text>
 
             {loading ? (

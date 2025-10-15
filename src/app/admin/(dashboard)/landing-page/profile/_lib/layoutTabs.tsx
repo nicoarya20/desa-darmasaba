@@ -66,7 +66,7 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
   return (
     <Stack gap="lg">
       <Title order={2} fw={700} style={{ color: "#1A1B1E" }}>
-        Profil Desa
+        Profile Desa
       </Title>
 
       <Tabs

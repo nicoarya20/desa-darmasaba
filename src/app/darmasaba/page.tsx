@@ -8,23 +8,28 @@ import colors from "@/con/colors";
 import SDGS from "./_com/main-page/sdgs";
 // import ApiFetch from "@/lib/api-fetch";
 
-import { Stack } from "@mantine/core";
+import { Box, Stack } from "@mantine/core";
 import Apbdes from "./_com/main-page/apbdes";
 import Prestasi from "./_com/main-page/prestasi";
+import ScrollToTopButton from "./_com/scrollToTopButton";
 
 
 export default function Page() {
   return (
-    <Stack bg={colors.grey[1]} gap={"4rem"}>
-      <LandingPage />
-      <Penghargaan />
-      <Layanan />
-      <Potensi />
-      <DesaAntiKorupsi />
-      <Kepuasan />
-      <SDGS />
-      <Apbdes />
-      <Prestasi/>
-    </Stack>
+    <Box>
+      <Stack bg={colors.grey[1]} gap={"4rem"}>
+        <LandingPage />
+        <Penghargaan />
+        <Layanan />
+        <Potensi />
+        <DesaAntiKorupsi />
+        <Kepuasan />
+        <SDGS />
+        <Apbdes />
+        <Prestasi />
+      </Stack>
+      {/* Tombol Scroll ke Atas */}
+      <ScrollToTopButton />
+    </Box>
   );
 }

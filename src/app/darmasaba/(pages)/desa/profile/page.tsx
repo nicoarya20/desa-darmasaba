@@ -10,31 +10,36 @@ import ProfilPerbekel from './ui/profilPerbekel';
 // import LembagaDesa from './ui/lembagaDesa';
 import MotoDesa from './ui/motoDesa';
 import SemuaPerbekel from './ui/semuaPerbekel';
+import ScrollToTopButton from '@/app/darmasaba/_com/scrollToTopButton';
 
 function Page() {
   return (
-    <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"22"}>
-      <Box px={{ base: 'md', md: 100 }}>
-        <BackButton />
-      </Box>
-      <Container w={{ base: "100%", md: "50%" }}>
-        <Stack align='center' gap={0}>
-          <Text fz={{base: "h1", md: "2.5rem"}} c={colors["blue-button"]} fw={"bold"}>
-            Profile Desa
-          </Text>
-        </Stack>
-      </Container>
-      <Box px={{ base: "md", md: 100 }}>
-        <ProfileDesa />
-        <SejarahDesa />
-        <VisimisiDesa />
-        <LambangDesa />
-        <MaskotDesa />
-        <ProfilPerbekel />
-        <MotoDesa />
-        <SemuaPerbekel/>
-      </Box>
-    </Stack>
+    <Box>
+      <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"22"}>
+        <Box px={{ base: 'md', md: 100 }}>
+          <BackButton />
+        </Box>
+        <Container w={{ base: "100%", md: "50%" }}>
+          <Stack align='center' gap={0}>
+            <Text fz={{ base: "h1", md: "2.5rem" }} c={colors["blue-button"]} fw={"bold"}>
+              Profile Desa
+            </Text>
+          </Stack>
+        </Container>
+        <Box px={{ base: "md", md: 100 }}>
+          <ProfileDesa />
+          <SejarahDesa />
+          <VisimisiDesa />
+          <LambangDesa />
+          <MaskotDesa />
+          <ProfilPerbekel />
+          <MotoDesa />
+          <SemuaPerbekel />
+        </Box>
+      </Stack>
+      {/* Tombol Scroll ke Atas */}
+      <ScrollToTopButton />
+    </Box>
   );
 }
 

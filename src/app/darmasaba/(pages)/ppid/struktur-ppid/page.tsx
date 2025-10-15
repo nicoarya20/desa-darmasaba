@@ -1,129 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// /* eslint-disable react-hooks/exhaustive-deps */
-// /* eslint-disable @typescript-eslint/no-explicit-any */
-// 'use client'
-// import stateStrukturPPID from '@/app/admin/(dashboard)/_state/ppid/struktur_ppid/struktur_PPID';
-// import colors from '@/con/colors';
-// import { Box, Image, Paper, Skeleton, Stack, Text, Title } from '@mantine/core';
-// import { OrganizationChart } from 'primereact/organizationchart';
-// import { useEffect } from 'react';
-// import { useProxy } from 'valtio/utils';
-// import BackButton from '../../desa/layanan/_com/BackButto';
-
-// function Page() {
-//   return (
-//     <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"22"}>
-//       <Box px={{ base: 'md', md: 100 }}>
-//         <BackButton />
-//       </Box>
-//       <Title ta={"center"} fz={{ base: "2rem", md: "2.5rem", lg: "3rem", xl: "3.5rem" }} c={colors["blue-button"]} fw={"bold"}>Struktur PPID</Title>
-//         <StrukturOrganisasiPPID />
-      
-//     </Stack>
-//   );
-// }
-
-// function StrukturOrganisasiPPID() {
-//   const stateOrganisasi = useProxy(stateStrukturPPID.pegawai)
-
-//   useEffect(() => {
-//     stateOrganisasi.findMany.load()
-//   }, [])
-
-//   if (!stateOrganisasi.findMany.data || stateOrganisasi.findMany.data.length === 0) {
-//     return (
-//       <Stack py={10}>
-//         <Skeleton h={500} />
-//       </Stack>
-//     );
-//   }
-
-//   // Step 1: Group pegawai berdasarkan posisiId
-//   const posisiMap = new Map<string, any>();
-
-//   for (const pegawai of stateOrganisasi.findMany.data) {
-//     const posisiId = pegawai.posisi.id;
-//     if (!posisiMap.has(posisiId)) {
-//       posisiMap.set(posisiId, {
-//         ...pegawai.posisi,
-//         pegawaiList: [],
-//         children: []
-//       });
-//     }
-//     posisiMap.get(posisiId)!.pegawaiList.push(pegawai);
-//   }
-
-
-//   // Step 2: Buat struktur pohon berdasarkan parentId
-//   const root: any[] = [];
-
-//   posisiMap.forEach((posisi) => {
-//     if (posisi.parentId) {
-//       const parent = posisiMap.get(posisi.parentId);
-//       if (parent) {
-//         parent.children.push(posisi);
-//       }
-//     } else {
-//       root.push(posisi);
-//     }
-//   });
-
-//   // Step 3: Ubah struktur ke format OrganizationChart
-//   function toOrgChartFormat(node: any): any {
-//     return {
-//       expanded: true,
-//       type: 'person',
-//       styleClass: 'p-person',
-//       data: {
-//         name: node.pegawaiList?.[0]?.namaLengkap || 'Tidak ada pegawai',
-//         status: node.nama,
-//         image: node.pegawaiList?.[0]?.image?.link || '/img/default.png'
-//       },
-//       children: node.children.map(toOrgChartFormat)
-//     };
-//   }
-
-
-//   const chartData = root.map(toOrgChartFormat);
-
-//   return (
-//     <Box py={10}>
-//       <Paper bg={colors.grey} p="md" style={{ overflowX: 'auto' }}>
-//         <OrganizationChart style={{ color: colors['blue-button'] }} value={chartData} nodeTemplate={nodeTemplate} />
-//       </Paper>
-//     </Box>
-//   );
-// }
-
-
-// function nodeTemplate(node: any) {
-//   const imageSrc = node?.data?.image || '/img/default.png';
-//   const name = node?.data?.name || 'Tanpa Nama';
-//   const status = node?.data?.status || 'Tidak ada deskripsi';
-
-//   return (
-//     <Stack pos={"relative"} py={"xl"} gap={"22"}>
-//       <Stack align="center" gap={4}>
-//         <Image
-//           src={imageSrc}
-//           alt={name}
-//           radius="xl"
-//           w={120}
-//           h={120}
-//           fit="cover"
-//         />
-//         <Text fw={600} ta="center">{name}</Text>
-//         <Text size="sm" c="dimmed" ta="center">{status}</Text>
-//       </Stack>
-//     </Stack>
-//   );
-// }
-
-// export default Page;
-
 'use client'
 import stateStrukturPPID from '@/app/admin/(dashboard)/_state/ppid/struktur_ppid/struktur_PPID'
+import colors from '@/con/colors'
 import {
   Box,
   Button,
@@ -145,7 +24,8 @@ import { OrganizationChart } from 'primereact/organizationchart'
 import { useEffect } from 'react'
 import { useProxy } from 'valtio/utils'
 import BackButton from '../../desa/layanan/_com/BackButto'
-import colors from '@/con/colors'
+import { useTransitionRouter } from 'next-view-transitions'
+import ScrollToTopButton from '@/app/darmasaba/_com/scrollToTopButton'
 
 export default function Page() {
   return (
@@ -180,12 +60,16 @@ export default function Page() {
           <StrukturOrganisasiPPID />
         </Box>
       </Container>
+
+       {/* Tombol Scroll ke Atas */}
+       <ScrollToTopButton />
     </Box>
   )
 }
 
 function StrukturOrganisasiPPID() {
   const stateOrganisasi: any = useProxy(stateStrukturPPID.pegawai)
+  const router = useTransitionRouter()
 
   useEffect(() => {
     void stateOrganisasi.findMany.load()
@@ -292,19 +176,21 @@ function StrukturOrganisasiPPID() {
   })
 
   function toOrgChartFormat(node: any): any {
+    const pegawai = node.pegawaiList?.[0];
     return {
       expanded: true,
       type: 'person',
       styleClass: 'p-person',
       data: {
-        name: node.pegawaiList?.[0]?.namaLengkap || 'Belum ditugaskan',
+        id: pegawai?.id || null, // tambahin ini bro
+        name: pegawai?.namaLengkap || 'Belum ditugaskan',
         title: node.nama || 'Tanpa jabatan',
-        image: node.pegawaiList?.[0]?.image?.link || '/img/default.png',
+        image: pegawai?.image?.link || '/img/default.png',
         description: node.deskripsi || '',
         positionId: node.id || null,
       },
       children: node.children?.map(toOrgChartFormat) || [],
-    }
+    };
   }
 
   const chartData = root.map(toOrgChartFormat)
@@ -322,21 +208,22 @@ function StrukturOrganisasiPPID() {
       >
         <OrganizationChart
           value={chartData}
-          nodeTemplate={nodeTemplate}
+          nodeTemplate={(node) => nodeTemplate(node, router)}
         />
       </Paper>
     </Box>
   )
 }
 
-function nodeTemplate(node: any) {
+function nodeTemplate(node: any, router: ReturnType<typeof useTransitionRouter>) {
   const imageSrc = node?.data?.image || '/img/default.png'
   const name = node?.data?.name || 'Tanpa Nama'
   const title = node?.data?.title || 'Tanpa Jabatan'
   const description = node?.data?.description || ''
 
+
   return (
-    <Transition  mounted transition="pop" duration={240}>
+    <Transition mounted transition="pop" duration={240}>
       {(styles) => (
         <Card
           radius="lg"
@@ -374,19 +261,17 @@ function nodeTemplate(node: any) {
           <Text size="xs" c="dimmed" mt={8} lineClamp={3}>
             {description || 'Belum ada deskripsi.'}
           </Text>
-          <Tooltip label="Kembali ke struktur organisasi" withArrow position="bottom">
+          <Tooltip label="Lihat Detail" withArrow position="bottom">
             <Button
               variant="light"
               size="xs"
               mt="md"
               onClick={() => {
-                const id = node?.data?.positionId
-                if (id && (window as any).scrollTo) {
-                  ;(window as any).scrollTo({ top: 0, behavior: 'smooth' })
-                }
+                const id = node?.data?.id
+                router.push(`/darmasaba/ppid/struktur-ppid/${id}`)
               }}
             >
-              Kembali
+              Lihat Detail
             </Button>
           </Tooltip>
         </Card>
@@ -394,6 +279,3 @@ function nodeTemplate(node: any) {
     </Transition>
   )
 }
-
-
-

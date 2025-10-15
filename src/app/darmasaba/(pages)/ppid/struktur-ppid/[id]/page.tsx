@@ -1,0 +1,157 @@
+'use client';
+import stateStrukturPPID from '@/app/admin/(dashboard)/_state/ppid/struktur_ppid/struktur_PPID';
+import colors from '@/con/colors';
+import {
+  Box,
+  Divider,
+  Group,
+  Image,
+  Paper,
+  Skeleton,
+  Stack,
+  Text,
+  Title,
+} from '@mantine/core';
+import { useShallowEffect } from '@mantine/hooks';
+import { IconArrowBack } from '@tabler/icons-react';
+import { useParams, useRouter } from 'next/navigation';
+import { useProxy } from 'valtio/utils';
+
+function DetailPegawaiUser() {
+  const statePegawai = useProxy(stateStrukturPPID.pegawai);
+  const params = useParams();
+  const router = useRouter();
+
+  useShallowEffect(() => {
+    stateStrukturPPID.posisiOrganisasi.findMany.load();
+    statePegawai.findUnique.load(params?.id as string);
+  }, []);
+
+
+  if (!statePegawai.findUnique.data) {
+    return (
+      <Stack py="lg">
+        <Skeleton height={500} radius="md" />
+      </Stack>
+    );
+  }
+
+  const data = statePegawai.findUnique.data;
+
+  return (
+    <Box px={{ base: 'sm', md: 'lg' }} py="xl">
+      {/* Back button */}
+      <Group mb="lg">
+        <Box
+          onClick={() => router.back()}
+          style={{
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+          }}
+        >
+          <IconArrowBack size={22} color={colors['blue-button']} />
+          <Text c={colors['blue-button']} fw={500}>
+            Kembali
+          </Text>
+        </Box>
+      </Group>
+
+      <Paper
+        w={{ base: '100%', md: '70%' }}
+        mx="auto"
+        p="xl"
+        radius="lg"
+        shadow="sm"
+        bg="white"
+        style={{
+          border: '1px solid #eaeaea',
+        }}
+      >
+        <Stack align="center" gap="md">
+          {/* Foto Profil */}
+          <Image
+            src={data.image?.link || '/placeholder-profile.png'}
+            alt={data.namaLengkap || 'Foto Profil'}
+            w={160}
+            h={160}
+            radius={100}
+            fit="cover"
+            style={{ border: `2px solid ${colors['blue-button']}` }}
+            loading="lazy"
+          />
+
+          {/* Nama & Jabatan */}
+          <Stack align="center" gap={2}>
+            <Title order={3} fw={700} c={colors['blue-button']}>
+              {data.namaLengkap || '-'} {data.gelarAkademik || ''}
+            </Title>
+            <Text fz="sm" c="dimmed">
+              {data.posisi?.nama || 'Posisi tidak tersedia'}
+            </Text>
+          </Stack>
+        </Stack>
+
+        <Divider my="lg" />
+
+        {/* Informasi Detail */}
+        <Stack gap="md">
+          <InfoRow label="Email" value={data.email} />
+          <InfoRow label="Telepon" value={data.telepon} />
+          <InfoRow label="Alamat" value={data.alamat} multiline />
+          <InfoRow
+            label="Tanggal Masuk"
+            value={
+              data.tanggalMasuk
+                ? new Date(data.tanggalMasuk).toLocaleDateString('id-ID', {
+                  day: '2-digit',
+                  month: 'long',
+                  year: 'numeric',
+                })
+                : '-'
+            }
+          />
+          <InfoRow
+            label="Status"
+            value={data.isActive ? 'Aktif' : 'Tidak Aktif'}
+            valueColor={data.isActive ? 'green' : 'red'}
+          />
+        </Stack>
+      </Paper>
+    </Box>
+  );
+}
+
+/* Komponen kecil untuk menampilkan baris informasi */
+function InfoRow({
+  label,
+  value,
+  valueColor,
+  multiline = false,
+}: {
+  label: string;
+  value?: string | null;
+  valueColor?: string;
+  multiline?: boolean;
+}) {
+  return (
+    <Box>
+      <Text fz="sm" fw={600} c="dark">
+        {label}
+      </Text>
+      <Text
+        fz="sm"
+        c={valueColor || 'dimmed'}
+        style={{
+          whiteSpace: multiline ? 'normal' : 'nowrap',
+          wordBreak: 'break-word',
+        }}
+      >
+        {value || '-'}
+      </Text>
+    </Box>
+  );
+}
+
+export default DetailPegawaiUser;

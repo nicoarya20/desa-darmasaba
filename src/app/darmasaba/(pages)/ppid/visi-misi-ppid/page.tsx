@@ -73,7 +73,7 @@ function Page() {
                     <Text
                       fz={{ base: 'md', md: 'lg' }}
                       lh={1.7}
-                      ta="justify"
+                      ta="center"
                       dangerouslySetInnerHTML={{ __html: item.visi }}
                       style={{wordBreak: "break-word", whiteSpace: "normal"}}
                     />
@@ -88,7 +88,7 @@ function Page() {
                     <Text
                       fz={{ base: 'md', md: 'lg' }}
                       lh={1.7}
-                      ta="justify"
+                      ta="center"
                       dangerouslySetInnerHTML={{ __html: item.misi }}
                       style={{wordBreak: "break-word", whiteSpace: "normal"}}
                     />
