@@ -121,13 +121,13 @@ function Page() {
                     </Badge>
                   </Group>
                   <Text fz="sm" c="dimmed">
-                    Diposting: 12 Februari 2025 · Dinas Kesehatan
+                    Diposting: {v.createdAt.toLocaleDateString()}
                   </Text>
                   <Divider />
-                  <Text fz="sm" lh={1.5}>
+                  <Text fz="sm" lh={1.5} lineClamp={3} truncate="end">
                     {v.deskripsiSingkat}
                   </Text>
-                  <Button variant="light" radius="md" size="md" onClick={() => router.push(`/admin/kesehatan/info-wabah-penyakit/${v.id}`)}>
+                  <Button variant="light" radius="md" size="md" onClick={() => router.push(`/darmasaba/kesehatan/info-wabah-penyakit/${v.id}`)}>
                     Selengkapnya
                   </Button>
                 </Stack>

@@ -223,7 +223,7 @@ function ListGrafikHasilKepuasanMasyarakat({ search }: { search: string }) {
 
       {/* Chart */}
       <Box mt="lg" style={{ width: '100%', minWidth: 300, height: 420, minHeight: 300 }}>
-        <Paper bg={colors['white-1']} p={'md'}>
+        <Paper withBorder bg={colors['white-1']} p={'md'}>
           <Title pb={10} order={4}>Grafik Hasil Kepuasan Masyarakat</Title>
           {mounted && diseaseChartData.length > 0 ? (
             <Center>

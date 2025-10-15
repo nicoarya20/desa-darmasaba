@@ -111,9 +111,7 @@ function ListInfoWabahPenyakit({ search }: { search: string }) {
                     </TableTd>
                     <TableTd>
                       <Box w={200}>
-                        <Text truncate fz="sm" c="dimmed">
-                          {item.deskripsiSingkat}
-                        </Text>
+                        <Text truncate="end" fz="sm" c="dimmed" lineClamp={1} dangerouslySetInnerHTML={{ __html: item.deskripsiSingkat }} />
                       </Box>
                     </TableTd>
                     <TableTd>

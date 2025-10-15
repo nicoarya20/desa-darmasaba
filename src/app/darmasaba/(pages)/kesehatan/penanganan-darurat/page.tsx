@@ -97,18 +97,23 @@ function Page() {
                 shadow="sm"
                 withBorder
                 bg={colors['white-trans-1']}
-                style={{ transition: 'all 0.3s ease' }}
+                style={{
+                  transition: 'all 0.3s ease',
+                  transform: 'translateY(0)',
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-5px)')}
+                onMouseLeave={(e) => (e.currentTarget.style.transform = 'translateY(0)')}
               >
                 <Stack align="center" gap="md">
                   <Center>
                     <Image
                       src={v.image.link}
                       alt={v.name}
-                      w={160}
-                      h={160}
-                      fit="contain"
+                      h={180}
+                      w="100%"
                       radius="md"
-                      loading="lazy"
+                      fit="cover"
+                      style={{ aspectRatio: '4/3' }}
                     />
                   </Center>
                   <Stack gap={4} w="100%">
@@ -151,8 +156,11 @@ function Page() {
           styles={{
             control: {
               border: `1px solid ${colors['blue-button']}`,
+              transition: 'all 0.3s ease',
+              '&:hover': { backgroundColor: colors['blue-button'], color: 'white' },
             },
           }}
+          
         />
       </Center>
 

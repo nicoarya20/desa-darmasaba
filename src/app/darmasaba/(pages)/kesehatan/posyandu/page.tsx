@@ -28,11 +28,31 @@ export default function Page() {
 
   if (data.length === 0) {
     return (
-      <Box py="xl" px={{ base: "md", md: 100 }}>
-        <Text fz="lg" fw="bold" c={colors["blue-button"]}>
-          Tidak ada posyandu yang ditemukan
-        </Text>
-      </Box>
+      <Stack pos="relative" bg={colors.Bg} py="xl" gap="xl">
+        <Box px={{ base: "md", md: 100 }}>
+          <BackButton />
+          <Flex mt="md" justify="space-between" align="center" wrap="wrap" gap="md">
+            <Text
+              ta="left"
+              fz={{ base: "1.8rem", md: "2.5rem" }}
+              c={colors["blue-button"]}
+              fw="bold"
+            >
+              Posyandu Desa Darmasaba
+            </Text>
+            <TextInput
+              placeholder="Cari posyandu berdasarkan nama..."
+              aria-label="Pencarian Posyandu"
+              radius="xl"
+              size="md"
+              leftSection={<IconSearch size={20} />}
+              w={{ base: "100%", md: "35%" }}
+              value={search}
+              onChange={(e) => setSearch(e.currentTarget.value)}
+            />
+          </Flex>
+        </Box>
+      </Stack>
     );
   }
 

@@ -89,26 +89,26 @@ function ListArtikelKesehatan({ search }: { search: string }) {
           <Table highlightOnHover>
             <TableThead>
               <TableTr>
-                <TableTh>Judul</TableTh>
-                <TableTh>Konten</TableTh>
-                <TableTh>Aksi</TableTh>
+                <TableTh style={{ minWidth: 200 }}>Judul</TableTh>
+                <TableTh style={{ minWidth: 200 }}>Konten</TableTh>
+                <TableTh style={{ minWidth: 200 }}>Aksi</TableTh>
               </TableTr>
             </TableThead>
             <TableTbody>
               {filteredData.length > 0 ? (
                 filteredData.map((item) => (
                   <TableTr key={item.id}>
-                    <TableTd>
+                    <TableTd style={{ minWidth: 200 }}>
                       <Text fw={500} truncate="end" lineClamp={1}>
                         {item.title}
                       </Text>
                     </TableTd>
-                    <TableTd>
+                    <TableTd style={{ minWidth: 200 }} >
                       <Text truncate fz="sm" c="dimmed" lineClamp={1}>
                         {item.content}
                       </Text>
                     </TableTd>
-                    <TableTd>
+                    <TableTd style={{ minWidth: 200 }}>
                       <Button
                         variant="light"
                         color="blue"

@@ -1,6 +1,6 @@
 import stateNav from "@/state/state-nav";
-import { Container, Stack, TextInput, Tooltip } from "@mantine/core";
-import { IconSearch } from "@tabler/icons-react";
+import { Container, Stack, Tooltip } from "@mantine/core";
+import GlobalSearch from "./globalSearch";
 
 export function NavbarSearch() {
   return (
@@ -12,14 +12,7 @@ export function NavbarSearch() {
     >
       <Stack pt="xl">
         <Tooltip label="Type to search across the site" position="bottom-start" withArrow>
-          <TextInput
-            autoFocus
-            size="lg"
-            variant="filled"
-            radius="xl"
-            placeholder="Search anything..."
-            leftSection={<IconSearch size={20} />}
-          />
+          <GlobalSearch />
         </Tooltip>
       </Stack>
     </Container>

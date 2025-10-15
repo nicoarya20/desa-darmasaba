@@ -25,6 +25,7 @@ import LandingPage from "./_lib/landing_page";
 import Pendidikan from "./_lib/pendidikan";
 import User from "./_lib/user";
 import Role from "./_lib/user/role";
+import Search from "./_lib/search";
 
 const ROOT = process.cwd();
 
@@ -95,6 +96,7 @@ const ApiServer = new Elysia()
   .use(Pendidikan)
   .use(User)
   .use(Role)
+  .use(Search)
 
   .onError(({ code }) => {
     if (code === "NOT_FOUND") {
