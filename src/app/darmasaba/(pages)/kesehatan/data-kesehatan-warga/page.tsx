@@ -141,7 +141,7 @@ function Page() {
                   <Box>
                     <Flex gap={{ base: 0, md: 5 }} align={'center'}>
                       <Text fw={'bold'} fz={{ base: 'md', md: 'h4' }}>Angka Kematian</Text>
-                      <ColorSwatch color="#EF3E3E" size={30} />
+                      <ColorSwatch  color="#EF3E3E" size={30} />
                     </Flex>
                   </Box>
                   <Box>

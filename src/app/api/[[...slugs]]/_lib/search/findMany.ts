@@ -701,6 +701,457 @@ export default async function searchFindMany(context: Context) {
     return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
   }
 
+  // ========================================= MENU INOVASI ========================================= //
+// ========================================= DESA DIGITAL / SMART VILLAGE ========================================= //
+
+  if (type === "desaDigital") {
+    const data = await prisma.desaDigital.findMany({
+      where: { 
+        OR: [
+          { name: { contains: query, mode: "insensitive" } },
+          { deskripsi: { contains: query, mode: "insensitive" } }
+        ],
+      },
+      skip,
+      take: limitNum,
+    });
+    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
+  }
+
+  // ========================================= PROGRAM KREATIF ========================================= //
+
+  if (type === "programKreatif") {
+    const data = await prisma.programKreatif.findMany({
+      where: { 
+        OR: [
+          { name: { contains: query, mode: "insensitive" } },
+          { slug: { contains: query, mode: "insensitive" } },
+          { deskripsi: { contains: query, mode: "insensitive" } }
+        ],
+      },
+      skip,
+      take: limitNum,
+    });
+    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
+  }
+
+  // ========================================= KOLABORASI INOVASI ========================================= //
+
+  if (type === "kolaborasiInovasi") {
+    const data = await prisma.kolaborasiInovasi.findMany({
+      where: { 
+        OR: [
+          { name: { contains: query, mode: "insensitive" } },
+          { slug: { contains: query, mode: "insensitive" } },
+          { deskripsi: { contains: query, mode: "insensitive" } },
+          { kolaborator: { contains: query, mode: "insensitive" } }
+        ],
+      },
+      skip,
+      take: limitNum,
+    });
+    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
+  }
+
+  if (type === "mitraKolaborasi") {
+    const data = await prisma.mitraKolaborasi.findMany({
+      where: { 
+        OR: [
+          { name: { contains: query, mode: "insensitive" } }
+        ],
+      },
+      skip,
+      take: limitNum,
+    });
+    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
+  }
+
+  // ========================================= INFO TEKHNOLOGI TEPAT GUNA ========================================= //
+
+  if (type === "infoTekno") {
+    const data = await prisma.infoTekno.findMany({
+      where: { 
+        OR: [
+          { name: { contains: query, mode: "insensitive" } },
+          { deskripsi: { contains: query, mode: "insensitive" } }
+        ],
+      },
+      skip,
+      take: limitNum,
+    });
+    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
+  }
+
+  // ========================================= LINGKUNGAN ========================================= //
+// ========================================= PENGELOLAAN SAMPAH ========================================= //
+
+  if (type === "pengelolaanSampah") {
+    const data = await prisma.pengelolaanSampah.findMany({
+      where: { 
+        OR: [
+          { name: { contains: query, mode: "insensitive" } }
+        ],
+      },
+      skip,
+      take: limitNum,
+    });
+    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
+  }
+
+  if (type === "keteranganBankSampahTerdekat") {
+    const data = await prisma.keteranganBankSampahTerdekat.findMany({
+      where: { 
+        OR: [
+          { name: { contains: query, mode: "insensitive" } },
+          { alamat: { contains: query, mode: "insensitive" } },
+          { namaTempatMaps: { contains: query, mode: "insensitive" } },
+          { linkPetunjukArah: { contains: query, mode: "insensitive" } }
+        ],
+      },
+      skip,
+      take: limitNum,
+    });
+    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
+  }
+
+  // ========================================= PORGRAM PENGHIJAUAN ========================================= //
+
+  if (type === "programPenghijauan") {
+    const data = await prisma.programPenghijauan.findMany({
+      where: { 
+        OR: [
+          { name: { contains: query, mode: "insensitive" } },
+          { judul: { contains: query, mode: "insensitive" } },
+          { deskripsi: { contains: query, mode: "insensitive" } }
+        ],
+      },
+      skip,
+      take: limitNum,
+    });
+    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
+  }
+
+  // ========================================= DATA LINGKUNGAN DESA ========================================= //
+
+  if (type === "dataLingkunganDesa") {
+    const data = await prisma.dataLingkunganDesa.findMany({
+      where: { 
+        OR: [
+          { name: { contains: query, mode: "insensitive" } },
+          { deskripsi: { contains: query, mode: "insensitive" } }
+        ],
+      },
+      skip,
+      take: limitNum,
+    });
+    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
+  }
+
+  // ========================================= GOTONG ROYONG ========================================= //
+
+  if (type === "gotongRoyong") {
+    const data = await prisma.kegiatanDesa.findMany({
+      where: { 
+        OR: [
+          { judul: { contains: query, mode: "insensitive" } },
+          { deskripsiSingkat: { contains: query, mode: "insensitive" } },
+          { deskripsiLengkap: { contains: query, mode: "insensitive" } }
+        ],
+      },
+      skip,
+      take: limitNum,
+    });
+    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
+  }
+
+  // ========================================= EDUKASI LINGKUNGAN ========================================= //
+
+  if (type === "tujuanEdukasiLingkungan") {
+    const data = await prisma.tujuanEdukasiLingkungan.findMany({
+      where: { 
+        OR: [
+          { judul: { contains: query, mode: "insensitive" } },
+          { deskripsi: { contains: query, mode: "insensitive" } }
+        ],
+      },
+      skip,
+      take: limitNum,
+    });
+    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
+  }
+
+  if (type === "materiEdukasiLingkungan") {
+    const data = await prisma.materiEdukasiLingkungan.findMany({
+      where: { 
+        OR: [
+          { judul: { contains: query, mode: "insensitive" } },
+          { deskripsi: { contains: query, mode: "insensitive" } }
+        ],
+      },
+      skip,
+      take: limitNum,
+    });
+    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
+  }
+
+  if (type === "contohEdukasiLingkungan") {
+    const data = await prisma.contohEdukasiLingkungan.findMany({
+      where: { 
+        OR: [
+          { judul: { contains: query, mode: "insensitive" } },
+          { deskripsi: { contains: query, mode: "insensitive" } }
+        ],
+      },
+      skip,
+      take: limitNum,
+    });
+    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
+  }
+
+  // ========================================= KONSERVASI ADAT BALI ========================================= //
+
+  if (type === "filosofiTriHita") {
+    const data = await prisma.filosofiTriHita.findMany({
+      where: { 
+        OR: [
+          { judul: { contains: query, mode: "insensitive" } },
+          { deskripsi: { contains: query, mode: "insensitive" } }
+        ],
+      },
+      skip,
+      take: limitNum,
+    });
+    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
+  }
+
+  if (type === "bentukKonservasiBerdasarkanAdat") {
+    const data = await prisma.bentukKonservasiBerdasarkanAdat.findMany({
+      where: { 
+        OR: [
+          { judul: { contains: query, mode: "insensitive" } },
+          { deskripsi: { contains: query, mode: "insensitive" } }
+        ],
+      },
+      skip,
+      take: limitNum,
+    });
+    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
+  }
+
+  if (type === "nilaiKonservasiAdat") {
+    const data = await prisma.nilaiKonservasiAdat.findMany({
+      where: { 
+        OR: [
+          { judul: { contains: query, mode: "insensitive" } },
+          { deskripsi: { contains: query, mode: "insensitive" } }
+        ],
+      },
+      skip,
+      take: limitNum,
+    });
+    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
+  }
+
+  // ========================================= MENU PENDIDIKAN ========================================= //
+// ========================================= INFO SEKOLAH & PAUD ========================================= //
+
+  if (type === "jenjangPendidikan") {
+    const data = await prisma.jenjangPendidikan.findMany({
+      where: { 
+        OR: [
+          { nama: { contains: query, mode: "insensitive" } }
+        ],
+      },
+      skip,
+      take: limitNum,
+    });
+    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
+  }
+
+  if (type === "lembaga") {
+    const data = await prisma.lembaga.findMany({
+      where: { 
+        OR: [
+          { nama: { contains: query, mode: "insensitive" } }
+        ],
+      },
+      skip,
+      take: limitNum,
+    });
+    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
+  }
+
+  if (type === "siswa") {
+    const data = await prisma.siswa.findMany({
+      where: { 
+        OR: [
+          { nama: { contains: query, mode: "insensitive" } }
+        ],
+      },
+      skip,
+      take: limitNum,
+    });
+    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
+  }
+
+  if (type === "pengajar") {
+    const data = await prisma.pengajar.findMany({
+      where: { 
+        OR: [
+          { nama: { contains: query, mode: "insensitive" } }
+        ],
+      },
+      skip,
+      take: limitNum,
+    });
+    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
+  }
+
+  // ========================================= BEASISWA DESA ========================================= //
+  if (type === "keunggulanProgram") {
+    const data = await prisma.keunggulanProgram.findMany({
+      where: { 
+        OR: [
+          { judul: { contains: query, mode: "insensitive" } },
+          { deskripsi: { contains: query, mode: "insensitive" } }
+        ],
+      },
+      skip,
+      take: limitNum,
+    });
+    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
+  }
+
+  // ========================================= PROGRAM PENDIDIKAN ANAK ========================================= //
+  if (type === "tujuanProgram") {
+    const data = await prisma.tujuanProgram.findMany({
+      where: { 
+        OR: [
+          { judul: { contains: query, mode: "insensitive" } },
+          { deskripsi: { contains: query, mode: "insensitive" } }
+        ],
+      },
+      skip,
+      take: limitNum,
+    });
+    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
+  }
+
+  if (type === "programUnggulan") {
+    const data = await prisma.programUnggulan.findMany({
+      where: { 
+        OR: [
+          { judul: { contains: query, mode: "insensitive" } },
+          { deskripsi: { contains: query, mode: "insensitive" } }
+        ],
+      },
+      skip,
+      take: limitNum,
+    });
+    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
+  }
+
+  if (type === "lokasiJadwalBimbinganBelajarDesa") {
+    const data = await prisma.lokasiJadwalBimbinganBelajarDesa.findMany({
+      where: { 
+        OR: [
+          { judul: { contains: query, mode: "insensitive" } },
+          { deskripsi: { contains: query, mode: "insensitive" } }
+        ],
+      },
+      skip,
+      take: limitNum,
+    });
+    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
+  }
+
+  if (type === "fasilitasBimbinganBelajarDesa") {
+    const data = await prisma.fasilitasBimbinganBelajarDesa.findMany({
+      where: { 
+        OR: [
+          { judul: { contains: query, mode: "insensitive" } },
+          { deskripsi: { contains: query, mode: "insensitive" } }
+        ],
+      },
+      skip,
+      take: limitNum,
+    });
+    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
+  }
+
+  // ========================================= PENDIDIKAN NON FORMAL ========================================= //
+  if (type === "tujuanPendidikanNonFormal") {
+    const data = await prisma.tujuanPendidikanNonFormal.findMany({
+      where: { 
+        OR: [
+          { judul: { contains: query, mode: "insensitive" } },
+          { deskripsi: { contains: query, mode: "insensitive" } }
+        ],
+      },
+      skip,
+      take: limitNum,
+    });
+    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
+  }
+
+  if (type === "tempatKegiatan") {
+    const data = await prisma.tempatKegiatan.findMany({
+      where: { 
+        OR: [
+          { judul: { contains: query, mode: "insensitive" } },
+          { deskripsi: { contains: query, mode: "insensitive" } }
+        ],
+      },
+      skip,
+      take: limitNum,
+    });
+    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
+  }
+
+  if (type === "jenisProgramYangDiselenggarakan") {
+    const data = await prisma.jenisProgramYangDiselenggarakan.findMany({
+      where: { 
+        OR: [
+          { judul: { contains: query, mode: "insensitive" } },
+          { deskripsi: { contains: query, mode: "insensitive" } }
+        ],
+      },
+      skip,
+      take: limitNum,
+    });
+    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
+  }
+
+  // ========================================= PERPUSTAKAAN ========================================= //
+  if (type === "dataPerpustakaan") {
+    const data = await prisma.dataPerpustakaan.findMany({
+      where: { 
+        OR: [
+          { judul: { contains: query, mode: "insensitive" } },
+          { deskripsi: { contains: query, mode: "insensitive" } }
+        ],
+      },
+      skip,
+      take: limitNum,
+    });
+    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
+  }
+
+  // ========================================= DATA PENDIDIKAN ========================================= //
+  if (type === "dataPendidikan") {
+    const data = await prisma.dataPendidikan.findMany({
+      where: { 
+        OR: [
+          { name: { contains: query, mode: "insensitive" } },
+          { jumlah: { contains: query, mode: "insensitive" } }
+        ],
+      },
+      skip,
+      take: limitNum,
+    });
+    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
+  }
+
   // 🌍 GLOBAL SEARCH — cari di beberapa modul sekaligus
   const [
     pejabatdesa,
@@ -760,6 +1211,37 @@ export default async function searchFindMany(context: Context) {
     programKemiskinan,
     sektorUnggulanDesa,
     demografiPekerjaan,
+    desaDigital,
+    programKreatif,
+    kolaborasiInovasi,
+    mitraKolaborasi,
+    infoTekno,
+    pengelolaanSampah,
+    keteranganBankSampahTerdekat,
+    programPenghijauan,
+    dataLingkunganDesa,
+    gotongRoyong,
+    tujuanEdukasiLingkungan,
+    materiEdukasiLingkungan,
+    contohEdukasiLingkungan,
+    filosofiTriHita,
+    bentukKonservasiBerdasarkanAdat,
+    nilaiKonservasiAdat,
+    jenjangPendidikan,
+    lembaga,
+    siswa,
+    pengajar,
+    keunggulanProgram,
+    tujuanProgram,
+    programUnggulan,
+    lokasiJadwalBimbinganBelajarDesa,
+    fasilitasBimbinganBelajarDesa,
+    tujuanPendidikanNonFormal,
+    tempatKegiatan,
+    jenisProgramYangDiselenggarakan,
+    dataPerpustakaan,
+    dataPendidikan
+
   ] = await Promise.all([
     prisma.pejabatDesa.findMany({
       where: { name: { contains: query, mode: "insensitive" } },
@@ -1097,6 +1579,277 @@ export default async function searchFindMany(context: Context) {
         pekerjaan: { contains: query, mode: "insensitive" } 
       },
       take: limitNum,
+    }),
+    prisma.desaDigital.findMany({
+      where: { 
+        OR: [
+          { name: { contains: query, mode: "insensitive" } },
+          { deskripsi: { contains: query, mode: "insensitive" } }
+        ],
+      },
+      take: limitNum,
+    }),
+    prisma.programKreatif.findMany({
+      where: { 
+        OR: [
+          { name: { contains: query, mode: "insensitive" } },
+          { slug: { contains: query, mode: "insensitive" } },
+          { deskripsi: { contains: query, mode: "insensitive" } }
+        ],
+      },
+      take: limitNum,
+    }),
+    prisma.kolaborasiInovasi.findMany({
+      where: { 
+        OR: [
+          { name: { contains: query, mode: "insensitive" } },
+          { slug: { contains: query, mode: "insensitive" } },
+          { deskripsi: { contains: query, mode: "insensitive" } },
+          { kolaborator: { contains: query, mode: "insensitive" } }
+        ],
+      },
+      take: limitNum,
+    }),
+    prisma.mitraKolaborasi.findMany({
+      where: { 
+        OR: [
+          { name: { contains: query, mode: "insensitive" } }
+        ],
+      },
+      take: limitNum,
+    }),
+    prisma.infoTekno.findMany({
+      where: { 
+        OR: [
+          { name: { contains: query, mode: "insensitive" } },
+          { deskripsi: { contains: query, mode: "insensitive" } }
+        ],
+      },
+      take: limitNum,
+    }),
+    prisma.pengelolaanSampah.findMany({
+      where: { 
+        OR: [
+          { name: { contains: query, mode: "insensitive" } }
+        ],
+      },
+      take: limitNum,
+    }),
+    prisma.keteranganBankSampahTerdekat.findMany({
+      where: { 
+        OR: [
+          { name: { contains: query, mode: "insensitive" } },
+          { alamat: { contains: query, mode: "insensitive" } },
+          { namaTempatMaps: { contains: query, mode: "insensitive" } },
+          { linkPetunjukArah: { contains: query, mode: "insensitive" } }
+        ],
+      },
+      take: limitNum,
+    }),
+    prisma.programPenghijauan.findMany({
+      where: { 
+        OR: [
+          { name: { contains: query, mode: "insensitive" } },
+          { judul: { contains: query, mode: "insensitive" } },
+          { deskripsi: { contains: query, mode: "insensitive" } }
+        ],
+      },
+      take: limitNum,
+    }), 
+    prisma.dataLingkunganDesa.findMany({
+      where: { 
+        OR: [
+          { name: { contains: query, mode: "insensitive" } },
+          { deskripsi: { contains: query, mode: "insensitive" } }
+        ],
+      },
+      take: limitNum,
+    }),
+    prisma.kegiatanDesa.findMany({
+      where: { 
+        OR: [
+          { judul: { contains: query, mode: "insensitive" } },
+          { deskripsiSingkat: { contains: query, mode: "insensitive" } },
+          { deskripsiLengkap: { contains: query, mode: "insensitive" } }
+        ],
+      },
+      take: limitNum,
+    }),
+    prisma.tujuanEdukasiLingkungan.findMany({
+      where: { 
+        OR: [
+          { judul: { contains: query, mode: "insensitive" } },
+          { deskripsi: { contains: query, mode: "insensitive" } }
+        ],
+      },
+      take: limitNum,
+    }),
+    prisma.materiEdukasiLingkungan.findMany({
+      where: { 
+        OR: [
+          { judul: { contains: query, mode: "insensitive" } },
+          { deskripsi: { contains: query, mode: "insensitive" } }
+        ],
+      },
+      take: limitNum,
+    }),
+    prisma.contohEdukasiLingkungan.findMany({
+      where: { 
+        OR: [
+          { judul: { contains: query, mode: "insensitive" } },
+          { deskripsi: { contains: query, mode: "insensitive" } }
+        ],
+      },
+      take: limitNum,
+    }),
+    prisma.filosofiTriHita.findMany({
+      where: { 
+        OR: [
+          { judul: { contains: query, mode: "insensitive" } },
+          { deskripsi: { contains: query, mode: "insensitive" } }
+        ],
+      },
+      take: limitNum,
+    }),
+    prisma.bentukKonservasiBerdasarkanAdat.findMany({
+      where: { 
+        OR: [
+          { judul: { contains: query, mode: "insensitive" } },
+          { deskripsi: { contains: query, mode: "insensitive" } }
+        ],
+      },
+      take: limitNum,
+    }),
+    prisma.nilaiKonservasiAdat.findMany({
+      where: { 
+        OR: [
+          { judul: { contains: query, mode: "insensitive" } },
+          { deskripsi: { contains: query, mode: "insensitive" } }
+        ],
+      },
+      take: limitNum,
+    }),
+    prisma.jenjangPendidikan.findMany({
+      where: { 
+        OR: [
+          { nama: { contains: query, mode: "insensitive" } }
+        ],
+      },
+      take: limitNum,
+    }),
+    prisma.lembaga.findMany({
+      where: { 
+        OR: [
+          { nama: { contains: query, mode: "insensitive" } }
+        ],
+      },
+      take: limitNum,
+    }),
+    prisma.siswa.findMany({
+      where: { 
+        OR: [
+          { nama: { contains: query, mode: "insensitive" } }
+        ],
+      },
+      take: limitNum,
+    }),
+    prisma.pengajar.findMany({
+      where: { 
+        OR: [
+          { nama: { contains: query, mode: "insensitive" } }
+        ],
+      },
+      take: limitNum,
+    }),
+    prisma.keunggulanProgram.findMany({
+      where: { 
+        OR: [
+          { judul: { contains: query, mode: "insensitive" } },
+          { deskripsi: { contains: query, mode: "insensitive" } }
+        ],
+      },
+      take: limitNum,
+    }),
+    prisma.tujuanProgram.findMany({
+      where: { 
+        OR: [
+          { judul: { contains: query, mode: "insensitive" } },
+          { deskripsi: { contains: query, mode: "insensitive" } }
+        ],
+      },
+      take: limitNum,
+    }),
+    prisma.programUnggulan.findMany({
+      where: { 
+        OR: [
+          { judul: { contains: query, mode: "insensitive" } },
+          { deskripsi: { contains: query, mode: "insensitive" } }
+        ],
+      },
+      take: limitNum,
+    }),
+    prisma.lokasiJadwalBimbinganBelajarDesa.findMany({
+      where: { 
+        OR: [
+          { judul: { contains: query, mode: "insensitive" } },
+          { deskripsi: { contains: query, mode: "insensitive" } }
+        ],
+      },
+      take: limitNum,
+    }),
+    prisma.fasilitasBimbinganBelajarDesa.findMany({
+      where: { 
+        OR: [
+          { judul: { contains: query, mode: "insensitive" } },
+          { deskripsi: { contains: query, mode: "insensitive" } }
+        ],
+      },
+      take: limitNum,
+    }),
+    prisma.tujuanPendidikanNonFormal.findMany({
+      where: { 
+        OR: [
+          { judul: { contains: query, mode: "insensitive" } },
+          { deskripsi: { contains: query, mode: "insensitive" } }
+        ],
+      },
+      take: limitNum,
+    }),
+    prisma.tempatKegiatan.findMany({
+      where: { 
+        OR: [
+          { judul: { contains: query, mode: "insensitive" } },
+          { deskripsi: { contains: query, mode: "insensitive" } }
+        ],
+      },
+      take: limitNum,
+    }),
+    prisma.jenisProgramYangDiselenggarakan.findMany({
+      where: { 
+        OR: [
+          { judul: { contains: query, mode: "insensitive" } },
+          { deskripsi: { contains: query, mode: "insensitive" } }
+        ],
+      },
+      take: limitNum,
+    }),
+    prisma.dataPerpustakaan.findMany({
+      where: { 
+        OR: [
+          { judul: { contains: query, mode: "insensitive" } },
+          { deskripsi: { contains: query, mode: "insensitive" } }
+        ],
+      },
+      take: limitNum,
+    }),
+    prisma.dataPendidikan.findMany({
+      where: { 
+        OR: [
+          { name: { contains: query, mode: "insensitive" } },
+          { jumlah: { contains: query, mode: "insensitive" } }
+        ],
+      },
+      take: limitNum,
     })
   ]);
 
@@ -1180,6 +1933,36 @@ export default async function searchFindMany(context: Context) {
       ...programKemiskinan.map((b) => ({ type: "programKemiskinan", ...b })),
       ...sektorUnggulanDesa.map((b) => ({ type: "sektorUnggulanDesa", ...b })),
       ...demografiPekerjaan.map((b) => ({ type: "demografiPekerjaan", ...b })),
+      ...desaDigital.map((b) => ({ type: "desaDigital", ...b })),
+      ...programKreatif.map((b) => ({ type: "programKreatif", ...b })),
+      ...kolaborasiInovasi.map((b) => ({ type: "kolaborasiInovasi", ...b })),
+      ...mitraKolaborasi.map((b) => ({ type: "mitraKolaborasi", ...b })),
+      ...infoTekno.map((b) => ({ type: "infoTekno", ...b })),
+      ...pengelolaanSampah.map((b) => ({ type: "pengelolaanSampah", ...b })),
+      ...keteranganBankSampahTerdekat.map((b) => ({ type: "keteranganBankSampahTerdekat", ...b })),
+      ...programPenghijauan.map((b) => ({ type: "programPenghijauan", ...b })),
+      ...dataLingkunganDesa.map((b) => ({ type: "dataLingkunganDesa", ...b })),
+      ...gotongRoyong.map((b) => ({ type: "gotongRoyong", ...b })),
+      ...tujuanEdukasiLingkungan.map((b) => ({ type: "tujuanEdukasiLingkungan", ...b })),
+      ...materiEdukasiLingkungan.map((b) => ({ type: "materiEdukasiLingkungan", ...b })),
+      ...contohEdukasiLingkungan.map((b) => ({ type: "contohEdukasiLingkungan", ...b })),
+      ...filosofiTriHita.map((b) => ({ type: "filosofiTriHita", ...b })),
+      ...bentukKonservasiBerdasarkanAdat.map((b) => ({ type: "bentukKonservasiBerdasarkanAdat", ...b })),
+      ...nilaiKonservasiAdat.map((b) => ({ type: "nilaiKonservasiAdat", ...b })),
+      ...jenjangPendidikan.map((b) => ({ type: "jenjangPendidikan", ...b })),
+      ...lembaga.map((b) => ({ type: "lembaga", ...b })),
+      ...siswa.map((b) => ({ type: "siswa", ...b })),
+      ...pengajar.map((b) => ({ type: "pengajar", ...b })),
+      ...keunggulanProgram.map((b) => ({ type: "keunggulanProgram", ...b })),
+      ...tujuanProgram.map((b) => ({ type: "tujuanProgram", ...b })),
+      ...programUnggulan.map((b) => ({ type: "programUnggulan", ...b })),
+      ...tujuanPendidikanNonFormal.map((b) => ({ type: "tujuanPendidikanNonFormal", ...b })),
+      ...fasilitasBimbinganBelajarDesa.map((b) => ({ type: "fasilitasBimbinganBelajarDesa", ...b })),
+      ...lokasiJadwalBimbinganBelajarDesa.map((b) => ({ type: "lokasiJadwalBimbinganBelajarDesa", ...b })),
+      ...tempatKegiatan.map((b) => ({ type: "tempatKegiatan", ...b })),
+      ...jenisProgramYangDiselenggarakan.map((b) => ({ type: "jenisProgramYangDiselenggarakan", ...b })),
+      ...dataPerpustakaan.map((b) => ({ type: "dataPerpustakaan", ...b })),
+      ...dataPendidikan.map((b) => ({ type: "dataPendidikan", ...b })),
 
     ],
     nextPage: null, // bisa dibuat lebih kompleks kalau perlu

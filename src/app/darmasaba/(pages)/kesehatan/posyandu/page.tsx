@@ -7,16 +7,18 @@ import { IconCalendar, IconInfoCircle, IconPhone, IconSearch } from "@tabler/ico
 import { useState } from "react";
 import { useProxy } from "valtio/utils";
 import BackButton from "../../desa/layanan/_com/BackButto";
+import { useDebouncedValue } from "@mantine/hooks";
 
 export default function Page() {
   const state = useProxy(posyandustate);
   const [search, setSearch] = useState("");
+  const [debouncedSearch] = useDebouncedValue(search, 500); // 500ms delay
 
   const { data, page, totalPages, loading, load } = state.findMany;
 
   useShallowEffect(() => {
-    load(page, 6, search);
-  }, [page, search]);
+    load(page, 6, debouncedSearch);
+  }, [page, debouncedSearch]);
 
   if (loading || !data) {
     return (

@@ -41,6 +41,37 @@ function Page() {
     )
   }
 
+  if (data.length === 0) {
+    return (
+      <Stack pos="relative" bg={colors.Bg} py="xl" gap={22}>
+        <Box px={{ base: 'md', md: 100 }}>
+          <Text fz={{ base: 'h1', md: '2.5rem' }} c={colors['blue-button']} fw="bold">
+            Pencegahan Kriminalitas
+          </Text>
+          <Text c={colors['blue-button']} fz={{ base: 'h4', md: 'h3' }}>
+            Keamanan Komunitas & Pencegahan Kriminal
+          </Text>
+        </Box>
+        <SimpleGrid
+          px={{ base: 20, md: 100 }}
+          cols={{ base: 1, md: 2 }}
+          spacing="xl"
+        >
+          <Paper p="xl" radius="xl" shadow="lg" >
+            <Text fz={{ base: 'h3', md: 'h2' }} c={colors['blue-button']} fw="bold">
+              Program Keamanan Berjalan
+            </Text>
+            <Stack pt={30} gap="lg">
+              <Text c="dimmed">
+                Tidak ada data pencegahan kriminalitas yang cocok
+              </Text>
+            </Stack>
+          </Paper>
+        </SimpleGrid>
+      </Stack>
+    )
+  }
+
   return (
     <Stack pos="relative" bg={colors.Bg} py="xl" gap={22}>
       <Box px={{ base: 'md', md: 100 }}>

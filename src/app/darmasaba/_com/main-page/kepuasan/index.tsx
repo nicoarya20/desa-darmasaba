@@ -332,7 +332,7 @@ function Kepuasan() {
               <TextInput
                 label="Nama"
                 type='text'
-                placeholder="masukkan nama"
+                placeholder="Masukkan nama"
                 defaultValue={state.create.form.name}
                 onChange={(val) => {
                   state.create.form.name = val.currentTarget.value;

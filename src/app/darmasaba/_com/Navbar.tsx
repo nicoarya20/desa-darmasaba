@@ -86,10 +86,15 @@ function NavbarMobile({ listNavbar }: { listNavbar: MenuItem[] }) {
               align="center"
               p="xs"
               onClick={() => {
-                router.push(item.href);
-                stateNav.mobileOpen = false;
+                if (item.href) {
+                  router.push(item.href);
+                  stateNav.mobileOpen = false;
+                }
               }}
-              style={{ cursor: "pointer" }}
+              style={{
+                cursor: item.href ? "pointer" : "default",
+                opacity: item.href ? 1 : 0.8
+              }}
             >
               <Text c="dark.9" fw={600} fz="md">
                 {item.name}

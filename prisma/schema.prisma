@@ -1606,7 +1606,7 @@ model Pembiayaan {
   ApbDesa   ApbDesa[] @relation("ApbDesaPembiayaan")
 }
 
-// ========================================= INOVASI ========================================= //
+// ========================================= MENU INOVASI ========================================= //
 // ========================================= DESA DIGITAL / SMART VILLAGE ========================================= //
 model DesaDigital {
   id        String      @id @default(cuid())

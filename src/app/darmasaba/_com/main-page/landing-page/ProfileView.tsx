@@ -37,9 +37,13 @@ export default function ProfileView({ data }: ProfileViewProps) {
         <Image
           src={data.image.link}
           alt={data.name || 'Foto profil'}
-          fit="cover"
+          fit="contain"
           radius="lg"
           loading="lazy"
+          style={{
+            objectPosition: 'bottom center',
+            transform: 'translateY(10px)', // sedikit turun biar natural
+          }}
         />
       ) : (
         <Stack align="center" gap="xs" w="100%" py="xl">
@@ -49,13 +53,26 @@ export default function ProfileView({ data }: ProfileViewProps) {
           </Text>
         </Stack>
       )}
-      <Box pos="absolute" bottom={0} w="100%" p={{ base: 'xs', md: 'md' }}>
+
+      {/* Box nama dan jabatan - sedikit overlap dengan gambar */}
+      <Box
+        pos="absolute"
+        bottom={-20} // bikin naik sedikit ke gambar
+        right={0}
+        w="100%"
+        p={{ base: 'xs', md: 'md' }}
+        style={{ pointerEvents: 'none' }} // biar ga ganggu klik di gambar
+      >
         <Card
           px="lg"
-          radius="2xl"
+          py="sm"
+          radius="lg"
           withBorder
-          className="glass3"
-          style={{ border: '1px solid rgba(255,255,255,0.15)' }}
+          style={{
+            boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+            backdropFilter: 'blur(6px)',
+            pointerEvents: 'auto',
+          }}
         >
           <Tooltip label="Jabatan Resmi" withArrow>
             <Text fz="sm" c="dimmed">

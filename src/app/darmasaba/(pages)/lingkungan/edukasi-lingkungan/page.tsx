@@ -78,9 +78,7 @@ function Page() {
                   <Tooltip label={materi.data?.judul} position="top" withArrow>
                     <Stack gap={4} align="center">
                     <IconRecycle size={28} color={colors['blue-button']} />
-                      <Text fz="h3" fw="bold" c={colors['blue-button']} ta="center">
-                        {materi.data?.judul}
-                      </Text>
+                      <Text fz="h3" fw="bold" c={colors['blue-button']} ta="center" dangerouslySetInnerHTML={{ __html: materi.data?.judul || '' }} />
                     </Stack>
                   </Tooltip>
                 </Box>

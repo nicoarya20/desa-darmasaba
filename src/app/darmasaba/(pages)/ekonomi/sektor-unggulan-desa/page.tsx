@@ -28,6 +28,32 @@ function Page() {
     )
   }
 
+  // Add this check before the return statement
+if (data.length === 0) {
+  return (
+    <Stack pos="relative" bg={colors.Bg} py="xl" gap={22}>
+      <Box px={{ base: 'md', md: 100 }}>
+        <BackButton />
+        <Text fz={{ base: 'h1', md: '2.5rem' }} c={colors['blue-button']} fw="bold">
+          Sektor Unggulan Desa Darmasaba
+        </Text>
+        <Text c="dimmed" mt="md">
+          Data sektor unggulan belum tersedia
+        </Text>
+      </Box>
+    </Stack>
+  );
+}
+
+const chartData = data
+  .filter(item => item?.name && typeof item.value === 'number')
+  .map((item) => ({
+    id: item.id,
+    sektor: item.name,
+    Ton: item.value,
+  }));
+
+
   return (
     <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"22"}>
       <Box px={{ base: 'md', md: 100 }}>
@@ -54,11 +80,7 @@ function Page() {
             <BarChart
               p={10}
               h={300}
-              data={data.map((item) => ({
-                id: item.id,
-                sektor: item.name,
-                Ton: item.value,
-              }))}
+              data={chartData}
               dataKey="sektor"
               series={[
                 { name: 'Ton', color: colors['blue-button'] },

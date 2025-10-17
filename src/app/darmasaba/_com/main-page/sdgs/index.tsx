@@ -51,7 +51,7 @@ export default function SDGS() {
           </Title>
         </Center>
         <Text fz={{ base: "1rem", md: "1.2rem" }} ta="center" c="dimmed" mt="md" maw={820} mx="auto">
-          SDGs Desa merupakan langkah nyata untuk mewujudkan desa yang maju, inklusif, dan berkelanjutan melalui 17 tujuan pembangunan: dari pengentasan kemiskinan, pendidikan, kesehatan, kesetaraan gender, hingga pelestarian lingkungan.
+          SDGs Desa merupakan langkah nyata untuk mewujudkan desa yang maju, inklusif, dan berkelanjutan melalui 17 tujuan pembangunan dari pengentasan kemiskinan, pendidikan, kesehatan, kesetaraan gender, hingga pelestarian lingkungan.
         </Text>
 
         <Box py={50}>
@@ -67,49 +67,62 @@ export default function SDGS() {
           >
             {sdgsDesa && sdgsDesa.length > 0 ? (
               <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="xl" verticalSpacing="xl">
-                {sdgsDesa.map((item) => (
-                  <Paper
-                    key={item.id}
-                    p="lg"
-                    radius="xl"
-                    shadow="sm"
-                    withBorder
-                    style={{
-                      background: "linear-gradient(180deg, #FFFFFF, #F6F8FA)",
-                      border: "1px solid rgba(0,0,0,0.05)",
-                      transition: "all 0.3s ease",
-                    }}
-                  >
-                    <Center mb="lg">
-                      <Box
-                        p="md"
-                        style={{
-                          background: "rgba(240, 249, 255, 0.8)",
-                          backdropFilter: "blur(6px)",
-                          width: mobile ? 140 : 160,
-                          height: mobile ? 140 : 160,
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          borderRadius: "1rem",
-                          boxShadow: "0 6px 16px rgba(0,0,0,0.06)",
-                        }}
-                      >
-                        <Image
-                          src={item.image?.link ? item.image.link : "/placeholder-sdgs.png"}
-                          alt={item.name}
-                          w={mobile ? 90 : 110}
-                          h={mobile ? 90 : 110}
-                          fit="contain"
-                          loading="lazy"
-                        />
-                      </Box>
-                    </Center>
+              {sdgsDesa.map((item) => (
+                <Paper
+                  key={item.id}
+                  p="lg"
+                  radius="xl"
+                  shadow="sm"
+                  withBorder
+                  style={{
+                    background: "linear-gradient(180deg, #FFFFFF, #F6F8FA)",
+                    border: "1px solid rgba(0,0,0,0.05)",
+                    transition: "all 0.3s ease",
+                    height: "100%", // biar tinggi antar card konsisten
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
+                >
+                  <Center mb="lg">
+                    <Box
+                      p="md"
+                      style={{
+                        background: "rgba(240, 249, 255, 0.8)",
+                        backdropFilter: "blur(6px)",
+                        width: mobile ? 140 : 160,
+                        height: mobile ? 140 : 160,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        borderRadius: "1rem",
+                        boxShadow: "0 6px 16px rgba(0,0,0,0.06)",
+                      }}
+                    >
+                      <Image
+                        src={item.image?.link ? item.image.link : "/placeholder-sdgs.png"}
+                        alt={item.name}
+                        w={mobile ? 90 : 110}
+                        h={mobile ? 90 : 110}
+                        fit="contain"
+                        loading="lazy"
+                      />
+                    </Box>
+                  </Center>
+            
+                  {/* Stack isi teks & angka */}
+                  <Stack justify="space-between" align="center" gap="xs" h="100%">
                     <Tooltip label="Nama tujuan SDGs Desa" position="top" withArrow>
-                      <Text ta="center" fz={{ base: "lg", md: "xl" }} fw={700} mb="xs">
+                      <Text
+                        ta="center"
+                        fz={{ base: "lg", md: "xl" }}
+                        fw={700}
+                        mb="xs"
+                        style={{ minHeight: mobile ? 60 : 70 }} // biar judulnya punya tinggi tetap
+                      >
                         {item.name}
                       </Text>
                     </Tooltip>
+            
                     <Title
                       order={2}
                       ta="center"
@@ -122,9 +135,11 @@ export default function SDGS() {
                     >
                       {item.jumlah}
                     </Title>
-                  </Paper>
-                ))}
-              </SimpleGrid>
+                  </Stack>
+                </Paper>
+              ))}
+            </SimpleGrid>
+            
             ) : (
               <Center mih={200} style={{ flexDirection: "column" }}>
                 <IconMoodSad size={48} stroke={1.5} style={{ marginBottom: "1rem" }} />

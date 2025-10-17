@@ -55,81 +55,95 @@ const dataPerpustakaan = proxy({
     },
   },
   findMany: {
-      data: null as
-        | Prisma.DataPerpustakaanGetPayload<{
-            include: {
-              image: true;
-              kategori: true;
-            };
-          }>[]
-        | null,
-      page: 1,
-      totalPages: 1,
-      loading: false,
-      search: "",
-     load: async (page = 1, limit = 10, search = "", kategori = "") => {
-        dataPerpustakaan.findMany.loading = true; // ✅ Akses langsung via nama path
-        dataPerpustakaan.findMany.page = page;
-        dataPerpustakaan.findMany.search = search;
-    
-        try {
-          const query: any = { page, limit };
-          if (search) query.search = search;
-          if (kategori) query.kategori = kategori;
-      
-          const res = await ApiFetch.api.pendidikan.perpustakaandigital.dataperpustakaan["findMany"].get({ query });
-      
-          if (res.status === 200 && res.data?.success) {
-            dataPerpustakaan.findMany.data = res.data.data ?? [];
-            dataPerpustakaan.findMany.totalPages = res.data.totalPages ?? 1;
-          } else {
-            dataPerpustakaan.findMany.data = [];
-            dataPerpustakaan.findMany.totalPages = 1;
-          }
-        } catch (err) {
-          console.error("Gagal fetch data perpustakaan paginated:", err);
+    data: null as
+      | Prisma.DataPerpustakaanGetPayload<{
+          include: {
+            image: true;
+            kategori: true;
+          };
+        }>[]
+      | null,
+    page: 1,
+    totalPages: 1,
+    loading: false,
+    search: "",
+    load: async (page = 1, limit = 10, search = "", kategori = "") => {
+      const startTime = Date.now();
+      dataPerpustakaan.findMany.loading = true; // ✅ Akses langsung via nama path
+      dataPerpustakaan.findMany.page = page;
+      dataPerpustakaan.findMany.search = search;
+
+      try {
+        const query: any = { page, limit };
+        if (search) query.search = search;
+        if (kategori) query.kategori = kategori;
+
+        const res =
+          await ApiFetch.api.pendidikan.perpustakaandigital.dataperpustakaan[
+            "findMany"
+          ].get({ query });
+
+        if (res.status === 200 && res.data?.success) {
+          dataPerpustakaan.findMany.data = res.data.data ?? [];
+          dataPerpustakaan.findMany.totalPages = res.data.totalPages ?? 1;
+        } else {
           dataPerpustakaan.findMany.data = [];
           dataPerpustakaan.findMany.totalPages = 1;
-        } finally {
+        }
+      } catch (err) {
+        console.error("Gagal fetch data perpustakaan paginated:", err);
+        dataPerpustakaan.findMany.data = [];
+        dataPerpustakaan.findMany.totalPages = 1;
+      } finally {
+        // pastikan minimal 300ms sebelum loading = false (biar UX smooth)
+        const elapsed = Date.now() - startTime;
+        const minDelay = 300;
+        const delay = elapsed < minDelay ? minDelay - elapsed : 0;
+
+        setTimeout(() => {
           dataPerpustakaan.findMany.loading = false;
-        }
-      },
+        }, delay);
+      }
     },
-    findManyAll: {
-      data: null as
-        | Prisma.DataPerpustakaanGetPayload<{
-            include: {
-              image: true;
-              kategori: true;
-            };
-          }>[]
-        | null,
-      loading: false,
-      search: "",
-     load: async (search = "", kategori = "") => {
-        dataPerpustakaan.findMany.loading = true; // ✅ Akses langsung via nama path
-        dataPerpustakaan.findMany.search = search;
-    
-        try {
-          const query: any = {};
-          if (search) query.search = search;
-          if (kategori) query.kategori = kategori;
-      
-          const res = await ApiFetch.api.pendidikan.perpustakaandigital.dataperpustakaan["findManyAll"].get({ query });
-      
-          if (res.status === 200 && res.data?.success) {
-            dataPerpustakaan.findManyAll.data = res.data.data ?? [];
-          } else {
-            dataPerpustakaan.findManyAll.data = [];
-          }
-        } catch (err) {
-          console.error("Gagal fetch data perpustakaan paginated:", err);
+  },
+  findManyAll: {
+    data: null as
+      | Prisma.DataPerpustakaanGetPayload<{
+          include: {
+            image: true;
+            kategori: true;
+          };
+        }>[]
+      | null,
+    loading: false,
+    search: "",
+    load: async (search = "", kategori = "") => {
+      dataPerpustakaan.findMany.loading = true; // ✅ Akses langsung via nama path
+      dataPerpustakaan.findMany.search = search;
+
+      try {
+        const query: any = {};
+        if (search) query.search = search;
+        if (kategori) query.kategori = kategori;
+
+        const res =
+          await ApiFetch.api.pendidikan.perpustakaandigital.dataperpustakaan[
+            "findManyAll"
+          ].get({ query });
+
+        if (res.status === 200 && res.data?.success) {
+          dataPerpustakaan.findManyAll.data = res.data.data ?? [];
+        } else {
           dataPerpustakaan.findManyAll.data = [];
-        } finally {
-          dataPerpustakaan.findManyAll.loading = false;
         }
-      },
+      } catch (err) {
+        console.error("Gagal fetch data perpustakaan paginated:", err);
+        dataPerpustakaan.findManyAll.data = [];
+      } finally {
+        dataPerpustakaan.findManyAll.loading = false;
+      }
     },
+  },
   findUnique: {
     data: null as Prisma.DataPerpustakaanGetPayload<{
       include: {
@@ -356,17 +370,20 @@ const kategoriBuku = proxy({
     totalPages: 1,
     loading: false,
     search: "",
-   load: async (page = 1, limit = 10, search = "") => {
+    load: async (page = 1, limit = 10, search = "") => {
       kategoriBuku.findMany.loading = true; // ✅ Akses langsung via nama path
       kategoriBuku.findMany.page = page;
       kategoriBuku.findMany.search = search;
-  
+
       try {
         const query: any = { page, limit };
         if (search) query.search = search;
-    
-        const res = await ApiFetch.api.pendidikan.perpustakaandigital.kategoribuku["findMany"].get({ query });
-    
+
+        const res =
+          await ApiFetch.api.pendidikan.perpustakaandigital.kategoribuku[
+            "findMany"
+          ].get({ query });
+
         if (res.status === 200 && res.data?.success) {
           kategoriBuku.findMany.data = res.data.data ?? [];
           kategoriBuku.findMany.totalPages = res.data.totalPages ?? 1;
@@ -557,7 +574,7 @@ const templatePeminjamanBuku = z.object({
   tanggalPinjam: z.string().min(1, "Tanggal Pinjam harus diisi"),
   batasKembali: z.string().min(1, "Batas Kembali harus diisi"),
   tanggalKembali: z.string().min(1, "Tanggal Kembali harus diisi"),
-  catatan: z.string().min(1, "Catatan harus diisi")
+  catatan: z.string().min(1, "Catatan harus diisi"),
 });
 
 const defaultPeminjamanBuku = {
@@ -568,7 +585,7 @@ const defaultPeminjamanBuku = {
   tanggalPinjam: "",
   batasKembali: "",
   tanggalKembali: "",
-  catatan: ""
+  catatan: "",
 };
 
 interface FormEditData {
@@ -584,7 +601,7 @@ interface FormEditData {
   batasKembali: string;
   tanggalKembali: string;
   catatan: string;
-  status: 'Dipinjam' | 'Dikembalikan' | 'Terlambat' | 'Dibatalkan';
+  status: "Dipinjam" | "Dikembalikan" | "Terlambat" | "Dibatalkan";
 }
 
 const editForm: FormEditData = {
@@ -596,8 +613,8 @@ const editForm: FormEditData = {
   batasKembali: "",
   tanggalKembali: "",
   catatan: "",
-  status: "Dipinjam"
-}
+  status: "Dipinjam",
+};
 
 const peminjamanBuku = proxy({
   create: {
@@ -646,13 +663,16 @@ const peminjamanBuku = proxy({
       peminjamanBuku.findMany.loading = true; // ✅ Akses langsung via nama path
       peminjamanBuku.findMany.page = page;
       peminjamanBuku.findMany.search = search;
-  
+
       try {
         const query: any = { page, limit };
         if (search) query.search = search;
-    
-        const res = await ApiFetch.api.pendidikan.perpustakaandigital.peminjamanbuku["findMany"].get({ query });
-    
+
+        const res =
+          await ApiFetch.api.pendidikan.perpustakaandigital.peminjamanbuku[
+            "findMany"
+          ].get({ query });
+
         if (res.status === 200 && res.data?.success) {
           peminjamanBuku.findMany.data = res.data.data ?? [];
           peminjamanBuku.findMany.totalPages = res.data.totalPages ?? 1;
@@ -720,7 +740,9 @@ const peminjamanBuku = proxy({
           );
           await peminjamanBuku.findMany.load(); // refresh list
         } else {
-          toast.error(result?.message || "Gagal menghapus Data Peminjaman Buku");
+          toast.error(
+            result?.message || "Gagal menghapus Data Peminjaman Buku"
+          );
         }
       } catch (error) {
         console.error("Gagal delete:", error);
@@ -768,7 +790,7 @@ const peminjamanBuku = proxy({
             batasKembali: data.batasKembali,
             tanggalKembali: data.tanggalKembali,
             catatan: data.catatan,
-            status: data.status
+            status: data.status,
           };
           return data; // Return the loaded data
         } else {
@@ -811,7 +833,7 @@ const peminjamanBuku = proxy({
               batasKembali: this.form.batasKembali,
               tanggalKembali: this.form.tanggalKembali,
               catatan: this.form.catatan,
-              status: this.form.status
+              status: this.form.status,
             }),
           }
         );
@@ -830,7 +852,9 @@ const peminjamanBuku = proxy({
           await peminjamanBuku.findMany.load(); // refresh list
           return true;
         } else {
-          throw new Error(result.message || "Gagal update data peminjaman buku");
+          throw new Error(
+            result.message || "Gagal update data peminjaman buku"
+          );
         }
       } catch (error) {
         console.error("Error updating data peminjaman buku:", error);
@@ -849,7 +873,7 @@ const peminjamanBuku = proxy({
       peminjamanBuku.update.form = { ...editForm };
     },
   },
-})
+});
 
 const perpustakaanDigitalState = proxy({
   dataPerpustakaan,

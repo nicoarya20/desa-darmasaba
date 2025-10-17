@@ -7,10 +7,11 @@ import { IconArrowRight } from "@tabler/icons-react";
 import { MenuItem } from "../../../../types/menu-item";
 import { useTransitionRouter } from "next-view-transitions";
 import colors from "@/con/colors";
+import { usePathname } from "next/navigation";
 
 export function NavbarSubMenu({ item }: { item: MenuItem[] | null }) {
   const router = useTransitionRouter();
-
+  const pathname = usePathname();
   return (
     <motion.div
       key={Math.random().toString(36).slice(2)}
@@ -32,33 +33,34 @@ export function NavbarSubMenu({ item }: { item: MenuItem[] | null }) {
           <Stack gap="xs" align="stretch">
             {item.map((link, index) => (
               <Button
-                key={index}
-                variant="subtle"
-                justify="space-between"
-                size="lg"
-                radius="md"
-                color="gray.0"
-                onClick={() => {
+              key={index}
+              variant="subtle"
+              justify="space-between"
+              size="lg"
+              radius="md"
+              color={pathname === link.href ? 'blue' : 'gray'}
+              onClick={() => {
+                if (link.href) {
                   router.push(link.href);
                   stateNav.item = null;
                   stateNav.isSearch = false;
-                }}
-                rightSection={<IconArrowRight size={18} />}
-                styles={(theme) => ({
-                  root: {
-                    background: "transparent",
-                    color: colors['blue-button'],
-                    fontWeight: 500,
-                    transition: "all 0.2s ease",
-                    "&:hover": {
-                      background: theme.colors.gray[8],
-                      boxShadow: `0 0 12px ${theme.colors.blue[6]}55`,
-                    },
-                  },
-                })}
-              >
-                {link.name}
-              </Button>
+                }
+              }}
+              rightSection={<IconArrowRight size={18} />}
+              styles={(theme) => ({
+                root: {
+                  background: pathname === link.href ? theme.colors.blue[0] : 'transparent',
+                  color: pathname === link.href ? theme.colors.blue[7] : colors['blue-button'],
+                  fontWeight: pathname === link.href ? 600 : 500,
+                  transition: "all 0.2s ease",
+                  "&:hover": {
+                    background: pathname === link.href ? theme.colors.blue[1] : theme.colors.gray[0],
+                  }
+                },
+              })}
+            >
+              {link.name}
+            </Button>
             ))}
           </Stack>
         ) : (

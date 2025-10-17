@@ -101,27 +101,42 @@ function Page() {
                 }}
               >
                 <Stack align="center" gap="sm">
-                  <Image
-                    src={v.image.link}
-                    alt={v.name}
-                    w={140}
-                    h={140}
-                    fit="contain"
-                    radius="md"
-                    loading="lazy"
-                  />
+                  <Box
+                    style={{
+                      width: '100%',
+                      aspectRatio: '16/9',
+                      borderRadius: '12px',
+                      overflow: 'hidden',
+                      position: 'relative',
+                    }}
+                  >
+                    <Image
+                      src={v.image.link}
+                      alt={v.name}
+                      fit="cover"
+                      loading="lazy"
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        transition: 'transform 0.4s ease',
+                      }}
+                      onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
+                      onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+                    />
+                  </Box>
+
                   <Text ta="center" fw={700} fz="lg" c={colors['blue-button']}>
                     {v.name}
                   </Text>
                   <Text fz="sm" c="dimmed" ta="center" lineClamp={3}>
                     <span style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: v.deskripsi }} />
                   </Text>
-                  <Button 
-                    variant="light" 
-                    leftSection={<IconBrandWhatsapp size={18} />} 
-                    component="a" 
-                    href={`https://wa.me/${v.whatsapp.replace(/\D/g, '')}`} 
-                    target="_blank" 
+                  <Button
+                    variant="light"
+                    leftSection={<IconBrandWhatsapp size={18} />}
+                    component="a"
+                    href={`https://wa.me/${v.whatsapp.replace(/\D/g, '')}`}
+                    target="_blank"
                     aria-label="Hubungi WhatsApp"
                   >WhatsApp</Button>
                 </Stack>

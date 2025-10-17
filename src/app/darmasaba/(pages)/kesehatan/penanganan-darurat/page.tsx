@@ -2,7 +2,6 @@
 import penangananDarurat from '@/app/admin/(dashboard)/_state/kesehatan/penanganan-darurat/penangananDarurat'
 import colors from '@/con/colors'
 import {
-  Badge,
   Box,
   Center,
   Grid,
@@ -106,15 +105,30 @@ function Page() {
               >
                 <Stack align="center" gap="md">
                   <Center>
-                    <Image
-                      src={v.image.link}
-                      alt={v.name}
-                      h={180}
-                      w="100%"
-                      radius="md"
-                      fit="cover"
-                      style={{ aspectRatio: '4/3' }}
-                    />
+                    <Box
+                      style={{
+                        width: '100%',
+                        aspectRatio: '16/9',
+                        borderRadius: '12px',
+                        overflow: 'hidden',
+                        position: 'relative',
+                      }}
+                    >
+                      <Image
+                        src={v.image.link}
+                        alt={v.name}
+                        fit="cover"
+                        loading="lazy"
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          transition: 'transform 0.4s ease',
+                        }}
+                        onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
+                        onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+                      />
+                    </Box>
+
                   </Center>
                   <Stack gap={4} w="100%">
                     <Text
@@ -136,9 +150,6 @@ function Page() {
                       />
                     </Box>
                   </Stack>
-                  <Badge radius="md" color="blue" variant="light" mt="sm">
-                    Darurat
-                  </Badge>
                 </Stack>
               </Paper>
             ))}
@@ -160,7 +171,7 @@ function Page() {
               '&:hover': { backgroundColor: colors['blue-button'], color: 'white' },
             },
           }}
-          
+
         />
       </Center>
 

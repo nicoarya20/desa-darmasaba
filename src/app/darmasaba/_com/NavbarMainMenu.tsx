@@ -2,15 +2,14 @@
 
 import colors from "@/con/colors"
 import stateNav from "@/state/state-nav"
-import { ActionIcon, Button, Container, Flex, Image, Stack, Tooltip } from "@mantine/core"
-import { useHover } from "@mantine/hooks"
+import { ActionIcon, Button, Container, Flex, Image, Menu, MenuTarget, Stack, Tooltip } from "@mantine/core"
 import { IconSearch, IconUser } from "@tabler/icons-react"
 import { useTransitionRouter } from 'next-view-transitions'
+import { usePathname, useRouter } from "next/navigation"
 import { useSnapshot } from "valtio"
 import { MenuItem } from "../../../../types/menu-item"
 import { NavbarSearch } from "./NavBarSearch"
 import { NavbarSubMenu } from "./NavbarSubMenu"
-import { useRouter } from "next/navigation"
 
 // contoh state auth (dummy aja dulu, bisa diganti sesuai sistem auth kamu)
 const stateAuth = {
@@ -21,6 +20,7 @@ export function NavbarMainMenu({ listNavbar }: { listNavbar: MenuItem[] }) {
   const { item, isSearch } = useSnapshot(stateNav)
   const router = useTransitionRouter()
   const next = useRouter()
+  const pathname = usePathname();
 
   return (
     <Stack gap={0} visibleFrom="sm" bg={colors["white-trans-1"]}>
@@ -47,7 +47,12 @@ export function NavbarMainMenu({ listNavbar }: { listNavbar: MenuItem[] }) {
           </Tooltip>
 
           {listNavbar.map((item, k) => (
-            <MenuItemCom key={k} item={item} />
+            <MenuItemCom 
+            key={k} 
+            item={item}
+            isActive={pathname === item.href || 
+              (item.children?.some(child => child.href === pathname))}
+            />
           ))}
 
           <Tooltip label="Search content" position="bottom" withArrow>
@@ -88,27 +93,45 @@ export function NavbarMainMenu({ listNavbar }: { listNavbar: MenuItem[] }) {
   )
 }
 
-function MenuItemCom({ item }: { item: MenuItem }) {
-  const { ref, hovered } = useHover()
+function MenuItemCom({ item, isActive = false }: { item: MenuItem, isActive?: boolean }) {
   const router = useTransitionRouter()
 
   return (
-    <Button
-      ref={ref}
-      color={hovered ? "gray" : colors["blue-button"]}
-      onMouseEnter={() => {
-        stateNav.item = item.children || null
-        stateNav.isSearch = false
+    <Menu
+      trigger="hover"
+      position="bottom-start"
+      offset={20}
+      width={300}
+      shadow="md"
+      withinPortal
+      onOpen={() => {
+        stateNav.item = item.children || null;
+        stateNav.isSearch = false;
       }}
-      variant="subtle"
-      radius="xl"
-      onClick={() => {
-        router.push(item.href)
-        stateNav.clear()
-      }}
-      fw={500}
     >
-      {item.name}
-    </Button>
+      <MenuTarget>
+        <Button
+          variant="subtle"
+          color={isActive ? 'blue' : 'gray'}
+          onClick={() => {
+            if (item.href) {
+              router.push(item.href);
+              stateNav.clear();
+            }
+          }}
+          styles={{
+            root: {
+              fontWeight: isActive ? 600 : 400,
+              borderBottom: isActive ? `2px solid ${colors['blue-button']}` : 'none',
+              '&:hover': {
+                backgroundColor: 'transparent',
+              }
+            }
+          }}
+        >
+          {item.name}
+        </Button>
+      </MenuTarget>
+    </Menu>
   )
 }

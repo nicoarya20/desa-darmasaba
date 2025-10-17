@@ -6,20 +6,19 @@ import {
   Center,
   Image,
   Paper,
+  ScrollArea,
   SimpleGrid,
+  Skeleton,
   Stack,
   Text,
-  Tooltip,
-  Skeleton,
-  useMantineColorScheme,
-  ScrollArea,
+  useMantineColorScheme
 } from "@mantine/core";
 import { useShallowEffect } from "@mantine/hooks";
+import { Prisma } from "@prisma/client";
+import { IconPhotoOff } from "@tabler/icons-react";
 import { motion } from "framer-motion";
 import { useTransitionRouter } from "next-view-transitions";
 import { useProxy } from "valtio/utils";
-import { Prisma } from "@prisma/client";
-import { IconPhotoOff } from "@tabler/icons-react";
 
 type ProgramInovasiItem = Prisma.ProgramInovasiGetPayload<{ include: { image: true } }>;
 
@@ -30,7 +29,6 @@ function ModuleItem({ data }: { data: ProgramInovasiItem }) {
 
   return (
     <motion.div whileHover={{ scale: 1.03 }}>
-      <Tooltip label={`Lihat ${data.name}`} withArrow>
         <Paper
           onClick={() => router.push(`/darmasaba/program-inovasi/${data.id}`)}
           p="lg"
@@ -67,7 +65,6 @@ function ModuleItem({ data }: { data: ProgramInovasiItem }) {
             </Text>
           </Box>
         </Paper>
-      </Tooltip>
     </motion.div>
   );
 }
