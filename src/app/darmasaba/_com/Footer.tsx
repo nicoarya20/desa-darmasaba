@@ -1,6 +1,63 @@
 'use client'
 import { ActionIcon, Anchor, Box, Button, Center, Container, Divider, Flex, Group, Image, Paper, SimpleGrid, Stack, Text, TextInput, Title } from '@mantine/core';
-import { IconAt, IconBrandFacebook, IconBrandInstagram, IconBrandTwitter, IconBrandWhatsapp } from '@tabler/icons-react';
+import { IconAt, IconBrandFacebook, IconBrandInstagram, IconBrandTiktok, IconBrandYoutube } from '@tabler/icons-react';
+
+const sosialMedia = [
+  {
+    title: "Facebook",
+    link: "https://www.facebook.com/DarmasabaDesaku",
+    icon: IconBrandFacebook,
+  },
+  {
+    title: "Instagram",
+    link: "https://www.instagram.com/ddarmasaba/",
+    icon: IconBrandInstagram,
+  },
+  {
+    title: "Youtube",
+    link: "https://www.youtube.com/channel/UCtPw9WOQO7d2HIKzKgel4Xg",
+    icon: IconBrandYoutube,
+  },
+  {
+    title: "Tiktok",
+    link: "https://www.tiktok.com/@desa.darmasaba?is_from_webapp=1&sender_device=pc",
+    icon: IconBrandTiktok,
+  },
+]
+
+const layanandesa = [
+  {
+    title: "Administrasi Kependudukan",
+    link: "/darmasaba/desa/layanan/",
+  },
+  {
+    title: "Layanan Sosial",
+    link: "/darmasaba/ekonomi/program-kemiskinan",
+  },
+  {
+    title: "Pengaduan Masyarakat",
+    link: "/darmasaba/keamanan/laporan-publik",
+  },
+  {
+    title: "Informasi Publik",
+    link: "/darmasaba/ppid/daftar-informasi-publik-desa-darmasaba",
+  },
+]
+
+const tautanPenting = [
+  {
+    title: "Portal Badung",
+    link: "/darmasaba/desa/berita/semua",
+  },
+  {
+    title: "E-Government",
+    link: "/darmasaba/inovasi/desa-digital-smart-village",
+  },
+  {
+    title: "Transparansi",
+    link: "/darmasaba/ppid/daftar-informasi-publik-desa-darmasaba",
+  }
+]
 
 function Footer() {
   return (
@@ -46,7 +103,7 @@ function Footer() {
                   <Group justify="apart" align="center" mt="lg">
                     <Text c="#F3F2EC" ta="center" fz="md" fw={700} style={{ fontStyle: 'italic' }}>&quot;Desa Kuat, Warga Sejahtera!&quot;</Text>
                     <ActionIcon size={80} radius="xl" variant="transparent">
-                      <Image src="/chatbot-removebg-preview.png" alt="Logo Desa" width={80} height={80} loading="lazy"/>
+                      <Image src="/chatbot-removebg-preview.png" alt="Logo Desa" width={80} height={80} loading="lazy" />
                     </ActionIcon>
                   </Group>
                 </Stack>
@@ -64,31 +121,39 @@ function Footer() {
                   Darmasaba adalah desa budaya yang kaya akan tradisi dan nilai-nilai warisan Bali.
                 </Text>
                 <Flex gap="md" mt="sm" c="#F3F2EC">
-                  <ActionIcon variant="subtle" color="white"><IconBrandFacebook size={22} /></ActionIcon>
-                  <ActionIcon variant="subtle" color="white"><IconBrandInstagram size={22} /></ActionIcon>
-                  <ActionIcon variant="subtle" color="white"><IconBrandTwitter size={22} /></ActionIcon>
-                  <ActionIcon variant="subtle" color="white"><IconBrandWhatsapp size={22} /></ActionIcon>
+                  {sosialMedia.map((item) => (
+                    <ActionIcon
+                      key={item.title}
+                      component="a"
+                      href={item.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      variant="subtle"
+                      color="white"
+                    >
+                      <item.icon size={22} />
+                    </ActionIcon>
+                  ))}
                 </Flex>
+
               </Stack>
             </Box>
 
             <Box>
               <Stack gap="xs">
                 <Text c="white" fz="md" fw={700}>Layanan Desa</Text>
-                <Anchor c="#F3F2EC" fz="xs">Administrasi Kependudukan</Anchor>
-                <Anchor c="#F3F2EC" fz="xs">Layanan Sosial</Anchor>
-                <Anchor c="#F3F2EC" fz="xs">Pengaduan Masyarakat</Anchor>
-                <Anchor c="#F3F2EC" fz="xs">Informasi Publik</Anchor>
+                {layanandesa.map((item) => (
+                  <Anchor key={item.title} c="#F3F2EC" fz="xs" href={item.link}>{item.title}</Anchor>
+                ))}
               </Stack>
             </Box>
 
             <Box>
               <Stack gap="xs">
                 <Text c="white" fz="md" fw={700}>Tautan Penting</Text>
-                <Anchor c="#F3F2EC" fz="xs">Portal Badung</Anchor>
-                <Anchor c="#F3F2EC" fz="xs">E-Government</Anchor>
-                <Anchor c="#F3F2EC" fz="xs">Transparansi</Anchor>
-                <Anchor c="#F3F2EC" fz="xs">Unduhan</Anchor>
+                {tautanPenting.map((item) => (
+                  <Anchor key={item.title} c="#F3F2EC" fz="xs" href={item.link}>{item.title}</Anchor>
+                ))}
               </Stack>
             </Box>
 

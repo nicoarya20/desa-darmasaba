@@ -199,7 +199,7 @@ function Page() {
                     <TableTd ta={'center'}>{item.totalUnemployment}</TableTd>
                     <TableTd ta={'center'}>{item.educatedUnemployment}</TableTd>
                     <TableTd ta={'center'}>{item.uneducatedUnemployment}</TableTd>
-                    <TableTd ta={'center'}>{item.percentageChange}</TableTd>
+                    <TableTd ta={'center'}>{item.percentageChange}%</TableTd>
                   </TableTr>
                 ))}
               </TableTbody>

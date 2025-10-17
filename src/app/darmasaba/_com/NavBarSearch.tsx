@@ -11,16 +11,20 @@ export function NavbarSearch() {
   // Close when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+      const target = event.target as HTMLElement;
+      // Only close if clicking outside both the search input and results
+      if (
+        containerRef.current && 
+        !containerRef.current.contains(target) &&
+        !target.closest('.search-result-item') // Add a class to your search result items
+      ) {
         setIsOpen(false);
         stateNav.clear();
       }
     }
-
-    // Add event listener
+  
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
-      // Clean up
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);

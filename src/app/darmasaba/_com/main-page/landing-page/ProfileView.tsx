@@ -42,7 +42,6 @@ export default function ProfileView({ data }: ProfileViewProps) {
           loading="lazy"
           style={{
             objectPosition: 'bottom center',
-            transform: 'translateY(10px)', // sedikit turun biar natural
           }}
         />
       ) : (

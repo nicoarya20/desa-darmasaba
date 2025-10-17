@@ -50,10 +50,12 @@ function Page() {
             </Text>
           </Box>
           <TextInput
-            placeholder='Cari kontak darurat, nama, atau nomor...'
-            leftSection={<IconSearch size={20} />}
+            radius={"lg"}
+            placeholder='Cari Kontak Darurat'
             value={search}
-            onChange={(e) => setSearch(e.currentTarget.value)}
+            onChange={(e) => setSearch(e.target.value)}
+            leftSection={<IconSearch size={20} />}
+            w={{ base: "100%", md: "25%" }}
           />
         </Group>
         <Box px={{ base: "md", md: 100 }}>
@@ -95,10 +97,12 @@ function Page() {
           </Text>
         </Box>
         <TextInput
-          placeholder='Cari kontak darurat, nama, atau nomor...'
-          leftSection={<IconSearch size={20} />}
+          radius={"lg"}
+          placeholder='Cari Kontak Darurat'
           value={search}
-          onChange={(e) => setSearch(e.currentTarget.value)}
+          onChange={(e) => setSearch(e.target.value)}
+          leftSection={<IconSearch size={20} />}
+          w={{ base: "50%", md: "100%" }}
         />
       </Group>
       <Box px={{ base: "md", md: 100 }}>

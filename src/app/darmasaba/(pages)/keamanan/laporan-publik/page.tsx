@@ -4,7 +4,7 @@ import colors from '@/con/colors';
 import { Box, Button, Center, ColorSwatch, Flex, Group, Modal, Pagination, Paper, SimpleGrid, Skeleton, Stack, Text, TextInput, Title } from '@mantine/core';
 import { DateTimePicker } from '@mantine/dates';
 import { useDebouncedValue, useDisclosure, useShallowEffect } from '@mantine/hooks';
-import { IconArrowRight, IconPlus } from '@tabler/icons-react';
+import { IconArrowRight, IconPlus, IconSearch } from '@tabler/icons-react';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import BackButton from '../../desa/layanan/_com/BackButto';
@@ -56,10 +56,13 @@ function Page() {
         <Flex justify="space-between" align="center">
           <BackButton />
           <TextInput
-            placeholder="Cari laporan"
-            value={search}
-            onChange={(e) => setSearch(e.currentTarget.value)}
-          />
+              radius={"lg"}
+              placeholder='Cari Laporan Publik'
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              leftSection={<IconSearch size={20} />}
+              w={{ base: "50%", md: "100%" }}
+            />
         </Flex>
       </Box>
       <Box px={{ base: 'md', md: 100 }}>

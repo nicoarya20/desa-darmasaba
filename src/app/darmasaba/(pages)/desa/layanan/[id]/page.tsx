@@ -146,24 +146,24 @@ function Page() {
             <Title order={3}>Ajukan Permohonan</Title>
             <TextInput
               label={<Text fz="sm" fw="bold">Nama</Text>}
-              placeholder="masukkan nama"
+              placeholder="Masukkan nama"
               onChange={(val) => (stateCreate.create.form.nama = val.target.value)}
             />
             <TextInput
               type="number"
               label={<Text fz="sm" fw="bold">NIK</Text>}
-              placeholder="masukkan NIK"
+              placeholder="Masukkan NIK"
               onChange={(val) => (stateCreate.create.form.nik = val.target.value)}
             />
             <TextInput
               label={<Text fz="sm" fw="bold">Alamat</Text>}
-              placeholder="masukkan alamat"
+              placeholder="Masukkan alamat"
               onChange={(val) => (stateCreate.create.form.alamat = val.target.value)}
             />
             <TextInput
               type="number"
               label={<Text fz="sm" fw="bold">Nomor KK</Text>}
-              placeholder="masukkan Nomor KK"
+              placeholder="Masukkan Nomor KK"
               onChange={(val) => (stateCreate.create.form.nomorKk = val.target.value)}
             />
             <Select

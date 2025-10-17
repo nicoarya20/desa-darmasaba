@@ -56,7 +56,7 @@ export default function Content() {
       try {
         await state.dataPerpustakaan.findMany.load(
           currentPage, 
-          10, 
+          3, 
           searchQuery, 
           ''
         );

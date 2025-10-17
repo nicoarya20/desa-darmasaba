@@ -72,21 +72,21 @@ function Page() {
     )
   }
   return (
-    <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"22"}>
-      <Box px={{ base: 'md', md: 100 }}>
+    <Stack pos="relative" bg={colors.Bg} py="xl" gap="22" style={{ overflow: 'auto' }}>
+      <Box px={{ base: 'md', md: 50, lg: 100 }}>
         <BackButton />
       </Box>
-      <Box px={{ base: 'md', md: 100 }} >
+      <Box px={{ base: 'md', md: 50, lg: 100 }} >
         <Text ta={"center"} fz={{ base: "h1", md: "2.5rem" }} c={colors["blue-button"]} fw={"bold"}>
           Jumlah Penduduk Usia Kerja Yang Menganggur
         </Text>
       </Box>
-      <Box px={{ base: "md", md: 100 }}>
+      <Box px={{ base: "md", md: 50, lg: 100 }}>
         <Stack gap={'lg'} justify='center'>
           <Paper p={'lg'}>
             <Text fw={'bold'} fz={'h3'}>Pengangguran Berdasarkan Usia</Text>
             {mounted && donutGrafikNganggurData.length > 0 ? (<Box style={{ width: '100%', height: 'auto', minHeight: 200 }}>
-              <Box w="100%" style={{ maxWidth: 400, margin: "0 auto" }}>
+              <Box w="100%" maw={{ base: '100%', md: 400 }} mx="auto">
                 <PieChart
                   w="100%"
                   h={250} // lebih kecil biar aman di mobile
@@ -133,7 +133,7 @@ function Page() {
               <Box w="100%" style={{ maxWidth: 400, margin: "0 auto" }}>
                 <PieChart
                   w="100%"
-                  h={250} // lebih kecil biar aman di mobile
+                  h="min(250px, 50vh)" // lebih kecil biar aman di mobile
                   withLabelsLine
                   labelsPosition="outside"
                   labelsType="percent"
