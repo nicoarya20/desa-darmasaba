@@ -5,7 +5,7 @@ import stateNav from "@/state/state-nav";
 import { ActionIcon, Box, Burger, Group, Image, Paper, ScrollArea, Stack, Text, Tooltip } from "@mantine/core";
 import { IconSquareArrowRight } from "@tabler/icons-react";
 import { motion } from "framer-motion";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useSnapshot } from "valtio";
 import { MenuItem } from "../../../../types/menu-item";
 import { NavbarMainMenu } from "./NavbarMainMenu";
@@ -19,14 +19,18 @@ export function Navbar() {
       <Paper
         radius="0"
         className="glass2"
-        w="100%"
+        w="100vw"
         pos="fixed"
         top={0}
         style={{ zIndex: 100 }}
       >
-        <NavbarMainMenu listNavbar={navbarListMenu} />
+        {/* Desktop navbar (muncul mulai 992px ke atas) */}
+        <Box visibleFrom="md">
+          <NavbarMainMenu listNavbar={navbarListMenu} />
+        </Box>
 
-        <Box hiddenFrom="sm" bg={colors.grey[2]} px="md" py="sm">
+        {/* Mobile navbar (muncul di bawah 992px, termasuk iPad Mini) */}
+        <Box hiddenFrom="md" bg={colors.grey[2]} px="md" py="sm">
           <Group justify="space-between" wrap="nowrap">
             <ActionIcon
               variant="transparent"
@@ -38,10 +42,21 @@ export function Navbar() {
               }}
             >
               <Tooltip label="Go to homepage" position="bottom" withArrow>
-                <Image src="/darmasaba-icon.png" alt="Village Logo" width={48} height={48} loading="lazy"/>
+                <Image
+                  src="/darmasaba-icon.png"
+                  alt="Village Logo"
+                  width={48}
+                  height={48}
+                  loading="lazy"
+                />
               </Tooltip>
             </ActionIcon>
-            <Tooltip label={mobileOpen ? "Close menu" : "Open menu"} position="bottom" withArrow>
+
+            <Tooltip
+              label={mobileOpen ? "Close menu" : "Open menu"}
+              position="bottom"
+              withArrow
+            >
               <Burger
                 opened={mobileOpen}
                 color={colors["blue-button"]}
@@ -50,12 +65,14 @@ export function Navbar() {
               />
             </Tooltip>
           </Group>
+
           {mobileOpen && (
             <Paper
               component={motion.div}
-              initial={{ x: '100%' }}
+              bg="white"
+              initial={{ x: "100%" }}
               animate={{ x: 0 }}
-              exit={{ x: '100%' }}
+              exit={{ x: "100%" }}
               transition={{ duration: 0.2 }}
               pos="absolute"
               left={0}
@@ -63,12 +80,14 @@ export function Navbar() {
               top="100%"
               m={0}
               radius={0}
+              shadow="md"
             >
               <NavbarMobile listNavbar={navbarListMenu} />
             </Paper>
           )}
         </Box>
       </Paper>
+
       {(item || isSearch) && <Box className="glass" />}
     </Box>
   );
@@ -76,40 +95,105 @@ export function Navbar() {
 
 function NavbarMobile({ listNavbar }: { listNavbar: MenuItem[] }) {
   const router = useRouter();
+  const pathname = usePathname(); // 👈 untuk cek path aktif
+
+  // fungsi bantu: cek apakah path sekarang sama dengan menu / sub-menu
+  const isActive = (href?: string) => href && pathname.startsWith(href);
+
   return (
-    <ScrollArea.Autosize mah="calc(100vh - 80px)" offsetScrollbars>
-      <Stack p="md" gap="xs">
-        {listNavbar.map((item, k) => (
-          <Box key={k}>
-            <Group
-              justify="space-between"
-              align="center"
-              p="xs"
-              onClick={() => {
-                if (item.href) {
-                  router.push(item.href);
-                  stateNav.mobileOpen = false;
-                }
-              }}
-              style={{
-                cursor: item.href ? "pointer" : "default",
-                opacity: item.href ? 1 : 0.8
-              }}
-            >
-              <Text c="dark.9" fw={600} fz="md">
-                {item.name}
-              </Text>
-              <IconSquareArrowRight size={18} />
-            </Group>
-            {item.children && (
-              <Box pl="md">
-                <NavbarMobile listNavbar={item.children} />
-              </Box>
-            )}
-          </Box>
-        ))}
+    <ScrollArea.Autosize
+      mah="calc(100dvh - 80px)"
+      type="auto"
+      offsetScrollbars
+    >
+      <Stack p="sm" gap="xs">
+        {listNavbar.map((item, k) => {
+          const active = isActive(item.href);
+          return (
+            <Box key={k}>
+              <Paper
+                shadow={active ? "sm" : "xs"}
+                radius="md"
+                p="sm"
+                withBorder
+                bg={active ? "blue.0" : "gray.0"}
+                onClick={() => {
+                  if (item.href) {
+                    router.push(item.href);
+                    stateNav.mobileOpen = false;
+                  }
+                }}
+                style={{
+                  cursor: item.href ? "pointer" : "default",
+                  transition: "background 0.15s ease",
+                  borderLeft: active ? "4px solid #1e66f5" : "4px solid transparent",
+                }}
+              >
+                <Group justify="space-between" align="center" wrap="nowrap">
+                  <Text
+                    fw={active ? 700 : 600}
+                    fz="md"
+                    c={active ? "blue.7" : "dark.9"}
+                  >
+                    {item.name}
+                  </Text>
+                  {item.href && (
+                    <IconSquareArrowRight
+                      size={18}
+                      color={active ? "#1e66f5" : "inherit"}
+                    />
+                  )}
+                </Group>
+              </Paper>
+
+              {/* Submenu */}
+              {item.children && (
+                <Box pl="md" mt={4}>
+                  {item.children.map((child, j) => {
+                    const childActive = isActive(child.href);
+                    return (
+                      <Group
+                        key={j}
+                        justify="space-between"
+                        align="center"
+                        p="xs"
+                        onClick={() => {
+                          if (child.href) {
+                            router.push(child.href);
+                            stateNav.mobileOpen = false;
+                          }
+                        }}
+                        style={{
+                          cursor: child.href ? "pointer" : "default",
+                          opacity: child.href ? 1 : 0.8,
+                          borderRadius: "0.5rem",
+                          backgroundColor: childActive ? "#e7f0ff" : "transparent",
+                          borderLeft: childActive ? "3px solid #1e66f5" : "3px solid transparent",
+                          transition: "background 0.15s ease",
+                        }}
+                      >
+                        <Text
+                          fz="sm"
+                          fw={childActive ? 600 : 400}
+                          c={childActive ? "blue.7" : "dark.8"}
+                        >
+                          {child.name}
+                        </Text>
+                        <IconSquareArrowRight
+                          size={14}
+                          color={childActive ? "#1e66f5" : "inherit"}
+                        />
+                      </Group>
+                    );
+                  })}
+                </Box>
+              )}
+            </Box>
+          );
+        })}
       </Stack>
     </ScrollArea.Autosize>
   );
 }
+
 
