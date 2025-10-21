@@ -178,7 +178,7 @@ function Page() {
 
                   <TextInput
                     label="Alamat Email"
-                    placeholder="contoh: nama@email.com"
+                    placeholder="Contoh: nama@email.com"
                     radius="md"
                     size="md"
                     type="email"
@@ -190,7 +190,7 @@ function Page() {
 
                   <TextInput
                     label="Nomor Telepon"
-                    placeholder="contoh: 0812-3456-7890"
+                    placeholder="Contoh: 0812-3456-7890"
                     radius="md"
                     size="md"
                     withAsterisk

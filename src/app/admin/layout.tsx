@@ -132,7 +132,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <Tooltip label="Keluar" position="bottom" withArrow>
               <ActionIcon
                 onClick={() => {
-                  router.push("/login");
+                  router.push("/darmasaba");
                 }}
                 color={colors["blue-button"]}
                 radius="xl"

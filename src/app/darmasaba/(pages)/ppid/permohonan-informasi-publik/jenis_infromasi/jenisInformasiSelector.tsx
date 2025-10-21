@@ -32,7 +32,7 @@ export default function JenisInformasiSelector({ onChange }: {
   return (
     <Group>
       <Select
-        placeholder='pilih jenis informasi'
+        placeholder='Pilih jenis informasi'
         label='Jenis Informasi'
         data={data.map((item) => ({
           value: item.id,

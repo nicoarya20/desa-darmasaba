@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
+
 import searchState, { debouncedFetch } from '@/app/api/[[...slugs]]/_lib/search/searchState';
 import { Box, Center, Loader, Popover, Text, TextInput } from '@mantine/core';
 import { IconX } from '@tabler/icons-react';
@@ -10,36 +11,85 @@ import getDetailUrl from './searchUrl';
 export default function GlobalSearch() {
   const snap = useSnapshot(searchState);
   const [opened, setOpened] = useState(false);
+  const [isNavigating, setIsNavigating] = useState(false);
 
-  // buka popover saat ada query
+  // Buka popover saat ada query
   useEffect(() => {
     setOpened(!!snap.query);
   }, [snap.query]);
 
-  // infinite scroll
+  // Infinite scroll handler
   useEffect(() => {
     const handleScroll = () => {
-      const bottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 200;
-      if (bottom && !snap.loading) searchState.next();
+      const nearBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 200;
+      if (nearBottom && !snap.loading) searchState.next();
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, [snap.loading]);
 
   const handleSelect = async (e: React.MouseEvent, item: any) => {
-    e.stopPropagation();
     e.preventDefault();
+    e.stopPropagation();
+  
+    if (isNavigating) return;
+    setIsNavigating(true);
+  
+    try {
+      // 🔥 pastikan objek udah “dikeluarkan” dari Proxy valtio
+      const rawItem = JSON.parse(JSON.stringify(item));
+  
+      // 🔥 pastikan type-nya string murni
+      const type = String(rawItem.type || '').trim().toLowerCase();
+  
+      // 🔥 panggil getDetailUrl pakai type yang fix
+      let url = getDetailUrl({ ...rawItem, type });
+  
+      // kalau hasil undefined atau default, fallback ke link eksternal
+      if (!url || url === '/darmasaba') {
+        if (rawItem.link && rawItem.link.startsWith('http')) {
+          url = rawItem.link;
+        }
+      }
+  
+      if (!url) {
+        console.warn('URL tidak ditemukan untuk item:', rawItem);
+        setIsNavigating(false);
+        return;
+      }
+  
+      console.log('Navigating to:', url);
+  
+      // tutup popover dulu
+      setOpened(false);
+      searchState.query = '';
+      searchState.results = [];
+      searchState.loading = false;
+  
+      // kasih delay biar UI nutup dulu
+      await new Promise((r) => setTimeout(r, 100));
+  
+      // navigasi
+      if (url.startsWith('http')) {
+        window.location.href = url;
+      } else {
+        window.location.href = url;
+      }
+  
+    } catch (err) {
+      console.error('Error saat navigasi:', err);
+      setIsNavigating(false);
+    }
+  };
+  
 
-    const url = getDetailUrl(item);
-    if (!url) return;
-
-    // Immediately close the search dropdown
+  const clearSearch = () => {
+    searchState.query = '';
+    searchState.results = [];
+    searchState.page = 1;
+    searchState.nextPage = null;
     setOpened(false);
-    searchState.results = [];  // Clear results immediately
-    searchState.loading = false;
-
-    // Use window.location for navigation to ensure full page reload
-    window.location.href = url;
+    setIsNavigating(false);
   };
 
   return (
@@ -47,13 +97,7 @@ export default function GlobalSearch() {
       <Popover
         opened={opened && !!snap.query}
         onChange={(isOpen) => {
-          if (!isOpen) {
-            // Clear search state when popover is closed
-            searchState.query = '';
-            searchState.results = [];
-            searchState.page = 1;
-            searchState.nextPage = null;
-          }
+          if (!isOpen) clearSearch();
           setOpened(isOpen);
         }}
         width="target"
@@ -61,10 +105,14 @@ export default function GlobalSearch() {
         shadow="md"
         withinPortal
         radius="md"
-        zIndex={1000}  // Add this line to ensure it appears above other elements
+        zIndex={2000}
+        closeOnClickOutside={true}
+        closeOnEscape={true}
         styles={{
           dropdown: {
-            zIndex: 1000,  // Add this to ensure the dropdown appears above other elements
+            zIndex: 2000,
+            borderRadius: 12,
+            overflow: 'hidden',
           },
         }}
       >
@@ -83,13 +131,7 @@ export default function GlobalSearch() {
                 <IconX
                   size={16}
                   style={{ cursor: 'pointer' }}
-                  onClick={() => {
-                    searchState.query = '';
-                    searchState.results = [];
-                    searchState.page = 1;
-                    searchState.nextPage = null;
-                    setOpened(false);
-                  }}
+                  onClick={clearSearch}
                 />
               ) : undefined
             }
@@ -101,34 +143,32 @@ export default function GlobalSearch() {
           style={{
             maxHeight: 350,
             overflowY: 'auto',
-            borderRadius: 12,
-            zIndex: 1000, // Add this line to ensure dropdown stays above other elements
-            position: 'relative', // Add this to contain child elements
+            backgroundColor: '#fff',
+            border: '1px solid #eee',
           }}
         >
-          {snap.results.length > 0 ? (
-            snap.results.map((item, i) => (
+          {[...snap.results].length > 0 ? (
+            [...snap.results].map((item: any, i: number) => (
               <Box
                 key={i}
                 p="sm"
-                className="search-result-item"  // Add this class
+                className="search-result-item" // Add class untuk prevent close
                 style={{
-                  borderBottom: '1px solid #eee',
-                  cursor: 'pointer',
+                  borderBottom: '1px solid #f1f1f1',
+                  cursor: isNavigating ? 'wait' : 'pointer',
+                  background: 'white',
                   transition: 'background 0.2s',
-                  position: 'relative', // Add this
-                  zIndex: 1, // Add this to ensure proper stacking context
-                  backgroundColor: 'white', // Ensure background is set
+                  opacity: isNavigating ? 0.6 : 1,
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.background = '#f7f7f7')}
-                onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
-                onClick={(e) => handleSelect(e, item)}  // Pass the event here
+                onMouseEnter={(e) => !isNavigating && (e.currentTarget.style.background = '#f9f9f9')}
+                onMouseLeave={(e) => (e.currentTarget.style.background = 'white')}
+                onClick={(e) => handleSelect(e, item)}
               >
-                <Text size="sm" fw={500}>
-                  {item.judul || item.namaPasar || item.nama || item.name}
+                <Text size="sm" fw={500} lineClamp={1}>
+                  {item.name ?? item.nama ?? item.namaPasar ?? item.judul ?? '(Tanpa nama)'}
                 </Text>
-                <Text size="xs" c="dimmed">
-                  dari modul: {item.type}
+                <Text size="xs" c="dimmed" lineClamp={1}>
+                  dari modul: {item.type || '-'}
                 </Text>
               </Box>
             ))

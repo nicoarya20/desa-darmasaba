@@ -7,17 +7,20 @@ import GlobalSearch from "./globalSearch";
 export function NavbarSearch() {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const isNavigatingRef = useRef(false);
 
   // Close when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       const target = event.target as HTMLElement;
-      // Only close if clicking outside both the search input and results
-      if (
-        containerRef.current && 
-        !containerRef.current.contains(target) &&
-        !target.closest('.search-result-item') // Add a class to your search result items
-      ) {
+      
+      // Jangan close jika klik di search result item (biar handleSelect yang urus)
+      if (target.closest('.search-result-item')) {
+        return;
+      }
+      
+      // Close jika klik di luar container
+      if (containerRef.current && !containerRef.current.contains(target)) {
         setIsOpen(false);
         stateNav.clear();
       }
@@ -26,6 +29,13 @@ export function NavbarSearch() {
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  // Reset navigation flag saat component unmount atau route change
+  useEffect(() => {
+    return () => {
+      isNavigatingRef.current = false;
     };
   }, []);
 

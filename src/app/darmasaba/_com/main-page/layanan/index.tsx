@@ -31,16 +31,12 @@ function Layanan() {
 
  return (
    <Stack pos={"relative"} bg={colors.grey[1]} gap={"42"} py={"xl"}>
-     <Container w={{ base: "100%", md: "50%" }} p={"xl"}>
+     <Container w={{ base: "100%", md: "80%" }} p={"xl"} >
        <Stack align="center" gap={"0"}>
-         <Text fz={"3.4rem"} fw={"bold"}>
+       <Text fw={"bold"} fz={{ base: "1.8rem", md: "3.4rem" }}>
            {textHeading.title}
          </Text>
-         <Text
-           style={{
-             textAlign: "center",
-           }}
-         >
+         <Text ta={"center"} fz={{ base: "1rem", md: "1.3rem" }}>
            {textHeading.des}
          </Text>
          <Box p={"md"}>

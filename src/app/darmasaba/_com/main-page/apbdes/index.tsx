@@ -37,10 +37,10 @@ function Apbdes() {
     <Stack p="lg" gap="4rem" bg={colors.Bg}>
       <Box>
         <Stack gap="sm">
-          <Text ta={"center"} fz={{ base: '2.4rem', sm: '4rem' }} fw="bold" lh={1.2}>
+          <Text ta={"center"} fw={"bold"} fz={{ base: "1.8rem", md: "3.4rem" }}>
             {textHeading.title}
           </Text>
-          <Text ta={"center"} fz={{ base: '1rem', sm: '1.3rem' }} c="dimmed">
+          <Text ta={"center"} fz={{ base: "1rem", md: "1.3rem" }}>
             {textHeading.des}
           </Text>
         </Stack>

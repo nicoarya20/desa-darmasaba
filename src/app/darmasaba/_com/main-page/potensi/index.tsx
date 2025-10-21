@@ -6,6 +6,7 @@ import {
   BackgroundImage,
   Box,
   Button,
+  Container,
   Divider,
   Group,
   Loader,
@@ -49,14 +50,14 @@ function Potensi() {
 
   return (
     <Stack p="sm" gap="4rem">
-      <Box>
-        <Text ta={"center"} fz={{ base: "2.4rem", md: "3.4rem" }} fw={700} c={colors["blue-button"]}>
+      <Container w={{ base: "100%", md: "80%" }} p={"xl"} >
+       <Text ta={"center"} fw={"bold"} fz={{ base: "1.8rem", md: "3.4rem" }}>
           {textHeading.title}
         </Text>
-        <Text ta={"center"} fz={{ base: "1.4rem", md: "1.6rem" }} c="black">
+        <Text ta={"center"} fz={{ base: "1rem", md: "1.3rem" }}>
           {textHeading.des}
         </Text>
-      </Box>
+      </Container>
 
       {loading ? (
         <Stack align="center" justify="center" h={300}>

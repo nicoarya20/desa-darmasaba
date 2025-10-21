@@ -43,15 +43,48 @@ export default function Page() {
   const loadingGrid = state.findMany.loading;
   const loadingFeatured = featured.loading;
 
+  // Load featured data once on component mount
   useEffect(() => {
-    if (!featured.data && !loadingFeatured) {
-      gotongRoyongState.kegiatanDesa.findFirst.load();
+    let mounted = true;
+    
+    const loadFeatured = async () => {
+      try {
+        if (!featured.data && !loadingFeatured) {
+          await gotongRoyongState.kegiatanDesa.findFirst.load();
+        }
+      } catch (error) {
+        console.error('Error loading featured data:', error);
+      }
+    };
+
+    if (mounted) {
+      loadFeatured();
     }
-  }, [featured.data, loadingFeatured]);
+
+    return () => {
+      mounted = false;
+    };
+  }, []); // Empty dependency array to run only once on mount
 
   useEffect(() => {
-    const limit = 3;
-    state.findMany.load(page, limit, search);
+    let mounted = true;
+    
+    const loadData = async () => {
+      try {
+        const limit = 3;
+        await state.findMany.load(page, limit, search);
+      } catch (error) {
+        console.error('Error loading data:', error);
+      }
+    };
+
+    if (mounted) {
+      loadData();
+    }
+
+    return () => {
+      mounted = false;
+    };
   }, [page, search]);
 
   const handlePageChange = (newPage: number) => {
@@ -59,7 +92,9 @@ export default function Page() {
     if (search) url.set('search', search);
     if (newPage > 1) url.set('page', newPage.toString());
     else url.delete('page');
-    router.replace(`?${url.toString()}`);
+    
+    // Use push instead of replace to keep browser history
+    router.push(`?${url.toString()}`, { scroll: false });
   };
 
   const featuredData = featured.data;

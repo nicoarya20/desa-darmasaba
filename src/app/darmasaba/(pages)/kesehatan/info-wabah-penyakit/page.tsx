@@ -121,7 +121,12 @@ function Page() {
                     </Badge>
                   </Group>
                   <Text fz="sm" c="dimmed">
-                    Diposting: {v.createdAt.toLocaleDateString()}
+                    Diposting: {new Date(v.createdAt).toLocaleDateString('id-ID', {
+                      day: '2-digit',
+                      month: 'long',
+                      year: 'numeric',
+                    })}
+
                   </Text>
                   <Divider />
                   <Text fz="sm" lh={1.5} lineClamp={3} truncate="end">

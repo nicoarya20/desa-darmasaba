@@ -1,26 +1,27 @@
 "use client";
 import colors from "@/con/colors";
-import { Prisma } from "@prisma/client";
 import {
+  Badge,
   Box,
   Card,
-  Skeleton,
+  Center,
   Flex,
   Grid,
   GridCol,
+  Group,
   Image,
   Paper,
+  Skeleton,
   Stack,
   Text,
-  Center,
   Tooltip,
-  Badge,
 } from "@mantine/core";
+import { Prisma } from "@prisma/client";
 import { IconCalendarTime, IconInfoCircle } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import ModuleView from "./ModuleView";
-import SosmedView from "./SosmedView";
 import ProfileView from "./ProfileView";
+import SosmedView from "./SosmedView";
 
 const getDayOfWeek = () => {
   const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
@@ -126,17 +127,15 @@ function LandingPage() {
           <Card radius="xl" bg={colors.grey[1]} p="lg" shadow="xl">
             <Stack gap="xl">
               <Flex gap="md" wrap="wrap">
+                <Group>
+                  <Box bg="white" w={72} h={72} p="sm" style={{ borderRadius: 24 }}>
+                    <Image loading="lazy" src="/darmasaba-icon.png" alt="Logo Darmasaba" fit="contain" />
+                  </Box>
+                  <Box bg="white" w={72} h={72} p="sm" style={{ borderRadius: 24 }}>
+                    <Image loading="lazy" src="/pudak-icon.png" alt="Logo Pudak" fit="contain" />
+                  </Box>
+                </Group>
                 <Grid w="100%">
-                  <Grid.Col span={{ base: 3, sm: 2 }}>
-                    <Box bg="white" w={72} h={72} p="sm" style={{ borderRadius: 24 }}>
-                      <Image loading="lazy" src="/darmasaba-icon.png" alt="Logo Darmasaba" fit="contain" />
-                    </Box>
-                  </Grid.Col>
-                  <Grid.Col span={{ base: 9, sm: 10 }}>
-                    <Box bg="white" w={72} h={72} p="sm" style={{ borderRadius: 24 }}>
-                      <Image loading="lazy" src="/pudak-icon.png" alt="Logo Pudak" fit="contain" />
-                    </Box>
-                  </Grid.Col>
                   <Grid.Col span={12}>
                     <Paper
                       bg={colors["blue-button"]}
@@ -199,7 +198,7 @@ function LandingPage() {
               )}
 
               <Text ta="center" c={colors.trans.dark[2]}>
-                Bagikan ide, kritik, atau saran Anda untuk mendukung pembangunan desa. 
+                Bagikan ide, kritik, atau saran Anda untuk mendukung pembangunan desa.
                 Semua lebih mudah dengan fitur interaktif yang kami sediakan.
               </Text>
             </Stack>

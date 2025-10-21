@@ -1,7 +1,7 @@
 'use client'
 import pendidikanNonFormalState from '@/app/admin/(dashboard)/_state/pendidikan/pendidikan-non-formal';
 import colors from '@/con/colors';
-import { Box, Paper, SimpleGrid, Skeleton, Stack, Text, Title, Tooltip } from '@mantine/core';
+import { Box, Group, Paper, SimpleGrid, Skeleton, Stack, Text, Title, Tooltip } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { useProxy } from 'valtio/utils';
 import { IconMapPin, IconTarget, IconBook2 } from '@tabler/icons-react';
@@ -59,13 +59,17 @@ function Page() {
             withBorder
           >
             <Stack>
-              <Tooltip label="Fokus utama program" withArrow>
-                <Title order={2} fw="bold" c={colors['blue-button']} mb="xs" flex="center">
-                  <IconTarget size={28} style={{ marginRight: 8 }} />
+              <Group align="center" gap={8} wrap="nowrap">
+                <Tooltip label="Fokus utama program" withArrow>
+                  <Box display="flex" style={{ alignItems: "center" }}>
+                    <IconTarget color={colors['blue-button']} size={26} />
+                  </Box>
+                </Tooltip>
+                <Text fw={700} fz="xl" c={colors['blue-button']}>
                   {stateTujuanPendidikanNonFormal.findById.data?.judul}
-                </Title>
-              </Tooltip>
-              <Text fz="md" lh={1.7} c="dark" style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: stateTujuanPendidikanNonFormal.findById.data?.deskripsi }} />
+                </Text>
+              </Group>
+              <Text fz="md" lh={1.7} c="dark" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: stateTujuanPendidikanNonFormal.findById.data?.deskripsi }} />
             </Stack>
           </Paper>
           <Paper
@@ -76,13 +80,17 @@ function Page() {
             withBorder
           >
             <Stack>
-              <Tooltip label="Lokasi pelaksanaan kegiatan" withArrow>
-                <Title order={2} fw="bold" c={colors['blue-button']} mb="xs" flex="center">
-                  <IconMapPin size={28} style={{ marginRight: 8 }} />
+              <Group align="center" gap={8} wrap="nowrap">
+                <Tooltip label="Lokasi pelaksanaan kegiatan" withArrow>
+                  <Box display="flex" style={{ alignItems: "center" }}>
+                    <IconMapPin color={colors['blue-button']} size={26} />
+                  </Box>
+                </Tooltip>
+                <Text fw={700} fz="xl" c={colors['blue-button']}>
                   {stateTempatKegiatan.findById.data?.judul}
-                </Title>
-              </Tooltip>
-              <Text fz="md" style={{wordBreak: "break-word", whiteSpace: "normal"}} lh={1.7} c="dark" dangerouslySetInnerHTML={{ __html: stateTempatKegiatan.findById.data?.deskripsi }} />
+                </Text>
+              </Group>
+              <Text fz="md" style={{ wordBreak: "break-word", whiteSpace: "normal" }} lh={1.7} c="dark" dangerouslySetInnerHTML={{ __html: stateTempatKegiatan.findById.data?.deskripsi }} />
             </Stack>
           </Paper>
         </SimpleGrid>
@@ -95,13 +103,17 @@ function Page() {
             withBorder
           >
             <Stack>
-              <Tooltip label="Ragam jenis program yang tersedia" withArrow>
-                <Title order={2} fw="bold" c={colors['blue-button']} mb="xs" flex="center">
-                  <IconBook2 size={28} style={{ marginRight: 8 }} />
+              <Group align="center" gap={8} wrap="nowrap">
+                <Tooltip label="Ragam jenis program yang tersedia" withArrow>
+                  <Box display="flex" style={{ alignItems: "center" }}>
+                    <IconBook2 color={colors['blue-button']} size={26} />
+                  </Box>
+                </Tooltip>
+                <Text fw={700} fz="xl" c={colors['blue-button']}>
                   {stateJenisProgram.findById.data?.judul}
-                </Title>
-              </Tooltip>
-              <Text fz="md" lh={1.7} c="dark" style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: stateJenisProgram.findById.data?.deskripsi }} />
+                </Text>
+              </Group>
+              <Text fz="md" lh={1.7} c="dark" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: stateJenisProgram.findById.data?.deskripsi }} />
             </Stack>
           </Paper>
         </Box>

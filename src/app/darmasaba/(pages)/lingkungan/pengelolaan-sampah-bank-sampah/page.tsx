@@ -1,9 +1,9 @@
 'use client'
 import pengelolaanSampahState from '@/app/admin/(dashboard)/_state/lingkungan/pengelolaan-sampah';
 import colors from '@/con/colors';
-import { Box, Center, Flex, Pagination, Paper, SimpleGrid, Skeleton, Stack, Text, TextInput } from '@mantine/core';
+import { Box, Center, Flex, Group, Pagination, Paper, SimpleGrid, Skeleton, Stack, Text, TextInput } from '@mantine/core';
 import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
-import { Icon, IconChartLine, IconClipboardTextFilled, IconLeaf, IconRecycle, IconScale, IconSearch, IconTent, IconTrashFilled, IconTrophy, IconTruckFilled } from '@tabler/icons-react';
+import { Icon, IconChartLine, IconClipboardTextFilled, IconLeaf, IconRecycle, IconRoute, IconScale, IconSearch, IconTent, IconTrashFilled, IconTrophy, IconTruckFilled } from '@tabler/icons-react';
 import React, { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import BackButton from '../../desa/layanan/_com/BackButto';
@@ -122,20 +122,28 @@ function Page() {
               <Stack gap="md">
                 {data2?.map((v, k) => (
                   <Paper key={k} p="md" withBorder radius="md">
-                    <Text fw="bold" fz="lg">{v.namaTempatMaps}</Text>
-                    <Text c="dimmed" fz="sm" mb="sm">{v.alamat}</Text>
-                    {v.lat && v.lng ? (
-                      <a
-                        href={`https://www.google.com/maps/dir/?api=1&destination=${v.lat},${v.lng}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{ color: colors['blue-button'], textDecoration: 'none' }}
-                      >
-                        <Text fz="sm">📌 Buka di Google Maps</Text>
-                      </a>
-                    ) : (
-                      <Text c="dimmed" fz="sm">Koordinat belum tersedia</Text>
-                    )}
+                    <Group justify='space-between'>
+                      <Box>
+                        <Text fw="bold" fz="lg">{v.namaTempatMaps}</Text>
+                        <Text c="dimmed" fz="sm" mb="sm">{v.alamat}</Text>
+                      </Box>
+                      <Box>
+                        <IconRoute color={colors['blue-button']} size={30} />
+                        <Text fw={"bold"} fz="sm" c={colors['blue-button']}>Rute</Text>
+                      </Box>
+                    </Group>
+                        {v.lat && v.lng ? (
+                          <a
+                            href={`https://www.google.com/maps/dir/?api=1&destination=${v.lat},${v.lng}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{ color: colors['blue-button'], textDecoration: 'none' }}
+                          >
+                            <Text fz="sm">📌 Lihat Peta Lebih Besar</Text>
+                          </a>
+                        ) : (
+                          <Text c="dimmed" fz="sm">Koordinat belum tersedia</Text>
+                        )}
                   </Paper>
                 ))}
               </Stack>

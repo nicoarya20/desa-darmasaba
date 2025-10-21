@@ -28,7 +28,7 @@ function MemperolehInformasi({ onChange }: {
   return (
     <Group>
       <Select
-        placeholder='pilih cara memperoleh informasi'
+        placeholder='Pilih cara memperoleh informasi'
         label={"Cara Memperoleh Informasi"}
         data={data.map((item) => ({
           value: item.id,

@@ -51,12 +51,12 @@ function Page() {
           <Box key={item.id} px={{ base: "md", md: 100 }}>
             <Paper p="xl" bg={colors['white-trans-1']} radius="lg" shadow="xl">
               <Box px={{ base: "md", md: 100 }}>
-                <Flex align="center" gap={40} justify="center">
-                  <Image loading='lazy' src="/darmasaba-icon.png" h={{ base: 70, md: 120 }} alt="Logo Desa" />
-                  <Text fz={{ base: "1.5rem", md: "2rem", lg: "2.5rem", xl: "3rem" }} fw="bold">
-                    Pejabat Pengelola Informasi Publik
+                <Center>
+                  <Image loading='lazy' src="/darmasaba-icon.png" h={{ base: 70, md: 120 }} w={{ base: 70, md: 120 }} alt="Logo Desa" />
+                </Center>
+                  <Text ta="center" fz={{ base: "1.2rem", md: "2rem", lg: "2.5rem", xl: "3rem" }} fw="bold">
+                  Pejabat Pengelola Informasi dan Dokumentasi
                   </Text>
-                </Flex>
               </Box>
               <Divider my="lg" />
 

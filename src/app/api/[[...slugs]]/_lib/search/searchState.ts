@@ -25,26 +25,40 @@ const searchState = proxy({
       searchState.results = [];
       return;
     }
-
+  
     searchState.loading = true;
+  
+    try {
+      const res = await ApiFetch.api.search.findMany.get({
+        query: {
+          query: searchState.query,
+          page: searchState.page,
+          limit: searchState.limit,
+          type: searchState.type,
+        },
+      });
+  
+      console.log("Search API Response:", res);
+      const rawItems = res.data?.data || [];
+      const parsedItems = structuredClone(rawItems); // ✅ penting!
+  
+      console.log("✅ Parsed items:", parsedItems);
+  
+      if (searchState.page === 1) {
+        searchState.results = parsedItems;
+      } else {
+        searchState.results.push(...parsedItems);
+      }
 
-    const res = await ApiFetch.api.search.findMany.get({
-      query: {
-        query: searchState.query,
-        page: searchState.page,
-        limit: searchState.limit,
-        type: searchState.type,
-      },
-    });
+      console.log("Search results render:", searchState.results);
 
-    if (searchState.page === 1) {
-      searchState.results = res.data?.data || [];
-    } else {
-      searchState.results.push(...(res.data?.data || []));
+  
+      searchState.nextPage = res.data?.nextPage || null;
+    } catch (error) {
+      console.error("Search fetch error:", error);
+    } finally {
+      searchState.loading = false;
     }
-
-    searchState.nextPage = res.data?.nextPage || null;
-    searchState.loading = false;
   },
 
   async next() {

@@ -50,7 +50,7 @@ export default function SDGS() {
             SDGs Desa
           </Title>
         </Center>
-        <Text fz={{ base: "1rem", md: "1.2rem" }} ta="center" c="dimmed" mt="md" maw={820} mx="auto">
+        <Text ta={"center"} fz={{ base: "1rem", md: "1.3rem" }}>
           SDGs Desa merupakan langkah nyata untuk mewujudkan desa yang maju, inklusif, dan berkelanjutan melalui 17 tujuan pembangunan dari pengentasan kemiskinan, pendidikan, kesehatan, kesetaraan gender, hingga pelestarian lingkungan.
         </Text>
 

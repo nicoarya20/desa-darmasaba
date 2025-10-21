@@ -29,42 +29,42 @@ function ModuleItem({ data }: { data: ProgramInovasiItem }) {
 
   return (
     <motion.div whileHover={{ scale: 1.03 }}>
-        <Paper
-          onClick={() => router.push(`/darmasaba/program-inovasi/${data.id}`)}
-          p="lg"
-          radius="xl"
-          shadow="sm"
-          role="button"
-          tabIndex={0}
-          className="cursor-pointer transition-all"
-          bg={isDark ? "dark.6" : "white"}
-        >
-          <Center h={160}>
-            {data.image?.link ? (
-              <Image
-                src={data.image.link}
-                alt={data.name}
-                radius="md"
-                fit="cover"
-                h={140}
-                w="100%"
-                loading="lazy"
-              />
-            ) : (
-              <Stack align="center" gap="xs">
-                <IconPhotoOff size={38} stroke={1.5} />
-                <Text size="sm" c="dimmed">
-                  Belum ada gambar
-                </Text>
-              </Stack>
-            )}
-          </Center>
-          <Box mt="md">
-            <Text fw={600} ta="center" size="md">
-              {data.name}
-            </Text>
-          </Box>
-        </Paper>
+      <Paper
+        onClick={() => router.push(`/darmasaba/program-inovasi/${data.id}`)}
+        p="lg"
+        radius="xl"
+        shadow="sm"
+        role="button"
+        tabIndex={0}
+        className="cursor-pointer transition-all"
+        bg={isDark ? "dark.6" : "white"}
+      >
+        <Center h={160}>
+          {data.image?.link ? (
+            <Image
+              src={data.image.link}
+              alt={data.name}
+              radius="md"
+              fit="contain"
+              h={140}
+              w="100%"
+              style={{ objectPosition: "center" }}
+            />
+          ) : (
+            <Stack align="center" gap="xs">
+              <IconPhotoOff size={38} stroke={1.5} />
+              <Text size="sm" c="dimmed">
+                Belum ada gambar
+              </Text>
+            </Stack>
+          )}
+        </Center>
+        <Box mt="md">
+          <Text fw={600} ta="center" size="md">
+            {data.name}
+          </Text>
+        </Box>
+      </Paper>
     </motion.div>
   );
 }
@@ -110,11 +110,11 @@ function ModuleView() {
         viewport: { paddingRight: 8 }, // kasih jarak biar scroll nggak dempet
       }}
     >
-    <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }} spacing="lg" mt="lg">
-      {listImageState.findMany.data?.map((item) => (
-        <ModuleItem key={item.id} data={item} />
-      ))}
-    </SimpleGrid>
+      <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }} spacing="lg" mt="lg">
+        {listImageState.findMany.data?.map((item) => (
+          <ModuleItem key={item.id} data={item} />
+        ))}
+      </SimpleGrid>
     </ScrollArea>
   );
 }

@@ -48,7 +48,7 @@ function Page() {
                 p={10}
                 mb={50}
                 h={400}
-                w={150}
+                w={Math.max(data.length * 120, 800)} // auto lebar sesuai jumlah data
                 data={data.map((item) => ({
                   id: item.id,
                   Pekerjaan: item.pekerjaan,

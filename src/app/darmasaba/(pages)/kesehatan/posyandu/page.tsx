@@ -1,18 +1,19 @@
 'use client'
 import posyandustate from "@/app/admin/(dashboard)/_state/kesehatan/posyandu/posyandu";
 import colors from "@/con/colors";
-import { Badge, Box, Center, Flex, Group, Image, List, ListItem, Pagination, Paper, SimpleGrid, Skeleton, Spoiler, Stack, Text, TextInput } from "@mantine/core";
-import { useShallowEffect } from "@mantine/hooks";
+import { Badge, Box, Button, Center, Flex, Group, Image, List, ListItem, Pagination, Paper, SimpleGrid, Skeleton, Stack, Text, TextInput } from "@mantine/core";
+import { useDebouncedValue, useShallowEffect } from "@mantine/hooks";
 import { IconCalendar, IconInfoCircle, IconPhone, IconSearch } from "@tabler/icons-react";
 import { useState } from "react";
 import { useProxy } from "valtio/utils";
 import BackButton from "../../desa/layanan/_com/BackButto";
-import { useDebouncedValue } from "@mantine/hooks";
+import { useTransitionRouter } from "next-view-transitions";
 
 export default function Page() {
   const state = useProxy(posyandustate);
   const [search, setSearch] = useState("");
   const [debouncedSearch] = useDebouncedValue(search, 500); // 500ms delay
+  const router = useTransitionRouter()
 
   const { data, page, totalPages, loading, load } = state.findMany;
 
@@ -133,33 +134,41 @@ export default function Page() {
                       loading="lazy"
                     />
                   </Center>
-                  <Flex align="center" gap="xs">
-                    <IconPhone size={18} stroke={1.5} />
-                    <Text fz="sm" c="dimmed">
-                      {v.nomor || "Tidak tersedia"}
-                    </Text>
+                  <Flex align="flex-start" gap="xs">
+                    <IconPhone size={18} stroke={1.5} style={{ marginTop: 3 }} />
+                    <Box>
+                      <Text fz="sm" c="dimmed" lh={1.4}>
+                        {v.nomor || "Tidak tersedia"}
+                      </Text>
+                    </Box>
                   </Flex>
-                  <Flex align="center" gap="xs">
-                    <IconCalendar size={18} stroke={1.5} />
-                    <Text fz="sm" c="dimmed">
-                      Jadwal:{" "}
-                      <span style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: v.jadwalPelayanan }} />
-                    </Text>
+
+                  <Flex align="flex-start" gap="xs">
+                    <IconCalendar size={18} stroke={1.5} style={{ marginTop: 3 }} />
+                    <Box>
+                      <Text fz="sm" c="dimmed" lh={1.4}>
+                        <strong>Jadwal:</strong>{" "}
+                        <span
+                          style={{ wordBreak: "break-word", whiteSpace: "normal" }}
+                          dangerouslySetInnerHTML={{ __html: v.jadwalPelayanan }}
+                        />
+                      </Text>
+                    </Box>
                   </Flex>
-                  <Spoiler
-                    key={`spoiler-${v.id}`}
-                    maxHeight={70}
-                    showLabel="Lihat selengkapnya"
-                    hideLabel="Sembunyikan"
-                    transitionDuration={300}
-                  >
+
+                  <Flex align="flex-start" gap="xs">
+                    <IconInfoCircle size={18} stroke={1.5} style={{ marginTop: 3 }} />
                     <Text
                       fz="sm"
                       lh={1.5}
+                      c="dimmed"
                       dangerouslySetInnerHTML={{ __html: v.deskripsi }}
                       style={{ wordBreak: "break-word", whiteSpace: "normal" }}
+                      lineClamp={3}
+                      truncate="end"
                     />
-                  </Spoiler>
+                  </Flex>
+                  <Button radius="lg" size="md" variant="outline" onClick={() => router.push(`/darmasaba/kesehatan/posyandu/${v.id}`)}>Detail</Button>
                 </Stack>
               </Paper>
             ))}

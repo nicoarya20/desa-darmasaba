@@ -30,20 +30,41 @@ export default function ProfileView({ data }: ProfileViewProps) {
       justify="end"
       align="end"
       pos="relative"
-      w={{ base: '100%', md: '40%' }}
-      px="xl"
+      w={{
+        base: '100%',    // mobile: full width
+        xs: '100%',      // small mobile
+        sm: '85%',       // tablet: 85%
+        md: '60%',       // laptop: 60%
+        lg: '55%',       // laptop large: 55%
+        xl: '50%'        // extra large (4K): 50%
+      }}
+      px={{ base: 'md', sm: 'lg', md: 'xl', xl: '2xl' }}
+      h={{ base: 'auto', sm: '500px', md: '600px', lg: '650px', xl: '700px' }}
     >
       {data.image?.link ? (
-        <Image
-          src={data.image.link}
-          alt={data.name || 'Foto profil'}
-          fit="contain"
-          radius="lg"
-          loading="lazy"
+        <Box
+          pos="relative"
+          w="100%"
+          h="100%"
           style={{
-            objectPosition: 'bottom center',
+            display: 'flex',
+            alignItems: 'flex-end',
+            justifyContent: 'center',
           }}
-        />
+        >
+          <Image
+            src={data.image.link}
+            alt={data.name || 'Foto profil'}
+            fit="contain"
+            radius="lg"
+            loading="lazy"
+            w="100%"
+            h="100%"
+            style={{
+              objectPosition: 'center bottom',
+            }}
+          />
+        </Box>
       ) : (
         <Stack align="center" gap="xs" w="100%" py="xl">
           <IconUserCircle size={96} stroke={1.5} />
@@ -53,32 +74,43 @@ export default function ProfileView({ data }: ProfileViewProps) {
         </Stack>
       )}
 
-      {/* Box nama dan jabatan - sedikit overlap dengan gambar */}
+      {/* Box nama dan jabatan - responsive positioning */}
       <Box
         pos="absolute"
-        bottom={-20} // bikin naik sedikit ke gambar
+        bottom={{ base: -30, sm: -25, md: -20 }}
         right={0}
-        w="100%"
-        p={{ base: 'xs', md: 'md' }}
-        style={{ pointerEvents: 'none' }} // biar ga ganggu klik di gambar
+        w={{ base: '95%', sm: '100%' }}
+        px={{ base: 'xs', sm: 'sm', md: 'md' }}
+        style={{ pointerEvents: 'none' }}
       >
         <Card
-          px="lg"
-          py="sm"
+          px={{ base: 'md', sm: 'lg' }}
+          py={{ base: 'xs', sm: 'sm' }}
           radius="lg"
           withBorder
           style={{
             boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
             backdropFilter: 'blur(6px)',
             pointerEvents: 'auto',
+            backgroundColor: 'rgba(255, 255, 255, 0.95)',
           }}
         >
           <Tooltip label="Jabatan Resmi" withArrow>
-            <Text fz="sm" c="dimmed">
+            <Text
+              fz={{ base: 'xs', sm: 'sm' }}
+              c="dimmed"
+              lineClamp={1}
+            >
               {data.position || 'Tidak ada jabatan'}
             </Text>
           </Tooltip>
-          <Text c={colors['blue-button']} fw={700} fz="xl" mt={4}>
+          <Text
+            c={colors['blue-button']}
+            fw={700}
+            fz={{ base: 'lg', sm: 'xl' }}
+            mt={4}
+            lineClamp={2}
+          >
             {data.name}
           </Text>
         </Card>

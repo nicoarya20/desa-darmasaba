@@ -92,7 +92,7 @@ function Page() {
                   cursor={{ fill: 'var(--mantine-color-gray-1)' }}
                 />
                 <Legend />
-                <Bar dataKey="jumlah" fill={colors['blue-button']} name="Jumlah Pendidikan" radius={[8, 8, 0, 0]} />
+                <Bar dataKey="jumlah" fill={colors['blue-button']} name="Jumlah Penduduk dengan Pendidikan" radius={[8, 8, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </Paper>

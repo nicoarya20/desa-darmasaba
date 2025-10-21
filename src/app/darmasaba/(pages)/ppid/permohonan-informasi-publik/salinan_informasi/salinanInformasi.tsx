@@ -26,7 +26,7 @@ function MemperolehSalinan({ onChange }: {
   return (
     <Group>
       <Select
-        placeholder='pilih cara memperoleh salinan informasi'
+        placeholder='Pilih cara memperoleh salinan informasi'
         label={'Cara Memperoleh Salinan Informasi'}
         data={data.map((item) => ({
           value: item.id,
