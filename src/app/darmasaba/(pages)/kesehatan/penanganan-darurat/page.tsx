@@ -108,26 +108,30 @@ function Page() {
                     <Box
                       style={{
                         width: '100%',
-                        aspectRatio: '16/9',
-                        borderRadius: '12px',
+                        height: 180, // 🔥 tinggi fix biar semua seragam
+                        borderRadius: 12,
                         overflow: 'hidden',
                         position: 'relative',
+                        backgroundColor: '#f0f2f5', // fallback kalau gambar loading
                       }}
                     >
                       <Image
-                        src={v.image.link}
+                        src={v.image?.link || '/img/default.png'}
                         alt={v.name}
                         fit="cover"
+                        width="100%"
+                        height="100%"
                         loading="lazy"
                         style={{
-                          width: '100%',
-                          height: '100%',
+                          objectFit: 'cover',
+                          objectPosition: 'center',
                           transition: 'transform 0.4s ease',
                         }}
                         onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
                         onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
                       />
                     </Box>
+
 
                   </Center>
                   <Stack gap={4} w="100%">

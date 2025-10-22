@@ -23,7 +23,7 @@ function Kepuasan() {
   const [donutDataJenisKelamin, setDonutDataJenisKelamin] = useState<ChartDataItem[]>([]);
   const [donutDataRating, setDonutDataRating] = useState<ChartDataItem[]>([]);
   const [donutDataKelompokUmur, setDonutDataKelompokUmur] = useState<ChartDataItem[]>([]);
-  const [barChartData, setBarChartData] = useState<Array<{ month: string; count: number }>>([]);
+  const [barChartData, setBarChartData] = useState<Array<{ month: string; Responden: number }>>([]);
   const [opened, { open, close }] = useDisclosure(false)
 
   const resetForm = () => {
@@ -121,18 +121,18 @@ function Kepuasan() {
 
       // Convert map to array and sort by date
       const barData = Array.from(monthYearMap.entries())
-        .map(([key, count]) => {
+        .map(([key, Responden]) => {
           const [year, month] = key.split('-');
           const monthName = new Date(Number(year), Number(month) - 1, 1)
             .toLocaleString('id-ID', { month: 'long' });
           return {
             month: `${monthName} ${year}`,
-            count,
+            Responden,
             sortKey: parseInt(`${year}${String(month).padStart(2, '0')}`, 10)
           };
         })
         .sort((a, b) => a.sortKey - b.sortKey)
-        .map(({ month, count }) => ({ month, count }));
+        .map(({ month, Responden }) => ({ month, Responden }));
 
       setBarChartData(barData);
     }
@@ -185,7 +185,7 @@ function Kepuasan() {
                   h={window.innerWidth < 480 ? 200 : 300}
                   data={barChartData}
                   dataKey="month"
-                  series={[{ name: 'count', color: colors['blue-button'] }]}
+                  series={[{ name: 'Responden', color: colors['blue-button'] }]}
                   tickLine="y"
                   xAxisLabel="Bulan"
                   yAxisLabel="Jumlah Responden"
@@ -448,7 +448,7 @@ function Kepuasan() {
                 h={300}
                 data={barChartData}
                 dataKey="month"
-                series={[{ name: 'count', color: colors['blue-button'] }]}
+                series={[{ name: 'Responden', color: colors['blue-button'] }]}
                 tickLine="y"
                 xAxisLabel="Bulan"
                 yAxisLabel="Jumlah Responden"

@@ -233,21 +233,42 @@ function StrukturOrganisasiPPID() {
   return (
     <Stack align="center" mt="xl">
       {/* 🔍 Search + Zoom + Fullscreen controls */}
-      <Group mb="md" justify="center" gap="sm">
+      <Group mb="md" justify="center" gap="sm" align="center">
         <TextInput
           placeholder="Cari nama atau jabatan..."
           leftSection={<IconSearch size={16} />}
           onChange={(e) => debouncedSearch(e.target.value)}
         />
+
         <Button variant="light" size="sm" onClick={handleZoomOut}>
           <IconZoomOut size={16} />
         </Button>
-        <Button variant="light" size="sm" onClick={resetZoom}>
-          100%
-        </Button>
+
+        {/* 🔍 Tambahkan indikator zoom di sini */}
+        {/* Floating Zoom Indicator */}
+        <Box
+          bg="#C3D0E8"
+          c="blue"
+          px={9}
+          py={8}
+          style={{
+            fontSize: 14,
+            fontWeight: 600,
+            borderRadius: '5px',
+          }}
+        >
+          {Math.round(scale * 100)}%
+        </Box>
+
+
         <Button variant="light" size="sm" onClick={handleZoomIn}>
           <IconZoomIn size={16} />
         </Button>
+
+        <Button variant="light" size="sm" onClick={resetZoom}>
+          Reset
+        </Button>
+
         <Button
           variant="light"
           size="sm"
@@ -259,6 +280,7 @@ function StrukturOrganisasiPPID() {
           {isFullscreen ? 'Keluar' : 'Fullscreen'}
         </Button>
       </Group>
+
 
       {/* Chart Container */}
       <Box

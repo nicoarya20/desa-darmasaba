@@ -38,7 +38,7 @@ export function NavbarSubMenu({ item }: { item: MenuItem[] | null }) {
               justify="space-between"
               size="lg"
               radius="md"
-              color={pathname === link.href ? 'blue' : 'gray'}
+              color={link.href && pathname.startsWith(link.href) ? 'blue' : 'gray'}
               onClick={() => {
                 if (link.href) {
                   router.push(link.href);
@@ -49,12 +49,12 @@ export function NavbarSubMenu({ item }: { item: MenuItem[] | null }) {
               rightSection={<IconArrowRight size={18} />}
               styles={(theme) => ({
                 root: {
-                  background: pathname === link.href ? theme.colors.blue[0] : 'transparent',
-                  color: pathname === link.href ? theme.colors.blue[7] : colors['blue-button'],
-                  fontWeight: pathname === link.href ? 600 : 500,
+                  background: link.href && pathname.startsWith(link.href) ? theme.colors.blue[0] : 'transparent',
+                  color: link.href && pathname.startsWith(link.href) ? theme.colors.blue[7] : colors['blue-button'],
+                  fontWeight: link.href && pathname.startsWith(link.href) ? 600 : 500,
                   transition: "all 0.2s ease",
                   "&:hover": {
-                    background: pathname === link.href ? theme.colors.blue[1] : theme.colors.gray[0],
+                    background: link.href && pathname.startsWith(link.href) ? theme.colors.blue[1] : theme.colors.gray[0],
                   }
                 },
               })}

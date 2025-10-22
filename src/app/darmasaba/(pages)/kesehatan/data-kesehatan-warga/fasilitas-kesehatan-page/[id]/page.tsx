@@ -3,9 +3,9 @@
 import fasilitasKesehatanState from '@/app/admin/(dashboard)/_state/kesehatan/data_kesehatan_warga/fasilitasKesehatan';
 import BackButton from '@/app/darmasaba/(pages)/desa/layanan/_com/BackButto';
 import colors from '@/con/colors';
-import { ActionIcon, Anchor, AspectRatio, Badge, Box, Button, Card, Chip, CopyButton, Divider, Grid, Group, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, ThemeIcon, Title, Tooltip } from '@mantine/core';
+import { ActionIcon, AspectRatio, Badge, Box, Button, Card, CopyButton, Divider, Grid, Group, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, ThemeIcon, Title, Tooltip } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { IconBrandWhatsapp, IconCheck, IconCopy, IconDeviceLandlinePhone, IconHeart, IconInfoCircle, IconMail, IconMapPin, IconMoodEmpty, IconSearch, IconStethoscope, IconUser, IconUsersGroup, IconWallet } from '@tabler/icons-react';
+import { IconBrandWhatsapp, IconCheck, IconCopy, IconDeviceLandlinePhone, IconHeart, IconInfoCircle, IconMail, IconMapPin, IconMoodEmpty, IconSearch, IconUser } from '@tabler/icons-react';
 import { useParams } from 'next/navigation';
 import { useMemo } from 'react';
 import { useProxy } from 'valtio/utils';
@@ -149,11 +149,6 @@ function Page() {
                 </CopyButton>
               </Group>
             </Group>
-            <Group gap="xs" mt="sm" wrap="wrap">
-              <Chip defaultChecked radius="xl" variant="light" icon={<IconStethoscope size={16} />}>Layanan Medis</Chip>
-              <Chip radius="xl" variant="light" icon={<IconUsersGroup size={16} />}>Ramah Keluarga</Chip>
-              <Chip radius="xl" variant="light" icon={<IconWallet size={16} />}>Pembayaran Non-Tunai</Chip>
-            </Group>
           </Stack>
         </Card>
       </Box>
@@ -210,7 +205,6 @@ function Page() {
                     <Button variant="light" leftSection={<IconBrandWhatsapp size={18} />} component="a" href={`https://wa.me/${kontak.whatsapp.replace(/\D/g, '')}`} target="_blank" aria-label="Hubungi WhatsApp">WhatsApp</Button>
                     <Button variant="light" leftSection={<IconMail size={18} />} component="a" href={`mailto:${kontak.email}`} aria-label="Kirim Email">Email</Button>
                   </Group>
-                  <Anchor target="_blank" underline="hover">Kunjungi situs resmi</Anchor>
                 </Stack>
               </Card>
 

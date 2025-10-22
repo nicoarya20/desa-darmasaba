@@ -50,8 +50,8 @@ export function NavbarMainMenu({ listNavbar }: { listNavbar: MenuItem[] }) {
             <MenuItemCom 
             key={k} 
             item={item}
-            isActive={pathname === item.href || 
-              (item.children?.some(child => child.href === pathname))}
+            isActive={item.href && pathname.startsWith(item.href) || 
+              (item.children?.some(child => child.href && pathname.startsWith(child.href)))}
             />
           ))}
 

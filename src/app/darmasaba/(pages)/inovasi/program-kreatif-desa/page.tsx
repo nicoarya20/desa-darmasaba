@@ -1,14 +1,14 @@
 'use client'
+import { IconKey, IconMapper } from '@/app/admin/(dashboard)/_com/iconMap';
 import programKreatifState from '@/app/admin/(dashboard)/_state/inovasi/program-kreatif';
 import colors from '@/con/colors';
-import { Box, Button, Center, Group, Pagination, Paper, SimpleGrid, Skeleton, Stack, Text, TextInput } from '@mantine/core';
+import { Box, Button, Center, Grid, GridCol, Pagination, Paper, SimpleGrid, Skeleton, Stack, Text, TextInput } from '@mantine/core';
 import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
+import { IconSearch } from '@tabler/icons-react';
 import { useTransitionRouter } from 'next-view-transitions';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import BackButton from '../../desa/layanan/_com/BackButto';
-import { IconSearch } from '@tabler/icons-react';
-import { IconKey, IconMapper } from '@/app/admin/(dashboard)/_com/iconMap';
 
 // const data = [
 //   {
@@ -75,17 +75,23 @@ function Page() {
         <BackButton />
       </Box>
       <Box px={{ base: 'md', md: 100 }} >
-        <Group justify="space-between" mb="md" align='center'>
-          <Text ta={"center"} fz={{ base: "h1", md: "2.5rem" }} c={colors["blue-button"]} fw={"bold"}>
-            Program Kreatif Desa
-          </Text>
-          <TextInput
-            placeholder="Cari program kreatif..."
-            leftSection={<IconSearch size={20} />}
-            value={search}
-            onChange={(e) => setSearch(e.currentTarget.value)}
-          />
-        </Group>
+        <Grid align='center'>
+          <GridCol span={{ base: 12, md: 9 }}>
+            <Text fz={{ base: "h1", md: "2.5rem" }} c={colors["blue-button"]} fw={"bold"}>
+              Program Kreatif Desa
+            </Text>
+          </GridCol>
+          <GridCol span={{ base: 12, md: 3 }}>
+            <TextInput
+              radius={"lg"}
+              placeholder='Cari Program Kreatif'
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              leftSection={<IconSearch size={20} />}
+              w={{ base: "50%", md: "100%" }}
+            />
+          </GridCol>
+        </Grid>
       </Box>
       <Box px={{ base: "md", md: 100 }}>
         <Stack gap={'lg'} justify='center'>
