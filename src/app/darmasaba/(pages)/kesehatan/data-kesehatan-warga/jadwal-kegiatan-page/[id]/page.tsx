@@ -4,14 +4,16 @@ import BackButton from '@/app/darmasaba/(pages)/desa/layanan/_com/BackButto';
 import colors from '@/con/colors';
 import {
   Box,
+  Button,
   Divider,
   Group,
+  Modal,
   Paper,
   Skeleton,
   Stack,
   Text
 } from '@mantine/core';
-import { useShallowEffect } from '@mantine/hooks';
+import { useDisclosure, useShallowEffect } from '@mantine/hooks';
 import { IconMail, IconPhone, IconUser } from '@tabler/icons-react';
 import { useParams } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
@@ -21,6 +23,7 @@ import CreatePendaftaran from '../create/page';
 function Page() {
   const params = useParams();
   const state = useProxy(jadwalkegiatanState);
+  const [opened, { open, close }] = useDisclosure(false);
 
   useShallowEffect(() => {
     state.findUnique.load(params?.id as string);
@@ -66,28 +69,38 @@ function Page() {
                 <Stack gap="sm">
                   <Text fz="lg" fw="bold">Deskripsi Kegiatan</Text>
                   <Divider />
-                  <Text ta="justify" fz="md" style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: state.findUnique.data.deskripsijadwalkegiatan.deskripsi }} />
+                  <Text ta="justify" fz="md" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: state.findUnique.data.deskripsijadwalkegiatan.deskripsi }} />
                 </Stack>
 
                 <Stack gap="sm">
                   <Text fz="lg" fw="bold">Layanan yang Tersedia</Text>
                   <Divider />
-                  <Text ta="justify" fz="md" style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: state.findUnique.data.layananjadwalkegiatan.content }} />
+                  <Text ta="justify" fz="md" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: state.findUnique.data.layananjadwalkegiatan.content }} />
                 </Stack>
 
                 <Stack gap="sm">
                   <Text fz="lg" fw="bold">Syarat & Ketentuan</Text>
                   <Divider />
-                  <Text ta="justify" fz="md" style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: state.findUnique.data.syaratketentuanjadwalkegiatan.content }} />
+                  <Text ta="justify" fz="md" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: state.findUnique.data.syaratketentuanjadwalkegiatan.content }} />
                 </Stack>
 
                 <Stack gap="sm">
                   <Text fz="lg" fw="bold">Dokumen yang Perlu Dibawa</Text>
                   <Divider />
-                  <Text ta="justify" fz="md" style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: state.findUnique.data.dokumenjadwalkegiatan.content }} />
+                  <Text ta="justify" fz="md" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: state.findUnique.data.dokumenjadwalkegiatan.content }} />
                 </Stack>
 
-                <CreatePendaftaran />
+                <Stack gap="sm">
+                  <Text fz="lg" fw="bold">Pendaftaran Kegiatan</Text>
+                  <Divider />
+                  <Group>
+                    <Button onClick={open}>Buat Pendaftaran</Button>
+                  </Group>
+                </Stack>
+
+                <Modal opened={opened} onClose={close}>
+                  <CreatePendaftaran />
+                </Modal>
 
                 <Paper p="lg" radius="md" bg={colors['blue-button-trans']} shadow="sm">
                   <Stack gap="xs">

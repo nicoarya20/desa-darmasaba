@@ -41,7 +41,7 @@ export function Navbar() {
                 stateNav.mobileOpen = false;
               }}
             >
-              <Tooltip label="Go to homepage" position="bottom" withArrow>
+              <Tooltip label="Kembali ke Beranda" position="bottom" withArrow>
                 <Image
                   src="/darmasaba-icon.png"
                   alt="Village Logo"

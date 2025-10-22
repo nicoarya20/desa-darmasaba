@@ -74,7 +74,7 @@ function Page() {
             <Title fz={55} fw={900} c={colors['blue-button']}>
               Wujudkan Mimpi Pendidikanmu di Desa Darmasaba
             </Title>
-            <Text fz="lg" mt="md" c="dimmed">
+            <Text fz="lg" mt="md" fw={"bold"}>
               Program beasiswa untuk mendukung pendidikan berkualitas bagi generasi muda Desa Darmasaba.
             </Text>
             <Group mt="xl">

@@ -240,15 +240,8 @@ function Page() {
                   </Table>
                 </Stack>
               </Card>
-            </Stack>
-          </Grid.Col>
-        </Grid>
-      </Box>
 
-      <Box px={{ base: 'md', md: 100 }}>
-        <Grid gutter="lg">
-          <Grid.Col span={{ base: 12, md: 8 }}>
-            <Card radius="xl" p="lg" withBorder>
+             <Card radius="xl" p="lg" withBorder>
               <Stack gap="md">
                 <Title order={3}>Fasilitas Pendukung</Title>
                 <Divider />
@@ -264,8 +257,7 @@ function Page() {
                 )}
               </Stack>
             </Card>
-          </Grid.Col>
-          <Grid.Col span={{ base: 12, md: 4 }}>
+
             <Card radius="xl" p="lg" withBorder>
               <Stack gap="md">
                 <Title order={3}>Layanan & Tarif</Title>
@@ -303,10 +295,11 @@ function Page() {
                 )}
               </Stack>
             </Card>
+            </Stack>
           </Grid.Col>
         </Grid>
       </Box>
-
+      
       <Box px={{ base: 'md', md: 100 }} pb="xl">
         <Paper radius="xl" p="lg" withBorder>
           <Stack gap="md">

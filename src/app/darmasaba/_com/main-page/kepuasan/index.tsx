@@ -605,7 +605,7 @@ function Kepuasan() {
               }}
             />
             <TextInput
-              label="Tanggal"
+              label="Tanggal Pengisian"
               type="date"
               placeholder="masukkan tanggal"
               defaultValue={state.create.form.tanggal}

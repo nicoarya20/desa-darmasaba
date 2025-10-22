@@ -186,12 +186,11 @@ function Page() {
                   stateCreate.create.form.kategoriId = '';
                 }
               }}
-              searchable
+              // searchable
               clearable
               nothingFoundMessage="Tidak ditemukan"
               required
             />
-
             <Button bg={colors['blue-button']} onClick={handleSubmit}>
               Simpan
             </Button>

@@ -15,7 +15,7 @@ import {
   Timeline,
   Title
 } from '@mantine/core';
-import { IconArrowLeft } from '@tabler/icons-react';
+import { IconArrowLeft, IconChecklist, IconInfoCircle, IconQuote, IconSchool, IconTimeline, IconUserPlus } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useDisclosure } from '@mantine/hooks';
 import { useProxy } from 'valtio/utils';
@@ -69,10 +69,11 @@ export default function BeasiswaPage() {
       {/* Hero Section */}
       <Container size="lg" py="xl">
         <Stack gap="md" maw={600}>
-          <Title order={2} c="blue.9">
-            Program Beasiswa Pendidikan Desa Darmasaba
-          </Title>
-          <Text c="dimmed">
+          <Group>
+            <IconSchool size={30} color={colors["blue-button"]} />
+            <Title order={2}>Program Beasiswa Pendidikan Desa Darmasaba</Title>
+          </Group>
+          <Text>
             Program ini bertujuan untuk mendukung pendidikan generasi muda di Desa Darmasaba
             agar dapat melanjutkan studi ke jenjang lebih tinggi dengan dukungan finansial dan pendampingan.
           </Text>
@@ -81,21 +82,35 @@ export default function BeasiswaPage() {
 
       {/* Tentang Program */}
       <Container size="lg" py="xl">
-        <Title order={3} mb="sm">
-          Tentang Program
-        </Title>
+        <Group mb="sm">
+          <IconInfoCircle size={24} color={colors["blue-button"]} />
+          <Title order={3}>Tentang Program</Title>
+        </Group>
         <Text>
           Program Beasiswa Desa Darmasaba adalah inisiatif pemerintah desa untuk meningkatkan akses
           pendidikan bagi siswa berprestasi dan kurang mampu. Melalui program ini, desa memberikan bantuan
           biaya sekolah, bimbingan akademik, serta pelatihan soft skill bagi peserta terpilih.
         </Text>
+
+        {/* Tambahkan info tahun berjalan di sini */}
+        <Paper mt="md" p="md" radius="lg" shadow="xs" bg="#f8fbff" withBorder>
+          <Text fw={500} c={colors["blue-button"]}>
+            📅 Periode Beasiswa Tahun 2025
+          </Text>
+          <Text fz="sm" c="dimmed">
+            Pendaftaran beasiswa dibuka mulai <strong>1 Januari 2025</strong> dan ditutup pada
+            <strong>31 Mei 2025</strong>.
+            Pengumuman hasil seleksi akan diumumkan pada pertengahan Juni 2025 melalui website resmi Desa Darmasaba.
+          </Text>
+        </Paper>
       </Container>
 
       {/* Syarat dan Ketentuan */}
       <Container size="lg" py="xl">
-        <Title order={3} mb="sm">
-          Syarat Pendaftaran
-        </Title>
+        <Group mb="sm">
+          <IconChecklist size={24} color={colors["blue-button"]} />
+          <Title order={3}>Syarat Pendaftaran</Title>
+        </Group>
 
         <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }} spacing="lg">
           <Paper shadow="sm" p="md" radius="lg" withBorder>
@@ -123,14 +138,18 @@ export default function BeasiswaPage() {
 
       {/* Proses Seleksi */}
       <Container size="lg" py="xl">
-        <Title order={3} mb="sm">
-          Proses Seleksi
-        </Title>
+        <Group mb="sm">
+          <IconTimeline size={24} color={colors["blue-button"]} />
+          <Title order={3}>Proses Seleksi</Title>
+        </Group>
 
         <Timeline active={4} bulletSize={24} lineWidth={2}>
           <Timeline.Item title="Pendaftaran Online">
             <Text c="dimmed" size="sm">
               Calon peserta mengisi formulir pendaftaran dan mengunggah dokumen pendukung.
+            </Text>
+            <Text size="sm" fw={500} c={colors["blue-button"]} mt={4}>
+              ⏰ Estimasi waktu: 1 Februari – 31 Mei 2025
             </Text>
           </Timeline.Item>
 
@@ -138,11 +157,17 @@ export default function BeasiswaPage() {
             <Text c="dimmed" size="sm">
               Panitia memverifikasi kelengkapan dan validitas berkas.
             </Text>
+            <Text size="sm" fw={500} c={colors["blue-button"]} mt={4}>
+              ⏰ Estimasi waktu: 5–7 hari kerja setelah penutupan pendaftaran
+            </Text>
           </Timeline.Item>
 
           <Timeline.Item title="Wawancara dan Penilaian">
             <Text c="dimmed" size="sm">
               Peserta yang lolos administrasi akan diundang untuk wawancara langsung dengan tim seleksi.
+            </Text>
+            <Text size="sm" fw={500} c={colors["blue-button"]} mt={4}>
+              ⏰ Estimasi waktu: 7–10 hari kerja setelah pengumuman seleksi administrasi
             </Text>
           </Timeline.Item>
 
@@ -150,15 +175,24 @@ export default function BeasiswaPage() {
             <Text c="dimmed" size="sm">
               Daftar penerima beasiswa diumumkan melalui website resmi Desa Darmasaba.
             </Text>
+            <Text size="sm" fw={500} c={colors["blue-button"]} mt={4}>
+              ⏰ Estimasi waktu: 5 hari kerja setelah tahap wawancara selesai
+            </Text>
           </Timeline.Item>
         </Timeline>
+
+        <Text c="dimmed" size="sm" mt="lg" ta="center">
+          🗓️ Total estimasi keseluruhan proses: sekitar 3–4 minggu setelah penutupan pendaftaran
+        </Text>
       </Container>
+
 
       {/* Testimoni */}
       <Container size="lg" py="xl">
-        <Title order={3} mb="sm">
-          Cerita Sukses Penerima Beasiswa
-        </Title>
+        <Group mb="sm">
+          <IconQuote size={24} color={colors["blue-button"]} />
+          <Title order={3}>Cerita Sukses Penerima Beasiswa</Title>
+        </Group>
 
         <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="lg">
           <Paper shadow="md" p="lg" radius="lg">
@@ -183,7 +217,10 @@ export default function BeasiswaPage() {
 
       {/* CTA Akhir */}
       <Container size="lg" py="xl" ta="center">
-        <Title order={3}>Siap Bergabung dengan Program Ini?</Title>
+        <Group justify="center" mb="sm">
+          <IconUserPlus size={28} color={colors["blue-button"]} />
+          <Title order={3}>Siap Bergabung dengan Program Ini?</Title>
+        </Group>
         <Text c="dimmed" mb="md">
           Segera daftar dan wujudkan mimpimu bersama Desa Darmasaba.
         </Text>

@@ -43,7 +43,7 @@ function Page() {
             Pendidikan Non Formal
           </Title>
           <Text ta="center" fz="lg" lh={1.6} c="black" maw={800} mx="auto">
-            Bentuk pendidikan di luar sekolah yang terstruktur, bertujuan memberikan keterampilan, pengetahuan, dan pengembangan karakter masyarakat dari berbagai usia serta latar belakang.
+          Pendidikan non formal merupakan bentuk pendidikan di luar sekolah yang terstruktur, bertujuan untuk memberikan keterampilan, pengetahuan, serta pengembangan karakter masyarakat dari berbagai usia dan latar belakang.
           </Text>
         </Box>
         <SimpleGrid

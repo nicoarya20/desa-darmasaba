@@ -55,9 +55,9 @@ function EditProgramKemiskinan() {
   useEffect(() => {
     if (!id) return;
 
-    stateProgram.findUnique
-      .load(id)
-      .then(() => {
+    const loadData = async () => {
+      try {
+        await stateProgram.findUnique.load(id);
         const data = stateProgram.findUnique.data;
         if (data) {
           setFormData({
@@ -70,12 +70,16 @@ function EditProgramKemiskinan() {
             },
           });
         }
-      })
-      .catch((err) => {
+      } catch (err) {
         console.error('Error load data:', err);
         toast.error('Gagal mengambil data program');
-      });
-  }, [id, stateProgram.findUnique]);
+      }
+    };
+
+    loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]); // ✅ hanya trigger saat id berubah
+
 
   // generic handler untuk field top-level
   const handleChange = useCallback(

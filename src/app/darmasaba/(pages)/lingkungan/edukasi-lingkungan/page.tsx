@@ -49,12 +49,10 @@ function Page() {
             <Paper p={20} bg={colors['white-trans-1']} shadow="md" radius="md" style={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
               <Stack gap="md">
                 <Box>
-                  <Tooltip label={tujuan.data?.judul} position="top" withArrow>
+                  <Tooltip label={<Text fz={"sm"} c={"white"} dangerouslySetInnerHTML={{ __html: tujuan.data?.judul || '' }} /> } position="top" withArrow>
                     <Stack gap={4} align="center">
                     <IconLeaf size={28} color={colors['blue-button']} />
-                      <Text fz="h3" fw="bold" c={colors['blue-button']} ta="center">
-                        {tujuan.data?.judul}
-                      </Text>
+                      <Text dangerouslySetInnerHTML={{ __html: tujuan.data?.judul || '' }} fz="h3" fw="bold" c={colors['blue-button']} ta="center" />
                     </Stack>
                   </Tooltip>
                 </Box>

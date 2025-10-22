@@ -26,7 +26,7 @@ export function NavbarMainMenu({ listNavbar }: { listNavbar: MenuItem[] }) {
     <Stack gap={0} visibleFrom="sm" bg={colors["white-trans-1"]}>
       <Container pos="relative" w={{ base: '100%', md: '80%' }} fluid>
         <Flex align="center" justify="space-between" wrap={{ base: "wrap", md: "nowrap" }}>
-          <Tooltip label="Go to Homepage" position="bottom" withArrow>
+          <Tooltip label="Kembali ke Beranda" position="bottom" withArrow>
             <ActionIcon
               radius="xl"
               variant="transparent"
@@ -55,7 +55,7 @@ export function NavbarMainMenu({ listNavbar }: { listNavbar: MenuItem[] }) {
             />
           ))}
 
-          <Tooltip label="Search content" position="bottom" withArrow>
+          <Tooltip label="Cari Konten" position="bottom" withArrow>
             <ActionIcon
               variant="transparent"
               c={isSearch ? 'gray' : colors["blue-button"]}
@@ -71,7 +71,7 @@ export function NavbarMainMenu({ listNavbar }: { listNavbar: MenuItem[] }) {
 
           {/* hanya tampil kalau role = admin */}
           {stateAuth.role === "admin" && (
-            <Tooltip label="My Profile" position="bottom" withArrow>
+            <Tooltip label="Profil Saya" position="bottom" withArrow>
               <ActionIcon
                 onClick={() => {
                   next.push("/admin/landing-page/profile/program-inovasi")

@@ -62,11 +62,23 @@ function Page() {
             Informasi dan Pelayanan Administrasi Digital
           </Text>
         </Box>
-        <Image src={state.findUnique.data?.image?.link || ''} alt='' w={"100%"} loading="lazy"/>
+        <Image src={state.findUnique.data?.image?.link || ''} alt='' w={"100%"} loading="lazy" />
       </Container>
       <Box px={{ base: "md", md: 100 }}>
         <Stack gap={"xs"}>
-          <Text py={20} fz={{ base: "sm", md: "lg" }} ta={"justify"} style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: state.findUnique.data?.content || '' }} />
+          <Text
+            py={20}
+            fz={{ base: "sm", md: "lg" }}
+            lh={{ base: 1.6, md: 1.8 }} // ✅ line-height lebih rapat dan responsif
+            ta="justify"
+            style={{
+              wordBreak: "break-word",
+              whiteSpace: "normal",
+            }}
+            dangerouslySetInnerHTML={{
+              __html: state.findUnique.data?.content || "",
+            }}
+          />
         </Stack>
       </Box>
     </Stack>
