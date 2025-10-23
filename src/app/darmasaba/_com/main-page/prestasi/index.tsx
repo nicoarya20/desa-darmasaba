@@ -35,7 +35,7 @@ function Prestasi() {
         <Stack align="center" gap="sm">
           <Group gap="xs">
             <IconTrophy size={36} color={colors["blue-button"]} />
-            <Text ta="center" fz={{ base: "2rem", md: "3.4rem" }} fw={700}>
+            <Text c={colors["blue-button"]} ta="center" fz={{ base: "2rem", md: "3.4rem" }} fw={700}>
               Prestasi Desa
             </Text>
           </Group>
@@ -55,7 +55,7 @@ function Prestasi() {
         </Stack>
       </Container>
 
-      <Box py={50}>
+      <Box py="lg">
         {loading ? (
           <Center mih={200}>
             <Loader color={colors["blue-button"]} size="xl" />

@@ -17,7 +17,10 @@ import ScrollToTopButton from "./_com/scrollToTopButton";
 export default function Page() {
   return (
     <Box>
-      <Stack bg={colors.grey[1]} gap={"4rem"}>
+      <Stack 
+      bg={colors.grey[1]} 
+      gap={"1.5rem"}
+      >
         <LandingPage />
         <Penghargaan />
         <Layanan />

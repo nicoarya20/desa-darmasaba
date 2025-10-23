@@ -30,10 +30,10 @@ const textHeading = {
 function Layanan() {
 
  return (
-   <Stack pos={"relative"} bg={colors.grey[1]} gap={"42"} py={"xl"}>
-     <Container w={{ base: "100%", md: "80%" }} p={"xl"} >
+   <Stack pos={"relative"} bg={colors.grey[1]} gap={"xl"} py={"md"}>
+     <Container w={{ base: "100%", md: "80%" }} p={"md"} >
        <Stack align="center" gap={"0"}>
-       <Text fw={"bold"} fz={{ base: "1.8rem", md: "3.4rem" }}>
+       <Text fw={"bold"} c={colors["blue-button"]} fz={{ base: "1.8rem", md: "3.4rem" }}>
            {textHeading.title}
          </Text>
          <Text ta={"center"} fz={{ base: "1rem", md: "1.3rem" }}>

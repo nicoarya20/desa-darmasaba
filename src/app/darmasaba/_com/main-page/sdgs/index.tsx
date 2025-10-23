@@ -5,6 +5,7 @@ import { useMediaQuery } from "@mantine/hooks"
 import { Prisma } from "@prisma/client"
 import Link from "next/link"
 import { IconMoodSad } from "@tabler/icons-react"
+import colors from "@/con/colors"
 
 export default function SDGS() {
   const theme = useMantineTheme()
@@ -41,11 +42,7 @@ export default function SDGS() {
             order={1}
             fz={{ base: "2.4rem", md: "3.6rem" }}
             fw={900}
-            style={{
-              background: "linear-gradient(90deg, #1A5F7A, #159895)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-            }}
+            c={colors["blue-button"]}
           >
             SDGs Desa
           </Title>
@@ -54,7 +51,7 @@ export default function SDGS() {
           SDGs Desa merupakan langkah nyata untuk mewujudkan desa yang maju, inklusif, dan berkelanjutan melalui 17 tujuan pembangunan dari pengentasan kemiskinan, pendidikan, kesehatan, kesetaraan gender, hingga pelestarian lingkungan.
         </Text>
 
-        <Box py={50}>
+        <Box py="lg">
           <Paper
             p={{ base: "md", md: "xl" }}
             radius="2xl"
@@ -156,7 +153,7 @@ export default function SDGS() {
               href="/darmasaba/sdgs-desa"
               radius="xl"
               size="lg"
-              mt={40}
+              mt="md"
               variant="gradient"
               gradient={{ from: "#26667F", to: "#124170" }}
               style={{ boxShadow: "0 6px 14px rgba(18,65,112,0.25)"}}

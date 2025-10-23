@@ -126,17 +126,36 @@ export default function Page() {
                   className="hover-scale"
                 >
                   <Stack gap="md">
-                    <Box h={180} w="100%">
-                      <Image
-                        src={v.image?.link}
-                        alt={v.name}
-                        radius="xl"
-                        w="100%"
-                        h="100%"
-                        fit="cover"
-                        loading="lazy"
-                      />
-                    </Box>
+                    <Center>
+                      <Box
+                        style={{
+                          width: '100%',
+                          height: 180, // 🔥 tinggi fix biar semua seragam
+                          borderRadius: 12,
+                          overflow: 'hidden',
+                          position: 'relative',
+                          backgroundColor: '#f0f2f5', // fallback kalau gambar loading
+                        }}
+                      >
+                        <Image
+                          src={v.image?.link || '/img/default.png'}
+                          alt={v.name}
+                          fit="cover"
+                          width="100%"
+                          height="100%"
+                          loading="lazy"
+                          style={{
+                            objectFit: 'cover',
+                            objectPosition: 'center',
+                            transition: 'transform 0.4s ease',
+                          }}
+                          onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
+                          onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+                        />
+                      </Box>
+
+
+                    </Center>
 
                     <Box px="lg" pb="lg">
                       <Text

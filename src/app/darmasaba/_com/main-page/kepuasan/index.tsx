@@ -140,7 +140,7 @@ function Kepuasan() {
 
   if ((loading && !data) || !data) {
     return (
-      <Stack py={10} px="xl">
+      <Stack py={10} px="sm">
         <Skeleton height={300} mb="md" />
         <SimpleGrid cols={{ base: 1, md: 3 }}>
           <Skeleton height={300} />
@@ -154,9 +154,9 @@ function Kepuasan() {
   if (data.length === 0) {
     return (
       <Stack p="sm">
-        <Container w={{ base: "100%", md: "80%" }} p={"xl"}>
+        <Container w={{ base: "100%", md: "80%" }} p={"sm"}>
           <Center>
-          <Text fw={"bold"} fz={{ base: "1.8rem", md: "3.4rem" }}>Indeks Kepuasan Masyarakat</Text>
+          <Text fw={"bold"} c={colors["blue-button"]} fz={{ base: "1.8rem", md: "3.4rem" }}>Indeks Kepuasan Masyarakat</Text>
           </Center>
           <Text ta={"center"} fz={{ base: "1rem", md: "1.3rem" }}>Ukur kebahagiaan warga, tingkatkan layanan desa! Dengan partisipasi aktif masyarakat, kami berkomitmen untuk terus memperbaiki layanan agar lebih transparan, efektif, dan sesuai dengan kebutuhan warga. Kepuasan Anda adalah prioritas utama kami dalam membangun desa yang lebih baik!</Text>
           <Center mt={10}>
@@ -168,7 +168,7 @@ function Kepuasan() {
             >Ajukan Responden</Button>
           </Center>
         </Container>
-        <Box px={"xl"}>
+        <Box px={"sm"}>
           <Paper p={"lg"} bg={colors.Bg}>
             <Paper p={"lg"}>
               <Stack gap={"xs"}>
@@ -416,16 +416,16 @@ function Kepuasan() {
   }
   return (
     <Stack p={"sm"}>
-     <Container size="lg" px="md">
+     <Container size="lg" px="sm">
         <Center>
-          <Text ta={"center"} fz={{ base: "2.4rem", md: "3.4rem" }}>Indeks Kepuasan Masyarakat</Text>
+          <Text ta={"center"} fz={{ base: "2.4rem", md: "3.4rem" }} c={colors["blue-button"]}>Indeks Kepuasan Masyarakat</Text>
         </Center>
         <Text fz={{ base: "1.2rem", md: "1.4rem" }} ta={"center"}>Ukur kebahagiaan warga, tingkatkan layanan desa! Dengan partisipasi aktif masyarakat, kami berkomitmen untuk terus memperbaiki layanan agar lebih transparan, efektif, dan sesuai dengan kebutuhan warga. Kepuasan Anda adalah prioritas utama kami dalam membangun desa yang lebih baik!</Text>
         <Center mt={10}>
           <Button radius={"lg"} bg={colors["blue-button"]} onClick={open}>Ajukan Responden</Button>
         </Center>
       </Container>
-      <Box px={"xl"}>
+      <Box px={"md"}>
         <Paper p={"lg"} bg={colors.Bg}>
           <Paper p={"lg"}>
             <Stack gap={"xs"}>

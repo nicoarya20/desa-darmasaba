@@ -30,9 +30,9 @@ function DesaAntiKorupsi() {
   const data = (state.desaAntikorupsi.findMany.data || []).slice(0, 6);
   return (
     <Stack gap={"0"} bg={colors.Bg} p={"sm"}>
-      <Container w={{ base: "100%", md: "80%" }} p={"xl"} >
+      <Container w={{ base: "100%", md: "80%" }} p={"md"} >
         <Center>
-          <Text fw={"bold"} fz={{ base: "1.8rem", md: "3.4rem" }}>Desa Anti Korupsi</Text>
+          <Text fw={"bold"} c={colors["blue-button"]} fz={{ base: "1.8rem", md: "3.4rem" }}>Desa Anti Korupsi</Text>
         </Center>
         <Text ta={"center"} fz={{ base: "1rem", md: "1.3rem" }}>Desa antikorupsi mendorong pemerintahan jujur dan transparan. Keuangan desa dikelola terbuka dengan melibatkan warga mengawasi anggaran, sehingga digunakan tepat sasaran sesuai kebutuhan.</Text>
         <Center py={20}>

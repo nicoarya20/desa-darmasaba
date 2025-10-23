@@ -49,9 +49,9 @@ function Potensi() {
   const data = (state.findMany.data || []).slice(0, 4);
 
   return (
-    <Stack p="sm" gap="4rem">
-      <Container w={{ base: "100%", md: "80%" }} p={"xl"} >
-       <Text ta={"center"} fw={"bold"} fz={{ base: "1.8rem", md: "3.4rem" }}>
+    <Stack p="sm" gap="xl">
+      <Container w={{ base: "100%", md: "80%" }} p={"md"} >
+       <Text ta={"center"} fw={"bold"} c={colors["blue-button"]} fz={{ base: "1.8rem", md: "3.4rem" }}>
           {textHeading.title}
         </Text>
         <Text ta={"center"} fz={{ base: "1rem", md: "1.3rem" }}>

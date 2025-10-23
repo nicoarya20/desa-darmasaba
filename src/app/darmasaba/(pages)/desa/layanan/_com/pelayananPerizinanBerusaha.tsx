@@ -7,34 +7,52 @@ import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
 
 function PelayananPerizinanBerusaha() {
-  const state = useProxy(stateLayananDesa)
-  const [loading, setLoading] = useState(false)
-  const [active, setActive] = useState(1);
-  const nextStep = () => setActive((current) => (current < 6 ? current + 1 : current));
-  const prevStep = () => setActive((current) => (current > 0 ? current - 1 : current));
+  const state = useProxy(stateLayananDesa);
+  const [loading, setLoading] = useState(false);
+  const [active, setActive] = useState(0);
+
+  const totalSteps = 6;
+
+  const nextStep = () => {
+    if (active < totalSteps - 1) {
+      setActive(active + 1);
+    } else if (active === totalSteps - 1) {
+      setActive(totalSteps); // Mark as completed
+    }
+  };
+
+  const prevStep = () => {
+    if (active > 0) {
+      setActive(active - 1);
+    }
+  };
 
   useEffect(() => {
     const loadData = async () => {
       try {
         setLoading(true);
-        await state.pelayananPerizinanBerusaha.findById.load('edit')
+        await state.pelayananPerizinanBerusaha.findById.load('edit');
       } catch (error) {
         console.error('Gagal memuat data:', error);
       } finally {
         setLoading(false);
       }
-    }
-    loadData()
-  }, [])
+    };
+    loadData();
+  }, []);
 
   const data = state.pelayananPerizinanBerusaha.findById.data;
-  
+
   if (!data && !loading) {
     return (
       <Center mih={300}>
         <Stack align="center" gap="sm">
-          <Text fz="lg" fw={500} c="dimmed">Belum ada informasi layanan yang tersedia</Text>
-          <Button component="a" href="https://oss.go.id" target="_blank" radius="xl">Kunjungi OSS</Button>
+          <Text fz="lg" fw={500} c="dimmed">
+            Belum ada informasi layanan yang tersedia
+          </Text>
+          <Button component="a" href="https://oss.go.id" target="_blank" radius="xl">
+            Kunjungi OSS
+          </Button>
         </Stack>
       </Center>
     );
@@ -47,69 +65,108 @@ function PelayananPerizinanBerusaha() {
           <Loader size="lg" color="blue" />
         </Center>
       ) : (
-          <Stack gap="lg">
-            <Box>
-              <Title order={2} fw={700} fz={{ base: 22, md: 32 }} mb="sm">
-                Perizinan Berusaha Berbasis Risiko melalui OSS
-              </Title>
-              <Text fz={{ base: 'sm', md: 'md' }} c="dimmed">
-                Sistem Online Single Submission (OSS) untuk pendaftaran NIB
-              </Text>
-            </Box>
+        <Stack gap="lg">
+          <Box>
+            <Title order={2} fw={700} fz={{ base: 22, md: 32 }} mb="sm">
+              Perizinan Berusaha Berbasis Risiko melalui OSS
+            </Title>
+            <Text fz={{ base: 'sm', md: 'md' }} c="dimmed">
+              Sistem Online Single Submission (OSS) untuk pendaftaran NIB
+            </Text>
+          </Box>
 
-            <Text fz={{ base: 'sm', md: 'md' }} ta="justify" style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: data?.deskripsi || '' }} />
+          <Text
+            fz={{ base: 'sm', md: 'md' }}
+            ta="justify"
+            style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
+            dangerouslySetInnerHTML={{ __html: data?.deskripsi || '' }}
+          />
 
-            <Box>
-              <Text fw={600} mb="sm" fz={{ base: 'sm', md: 'lg' }}>Alur pendaftaran NIB:</Text>
-              <Stepper active={active} onStepClick={setActive} orientation="vertical" color="blue" radius="md"
-                styles={{
-                  step: { padding: '14px 0' },
-                  stepBody: { marginLeft: 8 }
-                }}
-              >
-                <StepperStep label="Langkah 1" description="Daftar Akun">
-                  <Text fz="sm">Membuat akun di portal OSS</Text>
-                </StepperStep>
-                <StepperStep label="Langkah 2" description="Isi Data Perusahaan">
-                  <Text fz="sm">Lengkapi informasi perusahaan, data pemegang saham, dan alamat</Text>
-                </StepperStep>
-                <StepperStep label="Langkah 3" description="Pilih KBLI">
-                  <Text fz="sm">Menentukan kode KBLI sesuai jenis usaha</Text>
-                </StepperStep>
-                <StepperStep label="Langkah 4" description="Unggah Dokumen">
-                  <Text fz="sm">Unggah akta pendirian, surat izin, dan dokumen wajib lainnya</Text>
-                </StepperStep>
-                <StepperStep label="Langkah 5" description="Verifikasi Instansi">
-                  <Text fz="sm">Menunggu verifikasi dan persetujuan dari pihak berwenang</Text>
-                </StepperStep>
-                <StepperStep label="Langkah 6" description="Terbit NIB">
-                  <Text fz="sm">Menerima NIB sebagai identitas resmi usaha</Text>
-                </StepperStep>
-                <StepperCompleted>
-                  <Center>
-                    <Stack align="center" gap="xs">
-                      <IconCheck size={40} color="green" />
-                      <Text fz="sm" fw={500}>Proses pendaftaran selesai</Text>
-                    </Stack>
-                  </Center>
-                </StepperCompleted>
-              </Stepper>
+          <Box>
+            <Text fw={600} mb="sm" fz={{ base: 'sm', md: 'lg' }}>
+              Alur pendaftaran NIB:
+            </Text>
+            <Stepper
+              active={active}
+              onStepClick={(step) => {
+                if (step <= active) { // Only allow clicking on previous or current steps
+                  setActive(step);
+                }
+              }}
+              orientation="vertical"
+              color="blue"
+              radius="md"
+              styles={{
+                step: { padding: '14px 0' },
+                stepBody: { marginLeft: 8 }
+              }}
+            >
+              <StepperStep label="Langkah 1" description="Daftar Akun">
+                <Text fz="sm">Membuat akun di portal OSS</Text>
+              </StepperStep>
+              <StepperStep label="Langkah 2" description="Isi Data Perusahaan">
+                <Text fz="sm">Lengkapi informasi perusahaan, data pemegang saham, dan alamat</Text>
+              </StepperStep>
+              <StepperStep label="Langkah 3" description="Pilih KBLI">
+                <Text fz="sm">Menentukan kode KBLI sesuai jenis usaha</Text>
+              </StepperStep>
+              <StepperStep label="Langkah 4" description="Unggah Dokumen">
+                <Text fz="sm">Unggah akta pendirian, surat izin, dan dokumen wajib lainnya</Text>
+              </StepperStep>
+              <StepperStep label="Langkah 5" description="Verifikasi Instansi">
+                <Text fz="sm">Menunggu verifikasi dan persetujuan dari pihak berwenang</Text>
+              </StepperStep>
+              <StepperStep label="Langkah 6" description="Terbit NIB">
+                <Text fz="sm">Menerima NIB sebagai identitas resmi usaha</Text>
+              </StepperStep>
+              <StepperCompleted>
+                <Center>
+                  <Stack align="center" gap="xs">
+                    <IconCheck size={40} color="green" />
+                    <Text fz="sm" fw={500}>Proses pendaftaran selesai</Text>
+                  </Stack>
+                </Center>
+              </StepperCompleted>
+            </Stepper>
 
+            {active < totalSteps && (
               <Group justify="center" mt="lg">
-                <Button variant="light" leftSection={<IconArrowLeft size={18} />} onClick={prevStep} disabled={active === 0}>
+                <Button
+                  variant="light"
+                  leftSection={<IconArrowLeft size={18} />}
+                  onClick={prevStep}
+                  disabled={active === 0}
+                >
                   Kembali
                 </Button>
-                <Button rightSection={<IconArrowRight size={18} />} onClick={nextStep}>
-                  Lanjut
-                </Button>
-              </Group>
-            </Box>
 
-            <Text fz="sm" ta="justify" c="dimmed" mt="md">
-              Catatan: Persyaratan dan prosedur dapat berubah sewaktu-waktu. Untuk informasi resmi terbaru, silakan kunjungi situs{" "}
-              <a href="https://oss.go.id/" target="_blank" rel="noopener noreferrer">oss.go.id</a> atau hubungi instansi pemerintah terkait.
-            </Text>
-          </Stack>
+                {active < totalSteps ? (
+                  <Button
+                    rightSection={active < totalSteps - 1 ? <IconArrowRight size={18} /> : null}
+                    onClick={nextStep}
+                  >
+                    {active === totalSteps - 1 ? 'Selesai' : 'Lanjut'}
+                  </Button>
+                ) : (
+                  <Button
+                    variant="light"
+                    onClick={() => setActive(0)}
+                  >
+                    Mulai Lagi
+                  </Button>
+                )}
+              </Group>
+            )}
+          </Box>
+
+          <Text fz="sm" ta="justify" c="dimmed" mt="md">
+            Catatan: Persyaratan dan prosedur dapat berubah sewaktu-waktu. Untuk informasi resmi terbaru, silakan kunjungi situs{' '}
+            <a href="https://oss.go.id/" target="_blank" rel="noopener noreferrer">
+              oss.go.id
+            </a>{' '}
+            atau hubungi instansi pemerintah terkait.
+          </Text>
+        </Stack>
       )}
     </Box>
   );

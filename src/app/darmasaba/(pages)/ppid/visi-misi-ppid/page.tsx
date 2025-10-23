@@ -54,12 +54,11 @@ function Page() {
                       ta="center"
                       fz={{ base: 28, md: 36 }}
                       fw={800}
-                      variant="gradient"
-                      gradient={{ from: colors['blue-button'], to: 'cyan', deg: 45 }}
+                      c={colors['blue-button']}
                     >
                       Moto PPID Desa Darmasaba
                     </Text>
-                    <Text ta="center" fz={{ base: 16, md: 20 }} mt="xs" c="dimmed">
+                    <Text ta="center" fz={{ base: 16, md: 20 }} mt="xs">
                       Memberikan informasi yang cepat, mudah, tepat, dan transparan
                     </Text>
                   </Box>

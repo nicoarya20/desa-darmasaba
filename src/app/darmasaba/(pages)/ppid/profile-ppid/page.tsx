@@ -54,28 +54,34 @@ function Page() {
                 <Center>
                   <Image loading='lazy' src="/darmasaba-icon.png" h={{ base: 70, md: 120 }} w={{ base: 70, md: 120 }} alt="Logo Desa" />
                 </Center>
-                  <Text ta="center" fz={{ base: "1.2rem", md: "2rem", lg: "2.5rem", xl: "3rem" }} fw="bold">
+                <Text ta="center" fz={{ base: "1.2rem", md: "2rem", lg: "2.5rem", xl: "3rem" }} fw="bold">
                   Pejabat Pengelola Informasi dan Dokumentasi
-                  </Text>
+                </Text>
               </Box>
               <Divider my="lg" />
 
               <Box px={{ base: 0, md: 50 }} pb={40}>
                 <SimpleGrid cols={{ base: 1, xl: 2 }} spacing="xl">
                   <Box px={{ base: 0, md: 50 }}>
-                    <Paper bg={colors['white-trans-1']} radius="lg" shadow="sm">
-                      <Stack gap="md">
-                        <Center>
-                          <Image
-                            loading='lazy'
-                            src={item.image?.link ? `${item.image.link}?t=${Date.now()}` : "/perbekel.png"}
-                            w={{ base: 220, md: 330 }}
-                            alt="Foto Pimpinan"
-                            radius="md"
-                          />
-                        </Center>
-                        <Paper bg={colors['blue-button']} py={25} radius="lg" className="glass3">
-                          <Text ta="center" c={colors['white-1']} fw="bolder" fz={{ base: "1.5rem", md: "2rem" }}>
+                    <Paper bg={colors['white-trans-1']} radius="xl" shadow="md" withBorder>
+                      <Stack gap={0}>
+                        <Image
+                          pt={{ base: 0, md: 100 }}
+                          px="lg"
+                          src={item.image?.link ? `${item.image.link}?t=${Date.now()}` : "/perbekel.png"}
+                          alt="Foto Pimpinan"
+                          radius="lg"
+                          onError={(e) => e.currentTarget.src = "/perbekel.png"}
+                          loading="lazy"
+                        />
+                        <Paper
+                          bg={colors['blue-button']}
+                          px="lg"
+                          radius="0 0 var(--mantine-radius-xl) var(--mantine-radius-xl)"
+                          className="glass3"
+                          py={{ base: 20, md: 50 }}
+                        >
+                          <Text ta="center" c={colors['white-1']} fw="bolder" fz={{ base: "xl", md: "h2" }}>
                             {item.name}
                           </Text>
                         </Paper>

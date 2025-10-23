@@ -84,9 +84,8 @@ function Page() {
                   </Box>
 
                   <Box>
-                    <Text fz="h4" fw="bold">Kenali Gejala DBD</Text>
+                    <Text fz="h4" fw="bold">{state.findUnique.data.symptom?.title}</Text>
                     <Divider my="xs" />
-                    <Text fz="md" fw="semibold">{state.findUnique.data.symptom?.title}</Text>
                     <Text fz="md" lh={1.6} ta="justify" style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: state.findUnique.data.symptom?.content }} />
                   </Box>
 

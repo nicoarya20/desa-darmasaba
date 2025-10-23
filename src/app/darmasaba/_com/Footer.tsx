@@ -1,6 +1,8 @@
 'use client'
 import { ActionIcon, Anchor, Box, Button, Center, Container, Divider, Flex, Group, Image, Paper, SimpleGrid, Stack, Text, TextInput, Title } from '@mantine/core';
 import { IconAt, IconBrandFacebook, IconBrandInstagram, IconBrandTiktok, IconBrandYoutube } from '@tabler/icons-react';
+import { useRef } from 'react';
+import { toast } from 'react-toastify';
 
 const sosialMedia = [
   {
@@ -60,6 +62,39 @@ const tautanPenting = [
 ]
 
 function Footer() {
+
+  const emailRef = useRef<HTMLInputElement>(null)
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const email = emailRef.current?.value.trim();
+    if (!email) return toast.error('Email wajib diisi!');
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) return toast.error('Format email tidak valid!');
+
+    try {
+      const res = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        toast.success('Berhasil! Cek email Anda untuk konfirmasi.');
+        emailRef.current!.value = '';
+      } else {
+        toast.error(data.message || 'Gagal berlangganan.');
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error('Gagal menghubungi server. Coba lagi nanti.');
+    }
+  };
+
+
   return (
     <Stack bg="linear-gradient(180deg, #1C6EA4, #124170)" c="white">
       <Box w="100%" p="xl">
@@ -166,8 +201,9 @@ function Footer() {
                     w="70%"
                     placeholder="Masukkan email Anda"
                     rightSection={<IconAt size={16} />}
+                    ref={emailRef} // ini aja cukup
                   />
-                  <Button variant="gradient" gradient={{ from: 'blue', to: 'cyan' }} radius="md">Daftar</Button>
+                  <Button onClick={handleSubmit} variant="gradient" gradient={{ from: 'blue', to: 'cyan' }} radius="md">Daftar</Button>
                 </Group>
               </Stack>
             </Box>

@@ -34,10 +34,10 @@ function Apbdes() {
   const data = (state.findMany.data || []).slice(0, 3)
 
   return (
-    <Stack p="lg" gap="4rem" bg={colors.Bg}>
+    <Stack p="sm" gap="xl" bg={colors.Bg}>
       <Box>
         <Stack gap="sm">
-          <Text ta={"center"} fw={"bold"} fz={{ base: "1.8rem", md: "3.4rem" }}>
+          <Text c={colors["blue-button"]} ta={"center"} fw={"bold"} fz={{ base: "1.8rem", md: "3.4rem" }}>
             {textHeading.title}
           </Text>
           <Text ta={"center"} fz={{ base: "1rem", md: "1.3rem" }}>
@@ -117,7 +117,7 @@ function Apbdes() {
         )}
       </SimpleGrid>
 
-      <Group pb={80} justify="center">
+      <Group justify="center" pb={10}>
         <Button
           component={Link}
           href="/darmasaba/apbdes"

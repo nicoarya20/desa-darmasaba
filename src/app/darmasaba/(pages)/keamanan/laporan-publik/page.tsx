@@ -1,15 +1,15 @@
 'use client'
+import CreateEditor from '@/app/admin/(dashboard)/_com/createEditor';
 import laporanPublikState from '@/app/admin/(dashboard)/_state/keamanan/laporan-publik';
 import colors from '@/con/colors';
-import { Box, Button, Center, ColorSwatch, Flex, Group, Modal, Pagination, Paper, SimpleGrid, Skeleton, Stack, Text, TextInput, Title } from '@mantine/core';
+import { Box, Button, Center, ColorSwatch, Flex, Group, Modal, Pagination, Paper, SimpleGrid, Skeleton, Stack, Text, TextInput } from '@mantine/core';
 import { DateTimePicker } from '@mantine/dates';
 import { useDebouncedValue, useDisclosure, useShallowEffect } from '@mantine/hooks';
 import { IconArrowRight, IconPlus, IconSearch } from '@tabler/icons-react';
+import { useTransitionRouter } from 'next-view-transitions';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import BackButton from '../../desa/layanan/_com/BackButto';
-import { useTransitionRouter } from 'next-view-transitions';
-import CreateEditor from '@/app/admin/(dashboard)/_com/createEditor';
 
 function Page() {
   const [search, setSearch] = useState("");
@@ -53,7 +53,7 @@ function Page() {
   return (
     <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"22"}>
       <Box px={{ base: 'md', md: 100 }}>
-        <Flex justify="space-between" align="center">
+        <Group justify="space-between" align="center">
           <BackButton />
           <TextInput
               radius={"lg"}
@@ -61,9 +61,9 @@ function Page() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               leftSection={<IconSearch size={20} />}
-              w={{ base: "50%", md: "100%" }}
+              w={{ base: "100%", md: "30%" }}
             />
-        </Flex>
+        </Group>
       </Box>
       <Box px={{ base: 'md', md: 100 }}>
         <Group justify="space-between">
@@ -118,7 +118,7 @@ function Page() {
               return (
                 <Paper radius={'lg'} key={k} bg={colors['white-trans-1']} p={'xl'}>
                   <Stack>
-                    <Title c={colors['blue-button']} order={1}>{v.judul}</Title>
+                    <Text c={colors['blue-button']} lineClamp={3} truncate="end" fz="h4" fw="bold">{v.judul}</Text>
                     <Text fs={'italic'} fz={'xl'}>
                       {v.tanggalWaktu
                         ? new Date(v.tanggalWaktu).toLocaleString('id-ID')

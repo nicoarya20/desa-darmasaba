@@ -42,7 +42,7 @@ function Page() {
         >
           Dasar Hukum
         </Text>
-        <Text ta="center" fz="sm" c="dimmed">
+        <Text ta="center" fz="md" >
           Informasi regulasi dan kebijakan resmi yang menjadi dasar hukum
         </Text>
       </Stack>

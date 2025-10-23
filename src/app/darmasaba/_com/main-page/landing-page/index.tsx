@@ -121,7 +121,7 @@ function LandingPage() {
   }, []);
 
   return (
-    <Stack bg={colors.Bg} p="md" gap="xl">
+    <Stack bg={colors.Bg} p="md" gap="lg">
       <Flex gap="lg" wrap={{ base: "wrap", md: "nowrap" }}>
         <Stack w={{ base: "100%", md: "65%" }} gap="lg">
           <Card radius="xl" bg={colors.grey[1]} p="lg" shadow="xl">
