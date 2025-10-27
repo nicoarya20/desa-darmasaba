@@ -2,7 +2,7 @@
 'use client'
 import stateProfileDesa from '@/app/admin/(dashboard)/_state/desa/profile'
 import colors from '@/con/colors'
-import { Box, Center, Image, Paper, Skeleton, Stack, Text, Tooltip } from '@mantine/core'
+import { Box, Center, Image, Paper, Skeleton, Stack, Text } from '@mantine/core'
 import { useEffect } from 'react'
 import { useProxy } from 'valtio/utils'
 
@@ -58,7 +58,6 @@ function LambangDesa() {
             borderColor: '#e0e9ff',
           }}
         >
-          <Tooltip label="Deskripsi lambang desa" position="top-start" withArrow>
             <Text
               fz={{ base: 'md', md: 'lg' }}
               lh={1.8}
@@ -67,7 +66,6 @@ function LambangDesa() {
               style={{ fontWeight: 400, wordBreak: "break-word", whiteSpace: "normal", }}
               dangerouslySetInnerHTML={{ __html: data.deskripsi }}
             />
-          </Tooltip>
         </Paper>
       </Stack>
     </Box>

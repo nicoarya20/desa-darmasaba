@@ -43,7 +43,7 @@ function Page() {
           <Text fz={{ base: "2rem", md: "2.5rem" }} c={colors["blue-button"]} fw="bold">
             Daftar Puskesmas
           </Text>
-          <Text fz="sm" c="dimmed">
+          <Text fz="md">
             Temukan informasi lengkap mengenai layanan, kontak, dan lokasi Puskesmas Darmasaba
           </Text>
         </GridCol>

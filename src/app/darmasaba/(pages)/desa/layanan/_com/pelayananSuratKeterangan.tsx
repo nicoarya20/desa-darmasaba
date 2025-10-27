@@ -47,13 +47,13 @@ function PelayananSuratKeterangan({ search }: { search: string }) {
     <Box pb="xl">
       <Group justify="space-between" align="center" mb="md">
         <Group gap="xs">
-          <IconFileDescription size={28} stroke={1.8} color={colors["blue-button"]} />
+          <IconFileDescription size={28} stroke={1.8} />
           <Text fz={{ base: "h4", md: "h2" }} fw={700}>
             Layanan Surat Keterangan
           </Text>
         </Group>
         <Tooltip label="Pilih layanan surat keterangan sesuai kebutuhan Anda" withArrow>
-          <IconInfoCircle size={22} stroke={1.8} color={colors["blue-button"]} />
+          <IconInfoCircle size={22} stroke={1.8} />
         </Tooltip>
       </Group>
 

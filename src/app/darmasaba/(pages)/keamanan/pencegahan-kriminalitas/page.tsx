@@ -48,7 +48,7 @@ function Page() {
           <Text fz={{ base: 'h1', md: '2.5rem' }} c={colors['blue-button']} fw="bold">
             Pencegahan Kriminalitas
           </Text>
-          <Text c={colors['blue-button']} fz={{ base: 'h4', md: 'h3' }}>
+          <Text fz='md'>
             Keamanan Komunitas & Pencegahan Kriminal
           </Text>
         </Box>
@@ -78,7 +78,7 @@ function Page() {
         <Text fz={{ base: 'h1', md: '2.5rem' }} c={colors['blue-button']} fw="bold">
           Pencegahan Kriminalitas
         </Text>
-        <Text c={colors['blue-button']} fz={{ base: 'h4', md: 'h3' }}>
+        <Text fz='md'>
           Keamanan Komunitas & Pencegahan Kriminal
         </Text>
       </Box>
@@ -92,31 +92,63 @@ function Page() {
             Program Keamanan Berjalan
           </Text>
           <Stack pt={30} gap="lg">
-            {data.length > 0 ? (
-              data.map((item) => (
-                <a key={item.id} href={`/darmasaba/keamanan/pencegahan-kriminalitas/${item.id}`}>
-                  <Paper p="md" bg={colors['blue-button']} radius="md" shadow="sm">
-                    <Stack gap={"xs"}>
+            <Box
+              style={{
+                minHeight: 300, // sesuaikan: tinggi area yg muat 3 item
+              }}
+            >
+              {data.length > 0 ? (
+                data.map((item) => (
+                  <Paper
+                    key={item.id}
+                    p="md"
+                    radius="md"
+                    shadow="sm"
+                    style={{
+                      cursor: 'pointer',
+                      backgroundColor: colors['blue-button'],
+                      transition: 'all 0.2s ease',
+                    }}
+                    onClick={() =>
+                      router.push(`/darmasaba/keamanan/pencegahan-kriminalitas/${item.id}`)
+                    }
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.backgroundColor = '#1a3e7a')
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.backgroundColor = colors['blue-button'])
+                    }
+                  >
+                    <Stack gap="xs">
                       <Text fz="h3" c={colors['white-1']}>
                         {item.judul}
                       </Text>
                     </Stack>
                   </Paper>
-                </a>
-              ))
-            ) : (
-              <Text color="dimmed">
-                Tidak ada data pencegahan kriminalitas yang cocok
-              </Text>
-            )}
+                ))
+              ) : (
+                <Text c="dimmed">Tidak ada data pencegahan kriminalitas yang cocok</Text>
+              )}
+            </Box>
             <Button
               mt={20}
               fullWidth
               radius="xl"
               size="md"
-              bg={colors['blue-button']}
-              rightSection={<IconArrowRight size={20} color={colors['white-1']} />}
-              onClick={() => router.push(`/darmasaba/keamanan/pencegahan-kriminalitas/program-lainnya`)}
+              variant="outline"
+              color="blue"
+              rightSection={<IconArrowRight size={20} />}
+              styles={{
+                root: {
+                  fontWeight: 600,
+                  borderWidth: 2,
+                },
+              }}
+              onClick={() =>
+                router.push(
+                  `/darmasaba/keamanan/pencegahan-kriminalitas/program-lainnya`
+                )
+              }
             >
               Jelajahi Program Lainnya
             </Button>
@@ -142,9 +174,7 @@ function Page() {
               <Text py={10} fz={{ base: 'h3', md: 'h2' }} fw="bold" c={colors['blue-button']}>
                 {findFirst.data?.judul}
               </Text>
-              <Text fz="h4" c={colors['blue-button']}>
-                {findFirst.data?.deskripsiSingkat}
-              </Text>
+              <Text fz="h4" dangerouslySetInnerHTML={{ __html: findFirst.data?.deskripsiSingkat }} />
             </Paper>
           ) : null}
         </Box>

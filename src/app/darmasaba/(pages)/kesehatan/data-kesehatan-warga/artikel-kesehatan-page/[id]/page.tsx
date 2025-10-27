@@ -78,9 +78,7 @@ function Page() {
                   <Box>
                     <Text fz="h4" fw="bold">Pendahuluan</Text>
                     <Divider my="xs" />
-                    <Text fz="md" lh={1.6} ta="justify">
-                      {state.findUnique.data.introduction?.content}
-                    </Text>
+                    <Text fz="md" lh={1.6} ta="justify" dangerouslySetInnerHTML={{ __html: state.findUnique.data.introduction?.content }} />
                   </Box>
 
                   <Box>

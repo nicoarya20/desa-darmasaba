@@ -45,7 +45,7 @@ function DetailPencegahanKriminalitas() {
   const data = kriminalitasState.findUnique.data;
 
   return (
-    <Box py="md" px="md">
+    <Box py="md" px={{ base: 'md', md: 100 }}>
       <Group mb="md">
         <Button
           variant="light"

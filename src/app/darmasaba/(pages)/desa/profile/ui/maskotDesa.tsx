@@ -1,11 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import stateProfileDesa from '@/app/admin/(dashboard)/_state/desa/profile';
-import { Box, Card, Center, Group, Image, Loader, Paper, Stack, Text, Tooltip } from '@mantine/core';
+import colors from '@/con/colors';
+import { Box, Card, Center, Group, Image, Loader, Paper, Stack, Text } from '@mantine/core';
+import { IconPhoto } from '@tabler/icons-react';
 import { useEffect } from 'react';
 import { useProxy } from 'valtio/utils';
-import { IconPhoto } from '@tabler/icons-react';
-import colors from '@/con/colors';
 
 function MaskotDesa() {
   const state = useProxy(stateProfileDesa.maskotDesa);
@@ -54,8 +54,8 @@ function MaskotDesa() {
           <Group justify="center" gap="lg" mt="lg">
             {data.images.length > 0 ? (
               data.images.map((img, index) => (
-                <Tooltip key={index} label={img.label} position="bottom" withArrow>
                   <Card
+                  key={index}
                     radius="lg"
                     shadow="md"
                     withBorder
@@ -79,7 +79,6 @@ function MaskotDesa() {
                       {img.label}
                     </Text>
                   </Card>
-                </Tooltip>
               ))
             ) : (
               <Stack align="center" gap="xs" mt="lg">

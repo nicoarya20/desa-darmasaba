@@ -3,6 +3,7 @@ import penangananDarurat from '@/app/admin/(dashboard)/_state/kesehatan/penangan
 import colors from '@/con/colors'
 import {
   Box,
+  Button,
   Center,
   Grid,
   GridCol,
@@ -148,11 +149,19 @@ function Page() {
                       <Text
                         fz="sm"
                         c="dimmed"
-                        lineClamp={4}
+                        lineClamp={3}
                         dangerouslySetInnerHTML={{ __html: v.deskripsi }}
                         style={{ wordBreak: "break-word", whiteSpace: "normal" }}
                       />
                     </Box>
+                    <Button
+                      radius="xl"
+                      size="md"
+                      component="a"
+                      href={`/darmasaba/kesehatan/penanganan-darurat/${v.id}`}
+                    >
+                      Lihat Detail
+                    </Button>
                   </Stack>
                 </Stack>
               </Paper>

@@ -73,9 +73,9 @@ function JadwalKegiatanPage() {
 
                   <Divider my="sm" />
 
-                  <Group justify="flex-end">
+                  <Group justify="flex-start">
                     <Button
-                      variant="light"
+                      bg={colors['blue-button']}
                       radius="lg"
                       size="sm"
                       rightSection={<IconChevronRight size={18} />}
@@ -84,14 +84,6 @@ function JadwalKegiatanPage() {
                           `/darmasaba/kesehatan/data-kesehatan-warga/jadwal-kegiatan-page/${item.id}`
                         )
                       }
-                      styles={{
-                        root: {
-                          background: colors['blue-button'],
-                          color: 'white',
-                          boxShadow: '0 0 12px rgba(0, 123, 255, 0.4)',
-                          transition: 'all 0.2s ease',
-                        },
-                      }}
                     >
                       Lihat Detail & Daftar
                     </Button>

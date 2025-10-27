@@ -64,8 +64,8 @@ function Page() {
             />
           </GridCol>
         </Grid>
-        <Text px={{ base: 'md', md: 100 }} ta={"justify"} fz={{ base: "h4", md: "h3" }} >
-          Keamanan dan ketertiban lingkungan di Desa Darmasaba dijaga melalui peran aktif Pecalang dan Patwal (Patroli Pengawal). Mereka bertugas memastikan desa tetap aman, tertib, dan kondusif bagi seluruh warga.
+        <Text px={{ base: 'md', md: 100 }} ta={"justify"} fz="md" mt={4} >
+        Pecalang dan Patwal (Patroli Pengawal) bertugas memastikan desa tetap aman, tertib, dan kondusif bagi seluruh warga.
         </Text>
       </Box>
       <Box px={{ base: "md", md: 100 }}>

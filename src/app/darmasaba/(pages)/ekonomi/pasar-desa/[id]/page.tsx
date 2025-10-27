@@ -30,6 +30,7 @@ function DetailProdukPasarUser() {
   return (
     <Box py={20}>
       {/* Tombol kembali */}
+      <Box px={{ base: 'md', md: 100 }}>
       <Button
         variant="subtle"
         onClick={() => router.back()}
@@ -38,6 +39,7 @@ function DetailProdukPasarUser() {
       >
         Kembali ke daftar produk
       </Button>
+      </Box>
 
       <Paper
         w={{ base: '100%', md: '70%' }}
@@ -54,7 +56,7 @@ function DetailProdukPasarUser() {
               src={data.image.link}
               alt={data.nama}
               radius="md"
-              h={300}
+              h={250}
               w="100%"
               fit="cover"
               loading="lazy"

@@ -71,8 +71,11 @@ function Page() {
             onChange={(e) => setSearch(e.currentTarget.value)}
           />
         </Group>
-        <Text fz="lg" c={'black'}>
-          Desa Darmasaba menjaga dan mengembangkan lingkungan demi kesejahteraan warganya. Fokus utama meliputi penghijauan, pengelolaan sampah, dan perlindungan kawasan hijau.
+        <Text fz="md" >
+          Desa Darmasaba menjaga dan mengembangkan lingkungan demi kesejahteraan warganya. 
+        </Text>
+        <Text fz="md">
+          Fokus utama meliputi penghijauan, pengelolaan sampah, dan perlindungan kawasan hijau.
         </Text>
       </Box>
       <Box px={{ base: 'md', md: 100 }}>

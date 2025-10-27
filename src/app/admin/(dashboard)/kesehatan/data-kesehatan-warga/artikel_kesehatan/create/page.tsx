@@ -115,7 +115,7 @@ function CreateArtikelKesehatan() {
         <Stack gap="md">
           <Box>
             <Text fw="bold" fz="sm" mb={6}>
-              Gambar Berita
+              Gambar Artikel Kesehatan
             </Text>
             <Dropzone
               onDrop={(files) => {
@@ -163,7 +163,7 @@ function CreateArtikelKesehatan() {
               </Box>
             )}
           </Box>
-          
+
           <TextInput
             label={"Judul"}
             placeholder="Masukkan judul"
@@ -182,16 +182,15 @@ function CreateArtikelKesehatan() {
             }}
             required
           />
-          <TextInput
-            label={"Pendahuluan"}
-            placeholder="Masukkan pendahuluan"
-            required
-            defaultValue={stateArtikelKesehatan.create.form.introduction.content}
-            onChange={(e) => {
-              stateArtikelKesehatan.create.form.introduction.content = e.target.value;
-            }}
-          />
-
+          <Box>
+            <Text fz="sm" fw="bold">Pendahuluan</Text>
+            <CreateEditor
+              value={stateArtikelKesehatan.create.form.introduction.content}
+              onChange={(e) => {
+                stateArtikelKesehatan.create.form.introduction.content = e;
+              }}
+            />
+          </Box>
           {/* Gejala */}
           <Box>
             <Text fz="md" fw="bold">Gejala</Text>

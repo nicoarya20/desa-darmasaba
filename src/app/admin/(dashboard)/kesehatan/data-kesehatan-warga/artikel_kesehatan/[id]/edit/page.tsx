@@ -183,7 +183,7 @@ function EditArtikelKesehatan() {
           {/* Gambar */}
           <Box>
             <Text fw="bold" fz="sm" mb={6}>
-              Gambar Berita
+              Gambar Artikel Kesehatan
             </Text>
             <Dropzone
               onDrop={handleFileChange}
@@ -240,15 +240,15 @@ function EditArtikelKesehatan() {
           />
 
           {/* Pendahuluan */}
-          <InputText
-            label="Pendahuluan"
-            value={formData.introduction.content}
-            onChange={(value) =>
-              setFormData((prev) => ({ ...prev, introduction: { content: value } }))
-            }
-            placeholder="Masukkan pendahuluan"
-          />
-
+          <Box>
+            <Text fw="bold">Pendahuluan</Text>
+            <EditEditor
+              value={formData.introduction.content}
+              onChange={(value) =>
+                setFormData((prev) => ({ ...prev, introduction: { ...prev.introduction, content: value } }))
+              }
+            />
+          </Box>
           {/* Gejala */}
           <Box>
             <Text fw="bold">Gejala</Text>

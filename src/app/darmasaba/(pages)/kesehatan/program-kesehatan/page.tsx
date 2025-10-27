@@ -88,7 +88,7 @@ export default function Page() {
           >
             Program Kesehatan Desa
           </Text>
-          <Text fz="lg" c="dimmed" mt="xs">
+          <Text fz="lg" mt="xs">
             Temukan berbagai program kesehatan untuk mendukung kualitas hidup
             masyarakat Darmasaba.
           </Text>
@@ -168,7 +168,7 @@ export default function Page() {
                       </Text>
                       <Text
                         fz="sm"
-                        c="dimmed"
+                        ta={"justify"}
                         lineClamp={3}
                         dangerouslySetInnerHTML={{ __html: v.deskripsi }}
                         style={{ wordBreak: "break-word", whiteSpace: "normal" }}
@@ -249,7 +249,7 @@ export default function Page() {
           >
             Manfaat Program Kesehatan
           </Text>
-          <Text fz="lg" c="dimmed" maw={700}>
+          <Text fz="lg" maw={700}>
             Program kesehatan Desa Darmasaba berperan penting dalam meningkatkan
             kesejahteraan dan kualitas hidup warganya.
           </Text>
@@ -279,7 +279,7 @@ export default function Page() {
                 <Text ta="center" fw="bold" fz="xl" c={colors["blue-button"]}>
                   {v.title}
                 </Text>
-                <Text ta="center" fz="sm" c="dimmed">
+                <Text ta="center" fz="sm">
                   {v.desc}
                 </Text>
               </Stack>

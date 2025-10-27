@@ -21,12 +21,23 @@ import pencegahanKriminalitasState from '@/app/admin/(dashboard)/_state/keamanan
 import { useShallowEffect } from '@mantine/hooks';
 import { useState } from 'react';
 import HeaderSearch from '@/app/admin/(dashboard)/_com/header';
+import { IconArrowLeft } from '@tabler/icons-react';
 
 function PencegahanKriminalitas() {
   const [search, setSearch] = useState("");
-
+  const router = useRouter();
   return (
-    <Box>
+    <Box pt={20} px={{ base: 'md', md: 100 }}>
+      <Group mb="md">
+        <Button
+          variant="light"
+          color="blue"
+          onClick={() => router.back()}
+          leftSection={<IconArrowLeft size={20} />}
+        >
+          Kembali
+        </Button>
+      </Group>
       <HeaderSearch
         title="Program Pencegahan Kriminalitas"
         placeholder="Cari program atau deskripsi..."
@@ -82,7 +93,7 @@ function ListPencegahanKriminalitas({ search }: { search: string }) {
                   c="dimmed"
                   lineClamp={2}
                   dangerouslySetInnerHTML={{ __html: item.deskripsiSingkat || '' }}
-                  style={{wordBreak: "break-word", whiteSpace: "normal"}}
+                  style={{ wordBreak: "break-word", whiteSpace: "normal" }}
                 />
                 <Group justify="flex-end" mt="sm">
                   <Tooltip label="Lihat detail program" withArrow>

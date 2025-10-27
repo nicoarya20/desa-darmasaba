@@ -66,7 +66,8 @@ function Page() {
                   <Divider my="sm" labelPosition="center" label={<IconSparkles size={18} />} />
 
                   <Box>
-                    <Text ta="center" fz={{ base: 24, md: 30 }} fw={700} mb="sm">
+                    <Text ta="center" fz={{ base: 24, md: 30 }} fw={800}
+                      c={colors['blue-button']} mb="sm">
                       Visi PPID
                     </Text>
                     <Text
@@ -81,7 +82,8 @@ function Page() {
                   <Divider my="sm" />
 
                   <Box>
-                    <Text ta="center" fz={{ base: 24, md: 30 }} fw={700} mb="sm">
+                    <Text ta="center" fz={{ base: 24, md: 30 }} fw={800}
+                      c={colors['blue-button']} mb="sm">
                       Misi PPID
                     </Text>
                     <Text

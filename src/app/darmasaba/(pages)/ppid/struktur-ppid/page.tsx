@@ -3,6 +3,7 @@
 'use client'
 
 import stateStrukturPPID from '@/app/admin/(dashboard)/_state/ppid/struktur_ppid/struktur_PPID'
+import ScrollToTopButton from '@/app/darmasaba/_com/scrollToTopButton'
 import colors from '@/con/colors'
 import {
   Box,
@@ -18,25 +19,23 @@ import {
   Text,
   TextInput,
   Title,
-  Tooltip,
-  Transition,
+  Transition
 } from '@mantine/core'
 import {
+  IconArrowsMaximize,
+  IconArrowsMinimize,
   IconRefresh,
   IconSearch,
   IconUsers,
   IconZoomIn,
   IconZoomOut,
-  IconArrowsMaximize,
-  IconArrowsMinimize,
 } from '@tabler/icons-react'
+import { debounce } from 'lodash'
+import { useTransitionRouter } from 'next-view-transitions'
 import { OrganizationChart } from 'primereact/organizationchart'
 import { useEffect, useRef, useState } from 'react'
 import { useProxy } from 'valtio/utils'
 import BackButton from '../../desa/layanan/_com/BackButto'
-import { useTransitionRouter } from 'next-view-transitions'
-import ScrollToTopButton from '@/app/darmasaba/_com/scrollToTopButton'
-import { debounce } from 'lodash'
 
 export default function Page() {
   return (
@@ -346,7 +345,6 @@ function nodeTemplate(node: any, router: ReturnType<typeof useTransitionRouter>)
           <Text size="xs" c="dimmed" mt={8} lineClamp={3}>
             {description || 'Belum ada deskripsi.'}
           </Text>
-          <Tooltip label="Lihat Detail" withArrow position="bottom">
             <Button
               variant="light"
               size="xs"
@@ -358,7 +356,6 @@ function nodeTemplate(node: any, router: ReturnType<typeof useTransitionRouter>)
             >
               Lihat Detail
             </Button>
-          </Tooltip>
         </Card>
       )}
     </Transition>

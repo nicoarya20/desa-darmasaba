@@ -42,6 +42,7 @@ export default function DetailPosyanduUser() {
         </Button>
       </Group>
 
+      {/* Konten utama */}
       <Paper
         withBorder
         p="xl"
@@ -85,15 +86,15 @@ export default function DetailPosyanduUser() {
 
           {/* Info utama */}
           <Stack gap="sm" mt="md">
-            <Flex align="flex-start" gap="xs">
-              <IconPhone size={18} stroke={1.5} style={{ marginTop: 3 }} />
+            <Flex align="center" gap="xs">
+              <IconPhone size={18} stroke={1.5} />
               <Text fz="sm" c="dimmed">
                 {data.nomor || 'Nomor tidak tersedia'}
               </Text>
             </Flex>
 
-            <Flex align="flex-start" gap="xs">
-              <IconCalendar size={18} stroke={1.5} style={{ marginTop: 3 }} />
+            <Flex align="center" gap="xs">
+              <IconCalendar size={18} stroke={1.5} />
               <Text
                 fz="sm"
                 c="dimmed"
@@ -102,8 +103,8 @@ export default function DetailPosyanduUser() {
               />
             </Flex>
 
-            <Flex align="flex-start" gap="xs">
-              <IconInfoCircle size={18} stroke={1.5} style={{ marginTop: 3 }} />
+            <Flex align="center" gap="xs">
+              <IconInfoCircle size={18} stroke={1.5} />
               <Text
                 fz="sm"
                 c="dimmed"

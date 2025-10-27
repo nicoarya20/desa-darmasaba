@@ -1,7 +1,7 @@
 'use client'
 import artikelKesehatanState from '@/app/admin/(dashboard)/_state/kesehatan/data_kesehatan_warga/artikelKesehatan';
 import colors from '@/con/colors';
-import { Anchor, Box, Card, Divider, Group, Image, Loader, Paper, Stack, Text, Title, Tooltip } from '@mantine/core';
+import { Box, Button, Card, Divider, Group, Image, Loader, Paper, Stack, Text } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconCalendar, IconChevronRight } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
@@ -28,9 +28,9 @@ function ArtikelKesehatanPage() {
     <Box>
       <Paper p="xl" bg={colors['white-trans-1']} radius="xl" shadow="md">
         <Stack gap="lg">
-          <Title order={2} ta="center" c={colors['blue-button']}>
+          <Text ta="center" fw={700} fz="32px" c={colors['blue-button']}>
             Artikel Kesehatan
-          </Title>
+          </Text>
           <Divider size="sm" color={colors['blue-button']} />
           {state.findMany.data.length === 0 ? (
             <Box py="xl" ta="center">
@@ -51,7 +51,7 @@ function ArtikelKesehatanPage() {
                 onMouseLeave={(e) => (e.currentTarget.style.transform = 'translateY(0)')}
               >
                 <Card.Section>
-                  <Image src={item.image?.link} alt={item.title} height={200} fit="cover" loading="lazy"/>
+                  <Image style={{ borderTopLeftRadius: '10px', borderTopRightRadius: '10px' }} src={item.image?.link} alt={item.title} height={200} fit="cover" loading="lazy" />
                 </Card.Section>
                 <Stack gap="xs" mt="md">
                   <Text fw="bold" fz="xl" c="dark">{item.title}</Text>
@@ -64,18 +64,17 @@ function ArtikelKesehatanPage() {
                   <Text fz="md" c="dark" lineClamp={3}>
                     {item.content}
                   </Text>
-                  <Tooltip label="Baca artikel lengkap">
-                    <Anchor
+                  <Group justify="flex-start">
+                    <Button
+                      bg={colors['blue-button']}
+                      radius="lg"
+                      size="sm"
+                      rightSection={<IconChevronRight size={18} />}
                       onClick={() => router.push(`/darmasaba/kesehatan/data-kesehatan-warga/artikel-kesehatan-page/${item.id}`)}
-                      variant="light"
-                      c={colors['blue-button']}
                     >
-                      <Group gap="xs">
-                        <Text fw="bold" fz="md">Baca Selengkapnya</Text>
-                        <IconChevronRight size={18} />
-                      </Group>
-                    </Anchor>
-                  </Tooltip>
+                      Baca Selengkapnya
+                    </Button>
+                  </Group>
                 </Stack>
               </Card>
             ))

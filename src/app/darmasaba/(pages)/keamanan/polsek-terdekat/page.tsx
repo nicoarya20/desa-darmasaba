@@ -43,7 +43,7 @@ function Page() {
         <Text fz={{ base: "h1", md: "2.5rem" }} c={colors["blue-button"]} fw={"bold"}>
           Kantor Polisi Terdekat
         </Text>
-        <Text pb={15} fz={'h4'} >
+        <Text pb={15} fz={'md'} >
           Desa Darmasaba, Kecamatan Abiansemal, Kabupaten Badung
         </Text>
       </Box>

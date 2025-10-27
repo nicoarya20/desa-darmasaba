@@ -12,13 +12,13 @@ import BackButton from '../../desa/layanan/_com/BackButto';
 const formatCurrency = (value: string | number) => {
   // Convert to string if it's a number
   const numStr = typeof value === 'number' ? value.toString() : value;
-  
+
   // Remove all non-digit characters
   const digitsOnly = numStr.replace(/\D/g, '');
-  
+
   // Format with thousand separators
   const formatted = digitsOnly.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-  
+
   return `Rp.${formatted}`;
 };
 
@@ -103,7 +103,7 @@ function Page() {
                         </Box>
                       </Flex>
                     </Box>
-                    <Button onClick={() => router.push(`https://wa.me/${v.notelp?.replace(/\D/g, '')}`)}>Lamar Sekarang</Button>
+                    <Button onClick={() => router.push(`/darmasaba/ekonomi/lowongan-kerja-lokal/${v.id}`)}>Detail</Button>
                   </Stack>
                 </Paper>
               )

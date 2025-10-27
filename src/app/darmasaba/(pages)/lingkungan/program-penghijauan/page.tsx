@@ -66,8 +66,11 @@ function Page() {
             />
           </Group>
         </Box>
-        <Text c="dimmed" fz={{ base: 'sm', md: 'lg' }} mt="sm">
-          Mari berpartisipasi menanam dan merawat pohon untuk menciptakan lingkungan hijau, sehat, dan seimbang bagi seluruh warga desa.
+        <Text fz="md" mt="sm">
+          Mari berpartisipasi menanam dan merawat pohon untuk menciptakan lingkungan hijau,
+        </Text>
+        <Text fz="md">
+          sehat, dan seimbang bagi seluruh warga desa.
         </Text>
       </Box>
       <Box px={{ base: 'md', md: 100 }} pb={60}>

@@ -61,7 +61,7 @@ function Page() {
           >
             Informasi Wabah & Penyakit
           </Text>
-          <Text fz="md" c="dimmed" mt={4}>
+          <Text fz="md" mt={4}>
             Dapatkan informasi terbaru mengenai wabah dan penyakit yang sedang
             diawasi.
           </Text>
@@ -84,7 +84,7 @@ function Page() {
           <Center py="6xl">
             <Stack align="center" gap="sm">
               <IconInfoCircle size={50} color={colors['blue-button']} />
-              <Text fz="lg" fw={500} c="dimmed">
+              <Text fz="lg" fw={500} >
                 Tidak ada data yang cocok dengan pencarian Anda.
               </Text>
             </Stack>
@@ -101,17 +101,35 @@ function Page() {
                 bg={colors['white-trans-1']}
                 style={{
                   transition: 'transform 200ms ease, box-shadow 200ms ease',
+                  display: 'flex',
+                  flexDirection: 'column',
                 }}
               >
-                <Stack gap="sm">
-                  <Image
-                    radius="md"
+                <Stack gap="sm" style={{ flex: 1 }}>
+                  {/* Gambar */}
+                  <Box
                     h={180}
-                    src={v.image.link}
-                    alt={v.name}
-                    fit="cover"
-                    loading="lazy"
-                  />
+                    w="100%"
+                    style={{
+                      overflow: 'hidden',
+                      borderRadius: '8px',
+                    }}
+                  >
+                    <Image
+                      src={v.image?.link}
+                      alt={v.name}
+                      fit="cover"
+                      w="100%"
+                      h="100%"
+                      style={{
+                        objectFit: 'cover',
+                        objectPosition: 'center',
+                      }}
+                      loading="lazy"
+                    />
+                  </Box>
+
+                  {/* Judul dan badge */}
                   <Group justify="space-between" mt="sm">
                     <Text fw={700} fz="lg" c={colors['blue-button']}>
                       {v.name}
@@ -120,23 +138,46 @@ function Page() {
                       Wabah
                     </Badge>
                   </Group>
+
                   <Text fz="sm" c="dimmed">
-                    Diposting: {new Date(v.createdAt).toLocaleDateString('id-ID', {
+                    Diposting:{' '}
+                    {new Date(v.createdAt).toLocaleDateString('id-ID', {
                       day: '2-digit',
                       month: 'long',
                       year: 'numeric',
                     })}
-
                   </Text>
+
                   <Divider />
-                  <Text fz="sm" lh={1.5} lineClamp={3} truncate="end" dangerouslySetInnerHTML={{ __html: v.deskripsiSingkat }} />
-                  <Button variant="light" radius="md" size="md" onClick={() => router.push(`/darmasaba/kesehatan/info-wabah-penyakit/${v.id}`)}>
-                    Selengkapnya
-                  </Button>
+
+                  {/* Bagian deskripsi dan tombol */}
+                  <Box style={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
+                    <Text
+                      fz="sm"
+                      lh={1.5}
+                      lineClamp={3}
+                      dangerouslySetInnerHTML={{ __html: v.deskripsiSingkat }}
+                      style={{ flexGrow: 1 }}
+                    />
+
+                    <Button
+                      variant="light"
+                      radius="md"
+                      size="md"
+                      mt="md"
+                      onClick={() =>
+                        router.push(`/darmasaba/kesehatan/info-wabah-penyakit/${v.id}`)
+                      }
+                    >
+                      Selengkapnya
+                    </Button>
+                  </Box>
                 </Stack>
               </Paper>
+
             ))}
           </SimpleGrid>
+
         )}
       </Box>
 

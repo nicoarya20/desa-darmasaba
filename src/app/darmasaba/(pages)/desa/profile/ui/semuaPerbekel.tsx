@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 import stateProfileDesa from '@/app/admin/(dashboard)/_state/desa/profile';
-import { Box, Center, Image, Paper, SimpleGrid, Skeleton, Stack, Text, Title, Tooltip } from '@mantine/core';
+import { Box, Center, Image, Paper, SimpleGrid, Skeleton, Stack, Text, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconUser } from '@tabler/icons-react';
 import { useProxy } from 'valtio/utils';
@@ -77,23 +77,17 @@ function SemuaPerbekel() {
                 </Box>
 
                 <Stack gap={4} align="center">
-                  <Tooltip label="Nama Perbekel" withArrow>
                     <Text fw={700} fz="lg" ta="center">
                       {v.nama}
                     </Text>
-                  </Tooltip>
 
-                  <Tooltip label="Wilayah menjabat" withArrow>
-                    <Text c="dimmed" fz="sm" ta="center">
+                  <Text c="dimmed" fz="sm" ta="center">
                       {v.daerah}
                     </Text>
-                  </Tooltip>
 
-                  <Tooltip label="Periode jabatan" withArrow>
-                    <Text c="blue" fw={600} fz="sm" ta="center">
+                  <Text c="blue" fw={600} fz="sm" ta="center">
                       {v.periode}
                     </Text>
-                  </Tooltip>
                 </Stack>
               </Stack>
             </Paper>

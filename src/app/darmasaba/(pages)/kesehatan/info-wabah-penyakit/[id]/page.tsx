@@ -28,16 +28,18 @@ function DetailInfoWabahPenyakitUser() {
   const data = state.findUnique.data;
 
   return (
-    <Box py={10}>
+    <Box py={10} px={{ base: 'md', md: 100 }}>
       {/* Tombol Back */}
-      <Button
-        variant="subtle"
-        onClick={() => router.back()}
-        leftSection={<IconArrowBack size={22} color={colors['blue-button']} />}
-        mb={15}
-      >
-        Kembali
-      </Button>
+      <Box>
+        <Button
+          variant="subtle"
+          onClick={() => router.back()}
+          leftSection={<IconArrowBack size={22} color={colors['blue-button']} />}
+          mb={15}
+        >
+          Kembali
+        </Button>
+      </Box>
 
       {/* Wrapper Detail */}
       <Paper

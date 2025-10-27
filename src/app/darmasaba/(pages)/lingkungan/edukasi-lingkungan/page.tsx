@@ -1,126 +1,104 @@
-'use client'
-import stateEdukasiLingkungan from '@/app/admin/(dashboard)/_state/lingkungan/edukasi-lingkungan';
-import colors from '@/con/colors';
-import { Box, Paper, SimpleGrid, Skeleton, Stack, Text, Tooltip } from '@mantine/core';
+'use client';
+
+import { Box, Container, SimpleGrid, Skeleton, Stack, Text } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconLeaf, IconPlant2, IconRecycle } from '@tabler/icons-react';
 import { useProxy } from 'valtio/utils';
 import BackButton from '../../desa/layanan/_com/BackButto';
 
-function Page() {
-  const tujuan = useProxy(stateEdukasiLingkungan.stateTujuanEdukasi.findById)
-  const materi = useProxy(stateEdukasiLingkungan.stateMateriEdukasiLingkungan.findById)
-  const contoh = useProxy(stateEdukasiLingkungan.stateContohEdukasiLingkungan.findById)
+import stateEdukasiLingkungan from '@/app/admin/(dashboard)/_state/lingkungan/edukasi-lingkungan';
+import colors from '@/con/colors';
+import { EdukasiCard } from './component/edukasiCard';
+
+function LoadingSkeleton() {
+  return (
+    <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }} spacing="lg">
+      {[1, 2, 3].map((item) => (
+        <Skeleton key={item} height={300} radius="md" />
+      ))}
+    </SimpleGrid>
+  );
+}
+
+export default function EdukasiLingkunganPage() {
+  const tujuan = useProxy(stateEdukasiLingkungan.stateTujuanEdukasi.findById);
+  const materi = useProxy(stateEdukasiLingkungan.stateMateriEdukasiLingkungan.findById);
+  const contoh = useProxy(stateEdukasiLingkungan.stateContohEdukasiLingkungan.findById);
 
   useShallowEffect(() => {
-    tujuan.load('edit')
-    materi.load('edit')
-    contoh.load('edit')
-  }, [])
+    tujuan.load('edit');
+    materi.load('edit');
+    contoh.load('edit');
+  }, []);
 
-  if (tujuan.loading || !tujuan.data || materi.loading || !materi.data || contoh.loading || !contoh.data) {
+  const isLoading = tujuan.loading || !tujuan.data ||
+    materi.loading || !materi.data ||
+    contoh.loading || !contoh.data;
+
+  if (isLoading) {
     return (
-      <Stack py={20}>
-        <Skeleton radius="md" height={600} />
+      <Stack py="xl" px={{ base: 'md', md: 'xl' }}>
+        <BackButton />
+        <LoadingSkeleton />
       </Stack>
     );
   }
 
   return (
-    <Stack pos="relative" bg={colors.Bg} py="xl" gap="22">
+    <Stack bg={colors.Bg} py="xl" gap="xl" px={{ base: 'md', md: 'xl' }}>
       <Box px={{ base: 'md', md: 100 }}>
         <BackButton />
       </Box>
 
-      <Box px={{ base: 'md', md: 100 }} pb={20}>
-        <Text ta={'center'} fz={{ base: "h1", md: "2.5rem" }} c={colors["blue-button"]} fw="bold">
+      <Container size="lg" ta="center">
+        <Text
+          component="h1"
+          fz={{ base: 'h2', md: '2.5rem' }}
+          c={colors['blue-button']}
+          fw={700}
+          mb="md"
+        >
           Edukasi Lingkungan
         </Text>
-        <Text ta={'center'} fz="h4" c="black">
+        <Text
+          fz={{ base: 'md', md: 'lg' }}
+          c="dimmed"
+          maw={800}
+          mx="auto"
+        >
           Program edukasi ini membimbing masyarakat untuk peduli dan bertanggung jawab terhadap alam,
           meningkatkan kesehatan, kenyamanan, dan keberlanjutan hidup bersama.
         </Text>
-      </Box>
+      </Container>
 
-      <Box px={{ base: 'md', md: 100 }}>
-        <SimpleGrid cols={{ base: 1, md: 3 }} spacing="lg" style={{ alignItems: 'stretch' }}>
-          {/* Tujuan Edukasi Lingkungan */}
-         <Box style={{ display: 'flex', height: '100%' }}>
-            <Paper p={20} bg={colors['white-trans-1']} shadow="md" radius="md" style={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
-              <Stack gap="md">
-                <Box>
-                  <Tooltip label={<Text fz={"sm"} c={"white"} dangerouslySetInnerHTML={{ __html: tujuan.data?.judul || '' }} /> } position="top" withArrow>
-                    <Stack gap={4} align="center">
-                    <IconLeaf size={28} color={colors['blue-button']} />
-                      <Text dangerouslySetInnerHTML={{ __html: tujuan.data?.judul || '' }} fz="h3" fw="bold" c={colors['blue-button']} ta="center" />
-                    </Stack>
-                  </Tooltip>
-                </Box>
-                <Text 
-                  style={{ 
-                    wordBreak: "break-word", 
-                    whiteSpace: "normal",
-                    flexGrow: 1
-                  }} 
-                  dangerouslySetInnerHTML={{ __html: tujuan.data?.deskripsi || '' }} 
-                />
-                <Box style={{ flexGrow: 1 }} />
-              </Stack>
-            </Paper>
-          </Box>
-          {/* Materi Edukasi Lingkungan */}
-          <Box style={{ display: 'flex', height: '100%' }}>
-            <Paper p={20} bg={colors['white-trans-1']} shadow="md" radius="md">
-              <Stack gap="md">
-                <Box>
-                  <Tooltip label={materi.data?.judul} position="top" withArrow>
-                    <Stack gap={4} align="center">
-                    <IconRecycle size={28} color={colors['blue-button']} />
-                      <Text fz="h3" fw="bold" c={colors['blue-button']} ta="center" dangerouslySetInnerHTML={{ __html: materi.data?.judul || '' }} />
-                    </Stack>
-                  </Tooltip>
-                </Box>
-                <Text 
-                  style={{ 
-                    wordBreak: "break-word", 
-                    whiteSpace: "normal",
-                    flexGrow: 1
-                  }} 
-                  dangerouslySetInnerHTML={{ __html: materi.data?.deskripsi || '' }} 
-                />
-                <Box style={{ flexGrow: 1 }} />
-              </Stack>
-            </Paper>
-          </Box>
-          {/* Contoh Edukasi Lingkungan */}
-          <Box style={{ display: 'flex', height: '100%' }}>
-            <Paper p={20} bg={colors['white-trans-1']} shadow="md" radius="md">
-              <Stack gap="md">
-                <Box>
-                  <Tooltip label={contoh.data?.judul} position="top" withArrow>
-                    <Stack gap={4} align="center">
-                    <IconPlant2  size={28} color={colors['blue-button']} />
-                      <Text fz="h3" fw="bold" c={colors['blue-button']} ta="center">
-                        {contoh.data?.judul}
-                      </Text>
-                    </Stack>
-                  </Tooltip>
-                </Box>
-                <Text 
-                  style={{ 
-                    wordBreak: "break-word", 
-                    whiteSpace: "normal",
-                    flexGrow: 1
-                  }} 
-                  dangerouslySetInnerHTML={{ __html: contoh.data?.deskripsi || '' }} 
-                />
-              </Stack>
-            </Paper>
-          </Box>
+      <Container size="xl">
+        <SimpleGrid
+          cols={{ base: 1, sm: 2, lg: 3 }}
+          spacing="xl"
+          verticalSpacing={{ base: 'md', md: 'xl' }}
+        >
+          <EdukasiCard
+            icon={<IconLeaf size={32} />}
+            title={tujuan.data?.judul || ''}
+            description={tujuan.data?.deskripsi || ''}
+            color={colors['blue-button']}
+          />
+
+          <EdukasiCard
+            icon={<IconRecycle size={32} />}
+            title={materi.data?.judul || ''}
+            description={materi.data?.deskripsi || ''}
+            color={colors['blue-button']}
+          />
+
+          <EdukasiCard
+            icon={<IconPlant2 size={32} />}
+            title={contoh.data?.judul || ''}
+            description={contoh.data?.deskripsi || ''}
+            color={colors['blue-button']}
+          />
         </SimpleGrid>
-      </Box>
+      </Container>
     </Stack>
   );
 }
-
-export default Page;

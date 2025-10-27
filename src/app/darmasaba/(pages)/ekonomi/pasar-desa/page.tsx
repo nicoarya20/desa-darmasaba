@@ -71,8 +71,11 @@ function Page() {
             />
           </GridCol>
         </Grid>
-        <Text px={{ base: 'md', md: 100 }} ta={"justify"} fz={{ base: "h4", md: "h3" }} >
-          Pasar Desa Online merupakan Media Promosi yang bertujuan untuk membantu warga desa dalam memasarkan dan memperkenalkan produknya kepada masyarakat.
+        <Text px={{ base: 'md', md: 100 }} ta={"justify"} fz="md" >
+        Pasar Desa Online adalah media promosi untuk membantu warga memasarkan
+        </Text>
+        <Text px={{ base: 'md', md: 100 }} ta={"justify"} fz="md" >
+        dan memperkenalkan produk mereka.
         </Text>
       </Box>
       <Box px={{ base: "md", md: 100 }}>

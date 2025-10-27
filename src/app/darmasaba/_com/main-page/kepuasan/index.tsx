@@ -156,7 +156,13 @@ function Kepuasan() {
       <Stack p="sm">
         <Container w={{ base: "100%", md: "80%" }} p={"sm"}>
           <Center>
-          <Text fw={"bold"} c={colors["blue-button"]} fz={{ base: "1.8rem", md: "3.4rem" }}>Indeks Kepuasan Masyarakat</Text>
+            <Text
+              ta="center"
+              fz={{ base: '2rem', md: '2.8rem' }}
+              c={colors['blue-button']}
+              fw={800}
+              style={{ letterSpacing: '-0.5px' }}
+            >Indeks Kepuasan Masyarakat</Text>
           </Center>
           <Text ta={"center"} fz={{ base: "1rem", md: "1.3rem" }}>Ukur kebahagiaan warga, tingkatkan layanan desa! Dengan partisipasi aktif masyarakat, kami berkomitmen untuk terus memperbaiki layanan agar lebih transparan, efektif, dan sesuai dengan kebutuhan warga. Kepuasan Anda adalah prioritas utama kami dalam membangun desa yang lebih baik!</Text>
           <Center mt={10}>
@@ -416,9 +422,15 @@ function Kepuasan() {
   }
   return (
     <Stack p={"sm"}>
-     <Container size="lg" px="sm">
+      <Container size="lg" px="sm">
         <Center>
-          <Text ta={"center"} fz={{ base: "2.4rem", md: "3.4rem" }} c={colors["blue-button"]}>Indeks Kepuasan Masyarakat</Text>
+          <Text
+            ta="center"
+            fz={{ base: '2rem', md: '2.8rem' }}
+            c={colors['blue-button']}
+            fw={800}
+            style={{ letterSpacing: '-0.5px' }}
+          >Indeks Kepuasan Masyarakat</Text>
         </Center>
         <Text fz={{ base: "1.2rem", md: "1.4rem" }} ta={"center"}>Ukur kebahagiaan warga, tingkatkan layanan desa! Dengan partisipasi aktif masyarakat, kami berkomitmen untuk terus memperbaiki layanan agar lebih transparan, efektif, dan sesuai dengan kebutuhan warga. Kepuasan Anda adalah prioritas utama kami dalam membangun desa yang lebih baik!</Text>
         <Center mt={10}>

@@ -43,7 +43,7 @@ function Page() {
             <Text fz={{ base: "2rem", md: "3rem" }} fw={900} c={colors["blue-button"]} lh={1.2}>
               Potensi Desa Darmasaba
             </Text>
-            <Text fz="lg" c="dimmed" ta="justify">
+            <Text fz="lg" ta="justify">
               Temukan berbagai potensi unggulan, peluang, dan daya tarik yang menjadikan Desa Darmasaba istimewa.
             </Text>
           </Stack>
