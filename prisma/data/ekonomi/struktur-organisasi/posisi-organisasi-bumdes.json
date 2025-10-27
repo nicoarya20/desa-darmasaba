@@ -1,0 +1,159 @@
+[
+    [
+      {
+        "id": "kepala_desa",
+        "nama": "Kepala Desa",
+        "deskripsi": "Pemimpin desa Darmasaba",
+        "hierarki": 1,
+        "parentId": null
+      },
+      {
+        "id": "kepala_urusan",
+        "nama": "Kepala Urusan",
+        "deskripsi": "Pemimpin urusan desa Darmasaba",
+        "hierarki": 2,
+        "parentId": "kepala_desa"
+      },
+      {
+        "id": "sekretaris_desa",
+        "nama": "Sekretaris Desa",
+        "deskripsi": "Pengelola administrasi desa",
+        "hierarki": 2,
+        "parentId": "kepala_desa"
+      },
+      {
+        "id": "kaur_keuangan",
+        "nama": "Kaur Keuangan",
+        "deskripsi": "Pengelola keuangan desa",
+        "hierarki": 3,
+        "parentId": "kaur_umum"
+      },
+      {
+        "id": "kaur_perencanaan",
+        "nama": "Kaur Perencanaan",
+        "deskripsi": "Penyusun program kerja desa",
+        "hierarki": 3,
+        "parentId": "kaur_umum"
+      },
+      {
+        "id": "kaur_umum",
+        "nama": "Kaur Umum & TU",
+        "deskripsi": "Pelayanan umum dan administrasi",
+        "hierarki": 2,
+        "parentId": "kepala_desa"
+      },
+      {
+        "id": "kasi_pemerintahan",
+        "nama": "Kasi Pemerintahan",
+        "deskripsi": "Urusan pemerintahan dan keamanan",
+        "hierarki": 2,
+        "parentId": "kepala_desa"
+      },
+      {
+        "id": "kasi_pelayanan",
+        "nama": "Kasi Pelayanan",
+        "deskripsi": "Urusan pelayanan masyarakat",
+        "hierarki": 2,
+        "parentId": "kepala_desa"
+      },
+      {
+        "id": "kasi_kesejahteraan",
+        "nama": "Kasi Kesejahteraan",
+        "deskripsi": "Urusan sosial dan kesejahteraan",
+        "hierarki": 2,
+        "parentId": "kepala_desa"
+      },
+      {
+        "id": "kadus_banjar_dinas_cabe",
+        "nama": "Kepala Dusun Banjar Dinas Cabe",
+        "deskripsi": "Pimpinan wilayah Banjar Dinas Cabe",
+        "hierarki": 3,
+        "parentId": "sekretaris_desa"
+      },
+      {
+        "id": "kadus_banjar_dinas_menesa",
+        "nama": "Kepala Dusun Banjar Dinas Menesa",
+        "deskripsi": "Pimpinan wilayah Banjar Menesa",
+        "hierarki": 3,
+        "parentId": "sekretaris_desa"
+      },
+      {
+        "id": "kadus_banjar_dinas_penenjoan",
+        "nama": "Kepala Dusun Banjar Dinas Penenjoan",
+        "deskripsi": "Pimpinan wilayah Banjar Dinas Penenjoan",
+        "hierarki": 3,
+        "parentId": "sekretaris_desa"
+      },
+      {
+        "id": "kadus_banjar_dinas_telanga",
+        "nama": "Kepala Dusun Banjar Dinas Telanga",
+        "deskripsi": "Pimpinan wilayah Banjar Dinas Telanga",
+        "hierarki": 3,
+        "parentId": "sekretaris_desa"
+      },
+      {
+        "id": "kadus_banjar_dinas_tengah",
+        "nama": "Kepala Dusun Banjar Dinas Tengah",
+        "deskripsi": "Pimpinan wilayah Banjar Dinas Tengah",
+        "hierarki": 3,
+        "parentId": "sekretaris_desa"
+      },
+      {
+        "id": "kadus_banjar_dinas_baler_pasar",
+        "nama": "Kepala Dusun Banjar Dinas Baler Pasar",
+        "deskripsi": "Pimpinan wilayah Banjar Dinas Baler Pasar",
+        "hierarki": 3,
+        "parentId": "sekretaris_desa"
+      },
+      {
+        "id": "kadus_banjar_dinas_bucu",
+        "nama": "Kepala Dusun Banjar Dinas Bucu",
+        "deskripsi": "Pimpinan wilayah Banjar Dinas Bucu",
+        "hierarki": 3,
+        "parentId": "sekretaris_desa"
+      },
+      {
+        "id": "kadus_banjar_dinas_gulingan",
+        "nama": "Kepala Dusun Banjar Dinas Gulingan",
+        "deskripsi": "Pimpinan wilayah Banjar Dinas Gulingan",
+        "hierarki": 3,
+        "parentId": "sekretaris_desa"
+      },
+      {
+        "id": "kadus_banjar_dinas_bersih",
+        "nama": "Kepala Dusun Banjar Dinas Bersih",
+        "deskripsi": "Pimpinan wilayah Banjar Dinas Bersih",
+        "hierarki": 3,
+        "parentId": "sekretaris_desa"
+      },
+      {
+        "id": "kadus_banjar_dinas_umahanyar",
+        "nama": "Kepala Dusun Banjar Dinas Umahanyar",
+        "deskripsi": "Pimpinan wilayah Banjar Dinas Umahanyar",
+        "hierarki": 3,
+        "parentId": "sekretaris_desa"
+      },
+      {
+        "id": "kadus_banjar_dinas_taman",
+        "nama": "Kepala Dusun Banjar Dinas Taman",
+        "deskripsi": "Pimpinan wilayah Banjar Dinas Taman",
+        "hierarki": 3,
+        "parentId": "sekretaris_desa"
+      },
+      {
+        "id": "kadus_banjar_dinas_darmasaba",
+        "nama": "Kepala Dusun Banjar Dinas Darmasaba",
+        "deskripsi": "Pimpinan wilayah Banjar Dinas Darmasaba",
+        "hierarki": 3,
+        "parentId": "sekretaris_desa"
+      },
+      {
+        "id": "staf_desa",
+        "nama": "Staf Desa",
+        "deskripsi": "Staf Desa",
+        "hierarki": 3,
+        "parentId": "sekretaris_desa"
+      }
+    ]
+  ]
+  

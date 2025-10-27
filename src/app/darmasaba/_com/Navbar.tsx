@@ -2,74 +2,198 @@
 import colors from "@/con/colors";
 import navbarListMenu from "@/con/navbar-list-menu";
 import stateNav from "@/state/state-nav";
-import { ActionIcon, Box, Burger, Group, Stack, Text } from "@mantine/core";
-import { IconHome, IconSquareArrowRight } from "@tabler/icons-react";
-import { motion } from 'framer-motion';
+import { ActionIcon, Box, Burger, Group, Image, Paper, ScrollArea, Stack, Text, Tooltip } from "@mantine/core";
+import { IconSquareArrowRight } from "@tabler/icons-react";
+import { motion } from "framer-motion";
+import { usePathname, useRouter } from "next/navigation";
 import { useSnapshot } from "valtio";
 import { MenuItem } from "../../../../types/menu-item";
 import { NavbarMainMenu } from "./NavbarMainMenu";
-import { useRouter } from 'next/navigation'
 
 export function Navbar() {
   const { item, isSearch, mobileOpen } = useSnapshot(stateNav);
-  const router = useRouter()
+  const router = useRouter();
+
   return (
     <Box>
-      <Box
+      <Paper
+        radius="0"
         className="glass2"
-        w={"100%"}
-        pos={"fixed"}
+        w="100vw"
+        pos="fixed"
         top={0}
-        style={{
-          zIndex: 100,
-          overflow: "scroll"
-        }}
+        style={{ zIndex: 100 }}
       >
-        <NavbarMainMenu listNavbar={navbarListMenu} />
-        <Stack hiddenFrom="sm" bg={colors.grey[2]}>
-          <Group justify="space-between">
-            <ActionIcon variant="transparent" onClick={() => {
-              router.push("/darmasaba")
-              stateNav.mobileOpen = false
-            }}>
-              <IconHome />
+        {/* Desktop navbar (muncul mulai 992px ke atas) */}
+        <Box visibleFrom="md">
+          <NavbarMainMenu listNavbar={navbarListMenu} />
+        </Box>
+
+        {/* Mobile navbar (muncul di bawah 992px, termasuk iPad Mini) */}
+        <Box hiddenFrom="md" bg={colors.grey[2]} px="md" py="sm">
+          <Group justify="space-between" wrap="nowrap">
+            <ActionIcon
+              variant="transparent"
+              size="xl"
+              radius="xl"
+              onClick={() => {
+                router.push("/darmasaba");
+                stateNav.mobileOpen = false;
+              }}
+            >
+              <Tooltip label="Kembali ke Beranda" position="bottom" withArrow>
+                <Image
+                  src="/darmasaba-icon.png"
+                  alt="Village Logo"
+                  width={48}
+                  height={48}
+                  loading="lazy"
+                />
+              </Tooltip>
             </ActionIcon>
-            <Burger onClick={() => stateNav.mobileOpen = !stateNav.mobileOpen} color={colors["blue-button"]} opened={mobileOpen} />
+
+            <Tooltip
+              label={mobileOpen ? "Close menu" : "Open menu"}
+              position="bottom"
+              withArrow
+            >
+              <Burger
+                opened={mobileOpen}
+                color={colors["blue-button"]}
+                onClick={() => (stateNav.mobileOpen = !stateNav.mobileOpen)}
+                size="sm"
+              />
+            </Tooltip>
           </Group>
-          {mobileOpen && <motion.div
-            initial={{ x: 300 }}
-            animate={{ x: 0 }}
-            transition={{ duration: 0.1 }}
-            style={{
-              height: "100vh",
-              overflow: "scroll"
-            }}
-          >
-            <NavbarMobile listNavbar={navbarListMenu} />
-          </motion.div>}
-        </Stack>
-      </Box>
+
+          {mobileOpen && (
+            <Paper
+              component={motion.div}
+              bg="white"
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ duration: 0.2 }}
+              pos="absolute"
+              left={0}
+              right={0}
+              top="100%"
+              m={0}
+              radius={0}
+              shadow="md"
+            >
+              <NavbarMobile listNavbar={navbarListMenu} />
+            </Paper>
+          )}
+        </Box>
+      </Paper>
+
       {(item || isSearch) && <Box className="glass" />}
     </Box>
   );
 }
 
 function NavbarMobile({ listNavbar }: { listNavbar: MenuItem[] }) {
-  const router = useRouter()
-  return <Stack p={"md"} style={{ backgroundColor: "rgba(255, 255, 255, 0.3)" }}>
-    {listNavbar.map((item, k) => {
-      return <Stack key={k}>
-        <Group justify="space-between" onClick={() => {
-          router.push(item.href)
-          stateNav.mobileOpen = false
-        }}>
-          <Text c="dark.9"
-            style={{ fontWeight: "bold" }}
-          >{item.name}</Text>
-          <IconSquareArrowRight />
-        </Group>
-        {item.children && <NavbarMobile listNavbar={item.children} />}
+  const router = useRouter();
+  const pathname = usePathname(); // 👈 untuk cek path aktif
+
+  // fungsi bantu: cek apakah path sekarang sama dengan menu / sub-menu
+  const isActive = (href?: string) => href && pathname.startsWith(href);
+
+  return (
+    <ScrollArea.Autosize
+      mah="calc(100dvh - 80px)"
+      type="auto"
+      offsetScrollbars
+    >
+      <Stack p="sm" gap="xs">
+        {listNavbar.map((item, k) => {
+          const active = isActive(item.href);
+          return (
+            <Box key={k}>
+              <Paper
+                shadow={active ? "sm" : "xs"}
+                radius="md"
+                p="sm"
+                withBorder
+                bg={active ? "blue.0" : "gray.0"}
+                onClick={() => {
+                  if (item.href) {
+                    router.push(item.href);
+                    stateNav.mobileOpen = false;
+                  }
+                }}
+                style={{
+                  cursor: item.href ? "pointer" : "default",
+                  transition: "background 0.15s ease",
+                  borderLeft: active ? "4px solid #1e66f5" : "4px solid transparent",
+                }}
+              >
+                <Group justify="space-between" align="center" wrap="nowrap">
+                  <Text
+                    fw={active ? 700 : 600}
+                    fz="md"
+                    c={active ? "blue.7" : "dark.9"}
+                  >
+                    {item.name}
+                  </Text>
+                  {item.href && (
+                    <IconSquareArrowRight
+                      size={18}
+                      color={active ? "#1e66f5" : "inherit"}
+                    />
+                  )}
+                </Group>
+              </Paper>
+
+              {/* Submenu */}
+              {item.children && (
+                <Box pl="md" mt={4}>
+                  {item.children.map((child, j) => {
+                    const childActive = isActive(child.href);
+                    return (
+                      <Group
+                        key={j}
+                        justify="space-between"
+                        align="center"
+                        p="xs"
+                        onClick={() => {
+                          if (child.href) {
+                            router.push(child.href);
+                            stateNav.mobileOpen = false;
+                          }
+                        }}
+                        style={{
+                          cursor: child.href ? "pointer" : "default",
+                          opacity: child.href ? 1 : 0.8,
+                          borderRadius: "0.5rem",
+                          backgroundColor: childActive ? "#e7f0ff" : "transparent",
+                          borderLeft: childActive ? "3px solid #1e66f5" : "3px solid transparent",
+                          transition: "background 0.15s ease",
+                        }}
+                      >
+                        <Text
+                          fz="sm"
+                          fw={childActive ? 600 : 400}
+                          c={childActive ? "blue.7" : "dark.8"}
+                        >
+                          {child.name}
+                        </Text>
+                        <IconSquareArrowRight
+                          size={14}
+                          color={childActive ? "#1e66f5" : "inherit"}
+                        />
+                      </Group>
+                    );
+                  })}
+                </Box>
+              )}
+            </Box>
+          );
+        })}
       </Stack>
-    })}
-  </Stack>
+    </ScrollArea.Autosize>
+  );
 }
+
+

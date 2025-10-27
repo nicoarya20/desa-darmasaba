@@ -7,6 +7,12 @@ import "animate.css";
 import 'react-simple-toasts/dist/style.css';
 import 'react-simple-toasts/dist/theme/dark.css';
 import "./globals.css";
+import '@mantine/charts/styles.css';
+import '@mantine/dates/styles.css';
+import '@mantine/tiptap/styles.css';
+import "primereact/resources/themes/lara-light-blue/theme.css";
+import "primereact/resources/primereact.min.css";
+import "primeicons/primeicons.css";
 
 
 
@@ -18,9 +24,10 @@ import {
   mantineHtmlProps,
 } from "@mantine/core";
 import { ViewTransitions } from "next-view-transitions";
+import { ToastContainer } from "react-toastify";
 
 export const metadata = {
-  title: "desa darmasaba",
+  title: "Desa Darmasaba",
   description: "Desa Darmasaba Kabupaten Badung",
 };
 
@@ -51,7 +58,11 @@ export default function RootLayout({
         <body>
           <MantineProvider theme={theme}>
             {children}
+
           </MantineProvider>
+          <ToastContainer position="bottom-center" hideProgressBar style={{
+          zIndex: 9999
+        }} />
         </body>
         <LoadDataFirstClient />
       </html>

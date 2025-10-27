@@ -1,0 +1,23 @@
+[
+    {
+      "id": "role-1",
+      "name": "ADMIN DESA",
+      "description": "Administrator Desa",
+      "permissions": ["manage_users", "manage_content", "view_reports"],
+      "isActive": true
+    },
+    {
+      "id": "role-2",
+      "name": "ADMIN KESEHATAN",
+      "description": "Administrator Bidang Kesehatan",
+      "permissions": ["manage_health_data", "view_reports"],
+      "isActive": true
+    },
+    {
+      "id": "role-3",
+      "name": "ADMIN SEKOLAH",
+      "description": "Administrator Sekolah",
+      "permissions": ["manage_school_data", "view_reports"],
+      "isActive": true
+    }
+  ]

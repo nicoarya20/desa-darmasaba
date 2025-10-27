@@ -1,17 +1,32 @@
 import prisma from "@/lib/prisma";
 import cors, { HTTPMethod } from "@elysiajs/cors";
+import { staticPlugin } from "@elysiajs/static";
 import swagger from "@elysiajs/swagger";
 import { Elysia, t } from "elysia";
-import getPotensi from "./_lib/get-potensi";
-import img from "./_lib/img";
 import fs from "fs/promises";
 import path from "path";
-import uplImg from "./_lib/upl-img";
-import imgs from "./_lib/imgs";
-import uplCsv from "./_lib/upl-csv";
+import Desa from "./_lib/desa";
+import getPotensi from "./_lib/get-potensi";
+import img from "./_lib/img";
 import imgDel from "./_lib/img-del";
-import { uplImgSingle } from "./_lib/upl-img-single";
+import imgs from "./_lib/imgs";
+import Kesehatan from "./_lib/kesehatan";
+import PPID from "./_lib/ppid";
+import uplCsv from "./_lib/upl-csv";
 import { uplCsvSingle } from "./_lib/upl-csv-single";
+import uplImg from "./_lib/upl-img";
+import { uplImgSingle } from "./_lib/upl-img-single";
+import FileStorage from "./_lib/fileStorage";
+import Keamanan from "./_lib/keamanan";
+import Ekonomi from "./_lib/ekonomi";
+import Inovasi from "./_lib/inovasi";
+import Lingkungan from "./_lib/lingkungan";
+import LandingPage from "./_lib/landing_page";
+import Pendidikan from "./_lib/pendidikan";
+import User from "./_lib/user";
+import Role from "./_lib/user/role";
+import Search from "./_lib/search";
+
 const ROOT = process.cwd();
 
 if (!process.env.WIBU_UPLOAD_DIR)
@@ -43,9 +58,46 @@ async function layanan() {
   const data = await prisma.layanan.findMany();
   return { data };
 }
+
+const Utils = new Elysia({
+  prefix: "/api/utils",
+  tags: ["Utils"],
+}).get("/version", async () => {
+  const packageJson = await fs.readFile(
+    path.join(ROOT, "package.json"),
+    "utf-8"
+  );
+  const version = JSON.parse(packageJson).version;
+  return { version };
+});
+
+if (!process.env.WIBU_UPLOAD_DIR)
+  throw new Error("WIBU_UPLOAD_DIR is not defined");
+
 const ApiServer = new Elysia()
   .use(swagger({ path: "/api/docs" }))
+  .use(
+    staticPlugin({
+      assets: process.env.WIBU_UPLOAD_DIR,
+      prefix: "/uploads",
+    })
+  )
   .use(cors(corsConfig))
+  .use(Utils)
+  .use(FileStorage)
+  .use(LandingPage)
+  .use(PPID)
+  .use(Desa)
+  .use(Kesehatan)
+  .use(Keamanan)
+  .use(Ekonomi)
+  .use(Inovasi)
+  .use(Lingkungan)
+  .use(Pendidikan)
+  .use(User)
+  .use(Role)
+  .use(Search)
+
   .onError(({ code }) => {
     if (code === "NOT_FOUND") {
       return {

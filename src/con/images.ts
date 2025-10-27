@@ -10,6 +10,9 @@ const images = {
     "gelah-melah": "/assets/images/module/gelah-melah.png",
     "inovasi-desa-darmasaba": "/assets/images/module/inovasi-desa-darmasaba.png"
   },
+  "layanan": {
+    "layanan-1": "/assets/images/layanan/test.png",
+  },
   "bg-slide": "/assets/images/bg-slide.png",
   "sosmed": {
     "telegram": "/assets/images/sosmed/telegram.png",

@@ -41,7 +41,15 @@ next-env.d.ts
 # uploads
 /uploads
 
+# download
+/download
+
 # cache
 /cache
 
 .github/
+
+.env.*
+
+*.tar.gz
+

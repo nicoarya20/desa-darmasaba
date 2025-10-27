@@ -1,0 +1,31 @@
+import prisma from "@/lib/prisma";
+import { Context } from "elysia";
+
+export default async function jenjangPendidikanDelete(context: Context) {
+    const id = context.params.id;
+    if (!id) {
+        return {
+            success: false,
+            message: "ID is required",
+        }
+    }
+
+    const jenjangPendidikan = await prisma.jenjangPendidikan.delete({
+        where: {
+            id: id,
+        },
+    })
+
+    if(!jenjangPendidikan) {
+        return {
+            success: false,
+            message: "Jenjang Pendidikan tidak ditemukan",
+        }
+    }
+
+    return {
+        success: true,
+        message: "Success delete jenjang pendidikan",
+        data: jenjangPendidikan,
+    }
+}

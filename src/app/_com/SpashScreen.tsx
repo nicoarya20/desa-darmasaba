@@ -23,6 +23,7 @@ export default function SpashScreen() {
       <Paper p={"md"} miw={320}>
         <Flex>
           <Image
+            loading="lazy"
             src={images["darmasaba-icon"]}
             alt="darmasaba"
             w={100}

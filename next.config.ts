@@ -1,6 +1,11 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  experimental: {},
+  allowedDevOrigins: [
+    "http://192.168.1.82:3000", // buat akses dari HP/device lain
+    "http://localhost:3000",   // akses lokal
+  ],
   async headers() {
     return [
       {

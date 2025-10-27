@@ -1,9 +1,36 @@
-import { Container, Stack } from "@mantine/core";
+'use client';
+
+import dynamic from 'next/dynamic';
+import { useEffect, useState } from 'react';
+
+// Dynamically import the components with SSR disabled to prevent hydration issues
+const LayoutTabs = dynamic(
+  () => import('./(dashboard)/landing-page/profile/_lib/layoutTabs'),
+  { ssr: false }
+);
+
+const ProgramInovasi = dynamic(
+  () => import('./(dashboard)/landing-page/profile/program-inovasi/page'),
+  { ssr: false }
+);
 
 export default function Page() {
+  const [mounted, setMounted] = useState(false);
+
+  // This ensures the component is only rendered on the client
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return null; // or return a loading state
+  }
+
   return (
-    <Stack h={"100%"}>
-      <Container>admin</Container>
-    </Stack>
-  );
+    <div suppressHydrationWarning>
+      <LayoutTabs>
+        <ProgramInovasi />
+      </LayoutTabs>
+    </div>
+  )
 }

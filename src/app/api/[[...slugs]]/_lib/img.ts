@@ -23,7 +23,9 @@ async function img({
   // Validasi ekstensi file
   if (![".jpg", ".jpeg", ".png"].includes(ext)) {
     console.warn(`Ekstensi file tidak didukung: ${ext}`);
-    return new Response(await fs.readFile(noImage), {
+    const buffer = await fs.readFile(noImage);
+    const uint8Array = new Uint8Array(buffer);
+    return new Response(new Blob([uint8Array], { type: 'image/jpeg' }), {
       headers: { "Content-Type": "image/jpeg" },
     });
   }
@@ -43,7 +45,8 @@ async function img({
       .resize(size || metadata.width) // Gunakan size jika diberikan, jika tidak gunakan width asli
       .toBuffer();
 
-    return new Response(resizedImageBuffer, {
+    const uint8Array = new Uint8Array(resizedImageBuffer);
+    return new Response(new Blob([uint8Array], { type: 'image/jpeg' }), {
       headers: {
         "Cache-Control": "public, max-age=3600, stale-while-revalidate=600",
         "Content-Type": "image/jpeg",
@@ -52,7 +55,9 @@ async function img({
   } catch (error) {
     console.error(`Gagal memproses file: ${name}`, error);
     // Jika file tidak ditemukan atau gagal diproses, kembalikan default image
-    return new Response(await fs.readFile(noImage), {
+    const buffer = await fs.readFile(noImage);
+    const uint8Array = new Uint8Array(buffer);
+    return new Response(new Blob([uint8Array], { type: 'image/jpeg' }), {
       headers: { "Content-Type": "image/jpeg" },
     });
   }

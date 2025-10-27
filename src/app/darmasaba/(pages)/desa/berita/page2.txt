@@ -1,0 +1,128 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+import colors from '@/con/colors';
+import { Box, Container, Grid, GridCol, Skeleton, Stack, Tabs, TabsList, TabsPanel, TabsTab, Text, TextInput } from '@mantine/core';
+import { IconSearch } from '@tabler/icons-react';
+import BackButton from '../layanan/_com/BackButto';
+import Budaya from './budaya/page';
+import Ekonomi from './ekonomi/page';
+import Pemerintahan from './pemerintahan/page';
+import Semua from './semua/page';
+import Sosial from './sosial/page';
+import Teknologi from './teknologi/page';
+import Pembangunan from './pembangunan/page';
+import { useEffect, useState } from 'react';
+import { useProxy } from 'valtio/utils';
+import stateDashboardBerita from '@/app/admin/(dashboard)/_state/desa/berita';
+
+
+function Page() {
+  const [selectedKategori, setSelectedKategori] = useState<string>('Semua');
+  const [loading, setLoading] = useState(false);
+  const state = useProxy(stateDashboardBerita);
+
+
+  useEffect(() => {
+    state.kategoriBerita.findMany.load()
+    const loadData = async () => {
+      try {
+        setLoading(true);
+        await stateDashboardBerita.berita.findMany.load(1, 100);
+      } catch (error) {
+        console.error('Error loading data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadData();
+  }, []);
+
+  const data = state.berita.findMany.data || [];
+
+  const categories = [...new Set(
+    data
+      .filter(item => item.kategoriBerita?.name)
+      .map(item => item.kategoriBerita?.name)
+  )];
+
+  const filteredData = selectedKategori === 'Semua' 
+    ? data 
+    : data.filter(item => item.kategoriBerita?.name === selectedKategori);
+
+  return (
+    <Stack pos="relative" bg={colors.Bg} py="xl" gap="22">
+      {/* Header */}
+      <Box px={{ base: "md", md: 100 }}>
+        <BackButton />
+      </Box>
+      <Container size="lg" px="md">
+        <Stack align="center" gap="0" >
+          <Text fz={{ base: "2rem", md: "3.4rem" }} c={colors["blue-button"]} fw="bold" ta="center">
+            Portal Berita Darmasaba
+          </Text>
+          <Text ta="center" px="md">
+            Temukan berbagai potensi dan keunggulan yang dimiliki Desa Darmasaba
+          </Text>
+        </Stack>
+      </Container>
+
+      {/* Tabs Menu */}
+      <Tabs color={colors['blue-button']} variant="pills" defaultValue="semua">
+        <Box px={{ base: "md", md: 100 }} py="md" bg={colors['BG-trans']} >
+          <Grid>
+            <GridCol span={{ base: 12, md: 9, lg: 8, xl: 9 }}>
+              <TabsList>
+                {categories.map((kategori) => (
+                  <TabsTab key={kategori} value={kategori || ''}>
+                    {kategori}
+                  </TabsTab>
+                ))}
+              </TabsList>
+            </GridCol>
+            <GridCol span={{ base: 12, md: 3, lg: 4, xl: 3 }}>
+              {loading ? (
+                <Skeleton height={42} />
+              ) : filteredData.length > 0 ? (
+                <TextInput
+                  w={{ base: "100%", md: "100%" }}
+                  radius="lg"
+                  placeholder="Cari Berita"
+                  leftSection={<IconSearch size={18} />}
+                />
+              ) : (
+                <Text>Tidak ada data</Text>
+              )}
+            </GridCol>
+          </Grid>
+        </Box>
+
+        <TabsPanel value='semua'>
+          <Semua />
+        </TabsPanel>
+        <TabsPanel value='pemerintahan'>
+          <Pemerintahan />
+        </TabsPanel>
+        <TabsPanel value="pembangunan" >
+          <Pembangunan />
+        </TabsPanel>
+        <TabsPanel value="ekonomi" >
+          <Ekonomi />
+        </TabsPanel>
+        <TabsPanel value="sosial" >
+          <Sosial />
+        </TabsPanel>
+        <TabsPanel value="budaya" >
+          <Budaya />
+        </TabsPanel>
+        <TabsPanel value="teknologi" >
+          <Teknologi />
+        </TabsPanel>
+
+      </Tabs>
+
+
+
+    </Stack>
+  );
+}
+
+export default Page;

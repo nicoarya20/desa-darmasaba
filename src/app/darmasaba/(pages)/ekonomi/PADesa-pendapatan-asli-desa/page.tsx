@@ -1,0 +1,234 @@
+'use client'
+import PendapatanAsliDesa from '@/app/admin/(dashboard)/_state/ekonomi/PADesa';
+import colors from '@/con/colors';
+import { Box, Grid, GridCol, Paper, SimpleGrid, Stack, Table, Text, Title } from '@mantine/core';
+import { useShallowEffect } from '@mantine/hooks';
+import { useProxy } from 'valtio/utils';
+import BackButton from '../../desa/layanan/_com/BackButto';
+
+function Page() {
+  const state = useProxy(PendapatanAsliDesa.ApbDesa);
+
+  useShallowEffect(() => {
+    state.findMany.load();
+  }, []);
+
+  useShallowEffect(() => {
+    PendapatanAsliDesa.pembiayaan.findMany.load();
+    PendapatanAsliDesa.belanja.findMany.load();
+    PendapatanAsliDesa.pendapatan.findMany.load();
+  }, []);
+
+  // Get the latest APB data
+  const latestApb = state.findMany.data?.[0];
+
+  // Calculate totals
+  const totalPendapatan = latestApb?.pendapatan?.reduce((sum, item) => sum + (item?.value || 0), 0) || 0;
+  const totalBelanja = latestApb?.belanja?.reduce((sum, item) => sum + (item?.value || 0), 0) || 0;
+  const totalPembiayaan = latestApb?.pembiayaan?.reduce((sum, item) => sum + (item?.value || 0), 0) || 0;
+
+  // Hasil akhir
+  const sisaAnggaran = totalPendapatan - totalBelanja - totalPembiayaan;
+
+  return (
+    <Stack pos="relative" bg={colors.Bg} py="xl" gap="lg">
+      <Box px={{ base: 'md', md: 100 }}>
+        <BackButton />
+      </Box>
+      <Text ta="center" fz={{ base: "h1", md: "2.5rem" }} c={colors["blue-button"]} fw="bold">
+        Pendapatan Asli Desa
+      </Text>
+      <Box px={{ base: "md", md: 100 }}>
+        <Stack gap="lg" justify="center">
+          <Paper bg={colors['white-1']} p="xl">
+            <SimpleGrid cols={{ base: 1, md: 3 }} spacing="md">
+              {/* Pendapatan Card */}
+              <Box p="md" style={{ border: '1px solid #e9ecef', borderRadius: '8px' }}>
+                <Stack gap={"xs"}>
+                  <Title order={3}>Pendapatan</Title>
+                  {latestApb?.pendapatan?.map((item) => (
+                    <Box key={item.id}>
+                      <Grid>
+                        <GridCol span={{ base: 12, md: 6 }} style={{ maxWidth: '180px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          <Text fz="md" fw={500}>{item.name}</Text>
+                        </GridCol>
+                        <GridCol span={{ base: 12, md: 6 }} style={{ maxWidth: '180px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          <Text
+                            fz="md"
+                            fw={500}
+                            style={{
+                              wordBreak: 'break-word',
+                              whiteSpace: 'normal',
+                              textAlign: 'right',
+                            }}
+                          >
+                            {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(item.value)}
+                          </Text>
+                        </GridCol>
+                      </Grid>
+                    </Box>
+                  ))}
+                  <Grid>
+                    <GridCol span={{ base: 12, md: 6 }} style={{ maxWidth: '180px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      <Text fz="lg" fw={600} mb="xs">Total Pendapatan</Text>
+                    </GridCol>
+                    <GridCol span={{ base: 12, md: 6 }} style={{ maxWidth: '180px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      <Text style={{
+                        wordBreak: 'break-word',
+                        whiteSpace: 'normal'
+                      }} fz="xl" fw={700} c={colors['blue-button']}>
+                        {new Intl.NumberFormat('id-ID', {
+                          style: 'currency',
+                          currency: 'IDR',
+                          minimumFractionDigits: 0
+                        }).format(totalPendapatan)}
+                      </Text>
+                    </GridCol>
+                  </Grid>
+                </Stack>
+              </Box>
+
+              {/* Belanja Card */}
+              <Box p="md" style={{ border: '1px solid #e9ecef', borderRadius: '8px' }}>
+                <Stack gap={"xs"}>
+                  <Title order={3}>Belanja</Title>
+                  {latestApb?.belanja?.map((item) => (
+                    <Box key={item.id}>
+                      <Grid>
+                        <GridCol span={{ base: 12, md: 6 }} style={{ maxWidth: '180px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          <Text fz="md" fw={500}>{item.name}</Text>
+                        </GridCol>
+                        <GridCol span={{ base: 12, md: 6 }} style={{ maxWidth: '180px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          <Text 
+                            fz="md" 
+                            fw={500}
+                            style={{
+                              wordBreak: 'break-word',
+                              whiteSpace: 'normal',
+                              textAlign: 'right',
+                            }}
+                          >
+                            {new Intl.NumberFormat('id-ID', {
+                              style: 'currency',
+                              currency: 'IDR',
+                              minimumFractionDigits: 0
+                            }).format(item.value)}
+                          </Text>
+                        </GridCol>
+                      </Grid>
+                    </Box>
+                  ))}
+                  <Grid>
+                    <GridCol span={{ base: 12, md: 6 }}>
+                      <Text fz="lg" fw={600} mb="xs">Total Belanja</Text>
+                    </GridCol>
+                    <GridCol span={{ base: 12, md: 6 }}>
+                      <Text fz="xl" fw={700} c="orange">
+                        {new Intl.NumberFormat('id-ID', {
+                          style: 'currency',
+                          currency: 'IDR',
+                          minimumFractionDigits: 0
+                        }).format(totalBelanja)}
+                      </Text>
+                    </GridCol>
+                  </Grid>
+                </Stack>
+              </Box>
+
+              {/* Pembiayaan Card */}
+              <Box p="md" style={{ border: '1px solid #e9ecef', borderRadius: '8px' }}>
+                <Stack gap={"xs"}>
+                  <Title order={3}>Pembiayaan</Title>
+                  {latestApb?.pembiayaan?.map((item) => (
+                    <Box key={item.id}>
+                      <Grid>
+                        <GridCol span={{ base: 12, md: 6 }} style={{ maxWidth: '180px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          <Text fz="md" fw={500}>{item.name}</Text>
+                        </GridCol>
+                        <GridCol span={{ base: 12, md: 6 }} style={{ maxWidth: '180px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          <Text 
+                            fz="md" 
+                            fw={500}
+                            style={{
+                              wordBreak: 'break-word',
+                              whiteSpace: 'normal',
+                              textAlign: 'right',
+                            }}
+                          >
+                            {new Intl.NumberFormat('id-ID', {
+                              style: 'currency',
+                              currency: 'IDR',
+                              minimumFractionDigits: 0
+                            }).format(item.value)}
+                          </Text>
+                        </GridCol>
+                      </Grid>
+                    </Box>
+                  ))}
+                  <Grid>
+                    <GridCol span={{ base: 12, md: 6 }}>
+                      <Text fz="lg" fw={600} mb="xs">Total Pembiayaan</Text>
+                    </GridCol>
+                    <GridCol span={{ base: 12, md: 6 }}>
+                      <Text fz="xl" fw={700} c="green">
+                        {new Intl.NumberFormat('id-ID', {
+                          style: 'currency',
+                          currency: 'IDR',
+                          minimumFractionDigits: 0
+                        }).format(totalPembiayaan)}
+                      </Text>
+                    </GridCol>
+                  </Grid>
+                </Stack>
+              </Box>
+
+            </SimpleGrid>
+          </Paper>
+
+          {/* 🔽 Tambahan Ringkasan Anggaran */}
+          <Paper bg={colors['white-1']} p="xl" shadow="sm" withBorder>
+            <Title order={3} mb="md">Ringkasan Anggaran</Title>
+            <Table striped highlightOnHover withTableBorder>
+              <Table.Thead>
+                <Table.Tr>
+                  <Table.Th>Keterangan</Table.Th>
+                  <Table.Th ta={"right"}>Jumlah</Table.Th>
+                </Table.Tr>
+              </Table.Thead>
+              <Table.Tbody>
+                <Table.Tr>
+                  <Table.Td>Total Pendapatan</Table.Td>
+                  <Table.Td align="right">
+                    {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(totalPendapatan)}
+                  </Table.Td>
+                </Table.Tr>
+                <Table.Tr>
+                  <Table.Td>Total Belanja</Table.Td>
+                  <Table.Td align="right" c="orange">
+                    {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(totalBelanja)}
+                  </Table.Td>
+                </Table.Tr>
+                <Table.Tr>
+                  <Table.Td>Total Pembiayaan</Table.Td>
+                  <Table.Td align="right" c="green">
+                    {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(totalPembiayaan)}
+                  </Table.Td>
+                </Table.Tr>
+                <Table.Tr>
+                  <Table.Td><b>Sisa Anggaran</b></Table.Td>
+                  <Table.Td align="right" c={sisaAnggaran >= 0 ? "blue" : "red"}>
+                    <b>
+                      {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(sisaAnggaran)}
+                    </b>
+                  </Table.Td>
+                </Table.Tr>
+              </Table.Tbody>
+            </Table>
+          </Paper>
+        </Stack>
+      </Box>
+    </Stack>
+  );
+}
+
+export default Page;
