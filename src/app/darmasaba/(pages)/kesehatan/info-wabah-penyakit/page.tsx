@@ -129,9 +129,7 @@ function Page() {
 
                   </Text>
                   <Divider />
-                  <Text fz="sm" lh={1.5} lineClamp={3} truncate="end">
-                    {v.deskripsiSingkat}
-                  </Text>
+                  <Text fz="sm" lh={1.5} lineClamp={3} truncate="end" dangerouslySetInnerHTML={{ __html: v.deskripsiSingkat }} />
                   <Button variant="light" radius="md" size="md" onClick={() => router.push(`/darmasaba/kesehatan/info-wabah-penyakit/${v.id}`)}>
                     Selengkapnya
                   </Button>

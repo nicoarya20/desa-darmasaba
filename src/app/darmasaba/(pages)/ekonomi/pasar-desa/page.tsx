@@ -105,7 +105,7 @@ function Page() {
               return (
                 <Stack key={k}>
                   <motion.div
-                    onClick={() => router.push(`https://wa.me/${v.kontak?.replace(/\D/g, '')}`)}
+                    onClick={() => router.push(`/darmasaba/ekonomi/pasar-desa/${v.id}`)}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.8 }}
                   >

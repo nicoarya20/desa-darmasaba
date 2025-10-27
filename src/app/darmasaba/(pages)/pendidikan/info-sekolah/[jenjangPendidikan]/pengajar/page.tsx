@@ -84,7 +84,7 @@ function Page({ params }: PageProps) {
               <TableTr>
                 <TableTh w="30%">Nama Pengajar</TableTh>
                 <TableTh w="30%">Nama Lembaga</TableTh>
-                <TableTh w="40%">Jenjang Pendidikan</TableTh>
+                <TableTh w="40%">Mengajar Di Jenjang Pendidikan</TableTh>
               </TableTr>
             </TableThead>
             <TableTbody>
@@ -95,7 +95,7 @@ function Page({ params }: PageProps) {
                   <TableTd>{item.lembaga.jenjangPendidikan?.nama || '-'}</TableTd>
                 </TableTr>
               ))}
-            </TableTbody>
+            </TableTbody> 
           </Table>
         )}
       </Paper>
