@@ -75,18 +75,18 @@ function AdministrasiOnline() {
             <Title order={3}>Ajukan Administrasi Online</Title>
             <TextInput
               label={<Text fz="sm" fw="bold">Nama</Text>}
-              placeholder="masukkan nama"
+              placeholder="Masukkan nama"
               onChange={(val) => (state.administrasiOnline.create.form.name = val.target.value)}
             />
             <TextInput
               label={<Text fz="sm" fw="bold">Alamat</Text>}
-              placeholder="masukkan alamat"
+              placeholder="Masukkan alamat"
               onChange={(val) => (state.administrasiOnline.create.form.alamat = val.target.value)}
             />
             <TextInput
               type="number"
               label={<Text fz="sm" fw="bold">Nomor Telepon</Text>}
-              placeholder="masukkan nomor telepon"
+              placeholder="Masukkan nomor telepon"
               onChange={(val) => (state.administrasiOnline.create.form.nomorTelepon = val.target.value)}
             />
             <Select
@@ -95,7 +95,7 @@ function AdministrasiOnline() {
                 state.administrasiOnline.create.form.jenisLayananId = val ?? "";
               }}
               label={<Text fw={"bold"} fz={"sm"}>Jenis Layanan</Text>}
-              placeholder="Pilih kategori produk"
+              placeholder="Pilih jenis layanan"
               data={
                 state.jenisLayanan.findMany.data?.map((v) => ({
                   value: v.id,

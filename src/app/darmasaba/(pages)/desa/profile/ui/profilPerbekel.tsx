@@ -95,7 +95,7 @@ function ProfilPerbekel() {
             <Box>
               <Stack gap={6}>
                 <Stack align="center" gap={6}>
-                  <IconUser size={22} color={colors['blue-button']} />
+                  <IconUser size={22} />
                   <Text fz={{ base: "1.2rem", md: "1.5rem" }} fw="bold">Biodata</Text>
                 </Stack>
                 <Text
@@ -111,7 +111,7 @@ function ProfilPerbekel() {
             <Box>
               <Stack gap={6}>
                 <Stack align="center" gap={6}>
-                  <IconBriefcase size={22} color={colors['blue-button']} />
+                  <IconBriefcase size={22} />
                   <Text fz={{ base: "1.2rem", md: "1.5rem" }} fw="bold">Pengalaman</Text>
                 </Stack>
                 <Text
@@ -138,7 +138,7 @@ function ProfilPerbekel() {
         <Stack gap="xl">
           <Box>
             <Stack align="center" gap={6} >
-              <IconUsers size={22} color={colors['blue-button']} />
+              <IconUsers size={22} />
               <Text fz={{ base: "1.2rem", md: "1.5rem" }} fw="bold">Pengalaman Organisasi</Text>
             </Stack>
             <Text
@@ -152,7 +152,7 @@ function ProfilPerbekel() {
 
           <Box>
             <Stack align="center" gap={6} mb={6}>
-              <IconTargetArrow size={22} color={colors['blue-button']} />
+              <IconTargetArrow size={22} />
               <Text fz={{ base: "1.2rem", md: "1.5rem" }} fw="bold">Program Kerja Unggulan</Text>
             </Stack>
             <Box px={10}>

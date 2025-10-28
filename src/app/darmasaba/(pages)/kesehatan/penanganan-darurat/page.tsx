@@ -52,7 +52,7 @@ function Page() {
           <Text fz={{ base: 30, md: 40 }} c={colors['blue-button']} fw={800} lh={1.2}>
             Penanganan Darurat
           </Text>
-          <Text fz="md" c="dimmed" mt={4}>
+          <Text fz="md" mt={4}>
             Informasi cepat dan jelas untuk situasi darurat kesehatan
           </Text>
         </GridCol>
@@ -105,36 +105,28 @@ function Page() {
                 onMouseLeave={(e) => (e.currentTarget.style.transform = 'translateY(0)')}
               >
                 <Stack align="center" gap="md">
-                  <Center>
-                    <Box
+                  <Box
+                    style={{
+                      width: '100%',
+                      aspectRatio: '16/9',
+                      borderRadius: '12px',
+                      overflow: 'hidden',
+                      position: 'relative',
+                    }}
+                  >
+                    <Image
+                      src={v.image.link}
+                      alt={v.name}
+                      fit="cover"
+                      loading="lazy"
                       style={{
                         width: '100%',
-                        height: 180, // 🔥 tinggi fix biar semua seragam
-                        borderRadius: 12,
-                        overflow: 'hidden',
-                        position: 'relative',
-                        backgroundColor: '#f0f2f5', // fallback kalau gambar loading
+                        height: '100%',
+                        transition: 'transform 0.4s ease',
                       }}
-                    >
-                      <Image
-                        src={v.image?.link || '/img/default.png'}
-                        alt={v.name}
-                        fit="cover"
-                        width="100%"
-                        height="100%"
-                        loading="lazy"
-                        style={{
-                          objectFit: 'cover',
-                          objectPosition: 'center',
-                          transition: 'transform 0.4s ease',
-                        }}
-                        onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
-                        onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
-                      />
-                    </Box>
+                    />
+                  </Box>
 
-
-                  </Center>
                   <Stack gap={4} w="100%">
                     <Text
                       fz="lg"
@@ -147,8 +139,7 @@ function Page() {
                     </Text>
                     <Box>
                       <Text
-                        fz="sm"
-                        c="dimmed"
+                        fz="md"
                         lineClamp={3}
                         dangerouslySetInnerHTML={{ __html: v.deskripsi }}
                         style={{ wordBreak: "break-word", whiteSpace: "normal" }}
@@ -159,6 +150,8 @@ function Page() {
                       size="md"
                       component="a"
                       href={`/darmasaba/kesehatan/penanganan-darurat/${v.id}`}
+                      bg={colors['blue-button']}
+                      c="white"
                     >
                       Lihat Detail
                     </Button>

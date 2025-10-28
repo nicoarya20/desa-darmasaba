@@ -73,14 +73,14 @@ function FasilitasKesehatanPage() {
                       </Badge>
                     </Group>
                     <Group gap="xs">
-                      <IconMapPin size={18} stroke={1.5} color={colors['blue-button']} />
-                      <Text fz="sm" c="dimmed">
+                      <IconMapPin size={18} stroke={1.5} />
+                      <Text fz="sm">
                         {item.informasiumum.alamat}
                       </Text>
                     </Group>
                     <Group gap="xs">
-                      <IconClock size={18} stroke={1.5} color={colors['blue-button']} />
-                      <Text fz="sm" c="dimmed">
+                      <IconClock size={18} stroke={1.5} />
+                      <Text fz="sm">
                         {item.informasiumum.jamOperasional}
                       </Text>
                     </Group>

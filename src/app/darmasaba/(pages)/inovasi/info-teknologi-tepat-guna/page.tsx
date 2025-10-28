@@ -71,11 +71,22 @@ function Page() {
             {filteredData.map((v, k) => {
               return (
                 <Paper p={'xl'} key={k}>
-                  <Image src={v.image.link || ''} pb={10} radius={10} alt='' loading="lazy"/>
-                  <Text fz={'h3'} fw={'bold'} c={colors['blue-button']}>{v.name}</Text>
-                  <Box pr={'lg'} pb={10}>
-                    <Text fz={'h4'} fw={'bold'} style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: v.deskripsi }} />
-                  </Box>
+                  <Stack gap={"xs"}>
+                    <Image src={v.image.link || ''} pb={10} radius={10} alt='' loading="lazy" />
+                    <Text fz={'h3'} fw={'bold'}>{v.name}</Text>
+                    <Box pr={'lg'} pb={10}>
+                      <Text
+                        size="md"
+                        ta="justify"
+                        lh={1} // line height biar enak dibaca
+                        style={{
+                          wordBreak: "break-word",
+                          whiteSpace: "normal",
+                        }}
+                        dangerouslySetInnerHTML={{ __html: v.deskripsi }}
+                      />
+                    </Box>
+                  </Stack>
                 </Paper>
               )
             })}

@@ -185,6 +185,8 @@ export default function LayoutSekolah({
                         radius="xl"
                         size="sm"
                         variant={aktif ? 'filled' : 'light'}
+                        bg={colors['blue-button']}
+                        c={aktif ? colors['white-1'] : 'gray'}
                       >
                         {k}
                       </Button>

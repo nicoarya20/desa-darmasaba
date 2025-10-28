@@ -53,7 +53,7 @@ function Page() {
           <Text fz={{ base: '2rem', md: '2.8rem' }} c={colors['blue-button']} fw={800}>
             Kontak Darurat
           </Text>
-          <Text c="dimmed" fz="md" mt={4}>
+          <Text fz="md" mt={4}>
             Hubungi layanan penting dengan cepat dan mudah
           </Text>
         </GridCol>
@@ -128,7 +128,7 @@ function Page() {
                   <Text ta="center" fw={700} fz="lg" c={colors['blue-button']}>
                     {v.name}
                   </Text>
-                  <Text fz="sm" c="dimmed" ta="center" lineClamp={3}>
+                  <Text fz="sm" ta="center" lineClamp={3}>
                     <span style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: v.deskripsi }} />
                   </Text>
                   <Button

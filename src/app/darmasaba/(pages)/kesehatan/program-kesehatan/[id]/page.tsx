@@ -28,10 +28,11 @@ function Page() {
   }
 
   return (
-    <Stack pos="relative" bg={colors.Bg} py="xl" gap="xl">
+    <Stack bg={colors.Bg} py="xl" gap="xl">
       <Box px={{ base: 'md', md: 100 }}>
         <BackButton />
       </Box>
+      <Box px={{ base: 'md', md: 100 }}>
       <Paper
         px={{ base: 'md', md: 100 }}
         py="xl"
@@ -70,7 +71,7 @@ function Page() {
           <Group gap="xl">
             <Group gap="xs">
               <Tooltip label="Tanggal dibuat" withArrow>
-                <IconCalendar size={20} stroke={1.5} />
+                <IconCalendar color='gray' size={20} stroke={1.5} />
               </Tooltip>
               <Text size="sm" c="dimmed">
                 {state.findUnique.data.createdAt
@@ -84,13 +85,14 @@ function Page() {
             </Group>
             <Group gap="xs">
               <Tooltip label="Dibuat oleh" withArrow>
-                <IconUser size={20} stroke={1.5} />
+                <IconUser color='gray' size={20} stroke={1.5} />
               </Tooltip>
               <Text size="sm" c="dimmed">Admin Desa</Text>
             </Group>
           </Group>
         </Stack>
       </Paper>
+      </Box>
     </Stack>
   );
 }

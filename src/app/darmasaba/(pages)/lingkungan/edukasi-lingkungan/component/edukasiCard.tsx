@@ -45,9 +45,8 @@ export function EdukasiCard({ icon, title, description, color = '#1e88e5' }: Edu
                   alignItems: 'center',
                   justifyContent: 'center'
                 }}
-              >
-                {title}
-              </Text>
+                dangerouslySetInnerHTML={{ __html: title }}
+              />
             </Tooltip>
           </Stack>
           <Text

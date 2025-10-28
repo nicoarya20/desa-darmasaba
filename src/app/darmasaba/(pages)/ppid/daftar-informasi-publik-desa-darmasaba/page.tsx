@@ -74,10 +74,10 @@ function Page() {
         <Stack gap="lg">
           <Paper p="lg" radius="xl" shadow="sm" withBorder>
             <Stack gap="sm">
-              <Text fz={{ base: 'lg', md: 'xl' }} fw="bold" c={colors["blue-button"]}>
+              <Text ta={"center"} fz={{ base: 'lg', md: 'xl' }} fw="bold" c={colors["blue-button"]}>
                 Tentang Informasi Publik
               </Text>
-              <Text fz={{ base: 'sm', md: 'md' }} c="dimmed">
+              <Text ta={"center"} fz={{ base: 'sm', md: 'md' }} c="dimmed">
                 Daftar Informasi Publik Desa Darmasaba adalah kumpulan data yang dapat diakses oleh masyarakat sesuai dengan ketentuan peraturan yang berlaku.
               </Text>
             </Stack>
@@ -117,41 +117,45 @@ function Page() {
                     <TableTr key={item.id}>
                       <TableTd ta="center">{(page - 1) * 5 + index + 1}</TableTd>
                       <TableTd>
-                        <Box w={150}>
+                        <Box>
                           <Badge variant="light" size="lg" color="blue">
-                            {item.jenisInformasi}
+                            <Text fw={650} fz={"sm"} c={'blue'} lineClamp={1}>
+                              {item.jenisInformasi}
+                            </Text>
                           </Badge>
                         </Box>
                       </TableTd>
                       <TableTd>
-                        <Box w={150}>
-                          <Text lineClamp={1} fz="sm" c="dark" style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
+                        <Box>
+                          <Text lineClamp={1} fz="sm" c="dark" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
                         </Box>
                       </TableTd>
                       <TableTd ta="center">
-                        <Box w={150}>
-                          {item.tanggal ? new Date(item.tanggal).toLocaleDateString('id-ID', {
-                            day: '2-digit',
-                            month: 'long',
-                            year: 'numeric'
-                          }) : '-'}
+                        <Box>
+                          <Text ta={"center"}>
+                            {item.tanggal ? new Date(item.tanggal).toLocaleDateString('id-ID', {
+                              day: '2-digit',
+                              month: 'long',
+                              year: 'numeric'
+                            }) : '-'}
+                          </Text>
                         </Box>
                       </TableTd>
                       <TableTd style={{ textAlign: 'center' }}>
-                        <Box w={150}>
+                        <Box>
                           <Tooltip label="Lihat Detail" withArrow>
                             <Button
                               size="xs"
                               radius="md"
                               variant="light"
-                            color="blue"
-                            leftSection={<IconDeviceImacCog size={16} />}
-                            onClick={() => router.push(`/darmasaba/ppid/daftar-informasi-publik-desa-darmasaba/${item.id}`)}
-                          >
-                            Detail
-                          </Button>
-                        </Tooltip>
-                      </Box>
+                              color="blue"
+                              leftSection={<IconDeviceImacCog size={16} />}
+                              onClick={() => router.push(`/darmasaba/ppid/daftar-informasi-publik-desa-darmasaba/${item.id}`)}
+                            >
+                              Detail
+                            </Button>
+                          </Tooltip>
+                        </Box>
                       </TableTd>
                     </TableTr>
                   ))}

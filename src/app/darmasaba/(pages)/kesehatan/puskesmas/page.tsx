@@ -93,20 +93,23 @@ function Page() {
                     <Text fw={600} fz="lg" lineClamp={1}>{v.name}</Text>
                     <Badge color="blue" variant="light" radius="sm" fz="xs">Aktif</Badge>
                   </Group>
-                  <Stack gap={4}>
-                    <Group gap="xs">
-                      <IconMapPin size={16} />
-                      <Text fz="sm" c="dimmed" lineClamp={2}>{v.alamat}</Text>
+                  <Stack gap={6}>
+                    <Group gap="xs" align="flex-start" wrap="nowrap">
+                      <Box pt={2}><IconMapPin size={16} /></Box>
+                      <Text fz="sm" c="dimmed">{v.alamat}</Text>
                     </Group>
-                    <Group gap="xs">
-                      <IconPhone size={16} />
+
+                    <Group gap="xs" align="flex-start" wrap="nowrap">
+                      <Box pt={2}><IconPhone size={16} /></Box>
                       <Text fz="sm" c="dimmed">{v.kontak.kontakPuskesmas}</Text>
                     </Group>
-                    <Group gap="xs">
-                      <IconMail size={16} />
+
+                    <Group gap="xs" align="flex-start" wrap="nowrap">
+                      <Box pt={2}><IconMail size={16} /></Box>
                       <Text fz="sm" c="dimmed">{v.kontak.email}</Text>
                     </Group>
                   </Stack>
+
                   <Anchor
                     href={`/darmasaba/kesehatan/puskesmas/${v.id}`}
                     fz="sm"

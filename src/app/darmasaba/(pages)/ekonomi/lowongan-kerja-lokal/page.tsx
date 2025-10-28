@@ -52,7 +52,7 @@ function Page() {
       <Box px={{ base: 'md', md: 100 }}>
         <BackButton />
       </Box>
-      <Box px={{ base: 'md', md: 100 }}>
+      <Box px={{ base: 'md', md: 100 }} pb={80}>
         <Text ta={"center"} fz={{ base: "h1", md: "2.5rem" }} c={colors["blue-button"]} fw={"bold"}>
           Lowongan Kerja Lokal
         </Text>

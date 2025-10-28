@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import infoSekolahPaud from '@/app/admin/(dashboard)/_state/pendidikan/info-sekolah-paud';
+import colors from '@/con/colors';
 import {
   ActionIcon,
   Box,
@@ -130,11 +131,15 @@ export default function SekolahPage() {
         <Box>
           <Group justify="start" mb="md">
             <Button
-              leftSection={<IconRefresh size={16} />}
+              leftSection={<IconRefresh color={colors['blue-button']} size={16} />}
               variant="outline"
               size="xs"
               onClick={handleRefresh}
               loading={stats.some(stat => stat.loading)}
+              c={colors['blue-button']}
+              style={{
+                borderColor: colors['blue-button'],
+              }}
             >
               Segarkan Data
             </Button>
@@ -154,7 +159,7 @@ export default function SekolahPage() {
                 aria-label="Tidak ada hasil"
               >
                 <Center style={{ minHeight: 180, flexDirection: 'column' }}>
-                  <Text fz="lg" fw={800} c="#2563eb">
+                  <Text fz="lg" fw={800} c={colors['blue-button']}>
                     Tidak ditemukan
                   </Text>
                   <Text c="dimmed" mt="6px">
@@ -212,7 +217,7 @@ export default function SekolahPage() {
                           aria-hidden
                         >
                           {React.createElement(v.icon, {
-                            color: '#2563eb',
+                            color: colors['blue-button'],
                             size: 34,
                             stroke: 1.6,
                           })}
@@ -225,12 +230,12 @@ export default function SekolahPage() {
                             {v.jumlah.toLocaleString()}
                           </Text>
                           <Group gap={6} align="center">
-                            <Text ta={"center"} fz="sm" fw={700} c="#2563eb">
+                            <Text ta={"center"} fz="sm" fw={700} c={colors['blue-button']}>
                               {v.nama}
                             </Text>
                             <Tooltip label={v.helper ?? ''} position="right" withArrow>
                               <ActionIcon aria-label={`Info ${v.nama}`} variant="transparent" size="xs">
-                                <IconInfoCircle size={16} style={{ color: '#2563eb' }} />
+                                <IconInfoCircle size={16} style={{ color: colors['blue-button'] }} />
                               </ActionIcon>
                             </Tooltip>
                           </Group>
@@ -244,8 +249,8 @@ export default function SekolahPage() {
                         variant="outline"
                         aria-label={`Lihat detail ${v.nama}`}
                         style={{
-                          borderColor: '#e2e8f0',
-                          color: '#2563eb',
+                          borderColor: colors['blue-button'],
+                          color: colors['blue-button'],
                           paddingLeft: 20,
                           paddingRight: 20,
                         }}

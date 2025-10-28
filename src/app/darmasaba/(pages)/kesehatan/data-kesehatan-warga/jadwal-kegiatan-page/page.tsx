@@ -49,7 +49,7 @@ function JadwalKegiatanPage() {
               >
                 <Stack gap="sm">
                   <Group justify="space-between">
-                    <Text fw={700} fz="xl">
+                    <Text fw={700} fz="xl" c={colors['blue-button']}>
                       {item.informasijadwalkegiatan.name}
                     </Text>
                     <Text fw={600} fz="sm" c={colors['blue-button']}>
@@ -62,12 +62,12 @@ function JadwalKegiatanPage() {
                   </Group>
 
                   <Group gap="xs">
-                    <IconClockHour4 size={18} color={colors['blue-button']} />
+                    <IconClockHour4 size={18} />
                     <Text fz="sm">{item.informasijadwalkegiatan.waktu}</Text>
                   </Group>
 
                   <Group gap="xs">
-                    <IconMapPin size={18} color={colors['blue-button']} />
+                    <IconMapPin size={18} />
                     <Text fz="sm">{item.informasijadwalkegiatan.lokasi}</Text>
                   </Group>
 

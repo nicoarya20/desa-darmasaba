@@ -100,33 +100,33 @@ function PengaduanMasyarakat() {
             <Title order={3}>Ajukan Pengaduan Masyarakat</Title>
             <TextInput
               label={<Text fz="sm" fw="bold">Nama</Text>}
-              placeholder="masukkan nama"
+              placeholder="Masukkan nama"
               onChange={(val) => (state.pengaduanMasyarakat.create.form.name = val.target.value)}
             />
             <TextInput
               label={<Text fz="sm" fw="bold">Email</Text>}
-              placeholder="masukkan email"
+              placeholder="Masukkan email"
               onChange={(val) => (state.pengaduanMasyarakat.create.form.email = val.target.value)}
             />
             <TextInput
               type="number"
               label={<Text fz="sm" fw="bold">Nomor Telepon</Text>}
-              placeholder="masukkan nomor telepon"
+              placeholder="Masukkan nomor telepon"
               onChange={(val) => (state.pengaduanMasyarakat.create.form.nomorTelepon = val.target.value)}
             />
             <TextInput
               label={<Text fz="sm" fw="bold">NIK</Text>}
-              placeholder="masukkan nik"
+              placeholder="Masukkan nik"
               onChange={(val) => (state.pengaduanMasyarakat.create.form.nik = val.target.value)}
             />
             <TextInput
               label={<Text fz="sm" fw="bold">Judul Pengaduan</Text>}
-              placeholder="masukkan judul pengaduan"
+              placeholder="Masukkan judul pengaduan"
               onChange={(val) => (state.pengaduanMasyarakat.create.form.judulPengaduan = val.target.value)}
             />
             <TextInput
               label={<Text fz="sm" fw="bold">Lokasi Kejadian</Text>}
-              placeholder="masukkan lokasi kejadian"
+              placeholder="Masukkan lokasi kejadian"
               onChange={(val) => (state.pengaduanMasyarakat.create.form.lokasiKejadian = val.target.value)}
             />
             <Box>
@@ -144,7 +144,7 @@ function PengaduanMasyarakat() {
                 state.pengaduanMasyarakat.create.form.jenisPengaduanId = val ?? "";
               }}
               label={<Text fw={"bold"} fz={"sm"}>Jenis Pengaduan</Text>}
-              placeholder="Pilih kategori produk"
+              placeholder="Pilih jenis pengaduan"
               data={
                 state.jenisPengaduan.findMany.data?.map((v) => ({
                   value: v.id,

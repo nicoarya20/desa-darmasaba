@@ -73,7 +73,6 @@ function DetailInfoWabahPenyakitUser() {
             <Text fz="lg" fw="bold">Deskripsi</Text>
             <Text
               fz="md"
-              c="dimmed"
               dangerouslySetInnerHTML={{ __html: data.deskripsiLengkap || '-' }}
               style={{ wordBreak: "break-word", whiteSpace: "normal" }}
             />

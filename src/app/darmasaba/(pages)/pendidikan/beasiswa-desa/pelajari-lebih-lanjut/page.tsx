@@ -34,7 +34,7 @@ export default function BeasiswaPage() {
       tempatLahir: "",
       tanggalLahir: "",
       jenisKelamin: "",
-      kewarganegaraan: "",
+      kewarganegaraan: "WNI",
       agama: "",
       alamatKTP: "",
       alamatDomisili: "",
@@ -71,7 +71,7 @@ export default function BeasiswaPage() {
         <Stack gap="md" maw={600}>
           <Group>
             <IconSchool size={30} color={colors["blue-button"]} />
-            <Title order={2}>Program Beasiswa Pendidikan Desa Darmasaba</Title>
+            <Title order={2} c={colors["blue-button"]}>Program Beasiswa Pendidikan Desa Darmasaba</Title>
           </Group>
           <Text>
             Program ini bertujuan untuk mendukung pendidikan generasi muda di Desa Darmasaba
@@ -84,7 +84,7 @@ export default function BeasiswaPage() {
       <Container size="lg" py="xl">
         <Group mb="sm">
           <IconInfoCircle size={24} color={colors["blue-button"]} />
-          <Title order={3}>Tentang Program</Title>
+          <Title order={3} c={colors["blue-button"]}>Tentang Program</Title>
         </Group>
         <Text>
           Program Beasiswa Desa Darmasaba adalah inisiatif pemerintah desa untuk meningkatkan akses
@@ -94,12 +94,11 @@ export default function BeasiswaPage() {
 
         {/* Tambahkan info tahun berjalan di sini */}
         <Paper mt="md" p="md" radius="lg" shadow="xs" bg="#f8fbff" withBorder>
-          <Text fw={500} c={colors["blue-button"]}>
-            📅 Periode Beasiswa Tahun 2025
+          <Text fw={500}>
+            Periode Beasiswa Tahun 2025
           </Text>
           <Text fz="sm" c="dimmed">
-            Pendaftaran beasiswa dibuka mulai <strong>1 Januari 2025</strong> dan ditutup pada
-            <strong>31 Mei 2025</strong>.
+            Pendaftaran beasiswa dibuka mulai <strong>1 Januari 2025</strong> dan ditutup pada <strong>31 Mei 2025</strong>.
             Pengumuman hasil seleksi akan diumumkan pada pertengahan Juni 2025 melalui website resmi Desa Darmasaba.
           </Text>
         </Paper>
@@ -109,7 +108,7 @@ export default function BeasiswaPage() {
       <Container size="lg" py="xl">
         <Group mb="sm">
           <IconChecklist size={24} color={colors["blue-button"]} />
-          <Title order={3}>Syarat Pendaftaran</Title>
+          <Title order={3} c={colors["blue-button"]}>Syarat Pendaftaran</Title>
         </Group>
 
         <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }} spacing="lg">
@@ -140,7 +139,7 @@ export default function BeasiswaPage() {
       <Container size="lg" py="xl">
         <Group mb="sm">
           <IconTimeline size={24} color={colors["blue-button"]} />
-          <Title order={3}>Proses Seleksi</Title>
+          <Title order={3} c={colors["blue-button"]}>Proses Seleksi</Title>
         </Group>
 
         <Timeline active={4} bulletSize={24} lineWidth={2}>
@@ -148,8 +147,8 @@ export default function BeasiswaPage() {
             <Text c="dimmed" size="sm">
               Calon peserta mengisi formulir pendaftaran dan mengunggah dokumen pendukung.
             </Text>
-            <Text size="sm" fw={500} c={colors["blue-button"]} mt={4}>
-              ⏰ Estimasi waktu: 1 Februari – 31 Mei 2025
+            <Text size="sm" fw={500} mt={4}>
+              Estimasi waktu: 1 Februari – 31 Mei 2025
             </Text>
           </Timeline.Item>
 
@@ -157,8 +156,8 @@ export default function BeasiswaPage() {
             <Text c="dimmed" size="sm">
               Panitia memverifikasi kelengkapan dan validitas berkas.
             </Text>
-            <Text size="sm" fw={500} c={colors["blue-button"]} mt={4}>
-              ⏰ Estimasi waktu: 5–7 hari kerja setelah penutupan pendaftaran
+            <Text size="sm" fw={500} mt={4}>
+              Estimasi waktu: 5–7 hari kerja setelah penutupan pendaftaran
             </Text>
           </Timeline.Item>
 
@@ -166,8 +165,8 @@ export default function BeasiswaPage() {
             <Text c="dimmed" size="sm">
               Peserta yang lolos administrasi akan diundang untuk wawancara langsung dengan tim seleksi.
             </Text>
-            <Text size="sm" fw={500} c={colors["blue-button"]} mt={4}>
-              ⏰ Estimasi waktu: 7–10 hari kerja setelah pengumuman seleksi administrasi
+            <Text size="sm" fw={500} mt={4}>
+              Estimasi waktu: 7–10 hari kerja setelah pengumuman seleksi administrasi
             </Text>
           </Timeline.Item>
 
@@ -175,14 +174,14 @@ export default function BeasiswaPage() {
             <Text c="dimmed" size="sm">
               Daftar penerima beasiswa diumumkan melalui website resmi Desa Darmasaba.
             </Text>
-            <Text size="sm" fw={500} c={colors["blue-button"]} mt={4}>
-              ⏰ Estimasi waktu: 5 hari kerja setelah tahap wawancara selesai
+            <Text size="sm" fw={500} mt={4}>
+              Estimasi waktu: 5 hari kerja setelah tahap wawancara selesai
             </Text>
           </Timeline.Item>
         </Timeline>
 
         <Text c="dimmed" size="sm" mt="lg" ta="center">
-          🗓️ Total estimasi keseluruhan proses: sekitar 3–4 minggu setelah penutupan pendaftaran
+          Total estimasi keseluruhan proses: sekitar 3–4 minggu setelah penutupan pendaftaran
         </Text>
       </Container>
 
@@ -191,7 +190,7 @@ export default function BeasiswaPage() {
       <Container size="lg" py="xl">
         <Group mb="sm">
           <IconQuote size={24} color={colors["blue-button"]} />
-          <Title order={3}>Cerita Sukses Penerima Beasiswa</Title>
+          <Title order={3} c={colors["blue-button"]}>Cerita Sukses Penerima Beasiswa</Title>
         </Group>
 
         <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="lg">
@@ -219,12 +218,12 @@ export default function BeasiswaPage() {
       <Container size="lg" py="xl" ta="center">
         <Group justify="center" mb="sm">
           <IconUserPlus size={28} color={colors["blue-button"]} />
-          <Title order={3}>Siap Bergabung dengan Program Ini?</Title>
+          <Title order={3} c={colors["blue-button"]}>Siap Bergabung dengan Program Ini?</Title>
         </Group>
         <Text c="dimmed" mb="md">
           Segera daftar dan wujudkan mimpimu bersama Desa Darmasaba.
         </Text>
-        <Button onClick={open} size="lg" radius="xl" color="blue">
+        <Button onClick={open} size="lg" radius="xl" bg={colors["blue-button"]}>
           Daftar Sekarang
         </Button>
       </Container>
@@ -269,7 +268,11 @@ export default function BeasiswaPage() {
             <TextInput
               label="Kewarganegaraan"
               placeholder="Masukkan kewarganegaraan"
-              onChange={(val) => { beasiswaDesa.create.form.kewarganegaraan = val.target.value }} />
+              value={beasiswaDesa.create.form.kewarganegaraan || "WNI"} // tampilkan WNI kalau kosong
+              onChange={(e) => {
+                beasiswaDesa.create.form.kewarganegaraan = e.target.value;
+              }}
+            />
             <Select
               label="Agama"
               placeholder="Pilih agama"

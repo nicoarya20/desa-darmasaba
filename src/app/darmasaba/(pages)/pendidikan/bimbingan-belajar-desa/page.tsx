@@ -1,10 +1,10 @@
 'use client'
 import stateBimbinganBelajarDesa from '@/app/admin/(dashboard)/_state/pendidikan/bimbingan-belajar-desa';
 import colors from '@/con/colors';
-import { Box, Paper, SimpleGrid, Skeleton, Stack, Text, Title, Tooltip, Divider, Badge, Group } from '@mantine/core';
+import { Box, Divider, Group, Paper, SimpleGrid, Skeleton, Stack, Text, Title, Tooltip } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
+import { IconBook2, IconCalendarTime, IconMapPin } from '@tabler/icons-react';
 import { useProxy } from 'valtio/utils';
-import { IconMapPin, IconCalendarTime, IconBook2 } from '@tabler/icons-react';
 import BackButton from '../../desa/layanan/_com/BackButto';
 
 function Page() {
@@ -55,9 +55,9 @@ function Page() {
                     <IconBook2 size={36} stroke={1.5} color={colors['blue-button']} />
                   </Box>
                 </Tooltip>
-                <Badge variant="gradient" gradient={{ from: colors['blue-button'], to: 'cyan' }} size="lg" radius="sm" mb="sm">
+                <Title order={3} fw={700} c={colors['blue-button']} mb="xs">
                   {stateTujuanProgram.findById.data?.judul}
-                </Badge>
+                </Title>
               </Group>
               <Text fz="md" style={{wordBreak: "break-word", whiteSpace: "normal"}} lh={1.6} dangerouslySetInnerHTML={{ __html: stateTujuanProgram.findById.data?.deskripsi }} />
             </Stack>
@@ -70,9 +70,9 @@ function Page() {
                     <IconMapPin size={36} stroke={1.5} color={colors['blue-button']} />
                   </Box>
                 </Tooltip>
-                <Badge variant="gradient" gradient={{ from: colors['blue-button'], to: 'cyan' }} size="lg" radius="sm" mb="sm">
+                <Title order={3} fw={700} c={colors['blue-button']} mb="xs">
                   {stateLokasiDanJadwal.findById.data?.judul}
-                </Badge>
+                </Title>
               </Group>
               <Text fz="md" lh={1.6} style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: stateLokasiDanJadwal.findById.data?.deskripsi }} />
             </Stack>
@@ -85,9 +85,9 @@ function Page() {
                     <IconCalendarTime size={36} stroke={1.5} color={colors['blue-button']} />
                   </Box>
                 </Tooltip>
-                <Badge variant="gradient" gradient={{ from: colors['blue-button'], to: 'cyan' }} size="lg" radius="sm" mb="sm">
+                <Title order={3} fw={700} c={colors['blue-button']} mb="xs">
                   {stateFasilitas.findById.data?.judul}
-                </Badge>
+                </Title>
               </Group>
               <Text fz="md" lh={1.6} style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: stateFasilitas.findById.data?.deskripsi }} />
             </Stack>

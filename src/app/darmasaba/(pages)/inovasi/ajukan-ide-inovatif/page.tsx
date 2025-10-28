@@ -55,6 +55,7 @@ function Page() {
             }}
           >
             <Paper p={'xl'} >
+              <Stack gap={"xs"}>
               <Text fz={'h3'} fw={'bold'} c={colors['blue-button']}>Tujuan Ide Inovatif Ini</Text>
               <List>
                 <ListItem ta={'justify'} fz={{ base: 'h4', md: 'lg' }}>Mendorong partisipasi aktif masyarakat</ListItem>
@@ -62,6 +63,7 @@ function Page() {
                 <ListItem ta={'justify'} fz={{ base: 'h4', md: 'lg' }}>Memecahkan tantangan komunal</ListItem>
                 <ListItem ta={'justify'} fz={{ base: 'h4', md: 'lg' }}>Mengembangkan potensi kreativitas warga</ListItem>
               </List>
+              </Stack>
             </Paper>
             <Paper p={'xl'} >
               <Flex align={'center'} justify={'space-between'}>

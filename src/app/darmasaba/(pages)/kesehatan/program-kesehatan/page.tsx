@@ -1,4 +1,5 @@
 'use client'
+import programKesehatan from "@/app/admin/(dashboard)/_state/kesehatan/program-kesehatan/programKesehatan";
 import colors from "@/con/colors";
 import {
   Box,
@@ -15,9 +16,9 @@ import {
   Stack,
   Text,
   TextInput,
-  Tooltip,
-  Transition,
+  Transition
 } from "@mantine/core";
+import { useDebouncedValue, useShallowEffect } from "@mantine/hooks";
 import {
   IconBarbell,
   IconCalendar,
@@ -26,12 +27,10 @@ import {
   IconUser,
   IconUsersGroup,
 } from "@tabler/icons-react";
-import BackButton from "../../desa/layanan/_com/BackButto";
-import { useProxy } from "valtio/utils";
-import programKesehatan from "@/app/admin/(dashboard)/_state/kesehatan/program-kesehatan/programKesehatan";
-import { useState } from "react";
-import { useDebouncedValue, useShallowEffect } from "@mantine/hooks";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useProxy } from "valtio/utils";
+import BackButton from "../../desa/layanan/_com/BackButto";
 
 const manfaatProgram = [
   {
@@ -194,7 +193,6 @@ export default function Page() {
                           <Text size="sm">Admin Desa</Text>
                         </Group>
                       </Group>
-                      <Tooltip label="Lihat detail program" withArrow>
                         <Button
                           mt="lg"
                           fullWidth
@@ -211,7 +209,6 @@ export default function Page() {
                         >
                           Lihat Detail
                         </Button>
-                      </Tooltip>
                     </Box>
                   </Stack>
                 </Paper>

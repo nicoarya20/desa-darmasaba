@@ -54,14 +54,14 @@ function ArtikelKesehatanPage() {
                   <Image style={{ borderTopLeftRadius: '10px', borderTopRightRadius: '10px' }} src={item.image?.link} alt={item.title} height={200} fit="cover" loading="lazy" />
                 </Card.Section>
                 <Stack gap="xs" mt="md">
-                  <Text fw="bold" fz="xl" c="dark">{item.title}</Text>
+                  <Text fw="bold" fz="xl" c={colors['blue-button']}>{item.title}</Text>
                   <Group gap="xs">
-                    <IconCalendar size={16} color={colors['blue-button']} />
+                    <IconCalendar size={16} color='gray' />
                     <Text fz="sm" c="dimmed">
                       {new Date(item.createdAt).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })} • Dinas Kesehatan
                     </Text>
                   </Group>
-                  <Text fz="md" c="dark" lineClamp={3}>
+                  <Text fz="md" lineClamp={3}>
                     {item.content}
                   </Text>
                   <Group justify="flex-start">

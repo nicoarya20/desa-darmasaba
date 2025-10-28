@@ -1,13 +1,13 @@
 'use client'
 import beasiswaDesaState from '@/app/admin/(dashboard)/_state/pendidikan/beasiswa-desa';
 import colors from '@/con/colors';
-import { Box, Button, Center, Group, Image, Modal, Pagination, Paper, Select, SimpleGrid, Skeleton, Stack, Stepper, StepperStep, Text, TextInput, Title } from '@mantine/core';
+import { Box, Button, Center, Group, Image, Modal, Pagination, Paper, Select, SimpleGrid, Skeleton, Stack, Stepper, Text, TextInput, Title } from '@mantine/core';
 import { useDisclosure, useShallowEffect } from '@mantine/hooks';
 import { IconArrowRight, IconCoin, IconInfoCircle, IconSchool, IconUsers } from '@tabler/icons-react';
+import { useTransitionRouter } from 'next-view-transitions';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import BackButton from '../../desa/layanan/_com/BackButto';
-import { useTransitionRouter } from 'next-view-transitions';
 
 const dataBeasiswa = [
   { id: 1, nama: 'Penerima Beasiswa', jumlah: '250+', icon: IconUsers },
@@ -27,7 +27,7 @@ function Page() {
       tempatLahir: "",
       tanggalLahir: "",
       jenisKelamin: "",
-      kewarganegaraan: "",
+      kewarganegaraan: "WNI",
       agama: "",
       alamatKTP: "",
       alamatDomisili: "",
@@ -50,9 +50,21 @@ function Page() {
     close();
   };
 
+  const timeline = [
+    { label: "1 Maret 2025", desc: "Pembukaan Pendaftaran", date: new Date("2025-03-01") },
+    { label: "15 Maret 2025", desc: "Seleksi Administrasi", date: new Date("2025-03-15") },
+    { label: "1 April 2025", desc: "Tes Potensi Akademik", date: new Date("2025-04-01") },
+    { label: "15 April 2025", desc: "Wawancara", date: new Date("2025-04-15") },
+    { label: "1 Mei 2025", desc: "Pengumuman Hasil", date: new Date("2025-05-01") },
+  ];
+
   const [active, setActive] = useState(1);
-  const nextStep = () => setActive((current) => (current < 5 ? current + 1 : current));
-  const prevStep = () => setActive((current) => (current > 0 ? current - 1 : current));
+  useShallowEffect(() => {
+    const today = new Date();
+    // cari berapa banyak tanggal yang sudah lewat
+    const doneSteps = timeline.filter(item => today >= item.date).length;
+    setActive(doneSteps); // active step diset sesuai tanggal
+  }, []);
 
   if (loading || !data) {
     return (
@@ -115,7 +127,7 @@ function Page() {
           {data.map((v, k) => (
             <Paper key={k} p="xl" radius="xl" shadow="sm" bg={colors['white-trans-1']}>
               <Title order={3} fw={700} c={colors['blue-button']} mb="xs">{v.judul}</Title>
-              <Text fz="sm" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: v.deskripsi }}/>
+              <Text fz="sm" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: v.deskripsi }} />
             </Paper>
           ))}
         </SimpleGrid>
@@ -139,19 +151,22 @@ function Page() {
           Timeline Pendaftaran
         </Title>
         <Center>
-          <Stepper mt={20} active={active} onStepClick={setActive} orientation="vertical" allowNextStepsSelect={false}>
-            <StepperStep label="1 Maret 2025" description="Pembukaan Pendaftaran" />
-            <StepperStep label="15 Maret 2025" description="Seleksi Administrasi" />
-            <StepperStep label="1 April 2025" description="Tes Potensi Akademik" />
-            <StepperStep label="15 April 2025" description="Wawancara" />
-            <StepperStep label="1 Mei 2025" description="Pengumuman Hasil" />
+          <Stepper
+            mt={20}
+            active={active}
+            onStepClick={setActive}
+            orientation="vertical"
+            allowNextStepsSelect={false}
+          >
+            {timeline.map((item, index) => (
+              <Stepper.Step
+                key={index}
+                label={item.label}
+                description={item.desc}
+              />
+            ))}
           </Stepper>
         </Center>
-
-        <Group justify="center" mt="xl">
-          <Button variant="default" radius="xl" onClick={prevStep}>Kembali</Button>
-          <Button radius="xl" bg={colors['blue-button']} onClick={nextStep}>Lanjut</Button>
-        </Group>
       </Box>
 
       <Modal
@@ -194,7 +209,11 @@ function Page() {
             <TextInput
               label="Kewarganegaraan"
               placeholder="Masukkan kewarganegaraan"
-              onChange={(val) => { beasiswaDesa.create.form.kewarganegaraan = val.target.value }} />
+              value={beasiswaDesa.create.form.kewarganegaraan || "WNI"} // tampilkan WNI kalau kosong
+              onChange={(e) => {
+                beasiswaDesa.create.form.kewarganegaraan = e.target.value;
+              }}
+            />
             <Select
               label="Agama"
               placeholder="Pilih agama"

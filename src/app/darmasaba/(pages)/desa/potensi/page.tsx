@@ -2,7 +2,7 @@
 'use client'
 import potensiDesaState from '@/app/admin/(dashboard)/_state/desa/potensi';
 import colors from '@/con/colors';
-import { BackgroundImage, Box, Button, Center, Flex, Group, Paper, SimpleGrid, Skeleton, Stack, Text, Tooltip } from '@mantine/core';
+import { BackgroundImage, Box, Button, Center, Flex, Group, Paper, SimpleGrid, Skeleton, Stack, Text } from '@mantine/core';
 import { IconEye } from '@tabler/icons-react';
 import { useTransitionRouter } from 'next-view-transitions';
 import { useEffect, useState } from 'react';
@@ -114,7 +114,6 @@ function Page() {
                     </Text>
                   </Box>
                   <Group justify="center">
-                    <Tooltip label="Lihat detail potensi" withArrow>
                       <Button
                         radius="xl"
                         size="md"
@@ -126,7 +125,6 @@ function Page() {
                       >
                         Lihat Detail
                       </Button>
-                    </Tooltip>
                   </Group>
                 </Stack>
               </BackgroundImage>
