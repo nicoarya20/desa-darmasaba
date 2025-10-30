@@ -59,7 +59,7 @@ function LambangDesa() {
           }}
         >
             <Text
-              fz={{ base: 'md', md: 'lg' }}
+              fz={{ base: '1.125rem', md: '1.375rem' }}
               lh={1.8}
               c="dark"
               ta="justify"

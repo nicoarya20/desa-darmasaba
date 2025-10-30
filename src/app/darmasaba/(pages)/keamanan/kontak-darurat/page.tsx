@@ -45,7 +45,7 @@ function Page() {
             <Text fz={{ base: "h1", md: "2.5rem" }} c={colors["blue-button"]} fw={"bold"}>
               Kontak Darurat
             </Text>
-            <Text fz={{ base: "h4", md: "h3" }} >
+            <Text fz="md" >
               Desa Darmasaba, Kecamatan Abiansemal, Kabupaten Badung.
             </Text>
           </Box>

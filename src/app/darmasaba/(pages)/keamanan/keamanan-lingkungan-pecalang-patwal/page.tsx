@@ -1,17 +1,18 @@
 'use client'
 import keamananLingkunganState from '@/app/admin/(dashboard)/_state/keamanan/keamanan-lingkungan';
 import colors from '@/con/colors';
-import { Box, Center, Grid, GridCol, Image, Pagination, Paper, SimpleGrid, Skeleton, Spoiler, Stack, Text, TextInput } from '@mantine/core';
+import { Box, Button, Center, Grid, GridCol, Image, Pagination, Paper, SimpleGrid, Skeleton, Stack, Text, TextInput } from '@mantine/core';
 import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
 import { IconSearch } from '@tabler/icons-react';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import BackButton from '../../desa/layanan/_com/BackButto';
+import { useRouter } from 'next/navigation';
 
 
 function Page() {
   const state = useProxy(keamananLingkunganState)
-    const [expandedMap, setExpandedMap] = useState<Record<number, boolean>>({});
+  const router = useRouter()  
   const [search, setSearch] = useState('')
   const [debouncedSearch] = useDebouncedValue(search, 500); // 500ms delay
   const {
@@ -25,13 +26,6 @@ function Page() {
   useShallowEffect(() => {
     load(page, 3, debouncedSearch)
   }, [page, debouncedSearch])
-
-  const toggleExpanded = (index: number, value: boolean) => {
-    setExpandedMap((prev) => ({
-      ...prev,
-      [index]: value,
-    }));
-  };
 
   if (loading || !data) {
     return (
@@ -65,60 +59,100 @@ function Page() {
           </GridCol>
         </Grid>
         <Text px={{ base: 'md', md: 100 }} ta={"justify"} fz="md" mt={4} >
-        Pecalang dan Patwal (Patroli Pengawal) bertugas memastikan desa tetap aman, tertib, dan kondusif bagi seluruh warga.
+          Pecalang dan Patwal (Patroli Pengawal) bertugas memastikan desa tetap aman, tertib, dan kondusif bagi seluruh warga.
         </Text>
       </Box>
       <Box px={{ base: "md", md: 100 }}>
         <Stack gap={'lg'}>
           <SimpleGrid
-            pb={10}
-            cols={{
-              base: 1,
-              md: 3,
-            }}>
-            {data.map((v, k) => {
-              return (
-                <Paper radius={10} key={k} bg={colors["white-trans-1"]}>
-                  <Stack gap={'xs'}>
-                    <Center px={10} py={20}>
-                      <Image loading="lazy" src={v.image?.link} alt='' />
-                    </Center>
-                    <Box px={'lg'}>
-                      <Box pb={20}>
-                        <Text pb={10} c={colors["blue-button"]} fw={"bold"} fz={"h3"}>
-                          {v.name}
-                        </Text>
-                        <Spoiler
-                          showLabel={
-                            <Text fw="bold" fz="sm" c={colors['blue-button']}>
-                              Show more
-                            </Text>
-                          }
-                          hideLabel={
-                            <Text fw="bold" fz="sm" c={colors['blue-button']}>
-                              Hide details
-                            </Text>
-                          }
-                          expanded={expandedMap[k] || false}
-                          onExpandedChange={(val) => toggleExpanded(k, val)}
-                        >
-                          <Text pb={10} fz={"h4"} ta={'justify'} style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: v.deskripsi }} />
-                        </Spoiler>
-                      </Box>
-                    </Box>
-                  </Stack>
-                </Paper>
-              )
-            })}
+            cols={{ base: 1, sm: 2, md: 3 }} spacing="xl" mt="lg">
+            {data.map((v, k) => (
+              <Paper
+                key={k}
+                radius="xl"
+                shadow="md"
+                withBorder
+                p="lg"
+                bg={colors['white-trans-1']}
+                style={{
+                  transition: 'all 200ms ease',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  height: '100%',
+                }}
+              >
+                <Stack align="center" gap="sm" style={{ flexGrow: 1 }}>
+                  <Box
+                    style={{
+                      width: '100%',
+                      aspectRatio: '16/9',
+                      borderRadius: '12px',
+                      overflow: 'hidden',
+                      position: 'relative',
+                    }}
+                  >
+                    <Image
+                      src={v.image?.link}
+                      alt={v.name}
+                      fit="cover"
+                      loading="lazy"
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        transition: 'transform 0.4s ease',
+                      }}
+                      onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
+                      onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+                    />
+                  </Box>
+                  <Text ta="center" fw={700} fz="lg" c={colors['blue-button']}>
+                    {v.name}
+                  </Text>
+                  <Text
+                    fz="sm"
+                    ta="justify"
+                    lineClamp={3}
+                    lh={1.6}
+                    style={{
+                      minHeight: '4.8em',
+                    }}
+                  >
+                    <span
+                      style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
+                      dangerouslySetInnerHTML={{ __html: v.deskripsi }}
+                    />
+                  </Text>
+                </Stack>
+                <Center mt="md">
+                  <Button
+                    variant="light"
+                    onClick={() => {
+                      router.push(`/darmasaba/keamanan/keamanan-lingkungan-pecalang-patwal/${v.id}`)
+                    }}
+                  >
+                    Detail
+                  </Button>
+                </Center>
+              </Paper>
+            ))}
           </SimpleGrid>
         </Stack>
       </Box>
-      <Center>
+
+      <Center mt="xl">
         <Pagination
           value={page}
-          onChange={(newPage) => load(newPage)} // ini penting!
+          onChange={(newPage) => load(newPage, 3, search)}
           total={totalPages}
-          my="md"
+          size="lg"
+          radius="xl"
+          styles={{
+            control: {
+              border: `1px solid ${colors['blue-button']}`,
+            },
+          }}
         />
       </Center>
     </Stack>

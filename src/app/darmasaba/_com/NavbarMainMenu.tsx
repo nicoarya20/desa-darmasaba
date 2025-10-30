@@ -112,7 +112,7 @@ function MenuItemCom({ item, isActive = false }: { item: MenuItem, isActive?: bo
       <MenuTarget>
         <Button
           variant="subtle"
-          color={isActive ? 'blue' : 'gray'}
+          color={isActive ? colors['blue-button'] : 'gray'}
           onClick={() => {
             if (item.href) {
               router.push(item.href);

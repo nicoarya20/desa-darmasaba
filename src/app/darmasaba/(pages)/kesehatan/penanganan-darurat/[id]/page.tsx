@@ -1,15 +1,14 @@
 'use client';
 import penangananDarurat from '@/app/admin/(dashboard)/_state/kesehatan/penanganan-darurat/penangananDarurat';
 import colors from '@/con/colors';
-import { Box, Button, Image, Paper, Skeleton, Stack, Text } from '@mantine/core';
+import { Box, Image, Paper, Skeleton, Stack, Text } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { IconArrowBack } from '@tabler/icons-react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
+import BackButton from '../../../desa/layanan/_com/BackButto';
 
 function DetailPenangananDaruratUser() {
   const state = useProxy(penangananDarurat);
-  const router = useRouter();
   const params = useParams();
 
   useShallowEffect(() => {
@@ -32,14 +31,7 @@ function DetailPenangananDaruratUser() {
     <Box py={20}>
       {/* Tombol Back */}
       <Box px={{ base: 'md', md: 100 }}>
-        <Button
-          variant="subtle"
-          onClick={() => router.back()}
-          leftSection={<IconArrowBack size={22} color={colors['blue-button']} />}
-          mb={20}
-        >
-          Kembali
-        </Button>
+        <BackButton/>
       </Box>
 
       {/* Wrapper Detail */}

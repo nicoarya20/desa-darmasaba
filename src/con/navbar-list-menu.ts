@@ -35,13 +35,13 @@ const navbarListMenu = [
             },
             {
                 id: "1.7",
-                name: "Daftar Informasi Publik Desa Darmasaba",
-                href: "/darmasaba/ppid/daftar-informasi-publik-desa-darmasaba"
+                name: "Daftar Informasi Publik",
+                href: "/darmasaba/ppid/daftar-informasi-publik"
             },
             {
                 id: "1.8",
-                name: "IKM Desa Darmasaba",
-                href: "/darmasaba/ppid/ikm-desa-darmasaba"
+                name: "Indeks Kepuasan Masyarakat",
+                href: "/darmasaba/ppid/indeks-kepuasan-masyarakat"
             },
 
         ]

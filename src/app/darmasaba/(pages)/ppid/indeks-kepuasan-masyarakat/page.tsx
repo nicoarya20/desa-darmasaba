@@ -239,7 +239,7 @@ const state = useProxy(indeksKepuasanState.responden);
                 {/* Chart Rating */}
                 <Paper bg={colors['white-1']} p="md" radius="md">
                   <Stack>
-                    <Title order={4}>Pilihan</Title>
+                    <Title order={4}>Ulasan</Title>
                     {donutDataRating.every(item => item.value === 0) ? (
                       <Text c="dimmed" ta="center" my="md">
                         Belum ada data untuk ditampilkan dalam grafik
@@ -505,7 +505,7 @@ const state = useProxy(indeksKepuasanState.responden);
               {/* Chart Rating */}
               <Paper bg={colors['white-1']} p="md" radius="md">
                 <Stack>
-                  <Title order={4}>Pilihan</Title>
+                  <Title order={4}>Ulasan</Title>
                   {donutDataRating.every(item => item.value === 0) ? (
                     <Text c="dimmed" ta="center" my="md">
                       Belum ada data untuk ditampilkan dalam grafik

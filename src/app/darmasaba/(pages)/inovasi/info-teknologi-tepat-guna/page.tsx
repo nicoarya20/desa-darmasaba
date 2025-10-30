@@ -57,7 +57,8 @@ function Page() {
             />
           </GridCol>
         </Grid>
-        <Text fz={'h4'}>Desa Darmasaba berkomitmen mengembangkan teknologi tepat guna yang sesuai dengan kebutuhan masyarakat, mendukung pembangunan berkelanjutan, dan meningkatkan kualitas hidup warga.</Text>
+        <Text fz={'md'}>Desa Darmasaba berkomitmen mengembangkan teknologi tepat guna yang sesuai dengan kebutuhan masyarakat,</Text>
+        <Text fz={'md'}>mendukung pembangunan berkelanjutan, dan meningkatkan kualitas hidup warga.</Text>
       </Box>
       <Box px={{ base: "md", md: 100 }}>
         <Stack gap={'lg'} p={'lg'}>

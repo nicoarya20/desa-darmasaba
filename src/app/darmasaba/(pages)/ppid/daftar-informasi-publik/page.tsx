@@ -68,7 +68,7 @@ function Page() {
         <Image src="/darmasaba-icon.png" w={{ base: 70, md: 100 }} alt="Logo Desa Darmasaba" loading="lazy" />
       </Center>
       <Text ta="center" fz={{ base: "1.8rem", md: "2.5rem" }} c={colors["blue-button"]} fw="bold" lh={1.4}>
-        Daftar Informasi Publik Desa Darmasaba
+        Daftar Informasi Publik
       </Text>
       <Box px={{ base: "md", md: 100 }}>
         <Stack gap="lg">

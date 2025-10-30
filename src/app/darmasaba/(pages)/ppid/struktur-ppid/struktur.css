@@ -1,0 +1,68 @@
+/* ============================================
+   STRUKTUR ORGANISASI PPID - STYLING
+   ============================================ */
+
+/* Tabel chart selalu center */
+.p-organizationchart-table {
+    margin: 0 auto !important;
+  }
+  
+  /* Jarak vertikal antar level - lebih lega */
+  .p-organizationchart-line-down {
+    height: 32px !important;
+  }
+  
+  /* Padding di dalam node - lebih rapi */
+  .p-organizationchart-node-content {
+    padding: 0 !important;
+    background: transparent !important;
+    border: none !important;
+  }
+  
+  /* Garis connector antar node - lebih tebal dan jelas */
+  .p-organizationchart-line-down,
+  .p-organizationchart-line-left,
+  .p-organizationchart-line-right,
+  .p-organizationchart-line-top {
+    border-color: rgba(28, 110, 164, 0.4) !important;
+    border-width: 2px !important;
+  }
+  
+  /* Garis horizontal */
+  .p-organizationchart-line-left,
+  .p-organizationchart-line-right {
+    border-top-width: 2px !important;
+  }
+  
+  /* Jarak horizontal antar node - lebih proporsional */
+  .p-organizationchart-table > tbody > tr > td {
+    padding: 0 24px !important;
+    vertical-align: top !important;
+  }
+  
+  /* Node container spacing */
+  .p-organizationchart-node {
+    padding: 8px !important;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .p-organizationchart-table > tbody > tr > td {
+      padding: 0 12px !important;
+    }
+    
+    .p-organizationchart-line-down {
+      height: 24px !important;
+    }
+  }
+  
+  /* Smooth transitions untuk zoom */
+  .p-organizationchart {
+    transition: transform 0.2s ease;
+  }
+  
+  /* Fullscreen mode adjustments */
+  .p-organizationchart-table:fullscreen {
+    background: rgba(230, 240, 255, 0.98);
+    padding: 40px;
+  }

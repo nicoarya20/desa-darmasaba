@@ -67,16 +67,26 @@ function Page() {
             <Text ta="center" fw={600} fz={{ base: "md", md: "lg" }} c="dimmed">
               Informasi & Pelayanan Potensi Desa Digital
             </Text>
-            <Image
-              src={state.findUnique.data?.image?.link || ''}
-              alt={state.findUnique.data?.name || 'Potensi Desa'}
-              radius="lg"
-              fit="cover"
+            {/* ✅ Bagian gambar dibuat konsisten tanpa CSS manual */}
+            <Box
               w="100%"
               h={{ base: 220, md: 400 }}
-              fallbackSrc="https://placehold.co/800x400?text=Gambar+tidak+tersedia"
-              loading="lazy"
-            />
+              style={{
+                overflow: 'hidden',
+                borderRadius: 'var(--mantine-radius-lg)',
+              }}
+            >
+              <Image
+                src={state.findUnique.data?.image?.link || ''}
+                alt={state.findUnique.data?.name || 'Potensi Desa'}
+                fit="cover"
+                w="100%"
+                h="100%"
+                fallbackSrc="https://placehold.co/800x400?text=Gambar+tidak+tersedia"
+                loading="lazy"
+                radius="lg"
+              />
+            </Box>
             <Text py="md" fz={{ base: "sm", md: "md" }} ta="justify" lh={1.8} dangerouslySetInnerHTML={{ __html: state.findUnique.data?.deskripsi || 'Belum ada deskripsi untuk potensi desa ini.' }} />
           </Stack>
         </Paper>

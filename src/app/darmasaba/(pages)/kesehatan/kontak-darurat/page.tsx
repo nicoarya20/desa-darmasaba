@@ -88,59 +88,83 @@ function Page() {
         ) : (
           <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }} spacing="xl" mt="lg">
             {data.map((v, k) => (
-              <Paper
-                key={k}
-                radius="xl"
-                shadow="md"
-                withBorder
-                p="lg"
-                bg={colors['white-trans-1']}
-                style={{
-                  transition: 'all 200ms ease',
-                  cursor: 'pointer',
-                }}
-              >
-                <Stack align="center" gap="sm">
-                  <Box
-                    style={{
-                      width: '100%',
-                      aspectRatio: '16/9',
-                      borderRadius: '12px',
-                      overflow: 'hidden',
-                      position: 'relative',
-                    }}
-                  >
-                    <Image
-                      src={v.image.link}
-                      alt={v.name}
-                      fit="cover"
-                      loading="lazy"
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        transition: 'transform 0.4s ease',
-                      }}
-                      onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
-                      onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
-                    />
-                  </Box>
-
-                  <Text ta="center" fw={700} fz="lg" c={colors['blue-button']}>
-                    {v.name}
-                  </Text>
-                  <Text fz="sm" ta="center" lineClamp={3}>
-                    <span style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: v.deskripsi }} />
-                  </Text>
-                  <Button
-                    variant="light"
-                    leftSection={<IconBrandWhatsapp size={18} />}
-                    component="a"
-                    href={`https://wa.me/${v.whatsapp.replace(/\D/g, '')}`}
-                    target="_blank"
-                    aria-label="Hubungi WhatsApp"
-                  >WhatsApp</Button>
-                </Stack>
-              </Paper>
+             <Paper
+             key={k}
+             radius="xl"
+             shadow="md"
+             withBorder
+             p="lg"
+             bg={colors['white-trans-1']}
+             style={{
+               transition: 'all 200ms ease',
+               cursor: 'pointer',
+               display: 'flex',
+               flexDirection: 'column',
+               justifyContent: 'space-between', // ✅ biar button selalu di bawah
+               height: '100%', // ✅ bikin tinggi seragam
+             }}
+           >
+             <Stack align="center" gap="sm" style={{ flexGrow: 1 }}>
+               <Box
+                 style={{
+                   width: '100%',
+                   aspectRatio: '16/9',
+                   borderRadius: '12px',
+                   overflow: 'hidden',
+                   position: 'relative',
+                 }}
+               >
+                 <Image
+                   src={v.image.link}
+                   alt={v.name}
+                   fit="cover"
+                   loading="lazy"
+                   style={{
+                     width: '100%',
+                     height: '100%',
+                     transition: 'transform 0.4s ease',
+                   }}
+                   onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
+                   onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+                 />
+               </Box>
+           
+               <Text ta="center" fw={700} fz="lg" c={colors['blue-button']}>
+                 {v.name}
+               </Text>
+           
+               <Text
+                 fz="sm"
+                 ta="center"
+                 lineClamp={3}
+                 lh={1.6}
+                 style={{
+                   minHeight: '4.8em', // tinggi tetap 3 baris
+                 }}
+               >
+                 <span
+                   style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
+                   dangerouslySetInnerHTML={{ __html: v.deskripsi }}
+                 />
+               </Text>
+             </Stack>
+           
+             {/* ✅ Tombol selalu di bagian bawah card */}
+             <Center mt="md">
+               <Button
+                 variant="light"
+                 leftSection={<IconBrandWhatsapp size={18} />}
+                 component="a"
+                 href={`https://wa.me/${v.whatsapp.replace(/\D/g, '')}`}
+                 target="_blank"
+                 aria-label="Hubungi WhatsApp"
+               >
+                 WhatsApp
+               </Button>
+             </Center>
+           </Paper>
+           
+            
             ))}
           </SimpleGrid>
         )}

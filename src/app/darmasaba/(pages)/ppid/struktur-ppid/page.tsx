@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
-
 import stateStrukturPPID from '@/app/admin/(dashboard)/_state/ppid/struktur_ppid/struktur_PPID'
 import ScrollToTopButton from '@/app/darmasaba/_com/scrollToTopButton'
 import colors from '@/con/colors'
@@ -10,7 +9,6 @@ import {
   Button,
   Card,
   Center,
-  Container,
   Group,
   Image,
   Loader,
@@ -36,6 +34,7 @@ import { OrganizationChart } from 'primereact/organizationchart'
 import { useEffect, useRef, useState } from 'react'
 import { useProxy } from 'valtio/utils'
 import BackButton from '../../desa/layanan/_com/BackButto'
+import './struktur.css'
 
 export default function Page() {
   return (
@@ -47,10 +46,9 @@ export default function Page() {
         paddingBottom: 48,
       }}
     >
-      <Container size="xl" py="xl">
-        <Box px={{ base: 'md', md: 100 }}>
-          <BackButton />
-        </Box>
+      <Box px={{ base: 'md', md: 100 }} py={"xl"}>
+        <BackButton />
+
         <Stack align="center" gap="xl" mt="xl">
           <Title
             order={1}
@@ -65,12 +63,12 @@ export default function Page() {
             untuk melihat detail atau klik node untuk fokus tampilan.
           </Text>
         </Stack>
+
         <Box mt="lg">
           <StrukturOrganisasiPPID />
         </Box>
-      </Container>
+      </Box>
 
-      {/* Tombol Scroll ke Atas */}
       <ScrollToTopButton />
     </Box>
   )
@@ -84,7 +82,7 @@ function StrukturOrganisasiPPID() {
   const [isFullscreen, setFullscreen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
 
-  // debounce untuk pencarian
+  // debounce pencarian
   const debouncedSearch = useRef(
     debounce((value: string) => {
       setSearchQuery(value)
@@ -112,7 +110,8 @@ function StrukturOrganisasiPPID() {
     )
   }
 
-  if (!stateOrganisasi.findMany.data || stateOrganisasi.findMany.data.length === 0) {
+  const data = stateOrganisasi.findMany.data || []
+  if (data.length === 0) {
     return (
       <Center py={40}>
         <Stack align="center" gap="md">
@@ -151,9 +150,9 @@ function StrukturOrganisasiPPID() {
     )
   }
 
-  // Buat struktur organisasi
+  // 🧩 buat struktur organisasi
   const posisiMap = new Map<string, any>()
-  const aktifPegawai = stateOrganisasi.findMany.data.filter((p: any) => p.isActive)
+  const aktifPegawai = data.filter((p: any) => p.isActive)
 
   for (const pegawai of aktifPegawai) {
     const posisiId = pegawai.posisi.id
@@ -176,19 +175,15 @@ function StrukturOrganisasiPPID() {
     } else root.push(posisi)
   })
 
-  function toOrgChartFormat(node: any): any {
+  const toOrgChartFormat = (node: any): any => {
     const pegawai = node.pegawaiList?.[0]
     return {
       expanded: true,
-      type: 'person',
-      styleClass: 'p-person',
       data: {
-        id: pegawai?.id || null,
-        name: pegawai?.namaLengkap || 'Belum ditugaskan',
-        title: node.nama || 'Tanpa jabatan',
+        id: pegawai?.id,
+        name: pegawai?.namaLengkap || 'Belum Ditugaskan',
+        title: node.nama || 'Tanpa Jabatan',
         image: pegawai?.image?.link || '/img/default.png',
-        description: node.deskripsi || '',
-        positionId: node.id || null,
       },
       children: node.children?.map(toOrgChartFormat) || [],
     }
@@ -213,7 +208,7 @@ function StrukturOrganisasiPPID() {
     chartData = filterNodes(chartData)
   }
 
-  // 🧭 fungsi fullscreen
+  // 🎬 fullscreen & zoom control
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
       chartContainerRef.current?.requestFullscreen()
@@ -224,138 +219,249 @@ function StrukturOrganisasiPPID() {
     }
   }
 
-  // 🧭 fungsi zoom
-  const handleZoomIn = () => setScale((prev) => Math.min(prev + 0.1, 2))
-  const handleZoomOut = () => setScale((prev) => Math.max(prev - 0.1, 0.5))
+  const handleZoomIn = () => setScale((s) => Math.min(s + 0.1, 2))
+  const handleZoomOut = () => setScale((s) => Math.max(s - 0.1, 0.5))
   const resetZoom = () => setScale(1)
 
   return (
     <Stack align="center" mt="xl">
-      {/* 🔍 Search + Zoom + Fullscreen controls */}
-      <Group mb="md" justify="center" gap="sm" align="center">
-        <TextInput
-          placeholder="Cari nama atau jabatan..."
-          leftSection={<IconSearch size={16} />}
-          onChange={(e) => debouncedSearch(e.target.value)}
-        />
-
-        <Button variant="light" size="sm" onClick={handleZoomOut}>
-          <IconZoomOut size={16} />
-        </Button>
-
-        {/* 🔍 Tambahkan indikator zoom di sini */}
-        {/* Floating Zoom Indicator */}
-        <Box
-          bg="#C3D0E8"
-          c="blue"
-          px={9}
-          py={8}
-          style={{
-            fontSize: 14,
-            fontWeight: 600,
-            borderRadius: '5px',
-          }}
-        >
-          {Math.round(scale * 100)}%
-        </Box>
-
-
-        <Button variant="light" size="sm" onClick={handleZoomIn}>
-          <IconZoomIn size={16} />
-        </Button>
-
-        <Button variant="light" size="sm" onClick={resetZoom}>
-          Reset
-        </Button>
-
-        <Button
-          variant="light"
-          size="sm"
-          onClick={toggleFullscreen}
-          leftSection={
-            isFullscreen ? <IconArrowsMinimize size={16} /> : <IconArrowsMaximize size={16} />
-          }
-        >
-          {isFullscreen ? 'Keluar' : 'Fullscreen'}
-        </Button>
-      </Group>
-
-
-      {/* Chart Container */}
-      <Box
-        ref={chartContainerRef}
+      {/* 🔍 Controls */}
+      <Paper
+        shadow="xs"
+        p="md"
+        radius="md"
         style={{
-          overflow: 'auto',
-          transform: `scale(${scale})`,
-          transformOrigin: 'center top',
-          transition: 'transform 0.25s ease',
+          background: colors['blue-button']
         }}
       >
-        <OrganizationChart
-          value={chartData}
-          nodeTemplate={(node) => nodeTemplate(node, router)}
-        />
-      </Box>
+        <Group gap="sm" wrap="wrap" justify="center">
+          <TextInput
+            placeholder="Cari nama atau jabatan..."
+            leftSection={<IconSearch size={16} />}
+            onChange={(e) => debouncedSearch(e.target.value)}
+            styles={{
+              input: {
+                minWidth: 250,
+              },
+            }}
+          />
+
+          <Group gap="xs">
+            <Button
+              variant="light"
+              bg={colors['blue-button-2']}
+              size="sm"
+              onClick={handleZoomOut}
+              leftSection={<IconZoomOut size={16} />}
+              c={colors['blue-button']}
+            >
+              Zoom Out
+            </Button>
+
+            <Box
+              bg={colors['blue-button-2']}
+              c={colors['blue-button']}
+              px={16}
+              py={8}
+              style={{
+                fontSize: 14,
+                fontWeight: 700,
+                borderRadius: '8px',
+                minWidth: 70,
+                textAlign: 'center',
+              }}
+            >
+              {Math.round(scale * 100)}%
+            </Box>
+
+            <Button
+              bg={colors['blue-button-2']}
+              c={colors['blue-button']}
+              variant="light"
+              size="sm"
+              onClick={handleZoomIn}
+              leftSection={<IconZoomIn size={16} />}
+            >
+              Zoom In
+            </Button>
+
+            <Button
+              bg={colors['blue-button-2']}
+              c={colors['blue-button']}
+              variant="light"
+              size="sm"
+              onClick={resetZoom}
+            >
+              Reset
+            </Button>
+
+            <Button
+              bg={colors['blue-button-2']}
+              c={colors['blue-button']}
+              size="sm"
+              onClick={toggleFullscreen}
+              leftSection={
+                isFullscreen ? (
+                  <IconArrowsMinimize size={16} />
+                ) : (
+                  <IconArrowsMaximize size={16} />
+                )
+              }
+            >
+              Fullscreen
+            </Button>
+          </Group>
+        </Group>
+      </Paper>
+
+      {/* 🧩 Chart Container */}
+      <Center style={{ width: '100%' }}>
+        <Box
+          ref={chartContainerRef}
+          style={{
+            overflowX: 'auto',
+            overflowY: 'auto',
+            width: '100%',
+            maxWidth: '100%',
+            padding: '32px 16px',
+            transition: 'transform 0.2s ease',
+            transform: `scale(${scale})`,
+            transformOrigin: 'center top',
+          }}
+        >
+          <OrganizationChart
+            value={chartData}
+            nodeTemplate={(node) => <NodeCard node={node} router={router} />}
+            className="p-organizationchart p-organizationchart-horizontal"
+          />
+        </Box>
+      </Center>
     </Stack>
   )
 }
 
-function nodeTemplate(node: any, router: ReturnType<typeof useTransitionRouter>) {
+function NodeCard({ node, router }: any) {
   const imageSrc = node?.data?.image || '/img/default.png'
   const name = node?.data?.name || 'Tanpa Nama'
   const title = node?.data?.title || 'Tanpa Jabatan'
-  const description = node?.data?.description || ''
+  const hasId = Boolean(node?.data?.id)
 
   return (
-    <Transition mounted transition="pop" duration={240}>
+    <Transition mounted transition="pop" duration={300}>
       {(styles) => (
         <Card
-          radius="lg"
+          shadow="md"
+          radius="xl"
           withBorder
           style={{
             ...styles,
-            width: 260,
-            padding: 16,
-            background: 'rgba(28,110,164,0.3)',
-            borderColor: 'rgba(255,255,255,0.15)',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            textAlign: 'center',
+            width: 240,
+            minHeight: 280,
+            padding: 20,
+            background: 'linear-gradient(135deg, rgba(28,110,164,0.15) 0%, rgba(255,255,255,0.95) 100%)',
+            borderColor: 'rgba(28, 110, 164, 0.3)',
+            borderWidth: 2,
+            transition: 'all 0.3s ease',
+            cursor: hasId ? 'pointer' : 'default',
+          }}
+          onMouseEnter={(e) => {
+            if (hasId) {
+              e.currentTarget.style.transform = 'translateY(-4px)'
+              e.currentTarget.style.boxShadow = '0 8px 24px rgba(28, 110, 164, 0.25)'
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (hasId) {
+              e.currentTarget.style.transform = 'translateY(0)'
+              e.currentTarget.style.boxShadow = ''
+            }
           }}
         >
-          <Image
-            src={imageSrc}
-            alt={name}
-            radius="md"
-            width={60}
-            height={60}
-            fit="cover"
-            style={{
-              objectFit: 'cover',
-              border: '2px solid rgba(255,255,255,0.2)',
-              marginBottom: 12,
-            }}
-            loading="lazy"
-          />
-          <Text fw={700}>{name}</Text>
-          <Text size="sm" c="dimmed" mt={4}>
-            {title}
-          </Text>
-          <Text size="xs" c="dimmed" mt={8} lineClamp={3}>
-            {description || 'Belum ada deskripsi.'}
-          </Text>
-            <Button
-              variant="light"
-              size="xs"
-              mt="md"
-              onClick={() => {
-                const id = node?.data?.id
-                router.push(`/darmasaba/ppid/struktur-ppid/${id}`)
+          <Stack align="center" gap={12}>
+            {/* Photo */}
+            <Box
+              style={{
+                width: 96,
+                height: 96,
+                borderRadius: '50%',
+                overflow: 'hidden',
+                border: '3px solid rgba(28, 110, 164, 0.4)',
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                background: 'white',
               }}
             >
-              Lihat Detail
-            </Button>
+              <Image
+                src={imageSrc}
+                alt={name}
+                width={96}
+                height={96}
+                fit="cover"
+                loading="lazy"
+                style={{
+                  objectFit: 'cover',
+                }}
+              />
+            </Box>
+
+            {/* Name */}
+            <Text
+              fw={700}
+              size="sm"
+              ta="center"
+              c={colors['blue-button']}
+              lineClamp={2}
+              style={{
+                minHeight: 40,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                wordBreak: 'break-word',
+                lineHeight: 1.3,
+              }}
+            >
+              {name}
+            </Text>
+
+            {/* Title/Position */}
+            <Text
+              size="xs"
+              c="dimmed"
+              ta="center"
+              fw={500}
+              lineClamp={2}
+              style={{
+                minHeight: 32,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                wordBreak: 'break-word',
+                lineHeight: 1.2,
+              }}
+            >
+              {title}
+            </Text>
+
+            {/* Detail Button */}
+            {hasId && (
+              <Button
+                variant="gradient"
+                gradient={{ from: 'blue', to: 'cyan' }}
+                size="xs"
+                fullWidth
+                mt={8}
+                radius="md"
+                onClick={() =>
+                  router.push(`/darmasaba/ppid/struktur-ppid/${node.data.id}`)
+                }
+                style={{
+                  height: 32,
+                  fontWeight: 600,
+                }}
+              >
+                Lihat Detail
+              </Button>
+            )}
+          </Stack>
         </Card>
       )}
     </Transition>

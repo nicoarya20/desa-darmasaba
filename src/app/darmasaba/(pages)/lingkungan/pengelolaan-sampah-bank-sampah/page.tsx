@@ -91,7 +91,7 @@ function Page() {
                     <Box style={{ alignContent: 'center', alignItems: 'center' }}>
                       {iconMap[v.icon] ? React.createElement(iconMap[v.icon]) : null}
                     </Box>
-                    <Text fw={'bold'} fz={{ base: "lg", md: "xl" }} c={'black'}>{v.name}</Text>
+                    <Text fz={{ base: "lg", md: "xl" }} c={'black'}>{v.name}</Text>
                   </Flex>
                 </Paper>
               </Box>

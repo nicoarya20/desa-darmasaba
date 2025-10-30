@@ -39,9 +39,9 @@ function DetailPegawaiUser() {
   const data = statePegawai.findUnique.data;
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="xl">
+    <Box px={{ base: 'md', md: 100 }} py="xl">
       {/* Back button */}
-      <Group mb="lg">
+      <Group mb="lg" px={{ base: 'md', md: 100 }}>
         <Box
           onClick={() => router.back()}
           style={{

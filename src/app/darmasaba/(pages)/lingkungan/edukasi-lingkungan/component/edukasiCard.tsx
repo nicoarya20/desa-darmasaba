@@ -1,7 +1,7 @@
 // Create a new component: components/EdukasiCard.tsx
 'use client';
 
-import { Box, Paper, Stack, Text, Tooltip } from '@mantine/core';
+import { Box, Paper, Stack, Text } from '@mantine/core';
 import { ReactNode } from 'react';
 
 interface EdukasiCardProps {
@@ -31,7 +31,6 @@ export function EdukasiCard({ icon, title, description, color = '#1e88e5' }: Edu
         <Box>
           <Stack align="center" gap="xs" mb="md">
             <Box style={{ color }}>{icon}</Box>
-            <Tooltip label={title} maw={250} multiline withArrow position="top">
               <Text 
                 fz={{ base: 'h5', md: 'h4' }} 
                 fw={700} 
@@ -47,7 +46,6 @@ export function EdukasiCard({ icon, title, description, color = '#1e88e5' }: Edu
                 }}
                 dangerouslySetInnerHTML={{ __html: title }}
               />
-            </Tooltip>
           </Stack>
           <Text
             size="sm"

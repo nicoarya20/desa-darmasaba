@@ -44,13 +44,12 @@ function Page() {
           <Box style={{ display: 'flex', height: '100%' }}>
             <Paper
               p="lg"
-              bg="linear-gradient(145deg, #DFE3E8FF 0%, #EFF1F4FF 100%)"
               style={{ 
                 borderRadius: 16, 
-                boxShadow: '0 0 20px rgba(28, 110, 164, 0.5)',
                 width: '100%',
                 display: 'flex',
-                flexDirection: 'column'
+                flexDirection: 'column',
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
               }}
             >
               <Stack gap="md" px={20} style={{ height: '100%' }}>
@@ -74,13 +73,12 @@ function Page() {
          <Box style={{ display: 'flex', height: '100%' }}>
          <Paper
               p="lg"
-              bg="linear-gradient(145deg, #DFE3E8FF 0%, #EFF1F4FF 100%)"
               style={{ 
                 borderRadius: 16, 
-                boxShadow: '0 0 20px rgba(28, 110, 164, 0.5)',
                 width: '100%',
                 display: 'flex',
-                flexDirection: 'column'
+                flexDirection: 'column',
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
               }}
             >
               <Stack gap="md" px={20} style={{ height: '100%' }}>
@@ -105,13 +103,12 @@ function Page() {
          <Box>
             <Paper
               p="lg"
-              bg="linear-gradient(145deg, #DFE3E8FF 0%, #EFF1F4FF 100%)"
               style={{ 
                 borderRadius: 16, 
-                boxShadow: '0 0 20px rgba(28, 110, 164, 0.5)',
                 width: '100%',
                 display: 'flex',
-                flexDirection: 'column'
+                flexDirection: 'column',
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
               }}
             >
               <Stack gap="md" px={20} style={{ height: '100%' }}>

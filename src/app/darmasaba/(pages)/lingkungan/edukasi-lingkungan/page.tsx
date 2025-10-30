@@ -62,7 +62,6 @@ export default function EdukasiLingkunganPage() {
         </Text>
         <Text
           fz={{ base: 'md', md: 'lg' }}
-          c="dimmed"
           maw={800}
           mx="auto"
         >
@@ -78,21 +77,21 @@ export default function EdukasiLingkunganPage() {
           verticalSpacing={{ base: 'md', md: 'xl' }}
         >
           <EdukasiCard
-            icon={<IconLeaf size={32} />}
+            icon={<IconLeaf size={45} />}
             title={tujuan.data?.judul || ''}
             description={tujuan.data?.deskripsi || ''}
             color={colors['blue-button']}
           />
 
           <EdukasiCard
-            icon={<IconRecycle size={32} />}
+            icon={<IconRecycle size={45} />}
             title={materi.data?.judul || ''}
             description={materi.data?.deskripsi || ''}
             color={colors['blue-button']}
           />
 
           <EdukasiCard
-            icon={<IconPlant2 size={32} />}
+            icon={<IconPlant2 size={45} />}
             title={contoh.data?.judul || ''}
             description={contoh.data?.deskripsi || ''}
             color={colors['blue-button']}
