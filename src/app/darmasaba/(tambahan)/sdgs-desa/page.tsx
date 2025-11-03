@@ -1,10 +1,10 @@
 'use client'
-import { Box, Center, Container, Image, LoadingOverlay, Paper, SimpleGrid, Stack, Text, Title, Tooltip } from '@mantine/core';
-import { Prisma } from '@prisma/client';
-import { useEffect, useState } from 'react';
-import { IconMoodSad } from '@tabler/icons-react';
-import BackButton from '../../(pages)/desa/layanan/_com/BackButto';
 import colors from '@/con/colors';
+import { Box, Center, Container, Image, LoadingOverlay, Paper, SimpleGrid, Stack, Text, Title } from '@mantine/core';
+import { Prisma } from '@prisma/client';
+import { IconMoodSad } from '@tabler/icons-react';
+import { useEffect, useState } from 'react';
+import BackButton from '../../(pages)/desa/layanan/_com/BackButto';
 
 function Page() {
   const [sdgsDesa, setSdgsDesa] = useState<Prisma.SdgsDesaGetPayload<{ include: { image: true } }>[]>([]);
@@ -114,11 +114,9 @@ function Page() {
                     />
                   </Box>
                   <Stack gap="xs" align="center" style={{ width: '100%' }}>
-                    <Tooltip label={item.name} position="top" withArrow>
                       <Title order={4} ta="center" c="dark" fw={600} lineClamp={2} style={{ minHeight: '3rem' }}>
                         {item.name}
                       </Title>
-                    </Tooltip>
                     <Text
                       ta="center"
                       fw={700}

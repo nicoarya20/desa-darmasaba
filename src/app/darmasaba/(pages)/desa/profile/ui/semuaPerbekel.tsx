@@ -36,7 +36,7 @@ function SemuaPerbekel() {
   }
 
   return (
-    <Box pb={80}>
+    <Box>
       <Stack align="center" gap="lg">
         <Box>
           <Text

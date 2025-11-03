@@ -7,6 +7,7 @@ import {
   Box,
   Button,
   Center,
+  Group,
   Image,
   Pagination,
   Paper,
@@ -178,12 +179,18 @@ function Page() {
           <Paper p="lg" radius="xl" shadow="xs" withBorder>
             <Stack gap="xs">
               <Text fz="lg" fw="bold" c={colors["blue-button"]}>Kontak PPID</Text>
-              <Text fz="sm" c="dimmed" lh={1.6}>
-                <IconMail size={16} style={{ marginRight: 6 }} /> Email: <Text span fw="500">ppid@desadarmasaba.id</Text>
-              </Text>
-              <Text fz="sm" c="dimmed" lh={1.6}>
-                <IconBrandWhatsapp size={16} style={{ marginRight: 6 }} /> WhatsApp: <Text span fw="500">081-xxx-xxx-xxx</Text>
-              </Text>
+              <Group>
+                <IconMail color='gray' size={16} style={{ marginRight: 6 }} />
+                <Text c={"dimmed"} fz="sm" lh={1.6}>
+                  Email: <Text c={"dimmed"} span fw="500">ppid@desadarmasaba.id</Text>
+                </Text>
+              </Group>
+              <Group>
+                <IconBrandWhatsapp color='gray' size={16} style={{ marginRight: 6 }} />
+                <Text c={"dimmed"} fz="sm" lh={1.6}>
+                  WhatsApp: <Text c={"dimmed"} span fw="500">081-xxx-xxx-xxx</Text>
+                </Text>
+              </Group>
             </Stack>
           </Paper>
         </Stack>

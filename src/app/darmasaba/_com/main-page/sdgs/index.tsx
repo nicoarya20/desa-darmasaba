@@ -1,11 +1,12 @@
 'use client'
-import { useEffect, useState } from "react"
-import { Box, Button, Center, Container, Image, Paper, SimpleGrid, Stack, Text, Title, useMantineTheme, Tooltip } from "@mantine/core"
+import colors from "@/con/colors"
+import { Box, Button, Center, Container, Image, Paper, SimpleGrid, Stack, Text, Title, useMantineTheme } from "@mantine/core"
 import { useMediaQuery } from "@mantine/hooks"
 import { Prisma } from "@prisma/client"
-import Link from "next/link"
 import { IconMoodSad } from "@tabler/icons-react"
-import colors from "@/con/colors"
+import Link from "next/link"
+import { useEffect, useState } from "react"
+import { motion } from "framer-motion";
 
 export default function SDGS() {
   const theme = useMantineTheme()
@@ -25,8 +26,8 @@ export default function SDGS() {
           setSdgsDesa([])
           return
         }
-        const top3Sdgs = [...data].sort((a, b) => parseInt(b.jumlah) - parseInt(a.jumlah)).slice(0, 3)
-        setSdgsDesa(top3Sdgs)
+        const top4Sdgs = [...data].sort((a, b) => parseInt(b.jumlah) - parseInt(a.jumlah)).slice(0, 4)
+        setSdgsDesa(top4Sdgs)
       } catch {
         setSdgsDesa([])
       }
@@ -35,7 +36,7 @@ export default function SDGS() {
   }, [])
 
   return (
-    <Stack p="sm">
+    <Stack p="sm" my={"xs"}>
       <Container w={{ base: "100%", md: "80%" }} p="xl">
         <Center>
           <Title
@@ -52,63 +53,56 @@ export default function SDGS() {
         </Text>
 
         <Box py="lg">
-          <Paper
-            p={{ base: "md", md: "xl" }}
-            radius="2xl"
-            withBorder
-            shadow="lg"
-            style={{
-              background: "linear-gradient(145deg, #FFFFFF, #F9FAFB)",
-              border: "1px solid rgba(0,0,0,0.06)",
-            }}
-          >
-            {sdgsDesa && sdgsDesa.length > 0 ? (
-              <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="xl" verticalSpacing="xl">
+          {sdgsDesa && sdgsDesa.length > 0 ? (
+            <SimpleGrid cols={{ base: 1, sm: 4 }} spacing="xl" verticalSpacing="xl" pb={30}>
               {sdgsDesa.map((item) => (
-                <Paper
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                   key={item.id}
-                  p="lg"
-                  radius="xl"
-                  shadow="sm"
-                  withBorder
-                  style={{
-                    background: "linear-gradient(180deg, #FFFFFF, #F6F8FA)",
-                    border: "1px solid rgba(0,0,0,0.05)",
-                    transition: "all 0.3s ease",
-                    height: "100%", // biar tinggi antar card konsisten
-                    display: "flex",
-                    flexDirection: "column",
-                  }}
                 >
-                  <Center mb="lg">
-                    <Box
-                      p="md"
-                      style={{
-                        background: "rgba(240, 249, 255, 0.8)",
-                        backdropFilter: "blur(6px)",
-                        width: mobile ? 140 : 160,
-                        height: mobile ? 140 : 160,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        borderRadius: "1rem",
-                        boxShadow: "0 6px 16px rgba(0,0,0,0.06)",
-                      }}
-                    >
-                      <Image
-                        src={item.image?.link ? item.image.link : "/placeholder-sdgs.png"}
-                        alt={item.name}
-                        w={mobile ? 90 : 110}
-                        h={mobile ? 90 : 110}
-                        fit="contain"
-                        loading="lazy"
-                      />
-                    </Box>
-                  </Center>
-            
-                  {/* Stack isi teks & angka */}
-                  <Stack justify="space-between" align="center" gap="xs" h="100%">
-                    <Tooltip label="Nama tujuan SDGs Desa" position="top" withArrow>
+                  <Paper
+                    p="lg"
+                    radius="xl"
+                    shadow="sm"
+                    withBorder
+                    style={{
+                      background: "linear-gradient(180deg, #FFFFFF, #F6F8FA)",
+                      border: "1px solid rgba(0,0,0,0.05)",
+                      transition: "all 0.3s ease",
+                      height: "100%", // biar tinggi antar card konsisten
+                      display: "flex",
+                      flexDirection: "column",
+                    }}
+                  >
+                    <Center mb="lg">
+                      <Box
+                        p="md"
+                        style={{
+                          background: "rgba(240, 249, 255, 0.8)",
+                          backdropFilter: "blur(6px)",
+                          width: mobile ? 140 : 160,
+                          height: mobile ? 140 : 160,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          borderRadius: "1rem",
+                          boxShadow: "0 6px 16px rgba(0,0,0,0.06)",
+                        }}
+                      >
+                        <Image
+                          src={item.image?.link ? item.image.link : "/placeholder-sdgs.png"}
+                          alt={item.name}
+                          w={mobile ? 90 : 110}
+                          h={mobile ? 90 : 110}
+                          fit="contain"
+                          loading="lazy"
+                        />
+                      </Box>
+                    </Center>
+
+                    {/* Stack isi teks & angka */}
+                    <Stack justify="space-between" align="center" gap="xs" h="100%">
                       <Text
                         ta="center"
                         fz={{ base: "lg", md: "xl" }}
@@ -118,34 +112,33 @@ export default function SDGS() {
                       >
                         {item.name}
                       </Text>
-                    </Tooltip>
-            
-                    <Title
-                      order={2}
-                      ta="center"
-                      style={{
-                        fontSize: mobile ? "2.4rem" : "3.2rem",
-                        fontWeight: 900,
-                        letterSpacing: "-0.5px",
-                        color: "#124170",
-                      }}
-                    >
-                      {item.jumlah}
-                    </Title>
-                  </Stack>
-                </Paper>
+
+                      <Title
+                        order={2}
+                        ta="center"
+                        style={{
+                          fontSize: mobile ? "2.4rem" : "3.2rem",
+                          fontWeight: 900,
+                          letterSpacing: "-0.5px",
+                          color: "#124170",
+                        }}
+                      >
+                        {item.jumlah}
+                      </Title>
+                    </Stack>
+                  </Paper>
+                </motion.div>
               ))}
             </SimpleGrid>
-            
-            ) : (
-              <Center mih={200} style={{ flexDirection: "column" }}>
-                <IconMoodSad size={48} stroke={1.5} style={{ marginBottom: "1rem" }} />
-                <Text fz="lg" c="dimmed">
-                  Data SDGs Desa belum tersedia
-                </Text>
-              </Center>
-            )}
-          </Paper>
+
+          ) : (
+            <Center mih={200} style={{ flexDirection: "column" }}>
+              <IconMoodSad size={48} stroke={1.5} style={{ marginBottom: "1rem" }} />
+              <Text fz="lg" c="dimmed">
+                Data SDGs Desa belum tersedia
+              </Text>
+            </Center>
+          )}
 
           <Center>
             <Button
@@ -156,7 +149,19 @@ export default function SDGS() {
               mt="md"
               variant="gradient"
               gradient={{ from: "#26667F", to: "#124170" }}
-              style={{ boxShadow: "0 6px 14px rgba(18,65,112,0.25)"}}
+              style={{
+                boxShadow: "0 6px 14px rgba(18,65,112,0.25)",
+                transition: "all 0.3s ease",
+                transform: "translateY(0)",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = "translateY(-4px)";
+                e.currentTarget.style.boxShadow = "0 10px 20px rgba(18,65,112,0.35)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "translateY(0)";
+                e.currentTarget.style.boxShadow = "0 6px 14px rgba(18,65,112,0.25)";
+              }}
             >
               <Text c="white" fz={{ base: "md", md: "lg" }} fw="bold">Jelajahi Semua Tujuan SDGs Desa</Text>
             </Button>

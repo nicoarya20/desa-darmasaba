@@ -63,7 +63,7 @@ function Page() {
         <SimpleGrid px={{ base: 'md', md: 100 }} cols={{ base: 1, sm: 2, md: 3 }} spacing="xl">
           {data.map((v: any, k: number) => (
             <BackgroundImage key={k} src={v.image?.link || ''} h={360} radius="xl" pos="relative">
-              <Box pos="absolute" inset={0} bg="rgba(0,0,0,0.45)" style={{ borderRadius: 16 }} />
+              <Box pos="absolute" inset={0} bg="rgba(0,0,0,0.45)" style={{ borderRadius: 27 }} />
               <Stack justify="space-between" h="100%" p="lg" pos="relative">
                 <Box>
                   <Text fz="lg" fw={600} c="white" ta="center">

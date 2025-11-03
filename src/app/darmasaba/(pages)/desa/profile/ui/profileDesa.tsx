@@ -3,7 +3,7 @@ import { Box, Center, Paper } from '@mantine/core';
 
 function ProfileDesa() {
   return (
-    <Box pb={90}>
+    <Box>
       <Center>
           <Paper p={"xl"} bg={colors['white-trans-1']} w={{ base: "100%", md: "100%" }}>
             <Center>

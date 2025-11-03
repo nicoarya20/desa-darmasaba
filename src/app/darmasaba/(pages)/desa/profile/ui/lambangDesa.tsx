@@ -24,7 +24,7 @@ function LambangDesa() {
   }
 
   return (
-    <Box pb={90}>
+    <Box>
       <Stack align="center" gap="lg">
         <Box pb="lg">
           <Center>

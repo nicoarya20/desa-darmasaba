@@ -87,7 +87,7 @@ function Slider() {
      }}>
        <Box
          style={{
-           borderRadius: 16,
+           borderRadius: 8,
            zIndex: 0,
          }}
          pos={"absolute"}

@@ -36,7 +36,7 @@ const letters = ["S", "I", "G", "A", "P"];
 
 function MotoDesa() {
   return (
-    <Box pb={80} px={{ base: "md", md: "xl" }}>
+    <Box px={{ base: "md", md: "xl" }}>
       <Stack align="center" gap="lg">
         <Box>
           <Text

@@ -28,7 +28,7 @@ function MaskotDesa() {
   }
 
   return (
-    <Box pb={80}>
+    <Box>
       <Stack align="center" gap="xl">
         <Stack align="center" gap={10}>
           <Image src="/pudak-icon.png" alt="Ikon Desa" w={{ base: 160, md: 240 }} loading="lazy"/>

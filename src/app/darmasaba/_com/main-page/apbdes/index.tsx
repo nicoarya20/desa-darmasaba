@@ -35,7 +35,7 @@ function Apbdes() {
 
   return (
     <Stack p="sm" gap="xl" bg={colors.Bg}>
-      <Box>
+      <Box mt={"xl"}>
         <Stack gap="sm">
           <Text c={colors["blue-button"]} ta={"center"} fw={"bold"} fz={{ base: "1.8rem", md: "3.4rem" }}>
             {textHeading.title}
@@ -72,12 +72,7 @@ function Apbdes() {
               pos="relative"
               style={{ overflow: 'hidden' }}
             >
-              <Box
-                pos="absolute"
-                inset={0}
-                bg="rgba(0,0,0,0.55)"
-                style={{ backdropFilter: 'blur(4px)' }}
-              />
+               <Box pos="absolute" inset={0} bg="rgba(0,0,0,0.45)" style={{ borderRadius: 16 }} />
               <Stack justify="space-between" h="100%" p="xl" pos="relative">
                 <Text
                   c="white"
@@ -117,7 +112,7 @@ function Apbdes() {
         )}
       </SimpleGrid>
 
-      <Group justify="center" pb={10}>
+      <Group justify="center" pb={"xl"}>
         <Button
           component={Link}
           href="/darmasaba/apbdes"

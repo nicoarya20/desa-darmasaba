@@ -19,7 +19,7 @@ export default function Page() {
     <Box>
       <Stack 
       bg={colors.grey[1]} 
-      gap={"1.5rem"}
+      gap={0}
       >
         <LandingPage />
         <Penghargaan />

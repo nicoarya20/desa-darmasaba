@@ -47,7 +47,7 @@ function Page() {
         <Group justify="space-between" align="center" mb="md">
           <Group gap="sm">
             <IconChalkboard size={28} stroke={1.5} color={colors['blue-button']} />
-            <Title order={2} fz="xl">Daftar Lembaga Pendidikan</Title>
+            <Title order={2} fz="xl" c={colors['blue-button']}>Daftar Lembaga Pendidikan</Title>
           </Group>
           <TextInput
             placeholder='pencarian'

@@ -24,7 +24,7 @@ function SejarahDesa() {
   }
 
   return (
-    <Box py="xl">
+    <Box>
       <Stack align="center" gap="xl">
         <Stack align="center" gap="sm">
           <Center>

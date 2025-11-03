@@ -29,7 +29,7 @@ function DesaAntiKorupsi() {
 
   const data = (state.desaAntikorupsi.findMany.data || []).slice(0, 6);
   return (
-    <Stack gap={"0"} bg={colors.Bg} p={"sm"}>
+    <Stack gap={"0"} bg={colors.Bg} p={"sm"} my={"xs"}>
       <Container w={{ base: "100%", md: "80%" }} p={"md"} >
         <Center>
           <Text fw={"bold"} c={colors["blue-button"]} fz={{ base: "1.8rem", md: "3.4rem" }}>Desa Anti Korupsi</Text>

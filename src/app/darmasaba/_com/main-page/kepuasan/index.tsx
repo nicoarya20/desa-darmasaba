@@ -153,7 +153,7 @@ function Kepuasan() {
 
   if (data.length === 0) {
     return (
-      <Stack p="sm">
+      <Stack p="sm" my={"xs"}>
         <Container w={{ base: "100%", md: "80%" }} p={"sm"}>
           <Center>
             <Text
@@ -421,7 +421,7 @@ function Kepuasan() {
     );
   }
   return (
-    <Stack p={"sm"}>
+    <Stack p={"sm"} my={"xs"}>
       <Container size="lg" px="sm">
         <Center>
           <Text

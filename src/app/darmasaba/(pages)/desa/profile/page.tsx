@@ -26,7 +26,7 @@ function Page() {
             </Text>
           </Stack>
         </Container>
-        <Box px={{ base: "md", md: 100 }}>
+        <Stack px={{ base: "md", md: 100 }} gap={"xl"}>
           <ProfileDesa />
           <SejarahDesa />
           <VisimisiDesa />
@@ -35,7 +35,7 @@ function Page() {
           <ProfilPerbekel />
           <MotoDesa />
           <SemuaPerbekel />
-        </Box>
+        </Stack>
       </Stack>
       {/* Tombol Scroll ke Atas */}
       <ScrollToTopButton />

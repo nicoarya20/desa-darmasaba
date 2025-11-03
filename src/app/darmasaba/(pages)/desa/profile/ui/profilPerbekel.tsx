@@ -25,7 +25,7 @@ function ProfilPerbekel() {
   }
 
   return (
-    <Box pb={80} px="md">
+    <Box px="md">
       <Stack align="center" gap={0} mb={40}>
         <Text
           c={colors['blue-button']}
@@ -116,7 +116,7 @@ function ProfilPerbekel() {
                 </Stack>
                 <Text
                   fz={{ base: "1rem", md: "1.2rem" }}
-                  ta="justify"
+                  ta="left"
                   lh={1.6}
                   dangerouslySetInnerHTML={{ __html: data.pengalaman }}
                   style={{ wordBreak: "break-word", whiteSpace: "normal" }}

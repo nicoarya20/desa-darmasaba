@@ -24,7 +24,7 @@ function VisiMisiDesa() {
   }
 
   return (
-    <Box py="xl">
+    <Box>
       <Stack align="center" gap="xl">
         <Image
           src="/darmasaba-icon.png"
