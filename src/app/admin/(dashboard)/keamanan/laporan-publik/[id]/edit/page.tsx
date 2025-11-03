@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import laporanPublikState from '@/app/admin/(dashboard)/_state/keamanan/laporan-publik';
@@ -52,15 +53,14 @@ function EditLaporanPublik() {
       try {
         const data = await stateLaporan.edit.load(id);
         if (data) {
-          setFormData((prev) => ({
-            ...prev,
-            judul: data.judul ?? prev.judul,
-            lokasi: data.lokasi ?? prev.lokasi,
-            tanggalWaktu: data.tanggalWaktu ?? prev.tanggalWaktu,
-            status: (data.status as Status) ?? prev.status,
-            penanganan: data.penanganan?.[0]?.deskripsi ?? prev.penanganan,
-            kronologi: data.kronologi ?? prev.kronologi,
-          }));
+          setFormData({
+            judul: data.judul ?? '',
+            lokasi: data.lokasi ?? '',
+            tanggalWaktu: data.tanggalWaktu ?? '',
+            status: (data.status as Status) ?? 'Proses',
+            penanganan: data.penanganan?.[0]?.deskripsi ?? '',
+            kronologi: data.kronologi ?? '',
+          });
         }
       } catch (error) {
         console.error("Error loading laporan publik:", error);
@@ -69,7 +69,8 @@ function EditLaporanPublik() {
     };
   
     loadLaporanPublik();
-  }, [params?.id, stateLaporan.edit]);
+  }, [params?.id]);
+  
   
 
   const handleChange = (field: string, value: string | Status) => {

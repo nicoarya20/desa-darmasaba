@@ -12,6 +12,7 @@ import BackButton from '../layanan/_com/BackButto';
 function Page() {
   const router = useTransitionRouter()
   const [loading, setLoading] = useState(false)
+  const [hoveredId, setHoveredId] = useState<string | null>(null)
   const state = useProxy(potensiDesaState)
 
   useEffect(() => {
@@ -88,20 +89,55 @@ function Page() {
                 src={v.image?.link || ''}
                 h={360}
                 radius="xl"
-                style={{ overflow: 'hidden', position: 'relative' }}
+                onMouseEnter={() => setHoveredId(v.id)}
+                onMouseLeave={() => setHoveredId(null)}
+                style={{ 
+                  overflow: 'hidden', 
+                  position: 'relative',
+                  cursor: 'pointer',
+                  transition: 'transform 0.3s ease'
+                }}
               >
+                {/* Overlay with smooth transition */}
                 <Box
                   pos="absolute"
                   inset={0}
-                  bg="linear-gradient(180deg, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.7) 100%)"
+                  bg={hoveredId === v.id 
+                    ? "linear-gradient(180deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.75) 100%)" 
+                    : "linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.15) 100%)"
+                  }
+                  style={{
+                    transition: 'background 0.3s ease'
+                  }}
                 />
+                
                 <Stack justify="space-between" h="100%" gap="md" p="lg" pos="relative">
+                  {/* Kategori badge - always visible */}
                   <Group>
-                    <Paper radius="lg" py={6} px={12} shadow="md" withBorder bg="rgba(255,255,255,0.85)">
+                    <Paper 
+                      radius="lg" 
+                      py={6} 
+                      px={12} 
+                      shadow="md" 
+                      withBorder 
+                      bg="rgba(255,255,255,0.9)"
+                      style={{
+                        transition: 'all 0.3s ease'
+                      }}
+                    >
                       <Text fz="sm" fw={600}>{v.kategori?.nama}</Text>
                     </Paper>
                   </Group>
-                  <Box>
+
+                  {/* Nama potensi - visible on hover */}
+                  <Box
+                    style={{
+                      opacity: hoveredId === v.id ? 1 : 0,
+                      transform: hoveredId === v.id ? 'translateY(0)' : 'translateY(10px)',
+                      transition: 'all 0.3s ease',
+                      pointerEvents: hoveredId === v.id ? 'auto' : 'none'
+                    }}
+                  >
                     <Text
                       fw={800}
                       c="white"
@@ -113,18 +149,28 @@ function Page() {
                       {v.name}
                     </Text>
                   </Box>
-                  <Group justify="center">
-                      <Button
-                        radius="xl"
-                        size="md"
-                        leftSection={<IconEye size={18} />}
-                        bg={colors["blue-button"]}
-                        variant="gradient"
-                        gradient={{ from: colors["blue-button"], to: "#4dabf7", deg: 45 }}
-                        onClick={() => router.push(`/darmasaba/desa/potensi/${v.id}`)}
-                      >
-                        Lihat Detail
-                      </Button>
+
+                  {/* Button - visible on hover */}
+                  <Group 
+                    justify="center"
+                    style={{
+                      opacity: hoveredId === v.id ? 1 : 0,
+                      transform: hoveredId === v.id ? 'translateY(0)' : 'translateY(10px)',
+                      transition: 'all 0.3s ease',
+                      pointerEvents: hoveredId === v.id ? 'auto' : 'none'
+                    }}
+                  >
+                    <Button
+                      radius="xl"
+                      size="md"
+                      leftSection={<IconEye size={18} />}
+                      bg={colors["blue-button"]}
+                      variant="gradient"
+                      gradient={{ from: colors["blue-button"], to: "#4dabf7", deg: 45 }}
+                      onClick={() => router.push(`/darmasaba/desa/potensi/${v.id}`)}
+                    >
+                      Lihat Detail
+                    </Button>
                   </Group>
                 </Stack>
               </BackgroundImage>

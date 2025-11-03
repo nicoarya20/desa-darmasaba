@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
+import { IconKey } from '@/app/admin/(dashboard)/_com/iconMap';
 import programKreatifState from '@/app/admin/(dashboard)/_state/inovasi/program-kreatif';
 import colors from '@/con/colors';
 import {
@@ -11,8 +12,7 @@ import {
   Stack,
   Text,
   TextInput,
-  Title,
-  Tooltip,
+  Title
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -20,7 +20,6 @@ import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 import SelectIconProgramEdit from '../../../../_com/selectIconEdit';
-import { IconKey } from '@/app/admin/(dashboard)/_com/iconMap';
 
 interface FormProgramKreatif {
   name: string;
@@ -41,6 +40,15 @@ function EditProgramKreatifDesa() {
     icon: '',
   });
 
+  const [originalData, setOriginalData] = useState<FormProgramKreatif>({
+    name: '',
+    deskripsi: '',
+    slug: '',
+    icon: '',
+  });
+
+  const [isDataChanged, setIsDataChanged] = useState(false);
+
   // Load data hanya sekali berdasarkan params.id
   useEffect(() => {
     const loadProgramKreatif = async () => {
@@ -51,12 +59,14 @@ function EditProgramKreatifDesa() {
         const data = await stateProgramKreatif.update.load(id);
         if (data) {
           stateProgramKreatif.update.id = id;
-          setFormData({
+          const loadedData = {
             name: data.name || '',
             slug: data.slug || '',
             deskripsi: data.deskripsi || '',
             icon: data.icon || '',
-          });
+          };
+          setFormData(loadedData);
+          setOriginalData(loadedData);
         }
       } catch (error) {
         console.error('Error loading program kreatif:', error);
@@ -67,11 +77,48 @@ function EditProgramKreatifDesa() {
     loadProgramKreatif();
   }, [params?.id]);
 
+  // Deteksi perubahan data
+  useEffect(() => {
+    const hasChanged = 
+      formData.name !== originalData.name ||
+      formData.slug !== originalData.slug ||
+      formData.deskripsi !== originalData.deskripsi ||
+      formData.icon !== originalData.icon;
+    
+    setIsDataChanged(hasChanged);
+  }, [formData, originalData]);
+
+  // Prevent browser back/refresh jika ada perubahan
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (isDataChanged) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [isDataChanged]);
+
   const handleChange =
     (field: keyof FormProgramKreatif) =>
     (value: string) => {
       setFormData((prev) => ({ ...prev, [field]: value }));
     };
+
+  const handleBackClick = () => {
+    if (isDataChanged) {
+      const confirmed = window.confirm(
+        'Anda memiliki perubahan yang belum disimpan. Apakah Anda yakin ingin keluar dari halaman ini? Semua perubahan akan hilang.'
+      );
+      if (confirmed) {
+        router.back();
+      }
+    } else {
+      router.back();
+    }
+  };
 
   const handleSubmit = async () => {
     try {
@@ -82,6 +129,11 @@ function EditProgramKreatifDesa() {
         icon: formData.icon.trim(),
       };
       await stateProgramKreatif.update.submit();
+      
+      // Reset isDataChanged agar tidak muncul konfirmasi setelah save
+      setOriginalData(formData);
+      setIsDataChanged(false);
+      
       router.push('/admin/inovasi/program-kreatif-desa');
     } catch (error) {
       console.error('Error updating program kreatif:', error);
@@ -92,16 +144,14 @@ function EditProgramKreatifDesa() {
   return (
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button
-            variant="subtle"
-            onClick={() => router.back()}
-            p="xs"
-            radius="md"
-          >
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
-        </Tooltip>
+        <Button
+          variant="subtle"
+          onClick={handleBackClick}
+          p="xs"
+          radius="md"
+        >
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Edit Program Kreatif Desa
         </Title>

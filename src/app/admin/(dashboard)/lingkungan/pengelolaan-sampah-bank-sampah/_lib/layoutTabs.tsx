@@ -1,10 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
+import colors from '@/con/colors';
+import { ScrollArea, Stack, Tabs, TabsList, TabsPanel, TabsTab, Title } from '@mantine/core';
+import { IconRecycle, IconTrash } from '@tabler/icons-react';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
-import { ScrollArea, Stack, Tabs, TabsList, TabsPanel, TabsTab, Title, Tooltip } from '@mantine/core';
-import { IconTrash, IconRecycle } from '@tabler/icons-react';
-import colors from '@/con/colors';
 
 function LayoutTabsPengelolaanSampahBankSampah({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -16,14 +16,12 @@ function LayoutTabsPengelolaanSampahBankSampah({ children }: { children: React.R
       value: "listpengelolaansampahbanksampah",
       href: "/admin/lingkungan/pengelolaan-sampah-bank-sampah/list-pengelolaan-sampah-bank-sampah",
       icon: <IconTrash size={18} stroke={1.8} />,
-      tooltip: "Kelola data pengelolaan sampah bank sampah",
     },
     {
       label: "Keterangan Bank Sampah Terdekat",
       value: "keteranganbanksampahterdekat",
       href: "/admin/lingkungan/pengelolaan-sampah-bank-sampah/keterangan-bank-sampah-terdekat",
       icon: <IconRecycle size={18} stroke={1.8} />,
-      tooltip: "Kelola data bank sampah terdekat",
     },
   ];
 
@@ -74,14 +72,8 @@ function LayoutTabsPengelolaanSampahBankSampah({ children }: { children: React.R
             }}
           >
             {tabs.map((tab, i) => (
-              <Tooltip
-                key={i}
-                label={tab.tooltip}
-                position="bottom"
-                withArrow
-                transitionProps={{ transition: 'pop', duration: 200 }}
-              >
                 <TabsTab
+                  key={i}
                   value={tab.value}
                   leftSection={tab.icon}
                   style={{
@@ -92,7 +84,6 @@ function LayoutTabsPengelolaanSampahBankSampah({ children }: { children: React.R
                 >
                   {tab.label}
                 </TabsTab>
-              </Tooltip>
             ))}
           </TabsList>
         </ScrollArea>

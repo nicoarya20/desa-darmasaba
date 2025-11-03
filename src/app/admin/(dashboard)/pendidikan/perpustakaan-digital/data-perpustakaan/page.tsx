@@ -65,26 +65,32 @@ function ListDataPerpustakaan({ search }: { search: string }) {
           <Table striped highlightOnHover withRowBorders style={{ minWidth: '700px' }}>
             <TableThead>
               <TableTr>
-                <TableTh>No</TableTh>
-                <TableTh>Judul</TableTh>
-                <TableTh>Kategori</TableTh>
-                <TableTh>Detail</TableTh>
+                <TableTh style={{ width: '5%' }}>No</TableTh>
+                <TableTh style={{ width: '25%' }}>Judul</TableTh>
+                <TableTh style={{ width: '25%' }}>Kategori</TableTh>
+                <TableTh style={{ width: '23%' }}>Deskripsi</TableTh>
+                <TableTh style={{ width: '22%' }}>Detail</TableTh>
               </TableTr>
             </TableThead>
             <TableTbody>
               {filteredData.length > 0 ? (
                 filteredData.map((item, index) => (
                   <TableTr key={item.id}>
-                    <TableTd>
+                    <TableTd style={{ width: '5%' }}>
                       <Text truncate fz="sm">{index + 1}</Text>
                     </TableTd>
-                    <TableTd>
+                    <TableTd style={{ width: '20%' }}>
                       <Text truncate fz="sm">{item.judul}</Text>
                     </TableTd>
-                    <TableTd>
+                    <TableTd style={{ width: '20%' }}>
                       <Text truncate fz="sm">{item.kategori.name}</Text>
                     </TableTd>
-                    <TableTd>
+                    <TableTd style={{ width: '20%' }}>
+                      <Box w={150}>
+                        <Text dangerouslySetInnerHTML={{ __html: item.deskripsi }} lineClamp={1} truncate fz="sm"/>
+                      </Box>
+                    </TableTd>
+                    <TableTd style={{ width: '20%' }}>
                       <Button
                         variant="light"
                         color="blue"

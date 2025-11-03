@@ -32,10 +32,14 @@ function CreateProgramKreatifDesa() {
   };
 
   const handleSubmit = async () => {
-    await stateCreate.create.create();
-    resetForm();
-    router.push("/admin/inovasi/program-kreatif-desa");
+    const success = await stateCreate.create.create();
+  
+    if (success) {
+      resetForm();
+      router.push("/admin/inovasi/program-kreatif-desa");
+    }
   };
+  
 
   return (
     <Box px={{ base: 'sm', md: 'lg' }} py="md">

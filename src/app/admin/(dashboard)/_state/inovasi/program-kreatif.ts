@@ -6,9 +6,9 @@ import { proxy } from "valtio";
 import { z } from "zod";
 
 const templateForm = z.object({
-  name: z.string().min(1, "Nama minimal 1 karakter"),
-  deskripsi: z.string().min(1, "Deskripsi minimal 1 karakter"),
-  slug: z.string().min(1, "Deskripsi singkat minimal 1 karakter"),
+  name: z.string().min(5, "Nama minimal 5 karakter"),
+  deskripsi: z.string().min(5, "Deskripsi minimal 5 karakter"),
+  slug: z.string().min(5, "Deskripsi singkat minimal 5 karakter"),
   icon: z.string().min(1, "Icon minimal 1 karakter"),
 });
 
@@ -29,26 +29,33 @@ const programKreatifState = proxy({
         const err = `[${cek.error.issues
           .map((v) => `${v.path.join(".")}`)
           .join("\n")}] required`;
-        return toast.error(err);
+        toast.error(err);
+        return false; // ⬅️ ini penting
       }
-
+    
       try {
         programKreatifState.create.loading = true;
         const res = await ApiFetch.api.inovasi.programkreatif["create"].post(
           programKreatifState.create.form
         );
+    
         if (res.status === 200) {
           programKreatifState.findMany.load();
-          return toast.success("success create");
+          toast.success("success create");
+          return true;
         }
-        console.log(res);
-        return toast.error("failed create");
+    
+        toast.error("failed create");
+        return false;
       } catch (error) {
-        console.log((error as Error).message);
+        console.error((error as Error).message);
+        toast.error("Terjadi kesalahan saat create");
+        return false;
       } finally {
         programKreatifState.create.loading = false;
       }
-    },
+    }
+    
   },
   findMany: {
     data: null as any[] | null,

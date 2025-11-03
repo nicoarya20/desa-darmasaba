@@ -5,7 +5,6 @@ import {
   Box,
   Button,
   Group,
-  Image,
   Paper,
   Stack,
   Text,
@@ -21,6 +20,7 @@ import { useProxy } from 'valtio/utils';
 import CreateEditor from '../../../_com/createEditor';
 import desaDigitalState from '../../../_state/inovasi/desa-digital';
 import { Dropzone } from '@mantine/dropzone';
+import ExifOrientationImg from 'react-exif-orientation-img';
 
 export default function CreateDesaDigital() {
   const stateDesaDigital = useProxy(desaDigitalState);
@@ -173,17 +173,16 @@ export default function CreateDesaDigital() {
                   overflow: 'hidden',
                 }}
               >
-                <Image
-                  src={previewImage}
-                  alt="Preview"
-                  radius="md"
-                  style={{
-                    maxHeight: 220,
-                    objectFit: 'cover',
-                    border: '1px solid #e0e0e0',
-                  }}
-                  loading="lazy"
-                />
+                <ExifOrientationImg
+      src={previewImage}
+      alt="Preview"
+      style={{
+        maxHeight: 220,
+        objectFit: 'cover',
+        border: '1px solid #e0e0e0',
+        borderRadius: 12,
+      }}
+    />
               </Box>
             )}
           </Box>

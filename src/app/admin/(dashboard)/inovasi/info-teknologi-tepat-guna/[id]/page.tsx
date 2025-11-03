@@ -54,8 +54,8 @@ function DetailInfoTeknologiTepatGuna() {
       {/* Card Utama */}
       <Paper
         withBorder
-        w={{ base: "100%", md: "70%", lg: "60%" }}
-        bg="#ECEEF8"
+        w={{ base: "100%", md: "50%" }}
+        bg={colors['white-1']}
         p="lg"
         radius="md"
         shadow="sm"
@@ -65,7 +65,7 @@ function DetailInfoTeknologiTepatGuna() {
             Detail Info Teknologi Tepat Guna
           </Text>
 
-          <Paper bg={colors['BG-trans']} p="md" radius="md" shadow="xs">
+          <Paper bg="#ECEEF8" p="md" radius="md" shadow="xs">
             <Stack gap="sm">
               <Box>
                 <Text fz="lg" fw="bold">Judul</Text>
