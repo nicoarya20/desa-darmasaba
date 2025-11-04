@@ -6,6 +6,7 @@ import { useShallowEffect } from '@mantine/hooks';
 import { useParams } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
 import BackButton from '../../../layanan/_com/BackButto';
+import NewsReader from '@/app/darmasaba/_com/NewsReader';
 
 function Page() {
   const detail = useProxy(stateDesaPengumuman.pengumuman.findUnique)
@@ -30,6 +31,9 @@ function Page() {
         <BackButton />
       </Box>
       <Container size="lg" px="md">
+        <Group>
+          <NewsReader />
+        </Group>
         <Stack gap="xs" >
             <Group justify={"space-between"} align={"center"}>
               <Text fz={{ base: "2rem", md: "2rem" }} c={colors["blue-button"]} fw="bold" >
@@ -42,7 +46,7 @@ function Page() {
               </Group>
             </Group>
           <Paper bg={colors["white-1"]} p="md">
-            <Text fz={"md"} style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: detail.data?.content }} />
+            <Text id='news-content' fz={"md"} style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: detail.data?.content }} />
             <Text fz={"md"} c={colors["blue-button"]} fw="bold" >
               {new Date(detail.data?.createdAt).toLocaleDateString('id-ID', {
                 weekday: 'long',

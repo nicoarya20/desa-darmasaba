@@ -3,7 +3,7 @@
 import colors from '@/con/colors';
 import {
   Alert, Box, Button, Center, Group, Image,
-  Paper, Stack, Text, TextInput, Title, Tooltip
+  Paper, Stack, Text, TextInput, Title
 } from '@mantine/core';
 import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
@@ -177,11 +177,9 @@ function EditPejabatDesa() {
     <Box>
       <Stack gap="xs">
         <Group mb="md">
-          <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-            <Button variant="subtle" onClick={handleBack} p="xs" radius="md">
-              <IconArrowBack color={colors['blue-button']} size={24} />
-            </Button>
-          </Tooltip>
+          <Button variant="subtle" onClick={handleBack} p="xs" radius="md">
+            <IconArrowBack color={colors['blue-button']} size={24} />
+          </Button>
           <Title order={4} ml="sm" c="dark">
             Edit Pejabat Desa
           </Title>

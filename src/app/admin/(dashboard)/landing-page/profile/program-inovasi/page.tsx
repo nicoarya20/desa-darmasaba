@@ -51,8 +51,7 @@ function ListProgramInovasi({ search }: { search: string }) {
       <Paper bg={colors['white-1']} withBorder p="lg" radius="md" shadow="sm">
         <Group justify='space-between'>
           <Title order={4}>Daftar Program Inovasi</Title>
-          <Tooltip label="Tambah Program Inovasi" withArrow>
-            <Button
+          <Button
               color="blue"
               leftSection={<IconPlus size={18} />}
               variant="light"
@@ -61,7 +60,6 @@ function ListProgramInovasi({ search }: { search: string }) {
             >
               Tambah Program
             </Button>
-          </Tooltip>
         </Group>
         <Box style={{ overflowX: 'auto' }}>
           <Table highlightOnHover striped verticalSpacing="sm">

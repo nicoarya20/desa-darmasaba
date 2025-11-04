@@ -292,7 +292,8 @@ const navbarListMenu = [
                 href: "/darmasaba/lingkungan/konservasi-adat-bali"
             }
         ]
-    }, {
+    }, 
+    {
         id: "8",
         name: "Pendidikan",
         children: [
@@ -330,6 +331,17 @@ const navbarListMenu = [
                 id: "8.7",
                 name: "Data Pendidikan",
                 href: "/darmasaba/pendidikan/data-pendidikan"
+            }
+        ]
+    },
+    {
+        id: "9",
+        name: "Musik",
+        children: [
+            {
+                id: "9.1",
+                name: "Musik Desa",
+                href: "/darmasaba/musik/musik-desa"
             }
         ]
     }

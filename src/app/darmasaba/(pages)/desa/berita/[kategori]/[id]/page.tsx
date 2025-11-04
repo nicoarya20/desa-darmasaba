@@ -1,8 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import stateDashboardBerita from '@/app/admin/(dashboard)/_state/desa/berita';
+import NewsReader from '@/app/darmasaba/_com/NewsReader';
 import colors from '@/con/colors';
-import { Box, Center, Container, Image, Skeleton, Stack, Text } from '@mantine/core';
+import { Box, Center, Container, Group, Image, Skeleton, Stack, Text } from '@mantine/core';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
@@ -49,6 +50,9 @@ function Page() {
 
   return (
     <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"22"} px={{ base: "md", md: 0 }}>
+      <Group px={{ base: "md", md: 100 }}>
+        <NewsReader />
+      </Group>
       <Container w={{ base: "100%", md: "50%" }} >
         <Box pb={20}>
           <Text ta={"center"} fz={"2.4rem"} c={colors["blue-button"]} fw={"bold"}>
@@ -67,6 +71,7 @@ function Page() {
       <Box px={{ base: "md", md: 100 }}>
         <Stack gap={"xs"}>
           <Text
+           id='news-content'
             py={20}
             fz={{ base: "sm", md: "lg" }}
             lh={{ base: 1.6, md: 1.8 }} // ✅ line-height lebih rapat dan responsif

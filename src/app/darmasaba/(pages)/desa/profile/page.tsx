@@ -11,6 +11,7 @@ import ProfilPerbekel from './ui/profilPerbekel';
 import MotoDesa from './ui/motoDesa';
 import SemuaPerbekel from './ui/semuaPerbekel';
 import ScrollToTopButton from '@/app/darmasaba/_com/scrollToTopButton';
+import StrukturPerangkatDesa from './struktur-perangkat-desa/page';
 
 function Page() {
   return (
@@ -33,6 +34,7 @@ function Page() {
           <LambangDesa />
           <MaskotDesa />
           <ProfilPerbekel />
+          <StrukturPerangkatDesa/>
           <MotoDesa />
           <SemuaPerbekel />
         </Stack>
