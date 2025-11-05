@@ -1,6 +1,6 @@
 'use client'
 import colors from '@/con/colors'
-import { Box, Button, Group, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title, Tooltip } from '@mantine/core'
+import { Box, Button, Group, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title } from '@mantine/core'
 import { useShallowEffect } from '@mantine/hooks'
 import { IconDeviceImacCog, IconId, IconInfoCircle, IconPhone, IconUser } from '@tabler/icons-react'
 import { useRouter } from 'next/navigation'
@@ -32,9 +32,7 @@ function Page() {
         <Stack gap="md">
           <Group justify="space-between">
             <Title order={2} c="dark">Daftar Permohonan Informasi Publik</Title>
-            <Tooltip label="Data permohonan informasi sesuai dengan pengajuan masyarakat" position="bottom">
               <IconInfoCircle size={20} stroke={1.5} />
-            </Tooltip>
           </Group>
 
           {data.length === 0 ? (

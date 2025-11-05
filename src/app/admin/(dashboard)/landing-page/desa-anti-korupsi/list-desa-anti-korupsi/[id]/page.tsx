@@ -2,7 +2,7 @@
 import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
 import korupsiState from '@/app/admin/(dashboard)/_state/landing-page/desa-anti-korupsi';
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, Skeleton, Stack, Text, Tooltip } from '@mantine/core';
+import { Box, Button, Group, Paper, Skeleton, Stack, Text } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -113,7 +113,6 @@ export default function DetailKegiatanDesa() {
               </Box>
 
               <Group gap="sm" mt="md">
-                <Tooltip label="Hapus Data" withArrow position="top">
                   <Button
                     color="red"
                     onClick={() => {
@@ -127,9 +126,7 @@ export default function DetailKegiatanDesa() {
                   >
                     <IconTrash size={20} />
                   </Button>
-                </Tooltip>
 
-                <Tooltip label="Edit Data" withArrow position="top">
                   <Button
                     color="green"
                     onClick={() => router.push(`/admin/landing-page/desa-anti-korupsi/list-desa-anti-korupsi/${data.id}/edit`)}
@@ -139,7 +136,6 @@ export default function DetailKegiatanDesa() {
                   >
                     <IconEdit size={20} />
                   </Button>
-                </Tooltip>
               </Group>
             </Stack>
           </Paper>

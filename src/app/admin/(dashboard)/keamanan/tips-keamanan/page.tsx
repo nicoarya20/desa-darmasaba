@@ -16,14 +16,13 @@ import {
   TableThead,
   TableTr,
   Text,
-  Title,
-  Tooltip,
+  Title
 } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconDeviceImac, IconPlus, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import { useProxy } from 'valtio/utils';
 import { useState } from 'react';
+import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../_com/header';
 import tipsKeamananState from '../../_state/keamanan/tips-keamanan';
 
@@ -74,16 +73,14 @@ function ListTipsKeamanan({ search }: { search: string }) {
       <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
         <Group justify="space-between" mb="md">
           <Title order={4}>Daftar Tips Keamanan</Title>
-          <Tooltip label="Tambah Tips Keamanan" withArrow>
-            <Button
-              leftSection={<IconPlus size={18} />}
-              color="blue"
-              variant="light"
-              onClick={() => router.push('/admin/keamanan/tips-keamanan/create')}
-            >
-              Tambah Baru
-            </Button>
-          </Tooltip>
+          <Button
+            leftSection={<IconPlus size={18} />}
+            color="blue"
+            variant="light"
+            onClick={() => router.push('/admin/keamanan/tips-keamanan/create')}
+          >
+            Tambah Baru
+          </Button>
         </Group>
         <Box style={{ overflowX: "auto" }}>
           <Table highlightOnHover>

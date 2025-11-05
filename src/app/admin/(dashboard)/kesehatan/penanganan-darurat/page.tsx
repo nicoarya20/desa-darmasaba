@@ -16,8 +16,7 @@ import {
   TableThead,
   TableTr,
   Text,
-  Title,
-  Tooltip
+  Title
 } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconDeviceImacCog, IconPlus, IconSearch } from '@tabler/icons-react';
@@ -71,16 +70,14 @@ function ListPenangananDarurat({ search }: { search: string }) {
         {/* Judul + Tombol Tambah */}
         <Group justify="space-between" mb="md">
           <Title order={4}>Daftar Penanganan Darurat</Title>
-          <Tooltip label="Tambah Penanganan Darurat" withArrow>
-            <Button
-              leftSection={<IconPlus size={18} />}
-              color="blue"
-              variant="light"
-              onClick={() => router.push('/admin/kesehatan/penanganan-darurat/create')}
-            >
-              Tambah Baru
-            </Button>
-          </Tooltip>
+          <Button
+            leftSection={<IconPlus size={18} />}
+            color="blue"
+            variant="light"
+            onClick={() => router.push('/admin/kesehatan/penanganan-darurat/create')}
+          >
+            Tambah Baru
+          </Button>
         </Group>
 
         {/* Tabel */}
@@ -111,8 +108,8 @@ function ListPenangananDarurat({ search }: { search: string }) {
                           c="dimmed"
                           truncate
                           lineClamp={1}
-                        dangerouslySetInnerHTML={{ __html: item.deskripsi }}
-                      />
+                          dangerouslySetInnerHTML={{ __html: item.deskripsi }}
+                        />
                       </Box>
                     </TableTd>
                     <TableTd>

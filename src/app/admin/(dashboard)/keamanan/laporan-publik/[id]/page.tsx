@@ -7,16 +7,15 @@ import {
   Paper,
   Skeleton,
   Stack,
-  Text,
-  Tooltip,
+  Text
 } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
-import { useProxy } from 'valtio/utils';
-import laporanPublikState from '../../../_state/keamanan/laporan-publik';
 import { useState } from 'react';
+import { useProxy } from 'valtio/utils';
 import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
+import laporanPublikState from '../../../_state/keamanan/laporan-publik';
 
 function DetailLaporanPublik() {
   const [modalHapus, setModalHapus] = useState(false);
@@ -102,12 +101,12 @@ function DetailLaporanPublik() {
                     padding: '4px 12px',
                     borderRadius: '16px',
                     backgroundColor:
-                     data.status === 'Selesai' ? '#94EF95FF' :
-                       data.status === 'Proses' ? '#F1D295FF' :
+                      data.status === 'Selesai' ? '#94EF95FF' :
+                        data.status === 'Proses' ? '#F1D295FF' :
                           '#F38E8EFF',
                     color:
-                     data.status === 'Selesai' ? '#01BA01FF' :
-                       data.status === 'Proses' ? '#B67A00FF' :
+                      data.status === 'Selesai' ? '#01BA01FF' :
+                        data.status === 'Proses' ? '#B67A00FF' :
                           '#AE1700FF',
                     fontWeight: 900,
                     fontSize: '0.75rem',
@@ -146,35 +145,31 @@ function DetailLaporanPublik() {
 
               {/* Tombol Aksi */}
               <Group gap="sm" mt="sm">
-                <Tooltip label="Hapus Laporan Publik" withArrow position="top">
-                  <Button
-                    color="red"
-                    onClick={() => {
-                      setSelectedId(data.id);
-                      setModalHapus(true);
-                    }}
-                    variant="light"
-                    radius="md"
-                    size="md"
-                    disabled={stateLaporan.delete.loading}
-                  >
-                    <IconTrash size={20} />
-                  </Button>
-                </Tooltip>
+                <Button
+                  color="red"
+                  onClick={() => {
+                    setSelectedId(data.id);
+                    setModalHapus(true);
+                  }}
+                  variant="light"
+                  radius="md"
+                  size="md"
+                  disabled={stateLaporan.delete.loading}
+                >
+                  <IconTrash size={20} />
+                </Button>
 
-                <Tooltip label="Edit Laporan Publik" withArrow position="top">
-                  <Button
-                    color="green"
-                    onClick={() =>
-                      router.push(`/admin/keamanan/laporan-publik/${data.id}/edit`)
-                    }
-                    variant="light"
-                    radius="md"
-                    size="md"
-                  >
-                    <IconEdit size={20} />
-                  </Button>
-                </Tooltip>
+                <Button
+                  color="green"
+                  onClick={() =>
+                    router.push(`/admin/keamanan/laporan-publik/${data.id}/edit`)
+                  }
+                  variant="light"
+                  radius="md"
+                  size="md"
+                >
+                  <IconEdit size={20} />
+                </Button>
               </Group>
             </Stack>
           </Paper>

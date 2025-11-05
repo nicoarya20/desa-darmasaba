@@ -16,8 +16,7 @@ import {
   TableThead,
   TableTr,
   Text,
-  Title,
-  Tooltip,
+  Title
 } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconDeviceImac, IconPlus, IconSearch } from '@tabler/icons-react';
@@ -76,16 +75,14 @@ function ListPolsekTerdekat({ search }: { search: string }) {
       <Paper withBorder bg={colors['white-1']} p={'lg'} shadow="md" radius="md">
         <Group justify="space-between" mb="md">
           <Title order={4}>Daftar Polsek Terdekat</Title>
-          <Tooltip label="Tambah Polsek" withArrow>
-            <Button
-              leftSection={<IconPlus size={18} />}
-              color="blue"
-              variant="light"
-              onClick={() => router.push('/admin/keamanan/polsek-terdekat/create')}
-            >
-              Tambah Baru
-            </Button>
-          </Tooltip>
+          <Button
+            leftSection={<IconPlus size={18} />}
+            color="blue"
+            variant="light"
+            onClick={() => router.push('/admin/keamanan/polsek-terdekat/create')}
+          >
+            Tambah Baru
+          </Button>
         </Group>
 
         <Box style={{ overflowX: "auto" }}>
@@ -110,11 +107,11 @@ function ListPolsekTerdekat({ search }: { search: string }) {
                       </Box>
                     </TableTd>
                     <TableTd>{item.jarakKeDesa}</TableTd>
-                      <TableTd>
-                    <Box w={150}>
+                    <TableTd>
+                      <Box w={150}>
                         <Text truncate="end" lineClamp={1}>{item.alamat}</Text>
-                    </Box>
-                      </TableTd>
+                      </Box>
+                    </TableTd>
                     <TableTd>
                       <Button
                         variant="light"

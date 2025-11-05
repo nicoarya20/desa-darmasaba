@@ -15,8 +15,7 @@ import {
   Stack,
   Text,
   TextInput,
-  Title,
-  Tooltip,
+  Title
 } from "@mantine/core";
 import { Dropzone } from "@mantine/dropzone";
 import {
@@ -116,7 +115,6 @@ function EditBerita() {
     <Box px={{ base: "sm", md: "lg" }} py="md">
       {/* Header */}
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
           <Button
             variant="subtle"
             onClick={() => router.back()}
@@ -125,7 +123,6 @@ function EditBerita() {
           >
             <IconArrowBack color={colors["blue-button"]} size={24} />
           </Button>
-        </Tooltip>
         <Title order={4} ml="sm" c="dark">
           Edit Berita
         </Title>

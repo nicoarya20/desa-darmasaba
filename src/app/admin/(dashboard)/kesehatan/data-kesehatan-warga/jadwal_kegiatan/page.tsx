@@ -5,8 +5,8 @@ import {
   Button,
   Center,
   Group,
-  Paper,
   Pagination,
+  Paper,
   Skeleton,
   Stack,
   Table,
@@ -16,16 +16,15 @@ import {
   TableThead,
   TableTr,
   Text,
-  Title,
-  Tooltip,
+  Title
 } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack, IconDeviceImacCog, IconPlus, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../../_com/header';
 import jadwalKegiatanState from '../../../_state/kesehatan/data_kesehatan_warga/jadwalKegiatan';
-import { useState } from 'react';
 
 function JadwalKegiatan() {
   const router = useRouter();
@@ -80,18 +79,16 @@ function ListJadwalKegiatan({ search }: { search: string }) {
         {/* Judul + Tombol Tambah */}
         <Group justify="space-between" mb="md">
           <Title order={4}>Daftar Jadwal Kegiatan</Title>
-          <Tooltip label="Tambah Jadwal Kegiatan" withArrow>
-            <Button
-              leftSection={<IconPlus size={18} />}
-              color="blue"
-              variant="light"
-              onClick={() =>
-                router.push('/admin/kesehatan/data-kesehatan-warga/jadwal_kegiatan/create')
-              }
-            >
-              Tambah Baru
-            </Button>
-          </Tooltip>
+          <Button
+            leftSection={<IconPlus size={18} />}
+            color="blue"
+            variant="light"
+            onClick={() =>
+              router.push('/admin/kesehatan/data-kesehatan-warga/jadwal_kegiatan/create')
+            }
+          >
+            Tambah Baru
+          </Button>
         </Group>
 
         {/* Tabel */}
@@ -119,14 +116,14 @@ function ListJadwalKegiatan({ search }: { search: string }) {
                     </TableTd>
                     <TableTd>
                       <Box w={150}>
-                      {new Date(item.informasijadwalkegiatan.tanggal).toLocaleDateString(
-                        'id-ID',
-                        {
-                          day: '2-digit',
-                          month: 'long',
-                          year: 'numeric',
-                        }
-                      )}
+                        {new Date(item.informasijadwalkegiatan.tanggal).toLocaleDateString(
+                          'id-ID',
+                          {
+                            day: '2-digit',
+                            month: 'long',
+                            year: 'numeric',
+                          }
+                        )}
                       </Box>
                     </TableTd>
                     <TableTd>

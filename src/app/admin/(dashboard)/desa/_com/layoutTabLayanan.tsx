@@ -1,10 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import colors from '@/con/colors';
-import { ScrollArea, Stack, Tabs, TabsList, TabsPanel, TabsTab, Title, Tooltip } from '@mantine/core';
+import { ScrollArea, Stack, Tabs, TabsList, TabsPanel, TabsTab, Title } from '@mantine/core';
+import { IconBuildingStore, IconFileText, IconSparkles, IconUsers, IconUsersPlus } from '@tabler/icons-react';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
-import { IconFileText, IconBuildingStore, IconSparkles, IconUsers, IconUsersPlus } from '@tabler/icons-react';
 
 function LayoutTabsLayanan({ children }: { children: React.ReactNode }) {
     const router = useRouter()
@@ -14,36 +14,31 @@ function LayoutTabsLayanan({ children }: { children: React.ReactNode }) {
             label: "Pelayanan Surat Keterangan",
             value: "pelayanansuratketerangan",
             href: "/admin/desa/layanan/pelayanan_surat_keterangan",
-            icon: <IconFileText size={18} stroke={1.8} />,
-            tooltip: "Layanan terkait surat keterangan resmi desa"
+            icon: <IconFileText size={18} stroke={1.8} />
         },
         {
             label: "Pelayanan Perizinan Berusaha",
             value: "pelayananperizinanusaha",
             href: "/admin/desa/layanan/pelayanan_perizinan_berusaha",
-            icon: <IconBuildingStore size={18} stroke={1.8} />,
-            tooltip: "Layanan untuk izin usaha masyarakat"
+            icon: <IconBuildingStore size={18} stroke={1.8} />
         },
         {
             label: "Pelayanan Telunjuk Sakti Desa",
             value: "pelayanantelunjuksaktidesa",
             href: "/admin/desa/layanan/pelayanan_telunjuk_sakti_desa",
-            icon: <IconSparkles size={18} stroke={1.8} />,
-            tooltip: "Layanan inovasi khusus desa"
+            icon: <IconSparkles size={18} stroke={1.8} />
         },
         {
             label: "Pelayanan Penduduk Non-Permanent",
             value: "pelayanannonpermanent",
             href: "/admin/desa/layanan/pelayanan_penduduk_non_permanent",
-            icon: <IconUsers size={18} stroke={1.8} />,
-            tooltip: "Pendataan penduduk non-permanent"
+            icon: <IconUsers size={18} stroke={1.8} />
         },
         {
             label: "Ajukan Permohonan",
             value: "ajukanpermohonan",
             href: "/admin/desa/layanan/ajukan_permohonan",
-            icon: <IconUsersPlus size={18} stroke={1.8} />,
-            tooltip: "Ajukan permohonan"
+            icon: <IconUsersPlus size={18} stroke={1.8} />
         }
     ];
 
@@ -91,14 +86,8 @@ function LayoutTabsLayanan({ children }: { children: React.ReactNode }) {
                         }}
                     >
                         {tabs.map((tab, i) => (
-                            <Tooltip
-                                key={i}
-                                label={tab.tooltip}
-                                position="bottom"
-                                withArrow
-                                transitionProps={{ transition: 'pop', duration: 200 }}
-                            >
                                 <TabsTab
+                                key={i}
                                     value={tab.value}
                                     leftSection={tab.icon}
                                     style={{
@@ -109,7 +98,6 @@ function LayoutTabsLayanan({ children }: { children: React.ReactNode }) {
                                 >
                                     {tab.label}
                                 </TabsTab>
-                            </Tooltip>
                         ))}
                     </TabsList>
                 </ScrollArea>

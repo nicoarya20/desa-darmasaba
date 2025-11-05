@@ -1,24 +1,23 @@
 'use client'
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useState, useCallback } from 'react';
-import { useRouter, useParams } from 'next/navigation';
-import { useProxy } from 'valtio/utils';
+import indeksKepuasanState from '@/app/admin/(dashboard)/_state/landing-page/indeks-kepuasan';
 import colors from '@/con/colors';
 import {
   Box,
   Button,
   Group,
   Paper,
-  Stack,
-  Title,
-  TextInput,
-  Text,
   Select,
-  Tooltip,
+  Stack,
+  Text,
+  TextInput,
+  Title
 } from '@mantine/core';
 import { IconArrowBack, IconDeviceFloppy } from '@tabler/icons-react';
-import indeksKepuasanState from '@/app/admin/(dashboard)/_state/landing-page/indeks-kepuasan';
+import { useParams, useRouter } from 'next/navigation';
+import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
+import { useProxy } from 'valtio/utils';
 
 interface FormResponden {
   name: string;
@@ -120,11 +119,9 @@ function EditResponden() {
   return (
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
           <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
             <IconArrowBack color={colors['blue-button']} size={24} />
           </Button>
-        </Tooltip>
         <Title order={4} ml="sm" c="dark">
           Edit Responden
         </Title>

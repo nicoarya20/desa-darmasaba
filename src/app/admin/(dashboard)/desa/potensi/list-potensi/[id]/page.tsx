@@ -1,13 +1,13 @@
 'use client'
-import colors from '@/con/colors';
-import { Box, Button, Group, Image, Paper, Skeleton, Stack, Text, Tooltip } from '@mantine/core';
-import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
-import { useRouter, useParams } from 'next/navigation';
-import { useState } from 'react';
-import { useProxy } from 'valtio/utils';
-import { useShallowEffect } from '@mantine/hooks';
 import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
 import potensiDesaState from '@/app/admin/(dashboard)/_state/desa/potensi';
+import colors from '@/con/colors';
+import { Box, Button, Group, Image, Paper, Skeleton, Stack, Text } from '@mantine/core';
+import { useShallowEffect } from '@mantine/hooks';
+import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
+import { useParams, useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { useProxy } from 'valtio/utils';
 
 export default function DetailPotensi() {
   const router = useRouter();
@@ -108,7 +108,6 @@ export default function DetailPotensi() {
               </Box>
 
               <Group gap="sm">
-                <Tooltip label="Hapus Potensi" withArrow position="top">
                   <Button
                     color="red"
                     onClick={() => {
@@ -121,9 +120,7 @@ export default function DetailPotensi() {
                   >
                     <IconTrash size={20} />
                   </Button>
-                </Tooltip>
 
-                <Tooltip label="Edit Potensi" withArrow position="top">
                   <Button
                     color="green"
                     onClick={() =>
@@ -135,7 +132,6 @@ export default function DetailPotensi() {
                   >
                     <IconEdit size={20} />
                   </Button>
-                </Tooltip>
               </Group>
             </Stack>
           </Paper>

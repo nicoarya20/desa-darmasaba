@@ -1,9 +1,9 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, Skeleton, Stack, Text, Tooltip } from '@mantine/core';
+import { Box, Button, Group, Paper, Skeleton, Stack, Text } from '@mantine/core';
+import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
-import { useShallowEffect } from '@mantine/hooks';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
@@ -93,7 +93,6 @@ function DetailDaftarInformasiPublik() {
               </Box>
 
               <Group gap="sm" mt="md">
-                <Tooltip label="Edit Informasi" withArrow position="top">
                   <Button
                     variant="light"
                     color="green"
@@ -103,9 +102,7 @@ function DetailDaftarInformasiPublik() {
                   >
                     Edit
                   </Button>
-                </Tooltip>
 
-                <Tooltip label="Hapus Informasi" withArrow position="top">
                   <Button
                     variant="light"
                     color="red"
@@ -119,7 +116,6 @@ function DetailDaftarInformasiPublik() {
                   >
                     Hapus
                   </Button>
-                </Tooltip>
               </Group>
             </Stack>
           </Paper>

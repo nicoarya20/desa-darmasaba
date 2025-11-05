@@ -1,6 +1,6 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Center, Group, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title, Tooltip } from '@mantine/core';
+import { Box, Button, Center, Group, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconDeviceImacCog, IconPlus, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
@@ -59,7 +59,6 @@ function ListSdgsDesa({ search }: { search: string }) {
         <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
           <Group justify="space-between" mb="md">
             <Title order={4}>Daftar Sdgs Desa</Title>
-            <Tooltip label="Tambah Sdgs Desa" withArrow>
               <Button 
                 leftSection={<IconPlus size={18} />} 
                 color={colors['blue-button']} 
@@ -68,7 +67,6 @@ function ListSdgsDesa({ search }: { search: string }) {
               >
                 Tambah Baru
               </Button>
-            </Tooltip>
           </Group>
           <Box style={{ overflowX: 'auto' }}>
             <Table highlightOnHover striped verticalSpacing="sm">
@@ -98,13 +96,11 @@ function ListSdgsDesa({ search }: { search: string }) {
       <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
         <Group justify="space-between" mb="md">
           <Title order={4}>Daftar Sdgs Desa</Title>
-          <Tooltip label="Tambah Sdgs Desa" withArrow>
             <Button leftSection={<IconPlus size={18} />} color="blue" variant="light"
               onClick={() => router.push('/admin/landing-page/sdgs-desa/create')}
             >
               Tambah Baru
             </Button>
-          </Tooltip>
         </Group>
         <Box style={{ overflowX: 'auto' }}>
           <Table highlightOnHover>
@@ -129,7 +125,6 @@ function ListSdgsDesa({ search }: { search: string }) {
                     </Text>
                   </TableTd>
                   <TableTd style={{ width: '20%', textAlign: 'center' }}>
-                    <Tooltip label="Lihat Detail" withArrow>
                       <Button 
                         size="xs"
                         radius="md"
@@ -140,7 +135,6 @@ function ListSdgsDesa({ search }: { search: string }) {
                       >
                         Detail
                       </Button>
-                    </Tooltip>
                   </TableTd>
                 </TableTr>
               ))}

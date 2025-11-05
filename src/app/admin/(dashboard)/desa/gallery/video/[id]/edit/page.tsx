@@ -10,12 +10,11 @@ import {
   Paper,
   Stack,
   TextInput,
-  Title,
-  Tooltip
+  Title
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState, useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 import { convertYoutubeUrlToEmbed } from '../../../lib/youtube-utils';
@@ -89,7 +88,6 @@ function EditVideo() {
   return (
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
           <Button
             variant="subtle"
             onClick={() => router.back()}
@@ -98,7 +96,6 @@ function EditVideo() {
           >
             <IconArrowBack color={colors['blue-button']} size={24} />
           </Button>
-        </Tooltip>
         <Title order={4} ml="sm" c="dark">
           Edit Video
         </Title>

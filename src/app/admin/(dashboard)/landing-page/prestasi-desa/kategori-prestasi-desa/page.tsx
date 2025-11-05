@@ -1,6 +1,6 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Center, Group, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title, Tooltip } from '@mantine/core';
+import { Box, Button, Center, Group, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconEdit, IconPlus, IconSearch, IconTrash } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
@@ -68,11 +68,9 @@ function ListKategoriPrestasi({ search }: { search: string }) {
       <Paper bg={colors['white-1']} p="lg" radius="md" shadow="sm" withBorder>
         <Group justify="space-between" mb="md">
           <Title order={4} c="dark">List Kategori Prestasi</Title>
-          <Tooltip label="Tambah Kategori Prestasi" withArrow>
             <Button leftSection={<IconPlus size={18} />} color="blue" variant="light" onClick={() => router.push('/admin/landing-page/prestasi-desa/kategori-prestasi-desa/create')}>
               Tambah Baru
             </Button>
-          </Tooltip>
         </Group>
 
         <Box style={{ overflowX: 'auto' }}>
@@ -102,7 +100,6 @@ function ListKategoriPrestasi({ search }: { search: string }) {
                       </Box>
                     </TableTd>
                     <TableTd style={{ textAlign: 'center', width: '120px' }}>
-                      <Tooltip label="Edit" withArrow position="top">
                         <Button
                           variant="light"
                           color="green"
@@ -111,10 +108,8 @@ function ListKategoriPrestasi({ search }: { search: string }) {
                         >
                           <IconEdit size={18} />
                         </Button>
-                      </Tooltip>
                     </TableTd>
                     <TableTd style={{ textAlign: 'center', width: '120px' }}>
-                      <Tooltip label="Hapus" withArrow position="top">
                         <Button
                           variant="light"
                           color="red"
@@ -126,7 +121,6 @@ function ListKategoriPrestasi({ search }: { search: string }) {
                         >
                           <IconTrash size={18} />
                         </Button>
-                      </Tooltip>
                     </TableTd>
                   </TableTr>
                 ))

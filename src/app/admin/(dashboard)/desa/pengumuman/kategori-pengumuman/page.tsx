@@ -2,11 +2,13 @@
 'use client'
 import colors from '@/con/colors';
 import {
-  Box, Button, Center, Paper, Skeleton, Stack,
+  Box, Button, Center,
+  Pagination,
+  Paper, Skeleton, Stack,
   Table, TableTbody, TableTd, TableTh, TableThead, TableTr,
-  Text, Title, Tooltip, Pagination
+  Text, Title
 } from '@mantine/core';
-import { IconEdit, IconSearch, IconTrash, IconPlus } from '@tabler/icons-react';
+import { IconEdit, IconPlus, IconSearch, IconTrash } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
@@ -66,16 +68,14 @@ function ListKategoriPengumuman({ search }: { search: string }) {
         <Stack>
           <Box style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 15 }}>
             <Title order={4}>List Kategori Pengumuman</Title>
-            <Tooltip label="Tambah Kategori Pengumuman" withArrow>
-              <Button
-                leftSection={<IconPlus size={18} />}
-                color="blue"
-                variant="light"
-                onClick={() => router.push('/admin/desa/pengumuman/kategori-pengumuman/create')}
-              >
-                Tambah Baru
-              </Button>
-            </Tooltip>
+            <Button
+              leftSection={<IconPlus size={18} />}
+              color="blue"
+              variant="light"
+              onClick={() => router.push('/admin/desa/pengumuman/kategori-pengumuman/create')}
+            >
+              Tambah Baru
+            </Button>
           </Box>
 
           <Box style={{ overflowX: 'auto' }}>
@@ -99,29 +99,25 @@ function ListKategoriPengumuman({ search }: { search: string }) {
                         <Text truncate lineClamp={1}>{item.name}</Text>
                       </TableTd>
                       <TableTd>
-                        <Tooltip label="Edit Kategori Pengumuman" withArrow>
-                          <Button
-                            variant='light'
-                            color='green'
-                            onClick={() => router.push(`/admin/desa/pengumuman/kategori-pengumuman/${item.id}`)}
-                          >
-                            <IconEdit size={20} />
-                          </Button>
-                        </Tooltip>
+                        <Button
+                          variant='light'
+                          color='green'
+                          onClick={() => router.push(`/admin/desa/pengumuman/kategori-pengumuman/${item.id}`)}
+                        >
+                          <IconEdit size={20} />
+                        </Button>
                       </TableTd>
                       <TableTd>
-                        <Tooltip label="Hapus Kategori Pengumuman" withArrow>
-                          <Button
-                            variant='light'
-                            color='red'
-                            disabled={listDataState.delete.loading}
-                            onClick={() => {
-                              setSelectedId(item.id)
-                              setModalHapus(true)
-                            }}>
-                            <IconTrash size={20} />
-                          </Button>
-                        </Tooltip>
+                        <Button
+                          variant='light'
+                          color='red'
+                          disabled={listDataState.delete.loading}
+                          onClick={() => {
+                            setSelectedId(item.id)
+                            setModalHapus(true)
+                          }}>
+                          <IconTrash size={20} />
+                        </Button>
                       </TableTd>
                     </TableTr>
                   ))

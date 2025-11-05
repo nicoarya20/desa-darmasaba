@@ -1,14 +1,14 @@
 'use client'
-import { useProxy } from 'valtio/utils';
-import { Box, Button, Group, Image, Paper, Skeleton, Stack, Text, Tooltip } from '@mantine/core';
+import { Box, Button, Group, Image, Paper, Skeleton, Stack, Text } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { useProxy } from 'valtio/utils';
 
-import colors from '@/con/colors';
 import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
 import stateDashboardBerita from '@/app/admin/(dashboard)/_state/desa/berita';
+import colors from '@/con/colors';
 
 function DetailBerita() {
   const beritaState = useProxy(stateDashboardBerita);
@@ -111,7 +111,6 @@ function DetailBerita() {
 
               {/* Action Button */}
               <Group gap="sm">
-                <Tooltip label="Hapus Berita" withArrow position="top">
                   <Button
                     color="red"
                     onClick={() => {
@@ -124,9 +123,7 @@ function DetailBerita() {
                   >
                     <IconTrash size={20} />
                   </Button>
-                </Tooltip>
 
-                <Tooltip label="Edit Berita" withArrow position="top">
                   <Button
                     color="green"
                     onClick={() => router.push(`/admin/desa/berita/list-berita/${data.id}/edit`)}
@@ -136,7 +133,6 @@ function DetailBerita() {
                   >
                     <IconEdit size={20} />
                   </Button>
-                </Tooltip>
               </Group>
             </Stack>
           </Paper>

@@ -18,8 +18,7 @@ import {
   TableThead,
   TableTr,
   Text,
-  Title,
-  Tooltip
+  Title
 } from '@mantine/core';
 import { useMediaQuery, useShallowEffect } from '@mantine/hooks';
 import { IconDeviceImacCog, IconPlus, IconSearch } from '@tabler/icons-react';
@@ -117,20 +116,18 @@ function ListGrafikHasilKepuasanMasyarakat({ search }: { search: string }) {
         {/* Judul + Tombol Tambah */}
         <Group justify="space-between" mb="md">
           <Title order={4}>Daftar Grafik Hasil Kepuasan Masyarakat</Title>
-          <Tooltip label="Tambah Data" withArrow>
-            <Button
-              leftSection={<IconPlus size={18} />}
-              color="blue"
-              variant="light"
-              onClick={() =>
-                router.push(
-                  '/admin/kesehatan/data-kesehatan-warga/grafik_hasil_kepuasan/create'
-                )
-              }
-            >
-              Tambah Baru
-            </Button>
-          </Tooltip>
+          <Button
+            leftSection={<IconPlus size={18} />}
+            color="blue"
+            variant="light"
+            onClick={() =>
+              router.push(
+                '/admin/kesehatan/data-kesehatan-warga/grafik_hasil_kepuasan/create'
+              )
+            }
+          >
+            Tambah Baru
+          </Button>
         </Group>
 
         {/* Tabel */}

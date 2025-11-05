@@ -9,8 +9,7 @@ import {
   Paper,
   Skeleton,
   Stack,
-  Text,
-  Tooltip,
+  Text
 } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
@@ -130,7 +129,6 @@ function DetailPelayananTelunjukSakti() {
               </Box>
 
               <Group gap="sm">
-                <Tooltip label="Hapus Layanan" withArrow position="top">
                   <Button
                     color="red"
                     onClick={() => {
@@ -144,9 +142,7 @@ function DetailPelayananTelunjukSakti() {
                   >
                     <IconTrash size={20} />
                   </Button>
-                </Tooltip>
 
-                <Tooltip label="Edit Layanan" withArrow position="top">
                   <Button
                     color="green"
                     onClick={() =>
@@ -160,7 +156,6 @@ function DetailPelayananTelunjukSakti() {
                   >
                     <IconEdit size={20} />
                   </Button>
-                </Tooltip>
               </Group>
             </Stack>
           </Paper>

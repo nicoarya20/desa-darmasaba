@@ -10,8 +10,7 @@ import {
   Paper,
   Stack,
   TextInput,
-  Title,
-  Tooltip,
+  Title
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -77,7 +76,6 @@ function EditKategoriBerita() {
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
       {/* Back Button + Title */}
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
           <Button
             variant="subtle"
             onClick={() => router.back()}
@@ -86,7 +84,6 @@ function EditKategoriBerita() {
           >
             <IconArrowBack color={colors['blue-button']} size={24} />
           </Button>
-        </Tooltip>
         <Title order={4} ml="sm" c="dark">
           Edit Kategori Berita
         </Title>

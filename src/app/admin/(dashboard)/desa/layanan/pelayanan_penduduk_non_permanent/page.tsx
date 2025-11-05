@@ -11,8 +11,7 @@ import {
   Skeleton,
   Stack,
   Text,
-  Title,
-  Tooltip,
+  Title
 } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconEdit } from '@tabler/icons-react';
@@ -51,7 +50,6 @@ function PelayananPendudukNonPermanent() {
             </Title>
           </GridCol>
           <GridCol span={{ base: 12, md: 1 }}>
-            <Tooltip label="Edit Data Pelayanan" withArrow>
               <Button
                 c="green"
                 variant="light"
@@ -65,7 +63,6 @@ function PelayananPendudukNonPermanent() {
               >
                 Edit
               </Button>
-            </Tooltip>
           </GridCol>
         </Grid>
 

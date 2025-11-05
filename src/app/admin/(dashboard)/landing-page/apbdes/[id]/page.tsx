@@ -1,7 +1,7 @@
 'use client'
 import { useProxy } from 'valtio/utils';
 
-import { Box, Button, Group, Image, Paper, Skeleton, Stack, Text, Tooltip } from '@mantine/core';
+import { Box, Button, Group, Image, Paper, Skeleton, Stack, Text } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack, IconEdit, IconFile, IconTrash } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -117,7 +117,6 @@ function DetailAPBDes() {
               </Box>
 
               <Group gap="sm" mt="md">
-                <Tooltip label="Hapus APBDes" withArrow position="top">
                   <Button
                     color="red"
                     onClick={() => {
@@ -131,9 +130,7 @@ function DetailAPBDes() {
                   >
                     <IconTrash size={20} />
                   </Button>
-                </Tooltip>
 
-                <Tooltip label="Edit APBDes" withArrow position="top">
                   <Button
                     color="green"
                     onClick={() => router.push(`/admin/landing-page/apbdes/${data.id}/edit`)}
@@ -143,7 +140,6 @@ function DetailAPBDes() {
                   >
                     <IconEdit size={20} />
                   </Button>
-                </Tooltip>
               </Group>
             </Stack>
           </Paper>

@@ -1,19 +1,18 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
-import { usePathname, useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import colors from '@/con/colors';
 import {
+  ScrollArea,
   Stack,
   Tabs,
   TabsList,
   TabsPanel,
   TabsTab,
-  Title,
-  Tooltip,
-  ScrollArea,
+  Title
 } from '@mantine/core';
-import { IconBulb, IconUsers, IconBrandFacebook } from '@tabler/icons-react';
-import colors from '@/con/colors';
+import { IconBrandFacebook, IconBulb, IconUsers } from '@tabler/icons-react';
+import { usePathname, useRouter } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
 
 function LayoutTabs({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -25,21 +24,18 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
       value: "program-inovasi",
       href: "/admin/landing-page/profile/program-inovasi",
       icon: <IconBulb size={18} stroke={1.8} />,
-      tooltip: "Lihat dan kelola program inovasi desa",
     },
     {
       label: "Pejabat Desa",
       value: "pejabat-desa",
       href: "/admin/landing-page/profile/pejabat-desa",
       icon: <IconUsers size={18} stroke={1.8} />,
-      tooltip: "Kelola data pejabat desa",
     },
     {
       label: "Media Sosial",
       value: "media-sosial",
       href: "/admin/landing-page/profile/media-sosial",
       icon: <IconBrandFacebook size={18} stroke={1.8} />,
-      tooltip: "Atur tautan media sosial desa",
     },
   ];
 
@@ -92,26 +88,19 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
             }}
           >
             {tabs.map((tab, i) => (
-              <Tooltip
+              <TabsTab
                 key={i}
-                label={tab.tooltip}
-                position="bottom"
-                withArrow
-                transitionProps={{ transition: "pop", duration: 200 }}
+                value={tab.value}
+                leftSection={tab.icon}
+                style={{
+                  fontWeight: 600,
+                  fontSize: "0.9rem",
+                  transition: "all 0.2s ease",
+                  flexShrink: 0, // ✅ jangan mengecil aneh-aneh
+                }}
               >
-                <TabsTab
-                  value={tab.value}
-                  leftSection={tab.icon}
-                  style={{
-                    fontWeight: 600,
-                    fontSize: "0.9rem",
-                    transition: "all 0.2s ease",
-                    flexShrink: 0, // ✅ jangan mengecil aneh-aneh
-                  }}
-                >
-                  {tab.label}
-                </TabsTab>
-              </Tooltip>
+                {tab.label}
+              </TabsTab>
             ))}
           </TabsList>
         </ScrollArea>

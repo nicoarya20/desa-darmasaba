@@ -2,7 +2,7 @@
 import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
 import stateProfileDesa from '@/app/admin/(dashboard)/_state/desa/profile';
 import colors from '@/con/colors';
-import { Box, Button, Group, Image, Paper, Skeleton, Stack, Text, Tooltip } from '@mantine/core';
+import { Box, Button, Group, Image, Paper, Skeleton, Stack, Text } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack, IconEdit, IconX } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -98,7 +98,6 @@ function DetailPerbekelDariMasa() {
               </Box>
 
               <Group gap="sm">
-                <Tooltip label="Hapus Perbekel" withArrow position="top">
                   <Button
                     color="red"
                     onClick={() => {
@@ -111,9 +110,7 @@ function DetailPerbekelDariMasa() {
                   >
                     <IconX size={20} />
                   </Button>
-                </Tooltip>
 
-                <Tooltip label="Edit Perbekel" withArrow position="top">
                   <Button
                     color="green"
                     onClick={() => router.push(`/admin/desa/profile/profile-perbekel-dari-masa-ke-masa/${data.id}/edit`)}
@@ -123,7 +120,6 @@ function DetailPerbekelDariMasa() {
                   >
                     <IconEdit size={20} />
                   </Button>
-                </Tooltip>
               </Group>
             </Stack>
           </Paper>

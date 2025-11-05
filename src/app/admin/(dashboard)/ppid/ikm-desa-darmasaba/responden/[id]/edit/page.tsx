@@ -2,10 +2,10 @@
 'use client'
 import indeksKepuasanState from '@/app/admin/(dashboard)/_state/landing-page/indeks-kepuasan';
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, Select, Stack, TextInput, Title, Tooltip } from '@mantine/core';
+import { Box, Button, Group, Paper, Select, Stack, TextInput, Title } from '@mantine/core';
 import { IconArrowBack, IconDeviceFloppy } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState, ChangeEvent } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
@@ -87,11 +87,9 @@ function EditResponden() {
   return (
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
           <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
             <IconArrowBack color={colors['blue-button']} size={24} />
           </Button>
-        </Tooltip>
         <Title order={4} ml="sm" c="dark">
           Edit Responden
         </Title>

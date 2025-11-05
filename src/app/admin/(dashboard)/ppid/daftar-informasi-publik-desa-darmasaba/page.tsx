@@ -1,9 +1,9 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Center, Group, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title, Tooltip } from '@mantine/core';
+import { Box, Button, Center, Group, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title } from '@mantine/core';
+import { useShallowEffect, useViewportSize } from '@mantine/hooks';
 import { IconDeviceImacCog, IconPlus, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import { useShallowEffect, useViewportSize } from '@mantine/hooks';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../_com/header';
@@ -52,7 +52,6 @@ function ListDaftarInformasi({ search }: { search: string }) {
       <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
         <Group justify="space-between" mb="md">
           <Title order={4}>Daftar Informasi Publik</Title>
-          <Tooltip label="Tambah Informasi Publik" withArrow>
             <Button
               leftSection={<IconPlus size={18} />}
               color="blue"
@@ -61,7 +60,6 @@ function ListDaftarInformasi({ search }: { search: string }) {
             >
               {isMobile ? 'Tambah' : 'Tambah Baru'}
             </Button>
-          </Tooltip>
         </Group>
 
         {filteredData.length === 0 ? (
@@ -92,29 +90,19 @@ function ListDaftarInformasi({ search }: { search: string }) {
                       <Text fz="sm">{(page - 1) * 10 + index + 1}</Text>
                     </TableTd>
                     <TableTd>
-                      <Tooltip label={item.jenisInformasi} position="top-start" openDelay={500}>
                         <Box w={200}>
                           <Text fw={500} lineClamp={1}>{item.jenisInformasi}</Text>
                         </Box>
-                      </Tooltip>
                     </TableTd>
                     <TableTd>
-                      <Tooltip
-                        label={item.deskripsi?.replace(/<[^>]*>?/gm, '')}
-                        position="top-start"
-                        openDelay={500}
-                        multiline
-                        maw={400}
-                      >
                         <Box w={200}>
                           <Text lineClamp={1} fz="sm" c="dimmed">
                             {item.deskripsi?.replace(/<[^>]*>?/gm, '').substring(0, 80) + '...'}
                           </Text>
                         </Box>
-                      </Tooltip>
+
                     </TableTd>
                     <TableTd style={{ textAlign: 'center' }}>
-                      <Tooltip label="Lihat Detail" withArrow>
                         <Button
                           size="xs"
                           radius="md"
@@ -125,7 +113,6 @@ function ListDaftarInformasi({ search }: { search: string }) {
                         >
                           Detail
                         </Button>
-                      </Tooltip>
                     </TableTd>
                   </TableTr>
                 ))}

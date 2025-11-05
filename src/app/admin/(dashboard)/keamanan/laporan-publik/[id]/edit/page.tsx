@@ -12,8 +12,7 @@ import {
   Stack,
   Text,
   TextInput,
-  Title,
-  Tooltip,
+  Title
 } from '@mantine/core';
 import { DateTimePicker } from '@mantine/dates';
 import { IconArrowBack } from '@tabler/icons-react';
@@ -49,7 +48,7 @@ function EditLaporanPublik() {
     const loadLaporanPublik = async () => {
       const id = params?.id as string;
       if (!id) return;
-  
+
       try {
         const data = await stateLaporan.edit.load(id);
         if (data) {
@@ -67,11 +66,11 @@ function EditLaporanPublik() {
         toast.error("Gagal mengambil data laporan publik");
       }
     };
-  
+
     loadLaporanPublik();
   }, [params?.id]);
-  
-  
+
+
 
   const handleChange = (field: string, value: string | Status) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -97,11 +96,9 @@ function EditLaporanPublik() {
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
       {/* Header */}
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
-        </Tooltip>
+        <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Edit Laporan Publik
         </Title>

@@ -9,17 +9,16 @@ import {
   Stack,
   Text,
   TextInput,
-  Title,
-  Tooltip,
+  Title
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 import CreateEditor from '../../../_com/createEditor';
 import pencegahanKriminalitasState from '../../../_state/keamanan/pencegahan-kriminalitas';
-import { useState } from 'react';
 import { convertYoutubeUrlToEmbed } from '../../../desa/gallery/lib/youtube-utils';
-import { toast } from 'react-toastify';
 
 function CreatePencegahanKriminalitas() {
   const router = useRouter();
@@ -53,7 +52,6 @@ function CreatePencegahanKriminalitas() {
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
       {/* Header Back Button + Title */}
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
           <Button
             variant="subtle"
             onClick={() => router.back()}
@@ -62,7 +60,6 @@ function CreatePencegahanKriminalitas() {
           >
             <IconArrowBack color={colors['blue-button']} size={24} />
           </Button>
-        </Tooltip>
         <Title order={4} ml="sm" c="dark">
           Tambah Pencegahan Kriminalitas
         </Title>

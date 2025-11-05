@@ -4,9 +4,9 @@ import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import stateProfileDesa from '@/app/admin/(dashboard)/_state/desa/profile';
 import colors from '@/con/colors';
 import ApiFetch from '@/lib/api-fetch';
-import { Box, Button, Center, Group, Image, Paper, Stack, Text, Title, Tooltip } from '@mantine/core';
+import { Box, Button, Center, Group, Image, Paper, Stack, Text, Title } from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
-import { IconArrowBack, IconPhoto, IconUpload, IconX, IconImageInPicture } from '@tabler/icons-react';
+import { IconArrowBack, IconImageInPicture, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
@@ -101,11 +101,9 @@ function ProfilePerbekel() {
       <Stack gap="xs">
         {/* Header */}
         <Group mb="md">
-          <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
             <Button variant="subtle" onClick={handleBack} p="xs" radius="md">
               <IconArrowBack color={colors['blue-button']} size={24} />
             </Button>
-          </Tooltip>
           <Title order={4} ml="sm" c="dark">
             Edit Profil Perbekel
           </Title>

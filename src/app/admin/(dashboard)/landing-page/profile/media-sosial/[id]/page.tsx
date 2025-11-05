@@ -2,7 +2,7 @@
 import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
 import profileLandingPageState from '@/app/admin/(dashboard)/_state/landing-page/profile';
 import colors from '@/con/colors';
-import { Box, Button, Group, Image, Paper, Skeleton, Stack, Text, Tooltip } from '@mantine/core';
+import { Box, Button, Group, Image, Paper, Skeleton, Stack, Text } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -95,7 +95,6 @@ function DetailMediaSosial() {
               </Box>
 
               <Group gap="sm">
-                <Tooltip label="Hapus Media Sosial" withArrow position="top">
                   <Button
                     color="red"
                     onClick={() => {
@@ -108,9 +107,7 @@ function DetailMediaSosial() {
                   >
                     <IconTrash size={20} />
                   </Button>
-                </Tooltip>
 
-                <Tooltip label="Edit Media Sosial" withArrow position="top">
                   <Button
                     color="green"
                     onClick={() => router.push(`/admin/landing-page/profile/media-sosial/${data.id}/edit`)}
@@ -120,7 +117,6 @@ function DetailMediaSosial() {
                   >
                     <IconEdit size={20} />
                   </Button>
-                </Tooltip>
               </Group>
             </Stack>
           </Paper>

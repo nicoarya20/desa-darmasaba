@@ -18,8 +18,7 @@ import {
   TableThead,
   TableTr,
   Text,
-  Title,
-  Tooltip
+  Title
 } from '@mantine/core';
 import { IconDeviceImacCog, IconPlus, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
@@ -69,7 +68,6 @@ function ListPenghargaan({ search }: { search: string }) {
       <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
         <Group justify="space-between" mb="md">
           <Title order={4}>List Penghargaan</Title>
-          <Tooltip label="Tambah Penghargaan" withArrow>
             <Button
               leftSection={<IconPlus size={18} />}
               color="blue"
@@ -78,7 +76,6 @@ function ListPenghargaan({ search }: { search: string }) {
             >
               Tambah Baru
             </Button>
-          </Tooltip>
         </Group>
         <Box style={{ overflowX: 'auto' }}>
           <Table highlightOnHover>

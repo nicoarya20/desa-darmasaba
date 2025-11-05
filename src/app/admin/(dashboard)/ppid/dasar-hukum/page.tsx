@@ -1,6 +1,6 @@
 'use client';
 import colors from '@/con/colors';
-import { Box, Button, Center, Divider, Grid, GridCol, Image, Paper, Skeleton, Stack, Text, Title, Tooltip } from '@mantine/core';
+import { Box, Button, Center, Divider, Grid, GridCol, Image, Paper, Skeleton, Stack, Text, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconEdit } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
@@ -40,7 +40,6 @@ function Page() {
             <Title order={3} c={colors['blue-button']}>Preview Dasar Hukum PPID</Title>
           </GridCol>
           <GridCol span={{ base: 12, md: 1 }}>
-            <Tooltip label="Edit Dasar Hukum" withArrow>
               <Button
                 c="green"
                 variant="light"
@@ -50,7 +49,6 @@ function Page() {
               >
                 Edit
               </Button>
-            </Tooltip>
           </GridCol>
         </Grid>
 

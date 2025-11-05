@@ -8,13 +8,12 @@ import {
   Box,
   Button,
   Group,
+  Image,
   Paper,
   Stack,
   Text,
   TextInput,
-  Title,
-  Tooltip,
-  Image,
+  Title
 } from "@mantine/core";
 import { Dropzone } from "@mantine/dropzone";
 import { IconArrowBack, IconDeviceFloppy, IconPhoto, IconUpload, IconX } from "@tabler/icons-react";
@@ -94,11 +93,9 @@ export default function EditKolaborasiInovasi() {
   return (
     <Box px={{ base: "sm", md: "lg" }} py="md">
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
           <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
             <IconArrowBack color={colors["blue-button"]} size={24} />
           </Button>
-        </Tooltip>
         <Title order={4} ml="sm" c="dark">
           Edit Sdgs Desa
         </Title>

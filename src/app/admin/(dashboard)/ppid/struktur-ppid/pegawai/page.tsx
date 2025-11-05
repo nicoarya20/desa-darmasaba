@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import colors from '@/con/colors';
-import { Badge, Box, Button, Center, Group, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, ThemeIcon, Title, Tooltip } from '@mantine/core';
+import { Badge, Box, Button, Center, Group, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, ThemeIcon, Title } from '@mantine/core';
 import { IconCheck, IconDeviceImacCog, IconPlus, IconSearch, IconX } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -58,7 +58,6 @@ function ListPegawaiPPID({ search }: { search: string }) {
         <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
           <Group justify="space-between" mb="md">
             <Title order={4}>Daftar Pegawai PPID</Title>
-            <Tooltip label="Tambah Pegawai Baru" withArrow>
               <Button
                 leftSection={<IconPlus size={18} />}
                 color="blue"
@@ -67,7 +66,6 @@ function ListPegawaiPPID({ search }: { search: string }) {
               >
                 Tambah Baru
               </Button>
-            </Tooltip>
           </Group>
           <Center py="xl">
             <Text c="dimmed">Tidak ada data pegawai yang ditemukan</Text>
@@ -81,7 +79,6 @@ function ListPegawaiPPID({ search }: { search: string }) {
       <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
         <Group justify="space-between" mb="md">
           <Title order={4}>Daftar Pegawai PPID</Title>
-          <Tooltip label="Tambah Pegawai Baru" withArrow>
             <Button
               leftSection={<IconPlus size={18} />}
               color="blue"
@@ -90,7 +87,6 @@ function ListPegawaiPPID({ search }: { search: string }) {
             >
               Tambah Baru
             </Button>
-          </Tooltip>
         </Group>
         <Box style={{ overflowX: "auto" }}>
           <Table highlightOnHover>

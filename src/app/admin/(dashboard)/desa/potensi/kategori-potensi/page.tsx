@@ -1,14 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Center, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title, Tooltip, Pagination, Group } from '@mantine/core';
-import { IconEdit, IconSearch, IconTrash, IconPlus } from '@tabler/icons-react';
+import { Box, Button, Center, Group, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title } from '@mantine/core';
+import { IconEdit, IconPlus, IconSearch, IconTrash } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../../_com/header';
-import potensiDesaState from '../../../_state/desa/potensi';
 import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
+import potensiDesaState from '../../../_state/desa/potensi';
 
 function KategoriPotensi() {
   const [search, setSearch] = useState('');
@@ -62,7 +62,6 @@ function ListKategoriPotensi({ search }: { search: string }) {
         <Stack>
           <Group justify="space-between">
             <Title order={4}>List Kategori Potensi</Title>
-            <Tooltip label="Tambah Kategori Potensi" withArrow>
               <Button
                 leftSection={<IconPlus size={18} />}
                 color="blue"
@@ -71,7 +70,6 @@ function ListKategoriPotensi({ search }: { search: string }) {
               >
                 Tambah Baru
               </Button>
-            </Tooltip>
           </Group>
 
           <Box style={{ overflowX: 'auto' }}>

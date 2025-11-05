@@ -1,11 +1,11 @@
 'use client'
+import profileLandingPageState from '@/app/admin/(dashboard)/_state/landing-page/profile';
 import colors from '@/con/colors';
-import { Box, Button, Center, Divider, Grid, GridCol, Image, Paper, Skeleton, Stack, Text, Title, Tooltip } from '@mantine/core';
+import { Box, Button, Center, Divider, Grid, GridCol, Image, Paper, Skeleton, Stack, Text, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconEdit } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
-import profileLandingPageState from '@/app/admin/(dashboard)/_state/landing-page/profile';
 
 function Page() {
   const router = useRouter();
@@ -35,7 +35,6 @@ function Page() {
             <Title order={3} c={colors['blue-button']}>Preview Pejabat Desa</Title>
           </GridCol>
           <GridCol span={{ base: 12, md: 1 }}>
-            <Tooltip label="Edit Profil Pejabat" withArrow>
               <Button
                 c="green"
                 variant="light"
@@ -45,7 +44,6 @@ function Page() {
               >
                 Edit
               </Button>
-            </Tooltip>
           </GridCol>
         </Grid>
         {dataArray.map((item) => (

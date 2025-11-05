@@ -17,8 +17,7 @@ import {
   TableThead,
   TableTr,
   Text,
-  Title,
-  Tooltip
+  Title
 } from '@mantine/core';
 import { IconEdit, IconPlus, IconSearch, IconTrash } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
@@ -86,7 +85,6 @@ function ListKategoriBerita({ search }: { search: string }) {
       <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
         <Group justify="space-between" mb="md">
           <Title order={4}>Daftar Kategori Berita</Title>
-          <Tooltip label="Tambah Kategori Berita" withArrow>
             <Button
               leftSection={<IconPlus size={18} />}
               color="blue"
@@ -97,7 +95,6 @@ function ListKategoriBerita({ search }: { search: string }) {
             >
               Tambah Baru
             </Button>
-          </Tooltip>
         </Group>
 
         <Box style={{ overflowX: 'auto' }}>
@@ -123,7 +120,6 @@ function ListKategoriBerita({ search }: { search: string }) {
                       </Text>
                     </TableTd>
                     <TableTd>
-                      <Tooltip label="Edit Kategori Berita" withArrow>
                         <Button
                           variant="light"
                           color="green"
@@ -135,10 +131,8 @@ function ListKategoriBerita({ search }: { search: string }) {
                         >
                           <IconEdit size={18} />
                         </Button>
-                      </Tooltip>
                     </TableTd>
                     <TableTd>
-                      <Tooltip label="Hapus Kategori Berita" withArrow>
                         <Button
                           variant="light"
                           color="red"
@@ -150,7 +144,6 @@ function ListKategoriBerita({ search }: { search: string }) {
                         >
                           <IconTrash size={18} />
                         </Button>
-                      </Tooltip>
                     </TableTd>
                   </TableTr>
                 ))

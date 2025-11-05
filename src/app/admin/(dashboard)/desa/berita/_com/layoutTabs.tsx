@@ -1,10 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import colors from '@/con/colors';
-import { ScrollArea, Stack, Tabs, TabsList, TabsPanel, TabsTab, Title, Tooltip } from '@mantine/core';
+import { ScrollArea, Stack, Tabs, TabsList, TabsPanel, TabsTab, Title } from '@mantine/core';
+import { IconCategory, IconNews } from '@tabler/icons-react';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
-import { IconNews, IconCategory } from '@tabler/icons-react';
 
 function LayoutTabsBerita({ children }: { children: React.ReactNode }) {
     const router = useRouter();
@@ -15,15 +15,13 @@ function LayoutTabsBerita({ children }: { children: React.ReactNode }) {
             label: "List Berita",
             value: "list_berita",
             href: "/admin/desa/berita/list-berita",
-            icon: <IconNews size={18} stroke={1.8} />,
-            tooltip: "Lihat dan kelola semua berita desa"
+            icon: <IconNews size={18} stroke={1.8} />
         },
         {
             label: "Kategori Berita",
             value: "kategori_berita",
             href: "/admin/desa/berita/kategori-berita",
-            icon: <IconCategory size={18} stroke={1.8} />,
-            tooltip: "Kelola kategori berita desa"
+            icon: <IconCategory size={18} stroke={1.8} />
         },
     ];
 
@@ -71,46 +69,39 @@ function LayoutTabsBerita({ children }: { children: React.ReactNode }) {
                         }}
                     >
                         {tabs.map((tab, i) => (
-                            <Tooltip
+                            <TabsTab
                                 key={i}
-                                label={tab.tooltip}
-                                position="bottom"
-                                withArrow
-                                transitionProps={{ transition: 'pop', duration: 200 }}
+                                value={tab.value}
+                                leftSection={tab.icon}
+                                style={{
+                                    fontWeight: 600,
+                                    fontSize: "0.9rem",
+                                    transition: "all 0.2s ease",
+                                }}
                             >
-                                <TabsTab
-                                    value={tab.value}
-                                    leftSection={tab.icon}
-                                    style={{
-                                        fontWeight: 600,
-                                        fontSize: "0.9rem",
-                                        transition: "all 0.2s ease",
-                                    }}
-                                >
-                                    {tab.label}
-                                </TabsTab>
-                            </Tooltip>
+                                {tab.label}
+                            </TabsTab>
                         ))}
-                    </TabsList>
-                </ScrollArea>
+                </TabsList>
+            </ScrollArea>
 
-                {tabs.map((tab, i) => (
-                    <TabsPanel
-                        key={i}
-                        value={tab.value}
-                        style={{
-                            padding: "1.5rem",
-                            background: "linear-gradient(180deg, #ffffff, #f5f6fa)",
-                            borderRadius: "1rem",
-                            boxShadow: "0 4px 16px rgba(0,0,0,0.05)",
-                        }}
-                    >
-                        {/* Konten dummy, bisa diganti sesuai routing */}
-                        <>{children}</>
-                    </TabsPanel>
-                ))}
-            </Tabs>
-        </Stack>
+            {tabs.map((tab, i) => (
+                <TabsPanel
+                    key={i}
+                    value={tab.value}
+                    style={{
+                        padding: "1.5rem",
+                        background: "linear-gradient(180deg, #ffffff, #f5f6fa)",
+                        borderRadius: "1rem",
+                        boxShadow: "0 4px 16px rgba(0,0,0,0.05)",
+                    }}
+                >
+                    {/* Konten dummy, bisa diganti sesuai routing */}
+                    <>{children}</>
+                </TabsPanel>
+            ))}
+        </Tabs>
+        </Stack >
     );
 }
 

@@ -1,20 +1,19 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
-import { usePathname, useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import colors from "@/con/colors";
 import {
+    ScrollArea,
     Stack,
     Tabs,
     TabsList,
     TabsPanel,
     TabsTab,
-    Title,
-    Tooltip,
-    ScrollArea,
+    Title
 } from "@mantine/core";
-import { IconList, IconCategory } from "@tabler/icons-react";
-import colors from "@/con/colors";
+import { IconCategory, IconList } from "@tabler/icons-react";
+import { usePathname, useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
 
 function LayoutTabs({ children }: { children: React.ReactNode }) {
     const router = useRouter();
@@ -26,14 +25,12 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
             value: "listDesaAntiKorupsi",
             href: "/admin/landing-page/desa-anti-korupsi/list-desa-anti-korupsi",
             icon: <IconList size={18} stroke={1.8} />,
-            tooltip: "Kelola daftar program desa anti korupsi",
         },
         {
             label: "Kategori Desa Anti Korupsi",
             value: "kategoriDesaAntiKorupsi",
             href: "/admin/landing-page/desa-anti-korupsi/kategori-desa-anti-korupsi",
             icon: <IconCategory size={18} stroke={1.8} />,
-            tooltip: "Kelola kategori desa anti korupsi",
         },
     ];
 
@@ -85,26 +82,19 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
                         }}
                     >
                         {tabs.map((tab, i) => (
-                            <Tooltip
+                            <TabsTab
                                 key={i}
-                                label={tab.tooltip}
-                                position="bottom"
-                                withArrow
-                                transitionProps={{ transition: "pop", duration: 200 }}
+                                value={tab.value}
+                                leftSection={tab.icon}
+                                style={{
+                                    fontWeight: 600,
+                                    fontSize: "0.9rem",
+                                    transition: "all 0.2s ease",
+                                    flexShrink: 0, // ✅ mencegah tab mengecil
+                                }}
                             >
-                                <TabsTab
-                                    value={tab.value}
-                                    leftSection={tab.icon}
-                                    style={{
-                                        fontWeight: 600,
-                                        fontSize: "0.9rem",
-                                        transition: "all 0.2s ease",
-                                        flexShrink: 0, // ✅ mencegah tab mengecil
-                                    }}
-                                >
-                                    {tab.label}
-                                </TabsTab>
-                            </Tooltip>
+                                {tab.label}
+                            </TabsTab>
                         ))}
                     </TabsList>
                 </ScrollArea>

@@ -1,11 +1,11 @@
 'use client'
 import colors from '@/con/colors'
-import { Box, Button, Group, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title, Tooltip } from '@mantine/core'
+import { Box, Button, Group, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title } from '@mantine/core'
 import { useShallowEffect } from '@mantine/hooks'
 import { IconDeviceImacCog, IconInfoCircle, IconMail, IconPhone, IconUser } from '@tabler/icons-react'
+import { useRouter } from 'next/navigation'
 import { useProxy } from 'valtio/utils'
 import statePermohonanKeberatan from '../../_state/ppid/permohonan_keberatan_informasi_publik/permohonanKeberatanInformasi'
-import { useRouter } from 'next/navigation'
 
 function Page() {
   const listState = useProxy(statePermohonanKeberatan)
@@ -31,9 +31,7 @@ function Page() {
         <Stack gap="md">
           <Group justify="space-between">
             <Title order={2} c="dark">Daftar Permohonan Keberatan Informasi Publik</Title>
-            <Tooltip label="Data permohonan keberatan atas informasi yang diajukan masyarakat" position="bottom">
-              <IconInfoCircle size={20} stroke={1.5} />
-            </Tooltip>
+            <IconInfoCircle size={20} stroke={1.5} />
           </Group>
 
           {data.length === 0 ? (
@@ -65,9 +63,7 @@ function Page() {
                     <TableTr key={item.id}>
                       <TableTd>{index + 1}</TableTd>
                       <TableTd>
-                        <Tooltip label={item.name}>
-                          <Text lineClamp={1} fw={500}>{item.name}</Text>
-                        </Tooltip>
+                        <Text lineClamp={1} fw={500}>{item.name}</Text>
                       </TableTd>
                       <TableTd>
                         <Text size="sm">{item.email || '-'}</Text>

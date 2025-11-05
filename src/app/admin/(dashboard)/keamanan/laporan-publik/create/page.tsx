@@ -8,8 +8,7 @@ import {
   Stack,
   Text,
   TextInput,
-  Title,
-  Tooltip
+  Title
 } from '@mantine/core';
 import { DateTimePicker } from '@mantine/dates';
 import { IconArrowBack } from '@tabler/icons-react';
@@ -42,11 +41,9 @@ function CreateLaporanPublik() {
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
       {/* Header with Back Button */}
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
-        </Tooltip>
+        <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Tambah Laporan Publik
         </Title>

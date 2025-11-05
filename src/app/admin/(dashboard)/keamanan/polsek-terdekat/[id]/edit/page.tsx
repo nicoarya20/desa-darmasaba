@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
+import polsekTerdekat from "@/app/admin/(dashboard)/_state/keamanan/polsek-terdekat";
 import colors from "@/con/colors";
 import {
   Box,
@@ -14,15 +15,13 @@ import {
   Stack,
   Text,
   TextInput,
-  Title,
-  Tooltip,
+  Title
 } from "@mantine/core";
 import { IconArrowBack } from "@tabler/icons-react";
 import { useParams, useRouter } from "next/navigation";
-import { useProxy } from "valtio/utils";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import polsekTerdekat from "@/app/admin/(dashboard)/_state/keamanan/polsek-terdekat";
+import { useProxy } from "valtio/utils";
 
 function EditPolsekTerdekat() {
   const polsekState = useProxy(polsekTerdekat);
@@ -52,36 +51,36 @@ function EditPolsekTerdekat() {
     layananPolsekId: "",
   });
 
-    // load data untuk form edit
-    useEffect(() => {
-      const loadPolsekTerdekat = async () => {
-        const id = params?.id as string;
-        if (!id) return;
-  
-        try {
-          const data = await polsekState.edit.load(id);
-          if (data) {
-            setFormData({
-              nama: data.nama || "",
-              jarakKeDesa: data.jarakKeDesa || "",
-              alamat: data.alamat || "",
-              nomorTelepon: data.nomorTelepon || "",
-              jamOperasional: data.jamOperasional || "",
-              embedMapUrl: data.embedMapUrl || "",
-              namaTempatMaps: data.namaTempatMaps || "",
-              alamatMaps: data.alamatMaps || "",
-              linkPetunjukArah: data.linkPetunjukArah || "",
-              layananPolsekId: data.layananPolsekId || "",
-            });
-          }
-        } catch (error) {
-          console.error("Error loading polsek terdekat:", error);
-          toast.error("Gagal memuat data polsek terdekat");
+  // load data untuk form edit
+  useEffect(() => {
+    const loadPolsekTerdekat = async () => {
+      const id = params?.id as string;
+      if (!id) return;
+
+      try {
+        const data = await polsekState.edit.load(id);
+        if (data) {
+          setFormData({
+            nama: data.nama || "",
+            jarakKeDesa: data.jarakKeDesa || "",
+            alamat: data.alamat || "",
+            nomorTelepon: data.nomorTelepon || "",
+            jamOperasional: data.jamOperasional || "",
+            embedMapUrl: data.embedMapUrl || "",
+            namaTempatMaps: data.namaTempatMaps || "",
+            alamatMaps: data.alamatMaps || "",
+            linkPetunjukArah: data.linkPetunjukArah || "",
+            layananPolsekId: data.layananPolsekId || "",
+          });
         }
-      };
-  
-      loadPolsekTerdekat();
-    }, [params?.id]);
+      } catch (error) {
+        console.error("Error loading polsek terdekat:", error);
+        toast.error("Gagal memuat data polsek terdekat");
+      }
+    };
+
+    loadPolsekTerdekat();
+  }, [params?.id]);
 
   const fetchLayanan = async () => {
     try {
@@ -248,16 +247,14 @@ function EditPolsekTerdekat() {
 
       {/* Header */}
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button
-            variant="subtle"
-            onClick={() => router.back()}
-            p="xs"
-            radius="md"
-          >
-            <IconArrowBack color={colors["blue-button"]} size={24} />
-          </Button>
-        </Tooltip>
+        <Button
+          variant="subtle"
+          onClick={() => router.back()}
+          p="xs"
+          radius="md"
+        >
+          <IconArrowBack color={colors["blue-button"]} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Edit Polsek Terdekat
         </Title>

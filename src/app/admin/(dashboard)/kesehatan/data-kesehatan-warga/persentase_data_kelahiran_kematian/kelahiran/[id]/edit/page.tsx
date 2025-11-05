@@ -10,8 +10,7 @@ import {
   Paper,
   Stack,
   TextInput,
-  Title,
-  Tooltip,
+  Title
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -39,7 +38,7 @@ function EditKelahiran() {
 
       try {
         const data = await editState.edit.load(id);
-        if (data) setFormData({ 
+        if (data) setFormData({
           nama: data.nama || '',
           tanggal: data.tanggal || '',
           jenisKelamin: data.jenisKelamin || '',
@@ -75,11 +74,9 @@ function EditKelahiran() {
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
       {/* Header */}
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
-        </Tooltip>
+        <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Edit Data Kelahiran
         </Title>

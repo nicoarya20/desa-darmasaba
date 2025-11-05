@@ -16,14 +16,13 @@ import {
   StepperCompleted,
   StepperStep,
   Text,
-  Title,
-  Tooltip,
+  Title
 } from '@mantine/core';
 import { IconEdit } from '@tabler/icons-react';
-import { useEffect, useState } from 'react';
-import stateLayananDesa from '../../../_state/desa/layananDesa';
-import { useProxy } from 'valtio/utils';
 import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { useProxy } from 'valtio/utils';
+import stateLayananDesa from '../../../_state/desa/layananDesa';
 
 function PerizinanBerusaha() {
   const router = useRouter();
@@ -85,7 +84,6 @@ function PerizinanBerusaha() {
             </Title>
           </GridCol>
           <GridCol span={{ base: 12, md: 1 }}>
-            <Tooltip label="Edit Data Perizinan" withArrow>
               <Button
                 c="green"
                 variant="light"
@@ -99,7 +97,6 @@ function PerizinanBerusaha() {
               >
                 Edit
               </Button>
-            </Tooltip>
           </GridCol>
         </Grid>
 

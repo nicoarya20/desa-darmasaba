@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Center, Group, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title, Tooltip } from '@mantine/core';
+import { Box, Button, Center, Group, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title } from '@mantine/core';
 import { IconDeviceImacCog, IconPlus, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -70,7 +70,6 @@ function ListPrestasi({ search }: { search: string }) {
       <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
         <Group justify="space-between" mb="md">
           <Title order={4}>Daftar Prestasi Desa</Title>
-          <Tooltip label="Tambah Prestasi" withArrow>
             <Button
               leftSection={<IconPlus size={18} />}
               color="blue"
@@ -79,7 +78,6 @@ function ListPrestasi({ search }: { search: string }) {
             >
               Tambah Baru
             </Button>
-          </Tooltip>
         </Group>
         <Box style={{ overflowX: 'auto' }}>
           <Table highlightOnHover>
@@ -109,7 +107,6 @@ function ListPrestasi({ search }: { search: string }) {
                       </Box>
                     </TableTd>
                     <TableTd style={{ width: '25%', textAlign: 'center' }}>
-                      <Tooltip label="Kelola Prestasi" withArrow>
                         <Button
                           size="xs"
                           radius="md"
@@ -120,7 +117,6 @@ function ListPrestasi({ search }: { search: string }) {
                         >
                           Detail
                         </Button>
-                      </Tooltip>
                     </TableTd>
                   </TableTr>
                 ))

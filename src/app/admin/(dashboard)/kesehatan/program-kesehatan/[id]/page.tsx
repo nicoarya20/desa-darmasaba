@@ -1,13 +1,13 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, Skeleton, Stack, Text, Tooltip, Image } from '@mantine/core';
+import { Box, Button, Group, Image, Paper, Skeleton, Stack, Text } from '@mantine/core';
+import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
-import React, { useState } from 'react';
-import programKesehatan from '../../../_state/kesehatan/program-kesehatan/programKesehatan';
+import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
-import { useShallowEffect } from '@mantine/hooks';
 import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
+import programKesehatan from '../../../_state/kesehatan/program-kesehatan/programKesehatan';
 
 function DetailProgramKesehatan() {
   const state = useProxy(programKesehatan);
@@ -84,39 +84,35 @@ function DetailProgramKesehatan() {
               <Box>
                 <Text fz="lg" fw="bold">Gambar</Text>
                 {data?.image?.link ? (
-                  <Image src={data.image.link} alt="gambar program kesehatan" radius="md" loading="lazy"/>
+                  <Image src={data.image.link} alt="gambar program kesehatan" radius="md" loading="lazy" />
                 ) : (
                   <Text fz="md" c="dimmed">-</Text>
                 )}
               </Box>
 
               <Group gap="sm">
-                <Tooltip label="Hapus Data" withArrow position="top">
-                  <Button
-                    color="red"
-                    onClick={() => {
-                      setSelectedId(data.id);
-                      setModalHapus(true);
-                    }}
-                    variant="light"
-                    radius="md"
-                    size="md"
-                  >
-                    <IconTrash size={20} />
-                  </Button>
-                </Tooltip>
+                <Button
+                  color="red"
+                  onClick={() => {
+                    setSelectedId(data.id);
+                    setModalHapus(true);
+                  }}
+                  variant="light"
+                  radius="md"
+                  size="md"
+                >
+                  <IconTrash size={20} />
+                </Button>
 
-                <Tooltip label="Edit Data" withArrow position="top">
-                  <Button
-                    color="green"
-                    onClick={() => router.push(`/admin/kesehatan/program-kesehatan/${data?.id}/edit`)}
-                    variant="light"
-                    radius="md"
-                    size="md"
-                  >
-                    <IconEdit size={20} />
-                  </Button>
-                </Tooltip>
+                <Button
+                  color="green"
+                  onClick={() => router.push(`/admin/kesehatan/program-kesehatan/${data?.id}/edit`)}
+                  variant="light"
+                  radius="md"
+                  size="md"
+                >
+                  <IconEdit size={20} />
+                </Button>
               </Group>
             </Stack>
           </Paper>

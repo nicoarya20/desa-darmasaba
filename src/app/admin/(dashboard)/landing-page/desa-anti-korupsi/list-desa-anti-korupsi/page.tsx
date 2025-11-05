@@ -1,6 +1,6 @@
 'use client'
 
-import { Box, Button, Center, Group, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title, Tooltip } from '@mantine/core';
+import { Box, Button, Center, Group, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconDeviceImacCog, IconPlus, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
@@ -65,13 +65,11 @@ function ListDesaAntiKorupsi({ search }: { search: string }) {
         <Paper p="lg" radius="lg" shadow="md" withBorder>
           <Group justify="space-between" mb="md">
             <Title order={4}>Daftar Program Desa Anti Korupsi</Title>
-            <Tooltip label="Tambah Program Baru" withArrow>
               <Button leftSection={<IconPlus size={18} />} color="blue" variant="light"
                 onClick={() => router.push('/admin/landing-page/desa-anti-korupsi/list-desa-anti-korupsi/create')}
               >
                 Tambah Baru
               </Button>
-            </Tooltip>
           </Group>
           <Box style={{ overflowX: 'auto' }}>
             <Table

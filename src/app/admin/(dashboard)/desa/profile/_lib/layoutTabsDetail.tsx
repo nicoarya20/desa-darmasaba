@@ -1,10 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import colors from '@/con/colors';
-import { ScrollArea, Stack, Tabs, TabsList, TabsPanel, TabsTab, Title, Tooltip } from '@mantine/core';
+import { ScrollArea, Stack, Tabs, TabsList, TabsPanel, TabsTab, Title } from '@mantine/core';
+import { IconCalendar, IconUser, IconUsers } from '@tabler/icons-react';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
-import { IconUser, IconUsers, IconCalendar } from '@tabler/icons-react';
 
 function LayoutTabsDetail({ children }: { children: React.ReactNode }) {
     const router = useRouter()
@@ -14,22 +14,19 @@ function LayoutTabsDetail({ children }: { children: React.ReactNode }) {
             label: "Profile Desa",
             value: "profiledesa",
             href: "/admin/desa/profile/profile-desa",
-            icon: <IconUser size={18} stroke={1.8} />,
-            tooltip: "Lihat dan kelola profil desa"
+            icon: <IconUser size={18} stroke={1.8} />
         },
         {
             label: "Profile Perbekel",
             value: "profileperbekel",
             href: "/admin/desa/profile/profile-perbekel",
-            icon: <IconUsers size={18} stroke={1.8} />,
-            tooltip: "Kelola data Perbekel"
+            icon: <IconUsers size={18} stroke={1.8} />
         },
         {
             label: "Profile Perbekel Dari Masa Ke Masa",
             value: "profile-perbekel-dari-masa-ke-masa",
             href: "/admin/desa/profile/profile-perbekel-dari-masa-ke-masa",
-            icon: <IconCalendar size={18} stroke={1.8} />,
-            tooltip: "Riwayat Perbekel dari masa ke masa"
+            icon: <IconCalendar size={18} stroke={1.8} />
         }
     ];
 
@@ -76,42 +73,41 @@ function LayoutTabsDetail({ children }: { children: React.ReactNode }) {
                             paddingInline: "0.5rem", // ✅ biar nggak nempel ke tepi
                         }}
                     >
-                            {tabs.map((tab, i) => (
-                                <Tooltip key={i} label={tab.tooltip} position="bottom" withArrow transitionProps={{ transition: 'pop', duration: 200 }}>
-                                    <TabsTab
-                                        value={tab.value}
-                                        leftSection={tab.icon}
-                                        style={{
-                                            fontWeight: 600,
-                                            fontSize: "0.9rem",
-                                            transition: "all 0.2s ease",
-                                        }}
-                                    >
-                                        {tab.label}
-                                    </TabsTab>
-                                </Tooltip>
-                            ))}
-                        </TabsList>
-                        </ScrollArea>
-
                         {tabs.map((tab, i) => (
-                            <TabsPanel
+                            <TabsTab
                                 key={i}
                                 value={tab.value}
+                                leftSection={tab.icon}
                                 style={{
-                                    padding: "1.5rem",
-                                    background: "linear-gradient(180deg, #ffffff, #f5f6fa)",
-                                    borderRadius: "1rem",
-                                    boxShadow: "0 4px 16px rgba(0,0,0,0.05)",
+                                    fontWeight: 600,
+                                    fontSize: "0.9rem",
+                                    transition: "all 0.2s ease",
                                 }}
                             >
-                                {/* Konten dummy, bisa diganti sesuai routing */}
-                                <>{children}</>
-                            </TabsPanel>
+                                {tab.label}
+                            </TabsTab>
                         ))}
-                    </Tabs>
-                </Stack>
-                );
+                    </TabsList>
+                </ScrollArea>
+
+                {tabs.map((tab, i) => (
+                    <TabsPanel
+                        key={i}
+                        value={tab.value}
+                        style={{
+                            padding: "1.5rem",
+                            background: "linear-gradient(180deg, #ffffff, #f5f6fa)",
+                            borderRadius: "1rem",
+                            boxShadow: "0 4px 16px rgba(0,0,0,0.05)",
+                        }}
+                    >
+                        {/* Konten dummy, bisa diganti sesuai routing */}
+                        <>{children}</>
+                    </TabsPanel>
+                ))}
+            </Tabs>
+        </Stack>
+    );
 }
 
-                export default LayoutTabsDetail;
+export default LayoutTabsDetail;

@@ -16,8 +16,7 @@ import {
   TableThead,
   TableTr,
   Text,
-  Title,
-  Tooltip
+  Title
 } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconDeviceImac, IconPlus, IconSearch } from '@tabler/icons-react';
@@ -74,7 +73,6 @@ function ListVideo({ search }: { search: string }) {
       <Paper withBorder bg={colors['white-1']} p={'lg'} shadow="md" radius="md">
         <Group justify="space-between" mb="md">
           <Title order={4}>Daftar Video</Title>
-          <Tooltip label="Tambah Video Baru" withArrow>
             <Button
               leftSection={<IconPlus size={18} />}
               color="blue"
@@ -83,7 +81,6 @@ function ListVideo({ search }: { search: string }) {
             >
               Tambah Baru
             </Button>
-          </Tooltip>
         </Group>
         <Box style={{ overflowX: "auto" }}>
           <Table highlightOnHover>

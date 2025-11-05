@@ -10,9 +10,9 @@ import {
   Stack,
   Text,
   TextInput,
-  Title,
-  Tooltip,
+  Title
 } from '@mantine/core';
+import { Dropzone } from '@mantine/dropzone';
 import {
   IconArrowBack,
   IconPhoto,
@@ -25,7 +25,6 @@ import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 import CreateEditor from '../../../_com/createEditor';
 import kontakDarurat from '../../../_state/kesehatan/kontak-darurat/kontakDarurat';
-import { Dropzone } from '@mantine/dropzone';
 
 function CreateKontakDarurat() {
   const router = useRouter();
@@ -71,16 +70,14 @@ function CreateKontakDarurat() {
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
       {/* Header */}
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button
-            variant="subtle"
-            onClick={() => router.back()}
-            p="xs"
-            radius="md"
-          >
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
-        </Tooltip>
+        <Button
+          variant="subtle"
+          onClick={() => router.back()}
+          p="xs"
+          radius="md"
+        >
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Tambah Kontak Darurat
         </Title>
@@ -107,7 +104,7 @@ function CreateKontakDarurat() {
           />
 
           <TextInput
-          type='number'
+            type='number'
             defaultValue={kontakDaruratState.create.form.whatsapp}
             onChange={(val) => {
               kontakDaruratState.create.form.whatsapp = val.target.value;

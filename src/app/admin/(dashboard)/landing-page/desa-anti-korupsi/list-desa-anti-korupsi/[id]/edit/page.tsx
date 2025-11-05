@@ -1,19 +1,19 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
-import { Box, Button, Group, Paper, Select, Stack, Text, TextInput, Title, Tooltip } from '@mantine/core';
-import { IconArrowBack, IconFile, IconUpload, IconX } from '@tabler/icons-react';
-import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState, ChangeEvent } from 'react';
-import { toast } from 'react-toastify';
-import { useProxy } from 'valtio/utils';
+import { Box, Button, Group, Paper, Select, Stack, Text, TextInput, Title } from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
 import { useShallowEffect } from '@mantine/hooks';
+import { IconArrowBack, IconFile, IconUpload, IconX } from '@tabler/icons-react';
+import { useParams, useRouter } from 'next/navigation';
+import { ChangeEvent, useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
+import { useProxy } from 'valtio/utils';
 
-import colors from '@/con/colors';
-import korupsiState from '@/app/admin/(dashboard)/_state/landing-page/desa-anti-korupsi';
-import ApiFetch from '@/lib/api-fetch';
 import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
+import korupsiState from '@/app/admin/(dashboard)/_state/landing-page/desa-anti-korupsi';
+import colors from '@/con/colors';
+import ApiFetch from '@/lib/api-fetch';
 
 interface FormDesaAntiKorupsi {
   name: string;
@@ -123,11 +123,9 @@ export default function EditDesaAntiKorupsi() {
   return (
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
           <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
             <IconArrowBack color={colors['blue-button']} size={24} />
           </Button>
-        </Tooltip>
         <Title order={4} ml="sm" c="dark">
           Edit Desa Anti Korupsi
         </Title>

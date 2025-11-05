@@ -16,8 +16,7 @@ import {
   TableThead,
   TableTr,
   Text,
-  Title,
-  Tooltip
+  Title
 } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconDeviceImacCog, IconPlus, IconSearch } from '@tabler/icons-react';
@@ -71,7 +70,6 @@ function ListPuskesmas({ search }: { search: string }) {
       <Paper withBorder bg={colors['white-1']} p={'lg'} shadow="md" radius="md">
         <Group justify="space-between" mb="md">
           <Title order={4}>Daftar Puskesmas</Title>
-          <Tooltip label="Tambah Puskesmas" withArrow>
             <Button
               leftSection={<IconPlus size={18} />}
               color="blue"
@@ -80,7 +78,6 @@ function ListPuskesmas({ search }: { search: string }) {
             >
               Tambah Baru
             </Button>
-          </Tooltip>
         </Group>
 
         <Box style={{ overflowX: "auto" }}>

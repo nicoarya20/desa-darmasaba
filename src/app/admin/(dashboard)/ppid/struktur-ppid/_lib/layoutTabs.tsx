@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import colors from '@/con/colors';
-import { ScrollArea, Stack, Tabs, TabsList, TabsPanel, TabsTab, Title, Tooltip } from '@mantine/core';
+import { ScrollArea, Stack, Tabs, TabsList, TabsPanel, TabsTab, Title } from '@mantine/core';
 import { IconBuildingCommunity, IconHierarchy2, IconUsers } from '@tabler/icons-react';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
@@ -9,28 +9,25 @@ import React, { useEffect, useState } from 'react';
 function LayoutTabs({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  
+
   const tabs = [
     {
       label: "Pegawai",
       value: "pegawai",
       href: "/admin/ppid/struktur-ppid/pegawai",
       icon: <IconUsers size={18} stroke={1.8} />,
-      tooltip: "Kelola daftar pegawai PPID"
     },
     {
       label: "Posisi Organisasi",
       value: "posisiorganisasi",
       href: "/admin/ppid/struktur-ppid/posisi-organisasi",
       icon: <IconHierarchy2 size={18} stroke={1.8} />,
-      tooltip: "Kelola posisi dalam struktur organisasi"
     },
     {
       label: "Struktur Organisasi",
       value: "strukturorganisasi",
       href: "/admin/ppid/struktur-ppid/struktur-organisasi",
       icon: <IconBuildingCommunity size={18} stroke={1.8} />,
-      tooltip: "Kelola struktur organisasi PPID"
     }
   ];
 
@@ -79,9 +76,9 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
               paddingInline: "0.5rem", // ✅ biar nggak nempel ke tepi
             }}
           >
-          {tabs.map((tab, i) => (
-            <Tooltip key={i} label={tab.tooltip} position="bottom" withArrow transitionProps={{ transition: 'pop', duration: 200 }}>
+            {tabs.map((tab, i) => (
               <TabsTab
+                key={i}
                 value={tab.value}
                 leftSection={tab.icon}
                 style={{
@@ -92,27 +89,26 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
               >
                 {tab.label}
               </TabsTab>
-            </Tooltip>
           ))}
         </TabsList>
       </ScrollArea>
 
-        {tabs.map((tab, i) => (
-          <TabsPanel
-            key={i}
-            value={tab.value}
-            style={{
-              padding: "1.5rem",
-              background: "linear-gradient(180deg, #ffffff, #f5f6fa)",
-              borderRadius: "1rem",
-              boxShadow: "0 4px 16px rgba(0,0,0,0.05)",
-            }}
-          >
-            {children}
-          </TabsPanel>
-        ))}
-      </Tabs>
-    </Stack>
+      {tabs.map((tab, i) => (
+        <TabsPanel
+          key={i}
+          value={tab.value}
+          style={{
+            padding: "1.5rem",
+            background: "linear-gradient(180deg, #ffffff, #f5f6fa)",
+            borderRadius: "1rem",
+            boxShadow: "0 4px 16px rgba(0,0,0,0.05)",
+          }}
+        >
+          {children}
+        </TabsPanel>
+      ))}
+    </Tabs>
+    </Stack >
   );
 }
 

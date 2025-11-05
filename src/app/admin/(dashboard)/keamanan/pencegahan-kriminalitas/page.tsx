@@ -16,16 +16,15 @@ import {
   TableThead,
   TableTr,
   Text,
-  Title,
-  Tooltip,
+  Title
 } from '@mantine/core';
-import { IconDeviceImacCog, IconPlus, IconSearch } from '@tabler/icons-react';
-import HeaderSearch from '../../_com/header';
-import { useRouter } from 'next/navigation';
-import { useProxy } from 'valtio/utils';
-import pencegahanKriminalitasState from '../../_state/keamanan/pencegahan-kriminalitas';
 import { useShallowEffect } from '@mantine/hooks';
+import { IconDeviceImacCog, IconPlus, IconSearch } from '@tabler/icons-react';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { useProxy } from 'valtio/utils';
+import HeaderSearch from '../../_com/header';
+import pencegahanKriminalitasState from '../../_state/keamanan/pencegahan-kriminalitas';
 
 function PencegahanKriminalitas() {
   const [search, setSearch] = useState("");
@@ -77,16 +76,14 @@ function ListPencegahanKriminalitas({ search }: { search: string }) {
         {/* Judul + Tombol Tambah */}
         <Group justify="space-between" mb="md">
           <Title order={4}>Daftar Pencegahan Kriminalitas</Title>
-          <Tooltip label="Tambah Program Pencegahan" withArrow>
-            <Button
-              leftSection={<IconPlus size={18} />}
-              color="blue"
-              variant="light"
-              onClick={() => router.push('/admin/keamanan/pencegahan-kriminalitas/create')}
-            >
-              Tambah Baru
-            </Button>
-          </Tooltip>
+          <Button
+            leftSection={<IconPlus size={18} />}
+            color="blue"
+            variant="light"
+            onClick={() => router.push('/admin/keamanan/pencegahan-kriminalitas/create')}
+          >
+            Tambah Baru
+          </Button>
         </Group>
 
         {/* Tabel */}
@@ -106,9 +103,9 @@ function ListPencegahanKriminalitas({ search }: { search: string }) {
                   <TableTr key={item.id}>
                     <TableTd>
                       <Box w={200}>
-                       <Text fw={500} truncate="end" lineClamp={1}>
-                        {item.judul}
-                      </Text>
+                        <Text fw={500} truncate="end" lineClamp={1}>
+                          {item.judul}
+                        </Text>
                       </Box>
                     </TableTd>
                     <TableTd>

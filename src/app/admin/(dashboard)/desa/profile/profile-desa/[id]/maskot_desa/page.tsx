@@ -5,9 +5,9 @@ import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import stateProfileDesa from '@/app/admin/(dashboard)/_state/desa/profile';
 import colors from '@/con/colors';
 import ApiFetch from '@/lib/api-fetch';
-import { Box, Button, Group, Image, Paper, SimpleGrid, Stack, Text, TextInput, Title, Tooltip, Center, Alert } from '@mantine/core';
+import { Alert, Box, Button, Center, Group, Image, Paper, SimpleGrid, Stack, Text, TextInput, Title } from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
-import { IconArrowBack, IconPhoto, IconUpload, IconX, IconAlertCircle } from '@tabler/icons-react';
+import { IconAlertCircle, IconArrowBack, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
@@ -161,11 +161,9 @@ function Page() {
     <Box>
       <Stack gap="xs">
         <Group mb="md">
-          <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
             <Button variant="subtle" onClick={handleBack} p="xs" radius="md">
               <IconArrowBack color={colors['blue-button']} size={24} />
             </Button>
-          </Tooltip>
           <Title order={4} ml="sm" c="dark">Edit Maskot Desa</Title>
         </Group>
 

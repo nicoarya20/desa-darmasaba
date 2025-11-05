@@ -1,6 +1,6 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Center, Group, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title, Tooltip } from '@mantine/core';
+import { Box, Button, Center, Group, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconDeviceImacCog, IconPlus, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
@@ -49,7 +49,6 @@ function ListPerbekelDariMasaKeMasa({ search }: { search: string }) {
       <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
         <Group justify='space-between' mb="md">
           <Title order={4}>List Perbekel Dari Masa Ke Masa</Title>
-          <Tooltip label="Tambah Perbekel Baru" withArrow>
             <Button
               leftSection={<IconPlus size={18} />}
               color="blue"
@@ -58,7 +57,6 @@ function ListPerbekelDariMasaKeMasa({ search }: { search: string }) {
             >
               Tambah Baru
             </Button>
-          </Tooltip>
         </Group>
 
         <Box style={{ overflowX: "auto" }}>

@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import colors from '@/con/colors';
-import { ScrollArea, Stack, Tabs, TabsList, TabsPanel, TabsTab, Title, Tooltip } from '@mantine/core';
+import { ScrollArea, Stack, Tabs, TabsList, TabsPanel, TabsTab, Title } from '@mantine/core';
 import { IconChartBar, IconUsers } from '@tabler/icons-react';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
@@ -68,19 +68,18 @@ function LayoutTabsKepuasan({ children }: { children: React.ReactNode }) {
             }}
           >
             {tabs.map((e, i) => (
-              <Tooltip key={i} label={e.description} withArrow position="bottom" transitionProps={{ transition: 'pop', duration: 200 }}>
-                <TabsTab
-                  value={e.value}
-                  leftSection={e.icon}
-                  style={{
-                    fontWeight: 500,
-                    fontSize: "0.9rem",
-                    transition: "all 0.2s ease",
-                  }}
-                >
-                  {e.label}
-                </TabsTab>
-              </Tooltip>
+              <TabsTab
+                key={i}
+                value={e.value}
+                leftSection={e.icon}
+                style={{
+                  fontWeight: 500,
+                  fontSize: "0.9rem",
+                  transition: "all 0.2s ease",
+                }}
+              >
+                {e.label}
+              </TabsTab>
             ))}
           </TabsList>
         </ScrollArea>

@@ -12,11 +12,12 @@ import { Box, Stack } from "@mantine/core";
 import Apbdes from "./_com/main-page/apbdes";
 import Prestasi from "./_com/main-page/prestasi";
 import ScrollToTopButton from "./_com/scrollToTopButton";
-import RunningText from "./_com/RunningText";
+
 import { useProxy } from "valtio/utils";
 import stateDashboardBerita from "../admin/(dashboard)/_state/desa/berita";
 import { useEffect, useMemo } from "react";
 import stateDesaPengumuman from "../admin/(dashboard)/_state/desa/pengumuman";
+import ModernNewsNotification from "./_com/ModernNeewsNotification";
 
 
 export default function Page() {
@@ -37,36 +38,36 @@ export default function Page() {
     }
   }, [pengumuman.data, loadingPengumuman]);
 
-  // Memoize news data untuk performa lebih baik
+  // Transform data untuk notification system
   const newsData = useMemo(() => {
     const items = [];
     
-    // Tambahkan judul berita jika ada
-    if (featured.data?.judul) {
-      items.push(`📰 BERITA: ${featured.data.judul}`);
+    if (featured.data) {
+      items.push({
+        id: String(featured.data.id || "berita-1"),
+        type: "berita" as const,
+        title: String(featured.data.judul || "Berita Terbaru"),
+        content: String(featured.data.content || ""),
+        timestamp: featured.data.createdAt 
+          ? (typeof featured.data.createdAt === 'string' 
+              ? featured.data.createdAt 
+              : new Date(featured.data.createdAt).toISOString())
+          : new Date().toISOString(),
+      });
     }
     
-    // Tambahkan content berita (akan di-strip HTML di component)
-    if (featured.data?.content) {
-      items.push(featured.data.content);
-    }
-    
-    // Tambahkan judul pengumuman jika ada
-    if (pengumuman.data?.judul) {
-      items.push(`📢 PENGUMUMAN: ${pengumuman.data.judul}`);
-    }
-    
-    // Tambahkan content pengumuman
-    if (pengumuman.data?.content) {
-      items.push(pengumuman.data.content);
-    }
-    
-    // Jika tidak ada data, return default message
-    if (items.length === 0) {
-      return [
-        "Selamat datang di Portal Desa Darmasaba",
-        "Jam operasional kantor: Senin - Jumat 08:00 - 17:00"
-      ];
+    if (pengumuman.data) {
+      items.push({
+        id: String(pengumuman.data.id || "pengumuman-1"),
+        type: "pengumuman" as const,
+        title: String(pengumuman.data.judul || "Pengumuman Penting"),
+        content: String(pengumuman.data.content || ""),
+        timestamp: pengumuman.data.createdAt
+          ? (typeof pengumuman.data.createdAt === 'string'
+              ? pengumuman.data.createdAt
+              : new Date(pengumuman.data.createdAt).toISOString())
+          : new Date().toISOString(),
+      });
     }
     
     return items;
@@ -78,14 +79,7 @@ export default function Page() {
         bg={colors.grey[1]} 
         gap={0}
       >
-        <RunningText 
-          news={newsData}
-          autoSpeed={false}
-          maxLength={150}  // Potong text panjang
-          speed={100}       // Base speed (tidak dipakai jika autoSpeed=true)
-          bgColor="#1e5a7e"
-          textColor="white"
-        />
+        {/* HAPUS RUNNING TEXT, GANTI DENGAN MODERN NOTIFICATION */}
         <LandingPage />
         <Penghargaan />
         <Layanan />
@@ -96,8 +90,15 @@ export default function Page() {
         <Apbdes />
         <Prestasi />
       </Stack>
+
       {/* Tombol Scroll ke Atas */}
       <ScrollToTopButton />
+
+      {/* Modern Notification System */}
+      <ModernNewsNotification 
+        news={newsData}
+        autoShowDelay={2000} // Muncul 2 detik setelah load
+      />
     </Box>
   );
 }

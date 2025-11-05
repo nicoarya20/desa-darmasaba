@@ -1,10 +1,10 @@
 'use client'
-import { useProxy } from 'valtio/utils';
-import { Box, Button, Group, Image, Paper, Skeleton, Stack, Text, Tooltip } from '@mantine/core';
+import { Box, Button, Group, Image, Paper, Skeleton, Stack, Text } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack, IconEdit, IconX } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { useProxy } from 'valtio/utils';
 
 import colors from '@/con/colors';
 import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
@@ -95,7 +95,6 @@ function DetailSDGSDesa() {
               </Box>
 
               <Group gap="sm" mt="md">
-                <Tooltip label="Hapus Sdgs Desa" withArrow position="top">
                   <Button
                     color="red"
                     onClick={() => {
@@ -109,9 +108,7 @@ function DetailSDGSDesa() {
                   >
                     <IconX size={20} />
                   </Button>
-                </Tooltip>
 
-                <Tooltip label="Edit Sdgs Desa" withArrow position="top">
                   <Button
                     color="green"
                     onClick={() => router.push(`/admin/landing-page/sdgs-desa/${data.id}/edit`)}
@@ -121,7 +118,6 @@ function DetailSDGSDesa() {
                   >
                     <IconEdit size={20} />
                   </Button>
-                </Tooltip>
               </Group>
             </Stack>
           </Paper>

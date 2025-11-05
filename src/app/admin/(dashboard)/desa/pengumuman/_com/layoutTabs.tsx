@@ -1,10 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import colors from '@/con/colors';
-import { ScrollArea, Stack, Tabs, TabsList, TabsPanel, TabsTab, Title, Tooltip } from '@mantine/core';
+import { ScrollArea, Stack, Tabs, TabsList, TabsPanel, TabsTab, Title } from '@mantine/core';
+import { IconCategory, IconListDetails } from '@tabler/icons-react';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
-import { IconListDetails, IconCategory } from '@tabler/icons-react';
 
 function LayoutTabsLayanan({ children }: { children: React.ReactNode }) {
     const router = useRouter()
@@ -14,15 +14,13 @@ function LayoutTabsLayanan({ children }: { children: React.ReactNode }) {
             label: "List Pengumuman",
             value: "listpengumuman",
             href: "/admin/desa/pengumuman/list-pengumuman",
-            icon: <IconListDetails size={18} stroke={1.8} />,
-            tooltip: "Lihat semua daftar pengumuman"
+            icon: <IconListDetails size={18} stroke={1.8} />
         },
         {
             label: "Kategori Pengumuman",
             value: "kategoripengumuman",
             href: "/admin/desa/pengumuman/kategori-pengumuman",
-            icon: <IconCategory size={18} stroke={1.8} />,
-            tooltip: "Kelola kategori pengumuman"
+            icon: <IconCategory size={18} stroke={1.8} />
         },
     ];
 
@@ -70,19 +68,18 @@ function LayoutTabsLayanan({ children }: { children: React.ReactNode }) {
                         }}
                     >
                         {tabs.map((tab, i) => (
-                            <Tooltip key={i} label={tab.tooltip} position="bottom" withArrow transitionProps={{ transition: 'pop', duration: 200 }}>
-                                <TabsTab
-                                    value={tab.value}
-                                    leftSection={tab.icon}
-                                    style={{
-                                        fontWeight: 600,
-                                        fontSize: "0.9rem",
-                                        transition: "all 0.2s ease",
-                                    }}
-                                >
-                                    {tab.label}
-                                </TabsTab>
-                            </Tooltip>
+                            <TabsTab
+                                key={i}
+                                value={tab.value}
+                                leftSection={tab.icon}
+                                style={{
+                                    fontWeight: 600,
+                                    fontSize: "0.9rem",
+                                    transition: "all 0.2s ease",
+                                }}
+                            >
+                                {tab.label}
+                            </TabsTab>
                         ))}
                     </TabsList>
                 </ScrollArea>

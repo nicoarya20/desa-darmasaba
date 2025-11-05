@@ -5,8 +5,8 @@ import {
   Button,
   Center,
   Group,
-  Paper,
   Pagination,
+  Paper,
   Skeleton,
   Stack,
   Table,
@@ -16,16 +16,15 @@ import {
   TableThead,
   TableTr,
   Text,
-  Title,
-  Tooltip,
+  Title
 } from '@mantine/core';
-import { IconDeviceImac, IconPlus, IconSearch } from '@tabler/icons-react';
-import HeaderSearch from '../../_com/header';
-import { useRouter } from 'next/navigation';
-import { useProxy } from 'valtio/utils';
-import laporanPublikState from '../../_state/keamanan/laporan-publik';
 import { useShallowEffect } from '@mantine/hooks';
+import { IconDeviceImac, IconPlus, IconSearch } from '@tabler/icons-react';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { useProxy } from 'valtio/utils';
+import HeaderSearch from '../../_com/header';
+import laporanPublikState from '../../_state/keamanan/laporan-publik';
 
 function LaporanPublik() {
   const [search, setSearch] = useState("");
@@ -74,16 +73,14 @@ function ListLaporanPublik({ search }: { search: string }) {
       <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
         <Group justify="space-between" mb="md">
           <Title order={4}>Daftar Laporan Publik</Title>
-          <Tooltip label="Tambah Laporan Publik" withArrow>
-            <Button
-              leftSection={<IconPlus size={18} />}
-              color="blue"
-              variant="light"
-              onClick={() => router.push('/admin/keamanan/laporan-publik/create')}
-            >
-              Tambah Baru
-            </Button>
-          </Tooltip>
+          <Button
+            leftSection={<IconPlus size={18} />}
+            color="blue"
+            variant="light"
+            onClick={() => router.push('/admin/keamanan/laporan-publik/create')}
+          >
+            Tambah Baru
+          </Button>
         </Group>
         <Box style={{ overflowX: "auto" }}>
           <Table highlightOnHover>

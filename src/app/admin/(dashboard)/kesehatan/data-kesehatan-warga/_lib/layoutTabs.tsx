@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import colors from '@/con/colors';
-import { ScrollArea, Stack, Tabs, TabsList, TabsPanel, TabsTab, Title, Tooltip } from '@mantine/core';
+import { ScrollArea, Stack, Tabs, TabsList, TabsPanel, TabsTab, Title } from '@mantine/core';
 import { IconActivity, IconBuildingHospital, IconCalendarEvent, IconGauge, IconNotes } from '@tabler/icons-react';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
@@ -17,36 +17,31 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
       label: "Presentase Kelahiran & Kematian",
       value: "presentasekelahiran&kematian",
       href: "/admin/kesehatan/data-kesehatan-warga/persentase_data_kelahiran_kematian",
-      icon: <IconActivity size={18} stroke={1.8} />,
-      tooltip: "Lihat data kelahiran dan kematian"
+      icon: <IconActivity size={18} stroke={1.8} />
     },
     {
       label: "Grafik Hasil Kepuasan Masyarakat",
       value: "grafikhasilkepuasan",
       href: "/admin/kesehatan/data-kesehatan-warga/grafik_hasil_kepuasan",
-      icon: <IconGauge size={18} stroke={1.8} />,
-      tooltip: "Grafik kepuasan masyarakat terhadap pelayanan"
+      icon: <IconGauge size={18} stroke={1.8} />
     },
     {
       label: "Fasilitas Kesehatan",
       value: "fasilitaskesehatan",
       href: "/admin/kesehatan/data-kesehatan-warga/fasilitas_kesehatan",
-      icon: <IconBuildingHospital size={18} stroke={1.8} />,
-      tooltip: "Data fasilitas kesehatan desa"
+      icon: <IconBuildingHospital size={18} stroke={1.8} />
     },
     {
       label: "Jadwal Kegiatan",
       value: "jadwalkegiatan",
       href: "/admin/kesehatan/data-kesehatan-warga/jadwal_kegiatan",
-      icon: <IconCalendarEvent size={18} stroke={1.8} />,
-      tooltip: "Atur jadwal kegiatan kesehatan"
+      icon: <IconCalendarEvent size={18} stroke={1.8} />
     },
     {
       label: "Artikel Kesehatan",
       value: "artikelkesehatan",
       href: "/admin/kesehatan/data-kesehatan-warga/artikel_kesehatan",
-      icon: <IconNotes size={18} stroke={1.8} />,
-      tooltip: "Artikel & informasi seputar kesehatan"
+      icon: <IconNotes size={18} stroke={1.8} />
     },
   ];
 
@@ -100,46 +95,39 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
             }}
           >
             {tabs.map((tab, i) => (
-              <Tooltip
+              <TabsTab
                 key={i}
-                label={tab.tooltip}
-                position="bottom"
-                withArrow
-                transitionProps={{ transition: 'pop', duration: 200 }}
+                value={tab.value}
+                leftSection={tab.icon}
+                style={{
+                  fontWeight: 600,
+                  fontSize: "0.9rem",
+                  transition: "all 0.2s ease",
+                }}
               >
-                <TabsTab
-                  value={tab.value}
-                  leftSection={tab.icon}
-                  style={{
-                    fontWeight: 600,
-                    fontSize: "0.9rem",
-                    transition: "all 0.2s ease",
-                  }}
-                >
-                  {tab.label}
-                </TabsTab>
-              </Tooltip>
+                {tab.label}
+              </TabsTab>
             ))}
-          </TabsList>
-        </ScrollArea>
+        </TabsList>
+      </ScrollArea>
 
 
-        {tabs.map((tab, i) => (
-          <TabsPanel
-            key={i}
-            value={tab.value}
-            style={{
-              padding: "1.5rem",
-              background: "linear-gradient(180deg, #ffffff, #f5f6fa)",
-              borderRadius: "1rem",
-              boxShadow: "0 4px 16px rgba(0,0,0,0.05)",
-            }}
-          >
-            {children}
-          </TabsPanel>
-        ))}
-      </Tabs>
-    </Stack>
+      {tabs.map((tab, i) => (
+        <TabsPanel
+          key={i}
+          value={tab.value}
+          style={{
+            padding: "1.5rem",
+            background: "linear-gradient(180deg, #ffffff, #f5f6fa)",
+            borderRadius: "1rem",
+            boxShadow: "0 4px 16px rgba(0,0,0,0.05)",
+          }}
+        >
+          {children}
+        </TabsPanel>
+      ))}
+    </Tabs>
+    </Stack >
   );
 }
 

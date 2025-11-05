@@ -16,8 +16,7 @@ import {
   TableThead,
   TableTr,
   Text,
-  Title,
-  Tooltip
+  Title
 } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconCircleDashedPlus, IconDeviceImacCog, IconSearch } from '@tabler/icons-react';
@@ -68,7 +67,6 @@ function ListBerita({ search }: { search: string }) {
       <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
         <Group justify="space-between" mb="md">
           <Title order={4}>Daftar Berita</Title>
-          <Tooltip label="Tambah Berita" withArrow>
             <Button
               leftSection={<IconCircleDashedPlus size={18} />}
               color="blue"
@@ -77,7 +75,6 @@ function ListBerita({ search }: { search: string }) {
             >
               Tambah Baru
             </Button>
-          </Tooltip>
         </Group>
 
         <Box style={{ overflowX: 'auto' }}>

@@ -24,8 +24,7 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
       label: "Produk Pasar Desa",
       value: "produkpasardesa",
       href: "/admin/ekonomi/pasar-desa/produk-pasar-desa",
-      icon: <IconShoppingBag size={18} stroke={1.8} />,
-      tooltip: "Kelola data produk yang ada di pasar desa",
+      icon: <IconShoppingBag size={18} stroke={1.8} />
     },
     {
       label: "Kategori Produk",

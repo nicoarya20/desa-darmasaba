@@ -2,7 +2,7 @@
 import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
 import prestasiState from '@/app/admin/(dashboard)/_state/landing-page/prestasi-desa';
 import colors from '@/con/colors';
-import { Box, Button, Group, Image, Paper, Skeleton, Stack, Text, Tooltip } from '@mantine/core';
+import { Box, Button, Group, Image, Paper, Skeleton, Stack, Text } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -104,7 +104,6 @@ function DetailPrestasiDesa() {
               </Box>
 
               <Group gap="sm">
-                <Tooltip label="Hapus Prestasi" withArrow position="top">
                   <Button
                     color="red"
                     onClick={() => {
@@ -120,9 +119,7 @@ function DetailPrestasiDesa() {
                   >
                     <IconTrash size={20} />
                   </Button>
-                </Tooltip>
 
-                <Tooltip label="Edit Prestasi" withArrow position="top">
                   <Button
                     color="green"
                     onClick={() => {
@@ -137,7 +134,6 @@ function DetailPrestasiDesa() {
                   >
                     <IconEdit size={20} />
                   </Button>
-                </Tooltip>
               </Group>
             </Stack>
           </Paper>

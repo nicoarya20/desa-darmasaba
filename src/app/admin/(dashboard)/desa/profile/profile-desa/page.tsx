@@ -1,12 +1,12 @@
 'use client'
 
 import colors from '@/con/colors';
-import { Box, Button, Card, Center, Divider, Grid, GridCol, Image, Paper, SimpleGrid, Stack, Text, Title, Tooltip } from '@mantine/core';
-import { useSnapshot } from 'valtio';
-import stateProfileDesa from '../../../_state/desa/profile';
-import { useEffect } from 'react';
+import { Box, Button, Card, Center, Divider, Grid, GridCol, Image, Paper, SimpleGrid, Stack, Text, Title } from '@mantine/core';
 import { IconEdit } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+import { useSnapshot } from 'valtio';
+import stateProfileDesa from '../../../_state/desa/profile';
 
 function Page() {
   const router = useRouter();
@@ -37,7 +37,6 @@ function Page() {
                 <Title order={3} c={colors['blue-button']}>Preview Sejarah Desa</Title>
               </GridCol>
               <GridCol span={{ base: 12, md: 1 }}>
-                <Tooltip label="Edit Sejarah Desa" withArrow>
                   <Button
                     c="green"
                     variant="light"
@@ -47,7 +46,6 @@ function Page() {
                   >
                     Edit
                   </Button>
-                </Tooltip>
               </GridCol>
             </Grid>
 
@@ -84,7 +82,6 @@ function Page() {
                 <Title order={3} c={colors['blue-button']}>Preview Visi Misi Desa</Title>
               </GridCol>
               <GridCol span={{ base: 12, md: 1 }}>
-                <Tooltip label="Edit Visi Misi Desa" withArrow>
                   <Button
                     c="green"
                     variant="light"
@@ -94,7 +91,6 @@ function Page() {
                   >
                     Edit
                   </Button>
-                </Tooltip>
               </GridCol>
             </Grid>
 
@@ -134,7 +130,6 @@ function Page() {
                 <Title order={3} c={colors['blue-button']}>Preview Lambang Desa</Title>
               </GridCol>
               <GridCol span={{ base: 12, md: 1 }}>
-                <Tooltip label="Edit Lambang Desa" withArrow>
                   <Button
                     c="green"
                     variant="light"
@@ -144,7 +139,6 @@ function Page() {
                   >
                     Edit
                   </Button>
-                </Tooltip>
               </GridCol>
             </Grid>
 
@@ -181,7 +175,6 @@ function Page() {
                 <Title order={3} c={colors['blue-button']}>Preview Maskot Desa</Title>
               </GridCol>
               <GridCol span={{ base: 12, md: 1 }}>
-                <Tooltip label="Edit Maskot Desa" withArrow>
                   <Button
                     c="green"
                     variant="light"
@@ -191,7 +184,6 @@ function Page() {
                   >
                     Edit
                   </Button>
-                </Tooltip>
               </GridCol>
             </Grid>
 

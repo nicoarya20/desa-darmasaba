@@ -1,7 +1,7 @@
 'use client'
 
 import colors from '@/con/colors';
-import { Box, Button, Center, Divider, Grid, GridCol, Image, Paper, Skeleton, Stack, Text, Title, Tooltip } from '@mantine/core';
+import { Box, Button, Center, Divider, Grid, GridCol, Image, Paper, Skeleton, Stack, Text, Title } from '@mantine/core';
 import { IconEdit } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
@@ -36,7 +36,6 @@ function Page() {
             <Title order={3} c={colors['blue-button']}>Preview Profil PPID</Title>
           </GridCol>
           <GridCol span={{ base: 12, md: 1 }}>
-            <Tooltip label="Edit Profil Perbekel" withArrow>
               <Button
                 c="green"
                 variant="light"
@@ -46,7 +45,6 @@ function Page() {
               >
                 Edit
               </Button>
-            </Tooltip>
           </GridCol>
         </Grid>
 

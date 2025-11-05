@@ -13,8 +13,7 @@ import {
   Stack,
   Text,
   TextInput,
-  Title,
-  Tooltip,
+  Title
 } from "@mantine/core";
 import { useShallowEffect } from "@mantine/hooks";
 import { IconSearch, IconTrash, IconX } from "@tabler/icons-react";
@@ -103,7 +102,6 @@ export default function ListImage() {
                   </Box>
 
                   <Group justify="space-between" align="center" pt="xs">
-                    <Tooltip label="Hapus foto" withArrow>
                       <ActionIcon
                         variant="subtle"
                         color="red"
@@ -116,7 +114,6 @@ export default function ListImage() {
                       >
                         <IconTrash size={18} />
                       </ActionIcon>
-                    </Tooltip>
                   </Group>
                 </Stack>
               </Card>

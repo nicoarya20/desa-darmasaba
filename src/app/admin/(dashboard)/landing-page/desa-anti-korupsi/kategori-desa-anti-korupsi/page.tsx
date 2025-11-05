@@ -1,6 +1,6 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Center, Group, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title, Tooltip } from '@mantine/core';
+import { Box, Button, Center, Group, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconEdit, IconPlus, IconSearch, IconTrash } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
@@ -68,7 +68,6 @@ function ListKategoriKegiatan({ search }: { search: string }) {
       <Paper bg={colors['white-1']} p={'lg'} shadow="md" radius="md">
         <Group justify="space-between" mb="md">
           <Title order={4}>Daftar Kategori Kegiatan</Title>
-          <Tooltip label="Tambah Kategori" withArrow>
             <Button
               leftSection={<IconPlus size={18} />}
               color="blue"
@@ -77,7 +76,6 @@ function ListKategoriKegiatan({ search }: { search: string }) {
             >
               Tambah Baru
             </Button>
-          </Tooltip>
         </Group>
         <Box style={{ overflowX: "auto" }}>
           <Table highlightOnHover striped verticalSpacing="sm">
@@ -98,7 +96,6 @@ function ListKategoriKegiatan({ search }: { search: string }) {
                       </Box>
                     </TableTd>
                     <TableTd>
-                      <Tooltip label="Edit" withArrow>
                         <Button
                           variant="light"
                           color="green"
@@ -107,10 +104,8 @@ function ListKategoriKegiatan({ search }: { search: string }) {
                         >
                           <IconEdit size={18} />
                         </Button>
-                      </Tooltip>
                     </TableTd>
                     <TableTd>
-                      <Tooltip label="Hapus" withArrow>
                         <Button
                           variant="light"
                           color="red"
@@ -122,7 +117,6 @@ function ListKategoriKegiatan({ search }: { search: string }) {
                         >
                           <IconTrash size={18} />
                         </Button>
-                      </Tooltip>
                     </TableTd>
                   </TableTr>
                 ))

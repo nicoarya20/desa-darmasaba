@@ -13,8 +13,7 @@ import {
   Stack,
   Text,
   TextInput,
-  Title,
-  Tooltip,
+  Title
 } from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
 import { useShallowEffect } from '@mantine/hooks';
@@ -73,7 +72,6 @@ export default function CreateBerita() {
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
       {/* Header dengan tombol kembali */}
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
           <Button
             variant="subtle"
             onClick={() => router.back()}
@@ -82,7 +80,6 @@ export default function CreateBerita() {
           >
             <IconArrowBack color={colors['blue-button']} size={24} />
           </Button>
-        </Tooltip>
         <Title order={4} ml="sm" c="dark">
           Tambah Berita
         </Title>

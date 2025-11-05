@@ -1,5 +1,7 @@
 'use client'
 
+import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
+import stateDesaPengumuman from '@/app/admin/(dashboard)/_state/desa/pengumuman';
 import colors from '@/con/colors';
 import {
   Box,
@@ -8,16 +10,13 @@ import {
   Paper,
   Skeleton,
   Stack,
-  Text,
-  Tooltip,
+  Text
 } from '@mantine/core';
+import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
-import { useRouter, useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
-import { useShallowEffect } from '@mantine/hooks';
-import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
-import stateDesaPengumuman from '@/app/admin/(dashboard)/_state/desa/pengumuman';
 
 export default function DetailPengumuman() {
   const pengumumanState = useProxy(stateDesaPengumuman);
@@ -117,7 +116,6 @@ export default function DetailPengumuman() {
               </Box>
 
               <Group gap="sm">
-                <Tooltip label="Hapus Pengumuman" withArrow position="top">
                   <Button
                     color="red"
                     onClick={() => {
@@ -130,9 +128,7 @@ export default function DetailPengumuman() {
                   >
                     <IconTrash size={20} />
                   </Button>
-                </Tooltip>
 
-                <Tooltip label="Edit Pengumuman" withArrow position="top">
                   <Button
                     color="green"
                     onClick={() =>
@@ -146,7 +142,6 @@ export default function DetailPengumuman() {
                   >
                     <IconEdit size={20} />
                   </Button>
-                </Tooltip>
               </Group>
             </Stack>
           </Paper>
