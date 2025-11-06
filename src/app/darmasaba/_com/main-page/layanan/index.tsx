@@ -72,14 +72,14 @@ function Slider() {
   const scrollPositionRef = useRef(0);
   const animationFrameRef = useRef<number>(0);
   const isHoveredRef = useRef(false);
-  
+
   // Refs for drag functionality
   const isDraggingRef = useRef(false);
   const startXRef = useRef(0);
   const scrollLeftRef = useRef(0);
   const velocityRef = useRef(0);
   const lastScrollTimeRef = useRef(0);
-  
+
   // Speed configuration
   const normalSpeed = 1.0; // pixels per frame
   const hoverSpeed = 0.3; // slower speed on hover
@@ -143,7 +143,7 @@ function Slider() {
       } else {
         // Sync scroll position when user is scrolling
         scrollPositionRef.current = container.scrollLeft;
-        
+
         // Apply momentum/velocity for smooth drag release
         if (!isDraggingRef.current && Math.abs(velocityRef.current) > 0.1) {
           scrollPositionRef.current += velocityRef.current;
@@ -176,26 +176,26 @@ function Slider() {
   // Mouse drag handlers
   const handleMouseDown = (e: React.MouseEvent) => {
     if (!containerRef.current) return;
-    
+
     isDraggingRef.current = true;
     startXRef.current = e.pageX - containerRef.current.offsetLeft;
     scrollLeftRef.current = containerRef.current.scrollLeft;
     velocityRef.current = 0;
-    
+
     containerRef.current.style.cursor = 'grabbing';
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!isDraggingRef.current || !containerRef.current) return;
-    
+
     e.preventDefault();
     const x = e.pageX - containerRef.current.offsetLeft;
     const walk = (x - startXRef.current) * 2; // Multiply for faster scroll
     const newScrollLeft = scrollLeftRef.current - walk;
-    
+
     // Calculate velocity for momentum
     velocityRef.current = containerRef.current.scrollLeft - newScrollLeft;
-    
+
     containerRef.current.scrollLeft = newScrollLeft;
     scrollPositionRef.current = newScrollLeft;
     lastScrollTimeRef.current = Date.now();
@@ -203,7 +203,7 @@ function Slider() {
 
   const handleMouseUp = () => {
     if (!containerRef.current) return;
-    
+
     isDraggingRef.current = false;
     containerRef.current.style.cursor = 'grab';
   };
@@ -211,7 +211,7 @@ function Slider() {
   // Wheel scroll handler
   const handleWheel = (e: React.WheelEvent) => {
     if (!containerRef.current) return;
-    
+
     e.preventDefault();
     containerRef.current.scrollLeft += e.deltaY;
     scrollPositionRef.current = containerRef.current.scrollLeft;

@@ -13,11 +13,12 @@ import Apbdes from "./_com/main-page/apbdes";
 import Prestasi from "./_com/main-page/prestasi";
 import ScrollToTopButton from "./_com/scrollToTopButton";
 
+import { useEffect, useMemo } from "react";
 import { useProxy } from "valtio/utils";
 import stateDashboardBerita from "../admin/(dashboard)/_state/desa/berita";
-import { useEffect, useMemo } from "react";
 import stateDesaPengumuman from "../admin/(dashboard)/_state/desa/pengumuman";
 import ModernNewsNotification from "./_com/ModernNeewsNotification";
+import NewsReaderLanding from "./_com/NewsReaderalanding";
 
 
 export default function Page() {
@@ -74,7 +75,7 @@ export default function Page() {
   }, [featured.data, pengumuman.data]);
 
   return (
-    <Box>
+    <Box id="page-root">
       <Stack 
         bg={colors.grey[1]} 
         gap={0}
@@ -99,6 +100,9 @@ export default function Page() {
         news={newsData}
         autoShowDelay={2000} // Muncul 2 detik setelah load
       />
+
+      <NewsReaderLanding/>
+      
     </Box>
   );
 }

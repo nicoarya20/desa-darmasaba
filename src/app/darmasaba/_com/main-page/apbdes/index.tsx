@@ -1,14 +1,25 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import apbdes from '@/app/admin/(dashboard)/_state/landing-page/apbdes'
 import colors from '@/con/colors'
-import { ActionIcon, BackgroundImage, Box, Button, Center, Flex, Group, Loader, SimpleGrid, Stack, Text } from '@mantine/core'
+import { BarChart } from '@mantine/charts'
+import { ActionIcon, BackgroundImage, Box, Button, Center, Flex, Group, Loader, Paper, SimpleGrid, Stack, Text, Title } from '@mantine/core'
 import { IconDownload } from '@tabler/icons-react'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { useProxy } from 'valtio/utils'
+import parseJumlah from './lib/convert'
 
 function Apbdes() {
+  type APBDes = {
+    id: string
+    name: string
+    jumlah: number
+  };
+
+  const [chartData, setChartData] = useState<APBDes[]>([])
+  const [mounted, setMounted] = useState(false);
   const state = useProxy(apbdes)
   const [loading, setLoading] = useState(false)
 
@@ -18,8 +29,21 @@ function Apbdes() {
   }
 
   useEffect(() => {
+    if (state.findMany.data) {
+      setChartData(
+        state.findMany.data.map((item: any) => ({
+          id: item.id,
+          name: item.name,
+          jumlah: parseJumlah(item.jumlah),
+        }))
+      );
+    }
+  }, [state.findMany.data]);
+
+  useEffect(() => {
     const loadData = async () => {
       try {
+        setMounted(true);
         setLoading(true)
         await state.findMany.load()
       } catch (error) {
@@ -44,6 +68,55 @@ function Apbdes() {
             {textHeading.des}
           </Text>
         </Stack>
+      </Box>
+
+      {/* Chart */}
+      <Box mt={30} style={{ width: '100%', minHeight: 400 }}>
+        <Paper bg={colors['white-1']} py={50} px={90} mb={"xl"} radius="md" withBorder>
+          <Stack gap={"xs"}>
+            <Title ta={"center"} pb={10} order={2}>
+              Grafik APBDes
+            </Title>
+            {mounted && chartData.length > 0 ? (
+              <BarChart
+                orientation="vertical"
+                h={450}
+                barProps={{ radius: 50 }}
+                data={chartData}
+                dataKey="name"
+                type="stacked"
+                valueFormatter={(value: number) => {
+                  if (value >= 1_000_000_000_000)
+                    return `Rp ${(value / 1_000_000_000_000).toFixed(1)} T`;
+                  if (value >= 1_000_000_000)
+                    return `Rp ${(value / 1_000_000_000).toFixed(1)} M`;
+                  if (value >= 1_000_000)
+                    return `Rp ${(value / 1_000_000).toFixed(1)} Jt`;
+                  if (value >= 1_000)
+                    return `Rp ${(value / 1_000).toFixed(1)} Rb`;
+                  return `Rp ${value}`;
+                }}
+                series={[
+                  {
+                    name: 'jumlah',
+                    color: colors['blue-button'],
+                    label: 'Jumlah',
+                  },
+                ]}
+              />
+            ) : (
+              <Text c="dimmed">Belum ada data untuk ditampilkan dalam grafik</Text>
+            )}
+            <Box py={10}>
+              <Group justify='center'>
+                <Flex align="center" gap={10}>
+                  <Box bg={colors['blue-button']} w={20} h={20} />
+                  <Text>Jumlah</Text>
+                </Flex>
+              </Group>
+            </Box>
+          </Stack>
+        </Paper>
       </Box>
 
       <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="lg">
@@ -72,7 +145,7 @@ function Apbdes() {
               pos="relative"
               style={{ overflow: 'hidden' }}
             >
-               <Box pos="absolute" inset={0} bg="rgba(0,0,0,0.45)" style={{ borderRadius: 16 }} />
+              <Box pos="absolute" inset={0} bg="rgba(0,0,0,0.45)" style={{ borderRadius: 16 }} />
               <Stack justify="space-between" h="100%" p="xl" pos="relative">
                 <Text
                   c="white"

@@ -51,10 +51,10 @@ function Potensi() {
   return (
     <Stack p="sm" gap="xl">
       <Container w={{ base: "100%", md: "80%" }} p={"md"} >
-       <Text ta={"center"} fw={"bold"} c={colors["blue-button"]} fz={{ base: "1.8rem", md: "3.4rem" }}>
+       <Text id="news-title" ta={"center"} fw={"bold"} c={colors["blue-button"]} fz={{ base: "1.8rem", md: "3.4rem" }}>
           {textHeading.title}
         </Text>
-        <Text ta={"center"} fz={{ base: "1rem", md: "1.3rem" }}>
+        <Text id="news-content" ta={"center"} fz={{ base: "1rem", md: "1.3rem" }}>
           {textHeading.des}
         </Text>
       </Container>

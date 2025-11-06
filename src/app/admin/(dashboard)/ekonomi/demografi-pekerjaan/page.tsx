@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 import colors from '@/con/colors';
 import { BarChart } from '@mantine/charts';
@@ -85,7 +86,7 @@ function ListDemografiPekerjaan({ search }: { search: string }) {
   useEffect(() => {
     if (data) {
       setChartData(
-        data.map((item) => ({
+        data.map((item: any) => ({
           id: item.id,
           pekerjaan: item.pekerjaan,
           lakiLaki: Number(item.lakiLaki),

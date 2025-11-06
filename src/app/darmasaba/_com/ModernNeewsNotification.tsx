@@ -104,8 +104,7 @@ export default function ModernNewsNotification({
               ...transitionStyles,
               position: "fixed",
               bottom: "24px",
-              right: "24px",
-              zIndex: 1000,
+              right: "24px"
             }}
           >
             <ActionIcon
@@ -258,6 +257,7 @@ export default function ModernNewsNotification({
               overflow: "hidden",
               border: "1px solid #e9ecef",
             }}
+            onClick={handleLihatSemua}
           >
             <Box
               style={{

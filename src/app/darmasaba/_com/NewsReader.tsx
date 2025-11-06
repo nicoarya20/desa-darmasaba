@@ -1,82 +1,112 @@
 'use client';
 import { Button } from '@mantine/core';
+import { IconMusic, IconMusicOff } from '@tabler/icons-react';
 import { useEffect, useRef, useState } from 'react';
 
 const NewsReader = () => {
-  const [isSpeaking, setIsSpeaking] = useState(false);
-  const [isAllowed, setIsAllowed] = useState(false);
+  const [isPointerMode, setIsPointerMode] = useState(false);
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
 
-  // Fungsi untuk membaca teks
-  const speakText = () => {
-    if (typeof window === 'undefined' || !window.speechSynthesis) {
-      console.warn('Browser tidak mendukung SpeechSynthesis.');
-      return;
-    }
+  const speakText = (text: string) => {
+    if (!window.speechSynthesis || !text.trim()) return;
 
-    const contentElement = document.getElementById('news-content');
-    const rawText = contentElement?.innerText || '';
-    if (!rawText.trim()) return;
-
-    // Hentikan semua suara sebelumnya
-    window.speechSynthesis.cancel();
-
-    const utterance = new SpeechSynthesisUtterance(rawText);
+    window.speechSynthesis.cancel(); // hentikan sebelumnya
+    const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = 'id-ID';
     utterance.rate = 1;
     utterance.pitch = 1;
-
-    utterance.onstart = () => setIsSpeaking(true);
-    utterance.onend = () => setIsSpeaking(false);
-
     utteranceRef.current = utterance;
-
-    try {
-      window.speechSynthesis.speak(utterance);
-    } catch (err) {
-      console.warn('Autoplay gagal karena kebijakan browser:', err);
-    }
+    window.speechSynthesis.speak(utterance);
   };
 
-  // Auto play jika sudah pernah diizinkan
+  // Tambahkan listener hover ke semua elemen teks
   useEffect(() => {
-    const hasPermission = localStorage.getItem('ttsAllowed') === 'true';
-    setIsAllowed(hasPermission);
+    const content = document.getElementById('news-title');
+    if (!content) return;
 
-    if (hasPermission) {
-      const trySpeak = setInterval(() => {
-        const contentElement = document.getElementById('news-content');
-        if (contentElement && contentElement.innerText.trim()) {
-          speakText();
-          clearInterval(trySpeak);
-        }
-      }, 1000);
-      return () => clearInterval(trySpeak);
+    // Atur cursor saat mode aktif/nonaktif
+    if (isPointerMode) {
+      content.style.cursor = 'pointer';
+    } else {
+      content.style.cursor = 'auto';
     }
-  }, []);
 
-  // Hentikan suara saat user keluar halaman / komponen unmount
-  useEffect(() => {
-    return () => {
-      if (typeof window !== 'undefined' && window.speechSynthesis) {
-        window.speechSynthesis.cancel();
-        setIsSpeaking(false);
+    if (!isPointerMode) return;
+
+    const handleMouseOver = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      // opsional: hanya baca teks dari elemen tertentu
+      if (target && target.innerText) {
+        speakText(target.innerText);
+        target.style.backgroundColor = '#eef6ff'; // highlight biar keliatan
       }
     };
-  }, []);
 
-  // Handle tombol manual
-  const handleToggle = () => {
-    if (isSpeaking) {
+    const handleMouseOut = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (target) target.style.backgroundColor = ''; // hilangkan highlight
       window.speechSynthesis.cancel();
-      setIsSpeaking(false);
+    };
+
+    content.addEventListener('mouseover', handleMouseOver);
+    content.addEventListener('mouseout', handleMouseOut);
+
+    return () => {
+      content.removeEventListener('mouseover', handleMouseOver);
+      content.removeEventListener('mouseout', handleMouseOut);
+      content.style.cursor = 'auto'; // reset cursor saat mode dimatikan
+      window.speechSynthesis.cancel();
+    };
+  }, [isPointerMode]);
+
+  useEffect(() => {
+    const content = document.getElementById('news-content');
+    if (!content) return;
+
+    // Atur cursor saat mode aktif/nonaktif
+    if (isPointerMode) {
+      content.style.cursor = 'pointer';
     } else {
-      if (!isAllowed) {
-        localStorage.setItem('ttsAllowed', 'true');
-        setIsAllowed(true);
-      }
-      speakText();
+      content.style.cursor = 'auto';
     }
+
+    if (!isPointerMode) return;
+
+    const handleMouseOver = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      // opsional: hanya baca teks dari elemen tertentu
+      if (target && target.innerText) {
+        speakText(target.innerText);
+        target.style.backgroundColor = '#eef6ff'; // highlight biar keliatan
+      }
+    };
+
+    const handleMouseOut = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (target) target.style.backgroundColor = ''; // hilangkan highlight
+      window.speechSynthesis.cancel();
+    };
+
+    content.addEventListener('mouseover', handleMouseOver);
+    content.addEventListener('mouseout', handleMouseOut);
+
+    return () => {
+      content.removeEventListener('mouseover', handleMouseOver);
+      content.removeEventListener('mouseout', handleMouseOut);
+      content.style.cursor = 'auto'; // reset cursor saat mode dimatikan
+      window.speechSynthesis.cancel();
+    };
+  }, [isPointerMode]);
+
+ 
+
+  const handleToggle = () => {
+    setIsPointerMode((prev) => {
+      if (prev) {
+        window.speechSynthesis.cancel();
+      }
+      return !prev;
+    });
   };
 
   return (
@@ -84,11 +114,20 @@ const NewsReader = () => {
       onClick={handleToggle}
       color="#0B4F78"
       variant="filled"
-      radius="xl"
       size="md"
       mt="md"
+      style={{
+        zIndex: 500,
+        position: 'fixed',
+        bottom: '350px',
+        left: '0px',
+        borderBottomRightRadius: '20px',
+        borderTopRightRadius: '20px',
+        borderBottomLeftRadius: '0px',
+        borderTopLeftRadius: '0px',
+      }}
     >
-      {isSpeaking ? '🔇 Hentikan Suara' : '🔊 Dengarkan Berita'}
+      {isPointerMode ? <IconMusicOff /> : <IconMusic />}
     </Button>
   );
 };
