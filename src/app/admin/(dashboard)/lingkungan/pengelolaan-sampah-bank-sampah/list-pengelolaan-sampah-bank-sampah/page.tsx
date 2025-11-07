@@ -1,15 +1,14 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Center, Group, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title, Tooltip } from '@mantine/core';
+import { Box, Button, Center, Group, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconChartLine, IconClipboardTextFilled, IconEdit, IconLeaf, IconPlus, IconRecycle, IconScale, IconSearch, IconTent, IconTrashFilled, IconTrophy, IconTruckFilled } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../../_com/header';
 import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
 import pengelolaanSampahState from '../../../_state/lingkungan/pengelolaan-sampah';
-import React from 'react';
 
 
 function PengelolaanSampahBankSampah() {
@@ -82,16 +81,14 @@ function ListPengelolaanSampahBankSampah({ search }: { search: string }) {
       <Paper bg={colors['white-1']} p="lg" shadow="md" radius="md">
         <Group justify="space-between" mb="md">
           <Title order={4}>Daftar Pengelolaan Sampah Bank Sampah</Title>
-          <Tooltip label="Tambah Pengelolaan Sampah" withArrow>
-            <Button
-              leftSection={<IconPlus size={18} />}
-              color="blue"
-              variant="light"
-              onClick={() => router.push('/admin/lingkungan/pengelolaan-sampah-bank-sampah/list-pengelolaan-sampah-bank-sampah/create')}
-            >
-              Tambah Baru
-            </Button>
-          </Tooltip>
+          <Button
+            leftSection={<IconPlus size={18} />}
+            color="blue"
+            variant="light"
+            onClick={() => router.push('/admin/lingkungan/pengelolaan-sampah-bank-sampah/list-pengelolaan-sampah-bank-sampah/create')}
+          >
+            Tambah Baru
+          </Button>
         </Group>
 
         <Box style={{ overflowX: 'auto' }}>
@@ -113,44 +110,38 @@ function ListPengelolaanSampahBankSampah({ search }: { search: string }) {
                     </TableTd>
                     <TableTd>
                       {iconMap[item.icon] ? (
-                        <Tooltip label={item.icon} withArrow>
-                          <Box>
-                            {React.createElement(iconMap[item.icon], {
-                              size: 24,
-                              style: { color: colors['blue-button'] }
-                            })}
-                          </Box>
-                        </Tooltip>
+                        <Box>
+                          {React.createElement(iconMap[item.icon], {
+                            size: 24,
+                            style: { color: colors['blue-button'] }
+                          })}
+                        </Box>
                       ) : (
                         <Text c="dimmed" fz="sm">-</Text>
                       )}
                     </TableTd>
                     <TableTd>
-                      <Tooltip label="Edit" withArrow>
-                        <Button
-                          variant="light"
-                          color="green"
-                          size="sm"
-                          onClick={() => router.push(`/admin/lingkungan/pengelolaan-sampah-bank-sampah/list-pengelolaan-sampah-bank-sampah/${item.id}`)}
-                        >
-                          <IconEdit size={18} />
-                        </Button>
-                      </Tooltip>
+                      <Button
+                        variant="light"
+                        color="green"
+                        size="sm"
+                        onClick={() => router.push(`/admin/lingkungan/pengelolaan-sampah-bank-sampah/list-pengelolaan-sampah-bank-sampah/${item.id}`)}
+                      >
+                        <IconEdit size={18} />
+                      </Button>
                     </TableTd>
                     <TableTd>
-                      <Tooltip label="Hapus" withArrow>
-                        <Button
-                          variant="light"
-                          color="red"
-                          size="sm"
-                          onClick={() => {
-                            setSelectedId(item.id);
-                            setModalHapus(true);
-                          }}
-                        >
-                          <IconTrashFilled size={18} />
-                        </Button>
-                      </Tooltip>
+                      <Button
+                        variant="light"
+                        color="red"
+                        size="sm"
+                        onClick={() => {
+                          setSelectedId(item.id);
+                          setModalHapus(true);
+                        }}
+                      >
+                        <IconTrashFilled size={18} />
+                      </Button>
                     </TableTd>
                   </TableTr>
                 ))

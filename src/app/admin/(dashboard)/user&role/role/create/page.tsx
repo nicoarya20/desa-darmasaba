@@ -9,8 +9,7 @@ import {
   Paper,
   Stack,
   TextInput,
-  Title,
-  Tooltip
+  Title
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
@@ -29,7 +28,7 @@ export default function CreateRole() {
   const resetForm = () => {
     stateRole.create.form = {
       name: '',
-      permissions: [] ,
+      permissions: [],
     };
   };
 
@@ -43,11 +42,9 @@ export default function CreateRole() {
   return (
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
-        </Tooltip>
+        <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Tambah Role
         </Title>
@@ -83,8 +80,8 @@ export default function CreateRole() {
                       .flat()
                   )
                 )
-                .filter((p): p is string => typeof p === 'string')
-                .map((p) => ({ label: p, value: p }))
+                  .filter((p): p is string => typeof p === 'string')
+                  .map((p) => ({ label: p, value: p }))
               }
               value={stateRole.create.form.permissions}
               onChange={(value) => (stateRole.create.form.permissions = value)}

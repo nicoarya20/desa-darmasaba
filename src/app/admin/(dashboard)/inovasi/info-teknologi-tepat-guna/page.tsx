@@ -4,6 +4,7 @@ import {
   Box,
   Button,
   Center,
+  Group,
   Pagination,
   Paper,
   Skeleton,
@@ -15,9 +16,7 @@ import {
   TableThead,
   TableTr,
   Text,
-  Title,
-  Group,
-  Tooltip,
+  Title
 } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconDeviceImac, IconPlus, IconSearch } from '@tabler/icons-react';
@@ -68,18 +67,16 @@ function ListInfoTeknologiTepatGuna({ search }: { search: string }) {
       <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
         <Group justify="space-between" mb="md">
           <Title order={4}>Daftar Info Teknologi Tepat Guna</Title>
-          <Tooltip label="Tambah Info Teknologi" withArrow>
-            <Button
-              leftSection={<IconPlus size={18} />}
-              color="blue"
-              variant="light"
-              onClick={() =>
-                router.push('/admin/inovasi/info-teknologi-tepat-guna/create')
-              }
-            >
-              Tambah Baru
-            </Button>
-          </Tooltip>
+          <Button
+            leftSection={<IconPlus size={18} />}
+            color="blue"
+            variant="light"
+            onClick={() =>
+              router.push('/admin/inovasi/info-teknologi-tepat-guna/create')
+            }
+          >
+            Tambah Baru
+          </Button>
         </Group>
 
         <Box style={{ overflowX: 'auto' }}>

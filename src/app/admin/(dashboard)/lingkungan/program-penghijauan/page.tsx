@@ -17,8 +17,7 @@ import {
   TableThead,
   TableTr,
   Text,
-  Title,
-  Tooltip
+  Title
 } from '@mantine/core';
 import {
   IconChartLine,
@@ -27,6 +26,7 @@ import {
   IconDeviceImac,
   IconHomeEco,
   IconLeaf,
+  IconPlus,
   IconRecycle,
   IconScale,
   IconSearch,
@@ -36,7 +36,6 @@ import {
   IconTrendingUp,
   IconTrophy,
   IconTruckFilled,
-  IconPlus,
 } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
@@ -101,16 +100,14 @@ function ListProgramPenghijauan({ search }: { search: string }) {
         {/* Header Section */}
         <Box mb="md" display="flex" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
           <Title order={4}>Daftar Program Penghijauan</Title>
-          <Tooltip label="Tambah Program Penghijauan" withArrow>
-            <Button
-              leftSection={<IconPlus size={18} />}
-              color="blue"
-              variant="light"
-              onClick={() => router.push('/admin/lingkungan/program-penghijauan/create')}
-            >
-              Tambah Baru
-            </Button>
-          </Tooltip>
+          <Button
+            leftSection={<IconPlus size={18} />}
+            color="blue"
+            variant="light"
+            onClick={() => router.push('/admin/lingkungan/program-penghijauan/create')}
+          >
+            Tambah Baru
+          </Button>
         </Box>
 
         {/* Table Section */}

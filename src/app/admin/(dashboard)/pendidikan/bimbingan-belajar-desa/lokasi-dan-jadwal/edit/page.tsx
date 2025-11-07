@@ -11,16 +11,15 @@ import {
   Stack,
   Text,
   TextInput,
-  Title,
-  Tooltip
+  Title
 } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack } from '@tabler/icons-react';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { useProxy } from 'valtio/utils';
 import { toast } from 'react-toastify';
+import { useProxy } from 'valtio/utils';
 
 const BimbinganBelajarDesaTextEditor = dynamic(
   () =>
@@ -102,13 +101,15 @@ function EditLokasiDanJadwal() {
   return (
     <Box>
       <Stack gap="xs">
-        {/* Header */}
         <Group mb="md">
-          <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-            <Button variant="subtle" onClick={handleBack} p="xs" radius="md">
-              <IconArrowBack color={colors['blue-button']} size={24} />
-            </Button>
-          </Tooltip>
+          <Button
+            variant="subtle"
+            onClick={handleBack}
+            p="xs"
+            radius="md"
+          >
+            <IconArrowBack color={colors['blue-button']} size={24} />
+          </Button>
           <Title order={4} ml="sm" c="dark">
             Edit Lokasi & Jadwal
           </Title>

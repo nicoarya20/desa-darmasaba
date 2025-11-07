@@ -2,7 +2,7 @@
 import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
 import jumlahPengangguranState from '@/app/admin/(dashboard)/_state/ekonomi/jumlah-pengangguran';
 import colors from '@/con/colors';
-import { Box, Button, Flex, Paper, Skeleton, Stack, Text, Tooltip } from '@mantine/core';
+import { Box, Button, Flex, Paper, Skeleton, Stack, Text } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack, IconEdit, IconX } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -103,32 +103,28 @@ function DetailJumlahPengangguran() {
 
               {/* Tombol Edit & Hapus */}
               <Flex gap="sm">
-                <Tooltip label="Hapus Data Pengangguran" withArrow position="top">
-                  <Button
-                    onClick={() => {
-                      setSelectedId(data.id);
-                      setModalHapus(true);
-                    }}
-                    color="red"
-                    variant="light"
-                    radius="md"
-                    size="md"
-                  >
-                    <IconX size={20} />
-                  </Button>
-                </Tooltip>
+                <Button
+                  onClick={() => {
+                    setSelectedId(data.id);
+                    setModalHapus(true);
+                  }}
+                  color="red"
+                  variant="light"
+                  radius="md"
+                  size="md"
+                >
+                  <IconX size={20} />
+                </Button>
 
-                <Tooltip label="Edit Data Pengangguran" withArrow position="top">
-                  <Button
-                    onClick={() => router.push(`/admin/ekonomi/jumlah-pengangguran/${data.id}/edit`)}
-                    color="green"
-                    variant="light"
-                    radius="md"
-                    size="md"
-                  >
-                    <IconEdit size={20} />
-                  </Button>
-                </Tooltip>
+                <Button
+                  onClick={() => router.push(`/admin/ekonomi/jumlah-pengangguran/${data.id}/edit`)}
+                  color="green"
+                  variant="light"
+                  radius="md"
+                  size="md"
+                >
+                  <IconEdit size={20} />
+                </Button>
               </Flex>
             </Stack>
           </Paper>

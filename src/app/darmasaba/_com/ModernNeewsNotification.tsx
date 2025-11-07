@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Box, Paper, Text, Group, CloseButton, Badge, ActionIcon, Stack, Transition } from "@mantine/core";
 import { IconBell, IconChevronRight } from "@tabler/icons-react";
-import { useRouter } from "next/navigation"; // 👉 tambahkan ini
+import { usePathname, useRouter } from "next/navigation"; // 👉 tambahkan ini
 
 interface NewsItem {
   id: string | number;
@@ -27,9 +27,9 @@ function stripHtml(html: string): string {
     .trim();
 }
 
-export default function ModernNewsNotification({ 
+export default function ModernNewsNotification({
   news = [],
-  autoShowDelay = 2000 
+  autoShowDelay = 2000
 }: ModernNewsNotificationProps) {
   const router = useRouter(); // 👉 router Next.js
   const [toastVisible, setToastVisible] = useState(false);
@@ -37,6 +37,9 @@ export default function ModernNewsNotification({
   const [hasNewNotifications, setHasNewNotifications] = useState(true);
   const [hasShownToast, setHasShownToast] = useState(false);
   const [iconVisible, setIconVisible] = useState(true);
+  const pathname = usePathname();
+
+
 
   useEffect(() => {
     if (news.length > 0 && !toastVisible && !hasShownToast) {
@@ -57,25 +60,32 @@ export default function ModernNewsNotification({
     }
   }, [toastVisible]);
 
+  // Ganti useEffect scroll yang lama dengan versi berikut:
+
   useEffect(() => {
     let lastScrollY = window.scrollY;
 
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
-      
+
+      // Kontrol ikon lonceng
       if (currentScrollY > lastScrollY && currentScrollY > 100) {
         setIconVisible(false);
-      } 
-      else if (currentScrollY < lastScrollY) {
+      } else if (currentScrollY < lastScrollY) {
         setIconVisible(true);
       }
-      
+
+      // 🔴 BARU: Sembunyikan toast saat scroll ke bawah melewati 150px
+      if (currentScrollY > 150 && toastVisible) {
+        setToastVisible(false);
+      }
+
       lastScrollY = currentScrollY;
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [toastVisible]); // 👈 tambahkan toastVisible sebagai dependency
 
   const currentNews = news[0];
 
@@ -94,6 +104,11 @@ export default function ModernNewsNotification({
     setWidgetOpen(true);
     setHasNewNotifications(false);
   };
+
+  // Ganti dengan path landing page Anda
+  if (pathname !== '/darmasaba') {
+    return null;
+  }
 
   return (
     <>
@@ -174,7 +189,7 @@ export default function ModernNewsNotification({
                   <IconBell size={20} />
                   <Text c={"white"} fw={600} size="md">Berita & Pengumuman</Text>
                 </Group>
-                <CloseButton 
+                <CloseButton
                   onClick={() => setWidgetOpen(false)}
                   variant="transparent"
                   c="white"
@@ -283,16 +298,16 @@ export default function ModernNewsNotification({
                 >
                   {currentNews?.type === "berita" ? "Berita Terbaru" : "Pengumuman"}
                 </Badge>
-                <CloseButton 
+                <CloseButton
                   onClick={() => setToastVisible(false)}
                   size="sm"
                 />
               </Group>
-              
+
               <Text fw={600} size="sm" mb={6}>
                 {currentNews?.title || "Informasi Terbaru"}
               </Text>
-              
+
               <Text size="xs" c="dimmed" lineClamp={3}>
                 {stripHtml(currentNews?.content || "")}
               </Text>

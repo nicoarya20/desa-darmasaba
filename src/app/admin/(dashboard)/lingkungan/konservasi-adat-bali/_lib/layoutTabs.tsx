@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import colors from '@/con/colors';
-import { Box, ScrollArea, Stack, Tabs, TabsList, TabsPanel, TabsTab, Title, Tooltip } from '@mantine/core';
+import { Box, ScrollArea, Stack, Tabs, TabsList, TabsPanel, TabsTab, Title } from '@mantine/core';
 import { IconBook, IconLeaf, IconSchool } from '@tabler/icons-react';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
@@ -15,21 +15,18 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
       label: "Filosofi Tri Hita",
       value: "filosofi-tri-hita",
       href: "/admin/lingkungan/konservasi-adat-bali/filosofi-tri-hita-karana",
-      tooltip: "Lihat filosofi Tri Hita Karana",
       icon: <IconLeaf size={18} stroke={1.8} />
     },
     {
       label: "Nilai Konservasi Adat",
       value: "nilai-konservasi-adat",
       href: "/admin/lingkungan/konservasi-adat-bali/nilai-konservasi-adat",
-      tooltip: "Kelola nilai konservasi adat",
       icon: <IconBook size={18} stroke={1.8} />
     },
     {
       label: "Bentuk Konservasi Berdasarkan Adat",
       value: "bentuk-konservasi-berdasarkan-adat",
       href: "/admin/lingkungan/konservasi-adat-bali/bentuk-konservasi-berdasarkan-adat",
-      tooltip: "Lihat bentuk konservasi berdasarkan adat",
       icon: <IconSchool size={18} stroke={1.8} />
     },
   ];
@@ -76,27 +73,26 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
             }}
           >
             {tabs.map((tab, i) => (
-              <Tooltip key={i} label={tab.tooltip} position="bottom" withArrow transitionProps={{ transition: 'pop', duration: 200 }}>
-                <TabsTab
-                  value={tab.value}
-                  leftSection={tab.icon}
-                  style={{
-                    fontWeight: 600,
-                    fontSize: "0.9rem",
-                    whiteSpace: "nowrap",
-                    transition: "all 0.2s ease",
-                  }}
-                >
-                  <span style={{
-                    display: "inline-block",
-                    maxWidth: "200px",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis"
-                  }}>
-                    {tab.label}
-                  </span>
-                </TabsTab>
-              </Tooltip>
+              <TabsTab
+                key={i}
+                value={tab.value}
+                leftSection={tab.icon}
+                style={{
+                  fontWeight: 600,
+                  fontSize: "0.9rem",
+                  whiteSpace: "nowrap",
+                  transition: "all 0.2s ease",
+                }}
+              >
+                <span style={{
+                  display: "inline-block",
+                  maxWidth: "200px",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis"
+                }}>
+                  {tab.label}
+                </span>
+              </TabsTab>
             ))}
           </TabsList>
         </ScrollArea>

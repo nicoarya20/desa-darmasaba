@@ -1,6 +1,6 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Center, Group, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title, Tooltip } from '@mantine/core';
+import { Box, Button, Center, Group, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconEdit, IconPlus, IconX } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
@@ -68,16 +68,14 @@ function ListJenjangPendidikan() {
       <Paper bg={colors['white-1']} p="lg" withBorder shadow="md" radius="md">
         <Group justify="space-between" mb="md">
           <Title order={4}>Daftar Jenjang Pendidikan</Title>
-          <Tooltip label="Tambah Jenjang Pendidikan" withArrow>
-            <Button
-              leftSection={<IconPlus size={18} />}
-              color="blue"
-              variant="light"
-              onClick={() => router.push('/admin/pendidikan/info-sekolah/jenjang-pendidikan/create')}
-            >
-              Tambah Baru
-            </Button>
-          </Tooltip>
+          <Button
+            leftSection={<IconPlus size={18} />}
+            color="blue"
+            variant="light"
+            onClick={() => router.push('/admin/pendidikan/info-sekolah/jenjang-pendidikan/create')}
+          >
+            Tambah Baru
+          </Button>
         </Group>
 
         <Box style={{ overflowX: "auto" }}>

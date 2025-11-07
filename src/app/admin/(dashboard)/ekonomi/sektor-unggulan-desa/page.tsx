@@ -16,8 +16,7 @@ import {
   TableThead,
   TableTr,
   Text,
-  Title,
-  Tooltip,
+  Title
 } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconDeviceImac, IconPlus, IconSearch } from '@tabler/icons-react';
@@ -92,11 +91,9 @@ function ListSektorUnggulanDesa({ search }: { search: string }) {
       <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
         <Group justify="space-between" mb="md">
           <Title order={4}>List Sektor Unggulan Desa</Title>
-          <Tooltip label="Tambah Sektor Unggulan Desa" withArrow>
-            <Button leftSection={<IconPlus size={18} />} color="blue" variant="light" onClick={() => router.push('/admin/ekonomi/sektor-unggulan-desa/create')}>
-              Tambah Baru
-            </Button>
-          </Tooltip>
+          <Button leftSection={<IconPlus size={18} />} color="blue" variant="light" onClick={() => router.push('/admin/ekonomi/sektor-unggulan-desa/create')}>
+            Tambah Baru
+          </Button>
         </Group>
         {loading ? (
           <Skeleton height={300} radius="md" />
@@ -127,16 +124,14 @@ function ListSektorUnggulanDesa({ search }: { search: string }) {
                         </Box>
                       </TableTd>
                       <TableTd>
-                        <Tooltip label="Lihat detail sektor" withArrow>
-                          <Button
-                            variant="light"
-                            color="blue"
-                            onClick={() => router.push(`/admin/ekonomi/sektor-unggulan-desa/${item.id}`)}
-                          >
-                            <IconDeviceImac size={20} />
-                            <Text ml={6}>Detail</Text>
-                          </Button>
-                        </Tooltip>
+                        <Button
+                          variant="light"
+                          color="blue"
+                          onClick={() => router.push(`/admin/ekonomi/sektor-unggulan-desa/${item.id}`)}
+                        >
+                          <IconDeviceImac size={20} />
+                          <Text ml={6}>Detail</Text>
+                        </Button>
                       </TableTd>
                     </TableTr>
                   ))

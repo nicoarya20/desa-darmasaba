@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, Skeleton, Stack, Text, Tooltip } from '@mantine/core';
+import { Box, Button, Group, Paper, Skeleton, Stack, Text } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import {
   IconArrowBack, IconChartLine, IconChristmasTreeFilled, IconClipboard,
@@ -117,32 +117,28 @@ function DetailProgramPenghijauan() {
 
               {/* Tombol aksi */}
               <Group gap="sm" mt="md">
-                <Tooltip label="Hapus Program" withArrow position="top">
-                  <Button
-                    color="red"
-                    onClick={() => {
-                      setSelectedId(data.id);
-                      setModalHapus(true);
-                    }}
-                    variant="light"
-                    radius="md"
-                    size="md"
-                  >
-                    <IconTrash size={20} />
-                  </Button>
-                </Tooltip>
+                <Button
+                  color="red"
+                  onClick={() => {
+                    setSelectedId(data.id);
+                    setModalHapus(true);
+                  }}
+                  variant="light"
+                  radius="md"
+                  size="md"
+                >
+                  <IconTrash size={20} />
+                </Button>
 
-                <Tooltip label="Edit Program" withArrow position="top">
-                  <Button
-                    color="green"
-                    onClick={() => router.push(`/admin/lingkungan/program-penghijauan/${data.id}/edit`)}
-                    variant="light"
-                    radius="md"
-                    size="md"
-                  >
-                    <IconEdit size={20} />
-                  </Button>
-                </Tooltip>
+                <Button
+                  color="green"
+                  onClick={() => router.push(`/admin/lingkungan/program-penghijauan/${data.id}/edit`)}
+                  variant="light"
+                  radius="md"
+                  size="md"
+                >
+                  <IconEdit size={20} />
+                </Button>
               </Group>
             </Stack>
           </Paper>
@@ -155,7 +151,7 @@ function DetailProgramPenghijauan() {
         onClose={() => setModalHapus(false)}
         onConfirm={handleHapus}
         text="Apakah Anda yakin ingin menghapus program penghijauan ini?"
-      /> 
+      />
     </Box>
   );
 }

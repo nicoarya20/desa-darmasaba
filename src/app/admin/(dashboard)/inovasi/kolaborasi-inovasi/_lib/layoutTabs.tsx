@@ -1,10 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import colors from '@/con/colors';
-import { ScrollArea, Stack, Tabs, TabsList, TabsPanel, TabsTab, Title, Tooltip } from '@mantine/core';
+import { ScrollArea, Stack, Tabs, TabsList, TabsPanel, TabsTab, Title } from '@mantine/core';
+import { IconListDetails, IconUsers } from '@tabler/icons-react';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
-import { IconListDetails, IconUsers } from '@tabler/icons-react';
 
 function LayoutTabsKolaborasi({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -15,14 +15,12 @@ function LayoutTabsKolaborasi({ children }: { children: React.ReactNode }) {
       label: "List Kolaborasi Inovasi",
       value: "listkolaborasiinovasi",
       href: "/admin/inovasi/kolaborasi-inovasi/list-kolaborasi-inovasi",
-      tooltip: "Lihat daftar kolaborasi inovasi",
       icon: <IconListDetails size={18} stroke={1.8} />,
     },
     {
       label: "Mitra Kolaborasi",
       value: "mitarakolaborasi",
       href: "/admin/inovasi/kolaborasi-inovasi/mitra-kolaborasi",
-      tooltip: "Kelola mitra kolaborasi",
       icon: <IconUsers size={18} stroke={1.8} />,
     }
   ];
@@ -73,25 +71,18 @@ function LayoutTabsKolaborasi({ children }: { children: React.ReactNode }) {
             }}
           >
             {tabs.map((tab, i) => (
-              <Tooltip
+              <TabsTab
                 key={i}
-                label={tab.tooltip}
-                position="bottom"
-                withArrow
-                transitionProps={{ transition: 'pop', duration: 200 }}
+                value={tab.value}
+                leftSection={tab.icon}
+                style={{
+                  fontWeight: 600,
+                  fontSize: "0.9rem",
+                  transition: "all 0.2s ease",
+                }}
               >
-                <TabsTab
-                  value={tab.value}
-                  leftSection={tab.icon}
-                  style={{
-                    fontWeight: 600,
-                    fontSize: "0.9rem",
-                    transition: "all 0.2s ease",
-                  }}
-                >
-                  {tab.label}
-                </TabsTab>
-              </Tooltip>
+                {tab.label}
+              </TabsTab>
             ))}
           </TabsList>
         </ScrollArea>

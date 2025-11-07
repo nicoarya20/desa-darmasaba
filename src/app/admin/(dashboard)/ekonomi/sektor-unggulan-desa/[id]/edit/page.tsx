@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 
+import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import grafikSektorUnggulan from '@/app/admin/(dashboard)/_state/ekonomi/sektor-unggulan-desa';
 import colors from '@/con/colors';
 import {
@@ -11,15 +12,13 @@ import {
   Stack,
   Text,
   TextInput,
-  Title,
-  Tooltip,
+  Title
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { useProxy } from 'valtio/utils';
 import { toast } from 'react-toastify';
-import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
+import { useProxy } from 'valtio/utils';
 
 function EditSektorUnggulanDesa() {
   const router = useRouter();
@@ -59,10 +58,10 @@ function EditSektorUnggulanDesa() {
 
   const handleChange =
     (field: keyof typeof formData) =>
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const value = field === 'value' ? Number(e.currentTarget.value) : e.currentTarget.value;
-      setFormData((prev) => ({ ...prev, [field]: value }));
-    };
+      (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = field === 'value' ? Number(e.currentTarget.value) : e.currentTarget.value;
+        setFormData((prev) => ({ ...prev, [field]: value }));
+      };
 
   const handleSubmit = async () => {
     try {
@@ -80,16 +79,14 @@ function EditSektorUnggulanDesa() {
   return (
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button
-            variant="subtle"
-            onClick={() => router.back()}
-            p="xs"
-            radius="md"
-          >
-            <IconArrowBack color={colors['blue-button']} size={22} />
-          </Button>
-        </Tooltip>
+        <Button
+          variant="subtle"
+          onClick={() => router.back()}
+          p="xs"
+          radius="md"
+        >
+          <IconArrowBack color={colors['blue-button']} size={22} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Edit Sektor Unggulan Desa
         </Title>

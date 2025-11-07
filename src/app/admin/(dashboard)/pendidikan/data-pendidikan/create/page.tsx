@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, Stack, Text, TextInput, Title, Tooltip } from '@mantine/core';
+import { Box, Button, Group, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -31,11 +31,9 @@ export default function CreateDataPendidikan() {
   return (
     <Box px={{ base: 'sm', md: 'xl' }} py="md">
       <Group mb="md" gap="sm">
-        <Tooltip label="Kembali ke halaman sebelumnya" position="bottom" withArrow>
-          <Button variant="subtle" onClick={() => router.back()} radius="md">
-            <IconArrowBack size={20} stroke={2} />
-          </Button>
-        </Tooltip>
+        <Button variant="subtle" onClick={() => router.back()} radius="md">
+          <IconArrowBack size={20} stroke={2} />
+        </Button>
         <Title order={3} c='black'>Tambah Data Pendidikan</Title>
       </Group>
 

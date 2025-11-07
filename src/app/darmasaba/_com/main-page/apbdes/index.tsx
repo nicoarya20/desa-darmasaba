@@ -91,9 +91,9 @@ function Apbdes() {
                   if (value >= 1_000_000_000)
                     return `Rp ${(value / 1_000_000_000).toFixed(1)} M`;
                   if (value >= 1_000_000)
-                    return `Rp ${(value / 1_000_000).toFixed(1)} Jt`;
+                    return `Rp ${(value / 1_000_000).toFixed(1)} JT`;
                   if (value >= 1_000)
-                    return `Rp ${(value / 1_000).toFixed(1)} Rb`;
+                    return `Rp ${(value / 1_000).toFixed(1)} RB`;
                   return `Rp ${value}`;
                 }}
                 series={[

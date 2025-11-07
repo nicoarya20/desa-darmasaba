@@ -2,12 +2,12 @@
 
 import pengelolaanSampahState from '@/app/admin/(dashboard)/_state/lingkungan/pengelolaan-sampah';
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, Stack, Text, TextInput, Title, Tooltip } from '@mantine/core';
+import { Box, Button, Group, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
-import { toast } from 'react-toastify';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
 const LeafletMap = dynamic(() => import('@/app/admin/(dashboard)/_com/leafletMapCreate'), { ssr: false });
@@ -33,14 +33,14 @@ function CreateKeteranganBankSampahTerdekat() {
       if (!keteranganState.create.form.name) {
         return toast.error('Nama bank sampah harus diisi');
       }
-      
+
       if (markerPosition) {
         keteranganState.create.form.lat = markerPosition.lat;
         keteranganState.create.form.lng = markerPosition.lng;
       } else {
         return toast.error('Silakan pilih lokasi di peta');
       }
-      
+
       await keteranganState.create.create();
       toast.success('Data bank sampah berhasil ditambahkan');
       resetForm();
@@ -54,11 +54,9 @@ function CreateKeteranganBankSampahTerdekat() {
   return (
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
-        </Tooltip>
+        <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Tambah Bank Sampah Terdekat
         </Title>

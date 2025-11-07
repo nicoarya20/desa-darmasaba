@@ -1,6 +1,6 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Divider, Grid, GridCol, Paper, Skeleton, Stack, Text, Title, Tooltip } from '@mantine/core';
+import { Box, Button, Divider, Grid, GridCol, Paper, Skeleton, Stack, Text, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconEdit } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
@@ -36,21 +36,19 @@ function Page() {
             </Title>
           </GridCol>
           <GridCol span={{ base: 12, md: 1 }}>
-            <Tooltip label="Edit Lokasi & Jadwal" withArrow>
-              <Button
-                c="green"
-                variant="light"
-                leftSection={<IconEdit size={18} stroke={2} />}
-                radius="md"
-                onClick={() =>
-                  router.push(
-                    '/admin/pendidikan/bimbingan-belajar-desa/lokasi-dan-jadwal/edit'
-                  )
-                }
-              >
-                Edit
-              </Button>
-            </Tooltip>
+            <Button
+              c="green"
+              variant="light"
+              leftSection={<IconEdit size={18} stroke={2} />}
+              radius="md"
+              onClick={() =>
+                router.push(
+                  '/admin/pendidikan/bimbingan-belajar-desa/lokasi-dan-jadwal/edit'
+                )
+              }
+            >
+              Edit
+            </Button>
           </GridCol>
         </Grid>
 

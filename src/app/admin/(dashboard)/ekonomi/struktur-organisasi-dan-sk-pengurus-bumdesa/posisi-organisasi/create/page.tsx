@@ -3,7 +3,7 @@
 import CreateEditor from '@/app/admin/(dashboard)/_com/createEditor';
 import stateStrukturBumDes from '@/app/admin/(dashboard)/_state/ekonomi/struktur-organisasi/struktur-organisasi';
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, Stack, Text, TextInput, Title, Tooltip } from '@mantine/core';
+import { Box, Button, Group, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
@@ -13,7 +13,7 @@ import { useProxy } from 'valtio/utils';
 function CreatePosisiOrganisasiBumDes() {
   const router = useRouter();
   const stateOrganisasi = useProxy(stateStrukturBumDes.posisiOrganisasi);
-  
+
   useEffect(() => {
     stateOrganisasi.findMany.load();
     // Initialize form with default values
@@ -22,7 +22,7 @@ function CreatePosisiOrganisasiBumDes() {
       deskripsi: "",
       hierarki: 0,
     };
-    
+
     return () => {
       // Clean up form on unmount
       stateOrganisasi.create.form = {
@@ -38,7 +38,7 @@ function CreatePosisiOrganisasiBumDes() {
       if (!stateOrganisasi.create.form.nama.trim()) {
         return toast.error('Nama posisi tidak boleh kosong');
       }
-      
+
       await stateOrganisasi.create.submit();
       toast.success('Posisi organisasi berhasil ditambahkan');
       router.push('/admin/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa/posisi-organisasi');
@@ -51,11 +51,9 @@ function CreatePosisiOrganisasiBumDes() {
   return (
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
-        </Tooltip>
+        <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Tambah Posisi Organisasi BUMDes
         </Title>
@@ -77,7 +75,7 @@ function CreatePosisiOrganisasiBumDes() {
             onChange={(e) => (stateOrganisasi.create.form.nama = e.target.value)}
             required
           />
-          
+
           <Box>
             <Text fw="bold" fz="sm" mb={6}>
               Deskripsi
@@ -89,7 +87,7 @@ function CreatePosisiOrganisasiBumDes() {
               }}
             />
           </Box>
-          
+
           <TextInput
             label="Hierarki"
             type="number"

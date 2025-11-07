@@ -1,17 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 import colors from '@/con/colors';
+import { BarChart } from '@mantine/charts';
 import {
   Box, Button, Center, Group, Pagination, Paper, Skeleton, Stack,
   Table, TableTbody, TableTd, TableTh, TableThead, TableTr,
-  Text, Title, Tooltip
+  Text, Title
 } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconDeviceImac, IconPlus, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
-import { BarChart } from '@mantine/charts';
 
 import HeaderSearch from '../../_com/header';
 import jumlahPengangguranState from '../../_state/ekonomi/jumlah-pengangguran';
@@ -85,16 +85,14 @@ function ListDetailDataPengangguran({ search }: { search: string }) {
       <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
         <Group justify="space-between" mb="md">
           <Title order={4}>Daftar Detail Data Pengangguran</Title>
-          <Tooltip label="Tambah Data Baru" withArrow>
-            <Button
-              leftSection={<IconPlus size={18} />}
-              color="blue"
-              variant="light"
-              onClick={() => router.push('/admin/ekonomi/jumlah-pengangguran/create')}
-            >
-              Tambah Baru
-            </Button>
-          </Tooltip>
+          <Button
+            leftSection={<IconPlus size={18} />}
+            color="blue"
+            variant="light"
+            onClick={() => router.push('/admin/ekonomi/jumlah-pengangguran/create')}
+          >
+            Tambah Baru
+          </Button>
         </Group>
 
         <Box style={{ overflowX: 'auto' }}>

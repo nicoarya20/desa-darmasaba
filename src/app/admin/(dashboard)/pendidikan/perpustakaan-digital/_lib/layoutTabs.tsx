@@ -1,10 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import colors from '@/con/colors';
-import { ScrollArea, Stack, Tabs, TabsList, TabsPanel, TabsTab, Title, Tooltip } from '@mantine/core';
+import { ScrollArea, Stack, Tabs, TabsList, TabsPanel, TabsTab, Title } from '@mantine/core';
+import { IconBook2, IconCategory, IconUser } from '@tabler/icons-react';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
-import { IconBook2, IconCategory, IconUser } from '@tabler/icons-react';
 
 function LayoutTabs({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -15,22 +15,19 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
       label: "Data Perpustakaan",
       value: "data-perpustakaan",
       href: "/admin/pendidikan/perpustakaan-digital/data-perpustakaan",
-      icon: <IconBook2 size={18} stroke={1.8} />,
-      tooltip: "Kelola data koleksi perpustakaan digital",
+      icon: <IconBook2 size={18} stroke={1.8} />
     },
     {
       label: "Kategori Buku",
       value: "kategori-buku",
       href: "/admin/pendidikan/perpustakaan-digital/kategori-buku",
-      icon: <IconCategory size={18} stroke={1.8} />,
-      tooltip: "Atur kategori untuk buku digital",
+      icon: <IconCategory size={18} stroke={1.8} />
     },
     {
       label: "Peminjam",
       value: "peminjam",
       href: "/admin/pendidikan/perpustakaan-digital/peminjam",
-      icon: <IconUser size={18} stroke={1.8} />,
-      tooltip: "Data Peminjam Buku",
+      icon: <IconUser size={18} stroke={1.8} />
     },
   ];
 
@@ -76,28 +73,21 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
               flexWrap: "nowrap",
               gap: "0.5rem",
               paddingInline: "0.5rem", // ✅ biar nggak nempel ke tepi
-          }}
+            }}
           >
             {tabs.map((tab, i) => (
-              <Tooltip
+              <TabsTab
                 key={i}
-                label={tab.tooltip}
-                position="bottom"
-                withArrow
-                transitionProps={{ transition: 'pop', duration: 200 }}
+                value={tab.value}
+                leftSection={tab.icon}
+                style={{
+                  fontWeight: 600,
+                  fontSize: "0.9rem",
+                  transition: "all 0.2s ease",
+                }}
               >
-                <TabsTab
-                  value={tab.value}
-                  leftSection={tab.icon}
-                  style={{
-                    fontWeight: 600,
-                    fontSize: "0.9rem",
-                    transition: "all 0.2s ease",
-                  }}
-                >
-                  {tab.label}
-                </TabsTab>
-              </Tooltip>
+                {tab.label}
+              </TabsTab>
             ))}
           </TabsList>
         </ScrollArea>

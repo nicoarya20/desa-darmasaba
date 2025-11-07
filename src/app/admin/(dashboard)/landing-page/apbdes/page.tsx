@@ -57,57 +57,60 @@ function ListAPBDes({ search }: { search: string }) {
       <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
         <Group justify="space-between" mb="md">
           <Title order={4}>Daftar APBDes</Title>
-            <Button 
-              leftSection={<IconPlus size={18} />} 
-              color="blue" 
-              variant="light" 
-              onClick={() => router.push('/admin/landing-page/apbdes/create')}
-            >
-              Tambah Baru
-            </Button>
+          <Button
+            leftSection={<IconPlus size={18} />}
+            color="blue"
+            variant="light"
+            onClick={() => router.push('/admin/landing-page/apbdes/create')}
+          >
+            Tambah Baru
+          </Button>
         </Group>
-        
+
         <Box style={{ overflowX: 'auto' }}>
           <Table highlightOnHover>
             <TableThead>
               <TableTr>
-                <TableTh style={{ width: '30%' }}>Nama APBDes</TableTh>
-                <TableTh style={{ width: '25%' }}>Jumlah</TableTh>
+                <TableTh style={{ width: '30%'}}>Nama APBDes</TableTh>
+                <TableTh style={{ width: '30%' }}>Jumlah</TableTh>
                 <TableTh style={{ width: '25%' }}>Dokumen</TableTh>
-                <TableTh style={{ width: '20%' }}>Aksi</TableTh>
+                <TableTh style={{ width: '25%' }}>Aksi</TableTh>
               </TableTr>
             </TableThead>
             <TableTbody>
               {filteredData.length > 0 ? (
                 filteredData.map((item) => (
                   <TableTr key={item.id}>
-                    <TableTd>
+                    <TableTd style={{ width: '30%' }}>
                       <Text fw={500} truncate="end">{item.name}</Text>
                     </TableTd>
-                    <TableTd>
+                    <TableTd style={{ width: '30%' }}>
                       <Box w={150}>
                         <Text>Rp. {item.jumlah}</Text>
                       </Box>
                     </TableTd>
-                    <TableTd>
-                      {item.file?.link ? (
-                        <Button
-                          component="a"
-                          href={item.file.link}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          variant="light"
-                          leftSection={<IconFile size={18} />}
-                          size="sm"
-                        >
-                          Lihat Dokumen
-                        </Button>
-                      ) : (
-                        <Text c="dimmed" fz="sm">Tidak ada dokumen</Text>
-                      )}
+                    <TableTd style={{ width: '25%' }}>
+                      <Box w={150}>
+                        {item.file?.link ? (
+                          <Button
+                            component="a"
+                            href={item.file.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            variant="light"
+                            leftSection={<IconFile size={18} />}
+                            size="sm"
+                          >
+                            Lihat Dokumen
+                          </Button>
+                        ) : (
+                          <Text c="dimmed" fz="sm">Tidak ada dokumen</Text>
+                        )}
+                      </Box>
                     </TableTd>
-                    <TableTd>
-                      <Button
+                    <TableTd style={{ width: '25%' }}>
+                     <Box w={80}>
+                     <Button
                         size="xs"
                         radius="md"
                         variant="light"
@@ -118,6 +121,7 @@ function ListAPBDes({ search }: { search: string }) {
                       >
                         Detail
                       </Button>
+                     </Box>
                     </TableTd>
                   </TableTr>
                 ))
@@ -134,7 +138,7 @@ function ListAPBDes({ search }: { search: string }) {
           </Table>
         </Box>
       </Paper>
-      
+
       <Center mt="md">
         <Pagination
           value={page}

@@ -1,6 +1,6 @@
 'use client'
 
-import { Box, Button, Group, Paper, Skeleton, Stack, Text, Tooltip } from '@mantine/core';
+import { Box, Button, Group, Paper, Skeleton, Stack, Text } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack, IconTrash } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -53,20 +53,18 @@ function DetailAdministrasiOnline() {
           Kembali
         </Button>
 
-        <Tooltip label="Hapus Data" withArrow position="top">
-          <Button
-            color="red"
-            onClick={() => {
-              setSelectedId(data.id);
-              setModalHapus(true);
-            }}
-            variant="light"
-            radius="md"
-            size="md"
-          >
-            <IconTrash size={20} />
-          </Button>
-        </Tooltip>
+        <Button
+          color="red"
+          onClick={() => {
+            setSelectedId(data.id);
+            setModalHapus(true);
+          }}
+          variant="light"
+          radius="md"
+          size="md"
+        >
+          <IconTrash size={20} />
+        </Button>
       </Group>
       {/* Konten Detail */}
       <Paper

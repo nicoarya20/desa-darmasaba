@@ -2,18 +2,17 @@
 'use client'
 import colors from '@/con/colors';
 import {
+  ScrollArea,
   Stack,
   Tabs,
   TabsList,
   TabsPanel,
   TabsTab,
-  Title,
-  Tooltip,
-  ScrollArea,
+  Title
 } from '@mantine/core';
+import { IconCategory, IconShoppingBag } from '@tabler/icons-react';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
-import { IconShoppingBag, IconCategory } from '@tabler/icons-react';
 
 function LayoutTabs({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -30,8 +29,7 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
       label: "Kategori Produk",
       value: "kategoriproduk",
       href: "/admin/ekonomi/pasar-desa/kategori-produk",
-      icon: <IconCategory size={18} stroke={1.8} />,
-      tooltip: "Atur kategori produk pasar desa",
+      icon: <IconCategory size={18} stroke={1.8} />
     },
   ];
 
@@ -84,26 +82,19 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
             }}
           >
             {tabs.map((tab, i) => (
-              <Tooltip
+              <TabsTab
                 key={i}
-                label={tab.tooltip}
-                position="bottom"
-                withArrow
-                transitionProps={{ transition: "pop", duration: 200 }}
+                value={tab.value}
+                leftSection={tab.icon}
+                style={{
+                  fontWeight: 600,
+                  fontSize: "0.9rem",
+                  transition: "all 0.2s ease",
+                  flexShrink: 0,
+                }}
               >
-                <TabsTab
-                  value={tab.value}
-                  leftSection={tab.icon}
-                  style={{
-                    fontWeight: 600,
-                    fontSize: "0.9rem",
-                    transition: "all 0.2s ease",
-                    flexShrink: 0,
-                  }}
-                >
-                  {tab.label}
-                </TabsTab>
-              </Tooltip>
+                {tab.label}
+              </TabsTab>
             ))}
           </TabsList>
         </ScrollArea>

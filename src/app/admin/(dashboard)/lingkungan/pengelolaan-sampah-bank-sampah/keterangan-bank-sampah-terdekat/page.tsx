@@ -1,11 +1,11 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Center, Group, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title, Tooltip } from '@mantine/core';
+import { Box, Button, Center, Group, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconDeviceImac, IconPlus, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import { useProxy } from 'valtio/utils';
 import { useState } from 'react';
+import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../../_com/header';
 import pengelolaanSampahState from '../../../_state/lingkungan/pengelolaan-sampah';
 
@@ -56,16 +56,14 @@ function ListKeteranganBankSampahTerdekat({ search }: { search: string }) {
       <Paper bg={colors['white-1']} p="lg" shadow="md" radius="md">
         <Group justify="space-between" mb="md">
           <Title order={4}>Daftar Bank Sampah Terdekat</Title>
-          <Tooltip label="Tambah Bank Sampah" withArrow>
-            <Button 
-              leftSection={<IconPlus size={18} />} 
-              color="blue" 
-              variant="light" 
-              onClick={() => router.push('/admin/lingkungan/pengelolaan-sampah-bank-sampah/keterangan-bank-sampah-terdekat/create')}
+          <Button 
+            leftSection={<IconPlus size={18} />} 
+            color="blue" 
+            variant="light" 
+            onClick={() => router.push('/admin/lingkungan/pengelolaan-sampah-bank-sampah/keterangan-bank-sampah-terdekat/create')}
             >
               Tambah Baru
             </Button>
-          </Tooltip>
         </Group>
         
         <Box style={{ overflowX: 'auto' }}>
@@ -98,15 +96,13 @@ function ListKeteranganBankSampahTerdekat({ search }: { search: string }) {
                       </Text>
                     </TableTd>
                     <TableTd>
-                      <Tooltip label="Lihat Detail" withArrow>
-                        <Button
-                          variant="light"
-                          color="blue"
-                          onClick={() => router.push(`/admin/lingkungan/pengelolaan-sampah-bank-sampah/keterangan-bank-sampah-terdekat/${item.id}`)}
-                        >
+                      <Button
+                        variant="light"
+                        color="blue"
+                        onClick={() => router.push(`/admin/lingkungan/pengelolaan-sampah-bank-sampah/keterangan-bank-sampah-terdekat/${item.id}`)}
+                      >
                           <IconDeviceImac size={20} />
                         </Button>
-                      </Tooltip>
                     </TableTd>
                   </TableTr>
                 ))

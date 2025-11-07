@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 import colors from '@/con/colors';
+import { DonutChart } from '@mantine/charts';
 import {
   Box,
   Button,
@@ -17,15 +18,13 @@ import {
   TableThead,
   TableTr,
   Text,
-  Title,
-  Tooltip,
+  Title
 } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconEdit, IconPlus, IconSearch, IconTrash } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
-import { DonutChart } from '@mantine/charts';
 import HeaderSearch from '../../../_com/header';
 import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
 import grafikNganggur from '../../../_state/ekonomi/usia-kerja-nganggur';
@@ -116,20 +115,18 @@ function ListGrafikBerdasarkanPendidikan({ search }: { search: string }) {
       <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
         <Flex justify="space-between" align="center" mb="md">
           <Title order={4}>List Pengangguran Berdasarkan Pendidikan</Title>
-          <Tooltip label="Tambah Data" withArrow>
-            <Button
-              leftSection={<IconPlus size={18} />}
-              color="blue"
-              variant="light"
-              onClick={() =>
-                router.push(
-                  '/admin/ekonomi/jumlah-penduduk-usia-kerja-yang-menganggur/pengangguran_berdasarkan_pendidikan/create',
-                )
-              }
-            >
-              Tambah Baru
-            </Button>
-          </Tooltip>
+          <Button
+            leftSection={<IconPlus size={18} />}
+            color="blue"
+            variant="light"
+            onClick={() =>
+              router.push(
+                '/admin/ekonomi/jumlah-penduduk-usia-kerja-yang-menganggur/pengangguran_berdasarkan_pendidikan/create',
+              )
+            }
+          >
+            Tambah Baru
+          </Button>
         </Flex>
 
         <Box style={{ overflowX: 'auto' }}>
@@ -165,34 +162,30 @@ function ListGrafikBerdasarkanPendidikan({ search }: { search: string }) {
                     <TableTd>{item.D3}</TableTd>
                     <TableTd>{item.S1}</TableTd>
                     <TableTd>
-                      <Tooltip label="Edit Data" withArrow>
-                        <Button
-                          color="green"
-                          variant="light"
-                          onClick={() =>
-                            router.push(
-                              `/admin/ekonomi/jumlah-penduduk-usia-kerja-yang-menganggur/pengangguran_berdasarkan_pendidikan/${item.id}`,
-                            )
-                          }
-                        >
-                          <IconEdit size={18} />
-                        </Button>
-                      </Tooltip>
+                      <Button
+                        color="green"
+                        variant="light"
+                        onClick={() =>
+                          router.push(
+                            `/admin/ekonomi/jumlah-penduduk-usia-kerja-yang-menganggur/pengangguran_berdasarkan_pendidikan/${item.id}`,
+                          )
+                        }
+                      >
+                        <IconEdit size={18} />
+                      </Button>
                     </TableTd>
                     <TableTd>
-                      <Tooltip label="Hapus Data" withArrow>
-                        <Button
-                          color="red"
-                          variant="light"
-                          disabled={stategrafik.delete.loading}
-                          onClick={() => {
-                            setSelectedId(item.id);
-                            setModalHapus(true);
-                          }}
-                        >
-                          <IconTrash size={18} />
-                        </Button>
-                      </Tooltip>
+                      <Button
+                        color="red"
+                        variant="light"
+                        disabled={stategrafik.delete.loading}
+                        onClick={() => {
+                          setSelectedId(item.id);
+                          setModalHapus(true);
+                        }}
+                      >
+                        <IconTrash size={18} />
+                      </Button>
                     </TableTd>
                   </TableTr>
                 ))

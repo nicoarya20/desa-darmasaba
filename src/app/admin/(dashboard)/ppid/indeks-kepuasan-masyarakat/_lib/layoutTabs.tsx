@@ -11,17 +11,17 @@ function LayoutTabsIKM({ children }: { children: React.ReactNode }) {
     const pathname = usePathname()
     const tabs = [
         {
-            label: "Indeks Kepuasan Masyarakat",
-            description: "Lihat dan kelola indeks kepuasan masyarakat",
-            value: "indekskepuasannamasyarakat",
-            href: "/admin/ppid/ikm-desa-darmasaba/indeks-kepuasan-masyarakat",
+            label: "Grafik Kepuasan Masyarakat",
+            description: "Lihat dan kelola Grafik Kepuasan Masyarakat",
+            value: "grafikkepuasannamasyarakat",
+            href: "/admin/ppid/indeks-kepuasan-masyarakat/grafik-kepuasan-masyarakat",
             icon: <IconChartBar size={18} stroke={1.8} />
         },
         {
             label: "Responden",
             description: "Kelola dan tinjau data responden",
             value: "responden",
-            href: "/admin/ppid/ikm-desa-darmasaba/responden",
+            href: "/admin/ppid/indeks-kepuasan-masyarakat/responden",
             icon: <IconUsers size={18} stroke={1.8} />
         },
     ];
@@ -46,7 +46,7 @@ function LayoutTabsIKM({ children }: { children: React.ReactNode }) {
     return (
         <Stack gap="lg">
             <Title order={2} style={{ fontWeight: 700, color: "#1a1a1a" }}>
-                IKM Desa Darmasaba
+                Indeks Kepuasan Masyarakat
             </Title>
             <Tabs
                 color={colors["blue-button"]}

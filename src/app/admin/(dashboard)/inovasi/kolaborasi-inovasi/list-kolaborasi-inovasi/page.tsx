@@ -17,15 +17,14 @@ import {
   TableThead,
   TableTr,
   Text,
-  Title,
-  Tooltip,
+  Title
 } from '@mantine/core';
 import { IconDeviceImac, IconPlus, IconSearch } from '@tabler/icons-react';
-import HeaderSearch from '../../../_com/header';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import kolaborasiInovasiState from '../../../_state/inovasi/kolaborasi-inovasi';
 import { useProxy } from 'valtio/utils';
+import HeaderSearch from '../../../_com/header';
+import kolaborasiInovasiState from '../../../_state/inovasi/kolaborasi-inovasi';
 
 function KolaborasiInovasi() {
   const [search, setSearch] = useState('');
@@ -68,16 +67,14 @@ function ListKolaborasiInovasi({ search }: { search: string }) {
       <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
         <Group justify="space-between" mb="md">
           <Title order={4}>Daftar Kolaborasi Inovasi</Title>
-          <Tooltip label="Tambah Kolaborasi Inovasi" withArrow>
-            <Button
-              leftSection={<IconPlus size={18} />}
-              color="blue"
-              variant="light"
-              onClick={() => router.push('/admin/inovasi/kolaborasi-inovasi/list-kolaborasi-inovasi/create')}
-            >
-              Tambah Baru
-            </Button>
-          </Tooltip>
+          <Button
+            leftSection={<IconPlus size={18} />}
+            color="blue"
+            variant="light"
+            onClick={() => router.push('/admin/inovasi/kolaborasi-inovasi/list-kolaborasi-inovasi/create')}
+          >
+            Tambah Baru
+          </Button>
         </Group>
         <Box style={{ overflowX: 'auto' }}>
           <Table highlightOnHover>

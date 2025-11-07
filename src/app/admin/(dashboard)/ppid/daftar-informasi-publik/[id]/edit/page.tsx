@@ -71,7 +71,7 @@ function EditDaftarInformasiPublik() {
         tanggal: formData.tanggal.trim(),
       };
       await daftarInformasi.edit.update();
-      router.push('/admin/ppid/daftar-informasi-publik-desa-darmasaba');
+      router.push('/admin/ppid/daftar-informasi-publik');
     } catch (error) {
       console.error('Error updating berita:', error);
       toast.error('Terjadi kesalahan saat memperbarui berita');

@@ -1,6 +1,6 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Center, Group, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title, Tooltip } from '@mantine/core';
+import { Box, Button, Center, Group, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconEdit, IconPlus, IconSearch, IconX } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
@@ -68,7 +68,6 @@ function ListKategoriProduk({ search2 }: { search2: string }) {
       <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
         <Group justify="space-between" mb="md">
           <Title order={4}>Daftar Kategori Produk</Title>
-          <Tooltip label="Tambah Kategori Produk" withArrow>
             <Button
               leftSection={<IconPlus size={18} />}
               color="blue"
@@ -77,7 +76,6 @@ function ListKategoriProduk({ search2 }: { search2: string }) {
             >
               Tambah Baru
             </Button>
-          </Tooltip>
         </Group>
 
         <Box style={{ overflowX: 'auto' }}>
@@ -99,7 +97,6 @@ function ListKategoriProduk({ search2 }: { search2: string }) {
                       </Text>
                     </TableTd>
                     <TableTd>
-                      <Tooltip label="Edit Kategori Produk" withArrow>
                         <Button
                           color="green"
                           variant="light"
@@ -107,10 +104,8 @@ function ListKategoriProduk({ search2 }: { search2: string }) {
                         >
                           <IconEdit size={18} />
                         </Button>
-                      </Tooltip>
                     </TableTd>
                     <TableTd>
-                      <Tooltip label="Hapus Kategori Produk" withArrow>
                         <Button
                           color="red"
                           variant="light"
@@ -121,8 +116,7 @@ function ListKategoriProduk({ search2 }: { search2: string }) {
                         >
                           <IconX size={18} />
                         </Button>
-                      </Tooltip>
-                    </TableTd>
+                     </TableTd>
                   </TableTr>
                 ))
               ) : (

@@ -1,14 +1,13 @@
 'use client';
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React from 'react';
-import { useRouter } from 'next/navigation';
 import grafikNganggur from '@/app/admin/(dashboard)/_state/ekonomi/usia-kerja-nganggur';
-import { useProxy } from 'valtio/utils';
-import { useState } from 'react';
 import colors from '@/con/colors';
-import { Box, Button, Paper, Stack, Title, TextInput, Group, Tooltip } from '@mantine/core';
+import { Box, Button, Group, Paper, Stack, TextInput, Title } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { useProxy } from 'valtio/utils';
 
 function CreateGrafikBerdasarkanPendidikan() {
   const router = useRouter();
@@ -44,11 +43,9 @@ function CreateGrafikBerdasarkanPendidikan() {
   return (
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
-        </Tooltip>
+        <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Tambah Data Pengangguran Berdasarkan Pendidikan
         </Title>

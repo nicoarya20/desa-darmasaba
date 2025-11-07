@@ -1,9 +1,11 @@
 'use client'
+import colors from '@/con/colors';
 import {
   Box,
   Button,
   Center,
   Group,
+  Pagination,
   Paper,
   Skeleton,
   Stack,
@@ -14,19 +16,16 @@ import {
   TableThead,
   TableTr,
   Text,
-  Title,
-  Tooltip,
-  Pagination,
+  Title
 } from '@mantine/core';
-import React, { useState } from 'react';
-import HeaderSearch from '../../../_com/header';
-import { IconEdit, IconPlus, IconSearch, IconTrash } from '@tabler/icons-react';
-import PendapatanAsliDesa from '../../../_state/ekonomi/PADesa';
-import { useProxy } from 'valtio/utils';
-import { useRouter } from 'next/navigation';
 import { useShallowEffect } from '@mantine/hooks';
-import colors from '@/con/colors';
+import { IconEdit, IconPlus, IconSearch, IconTrash } from '@tabler/icons-react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { useProxy } from 'valtio/utils';
+import HeaderSearch from '../../../_com/header';
 import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
+import PendapatanAsliDesa from '../../../_state/ekonomi/PADesa';
 
 function Pembiayaan() {
   const [search, setSearch] = useState("");
@@ -95,18 +94,16 @@ function ListPembiayaan({ search }: { search: string }) {
       <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
         <Group justify="space-between" mb="md">
           <Title order={4}>Daftar Pembiayaan</Title>
-          <Tooltip label="Tambah Pembiayaan" withArrow>
-            <Button
-              leftSection={<IconPlus size={18} />}
-              color="blue"
-              variant="light"
-              onClick={() =>
-                router.push('/admin/ekonomi/PADesa-pendapatan-asli-desa/pembiayaan/create')
-              }
-            >
-              Tambah Baru
-            </Button>
-          </Tooltip>
+          <Button
+            leftSection={<IconPlus size={18} />}
+            color="blue"
+            variant="light"
+            onClick={() =>
+              router.push('/admin/ekonomi/PADesa-pendapatan-asli-desa/pembiayaan/create')
+            }
+          >
+            Tambah Baru
+          </Button>
         </Group>
 
         <Box style={{ overflowX: 'auto' }}>

@@ -10,15 +10,14 @@ import {
   Stack,
   Text,
   TextInput,
-  Title,
-  Tooltip,
+  Title
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
-import grafikSektorUnggulan from '../../../_state/ekonomi/sektor-unggulan-desa';
 import CreateEditor from '../../../_com/createEditor';
+import grafikSektorUnggulan from '../../../_state/ekonomi/sektor-unggulan-desa';
 
 function CreateSektorUnggulanDesa() {
   const stateGrafik = useProxy(grafikSektorUnggulan);
@@ -50,16 +49,14 @@ function CreateSektorUnggulanDesa() {
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
       {/* Header dengan back button */}
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button
-            variant="subtle"
-            onClick={() => router.back()}
-            p="xs"
-            radius="md"
-          >
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
-        </Tooltip>
+        <Button
+          variant="subtle"
+          onClick={() => router.back()}
+          p="xs"
+          radius="md"
+        >
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Tambah Sektor Unggulan Desa
         </Title>

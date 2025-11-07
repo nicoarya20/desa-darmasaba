@@ -1,10 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import colors from '@/con/colors';
-import { ScrollArea, Stack, Tabs, TabsList, TabsPanel, TabsTab, Title, Tooltip } from '@mantine/core';
+import { ScrollArea, Stack, Tabs, TabsList, TabsPanel, TabsTab, Title } from '@mantine/core';
+import { IconBuildingCommunity, IconCalendar, IconSchool } from '@tabler/icons-react';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
-import { IconSchool, IconCalendar, IconBuildingCommunity } from '@tabler/icons-react';
 
 function LayoutTabs({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -15,22 +15,19 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
       label: "Tujuan Program",
       value: "tujuan-program",
       href: "/admin/pendidikan/bimbingan-belajar-desa/tujuan-program",
-      icon: <IconSchool size={18} stroke={1.8} />,
-      tooltip: "Lihat tujuan utama program bimbingan belajar",
+      icon: <IconSchool size={18} stroke={1.8} />
     },
     {
       label: "Lokasi dan Jadwal",
       value: "lokasi-dan-jadwal",
       href: "/admin/pendidikan/bimbingan-belajar-desa/lokasi-dan-jadwal",
       icon: <IconCalendar size={18} stroke={1.8} />,
-      tooltip: "Atur lokasi pelaksanaan dan jadwal bimbingan",
     },
     {
       label: "Fasilitas yang Disediakan",
       value: "fasilitas-yang-disediakan",
       href: "/admin/pendidikan/bimbingan-belajar-desa/fasilitas-yang-disediakan",
-      icon: <IconBuildingCommunity size={18} stroke={1.8} />,
-      tooltip: "Kelola fasilitas yang tersedia untuk peserta",
+      icon: <IconBuildingCommunity size={18} stroke={1.8} />
     },
   ];
 
@@ -76,28 +73,21 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
               flexWrap: "nowrap",
               gap: "0.5rem",
               paddingInline: "0.5rem", // ✅ biar nggak nempel ke tepi
-          }}
+            }}
           >
             {tabs.map((tab, i) => (
-              <Tooltip
+              <TabsTab
                 key={i}
-                label={tab.tooltip}
-                position="bottom"
-                withArrow
-                transitionProps={{ transition: 'pop', duration: 200 }}
+                value={tab.value}
+                leftSection={tab.icon}
+                style={{
+                  fontWeight: 600,
+                  fontSize: "0.9rem",
+                  transition: "all 0.2s ease",
+                }}
               >
-                <TabsTab
-                  value={tab.value}
-                  leftSection={tab.icon}
-                  style={{
-                    fontWeight: 600,
-                    fontSize: "0.9rem",
-                    transition: "all 0.2s ease",
-                  }}
-                >
-                  {tab.label}
-                </TabsTab>
-              </Tooltip>
+                {tab.label}
+              </TabsTab>
             ))}
           </TabsList>
         </ScrollArea>

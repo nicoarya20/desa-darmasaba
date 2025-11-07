@@ -2,23 +2,22 @@
 'use client'
 import colors from '@/con/colors';
 import {
+  ScrollArea,
   Stack,
   Tabs,
   TabsList,
   TabsPanel,
   TabsTab,
-  Title,
-  Tooltip,
-  ScrollArea,
+  Title
 } from '@mantine/core';
-import { usePathname, useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
 import {
-  IconFileAnalytics,
   IconCoins,
+  IconFileAnalytics,
   IconShoppingCart,
   IconWallet,
 } from '@tabler/icons-react';
+import { usePathname, useRouter } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
 
 function LayoutTabs({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -29,29 +28,25 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
       label: "APB Desa",
       value: "apbdesa",
       href: "/admin/ekonomi/PADesa-pendapatan-asli-desa/apbdesa",
-      icon: <IconFileAnalytics size={18} stroke={1.8} />,
-      tooltip: "Lihat ringkasan Anggaran Pendapatan dan Belanja Desa",
+      icon: <IconFileAnalytics size={18} stroke={1.8} />
     },
     {
       label: "Pendapatan",
       value: "pendapatan",
       href: "/admin/ekonomi/PADesa-pendapatan-asli-desa/pendapatan",
       icon: <IconCoins size={18} stroke={1.8} />,
-      tooltip: "Kelola data pendapatan desa",
     },
     {
       label: "Belanja",
       value: "belanja",
       href: "/admin/ekonomi/PADesa-pendapatan-asli-desa/belanja",
       icon: <IconShoppingCart size={18} stroke={1.8} />,
-      tooltip: "Atur data belanja desa",
     },
     {
       label: "Pembiayaan",
       value: "pembiayaan",
       href: "/admin/ekonomi/PADesa-pendapatan-asli-desa/pembiayaan",
       icon: <IconWallet size={18} stroke={1.8} />,
-      tooltip: "Kelola data pembiayaan desa",
     },
   ];
 
@@ -104,26 +99,19 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
             }}
           >
             {tabs.map((tab, i) => (
-              <Tooltip
+              <TabsTab
                 key={i}
-                label={tab.tooltip}
-                position="bottom"
-                withArrow
-                transitionProps={{ transition: "pop", duration: 200 }}
+                value={tab.value}
+                leftSection={tab.icon}
+                style={{
+                  fontWeight: 600,
+                  fontSize: "0.9rem",
+                  transition: "all 0.2s ease",
+                  flexShrink: 0,
+                }}
               >
-                <TabsTab
-                  value={tab.value}
-                  leftSection={tab.icon}
-                  style={{
-                    fontWeight: 600,
-                    fontSize: "0.9rem",
-                    transition: "all 0.2s ease",
-                    flexShrink: 0,
-                  }}
-                >
-                  {tab.label}
-                </TabsTab>
-              </Tooltip>
+                {tab.label}
+              </TabsTab>
             ))}
           </TabsList>
         </ScrollArea>

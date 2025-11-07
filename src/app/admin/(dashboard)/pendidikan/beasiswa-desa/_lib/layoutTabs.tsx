@@ -1,10 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import colors from '@/con/colors';
-import { ScrollArea, Stack, Tabs, TabsList, TabsPanel, TabsTab, Title, Tooltip } from '@mantine/core';
+import { ScrollArea, Stack, Tabs, TabsList, TabsPanel, TabsTab, Title } from '@mantine/core';
+import { IconSchool, IconStar } from '@tabler/icons-react';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
-import { IconSchool, IconStar } from '@tabler/icons-react';
 
 function LayoutTabs({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -15,15 +15,13 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
       label: "Beasiswa Pendaftar",
       value: "beasiswa-pendaftar",
       href: "/admin/pendidikan/beasiswa-desa/beasiswa-pendaftar",
-      icon: <IconSchool size={18} stroke={1.8} />,
-      tooltip: "Kelola data pendaftar beasiswa desa",
+      icon: <IconSchool size={18} stroke={1.8} />
     },
     {
       label: "Keunggulan Program",
       value: "keunggulan-program",
       href: "/admin/pendidikan/beasiswa-desa/keunggulan-program",
-      icon: <IconStar size={18} stroke={1.8} />,
-      tooltip: "Lihat keunggulan dan detail program beasiswa",
+      icon: <IconStar size={18} stroke={1.8} />
     },
   ];
 
@@ -69,28 +67,21 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
               flexWrap: "nowrap",
               gap: "0.5rem",
               paddingInline: "0.5rem", // ✅ biar nggak nempel ke tepi
-          }}
+            }}
           >
             {tabs.map((tab, i) => (
-              <Tooltip
+              <TabsTab
                 key={i}
-                label={tab.tooltip}
-                position="bottom"
-                withArrow
-                transitionProps={{ transition: 'pop', duration: 200 }}
+                value={tab.value}
+                leftSection={tab.icon}
+                style={{
+                  fontWeight: 600,
+                  fontSize: "0.9rem",
+                  transition: "all 0.2s ease",
+                }}
               >
-                <TabsTab
-                  value={tab.value}
-                  leftSection={tab.icon}
-                  style={{
-                    fontWeight: 600,
-                    fontSize: "0.9rem",
-                    transition: "all 0.2s ease",
-                  }}
-                >
-                  {tab.label}
-                </TabsTab>
-              </Tooltip>
+                {tab.label}
+              </TabsTab>
             ))}
           </TabsList>
         </ScrollArea>

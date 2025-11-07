@@ -18,16 +18,15 @@ import {
   TableThead,
   TableTr,
   Text,
-  Title,
-  Tooltip,
+  Title
 } from '@mantine/core';
-import { IconEdit, IconSearch, IconX, IconPlus } from '@tabler/icons-react';
+import { IconEdit, IconPlus, IconSearch, IconX } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../../_com/header';
-import mitraKolaborasi from '../../../_state/inovasi/mitra-kolaborasi';
 import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
+import mitraKolaborasi from '../../../_state/inovasi/mitra-kolaborasi';
 
 function MitraKolaborasi() {
   const [search, setSearch] = useState('');
@@ -81,20 +80,18 @@ function ListMitraKolaborasi({ search }: { search: string }) {
       <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
         <Group justify="space-between" mb="md">
           <Title order={4}>Daftar Mitra Kolaborasi</Title>
-          <Tooltip label="Tambah Mitra Baru" withArrow>
-            <Button
-              leftSection={<IconPlus size={18} />}
-              color="blue"
-              variant="light"
-              onClick={() =>
-                router.push(
-                  '/admin/inovasi/kolaborasi-inovasi/mitra-kolaborasi/create'
-                )
-              }
-            >
-              Tambah Baru
-            </Button>
-          </Tooltip>
+          <Button
+            leftSection={<IconPlus size={18} />}
+            color="blue"
+            variant="light"
+            onClick={() =>
+              router.push(
+                '/admin/inovasi/kolaborasi-inovasi/mitra-kolaborasi/create'
+              )
+            }
+          >
+            Tambah Baru
+          </Button>
         </Group>
         <Box style={{ overflowX: 'auto' }}>
           <Table highlightOnHover>
@@ -135,39 +132,35 @@ function ListMitraKolaborasi({ search }: { search: string }) {
                       </Box>
                     </TableTd>
                     <TableTd>
-                      <Tooltip label="Hapus Mitra" withArrow>
-                        <Button
-                          size="xs"
-                          radius="md"
-                          variant="light"
-                          color="red"
-                          disabled={mitraKolaborasi.delete.loading || !item}
-                          onClick={() => {
-                            setSelectedId(item.id);
-                            setModalHapus(true);
-                          }}
-                        >
-                          <IconX size={16} />
-                        </Button>
-                      </Tooltip>
+                      <Button
+                        size="xs"
+                        radius="md"
+                        variant="light"
+                        color="red"
+                        disabled={mitraKolaborasi.delete.loading || !item}
+                        onClick={() => {
+                          setSelectedId(item.id);
+                          setModalHapus(true);
+                        }}
+                      >
+                        <IconX size={16} />
+                      </Button>
                     </TableTd>
                     <TableTd>
-                      <Tooltip label="Edit Mitra" withArrow>
-                        <Button
-                          size="xs"
-                          radius="md"
-                          variant="light"
-                          color="green"
-                          disabled={!item}
-                          onClick={() =>
-                            router.push(
-                              `/admin/inovasi/kolaborasi-inovasi/mitra-kolaborasi/${item.id}`
-                            )
-                          }
-                        >
-                          <IconEdit size={16} />
-                        </Button>
-                      </Tooltip>
+                      <Button
+                        size="xs"
+                        radius="md"
+                        variant="light"
+                        color="green"
+                        disabled={!item}
+                        onClick={() =>
+                          router.push(
+                            `/admin/inovasi/kolaborasi-inovasi/mitra-kolaborasi/${item.id}`
+                          )
+                        }
+                      >
+                        <IconEdit size={16} />
+                      </Button>
                     </TableTd>
                   </TableTr>
                 ))

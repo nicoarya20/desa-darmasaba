@@ -16,8 +16,7 @@ import {
   TableThead,
   TableTr,
   Text,
-  Title,
-  Tooltip
+  Title
 } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconDeviceImac, IconPlus, IconSearch } from '@tabler/icons-react';
@@ -68,18 +67,16 @@ function ListDesaDigitalSmartVillage({ search }: { search: string }) {
       <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
         <Group justify="space-between" mb="md">
           <Title order={4}>List Desa Digital Smart Village</Title>
-          <Tooltip label="Tambah Inovasi" withArrow>
-            <Button
-              leftSection={<IconPlus size={18} />}
-              color="blue"
-              variant="light"
-              onClick={() =>
-                router.push('/admin/inovasi/desa-digital-smart-village/create')
-              }
-            >
-              Tambah Baru
-            </Button>
-          </Tooltip>
+          <Button
+            leftSection={<IconPlus size={18} />}
+            color="blue"
+            variant="light"
+            onClick={() =>
+              router.push('/admin/inovasi/desa-digital-smart-village/create')
+            }
+          >
+            Tambah Baru
+          </Button>
         </Group>
         <Box style={{ overflowX: 'auto' }}>
           <Table highlightOnHover>

@@ -9,18 +9,17 @@ import {
   Stack,
   Text,
   TextInput,
-  Title,
-  Tooltip,
+  Title
 } from '@mantine/core';
+import { Dropzone } from '@mantine/dropzone';
 import { IconArrowBack, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import ExifOrientationImg from 'react-exif-orientation-img';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 import CreateEditor from '../../../_com/createEditor';
 import desaDigitalState from '../../../_state/inovasi/desa-digital';
-import { Dropzone } from '@mantine/dropzone';
-import ExifOrientationImg from 'react-exif-orientation-img';
 
 export default function CreateDesaDigital() {
   const stateDesaDigital = useProxy(desaDigitalState);
@@ -71,17 +70,15 @@ export default function CreateDesaDigital() {
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
       {/* Header dengan tombol kembali */}
       <Group mb="md" align="center">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button
-            variant="subtle"
-            onClick={() => router.back()}
-            p="xs"
-            radius="md"
-            style={{ transition: 'background 0.2s ease' }}
-          >
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
-        </Tooltip>
+        <Button
+          variant="subtle"
+          onClick={() => router.back()}
+          p="xs"
+          radius="md"
+          style={{ transition: 'background 0.2s ease' }}
+        >
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Tambah Desa Digital Smart Village
         </Title>
@@ -174,15 +171,15 @@ export default function CreateDesaDigital() {
                 }}
               >
                 <ExifOrientationImg
-      src={previewImage}
-      alt="Preview"
-      style={{
-        maxHeight: 220,
-        objectFit: 'cover',
-        border: '1px solid #e0e0e0',
-        borderRadius: 12,
-      }}
-    />
+                  src={previewImage}
+                  alt="Preview"
+                  style={{
+                    maxHeight: 220,
+                    objectFit: 'cover',
+                    border: '1px solid #e0e0e0',
+                    borderRadius: 12,
+                  }}
+                />
               </Box>
             )}
           </Box>

@@ -16,8 +16,7 @@ import {
   TableThead,
   TableTr,
   Text,
-  Title,
-  Tooltip,
+  Title
 } from '@mantine/core';
 import { IconDeviceImac, IconSearch } from '@tabler/icons-react';
 
@@ -99,18 +98,16 @@ function ListPengaduanMasyarakat({ search }: { search: string }) {
                       <Text fz="sm" c="dimmed" truncate lineClamp={1}>{item.nomorTelepon}</Text>
                     </TableTd>
                     <TableTd style={{ width: '15%' }}>
-                      <Tooltip label="Lihat detail pengaduan" withArrow>
-                        <Button
-                          size="xs"
-                          radius="md"
-                          variant="light"
-                          color="blue"
-                          leftSection={<IconDeviceImac size={16} />}
-                          onClick={() => router.push(`/admin/inovasi/layanan-online-desa/pengaduan-masyarakat/${item.id}`)}
-                        >
-                          Detail
-                        </Button>
-                      </Tooltip>
+                      <Button
+                        size="xs"
+                        radius="md"
+                        variant="light"
+                        color="blue"
+                        leftSection={<IconDeviceImac size={16} />}
+                        onClick={() => router.push(`/admin/inovasi/layanan-online-desa/pengaduan-masyarakat/${item.id}`)}
+                      >
+                        Detail
+                      </Button>
                     </TableTd>
                   </TableTr>
                 ))

@@ -65,7 +65,7 @@ function VisiMisiPPIDList() {
                 <Text ta="center" fz={{ base: '1.2rem', md: '1.8rem' }} fw="bold" c={colors['blue-button']}>
                   MOTO PPID DESA DARMASABA
                 </Text>
-                <Text ta="center" fz={{ base: '1rem', md: '1.2rem' }} c="dimmed" mt="sm">
+                <Text ta="center" fz={{ base: '1rem', md: '1.2rem' }} mt="sm">
                   MEMBERIKAN INFORMASI YANG CEPAT, MUDAH, TEPAT DAN TRANSPARAN
                 </Text>
               </GridCol>

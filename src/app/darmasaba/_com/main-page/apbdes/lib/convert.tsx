@@ -7,7 +7,7 @@ export default function parseJumlah(value: string): number {
   if (cleaned.includes("T")) return num * 1_000_000_000_000;
   if (cleaned.includes("M")) return num * 1_000_000_000;
   if (cleaned.includes("JT")) return num * 1_000_000;
-  if (cleaned.includes("K")) return num * 1_000;
+  if (cleaned.includes("RB")) return num * 1_000;
 
   return num;
 }

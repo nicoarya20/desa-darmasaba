@@ -8,17 +8,16 @@ import {
   TabsList,
   TabsPanel,
   TabsTab,
-  Title,
-  Tooltip
+  Title
 } from '@mantine/core';
-import { usePathname, useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
 import {
+  IconAlertCircle,
   IconFileText,
   IconListDetails,
-  IconMessage,
-  IconAlertCircle
+  IconMessage
 } from '@tabler/icons-react';
+import { usePathname, useRouter } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
 
 function LayoutTabsLayananOnlineDesa({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -30,29 +29,25 @@ function LayoutTabsLayananOnlineDesa({ children }: { children: React.ReactNode }
       label: "Administrasi Online",
       value: "administrasionline",
       href: "/admin/inovasi/layanan-online-desa/administrasi-online",
-      icon: <IconFileText size={18} stroke={1.8} />,
-      tooltip: "Kelola administrasi online desa"
+      icon: <IconFileText size={18} stroke={1.8} />
     },
     {
       label: "Jenis Layanan",
       value: "jenislayanan",
       href: "/admin/inovasi/layanan-online-desa/jenis-layanan",
-      icon: <IconListDetails size={18} stroke={1.8} />,
-      tooltip: "Daftar jenis layanan desa"
+      icon: <IconListDetails size={18} stroke={1.8} />
     },
     {
       label: "Pengaduan Masyarakat",
       value: "pengaduanmasyarakat",
       href: "/admin/inovasi/layanan-online-desa/pengaduan-masyarakat",
-      icon: <IconMessage size={18} stroke={1.8} />,
-      tooltip: "Laporan pengaduan masyarakat"
+      icon: <IconMessage size={18} stroke={1.8} />
     },
     {
       label: "Jenis Pengaduan",
       value: "jenispengaduan",
       href: "/admin/inovasi/layanan-online-desa/jenis-pengaduan",
-      icon: <IconAlertCircle size={18} stroke={1.8} />,
-      tooltip: "Kategori/jenis pengaduan masyarakat"
+      icon: <IconAlertCircle size={18} stroke={1.8} />
     }
   ];
 
@@ -103,25 +98,18 @@ function LayoutTabsLayananOnlineDesa({ children }: { children: React.ReactNode }
             }}
           >
             {tabs.map((tab, i) => (
-              <Tooltip
+              <TabsTab
                 key={i}
-                label={tab.tooltip}
-                position="bottom"
-                withArrow
-                transitionProps={{ transition: 'pop', duration: 200 }}
+                value={tab.value}
+                leftSection={tab.icon}
+                style={{
+                  fontWeight: 600,
+                  fontSize: "0.9rem",
+                  transition: "all 0.2s ease",
+                }}
               >
-                <TabsTab
-                  value={tab.value}
-                  leftSection={tab.icon}
-                  style={{
-                    fontWeight: 600,
-                    fontSize: "0.9rem",
-                    transition: "all 0.2s ease",
-                  }}
-                >
-                  {tab.label}
-                </TabsTab>
-              </Tooltip>
+                {tab.label}
+              </TabsTab>
             ))}
           </TabsList>
         </ScrollArea>

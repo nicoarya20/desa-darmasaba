@@ -1,6 +1,6 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Flex, Paper, Skeleton, Stack, Text, Tooltip } from '@mantine/core';
+import { Box, Button, Flex, Paper, Skeleton, Stack, Text } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -95,40 +95,36 @@ function DetailProgramKreatifDesa() {
               </Box>
 
               <Flex gap="sm" mt={10}>
-                <Tooltip label="Hapus Program Kreatif Desa" withArrow position="top">
-                  <Button
-                    color="red"
-                    onClick={() => {
-                      if (data) {
-                        setSelectedId(data.id);
-                        setModalHapus(true);
-                      }
-                    }}
-                    disabled={stateProgramKreatif.delete.loading || !data}
-                    variant="light"
-                    radius="md"
-                    size="md"
-                  >
-                    <IconTrash size={20} />
-                  </Button>
-                </Tooltip>
+                <Button
+                  color="red"
+                  onClick={() => {
+                    if (data) {
+                      setSelectedId(data.id);
+                      setModalHapus(true);
+                    }
+                  }}
+                  disabled={stateProgramKreatif.delete.loading || !data}
+                  variant="light"
+                  radius="md"
+                  size="md"
+                >
+                  <IconTrash size={20} />
+                </Button>
 
-                <Tooltip label="Edit Program Kreatif Desa" withArrow position="top">
-                  <Button
-                    color="green"
-                    onClick={() => {
-                      if (data) {
-                        router.push(`/admin/inovasi/program-kreatif-desa/${data.id}/edit`);
-                      }
-                    }}
-                    disabled={!data}
-                    variant="light"
-                    radius="md"
-                    size="md"
-                  >
-                    <IconEdit size={20} />
-                  </Button>
-                </Tooltip>
+                <Button
+                  color="green"
+                  onClick={() => {
+                    if (data) {
+                      router.push(`/admin/inovasi/program-kreatif-desa/${data.id}/edit`);
+                    }
+                  }}
+                  disabled={!data}
+                  variant="light"
+                  radius="md"
+                  size="md"
+                >
+                  <IconEdit size={20} />
+                </Button>
               </Flex>
             </Stack>
           </Paper>

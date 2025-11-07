@@ -5,8 +5,8 @@ import {
   Button,
   Center,
   Group,
-  Paper,
   Pagination,
+  Paper,
   Skeleton,
   Stack,
   Table,
@@ -15,8 +15,7 @@ import {
   TableTh,
   TableThead,
   TableTr,
-  Text,
-  Tooltip,
+  Text
 } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconDeviceImacCog, IconPlus, IconSearch } from '@tabler/icons-react';
@@ -82,20 +81,18 @@ function ListAPBDesa({ search }: { search: string }) {
           <Text fw={600} fz="lg">
             List APB Desa
           </Text>
-          <Tooltip label="Tambah APB Desa" withArrow>
-            <Button
-              leftSection={<IconPlus size={18} />}
-              color="blue"
-              variant="light"
-              onClick={() =>
-                router.push(
-                  "/admin/ekonomi/PADesa-pendapatan-asli-desa/apbdesa/create"
-                )
-              }
-            >
-              Tambah Baru
-            </Button>
-          </Tooltip>
+          <Button
+            leftSection={<IconPlus size={18} />}
+            color="blue"
+            variant="light"
+            onClick={() =>
+              router.push(
+                "/admin/ekonomi/PADesa-pendapatan-asli-desa/apbdesa/create"
+              )
+            }
+          >
+            Tambah Baru
+          </Button>
         </Group>
         <Box style={{ overflowX: "auto" }}>
           <Table highlightOnHover>
@@ -138,20 +135,18 @@ function ListAPBDesa({ search }: { search: string }) {
                       )}
                     </TableTd>
                     <TableTd>
-                      <Tooltip label="Lihat Detail" withArrow>
-                        <Button
-                          variant="light"
-                          color="green"
-                          onClick={() =>
-                            router.push(
-                              `/admin/ekonomi/PADesa-pendapatan-asli-desa/apbdesa/${item.id}`
-                            )
-                          }
-                        >
-                          <IconDeviceImacCog size={20} />
-                          <Text ml={5}>Detail</Text>
-                        </Button>
-                      </Tooltip>
+                      <Button
+                        variant="light"
+                        color="green"
+                        onClick={() =>
+                          router.push(
+                            `/admin/ekonomi/PADesa-pendapatan-asli-desa/apbdesa/${item.id}`
+                          )
+                        }
+                      >
+                        <IconDeviceImacCog size={20} />
+                        <Text ml={5}>Detail</Text>
+                      </Button>
                     </TableTd>
                   </TableTr>
                 ))

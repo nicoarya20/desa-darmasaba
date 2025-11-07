@@ -6,7 +6,9 @@ import {
   Box,
   Button,
   Center,
+  Flex,
   Group,
+  Pagination,
   Paper,
   Skeleton,
   Stack,
@@ -17,10 +19,7 @@ import {
   TableThead,
   TableTr,
   Text,
-  Title,
-  Tooltip,
-  Pagination,
-  Flex,
+  Title
 } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconEdit, IconPlus, IconSearch, IconTrash } from '@tabler/icons-react';
@@ -111,16 +110,14 @@ function ListDemografiPekerjaan({ search }: { search: string }) {
       <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
         <Group justify="space-between" mb="md">
           <Title order={4}>List Demografi Pekerjaan</Title>
-          <Tooltip label="Tambah Data Pekerjaan" withArrow>
-            <Button
-              leftSection={<IconPlus size={18} />}
-              color="blue"
-              variant="light"
-              onClick={() => router.push('/admin/ekonomi/demografi-pekerjaan/create')}
-            >
-              Tambah Baru
-            </Button>
-          </Tooltip>
+          <Button
+            leftSection={<IconPlus size={18} />}
+            color="blue"
+            variant="light"
+            onClick={() => router.push('/admin/ekonomi/demografi-pekerjaan/create')}
+          >
+            Tambah Baru
+          </Button>
         </Group>
 
         <Box style={{ overflowX: 'auto' }}>

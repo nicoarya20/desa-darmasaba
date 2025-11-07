@@ -1,8 +1,8 @@
 'use client';
-import pengelolaanSampahState from '@/app/admin/(dashboard)/_state/lingkungan/pengelolaan-sampah';
 import SelectIconProgram from '@/app/admin/(dashboard)/_com/selectIcon';
+import pengelolaanSampahState from '@/app/admin/(dashboard)/_state/lingkungan/pengelolaan-sampah';
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, Stack, Text, TextInput, Title, Tooltip } from '@mantine/core';
+import { Box, Button, Group, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
@@ -34,7 +34,6 @@ function CreatePengelolaanSampahBankSampah() {
   return (
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" color="blue" position="bottom">
           <Button 
             variant="subtle" 
             onClick={() => router.back()} 
@@ -43,7 +42,6 @@ function CreatePengelolaanSampahBankSampah() {
           >
             <IconArrowBack color={colors['blue-button']} size={24} />
           </Button>
-        </Tooltip>
         <Title order={4} ml="sm" c="dark">
           Tambah Pengelolaan Sampah Bank Sampah
         </Title>

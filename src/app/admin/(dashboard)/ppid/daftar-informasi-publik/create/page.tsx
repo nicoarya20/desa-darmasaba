@@ -33,7 +33,7 @@ export default function CreateDaftarInformasi() {
     try {
       await daftarInformasi.create.create();
       resetForm();
-      router.push("/admin/ppid/daftar-informasi-publik-desa-darmasaba");
+      router.push("/admin/ppid/daftar-informasi-publik");
     } catch (error) {
       console.error('Error creating informasi publik:', error);
       alert('Terjadi kesalahan saat menyimpan data');

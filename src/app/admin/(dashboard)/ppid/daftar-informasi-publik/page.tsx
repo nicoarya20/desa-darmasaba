@@ -14,7 +14,7 @@ function DaftarInformasiPublik() {
   return (
     <Box>
       <HeaderSearch
-        title='Daftar Informasi Publik Desa Darmasaba'
+        title='Daftar Informasi Publik'
         placeholder='Cari jenis informasi atau deskripsi...'
         searchIcon={<IconSearch size={20} />}
         value={search}
@@ -51,12 +51,12 @@ function ListDaftarInformasi({ search }: { search: string }) {
     <Box py="md">
       <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
         <Group justify="space-between" mb="md">
-          <Title order={4}>Daftar Informasi Publik</Title>
+          <Title order={4}>List Daftar Informasi Publik</Title>
             <Button
               leftSection={<IconPlus size={18} />}
               color="blue"
               variant="light"
-              onClick={() => router.push('/admin/ppid/daftar-informasi-publik-desa-darmasaba/create')}
+              onClick={() => router.push('/admin/ppid/daftar-informasi-publik/create')}
             >
               {isMobile ? 'Tambah' : 'Tambah Baru'}
             </Button>
@@ -109,7 +109,7 @@ function ListDaftarInformasi({ search }: { search: string }) {
                           variant="light"
                           color="blue"
                           leftSection={<IconDeviceImacCog size={16} />}
-                          onClick={() => router.push(`/admin/ppid/daftar-informasi-publik-desa-darmasaba/${item.id}`)}
+                          onClick={() => router.push(`/admin/ppid/daftar-informasi-publik/${item.id}`)}
                         >
                           Detail
                         </Button>

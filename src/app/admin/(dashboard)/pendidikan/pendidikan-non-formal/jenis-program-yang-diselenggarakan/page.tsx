@@ -10,8 +10,7 @@ import {
   Skeleton,
   Stack,
   Text,
-  Title,
-  Tooltip,
+  Title
 } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconEdit } from '@tabler/icons-react';
@@ -48,21 +47,19 @@ function Page() {
             </Title>
           </GridCol>
           <GridCol span={{ base: 12, md: 1 }}>
-            <Tooltip label="Edit Jenis Program" withArrow>
-              <Button
-                c="green"
-                variant="light"
-                leftSection={<IconEdit size={18} stroke={2} />}
-                radius="md"
-                onClick={() =>
-                  router.push(
-                    '/admin/pendidikan/pendidikan-non-formal/jenis-program-yang-diselenggarakan/edit'
-                  )
-                }
-              >
-                Edit
-              </Button>
-            </Tooltip>
+            <Button
+              c="green"
+              variant="light"
+              leftSection={<IconEdit size={18} stroke={2} />}
+              radius="md"
+              onClick={() =>
+                router.push(
+                  '/admin/pendidikan/pendidikan-non-formal/jenis-program-yang-diselenggarakan/edit'
+                )
+              }
+            >
+              Edit
+            </Button>
           </GridCol>
         </Grid>
 

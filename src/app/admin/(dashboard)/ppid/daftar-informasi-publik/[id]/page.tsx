@@ -25,7 +25,7 @@ function DetailDaftarInformasiPublik() {
       stateDaftarInformasi.delete.byId(selectedId)
       setModalHapus(false)
       setSelectedId(null)
-      router.push("/admin/ppid/daftar-informasi-publik-desa-darmasaba")
+      router.push("/admin/ppid/daftar-informasi-publik")
     }
   }
 
@@ -97,7 +97,7 @@ function DetailDaftarInformasiPublik() {
                     variant="light"
                     color="green"
                     leftSection={<IconEdit size={18} />}
-                    onClick={() => router.push(`/admin/ppid/daftar-informasi-publik-desa-darmasaba/${data.id}/edit`)}
+                    onClick={() => router.push(`/admin/ppid/daftar-informasi-publik/${data.id}/edit`)}
                     disabled={!data}
                   >
                     Edit

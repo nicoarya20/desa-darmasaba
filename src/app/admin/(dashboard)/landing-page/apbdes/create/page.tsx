@@ -221,7 +221,7 @@ function CreateAPBDes() {
           />
           <TextInput
             label="Jumlah Anggaran"
-            placeholder="Masukkan jumlah anggaran"
+            placeholder="14 M / 1 T / 200 JT / 900 RB"
             defaultValue={stateAPBDes.create.form.jumlah || ''}
             onChange={(e) => (stateAPBDes.create.form.jumlah = e.target.value)}
             required

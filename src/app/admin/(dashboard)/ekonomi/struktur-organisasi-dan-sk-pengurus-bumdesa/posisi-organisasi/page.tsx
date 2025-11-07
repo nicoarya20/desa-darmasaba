@@ -1,6 +1,6 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Center, Group, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title, Tooltip } from '@mantine/core';
+import { Box, Button, Center, Group, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconEdit, IconPlus, IconSearch, IconTrash } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
@@ -68,16 +68,14 @@ function ListPosisiOrganisasiBumDes({ search }: { search: string }) {
       <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
         <Group justify="space-between" mb="md">
           <Title order={4}>Daftar Posisi Organisasi BumDes</Title>
-          <Tooltip label="Tambah Posisi Organisasi" withArrow>
-            <Button
-              leftSection={<IconPlus size={18} />}
-              color="blue"
-              variant="light"
-              onClick={() => router.push('/admin/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa/posisi-organisasi/create')}
-            >
-              Tambah Baru
-            </Button>
-          </Tooltip>
+          <Button
+            leftSection={<IconPlus size={18} />}
+            color="blue"
+            variant="light"
+            onClick={() => router.push('/admin/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa/posisi-organisasi/create')}
+          >
+            Tambah Baru
+          </Button>
         </Group>
         <Box style={{ overflowX: 'auto' }}>
           <Table highlightOnHover>
@@ -106,19 +104,16 @@ function ListPosisiOrganisasiBumDes({ search }: { search: string }) {
                       <Text>{item.hierarki || '-'}</Text>
                     </TableTd>
                     <TableTd style={{ width: '20%' }}>
-                      <Tooltip label="Edit" withArrow>
-                        <Button
-                          variant="light"
-                          color="green"
-                          size="sm"
-                          onClick={() => router.push(`/admin/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa/posisi-organisasi/${item.id}`)}
-                        >
-                          <IconEdit size={18} />
-                        </Button>
-                      </Tooltip>
+                      <Button
+                        variant="light"
+                        color="green"
+                        size="sm"
+                        onClick={() => router.push(`/admin/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa/posisi-organisasi/${item.id}`)}
+                      >
+                        <IconEdit size={18} />
+                      </Button>
                     </TableTd>
                     <TableTd style={{ width: '20%' }}>
-                    <Tooltip label="Hapus" withArrow>
                       <Button
                         variant="light"
                         color="red"
@@ -130,7 +125,6 @@ function ListPosisiOrganisasiBumDes({ search }: { search: string }) {
                       >
                         <IconTrash size={18} />
                       </Button>
-                    </Tooltip>
                     </TableTd>
                   </TableTr>
                 ))

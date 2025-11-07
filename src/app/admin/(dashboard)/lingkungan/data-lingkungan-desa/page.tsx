@@ -5,8 +5,7 @@ import colors from '@/con/colors';
 import {
   Box, Button, Center, Group, Pagination, Paper, Skeleton, Stack,
   Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text,
-  Title,
-  Tooltip
+  Title
 } from '@mantine/core';
 import {
   IconChartLine, IconChristmasTreeFilled, IconClipboardTextFilled,
@@ -83,11 +82,9 @@ function ListDataLingkunganDesa({ search }: { search: string }) {
           <Stack>
             <Group justify="space-between" mb="md">
               <Title order={4}>Daftar Data Lingkungan Desa</Title>
-              <Tooltip label="Tambah Data Lingkungan Desa" withArrow>
-                <Button leftSection={<IconPlus size={18} />} color="blue" variant="light" onClick={() => router.push('/admin/lingkungan/data-lingkungan-desa/create')}>
-                  Tambah Baru
-                </Button>
-              </Tooltip>
+              <Button leftSection={<IconPlus size={18} />} color="blue" variant="light" onClick={() => router.push('/admin/lingkungan/data-lingkungan-desa/create')}>
+                Tambah Baru
+              </Button>
             </Group>
             <Table highlightOnHover>
               <TableThead>
@@ -114,11 +111,9 @@ function ListDataLingkunganDesa({ search }: { search: string }) {
       <Paper withBorder shadow="md" radius="md" bg={colors['white-1']} p="lg">
         <Group justify="space-between" mb="md">
           <Title order={4}>Daftar Data Lingkungan Desa</Title>
-          <Tooltip label="Tambah Data Lingkungan Desa" withArrow>
-            <Button leftSection={<IconPlus size={18} />} color="blue" variant="light" onClick={() => router.push('/admin/lingkungan/data-lingkungan-desa/create')}>
-              Tambah Baru
-            </Button>
-          </Tooltip>
+          <Button leftSection={<IconPlus size={18} />} color="blue" variant="light" onClick={() => router.push('/admin/lingkungan/data-lingkungan-desa/create')}>
+            Tambah Baru
+          </Button>
         </Group>
         <Box style={{ overflowX: 'auto' }}>
           <Table highlightOnHover>

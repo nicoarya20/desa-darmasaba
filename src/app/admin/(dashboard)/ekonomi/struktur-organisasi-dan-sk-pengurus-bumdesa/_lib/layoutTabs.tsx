@@ -8,8 +8,7 @@ import {
   TabsList,
   TabsPanel,
   TabsTab,
-  Title,
-  Tooltip,
+  Title
 } from '@mantine/core';
 import {
   IconBuildingCommunity,
@@ -28,22 +27,19 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
       label: "Pegawai",
       value: "pegawai",
       href: "/admin/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa/pegawai",
-      icon: <IconUsers size={18} stroke={1.8} />,
-      tooltip: "Kelola data pegawai BUMDesa",
+      icon: <IconUsers size={18} stroke={1.8} />
     },
     {
       label: "Posisi Organisasi",
       value: "posisiorganisasi",
       href: "/admin/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa/posisi-organisasi",
-      icon: <IconHierarchy size={18} stroke={1.8} />,
-      tooltip: "Kelola daftar posisi organisasi",
+      icon: <IconHierarchy size={18} stroke={1.8} />
     },
     {
       label: "Struktur Organisasi",
       value: "strukturorganisasi",
       href: "/admin/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa/struktur-organisasi",
-      icon: <IconBuildingCommunity size={18} stroke={1.8} />,
-      tooltip: "Kelola struktur organisasi BUMDesa"
+      icon: <IconBuildingCommunity size={18} stroke={1.8} />
     }
   ];
 
@@ -96,26 +92,19 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
             }}
           >
             {tabs.map((tab, i) => (
-              <Tooltip
+              <TabsTab
                 key={i}
-                label={tab.tooltip}
-                position="bottom"
-                withArrow
-                transitionProps={{ transition: "pop", duration: 200 }}
+                value={tab.value}
+                leftSection={tab.icon}
+                style={{
+                  fontWeight: 600,
+                  fontSize: "0.9rem",
+                  transition: "all 0.2s ease",
+                  flexShrink: 0,
+                }}
               >
-                <TabsTab
-                  value={tab.value}
-                  leftSection={tab.icon}
-                  style={{
-                    fontWeight: 600,
-                    fontSize: "0.9rem",
-                    transition: "all 0.2s ease",
-                    flexShrink: 0,
-                  }}
-                >
-                  {tab.label}
-                </TabsTab>
-              </Tooltip>
+                {tab.label}
+              </TabsTab>
             ))}
           </TabsList>
         </ScrollArea>
@@ -135,7 +124,7 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
           </TabsPanel>
         ))}
       </Tabs>
-    </Stack>
+    </Stack >
   );
 }
 

@@ -8,8 +8,7 @@ import {
   Paper,
   Stack,
   TextInput,
-  Title,
-  Tooltip
+  Title
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
@@ -46,7 +45,6 @@ function CreateKategoriProduk() {
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
       {/* Header dengan tombol kembali */}
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
           <Button
             variant="subtle"
             onClick={() => router.back()}
@@ -55,7 +53,6 @@ function CreateKategoriProduk() {
           >
             <IconArrowBack color={colors['blue-button']} size={24} />
           </Button>
-        </Tooltip>
         <Title order={4} ml="sm" c="dark">
           Tambah Kategori Produk
         </Title>

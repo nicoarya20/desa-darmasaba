@@ -1,11 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Center, Group, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title, Tooltip, Pagination } from '@mantine/core';
+import { Box, Button, Center, Group, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title } from '@mantine/core';
+import { IconDeviceImacCog, IconPlus, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
-import { IconDeviceImacCog, IconPlus, IconSearch } from '@tabler/icons-react';
 import HeaderSearch from '../../../_com/header';
 import perpustakaanDigitalState from '../../../_state/pendidikan/perpustakaan-digital';
 
@@ -50,16 +50,14 @@ function ListDataPerpustakaan({ search }: { search: string }) {
       <Paper withBorder bg={colors['white-1']} p="md" shadow="md" radius="md">
         <Group justify="space-between" mb="md">
           <Title order={4}>List Data Perpustakaan</Title>
-          <Tooltip label="Tambah Data Perpustakaan" withArrow>
-            <Button
-              leftSection={<IconPlus size={18} />}
-              color="blue"
-              variant="light"
-              onClick={() => router.push('/admin/pendidikan/perpustakaan-digital/data-perpustakaan/create')}
-            >
-              Tambah Baru
-            </Button>
-          </Tooltip>
+          <Button
+            leftSection={<IconPlus size={18} />}
+            color="blue"
+            variant="light"
+            onClick={() => router.push('/admin/pendidikan/perpustakaan-digital/data-perpustakaan/create')}
+          >
+            Tambah Baru
+          </Button>
         </Group>
         <Box style={{ overflowX: 'auto' }}>
           <Table striped highlightOnHover withRowBorders style={{ minWidth: '700px' }}>
@@ -87,7 +85,7 @@ function ListDataPerpustakaan({ search }: { search: string }) {
                     </TableTd>
                     <TableTd style={{ width: '20%' }}>
                       <Box w={150}>
-                        <Text dangerouslySetInnerHTML={{ __html: item.deskripsi }} lineClamp={1} truncate fz="sm"/>
+                        <Text dangerouslySetInnerHTML={{ __html: item.deskripsi }} lineClamp={1} truncate fz="sm" />
                       </Box>
                     </TableTd>
                     <TableTd style={{ width: '20%' }}>

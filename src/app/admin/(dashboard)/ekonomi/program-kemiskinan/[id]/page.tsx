@@ -8,17 +8,16 @@ import {
   Paper,
   Skeleton,
   Stack,
-  Text,
-  Tooltip,
+  Text
 } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
+import { IconKey, IconMapper } from '../../../_com/iconMap';
 import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
 import programKemiskinanState from '../../../_state/ekonomi/program-kemiskinan';
-import { IconKey, IconMapper } from '../../../_com/iconMap';
 
 function DetailProgramKemiskinan() {
   const programState = useProxy(programKemiskinanState);
@@ -123,33 +122,29 @@ function DetailProgramKemiskinan() {
 
               {/* Action Buttons */}
               <Group gap="sm" mt="sm">
-                <Tooltip label="Hapus Program" withArrow position="top">
-                  <Button
-                    color="red"
-                    onClick={() => {
-                      setSelectedId(data.id);
-                      setModalHapus(true);
-                    }}
-                    variant="light"
-                    radius="md"
-                    size="md"
-                    disabled={programState.delete.loading}
-                  >
-                    <IconTrash size={20} />
-                  </Button>
-                </Tooltip>
+                <Button
+                  color="red"
+                  onClick={() => {
+                    setSelectedId(data.id);
+                    setModalHapus(true);
+                  }}
+                  variant="light"
+                  radius="md"
+                  size="md"
+                  disabled={programState.delete.loading}
+                >
+                  <IconTrash size={20} />
+                </Button>
 
-                <Tooltip label="Edit Program" withArrow position="top">
-                  <Button
-                    color="green"
-                    onClick={() => router.push(`/admin/ekonomi/program-kemiskinan/${data.id}/edit`)}
-                    variant="light"
-                    radius="md"
-                    size="md"
-                  >
-                    <IconEdit size={20} />
-                  </Button>
-                </Tooltip>
+                <Button
+                  color="green"
+                  onClick={() => router.push(`/admin/ekonomi/program-kemiskinan/${data.id}/edit`)}
+                  variant="light"
+                  radius="md"
+                  size="md"
+                >
+                  <IconEdit size={20} />
+                </Button>
               </Group>
             </Stack>
           </Paper>

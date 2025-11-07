@@ -1,9 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import colors from '@/con/colors';
-import { 
-  Box, Button, Center, Group, Pagination, Paper, Skeleton, Stack, 
-  Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title, Tooltip 
+import {
+  Box, Button, Center, Group, Pagination, Paper, Skeleton, Stack,
+  Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title
 } from '@mantine/core';
 import { IconDeviceImacCog, IconPlus, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
@@ -59,16 +59,14 @@ function ListPengajar({ search }: { search: string }) {
       <Paper withBorder bg={colors['white-1']} p={'lg'} shadow="md" radius="md">
         <Group justify="space-between" mb="md">
           <Title order={4}>Daftar Pengajar</Title>
-          <Tooltip label="Tambah Pengajar" withArrow>
-            <Button 
-              leftSection={<IconPlus size={18} />} 
-              color="blue" 
-              variant="light" 
-              onClick={() => router.push('/admin/pendidikan/info-sekolah/pengajar/create')}
-            >
-              Tambah Baru
-            </Button>
-          </Tooltip>
+          <Button
+            leftSection={<IconPlus size={18} />}
+            color="blue"
+            variant="light"
+            onClick={() => router.push('/admin/pendidikan/info-sekolah/pengajar/create')}
+          >
+            Tambah Baru
+          </Button>
         </Group>
 
         <Box style={{ overflowX: 'auto' }}>

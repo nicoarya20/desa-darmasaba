@@ -14,8 +14,7 @@ import {
   Stack,
   Text,
   TextInput,
-  Title,
-  Tooltip,
+  Title
 } from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
 import { IconArrowBack, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
@@ -78,16 +77,14 @@ function CreateKegiatanDesa() {
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
       {/* Header */}
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button
-            variant="subtle"
-            onClick={() => router.back()}
-            p="xs"
-            radius="md"
-          >
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
-        </Tooltip>
+        <Button
+          variant="subtle"
+          onClick={() => router.back()}
+          p="xs"
+          radius="md"
+        >
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Tambah Kegiatan Desa
         </Title>
@@ -159,7 +156,7 @@ function CreateKegiatanDesa() {
             onChange={(e) => (stateKegiatanDesa.create.form.judul = e.target.value)}
             required
           />
-         <Box>
+          <Box>
             <Text fw="bold" fz="sm" mb={6}>
               Deskripsi Singkat
             </Text>

@@ -8,15 +8,14 @@ import {
   Stack,
   Text,
   TextInput,
-  Title,
-  Tooltip,
+  Title
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
 import CreateEditor from '../../../_com/createEditor';
-import programKreatifState from '../../../_state/inovasi/program-kreatif';
 import SelectIconProgram from '../../../_com/selectIcon';
+import programKreatifState from '../../../_state/inovasi/program-kreatif';
 
 function CreateProgramKreatifDesa() {
   const stateCreate = useProxy(programKreatifState);
@@ -33,23 +32,21 @@ function CreateProgramKreatifDesa() {
 
   const handleSubmit = async () => {
     const success = await stateCreate.create.create();
-  
+
     if (success) {
       resetForm();
       router.push("/admin/inovasi/program-kreatif-desa");
     }
   };
-  
+
 
   return (
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
       {/* Tombol kembali */}
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
-        </Tooltip>
+        <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Tambah Program Kreatif Desa
         </Title>

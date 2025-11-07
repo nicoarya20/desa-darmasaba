@@ -18,8 +18,7 @@ import {
   TableThead,
   TableTr,
   Text,
-  Title,
-  Tooltip
+  Title
 } from '@mantine/core';
 import {
   IconCash,
@@ -117,20 +116,18 @@ function ListProgramKreatifDesa({ search }: { search: string }) {
           <Stack>
             <Group justify="space-between" mb="md">
               <Title order={4}>Daftar Program Kreatif Desa</Title>
-              <Tooltip label="Tambah Program Kreatif Desa" withArrow>
-                <Button
-                  leftSection={<IconPlus size={18} />}
-                  color="blue"
-                  variant="light"
-                  onClick={() =>
-                    router.push(
-                      '/admin/inovasi/program-kreatif-desa/create'
-                    )
-                  }
-                >
-                  Tambah Baru
-                </Button>
-              </Tooltip>
+              <Button
+                leftSection={<IconPlus size={18} />}
+                color="blue"
+                variant="light"
+                onClick={() =>
+                  router.push(
+                    '/admin/inovasi/program-kreatif-desa/create'
+                  )
+                }
+              >
+                Tambah Baru
+              </Button>
             </Group>
             <Table highlightOnHover striped>
               <TableThead>
@@ -164,20 +161,18 @@ function ListProgramKreatifDesa({ search }: { search: string }) {
       >
         <Group justify="space-between" mb="md">
           <Title order={4}>Daftar Program Kreatif Desa</Title>
-          <Tooltip label="Tambah Program Kreatif Desa" withArrow>
-            <Button
-              leftSection={<IconPlus size={18} />}
-              color="blue"
-              variant="light"
-              onClick={() =>
-                router.push(
-                  '/admin/inovasi/program-kreatif-desa/create'
-                )
-              }
-            >
-              Tambah Baru
-            </Button>
-          </Tooltip>
+          <Button
+            leftSection={<IconPlus size={18} />}
+            color="blue"
+            variant="light"
+            onClick={() =>
+              router.push(
+                '/admin/inovasi/program-kreatif-desa/create'
+              )
+            }
+          >
+            Tambah Baru
+          </Button>
         </Group>
         <Box style={{ overflowY: 'auto' }}>
           <Table highlightOnHover striped >

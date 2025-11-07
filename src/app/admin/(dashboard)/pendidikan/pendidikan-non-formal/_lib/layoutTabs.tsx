@@ -1,10 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import colors from '@/con/colors';
-import { ScrollArea, Stack, Tabs, TabsList, TabsPanel, TabsTab, Title, Tooltip } from '@mantine/core';
+import { ScrollArea, Stack, Tabs, TabsList, TabsPanel, TabsTab, Title } from '@mantine/core';
+import { IconBook2, IconMapPin, IconSchool } from '@tabler/icons-react';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
-import { IconSchool, IconMapPin, IconBook2 } from '@tabler/icons-react';
 
 function LayoutTabs({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -15,22 +15,19 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
       label: "Tujuan Program",
       value: "tujuan-program",
       href: "/admin/pendidikan/pendidikan-non-formal/tujuan-program",
-      icon: <IconSchool size={18} stroke={1.8} />,
-      tooltip: "Atur tujuan program pendidikan non formal",
+      icon: <IconSchool size={18} stroke={1.8} />
     },
     {
       label: "Tempat Kegiatan",
       value: "tempat-kegiatan",
       href: "/admin/pendidikan/pendidikan-non-formal/tempat-kegiatan",
-      icon: <IconMapPin size={18} stroke={1.8} />,
-      tooltip: "Kelola daftar tempat kegiatan",
+      icon: <IconMapPin size={18} stroke={1.8} />
     },
     {
       label: "Jenis Program yang Diselenggarakan",
       value: "jenis-program-yang-diselenggarakan",
       href: "/admin/pendidikan/pendidikan-non-formal/jenis-program-yang-diselenggarakan",
-      icon: <IconBook2 size={18} stroke={1.8} />,
-      tooltip: "Lihat & atur jenis program yang tersedia",
+      icon: <IconBook2 size={18} stroke={1.8} />
     },
   ];
 
@@ -77,28 +74,21 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
               flexWrap: "nowrap",
               gap: "0.5rem",
               paddingInline: "0.5rem", // ✅ biar nggak nempel ke tepi
-          }}
+            }}
           >
             {tabs.map((tab, i) => (
-              <Tooltip
+              <TabsTab
                 key={i}
-                label={tab.tooltip}
-                position="bottom"
-                withArrow
-                transitionProps={{ transition: 'pop', duration: 200 }}
+                value={tab.value}
+                leftSection={tab.icon}
+                style={{
+                  fontWeight: 600,
+                  fontSize: "0.9rem",
+                  transition: "all 0.2s ease",
+                }}
               >
-                <TabsTab
-                  value={tab.value}
-                  leftSection={tab.icon}
-                  style={{
-                    fontWeight: 600,
-                    fontSize: "0.9rem",
-                    transition: "all 0.2s ease",
-                  }}
-                >
-                  {tab.label}
-                </TabsTab>
-              </Tooltip>
+                {tab.label}
+              </TabsTab>
             ))}
           </TabsList>
         </ScrollArea>
