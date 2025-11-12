@@ -333,7 +333,7 @@ const state = useProxy(indeksKepuasanState.responden);
                 label="Nama"
                 type='text'
                 placeholder="Masukkan nama"
-                defaultValue={state.create.form.name}
+                value={state.create.form.name}
                 onChange={(val) => {
                   state.create.form.name = val.currentTarget.value;
                 }}
@@ -342,7 +342,7 @@ const state = useProxy(indeksKepuasanState.responden);
                 label="Tanggal"
                 type="date"
                 placeholder="masukkan tanggal"
-                defaultValue={state.create.form.tanggal}
+                value={state.create.form.tanggal}
                 onChange={(val) => {
                   state.create.form.tanggal = val.currentTarget.value;
                 }}
@@ -351,7 +351,7 @@ const state = useProxy(indeksKepuasanState.responden);
                 key={"jenisKelamin"}
                 label={"Jenis Kelamin"}
                 placeholder={indeksKepuasanState.jenisKelaminResponden.findMany.loading ? 'Memuat...' : 'Pilih jenis kelamin'}
-                defaultValue={state.create.form.jenisKelaminId || ""}
+                value={state.create.form.jenisKelaminId || ""}
                 onChange={(val) => {
                   state.create.form.jenisKelaminId = val ?? "";
                 }}
@@ -369,7 +369,7 @@ const state = useProxy(indeksKepuasanState.responden);
                 key={"rating_responden"}
                 label={"Rating"}
                 placeholder={indeksKepuasanState.pilihanRatingResponden.findMany.loading ? 'Memuat...' : 'Pilih rating'}
-                defaultValue={state.create.form.ratingId || ""}
+                value={state.create.form.ratingId || ""}
                 onChange={(val) => {
                   state.create.form.ratingId = val ?? "";
                 }}
@@ -387,7 +387,7 @@ const state = useProxy(indeksKepuasanState.responden);
                 key={"kelompokUmur"}
                 label={"Kelompok Umur"}
                 placeholder={indeksKepuasanState.kelompokUmurResponden.findMany.loading ? 'Memuat...' : 'Pilih kelompok umur'}
-                defaultValue={state.create.form.kelompokUmurId || ""}
+                value={state.create.form.kelompokUmurId || ""}
                 onChange={(val) => {
                   state.create.form.kelompokUmurId = val ?? "";
                 }}
@@ -599,7 +599,7 @@ const state = useProxy(indeksKepuasanState.responden);
               label="Nama"
               type='text'
               placeholder="masukkan nama"
-              defaultValue={state.create.form.name}
+              value={state.create.form.name}
               onChange={(val) => {
                 state.create.form.name = val.currentTarget.value;
               }}
@@ -608,7 +608,7 @@ const state = useProxy(indeksKepuasanState.responden);
               label="Tanggal Pengisian"
               type="date"
               placeholder="masukkan tanggal"
-              defaultValue={state.create.form.tanggal}
+              value={state.create.form.tanggal}
               onChange={(val) => {
                 state.create.form.tanggal = val.currentTarget.value;
               }}
@@ -617,7 +617,7 @@ const state = useProxy(indeksKepuasanState.responden);
               key={"jenisKelamin"}
               label={"Jenis Kelamin"}
               placeholder={indeksKepuasanState.jenisKelaminResponden.findMany.loading ? 'Memuat...' : 'Pilih jenis kelamin'}
-              defaultValue={state.create.form.jenisKelaminId || ""}
+              value={state.create.form.jenisKelaminId || ""}
               onChange={(val) => {
                 state.create.form.jenisKelaminId = val ?? "";
               }}
@@ -635,7 +635,7 @@ const state = useProxy(indeksKepuasanState.responden);
               key={"rating_responden"}
               label={"Rating"}
               placeholder={indeksKepuasanState.pilihanRatingResponden.findMany.loading ? 'Memuat...' : 'Pilih rating'}
-              defaultValue={state.create.form.ratingId || ""}
+              value={state.create.form.ratingId || ""}
               onChange={(val) => {
                 state.create.form.ratingId = val ?? "";
               }}
@@ -653,7 +653,7 @@ const state = useProxy(indeksKepuasanState.responden);
               key={"kelompokUmur"}
               label={"Kelompok Umur"}
               placeholder={indeksKepuasanState.kelompokUmurResponden.findMany.loading ? 'Memuat...' : 'Pilih kelompok umur'}
-              defaultValue={state.create.form.kelompokUmurId || ""}
+              value={state.create.form.kelompokUmurId || ""}
               onChange={(val) => {
                 state.create.form.kelompokUmurId = val ?? "";
               }}

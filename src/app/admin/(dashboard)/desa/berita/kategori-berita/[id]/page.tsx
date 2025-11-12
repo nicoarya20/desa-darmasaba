@@ -10,7 +10,8 @@ import {
   Paper,
   Stack,
   TextInput,
-  Title
+  Title,
+  Loader
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -22,6 +23,11 @@ function EditKategoriBerita() {
   const editState = useProxy(stateDashboardBerita.kategoriBerita);
   const router = useRouter();
   const params = useParams();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [originalData, setOriginalData] = useState({
+    name: '',
+  });
 
   const [formData, setFormData] = useState({
     name: '',
@@ -36,6 +42,9 @@ function EditKategoriBerita() {
         const data = await editState.update.load(id);
         if (data) {
           setFormData({
+            name: data.name || '',
+          });
+          setOriginalData({
             name: data.name || '',
           });
         }
@@ -55,8 +64,16 @@ function EditKategoriBerita() {
     }));
   };
 
+  const handleResetForm = () => {
+    setFormData({
+      name: originalData.name,
+    });
+    toast.info('Form dikembalikan ke data awal');
+  };
+
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       // update global state hanya saat submit
       editState.update.form = {
         ...editState.update.form,
@@ -69,6 +86,8 @@ function EditKategoriBerita() {
     } catch (error) {
       console.error('Error updating kategori Berita:', error);
       toast.error('Terjadi kesalahan saat memperbarui kategori Berita');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -110,6 +129,17 @@ function EditKategoriBerita() {
 
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
@@ -119,7 +149,7 @@ function EditKategoriBerita() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

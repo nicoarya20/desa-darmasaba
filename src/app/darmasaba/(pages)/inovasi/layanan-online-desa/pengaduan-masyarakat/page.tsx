@@ -166,7 +166,7 @@ function PengaduanMasyarakat() {
                     }}
                     onReject={() => toast.error('File tidak valid.')}
                     maxSize={5 * 1024 ** 2} // Maks 5MB
-                    accept={{ 'image/*': [] }}
+                    accept={{ 'image/*': ['.jpeg', '.jpg', '.png', '.webp'] }}
                   >
                     <Group justify="center" gap="xl" mih={220} style={{ pointerEvents: 'none' }}>
                       <Dropzone.Accept>

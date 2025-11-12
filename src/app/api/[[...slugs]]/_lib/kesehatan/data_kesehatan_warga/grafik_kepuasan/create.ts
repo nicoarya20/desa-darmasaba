@@ -30,7 +30,7 @@ export default async function grafikKepuasanCreate(context: Context) {
   });
   return {
     success: true,
-    message: "Success create grafik kepuasan",
+    message: "Sukses menambahkan grafik kepuasan",
     data: created,
   };
 }

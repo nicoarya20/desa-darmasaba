@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Box, Paper, Text, Group, CloseButton, Badge, ActionIcon, Stack, Transition } from "@mantine/core";
 import { IconBell, IconChevronRight } from "@tabler/icons-react";
-import { usePathname, useRouter } from "next/navigation"; // 👉 tambahkan ini
+import { usePathname, useRouter } from "next/navigation";
 
 interface NewsItem {
   id: string | number;
@@ -31,7 +31,7 @@ export default function ModernNewsNotification({
   news = [],
   autoShowDelay = 2000
 }: ModernNewsNotificationProps) {
-  const router = useRouter(); // 👉 router Next.js
+  const router = useRouter();
   const [toastVisible, setToastVisible] = useState(false);
   const [widgetOpen, setWidgetOpen] = useState(false);
   const [hasNewNotifications, setHasNewNotifications] = useState(true);
@@ -39,8 +39,7 @@ export default function ModernNewsNotification({
   const [iconVisible, setIconVisible] = useState(true);
   const pathname = usePathname();
 
-
-
+  // Auto show toast on page load
   useEffect(() => {
     if (news.length > 0 && !toastVisible && !hasShownToast) {
       const timer = setTimeout(() => {
@@ -51,6 +50,7 @@ export default function ModernNewsNotification({
     }
   }, [news.length, autoShowDelay, toastVisible, hasShownToast]);
 
+  // Auto hide toast after 8 seconds
   useEffect(() => {
     if (toastVisible) {
       const timer = setTimeout(() => {
@@ -60,22 +60,26 @@ export default function ModernNewsNotification({
     }
   }, [toastVisible]);
 
-  // Ganti useEffect scroll yang lama dengan versi berikut:
-
+  // Enhanced scroll handler with better thresholds
   useEffect(() => {
     let lastScrollY = window.scrollY;
+    const HIDE_THRESHOLD = 100; // Mulai hide saat scroll > 100px
+    const SHOW_THRESHOLD = 50; // Hanya show ketika benar-benar di atas (< 50px)
 
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
+      const scrollDirection = currentScrollY > lastScrollY ? 'down' : 'up';
 
-      // Kontrol ikon lonceng
-      if (currentScrollY > lastScrollY && currentScrollY > 100) {
+      // Logic untuk hide/show icon
+      if (scrollDirection === 'down' && currentScrollY > HIDE_THRESHOLD) {
+        // Scroll ke bawah dan sudah melewati threshold → hide
         setIconVisible(false);
-      } else if (currentScrollY < lastScrollY) {
+      } else if (scrollDirection === 'up' && currentScrollY < SHOW_THRESHOLD) {
+        // Scroll ke atas dan sudah di posisi paling atas → show
         setIconVisible(true);
       }
 
-      // 🔴 BARU: Sembunyikan toast saat scroll ke bawah melewati 150px
+      // Hide toast saat scroll ke bawah melewati 150px
       if (currentScrollY > 150 && toastVisible) {
         setToastVisible(false);
       }
@@ -85,11 +89,11 @@ export default function ModernNewsNotification({
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [toastVisible]); // 👈 tambahkan toastVisible sebagai dependency
+  }, [toastVisible]);
 
   const currentNews = news[0];
 
-  // 👉 Fungsi baru untuk handle klik notifikasi
+  // Handle notification click
   const handleNotificationClick = (item: NewsItem) => {
     setWidgetOpen(false);
     if (item.type === "berita") {
@@ -105,13 +109,14 @@ export default function ModernNewsNotification({
     setHasNewNotifications(false);
   };
 
-  // Ganti dengan path landing page Anda
+  // Only show on landing page
   if (pathname !== '/darmasaba') {
     return null;
   }
 
   return (
     <>
+      {/* Floating Bell Icon */}
       <Transition mounted={iconVisible} transition="slide-down" duration={200}>
         {(transitionStyles) => (
           <Box
@@ -119,7 +124,8 @@ export default function ModernNewsNotification({
               ...transitionStyles,
               position: "fixed",
               bottom: "24px",
-              right: "24px"
+              right: "24px",
+              zIndex: 1000,
             }}
           >
             <ActionIcon
@@ -161,6 +167,7 @@ export default function ModernNewsNotification({
         )}
       </Transition>
 
+      {/* Widget Panel */}
       <Transition mounted={widgetOpen} transition="slide-up" duration={300}>
         {(styles) => (
           <Paper
@@ -187,7 +194,7 @@ export default function ModernNewsNotification({
               <Group justify="space-between">
                 <Group gap="xs">
                   <IconBell size={20} />
-                  <Text c={"white"} fw={600} size="md">Berita & Pengumuman</Text>
+                  <Text c="white" fw={600} size="md">Berita & Pengumuman</Text>
                 </Group>
                 <CloseButton
                   onClick={() => setWidgetOpen(false)}
@@ -257,6 +264,7 @@ export default function ModernNewsNotification({
         )}
       </Transition>
 
+      {/* Toast Notification */}
       <Transition mounted={toastVisible && !!currentNews} transition="slide-left" duration={300}>
         {(styles) => (
           <Paper
@@ -299,7 +307,10 @@ export default function ModernNewsNotification({
                   {currentNews?.type === "berita" ? "Berita Terbaru" : "Pengumuman"}
                 </Badge>
                 <CloseButton
-                  onClick={() => setToastVisible(false)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setToastVisible(false);
+                  }}
                   size="sm"
                 />
               </Group>

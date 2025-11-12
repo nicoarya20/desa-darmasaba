@@ -4,7 +4,7 @@ import CreateEditor from '@/app/admin/(dashboard)/_com/createEditor';
 import prestasiState from '@/app/admin/(dashboard)/_state/landing-page/prestasi-desa';
 import colors from '@/con/colors';
 import ApiFetch from '@/lib/api-fetch';
-import { Box, Button, Group, Image, Paper, Select, Stack, Text, TextInput, Title } from '@mantine/core';
+import { ActionIcon, Box, Button, Group, Image, Paper, Select, Stack, Text, TextInput, Title, Loader } from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
 import { IconArrowBack, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
@@ -15,18 +15,20 @@ import { useProxy } from 'valtio/utils';
 
 function CreatePrestasiDesa() {
   const router = useRouter();
-  const stateCreate = useProxy(prestasiState.prestasiDesa)
+  const snapPrestasi = useProxy(prestasiState.prestasiDesa); // snapshot → buat render
+  const prestasi = prestasiState.prestasiDesa
   const [previewFile, setPreviewFile] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
 
   useEffect(() => {
-    stateCreate.findMany.load();
+    prestasi.findMany.load();
     prestasiState.kategoriPrestasi.findMany.load();
   }, []);
 
   const resetForm = () => {
-    stateCreate.create.form = {
+    prestasi.create.form = {
       name: "",
       deskripsi: "",
       kategoriId: "",
@@ -36,34 +38,42 @@ function CreatePrestasiDesa() {
     setPreviewFile(null);
   };
   const handleSubmit = async () => {
-    if (!file) {
-      return toast.warn("Pilih file image terlebih dahulu");
+    try {
+      setIsSubmitting(true);
+      if (!file) {
+        return toast.warn("Pilih file image terlebih dahulu");
+      }
+
+      const res = await ApiFetch.api.fileStorage.create.post({
+        file,
+        name: file.name,
+      })
+
+      const uploaded = res.data?.data;
+
+      if (!uploaded?.id) {
+        return toast.error("Gagal mengupload image");
+      }
+
+      prestasi.create.form.imageId = uploaded.id;
+
+      await prestasi.create.create();
+
+      resetForm();
+      router.push("/admin/landing-page/prestasi-desa/list-prestasi-desa")
+    } catch (error) {
+      console.error(error);
+      toast.error("Gagal menambahkan prestasi desa");
+    } finally {
+      setIsSubmitting(false);
     }
-
-    const res = await ApiFetch.api.fileStorage.create.post({
-      file,
-      name: file.name,
-    })
-
-    const uploaded = res.data?.data;
-
-    if (!uploaded?.id) {
-      return toast.error("Gagal mengupload image");
-    }
-
-    stateCreate.create.form.imageId = uploaded.id;
-
-    await stateCreate.create.create();
-
-    resetForm();
-    router.push("/admin/landing-page/prestasi-desa/list-prestasi-desa")
   }
   return (
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
       <Group mb="md">
-          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
+        <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Tambah Prestasi Desa
         </Title>
@@ -112,14 +122,14 @@ function CreatePrestasiDesa() {
                     Seret file gambar ke sini atau klik untuk memilih
                   </Text>
                   <Text size="sm" c="dimmed" inline mt={7}>
-                    Unggah file gambar (maks. 5MB)
+                  Maksimal 5MB, format gambar .png, .jpg, .jpeg, webp
                   </Text>
                 </div>
               </Group>
             </Dropzone>
 
             {previewFile && (
-              <Box mt="md">
+              <Box mt="md" pos={"relative"}>
                 <Text size="sm" fw={500} mb={4}>
                   Pratinjau Gambar:
                 </Text>
@@ -132,6 +142,24 @@ function CreatePrestasiDesa() {
                     loading='lazy'
                   />
                 </Box>
+                <ActionIcon
+                  variant="filled"
+                  color="red"
+                  radius="xl"
+                  size="sm"
+                  pos="absolute"
+                  top={5}
+                  right={5}
+                  onClick={() => {
+                    setPreviewFile(null);
+                    setFile(null);
+                  }}
+                  style={{
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                  }}
+                >
+                  <IconX size={14} />
+                </ActionIcon>
               </Box>
             )}
           </Box>
@@ -139,8 +167,8 @@ function CreatePrestasiDesa() {
           <TextInput
             label="Judul Prestasi"
             placeholder="Masukkan judul prestasi"
-            defaultValue={stateCreate.create.form.name}
-            onChange={(e) => (stateCreate.create.form.name = e.target.value)}
+            value={snapPrestasi.create.form.name}
+            onChange={(e) => (prestasi.create.form.name = e.target.value)}
             required
           />
 
@@ -149,39 +177,62 @@ function CreatePrestasiDesa() {
               Deskripsi Prestasi
             </Text>
             <CreateEditor
-              value={stateCreate.create.form.deskripsi}
-              onChange={(val) => (stateCreate.create.form.deskripsi = val)}
+              value={snapPrestasi.create.form.deskripsi}
+              onChange={(val) => (prestasi.create.form.deskripsi = val)}
             />
           </Box>
 
           <Select
-            label="Kategori Prestasi"
+            label="Kategori"
             placeholder="Pilih kategori"
-            value={stateCreate.create.form.kategoriId}
-            onChange={(val) => (stateCreate.create.form.kategoriId = val ?? '')}
-            data={
-              prestasiState.kategoriPrestasi.findMany.data?.map((v) => ({
-                value: v.id,
-                label: v.name,
-              })) || []
-            }
+            data={prestasiState.kategoriPrestasi.findMany.data?.map((item) => ({
+              label: item.name,
+              value: item.id,
+            })) || []}
+            value={snapPrestasi.create.form.kategoriId || null}
+            onChange={(val: string | null) => {
+              if (val) {
+                const selected = prestasiState.kategoriPrestasi.findMany.data?.find(
+                  (item) => item.id === val
+                );
+                if (selected) {
+                  prestasi.create.form.kategoriId = selected.id;
+                }
+              } else {
+                prestasi.create.form.kategoriId = '';
+              }
+            }}
+            searchable
+            clearable
+            nothingFoundMessage="Tidak ditemukan"
             required
           />
 
-          <Group justify="space-between" mt="md">
+          {/* ======= Tombol Aksi ======= */}
+          <Group justify="right">
+            {/* Tombol Batal */}
             <Button
-              variant="light"
+              variant="outline"
               color="gray"
-              onClick={() => router.back()}
+              radius="md"
+              size="md"
+              onClick={resetForm}
             >
-              Batal
+              Reset
             </Button>
+
+            {/* Tombol Simpan */}
             <Button
               onClick={handleSubmit}
-              bg={colors['blue-button']}
-              style={{ boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)' }}
+              radius="md"
+              size="md"
+              style={{
+                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                color: '#fff',
+                boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
+              }}
             >
-              Simpan Prestasi
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

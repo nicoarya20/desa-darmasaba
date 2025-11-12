@@ -4,12 +4,14 @@ import apbDesaFindUnique from "./findUnique";
 import apbDesaCreate from "./create";
 import apbDesaDelete from "./del";
 import apbDesaUpdate from "./updt";
+import apbDesaFindFirst from "./findFirst";
 
 const APBDesa = new Elysia({
   prefix: "/apbdesa",
   tags: ["Ekonomi/Pendapatan Asli Desa/APB Desa"],
 })
   .get("/find-many", apbDesaFindMany)
+  .get("/find-first", apbDesaFindFirst)
   .get("/:id", async (context) => {
     const response = await apbDesaFindUnique(new Request(context.request));
     return response;

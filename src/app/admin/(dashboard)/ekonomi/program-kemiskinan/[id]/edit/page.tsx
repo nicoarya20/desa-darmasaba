@@ -9,6 +9,7 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Stack,
   Text,
@@ -49,6 +50,8 @@ function EditProgramKemiskinan() {
   const stateProgram = useProxy(programKemiskinanState);
 
   const [formData, setFormData] = useState<FormData>(initialForm);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [originalData, setOriginalData] = useState<FormData>(initialForm);
 
   // Load data 1x dari global state → isi local state
   useEffect(() => {
@@ -60,6 +63,15 @@ function EditProgramKemiskinan() {
         const data = stateProgram.findUnique.data;
         if (data) {
           setFormData({
+            nama: data.nama ?? '',
+            deskripsi: data.deskripsi ?? '',
+            icon: data.icon ?? '',
+            statistik: {
+              tahun: data.statistik?.tahun?.toString() ?? '',
+              jumlah: data.statistik?.jumlah?.toString() ?? '',
+            },
+          });
+          setOriginalData({
             nama: data.nama ?? '',
             deskripsi: data.deskripsi ?? '',
             icon: data.icon ?? '',
@@ -99,8 +111,22 @@ function EditProgramKemiskinan() {
     []
   );
 
+  const handleResetForm = () => {
+    setFormData({
+      nama: originalData.nama,
+      deskripsi: originalData.deskripsi,
+      icon: originalData.icon,
+      statistik: {
+        tahun: originalData.statistik.tahun,
+        jumlah: originalData.statistik.jumlah,
+      },
+    });
+    toast.info('Form dikembalikan ke data awal');
+  };
+
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       stateProgram.update.id = id;
       stateProgram.update.form = formData;
       await stateProgram.update.update();
@@ -110,6 +136,8 @@ function EditProgramKemiskinan() {
     } catch (error) {
       console.error('Error update program:', error);
       toast.error('Terjadi kesalahan saat memperbarui program');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -193,6 +221,17 @@ function EditProgramKemiskinan() {
 
           <Group justify="right" mt="md">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
@@ -202,7 +241,7 @@ function EditProgramKemiskinan() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

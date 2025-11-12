@@ -7,6 +7,7 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Stack,
   TextInput,
@@ -15,12 +16,14 @@ import {
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
 function CreateGrafikHasilKepuasanMasyarakat() {
   const stateGrafikKepuasan = useProxy(grafikkepuasan);
   const [chartData, setChartData] = useState<any[]>([]);
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const resetForm = () => {
     stateGrafikKepuasan.create.form = {
@@ -33,9 +36,17 @@ function CreateGrafikHasilKepuasanMasyarakat() {
   };
 
   const handleSubmit = async () => {
-    await stateGrafikKepuasan.create.create();
-    resetForm();
-    router.push("/admin/kesehatan/data-kesehatan-warga/grafik_hasil_kepuasan");
+    try {
+      setIsSubmitting(true);
+      await stateGrafikKepuasan.create.create();
+      resetForm();
+      router.push("/admin/kesehatan/data-kesehatan-warga/grafik_hasil_kepuasan");
+    } catch (error) {
+      console.error("Error creating grafik kepuasan:", error);
+      toast.error("Terjadi kesalahan saat membuat grafik kepuasan");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -68,7 +79,7 @@ function CreateGrafikHasilKepuasanMasyarakat() {
           <TextInput
             label="Nama"
             placeholder="Masukkan nama"
-            defaultValue={stateGrafikKepuasan.create.form.nama}
+            value={stateGrafikKepuasan.create.form.nama}
             onChange={(e) => (stateGrafikKepuasan.create.form.nama = e.target.value)}
             required
           />
@@ -76,33 +87,44 @@ function CreateGrafikHasilKepuasanMasyarakat() {
             type="date"
             label="Tanggal"
             placeholder="Masukkan tanggal"
-            defaultValue={stateGrafikKepuasan.create.form.tanggal}
+            value={stateGrafikKepuasan.create.form.tanggal}
             onChange={(e) => (stateGrafikKepuasan.create.form.tanggal = e.target.value)}
             required
           />
           <TextInput
             label="Jenis Kelamin"
             placeholder="Masukkan jenis kelamin"
-            defaultValue={stateGrafikKepuasan.create.form.jenisKelamin}
+            value={stateGrafikKepuasan.create.form.jenisKelamin}
             onChange={(e) => (stateGrafikKepuasan.create.form.jenisKelamin = e.target.value)}
             required
           />
           <TextInput
             label="Alamat"
             placeholder="Masukkan alamat"
-            defaultValue={stateGrafikKepuasan.create.form.alamat}
+            value={stateGrafikKepuasan.create.form.alamat}
             onChange={(e) => (stateGrafikKepuasan.create.form.alamat = e.target.value)}
             required
           />
           <TextInput
             label="Penyakit"
             placeholder="Masukkan penyakit"
-            defaultValue={stateGrafikKepuasan.create.form.penyakit}
+            value={stateGrafikKepuasan.create.form.penyakit}
             onChange={(e) => (stateGrafikKepuasan.create.form.penyakit = e.target.value)}
             required
           />
 
           <Group justify="right">
+            <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
             <Button
               onClick={handleSubmit}
               radius="md"
@@ -113,7 +135,7 @@ function CreateGrafikHasilKepuasanMasyarakat() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

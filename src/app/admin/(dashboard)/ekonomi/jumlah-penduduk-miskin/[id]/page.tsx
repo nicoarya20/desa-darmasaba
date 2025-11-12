@@ -7,6 +7,7 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Stack,
   TextInput,
@@ -22,11 +23,16 @@ function EditJumlahPendudukMiskin() {
   const router = useRouter();
   const params = useParams() as { id: string };
   const stateJPM = useProxy(jumlahPendudukMiskin);
-
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const id = params.id;
 
   // 🔹 State lokal untuk form
   const [formData, setFormData] = useState({
+    year: 0,
+    totalPoorPopulation: 0,
+  });
+
+  const [originalData, setOriginalData] = useState({
     year: 0,
     totalPoorPopulation: 0,
   });
@@ -41,6 +47,10 @@ function EditJumlahPendudukMiskin() {
         const data = stateJPM.findUnique.data;
         if (data) {
           setFormData({
+            year: data.year || 0,
+            totalPoorPopulation: data.totalPoorPopulation || 0,
+          });
+          setOriginalData({
             year: data.year || 0,
             totalPoorPopulation: data.totalPoorPopulation || 0,
           });
@@ -62,9 +72,18 @@ function EditJumlahPendudukMiskin() {
     }));
   };
 
+  const handleResetForm = () => {
+    setFormData({
+      year: originalData.year,
+      totalPoorPopulation: originalData.totalPoorPopulation,
+    });
+    toast.info('Form dikembalikan ke data awal');
+  };
+
   // 🔹 Submit form
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       stateJPM.update.id = id;
       // update global state cuma saat submit
       stateJPM.update.form = { ...formData };
@@ -75,6 +94,8 @@ function EditJumlahPendudukMiskin() {
     } catch (error) {
       console.error('Gagal menyimpan data:', error);
       toast.error('Terjadi kesalahan saat menyimpan data');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -125,6 +146,17 @@ function EditJumlahPendudukMiskin() {
 
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
@@ -134,7 +166,7 @@ function EditJumlahPendudukMiskin() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

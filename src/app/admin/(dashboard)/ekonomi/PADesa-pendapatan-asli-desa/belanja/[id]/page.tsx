@@ -7,6 +7,7 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Stack,
   TextInput,
@@ -22,8 +23,14 @@ function EditBelanja() {
   const belanjaState = useProxy(PendapatanAsliDesa.belanja);
   const router = useRouter();
   const params = useParams();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [formData, setFormData] = useState({
+    name: '',
+    value: '',
+  });
+
+  const [originalData, setOriginalData] = useState({
     name: '',
     value: '',
   });
@@ -58,6 +65,10 @@ function EditBelanja() {
             name: data.name || '',
             value: String(data.value || ''),
           });
+          setOriginalData({
+            name: data.name || '',
+            value: String(data.value || ''),
+          });
         }
       } catch (error) {
         console.error("Error loading belanja:", error);
@@ -70,6 +81,7 @@ function EditBelanja() {
 
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       belanjaState.update.form = {
         ...belanjaState.update.form,
         name: formData.name,
@@ -82,7 +94,17 @@ function EditBelanja() {
     } catch (error) {
       console.error("Error updating jenis belanja:", error);
       toast.error("Terjadi kesalahan saat memperbarui jenis belanja");
+    } finally {
+      setIsSubmitting(false);
     }
+  };
+
+  const handleResetForm = () => {
+    setFormData({
+      name: originalData.name,
+      value: originalData.value,
+    });
+    toast.info("Form dikembalikan ke data awal");
   };
 
   return (
@@ -136,6 +158,17 @@ function EditBelanja() {
 
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
@@ -145,7 +178,7 @@ function EditBelanja() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

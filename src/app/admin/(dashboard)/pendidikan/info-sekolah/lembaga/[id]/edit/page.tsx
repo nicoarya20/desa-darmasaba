@@ -7,6 +7,7 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Select,
   Stack,
@@ -24,8 +25,14 @@ export default function EditLembaga() {
   const { id } = useParams<{ id: string }>();
   const state = useProxy(infoSekolahPaud.lembagaPendidikan);
   const jenjangPendidikanList = infoSekolahPaud.jenjangPendidikan.findMany.data;
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [form, setForm] = useState({
+    nama: '',
+    jenjangId: '',
+  });
+
+  const [originalData, setOriginalData] = useState({
     nama: '',
     jenjangId: '',
   });
@@ -41,6 +48,10 @@ export default function EditLembaga() {
             nama: data.nama,
             jenjangId: data.jenjangId,
           });
+          setOriginalData({
+            nama: data.nama,
+            jenjangId: data.jenjangId,
+          });
         }
       });
     }
@@ -50,21 +61,37 @@ export default function EditLembaga() {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
+  const handleResetForm = () => {
+    setForm({
+      nama: originalData.nama,
+      jenjangId: originalData.jenjangId,
+    });
+    toast.info('Form dikembalikan ke data awal');
+  };
+
   const handleSubmit = async () => {
-    if (!form.nama || !form.jenjangId) {
-      toast.warn('Nama dan jenjang pendidikan harus diisi');
-      return;
-    }
+    try {
+      setIsSubmitting(true);
+      if (!form.nama || !form.jenjangId) {
+        toast.warn('Nama dan jenjang pendidikan harus diisi');
+        return;
+      }
 
-    // Update global state hanya saat submit
-    state.edit.id = id;
-    state.edit.form = form;
+      // Update global state hanya saat submit
+      state.edit.id = id;
+      state.edit.form = form;
 
-    const result = await state.edit.update();
+      const result = await state.edit.update();
 
-    if (result) {
-      toast.success('Data berhasil diperbarui');
-      router.push('/admin/pendidikan/info-sekolah/lembaga');
+      if (result) {
+        toast.success('Data berhasil diperbarui');
+        router.push('/admin/pendidikan/info-sekolah/lembaga');
+      }
+    } catch (error) {
+      console.error('Error updating lembaga:', error);
+      toast.error('Gagal memperbarui lembaga');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -120,6 +147,17 @@ export default function EditLembaga() {
 
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
@@ -129,7 +167,7 @@ export default function EditLembaga() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

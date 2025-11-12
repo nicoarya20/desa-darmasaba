@@ -7,6 +7,7 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Select,
   Stack,
@@ -29,6 +30,12 @@ function EditSiswa() {
   const siswaState = useProxy(infoSekolahPaud.siswa);
   const params = useParams();
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [originalData, setOriginalData] = useState({
+    nama: "",
+    lembagaId: "",
+  });
 
   const [formData, setFormData] = useState<FormSiswa>({
     nama: '',
@@ -45,6 +52,10 @@ function EditSiswa() {
         const data = await siswaState.edit.load(id);
         if (data) {
           setFormData({
+            nama: data.nama || '',
+            lembagaId: data.lembagaId || '',
+          });
+          setOriginalData({
             nama: data.nama || '',
             lembagaId: data.lembagaId || '',
           });
@@ -67,9 +78,18 @@ function EditSiswa() {
     }));
   };
 
+  const handleResetForm = () => {
+    setFormData({
+      nama: originalData.nama,
+      lembagaId: originalData.lembagaId,
+    });
+    toast.info('Form dikembalikan ke data awal');
+  };
+
   // Submit ke global state
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       siswaState.edit.form = {
         ...siswaState.edit.form,
         nama: formData.nama.trim(),
@@ -81,6 +101,8 @@ function EditSiswa() {
     } catch (error) {
       console.error('Error updating siswa:', error);
       toast.error('Terjadi kesalahan saat memperbarui siswa');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -130,6 +152,17 @@ function EditSiswa() {
 
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
@@ -139,7 +172,7 @@ function EditSiswa() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

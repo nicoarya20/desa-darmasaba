@@ -5,10 +5,12 @@ import stateStrukturBumDes from '@/app/admin/(dashboard)/_state/ekonomi/struktur
 import colors from '@/con/colors';
 import ApiFetch from '@/lib/api-fetch';
 import {
+  ActionIcon,
   Box,
   Button,
   Group,
   Image,
+  Loader,
   Paper,
   Select,
   Stack,
@@ -27,7 +29,7 @@ export default function EditPegawaiBumDes() {
   const router = useRouter();
   const { id } = useParams<{ id: string }>();
   const stateOrganisasi = useProxy(stateStrukturBumDes.pegawai);
-
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     namaLengkap: '',
     gelarAkademik: '',
@@ -38,6 +40,18 @@ export default function EditPegawaiBumDes() {
     alamat: '',
     posisiId: '',
     isActive: true,
+  });
+  const [originalData, setOriginalData] = useState({
+    namaLengkap: '',
+    gelarAkademik: '',
+    imageId: '',
+    tanggalMasuk: '',
+    email: '',
+    telepon: '',
+    alamat: '',
+    posisiId: '',
+    isActive: true,
+    imageUrl: ''
   });
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
@@ -67,6 +81,18 @@ export default function EditPegawaiBumDes() {
             posisiId: data.posisiId || '',
             isActive: data.isActive ?? true,
           });
+          setOriginalData({
+            namaLengkap: data.namaLengkap || '',
+            gelarAkademik: data.gelarAkademik || '',
+            imageId: data.imageId || '',
+            tanggalMasuk: data.tanggalMasuk || '',
+            email: data.email || '',
+            telepon: data.telepon || '',
+            alamat: data.alamat || '',
+            posisiId: data.posisiId || '',
+            isActive: data.isActive ?? true,
+            imageUrl: data.image?.link || '',
+          });
 
           setPreviewImage(data.image?.link || null);
         }
@@ -79,8 +105,26 @@ export default function EditPegawaiBumDes() {
     loadPegawai();
   }, [id]);
 
+  const handleResetForm = () => {
+    setFormData({
+      namaLengkap: originalData.namaLengkap,
+      gelarAkademik: originalData.gelarAkademik,
+      imageId: originalData.imageId,
+      tanggalMasuk: originalData.tanggalMasuk,
+      email: originalData.email,
+      telepon: originalData.telepon,
+      alamat: originalData.alamat,
+      posisiId: originalData.posisiId,
+      isActive: originalData.isActive,
+    });
+    setPreviewImage(originalData.imageUrl || null);
+    setFile(null);
+    toast.info("Form dikembalikan ke data awal");
+  };
+
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       if (!formData.namaLengkap.trim()) {
         return toast.error('Nama lengkap tidak boleh kosong');
       }
@@ -103,6 +147,8 @@ export default function EditPegawaiBumDes() {
     } catch (error) {
       console.error('Error updating pegawai:', error);
       toast.error(error instanceof Error ? error.message : 'Gagal memperbarui data pegawai');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -164,13 +210,13 @@ export default function EditPegawaiBumDes() {
                 <Dropzone.Idle><IconPhoto size={48} color="#868e96" stroke={1.5} /></Dropzone.Idle>
                 <Stack gap="xs" align="center">
                   <Text size="md" fw={500}>Seret gambar atau klik untuk memilih file</Text>
-                  <Text size="sm" c="dimmed">Maksimal 5MB, format gambar wajib</Text>
+                  <Text size="sm" c="dimmed">Maksimal 5MB, format gambar .png, .jpg, .jpeg, webp</Text>
                 </Stack>
               </Group>
             </Dropzone>
 
             {previewImage && (
-              <Box mt="sm" style={{ display: 'flex', justifyContent: 'center' }}>
+              <Box pos={"relative"} mt="sm" style={{ display: 'flex', justifyContent: 'center' }}>
                 <Image
                   src={previewImage}
                   alt="Preview Gambar"
@@ -178,6 +224,24 @@ export default function EditPegawaiBumDes() {
                   style={{ maxHeight: 220, objectFit: 'contain', border: `1px solid ${colors['blue-button']}` }}
                   loading="lazy"
                 />
+                <ActionIcon
+                  variant="filled"
+                  color="red"
+                  radius="xl"
+                  size="sm"
+                  pos="absolute"
+                  top={5}
+                  right={5}
+                  onClick={() => {
+                    setPreviewImage(null);
+                    setFile(null);
+                  }}
+                  style={{
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                  }}
+                >
+                  <IconX size={14} />
+                </ActionIcon>
               </Box>
             )}
           </Box>
@@ -244,10 +308,21 @@ export default function EditPegawaiBumDes() {
           </Box>
 
           {/* Submit Button */}
-          <Group justify="flex-end" mt="md">
+          <Group justify="right">
+            {/* Tombol Batal */}
+            <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
             <Button
               onClick={handleSubmit}
-              loading={stateOrganisasi.edit.loading}
               radius="md"
               size="md"
               style={{
@@ -256,7 +331,7 @@ export default function EditPegawaiBumDes() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

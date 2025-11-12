@@ -6,6 +6,7 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   MultiSelect,
   Paper,
   Skeleton,
@@ -17,11 +18,14 @@ import {
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
 function CreateAPBDesa() {
   const apbDesaState = useProxy(PendapatanAsliDesa.ApbDesa);
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const resetForm = () => {
     apbDesaState.create.form = {
@@ -33,9 +37,17 @@ function CreateAPBDesa() {
   };
 
   const handleSubmit = async () => {
-    await apbDesaState.create.submit();
-    resetForm();
-    router.push('/admin/ekonomi/PADesa-pendapatan-asli-desa/apbdesa');
+    try {
+      setIsSubmitting(true);
+      await apbDesaState.create.submit();
+      resetForm();
+      router.push('/admin/ekonomi/PADesa-pendapatan-asli-desa/apbdesa');
+    } catch (error) {
+      console.error('Error creating APB Desa:', error);
+      toast.error('Gagal membuat APB Desa');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -62,7 +74,7 @@ function CreateAPBDesa() {
         <Stack gap="md">
           <TextInput
             type="number"
-            defaultValue={apbDesaState.create.form.tahun}
+            value={apbDesaState.create.form.tahun}
             onChange={(val) => {
               apbDesaState.create.form.tahun = Number(val.target.value);
             }}
@@ -95,6 +107,17 @@ function CreateAPBDesa() {
           {/* Action */}
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
@@ -104,7 +127,7 @@ function CreateAPBDesa() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

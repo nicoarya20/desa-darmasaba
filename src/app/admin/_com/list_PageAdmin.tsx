@@ -6,8 +6,8 @@ export const navBar = [
     children: [
       {
         id: "Landing_Page_1",
-        name: "Profile",
-        path: "/admin/landing-page/profile/program-inovasi"
+        name: "Profil",
+        path: "/admin/landing-page/profil/program-inovasi"
       },
       {
         id: "Landing_Page_2",
@@ -21,13 +21,13 @@ export const navBar = [
       },
       {
         id: "Landing_Page_4",
-        name: "Sdgs Desa",
-        path: "/admin/landing-page/sdgs-desa"
+        name: "SDGs",
+        path: "/admin/landing-page/SDGs"
       },
       {
         id: "Landing_Page_5",
-        name: "Apbdes",
-        path: "/admin/landing-page/apbdes"
+        name: "APBDes",
+        path: "/admin/landing-page/APBDes"
       },
       {
         id: "Landing_Page_6",
@@ -43,8 +43,8 @@ export const navBar = [
     children: [
       {
         id: "PPID_1",
-        name: "Profile PPID",
-        path: "/admin/ppid/profile-ppid"
+        name: "Profil PPID",
+        path: "/admin/ppid/profil-ppid"
       },
       {
         id: "PPID_2",

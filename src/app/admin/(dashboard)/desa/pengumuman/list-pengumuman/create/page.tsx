@@ -12,25 +12,37 @@ import {
   Stack,
   Text,
   TextInput,
-  Title
+  Title,
+  Loader
 } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
 function CreatePengumuman() {
   const pengumumanState = useProxy(stateDesaPengumuman);
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useShallowEffect(() => {
     pengumumanState.category.findMany.load();
   }, []);
 
   const handleSubmit = async () => {
-    await pengumumanState.pengumuman.create.create();
-    resetForm();
-    router.push('/admin/desa/pengumuman/list-pengumuman');
+    try {
+      setIsSubmitting(true);
+      await pengumumanState.pengumuman.create.create();
+      resetForm();
+      router.push('/admin/desa/pengumuman/list-pengumuman');
+    } catch (error) {
+      console.error('Error creating pengumuman:', error);
+      toast.error('Terjadi kesalahan saat membuat pengumuman');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const resetForm = () => {
@@ -46,9 +58,9 @@ function CreatePengumuman() {
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
       {/* Header */}
       <Group mb="md">
-          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
+        <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Tambah Pengumuman
         </Title>
@@ -65,7 +77,7 @@ function CreatePengumuman() {
         <Stack gap="md">
           {/* Judul */}
           <TextInput
-            defaultValue={pengumumanState.pengumuman.create.form.judul}
+            value={pengumumanState.pengumuman.create.form.judul}
             onChange={(val) => (pengumumanState.pengumuman.create.form.judul = val.target.value)}
             label="Judul"
             placeholder="Masukkan judul pengumuman"
@@ -76,21 +88,32 @@ function CreatePengumuman() {
           <Select
             label="Kategori"
             placeholder="Pilih kategori"
-            value={pengumumanState.pengumuman.create.form.categoryPengumumanId || ""}
-            onChange={(val) => {
-              pengumumanState.pengumuman.create.form.categoryPengumumanId = val ?? "";
-            }}
             data={pengumumanState.category.findMany.data?.map((item) => ({
               label: item.name,
               value: item.id,
-            }))}
+            })) || []}
+            value={pengumumanState.pengumuman.create.form.categoryPengumumanId || null}
+            onChange={(val: string | null) => {
+              if (val) {
+                const selected = pengumumanState.category.findMany.data?.find(
+                  (item) => item.id === val
+                );
+                if (selected) {
+                  pengumumanState.pengumuman.create.form.categoryPengumumanId = selected.id;
+                }
+              } else {
+                pengumumanState.pengumuman.create.form.categoryPengumumanId = '';
+              }
+            }}
             searchable
+            clearable
             nothingFoundMessage="Tidak ditemukan"
+            required
           />
 
           {/* Deskripsi Singkat */}
           <TextInput
-            defaultValue={pengumumanState.pengumuman.create.form.deskripsi}
+            value={pengumumanState.pengumuman.create.form.deskripsi}
             onChange={(val) => (pengumumanState.pengumuman.create.form.deskripsi = val.target.value)}
             label="Deskripsi Singkat"
             placeholder="Masukkan deskripsi singkat"
@@ -113,6 +136,17 @@ function CreatePengumuman() {
           {/* Tombol Submit */}
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
@@ -122,7 +156,7 @@ function CreatePengumuman() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

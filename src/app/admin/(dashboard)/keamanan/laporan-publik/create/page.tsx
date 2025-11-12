@@ -4,6 +4,7 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Stack,
   Text,
@@ -15,12 +16,15 @@ import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
 import laporanPublikState from '../../../_state/keamanan/laporan-publik';
+import { useState } from 'react';
+import { toast } from 'react-toastify';
 
 export type Status = 'Selesai' | 'Proses' | 'Gagal';
 
 function CreateLaporanPublik() {
   const stateLaporan = useProxy(laporanPublikState);
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const resetForm = () => {
     stateLaporan.create.form = {
@@ -32,9 +36,17 @@ function CreateLaporanPublik() {
   };
 
   const handleSubmit = async () => {
-    await stateLaporan.create.create();
-    resetForm();
-    router.push('/admin/keamanan/laporan-publik');
+    try {
+      setIsSubmitting(true);
+      await stateLaporan.create.create();
+      resetForm();
+      router.push('/admin/keamanan/laporan-publik');
+    } catch (error) {
+      console.error('Error creating laporan publik:', error);
+      toast.error('Terjadi kesalahan saat membuat laporan publik');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -60,7 +72,7 @@ function CreateLaporanPublik() {
       >
         <Stack gap="md">
           <TextInput
-            defaultValue={stateLaporan.create.form.judul}
+            value={stateLaporan.create.form.judul}
             onChange={(e) => (stateLaporan.create.form.judul = e.target.value)}
             label={<Text fw="bold" fz="sm">Judul Laporan Publik</Text>}
             placeholder="Masukkan judul laporan publik"
@@ -68,7 +80,7 @@ function CreateLaporanPublik() {
           />
 
           <TextInput
-            defaultValue={stateLaporan.create.form.lokasi}
+            value={stateLaporan.create.form.lokasi}
             onChange={(e) => (stateLaporan.create.form.lokasi = e.target.value)}
             label={<Text fw="bold" fz="sm">Lokasi Laporan Publik</Text>}
             placeholder="Masukkan lokasi laporan publik"
@@ -88,7 +100,7 @@ function CreateLaporanPublik() {
           />
 
           <TextInput
-            defaultValue={stateLaporan.create.form.kronologi}
+            value={stateLaporan.create.form.kronologi}
             onChange={(e) => (stateLaporan.create.form.kronologi = e.target.value)}
             label={<Text fw="bold" fz="sm">Kronologi Laporan Publik</Text>}
             placeholder="Masukkan kronologi laporan publik"
@@ -96,6 +108,17 @@ function CreateLaporanPublik() {
           />
 
           <Group justify="right">
+            <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
             <Button
               onClick={handleSubmit}
               radius="md"
@@ -106,7 +129,7 @@ function CreateLaporanPublik() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

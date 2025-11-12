@@ -5,6 +5,7 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Select,
   Stack,
@@ -14,13 +15,15 @@ import {
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import infoSekolahPaud from '../../../../_state/pendidikan/info-sekolah-paud';
+import { toast } from 'react-toastify';
 
 function CreateLembaga() {
   const router = useRouter();
   const stateLembaga = useProxy(infoSekolahPaud.lembagaPendidikan);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     stateLembaga.findMany.load();
@@ -35,9 +38,17 @@ function CreateLembaga() {
   };
 
   const handleSubmit = async () => {
-    await stateLembaga.create.create();
-    resetForm();
-    router.push('/admin/pendidikan/info-sekolah/lembaga');
+    try {
+      setIsSubmitting(true);
+      await stateLembaga.create.create();
+      resetForm();
+      router.push('/admin/pendidikan/info-sekolah/lembaga');
+    } catch (error) {
+      console.error('Error creating lembaga:', error);
+      toast.error('Gagal menambahkan lembaga');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -63,7 +74,7 @@ function CreateLembaga() {
       >
         <Stack gap="md">
           <TextInput
-            defaultValue={stateLembaga.create.form.nama}
+            value={stateLembaga.create.form.nama}
             onChange={(val) => {
               stateLembaga.create.form.nama = val.target.value;
             }}
@@ -91,6 +102,17 @@ function CreateLembaga() {
 
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
@@ -100,7 +122,7 @@ function CreateLembaga() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

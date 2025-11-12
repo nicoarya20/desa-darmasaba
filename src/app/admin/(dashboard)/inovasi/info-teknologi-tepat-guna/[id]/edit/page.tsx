@@ -5,10 +5,12 @@ import infoTeknoState from '@/app/admin/(dashboard)/_state/inovasi/info-tekno';
 import colors from '@/con/colors';
 import ApiFetch from '@/lib/api-fetch';
 import {
+  ActionIcon,
   Box,
   Button,
   Group,
   Image,
+  Loader,
   Paper,
   Stack,
   Text,
@@ -29,11 +31,17 @@ function EditInfoTeknologiTepatGuna() {
 
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
-
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     deskripsi: '',
     imageId: '',
+  });
+  const [originalData, setOriginalData] = useState({
+    name: '',
+    deskripsi: '',
+    imageId: '',
+    imageUrl: '',
   });
 
   // Load data pertama kali
@@ -50,7 +58,12 @@ function EditInfoTeknologiTepatGuna() {
             deskripsi: data.deskripsi || '',
             imageId: data.imageId || '',
           });
-
+          setOriginalData({
+            name: data.name || '',
+            deskripsi: data.deskripsi || '',
+            imageId: data.imageId || '',
+            imageUrl: data.image?.link || '',
+          });
           if (data?.image?.link) setPreviewImage(data.image.link);
         }
       } catch (error) {
@@ -62,9 +75,21 @@ function EditInfoTeknologiTepatGuna() {
     loadData();
   }, [params?.id]);
 
+  const handleResetForm = () => {
+    setFormData({
+      name: originalData.name,
+      deskripsi: originalData.deskripsi,
+      imageId: originalData.imageId,
+    });
+    setFile(null);
+    setPreviewImage(originalData.imageUrl);
+    toast.info("Form dikembalikan ke data awal");
+  };
+
   // Submit form
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       // sync local → global pas submit
       stateInfoTekno.edit.form = {
         ...stateInfoTekno.edit.form,
@@ -92,6 +117,8 @@ function EditInfoTeknologiTepatGuna() {
     } catch (error) {
       console.error('Error updating info teknologi tepat guna:', error);
       toast.error('Terjadi kesalahan saat memperbarui info teknologi tepat guna');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -141,7 +168,7 @@ function EditInfoTeknologiTepatGuna() {
               }}
               onReject={() => toast.error('File tidak valid, gunakan format gambar')}
               maxSize={5 * 1024 ** 2}
-              accept={{ 'image/*': [] }}
+              accept={{ 'image/*': ['.jpeg', '.jpg', '.png', '.webp'] }}
               radius="md"
               p="xl"
             >
@@ -160,25 +187,45 @@ function EditInfoTeknologiTepatGuna() {
                     Seret gambar atau klik untuk memilih file
                   </Text>
                   <Text size="sm" c="dimmed">
-                    Maksimal 5MB, format gambar wajib
+                    Maksimal 5MB, format gambar .png, .jpg, .jpeg, webp
                   </Text>
                 </Stack>
               </Group>
             </Dropzone>
 
             {previewImage && (
-              <Box mt="sm" style={{ display: 'flex', justifyContent: 'center' }}>
+              <Box pos={"relative"} mt="sm" style={{ display: 'flex', justifyContent: 'center' }}>
                 <Image
                   src={previewImage}
                   alt="Preview Gambar"
                   radius="md"
                   style={{
-                    maxHeight: 220,
+                    maxHeight: 200,
                     objectFit: 'contain',
-                    border: `1px solid ${colors['blue-button']}`,
+                    border: '1px solid #ddd',
                   }}
                   loading="lazy"
                 />
+
+                {/* Tombol hapus (pojok kanan atas) */}
+                <ActionIcon
+                  variant="filled"
+                  color="red"
+                  radius="xl"
+                  size="sm"
+                  pos="absolute"
+                  top={5}
+                  right={5}
+                  onClick={() => {
+                    setPreviewImage(null);
+                    setFile(null);
+                  }}
+                  style={{
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                  }}
+                >
+                  <IconX size={14} />
+                </ActionIcon>
               </Box>
             )}
           </Box>
@@ -199,6 +246,17 @@ function EditInfoTeknologiTepatGuna() {
           {/* Tombol submit */}
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
@@ -208,7 +266,7 @@ function EditInfoTeknologiTepatGuna() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

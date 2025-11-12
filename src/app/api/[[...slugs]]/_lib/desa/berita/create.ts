@@ -26,7 +26,7 @@ async function beritaCreate(context: Context) {
 
   return {
     success: true,
-    message: "Success create berita",
+    message: "Sukses menambahkan berita",
     data: {
       ...body,
     },

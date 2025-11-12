@@ -1,16 +1,18 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, Stack, TextInput, Title } from '@mantine/core';
+import { Box, Button, Group, Paper, Stack, TextInput, Title, Loader } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import korupsiState from '../../../../_state/landing-page/desa-anti-korupsi';
+import { toast } from 'react-toastify';
 
 export default function CreateKategoriDesaAntiKorupsi() {
   const router = useRouter();
   const stateKategori = useProxy(korupsiState.kategoriDesaAntiKorupsi);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     stateKategori.findMany.load();
@@ -23,21 +25,29 @@ export default function CreateKategoriDesaAntiKorupsi() {
   };
 
   const handleSubmit = async () => {
-    if (!stateKategori.create.form.name) {
-      return alert('Nama kategori harus diisi');
+    setIsSubmitting(true);
+    try {
+      if (!stateKategori.create.form.name) {
+        return alert('Nama kategori harus diisi');
+      }
+
+      await stateKategori.create.create();
+      resetForm();
+      router.push("/admin/landing-page/desa-anti-korupsi/kategori-desa-anti-korupsi");
+    } catch (error) {
+      console.error("Error creating kategori desa anti korupsi:", error);
+      toast.error("Gagal menambahkan kategori desa anti korupsi");
+    } finally {
+      setIsSubmitting(false);
     }
-    
-    await stateKategori.create.create();
-    resetForm();
-    router.push("/admin/landing-page/desa-anti-korupsi/kategori-desa-anti-korupsi");
   };
 
   return (
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
       <Group mb="md">
-          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
+        <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Tambah Kategori Desa Anti Korupsi
         </Title>
@@ -55,12 +65,24 @@ export default function CreateKategoriDesaAntiKorupsi() {
           <TextInput
             label="Nama Kategori"
             placeholder="Masukkan nama kategori"
-            defaultValue={stateKategori.create.form.name || ''}
+            value={stateKategori.create.form.name || ''}
             onChange={(e) => (stateKategori.create.form.name = e.target.value)}
             required
           />
 
-          <Group justify="right" mt="md">
+          <Group justify="right">
+            {/* Tombol Batal */}
+            <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
             <Button
               onClick={handleSubmit}
               radius="md"
@@ -71,7 +93,7 @@ export default function CreateKategoriDesaAntiKorupsi() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

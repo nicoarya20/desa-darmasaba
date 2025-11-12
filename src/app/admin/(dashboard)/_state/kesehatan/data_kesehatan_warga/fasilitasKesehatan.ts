@@ -351,7 +351,7 @@ const dokter = proxy({
           if (res.status === 200) {
             const id = res.data?.data;
             if (id) {
-              toast.success("Success create");
+              toast.success("Sukses menambahkan");
               dokter.create.create.form = { ...defaultDokterForm };
               dokter.findMany.load();
               return id;

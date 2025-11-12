@@ -1,11 +1,13 @@
 "use client";
 
 import {
+  ActionIcon,
   Box,
   Button,
   Center,
   Group,
   Image,
+  Loader,
   Paper,
   Stack,
   Text,
@@ -37,10 +39,18 @@ function EditKeamananLingkungan() {
 
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     deskripsi: "",
     imageId: "",
+  });
+
+  const [originalData, setOriginalData] = useState({
+    name: "",
+    deskripsi: "",
+    imageId: "",
+    imageUrl: "",
   });
 
   // Load data sekali pas mount
@@ -56,6 +66,12 @@ function EditKeamananLingkungan() {
             name: data.name || "",
             deskripsi: data.deskripsi || "",
             imageId: data.imageId || "",
+          });
+          setOriginalData({
+            name: data.name || "",
+            deskripsi: data.deskripsi || "",
+            imageId: data.imageId || "",
+            imageUrl: data.image?.link || "",
           });
 
           if (data?.image?.link) {
@@ -76,8 +92,20 @@ function EditKeamananLingkungan() {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
+  const handleResetForm = () => {
+    setFormData({
+      name: originalData.name,
+      deskripsi: originalData.deskripsi,
+      imageId: originalData.imageId,
+    });
+    setPreviewImage(originalData.imageUrl || null);
+    setFile(null);
+    toast.info("Form dikembalikan ke data awal");
+  };
+
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       let imageId = formData.imageId;
 
       if (file) {
@@ -108,6 +136,8 @@ function EditKeamananLingkungan() {
     } catch (error) {
       console.error("Error updating keamananLingkungan:", error);
       toast.error("Terjadi kesalahan saat memperbarui keamananLingkungan");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -190,7 +220,39 @@ function EditKeamananLingkungan() {
           </Dropzone>
 
           {previewImage ? (
-            <Image alt="" src={previewImage} w={200} h={200} loading="lazy" />
+            <Box pos={"relative"}>
+              <Image
+                src={previewImage}
+                alt="Preview Gambar"
+                radius="md"
+                style={{
+                  maxHeight: 200,
+                  objectFit: 'contain',
+                  border: '1px solid #ddd',
+                }}
+                loading="lazy"
+              />
+
+              {/* Tombol hapus (pojok kanan atas) */}
+              <ActionIcon
+                variant="filled"
+                color="red"
+                radius="xl"
+                size="sm"
+                pos="absolute"
+                top={5}
+                right={5}
+                onClick={() => {
+                  setPreviewImage(null);
+                  setFile(null);
+                }}
+                style={{
+                  boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                }}
+              >
+                <IconX size={14} />
+              </ActionIcon>
+            </Box>
           ) : (
             <Center w={200} h={200} bg={"gray"}>
               <IconImageInPicture />
@@ -216,17 +278,29 @@ function EditKeamananLingkungan() {
           </Box>
 
           <Group justify="right">
+            {/* Tombol Batal */}
+            <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
             <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
               style={{
-                background: `linear-gradient(135deg, ${colors["blue-button"]}, #4facfe)`,
-                color: "#fff",
-                boxShadow: "0 4px 15px rgba(79, 172, 254, 0.4)",
+                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                color: '#fff',
+                boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

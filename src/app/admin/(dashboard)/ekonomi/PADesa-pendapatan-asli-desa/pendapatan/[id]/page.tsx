@@ -6,6 +6,7 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Stack,
   TextInput,
@@ -21,6 +22,12 @@ function EditPendapatan() {
   const pendapatanState = useProxy(PendapatanAsliDesa.pendapatan);
   const router = useRouter();
   const params = useParams();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [originalData, setOriginalData] = useState({
+    name: "",
+    value: "",
+  });
 
   const [formData, setFormData] = useState({
     name: '',
@@ -55,6 +62,10 @@ function EditPendapatan() {
             name: data.name ?? '',
             value: data.value?.toString() ?? '',
           });
+          setOriginalData({
+            name: data.name ?? '',
+            value: data.value?.toString() ?? '',
+          });
         }
       } catch (error) {
         console.error('Error loading pendapatan:', error);
@@ -72,8 +83,18 @@ function EditPendapatan() {
     }));
   };
 
+  const handleResetForm = () => {
+    setFormData({
+      name: originalData.name,
+      value: originalData.value,
+    });
+    toast.info("Form dikembalikan ke data awal");
+  };
+
+
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       pendapatanState.update.form = {
         ...pendapatanState.update.form,
         name: formData.name,
@@ -86,7 +107,10 @@ function EditPendapatan() {
     } catch (error) {
       console.error('Error updating jenis pendapatan:', error);
       toast.error('Terjadi kesalahan saat memperbarui jenis pendapatan');
+    } finally {
+      setIsSubmitting(false);
     }
+
   };
 
   return (
@@ -138,6 +162,17 @@ function EditPendapatan() {
 
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
@@ -147,7 +182,7 @@ function EditPendapatan() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

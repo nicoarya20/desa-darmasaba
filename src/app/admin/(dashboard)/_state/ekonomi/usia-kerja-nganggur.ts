@@ -51,7 +51,7 @@ const grafikBerdasarkanUsiaKerjaNganggur = proxy({
         if (res.status === 200) {
           const id = res.data?.data?.id;
           if (id) {
-            toast.success("Success create");
+            toast.success("Sukses menambahkan");
             grafikBerdasarkanUsiaKerjaNganggur.create.form = {
               usia18_25: "",
               usia26_35: "",
@@ -255,7 +255,7 @@ const grafikBerdasarkanPendidikan = proxy({
         if (res.status === 200) {
           const id = res.data?.data?.id;
           if (id) {
-            toast.success("Success create");
+            toast.success("Sukses menambahkan");
             grafikBerdasarkanPendidikan.create.form = {
               SD: "",
               SMP: "",

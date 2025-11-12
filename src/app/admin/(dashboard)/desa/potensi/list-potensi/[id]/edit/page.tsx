@@ -15,7 +15,9 @@ import {
   Stack,
   Text,
   TextInput,
-  Title
+  Title,
+  Loader,
+  ActionIcon
 } from "@mantine/core";
 import { Dropzone } from "@mantine/dropzone";
 import { IconArrowBack, IconPhoto, IconUpload, IconX } from "@tabler/icons-react";
@@ -38,6 +40,16 @@ function EditPotensi() {
     content: "",
     imageId: "",
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [originalData, setOriginalData] = useState({
+    name: "",
+    deskripsi: "",
+    kategoriId: "",
+    content: "",
+    imageId: "",
+    imageUrl: "",
+  });
 
   // handle input changes
   const handleChange = (field: string, value: string) => {
@@ -46,11 +58,11 @@ function EditPotensi() {
 
   useEffect(() => {
     potensiDesaState.kategoriPotensi.findMany.load();
-  
+
     const loadPotensi = async () => {
       const id = params?.id as string;
       if (!id) return;
-  
+
       try {
         const data = await potensiState.edit.load(id);
         if (data) {
@@ -61,35 +73,45 @@ function EditPotensi() {
             content: data.content || "",
             imageId: data.imageId || "",
           });
-          
-          // // merge, bukan replace
-          // setFormData((prev) => ({
-          //   ...prev,
-          //   name: data.name ?? prev.name,
-          //   deskripsi: data.deskripsi ?? prev.deskripsi,
-          //   kategoriId: data.kategoriId ?? prev.kategoriId,
-          //   content: data.content ?? prev.content,
-          //   imageId: data.imageId ?? prev.imageId,
-          // }));
-  
-          if (data?.image?.link) {
-            setPreviewImage(data.image.link);
-          }
+
+          setOriginalData({
+            name: data.name || "",
+            deskripsi: data.deskripsi || "",
+            kategoriId: data.kategoriId || "",
+            content: data.content || "",
+            imageId: data.imageId || "",
+            imageUrl: data.image?.link || "",
+          });
+          setPreviewImage(data.image.link);
+
         }
       } catch (error) {
         console.error("Error loading potensi:", error);
         toast.error("Gagal memuat data potensi");
       }
     };
-  
+
     loadPotensi();
   }, [params?.id]);
-  
+
+  const handleResetForm = () => {
+    setFormData({
+      name: originalData.name || "",
+      deskripsi: originalData.deskripsi || "",
+      kategoriId: originalData.kategoriId || "",
+      content: originalData.content || "",
+      imageId: originalData.imageId || ""
+    });
+    setPreviewImage(originalData.imageUrl || null);
+    setFile(null);
+    toast.info("Form dikembalikan ke data awal");
+  };
+
 
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       let imageId = formData.imageId;
-
       if (file) {
         const res = await ApiFetch.api.fileStorage.create.post({
           file,
@@ -115,20 +137,22 @@ function EditPotensi() {
     } catch (error) {
       console.error("Error updating potensi:", error);
       toast.error("Terjadi kesalahan saat memperbarui potensi");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
     <Box px={{ base: "sm", md: "lg" }} py="md">
       <Group mb="md">
-          <Button
-            variant="subtle"
-            onClick={() => router.back()}
-            p="xs"
-            radius="md"
-          >
-            <IconArrowBack color={colors["blue-button"]} size={24} />
-          </Button>
+        <Button
+          variant="subtle"
+          onClick={() => router.back()}
+          p="xs"
+          radius="md"
+        >
+          <IconArrowBack color={colors["blue-button"]} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Edit Potensi Desa
         </Title>
@@ -164,6 +188,32 @@ function EditPotensi() {
           </Box>
 
           <Select
+            label="Kategori"
+            placeholder="Pilih kategori"
+            data={potensiDesaState.kategoriPotensi.findMany.data?.map((item) => ({
+              label: item.nama,
+              value: item.id,
+            })) || []}
+            value={formData.kategoriId || null}
+            onChange={(val: string | null) => {
+              if (val) {
+                const selected = potensiDesaState.kategoriPotensi.findMany.data?.find(
+                  (item) => item.id === val
+                );
+                if (selected) {
+                  handleChange("kategoriId", selected.id);
+                }
+              } else {
+                handleChange("kategoriId", "");
+              }
+            }}
+            searchable
+            clearable
+            nothingFoundMessage="Tidak ditemukan"
+            required
+          />
+
+          {/* <Select
             value={formData.kategoriId}
             onChange={(val) => handleChange("kategoriId", val || "")}
             label="Kategori"
@@ -178,7 +228,7 @@ function EditPotensi() {
             searchable
             required
             error={!formData.kategoriId ? "Pilih kategori" : undefined}
-          />
+          /> */}
 
           <Box>
             <Text fw="bold" fz="sm" mb={6}>
@@ -219,25 +269,45 @@ function EditPotensi() {
                     Seret gambar atau klik untuk memilih file
                   </Text>
                   <Text size="sm" c="dimmed">
-                    Maksimal 5MB, format gambar wajib
+                    Maksimal 5MB, format gambar .png, .jpg, .jpeg, webp
                   </Text>
                 </Stack>
               </Group>
             </Dropzone>
 
             {previewImage && (
-              <Box mt="sm" style={{ display: "flex", justifyContent: "center" }}>
+              <Box mt="sm" pos="relative" style={{ textAlign: 'center' }}>
                 <Image
                   src={previewImage}
                   alt="Preview Gambar"
                   radius="md"
                   style={{
-                    maxHeight: 220,
-                    objectFit: "contain",
-                    border: `1px solid ${colors["blue-button"]}`,
+                    maxHeight: 200,
+                    objectFit: 'contain',
+                    border: '1px solid #ddd',
                   }}
                   loading="lazy"
                 />
+
+                {/* Tombol hapus (pojok kanan atas) */}
+                <ActionIcon
+                  variant="filled"
+                  color="red"
+                  radius="xl"
+                  size="sm"
+                  pos="absolute"
+                  top={5}
+                  right={5}
+                  onClick={() => {
+                    setPreviewImage(null);
+                    setFile(null);
+                  }}
+                  style={{
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                  }}
+                >
+                  <IconX size={14} />
+                </ActionIcon>
               </Box>
             )}
           </Box>
@@ -255,17 +325,29 @@ function EditPotensi() {
           </Box>
 
           <Group justify="right">
+            {/* Tombol Batal */}
+            <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
             <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
               style={{
-                background: `linear-gradient(135deg, ${colors["blue-button"]}, #4facfe)`,
-                color: "#fff",
-                boxShadow: "0 4px 15px rgba(79, 172, 254, 0.4)",
+                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                color: '#fff',
+                boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

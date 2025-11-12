@@ -4,10 +4,12 @@ import artikelKesehatanState from '@/app/admin/(dashboard)/_state/kesehatan/data
 import colors from '@/con/colors';
 import ApiFetch from '@/lib/api-fetch';
 import {
+  ActionIcon,
   Box,
   Button,
   Group,
   Image,
+  Loader,
   Paper,
   Stack,
   Text,
@@ -26,6 +28,7 @@ function CreateArtikelKesehatan() {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const resetForm = () => {
     stateArtikelKesehatan.create.form = {
@@ -62,25 +65,32 @@ function CreateArtikelKesehatan() {
 
   const handleSubmit = async (e?: React.FormEvent) => {
     e?.preventDefault();
-    if (!file) {
-      return toast.warn('Silakan pilih file gambar terlebih dahulu');
+    try {
+      if (!file) {
+        return toast.warn('Silakan pilih file gambar terlebih dahulu');
+      }
+
+      const res = await ApiFetch.api.fileStorage.create.post({
+        file,
+        name: file.name,
+      });
+
+      const uploaded = res.data?.data;
+      if (!uploaded?.id) {
+        return toast.error('Gagal mengunggah gambar, silakan coba lagi');
+      }
+
+      stateArtikelKesehatan.create.form.imageId = uploaded.id;
+      await stateArtikelKesehatan.create.submit();
+      toast.success('Data berhasil disimpan');
+      resetForm();
+      router.push('/admin/kesehatan/data-kesehatan-warga/artikel_kesehatan');
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      toast.error('Gagal menyimpan data, silakan coba lagi');
+    } finally {
+      setIsSubmitting(false);
     }
-
-    const res = await ApiFetch.api.fileStorage.create.post({
-      file,
-      name: file.name,
-    });
-
-    const uploaded = res.data?.data;
-    if (!uploaded?.id) {
-      return toast.error('Gagal mengunggah gambar, silakan coba lagi');
-    }
-
-    stateArtikelKesehatan.create.form.imageId = uploaded.id;
-    await stateArtikelKesehatan.create.submit();
-    toast.success('Data berhasil disimpan');
-    resetForm();
-    router.push('/admin/kesehatan/data-kesehatan-warga/artikel_kesehatan');
   };
 
   return (
@@ -124,7 +134,7 @@ function CreateArtikelKesehatan() {
               }}
               onReject={() => toast.error('File tidak valid, gunakan format gambar')}
               maxSize={5 * 1024 ** 2}
-              accept={{ 'image/*': [] }}
+              accept={{ 'image/*': ['.jpeg', '.jpg', '.png', '.webp'] }}
               radius="md"
               p="xl"
             >
@@ -145,7 +155,7 @@ function CreateArtikelKesehatan() {
             </Dropzone>
 
             {previewImage && (
-              <Box mt="sm" style={{ textAlign: 'center' }}>
+              <Box pos={"relative"} mt="sm" style={{ textAlign: 'center' }}>
                 <Image
                   src={previewImage}
                   alt="Preview Gambar"
@@ -157,6 +167,24 @@ function CreateArtikelKesehatan() {
                   }}
                   loading="lazy"
                 />
+                <ActionIcon
+                  variant="filled"
+                  color="red"
+                  radius="xl"
+                  size="sm"
+                  pos="absolute"
+                  top={5}
+                  right={5}
+                  onClick={() => {
+                    setPreviewImage(null);
+                    setFile(null);
+                  }}
+                  style={{
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                  }}
+                >
+                  <IconX size={14} />
+                </ActionIcon>
               </Box>
             )}
           </Box>
@@ -164,7 +192,7 @@ function CreateArtikelKesehatan() {
           <TextInput
             label={"Judul"}
             placeholder="Masukkan judul"
-            defaultValue={stateArtikelKesehatan.create.form.title}
+            value={stateArtikelKesehatan.create.form.title}
             onChange={(e) => {
               stateArtikelKesehatan.create.form.title = e.target.value;
             }}
@@ -173,7 +201,7 @@ function CreateArtikelKesehatan() {
           <TextInput
             label={"Deskripsi"}
             placeholder="Masukkan deskripsi"
-            defaultValue={stateArtikelKesehatan.create.form.content}
+            value={stateArtikelKesehatan.create.form.content}
             onChange={(e) => {
               stateArtikelKesehatan.create.form.content = e.target.value;
             }}
@@ -196,7 +224,7 @@ function CreateArtikelKesehatan() {
                 label={"Judul Gejala"}
                 required
                 placeholder="Masukkan judul gejala penyakit"
-                defaultValue={stateArtikelKesehatan.create.form.symptom.title}
+                value={stateArtikelKesehatan.create.form.symptom.title}
                 onChange={(e) => {
                   stateArtikelKesehatan.create.form.symptom.title = e.target.value;
                 }}
@@ -220,7 +248,7 @@ function CreateArtikelKesehatan() {
               label={"Judul Pencegahan"}
               required
               placeholder="Masukkan judul"
-              defaultValue={stateArtikelKesehatan.create.form.prevention.title}
+              value={stateArtikelKesehatan.create.form.prevention.title}
               onChange={(e) => {
                 stateArtikelKesehatan.create.form.prevention.title = e.target.value;
               }}
@@ -241,7 +269,7 @@ function CreateArtikelKesehatan() {
               label={"Judul Pertolongan Pertama"}
               required
               placeholder="Masukkan judul"
-              defaultValue={stateArtikelKesehatan.create.form.firstAid.title}
+              value={stateArtikelKesehatan.create.form.firstAid.title}
               onChange={(e) => {
                 stateArtikelKesehatan.create.form.firstAid.title = e.target.value;
               }}
@@ -262,7 +290,7 @@ function CreateArtikelKesehatan() {
               label={"Judul Mitos dan Fakta"}
               required
               placeholder="Masukkan judul"
-              defaultValue={stateArtikelKesehatan.create.form.mythVsFact.title}
+              value={stateArtikelKesehatan.create.form.mythVsFact.title}
               onChange={(e) => {
                 stateArtikelKesehatan.create.form.mythVsFact.title = e.target.value;
               }}
@@ -300,8 +328,20 @@ function CreateArtikelKesehatan() {
 
           {/* Submit Button */}
           <Group justify="right">
+            {/* Tombol Batal */}
             <Button
-              type="submit"
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
+              onClick={handleSubmit}
               radius="md"
               size="md"
               style={{
@@ -310,7 +350,7 @@ function CreateArtikelKesehatan() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

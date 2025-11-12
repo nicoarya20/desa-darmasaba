@@ -5,10 +5,12 @@ import programKesehatan from '@/app/admin/(dashboard)/_state/kesehatan/program-k
 import colors from '@/con/colors';
 import ApiFetch from '@/lib/api-fetch';
 import {
+  ActionIcon,
   Box,
   Button,
   Group,
   Image,
+  Loader,
   Paper,
   Stack,
   Text,
@@ -29,11 +31,19 @@ function EditProgramKesehatan() {
 
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     deskripsiSingkat: '',
     deskripsi: '',
     imageId: '',
+  });
+  const [originalData, setOriginalData] = useState({
+    name: '',
+    deskripsiSingkat: '',
+    deskripsi: '',
+    imageId: '',
+    imageUrl: ''
   });
 
   // Load data awal
@@ -52,6 +62,13 @@ function EditProgramKesehatan() {
           deskripsi: data.deskripsi || '',
           imageId: data.imageId || '',
         });
+        setOriginalData({
+          name: data.name || '',
+          deskripsiSingkat: data.deskripsiSingkat || '',
+          deskripsi: data.deskripsi || '',
+          imageId: data.imageId || '',
+          imageUrl: data.image?.link || '',
+        });
 
         if (data?.image?.link) setPreviewImage(data.image.link);
       } catch (err) {
@@ -68,9 +85,22 @@ function EditProgramKesehatan() {
     setFormData((prev) => ({ ...prev, [key]: value }));
   };
 
+  const handleResetForm = () => {
+    setFormData({
+      name: originalData.name,
+      deskripsiSingkat: originalData.deskripsiSingkat,
+      deskripsi: originalData.deskripsi,
+      imageId: originalData.imageId,
+    });
+    setPreviewImage(originalData.imageUrl || null);
+    setFile(null);
+    toast.info("Form dikembalikan ke data awal");
+  };
+
   // Submit form
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       const updatedForm = { ...programKesehatanState.edit.form, ...formData };
 
       // Upload file kalau ada
@@ -89,6 +119,8 @@ function EditProgramKesehatan() {
     } catch (err) {
       console.error(err);
       toast.error('Terjadi kesalahan saat memperbarui program kesehatan');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -158,7 +190,7 @@ function EditProgramKesehatan() {
               }}
               onReject={() => toast.error('File tidak valid.')}
               maxSize={5 * 1024 ** 2}
-              accept={{ 'image/*': [] }}
+              accept={{ 'image/*': ['.jpeg', '.jpg', '.png', '.webp'] }}
             >
               <Group justify="center" gap="xl" mih={220} style={{ pointerEvents: 'none' }}>
                 <Dropzone.Accept>
@@ -183,7 +215,7 @@ function EditProgramKesehatan() {
             </Dropzone>
 
             {previewImage && (
-              <Box mt="sm">
+              <Box mt="sm" pos={"relative"}>
                 <Image
                   src={previewImage}
                   alt="Preview"
@@ -196,11 +228,40 @@ function EditProgramKesehatan() {
                   }}
                   loading="lazy"
                 />
+                <ActionIcon
+                  variant="filled"
+                  color="red"
+                  radius="xl"
+                  size="sm"
+                  pos="absolute"
+                  top={5}
+                  right={5}
+                  onClick={() => {
+                    setPreviewImage(null);
+                    setFile(null);
+                  }}
+                  style={{
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                  }}
+                >
+                  <IconX size={14} />
+                </ActionIcon>
               </Box>
             )}
           </Box>
 
           <Group justify="right">
+            <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
             <Button
               onClick={handleSubmit}
               radius="md"
@@ -211,7 +272,7 @@ function EditProgramKesehatan() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

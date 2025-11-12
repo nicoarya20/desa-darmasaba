@@ -23,7 +23,7 @@ export default async function infoWabahPenyakitCreate(context: Context) {
     })
     return {
         success: true,
-        message: "Success create info wabah penyakit",
+        message: "Sukses menambahkan info wabah penyakit",
         data: {
             ...body,
         },

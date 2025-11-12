@@ -14,6 +14,6 @@ export default async function programKemiskinanDelete(context: Context) {
   return {
     status: 200,
     success: true,
-    message: "Success delete program kemiskinan",
+    message: "Sukses Menghapus program kemiskinan",
   };
 }

@@ -7,6 +7,7 @@ import {
   Button,
   Center,
   Group,
+  Loader,
   Paper,
   Stack,
   Text,
@@ -36,6 +37,7 @@ function EditTujuanProgram() {
   // gabung judul & content jadi formData
   const [formData, setFormData] = useState({ judul: '', deskripsi: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [originalData, setOriginalData] = useState({ judul: '', deskripsi: '' });
 
   // load data sekali
   useShallowEffect(() => {
@@ -49,11 +51,23 @@ function EditTujuanProgram() {
         judul: editState.findById.data.judul ?? '',
         deskripsi: editState.findById.data.deskripsi ?? '',
       });
+      setOriginalData({
+        judul: editState.findById.data.judul ?? '',
+        deskripsi: editState.findById.data.deskripsi ?? '',
+      });
     }
   }, [editState.findById.data]);
 
   const handleChange = (field: 'judul' | 'deskripsi', value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleResetForm = () => {
+    setFormData({
+      judul: originalData.judul,
+      deskripsi: originalData.deskripsi,
+    });
+    toast.info("Form dikembalikan ke data awal");
   };
 
   const handleSubmit = async () => {
@@ -139,22 +153,30 @@ function EditTujuanProgram() {
             </Box>
 
             {/* Submit & Cancel */}
-            <Group>
-              <Button
-                bg={colors['blue-button']}
-                onClick={handleSubmit}
-                loading={isSubmitting || editState.update.loading}
-                disabled={!formData.judul}
-              >
-                {isSubmitting ? 'Menyimpan...' : 'Simpan Perubahan'}
-              </Button>
-
+            <Group justify="right">
+              {/* Tombol Batal */}
               <Button
                 variant="outline"
-                onClick={handleBack}
-                disabled={isSubmitting || editState.update.loading}
+                color="gray"
+                radius="md"
+                size="md"
+                onClick={handleResetForm}
               >
                 Batal
+              </Button>
+
+              {/* Tombol Simpan */}
+              <Button
+                onClick={handleSubmit}
+                radius="md"
+                size="md"
+                style={{
+                  background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                  color: '#fff',
+                  boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
+                }}
+              >
+                {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
               </Button>
             </Group>
           </Stack>

@@ -5,7 +5,7 @@ import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import stateProfileDesa from '@/app/admin/(dashboard)/_state/desa/profile';
 import colors from '@/con/colors';
 import ApiFetch from '@/lib/api-fetch';
-import { Alert, Box, Button, Center, Group, Image, Paper, SimpleGrid, Stack, Text, TextInput, Title } from '@mantine/core';
+import { Alert, Box, Button, Center, Group, Image, Loader, Paper, SimpleGrid, Stack, Text, TextInput, Title } from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
 import { IconAlertCircle, IconArrowBack, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -19,14 +19,20 @@ function Page() {
   const params = useParams();
 
   const [images, setImages] = useState<
-  Array<{ file: File | null; preview: string; label: string; imageId?: string }>
->([]);
+    Array<{ file: File | null; preview: string; label: string; imageId?: string }>
+  >([]);
   const [formData, setFormData] = useState({
     judul: '',
     deskripsi: '',
     images: [] as Array<{ label: string; imageId: string }>,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [originalData, setOriginalData] = useState({
+    judul: "",
+    deskripsi: "",
+    images: [] as Array<{ label: string; imageId: string }>
+  });
 
   // Load data
   useEffect(() => {
@@ -51,6 +57,17 @@ function Page() {
               imageId: img.image?.id ?? '',
             })),
           });
+
+          setOriginalData({
+            judul: data.judul || '',
+            deskripsi: data.deskripsi || '',
+            images: (data.images || []).map((img: any) => ({
+              label: img.label,
+              imageId: img.image?.id ?? '',
+              preview: img.image?.link ?? '',
+            })),
+          });
+          
 
           if (data?.images?.length > 0 && data.images[0].image?.link) {
             setImages(data.images.map((img: any) => ({
@@ -77,15 +94,36 @@ function Page() {
 
   const handleBack = () => router.back();
 
+  const handleResetForm = () => {
+    setFormData({
+      judul: originalData.judul,
+      deskripsi: originalData.deskripsi,
+      images: originalData.images.map((img) => ({
+        label: img.label,
+        imageId: img.imageId,
+      })),
+    });
+  
+    setImages(
+      originalData.images.map((img: any) => ({
+        file: null,
+        preview: img.preview, // pakai preview masing-masing, bukan cuma satu
+        label: img.label,
+        imageId: img.imageId,
+      }))
+    );
+  
+    toast.info("Form dikembalikan ke data awal");
+  };
+  
+
   const handleSubmit = async () => {
     if (isSubmitting || !formData.judul.trim()) {
       toast.error("Judul wajib diisi");
       return;
     }
-
-    setIsSubmitting(true);
-
     try {
+      setIsSubmitting(true);
       const uploadedImages = [];
 
       // Upload semua gambar baru
@@ -95,7 +133,7 @@ function Page() {
           uploadedImages.push({ imageId: img.imageId, label: img.label });
           continue;
         }
-      
+
         // upload baru
         const res = await ApiFetch.api.fileStorage.create.post({
           file: img.file,
@@ -108,7 +146,7 @@ function Page() {
         }
         uploadedImages.push({ imageId: uploaded.id, label: img.label || "main" });
       }
-      
+
 
       // Update ke global state
       maskotState.update.updateField("judul", formData.judul);
@@ -161,9 +199,9 @@ function Page() {
     <Box>
       <Stack gap="xs">
         <Group mb="md">
-            <Button variant="subtle" onClick={handleBack} p="xs" radius="md">
-              <IconArrowBack color={colors['blue-button']} size={24} />
-            </Button>
+          <Button variant="subtle" onClick={handleBack} p="xs" radius="md">
+            <IconArrowBack color={colors['blue-button']} size={24} />
+          </Button>
           <Title order={4} ml="sm" c="dark">Edit Maskot Desa</Title>
         </Group>
 
@@ -175,7 +213,7 @@ function Page() {
             <TextInput
               label={<Text fw="bold">Judul</Text>}
               placeholder="Masukkan judul maskot"
-              defaultValue={formData.judul}
+              value={formData.judul}
               onChange={(e) => setFormData({ ...formData, judul: e.currentTarget.value })}
               error={!formData.judul && "Judul wajib diisi"}
             />
@@ -231,7 +269,7 @@ function Page() {
                             setImages(updated);
                           }}
                         >
-                          Hapus
+                          <IconX size={16} />
                         </Button>
                       </Group>
                       <Image
@@ -260,17 +298,30 @@ function Page() {
             </SimpleGrid>
 
             {/* Buttons */}
-            <Group>
+            <Group justify="right">
+              {/* Tombol Batal */}
               <Button
-                bg={colors['blue-button']}
-                onClick={handleSubmit}
-                loading={isSubmitting || maskotState.update.loading}
-                disabled={!formData.judul}
+                variant="outline"
+                color="gray"
+                radius="md"
+                size="md"
+                onClick={handleResetForm}
               >
-                {isSubmitting ? 'Menyimpan...' : 'Simpan Perubahan'}
-              </Button>
-              <Button variant="outline" onClick={handleBack} disabled={isSubmitting || maskotState.update.loading}>
                 Batal
+              </Button>
+
+              {/* Tombol Simpan */}
+              <Button
+                onClick={handleSubmit}
+                radius="md"
+                size="md"
+                style={{
+                  background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                  color: '#fff',
+                  boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
+                }}
+              >
+                {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
               </Button>
             </Group>
           </Stack>

@@ -13,7 +13,8 @@ import {
   Stack,
   Text,
   TextInput,
-  Title
+  Title,
+  Loader
 } from "@mantine/core";
 import { IconArrowBack } from "@tabler/icons-react";
 import { useParams, useRouter } from "next/navigation";
@@ -27,6 +28,15 @@ function EditPengumuman() {
   const params = useParams();
 
   const [formData, setFormData] = useState({
+    judul: "",
+    deskripsi: "",
+    categoryPengumumanId: "",
+    content: "",
+  });
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [originalData, setOriginalData] = useState({
     judul: "",
     deskripsi: "",
     categoryPengumumanId: "",
@@ -50,6 +60,12 @@ function EditPengumuman() {
             categoryPengumumanId: data.categoryPengumumanId || "",
             content: data.content || "",
           });
+          setOriginalData({
+            judul: data.judul || "",
+            deskripsi: data.deskripsi || "",
+            categoryPengumumanId: data.categoryPengumumanId || "",
+            content: data.content || "",
+          });
         }
       } catch (error) {
         console.error("Error loading pengumuman:", error);
@@ -66,6 +82,7 @@ function EditPengumuman() {
 
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       // update global state hanya sekali pas submit
       editState.pengumuman.edit.form = {
         ...editState.pengumuman.edit.form,
@@ -78,7 +95,19 @@ function EditPengumuman() {
     } catch (error) {
       console.error("Error updating pengumuman:", error);
       toast.error("Terjadi kesalahan saat memperbarui pengumuman");
+    } finally {
+      setIsSubmitting(false);
     }
+  };
+
+  const handleResetForm = () => {
+    setFormData({
+      judul: originalData.judul,
+      deskripsi: originalData.deskripsi,
+      categoryPengumumanId: originalData.categoryPengumumanId,
+      content: originalData.content,
+    });
+    toast.info("Form dikembalikan ke data awal");
   };
 
   return (
@@ -152,17 +181,29 @@ function EditPengumuman() {
           </Box>
 
           <Group justify="right">
+            {/* Tombol Batal */}
+            <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
             <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
               style={{
-                background: `linear-gradient(135deg, ${colors["blue-button"]}, #4facfe)`,
-                color: "#fff",
-                boxShadow: "0 4px 15px rgba(79, 172, 254, 0.4)",
+                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                color: '#fff',
+                boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

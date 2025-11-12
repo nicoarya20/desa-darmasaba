@@ -8,12 +8,14 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Stack,
   Text,
   TextInput,
   Title
 } from "@mantine/core";
+import { YearPickerInput } from "@mantine/dates";
 import { IconArrowBack } from "@tabler/icons-react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -24,8 +26,17 @@ function EditKolaborasiInovasi() {
   const kolaborasiState = useProxy(kolaborasiInovasiState);
   const router = useRouter();
   const params = useParams();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [formData, setFormData] = useState({
+    name: "",
+    deskripsi: "",
+    tahun: "",
+    slug: "",
+    kolaborator: "",
+  });
+
+  const [originalData, setOriginalData] = useState({
     name: "",
     deskripsi: "",
     tahun: "",
@@ -49,6 +60,13 @@ function EditKolaborasiInovasi() {
             slug: data.slug ?? "",
             kolaborator: data.kolaborator ?? "",
           });
+          setOriginalData({
+            name: data.name ?? "",
+            deskripsi: data.deskripsi ?? "",
+            tahun: data.tahun?.toString() ?? "",
+            slug: data.slug ?? "",
+            kolaborator: data.kolaborator ?? "",
+          })
         }
       } catch (error) {
         console.error("Error loading kolaborasi:", error);
@@ -59,9 +77,21 @@ function EditKolaborasiInovasi() {
     loadKolaborasi();
   }, [params?.id]);
 
+  const handleResetForm = () => {
+    setFormData({
+      name: originalData.name,
+      deskripsi: originalData.deskripsi,
+      tahun: originalData.tahun?.toString(),
+      slug: originalData.slug,
+      kolaborator: originalData.kolaborator,
+    });
+    toast.info("Form dikembalikan ke data awal");
+  };
+
   // Handler submit → baru update global state
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       kolaborasiState.update.form = {
         ...kolaborasiState.update.form,
         name: formData.name,
@@ -73,10 +103,12 @@ function EditKolaborasiInovasi() {
 
       await kolaborasiState.update.submit();
       toast.success("Kolaborasi inovasi berhasil diperbarui!");
-      router.push("/admin/inovasi/kolaborasi-inovasi");
+      router.push("/admin/inovasi/kolaborasi-inovasi/list-kolaborasi-inovasi");
     } catch (error) {
       console.error("Error updating kolaborasi:", error);
       toast.error("Terjadi kesalahan saat memperbarui data");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -121,12 +153,15 @@ function EditKolaborasiInovasi() {
             required
           />
 
-          <TextInput
-            label="Tahun"
-            placeholder="Masukkan tahun"
-            value={formData.tahun}
-            onChange={(e) => handleChange("tahun", e.target.value)}
-            required
+          <YearPickerInput
+            clearable
+            value={formData.tahun ? new Date(Number(formData.tahun), 0, 1) : null}
+            label={<Text fz="sm" fw="bold">Tahun</Text>}
+            placeholder="Pilih tahun"
+            onChange={(date) => {
+              const year = date ? new Date(date).getFullYear() : 0;
+              handleChange("tahun", year.toString());
+            }}
           />
 
           <TextInput
@@ -148,17 +183,29 @@ function EditKolaborasiInovasi() {
           </Box>
 
           <Group justify="right">
+            {/* Tombol Batal */}
+            <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
             <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
               style={{
-                background: `linear-gradient(135deg, ${colors["blue-button"]}, #4facfe)`,
-                color: "#fff",
-                boxShadow: "0 4px 15px rgba(79, 172, 254, 0.4)",
+                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                color: '#fff',
+                boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

@@ -23,7 +23,7 @@ export default async function kontakDaruratCreate(context: Context) {
     })
     return {
         success: true,
-        message: "Success create kontak darurat",
+        message: "Sukses menambahkan kontak darurat",
         data: {
             ...body,
         },

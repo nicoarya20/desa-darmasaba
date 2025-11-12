@@ -13,7 +13,9 @@ import {
   Stack,
   Text,
   TextInput,
-  Title
+  Title,
+  Loader,
+  ActionIcon,
 } from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
 import { IconArrowBack, IconFile, IconUpload, IconX } from '@tabler/icons-react';
@@ -27,7 +29,7 @@ export default function CreateDesaAntiKorupsi() {
   const stateKorupsi = useProxy(korupsiState.desaAntikorupsi);
   const [previewFile, setPreviewFile] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     stateKorupsi.findMany.load();
@@ -56,7 +58,7 @@ export default function CreateDesaAntiKorupsi() {
       return toast.warn('Pilih kategori dokumen');
     }
 
-    setIsLoading(true);
+    setIsSubmitting(true);
     try {
       const res = await ApiFetch.api.fileStorage.create.post({
         file,
@@ -71,7 +73,7 @@ export default function CreateDesaAntiKorupsi() {
 
       stateKorupsi.create.form.fileId = uploaded.id;
       await stateKorupsi.create.create();
-      
+
       toast.success('Data berhasil disimpan');
       resetForm();
       router.push('/admin/landing-page/desa-anti-korupsi/list-desa-anti-korupsi');
@@ -79,15 +81,15 @@ export default function CreateDesaAntiKorupsi() {
       console.error('Error:', error);
       toast.error('Terjadi kesalahan saat menyimpan data');
     } finally {
-      setIsLoading(false);
+      setIsSubmitting(false);
     }
   };
   return (
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
       <Group mb="md">
-          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
+        <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Tambah Dokumen Desa Anti Korupsi
         </Title>
@@ -143,7 +145,7 @@ export default function CreateDesaAntiKorupsi() {
             </Dropzone>
 
             {previewFile && (
-              <Box mt="md" style={{ textAlign: 'center' }}>
+              <Box mt="sm" pos="relative" style={{ textAlign: 'center' }}>
                 <iframe
                   src={previewFile}
                   width="100%"
@@ -154,6 +156,24 @@ export default function CreateDesaAntiKorupsi() {
                     maxWidth: '100%',
                   }}
                 />
+                <ActionIcon
+                  variant="filled"
+                  color="red"
+                  radius="xl"
+                  size="sm"
+                  pos="absolute"
+                  top={5}
+                  right={5}
+                  onClick={() => {
+                    setPreviewFile(null);
+                    setFile(null);
+                  }}
+                  style={{
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                  }}
+                >
+                  <IconX size={14} />
+                </ActionIcon>
               </Box>
             )}
           </Box>
@@ -161,7 +181,7 @@ export default function CreateDesaAntiKorupsi() {
           <TextInput
             label="Judul Dokumen"
             placeholder="Masukkan judul dokumen"
-            defaultValue={stateKorupsi.create.form.name || ''}
+            value={stateKorupsi.create.form.name || ''}
             onChange={(e) => (stateKorupsi.create.form.name = e.target.value)}
             required
           />
@@ -179,32 +199,52 @@ export default function CreateDesaAntiKorupsi() {
           <Select
             label="Kategori"
             placeholder="Pilih kategori"
-            value={stateKorupsi.create.form.kategoriId || ''}
-            onChange={(val) => (stateKorupsi.create.form.kategoriId = val || '')}
-            data={
-              korupsiState.kategoriDesaAntiKorupsi.findMany.data?.map((v) => ({
-                value: v.id,
-                label: v.name,
-              })) || []
-            }
-            required
+            data={korupsiState.kategoriDesaAntiKorupsi.findMany.data?.map((item) => ({
+              label: item.name,
+              value: item.id,
+            })) || []}
+            value={stateKorupsi.create.form.kategoriId || null}
+            onChange={(val: string | null) => {
+              if (val) {
+                const selected = korupsiState.kategoriDesaAntiKorupsi.findMany.data?.find(
+                  (item) => item.id === val
+                );
+                if (selected) {
+                  stateKorupsi.create.form.kategoriId = selected.id;
+                }
+              } else {
+                stateKorupsi.create.form.kategoriId = '';
+              }
+            }}
             searchable
             clearable
+            nothingFoundMessage="Tidak ditemukan"
+            required
           />
 
-          <Group justify="right" mt="xl">
+          <Group justify="right">
+            <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
             <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
-              loading={isLoading}
               style={{
                 background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

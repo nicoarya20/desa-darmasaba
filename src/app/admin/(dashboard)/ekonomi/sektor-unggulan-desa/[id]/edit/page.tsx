@@ -8,6 +8,7 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Stack,
   Text,
@@ -24,11 +25,17 @@ function EditSektorUnggulanDesa() {
   const router = useRouter();
   const params = useParams() as { id: string };
   const stateGrafik = useProxy(grafikSektorUnggulan);
-
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const id = params.id;
 
   // state lokal buat form
   const [formData, setFormData] = useState({
+    name: '',
+    description: '',
+    value: 0,
+  });
+
+  const [originalData, setOriginalData] = useState({
     name: '',
     description: '',
     value: 0,
@@ -43,6 +50,11 @@ function EditSektorUnggulanDesa() {
           const data = stateGrafik.findUnique.data;
           if (data) {
             setFormData({
+              name: data.name || '',
+              description: data.description || '',
+              value: data.value || 0,
+            });
+            setOriginalData({
               name: data.name || '',
               description: data.description || '',
               value: data.value || 0,
@@ -65,6 +77,7 @@ function EditSektorUnggulanDesa() {
 
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       stateGrafik.update.id = id;
       stateGrafik.update.form = { ...formData }; // update global pas submit
       await stateGrafik.update.submit();
@@ -73,7 +86,18 @@ function EditSektorUnggulanDesa() {
     } catch (error) {
       console.error('Error update sektor unggulan:', error);
       toast.error('Terjadi kesalahan saat memperbarui sektor unggulan');
+    } finally {
+      setIsSubmitting(false);
     }
+  };
+
+  const handleResetForm = () => {
+    setFormData({
+      name: originalData.name,
+      description: originalData.description,
+      value: originalData.value,
+    });
+    toast.info('Form dikembalikan ke data awal');
   };
 
   return (
@@ -130,6 +154,17 @@ function EditSektorUnggulanDesa() {
 
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
@@ -139,7 +174,7 @@ function EditSektorUnggulanDesa() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

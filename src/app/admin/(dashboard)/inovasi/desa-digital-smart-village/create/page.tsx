@@ -2,9 +2,11 @@
 import colors from '@/con/colors';
 import ApiFetch from '@/lib/api-fetch';
 import {
+  ActionIcon,
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Stack,
   Text,
@@ -26,6 +28,7 @@ export default function CreateDesaDigital() {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const resetForm = () => {
     stateDesaDigital.create.form = {
@@ -43,6 +46,7 @@ export default function CreateDesaDigital() {
     }
 
     try {
+      setIsSubmitting(true);
       const uploadRes = await ApiFetch.api.fileStorage.create.post({
         file,
         name: file.name,
@@ -63,6 +67,8 @@ export default function CreateDesaDigital() {
     } catch (error) {
       console.error('Error in handleSubmit:', error);
       toast.error('Terjadi kesalahan saat menyimpan data');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -101,7 +107,7 @@ export default function CreateDesaDigital() {
           <TextInput
             label="Nama Desa Digital"
             placeholder="Masukkan nama desa digital"
-            defaultValue={stateDesaDigital.create.form.name}
+            value={stateDesaDigital.create.form.name}
             onChange={(e) => (stateDesaDigital.create.form.name = e.target.value)}
             radius="md"
             withAsterisk
@@ -135,7 +141,7 @@ export default function CreateDesaDigital() {
               }}
               onReject={() => toast.error('File tidak valid, gunakan format gambar')}
               maxSize={5 * 1024 ** 2}
-              accept={{ 'image/*': [] }}
+              accept={{ 'image/*': ['.jpeg', '.jpg', '.png', '.webp'] }}
               radius="md"
               p="xl"
               style={{
@@ -163,6 +169,7 @@ export default function CreateDesaDigital() {
             {/* Preview */}
             {previewImage && (
               <Box
+                pos={"relative"}
                 mt="sm"
                 style={{
                   textAlign: 'center',
@@ -180,12 +187,42 @@ export default function CreateDesaDigital() {
                     borderRadius: 12,
                   }}
                 />
+                <ActionIcon
+                  variant="filled"
+                  color="red"
+                  radius="xl"
+                  size="sm"
+                  pos="absolute"
+                  top={5}
+                  right={5}
+                  onClick={() => {
+                    setPreviewImage(null);
+                    setFile(null);
+                  }}
+                  style={{
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                  }}
+                >
+                  <IconX size={14} />
+                </ActionIcon>
               </Box>
             )}
           </Box>
 
           {/* Tombol Submit */}
-          <Group justify="flex-end" mt="sm">
+          <Group justify="right">
+            {/* Tombol Batal */}
+            <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
             <Button
               onClick={handleSubmit}
               radius="md"
@@ -194,20 +231,9 @@ export default function CreateDesaDigital() {
                 background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
-                transition: 'transform 0.2s ease, box-shadow 0.2s ease',
-              }}
-              onMouseEnter={(e) => {
-                (e.currentTarget.style.transform = 'translateY(-2px)');
-                (e.currentTarget.style.boxShadow =
-                  '0 6px 20px rgba(79, 172, 254, 0.5)');
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget.style.transform = 'translateY(0)');
-                (e.currentTarget.style.boxShadow =
-                  '0 4px 15px rgba(79, 172, 254, 0.4)');
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

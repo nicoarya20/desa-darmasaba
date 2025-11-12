@@ -2,10 +2,12 @@
 import colors from '@/con/colors';
 import ApiFetch from '@/lib/api-fetch';
 import {
+  ActionIcon,
   Box,
   Button,
   Group,
   Image,
+  Loader,
   Paper,
   Stack,
   Text,
@@ -26,6 +28,7 @@ function CreateInfoTeknologiTepatGuna() {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const resetForm = () => {
     stateInfoTekno.create.form = {
@@ -43,6 +46,7 @@ function CreateInfoTeknologiTepatGuna() {
     }
 
     try {
+      setIsSubmitting(true);
       const uploadRes = await ApiFetch.api.fileStorage.create.post({
         file: file,
         name: file.name,
@@ -64,6 +68,8 @@ function CreateInfoTeknologiTepatGuna() {
     } catch (error) {
       console.error('Error in handleSubmit:', error);
       toast.error('Terjadi kesalahan saat menyimpan data');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -91,7 +97,7 @@ function CreateInfoTeknologiTepatGuna() {
         <Stack gap="md">
           {/* Nama */}
           <TextInput
-            defaultValue={stateInfoTekno.create.form.name}
+            value={stateInfoTekno.create.form.name}
             onChange={(val) => {
               stateInfoTekno.create.form.name = val.target.value;
             }}
@@ -128,7 +134,7 @@ function CreateInfoTeknologiTepatGuna() {
               }}
               onReject={() => toast.error('File tidak valid.')}
               maxSize={5 * 1024 ** 2}
-              accept={{ 'image/*': [] }}
+              accept={{ 'image/*': ['.jpeg', '.jpg', '.png', '.webp'] }}
               radius="md"
               p="xl"
             >
@@ -149,7 +155,7 @@ function CreateInfoTeknologiTepatGuna() {
             </Dropzone>
 
             {previewImage && (
-              <Box mt="sm" style={{ textAlign: 'center' }}>
+              <Box pos={"relative"} mt="sm" style={{ textAlign: 'center' }}>
                 <Image
                   src={previewImage}
                   alt="Preview"
@@ -157,12 +163,41 @@ function CreateInfoTeknologiTepatGuna() {
                   style={{ maxHeight: 200, objectFit: 'contain', border: '1px solid #ddd' }}
                   loading="lazy"
                 />
+                <ActionIcon
+                  variant="filled"
+                  color="red"
+                  radius="xl"
+                  size="sm"
+                  pos="absolute"
+                  top={5}
+                  right={5}
+                  onClick={() => {
+                    setPreviewImage(null);
+                    setFile(null);
+                  }}
+                  style={{
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                  }}
+                >
+                  <IconX size={14} />
+                </ActionIcon>
               </Box>
             )}
           </Box>
 
           {/* Submit Button */}
           <Group justify="right">
+            <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
             <Button
               onClick={handleSubmit}
               radius="md"
@@ -173,7 +208,7 @@ function CreateInfoTeknologiTepatGuna() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

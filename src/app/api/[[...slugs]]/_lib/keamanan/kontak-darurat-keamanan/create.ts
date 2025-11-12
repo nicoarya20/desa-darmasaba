@@ -45,7 +45,7 @@ export default async function kontakDaruratKeamananCreate(context: Context) {
 
     return {
       success: true,
-      message: "Success create kontak darurat keamanan",
+      message: "Sukses menambahkan kontak darurat keamanan",
       data: result,
     };
   } catch (error) {

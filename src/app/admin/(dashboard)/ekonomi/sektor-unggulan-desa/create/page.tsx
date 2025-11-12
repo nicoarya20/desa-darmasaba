@@ -6,6 +6,7 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Stack,
   Text,
@@ -18,11 +19,13 @@ import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import CreateEditor from '../../../_com/createEditor';
 import grafikSektorUnggulan from '../../../_state/ekonomi/sektor-unggulan-desa';
+import { toast } from 'react-toastify';
 
 function CreateSektorUnggulanDesa() {
   const stateGrafik = useProxy(grafikSektorUnggulan);
   const [chartData, setChartData] = useState<any[]>([]);
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const resetForm = () => {
     stateGrafik.create.form = {
@@ -33,16 +36,24 @@ function CreateSektorUnggulanDesa() {
   };
 
   const handleSubmit = async () => {
-    const id = await stateGrafik.create.create();
-    if (id) {
-      const idStr = String(id);
-      await stateGrafik.findUnique.load(idStr);
-      if (stateGrafik.findUnique.data) {
-        setChartData([stateGrafik.findUnique.data]);
+    try {
+      setIsSubmitting(true);
+      const id = await stateGrafik.create.create();
+      if (id) {
+        const idStr = String(id);
+        await stateGrafik.findUnique.load(idStr);
+        if (stateGrafik.findUnique.data) {
+          setChartData([stateGrafik.findUnique.data]);
+        }
       }
+      resetForm();
+      router.push('/admin/ekonomi/sektor-unggulan-desa');
+    } catch (error) {
+      console.error('Error creating sektor unggulan:', error);
+      toast.error('Terjadi kesalahan saat menambahkan sektor unggulan');
+    } finally {
+      setIsSubmitting(false);
     }
-    resetForm();
-    router.push('/admin/ekonomi/sektor-unggulan-desa');
   };
 
   return (
@@ -75,7 +86,7 @@ function CreateSektorUnggulanDesa() {
           <TextInput
             label="Nama Sektor Unggulan"
             placeholder="Masukkan nama sektor unggulan"
-            defaultValue={stateGrafik.create.form.name}
+            value={stateGrafik.create.form.name}
             onChange={(e) => {
               stateGrafik.create.form.name = e.currentTarget.value;
             }}
@@ -98,7 +109,7 @@ function CreateSektorUnggulanDesa() {
             label="Jumlah"
             type="number"
             placeholder="Masukkan jumlah"
-            defaultValue={stateGrafik.create.form.value}
+            value={stateGrafik.create.form.value}
             onChange={(e) => {
               stateGrafik.create.form.value = Number(e.currentTarget.value);
             }}
@@ -106,6 +117,17 @@ function CreateSektorUnggulanDesa() {
           />
 
           <Group justify="right">
+            <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
             <Button
               onClick={handleSubmit}
               radius="md"
@@ -116,7 +138,7 @@ function CreateSektorUnggulanDesa() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

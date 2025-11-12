@@ -7,6 +7,7 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Stack,
   TextInput,
@@ -17,13 +18,23 @@ import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
+import { convertToISODate } from '../../../persentase_data_kelahiran_kematian/lib/dateUtils';
 
 function EditGrafikHasilKepuasan() {
   const editState = useProxy(grafikkepuasan);
   const router = useRouter();
   const params = useParams();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [formData, setFormData] = useState({
+    nama: '',
+    tanggal: '',
+    jenisKelamin: '',
+    alamat: '',
+    penyakit: '',
+  });
+
+  const [originalData, setOriginalData] = useState({
     nama: '',
     tanggal: '',
     jenisKelamin: '',
@@ -39,13 +50,25 @@ function EditGrafikHasilKepuasan() {
 
       try {
         const data = await editState.update.load(id);
-        if (data) setFormData({
-          nama: data.nama || '',
-          tanggal: data.tanggal || '',
-          jenisKelamin: data.jenisKelamin || '',
-          alamat: data.alamat || '',
-          penyakit: data.penyakit || '',
-        });
+        if (data) {
+          const formattedTanggal = convertToISODate(data.tanggal);
+
+          setFormData({
+            nama: data.nama || '',
+            tanggal: formattedTanggal,
+            jenisKelamin: data.jenisKelamin || '',
+            alamat: data.alamat || '',
+            penyakit: data.penyakit || '',
+          });
+
+          setOriginalData({
+            nama: data.nama || '',
+            tanggal: formattedTanggal,
+            jenisKelamin: data.jenisKelamin || '',
+            alamat: data.alamat || '',
+            penyakit: data.penyakit || '',
+          });
+        }
       } catch (err) {
         console.error("Error loading grafik hasil kepuasan:", err);
         toast.error("Gagal memuat data grafik hasil kepuasan");
@@ -60,8 +83,20 @@ function EditGrafikHasilKepuasan() {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
+  const handleResetForm = () => {
+    setFormData({
+      nama: originalData.nama,
+      tanggal: originalData.tanggal,
+      jenisKelamin: originalData.jenisKelamin,
+      alamat: originalData.alamat,
+      penyakit: originalData.penyakit,
+    });
+    toast.info("Form dikembalikan ke data awal");
+  };
+
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       editState.update.form = { ...editState.update.form, ...formData };
       await editState.update.submit();
       toast.success('Grafik hasil kepuasan berhasil diperbarui!');
@@ -69,6 +104,8 @@ function EditGrafikHasilKepuasan() {
     } catch (err) {
       console.error('Error updating grafik hasil kepuasan:', err);
       toast.error('Terjadi kesalahan saat memperbarui grafik hasil kepuasan');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -113,6 +150,17 @@ function EditGrafikHasilKepuasan() {
 
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
@@ -122,7 +170,7 @@ function EditGrafikHasilKepuasan() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

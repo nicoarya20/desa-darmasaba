@@ -2,10 +2,12 @@
 import colors from '@/con/colors';
 import ApiFetch from '@/lib/api-fetch';
 import {
+  ActionIcon,
   Box,
   Button,
   Group,
   Image,
+  Loader,
   Paper,
   Stack,
   Text,
@@ -27,6 +29,7 @@ function CreatePosyandu() {
   const router = useRouter();
   const [file, setFile] = useState<File | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
 
   const resetForm = () => {
@@ -43,35 +46,31 @@ function CreatePosyandu() {
 
 
   const handleSubmit = async () => {
-    if (!file) {
-      return toast.warn('Silakan pilih file gambar terlebih dahulu');
+    try {
+      setIsSubmitting(true);
+      if (!file) {
+        return toast.warn('Silakan pilih file gambar terlebih dahulu');
+      }
+      // Upload gambar dulu
+      const res = await ApiFetch.api.fileStorage.create.post({
+        file,
+        name: file.name,
+      });
+      const uploaded = res.data?.data;
+      if (!uploaded?.id) {
+        return toast.error('Gagal upload gambar');
+      }
+      statePosyandu.create.form.imageId = uploaded.id;
+      await statePosyandu.create.create();
+      resetForm();
+      router.push('/admin/kesehatan/posyandu');
+    } catch (error) {
+      console.error('Error creating posyandu:', error);
+      toast.error('Gagal menambahkan posyandu');
+    } finally {
+      setIsSubmitting(false);
     }
-
-
-    // Upload gambar dulu
-    const res = await ApiFetch.api.fileStorage.create.post({
-      file,
-      name: file.name,
-    });
-
-
-    const uploaded = res.data?.data;
-    if (!uploaded?.id) {
-      return toast.error('Gagal upload gambar');
-    }
-
-
-    statePosyandu.create.form.imageId = uploaded.id;
-
-
-    await statePosyandu.create.create();
-
-
-    resetForm();
-    router.push('/admin/kesehatan/posyandu');
   };
-
-
   return (
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
       {/* Header */}
@@ -109,7 +108,7 @@ function CreatePosyandu() {
               }}
               onReject={() => toast.error('File tidak valid, gunakan format gambar')}
               maxSize={5 * 1024 ** 2}
-              accept={{ 'image/*': [] }}
+              accept={{ 'image/*': ['.jpeg', '.jpg', '.png', '.webp'] }}
               radius="md"
               p="xl"
             >
@@ -131,7 +130,7 @@ function CreatePosyandu() {
 
 
             {previewImage && (
-              <Box mt="sm" style={{ textAlign: 'center' }}>
+              <Box pos={"relative"} mt="sm" style={{ textAlign: 'center' }}>
                 <Image
                   src={previewImage}
                   alt="Preview Gambar"
@@ -143,6 +142,24 @@ function CreatePosyandu() {
                   }}
                   loading="lazy"
                 />
+                <ActionIcon
+                  variant="filled"
+                  color="red"
+                  radius="xl"
+                  size="sm"
+                  pos="absolute"
+                  top={5}
+                  right={5}
+                  onClick={() => {
+                    setPreviewImage(null);
+                    setFile(null);
+                  }}
+                  style={{
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                  }}
+                >
+                  <IconX size={14} />
+                </ActionIcon>
               </Box>
             )}
           </Box>
@@ -152,14 +169,14 @@ function CreatePosyandu() {
           <TextInput
             label="Nama Posyandu"
             placeholder="Masukkan nama posyandu"
-            defaultValue={statePosyandu.create.form.name || ''}
+            value={statePosyandu.create.form.name || ''}
             onChange={(e) => (statePosyandu.create.form.name = e.target.value)}
             required
           />
           <TextInput
             label="Telepon Posyandu"
             placeholder="Masukkan telepon posyandu"
-            defaultValue={statePosyandu.create.form.nomor || ''}
+            value={statePosyandu.create.form.nomor || ''}
             onChange={(e) => (statePosyandu.create.form.nomor = e.target.value)}
             required
           />
@@ -190,6 +207,17 @@ function CreatePosyandu() {
           {/* Button */}
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
@@ -199,7 +227,7 @@ function CreatePosyandu() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

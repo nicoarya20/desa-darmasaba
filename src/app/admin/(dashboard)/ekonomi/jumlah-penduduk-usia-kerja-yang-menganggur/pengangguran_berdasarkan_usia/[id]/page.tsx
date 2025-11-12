@@ -6,6 +6,7 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Stack,
   TextInput,
@@ -25,8 +26,17 @@ function EditGrafikBerdasarkanUsiaKerjaYangMenganggur() {
   );
   const id = params.id;
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   // ✅ state lokal, controlled
   const [formData, setFormData] = useState({
+    usia18_25: '',
+    usia26_35: '',
+    usia36_45: '',
+    usia46_keatas: '',
+  });
+
+  const [originalData, setOriginalData] = useState({
     usia18_25: '',
     usia26_35: '',
     usia36_45: '',
@@ -45,6 +55,13 @@ function EditGrafikBerdasarkanUsiaKerjaYangMenganggur() {
             usia36_45: data.usia36_45 || '',
             usia46_keatas: data.usia46_keatas || '',
           });
+          setOriginalData({
+            usia18_25: data.usia18_25 || '',
+            usia26_35: data.usia26_35 || '',
+            usia36_45: data.usia36_45 || '',
+            usia46_keatas: data.usia46_keatas || '',
+          });
+          
         }
       });
     }
@@ -57,8 +74,19 @@ function EditGrafikBerdasarkanUsiaKerjaYangMenganggur() {
     }));
   };
 
+  const handleResetForm = () => {
+    setFormData({
+      usia18_25: originalData.usia18_25,
+      usia26_35: originalData.usia26_35,
+      usia36_45: originalData.usia36_45,
+      usia46_keatas: originalData.usia46_keatas,
+    });
+    toast.info('Form dikembalikan ke data awal');
+  };
+
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       // ✅ baru update global state pas submit
       stategrafik.update.id = id;
       stategrafik.update.form = { ...formData };
@@ -72,6 +100,8 @@ function EditGrafikBerdasarkanUsiaKerjaYangMenganggur() {
     } catch (error) {
       console.error(error);
       toast.error('Terjadi kesalahan saat memperbarui data grafik');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -135,6 +165,17 @@ function EditGrafikBerdasarkanUsiaKerjaYangMenganggur() {
 
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
@@ -144,7 +185,7 @@ function EditGrafikBerdasarkanUsiaKerjaYangMenganggur() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

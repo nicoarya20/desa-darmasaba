@@ -22,7 +22,7 @@ export default async function mythVsFactCreate(context: Context) {
     });
     return {
         success: true,
-        message: "Success create myth vs fact",
+        message: "Sukses menambahkan myth vs fact",
         data: {
             ...body,
         },

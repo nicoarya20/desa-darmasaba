@@ -61,7 +61,7 @@ function ListAPBDes({ search }: { search: string }) {
             leftSection={<IconPlus size={18} />}
             color="blue"
             variant="light"
-            onClick={() => router.push('/admin/landing-page/apbdes/create')}
+            onClick={() => router.push('/admin/landing-page/APBDes/create')}
           >
             Tambah Baru
           </Button>
@@ -116,7 +116,7 @@ function ListAPBDes({ search }: { search: string }) {
                         variant="light"
                         color="blue"
                         leftSection={<IconDeviceImacCog size={16} />}
-                        onClick={() => router.push(`/admin/landing-page/apbdes/${item.id}`)}
+                        onClick={() => router.push(`/admin/landing-page/APBDes/${item.id}`)}
                         fullWidth
                       >
                         Detail

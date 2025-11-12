@@ -217,20 +217,22 @@ function ListGrafikBerdasarkanPendidikan({ search }: { search: string }) {
           <Title order={3} pb={10}>
             Grafik Pengangguran Berdasarkan Pendidikan
           </Title>
-          {donutData.length > 0 ? (
-            <DonutChart
-              data={donutData}
-              withLabels
-              withTooltip
-              tooltipDataSource="segment"
-              size={260}
-              thickness={40}
-            />
-          ) : (
-            <Text color="dimmed">
-              Belum ada data untuk ditampilkan dalam grafik
-            </Text>
-          )}
+          <Center>
+            {donutData.length > 0 ? (
+              <DonutChart
+                data={donutData}
+                withLabels
+                withTooltip
+                tooltipDataSource="segment"
+                size={260}
+                thickness={40}
+              />
+            ) : (
+              <Text color="dimmed">
+                Belum ada data untuk ditampilkan dalam grafik
+              </Text>
+            )}
+          </Center>
         </Stack>
       </Paper>
 

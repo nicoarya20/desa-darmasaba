@@ -2,21 +2,28 @@
 'use client'
 
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, Stack, TextInput, Title } from '@mantine/core';
+import { Box, Button, Loader, Group, Paper, Stack, TextInput, Title } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import dataPendidikan from '../../../_state/pendidikan/data-pendidikan';
+import { toast } from 'react-toastify';
 
 export default function EditDataPendidikan() {
   const router = useRouter();
   const params = useParams() as { id: string };
   const stateDPM = useProxy(dataPendidikan);
   const id = params.id;
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // state lokal untuk form
   const [formData, setFormData] = useState({
+    name: '',
+    jumlah: '',
+  });
+
+  const [originalData, setOriginalData] = useState({
     name: '',
     jumlah: '',
   });
@@ -31,21 +38,41 @@ export default function EditDataPendidikan() {
             name: data.name || '',
             jumlah: data.jumlah || '',
           });
+          setOriginalData({
+            name: data.name || '',
+            jumlah: data.jumlah || '',
+          });
         }
       });
     }
   }, [id]);
+
+  const handleResetForm = () => {
+    setFormData({
+      name: originalData.name,
+      jumlah: originalData.jumlah,
+    });
+    toast.info("Form dikembalikan ke data awal");
+  };
 
   const handleChange = (field: 'name' | 'jumlah', value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleSubmit = async () => {
-    // update global state hanya saat submit
+    try {
+      setIsSubmitting(true);
+      // update global state hanya saat submit
     stateDPM.update.id = id;
     stateDPM.update.form = { ...formData };
     await stateDPM.update.submit();
     router.push('/admin/pendidikan/data-pendidikan');
+    } catch (error) {
+      console.error("Error updating data pendidikan:", error);
+      toast.error("Terjadi kesalahan saat memperbarui data pendidikan");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -83,19 +110,30 @@ export default function EditDataPendidikan() {
             radius="md"
             required
           />
-          <Group justify="right" mt="sm">
+          <Group justify="right">
+            {/* Tombol Batal */}
             <Button
-              onClick={handleSubmit}
-              style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, ${colors['blue-button-trans']})`,
-                color: 'white',
-                boxShadow: '0 0 10px rgba(0,123,255,0.5)',
-                '&:hover': { opacity: 0.9 },
-              }}
+              variant="outline"
+              color="gray"
               radius="md"
               size="md"
+              onClick={handleResetForm}
             >
-              Simpan
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
+              onClick={handleSubmit}
+              radius="md"
+              size="md"
+              style={{
+                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                color: '#fff',
+                boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
+              }}
+            >
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

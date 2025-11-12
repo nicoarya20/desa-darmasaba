@@ -4,6 +4,7 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Stack,
   Text,
@@ -16,10 +17,13 @@ import { useProxy } from 'valtio/utils';
 import CreateEditor from '../../../_com/createEditor';
 import SelectIconProgram from '../../../_com/selectIcon';
 import programKreatifState from '../../../_state/inovasi/program-kreatif';
+import { useState } from 'react';
+import { toast } from 'react-toastify';
 
 function CreateProgramKreatifDesa() {
   const stateCreate = useProxy(programKreatifState);
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const resetForm = () => {
     stateCreate.create.form = {
@@ -31,11 +35,18 @@ function CreateProgramKreatifDesa() {
   };
 
   const handleSubmit = async () => {
-    const success = await stateCreate.create.create();
+    try {
+      const success = await stateCreate.create.create();
 
-    if (success) {
-      resetForm();
-      router.push("/admin/inovasi/program-kreatif-desa");
+      if (success) {
+        resetForm();
+        router.push("/admin/inovasi/program-kreatif-desa");
+      }
+    } catch (error) {
+      console.error("Error creating program kreatif desa:", error);
+      toast.error("Gagal menambahkan program kreatif desa");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -65,7 +76,7 @@ function CreateProgramKreatifDesa() {
           <TextInput
             label={<Text fw="bold" fz="sm">Nama Program Kreatif Desa</Text>}
             placeholder="Masukkan nama program kreatif desa"
-            defaultValue={stateCreate.create.form.name || ""}
+            value={stateCreate.create.form.name || ""}
             onChange={(e) => (stateCreate.create.form.name = e.currentTarget.value)}
             required
           />
@@ -82,7 +93,7 @@ function CreateProgramKreatifDesa() {
           <TextInput
             label={<Text fw="bold" fz="sm">Deskripsi Singkat Program Kreatif Desa</Text>}
             placeholder="Masukkan deskripsi singkat program kreatif desa"
-            defaultValue={stateCreate.create.form.slug || ""}
+            value={stateCreate.create.form.slug || ""}
             onChange={(e) => (stateCreate.create.form.slug = e.currentTarget.value)}
             required
           />
@@ -102,6 +113,17 @@ function CreateProgramKreatifDesa() {
           {/* Tombol Submit */}
           <Group justify="right" mt="md">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
@@ -111,7 +133,7 @@ function CreateProgramKreatifDesa() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

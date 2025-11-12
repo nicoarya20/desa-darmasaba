@@ -3,7 +3,7 @@
 
 import perpustakaanDigitalState from '@/app/admin/(dashboard)/_state/pendidikan/perpustakaan-digital';
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, Stack, TextInput, Title } from '@mantine/core';
+import { Box, Button, Group, Loader, Paper, Stack, TextInput, Title } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -14,6 +14,11 @@ function EditKategoriBuku() {
   const editState = useProxy(perpustakaanDigitalState.kategoriBuku);
   const router = useRouter();
   const params = useParams();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [originalData, setOriginalData] = useState({
+    name: "",
+  })
 
   const [formData, setFormData] = useState({ name: '' });
   const [loading, setLoading] = useState(true);
@@ -27,6 +32,9 @@ function EditKategoriBuku() {
         const data = await editState.update.load(id);
         if (data) {
           setFormData({ name: data.name || '' });
+          setOriginalData({
+            name: data.name || "",
+          });
         }
       } catch (error) {
         console.error('Error loading kategori buku:', error);
@@ -43,8 +51,16 @@ function EditKategoriBuku() {
     setFormData((prev) => ({ ...prev, name: e.target.value }));
   };
 
+  const handleResetForm = () => {
+    setFormData({
+      name: originalData.name,
+    });
+    toast.info('Form dikembalikan ke data awal');
+  };
+
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       // Update global state hanya saat submit
       editState.update.form = { ...editState.update.form, name: formData.name };
       await editState.update.update();
@@ -53,6 +69,8 @@ function EditKategoriBuku() {
     } catch (error) {
       console.error('Error updating kategori buku:', error);
       toast.error('Terjadi kesalahan saat memperbarui kategori buku');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -86,6 +104,18 @@ function EditKategoriBuku() {
           />
 
           <Group justify="right">
+            {/* Tombol Batal */}
+            <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
             <Button
               onClick={handleSubmit}
               radius="md"
@@ -95,9 +125,8 @@ function EditKategoriBuku() {
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
-              disabled={loading || !formData.name.trim()}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

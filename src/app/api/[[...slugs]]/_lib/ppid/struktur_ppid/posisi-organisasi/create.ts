@@ -27,7 +27,7 @@ export default async function posisiOrganisasiCreate(context: Context) {
         });
         return {
             success: true,
-            message: "Success create posisi organisasi",
+            message: "Sukses menambahkan posisi organisasi",
             data: posisiOrganisasi
         };
     } catch (error) {

@@ -9,7 +9,8 @@ import {
   Paper,
   Stack,
   TextInput,
-  Title
+  Title,
+  Loader
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -26,6 +27,12 @@ function EditKategoriPotensi() {
     nama: '',
   });
 
+  const [originalData, setOriginalData] = useState({
+    nama: '',
+  });
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   // Load data dari backend -> isi ke formData lokal
   useEffect(() => {
     const loadKategori = async () => {
@@ -36,6 +43,9 @@ function EditKategoriPotensi() {
         const data = await editState.update.load(id);
         if (data) {
           setFormData({
+            nama: data.nama || '',
+          });
+          setOriginalData({
             nama: data.nama || '',
           });
         }
@@ -55,8 +65,16 @@ function EditKategoriPotensi() {
     }));
   };
 
+  const handleResetForm = () => {
+    setFormData({
+      nama: originalData.nama,
+    });
+    toast.info("Form dikembalikan ke data awal");
+  };
+
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       // Update global state hanya pas submit
       editState.update.form = {
         ...editState.update.form,
@@ -69,6 +87,8 @@ function EditKategoriPotensi() {
     } catch (error) {
       console.error('Error updating kategori potensi:', error);
       toast.error('Terjadi kesalahan saat memperbarui kategori potensi');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -107,6 +127,17 @@ function EditKategoriPotensi() {
 
           <Group justify="flex-end">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
@@ -116,7 +147,7 @@ function EditKategoriPotensi() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client';
-import { Box, Button, Group, Image, Paper, Select, Stack, Text, TextInput, Title } from '@mantine/core';
+import { ActionIcon, Box, Button, Group, Image, Paper, Select, Stack, Text, TextInput, Title, Loader } from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
 import { IconArrowBack, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -28,6 +28,17 @@ export default function EditPrestasiDesa() {
     kategoriId: '',
     imageId: '',
   });
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [originalData, setOriginalData] = useState({
+    name: "",
+    deskripsi: "",
+    kategoriId: "",
+    imageId: "",
+    imageUrl: "",
+  });
+
   const [previewFile, setPreviewFile] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const params = useParams();
@@ -59,6 +70,14 @@ export default function EditPrestasiDesa() {
             imageId: data.imageId,
           });
 
+          setOriginalData({
+            name: data.name,
+            deskripsi: data.deskripsi,
+            kategoriId: data.kategoriId,
+            imageId: data.imageId,
+            imageUrl: data.image?.link || "",
+          });
+
           if (data.image?.link) setPreviewFile(data.image.link);
         }
       } catch (error) {
@@ -70,9 +89,22 @@ export default function EditPrestasiDesa() {
     loadPrestasi();
   }, [params?.id]);
 
+  const handleResetForm = () => {
+    setFormData({
+      name: originalData.name,
+      deskripsi: originalData.deskripsi,
+      kategoriId: originalData.kategoriId,
+      imageId: originalData.imageId,
+    });
+    setPreviewFile(originalData.imageUrl || null);
+    setFile(null);
+    toast.info("Form dikembalikan ke data awal");
+  };
+
+
   const handleSubmit = async () => {
     try {
-      // Jika ada file baru, upload dulu
+      setIsSubmitting(true);
       let imageId = formData.imageId;
       if (file) {
         const res = await ApiFetch.api.fileStorage.create.post({ file, name: file.name });
@@ -90,15 +122,17 @@ export default function EditPrestasiDesa() {
     } catch (error) {
       console.error('Error updating prestasi desa:', error);
       toast.error('Terjadi kesalahan saat memperbarui prestasi desa');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
       <Group mb="md">
-          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
+        <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">Edit Prestasi Desa</Title>
       </Group>
 
@@ -118,12 +152,29 @@ export default function EditPrestasiDesa() {
           </Box>
 
           <Select
-            label="Kategori"
-            placeholder="Pilih kategori"
-            value={formData.kategoriId}
-            onChange={(val) => setFormData({ ...formData, kategoriId: val ?? '' })}
-            data={prestasiState.kategoriPrestasi.findMany.data?.map((v) => ({ value: v.id, label: v.name })) || []}
-            required
+           label="Kategori"
+           placeholder="Pilih kategori"
+           data={prestasiState.kategoriPrestasi.findMany.data?.map((item) => ({
+             label: item.name,
+             value: item.id,
+           })) || []}
+           value={formData.kategoriId || null}
+           onChange={(val: string | null) => {
+             if (val) {
+               const selected = prestasiState.kategoriPrestasi.findMany.data?.find(
+                 (item) => item.id === val
+               );
+               if (selected) {
+                 setFormData({ ...formData, kategoriId: selected.id });
+               }
+             } else {
+               setFormData({ ...formData, kategoriId: '' });
+             }
+           }}
+           searchable
+           clearable
+           nothingFoundMessage="Tidak ditemukan"
+           required
           />
 
           <Box>
@@ -138,7 +189,7 @@ export default function EditPrestasiDesa() {
               }}
               onReject={() => toast.error('File tidak valid, gunakan format gambar')}
               maxSize={5 * 1024 ** 2}
-              accept={{ 'image/*': [] }}
+              accept={{ 'image/*': ['.jpeg', '.jpg', '.png', '.webp'] }}
               radius="md"
               p="xl"
             >
@@ -148,13 +199,13 @@ export default function EditPrestasiDesa() {
                 <Dropzone.Idle><IconPhoto size={48} color="#868e96" stroke={1.5} /></Dropzone.Idle>
                 <Stack gap="xs" align="center">
                   <Text size="md" fw={500}>Seret gambar atau klik untuk memilih file</Text>
-                  <Text size="sm" c="dimmed">Maksimal 5MB, format gambar wajib</Text>
+                  <Text size="sm" c="dimmed">Maksimal 5MB, format gambar .png, .jpg, .jpeg, webp</Text>
                 </Stack>
               </Group>
             </Dropzone>
 
             {previewFile && (
-              <Box mt="sm" style={{ display: 'flex', justifyContent: 'center' }}>
+              <Box pos="relative" mt="sm" style={{ display: 'flex', justifyContent: 'center' }}>
                 <Image
                   src={previewFile}
                   alt="Preview Gambar"
@@ -162,11 +213,42 @@ export default function EditPrestasiDesa() {
                   style={{ maxHeight: 220, objectFit: 'contain', border: `1px solid ${colors['blue-button']}` }}
                   loading="lazy"
                 />
+                <ActionIcon
+                  variant="filled"
+                  color="red"
+                  radius="xl"
+                  size="sm"
+                  pos="absolute"
+                  top={5}
+                  right={5}
+                  onClick={() => {
+                    setPreviewFile(null);
+                    setFile(null);
+                  }}
+                  style={{
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                  }}
+                >
+                  <IconX size={14} />
+                </ActionIcon>
               </Box>
             )}
           </Box>
 
-          <Group justify="right" mt="md">
+          {/* ======= Tombol Aksi ======= */}
+          <Group justify="right">
+            {/* Tombol Batal */}
+            <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
             <Button
               onClick={handleSubmit}
               radius="md"
@@ -177,7 +259,7 @@ export default function EditPrestasiDesa() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

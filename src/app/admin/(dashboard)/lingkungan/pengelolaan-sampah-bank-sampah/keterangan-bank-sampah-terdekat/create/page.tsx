@@ -2,7 +2,7 @@
 
 import pengelolaanSampahState from '@/app/admin/(dashboard)/_state/lingkungan/pengelolaan-sampah';
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
+import { Box, Button, Group, Loader, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
@@ -17,6 +17,7 @@ function CreateKeteranganBankSampahTerdekat() {
   const router = useRouter();
 
   const [markerPosition, setMarkerPosition] = useState<{ lat: number; lng: number } | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const resetForm = () => {
     keteranganState.create.form = {
@@ -30,6 +31,7 @@ function CreateKeteranganBankSampahTerdekat() {
   }
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       if (!keteranganState.create.form.name) {
         return toast.error('Nama bank sampah harus diisi');
       }
@@ -48,6 +50,8 @@ function CreateKeteranganBankSampahTerdekat() {
     } catch (error) {
       console.error('Error creating bank sampah:', error);
       toast.error('Gagal menambahkan data bank sampah');
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
@@ -74,7 +78,7 @@ function CreateKeteranganBankSampahTerdekat() {
           <TextInput
             label="Nama Bank Sampah"
             placeholder="Masukkan nama bank sampah"
-            defaultValue={keteranganState.create.form.name}
+            value={keteranganState.create.form.name}
             onChange={(e) => (keteranganState.create.form.name = e.target.value)}
             required
           />
@@ -82,7 +86,7 @@ function CreateKeteranganBankSampahTerdekat() {
           <TextInput
             label="Alamat"
             placeholder="Masukkan alamat lengkap"
-            defaultValue={keteranganState.create.form.alamat}
+            value={keteranganState.create.form.alamat}
             onChange={(e) => (keteranganState.create.form.alamat = e.target.value)}
             required
           />
@@ -90,7 +94,7 @@ function CreateKeteranganBankSampahTerdekat() {
           <TextInput
             label="Nama Tempat di Maps"
             placeholder="Masukkan nama tempat yang terdaftar di Google Maps"
-            defaultValue={keteranganState.create.form.namaTempatMaps}
+            value={keteranganState.create.form.namaTempatMaps}
             onChange={(e) => (keteranganState.create.form.namaTempatMaps = e.target.value)}
             required
           />
@@ -117,6 +121,17 @@ function CreateKeteranganBankSampahTerdekat() {
 
           <Group justify="right" mt="md">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
@@ -126,7 +141,7 @@ function CreateKeteranganBankSampahTerdekat() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

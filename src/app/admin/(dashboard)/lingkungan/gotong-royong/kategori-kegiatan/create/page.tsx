@@ -1,16 +1,18 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
+import { Box, Button, Group, Loader, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import gotongRoyongState from '../../../../_state/lingkungan/gotong-royong';
+import { toast } from 'react-toastify';
 
 function CreateKategoriKegiatan() {
   const router = useRouter();
   const stateKategori = useProxy(gotongRoyongState.kategoriKegiatan)
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     stateKategori.findMany.load();
@@ -23,9 +25,17 @@ function CreateKategoriKegiatan() {
   }
 
   const handleSubmit = async () => {
-    await stateKategori.create.create();
-    resetForm();
-    router.push("/admin/lingkungan/gotong-royong/kategori-kegiatan")
+    try {
+      setIsSubmitting(true);
+      await stateKategori.create.create();
+      resetForm();
+      router.push("/admin/lingkungan/gotong-royong/kategori-kegiatan")
+    } catch (error) {
+      console.error('Error creating kategori kegiatan:', error);
+      toast.error('Terjadi kesalahan saat menambahkan kategori kegiatan');
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -51,7 +61,7 @@ function CreateKategoriKegiatan() {
       >
         <Stack gap="md">
           <TextInput
-            defaultValue={stateKategori.create.form.nama}
+            value={stateKategori.create.form.nama}
             onChange={(val) => (stateKategori.create.form.nama = val.target.value)}
             label={<Text fw="bold" fz="sm">Nama Kategori Kegiatan</Text>}
             placeholder="Masukkan nama kategori kegiatan"
@@ -59,6 +69,17 @@ function CreateKategoriKegiatan() {
           />
 
           <Group justify="right">
+            <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
             <Button
               onClick={handleSubmit}
               radius="md"
@@ -69,7 +90,7 @@ function CreateKategoriKegiatan() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

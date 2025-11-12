@@ -1,146 +1,272 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-'use client'
+'use client';
 import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import stateProfileDesa from '@/app/admin/(dashboard)/_state/desa/profile';
 import colors from '@/con/colors';
-import { Alert, Box, Button, Center, Group, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
+import {
+    Alert,
+    Box,
+    Button,
+    Center,
+    Group,
+    Loader,
+    Paper,
+    Stack,
+    Text,
+    TextInput,
+    Title
+} from '@mantine/core';
 import { IconAlertCircle, IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
-import { useProxy } from 'valtio/utils';
 
+// 🔹 Types
+interface FormData {
+    judul: string;
+    deskripsi: string;
+}
+
+// 🔹 Main Component
 function Page() {
-    const sejarahState = useProxy(stateProfileDesa.sejarahDesa)
-    const router = useRouter()
-    const params = useParams()
-    const [isSubmitting, setIsSubmitting] = useState(false);
+    const router = useRouter();
+    const params = useParams();
 
-    // Load data
+    // 🧩 Local State
+    const [formData, setFormData] = useState<FormData>({
+        judul: '',
+        deskripsi: '',
+    });
+    const [originalData, setOriginalData] = useState<FormData>({
+        judul: '',
+        deskripsi: '',
+    });
+    const [isLoading, setIsLoading] = useState(true);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [loadError, setLoadError] = useState<string | null>(null);
+
+    // 🧭 Load Initial Data
     useEffect(() => {
         const loadData = async () => {
             const id = params?.id as string;
             if (!id) {
-                toast.error("ID tidak valid");
-                router.push("/admin/desa/profile/profile-desa");
+                toast.error('ID tidak valid');
+                router.push('/admin/desa/profile/profile-desa');
                 return;
             }
 
+            setIsLoading(true);
+            setLoadError(null);
+
             try {
-                const data = await sejarahState.findUnique.load(id);
+                const data = await stateProfileDesa.sejarahDesa.findUnique.load(id);
+
                 if (data) {
-                    sejarahState.update.initialize(data);
+                    const initialData: FormData = {
+                        judul: data.judul || '',
+                        deskripsi: data.deskripsi || '',
+                    };
+
+                    setFormData(initialData);
+                    setOriginalData(initialData);
+
+                    stateProfileDesa.sejarahDesa.update.initialize(data);
+                } else {
+                    setLoadError('Data tidak ditemukan');
                 }
             } catch (error) {
-                console.error("Error loading sejarah:", error);
-                toast.error("Gagal memuat data sejarah desa");
+                console.error('Error loading sejarah:', error);
+                setLoadError('Gagal memuat data sejarah desa');
+                toast.error('Gagal memuat data sejarah desa');
+            } finally {
+                setIsLoading(false);
             }
         };
 
         loadData();
 
         return () => {
-            sejarahState.update.reset();
-            sejarahState.findUnique.reset();
+            stateProfileDesa.sejarahDesa.update.reset();
+            stateProfileDesa.sejarahDesa.findUnique.reset();
         };
     }, [params?.id, router]);
 
+    // 🔄 Check if form has changes
+    
+
+    // 🔁 Reset Form to Original Data
+    const handleResetForm = () => {
+        setFormData(originalData);
+        toast.info('Form dikembalikan ke data awal');
+    };
+
+    // 💾 Submit Handler
     const handleSubmit = async () => {
-        if (isSubmitting || !sejarahState.update.form.judul.trim()) {
-            toast.error("Judul wajib diisi");
+        // Validation
+        if (!formData.judul.trim()) {
+            toast.error('Judul wajib diisi');
             return;
         }
 
         setIsSubmitting(true);
+
         try {
-            const success = await sejarahState.update.submit();
+            // Access original state directly (not proxy)
+            const originalState = stateProfileDesa.sejarahDesa;
+
+            // Update form data
+            originalState.update.form.judul = formData.judul;
+            originalState.update.form.deskripsi = formData.deskripsi;
+
+            // Submit
+            const success = await originalState.update.submit();
+
             if (success) {
-                toast.success("Data berhasil disimpan");
-                router.push("/admin/desa/profile/profile-desa");
+                toast.success('Data berhasil disimpan');
+                router.push('/admin/desa/profile/profile-desa');
+            } else {
+                toast.error('Gagal menyimpan data');
             }
         } catch (error) {
-            console.error("Error update sejarah desa:", error);
-            toast.error("Terjadi kesalahan saat update sejarah desa");
+            console.error('Error update sejarah desa:', error);
+            toast.error('Terjadi kesalahan saat update sejarah desa');
         } finally {
             setIsSubmitting(false);
         }
     };
 
-    const handleBack = () => router.back();
+    // 📝 Form Field Handlers
+    const handleJudulChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setFormData(prev => ({ ...prev, judul: e.target.value }));
+    };
 
-    // Loading state
-    if (sejarahState.findUnique.loading || sejarahState.update.loading) {
+    const handleDeskripsiChange = (html: string) => {
+        setFormData(prev => ({ ...prev, deskripsi: html }));
+    };
+
+    const handleBack = () => {
+        router.back();
+    };
+    // 🔄 Loading State
+    if (isLoading) {
         return (
             <Box>
                 <Center h={400}>
-                    <Text>Memuat data...</Text>
+                    <Stack align="center" gap="md">
+                        <Loader size="lg" color={colors['blue-button']} />
+                        <Text size="lg" fw={500} c="dimmed">
+                            Memuat data...
+                        </Text>
+                    </Stack>
                 </Center>
             </Box>
         );
     }
 
-    // Error state
-    if (sejarahState.findUnique.error) {
+    // ❌ Error State
+    if (loadError) {
         return (
-            <Box>
+            <Box px={{ base: 'sm', md: 'lg' }} py="md">
                 <Stack gap="md">
-                    <Button variant="subtle" onClick={handleBack}>
-                        <IconArrowBack color={colors['blue-button']} size={20} />
+                    <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+                        <IconArrowBack color={colors['blue-button']} size={24} />
                     </Button>
-                    <Alert icon={<IconAlertCircle size={16} />} color="red">
-                        <Text fw="bold">Error</Text>
-                        <Text>{sejarahState.findUnique.error}</Text>
+                    <Alert
+                        icon={<IconAlertCircle size={20} />}
+                        color="red"
+                        title="Terjadi Kesalahan"
+                        radius="md"
+                    >
+                        {loadError}
                     </Alert>
+                    <Button
+                        onClick={() => router.push('/admin/desa/profile/profile-desa')}
+                        variant="outline"
+                    >
+                        Kembali ke Halaman Utama
+                    </Button>
                 </Stack>
             </Box>
         );
     }
 
     return (
-        <Box>
-            <Stack gap="xs">
-                <Group mb="md">
+        <Box px={{ base: 'sm', md: 'lg' }} py="md">
+            <Stack gap="md">
+                {/* Header */}
+                <Group mb="sm">
                     <Button variant="subtle" onClick={handleBack} p="xs" radius="md">
                         <IconArrowBack color={colors['blue-button']} size={24} />
                     </Button>
-                    <Title order={4} ml="sm" c="dark">Edit Sejarah Desa</Title>
+                    <Title order={4} ml="sm" c="dark">
+                        Edit Sejarah Desa
+                    </Title>
                 </Group>
 
-                <Paper w={{ base: "100%", md: "50%" }} bg={colors['white-1']} p="md" radius="md" shadow="sm" style={{ border: '1px solid #e0e0e0' }}>
-                    <Stack gap="xs">
-                        <Title order={3}>Edit Sejarah Desa</Title>
-
-                        {/* Judul */}
+                {/* Form */}
+                <Paper
+                    w={{ base: '100%', md: '60%' }}
+                    bg={colors['white-1']}
+                    p="xl"
+                    radius="md"
+                    shadow="sm"
+                    style={{ border: '1px solid #e0e0e0' }}
+                >
+                    <Stack gap="lg">
+                        {/* Form Title */}
+                        <Box>
+                            <Title order={3} mb={4}>
+                                Informasi Sejarah Desa
+                            </Title>
+                        </Box>
+                        {/* Judul Field */}
                         <TextInput
-                            label={<Text fw="bold">Judul</Text>}
-                            placeholder="Judul sejarah"
-                            defaultValue={sejarahState.update.form.judul}
-                            onChange={(e) => sejarahState.update.form.judul = e.currentTarget.value}
-                            error={!sejarahState.update.form.judul && "Judul wajib diisi"}
+                            label={<Text fw="bold" size="sm">Judul Sejarah</Text>}
+                            placeholder="Masukkan judul sejarah desa"
+                            value={formData.judul}
+                            onChange={handleJudulChange}
+                            error={!formData.judul.trim() && 'Judul wajib diisi'}
+                            required
+                            size="md"
+                            radius="md"
                         />
 
-                        {/* Deskripsi */}
+                        {/* Deskripsi Field */}
                         <Box>
-                            <Text fz={"md"} fw={"bold"}>Deskripsi</Text>
+                            <Text fw="bold" size="sm" mb={8}>
+                                Deskripsi Sejarah
+                            </Text>
                             <EditEditor
-                                value={sejarahState.update.form.deskripsi}
-                                onChange={(val) => sejarahState.update.form.deskripsi = val}
+                                value={formData.deskripsi}
+                                onChange={handleDeskripsiChange}
                             />
+
                         </Box>
 
-                        {/* Buttons */}
-                        <Group>
+                        {/* Action Buttons */}
+                        <Group justify="right">
+                            {/* Tombol Batal */}
                             <Button
-                                bg={colors['blue-button']}
-                                onClick={handleSubmit}
-                                loading={isSubmitting || sejarahState.update.loading}
-                                disabled={!sejarahState.update.form.judul}
+                                variant="outline"
+                                color="gray"
+                                radius="md"
+                                size="md"
+                                onClick={handleResetForm}
                             >
-                                {isSubmitting ? 'Menyimpan...' : 'Simpan Perubahan'}
+                                Batal
                             </Button>
 
-                            <Button variant="outline" onClick={handleBack} disabled={isSubmitting || sejarahState.update.loading}>
-                                Batal
+                            {/* Tombol Simpan */}
+                            <Button
+                                onClick={handleSubmit}
+                                radius="md"
+                                size="md"
+                                style={{
+                                    background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                                    color: '#fff',
+                                    boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
+                                }}
+                            >
+                                {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
                             </Button>
                         </Group>
                     </Stack>

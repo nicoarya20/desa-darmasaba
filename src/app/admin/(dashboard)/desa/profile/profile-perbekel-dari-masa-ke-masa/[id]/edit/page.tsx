@@ -4,6 +4,7 @@ import stateProfileDesa from '@/app/admin/(dashboard)/_state/desa/profile';
 import colors from '@/con/colors';
 import ApiFetch from '@/lib/api-fetch';
 import {
+  ActionIcon,
   Box,
   Button,
   Group,
@@ -12,7 +13,8 @@ import {
   Stack,
   Text,
   TextInput,
-  Title
+  Title,
+  Loader
 } from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
 import { IconArrowBack, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
@@ -35,6 +37,16 @@ function EditPerbekelDariMasaKeMasa() {
     imageId: ''
   });
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [originalData, setOriginalData] = useState({
+    nama: '',
+    daerah: '',
+    periode: '',
+    imageId: '',
+    imageUrl: "",
+  });
+
   // load data pertama kali
   useEffect(() => {
     const loadFoto = async () => {
@@ -49,9 +61,14 @@ function EditPerbekelDariMasaKeMasa() {
             periode: data.periode || '',
             imageId: data.imageId || ''
           });
-          if (data?.imageGalleryFoto?.link) {
-            setPreviewImage(data.imageGalleryFoto.link);
-          }
+          setOriginalData({
+            nama: data.nama || '',
+            daerah: data.daerah || '',
+            periode: data.periode || '',
+            imageId: data.imageId || '',
+            imageUrl: data.image.link || '',
+          })
+          setPreviewImage(data.image.link);
         }
       } catch (error) {
         console.error('Error loading foto:', error);
@@ -69,8 +86,22 @@ function EditPerbekelDariMasaKeMasa() {
     }));
   };
 
+  const handleResetForm = () => {
+    setFormData({
+      nama: originalData.nama,
+      daerah: originalData.daerah,
+      periode: originalData.periode,
+      imageId: originalData.imageId,
+    });
+    setPreviewImage(originalData.imageUrl || null);
+    setFile(null);
+    toast.info("Form dikembalikan ke data awal");
+  };
+
+
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       // update global state hanya sekali pas submit
       state.update.form = { ...state.update.form, ...formData };
 
@@ -90,15 +121,17 @@ function EditPerbekelDariMasaKeMasa() {
     } catch (error) {
       console.error('Error updating perbekel dari masa ke masa:', error);
       toast.error('Terjadi kesalahan saat memperbarui perbekel dari masa ke masa');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
       <Group mb="md">
-          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
+        <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Edit Perbekel Dari Masa Ke Masa
         </Title>
@@ -135,7 +168,7 @@ function EditPerbekelDariMasaKeMasa() {
               }}
               onReject={() => toast.error('File tidak valid, gunakan format gambar')}
               maxSize={5 * 1024 ** 2}
-              accept={{ 'image/*': [] }}
+              accept={{ 'image/*': ['.jpeg', '.jpg', '.png', '.webp'] }}
               radius="md"
               p="xl"
             >
@@ -154,25 +187,45 @@ function EditPerbekelDariMasaKeMasa() {
                     Seret gambar atau klik untuk memilih file
                   </Text>
                   <Text size="sm" c="dimmed">
-                    Maksimal 5MB, format gambar wajib
+                    Maksimal 5MB, format gambar .png, .jpg, .jpeg, webp
                   </Text>
                 </Stack>
               </Group>
             </Dropzone>
 
             {previewImage && (
-              <Box mt="sm" style={{ display: 'flex', justifyContent: 'center' }}>
+              <Box mt="sm" pos="relative" style={{ textAlign: 'center' }}>
                 <Image
                   src={previewImage}
                   alt="Preview Gambar"
                   radius="md"
                   style={{
-                    maxHeight: 220,
+                    maxHeight: 200,
                     objectFit: 'contain',
-                    border: `1px solid ${colors['blue-button']}`,
+                    border: '1px solid #ddd',
                   }}
                   loading="lazy"
                 />
+
+                {/* Tombol hapus (pojok kanan atas) */}
+                <ActionIcon
+                  variant="filled"
+                  color="red"
+                  radius="xl"
+                  size="sm"
+                  pos="absolute"
+                  top={5}
+                  right={5}
+                  onClick={() => {
+                    setPreviewImage(null);
+                    setFile(null);
+                  }}
+                  style={{
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                  }}
+                >
+                  <IconX size={14} />
+                </ActionIcon>
               </Box>
             )}
           </Box>
@@ -195,6 +248,17 @@ function EditPerbekelDariMasaKeMasa() {
 
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
@@ -204,7 +268,7 @@ function EditPerbekelDariMasaKeMasa() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

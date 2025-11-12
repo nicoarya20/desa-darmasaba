@@ -8,6 +8,7 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Stack,
   Text,
@@ -24,8 +25,15 @@ function EditKontakItem() {
   const router = useRouter();
   const kontakState = useProxy(kontakDarurat.kontakDaruratItem);
   const params = useParams();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [formData, setFormData] = useState({
+    name: '',
+    nomorTelepon: '',
+    icon: '',
+  });
+
+  const [originalData, setOriginalData] = useState({
     name: '',
     nomorTelepon: '',
     icon: '',
@@ -41,6 +49,11 @@ function EditKontakItem() {
         const data = await kontakState.update.load(id);
         if (data) {
           setFormData({
+            name: data.nama || '',
+            nomorTelepon: data.nomorTelepon || '',
+            icon: data.icon || '',
+          });
+          setOriginalData({
             name: data.nama || '',
             nomorTelepon: data.nomorTelepon || '',
             icon: data.icon || '',
@@ -62,8 +75,18 @@ function EditKontakItem() {
     }));
   };
 
+  const handleResetForm = () => {
+    setFormData({
+      name: originalData.name,
+      nomorTelepon: originalData.nomorTelepon,
+      icon: originalData.icon,
+    });
+    toast.info('Form dikembalikan ke data awal');
+  };
+
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       // Update global state sekali pas submit
       kontakState.update.form = {
         ...kontakState.update.form,
@@ -78,6 +101,8 @@ function EditKontakItem() {
     } catch (error) {
       console.error('Error updating kontak darurat:', error);
       toast.error('Terjadi kesalahan saat memperbarui kontak darurat');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -131,6 +156,17 @@ function EditKontakItem() {
 
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
@@ -140,7 +176,7 @@ function EditKontakItem() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

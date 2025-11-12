@@ -53,7 +53,7 @@ const programInovasi = proxy({
         ].post(formData);
         if (res.status === 200) {
           programInovasi.findMany.load();
-          return toast.success("success create");
+          return toast.success("Sukses menambahkan");
         }
         console.log(res);
         return toast.error("failed create");
@@ -474,7 +474,7 @@ const mediaSosial = proxy({
         );
         if (res.status === 200) {
           mediaSosial.findMany.load();
-          return toast.success("success create");
+          return toast.success("Sukses menambahkan");
         }
         console.log(res);
         return toast.error("failed create");

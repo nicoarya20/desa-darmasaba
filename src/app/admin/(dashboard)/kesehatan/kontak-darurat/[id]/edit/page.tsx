@@ -1,13 +1,16 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import kontakDarurat from '@/app/admin/(dashboard)/_state/kesehatan/kontak-darurat/kontakDarurat';
 import colors from '@/con/colors';
 import ApiFetch from '@/lib/api-fetch';
 import {
+  ActionIcon,
   Box,
   Button,
   Group,
   Image,
+  Loader,
   Paper,
   Stack,
   Text,
@@ -28,11 +31,19 @@ function EditKontakDarurat() {
 
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     deskripsi: '',
     imageId: '',
     whatsapp: '',
+  });
+  const [originalData, setOriginalData] = useState({
+    name: '',
+    deskripsi: '',
+    imageId: '',
+    whatsapp: '',
+    imageUrl: '',
   });
   const [loading, setLoading] = useState(true);
 
@@ -51,6 +62,13 @@ function EditKontakDarurat() {
             imageId: data.imageId || '',
             whatsapp: data.whatsapp || '',
           });
+          setOriginalData({
+            name: data.name || '',
+            deskripsi: data.deskripsi || '',
+            imageId: data.imageId || '',
+            whatsapp: data.whatsapp || '',
+            imageUrl: data.image?.link || '',
+          });
           if (data?.image?.link) setPreviewImage(data.image.link);
         }
       } catch (error) {
@@ -62,10 +80,11 @@ function EditKontakDarurat() {
     };
 
     loadKontakDarurat();
-  }, [params?.id, kontakDaruratState.edit]);
+  }, [params?.id]);
 
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       let imageId = formData.imageId;
 
       // Upload file baru jika ada
@@ -89,7 +108,21 @@ function EditKontakDarurat() {
     } catch (error) {
       console.error("Error updating kontak darurat:", error);
       toast.error("Terjadi kesalahan saat memperbarui kontak darurat");
+    } finally {
+      setIsSubmitting(false);
     }
+  };
+
+  const handleResetForm = () => {
+    setFormData({
+      name: originalData.name,
+      deskripsi: originalData.deskripsi,
+      imageId: originalData.imageId,
+      whatsapp: originalData.whatsapp,
+    });
+    setPreviewImage(originalData.imageUrl || null);
+    setFile(null);
+    toast.info("Form dikembalikan ke data awal");
   };
 
   if (loading) return <Text>Loading...</Text>;
@@ -151,7 +184,7 @@ function EditKontakDarurat() {
               }}
               onReject={() => toast.error('File tidak valid.')}
               maxSize={5 * 1024 ** 2}
-              accept={{ 'image/*': [] }}
+              accept={{ 'image/*': ['.jpeg', '.jpg', '.png', '.webp'] }}
             >
               <Group justify="center" gap="xl" mih={200} style={{ pointerEvents: 'none' }}>
                 <Dropzone.Accept>
@@ -172,7 +205,7 @@ function EditKontakDarurat() {
             </Dropzone>
 
             {previewImage && (
-              <Box mt="sm">
+              <Box mt="sm" pos={"relative"}>
                 <Image
                   src={previewImage}
                   alt="Preview"
@@ -185,11 +218,40 @@ function EditKontakDarurat() {
                   }}
                   loading="lazy"
                 />
+                <ActionIcon
+                  variant="filled"
+                  color="red"
+                  radius="xl"
+                  size="sm"
+                  pos="absolute"
+                  top={5}
+                  right={5}
+                  onClick={() => {
+                    setPreviewImage(null);
+                    setFile(null);
+                  }}
+                  style={{
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                  }}
+                >
+                  <IconX size={14} />
+                </ActionIcon>
               </Box>
             )}
           </Box>
 
           <Group justify="right">
+            <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
             <Button
               onClick={handleSubmit}
               radius="md"
@@ -200,7 +262,7 @@ function EditKontakDarurat() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

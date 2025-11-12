@@ -5,6 +5,7 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Stack,
   Text,
@@ -13,13 +14,15 @@ import {
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
 
 function CreateKelahiran() {
   const createState = useProxy(persentaseKelahiranKematian.kelahiran);
   const router = useRouter();
-
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const resetForm = () => {
     createState.create.form = {
@@ -32,11 +35,19 @@ function CreateKelahiran() {
 
 
   const handleSubmit = async () => {
-    await createState.create.create();
-    resetForm();
-    router.push(
-      '/admin/kesehatan/data-kesehatan-warga/persentase_data_kelahiran_kematian/kelahiran'
-    );
+    try {
+      setIsSubmitting(true);
+      await createState.create.create();
+      resetForm();
+      router.push(
+        '/admin/kesehatan/data-kesehatan-warga/persentase_data_kelahiran_kematian/kelahiran'
+      );
+    } catch (error) {
+      console.error('Error creating kelahiran:', error);
+      toast.error('Gagal menambahkan data kelahiran');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
 
@@ -71,7 +82,7 @@ function CreateKelahiran() {
           <TextInput
             label={<Text fw="bold" fz="sm">Nama</Text>}
             placeholder="Masukkan nama"
-            defaultValue={createState.create.form.nama}
+            value={createState.create.form.nama}
             onChange={(e) => (createState.create.form.nama = e.target.value)}
             required
           />
@@ -79,27 +90,38 @@ function CreateKelahiran() {
             type="date"
             label={<Text fw="bold" fz="sm">Tanggal</Text>}
             placeholder="Masukkan tanggal"
-            defaultValue={createState.create.form.tanggal}
+            value={createState.create.form.tanggal}
             onChange={(e) => (createState.create.form.tanggal = e.target.value)}
             required
           />
           <TextInput
             label={<Text fw="bold" fz="sm">Jenis Kelamin</Text>}
             placeholder="Masukkan jenis kelamin"
-            defaultValue={createState.create.form.jenisKelamin}
+            value={createState.create.form.jenisKelamin}
             onChange={(e) => (createState.create.form.jenisKelamin = e.target.value)}
             required
           />
           <TextInput
             label={<Text fw="bold" fz="sm">Alamat</Text>}
             placeholder="Masukkan alamat"
-            defaultValue={createState.create.form.alamat}
+            value={createState.create.form.alamat}
             onChange={(e) => (createState.create.form.alamat = e.target.value)}
             required
           />
 
 
           <Group justify="right">
+            <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
             <Button
               onClick={handleSubmit}
               radius="md"
@@ -110,7 +132,7 @@ function CreateKelahiran() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

@@ -9,6 +9,7 @@ import {
   Button,
   Card,
   Group,
+  Loader,
   Modal,
   Paper,
   Select,
@@ -38,7 +39,21 @@ function EditPolsekTerdekat() {
     null
   );
   const [namaLayananUpdate, setNamaLayananUpdate] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
+    nama: "",
+    jarakKeDesa: "",
+    alamat: "",
+    nomorTelepon: "",
+    jamOperasional: "",
+    embedMapUrl: "",
+    namaTempatMaps: "",
+    alamatMaps: "",
+    linkPetunjukArah: "",
+    layananPolsekId: "",
+  });
+
+  const [originalData, setOriginalData] = useState({
     nama: "",
     jarakKeDesa: "",
     alamat: "",
@@ -61,6 +76,19 @@ function EditPolsekTerdekat() {
         const data = await polsekState.edit.load(id);
         if (data) {
           setFormData({
+            nama: data.nama || "",
+            jarakKeDesa: data.jarakKeDesa || "",
+            alamat: data.alamat || "",
+            nomorTelepon: data.nomorTelepon || "",
+            jamOperasional: data.jamOperasional || "",
+            embedMapUrl: data.embedMapUrl || "",
+            namaTempatMaps: data.namaTempatMaps || "",
+            alamatMaps: data.alamatMaps || "",
+            linkPetunjukArah: data.linkPetunjukArah || "",
+            layananPolsekId: data.layananPolsekId || "",
+          });
+
+          setOriginalData({
             nama: data.nama || "",
             jarakKeDesa: data.jarakKeDesa || "",
             alamat: data.alamat || "",
@@ -187,8 +215,25 @@ function EditPolsekTerdekat() {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
+  const handleResetForm = () => {
+    setFormData({
+      nama: originalData.nama,
+      jarakKeDesa: originalData.jarakKeDesa,
+      alamat: originalData.alamat,
+      nomorTelepon: originalData.nomorTelepon,
+      jamOperasional: originalData.jamOperasional,
+      embedMapUrl: originalData.embedMapUrl,
+      namaTempatMaps: originalData.namaTempatMaps,
+      alamatMaps: originalData.alamatMaps,
+      linkPetunjukArah: originalData.linkPetunjukArah,
+      layananPolsekId: originalData.layananPolsekId,
+    });
+    toast.info("Form dikembalikan ke data awal");
+  };
+
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       polsekState.edit.form = { ...formData }; // update global state hanya di sini
       await polsekState.edit.update();
       toast.success("Polsek terdekat berhasil diperbarui!");
@@ -196,6 +241,8 @@ function EditPolsekTerdekat() {
     } catch (error) {
       console.error("Error updating polsek terdekat:", error);
       toast.error("Gagal memperbarui data polsek terdekat");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -212,7 +259,7 @@ function EditPolsekTerdekat() {
           <TextInput
             label="Nama Layanan"
             placeholder="Masukkan nama layanan"
-            defaultValue={namaLayananBaru}
+            value={namaLayananBaru}
             onChange={(e) => setNamaLayananBaru(e.currentTarget.value)}
           />
           <Button onClick={handleTambahLayanan}>Simpan</Button>
@@ -230,7 +277,7 @@ function EditPolsekTerdekat() {
           <TextInput
             label="Nama Layanan"
             placeholder="Masukkan nama layanan"
-            defaultValue={namaLayananUpdate}
+            value={namaLayananUpdate}
             onChange={(e) => setNamaLayananUpdate(e.currentTarget.value)}
           />
           <Button
@@ -376,17 +423,29 @@ function EditPolsekTerdekat() {
 
           {/* Submit */}
           <Group justify="right">
+            {/* Tombol Batal */}
+            <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
             <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
               style={{
-                background: `linear-gradient(135deg, ${colors["blue-button"]}, #4facfe)`,
-                color: "#fff",
-                boxShadow: "0 4px 15px rgba(79, 172, 254, 0.4)",
+                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                color: '#fff',
+                boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

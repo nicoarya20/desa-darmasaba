@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 
@@ -5,10 +6,12 @@ import puskesmasState from '@/app/admin/(dashboard)/_state/kesehatan/puskesmas/p
 import colors from '@/con/colors';
 import ApiFetch from '@/lib/api-fetch';
 import {
+  ActionIcon,
   Box,
   Button,
   Group,
   Image,
+  Loader,
   Paper,
   Stack,
   Text,
@@ -52,12 +55,21 @@ function EditPuskesmas() {
 
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState<PuskesmasFormData>({
     name: '',
     alamat: '',
     jam: { workDays: '', weekDays: '', holiday: '' },
     kontak: { kontakPuskesmas: '', email: '', facebook: '', kontakUGD: '' },
     imageId: '',
+  });
+  const [originalData, setOriginalData] = useState({
+    name: '',
+    alamat: '',
+    jam: { workDays: '', weekDays: '', holiday: '' },
+    kontak: { kontakPuskesmas: '', email: '', facebook: '', kontakUGD: '' },
+    imageId: '',
+    imageUrl: ''
   });
 
   useEffect(() => {
@@ -85,6 +97,24 @@ function EditPuskesmas() {
             },
             imageId: form.imageId,
           });
+          setOriginalData({
+            name: form.name,
+            alamat: form.alamat,
+            jam: {
+              workDays: form.jam.workDays,
+              weekDays: form.jam.weekDays,
+              holiday: form.jam.holiday,
+            },
+            kontak: {
+              kontakPuskesmas: form.kontak.kontakPuskesmas,
+              email: form.kontak.email,
+              facebook: form.kontak.facebook,
+              kontakUGD: form.kontak.kontakUGD,
+            },
+            imageId: form.imageId,
+            imageUrl: (form as any).image?.link
+
+          });
 
           const formWithImage = form as PuskesmasFormData;
           if (formWithImage.image?.link) {
@@ -99,8 +129,31 @@ function EditPuskesmas() {
     loadPuskesmas();
   }, [params?.id]);
 
+  const handleResetForm = () => {
+    setFormData({
+      name: originalData.name,
+      alamat: originalData.alamat,
+      jam: {
+        workDays: originalData.jam.workDays,
+        weekDays: originalData.jam.weekDays,
+        holiday: originalData.jam.holiday,
+      },
+      kontak: {
+        kontakPuskesmas: originalData.kontak.kontakPuskesmas,
+        email: originalData.kontak.email,
+        facebook: originalData.kontak.facebook,
+        kontakUGD: originalData.kontak.kontakUGD,
+      },
+      imageId: originalData.imageId,
+    });
+    setPreviewImage(originalData.imageUrl || null);
+    setFile(null);
+    toast.info("Form dikembalikan ke data awal");
+  };
+
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       statePuskesmas.edit.form = {
         ...statePuskesmas.edit.form,
         name: formData.name,
@@ -130,6 +183,8 @@ function EditPuskesmas() {
     } catch (error) {
       console.error("Error updating puskesmas:", error);
       toast.error(error instanceof Error ? error.message : "Gagal memperbarui data puskesmas");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -252,7 +307,7 @@ function EditPuskesmas() {
               }}
               onReject={() => toast.error('File tidak valid.')}
               maxSize={5 * 1024 ** 2}
-              accept={{ 'image/*': [] }}
+              accept={{ 'image/*': ['.jpeg', '.jpg', '.png', '.webp'] }}
             >
               <Group justify="center" gap="xl" mih={200} style={{ pointerEvents: 'none' }}>
                 <Dropzone.Accept>
@@ -276,7 +331,7 @@ function EditPuskesmas() {
             </Dropzone>
 
             {previewImage && (
-              <Box mt="sm">
+              <Box mt="sm" pos={"relative"}>
                 <Image
                   src={previewImage}
                   alt="Preview"
@@ -289,11 +344,41 @@ function EditPuskesmas() {
                   }}
                   loading="lazy"
                 />
+                <ActionIcon
+                  variant="filled"
+                  color="red"
+                  radius="xl"
+                  size="sm"
+                  pos="absolute"
+                  top={5}
+                  right={5}
+                  onClick={() => {
+                    setPreviewImage(null);
+                    setFile(null);
+                  }}
+                  style={{
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                  }}
+                >
+                  <IconX size={14} />
+                </ActionIcon>
               </Box>
             )}
           </Box>
 
           <Group justify="right">
+            {/* Tombol Batal */}
+            <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
             <Button
               onClick={handleSubmit}
               radius="md"
@@ -303,9 +388,8 @@ function EditPuskesmas() {
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
-              loading={statePuskesmas.edit.loading}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

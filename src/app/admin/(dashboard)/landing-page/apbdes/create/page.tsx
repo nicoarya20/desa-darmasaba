@@ -11,7 +11,9 @@ import {
   Stack,
   Text,
   TextInput,
-  Title
+  Title,
+  Loader,
+  ActionIcon
 } from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
 import { IconArrowBack, IconFile, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
@@ -29,7 +31,7 @@ function CreateAPBDes() {
   const [previewDoc, setPreviewDoc] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [docFile, setDocFile] = useState<File | null>(null);
-  
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
 
   useEffect(() => {
@@ -51,40 +53,43 @@ function CreateAPBDes() {
     if (!imageFile || !docFile) {
       return toast.warn("Pilih gambar dan dokumen terlebih dahulu");
     }
-  
+
     try {
+      setIsSubmitting(true);
       const [uploadImageRes, uploadDocRes] = await Promise.all([
         ApiFetch.api.fileStorage.create.post({ file: imageFile, name: imageFile.name }),
         ApiFetch.api.fileStorage.create.post({ file: docFile, name: docFile.name }),
       ]);
-  
+
       const imageId = uploadImageRes?.data?.data?.id;
       const fileId = uploadDocRes?.data?.data?.id;
-  
+
       if (!imageId || !fileId) {
         return toast.error("Gagal mengupload file");
       }
-  
+
       stateAPBDes.create.form.imageId = imageId;
       stateAPBDes.create.form.fileId = fileId;
-  
+
       await stateAPBDes.create.create();
-  
+
       toast.success("Berhasil menambahkan APBDes");
       resetForm();
-      router.push("/admin/landing-page/apbdes");
+      router.push("/admin/landing-page/APBDes");
     } catch (error) {
       console.error("Gagal submit:", error);
       toast.error("Gagal menyimpan data");
+    } finally {
+      setIsSubmitting(false);
     }
   };
-  
+
   return (
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
       <Group mb="md">
-          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
+        <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Tambah APBDes
         </Title>
@@ -102,7 +107,7 @@ function CreateAPBDes() {
           {/* Gambar APBDes */}
           <Box>
             <Text fw="bold" fz="sm" mb={6}>
-              Gambar APBDes
+              Gambar Program Inovasi
             </Text>
             <Dropzone
               onDrop={(files) => {
@@ -114,40 +119,65 @@ function CreateAPBDes() {
               }}
               onReject={() => toast.error('File tidak valid, gunakan format gambar')}
               maxSize={5 * 1024 ** 2}
-              accept={{ 'image/*': [] }}
+              accept={{ 'image/*': ['.jpeg', '.jpg', '.png', '.webp'] }}
               radius="md"
               p="xl"
             >
               <Group justify="center" gap="xl" mih={180}>
                 <Dropzone.Accept>
-                  <IconUpload size={48} color="var(--mantine-color-blue-6)" stroke={1.5} />
+                  <IconUpload size={48} color={colors['blue-button']} stroke={1.5} />
                 </Dropzone.Accept>
                 <Dropzone.Reject>
-                  <IconX size={48} color="var(--mantine-color-red-6)" stroke={1.5} />
+                  <IconX size={48} color="red" stroke={1.5} />
                 </Dropzone.Reject>
                 <Dropzone.Idle>
-                  <IconPhoto size={48} color="var(--mantine-color-dimmed)" stroke={1.5} />
+                  <IconPhoto size={48} color="#868e96" stroke={1.5} />
                 </Dropzone.Idle>
-                <Box>
-                  <Text size="xl" inline>
+                <Stack gap="xs" align="center">
+                  <Text size="md" fw={500}>
                     Seret gambar atau klik untuk memilih file
                   </Text>
-                  <Text size="sm" c="dimmed" inline display="block" mt={7}>
-                    Maksimal 5MB (format: JPEG, JPG, PNG, GIF, WEBP, SVG)
+                  <Text size="sm" c="dimmed">
+                    Maksimal 5MB, format gambar .png, .jpg, .jpeg, webp
                   </Text>
-                </Box>
+                </Stack>
               </Group>
             </Dropzone>
 
+            {/* ✅ Preview gambar + tombol X */}
             {previewImage && (
-              <Box mt="md" style={{ textAlign: 'center' }}>
+              <Box mt="sm" pos="relative" style={{ textAlign: 'center' }}>
                 <Image
                   src={previewImage}
                   alt="Preview Gambar"
                   radius="md"
-                  style={{ maxHeight: 200, objectFit: 'contain', border: '1px solid #ddd' }}
+                  style={{
+                    maxHeight: 200,
+                    objectFit: 'contain',
+                    border: '1px solid #ddd',
+                  }}
                   loading="lazy"
                 />
+
+                {/* Tombol hapus (pojok kanan atas) */}
+                <ActionIcon
+                  variant="filled"
+                  color="red"
+                  radius="xl"
+                  size="sm"
+                  pos="absolute"
+                  top={5}
+                  right={5}
+                  onClick={() => {
+                    setPreviewImage(null);
+                    setImageFile(null);
+                  }}
+                  style={{
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                  }}
+                >
+                  <IconX size={14} />
+                </ActionIcon>
               </Box>
             )}
           </Box>
@@ -197,7 +227,7 @@ function CreateAPBDes() {
             </Dropzone>
 
             {previewDoc && (
-              <Box mt="md">
+              <Box mt="md" pos="relative" style={{ textAlign: 'center' }}>
                 <Text fw="bold" fz="sm" mb={6}>
                   Pratinjau Dokumen
                 </Text>
@@ -207,6 +237,25 @@ function CreateAPBDes() {
                   height="500px"
                   style={{ border: '1px solid #ddd', borderRadius: '8px' }}
                 />
+
+                <ActionIcon
+                  variant="filled"
+                  color="red"
+                  radius="xl"
+                  size="sm"
+                  pos="absolute"
+                  top={5}
+                  right={5}
+                  onClick={() => {
+                    setPreviewDoc(null);
+                    setDocFile(null);
+                  }}
+                  style={{
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                  }}
+                >
+                  <IconX size={14} />
+                </ActionIcon>
               </Box>
             )}
           </Box>
@@ -215,19 +264,31 @@ function CreateAPBDes() {
           <TextInput
             label="Nama APBDes"
             placeholder="Masukkan nama APBDes"
-            defaultValue={stateAPBDes.create.form.name || ''}
+            value={stateAPBDes.create.form.name || ''}
             onChange={(e) => (stateAPBDes.create.form.name = e.target.value)}
             required
           />
           <TextInput
             label="Jumlah Anggaran"
             placeholder="14 M / 1 T / 200 JT / 900 RB"
-            defaultValue={stateAPBDes.create.form.jumlah || ''}
+            value={stateAPBDes.create.form.jumlah || ''}
             onChange={(e) => (stateAPBDes.create.form.jumlah = e.target.value)}
             required
           />
 
-          <Group justify="right" mt="md">
+          <Group justify="right">
+            {/* Tombol Batal */}
+            <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
             <Button
               onClick={handleSubmit}
               radius="md"
@@ -237,9 +298,8 @@ function CreateAPBDes() {
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
-              disabled={!imageFile || !docFile || !stateAPBDes.create.form.name || !stateAPBDes.create.form.jumlah}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

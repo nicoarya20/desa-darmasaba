@@ -2,17 +2,16 @@
 import SelectIconProgram from '@/app/admin/(dashboard)/_com/selectIcon';
 import pengelolaanSampahState from '@/app/admin/(dashboard)/_state/lingkungan/pengelolaan-sampah';
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
+import { Box, Button, Group, Loader, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
-
-
-
 
 function CreatePengelolaanSampahBankSampah() {
   const stateCreate = useProxy(pengelolaanSampahState.pengelolaanSampah);
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const resetForm = () => {
     stateCreate.create.form = {
@@ -23,11 +22,14 @@ function CreatePengelolaanSampahBankSampah() {
 
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       await stateCreate.create.create();
       resetForm();
       router.push("/admin/lingkungan/pengelolaan-sampah-bank-sampah/list-pengelolaan-sampah-bank-sampah");
     } catch (error) {
       console.error('Error creating pengelolaan sampah:', error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -59,7 +61,7 @@ function CreatePengelolaanSampahBankSampah() {
           <TextInput
             label="Nama Pengelolaan Sampah"
             placeholder="Masukkan nama pengelolaan sampah"
-            defaultValue={stateCreate.create.form.name || ''}
+            value={stateCreate.create.form.name || ''}
             onChange={(e) => (stateCreate.create.form.name = e.target.value)}
             required
           />
@@ -75,6 +77,17 @@ function CreatePengelolaanSampahBankSampah() {
 
           <Group justify="right" mt="md">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
@@ -84,7 +97,7 @@ function CreatePengelolaanSampahBankSampah() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

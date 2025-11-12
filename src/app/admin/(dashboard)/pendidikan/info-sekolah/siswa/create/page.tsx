@@ -6,6 +6,7 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Select,
   Stack,
@@ -15,12 +16,14 @@ import {
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
 function CreateSiswa() {
   const router = useRouter();
   const stateCreate = useProxy(infoSekolahPaud.siswa);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     stateCreate.findMany.load();
@@ -35,10 +38,17 @@ function CreateSiswa() {
   };
 
   const handleSubmit = async () => {
-    await stateCreate.create.create();
-
-    resetForm();
-    router.push('/admin/pendidikan/info-sekolah/siswa');
+    try {
+      setIsSubmitting(true);
+      await stateCreate.create.create();
+      resetForm();
+      router.push('/admin/pendidikan/info-sekolah/siswa');
+    } catch (error) {
+      console.error('Error creating siswa:', error);
+      toast.error('Gagal menambahkan siswa');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -64,7 +74,7 @@ function CreateSiswa() {
       >
         <Stack gap="md">
           <TextInput
-            defaultValue={stateCreate.create.form.nama}
+            value={stateCreate.create.form.nama}
             onChange={(val) => {
               stateCreate.create.form.nama = val.target.value;
             }}
@@ -91,6 +101,17 @@ function CreateSiswa() {
 
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
@@ -100,7 +121,7 @@ function CreateSiswa() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

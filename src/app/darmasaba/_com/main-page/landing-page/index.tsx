@@ -18,14 +18,10 @@ import {
 } from "@mantine/core";
 import { Prisma } from "@prisma/client";
 import { IconCalendarTime, IconInfoCircle } from "@tabler/icons-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import ModuleView from "./ModuleView";
 import ProfileView from "./ProfileView";
 import SosmedView from "./SosmedView";
-import { useProxy } from "valtio/utils";
-import stateDashboardBerita from "@/app/admin/(dashboard)/_state/desa/berita";
-import stateDesaPengumuman from "@/app/admin/(dashboard)/_state/desa/pengumuman";
-import ModernNewsNotification from "../../ModernNeewsNotification";
 
 const getDayOfWeek = () => {
   const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
@@ -72,57 +68,7 @@ function LandingPage() {
   >(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const featured = useProxy(stateDashboardBerita.berita.findFirst);
-  const loadingFeatured = featured.loading;
-  const pengumuman = useProxy(stateDesaPengumuman.pengumuman.findFirst);
-  const loadingPengumuman = pengumuman.loading;
-
-  useEffect(() => {
-    if (!featured.data && !loadingFeatured) {
-      stateDashboardBerita.berita.findFirst.load();
-    }
-  }, [featured.data, loadingFeatured]);
-
-  useEffect(() => {
-    if (!pengumuman.data && !loadingPengumuman) {
-      stateDesaPengumuman.pengumuman.findFirst.load();
-    }
-  }, [pengumuman.data, loadingPengumuman]);
-
-  // Transform data untuk notification system
-  const newsData = useMemo(() => {
-    const items = [];
-
-    if (featured.data) {
-      items.push({
-        id: String(featured.data.id || "berita-1"),
-        type: "berita" as const,
-        title: String(featured.data.judul || "Berita Terbaru"),
-        content: String(featured.data.content || ""),
-        timestamp: featured.data.createdAt
-          ? (typeof featured.data.createdAt === 'string'
-            ? featured.data.createdAt
-            : new Date(featured.data.createdAt).toISOString())
-          : new Date().toISOString(),
-      });
-    }
-
-    if (pengumuman.data) {
-      items.push({
-        id: String(pengumuman.data.id || "pengumuman-1"),
-        type: "pengumuman" as const,
-        title: String(pengumuman.data.judul || "Pengumuman Penting"),
-        content: String(pengumuman.data.content || ""),
-        timestamp: pengumuman.data.createdAt
-          ? (typeof pengumuman.data.createdAt === 'string'
-            ? pengumuman.data.createdAt
-            : new Date(pengumuman.data.createdAt).toISOString())
-          : new Date().toISOString(),
-      });
-    }
-
-    return items;
-  }, [featured.data, pengumuman.data]);
+  
 
   useEffect(() => {
     const fetchSocialMedia = async () => {
@@ -272,11 +218,6 @@ function LandingPage() {
         )}
       </Flex>
       
-      {/* Modern Notification System */}
-      <ModernNewsNotification
-        news={newsData}
-        autoShowDelay={2000} // Muncul 2 detik setelah load
-      />
     </Stack>
   );
 }

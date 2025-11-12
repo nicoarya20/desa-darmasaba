@@ -8,6 +8,7 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Stack,
   Text,
@@ -24,8 +25,16 @@ function EditPencegahanKriminalitas() {
   const router = useRouter();
   const params = useParams();
   const kriminalitasState = useProxy(pencegahanKriminalitasState);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [formData, setFormData] = useState({
+    judul: '',
+    deskripsi: '',
+    deskripsiSingkat: '',
+    linkVideo: '',
+  });
+
+  const [originalData, setOriginalData] = useState({
     judul: '',
     deskripsi: '',
     deskripsiSingkat: '',
@@ -42,6 +51,12 @@ function EditPencegahanKriminalitas() {
         const data = await kriminalitasState.update.load(id);
         if (data) {
           setFormData({
+            judul: data.judul ?? '',
+            deskripsi: data.deskripsi ?? '',
+            deskripsiSingkat: data.deskripsiSingkat ?? '',
+            linkVideo: data.linkVideo ?? '',
+          });
+          setOriginalData({
             judul: data.judul ?? '',
             deskripsi: data.deskripsi ?? '',
             deskripsiSingkat: data.deskripsiSingkat ?? '',
@@ -65,6 +80,16 @@ function EditPencegahanKriminalitas() {
         setFormData((prev) => ({ ...prev, [field]: e.target.value }));
       };
 
+  const handleResetForm = () => {
+    setFormData({
+      judul: originalData.judul,
+      deskripsi: originalData.deskripsi,
+      deskripsiSingkat: originalData.deskripsiSingkat,
+      linkVideo: originalData.linkVideo,
+    });
+    toast.info("Form dikembalikan ke data awal");
+  };
+
   const handleSubmit = async () => {
     const converted = convertYoutubeUrlToEmbed(formData.linkVideo);
     if (!converted) {
@@ -73,6 +98,7 @@ function EditPencegahanKriminalitas() {
     }
 
     try {
+      setIsSubmitting(true);
       // update global state saat submit
       kriminalitasState.update.form = {
         judul: formData.judul,
@@ -88,6 +114,8 @@ function EditPencegahanKriminalitas() {
     } catch (error) {
       console.error('Error updating pencegahan kriminalitas:', error);
       toast.error('Terjadi kesalahan saat memperbarui data');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -178,6 +206,17 @@ function EditPencegahanKriminalitas() {
           {/* Action button */}
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
@@ -187,7 +226,7 @@ function EditPencegahanKriminalitas() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

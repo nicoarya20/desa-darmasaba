@@ -42,7 +42,7 @@ const dataPendidikan = proxy({
         if (res.status === 200) {
           const id = res.data?.data?.id;
           if (id) {
-            toast.success("Success create");
+            toast.success("Sukses menambahkan");
             dataPendidikan.create.form = {
               name: "",
               jumlah: "",

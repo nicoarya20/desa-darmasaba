@@ -22,7 +22,7 @@ export default async function programKreatifCreate(context: Context){
 
     return {
         success: true,
-        message: "Success create program kreatif",
+        message: "Sukses menambahkan program kreatif",
         data: {
             ...body,
         }

@@ -5,6 +5,7 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Stack,
   Text,
@@ -23,9 +24,9 @@ function EditKategoriProduk() {
   const params = useParams();
   const id = params?.id as string;
   const statePasar = useProxy(pasarDesaState.kategoriProduk);
-
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({ nama: '' });
-  const [loading, setLoading] = useState(true);
+  const [originalData, setOriginalData] = useState({ nama: '' });
 
   useEffect(() => {
     const loadKategoriProduk = async () => {
@@ -40,12 +41,11 @@ function EditKategoriProduk() {
 
           // simpan data ke state lokal
           setFormData({ nama: data.nama || '' });
+          setOriginalData({ nama: data.nama || '' });
         }
       } catch (error) {
         console.error('Error loading kategori produk:', error);
         toast.error('Gagal memuat data kategori produk');
-      } finally {
-        setLoading(false);
       }
     };
 
@@ -59,8 +59,16 @@ function EditKategoriProduk() {
     }));
   };
 
+  const handleResetForm = () => {
+    setFormData({
+      nama: originalData.nama,
+    });
+    toast.info('Form dikembalikan ke data awal');
+  };
+
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       if (!formData.nama.trim()) {
         toast.error('Nama kategori produk tidak boleh kosong');
         return;
@@ -81,12 +89,10 @@ function EditKategoriProduk() {
     } catch (error) {
       console.error('Error updating kategori produk:', error);
       toast.error('Terjadi kesalahan saat memperbarui kategori produk');
+    } finally {
+      setIsSubmitting(false);
     }
   };
-
-  if (loading) {
-    return <Text>Loading...</Text>;
-  }
 
   return (
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
@@ -126,6 +132,17 @@ function EditKategoriProduk() {
 
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
@@ -135,7 +152,7 @@ function EditKategoriProduk() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

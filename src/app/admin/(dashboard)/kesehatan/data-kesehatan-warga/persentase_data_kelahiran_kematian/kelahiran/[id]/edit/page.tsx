@@ -7,6 +7,7 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Stack,
   TextInput,
@@ -17,13 +18,22 @@ import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
+import { convertToISODate } from '../../../lib/dateUtils';
 
 function EditKelahiran() {
   const editState = useProxy(persentaseKelahiranKematian.kelahiran);
   const router = useRouter();
   const params = useParams();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [formData, setFormData] = useState({
+    nama: '',
+    tanggal: '',
+    jenisKelamin: '',
+    alamat: '',
+  });
+
+  const [originalData, setOriginalData] = useState({
     nama: '',
     tanggal: '',
     jenisKelamin: '',
@@ -35,21 +45,32 @@ function EditKelahiran() {
     const loadKelahiran = async () => {
       const id = params?.id as string;
       if (!id) return;
-
+  
       try {
         const data = await editState.edit.load(id);
-        if (data) setFormData({
-          nama: data.nama || '',
-          tanggal: data.tanggal || '',
-          jenisKelamin: data.jenisKelamin || '',
-          alamat: data.alamat || ''
-        });
+        if (data) {
+          const formattedTanggal = convertToISODate(data.tanggal);
+  
+          setFormData({
+            nama: data.nama || '',
+            tanggal: formattedTanggal,
+            jenisKelamin: data.jenisKelamin || '',
+            alamat: data.alamat || ''
+          });
+  
+          setOriginalData({
+            nama: data.nama || '',
+            tanggal: formattedTanggal,
+            jenisKelamin: data.jenisKelamin || '',
+            alamat: data.alamat || ''
+          });
+        }
       } catch (error) {
         console.error('Error loading data kelahiran:', error);
         toast.error('Gagal memuat data kelahiran');
       }
     };
-
+  
     loadKelahiran();
   }, [params?.id]);
 
@@ -57,8 +78,20 @@ function EditKelahiran() {
     setFormData((prev) => ({ ...prev, [key]: value }));
   };
 
+  const handleResetForm = () => {
+    setFormData({
+      nama: originalData.nama,
+      tanggal: originalData.tanggal,
+      jenisKelamin: originalData.jenisKelamin,
+      alamat: originalData.alamat,
+    });
+    toast.info("Form dikembalikan ke data awal");
+  };
+
+
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       // Update global state hanya saat submit
       editState.edit.form = { ...editState.edit.form, ...formData };
       await editState.edit.update();
@@ -67,6 +100,8 @@ function EditKelahiran() {
     } catch (error) {
       console.error('Error updating data kelahiran:', error);
       toast.error('Terjadi kesalahan saat memperbarui data kelahiran');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -124,6 +159,17 @@ function EditKelahiran() {
 
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
@@ -133,7 +179,7 @@ function EditKelahiran() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

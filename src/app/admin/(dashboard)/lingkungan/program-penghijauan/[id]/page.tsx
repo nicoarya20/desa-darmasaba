@@ -4,9 +4,13 @@ import colors from '@/con/colors';
 import { Box, Button, Group, Paper, Skeleton, Stack, Text } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import {
-  IconArrowBack, IconChartLine, IconChristmasTreeFilled, IconClipboard,
-  IconEdit, IconHomeEco, IconLeaf, IconRecycle, IconScale,
-  IconShieldFilled, IconTent, IconTrash, IconTrendingUp,
+  IconAlertTriangle,
+  IconAmbulance,
+  IconArrowBack, IconBuilding, IconCash, IconChartLine, IconChristmasTreeFilled, IconClipboard,
+  IconDroplet,
+  IconEdit, IconFiretruck, IconHome, IconHomeEco, IconHospital, IconLeaf, IconRecycle, IconScale,
+  IconSchool,
+  IconShieldFilled, IconShoppingCart, IconTent, IconTrash, IconTree, IconTrendingUp,
   IconTrophy, IconTruck
 } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -24,18 +28,31 @@ function DetailProgramPenghijauan() {
 
   const iconMap: Record<string, React.FC<any>> = {
     ekowisata: IconLeaf,
-    kompetisi: IconTrophy,
-    wisata: IconTent,
-    ekonomi: IconChartLine,
-    sampah: IconRecycle,
-    truck: IconTruck,
-    scale: IconScale,
-    clipboard: IconClipboard,
-    trash: IconTrash,
-    lingkunganSehat: IconHomeEco,
-    sumberOksigen: IconChristmasTreeFilled,
-    ekonomiBerkelanjutan: IconTrendingUp,
-    mencegahBencana: IconShieldFilled,
+  kompetisi: IconTrophy,
+  wisata: IconTent,
+  ekonomi: IconChartLine,
+  sampah: IconRecycle,
+  truck: IconTruck,
+  scale: IconScale,
+  clipboard: IconClipboard,
+  trash: IconTrash,
+  lingkunganSehat: IconHomeEco,
+  sumberOksigen: IconChristmasTreeFilled,
+  ekonomiBerkelanjutan: IconTrendingUp,
+  mencegahBencana: IconShieldFilled,
+  rumah: IconHome,
+  pohon: IconTree,
+  air: IconDroplet,
+  bantuan: IconCash,
+  pelatihan: IconSchool,
+  subsidi: IconShoppingCart,
+  layananKesehatan: IconHospital,
+  polisi: IconShieldFilled,
+  ambulans: IconAmbulance,
+  pemadam: IconFiretruck,
+  rumahSakit: IconHospital,
+  bangunan: IconBuilding,
+  darurat: IconAlertTriangle
   };
 
   useShallowEffect(() => {
@@ -96,7 +113,7 @@ function DetailProgramPenghijauan() {
 
               <Box>
                 <Text fz="lg" fw="bold">Ikon Program</Text>
-                {iconMap[data?.icon] ? (
+                {iconMap[data?.icon]  ? (
                   <Box title={data?.icon}>
                     {React.createElement(iconMap[data.icon], { size: 28, color: colors['blue-button'] })}
                   </Box>

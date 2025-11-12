@@ -21,7 +21,7 @@ export default async function profileMantanPerbekelCreate(context: Context) {
     });
     return {
         success: true,
-        message: "Success create profile mantan perbekel",
+        message: "Sukses menambahkan profile mantan perbekel",
         data: {
             ...body,
         },

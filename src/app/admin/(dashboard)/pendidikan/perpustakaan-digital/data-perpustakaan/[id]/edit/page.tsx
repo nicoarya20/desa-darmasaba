@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 
-import { Box, Button, Group, Image, Paper, Select, Stack, Text, TextInput, Title } from '@mantine/core';
+import { ActionIcon, Loader, Box, Button, Group, Image, Paper, Select, Stack, Text, TextInput, Title } from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
 import { IconArrowBack, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -18,12 +18,21 @@ function EditPerpustakaanDigital() {
   const router = useRouter();
   const params = useParams();
   const editState = useProxy(perpustakaanDigitalState.dataPerpustakaan);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [formData, setFormData] = useState({
     judul: '',
     deskripsi: '',
     kategoriId: '',
     imageId: '',
+  });
+
+  const [originalData, setOriginalData] = useState({
+    judul: '',
+    deskripsi: '',
+    kategoriId: '',
+    imageId: '',
+    imageUrl: ''
   });
 
   const [previewImage, setPreviewImage] = useState<string | null>(null);
@@ -48,6 +57,14 @@ function EditPerpustakaanDigital() {
           imageId: data.imageId || '',
         });
 
+        setOriginalData({
+          judul: data.judul || '',
+          deskripsi: data.deskripsi || '',
+          kategoriId: data.kategoriId || '',
+          imageId: data.imageId || '',
+          imageUrl: data.image?.link || '',
+        });
+
         if (data.image?.link) setPreviewImage(data.image.link);
       } catch (error) {
         console.error(error);
@@ -62,8 +79,20 @@ function EditPerpustakaanDigital() {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
+  const handleResetForm = () => {
+    setFormData({
+      judul: originalData.judul,
+      deskripsi: originalData.deskripsi,
+      kategoriId: originalData.kategoriId,
+      imageId: originalData.imageId,
+    });
+    setPreviewImage(originalData.imageUrl || null);
+    setFile(null);
+  };
+
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       // Update global state hanya pas submit
       editState.update.form = { ...editState.update.form, ...formData };
 
@@ -81,6 +110,8 @@ function EditPerpustakaanDigital() {
     } catch (error) {
       console.error(error);
       toast.error('Terjadi kesalahan saat memperbarui data perpustakaan');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -120,7 +151,7 @@ function EditPerpustakaanDigital() {
               }}
               onReject={() => toast.error('File tidak valid.')}
               maxSize={5 * 1024 ** 2}
-              accept={{ 'image/*': [] }}
+              accept={{ 'image/*': ['.jpeg', '.jpg', '.png', '.webp'] }}
               radius="md"
               p="xl"
             >
@@ -139,14 +170,14 @@ function EditPerpustakaanDigital() {
                     Seret gambar atau klik untuk memilih file
                   </Text>
                   <Text size="sm" c="dimmed">
-                    Maksimal 5MB, format gambar wajib
+                    Maksimal 5MB, format gambar .png, .jpg, .jpeg, webp
                   </Text>
                 </Stack>
               </Group>
             </Dropzone>
 
             {previewImage && (
-              <Box mt="sm" style={{ display: 'flex', justifyContent: 'center' }}>
+              <Box pos={"relative"} mt="sm" style={{ display: 'flex', justifyContent: 'center' }}>
                 <Image
                   src={previewImage}
                   alt="Preview"
@@ -154,6 +185,24 @@ function EditPerpustakaanDigital() {
                   style={{ maxHeight: 220, objectFit: 'contain', border: `1px solid ${colors['blue-button']}` }}
                   loading="lazy"
                 />
+                <ActionIcon
+                  variant="filled"
+                  color="red"
+                  radius="xl"
+                  size="sm"
+                  pos="absolute"
+                  top={5}
+                  right={5}
+                  onClick={() => {
+                    setPreviewImage(null);
+                    setFile(null);
+                  }}
+                  style={{
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                  }}
+                >
+                  <IconX size={14} />
+                </ActionIcon>
               </Box>
             )}
           </Box>
@@ -191,6 +240,17 @@ function EditPerpustakaanDigital() {
           {/* Submit Button */}
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
@@ -200,7 +260,7 @@ function EditPerpustakaanDigital() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

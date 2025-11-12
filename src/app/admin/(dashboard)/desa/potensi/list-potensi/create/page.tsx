@@ -14,7 +14,9 @@ import {
   Stack,
   Text,
   TextInput,
-  Title
+  Title,
+  Loader,
+  ActionIcon
 } from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
 import { IconArrowBack, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
@@ -28,30 +30,39 @@ function CreatePotensi() {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     potensiDesaState.kategoriPotensi.findMany.load();
   }, []);
 
   const handleSubmit = async () => {
-    if (!file) return toast.warn('Pilih file gambar terlebih dahulu');
+    try {
+      setIsSubmitting(true);
+      if (!file) return toast.warn('Pilih file gambar terlebih dahulu');
 
-    const res = await ApiFetch.api.fileStorage.create.post({
-      file,
-      name: file.name,
-    });
+      const res = await ApiFetch.api.fileStorage.create.post({
+        file,
+        name: file.name,
+      });
 
-    const uploaded = res.data?.data;
-    if (!uploaded?.id) {
-      return toast.error('Gagal upload gambar');
+      const uploaded = res.data?.data;
+      if (!uploaded?.id) {
+        return toast.error('Gagal upload gambar');
+      }
+
+      potensiState.create.form.imageId = uploaded.id;
+
+      await potensiState.create.create();
+
+      resetForm();
+      router.push('/admin/desa/potensi/list-potensi');
+    } catch (error) {
+      console.error('Error creating potensi:', error);
+      toast.error('Terjadi kesalahan saat menambahkan potensi');
+    } finally {
+      setIsSubmitting(false);
     }
-
-    potensiState.create.form.imageId = uploaded.id;
-
-    await potensiState.create.create();
-
-    resetForm();
-    router.push('/admin/desa/potensi/list-potensi');
   };
 
   const resetForm = () => {
@@ -71,9 +82,9 @@ function CreatePotensi() {
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
       {/* Header */}
       <Group mb="md">
-          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
+        <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Tambah Potensi Desa
         </Title>
@@ -90,7 +101,7 @@ function CreatePotensi() {
         <Stack gap="md">
           {/* Judul */}
           <TextInput
-            defaultValue={potensiState.create.form.name}
+            value={potensiState.create.form.name}
             onChange={(val) => (potensiState.create.form.name = val.target.value)}
             label="Judul"
             placeholder="Masukkan judul potensi"
@@ -114,6 +125,32 @@ function CreatePotensi() {
           <Select
             label="Kategori"
             placeholder="Pilih kategori"
+            data={potensiDesaState.kategoriPotensi.findMany.data?.map((item) => ({
+              label: item.nama,
+              value: item.id,
+            })) || []}
+            value={potensiState.create.form.kategoriId || null}
+            onChange={(val: string | null) => {
+              if (val) {
+                const selected = potensiDesaState.kategoriPotensi.findMany.data?.find(
+                  (item) => item.id === val
+                );
+                if (selected) {
+                  potensiState.create.form.kategoriId = selected.id;
+                }
+              } else {
+                potensiState.create.form.kategoriId = '';
+              }
+            }}
+            searchable
+            clearable
+            nothingFoundMessage="Tidak ditemukan"
+            required
+          />
+
+          {/* <Select
+            label="Kategori"
+            placeholder="Pilih kategori"
             value={potensiState.create.form.kategoriId || ""}
             onChange={(val) => {
               potensiState.create.form.kategoriId = val ?? "";
@@ -122,7 +159,7 @@ function CreatePotensi() {
               value: item.id,
               label: item.nama,
             }))}
-          />
+          /> */}
 
           {/* Upload Gambar */}
           <Box>
@@ -139,7 +176,7 @@ function CreatePotensi() {
               }}
               onReject={() => toast.error('File tidak valid, gunakan format gambar')}
               maxSize={5 * 1024 ** 2}
-              accept={{ 'image/*': [] }}
+              accept={{ 'image/*': ['.jpeg', '.jpg', '.png', '.webp'] }}
               radius="md"
               p="xl"
             >
@@ -157,17 +194,44 @@ function CreatePotensi() {
               <Text ta="center" mt="sm" size="sm" color="dimmed">
                 Seret gambar atau klik untuk memilih file (maks 5MB)
               </Text>
+              <Text size="sm" c="dimmed">
+                Maksimal 5MB, format gambar .png, .jpg, .jpeg, webp
+              </Text>
             </Dropzone>
 
             {previewImage && (
-              <Box mt="sm" style={{ textAlign: 'center' }}>
+              <Box mt="sm" pos="relative" style={{ textAlign: 'center' }}>
                 <Image
                   src={previewImage}
                   alt="Preview Gambar"
                   radius="md"
-                  style={{ maxHeight: 200, objectFit: 'contain', border: '1px solid #ddd' }}
-                  loading='lazy'
+                  style={{
+                    maxHeight: 200,
+                    objectFit: 'contain',
+                    border: '1px solid #ddd',
+                  }}
+                  loading="lazy"
                 />
+
+                {/* Tombol hapus (pojok kanan atas) */}
+                <ActionIcon
+                  variant="filled"
+                  color="red"
+                  radius="xl"
+                  size="sm"
+                  pos="absolute"
+                  top={5}
+                  right={5}
+                  onClick={() => {
+                    setPreviewImage(null);
+                    setFile(null);
+                  }}
+                  style={{
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                  }}
+                >
+                  <IconX size={14} />
+                </ActionIcon>
               </Box>
             )}
           </Box>
@@ -188,6 +252,17 @@ function CreatePotensi() {
           {/* Tombol Simpan */}
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
@@ -197,7 +272,7 @@ function CreatePotensi() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

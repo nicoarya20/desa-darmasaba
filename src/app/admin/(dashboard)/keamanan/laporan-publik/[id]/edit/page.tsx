@@ -7,6 +7,7 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Select,
   Stack,
@@ -27,6 +28,7 @@ function EditLaporanPublik() {
   const stateLaporan = useProxy(laporanPublikState);
   const router = useRouter();
   const params = useParams();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [formData, setFormData] = useState<{
     judul: string;
@@ -36,6 +38,15 @@ function EditLaporanPublik() {
     penanganan: string;
     kronologi: string;
   }>({
+    judul: '',
+    lokasi: '',
+    tanggalWaktu: '',
+    status: 'Proses', // Default status
+    penanganan: '',
+    kronologi: '',
+  });
+
+  const [originalData, setOriginalData] = useState({
     judul: '',
     lokasi: '',
     tanggalWaktu: '',
@@ -60,6 +71,14 @@ function EditLaporanPublik() {
             penanganan: data.penanganan?.[0]?.deskripsi ?? '',
             kronologi: data.kronologi ?? '',
           });
+          setOriginalData({
+            judul: data.judul ?? '',
+            lokasi: data.lokasi ?? '',
+            tanggalWaktu: data.tanggalWaktu ?? '',
+            status: (data.status as Status) ?? 'Proses',
+            penanganan: data.penanganan?.[0]?.deskripsi ?? '',
+            kronologi: data.kronologi ?? '',
+          });
         }
       } catch (error) {
         console.error("Error loading laporan publik:", error);
@@ -76,8 +95,21 @@ function EditLaporanPublik() {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
+  const handleResetForm = () => {
+    setFormData({
+      judul: originalData.judul,
+      lokasi: originalData.lokasi,
+      tanggalWaktu: originalData.tanggalWaktu,
+      status: (originalData.status as Status),
+      penanganan: originalData.penanganan,
+      kronologi: originalData.kronologi,
+    });
+    toast.info("Form dikembalikan ke data awal");
+  };
+
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       stateLaporan.edit.form = {
         ...stateLaporan.edit.form,
         ...formData,
@@ -89,6 +121,8 @@ function EditLaporanPublik() {
     } catch (error) {
       console.error("Error updating laporan publik:", error);
       toast.error("Terjadi kesalahan saat memperbarui laporan publik");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -175,6 +209,17 @@ function EditLaporanPublik() {
 
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
@@ -184,7 +229,7 @@ function EditLaporanPublik() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

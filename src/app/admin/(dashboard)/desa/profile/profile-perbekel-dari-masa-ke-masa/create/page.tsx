@@ -2,7 +2,7 @@
 import stateProfileDesa from '@/app/admin/(dashboard)/_state/desa/profile';
 import colors from '@/con/colors';
 import ApiFetch from '@/lib/api-fetch';
-import { Box, Button, Group, Image, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
+import { Loader, ActionIcon, Box, Button, Group, Image, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
 import { IconArrowBack, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
@@ -14,6 +14,7 @@ function CreatePerbekelDariMasaKeMasa() {
   const state = useProxy(stateProfileDesa.mantanPerbekel);
   const router = useRouter();
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [file, setFile] = useState<File | null>(null);
 
   const resetForm = () => {
@@ -28,31 +29,39 @@ function CreatePerbekelDariMasaKeMasa() {
   };
 
   const handleSubmit = async () => {
-    if (!file) {
-      return toast.warn('Pilih file gambar terlebih dahulu');
+    try {
+      setIsSubmitting(true);
+      if (!file) {
+        return toast.warn('Pilih file gambar terlebih dahulu');
+      }
+
+      const res = await ApiFetch.api.fileStorage.create.post({
+        file,
+        name: file.name,
+      });
+
+      const uploaded = res.data?.data;
+      if (!uploaded?.id) return toast.error('Gagal upload gambar');
+
+      state.create.form.imageId = uploaded.id;
+      await state.create.create();
+      resetForm();
+      router.push('/admin/desa/profile/profile-perbekel-dari-masa-ke-masa');
+    } catch (error) {
+      console.error(error);
+      toast.error('Gagal menambahkan perbekel dari masa ke masa');
+    } finally {
+      setIsSubmitting(false);
     }
-
-    const res = await ApiFetch.api.fileStorage.create.post({
-      file,
-      name: file.name,
-    });
-
-    const uploaded = res.data?.data;
-    if (!uploaded?.id) return toast.error('Gagal upload gambar');
-
-    state.create.form.imageId = uploaded.id;
-    await state.create.create();
-    resetForm();
-    router.push('/admin/desa/profile/profile-perbekel-dari-masa-ke-masa');
   };
 
   return (
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
       {/* Back button + Title */}
       <Group mb="md">
-          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
+        <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Create Perbekel Dari Masa Ke Masa
         </Title>
@@ -70,21 +79,21 @@ function CreatePerbekelDariMasaKeMasa() {
           <TextInput
             label="Nama Perbekel"
             placeholder="Masukkan nama perbekel"
-            defaultValue={state.create.form.nama}
+            value={state.create.form.nama}
             onChange={(e) => (state.create.form.nama = e.target.value)}
             required
           />
           <TextInput
             label="Daerah"
             placeholder="Masukkan daerah"
-            defaultValue={state.create.form.daerah}
+            value={state.create.form.daerah}
             onChange={(e) => (state.create.form.daerah = e.target.value)}
             required
           />
           <TextInput
             label="Periode"
             placeholder="Masukkan periode"
-            defaultValue={state.create.form.periode}
+            value={state.create.form.periode}
             onChange={(e) => (state.create.form.periode = e.target.value)}
             required
           />
@@ -102,7 +111,7 @@ function CreatePerbekelDariMasaKeMasa() {
               }}
               onReject={() => toast.error('File tidak valid, gunakan format gambar')}
               maxSize={5 * 1024 ** 2}
-              accept={{ 'image/*': [] }}
+              accept={{ 'image/*': ['.jpeg', '.jpg', '.png', '.webp'] }}
               radius="md"
               p="xl"
             >
@@ -118,25 +127,63 @@ function CreatePerbekelDariMasaKeMasa() {
                 </Dropzone.Idle>
               </Group>
               <Text ta="center" mt="sm" size="sm" color="dimmed">
-                Seret gambar atau klik untuk memilih file (maks 5MB)
+                Seret gambar atau klik untuk memilih file
+              </Text>
+              <Text size="sm" c="dimmed">
+                Maksimal 5MB, format gambar .png, .jpg, .jpeg, webp
               </Text>
             </Dropzone>
 
             {previewImage && (
-              <Box mt="sm" style={{ textAlign: 'center' }}>
+              <Box mt="sm" pos="relative" style={{ textAlign: 'center' }}>
                 <Image
                   src={previewImage}
                   alt="Preview Gambar"
                   radius="md"
-                  style={{ maxHeight: 200, objectFit: 'contain', border: '1px solid #ddd' }}
-                  loading='lazy'
+                  style={{
+                    maxHeight: 200,
+                    objectFit: 'contain',
+                    border: '1px solid #ddd',
+                  }}
+                  loading="lazy"
                 />
+
+                {/* Tombol hapus (pojok kanan atas) */}
+                <ActionIcon
+                  variant="filled"
+                  color="red"
+                  radius="xl"
+                  size="sm"
+                  pos="absolute"
+                  top={5}
+                  right={5}
+                  onClick={() => {
+                    setPreviewImage(null);
+                    setFile(null);
+                  }}
+                  style={{
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                  }}
+                >
+                  <IconX size={14} />
+                </ActionIcon>
               </Box>
             )}
           </Box>
 
           {/* Submit */}
           <Group justify="right">
+            <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
             <Button
               onClick={handleSubmit}
               radius="md"
@@ -147,7 +194,7 @@ function CreatePerbekelDariMasaKeMasa() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

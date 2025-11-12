@@ -45,7 +45,7 @@ const programKemiskinanState = proxy({
         );
         if (res.status === 200) {
           programKemiskinanState.findMany.load();
-          return toast.success("success create");
+          return toast.success("Sukses menambahkan");
         }
         console.log(res);
         return toast.error("failed create");

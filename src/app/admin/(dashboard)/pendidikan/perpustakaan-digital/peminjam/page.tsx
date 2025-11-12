@@ -89,9 +89,10 @@ function ListPeminjamBuku({ search }: { search: string }) {
             <TableThead>
               <TableTr>
                 <TableTh style={{ width: '10%' }}>No</TableTh>
-                <TableTh style={{ width: '60%' }}>Nama Peminjam</TableTh>
-                <TableTh style={{ width: '15%' }}>Status</TableTh>
-                <TableTh style={{ width: '15%' }}>Detail</TableTh>
+                <TableTh style={{ width: '25%' }}>Nama Peminjam</TableTh>
+                <TableTh style={{ width: '25%' }}>Status</TableTh>
+                <TableTh style={{ width: '25%' }}>Alamat</TableTh>
+                <TableTh style={{ width: '25%' }}>Detail</TableTh>
               </TableTr>
             </TableThead>
             <TableTbody>
@@ -104,6 +105,9 @@ function ListPeminjamBuku({ search }: { search: string }) {
                     </TableTd>
                     <TableTd>
                       {renderStatusBadge(item.status)}
+                    </TableTd>
+                    <TableTd>
+                      {item.alamat}
                     </TableTd>
                     <TableTd>
                       <Button

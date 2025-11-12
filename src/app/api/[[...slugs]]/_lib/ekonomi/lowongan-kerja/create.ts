@@ -30,7 +30,7 @@ export default async function lowonganKerjaCreate(context: Context) {
 
     return {
         success: true,
-        message: "Success create lowongan kerja",
+        message: "Sukses menambahkan lowongan kerja",
         data: lowonganKerja,
     };
 }

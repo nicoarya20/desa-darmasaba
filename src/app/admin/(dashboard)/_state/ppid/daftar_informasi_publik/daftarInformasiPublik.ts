@@ -38,7 +38,7 @@ const daftarInformasiPublik = proxy({
         ].post(daftarInformasiPublik.create.form);
         if (res.status === 200) {
           daftarInformasiPublik.findMany.load();
-          return toast.success("success create");
+          return toast.success("Sukses menambahkan");
         }
         return toast.error("failed create");
       } catch (error) {

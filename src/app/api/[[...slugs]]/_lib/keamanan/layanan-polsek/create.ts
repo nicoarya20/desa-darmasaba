@@ -20,7 +20,7 @@ export default async function layananPolsekCreate(context: Context) {
 
   return {
     success: true,
-    message: "Success create layanan polsek",
+    message: "Sukses menambahkan layanan polsek",
     data: layanan,
   };
 }

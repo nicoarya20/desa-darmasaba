@@ -47,7 +47,7 @@ const lowonganKerjaState = proxy({
         );
         if (res.status === 200) {
           lowonganKerjaState.create.loading = false;
-          return toast.success("success create");
+          return toast.success("Sukses menambahkan");
         }
         console.log(res);
         return toast.error("failed create");

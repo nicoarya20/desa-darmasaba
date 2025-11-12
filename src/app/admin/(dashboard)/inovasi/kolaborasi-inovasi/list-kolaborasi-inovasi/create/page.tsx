@@ -3,17 +3,18 @@
 import CreateEditor from '@/app/admin/(dashboard)/_com/createEditor';
 import kolaborasiInovasiState from '@/app/admin/(dashboard)/_state/inovasi/kolaborasi-inovasi';
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
+import { Box, Button, Group, Loader, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
 import { YearPickerInput } from '@mantine/dates';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
 function CreateProgramKreatifDesa() {
   const stateCreate = useProxy(kolaborasiInovasiState);
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const resetForm = () => {
     stateCreate.create.form = {
@@ -40,6 +41,7 @@ function CreateProgramKreatifDesa() {
 
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       await stateCreate.create.create();
       resetForm();
       router.push("/admin/inovasi/kolaborasi-inovasi/list-kolaborasi-inovasi");
@@ -47,6 +49,8 @@ function CreateProgramKreatifDesa() {
     } catch (error) {
       console.error("Error creating kolaborasi inovasi:", error);
       toast.error("Terjadi kesalahan saat menyimpan data");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -75,7 +79,7 @@ function CreateProgramKreatifDesa() {
           <TextInput
             label={<Text fz="sm" fw="bold">Nama Kolaborasi Inovasi</Text>}
             placeholder="Masukkan nama kolaborasi inovasi"
-            defaultValue={stateCreate.create.form.name || ''}
+            value={stateCreate.create.form.name || ''}
             onChange={(val) => stateCreate.create.form.name = val.target.value}
             required
           />
@@ -104,11 +108,22 @@ function CreateProgramKreatifDesa() {
           <TextInput
             label={<Text fz="sm" fw="bold">Kolaborator</Text>}
             placeholder="Masukkan kolaborator"
-            defaultValue={stateCreate.create.form.kolaborator || ''}
+            value={stateCreate.create.form.kolaborator || ''}
             onChange={(e) => stateCreate.create.form.kolaborator = e.currentTarget.value}
           />
 
           <Group justify="right" mt="md">
+            <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
             <Button
               onClick={handleSubmit}
               radius="md"
@@ -119,7 +134,7 @@ function CreateProgramKreatifDesa() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

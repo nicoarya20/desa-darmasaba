@@ -21,7 +21,7 @@ export default async function dataLingkunganDesaCreate(context: Context){
 
     return {
         success: true,
-        message: "Success create data lingkungan desa",
+        message: "Sukses menambahkan data lingkungan desa",
         data: {
             ...body,
         }

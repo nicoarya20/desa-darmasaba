@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 
 import korupsiState from '@/app/admin/(dashboard)/_state/landing-page/desa-anti-korupsi';
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, Stack, TextInput, Title } from '@mantine/core';
+import { Box, Button, Group, Paper, Stack, TextInput, Title, Loader } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
@@ -14,71 +15,78 @@ export default function EditKategoriDesaAntiKorupsi() {
   const router = useRouter();
   const params = useParams();
   const id = params?.id as string;
-  const stateKategori = useProxy(korupsiState.kategoriDesaAntiKorupsi);
 
-  // state lokal untuk form
+  // 🧠 Ambil proxy asli (bisa ditulis) & snapshot (buat render)
+  const stateKategori = korupsiState.kategoriDesaAntiKorupsi;
+  const snapshotKategori = useProxy(stateKategori);
+
+  // 🧾 state lokal form
   const [formData, setFormData] = useState({ name: '' });
-  const [isLoading, setIsLoading] = useState(false);
+  const [originalData, setOriginalData] = useState({ name: '' });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // load data kategori saat mount atau id berubah
+  // 📥 load data saat pertama kali dibuka
   useEffect(() => {
     if (!id) return;
 
     const loadKategori = async () => {
-      setIsLoading(true);
       try {
         const data = await stateKategori.edit.load(id);
         if (data) {
           stateKategori.edit.id = id;
-          setFormData({ name: data.name || '' });
+          const newForm = { name: data.name || '' };
+          setFormData(newForm);
+          setOriginalData(newForm);
         }
       } catch (err) {
         console.error(err);
         toast.error('Gagal memuat data kategori desa anti korupsi');
-      } finally {
-        setIsLoading(false);
       }
     };
 
     loadKategori();
   }, [id]);
 
-  // handler controlled input
-  const handleChange = useCallback(
-    (field: keyof typeof formData, value: string) => {
-      setFormData(prev => ({ ...prev, [field]: value }));
-    },
-    []
-  );
+  // ✍️ ubah value input form
+  const handleChange = (field: keyof typeof formData, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
 
-  // submit form
+  // 🔁 reset ke data awal
+  const handleResetForm = () => {
+    setFormData({ ...originalData });
+    toast.info('Form dikembalikan ke data awal');
+  };
+
+  // 💾 submit update
   const handleSubmit = useCallback(async () => {
     if (!formData.name.trim()) return toast.error('Nama kategori tidak boleh kosong');
 
+    setIsSubmitting(true);
     try {
-      setIsLoading(true);
-
-      // update global state hanya saat submit
+      // isi form global dari local state
       stateKategori.edit.form = { name: formData.name.trim() };
-      if (!stateKategori.edit.id) stateKategori.edit.id = id;
+      stateKategori.edit.id = id;
 
       await stateKategori.edit.update();
+
       toast.success('Kategori berhasil diperbarui');
       router.push('/admin/landing-page/desa-anti-korupsi/kategori-desa-anti-korupsi');
     } catch (err) {
       console.error(err);
       toast.error(err instanceof Error ? err.message : 'Gagal memperbarui kategori');
     } finally {
-      setIsLoading(false);
+      setIsSubmitting(false);
     }
-  }, [formData.name, id, router, stateKategori.edit]);
+  }, [formData.name, id, router]);
 
+  // 🧩 UI
   return (
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
       <Group mb="md">
-          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
+        <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Edit Kategori Desa Anti Korupsi
         </Title>
@@ -96,25 +104,36 @@ export default function EditKategoriDesaAntiKorupsi() {
           <TextInput
             label="Nama Kategori"
             placeholder="Masukkan nama kategori"
-            value={formData.name} // controlled
+            value={formData.name}
             onChange={(e) => handleChange('name', e.currentTarget.value)}
             required
-            disabled={isLoading}
           />
 
-          <Group justify="right" mt="md">
+          <Group justify="right">
+            {/* Tombol Batal */}
+            <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
             <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
-              loading={isLoading}
+              disabled={isSubmitting}
               style={{
                 background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

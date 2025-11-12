@@ -3,37 +3,32 @@
 import CreateEditor from '@/app/admin/(dashboard)/_com/createEditor';
 import stateStrukturBumDes from '@/app/admin/(dashboard)/_state/ekonomi/struktur-organisasi/struktur-organisasi';
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
+import { Box, Button, Group, Loader, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
 function CreatePosisiOrganisasiBumDes() {
   const router = useRouter();
   const stateOrganisasi = useProxy(stateStrukturBumDes.posisiOrganisasi);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     stateOrganisasi.findMany.load();
-    // Initialize form with default values
+  }, []);
+
+  const resetForm = () => {
     stateOrganisasi.create.form = {
       nama: "",
       deskripsi: "",
       hierarki: 0,
     };
-
-    return () => {
-      // Clean up form on unmount
-      stateOrganisasi.create.form = {
-        nama: "",
-        deskripsi: "",
-        hierarki: 0,
-      };
-    };
-  }, []);
+  }
 
   const handleSubmit = async () => {
+    setIsSubmitting(true);
     try {
       if (!stateOrganisasi.create.form.nama.trim()) {
         return toast.error('Nama posisi tidak boleh kosong');
@@ -45,6 +40,8 @@ function CreatePosisiOrganisasiBumDes() {
     } catch (error) {
       toast.error('Gagal menambahkan posisi organisasi');
       console.error('Error:', error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -71,7 +68,7 @@ function CreatePosisiOrganisasiBumDes() {
           <TextInput
             label="Nama Posisi"
             placeholder="Contoh: Kepala Desa"
-            defaultValue={stateOrganisasi.create.form.nama}
+            value={stateOrganisasi.create.form.nama}
             onChange={(e) => (stateOrganisasi.create.form.nama = e.target.value)}
             required
           />
@@ -93,7 +90,7 @@ function CreatePosisiOrganisasiBumDes() {
             type="number"
             min={0}
             placeholder="Contoh: 1 (Angka semakin kecil, posisi semakin tinggi)"
-            defaultValue={stateOrganisasi.create.form.hierarki || ''}
+            value={stateOrganisasi.create.form.hierarki || ''}
             onChange={(e) => {
               const value = parseInt(e.target.value, 10);
               stateOrganisasi.create.form.hierarki = isNaN(value) ? 0 : value;
@@ -101,10 +98,21 @@ function CreatePosisiOrganisasiBumDes() {
             required
           />
 
-          <Group justify="flex-end" mt="md">
+<Group justify="right">
+            {/* Tombol Batal */}
+            <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
             <Button
               onClick={handleSubmit}
-              loading={stateOrganisasi.create.loading}
               radius="md"
               size="md"
               style={{
@@ -113,7 +121,7 @@ function CreatePosisiOrganisasiBumDes() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

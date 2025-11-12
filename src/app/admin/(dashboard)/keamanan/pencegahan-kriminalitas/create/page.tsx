@@ -5,6 +5,7 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Stack,
   Text,
@@ -25,6 +26,7 @@ function CreatePencegahanKriminalitas() {
   const kriminalitasState = useProxy(pencegahanKriminalitasState);
   const [link, setLink] = useState('');
   const embedLink = convertYoutubeUrlToEmbed(link);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const resetForm = () => {
     kriminalitasState.create.form = {
@@ -37,15 +39,23 @@ function CreatePencegahanKriminalitas() {
   };
 
   const handleSubmit = async () => {
-    if (!embedLink) {
-      toast.error('Link YouTube tidak valid. Pastikan formatnya benar.');
-      return;
+    try {
+      setIsSubmitting(true);
+      if (!embedLink) {
+        toast.error('Link YouTube tidak valid. Pastikan formatnya benar.');
+        return;
+      }
+  
+      kriminalitasState.create.form.linkVideo = embedLink;
+      await kriminalitasState.create.create();
+      resetForm();
+      router.push('/admin/keamanan/pencegahan-kriminalitas');
+    } catch (error) {
+      console.error('Gagal menambahkan pencegahan kriminalitas:', error);
+      toast.error('Gagal menambahkan pencegahan kriminalitas');
+    } finally {
+      setIsSubmitting(false);
     }
-
-    kriminalitasState.create.form.linkVideo = embedLink;
-    await kriminalitasState.create.create();
-    resetForm();
-    router.push('/admin/keamanan/pencegahan-kriminalitas');
   };
 
   return (
@@ -79,7 +89,7 @@ function CreatePencegahanKriminalitas() {
           <TextInput
             label="Judul Pencegahan Kriminalitas"
             placeholder="Masukkan judul Pencegahan Kriminalitas"
-            defaultValue={kriminalitasState.create.form.judul}
+            value={kriminalitasState.create.form.judul}
             onChange={(e) => {
               kriminalitasState.create.form.judul = e.currentTarget.value;
             }}
@@ -116,7 +126,7 @@ function CreatePencegahanKriminalitas() {
           <TextInput
             label="Link Video YouTube"
             placeholder="https://www.youtube.com/watch?v=abc123"
-            defaultValue={link}
+            value={link}
             onChange={(e) => setLink(e.currentTarget.value)}
             required
           />
@@ -141,6 +151,17 @@ function CreatePencegahanKriminalitas() {
           {/* Button Submit */}
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
@@ -150,7 +171,7 @@ function CreatePencegahanKriminalitas() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

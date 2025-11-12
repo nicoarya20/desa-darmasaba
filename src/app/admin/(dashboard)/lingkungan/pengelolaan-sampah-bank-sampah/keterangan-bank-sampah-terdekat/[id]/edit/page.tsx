@@ -3,7 +3,7 @@
 
 import pengelolaanSampahState from '@/app/admin/(dashboard)/_state/lingkungan/pengelolaan-sampah';
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
+import { Box, Button, Group, Loader, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import dynamic from 'next/dynamic';
 import { useParams, useRouter } from 'next/navigation';
@@ -18,8 +18,16 @@ function EditKeteranganBankSampahTerdekat() {
   const router = useRouter();
   const params = useParams();
   const [markerPosition, setMarkerPosition] = useState<{ lat: number; lng: number } | null>(null);
-
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
+    name: '',
+    alamat: '',
+    namaTempatMaps: '',
+    lat: 0,
+    lng: 0,
+  });
+
+  const [originalData, setOriginalData] = useState({
     name: '',
     alamat: '',
     namaTempatMaps: '',
@@ -46,6 +54,15 @@ function EditKeteranganBankSampahTerdekat() {
             lat: data.lat,
             lng: data.lng,
           });
+
+          // simpan juga versi original
+          setOriginalData({
+            name: data.name,
+            alamat: data.alamat,
+            namaTempatMaps: data.namaTempatMaps,
+            lat: data.lat,
+            lng: data.lng,
+          });
           setMarkerPosition({ lat: data.lat, lng: data.lng });
         }
       } catch (error) {
@@ -61,8 +78,21 @@ function EditKeteranganBankSampahTerdekat() {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
+  const handleResetForm = () => {
+    setFormData({
+      name: originalData.name,
+      alamat: originalData.alamat,
+      namaTempatMaps: originalData.namaTempatMaps,
+      lat: originalData.lat,
+      lng: originalData.lng,
+    });
+    setMarkerPosition({ lat: originalData.lat, lng: originalData.lng });
+    toast.info('Form dikembalikan ke data awal');
+  };
+
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       if (!formData.name.trim()) return toast.error('Nama bank sampah harus diisi');
       if (!formData.alamat.trim()) return toast.error('Alamat harus diisi');
       if (!formData.namaTempatMaps.trim()) return toast.error('Nama tempat di Maps harus diisi');
@@ -84,6 +114,8 @@ function EditKeteranganBankSampahTerdekat() {
     } catch (error) {
       console.error(error);
       toast.error(error instanceof Error ? error.message : 'Gagal memperbarui data bank sampah');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -151,6 +183,17 @@ function EditKeteranganBankSampahTerdekat() {
 
           <Group justify="right" mt="md">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
@@ -160,7 +203,7 @@ function EditKeteranganBankSampahTerdekat() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

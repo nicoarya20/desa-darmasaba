@@ -18,7 +18,7 @@ export default async function introductionCreate(context: Context) {
   });
   return {
     success: true,
-    message: "Success create introduction",
+    message: "Sukses menambahkan introduction",
     data: {
       ...body,
     },

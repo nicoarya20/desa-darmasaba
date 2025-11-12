@@ -7,6 +7,7 @@ import Underline from '@tiptap/extension-underline';
 import TextAlign from '@tiptap/extension-text-align';
 import Superscript from '@tiptap/extension-superscript';
 import SubScript from '@tiptap/extension-subscript';
+import { useEffect } from 'react';
 
 type CreateEditorProps = {
   value: string;
@@ -31,6 +32,13 @@ export default function CreateEditor({ value, onChange }: CreateEditorProps) {
       }
     },
   });
+
+  // 👇 Tambahkan efek untuk sinkronisasi value dari luar (resetForm)
+  useEffect(() => {
+    if (editor && value !== editor.getHTML()) {
+      editor.commands.setContent(value || '');
+    }
+  }, [value, editor]);
 
   return (
     <RichTextEditor editor={editor}>

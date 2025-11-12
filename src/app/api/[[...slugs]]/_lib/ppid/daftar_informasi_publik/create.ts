@@ -17,7 +17,7 @@ export default async function daftarInformasiPublikCreate(context: Context) {
     })
     return {
         success: true,
-        message: "Success create daftar informasi publik",
+        message: "Sukses menambahkan daftar informasi publik",
         data: {
             ...body,
         },

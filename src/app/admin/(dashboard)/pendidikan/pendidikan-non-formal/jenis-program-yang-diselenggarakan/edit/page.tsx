@@ -6,6 +6,7 @@ import {
   Button,
   Center,
   Group,
+  Loader,
   Paper,
   Stack,
   Text,
@@ -34,6 +35,7 @@ function EditJenisProgramYangDiselenggarakan() {
 
   const [formData, setFormData] = useState({ judul: '', content: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [originalData, setOriginalData] = useState({ judul: '', content: '' });
 
   // Load data pertama kali
   useShallowEffect(() => {
@@ -49,11 +51,23 @@ function EditJenisProgramYangDiselenggarakan() {
         judul: editState.findById.data.judul ?? '',
         content: editState.findById.data.deskripsi ?? '',
       });
+      setOriginalData({
+        judul: editState.findById.data.judul ?? '',
+        content: editState.findById.data.deskripsi ?? '',
+      });
     }
   }, [editState.findById.data]);
 
   const handleChange = (field: 'judul' | 'content', value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleResetForm = () => {
+    setFormData({
+      judul: originalData.judul,
+      content: originalData.content,
+    });
+    toast.info("Form dikembalikan ke data awal");
   };
 
   const handleSubmit = async () => {
@@ -137,24 +151,32 @@ function EditJenisProgramYangDiselenggarakan() {
               />
             </Box>
 
-            <Group>
-              <Button
-                bg={colors['blue-button']}
-                onClick={handleSubmit}
-                loading={isSubmitting || editState.update.loading}
-                disabled={!formData.judul}
-              >
-                {isSubmitting ? 'Menyimpan...' : 'Simpan Perubahan'}
-              </Button>
+            <Group justify="right">
+            {/* Tombol Batal */}
+            <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
 
-              <Button
-                variant="outline"
-                onClick={handleBack}
-                disabled={isSubmitting || editState.update.loading}
-              >
-                Batal
-              </Button>
-            </Group>
+            {/* Tombol Simpan */}
+            <Button
+              onClick={handleSubmit}
+              radius="md"
+              size="md"
+              style={{
+                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                color: '#fff',
+                boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
+              }}
+            >
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
+            </Button>
+          </Group>
           </Stack>
         </Paper>
       </Stack>

@@ -6,6 +6,7 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Stack,
   Text,
@@ -14,11 +15,14 @@ import {
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
 function CreateKontakItem() {
   const kontakState = useProxy(kontakDarurat.kontakDaruratItem);
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const resetForm = () => {
     kontakState.create.form = {
       nama: '',
@@ -28,9 +32,17 @@ function CreateKontakItem() {
   };
 
   const handleSubmit = async () => {
-    await kontakState.create.create();
-    resetForm();
-    router.push('/admin/keamanan/kontak-darurat/kontak-darurat-item');
+    try {
+      setIsSubmitting(true);
+      await kontakState.create.create();
+      resetForm();
+      router.push('/admin/keamanan/kontak-darurat/kontak-darurat-item');
+    } catch (error) {
+      console.error("Error creating kontak darurat item:", error);
+      toast.error("Gagal menambahkan kontak darurat item");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -62,7 +74,7 @@ function CreateKontakItem() {
         <Stack gap="md">
           {/* Input Nama Kategori */}
           <TextInput
-            defaultValue={kontakState.create.form.nama}
+            value={kontakState.create.form.nama}
             onChange={(val) => {
               kontakState.create.form.nama = val.target.value;
             }}
@@ -74,7 +86,7 @@ function CreateKontakItem() {
           <TextInput
             label={<Text fw="bold" fz="sm">Nomor Telepon Kontak</Text>}
             placeholder="Masukkan nomor telepon"
-            defaultValue={kontakState.create.form.nomorTelepon}
+            value={kontakState.create.form.nomorTelepon}
             onChange={(val) => {
               kontakState.create.form.nomorTelepon = val.target.value;
             }}
@@ -89,6 +101,17 @@ function CreateKontakItem() {
           {/* Tombol Submit */}
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
@@ -98,7 +121,7 @@ function CreateKontakItem() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

@@ -11,6 +11,6 @@ export default async function kategoriBeritaDelete(context: Context) {
     return {
         status: 200,
         success: true,
-        message: "Success delete kategori berita",
+        message: "Sukses Menghapus kategori berita",
     };
 }

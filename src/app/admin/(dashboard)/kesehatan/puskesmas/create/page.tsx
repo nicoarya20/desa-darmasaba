@@ -2,10 +2,12 @@
 import colors from '@/con/colors';
 import ApiFetch from '@/lib/api-fetch';
 import {
+  ActionIcon,
   Box,
   Button,
   Group,
   Image,
+  Loader,
   Paper,
   Stack,
   Text,
@@ -25,6 +27,7 @@ function CreatePuskesmas() {
   const router = useRouter();
   const [file, setFile] = useState<File | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const resetForm = () => {
     statePuskesmas.create.form = {
@@ -50,35 +53,43 @@ function CreatePuskesmas() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!file) {
-      return toast.warn('Pilih file gambar terlebih dahulu');
+    try {
+      setIsSubmitting(true);
+      if (!file) {
+        return toast.warn('Pilih file gambar terlebih dahulu');
+      }
+
+      const res = await ApiFetch.api.fileStorage.create.post({
+        file,
+        name: file.name,
+      });
+
+      const uploaded = res.data?.data;
+      if (!uploaded?.id) {
+        return toast.error('Gagal upload gambar');
+      }
+
+      statePuskesmas.create.form.imageId = uploaded.id;
+      await statePuskesmas.create.submit();
+
+      toast.success('Data berhasil disimpan');
+      resetForm();
+      router.push('/admin/kesehatan/puskesmas');
+    } catch (error) {
+      console.error('Error creating posyandu:', error);
+      toast.error('Terjadi kesalahan saat membuat posyandu');
+    } finally {
+      setIsSubmitting(false);
     }
-
-    const res = await ApiFetch.api.fileStorage.create.post({
-      file,
-      name: file.name,
-    });
-
-    const uploaded = res.data?.data;
-    if (!uploaded?.id) {
-      return toast.error('Gagal upload gambar');
-    }
-
-    statePuskesmas.create.form.imageId = uploaded.id;
-    await statePuskesmas.create.submit();
-
-    toast.success('Data berhasil disimpan');
-    resetForm();
-    router.push('/admin/kesehatan/puskesmas');
   };
 
   return (
     <Box px={{ base: 'sm', md: 'lg' }} py="md" component="form" onSubmit={handleSubmit}>
       {/* Header */}
       <Group mb="md">
-          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
+        <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Tambah Data Puskesmas
         </Title>
@@ -97,40 +108,40 @@ function CreatePuskesmas() {
           <TextInput
             label="Nama Puskesmas"
             placeholder="Masukkan nama puskesmas"
-            defaultValue={statePuskesmas.create.form.name}
+            value={statePuskesmas.create.form.name}
             onChange={(e) => (statePuskesmas.create.form.name = e.target.value)}
             required
           />
           <TextInput
             label="Alamat"
             placeholder="Masukkan alamat"
-            defaultValue={statePuskesmas.create.form.alamat}
+            value={statePuskesmas.create.form.alamat}
             onChange={(e) => (statePuskesmas.create.form.alamat = e.target.value)}
             required
           />
           <TextInput
             label="Jam Buka"
             placeholder="Masukkan jam buka"
-            defaultValue={statePuskesmas.create.form.jam.workDays}
+            value={statePuskesmas.create.form.jam.workDays}
             onChange={(e) => (statePuskesmas.create.form.jam.workDays = e.target.value)}
           />
           <TextInput
             label="Jam Tutup"
             placeholder="Masukkan jam tutup"
-            defaultValue={statePuskesmas.create.form.jam.weekDays}
+            value={statePuskesmas.create.form.jam.weekDays}
             onChange={(e) => (statePuskesmas.create.form.jam.weekDays = e.target.value)}
           />
           <TextInput
             label="Holiday"
             placeholder="Masukkan hari libur"
-            defaultValue={statePuskesmas.create.form.jam.holiday}
+            value={statePuskesmas.create.form.jam.holiday}
             onChange={(e) => (statePuskesmas.create.form.jam.holiday = e.target.value)}
           />
 
           <TextInput
             label="Kontak Puskesmas"
             placeholder="Masukkan kontak puskesmas"
-            defaultValue={statePuskesmas.create.form.kontak.kontakPuskesmas}
+            value={statePuskesmas.create.form.kontak.kontakPuskesmas}
             onChange={(e) =>
               (statePuskesmas.create.form.kontak.kontakPuskesmas = e.target.value)
             }
@@ -138,19 +149,19 @@ function CreatePuskesmas() {
           <TextInput
             label="Email"
             placeholder="Masukkan email"
-            defaultValue={statePuskesmas.create.form.kontak.email}
+            value={statePuskesmas.create.form.kontak.email}
             onChange={(e) => (statePuskesmas.create.form.kontak.email = e.target.value)}
           />
           <TextInput
             label="Facebook"
             placeholder="Masukkan facebook"
-            defaultValue={statePuskesmas.create.form.kontak.facebook}
+            value={statePuskesmas.create.form.kontak.facebook}
             onChange={(e) => (statePuskesmas.create.form.kontak.facebook = e.target.value)}
           />
           <TextInput
             label="Kontak UGD"
             placeholder="Masukkan kontak UGD"
-            defaultValue={statePuskesmas.create.form.kontak.kontakUGD}
+            value={statePuskesmas.create.form.kontak.kontakUGD}
             onChange={(e) => (statePuskesmas.create.form.kontak.kontakUGD = e.target.value)}
           />
 
@@ -168,7 +179,7 @@ function CreatePuskesmas() {
               }}
               onReject={() => toast.error('File tidak valid.')}
               maxSize={5 * 1024 ** 2}
-              accept={{ 'image/*': [] }}
+              accept={{ 'image/*': ['.jpeg', '.jpg', '.png', '.webp'] }}
             >
               <Group justify="center" gap="xl" mih={200} style={{ pointerEvents: 'none' }}>
                 <Dropzone.Accept>
@@ -193,7 +204,7 @@ function CreatePuskesmas() {
             </Dropzone>
 
             {previewImage && (
-              <Box mt="sm">
+              <Box mt="sm" pos={"relative"}>
                 <Image
                   src={previewImage}
                   alt="Preview"
@@ -206,14 +217,44 @@ function CreatePuskesmas() {
                   }}
                   loading="lazy"
                 />
+                <ActionIcon
+                  variant="filled"
+                  color="red"
+                  radius="xl"
+                  size="sm"
+                  pos="absolute"
+                  top={5}
+                  right={5}
+                  onClick={() => {
+                    setPreviewImage(null);
+                    setFile(null);
+                  }}
+                  style={{
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                  }}
+                >
+                  <IconX size={14} />
+                </ActionIcon>
               </Box>
             )}
           </Box>
 
           {/* Action Button */}
           <Group justify="right">
+            {/* Tombol Batal */}
             <Button
-              type="submit"
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
+              onClick={handleSubmit}
               radius="md"
               size="md"
               style={{
@@ -222,7 +263,7 @@ function CreatePuskesmas() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

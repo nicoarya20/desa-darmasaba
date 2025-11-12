@@ -7,6 +7,7 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Select,
   Stack,
@@ -29,7 +30,12 @@ function EditPengajar() {
   const params = useParams();
   const router = useRouter();
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState<FormPengajar>({
+    nama: '',
+    lembagaId: ''
+  });
+  const [originalData, setOriginalData] = useState<FormPengajar>({
     nama: '',
     lembagaId: ''
   });
@@ -47,6 +53,10 @@ function EditPengajar() {
             nama: data.nama || '',
             lembagaId: data.lembagaId || '',
           });
+          setOriginalData({
+            nama: data.nama || '',
+            lembagaId: data.lembagaId || '',
+          });
         }
       } catch (err) {
         console.error(err);
@@ -57,12 +67,21 @@ function EditPengajar() {
     loadData();
   }, [params?.id]);
 
+  const handleResetForm = () => {
+    setFormData({
+      nama: originalData.nama,
+      lembagaId: originalData.lembagaId,
+    });
+    toast.info('Form dikembalikan ke data awal');
+  };
+
   const handleChange = (field: keyof FormPengajar, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       // update global state hanya saat submit
       pengajarState.edit.form = {
         ...pengajarState.edit.form,
@@ -75,6 +94,8 @@ function EditPengajar() {
     } catch (err) {
       console.error(err);
       toast.error("Terjadi kesalahan saat memperbarui pengajar");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -122,6 +143,17 @@ function EditPengajar() {
 
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
@@ -131,7 +163,7 @@ function EditPengajar() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

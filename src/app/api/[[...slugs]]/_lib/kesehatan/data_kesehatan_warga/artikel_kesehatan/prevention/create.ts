@@ -20,7 +20,7 @@ export default async function preventionCreate(context: Context) {
     });
     return {
         success: true,
-        message: "Success create prevention",
+        message: "Sukses menambahkan prevention",
         data: {
             ...body,
         },

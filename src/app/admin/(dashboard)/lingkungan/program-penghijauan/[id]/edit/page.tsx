@@ -9,6 +9,7 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Stack,
   Text,
@@ -47,8 +48,16 @@ function EditProgramPenghijauan() {
   const stateProgramPenghijauan = useProxy(programPenghijauanState);
   const params = useParams();
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [formData, setFormData] = useState<FormProgramPenghijauan>({
+    name: '',
+    judul: '',
+    deskripsi: '',
+    icon: '',
+  });
+
+  const [originalData, setOriginalData] = useState<FormProgramPenghijauan>({
     name: '',
     judul: '',
     deskripsi: '',
@@ -71,6 +80,12 @@ function EditProgramPenghijauan() {
             deskripsi: data.deskripsi,
             icon: data.icon,
           });
+          setOriginalData({
+            name: data.name,
+            judul: data.judul,
+            deskripsi: data.deskripsi,
+            icon: data.icon,
+          });
         }
       } catch (error) {
         console.error('Error loading program penghijauan:', error);
@@ -81,9 +96,20 @@ function EditProgramPenghijauan() {
     loadProgram();
   }, [params?.id]);
 
+  const handleResetForm = () => {
+    setFormData({
+      name: originalData.name,
+      judul: originalData.judul,
+      deskripsi: originalData.deskripsi,
+      icon: originalData.icon,
+    });
+    toast.info('Form dikembalikan ke data awal');
+  };
+
   // Hanya update global state saat submit
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       stateProgramPenghijauan.update.form = {
         name: formData.name.trim(),
         judul: formData.judul.trim(),
@@ -97,6 +123,8 @@ function EditProgramPenghijauan() {
     } catch (error) {
       console.error('Error updating program penghijauan:', error);
       toast.error('Gagal memperbarui program penghijauan');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -174,6 +202,17 @@ function EditProgramPenghijauan() {
           {/* Tombol simpan */}
           <Group justify="flex-end">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
@@ -183,7 +222,7 @@ function EditProgramPenghijauan() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

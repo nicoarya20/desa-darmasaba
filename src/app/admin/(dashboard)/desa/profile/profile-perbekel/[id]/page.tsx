@@ -126,8 +126,8 @@ function ProfilePerbekel() {
               <Dropzone
                 onDrop={(files) => handleFileChange(files[0])}
                 onReject={() => toast.error('File tidak valid.')}
-                maxSize={5 * 1024 ** 2} // 5MB
-                accept={{ 'image/*': [] }}
+                maxSize={5 * 1024 ** 2} 
+                accept={{ 'image/*': ['.jpeg', '.jpg', '.png', '.webp'] }}
               >
                 <Group justify="center" gap="xl" mih={220} style={{ pointerEvents: 'none' }}>
                   <Dropzone.Accept><IconUpload size={52} color="var(--mantine-color-blue-6)" stroke={1.5} /></Dropzone.Accept>

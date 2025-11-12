@@ -38,7 +38,7 @@ const kontakDaruratKeamananState = proxy({
         ].post(kontakDaruratKeamananState.create.form);
         if (res.status === 200) {
           kontakDaruratKeamananState.findMany.load();
-          return toast.success("success create");
+          return toast.success("Sukses menambahkan");
         }
         console.log(res);
         return toast.error("failed create");
@@ -294,7 +294,7 @@ const kontakDaruratItem = proxy({
         );
         if (res.status === 200) {
           kontakDaruratItem.findMany.load();
-          return toast.success("success create");
+          return toast.success("Sukses menambahkan");
         }
         console.log(res);
         return toast.error("failed create");

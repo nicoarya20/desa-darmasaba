@@ -27,7 +27,7 @@ export default async function kelahiranCreate(context: Context) {
     });
     return {
         success: true,
-        message: "Success create kelahiran",
+        message: "Sukses menambahkan kelahiran",
         data: created,
     };
 }

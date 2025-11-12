@@ -8,6 +8,7 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Stack,
   Text,
@@ -32,6 +33,7 @@ function EditProgramKreatifDesa() {
   const stateProgramKreatif = useProxy(programKreatifState);
   const params = useParams();
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [formData, setFormData] = useState<FormProgramKreatif>({
     name: '',
@@ -120,8 +122,22 @@ function EditProgramKreatifDesa() {
     }
   };
 
+  const handleResetForm = () => {
+    setFormData({
+      name: originalData.name,
+      slug: originalData.slug,
+      deskripsi: originalData.deskripsi,
+      icon: originalData.icon,
+    });
+    setOriginalData({
+      ...originalData,
+    });
+    toast.info("Form dikembalikan ke data awal");
+  };
+
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       stateProgramKreatif.update.form = {
         name: formData.name.trim(),
         deskripsi: formData.deskripsi.trim(),
@@ -138,6 +154,8 @@ function EditProgramKreatifDesa() {
     } catch (error) {
       console.error('Error updating program kreatif:', error);
       toast.error('Gagal menyimpan program kreatif');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -204,6 +222,17 @@ function EditProgramKreatifDesa() {
 
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
@@ -213,7 +242,7 @@ function EditProgramKreatifDesa() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

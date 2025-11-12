@@ -6,6 +6,7 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Stack,
   Text,
@@ -14,12 +15,14 @@ import {
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
 function CreateBelanja() {
   const belanjaState = useProxy(PendapatanAsliDesa.belanja);
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const formatRupiah = (value: number | string) => {
     const number =
@@ -47,9 +50,17 @@ function CreateBelanja() {
       return toast.warn('Lengkapi semua field terlebih dahulu');
     }
 
-    await belanjaState.create.submit();
-    resetForm();
-    router.push('/admin/ekonomi/PADesa-pendapatan-asli-desa/belanja');
+    try {
+      setIsSubmitting(true);
+      await belanjaState.create.submit();
+      resetForm();
+      router.push('/admin/ekonomi/PADesa-pendapatan-asli-desa/belanja');
+    } catch (error) {
+      console.error('Error creating belanja:', error);
+      toast.error('Gagal menambahkan jenis belanja');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -82,7 +93,7 @@ function CreateBelanja() {
           <TextInput
             label={<Text fw="bold" fz="sm">Nama Jenis Belanja</Text>}
             placeholder="Masukkan nama jenis belanja"
-            defaultValue={belanjaState.create.form.name}
+            value={belanjaState.create.form.name}
             onChange={(e) => (belanjaState.create.form.name = e.target.value)}
             required
           />
@@ -91,7 +102,7 @@ function CreateBelanja() {
             type="text"
             label={<Text fw="bold" fz="sm">Nilai</Text>}
             placeholder="Masukkan nilai belanja"
-            defaultValue={formatRupiah(belanjaState.create.form.value)}
+            value={formatRupiah(belanjaState.create.form.value)}
             onChange={(e) => {
               const raw = e.currentTarget.value;
               belanjaState.create.form.value = unformatRupiah(raw);
@@ -100,6 +111,17 @@ function CreateBelanja() {
           />
 
           <Group justify="right">
+            <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
             <Button
               onClick={handleSubmit}
               radius="md"
@@ -110,7 +132,7 @@ function CreateBelanja() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

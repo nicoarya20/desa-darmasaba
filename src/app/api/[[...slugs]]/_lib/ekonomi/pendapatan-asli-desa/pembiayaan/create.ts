@@ -22,7 +22,7 @@ export default async function pembiayaanCreate(context: Context) {
     });
     return {
         success: true,
-        message: "Success create pembiayaan",
+        message: "Sukses menambahkan pembiayaan",
         data: created,
     };
 }

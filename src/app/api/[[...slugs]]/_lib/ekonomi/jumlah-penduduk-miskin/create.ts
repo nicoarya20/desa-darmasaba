@@ -27,7 +27,7 @@ export default async function grafikJumlahPendudukMiskinCreate(
 
   return {
     success: true,
-    message: "Success create grafik jumlah penduduk miskin",
+    message: "Sukses menambahkan grafik jumlah penduduk miskin",
     data: created,
   };
 }

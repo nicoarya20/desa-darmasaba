@@ -6,6 +6,7 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Stack,
   Text,
@@ -14,12 +15,14 @@ import {
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
 function CreateJadwalKegiatan() {
   const stateJadwalKegiatan = useProxy(jadwalKegiatanState);
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const resetForm = () => {
     stateJadwalKegiatan.create.form = {
@@ -47,11 +50,18 @@ function CreateJadwalKegiatan() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await stateJadwalKegiatan.create.submit();
-
-    toast.success('Data berhasil disimpan');
-    resetForm();
-    router.push('/admin/kesehatan/data-kesehatan-warga/jadwal_kegiatan');
+    try {
+      setIsSubmitting(true);
+      await stateJadwalKegiatan.create.submit();
+      toast.success('Data berhasil disimpan');
+      resetForm();
+      router.push('/admin/kesehatan/data-kesehatan-warga/jadwal_kegiatan');
+    } catch (error) {
+      console.error(error);
+      toast.error('Gagal menyimpan data jadwal kegiatan');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -84,7 +94,7 @@ function CreateJadwalKegiatan() {
           <TextInput
             label="Nama Jadwal Kegiatan"
             placeholder="Masukkan nama jadwal kegiatan"
-            defaultValue={stateJadwalKegiatan.create.form.content}
+            value={stateJadwalKegiatan.create.form.content}
             onChange={(e) => {
               stateJadwalKegiatan.create.form.content = e.target.value;
             }}
@@ -107,7 +117,7 @@ function CreateJadwalKegiatan() {
               label="Nama"
               required
               placeholder="Masukkan nama"
-              defaultValue={stateJadwalKegiatan.create.form.informasiJadwalKegiatan.name}
+              value={stateJadwalKegiatan.create.form.informasiJadwalKegiatan.name}
               onChange={(e) => {
                 stateJadwalKegiatan.create.form.informasiJadwalKegiatan.name = e.target.value;
               }}
@@ -116,7 +126,7 @@ function CreateJadwalKegiatan() {
               type="date"
               required
               label="Tanggal"
-              defaultValue={stateJadwalKegiatan.create.form.informasiJadwalKegiatan.tanggal}
+              value={stateJadwalKegiatan.create.form.informasiJadwalKegiatan.tanggal}
               onChange={(e) => {
                 stateJadwalKegiatan.create.form.informasiJadwalKegiatan.tanggal = e.target.value;
               }}
@@ -125,7 +135,7 @@ function CreateJadwalKegiatan() {
               label="Waktu"
               required
               placeholder="Masukkan waktu"
-              defaultValue={stateJadwalKegiatan.create.form.informasiJadwalKegiatan.waktu}
+              value={stateJadwalKegiatan.create.form.informasiJadwalKegiatan.waktu}
               onChange={(e) => {
                 stateJadwalKegiatan.create.form.informasiJadwalKegiatan.waktu = e.target.value;
               }}
@@ -134,7 +144,7 @@ function CreateJadwalKegiatan() {
               label="Lokasi"
               required
               placeholder="Masukkan lokasi"
-              defaultValue={stateJadwalKegiatan.create.form.informasiJadwalKegiatan.lokasi}
+              value={stateJadwalKegiatan.create.form.informasiJadwalKegiatan.lokasi}
               onChange={(e) => {
                 stateJadwalKegiatan.create.form.informasiJadwalKegiatan.lokasi = e.target.value;
               }}
@@ -172,8 +182,20 @@ function CreateJadwalKegiatan() {
           </Box>
           {/* Save Button */}
           <Group justify="right">
+            {/* Tombol Batal */}
             <Button
-              type="submit"
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
+              onClick={handleSubmit}
               radius="md"
               size="md"
               style={{
@@ -182,7 +204,7 @@ function CreateJadwalKegiatan() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

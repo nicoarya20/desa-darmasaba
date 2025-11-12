@@ -7,15 +7,17 @@ import {
   Group,
   MultiSelect,
   Paper,
+  Loader,
   Stack,
   TextInput,
   Title
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import user from '../../../_state/user/user-state';
+import { toast } from 'react-toastify';
 
 
 export default function CreateRole() {
@@ -25,6 +27,8 @@ export default function CreateRole() {
     stateRole.findMany.load();
   }, []);
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const resetForm = () => {
     stateRole.create.form = {
       name: '',
@@ -33,10 +37,18 @@ export default function CreateRole() {
   };
 
   const handleSubmit = async () => {
-    await stateRole.create.create();
+    try {
+      setIsSubmitting(true);
+      await stateRole.create.create();
 
-    resetForm();
-    router.push('/admin/user&role/role');
+      resetForm();
+      router.push('/admin/user&role/role');
+    } catch (error) {
+      console.error('Error creating role:', error);
+      toast.error('Terjadi kesalahan saat membuat role');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -63,7 +75,7 @@ export default function CreateRole() {
             <TextInput
               label="Nama Role"
               placeholder="Masukkan nama role"
-              defaultValue={stateRole.create.form.name || ''}
+              value={stateRole.create.form.name || ''}
               onChange={(e) => (stateRole.create.form.name = e.target.value)}
               required
             />
@@ -93,6 +105,17 @@ export default function CreateRole() {
 
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
@@ -102,7 +125,7 @@ export default function CreateRole() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

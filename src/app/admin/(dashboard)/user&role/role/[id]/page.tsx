@@ -1,7 +1,7 @@
 'use client'
 
 import colors from '@/con/colors';
-import { Box, Button, Group, MultiSelect, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
+import { Box, Button, Loader, Group, MultiSelect, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
@@ -20,12 +20,23 @@ function EditRole() {
     permissions: [] as string[],
   });
 
+  const [originalData, setOriginalData] = useState({
+    name: '',
+    permissions: [] as string[],
+  });
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   // Load role data
   const loadRole = useCallback(async (id: string) => {
     try {
       const data = await stateRole.update.load(id);
       if (data) {
         setFormData({
+          name: data.name || '',
+          permissions: data.permissions || [],
+        });
+        setOriginalData({
           name: data.name || '',
           permissions: data.permissions || [],
         });
@@ -42,6 +53,13 @@ function EditRole() {
     if (id) loadRole(id);
   }, [params?.id, loadRole, stateRole.findMany]);
 
+  const handleResetForm = () => {
+    setFormData({
+      name: originalData.name,
+      permissions: originalData.permissions,
+    });
+    toast.info("Form dikembalikan ke data awal");
+  };
   // Submit handler
   const handleSubmit = async () => {
     if (!formData.name.trim()) {
@@ -54,6 +72,7 @@ function EditRole() {
     }
 
     try {
+      setIsSubmitting(true);
       // Update global state only on submit
       stateRole.update.form = {
         ...stateRole.update.form,
@@ -66,6 +85,8 @@ function EditRole() {
     } catch (error) {
       console.error('Error updating role:', error);
       toast.error('Terjadi kesalahan saat memperbarui role');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -112,18 +133,30 @@ function EditRole() {
             error={!formData.permissions.length ? 'Pilih minimal satu permission' : undefined}
           />
 
-          <Group justify="right">
+<Group justify="right">
+            {/* Tombol Batal */}
             <Button
+              variant="outline"
+              color="gray"
               radius="md"
               size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
+              radius="md"
+              size="md"
               style={{
                 background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Submit
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

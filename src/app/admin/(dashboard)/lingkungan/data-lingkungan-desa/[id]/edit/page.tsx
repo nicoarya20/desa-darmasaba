@@ -8,6 +8,7 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Stack,
   Text,
@@ -50,8 +51,16 @@ export default function EditDataLingkunganDesa() {
   const stateDataLingkunganDesa = useProxy(dataLingkunganDesaState);
   const params = useParams();
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [formData, setFormData] = useState<FormDataLingkunganDesa>({
+    name: '',
+    deskripsi: '',
+    jumlah: '',
+    icon: '',
+  });
+
+  const [originalData, setOriginalData] = useState<FormDataLingkunganDesa>({
     name: '',
     deskripsi: '',
     jumlah: '',
@@ -74,6 +83,12 @@ export default function EditDataLingkunganDesa() {
             jumlah: data.jumlah,
             icon: data.icon,
           });
+          setOriginalData({
+            name: data.name,
+            deskripsi: data.deskripsi,
+            jumlah: data.jumlah,
+            icon: data.icon,
+          });
         }
       } catch (error) {
         console.error('Error loading data lingkungan desa:', error);
@@ -84,8 +99,19 @@ export default function EditDataLingkunganDesa() {
     loadData();
   }, [params?.id]);
 
+  const handleResetForm = () => {
+    setFormData({
+      name: originalData.name,
+      deskripsi: originalData.deskripsi,
+      jumlah: originalData.jumlah,
+      icon: originalData.icon,
+    });
+    toast.info('Form dikembalikan ke data awal');
+  };
+
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       // Update global state hanya saat submit
       stateDataLingkunganDesa.update.form = {
         ...formData,
@@ -100,6 +126,8 @@ export default function EditDataLingkunganDesa() {
     } catch (error) {
       console.error('Error updating data lingkungan desa:', error);
       toast.error('Terjadi kesalahan saat memperbarui data lingkungan desa');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -169,6 +197,17 @@ export default function EditDataLingkunganDesa() {
 
           <Group justify="flex-end">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
@@ -178,7 +217,7 @@ export default function EditDataLingkunganDesa() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

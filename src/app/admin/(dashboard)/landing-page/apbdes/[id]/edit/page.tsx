@@ -13,7 +13,9 @@ import {
   Stack,
   Text,
   TextInput,
-  Title
+  Title,
+  Loader,
+  ActionIcon
 } from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
 import { IconArrowBack, IconFile, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
@@ -34,6 +36,17 @@ function EditAPBDes() {
     fileId: ''
   });
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [originalData, setOriginalData] = useState({
+    name: "",
+    jumlah: "",
+    imageId: "",
+    fileId: "",
+    imageUrl: "",
+    docUrl: "",
+  });
+
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [previewDoc, setPreviewDoc] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -48,12 +61,21 @@ function EditAPBDes() {
       try {
         const data = await apbdesState.edit.load(id);
         if (data) {
-          setFormData({
-            name: data.name || '',
-            jumlah: data.jumlah || '',
-            imageId: data.imageId || '',
-            fileId: data.fileId || ''
+          const newForm = {
+            name: data.name || "",
+            jumlah: data.jumlah || "",
+            imageId: data.imageId || "",
+            fileId: data.fileId || "",
+          };
+          setFormData(newForm);
+
+          // simpan juga versi original
+          setOriginalData({
+            ...newForm,
+            imageUrl: data.image?.link || "",
+            docUrl: data.file?.link || "",
           });
+
           setPreviewImage(data.image?.link || null);
           setPreviewDoc(data.file?.link || null);
         }
@@ -82,6 +104,7 @@ function EditAPBDes() {
 
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       // Update global state with local form data first
       apbdesState.edit.form = { ...apbdesState.edit.form, ...formData };
 
@@ -103,11 +126,27 @@ function EditAPBDes() {
 
       await apbdesState.edit.update();
       toast.success('APBDes berhasil diperbarui!');
-      router.push('/admin/landing-page/apbdes');
+      router.push('/admin/landing-page/APBDes');
     } catch (err) {
       console.error(err);
       toast.error('Terjadi kesalahan saat memperbarui APBDes');
+    } finally {
+      setIsSubmitting(false);
     }
+  };
+
+  const handleResetForm = () => {
+    setFormData({
+      name: originalData.name,
+      jumlah: originalData.jumlah,
+      imageId: originalData.imageId,
+      fileId: originalData.fileId,
+    });
+    setPreviewImage(originalData.imageUrl || null);
+    setImageFile(null);
+    setPreviewDoc(originalData.docUrl || null);
+    setDocFile(null);
+    toast.info("Form dikembalikan ke data awal");
   };
 
   return (
@@ -147,7 +186,7 @@ function EditAPBDes() {
               onDrop={handleDrop('image')}
               onReject={() => toast.error('File tidak valid, gunakan format gambar')}
               maxSize={5 * 1024 ** 2}
-              accept={{ 'image/*': [] }}
+              accept={{ 'image/*': ['.jpeg', '.jpg', '.png', '.webp'] }}
               radius="md"
               p="xl"
             >
@@ -157,13 +196,43 @@ function EditAPBDes() {
                 <Dropzone.Idle><IconPhoto size={48} color="#868e96" stroke={1.5} /></Dropzone.Idle>
                 <Stack gap="xs" align="center">
                   <Text size="md" fw={500}>Seret gambar atau klik untuk memilih file</Text>
-                  <Text size="sm" c="dimmed">Maksimal 5MB, format gambar wajib</Text>
+                  <Text size="sm" c="dimmed">Maksimal 5MB, format gambar .png, .jpg, .jpeg, webp</Text>
                 </Stack>
               </Group>
             </Dropzone>
             {previewImage && (
-              <Box mt="sm" style={{ display: 'flex', justifyContent: 'center' }}>
-                <Image src={previewImage} alt="Preview Gambar" radius="md" style={{ maxHeight: 300, objectFit: 'contain', border: `1px solid ${colors['blue-button']}` }} loading="lazy" />
+              <Box mt="sm" pos="relative" style={{ textAlign: 'center' }}>
+                <Image
+                  src={previewImage}
+                  alt="Preview Gambar"
+                  radius="md"
+                  style={{
+                    maxHeight: 200,
+                    objectFit: 'contain',
+                    border: '1px solid #ddd',
+                  }}
+                  loading="lazy"
+                />
+
+                {/* Tombol hapus (pojok kanan atas) */}
+                <ActionIcon
+                  variant="filled"
+                  color="red"
+                  radius="xl"
+                  size="sm"
+                  pos="absolute"
+                  top={5}
+                  right={5}
+                  onClick={() => {
+                    setPreviewImage(null);
+                    setImageFile(null);
+                  }}
+                  style={{
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                  }}
+                >
+                  <IconX size={14} />
+                </ActionIcon>
               </Box>
             )}
           </Box>
@@ -196,16 +265,47 @@ function EditAPBDes() {
               </Group>
             </Dropzone>
             {previewDoc && (
-              <Box mt="sm">
+              <Box mt="sm" pos="relative" style={{ textAlign: 'center' }}>
                 <Text size="sm" c="dimmed" mb="xs">Dokumen terpilih: {docFile?.name || 'Dokumen'}</Text>
                 <Button component="a" href={previewDoc} target="_blank" rel="noopener noreferrer" variant="light" leftSection={<IconFile size={16} />} size="sm">
                   Lihat Dokumen
                 </Button>
+                {/* Tombol hapus (pojok kanan atas) */}
+                <ActionIcon
+                  variant="filled"
+                  color="red"
+                  radius="xl"
+                  size="sm"
+                  pos="absolute"
+                  top={5}
+                  right={5}
+                  onClick={() => {
+                    setPreviewDoc(null);
+                    setDocFile(null);
+                  }}
+                  style={{
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                  }}
+                >
+                  <IconX size={14} />
+                </ActionIcon>
               </Box>
             )}
           </Box>
 
-          <Group justify="right" mt="md">
+          <Group justify="right">
+            {/* Tombol Batal */}
+            <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
             <Button
               onClick={handleSubmit}
               radius="md"
@@ -216,7 +316,7 @@ function EditAPBDes() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

@@ -43,7 +43,7 @@ const grafikkepuasan = proxy({
         if (res.status === 200) {
           const id = res.data?.data;
           if (id) {
-            toast.success("Success create");
+            toast.success("Sukses menambahkan");
             grafikkepuasan.create.form = { ...defaultForm };
             grafikkepuasan.findMany.load();
             return id;

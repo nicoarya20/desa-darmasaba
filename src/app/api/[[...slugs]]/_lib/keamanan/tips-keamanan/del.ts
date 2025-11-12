@@ -47,7 +47,7 @@ const menuTipsKeamananDelete = async (context: Context) => {
 
     return {
         success: true,
-        message: "Success delete menu tips keamanan",
+        message: "Sukses Menghapus menu tips keamanan",
         data: deleted,
     };
 };

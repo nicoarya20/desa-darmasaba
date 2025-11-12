@@ -6,10 +6,12 @@ import posyandustate from '@/app/admin/(dashboard)/_state/kesehatan/posyandu/pos
 import colors from '@/con/colors';
 import ApiFetch from '@/lib/api-fetch';
 import {
+  ActionIcon,
   Box,
   Button,
   Group,
   Image,
+  Loader,
   Paper,
   Stack,
   Text,
@@ -30,12 +32,21 @@ function EditPosyandu() {
 
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     nomor: '',
     deskripsi: '',
     imageId: '',
     jadwalPelayanan: '',
+  });
+  const [originalData, setOriginalData] = useState({
+    name: "",
+    nomor: "",
+    deskripsi: "",
+    imageId: "",
+    jadwalPelayanan: "",
+    imageUrl: ""
   });
 
   // Load data posyandu
@@ -54,6 +65,14 @@ function EditPosyandu() {
             imageId: data.imageId || '',
             jadwalPelayanan: data.jadwalPelayanan || '',
           });
+          setOriginalData({
+            name: data.name || '',
+            nomor: data.nomor || '',
+            deskripsi: data.deskripsi || '',
+            imageId: data.imageId || '',
+            jadwalPelayanan: data.jadwalPelayanan || '',
+            imageUrl: data.image?.link || '',
+          });
           if (data?.image?.link) setPreviewImage(data.image.link);
         }
       } catch (error) {
@@ -66,7 +85,7 @@ function EditPosyandu() {
 
   const handleSubmit = async () => {
     try {
-      // Update global state hanya saat submit
+      setIsSubmitting(true);
       const updatedForm = { ...statePosyandu.edit.form, ...formData };
 
       // Upload file jika ada
@@ -86,7 +105,22 @@ function EditPosyandu() {
     } catch (error) {
       console.error('Error updating posyandu:', error);
       toast.error('Terjadi kesalahan saat memperbarui posyandu');
+    } finally {
+      setIsSubmitting(false);
     }
+  };
+
+  const resetForm = () => {
+    setFormData({
+      name: originalData.name,
+      nomor: originalData.nomor,
+      deskripsi: originalData.deskripsi,
+      imageId: originalData.imageId,
+      jadwalPelayanan: originalData.jadwalPelayanan,
+    });
+    setPreviewImage(originalData.imageUrl || null);
+    setFile(null);
+    toast.info("Form dikembalikan ke data awal");
   };
 
   return (
@@ -126,7 +160,7 @@ function EditPosyandu() {
               }}
               onReject={() => toast.error('File tidak valid, gunakan format gambar')}
               maxSize={5 * 1024 ** 2}
-              accept={{ 'image/*': [] }}
+              accept={{ 'image/*': ['.jpeg', '.jpg', '.png', '.webp'] }}
               radius="md"
               p="xl"
             >
@@ -145,25 +179,45 @@ function EditPosyandu() {
                     Seret gambar atau klik untuk memilih file
                   </Text>
                   <Text size="sm" c="dimmed">
-                    Maksimal 5MB, format gambar wajib
+                    Maksimal 5MB, format gambar .png, .jpg, .jpeg, webp
                   </Text>
                 </Stack>
               </Group>
             </Dropzone>
 
             {previewImage && (
-              <Box mt="sm" style={{ display: 'flex', justifyContent: 'center' }}>
+              <Box mt="sm" pos={"relative"} style={{ display: 'flex', justifyContent: 'center' }}>
                 <Image
                   src={previewImage}
                   alt="Preview Gambar"
                   radius="md"
                   style={{
-                    maxHeight: 220,
+                    maxHeight: 200,
                     objectFit: 'contain',
-                    border: `1px solid ${colors['blue-button']}`,
+                    border: '1px solid #ddd',
                   }}
                   loading="lazy"
                 />
+
+                {/* Tombol hapus (pojok kanan atas) */}
+                <ActionIcon
+                  variant="filled"
+                  color="red"
+                  radius="xl"
+                  size="sm"
+                  pos="absolute"
+                  top={5}
+                  right={5}
+                  onClick={() => {
+                    setPreviewImage(null);
+                    setFile(null);
+                  }}
+                  style={{
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                  }}
+                >
+                  <IconX size={14} />
+                </ActionIcon>
               </Box>
             )}
           </Box>
@@ -210,6 +264,17 @@ function EditPosyandu() {
           {/* Tombol Submit */}
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
@@ -219,7 +284,7 @@ function EditPosyandu() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

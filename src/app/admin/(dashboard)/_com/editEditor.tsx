@@ -47,6 +47,7 @@ export default function EditEditor({ value, onChange }: EditEditorProps) {
       editor.off('update', updateHandler);
     };
   }, [editor, onChange]);
+  
 
   return (
     <RichTextEditor editor={editor}>

@@ -34,7 +34,7 @@ export default async function apbDesaCreate(context: Context) {
     });
     return {
         success: true,
-        message: "Success create apb desa",
+        message: "Sukses menambahkan apb desa",
         data: created,
     };
 }

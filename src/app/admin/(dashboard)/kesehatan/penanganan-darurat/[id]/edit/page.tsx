@@ -6,10 +6,12 @@ import penangananDarurat from '@/app/admin/(dashboard)/_state/kesehatan/penangan
 import colors from '@/con/colors';
 import ApiFetch from '@/lib/api-fetch';
 import {
+  ActionIcon,
   Box,
   Button,
   Group,
   Image,
+  Loader,
   Paper,
   Stack,
   Text,
@@ -27,11 +29,19 @@ function EditPenangananDarurat() {
   const penangananDaruratState = useProxy(penangananDarurat)
   const router = useRouter();
   const params = useParams()
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [formData, setFormData] = useState({
     name: '',
     deskripsi: '',
     imageId: '',
+  });
+
+  const [originalData, setOriginalData] = useState({
+    name: '',
+    deskripsi: '',
+    imageId: '',
+    imageUrl: '',
   });
 
   const [previewImage, setPreviewImage] = useState<string | null>(null);
@@ -51,6 +61,13 @@ function EditPenangananDarurat() {
             name: data.name || '',
             deskripsi: data.deskripsi || '',
             imageId: data.imageId || '',
+          });
+
+          setOriginalData({
+            name: data.name || '',
+            deskripsi: data.deskripsi || '',
+            imageId: data.imageId || '',
+            imageUrl: data.image?.link || '',
           });
 
           if (data.image?.link) {
@@ -80,8 +97,20 @@ function EditPenangananDarurat() {
     setPreviewImage(URL.createObjectURL(selected));
   };
 
+  const handleResetForm = () => {
+    setFormData({
+      name: originalData.name,
+      deskripsi: originalData.deskripsi,
+      imageId: originalData.imageId,
+    });
+    setPreviewImage(originalData.imageUrl || null);
+    setFile(null);
+    toast.info("Form dikembalikan ke data awal");
+  };
+
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       let imageId = formData.imageId;
 
       if (file) {
@@ -107,6 +136,8 @@ function EditPenangananDarurat() {
     } catch (err) {
       console.error("Error updating penanganan darurat:", err);
       toast.error("Gagal memperbarui data penanganan darurat");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -156,7 +187,7 @@ function EditPenangananDarurat() {
               onDrop={handleDrop}
               onReject={() => toast.error('File tidak valid.')}
               maxSize={5 * 1024 ** 2}
-              accept={{ 'image/*': [] }}
+              accept={{ 'image/*': ['.jpeg', '.jpg', '.png', '.webp'] }}
             >
               <Group justify="center" gap="xl" mih={220} style={{ pointerEvents: 'none' }}>
                 <Dropzone.Accept>
@@ -181,7 +212,7 @@ function EditPenangananDarurat() {
             </Dropzone>
 
             {previewImage && (
-              <Box mt="sm">
+              <Box mt="sm" pos="relative">
                 <Image
                   src={previewImage}
                   alt="Preview"
@@ -194,11 +225,40 @@ function EditPenangananDarurat() {
                   }}
                   loading="lazy"
                 />
+                <ActionIcon
+                  variant="filled"
+                  color="red"
+                  radius="xl"
+                  size="sm"
+                  pos="absolute"
+                  top={5}
+                  right={5}
+                  onClick={() => {
+                    setPreviewImage(null);
+                    setFile(null);
+                  }}
+                  style={{
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                  }}
+                >
+                  <IconX size={14} />
+                </ActionIcon>
               </Box>
             )}
           </Box>
 
           <Group justify="right">
+            <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
             <Button
               onClick={handleSubmit}
               radius="md"
@@ -209,7 +269,7 @@ function EditPenangananDarurat() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

@@ -1,6 +1,6 @@
-'use client'
+'use client';
 
-import { Box, rem, Select } from '@mantine/core';
+import { Box, Group, rem, Select, SelectProps } from '@mantine/core';
 import {
   IconAmbulance,
   IconCash,
@@ -25,7 +25,7 @@ import {
   IconTrophy,
   IconTruckFilled,
   IconBuilding,
-  IconAlertTriangle
+  IconAlertTriangle,
 } from '@tabler/icons-react';
 
 const iconMap = {
@@ -38,26 +38,26 @@ const iconMap = {
   scale: { label: 'Scale', icon: IconScale },
   clipboard: { label: 'Clipboard', icon: IconClipboardTextFilled },
   trash: { label: 'Trash', icon: IconTrashFilled },
-  lingkunganSehat: {label: 'Lingkungan Sehat', icon: IconHomeEco},
-  sumberOksigen: {label: 'Sumber Oksigen', icon: IconChristmasTreeFilled},
-  ekonomiBerkelanjutan: {label: 'Ekonomi Berkelanjutan', icon: IconTrendingUp},
-  mencegahBencana: {label: 'Mencegah Bencana', icon: IconShieldFilled},
-  rumah: {label: 'Rumah', icon: IconHome},
-  pohon: {label: 'Pohon', icon: IconTree},
-  air: {label: 'Air', icon: IconDroplet},
-  bantuan: {label: 'Bantuan', icon: IconCash},
-  pelatihan: {label: 'Pelatihan', icon: IconSchool},
-  subsidi: {label: 'Subsidi', icon: IconShoppingCart},
-  layananKesehatan: {label: 'Layanan Kesehatan', icon: IconHospital},
-  polisi: {label: 'Polisi', icon: IconShieldFilled},
-  ambulans: {label: 'Ambulans', icon: IconAmbulance},
-  pemadam: {label: 'Pemadam', icon: IconFiretruck},
-  rumahSakit: {label: 'Rumah Sakit', icon: IconHospital},
-  bangunan: {label: 'Bangunan', icon: IconBuilding},
-  darurat: {label: 'Darurat', icon: IconAlertTriangle},
+  lingkunganSehat: { label: 'Lingkungan Sehat', icon: IconHomeEco },
+  sumberOksigen: { label: 'Sumber Oksigen', icon: IconChristmasTreeFilled },
+  ekonomiBerkelanjutan: { label: 'Ekonomi Berkelanjutan', icon: IconTrendingUp },
+  mencegahBencana: { label: 'Mencegah Bencana', icon: IconShieldFilled },
+  rumah: { label: 'Rumah', icon: IconHome },
+  pohon: { label: 'Pohon', icon: IconTree },
+  air: { label: 'Air', icon: IconDroplet },
+  bantuan: { label: 'Bantuan', icon: IconCash },
+  pelatihan: { label: 'Pelatihan', icon: IconSchool },
+  subsidi: { label: 'Subsidi', icon: IconShoppingCart },
+  layananKesehatan: { label: 'Layanan Kesehatan', icon: IconHospital },
+  polisi: { label: 'Polisi', icon: IconShieldFilled },
+  ambulans: { label: 'Ambulans', icon: IconAmbulance },
+  pemadam: { label: 'Pemadam', icon: IconFiretruck },
+  rumahSakit: { label: 'Rumah Sakit', icon: IconHospital },
+  bangunan: { label: 'Bangunan', icon: IconBuilding },
+  darurat: { label: 'Darurat', icon: IconAlertTriangle },
 };
 
-type IconKey = keyof typeof iconMap;
+export type IconKey = keyof typeof iconMap;
 
 const iconList = Object.entries(iconMap).map(([value, data]) => ({
   value,
@@ -67,44 +67,52 @@ const iconList = Object.entries(iconMap).map(([value, data]) => ({
 export default function SelectIconProgramEdit({
   onChange,
   value,
+  ...props
 }: {
-  onChange: (value: IconKey) => void;
-  value: IconKey;
-}) {
-  const IconComponent = iconMap[value]?.icon || null;
-
+  onChange: (value: IconKey | '') => void;
+  value: IconKey | '';
+} & Omit<SelectProps, 'onChange' | 'value' | 'data'>) {
   return (
     <Box maw={300}>
       <Select
         placeholder="Pilih ikon"
-        value={value}
-        onChange={(value) => {
-          if (value) onChange(value as IconKey);
+        value={value || ''}
+        onChange={(val: string | null) => {
+          if (val) {
+            onChange(val as IconKey);
+          } else {
+            onChange('');
+          }
         }}
         data={iconList}
+        renderOption={({ option }) => {
+          const Icon = iconMap[option.value as IconKey]?.icon;
+          return (
+            <Group gap="sm">
+              {Icon && <Icon size={18} stroke={1.5} />}
+              {option.label}
+            </Group>
+          );
+        }}
         leftSection={
-          IconComponent && (
-            <Box>
-              <IconComponent size={24} stroke={1.5} />
+          value && iconMap[value as IconKey] ? (
+            <Box ml={-4}>
+              {(() => {
+                const Icon = iconMap[value as IconKey].icon;
+                return <Icon size={20} stroke={1.5} />;
+              })()}
             </Box>
-          )
+          ) : null
         }
-        withCheckIcon={false}
-        searchable={false}
-        rightSectionWidth={0}
+        searchable
         styles={{
           input: {
-            textAlign: 'left',
-            fontSize: rem(16),
             paddingLeft: 40,
-          },
-          section: {
-            left: 10,
-            right: 'auto',
+            fontSize: rem(16),
           },
         }}
+        {...props}
       />
     </Box>
   );
 }
-

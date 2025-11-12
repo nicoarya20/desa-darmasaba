@@ -88,7 +88,7 @@ const statepermohonanInformasiPublik = proxy({
                 const res = await ApiFetch.api.ppid.permohonaninformasipublik["create"].post(statepermohonanInformasiPublik.create.form);
                 if (res.status === 200) {
                     statepermohonanInformasiPublik.findMany.load();
-                    return toast.success("success create");
+                    return toast.success("Sukses menambahkan");
                 }
                 return toast.error("failed create");
             } catch (error) {

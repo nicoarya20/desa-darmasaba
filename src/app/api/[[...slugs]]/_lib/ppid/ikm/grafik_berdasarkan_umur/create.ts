@@ -30,7 +30,7 @@ export async function grafikBerdasarkanUmurCreate(context: Context) {
     });
     return {
         success: true,
-        message: "Success create grafik berdasarkan umur",
+        message: "Sukses menambahkan grafik berdasarkan umur",
         data: created,
     };
 }

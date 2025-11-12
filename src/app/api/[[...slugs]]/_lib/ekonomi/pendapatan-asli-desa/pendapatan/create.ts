@@ -23,7 +23,7 @@ export default async function pendapatanAsliCreate(context: Context) {
     });
     return {
         success: true,
-        message: "Success create pendapatan asli desa",
+        message: "Sukses menambahkan pendapatan asli desa",
         data: created,
     };
 }

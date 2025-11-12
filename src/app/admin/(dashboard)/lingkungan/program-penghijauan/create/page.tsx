@@ -4,6 +4,7 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Stack,
   Text,
@@ -16,10 +17,13 @@ import { useProxy } from 'valtio/utils';
 import CreateEditor from '../../../_com/createEditor';
 import SelectIconProgram from '../../../_com/selectIcon';
 import programPenghijauanState from '../../../_state/lingkungan/program-penghijauan';
+import { toast } from 'react-toastify';
+import { useState } from 'react';
 
 function CreateProgramPenghijauan() {
   const stateCreate = useProxy(programPenghijauanState);
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const resetForm = () => {
     stateCreate.create.form = {
@@ -31,9 +35,17 @@ function CreateProgramPenghijauan() {
   };
 
   const handleSubmit = async () => {
-    await stateCreate.create.create();
-    resetForm();
-    router.push('/admin/lingkungan/program-penghijauan');
+    try {
+      setIsSubmitting(true);
+      await stateCreate.create.create();
+      resetForm();
+      router.push('/admin/lingkungan/program-penghijauan');
+    } catch (error) {
+      console.error(error);
+      toast.error(error instanceof Error ? error.message : 'Gagal menambahkan program penghijauan');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -66,7 +78,7 @@ function CreateProgramPenghijauan() {
           <TextInput
             label={<Text fz="sm" fw="bold">Nama Program Penghijauan</Text>}
             placeholder="Masukkan nama program penghijauan"
-            defaultValue={stateCreate.create.form.name || ''}
+            value={stateCreate.create.form.name || ''}
             onChange={(e) => (stateCreate.create.form.name = e.target.value)}
             required
           />
@@ -83,7 +95,7 @@ function CreateProgramPenghijauan() {
           <TextInput
             label={<Text fz="sm" fw="bold">Judul Deskripsi Program Penghijauan</Text>}
             placeholder="Masukkan judul deskripsi program penghijauan"
-            defaultValue={stateCreate.create.form.judul || ''}
+            value={stateCreate.create.form.judul || ''}
             onChange={(e) => (stateCreate.create.form.judul = e.target.value)}
             required
           />
@@ -102,6 +114,17 @@ function CreateProgramPenghijauan() {
 
           <Group justify="right" mt="sm">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
@@ -111,7 +134,7 @@ function CreateProgramPenghijauan() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

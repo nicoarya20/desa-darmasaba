@@ -35,7 +35,7 @@ async function polsekTerdekatCreate(context: Context) {
     });
     return {
         success: true,
-        message: "Success create polsek terdekat",
+        message: "Sukses menambahkan polsek terdekat",
         data: {
             ...body,
         },

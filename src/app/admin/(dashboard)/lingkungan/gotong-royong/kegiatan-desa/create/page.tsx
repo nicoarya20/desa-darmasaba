@@ -5,10 +5,12 @@ import gotongRoyongState from '@/app/admin/(dashboard)/_state/lingkungan/gotong-
 import colors from '@/con/colors';
 import ApiFetch from '@/lib/api-fetch';
 import {
+  ActionIcon,
   Box,
   Button,
   Group,
   Image,
+  Loader,
   Paper,
   Select,
   Stack,
@@ -34,6 +36,8 @@ function CreateKegiatanDesa() {
     gotongRoyongState.kategoriKegiatan.findMany.load();
   }, []);
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const resetForm = () => {
     stateKegiatanDesa.create.form = {
       judul: '',
@@ -50,27 +54,35 @@ function CreateKegiatanDesa() {
   };
 
   const handleSubmit = async () => {
-    if (!file) {
-      return toast.warn('Silakan pilih file gambar terlebih dahulu');
+    try {
+      setIsSubmitting(true);
+      if (!file) {
+        return toast.warn('Silakan pilih file gambar terlebih dahulu');
+      }
+
+      const res = await ApiFetch.api.fileStorage.create.post({
+        file,
+        name: file.name,
+      });
+
+      const uploaded = res.data?.data;
+
+      if (!uploaded?.id) {
+        return toast.error('Gagal mengunggah gambar, silakan coba lagi');
+      }
+
+      stateKegiatanDesa.create.form.imageId = uploaded.id;
+
+      await stateKegiatanDesa.create.create();
+
+      resetForm();
+      router.push('/admin/lingkungan/gotong-royong/kegiatan-desa');
+    } catch (error) {
+      console.error('Error creating kegiatan desa:', error);
+      toast.error('Gagal membuat kegiatan desa');
+    } finally {
+      setIsSubmitting(false);
     }
-
-    const res = await ApiFetch.api.fileStorage.create.post({
-      file,
-      name: file.name,
-    });
-
-    const uploaded = res.data?.data;
-
-    if (!uploaded?.id) {
-      return toast.error('Gagal mengunggah gambar, silakan coba lagi');
-    }
-
-    stateKegiatanDesa.create.form.imageId = uploaded.id;
-
-    await stateKegiatanDesa.create.create();
-
-    resetForm();
-    router.push('/admin/lingkungan/gotong-royong/kegiatan-desa');
   };
 
   return (
@@ -115,7 +127,7 @@ function CreateKegiatanDesa() {
               }}
               onReject={() => toast.error('File tidak valid, gunakan format gambar')}
               maxSize={5 * 1024 ** 2}
-              accept={{ 'image/*': [] }}
+              accept={{ 'image/*': ['.jpeg', '.jpg', '.png', '.webp'] }}
               radius="md"
               p="xl"
             >
@@ -136,7 +148,7 @@ function CreateKegiatanDesa() {
             </Dropzone>
 
             {previewImage && (
-              <Box mt="sm" style={{ textAlign: 'center' }}>
+              <Box pos={"relative"} mt="sm" style={{ textAlign: 'center' }}>
                 <Image
                   src={previewImage}
                   alt="Preview Gambar"
@@ -144,6 +156,24 @@ function CreateKegiatanDesa() {
                   style={{ maxHeight: 200, objectFit: 'contain', border: '1px solid #ddd' }}
                   loading="lazy"
                 />
+                <ActionIcon
+                  variant="filled"
+                  color="red"
+                  radius="xl"
+                  size="sm"
+                  pos="absolute"
+                  top={5}
+                  right={5}
+                  onClick={() => {
+                    setPreviewImage(null);
+                    setFile(null);
+                  }}
+                  style={{
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                  }}
+                >
+                  <IconX size={14} />
+                </ActionIcon>
               </Box>
             )}
           </Box>
@@ -152,7 +182,7 @@ function CreateKegiatanDesa() {
           <TextInput
             label="Judul Kegiatan"
             placeholder="Masukkan judul kegiatan"
-            defaultValue={stateKegiatanDesa.create.form.judul}
+            value={stateKegiatanDesa.create.form.judul}
             onChange={(e) => (stateKegiatanDesa.create.form.judul = e.target.value)}
             required
           />
@@ -168,7 +198,7 @@ function CreateKegiatanDesa() {
           <TextInput
             type="number"
             min={0}
-            defaultValue={stateKegiatanDesa.create.form.partisipan}
+            value={stateKegiatanDesa.create.form.partisipan}
             onChange={(e) => {
               const value = Number(e.target.value);
               if (value >= 0) {
@@ -183,7 +213,7 @@ function CreateKegiatanDesa() {
             label="Tanggal"
             type="date"
             placeholder="Contoh: 2022-01-01"
-            defaultValue={
+            value={
               stateKegiatanDesa.create.form.tanggal
                 ? stateKegiatanDesa.create.form.tanggal.toISOString().split('T')[0]
                 : ''
@@ -197,7 +227,7 @@ function CreateKegiatanDesa() {
           <TextInput
             label="Lokasi"
             placeholder="Masukkan lokasi kegiatan"
-            defaultValue={stateKegiatanDesa.create.form.lokasi}
+            value={stateKegiatanDesa.create.form.lokasi}
             onChange={(e) => (stateKegiatanDesa.create.form.lokasi = e.target.value)}
             required
           />
@@ -229,6 +259,17 @@ function CreateKegiatanDesa() {
           {/* Submit */}
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
@@ -238,7 +279,7 @@ function CreateKegiatanDesa() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

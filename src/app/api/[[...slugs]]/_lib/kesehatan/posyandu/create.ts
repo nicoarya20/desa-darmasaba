@@ -25,7 +25,7 @@ export default async function posyanduCreate(context: Context) {
     })
     return {
         success: true,
-        message: "Success create posyandu",
+        message: "Sukses menambahkan posyandu",
         data: {
             ...body,
         },

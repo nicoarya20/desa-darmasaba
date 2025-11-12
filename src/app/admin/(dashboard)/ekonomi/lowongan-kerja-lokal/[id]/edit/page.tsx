@@ -7,6 +7,7 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Stack,
   Text,
@@ -23,6 +24,7 @@ function EditLowonganKerja() {
   const lowonganState = useProxy(lowonganKerjaState);
   const router = useRouter();
   const params = useParams();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [formData, setFormData] = useState({
     posisi: '',
@@ -35,6 +37,17 @@ function EditLowonganKerja() {
     notelp: '',
   });
 
+  const [originalData, setOriginalData] = useState({
+    posisi: '',
+    namaPerusahaan: '',
+    lokasi: '',
+    tipePekerjaan: '',
+    gaji: '',
+    deskripsi: '',
+    kualifikasi: '',
+    notelp: '',
+  })
+
   // load data sekali aja ketika mount / id berubah
   useEffect(() => {
     const loadLowongan = async () => {
@@ -45,6 +58,16 @@ function EditLowonganKerja() {
         const data = await lowonganState.update.load(id);
         if (data) {
           setFormData({
+            posisi: data.posisi || '',
+            namaPerusahaan: data.namaPerusahaan || '',
+            lokasi: data.lokasi || '',
+            tipePekerjaan: data.tipePekerjaan || '',
+            gaji: data.gaji || '',
+            deskripsi: data.deskripsi || '',
+            kualifikasi: data.kualifikasi || '',
+            notelp: data.notelp || '',
+          });
+          setOriginalData({
             posisi: data.posisi || '',
             namaPerusahaan: data.namaPerusahaan || '',
             lokasi: data.lokasi || '',
@@ -70,9 +93,23 @@ function EditLowonganKerja() {
       [field]: value,
     }));
   };
+  const handleResetForm = () => {
+    setFormData({
+      posisi: originalData.posisi,
+      namaPerusahaan: originalData.namaPerusahaan,
+      lokasi: originalData.lokasi,
+      tipePekerjaan: originalData.tipePekerjaan,
+      gaji: originalData.gaji,
+      deskripsi: originalData.deskripsi,
+      kualifikasi: originalData.kualifikasi,
+      notelp: originalData.notelp,
+    });
+    toast.info("Form dikembalikan ke data awal");
+  };
 
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       lowonganState.update.id = params?.id as string;
       lowonganState.update.form = { ...formData };
 
@@ -82,6 +119,8 @@ function EditLowonganKerja() {
     } catch (error) {
       console.error("Error updating lowongan kerja:", error);
       toast.error("Terjadi kesalahan saat memperbarui lowongan kerja");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -176,6 +215,17 @@ function EditLowonganKerja() {
 
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
@@ -185,7 +235,7 @@ function EditLowonganKerja() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

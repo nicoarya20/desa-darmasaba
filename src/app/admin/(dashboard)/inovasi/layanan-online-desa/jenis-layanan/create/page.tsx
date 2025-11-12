@@ -6,6 +6,7 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Stack,
   Text,
@@ -14,12 +15,14 @@ import {
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
 function CreateJenisLayanan() {
   const router = useRouter();
   const statePasar = useProxy(layananonlineDesa.jenisLayanan);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     statePasar.findMany.load();
@@ -33,9 +36,17 @@ function CreateJenisLayanan() {
   };
 
   const handleSubmit = async () => {
-    await statePasar.create.create();
-    resetForm();
-    router.push('/admin/inovasi/layanan-online-desa/jenis-layanan');
+    try {
+      setIsSubmitting(true);
+      await statePasar.create.create();
+      resetForm();
+      router.push('/admin/inovasi/layanan-online-desa/jenis-layanan');
+    } catch (error) {
+      console.error('Error creating jenis layanan:', error);
+      toast.error('Terjadi kesalahan saat menambahkan jenis layanan');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -66,7 +77,7 @@ function CreateJenisLayanan() {
       >
         <Stack gap="md">
           <TextInput
-            defaultValue={statePasar.create.form.nama}
+            value={statePasar.create.form.nama}
             onChange={(val) => {
               statePasar.create.form.nama = val.target.value;
             }}
@@ -75,7 +86,7 @@ function CreateJenisLayanan() {
             required
           />
           <TextInput
-            defaultValue={statePasar.create.form.deskripsi}
+            value={statePasar.create.form.deskripsi}
             onChange={(val) => {
               statePasar.create.form.deskripsi = val.target.value;
             }}
@@ -86,6 +97,17 @@ function CreateJenisLayanan() {
 
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
@@ -95,7 +117,7 @@ function CreateJenisLayanan() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

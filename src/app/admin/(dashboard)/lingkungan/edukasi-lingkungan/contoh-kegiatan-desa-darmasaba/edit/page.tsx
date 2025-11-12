@@ -2,12 +2,13 @@
 
 import stateEdukasiLingkungan from '@/app/admin/(dashboard)/_state/lingkungan/edukasi-lingkungan';
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, Stack, Text, Title } from '@mantine/core';
+import { Box, Button, Group, Loader, Paper, Stack, Text, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack } from '@tabler/icons-react';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
 const EdukasiLingkunganTextEditor = dynamic(
@@ -24,8 +25,15 @@ export default function EditContohKegiatanDesaDarmasaba() {
     stateEdukasiLingkungan.stateContohEdukasiLingkungan
   );
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   // state lokal untuk form
   const [formData, setFormData] = useState({
+    judul: '',
+    deskripsi: '',
+  });
+
+  const [originalData, setOriginalData] = useState({
     judul: '',
     deskripsi: '',
   });
@@ -44,6 +52,10 @@ export default function EditContohKegiatanDesaDarmasaba() {
         judul: contohEdukasiState.findById.data.judul ?? '',
         deskripsi: contohEdukasiState.findById.data.deskripsi ?? '',
       });
+      setOriginalData({
+        judul: contohEdukasiState.findById.data.judul ?? '',
+        deskripsi: contohEdukasiState.findById.data.deskripsi ?? '',
+      });
     }
   }, [contohEdukasiState.findById.data]);
 
@@ -52,19 +64,35 @@ export default function EditContohKegiatanDesaDarmasaba() {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
+  const handleResetForm = () => {
+    setFormData({
+      judul: originalData.judul,
+      deskripsi: originalData.deskripsi,
+    });
+    toast.info("Form dikembalikan ke data awal");
+  };
+
   // submit update
   const handleSubmit = () => {
-    if (contohEdukasiState.findById.data) {
-      const updatedData = {
-        ...contohEdukasiState.findById.data,
-        judul: formData.judul,
-        deskripsi: formData.deskripsi,
-      };
-      contohEdukasiState.update.save(updatedData);
+    try {
+      setIsSubmitting(true);
+      if (contohEdukasiState.findById.data) {
+        const updatedData = {
+          ...contohEdukasiState.findById.data,
+          judul: formData.judul,
+          deskripsi: formData.deskripsi,
+        };
+        contohEdukasiState.update.save(updatedData);
+      }
+      router.push(
+        '/admin/lingkungan/edukasi-lingkungan/contoh-kegiatan-desa-darmasaba'
+      );
+    } catch (error) {
+      console.error("Error updating contoh kegiatan desa darmasaba:", error);
+      toast.error("Terjadi kesalahan saat memperbarui contoh kegiatan desa darmasaba");
+    } finally {
+      setIsSubmitting(false);
     }
-    router.push(
-      '/admin/lingkungan/edukasi-lingkungan/contoh-kegiatan-desa-darmasaba'
-    );
   };
 
   return (
@@ -111,7 +139,19 @@ export default function EditContohKegiatanDesaDarmasaba() {
             />
           </Box>
 
-          <Group justify="right" mt="md">
+          <Group justify="right">
+            {/* Tombol Batal */}
+            <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
             <Button
               onClick={handleSubmit}
               radius="md"
@@ -121,9 +161,8 @@ export default function EditContohKegiatanDesaDarmasaba() {
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
-              loading={contohEdukasiState.update.loading}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

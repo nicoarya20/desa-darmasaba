@@ -61,7 +61,7 @@ export default async function pasarDesaCreate(context: Context) {
 
     return {
       success: true,
-      message: "Success create pasar desa",
+      message: "Sukses menambahkan pasar desa",
       data: result,
     };
   } catch (error) {

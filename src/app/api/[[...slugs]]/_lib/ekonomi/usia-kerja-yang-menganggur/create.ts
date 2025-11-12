@@ -30,7 +30,7 @@ export default async function grafikMenganggurBerdasarkanUsiaCreate(context: Con
     });
     return {
         success: true,
-        message: "Success create grafik menganggur berdasarkan usia",
+        message: "Sukses menambahkan grafik menganggur berdasarkan usia",
         data: created,
     };
 }

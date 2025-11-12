@@ -80,7 +80,7 @@ function DetailAPBDesa() {
             Detail APB Desa
           </Text>
 
-          <Paper bg={colors['BG-trans']} p="md" radius="md" shadow="xs">
+          <Paper bg="#EEF3FBFF" p="md" radius="md" shadow="xs">
             <Stack gap="sm">
               <Box>
                 <Text fz="lg" fw="bold">

@@ -25,7 +25,7 @@ export default async function dokterTenagaMedisCreate(context: Context) {
 
   return {
     success: true,
-    message: "Success create dokter tenaga medis",
+    message: "Sukses menambahkan dokter tenaga medis",
     data: created,
   };
 }

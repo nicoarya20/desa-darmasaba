@@ -5,7 +5,7 @@
 import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import stateStrukturPPID from '@/app/admin/(dashboard)/_state/ppid/struktur_ppid/struktur_PPID';
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
+import { Loader, Box, Button, Group, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -21,6 +21,14 @@ function EditPosisiOrganisasiPPID() {
   const [formData, setFormData] = useState({
     nama: '',
     deskripsi: '',
+    hierarki: 0,
+  });
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [originalData, setOriginalData] = useState({
+    nama: "",
+    deskripsi: "",
     hierarki: 0,
   });
 
@@ -42,6 +50,11 @@ function EditPosisiOrganisasiPPID() {
             deskripsi: data.deskripsi || '',
             hierarki: data.hierarki || 0,
           });
+          setOriginalData({
+            nama: data.nama || '',
+            deskripsi: data.deskripsi || '',
+            hierarki: data.hierarki || 0,
+          });
         }
       } catch (err) {
         console.error('Error loading posisi organisasi:', err);
@@ -52,6 +65,15 @@ function EditPosisiOrganisasiPPID() {
     loadPosisiOrganisasi();
   }, [id]);
 
+  const handleResetForm = () => {
+    setFormData({
+      nama: originalData.nama,
+      deskripsi: originalData.deskripsi,
+      hierarki: originalData.hierarki,
+    });
+    toast.info("Form dikembalikan ke data awal");
+  };
+
   const handleSubmit = async () => {
     if (!formData.nama.trim()) {
       toast.error('Nama posisi organisasi tidak boleh kosong');
@@ -59,6 +81,7 @@ function EditPosisiOrganisasiPPID() {
     }
 
     try {
+      setIsSubmitting(true);
       // Update global state hanya saat submit
       stateOrganisasi.edit.form = {
         nama: formData.nama.trim(),
@@ -78,15 +101,17 @@ function EditPosisiOrganisasiPPID() {
     } catch (err) {
       console.error('Error updating posisi organisasi:', err);
       // toast error biasanya sudah ada di update
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
       <Group mb="md">
-          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
+        <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Edit Posisi Organisasi PPID
         </Title>
@@ -132,10 +157,21 @@ function EditPosisiOrganisasiPPID() {
             required
           />
 
-          <Group justify="flex-end" mt="md">
+          <Group justify="right">
+            {/* Tombol Batal */}
+            <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
             <Button
               onClick={handleSubmit}
-              loading={stateOrganisasi.edit.loading}
               radius="md"
               size="md"
               style={{
@@ -144,7 +180,7 @@ function EditPosisiOrganisasiPPID() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

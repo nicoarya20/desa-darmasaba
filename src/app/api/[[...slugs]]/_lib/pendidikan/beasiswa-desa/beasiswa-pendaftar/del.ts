@@ -11,6 +11,6 @@ export default async function beasiswaPendaftarDelete(context: Context) {
   return {
     status: 200,
     success: true,
-    message: "Success delete beasiswa pendaftar",
+    message: "Sukses Menghapus beasiswa pendaftar",
   };
 }

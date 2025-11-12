@@ -25,7 +25,7 @@ export default async function jenjangPendidikanDelete(context: Context) {
 
     return {
         success: true,
-        message: "Success delete jenjang pendidikan",
+        message: "Sukses Menghapus jenjang pendidikan",
         data: jenjangPendidikan,
     }
 }

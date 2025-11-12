@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
@@ -8,6 +9,7 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Stack,
   Text,
@@ -45,8 +47,19 @@ function EditFasilitasKesehatan() {
   const state = useProxy(fasilitasKesehatanState.fasilitasKesehatan);
   const router = useRouter();
   const params = useParams();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [formData, setFormData] = useState<FasilitasKesehatanFormBase>({
+    name: '',
+    informasiUmum: { fasilitas: '', alamat: '', jamOperasional: '' },
+    layananUnggulan: { content: '' },
+    dokterdanTenagaMedis: { name: '', specialist: '', jadwal: '' },
+    fasilitasPendukung: { content: '' },
+    prosedurPendaftaran: { content: '' },
+    tarifDanLayanan: { layanan: '', tarif: '' },
+  });
+
+  const [originalData, setOriginalData] = useState<FasilitasKesehatanFormBase>({
     name: '',
     informasiUmum: { fasilitas: '', alamat: '', jamOperasional: '' },
     layananUnggulan: { content: '' },
@@ -71,26 +84,73 @@ function EditFasilitasKesehatan() {
       [key]: { ...prev[key] as object, [nestedKey]: value },
     }));
 
+  const deepClone = (obj: any): any => {
+    try {
+      return JSON.parse(JSON.stringify(obj));
+    } catch (error) {
+      console.warn('Gagal deep clone dengan JSON fallback:', error);
+      return obj; // fallback (berisiko shared reference)
+    }
+  };
+
   // Load data
   useEffect(() => {
     const load = async () => {
       const id = params?.id as string;
       if (!id) return;
+  
       try {
         await state.edit.load(id);
-        const form = state.edit.form;
-        if (form) setFormData(form as FasilitasKesehatanFormBase);
+        const loadedData = state.edit.form;
+  
+        if (!loadedData) {
+          toast.error('Data tidak ditemukan');
+          return;
+        }
+  
+        // Gunakan JSON fallback untuk deep clone
+        const clonedData = deepClone(loadedData) as FasilitasKesehatanFormBase;
+  
+        setFormData(clonedData);
+        setOriginalData(clonedData);
       } catch (err) {
         console.error(err);
         toast.error('Gagal memuat data fasilitas kesehatan');
       }
     };
+  
     load();
   }, [params?.id]);
+
+  const handleResetForm = () => {
+    setFormData({
+      name: originalData.name,
+      informasiUmum:
+      {
+        fasilitas: originalData.informasiUmum.fasilitas,
+        alamat: originalData.informasiUmum.alamat,
+        jamOperasional: originalData.informasiUmum.jamOperasional
+      },
+      layananUnggulan: { content: originalData.layananUnggulan.content },
+      dokterdanTenagaMedis: {
+        name: originalData.dokterdanTenagaMedis.name,
+        specialist: originalData.dokterdanTenagaMedis.specialist,
+        jadwal: originalData.dokterdanTenagaMedis.jadwal
+      },
+      fasilitasPendukung: { content: originalData.fasilitasPendukung.content },
+      prosedurPendaftaran: { content: originalData.prosedurPendaftaran.content },
+      tarifDanLayanan: {
+        layanan: originalData.tarifDanLayanan.layanan,
+        tarif: originalData.tarifDanLayanan.tarif
+      },
+    });
+    toast.info("Form dikembalikan ke data awal");
+  };
 
   // Submit
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       state.edit.form = { ...state.edit.form, ...formData };
       const success = await state.edit.submit();
       if (success) {
@@ -100,6 +160,8 @@ function EditFasilitasKesehatan() {
     } catch (err) {
       console.error(err);
       toast.error('Terjadi kesalahan saat memperbarui data fasilitas kesehatan');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -230,19 +292,30 @@ function EditFasilitasKesehatan() {
           </Box>
 
           {/* Tombol Simpan */}
-          <Group justify="flex-end">
+          <Group justify="right">
+            {/* Tombol Batal */}
+            <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
             <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
-              loading={state.edit.loading}
               style={{
                 background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

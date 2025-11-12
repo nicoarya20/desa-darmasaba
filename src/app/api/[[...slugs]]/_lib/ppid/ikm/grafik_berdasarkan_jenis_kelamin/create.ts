@@ -24,7 +24,7 @@ export default async function grafikBerdasarkanJenisKelaminCreate(context: Conte
     });
     return {
         success: true,
-        message: "Success create grafik berdasarkan jenis kelamin",
+        message: "Sukses menambahkan grafik berdasarkan jenis kelamin",
         data: created,
     };
 }

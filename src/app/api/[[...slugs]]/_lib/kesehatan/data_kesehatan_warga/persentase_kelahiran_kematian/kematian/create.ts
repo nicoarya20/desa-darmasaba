@@ -30,7 +30,7 @@ export default async function kematianCreate(context: Context) {
   });
   return {
     success: true,
-    message: "Success create kematian",
+    message: "Sukses menambahkan kematian",
     data: created,
   };
 }

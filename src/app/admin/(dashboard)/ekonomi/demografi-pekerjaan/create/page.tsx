@@ -7,6 +7,7 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Stack,
   TextInput,
@@ -17,11 +18,13 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import demografiPekerjaan from '../../../_state/ekonomi/demografi-pekerjaan';
+import { toast } from 'react-toastify';
 
 function CreateDemografiPekerjaan() {
   const stateDemografi = useProxy(demografiPekerjaan);
   const [chartData, setChartData] = useState<any[]>([]);
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const resetForm = () => {
     stateDemografi.create.form = {
@@ -32,16 +35,23 @@ function CreateDemografiPekerjaan() {
   };
 
   const handleSubmit = async () => {
-    const id = await stateDemografi.create.create();
-    if (id) {
-      const idStr = String(id);
-      await stateDemografi.findUnique.load(idStr);
-      if (stateDemografi.findUnique.data) {
-        setChartData([stateDemografi.findUnique.data]);
+    try {
+      const id = await stateDemografi.create.create();
+      if (id) {
+        const idStr = String(id);
+        await stateDemografi.findUnique.load(idStr);
+        if (stateDemografi.findUnique.data) {
+          setChartData([stateDemografi.findUnique.data]);
+        }
       }
+      resetForm();
+      router.push('/admin/ekonomi/demografi-pekerjaan');
+    } catch (error) {
+      console.error('Error creating demografi pekerjaan:', error);
+      toast.error('Terjadi kesalahan saat menambah demografi pekerjaan');
+    } finally {
+      setIsSubmitting(false);
     }
-    resetForm();
-    router.push('/admin/ekonomi/demografi-pekerjaan');
   };
 
   return (
@@ -74,7 +84,7 @@ function CreateDemografiPekerjaan() {
           <TextInput
             label="Pekerjaan"
             type="text"
-            defaultValue={stateDemografi.create.form.pekerjaan}
+            value={stateDemografi.create.form.pekerjaan}
             placeholder="Masukkan pekerjaan"
             onChange={(val) => {
               stateDemografi.create.form.pekerjaan = val.currentTarget.value;
@@ -84,7 +94,7 @@ function CreateDemografiPekerjaan() {
           <TextInput
             label="Jumlah Pekerja Laki-Laki"
             type="number"
-            defaultValue={stateDemografi.create.form.lakiLaki}
+            value={stateDemografi.create.form.lakiLaki}
             placeholder="Masukkan jumlah pekerja laki-laki"
             onChange={(val) => {
               stateDemografi.create.form.lakiLaki = Number(val.currentTarget.value);
@@ -94,7 +104,7 @@ function CreateDemografiPekerjaan() {
           <TextInput
             label="Jumlah Pekerja Perempuan"
             type="number"
-            defaultValue={stateDemografi.create.form.perempuan}
+            value={stateDemografi.create.form.perempuan}
             placeholder="Masukkan jumlah pekerja perempuan"
             onChange={(val) => {
               stateDemografi.create.form.perempuan = Number(val.currentTarget.value);
@@ -103,6 +113,17 @@ function CreateDemografiPekerjaan() {
           />
 
           <Group justify="right">
+            <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
             <Button
               onClick={handleSubmit}
               radius="md"
@@ -113,7 +134,7 @@ function CreateDemografiPekerjaan() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

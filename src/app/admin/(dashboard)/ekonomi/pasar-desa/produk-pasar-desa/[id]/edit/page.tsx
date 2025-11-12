@@ -5,10 +5,12 @@ import pasarDesaState from '@/app/admin/(dashboard)/_state/ekonomi/pasar-desa/pa
 import colors from '@/con/colors';
 import ApiFetch from '@/lib/api-fetch';
 import {
+  ActionIcon,
   Box,
   Button,
   Group,
   Image,
+  Loader,
   MultiSelect,
   Paper,
   Stack,
@@ -40,11 +42,23 @@ function EditPasarDesa() {
 
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     nama: '',
     harga: 0,
     alamatUsaha: '',
     imageId: '',
+    rating: 0,
+    kategoriId: [],
+    kontak: '',
+  });
+
+  const [originalData, setOriginalData] = useState({
+    nama: '',
+    harga: 0,
+    alamatUsaha: '',
+    imageId: '',
+    imageUrl: "",
     rating: 0,
     kategoriId: [],
     kontak: '',
@@ -70,6 +84,16 @@ function EditPasarDesa() {
             kategoriId: data.KategoriToPasar?.map((k: any) => k.kategoriId) || [],
             kontak: data.kontak || '',
           });
+          setOriginalData({
+            nama: data.nama || '',
+            harga: data.harga || 0,
+            alamatUsaha: data.alamatUsaha || '',
+            imageId: data.imageId || '',
+            imageUrl: data.image?.link || "",
+            rating: data.rating || 0,
+            kategoriId: data.KategoriToPasar?.map((k: any) => k.kategoriId) || [],
+            kontak: data.kontak || '',
+          });
           if (data.image?.link) setPreviewImage(data.image.link);
         }
       } catch (error) {
@@ -87,8 +111,25 @@ function EditPasarDesa() {
     setFormData((prev) => ({ ...prev, [key]: value }));
   };
 
+  const handleResetForm = () => {
+    setFormData({
+      nama: originalData.nama,
+      harga: originalData.harga,
+      alamatUsaha: originalData.alamatUsaha,
+      imageId: originalData.imageId,
+      rating: originalData.rating,
+      kategoriId: (originalData as any)?.KategoriToPasar?.map((k: any) => k.kategoriId) || [],
+      kontak: originalData.kontak,
+    });
+    setPreviewImage(originalData.imageUrl || null);
+    setFile(null);
+    toast.info("Form dikembalikan ke data awal");
+  };
+    
+
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       // upload image kalau ada file baru
       let imageId = formData.imageId;
       if (file) {
@@ -110,6 +151,8 @@ function EditPasarDesa() {
     } catch (error) {
       console.error('Error updating pasar desa:', error);
       toast.error('Terjadi kesalahan saat memperbarui pasar desa');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -148,7 +191,7 @@ function EditPasarDesa() {
               }}
               onReject={() => toast.error('File tidak valid, gunakan format gambar')}
               maxSize={5 * 1024 ** 2}
-              accept={{ 'image/*': [] }}
+              accept={{ 'image/*': ['.jpeg', '.jpg', '.png', '.webp'] }}
               radius="md"
               p="xl"
             >
@@ -167,25 +210,45 @@ function EditPasarDesa() {
                     Seret gambar atau klik untuk memilih file
                   </Text>
                   <Text size="sm" c="dimmed">
-                    Maksimal 5MB, format gambar wajib
+                    Maksimal 5MB, format gambar .png, .jpg, .jpeg, webp
                   </Text>
                 </Stack>
               </Group>
             </Dropzone>
 
             {previewImage && (
-              <Box mt="sm" style={{ display: 'flex', justifyContent: 'center' }}>
+              <Box pos={"relative"} mt="sm" style={{ display: 'flex', justifyContent: 'center' }}>
                 <Image
                   src={previewImage}
                   alt="Preview Gambar"
                   radius="md"
                   style={{
-                    maxHeight: 220,
+                    maxHeight: 200,
                     objectFit: 'contain',
-                    border: `1px solid ${colors['blue-button']}`,
+                    border: '1px solid #ddd',
                   }}
                   loading="lazy"
                 />
+
+                {/* Tombol hapus (pojok kanan atas) */}
+                <ActionIcon
+                  variant="filled"
+                  color="red"
+                  radius="xl"
+                  size="sm"
+                  pos="absolute"
+                  top={5}
+                  right={5}
+                  onClick={() => {
+                    setPreviewImage(null);
+                    setFile(null);
+                  }}
+                  style={{
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                  }}
+                >
+                  <IconX size={14} />
+                </ActionIcon>
               </Box>
             )}
           </Box>
@@ -255,6 +318,17 @@ function EditPasarDesa() {
 
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
@@ -264,7 +338,7 @@ function EditPasarDesa() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

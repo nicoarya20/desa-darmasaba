@@ -6,6 +6,7 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Stack,
   Text,
@@ -14,6 +15,7 @@ import {
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
@@ -21,6 +23,7 @@ import { useProxy } from 'valtio/utils';
 function CreateFasilitasKesehatan() {
   const stateFasilitasKesehatan = useProxy(fasilitasKesehatanState.fasilitasKesehatan);
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const resetForm = () => {
     stateFasilitasKesehatan.create.form = {
@@ -53,10 +56,18 @@ function CreateFasilitasKesehatan() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await stateFasilitasKesehatan.create.submit();
-    toast.success('Data berhasil disimpan');
-    resetForm();
-    router.push('/admin/kesehatan/data-kesehatan-warga/fasilitas_kesehatan');
+    try {
+      setIsSubmitting(true);
+      await stateFasilitasKesehatan.create.submit();
+      toast.success('Data berhasil disimpan');
+      resetForm();
+      router.push('/admin/kesehatan/data-kesehatan-warga/fasilitas_kesehatan');
+    } catch (error) {
+      console.error(error);
+      toast.error('Gagal menyimpan data');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -89,7 +100,7 @@ function CreateFasilitasKesehatan() {
           <TextInput
             label={"Nama Fasilitas Kesehatan"}
             placeholder="Masukkan nama fasilitas kesehatan"
-            defaultValue={stateFasilitasKesehatan.create.form.name}
+            value={stateFasilitasKesehatan.create.form.name}
             onChange={(e) => (stateFasilitasKesehatan.create.form.name = e.target.value)}
             required
           />
@@ -100,21 +111,21 @@ function CreateFasilitasKesehatan() {
             <TextInput
               label="Fasilitas"
               placeholder="Masukkan fasilitas"
-              defaultValue={stateFasilitasKesehatan.create.form.informasiUmum.fasilitas}
+              value={stateFasilitasKesehatan.create.form.informasiUmum.fasilitas}
               onChange={(e) => (stateFasilitasKesehatan.create.form.informasiUmum.fasilitas = e.target.value)}
               required
             />
             <TextInput
               label="Alamat"
               placeholder="Masukkan alamat"
-              defaultValue={stateFasilitasKesehatan.create.form.informasiUmum.alamat}
+              value={stateFasilitasKesehatan.create.form.informasiUmum.alamat}
               onChange={(e) => (stateFasilitasKesehatan.create.form.informasiUmum.alamat = e.target.value)}
               required
             />
             <TextInput
               label="Jam Operasional"
               placeholder="Masukkan jam operasional"
-              defaultValue={stateFasilitasKesehatan.create.form.informasiUmum.jamOperasional}
+              value={stateFasilitasKesehatan.create.form.informasiUmum.jamOperasional}
               onChange={(e) => (stateFasilitasKesehatan.create.form.informasiUmum.jamOperasional = e.target.value)}
               required
             />
@@ -135,21 +146,21 @@ function CreateFasilitasKesehatan() {
             <TextInput
               label="Nama Dokter"
               placeholder="Masukkan nama dokter"
-              defaultValue={stateFasilitasKesehatan.create.form.dokterdanTenagaMedis.name}
+              value={stateFasilitasKesehatan.create.form.dokterdanTenagaMedis.name}
               onChange={(e) => (stateFasilitasKesehatan.create.form.dokterdanTenagaMedis.name = e.target.value)}
               required
             />
             <TextInput
               label="Spesialis"
               placeholder="Masukkan spesialis"
-              defaultValue={stateFasilitasKesehatan.create.form.dokterdanTenagaMedis.specialist}
+              value={stateFasilitasKesehatan.create.form.dokterdanTenagaMedis.specialist}
               onChange={(e) => (stateFasilitasKesehatan.create.form.dokterdanTenagaMedis.specialist = e.target.value)}
               required
             />
             <TextInput
               label="Jadwal"
               placeholder="Masukkan jadwal"
-              defaultValue={stateFasilitasKesehatan.create.form.dokterdanTenagaMedis.jadwal}
+              value={stateFasilitasKesehatan.create.form.dokterdanTenagaMedis.jadwal}
               onChange={(e) => (stateFasilitasKesehatan.create.form.dokterdanTenagaMedis.jadwal = e.target.value)}
               required
             />
@@ -179,23 +190,35 @@ function CreateFasilitasKesehatan() {
             <TextInput
               label="Tarif"
               placeholder="Masukkan tarif"
-              defaultValue={stateFasilitasKesehatan.create.form.tarifDanLayanan.tarif}
+              value={stateFasilitasKesehatan.create.form.tarifDanLayanan.tarif}
               onChange={(e) => (stateFasilitasKesehatan.create.form.tarifDanLayanan.tarif = e.target.value)}
               required
             />
             <TextInput
               label="Layanan"
               placeholder="Masukkan layanan"
-              defaultValue={stateFasilitasKesehatan.create.form.tarifDanLayanan.layanan}
+              value={stateFasilitasKesehatan.create.form.tarifDanLayanan.layanan}
               onChange={(e) => (stateFasilitasKesehatan.create.form.tarifDanLayanan.layanan = e.target.value)}
               required
             />
           </Box>
 
           {/* Submit */}
-          <Group justify="right" mt="md">
+          <Group justify="right">
+            {/* Tombol Batal */}
             <Button
-              type="submit"
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
+              onClick={handleSubmit}
               radius="md"
               size="md"
               style={{
@@ -204,7 +227,7 @@ function CreateFasilitasKesehatan() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

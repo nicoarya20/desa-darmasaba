@@ -1,10 +1,12 @@
 "use client";
 
 import {
+  ActionIcon,
   Box,
   Button,
   Group,
   Image,
+  Loader,
   Paper,
   Stack,
   Text,
@@ -36,10 +38,18 @@ function EditTipsKeamanan() {
 
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     judul: "",
     deskripsi: "",
     imageId: "",
+  });
+
+  const [originalData, setOriginalData] = useState({
+    judul: "",
+    deskripsi: "",
+    imageId: "",
+    imageUrl: "",
   });
 
   // Load data saat pertama kali
@@ -57,6 +67,13 @@ function EditTipsKeamanan() {
             imageId: data.imageId || "",
           });
 
+          setOriginalData({
+            judul: data.judul || "",
+            deskripsi: data.deskripsi || "",
+            imageId: data.imageId || "",
+            imageUrl: data.image?.link || "",
+          })
+
           if (data?.image?.link) {
             setPreviewImage(data.image.link);
           }
@@ -73,6 +90,7 @@ function EditTipsKeamanan() {
 
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       let imageId = formData.imageId;
 
       if (file) {
@@ -97,7 +115,20 @@ function EditTipsKeamanan() {
     } catch (error) {
       console.error("Error updating tips keamanan:", error);
       toast.error("Terjadi kesalahan saat memperbarui tips keamanan");
+    } finally {
+      setIsSubmitting(false);
     }
+  };
+
+  const handleResetForm = () => {
+    setFormData({
+      judul: originalData.judul,
+      deskripsi: originalData.deskripsi,
+      imageId: originalData.imageId,
+    });
+    setPreviewImage(originalData.imageUrl || null);
+    setFile(null);
+    toast.info("Form dikembalikan ke data awal");
   };
 
   return (
@@ -167,14 +198,14 @@ function EditTipsKeamanan() {
                     Seret gambar atau klik untuk memilih file
                   </Text>
                   <Text size="sm" c="dimmed">
-                    Maksimal 5MB, format gambar wajib
+                    Maksimal 5MB, format gambar .png, .jpg, .jpeg, webp
                   </Text>
                 </Stack>
               </Group>
             </Dropzone>
 
             {previewImage ? (
-              <Box mt="sm" style={{ display: "flex", justifyContent: "center" }}>
+              <Box pos={"relative"} mt="sm" style={{ display: "flex", justifyContent: "center" }}>
                 <Image
                   src={previewImage}
                   alt="Preview Gambar"
@@ -186,6 +217,24 @@ function EditTipsKeamanan() {
                   }}
                   loading="lazy"
                 />
+                <ActionIcon
+                  variant="filled"
+                  color="red"
+                  radius="xl"
+                  size="sm"
+                  pos="absolute"
+                  top={5}
+                  right={5}
+                  onClick={() => {
+                    setPreviewImage(null);
+                    setFile(null);
+                  }}
+                  style={{
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                  }}
+                >
+                  <IconX size={14} />
+                </ActionIcon>
               </Box>
             ) : (
               <Box
@@ -230,17 +279,29 @@ function EditTipsKeamanan() {
 
           {/* Button Simpan */}
           <Group justify="right">
+            {/* Tombol Batal */}
+            <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
             <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
               style={{
-                background: `linear-gradient(135deg, ${colors["blue-button"]}, #4facfe)`,
-                color: "#fff",
-                boxShadow: "0 4px 15px rgba(79, 172, 254, 0.4)",
+                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                color: '#fff',
+                boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

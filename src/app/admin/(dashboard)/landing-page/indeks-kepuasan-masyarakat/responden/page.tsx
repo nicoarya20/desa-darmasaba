@@ -97,11 +97,11 @@ function ListResponden({ search }: ListRespondenProps) {
             >
               <TableThead>
                 <TableTr>
-                  <TableTh style={{ width: '5%', textAlign: 'center' }}>No</TableTh>
-                  <TableTh style={{ width: '25%', textAlign: 'center' }}>Nama</TableTh>
-                  <TableTh style={{ width: '20%', textAlign: 'center' }}>Tanggal</TableTh>
-                  <TableTh style={{ width: '20%', textAlign: 'center' }}>Jenis Kelamin</TableTh>
-                  <TableTh style={{ width: '15%', textAlign: 'center' }}>Aksi</TableTh>
+                  <TableTh style={{ width: '5%' }}>No</TableTh>
+                  <TableTh style={{ width: '25%' }}>Nama</TableTh>
+                  <TableTh style={{ width: '20%' }}>Tanggal</TableTh>
+                  <TableTh style={{ width: '20%' }}>Jenis Kelamin</TableTh>
+                  <TableTh style={{ width: '15%' }}>Aksi</TableTh>
                 </TableTr>
               </TableThead>
               <TableTbody>
@@ -116,9 +116,9 @@ function ListResponden({ search }: ListRespondenProps) {
                 ) : (
                   filteredData.map((item, index) => (
                     <TableTr key={item.id}>
-                      <TableTd ta="center">{index + 1}</TableTd>
-                      <TableTd ta="center">{item.name}</TableTd>
-                      <TableTd ta="center">
+                      <TableTd>{index + 1}</TableTd>
+                      <TableTd>{item.name}</TableTd>
+                      <TableTd>
                         <Box w={150}>
                         {item.tanggal
                           ? new Date(item.tanggal).toLocaleDateString('id-ID', {
@@ -129,12 +129,12 @@ function ListResponden({ search }: ListRespondenProps) {
                           : '-'}
                         </Box>
                       </TableTd>
-                      <TableTd ta="center">
+                      <TableTd>
                         <Box w={100}>
                         {item.jenisKelamin.name}
                         </Box>
                       </TableTd>
-                      <TableTd ta="center">
+                      <TableTd>
                         <Button
                           size="xs"
                           radius="md"

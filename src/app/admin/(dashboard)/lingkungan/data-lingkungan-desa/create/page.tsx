@@ -4,6 +4,7 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Stack,
   Text,
@@ -16,10 +17,13 @@ import { useProxy } from 'valtio/utils';
 import CreateEditor from '../../../_com/createEditor';
 import SelectIconProgram from '../../../_com/selectIcon';
 import dataLingkunganDesaState from '../../../_state/lingkungan/data-lingkungan-desa';
+import { useState } from 'react';
+import { toast } from 'react-toastify';
 
 function CreateDataLingkunganDesa() {
   const stateCreate = useProxy(dataLingkunganDesaState);
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const resetForm = () => {
     stateCreate.create.form = {
@@ -31,9 +35,17 @@ function CreateDataLingkunganDesa() {
   };
 
   const handleSubmit = async () => {
-    await stateCreate.create.create();
-    resetForm();
-    router.push('/admin/lingkungan/data-lingkungan-desa');
+    try {
+      setIsSubmitting(true);
+      await stateCreate.create.create();
+      resetForm();
+      router.push('/admin/lingkungan/data-lingkungan-desa');
+    } catch (error) {
+      console.error("Error creating data lingkungan desa:", error);
+      toast.error("Terjadi kesalahan saat menambahkan data lingkungan desa");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -66,7 +78,7 @@ function CreateDataLingkunganDesa() {
           <TextInput
             label={<Text fw="bold" fz="sm">Nama Data Lingkungan Desa</Text>}
             placeholder="Masukkan nama data lingkungan desa"
-            defaultValue={stateCreate.create.form.name || ''}
+            value={stateCreate.create.form.name || ''}
             onChange={(val) => (stateCreate.create.form.name = val.target.value)}
             required
           />
@@ -83,7 +95,7 @@ function CreateDataLingkunganDesa() {
           <TextInput
             label={<Text fw="bold" fz="sm">Jumlah Data Lingkungan Desa</Text>}
             placeholder="Masukkan jumlah data lingkungan desa"
-            defaultValue={stateCreate.create.form.jumlah || ''}
+            value={stateCreate.create.form.jumlah || ''}
             onChange={(e) => (stateCreate.create.form.jumlah = e.currentTarget.value)}
             required
           />
@@ -103,6 +115,17 @@ function CreateDataLingkunganDesa() {
           {/* Submit Button */}
           <Group justify="right" mt="sm">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
@@ -112,7 +135,7 @@ function CreateDataLingkunganDesa() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

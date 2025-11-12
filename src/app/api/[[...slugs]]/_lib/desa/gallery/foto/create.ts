@@ -22,7 +22,7 @@ async function galleryFotoCreate(context: Context) {
     });
     return {
         success: true,
-        message: "Success create gallery foto",
+        message: "Sukses menambahkan gallery foto",
         data: {
             ...body,
         },

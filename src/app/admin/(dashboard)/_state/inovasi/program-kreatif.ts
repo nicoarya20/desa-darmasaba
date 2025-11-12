@@ -41,7 +41,7 @@ const programKreatifState = proxy({
     
         if (res.status === 200) {
           programKreatifState.findMany.load();
-          toast.success("success create");
+          toast.success("Sukses menambahkan");
           return true;
         }
     

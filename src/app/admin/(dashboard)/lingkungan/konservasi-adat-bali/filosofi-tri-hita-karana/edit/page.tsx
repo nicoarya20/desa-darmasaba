@@ -2,12 +2,13 @@
 
 import stateKonservasiAdatBali from '@/app/admin/(dashboard)/_state/lingkungan/konservasi-adat-bali';
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, Stack, Text, Title } from '@mantine/core';
+import { Box, Button, Group, Loader, Paper, Stack, Text, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack } from '@tabler/icons-react';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
 const KonservasiAdatBaliTextEditor = dynamic(
@@ -21,9 +22,14 @@ const KonservasiAdatBaliTextEditor = dynamic(
 function EditFilosofiTriHitaKarana() {
   const router = useRouter();
   const filosofiTriHitaState = useProxy(stateKonservasiAdatBali.stateFilosofiTriHita);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Local state form
   const [formData, setFormData] = useState({ judul: '', content: '' });
+  const [originalData, setOriginalData] = useState({
+    judul: '',
+    content: '',
+  });
 
   // Load data dari global state kalau belum ada
   useShallowEffect(() => {
@@ -39,6 +45,10 @@ function EditFilosofiTriHitaKarana() {
         judul: filosofiTriHitaState.findById.data.judul ?? '',
         content: filosofiTriHitaState.findById.data.deskripsi ?? '',
       });
+      setOriginalData({
+        judul: filosofiTriHitaState.findById.data.judul ?? '',
+        content: filosofiTriHitaState.findById.data.deskripsi ?? '',
+      });
     }
   }, [filosofiTriHitaState.findById.data]);
 
@@ -46,13 +56,29 @@ function EditFilosofiTriHitaKarana() {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
+  const handleResetForm = () => {
+    setFormData({
+      judul: originalData.judul,
+      content: originalData.content,
+    });
+    toast.info("Form dikembalikan ke data awal");
+  };
+
   const handleSubmit = () => {
-    if (filosofiTriHitaState.findById.data) {
-      filosofiTriHitaState.findById.data.judul = formData.judul;
-      filosofiTriHitaState.findById.data.deskripsi = formData.content;
-      filosofiTriHitaState.update.save(filosofiTriHitaState.findById.data);
+    try {
+      setIsSubmitting(true);
+      if (filosofiTriHitaState.findById.data) {
+        filosofiTriHitaState.findById.data.judul = formData.judul;
+        filosofiTriHitaState.findById.data.deskripsi = formData.content;
+        filosofiTriHitaState.update.save(filosofiTriHitaState.findById.data);
+      }
+      router.push('/admin/lingkungan/konservasi-adat-bali/filosofi-tri-hita-karana');
+    } catch (error) {
+      console.error("Error updating filosofi tri hita karana:", error);
+      toast.error("Terjadi kesalahan saat memperbarui filosofi tri hita karana");
+    } finally {
+      setIsSubmitting(false);
     }
-    router.push('/admin/lingkungan/konservasi-adat-bali/filosofi-tri-hita-karana');
   };
 
   return (
@@ -99,7 +125,19 @@ function EditFilosofiTriHitaKarana() {
             />
           </Box>
 
-          <Group justify="right" mt="md">
+          <Group justify="right">
+            {/* Tombol Batal */}
+            <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
             <Button
               onClick={handleSubmit}
               radius="md"
@@ -109,9 +147,8 @@ function EditFilosofiTriHitaKarana() {
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
-              loading={filosofiTriHitaState.update.loading}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

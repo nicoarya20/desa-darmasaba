@@ -24,7 +24,7 @@ export default async function penghargaanCreate(context: Context){
 
     return {
         success: true,
-        message: "Success create penghargaan",
+        message: "Sukses menambahkan penghargaan",
         data: {
             ...body,
         }

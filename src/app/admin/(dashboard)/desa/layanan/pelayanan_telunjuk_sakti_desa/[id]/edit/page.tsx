@@ -6,6 +6,7 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Stack,
   TextInput,
@@ -21,8 +22,15 @@ function EditPelayananTelunjukSakti() {
   const stateTelunjukDesa = useProxy(stateLayananDesa.pelayananTelunjukSaktiDesa);
   const router = useRouter();
   const params = useParams();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [formData, setFormData] = useState({
+    name: '',
+    deskripsi: '',
+    link: '',
+  });
+
+  const [originalData, setOriginalData] = useState({
     name: '',
     deskripsi: '',
     link: '',
@@ -38,6 +46,11 @@ function EditPelayananTelunjukSakti() {
         const data = await stateTelunjukDesa.edit.load(id);
         if (data) {
           setFormData({
+            name: data.name ?? '',
+            deskripsi: data.deskripsi ?? '',
+            link: data.link ?? '',
+          });
+          setOriginalData({
             name: data.name ?? '',
             deskripsi: data.deskripsi ?? '',
             link: data.link ?? '',
@@ -60,9 +73,19 @@ function EditPelayananTelunjukSakti() {
     []
   );
 
+  const handleResetForm = () => {
+      setFormData({
+        name: originalData.name,
+        deskripsi: originalData.deskripsi,
+        link: originalData.link,
+      });
+      toast.info("Form dikembalikan ke data awal");
+    };
+
   // Submit: update global state hanya saat simpan
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       stateTelunjukDesa.edit.form = {
         ...stateTelunjukDesa.edit.form,
         ...formData,
@@ -73,6 +96,8 @@ function EditPelayananTelunjukSakti() {
     } catch (error) {
       console.error('Error updating pelayanan telunjuk sakti:', error);
       toast.error('Terjadi kesalahan saat memperbarui pelayanan telunjuk sakti');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -126,6 +151,17 @@ function EditPelayananTelunjukSakti() {
           {/* Tombol Simpan */}
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
@@ -135,7 +171,7 @@ function EditPelayananTelunjukSakti() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

@@ -7,6 +7,7 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Stack,
   Text,
@@ -23,6 +24,12 @@ function EditJenisLayanan() {
   const state = useProxy(layananonlineDesa.jenisLayanan);
   const router = useRouter();
   const params = useParams();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [originalData, setOriginalData] = useState({
+    nama: '',
+    deskripsi: '',
+  });
 
   const [formData, setFormData] = useState({
     nama: '',
@@ -41,6 +48,10 @@ function EditJenisLayanan() {
             nama: data.nama ?? '',
             deskripsi: data.deskripsi ?? '',
           });
+          setOriginalData({
+            nama: data.nama ?? '',
+            deskripsi: data.deskripsi ?? '',
+          });
         }
       } catch (error) {
         console.error('Error loading jenis layanan:', error);
@@ -51,8 +62,17 @@ function EditJenisLayanan() {
     loadJenisLayanan();
   }, [params?.id]);
 
+  const handleResetForm = () => {
+    setFormData({
+      nama: originalData.nama,
+      deskripsi: originalData.deskripsi,
+    });
+    toast.info('Form dikembalikan ke data awal');
+  };
+
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       state.edit.form = {
         ...state.edit.form,
         ...formData,
@@ -64,6 +84,8 @@ function EditJenisLayanan() {
     } catch (error) {
       console.error('Error updating jenis layanan:', error);
       toast.error('Terjadi kesalahan saat memperbarui jenis layanan');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -124,6 +146,17 @@ function EditJenisLayanan() {
           {/* Tombol Submit */}
           <Group justify="right" mt="sm">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
@@ -133,7 +166,7 @@ function EditJenisLayanan() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

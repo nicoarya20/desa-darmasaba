@@ -195,7 +195,7 @@ function Page() {
         >
           <Stack gap="md">
             <TextInput
-              defaultValue={stateLaporan.create.form.judul}
+              value={stateLaporan.create.form.judul}
               onChange={(e) => (stateLaporan.create.form.judul = e.target.value)}
               label={<Text fw="bold" fz="sm">Judul Laporan Publik</Text>}
               placeholder="Masukkan judul laporan publik"
@@ -203,7 +203,7 @@ function Page() {
             />
 
             <TextInput
-              defaultValue={stateLaporan.create.form.lokasi}
+              value={stateLaporan.create.form.lokasi}
               onChange={(e) => (stateLaporan.create.form.lokasi = e.target.value)}
               label={<Text fw="bold" fz="sm">Lokasi Laporan Publik</Text>}
               placeholder="Masukkan lokasi laporan publik"
@@ -212,7 +212,7 @@ function Page() {
 
             <DateTimePicker
               label={<Text fw="bold" fz="sm">Tanggal Laporan Publik</Text>}
-              defaultValue={
+              value={
                 stateLaporan.create.form.tanggalWaktu
                   ? new Date(stateLaporan.create.form.tanggalWaktu)
                   : null

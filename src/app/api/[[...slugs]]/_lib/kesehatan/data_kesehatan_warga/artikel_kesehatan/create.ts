@@ -51,7 +51,7 @@ const artikelKesehatanCreate = async (context: Context) => {
 
     return {
         success: true,
-        message: "Success create artikel kesehatan",
+        message: "Sukses menambahkan artikel kesehatan",
         data: artikelKesehatan,
     }
 }

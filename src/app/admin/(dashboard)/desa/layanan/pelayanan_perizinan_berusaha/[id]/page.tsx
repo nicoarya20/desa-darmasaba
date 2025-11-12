@@ -8,6 +8,7 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Skeleton,
   Stack,
@@ -34,19 +35,33 @@ function EditPelayananPerizinanBerusaha() {
     link: '',
   });
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [originalData, setOriginalData] = useState({
+    id: '',
+    name: '',
+    deskripsi: '',
+    link: '',
+  });
+
   // Load data detail
   useEffect(() => {
     if (!id) {
       toast.error("ID tidak valid");
       return;
     }
-  
+
     const loadData = async () => {
       try {
         setLoading(true);
         const data = await state.findById.load(id);
         if (data) {
           setFormData({
+            id: data.id,
+            name: data.name || "",
+            deskripsi: data.deskripsi || "",
+            link: data.link || "",
+          });
+          setOriginalData({
             id: data.id,
             name: data.name || "",
             deskripsi: data.deskripsi || "",
@@ -62,10 +77,10 @@ function EditPelayananPerizinanBerusaha() {
         setLoading(false);
       }
     };
-  
+
     loadData();
   }, [id]);
-  
+
 
   const handleChange =
     (field: keyof typeof formData) =>
@@ -76,13 +91,26 @@ function EditPelayananPerizinanBerusaha() {
         }));
       };
 
+  const handleResetForm = () => {
+    setFormData({
+      id: originalData.id,
+      name: originalData.name,
+      deskripsi: originalData.deskripsi,
+      link: originalData.link,
+    });
+    toast.info("Form dikembalikan ke data awal");
+  };
+
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       await state.update.update(formData);
       router.push('/admin/desa/layanan/pelayanan_perizinan_berusaha');
     } catch (error) {
       console.error('Error updating pelayanan perizinan berusaha:', error);
       toast.error('Terjadi kesalahan saat update data');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -99,14 +127,14 @@ function EditPelayananPerizinanBerusaha() {
       <Stack gap="xs">
         {/* Header */}
         <Group mb="md">
-            <Button
-              variant="subtle"
-              onClick={() => router.back()}
-              p="xs"
-              radius="md"
-            >
-              <IconArrowBack color={colors['blue-button']} size={24} />
-            </Button>
+          <Button
+            variant="subtle"
+            onClick={() => router.back()}
+            p="xs"
+            radius="md"
+          >
+            <IconArrowBack color={colors['blue-button']} size={24} />
+          </Button>
           <Title order={4} ml="sm" c="dark">
             Edit Pelayanan Perizinan Berusaha
           </Title>
@@ -147,22 +175,30 @@ function EditPelayananPerizinanBerusaha() {
               />
             </Box>
 
-            <Group>
-              <Button
-                bg={colors['blue-button']}
-                onClick={handleSubmit}
-                loading={state.update.loading}
-                disabled={!formData.name}
-              >
-                {state.update.loading ? 'Menyimpan...' : 'Simpan Perubahan'}
-              </Button>
-
+            <Group justify="right">
+              {/* Tombol Batal */}
               <Button
                 variant="outline"
-                onClick={() => router.back()}
-                disabled={state.update.loading}
+                color="gray"
+                radius="md"
+                size="md"
+                onClick={handleResetForm}
               >
                 Batal
+              </Button>
+
+              {/* Tombol Simpan */}
+              <Button
+                onClick={handleSubmit}
+                radius="md"
+                size="md"
+                style={{
+                  background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                  color: '#fff',
+                  boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
+                }}
+              >
+                {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
               </Button>
             </Group>
           </Stack>

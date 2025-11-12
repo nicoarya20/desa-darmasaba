@@ -2,10 +2,12 @@
 import colors from '@/con/colors';
 import ApiFetch from '@/lib/api-fetch';
 import {
+  ActionIcon,
   Box,
   Button,
   Group,
   Image,
+  Loader,
   Paper,
   Stack,
   Text,
@@ -26,6 +28,7 @@ function CreateProgramKesehatan() {
   const programKesehatanState = useProxy(programKesehatan);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const resetForm = () => {
     programKesehatanState.create.form = {
@@ -45,25 +48,33 @@ function CreateProgramKesehatan() {
     if (!programKesehatanState.create.form.deskripsiSingkat) {
       return toast.warn("Deskripsi singkat wajib diisi");
     }
-    if (!file) {
-      return toast.warn("Pilih file gambar terlebih dahulu");
+    try {
+      setIsSubmitting(true);
+      if (!file) {
+        return toast.warn("Pilih file gambar terlebih dahulu");
+      }
+
+      const res = await ApiFetch.api.fileStorage.create.post({
+        file,
+        name: file.name,
+      });
+
+      const uploaded = res.data?.data;
+      if (!uploaded?.id) {
+        return toast.error("Gagal upload gambar");
+      }
+
+      programKesehatanState.create.form.imageId = uploaded.id;
+      await programKesehatanState.create.create();
+
+      resetForm();
+      router.push("/admin/kesehatan/program-kesehatan");
+    } catch (error) {
+      console.error("Error creating program kesehatan:", error);
+      toast.error("Gagal menambahkan program kesehatan");
+    } finally {
+      setIsSubmitting(false);
     }
-
-    const res = await ApiFetch.api.fileStorage.create.post({
-      file,
-      name: file.name,
-    });
-
-    const uploaded = res.data?.data;
-    if (!uploaded?.id) {
-      return toast.error("Gagal upload gambar");
-    }
-
-    programKesehatanState.create.form.imageId = uploaded.id;
-    await programKesehatanState.create.create();
-
-    resetForm();
-    router.push("/admin/kesehatan/program-kesehatan");
   };
 
   return (
@@ -89,7 +100,7 @@ function CreateProgramKesehatan() {
       >
         <Stack gap="md">
           <TextInput
-            defaultValue={programKesehatanState.create.form.name}
+            value={programKesehatanState.create.form.name}
             onChange={(val) => {
               programKesehatanState.create.form.name = val.target.value;
             }}
@@ -136,7 +147,7 @@ function CreateProgramKesehatan() {
               }}
               onReject={() => toast.error('File tidak valid.')}
               maxSize={5 * 1024 ** 2}
-              accept={{ 'image/*': [] }}
+              accept={{ 'image/*': ['.jpeg', '.jpg', '.png', '.webp'] }}
             >
               <Group justify="center" gap="xl" mih={220} style={{ pointerEvents: 'none' }}>
                 <Dropzone.Accept>
@@ -161,7 +172,7 @@ function CreateProgramKesehatan() {
             </Dropzone>
 
             {previewImage && (
-              <Box mt="sm">
+              <Box mt="sm" pos={"relative"}>
                 <Image
                   src={previewImage}
                   alt="Preview"
@@ -174,11 +185,40 @@ function CreateProgramKesehatan() {
                   }}
                   loading="lazy"
                 />
+                <ActionIcon
+                  variant="filled"
+                  color="red"
+                  radius="xl"
+                  size="sm"
+                  pos="absolute"
+                  top={5}
+                  right={5}
+                  onClick={() => {
+                    setPreviewImage(null);
+                    setFile(null);
+                  }}
+                  style={{
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                  }}
+                >
+                  <IconX size={14} />
+                </ActionIcon>
               </Box>
             )}
           </Box>
 
           <Group justify="right">
+            <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
             <Button
               onClick={handleSubmit}
               radius="md"
@@ -189,7 +229,7 @@ function CreateProgramKesehatan() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

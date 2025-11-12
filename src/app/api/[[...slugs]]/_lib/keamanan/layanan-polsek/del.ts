@@ -25,7 +25,7 @@ export const layananPolsekDelete = async (context: Context) => {
 
     return {
         success: true,
-        message: "Success delete layanan polsek",
+        message: "Sukses Menghapus layanan polsek",
         data: layanan,
     }
 }

@@ -6,6 +6,7 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Stack,
   TextInput,
@@ -13,12 +14,14 @@ import {
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
 function CreatePelayananTelunjukDesa() {
   const stateTelunjukDesa = useProxy(stateLayananDesa.pelayananTelunjukSaktiDesa);
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const resetForm = () => {
     stateTelunjukDesa.create.form = {
@@ -30,6 +33,7 @@ function CreatePelayananTelunjukDesa() {
 
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       await stateTelunjukDesa.create.create();
       resetForm();
       toast.success('Data pelayanan telunjuk sakti berhasil ditambahkan');
@@ -37,6 +41,8 @@ function CreatePelayananTelunjukDesa() {
     } catch (error) {
       console.error('Error create pelayanan telunjuk sakti:', error);
       toast.error('Terjadi kesalahan saat menambahkan data');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -64,7 +70,7 @@ function CreatePelayananTelunjukDesa() {
         <Stack gap="md">
           {/* Nama */}
           <TextInput
-            defaultValue={stateTelunjukDesa.create.form.name}
+            value={stateTelunjukDesa.create.form.name}
             onChange={(val) => {
               stateTelunjukDesa.create.form.name = val.target.value;
             }}
@@ -75,7 +81,7 @@ function CreatePelayananTelunjukDesa() {
 
           {/* Deskripsi */}
           <TextInput
-            defaultValue={stateTelunjukDesa.create.form.deskripsi}
+            value={stateTelunjukDesa.create.form.deskripsi}
             onChange={(val) => {
               stateTelunjukDesa.create.form.deskripsi = val.target.value;
             }}
@@ -86,7 +92,7 @@ function CreatePelayananTelunjukDesa() {
 
           {/* Link */}
           <TextInput
-            defaultValue={stateTelunjukDesa.create.form.link}
+            value={stateTelunjukDesa.create.form.link}
             onChange={(val) => {
               stateTelunjukDesa.create.form.link = val.target.value;
             }}
@@ -98,6 +104,17 @@ function CreatePelayananTelunjukDesa() {
           {/* Tombol Simpan */}
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
@@ -107,7 +124,7 @@ function CreatePelayananTelunjukDesa() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

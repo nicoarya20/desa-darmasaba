@@ -5,12 +5,12 @@ import { useEffect, useState } from 'react';
 
 // Dynamically import the components with SSR disabled to prevent hydration issues
 const LayoutTabs = dynamic(
-  () => import('./(dashboard)/landing-page/profile/_lib/layoutTabs'),
+  () => import('./(dashboard)/landing-page/profil/_lib/layoutTabs'),
   { ssr: false }
 );
 
 const ProgramInovasi = dynamic(
-  () => import('./(dashboard)/landing-page/profile/program-inovasi/page'),
+  () => import('./(dashboard)/landing-page/profil/program-inovasi/page'),
   { ssr: false }
 );
 

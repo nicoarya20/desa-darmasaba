@@ -7,6 +7,7 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Stack,
   Text,
@@ -27,6 +28,7 @@ function CreateProgramKemiskinan() {
   const router = useRouter();
   const [lineChart, setLineChart] = useState<any[]>([]);
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const resetForm = () => {
     programState.create.form = {
       nama: '',
@@ -40,24 +42,32 @@ function CreateProgramKemiskinan() {
   };
 
   const handleSubmit = async () => {
-    if (!programState.create.form.nama || !programState.create.form.deskripsi) {
-      return toast.warn('Judul dan deskripsi wajib diisi');
-    }
-
-    const id = await programState.create.create();
-    if (id) {
-      const idStr = String(id);
-      await programState.findUnique.load(idStr);
-      if (programState.findUnique.data) {
-        setLineChart([programState.findUnique.data]);
+    try {
+      setIsSubmitting(true);
+      if (!programState.create.form.nama || !programState.create.form.deskripsi) {
+        return toast.warn('Judul dan deskripsi wajib diisi');
       }
-      toast.success('Program berhasil ditambahkan');
-    } else {
-      toast.error('Gagal menambahkan program, coba lagi');
-    }
 
-    resetForm();
-    router.push('/admin/ekonomi/program-kemiskinan');
+      const id = await programState.create.create();
+      if (id) {
+        const idStr = String(id);
+        await programState.findUnique.load(idStr);
+        if (programState.findUnique.data) {
+          setLineChart([programState.findUnique.data]);
+        }
+        toast.success('Program berhasil ditambahkan');
+      } else {
+        toast.error('Gagal menambahkan program, coba lagi');
+      }
+
+      resetForm();
+      router.push('/admin/ekonomi/program-kemiskinan');
+    } catch (error) {
+      console.error('Gagal menyimpan data:', error);
+      toast.error('Terjadi kesalahan saat menyimpan data');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -90,7 +100,7 @@ function CreateProgramKemiskinan() {
           <TextInput
             label="Judul Program"
             placeholder="Masukkan judul program"
-            defaultValue={programState.create.form.nama}
+            value={programState.create.form.nama}
             onChange={(val) => (programState.create.form.nama = val.target.value)}
             required
           />
@@ -125,7 +135,7 @@ function CreateProgramKemiskinan() {
           <Group grow>
             <TextInput
               type="number"
-              defaultValue={programState.create.form.statistik.jumlah}
+              value={programState.create.form.statistik.jumlah}
               onChange={(val) =>
                 (programState.create.form.statistik.jumlah = val.target.value)
               }
@@ -135,7 +145,7 @@ function CreateProgramKemiskinan() {
             />
             <TextInput
               type="number"
-              defaultValue={programState.create.form.statistik.tahun}
+              value={programState.create.form.statistik.tahun}
               onChange={(val) =>
                 (programState.create.form.statistik.tahun = val.target.value)
               }
@@ -148,6 +158,17 @@ function CreateProgramKemiskinan() {
           {/* Tombol Submit */}
           <Group justify="right" mt="sm">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
@@ -157,7 +178,7 @@ function CreateProgramKemiskinan() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

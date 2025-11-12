@@ -4,7 +4,7 @@
 import stateStrukturBumDes from '@/app/admin/(dashboard)/_state/ekonomi/struktur-organisasi/struktur-organisasi';
 import colors from '@/con/colors';
 import ApiFetch from '@/lib/api-fetch';
-import { Box, Button, Group, Image, Paper, Select, Stack, Text, TextInput, Title } from '@mantine/core';
+import { ActionIcon, Box, Button, Group, Image, Loader, Paper, Select, Stack, Text, TextInput, Title } from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
 import { IconArrowBack, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
@@ -20,6 +20,8 @@ function CreatePegawaiBumDes() {
     stateStrukturBumDes.posisiOrganisasi.findManyAll.load();
     resetForm();
   }, []);
+  const [file, setFile] = useState<File | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const resetForm = () => {
     stateOrganisasi.create.form = {
@@ -33,6 +35,8 @@ function CreatePegawaiBumDes() {
       posisiId: "",
       isActive: true,
     };
+    setPreviewImage(null);
+    setFile(null);
   };
 
   const handleSubmit = async () => {
@@ -41,15 +45,18 @@ function CreatePegawaiBumDes() {
     }
 
     try {
+      setIsSubmitting(true);
       // Upload gambar dulu
+      if (!file) {
+        return toast.warn('Silakan pilih file gambar terlebih dahulu');
+      }
       const res = await ApiFetch.api.fileStorage.create.post({
-        file: previewImage.file,
-        name: previewImage.file.name,
+        file,
+        name: file.name,
       });
-
       const uploaded = res.data?.data;
       if (!uploaded?.id) {
-        return toast.error("Gagal upload gambar");
+        return toast.error('Gagal mengunggah gambar, silakan coba lagi');
       }
 
       // Set status aktif secara otomatis
@@ -69,6 +76,8 @@ function CreatePegawaiBumDes() {
     } catch (error) {
       console.error("Error creating pegawai:", error);
       toast.error("Terjadi kesalahan saat menambahkan pegawai");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -96,7 +105,7 @@ function CreatePegawaiBumDes() {
             <TextInput
               label="Nama Lengkap"
               placeholder="Masukkan nama lengkap"
-              defaultValue={stateOrganisasi.create.form.namaLengkap}
+              value={stateOrganisasi.create.form.namaLengkap}
               onChange={(e) => (stateOrganisasi.create.form.namaLengkap = e.currentTarget.value)}
               required
             />
@@ -105,7 +114,7 @@ function CreatePegawaiBumDes() {
             <TextInput
               label="Gelar Akademik"
               placeholder="Contoh: S.Kom"
-              defaultValue={stateOrganisasi.create.form.gelarAkademik}
+              value={stateOrganisasi.create.form.gelarAkademik}
               onChange={(e) => (stateOrganisasi.create.form.gelarAkademik = e.currentTarget.value)}
             />
           </Box>
@@ -163,7 +172,7 @@ function CreatePegawaiBumDes() {
             </Dropzone>
 
             {previewImage && (
-              <Box mt="md">
+              <Box mt="md" pos={"relative"}>
                 <Text fw="bold" fz="sm" mb={6}>
                   Preview Gambar
                 </Text>
@@ -180,6 +189,24 @@ function CreatePegawaiBumDes() {
                   }}
                   loading='lazy'
                 />
+                <ActionIcon
+                  variant="filled"
+                  color="red"
+                  radius="xl"
+                  size="sm"
+                  pos="absolute"
+                  top={5}
+                  right={5}
+                  onClick={() => {
+                    setPreviewImage(null);
+                    setFile(null);
+                  }}
+                  style={{
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                  }}
+                >
+                  <IconX size={14} />
+                </ActionIcon>
               </Box>
             )}
           </Box>
@@ -188,7 +215,7 @@ function CreatePegawaiBumDes() {
               label="Tanggal Masuk"
               type="date"
               placeholder="Contoh: 2022-01-01"
-              defaultValue={stateOrganisasi.create.form.tanggalMasuk}
+              value={stateOrganisasi.create.form.tanggalMasuk}
               onChange={(e) => (stateOrganisasi.create.form.tanggalMasuk = e.currentTarget.value)}
             />
           </Box>
@@ -198,7 +225,7 @@ function CreatePegawaiBumDes() {
               label="Email"
               type="email"
               placeholder="Contoh: email@example.com"
-              defaultValue={stateOrganisasi.create.form.email}
+              value={stateOrganisasi.create.form.email}
               onChange={(e) => (stateOrganisasi.create.form.email = e.currentTarget.value)}
             />
           </Box>
@@ -207,7 +234,7 @@ function CreatePegawaiBumDes() {
             <TextInput
               label="Nomor Telepon"
               placeholder="Contoh: 08123456789"
-              defaultValue={stateOrganisasi.create.form.telepon}
+              value={stateOrganisasi.create.form.telepon}
               onChange={(e) => (stateOrganisasi.create.form.telepon = e.currentTarget.value)}
             />
           </Box>
@@ -216,7 +243,7 @@ function CreatePegawaiBumDes() {
             <TextInput
               label="Alamat"
               placeholder="Contoh: Jl. Contoh No. 1"
-              defaultValue={stateOrganisasi.create.form.alamat}
+              value={stateOrganisasi.create.form.alamat}
               onChange={(e) => (stateOrganisasi.create.form.alamat = e.currentTarget.value)}
             />
           </Box>
@@ -243,6 +270,17 @@ function CreatePegawaiBumDes() {
 
           <Group justify="flex-end" mt="md">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
@@ -252,7 +290,7 @@ function CreatePegawaiBumDes() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

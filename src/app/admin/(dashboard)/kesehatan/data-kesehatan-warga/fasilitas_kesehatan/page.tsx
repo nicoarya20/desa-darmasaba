@@ -19,7 +19,7 @@ import {
   Title
 } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { IconArrowBack, IconDeviceImacCog, IconPlus, IconSearch } from '@tabler/icons-react';
+import { IconDeviceImacCog, IconPlus, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
@@ -28,18 +28,10 @@ import fasilitasKesehatanState from '../../../_state/kesehatan/data_kesehatan_wa
 
 
 function FasilitasKesehatan() {
-  const router = useRouter();
   const [search, setSearch] = useState("");
 
   return (
     <Box>
-      {/* Tombol Back */}
-      <Box mb={10}>
-        <Button variant="subtle" onClick={() => router.back()}>
-          <IconArrowBack color={colors["blue-button"]} size={25} />
-        </Button>
-      </Box>
-
       {/* Header Search */}
       <HeaderSearch
         title='Fasilitas Kesehatan'

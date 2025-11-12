@@ -11,6 +11,6 @@ export default async function jenisKelaminRespondenDelete(context: Context) {
     return {
         status: 200,
         success: true,
-        message: "Success delete jenis kelamin responden",
+        message: "Sukses Menghapus jenis kelamin responden",
     };
 }

@@ -8,6 +8,7 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Stack,
   Text,
@@ -19,13 +20,23 @@ import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
+import { convertToISODate } from '../../../lib/dateUtils';
 
 function EditKematian() {
   const editState = useProxy(persentaseKelahiranKematian.kematian);
   const router = useRouter();
   const params = useParams();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [formData, setFormData] = useState({
+    nama: '',
+    tanggal: '',
+    jenisKelamin: '',
+    alamat: '',
+    penyebab: '',
+  });
+
+  const [originalData, setOriginalData] = useState({
     nama: '',
     tanggal: '',
     jenisKelamin: '',
@@ -42,12 +53,22 @@ function EditKematian() {
       try {
         const data = await editState.edit.load(id);
         if (data) {
+          const formattedTanggal = convertToISODate(data.tanggal);
+
           setFormData({
             nama: data.nama || '',
-            tanggal: data.tanggal || '',
+            tanggal: formattedTanggal,
             jenisKelamin: data.jenisKelamin || '',
             alamat: data.alamat || '',
-            penyebab: data.penyebab || '',
+            penyebab: data.penyebab || ''
+          });
+
+          setOriginalData({
+            nama: data.nama || '',
+            tanggal: formattedTanggal,
+            jenisKelamin: data.jenisKelamin || '',
+            alamat: data.alamat || '',
+            penyebab: data.penyebab || ''
           });
         }
       } catch (error) {
@@ -63,8 +84,20 @@ function EditKematian() {
     setFormData(prev => ({ ...prev, [key]: value }));
   };
 
+  const handleResetForm = () => {
+    setFormData({
+      nama: originalData.nama,
+      tanggal: originalData.tanggal,
+      jenisKelamin: originalData.jenisKelamin,
+      alamat: originalData.alamat,
+      penyebab: originalData.penyebab,
+    });
+    toast.info("Form dikembalikan ke data awal");
+  };
+
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       // Update global state saat submit
       editState.edit.form = { ...editState.edit.form, ...formData };
       await editState.edit.update();
@@ -75,6 +108,8 @@ function EditKematian() {
     } catch (error) {
       console.error('Error updating data kematian:', error);
       toast.error('Terjadi kesalahan saat memperbarui data kematian');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -145,6 +180,17 @@ function EditKematian() {
 
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
@@ -154,7 +200,7 @@ function EditKematian() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

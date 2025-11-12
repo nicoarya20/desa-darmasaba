@@ -7,6 +7,7 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Stack,
   Text,
@@ -31,9 +32,19 @@ function EditDetailDataPengangguran() {
   const stateDetail = useProxy(jumlahPengangguranState.jumlahPengangguran);
   const router = useRouter();
   const params = useParams();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // --- state lokal form
   const [formData, setFormData] = useState({
+    month: '',
+    year: new Date().getFullYear(),
+    educatedUnemployment: 0,
+    uneducatedUnemployment: 0,
+    totalUnemployment: 0,
+    percentageChange: 0,
+  });
+
+  const [originalData, setOriginalData] = useState({
     month: '',
     year: new Date().getFullYear(),
     educatedUnemployment: 0,
@@ -109,6 +120,15 @@ function EditDetailDataPengangguran() {
           totalUnemployment: data.totalUnemployment,
           percentageChange: data.percentageChange || 0,
         });
+
+        setOriginalData({
+          month: data.month,
+          year: yearValue,
+          educatedUnemployment: data.educatedUnemployment,
+          uneducatedUnemployment: data.uneducatedUnemployment,
+          totalUnemployment: data.totalUnemployment,
+          percentageChange: data.percentageChange || 0,
+        });
       } catch (err) {
         console.error('Error loading detail:', err);
         toast.error('Gagal memuat data detail');
@@ -118,9 +138,22 @@ function EditDetailDataPengangguran() {
     loadDetail();
   }, [params?.id]);
 
+  const handleResetForm = () => {
+      setFormData({
+        month: originalData.month,
+        year: originalData.year,
+        educatedUnemployment: originalData.educatedUnemployment,
+        uneducatedUnemployment: originalData.uneducatedUnemployment,
+        totalUnemployment: originalData.totalUnemployment,
+        percentageChange: originalData.percentageChange,
+      });
+      toast.info("Form dikembalikan ke data awal");
+    };
+
   // --- submit form
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       const { total, percentageChange } = await calculateTotalAndChange(formData);
 
       stateDetail.update.form = {
@@ -137,6 +170,8 @@ function EditDetailDataPengangguran() {
     } catch (err) {
       console.error('Error updating:', err);
       toast.error('Terjadi kesalahan saat memperbarui data');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -206,6 +241,17 @@ function EditDetailDataPengangguran() {
 
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
@@ -215,7 +261,7 @@ function EditDetailDataPengangguran() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

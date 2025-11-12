@@ -19,7 +19,7 @@ export default async function firstAidCreate(context: Context) {
     });
     return {
         success: true,
-        message: "Success create first aid",
+        message: "Sukses menambahkan first aid",
         data: {
             ...body,
         },

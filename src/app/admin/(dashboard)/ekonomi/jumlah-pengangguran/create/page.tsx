@@ -7,6 +7,7 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   NumberInput,
   Paper,
   Select,
@@ -17,12 +18,14 @@ import {
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
 function CreateJumlahPengangguran() {
   const stateDetail = useProxy(jumlahPengangguranState.jumlahPengangguran);
   const [chartData, setChartData] = useState<any[]>([]);
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const monthOptions = [
     'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun',
@@ -72,15 +75,23 @@ function CreateJumlahPengangguran() {
   };
 
   const handleSubmit = async () => {
-    await calculateTotalAndChange();
-    const id = await stateDetail.create.create();
-    if (id) {
-      await stateDetail.findUnique.load(String(id));
-      if (stateDetail.findUnique.data) {
-        setChartData([stateDetail.findUnique.data]);
+    try {
+      setIsSubmitting(true);
+      await calculateTotalAndChange();
+      const id = await stateDetail.create.create();
+      if (id) {
+        await stateDetail.findUnique.load(String(id));
+        if (stateDetail.findUnique.data) {
+          setChartData([stateDetail.findUnique.data]);
+        }
+        resetForm();
+        router.push('/admin/ekonomi/jumlah-pengangguran');
       }
-      resetForm();
-      router.push('/admin/ekonomi/jumlah-pengangguran');
+    } catch (error) {
+      console.error("Error creating jumlah pengangguran:", error);
+      toast.error("Gagal menambahkan data pengangguran");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -176,7 +187,19 @@ function CreateJumlahPengangguran() {
           </Box>
 
           {/* Action Button */}
-          <Group justify="right" mt="md">
+          <Group justify="right">
+            {/* Tombol Batal */}
+            <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
             <Button
               onClick={handleSubmit}
               radius="md"
@@ -186,9 +209,8 @@ function CreateJumlahPengangguran() {
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
-              disabled={!stateDetail.create.form.month || !stateDetail.create.form.year}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

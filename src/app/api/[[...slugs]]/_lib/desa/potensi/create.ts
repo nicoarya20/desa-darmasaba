@@ -25,7 +25,7 @@ export default async function potensiDesaCreate(context: Context) {
     });
     return {
         success: true,
-        message: "Success create potensi desa",
+        message: "Sukses menambahkan potensi desa",
         data: {
             ...body,
         },

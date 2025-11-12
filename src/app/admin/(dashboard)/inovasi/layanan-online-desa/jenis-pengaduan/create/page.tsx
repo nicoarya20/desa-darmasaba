@@ -6,6 +6,7 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Stack,
   TextInput,
@@ -13,13 +14,14 @@ import {
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
 function CreateJenisPengaduan() {
   const router = useRouter();
   const state = useProxy(layananonlineDesa.jenisPengaduan);
-
+  const [isSubmitting, setIsSubmitting] = useState(false);
   useEffect(() => {
     state.findMany.load();
   }, []);
@@ -31,9 +33,17 @@ function CreateJenisPengaduan() {
   };
 
   const handleSubmit = async () => {
-    await state.create.create();
-    resetForm();
-    router.push('/admin/inovasi/layanan-online-desa/jenis-pengaduan');
+    try {
+      setIsSubmitting(true);
+      await state.create.create();
+      resetForm();
+      router.push('/admin/inovasi/layanan-online-desa/jenis-pengaduan');
+    } catch (error) {
+      console.error('Error creating jenis pengaduan:', error);
+      toast.error('Terjadi kesalahan saat menambahkan jenis pengaduan');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -61,12 +71,23 @@ function CreateJenisPengaduan() {
           <TextInput
             label="Nama Jenis Pengaduan"
             placeholder="Masukkan nama jenis pengaduan"
-            defaultValue={state.create.form.nama || ''}
+            value={state.create.form.nama || ''}
             onChange={(e) => (state.create.form.nama = e.target.value)}
             required
           />
 
           <Group justify="right">
+            <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
             <Button
               onClick={handleSubmit}
               radius="md"
@@ -77,7 +98,7 @@ function CreateJenisPengaduan() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

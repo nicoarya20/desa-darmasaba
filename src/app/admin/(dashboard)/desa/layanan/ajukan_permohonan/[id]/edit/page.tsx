@@ -6,6 +6,7 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Select,
   Stack,
@@ -22,6 +23,16 @@ function EditAjukanPermohonan() {
   const router = useRouter();
   const params = useParams();
   const stateAjukan = useProxy(stateLayananDesa.ajukanPermohonan);
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [originalData, setOriginalData] = useState({
+    nama: "",
+    nik: "",
+    alamat: "",
+    nomorKk: "",
+    kategoriId: "",
+  });
 
   // State lokal form
   const [formData, setFormData] = useState({
@@ -50,6 +61,13 @@ function EditAjukanPermohonan() {
             nomorKk: data.nomorKk || '',
             kategoriId: data.kategoriId || '',
           });
+          setOriginalData({
+            nama: data.nama || '',
+            nik: data.nik || '',
+            alamat: data.alamat || '',
+            nomorKk: data.nomorKk || '',
+            kategoriId: data.kategoriId || '',
+          });
         }
       } catch (error) {
         console.error('Error loading ajukan:', error);
@@ -68,8 +86,20 @@ function EditAjukanPermohonan() {
     }));
   };
 
+  const handleResetForm = () => {
+    setFormData({
+      nama: originalData.nama,
+      nik: originalData.nik,
+      alamat: originalData.alamat,
+      nomorKk: originalData.nomorKk,
+      kategoriId: originalData.kategoriId,
+    });
+    toast.info("Form dikembalikan ke data awal");
+  };
+
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       stateAjukan.edit.form = {
         ...stateAjukan.edit.form,
         ...formData,
@@ -79,6 +109,8 @@ function EditAjukanPermohonan() {
     } catch (error) {
       console.error('Error updating ajukan:', error);
       toast.error('Terjadi kesalahan saat memperbarui ajukan');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -86,9 +118,9 @@ function EditAjukanPermohonan() {
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
       {/* Back Button */}
       <Group mb="md">
-          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
+        <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Edit Ajukan Permohonan
         </Title>
@@ -154,6 +186,17 @@ function EditAjukanPermohonan() {
 
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
@@ -163,7 +206,7 @@ function EditAjukanPermohonan() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

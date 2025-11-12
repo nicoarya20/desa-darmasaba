@@ -5,10 +5,12 @@ import stateLayananDesa from '@/app/admin/(dashboard)/_state/desa/layananDesa';
 import colors from '@/con/colors';
 import ApiFetch from '@/lib/api-fetch';
 import {
+  ActionIcon,
   Box,
   Button,
   Group,
   Image,
+  Loader,
   Paper,
   Stack,
   Text,
@@ -27,6 +29,7 @@ function CreateSuratKeterangan() {
   const [previewImage2, setPreviewImage2] = useState<{ preview: string; file: File } | null>(null);
   const [previewImage, setPreviewImage] = useState<{ preview: string; file: File } | null>(null);
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const resetForm = () => {
     stateSurat.create.form = {
@@ -45,6 +48,7 @@ function CreateSuratKeterangan() {
     }
 
     try {
+      setIsSubmitting(true);
       // Upload gambar utama
       const res1 = await ApiFetch.api.fileStorage.create.post({
         file: previewImage.file,
@@ -77,6 +81,8 @@ function CreateSuratKeterangan() {
     } catch (error) {
       console.error('Error creating surat keterangan:', error);
       toast.error('Terjadi kesalahan saat menambahkan surat keterangan');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -84,9 +90,9 @@ function CreateSuratKeterangan() {
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
       {/* Header */}
       <Group mb="md">
-          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
+        <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Tambah Surat Keterangan
         </Title>
@@ -103,7 +109,7 @@ function CreateSuratKeterangan() {
         <Stack gap="md">
           {/* Nama Surat */}
           <TextInput
-            defaultValue={stateSurat.create.form.name}
+            value={stateSurat.create.form.name}
             onChange={(val) => (stateSurat.create.form.name = val.target.value)}
             label="Nama Surat Keterangan"
             placeholder="Masukkan nama surat keterangan"
@@ -140,7 +146,7 @@ function CreateSuratKeterangan() {
               }}
               onReject={() => toast.error('File tidak valid, gunakan format gambar')}
               maxSize={5 * 1024 ** 2}
-              accept={{ 'image/*': [] }}
+              accept={{ 'image/*': ['.jpeg', '.jpg', '.png', '.webp'] }}
               radius="md"
               p="xl"
             >
@@ -161,7 +167,7 @@ function CreateSuratKeterangan() {
             </Dropzone>
 
             {previewImage && (
-              <Box mt="sm" style={{ textAlign: 'center' }}>
+              <Box pos={"relative"} mt="sm" style={{ textAlign: 'center' }}>
                 <Image
                   src={previewImage.preview}
                   alt="Preview Gambar Utama"
@@ -169,6 +175,23 @@ function CreateSuratKeterangan() {
                   style={{ maxHeight: 200, objectFit: 'contain', border: '1px solid #ddd' }}
                   loading="lazy"
                 />
+                <ActionIcon
+                  variant="filled"
+                  color="red"
+                  radius="xl"
+                  size="sm"
+                  pos="absolute"
+                  top={5}
+                  right={5}
+                  onClick={() => {
+                    setPreviewImage(null);
+                  }}
+                  style={{
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                  }}
+                >
+                  <IconX size={14} />
+                </ActionIcon>
               </Box>
             )}
           </Box>
@@ -190,7 +213,7 @@ function CreateSuratKeterangan() {
               }}
               onReject={() => toast.error('File tidak valid, gunakan format gambar')}
               maxSize={5 * 1024 ** 2}
-              accept={{ 'image/*': [] }}
+              accept={{ 'image/*': ['.jpeg', '.jpg', '.png', '.webp'] }}
               radius="md"
               p="xl"
             >
@@ -211,7 +234,7 @@ function CreateSuratKeterangan() {
             </Dropzone>
 
             {previewImage2 ? (
-              <Box mt="sm" style={{ textAlign: 'center' }}>
+              <Box pos={"relative"} mt="sm" style={{ textAlign: 'center' }}>
                 <Image
                   src={previewImage2.preview}
                   alt="Preview Gambar Tambahan"
@@ -219,6 +242,23 @@ function CreateSuratKeterangan() {
                   style={{ maxHeight: 200, objectFit: 'contain', border: '1px solid #ddd' }}
                   loading="lazy"
                 />
+                <ActionIcon
+                  variant="filled"
+                  color="red"
+                  radius="xl"
+                  size="sm"
+                  pos="absolute"
+                  top={5}
+                  right={5}
+                  onClick={() => {
+                    setPreviewImage2(null);
+                  }}
+                  style={{
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                  }}
+                >
+                  <IconX size={14} />
+                </ActionIcon>
               </Box>
             ) : (
               <Text size="sm" c="dimmed" mt="sm" ta="center">
@@ -230,6 +270,17 @@ function CreateSuratKeterangan() {
           {/* Tombol Simpan */}
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
@@ -239,7 +290,7 @@ function CreateSuratKeterangan() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

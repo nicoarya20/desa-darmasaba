@@ -6,6 +6,7 @@ import stateDashboardBerita from "@/app/admin/(dashboard)/_state/desa/berita";
 import colors from "@/con/colors";
 import ApiFetch from "@/lib/api-fetch";
 import {
+  ActionIcon,
   Box,
   Button,
   Group,
@@ -15,7 +16,8 @@ import {
   Stack,
   Text,
   TextInput,
-  Title
+  Title,
+  Loader
 } from "@mantine/core";
 import { Dropzone } from "@mantine/dropzone";
 import {
@@ -44,6 +46,17 @@ function EditBerita() {
     imageId: "",
   });
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [originalData, setOriginalData] = useState({
+    judul: "",
+    deskripsi: "",
+    kategoriBeritaId: "",
+    content: "",
+    imageId: "",
+    imageUrl: ""
+  });
+
   // Load kategori + berita
   useEffect(() => {
     beritaState.kategoriBerita.findMany.load();
@@ -61,6 +74,15 @@ function EditBerita() {
             kategoriBeritaId: data.kategoriBeritaId || "",
             content: data.content || "",
             imageId: data.imageId || "",
+          });
+
+          setOriginalData({
+            judul: data.judul || "",
+            deskripsi: data.deskripsi || "",
+            kategoriBeritaId: data.kategoriBeritaId || "",
+            content: data.content || "",
+            imageId: data.imageId || "",
+            imageUrl: data.image?.link || ""
           });
 
           if (data?.image?.link) {
@@ -82,6 +104,7 @@ function EditBerita() {
 
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       // Update global state hanya sekali di sini
       beritaState.berita.edit.form = {
         ...beritaState.berita.edit.form,
@@ -108,21 +131,36 @@ function EditBerita() {
     } catch (error) {
       console.error("Error updating berita:", error);
       toast.error("Terjadi kesalahan saat memperbarui berita");
+    } finally {
+      setIsSubmitting(false);
     }
+  };
+
+  const handleResetForm = () => {
+    setFormData({
+      judul: originalData.judul,
+      deskripsi: originalData.deskripsi,
+      kategoriBeritaId: originalData.kategoriBeritaId,
+      content: originalData.content,
+      imageId: originalData.imageId,
+    });
+    setPreviewImage(originalData.imageUrl || null);
+    setFile(null);
+    toast.info("Form dikembalikan ke data awal");
   };
 
   return (
     <Box px={{ base: "sm", md: "lg" }} py="md">
       {/* Header */}
       <Group mb="md">
-          <Button
-            variant="subtle"
-            onClick={() => router.back()}
-            p="xs"
-            radius="md"
-          >
-            <IconArrowBack color={colors["blue-button"]} size={24} />
-          </Button>
+        <Button
+          variant="subtle"
+          onClick={() => router.back()}
+          p="xs"
+          radius="md"
+        >
+          <IconArrowBack color={colors["blue-button"]} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Edit Berita
         </Title>
@@ -216,14 +254,14 @@ function EditBerita() {
                     Seret gambar atau klik untuk memilih file
                   </Text>
                   <Text size="sm" c="dimmed">
-                    Maksimal 5MB, format gambar wajib
+                    Maksimal 5MB, format gambar .png, .jpg, .jpeg, webp
                   </Text>
                 </Stack>
               </Group>
             </Dropzone>
 
             {previewImage && (
-              <Box mt="sm" style={{ display: "flex", justifyContent: "center" }}>
+              <Box mt="sm" pos="relative" style={{ textAlign: 'center' }}>
                 <Image
                   src={previewImage}
                   alt="Preview Gambar"
@@ -235,6 +273,24 @@ function EditBerita() {
                   }}
                   loading="lazy"
                 />
+                <ActionIcon
+                  variant="filled"
+                  color="red"
+                  radius="xl"
+                  size="sm"
+                  pos="absolute"
+                  top={5}
+                  right={5}
+                  onClick={() => {
+                    setPreviewImage(null);
+                    setFile(null);
+                  }}
+                  style={{
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                  }}
+                >
+                  <IconX size={14} />
+                </ActionIcon>
               </Box>
             )}
           </Box>
@@ -254,17 +310,29 @@ function EditBerita() {
 
           {/* Action */}
           <Group justify="right">
+            {/* Tombol Batal */}
+            <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
             <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
               style={{
-                background: `linear-gradient(135deg, ${colors["blue-button"]}, #4facfe)`,
-                color: "#fff",
-                boxShadow: "0 4px 15px rgba(79, 172, 254, 0.4)",
+                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                color: '#fff',
+                boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

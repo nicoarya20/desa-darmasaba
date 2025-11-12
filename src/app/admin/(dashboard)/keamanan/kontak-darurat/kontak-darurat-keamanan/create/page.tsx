@@ -6,6 +6,7 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   MultiSelect,
   Paper,
   Stack,
@@ -16,11 +17,14 @@ import {
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
 function CreateKontakDaruratKeamanan() {
   const kontakState = useProxy(kontakDarurat.kontakDaruratKeamananState);
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useShallowEffect(() => {
     kontakDarurat.kontakDaruratItem.findMany.load();
@@ -35,9 +39,17 @@ function CreateKontakDaruratKeamanan() {
   };
 
   const handleSubmit = async () => {
-    await kontakState.create.create();
-    resetForm();
-    router.push('/admin/keamanan/kontak-darurat/kontak-darurat-keamanan');
+    try {
+      setIsSubmitting(true);
+      await kontakState.create.create();
+      resetForm();
+      router.push('/admin/keamanan/kontak-darurat/kontak-darurat-keamanan');
+    } catch (error) {
+      console.error('Error creating kontak darurat:', error);
+      toast.error('Terjadi kesalahan saat menambah kontak darurat');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -69,7 +81,7 @@ function CreateKontakDaruratKeamanan() {
         <Stack gap="md">
           {/* Input Nama Kategori */}
           <TextInput
-            defaultValue={kontakState.create.form.nama}
+            value={kontakState.create.form.nama}
             onChange={(val) => {
               kontakState.create.form.nama = val.target.value;
             }}
@@ -101,6 +113,17 @@ function CreateKontakDaruratKeamanan() {
           {/* Tombol Submit */}
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
@@ -110,7 +133,7 @@ function CreateKontakDaruratKeamanan() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

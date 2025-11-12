@@ -1,10 +1,10 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import colors from '@/con/colors';
 import { Box, Button, Center, Group, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title } from '@mantine/core';
+import { useShallowEffect } from '@mantine/hooks';
 import { IconDeviceImacCog, IconPlus, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../../_com/header';
 import prestasiState from '../../../_state/landing-page/prestasi-desa';
@@ -37,23 +37,9 @@ function ListPrestasi({ search }: { search: string }) {
     load,
   } = listState.findMany
 
-  // Debug log
-  console.log('ListPrestasi state:', {
-    loading,
-    data: data?.length,
-    page,
-    totalPages,
-    search
-  });
-
-  useEffect(() => {
-    console.log('Loading data...', { page, search });
-    load(page, 10, search).then(() => {
-      console.log('Data loaded:', listState.findMany.data);
-    }).catch(error => {
-      console.error('Error loading data:', error);
-    });
-  }, [page, search])
+  useShallowEffect(() => {
+    load(page, 10, search);
+  }, [page, search]);
 
   const filteredData = data || []
 
@@ -70,14 +56,14 @@ function ListPrestasi({ search }: { search: string }) {
       <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
         <Group justify="space-between" mb="md">
           <Title order={4}>Daftar Prestasi Desa</Title>
-            <Button
-              leftSection={<IconPlus size={18} />}
-              color="blue"
-              variant="light"
-              onClick={() => router.push('/admin/landing-page/prestasi-desa/list-prestasi-desa/create')}
-            >
-              Tambah Baru
-            </Button>
+          <Button
+            leftSection={<IconPlus size={18} />}
+            color="blue"
+            variant="light"
+            onClick={() => router.push('/admin/landing-page/prestasi-desa/list-prestasi-desa/create')}
+          >
+            Tambah Baru
+          </Button>
         </Group>
         <Box style={{ overflowX: 'auto' }}>
           <Table highlightOnHover>
@@ -107,16 +93,16 @@ function ListPrestasi({ search }: { search: string }) {
                       </Box>
                     </TableTd>
                     <TableTd style={{ width: '25%', textAlign: 'center' }}>
-                        <Button
-                          size="xs"
-                          radius="md"
-                          variant="light"
-                          color="blue"
-                          leftSection={<IconDeviceImacCog size={16} />}
-                          onClick={() => router.push(`/admin/landing-page/prestasi-desa/list-prestasi-desa/${item.id}`)}
-                        >
-                          Detail
-                        </Button>
+                      <Button
+                        size="xs"
+                        radius="md"
+                        variant="light"
+                        color="blue"
+                        leftSection={<IconDeviceImacCog size={16} />}
+                        onClick={() => router.push(`/admin/landing-page/prestasi-desa/list-prestasi-desa/${item.id}`)}
+                      >
+                        Detail
+                      </Button>
                     </TableTd>
                   </TableTr>
                 ))

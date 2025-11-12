@@ -4,6 +4,7 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Stack,
   Text,
@@ -15,10 +16,13 @@ import { useRouter } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
 import CreateEditor from '../../../_com/createEditor';
 import lowonganKerjaState from '../../../_state/ekonomi/lowongan-kerja';
+import { useState } from 'react';
+import { toast } from 'react-toastify';
 
 function CreateLowonganKerja() {
   const lowonganState = useProxy(lowonganKerjaState);
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const resetForm = () => {
     lowonganState.create.form = {
@@ -34,9 +38,19 @@ function CreateLowonganKerja() {
   };
 
   const handleSubmit = async () => {
-    await lowonganState.create.create();
-    resetForm();
-    router.push('/admin/ekonomi/lowongan-kerja-lokal');
+    try {
+      setIsSubmitting(true);
+      await lowonganState.create.create();
+      resetForm();
+      router.push('/admin/ekonomi/lowongan-kerja-lokal');
+    } catch (error) {
+      console.error('Error creating lowongan kerja:', error);
+      toast.error(
+        error instanceof Error ? error.message : 'Gagal membuat lowongan kerja'
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -66,7 +80,7 @@ function CreateLowonganKerja() {
       >
         <Stack gap="md">
           <TextInput
-            defaultValue={lowonganState.create.form.posisi}
+            value={lowonganState.create.form.posisi}
             onChange={(val) =>
               (lowonganState.create.form.posisi = val.target.value)
             }
@@ -75,7 +89,7 @@ function CreateLowonganKerja() {
             required
           />
           <TextInput
-            defaultValue={lowonganState.create.form.namaPerusahaan}
+            value={lowonganState.create.form.namaPerusahaan}
             onChange={(val) =>
               (lowonganState.create.form.namaPerusahaan = val.target.value)
             }
@@ -84,7 +98,7 @@ function CreateLowonganKerja() {
             required
           />
           <TextInput
-            defaultValue={lowonganState.create.form.notelp}
+            value={lowonganState.create.form.notelp}
             onChange={(val) =>
               (lowonganState.create.form.notelp = val.target.value)
             }
@@ -93,7 +107,7 @@ function CreateLowonganKerja() {
             required
           />
           <TextInput
-            defaultValue={lowonganState.create.form.lokasi}
+            value={lowonganState.create.form.lokasi}
             onChange={(val) =>
               (lowonganState.create.form.lokasi = val.target.value)
             }
@@ -102,7 +116,7 @@ function CreateLowonganKerja() {
             required
           />
           <TextInput
-            defaultValue={lowonganState.create.form.tipePekerjaan}
+            value={lowonganState.create.form.tipePekerjaan}
             onChange={(val) =>
               (lowonganState.create.form.tipePekerjaan = val.target.value)
             }
@@ -111,7 +125,7 @@ function CreateLowonganKerja() {
             required
           />
           <TextInput
-            defaultValue={lowonganState.create.form.gaji}
+            value={lowonganState.create.form.gaji}
             onChange={(val) =>
               (lowonganState.create.form.gaji = val.target.value)
             }
@@ -147,6 +161,17 @@ function CreateLowonganKerja() {
           {/* Tombol Simpan */}
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
@@ -156,7 +181,7 @@ function CreateLowonganKerja() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

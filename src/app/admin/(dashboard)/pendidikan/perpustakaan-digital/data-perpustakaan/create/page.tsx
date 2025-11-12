@@ -3,7 +3,7 @@ import CreateEditor from '@/app/admin/(dashboard)/_com/createEditor';
 import perpustakaanDigitalState from '@/app/admin/(dashboard)/_state/pendidikan/perpustakaan-digital';
 import colors from '@/con/colors';
 import ApiFetch from '@/lib/api-fetch';
-import { Box, Button, Group, Image, Paper, Select, Stack, Text, TextInput, Title } from '@mantine/core';
+import { ActionIcon, Box, Button, Group, Image, Loader, Paper, Select, Stack, Text, TextInput, Title } from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
 import { IconArrowBack, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
@@ -16,6 +16,7 @@ function CreateDataPerpustakaan() {
   const router = useRouter();
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     perpustakaanDigitalState.kategoriBuku.findMany.load();
@@ -33,24 +34,32 @@ function CreateDataPerpustakaan() {
   };
 
   const handleSubmit = async () => {
-    if (!file) {
-      return toast.warn("Pilih file gambar terlebih dahulu");
+    try {
+      if (!file) {
+        return toast.warn("Pilih file gambar terlebih dahulu");
+      }
+
+      setIsSubmitting(true);
+      const res = await ApiFetch.api.fileStorage.create.post({
+        file,
+        name: file.name,
+      });
+
+      const uploaded = res.data?.data;
+      if (!uploaded?.id) {
+        return toast.error("Gagal upload gambar");
+      }
+
+      createState.create.form.imageId = uploaded.id;
+      await createState.create.create();
+      resetForm();
+      router.push("/admin/pendidikan/perpustakaan-digital/data-perpustakaan")
+    } catch (error) {
+      console.error("Error creating data perpustakaan:", error);
+      toast.error("Gagal menambahkan data perpustakaan");
+    } finally {
+      setIsSubmitting(false);
     }
-
-    const res = await ApiFetch.api.fileStorage.create.post({
-      file,
-      name: file.name,
-    });
-
-    const uploaded = res.data?.data;
-    if (!uploaded?.id) {
-      return toast.error("Gagal upload gambar");
-    }
-
-    createState.create.form.imageId = uploaded.id;
-    await createState.create.create();
-    resetForm();
-    router.push("/admin/pendidikan/perpustakaan-digital/data-perpustakaan")
   };
 
   return (
@@ -78,7 +87,7 @@ function CreateDataPerpustakaan() {
           <TextInput
             label={<Text fw="bold" fz="sm">Judul</Text>}
             placeholder='Masukkan judul'
-            defaultValue={createState.create.form.judul}
+            value={createState.create.form.judul}
             onChange={(val) => {
               createState.create.form.judul = val.target.value;
             }}
@@ -119,7 +128,7 @@ function CreateDataPerpustakaan() {
               }}
               onReject={() => toast.error('File tidak valid.')}
               maxSize={5 * 1024 ** 2}
-              accept={{ 'image/*': [] }}
+              accept={{ 'image/*': ['.jpeg', '.jpg', '.png', '.webp'] }}
               radius="md"
               p="xl"
             >
@@ -140,7 +149,7 @@ function CreateDataPerpustakaan() {
             </Dropzone>
 
             {previewImage && (
-              <Box mt="sm" style={{ textAlign: 'center' }}>
+              <Box pos={"relative"} mt="sm" style={{ textAlign: 'center' }}>
                 <Image
                   src={previewImage}
                   alt="Preview"
@@ -148,12 +157,41 @@ function CreateDataPerpustakaan() {
                   style={{ maxHeight: 200, objectFit: 'contain', border: '1px solid #ddd' }}
                   loading="lazy"
                 />
+                <ActionIcon
+                  variant="filled"
+                  color="red"
+                  radius="xl"
+                  size="sm"
+                  pos="absolute"
+                  top={5}
+                  right={5}
+                  onClick={() => {
+                    setPreviewImage(null);
+                    setFile(null);
+                  }}
+                  style={{
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                  }}
+                >
+                  <IconX size={14} />
+                </ActionIcon>
               </Box>
             )}
           </Box>
 
           {/* Submit Button */}
           <Group justify="right">
+            <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
             <Button
               onClick={handleSubmit}
               radius="md"
@@ -164,7 +202,7 @@ function CreateDataPerpustakaan() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

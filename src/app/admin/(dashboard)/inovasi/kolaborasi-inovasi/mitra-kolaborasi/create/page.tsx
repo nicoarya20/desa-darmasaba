@@ -3,10 +3,12 @@ import mitraKolaborasi from '@/app/admin/(dashboard)/_state/inovasi/mitra-kolabo
 import colors from '@/con/colors';
 import ApiFetch from '@/lib/api-fetch';
 import {
+  ActionIcon,
   Box,
   Button,
   Group,
   Image,
+  Loader,
   Paper,
   Stack,
   Text,
@@ -25,6 +27,7 @@ function CreateMitraKolaborasi() {
   const router = useRouter();
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const resetForm = () => {
     state.create.form = {
@@ -36,24 +39,32 @@ function CreateMitraKolaborasi() {
   };
 
   const handleSubmit = async () => {
-    if (!file) {
-      return toast.warn('Silakan pilih file gambar terlebih dahulu');
+    try {
+      setIsSubmitting(true);
+      if (!file) {
+        return toast.warn('Silakan pilih file gambar terlebih dahulu');
+      }
+
+      const res = await ApiFetch.api.fileStorage.create.post({
+        file,
+        name: file.name,
+      });
+
+      const uploaded = res.data?.data;
+      if (!uploaded?.id) {
+        return toast.error('Gagal mengunggah gambar, silakan coba lagi');
+      }
+
+      state.create.form.imageId = uploaded.id;
+      await state.create.create();
+      resetForm();
+      router.push('/admin/inovasi/kolaborasi-inovasi/mitra-kolaborasi');
+    } catch (error) {
+      console.error("Error creating mitra kolaborasi:", error);
+      toast.error("Terjadi kesalahan saat menambahkan mitra kolaborasi");
+    } finally {
+      setIsSubmitting(false);
     }
-
-    const res = await ApiFetch.api.fileStorage.create.post({
-      file,
-      name: file.name,
-    });
-
-    const uploaded = res.data?.data;
-    if (!uploaded?.id) {
-      return toast.error('Gagal mengunggah gambar, silakan coba lagi');
-    }
-
-    state.create.form.imageId = uploaded.id;
-    await state.create.create();
-    resetForm();
-    router.push('/admin/inovasi/kolaborasi-inovasi/mitra-kolaborasi');
   };
 
   return (
@@ -82,7 +93,7 @@ function CreateMitraKolaborasi() {
           <TextInput
             label="Nama Mitra"
             placeholder="Masukkan nama mitra"
-            defaultValue={state.create.form.name || ''}
+            value={state.create.form.name || ''}
             onChange={(e) => (state.create.form.name = e.target.value)}
             required
           />
@@ -102,7 +113,7 @@ function CreateMitraKolaborasi() {
               }}
               onReject={() => toast.error('File tidak valid, gunakan format gambar')}
               maxSize={5 * 1024 ** 2}
-              accept={{ 'image/*': [] }}
+              accept={{ 'image/*': ['.jpeg', '.jpg', '.png', '.webp'] }}
               radius="md"
               p="xl"
             >
@@ -123,7 +134,7 @@ function CreateMitraKolaborasi() {
             </Dropzone>
 
             {previewImage && (
-              <Box mt="sm" style={{ textAlign: 'center' }}>
+              <Box pos={"relative"} mt="sm" style={{ textAlign: 'center' }}>
                 <Image
                   src={previewImage}
                   alt="Preview Gambar"
@@ -131,12 +142,41 @@ function CreateMitraKolaborasi() {
                   style={{ maxHeight: 200, objectFit: 'contain', border: '1px solid #ddd' }}
                   loading="lazy"
                 />
+                <ActionIcon
+                  variant="filled"
+                  color="red"
+                  radius="xl"
+                  size="sm"
+                  pos="absolute"
+                  top={5}
+                  right={5}
+                  onClick={() => {
+                    setPreviewImage(null);
+                    setFile(null);
+                  }}
+                  style={{
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                  }}
+                >
+                  <IconX size={14} />
+                </ActionIcon>
               </Box>
             )}
           </Box>
 
           {/* Submit Button */}
           <Group justify="right">
+            <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
             <Button
               onClick={handleSubmit}
               radius="md"
@@ -147,7 +187,7 @@ function CreateMitraKolaborasi() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

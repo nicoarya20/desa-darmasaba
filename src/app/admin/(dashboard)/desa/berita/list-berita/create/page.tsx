@@ -13,7 +13,9 @@ import {
   Stack,
   Text,
   TextInput,
-  Title
+  Title,
+  Loader,
+  ActionIcon
 } from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
 import { useShallowEffect } from '@mantine/hooks';
@@ -28,6 +30,7 @@ export default function CreateBerita() {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useShallowEffect(() => {
     beritaState.kategoriBerita.findMany.load();
@@ -46,40 +49,48 @@ export default function CreateBerita() {
   };
 
   const handleSubmit = async () => {
-    if (!file) {
-      return toast.warn('Silakan pilih file gambar terlebih dahulu');
+    try {
+      setIsSubmitting(true);
+      if (!file) {
+        return toast.warn('Silakan pilih file gambar terlebih dahulu');
+      }
+
+      const res = await ApiFetch.api.fileStorage.create.post({
+        file,
+        name: file.name,
+      });
+
+      const uploaded = res.data?.data;
+      if (!uploaded?.id) {
+        return toast.error('Gagal mengunggah gambar, silakan coba lagi');
+      }
+
+      beritaState.berita.create.form.imageId = uploaded.id;
+
+      await beritaState.berita.create.create();
+
+      resetForm();
+      router.push('/admin/desa/berita/list-berita');
+    } catch (error) {
+      console.error('Error creating berita:', error);
+      toast.error('Terjadi kesalahan saat membuat berita');
+    } finally {
+      setIsSubmitting(false);
     }
-
-    const res = await ApiFetch.api.fileStorage.create.post({
-      file,
-      name: file.name,
-    });
-
-    const uploaded = res.data?.data;
-    if (!uploaded?.id) {
-      return toast.error('Gagal mengunggah gambar, silakan coba lagi');
-    }
-
-    beritaState.berita.create.form.imageId = uploaded.id;
-
-    await beritaState.berita.create.create();
-
-    resetForm();
-    router.push('/admin/desa/berita/list-berita');
   };
 
   return (
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
       {/* Header dengan tombol kembali */}
       <Group mb="md">
-          <Button
-            variant="subtle"
-            onClick={() => router.back()}
-            p="xs"
-            radius="md"
-          >
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
+        <Button
+          variant="subtle"
+          onClick={() => router.back()}
+          p="xs"
+          radius="md"
+        >
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Tambah Berita
         </Title>
@@ -97,7 +108,7 @@ export default function CreateBerita() {
           <TextInput
             label="Judul"
             placeholder="Masukkan judul berita"
-            defaultValue={beritaState.berita.create.form.judul}
+            value={beritaState.berita.create.form.judul}
             onChange={(e) => (beritaState.berita.create.form.judul = e.target.value)}
             required
           />
@@ -109,7 +120,7 @@ export default function CreateBerita() {
               label: item.name,
               value: item.id,
             }))}
-            defaultValue={beritaState.berita.create.form.kategoriBeritaId || null}
+            value={beritaState.berita.create.form.kategoriBeritaId || null}
             onChange={(val: string | null) => {
               if (val) {
                 const selected = beritaState.kategoriBerita.findMany.data?.find(
@@ -154,7 +165,7 @@ export default function CreateBerita() {
               }}
               onReject={() => toast.error('File tidak valid, gunakan format gambar')}
               maxSize={5 * 1024 ** 2}
-              accept={{ 'image/*': [] }}
+              accept={{ 'image/*': ['.jpeg', '.jpg', '.png', '.webp'] }}
               radius="md"
               p="xl"
             >
@@ -175,7 +186,7 @@ export default function CreateBerita() {
             </Dropzone>
 
             {previewImage && (
-              <Box mt="sm" style={{ textAlign: 'center' }}>
+              <Box mt="sm" pos="relative" style={{ textAlign: 'center' }}>
                 <Image
                   src={previewImage}
                   alt="Preview Gambar"
@@ -187,6 +198,26 @@ export default function CreateBerita() {
                   }}
                   loading="lazy"
                 />
+
+                {/* Tombol hapus (pojok kanan atas) */}
+                <ActionIcon
+                  variant="filled"
+                  color="red"
+                  radius="xl"
+                  size="sm"
+                  pos="absolute"
+                  top={5}
+                  right={5}
+                  onClick={() => {
+                    setPreviewImage(null);
+                    setFile(null);
+                  }}
+                  style={{
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                  }}
+                >
+                  <IconX size={14} />
+                </ActionIcon>
               </Box>
             )}
           </Box>
@@ -205,6 +236,17 @@ export default function CreateBerita() {
 
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
@@ -214,7 +256,7 @@ export default function CreateBerita() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

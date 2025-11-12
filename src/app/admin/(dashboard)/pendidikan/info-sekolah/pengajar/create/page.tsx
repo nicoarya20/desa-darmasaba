@@ -6,6 +6,7 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Select,
   Stack,
@@ -15,13 +16,14 @@ import {
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
 function CreatePengajar() {
   const router = useRouter();
   const stateCreate = useProxy(infoSekolahPaud.pengajar);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     stateCreate.findMany.load();
@@ -36,14 +38,22 @@ function CreatePengajar() {
   };
 
   const handleSubmit = async () => {
-    if (!stateCreate.create.form.nama || !stateCreate.create.form.lembagaId) {
-      return toast.warn('Nama dan Lembaga wajib diisi!');
+    try {
+      setIsSubmitting(true);
+      if (!stateCreate.create.form.nama || !stateCreate.create.form.lembagaId) {
+        return toast.warn('Nama dan Lembaga wajib diisi!');
+      }
+  
+      await stateCreate.create.create();
+  
+      resetForm();
+      router.push('/admin/pendidikan/info-sekolah/pengajar');
+    } catch (error) {
+      console.error('Error creating pengajar:', error);
+      toast.error('Terjadi kesalahan saat menambahkan pengajar');
+    } finally {
+      setIsSubmitting(false);
     }
-
-    await stateCreate.create.create();
-
-    resetForm();
-    router.push('/admin/pendidikan/info-sekolah/pengajar');
   };
 
   return (
@@ -71,7 +81,7 @@ function CreatePengajar() {
           <TextInput
             label={<Text fw="bold" fz="sm">Nama</Text>}
             placeholder="Masukkan nama pengajar"
-            defaultValue={stateCreate.create.form.nama}
+            value={stateCreate.create.form.nama}
             onChange={(e) => (stateCreate.create.form.nama = e.target.value)}
             required
           />
@@ -92,6 +102,17 @@ function CreatePengajar() {
 
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
@@ -101,7 +122,7 @@ function CreatePengajar() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

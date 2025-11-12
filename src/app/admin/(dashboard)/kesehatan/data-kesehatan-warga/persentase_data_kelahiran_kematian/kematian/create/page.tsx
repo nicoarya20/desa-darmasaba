@@ -6,6 +6,7 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Stack,
   TextInput,
@@ -13,18 +14,14 @@ import {
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
-
-
-
-
-
 
 function CreateKematian() {
   const createState = useProxy(persentaseKelahiranKematian.kematian);
   const router = useRouter();
-
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const resetForm = () => {
     createState.create.form = {
@@ -38,19 +35,27 @@ function CreateKematian() {
 
 
   const handleSubmit = async () => {
-    if (!createState.create.form.nama) {
-      return toast.warn('Nama wajib diisi');
-    }
-    if (!createState.create.form.tanggal) {
-      return toast.warn('Tanggal wajib diisi');
-    }
+    try {
+      setIsSubmitting(true);
+      if (!createState.create.form.nama) {
+        return toast.warn('Nama wajib diisi');
+      }
+      if (!createState.create.form.tanggal) {
+        return toast.warn('Tanggal wajib diisi');
+      }
 
 
-    await createState.create.create();
-    resetForm();
-    router.push(
-      '/admin/kesehatan/data-kesehatan-warga/persentase_data_kelahiran_kematian/kematian'
-    );
+      await createState.create.create();
+      resetForm();
+      router.push(
+        '/admin/kesehatan/data-kesehatan-warga/persentase_data_kelahiran_kematian/kematian'
+      );
+    } catch (error) {
+      console.error('Error creating data kematian:', error);
+      toast.error('Gagal menambahkan data kematian');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
 
@@ -80,7 +85,7 @@ function CreateKematian() {
           <TextInput
             label="Nama"
             placeholder="Masukkan nama"
-            defaultValue={createState.create.form.nama}
+            value={createState.create.form.nama}
             onChange={(e) => (createState.create.form.nama = e.target.value)}
             required
           />
@@ -88,21 +93,21 @@ function CreateKematian() {
             type="date"
             label="Tanggal"
             placeholder="Masukkan tanggal"
-            defaultValue={createState.create.form.tanggal}
+            value={createState.create.form.tanggal}
             onChange={(e) => (createState.create.form.tanggal = e.target.value)}
             required
           />
           <TextInput
             label="Jenis Kelamin"
             placeholder="Masukkan jenis kelamin"
-            defaultValue={createState.create.form.jenisKelamin}
+            value={createState.create.form.jenisKelamin}
             onChange={(e) => (createState.create.form.jenisKelamin = e.target.value)}
             required
           />
           <TextInput
             label="Alamat"
             placeholder="Masukkan alamat"
-            defaultValue={createState.create.form.alamat}
+            value={createState.create.form.alamat}
             onChange={(e) => (createState.create.form.alamat = e.target.value)}
             required
           />
@@ -121,6 +126,17 @@ function CreateKematian() {
 
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
@@ -130,7 +146,7 @@ function CreateKematian() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>
