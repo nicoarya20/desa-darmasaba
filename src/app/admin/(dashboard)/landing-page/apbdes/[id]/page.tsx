@@ -45,7 +45,7 @@ function DetailAPBDes() {
       apbdesState.delete.byId(selectedId);
       setModalHapus(false);
       setSelectedId(null);
-      router.push('/admin/landing-page/APBDes');
+      router.push('/admin/landing-page/apbdes');
     }
   };
 
@@ -160,7 +160,7 @@ function DetailAPBDes() {
 
                 <Button
                   color="green"
-                  onClick={() => router.push(`/admin/landing-page/APBDes/${data.id}/edit`)}
+                  onClick={() => router.push(`/admin/landing-page/apbdes/${data.id}/edit`)}
                   variant="light"
                   radius="md"
                   size="md"

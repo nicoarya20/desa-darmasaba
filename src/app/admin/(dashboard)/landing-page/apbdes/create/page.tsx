@@ -107,7 +107,7 @@ function CreateAPBDes() {
 
       toast.success("Berhasil menambahkan APBDes");
       resetForm();
-      router.push("/admin/landing-page/APBDes");
+      router.push("/admin/landing-page/apbdes");
     } catch (error) {
       console.error("Gagal submit:", error);
       toast.error("Gagal menyimpan data");

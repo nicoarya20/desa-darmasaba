@@ -173,7 +173,7 @@ function EditAPBDes() {
 
       const success = await apbdesState.edit.update();
       if (success) {
-        router.push('/admin/landing-page/APBDes');
+        router.push('/admin/landing-page/apbdes');
       }
     } catch (err) {
       console.error('Update error:', err);
