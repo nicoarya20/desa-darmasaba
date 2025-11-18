@@ -1,94 +1,102 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 'use client';
 
 import apbdes from '@/app/admin/(dashboard)/_state/landing-page/apbdes';
 import colors from '@/con/colors';
 import ApiFetch from '@/lib/api-fetch';
 import {
+  ActionIcon,
+  Badge,
   Box,
   Button,
   Group,
   Image,
+  Loader,
+  NumberInput,
   Paper,
+  Select,
   Stack,
+  Table,
   Text,
   TextInput,
   Title,
-  Loader,
-  ActionIcon
 } from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
-import { IconArrowBack, IconFile, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
+import {
+  IconArrowBack,
+  IconFile,
+  IconPhoto,
+  IconPlus,
+  IconTrash,
+  IconX
+} from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
+
+// Tipe untuk form item
+type ItemForm = {
+  kode: string;
+  uraian: string;
+  anggaran: number;
+  realisasi: number;
+  level: number;
+  tipe: 'pendapatan' | 'belanja' | 'pembiayaan';
+};
 
 function EditAPBDes() {
   const apbdesState = useProxy(apbdes);
   const router = useRouter();
   const params = useParams();
 
-  const [formData, setFormData] = useState({
-    name: '',
-    jumlah: '',
-    imageId: '',
-    fileId: ''
-  });
-
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const [originalData, setOriginalData] = useState({
-    name: "",
-    jumlah: "",
-    imageId: "",
-    fileId: "",
-    imageUrl: "",
-    docUrl: "",
-  });
-
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [previewDoc, setPreviewDoc] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [docFile, setDocFile] = useState<File | null>(null);
 
-  // Load data on mount
+  // Form input untuk item baru
+  const [newItem, setNewItem] = useState<ItemForm>({
+    kode: '',
+    uraian: '',
+    anggaran: 0,
+    realisasi: 0,
+    level: 1,
+    tipe: 'pendapatan',
+  });
+
+  // Type for the API response
+  interface APBDesResponse {
+    id: string;
+    image?: {
+      link: string;
+      id: string;
+    };
+    file?: {
+      link: string;
+      id: string;
+    };
+    // Add other properties as needed
+  }
+
+  // Load data saat pertama kali
   useEffect(() => {
-    const loadData = async () => {
-      const id = params?.id as string;
-      if (!id) return;
-
-      try {
-        const data = await apbdesState.edit.load(id);
+    const id = params?.id as string;
+    if (id) {
+      apbdesState.edit.load(id).then((response) => {
+        const data = response as unknown as APBDesResponse;
         if (data) {
-          const newForm = {
-            name: data.name || "",
-            jumlah: data.jumlah || "",
-            imageId: data.imageId || "",
-            fileId: data.fileId || "",
-          };
-          setFormData(newForm);
-
-          // simpan juga versi original
-          setOriginalData({
-            ...newForm,
-            imageUrl: data.image?.link || "",
-            docUrl: data.file?.link || "",
-          });
-
+          // ✅ Ambil link langsung dari response
           setPreviewImage(data.image?.link || null);
           setPreviewDoc(data.file?.link || null);
         }
-      } catch (err) {
-        console.error(err);
-        toast.error('Gagal memuat data APBDes');
-      }
-    };
-
-    loadData();
+      });
+    }
   }, [params?.id]);
 
-  // Generic Dropzone handler
   const handleDrop = (fileType: 'image' | 'doc') => (files: File[]) => {
     const file = files[0];
     if (!file) return;
@@ -102,51 +110,95 @@ function EditAPBDes() {
     }
   };
 
+  const handleAddItem = () => {
+    const { kode, uraian, anggaran, realisasi, level, tipe } = newItem;
+    if (!kode || !uraian) {
+      return toast.warn('Kode dan uraian wajib diisi');
+    }
+
+    const selisih = realisasi - anggaran;
+    const persentase = anggaran > 0 ? (realisasi / anggaran) * 100 : 0;
+
+    apbdesState.edit.addItem({
+      kode,
+      uraian,
+      anggaran,
+      realisasi,
+      selisih,
+      persentase,
+      level,
+      tipe,
+    });
+
+    setNewItem({
+      kode: '',
+      uraian: '',
+      anggaran: 0,
+      realisasi: 0,
+      level: 1,
+      tipe: 'pendapatan',
+    });
+  };
+
+  const handleRemoveItem = (index: number) => {
+    apbdesState.edit.removeItem(index);
+  };
+
   const handleSubmit = async () => {
+    if (apbdesState.edit.form.items.length === 0) {
+      return toast.warn('Minimal harus ada 1 item APBDes');
+    }
+
     try {
       setIsSubmitting(true);
-      // Update global state with local form data first
-      apbdesState.edit.form = { ...apbdesState.edit.form, ...formData };
 
-      // Helper function for uploading file
-      const uploadFile = async (file: File | null) => {
-        if (!file) return null;
-        const res = await ApiFetch.api.fileStorage.create.post({ file, name: file.name });
-        const uploaded = res.data?.data;
-        if (!uploaded?.id) throw new Error('Upload gagal');
-        return uploaded.id;
-      };
+      // Upload file baru jika ada
+      if (imageFile) {
+        const res = await ApiFetch.api.fileStorage.create.post({
+          file: imageFile,
+          name: imageFile.name,
+        });
+        const imageId = res.data?.data?.id;
+        if (imageId) apbdesState.edit.form.imageId = imageId;
+      }
 
-      // Upload files if selected
-      const uploadedImageId = await uploadFile(imageFile);
-      const uploadedDocId = await uploadFile(docFile);
+      if (docFile) {
+        const res = await ApiFetch.api.fileStorage.create.post({
+          file: docFile,
+          name: docFile.name,
+        });
+        const fileId = res.data?.data?.id;
+        if (fileId) apbdesState.edit.form.fileId = fileId;
+      }
 
-      if (uploadedImageId) apbdesState.edit.form.imageId = uploadedImageId;
-      if (uploadedDocId) apbdesState.edit.form.fileId = uploadedDocId;
-
-      await apbdesState.edit.update();
-      toast.success('APBDes berhasil diperbarui!');
-      router.push('/admin/landing-page/APBDes');
+      const success = await apbdesState.edit.update();
+      if (success) {
+        router.push('/admin/landing-page/APBDes');
+      }
     } catch (err) {
-      console.error(err);
-      toast.error('Terjadi kesalahan saat memperbarui APBDes');
+      console.error('Update error:', err);
+      toast.error('Gagal memperbarui APBDes');
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleResetForm = () => {
-    setFormData({
-      name: originalData.name,
-      jumlah: originalData.jumlah,
-      imageId: originalData.imageId,
-      fileId: originalData.fileId,
-    });
-    setPreviewImage(originalData.imageUrl || null);
-    setImageFile(null);
-    setPreviewDoc(originalData.docUrl || null);
-    setDocFile(null);
-    toast.info("Form dikembalikan ke data awal");
+  const handleReset = () => {
+    const id = params?.id as string;
+    if (id) {
+      apbdesState.edit.load(id);
+      setImageFile(null);
+      setDocFile(null);
+      setNewItem({
+        kode: '',
+        uraian: '',
+        anggaran: 0,
+        realisasi: 0,
+        level: 1,
+        tipe: 'pendapatan',
+      });
+      toast.info('Form dikembalikan ke data awal');
+    }
   };
 
   return (
@@ -160,163 +212,272 @@ function EditAPBDes() {
         </Title>
       </Group>
 
-      <Paper w={{ base: '100%', md: '50%' }} bg={colors['white-1']} p="lg" radius="md" shadow="sm" style={{ border: '1px solid #e0e0e0' }}>
+      <Paper
+        w={{ base: '100%', md: '100%' }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+        style={{ border: '1px solid #e0e0e0' }}
+      >
         <Stack gap="md">
-          {/* Controlled Inputs */}
-          <TextInput
-            label="Nama APBDes"
-            placeholder="Masukkan nama APBDes"
-            value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+          {/* Header Form */}
+          <NumberInput
+            label="Tahun"
+            value={apbdesState.edit.form.tahun || new Date().getFullYear()}
+            onChange={(val) =>
+              (apbdesState.edit.form.tahun = Number(val) || new Date().getFullYear())
+            }
+            min={2000}
+            max={2100}
             required
           />
 
-          <TextInput
-            label="Jumlah Anggaran"
-            placeholder="Masukkan jumlah anggaran"
-            value={formData.jumlah}
-            onChange={(e) => setFormData({ ...formData, jumlah: e.target.value })}
-            required
-          />
+          {/* Gambar & Dokumen */}
+          <Stack gap="xs">
+            <Box>
+              <Text fw="bold" fz="sm" mb={6}>
+                Gambar APBDes
+              </Text>
+              <Dropzone
+                onDrop={handleDrop('image')}
+                onReject={() => toast.error('File gambar tidak valid')}
+                maxSize={5 * 1024 ** 2}
+                accept={{ 'image/*': ['.jpeg', '.jpg', '.png', '.webp'] }}
+                radius="md"
+                p="xl"
+              >
+                <Group justify="center" gap="xl" mih={180}>
+                  <Dropzone.Idle>
+                    <IconPhoto size={48} color="#868e96" stroke={1.5} />
+                  </Dropzone.Idle>
+                  <Stack gap="xs" align="center">
+                    <Text size="md" fw={500}>
+                      {previewImage ? 'Ganti gambar' : 'Unggah gambar'}
+                    </Text>
+                  </Stack>
+                </Group>
+              </Dropzone>
+              {previewImage && (
+                <Box mt="sm" pos="relative" style={{ textAlign: 'center' }}>
+                  <Image
+                    src={previewImage}
+                    alt="Preview"
+                    radius="md"
+                    style={{ maxHeight: 200, objectFit: 'contain', border: '1px solid #ddd' }}
+                  />
+                  <ActionIcon
+                    variant="filled"
+                    color="red"
+                    radius="xl"
+                    size="sm"
+                    pos="absolute"
+                    top={5}
+                    right={5}
+                    onClick={() => {
+                      setPreviewImage(null);
+                      setImageFile(null);
+                    }}
+                  >
+                    <IconX size={14} />
+                  </ActionIcon>
+                </Box>
+              )}
+            </Box>
 
-          {/* Image Dropzone */}
-          <Box>
-            <Text fw="bold" fz="sm" mb={6}>Gambar APBDes</Text>
-            <Dropzone
-              onDrop={handleDrop('image')}
-              onReject={() => toast.error('File tidak valid, gunakan format gambar')}
-              maxSize={5 * 1024 ** 2}
-              accept={{ 'image/*': ['.jpeg', '.jpg', '.png', '.webp'] }}
-              radius="md"
-              p="xl"
-            >
-              <Group justify="center" gap="xl" mih={180}>
-                <Dropzone.Accept><IconUpload size={48} color={colors['blue-button']} stroke={1.5} /></Dropzone.Accept>
-                <Dropzone.Reject><IconX size={48} color="red" stroke={1.5} /></Dropzone.Reject>
-                <Dropzone.Idle><IconPhoto size={48} color="#868e96" stroke={1.5} /></Dropzone.Idle>
-                <Stack gap="xs" align="center">
-                  <Text size="md" fw={500}>Seret gambar atau klik untuk memilih file</Text>
-                  <Text size="sm" c="dimmed">Maksimal 5MB, format gambar .png, .jpg, .jpeg, webp</Text>
-                </Stack>
-              </Group>
-            </Dropzone>
-            {previewImage && (
-              <Box mt="sm" pos="relative" style={{ textAlign: 'center' }}>
-                <Image
-                  src={previewImage}
-                  alt="Preview Gambar"
-                  radius="md"
-                  style={{
-                    maxHeight: 200,
-                    objectFit: 'contain',
-                    border: '1px solid #ddd',
-                  }}
-                  loading="lazy"
+            <Box>
+              <Text fw="bold" fz="sm" mb={6}>
+                Dokumen APBDes
+              </Text>
+              <Dropzone
+                onDrop={handleDrop('doc')}
+                onReject={() => toast.error('File dokumen tidak valid')}
+                maxSize={10 * 1024 ** 2}
+                accept={{
+                  'application/pdf': ['.pdf'],
+                  'application/msword': ['.doc'],
+                  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx'],
+                  'application/vnd.ms-excel': ['.xls'],
+                  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx'],
+                }}
+                radius="md"
+                p="xl"
+              >
+                <Group justify="center" gap="xl" mih={180}>
+                  <Dropzone.Idle>
+                    <IconFile size={48} color="#868e96" stroke={1.5} />
+                  </Dropzone.Idle>
+                  <Stack gap="xs" align="center">
+                    <Text size="md" fw={500}>
+                      {previewDoc ? 'Ganti dokumen' : 'Unggah dokumen'}
+                    </Text>
+                  </Stack>
+                </Group>
+              </Dropzone>
+              {previewDoc && (
+                <Box mt="sm">
+                  <Button
+                    component="a"
+                    href={previewDoc}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    variant="light"
+                    size="xs"
+                    leftSection={<IconFile size={14} />}
+                  >
+                    Lihat Dokumen
+                  </Button>
+                  <ActionIcon
+                    variant="filled"
+                    color="red"
+                    radius="xl"
+                    size="sm"
+                    ml="sm"
+                    onClick={() => {
+                      setPreviewDoc(null);
+                      setDocFile(null);
+                    }}
+                  >
+                    <IconX size={14} />
+                  </ActionIcon>
+                </Box>
+              )}
+            </Box>
+          </Stack>
+
+          {/* Input Item Baru */}
+          <Paper withBorder p="md" radius="md">
+            <Title order={6} mb="sm">
+              Tambah Item Pendapatan/Belanja
+            </Title>
+            <Stack gap="xs">
+              <Group grow>
+                <TextInput
+                  label="Kode"
+                  placeholder="Contoh: 4.1.2"
+                  value={newItem.kode}
+                  onChange={(e) => setNewItem({ ...newItem, kode: e.target.value })}
+                  required
                 />
-
-                {/* Tombol hapus (pojok kanan atas) */}
-                <ActionIcon
-                  variant="filled"
-                  color="red"
-                  radius="xl"
-                  size="sm"
-                  pos="absolute"
-                  top={5}
-                  right={5}
-                  onClick={() => {
-                    setPreviewImage(null);
-                    setImageFile(null);
-                  }}
-                  style={{
-                    boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
-                  }}
-                >
-                  <IconX size={14} />
-                </ActionIcon>
-              </Box>
-            )}
-          </Box>
-
-          {/* Document Dropzone */}
-          <Box>
-            <Text fw="bold" fz="sm" mb={6}>Dokumen APBDes</Text>
-            <Dropzone
-              onDrop={handleDrop('doc')}
-              onReject={() => toast.error('File tidak valid, gunakan format dokumen')}
-              maxSize={10 * 1024 ** 2}
-              accept={{
-                'application/pdf': ['.pdf'],
-                'application/msword': ['.doc'],
-                'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx'],
-                'application/vnd.ms-excel': ['.xls'],
-                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx'],
-              }}
-              radius="md"
-              p="xl"
-            >
-              <Group justify="center" gap="xl" mih={150}>
-                <Dropzone.Accept><IconUpload size={48} color={colors['blue-button']} stroke={1.5} /></Dropzone.Accept>
-                <Dropzone.Reject><IconX size={48} color="red" stroke={1.5} /></Dropzone.Reject>
-                <Dropzone.Idle><IconFile size={48} color="#868e96" stroke={1.5} /></Dropzone.Idle>
-                <Stack gap="xs" align="center">
-                  <Text size="md" fw={500}>Seret dokumen atau klik untuk memilih file</Text>
-                  <Text size="sm" c="dimmed">Maksimal 10MB, format PDF/DOC/DOCX/XLS/XLSX</Text>
-                </Stack>
+                <Select
+                  label="Level"
+                  data={[
+                    { value: '1', label: 'Level 1 (Kelompok)' },
+                    { value: '2', label: 'Level 2 (Sub-kelompok)' },
+                    { value: '3', label: 'Level 3 (Detail)' },
+                  ]}
+                  value={String(newItem.level)}
+                  onChange={(val) => setNewItem({ ...newItem, level: Number(val) || 1 })}
+                />
+                <Select
+                  label="Tipe"
+                  data={[
+                    { value: 'pendapatan', label: 'Pendapatan' },
+                    { value: 'belanja', label: 'Belanja' },
+                  ]}
+                  value={newItem.tipe}
+                  onChange={(val) => setNewItem({ ...newItem, tipe: (val as any) || 'pendapatan' })}
+                />
               </Group>
-            </Dropzone>
-            {previewDoc && (
-              <Box mt="sm" pos="relative" style={{ textAlign: 'center' }}>
-                <Text size="sm" c="dimmed" mb="xs">Dokumen terpilih: {docFile?.name || 'Dokumen'}</Text>
-                <Button component="a" href={previewDoc} target="_blank" rel="noopener noreferrer" variant="light" leftSection={<IconFile size={16} />} size="sm">
-                  Lihat Dokumen
-                </Button>
-                {/* Tombol hapus (pojok kanan atas) */}
-                <ActionIcon
-                  variant="filled"
-                  color="red"
-                  radius="xl"
-                  size="sm"
-                  pos="absolute"
-                  top={5}
-                  right={5}
-                  onClick={() => {
-                    setPreviewDoc(null);
-                    setDocFile(null);
-                  }}
-                  style={{
-                    boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
-                  }}
-                >
-                  <IconX size={14} />
-                </ActionIcon>
-              </Box>
-            )}
-          </Box>
+              <TextInput
+                label="Uraian"
+                placeholder="Contoh: Dana Desa"
+                value={newItem.uraian}
+                onChange={(e) => setNewItem({ ...newItem, uraian: e.target.value })}
+                required
+              />
+              <Group grow>
+                <NumberInput
+                  label="Anggaran (Rp)"
+                  value={newItem.anggaran}
+                  onChange={(val) => setNewItem({ ...newItem, anggaran: Number(val) || 0 })}
+                  thousandSeparator
+                  min={0}
+                />
+                <NumberInput
+                  label="Realisasi (Rp)"
+                  value={newItem.realisasi}
+                  onChange={(val) => setNewItem({ ...newItem, realisasi: Number(val) || 0 })}
+                  thousandSeparator
+                  min={0}
+                />
+              </Group>
+              <Button
+                leftSection={<IconPlus size={16} />}
+                onClick={handleAddItem}
+                disabled={!newItem.kode || !newItem.uraian}
+              >
+                Tambah Item
+              </Button>
+            </Stack>
+          </Paper>
 
+          {/* Tabel Items */}
+          {apbdesState.edit.form.items.length > 0 && (
+            <Paper withBorder p="md" radius="md">
+              <Title order={6} mb="sm">
+                Daftar Item ({apbdesState.edit.form.items.length})
+              </Title>
+              <Table striped highlightOnHover>
+                <thead>
+                  <tr>
+                    <th>Kode</th>
+                    <th>Uraian</th>
+                    <th>Anggaran</th>
+                    <th>Realisasi</th>
+                    <th>Level</th>
+                    <th>Tipe</th>
+                    <th style={{ width: '50px' }}>Aksi</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {apbdesState.edit.form.items.map((item, idx) => (
+                    <tr key={idx}>
+                      <td>
+                        <Text size="sm" fw={500}>
+                          {item.kode}
+                        </Text>
+                      </td>
+                      <td>{item.uraian}</td>
+                      <td>{item.anggaran.toLocaleString('id-ID')}</td>
+                      <td>{item.realisasi.toLocaleString('id-ID')}</td>
+                      <td>
+                        <Badge size="sm" color={item.level === 1 ? 'blue' : item.level === 2 ? 'green' : 'grape'}>
+                          L{item.level}
+                        </Badge>
+                      </td>
+                      <td>
+                        <Badge size="sm" color={item.tipe === 'pendapatan' ? 'teal' : 'red'}>
+                          {item.tipe}
+                        </Badge>
+                      </td>
+                      <td>
+                        <ActionIcon color="red" onClick={() => handleRemoveItem(idx)}>
+                          <IconTrash size={16} />
+                        </ActionIcon>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+            </Paper>
+          )}
+
+          {/* Tombol Aksi */}
           <Group justify="right">
-            {/* Tombol Batal */}
-            <Button
-              variant="outline"
-              color="gray"
-              radius="md"
-              size="md"
-              onClick={handleResetForm}
-            >
+            <Button variant="outline" color="gray" radius="md" onClick={handleReset}>
               Batal
             </Button>
-
-            {/* Tombol Simpan */}
             <Button
               onClick={handleSubmit}
               radius="md"
-              size="md"
+              disabled={apbdesState.edit.form.items.length === 0 || apbdesState.edit.loading}
               style={{
                 background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
-                boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan Perubahan'}
             </Button>
           </Group>
         </Stack>

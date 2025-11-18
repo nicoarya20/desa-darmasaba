@@ -125,7 +125,6 @@ export default function ModernNewsNotification({
               position: "fixed",
               bottom: "24px",
               right: "24px",
-              zIndex: 1000,
             }}
           >
             <ActionIcon
@@ -147,20 +146,20 @@ export default function ModernNewsNotification({
               <IconBell size={28} />
               {hasNewNotifications && news.length > 0 && (
                 <Badge
-                  size="sm"
-                  variant="filled"
-                  color="red"
-                  style={{
-                    position: "absolute",
-                    top: "-5px",
-                    right: "-5px",
-                    minWidth: "22px",
-                    height: "22px",
-                    padding: "0 6px",
-                  }}
-                >
-                  {news.length}
-                </Badge>
+                size="sm"
+                variant="filled"
+                color="red"
+                style={{
+                  position: "absolute",
+                  top: "6px",
+                  right: "6px",
+                  minWidth: "22px",
+                  height: "22px",
+                  padding: "0 6px",
+                }}
+              >
+                {news.length}
+              </Badge>
               )}
             </ActionIcon>
           </Box>
@@ -178,7 +177,6 @@ export default function ModernNewsNotification({
               right: "24px",
               width: "380px",
               maxHeight: "500px",
-              zIndex: 999,
               boxShadow: "0 8px 32px rgba(0,0,0,0.12)",
               borderRadius: "16px",
               overflow: "hidden",
@@ -274,7 +272,6 @@ export default function ModernNewsNotification({
               bottom: "100px",
               right: "24px",
               width: "380px",
-              zIndex: 1001,
               boxShadow: "0 8px 32px rgba(0,0,0,0.15)",
               borderRadius: "12px",
               overflow: "hidden",

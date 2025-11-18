@@ -209,50 +209,57 @@ function Page() {
           ) : null}
 
           {/* Chart */}
-          <Box mt={30} style={{ width: '100%', minHeight: 400 }}>
-            <Paper bg={colors['white-1']} pt={50} pb={170} px={90} mb={"xl"} radius="md" withBorder>
-              <Stack gap={"xs"}>
-                <Title ta={"center"} pb={10} order={2}>
-                  Grafik APBDes
-                </Title>
+          <Box mt={30} style={{ width: '100%' }}>
+            <Paper
+              bg={colors['white-1']}
+              py={90}
+              px={{ base: 12, sm: 24, md: 50 }}
+              radius="md"
+              withBorder
+            >
+              <Stack gap="lg">
+                <Title ta="center" order={2}>Grafik SDGs Desa</Title>
+
                 {mounted && chartData.length > 0 ? (
-                  <Box style={{ padding: '0 30px' }}> {/* Tambahkan padding horizontal agar label tidak keluar */}
-                    <BarChart
-                      h={500}
-                      data={chartData}
-                      dataKey="name"
-                      type="stacked"
-                      withBarValueLabel
-                      series={[
-                        {
-                          name: 'jumlah',
-                          color: colors['blue-button'],
-                          // label: 'Jumlah', → HAPUS INI AGAR LEGEND TIDAK MUNCUL
-                        },
-                      ]}
-                      withTooltip
-                      tooltipProps={{
-                        labelFormatter: (value) => value,
-                        formatter: (value) => `${value}%`,
-                      }}
-                      xAxisProps={{
-                        angle: -45,
-                        textAnchor: 'end',
-                        interval: 0,
-                        fontSize: 12,
-                        dy: 10,
-                      }}
-                      yAxisProps={{
-                        domain: [0, 100],
-                        tickCount: 6,
-                      }}
-                      style={{
-                        overflowX: 'visible',
-                        paddingBottom: 40, // Tambahkan ruang di bawah untuk label
-                      }}
-                      // Hilangkan legend secara eksplisit
-                      withLegend={false} // ⭐ Ini yang menghilangkan kotak biru + teks "Jumlah"
-                    />
+                  <Box
+                    style={{
+                      width: "100%",
+                      overflowX: "auto",
+                      paddingBottom: 185,
+                    }}
+                  >
+                    <Box style={{ minWidth: 900 }}> {/* ⭐ batas minimum biar bisa scroll */}
+                      <BarChart
+                        h={350}
+                        data={chartData}
+                        dataKey="name"
+                        type="stacked"
+                        withBarValueLabel
+                        series={[
+                          {
+                            name: 'jumlah',
+                            color: colors['blue-button'],
+                          },
+                        ]}
+                        withTooltip
+                        tooltipProps={{
+                          labelFormatter: (value) => value,
+                          formatter: (value) => `${value}%`,
+                        }}
+                        xAxisProps={{
+                          angle: -45,
+                          textAnchor: 'end',
+                          interval: 0,
+                          fontSize: 12,
+                          dy: 10,
+                        }}
+                        yAxisProps={{
+                          domain: [0, 100],
+                          tickCount: 6,
+                        }}
+                        withLegend={false}
+                      />
+                    </Box>
                   </Box>
                 ) : (
                   <Text c="dimmed">Belum ada data untuk ditampilkan dalam grafik</Text>
@@ -260,6 +267,7 @@ function Page() {
               </Stack>
             </Paper>
           </Box>
+
         </Box>
       </Box>
     </Stack>

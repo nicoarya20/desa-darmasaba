@@ -183,17 +183,45 @@ model SdgsDesa {
 
 //========================================= APBDes ========================================= //
 model APBDes {
-  id        String       @id @default(cuid())
-  name      String
-  jumlah    String
-  image     FileStorage? @relation("APBDesImage", fields: [imageId], references: [id])
-  imageId   String?
-  file      FileStorage? @relation("APBDesFile", fields: [fileId], references: [id])
-  fileId    String?
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
-  deletedAt DateTime     @default(now())
-  isActive  Boolean      @default(true)
+  id          String        @id @default(cuid())
+  tahun       Int?
+  name        String?       // misalnya: "APBDes Tahun 2025"
+  deskripsi   String?
+  jumlah      String?       // total keseluruhan (opsional, bisa juga dihitung dari items)
+  items       APBDesItem[]
+  image       FileStorage?  @relation("APBDesImage", fields: [imageId], references: [id])
+  imageId     String?
+  file        FileStorage?  @relation("APBDesFile", fields: [fileId], references: [id])
+  fileId      String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  deletedAt   DateTime?     // opsional, tidak perlu default now()
+  isActive    Boolean       @default(true)
+}
+
+model APBDesItem {
+  id          String        @id @default(cuid())
+  kode        String        // contoh: "4", "4.1", "4.1.2"
+  uraian      String        // nama item, contoh: "Pendapatan Asli Desa", "Hasil Usaha"
+  anggaran    Float         // dalam satuan Rupiah (bisa DECIMAL di DB, tapi Float umum di TS/JS)
+  realisasi   Float
+  selisih     Float         // realisasi - anggaran
+  persentase  Float  
+  tipe        String?       // (realisasi / anggaran) * 100
+  level       Int           // 1 = kelompok utama, 2 = sub-kelompok, 3 = detail
+  parentId    String?       // untuk relasi hierarki
+  parent      APBDesItem?   @relation("APBDesItemParent", fields: [parentId], references: [id])
+  children    APBDesItem[]  @relation("APBDesItemParent")
+  apbdesId    String
+  apbdes      APBDes        @relation(fields: [apbdesId], references: [id])
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  deletedAt   DateTime?     
+  isActive    Boolean       @default(true)
+
+  @@index([kode])
+  @@index([level])
+  @@index([apbdesId])
 }
 
 //========================================= PRESTASI DESA ========================================= //
@@ -1942,23 +1970,28 @@ model KeunggulanProgram {
 }
 
 model BeasiswaPendaftar {
-  id               String           @id @default(cuid())
+  id               String            @id @default(cuid())
   namaLengkap      String
-  nik              String           @unique
+  nis              String?
+  kelas            String?
+  jenisKelamin     JenisKelamin
+  alamatDomisili   String?
   tempatLahir      String
   tanggalLahir     DateTime
-  jenisKelamin     JenisKelamin
-  kewarganegaraan  String
-  agama            Agama
-  alamatKTP        String
-  alamatDomisili   String?
+  namaOrtu         String?
+  nik              String            @unique
+  pekerjaanOrtu    String?
+  penghasilan      String?
   noHp             String
-  email            String           @unique
-  statusPernikahan StatusPernikahan
+  kewarganegaraan  String?
+  agama            Agama?
+  alamatKTP        String?
+  email            String?           @unique
+  statusPernikahan StatusPernikahan?
   ukuranBaju       UkuranBaju?
-  isActive         Boolean          @default(true)
-  createdAt        DateTime         @default(now())
-  updatedAt        DateTime         @updatedAt
+  isActive         Boolean           @default(true)
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
 }
 
 enum JenisKelamin {

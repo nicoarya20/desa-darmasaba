@@ -1,8 +1,7 @@
-import { Box, Card, Image, Stack, Text, Tooltip } from '@mantine/core';
-import { IconUserCircle } from '@tabler/icons-react';
-import React from 'react';
-import { Prisma } from '@prisma/client';
 import colors from '@/con/colors';
+import { Box, Card, Image, Stack, Text } from '@mantine/core';
+import { Prisma } from '@prisma/client';
+import { IconUserCircle } from '@tabler/icons-react';
 
 interface ProfileViewProps {
   data: Prisma.PejabatDesaGetPayload<{ include: { image: true } }> | null;
@@ -95,7 +94,6 @@ export default function ProfileView({ data }: ProfileViewProps) {
             backgroundColor: 'rgba(255, 255, 255, 0.95)',
           }}
         >
-          <Tooltip label="Jabatan Resmi" withArrow>
             <Text
               fz={{ base: 'xs', sm: 'sm' }}
               c="dimmed"
@@ -103,7 +101,6 @@ export default function ProfileView({ data }: ProfileViewProps) {
             >
               {data.position || 'Tidak ada jabatan'}
             </Text>
-          </Tooltip>
           <Text
             c={colors['blue-button']}
             fw={700}
