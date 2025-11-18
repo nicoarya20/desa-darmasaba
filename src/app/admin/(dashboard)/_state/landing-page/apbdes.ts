@@ -53,7 +53,7 @@ function normalizeItem(item: Partial<z.infer<typeof ApbdesItemSchema>>): z.infer
     selisih,
     persentase,
     level: item.level || 1,
-    tipe: item.tipe || "pendapatan",
+    tipe: item.tipe, // biarkan null jika memang null
   };
 }
 

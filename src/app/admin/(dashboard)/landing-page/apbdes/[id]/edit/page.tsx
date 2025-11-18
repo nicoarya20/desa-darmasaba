@@ -115,21 +115,21 @@ function EditAPBDes() {
     if (!kode || !uraian) {
       return toast.warn('Kode dan uraian wajib diisi');
     }
-    const finalTipe = level === 1 ? 'pendapatan' : tipe; // Berikan default
 
-  const selisih = realisasi - anggaran;
-  const persentase = anggaran > 0 ? (realisasi / anggaran) * 100 : 0;
+    const finalTipe = level === 1 ? null : tipe;
+    const selisih = realisasi - anggaran;
+    const persentase = anggaran > 0 ? (realisasi / anggaran) * 100 : 0;
 
-  apbdesState.edit.addItem({
-    kode,
-    uraian,
-    anggaran,
-    realisasi,
-    selisih,
-    persentase,
-    level,
-    tipe: finalTipe, // ✅ Tidak akan undefined
-  });
+    apbdesState.edit.addItem({
+      kode,
+      uraian,
+      anggaran,
+      realisasi,
+      selisih,
+      persentase,
+      level,
+      tipe: finalTipe, // ✅ Tidak akan undefined
+    });
 
 
     setNewItem({

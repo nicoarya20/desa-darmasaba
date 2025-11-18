@@ -123,8 +123,7 @@ function CreateAPBDes() {
       return toast.warn("Kode dan uraian wajib diisi");
     }
 
-    const finalTipe = level === 1 ? 'pendapatan' : tipe; // Berikan default
-
+    const finalTipe = level === 1 ? null : tipe;
     const selisih = realisasi - anggaran;
     const persentase = anggaran > 0 ? (realisasi / anggaran) * 100 : 0;
 
@@ -363,8 +362,9 @@ function CreateAPBDes() {
                     { value: 'pendapatan', label: 'Pendapatan' },
                     { value: 'belanja', label: 'Belanja' },
                   ]}
-                  value={newItem.tipe}
+                  value={newItem.level === 1 ? null : newItem.tipe}
                   onChange={(val) => setNewItem({ ...newItem, tipe: val as any })}
+                  disabled={newItem.level === 1}
                 />
               </Group>
               <TextInput

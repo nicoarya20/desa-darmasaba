@@ -66,8 +66,8 @@ export default async function apbdesCreate(context: Context) {
             selisih: item.selisih,
             persentase: item.persentase,
             level: item.level,
+            tipe: item.tipe, // ✅ sertakan, biar null
             apbdesId: apbdes.id,
-            // Note: tipe field is not included as it doesn't exist in the model
           };
           
           return prisma.aPBDesItem.create({
