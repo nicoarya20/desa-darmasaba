@@ -115,20 +115,22 @@ function EditAPBDes() {
     if (!kode || !uraian) {
       return toast.warn('Kode dan uraian wajib diisi');
     }
+    const finalTipe = level === 1 ? 'pendapatan' : tipe; // Berikan default
 
-    const selisih = realisasi - anggaran;
-    const persentase = anggaran > 0 ? (realisasi / anggaran) * 100 : 0;
+  const selisih = realisasi - anggaran;
+  const persentase = anggaran > 0 ? (realisasi / anggaran) * 100 : 0;
 
-    apbdesState.edit.addItem({
-      kode,
-      uraian,
-      anggaran,
-      realisasi,
-      selisih,
-      persentase,
-      level,
-      tipe,
-    });
+  apbdesState.edit.addItem({
+    kode,
+    uraian,
+    anggaran,
+    realisasi,
+    selisih,
+    persentase,
+    level,
+    tipe: finalTipe, // ✅ Tidak akan undefined
+  });
+
 
     setNewItem({
       kode: '',
@@ -374,6 +376,7 @@ function EditAPBDes() {
                   data={[
                     { value: 'pendapatan', label: 'Pendapatan' },
                     { value: 'belanja', label: 'Belanja' },
+                    { value: 'pembiayaan', label: 'Pembiayaan' },
                   ]}
                   value={newItem.tipe}
                   onChange={(val) => setNewItem({ ...newItem, tipe: (val as any) || 'pendapatan' })}
@@ -447,9 +450,13 @@ function EditAPBDes() {
                         </Badge>
                       </td>
                       <td>
-                        <Badge size="sm" color={item.tipe === 'pendapatan' ? 'teal' : 'red'}>
-                          {item.tipe}
-                        </Badge>
+                        {item.tipe ? (
+                          <Badge color={item.tipe === 'pendapatan' ? 'teal' : 'red'} size="sm">
+                            {item.tipe}
+                          </Badge>
+                        ) : (
+                          '-'
+                        )}
                       </td>
                       <td>
                         <ActionIcon color="red" onClick={() => handleRemoveItem(idx)}>

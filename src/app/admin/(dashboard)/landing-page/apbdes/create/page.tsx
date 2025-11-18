@@ -123,6 +123,8 @@ function CreateAPBDes() {
       return toast.warn("Kode dan uraian wajib diisi");
     }
 
+    const finalTipe = level === 1 ? 'pendapatan' : tipe; // Berikan default
+
     const selisih = realisasi - anggaran;
     const persentase = anggaran > 0 ? (realisasi / anggaran) * 100 : 0;
 
@@ -134,7 +136,7 @@ function CreateAPBDes() {
       selisih,
       persentase,
       level,
-      tipe,
+      tipe: finalTipe,
     });
 
     // Reset form input

@@ -15,7 +15,7 @@ const ApbdesItemSchema = t.Object({
   selisih: t.Number(),
   persentase: t.Number(),
   level: t.Number(),
-  tipe: t.String(), // misal: "pendapatan" atau "belanja"
+  tipe: t.Optional(t.Union([t.String(), t.Null()])) // misal: "pendapatan" atau "belanja"
 });
 
 const APBDes = new Elysia({

@@ -10,7 +10,7 @@ type APBDesItemInput = {
   selisih: number;
   persentase: number;
   level: number;
-  tipe: string;
+  tipe?: string | null;
 };
 
 type FormUpdateBody = {
@@ -54,7 +54,7 @@ export default async function apbdesUpdate(context: Context) {
         selisih: item.anggaran - item.realisasi,
         persentase: item.anggaran > 0 ? (item.realisasi / item.anggaran) * 100 : 0,
         level: item.level,
-        tipe: item.tipe,
+        tipe: item.tipe || null,
         isActive: true,
       })),
     });

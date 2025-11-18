@@ -7,14 +7,14 @@ import { z } from "zod";
 
 // --- Zod Schema ---
 const ApbdesItemSchema = z.object({
-  kode: z.string().min(1),
-  uraian: z.string().min(1),
+  kode: z.string().min(1, "Kode wajib diisi"),
+  uraian: z.string().min(1, "Uraian wajib diisi"),
   anggaran: z.number().min(0),
   realisasi: z.number().min(0),
   selisih: z.number(),
-  persentase: z.number().min(0).max(1000), // allow >100% if overbudget
+  persentase: z.number(),
   level: z.number().int().min(1).max(3),
-  tipe: z.string().min(1), // "pendapatan" | "belanja"
+  tipe: z.enum(['pendapatan', 'belanja', 'pembiayaan']).nullable().optional(),
 });
 
 const ApbdesFormSchema = z.object({
@@ -37,6 +37,9 @@ const defaultApbdesForm = {
 function normalizeItem(item: Partial<z.infer<typeof ApbdesItemSchema>>): z.infer<typeof ApbdesItemSchema> {
   const anggaran = item.anggaran ?? 0;
   const realisasi = item.realisasi ?? 0;
+
+  
+
   
   // ✅ Formula yang benar
   const selisih = anggaran - realisasi; // positif = sisa anggaran, negatif = over budget
@@ -56,58 +59,6 @@ function normalizeItem(item: Partial<z.infer<typeof ApbdesItemSchema>>): z.infer
 
 // --- State Utama ---
 const apbdes = proxy({
-  // create: {
-  //   form: { ...defaultApbdesForm },
-  //   loading: false,
-
-  //   addItem(item: Partial<z.infer<typeof ApbdesItemSchema>>) {
-  //     const normalized = normalizeItem(item);
-  //     this.form.items.push(normalized);
-  //   },
-
-  //   removeItem(index: number) {
-  //     this.form.items.splice(index, 1);
-  //   },
-
-  //   updateItem(index: number, updates: Partial<z.infer<typeof ApbdesItemSchema>>) {
-  //     const current = this.form.items[index];
-  //     if (current) {
-  //       const updated = normalizeItem({ ...current, ...updates });
-  //       this.form.items[index] = updated;
-  //     }
-  //   },
-
-  //   reset() {
-  //     this.form = { ...defaultApbdesForm };
-  //   },
-
-  //   async create() {
-  //     const parsed = ApbdesFormSchema.safeParse(this.form);
-  //     if (!parsed.success) {
-  //       const errors = parsed.error.issues.map((issue) => `${issue.path.join(".")} - ${issue.message}`);
-  //       toast.error(`Validasi gagal:\n${errors.join("\n")}`);
-  //       return;
-  //     }
-
-  //     try {
-  //       this.loading = true;
-  //       const res = await ApiFetch.api.landingpage.apbdes["create"].post(parsed.data);
-
-  //       if (res.data?.success) {
-  //         toast.success("APBDes berhasil dibuat");
-  //         apbdes.findMany.load();
-  //         this.reset();
-  //       } else {
-  //         toast.error(res.data?.message || "Gagal membuat APBDes");
-  //       }
-  //     } catch (error: any) {
-  //       console.error("Create APBDes error:", error);
-  //       toast.error(error?.message || "Terjadi kesalahan saat membuat APBDes");
-  //     } finally {
-  //       this.loading = false;
-  //     }
-  //   },
-  // },
   create: {
     form: { ...defaultApbdesForm },
     loading: false,
@@ -305,7 +256,7 @@ const apbdes = proxy({
               selisih: item.selisih,
               persentase: item.persentase,
               level: item.level,
-              tipe: item.tipe,
+              tipe: item.tipe || 'pendapatan',
             })),
           };
           return data;

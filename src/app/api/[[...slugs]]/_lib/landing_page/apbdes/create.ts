@@ -12,7 +12,7 @@ type APBDesItemInput = {
   selisih: number;
   persentase: number;
   level: number;
-  tipe: string;
+  tipe?: string | null;
 };
 
 type FormCreate = {
