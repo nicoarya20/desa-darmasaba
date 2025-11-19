@@ -1,5 +1,5 @@
+// app/api/auth/login/route.ts
 import prisma from "@/lib/prisma";
-
 import { NextResponse } from "next/server";
 import { randomOTP } from "../_lib/randomOTP";
 
@@ -12,49 +12,63 @@ export async function POST(req: Request) {
   }
 
   try {
-    const codeOtp = randomOTP();
-    const body = await req.json();
-    const { nomor } = body;
-    const res = await fetch(
-      `https://wa.wibudev.com/code?nom=${nomor}&text=Website Desa Darmasaba - Kode ini bersifat RAHASIA dan JANGAN DI BAGIKAN KEPADA SIAPAPUN, termasuk anggota ataupun Admin lainnya. 
-      \n 
-      >> Kode OTP anda: ${codeOtp}.
-      `
-    );
+    const { nomor } = await req.json();
 
-    const sendWa = await res.json();
-
-    if (sendWa.status !== "success")
+    if (!nomor || typeof nomor !== "string") {
       return NextResponse.json(
-        { success: false, message: "Nomor Whatsapp Tidak Aktif" },
+        { success: false, message: "Nomor tidak valid" },
         { status: 400 }
       );
+    }
 
-    const createOtpId = await prisma.kodeOtp.create({
-      data: {
-        nomor: nomor,
-        otp: codeOtp,
-      },
+    const existingUser = await prisma.user.findUnique({
+      where: { nomor },
+      select: { id: true, isActive: true },
     });
 
-    if (!createOtpId)
-      return NextResponse.json(
-        { success: false, message: "Gagal mengirim kode OTP" },
-        { status: 400 }
-      );
+    const isRegistered = !!existingUser;
 
-    return NextResponse.json(
-      {
+    if (isRegistered) {
+      // ✅ User terdaftar → kirim OTP
+      const codeOtp = randomOTP();
+      const otpNumber = Number(codeOtp);
+
+      const waMessage = `Website Desa Darmasaba - Kode verifikasi Anda: ${codeOtp}`;
+      const waUrl = `https://wa.wibudev.com/code?nom=${encodeURIComponent(nomor)}&text=${encodeURIComponent(waMessage)}`;
+
+      const res = await fetch(waUrl);
+      const sendWa = await res.json();
+
+      if (sendWa.status !== "success") {
+        return NextResponse.json(
+          { success: false, message: "Gagal mengirim OTP via WhatsApp" },
+          { status: 400 }
+        );
+      }
+
+      const createOtpId = await prisma.kodeOtp.create({
+        data: { nomor, otp: otpNumber, isActive: true },
+      });
+
+      return NextResponse.json({
         success: true,
-        message: "Kode verifikasi terkirim",
+        message: "Kode verifikasi dikirim",
         kodeId: createOtpId.id,
-      },
-      { status: 200 }
-    );
+        isRegistered: true,
+      });
+    } else {
+      // ❌ User belum terdaftar → JANGAN kirim OTP
+      return NextResponse.json({
+        success: true,
+        message: "Nomor belum terdaftar",
+        isRegistered: false,
+        // Tidak ada kodeId
+      });
+    }
   } catch (error) {
-    console.log("Error Login", error);
+    console.error("Error Login:", error);
     return NextResponse.json(
-      { success: false, message: "Terjadi masalah saat login" , reason: error as Error },
+      { success: false, message: "Terjadi kesalahan saat login" },
       { status: 500 }
     );
   } finally {

@@ -1,36 +1,42 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { cookies } from "next/headers";
 import { encrypt } from "./encrypt";
 
 export async function sessionCreate({
   sessionKey,
   exp = "7 year",
-  encodedKey,
+  jwtSecret,
   user,
 }: {
   sessionKey: string;
   exp?: string;
-  encodedKey: string;
+  jwtSecret: string;
   user: Record<string, unknown>;
 }) {
+  // 🔒 Validasi kunci tidak kosong
+  if (!sessionKey || sessionKey.length === 0) {
+    throw new Error("sessionKey tidak boleh kosong");
+  }
+  if (!jwtSecret || jwtSecret.length === 0) {
+    throw new Error("jwtSecret tidak boleh kosong");
+  }
+
   const token = await encrypt({
     exp,
-    encodedKey,
+    jwtSecret,
     user,
   });
 
-  const cookie: any = {
-    key: sessionKey,
-    value: token,
-    options: {
-      httpOnly: true,
-      sameSite: "lax",
-      path: "/",
-    },
-  };
+  if (token === null) {
+    throw new Error("Token generation failed");
+  }
 
-  (await cookies()).set(cookie.key, cookie.value, { ...cookie.options });
+  const cookieStore = await cookies();
+  cookieStore.set(sessionKey, token, {
+    httpOnly: true,
+    sameSite: "lax",
+    path: "/",
+    secure: process.env.NODE_ENV === "production",
+  });
+
   return token;
 }
-
-// wibu:0.2.82

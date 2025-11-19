@@ -1,113 +1,127 @@
-/* eslint-disable @typescript-eslint/no-unused-expressions */
-'use client'
-import { apiFetchRegister } from '@/app/admin/auth/_lib/api_fetch_auth';
+// app/registrasi/page.tsx
+'use client';
+
+import { apiFetchRegister } from '@/app/api/auth/_lib/api_fetch_auth';
 import BackButton from '@/app/darmasaba/(pages)/desa/layanan/_com/BackButto';
 import colors from '@/con/colors';
-import { Box, Button, Center, Checkbox, Image, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
+import {
+  Box, Button, Center, Checkbox, Image, Paper, Stack, Text, TextInput, Title,
+} from '@mantine/core';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import { PhoneInput } from "react-international-phone";
-import "react-international-phone/style.css";
+import { useEffect, useState } from 'react';
+import { PhoneInput } from 'react-international-phone';
+import 'react-international-phone/style.css';
 import { toast } from 'react-toastify';
 
-function Registrasi() {
-  const [phone, setPhone] = useState("")
-  const router = useRouter()
-  const [value, setValue] = useState("")
-  const [isValue, setIsValue] = useState(false);
+export default function Registrasi() {
+  const router = useRouter();
+  const [username, setUsername] = useState('');
   const [loading, setLoading] = useState(false);
+  const [phone, setPhone] = useState(''); // ✅ tambahkan state untuk phone
 
-  async function onRegistarsi() {
-    if (value.length < 5) {
-      toast.error("Username minimal 5 karakter!");
+  // Ambil data dari localStorage (dari login)
+  useEffect(() => {
+    const storedNomor = localStorage.getItem('auth_nomor');
+    if (!storedNomor) {
+      toast.error('Akses tidak valid');
+      router.push('/login');
       return;
     }
-  
-    if (value.includes(" ")) {
-      toast.error("Username tidak boleh ada spasi!");
+    setPhone(storedNomor);
+  }, [router]);
+
+  const handleRegister = async () => {
+    if (!username || username.trim().length < 5) {
+      toast.error('Username minimal 5 karakter!');
       return;
     }
-  
-    if (!phone) {
-      toast.error("Nomor telepon wajib diisi!");
+    if (username.includes(' ')) {
+      toast.error('Username tidak boleh ada spasi!');
       return;
     }
-    
+
+    const cleanPhone = phone.replace(/\D/g, '');
+    if (cleanPhone.length < 10) {
+      toast.error('Nomor tidak valid!');
+      return;
+    }
+
     try {
       setLoading(true);
-      const respone = await apiFetchRegister({ nomor: phone, username: value });
+      // ✅ Hanya kirim username & nomor → dapat kodeId
+      const response = await apiFetchRegister({ username, nomor: cleanPhone });
 
-      if (respone.success) {
-        router.push("/login", { scroll: false });
-        toast.success(respone.message);
+      if (response.success) {
+        // Simpan sementara
+        localStorage.setItem('auth_kodeId', response.kodeId);
+        localStorage.setItem('auth_username', username); // simpan username
 
-      } else {
-        setLoading(false);
-        toast.error(respone.message);
+        toast.success('Kode verifikasi dikirim!');
+        router.push('/validasi'); // ✅ ke halaman validasi
       }
     } catch (error) {
+      console.error('Error Registrasi:', error);
+      toast.error('Gagal mengirim OTP');
+    } finally {
       setLoading(false);
-      console.log("Error Registrasi", error);
     }
-  }
+  };
+
   return (
-    <Stack pos={"relative"} bg={colors.Bg} gap={"22"} py={"xl"} h={"100vh"}>
+    <Stack pos="relative" bg={colors.Bg} gap="22" py="xl" h="100vh">
       <Box px={{ base: 'md', md: 100 }}>
         <BackButton />
       </Box>
       <Box px={{ base: 'md', md: 100 }}>
-        <Stack justify='center' align='center' h={"80vh"}>
-          <Paper p={'xl'} radius={'md'} bg={colors['white-trans-1']}>
-            <Stack align='center'>
-              <Title order={2} fw={'bold'} c={colors['blue-button']}>
+        <Stack justify="center" align="center" h="80vh">
+          <Paper p="xl" radius="md" bg={colors['white-trans-1']} w={{ base: '100%', sm: 400 }}>
+            <Stack align="center">
+              <Title order={2} fw="bold" c={colors['blue-button']}>
                 Registrasi
               </Title>
               <Center>
-                <Image loading="lazy" src={"/darmasaba-icon.png"} alt="" w={80} />
+                <Image loading="lazy" src="/darmasaba-icon.png" alt="" w={80} />
               </Center>
-              <Box>
-                <TextInput placeholder='Username'
-                  label='Username'
-                  maxLength={50}
-
+              <Box w="100%">
+                <TextInput
+                  label="Username"
+                  placeholder="Username"
+                  value={username}
+                  onChange={(e) => setUsername(e.currentTarget.value)}
                   error={
-                    value.length > 0 && value.length < 5
-                      ? "Minimal 5 karakter !"
-                      : value.includes(" ")
-                      ? "Tidak boleh ada spasi"
-                      : isValue
-                      ? "Masukan username anda"
-                      : ""
+                    username.length > 0 && username.length < 5
+                      ? 'Minimal 5 karakter!'
+                      : username.includes(' ')
+                      ? 'Tidak boleh ada spasi'
+                      : ''
                   }
-                  onChange={(val) => {
-                    val.currentTarget.value.length > 0 ? setIsValue(false) : "";
-                    setValue(val.currentTarget.value);
-                  }}
                   required
-
                 />
-                <Box py={10}>
-                  <Text fz={"sm"} >Nomor Telepon</Text>
+
+                <Box pt="md">
+                  <Text fz="sm">Nomor Telepon</Text>
                   <PhoneInput
-                    countrySelectorStyleProps={{
-                      buttonStyle: {
-                        backgroundColor: colors['blue-button'],
-                      },
-                    }}
-                    inputStyle={{ width: "100%" }}
                     defaultCountry="id"
-                    onChange={(val) => {
-                      setPhone(val);
-                    }}
+                    value={phone}
+                    disabled
                   />
                 </Box>
-                <Box pb={10}>
-                  <Checkbox
-                    label="Saya menyetujui syarat dan ketentuan yang berlaku"
-                  />
+
+                <Box pt="md">
+                  <Checkbox label="Saya menyetujui syarat dan ketentuan" defaultChecked />
                 </Box>
-                <Box pb={20} >
-                  <Button fullWidth bg={colors['blue-button']} radius={'xl'} onClick={onRegistarsi} loading={loading ? true : false}>Daftar</Button>
+
+                <Box pt="xl">
+                  <Button
+                    fullWidth
+                    bg={colors['blue-button']}
+                    radius="xl"
+                    onClick={handleRegister}
+                    loading={loading}
+                    disabled={username.length < 5}
+                  >
+                    Kirim Kode Verifikasi
+                  </Button>
                 </Box>
               </Box>
             </Stack>
@@ -117,5 +131,3 @@ function Registrasi() {
     </Stack>
   );
 }
-
-export default Registrasi;
