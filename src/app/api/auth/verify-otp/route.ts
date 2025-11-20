@@ -108,11 +108,18 @@ export async function POST(req: Request) {
       data: { isActive: false },
     });
 
+    const userData = {
+      id: user.id,
+      name: user.username, // atau user.nama jika ada kolom nama
+      roleId: user.roleId,
+    };
+
     // Set cookie & respons
     const response = NextResponse.json(
       {
         success: true,
         message: "Berhasil login",
+        user: userData,
         roleId: user.roleId,
       },
       { status: 200 }

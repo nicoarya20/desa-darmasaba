@@ -13,7 +13,6 @@ const Role = new Elysia({
  .post("/create", roleCreate, {
     body: t.Object({
       name: t.String(),
-      permissions: t.Array(t.String()),
     }),
   })
 
@@ -27,7 +26,6 @@ const Role = new Elysia({
   .put("/:id", roleUpdate, {
     body: t.Object({
       name: t.String(),
-      permissions: t.Array(t.String()),
     }),
   })
   .delete("/del/:id", roleDelete);

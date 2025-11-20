@@ -2181,7 +2181,6 @@ model Role {
   id          String    @id @default(cuid())
   name        String    @unique // ADMIN_DESA, ADMIN_KESEHATAN, ADMIN_SEKOLAH
   description String?
-  permissions Json // Menyimpan permission dalam format JSON
   isActive    Boolean   @default(true)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
@@ -2198,17 +2197,6 @@ model KodeOtp {
   updatedAt DateTime @updatedAt
   nomor     String
   otp       Int
-}
-
-// Tabel untuk menyimpan permission
-model Permission {
-  id          String   @id @default(cuid())
-  name        String   @unique
-  description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  @@map("permissions")
 }
 
 model UserSession {

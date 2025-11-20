@@ -1,13 +1,15 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 
 import colors from '@/con/colors';
-import { Box, Button, Loader, Group, MultiSelect, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
+import { Box, Button, Group, Loader, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 import user from '../../../_state/user/user-state';
+
 
 function EditRole() {
   const stateRole = useProxy(user.roleState);
@@ -17,46 +19,37 @@ function EditRole() {
   // Controlled local state
   const [formData, setFormData] = useState({
     name: '',
-    permissions: [] as string[],
   });
 
   const [originalData, setOriginalData] = useState({
     name: '',
-    permissions: [] as string[],
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Load role data
   const loadRole = useCallback(async (id: string) => {
-    try {
-      const data = await stateRole.update.load(id);
-      if (data) {
-        setFormData({
-          name: data.name || '',
-          permissions: data.permissions || [],
-        });
-        setOriginalData({
-          name: data.name || '',
-          permissions: data.permissions || [],
-        });
-      }
-    } catch (error) {
-      console.error('Error loading role:', error);
-      toast.error(error instanceof Error ? error.message : 'Gagal mengambil data role');
+    const data = await stateRole.update.load(id);
+
+    if (data) {
+      setFormData({
+        name: data.name ?? '',
+      });
+
+      setOriginalData({
+        name: data.name ?? '',
+      });
     }
-  }, [stateRole.update]);
+  }, []);
 
   useEffect(() => {
-    stateRole.findMany.load(); // Load permissions/options
-    const id = params?.id as string;
-    if (id) loadRole(id);
-  }, [params?.id, loadRole, stateRole.findMany]);
+    stateRole.findMany.load();   // load permission
+    if (params?.id) loadRole(params.id as string);
+  }, [params?.id]);
 
   const handleResetForm = () => {
     setFormData({
       name: originalData.name,
-      permissions: originalData.permissions,
     });
     toast.info("Form dikembalikan ke data awal");
   };
@@ -66,10 +59,6 @@ function EditRole() {
       toast.error('Nama role tidak boleh kosong');
       return;
     }
-    if (!formData.permissions.length) {
-      toast.error('Pilih minimal satu permission');
-      return;
-    }
 
     try {
       setIsSubmitting(true);
@@ -77,7 +66,6 @@ function EditRole() {
       stateRole.update.form = {
         ...stateRole.update.form,
         name: formData.name,
-        permissions: formData.permissions,
       };
       await stateRole.update.update();
       toast.success('Role berhasil diperbarui!');
@@ -116,24 +104,7 @@ function EditRole() {
             label={<Text fw="bold" fz="sm">Nama Role</Text>}
             placeholder="Masukkan nama role"
           />
-          <MultiSelect
-            value={formData.permissions}
-            onChange={(val) => setFormData({ ...formData, permissions: val })}
-            label={<Text fw="bold" fz="sm">Permission</Text>}
-            placeholder="Pilih permission"
-            data={
-              stateRole.findMany.data?.map((v) => ({
-                value: v.id,
-                label: v.name,
-              })) || []
-            }
-            clearable
-            searchable
-            required
-            error={!formData.permissions.length ? 'Pilih minimal satu permission' : undefined}
-          />
-
-<Group justify="right">
+          <Group justify="right">
             {/* Tombol Batal */}
             <Button
               variant="outline"

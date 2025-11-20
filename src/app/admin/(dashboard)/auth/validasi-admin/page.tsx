@@ -7,6 +7,7 @@ import { Box, Button, Loader, Paper, PinInput, Stack, Text, Title } from '@manti
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
+import { authStore } from '@/store/authStore';
 
 export default function Validasi() {
   const router = useRouter();
@@ -53,10 +54,17 @@ export default function Validasi() {
       setLoading(true);
       const verifyResult = await apiFetchVerifyOtp({ nomor, otp, kodeId });
   
-      if (verifyResult.success) {
+      if (verifyResult.success && verifyResult.user) {
+        // ✅ SET USER KE STORE
+        authStore.setUser({
+          id: verifyResult.user.id,
+          name: verifyResult.user.name,
+          roleId: Number(verifyResult.user.roleId),
+        });
+  
         cleanupStorage();
         router.push('/admin/landing-page/profil/program-inovasi');
-        return; // ✅ HENTIKAN eksekusi di sini
+        return;
       }
   
       // Hanya coba registrasi jika akun tidak ditemukan

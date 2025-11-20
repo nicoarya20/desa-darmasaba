@@ -1,6 +1,6 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Center, Group, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title, Tooltip } from '@mantine/core';
+import { Box, Button, Center, Group, Pagination, Paper, Select, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title, Tooltip } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconCheck, IconSearch, IconX } from '@tabler/icons-react';
 import { useState } from 'react';
@@ -28,6 +28,7 @@ function User() {
 
 function ListUser({ search }: { search: string }) {
   const stateUser = useProxy(user.userState)
+  const stateRole = useProxy(user.roleState)
   const [modalHapus, setModalHapus] = useState(false)
   const [selectedId, setSelectedId] = useState<string | null>(null)
 
@@ -51,6 +52,7 @@ function ListUser({ search }: { search: string }) {
 
 
   useShallowEffect(() => {
+    stateRole.findMany.load()
     load(page, 10, search)
   }, [page, search])
 
@@ -92,11 +94,31 @@ function ListUser({ search }: { search: string }) {
                         {item.nomor}
                       </Text>
                     </TableTd>
-                    <TableTd style={{ width: '20%', }}>
-                      <Text truncate fz="sm" c="dimmed">
-                        {item.role.name}
-                      </Text>
+                    <TableTd style={{ width: '20%' }}>
+                      <Select
+                        placeholder="Pilih role"
+                        data={stateRole.findMany.data.map((r) => ({
+                          label: r.name,
+                          value: r.id,
+                        }))}
+                        value={item.roleId} // ⬅ role milik user ini
+                        onChange={async (val) => {
+                          if (!val) return;
+
+                          await stateUser.update.submit({
+                            id: item.id,
+                            roleId: val, // ⬅ kirim roleId
+                          });
+
+                          // reload data supaya UI up-to-date
+                          stateUser.findMany.load(page, 10, search);
+                        }}
+                        searchable
+                        clearable={false} // role harus ada
+                        nothingFoundMessage="Role tidak ditemukan"
+                      />
                     </TableTd>
+
                     <TableTd style={{ width: '15%' }}>
                       <Tooltip
                         label={item.isActive ? "Nonaktifkan user" : "Aktifkan user"}
@@ -106,8 +128,12 @@ function ListUser({ search }: { search: string }) {
                           variant="light"
                           color={item.isActive ? "green" : "red"}
                           onClick={async () => {
-                            await stateUser.updateActive.submit(item.id, !item.isActive)
-                            stateUser.findMany.load(page, 10, search)
+                            await stateUser.update.submit({
+                              id: item.id,
+                              isActive: !item.isActive, // toggle
+                            });
+
+                            stateUser.findMany.load(page, 10, search);
                           }}
                         >
                           {item.isActive ? <IconCheck size={20} /> : <IconX size={20} />}

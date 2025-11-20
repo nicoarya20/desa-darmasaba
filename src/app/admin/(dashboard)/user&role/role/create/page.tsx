@@ -5,9 +5,8 @@ import {
   Box,
   Button,
   Group,
-  MultiSelect,
-  Paper,
   Loader,
+  Paper,
   Stack,
   TextInput,
   Title
@@ -15,9 +14,9 @@ import {
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 import user from '../../../_state/user/user-state';
-import { toast } from 'react-toastify';
 
 
 export default function CreateRole() {
@@ -31,8 +30,7 @@ export default function CreateRole() {
 
   const resetForm = () => {
     stateRole.create.form = {
-      name: '',
-      permissions: [],
+      name: ''
     };
   };
 
@@ -79,28 +77,6 @@ export default function CreateRole() {
               onChange={(e) => (stateRole.create.form.name = e.target.value)}
               required
             />
-          </Box>
-          <Box>
-            <MultiSelect
-              label="Permission"
-              placeholder="Pilih permission"
-              data={
-                Array.from(
-                  new Set(
-                    stateRole.findMany.data
-                      ?.map((item) => item.permissions)
-                      .flat()
-                  )
-                )
-                  .filter((p): p is string => typeof p === 'string')
-                  .map((p) => ({ label: p, value: p }))
-              }
-              value={stateRole.create.form.permissions}
-              onChange={(value) => (stateRole.create.form.permissions = value)}
-              required
-            />
-
-
           </Box>
 
           <Group justify="right">

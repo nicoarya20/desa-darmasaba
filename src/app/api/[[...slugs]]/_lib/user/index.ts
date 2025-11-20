@@ -14,6 +14,16 @@ const User = new Elysia({ prefix: "/api/user" })
       id: t.String(),
     }),
   }) // pakai PUT untuk soft delete
-  .put("/updt", userUpdate);
+  .put(
+    "/updt",
+    userUpdate,
+    {
+      body: t.Object({
+        id: t.String(),
+        isActive: t.Optional(t.Boolean()),
+        roleId: t.Optional(t.String()),
+      })
+    }
+  );
 
 export default User;

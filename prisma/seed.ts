@@ -54,14 +54,13 @@ import tujuanProgram2 from "./data/pendidikan/pendidikan-non-formal/tujuan-progr
 import programUnggulan from "./data/pendidikan/program-pendidikan-anak/program-unggulan.json";
 import tujuanProgram from "./data/pendidikan/program-pendidikan-anak/tujuan-program.json";
 import roles from "./data/user/roles.json";
-import users from "./data/user/users.json";
 import fileStorage from "./data/file-storage.json";
 import jenjangPendidikan from "./data/pendidikan/info-sekolah/jenjang-pendidikan.json";
 import seedAssets from "./seed_assets";
 import { safeSeedUnique } from "./safeseedUnique";
 
 (async () => {
-  // =========== USER & ROLE ===========
+  // =========== ROLE ===========
   // In your seed.ts
   // =========== ROLES ===========
   console.log("🔄 Seeding roles...");
@@ -69,34 +68,11 @@ import { safeSeedUnique } from "./safeseedUnique";
     await safeSeedUnique("role", { id: r.id }, {
       name: r.name,
       description: r.description,
-      permissions: r.permissions,
       isActive: r.isActive,
     });
   }
 
   console.log("✅ Roles seeded");
-
-  // =========== USERS ===========
-  console.log("🔄 Seeding users...");
-  for (const u of users) {
-    // First verify the role exists
-    const roleExists = await prisma.role.findUnique({
-      where: { id: u.roleId },
-    });
-
-    if (!roleExists) {
-      console.error(`❌ Role with id ${u.roleId} not found for user ${u.nama}`);
-      continue;
-    }
-
-    await safeSeedUnique("user", { id: u.id }, {
-      username: u.nama,
-      nomor: u.nomor,
-      roleId: u.roleId,
-        isActive: u.isActive,
-      });
-  }
-  console.log("✅ Users seeded");
 
   // =========== FILE STORAGE ===========
   console.log("🔄 Seeding file storage...");

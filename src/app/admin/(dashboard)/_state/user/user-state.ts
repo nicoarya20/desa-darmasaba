@@ -90,27 +90,35 @@ const userState = proxy({
       }
     },
   },
-  updateActive: {
+  update: {
     loading: false,
-    async submit(id: string, isActive: boolean) {
+
+    async submit(payload: { id: string; isActive?: boolean; roleId?: string }) {
       this.loading = true;
       try {
         const res = await fetch(`/api/user/updt`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ id, isActive }),
+          body: JSON.stringify(payload),
         });
 
         const data = await res.json();
+
         if (res.status === 200 && data.success) {
           toast.success(data.message);
-          userState.findMany.load(userState.findMany.page, 10, userState.findMany.search);
+
+          // refresh list
+          userState.findMany.load(
+            userState.findMany.page,
+            10,
+            userState.findMany.search
+          );
         } else {
-          toast.error(data.message || "Gagal update status user");
+          toast.error(data.message || "Gagal update user");
         }
       } catch (e) {
         console.error(e);
-        toast.error("Gagal update status user");
+        toast.error("Gagal update user");
       } finally {
         this.loading = false;
       }
@@ -120,12 +128,10 @@ const userState = proxy({
 
 const templateRole = z.object({
   name: z.string().min(1, "Nama harus diisi"),
-  permissions: z.array(z.string()).min(1, "Permission harus diisi"),
 });
 
 const defaultRole = {
   name: "",
-  permissions: [] as string[],
 };
 
 const roleState = proxy({
@@ -237,7 +243,7 @@ const roleState = proxy({
         toast.warn("ID tidak valid");
         return null;
       }
-
+    
       try {
         const response = await fetch(`/api/role/${id}`, {
           method: "GET",
@@ -245,31 +251,25 @@ const roleState = proxy({
             "Content-Type": "application/json",
           },
         });
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
+    
         const result = await response.json();
-
+    
         if (result?.success) {
           const data = result.data;
-          this.id = data.id;
-          this.form = {
+    
+          // langsung set melalui root state, bukan this
+          roleState.update.id = data.id;
+          roleState.update.form = {
             name: data.name,
-            permissions: data.permissions,
           };
-          return data; // Return the loaded data
-        } else {
-          throw new Error(result?.message || "Gagal memuat data");
+    
+          return data;
         }
       } catch (error) {
         console.error("Error loading role:", error);
-        toast.error(
-          error instanceof Error ? error.message : "Gagal memuat data"
-        );
-        return null;
+        toast.error("Gagal memuat data");
       }
-    },
+    },    
     async update() {
       const cek = templateRole.safeParse(roleState.update.form);
       if (!cek.success) {
@@ -290,7 +290,6 @@ const roleState = proxy({
           },
           body: JSON.stringify({
             name: this.form.name,
-            permissions: this.form.permissions,
           }),
         });
 
