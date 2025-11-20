@@ -1,121 +1,50 @@
-// app/api/auth/register/route.ts
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
+import { randomOTP } from '../_lib/randomOTP'; // pastikan ada
 
 export async function POST(req: Request) {
   try {
-    // Terima langsung properti, bukan { data: { ... } }
     const { username, nomor } = await req.json();
 
-    // Validasi input
     if (!username || !nomor) {
-      return NextResponse.json(
-        { success: false, message: 'Data tidak lengkap' },
-        { status: 400 }
-      );
+      return NextResponse.json({ success: false, message: 'Data tidak lengkap' }, { status: 400 });
     }
 
-    // // Validasi OTP: pastikan berisi digit saja
-    // const cleanOtp = otp.toString().trim();
-    // if (!/^\d{4,6}$/.test(cleanOtp)) {
-    //   return NextResponse.json(
-    //     { success: false, message: 'Kode OTP tidak valid' },
-    //     { status: 400 }
-    //   );
-    // }
-
-    // const receivedOtp = parseInt(cleanOtp, 10);
-    // if (isNaN(receivedOtp)) {
-    //   return NextResponse.json(
-    //     { success: false, message: 'Kode OTP tidak valid' },
-    //     { status: 400 }
-    //   );
-    // }
-
-    // // Cari OTP record
-    // const otpRecord = await prisma.kodeOtp.findUnique({
-    //   where: { id: kodeId },
-    // });
-
-    // if (!otpRecord) {
-    //   return NextResponse.json(
-    //     { success: false, message: 'Kode verifikasi tidak valid' },
-    //     { status: 400 }
-    //   );
-    // }
-
-    // if (!otpRecord.isActive) {
-    //   return NextResponse.json(
-    //     { success: false, message: 'Kode verifikasi sudah kadaluarsa' },
-    //     { status: 400 }
-    //   );
-    // }
-
-    // if (otpRecord.otp !== receivedOtp) {
-    //   return NextResponse.json(
-    //     { success: false, message: 'Kode OTP salah' },
-    //     { status: 400 }
-    //   );
-    // }
-
-    // if (otpRecord.nomor !== nomor) {
-    //   return NextResponse.json(
-    //     { success: false, message: 'Nomor tidak sesuai' },
-    //     { status: 400 }
-    //   );
-    // }
-
-    // Cek duplikat nomor
-    const existingUser = await prisma.user.findUnique({
-      where: { nomor },
-    });
-
-    if (existingUser) {
-      return NextResponse.json(
-        { success: false, message: 'Nomor sudah terdaftar' },
-        { status: 409 }
-      );
+    // Cek duplikat
+    if (await prisma.user.findUnique({ where: { nomor } })) {
+      return NextResponse.json({ success: false, message: 'Nomor sudah terdaftar' }, { status: 409 });
+    }
+    if (await prisma.user.findUnique({ where: { username } })) {
+      return NextResponse.json({ success: false, message: 'Username sudah digunakan' }, { status: 409 });
     }
 
-    // Cek username unik (pastikan ada @unique di schema!)
-    const existingByUsername = await prisma.user.findUnique({
-      where: { username },
-    });
+    // ✅ Generate dan kirim OTP
+    const codeOtp = randomOTP();
+    const otpNumber = Number(codeOtp);
 
-    if (existingByUsername) {
-      return NextResponse.json(
-        { success: false, message: 'Username sudah digunakan' },
-        { status: 409 }
-      );
+    const waMessage = `Website Desa Darmasaba - Kode verifikasi Anda: ${codeOtp}`;
+    const waUrl = `https://wa.wibudev.com/code?nom=${encodeURIComponent(nomor)}&text=${encodeURIComponent(waMessage)}`;
+    const waRes = await fetch(waUrl);
+    const waData = await waRes.json();
+
+    if (waData.status !== "success") {
+      return NextResponse.json({ success: false, message: 'Gagal mengirim OTP via WhatsApp' }, { status: 400 });
     }
 
-    // Buat user
-    const newUser = await prisma.user.create({
-      data: {
-        username: username.trim(),
-        nomor,
-        isActive: false,
-        // roleId default "1"
-      },
+    // ✅ Simpan OTP ke database
+    const otpRecord = await prisma.kodeOtp.create({
+      data: { nomor, otp: otpNumber, isActive: true }
     });
 
-    // // Nonaktifkan OTP
-    // await prisma.kodeOtp.update({
-    //   where: { id: kodeId },
-    //   data: { isActive: false },
-    // });
-
+    // ✅ Kembalikan kodeId (jangan buat user di sini!)
     return NextResponse.json({
       success: true,
-      message: 'Pendaftaran berhasil. Menunggu persetujuan admin.',
-      userId: newUser.id,
+      message: 'Kode verifikasi dikirim',
+      kodeId: otpRecord.id,
     });
   } catch (error) {
-    console.error('Registration error:', error);
-    return NextResponse.json(
-      { success: false, message: 'Terjadi kesalahan saat pendaftaran' },
-      { status: 500 }
-    );
+    console.error('Register OTP Error:', error);
+    return NextResponse.json({ success: false, message: 'Gagal mengirim OTP' }, { status: 500 });
   } finally {
     await prisma.$disconnect();
   }

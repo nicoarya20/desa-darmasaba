@@ -336,7 +336,8 @@ export const navBar = [
         path: "/admin/lingkungan/konservasi-adat-bali/filosofi-tri-hita-karana"
       }
     ]
-  }, {
+  }, 
+  {
     id: "Pendidikan",
     name: "Pendidikan",
     path: "",
@@ -377,5 +378,49 @@ export const navBar = [
         path: "/admin/pendidikan/data-pendidikan"
       }
     ]
+  },
+  {
+    id: "User & Role",
+    name: "User & Role",
+    path: "",
+    children: [
+      {
+        id: "User",
+        name: "User",
+        path: "/admin/user/user"
+      },
+      {
+        id: "Role",
+        name: "Role",
+        path: "/admin/role/role"
+      },
+      {
+        id: "Pendidikan_3",
+        name: "Program Pendidikan Anak",
+        path: "/admin/pendidikan/program-pendidikan-anak/program-unggulan"
+      },
+      {
+        id: "Pendidikan_4",
+        name: "Bimbingan Belajar Desa",
+        path: "/admin/pendidikan/bimbingan-belajar-desa/tujuan-program"
+      },
+      {
+        id: "Pendidikan_5",
+        name: "Pendidikan Non Formal",
+        path: "/admin/pendidikan/pendidikan-non-formal/tujuan-program"
+      },
+      {
+        id: "Pendidikan_6",
+        name: "Perpustakaan Digital",
+        path: "/admin/pendidikan/perpustakaan-digital/data-perpustakaan"
+      },
+      {
+        id: "Pendidikan_7",
+        name: "Data Pendidikan",
+        path: "/admin/pendidikan/data-pendidikan"
+      }
+    ]
   }
 ]
+
+

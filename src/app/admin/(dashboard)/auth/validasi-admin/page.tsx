@@ -76,7 +76,7 @@ export default function Validasi() {
         const regData = await regRes.json();
         if (regData.success) {
           cleanupStorage();
-          router.push('/admin/landing-page/profil/program-inovasi');
+          router.push('/waiting-room'); // ✅
         } else {
           toast.error(regData.message || 'Registrasi gagal');
         }

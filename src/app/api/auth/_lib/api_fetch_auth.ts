@@ -54,7 +54,7 @@ export const apiFetchRegister = async ({
   const cleanPhone = nomor.replace(/\D/g, '');
   if (cleanPhone.length < 10) throw new Error('Nomor tidak valid');
 
-  const response = await fetch("/api/auth/send-otp-register", {
+  const response = await fetch("/api/auth/register", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ username: username.trim(), nomor: cleanPhone }),
@@ -85,38 +85,6 @@ export const apiFetchOtpData = async ({ kodeId }: { kodeId: string }) => {
 
   return data;
 };
-
-// export const apiFetchVerifyOtp = async ({
-//   nomor,
-//   otp,
-//   kodeId
-// }: {
-//   nomor: string;
-//   otp: string;
-//   kodeId: string;
-// }) => {
-//   if (!nomor || !otp || !kodeId) {
-//     throw new Error('Data verifikasi tidak lengkap');
-//   }
-
-//   if (!/^\d{4,6}$/.test(otp)) {
-//     throw new Error('Kode OTP harus 4-6 digit angka');
-//   }
-
-//   const response = await fetch('/api/auth/verify-otp', {
-//     method: 'POST',
-//     headers: { 'Content-Type': 'application/json' },
-//     body: JSON.stringify({ nomor, otp, kodeId }),
-//   });
-
-//   const data = await response.json();
-
-//   if (!response.ok) {
-//     throw new Error(data.message || 'Verifikasi OTP gagal');
-//   }
-
-//   return data;
-// };
 
 export const apiFetchVerifyOtp = async ({
   nomor,
