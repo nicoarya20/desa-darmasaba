@@ -2,13 +2,12 @@
 import colors from '@/con/colors';
 import { Box, Button, Center, Group, Pagination, Paper, Select, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title, Tooltip } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { IconCheck, IconSearch, IconX } from '@tabler/icons-react';
+import { IconCheck, IconSearch, IconTrash, IconX } from '@tabler/icons-react';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../_com/header';
 import { ModalKonfirmasiHapus } from '../../_com/modalKonfirmasiHapus';
 import user from '../../_state/user/user-state';
-
 
 function User() {
   const [search, setSearch] = useState("");
@@ -27,10 +26,10 @@ function User() {
 }
 
 function ListUser({ search }: { search: string }) {
-  const stateUser = useProxy(user.userState)
-  const stateRole = useProxy(user.roleState)
-  const [modalHapus, setModalHapus] = useState(false)
-  const [selectedId, setSelectedId] = useState<string | null>(null)
+  const stateUser = useProxy(user.userState);
+  const stateRole = useProxy(user.roleState);
+  const [modalHapus, setModalHapus] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const {
     data,
@@ -42,21 +41,80 @@ function ListUser({ search }: { search: string }) {
 
   const handleDelete = () => {
     if (selectedId) {
-      stateUser.delete.submit(selectedId)
-      setModalHapus(false)
-      setSelectedId(null)
-
-      stateUser.findMany.load()
+      stateUser.deleteUser.delete(selectedId);
+      setModalHapus(false);
+      setSelectedId(null);
+      stateUser.findMany.load();
     }
-  }
-
+  };
 
   useShallowEffect(() => {
-    stateRole.findMany.load()
-    load(page, 10, search)
-  }, [page, search])
+    stateRole.findMany.load();
+    load(page, 10, search);
+  }, [page, search]);
 
-  const filteredData = data || []
+  // ✅ Helper function untuk nama role
+  const getRoleName = (roleId: string) => {
+    // Cari dari data role yang sudah diload
+    const role = stateRole.findMany.data.find((r) => r.id === roleId);
+    return role?.name || "Unknown Role";
+  };
+
+  // ✅ Handler untuk perubahan role dengan konfirmasi
+  const handleRoleChange = async (
+    userId: string,
+    username: string,
+    oldRoleId: string,
+    newRoleId: string
+  ) => {
+    // Skip jika sama
+    if (oldRoleId === newRoleId) {
+      return true;
+    }
+
+    // ✅ Konfirmasi perubahan role
+    const confirmed = window.confirm(
+      `⚠️ PERINGATAN\n\n` +
+      `Mengubah role untuk "${username}" akan:\n` +
+      `• Logout user otomatis dari semua device\n` +
+      `• Mengubah akses menu sesuai role baru\n\n` +
+      `Role: ${getRoleName(oldRoleId)} → ${getRoleName(newRoleId)}\n\n` +
+      `Lanjutkan?`
+    );
+
+    if (!confirmed) {
+      // Reload data untuk reset dropdown ke nilai lama
+      stateUser.findMany.load(page, 10, search);
+      return false;
+    }
+
+    // ✅ Submit update
+    const success = await stateUser.update.submit({
+      id: userId,
+      roleId: newRoleId,
+    });
+
+    if (success) {
+      // Reload data setelah berhasil update
+      stateUser.findMany.load(page, 10, search);
+    }
+
+    return success;
+  };
+
+  // ✅ Handler untuk toggle isActive
+  const handleToggleActive = async (userId: string, currentStatus: boolean) => {
+    const success = await stateUser.update.submit({
+      id: userId,
+      isActive: !currentStatus,
+    });
+
+    if (success) {
+      stateUser.findMany.load(page, 10, search);
+    }
+  };
+
+  const filteredData = data || [];
 
   if (loading || !data) {
     return (
@@ -80,16 +138,19 @@ function ListUser({ search }: { search: string }) {
                 <TableTh style={{ width: '20%' }}>Nomor</TableTh>
                 <TableTh style={{ width: '20%' }}>Role</TableTh>
                 <TableTh style={{ width: '15%' }}>Aktif / Nonaktif</TableTh>
+                <TableTh style={{ width: '15%' }}>Hapus</TableTh>
               </TableTr>
             </TableThead>
             <TableTbody>
               {filteredData.length > 0 ? (
                 filteredData.map((item) => (
                   <TableTr key={item.id}>
-                    <TableTd style={{ width: '25%', }}>
-                      <Text fw={500} truncate="end" lineClamp={1}>{item.username}</Text>
+                    <TableTd style={{ width: '25%' }}>
+                      <Text fw={500} truncate="end" lineClamp={1}>
+                        {item.username}
+                      </Text>
                     </TableTd>
-                    <TableTd style={{ width: '20%', }}>
+                    <TableTd style={{ width: '20%' }}>
                       <Text truncate fz="sm" c="dimmed">
                         {item.nomor}
                       </Text>
@@ -101,21 +162,22 @@ function ListUser({ search }: { search: string }) {
                           label: r.name,
                           value: r.id,
                         }))}
-                        value={item.roleId} // ⬅ role milik user ini
-                        onChange={async (val) => {
+                        value={item.roleId}
+                        onChange={(val) => {
                           if (!val) return;
 
-                          await stateUser.update.submit({
-                            id: item.id,
-                            roleId: val, // ⬅ kirim roleId
-                          });
-
-                          // reload data supaya UI up-to-date
-                          stateUser.findMany.load(page, 10, search);
+                          // ✅ Panggil handleRoleChange dengan konfirmasi
+                          handleRoleChange(
+                            item.id,
+                            item.username,
+                            item.roleId,
+                            val
+                          );
                         }}
                         searchable
-                        clearable={false} // role harus ada
+                        clearable={false}
                         nothingFoundMessage="Role tidak ditemukan"
+                        disabled={stateUser.update.loading}
                       />
                     </TableTd>
 
@@ -127,26 +189,34 @@ function ListUser({ search }: { search: string }) {
                         <Button
                           variant="light"
                           color={item.isActive ? "green" : "red"}
-                          onClick={async () => {
-                            await stateUser.update.submit({
-                              id: item.id,
-                              isActive: !item.isActive, // toggle
-                            });
-
-                            stateUser.findMany.load(page, 10, search);
-                          }}
+                          onClick={() => handleToggleActive(item.id, item.isActive)}
+                          disabled={stateUser.update.loading}
                         >
                           {item.isActive ? <IconCheck size={20} /> : <IconX size={20} />}
                         </Button>
                       </Tooltip>
                     </TableTd>
+
+                    <TableTd style={{ width: '15%' }}>
+                      <Button
+                        variant="light"
+                        color='red'
+                        disabled={stateUser.deleteUser.loading}
+                        onClick={() => {
+                          setSelectedId(item.id);
+                          setModalHapus(true);
+                        }}
+                      >
+                        <IconTrash size={20} />
+                      </Button>
+                    </TableTd>
                   </TableTr>
                 ))
               ) : (
                 <TableTr>
-                  <TableTd colSpan={4}>
+                  <TableTd colSpan={5}>
                     <Center py={20}>
-                      <Text color="dimmed">Tidak ada data user yang cocok</Text>
+                      <Text c="dimmed">Tidak ada data user yang cocok</Text>
                     </Center>
                   </TableTd>
                 </TableTr>
@@ -155,6 +225,7 @@ function ListUser({ search }: { search: string }) {
           </Table>
         </Box>
       </Paper>
+
       <Center>
         <Pagination
           value={page}
@@ -169,6 +240,7 @@ function ListUser({ search }: { search: string }) {
           radius="md"
         />
       </Center>
+
       {/* Modal Konfirmasi Hapus */}
       <ModalKonfirmasiHapus
         opened={modalHapus}

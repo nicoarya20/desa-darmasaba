@@ -31,6 +31,27 @@ export default async function userUpdate(context: Context) {
       }
     }
 
+    // ✅ CEK: Apakah roleId berubah?
+    let isRoleChanged = false;
+    let oldRoleId: string | null = null;
+    
+    if (roleId) {
+      const currentUser = await prisma.user.findUnique({
+        where: { id },
+        select: { 
+          roleId: true,
+          username: true,
+        }
+      });
+      
+      if (currentUser && currentUser.roleId !== roleId) {
+        isRoleChanged = true;
+        oldRoleId = currentUser.roleId;
+        console.log(`🔄 Role berubah untuk ${currentUser.username}: ${oldRoleId} → ${roleId}`);
+      }
+    }
+
+    // Update user
     const updatedUser = await prisma.user.update({
       where: { id },
       data: {
@@ -53,17 +74,43 @@ export default async function userUpdate(context: Context) {
       }
     });
 
+    // ✅ FORCE LOGOUT: Hapus UserSession jika role berubah
+    if (isRoleChanged) {
+      try {
+        const deletedSessions = await prisma.userSession.deleteMany({
+          where: { userId: id }
+        });
+        
+        console.log(`🔒 Force logout user ${updatedUser.username} (${id})`);
+        console.log(`   Deleted ${deletedSessions.count} session(s)`);
+        console.log(`   Role: ${oldRoleId} → ${roleId}`);
+      } catch (sessionError: any) {
+        // Jika UserSession tidak ditemukan (user belum pernah login), skip error
+        if (sessionError.code !== 'P2025') {
+          console.error("⚠️ Error menghapus session:", sessionError);
+        } else {
+          console.log(`ℹ️ User ${updatedUser.username} belum pernah login`);
+        }
+      }
+    }
+
+    // ✅ Response dengan info tambahan
     return {
       success: true,
-      message: `User berhasil diupdate`,
+      message: isRoleChanged 
+        ? `User berhasil diupdate. ${updatedUser.username} akan logout otomatis.`
+        : "User berhasil diupdate",
       data: updatedUser,
+      roleChanged: isRoleChanged, // Info untuk frontend
+      oldRoleId: oldRoleId,
+      newRoleId: roleId,
     };
 
   } catch (e: any) {
-    console.error("Error update user:", e);
+    console.error("❌ Error update user:", e);
     return {
       success: false,
-      message: "Gagal mengupdate user",
+      message: "Gagal mengupdate user: " + (e.message || "Unknown error"),
     };
   }
 }

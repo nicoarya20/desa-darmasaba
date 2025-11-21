@@ -19,37 +19,42 @@ export default function WaitingRoom() {
   // const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    let isMounted = true;
-    const interval = setInterval(async () => {
-      try {
-        const data = await fetchUser();
-        if (!isMounted) return;
 
-        setUser(data.user);
+useEffect(() => {
+  let isMounted = true;
+  const interval = setInterval(async () => {
+    try {
+      const data = await fetchUser();
+      if (!isMounted) return;
 
-        // Jika sudah aktif, redirect ke dashboard admin
-        if (data.user.isActive) {
-          clearInterval(interval);
-          router.push('/admin'); // atau /dashboard
-        }
-      } catch (err: any) {
-        if (!isMounted) return;
-        setError(err.message || 'Gagal memuat status');
+      const currentUser = data.user;
+      setUser(currentUser);
+
+      // ✅ Sekarang isActive tersedia!
+      if (currentUser?.isActive) {
         clearInterval(interval);
-        // Redirect ke login jika unauthorized
-        if (err.message === 'Unauthorized') {
-          router.push('/login');
+        // Redirect ke halaman admin sesuai role
+        if (currentUser.roleId === 0) {
+          router.push('/admin/landing-page/profil/program-inovasi');
+        } else {
+          router.push('/admin'); // atau halaman default role
         }
       }
-    }, 2000); // Cek setiap 2 detik
-
-    // Cleanup
-    return () => {
-      isMounted = false;
+    } catch (err: any) {
+      if (!isMounted) return;
+      setError(err.message || 'Gagal memuat status');
       clearInterval(interval);
-    };
-  }, [router]);
+      if (err.message === 'Unauthorized') {
+        router.push('/login');
+      }
+    }
+  }, 2000);
+
+  return () => {
+    isMounted = false;
+    clearInterval(interval);
+  };
+}, [router]);
 
   if (error) {
     return (

@@ -1,47 +1,99 @@
 // app/api/auth/finalize-registration/route.ts
 import prisma from "@/lib/prisma";
-import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-// import { sessionCreate } from "../_lib/session_create";
+import { sessionCreate } from "../_lib/session_create";
 
 export async function POST(req: Request) {
   try {
-    const { nomor, username, kodeId } = await req.json();
+    const { nomor, username, kodeId, roleId } = await req.json();
 
-    // Verifikasi OTP (sama seperti verify-otp)
-    const otpRecord = await prisma.kodeOtp.findUnique({ where: { id: kodeId } });
-    if (!otpRecord?.isActive || otpRecord.nomor !== nomor) {
-      return NextResponse.json({ success: false, message: 'OTP tidak valid' }, { status: 400 });
+    // Validasi input
+    if (!nomor || !username || !kodeId) {
+      return NextResponse.json(
+        { success: false, message: "Data tidak lengkap" },
+        { status: 400 }
+      );
     }
 
-    // Buat user
-    const user = await prisma.user.create({
-      data: { username, nomor, isActive: false }
+    // Verifikasi OTP
+    const otpRecord = await prisma.kodeOtp.findUnique({
+      where: { id: kodeId },
+    });
+
+    if (!otpRecord?.isActive || otpRecord.nomor !== nomor) {
+      return NextResponse.json(
+        { success: false, message: "OTP tidak valid" },
+        { status: 400 }
+      );
+    }
+
+    // Cek apakah username sudah dipakai
+    const existingUser = await prisma.user.findUnique({
+      where: { username },
+    });
+
+    if (existingUser) {
+      return NextResponse.json(
+        { success: false, message: "Username sudah digunakan" },
+        { status: 400 }
+      );
+    }
+
+    // Buat user baru
+    const newUser = await prisma.user.create({
+      data: {
+        username,
+        nomor,
+        roleId: roleId || "1", // Default role
+        isActive: false, // Menunggu approval
+      },
     });
 
     // Nonaktifkan OTP
-    await prisma.kodeOtp.update({ where: { id: kodeId }, data: { isActive: false } });
-
-    // Buat session
-    // const token = await sessionCreate({
-    //   sessionKey: process.env.BASE_SESSION_KEY!,
-    //   jwtSecret: process.env.BASE_TOKEN_KEY!,
-    //   user: { id: user.id, nomor: user.nomor, username: user.username, roleId: user.roleId, isActive: true },
-    // });
-
-    (await cookies()).set('desadarmasaba_user_id', user.id, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      path: '/',
-      maxAge: 30 * 24 * 60 * 60, // 30 hari
+    await prisma.kodeOtp.update({
+      where: { id: kodeId },
+      data: { isActive: false },
     });
 
-    const response = NextResponse.json({ success: true, roleId: user.roleId });
-    // response.cookies.set(process.env.BASE_SESSION_KEY!, token, { /* options */ });
-    return response;
+    // ✅ CREATE SESSION (JWT + Database)
+    try {
+      await sessionCreate({
+        sessionKey: process.env.BASE_SESSION_KEY!,
+        jwtSecret: process.env.BASE_TOKEN_KEY!,
+        exp: "30 day",
+        user: {
+          id: newUser.id,
+          nomor: newUser.nomor,
+          username: newUser.username,
+          roleId: newUser.roleId,
+          isActive: false, // User baru belum aktif
+        },
+      });
+    } catch (sessionError) {
+      console.error("❌ Error creating session:", sessionError);
+      return NextResponse.json(
+        { success: false, message: "Gagal membuat session" },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: "Registrasi berhasil. Menunggu persetujuan admin.",
+      user: {
+        id: newUser.id,
+        name: newUser.username,
+        roleId: newUser.roleId,
+        isActive: false,
+      },
+    });
+
   } catch (error) {
-    console.error('Finalize Registration Error:', error);
-    return NextResponse.json({ success: false, message: 'Registrasi gagal' }, { status: 500 });
+    console.error("❌ Finalize Registration Error:", error);
+    return NextResponse.json(
+      { success: false, message: "Registrasi gagal" },
+      { status: 500 }
+    );
   } finally {
     await prisma.$disconnect();
   }

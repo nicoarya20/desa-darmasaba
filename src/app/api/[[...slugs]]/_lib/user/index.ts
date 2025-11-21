@@ -24,6 +24,11 @@ const User = new Elysia({ prefix: "/api/user" })
         roleId: t.Optional(t.String()),
       })
     }
-  );
+  )
+  .put("/delUser/:id", userDelete, {
+    params: t.Object({
+      id: t.String(),
+    }),
+  });
 
 export default User;

@@ -1,3 +1,4 @@
+// /* eslint-disable react-hooks/exhaustive-deps */
 // 'use client'
 
 // import colors from "@/con/colors";
@@ -257,9 +258,6 @@
 // }
 
 
-
-
-
 'use client'
 
 import colors from "@/con/colors";
@@ -271,9 +269,11 @@ import {
   AppShellMain,
   AppShellNavbar,
   Burger,
+  Center,
   Flex,
   Group,
   Image,
+  Loader,
   NavLink,
   ScrollArea,
   Text,
@@ -289,23 +289,164 @@ import {
 import _ from "lodash";
 import Link from "next/link";
 import { useRouter, useSelectedLayoutSegments } from "next/navigation";
-import { useSnapshot } from "valtio";
+import { useEffect, useState } from "react";
 import { navigationByRole } from "./_com/navigationByRole";
+import { useSnapshot } from "valtio";
+import { toast } from "react-toastify";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [opened, { toggle }] = useDisclosure();
+  const [loading, setLoading] = useState(true);
   const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true);
   const router = useRouter();
   const segments = useSelectedLayoutSegments().map((s) => _.lowerCase(s));
 
-  //ambil user dari authStore
-  const {user} = useSnapshot(authStore)
-  console.log("Current User:", user); // 👈 Tambahkan ini
+  const { user } = useSnapshot(authStore);
+  console.log("Current user in store:", user);
 
-  //ambil navigation berdasarkan role
+  // ✅ Fetch user dari backend jika belum ada di store
+  useEffect(() => {
+    if (user) {
+      setLoading(false);
+      return;
+    } // Sudah ada → jangan fetch
+
+    const fetchUser = async () => {
+      try {
+        const res = await fetch('/api/auth/me');
+        const data = await res.json();
+
+        if (data.user) {
+          authStore.setUser({
+            id: data.user.id,
+            name: data.user.name,
+            roleId: Number(data.user.roleId),
+          });
+        } else {
+          authStore.setUser(null);
+          router.replace('/login');
+        }
+      } catch (error) {
+        console.error('Gagal memuat data pengguna:', error);
+        authStore.setUser(null);
+        router.replace('/login');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUser();
+  }, [user, router]); // ✅ Sekarang 'user' terdefinisi
+
+  // ✅ Polling untuk cek perubahan role setiap 30 detik
+  // Di layout.tsx - useEffect polling
+useEffect(() => {
+  if (!user?.id) return;
+
+  const checkRoleUpdate = async () => {
+    try {
+      const res = await fetch('/api/auth/me');
+      const data = await res.json();
+
+      // ✅ Session tidak valid (sudah dihapus karena role berubah)
+      if (!data.success || !data.user) {
+        console.log('⚠️ Session tidak valid, logout...');
+        authStore.setUser(null);
+        
+        // Clear cookie manual (backup)
+        document.cookie = `${process.env.NEXT_PUBLIC_SESSION_KEY}=; Max-Age=0; path=/;`;
+        
+        toast.info('Role Anda telah diubah. Silakan login kembali.', {
+          autoClose: 5000,
+        });
+        
+        router.push('/login');
+        return;
+      }
+
+      // Cek perubahan roleId (seharusnya tidak sampai sini jika session dihapus)
+      const currentRoleId = Number(data.user.roleId);
+      
+      if (currentRoleId !== user.roleId) {
+        console.log('🔄 Role berubah! Dari', user.roleId, 'ke', currentRoleId);
+        
+        // Update store
+        authStore.setUser({
+          id: data.user.id,
+          name: data.user.name || data.user.username,
+          roleId: currentRoleId,
+        });
+
+        // Redirect ke halaman default role baru
+        let redirectPath = '/admin';
+
+        switch (currentRoleId) {
+          case 0:
+          case 1:
+            redirectPath = '/admin/landing-page/profil/program-inovasi';
+            break;
+          case 2:
+            redirectPath = '/admin/kesehatan/posyandu';
+            break;
+          case 3:
+            redirectPath = '/admin/pendidikan/info-sekolah/jenjang-pendidikan';
+            break;
+        }
+
+        toast.info('Role Anda telah diubah. Mengalihkan halaman...', {
+          autoClose: 5000,
+        });
+        
+        router.push(redirectPath);
+        
+        // Reload untuk clear semua state
+        setTimeout(() => {
+          window.location.reload();
+        }, 500);
+      }
+    } catch (error) {
+      console.error('❌ Error checking role update:', error);
+    }
+  };
+
+  // ✅ Polling setiap 10 detik (lebih responsif dari 30 detik)
+  const interval = setInterval(checkRoleUpdate, 10000);
+
+  // Juga cek saat window focus (user kembali ke tab)
+  const handleFocus = () => {
+    checkRoleUpdate();
+  };
+  
+  window.addEventListener('focus', handleFocus);
+
+  return () => {
+    clearInterval(interval);
+    window.removeEventListener('focus', handleFocus);
+  };
+}, [user, router]);
+
+  if (loading) {
+    return (
+      <AppShell>
+        <AppShellMain>
+          <Center h="100vh">
+            <Loader />
+          </Center>
+        </AppShellMain>
+      </AppShell>
+    );
+  }
+
+  // ✅ Ambil menu berdasarkan roleId
   const currentNav = user?.roleId !== undefined
-  ? navigationByRole[user.roleId as keyof typeof navigationByRole] || []
-  : [];
+    ? (navigationByRole[user.roleId as keyof typeof navigationByRole] || [])
+    : [];
+
+  const handleLogout = () => {
+    authStore.setUser(null);
+    document.cookie = `${process.env.BASE_SESSION_KEY}=; Max-Age=0; path=/;`;
+    router.push('/login');
+  };
 
   return (
     <AppShell
@@ -388,13 +529,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 variant="gradient"
                 gradient={{ from: colors["blue-button"], to: "#228be6" }}
               >
-                <Image 
-                  src="/assets/images/darmasaba-icon.png" 
-                  alt="Logo Darmasaba" 
-                  w={20} 
-                  h={20} 
-                  radius="md" 
-                  loading="lazy" 
+                <Image
+                  src="/assets/images/darmasaba-icon.png"
+                  alt="Logo Darmasaba"
+                  w={20}
+                  h={20}
+                  radius="md"
+                  loading="lazy"
                   style={{
                     minWidth: '20px',
                     height: 'auto',
@@ -404,9 +545,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             </Tooltip>
             <Tooltip label="Keluar" position="bottom" withArrow>
               <ActionIcon
-                onClick={() => {
-                  router.push("/darmasaba");
-                }}
+                onClick={handleLogout}
                 color={colors["blue-button"]}
                 radius="xl"
                 size="lg"

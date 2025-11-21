@@ -4,13 +4,6 @@ import { NextResponse } from "next/server";
 import { sessionCreate } from "../_lib/session_create";
 
 export async function POST(req: Request) {
-  if (req.method !== "POST") {
-    return NextResponse.json(
-      { success: false, message: "Method Not Allowed" },
-      { status: 405 }
-    );
-  }
-
   try {
     const { nomor, otp, kodeId } = await req.json();
 
@@ -41,7 +34,7 @@ export async function POST(req: Request) {
       );
     }
 
-    // Pastikan tipe data cocok (OTP di DB = number)
+    // Validasi OTP
     const receivedOtp = Number(otp);
     if (isNaN(receivedOtp) || otpRecord.otp !== receivedOtp) {
       return NextResponse.json(
@@ -76,26 +69,22 @@ export async function POST(req: Request) {
       );
     }
 
-    if (!user.isActive) {
-      return NextResponse.json(
-        { success: false, message: "Akun belum disetujui oleh admin" },
-        { status: 403 }
-      );
-    }
-
-    // Buat session
-    const token = await sessionCreate({
-      sessionKey: process.env.BASE_SESSION_KEY!,
-      jwtSecret: process.env.BASE_TOKEN_KEY!, // ✅
-      user: {
-        id: user.id,
-        nomor: user.nomor,
-        username: user.username,
-        roleId: user.roleId,
-        isActive: user.isActive,
-      },
-    });
-    if (!token) {
+    // ✅ CREATE SESSION (JWT + Database)
+    try {
+      await sessionCreate({
+        sessionKey: process.env.BASE_SESSION_KEY!,
+        jwtSecret: process.env.BASE_TOKEN_KEY!,
+        exp: "30 day",
+        user: {
+          id: user.id,
+          nomor: user.nomor,
+          username: user.username,
+          roleId: user.roleId,
+          isActive: user.isActive,
+        },
+      });
+    } catch (sessionError) {
+      console.error("❌ Error creating session:", sessionError);
       return NextResponse.json(
         { success: false, message: "Gagal membuat session" },
         { status: 500 }
@@ -108,34 +97,25 @@ export async function POST(req: Request) {
       data: { isActive: false },
     });
 
-    const userData = {
-      id: user.id,
-      name: user.username, // atau user.nama jika ada kolom nama
-      roleId: user.roleId,
-    };
-
-    // Set cookie & respons
-    const response = NextResponse.json(
-      {
-        success: true,
-        message: "Berhasil login",
-        user: userData,
-        roleId: user.roleId,
-      },
-      { status: 200 }
-    );
-
-    response.cookies.set(process.env.BASE_SESSION_KEY!, token, {
-      path: "/",
-      sameSite: "lax",
-      secure: process.env.NODE_ENV === "production",
-      httpOnly: true, // 🔒 lebih aman
-      maxAge: 30 * 24 * 60 * 60,
+    // Update lastLogin
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { lastLogin: new Date() },
     });
 
-    return response;
+    return NextResponse.json({
+      success: true,
+      message: user.isActive ? "Berhasil login" : "Menunggu persetujuan",
+      user: {
+        id: user.id,
+        name: user.username,
+        roleId: user.roleId,
+        isActive: user.isActive,
+      },
+    });
+
   } catch (error) {
-    console.error("Verify OTP Error:", error);
+    console.error("❌ Verify OTP Error:", error);
     return NextResponse.json(
       { success: false, message: "Terjadi kesalahan saat verifikasi" },
       { status: 500 }

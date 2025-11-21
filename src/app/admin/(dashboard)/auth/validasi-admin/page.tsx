@@ -1,4 +1,5 @@
-// app/validasi/page.tsx
+// 
+
 'use client';
 
 import { apiFetchOtpData, apiFetchVerifyOtp } from '@/app/api/auth/_lib/api_fetch_auth';
@@ -17,86 +18,148 @@ export default function Validasi() {
   const [isLoading, setIsLoading] = useState(true);
   const [kodeId, setKodeId] = useState<string | null>(null);
 
+  // Inisialisasi data OTP
   useEffect(() => {
     const storedKodeId = localStorage.getItem('auth_kodeId');
     if (!storedKodeId) {
       toast.error('Akses tidak valid');
-      router.push('/login');
+      router.replace('/login');
       return;
     }
 
     setKodeId(storedKodeId);
 
-    const fetchOtpData = async () => {
+    const loadOtpData = async () => {
       try {
         const result = await apiFetchOtpData({ kodeId: storedKodeId });
         if (result.success && result.data?.nomor) {
           setNomor(result.data.nomor);
         } else {
-          throw new Error('OTP tidak valid');
+          throw new Error('Data OTP tidak valid');
         }
       } catch (error) {
-        console.error('Gagal muat OTP:', error);
+        console.error('Gagal memuat data OTP:', error);
         toast.error('Kode verifikasi tidak valid');
-        router.push('/login');
+        router.replace('/login');
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchOtpData();
+    loadOtpData();
   }, [router]);
 
+  // Verifikasi OTP
   const handleVerify = async () => {
     if (!kodeId || !nomor || otp.length < 4) return;
-  
+
+    setLoading(true);
     try {
-      setLoading(true);
       const verifyResult = await apiFetchVerifyOtp({ nomor, otp, kodeId });
-  
-      if (verifyResult.success && verifyResult.user) {
-        // ✅ SET USER KE STORE
-        authStore.setUser({
-          id: verifyResult.user.id,
-          name: verifyResult.user.name,
-          roleId: Number(verifyResult.user.roleId),
-        });
-  
-        cleanupStorage();
-        router.push('/admin/landing-page/profil/program-inovasi');
-        return;
-      }
-  
-      // Hanya coba registrasi jika akun tidak ditemukan
-      if (verifyResult.status === 404 && verifyResult.message?.includes('Akun tidak ditemukan')) {
-        const username = localStorage.getItem('auth_username');
-        if (!username) {
-          toast.error('Data registrasi hilang');
+
+      if (!verifyResult.success) {
+        // Registrasi baru?
+        if (
+          verifyResult.status === 404 &&
+          verifyResult.message?.includes('Akun tidak ditemukan')
+        ) {
+          await handleNewRegistration();
           return;
         }
-  
-        const regRes = await fetch('/api/auth/finalize-registration', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ nomor, username, otp, kodeId }),
-        });
-  
-        const regData = await regRes.json();
-        if (regData.success) {
-          cleanupStorage();
-          router.push('/waiting-room'); // ✅
-        } else {
-          toast.error(regData.message || 'Registrasi gagal');
-        }
-      } else {
-        // Hanya tampilkan error jika bukan kasus "akun tidak ditemukan"
+
+        // Error lain
         toast.error(verifyResult.message || 'Verifikasi gagal');
+        return;
       }
+
+      // ✅ Verifikasi sukses → simpan user ke store
+      const user = verifyResult.user;
+      console.log('=== DEBUG USER ===');
+      console.log('Full user object:', user);
+
+      if (!user || !user.id) {
+        toast.error('Data pengguna tidak lengkap');
+        return;
+      }
+
+      const roleId = Number(user.roleId);
+      authStore.setUser({
+        id: user.id,
+        name: user.name || user.username || 'User',
+        roleId: roleId,
+      });
+
+      cleanupStorage();
+
+      const isUserActive = user.isActive ?? user.is_active ?? true;
+
+      // Redirect berdasarkan status approval
+      if (!isUserActive) {
+        router.replace('/waiting-room');
+        return;
+      }
+      
+      // ✅ Switch statement lebih clean
+      let redirectPath: string;
+      
+      switch (roleId) {
+        case 0:
+        case 1:
+          redirectPath = '/admin/landing-page/profil/program-inovasi';
+          break;
+        case 2:
+          redirectPath = '/admin/kesehatan/posyandu';
+          break;
+        case 3:
+          redirectPath = '/admin/pendidikan/info-sekolah/jenjang-pendidikan';
+          break;
+        default:
+          redirectPath = '/admin';
+          console.warn('Unknown roleId:', roleId);
+      }
+      
+      console.log('Redirecting to:', redirectPath);
+      router.replace(redirectPath);
+
     } catch (error) {
-      console.error('Verifikasi error:', error);
-      toast.error('Terjadi kesalahan');
+      console.error('Error saat verifikasi:', error);
+      toast.error('Terjadi kesalahan sistem');
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Registrasi baru
+  const handleNewRegistration = async () => {
+    const username = localStorage.getItem('auth_username');
+    if (!username) {
+      toast.error('Data registrasi tidak ditemukan');
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/auth/finalize-registration', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nomor, username, otp, kodeId }),
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        // Set user sementara (tanpa roleId, akan diisi saat approve)
+        authStore.setUser({
+          id: 'pending',
+          name: username,
+        });
+        cleanupStorage();
+        router.replace('/waiting-room');
+      } else {
+        toast.error(data.message || 'Registrasi gagal');
+      }
+    } catch (error) {
+      console.error('Error registrasi:', error);
+      toast.error('Gagal menyelesaikan registrasi');
     }
   };
 
@@ -118,12 +181,15 @@ export default function Validasi() {
       if (data.success) {
         localStorage.setItem('auth_kodeId', data.kodeId);
         toast.success('OTP baru dikirim');
+      } else {
+        toast.error(data.message || 'Gagal mengirim ulang OTP');
       }
     } catch {
-      toast.error('Gagal kirim ulang');
+      toast.error('Gagal menghubungi server');
     }
   };
 
+  // Loading
   if (isLoading) {
     return (
       <Stack pos="relative" bg={colors.Bg} align="center" justify="center" h="100vh">
@@ -148,7 +214,7 @@ export default function Validasi() {
                   Kami telah mengirim kode ke nomor <strong>{nomor}</strong>
                 </Text>
               </Box>
-              <Box>
+              <Box w="100%">
                 <Box mb={20}>
                   <Text c={colors['blue-button']} ta="center" fz="sm" fw="bold">
                     Masukkan Kode Verifikasi
@@ -176,7 +242,14 @@ export default function Validasi() {
 
                 <Text ta="center" size="sm" mt="md">
                   Tidak menerima kode?{' '}
-                  <Button variant="subtle" onClick={handleResend} size="xs" p={0} h="auto" color={colors['blue-button']}>
+                  <Button
+                    variant="subtle"
+                    onClick={handleResend}
+                    size="xs"
+                    p={0}
+                    h="auto"
+                    color={colors['blue-button']}
+                  >
                     Kirim Ulang
                   </Button>
                 </Text>

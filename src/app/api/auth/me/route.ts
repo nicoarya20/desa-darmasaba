@@ -1,30 +1,45 @@
-import prisma from "@/lib/prisma";
-import { NextRequest } from "next/server";
-// Jika pakai custom session (bukan next-auth), ganti dengan logic session-mu
+// app/api/auth/me/route.ts
+import { NextResponse } from 'next/server';
+import { verifySession } from '../_lib/session_verify';
 
-export async function GET(req: NextRequest) {
-  // 🔸 GANTI DENGAN LOGIC SESSION-MU
-  // Contoh: jika kamu simpan user.id di cookie atau JWT
-  const userId = req.cookies.get("desadarmasaba_user_id")?.value; // sesuaikan
+export async function GET() {
+  try {
+    // ✅ Verify session (hybrid: JWT + Database)
+    const user = await verifySession();
 
-  if (!userId) {
-    return Response.json({ error: "Unauthorized" }, { status: 401 });
+    if (!user) {
+      return NextResponse.json(
+        { 
+          success: false,
+          message: "Session tidak valid",
+          user: null 
+        },
+        { status: 401 }
+      );
+    }
+
+    // Data user sudah fresh dari database (via verifySession)
+    return NextResponse.json({
+      success: true,
+      user: {
+        id: user.id,
+        name: user.username,
+        username: user.username,
+        nomor: user.nomor,
+        roleId: user.roleId,
+        isActive: user.isActive,
+      },
+    });
+
+  } catch (error) {
+    console.error("❌ Error in /api/auth/me:", error);
+    return NextResponse.json(
+      { 
+        success: false,
+        message: "Terjadi kesalahan",
+        user: null 
+      },
+      { status: 500 }
+    );
   }
-
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    select: {
-      id: true,
-      username: true,
-      nomor: true,
-      isActive: true,
-      role: { select: { name: true } },
-    },
-  });
-
-  if (!user) {
-    return Response.json({ error: "User not found" }, { status: 404 });
-  }
-
-  return Response.json({ user });
 }
