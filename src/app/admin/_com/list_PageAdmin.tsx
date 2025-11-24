@@ -392,6 +392,11 @@ export const navBar = [
         id: "Role",
         name: "Role",
         path: "/admin/user&role/role"
+      },
+      {
+        id: "Menu Access",
+        name: "Menu Access",
+        path: "/admin/user&role/menu-access"
       }
     ]
   }

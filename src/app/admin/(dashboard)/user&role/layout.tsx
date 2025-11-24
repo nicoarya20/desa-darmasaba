@@ -2,7 +2,7 @@
 'use client'
 import colors from '@/con/colors';
 import { Stack, Tabs, TabsList, TabsPanel, TabsTab, Title } from '@mantine/core';
-import { IconForms, IconUser } from '@tabler/icons-react';
+import { IconBrush, IconForms, IconUser } from '@tabler/icons-react';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
@@ -23,6 +23,12 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
       href: "/admin/user&role/role",
       icon: <IconForms size={18} stroke={1.8} />,
     },
+    {
+      label: "Menu Access",
+      value: "menu-access",
+      href: "/admin/user&role/menu-access",
+      icon: <IconBrush size={18} stroke={1.8} />,
+    }
   ];
 
   const currentTab = tabs.find(tab => tab.href === pathname);

@@ -4,7 +4,7 @@
 
 import { apiFetchOtpData, apiFetchVerifyOtp } from '@/app/api/auth/_lib/api_fetch_auth';
 import colors from '@/con/colors';
-import { Box, Button, Loader, Paper, PinInput, Stack, Text, Title } from '@mantine/core';
+import { Box, Button, Center, Loader, Paper, PinInput, Stack, Text, Title } from '@mantine/core';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
@@ -98,10 +98,10 @@ export default function Validasi() {
         router.replace('/waiting-room');
         return;
       }
-      
+
       // ✅ Switch statement lebih clean
       let redirectPath: string;
-      
+
       switch (roleId) {
         case 0:
         case 1:
@@ -117,7 +117,7 @@ export default function Validasi() {
           redirectPath = '/admin';
           console.warn('Unknown roleId:', roleId);
       }
-      
+
       console.log('Redirecting to:', redirectPath);
       router.replace(redirectPath);
 
@@ -151,6 +151,7 @@ export default function Validasi() {
         authStore.setUser({
           id: 'pending',
           name: username,
+          roleId: 1,
         });
         cleanupStorage();
         router.replace('/waiting-room');
@@ -219,14 +220,16 @@ export default function Validasi() {
                   <Text c={colors['blue-button']} ta="center" fz="sm" fw="bold">
                     Masukkan Kode Verifikasi
                   </Text>
-                  <PinInput
-                    length={4}
-                    value={otp}
-                    onChange={setOtp}
-                    onComplete={handleVerify}
-                    inputMode="numeric"
-                    size="lg"
-                  />
+                  <Center>
+                    <PinInput
+                      length={4}
+                      value={otp}
+                      onChange={setOtp}
+                      onComplete={handleVerify}
+                      inputMode="numeric"
+                      size="lg"
+                    />
+                  </Center>
                 </Box>
 
                 <Button

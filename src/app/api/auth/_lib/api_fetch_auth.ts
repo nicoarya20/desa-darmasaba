@@ -118,3 +118,43 @@ export const apiFetchVerifyOtp = async ({
     status: response.status,
   };
 };
+
+// Di dalam api_fetch_auth.ts
+
+export async function apiFetchUserMenuAccess(userId: string): Promise<{
+  success: boolean;
+  menuIds?: string[];
+  message?: string;
+}> {
+  try {
+    const res = await fetch(`/api/admin/user-menu-access/${userId}`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    console.error('API Fetch User Menu Access Error:', error);
+    return { success: false, message: 'Gagal memuat menu akses' };
+  }
+}
+
+export async function apiUpdateUserMenuAccess(
+  userId: string,
+  menuIds: string[]
+): Promise<{ success: boolean; message?: string }> {
+  try {
+    const res = await fetch('/api/admin/user-menu-access', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId, menuIds }),
+    });
+
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    console.error('API Update User Menu Access Error:', error);
+    return { success: false, message: 'Gagal menyimpan menu akses' };
+  }
+}

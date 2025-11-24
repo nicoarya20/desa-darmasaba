@@ -95,7 +95,24 @@ function ListUser({ search }: { search: string }) {
     });
 
     if (success) {
-      // Reload data setelah berhasil update
+      // Cek apakah role berubah
+      const res = await fetch('/api/user/updt', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id: userId,
+          roleId: newRoleId,
+        }),
+      });
+      const data = await res.json();
+
+      if (data.roleChanged) {
+        // Tampilkan notifikasi
+        alert(`User ${username} akan logout otomatis!`);
+      }
+
       stateUser.findMany.load(page, 10, search);
     }
 
@@ -114,7 +131,9 @@ function ListUser({ search }: { search: string }) {
     }
   };
 
-  const filteredData = data || [];
+  const filteredData = (data || []).filter(
+    (item) => item.roleId !== "0" // asumsikan id role SUPERADMIN = "0"
+  );
 
   if (loading || !data) {
     return (
@@ -158,10 +177,12 @@ function ListUser({ search }: { search: string }) {
                     <TableTd style={{ width: '20%' }}>
                       <Select
                         placeholder="Pilih role"
-                        data={stateRole.findMany.data.map((r) => ({
-                          label: r.name,
-                          value: r.id,
-                        }))}
+                        data={stateRole.findMany.data
+                          .filter(r => r.id !== "0") // ❌ Sembunyikan SUPERADMIN
+                          .map(r => ({
+                            label: r.name,
+                            value: r.id,
+                          }))}
                         value={item.roleId}
                         onChange={(val) => {
                           if (!val) return;
