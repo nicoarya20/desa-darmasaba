@@ -138,7 +138,7 @@ export default function Validasi() {
     });
 
     cleanupStorage();
-    router.replace('/waiting-room');
+    window.location.href = '/waiting-room';
   };
 
   // ✅ Verifikasi OTP untuk LOGIN
@@ -167,7 +167,7 @@ export default function Validasi() {
     cleanupStorage();
 
     if (!isActive) {
-      router.replace('/waiting-room');
+      window.location.href = '/waiting-room';
       return;
     }
 

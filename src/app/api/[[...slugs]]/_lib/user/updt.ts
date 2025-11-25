@@ -40,7 +40,7 @@ export default async function userUpdate(context: Context) {
         ...(isActive !== undefined && { isActive }),
         ...(roleId && { roleId }),
         // Force logout: invalidate semua sesi
-        ...(isRoleChanged || isActiveChanged ? { sessionInvalid: true } : {}),
+        ...(isRoleChanged ? { sessionInvalid: true } : {}),
       },
       select: {
         id: true,
@@ -53,7 +53,7 @@ export default async function userUpdate(context: Context) {
     });
 
     // ✅ HAPUS SEMUA SESI USER DI DATABASE
-    if (isRoleChanged || isActiveChanged) {
+    if (isRoleChanged) {
       await prisma.userSession.deleteMany({ where: { userId: id } });
     }
 

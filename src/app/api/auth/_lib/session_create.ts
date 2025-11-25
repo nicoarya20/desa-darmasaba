@@ -1,6 +1,8 @@
 // app/api/auth/_lib/session_create.ts
 import { cookies } from "next/headers";
 import { encrypt } from "./encrypt";
+import prisma from "@/lib/prisma";
+import { add } from "date-fns";
 
 export async function sessionCreate({
   sessionKey,
@@ -11,7 +13,7 @@ export async function sessionCreate({
   sessionKey: string;
   exp?: string;
   jwtSecret: string;
-  user: Record<string, unknown>;
+  user: Record<string, unknown> & { id: string };
 }) {
   // ✅ Validasi env vars
   if (!sessionKey || sessionKey.length === 0) {
@@ -26,17 +28,35 @@ export async function sessionCreate({
     throw new Error("Token generation failed");
   }
 
-  // Set cookie
+  // ✅ Hitung expiresAt sesuai exp
+  let expiresAt = add(new Date(), { days: 30 });
+  if (exp === "7 day") expiresAt = add(new Date(), { days: 7 });
+  // tambahkan opsi lain jika perlu
+
+  // Sebelum create session baru, nonaktifkan session aktif sebelumnya
+  await prisma.userSession.updateMany({
+    where: { userId: user.id, active: true },
+    data: { active: false },
+  });
+
+  // ✅ Simpan ke database
+  await prisma.userSession.create({
+    data: {
+      token,
+      userId: user.id,
+      active: true,
+      expiresAt,
+    },
+  });
+
+  // ✅ Set cookie
   (await cookies()).set(sessionKey, token, {
     httpOnly: true,
     sameSite: "lax",
     path: "/",
     secure: process.env.NODE_ENV === "production",
-    maxAge: 30 * 24 * 60 * 60,
+    maxAge: 30 * 24 * 60 * 60, // seconds
   });
-
-  console.log("✅ BASE_SESSION_KEY loaded:", !!process.env.BASE_SESSION_KEY);
-  console.log("✅ BASE_TOKEN_KEY loaded:", !!process.env.BASE_TOKEN_KEY);
 
   return token;
 }
