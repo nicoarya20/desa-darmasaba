@@ -1,5 +1,5 @@
 // src/app/admin/(dashboard)/user&role/_com/dynamicNavbar.ts
-import { navBar, role1, role2, role3 } from '@/app/admin/_com/list_PageAdmin';
+import { devBar, navBar, role1, role2, role3 } from '@/app/admin/_com/list_PageAdmin';
 
 export function getNavbar({
   roleId,
@@ -14,9 +14,10 @@ export function getNavbar({
   }
 
   // Fallback ke role-based
-  if (roleId === 0) return navBar;
-  if (roleId === 1) return role1;
-  if (roleId === 2) return role2;
-  if (roleId === 3) return role3;
+  if (roleId === 0) return devBar;
+  if (roleId === 1) return navBar;
+  if (roleId === 2) return role1;
+  if (roleId === 3) return role2;
+  if (roleId === 4) return role3;
   return [];
 }

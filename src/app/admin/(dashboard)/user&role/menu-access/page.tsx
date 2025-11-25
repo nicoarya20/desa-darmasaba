@@ -8,6 +8,7 @@ import { Button, Checkbox, Group, Paper, Select, Stack, Text, Title } from '@man
 import { useEffect, useState } from 'react'
 import { useProxy } from 'valtio/utils'
 import user from '../../_state/user/user-state'
+import { useShallowEffect } from '@mantine/hooks'
 
 
 // ✅ Helper: ekstrak semua menu ID dari struktur navBar
@@ -22,6 +23,10 @@ function MenuAccessPage() {
   const stateUser = useProxy(user.userState)
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null)
   const [userMenus, setUserMenus] = useState<string[]>([])
+
+  useShallowEffect(() => {
+    stateUser.findMany.load()
+  }, [])
 
   // ✅ Gunakan helper untuk ekstrak menu
   const availableMenus = extractMenuIds(navBar);

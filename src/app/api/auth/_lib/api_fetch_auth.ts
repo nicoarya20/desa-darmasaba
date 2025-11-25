@@ -86,32 +86,14 @@ export const apiFetchOtpData = async ({ kodeId }: { kodeId: string }) => {
   return data;
 };
 
-export const apiFetchVerifyOtp = async ({
-  nomor,
-  otp,
-  kodeId
-}: {
-  nomor: string;
-  otp: string;
-  kodeId: string;
-}) => {
-  if (!nomor || !otp || !kodeId) {
-    throw new Error('Data verifikasi tidak lengkap');
-  }
-
-  if (!/^\d{4,6}$/.test(otp)) {
-    throw new Error('Kode OTP harus 4-6 digit angka');
-  }
-
-  const response = await fetch('/api/auth/verify-otp', {
+// Ganti endpoint ke verify-otp-login
+export const apiFetchVerifyOtp = async ({ nomor, otp, kodeId }: { nomor: string; otp: string; kodeId: string }) => {
+  const response = await fetch('/api/auth/verify-otp-login', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ nomor, otp, kodeId }),
   });
-
   const data = await response.json();
-
-  // ✅ Jangan throw error untuk status 4xx — biarkan frontend handle
   return {
     success: response.ok,
     ...data,

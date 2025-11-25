@@ -1,68 +1,55 @@
+// src/app/api/auth/resend-otp/route.ts
 import prisma from "@/lib/prisma";
-import { randomOTP } from "../_lib/randomOTP";
+
 import { NextResponse } from "next/server";
+import { randomOTP } from "../_lib/randomOTP";
 
 export async function POST(req: Request) {
-  if (req.method !== "POST") {
-    return NextResponse.json(
-      { success: false, message: "Method Not Allowed" },
-      { status: 405 }
-    );
-  }
-
   try {
-    const codeOtp = randomOTP();
-    const body = await req.json();
-    const { nomor } = body;
+    const { nomor } = await req.json();
 
-    const res = await fetch(
-      `https://wa.wibudev.com/code?nom=${nomor}&text=HIPMI - Kode ini bersifat RAHASIA dan JANGAN DI BAGIKAN KEPADA SIAPAPUN, termasuk anggota ataupun pengurus HIPMI lainnya.
-      \n
-      >> Kode OTP anda: ${codeOtp}.
-      `
-    );
-
-    const sendWa = await res.json();
-    if (sendWa.status !== "success")
+    if (!nomor || typeof nomor !== 'string') {
       return NextResponse.json(
-        {
-          success: false,
-          message: "Nomor Whatsapp Tidak Aktif",
-        },
+        { success: false, message: "Nomor tidak valid" },
         { status: 400 }
       );
+    }
 
-    const createOtpId = await prisma.kodeOtp.create({
+    const codeOtp = randomOTP();
+    const otpNumber = Number(codeOtp);
+
+    // Kirim OTP via WhatsApp
+    const waMessage = `Kode verifikasi Anda: ${codeOtp}`;
+    const waUrl = `https://wa.wibudev.com/code?nom=${encodeURIComponent(nomor)}&text=${encodeURIComponent(waMessage)}`;
+    const waRes = await fetch(waUrl);
+    const waData = await waRes.json();
+
+    if (waData.status !== "success") {
+      return NextResponse.json(
+        { success: false, message: "Gagal mengirim OTP via WhatsApp" },
+        { status: 400 }
+      );
+    }
+
+    // Simpan OTP ke database
+    const otpRecord = await prisma.kodeOtp.create({
       data: {
-        nomor: nomor,
-        otp: codeOtp,
+        nomor,
+        otp: otpNumber,
+        isActive: true,
       },
     });
 
-    if (!createOtpId)
-      return NextResponse.json(
-        {
-          success: false,
-          message: "Gagal Membuat Kode OTP",
-        },
-        { status: 400 }
-      );
+    return NextResponse.json({
+      success: true,
+      message: "OTP baru dikirim",
+      kodeId: otpRecord.id,
+    });
 
-    return NextResponse.json(
-      {
-        success: true,
-        message: "Kode Verifikasi Dikirim",
-        kodeId: createOtpId.id,
-      },
-      { status: 200 }
-    );
   } catch (error) {
-    console.error(" Error Resend OTP", error);
+    console.error("Error Resend OTP:", error);
     return NextResponse.json(
-      {
-        success: false,
-        message: "Server Whatsapp Error !!",
-      },
+      { success: false, message: "Gagal mengirim ulang OTP" },
       { status: 500 }
     );
   } finally {

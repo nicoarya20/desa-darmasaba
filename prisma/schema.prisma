@@ -2163,20 +2163,21 @@ enum StatusPeminjaman {
 // ========================================= USER ========================================= //
 
 model User {
-  id             String           @id @default(cuid())
-  username       String           @unique
-  nomor          String           @unique
-  role           Role             @relation(fields: [roleId], references: [id])
-  roleId         String           @default("1")
-  instansi       String?
-  UserSession    UserSession? // Nama instansi (Puskesmas, Sekolah, dll)
-  isActive       Boolean          @default(true)
+  id             String    @id @default(cuid())
+  username       String
+  nomor          String    @unique
+  roleId         String     @default("2")
+  isActive       Boolean   @default(false)
+  sessionInvalid Boolean   @default(false)
   lastLogin      DateTime?
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
-  deletedAt      DateTime?
-  sessionInvalid Boolean          @default(false)
-  UserMenuAccess UserMenuAccess[]
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @default(now()) @updatedAt
+  
+  sessions       UserSession[]  // ✅ Relasi one-to-many
+  role           Role           @relation(fields: [roleId], references: [id])
+  menuAccesses   UserMenuAccess[]
+  
+  @@map("users")
 }
 
 model Role {
@@ -2203,13 +2204,18 @@ model KodeOtp {
 
 model UserSession {
   id        String    @id @default(cuid())
-  token     String
-  expires   DateTime?
+  token     String    @db.Text  // ✅ JWT bisa panjang
+  expiresAt DateTime              // ✅ Ubah jadi expiresAt (konsisten)
   active    Boolean   @default(true)
   createdAt DateTime  @default(now())
   updatedAt DateTime  @default(now()) @updatedAt
-  User      User      @relation(fields: [userId], references: [id])
-  userId    String    @unique
+  
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String    // ✅ HAPUS @unique - user bisa punya multiple sessions
+  
+  @@index([userId])           // ✅ Index untuk query cepat
+  @@index([token])            // ✅ Index untuk verify cepat
+  @@map("user_sessions")
 }
 
 model UserMenuAccess {

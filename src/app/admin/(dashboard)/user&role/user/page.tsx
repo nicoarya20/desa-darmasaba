@@ -8,6 +8,7 @@ import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../_com/header';
 import { ModalKonfirmasiHapus } from '../../_com/modalKonfirmasiHapus';
 import user from '../../_state/user/user-state';
+import { authStore } from '@/store/authStore';
 
 function User() {
   const [search, setSearch] = useState("");
@@ -95,24 +96,17 @@ function ListUser({ search }: { search: string }) {
     });
 
     if (success) {
-      // Cek apakah role berubah
-      const res = await fetch('/api/user/updt', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          id: userId,
-          roleId: newRoleId,
-        }),
-      });
-      const data = await res.json();
-
-      if (data.roleChanged) {
-        // Tampilkan notifikasi
-        alert(`User ${username} akan logout otomatis!`);
+      // ✅ Logout user jika sedang mengedit diri sendiri
+      const currentUserId = authStore.user?.id;
+      if (currentUserId === userId) {
+        authStore.setUser(null);
+        document.cookie = `${process.env.BASE_SESSION_KEY}=; Max-Age=0; path=/;`;
+        alert("Perubahan memerlukan login ulang");
+        window.location.href = "/login";
+        return;
       }
 
+      // Reload data
       stateUser.findMany.load(page, 10, search);
     }
 
@@ -127,6 +121,17 @@ function ListUser({ search }: { search: string }) {
     });
 
     if (success) {
+      // ✅ Logout user jika sedang mengedit diri sendiri
+      const currentUserId = authStore.user?.id;
+      if (currentUserId === userId) {
+        authStore.setUser(null);
+        document.cookie = `${process.env.BASE_SESSION_KEY}=; Max-Age=0; path=/;`;
+        alert("Perubahan memerlukan login ulang");
+        window.location.href = "/login";
+        return;
+      }
+
+      // Reload data
       stateUser.findMany.load(page, 10, search);
     }
   };

@@ -1,10 +1,17 @@
-// 
-
 'use client';
 
-import { apiFetchOtpData, apiFetchVerifyOtp } from '@/app/api/auth/_lib/api_fetch_auth';
 import colors from '@/con/colors';
-import { Box, Button, Center, Loader, Paper, PinInput, Stack, Text, Title } from '@mantine/core';
+import {
+  Box,
+  Button,
+  Center,
+  Loader,
+  Paper,
+  PinInput,
+  Stack,
+  Text,
+  Title,
+} from '@mantine/core';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
@@ -17,8 +24,14 @@ export default function Validasi() {
   const [loading, setLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [kodeId, setKodeId] = useState<string | null>(null);
+  const [isRegistrationFlow, setIsRegistrationFlow] = useState(false); // Tambahkan flag
 
-  // Inisialisasi data OTP
+  // Cek apakah ini alur registrasi
+  useEffect(() => {
+    const storedUsername = localStorage.getItem('auth_username');
+    setIsRegistrationFlow(!!storedUsername);
+  }, []);
+
   useEffect(() => {
     const storedKodeId = localStorage.getItem('auth_kodeId');
     if (!storedKodeId) {
@@ -28,11 +41,12 @@ export default function Validasi() {
     }
 
     setKodeId(storedKodeId);
-
     const loadOtpData = async () => {
       try {
-        const result = await apiFetchOtpData({ kodeId: storedKodeId });
-        if (result.success && result.data?.nomor) {
+        const res = await fetch(`/api/auth/otp-data?kodeId=${encodeURIComponent(storedKodeId)}`);
+        const result = await res.json();
+
+        if (res.ok && result.data?.nomor) {
           setNomor(result.data.nomor);
         } else {
           throw new Error('Data OTP tidak valid');
@@ -45,82 +59,21 @@ export default function Validasi() {
         setIsLoading(false);
       }
     };
-
     loadOtpData();
   }, [router]);
 
-  // Verifikasi OTP
   const handleVerify = async () => {
     if (!kodeId || !nomor || otp.length < 4) return;
 
     setLoading(true);
     try {
-      const verifyResult = await apiFetchVerifyOtp({ nomor, otp, kodeId });
-
-      if (!verifyResult.success) {
-        // Registrasi baru?
-        if (
-          verifyResult.status === 404 &&
-          verifyResult.message?.includes('Akun tidak ditemukan')
-        ) {
-          await handleNewRegistration();
-          return;
-        }
-
-        // Error lain
-        toast.error(verifyResult.message || 'Verifikasi gagal');
-        return;
+      if (isRegistrationFlow) {
+        // 🔑 Alur REGISTRASI
+        await handleRegistrationVerification();
+      } else {
+        // 🔑 Alur LOGIN
+        await handleLoginVerification();
       }
-
-      // ✅ Verifikasi sukses → simpan user ke store
-      const user = verifyResult.user;
-      console.log('=== DEBUG USER ===');
-      console.log('Full user object:', user);
-
-      if (!user || !user.id) {
-        toast.error('Data pengguna tidak lengkap');
-        return;
-      }
-
-      const roleId = Number(user.roleId);
-      authStore.setUser({
-        id: user.id,
-        name: user.name || user.username || 'User',
-        roleId: roleId,
-      });
-
-      cleanupStorage();
-
-      const isUserActive = user.isActive ?? user.is_active ?? true;
-
-      // Redirect berdasarkan status approval
-      if (!isUserActive) {
-        router.replace('/waiting-room');
-        return;
-      }
-
-      // ✅ Switch statement lebih clean
-      let redirectPath: string;
-
-      switch (roleId) {
-        case 0:
-        case 1:
-          redirectPath = '/admin/landing-page/profil/program-inovasi';
-          break;
-        case 2:
-          redirectPath = '/admin/kesehatan/posyandu';
-          break;
-        case 3:
-          redirectPath = '/admin/pendidikan/info-sekolah/jenjang-pendidikan';
-          break;
-        default:
-          redirectPath = '/admin';
-          console.warn('Unknown roleId:', roleId);
-      }
-
-      console.log('Redirecting to:', redirectPath);
-      router.replace(redirectPath);
-
     } catch (error) {
       console.error('Error saat verifikasi:', error);
       toast.error('Terjadi kesalahan sistem');
@@ -129,38 +82,111 @@ export default function Validasi() {
     }
   };
 
-  // Registrasi baru
-  const handleNewRegistration = async () => {
+  // ✅ Verifikasi OTP untuk REGISTRASI
+  const handleRegistrationVerification = async () => {
     const username = localStorage.getItem('auth_username');
     if (!username) {
-      toast.error('Data registrasi tidak ditemukan');
+      toast.error('Data registrasi tidak ditemukan. Silakan ulangi dari awal.');
       return;
     }
 
-    try {
-      const res = await fetch('/api/auth/finalize-registration', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nomor, username, otp, kodeId }),
-      });
+    // ✅ Validasi format
+    const cleanNomor = nomor?.replace(/\D/g, '') ?? '';
+    if (cleanNomor.length < 10) {
+      toast.error('Nomor tidak valid');
+      return;
+    }
 
-      const data = await res.json();
+    if (username.trim().length < 5) {
+      toast.error('Username minimal 5 karakter');
+      return;
+    }
 
-      if (data.success) {
-        // Set user sementara (tanpa roleId, akan diisi saat approve)
-        authStore.setUser({
-          id: 'pending',
-          name: username,
-          roleId: 1,
-        });
-        cleanupStorage();
-        router.replace('/waiting-room');
-      } else {
-        toast.error(data.message || 'Registrasi gagal');
-      }
-    } catch (error) {
-      console.error('Error registrasi:', error);
-      toast.error('Gagal menyelesaikan registrasi');
+    // 1. Verifikasi OTP via endpoint register
+    const verifyRes = await fetch('/api/auth/verify-otp-register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nomor: cleanNomor, otp, kodeId }),
+    });
+
+    const verifyData = await verifyRes.json();
+
+    if (!verifyRes.ok) {
+      toast.error(verifyData.message || 'Verifikasi OTP gagal');
+      return;
+    }
+
+    // 2. Finalisasi registrasi
+    const finalizeRes = await fetch('/api/auth/finalize-registration', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nomor, username, kodeId }), // 🔴 Tidak perlu kirim `otp` ke sini
+    });
+
+    const finalizeData = await finalizeRes.json();
+
+    if (!finalizeRes.ok) {
+      toast.error(finalizeData.message || 'Registrasi gagal');
+      return;
+    }
+
+    // 3. Set user & redirect
+    authStore.setUser({
+      id: finalizeData.user.id,
+      name: finalizeData.user.name,
+      roleId: Number(finalizeData.user.roleId),
+    });
+
+    cleanupStorage();
+    router.replace('/waiting-room');
+  };
+
+  // ✅ Verifikasi OTP untuk LOGIN
+  const handleLoginVerification = async () => {
+    const loginRes = await fetch('/api/auth/verify-otp-login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nomor, otp, kodeId }),
+    });
+
+    const loginData = await loginRes.json();
+
+    if (!loginRes.ok) {
+      toast.error(loginData.message || 'Verifikasi gagal');
+      return;
+    }
+
+    const { id, name, roleId, isActive } = loginData.user;
+
+    authStore.setUser({
+      id,
+      name: name || 'User',
+      roleId: Number(roleId),
+    });
+
+    cleanupStorage();
+
+    if (!isActive) {
+      router.replace('/waiting-room');
+      return;
+    }
+
+    const redirectPath = getRedirectPath(Number(roleId));
+    router.replace(redirectPath);
+  };
+
+  const getRedirectPath = (roleId: number): string => {
+    switch (roleId) {
+      case 0: // DEVELOPER
+      case 1: // SUPERADMIN
+      case 2: // ADMIN_DESA
+        return '/admin/landing-page/profil/program-inovasi';
+      case 3: // ADMIN_KESEHATAN
+        return '/admin/kesehatan/posyandu';
+      case 4: // ADMIN_PENDIDIKAN
+        return '/admin/pendidikan/info-sekolah/jenjang-pendidikan';
+      default:
+        return '/admin';
     }
   };
 
@@ -173,7 +199,7 @@ export default function Validasi() {
   const handleResend = async () => {
     if (!nomor) return;
     try {
-      const res = await fetch('/api/auth/resend-otp', {
+      const res = await fetch('/api/auth/resend', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ nomor }),
@@ -190,7 +216,6 @@ export default function Validasi() {
     }
   };
 
-  // Loading
   if (isLoading) {
     return (
       <Stack pos="relative" bg={colors.Bg} align="center" justify="center" h="100vh">
@@ -209,7 +234,7 @@ export default function Validasi() {
             <Stack align="center" gap="lg">
               <Box>
                 <Title ta="center" order={2} fw="bold" c={colors['blue-button']}>
-                  Kode Verifikasi
+                  {isRegistrationFlow ? 'Verifikasi Registrasi' : 'Verifikasi Login'}
                 </Title>
                 <Text ta="center" size="sm" c="dimmed" mt="xs">
                   Kami telah mengirim kode ke nomor <strong>{nomor}</strong>

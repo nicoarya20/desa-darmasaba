@@ -118,7 +118,7 @@ const userState = proxy({
         console.error("Gagal delete user:", error);
         toast.error("Terjadi kesalahan saat menghapus user");
       } finally {
-        userState.delete.loading = false;
+        userState.deleteUser.loading = false;
       }
     },
   },  

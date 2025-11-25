@@ -5,6 +5,7 @@ import userFindMany from "./findMany";
 import userFindUnique from "./findUnique";
 import userDelete from "./del"; // `delete` nggak boleh jadi nama file JS langsung, jadi biasanya `del.ts`
 import userUpdate from "./updt";
+import userDeleteAccount from "./delUser";
 
 const User = new Elysia({ prefix: "/api/user" })
   .get("/findMany", userFindMany)
@@ -25,7 +26,7 @@ const User = new Elysia({ prefix: "/api/user" })
       })
     }
   )
-  .put("/delUser/:id", userDelete, {
+  .delete("/delUser/:id", userDeleteAccount, {
     params: t.Object({
       id: t.String(),
     }),

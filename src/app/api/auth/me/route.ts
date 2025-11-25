@@ -5,36 +5,54 @@ import prisma from '@/lib/prisma';
 
 export async function GET() {
   try {
-    const user = await verifySession();
-    if (!user) {
+    const sessionUser = await verifySession();
+    if (!sessionUser) {
       return NextResponse.json(
-        { success: false, message: "Session tidak valid", user: null },
+        { success: false, message: "Unauthorized", user: null },
         { status: 401 }
       );
     }
 
-    // ✅ Ambil menu akses kustom
-    const menuAccess = await prisma.userMenuAccess.findMany({
-      where: { userId: user.id },
-      select: { menuId: true },
-    });
+    const [dbUser, menuAccess] = await Promise.all([
+      prisma.user.findUnique({
+        where: { id: sessionUser.id },
+        select: {
+          id: true,
+          username: true,
+          nomor: true,
+          roleId: true,   // STRING!
+          isActive: true, // BOOLEAN!
+        },
+      }),
+      prisma.userMenuAccess.findMany({
+        where: { userId: sessionUser.id },
+        select: { menuId: true },
+      }),
+    ]);
+
+    if (!dbUser) {
+      return NextResponse.json(
+        { success: false, message: "User not found", user: null },
+        { status: 404 }
+      );
+    }
 
     return NextResponse.json({
       success: true,
       user: {
-        id: user.id,
-        name: user.username,
-        username: user.username,
-        nomor: user.nomor,
-        roleId: user.roleId,
-        isActive: user.isActive,
-        menuIds: menuAccess.map(m => m.menuId), // ✅ tambahkan ini
+        id: dbUser.id,
+        name: dbUser.username,
+        username: dbUser.username,
+        nomor: dbUser.nomor,
+        roleId: dbUser.roleId,     // STRING!
+        isActive: dbUser.isActive, // BOOLEAN!
+        menuIds: menuAccess.map(m => m.menuId),
       },
     });
   } catch (error) {
     console.error("❌ Error in /api/auth/me:", error);
     return NextResponse.json(
-      { success: false, message: "Terjadi kesalahan", user: null },
+      { success: false, message: "Internal server error", user: null },
       { status: 500 }
     );
   }

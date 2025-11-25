@@ -14,7 +14,7 @@ export async function POST(req: Request) {
     if (await prisma.user.findUnique({ where: { nomor } })) {
       return NextResponse.json({ success: false, message: 'Nomor sudah terdaftar' }, { status: 409 });
     }
-    if (await prisma.user.findUnique({ where: { username } })) {
+    if (await prisma.user.findFirst({ where: { username } })) {
       return NextResponse.json({ success: false, message: 'Username sudah digunakan' }, { status: 409 });
     }
 

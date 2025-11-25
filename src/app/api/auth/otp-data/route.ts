@@ -2,9 +2,10 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 
-export async function POST(req: Request) {
+export async function GET(request: Request) {
   try {
-    const { kodeId } = await req.json();
+    const { searchParams } = new URL(request.url);
+    const kodeId = searchParams.get("kodeId");
 
     if (!kodeId) {
       return NextResponse.json(
@@ -15,7 +16,7 @@ export async function POST(req: Request) {
 
     const otpRecord = await prisma.kodeOtp.findUnique({
       where: { id: kodeId },
-      select: { id: true, nomor: true, isActive: true, createdAt: true },
+      select: { nomor: true, isActive: true },
     });
 
     if (!otpRecord || !otpRecord.isActive) {
@@ -27,12 +28,12 @@ export async function POST(req: Request) {
 
     return NextResponse.json({
       success: true,
-      data: otpRecord,
+      data: { nomor: otpRecord.nomor },
     });
   } catch (error) {
-    console.error("Error fetching OTP data:", error);
+    console.error("❌ Gagal mengambil data OTP:", error);
     return NextResponse.json(
-      { success: false, message: "Gagal mengambil data OTP" },
+      { success: false, message: "Terjadi kesalahan internal" },
       { status: 500 }
     );
   } finally {
