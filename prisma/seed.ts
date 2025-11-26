@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import prisma from "@/lib/prisma";
 import profilePejabatDesa from "./data/landing-page/profile/profile.json";
@@ -61,64 +62,101 @@ import users from "./data/user/users.json";
 import { safeSeedUnique } from "./safeseedUnique";
 
 (async () => {
-  // =========== USER ===========
-  console.log("🔄 Seeding user...");
-  for (const u of users) {
-    await safeSeedUnique(
-      "user",
-      { id: u.id },
-      {
-        username: u.username,
-        nomor: u.nomor,
-        roleId: u.roleId.toString(),
-        isActive: u.isActive,
-        sessionInvalid: false,
-      }
-    );
-  }
-
-  console.log("✅ Roles seeded");
-  // =========== ROLE ===========
-  // In your seed.ts
-  // =========== ROLES ===========
   console.log("🔄 Seeding roles...");
-  for (const r of roles) {
-    await safeSeedUnique(
-      "role",
-      { id: r.id },
-      {
-        name: r.name,
-        description: r.description,
-        isActive: r.isActive,
-      }
-    );
-  }
 
-  console.log("✅ Roles seeded");
+  // Check for duplicate names in roles data
+  const roleNames = new Set();
+  const duplicateRoleNames = roles.filter((r) => {
+    if (roleNames.has(r.name)) {
+      console.warn(`⚠️ Duplicate role name found: ${r.name}`);
+      return true;
+    }
+    roleNames.add(r.name);
+    return false;
+  });
+
+  for (const r of roles) {
+    try {
+      await safeSeedUnique(
+        "role",
+        { id: r.id },
+        {
+          name: r.name,
+          description: r.description,
+          isActive: r.isActive,
+        }
+      );
+      console.log(`✅ Seeded role -> ${r.name}`);
+    } catch (error: any) {
+      if (error.code === "P2002") {
+        console.warn(`⚠️ Role already exists (skipping): ${r.name}`);
+      } else {
+        console.error(`❌ Failed to seed role ${r.name}:`, error.message);
+      }
+    }
+  }
+  console.log("✅ Roles seeding completed");
+  // =========== USER ===========
+  console.log("🔄 Seeding users...");
+  for (const u of users) {
+    try {
+      // Verify role exists
+      const roleExists = await prisma.role.findUnique({
+        where: { id: u.roleId.toString() },
+      });
+
+      if (!roleExists) {
+        console.error(
+          `❌ Role with id ${u.roleId} not found for user ${u.username}`
+        );
+        continue;
+      }
+
+      await safeSeedUnique(
+        "user",
+        { id: u.id },
+        {
+          username: u.username,
+          nomor: u.nomor,
+          roleId: u.roleId.toString(),
+          isActive: u.isActive,
+          sessionInvalid: false,
+        }
+      );
+      console.log(`✅ Seeded user -> ${u.username}`);
+    } catch (error: any) {
+      console.error(`❌ Failed to seed user ${u.username}:`, error.message);
+    }
+  }
+  console.log("✅ Users seeding completed");
 
   // =========== FILE STORAGE ===========
   console.log("🔄 Seeding file storage...");
   for (const f of fileStorage) {
-    await prisma.fileStorage.upsert({
-      where: { id: f.id },
-      update: {
-        name: f.name,
-        realName: f.realName,
-        path: f.path,
-        mimeType: f.mimeType,
-        link: f.link,
-        category: f.category,
-      },
-      create: {
-        id: f.id,
-        name: f.name,
-        realName: f.realName,
-        path: f.path,
-        mimeType: f.mimeType,
-        link: f.link,
-        category: f.category,
-      },
-    });
+    try {
+      await prisma.fileStorage.upsert({
+        where: { id: f.id },
+        update: {
+          name: f.name,
+          realName: f.realName,
+          path: f.path,
+          mimeType: f.mimeType,
+          link: f.link,
+          category: f.category,
+        },
+        create: {
+          id: f.id,
+          name: f.name,
+          realName: f.realName,
+          path: f.path,
+          mimeType: f.mimeType,
+          link: f.link,
+          category: f.category,
+        },
+      });
+    } catch (error: any) {
+      console.error(`❌ Failed to seed file storage ${f.name}:`, error.message);
+    }
   }
   console.log("✅ File storage seeded");
   // =========== LANDING PAGE ===========
@@ -537,15 +575,40 @@ import { safeSeedUnique } from "./safeseedUnique";
   console.log("posisi organisasi berhasil");
 
   // =========== PEGAWAI PPID ===========
+  console.log("🔄 Seeding pegawai PPID...");
   const flattenedPegawai = pegawaiPPID.flat();
+
+  // Check for duplicate emails
+  const emails = new Set();
   for (const p of flattenedPegawai) {
-    await prisma.pegawaiPPID.upsert({
-      where: { id: p.id },
-      update: p,
-      create: p,
-    });
+    if (emails.has(p.email)) {
+      console.warn(`⚠️ Duplicate email found in pegawaiPPID: ${p.email}`);
+    }
+    emails.add(p.email);
   }
-  console.log("pegawai berhasil");
+
+  for (const p of flattenedPegawai) {
+    try {
+      await prisma.pegawaiPPID.upsert({
+        where: { id: p.id },
+        update: p,
+        create: p,
+      });
+      console.log(`✅ Seeded pegawai PPID -> ${p.namaLengkap}`);
+    } catch (error: any) {
+      if (error.code === "P2002") {
+        console.warn(
+          `⚠️ Pegawai PPID with duplicate email (skipping): ${p.email}`
+        );
+      } else {
+        console.error(
+          `❌ Failed to seed pegawai PPID ${p.namaLengkap}:`,
+          error.message
+        );
+      }
+    }
+  }
+  console.log("✅ pegawai PPID seeding completed");
 
   // =========== SUBMENU VISI MISI PPID ===========
 
