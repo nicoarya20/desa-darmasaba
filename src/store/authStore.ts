@@ -6,6 +6,7 @@ export type User = {
   name: string;
   roleId: number;
   menuIds?: string[] | null; // ✅ Pastikan pakai `string[]`
+  isActive?: boolean;
 };
 
 export const authStore = proxy<{

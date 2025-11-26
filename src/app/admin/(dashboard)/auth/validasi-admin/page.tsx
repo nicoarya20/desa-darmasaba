@@ -82,64 +82,48 @@ export default function Validasi() {
     }
   };
 
-  // ✅ Verifikasi OTP untuk REGISTRASI
-  const handleRegistrationVerification = async () => {
-    const username = localStorage.getItem('auth_username');
-    if (!username) {
-      toast.error('Data registrasi tidak ditemukan. Silakan ulangi dari awal.');
-      return;
-    }
+const handleRegistrationVerification = async () => {
+  const username = localStorage.getItem('auth_username');
+  if (!username) {
+    toast.error('Data registrasi tidak ditemukan.');
+    return;
+  }
 
-    // ✅ Validasi format
-    const cleanNomor = nomor?.replace(/\D/g, '') ?? '';
-    if (cleanNomor.length < 10) {
-      toast.error('Nomor tidak valid');
-      return;
-    }
+  const cleanNomor = nomor?.replace(/\D/g, '') ?? '';
+  if (cleanNomor.length < 10 || username.trim().length < 5) {
+    toast.error('Data tidak valid');
+    return;
+  }
 
-    if (username.trim().length < 5) {
-      toast.error('Username minimal 5 karakter');
-      return;
-    }
+  // Verifikasi OTP dulu
+  const verifyRes = await fetch('/api/auth/verify-otp-register', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ nomor: cleanNomor, otp, kodeId }),
+  });
 
-    // 1. Verifikasi OTP via endpoint register
-    const verifyRes = await fetch('/api/auth/verify-otp-register', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nomor: cleanNomor, otp, kodeId }),
-    });
+  const verifyData = await verifyRes.json();
+  if (!verifyRes.ok) {
+    toast.error(verifyData.message || 'Verifikasi OTP gagal');
+    return;
+  }
 
-    const verifyData = await verifyRes.json();
+  // ✅ Kirim ke finalize-registration → akan redirect ke /waiting-room
+  const finalizeRes = await fetch('/api/auth/finalize-registration', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ nomor, username, kodeId }),
+    credentials: 'include'
+  });
 
-    if (!verifyRes.ok) {
-      toast.error(verifyData.message || 'Verifikasi OTP gagal');
-      return;
-    }
-
-    // 2. Finalisasi registrasi
-    const finalizeRes = await fetch('/api/auth/finalize-registration', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nomor, username, kodeId }), // 🔴 Tidak perlu kirim `otp` ke sini
-    });
-
-    const finalizeData = await finalizeRes.json();
-
-    if (!finalizeRes.ok) {
-      toast.error(finalizeData.message || 'Registrasi gagal');
-      return;
-    }
-
-    // 3. Set user & redirect
-    authStore.setUser({
-      id: finalizeData.user.id,
-      name: finalizeData.user.name,
-      roleId: Number(finalizeData.user.roleId),
-    });
-
-    cleanupStorage();
-    window.location.href = '/waiting-room';
-  };
+  if (finalizeRes.redirected) {
+    // ✅ Redirect otomatis oleh server
+    window.location.href = finalizeRes.url;
+  } else {
+    const data = await finalizeRes.json();
+    toast.error(data.message || 'Registrasi gagal');
+  }
+};
 
   // ✅ Verifikasi OTP untuk LOGIN
   const handleLoginVerification = async () => {

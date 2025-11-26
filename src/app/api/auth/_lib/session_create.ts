@@ -1,4 +1,4 @@
-// app/api/auth/_lib/session_create.ts
+// src/app/api/auth/_lib/sessionCreate.ts
 import { cookies } from "next/headers";
 import { encrypt } from "./encrypt";
 import prisma from "@/lib/prisma";
@@ -9,11 +9,13 @@ export async function sessionCreate({
   exp = "30 day",
   jwtSecret,
   user,
+  invalidatePrevious = true, // 🔑 kontrol apakah sesi lama di-nonaktifkan
 }: {
   sessionKey: string;
   exp?: string;
   jwtSecret: string;
   user: Record<string, unknown> & { id: string };
+  invalidatePrevious?: boolean; // default true untuk login, false untuk registrasi
 }) {
   // ✅ Validasi env vars
   if (!sessionKey || sessionKey.length === 0) {
@@ -28,18 +30,19 @@ export async function sessionCreate({
     throw new Error("Token generation failed");
   }
 
-  // ✅ Hitung expiresAt sesuai exp
+  // ✅ Hitung expiresAt
   let expiresAt = add(new Date(), { days: 30 });
   if (exp === "7 day") expiresAt = add(new Date(), { days: 7 });
-  // tambahkan opsi lain jika perlu
 
-  // Sebelum create session baru, nonaktifkan session aktif sebelumnya
-  await prisma.userSession.updateMany({
-    where: { userId: user.id, active: true },
-    data: { active: false },
-  });
+  // 🔐 Hanya nonaktifkan sesi aktif sebelumnya jika diminta (misal: saat login ulang)
+  if (invalidatePrevious) {
+    await prisma.userSession.updateMany({
+      where: { userId: user.id, active: true },
+      data: { active: false },
+    });
+  }
 
-  // ✅ Simpan ke database
+  // ✅ Simpan sesi baru
   await prisma.userSession.create({
     data: {
       token,
@@ -55,7 +58,7 @@ export async function sessionCreate({
     sameSite: "lax",
     path: "/",
     secure: process.env.NODE_ENV === "production",
-    maxAge: 30 * 24 * 60 * 60, // seconds
+    maxAge: 30 * 24 * 60 * 60, // 30 hari dalam detik
   });
 
   return token;

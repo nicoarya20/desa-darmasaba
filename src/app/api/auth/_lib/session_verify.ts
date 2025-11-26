@@ -30,13 +30,7 @@ export async function verifySession() {
       return null;
     }
 
-    // ❌ Hanya tolak jika sessionInvalid = true
-    if (dbSession.user.sessionInvalid) {
-      console.log('⚠️ Session di-invalidate');
-      return null;
-    }
-
-    // ✅ Return user, meskipun isActive = false
+    // Don't check isActive here, let the frontend handle it
     return dbSession.user;
   } catch (error) {
     console.warn('Session verification failed:', error);

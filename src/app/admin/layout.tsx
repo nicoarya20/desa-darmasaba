@@ -50,38 +50,45 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    const fetchUser = async () => {
-      try {
-        const res = await fetch('/api/auth/me');
-        const data = await res.json();
+   const fetchUser = async () => {
+  try {
+    const res = await fetch('/api/auth/me');
+    const data = await res.json();
 
-        if (data.user) {
-          const menuRes = await fetch(`/api/admin/user-menu-access?userId=${data.user.id}`);
-          const menuData = await menuRes.json();
-
-          // ✅ Clone ke array mutable
-          const menuIds = menuData.success && Array.isArray(menuData.menuIds)
-            ? [...menuData.menuIds] // Converts readonly array to mutable
-            : null;
-
-          authStore.setUser({
-            id: data.user.id,
-            name: data.user.name,
-            roleId: Number(data.user.roleId),
-            menuIds,
-          });
-        } else {
-          authStore.setUser(null);
-          router.replace('/login');
-        }
-      } catch (error) {
-        console.error('Gagal memuat data pengguna:', error);
+    if (data.user) {
+      // Check if user is active
+      if (!data.user.isActive) {
         authStore.setUser(null);
-        router.replace('/login');
-      } finally {
-        setLoading(false);
+        router.replace('/waiting-room');
+        return;
       }
-    };
+
+      const menuRes = await fetch(`/api/admin/user-menu-access?userId=${data.user.id}`);
+      const menuData = await menuRes.json();
+
+      const menuIds = menuData.success && Array.isArray(menuData.menuIds)
+        ? [...menuData.menuIds]
+        : null;
+
+      authStore.setUser({
+        id: data.user.id,
+        name: data.user.name,
+        roleId: Number(data.user.roleId),
+        menuIds,
+        isActive: data.user.isActive // Add isActive to store
+      });
+    } else {
+      authStore.setUser(null);
+      router.replace('/login');
+    }
+  } catch (error) {
+    console.error('Gagal memuat data pengguna:', error);
+    authStore.setUser(null);
+    router.replace('/login');
+  } finally {
+    setLoading(false);
+  }
+};
 
     fetchUser();
   }, [router]);

@@ -2,14 +2,22 @@
 'use client';
 
 import colors from '@/con/colors';
-import { Center, Loader, Paper, Stack, Text, Title } from '@mantine/core';
+import {
+  Button,
+  Center,
+  Loader,
+  Paper,
+  Stack,
+  Text,
+  Title,
+} from '@mantine/core';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { authStore } from '@/store/authStore'; // ✅ integrasi authStore
 
 async function fetchUser() {
   const res = await fetch('/api/auth/me');
   if (!res.ok) {
-    // Jangan throw error — biarkan handle status code
     const text = await res.text();
     throw new Error(`HTTP ${res.status}: ${text}`);
   }
@@ -21,10 +29,14 @@ export default function WaitingRoom() {
   const [user, setUser] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
   const [isRedirecting, setIsRedirecting] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
+  const MAX_RETRIES = 2;
 
   useEffect(() => {
     let isMounted = true;
-    const interval = setInterval(async () => {
+    let interval: ReturnType<typeof setInterval>;
+
+    const poll = async () => {
       if (isRedirecting || !isMounted) return;
 
       try {
@@ -34,63 +46,110 @@ export default function WaitingRoom() {
         const currentUser = data.user;
         setUser(currentUser);
 
-        // ✅ Periksa isActive dan redirect
+        // ✅ Update authStore
+        if (currentUser) {
+          authStore.setUser({
+            id: currentUser.id,
+            name: currentUser.name,
+            roleId: Number(currentUser.roleId),
+            menuIds: currentUser.menuIds || null,
+          });
+        }
+
+        // In the poll function
         if (currentUser?.isActive === true) {
           setIsRedirecting(true);
           clearInterval(interval);
 
-          // ✅ roleId adalah STRING → gunakan string literal
-          let redirectPath = '/admin';
+          // Update authStore with the current user data
+          authStore.setUser({
+            id: currentUser.id,
+            name: currentUser.name || 'User',
+            roleId: Number(currentUser.roleId),
+            menuIds: currentUser.menuIds || null,
+            isActive: true
+          });
 
-          switch (currentUser.roleId) {
-            case "0": // DEVELOPER
-            case "1": // SUPERADMIN
-            case "2": // ADMIN_DESA
-              redirectPath = '/admin/landing-page/profil/program-inovasi';
-              break;
-            case "3": // ADMIN_KESEHATAN
-              redirectPath = '/admin/kesehatan/posyandu';
-              break;
-            case "4": // ADMIN_PENDIDIKAN
-              redirectPath = '/admin/pendidikan/info-sekolah/jenjang-pendidikan';
-              break;
+          // Clean up storage
+          localStorage.removeItem('auth_kodeId');
+          localStorage.removeItem('auth_nomor');
+          localStorage.removeItem('auth_username');
+
+          // Force a session refresh
+          try {
+            const res = await fetch('/api/auth/refresh-session', {
+              method: 'POST',
+              credentials: 'include'
+            });
+
+            if (res.ok) {
+              // Redirect based on role
+              let redirectPath = '/admin';
+              switch (String(currentUser.roleId)) {
+                case "0": case "1": case "2":
+                  redirectPath = '/admin/landing-page/profil/program-inovasi';
+                  break;
+                case "3":
+                  redirectPath = '/admin/kesehatan/posyandu';
+                  break;
+                case "4":
+                  redirectPath = '/admin/pendidikan/info-sekolah/jenjang-pendidikan';
+                  break;
+              }
+              window.location.href = redirectPath; // Use window.location to force full page reload
+            }
+          } catch (error) {
+            console.error('Error refreshing session:', error);
+            router.refresh(); // Fallback to client-side refresh
           }
-
-          setTimeout(() => router.push(redirectPath), 500);
         }
       } catch (err: any) {
         if (!isMounted) return;
 
-        // ❌ Hanya redirect ke /login jika benar-benar tidak ada sesi
         if (err.message.includes('401')) {
-          setError('Sesi tidak valid');
-          clearInterval(interval);
-          router.push('/login');
+          if (retryCount < MAX_RETRIES) {
+            setRetryCount((prev) => prev + 1);
+            setTimeout(() => {
+              if (isMounted) interval = setInterval(poll, 3000);
+            }, 800);
+          } else {
+            setError('Sesi tidak valid. Silakan login ulang.');
+            clearInterval(interval);
+            authStore.setUser(null); // ✅ clear sesi
+          }
         } else {
           console.error('Error polling:', err);
         }
       }
-    }, 3000);
+    };
 
+    interval = setInterval(poll, 3000);
     return () => {
       isMounted = false;
-      clearInterval(interval);
+      if (interval) clearInterval(interval);
     };
-  }, [router, isRedirecting]);
+  }, [router, isRedirecting, retryCount]);
 
+  // ✅ UI Error
   if (error) {
     return (
       <Center h="100vh">
         <Paper p="xl" radius="md" bg={colors['white-trans-1']} w={400}>
           <Stack align="center" gap="md">
-            <Title order={3} c="red">Error</Title>
+            <Title order={3} c="red">
+              Sesi Tidak Valid
+            </Title>
             <Text>{error}</Text>
+            <Button onClick={() => router.push('/login')}>
+              Login Ulang
+            </Button>
           </Stack>
         </Paper>
       </Center>
     );
   }
 
+  // ✅ UI Redirecting
   if (isRedirecting) {
     return (
       <Center h="100vh" bg={colors.Bg}>
@@ -109,6 +168,7 @@ export default function WaitingRoom() {
     );
   }
 
+  // ✅ UI Default (MENUNGGU) — INI YANG KAMU HILANGKAN!
   return (
     <Center h="100vh" bg={colors.Bg}>
       <Paper p="xl" radius="md" bg={colors['white-trans-1']} w={{ base: '90%', sm: 400 }}>
