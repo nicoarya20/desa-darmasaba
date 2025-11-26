@@ -30,68 +30,67 @@ import _ from "lodash";
 import Link from "next/link";
 import { useRouter, useSelectedLayoutSegments } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useSnapshot } from "valtio";
+// import { useSnapshot } from "valtio";
 import { getNavbar } from "./(dashboard)/user&role/_com/dynamicNavbar";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
- const [opened, { toggle }] = useDisclosure();
+  const [opened, { toggle }] = useDisclosure();
   const [loading, setLoading] = useState(true);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true);
   const router = useRouter();
   const segments = useSelectedLayoutSegments().map((s) => _.lowerCase(s));
 
-  const { user } = useSnapshot(authStore);
+  // const { user } = useSnapshot(authStore);
 
-  console.log("Current user in store:", user);
+  // console.log("Current user in store:", user);
 
- useEffect(() => {
-    if (authStore.user) {
-      setLoading(false);
-      return;
-    }
+  // ✅ FIX: Selalu fetch user data setiap kali komponen mount
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await fetch('/api/auth/me');
+        const data = await res.json();
 
-   const fetchUser = async () => {
-  try {
-    const res = await fetch('/api/auth/me');
-    const data = await res.json();
+        if (data.user) {
+          // Check if user is active
+          if (!data.user.isActive) {
+            authStore.setUser(null);
+            router.replace('/waiting-room');
+            return;
+          }
 
-    if (data.user) {
-      // Check if user is active
-      if (!data.user.isActive) {
+          // ✅ PENTING: Selalu fetch menuIds terbaru setiap login
+          const menuRes = await fetch(`/api/admin/user-menu-access?userId=${data.user.id}`);
+          const menuData = await menuRes.json();
+
+          const menuIds = menuData.success && Array.isArray(menuData.menuIds)
+            ? [...menuData.menuIds]
+            : null;
+
+          // ✅ Set user dengan menuIds yang fresh dari database
+          authStore.setUser({
+            id: data.user.id,
+            name: data.user.name,
+            roleId: Number(data.user.roleId),
+            menuIds, // menuIds terbaru
+            isActive: data.user.isActive
+          });
+        } else {
+          authStore.setUser(null);
+          router.replace('/login');
+        }
+      } catch (error) {
+        console.error('Gagal memuat data pengguna:', error);
         authStore.setUser(null);
-        router.replace('/waiting-room');
-        return;
+        router.replace('/login');
+      } finally {
+        setLoading(false);
       }
-
-      const menuRes = await fetch(`/api/admin/user-menu-access?userId=${data.user.id}`);
-      const menuData = await menuRes.json();
-
-      const menuIds = menuData.success && Array.isArray(menuData.menuIds)
-        ? [...menuData.menuIds]
-        : null;
-
-      authStore.setUser({
-        id: data.user.id,
-        name: data.user.name,
-        roleId: Number(data.user.roleId),
-        menuIds,
-        isActive: data.user.isActive // Add isActive to store
-      });
-    } else {
-      authStore.setUser(null);
-      router.replace('/login');
-    }
-  } catch (error) {
-    console.error('Gagal memuat data pengguna:', error);
-    authStore.setUser(null);
-    router.replace('/login');
-  } finally {
-    setLoading(false);
-  }
-};
+    };
 
     fetchUser();
-  }, [router]);
+  }, [router]); // ✅ Hapus dependency pada authStore.user
 
   if (loading) {
     return (
@@ -105,15 +104,43 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     );
   }
 
-  // ✅ Ambil menu berdasarkan roleId
+  // ✅ Ambil menu berdasarkan roleId dan menuIds
   const currentNav = authStore.user
     ? getNavbar({ roleId: authStore.user.roleId, menuIds: authStore.user.menuIds })
     : [];
 
-  const handleLogout = () => {
-    authStore.setUser(null);
-    document.cookie = `${process.env.BASE_SESSION_KEY}=; Max-Age=0; path=/;`;
-    router.push('/login');
+  const handleLogout = async () => {
+    try {
+      setIsLoggingOut(true);
+      
+      // ✅ Panggil API logout untuk clear session di server
+      const response = await fetch('/api/auth/logout', { method: 'POST' });
+      const result = await response.json();
+      
+      if (result.success) {
+        // Clear user data dari store
+        authStore.setUser(null);
+        
+        // Clear localStorage
+        localStorage.removeItem('auth_nomor');
+        localStorage.removeItem('auth_kodeId');
+        
+        // Force reload untuk reset semua state
+        window.location.href = '/login';
+      } else {
+        console.error('Logout failed:', result.message);
+        // Tetap redirect meskipun gagal
+        authStore.setUser(null);
+        window.location.href = '/login';
+      }
+    } catch (error) {
+      console.error('Error during logout:', error);
+      // Tetap clear store dan redirect jika error
+      authStore.setUser(null);
+      window.location.href = '/login';
+    } finally {
+      setIsLoggingOut(false);
+    }
   };
 
   return (
@@ -219,6 +246,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 size="lg"
                 variant="gradient"
                 gradient={{ from: colors["blue-button"], to: "#228be6" }}
+                loading={isLoggingOut}
+                disabled={isLoggingOut}
               >
                 <IconLogout2 size={22} />
               </ActionIcon>
