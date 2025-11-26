@@ -57,19 +57,41 @@ import roles from "./data/user/roles.json";
 import fileStorage from "./data/file-storage.json";
 import jenjangPendidikan from "./data/pendidikan/info-sekolah/jenjang-pendidikan.json";
 import seedAssets from "./seed_assets";
+import users from "./data/user/users.json";
 import { safeSeedUnique } from "./safeseedUnique";
 
 (async () => {
+  // =========== USER ===========
+  console.log("🔄 Seeding user...");
+  for (const u of users) {
+    await safeSeedUnique(
+      "user",
+      { id: u.id },
+      {
+        username: u.username,
+        nomor: u.nomor,
+        roleId: u.roleId.toString(),
+        isActive: u.isActive,
+        sessionInvalid: false,
+      }
+    );
+  }
+
+  console.log("✅ Roles seeded");
   // =========== ROLE ===========
   // In your seed.ts
   // =========== ROLES ===========
   console.log("🔄 Seeding roles...");
   for (const r of roles) {
-    await safeSeedUnique("role", { id: r.id }, {
-      name: r.name,
-      description: r.description,
-      isActive: r.isActive,
-    });
+    await safeSeedUnique(
+      "role",
+      { id: r.id },
+      {
+        name: r.name,
+        description: r.description,
+        isActive: r.isActive,
+      }
+    );
   }
 
   console.log("✅ Roles seeded");
@@ -787,7 +809,9 @@ import { safeSeedUnique } from "./safeseedUnique";
   const flattenedPosisiBumdes = posisiOrganisasi.flat();
 
   // ✅ Urutkan berdasarkan hierarki
-  const sortedPosisiBumdes = flattenedPosisiBumdes.sort((a, b) => a.hierarki - b.hierarki);
+  const sortedPosisiBumdes = flattenedPosisiBumdes.sort(
+    (a, b) => a.hierarki - b.hierarki
+  );
 
   for (const p of sortedPosisiBumdes) {
     console.log(`Seeding: ${p.nama} (id: ${p.id}, parent: ${p.parentId})`);
@@ -867,7 +891,7 @@ import { safeSeedUnique } from "./safeseedUnique";
   // Add IDs to the kategoriKegiatan data
   const kategoriKegiatan = kategoriKegiatanData.map((k, index) => ({
     ...k,
-    id: `kategori-${index + 1}`
+    id: `kategori-${index + 1}`,
   }));
 
   for (const k of kategoriKegiatan) {
@@ -1159,7 +1183,6 @@ import { safeSeedUnique } from "./safeseedUnique";
 
   // seed assets
   await seedAssets();
-
 })()
   .then(() => prisma.$disconnect())
   .catch((e) => {

@@ -41,7 +41,7 @@ function Kepuasan() {
     indeksKepuasanState.jenisKelaminResponden.findMany.load()
     indeksKepuasanState.pilihanRatingResponden.findMany.load()
     indeksKepuasanState.kelompokUmurResponden.findMany.load()
-  })
+  },[])
 
   const handleSubmit = async () => {
     try {

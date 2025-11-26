@@ -59,6 +59,35 @@ const getWorkStatus = (day: string, currentTime: string): { status: string; mess
     : { status: "Tutup", message: "08:00 - 17:00" };
 };
 
+// Skeleton component untuk Social Media
+const SosmedSkeleton = () => (
+  <Flex gap="md" justify="center" wrap="wrap">
+    {[1, 2, 3, 4].map((i) => (
+      <Skeleton key={i} height={56} width={56} circle />
+    ))}
+  </Flex>
+);
+
+// Skeleton component untuk Profile
+const ProfileSkeleton = () => (
+  <Card
+    radius="xl"
+    bg={colors.grey[1]}
+    p="lg"
+    shadow="xl"
+    w={{ base: "100%", md: "35%" }}
+    style={{ height: "fit-content" }}
+  >
+    <Stack gap="lg" align="center">
+      <Skeleton height={300} width="100%" radius="lg" />
+      <Stack gap="xs" w="100%" align="center">
+        <Skeleton height={20} width="60%" />
+        <Skeleton height={32} width="80%" />
+      </Stack>
+    </Stack>
+  </Card>
+);
+
 function LandingPage() {
   const [socialMedia, setSocialMedia] = useState<
     Prisma.MediaSosialGetPayload<{ include: { image: true } }>[]
@@ -66,9 +95,8 @@ function LandingPage() {
   const [profile, setProfile] = useState<
     Prisma.PejabatDesaGetPayload<{ include: { image: true } }> | null
   >(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  
+  const [isLoadingSosmed, setIsLoadingSosmed] = useState(true);
+  const [isLoadingProfile, setIsLoadingProfile] = useState(true);
 
   useEffect(() => {
     const fetchSocialMedia = async () => {
@@ -86,7 +114,7 @@ function LandingPage() {
       } catch {
         setSocialMedia([]);
       } finally {
-        setIsLoading(false);
+        setIsLoadingSosmed(false);
       }
     };
 
@@ -98,6 +126,8 @@ function LandingPage() {
         setProfile(result.data || null);
       } catch {
         setProfile(null);
+      } finally {
+        setIsLoadingProfile(false);
       }
     };
 
@@ -189,8 +219,8 @@ function LandingPage() {
 
               <ModuleView />
 
-              {isLoading ? (
-                <Skeleton height={32} width="100%" />
+              {isLoadingSosmed ? (
+                <SosmedSkeleton />
               ) : socialMedia.length > 0 ? (
                 <SosmedView data={socialMedia} />
               ) : (
@@ -207,17 +237,25 @@ function LandingPage() {
           </Card>
         </Stack>
 
-        {isLoading ? (
-          <Skeleton height={300} width="100%" radius="lg" />
+        {isLoadingProfile ? (
+          <ProfileSkeleton />
         ) : profile ? (
           <ProfileView data={profile} />
         ) : (
-          <Center w="100%">
-            <Text c="dimmed">Informasi profil belum tersedia</Text>
-          </Center>
+          <Card
+            radius="xl"
+            bg={colors.grey[1]}
+            p="lg"
+            shadow="xl"
+            w={{ base: "100%", md: "35%" }}
+            style={{ height: "fit-content" }}
+          >
+            <Center h={300}>
+              <Text c="dimmed">Informasi profil belum tersedia</Text>
+            </Center>
+          </Card>
         )}
       </Flex>
-      
     </Stack>
   );
 }

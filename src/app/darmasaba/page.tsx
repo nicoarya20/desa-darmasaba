@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import DesaAntiKorupsi from "@/app/darmasaba/_com/main-page/desaantikorupsi";
 import Kepuasan from "@/app/darmasaba/_com/main-page/kepuasan";
@@ -13,32 +14,34 @@ import Apbdes from "./_com/main-page/apbdes";
 import Prestasi from "./_com/main-page/prestasi";
 import ScrollToTopButton from "./_com/scrollToTopButton";
 
-import NewsReaderLanding from "./_com/NewsReaderalanding";
-import ModernNewsNotification from "./_com/ModernNeewsNotification";
-import { useMemo } from "react";
-import { useProxy } from "valtio/utils";
+import { useEffect, useMemo } from "react";
+import { useSnapshot } from "valtio";
 import stateDashboardBerita from "../admin/(dashboard)/_state/desa/berita";
 import stateDesaPengumuman from "../admin/(dashboard)/_state/desa/pengumuman";
-import { useEffect } from "react";
+import ModernNewsNotification from "./_com/ModernNeewsNotification";
+import NewsReaderLanding from "./_com/NewsReaderalanding";
 
 
 export default function Page() {
-  const featured = useProxy(stateDashboardBerita.berita.findFirst);
+  const snap1 = useSnapshot(stateDashboardBerita.berita.findFirst);
+  const snap2 = useSnapshot(stateDesaPengumuman.pengumuman.findFirst);
+
+  const featured = snap1;
+  const pengumuman = snap2;
   const loadingFeatured = featured.loading;
-  const pengumuman = useProxy(stateDesaPengumuman.pengumuman.findFirst);
   const loadingPengumuman = pengumuman.loading;
 
   useEffect(() => {
     if (!featured.data && !loadingFeatured) {
       stateDashboardBerita.berita.findFirst.load();
     }
-  }, [featured.data, loadingFeatured]);
+  }, []);
 
   useEffect(() => {
     if (!pengumuman.data && !loadingPengumuman) {
       stateDesaPengumuman.pengumuman.findFirst.load();
     }
-  }, [pengumuman.data, loadingPengumuman]);
+  }, []);
 
 
   const newsData = useMemo(() => {
