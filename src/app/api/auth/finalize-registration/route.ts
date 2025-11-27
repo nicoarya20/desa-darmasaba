@@ -3,6 +3,21 @@ import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { sessionCreate } from "../_lib/session_create";
 
+// ✅ Gunakan STRING untuk roleId
+const DEFAULT_MENUS_BY_ROLE: Record<string, string[]> = {
+  "0": [
+    "Landing Page", "PPID", "Desa", "Kesehatan", "Keamanan",
+    "Ekonomi", "Inovasi", "Lingkungan", "Pendidikan", "User & Role"
+  ],
+  "1": [
+    "Landing Page", "PPID", "Desa", "Keamanan",
+    "Ekonomi", "Inovasi", "Lingkungan", "User & Role"
+  ],
+  "2": ["Landing Page", "Desa", "Ekonomi", "Inovasi", "Lingkungan"],
+  "3": ["Kesehatan"],
+  "4": ["Pendidikan"],
+};
+
 export async function POST(req: Request) {
   try {
     const { nomor, username, kodeId } = await req.json();
@@ -30,26 +45,42 @@ export async function POST(req: Request) {
       );
     }
 
-    const defaultRole = await prisma.role.findFirst({
-      where: { name: "ADMIN DESA" },
-      select: { id: true },
+    // 🔥 Tentukan roleId sebagai STRING
+    const targetRoleId = "1"; // ✅ string, bukan number
+
+    // Validasi role (gunakan string)
+    const roleExists = await prisma.role.findUnique({
+      where: { id: targetRoleId }, // ✅ id bertipe string
+      select: { id: true }
     });
 
-    if (!defaultRole) {
+    if (!roleExists) {
       return NextResponse.json(
-        { success: false, message: "Role default tidak ditemukan" },
-        { status: 500 }
+        { success: false, message: "Role tidak valid" },
+        { status: 400 }
       );
     }
 
+    // Buat user dengan roleId string
     const newUser = await prisma.user.create({
       data: {
         username,
         nomor,
-        roleId: defaultRole.id,
+        roleId: targetRoleId, // ✅ string
         isActive: false,
       },
     });
+
+    // Berikan akses menu
+    const menuIds = DEFAULT_MENUS_BY_ROLE[targetRoleId] || [];
+    if (menuIds.length > 0) {
+      await prisma.userMenuAccess.createMany({
+        data: menuIds.map(menuId => ({
+          userId: newUser.id,
+          menuId,
+        })),
+      });
+    }
 
     await prisma.kodeOtp.update({
       where: { id: kodeId },
@@ -64,13 +95,12 @@ export async function POST(req: Request) {
         id: newUser.id,
         nomor: newUser.nomor,
         username: newUser.username,
-        roleId: newUser.roleId,
+        roleId: newUser.roleId, // string
         isActive: false,
       },
       invalidatePrevious: false,
     });
 
-    // ✅ REDIRECT DARI SERVER — cookie pasti tersedia
     const response = NextResponse.redirect(new URL('/waiting-room', req.url));
     response.cookies.set(process.env.BASE_SESSION_KEY!, token, {
       httpOnly: true,

@@ -114,6 +114,7 @@ export default function Validasi() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ nomor: cleanNomor, otp, kodeId }),
+      credentials: 'include'
     });
 
     const verifyData = await verifyRes.json();
