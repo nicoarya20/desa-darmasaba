@@ -2163,20 +2163,20 @@ enum StatusPeminjaman {
 // ========================================= USER ========================================= //
 
 model User {
-  id             String    @id @default(cuid())
+  id             String           @id @default(cuid())
   username       String
-  nomor          String    @unique
-  roleId         String     @default("2")
-  isActive       Boolean   @default(false)
-  sessionInvalid Boolean   @default(false)
+  nomor          String           @unique
+  roleId         String           @default("2")
+  isActive       Boolean          @default(false)
+  sessionInvalid Boolean          @default(false)
   lastLogin      DateTime?
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @default(now()) @updatedAt
-  
-  sessions       UserSession[]  // ✅ Relasi one-to-many
-  role           Role           @relation(fields: [roleId], references: [id])
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @default(now()) @updatedAt
+  permissions    Json?
+  sessions       UserSession[] // ✅ Relasi one-to-many
+  role           Role             @relation(fields: [roleId], references: [id])
   menuAccesses   UserMenuAccess[]
-  
+
   @@map("users")
 }
 
@@ -2184,6 +2184,7 @@ model Role {
   id          String    @id @default(cuid())
   name        String    @unique // ADMIN_DESA, ADMIN_KESEHATAN, ADMIN_SEKOLAH
   description String?
+  permissions Json?
   isActive    Boolean   @default(true)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
@@ -2203,18 +2204,18 @@ model KodeOtp {
 }
 
 model UserSession {
-  id        String    @id @default(cuid())
-  token     String    @db.Text  // ✅ JWT bisa panjang
-  expiresAt DateTime              // ✅ Ubah jadi expiresAt (konsisten)
-  active    Boolean   @default(true)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @default(now()) @updatedAt
-  
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    String    // ✅ HAPUS @unique - user bisa punya multiple sessions
-  
-  @@index([userId])           // ✅ Index untuk query cepat
-  @@index([token])            // ✅ Index untuk verify cepat
+  id        String   @id @default(cuid())
+  token     String   @db.Text // ✅ JWT bisa panjang
+  expiresAt DateTime // ✅ Ubah jadi expiresAt (konsisten)
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String // ✅ HAPUS @unique - user bisa punya multiple sessions
+
+  @@index([userId]) // ✅ Index untuk query cepat
+  @@index([token]) // ✅ Index untuk verify cepat
   @@map("user_sessions")
 }
 

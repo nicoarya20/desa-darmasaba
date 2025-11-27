@@ -64,29 +64,22 @@ import { safeSeedUnique } from "./safeseedUnique";
 (async () => {
   console.log("🔄 Seeding roles...");
 
-  // Check for duplicate names in roles data
-  const roleNames = new Set();
-  const duplicateRoleNames = roles.filter((r) => {
-    if (roleNames.has(r.name)) {
-      console.warn(`⚠️ Duplicate role name found: ${r.name}`);
-      return true;
-    }
-    roleNames.add(r.name);
-    return false;
-  });
-
   for (const r of roles) {
     try {
+      // ✅ Destructure to remove permissions if exists
+      const { permissions, ...roleData } = r as any;
+
       await safeSeedUnique(
         "role",
-        { id: r.id },
+        { id: roleData.id },
         {
-          name: r.name,
-          description: r.description,
-          isActive: r.isActive,
+          name: roleData.name,
+          description: roleData.description,
+          permissions: roleData.permissions || {}, // ✅ Include permissions
+          isActive: roleData.isActive,
         }
       );
-      console.log(`✅ Seeded role -> ${r.name}`);
+      console.log(`✅ Seeded role -> ${roleData.name}`);
     } catch (error: any) {
       if (error.code === "P2002") {
         console.warn(`⚠️ Role already exists (skipping): ${r.name}`);
@@ -96,13 +89,15 @@ import { safeSeedUnique } from "./safeseedUnique";
     }
   }
   console.log("✅ Roles seeding completed");
+
   // =========== USER ===========
   console.log("🔄 Seeding users...");
   for (const u of users) {
     try {
-      // Verify role exists
+      // Verify role exists first
       const roleExists = await prisma.role.findUnique({
         where: { id: u.roleId.toString() },
+        select: { id: true }, // Only select id to minimize query
       });
 
       if (!roleExists) {
@@ -125,7 +120,13 @@ import { safeSeedUnique } from "./safeseedUnique";
       );
       console.log(`✅ Seeded user -> ${u.username}`);
     } catch (error: any) {
-      console.error(`❌ Failed to seed user ${u.username}:`, error.message);
+      if (error.code === "P2003") {
+        console.error(
+          `❌ Foreign key constraint failed for user ${u.username}: Role ${u.roleId} does not exist`
+        );
+      } else {
+        console.error(`❌ Failed to seed user ${u.username}:`, error.message);
+      }
     }
   }
   console.log("✅ Users seeding completed");
