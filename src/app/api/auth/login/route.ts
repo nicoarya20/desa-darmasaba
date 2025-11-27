@@ -37,11 +37,11 @@ export async function POST(req: Request) {
       // Hapus karakter khusus yang bisa bikin masalah
       const waMessage = `Website Desa Darmasaba\nKode verifikasi Anda ${codeOtp}`;
       
-      // ✅ OPSI 1: Tanpa encoding (coba dulu ini)
-      const waUrl = `https://wa.wibudev.com/code?nom=${nomor}&text=${waMessage}`;
+      // // ✅ OPSI 1: Tanpa encoding (coba dulu ini)
+      // const waUrl = `https://wa.wibudev.com/code?nom=${nomor}&text=${waMessage}`;
       
       // ✅ OPSI 2: Dengan encoding (kalau opsi 1 gagal)
-      // const waUrl = `https://wa.wibudev.com/code?nom=${nomor}&text=${encodeURIComponent(waMessage)}`;
+      const waUrl = `https://wa.wibudev.com/code?nom=${nomor}&text=${encodeURIComponent(waMessage)}`;
       
       // ✅ OPSI 3: Encoding manual untuk URL-safe (alternatif terakhir)
       // const encodedMessage = waMessage.replace(/\n/g, '%0A').replace(/ /g, '%20');

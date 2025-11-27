@@ -71,8 +71,9 @@ import { safeSeedUnique } from "./safeseedUnique";
 
       await safeSeedUnique(
         "role",
-        { id: roleData.id },
+        { name: roleData.name },
         {
+          id: roleData.id,
           name: roleData.name,
           description: roleData.description,
           permissions: roleData.permissions || {}, // ✅ Include permissions
