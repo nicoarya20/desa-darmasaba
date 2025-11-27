@@ -32,6 +32,7 @@ export default function WaitingRoom() {
   const [retryCount, setRetryCount] = useState(0);
   const MAX_RETRIES = 2;
 
+  
   useEffect(() => {
     let isMounted = true;
     let interval: ReturnType<typeof setInterval>;
