@@ -14,6 +14,7 @@ export const apiFetchLogin = async ({ nomor }: { nomor: string }) => {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ nomor: cleanPhone }),
+    credentials: 'include'
   });
 
   // Pastikan respons bisa di-parse sebagai JSON
@@ -58,6 +59,7 @@ export const apiFetchRegister = async ({
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ username: username.trim(), nomor: cleanPhone }),
+    credentials: 'include',
   });
 
   const data = await response.json();

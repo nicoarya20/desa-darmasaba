@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
 import prisma from '@/lib/prisma';
-import { randomOTP } from '../_lib/randomOTP'; // pastikan ada
+import { randomOTP } from '../_lib/randomOTP';
 
 export async function POST(req: Request) {
   try {
@@ -36,7 +37,17 @@ export async function POST(req: Request) {
       data: { nomor, otp: otpNumber, isActive: true }
     });
 
-    // ✅ Kembalikan kodeId (jangan buat user di sini!)
+    // ✅ Set cookie flow=register (Next.js 15+ syntax)
+    const cookieStore = await cookies();
+    cookieStore.set('auth_flow', 'register', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 60 * 5, // 5 menit
+      path: '/'
+    });
+
+    // ✅ Kembalikan kodeId
     return NextResponse.json({
       success: true,
       message: 'Kode verifikasi dikirim',

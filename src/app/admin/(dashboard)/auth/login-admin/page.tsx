@@ -15,7 +15,9 @@ function Login() {
 
   // Login.tsx
   async function onLogin() {
+
     const cleanPhone = phone.replace(/\D/g, '');
+    console.log(cleanPhone);
     if (cleanPhone.length < 10) {
       toast.error('Nomor telepon tidak valid');
       return;
@@ -25,6 +27,8 @@ function Login() {
       setLoading(true);
       const response = await apiFetchLogin({ nomor: cleanPhone });
 
+      console.log(response);
+
       if (!response.success) {
         toast.error(response.message || 'Gagal memproses login');
         return;
@@ -32,11 +36,12 @@ function Login() {
 
       // Simpan nomor untuk register
       localStorage.setItem('auth_nomor', cleanPhone);
-
       if (response.isRegistered) {
-        // ✅ User lama: simpan kodeId & ke validasi
+        // ✅ User lama: simpan kodeId
         localStorage.setItem('auth_kodeId', response.kodeId);
-        router.push('/validasi');
+
+        // ✅ Cookie sudah di-set oleh API, langsung redirect
+        router.push('/validasi'); // Clean URL
       } else {
         // ❌ User baru: langsung ke registrasi (tanpa kodeId)
         router.push('/registrasi');

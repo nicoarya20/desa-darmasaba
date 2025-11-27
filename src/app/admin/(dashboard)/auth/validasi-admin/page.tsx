@@ -19,17 +19,34 @@ import { authStore } from '@/store/authStore';
 
 export default function Validasi() {
   const router = useRouter();
+  
   const [nomor, setNomor] = useState<string | null>(null);
   const [otp, setOtp] = useState('');
   const [loading, setLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [kodeId, setKodeId] = useState<string | null>(null);
-  const [isRegistrationFlow, setIsRegistrationFlow] = useState(false); // Tambahkan flag
+  const [isRegistrationFlow, setIsRegistrationFlow] = useState(false);
 
-  // Cek apakah ini alur registrasi
+  // ✅ Deteksi flow dari cookie via API
   useEffect(() => {
-    const storedUsername = localStorage.getItem('auth_username');
-    setIsRegistrationFlow(!!storedUsername);
+    const checkFlow = async () => {
+      try {
+        const res = await fetch('/api/auth/get-flow', {
+          credentials: 'include'
+        });
+        const data = await res.json();
+        
+        if (data.success) {
+          setIsRegistrationFlow(data.flow === 'register');
+          console.log('🔍 Flow detected from cookie:', data.flow);
+        }
+      } catch (error) {
+        console.error('❌ Error getting flow:', error);
+        setIsRegistrationFlow(false);
+      }
+    };
+    
+    checkFlow();
   }, []);
 
   useEffect(() => {
@@ -68,10 +85,8 @@ export default function Validasi() {
     setLoading(true);
     try {
       if (isRegistrationFlow) {
-        // 🔑 Alur REGISTRASI
         await handleRegistrationVerification();
       } else {
-        // 🔑 Alur LOGIN
         await handleLoginVerification();
       }
     } catch (error) {
@@ -82,55 +97,55 @@ export default function Validasi() {
     }
   };
 
-const handleRegistrationVerification = async () => {
-  const username = localStorage.getItem('auth_username');
-  if (!username) {
-    toast.error('Data registrasi tidak ditemukan.');
-    return;
-  }
+  const handleRegistrationVerification = async () => {
+    const username = localStorage.getItem('auth_username');
+    if (!username) {
+      toast.error('Data registrasi tidak ditemukan.');
+      return;
+    }
 
-  const cleanNomor = nomor?.replace(/\D/g, '') ?? '';
-  if (cleanNomor.length < 10 || username.trim().length < 5) {
-    toast.error('Data tidak valid');
-    return;
-  }
+    const cleanNomor = nomor?.replace(/\D/g, '') ?? '';
+    if (cleanNomor.length < 10 || username.trim().length < 5) {
+      toast.error('Data tidak valid');
+      return;
+    }
 
-  // Verifikasi OTP dulu
-  const verifyRes = await fetch('/api/auth/verify-otp-register', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ nomor: cleanNomor, otp, kodeId }),
-  });
+    const verifyRes = await fetch('/api/auth/verify-otp-register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nomor: cleanNomor, otp, kodeId }),
+    });
 
-  const verifyData = await verifyRes.json();
-  if (!verifyRes.ok) {
-    toast.error(verifyData.message || 'Verifikasi OTP gagal');
-    return;
-  }
+    const verifyData = await verifyRes.json();
+    if (!verifyRes.ok) {
+      toast.error(verifyData.message || 'Verifikasi OTP gagal');
+      return;
+    }
 
-  // ✅ Kirim ke finalize-registration → akan redirect ke /waiting-room
-  const finalizeRes = await fetch('/api/auth/finalize-registration', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ nomor, username, kodeId }),
-    credentials: 'include'
-  });
+    const finalizeRes = await fetch('/api/auth/finalize-registration', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nomor, username, kodeId }),
+      credentials: 'include'
+    });
 
-  if (finalizeRes.redirected) {
-    // ✅ Redirect otomatis oleh server
-    window.location.href = finalizeRes.url;
-  } else {
     const data = await finalizeRes.json();
-    toast.error(data.message || 'Registrasi gagal');
-  }
-};
+    
+    if (data.success || finalizeRes.redirected) {
+      // ✅ Cleanup setelah registrasi sukses
+      await cleanupStorage();
+      window.location.href = '/waiting-room';
+    } else {
+      toast.error(data.message || 'Registrasi gagal');
+    }
+  };
 
-  // ✅ Verifikasi OTP untuk LOGIN
   const handleLoginVerification = async () => {
     const loginRes = await fetch('/api/auth/verify-otp-login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ nomor, otp, kodeId }),
+      credentials: 'include'
     });
 
     const loginData = await loginRes.json();
@@ -148,7 +163,8 @@ const handleRegistrationVerification = async () => {
       roleId: Number(roleId),
     });
 
-    cleanupStorage();
+    // ✅ Cleanup setelah login sukses
+    await cleanupStorage();
 
     if (!isActive) {
       window.location.href = '/waiting-room';
@@ -161,23 +177,35 @@ const handleRegistrationVerification = async () => {
 
   const getRedirectPath = (roleId: number): string => {
     switch (roleId) {
-      case 0: // DEVELOPER
-      case 1: // SUPERADMIN
-      case 2: // ADMIN_DESA
+      case 0:
+      case 1:
+      case 2:
         return '/admin/landing-page/profil/program-inovasi';
-      case 3: // ADMIN_KESEHATAN
+      case 3:
         return '/admin/kesehatan/posyandu';
-      case 4: // ADMIN_PENDIDIKAN
+      case 4:
         return '/admin/pendidikan/info-sekolah/jenjang-pendidikan';
       default:
         return '/admin';
     }
   };
 
-  const cleanupStorage = () => {
+  // ✅ CLEANUP FUNCTION - Hapus localStorage + Cookie
+  const cleanupStorage = async () => {
+    // Clear localStorage
     localStorage.removeItem('auth_kodeId');
     localStorage.removeItem('auth_nomor');
     localStorage.removeItem('auth_username');
+    
+    // Clear cookie
+    try {
+      await fetch('/api/auth/clear-flow', {
+        method: 'POST',
+        credentials: 'include'
+      });
+    } catch (error) {
+      console.error('Error clearing flow cookie:', error);
+    }
   };
 
   const handleResend = async () => {
