@@ -48,6 +48,7 @@ export default function RootLayout({
     <ViewTransitions>
       <html lang="en" {...mantineHtmlProps}>
         <head>
+          <meta charSet="utf-8" />
           <ColorSchemeScript />
           <link
             rel="icon"
