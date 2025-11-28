@@ -35,13 +35,6 @@ export default async function userUpdate(context: Context) {
     const isActiveChanged =
       isActive !== undefined && currentUser.isActive !== isActive;
 
-    // ✅ Jika role berubah, hapus semua akses menu yang ada
-    if (isRoleChanged) {
-      await prisma.userMenuAccess.deleteMany({
-        where: { userId: id }
-      });
-    }
-
     // ✅ Jika role berubah, reset dan set ulang akses menu
     if (isRoleChanged && roleId) {
       // Hapus akses lama
@@ -62,8 +55,6 @@ export default async function userUpdate(context: Context) {
         });
       }
     }
-
-    
 
     // Update user
     const updatedUser = await prisma.user.update({
