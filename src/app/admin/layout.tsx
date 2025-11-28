@@ -435,6 +435,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true);
   const router = useRouter();
   const segments = useSelectedLayoutSegments().map((s) => _.lowerCase(s));
+  
 
   useEffect(() => {
     const fetchUser = async () => {
