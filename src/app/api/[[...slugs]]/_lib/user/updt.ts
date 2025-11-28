@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { getMenuIdsByRoleId } from "@/app/admin/(dashboard)/user&role/_com/getMenuIdByRole";
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
 
@@ -34,11 +35,25 @@ export default async function userUpdate(context: Context) {
     const isActiveChanged =
       isActive !== undefined && currentUser.isActive !== isActive;
 
-    // ✅ Jika role berubah, hapus semua akses menu yang ada
-    if (isRoleChanged) {
+    // ✅ Jika role berubah, reset dan set ulang akses menu
+    if (isRoleChanged && roleId) {
+      // Hapus akses lama
       await prisma.userMenuAccess.deleteMany({
         where: { userId: id }
       });
+
+      // Ambil menu default untuk role baru
+      const menuIds = getMenuIdsByRoleId(roleId);
+
+      if (menuIds.length > 0) {
+        // Buat akses baru
+        await prisma.userMenuAccess.createMany({
+          data: menuIds.map(menuId => ({
+            userId: id,
+            menuId
+          }))
+        });
+      }
     }
 
     // Update user
