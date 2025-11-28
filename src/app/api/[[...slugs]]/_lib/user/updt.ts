@@ -60,6 +60,7 @@ export default async function userUpdate(context: Context) {
       },
     });
 
+    
     // ✅ HAPUS SEMUA SESI USER DI DATABASE
     if (isRoleChanged) {
       await prisma.userSession.deleteMany({ where: { userId: id } });
