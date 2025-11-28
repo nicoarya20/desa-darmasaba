@@ -30,7 +30,12 @@ export async function POST(req: Request) {
       );
     }
 
-    const otpRecord = await prisma.kodeOtp.findUnique({ where: { id: kodeId } });
+    // Verify OTP
+    const otpRecord = await prisma.kodeOtp.findUnique({ 
+      where: { id: kodeId },
+      select: { nomor: true, isActive: true }
+    });
+
     if (!otpRecord?.isActive || otpRecord.nomor !== cleanNomor) {
       return NextResponse.json(
         { success: false, message: "OTP tidak valid" },
@@ -38,6 +43,7 @@ export async function POST(req: Request) {
       );
     }
 
+    // Check duplicate username
     if (await prisma.user.findFirst({ where: { username } })) {
       return NextResponse.json(
         { success: false, message: "Username sudah digunakan" },
@@ -45,12 +51,20 @@ export async function POST(req: Request) {
       );
     }
 
-    // 🔥 Tentukan roleId sebagai STRING
-    const targetRoleId = "1"; // ✅ string, bukan number
+    // Check duplicate nomor
+    if (await prisma.user.findUnique({ where: { nomor: cleanNomor } })) {
+      return NextResponse.json(
+        { success: false, message: "Nomor sudah terdaftar" },
+        { status: 409 }
+      );
+    }
 
-    // Validasi role (gunakan string)
+    // 🔥 Tentukan roleId sebagai STRING
+    const targetRoleId = "2"; // ✅ Default ADMIN_DESA (roleId "2")
+
+    // Validasi role exists
     const roleExists = await prisma.role.findUnique({
-      where: { id: targetRoleId }, // ✅ id bertipe string
+      where: { id: targetRoleId },
       select: { id: true }
     });
 
@@ -61,17 +75,17 @@ export async function POST(req: Request) {
       );
     }
 
-    // Buat user dengan roleId string
+    // ✅ Create user (inactive, waiting approval)
     const newUser = await prisma.user.create({
       data: {
         username,
-        nomor,
-        roleId: targetRoleId, // ✅ string
-        isActive: false,
+        nomor: cleanNomor,
+        roleId: targetRoleId,
+        isActive: false, // Waiting for admin approval
       },
     });
 
-    // Berikan akses menu
+    // ✅ Berikan akses menu default based on role
     const menuIds = DEFAULT_MENUS_BY_ROLE[targetRoleId] || [];
     if (menuIds.length > 0) {
       await prisma.userMenuAccess.createMany({
@@ -79,14 +93,17 @@ export async function POST(req: Request) {
           userId: newUser.id,
           menuId,
         })),
+        skipDuplicates: true, // ✅ Avoid duplicate errors
       });
     }
 
+    // ✅ Mark OTP as used
     await prisma.kodeOtp.update({
       where: { id: kodeId },
       data: { isActive: false },
     });
 
+    // ✅ Create session token
     const token = await sessionCreate({
       sessionKey: process.env.BASE_SESSION_KEY!,
       jwtSecret: process.env.BASE_TOKEN_KEY!,
@@ -95,25 +112,35 @@ export async function POST(req: Request) {
         id: newUser.id,
         nomor: newUser.nomor,
         username: newUser.username,
-        roleId: newUser.roleId, // string
-        isActive: false,
+        roleId: newUser.roleId,
+        isActive: false, // User belum aktif
       },
       invalidatePrevious: false,
     });
 
-    const response = NextResponse.redirect(new URL('/waiting-room', req.url));
-    response.cookies.set(process.env.BASE_SESSION_KEY!, token, {
+    // ✅ PENTING: Return JSON response (bukan redirect)
+    const response = NextResponse.json({
+      success: true,
+      message: "Registrasi berhasil. Menunggu persetujuan admin.",
+      userId: newUser.id,
+    });
+
+    // ✅ Set session cookie
+    const cookieName = process.env.BASE_SESSION_KEY || 'session';
+    response.cookies.set(cookieName, token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
+      sameSite: 'lax',
       path: "/",
-      maxAge: 30 * 24 * 60 * 60,
+      maxAge: 30 * 24 * 60 * 60, // 30 days
     });
 
     return response;
+
   } catch (error) {
     console.error("❌ Finalize Registration Error:", error);
     return NextResponse.json(
-      { success: false, message: "Registrasi gagal" },
+      { success: false, message: "Registrasi gagal. Silakan coba lagi." },
       { status: 500 }
     );
   } finally {

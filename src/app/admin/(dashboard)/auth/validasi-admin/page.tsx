@@ -19,7 +19,7 @@ import { authStore } from '@/store/authStore';
 
 export default function Validasi() {
   const router = useRouter();
-  
+
   const [nomor, setNomor] = useState<string | null>(null);
   const [otp, setOtp] = useState('');
   const [loading, setLoading] = useState(false);
@@ -35,7 +35,7 @@ export default function Validasi() {
           credentials: 'include'
         });
         const data = await res.json();
-        
+
         if (data.success) {
           setIsRegistrationFlow(data.flow === 'register');
           console.log('🔍 Flow detected from cookie:', data.flow);
@@ -45,7 +45,7 @@ export default function Validasi() {
         setIsRegistrationFlow(false);
       }
     };
-    
+
     checkFlow();
   }, []);
 
@@ -110,6 +110,7 @@ export default function Validasi() {
       return;
     }
 
+    // ✅ Verify OTP
     const verifyRes = await fetch('/api/auth/verify-otp-register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -123,19 +124,25 @@ export default function Validasi() {
       return;
     }
 
+    // ✅ Finalize registration
     const finalizeRes = await fetch('/api/auth/finalize-registration', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nomor, username, kodeId }),
+      body: JSON.stringify({ nomor: cleanNomor, username, kodeId }),
       credentials: 'include'
     });
 
     const data = await finalizeRes.json();
-    
-    if (data.success || finalizeRes.redirected) {
-      // ✅ Cleanup setelah registrasi sukses
+
+    // ✅ Check JSON response (bukan redirect)
+    if (data.success) {
+      toast.success('Registrasi berhasil! Menunggu persetujuan admin.');
       await cleanupStorage();
-      window.location.href = '/waiting-room';
+
+      // ✅ Client-side redirect
+      setTimeout(() => {
+        window.location.href = '/waiting-room';
+      }, 1000);
     } else {
       toast.error(data.message || 'Registrasi gagal');
     }
@@ -197,7 +204,7 @@ export default function Validasi() {
     localStorage.removeItem('auth_kodeId');
     localStorage.removeItem('auth_nomor');
     localStorage.removeItem('auth_username');
-    
+
     // Clear cookie
     try {
       await fetch('/api/auth/clear-flow', {

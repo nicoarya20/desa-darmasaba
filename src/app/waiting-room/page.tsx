@@ -16,7 +16,9 @@ import { useEffect, useState } from 'react';
 import { authStore } from '@/store/authStore'; // ✅ integrasi authStore
 
 async function fetchUser() {
-  const res = await fetch('/api/auth/me');
+  const res = await fetch('/api/auth/me', {
+    credentials: 'include'
+  });
   if (!res.ok) {
     const text = await res.text();
     throw new Error(`HTTP ${res.status}: ${text}`);
@@ -32,7 +34,7 @@ export default function WaitingRoom() {
   const [retryCount, setRetryCount] = useState(0);
   const MAX_RETRIES = 2;
 
-  
+
   useEffect(() => {
     let isMounted = true;
     let interval: ReturnType<typeof setInterval>;
