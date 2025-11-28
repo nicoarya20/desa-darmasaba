@@ -93,6 +93,7 @@ function ListUser({ search }: { search: string }) {
     const success = await stateUser.update.submit({
       id: userId,
       roleId: newRoleId,
+
     });
 
     if (success) {
@@ -136,9 +137,10 @@ function ListUser({ search }: { search: string }) {
     }
   };
 
-  const filteredData = (data || []).filter(
-    (item) => item.roleId !== "0" // asumsikan id role SUPERADMIN = "0"
-  );
+  const filteredData = (data || []).filter((item) => {
+    return item.roleId !== "0" && item.roleId !== "1";
+  });
+
 
   if (loading || !data) {
     return (
@@ -183,7 +185,7 @@ function ListUser({ search }: { search: string }) {
                       <Select
                         placeholder="Pilih role"
                         data={stateRole.findMany.data
-                          .filter(r => r.id !== "0") // ❌ Sembunyikan SUPERADMIN
+                          .filter(r => r.id !== "0" && r.id !== "1") // ❌ Sembunyikan SUPERADMIN dan DEVELOPER
                           .map(r => ({
                             label: r.name,
                             value: r.id,

@@ -23,7 +23,7 @@ export default async function userUpdate(context: Context) {
 
     const currentUser = await prisma.user.findUnique({
       where: { id },
-      select: { roleId: true, isActive: true }
+      select: { roleId: true, isActive: true },
     });
 
     if (!currentUser) {
@@ -31,7 +31,15 @@ export default async function userUpdate(context: Context) {
     }
 
     const isRoleChanged = roleId && currentUser.roleId !== roleId;
-    const isActiveChanged = isActive !== undefined && currentUser.isActive !== isActive;
+    const isActiveChanged =
+      isActive !== undefined && currentUser.isActive !== isActive;
+
+    // ✅ Jika role berubah, hapus semua akses menu yang ada
+    if (isRoleChanged) {
+      await prisma.userMenuAccess.deleteMany({
+        where: { userId: id }
+      });
+    }
 
     // Update user
     const updatedUser = await prisma.user.update({
@@ -48,10 +56,11 @@ export default async function userUpdate(context: Context) {
         nomor: true,
         isActive: true,
         roleId: true,
-        role: { select: { name: true } }
-      }
+        role: { select: { name: true } },
+      },
     });
 
+    
     // ✅ HAPUS SEMUA SESI USER DI DATABASE
     if (isRoleChanged) {
       await prisma.userSession.deleteMany({ where: { userId: id } });
@@ -62,11 +71,13 @@ export default async function userUpdate(context: Context) {
       roleChanged: isRoleChanged,
       isActiveChanged,
       data: updatedUser,
-      message: isRoleChanged 
+      message: isRoleChanged
         ? `Role ${updatedUser.username} diubah. User akan logout otomatis.`
         : isActiveChanged
-        ? `${updatedUser.username} ${isActive ? 'diaktifkan' : 'dinonaktifkan'}.`
-        : "User berhasil diupdate"
+        ? `${updatedUser.username} ${
+            isActive ? "diaktifkan" : "dinonaktifkan"
+          }.`
+        : "User berhasil diupdate",
     };
   } catch (e: any) {
     console.error("❌ Error update user:", e);
