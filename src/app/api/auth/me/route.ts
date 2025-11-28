@@ -12,6 +12,7 @@ export async function GET() {
         { status: 401 }
       );
     }
+    
 
     const [dbUser, menuAccess] = await Promise.all([
       prisma.user.findUnique({
