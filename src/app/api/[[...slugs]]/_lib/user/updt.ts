@@ -63,6 +63,8 @@ export default async function userUpdate(context: Context) {
       }
     }
 
+    
+
     // Update user
     const updatedUser = await prisma.user.update({
       where: { id },
