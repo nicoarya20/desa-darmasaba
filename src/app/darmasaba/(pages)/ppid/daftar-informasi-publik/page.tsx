@@ -151,7 +151,7 @@ function Page() {
                               variant="light"
                               color="blue"
                               leftSection={<IconDeviceImacCog size={16} />}
-                              onClick={() => router.push(`/darmasaba/ppid/daftar-informasi-publik-desa-darmasaba/${item.id}`)}
+                              onClick={() => router.push(`/darmasaba/ppid/daftar-informasi-publik/${item.id}`)}
                             >
                               Detail
                             </Button>

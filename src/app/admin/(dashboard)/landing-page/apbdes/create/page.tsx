@@ -361,6 +361,7 @@ function CreateAPBDes() {
                   data={[
                     { value: 'pendapatan', label: 'Pendapatan' },
                     { value: 'belanja', label: 'Belanja' },
+                    { value: 'pembiayaan', label: 'Pembiayaan' },
                   ]}
                   value={newItem.level === 1 ? null : newItem.tipe}
                   onChange={(val) => setNewItem({ ...newItem, tipe: val as any })}
