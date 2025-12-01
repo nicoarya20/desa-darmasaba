@@ -4,19 +4,21 @@
 import PendapatanAsliDesa from '@/app/admin/(dashboard)/_state/ekonomi/PADesa'
 import apbdes from '@/app/admin/(dashboard)/_state/landing-page/apbdes'
 import colors from '@/con/colors'
-import { ActionIcon, BackgroundImage, Box, Center, Container, Group, Loader, SimpleGrid, Stack, Text, Title } from '@mantine/core'
+import { ActionIcon, BackgroundImage, Box, Center, Container, Group, Loader, Select, SimpleGrid, Stack, Text, Title } from '@mantine/core'
 import { IconDownload } from '@tabler/icons-react'
 import { Link } from 'next-view-transitions'
 import { useEffect, useState } from 'react'
 import { useProxy } from 'valtio/utils'
 import BackButton from '../../(pages)/desa/layanan/_com/BackButto'
-import APBDesProgress from './lib/apbDesaProgress'
 import APBDesTable from './lib/apbDesaTable'
+import APBDesProgress from './lib/apbDesaProgress'
+import { transformAPBDesData } from './lib/types'
 
 function Page() {
   const state = useProxy(apbdes)
   const paDesaState = useProxy(PendapatanAsliDesa.ApbDesa)
   const [loading, setLoading] = useState(false)
+  const [selectedYear, setSelectedYear] = useState<string | null>(null)
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -33,6 +35,23 @@ function Page() {
   }, [])
 
   const dataAPBDes = state.findMany.data || []
+
+  // Buat daftar tahun unik dari data
+  const years = Array.from(new Set(dataAPBDes.map((item: any) => item.tahun)))
+    .sort((a, b) => b - a) // urutkan descending
+    .map(year => ({ value: year.toString(), label: `Tahun ${year}` }))
+
+  // Pilih tahun pertama sebagai default jika belum ada yang dipilih
+  useEffect(() => {
+    if (years.length > 0 && !selectedYear) {
+      setSelectedYear(years[0].value)
+    }
+  }, [years, selectedYear])
+
+  // Transform and filter data based on selected year
+  const currentApbdes = dataAPBDes.length > 0
+    ? transformAPBDesData(dataAPBDes.find(item => item?.tahun?.toString() === selectedYear) || dataAPBDes[0])
+    : null
 
   return (
     <Stack pos="relative" bg={colors.Bg} py="xl" gap={32}>
@@ -94,8 +113,31 @@ function Page() {
           ))}
         </SimpleGrid>
       )}
-      <APBDesTable />
-      <APBDesProgress />
+      {/* 🔥 COMBOBOX UNTUK PILIH TAHUN */}
+      <Box px={{ base: 'md', md: 100 }}>
+        <Select
+          label="Pilih Tahun APBDes"
+          placeholder="Pilih tahun"
+          value={selectedYear}
+          onChange={setSelectedYear}
+          data={years}
+          w={{ base: '100%', sm: 200 }}
+          searchable
+          clearable
+          nothingFoundMessage="Tidak ada tahun tersedia"
+        />
+      </Box>
+      {/* ❗ Pass currentApbdes ke komponen anak */}
+      {currentApbdes ? (
+        <>
+          <APBDesTable apbdesData={currentApbdes} />
+          <APBDesProgress apbdesData={currentApbdes} />
+        </>
+      ) : (
+        <Box px={{ base: 'md', md: 100 }} py="md">
+          <Text c="dimmed">Tidak ada data APBDes untuk tahun yang dipilih.</Text>
+        </Box>
+      )}
     </Stack>
   )
 }
