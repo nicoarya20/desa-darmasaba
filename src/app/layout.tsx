@@ -1,20 +1,5 @@
-// Import styles of packages that you've installed.
-// All packages except `@mantine/hooks` require styles imports
-import "@mantine/carousel/styles.css";
 import "@mantine/core/styles.css";
-import '@mantine/dropzone/styles.css';
-import "animate.css";
-import 'react-simple-toasts/dist/style.css';
-import 'react-simple-toasts/dist/theme/dark.css';
 import "./globals.css";
-import '@mantine/charts/styles.css';
-import '@mantine/dates/styles.css';
-import '@mantine/tiptap/styles.css';
-import "primereact/resources/themes/lara-light-blue/theme.css";
-import "primereact/resources/primereact.min.css";
-import "primeicons/primeicons.css";
-
-
 
 import LoadDataFirstClient from "@/app/darmasaba/_com/LoadDataFirstClient";
 import {
@@ -23,19 +8,82 @@ import {
   createTheme,
   mantineHtmlProps,
 } from "@mantine/core";
+import { Metadata, Viewport } from "next";
 import { ViewTransitions } from "next-view-transitions";
 import { ToastContainer } from "react-toastify";
 
-export const metadata = {
-  title: "Desa Darmasaba",
-  description: "Desa Darmasaba Kabupaten Badung",
+// ✅ Pisahkan viewport ke export tersendiri
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+};
+
+export const metadata: Metadata = {
+  // ✅ Tambahkan metadataBase
+  metadataBase: new URL("https://cld-dkr-staging-desa-darmasaba.wibudev.com"),
+  
+  title: {
+    default: "Desa Darmasaba",
+    template: "%s | Desa Darmasaba",
+  },
+  description: "Website resmi Desa Darmasaba, Kabupaten Badung, Bali. Informasi layanan publik, berita, dan profil desa.",
+  // ❌ HAPUS viewport dari sini
+  keywords: [
+    "desa darmasaba",
+    "darmasaba",
+    "badung",
+    "bali",
+    "desa",
+    "pemerintah desa",
+    "layanan publik",
+    "abang batan desa",
+  ],
+  authors: [{ name: "Pemerintah Desa Darmasaba" }],
+  creator: "Desa Darmasaba",
+  publisher: "Desa Darmasaba",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  icons: {
+    icon: "/assets/images/darmasaba-icon.png",
+    apple: "/assets/images/darmasaba-icon.png",
+  },
+  manifest: "/manifest.json",
+  openGraph: {
+    type: "website",
+    locale: "id_ID",
+    url: "https://cld-dkr-staging-desa-darmasaba.wibudev.com",
+    siteName: "Desa Darmasaba",
+    title: "Desa Darmasaba - Kabupaten Badung, Bali",
+    description: "Website resmi Desa Darmasaba, Kabupaten Badung, Bali. Informasi layanan publik, berita, dan profil desa.",
+    images: [
+      {
+        url: "/assets/images/darmasaba-icon.png",
+        width: 1200,
+        height: 630,
+        alt: "Desa Darmasaba",
+      },
+    ],
+  },
+  category: "government",
+  other: {
+    "msapplication-TileColor": "#ffffff",
+    "theme-color": "#ffffff",
+  },
 };
 
 const theme = createTheme({
-  fontFamily:
-    "San Francisco, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif",
-  fontFamilyMonospace:
-    "SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace",
+  fontFamily: "San Francisco, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif",
+  fontFamilyMonospace: "SFMono-Regular, Menlo, Monaco, Consolas, monospace",
   headings: { fontFamily: "San Francisco, sans-serif" },
 });
 
@@ -46,25 +94,22 @@ export default function RootLayout({
 }) {
   return (
     <ViewTransitions>
-      <html lang="en" {...mantineHtmlProps}>
+      <html lang="id" {...mantineHtmlProps}>
         <head>
+          <meta charSet="utf-8" />
           <ColorSchemeScript />
-          <link
-            rel="icon"
-            href="/assets/images/darmasaba-icon.png"
-            sizes="any"
-          />
         </head>
         <body>
           <MantineProvider theme={theme}>
             {children}
-
+            <LoadDataFirstClient />
+            <ToastContainer 
+              position="bottom-center" 
+              hideProgressBar 
+              style={{ zIndex: 9999 }} 
+            />
           </MantineProvider>
-          <ToastContainer position="bottom-center" hideProgressBar style={{
-          zIndex: 9999
-        }} />
         </body>
-        <LoadDataFirstClient />
       </html>
     </ViewTransitions>
   );

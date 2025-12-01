@@ -18,6 +18,7 @@ export default function Registrasi() {
   const [username, setUsername] = useState('');
   const [loading, setLoading] = useState(false);
   const [phone, setPhone] = useState(''); // ✅ tambahkan state untuk phone
+  const [agree, setAgree] = useState(false)
 
   // Ambil data dari localStorage (dari login)
   useEffect(() => {
@@ -43,6 +44,11 @@ export default function Registrasi() {
     const cleanPhone = phone.replace(/\D/g, '');
     if (cleanPhone.length < 10) {
       toast.error('Nomor tidak valid!');
+      return;
+    }
+
+    if (!agree) {
+      toast.error("Anda harus menyetujui syarat dan ketentuan!");
       return;
     }
 
@@ -92,8 +98,8 @@ export default function Registrasi() {
                     username.length > 0 && username.length < 5
                       ? 'Minimal 5 karakter!'
                       : username.includes(' ')
-                      ? 'Tidak boleh ada spasi'
-                      : ''
+                        ? 'Tidak boleh ada spasi'
+                        : ''
                   }
                   required
                 />
@@ -108,8 +114,28 @@ export default function Registrasi() {
                 </Box>
 
                 <Box pt="md">
-                  <Checkbox label="Saya menyetujui syarat dan ketentuan" defaultChecked />
+                  <Checkbox
+                    checked={agree}
+                    onChange={(e) => setAgree(e.currentTarget.checked)}
+                    label={
+                      <Text fz="sm">
+                        Saya menyetujui{" "}
+                        <a
+                          href="/terms-of-service"
+                          target="_blank"
+                          style={{
+                            color: colors["blue-button"],
+                            textDecoration: "underline",
+                            fontWeight: 500,
+                          }}
+                        >
+                          syarat dan ketentuan
+                        </a>
+                      </Text>
+                    }
+                  />
                 </Box>
+
 
                 <Box pt="xl">
                   <Button
