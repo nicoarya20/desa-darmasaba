@@ -6,80 +6,80 @@ import {
   ColorSchemeScript,
   MantineProvider,
   createTheme,
-  mantineHtmlProps,
+  // mantineHtmlProps,
 } from "@mantine/core";
-import { Metadata } from "next";
-import { ViewTransitions } from "next-view-transitions";
+// import { Metadata } from "next";
+// import { ViewTransitions } from "next-view-transitions";
 import { ToastContainer } from "react-toastify";
 
-export const metadata: Metadata = {
-  title: {
-    default: "Desa Darmasaba",
-    template: "%s | Desa Darmasaba",
-  },
-  description: "Website resmi Desa Darmasaba, Kabupaten Badung, Bali. Informasi layanan publik, berita, dan profil desa.",
-  keywords: [
-    "desa darmasaba",
-    "darmasaba",
-    "badung",
-    "bali",
-    "desa",
-    "pemerintah desa",
-    "layanan publik",
-    "abang batan desa",
-  ],
-  authors: [{ name: "Pemerintah Desa Darmasaba" }],
-  creator: "Desa Darmasaba",
-  publisher: "Desa Darmasaba",
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-video-preview": -1,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-    },
-  },
-  icons: {
-    icon: "/assets/images/darmasaba-icon.png",
-    apple: "/assets/images/darmasaba-icon.png",
-  },
-  manifest: "/manifest.json",
-  openGraph: {
-    type: "website",
-    locale: "id_ID",
-    url: "https://cld-dkr-staging-desa-darmasaba.wibudev.com",
-    siteName: "Desa Darmasaba",
-    title: "Desa Darmasaba - Kabupaten Badung, Bali",
-    description: "Website resmi Desa Darmasaba, Kabupaten Badung, Bali. Informasi layanan publik, berita, dan profil desa.",
-    images: [
-      {
-        url: "/assets/images/darmasaba-icon.png",
-        width: 1200,
-        height: 630,
-        alt: "Desa Darmasaba",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Desa Darmasaba - Kabupaten Badung, Bali",
-    description: "Website resmi Desa Darmasaba, Kabupaten Badung, Bali",
-    images: ["/assets/images/darmasaba-icon.png"],
-  },
-  verification: {
-    // google: "your-google-verification-code", // Tambahkan jika sudah punya
-    // yandex: "your-yandex-verification-code",
-    // yahoo: "your-yahoo-verification-code",
-  },
-  category: "government",
-  other: {
-    "msapplication-TileColor": "#ffffff",
-    "theme-color": "#ffffff",
-  },
-};
+// export const metadata: Metadata = {
+//   title: {
+//     default: "Desa Darmasaba",
+//     template: "%s | Desa Darmasaba",
+//   },
+//   description: "Website resmi Desa Darmasaba, Kabupaten Badung, Bali. Informasi layanan publik, berita, dan profil desa.",
+//   keywords: [
+//     "desa darmasaba",
+//     "darmasaba",
+//     "badung",
+//     "bali",
+//     "desa",
+//     "pemerintah desa",
+//     "layanan publik",
+//     "abang batan desa",
+//   ],
+//   authors: [{ name: "Pemerintah Desa Darmasaba" }],
+//   creator: "Desa Darmasaba",
+//   publisher: "Desa Darmasaba",
+//   robots: {
+//     index: true,
+//     follow: true,
+//     googleBot: {
+//       index: true,
+//       follow: true,
+//       "max-video-preview": -1,
+//       "max-image-preview": "large",
+//       "max-snippet": -1,
+//     },
+//   },
+//   icons: {
+//     icon: "/assets/images/darmasaba-icon.png",
+//     apple: "/assets/images/darmasaba-icon.png",
+//   },
+//   manifest: "/manifest.json",
+//   openGraph: {
+//     type: "website",
+//     locale: "id_ID",
+//     url: "https://cld-dkr-staging-desa-darmasaba.wibudev.com",
+//     siteName: "Desa Darmasaba",
+//     title: "Desa Darmasaba - Kabupaten Badung, Bali",
+//     description: "Website resmi Desa Darmasaba, Kabupaten Badung, Bali. Informasi layanan publik, berita, dan profil desa.",
+//     images: [
+//       {
+//         url: "/assets/images/darmasaba-icon.png",
+//         width: 1200,
+//         height: 630,
+//         alt: "Desa Darmasaba",
+//       },
+//     ],
+//   },
+//   twitter: {
+//     card: "summary_large_image",
+//     title: "Desa Darmasaba - Kabupaten Badung, Bali",
+//     description: "Website resmi Desa Darmasaba, Kabupaten Badung, Bali",
+//     images: ["/assets/images/darmasaba-icon.png"],
+//   },
+//   verification: {
+//     // google: "your-google-verification-code", // Tambahkan jika sudah punya
+//     // yandex: "your-yandex-verification-code",
+//     // yahoo: "your-yahoo-verification-code",
+//   },
+//   category: "government",
+//   other: {
+//     "msapplication-TileColor": "#ffffff",
+//     "theme-color": "#ffffff",
+//   },
+// };
 
 const theme = createTheme({
   fontFamily: "San Francisco, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif",
@@ -93,23 +93,22 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ViewTransitions>
-      <html lang="id" {...mantineHtmlProps}>
-        <head>
-          <ColorSchemeScript />
-        </head>
-        <body>
-          <MantineProvider theme={theme}>
-            {children}
-            <LoadDataFirstClient />
-          </MantineProvider>
-          <ToastContainer 
-            position="bottom-center" 
-            hideProgressBar 
-            style={{ zIndex: 9999 }} 
-          />
-        </body>
-      </html>
-    </ViewTransitions>
+    <html lang="id" data-mantine-color-scheme="light">
+      <head>
+        <meta charSet="utf-8" />
+        <ColorSchemeScript />
+      </head>
+      <body>
+        <MantineProvider theme={theme}>
+          {children}
+          <LoadDataFirstClient />
+        </MantineProvider>
+        <ToastContainer
+          position="bottom-center"
+          hideProgressBar
+          style={{ zIndex: 9999 }}
+        />
+      </body>
+    </html>
   );
 }
