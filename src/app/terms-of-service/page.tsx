@@ -16,6 +16,7 @@ function Page() {
             dengan ketentuan ini, harap jangan gunakan Website.
           </Text>
         </Paper>
+        
 
         <Box>
           <Title order={2} size="h2" fw={700} c="blue.9" mb="md">
