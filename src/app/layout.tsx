@@ -19,6 +19,7 @@ export const viewport: Viewport = {
   maximumScale: 5,
 };
 
+
 export const metadata: Metadata = {
   // ✅ Tambahkan metadataBase
   metadataBase: new URL("https://cld-dkr-staging-desa-darmasaba.wibudev.com"),
