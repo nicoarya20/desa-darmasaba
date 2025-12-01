@@ -1,5 +1,5 @@
 import "@mantine/core/styles.css";
-import "./globals.css";
+import "./globals.css"; // Sisanya import di globals.css
 
 import LoadDataFirstClient from "@/app/darmasaba/_com/LoadDataFirstClient";
 import {
@@ -7,6 +7,7 @@ import {
   MantineProvider,
   createTheme,
   mantineHtmlProps,
+  // mantineHtmlProps,
 } from "@mantine/core";
 import { Metadata, Viewport } from "next";
 import { ViewTransitions } from "next-view-transitions";
