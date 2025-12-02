@@ -5,7 +5,7 @@ import apbdes from '@/app/admin/(dashboard)/_state/landing-page/apbdes'
 import APBDesProgress from '@/app/darmasaba/(tambahan)/apbdes/lib/apbDesaProgress'
 import { transformAPBDesData } from '@/app/darmasaba/(tambahan)/apbdes/lib/types'
 import colors from '@/con/colors'
-import { ActionIcon, BackgroundImage, Box, Button, Center, Flex, Group, Loader, Select, SimpleGrid, Stack, Text } from '@mantine/core'
+import { ActionIcon, BackgroundImage, Box, Button, Center, Group, Loader, Select, SimpleGrid, Stack, Text } from '@mantine/core'
 import { IconDownload } from '@tabler/icons-react'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
@@ -133,7 +133,7 @@ function Apbdes() {
               style={{ overflow: 'hidden' }}
             >
               <Box pos="absolute" inset={0} bg="rgba(0,0,0,0.45)" style={{ borderRadius: 16 }} />
-              <Stack justify="space-between" h="100%" p="xl" pos="relative">
+              <Stack gap={"xs"} justify="space-between" h="100%" p="xl" pos="relative">
                 <Text
                   c="white"
                   fw={600}
@@ -152,7 +152,20 @@ function Apbdes() {
                 >
                   {v.jumlah}
                 </Text>
-                <Group justify="center">
+                <Center>
+                  <ActionIcon
+                    component={Link}
+                    href={v.file?.link || ''}
+                    radius="xl"
+                    size="xl"
+                    variant="gradient"
+                    gradient={{ from: '#1C6EA4', to: '#1C6EA4' }}
+                  >
+                    <IconDownload size={20} color="white" />
+                  </ActionIcon>
+
+                </Center>
+                {/* <Group justify="center">
                   <ActionIcon
                     component={Link}
                     href={v.file?.link || ''}
@@ -161,11 +174,11 @@ function Apbdes() {
                     variant="gradient"
                     gradient={{ from: '#1C6EA4', to: '#1C6EA4' }}
                   >
-                    <Flex align="center" gap="xs" px="md" py={6}>
-                      <IconDownload size={18} color="white" />
-                    </Flex>
+                    <Group align="center" gap="xs" px="md" py={6}>
+                      <IconDownload size={25} color="white" />
+                    </Group>
                   </ActionIcon>
-                </Group>
+                </Group> */}
               </Stack>
             </BackgroundImage>
           ))

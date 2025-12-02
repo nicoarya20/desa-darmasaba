@@ -27,7 +27,7 @@ const programInovasi = proxy({
       name: "",
       description: "",
       imageId: "",
-      link: ""
+      link: "",
     } as ProgramInovasiForm,
     loading: false,
     async create() {
@@ -71,20 +71,21 @@ const programInovasi = proxy({
     total: 0,
     loading: false,
     search: "",
-    load: async (page = 1, limit = 10, search = "") => {  // Change to arrow function
-      programInovasi.findMany.loading = true;  // Use the full path to access the property
+    load: async (page = 1, limit = 10, search = "") => {
+      // Change to arrow function
+      programInovasi.findMany.loading = true; // Use the full path to access the property
       programInovasi.findMany.page = page;
       programInovasi.findMany.search = search;
       try {
         const query: any = { page, limit };
         if (search) query.search = search;
-        
+
         const res = await ApiFetch.api.landingpage.programinovasi[
           "findMany"
         ].get({
-          query
+          query,
         });
-  
+
         if (res.status === 200 && res.data?.success) {
           programInovasi.findMany.data = res.data.data || [];
           programInovasi.findMany.total = res.data.total || 0;
@@ -389,7 +390,10 @@ const pejabatDesa = proxy({
 
       try {
         // Ensure ID is properly encoded in the URL
-        const url = new URL(`/api/landingpage/pejabatdesa/${encodeURIComponent(this.id)}`, window.location.origin);
+        const url = new URL(
+          `/api/landingpage/pejabatdesa/${encodeURIComponent(this.id)}`,
+          window.location.origin
+        );
         const response = await fetch(url.toString(), {
           method: "PUT",
           headers: {
@@ -438,15 +442,18 @@ const pejabatDesa = proxy({
 
 const templateMediaSosial = z.object({
   name: z.string().min(3, "Nama minimal 3 karakter"),
-  imageId: z.string().min(1, "Gambar wajib dipilih"),
+  imageId: z.string().nullable().optional(),
   iconUrl: z.string().min(3, "Icon URL minimal 3 karakter"),
+  icon: z.string().nullable().optional(),
 });
 
 type MediaSosialForm = {
   name: string;
-  imageId: string;
+  imageId: string | null; // boleh null
   iconUrl: string;
+  icon: string | null; // boleh null
 };
+
 
 const mediaSosial = proxy({
   create: {
@@ -455,9 +462,10 @@ const mediaSosial = proxy({
     async create() {
       // Ensure all required fields are non-null
       const formData = {
-        name: mediaSosial.create.form.name || "",
-        imageId: mediaSosial.create.form.imageId || "",
-        iconUrl: mediaSosial.create.form.iconUrl || "",
+        name: mediaSosial.create.form.name ?? "",
+        imageId: mediaSosial.create.form.imageId ?? null, // FIXED
+        iconUrl: mediaSosial.create.form.iconUrl ?? "",
+        icon: mediaSosial.create.form.icon ?? null, // FIXED
       };
 
       const cek = templateMediaSosial.safeParse(formData);
@@ -492,20 +500,19 @@ const mediaSosial = proxy({
     total: 0,
     loading: false,
     search: "",
-    load: async (page = 1, limit = 10, search = "") => {  // Change to arrow function
-      mediaSosial.findMany.loading = true;  // Use the full path to access the property
+    load: async (page = 1, limit = 10, search = "") => {
+      // Change to arrow function
+      mediaSosial.findMany.loading = true; // Use the full path to access the property
       mediaSosial.findMany.page = page;
       mediaSosial.findMany.search = search;
-      try { 
+      try {
         const query: any = { page, limit };
         if (search) query.search = search;
-        
-        const res = await ApiFetch.api.landingpage.mediasosial[
-          "findMany"
-        ].get({
+
+        const res = await ApiFetch.api.landingpage.mediasosial["findMany"].get({
           query,
         });
-  
+
         if (res.status === 200 && res.data?.success) {
           mediaSosial.findMany.data = res.data.data || [];
           mediaSosial.findMany.total = res.data.total || 0;
@@ -537,7 +544,7 @@ const mediaSosial = proxy({
         toast.warn("ID tidak valid");
         return null;
       }
-    
+
       mediaSosial.update.loading = true;
       try {
         const res = await fetch(`/api/landingpage/mediasosial/${id}`);
@@ -586,66 +593,72 @@ const mediaSosial = proxy({
     },
   },
   update: {
-      id: "",
-      form: {} as MediaSosialForm,
-      loading: false,
-  
-      async load(id: string) {
-        if (!id) {
-          toast.warn("ID tidak valid");
-          return null;
+    id: "",
+    form: {} as MediaSosialForm,
+    loading: false,
+
+    async load(id: string) {
+      if (!id) {
+        toast.warn("ID tidak valid");
+        return null;
+      }
+
+      mediaSosial.update.loading = true; // ✅ Tambahkan ini di awal
+
+      try {
+        const response = await fetch(`/api/landingpage/mediasosial/${id}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
-      
-        mediaSosial.update.loading = true; // ✅ Tambahkan ini di awal
-      
-        try {
-          const response = await fetch(`/api/landingpage/mediasosial/${id}`, {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          });
-      
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
-      
-          const result = await response.json();
-      
-          if (result?.success) {
-            const data = result.data;
-            this.id = data.id;
-            this.form = {
-              name: data.name || "",
-              imageId: data.imageId || "",
-              iconUrl: data.iconUrl || "",
-            };
-            return data;
-          } else {
-            throw new Error(result?.message || "Gagal mengambil data media sosial");
-          }
-        } catch (error) {
-          console.error((error as Error).message);
-          toast.error("Terjadi kesalahan saat mengambil data media sosial");
-        } finally {
-          mediaSosial.update.loading = false; // ✅ Supaya berhenti loading walau error
+
+        const result = await response.json();
+
+        if (result?.success) {
+          const data = result.data;
+          this.id = data.id;
+          this.form = {
+            name: data.name || "",
+            imageId: data.imageId || null,
+            iconUrl: data.iconUrl || "",
+            icon: data.icon || null,
+            
+          };
+          return data;
+        } else {
+          throw new Error(
+            result?.message || "Gagal mengambil data media sosial"
+          );
         }
-      },
-      
-      async update() {
-        const cek = templateMediaSosial.safeParse(mediaSosial.update.form);
-        if (!cek.success) {
-          const err = `[${cek.error.issues
-            .map((v) => `${v.path.join(".")}`)
-            .join("\n")}] required`;
-          toast.error(err);
-          return false;
-        }
-  
-        try {
-          mediaSosial.update.loading = true;
-  
-          const response = await fetch(`/api/landingpage/mediasosial/${this.id}`, {
+      } catch (error) {
+        console.error((error as Error).message);
+        toast.error("Terjadi kesalahan saat mengambil data media sosial");
+      } finally {
+        mediaSosial.update.loading = false; // ✅ Supaya berhenti loading walau error
+      }
+    },
+
+    async update() {
+      const cek = templateMediaSosial.safeParse(mediaSosial.update.form);
+      if (!cek.success) {
+        const err = `[${cek.error.issues
+          .map((v) => `${v.path.join(".")}`)
+          .join("\n")}] required`;
+        toast.error(err);
+        return false;
+      }
+
+      try {
+        mediaSosial.update.loading = true;
+
+        const response = await fetch(
+          `/api/landingpage/mediasosial/${this.id}`,
+          {
             method: "PUT",
             headers: {
               "Content-Type": "application/json",
@@ -654,38 +667,40 @@ const mediaSosial = proxy({
               name: this.form.name,
               imageId: this.form.imageId,
               iconUrl: this.form.iconUrl,
+              icon: this.form.icon,
             }),
-          });
-  
-          if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(
-              errorData.message || `HTTP error! status: ${response.status}`
-            );
           }
-  
-          const result = await response.json();
-  
-          if (result.success) {
-            toast.success("Berhasil update media sosial");
-            await mediaSosial.findMany.load(); // refresh list
-            return true;
-          } else {
-            throw new Error(result.message || "Gagal update media sosial");
-          }
-        } catch (error) {
-          console.error("Error updating media sosial:", error);
-          toast.error(
-            error instanceof Error
-              ? error.message
-              : "Terjadi kesalahan saat update media sosial"
+        );
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(
+            errorData.message || `HTTP error! status: ${response.status}`
           );
-          return false;
-        } finally {
-          mediaSosial.update.loading = false;
         }
-      },
+
+        const result = await response.json();
+
+        if (result.success) {
+          toast.success("Berhasil update media sosial");
+          await mediaSosial.findMany.load(); // refresh list
+          return true;
+        } else {
+          throw new Error(result.message || "Gagal update media sosial");
+        }
+      } catch (error) {
+        console.error("Error updating media sosial:", error);
+        toast.error(
+          error instanceof Error
+            ? error.message
+            : "Terjadi kesalahan saat update media sosial"
+        );
+        return false;
+      } finally {
+        mediaSosial.update.loading = false;
+      }
     },
+  },
 });
 
 const profileLandingPageState = proxy({

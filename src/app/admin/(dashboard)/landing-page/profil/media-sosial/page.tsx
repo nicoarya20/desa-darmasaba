@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 import colors from '@/con/colors';
 import { Box, Button, Center, Group, Image, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title } from '@mantine/core';
@@ -8,6 +9,7 @@ import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../../_com/header';
 import profileLandingPageState from '../../../_state/landing-page/profile';
+import { sosmedMap } from '../_lib/sosmed';
 
 function MediaSosial() {
   const [search, setSearch] = useState("");
@@ -28,6 +30,14 @@ function MediaSosial() {
 function ListMediaSosial({ search }: { search: string }) {
   const stateMediaSosial = useProxy(profileLandingPageState.mediaSosial)
   const router = useRouter();
+
+  const getIconSource = (item: any) => {
+    if (item.image?.link) return item.image.link; 
+    if (item.icon && sosmedMap[item.icon as keyof typeof sosmedMap]?.src) {
+      return sosmedMap[item.icon as keyof typeof sosmedMap].src;
+    }
+    return null;
+  };
 
   const {
     data,
@@ -56,9 +66,9 @@ function ListMediaSosial({ search }: { search: string }) {
       <Paper withBorder bg={colors['white-1']} p={'lg'} shadow="md" radius="md">
         <Group justify="space-between" mb="md">
           <Title order={4}>Daftar Media Sosial</Title>
-            <Button leftSection={<IconPlus size={18} />} color="blue" variant="light" onClick={() => router.push('/admin/landing-page/profil/media-sosial/create')}>
-              Tambah Baru
-            </Button>
+          <Button leftSection={<IconPlus size={18} />} color="blue" variant="light" onClick={() => router.push('/admin/landing-page/profil/media-sosial/create')}>
+            Tambah Baru
+          </Button>
         </Group>
         <Box style={{ overflowX: "auto" }}>
           <Table highlightOnHover>
@@ -77,13 +87,26 @@ function ListMediaSosial({ search }: { search: string }) {
                     <TableTd style={{ width: '25%', }}>
                       <Text fw={500} truncate="end" lineClamp={1}>{item.name}</Text>
                     </TableTd>
-                    <TableTd style={{ width: '20%', }}>
-                      <Box w={50} h={50} style={{ borderRadius: 8, overflow: 'hidden', }}>
-                        {item.image?.link ? (
-                          <Image loading='lazy' src={item.image.link} alt={item.name} fit="cover" />
-                        ) : (
-                          <Box bg={colors['blue-button']} w="100%" h="100%" />
-                        )}
+                    <TableTd style={{ width: '20%' }}>
+                      <Box w={50} h={50} style={{ borderRadius: 8, overflow: 'hidden' }}>
+
+                        {(() => {
+                          const src = getIconSource(item);
+
+                          if (src) {
+                            return (
+                              <Image
+                                loading="lazy"
+                                src={src}
+                                alt={item.name}
+                                fit={item.image?.link ? "cover" : "contain"}
+                              />
+                            );
+                          }
+
+                          return <Box bg={colors['blue-button']} w="100%" h="100%" />;
+                        })()}
+
                       </Box>
                     </TableTd>
                     <TableTd style={{ width: '20%', }}>
