@@ -6,6 +6,7 @@ type FormUpdateMediaSosial = {
   name?: string;
   imageId?: string;
   iconUrl?: string;
+  icon?: string;
 };
 
 export default async function mediaSosialUpdate(context: Context) {
@@ -20,13 +21,29 @@ export default async function mediaSosialUpdate(context: Context) {
     };
   }
 
+  // 🚨 Tambahkan validasi di sini
+  if (!body.name || body.name.trim().length < 3) {
+    return {
+      success: false,
+      message: "Nama media sosial minimal 3 karakter",
+    };
+  }
+
+  if (!body.iconUrl || body.iconUrl.trim().length < 3) {
+    return {
+      success: false,
+      message: "Icon URL minimal 3 karakter",
+    };
+  }
+
   try {
     const updated = await prisma.mediaSosial.update({
       where: { id },
       data: {
         name: body.name,
-        imageId: body.imageId,
+        imageId: body.imageId || null, // pastikan null jika kosong
         iconUrl: body.iconUrl,
+        icon: body.icon || null, // pastikan null jika kosong
       },
       include: {
         image: true,

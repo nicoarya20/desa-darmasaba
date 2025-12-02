@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
 import profileLandingPageState from '@/app/admin/(dashboard)/_state/landing-page/profile';
@@ -8,6 +9,7 @@ import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
+import { sosmedMap } from '../../_lib/sosmed';
 
 function DetailMediaSosial() {
   const stateMediaSosial = useProxy(profileLandingPageState.mediaSosial);
@@ -15,6 +17,14 @@ function DetailMediaSosial() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const params = useParams();
   const router = useRouter();
+
+  const getIconSource = (item: any) => {
+    if (item.image?.link) return item.image.link;
+    if (item.icon && sosmedMap[item.icon as keyof typeof sosmedMap]?.src) {
+      return sosmedMap[item.icon as keyof typeof sosmedMap].src;
+    }
+    return null;
+  };
 
   useShallowEffect(() => {
     stateMediaSosial.findUnique.load(params?.id as string);
@@ -77,46 +87,47 @@ function DetailMediaSosial() {
 
               <Box>
                 <Text fz="lg" fw="bold">Gambar</Text>
-                {data.image?.link ? (
-                  <Image
-                    src={data.image.link}
-                    alt={data.name || 'Gambar Media Sosial'}
-                    w="100%"
-                    maw={120} // max width biar tidak keluar layar
-                    h="auto"
-                    radius="md"
-                    fit="cover"
-                    loading="lazy"
-                  />
+                {(() => {
+                  const src = getIconSource(data);
 
-                ) : (
-                  <Text fz="sm" c="dimmed">Tidak ada gambar</Text>
-                )}
+                  if (src) {
+                    return (
+                      <Image
+                        loading="lazy"
+                        src={src}
+                        alt={data.name}
+                        fit={data.image?.link ? "cover" : "contain"}
+                      />
+                    );
+                  }
+
+                  return <Box bg={colors['blue-button']} w="100%" h="100%" />;
+                })()}
               </Box>
 
               <Group gap="sm">
-                  <Button
-                    color="red"
-                    onClick={() => {
-                      setSelectedId(data.id);
-                      setModalHapus(true);
-                    }}
-                    variant="light"
-                    radius="md"
-                    size="md"
-                  >
-                    <IconTrash size={20} />
-                  </Button>
+                <Button
+                  color="red"
+                  onClick={() => {
+                    setSelectedId(data.id);
+                    setModalHapus(true);
+                  }}
+                  variant="light"
+                  radius="md"
+                  size="md"
+                >
+                  <IconTrash size={20} />
+                </Button>
 
-                  <Button
-                    color="green"
-                    onClick={() => router.push(`/admin/landing-page/profil/media-sosial/${data.id}/edit`)}
-                    variant="light"
-                    radius="md"
-                    size="md"
-                  >
-                    <IconEdit size={20} />
-                  </Button>
+                <Button
+                  color="green"
+                  onClick={() => router.push(`/admin/landing-page/profil/media-sosial/${data.id}/edit`)}
+                  variant="light"
+                  radius="md"
+                  size="md"
+                >
+                  <IconEdit size={20} />
+                </Button>
               </Group>
             </Stack>
           </Paper>
