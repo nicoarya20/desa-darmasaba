@@ -50,7 +50,9 @@ function SosmedView({
                       loading="lazy"
                       src={src}
                       alt={item.name}
-                      fit={item.image?.link ? "cover" : "contain"}
+                      w={24}
+                      h={24}
+                      fit="contain"
                     />
                   );
                 }

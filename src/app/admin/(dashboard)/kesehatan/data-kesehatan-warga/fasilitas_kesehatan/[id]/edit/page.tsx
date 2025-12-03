@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
 import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
@@ -10,19 +8,22 @@ import {
   Button,
   Group,
   Loader,
+  MultiSelect,
   Paper,
   Stack,
   Text,
   TextInput,
-  Title
+  Title,
 } from '@mantine/core';
+import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
-interface FasilitasKesehatanFormBase {
+// Tipe form yang SESUAI dengan logika relasi (array ID)
+interface EditFasilitasKesehatanForm {
   name: string;
   informasiUmum: {
     fasilitas: string;
@@ -30,128 +31,92 @@ interface FasilitasKesehatanFormBase {
     jamOperasional: string;
   };
   layananUnggulan: { content: string };
-  dokterdanTenagaMedis: {
-    name: string;
-    specialist: string;
-    jadwal: string;
-  };
+  dokterdanTenagaMedis: string[]; // ← ARRAY ID
   fasilitasPendukung: { content: string };
   prosedurPendaftaran: { content: string };
-  tarifDanLayanan: {
-    layanan: string;
-    tarif: string;
-  };
+  tarifDanLayanan: string[]; // ← ARRAY ID
 }
 
 function EditFasilitasKesehatan() {
   const state = useProxy(fasilitasKesehatanState.fasilitasKesehatan);
+  const dokterState = useProxy(fasilitasKesehatanState.dokter);
+  const tarifState = useProxy(fasilitasKesehatanState.tarif);
   const router = useRouter();
-  const params = useParams();
+  const params = useParams<{ id: string }>();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const [formData, setFormData] = useState<FasilitasKesehatanFormBase>({
+  const [formData, setFormData] = useState<EditFasilitasKesehatanForm>({
     name: '',
     informasiUmum: { fasilitas: '', alamat: '', jamOperasional: '' },
     layananUnggulan: { content: '' },
-    dokterdanTenagaMedis: { name: '', specialist: '', jadwal: '' },
+    dokterdanTenagaMedis: [],
     fasilitasPendukung: { content: '' },
     prosedurPendaftaran: { content: '' },
-    tarifDanLayanan: { layanan: '', tarif: '' },
+    tarifDanLayanan: [],
   });
 
-  const [originalData, setOriginalData] = useState<FasilitasKesehatanFormBase>({
-    name: '',
-    informasiUmum: { fasilitas: '', alamat: '', jamOperasional: '' },
-    layananUnggulan: { content: '' },
-    dokterdanTenagaMedis: { name: '', specialist: '', jadwal: '' },
-    fasilitasPendukung: { content: '' },
-    prosedurPendaftaran: { content: '' },
-    tarifDanLayanan: { layanan: '', tarif: '' },
-  });
+  // Load data fasilitas & daftar dokter/tarif
+  useShallowEffect(() => {
+    const loadAll = async () => {
+      const id = params?.id;
+      if (!id) return;
 
-  // Helper untuk update nested state
-  const updateForm = <K extends keyof FasilitasKesehatanFormBase>(
-    key: K,
-    value: FasilitasKesehatanFormBase[K]
-  ) => setFormData(prev => ({ ...prev, [key]: value }));
+      // Load dokter & tarif (untuk opsi MultiSelect)
+      await Promise.all([
+        dokterState.findMany.load(),
+        tarifState.findMany.load(),
+      ]);
 
-  const updateNested = <
-    K extends keyof FasilitasKesehatanFormBase,
-    N extends keyof FasilitasKesehatanFormBase[K]
-  >(key: K, nestedKey: N, value: FasilitasKesehatanFormBase[K][N]) =>
-    setFormData(prev => ({
-      ...prev,
-      [key]: { ...prev[key] as object, [nestedKey]: value },
-    }));
+      // Load data fasilitas
+      await state.edit.load(id);
+      const loaded = state.edit.form;
+      if (loaded) {
+        setFormData({
+          name: loaded.name,
+          informasiUmum: loaded.informasiUmum,
+          layananUnggulan: loaded.layananUnggulan,
+          dokterdanTenagaMedis: loaded.dokterdanTenagaMedis || [],
+          fasilitasPendukung: loaded.fasilitasPendukung,
+          prosedurPendaftaran: loaded.prosedurPendaftaran,
+          tarifDanLayanan: loaded.tarifDanLayanan || [],
+        });
+      }
+    };
 
-  const deepClone = (obj: any): any => {
-    try {
-      return JSON.parse(JSON.stringify(obj));
-    } catch (error) {
-      console.warn('Gagal deep clone dengan JSON fallback:', error);
-      return obj; // fallback (berisiko shared reference)
+    loadAll();
+  }, [params?.id]);
+
+  const updateForm = <K extends keyof EditFasilitasKesehatanForm>(
+    field: K,
+    value: EditFasilitasKesehatanForm[K]
+  ) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleReset = () => {
+    const loaded = state.edit.form;
+    if (loaded) {
+      setFormData({
+        name: loaded.name,
+        informasiUmum: loaded.informasiUmum,
+        layananUnggulan: loaded.layananUnggulan,
+        dokterdanTenagaMedis: loaded.dokterdanTenagaMedis || [],
+        fasilitasPendukung: loaded.fasilitasPendukung,
+        prosedurPendaftaran: loaded.prosedurPendaftaran,
+        tarifDanLayanan: loaded.tarifDanLayanan || [],
+      });
+      toast.info('Form dikembalikan ke data awal');
     }
   };
 
-  // Load data
-  useEffect(() => {
-    const load = async () => {
-      const id = params?.id as string;
-      if (!id) return;
-  
-      try {
-        await state.edit.load(id);
-        const loadedData = state.edit.form;
-  
-        if (!loadedData) {
-          toast.error('Data tidak ditemukan');
-          return;
-        }
-  
-        // Gunakan JSON fallback untuk deep clone
-        const clonedData = deepClone(loadedData) as FasilitasKesehatanFormBase;
-  
-        setFormData(clonedData);
-        setOriginalData(clonedData);
-      } catch (err) {
-        console.error(err);
-        toast.error('Gagal memuat data fasilitas kesehatan');
-      }
-    };
-  
-    load();
-  }, [params?.id]);
-
-  const handleResetForm = () => {
-    setFormData({
-      name: originalData.name,
-      informasiUmum:
-      {
-        fasilitas: originalData.informasiUmum.fasilitas,
-        alamat: originalData.informasiUmum.alamat,
-        jamOperasional: originalData.informasiUmum.jamOperasional
-      },
-      layananUnggulan: { content: originalData.layananUnggulan.content },
-      dokterdanTenagaMedis: {
-        name: originalData.dokterdanTenagaMedis.name,
-        specialist: originalData.dokterdanTenagaMedis.specialist,
-        jadwal: originalData.dokterdanTenagaMedis.jadwal
-      },
-      fasilitasPendukung: { content: originalData.fasilitasPendukung.content },
-      prosedurPendaftaran: { content: originalData.prosedurPendaftaran.content },
-      tarifDanLayanan: {
-        layanan: originalData.tarifDanLayanan.layanan,
-        tarif: originalData.tarifDanLayanan.tarif
-      },
-    });
-    toast.info("Form dikembalikan ke data awal");
-  };
-
-  // Submit
-  const handleSubmit = async () => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     try {
       setIsSubmitting(true);
-      state.edit.form = { ...state.edit.form, ...formData };
+
+      // Update state Valtio
+      state.edit.form = { ...formData };
+
       const success = await state.edit.submit();
       if (success) {
         toast.success('Fasilitas kesehatan berhasil diperbarui!');
@@ -159,14 +124,14 @@ function EditFasilitasKesehatan() {
       }
     } catch (err) {
       console.error(err);
-      toast.error('Terjadi kesalahan saat memperbarui data fasilitas kesehatan');
+      toast.error('Gagal memperbarui data');
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 'sm', md: 'lg' }} py="md" component="form" onSubmit={handleSubmit}>
       {/* Header */}
       <Group mb="md">
         <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
@@ -189,7 +154,7 @@ function EditFasilitasKesehatan() {
         <Stack gap="md">
           <TextInput
             label="Nama Fasilitas Kesehatan"
-            placeholder="Masukkan nama fasilitas kesehatan"
+            placeholder="Masukkan nama"
             value={formData.name}
             onChange={(e) => updateForm('name', e.target.value)}
             required
@@ -197,118 +162,108 @@ function EditFasilitasKesehatan() {
 
           {/* Informasi Umum */}
           <Box>
-            <Text fw="bold" mb={5}>
-              Informasi Umum
-            </Text>
+            <Text fw="bold" mb={5}>Informasi Umum</Text>
             <TextInput
               label="Fasilitas"
               value={formData.informasiUmum.fasilitas}
-              onChange={(e) => updateNested('informasiUmum', 'fasilitas', e.target.value)}
+              onChange={(e) =>
+                updateForm('informasiUmum', {
+                  ...formData.informasiUmum,
+                  fasilitas: e.target.value,
+                })
+              }
             />
             <TextInput
               label="Alamat"
               value={formData.informasiUmum.alamat}
-              onChange={(e) => updateNested('informasiUmum', 'alamat', e.target.value)}
+              onChange={(e) =>
+                updateForm('informasiUmum', {
+                  ...formData.informasiUmum,
+                  alamat: e.target.value,
+                })
+              }
             />
             <TextInput
               label="Jam Operasional"
               value={formData.informasiUmum.jamOperasional}
-              onChange={(e) => updateNested('informasiUmum', 'jamOperasional', e.target.value)}
+              onChange={(e) =>
+                updateForm('informasiUmum', {
+                  ...formData.informasiUmum,
+                  jamOperasional: e.target.value,
+                })
+              }
             />
           </Box>
 
           {/* Layanan Unggulan */}
           <Box>
-            <Text fw="bold" mb={5}>
-              Layanan Unggulan
-            </Text>
+            <Text fw="bold" mb={5}>Layanan Unggulan</Text>
             <EditEditor
               value={formData.layananUnggulan.content}
-              onChange={(v) => updateNested('layananUnggulan', 'content', v)}
+              onChange={(v) => updateForm('layananUnggulan', { content: v })}
             />
           </Box>
 
-          {/* Dokter dan Tenaga Medis */}
-          <Box>
-            <Text fw="bold" mb={5}>
-              Dokter dan Tenaga Medis
-            </Text>
-            <TextInput
-              label="Nama Dokter"
-              value={formData.dokterdanTenagaMedis.name}
-              onChange={(e) => updateNested('dokterdanTenagaMedis', 'name', e.target.value)}
-            />
-            <TextInput
-              label="Specialist"
-              value={formData.dokterdanTenagaMedis.specialist}
-              onChange={(e) =>
-                updateNested('dokterdanTenagaMedis', 'specialist', e.target.value)
-              }
-            />
-            <TextInput
-              label="Jadwal"
-              value={formData.dokterdanTenagaMedis.jadwal}
-              onChange={(e) => updateNested('dokterdanTenagaMedis', 'jadwal', e.target.value)}
-            />
-          </Box>
+          {/* Dokter & Tenaga Medis — MultiSelect */}
+          <MultiSelect
+            label="Dokter & Tenaga Medis"
+            placeholder="Pilih dokter/tenaga medis"
+            data={
+              dokterState.findMany.data?.map((d) => ({
+                value: d.id,
+                label: `${d.name} (${d.specialist})`,
+              })) || []
+            }
+            value={formData.dokterdanTenagaMedis}
+            onChange={(val) => updateForm('dokterdanTenagaMedis', val)}
+            searchable
+            clearable
+            required
+          />
 
           {/* Fasilitas Pendukung */}
           <Box>
-            <Text fw="bold" mb={5}>
-              Fasilitas Pendukung
-            </Text>
+            <Text fw="bold" mb={5}>Fasilitas Pendukung</Text>
             <EditEditor
               value={formData.fasilitasPendukung.content}
-              onChange={(v) => updateNested('fasilitasPendukung', 'content', v)}
+              onChange={(v) => updateForm('fasilitasPendukung', { content: v })}
             />
           </Box>
 
           {/* Prosedur Pendaftaran */}
           <Box>
-            <Text fw="bold" mb={5}>
-              Prosedur Pendaftaran
-            </Text>
+            <Text fw="bold" mb={5}>Prosedur Pendaftaran</Text>
             <EditEditor
               value={formData.prosedurPendaftaran.content}
-              onChange={(v) => updateNested('prosedurPendaftaran', 'content', v)}
+              onChange={(v) => updateForm('prosedurPendaftaran', { content: v })}
             />
           </Box>
 
-          {/* Tarif dan Layanan */}
-          <Box>
-            <Text fw="bold" mb={5}>
-              Tarif dan Layanan
-            </Text>
-            <TextInput
-              label="Tarif"
-              value={formData.tarifDanLayanan.tarif}
-              onChange={(e) => updateNested('tarifDanLayanan', 'tarif', e.target.value)}
-            />
-            <TextInput
-              label="Layanan"
-              value={formData.tarifDanLayanan.layanan}
-              onChange={(e) => updateNested('tarifDanLayanan', 'layanan', e.target.value)}
-            />
-          </Box>
+          {/* Tarif & Layanan — MultiSelect */}
+          <MultiSelect
+            label="Tarif & Layanan"
+            placeholder="Pilih layanan"
+            data={
+              tarifState.findMany.data?.map((t) => ({
+                value: t.id,
+                label: `${t.layanan} - ${t.tarif}`,
+              })) || []
+            }
+            value={formData.tarifDanLayanan}
+            onChange={(val) => updateForm('tarifDanLayanan', val)}
+            searchable
+            clearable
+            required
+          />
 
-          {/* Tombol Simpan */}
+          {/* Aksi */}
           <Group justify="right">
-            {/* Tombol Batal */}
-            <Button
-              variant="outline"
-              color="gray"
-              radius="md"
-              size="md"
-              onClick={handleResetForm}
-            >
+            <Button variant="outline" color="gray" radius="md" onClick={handleReset}>
               Batal
             </Button>
-
-            {/* Tombol Simpan */}
             <Button
-              onClick={handleSubmit}
+              type="submit"
               radius="md"
-              size="md"
               style={{
                 background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
