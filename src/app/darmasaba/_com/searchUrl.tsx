@@ -1,4 +1,4 @@
-const getDetailUrl = (item: { type?: string; id: string | number; [key: string]: unknown }) => {
+const getDetailUrl = (item: { type?: string; id: string | number;[key: string]: unknown }) => {
   const { type, id, kategori } = item;
   const map: Record<string, (id: string | number, kategori?: string) => string> = {
     programinovasi: (id) => `/darmasaba/program-inovasi/${id}`,
@@ -30,6 +30,8 @@ const getDetailUrl = (item: { type?: string; id: string | number; [key: string]:
     penghargaan: () => '/darmasaba/desa/penghargaan',
     posyandu: (id) => `/darmasaba/kesehatan/posyandu/${id}`,
     fasilitasKesehatan: () => '/darmasaba/kesehatan/data-kesehatan-warga',
+    dokterDanTenagaMedis: () => '/darmasaba/kesehatan/data-kesehatan-warga',
+    tarifDanLayanan: () => '/darmasaba/kesehatan/data-kesehatan-warga',
     jadwalKegiatan: () => '/darmasaba/kesehatan/data-kesehatan-warga',
     artikelKesehatan: () => '/darmasaba/kesehatan/data-kesehatan-warga',
     puskesmas: () => '/darmasaba/kesehatan/puskesmas',
@@ -82,7 +84,7 @@ const getDetailUrl = (item: { type?: string; id: string | number; [key: string]:
     jenisProgramYangDiselenggarakan: () => '/darmasaba/pendidikan/pendidikan-non-formal',
     dataPerpustakaan: () => '/darmasaba/pendidikan/perpustakaan-digital/semua',
     dataPendidikan: () => '/darmasaba/pendidikan/data-pendidikan',
-    
+
   };
 
   if (type && map[type]) return map[type](id, kategori as string | undefined);

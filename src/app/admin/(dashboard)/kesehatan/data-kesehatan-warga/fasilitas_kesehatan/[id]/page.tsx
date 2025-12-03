@@ -9,6 +9,12 @@ import {
   Paper,
   Skeleton,
   Stack,
+  Table,
+  TableTbody,
+  TableTd,
+  TableTh,
+  TableThead,
+  TableTr,
   Text
 } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
@@ -108,21 +114,79 @@ function DetailFasilitasKesehatan() {
               </Box>
 
               <Box>
-                <Text fz="lg" fw="bold">Dokter & Tenaga Medis</Text>
-                <Text fz="md" fw="bold">Nama</Text>
-                <Text fz="md" c="dimmed">{data.dokterdantenagamedis?.name || '-'}</Text>
-                <Text fz="md" fw="bold">Spesialis</Text>
-                <Text fz="md" c="dimmed">{data.dokterdantenagamedis?.specialist || '-'}</Text>
-                <Text fz="md" fw="bold">Jadwal</Text>
-                <Text fz="md" c="dimmed">{data.dokterdantenagamedis?.jadwal || '-'}</Text>
+                <Text fz="lg" fw="bold" mb="sm">Dokter & Tenaga Medis</Text>
+                {data.dokterdantenagamedis && data.dokterdantenagamedis.length > 0 ? (
+                  <Box style={{ overflowX: 'auto', width: '100%' }}>
+                    <Table striped highlightOnHover withTableBorder>
+                      <TableThead>
+                        <TableTr>
+                          <TableTh style={{ whiteSpace: 'nowrap' }}>Nama</TableTh>
+                          <TableTh style={{ whiteSpace: 'nowrap' }}>Spesialis</TableTh>
+                          <TableTh style={{ whiteSpace: 'nowrap' }}>Jadwal</TableTh>
+                          <TableTh style={{ whiteSpace: 'nowrap' }}>Jam Operasional</TableTh>
+                        </TableTr>
+                      </TableThead>
+                      <TableTbody>
+                        {data.dokterdantenagamedis.map((dokter) => (
+                          <TableTr key={dokter.id}>
+                            <TableTd style={{ whiteSpace: 'normal', wordBreak: 'break-word' }}>
+                              {dokter.name || '-'}
+                            </TableTd>
+                            <TableTd style={{ whiteSpace: 'normal', wordBreak: 'break-word' }}>
+                              {dokter.specialist || '-'}
+                            </TableTd>
+                            <TableTd style={{ whiteSpace: 'normal', wordBreak: 'break-word' }}>
+                              {dokter.jadwal || '-'}
+                            </TableTd>
+                            <TableTd style={{ whiteSpace: 'normal', wordBreak: 'break-word' }}>
+                              {dokter.jamBukaOperasional} – {dokter.jamTutupOperasional}
+                              {dokter.jadwalLibur && (
+                                <>
+                                  <br />
+                                  <Text span c="dimmed" fz="xs">
+                                    Libur: {dokter.jadwalLibur} ({dokter.jamBukaLibur}–{dokter.jamTutupLibur})
+                                  </Text>
+                                </>
+                              )}
+                            </TableTd>
+                          </TableTr>
+                        ))}
+                      </TableTbody>
+                    </Table>
+                  </Box>
+                ) : (
+                  <Text c="dimmed">Tidak ada dokter atau tenaga medis terdaftar.</Text>
+                )}
               </Box>
 
-              <Box>
-                <Text fz="lg" fw="bold">Tarif & Layanan</Text>
-                <Text fz="md" fw="bold">Layanan</Text>
-                <Text fz="md" c="dimmed">{data.tarifdanlayanan?.layanan || '-'}</Text>
-                <Text fz="md" fw="bold">Tarif</Text>
-                <Text fz="md" c="dimmed">{data.tarifdanlayanan?.tarif || '-'}</Text>
+              <Box mt="xl">
+                <Text fz="lg" fw="bold" mb="sm">Tarif & Layanan</Text>
+                {data.tarifdanlayanan && data.tarifdanlayanan.length > 0 ? (
+                  <Box style={{ overflowX: 'auto', width: '100%' }}>
+                    <Table striped highlightOnHover withTableBorder>
+                      <TableThead>
+                        <TableTr>
+                          <TableTh style={{ whiteSpace: 'nowrap' }}>Layanan</TableTh>
+                          <TableTh style={{ whiteSpace: 'nowrap' }}>Tarif</TableTh>
+                        </TableTr>
+                      </TableThead>
+                      <TableTbody>
+                        {data.tarifdanlayanan.map((tarif) => (
+                          <TableTr key={tarif.id}>
+                            <TableTd style={{ whiteSpace: 'normal', wordBreak: 'break-word' }}>
+                              {tarif.layanan || '-'}
+                            </TableTd>
+                            <TableTd style={{ whiteSpace: 'normal', wordBreak: 'break-word' }}>
+                              {tarif.tarif || '-'}
+                            </TableTd>
+                          </TableTr>
+                        ))}
+                      </TableTbody>
+                    </Table>
+                  </Box>
+                ) : (
+                  <Text c="dimmed">Tidak ada tarif atau layanan terdaftar.</Text>
+                )}
               </Box>
 
               {/* Aksi */}

@@ -7,18 +7,19 @@ import {
   Button,
   Group,
   Loader,
+  MultiSelect,
   Paper,
   Stack,
   Text,
   TextInput,
   Title
 } from '@mantine/core';
+import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
-
 
 function CreateFasilitasKesehatan() {
   const stateFasilitasKesehatan = useProxy(fasilitasKesehatanState.fasilitasKesehatan);
@@ -34,23 +35,16 @@ function CreateFasilitasKesehatan() {
         jamOperasional: '',
       },
       layananUnggulan: {
-        content: '',
+        content: ''
       },
-      dokterdanTenagaMedis: {
-        name: '',
-        specialist: '',
-        jadwal: '',
-      },
+      dokterdanTenagaMedis: [] as string[],
       fasilitasPendukung: {
         content: '',
       },
       prosedurPendaftaran: {
         content: '',
       },
-      tarifDanLayanan: {
-        layanan: '',
-        tarif: '',
-      },
+      tarifDanLayanan: [] as string[],
     };
   };
 
@@ -69,6 +63,11 @@ function CreateFasilitasKesehatan() {
       setIsSubmitting(false);
     }
   };
+
+  useShallowEffect(() => {
+    fasilitasKesehatanState.dokter.findMany.load();
+    fasilitasKesehatanState.tarif.findMany.load();
+  }, []);
 
   return (
     <Box px={{ base: 'sm', md: 'lg' }} py="md" component="form" onSubmit={handleSubmit}>
@@ -140,31 +139,25 @@ function CreateFasilitasKesehatan() {
             />
           </Box>
 
+
           {/* Dokter dan Tenaga Medis */}
-          <Box>
-            <Text fz="md" fw="bold" mb={5}>Dokter dan Tenaga Medis</Text>
-            <TextInput
-              label="Nama Dokter"
-              placeholder="Masukkan nama dokter"
-              value={stateFasilitasKesehatan.create.form.dokterdanTenagaMedis.name}
-              onChange={(e) => (stateFasilitasKesehatan.create.form.dokterdanTenagaMedis.name = e.target.value)}
-              required
-            />
-            <TextInput
-              label="Spesialis"
-              placeholder="Masukkan spesialis"
-              value={stateFasilitasKesehatan.create.form.dokterdanTenagaMedis.specialist}
-              onChange={(e) => (stateFasilitasKesehatan.create.form.dokterdanTenagaMedis.specialist = e.target.value)}
-              required
-            />
-            <TextInput
-              label="Jadwal"
-              placeholder="Masukkan jadwal"
-              value={stateFasilitasKesehatan.create.form.dokterdanTenagaMedis.jadwal}
-              onChange={(e) => (stateFasilitasKesehatan.create.form.dokterdanTenagaMedis.jadwal = e.target.value)}
-              required
-            />
-          </Box>
+          <MultiSelect
+            label="Dokter & Tenaga Medis"
+            placeholder="Pilih dokter / tenaga medis"
+            data={
+              fasilitasKesehatanState.dokter.findMany.data?.map((item) => ({
+                label: item.name,
+                value: item.id,
+              })) || []
+            }
+            value={stateFasilitasKesehatan.create.form.dokterdanTenagaMedis}
+            onChange={(val: string[]) => {
+              stateFasilitasKesehatan.create.form.dokterdanTenagaMedis = val;
+            }}
+            searchable
+            clearable
+            required
+          />
 
           {/* Fasilitas Pendukung */}
           <Box>
@@ -175,6 +168,24 @@ function CreateFasilitasKesehatan() {
             />
           </Box>
 
+          <MultiSelect
+            label="Layanan"
+            placeholder="Pilih layanan"
+            data={
+              fasilitasKesehatanState.tarif.findMany.data?.map((item) => ({
+                label: item.layanan,
+                value: item.id,
+              })) || []
+            }
+            value={stateFasilitasKesehatan.create.form.tarifDanLayanan} // string[]
+            onChange={(val: string[]) => {
+              stateFasilitasKesehatan.create.form.tarifDanLayanan = val;
+            }}
+            searchable
+            clearable
+            required
+          />
+
           {/* Prosedur Pendaftaran */}
           <Box>
             <Text fz="md" fw="bold" mb={5}>Prosedur Pendaftaran</Text>
@@ -184,24 +195,6 @@ function CreateFasilitasKesehatan() {
             />
           </Box>
 
-          {/* Tarif dan Layanan */}
-          <Box>
-            <Text fz="md" fw="bold" mb={5}>Tarif dan Layanan</Text>
-            <TextInput
-              label="Tarif"
-              placeholder="Masukkan tarif"
-              value={stateFasilitasKesehatan.create.form.tarifDanLayanan.tarif}
-              onChange={(e) => (stateFasilitasKesehatan.create.form.tarifDanLayanan.tarif = e.target.value)}
-              required
-            />
-            <TextInput
-              label="Layanan"
-              placeholder="Masukkan layanan"
-              value={stateFasilitasKesehatan.create.form.tarifDanLayanan.layanan}
-              onChange={(e) => (stateFasilitasKesehatan.create.form.tarifDanLayanan.layanan = e.target.value)}
-              required
-            />
-          </Box>
 
           {/* Submit */}
           <Group justify="right">

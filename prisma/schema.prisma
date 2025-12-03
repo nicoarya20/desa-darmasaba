@@ -783,24 +783,22 @@ model Penghargaan {
 
 // ========================================= FASILITAS KESEHATAN ========================================= //
 model FasilitasKesehatan {
-  id                     String               @id @default(cuid())
-  name                   String
-  createdAt              DateTime             @default(now())
-  updatedAt              DateTime             @updatedAt
-  deletedAt              DateTime             @default(now())
-  isActive               Boolean              @default(true)
-  informasiumum          InformasiUmum        @relation(fields: [informasiUmumId], references: [id])
-  informasiUmumId        String
-  layananunggulan        LayananUnggulan      @relation(fields: [layananUnggulanId], references: [id])
-  layananUnggulanId      String
-  dokterdantenagamedis   DokterdanTenagaMedis @relation(fields: [dokterdanTenagaMedisId], references: [id])
-  dokterdanTenagaMedisId String
-  fasilitaspendukung     FasilitasPendukung   @relation(fields: [fasilitasPendukungId], references: [id])
-  fasilitasPendukungId   String
-  prosedurpendaftaran    ProsedurPendaftaran  @relation(fields: [prosedurPendaftaranId], references: [id])
-  prosedurPendaftaranId  String
-  tarifdanlayanan        TarifDanLayanan      @relation(fields: [tarifDanLayananId], references: [id])
-  tarifDanLayananId      String
+  id                    String                 @id @default(cuid())
+  name                  String
+  createdAt             DateTime               @default(now())
+  updatedAt             DateTime               @updatedAt
+  deletedAt             DateTime               @default(now())
+  isActive              Boolean                @default(true)
+  informasiumum         InformasiUmum          @relation(fields: [informasiUmumId], references: [id])
+  informasiUmumId       String
+  layananunggulan       LayananUnggulan        @relation(fields: [layananUnggulanId], references: [id])
+  layananUnggulanId     String
+  dokterdantenagamedis  DokterdanTenagaMedis[] @relation("Dokter")
+  fasilitaspendukung    FasilitasPendukung     @relation(fields: [fasilitasPendukungId], references: [id])
+  fasilitasPendukungId  String
+  prosedurpendaftaran   ProsedurPendaftaran    @relation(fields: [prosedurPendaftaranId], references: [id])
+  prosedurPendaftaranId String
+  tarifdanlayanan       TarifDanLayanan[]      @relation("Tarif")
 }
 
 model InformasiUmum {
@@ -826,15 +824,20 @@ model LayananUnggulan {
 }
 
 model DokterdanTenagaMedis {
-  id                 String               @id @default(cuid())
-  name               String
-  specialist         String
-  jadwal             String
-  createdAt          DateTime             @default(now())
-  updatedAt          DateTime             @updatedAt
-  deletedAt          DateTime             @default(now())
-  isActive           Boolean              @default(true)
-  FasilitasKesehatan FasilitasKesehatan[]
+  id                  String               @id @default(cuid())
+  name                String
+  specialist          String
+  jadwal              String
+  jadwalLibur         String
+  jamBukaOperasional  String
+  jamTutupOperasional String
+  jamBukaLibur        String
+  jamTutupLibur       String
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  deletedAt           DateTime             @default(now())
+  isActive            Boolean              @default(true)
+  FasilitasKesehatan  FasilitasKesehatan[] @relation("Dokter")
 }
 
 model FasilitasPendukung {
@@ -865,7 +868,7 @@ model TarifDanLayanan {
   updatedAt          DateTime             @updatedAt
   deletedAt          DateTime             @default(now())
   isActive           Boolean              @default(true)
-  FasilitasKesehatan FasilitasKesehatan[]
+  FasilitasKesehatan FasilitasKesehatan[] @relation("Tarif")
 }
 
 // ========================================= JADWAL KEGIATAN ========================================= //

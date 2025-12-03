@@ -19,6 +19,11 @@ const DokterTenagaMedis = new Elysia({
             name: t.String(),
             specialist: t.String(),
             jadwal: t.String(),
+            jadwalLibur: t.String(),
+            jamBukaOperasional: t.String(),
+            jamTutupOperasional: t.String(),
+            jamBukaLibur: t.String(),
+            jamTutupLibur: t.String(),
         }),
     })
     .put("/:id", dokterTenagaMedisUpdate, {
@@ -26,6 +31,11 @@ const DokterTenagaMedis = new Elysia({
             name: t.String(),
             specialist: t.String(),
             jadwal: t.String(),
+            jadwalLibur: t.String(),
+            jamBukaOperasional: t.String(),
+            jamTutupOperasional: t.String(),
+            jamBukaLibur: t.String(),
+            jamTutupLibur: t.String(),
         }),
     })
     .delete("/del/:id", dokterTenagaMedisDelete)

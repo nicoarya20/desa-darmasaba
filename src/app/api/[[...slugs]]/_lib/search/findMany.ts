@@ -557,25 +557,37 @@ export default async function searchFindMany(context: Context) {
           ],
         },
         layananunggulan: { content: { contains: query, mode: "insensitive" } },
-        dokterdantenagamedis: {
-          OR: [
-            { name: { contains: query, mode: "insensitive" } },
-            { specialist: { contains: query, mode: "insensitive" } },
-            { jadwal: { contains: query, mode: "insensitive" } },
-          ],
-        },
+
         fasilitaspendukung: {
           content: { contains: query, mode: "insensitive" },
         },
         prosedurpendaftaran: {
           content: { contains: query, mode: "insensitive" },
         },
-        tarifdanlayanan: {
-          OR: [
-            { layanan: { contains: query, mode: "insensitive" } },
-            { tarif: { contains: query, mode: "insensitive" } },
-          ],
-        },
+      },
+      skip,
+      take: limitNum,
+    });
+    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
+  }
+
+  if (type === "doktertenagamedis") {
+    const data = await prisma.dokterdanTenagaMedis.findMany({
+      where: {
+        name: { contains: query, mode: "insensitive" },
+        specialist: { contains: query, mode: "insensitive" },
+      },
+      skip,
+      take: limitNum,
+    });
+    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
+  }
+
+  if (type === "tarifdanlayanan") {
+    const data = await prisma.tarifDanLayanan.findMany({
+      where: {
+        layanan: { contains: query, mode: "insensitive" },
+        tarif: { contains: query, mode: "insensitive" },
       },
       skip,
       take: limitNum,
@@ -1567,6 +1579,8 @@ export default async function searchFindMany(context: Context) {
     jenisProgramYangDiselenggarakan,
     dataPerpustakaan,
     dataPendidikan,
+    dokterDanTenagaMedis,
+    tarifDanLayanan 
   ] = await Promise.all([
     prisma.pejabatDesa.findMany({
       where: { name: { contains: query, mode: "insensitive" } },
@@ -1894,25 +1908,27 @@ export default async function searchFindMany(context: Context) {
           ],
         },
         layananunggulan: { content: { contains: query, mode: "insensitive" } },
-        dokterdantenagamedis: {
-          OR: [
-            { name: { contains: query, mode: "insensitive" } },
-            { specialist: { contains: query, mode: "insensitive" } },
-            { jadwal: { contains: query, mode: "insensitive" } },
-          ],
-        },
+
         fasilitaspendukung: {
           content: { contains: query, mode: "insensitive" },
         },
         prosedurpendaftaran: {
           content: { contains: query, mode: "insensitive" },
         },
-        tarifdanlayanan: {
-          OR: [
-            { layanan: { contains: query, mode: "insensitive" } },
-            { tarif: { contains: query, mode: "insensitive" } },
-          ],
-        },
+      },
+      take: limitNum,
+    }),
+    prisma.dokterdanTenagaMedis.findMany({
+      where: {
+        name: { contains: query, mode: "insensitive" },
+        specialist: { contains: query, mode: "insensitive" },
+      },
+      take: limitNum,
+    }),
+    prisma.tarifDanLayanan.findMany({
+      where: {
+        tarif: { contains: query, mode: "insensitive" },
+        layanan: { contains: query, mode: "insensitive" },
       },
       take: limitNum,
     }),
@@ -2316,7 +2332,7 @@ export default async function searchFindMany(context: Context) {
           { judul: { contains: query, mode: "insensitive" } },
           { deskripsiSingkat: { contains: query, mode: "insensitive" } },
           { deskripsiLengkap: { contains: query, mode: "insensitive" } },
-           { lokasi: { contains: query, mode: "insensitive" } },
+          { lokasi: { contains: query, mode: "insensitive" } },
           {
             kategoriKegiatan: {
               nama: { contains: query, mode: "insensitive" },
@@ -2559,6 +2575,8 @@ export default async function searchFindMany(context: Context) {
       ...penghargaan.map((b) => ({ type: "penghargaan", ...b })),
       ...posyandu.map((b) => ({ type: "posyandu", ...b })),
       ...fasilitasKesehatan.map((b) => ({ type: "fasilitasKesehatan", ...b })),
+      ...dokterDanTenagaMedis.map((b) => ({ type: "dokterdanTenagaMedis", ...b })),
+      ...tarifDanLayanan.map((b) => ({ type: "tarifDanLayanan", ...b })),
       ...jadwalKegiatan.map((b) => ({ type: "jadwalKegiatan", ...b })),
       ...artikelKesehatan.map((b) => ({ type: "artikelKesehatan", ...b })),
       ...puskesmas.map((b) => ({ type: "puskesmas", ...b })),

@@ -111,7 +111,7 @@ function EditKategoriBerita() {
       {/* Form Wrapper */}
       <Paper
         w={{ base: '100%', md: '50%' }}
-        bg={colors['white-1']}
+        bg={colors['white-1']}  
         p="lg"
         radius="md"
         shadow="sm"

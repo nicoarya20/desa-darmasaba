@@ -42,9 +42,7 @@ function Page() {
   const alamat = data?.informasiumum?.alamat || '-';
   const jam = data?.informasiumum?.jamOperasional || '-';
   const layananUnggulan = data?.layananunggulan?.content || '';
-  const tenaga = data?.dokterdantenagamedis || null;
   const fasilitasPendukungHtml = data?.fasilitaspendukung?.content || '';
-  const tarif = (data?.tarifdanlayanan as TarifDanLayanan) || null;
   const kontak = (data?.kontak as Kontak) || {
     telepon: '(0361) 123456',
     whatsapp: '6289647037426',
@@ -211,7 +209,7 @@ function Page() {
               <Card radius="xl" p="lg" withBorder>
                 <Stack gap="md">
                   <Title order={4}>Dokter & Tenaga Medis</Title>
-                  <Table highlightOnHover withTableBorder withColumnBorders stickyHeader stickyHeaderOffset={0} aria-label="Tabel Dokter">
+                  <Table highlightOnHover withTableBorder withColumnBorders aria-label="Tabel Dokter">
                     <TableThead>
                       <TableTr>
                         <TableTh>Nama</TableTh>
@@ -220,12 +218,19 @@ function Page() {
                       </TableTr>
                     </TableThead>
                     <TableTbody>
-                      {tenaga ? (
-                        <TableTr>
-                          <TableTd><Group gap="xs"><IconUser size={16} /><Text>{tenaga?.name || '-'}</Text></Group></TableTd>
-                          <TableTd>{tenaga?.specialist || '-'}</TableTd>
-                          <TableTd>{tenaga?.jadwal || '-'}</TableTd>
-                        </TableTr>
+                      {Array.isArray(data?.dokterdantenagamedis) && data.dokterdantenagamedis.length > 0 ? (
+                        data.dokterdantenagamedis.map((dokter: any) => (
+                          <TableTr key={dokter.id}>
+                            <TableTd>
+                              <Group gap="xs">
+                                <IconUser size={16} />
+                                <Text>{dokter.name || '-'}</Text>
+                              </Group>
+                            </TableTd>
+                            <TableTd>{dokter.specialist || '-'}</TableTd>
+                            <TableTd>{dokter.jadwal || '-'}</TableTd>
+                          </TableTr>
+                        ))
                       ) : (
                         <TableTr>
                           <TableTd colSpan={3}>
@@ -241,72 +246,74 @@ function Page() {
                 </Stack>
               </Card>
 
-             <Card radius="xl" p="lg" withBorder>
-              <Stack gap="md">
-                <Title order={3}>Fasilitas Pendukung</Title>
-                <Divider />
-                {fasilitasPendukungHtml ? (
-                  <Text fz="md" style={{wordBreak: "break-word", whiteSpace: "normal", lineHeight: 1.7 }} dangerouslySetInnerHTML={{ __html: fasilitasPendukungHtml }} />
-                ) : (
-                  <Paper withBorder radius="md" p="md">
-                    <Group gap="sm">
-                      <IconMoodEmpty />
-                      <Text>Belum ada informasi fasilitas pendukung.</Text>
-                    </Group>
-                  </Paper>
-                )}
-              </Stack>
-            </Card>
+              <Card radius="xl" p="lg" withBorder>
+                <Stack gap="md">
+                  <Title order={3}>Fasilitas Pendukung</Title>
+                  <Divider />
+                  {fasilitasPendukungHtml ? (
+                    <Text fz="md" style={{ wordBreak: "break-word", whiteSpace: "normal", lineHeight: 1.7 }} dangerouslySetInnerHTML={{ __html: fasilitasPendukungHtml }} />
+                  ) : (
+                    <Paper withBorder radius="md" p="md">
+                      <Group gap="sm">
+                        <IconMoodEmpty />
+                        <Text>Belum ada informasi fasilitas pendukung.</Text>
+                      </Group>
+                    </Paper>
+                  )}
+                </Stack>
+              </Card>
 
-            <Card radius="xl" p="lg" withBorder>
-              <Stack gap="md">
-                <Title order={3}>Layanan & Tarif</Title>
-                <Divider />
-                <Table highlightOnHover withTableBorder withColumnBorders aria-label="Tabel Layanan dan Tarif">
-                  <TableThead>
-                    <TableTr>
-                      <TableTh>Layanan</TableTh>
-                      <TableTh>Tarif</TableTh>
-                    </TableTr>
-                  </TableThead>
-                  <TableTbody>
-                    {tarif ? (
+              <Card radius="xl" p="lg" withBorder>
+                <Stack gap="md">
+                  <Title order={3}>Layanan & Tarif</Title>
+                  <Divider />
+                  <Table highlightOnHover withTableBorder withColumnBorders aria-label="Tabel Layanan dan Tarif">
+                    <TableThead>
                       <TableTr>
-                        <TableTd>{tarif?.layanan || '-'}</TableTd>
-                        <TableTd>{formatRupiah(tarif?.tarif)}</TableTd>
+                        <TableTh>Layanan</TableTh>
+                        <TableTh>Tarif</TableTh>
                       </TableTr>
-                    ) : (
-                      <TableTr>
-                        <TableTd colSpan={2}>
-                          <Group justify="center" gap="xs" c="dimmed">
-                            <IconSearch size={18} />
-                            <Text>Tidak ada data tarif.</Text>
-                          </Group>
-                        </TableTd>
-                      </TableTr>
-                    )}
-                  </TableTbody>
-                </Table>
-                {gratisBpjs && (
-                  <Group gap="xs">
-                    <ThemeIcon variant="light" radius="xl"><IconCheck size={18} /></ThemeIcon>
-                    <Text fw={600}>Gratis dengan BPJS Kesehatan</Text>
-                  </Group>
-                )}
-              </Stack>
-            </Card>
+                    </TableThead>
+                    <TableTbody>
+                      {Array.isArray(data?.tarifdanlayanan) && data.tarifdanlayanan.length > 0 ? (
+                        data.tarifdanlayanan.map((item: any) => (
+                          <TableTr key={item.id}>
+                            <TableTd>{item.layanan || '-'}</TableTd>
+                            <TableTd>{formatRupiah(item.tarif)}</TableTd>
+                          </TableTr>
+                        ))
+                      ) : (
+                        <TableTr>
+                          <TableTd colSpan={2}>
+                            <Group justify="center" gap="xs" c="dimmed">
+                              <IconSearch size={18} />
+                              <Text>Tidak ada data tarif.</Text>
+                            </Group>
+                          </TableTd>
+                        </TableTr>
+                      )}
+                    </TableTbody>
+                  </Table>
+                  {gratisBpjs && (
+                    <Group gap="xs">
+                      <ThemeIcon variant="light" radius="xl"><IconCheck size={18} /></ThemeIcon>
+                      <Text fw={600}>Gratis dengan BPJS Kesehatan</Text>
+                    </Group>
+                  )}
+                </Stack>
+              </Card>
             </Stack>
           </Grid.Col>
         </Grid>
       </Box>
-      
+
       <Box px={{ base: 'md', md: 100 }} pb="xl">
         <Paper radius="xl" p="lg" withBorder>
           <Stack gap="md">
             <Title order={3}>Prosedur Pendaftaran</Title>
             <Divider />
             {prosedur ? (
-              <Text fz="md" style={{wordBreak: "break-word", whiteSpace: "normal", lineHeight: 1.7 }} dangerouslySetInnerHTML={{ __html: prosedur }} />
+              <Text fz="md" style={{ wordBreak: "break-word", whiteSpace: "normal", lineHeight: 1.7 }} dangerouslySetInnerHTML={{ __html: prosedur }} />
             ) : (
               <Text fz="md" c="dimmed">Belum ada prosedur pendaftaran</Text>
             )}

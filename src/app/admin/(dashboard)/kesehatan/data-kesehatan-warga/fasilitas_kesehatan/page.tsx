@@ -1,9 +1,12 @@
 'use client'
 import colors from '@/con/colors';
 import {
+  ActionIcon,
   Box,
   Button,
   Center,
+  Grid,
+  GridCol,
   Group,
   Pagination,
   Paper,
@@ -16,30 +19,52 @@ import {
   TableThead,
   TableTr,
   Text,
-  Title
+  TextInput,
+  Title,
+  Tooltip
 } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { IconDeviceImacCog, IconPlus, IconSearch } from '@tabler/icons-react';
+import { IconCoin, IconDeviceImacCog, IconPlus, IconReportMedical, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
-import HeaderSearch from '../../../_com/header';
 import fasilitasKesehatanState from '../../../_state/kesehatan/data_kesehatan_warga/fasilitasKesehatan';
 
 
 function FasilitasKesehatan() {
   const [search, setSearch] = useState("");
-
+  const router = useRouter()
   return (
     <Box>
-      {/* Header Search */}
-      <HeaderSearch
-        title='Fasilitas Kesehatan'
-        placeholder='Cari nama, alamat, atau jam operasional...'
-        searchIcon={<IconSearch size={20} />}
-        value={search}
-        onChange={(e) => setSearch(e.currentTarget.value)}
-      />
+      <Grid mb={10}>
+        <GridCol span={{ base: 12, md: 8 }}>
+          <Title order={3}>Fasilitas Kesehatan</Title>
+        </GridCol>
+        <GridCol span={{ base: 12, md: 4 }}>
+          <Group gap={"xs"}>
+            <Tooltip label="List Dokter" withArrow>
+              <ActionIcon onClick={() => router.push('/admin/kesehatan/data-kesehatan-warga/fasilitas_kesehatan/dokter-tenaga-medis')} size="lg" radius="xl" color="green.6">
+                <IconReportMedical size={20} />
+              </ActionIcon>
+            </Tooltip>
+            <Tooltip label="List Tarif Layanan" withArrow>
+              <ActionIcon onClick={()=> router.push('/admin/kesehatan/data-kesehatan-warga/fasilitas_kesehatan/tarif-layanan')} size="lg" radius="xl" color="blue.6">
+                <IconCoin size={20} />
+              </ActionIcon>
+            </Tooltip>
+            <Paper radius="lg" bg={colors['white-1']}>
+              <TextInput
+                radius="lg"
+                placeholder='Cari nama, alamat, atau jam operasional...'
+                leftSection={<IconSearch size={20} />}
+                w="133%"
+                value={search}
+                onChange={(e) => setSearch(e.currentTarget.value)}
+              />
+            </Paper>
+          </Group>
+        </GridCol>
+      </Grid>
 
       <ListFasilitasKesehatan search={search} />
     </Box>
@@ -54,6 +79,7 @@ function ListFasilitasKesehatan({ search }: { search: string }) {
   const { data, page, totalPages, loading, load } = stateFasilitasKesehatan.findMany;
 
   useShallowEffect(() => {
+
     load(page, 10, search);
   }, [page, search]);
 
@@ -93,8 +119,8 @@ function ListFasilitasKesehatan({ search }: { search: string }) {
             <TableThead>
               <TableTr>
                 <TableTh>Fasilitas Kesehatan</TableTh>
-                <TableTh>Dokter</TableTh>
-                <TableTh>Layanan</TableTh>
+                <TableTh>Jumlah Dokter</TableTh>
+                <TableTh>Jumlah Layanan</TableTh>
                 <TableTh>Aksi</TableTh>
               </TableTr>
             </TableThead>
@@ -111,13 +137,17 @@ function ListFasilitasKesehatan({ search }: { search: string }) {
                     </TableTd>
                     <TableTd>
                       <Box w={150}>
-                        {item.dokterdantenagamedis?.name || '-'}
+                        {item.dokterdantenagamedis?.length
+                          ? `${item.dokterdantenagamedis.length} dokter`
+                          : '-'}
                       </Box>
                     </TableTd>
                     <TableTd>
                       <Box w={150}>
                         <Text truncate="end" lineClamp={1}>
-                          {item.tarifdanlayanan?.layanan || '-'}
+                          {item.tarifdanlayanan?.length
+                            ? `${item.tarifdanlayanan.length} layanan`
+                            : '-'}
                         </Text>
                       </Box>
                     </TableTd>
@@ -141,7 +171,7 @@ function ListFasilitasKesehatan({ search }: { search: string }) {
                 <TableTr>
                   <TableTd colSpan={4}>
                     <Center py={20}>
-                      <Text color="dimmed">
+                      <Text c="dimmed">
                         Tidak ada fasilitas kesehatan yang cocok
                       </Text>
                     </Center>
