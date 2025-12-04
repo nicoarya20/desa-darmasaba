@@ -115,7 +115,7 @@ function DetailFasilitasKesehatan() {
 
               <Box>
                 <Text fz="lg" fw="bold" mb="sm">Dokter & Tenaga Medis</Text>
-                {data.dokterdantenagamedis && data.dokterdantenagamedis.length > 0 ? (
+                {Array.isArray(data.dokterdantenagamedis) && data.dokterdantenagamedis.length > 0 ? (
                   <Box style={{ overflowX: 'auto', width: '100%' }}>
                     <Table striped highlightOnHover withTableBorder>
                       <TableThead>
@@ -161,7 +161,7 @@ function DetailFasilitasKesehatan() {
 
               <Box mt="xl">
                 <Text fz="lg" fw="bold" mb="sm">Tarif & Layanan</Text>
-                {data.tarifdanlayanan && data.tarifdanlayanan.length > 0 ? (
+                {Array.isArray(data.tarifdanlayanan) && data.tarifdanlayanan.length > 0 ? (
                   <Box style={{ overflowX: 'auto', width: '100%' }}>
                     <Table striped highlightOnHover withTableBorder>
                       <TableThead>
