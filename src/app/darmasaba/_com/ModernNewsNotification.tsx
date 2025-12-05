@@ -1,74 +1,94 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Box, Paper, Text, Group, CloseButton, Badge, ActionIcon, Stack, Transition } from "@mantine/core";
+import {
+  ActionIcon,
+  Badge,
+  Box,
+  CloseButton,
+  Group,
+  Paper,
+  Stack,
+  Text,
+  Transition,
+} from "@mantine/core";
 import { IconBell, IconChevronRight } from "@tabler/icons-react";
 import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
-interface NewsItem {
-  id: string | number;
+// === Tipe yang bisa diimpor di tempat lain ===
+export interface KategoriBerita {
+  id: string;
+  name: string;
+}
+
+export interface KategoriPengumuman {
+  id: string;
+  name: string;
+}
+
+export interface NewsItem {
+  id: string;
   type: "berita" | "pengumuman";
   title: string;
   content: string;
   timestamp?: string | Date;
+  kategoriBerita?: KategoriBerita;
+  kategoriPengumuman?: KategoriPengumuman;
 }
 
-interface ModernNewsNotificationProps {
+export interface ModernNewsNotificationProps {
   news: NewsItem[];
-  hasNewContent?: boolean; // ✅ TAMBAHAN
-  newItemCount?: number; // ← tambahkan ini
-  onSeen?: () => void;     // ✅ TAMBAHAN
+  hasNewContent?: boolean;
+  newItemCount?: number;
+  onSeen?: () => void;
   autoShowDelay?: number;
 }
 
+// === Helper ===
 function stripHtml(html: string): string {
   return html
-    .replace(/<[^>]+>/g, '')
-    .replace(/&nbsp;/gi, ' ')
-    .replace(/&amp;/gi, '&')
-    .replace(/\s+/g, ' ')
+    .replace(/<[^>]+>/g, "")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&amp;/gi, "&")
+    .replace(/\s+/g, " ")
     .trim();
 }
 
+// === Komponen Utama ===
 export default function ModernNewsNotification({
   news = [],
   hasNewContent = false,
-  newItemCount = 0, // 👈 tambahkan ini
+  newItemCount = 0,
   onSeen,
   autoShowDelay = 2000,
 }: ModernNewsNotificationProps) {
   const router = useRouter();
+  const pathname = usePathname();
+
   const [toastVisible, setToastVisible] = useState(false);
   const [widgetOpen, setWidgetOpen] = useState(false);
   const [hasNewNotifications, setHasNewNotifications] = useState(hasNewContent);
   const [hasShownToast, setHasShownToast] = useState(false);
   const [iconVisible, setIconVisible] = useState(true);
-  const pathname = usePathname();
 
-  // Sinkronisasi dari luar
+  // Sinkronisasi prop eksternal
   useEffect(() => {
-    if (hasNewContent) {
-      setHasNewNotifications(true);
-      // Jangan otomatis tampilkan toast di sini — biarkan saat page load saja
-    }
+    setHasNewNotifications(hasNewContent);
   }, [hasNewContent]);
 
-  // Auto show toast hanya saat page pertama kali load
+  // Tampilkan toast pertama kali
   useEffect(() => {
     if (news.length > 0 && !toastVisible && !hasShownToast) {
       const timer = setTimeout(() => {
         setToastVisible(true);
         setHasShownToast(true);
-        // Jika ada new content, anggap sudah "dilihat" setelah toast muncul
-        if (hasNewNotifications) {
-          onSeen?.();
-        }
+        if (hasNewNotifications) onSeen?.();
       }, autoShowDelay);
       return () => clearTimeout(timer);
     }
   }, [news.length, autoShowDelay, toastVisible, hasShownToast, hasNewNotifications, onSeen]);
 
-  // Auto hide toast
+  // Sembunyikan toast otomatis
   useEffect(() => {
     if (toastVisible) {
       const timer = setTimeout(() => setToastVisible(false), 8000);
@@ -76,7 +96,7 @@ export default function ModernNewsNotification({
     }
   }, [toastVisible]);
 
-  // Scroll handler
+  // Kontrol visibilitas ikon saat scroll
   useEffect(() => {
     let lastScrollY = window.scrollY;
     const HIDE_THRESHOLD = 100;
@@ -84,11 +104,11 @@ export default function ModernNewsNotification({
 
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
-      const scrollDirection = currentScrollY > lastScrollY ? 'down' : 'up';
+      const scrollDirection = currentScrollY > lastScrollY ? "down" : "up";
 
-      if (scrollDirection === 'down' && currentScrollY > HIDE_THRESHOLD) {
+      if (scrollDirection === "down" && currentScrollY > HIDE_THRESHOLD) {
         setIconVisible(false);
-      } else if (scrollDirection === 'up' && currentScrollY < SHOW_THRESHOLD) {
+      } else if (scrollDirection === "up" && currentScrollY < SHOW_THRESHOLD) {
         setIconVisible(true);
       }
 
@@ -99,19 +119,25 @@ export default function ModernNewsNotification({
       lastScrollY = currentScrollY;
     };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
   }, [toastVisible]);
 
   const currentNews = news[0];
 
+  // 🔗 Arahkan ke detail dengan kategori aman
   const handleNotificationClick = (item: NewsItem) => {
     setWidgetOpen(false);
-    onSeen?.(); // ✅ tandai sebagai dilihat
+    onSeen?.();
+
     if (item.type === "berita") {
-      router.push("/darmasaba/desa/berita/semua");
+      const kategori = item.kategoriBerita?.name || "umum";
+      const safeKategori = encodeURIComponent(kategori);
+      router.push(`/darmasaba/desa/berita/${safeKategori}/${item.id}`);
     } else if (item.type === "pengumuman") {
-      router.push("/darmasaba/desa/pengumuman");
+      const kategori = item.kategoriPengumuman?.name || "umum";
+      const safeKategori = encodeURIComponent(kategori);
+      router.push(`/darmasaba/desa/pengumuman/${safeKategori}/${item.id}`);
     }
   };
 
@@ -119,35 +145,40 @@ export default function ModernNewsNotification({
     setToastVisible(false);
     setWidgetOpen(true);
     setHasNewNotifications(false);
-    onSeen?.(); // ✅
+    onSeen?.();
   };
 
   const handleDismissToast = (e: React.MouseEvent) => {
     e.stopPropagation();
     setToastVisible(false);
-    onSeen?.(); // ✅
+    onSeen?.();
   };
 
-  // Only show on landing page
-  if (pathname !== '/darmasaba') {
-    return null;
-  }
+  // Hanya tampilkan di landing page
+  if (pathname !== "/darmasaba") return null;
 
   return (
     <>
       {/* Floating Bell Icon */}
       <Transition mounted={iconVisible} transition="slide-down" duration={200}>
         {(transitionStyles) => (
-          <Box style={{ ...transitionStyles, position: "fixed", bottom: "24px", right: "24px" }}>
+          <Box
+            style={{
+              ...transitionStyles,
+              position: "fixed",
+              bottom: "24px",
+              right: "24px",
+            }}
+          >
             <ActionIcon
               size="xl"
               radius="xl"
               variant="filled"
               color="#1e5a7e"
               onClick={() => {
-                setWidgetOpen(!widgetOpen);
+                setWidgetOpen((open) => !open);
                 setHasNewNotifications(false);
-                onSeen?.(); // ✅
+                onSeen?.();
               }}
               style={{
                 width: "60px",
@@ -168,7 +199,6 @@ export default function ModernNewsNotification({
                     right: "6px",
                     minWidth: "22px",
                     height: "22px",
-                    padding: "0 6px",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
@@ -208,12 +238,14 @@ export default function ModernNewsNotification({
               <Group justify="space-between">
                 <Group gap="xs">
                   <IconBell size={20} />
-                  <Text c="white" fw={600} size="md">Berita & Pengumuman</Text>
+                  <Text c="white" fw={600} size="md">
+                    Berita & Pengumuman
+                  </Text>
                 </Group>
                 <CloseButton
                   onClick={() => {
                     setWidgetOpen(false);
-                    onSeen?.(); // ✅
+                    onSeen?.();
                   }}
                   variant="transparent"
                   c="white"
@@ -224,13 +256,15 @@ export default function ModernNewsNotification({
             <Box style={{ maxHeight: "400px", overflowY: "auto", padding: "12px" }}>
               {news.length === 0 ? (
                 <Box p="xl" style={{ textAlign: "center" }}>
-                  <Text c="dimmed" size="sm">Tidak ada berita terbaru</Text>
+                  <Text c="dimmed" size="sm">
+                    Tidak ada berita terbaru
+                  </Text>
                 </Box>
               ) : (
                 <Stack gap="xs">
-                  {news.map((item, index) => (
+                  {news.map((item) => (
                     <Paper
-                      key={item.id || index}
+                      key={item.id}
                       p="md"
                       radius="md"
                       style={{
@@ -276,7 +310,11 @@ export default function ModernNewsNotification({
       </Transition>
 
       {/* Toast Notification */}
-      <Transition mounted={toastVisible && !!currentNews} transition="slide-left" duration={300}>
+      <Transition
+        mounted={toastVisible && !!currentNews}
+        transition="slide-left"
+        duration={300}
+      >
         {(styles) => (
           <Paper
             style={{
@@ -314,7 +352,9 @@ export default function ModernNewsNotification({
                   variant="light"
                   leftSection={currentNews?.type === "berita" ? "📰" : "📢"}
                 >
-                  {currentNews?.type === "berita" ? "Berita Terbaru" : "Pengumuman"}
+                  {currentNews?.type === "berita"
+                    ? "Berita Terbaru"
+                    : "Pengumuman"}
                 </Badge>
                 <CloseButton onClick={handleDismissToast} size="sm" />
               </Group>
@@ -329,7 +369,7 @@ export default function ModernNewsNotification({
 
               <Group justify="space-between" mt="md">
                 <Text size="xs" c="dimmed">
-                  {news.length > 1 ? `${news.length} berita tersedia` : '1 berita'}
+                  {news.length > 1 ? `${news.length} berita tersedia` : "1 berita"}
                 </Text>
                 <Text
                   size="xs"

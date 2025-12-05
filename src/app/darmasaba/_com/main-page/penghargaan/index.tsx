@@ -60,7 +60,7 @@ function Penghargaan() {
         <Box
           onClick={() => setShowVideo(true)}
           style={{
-            backgroundImage: "url('/assets/images/award-poster.jpg')",
+            backgroundImage: "url('/mangupuraaward.jpeg')",
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             cursor: 'pointer',
