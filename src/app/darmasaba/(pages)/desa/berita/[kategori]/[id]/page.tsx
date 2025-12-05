@@ -49,7 +49,7 @@ function Page() {
 
 
   return (
-    <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"22"} px={{ base: "md", md: 0 }}>
+    <Stack pos={"relative"} bg={colors.Bg} pb={"xl"} gap={"xs"} px={{ base: "md", md: 0 }}>
       <Group px={{ base: "md", md: 100 }}>
         <NewsReader />
       </Group>

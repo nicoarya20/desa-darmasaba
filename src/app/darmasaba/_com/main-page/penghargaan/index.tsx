@@ -1,8 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 import penghargaanState from "@/app/admin/(dashboard)/_state/desa/penghargaan";
-import { Stack, Box, Container, Button, Text, Loader, Paper } from "@mantine/core";
-import { IconAward, IconArrowRight } from "@tabler/icons-react";
+import { Stack, Box, Container, Button, Text, Loader, Paper, Center, ActionIcon } from "@mantine/core";
+import { IconAward, IconArrowRight, IconPlayerPlay } from "@tabler/icons-react";
 import { useTransitionRouter } from 'next-view-transitions';
 import { useEffect, useState } from "react";
 import { useProxy } from "valtio/utils";
@@ -13,6 +13,18 @@ function Penghargaan() {
   const state = useProxy(penghargaanState);
   const [loading, setLoading] = useState(false);
   const isMobile = useMediaQuery('(max-width: 768px)');
+  const [isVideoLoaded, setIsVideoLoaded] = useState(false);
+  const [showVideo, setShowVideo] = useState(true);
+
+  // Opsional: deteksi iOS
+  const isIOS = typeof window !== 'undefined' && /iPad|iPhone|iPod/.test(navigator.userAgent);
+
+  useEffect(() => {
+    if (isIOS) {
+      // Di iOS, jangan andalkan autoplay — tampilkan kontrol
+      setShowVideo(false);
+    }
+  }, []);
 
   useEffect(() => {
     const loadData = async () => {
@@ -31,22 +43,36 @@ function Penghargaan() {
 
   return (
     <Stack pos="relative" h="auto" mih={{ base: 500, md: 720 }}>
-      <video
-        loop
-        autoPlay
-        muted
-        style={{
-          width: "100%",
-          height: "100%",
-          objectFit: "cover",
-          position: "absolute",
-          top: 0,
-          left: 0,
-          zIndex: 0,
-        }}
-      >
-        <source src="/assets/videos/award.mp4" type="video/mp4" />
-      </video>
+      {showVideo ? (
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          webkit-playsinline="true"
+          onLoadedData={() => setIsVideoLoaded(true)}
+          style={{ opacity: isVideoLoaded ? 1 : 0, transition: 'opacity 0.5s' }}
+        >
+          <source src="/assets/videos/award.mp4" type="video/mp4" />
+        </video>
+      ) : (
+        // Fallback: tampilkan poster + play button
+        <Box
+          onClick={() => setShowVideo(true)}
+          style={{
+            backgroundImage: "url('/assets/images/award-poster.jpg')",
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            cursor: 'pointer',
+          }}
+        >
+          <Center h="100%">
+            <ActionIcon size="lg" radius="xl" color="white">
+              <IconPlayerPlay size={32} />
+            </ActionIcon>
+          </Center>
+        </Box>
+      )}
 
       <Box
         style={{

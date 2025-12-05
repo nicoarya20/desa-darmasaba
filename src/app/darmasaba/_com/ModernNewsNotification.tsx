@@ -15,6 +15,9 @@ interface NewsItem {
 
 interface ModernNewsNotificationProps {
   news: NewsItem[];
+  hasNewContent?: boolean; // ✅ TAMBAHAN
+  newItemCount?: number; // ← tambahkan ini
+  onSeen?: () => void;     // ✅ TAMBAHAN
   autoShowDelay?: number;
 }
 
@@ -29,57 +32,66 @@ function stripHtml(html: string): string {
 
 export default function ModernNewsNotification({
   news = [],
-  autoShowDelay = 2000
+  hasNewContent = false,
+  newItemCount = 0, // 👈 tambahkan ini
+  onSeen,
+  autoShowDelay = 2000,
 }: ModernNewsNotificationProps) {
   const router = useRouter();
   const [toastVisible, setToastVisible] = useState(false);
   const [widgetOpen, setWidgetOpen] = useState(false);
-  const [hasNewNotifications, setHasNewNotifications] = useState(true);
+  const [hasNewNotifications, setHasNewNotifications] = useState(hasNewContent);
   const [hasShownToast, setHasShownToast] = useState(false);
   const [iconVisible, setIconVisible] = useState(true);
   const pathname = usePathname();
 
-  // Auto show toast on page load
+  // Sinkronisasi dari luar
+  useEffect(() => {
+    if (hasNewContent) {
+      setHasNewNotifications(true);
+      // Jangan otomatis tampilkan toast di sini — biarkan saat page load saja
+    }
+  }, [hasNewContent]);
+
+  // Auto show toast hanya saat page pertama kali load
   useEffect(() => {
     if (news.length > 0 && !toastVisible && !hasShownToast) {
       const timer = setTimeout(() => {
         setToastVisible(true);
         setHasShownToast(true);
+        // Jika ada new content, anggap sudah "dilihat" setelah toast muncul
+        if (hasNewNotifications) {
+          onSeen?.();
+        }
       }, autoShowDelay);
       return () => clearTimeout(timer);
     }
-  }, [news.length, autoShowDelay, toastVisible, hasShownToast]);
+  }, [news.length, autoShowDelay, toastVisible, hasShownToast, hasNewNotifications, onSeen]);
 
-  // Auto hide toast after 8 seconds
+  // Auto hide toast
   useEffect(() => {
     if (toastVisible) {
-      const timer = setTimeout(() => {
-        setToastVisible(false);
-      }, 8000);
+      const timer = setTimeout(() => setToastVisible(false), 8000);
       return () => clearTimeout(timer);
     }
   }, [toastVisible]);
 
-  // Enhanced scroll handler with better thresholds
+  // Scroll handler
   useEffect(() => {
     let lastScrollY = window.scrollY;
-    const HIDE_THRESHOLD = 100; // Mulai hide saat scroll > 100px
-    const SHOW_THRESHOLD = 50; // Hanya show ketika benar-benar di atas (< 50px)
+    const HIDE_THRESHOLD = 100;
+    const SHOW_THRESHOLD = 50;
 
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
       const scrollDirection = currentScrollY > lastScrollY ? 'down' : 'up';
 
-      // Logic untuk hide/show icon
       if (scrollDirection === 'down' && currentScrollY > HIDE_THRESHOLD) {
-        // Scroll ke bawah dan sudah melewati threshold → hide
         setIconVisible(false);
       } else if (scrollDirection === 'up' && currentScrollY < SHOW_THRESHOLD) {
-        // Scroll ke atas dan sudah di posisi paling atas → show
         setIconVisible(true);
       }
 
-      // Hide toast saat scroll ke bawah melewati 150px
       if (currentScrollY > 150 && toastVisible) {
         setToastVisible(false);
       }
@@ -93,9 +105,9 @@ export default function ModernNewsNotification({
 
   const currentNews = news[0];
 
-  // Handle notification click
   const handleNotificationClick = (item: NewsItem) => {
     setWidgetOpen(false);
+    onSeen?.(); // ✅ tandai sebagai dilihat
     if (item.type === "berita") {
       router.push("/darmasaba/desa/berita/semua");
     } else if (item.type === "pengumuman") {
@@ -107,6 +119,13 @@ export default function ModernNewsNotification({
     setToastVisible(false);
     setWidgetOpen(true);
     setHasNewNotifications(false);
+    onSeen?.(); // ✅
+  };
+
+  const handleDismissToast = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setToastVisible(false);
+    onSeen?.(); // ✅
   };
 
   // Only show on landing page
@@ -119,14 +138,7 @@ export default function ModernNewsNotification({
       {/* Floating Bell Icon */}
       <Transition mounted={iconVisible} transition="slide-down" duration={200}>
         {(transitionStyles) => (
-          <Box
-            style={{
-              ...transitionStyles,
-              position: "fixed",
-              bottom: "24px",
-              right: "24px",
-            }}
-          >
+          <Box style={{ ...transitionStyles, position: "fixed", bottom: "24px", right: "24px" }}>
             <ActionIcon
               size="xl"
               radius="xl"
@@ -135,6 +147,7 @@ export default function ModernNewsNotification({
               onClick={() => {
                 setWidgetOpen(!widgetOpen);
                 setHasNewNotifications(false);
+                onSeen?.(); // ✅
               }}
               style={{
                 width: "60px",
@@ -146,20 +159,23 @@ export default function ModernNewsNotification({
               <IconBell size={28} />
               {hasNewNotifications && news.length > 0 && (
                 <Badge
-                size="sm"
-                variant="filled"
-                color="red"
-                style={{
-                  position: "absolute",
-                  top: "6px",
-                  right: "6px",
-                  minWidth: "22px",
-                  height: "22px",
-                  padding: "0 6px",
-                }}
-              >
-                {news.length}
-              </Badge>
+                  size="sm"
+                  variant="filled"
+                  color="red"
+                  style={{
+                    position: "absolute",
+                    top: "6px",
+                    right: "6px",
+                    minWidth: "22px",
+                    height: "22px",
+                    padding: "0 6px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  {newItemCount || news.length}
+                </Badge>
               )}
             </ActionIcon>
           </Box>
@@ -195,20 +211,17 @@ export default function ModernNewsNotification({
                   <Text c="white" fw={600} size="md">Berita & Pengumuman</Text>
                 </Group>
                 <CloseButton
-                  onClick={() => setWidgetOpen(false)}
+                  onClick={() => {
+                    setWidgetOpen(false);
+                    onSeen?.(); // ✅
+                  }}
                   variant="transparent"
                   c="white"
                 />
               </Group>
             </Box>
 
-            <Box
-              style={{
-                maxHeight: "400px",
-                overflowY: "auto",
-                padding: "12px",
-              }}
-            >
+            <Box style={{ maxHeight: "400px", overflowY: "auto", padding: "12px" }}>
               {news.length === 0 ? (
                 <Box p="xl" style={{ textAlign: "center" }}>
                   <Text c="dimmed" size="sm">Tidak ada berita terbaru</Text>
@@ -303,13 +316,7 @@ export default function ModernNewsNotification({
                 >
                   {currentNews?.type === "berita" ? "Berita Terbaru" : "Pengumuman"}
                 </Badge>
-                <CloseButton
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setToastVisible(false);
-                  }}
-                  size="sm"
-                />
+                <CloseButton onClick={handleDismissToast} size="sm" />
               </Group>
 
               <Text fw={600} size="sm" mb={6}>
