@@ -4,26 +4,27 @@ import stateGallery from '@/app/admin/(dashboard)/_state/desa/gallery';
 import colors from '@/con/colors';
 import {
   Box,
+  Button,
   Center,
+  Group,
   Pagination,
   Paper,
   SimpleGrid,
-  Spoiler,
   Stack,
-  Text,
+  Text
 } from '@mantine/core';
-import { useCallback, useEffect, useState } from 'react';
+import { useTransitionRouter } from 'next-view-transitions';
+import { useCallback, useEffect } from 'react';
 import { useSnapshot } from 'valtio';
 
 export default function VideoContent() {
-  // ✅ expanded state per index
-  const [expandedMap, setExpandedMap] = useState<Record<number, boolean>>({});
   const videoState = useSnapshot(stateGallery.video);
+  const router = useTransitionRouter()
   const { data, page, totalPages, loading } = videoState.findMany;
 
   // Handle search and pagination changes
   const loadData = useCallback((pageNum: number, searchTerm: string) => {
-    stateGallery.video.findMany.load(pageNum, 10, searchTerm.trim());
+    stateGallery.video.findMany.load(pageNum, 3, searchTerm.trim());
   }, []);
 
   // Initial load and URL change handler
@@ -56,12 +57,6 @@ export default function VideoContent() {
     loadData(newPage, search);
   };
 
-  const toggleExpanded = (index: number, value: boolean) => {
-    setExpandedMap((prev) => ({
-      ...prev,
-      [index]: value,
-    }));
-  };
 
   const dataVideo = data || [];
 
@@ -110,27 +105,22 @@ export default function VideoContent() {
                   <Text fw="bold" fz="sm" lineClamp={1}>
                     {v.name}
                   </Text>
-                  <Spoiler
-                    showLabel={
-                      <Text fw="bold" fz="sm" c={colors['blue-button']}>
-                        Show more
-                      </Text>
-                    }
-                    hideLabel={
-                      <Text fw="bold" fz="sm" c={colors['blue-button']}>
-                        Hide details
-                      </Text>
-                    }
-                    expanded={expandedMap[k] || false}
-                    onExpandedChange={(val) => toggleExpanded(k, val)}
+                  <Text
+                    ta="justify"
+                    fz="sm"
+                    dangerouslySetInnerHTML={{ __html: v.deskripsi }}
+                    style={{ wordBreak: "break-word", whiteSpace: "normal" }}
+                    lineClamp={3}
+                    truncate="end"
+                  />
+                  <Group justify={"right"}>
+                    <Button
+                    onClick={() => router.push(`/darmasaba/desa/galery/video/${v.id}`)}
+                    bg={colors['blue-button']}
                   >
-                    <Text
-                      ta="justify"
-                      fz="sm"
-                      dangerouslySetInnerHTML={{ __html: v.deskripsi }}
-                      style={{wordBreak: "break-word", whiteSpace: "normal"}}
-                    />
-                  </Spoiler>
+                    Detail
+                  </Button>
+                  </Group>
                 </Stack>
               </Box>
             </Paper>
