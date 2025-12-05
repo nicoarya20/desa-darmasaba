@@ -828,11 +828,11 @@ model DokterdanTenagaMedis {
   name                String
   specialist          String
   jadwal              String
-  jadwalLibur         String
-  jamBukaOperasional  String
-  jamTutupOperasional String
-  jamBukaLibur        String
-  jamTutupLibur       String
+  jadwalLibur         String?
+  jamBukaOperasional  String?
+  jamTutupOperasional String?
+  jamBukaLibur        String?
+  jamTutupLibur       String?
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
   deletedAt           DateTime             @default(now())
