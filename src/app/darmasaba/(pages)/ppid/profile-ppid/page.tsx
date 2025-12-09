@@ -96,14 +96,20 @@ function Page() {
                           <IconUser size={28} />
                           <Text fz={{ base: "1.25rem", md: "1.5rem" }} fw="bold">Biografi</Text>
                         </Flex>
-                        <Text fz={{ base: "1rem", md: "1.125rem", lg: "1.25rem" }} ta="justify" dangerouslySetInnerHTML={{ __html: item.biodata }} style={{ wordBreak: "break-word", whiteSpace: "normal" }} />
+                        <Box px={20}>
+                          <Text fz={{ base: "1rem", md: "1.125rem", lg: "1.25rem" }} ta="justify" dangerouslySetInnerHTML={{ __html: item.biodata }} style={{ wordBreak: "break-word", whiteSpace: "normal" }} />
+                        </Box>
                       </Box>
                       <Box>
                         <Flex align="center" gap="sm" mb="sm">
                           <IconTimeline size={28} />
                           <Text fz={{ base: "1.25rem", md: "1.5rem" }} fw="bold">Riwayat Karir</Text>
                         </Flex>
-                        <Text fz={{ base: "1rem", md: "1.125rem", lg: "1.25rem" }} dangerouslySetInnerHTML={{ __html: item.riwayat }} style={{ wordBreak: "break-word", whiteSpace: "normal" }} />
+                        <List spacing="xs" size="sm">
+                          <Box px={20}>
+                            <Text fz={{ base: "1rem", md: "1.125rem", lg: "1.25rem" }} dangerouslySetInnerHTML={{ __html: item.riwayat }} style={{ wordBreak: "break-word", whiteSpace: "normal" }} />
+                          </Box>
+                        </List>
                       </Box>
                     </Stack>
                   </Box>

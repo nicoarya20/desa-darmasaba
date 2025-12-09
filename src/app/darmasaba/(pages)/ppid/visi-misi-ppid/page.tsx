@@ -75,7 +75,7 @@ function Page() {
                       lh={1.7}
                       ta="center"
                       dangerouslySetInnerHTML={{ __html: item.visi }}
-                      style={{wordBreak: "break-word", whiteSpace: "normal"}}
+                      style={{ wordBreak: "break-word", whiteSpace: "normal" }}
                     />
                   </Box>
 
@@ -86,12 +86,15 @@ function Page() {
                       c={colors['blue-button']} mb="sm">
                       Misi PPID
                     </Text>
-                    <Text
-                      fz={{ base: 'md', md: 'lg' }}
-                      lh={1.7}
-                      dangerouslySetInnerHTML={{ __html: item.misi }}
-                      style={{wordBreak: "break-word", whiteSpace: "normal"}}
-                    />
+                    <Box px={{ base: 'md', md: 100 }}>
+                      <Text
+                        ta={"justify"}
+                        fz={{ base: 'md', md: 'lg' }}
+                        lh={1.7}
+                        dangerouslySetInnerHTML={{ __html: item.misi }}
+                        style={{ wordBreak: "break-word", whiteSpace: "normal" }}
+                      />
+                    </Box>
                   </Box>
                 </Stack>
               </Paper>

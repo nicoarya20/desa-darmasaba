@@ -31,7 +31,11 @@ function Page() {
       <Box px={{ base: 'md', md: 100 }}>
         <BackButton />
       </Box>
-      <Stack align="center" gap="xs">
+      <Stack
+        align="center"
+        gap="xs"
+        px={{ base: 'md', md: 100 }}
+      >
         <IconBook2 size={42} stroke={1.5} color={colors["blue-button"]} />
         <Text
           ta="center"
@@ -42,7 +46,7 @@ function Page() {
         >
           Dasar Hukum
         </Text>
-        <Text ta="center" fz="md" >
+        <Text ta="center" fz="md" c={"black"}>
           Informasi regulasi dan kebijakan resmi yang menjadi dasar hukum
         </Text>
       </Stack>
@@ -71,12 +75,15 @@ function Page() {
                   <Stack gap="md">
                     <Text
                       ta="center"
+                      c={"black"}
                       fw="bold"
                       fz={{ base: 'lg', md: 'xl' }}
                       style={{ lineHeight: 1.4 }}
                       dangerouslySetInnerHTML={{ __html: item.judul }}
                     />
                     <Text
+                      c={"black"}
+                      ta={"justify"}
                       fz={{ base: 'sm', md: 'md' }}
                       style={{ lineHeight: 1.7, wordBreak: "break-word", whiteSpace: "normal" }}
                       dangerouslySetInnerHTML={{ __html: item.content }}

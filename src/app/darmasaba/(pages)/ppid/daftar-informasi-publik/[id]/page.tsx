@@ -87,7 +87,7 @@ export default function DetailInformasiPublikUser() {
           <Divider />
 
           <Stack gap="lg">
-            <Box>
+            <Box px="lg">
               <Text fz={{ base: 'md', md: 'lg' }} fw="bold" mb={4}>
                 Jenis Informasi
               </Text>
@@ -96,7 +96,7 @@ export default function DetailInformasiPublikUser() {
               </Text>
             </Box>
 
-            <Box>
+            <Box px="lg">
               <Text fz={{ base: 'md', md: 'lg' }} fw="bold" mb={4}>
                 Tanggal Publikasi
               </Text>
@@ -111,15 +111,19 @@ export default function DetailInformasiPublikUser() {
               </Text>
             </Box>
 
-            <Box>
+            <Box px="lg">
               <Text fz={{ base: 'md', md: 'lg' }} fw="bold" mb={4}>
                 Deskripsi
               </Text>
-              <Box
-                className="prose max-w-none leading-relaxed"
-                dangerouslySetInnerHTML={{ __html: data.deskripsi || '-' }}
-                style={{wordBreak: "break-word", whiteSpace: "normal"}}
-              />
+              <Box>
+                <Text
+                  ta={"justify"}
+                  className="prose max-w-none leading-relaxed"
+                  dangerouslySetInnerHTML={{ __html: data.deskripsi || '-' }}
+                  style={{ wordBreak: "break-word", whiteSpace: "normal" }}
+                  fz={{ base: 'md', md: 'lg' }}
+                />
+              </Box>
             </Box>
           </Stack>
         </Stack>

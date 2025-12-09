@@ -53,23 +53,11 @@ function Page() {
   const permohonanInformasiPublikState = useProxy(statePermohonanInformasi);
   const router = useRouter();
 
-  const submitForms = () => {
+  const submitForms = async () => {
     const { create } = permohonanInformasiPublikState.statepermohonanInformasiPublik;
-
-    if (
-      create.form.name &&
-      create.form.nik &&
-      create.form.notelp &&
-      create.form.alamat &&
-      create.form.email &&
-      create.form.jenisInformasiDimintaId &&
-      create.form.caraMemperolehInformasiId &&
-      create.form.caraMemperolehSalinanInformasiId
-    ) {
-      create.create();
+    const hasil = await create.create(); // tunggu hasilnya
+    if (hasil) {
       router.push('/darmasaba/permohonan/berhasil');
-    } else {
-      console.log('Validasi gagal, form tidak lengkap');
     }
   };
 

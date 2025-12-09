@@ -598,7 +598,7 @@ const state = useProxy(indeksKepuasanState.responden);
             <TextInput
               label="Nama"
               type='text'
-              placeholder="masukkan nama"
+              placeholder="Masukkan nama"
               value={state.create.form.name}
               onChange={(val) => {
                 state.create.form.name = val.currentTarget.value;
@@ -607,7 +607,7 @@ const state = useProxy(indeksKepuasanState.responden);
             <TextInput
               label="Tanggal Pengisian"
               type="date"
-              placeholder="masukkan tanggal"
+              placeholder="Masukkan tanggal"
               value={state.create.form.tanggal}
               onChange={(val) => {
                 state.create.form.tanggal = val.currentTarget.value;

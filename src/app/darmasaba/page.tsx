@@ -38,15 +38,15 @@ export default function Page() {
   const [hasNewContent, setHasNewContent] = useState(false);
   const [newItemCount, setNewItemCount] = useState(0);
 
-  const lastBeritaId = useRef<string | null>(null);
-  const lastPengumumanId = useRef<string | null>(null);
+  const lastBeritaTimestamp = useRef<string | null>(null);
+  const lastPengumumanTimestamp = useRef<string | null>(null);
 
   // Inisialisasi dari localStorage
   useEffect(() => {
-    const savedBerita = localStorage.getItem("lastSeenBeritaId");
-    const savedPengumuman = localStorage.getItem("lastSeenPengumumanId");
-    if (savedBerita) lastBeritaId.current = savedBerita;
-    if (savedPengumuman) lastPengumumanId.current = savedPengumuman;
+    const savedBeritaTs = localStorage.getItem("lastSeenBeritaTs");
+    const savedPengumumanTs = localStorage.getItem("lastSeenPengumumanTs");
+    if (savedBeritaTs) lastBeritaTimestamp.current = savedBeritaTs;
+    if (savedPengumumanTs) lastPengumumanTimestamp.current = savedPengumumanTs;
   }, []);
 
   // Load data utama (untuk card)
@@ -70,28 +70,49 @@ export default function Page() {
       if (result.success && Array.isArray(result.news)) {
         const news = result.news as NewsItem[];
 
-        // Ambil ID terbaru
         const latestBerita = news.find((n) => n.type === "berita");
         const latestPengumuman = news.find((n) => n.type === "pengumuman");
 
-        const isNewBerita = latestBerita && lastBeritaId.current !== null && latestBerita.id !== lastBeritaId.current;
-        const isNewPengumuman = latestPengumuman && lastPengumumanId.current !== null && latestPengumuman.id !== lastPengumumanId.current;
+        const latestBeritaTs = latestBerita?.timestamp
+          ? new Date(latestBerita.timestamp).toISOString()
+          : null;
+        const latestPengumumanTs = latestPengumuman?.timestamp
+          ? new Date(latestPengumuman.timestamp).toISOString()
+          : null;
 
-        // Simpan ID terbaru ke ref
-        if (latestBerita) lastBeritaId.current = (latestBerita.id);
-        if (latestPengumuman) lastPengumumanId.current = (latestPengumuman.id);
+        // Inisialisasi flag
+        let isNewBerita = false;
+        let isNewPengumuman = false;
 
-        // Jika ini bukan inisialisasi pertama, tampilkan notifikasi
-        if (lastBeritaId.current !== null || lastPengumumanId.current !== null) {
-          if (isNewBerita || isNewPengumuman) {
-            const count = (isNewBerita ? 1 : 0) + (isNewPengumuman ? 1 : 0);
-            setNewItemCount(count);
-            setHasNewContent(true);
+        // Deteksi berita baru
+        if (latestBeritaTs) {
+          if (lastBeritaTimestamp.current === null) {
+            // Pertama kali: simpan tanpa notifikasi
+            lastBeritaTimestamp.current = latestBeritaTs;
+            localStorage.setItem("lastSeenBeritaTs", latestBeritaTs);
+          } else if (latestBeritaTs > lastBeritaTimestamp.current) {
+            isNewBerita = true;
+            lastBeritaTimestamp.current = latestBeritaTs;
           }
-        } else {
-          // Simpan ke localStorage saat pertama kali
-          if (latestBerita) localStorage.setItem("lastSeenBeritaId", (latestBerita.id));
-          if (latestPengumuman) localStorage.setItem("lastSeenPengumumanId", (latestPengumuman.id));
+        }
+
+        // Deteksi pengumuman baru
+        if (latestPengumumanTs) {
+          if (lastPengumumanTimestamp.current === null) {
+            // Pertama kali: simpan tanpa notifikasi
+            lastPengumumanTimestamp.current = latestPengumumanTs;
+            localStorage.setItem("lastSeenPengumumanTs", latestPengumumanTs);
+          } else if (latestPengumumanTs > lastPengumumanTimestamp.current) {
+            isNewPengumuman = true;
+            lastPengumumanTimestamp.current = latestPengumumanTs;
+          }
+        }
+
+        // 🔔 Trigger notifikasi hanya jika ada yang benar-benar BARU
+        if (isNewBerita || isNewPengumuman) {
+          const count = (isNewBerita ? 1 : 0) + (isNewPengumuman ? 1 : 0);
+          setNewItemCount(count);
+          setHasNewContent(true); // ✅ INI YANG KAMU LUPA!
         }
 
         setNotificationNews(news);
@@ -113,13 +134,17 @@ export default function Page() {
   }, []);
 
   const handleSeen = () => {
-  setHasNewContent(false);
-  setNewItemCount(0);
-  const latestBerita = notificationNews.find(n => n.type === "berita");
-  const latestPengumuman = notificationNews.find(n => n.type === "pengumuman");
-  if (latestBerita) localStorage.setItem("lastSeenBeritaId", String(latestBerita.id));
-  if (latestPengumuman) localStorage.setItem("lastSeenPengumumanId", String(latestPengumuman.id));
-};
+    setHasNewContent(false);
+    setNewItemCount(0);
+    const latestBerita = notificationNews.find(n => n.type === "berita");
+    const latestPengumuman = notificationNews.find(n => n.type === "pengumuman");
+    if (latestBerita) {
+      localStorage.setItem("lastSeenBeritaTs", new Date(latestBerita.timestamp!).toISOString());
+    }
+    if (latestPengumuman) {
+      localStorage.setItem("lastSeenPengumumanTs", new Date(latestPengumuman.timestamp!).toISOString());
+    }
+  };
 
   return (
     <Box id="page-root">

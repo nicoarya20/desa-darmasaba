@@ -220,8 +220,9 @@ export default function ModernNewsNotification({
               ...styles,
               position: "fixed",
               bottom: "100px",
-              right: "24px",
-              width: "380px",
+              left: "24px",
+              width: "90vw",
+              maxWidth: 380,
               maxHeight: "500px",
               boxShadow: "0 8px 32px rgba(0,0,0,0.12)",
               borderRadius: "16px",
@@ -290,7 +291,7 @@ export default function ModernNewsNotification({
                           color={item.type === "berita" ? "blue" : "orange"}
                           variant="light"
                         >
-                          {item.type === "berita" ? "📰 Berita" : "📢 Pengumuman"}
+                          {item.type === "berita" ? "Berita" : "Pengumuman"}
                         </Badge>
                         <IconChevronRight size={16} color="#adb5bd" />
                       </Group>
@@ -321,8 +322,9 @@ export default function ModernNewsNotification({
               ...styles,
               position: "fixed",
               bottom: "100px",
-              right: "24px",
-              width: "380px",
+              left: "24px",
+              width: "90vw",
+              maxWidth: 380,
               boxShadow: "0 8px 32px rgba(0,0,0,0.15)",
               borderRadius: "12px",
               overflow: "hidden",
@@ -350,7 +352,6 @@ export default function ModernNewsNotification({
                   size="md"
                   color={currentNews?.type === "berita" ? "blue" : "orange"}
                   variant="light"
-                  leftSection={currentNews?.type === "berita" ? "📰" : "📢"}
                 >
                   {currentNews?.type === "berita"
                     ? "Berita Terbaru"

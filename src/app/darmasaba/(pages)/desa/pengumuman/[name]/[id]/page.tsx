@@ -46,8 +46,8 @@ function Page() {
               </Group>
             </Group>
           <Paper bg={colors["white-1"]} p="md">
-            <Text id='news-content' fz={"md"} style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: detail.data?.content }} />
-            <Text fz={"md"} c={colors["blue-button"]} fw="bold" >
+            <Text px="lg" id='news-content' fz={"md"} style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: detail.data?.content }} />
+            <Text px="lg" fz={"md"} c={colors["blue-button"]} fw="bold" >
               {new Date(detail.data?.createdAt).toLocaleDateString('id-ID', {
                 weekday: 'long',
                 day: 'numeric',

@@ -14,6 +14,9 @@ import {
   Loader,
   Paper,
   Stack,
+  Tabs,
+  TabsList,
+  TabsTab,
   Text,
   TextInput,
   Title,
@@ -35,6 +38,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useProxy } from 'valtio/utils'
 import './struktur.css'
 import BackButton from '../_com/BackButto'
+import { useMediaQuery } from '@mantine/hooks'
 
 export default function StrukturPerangkatDesa() {
   return (
@@ -231,87 +235,121 @@ function StrukturPerangkatDesaNode() {
         p="md"
         radius="md"
         style={{
-          background: colors['blue-button']
+          background: colors['blue-button'],
+          width: '100%',       // ⬅️ penting
+          maxWidth: '100%',    // ⬅️ penting
+          overflowX: 'auto'    // ⬅️ untuk mencegah overflow
         }}
       >
-        <Group gap="sm" wrap="wrap" justify="center">
-          <TextInput
-            placeholder="Cari nama atau jabatan..."
-            leftSection={<IconSearch size={16} />}
-            onChange={(e) => debouncedSearch(e.target.value)}
+
+        <Stack gap="sm">
+          <Group justify='center'>
+            <TextInput
+              placeholder="Cari nama atau jabatan..."
+              leftSection={<IconSearch size={16} />}
+              onChange={(e) => debouncedSearch(e.target.value)}
+              styles={{
+                input: {
+                  minWidth: 250,
+                },
+              }}
+            />
+          </Group>
+          <Tabs
+            defaultValue="zoom-out"
+            variant="outline"
+            radius="md"
             styles={{
-              input: {
-                minWidth: 250,
+              panel: { display: 'none' },
+              tab: {
+                color: colors['blue-button'],
+                backgroundColor: colors['blue-button-2'],
+                border: 'none',
+                fontWeight: 600,
+                fontSize: '0.875rem',
+                padding: '6px 12px',
+                minHeight: 'auto',
+                flexShrink: 0, // 👈 PENTING: mencegah tab mengecil
               },
             }}
-          />
-
-          <Group gap="xs">
-            <Button
-              variant="light"
-              bg={colors['blue-button-2']}
-              size="sm"
-              onClick={handleZoomOut}
-              leftSection={<IconZoomOut size={16} />}
-              c={colors['blue-button']}
-            >
-              Zoom Out
-            </Button>
-
-            <Box
-              bg={colors['blue-button-2']}
-              c={colors['blue-button']}
-              px={16}
-              py={8}
+          >
+            <TabsList
               style={{
-                fontSize: 14,
-                fontWeight: 700,
-                borderRadius: '8px',
-                minWidth: 70,
-                textAlign: 'center',
+                display: 'flex',
+                overflowX: 'auto',
+                overflowY: 'hidden', // 👈 tambahkan ini
+                gap: '4px',
+                paddingBottom: '4px',
+                flexWrap: 'nowrap',
+                WebkitOverflowScrolling: 'touch', // 👈 smooth scroll di iOS
+                scrollbarWidth: 'thin', // 👈 scrollbar tipis di Firefox
+                msOverflowStyle: '-ms-autohiding-scrollbar', // 👈 untuk IE/Edge
               }}
             >
-              {Math.round(scale * 100)}%
-            </Box>
+              <TabsTab
+                value="zoom-out"
+                onClick={handleZoomOut}
+                leftSection={<IconZoomOut size={16} />}
+                style={{ flexShrink: 0 }} // 👈 pastikan tidak mengecil
+              >
+                Zoom Out
+              </TabsTab>
 
-            <Button
-              bg={colors['blue-button-2']}
-              c={colors['blue-button']}
-              variant="light"
-              size="sm"
-              onClick={handleZoomIn}
-              leftSection={<IconZoomIn size={16} />}
-            >
-              Zoom In
-            </Button>
+              <Box
+                bg={colors['blue-button-2']}
+                c={colors['blue-button']}
+                px={12}
+                py={6}
+                style={{
+                  fontSize: 14,
+                  fontWeight: 700,
+                  borderRadius: '6px',
+                  minWidth: 60,
+                  textAlign: 'center',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0,
+                  whiteSpace: 'nowrap', // 👈 mencegah text wrap
+                }}
+              >
+                {Math.round(scale * 100)}%
+              </Box>
 
-            <Button
-              bg={colors['blue-button-2']}
-              c={colors['blue-button']}
-              variant="light"
-              size="sm"
-              onClick={resetZoom}
-            >
-              Reset
-            </Button>
+              <TabsTab
+                value="zoom-in"
+                onClick={handleZoomIn}
+                leftSection={<IconZoomIn size={16} />}
+                style={{ flexShrink: 0 }}
+              >
+                Zoom In
+              </TabsTab>
 
-            <Button
-              bg={colors['blue-button-2']}
-              c={colors['blue-button']}
-              size="sm"
-              onClick={toggleFullscreen}
-              leftSection={
-                isFullscreen ? (
-                  <IconArrowsMinimize size={16} />
-                ) : (
-                  <IconArrowsMaximize size={16} />
-                )
-              }
-            >
-              Fullscreen
-            </Button>
-          </Group>
-        </Group>
+              <TabsTab
+                value="reset"
+                onClick={resetZoom}
+                style={{ flexShrink: 0 }}
+              >
+                Reset
+              </TabsTab>
+
+              <TabsTab
+                value="fullscreen"
+                onClick={toggleFullscreen}
+                leftSection={
+                  isFullscreen ? (
+                    <IconArrowsMinimize size={16} />
+                  ) : (
+                    <IconArrowsMaximize size={16} />
+                  )
+                }
+                style={{ flexShrink: 0 }}
+              >
+                {isFullscreen ? 'Exit' : 'Fullscreen'}
+              </TabsTab>
+            </TabsList>
+          </Tabs>
+        </Stack>
       </Paper>
 
       {/* 🧩 Chart Container */}
@@ -325,15 +363,20 @@ function StrukturPerangkatDesaNode() {
             maxWidth: '100%',
             padding: '32px 16px',
             transition: 'transform 0.2s ease',
-            transform: `scale(${scale})`,
-            transformOrigin: 'center top',
           }}
         >
-          <OrganizationChart
-            value={chartData}
-            nodeTemplate={(node) => <NodeCard node={node} router={router} />}
-            className="p-organizationchart p-organizationchart-horizontal"
-          />
+          <Box style={{
+            transform: `scale(${scale})`,
+            transformOrigin: 'center top',
+            display: 'inline-block', // 👈 agar tidak memenuhi lebar parent
+            minWidth: 'min-content', // 👈 penting agar chart tidak dipaksa muat di width 100%
+          }}>
+            <OrganizationChart
+              value={chartData}
+              nodeTemplate={(node) => <NodeCard node={node} router={router} />}
+              className="p-organizationchart p-organizationchart-horizontal"
+            />
+          </Box>
         </Box>
       </Center>
     </Stack>
@@ -345,6 +388,7 @@ function NodeCard({ node, router }: any) {
   const name = node?.data?.name || 'Tanpa Nama'
   const title = node?.data?.title || 'Tanpa Jabatan'
   const hasId = Boolean(node?.data?.id)
+  const isMobile = useMediaQuery("(max-width: 768px)");
 
   return (
     <Transition mounted transition="pop" duration={300}>
@@ -355,9 +399,10 @@ function NodeCard({ node, router }: any) {
           withBorder
           style={{
             ...styles,
-            width: 240,
-            minHeight: 280,
-            padding: 20,
+            width: '100%',
+            maxWidth: isMobile ? 200 : 240, // lebih kecil di mobile
+            minHeight: isMobile ? 240 : 280,
+            padding: isMobile ? 16 : 20,
             background: 'linear-gradient(135deg, rgba(28,110,164,0.15) 0%, rgba(255,255,255,0.95) 100%)',
             borderColor: 'rgba(28, 110, 164, 0.3)',
             borderWidth: 2,

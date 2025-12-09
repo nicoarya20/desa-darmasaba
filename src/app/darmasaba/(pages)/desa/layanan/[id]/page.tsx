@@ -100,7 +100,7 @@ function Page() {
           {data.name}
         </Text>
       </Container>
-      <Box px={{ base: "md", md: 100 }}>
+      <Box px={{ base: "35", md: 100 }}>
         <Stack gap="md">
           <Text
             dangerouslySetInnerHTML={{ __html: data.deskripsi }}

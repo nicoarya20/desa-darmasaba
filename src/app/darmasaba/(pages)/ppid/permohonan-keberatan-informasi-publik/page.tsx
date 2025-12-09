@@ -55,17 +55,13 @@ function Page() {
   const stateKeberatan = useProxy(permohonanKeberatanInformasi);
   const router = useRouter();
 
-  const submit = () => {
-    if (
-      stateKeberatan.create.form.name &&
-      stateKeberatan.create.form.email &&
-      stateKeberatan.create.form.notelp &&
-      stateKeberatan.create.form.alasan
-    ) {
-      stateKeberatan.create.create();
+  const submit = async () => {
+    const { create } = stateKeberatan;
+
+    const hasil = await create.create(); // tunggu hasilnya
+
+    if (hasil) {
       router.push('/darmasaba/permohonan/berhasil');
-    } else {
-      console.log('Formulir belum lengkap');
     }
   };
 
@@ -190,7 +186,7 @@ function Page() {
 
                   <TextInput
                     label="Nomor Telepon"
-                    placeholder="Contoh: 0812-3456-7890"
+                    placeholder="Contoh: 081234567890"
                     radius="md"
                     size="md"
                     withAsterisk
