@@ -70,8 +70,8 @@ function EditGrafikHasilKepuasan() {
           });
         }
       } catch (err) {
-        console.error("Error loading grafik hasil kepuasan:", err);
-        toast.error("Gagal memuat data grafik hasil kepuasan");
+        console.error("Error loading penderita penyakit:", err);
+        toast.error("Gagal memuat data penderita penyakit");
       }
     };
 
@@ -99,11 +99,11 @@ function EditGrafikHasilKepuasan() {
       setIsSubmitting(true);
       editState.update.form = { ...editState.update.form, ...formData };
       await editState.update.submit();
-      toast.success('Grafik hasil kepuasan berhasil diperbarui!');
-      router.push('/admin/kesehatan/data-kesehatan-warga/grafik_hasil_kepuasan');
+      toast.success('penderita penyakit berhasil diperbarui!');
+      router.push('/admin/kesehatan/data-kesehatan-warga/penderita_penyakit');
     } catch (err) {
-      console.error('Error updating grafik hasil kepuasan:', err);
-      toast.error('Terjadi kesalahan saat memperbarui grafik hasil kepuasan');
+      console.error('Error updating penderita penyakit:', err);
+      toast.error('Terjadi kesalahan saat memperbarui penderita penyakit');
     } finally {
       setIsSubmitting(false);
     }
@@ -122,7 +122,7 @@ function EditGrafikHasilKepuasan() {
           <IconArrowBack color={colors['blue-button']} size={24} />
         </Button>
         <Title order={4} ml="sm" c="dark">
-          Edit Grafik Hasil Kepuasan
+          Edit Penderita Penyakit
         </Title>
       </Group>
 

@@ -55,8 +55,8 @@ function APBDesProgress({ apbdesData }: APBDesProgressProps) {
 
     return (
       <Box key={label}>
-        <Text fw={600} fz="sm">{label}</Text>
-        <Text fw={700} mb="xs">
+        <Text fw={600} fz={{base: "sm", md: "md"}}>{label}</Text>
+        <Text fw={700} fz={{base: "sm", md: "md"}} mb="xs">
           {formatRupiah(dataset.realisasi)} | {formatRupiah(dataset.anggaran)}
         </Text>
         <Progress

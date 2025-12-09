@@ -12,7 +12,7 @@ import { IconKey, IconMapper } from '@/app/admin/(dashboard)/_com/iconMap';
 function Page() {
   const kontakState = useProxy(kontakDarurat.kontakDaruratKeamananState);
   const [search, setSearch] = useState("");
-  const [debouncedSearch] = useDebouncedValue(search, 500);
+  const [debouncedSearch] = useDebouncedValue(search, 1000);
   const {
     data,
     page,

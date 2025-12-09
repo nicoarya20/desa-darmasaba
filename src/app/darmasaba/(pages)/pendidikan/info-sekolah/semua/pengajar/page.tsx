@@ -10,7 +10,7 @@ import { useProxy } from 'valtio/utils';
 function Page() {
   const stateList = useProxy(infoSekolahPaud.pengajar)
   const [search, setSearch] = useState("")
-  const [debouncedSearch] = useDebouncedValue(search, 500); // 500ms delay
+  const [debouncedSearch] = useDebouncedValue(search, 1000); // 500ms delay
   const {
     data,
     page,

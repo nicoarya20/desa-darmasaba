@@ -21,7 +21,7 @@ function Page() {
   const state2 = useProxy(pengelolaanSampahState.keteranganSampah)
 
   const [search, setSearch] = useState('')
-  const [debouncedSearch] = useDebouncedValue(search, 500);
+  const [debouncedSearch] = useDebouncedValue(search, 1000);
 
   const {
     data,

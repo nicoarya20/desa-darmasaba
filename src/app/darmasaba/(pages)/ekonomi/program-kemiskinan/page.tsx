@@ -32,7 +32,7 @@ interface ProgramKemiskinanData {
 
 function Page() {
   const [search, setSearch] = useState('')
-  const [debouncedSearch] = useDebouncedValue(search, 500); // 500ms delay
+  const [debouncedSearch] = useDebouncedValue(search, 1000); // 500ms delay
   const state = useProxy(programKemiskinanState)
 
   // 🔧 Get valid statistics data with proper type checking

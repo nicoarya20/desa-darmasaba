@@ -71,11 +71,13 @@ function DetailInfoWabahPenyakitUser() {
           {/* Deskripsi */}
           <Box>
             <Text fz="lg" fw="bold">Deskripsi</Text>
-            <Text
-              fz="md"
-              dangerouslySetInnerHTML={{ __html: data.deskripsiLengkap || '-' }}
-              style={{ wordBreak: "break-word", whiteSpace: "normal" }}
-            />
+            <Box pl={20}>
+              <Text
+                fz="md"
+                dangerouslySetInnerHTML={{ __html: data.deskripsiLengkap || '-' }}
+                style={{ wordBreak: "break-word", whiteSpace: "normal" }}
+              />
+            </Box>
           </Box>
         </Stack>
       </Paper>

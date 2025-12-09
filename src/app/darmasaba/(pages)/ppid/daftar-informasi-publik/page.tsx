@@ -33,7 +33,7 @@ import { useTransitionRouter } from 'next-view-transitions';
 function Page() {
   const listData = useProxy(daftarInformasiPublik)
   const [search, setSearch] = useState('')
-  const [debouncedSearch] = useDebouncedValue(search, 500); // 500ms delay
+  const [debouncedSearch] = useDebouncedValue(search, 1000); // 500ms delay
   const router = useTransitionRouter()
   const {
     data,

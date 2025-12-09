@@ -13,7 +13,7 @@ import { useDebouncedValue } from '@mantine/hooks';
 function Page() {
   const state = useProxy(polsekTerdekatState);
   const [search, setSearch] = useState('');
-  const [debouncedSearch] = useDebouncedValue(search, 500); // 500ms delay
+  const [debouncedSearch] = useDebouncedValue(search, 1000); // 500ms delay
   const router = useRouter()
 
   const {

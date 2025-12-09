@@ -4,7 +4,7 @@ import penghargaanState from "@/app/admin/(dashboard)/_state/desa/penghargaan";
 import { Stack, Box, Container, Button, Text, Loader, Paper, Center, ActionIcon } from "@mantine/core";
 import { IconAward, IconArrowRight, IconPlayerPlay } from "@tabler/icons-react";
 import { useTransitionRouter } from 'next-view-transitions';
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useProxy } from "valtio/utils";
 import { useMediaQuery } from "@mantine/hooks";
 
@@ -15,16 +15,35 @@ function Penghargaan() {
   const isMobile = useMediaQuery('(max-width: 768px)');
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
   const [showVideo, setShowVideo] = useState(true);
+  const [videoError, setVideoError] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
-  // Opsional: deteksi iOS
-  const isIOS = typeof window !== 'undefined' && /iPad|iPhone|iPod/.test(navigator.userAgent);
+  // Deteksi iOS dengan lebih akurat
+  const isIOS = typeof window !== 'undefined' && (
+    /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1) // iPad dengan iPadOS 13+
+  );
 
   useEffect(() => {
-    if (isIOS) {
-      // Di iOS, jangan andalkan autoplay — tampilkan kontrol
-      setShowVideo(false);
+    // Di iOS, coba autoplay dulu, kalau gagal tampilkan fallback
+    if (isIOS && videoRef.current) {
+      const playPromise = videoRef.current.play();
+      
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            // Autoplay berhasil
+            setShowVideo(true);
+            setIsVideoLoaded(true);
+          })
+          .catch(() => {
+            // Autoplay gagal, tampilkan fallback
+            setShowVideo(false);
+            setVideoError(true);
+          });
+      }
     }
-  }, []);
+  }, [isIOS]);
 
   useEffect(() => {
     const loadData = async () => {
@@ -38,42 +57,99 @@ function Penghargaan() {
     loadData();
   }, []);
 
+  const handlePlayVideo = () => {
+    setShowVideo(true);
+    setVideoError(false);
+    
+    // Paksa play video setelah user interaction
+    setTimeout(() => {
+      if (videoRef.current) {
+        videoRef.current.play().catch(err => {
+          console.error("Video play error:", err);
+          setVideoError(true);
+        });
+      }
+    }, 100);
+  };
+
   // kalau mobile ambil 1 data aja, kalau desktop ambil 3
   const data = state.findMany.data?.slice(0, isMobile ? 1 : 3);
 
   return (
-    <Stack pos="relative" h="auto" mih={{ base: 500, md: 720 }}>
-      {showVideo ? (
+    <Stack pos="relative" h="auto" mih={{ base: 500, md: 720 }} style={{ overflow: 'hidden' }}>
+      {/* Video Layer */}
+      {showVideo && !videoError && (
         <video
+          ref={videoRef}
           autoPlay
           muted
           loop
           playsInline
-          webkit-playsinline="true"
+          preload="auto"
           onLoadedData={() => setIsVideoLoaded(true)}
-          style={{ opacity: isVideoLoaded ? 1 : 0, transition: 'opacity 0.5s' }}
+          onError={() => {
+            console.error("Video load error");
+            setVideoError(true);
+            setShowVideo(false);
+          }}
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            opacity: isVideoLoaded ? 1 : 0,
+            transition: 'opacity 0.5s ease',
+            zIndex: 0,
+          }}
         >
           <source src="/assets/videos/award.mp4" type="video/mp4" />
         </video>
-      ) : (
-        // Fallback: tampilkan poster + play button
+      )}
+
+      {/* Fallback Image + Play Button */}
+      {(!showVideo || videoError) && (
         <Box
-          onClick={() => setShowVideo(true)}
+          onClick={handlePlayVideo}
           style={{
-            backgroundImage: "url('/assets/images/award-poster.jpg')",
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            backgroundImage: "url('/mangupuraaward.jpeg')",
             backgroundSize: 'cover',
             backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
             cursor: 'pointer',
+            zIndex: 0,
           }}
         >
-          <Center h="100%">
-            <ActionIcon size="lg" radius="xl" color="white">
-              <IconPlayerPlay size={32} />
+          <Center 
+            style={{ 
+              width: '100%', 
+              height: '100%',
+              background: 'rgba(0,0,0,0.3)', // overlay gelap agar icon terlihat
+            }}
+          >
+            <ActionIcon 
+              size={80} 
+              radius="xl" 
+              variant="filled"
+              color="blue"
+              style={{
+                backgroundColor: 'rgba(255,255,255,0.9)',
+                boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
+              }}
+            >
+              <IconPlayerPlay size={40} color="var(--mantine-color-blue-6)" />
             </ActionIcon>
           </Center>
         </Box>
       )}
 
+      {/* Overlay Gradient + Content */}
       <Box
         style={{
           width: "100%",

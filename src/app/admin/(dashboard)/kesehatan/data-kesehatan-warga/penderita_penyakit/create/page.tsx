@@ -40,7 +40,7 @@ function CreateGrafikHasilKepuasanMasyarakat() {
       setIsSubmitting(true);
       await stateGrafikKepuasan.create.create();
       resetForm();
-      router.push("/admin/kesehatan/data-kesehatan-warga/grafik_hasil_kepuasan");
+      router.push("/admin/kesehatan/data-kesehatan-warga/penderita_penyakit");
     } catch (error) {
       console.error("Error creating grafik kepuasan:", error);
       toast.error("Terjadi kesalahan saat membuat grafik kepuasan");
@@ -62,7 +62,7 @@ function CreateGrafikHasilKepuasanMasyarakat() {
           <IconArrowBack color={colors['blue-button']} size={24} />
         </Button>
         <Title order={4} ml="sm" c="dark">
-          Tambah Grafik Hasil Kepuasan Masyarakat
+          Tambah Penderita Penyakit
         </Title>
       </Group>
 

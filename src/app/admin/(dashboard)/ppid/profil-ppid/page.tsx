@@ -30,12 +30,13 @@ function Page() {
   return (
     <Paper bg={colors['white-1']} p="lg" radius="md" shadow="sm">
       <Stack gap="md">
-        <Grid align="center">
+        <Grid>
           <GridCol span={{ base: 12, md: 11 }}>
             <Title order={3} c={colors['blue-button']}>Preview Profil PPID</Title>
           </GridCol>
           <GridCol span={{ base: 12, md: 1 }}>
               <Button
+                w={{base: '100%', md: "110%"}}
                 c="green"
                 variant="light"
                 leftSection={<IconEdit size={18} stroke={2} />}

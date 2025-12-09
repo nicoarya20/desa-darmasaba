@@ -49,6 +49,7 @@ export function EdukasiCard({ icon, title, description, color = '#1e88e5' }: Edu
           </Stack>
           <Text
             size="sm"
+            pl={20}
             style={{
               wordBreak: 'break-word',
               lineHeight: 1.6,

@@ -69,25 +69,33 @@ function Page() {
                 <Stack gap="sm">
                   <Text fz="lg" fw="bold">Deskripsi Kegiatan</Text>
                   <Divider />
-                  <Text ta="justify" fz="md" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: state.findUnique.data.deskripsijadwalkegiatan.deskripsi }} />
+                  <Box pl={20}>
+                    <Text ta="justify" fz="md" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: state.findUnique.data.deskripsijadwalkegiatan.deskripsi }} />
+                  </Box>
                 </Stack>
 
                 <Stack gap="sm">
                   <Text fz="lg" fw="bold">Layanan yang Tersedia</Text>
                   <Divider />
-                  <Text ta="justify" fz="md" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: state.findUnique.data.layananjadwalkegiatan.content }} />
+                  <Box pl={20}>
+                    <Text ta="justify" fz="md" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: state.findUnique.data.layananjadwalkegiatan.content }} />
+                  </Box>
                 </Stack>
 
                 <Stack gap="sm">
                   <Text fz="lg" fw="bold">Syarat & Ketentuan</Text>
                   <Divider />
-                  <Text ta="justify" fz="md" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: state.findUnique.data.syaratketentuanjadwalkegiatan.content }} />
+                  <Box pl={20}>
+                    <Text ta="justify" fz="md" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: state.findUnique.data.syaratketentuanjadwalkegiatan.content }} />
+                  </Box>
                 </Stack>
 
                 <Stack gap="sm">
                   <Text fz="lg" fw="bold">Dokumen yang Perlu Dibawa</Text>
                   <Divider />
-                  <Text ta="justify" fz="md" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: state.findUnique.data.dokumenjadwalkegiatan.content }} />
+                  <Box pl={20}>
+                    <Text ta="justify" fz="md" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: state.findUnique.data.dokumenjadwalkegiatan.content }} />
+                  </Box>
                 </Stack>
 
                 <Stack gap="sm">

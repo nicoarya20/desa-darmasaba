@@ -36,7 +36,7 @@ function GrafikHasilKepuasanMasyarakat() {
     <Box>
       {/* Header Search */}
       <HeaderSearch
-        title='Grafik Hasil Kepuasan Masyarakat'
+        title='Penderita Penyakit'
         placeholder='Cari nama atau alamat...'
         searchIcon={<IconSearch size={20} />}
         value={search}
@@ -115,14 +115,14 @@ function ListGrafikHasilKepuasanMasyarakat({ search }: { search: string }) {
       <Paper withBorder bg={colors['white-1']} p={'lg'} shadow="md" radius="md">
         {/* Judul + Tombol Tambah */}
         <Group justify="space-between" mb="md">
-          <Title order={4}>Daftar Grafik Hasil Kepuasan Masyarakat</Title>
+          <Title order={4}>Daftar Penderita Penyakit</Title>
           <Button
             leftSection={<IconPlus size={18} />}
             color="blue"
             variant="light"
             onClick={() =>
               router.push(
-                '/admin/kesehatan/data-kesehatan-warga/grafik_hasil_kepuasan/create'
+                '/admin/kesehatan/data-kesehatan-warga/penderita_penyakit/create'
               )
             }
           >
@@ -176,7 +176,7 @@ function ListGrafikHasilKepuasanMasyarakat({ search }: { search: string }) {
                         color="blue"
                         onClick={() =>
                           router.push(
-                            `/admin/kesehatan/data-kesehatan-warga/grafik_hasil_kepuasan/${item.id}`
+                            `/admin/kesehatan/data-kesehatan-warga/penderita_penyakit/${item.id}`
                           )
                         }
                       >
@@ -221,7 +221,7 @@ function ListGrafikHasilKepuasanMasyarakat({ search }: { search: string }) {
       {/* Chart */}
       <Box mt="lg" style={{ width: '100%', minWidth: 300, height: 420, minHeight: 300 }}>
         <Paper withBorder bg={colors['white-1']} p={'md'}>
-          <Title pb={10} order={4}>Grafik Hasil Kepuasan Masyarakat</Title>
+          <Title pb={10} order={4}>Penderita Penyakit</Title>
           {mounted && diseaseChartData.length > 0 ? (
             <Center>
               <BarChart
