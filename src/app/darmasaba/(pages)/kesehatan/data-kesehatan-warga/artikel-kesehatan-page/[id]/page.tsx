@@ -2,7 +2,7 @@
 import artikelKesehatanState from '@/app/admin/(dashboard)/_state/kesehatan/data_kesehatan_warga/artikelKesehatan';
 import BackButton from '@/app/darmasaba/(pages)/desa/layanan/_com/BackButto';
 import colors from '@/con/colors';
-import { Box, Divider, Group, Image, List, ListItem, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
+import { Box, Divider, Flex, Group, Image, List, ListItem, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconAlertCircle, IconCalendar, IconInfoCircle } from '@tabler/icons-react';
 import { useParams } from 'next/navigation';
@@ -44,18 +44,18 @@ function Page() {
 
             <Box p="lg">
               <Box style={{ position: 'relative', width: '100%', maxWidth: '800px', margin: '0 auto' }}>
-                <Image 
-                  src={state.findUnique.data.image?.link} 
-                  alt={state.findUnique.data.title} 
+                <Image
+                  src={state.findUnique.data.image?.link}
+                  alt={state.findUnique.data.title}
                   height={0}
-                  style={{ 
+                  style={{
                     height: 'auto',
                     width: '100%',
                     maxHeight: '500px',
                     objectFit: 'contain',
                     borderRadius: '8px'
                   }}
-                  loading="lazy" 
+                  loading="lazy"
                 />
               </Box>
             </Box>
@@ -78,25 +78,33 @@ function Page() {
                   <Box>
                     <Text fz="h4" fw="bold">Pendahuluan</Text>
                     <Divider my="xs" />
-                    <Text fz="md" lh={1.6} ta="justify" dangerouslySetInnerHTML={{ __html: state.findUnique.data.introduction?.content }} />
+                    <Box pl={20}>
+                      <Text fz="md" lh={1.6} ta="justify" dangerouslySetInnerHTML={{ __html: state.findUnique.data.introduction?.content }} />
+                    </Box>
                   </Box>
 
                   <Box>
                     <Text fz="h4" fw="bold">{state.findUnique.data.symptom?.title}</Text>
                     <Divider my="xs" />
-                    <Text fz="md" lh={1.6} ta="justify" style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: state.findUnique.data.symptom?.content }} />
+                    <Box pl={20}>
+                      <Text fz="md" lh={1.6} ta="justify" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: state.findUnique.data.symptom?.content }} />
+                    </Box>
                   </Box>
 
                   <Box>
                     <Text fz="h4" fw="bold">{state.findUnique.data.prevention?.title}</Text>
                     <Divider my="xs" />
-                    <Text fz="md" lh={1.6} ta="justify" style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: state.findUnique.data.prevention?.content }} />
+                    <Box pl={20}>
+                      <Text fz="md" lh={1.6} ta="justify" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: state.findUnique.data.prevention?.content }} />
+                    </Box>
                   </Box>
 
                   <Box>
                     <Text fz="h4" fw="bold">{state.findUnique.data.firstaid?.title}</Text>
                     <Divider my="xs" />
-                    <Text fz="md" lh={1.6} ta="justify" style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: state.findUnique.data.firstaid?.content }} />
+                    <Box pl={20}>
+                      <Text fz="md" lh={1.6} ta="justify" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: state.findUnique.data.firstaid?.content }} />
+                    </Box>
                   </Box>
 
                   <Box>
@@ -114,10 +122,14 @@ function Page() {
                           {state.findUnique.data?.mythvsfact ? (
                             <TableTr>
                               <TableTd>
-                                <Text fz="sm" lh={1.6} style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: state.findUnique.data.mythvsfact.mitos }} />
+                                <Box pl={20}>
+                                  <Text fz="sm" lh={1.6} style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: state.findUnique.data.mythvsfact.mitos }} />
+                                </Box>
                               </TableTd>
                               <TableTd>
-                                <Text fz="sm" lh={1.6} style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: state.findUnique.data.mythvsfact.fakta }} />
+                                <Box pl={20}>
+                                  <Text fz="sm" lh={1.6} style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: state.findUnique.data.mythvsfact.fakta }} />
+                                </Box>
                               </TableTd>
                             </TableTr>
                           ) : (
@@ -133,17 +145,15 @@ function Page() {
                   <Box>
                     <Text fz="h4" fw="bold">Kapan Harus ke Dokter?</Text>
                     <Divider my="xs" />
-                    <Group gap="xs" mb="xs">
+                    <Flex justify={'flex-start'} gap={"xs"} align={"center"} mb="xs">
                       <IconAlertCircle size={18} color="red" />
                       <Text fz="md">Segera bawa penderita ke fasilitas kesehatan jika mengalami:</Text>
-                    </Group>
-                    <Text fz="md" lh={1.6} dangerouslySetInnerHTML={{ __html: state.findUnique.data.doctorsign.content }} />
+                    </Flex>
+                    <Box pl={20}>
+                      <Text fz="md" lh={1.6} dangerouslySetInnerHTML={{ __html: state.findUnique.data.doctorsign.content }} /></Box>
                   </Box>
 
                   <Box>
-                    <Text fz="h4" fw="bold">Kasus DBD di Wilayah Abiansemal</Text>
-                    <Divider my="xs" />
-
                     <Paper p="lg" radius="md" bg={colors['blue-button-trans']} withBorder>
                       <Group gap="xs" mb="sm">
                         <IconInfoCircle size={20} color={colors['white-1']} />

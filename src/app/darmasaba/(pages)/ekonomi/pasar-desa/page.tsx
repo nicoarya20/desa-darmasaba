@@ -14,7 +14,7 @@ function Page() {
   const router = useRouter()
   const state = useProxy(pasarDesaState.pasarDesa)
   const [search, setSearch] = useState('');
-  const [debouncedSearch] = useDebouncedValue(search, 500); // 500ms delay
+  const [debouncedSearch] = useDebouncedValue(search, 1000); // 500ms delay
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const {
     data,

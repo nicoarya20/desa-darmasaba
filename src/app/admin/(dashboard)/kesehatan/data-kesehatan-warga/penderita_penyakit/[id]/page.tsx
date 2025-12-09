@@ -26,7 +26,7 @@ function DetailGrafikHasilKepuasan() {
       state.delete.byId(selectedId);
       setModalHapus(false);
       setSelectedId(null);
-      router.push("/admin/kesehatan/data-kesehatan-warga/grafik_hasil_kepuasan");
+      router.push("/admin/kesehatan/data-kesehatan-warga/penderita_penyakit");
     }
   };
 
@@ -63,7 +63,7 @@ function DetailGrafikHasilKepuasan() {
       >
         <Stack gap="md">
           <Text fz="2xl" fw="bold" c={colors['blue-button']}>
-            Detail Data Grafik Hasil Kepuasan
+            Detail Data Penderita Penyakit
           </Text>
 
           <Paper bg="#ECEEF8" p="md" radius="md" shadow="xs">
@@ -118,7 +118,7 @@ function DetailGrafikHasilKepuasan() {
                   color="green"
                   onClick={() =>
                     router.push(
-                      `/admin/kesehatan/data-kesehatan-warga/grafik_hasil_kepuasan/${data.id}/edit`
+                      `/admin/kesehatan/data-kesehatan-warga/penderita_penyakit/${data.id}/edit`
                     )
                   }
                   variant="light"

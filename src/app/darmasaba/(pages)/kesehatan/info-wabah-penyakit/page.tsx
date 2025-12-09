@@ -30,7 +30,7 @@ function Page() {
   const state = useProxy(infoWabahPenyakit);
   const router = useTransitionRouter();
   const [search, setSearch] = useState('');
-  const [debouncedSearch] = useDebouncedValue(search, 500)
+  const [debouncedSearch] = useDebouncedValue(search, 1000)
   const { data, page, totalPages, loading, load } = state.findMany;
 
   useShallowEffect(() => {

@@ -95,7 +95,7 @@ function GrafikPenyakit() {
         <Box style={{ width: '100%', minWidth: 300, height: 400, minHeight: 300 }}>
           <Paper bg={colors['white-1']} p={'md'}>
             <Center>
-              <Title pb={10} order={3}>Grafik Hasil Kepuasan Masyarakat</Title>
+              <Title pb={10} order={2}>Penderita Penyakit</Title>
               <Text c='dimmed'>Belum ada data untuk ditampilkan dalam grafik</Text>
             </Center>
           </Paper>
@@ -103,7 +103,7 @@ function GrafikPenyakit() {
       ) : (
         <Box style={{ width: '100%', minWidth: 300, height: 420, minHeight: 300 }}>
           <Paper bg={colors["white-trans-1"]} p={'md'}>
-            <Title pb={10} order={4}>Grafik Hasil Kepuasan Masyarakat</Title>
+            <Title pb={10} order={2}>Penderita Penyakit</Title>
             {mounted && diseaseChartData.length > 0 && (
               <Center>
                 <BarChart width={isMobile ? 450 : isTablet ? 500 : 550} height={350} data={diseaseChartData} >

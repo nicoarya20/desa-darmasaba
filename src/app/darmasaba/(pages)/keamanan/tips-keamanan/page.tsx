@@ -12,7 +12,7 @@ import { IconSearch } from '@tabler/icons-react';
 function Page() {
   const state = useProxy(tipsKeamananState)
   const [search, setSearch] = useState('')
-  const [debouncedSearch] = useDebouncedValue(search, 500); // 500ms delay
+  const [debouncedSearch] = useDebouncedValue(search, 1000); // 500ms delay
   const {
     data,
     page,

@@ -1,10 +1,26 @@
 'use client'
+
 import CreateEditor from '@/app/admin/(dashboard)/_com/createEditor';
 import laporanPublikState from '@/app/admin/(dashboard)/_state/keamanan/laporan-publik';
 import colors from '@/con/colors';
-import { Box, Button, Center, ColorSwatch, Flex, Group, Modal, Pagination, Paper, SimpleGrid, Skeleton, Stack, Text, TextInput } from '@mantine/core';
+import {
+  Box,
+  Button,
+  Center,
+  ColorSwatch,
+  Flex,
+  Group,
+  Modal,
+  Pagination,
+  Paper,
+  SimpleGrid,
+  Skeleton,
+  Stack,
+  Text,
+  TextInput,
+} from '@mantine/core';
 import { DateTimePicker } from '@mantine/dates';
-import { useDebouncedValue, useDisclosure, useShallowEffect } from '@mantine/hooks';
+import { useDebouncedValue, useDisclosure, useMediaQuery, useShallowEffect } from '@mantine/hooks';
 import { IconArrowRight, IconPlus, IconSearch } from '@tabler/icons-react';
 import { useTransitionRouter } from 'next-view-transitions';
 import { useState } from 'react';
@@ -12,9 +28,10 @@ import { useProxy } from 'valtio/utils';
 import BackButton from '../../desa/layanan/_com/BackButto';
 
 function Page() {
-  const [search, setSearch] = useState("");
-  const router = useTransitionRouter()
-  const [debouncedSearch] = useDebouncedValue(search, 500);
+  const mobile = useMediaQuery('(max-width: 768px)');
+  const [search, setSearch] = useState('');
+  const router = useTransitionRouter();
+  const [debouncedSearch] = useDebouncedValue(search, 1000);
   const [opened, { open, close }] = useDisclosure(false);
   const stateLaporan = useProxy(laporanPublikState);
   const {
@@ -49,143 +66,219 @@ function Page() {
   const handleSubmit = async () => {
     await stateLaporan.create.create();
     resetForm();
+    close();
   };
+
   return (
-    <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"22"}>
+    <Stack pos="relative" bg={colors.Bg} py="xl" gap="22">
+      {/* Header: Back + Search */}
       <Box px={{ base: 'md', md: 100 }}>
         <Group justify="space-between" align="center">
           <BackButton />
           <TextInput
-              radius={"lg"}
-              placeholder='Cari Laporan Publik'
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              leftSection={<IconSearch size={20} />}
-              w={{ base: "100%", md: "30%" }}
-            />
+            radius="lg"
+            placeholder="Cari Laporan Publik"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            leftSection={<IconSearch size={20} />}
+            w={{ base: '100%', md: '30%' }}
+            size={mobile ? 'sm' : 'md'}
+          />
         </Group>
       </Box>
+
+      {/* Title + Add Button */}
       <Box px={{ base: 'md', md: 100 }}>
-        <Group justify="space-between">
-          <Text ta={"center"} fz={{ base: "h1", md: "2.5rem" }} c={colors["blue-button"]} fw={"bold"}>
+        <Group justify="space-between" align="flex-start">
+          <Text
+            ta="center"
+            fz={{ base: 'xl', sm: '2xl', md: '2.5rem' }}
+            c={colors['blue-button']}
+            fw="bold"
+            lineClamp={2}
+            style={{ wordBreak: 'break-word' }}
+          >
             Laporan Keamanan Lingkungan
           </Text>
           <Button
             onClick={open}
             bg={colors['blue-button']}
-            size="md"
+            size={mobile ? 'sm' : 'md'}
             radius="md"
             rightSection={<IconPlus size={20} />}
           >
-            Tambah Laporan
+            {mobile ? 'Tambah' : 'Tambah Laporan'}
           </Button>
         </Group>
       </Box>
-      <Box px={{ base: "md", md: 100 }}>
-        <Stack gap={'lg'}>
-          <Flex justify={'space-between'} align={'center'}>
-            <Text fz={{ base: 'sm', md: 'h4' }} fw={'bold'}>Laporan Terbaru</Text>
-            <Box>
-              <Flex gap={'lg'}>
-                <Box>
-                  <Flex gap={{ base: 2, md: 5 }} align={'center'}>
-                    <Text fz={{ base: 'sm', md: 'h4' }}>Terselesaikan</Text>
-                    <ColorSwatch color="#2A742D" size={20} />
-                  </Flex>
-                </Box>
-                <Box>
-                  <Flex gap={{ base: 2, md: 5 }} align={'center'}>
-                    <Text fz={{ base: 'sm', md: 'h4' }}>Dalam Proses</Text>
-                    <ColorSwatch color="#D1961F" size={20} />
-                  </Flex>
-                </Box>
-                <Box>
-                  <Flex gap={{ base: 2, md: 5 }} align={'center'}>
-                    <Text fz={{ base: 'sm', md: 'h4' }}>Gagal</Text>
-                    <ColorSwatch color="#A34437" size={20} />
-                  </Flex>
-                </Box>
-              </Flex>
-            </Box>
-          </Flex>
-          <SimpleGrid
-            cols={{
-              base: 1,
-              md: 3
-            }}
+
+      {/* Legend Status */}
+      <Box px={{ base: 'md', md: 100 }}>
+        <Flex
+          justify="space-between"
+          align="center"
+          direction={mobile ? 'column' : 'row'}
+          gap={mobile ? 'xs' : 'lg'}
+        >
+          <Text fz={{ base: 'sm', md: 'h4' }} fw="bold">
+            Laporan Terbaru
+          </Text>
+          <Flex
+            gap={mobile ? 'xs' : 'lg'}
+            wrap="wrap"
+            justify={mobile ? 'center' : 'flex-start'}
+            align="center"
           >
-            {data.map((v, k) => {
-              return (
-                <Paper radius={'lg'} key={k} bg={colors['white-trans-1']} p={'xl'}>
-                  <Stack>
-                    <Text c={colors['blue-button']} lineClamp={3} truncate="end" fz="h4" fw="bold">{v.judul}</Text>
-                    <Text fs={'italic'} fz={'xl'}>
-                      {v.tanggalWaktu
-                        ? new Date(v.tanggalWaktu).toLocaleString('id-ID')
-                        : '-'}
-                    </Text>
-                    <Box>
-                      <Text fw={'bold'}>Penanganan:</Text>
-                      {v.penanganan?.length ? (
-                        v.penanganan.map((item, index) => (
-                          <Box key={index}>
-                            <Text
-                              fz="md"
-                              c="dimmed"
-                              dangerouslySetInnerHTML={{ __html: item.deskripsi || '-' }}
-                              style={{wordBreak: "break-word", whiteSpace: "normal"}}
-                            />
-                          </Box>
-                        ))
-                      ) : (
-                        <Text fz="sm" fs="italic" c="dimmed">
-                          Belum ada penanganan
-                        </Text>
-                      )}
-                    </Box>
-                    <Box
-                      style={{
-                        display: 'inline-block',
-                        padding: '4px 12px',
-                        borderRadius: '16px',
-                        backgroundColor:
-                          v.status === 'Selesai' ? '#94EF95FF' :
-                            v.status === 'Proses' ? '#F1D295FF' :
-                              '#F38E8EFF',
-                        color:
-                          v.status === 'Selesai' ? '#01BA01FF' :
-                            v.status === 'Proses' ? '#B67A00FF' :
-                              '#AE1700FF',
-                        fontWeight: 900,
-                        fontSize: '0.75rem',
-                        textAlign: 'center',
-                        minWidth: '80px',
-                      }}
-                    >
-                      {v.status}
-                    </Box>
-                    <Button
-                      bg={colors['blue-button']}
-                      rightSection={<IconArrowRight size={20} color={colors['white-1']} />}
-                      onClick={() => router.push(`/darmasaba/keamanan/laporan-publik/${v.id}`)}
-                    >Lihat Detail Kronologi
-                    </Button>
-                  </Stack>
-                </Paper>
-              )
-            })}
-          </SimpleGrid>
-          <Center>
-            <Pagination
-              value={page}
-              onChange={(newPage) => load(newPage)}
-              total={totalPages}
-              my="md"
-            />
-          </Center>
-        </Stack>
+            <Flex gap={2} align="center">
+              <ColorSwatch color="#2A742D" size={16} />
+              <Text fz={{ base: 'xs', md: 'sm' }}>Terselesaikan</Text>
+            </Flex>
+            <Flex gap={2} align="center">
+              <ColorSwatch color="#D1961F" size={16} />
+              <Text fz={{ base: 'xs', md: 'sm' }}>Dalam Proses</Text>
+            </Flex>
+            <Flex gap={2} align="center">
+              <ColorSwatch color="#A34437" size={16} />
+              <Text fz={{ base: 'xs', md: 'sm' }}>Gagal</Text>
+            </Flex>
+          </Flex>
+        </Flex>
       </Box>
-      <Modal opened={opened} onClose={close} title="Tambah Laporan Publik">
+
+      {/* Cards Grid */}
+      <Box px={{ base: 'md', md: 100 }}>
+        <SimpleGrid
+          cols={{
+            base: 1,
+            md: 3,
+          }}
+          spacing="lg"
+        >
+          {data.map((v, k) => (
+            <Paper
+              key={k}
+              radius="lg"
+              bg={colors['white-trans-1']}
+              p="lg"
+              shadow="sm"
+              style={{
+                '&:hover': {
+                  transform: 'translateY(-4px)',
+                  boxShadow: '0 8px 20px rgba(0,0,0,0.1)',
+                },
+                transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+              }}
+            >
+              <Stack gap="sm">
+                <Text
+                  c={colors['blue-button']}
+                  lineClamp={2}
+                  fz={{ base: 'lg', md: 'xl' }}
+                  fw="bold"
+                  style={{ wordBreak: 'break-word' }}
+                >
+                  {v.judul}
+                </Text>
+
+                <Text
+                  fs="italic"
+                  fz={{ base: 'sm', md: 'md' }}
+                  c="dimmed"
+                >
+                  {v.tanggalWaktu
+                    ? new Date(v.tanggalWaktu).toLocaleString('id-ID')
+                    : '-'}
+                </Text>
+
+                <Box>
+                  <Text fw="bold" fz="sm">
+                    Penanganan:
+                  </Text>
+                  {v.penanganan?.length ? (
+                    v.penanganan.map((item, index) => (
+                      <Box key={index}>
+                        <Text
+                          fz="xs"
+                          c="dimmed"
+                          dangerouslySetInnerHTML={{
+                            __html: item.deskripsi || '-',
+                          }}
+                          style={{
+                            wordBreak: 'break-word',
+                            whiteSpace: 'normal',
+                            maxHeight: '80px',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                          }}
+                        />
+                      </Box>
+                    ))
+                  ) : (
+                    <Text fz="xs" fs="italic" c="dimmed">
+                      Belum ada penanganan
+                    </Text>
+                  )}
+                </Box>
+
+                <Box
+                  style={{
+                    display: 'inline-block',
+                    padding: '4px 8px',
+                    borderRadius: '12px',
+                    backgroundColor:
+                      v.status === 'Selesai'
+                        ? '#94EF95FF'
+                        : v.status === 'Proses'
+                        ? '#F1D295FF'
+                        : '#F38E8EFF',
+                    color:
+                      v.status === 'Selesai'
+                        ? '#01BA01FF'
+                        : v.status === 'Proses'
+                        ? '#B67A00FF'
+                        : '#AE1700FF',
+                    fontWeight: 700,
+                    fontSize: '0.75rem',
+                    textAlign: 'center',
+                    minWidth: '70px',
+                  }}
+                >
+                  {v.status}
+                </Box>
+
+                <Button
+                  bg={colors['blue-button']}
+                  rightSection={
+                    <IconArrowRight
+                      size={18}
+                      color={colors['white-1']}
+                    />
+                  }
+                  onClick={() => router.push(`/darmasaba/keamanan/laporan-publik/${v.id}`)}
+                  size={mobile ? 'sm' : 'md'}
+                  fullWidth
+                >
+                  {mobile ? 'Detail' : 'Lihat Detail Kronologi'}
+                </Button>
+              </Stack>
+            </Paper>
+          ))}
+        </SimpleGrid>
+      </Box>
+
+      {/* Pagination */}
+      <Center px={{ base: 'md', md: 100 }}>
+        <Pagination
+          value={page}
+          onChange={(newPage) => load(newPage)}
+          total={totalPages}
+          my="md"
+          size={mobile ? 'sm' : 'md'}
+        />
+      </Center>
+
+      {/* Modal Form */}
+      <Modal opened={opened} onClose={close} title="Tambah Laporan Publik" size="xl">
         <Paper
           bg={colors['white-1']}
           p="lg"
@@ -196,18 +289,26 @@ function Page() {
           <Stack gap="md">
             <TextInput
               value={stateLaporan.create.form.judul}
-              onChange={(e) => (stateLaporan.create.form.judul = e.target.value)}
+              onChange={(e) =>
+                (stateLaporan.create.form.judul = e.target.value)
+              }
               label={<Text fw="bold" fz="sm">Judul Laporan Publik</Text>}
               placeholder="Masukkan judul laporan publik"
               required
+              w="100%"
+              size={mobile ? 'sm' : 'md'}
             />
 
             <TextInput
               value={stateLaporan.create.form.lokasi}
-              onChange={(e) => (stateLaporan.create.form.lokasi = e.target.value)}
+              onChange={(e) =>
+                (stateLaporan.create.form.lokasi = e.target.value)
+              }
               label={<Text fw="bold" fz="sm">Lokasi Laporan Publik</Text>}
               placeholder="Masukkan lokasi laporan publik"
               required
+              w="100%"
+              size={mobile ? 'sm' : 'md'}
             />
 
             <DateTimePicker
@@ -220,6 +321,8 @@ function Page() {
               onChange={(val) => {
                 stateLaporan.create.form.tanggalWaktu = val ? val.toString() : '';
               }}
+              w="100%"
+              size={mobile ? 'sm' : 'md'}
             />
 
             <Box>
@@ -238,7 +341,7 @@ function Page() {
               <Button
                 onClick={handleSubmit}
                 radius="md"
-                size="md"
+                size={mobile ? 'sm' : 'md'}
                 style={{
                   background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                   color: '#fff',

@@ -82,13 +82,13 @@ const state = useProxy(indeksKepuasanState.responden);
 
       // Update gender chart data
       setDonutDataJenisKelamin([
-        { name: 'Laki-laki', value: totalLaki, color: colors['blue-button'] },
+        { name: 'Laki-laki', value: totalLaki, color: '#52ABE3FF' },
         { name: 'Perempuan', value: totalPerempuan, color: '#10A85AFF' },
       ]);
 
       // Update rating chart data
       setDonutDataRating([
-        { name: 'Sangat Baik', value: totalSangatBaik, color: colors['blue-button'] },
+        { name: 'Sangat Baik', value: totalSangatBaik, color: '#52ABE3FF' },
         { name: 'Baik', value: totalBaik, color: '#10A85AFF' },
         { name: 'Kurang Baik', value: totalKurangBaik, color: '#FFA500' },
         { name: 'Sangat Kurang Baik', value: totalSangatKurangBaik, color: '#FF4500' },
@@ -96,7 +96,7 @@ const state = useProxy(indeksKepuasanState.responden);
 
       // Update age group chart data
       setDonutDataKelompokUmur([
-        { name: 'Muda', value: totalMuda, color: colors['blue-button'] },
+        { name: 'Muda', value: totalMuda, color: '#52ABE3FF' },
         { name: 'Dewasa', value: totalDewasa, color: '#10A85AFF' },
         { name: 'Lansia', value: totalLansia, color: '#FFA500' },
       ]);
@@ -216,6 +216,7 @@ const state = useProxy(indeksKepuasanState.responden);
                               <PieChart
                                 withLabels
                                 withTooltip
+                                labelsPosition="inside"
                                 labelsType="percent"
                                 size={250} // Fixed size in pixels
                                 data={donutDataJenisKelamin}
@@ -253,7 +254,7 @@ const state = useProxy(indeksKepuasanState.responden);
                                 withTooltip
                                 tooltipAnimationDuration={200}
                                 withLabels
-                                labelsPosition="outside"
+                                labelsPosition="inside"
                                 labelsType="percent"
                                 withLabelsLine
                                 size={250}
@@ -296,7 +297,7 @@ const state = useProxy(indeksKepuasanState.responden);
                                 withTooltip
                                 tooltipAnimationDuration={200}
                                 withLabels
-                                labelsPosition="outside"
+                                labelsPosition="inside"
                                 labelsType="percent"
                                 withLabelsLine
                                 size={250}
@@ -482,6 +483,7 @@ const state = useProxy(indeksKepuasanState.responden);
                             <PieChart
                               withLabels
                               withTooltip
+                              labelsPosition="inside"
                               labelsType="percent"
                               size={200}
                               data={donutDataJenisKelamin}
@@ -519,7 +521,7 @@ const state = useProxy(indeksKepuasanState.responden);
                               withTooltip
                               tooltipAnimationDuration={200}
                               withLabels
-                              labelsPosition="outside"
+                              labelsPosition="inside"
                               labelsType="percent"
                               withLabelsLine
                               size={200}
@@ -562,7 +564,7 @@ const state = useProxy(indeksKepuasanState.responden);
                               withTooltip
                               tooltipAnimationDuration={200}
                               withLabels
-                              labelsPosition="outside"
+                              labelsPosition="inside"
                               labelsType="percent"
                               withLabelsLine
                               size={190}

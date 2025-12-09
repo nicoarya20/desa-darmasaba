@@ -57,7 +57,7 @@ export default function Page() {
   const state = useProxy(programKesehatan);
   const router = useRouter();
   const [search, setSearch] = useState("");
-  const [debouncedSearch] = useDebouncedValue(search, 500); // 500ms delay
+  const [debouncedSearch] = useDebouncedValue(search, 1000); // 500ms delay
   const { data, page, totalPages, loading, load } = state.findMany;
 
   useShallowEffect(() => {

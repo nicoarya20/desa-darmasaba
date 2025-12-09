@@ -7,6 +7,7 @@ import {
   Center,
   Grid,
   GridCol,
+  Group,
   Image,
   Pagination,
   Paper,
@@ -17,17 +18,18 @@ import {
   TextInput,
   Tooltip
 } from '@mantine/core';
-import { useShallowEffect } from '@mantine/hooks';
-import { IconBrandWhatsapp, IconSearch } from '@tabler/icons-react';
+import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
+import { IconSearch } from '@tabler/icons-react';
+import { useTransitionRouter } from 'next-view-transitions';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import BackButton from '../../desa/layanan/_com/BackButto';
-import { useDebouncedValue } from '@mantine/hooks';
 
 function Page() {
   const state = useProxy(kontakDarurat);
+  const router = useTransitionRouter()
   const [search, setSearch] = useState('');
-  const [debouncedSearch] = useDebouncedValue(search, 500)
+  const [debouncedSearch] = useDebouncedValue(search, 1000)
   const { data, page, totalPages, loading, load } = state.findMany;
 
   useShallowEffect(() => {
@@ -88,83 +90,79 @@ function Page() {
         ) : (
           <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }} spacing="xl" mt="lg">
             {data.map((v, k) => (
-             <Paper
-             key={k}
-             radius="xl"
-             shadow="md"
-             withBorder
-             p="lg"
-             bg={colors['white-trans-1']}
-             style={{
-               transition: 'all 200ms ease',
-               cursor: 'pointer',
-               display: 'flex',
-               flexDirection: 'column',
-               justifyContent: 'space-between', // ✅ biar button selalu di bawah
-               height: '100%', // ✅ bikin tinggi seragam
-             }}
-           >
-             <Stack align="center" gap="sm" style={{ flexGrow: 1 }}>
-               <Box
-                 style={{
-                   width: '100%',
-                   aspectRatio: '16/9',
-                   borderRadius: '12px',
-                   overflow: 'hidden',
-                   position: 'relative',
-                 }}
-               >
-                 <Image
-                   src={v.image.link}
-                   alt={v.name}
-                   fit="cover"
-                   loading="lazy"
-                   style={{
-                     width: '100%',
-                     height: '100%',
-                     transition: 'transform 0.4s ease',
-                   }}
-                   onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
-                   onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
-                 />
-               </Box>
-           
-               <Text ta="center" fw={700} fz="lg" c={colors['blue-button']}>
-                 {v.name}
-               </Text>
-           
-               <Text
-                 fz="sm"
-                 ta="center"
-                 lineClamp={3}
-                 lh={1.6}
-                 style={{
-                   minHeight: '4.8em', // tinggi tetap 3 baris
-                 }}
-               >
-                 <span
-                   style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
-                   dangerouslySetInnerHTML={{ __html: v.deskripsi }}
-                 />
-               </Text>
-             </Stack>
-           
-             {/* ✅ Tombol selalu di bagian bawah card */}
-             <Center mt="md">
-               <Button
-                 variant="light"
-                 leftSection={<IconBrandWhatsapp size={18} />}
-                 component="a"
-                 href={`https://wa.me/${v.whatsapp.replace(/\D/g, '')}`}
-                 target="_blank"
-                 aria-label="Hubungi WhatsApp"
-               >
-                 WhatsApp
-               </Button>
-             </Center>
-           </Paper>
-           
-            
+              <Paper
+                key={k}
+                radius="xl"
+                shadow="md"
+                withBorder
+                p="lg"
+                bg={colors['white-trans-1']}
+                style={{
+                  transition: 'all 200ms ease',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between', // ✅ biar button selalu di bawah
+                  height: '100%', // ✅ bikin tinggi seragam
+                }}
+              >
+                <Stack align="center" gap="sm" style={{ flexGrow: 1 }}>
+                  <Box
+                    style={{
+                      width: '100%',
+                      aspectRatio: '16/9',
+                      borderRadius: '12px',
+                      overflow: 'hidden',
+                      position: 'relative',
+                    }}
+                  >
+                    <Image
+                      src={v.image.link}
+                      alt={v.name}
+                      fit="cover"
+                      loading="lazy"
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        transition: 'transform 0.4s ease',
+                      }}
+                      onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
+                      onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+                    />
+                  </Box>
+
+                  <Text ta="center" fw={700} fz="lg" c={colors['blue-button']}>
+                    {v.name}
+                  </Text>
+
+                  <Text
+                    fz="sm"
+                    ta="center"
+                    lineClamp={3}
+                    lh={1.6}
+                    style={{
+                      minHeight: '4.8em', // tinggi tetap 3 baris
+                    }}
+                  >
+                    <span
+                      style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
+                      dangerouslySetInnerHTML={{ __html: v.deskripsi }}
+                    />
+                  </Text>
+                </Stack>
+
+                {/* ✅ Tombol selalu di bagian bawah card */}
+                <Group mt="md" justify='center'>
+                  <Button
+                    bg={colors['blue-button']}
+                    onClick={() => router.push(`/darmasaba/kesehatan/kontak-darurat/${v.id}`)}
+                  >
+                    Detail
+                  </Button>
+                </Group>
+              </Paper>
+
+
             ))}
           </SimpleGrid>
         )}

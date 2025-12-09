@@ -13,7 +13,7 @@ import { useTransitionRouter } from 'next-view-transitions';
 function Page() {
   const state = useProxy(programPenghijauanState);
   const [search, setSearch] = useState("");
-  const [debouncedSearch] = useDebouncedValue(search, 500);
+  const [debouncedSearch] = useDebouncedValue(search, 1000);
   const router = useTransitionRouter()
   const { data, load, page, totalPages, loading } = state.findMany;
 

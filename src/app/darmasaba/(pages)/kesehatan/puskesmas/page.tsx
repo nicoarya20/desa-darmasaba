@@ -7,10 +7,12 @@ import { IconSearch, IconMapPin, IconPhone, IconMail } from '@tabler/icons-react
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import BackButton from '../../desa/layanan/_com/BackButto';
+import { useDebouncedValue } from '@mantine/hooks';
 
 function Page() {
   const state = useProxy(puskesmasState)
   const [search, setSearch] = useState('')
+  const [debouncedSearch] = useDebouncedValue(search, 1000);
 
   const {
     data,
@@ -21,8 +23,8 @@ function Page() {
   } = state.findMany;
 
   useShallowEffect(() => {
-    load(page, 6, search)
-  }, [page, search])
+    load(page, 6, debouncedSearch)
+  }, [page, debouncedSearch])
 
   if (loading || !data) {
     return (
@@ -95,17 +97,17 @@ function Page() {
                   </Group>
                   <Stack gap={6}>
                     <Group gap="xs" align="flex-start" wrap="nowrap">
-                      <Box pt={2}><IconMapPin size={16} /></Box>
+                      <Box pt={2}><IconMapPin size={20} /></Box>
                       <Text fz="sm" c="dimmed">{v.alamat}</Text>
                     </Group>
 
                     <Group gap="xs" align="flex-start" wrap="nowrap">
-                      <Box pt={2}><IconPhone size={16} /></Box>
+                      <Box pt={2}><IconPhone size={20} /></Box>
                       <Text fz="sm" c="dimmed">{v.kontak.kontakPuskesmas}</Text>
                     </Group>
 
                     <Group gap="xs" align="flex-start" wrap="nowrap">
-                      <Box pt={2}><IconMail size={16} /></Box>
+                      <Box pt={2}><IconMail size={20} /></Box>
                       <Text fz="sm" c="dimmed">{v.kontak.email}</Text>
                     </Group>
                   </Stack>

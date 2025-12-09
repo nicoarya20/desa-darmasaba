@@ -45,7 +45,7 @@ import BackButton from '../../desa/layanan/_com/BackButto';
 function Page() {
   const listState = useProxy(programKreatifState);
   const [search, setSearch] = useState("");
-  const [debouncedSearch] = useDebouncedValue(search, 500);
+  const [debouncedSearch] = useDebouncedValue(search, 1000);
   const router = useTransitionRouter()
   const {
     data,

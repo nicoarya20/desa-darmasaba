@@ -12,7 +12,7 @@ import { useTransitionRouter } from "next-view-transitions";
 export default function Page() {
   const state = useProxy(posyandustate);
   const [search, setSearch] = useState("");
-  const [debouncedSearch] = useDebouncedValue(search, 500); // 500ms delay
+  const [debouncedSearch] = useDebouncedValue(search, 1000); // 500ms delay
   const router = useTransitionRouter()
 
   const { data, page, totalPages, loading, load } = state.findMany;

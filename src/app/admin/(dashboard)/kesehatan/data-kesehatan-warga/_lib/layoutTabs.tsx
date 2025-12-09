@@ -20,9 +20,9 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
       icon: <IconActivity size={18} stroke={1.8} />
     },
     {
-      label: "Grafik Hasil Kepuasan Masyarakat",
-      value: "grafikhasilkepuasan",
-      href: "/admin/kesehatan/data-kesehatan-warga/grafik_hasil_kepuasan",
+      label: "Penderita Penyakit",
+      value: "penderitapenyakit",
+      href: "/admin/kesehatan/data-kesehatan-warga/penderita_penyakit",
       icon: <IconGauge size={18} stroke={1.8} />
     },
     {
