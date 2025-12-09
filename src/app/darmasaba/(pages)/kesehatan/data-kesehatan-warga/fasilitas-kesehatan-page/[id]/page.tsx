@@ -175,7 +175,9 @@ function Page() {
                 <Title order={4}>Layanan Unggulan</Title>
                 <Divider />
                 {layananUnggulan ? (
-                  <Text fz="md" style={{ lineHeight: 1.7, wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: layananUnggulan }} />
+                  <Box pl={"lg"}>
+                    <Text fz="md" style={{ lineHeight: 1.7, wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: layananUnggulan }} />
+                  </Box>
                 ) : (
                   <Paper withBorder radius="md" p="md">
                     <Group gap="sm">
@@ -251,7 +253,9 @@ function Page() {
                   <Title order={3}>Fasilitas Pendukung</Title>
                   <Divider />
                   {fasilitasPendukungHtml ? (
-                    <Text fz="md" style={{ wordBreak: "break-word", whiteSpace: "normal", lineHeight: 1.7 }} dangerouslySetInnerHTML={{ __html: fasilitasPendukungHtml }} />
+                    <Box pl="lg">
+                      <Text fz="md" style={{ wordBreak: "break-word", whiteSpace: "normal", lineHeight: 1.7 }} dangerouslySetInnerHTML={{ __html: fasilitasPendukungHtml }} />
+                    </Box>
                   ) : (
                     <Paper withBorder radius="md" p="md">
                       <Group gap="sm">
@@ -313,7 +317,7 @@ function Page() {
             <Title order={3}>Prosedur Pendaftaran</Title>
             <Divider />
             {prosedur ? (
-              <Text fz="md" style={{ wordBreak: "break-word", whiteSpace: "normal", lineHeight: 1.7 }} dangerouslySetInnerHTML={{ __html: prosedur }} />
+              <Box pl="lg"><Text fz="md" style={{ wordBreak: "break-word", whiteSpace: "normal", lineHeight: 1.7 }} dangerouslySetInnerHTML={{ __html: prosedur }} /></Box>
             ) : (
               <Text fz="md" c="dimmed">Belum ada prosedur pendaftaran</Text>
             )}
