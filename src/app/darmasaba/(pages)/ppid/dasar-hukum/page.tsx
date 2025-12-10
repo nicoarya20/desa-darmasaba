@@ -1,7 +1,7 @@
 'use client'
 import stateDasarHukum from '@/app/admin/(dashboard)/_state/ppid/dasar_hukum/dasarHukum';
 import colors from '@/con/colors';
-import { Box, Paper, Skeleton, Stack, Text, Transition } from '@mantine/core';
+import { Box, Paper, Skeleton, Stack, Text, Transition, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { useProxy } from 'valtio/utils';
 import { IconBook2 } from '@tabler/icons-react';
@@ -31,31 +31,39 @@ function Page() {
       <Box px={{ base: 'md', md: 100 }}>
         <BackButton />
       </Box>
-      <Stack
-        align="center"
-        gap="xs"
-        px={{ base: 'md', md: 100 }}
-      >
+
+      {/* HEADER */}
+      <Stack align="center" gap="xs" px={{ base: 'md', md: 100 }}>
         <IconBook2 size={42} stroke={1.5} color={colors["blue-button"]} />
-        <Text
+
+        <Title
+          order={1}
           ta="center"
-          fz={{ base: "2rem", md: "2.5rem" }}
           c={colors["blue-button"]}
-          fw="bold"
+          fz={{ base: "1.8rem", md: "2.3rem" }}
+          lh={1.2}
           style={{ letterSpacing: "-0.5px" }}
         >
           Dasar Hukum
-        </Text>
-        <Text ta="center" fz="md" c={"black"}>
+        </Title>
+
+        <Text
+          ta="center"
+          fz={{ base: "sm", md: "md" }}
+          lh={1.6}
+          c="black"
+        >
           Informasi regulasi dan kebijakan resmi yang menjadi dasar hukum
         </Text>
       </Stack>
+
+      {/* CONTENT */}
       <Box px={{ base: "md", md: 100 }}>
         <Stack gap="lg">
           {dataArray.map((item, k) => (
             <Transition
               key={k}
-              mounted={true}
+              mounted
               transition="fade-up"
               duration={400}
               timingFunction="ease"
@@ -73,19 +81,27 @@ function Page() {
                   }}
                 >
                   <Stack gap="md">
-                    <Text
+
+                    {/* JUDUL */}
+                    <Title
+                      order={3}
                       ta="center"
-                      c={"black"}
-                      fw="bold"
-                      fz={{ base: 'lg', md: 'xl' }}
-                      style={{ lineHeight: 1.4 }}
+                      c="black"
+                      fz={{ base: "lg", md: "xl" }}
+                      lh={1.3}
                       dangerouslySetInnerHTML={{ __html: item.judul }}
                     />
+
+                    {/* CONTENT */}
                     <Text
-                      c={"black"}
-                      ta={"justify"}
-                      fz={{ base: 'sm', md: 'md' }}
-                      style={{ lineHeight: 1.7, wordBreak: "break-word", whiteSpace: "normal" }}
+                      c="black"
+                      ta="justify"
+                      fz={{ base: "sm", md: "md" }}
+                      lh={1.7}
+                      style={{
+                        wordBreak: "break-word",
+                        whiteSpace: "normal",
+                      }}
                       dangerouslySetInnerHTML={{ __html: item.content }}
                     />
                   </Stack>

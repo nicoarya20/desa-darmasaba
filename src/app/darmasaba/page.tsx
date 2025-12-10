@@ -158,8 +158,6 @@ export default function Page() {
         <SDGS />
         <Apbdes />
         <Prestasi />
-      </Stack>
-
       <ScrollToTopButton />
       <NewsReaderLanding />
 
@@ -170,6 +168,8 @@ export default function Page() {
         onSeen={handleSeen}
         autoShowDelay={2000}
       />
+      </Stack>
+
     </Box>
   );
 }

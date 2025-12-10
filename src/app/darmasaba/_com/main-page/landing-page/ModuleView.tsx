@@ -53,14 +53,23 @@ function ModuleItem({ data }: { data: ProgramInovasiItem }) {
           ) : (
             <Stack align="center" gap="xs">
               <IconPhotoOff size={38} stroke={1.5} />
-              <Text size="sm" c="dimmed">
+
+              {/* ❗ Caption konsisten */}
+              <Text fz={{ base: 13, md: 14 }} c="dimmed">
                 Belum ada gambar
               </Text>
             </Stack>
           )}
         </Center>
+
         <Box mt="md">
-          <Text fw={600} ta="center" size="md">
+          {/* ❗ Responsive Title */}
+          <Text
+            fw={600}
+            ta="center"
+            fz={{ base: 16, md: 18 }} // mobile → desktop
+            lh={1.3}
+          >
             {data.name}
           </Text>
         </Box>
@@ -91,10 +100,14 @@ function ModuleView() {
       <Center h={320}>
         <Stack align="center" gap="sm">
           <IconPhotoOff size={54} stroke={1.5} />
-          <Text size="lg" fw={600}>
+
+          {/* ❗ Empty title lebih besar */}
+          <Text fw={600} fz={{ base: 18, md: 22 }}>
             Belum ada program inovasi
           </Text>
-          <Text size="sm" c="dimmed">
+
+          {/* ❗ Deskripsi kecil & lembut */}
+          <Text fz={{ base: 14, md: 16 }} c="dimmed" ta="center" lh={1.4}>
             Tambahkan program inovasi untuk ditampilkan di sini
           </Text>
         </Stack>
@@ -103,11 +116,12 @@ function ModuleView() {
   }
 
   return (
-    <ScrollArea h={280} // ✅ tinggi fixed, bisa disesuaikan
+    <ScrollArea
+      h={280}
       scrollbarSize={2}
       offsetScrollbars
       styles={{
-        viewport: { paddingRight: 8 }, // kasih jarak biar scroll nggak dempet
+        viewport: { paddingRight: 8 },
       }}
     >
       <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }} spacing="lg" mt="lg">

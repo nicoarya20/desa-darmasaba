@@ -59,10 +59,11 @@ export default function Page() {
             ta="center"
             c={colors['blue-button']}
             fz={{ base: 28, md: 36, lg: 44 }}
+            lh={{ base: 1.05, md: 1.03 }}
           >
             Struktur Organisasi PPID
           </Title>
-          <Text ta="center" c="black" maw={800}>
+          <Text ta="center" c="black" maw={800} fz={{ base: 13, md: 15 }} lh={1.45}>
             Gambaran visual peran dan pegawai yang ditugaskan. Arahkan kursor
             untuk melihat detail atau klik node untuk fokus tampilan.
           </Text>
@@ -105,8 +106,8 @@ function StrukturOrganisasiPPID() {
       <Center py={48}>
         <Stack align="center" gap="sm">
           <Loader size="lg" />
-          <Text fw={600}>Memuat struktur organisasi…</Text>
-          <Text c="dimmed" size="sm">
+          <Text fw={600} fz={{ base: 15, md: 16 }} lh={1.2}>Memuat struktur organisasi…</Text>
+          <Text c="dimmed" fz={{ base: 12, md: 13 }} lh={1.4}>
             Mengambil data pegawai dan posisi. Mohon tunggu sebentar.
           </Text>
         </Stack>
@@ -132,10 +133,10 @@ function StrukturOrganisasiPPID() {
             <Center>
               <IconUsers size={56} />
             </Center>
-            <Title order={3} mt="md">
+            <Title order={3} mt="md" fz={{ base: 16, md: 18 }} lh={1.15}>
               Data pegawai belum tersedia
             </Title>
-            <Text c="dimmed" mt="xs">
+            <Text c="dimmed" mt="xs" fz={{ base: 13, md: 14 }} lh={1.4}>
               Belum ada data pegawai yang tercatat untuk PPID.
             </Text>
             <Group justify="center" mt="lg">
@@ -232,11 +233,18 @@ function StrukturOrganisasiPPID() {
       {/* 🔍 Controls */}
       <Paper
         shadow="xs"
+        w={{
+          base: '100%',       // Mobile: 100%
+          sm: '40%',          // Tablet: 95%
+          md: '39%',          // Desktop: 70%
+          lg: '38%',          // Desktop L: 60%
+          xl: '37%',          // 4K: 50%
+          '2xl': '36%',       // Ultra-wide: 45%
+        }}
         p="md"
         radius="md"
         style={{
-          background: colors['blue-button'],
-          width: '100%',       // ⬅️ penting
+          background: colors['blue-button'],       // ⬅️ penting
           maxWidth: '100%',    // ⬅️ penting
           overflowX: 'auto'    // ⬅️ untuk mencegah overflow
         }}
@@ -269,30 +277,33 @@ function StrukturOrganisasiPPID() {
                 fontSize: '0.875rem',
                 padding: '6px 12px',
                 minHeight: 'auto',
-                flexShrink: 0, // 👈 PENTING: mencegah tab mengecil
+                flexShrink: 0,
               },
             }}
+            style={{ width: '100%' }} // 👈 penting
           >
             <TabsList
               style={{
                 display: 'flex',
                 overflowX: 'auto',
-                overflowY: 'hidden', // 👈 tambahkan ini
+                overflowY: 'hidden',
                 gap: '4px',
                 paddingBottom: '4px',
                 flexWrap: 'nowrap',
-                WebkitOverflowScrolling: 'touch', // 👈 smooth scroll di iOS
-                scrollbarWidth: 'thin', // 👈 scrollbar tipis di Firefox
-                msOverflowStyle: '-ms-autohiding-scrollbar', // 👈 untuk IE/Edge
+                WebkitOverflowScrolling: 'touch',
+                scrollbarWidth: 'thin',
+                msOverflowStyle: '-ms-autohiding-scrollbar',
+                maxWidth: '100%',
+                scrollBehavior: 'smooth', // 👈 smooth scroll
               }}
             >
               <TabsTab
                 value="zoom-out"
                 onClick={handleZoomOut}
                 leftSection={<IconZoomOut size={16} />}
-                style={{ flexShrink: 0 }} // 👈 pastikan tidak mengecil
+                style={{ flexShrink: 0 }}
               >
-                Zoom Out
+                <Text fz={{ base: 12, sm: 13 }} lh={1} ta="center">Zoom Out</Text>
               </TabsTab>
 
               <Box
@@ -301,7 +312,6 @@ function StrukturOrganisasiPPID() {
                 px={12}
                 py={6}
                 style={{
-                  fontSize: 14,
                   fontWeight: 700,
                   borderRadius: '6px',
                   minWidth: 60,
@@ -310,10 +320,12 @@ function StrukturOrganisasiPPID() {
                   alignItems: 'center',
                   justifyContent: 'center',
                   flexShrink: 0,
-                  whiteSpace: 'nowrap', // 👈 mencegah text wrap
+                  whiteSpace: 'nowrap',
                 }}
               >
-                {Math.round(scale * 100)}%
+                <Text fz={{ base: 12, sm: 13 }} lh={1} c={colors['blue-button']}>
+                  {Math.round(scale * 100)}%
+                </Text>
               </Box>
 
               <TabsTab
@@ -322,7 +334,7 @@ function StrukturOrganisasiPPID() {
                 leftSection={<IconZoomIn size={16} />}
                 style={{ flexShrink: 0 }}
               >
-                Zoom In
+                <Text fz={{ base: 12, sm: 13 }} lh={1} ta="center">Zoom In</Text>
               </TabsTab>
 
               <TabsTab
@@ -330,7 +342,7 @@ function StrukturOrganisasiPPID() {
                 onClick={resetZoom}
                 style={{ flexShrink: 0 }}
               >
-                Reset
+                <Text fz={{ base: 12, sm: 13 }} lh={1} ta="center">Reset</Text>
               </TabsTab>
 
               <TabsTab
@@ -345,7 +357,9 @@ function StrukturOrganisasiPPID() {
                 }
                 style={{ flexShrink: 0 }}
               >
-                {isFullscreen ? 'Exit' : 'Fullscreen'}
+                <Text fz={{ base: 12, sm: 13 }} lh={1} ta="center">
+                  {isFullscreen ? 'Exit' : 'Fullscreen'}
+                </Text>
               </TabsTab>
             </TabsList>
           </Tabs>
@@ -451,18 +465,17 @@ function NodeCard({ node, router }: any) {
             {/* Name */}
             <Text
               fw={700}
-              size="sm"
               ta="center"
               c={colors['blue-button']}
               lineClamp={2}
+              fz={{ base: 13, md: 15 }}
+              lh={1.2}
               style={{
-                // fontSize: 'clamp(12px, 4vw, 16px)', // 👈 responsif font size
                 minHeight: 40,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 wordBreak: 'break-word',
-                lineHeight: 1.3,
               }}
             >
               {name}
@@ -470,18 +483,18 @@ function NodeCard({ node, router }: any) {
 
             {/* Title/Position */}
             <Text
-              size="xs"
               c="dimmed"
               ta="center"
               fw={500}
               lineClamp={2}
+              fz={{ base: 12, md: 13 }}
+              lh={1.3}
               style={{
                 minHeight: 32,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 wordBreak: 'break-word',
-                lineHeight: 1.2,
               }}
             >
               {title}
@@ -504,7 +517,7 @@ function NodeCard({ node, router }: any) {
                   fontWeight: 600,
                 }}
               >
-                Lihat Detail
+                <Text fz={{ base: 12, md: 13 }} lh={1} ta="center">Lihat Detail</Text>
               </Button>
             )}
           </Stack>

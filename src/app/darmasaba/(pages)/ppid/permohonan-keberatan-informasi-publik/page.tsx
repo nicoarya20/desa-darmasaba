@@ -12,6 +12,7 @@ import {
   Stack,
   Text,
   TextInput,
+  Title,
   Tooltip,
 } from '@mantine/core';
 import {
@@ -56,13 +57,8 @@ function Page() {
   const router = useRouter();
 
   const submit = async () => {
-    const { create } = stateKeberatan;
-
-    const hasil = await create.create(); // tunggu hasilnya
-
-    if (hasil) {
-      router.push('/darmasaba/permohonan/berhasil');
-    }
+    const hasil = await stateKeberatan.create.create();
+    if (hasil) router.push('/darmasaba/permohonan/berhasil');
   };
 
   return (
@@ -72,15 +68,16 @@ function Page() {
       </Box>
 
       <Stack align="center" px={{ base: 'md', md: 100 }}>
-        <Text
+        <Title
+          order={1}
           ta="center"
-          fz={{ base: '2rem', md: '2.8rem' }}
+          fz={{ base: '1.8rem', md: '2.6rem' }}
+          lh={1.2}
           c={colors['blue-button']}
-          fw={800}
-          style={{ letterSpacing: '-0.5px' }}
+          style={{ letterSpacing: -0.5 }}
         >
           Permohonan Keberatan Informasi Publik
-        </Text>
+        </Title>
 
         <Paper
           p="xl"
@@ -90,26 +87,36 @@ function Page() {
           withBorder
         >
           <Stack gap="xl">
+            {/* Tentang */}
             <Box>
-              <Text fw={700} fz={{ base: 'lg', md: 'xl' }} mb={8}>
+              <Title order={3} fz={{ base: 'lg', md: 'xl' }} lh={1.3} mb={8}>
                 Tentang Permohonan Keberatan
-              </Text>
-              <Text ta="justify" fz={{ base: 'sm', md: 'md' }} lh={1.6}>
+              </Title>
+
+              <Text
+                ta="justify"
+                fz={{ base: 'sm', md: 'md' }}
+                lh={1.7}
+                c="black"
+              >
                 Jika Anda merasa permohonan informasi tidak ditanggapi dengan
                 baik atau ditolak, Anda berhak mengajukan keberatan melalui
                 formulir berikut.
               </Text>
             </Box>
 
+            {/* Alur */}
             <Stack>
-              <Text
+              <Title
+                order={3}
                 ta="center"
                 fw={700}
                 fz={{ base: 'xl', md: '2xl' }}
-                style={{ letterSpacing: '-0.5px' }}
+                lh={1.2}
+                style={{ letterSpacing: -0.5 }}
               >
                 Alur Pengajuan Keberatan
-              </Text>
+              </Title>
 
               <SimpleGrid cols={{ base: 1, md: 4 }} spacing="lg">
                 {data.map((v) => (
@@ -124,15 +131,23 @@ function Page() {
                       <Center>
                         <v.icon size={48} color={colors['white-1']} />
                       </Center>
+
                       <Text
                         ta="center"
                         c={colors['white-1']}
                         fw={700}
                         fz="lg"
+                        lh={1.3}
                       >
                         {v.title}
                       </Text>
-                      <Text ta="center" c={colors['white-1']} fz="sm">
+
+                      <Text
+                        ta="center"
+                        c={colors['white-1']}
+                        fz="sm"
+                        lh={1.6}
+                      >
                         {v.desc}
                       </Text>
                     </Stack>
@@ -141,6 +156,7 @@ function Page() {
               </SimpleGrid>
             </Stack>
 
+            {/* Form */}
             <Group justify="center">
               <Paper
                 p="xl"
@@ -152,14 +168,16 @@ function Page() {
                 w="100%"
               >
                 <Stack gap="md">
-                  <Text
+                  <Title
+                    order={3}
+                    ta="center"
                     fw={700}
                     fz={{ base: 'lg', md: 'xl' }}
-                    ta="center"
+                    lh={1.3}
                     mb={4}
                   >
                     Formulir Keberatan
-                  </Text>
+                  </Title>
 
                   <TextInput
                     label="Nama Lengkap"
@@ -196,7 +214,7 @@ function Page() {
                   />
 
                   <Box>
-                    <Text fw={600} fz="sm" mb={6}>
+                    <Text fw={600} fz="sm" lh={1.4} mb={6}>
                       Alasan Keberatan
                     </Text>
                     <PPIDTextEditor
@@ -222,11 +240,13 @@ function Page() {
               </Paper>
             </Group>
 
+            {/* Kontak */}
             <Stack gap={4} pt="lg" align="center">
-              <Text fw={700} fz="lg">
+              <Title order={4} fw={700} fz="lg" lh={1.3}>
                 Kontak PPID
-              </Text>
-              <Text fz="sm" c="dimmed">
+              </Title>
+
+              <Text fz="sm" lh={1.5} c="dimmed" ta="center">
                 Email: desadarmasaba@badungkab.go.id | WhatsApp: 081-xxx-xxx-xxx
               </Text>
             </Stack>

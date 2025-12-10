@@ -12,7 +12,8 @@ import {
   SimpleGrid,
   Stack,
   Text,
-  TextInput
+  TextInput,
+  Title
 } from '@mantine/core';
 import { IconSend2 } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
@@ -55,7 +56,7 @@ function Page() {
 
   const submitForms = async () => {
     const { create } = permohonanInformasiPublikState.statepermohonanInformasiPublik;
-    const hasil = await create.create(); // tunggu hasilnya
+    const hasil = await create.create();
     if (hasil) {
       router.push('/darmasaba/permohonan/berhasil');
     }
@@ -67,14 +68,17 @@ function Page() {
         <BackButton />
       </Box>
 
-      <Text
+      {/* MAIN PAGE TITLE */}
+      <Title
+        order={1}
         ta="center"
-        fz={{ base: '2rem', md: '2.5rem' }}
+        fz={{ base: '1.8rem', sm: '2.2rem', md: '2.6rem' }}
+        lh={1.2}
         c={colors['blue-button']}
-        fw="bold"
+        style={{ fontWeight: 700 }}
       >
         Permohonan Informasi Publik
-      </Text>
+      </Title>
 
       <Box px={{ base: 'md', md: 100 }}>
         <Stack gap="xl">
@@ -85,15 +89,18 @@ function Page() {
             shadow="sm"
             bg={colors['white-trans-1']}
           >
-            <Text
+            {/* SUBTITLE */}
+            <Title
+              order={2}
               pb={30}
               ta="center"
-              fw="bold"
-              fz={{ base: 'h4', md: 'h3' }}
+              fz={{ base: '1.4rem', md: '1.8rem' }}
+              lh={1.3}
               c={colors['blue-button']}
+              style={{ fontWeight: 700 }}
             >
               Tata Cara Permohonan
-            </Text>
+            </Title>
 
             <SimpleGrid pb={30} cols={{ base: 1, sm: 2, lg: 4 }} spacing="lg">
               {steps.map((v) => (
@@ -116,27 +123,38 @@ function Page() {
                           c={colors['blue-button']}
                           ta="center"
                           fw="bold"
-                          fz="h3"
+                          fz="h2"
+                          lh={1}
                         >
                           {v.number}
                         </Text>
                       </ActionIcon>
                     </Center>
+
+                    <Title
+                      order={4}
+                      ta="center"
+                      c={colors['white-1']}
+                      fz="lg"
+                      lh={1.3}
+                      style={{ fontWeight: 700 }}
+                    >
+                      {v.title}
+                    </Title>
+
                     <Text
                       ta="center"
                       c={colors['white-1']}
-                      fw="bold"
-                      fz="lg"
+                      fz="sm"
+                      lh={1.4}
                     >
-                      {v.title}
-                    </Text>
-                    <Text ta="center" c={colors['white-1']} fz="sm">
                       {v.desc}
                     </Text>
                   </Stack>
                 </Paper>
               ))}
             </SimpleGrid>
+
             <Group justify="center">
               <Paper
                 p="xl"
@@ -148,15 +166,20 @@ function Page() {
                 maw={800}
               >
                 <Stack gap="md">
-                  <Text
-                    fw="bold"
-                    fz={{ base: 'h4', md: 'h3' }}
+
+                  {/* FORM TITLE */}
+                  <Title
+                    order={2}
                     ta="center"
+                    fz={{ base: '1.4rem', md: '1.8rem' }}
+                    lh={1.3}
                     c={colors['blue-button']}
+                    style={{ fontWeight: 700 }}
                   >
                     Formulir Permohonan Informasi
-                  </Text>
+                  </Title>
 
+                  {/* INPUTS */}
                   <TextInput
                     label="Nama Lengkap"
                     placeholder="Masukkan nama lengkap Anda"
@@ -166,6 +189,7 @@ function Page() {
                         val.target.value;
                     }}
                   />
+
                   <TextInput
                     label="Nomor Induk Kependudukan (NIK)"
                     placeholder="Masukkan NIK"
@@ -175,6 +199,7 @@ function Page() {
                         val.target.value;
                     }}
                   />
+
                   <TextInput
                     label="Nomor Telepon"
                     placeholder="Masukkan nomor telepon aktif"
@@ -184,6 +209,7 @@ function Page() {
                         val.target.value;
                     }}
                   />
+
                   <TextInput
                     label="Alamat Lengkap"
                     placeholder="Masukkan alamat sesuai identitas"
@@ -193,6 +219,7 @@ function Page() {
                         val.target.value;
                     }}
                   />
+
                   <TextInput
                     label="Alamat Email"
                     placeholder="Masukkan alamat email aktif"
@@ -209,12 +236,14 @@ function Page() {
                         val.id;
                     }}
                   />
+
                   <MemperolehInformasi
                     onChange={(val) => {
                       permohonanInformasiPublikState.statepermohonanInformasiPublik.create.form.caraMemperolehInformasiId =
                         val.id;
                     }}
                   />
+
                   <MemperolehSalinan
                     onChange={(val) => {
                       permohonanInformasiPublikState.statepermohonanInformasiPublik.create.form.caraMemperolehSalinanInformasiId =
@@ -241,6 +270,7 @@ function Page() {
                       Kirim Permohonan
                     </Button>
                   </Group>
+
                 </Stack>
               </Paper>
             </Group>
