@@ -28,20 +28,41 @@ const textHeading = {
 const HEIGHT = 720;
 
 function Layanan() {
+  // responsive breakpoints: base = mobile, md = desktop/tablet landscape
   return (
     <Stack pos="relative" bg={colors.grey[1]} gap="xl" py="md">
       <Container w={{ base: "100%", md: "80%" }} p="md">
         <Stack align="center" gap="0">
+          {/* Main title - semantic h1 */}
           <Text
-            fw="bold"
+            component="h1"
+            fw={700}
             c={colors["blue-button"]}
-            fz={{ base: "1.8rem", md: "3.4rem" }}
+            ta="center"
+            // responsive sizes: mobile ~28px, desktop ~48px
+            fz={{ base: "1.75rem", md: "3rem" }}
+            // tighter line-height for large headings, slightly more compact on desktop
+            style={{ lineHeight: "1.05" }}
           >
             {textHeading.title}
           </Text>
-          <Text ta="center" fz={{ base: "1rem", md: "1.3rem" }}>
+
+          {/* Description - readable line-height and constrained width on desktop */}
+          <Text
+            component="p"
+            ta="center"
+            fz={{ base: "0.95rem", md: "1.15rem" }}
+            // more comfortable line-height for paragraphs
+            style={{
+              lineHeight: "1.6",
+              maxWidth: "70ch",
+              marginTop: 8,
+            }}
+            c="black"
+          >
             {textHeading.des}
           </Text>
+
           <Box p="md">
             <Button
               component={Link}
@@ -49,6 +70,14 @@ function Layanan() {
               variant="filled"
               bg={colors["blue-button"]}
               radius={100}
+              // accessible sizing: slightly smaller on mobile, comfortable on desktop
+              style={{
+                paddingLeft: 20,
+                paddingRight: 20,
+                fontSize: "md",
+                // ensure button text doesn't overflow on very narrow screens
+                whiteSpace: "nowrap",
+              }}
             >
               Detail
             </Button>
@@ -175,7 +204,7 @@ function Slider() {
     startXRef.current = e.pageX - containerRef.current.offsetLeft;
     scrollLeftRef.current = containerRef.current.scrollLeft;
     velocityRef.current = 0;
-    containerRef.current.style.cursor = 'grabbing';
+    containerRef.current.style.cursor = "grabbing";
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
@@ -196,7 +225,7 @@ function Slider() {
     if (!containerRef.current || mobile) return;
 
     isDraggingRef.current = false;
-    containerRef.current.style.cursor = 'grab';
+    containerRef.current.style.cursor = "grab";
   };
 
   const handleWheel = (e: React.WheelEvent) => {
@@ -215,7 +244,7 @@ function Slider() {
   if (data.length === 0) {
     return (
       <Container>
-        <Text ta="center" c="dimmed">
+        <Text ta="center" c="dimmed" fz={{ base: "0.95rem", md: "1rem" }}>
           Tidak ada layanan tersedia
         </Text>
       </Container>
@@ -240,6 +269,8 @@ function Slider() {
         scrollbarWidth: "none",
         msOverflowStyle: "none",
       }}
+      // ensure keyboard accessibility: allow focus outline when focused
+      tabIndex={0}
     >
       <Box
         style={{
@@ -287,26 +318,56 @@ function Slider() {
                 pos="relative"
               >
                 <Box p="lg">
+                  {/* slide title - semantic h2 */}
                   <Text
-                    fw="bold"
+                    component="h2"
+                    fw={700}
                     c="white"
-                    fz={{base: "xl", md: "3.5rem"}}
+                    fz={{ base: "1.25rem", md: "2.4rem" }}
+                    // tighter heading line-height but ensure readability on mobile
                     style={{
                       textAlign: "center",
+                      lineHeight: mobile ? "1.15" : "1.02",
+                      // clamp long names visually
+                      display: "-webkit-box",
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: "vertical",
+                      overflow: "hidden",
                     }}
+                    title={_.startCase(item.name)}
                   >
                     {_.startCase(item.name)}
                   </Text>
+
+                  {/* optional short description - rendered if exists */}
+                  {item.description ? (
+                    <Text
+                      component="p"
+                      mt="sm"
+                      c="white"
+                      fz={{ base: "0.9rem", md: "1rem" }}
+                      style={{ lineHeight: "1.5", textAlign: "center" }}
+                    >
+                      {item.description}
+                    </Text>
+                  ) : null}
                 </Box>
-                <Group justify="center">
+
+                <Group justify="center" mb="lg">
                   <Button
                     onClick={() =>
                       router.push(`/darmasaba/desa/layanan/${item.id}`)
                     }
-                    px={46}
+                    px={mobile ? 20 : 46}
                     radius="100"
-                    size="md"
+                    size={mobile ? "sm" : "md"}
                     bg={colors["blue-button"]}
+                    // ensure button text readable on all sizes
+                    style={{
+                      fontSize: mobile ? "0.95rem" : "1rem",
+                      whiteSpace: "nowrap",
+                    }}
+                    aria-label={`Detail layanan ${_.startCase(item.name)}`}
                   >
                     Detail
                   </Button>

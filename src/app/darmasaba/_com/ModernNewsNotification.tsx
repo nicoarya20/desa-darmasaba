@@ -168,6 +168,7 @@ export default function ModernNewsNotification({
               position: "fixed",
               bottom: "24px",
               right: "24px",
+              zIndex: 1
             }}
           >
             <ActionIcon

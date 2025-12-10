@@ -27,7 +27,6 @@ function DetailPegawaiUser() {
     statePegawai.findUnique.load(params?.id as string);
   }, []);
 
-
   if (!statePegawai.findUnique.data) {
     return (
       <Stack py="lg">
@@ -52,7 +51,7 @@ function DetailPegawaiUser() {
           }}
         >
           <IconArrowBack size={22} color={colors['blue-button']} />
-          <Text c={colors['blue-button']} fw={500}>
+          <Text fz={{ base: 'sm', md: 'md' }} lh="1.4" fw={500} c={colors['blue-button']}>
             Kembali
           </Text>
         </Box>
@@ -65,9 +64,7 @@ function DetailPegawaiUser() {
         radius="lg"
         shadow="sm"
         bg="white"
-        style={{
-          border: '1px solid #eaeaea',
-        }}
+        style={{ border: '1px solid #eaeaea' }}
       >
         <Stack align="center" gap="md">
           {/* Foto Profil */}
@@ -84,10 +81,23 @@ function DetailPegawaiUser() {
 
           {/* Nama & Jabatan */}
           <Stack align="center" gap={2}>
-            <Title order={3} fw={700} c={colors['blue-button']}>
+            <Title
+              order={2}
+              c={colors['blue-button']}
+              fw={700}
+              fz={{ base: 'xl', md: '28px' }}
+              lh="1.2"
+              ta="center"
+            >
               {data.namaLengkap || '-'} {data.gelarAkademik || ''}
             </Title>
-            <Text fz="sm" c="dimmed">
+
+            <Text
+              fz={{ base: 'sm', md: 'md' }}
+              lh="1.4"
+              c="dimmed"
+              ta="center"
+            >
               {data.posisi?.nama || 'Posisi tidak tersedia'}
             </Text>
           </Stack>
@@ -105,10 +115,10 @@ function DetailPegawaiUser() {
             value={
               data.tanggalMasuk
                 ? new Date(data.tanggalMasuk).toLocaleDateString('id-ID', {
-                  day: '2-digit',
-                  month: 'long',
-                  year: 'numeric',
-                })
+                    day: '2-digit',
+                    month: 'long',
+                    year: 'numeric',
+                  })
                 : '-'
             }
           />
@@ -123,7 +133,7 @@ function DetailPegawaiUser() {
   );
 }
 
-/* Komponen kecil untuk menampilkan baris informasi */
+/* Komponen Baris Informasi */
 function InfoRow({
   label,
   value,
@@ -137,11 +147,18 @@ function InfoRow({
 }) {
   return (
     <Box>
-      <Text fz="sm" fw={600} c="dark">
+      <Text
+        fz={{ base: 'sm', md: 'md' }}
+        fw={600}
+        lh="1.3"
+        c="dark"
+      >
         {label}
       </Text>
+
       <Text
-        fz="sm"
+        fz={{ base: 'sm', md: 'md' }}
+        lh="1.5"
         c={valueColor || 'dimmed'}
         style={{
           whiteSpace: multiline ? 'normal' : 'nowrap',

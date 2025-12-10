@@ -11,21 +11,21 @@ function LayoutTabsDetail({ children }: { children: React.ReactNode }) {
     const pathname = usePathname()
     const tabs = [
         {
-            label: "Profile Desa",
-            value: "profiledesa",
-            href: "/admin/desa/profile/profile-desa",
+            label: "Profil Desa",
+            value: "profildesa",
+            href: "/admin/desa/profil/profil-desa",
             icon: <IconUser size={18} stroke={1.8} />
         },
         {
-            label: "Profile Perbekel",
-            value: "profileperbekel",
-            href: "/admin/desa/profile/profile-perbekel",
+            label: "Profil Perbekel",
+            value: "profilperbekel",
+            href: "/admin/desa/profil/profil-perbekel",
             icon: <IconUsers size={18} stroke={1.8} />
         },
         {
-            label: "Profile Perbekel Dari Masa Ke Masa",
-            value: "profile-perbekel-dari-masa-ke-masa",
-            href: "/admin/desa/profile/profile-perbekel-dari-masa-ke-masa",
+            label: "Profil Perbekel Dari Masa Ke Masa",
+            value: "profilperbekeldarimasakemasa",
+            href: "/admin/desa/profil/profil-perbekel-dari-masa-ke-masa",
             icon: <IconCalendar size={18} stroke={1.8} />
         }
     ];

@@ -12,22 +12,22 @@ function LayoutTabsEdit({ children }: { children: React.ReactNode }) {
         {
             label: "Sejarah Desa",
             value: "sejarahdesa",
-            href: "/admin/desa/profile/edit/sejarah_desa"
+            href: "/admin/desa/profil/edit/sejarah_desa"
         },
         {
             label: "Visi Misi Desa",
             value: "visimisidesa",
-            href: "/admin/desa/profile/edit/visi_misi_desa"
+            href: "/admin/desa/profil/edit/visi_misi_desa"
         },
         {
             label: "Lambang Desa",
             value: "lambangdesa",
-            href: "/admin/desa/profile/edit/lambang_desa"
+            href: "/admin/desa/profil/edit/lambang_desa"
         },
         {
             label: "Maskot Desa",
             value: "maskotdesa",
-            href: "/admin/desa/profile/edit/maskot_desa"
+            href: "/admin/desa/profil/edit/maskot_desa"
         },
     ];
     const curentTab = tabs.find(tab => tab.href === pathname)

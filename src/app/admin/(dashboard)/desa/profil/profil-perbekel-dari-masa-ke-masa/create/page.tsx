@@ -46,7 +46,7 @@ function CreatePerbekelDariMasaKeMasa() {
       state.create.form.imageId = uploaded.id;
       await state.create.create();
       resetForm();
-      router.push('/admin/desa/profile/profile-perbekel-dari-masa-ke-masa');
+      router.push('/admin/desa/profil/profil-perbekel-dari-masa-ke-masa');
     } catch (error) {
       console.error(error);
       toast.error('Gagal menambahkan perbekel dari masa ke masa');

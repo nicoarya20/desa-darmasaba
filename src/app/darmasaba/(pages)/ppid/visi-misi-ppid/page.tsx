@@ -1,7 +1,18 @@
 'use client'
 import stateVisiMisiPPID from '@/app/admin/(dashboard)/_state/ppid/visi_misi_ppid/visimisiPPID';
 import colors from '@/con/colors';
-import { Box, Center, Image, Paper, Skeleton, Stack, Text, Divider, Transition } from '@mantine/core';
+import {
+  Box,
+  Center,
+  Image,
+  Paper,
+  Skeleton,
+  Stack,
+  Text,
+  Divider,
+  Transition,
+  Title
+} from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { useProxy } from 'valtio/utils';
 import { IconSparkles } from '@tabler/icons-react';
@@ -9,6 +20,7 @@ import BackButton from '../../desa/layanan/_com/BackButto';
 
 function Page() {
   const allList = useProxy(stateVisiMisiPPID);
+
   useShallowEffect(() => {
     allList.findById.load("1");
   }, []);
@@ -35,7 +47,7 @@ function Page() {
 
       {dataArray.map((item) => (
         <Box key={item.id} px={{ base: 'md', md: 100 }}>
-          <Transition mounted={true} transition="fade" duration={500} timingFunction="ease">
+          <Transition mounted transition="fade" duration={500} timingFunction="ease">
             {(styles) => (
               <Paper
                 style={styles}
@@ -46,56 +58,93 @@ function Page() {
                 withBorder
               >
                 <Stack gap="xl">
+
+                  {/* ==== MOTTO SECTION ==== */}
                   <Box>
                     <Center mb="md">
-                      <Image src="/darmasaba-icon.png" w={{ base: 80, md: 130 }} alt="Logo Desa Darmasaba" loading='lazy' />
+                      <Image
+                        src="/darmasaba-icon.png"
+                        w={{ base: 80, md: 130 }}
+                        alt="Logo Desa Darmasaba"
+                        loading="lazy"
+                      />
                     </Center>
-                    <Text
+
+                    <Title
+                      order={2}
                       ta="center"
-                      fz={{ base: 28, md: 36 }}
-                      fw={800}
+                      fz={{ base: 26, md: 34 }}
+                      lh={1.2}
                       c={colors['blue-button']}
                     >
                       Moto PPID Desa Darmasaba
-                    </Text>
-                    <Text ta="center" fz={{ base: 16, md: 20 }} mt="xs">
+                    </Title>
+
+                    <Text
+                      ta="center"
+                      fz={{ base: 15, md: 18 }}
+                      lh={1.5}
+                      c={"black"}
+                      mt="xs"
+                    >
                       Memberikan informasi yang cepat, mudah, tepat, dan transparan
                     </Text>
                   </Box>
 
-                  <Divider my="sm" labelPosition="center" label={<IconSparkles size={18} />} />
+                  <Divider
+                    my="sm"
+                    labelPosition="center"
+                    label={<IconSparkles size={18} />}
+                  />
 
+                  {/* ==== VISI SECTION ==== */}
                   <Box>
-                    <Text ta="center" fz={{ base: 24, md: 30 }} fw={800}
-                      c={colors['blue-button']} mb="sm">
-                      Visi PPID
-                    </Text>
-                    <Text
-                      fz={{ base: 'md', md: 'lg' }}
-                      lh={1.7}
+                    <Title
+                      order={3}
                       ta="center"
+                      fz={{ base: 22, md: 28 }}
+                      lh={1.2}
+                      c={colors['blue-button']}
+                      mb="sm"
+                    >
+                      Visi PPID
+                    </Title>
+
+                    <Text
+                      ta="center"
+                      fz={{ base: 15, md: 18 }}
+                      lh={1.7}
                       dangerouslySetInnerHTML={{ __html: item.visi }}
-                      style={{ wordBreak: "break-word", whiteSpace: "normal" }}
+                      style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
                     />
                   </Box>
 
                   <Divider my="sm" />
 
+                  {/* ==== MISI SECTION ==== */}
                   <Box>
-                    <Text ta="center" fz={{ base: 24, md: 30 }} fw={800}
-                      c={colors['blue-button']} mb="sm">
+                    <Title
+                      order={3}
+                      ta="center"
+                      fz={{ base: 22, md: 28 }}
+                      lh={1.2}
+                      c={colors['blue-button']}
+                      mb="sm"
+                    >
                       Misi PPID
-                    </Text>
+                    </Title>
+
                     <Box px={{ base: 'md', md: 100 }}>
                       <Text
-                        ta={"justify"}
-                        fz={{ base: 'md', md: 'lg' }}
+                        ta="justify"
+                        fz={{ base: 15, md: 18 }}
                         lh={1.7}
                         dangerouslySetInnerHTML={{ __html: item.misi }}
-                        style={{ wordBreak: "break-word", whiteSpace: "normal" }}
+                        style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
                       />
                     </Box>
                   </Box>
+
                 </Stack>
               </Paper>
             )}

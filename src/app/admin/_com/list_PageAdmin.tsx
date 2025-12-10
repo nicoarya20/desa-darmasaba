@@ -91,8 +91,8 @@ export const devBar = [
     children: [
       {
         id: "Desa_1",
-        name: "Profile",
-        path: "/admin/desa/profile/profile-desa"
+        name: "Profil",
+        path: "/admin/desa/profil/profil-desa"
       },
       {
         id: "Desa_2",
@@ -495,8 +495,8 @@ export const navBar = [
     children: [
       {
         id: "Desa_1",
-        name: "Profile",
-        path: "/admin/desa/profile/profile-desa"
+        name: "Profil",
+        path: "/admin/desa/profil/profil-desa"
       },
       {
         id: "Desa_2",
@@ -899,8 +899,8 @@ export const role1 = [
     children: [
       {
         id: "Desa_1",
-        name: "Profile",
-        path: "/admin/desa/profile/profile-desa"
+        name: "Profil",
+        path: "/admin/desa/profil/profil-desa"
       },
       {
         id: "Desa_2",

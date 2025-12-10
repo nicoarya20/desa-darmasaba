@@ -59,7 +59,7 @@ const getWorkStatus = (day: string, currentTime: string): { status: string; mess
     : { status: "Tutup", message: "08:00 - 17:00" };
 };
 
-// Skeleton component untuk Social Media
+// 🟦 Skeleton component untuk Social Media
 const SosmedSkeleton = () => (
   <Flex gap="md" justify="center" wrap="wrap">
     {[1, 2, 3, 4].map((i) => (
@@ -68,7 +68,7 @@ const SosmedSkeleton = () => (
   </Flex>
 );
 
-// Skeleton component untuk Profile
+// 🟦 Skeleton component untuk Profile
 const ProfileSkeleton = () => (
   <Card
     radius="xl"
@@ -158,6 +158,8 @@ function LandingPage() {
         <Stack w={{ base: "100%", md: "65%" }} gap="lg">
           <Card radius="xl" bg={colors.grey[1]} p="lg" mt={10} shadow="xl">
             <Stack gap="xl">
+
+              {/* Header Logo */}
               <Flex gap="md" wrap="wrap">
                 <Group>
                   <Box bg="white" w={72} h={72} p="sm" style={{ borderRadius: 24 }}>
@@ -167,6 +169,8 @@ function LandingPage() {
                     <Image loading="lazy" src="/pudak-icon.png" alt="Logo Pudak" fit="contain" />
                   </Box>
                 </Group>
+
+                {/* Jam Operasional */}
                 <Grid w="100%">
                   <Grid.Col span={12}>
                     <Paper
@@ -177,36 +181,58 @@ function LandingPage() {
                       style={{ position: "relative", overflow: "hidden" }}
                     >
                       <Grid gutter="md">
+
+                        {/* Kolom 1 */}
                         <GridCol span={{ base: 12, md: 6 }}>
                           <Stack gap="xs">
                             <Flex align="center" gap="xs">
                               <IconCalendarTime size={16} color="white" />
-                              <Text c="white" fz="sm">Jam Operasional</Text>
+                              <Text c="white" fz={{ base: "xs", md: "sm" }}>
+                                Jam Operasional
+                              </Text>
                             </Flex>
+
                             <Paper p="sm" radius="md" bg="white">
                               <Tooltip label="Status saat ini berdasarkan jam operasional kantor">
                                 <Badge
                                   color={workStatus.status === "Buka" ? "green" : "red"}
                                   radius="sm"
                                   variant="filled"
+                                  size="md"
                                 >
                                   {workStatus.status}
                                 </Badge>
                               </Tooltip>
-                              <Text fw="bold" fz="lg">{workStatus.message}</Text>
+
+                              <Text
+                                fw={700}
+                                fz={{ base: "md", md: "lg" }}
+                                mt={4}
+                              >
+                                {workStatus.message}
+                              </Text>
                             </Paper>
                           </Stack>
                         </GridCol>
+
+                        {/* Kolom 2 */}
                         <GridCol span={{ base: 12, md: 6 }}>
                           <Stack gap="xs">
                             <Flex align="center" gap="xs">
                               <IconInfoCircle size={16} color="white" />
-                              <Text c="white" fz="sm">Hari Ini</Text>
+                              <Text c="white" fz={{ base: "xs", md: "sm" }}>
+                                Hari Ini
+                              </Text>
                             </Flex>
+
                             <Paper p="sm" radius="md" bg="white">
-                              <Text fz="sm">Status Kantor</Text>
-                              <Text fw="bold" fz="lg">
-                                {workStatus.status === "Buka" ? "Sedang Beroperasi" : "Tidak Beroperasi"}
+                              <Text fz={{ base: "xs", md: "sm" }} c="dimmed">
+                                Status Kantor
+                              </Text>
+                              <Text fw={700} fz={{ base: "md", md: "lg" }}>
+                                {workStatus.status === "Buka"
+                                  ? "Sedang Beroperasi"
+                                  : "Tidak Beroperasi"}
                               </Text>
                             </Paper>
                           </Stack>
@@ -217,19 +243,29 @@ function LandingPage() {
                 </Grid>
               </Flex>
 
+              {/* MODULE VIEW */}
               <ModuleView />
 
+              {/* Sosmed */}
               {isLoadingSosmed ? (
                 <SosmedSkeleton />
               ) : socialMedia.length > 0 ? (
                 <SosmedView data={socialMedia} />
               ) : (
                 <Center>
-                  <Text c="dimmed">Belum ada tautan media sosial yang tersedia</Text>
+                  <Text fz={{ base: "sm", md: "md" }} c="dimmed">
+                    Belum ada tautan media sosial yang tersedia
+                  </Text>
                 </Center>
               )}
 
-              <Text ta="center" c={colors.trans.dark[2]}>
+              {/* CTA Text */}
+              <Text
+                ta="center"
+                c={colors.trans.dark[2]}
+                fz={{ base: "sm", md: "md" }}
+                lh={1.5}
+              >
                 Bagikan ide, kritik, atau saran Anda untuk mendukung pembangunan desa.
                 Semua lebih mudah dengan fitur interaktif yang kami sediakan.
               </Text>
@@ -237,6 +273,7 @@ function LandingPage() {
           </Card>
         </Stack>
 
+        {/* PROFIL */}
         {isLoadingProfile ? (
           <ProfileSkeleton />
         ) : profile ? (
@@ -251,7 +288,9 @@ function LandingPage() {
             style={{ height: "fit-content" }}
           >
             <Center h={300}>
-              <Text c="dimmed">Informasi profil belum tersedia</Text>
+              <Text fz={{ base: "sm", md: "md" }} c="dimmed">
+                Informasi profil belum tersedia
+              </Text>
             </Center>
           </Card>
         )}

@@ -26,7 +26,11 @@ function SosmedView({
         data.map((item, k) => (
           <Tooltip
             key={k}
-            label={item.name || "Tautan Sosial"}
+            label={
+              <Text fz={{ base: 12, md: 14 }}>
+                {item.name || "Tautan Sosial"}
+              </Text>
+            }
             withArrow
             position="top"
             transitionProps={{ transition: "pop", duration: 150 }}
@@ -57,7 +61,7 @@ function SosmedView({
                   );
                 }
 
-                return <Box bg={colors['blue-button']} w="100%" h="100%" />;
+                return <Box bg={colors["blue-button"]} w="100%" h="100%" />;
               })()}
             </ActionIcon>
           </Tooltip>
@@ -72,7 +76,12 @@ function SosmedView({
             background: "linear-gradient(135deg, #1C6EA4 0%, #000 100%)",
           }}
         >
-          <Text ta="center" c="dimmed" size="sm">
+          <Text
+            ta="center"
+            c="dimmed"
+            fz={{ base: 13, md: 15 }}
+            lh={1.4}
+          >
             Belum ada media sosial yang terhubung
           </Text>
         </Card>

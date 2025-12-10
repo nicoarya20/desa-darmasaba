@@ -3,7 +3,22 @@
 import indeksKepuasanState from "@/app/admin/(dashboard)/_state/landing-page/indeks-kepuasan";
 import colors from "@/con/colors";
 import { BarChart, PieChart } from '@mantine/charts';
-import { Box, Button, Center, Container, Flex, Modal, Paper, Select, SimpleGrid, Skeleton, Stack, Text, TextInput, Title } from "@mantine/core";
+import {
+  Box,
+  Button,
+  Center,
+  Container,
+  Flex,
+  Modal,
+  Paper,
+  Select,
+  SimpleGrid,
+  Skeleton,
+  Stack,
+  Text,
+  TextInput,
+  Title
+} from "@mantine/core";
 import { useDisclosure, useShallowEffect } from "@mantine/hooks";
 import { useState } from "react";
 import { useProxy } from "valtio/utils";
@@ -15,16 +30,14 @@ interface ChartDataItem {
   label?: string;
 }
 
-
-
 function Kepuasan() {
-const state = useProxy(indeksKepuasanState.responden);
+  const state = useProxy(indeksKepuasanState.responden);
   const { data, loading } = state.findMany;
   const [donutDataJenisKelamin, setDonutDataJenisKelamin] = useState<ChartDataItem[]>([]);
   const [donutDataRating, setDonutDataRating] = useState<ChartDataItem[]>([]);
   const [donutDataKelompokUmur, setDonutDataKelompokUmur] = useState<ChartDataItem[]>([]);
   const [barChartData, setBarChartData] = useState<Array<{ month: string; Responden: number }>>([]);
-  const [opened, { open, close }] = useDisclosure(false)
+  const [opened, { open, close }] = useDisclosure(false);
 
   const resetForm = () => {
     state.create.form = {
@@ -34,14 +47,14 @@ const state = useProxy(indeksKepuasanState.responden);
       jenisKelaminId: "",
       ratingId: "",
       kelompokUmurId: "",
-    }
-  }
+    };
+  };
 
   useShallowEffect(() => {
-    indeksKepuasanState.jenisKelaminResponden.findMany.load()
-    indeksKepuasanState.pilihanRatingResponden.findMany.load()
-    indeksKepuasanState.kelompokUmurResponden.findMany.load()
-  },[])
+    indeksKepuasanState.jenisKelaminResponden.findMany.load();
+    indeksKepuasanState.pilihanRatingResponden.findMany.load();
+    indeksKepuasanState.kelompokUmurResponden.findMany.load();
+  }, []);
 
   const handleSubmit = async () => {
     try {
@@ -51,11 +64,11 @@ const state = useProxy(indeksKepuasanState.responden);
         await state.findUnique.load(idStr);
       }
       resetForm();
-      close()
+      close();
     } catch (error) {
       console.error('Error submitting form:', error);
     }
-  }
+  };
 
   // Load data on component mount
   useShallowEffect(() => {
@@ -154,33 +167,52 @@ const state = useProxy(indeksKepuasanState.responden);
   if (data.length === 0) {
     return (
       <Stack p="sm">
-        <Container w={{ base: "100%", md: "80%" }} p={"xl"}>
+        <Container w={{ base: "100%", md: "80%" }} p="xl">
           <Center>
-          <Text fw={"bold"} fz={{ base: "1.8rem", md: "3.4rem" }}>Indeks Kepuasan Masyarakat</Text>
+            {/* Main page title — converted to Title, use order (don't set fz according to rules) */}
+            <Title order={2} ta="center" c="dark">
+              Indeks Kepuasan Masyarakat
+            </Title>
           </Center>
-          <Text ta={"center"} fz={{ base: "1rem", md: "1.3rem" }}>Ukur kebahagiaan warga, tingkatkan layanan desa! Dengan partisipasi aktif masyarakat, kami berkomitmen untuk terus memperbaiki layanan agar lebih transparan, efektif, dan sesuai dengan kebutuhan warga. Kepuasan Anda adalah prioritas utama kami dalam membangun desa yang lebih baik!</Text>
+
+          {/* Body lead text — responsive fz & lh */}
+          <Text ta="center" fz={{ base: "1rem", md: "1.25rem" }} lh={{ base: 1.4, md: 1.6 }} c="dimmed" mt="sm">
+            Ukur kebahagiaan warga, tingkatkan layanan desa! Dengan partisipasi aktif masyarakat, kami berkomitmen untuk terus memperbaiki layanan agar lebih transparan, efektif, dan sesuai dengan kebutuhan warga. Kepuasan Anda adalah prioritas utama kami dalam membangun desa yang lebih baik!
+          </Text>
+
           <Center mt={10}>
             <Button
-              radius={"lg"}
+              radius="lg"
               onClick={open}
               variant="gradient"
               gradient={{ from: "#26667F", to: "#124170" }}
-            >Ajukan Responden</Button>
+            >
+              Ajukan Responden
+            </Button>
           </Center>
         </Container>
-        <Box px={"xl"}>
-          <Paper p={"lg"} bg={colors.Bg}>
-            <Paper p={"lg"}>
-              <Stack gap={"xs"}>
-                <Flex justify={"space-between"} align={"center"}>
-                  <Text fw={"bold"}>Pelayanan Terhadap Publik Desa Darmasaba</Text>
+
+        <Box px="xl">
+          <Paper p="lg" bg={colors.Bg}>
+            <Paper p="lg">
+              <Stack gap="xs">
+                <Flex justify="space-between" align="center">
+                  {/* Section heading — use Title order for hierarchy */}
+                  <Title order={4}>
+                    Pelayanan Terhadap Publik Desa Darmasaba
+                  </Title>
+
                   <Box>
-                    <Text fz={"sm"} fw={"bold"} c={colors["blue-button"]}>Total Responden</Text>
-                    <Text ta={"end"} fz={"h1"} fw={"bold"} c={colors["blue-button"]}>
-                      {state.findMany.total.toLocaleString('id-ID')}
+                    <Text fz={{ base: "0.9rem", md: "1rem" }} fw="bold" c={colors["blue-button"]}>
+                      Total Responden
                     </Text>
+                    {/* Big number — use Title for emphasis */}
+                    <Title order={3} ta="end" c={colors["blue-button"]} fw="bold" mt="xs">
+                      {state.findMany.total.toLocaleString('id-ID')}
+                    </Title>
                   </Box>
                 </Flex>
+
                 <BarChart
                   h={window.innerWidth < 480 ? 200 : 300}
                   data={barChartData}
@@ -194,18 +226,16 @@ const state = useProxy(indeksKepuasanState.responden);
                 />
               </Stack>
             </Paper>
-            <Box py={"xl"}>
-              <SimpleGrid
-                cols={{ base: 1, sm: 2, lg: 3 }}
-                spacing="md"
-                verticalSpacing="md"
-              >
+
+            <Box py="xl">
+              <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="md" verticalSpacing="md">
                 {/* Chart Jenis Kelamin */}
                 <Paper bg={colors['white-1']} p="md" radius="md">
                   <Stack>
-                    <Title order={4}>Jenis Kelamin</Title>
+                    <Title order={5}>Jenis Kelamin</Title>
+
                     {donutDataJenisKelamin.every(item => item.value === 0) ? (
-                      <Text c="dimmed" ta="center" my="md">
+                      <Text c="dimmed" ta="center" my="md" fz={{ base: "0.95rem", md: "1rem" }}>
                         Belum ada data untuk ditampilkan dalam grafik
                       </Text>
                     ) : (
@@ -218,7 +248,7 @@ const state = useProxy(indeksKepuasanState.responden);
                                 withTooltip
                                 labelsPosition="inside"
                                 labelsType="percent"
-                                size={250} // Fixed size in pixels
+                                size={250}
                                 data={donutDataJenisKelamin}
                               />
                             </Center>
@@ -227,7 +257,7 @@ const state = useProxy(indeksKepuasanState.responden);
                             {donutDataJenisKelamin.map((entry) => (
                               <Flex key={entry.name} gap="md" align="center">
                                 <Box bg={entry.color} w={20} h={20} style={{ flexShrink: 0 }} />
-                                <Text size="sm">{entry.name}: {entry.value}</Text>
+                                <Text fz={{ base: "0.95rem", md: "1rem" }}>{entry.name}: {entry.value}</Text>
                               </Flex>
                             ))}
                           </Stack>
@@ -240,9 +270,10 @@ const state = useProxy(indeksKepuasanState.responden);
                 {/* Chart Rating */}
                 <Paper bg={colors['white-1']} p="md" radius="md">
                   <Stack>
-                    <Title order={4}>Ulasan</Title>
+                    <Title order={5}>Ulasan</Title>
+
                     {donutDataRating.every(item => item.value === 0) ? (
-                      <Text c="dimmed" ta="center" my="md">
+                      <Text c="dimmed" ta="center" my="md" fz={{ base: "0.95rem", md: "1rem" }}>
                         Belum ada data untuk ditampilkan dalam grafik
                       </Text>
                     ) : (
@@ -267,7 +298,7 @@ const state = useProxy(indeksKepuasanState.responden);
                               {donutDataRating.map((entry) => (
                                 <Flex key={entry.name} gap="sm" align="center" style={{ overflow: 'hidden' }}>
                                   <Box bg={entry.color} w={16} h={16} style={{ flexShrink: 0 }} />
-                                  <Text size="xs" lineClamp={1} style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                  <Text fz={{ base: "0.85rem", md: "0.95rem" }} lineClamp={1} style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                                     {entry.name}: {entry.value}
                                   </Text>
                                 </Flex>
@@ -283,9 +314,10 @@ const state = useProxy(indeksKepuasanState.responden);
                 {/* Chart Kelompok Umur */}
                 <Paper bg={colors['white-1']} p="md" radius="md">
                   <Stack>
-                    <Title order={4}>Umur</Title>
+                    <Title order={5}>Umur</Title>
+
                     {donutDataKelompokUmur.every(item => item.value === 0) ? (
-                      <Text c="dimmed" ta="center" my="md">
+                      <Text c="dimmed" ta="center" my="md" fz={{ base: "0.95rem", md: "1rem" }}>
                         Belum ada data untuk ditampilkan dalam grafik
                       </Text>
                     ) : (
@@ -310,7 +342,7 @@ const state = useProxy(indeksKepuasanState.responden);
                               {donutDataKelompokUmur.map((entry) => (
                                 <Flex key={entry.name} gap="sm" align="center" style={{ overflow: 'hidden' }}>
                                   <Box bg={entry.color} w={16} h={16} style={{ flexShrink: 0 }} />
-                                  <Text size="xs" lineClamp={1} style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                  <Text fz={{ base: "0.85rem", md: "0.95rem" }} lineClamp={1} style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                                     {entry.name}: {entry.value}
                                   </Text>
                                 </Flex>
@@ -326,18 +358,21 @@ const state = useProxy(indeksKepuasanState.responden);
             </Box>
           </Paper>
         </Box>
+
         {/* Modal */}
         <Modal opened={opened} onClose={close} title="Ajukan Responden" centered>
-          <Paper bg={colors['white-1']} p={'md'}>
+          <Paper bg={colors['white-1']} p="md">
             <Stack>
               <TextInput
                 label="Nama"
-                type='text'
+                type="text"
                 placeholder="Masukkan nama"
                 value={state.create.form.name}
                 onChange={(val) => {
                   state.create.form.name = val.currentTarget.value;
                 }}
+                // label typography
+                labelProps={{ style: { fontSize: '0.95rem', lineHeight: '1.4' } } as any}
               />
               <TextInput
                 label="Tanggal"
@@ -347,10 +382,11 @@ const state = useProxy(indeksKepuasanState.responden);
                 onChange={(val) => {
                   state.create.form.tanggal = val.currentTarget.value;
                 }}
+                labelProps={{ style: { fontSize: '0.95rem', lineHeight: '1.4' } } as any}
               />
               <Select
-                key={"jenisKelamin"}
-                label={"Jenis Kelamin"}
+                key="jenisKelamin"
+                label="Jenis Kelamin"
                 placeholder={indeksKepuasanState.jenisKelaminResponden.findMany.loading ? 'Memuat...' : 'Pilih jenis kelamin'}
                 value={state.create.form.jenisKelaminId || ""}
                 onChange={(val) => {
@@ -358,17 +394,19 @@ const state = useProxy(indeksKepuasanState.responden);
                 }}
                 data={
                   (indeksKepuasanState.jenisKelaminResponden.findMany.data || [])
-                    .filter(Boolean) // Hapus null, undefined, dll
+                    .filter(Boolean)
                     .map((item) => ({
                       value: item.id,
                       label: item.name || 'Tanpa Nama',
                     }))
                 }
                 disabled={indeksKepuasanState.jenisKelaminResponden.findMany.loading}
+                // label typography
+                labelProps={{ style: { fontSize: '0.95rem', lineHeight: '1.4' } } as any}
               />
               <Select
-                key={"rating_responden"}
-                label={"Rating"}
+                key="rating_responden"
+                label="Rating"
                 placeholder={indeksKepuasanState.pilihanRatingResponden.findMany.loading ? 'Memuat...' : 'Pilih rating'}
                 value={state.create.form.ratingId || ""}
                 onChange={(val) => {
@@ -376,17 +414,18 @@ const state = useProxy(indeksKepuasanState.responden);
                 }}
                 data={
                   (indeksKepuasanState.pilihanRatingResponden.findMany.data || [])
-                    .filter(Boolean) // Hapus null, undefined, dll
+                    .filter(Boolean)
                     .map((item) => ({
                       value: item.id,
                       label: item.name || 'Tanpa Nama',
                     }))
                 }
                 disabled={indeksKepuasanState.pilihanRatingResponden.findMany.loading}
+                labelProps={{ style: { fontSize: '0.95rem', lineHeight: '1.4' } } as any}
               />
               <Select
-                key={"kelompokUmur"}
-                label={"Kelompok Umur"}
+                key="kelompokUmur"
+                label="Kelompok Umur"
                 placeholder={indeksKepuasanState.kelompokUmurResponden.findMany.loading ? 'Memuat...' : 'Pilih kelompok umur'}
                 value={state.create.form.kelompokUmurId || ""}
                 onChange={(val) => {
@@ -394,19 +433,16 @@ const state = useProxy(indeksKepuasanState.responden);
                 }}
                 data={
                   (indeksKepuasanState.kelompokUmurResponden.findMany.data || [])
-                    .filter(Boolean) // Hapus null, undefined, dll
+                    .filter(Boolean)
                     .map((item) => ({
                       value: item.id,
                       label: item.name || 'Tanpa Nama',
                     }))
                 }
                 disabled={indeksKepuasanState.kelompokUmurResponden.findMany.loading}
+                labelProps={{ style: { fontSize: '0.95rem', lineHeight: '1.4' } } as any}
               />
-              <Button
-                mt={10}
-                bg={colors['blue-button']}
-                onClick={handleSubmit}
-              >
+              <Button mt={10} bg={colors['blue-button']} onClick={handleSubmit}>
                 Submit
               </Button>
             </Stack>
@@ -415,36 +451,47 @@ const state = useProxy(indeksKepuasanState.responden);
       </Stack>
     );
   }
+
   return (
-    <Stack p={"sm"}>
-     <Container size="lg" px="md">
+    <Stack p="sm">
+      <Container size="lg" px="md">
         <Center>
-          <Text ta={"center"} fz={{ base: "2.4rem", md: "3.4rem" }}>Indeks Kepuasan Masyarakat</Text>
+          {/* Main page title — Title with order */}
+          <Title order={2} ta="center" c="dark">
+            Indeks Kepuasan Masyarakat
+          </Title>
         </Center>
-        <Text fz={{ base: "1.2rem", md: "1.4rem" }} ta={"center"}>Ukur kebahagiaan warga, tingkatkan layanan desa! Dengan partisipasi aktif masyarakat, kami berkomitmen untuk terus memperbaiki layanan agar lebih transparan, efektif, dan sesuai dengan kebutuhan warga. Kepuasan Anda adalah prioritas utama kami dalam membangun desa yang lebih baik!</Text>
+
+        <Text fz={{ base: "1rem", md: "1.125rem" }} lh={{ base: 1.4, md: 1.6 }} ta="center" c="dimmed" mt="sm">
+          Ukur kebahagiaan warga, tingkatkan layanan desa! Dengan partisipasi aktif masyarakat, kami berkomitmen untuk terus memperbaiki layanan agar lebih transparan, efektif, dan sesuai dengan kebutuhan warga. Kepuasan Anda adalah prioritas utama kami dalam membangun desa yang lebih baik!
+        </Text>
+
         <Center mt={10}>
-          <Button radius={"lg"} bg={colors["blue-button"]} onClick={open}>Ajukan Responden</Button>
+          <Button radius="lg" bg={colors["blue-button"]} onClick={open}>Ajukan Responden</Button>
         </Center>
       </Container>
-      <Box px={"xl"}>
-        <Paper p={"lg"} bg={colors.Bg}>
-          <Paper p={"lg"}>
-            <Stack gap={"xs"}>
+
+      <Box px="xl">
+        <Paper p="lg" bg={colors.Bg}>
+          <Paper p="lg">
+            <Stack gap="xs">
               <Flex
                 direction={{ base: "column", sm: "row" }}
                 justify="space-between"
                 align={{ base: "flex-start", sm: "center" }}
               >
-                <Text fw="bold" ta={{ base: "center", sm: "left" }}>
+                <Title order={4} ta={{ base: "center", sm: "left" }}>
                   Pelayanan Terhadap Publik Desa Darmasaba
-                </Text>
+                </Title>
+
                 <Box mt={{ base: "sm", sm: 0 }}>
-                  <Text fz={"sm"} fw={"bold"} c={colors["blue-button"]}>Total Responden</Text>
-                  <Text ta={"end"} fz={"h1"} fw={"bold"} c={colors["blue-button"]}>
+                  <Text fz={{ base: "0.9rem", md: "1rem" }} fw="bold" c={colors["blue-button"]}>Total Responden</Text>
+                  <Title order={3} ta="end" c={colors["blue-button"]} fw="bold" mt="xs">
                     {state.findMany.total.toLocaleString('id-ID')}
-                  </Text>
+                  </Title>
                 </Box>
               </Flex>
+
               <BarChart
                 h={300}
                 data={barChartData}
@@ -458,21 +505,18 @@ const state = useProxy(indeksKepuasanState.responden);
               />
             </Stack>
           </Paper>
-          <Box py={"xl"}>
+
+          <Box py="xl">
             <SimpleGrid
-              cols={{
-                base: 1,
-                md: 1,
-                lg: 1,
-                xl: 3
-              }}
+              cols={{ base: 1, md: 1, lg: 1, xl: 3 }}
             >
               {/* Chart Jenis Kelamin */}
               <Paper bg={colors['white-1']} p="md" radius="md">
                 <Stack>
-                  <Title order={4}>Jenis Kelamin</Title>
+                  <Title order={5}>Jenis Kelamin</Title>
+
                   {donutDataJenisKelamin.every(item => item.value === 0) ? (
-                    <Text c="dimmed" ta="center" my="md">
+                    <Text c="dimmed" ta="center" my="md" fz={{ base: "0.95rem", md: "1rem" }}>
                       Belum ada data untuk ditampilkan dalam grafik
                     </Text>
                   ) : (
@@ -494,7 +538,7 @@ const state = useProxy(indeksKepuasanState.responden);
                           {donutDataJenisKelamin.map((entry) => (
                             <Flex key={entry.name} gap="md" align="center">
                               <Box bg={entry.color} w={20} h={20} style={{ flexShrink: 0 }} />
-                              <Text size="sm">{entry.name}: {entry.value}</Text>
+                              <Text fz={{ base: "0.95rem", md: "1rem" }}>{entry.name}: {entry.value}</Text>
                             </Flex>
                           ))}
                         </Stack>
@@ -507,9 +551,10 @@ const state = useProxy(indeksKepuasanState.responden);
               {/* Chart Rating */}
               <Paper bg={colors['white-1']} p="md" radius="md">
                 <Stack>
-                  <Title order={4}>Ulasan</Title>
+                  <Title order={5}>Ulasan</Title>
+
                   {donutDataRating.every(item => item.value === 0) ? (
-                    <Text c="dimmed" ta="center" my="md">
+                    <Text c="dimmed" ta="center" my="md" fz={{ base: "0.95rem", md: "1rem" }}>
                       Belum ada data untuk ditampilkan dalam grafik
                     </Text>
                   ) : (
@@ -534,7 +579,7 @@ const state = useProxy(indeksKepuasanState.responden);
                             {donutDataRating.map((entry) => (
                               <Flex key={entry.name} gap="sm" align="center" style={{ overflow: 'hidden' }}>
                                 <Box bg={entry.color} w={16} h={16} style={{ flexShrink: 0 }} />
-                                <Text size="xs" lineClamp={1} style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                <Text fz={{ base: "0.85rem", md: "0.95rem" }} lineClamp={1} style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                                   {entry.name}: {entry.value}
                                 </Text>
                               </Flex>
@@ -550,9 +595,10 @@ const state = useProxy(indeksKepuasanState.responden);
               {/* Chart Kelompok Umur */}
               <Paper bg={colors['white-1']} p="md" radius="md">
                 <Stack>
-                  <Title order={4}>Umur</Title>
+                  <Title order={5}>Umur</Title>
+
                   {donutDataKelompokUmur.every(item => item.value === 0) ? (
-                    <Text c="dimmed" ta="center" my="md">
+                    <Text c="dimmed" ta="center" my="md" fz={{ base: "0.95rem", md: "1rem" }}>
                       Belum ada data untuk ditampilkan dalam grafik
                     </Text>
                   ) : (
@@ -577,7 +623,7 @@ const state = useProxy(indeksKepuasanState.responden);
                             {donutDataKelompokUmur.map((entry) => (
                               <Flex key={entry.name} gap="sm" align="center" style={{ overflow: 'hidden' }}>
                                 <Box bg={entry.color} w={16} h={16} style={{ flexShrink: 0 }} />
-                                <Text size="xs" lineClamp={1} style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                <Text fz={{ base: "0.85rem", md: "0.95rem" }} lineClamp={1} style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                                   {entry.name}: {entry.value}
                                 </Text>
                               </Flex>
@@ -593,18 +639,20 @@ const state = useProxy(indeksKepuasanState.responden);
           </Box>
         </Paper>
       </Box>
+
       {/* Modal */}
       <Modal opened={opened} onClose={close} title="Ajukan Responden" centered>
-        <Paper bg={colors['white-1']} p={'md'}>
+        <Paper bg={colors['white-1']} p="md">
           <Stack>
             <TextInput
               label="Nama"
-              type='text'
+              type="text"
               placeholder="Masukkan nama"
               value={state.create.form.name}
               onChange={(val) => {
                 state.create.form.name = val.currentTarget.value;
               }}
+              labelProps={{ style: { fontSize: '0.95rem', lineHeight: '1.4' } } as any}
             />
             <TextInput
               label="Tanggal Pengisian"
@@ -614,10 +662,11 @@ const state = useProxy(indeksKepuasanState.responden);
               onChange={(val) => {
                 state.create.form.tanggal = val.currentTarget.value;
               }}
+              labelProps={{ style: { fontSize: '0.95rem', lineHeight: '1.4' } } as any}
             />
             <Select
-              key={"jenisKelamin"}
-              label={"Jenis Kelamin"}
+              key="jenisKelamin"
+              label="Jenis Kelamin"
               placeholder={indeksKepuasanState.jenisKelaminResponden.findMany.loading ? 'Memuat...' : 'Pilih jenis kelamin'}
               value={state.create.form.jenisKelaminId || ""}
               onChange={(val) => {
@@ -625,17 +674,18 @@ const state = useProxy(indeksKepuasanState.responden);
               }}
               data={
                 (indeksKepuasanState.jenisKelaminResponden.findMany.data || [])
-                  .filter(Boolean) // Hapus null, undefined, dll
+                  .filter(Boolean)
                   .map((item) => ({
                     value: item.id,
                     label: item.name || 'Tanpa Nama',
                   }))
               }
               disabled={indeksKepuasanState.jenisKelaminResponden.findMany.loading}
+              labelProps={{ style: { fontSize: '0.95rem', lineHeight: '1.4' } } as any}
             />
             <Select
-              key={"rating_responden"}
-              label={"Rating"}
+              key="rating_responden"
+              label="Rating"
               placeholder={indeksKepuasanState.pilihanRatingResponden.findMany.loading ? 'Memuat...' : 'Pilih rating'}
               value={state.create.form.ratingId || ""}
               onChange={(val) => {
@@ -643,17 +693,18 @@ const state = useProxy(indeksKepuasanState.responden);
               }}
               data={
                 (indeksKepuasanState.pilihanRatingResponden.findMany.data || [])
-                  .filter(Boolean) // Hapus null, undefined, dll
+                  .filter(Boolean)
                   .map((item) => ({
                     value: item.id,
                     label: item.name || 'Tanpa Nama',
                   }))
               }
               disabled={indeksKepuasanState.pilihanRatingResponden.findMany.loading}
+              labelProps={{ style: { fontSize: '0.95rem', lineHeight: '1.4' } } as any}
             />
             <Select
-              key={"kelompokUmur"}
-              label={"Kelompok Umur"}
+              key="kelompokUmur"
+              label="Kelompok Umur"
               placeholder={indeksKepuasanState.kelompokUmurResponden.findMany.loading ? 'Memuat...' : 'Pilih kelompok umur'}
               value={state.create.form.kelompokUmurId || ""}
               onChange={(val) => {
@@ -661,19 +712,16 @@ const state = useProxy(indeksKepuasanState.responden);
               }}
               data={
                 (indeksKepuasanState.kelompokUmurResponden.findMany.data || [])
-                  .filter(Boolean) // Hapus null, undefined, dll
+                  .filter(Boolean)
                   .map((item) => ({
                     value: item.id,
                     label: item.name || 'Tanpa Nama',
                   }))
               }
               disabled={indeksKepuasanState.kelompokUmurResponden.findMany.loading}
+              labelProps={{ style: { fontSize: '0.95rem', lineHeight: '1.4' } } as any}
             />
-            <Button
-              mt={10}
-              bg={colors['blue-button']}
-              onClick={handleSubmit}
-            >
+            <Button mt={10} bg={colors['blue-button']} onClick={handleSubmit}>
               Submit
             </Button>
           </Stack>

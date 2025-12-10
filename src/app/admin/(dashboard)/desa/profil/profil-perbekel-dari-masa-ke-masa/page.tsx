@@ -53,7 +53,7 @@ function ListPerbekelDariMasaKeMasa({ search }: { search: string }) {
               leftSection={<IconPlus size={18} />}
               color="blue"
               variant="light"
-              onClick={() => router.push('/admin/desa/profile/profile-perbekel-dari-masa-ke-masa/create')}
+              onClick={() => router.push('/admin/desa/profil/profil-perbekel-dari-masa-ke-masa/create')}
             >
               Tambah Baru
             </Button>
@@ -90,7 +90,7 @@ function ListPerbekelDariMasaKeMasa({ search }: { search: string }) {
                           variant="light"
                           color="blue"
                           leftSection={<IconDeviceImacCog size={16} />}
-                          onClick={() => router.push(`/admin/desa/profile/profile-perbekel-dari-masa-ke-masa/${item.id}`)}
+                          onClick={() => router.push(`/admin/desa/profil/profil-perbekel-dari-masa-ke-masa/${item.id}`)}
                         >
                           Detail
                         </Button>

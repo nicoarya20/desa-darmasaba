@@ -12,6 +12,7 @@ import {
   Skeleton,
   Stack,
   Text,
+  Title,
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -41,9 +42,9 @@ export default function DetailInformasiPublikUser() {
     return (
       <Center py="xl">
         <Stack align="center" gap="sm">
-          <Text fz="lg" fw="bold">
+          <Title order={4} fz={{ base: 'lg', md: 'xl' }} lh={1.3}>
             Informasi tidak ditemukan
-          </Text>
+          </Title>
           <Button variant="light" onClick={() => router.push('/informasi-publik')}>
             Kembali ke Daftar
           </Button>
@@ -75,53 +76,60 @@ export default function DetailInformasiPublikUser() {
         shadow="xs"
       >
         <Stack gap="xl">
-          <Text
-            fz={{ base: 'xl', md: '2xl' }}
-            fw="bold"
+          {/* MAIN TITLE */}
+          <Title
+            order={2}
+            lh={1.2}
             ta="center"
             c={colors['blue-button']}
           >
             Detail Informasi Publik
-          </Text>
+          </Title>
 
           <Divider />
 
+          {/* CONTENT */}
           <Stack gap="lg">
+            {/* Jenis Informasi */}
             <Box px="lg">
-              <Text fz={{ base: 'md', md: 'lg' }} fw="bold" mb={4}>
+              <Title order={5} fz={{ base: 'lg', md: 'xl' }} lh={1.3} mb={4}>
                 Jenis Informasi
-              </Text>
-              <Text fz={{ base: 'sm', md: 'md' }} c="dimmed">
+              </Title>
+              <Text fz={{ base: 'sm', md: 'md' }} lh={1.5} c="black">
                 {data.jenisInformasi || '-'}
               </Text>
             </Box>
 
+            {/* Tanggal Publikasi */}
             <Box px="lg">
-              <Text fz={{ base: 'md', md: 'lg' }} fw="bold" mb={4}>
+              <Title order={5} fz={{ base: 'lg', md: 'xl' }} lh={1.3} mb={4}>
                 Tanggal Publikasi
-              </Text>
-              <Text fz={{ base: 'sm', md: 'md' }} c="dimmed">
+              </Title>
+              <Text fz={{ base: 'sm', md: 'md' }} lh={1.5} c="black">
                 {data.tanggal
                   ? new Date(data.tanggal).toLocaleDateString('id-ID', {
-                    day: '2-digit',
-                    month: 'long',
-                    year: 'numeric',
-                  })
+                      day: '2-digit',
+                      month: 'long',
+                      year: 'numeric',
+                    })
                   : '-'}
               </Text>
             </Box>
 
+            {/* Deskripsi */}
             <Box px="lg">
-              <Text fz={{ base: 'md', md: 'lg' }} fw="bold" mb={4}>
+              <Title order={5} fz={{ base: 'lg', md: 'xl' }} lh={1.3} mb={4}>
                 Deskripsi
-              </Text>
+              </Title>
+
               <Box>
                 <Text
-                  ta={"justify"}
-                  className="prose max-w-none leading-relaxed"
+                  ta="justify"
                   dangerouslySetInnerHTML={{ __html: data.deskripsi || '-' }}
-                  style={{ wordBreak: "break-word", whiteSpace: "normal" }}
-                  fz={{ base: 'md', md: 'lg' }}
+                  fz={{ base: 'sm', md: 'md' }}
+                  lh={1.6}
+                  style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
+                  className="prose max-w-none"
                 />
               </Box>
             </Box>

@@ -100,6 +100,7 @@ const NewsReaderLanding = () => {
         borderBottomRightRadius: '20px',
         borderTopRightRadius: '20px',
         transition: 'all 0.3s ease',
+        zIndex: 1
       }}
     >
       {isPointerMode ? <IconMusicOff /> : <IconMusic />}

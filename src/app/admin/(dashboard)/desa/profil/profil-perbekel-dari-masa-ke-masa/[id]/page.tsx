@@ -25,7 +25,7 @@ function DetailPerbekelDariMasa() {
       state.delete.byId(selectedId);
       setModalHapus(false);
       setSelectedId(null);
-      router.push("/admin/desa/profile/profile-perbekel-dari-masa-ke-masa");
+      router.push("/admin/desa/profil/profil-perbekel-dari-masa-ke-masa");
     }
   };
 
@@ -113,7 +113,7 @@ function DetailPerbekelDariMasa() {
 
                   <Button
                     color="green"
-                    onClick={() => router.push(`/admin/desa/profile/profile-perbekel-dari-masa-ke-masa/${data.id}/edit`)}
+                    onClick={() => router.push(`/admin/desa/profil/profil-perbekel-dari-masa-ke-masa/${data.id}/edit`)}
                     variant="light"
                     radius="md"
                     size="md"

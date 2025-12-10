@@ -40,7 +40,7 @@ function Page() {
       const id = params?.id as string;
       if (!id) {
         toast.error("ID tidak valid");
-        router.push("/admin/desa/profile/profile-desa");
+        router.push("/admin/desa/profil/profil-desa");
         return;
       }
 
@@ -157,7 +157,7 @@ function Page() {
 
       if (success) {
         toast.success("Maskot berhasil diperbarui!");
-        router.push("/admin/desa/profile/profile-desa");
+        router.push("/admin/desa/profil/profil-desa");
       }
     } catch (error) {
       console.error("Error update maskot:", error);
