@@ -179,26 +179,61 @@ function Kepuasan() {
           <Paper p={"lg"} bg={colors.Bg}>
             <Paper p={"lg"}>
               <Stack gap={"xs"}>
-                <Flex justify={"space-between"} align={"center"}>
-                  <Text fw={"bold"}>Pelayanan Terhadap Publik Desa Darmasaba</Text>
-                  <Box>
-                    <Text fz={"sm"} fw={"bold"} c={colors["blue-button"]}>Total Responden</Text>
-                    <Text ta={"end"} fz={"h1"} fw={"bold"} c={colors["blue-button"]}>
+                <Flex
+                  direction={{ base: "column", sm: "row" }}
+                  justify="space-between"
+                  align={{ base: "flex-start", sm: "center" }}
+                  gap={{ base: "xs", sm: "md" }} // 👈 Tambahkan gap untuk memberi ruang
+                >
+                  <Text
+                    fw="bold"
+                    ta={{ base: "center", sm: "left" }}
+                    fz={{ base: "sm", sm: "md" }} // 👈 Atur ukuran font agar lebih proporsional di mobile
+                  >
+                    Pelayanan Terhadap Publik Desa Darmasaba
+                  </Text>
+                  <Box
+                    mt={{ base: "sm", sm: 0 }}
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'flex-end', // 👈 Pastikan teks dan angka sejajar ke kanan
+                      textAlign: 'right', // 👈 Agar teks rata kanan
+                    }}
+                  >
+                    <Text fz={{ base: "xs", sm: "sm" }} fw={"bold"} c={colors["blue-button"]}>
+                      Total Responden
+                    </Text>
+                    <Text
+                      ta="end"
+                      fz={{ base: "h2", sm: "h1" }} // 👈 Ukuran font lebih kecil di mobile
+                      fw={"bold"}
+                      c={colors["blue-button"]}
+                    >
                       {state.findMany.total.toLocaleString('id-ID')}
                     </Text>
                   </Box>
                 </Flex>
-                <BarChart
-                  h={window.innerWidth < 480 ? 200 : 300}
-                  data={barChartData}
-                  dataKey="month"
-                  series={[{ name: 'Responden', color: colors['blue-button'] }]}
-                  tickLine="y"
-                  xAxisLabel="Bulan"
-                  yAxisLabel="Jumlah Responden"
-                  withTooltip
-                  tooltipAnimationDuration={200}
-                />
+                <Box style={{ overflowX: 'auto', width: '100%' }}>
+                  <BarChart
+                    h={300}
+                    data={barChartData}
+                    dataKey="month"
+                    series={[{ name: 'Responden', color: colors['blue-button'] }]}
+                    tickLine="y"
+                    xAxisLabel="Bulan"
+                    yAxisLabel="Jumlah Responden"
+                    withTooltip
+                    tooltipAnimationDuration={200}
+                    xAxisProps={{
+                      angle: -45,
+                      textAnchor: 'end',
+                      fontSize: 12,
+                    }}
+                    // 👇 Tambahkan ini agar chart punya lebar minimum yang cukup untuk semua bar
+                    style={{ minWidth: 'fit-content' }}
+                  />
+                </Box>
               </Stack>
             </Paper>
             <Box py={"xl"}>
@@ -443,34 +478,62 @@ function Kepuasan() {
       </Container>
       <Box px={"md"}>
         <Paper p={"lg"} bg={colors.Bg}>
-          <Paper p={"lg"}>
+          <Paper p={"lg"} >
             <Stack gap={"xs"}>
               <Flex
                 direction={{ base: "column", sm: "row" }}
                 justify="space-between"
                 align={{ base: "flex-start", sm: "center" }}
+                gap={{ base: "xs", sm: "md" }} // 👈 Tambahkan gap untuk memberi ruang
               >
-                <Text fw="bold" ta={{ base: "center", sm: "left" }}>
+                <Text
+                  fw="bold"
+                  ta={{ base: "center", sm: "left" }}
+                  fz={{ base: "sm", sm: "md" }} // 👈 Atur ukuran font agar lebih proporsional di mobile
+                >
                   Pelayanan Terhadap Publik Desa Darmasaba
                 </Text>
-                <Box mt={{ base: "sm", sm: 0 }}>
-                  <Text fz={"sm"} fw={"bold"} c={colors["blue-button"]}>Total Responden</Text>
-                  <Text ta={"end"} fz={"h1"} fw={"bold"} c={colors["blue-button"]}>
+                <Box
+                  mt={{ base: "sm", sm: 0 }}
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'flex-end', // 👈 Pastikan teks dan angka sejajar ke kanan
+                    textAlign: 'right', // 👈 Agar teks rata kanan
+                  }}
+                >
+                  <Text fz={{ base: "xs", sm: "sm" }} fw={"bold"} c={colors["blue-button"]}>
+                    Total Responden
+                  </Text>
+                  <Text
+                    ta="end"
+                    fz={{ base: "h2", sm: "h1" }} // 👈 Ukuran font lebih kecil di mobile
+                    fw={"bold"}
+                    c={colors["blue-button"]}
+                  >
                     {state.findMany.total.toLocaleString('id-ID')}
                   </Text>
                 </Box>
               </Flex>
-              <BarChart
-                h={300}
-                data={barChartData}
-                dataKey="month"
-                series={[{ name: 'Responden', color: colors['blue-button'] }]}
-                tickLine="y"
-                xAxisLabel="Bulan"
-                yAxisLabel="Jumlah Responden"
-                withTooltip
-                tooltipAnimationDuration={200}
-              />
+              <Box style={{ overflowX: 'auto', width: '100%' }} pb={50}>
+                <BarChart
+                  h={300}
+                  data={barChartData}
+                  dataKey="month"
+                  series={[{ name: 'Responden', color: colors['blue-button'] }]}
+                  tickLine="y"
+                  xAxisLabel=""
+                  yAxisLabel="Jumlah Responden"
+                  withTooltip
+                  tooltipAnimationDuration={200}
+                  xAxisProps={{
+                    angle: -45,
+                    textAnchor: 'end',
+                    fontSize: 12,
+                  }}
+                  style={{ minWidth: 'fit-content' }}
+                />
+              </Box>
             </Stack>
           </Paper>
           <Box py={"xl"}>
@@ -499,7 +562,7 @@ function Kepuasan() {
                               withLabels
                               withTooltip
                               labelsPosition="inside"
-                          
+
                               labelsType="percent"
                               size={200}
                               data={donutDataJenisKelamin}
@@ -537,7 +600,7 @@ function Kepuasan() {
                               withTooltip
                               tooltipAnimationDuration={200}
                               withLabels
-                          
+
                               labelsPosition="inside"
                               labelsType="percent"
                               withLabelsLine
@@ -581,7 +644,7 @@ function Kepuasan() {
                               withTooltip
                               tooltipAnimationDuration={200}
                               withLabels
-                              
+
                               labelsPosition="inside"
                               labelsType="percent"
                               withLabelsLine

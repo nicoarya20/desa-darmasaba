@@ -27,7 +27,7 @@ function Page() {
   return (
     <Paper bg={colors['white-1']} p="lg" radius="md" shadow="sm">
       <Stack gap="lg">
-        <Title order={2} c={colors['blue-button']}>Preview Profile Desa</Title>
+        <Title order={2} c={colors['blue-button']}>Preview Profil Desa</Title>
 
         {/* Sejarah Desa */}
         {sejarah && (
@@ -42,7 +42,7 @@ function Page() {
                     variant="light"
                     leftSection={<IconEdit size={18} stroke={2} />}
                     radius="md"
-                    onClick={() => router.push(`/admin/desa/profile/profile-desa/${sejarah.id}/sejarah_desa`)}
+                    onClick={() => router.push(`/admin/desa/profil/profil-desa/${sejarah.id}/sejarah_desa`)}
                   >
                     Edit
                   </Button>
@@ -87,7 +87,7 @@ function Page() {
                     variant="light"
                     leftSection={<IconEdit size={18} stroke={2} />}
                     radius="md"
-                    onClick={() => router.push(`/admin/desa/profile/profile-desa/${visiMisi.id}/visi_misi_desa`)}
+                    onClick={() => router.push(`/admin/desa/profil/profil-desa/${visiMisi.id}/visi_misi_desa`)}
                   >
                     Edit
                   </Button>
@@ -135,7 +135,7 @@ function Page() {
                     variant="light"
                     leftSection={<IconEdit size={18} stroke={2} />}
                     radius="md"
-                    onClick={() => router.push(`/admin/desa/profile/profile-desa/${lambang.id}/lambang_desa`)}
+                    onClick={() => router.push(`/admin/desa/profil/profil-desa/${lambang.id}/lambang_desa`)}
                   >
                     Edit
                   </Button>
@@ -180,7 +180,7 @@ function Page() {
                     variant="light"
                     leftSection={<IconEdit size={18} stroke={2} />}
                     radius="md"
-                    onClick={() => router.push(`/admin/desa/profile/profile-desa/${maskot.id}/maskot_desa`)}
+                    onClick={() => router.push(`/admin/desa/profil/profil-desa/${maskot.id}/maskot_desa`)}
                   >
                     Edit
                   </Button>

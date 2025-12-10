@@ -41,7 +41,7 @@ function Page() {
                 variant="light"
                 leftSection={<IconEdit size={18} stroke={2} />}
                 radius="md"
-                onClick={() => router.push(`/admin/desa/profile/profile-perbekel/${perbekel.id}`)}
+                onClick={() => router.push(`/admin/desa/profil/profil-perbekel/${perbekel.id}`)}
               >
                 Edit
               </Button>

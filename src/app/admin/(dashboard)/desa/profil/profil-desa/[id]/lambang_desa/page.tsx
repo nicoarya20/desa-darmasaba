@@ -1,5 +1,4 @@
 'use client';
-
 import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import stateProfileDesa from '@/app/admin/(dashboard)/_state/desa/profile';
 import colors from '@/con/colors';
@@ -13,6 +12,7 @@ import {
   Paper,
   Stack,
   Text,
+  TextInput,
   Title,
 } from '@mantine/core';
 import { IconAlertCircle, IconArrowBack } from '@tabler/icons-react';
@@ -20,29 +20,30 @@ import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
-// 🔹 Types
+// 🧩 Type untuk form
 interface FormData {
-  visi: string;
-  misi: string;
+  judul: string;
+  deskripsi: string;
 }
 
-// 🔹 Main Component
+// 🧩 Main Component
 function Page() {
   const router = useRouter();
   const params = useParams();
-  const [formData, setFormData] = useState<FormData>({ visi: '', misi: '' });
-  const [originalData, setOriginalData] = useState<FormData>({ visi: '', misi: '' });
+
+  const [formData, setFormData] = useState<FormData>({ judul: '', deskripsi: '' });
+  const [originalData, setOriginalData] = useState<FormData>({ judul: '', deskripsi: '' });
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
 
-  // 🧭 Load Data
+  // 🧭 Load data awal
   useEffect(() => {
     const loadData = async () => {
       const id = params?.id as string;
       if (!id) {
         toast.error('ID tidak valid');
-        router.push('/admin/desa/profile/profile-desa');
+        router.push('/admin/desa/profil/profil-desa');
         return;
       }
 
@@ -50,24 +51,25 @@ function Page() {
       setLoadError(null);
 
       try {
-        const data = await stateProfileDesa.visiMisiDesa.findUnique.load(id);
-        if (data) {
-          const initialData: FormData = {
-            visi: data.visi || '',
-            misi: data.misi || '',
-          };
-          setFormData(initialData);
-          setOriginalData(initialData);
+        const data = await stateProfileDesa.lambangDesa.findUnique.load(id);
 
-          // set id ke state agar submit pakai endpoint benar
-          stateProfileDesa.visiMisiDesa.update.initialize(data);
+        if (data) {
+          const initial: FormData = {
+            judul: data.judul || '',
+            deskripsi: data.deskripsi || '',
+          };
+          setFormData(initial);
+          setOriginalData(initial);
+
+          // Penting untuk isi id di state sebelum submit
+          stateProfileDesa.lambangDesa.update.initialize(data);
         } else {
           setLoadError('Data tidak ditemukan');
         }
       } catch (error) {
-        console.error('Error load visi misi:', error);
-        setLoadError('Gagal memuat data visi misi desa');
-        toast.error('Gagal memuat data visi misi desa');
+        console.error('Error loading lambang:', error);
+        setLoadError('Gagal memuat data lambang desa');
+        toast.error('Gagal memuat data lambang desa');
       } finally {
         setIsLoading(false);
       }
@@ -76,54 +78,58 @@ function Page() {
     loadData();
 
     return () => {
-      stateProfileDesa.visiMisiDesa.update.reset();
-      stateProfileDesa.visiMisiDesa.findUnique.reset();
+      stateProfileDesa.lambangDesa.update.reset();
+      stateProfileDesa.lambangDesa.findUnique.reset();
     };
   }, [params?.id, router]);
 
-  // 🔄 Reset Form
+  // 🔁 Reset form
   const handleResetForm = () => {
     setFormData(originalData);
     toast.info('Form dikembalikan ke data awal');
   };
 
-  // 💾 Submit
+  // 💾 Submit handler
   const handleSubmit = async () => {
-    if (!formData.visi.trim()) {
-      toast.error('Visi wajib diisi');
+    if (!formData.judul.trim()) {
+      toast.error('Judul wajib diisi');
       return;
     }
 
     setIsSubmitting(true);
     try {
-      const originalState = stateProfileDesa.visiMisiDesa;
+      const state = stateProfileDesa.lambangDesa;
+      state.update.form.judul = formData.judul;
+      state.update.form.deskripsi = formData.deskripsi;
 
-      // update data form ke state sebelum submit
-      originalState.update.form.visi = formData.visi;
-      originalState.update.form.misi = formData.misi;
-
-      const success = await originalState.update.submit();
+      const success = await state.update.submit();
 
       if (success) {
         toast.success('Data berhasil disimpan');
-        router.push('/admin/desa/profile/profile-desa');
+        router.push('/admin/desa/profil/profil-desa');
       } else {
         toast.error('Gagal menyimpan data');
       }
     } catch (error) {
-      console.error('Error update visi misi desa:', error);
-      toast.error('Terjadi kesalahan saat update visi misi desa');
+      console.error('Error update lambang desa:', error);
+      toast.error('Terjadi kesalahan saat update lambang desa');
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  // 🧭 Field handlers
-  const handleVisiChange = (html: string) => setFormData(prev => ({ ...prev, visi: html }));
-  const handleMisiChange = (html: string) => setFormData(prev => ({ ...prev, misi: html }));
+  // 📝 Handlers
+  const handleJudulChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData(prev => ({ ...prev, judul: e.target.value }));
+  };
+
+  const handleDeskripsiChange = (html: string) => {
+    setFormData(prev => ({ ...prev, deskripsi: html }));
+  };
+
   const handleBack = () => router.back();
 
-  // ⏳ Loading
+  // 🔄 Loading
   if (isLoading) {
     return (
       <Box>
@@ -131,7 +137,7 @@ function Page() {
           <Stack align="center" gap="md">
             <Loader size="lg" color={colors['blue-button']} />
             <Text size="lg" fw={500} c="dimmed">
-              Memuat data...
+              Memuat data lambang desa...
             </Text>
           </Stack>
         </Center>
@@ -147,18 +153,10 @@ function Page() {
           <Button variant="subtle" onClick={handleBack} p="xs" radius="md">
             <IconArrowBack color={colors['blue-button']} size={24} />
           </Button>
-          <Alert
-            icon={<IconAlertCircle size={20} />}
-            color="red"
-            title="Terjadi Kesalahan"
-            radius="md"
-          >
+          <Alert icon={<IconAlertCircle size={20} />} color="red" title="Terjadi Kesalahan" radius="md">
             {loadError}
           </Alert>
-          <Button
-            onClick={() => router.push('/admin/desa/profile/profile-desa')}
-            variant="outline"
-          >
+          <Button onClick={() => router.push('/admin/desa/profil/profil-desa')} variant="outline">
             Kembali ke Halaman Utama
           </Button>
         </Stack>
@@ -166,7 +164,7 @@ function Page() {
     );
   }
 
-  // ✅ UI
+  // 🧱 UI utama
   return (
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
       <Stack gap="md">
@@ -176,7 +174,7 @@ function Page() {
             <IconArrowBack color={colors['blue-button']} size={24} />
           </Button>
           <Title order={4} ml="sm" c="dark">
-            Edit Visi & Misi Desa
+            Edit Lambang Desa
           </Title>
         </Group>
 
@@ -190,29 +188,27 @@ function Page() {
           style={{ border: '1px solid #e0e0e0' }}
         >
           <Stack gap="lg">
-            <Box>
-              <Title order={3} mb={4}>
-                Informasi Visi & Misi Desa
-              </Title>
-            </Box>
+            {/* Judul */}
+            <TextInput
+              label={<Text fw="bold" size="sm">Judul</Text>}
+              placeholder="Masukkan judul lambang desa"
+              value={formData.judul}
+              onChange={handleJudulChange}
+              error={!formData.judul.trim() && 'Judul wajib diisi'}
+              required
+              size="md"
+              radius="md"
+            />
 
-            {/* Visi */}
-            <Box>
-              <Text fw="bold" size="sm" mb={8}>
-                Visi
-              </Text>
-              <EditEditor value={formData.visi} onChange={handleVisiChange} />
-            </Box>
-
-            {/* Misi */}
+            {/* Deskripsi */}
             <Box>
               <Text fw="bold" size="sm" mb={8}>
-                Misi
+                Deskripsi
               </Text>
-              <EditEditor value={formData.misi} onChange={handleMisiChange} />
+              <EditEditor value={formData.deskripsi} onChange={handleDeskripsiChange} />
             </Box>
 
-            {/* Actions */}
+            {/* Tombol Aksi */}
             <Group justify="right">
               <Button
                 variant="outline"
@@ -220,6 +216,7 @@ function Page() {
                 radius="md"
                 size="md"
                 onClick={handleResetForm}
+                disabled={isSubmitting}
               >
                 Batal
               </Button>

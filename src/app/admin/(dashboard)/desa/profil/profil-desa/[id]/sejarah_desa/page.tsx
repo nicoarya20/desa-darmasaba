@@ -50,7 +50,7 @@ function Page() {
             const id = params?.id as string;
             if (!id) {
                 toast.error('ID tidak valid');
-                router.push('/admin/desa/profile/profile-desa');
+                router.push('/admin/desa/profil/profil-desa');
                 return;
             }
 
@@ -122,7 +122,7 @@ function Page() {
 
             if (success) {
                 toast.success('Data berhasil disimpan');
-                router.push('/admin/desa/profile/profile-desa');
+                router.push('/admin/desa/profil/profil-desa');
             } else {
                 toast.error('Gagal menyimpan data');
             }
@@ -179,7 +179,7 @@ function Page() {
                         {loadError}
                     </Alert>
                     <Button
-                        onClick={() => router.push('/admin/desa/profile/profile-desa')}
+                        onClick={() => router.push('/admin/desa/profil/profil-desa')}
                         variant="outline"
                     >
                         Kembali ke Halaman Utama

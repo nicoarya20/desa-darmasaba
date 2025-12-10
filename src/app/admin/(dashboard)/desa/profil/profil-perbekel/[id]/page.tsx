@@ -25,7 +25,7 @@ function ProfilePerbekel() {
       const id = params?.id as string;
       if (!id) {
         toast.error("ID tidak valid");
-        router.push("/admin/desa/profile/profile-perbekel");
+        router.push("/admin/desa/profil/profil-perbekel");
         return;
       }
 
@@ -74,7 +74,7 @@ function ProfilePerbekel() {
       const success = await perbekelState.edit.submit()
       if (success) {
         toast.success("Data berhasil disimpan");
-        router.push("/admin/desa/profile/profile-perbekel");
+        router.push("/admin/desa/profil/profil-perbekel");
       }
     } catch (error) {
       console.error("Error update sejarah desa:", error);

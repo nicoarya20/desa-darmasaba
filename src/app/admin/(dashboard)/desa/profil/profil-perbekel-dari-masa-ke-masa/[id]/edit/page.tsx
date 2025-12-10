@@ -117,7 +117,7 @@ function EditPerbekelDariMasaKeMasa() {
 
       await state.update.update();
       toast.success('Perbekel dari masa ke masa berhasil diperbarui!');
-      router.push('/admin/desa/profile/profile-perbekel-dari-masa-ke-masa');
+      router.push('/admin/desa/profil/profil-perbekel-dari-masa-ke-masa');
     } catch (error) {
       console.error('Error updating perbekel dari masa ke masa:', error);
       toast.error('Terjadi kesalahan saat memperbarui perbekel dari masa ke masa');
