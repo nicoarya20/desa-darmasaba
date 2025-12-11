@@ -1,7 +1,7 @@
 'use client'
 import artikelKesehatanState from '@/app/admin/(dashboard)/_state/kesehatan/data_kesehatan_warga/artikelKesehatan';
 import colors from '@/con/colors';
-import { Box, Button, Card, Divider, Group, Image, Loader, Paper, Stack, Text } from '@mantine/core';
+import { Box, Button, Card, Divider, Group, Image, Paper, Skeleton, Stack, Text } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconCalendar, IconChevronRight } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
@@ -17,9 +17,8 @@ function ArtikelKesehatanPage() {
 
   if (!state.findMany.data) {
     return (
-      <Box py="xl" ta="center">
-        <Loader size="lg" color={colors['blue-button']} />
-        <Text mt="md" c="dimmed" fz="md">Memuat artikel kesehatan...</Text>
+      <Box py="lg">
+        <Skeleton h={500} radius="lg" />
       </Box>
     )
   }

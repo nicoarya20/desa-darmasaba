@@ -2,7 +2,7 @@
 'use client';
 import penghargaanState from "@/app/admin/(dashboard)/_state/desa/penghargaan";
 import colors from "@/con/colors";
-import { Box, Button, Container, Group, Paper, Skeleton, Stack, Text } from "@mantine/core";
+import { Box, Button, Container, Group, Paper, Skeleton, Stack, Text, Title } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { IconArrowRight, IconAward } from "@tabler/icons-react";
 import { useTransitionRouter } from "next-view-transitions";
@@ -20,11 +20,21 @@ export default function Page() {
         <Stack align="center" gap="sm">
           <Group gap="xs">
             <IconAward size={40} color={colors["blue-button"]} />
-            <Text fz={{ base: "2rem", md: "3.2rem" }} fw={800} variant="gradient" gradient={{ from: "#1C6EA4", to: "#69BFF8" }}>
+            <Title
+              order={1}
+              fw={800}
+              c={colors["blue-button"]}
+              ta="center"
+            >
               Penghargaan Desa
-            </Text>
+            </Title>
           </Group>
-          <Text fz="lg" c="dimmed" ta="center">
+          <Text
+            fz={{ base: "sm", md: "md" }}
+            lh={{ base: "1.5", md: "1.6" }}
+            c="black"
+            ta="center"
+          >
             Desa Darmasaba berhasil meraih beragam penghargaan bergengsi yang mencerminkan dedikasi dan kerja keras masyarakat dalam membangun desa yang maju dan berkelanjutan.
           </Text>
         </Stack>
@@ -61,10 +71,8 @@ function Slider() {
   const data = state.findMany.data || [];
   const loading = state.findMany.loading;
 
-  // Triple data untuk infinite loop (desktop only)
   const slidesData = mobile ? data : [...data, ...data, ...data];
 
-  // Auto-scroll animation untuk desktop
   useEffect(() => {
     if (loading || !containerRef.current || data.length === 0 || mobile) return;
 
@@ -72,7 +80,6 @@ function Slider() {
     const slideWidth = container.scrollWidth / slidesData.length;
     const originalLength = data.length;
 
-    // Start dari middle set
     scrollPosRef.current = slideWidth * originalLength;
     container.scrollLeft = scrollPosRef.current;
 
@@ -88,7 +95,6 @@ function Slider() {
         const speed = isHoveredRef.current ? SPEED_HOVER : SPEED_NORMAL;
         scrollPosRef.current += speed;
 
-        // Reset untuk infinite loop
         if (scrollPosRef.current >= slideWidth * (originalLength * 2)) {
           scrollPosRef.current -= slideWidth * originalLength;
         }
@@ -100,7 +106,6 @@ function Slider() {
       } else {
         scrollPosRef.current = container.scrollLeft;
 
-        // Momentum untuk drag release
         if (!isDraggingRef.current && Math.abs(velocityRef.current) > 0.1) {
           scrollPosRef.current += velocityRef.current;
           velocityRef.current *= VELOCITY_DECAY;
@@ -185,7 +190,7 @@ function Slider() {
     return (
       <Stack align="center" py="xl">
         <IconAward size={56} color={colors["blue-button"]} />
-        <Text fz="lg" fw={600} c="dimmed">
+        <Text fz={{ base: "sm", md: "md" }} fw={600} c="dimmed" ta="center">
           Belum ada penghargaan yang ditambahkan
         </Text>
       </Stack>
@@ -213,7 +218,6 @@ function Slider() {
         msOverflowStyle: "none",
       }}
     >
-      {/* Blur edges - hanya untuk desktop */}
       {!mobile && (
         <>
           <Box
@@ -291,8 +295,8 @@ function Slider() {
                 style={{ borderRadius: 16 }}
               />
               <Stack justify="flex-end" h="100%" gap="sm" p="lg" pos="relative">
-                <Text
-                  fz={{ base: "lg", sm: "xl", md: "1.5rem" }}
+                <Title
+                  order={3}
                   fw={700}
                   ta="center"
                   c="white"
@@ -300,7 +304,7 @@ function Slider() {
                   style={{ textShadow: "0 2px 8px rgba(0,0,0,0.8)" }}
                 >
                   {item.name}
-                </Text>
+                </Title>
                 <Group justify="center">
                   <Button
                     onClick={() => router.push(`/darmasaba/penghargaan/${item.id}`)}

@@ -1,7 +1,7 @@
 'use client'
 import programKemiskinanState from '@/app/admin/(dashboard)/_state/ekonomi/program-kemiskinan';
 import colors from '@/con/colors';
-import { Box, Center, Grid, GridCol, Pagination, Paper, SimpleGrid, Skeleton, Stack, Text, TextInput } from '@mantine/core';
+import { Box, Center, Grid, GridCol, Pagination, Paper, SimpleGrid, Skeleton, Stack, Text, TextInput, Title } from '@mantine/core';
 import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
 import { IconSearch } from '@tabler/icons-react';
 import { useState } from 'react';
@@ -32,10 +32,9 @@ interface ProgramKemiskinanData {
 
 function Page() {
   const [search, setSearch] = useState('')
-  const [debouncedSearch] = useDebouncedValue(search, 1000); // 500ms delay
+  const [debouncedSearch] = useDebouncedValue(search, 1000);
   const state = useProxy(programKemiskinanState)
 
-  // 🔧 Get valid statistics data with proper type checking
   const statistikData = state.findMany.data
     .filter((item): item is ProgramKemiskinanData & { statistik: StatistikData } => {
       return !!item?.statistik && 
@@ -43,11 +42,11 @@ function Page() {
              item.statistik.jumlah !== undefined;
     })
     .map(item => ({
-      tahun: Number(item.statistik.tahun) || 0, // Ensure tahun is a number
-      jumlah: Number(item.statistik.jumlah) || 0, // Ensure jumlah is a number
+      tahun: Number(item.statistik.tahun) || 0,
+      jumlah: Number(item.statistik.jumlah) || 0,
     }))
     .sort((a, b) => a.tahun - b.tahun)
-    .filter(item => !isNaN(item.tahun) && !isNaN(item.jumlah)); // Remove any invalid entries
+    .filter(item => !isNaN(item.tahun) && !isNaN(item.jumlah));
 
   const {
     data,
@@ -74,12 +73,18 @@ function Page() {
       <Box px={{ base: 'md', md: 100 }}>
         <BackButton />
       </Box>
-      <Box px={{ base: 'md', md: 100 }} >
+      <Box px={{ base: 'md', md: 100 }}>
         <Grid align='center'>
           <GridCol span={{ base: 12, md: 9 }}>
-            <Text fz={{ base: "h1", md: "2.5rem" }} c={colors["blue-button"]} fw={"bold"}>
+            <Title
+              order={1}
+              c={colors["blue-button"]}
+              fw={"bold"}
+              fz={{ base: '28px', md: '32px' }}
+              lh={{ base: '1.2', md: '1.25' }}
+            >
               Program Kemiskinan
-            </Text>
+            </Title>
           </GridCol>
           <GridCol span={{ base: 12, md: 3 }}>
             <TextInput
@@ -92,7 +97,15 @@ function Page() {
             />
           </GridCol>
         </Grid>
-        <Text fz={'h4'}>Berbagai program bantuan untuk mengurangi kemiskinan dan meningkatkan kesejahteraan masyarakat</Text>
+        <Text
+          fz={{ base: '14px', md: '16px' }}
+          lh={{ base: '1.5', md: '1.6' }}
+          c="black"
+          ta={{ base: 'left', md: 'left' }}
+          pt={20}
+        >
+          Berbagai program bantuan untuk mengurangi kemiskinan dan meningkatkan kesejahteraan masyarakat
+        </Text>
       </Box>
       <Box px={{ base: "md", md: 100 }}>
         <Stack gap={'lg'} justify='center'>
@@ -106,8 +119,22 @@ function Page() {
             {state.findMany.data.map(v => {
               return (
                 <Paper p={'xl'} key={v.id}>
-                  <Text fz={'h3'} fw={'bold'} c={colors['blue-button']}>{v.nama}</Text>
-                  <Text fz={'lg'} c={'black'} style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: v.deskripsi }}></Text>
+                  <Title
+                    order={3}
+                    fw={'bold'}
+                    c={colors['blue-button']}
+                    fz={{ base: '18px', md: '20px' }}
+                    lh={{ base: '1.3', md: '1.35' }}
+                  >
+                    {v.nama}
+                  </Title>
+                  <Text
+                    fz={{ base: '14px', md: '16px' }}
+                    lh={{ base: '1.5', md: '1.6' }}
+                    c={'black'}
+                    style={{ wordBreak: "break-word", whiteSpace: "normal" }}
+                    dangerouslySetInnerHTML={{ __html: v.deskripsi }}
+                  />
                 </Paper>
               )
             })}
@@ -124,7 +151,16 @@ function Page() {
             />
           </Center>
           <Paper p={'xl'}>
-            <Text fz={'h3'} fw={'bold'} c={colors['blue-button']} mb="md">Statistik Kemiskinan Masyarakat</Text>
+            <Title
+              order={3}
+              fw={'bold'}
+              c={colors['blue-button']}
+              fz={{ base: '18px', md: '20px' }}
+              lh={{ base: '1.3', md: '1.35' }}
+              mb="md"
+            >
+              Statistik Kemiskinan Masyarakat
+            </Title>
             <Box style={{ width: '100%', height: 'auto' }}>
               {statistikData.length > 0 ? (
                 <Box w="100%" style={{ overflowX: 'auto' }}>
@@ -162,7 +198,11 @@ function Page() {
                 </Box>
               ) : (
                 <Box p="md" ta="center" bg="gray.0" style={{ borderRadius: '8px' }}>
-                  <Text c="dimmed">
+                  <Text
+                    fz={{ base: '12px', md: '14px' }}
+                    c="dimmed"
+                    lh={{ base: '1.4', md: '1.5' }}
+                  >
                     {state.findMany.loading 
                       ? 'Memuat data statistik...' 
                       : 'Belum ada data statistik yang tersedia atau data tidak valid'}

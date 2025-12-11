@@ -91,7 +91,7 @@ function StrukturOrganisasiPPID() {
   const debouncedSearch = useRef(
     debounce((value: string) => {
       setSearchQuery(value)
-    }, 400)
+    }, 1000)
   ).current
 
   useEffect(() => {

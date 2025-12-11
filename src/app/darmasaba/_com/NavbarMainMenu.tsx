@@ -74,7 +74,7 @@ export function NavbarMainMenu({ listNavbar }: { listNavbar: MenuItem[] }) {
             <Tooltip label="Profil Saya" position="bottom" withArrow>
               <ActionIcon
                 onClick={() => {
-                  next.push("/admin/landing-page/profile/program-inovasi")
+                  next.push("/admin/landing-page/profil/program-inovasi")
                 }}
                 color={colors["blue-button"]}
                 radius="xl"

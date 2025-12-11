@@ -1,7 +1,7 @@
 'use client'
 import infoWabahPenyakit from '@/app/admin/(dashboard)/_state/kesehatan/info-wabah-penyakit/infoWabahPenyakit';
 import colors from '@/con/colors';
-import { Box, Button, Image, Paper, Skeleton, Stack, Text } from '@mantine/core';
+import { Box, Button, Image, Paper, Skeleton, Stack, Text, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -51,10 +51,15 @@ function DetailInfoWabahPenyakitUser() {
         shadow="sm"
       >
         <Stack gap="lg">
-          {/* Judul */}
-          <Text fz="xl" fw="bold" c={colors['blue-button']} ta="center">
+          {/* Judul — H1 */}
+          <Title
+            order={1}
+            fw="bold"
+            c={colors['blue-button']}
+            ta="center"
+          >
             {data.name || 'Kontak Darurat'}
-          </Text>
+          </Title>
 
           {/* Gambar */}
           {data.image?.link && (
@@ -70,10 +75,16 @@ function DetailInfoWabahPenyakitUser() {
 
           {/* Deskripsi */}
           <Box>
-            <Text fz="lg" fw="bold">Deskripsi</Text>
+            {/* Section Title — H2 */}
+            <Title order={2} fw="bold" fz={{ base: 'md', md: 'lg' }} lh="1.4">
+              Deskripsi
+            </Title>
             <Box pl={20}>
               <Text
-                fz="md"
+                fz={{ base: 'sm', md: 'md' }}
+                lh="1.6"
+                c="dimmed"
+                ta={"justify"}
                 dangerouslySetInnerHTML={{ __html: data.deskripsiLengkap || '-' }}
                 style={{ wordBreak: "break-word", whiteSpace: "normal" }}
               />

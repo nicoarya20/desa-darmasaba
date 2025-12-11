@@ -28,8 +28,10 @@ function SemuaPerbekel() {
       <Center py="xl">
         <Stack align="center" gap="sm">
           <IconUser size={48} stroke={1.5} />
-          <Title fw="bold" order={2}>Belum ada data Perbekel</Title>
-          <Text c="dimmed" fz="sm" ta="center">Data mantan Perbekel akan muncul di sini ketika sudah tersedia</Text>
+          <Title order={2} ta="center">Belum ada data Perbekel</Title>
+          <Text c="dimmed" fz={{ base: 'xs', md: 'sm' }} lh={{ base: 1.4, md: 1.6 }} ta="center">
+            Data mantan Perbekel akan muncul di sini ketika sudah tersedia
+          </Text>
         </Stack>
       </Center>
     );
@@ -38,17 +40,20 @@ function SemuaPerbekel() {
   return (
     <Box>
       <Stack align="center" gap="lg">
-        <Box>
-          <Text
-            ta="center"
-            fw={900}
-            fz={{ base: "2rem", md: "2.5rem" }}
-            variant="gradient"
-            gradient={{ from: "blue", to: "cyan", deg: 45 }}
-          >
-            Perbekel Dari Masa ke Masa
-          </Text>
-        </Box>
+        <Title
+          order={1}
+          ta="center"
+          style={{
+            background: 'linear-gradient(45deg, blue, cyan)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+          }}
+          fz={{ base: 28, md: 36 }}
+          lh={{ base: 1.2, md: 1.3 }}
+          fw={900}
+        >
+          Perbekel Dari Masa ke Masa
+        </Title>
 
         <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }} spacing="xl" w="100%">
           {data.map((v: any, k: number) => (
@@ -59,9 +64,7 @@ function SemuaPerbekel() {
               withBorder
               p="lg"
               bg="white"
-              style={{
-                transition: "all 250ms ease",
-              }}
+              style={{ transition: "all 250ms ease" }}
               className="hover:shadow-xl hover:scale-[1.02]"
             >
               <Stack gap="md" align="center">
@@ -77,17 +80,17 @@ function SemuaPerbekel() {
                 </Box>
 
                 <Stack gap={4} align="center">
-                    <Text fw={700} fz="lg" ta="center">
-                      {v.nama}
-                    </Text>
+                  <Title order={3} fz={{ base: 18, md: 20 }} ta="center" fw={700}>
+                    {v.nama}
+                  </Title>
 
-                  <Text c="dimmed" fz="sm" ta="center">
-                      {v.daerah}
-                    </Text>
+                  <Text c="dimmed" fz={{ base: 12, md: 14 }} lh={{ base: 1.4, md: 1.6 }} ta="center">
+                    {v.daerah}
+                  </Text>
 
-                  <Text c="blue" fw={600} fz="sm" ta="center">
-                      {v.periode}
-                    </Text>
+                  <Text c="blue" fw={600} fz={{ base: 12, md: 14 }} lh={{ base: 1.4, md: 1.6 }} ta="center">
+                    {v.periode}
+                  </Text>
                 </Stack>
               </Stack>
             </Paper>

@@ -16,35 +16,30 @@ function Semua() {
   const searchParams = useSearchParams();
   const router = useTransitionRouter();
 
-  // Ambil parameter langsung dari URL
   const search = searchParams.get('search') || '';
   const page = parseInt(searchParams.get('page') || '1');
 
-  // Gunakan proxy untuk state global
   const state = useProxy(stateDashboardBerita.berita);
   const featured = useProxy(stateDashboardBerita.berita.findFirst);
   const loadingGrid = state.findMany.loading;
   const loadingFeatured = featured.loading;
 
-  // Load berita utama sekali saja
   useEffect(() => {
     if (!featured.data && !loadingFeatured) {
       stateDashboardBerita.berita.findFirst.load();
     }
   }, [featured.data, loadingFeatured]);
 
-  // Load berita terbaru tiap page / search berubah
   useEffect(() => {
     const limit = 3;
     state.findMany.load(page, limit, search);
   }, [page, search]);
 
-  // Handler pagination → langsung update URL
   const handlePageChange = (newPage: number) => {
     const url = new URLSearchParams(searchParams.toString());
     if (search) url.set('search', search);
     if (newPage > 1) url.set('page', newPage.toString());
-    else url.delete('page'); // biar page=1 ga muncul di URL
+    else url.delete('page');
 
     router.replace(`?${url.toString()}`);
   };
@@ -61,7 +56,7 @@ function Semua() {
           <Center><Skeleton h={400} /></Center>
         ) : featuredData ? (
           <Box mb={50}>
-            <Text fz="h2" fw={700} mb="md">Berita Utama</Text>
+            <Title order={2} mb="md">Berita Utama</Title>
             <Paper shadow="md" radius="md" withBorder>
               <Grid gutter={0}>
                 <GridCol span={{ base: 12, md: 6 }}>
@@ -81,13 +76,24 @@ function Semua() {
                       <Badge color="blue" variant="light" mb="md">
                         {featuredData.kategoriBerita?.name || 'Berita'}
                       </Badge>
-                      <Title order={2} mb="md">{featuredData.judul}</Title>
-                      <Text c="dimmed" lineClamp={3} mb="md" dangerouslySetInnerHTML={{ __html: featuredData.deskripsi }} />
+                      <Title order={3} mb="md">{featuredData.judul}</Title>
+                      <Text
+                        c="dimmed"
+                        lineClamp={3}
+                        mb="md"
+                        dangerouslySetInnerHTML={{ __html: featuredData.deskripsi }}
+                        fz={{ base: 'sm', md: 'md' }}
+                        lh={{ base: 1.5, md: 1.6 }}
+                      />
                     </div>
                     <Group justify="apart" mt="auto">
                       <Group gap="xs">
                         <IconCalendar size={18} />
-                        <Text size="sm">
+                        <Text
+                          c="dimmed"
+                          fz={{ base: 'xs', md: 'sm' }}
+                          lh={{ base: 1.4, md: 1.5 }}
+                        >
                           {new Date(featuredData.createdAt).toLocaleDateString('id-ID', {
                             day: 'numeric',
                             month: 'long',
@@ -124,7 +130,9 @@ function Semua() {
               ))}
             </SimpleGrid>
           ) : paginatedNews.length === 0 ? (
-            <Text c="dimmed" ta="center">Tidak ada berita ditemukan.</Text>
+            <Text c="dimmed" ta="center" fz={{ base: 'sm', md: 'md' }} lh={{ base: 1.5, md: 1.6 }}>
+              Tidak ada berita ditemukan.
+            </Text>
           ) : (
             <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="xl" verticalSpacing="xl">
               {paginatedNews.map((item) => (
@@ -143,11 +151,24 @@ function Semua() {
                     {item.kategoriBerita?.name || 'Berita'}
                   </Badge>
 
-                  <Text fw={600} size="lg" mt="sm" lineClamp={2}>{item.judul}</Text>
-                  <Text size="sm" c="dimmed" lineClamp={3} mt="xs" dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
+                  <Title order={4} mt="sm" lineClamp={2}>
+                    {item.judul}
+                  </Title>
+                  <Text
+                    c="dimmed"
+                    lineClamp={3}
+                    mt="xs"
+                    dangerouslySetInnerHTML={{ __html: item.deskripsi }}
+                    fz={{ base: 'xs', md: 'sm' }}
+                    lh={{ base: 1.5, md: 1.6 }}
+                  />
 
                   <Flex align="center" justify="apart" mt="md" gap="xs">
-                    <Text size="xs" c="dimmed">
+                    <Text
+                      c="dimmed"
+                      fz={{ base: 'xs', md: 'xs' }}
+                      lh={{ base: 1.4, md: 1.4 }}
+                    >
                       {new Date(item.createdAt).toLocaleDateString('id-ID', {
                         day: 'numeric',
                         month: 'short',

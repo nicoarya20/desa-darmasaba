@@ -42,9 +42,10 @@ function PelayananTelunjukSaktiDesa() {
 
   return (
     <Box>
-      <Title order={2} mb="lg" fz={{ base: 22, md: 28 }} fw={700} style={{ lineHeight: 1.4 }}>
-        Layanan Telunjuk Sakti Desa <br /> 
-        <Text span c="dimmed" fz="lg" fw={400}>
+      <Title order={2} mb="lg" fw={700} style={{ lineHeight: 1.3 }} ta="left">
+        Layanan Telunjuk Sakti Desa
+        <Text span c="black" fz={{ base: 'sm', md: 'md' }} fw={400} style={{ lineHeight: 1.5 }}>
+          {' '}
           Terwujudnya sistem administrasi kependudukan terintegrasi berbasis elektronik, cerdas, dan aman
         </Text>
       </Title>
@@ -53,7 +54,7 @@ function PelayananTelunjukSaktiDesa() {
         <Skeleton h={400} radius="lg" />
       ) : data.length === 0 ? (
         <Card shadow="sm" radius="lg" withBorder>
-          <Text c="dimmed" ta="center" py="xl">
+          <Text c="black" ta="center" py="xl" fz={{ base: 'sm', md: 'md' }} lh={1.5}>
             Belum ada layanan tersedia untuk saat ini
           </Text>
         </Card>
@@ -72,9 +73,9 @@ function PelayananTelunjukSaktiDesa() {
                 }}
               >
                 <Stack gap="sm">
-                  <Text fw={700} fz="lg" lh={1.4}>
+                  <Title order={3} fw={700} lh={1.3}>
                     {v.name}
-                  </Text>
+                  </Title>
                   <Flex gap="xs" align="center">
                     <IconExternalLink size={18} stroke={1.5} />
                     <Text
@@ -82,7 +83,7 @@ function PelayananTelunjukSaktiDesa() {
                       href={v.link}
                       target="_blank"
                       rel="noopener noreferrer"
-                      fz="sm"
+                      fz={{ base: 'xs', md: 'sm' }}
                       c="blue"
                       td="underline"
                       style={{ cursor: 'pointer' }}

@@ -2,7 +2,7 @@
 'use client'
 import stateProfileDesa from '@/app/admin/(dashboard)/_state/desa/profile';
 import colors from '@/con/colors';
-import { Box, Center, Image, Paper, Skeleton, Stack, Text } from '@mantine/core';
+import { Box, Center, Image, Paper, Skeleton, Stack, Text, Title } from '@mantine/core';
 import { useEffect } from 'react';
 import { useProxy } from 'valtio/utils';
 
@@ -26,29 +26,32 @@ function SejarahDesa() {
   return (
     <Box>
       <Stack align="center" gap="xl">
+        {/* HEADER ICON + TITLE */}
         <Stack align="center" gap="sm">
           <Center>
             <Image
               src="/darmasaba-icon.png"
               alt="Ikon Desa Darmasaba"
-              w={{ base: 180, md: 260 }}
+              w={{ base: 160, md: 240 }}
               radius="md"
               style={{ filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.15))' }}
               loading="lazy"
             />
           </Center>
+
           <Center>
-            <Text
+            <Title
+              order={1}
               c={colors['blue-button']}
               ta="center"
-              fw={700}
-              fz={{ base: '2rem', md: '2.8rem' }}
               style={{ letterSpacing: '-0.5px' }}
             >
               Sejarah Desa
-            </Text>
+            </Title>
           </Center>
         </Stack>
+
+        {/* CONTENT */}
         <Paper
           p="xl"
           radius="lg"
@@ -61,10 +64,14 @@ function SejarahDesa() {
         >
           <Stack gap="md">
             <Text
-              fz={{ base: 'md', md: 'lg' }}
-              lh={1.8}
+              fz={{ base: 'sm', md: 'md' }}
+              lh={1.75}
               ta="justify"
-              style={{ color: '#2a2a2a', wordBreak: "break-word", whiteSpace: "normal" }}
+              c="dark.7"
+              style={{
+                wordBreak: 'break-word',
+                whiteSpace: 'normal',
+              }}
               dangerouslySetInnerHTML={{ __html: data.deskripsi }}
             />
           </Stack>

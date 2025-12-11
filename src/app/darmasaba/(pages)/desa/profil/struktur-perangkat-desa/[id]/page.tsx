@@ -26,7 +26,6 @@ function DetailPegawaiUser() {
     statePegawai.findUnique.load(params?.id as string);
   }, []);
 
-
   if (!statePegawai.findUnique.data) {
     return (
       <Stack py="lg">
@@ -41,7 +40,7 @@ function DetailPegawaiUser() {
     <Box px={{ base: 'md', md: 100 }} py="xl">
       {/* Back button */}
       <Group mb="lg" px={{ base: 'md', md: 100 }}>
-        <BackButton/>
+        <BackButton />
       </Group>
 
       <Paper
@@ -69,11 +68,17 @@ function DetailPegawaiUser() {
           />
 
           {/* Nama & Jabatan */}
-          <Stack align="center" gap={2}>
-            <Title order={3} fw={700} c={colors['blue-button']}>
+          <Stack align="center" gap={4}>
+            {/* Title utama → H2 karena ini judul profil */}
+            <Title order={2} c={colors['blue-button']} lh={1.2}>
               {data.namaLengkap || '-'} {data.gelarAkademik || ''}
             </Title>
-            <Text fz="sm" c="dimmed">
+
+            <Text
+              fz={{ base: 'sm', md: 'md' }}
+              lh={1.4}
+              c="dimmed"
+            >
               {data.posisi?.nama || 'Posisi tidak tersedia'}
             </Text>
           </Stack>
@@ -82,7 +87,11 @@ function DetailPegawaiUser() {
         <Divider my="lg" />
 
         {/* Informasi Detail */}
-        <Stack gap="md">
+        <Stack gap="lg">
+          <Title order={3} lh={1.3}>
+            Informasi Pegawai
+          </Title>
+
           <InfoRow label="Email" value={data.email} />
           <InfoRow label="Telepon" value={data.telepon} />
           <InfoRow label="Alamat" value={data.alamat} multiline />
@@ -91,10 +100,10 @@ function DetailPegawaiUser() {
             value={
               data.tanggalMasuk
                 ? new Date(data.tanggalMasuk).toLocaleDateString('id-ID', {
-                  day: '2-digit',
-                  month: 'long',
-                  year: 'numeric',
-                })
+                    day: '2-digit',
+                    month: 'long',
+                    year: 'numeric',
+                  })
                 : '-'
             }
           />
@@ -123,11 +132,18 @@ function InfoRow({
 }) {
   return (
     <Box>
-      <Text fz="sm" fw={600} c="dark">
+      <Text
+        fz={{ base: 'sm', md: 'md' }}
+        fw={600}
+        lh={1.3}
+        c="dark"
+      >
         {label}
       </Text>
+
       <Text
-        fz="sm"
+        fz={{ base: 'sm', md: 'md' }}
+        lh={1.5}
         c={valueColor || 'dimmed'}
         style={{
           whiteSpace: multiline ? 'normal' : 'nowrap',

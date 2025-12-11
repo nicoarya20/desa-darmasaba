@@ -1,7 +1,18 @@
 'use client';
 
 import colors from '@/con/colors';
-import { Button, Center, Flex, Group, Image, Paper, Skeleton, Stack, Text } from '@mantine/core';
+import {
+  Button,
+  Center,
+  Flex,
+  Group,
+  Image,
+  Paper,
+  Skeleton,
+  Stack,
+  Text,
+  Title,
+} from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack, IconCalendar, IconInfoCircle, IconPhone } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -53,15 +64,14 @@ export default function DetailPosyanduUser() {
         mx="auto"
       >
         <Stack gap="md">
-          {/* Header */}
-          <Text
+          {/* Header — Dijadikan Title */}
+          <Title
             ta="center"
-            fz={{ base: '1.8rem', md: '2.2rem' }}
-            fw={700}
+            order={1}
             c={colors['blue-button']}
           >
             {data.name || 'Posyandu Desa'}
-          </Text>
+          </Title>
 
           {/* Gambar */}
           {data.image?.link ? (
@@ -78,7 +88,7 @@ export default function DetailPosyanduUser() {
             </Center>
           ) : (
             <Center>
-              <Text fz="sm" c="dimmed">
+              <Text fz={{ base: 'xs', md: 'sm' }} c="dimmed">
                 Tidak ada gambar
               </Text>
             </Center>
@@ -88,7 +98,11 @@ export default function DetailPosyanduUser() {
           <Stack gap="sm" mt="md">
             <Flex align="center" gap="xs">
               <IconPhone size={18} stroke={1.5} />
-              <Text fz="sm" c="dimmed">
+              <Text
+                fz={{ base: 'xs', md: 'sm' }}
+                c="dimmed"
+                lh={{ base: 1.5, md: 1.6 }}
+              >
                 {data.nomor || 'Nomor tidak tersedia'}
               </Text>
             </Flex>
@@ -96,8 +110,9 @@ export default function DetailPosyanduUser() {
             <Flex align="center" gap="xs">
               <IconCalendar size={18} stroke={1.5} />
               <Text
-                fz="sm"
+                fz={{ base: 'xs', md: 'sm' }}
                 c="dimmed"
+                lh={{ base: 1.5, md: 1.6 }}
                 dangerouslySetInnerHTML={{ __html: data.jadwalPelayanan || '-' }}
                 style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
               />
@@ -106,9 +121,9 @@ export default function DetailPosyanduUser() {
             <Flex align="center" gap="xs">
               <IconInfoCircle size={18} stroke={1.5} />
               <Text
-                fz="sm"
+                fz={{ base: 'xs', md: 'sm' }}
                 c="dimmed"
-                lh={1.6}
+                lh={{ base: 1.5, md: 1.6 }}
                 dangerouslySetInnerHTML={{ __html: data.deskripsi || '-' }}
                 style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
               />
