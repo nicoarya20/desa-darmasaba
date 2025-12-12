@@ -53,6 +53,7 @@ function Page() {
       Ton: item.value,
     }));
 
+  const chartWidth = Math.max(600, chartData.length * 150); // contoh: 150px per bar
 
   return (
     <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"22"}>
@@ -78,7 +79,7 @@ function Page() {
           <Box style={{ width: '100%', overflowX: 'auto' }}>
             <Paper p="xl">
               <Text pb={10} fw="bold" fz="h4">Statistik Sektor Unggulan Darmasaba</Text>
-              <Box style={{ width: '100%', minWidth: '600px' }}>
+              <Box style={{ width: '100%', overflowX: 'auto', maxWidth: `${chartWidth}px` }}>
                 <BarChart
                   p={10}
                   h={300}
@@ -90,11 +91,14 @@ function Page() {
                   tickLine="y"
                   tooltipAnimationDuration={200}
                   withTooltip
-                  style={{
-                    fontFamily: 'inherit',
-                  }}
+                  withXAxis
+                  withYAxis
                   xAxisLabel="Sektor"
                   yAxisLabel="Ton"
+                  style={{
+                    fontFamily: 'inherit',
+                    fontSize: '12px', // ukuran font lebih kecil di mobile
+                  }}
                 />
               </Box>
             </Paper>

@@ -2,7 +2,7 @@
 'use client'
 import stateProfileDesa from '@/app/admin/(dashboard)/_state/desa/profile';
 import colors from '@/con/colors';
-import { Box, Image, Paper, Skeleton, Stack, Text } from '@mantine/core';
+import { Box, Image, Paper, Skeleton, Stack, Text, Title } from '@mantine/core';
 import { useEffect } from 'react';
 import { useProxy } from 'valtio/utils';
 
@@ -34,60 +34,57 @@ function VisiMisiDesa() {
           loading="lazy"
         />
 
+        {/* VISI */}
         <Paper
           p="xl"
           radius="lg"
           shadow="md"
           withBorder
           w="100%"
-          style={{
-            background: 'linear-gradient(145deg, #ffffff, #f5f7fa)',
-          }}
+          style={{ background: 'linear-gradient(145deg, #ffffff, #f5f7fa)' }}
         >
-          <Text
+          <Title
+            order={1}
             c={colors['blue-button']}
             ta="center"
-            fw={700}
-            fz={{ base: '2rem', md: '2.5rem' }}
             mb="md"
           >
             Visi Desa
-          </Text>
+          </Title>
+
           <Text
-            fz={{ base: '1.125rem', md: '1.375rem' }}
+            fz={{ base: 'sm', md: 'md' }}   // body text responsive
+            lh={1.7}
             ta="center"
-            fw={500}
-            lh={1.6}
             dangerouslySetInnerHTML={{ __html: data.visi }}
-            style={{wordBreak: "break-word", whiteSpace: "normal"}}
+            style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
           />
         </Paper>
 
+        {/* MISI */}
         <Paper
           p="xl"
           radius="lg"
           shadow="md"
           withBorder
           w="100%"
-          style={{
-            background: 'linear-gradient(145deg, #ffffff, #f5f7fa)',
-          }}
+          style={{ background: 'linear-gradient(145deg, #ffffff, #f5f7fa)' }}
         >
-          <Text
+          <Title
+            order={1}
             c={colors['blue-button']}
             ta="center"
-            fw={700}
-            fz={{ base: '2rem', md: '2.5rem' }}
             mb="md"
           >
             Misi Desa
-          </Text>
+          </Title>
+
           <Text
-            fz={{ base: '1.125rem', md: '1.375rem' }}
-            fw={500}
-            lh={1.6}
+            fz={{ base: 'sm', md: 'md' }}   // body text responsive
+            lh={1.7}
+            ta="left"
             dangerouslySetInnerHTML={{ __html: data.misi }}
-            style={{wordBreak: "break-word", whiteSpace: "normal"}}
+            style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
           />
         </Paper>
       </Stack>

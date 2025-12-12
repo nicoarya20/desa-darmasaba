@@ -11,7 +11,8 @@ import {
   Paper,
   Skeleton,
   Stack,
-  Text
+  Text,
+  Title
 } from '@mantine/core';
 import { useDisclosure, useShallowEffect } from '@mantine/hooks';
 import { IconMail, IconPhone, IconUser } from '@tabler/icons-react';
@@ -51,55 +52,97 @@ function Page() {
               style={{ borderTopLeftRadius: 16, borderTopRightRadius: 16 }}
               bg={colors['blue-button']}
             >
-              <Text p="md" fz={{ base: "h3", md: "h2" }} c={colors['white-1']} fw="bold">
+              <Title
+                p="md"
+                order={1}
+                c={colors['white-1']}
+                fw="bold"
+                ta={{ base: 'center', md: 'left' }}
+              >
                 Detail & Pendaftaran Kegiatan
-              </Text>
+              </Title>
             </Box>
             <Box p="lg">
               <Stack gap="xl">
                 <Stack gap="sm">
-                  <Text fz="lg" fw="bold">Informasi Kegiatan</Text>
+                  <Title order={2} fw="bold">Informasi Kegiatan</Title>
                   <Divider />
-                  <Text fz="md" fw="bold">Nama Kegiatan: <Text span>{state.findUnique.data.informasijadwalkegiatan.name}</Text></Text>
-                  <Text fz="md" fw="bold">Tanggal: <Text span>{state.findUnique.data.informasijadwalkegiatan.tanggal}</Text></Text>
-                  <Text fz="md" fw="bold">Waktu: <Text span>{state.findUnique.data.informasijadwalkegiatan.waktu}</Text></Text>
-                  <Text fz="md" fw="bold">Lokasi: <Text span>{state.findUnique.data.informasijadwalkegiatan.lokasi}</Text></Text>
+                  <Text fw="bold">
+                    Nama Kegiatan:&nbsp;
+                    <Text span fw="normal">
+                      {state.findUnique.data.informasijadwalkegiatan.name}
+                    </Text>
+                  </Text>
+                  <Text fw="bold">
+                    Tanggal:&nbsp;
+                    <Text span fw="normal">
+                      {state.findUnique.data.informasijadwalkegiatan.tanggal}
+                    </Text>
+                  </Text>
+                  <Text fw="bold">
+                    Waktu:&nbsp;
+                    <Text span fw="normal">
+                      {state.findUnique.data.informasijadwalkegiatan.waktu}
+                    </Text>
+                  </Text>
+                  <Text fw="bold">
+                    Lokasi:&nbsp;
+                    <Text span fw="normal">
+                      {state.findUnique.data.informasijadwalkegiatan.lokasi}
+                    </Text>
+                  </Text>
                 </Stack>
 
                 <Stack gap="sm">
-                  <Text fz="lg" fw="bold">Deskripsi Kegiatan</Text>
+                  <Title order={2} fw="bold">Deskripsi Kegiatan</Title>
                   <Divider />
                   <Box pl={20}>
-                    <Text ta="justify" fz="md" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: state.findUnique.data.deskripsijadwalkegiatan.deskripsi }} />
+                    <Text
+                      ta="justify"
+                      style={{ wordBreak: "break-word", whiteSpace: "normal" }}
+                      dangerouslySetInnerHTML={{ __html: state.findUnique.data.deskripsijadwalkegiatan.deskripsi }}
+                    />
                   </Box>
                 </Stack>
 
                 <Stack gap="sm">
-                  <Text fz="lg" fw="bold">Layanan yang Tersedia</Text>
+                  <Title order={2} fw="bold">Layanan yang Tersedia</Title>
                   <Divider />
                   <Box pl={20}>
-                    <Text ta="justify" fz="md" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: state.findUnique.data.layananjadwalkegiatan.content }} />
+                    <Text
+                      ta="justify"
+                      style={{ wordBreak: "break-word", whiteSpace: "normal" }}
+                      dangerouslySetInnerHTML={{ __html: state.findUnique.data.layananjadwalkegiatan.content }}
+                    />
                   </Box>
                 </Stack>
 
                 <Stack gap="sm">
-                  <Text fz="lg" fw="bold">Syarat & Ketentuan</Text>
+                  <Title order={2} fw="bold">Syarat & Ketentuan</Title>
                   <Divider />
                   <Box pl={20}>
-                    <Text ta="justify" fz="md" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: state.findUnique.data.syaratketentuanjadwalkegiatan.content }} />
+                    <Text
+                      ta="justify"
+                      style={{ wordBreak: "break-word", whiteSpace: "normal" }}
+                      dangerouslySetInnerHTML={{ __html: state.findUnique.data.syaratketentuanjadwalkegiatan.content }}
+                    />
                   </Box>
                 </Stack>
 
                 <Stack gap="sm">
-                  <Text fz="lg" fw="bold">Dokumen yang Perlu Dibawa</Text>
+                  <Title order={2} fw="bold">Dokumen yang Perlu Dibawa</Title>
                   <Divider />
                   <Box pl={20}>
-                    <Text ta="justify" fz="md" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: state.findUnique.data.dokumenjadwalkegiatan.content }} />
+                    <Text
+                      ta="justify"
+                      style={{ wordBreak: "break-word", whiteSpace: "normal" }}
+                      dangerouslySetInnerHTML={{ __html: state.findUnique.data.dokumenjadwalkegiatan.content }}
+                    />
                   </Box>
                 </Stack>
 
                 <Stack gap="sm">
-                  <Text fz="lg" fw="bold">Pendaftaran Kegiatan</Text>
+                  <Title order={2} fw="bold">Pendaftaran Kegiatan</Title>
                   <Divider />
                   <Group>
                     <Button onClick={open}>Buat Pendaftaran</Button>
@@ -112,18 +155,21 @@ function Page() {
 
                 <Paper p="lg" radius="md" bg={colors['blue-button-trans']} shadow="sm">
                   <Stack gap="xs">
-                    <Text fz="lg" c={colors['white-1']} fw="bold">Informasi Kontak</Text>
-                    <Group gap="xs">
+                    <Title order={3} c={colors['white-1']} fw="bold">Informasi Kontak</Title>
+                    <Group gap="xs" justify="flex-start">
                       <IconUser size={18} color="white" />
-                      <Text fz="md" c={colors['white-1']}>Penanggung Jawab: <Text span fw="bold">Bidan Komang Ayu</Text></Text>
+                      <Text c={colors['white-1']}>
+                        Penanggung Jawab:&nbsp;
+                        <Text span fw="bold">Bidan Komang Ayu</Text>
+                      </Text>
                     </Group>
                     <Group gap="xs">
                       <IconPhone size={18} color="white" />
-                      <Text fz="md" c={colors['white-1']}>081234567890</Text>
+                      <Text c={colors['white-1']}>081234567890</Text>
                     </Group>
                     <Group gap="xs">
                       <IconMail size={18} color="white" />
-                      <Text fz="md" c={colors['white-1']}>puskesmasabiansemal3@gmail.com</Text>
+                      <Text c={colors['white-1']}>puskesmasabiansemal3@gmail.com</Text>
                     </Group>
                   </Stack>
                 </Paper>

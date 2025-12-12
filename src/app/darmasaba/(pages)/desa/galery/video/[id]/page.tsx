@@ -12,16 +12,17 @@ import {
   Stack,
   Text,
   ThemeIcon,
+  Title,
 } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack, IconInfoCircle, IconVideo } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
-import stateGallery from '@/app/admin/(dashboard)/_state/desa/gallery'; // pastikan state bisa dipakai di publik
+import stateGallery from '@/app/admin/(dashboard)/_state/desa/gallery';
 import BackButton from '../../../layanan/_com/BackButto';
 
-// Fungsi helper: aman dan tanpa spasi
+
 function convertToEmbedUrl(youtubeUrl: string): string {
   try {
     const url = new URL(youtubeUrl);
@@ -72,7 +73,9 @@ export default function DetailVideoUser() {
           color="red"
           radius="md"
         >
-          Video yang Anda cari tidak tersedia.
+          <Text fz={{ base: 'sm', md: 'md' }} c="red.9">
+            Video yang Anda cari tidak tersedia.
+          </Text>
         </Alert>
         <Button
           leftSection={<IconArrowBack size={16} />}
@@ -91,20 +94,20 @@ export default function DetailVideoUser() {
   return (
     <Box py="xl" px={{ base: 'md', md: 100 }}>
       {/* Tombol Kembali */}
-      <Box >
+      <Box>
         <BackButton />
       </Box>
 
-      {/* Header */}
-      <Text
+      {/* Header - Dijadikan Title */}
+      <Title
+        order={1}
         ta="center"
-        fz={{ base: 'xl', md: '2xl' }}
-        fw={700}
         c={colors['blue-button']}
         mb="lg"
+        lh={{ base: 1.2, md: 1.25 }}
       >
         {data.name || 'Video Galeri Desa'}
-      </Text>
+      </Title>
 
       {/* Konten Utama */}
       <Card
@@ -118,7 +121,7 @@ export default function DetailVideoUser() {
           {embedUrl ? (
             <Box
               pos="relative"
-              style={{ paddingBottom: '56.25%', height: 0, overflow: 'hidden' }} // 16:9 aspect ratio
+              style={{ paddingBottom: '56.25%', height: 0, overflow: 'hidden' }}
             >
               <iframe
                 src={embedUrl}
@@ -144,7 +147,9 @@ export default function DetailVideoUser() {
               title="Gagal memuat video"
               radius="md"
             >
-              Mohon maaf, video tidak dapat diputar.
+              <Text fz={{ base: 'xs', md: 'sm' }} c="orange.9">
+                Mohon maaf, video tidak dapat diputar.
+              </Text>
             </Alert>
           ) : (
             <Alert
@@ -153,7 +158,9 @@ export default function DetailVideoUser() {
               title="Tidak ada video"
               radius="md"
             >
-              Konten video belum tersedia.
+              <Text fz={{ base: 'xs', md: 'sm' }} c="dimmed">
+                Konten video belum tersedia.
+              </Text>
             </Alert>
           )}
 
@@ -163,7 +170,11 @@ export default function DetailVideoUser() {
               <ThemeIcon variant="light" size="sm" radius="xl">
                 <IconInfoCircle size={14} />
               </ThemeIcon>
-              <Text fz="sm" c="dimmed">
+              <Text
+                fz={{ base: 'xs', md: 'sm' }}
+                c="dimmed"
+                lh={{ base: 1.4, md: 1.5 }}
+              >
                 Diunggah pada{' '}
                 {new Date(data.createdAt).toLocaleDateString('id-ID', {
                   weekday: 'long',
@@ -179,8 +190,9 @@ export default function DetailVideoUser() {
           {data.deskripsi && (
             <Paper p="md" bg="gray.0" radius="md">
               <Text
-                fz="md"
+                fz={{ base: 'sm', md: 'md' }}
                 c="dark"
+                ta={"justify"}
                 dangerouslySetInnerHTML={{ __html: data.deskripsi }}
                 style={{
                   wordBreak: 'break-word',

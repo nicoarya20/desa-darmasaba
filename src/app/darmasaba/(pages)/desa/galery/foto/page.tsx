@@ -17,17 +17,11 @@ import {
 } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconPhoto } from '@tabler/icons-react';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 
 // Komponen kartu foto
 function FotoCard({ item }: { item: any }) {
-  const router = useRouter();
-
-  const handleClick = () => {
-    router.push(`/darmasaba/galeri/foto/${item.id}`);
-  };
 
   return (
     <Grid.Col span={{ base: 12, xs: 6, md: 4 }}>
@@ -35,19 +29,19 @@ function FotoCard({ item }: { item: any }) {
         shadow="sm"
         radius="md"
         p={0}
-        onClick={handleClick}
-        style={{ cursor: 'pointer', transition: 'transform 0.2s' }}
+        style={{ transition: 'transform 0.2s' }}
         onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.02)')}
         onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+        
       >
         {item.imageGalleryFoto?.link ? (
           <Box
             pos="relative"
             style={{
-              paddingBottom: '100%', // ✅ Ubah ke 1:1 (square) — atau sesuaikan
+              paddingBottom: '100%',
               overflow: 'hidden',
               borderRadius: '4px 4px 0 0',
-              backgroundColor: '#f9f9f9', // ✅ background netral
+              backgroundColor: '#f9f9f9',
             }}
           >
             <Image
@@ -61,8 +55,8 @@ function FotoCard({ item }: { item: any }) {
                 left: 0,
                 width: '100%',
                 height: '100%',
-                objectFit: 'contain', // ✅ Tampilkan utuh, jangan crop
-                objectPosition: 'center', // rata tengah
+                objectFit: 'contain',
+                objectPosition: 'center',
               }}
               loading="lazy"
             />
@@ -74,13 +68,23 @@ function FotoCard({ item }: { item: any }) {
         )}
 
         <Stack p="md" gap={4}>
-          <Text fw={600} lineClamp={1}>
+          <Text fw={600} lineClamp={1} fz={{ base: 'sm', md: 'md' }} lh={{ base: '1.4', md: '1.5' }}>
             {item.name || 'Tanpa Judul'}
           </Text>
           {item.deskripsi && (
-            <Text fz="sm" c="dimmed" lineClamp={2} dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
+            <Text
+              fz={{ base: 'xs', md: 'sm' }}
+              c="dimmed"
+              lineClamp={2}
+              dangerouslySetInnerHTML={{ __html: item.deskripsi }}
+              lh={{ base: '1.4', md: '1.5' }}
+            />
           )}
-          <Text fz="xs" c="dimmed">
+          <Text
+            fz={{ base: 11, md: 'xs' }}
+            c="dimmed"
+            lh={{ base: '1.3', md: '1.4' }}
+          >
             {new Date(item.createdAt).toLocaleDateString('id-ID', {
               day: 'numeric',
               month: 'short',
@@ -99,7 +103,7 @@ export default function GaleriFotoUser() {
   return (
     <Box py="xl" px={{ base: 'md', md: 'lg' }}>
       {/* Header */}
-      <Title order={2} c={colors['blue-button']} mb="lg">
+      <Title order={2} c={colors['blue-button']} mb="lg" ta="center">
         Galeri Foto Desa Darmasaba
       </Title>
 
@@ -115,7 +119,7 @@ function FotoList({ search }: { search: string }) {
   const { data, page, totalPages, loading, load } = FotoState.findMany;
 
   useShallowEffect(() => {
-    load(page, 3, search); // ✅ 9 item per halaman
+    load(page, 3, search);
   }, [page, search]);
 
   if (loading) {
@@ -135,7 +139,9 @@ function FotoList({ search }: { search: string }) {
       <Center py="xl">
         <Stack align="center" c="dimmed">
           <IconPhoto size={48} />
-          <Text>Tidak ada foto ditemukan</Text>
+          <Text fz={{ base: 'sm', md: 'md' }} lh={{ base: '1.4', md: '1.5' }}>
+            Tidak ada foto ditemukan
+          </Text>
         </Stack>
       </Center>
     );
@@ -150,19 +156,18 @@ function FotoList({ search }: { search: string }) {
       </Grid>
 
       {/* Pagination */}
-      
-        <Center>
-          <Pagination
-            value={page}
-            onChange={(newPage) => {
-              load(newPage, 3, search);
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
-            total={totalPages}
-            color="blue"
-            radius="md"
-          />
-        </Center>
+      <Center>
+        <Pagination
+          value={page}
+          onChange={(newPage) => {
+            load(newPage, 3, search);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          total={totalPages}
+          color="blue"
+          radius="md"
+        />
+      </Center>
     </Stack>
   );
 }

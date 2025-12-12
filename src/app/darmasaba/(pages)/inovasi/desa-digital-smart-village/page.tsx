@@ -58,7 +58,7 @@ function Page() {
             />
           </GridCol>
         </Grid>
-        <Text fz={'md'}>Menjadikan Desa Darmasaba pusat inovasi digital untuk pemberdayaan masyarakat</Text>
+        <Text pt={20} fz={'md'}>Menjadikan Desa Darmasaba pusat inovasi digital untuk pemberdayaan masyarakat</Text>
         <Text fz={'md'}>dan peningkatan ekonomi berbasis teknologi.</Text>
       </Box>
       <Box px={{ base: "md", md: 100 }}>

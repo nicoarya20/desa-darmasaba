@@ -16,6 +16,7 @@ import {
   Stack,
   Text,
   TextInput,
+  Title,
   Transition
 } from "@mantine/core";
 import { useDebouncedValue, useShallowEffect } from "@mantine/hooks";
@@ -57,7 +58,7 @@ export default function Page() {
   const state = useProxy(programKesehatan);
   const router = useRouter();
   const [search, setSearch] = useState("");
-  const [debouncedSearch] = useDebouncedValue(search, 1000); // 500ms delay
+  const [debouncedSearch] = useDebouncedValue(search, 1000);
   const { data, page, totalPages, loading, load } = state.findMany;
 
   useShallowEffect(() => {
@@ -80,14 +81,19 @@ export default function Page() {
 
       <Grid px={{ base: "md", md: 100 }} align="center" gutter="lg">
         <GridCol span={{ base: 12, md: 8 }}>
-          <Text
-            fz={{ base: "2rem", md: "2.8rem" }}
+          <Title
+            order={1}
             c={colors["blue-button"]}
             fw="bold"
+            fz={{ base: '28px', md: '32px' }}
           >
             Program Kesehatan Desa
-          </Text>
-          <Text fz="lg" mt="xs">
+          </Title>
+          <Text
+            fz={{ base: '14px', md: '16px' }}
+            lh={{ base: '1.5', md: '1.6' }}
+            mt="xs"
+          >
             Temukan berbagai program kesehatan untuk mendukung kualitas hidup
             masyarakat Darmasaba.
           </Text>
@@ -129,11 +135,9 @@ export default function Page() {
                       <Box
                         style={{
                           width: '100%',
-                          height: 180, // 🔥 tinggi fix biar semua seragam
+                          aspectRatio: '16/9',   // thumbnail landscape aman untuk portrait/landscape
                           borderRadius: 12,
                           overflow: 'hidden',
-                          position: 'relative',
-                          backgroundColor: '#f0f2f5', // fallback kalau gambar loading
                         }}
                       >
                         <Image
@@ -142,32 +146,28 @@ export default function Page() {
                           fit="cover"
                           width="100%"
                           height="100%"
+                          style={{ objectFit: 'cover', objectPosition: 'center' }}
                           loading="lazy"
-                          style={{
-                            objectFit: 'cover',
-                            objectPosition: 'center',
-                            transition: 'transform 0.4s ease',
-                          }}
                           onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
                           onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
                         />
                       </Box>
-
-
                     </Center>
 
                     <Box px="lg" pb="lg">
-                      <Text
-                        fw="bold"
-                        fz="xl"
+                      <Title
+                        order={3}
                         c={colors["blue-button"]}
+                        fw="bold"
+                        fz={{ base: '18px', md: '20px' }}
                         mb="xs"
                       >
                         {v.name}
-                      </Text>
+                      </Title>
                       <Text
-                        fz="sm"
-                        ta={"justify"}
+                        fz={{ base: '13px', md: '14px' }}
+                        lh="1.6"
+                        ta="justify"
                         lineClamp={3}
                         dangerouslySetInnerHTML={{ __html: v.deskripsi }}
                         style={{ wordBreak: "break-word", whiteSpace: "normal" }}
@@ -175,7 +175,10 @@ export default function Page() {
                       <Group justify="space-between" mt="md">
                         <Group gap="xs">
                           <IconCalendar size={18} />
-                          <Text size="sm">
+                          <Text
+                            fz={{ base: '12px', md: '14px' }}
+                            lh="1.5"
+                          >
                             {v.createdAt
                               ? new Date(v.createdAt).toLocaleDateString(
                                 "id-ID",
@@ -190,25 +193,30 @@ export default function Page() {
                         </Group>
                         <Group gap="xs">
                           <IconUser size={18} />
-                          <Text size="sm">Admin Desa</Text>
+                          <Text
+                            fz={{ base: '12px', md: '14px' }}
+                            lh="1.5"
+                          >
+                            Admin Desa
+                          </Text>
                         </Group>
                       </Group>
-                        <Button
-                          mt="lg"
-                          fullWidth
-                          radius="lg"
-                          size="md"
-                          fw="bold"
-                          variant="gradient"
-                          gradient={{ from: colors["blue-button"], to: "#4dabf7" }}
-                          onClick={() =>
-                            router.push(
-                              `/darmasaba/kesehatan/program-kesehatan/${v.id}`
-                            )
-                          }
-                        >
-                          Lihat Detail
-                        </Button>
+                      <Button
+                        mt="lg"
+                        fullWidth
+                        radius="lg"
+                        size="md"
+                        fw="bold"
+                        variant="gradient"
+                        gradient={{ from: colors["blue-button"], to: "#4dabf7" }}
+                        onClick={() =>
+                          router.push(
+                            `/darmasaba/kesehatan/program-kesehatan/${v.id}`
+                          )
+                        }
+                      >
+                        Lihat Detail
+                      </Button>
                     </Box>
                   </Stack>
                 </Paper>
@@ -239,14 +247,19 @@ export default function Page() {
 
       <Box px={{ base: "md", md: 100 }} py="xl">
         <Stack gap="sm" mb="lg">
-          <Text
-            fz={{ base: "2rem", md: "2.5rem" }}
+          <Title
+            order={2}
             c={colors["blue-button"]}
             fw="bold"
+            fz={{ base: '24px', md: '28px' }}
           >
             Manfaat Program Kesehatan
-          </Text>
-          <Text fz="lg" maw={700}>
+          </Title>
+          <Text
+            fz={{ base: '14px', md: '16px' }}
+            lh={{ base: '1.5', md: '1.6' }}
+            maw={700}
+          >
             Program kesehatan Desa Darmasaba berperan penting dalam meningkatkan
             kesejahteraan dan kualitas hidup warganya.
           </Text>
@@ -273,10 +286,20 @@ export default function Page() {
                 >
                   <Center>{v.icon}</Center>
                 </Paper>
-                <Text ta="center" fw="bold" fz="xl" c={colors["blue-button"]}>
+                <Title
+                  order={3}
+                  ta="center"
+                  fw="bold"
+                  c={colors["blue-button"]}
+                  fz={{ base: '18px', md: '20px' }}
+                >
                   {v.title}
-                </Text>
-                <Text ta="center" fz="sm">
+                </Title>
+                <Text
+                  ta="center"
+                  fz={{ base: '13px', md: '14px' }}
+                  lh="1.5"
+                >
                   {v.desc}
                 </Text>
               </Stack>

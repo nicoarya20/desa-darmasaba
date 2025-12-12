@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-'use client'
+'use client';
 import stateDashboardBerita from '@/app/admin/(dashboard)/_state/desa/berita';
 import {
   Badge,
@@ -51,10 +51,14 @@ export default function Content({ kategori }: { kategori: string }) {
       <Container size="xl" px={{ base: 'md', md: 'xl' }}>
         {/* === Berita Utama === */}
         {featuredState.loading ? (
-          <Center><Skeleton h={400} /></Center>
+          <Center>
+            <Skeleton h={400} />
+          </Center>
         ) : featured ? (
           <Box mb={50}>
-            <Text fz="h2" fw={700} mb="md">Berita Utama</Text>
+            <Title order={2} mb="md">
+              Berita Utama
+            </Title>
             <Paper shadow="md" radius="md" withBorder>
               <Grid gutter={0}>
                 <GridCol span={{ base: 12, md: 6 }}>
@@ -74,13 +78,29 @@ export default function Content({ kategori }: { kategori: string }) {
                       <Badge color="blue" variant="light" mb="md">
                         {featured.kategoriBerita?.name || kategori}
                       </Badge>
-                      <Title order={2} mb="md">{featured.judul}</Title>
-                      <Text c="dimmed" lineClamp={3} mb="md" dangerouslySetInnerHTML={{ __html: featured.deskripsi }} />
+                      <Title order={3} mb="md">
+                        {featured.judul}
+                      </Title>
+                      <Text
+                        c="dimmed"
+                        lineClamp={3}
+                        mb="md"
+                        style={{ lineHeight: 1.6 }}
+                        dangerouslySetInnerHTML={{ __html: featured.deskripsi }}
+                      />
                     </div>
                     <Group justify="apart" mt="auto">
                       <Group gap="xs">
                         <IconCalendar size={18} />
-                        <Text size="sm">
+                        <Text
+                          fz={{ base: 'xs', md: 'sm' }}
+                          c="dimmed"
+                          lh={1.5}
+                          style={{
+                            fontSize: '0.875rem',
+                            lineHeight: '1.5rem',
+                          }}
+                        >
                           {new Date(featured.createdAt).toLocaleDateString('id-ID', {
                             day: 'numeric',
                             month: 'long',
@@ -91,7 +111,9 @@ export default function Content({ kategori }: { kategori: string }) {
                       <Button
                         variant="light"
                         rightSection={<IconArrowRight size={16} />}
-                        onClick={() => router.push(`/darmasaba/desa/berita/${kategori}/${featured.id}`)}
+                        onClick={() =>
+                          router.push(`/darmasaba/desa/berita/${kategori}/${featured.id}`)
+                        }
                       >
                         Baca Selengkapnya
                       </Button>
@@ -105,19 +127,29 @@ export default function Content({ kategori }: { kategori: string }) {
 
         {/* === Daftar Berita === */}
         <Box mt={50}>
-          <Title order={2} mb="md">Daftar Berita</Title>
+          <Title order={2} mb="md">
+            Daftar Berita
+          </Title>
           <Divider mb="xl" />
 
           {state.findMany.loading ? (
             <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="xl">
-              {Array(3).fill(0).map((_, i) => (
-                <Skeleton key={i} h={300} radius="md" />
-              ))}
+              {Array(3)
+                .fill(0)
+                .map((_, i) => (
+                  <Skeleton key={i} h={300} radius="md" />
+                ))}
             </SimpleGrid>
           ) : paginatedNews.length === 0 ? (
-            <Text c="dimmed" ta="center">Belum ada berita di kategori &quot;{kategori}&quot;.</Text>
+            <Text c="dimmed" ta="center" fz={{ base: 'sm', md: 'md' }} lh={1.5}>
+              Belum ada berita di kategori &quot;{kategori}&quot;.
+            </Text>
           ) : (
-            <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="xl" verticalSpacing="xl">
+            <SimpleGrid
+              cols={{ base: 1, sm: 2, lg: 3 }}
+              spacing="xl"
+              verticalSpacing="xl"
+            >
               {paginatedNews.map((item) => (
                 <Card
                   key={item.id}
@@ -125,19 +157,51 @@ export default function Content({ kategori }: { kategori: string }) {
                   p="lg"
                   radius="md"
                   withBorder
-                  onClick={() => router.push(`/darmasaba/desa/berita/${kategori}/${item.id}`)}
+                  onClick={() =>
+                    router.push(`/darmasaba/desa/berita/${kategori}/${item.id}`)
+                  }
                   style={{ cursor: 'pointer' }}
                 >
                   <Card.Section>
-                    <Image src={item.image?.link} height={200} alt={item.judul} fit="cover" loading="lazy"/>
+                    <Image
+                      src={item.image?.link}
+                      height={200}
+                      alt={item.judul}
+                      fit="cover"
+                      loading="lazy"
+                    />
                   </Card.Section>
                   <Badge color="blue" variant="light" mt="md">
                     {item.kategoriBerita?.name || kategori}
                   </Badge>
-                  <Text fw={600} size="lg" mt="sm" lineClamp={2}>{item.judul}</Text>
-                  <Text size="sm" c="dimmed" lineClamp={3} style={{wordBreak: "break-word", whiteSpace: "normal"}} mt="xs" dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
+                  <Title
+                    order={4}
+                    mt="sm"
+                    fz={{ base: 'sm', md: 'md' }}
+                    style={{ lineHeight: 1.4 }}
+                    lineClamp={2}
+                  >
+                    {item.judul}
+                  </Title>
+                  <Text
+                    fz={{ base: 'xs', md: 'sm' }}
+                    c="dimmed"
+                    lineClamp={3}
+                    style={{
+                      wordBreak: 'break-word',
+                      whiteSpace: 'normal',
+                      lineHeight: 1.5,
+                    }}
+                    mt="xs"
+                    dangerouslySetInnerHTML={{ __html: item.deskripsi }}
+                  />
                   <Group justify="apart" mt="md" gap="xs">
-                    <Text size="xs" c="dimmed">
+                    <Text
+                      fz={{ base: 'xs', md: 'xs' }}
+                      c="dimmed"
+                      lh={1.4}
+                      style={{ fontSize: '0.75rem', lineHeight: '1.125rem' }}
+                    >
                       {new Date(item.createdAt).toLocaleDateString('id-ID', {
                         day: 'numeric',
                         month: 'short',

@@ -59,12 +59,16 @@ function Page() {
                 left={20}
                 gap={6}
               >
-                <Text fw="bold" fz={{ base: 'lg', md: 'h2' }} c={colors['white-1']}>
+                <Title
+                  order={1}
+                  c={colors['white-1']}
+                  fz={{ base: 'lg', md: 'xl' }}
+                >
                   {data.name}
-                </Text>
+                </Title>
                 <Group gap={6}>
                   <IconMapPin size={20} color="white" />
-                  <Text fz={{ base: 'sm', md: 'md' }} c={colors['white-1']}>
+                  <Text fz={{ base: 'xs', md: 'sm' }} c={colors['white-1']}>
                     {data.alamat}
                   </Text>
                 </Group>
@@ -75,37 +79,45 @@ function Page() {
               <GridCol span={{ base: 12, md: 6 }}>
                 <Stack gap="lg">
                   <Box>
-                    <Title order={3} mb={10}>Informasi Kontak</Title>
+                    <Title order={2} mb="md">Informasi Kontak</Title>
                     <Stack gap={8}>
                       <Group gap={8}>
                         <IconPhone size={18} />
-                        <Text fz="md">{data.kontak.kontakPuskesmas || '-'}</Text>
+                        <Text fz={{ base: 'sm', md: 'md' }}>
+                          {data.kontak.kontakPuskesmas || '-'}
+                        </Text>
                       </Group>
                       <Group gap={8}>
                         <IconMail size={18} />
-                        <Text fz="md">{data.kontak.email || '-'}</Text>
+                        <Text fz={{ base: 'sm', md: 'md' }}>
+                          {data.kontak.email || '-'}
+                        </Text>
                       </Group>
                     </Stack>
                   </Box>
 
                   <Divider />
 
-                  <Stack gap={"xs"}>
-                    <Title order={3} mb={10}>Jam Operasional</Title>
-                    <Text fw="bold" fz="md">Senin - Jumat</Text>
+                  <Stack gap="xs">
+                    <Title order={2} mb="md">Jam Operasional</Title>
+                    <Text fw="bold" fz={{ base: 'sm', md: 'md' }}>Senin - Jumat</Text>
                     <Group gap={8}>
                       <IconClock size={18} />
-                      <Text fw="bold" fz="md">{data.jam.workDays} - {data.jam.weekDays}</Text>
+                      <Text fw="bold" fz={{ base: 'sm', md: 'md' }}>
+                        {data.jam.workDays} – {data.jam.weekDays}
+                      </Text>
                       <Tooltip label="Hari aktif pelayanan puskesmas" position="top" withArrow>
                         <Badge size="sm" variant="light" color="blue">Aktif</Badge>
                       </Tooltip>
                     </Group>
-                    <Text fw="bold" fz="md">Sabtu - Minggu / Hari Libur</Text>
+                    <Text fw="bold" fz={{ base: 'sm', md: 'md' }}>Sabtu – Minggu / Hari Libur</Text>
                     <Group gap={8}>
                       <IconClock size={18} />
-                      <Text fw="bold" fz="md">{data.jam.holiday}</Text>
+                      <Text fw="bold" fz={{ base: 'sm', md: 'md' }}>
+                        {data.jam.holiday}
+                      </Text>
                       <Tooltip label="Hari aktif pelayanan puskesmas" position="top" withArrow>
-                      <Badge size="sm" variant="light" color="blue">Aktif</Badge>
+                        <Badge size="sm" variant="light" color="blue">Aktif</Badge>
                       </Tooltip>
                     </Group>
                   </Stack>
@@ -114,20 +126,24 @@ function Page() {
 
               <GridCol span={{ base: 12, md: 6 }}>
                 <Paper p="xl" radius="lg" bg="linear-gradient(135deg, #EAF0FB, #BFD4F5)" shadow="sm">
-                  <Title order={3} mb="lg" ta="center" c="dark">Layanan Unggulan</Title>
+                  <Title order={2} mb="lg" ta="center" c="dark">Layanan Unggulan</Title>
                   <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="lg">
                     <Paper p="lg" radius="lg" withBorder bg={colors['white-trans-1']} shadow="xs">
                       <Stack align="center" gap={8}>
                         <IconBuildingHospital size={36} color={colors['blue-button']} />
-                        <Text fw="bold" fz="lg">Poliklinik Umum</Text>
-                        <Text fz={{ base: 36, md: 48 }} fw="bold" c={colors['blue-button']}>26</Text>
+                        <Text fw="bold" fz={{ base: 'sm', md: 'md' }}>Poliklinik Umum</Text>
+                        <Text fz={{ base: 'h1', md: 'h1' }} fw="bold" c={colors['blue-button']} lh={1}>
+                          26
+                        </Text>
                       </Stack>
                     </Paper>
                     <Paper p="lg" radius="lg" withBorder bg={colors['white-trans-1']} shadow="xs">
                       <Stack align="center" gap={8}>
                         <IconBuildingHospital size={36} color={colors['blue-button']} />
-                        <Text fw="bold" fz="lg">Poli Gigi</Text>
-                        <Text fz={{ base: 36, md: 48 }} fw="bold" c={colors['blue-button']}>26</Text>
+                        <Text fw="bold" fz={{ base: 'sm', md: 'md' }}>Poli Gigi</Text>
+                        <Text fz={{ base: 'h1', md: 'h1' }} fw="bold" c={colors['blue-button']} lh={1}>
+                          26
+                        </Text>
                       </Stack>
                     </Paper>
                   </SimpleGrid>

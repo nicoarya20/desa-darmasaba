@@ -96,7 +96,7 @@ function Potensi() {
         </Stack>
       ) : (
         /* CARD LIST */
-        <SimpleGrid cols={{ base: 1, sm: 2 }}>
+        <SimpleGrid cols={{ base: 1, sm: 2 }} px={{base: 'md', md: 80}}>
           {_.take(data, 4).map((v, k) => (
             <motion.div
               key={k}

@@ -58,7 +58,7 @@ function Page() {
             />
           </GridCol>
         </Grid>
-        <Text px={{ base: 'md', md: 100 }} ta={"justify"} fz="md" mt={4} >
+        <Text px={{ base: 'md', md: 100 }} pt={20} ta={"justify"} fz="md" mt={4} >
           Pecalang dan Patwal (Patroli Pengawal) bertugas memastikan desa tetap aman, tertib, dan kondusif bagi seluruh warga.
         </Text>
       </Box>

@@ -1,7 +1,7 @@
 'use client'
 import posyandustate from "@/app/admin/(dashboard)/_state/kesehatan/posyandu/posyandu";
 import colors from "@/con/colors";
-import { Badge, Box, Button, Center, Flex, Group, Image, List, ListItem, Pagination, Paper, SimpleGrid, Skeleton, Stack, Text, TextInput } from "@mantine/core";
+import { Badge, Box, Button, Center, Flex, Group, Image, List, ListItem, Pagination, Paper, SimpleGrid, Skeleton, Stack, Text, TextInput, Title } from "@mantine/core";
 import { useDebouncedValue, useShallowEffect } from "@mantine/hooks";
 import { IconCalendar, IconInfoCircle, IconPhone, IconSearch } from "@tabler/icons-react";
 import { useState } from "react";
@@ -12,8 +12,8 @@ import { useTransitionRouter } from "next-view-transitions";
 export default function Page() {
   const state = useProxy(posyandustate);
   const [search, setSearch] = useState("");
-  const [debouncedSearch] = useDebouncedValue(search, 1000); // 500ms delay
-  const router = useTransitionRouter()
+  const [debouncedSearch] = useDebouncedValue(search, 1000);
+  const router = useTransitionRouter();
 
   const { data, page, totalPages, loading, load } = state.findMany;
 
@@ -35,14 +35,13 @@ export default function Page() {
         <Box px={{ base: "md", md: 100 }}>
           <BackButton />
           <Flex mt="md" justify="space-between" align="center" wrap="wrap" gap="md">
-            <Text
+            <Title
+              order={1}
               ta="left"
-              fz={{ base: "1.8rem", md: "2.5rem" }}
               c={colors["blue-button"]}
-              fw="bold"
             >
               Posyandu Desa Darmasaba
-            </Text>
+            </Title>
             <TextInput
               placeholder="Cari posyandu berdasarkan nama..."
               aria-label="Pencarian Posyandu"
@@ -55,6 +54,7 @@ export default function Page() {
             />
           </Flex>
         </Box>
+        <Title c={"dimmed"} order={3} ta={"center"}>Belum ada posyandu yang terdaftar</Title>
       </Stack>
     );
   }
@@ -64,14 +64,13 @@ export default function Page() {
       <Box px={{ base: "md", md: 100 }}>
         <BackButton />
         <Flex mt="md" justify="space-between" align="center" wrap="wrap" gap="md">
-          <Text
+          <Title
+            order={1}
             ta="left"
-            fz={{ base: "1.8rem", md: "2.5rem" }}
             c={colors["blue-button"]}
-            fw="bold"
           >
             Posyandu Desa Darmasaba
-          </Text>
+          </Title>
           <TextInput
             placeholder="Cari posyandu berdasarkan nama..."
             aria-label="Pencarian Posyandu"
@@ -116,9 +115,9 @@ export default function Page() {
               >
                 <Stack gap="sm">
                   <Group justify="space-between" align="center">
-                    <Text c={colors["blue-button"]} fw="bold" fz="lg" lineClamp={1}>
+                    <Title order={3} c={colors["blue-button"]} fw="bold" lineClamp={1}>
                       {v.name}
-                    </Text>
+                    </Title>
                     <Badge color="blue" variant="light" size="sm" radius="sm">
                       Aktif
                     </Badge>
@@ -136,39 +135,45 @@ export default function Page() {
                   </Center>
                   <Flex align="flex-start" gap="xs">
                     <IconPhone size={18} stroke={1.5} style={{ marginTop: 3 }} />
-                    <Box>
-                      <Text fz="sm" c="dimmed" lh={1.4}>
-                        {v.nomor || "Tidak tersedia"}
-                      </Text>
-                    </Box>
+                    <Text
+                      fz={{ base: "sm", md: "md" }}
+                      c="black"
+                      lh={{ base: 1.4, md: 1.5 }}
+                    >
+                      {v.nomor || "Tidak tersedia"}
+                    </Text>
                   </Flex>
 
                   <Flex align="flex-start" gap="xs">
                     <IconCalendar size={18} stroke={1.5} style={{ marginTop: 3 }} />
-                    <Box>
-                      <Text fz="sm" c="dimmed" lh={1.4}>
-                        <strong>Jadwal:</strong>{" "}
-                        <span
-                          style={{ wordBreak: "break-word", whiteSpace: "normal" }}
-                          dangerouslySetInnerHTML={{ __html: v.jadwalPelayanan }}
-                        />
-                      </Text>
-                    </Box>
+                    <Text
+                      fz={{ base: "sm", md: "md" }}
+                      c="black"
+                      lh={{ base: 1.4, md: 1.5 }}
+                    >
+                      <strong>Jadwal:</strong>{" "}
+                      <span
+                        style={{ wordBreak: "break-word", whiteSpace: "normal" }}
+                        dangerouslySetInnerHTML={{ __html: v.jadwalPelayanan }}
+                      />
+                    </Text>
                   </Flex>
 
                   <Flex align="flex-start" gap="xs">
                     <IconInfoCircle size={18} stroke={1.5} style={{ marginTop: 3 }} />
                     <Text
-                      fz="sm"
-                      lh={1.5}
-                      c="dimmed"
+                      fz={{ base: "sm", md: "md" }}
+                      lh={{ base: 1.4, md: 1.5 }}
+                      c="black"
                       dangerouslySetInnerHTML={{ __html: v.deskripsi }}
                       style={{ wordBreak: "break-word", whiteSpace: "normal" }}
                       lineClamp={3}
                       truncate="end"
                     />
                   </Flex>
-                  <Button radius="lg" size="md" variant="outline" onClick={() => router.push(`/darmasaba/kesehatan/posyandu/${v.id}`)}>Detail</Button>
+                  <Button radius="lg" size="md" variant="outline" onClick={() => router.push(`/darmasaba/kesehatan/posyandu/${v.id}`)}>
+                    Detail
+                  </Button>
                 </Stack>
               </Paper>
             ))}
@@ -191,11 +196,11 @@ export default function Page() {
           <Stack gap="sm">
             <Flex align="center" gap="xs">
               <IconInfoCircle size={22} color={colors["blue-button"]} />
-              <Text fz="lg" fw="bold" c={colors["blue-button"]}>
+              <Title order={2} c={colors["blue-button"]}>
                 Layanan Utama Posyandu
-              </Text>
+              </Title>
             </Flex>
-            <List spacing="xs" size="sm" center>
+            <List spacing="xs" fz={{ base: "sm", md: "md" }} lh={{ base: 1.4, md: 1.5 }} c="black">
               <ListItem>Penimbangan bayi dan balita</ListItem>
               <ListItem>Pemantauan status gizi</ListItem>
               <ListItem>Imunisasi dasar lengkap</ListItem>

@@ -3,7 +3,7 @@
 
 import stateLayananDesa from '@/app/admin/(dashboard)/_state/desa/layananDesa';
 import colors from '@/con/colors';
-import { ActionIcon, Box, Divider, Flex, Group, Skeleton, Stack, Text, Tooltip } from '@mantine/core';
+import { ActionIcon, Box, Divider, Flex, Group, Skeleton, Stack, Text, Title, Tooltip } from '@mantine/core';
 import { IconBrandFacebook, IconBrandInstagram, IconBrandTwitter, IconBrandWhatsapp } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
@@ -39,30 +39,38 @@ function PelayananPendudukNonPermanent() {
       ) : (
         <Stack gap="xl">
           <Box>
-            <Text fz={{ base: "xl", md: "2xl" }} fw={700} lh={1.3} c="dark">
+            <Title
+              order={1}
+              fz={{ base: 'lg', md: 'xl' }}
+              fw={700}
+              lh={{ base: 1.3, md: 1.3 }}
+              c="dark"
+            >
               {data?.name || "Judul belum tersedia"}
-            </Text>
+            </Title>
           </Box>
 
           <Box>
             {data?.deskripsi ? (
               <Text
-                fz={{ base: "sm", md: "md" }}
-                lh={1.7}
+                fz={{ base: 'sm', md: 'md' }}
+                lh={{ base: 1.6, md: 1.7 }}
                 ta="justify"
-                c="dimmed"
+                c="black"
                 dangerouslySetInnerHTML={{ __html: data?.deskripsi }}
-                style={{wordBreak: "break-word", whiteSpace: "normal"}}
+                style={{ wordBreak: "break-word", whiteSpace: "normal" }}
               />
             ) : (
-              <Text fz="sm" c="gray">Deskripsi belum tersedia.</Text>
+              <Text fz="xs" c="gray">
+                Deskripsi belum tersedia.
+              </Text>
             )}
           </Box>
 
           <Divider color={colors["blue-button"]} size="sm" />
 
           <Flex justify="space-between" align="center" wrap="wrap" gap="md">
-            <Text fz={{ base: "xs", md: "sm" }} c="dimmed">
+            <Text fz={{ base: 'xs', md: 'sm' }} lh={{ base: 1.4, md: 1.5 }} c="black">
               25 Mei 2021 • Darmasaba
             </Text>
             <Group gap="md">

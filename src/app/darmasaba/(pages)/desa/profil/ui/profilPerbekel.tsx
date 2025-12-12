@@ -2,44 +2,45 @@
 'use client'
 import stateProfileDesa from '@/app/admin/(dashboard)/_state/desa/profile';
 import colors from '@/con/colors';
-import { Box, Divider, Image, Paper, SimpleGrid, Skeleton, Stack, Text } from '@mantine/core';
+import { Box, Divider, Image, Paper, SimpleGrid, Skeleton, Stack, Text, Title } from '@mantine/core';
 import { IconBriefcase, IconTargetArrow, IconUser, IconUsers } from '@tabler/icons-react';
 import { useEffect } from 'react';
 import { useProxy } from 'valtio/utils';
 
 function ProfilPerbekel() {
-  const state = useProxy(stateProfileDesa.profilPerbekel)
+  const state = useProxy(stateProfileDesa.profilPerbekel);
 
   useEffect(() => {
-    state.findUnique.load("edit")
-  }, [])
+    state.findUnique.load("edit");
+  }, []);
 
-  const { data, loading } = state.findUnique
+  const { data, loading } = state.findUnique;
 
   if (loading || !data) {
     return (
       <Box py={20} px="md">
         <Skeleton h={500} radius="lg" />
       </Box>
-    )
+    );
   }
 
   return (
     <Box px="md">
+      {/* ===== PAGE TITLE ===== */}
       <Stack align="center" gap={0} mb={40}>
-        <Text
+        <Title
+          order={1}
           c={colors['blue-button']}
           ta="center"
-          fw="bold"
-          fz={{ base: "2rem", md: "2.8rem" }}
           style={{ letterSpacing: "0.5px" }}
         >
           Profil Perbekel
-        </Text>
+        </Title>
         <Divider w={120} size="sm" color={colors['blue-button']} mt={10} />
       </Stack>
 
       <SimpleGrid cols={{ base: 1, md: 2 }} spacing="xl" pb={50}>
+        {/* ========== FOTO PERBEKEL ========== */}
         <Box>
           <Paper
             bg={colors['white-trans-1']}
@@ -60,6 +61,8 @@ function ProfilPerbekel() {
                 }}
                 loading="lazy"
               />
+
+              {/* ===== NAMA DAN JABATAN ===== */}
               <Paper
                 bg={colors['blue-button']}
                 px="lg"
@@ -67,22 +70,23 @@ function ProfilPerbekel() {
                 className="glass3"
                 py={{ base: 20, md: 50 }}
               >
-                <Text c={colors['white-1']} fz={{ base: "lg", md: "h3" }}>
+                <Title order={3} c={colors['white-1']}>
                   Perbekel Desa Darmasaba
-                </Text>
-                <Text
+                </Title>
+
+                <Title
+                  order={2}
                   c={colors['white-1']}
-                  fw="bolder"
-                  fz={{ base: "xl", md: "h2" }}
                   mt={8}
                 >
                   {"I.B. Surya Prabhawa Manuaba, S.H.,M.H.,NL.P."}
-                </Text>
+                </Title>
               </Paper>
             </Stack>
           </Paper>
         </Box>
 
+        {/* ========== BIODATA & PENGALAMAN ========== */}
         <Paper
           p="xl"
           bg={colors['white-trans-1']}
@@ -92,34 +96,39 @@ function ProfilPerbekel() {
           withBorder
         >
           <Stack gap="xl">
+
+            {/* ===== BIODATA ===== */}
             <Box>
               <Stack gap={6}>
                 <Stack align="center" gap={6}>
                   <IconUser size={22} />
-                  <Text fz={{ base: "1.2rem", md: "1.5rem" }} fw="bold">Biodata</Text>
+                  <Title order={3}>Biodata</Title>
                 </Stack>
+
                 <Text
-                  fz={{ base: "1rem", md: "1.2rem" }}
+                  fz={{ base: "sm", md: "md" }}
                   ta="justify"
-                  lh={1.6}
+                  lh={1.7}
                   dangerouslySetInnerHTML={{ __html: data.biodata }}
-                  style={{ wordBreak: "break-word", whiteSpace: "normal" }}
+                  style={{ wordBreak: "break-word" }}
                 />
               </Stack>
             </Box>
 
+            {/* ===== PENGALAMAN ===== */}
             <Box>
               <Stack gap={6}>
                 <Stack align="center" gap={6}>
                   <IconBriefcase size={22} />
-                  <Text fz={{ base: "1.2rem", md: "1.5rem" }} fw="bold">Pengalaman</Text>
+                  <Title order={3}>Pengalaman</Title>
                 </Stack>
+
                 <Text
-                  fz={{ base: "1rem", md: "1.2rem" }}
+                  fz={{ base: "sm", md: "md" }}
                   ta="left"
-                  lh={1.6}
+                  lh={1.7}
                   dangerouslySetInnerHTML={{ __html: data.pengalaman }}
-                  style={{ wordBreak: "break-word", whiteSpace: "normal" }}
+                  style={{ wordBreak: "break-word" }}
                 />
               </Stack>
             </Box>
@@ -127,6 +136,7 @@ function ProfilPerbekel() {
         </Paper>
       </SimpleGrid>
 
+      {/* ========== ORGANISASI & PROGRAM UNGGULAN ========== */}
       <Paper
         p="xl"
         bg={colors['white-trans-1']}
@@ -136,35 +146,41 @@ function ProfilPerbekel() {
         withBorder
       >
         <Stack gap="xl">
+
+          {/* ===== PENGALAMAN ORGANISASI ===== */}
           <Box>
-            <Stack align="center" gap={6} >
+            <Stack align="center" gap={6}>
               <IconUsers size={22} />
-              <Text fz={{ base: "1.2rem", md: "1.5rem" }} fw="bold">Pengalaman Organisasi</Text>
+              <Title order={3}>Pengalaman Organisasi</Title>
             </Stack>
+
             <Text
-              fz={{ base: "1rem", md: "1.2rem" }}
+              fz={{ base: "sm", md: "md" }}
               ta="justify"
-              lh={1.6}
+              lh={1.7}
               dangerouslySetInnerHTML={{ __html: data.pengalamanOrganisasi }}
-              style={{ wordBreak: "break-word", whiteSpace: "normal" }}
+              style={{ wordBreak: "break-word" }}
             />
           </Box>
 
+          {/* ===== PROGRAM UNGGULAN ===== */}
           <Box>
             <Stack align="center" gap={6} mb={6}>
               <IconTargetArrow size={22} />
-              <Text fz={{ base: "1.2rem", md: "1.5rem" }} fw="bold">Program Kerja Unggulan</Text>
+              <Title order={3}>Program Kerja Unggulan</Title>
             </Stack>
+
             <Box px={10}>
               <Text
-                fz={{ base: "1rem", md: "1.2rem" }}
+                fz={{ base: "sm", md: "md" }}
                 ta="justify"
-                lh={1.6}
+                lh={1.7}
                 dangerouslySetInnerHTML={{ __html: data.programUnggulan }}
-                style={{ wordBreak: "break-word", whiteSpace: "normal" }}
+                style={{ wordBreak: "break-word" }}
               />
             </Box>
           </Box>
+
         </Stack>
       </Paper>
     </Box>
