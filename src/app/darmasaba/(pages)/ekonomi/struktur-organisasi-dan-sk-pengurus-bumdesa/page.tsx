@@ -365,7 +365,6 @@ function StrukturOrganisasiBumDes() {
               <Box
                 ref={chartContainerRef}
                 style={{
-                  borderRadius: '12px',
                   overflowX: 'auto',
                   overflowY: 'auto',
                   width: '100%',

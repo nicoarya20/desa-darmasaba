@@ -135,32 +135,36 @@ export default function Page() {
                   </Center>
                   <Flex align="flex-start" gap="xs">
                     <IconPhone size={18} stroke={1.5} style={{ marginTop: 3 }} />
-                    <Box>
-                      <Text fz={{ base: "xs", md: "sm" }} c="dimmed" lh={1.4}>
-                        {v.nomor || "Tidak tersedia"}
-                      </Text>
-                    </Box>
+                    <Text
+                      fz={{ base: "sm", md: "md" }}
+                      c="black"
+                      lh={{ base: 1.4, md: 1.5 }}
+                    >
+                      {v.nomor || "Tidak tersedia"}
+                    </Text>
                   </Flex>
 
                   <Flex align="flex-start" gap="xs">
                     <IconCalendar size={18} stroke={1.5} style={{ marginTop: 3 }} />
-                    <Box>
-                      <Text fz={{ base: "xs", md: "sm" }} c="dimmed" lh={1.4}>
-                        <strong>Jadwal:</strong>{" "}
-                        <span
-                          style={{ wordBreak: "break-word", whiteSpace: "normal" }}
-                          dangerouslySetInnerHTML={{ __html: v.jadwalPelayanan }}
-                        />
-                      </Text>
-                    </Box>
+                    <Text
+                      fz={{ base: "sm", md: "md" }}
+                      c="black"
+                      lh={{ base: 1.4, md: 1.5 }}
+                    >
+                      <strong>Jadwal:</strong>{" "}
+                      <span
+                        style={{ wordBreak: "break-word", whiteSpace: "normal" }}
+                        dangerouslySetInnerHTML={{ __html: v.jadwalPelayanan }}
+                      />
+                    </Text>
                   </Flex>
 
                   <Flex align="flex-start" gap="xs">
                     <IconInfoCircle size={18} stroke={1.5} style={{ marginTop: 3 }} />
                     <Text
-                      fz={{ base: "xs", md: "sm" }}
-                      lh={1.5}
-                      c="dimmed"
+                      fz={{ base: "sm", md: "md" }}
+                      lh={{ base: 1.4, md: 1.5 }}
+                      c="black"
                       dangerouslySetInnerHTML={{ __html: v.deskripsi }}
                       style={{ wordBreak: "break-word", whiteSpace: "normal" }}
                       lineClamp={3}
@@ -196,7 +200,7 @@ export default function Page() {
                 Layanan Utama Posyandu
               </Title>
             </Flex>
-            <List spacing="xs" fz={{ base: "xs", md: "sm" }} center>
+            <List spacing="xs" fz={{ base: "sm", md: "md" }} lh={{ base: 1.4, md: 1.5 }} c="black">
               <ListItem>Penimbangan bayi dan balita</ListItem>
               <ListItem>Pemantauan status gizi</ListItem>
               <ListItem>Imunisasi dasar lengkap</ListItem>

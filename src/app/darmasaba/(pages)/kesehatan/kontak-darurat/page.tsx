@@ -16,6 +16,7 @@ import {
   Stack,
   Text,
   TextInput,
+  Title,
   Tooltip
 } from '@mantine/core';
 import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
@@ -52,10 +53,21 @@ function Page() {
 
       <Grid align="center" px={{ base: 'md', md: 100 }} gutter="lg">
         <GridCol span={{ base: 12, md: 8 }}>
-          <Text fz={{ base: '2rem', md: '2.8rem' }} c={colors['blue-button']} fw={800}>
+          <Title
+            order={1}
+            c={colors['blue-button']}
+            fw={800}
+            fz={{ base: '28px', md: '32px' }}
+            lh={{ base: 1.2, md: 1.25 }}
+          >
             Kontak Darurat
-          </Text>
-          <Text fz="md" mt={4}>
+          </Title>
+          <Text
+            fz={{ base: 'sm', md: 'md' }}
+            lh={{ base: 1.5, md: 1.6 }}
+            mt={4}
+            c="dark.9"
+          >
             Hubungi layanan penting dengan cepat dan mudah
           </Text>
         </GridCol>
@@ -79,10 +91,20 @@ function Page() {
           <Center mih={300}>
             <Stack align="center" gap="xs">
               <IconSearch size={50} color={colors['blue-button']} />
-              <Text fz="lg" fw={600} c={colors['blue-button']}>
+              <Title
+                order={2}
+                fw={600}
+                c={colors['blue-button']}
+                fz={{ base: '20px', md: '24px' }}
+                lh={{ base: 1.3, md: 1.35 }}
+              >
                 Tidak ada kontak ditemukan
-              </Text>
-              <Text fz="sm" c="dimmed">
+              </Title>
+              <Text
+                fz={{ base: 'xs', md: 'sm' }}
+                lh={{ base: 1.4, md: 1.5 }}
+                c="dark.7"
+              >
                 Coba kata kunci lain untuk pencarian
               </Text>
             </Stack>
@@ -102,8 +124,8 @@ function Page() {
                   cursor: 'pointer',
                   display: 'flex',
                   flexDirection: 'column',
-                  justifyContent: 'space-between', // ✅ biar button selalu di bawah
-                  height: '100%', // ✅ bikin tinggi seragam
+                  justifyContent: 'space-between',
+                  height: '100%',
                 }}
               >
                 <Stack align="center" gap="sm" style={{ flexGrow: 1 }}>
@@ -131,27 +153,24 @@ function Page() {
                     />
                   </Box>
 
-                  <Text ta="center" fw={700} fz="lg" c={colors['blue-button']}>
+                  <Text ta="center" fw={700} fz={{ base: '18px', md: '20px' }} lh={1.3} c={colors['blue-button']}>
                     {v.name}
                   </Text>
 
                   <Text
-                    fz="sm"
+                    fz={{ base: 'xs', md: 'sm' }}
                     ta="center"
                     lineClamp={3}
-                    lh={1.6}
+                    lh={{ base: 1.5, md: 1.6 }}
                     style={{
-                      minHeight: '4.8em', // tinggi tetap 3 baris
+                      minHeight: '4.8em',
+                      wordBreak: 'break-word',
+                      whiteSpace: 'normal',
                     }}
-                  >
-                    <span
-                      style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
-                      dangerouslySetInnerHTML={{ __html: v.deskripsi }}
-                    />
-                  </Text>
+                    dangerouslySetInnerHTML={{ __html: v.deskripsi }}
+                  />
                 </Stack>
 
-                {/* ✅ Tombol selalu di bagian bawah card */}
                 <Group mt="md" justify='center'>
                   <Button
                     bg={colors['blue-button']}
@@ -161,8 +180,6 @@ function Page() {
                   </Button>
                 </Group>
               </Paper>
-
-
             ))}
           </SimpleGrid>
         )}

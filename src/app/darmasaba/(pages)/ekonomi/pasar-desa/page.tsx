@@ -66,7 +66,7 @@ function Page() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               leftSection={<IconSearch size={20} />}
-              w={{ base: "50%", md: "100%" }}
+              w={"100%"}
             />
           </GridCol>
         </Grid>

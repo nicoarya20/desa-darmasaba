@@ -88,7 +88,11 @@ export default function DetailPosyanduUser() {
             </Center>
           ) : (
             <Center>
-              <Text fz={{ base: 'xs', md: 'sm' }} c="dimmed">
+              <Text
+                fz={{ base: 'xs', md: 'sm' }}
+                c="dimmed"
+                ta="center"
+              >
                 Tidak ada gambar
               </Text>
             </Center>
@@ -99,8 +103,8 @@ export default function DetailPosyanduUser() {
             <Flex align="center" gap="xs">
               <IconPhone size={18} stroke={1.5} />
               <Text
-                fz={{ base: 'xs', md: 'sm' }}
-                c="dimmed"
+                fz={{ base: 'sm', md: 'md' }}
+                c="black"
                 lh={{ base: 1.5, md: 1.6 }}
               >
                 {data.nomor || 'Nomor tidak tersedia'}
@@ -110,8 +114,8 @@ export default function DetailPosyanduUser() {
             <Flex align="center" gap="xs">
               <IconCalendar size={18} stroke={1.5} />
               <Text
-                fz={{ base: 'xs', md: 'sm' }}
-                c="dimmed"
+                fz={{ base: 'sm', md: 'md' }}
+                c="black"
                 lh={{ base: 1.5, md: 1.6 }}
                 dangerouslySetInnerHTML={{ __html: data.jadwalPelayanan || '-' }}
                 style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
@@ -121,8 +125,8 @@ export default function DetailPosyanduUser() {
             <Flex align="center" gap="xs">
               <IconInfoCircle size={18} stroke={1.5} />
               <Text
-                fz={{ base: 'xs', md: 'sm' }}
-                c="dimmed"
+                fz={{ base: 'sm', md: 'md' }}
+                c="black"
                 lh={{ base: 1.5, md: 1.6 }}
                 dangerouslySetInnerHTML={{ __html: data.deskripsi || '-' }}
                 style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}

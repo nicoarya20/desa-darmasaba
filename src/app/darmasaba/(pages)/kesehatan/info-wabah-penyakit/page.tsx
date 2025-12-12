@@ -17,7 +17,8 @@ import {
   Skeleton,
   Stack,
   Text,
-  TextInput
+  TextInput,
+  Title
 } from '@mantine/core';
 import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
 import { IconInfoCircle, IconSearch } from '@tabler/icons-react';
@@ -30,7 +31,7 @@ function Page() {
   const state = useProxy(infoWabahPenyakit);
   const router = useTransitionRouter();
   const [search, setSearch] = useState('');
-  const [debouncedSearch] = useDebouncedValue(search, 1000)
+  const [debouncedSearch] = useDebouncedValue(search, 1000);
   const { data, page, totalPages, loading, load } = state.findMany;
 
   useShallowEffect(() => {
@@ -53,15 +54,19 @@ function Page() {
 
       <Grid align="center" px={{ base: 'md', md: 100 }}>
         <GridCol span={{ base: 12, md: 8 }}>
-          <Text
-            fz={{ base: '1.8rem', md: '2.8rem' }}
+          <Title
+            order={1}
             c={colors['blue-button']}
             fw="bold"
-            lh={1.2}
+            lh={{ base: 1.2, md: 1.2 }}
           >
             Informasi Wabah & Penyakit
-          </Text>
-          <Text fz="md" mt={4}>
+          </Title>
+          <Text
+            fz={{ base: 'sm', md: 'md' }}
+            lh={{ base: 1.5, md: 1.5 }}
+            mt={4}
+          >
             Dapatkan informasi terbaru mengenai wabah dan penyakit yang sedang
             diawasi.
           </Text>
@@ -84,9 +89,9 @@ function Page() {
           <Center py="6xl">
             <Stack align="center" gap="sm">
               <IconInfoCircle size={50} color={colors['blue-button']} />
-              <Text fz="lg" fw={500} >
+              <Title order={2} fz={{ base: 'md', md: 'lg' }} fw={500}>
                 Tidak ada data yang cocok dengan pencarian Anda.
-              </Text>
+              </Title>
             </Stack>
           </Center>
         ) : (
@@ -131,15 +136,24 @@ function Page() {
 
                   {/* Judul dan badge */}
                   <Group justify="space-between" mt="sm">
-                    <Text fw={700} fz="lg" c={colors['blue-button']}>
+                    <Title
+                      order={3}
+                      c={colors['blue-button']}
+                      fw={700}
+                      fz={{ base: 'sm', md: 'lg' }}
+                    >
                       {v.name}
-                    </Text>
+                    </Title>
                     <Badge color="blue" variant="light" radius="sm">
                       Wabah
                     </Badge>
                   </Group>
 
-                  <Text fz="sm" c="dimmed">
+                  <Text
+                    fz={{ base: 'xs', md: 'sm' }}
+                    c="dimmed"
+                    lh={{ base: 1.4, md: 1.4 }}
+                  >
                     Diposting:{' '}
                     {new Date(v.createdAt).toLocaleDateString('id-ID', {
                       day: '2-digit',
@@ -153,8 +167,8 @@ function Page() {
                   {/* Bagian deskripsi dan tombol */}
                   <Box style={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
                     <Text
-                      fz="sm"
-                      lh={1.5}
+                      fz={{ base: 'xs', md: 'sm' }}
+                      lh={{ base: 1.5, md: 1.5 }}
                       lineClamp={3}
                       dangerouslySetInnerHTML={{ __html: v.deskripsiSingkat }}
                       style={{ flexGrow: 1 }}
@@ -174,13 +188,10 @@ function Page() {
                   </Box>
                 </Stack>
               </Paper>
-
             ))}
           </SimpleGrid>
-
         )}
       </Box>
-
 
       <Center>
         <Pagination
@@ -192,7 +203,6 @@ function Page() {
           mt="lg"
         />
       </Center>
-
     </Stack>
   );
 }

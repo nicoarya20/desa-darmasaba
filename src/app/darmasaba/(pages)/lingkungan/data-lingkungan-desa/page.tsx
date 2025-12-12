@@ -64,14 +64,14 @@ function Page() {
           </Text>
           <TextInput
             radius="xl"
-            w={'30%'}
+            w={{base: "100%", md: "30%"}}
             placeholder="Cari Data Lingkungan Desa"
             leftSection={<IconSearch size={20} />}
             value={search}
             onChange={(e) => setSearch(e.currentTarget.value)}
           />
         </Group>
-        <Text fz="md" >
+        <Text fz="md" pt={20}>
           Desa Darmasaba menjaga dan mengembangkan lingkungan demi kesejahteraan warganya. 
         </Text>
         <Text fz="md">

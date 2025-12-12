@@ -1,7 +1,7 @@
 'use client'
 import kontakDarurat from '@/app/admin/(dashboard)/_state/kesehatan/kontak-darurat/kontakDarurat';
 import colors from '@/con/colors';
-import { Box, Button, Group, Image, Paper, Skeleton, Stack, Text } from '@mantine/core';
+import { Box, Button, Group, Image, Paper, Skeleton, Stack, Text, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack, IconBrandWhatsapp } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -27,15 +27,16 @@ function Page() {
   const data = state.findUnique.data;
 
   return (
-    <Box px={{base: 'md', md: 100}} py={10}>
+    <Box px={{ base: 'md', md: 100 }} py={10}>
       {/* Tombol Back */}
       <Button
         variant="subtle"
         onClick={() => router.back()}
         leftSection={<IconArrowBack size={24} color={colors['blue-button']} />}
         mb={15}
+        style={{ lineHeight: 1.2 }}
       >
-        Kembali
+        <Text fz={{ base: 'sm', md: 'md' }} fw={500}>Kembali</Text>
       </Button>
 
       {/* Wrapper Detail */}
@@ -48,34 +49,38 @@ function Page() {
         shadow="sm"
       >
         <Stack gap="md">
-          <Text fz="2xl" fw="bold" c={colors['blue-button']}>
+          <Title order={1} c={colors['blue-button']}>
             Detail Kontak Darurat
-          </Text>
+          </Title>
 
           <Paper bg="#ECEEF8" p="md" radius="md" shadow="xs">
             <Stack gap="sm">
               <Box>
-                <Text fz="lg" fw="bold">Judul</Text>
-                <Text fz="md" c="dimmed">{data.name || '-'}</Text>
+                <Title order={3}>Judul</Title>
+                <Text fz={{ base: 'sm', md: 'md' }} c={data.name ? 'black' : 'dimmed'}>
+                  {data.name || '-'}
+                </Text>
               </Box>
 
               <Box>
-                <Text fz="lg" fw="bold">Whatsapp</Text>
-                <Text fz="md" c="dimmed">{data.whatsapp || '-'}</Text>
+                <Title order={3}>Whatsapp</Title>
+                <Text fz={{ base: 'sm', md: 'md' }} c={data.whatsapp ? 'black' : 'dimmed'}>
+                  {data.whatsapp || '-'}
+                </Text>
               </Box>
 
               <Box>
-                <Text fz="lg" fw="bold">Deskripsi</Text>
+                <Title order={3}>Deskripsi</Title>
                 <Text
-                  fz="md"
-                  c="dimmed"
+                  fz={{ base: 'sm', md: 'md' }}
+                  c={data.deskripsi ? 'black' : 'dimmed'}
                   dangerouslySetInnerHTML={{ __html: data.deskripsi || '-' }}
-                  style={{ wordBreak: "break-word", whiteSpace: "normal" }}
+                  style={{ wordBreak: 'break-word', whiteSpace: 'normal', lineHeight: 1.5 }}
                 />
               </Box>
 
               <Box>
-                <Text fz="lg" fw="bold">Gambar</Text>
+                <Title order={3}>Gambar</Title>
                 {data.image?.link ? (
                   <Image
                     src={data.image.link}
@@ -85,9 +90,10 @@ function Page() {
                     loading="lazy"
                   />
                 ) : (
-                  <Text fz="md" c="dimmed">-</Text>
+                  <Text fz={{ base: 'sm', md: 'md' }} c="dimmed">-</Text>
                 )}
               </Box>
+
               <Group>
                 <Button
                   variant="light"
@@ -96,6 +102,7 @@ function Page() {
                   href={`https://wa.me/${data.whatsapp.replace(/\D/g, '')}`}
                   target="_blank"
                   aria-label="Hubungi WhatsApp"
+                  fz={{ base: 'sm', md: 'md' }}
                 >
                   WhatsApp
                 </Button>

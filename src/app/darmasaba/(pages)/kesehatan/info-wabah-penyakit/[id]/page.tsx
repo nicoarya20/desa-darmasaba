@@ -74,22 +74,22 @@ function DetailInfoWabahPenyakitUser() {
           )}
 
           {/* Deskripsi */}
-          <Box>
+          <Stack gap={"xs"}>
             {/* Section Title — H2 */}
-            <Title order={2} fw="bold" fz={{ base: 'md', md: 'lg' }} lh="1.4">
+            <Title order={3} fw="bold" ta="left">
               Deskripsi
             </Title>
             <Box pl={20}>
               <Text
                 fz={{ base: 'sm', md: 'md' }}
-                lh="1.6"
-                c="dimmed"
-                ta={"justify"}
+                lh={{ base: '1.5', md: '1.6' }}
+                c="dark"
+                ta="justify"
                 dangerouslySetInnerHTML={{ __html: data.deskripsiLengkap || '-' }}
                 style={{ wordBreak: "break-word", whiteSpace: "normal" }}
               />
             </Box>
-          </Box>
+          </Stack>
         </Stack>
       </Paper>
     </Box>

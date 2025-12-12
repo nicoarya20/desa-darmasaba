@@ -76,13 +76,13 @@ function Page() {
             </Box>
             <Flex pb={30} justify={'center'} gap={'xl'} align={'center'}>
               <Box>
-                <Flex gap={{ base: 0, md: 5 }} align={'center'}>
+                <Flex gap={{base: 7, md: 5}} align={'center'}>
                   <Text fw={'bold'} fz={{ base: 'md', md: 'h4' }}>Laki-Laki</Text>
                   <ColorSwatch color="#5082EE" size={30} />
                 </Flex>
               </Box>
               <Box>
-                <Flex gap={{ base: 0, md: 5 }} align={'center'}>
+                <Flex gap={{base: 7, md: 5}} align={'center'}>
                   <Text fw={'bold'} fz={{ base: 'md', md: 'h4' }}>Perempuan</Text>
                   <ColorSwatch color="#6EDF9C" size={30} />
                 </Flex>

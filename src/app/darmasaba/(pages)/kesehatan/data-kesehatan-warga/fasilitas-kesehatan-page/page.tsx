@@ -40,7 +40,11 @@ function FasilitasKesehatanPage() {
           <Stack gap="lg">
             {state.findMany.data.length === 0 ? (
               <Box py="xl" ta="center">
-                <Text size="lg" c="dimmed" lh="1.5">
+                <Text
+                  fz={{ base: 'sm', sm: 'md' }}
+                  c={colors['blue-button']}
+                  lh={{ base: '1.5', sm: '1.6' }}
+                >
                   Belum ada fasilitas kesehatan yang tersedia
                 </Text>
               </Box>
@@ -67,20 +71,36 @@ function FasilitasKesehatanPage() {
                 >
                   <Stack gap="sm">
                     <Group justify="space-between" align="center">
-                      <Title order={3} fw={700} c={colors['blue-button']} lh="1.3" />
+                      <Title
+                        order={3}
+                        fw={700}
+                        c={colors['blue-button']}
+                        fz={{ base: 'sm', sm: 'md' }}
+                        lh={{ base: '1.3', sm: '1.3' }}
+                      >
+                        {item.name}
+                      </Title>
                       <Badge color="blue" radius="sm" variant="light" size="xs">
                         Aktif
                       </Badge>
                     </Group>
                     <Group gap="xs">
                       <IconMapPin size={18} stroke={1.5} />
-                      <Text size="sm" lh="1.5">
+                      <Text
+                        fz={{ base: 'xs', sm: 'sm' }}
+                        lh={{ base: '1.5', sm: '1.5' }}
+                        c="text"
+                      >
                         {item.informasiumum.alamat}
                       </Text>
                     </Group>
                     <Group gap="xs">
                       <IconClock size={18} stroke={1.5} />
-                      <Text size="sm" lh="1.5">
+                      <Text
+                        fz={{ base: 'xs', sm: 'sm' }}
+                        lh={{ base: '1.5', sm: '1.5' }}
+                        c="text"
+                      >
                         {item.informasiumum.jamOperasional}
                       </Text>
                     </Group>
