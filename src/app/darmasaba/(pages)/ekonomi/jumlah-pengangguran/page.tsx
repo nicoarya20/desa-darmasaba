@@ -36,7 +36,6 @@ function Page() {
   useEffect(() => {
     setMounted(true);
     if (state.findMany.data) {
-      // Set chart data
       setChartData(state.findMany.data.map((item) => ({
         id: item.id,
         bulan: item.month,
@@ -44,7 +43,6 @@ function Page() {
         takberpendidikan: Number(item.uneducatedUnemployment),
       })));
 
-      // Calculate yearly totals
       const currentYearData = state.findMany.data.filter(item => item.year === currentYear);
       if (currentYearData.length > 0) {
         const yearlyTotal = {
@@ -72,30 +70,37 @@ function Page() {
       <Box px={{ base: 'md', md: 100 }}>
         <BackButton />
       </Box>
-      <Box px={{ base: 'md', md: 100 }} >
-        <Text ta={"center"} fz={{ base: "h1", md: "2.5rem" }} c={colors["blue-button"]} fw={"bold"}>
+      <Box px={{ base: 'md', md: 100 }}>
+        <Title
+          order={1}
+          ta={"center"}
+          c={colors["blue-button"]}
+          fw={"bold"}
+          lh={1.2}
+        >
           Jumlah Pengangguran
-        </Text>
+        </Title>
         <Group py={20} align='center' justify='space-between'>
-          <Text fz={'h4'} fw={"bold"}>DATA PENGANGGURAN DESA</Text>
+          <Title order={2} fw={"bold"} lh={1.2}>
+            DATA PENGANGGURAN DESA
+          </Title>
         </Group>
       </Box>
       <Box px={{ base: "md", md: 100 }}>
         <Stack gap={'lg'} justify='center'>
-          <SimpleGrid
-            cols={1}
-            pb={20}
-          >
+          <SimpleGrid cols={1} pb={20}>
             <SimpleGrid cols={{ base: 1, md: 3 }} spacing="md">
               {/* Total Unemployment Card */}
               <Paper px={25} py={'lg'} bg={colors['white-1']} shadow="md">
                 <Flex direction="column" gap="md">
                   <IconUserOff size={35} color={colors['blue-button']} />
-                  <Text fz="h4" fw={600}>Total Pengangguran</Text>
-                  <Text fz="h2" fw={700} c={colors['blue-button']}>
+                  <Title order={3} fw={600} lh={1.2}>
+                    Total Pengangguran
+                  </Title>
+                  <Text fz={{ base: 'lg', md: 'xl' }} fw={700} c={colors['blue-button']} lh={1.2}>
                     {yearlyData?.total.toLocaleString() || 0} Orang
                   </Text>
-                  <Text fz="sm" c="dimmed">
+                  <Text fz={{ base: 'xs', md: 'sm' }} c="dimmed" lh={1.4}>
                     Total data tahun {currentYear}
                   </Text>
                 </Flex>
@@ -105,11 +110,13 @@ function Page() {
               <Paper px={25} py={'lg'} bg={colors['white-1']} shadow="md">
                 <Flex direction="column" gap="md">
                   <IconSchool size={35} color="#5082EE" />
-                  <Text fz="h4" fw={600}>Pengangguran Terdidik</Text>
-                  <Text fz="h2" fw={700} c="#5082EE">
+                  <Title order={3} fw={600} lh={1.2}>
+                    Pengangguran Terdidik
+                  </Title>
+                  <Text fz={{ base: 'lg', md: 'xl' }} fw={700} c="#5082EE" lh={1.2}>
                     {yearlyData?.educated.toLocaleString() || 0} Orang
                   </Text>
-                  <Text fz="sm" c="dimmed">
+                  <Text fz={{ base: 'xs', md: 'sm' }} c="dimmed" lh={1.4}>
                     {yearlyData ?
                       <>
                         {((yearlyData.educated / yearlyData.total) * 100).toFixed(1)}%
@@ -123,11 +130,13 @@ function Page() {
               <Paper px={25} py={'lg'} bg={colors['white-1']} shadow="md">
                 <Flex direction="column" gap="md">
                   <IconSchoolOff size={35} color="#DA524C" />
-                  <Text fz="h4" fw={600}>Pengangguran Tidak Terdidik</Text>
-                  <Text fz="h2" fw={700} c="#DA524C">
+                  <Title order={3} fw={600} lh={1.2}>
+                    Pengangguran Tidak Terdidik
+                  </Title>
+                  <Text fz={{ base: 'lg', md: 'xl' }} fw={700} c="#DA524C" lh={1.2}>
                     {yearlyData?.uneducated.toLocaleString() || 0} Orang
                   </Text>
-                  <Text fz="sm" c="dimmed">
+                  <Text fz={{ base: 'xs', md: 'sm' }} c="dimmed" lh={1.4}>
                     {yearlyData ?
                       <>
                         {((yearlyData.uneducated / yearlyData.total) * 100).toFixed(1)}%
@@ -142,13 +151,17 @@ function Page() {
             <Flex pb={30} justify={'flex-end'} gap={'xl'} align={'center'}>
               <Box>
                 <Flex gap={{ base: 0, md: 5 }} align={'center'}>
-                  <Text fw={'bold'} fz={{ base: 'md', md: 'h4' }}>Pengangguran Berpendidikan</Text>
+                  <Text fw={'bold'} fz={{ base: 'sm', md: 'md' }} lh={1.45}>
+                    Pengangguran Berpendidikan
+                  </Text>
                   <ColorSwatch color="#5082EE" size={30} />
                 </Flex>
               </Box>
               <Box>
                 <Flex gap={{ base: 0, md: 5 }} align={'center'}>
-                  <Text fw={'bold'} fz={{ base: 'md', md: 'h4' }}>Pengangguran Tak Berpendidikan</Text>
+                  <Text fw={'bold'} fz={{ base: 'sm', md: 'md' }} lh={1.45}>
+                    Pengangguran Tak Berpendidikan
+                  </Text>
                   <ColorSwatch color="#DA524C" size={30} />
                 </Flex>
               </Box>
@@ -156,15 +169,24 @@ function Page() {
             {!mounted || chartData.length === 0 ? (
               <Box style={{ width: '100%', minWidth: 300, height: 400, minHeight: 300 }}>
                 <Paper bg={colors['white-1']} p={'md'}>
-                  <Title pb={10} order={3}>Data Pengangguran Terdidik dan Tidak Terdidik</Title>
-                  <Text c='dimmed'>Belum ada data untuk ditampilkan dalam grafik</Text>
+                  <Title order={3} pb={10} lh={1.2}>
+                    Data Pengangguran Terdidik dan Tidak Terdidik
+                  </Title>
+                  <Text c='dimmed' fz={{ base: 'xs', md: 'sm' }} lh={1.4}>
+                    Belum ada data untuk ditampilkan dalam grafik
+                  </Text>
                 </Paper>
               </Box>
             ) : (
               <Box style={{ width: '100%', minWidth: 300, height: 550, minHeight: 300 }}>
                 <Paper bg={colors['white-1']} p={'md'}>
-                  <Title pb={10} order={4}>Data Pengangguran Terdidik dan Tidak Terdidik</Title>
-                  <Box w={{ base: '100%', md: '70%' }}>
+                  <Title order={3} pb={10} lh={1.2}>
+                    Data Pengangguran Terdidik dan Tidak Terdidik
+                  </Title>
+                  <Box 
+                  w={{ base: '100%', md: '70%' }} 
+                  style={{ overflowX: "auto" }}
+                  >
                     <BarChart
                       h={450}
                       data={chartData}
@@ -178,32 +200,55 @@ function Page() {
                 </Paper>
               </Box>
             )}
-
           </Paper>
           <Paper p={'lg'}>
-            <Text fw={'bold'} fz={'h4'}>Detail Data Pengangguran</Text>
-            <Table striped highlightOnHover>
-              <TableThead>
-                <TableTr>
-                  <TableTh ta={'center'}>Bulan</TableTh>
-                  <TableTh ta={'center'}>Total</TableTh>
-                  <TableTh ta={'center'}>Terdidik</TableTh>
-                  <TableTh ta={'center'}>Tidak Terdidik</TableTh>
-                  <TableTh ta={'center'}>Perubahan</TableTh>
-                </TableTr>
-              </TableThead>
-              <TableTbody>
-                {state.findMany.data?.map((item, index) => (
-                  <TableTr key={item?.id ? String(item.id) : `row-${index}`}>
-                    <TableTd ta={'center'}>{item.month}</TableTd>
-                    <TableTd ta={'center'}>{item.totalUnemployment}</TableTd>
-                    <TableTd ta={'center'}>{item.educatedUnemployment}</TableTd>
-                    <TableTd ta={'center'}>{item.uneducatedUnemployment}</TableTd>
-                    <TableTd ta={'center'}>{item.percentageChange}%</TableTd>
+            <Title order={2} fw={'bold'} fz={{ base: 'md', md: 'lg' }} lh={1.2}>
+              Detail Data Pengangguran
+            </Title>
+            <Box style={{ overflowX: 'auto' }}>
+              <Table striped highlightOnHover>
+                <TableThead>
+                  <TableTr>
+                    <TableTh ta={'center'} fz={{ base: 'sm', md: 'md' }} lh={1.45}>
+                      Bulan
+                    </TableTh>
+                    <TableTh ta={'center'} fz={{ base: 'sm', md: 'md' }} lh={1.45}>
+                      Total
+                    </TableTh>
+                    <TableTh ta={'center'} fz={{ base: 'sm', md: 'md' }} lh={1.45}>
+                      Terdidik
+                    </TableTh>
+                    <TableTh ta={'center'} fz={{ base: 'sm', md: 'md' }} lh={1.45}>
+                      Tidak Terdidik
+                    </TableTh>
+                    <TableTh ta={'center'} fz={{ base: 'sm', md: 'md' }} lh={1.45}>
+                      Perubahan
+                    </TableTh>
                   </TableTr>
-                ))}
-              </TableTbody>
-            </Table>
+                </TableThead>
+                <TableTbody>
+                  {state.findMany.data?.map((item, index) => (
+                    <TableTr key={item?.id ? String(item.id) : `row-${index}`}>
+                      <TableTd ta={'center'} fz={{ base: 'sm', md: 'md' }} lh={1.45}>
+                        {item.month}
+                      </TableTd>
+                      <TableTd ta={'center'} fz={{ base: 'sm', md: 'md' }} lh={1.45}>
+                        {item.totalUnemployment}
+                      </TableTd>
+                      <TableTd ta={'center'} fz={{ base: 'sm', md: 'md' }} lh={1.45}>
+                        {item.educatedUnemployment}
+                      </TableTd>
+                      <TableTd ta={'center'} fz={{ base: 'sm', md: 'md' }} lh={1.45}>
+                        {item.uneducatedUnemployment}
+                      </TableTd>
+                      <TableTd ta={'center'} fz={{ base: 'sm', md: 'md' }} lh={1.45}>
+                        {item.percentageChange}%
+                      </TableTd>
+                    </TableTr>
+                  ))}
+                </TableTbody>
+              </Table>
+            </Box>
           </Paper>
         </Stack>
       </Box>

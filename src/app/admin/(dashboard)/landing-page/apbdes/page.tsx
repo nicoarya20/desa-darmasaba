@@ -56,71 +56,85 @@ function ListAPBDes({ search }: { search: string }) {
 
   if (loading || !data) {
     return (
-      <Stack py={10}>
+      <Stack py={{ base: 'md', md: 'lg' }}>
         <Skeleton height={600} radius="md" />
       </Stack>
     );
   }
 
   return (
-    <Box py={10}>
-      <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
-        <Group justify="space-between" mb="md">
-          <Title order={4}>Daftar APBDes</Title>
-          <Button
-            leftSection={<IconPlus size={18} />}
-            color="blue"
-            variant="light"
-            onClick={() => router.push('/admin/landing-page/apbdes/create')}
-          >
-            Tambah Baru
-          </Button>
-        </Group>
+    <Box py={{ base: 'md', md: 'lg' }}>
+      {/* Desktop Table */}
+      <Box visibleFrom="md">
+        <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
+          <Group justify="space-between" mb="md">
+            <Title order={2} size="lg" lh={1.2}>
+              Daftar APBDes
+            </Title>
+            <Button
+              leftSection={<IconPlus size={18} />}
+              color="blue"
+              variant="light"
+              onClick={() => router.push('/admin/landing-page/apbdes/create')}
+            >
+              Tambah Baru
+            </Button>
+          </Group>
 
-        <Box style={{ overflowX: 'auto' }}>
-          <Table highlightOnHover>
-            <TableThead>
-              <TableTr>
-                <TableTh style={{ width: '25%' }}>APBDes</TableTh>
-                <TableTh style={{ width: '25%' }}>Tahun</TableTh>
-                <TableTh style={{ width: '25%' }}>Dokumen</TableTh>
-                <TableTh style={{ width: '25%' }}>Aksi</TableTh>
-              </TableTr>
-            </TableThead>
-            <TableTbody>
-              {filteredData.length > 0 ? (
-                filteredData.map((item) => (
-                  <TableTr key={item.id}>
-                    <TableTd style={{ width: '25%' }}>
-                      <Text fw={500} lineClamp={1}>
-                        APBDes {item.tahun}
-                      </Text>
-                    </TableTd>
-                    <TableTd style={{ width: '25%' }}>
-                      <Text fw={500}>{item.tahun || '-'}</Text>
-                    </TableTd>
-                    <TableTd style={{ width: '25%' }}>
-                      {item.file?.link ? (
-                        <Button
-                          component="a"
-                          href={item.file.link}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          variant="light"
-                          leftSection={<IconFile size={16} />}
-                          size="xs"
-                          radius="sm"
-                        >
-                          Lihat Dokumen
-                        </Button>
-                      ) : (
-                        <Text c="dimmed" fz="sm">
-                          Tidak ada dokumen
+          <Box>
+            <Table highlightOnHover miw={0}>
+              <TableThead>
+                <TableTr>
+                  <TableTh fz="md" fw={600} ta="left" w="25%">
+                    APBDes
+                  </TableTh>
+                  <TableTh fz="md" fw={600} ta="left" w="25%">
+                    Tahun
+                  </TableTh>
+                  <TableTh fz="md" fw={600} ta="left" w="25%">
+                    Dokumen
+                  </TableTh>
+                  <TableTh fz="md" fw={600} ta="left" w="25%">
+                    Aksi
+                  </TableTh>
+                </TableTr>
+              </TableThead>
+              <TableTbody>
+                {filteredData.length > 0 ? (
+                  filteredData.map((item) => (
+                    <TableTr key={item.id}>
+                      <TableTd>
+                        <Text fz="md" fw={500} lh={1.5} lineClamp={1}>
+                          APBDes {item.tahun}
                         </Text>
-                      )}
-                    </TableTd>
-                    <TableTd style={{ width: '25%' }}>
-                      <Box w={100}>
+                      </TableTd>
+                      <TableTd>
+                        <Text fz="md" fw={500} lh={1.5}>
+                          {item.tahun || '-'}
+                        </Text>
+                      </TableTd>
+                      <TableTd>
+                        {item.file?.link ? (
+                          <Button
+                            component="a"
+                            href={item.file.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            variant="light"
+                            leftSection={<IconFile size={16} />}
+                            size="xs"
+                            radius="sm"
+                            fz="sm"
+                          >
+                            Lihat Dokumen
+                          </Button>
+                        ) : (
+                          <Text c="dimmed" fz="sm" lh={1.5}>
+                            Tidak ada dokumen
+                          </Text>
+                        )}
+                      </TableTd>
+                      <TableTd>
                         <Button
                           size="xs"
                           radius="md"
@@ -128,29 +142,126 @@ function ListAPBDes({ search }: { search: string }) {
                           color="blue"
                           leftSection={<IconDeviceImacCog size={14} />}
                           onClick={() => router.push(`/admin/landing-page/apbdes/${item.id}`)}
-                          fullWidth
+                          fz="sm"
                         >
                           Detail
                         </Button>
-                      </Box>
+                      </TableTd>
+                    </TableTr>
+                  ))
+                ) : (
+                  <TableTr>
+                    <TableTd colSpan={4}>
+                      <Center py="lg">
+                        <Text c="dimmed" fz="sm" lh={1.5}>
+                          Tidak ada data APBDes yang cocok
+                        </Text>
+                      </Center>
                     </TableTd>
                   </TableTr>
-                ))
-              ) : (
-                <TableTr>
-                  <TableTd colSpan={5}>
-                    <Center py={20}>
-                      <Text color="dimmed">Tidak ada data APBDes yang cocok</Text>
-                    </Center>
-                  </TableTd>
-                </TableTr>
-              )}
-            </TableTbody>
-          </Table>
-        </Box>
-      </Paper>
+                )}
+              </TableTbody>
+            </Table>
+          </Box>
+        </Paper>
+      </Box>
 
-      <Center mt="md">
+      {/* Mobile Cards */}
+      <Box hiddenFrom="md">
+        <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
+          <Group justify="space-between" mb="md">
+            <Title order={2} size="lg" lh={1.2}>
+              Daftar APBDes
+            </Title>
+            <Button
+              leftSection={<IconPlus size={18} />}
+              color="blue"
+              variant="light"
+              onClick={() => router.push('/admin/landing-page/apbdes/create')}
+            >
+              Tambah Baru
+            </Button>
+          </Group>
+          <Stack gap="md">
+            {filteredData.length > 0 ? (
+              filteredData.map((item) => (
+                <Paper
+                  key={item.id}
+                  withBorder
+                  bg={colors['white-1']}
+                  p="md"
+                  shadow="sm"
+                  radius="md"
+                >
+                  <Stack gap="xs">
+                    <Text fz="sm" fw={600} lh={1.4}>
+                      APBDes {item.tahun}
+                    </Text>
+                    <Group justify="space-between" wrap="nowrap">
+                      <Text fz="sm" c="dimmed" lh={1.4}>
+                        Tahun
+                      </Text>
+                      <Text fz="sm" fw={500} lh={1.4}>
+                        {item.tahun || '-'}
+                      </Text>
+                    </Group>
+
+                    <Group justify="space-between" wrap="nowrap">
+                      <Text fz="sm" c="dimmed" lh={1.4}>
+                        Dokumen
+                      </Text>
+                      {item.file?.link ? (
+                        <Button
+                          component="a"
+                          href={item.file.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          variant="light"
+                          leftSection={<IconFile size={14} />}
+                          size="xs"
+                          radius="sm"
+                          fz="xs"
+                          lh={1.4}
+                        >
+                          Lihat
+                        </Button>
+                      ) : (
+                        <Text fz="xs" c="dimmed" lh={1.4}>
+                          Tidak ada
+                        </Text>
+                      )}
+                    </Group>
+
+                    <Button
+                      size="xs"
+                      radius="md"
+                      variant="light"
+                      color="blue"
+                      leftSection={<IconDeviceImacCog size={14} />}
+                      onClick={() => router.push(`/admin/landing-page/apbdes/${item.id}`)}
+                      mt="sm"
+                      fz="xs"
+                      lh={1.4}
+                    >
+                      Detail
+                    </Button>
+                  </Stack>
+                </Paper>
+              ))
+            ) : (
+              <Paper withBorder bg={colors['white-1']} p="md" radius="md">
+                <Center py="lg">
+                  <Text c="dimmed" fz="xs" lh={1.4}>
+                    Tidak ada data APBDes yang cocok
+                  </Text>
+                </Center>
+              </Paper>
+            )}
+          </Stack>
+        </Paper>
+      </Box>
+
+      <Center mt="xl">
         <Pagination
           value={page}
           onChange={(newPage) => {

@@ -33,7 +33,7 @@ import { useEffect, useState } from "react";
 import { getNavbar } from "./(dashboard)/user&role/_com/dynamicNavbar";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  const [opened, { toggle }] = useDisclosure();
+  const [opened, { toggle, close }] = useDisclosure(); // ✅ Tambahkan 'close'
   const [loading, setLoading] = useState(true);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true);
@@ -45,21 +45,19 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     const fetchUser = async () => {
       try {
         const res = await fetch('/api/auth/me', {
-          credentials: 'include' // ✅ ADD credentials
+          credentials: 'include'
         });
         const data = await res.json();
 
         if (data.user) {
-          // ✅ Check if user is NOT active → redirect to waiting room
           if (!data.user.isActive) {
             authStore.setUser(null);
             router.replace('/waiting-room');
             return;
           }
 
-          // ✅ Fetch menuIds
           const menuRes = await fetch(`/api/admin/user-menu-access?userId=${data.user.id}`, {
-            credentials: 'include' // ✅ ADD credentials
+            credentials: 'include'
           });
           const menuData = await menuRes.json();
 
@@ -67,7 +65,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             ? [...menuData.menuIds]
             : null;
 
-          // ✅ Set user dengan menuIds yang fresh
           authStore.setUser({
             id: data.user.id,
             name: data.user.name,
@@ -76,7 +73,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             isActive: data.user.isActive
           });
 
-          // ✅ IMPROVED: Redirect ONLY if di root /admin
           const currentPath = window.location.pathname;
           
           if (currentPath === '/admin') {
@@ -84,7 +80,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             console.log('🔄 Redirecting from /admin to:', expectedPath);
             router.replace(expectedPath);
           }
-          // ✅ Jangan redirect jika user sudah di path yang valid
 
         } else {
           authStore.setUser(null);
@@ -100,17 +95,17 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     };
 
     fetchUser();
-  }, [router]); // ✅ Only depend on router
+  }, [router]);
 
   const getRedirectPath = (roleId: number): string => {
     switch (roleId) {
-      case 0: // DEVELOPER
-      case 1: // SUPERADMIN
-      case 2: // ADMIN_DESA
+      case 0:
+      case 1:
+      case 2:
         return '/admin/landing-page/profil/program-inovasi';
-      case 3: // ADMIN_KESEHATAN
+      case 3:
         return '/admin/kesehatan/posyandu';
-      case 4: // ADMIN_PENDIDIKAN
+      case 4:
         return '/admin/pendidikan/info-sekolah/jenjang-pendidikan';
       default:
         return '/admin';
@@ -139,7 +134,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
       const response = await fetch('/api/auth/logout', { 
         method: 'POST',
-        credentials: 'include' // ✅ ADD credentials
+        credentials: 'include'
       });
       const result = await response.json();
 
@@ -163,6 +158,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     }
   };
 
+  // ✅ Handler untuk menutup mobile menu saat navigasi
+  const handleNavClick = (path: string) => {
+    router.push(path);
+    close(); // Tutup mobile menu
+  };
+
   return (
     <AppShell
       suppressHydrationWarning
@@ -177,7 +178,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       }}
       padding="md"
     >
-      {/* ... rest of your JSX (Header, Navbar, Main) sama seperti sebelumnya ... */}
       <AppShellHeader
         style={{
           background: "linear-gradient(90deg, #ffffff, #f9fbff)",
@@ -230,16 +230,48 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       </AppShellHeader>
 
       <AppShellNavbar component={ScrollArea} style={{ background: "#ffffff", borderRight: `1px solid ${colors["blue-button"]}20` }} p={{ base: 'xs', sm: 'sm' }}>
-        {/* ... Navbar content sama seperti sebelumnya ... */}
         <AppShell.Section p="sm">
           {currentNav.map((v, k) => {
             const isParentActive = segments.includes(_.lowerCase(v.name));
             return (
-              <NavLink key={k} defaultOpened={isParentActive} c={isParentActive ? colors["blue-button"] : "gray"} label={<Text fw={isParentActive ? 600 : 400} fz="sm">{v.name}</Text>} style={{ borderRadius: rem(10), marginBottom: rem(4), transition: "background 150ms ease" }} styles={{ root: { '&:hover': { backgroundColor: 'rgba(25, 113, 194, 0.05)' } } }} variant="light" active={isParentActive}>
+              <NavLink 
+                key={k} 
+                defaultOpened={isParentActive} 
+                c={isParentActive ? colors["blue-button"] : "gray"} 
+                label={<Text fw={isParentActive ? 600 : 400} fz="sm">{v.name}</Text>} 
+                style={{ borderRadius: rem(10), marginBottom: rem(4), transition: "background 150ms ease" }} 
+                styles={{ root: { '&:hover': { backgroundColor: 'rgba(25, 113, 194, 0.05)' } } }} 
+                variant="light" 
+                active={isParentActive}
+              >
                 {v.children.map((child, key) => {
                   const isChildActive = segments.includes(_.lowerCase(child.name));
                   return (
-                    <NavLink key={key} href={child.path} c={isChildActive ? colors["blue-button"] : "gray"} label={<Text fw={isChildActive ? 600 : 400} fz="sm">{child.name}</Text>} styles={{ root: { borderRadius: rem(8), marginBottom: rem(2), transition: 'background 150ms ease', padding: '6px 12px', '&:hover': { backgroundColor: isChildActive ? 'rgba(25, 113, 194, 0.15)' : 'rgba(25, 113, 194, 0.05)' }, ...(isChildActive && { backgroundColor: 'rgba(25, 113, 194, 0.1)' }) } }} active={isChildActive} component={Link} />
+                    <NavLink 
+                      key={key} 
+                      // ✅ PERBAIKAN: Gunakan onClick untuk handle navigasi dan close menu
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleNavClick(child.path);
+                      }}
+                      href={child.path}
+                      c={isChildActive ? colors["blue-button"] : "gray"} 
+                      label={<Text fw={isChildActive ? 600 : 400} fz="sm">{child.name}</Text>} 
+                      styles={{ 
+                        root: { 
+                          borderRadius: rem(8), 
+                          marginBottom: rem(2), 
+                          transition: 'background 150ms ease', 
+                          padding: '6px 12px', 
+                          '&:hover': { 
+                            backgroundColor: isChildActive ? 'rgba(25, 113, 194, 0.15)' : 'rgba(25, 113, 194, 0.05)' 
+                          }, 
+                          ...(isChildActive && { backgroundColor: 'rgba(25, 113, 194, 0.1)' }) 
+                        } 
+                      }} 
+                      active={isChildActive} 
+                      component={Link}
+                    />
                   );
                 })}
               </NavLink>

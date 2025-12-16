@@ -204,7 +204,7 @@ function EditAPBDes() {
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       <Group mb="md">
         <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
           <IconArrowBack color={colors['blue-button']} size={24} />
@@ -215,7 +215,7 @@ function EditAPBDes() {
       </Group>
 
       <Paper
-        w={{ base: '100%', md: '100%' }}
+        w={{ base: '100%', md: '50%' }}
         bg={colors['white-1']}
         p="lg"
         radius="md"

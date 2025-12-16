@@ -75,7 +75,7 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
         keepMounted={false}
       >
         {/* ✅ Scroll horizontal wrapper */}
-        <Box visibleFrom='md'>
+        <Box visibleFrom='md' pb={10}>
           <ScrollArea type="auto" offsetScrollbars>
             <TabsList
               p="sm"
@@ -108,7 +108,7 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
           </ScrollArea>
         </Box>
 
-        <Box hiddenFrom='md'>
+        <Box hiddenFrom='md' pb={10}>
           <ScrollArea
             type="auto"
             offsetScrollbars={false}

@@ -3,7 +3,7 @@
 import grafikNganggur from '@/app/admin/(dashboard)/_state/ekonomi/usia-kerja-nganggur';
 import colors from '@/con/colors';
 import { PieChart } from '@mantine/charts';
-import { Box, Center, ColorSwatch, Flex, Paper, Skeleton, Stack, Text } from '@mantine/core';
+import { Box, Center, ColorSwatch, Flex, Paper, Skeleton, Stack, Text, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
@@ -56,7 +56,7 @@ function Page() {
     }
   }, [stateGrafikNganggurPendidikan.findMany.data])
 
-  if (!stateGrafikNganggur.findMany.data) {
+  if (!stateGrafikNganggur.findMany.data || !stateGrafikNganggurPendidikan.findMany.data) {
     return (
       <Box>
         <Skeleton h={500} />
@@ -64,114 +64,151 @@ function Page() {
     )
   }
 
-  if (!stateGrafikNganggur.findMany.data) {
-    return (
-      <Box>
-        <Skeleton h={500} />
-      </Box>
-    )
-  }
   return (
     <Stack pos="relative" bg={colors.Bg} py="xl" gap="22" style={{ overflow: 'auto' }}>
       <Box px={{ base: 'md', md: 50, lg: 100 }}>
         <BackButton />
       </Box>
-      <Box px={{ base: 'md', md: 50, lg: 100 }} >
-        <Text ta={"center"} fz={{ base: "h1", md: "2.5rem" }} c={colors["blue-button"]} fw={"bold"}>
+      <Box px={{ base: 'md', md: 50, lg: 100 }}>
+        <Title
+          order={1}
+          ta="center"
+          c={colors["blue-button"]}
+          fw="bold"
+          style={{ lineHeight: 1.15 }}
+        >
           Jumlah Penduduk Usia Kerja Yang Menganggur
-        </Text>
+        </Title>
       </Box>
       <Box px={{ base: "md", md: 50, lg: 100 }}>
         <Stack gap={'lg'} justify='center'>
           <Paper p={'lg'}>
-            <Text fw={'bold'} fz={'h3'}>Pengangguran Berdasarkan Usia</Text>
-            {mounted && donutGrafikNganggurData.length > 0 ? (<Box style={{ width: '100%', height: 'auto', minHeight: 200 }}>
-              <Box w="100%" maw={{ base: '100%', md: 400 }} mx="auto">
-                <PieChart
-                  w="100%"
-                  h={250} // lebih kecil biar aman di mobile
-                  withLabelsLine
-                  labelsPosition="outside"
-                  labelsType="percent"
-                  withLabels
-                  data={donutGrafikNganggurData}
-                  withTooltip
-                  tooltipDataSource="segment"
-                />
+            <Title
+              order={2}
+              fw="bold"
+              style={{ lineHeight: 1.2 }}
+            >
+              Pengangguran Berdasarkan Usia
+            </Title>
+            {mounted && donutGrafikNganggurData.length > 0 ? (
+              <Box style={{ width: '100%', height: 'auto', minHeight: 200 }}>
+                <Box w="100%" maw={{ base: '100%', md: 400 }} mx="auto">
+                  <PieChart
+                    w="100%"
+                    h={250}
+                    withLabelsLine
+                    labelsPosition="outside"
+                    labelsType="percent"
+                    withLabels
+                    data={donutGrafikNganggurData}
+                    withTooltip
+                    tooltipDataSource="segment"
+                  />
+                </Box>
               </Box>
-            </Box>) : <Skeleton h={500} />}
+            ) : (
+              <Skeleton h={500} />
+            )}
             <Flex pb={30} justify={'center'} gap={'xl'} align={'center'} wrap="wrap">
               <Box>
                 <Flex gap={{ base: 5, md: 8 }} align={'center'} wrap="wrap">
-                  <Text fw={'bold'} fz={{ base: 'md', md: 'h4' }}>18-25</Text>
+                  <Text fw={'bold'} fz={{ base: 'sm', md: 'md' }} style={{ lineHeight: 1.45 }}>
+                    18-25
+                  </Text>
                   <ColorSwatch color="#4b6Ef5" size={30} />
                 </Flex>
               </Box>
               <Box>
                 <Flex gap={{ base: 5, md: 8 }} align={'center'} wrap="wrap">
-                  <Text fw={'bold'} fz={{ base: 'md', md: 'h4' }}>26-35</Text>
+                  <Text fw={'bold'} fz={{ base: 'sm', md: 'md' }} style={{ lineHeight: 1.45 }}>
+                    26-35
+                  </Text>
                   <ColorSwatch color="#14b885" size={30} />
                 </Flex>
               </Box>
               <Box>
                 <Flex gap={{ base: 5, md: 8 }} align={'center'} wrap="wrap">
-                  <Text fw={'bold'} fz={{ base: 'md', md: 'h4' }}>36-45</Text>
+                  <Text fw={'bold'} fz={{ base: 'sm', md: 'md' }} style={{ lineHeight: 1.45 }}>
+                    36-45
+                  </Text>
                   <ColorSwatch color="#E6A03B" size={30} />
                 </Flex>
               </Box>
               <Box>
                 <Flex gap={{ base: 5, md: 8 }} align={'center'} wrap="wrap">
-                  <Text fw={'bold'} fz={{ base: 'md', md: 'h4' }}>46+</Text>
+                  <Text fw={'bold'} fz={{ base: 'sm', md: 'md' }} style={{ lineHeight: 1.45 }}>
+                    46+
+                  </Text>
                   <ColorSwatch color="#DB524D" size={30} />
                 </Flex>
               </Box>
             </Flex>
           </Paper>
           <Paper p={'lg'}>
-            <Text fw={'bold'} fz={'h3'}>Pengangguran Berdasarkan Pendidikan</Text>
-            {mounted2 && donutGrafikNganggurDataPendidikan.length > 0 ? (<Center>
-              <Box w="100%" style={{ maxWidth: 400, margin: "0 auto" }}>
-                <PieChart
-                  w="100%"
-                  h="min(250px, 50vh)" // lebih kecil biar aman di mobile
-                  withLabelsLine
-                  labelsPosition="outside"
-                  labelsType="percent"
-                  withLabels
-                  data={donutGrafikNganggurDataPendidikan}
-                  withTooltip
-                  tooltipDataSource="segment"
-                />
-              </Box>
-            </Center>) : <Skeleton h={500} />}
+            <Title
+              order={2}
+              fw="bold"
+              style={{ lineHeight: 1.2 }}
+            >
+              Pengangguran Berdasarkan Pendidikan
+            </Title>
+            {mounted2 && donutGrafikNganggurDataPendidikan.length > 0 ? (
+              <Center>
+                <Box w="100%" style={{ maxWidth: 400, margin: "0 auto" }}>
+                  <PieChart
+                    w="100%"
+                    h="min(250px, 50vh)"
+                    withLabelsLine
+                    labelsPosition="outside"
+                    labelsType="percent"
+                    withLabels
+                    data={donutGrafikNganggurDataPendidikan}
+                    withTooltip
+                    tooltipDataSource="segment"
+                  />
+                </Box>
+              </Center>
+            ) : (
+              <Skeleton h={500} />
+            )}
             <Flex pb={30} justify={'center'} gap={'xl'} align={'center'} wrap="wrap">
               <Box>
                 <Flex gap={{ base: 5, md: 8 }} align={'center'} wrap="wrap">
-                  <Text fw={'bold'} fz={{ base: 'md', md: 'h4' }}>SD</Text>
+                  <Text fw={'bold'} fz={{ base: 'sm', md: 'md' }} style={{ lineHeight: 1.45 }}>
+                    SD
+                  </Text>
                   <ColorSwatch color="#4b6Ef5" size={30} />
                 </Flex>
               </Box>
               <Box>
                 <Flex gap={{ base: 5, md: 8 }} align={'center'} wrap="wrap">
-                  <Text fw={'bold'} fz={{ base: 'md', md: 'h4' }}>SMP</Text>
+                  <Text fw={'bold'} fz={{ base: 'sm', md: 'md' }} style={{ lineHeight: 1.45 }}>
+                    SMP
+                  </Text>
                   <ColorSwatch color="#14b885" size={30} />
                 </Flex>
               </Box>
               <Box>
                 <Flex gap={{ base: 5, md: 8 }} align={'center'} wrap="wrap">
-                  <Text fw={'bold'} fz={{ base: 'md', md: 'h4' }}>SMA/SMK</Text>
+                  <Text fw={'bold'} fz={{ base: 'sm', md: 'md' }} style={{ lineHeight: 1.45 }}>
+                    SMA/SMK
+                  </Text>
                   <ColorSwatch color="#E6A03B" size={30} />
                 </Flex>
               </Box>
               <Box>
                 <Flex gap={{ base: 5, md: 8 }} align={'center'} wrap="wrap">
-                  <Text fw={'bold'} fz={{ base: 'md', md: 'h4' }}>D3</Text>
+                  <Text fw={'bold'} fz={{ base: 'sm', md: 'md' }} style={{ lineHeight: 1.45 }}>
+                    D3
+                  </Text>
                   <ColorSwatch color="#DB524D" size={30} />
                 </Flex>
               </Box>
               <Box>
                 <Flex gap={{ base: 5, md: 8 }} align={'center'} wrap="wrap">
-                  <Text fw={'bold'} fz={{ base: 'md', md: 'h4' }}>S1</Text>
+                  <Text fw={'bold'} fz={{ base: 'sm', md: 'md' }} style={{ lineHeight: 1.45 }}>
+                    S1
+                  </Text>
                   <ColorSwatch color="#1018A8FF" size={30} />
                 </Flex>
               </Box>
