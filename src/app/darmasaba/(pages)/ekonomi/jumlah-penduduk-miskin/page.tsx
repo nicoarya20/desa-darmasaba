@@ -2,7 +2,7 @@
 import jumlahPendudukMiskin from '@/app/admin/(dashboard)/_state/ekonomi/jumlah-penduduk-miskin';
 import colors from '@/con/colors';
 import { BarChart } from '@mantine/charts';
-import { Box, Paper, Skeleton, Stack, Text } from '@mantine/core';
+import { Box, Paper, Skeleton, Stack, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
@@ -17,12 +17,9 @@ function Page() {
   const state = useProxy(jumlahPendudukMiskin)
   const [chartData, setChartData] = useState<JPMGrafik[]>([])
 
-
   useShallowEffect(() => {
     state.findMany.load()
   }, [])
-
-
 
   useEffect(() => {
     if (state.findMany.data) {
@@ -48,20 +45,30 @@ function Page() {
         <BackButton />
       </Box>
       <Box px={{ base: 'md', md: 100 }} >
-        <Text ta={"center"} fz={{ base: "h1", md: "2.5rem" }} c={colors["blue-button"]} fw={"bold"}>
+        <Title
+          order={1}
+          ta={"center"}
+          c={colors["blue-button"]}
+          fw={"bold"}
+          lh={1.1}
+        >
           Jumlah Penduduk Miskin
-        </Text>
+        </Title>
       </Box>
       <Box px={{ base: "md", md: 100 }}>
         <Stack gap={'lg'} justify='center'>
           <Paper p={'xl'}>
-            <Text fz={'h3'}>Jumlah Data Penduduk Miskin</Text>
-            <Text fw={"bold"} fz={'h1'}>
+            <Title order={3} fw={'normal'} lh={1.1}>
+              Jumlah Data Penduduk Miskin
+            </Title>
+            <Title order={2} fw={"bold"} lh={1.1}>
               {state.findMany.data?.reduce((sum, item) => sum + (Number(item.totalPoorPopulation) || 0), 0).toLocaleString()} Orang
-            </Text>
+            </Title>
           </Paper>
           <Paper p={'xl'}>
-            <Text pb={10} fw={'bold'} fz={'h4'}>Jumlah Penduduk Miskin Per Tahun</Text>
+            <Title order={3} pb={10} fw={'bold'} lh={1.1}>
+              Jumlah Penduduk Miskin Per Tahun
+            </Title>
             <BarChart
               h={300}
               data={chartData}

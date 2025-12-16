@@ -1,6 +1,6 @@
 'use client';
 
-import { Box, Container, SimpleGrid, Skeleton, Stack, Text } from '@mantine/core';
+import { Box, Container, SimpleGrid, Skeleton, Stack, Text, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconLeaf, IconPlant2, IconRecycle } from '@tabler/icons-react';
 import { useProxy } from 'valtio/utils';
@@ -51,19 +51,21 @@ export default function EdukasiLingkunganPage() {
       </Box>
 
       <Container size="lg" ta="center">
-        <Text
-          component="h1"
-          fz={{ base: 'h2', md: '2.5rem' }}
+        <Title
+          order={1}
           c={colors['blue-button']}
           fw={700}
           mb="md"
+          lh={1.15}
         >
           Edukasi Lingkungan
-        </Text>
+        </Title>
         <Text
-          fz={{ base: 'md', md: 'lg' }}
+          fz={{ base: 'sm', md: 'md' }}
+          lh={1.5}
           maw={800}
           mx="auto"
+          c="dark.9"
         >
           Program edukasi ini membimbing masyarakat untuk peduli dan bertanggung jawab terhadap alam,
           meningkatkan kesehatan, kenyamanan, dan keberlanjutan hidup bersama.

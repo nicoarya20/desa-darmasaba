@@ -517,7 +517,7 @@ function NodeCard({ node, router }: any) {
                   fontWeight: 600,
                 }}
               >
-                <Text fz={{ base: 12, md: 13 }} lh={1} ta="center">Lihat Detail</Text>
+                <Text c={"white"} fz={{ base: 12, md: 13 }} lh={1} ta="center">Lihat Detail</Text>
               </Button>
             )}
           </Stack>

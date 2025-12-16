@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
-
 import stateStrukturBumDes from '@/app/admin/(dashboard)/_state/ekonomi/struktur-organisasi/struktur-organisasi'
 import colors from '@/con/colors'
 import {
@@ -32,12 +31,13 @@ import {
   IconZoomOut,
 } from '@tabler/icons-react'
 import { debounce } from 'lodash'
+import { useTransitionRouter } from 'next-view-transitions'
 import { OrganizationChart } from 'primereact/organizationchart'
 import { useEffect, useRef, useState } from 'react'
 import { useProxy } from 'valtio/utils'
 import BackButton from '../../desa/layanan/_com/BackButto'
+import '../../ppid/struktur-ppid/struktur.css'
 import { useMediaQuery } from '@mantine/hooks'
-import { useTransitionRouter } from 'next-view-transitions'
 
 export default function Page() {
   return (
@@ -49,14 +49,16 @@ export default function Page() {
         paddingBottom: 48,
       }}
     >
-      <Box px={{ base: 'md', md: 100 }} py="xl">
+      <Box px={{ base: 'md', md: 100 }} py={"xl"}>
         <BackButton />
+
         <Stack align="center" gap="xl" mt="xl">
           <Title
             order={1}
             ta="center"
             c={colors['blue-button']}
-            fz={{ base: 28, md: 36 }}
+            fz={{ base: 28, md: 36, lg: 44 }}
+            lh={{ base: 1.05, md: 1.03 }}
           >
             Struktur Organisasi & SK Pengurus BumDes
           </Title>
@@ -75,14 +77,18 @@ export default function Page() {
 }
 
 function StrukturOrganisasiBumDes() {
-  const router = useTransitionRouter()
   const stateOrganisasi: any = useProxy(stateStrukturBumDes.pegawai)
+  const router = useTransitionRouter()
   const chartContainerRef = useRef<HTMLDivElement>(null)
   const [scale, setScale] = useState(1)
   const [isFullscreen, setFullscreen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
+
+  // debounce pencarian
   const debouncedSearch = useRef(
-    debounce((value: string) => setSearchQuery(value), 1000)
+    debounce((value: string) => {
+      setSearchQuery(value)
+    }, 1000)
   ).current
 
   useEffect(() => {
@@ -90,8 +96,7 @@ function StrukturOrganisasiBumDes() {
   }, [])
 
   const isLoading =
-    !stateOrganisasi.findMany.data &&
-    stateOrganisasi.findMany.loading !== false
+    !stateOrganisasi.findMany.data && stateOrganisasi.findMany.loading !== false
 
   if (isLoading) {
     return (
@@ -149,7 +154,7 @@ function StrukturOrganisasiBumDes() {
     )
   }
 
-  // 📊 susun struktur organisasi
+  // 🧩 buat struktur organisasi
   const posisiMap = new Map<string, any>()
   const aktifPegawai = data.filter((p: any) => p.isActive)
 
@@ -183,7 +188,6 @@ function StrukturOrganisasiBumDes() {
         name: pegawai?.namaLengkap || 'Belum Ditugaskan',
         title: node.nama || 'Tanpa Jabatan',
         image: pegawai?.image?.link || '/img/default.png',
-        description: node.deskripsi || '',
       },
       children: node.children?.map(toOrgChartFormat) || [],
     }
@@ -208,7 +212,7 @@ function StrukturOrganisasiBumDes() {
     chartData = filterNodes(chartData)
   }
 
-  // 🔍 fullscreen dan zoom control
+  // 🎬 fullscreen & zoom control
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
       chartContainerRef.current?.requestFullscreen()
@@ -225,7 +229,7 @@ function StrukturOrganisasiBumDes() {
 
   return (
     <Stack align="center" mt="xl">
-      {/* 🧭 Kontrol atas */}
+      {/* 🔍 Controls */}
       <Paper
         shadow="xs"
         w={{
@@ -244,6 +248,7 @@ function StrukturOrganisasiBumDes() {
           overflowX: 'auto'    // ⬅️ untuk mencegah overflow
         }}
       >
+
         <Stack gap="sm">
           <Group justify='center'>
             <TextInput
@@ -360,165 +365,163 @@ function StrukturOrganisasiBumDes() {
         </Stack>
       </Paper>
 
-       {/* 🧩 Chart Container */}
-            <Center style={{ width: '100%' }}>
-              <Box
-                ref={chartContainerRef}
+      {/* 🧩 Chart Container */}
+      <Center style={{ width: '100%' }}>
+        <Box
+          ref={chartContainerRef}
+          style={{
+            overflowX: 'auto',
+            overflowY: 'auto',
+            width: '100%',
+            maxWidth: '100%',
+            padding: '32px 16px',
+            transition: 'transform 0.2s ease',
+          }}
+        >
+          <Box style={{
+            transform: `scale(${scale})`,
+            transformOrigin: 'center top',
+            display: 'inline-block', // 👈 agar tidak memenuhi lebar parent
+            minWidth: 'min-content', // 👈 penting agar chart tidak dipaksa muat di width 100%
+          }}>
+            <OrganizationChart
+              value={chartData}
+              nodeTemplate={(node) => <NodeCard node={node} router={router} />}
+              className="p-organizationchart p-organizationchart-horizontal"
+            />
+          </Box>
+        </Box>
+      </Center>
+    </Stack>
+  )
+}
+
+function NodeCard({ node, router }: any) {
+  const imageSrc = node?.data?.image || '/img/default.png'
+  const name = node?.data?.name || 'Tanpa Nama'
+  const title = node?.data?.title || 'Tanpa Jabatan'
+  const hasId = Boolean(node?.data?.id)
+  const isMobile = useMediaQuery("(max-width: 768px)");
+
+  return (
+    <Transition mounted transition="pop" duration={300}>
+      {(styles) => (
+        <Card
+          shadow="md"
+          radius="xl"
+          withBorder
+          style={{
+            ...styles,
+            width: '100%',
+            maxWidth: isMobile ? 200 : 240, // lebih kecil di mobile
+            minHeight: isMobile ? 240 : 280,
+            padding: isMobile ? 16 : 20,
+            background: 'linear-gradient(135deg, rgba(28,110,164,0.15) 0%, rgba(255,255,255,0.95) 100%)',
+            borderColor: 'rgba(28, 110, 164, 0.3)',
+            borderWidth: 2,
+            transition: 'all 0.3s ease',
+            cursor: hasId ? 'pointer' : 'default',
+          }}
+          onMouseEnter={(e) => {
+            if (hasId) {
+              e.currentTarget.style.transform = 'translateY(-4px)'
+              e.currentTarget.style.boxShadow = '0 8px 24px rgba(28, 110, 164, 0.25)'
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (hasId) {
+              e.currentTarget.style.transform = 'translateY(0)'
+              e.currentTarget.style.boxShadow = ''
+            }
+          }}
+        >
+          <Stack align="center" gap={12}>
+            {/* Photo */}
+            <Box
+              style={{
+                width: 96,
+                height: 96,
+                borderRadius: '50%',
+                overflow: 'hidden',
+                border: '3px solid rgba(28, 110, 164, 0.4)',
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                background: 'white',
+              }}
+            >
+              <Image
+                src={imageSrc}
+                alt={name}
+                width={96}
+                height={96}
+                fit="cover"
+                loading="lazy"
                 style={{
-                  overflowX: 'auto',
-                  overflowY: 'auto',
-                  width: '100%',
-                  maxWidth: '100%',
-                  padding: '32px 16px',
-                  transition: 'transform 0.2s ease',
+                  objectFit: 'cover',
+                }}
+              />
+            </Box>
+
+            {/* Name */}
+            <Text
+              fw={700}
+              ta="center"
+              c={colors['blue-button']}
+              lineClamp={2}
+              fz={{ base: 13, md: 15 }}
+              lh={1.2}
+              style={{
+                minHeight: 40,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                wordBreak: 'break-word',
+              }}
+            >
+              {name}
+            </Text>
+
+            {/* Title/Position */}
+            <Text
+              c="dimmed"
+              ta="center"
+              fw={500}
+              lineClamp={2}
+              fz={{ base: 12, md: 13 }}
+              lh={1.3}
+              style={{
+                minHeight: 32,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                wordBreak: 'break-word',
+              }}
+            >
+              {title}
+            </Text>
+
+            {/* Detail Button */}
+            {hasId && (
+              <Button
+                variant="gradient"
+                gradient={{ from: 'blue', to: 'cyan' }}
+                size="xs"
+                fullWidth
+                mt={8}
+                radius="md"
+                onClick={() =>
+                  router.push(`/darmasaba/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa/${node.data.id}`)
+                }
+                style={{
+                  height: 32,
+                  fontWeight: 600,
                 }}
               >
-                <Box style={{
-                  
-                  transform: `scale(${scale})`,
-                  transformOrigin: 'center top',
-                  display: 'inline-block', // 👈 agar tidak memenuhi lebar parent
-                  minWidth: 'min-content', // 👈 penting agar chart tidak dipaksa muat di width 100%
-                }}>
-                  <OrganizationChart
-                    value={chartData}
-                    nodeTemplate={(node) => <NodeCard node={node} router={router} />}
-                    className="p-organizationchart p-organizationchart-horizontal"
-                  />
-                </Box>
-              </Box>
-            </Center>
-          </Stack>
-        )
-      }
-      
-      function NodeCard({ node, router }: any) {
-        const imageSrc = node?.data?.image || '/img/default.png'
-        const name = node?.data?.name || 'Tanpa Nama'
-        const title = node?.data?.title || 'Tanpa Jabatan'
-        const hasId = Boolean(node?.data?.id)
-        const isMobile = useMediaQuery("(max-width: 768px)");
-      
-        return (
-          <Transition mounted transition="pop" duration={300}>
-            {(styles) => (
-              <Card
-                shadow="md"
-                radius="xl"
-                withBorder
-              
-                style={{
-                  ...styles,
-                  width: '100%',
-                  maxWidth: isMobile ? 200 : 240, // lebih kecil di mobile
-                  minHeight: isMobile ? 240 : 280,
-                  padding: isMobile ? 16 : 20,
-                  background: 'linear-gradient(135deg, rgba(28,110,164,0.15) 0%, rgba(255,255,255,0.95) 100%)',
-                  borderColor: 'rgba(28, 110, 164, 0.3)',
-                  borderWidth: 2,
-                  transition: 'all 0.3s ease',
-                  cursor: hasId ? 'pointer' : 'default',
-                }}
-                onMouseEnter={(e) => {
-                  if (hasId) {
-                    e.currentTarget.style.transform = 'translateY(-4px)'
-                    e.currentTarget.style.boxShadow = '0 8px 24px rgba(28, 110, 164, 0.25)'
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (hasId) {
-                    e.currentTarget.style.transform = 'translateY(0)'
-                    e.currentTarget.style.boxShadow = ''
-                  }
-                }}
-              >
-                <Stack align="center" gap={12}>
-                  {/* Photo */}
-                  <Box
-                    style={{
-                      width: 96,
-                      height: 96,
-                      borderRadius: '50%',
-                      overflow: 'hidden',
-                      border: '3px solid rgba(28, 110, 164, 0.4)',
-                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-                      background: 'white',
-                    }}
-                  >
-                    <Image
-                      src={imageSrc}
-                      alt={name}
-                      width={96}
-                      height={96}
-                      fit="cover"
-                      loading="lazy"
-                      style={{
-                        objectFit: 'cover',
-                      }}
-                    />
-                  </Box>
-      
-                  {/* Name */}
-                  <Text
-                    fw={700}
-                    ta="center"
-                    c={colors['blue-button']}
-                    lineClamp={2}
-                    fz={{ base: 13, md: 15 }}
-                    lh={1.2}
-                    style={{
-                      minHeight: 40,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      wordBreak: 'break-word',
-                    }}
-                  >
-                    {name}
-                  </Text>
-      
-                  {/* Title/Position */}
-                  <Text
-                    c="dimmed"
-                    ta="center"
-                    fw={500}
-                    lineClamp={2}
-                    fz={{ base: 12, md: 13 }}
-                    lh={1.3}
-                    style={{
-                      minHeight: 32,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      wordBreak: 'break-word',
-                    }}
-                  >
-                    {title}
-                  </Text>
-      
-                  {/* Detail Button */}
-                  {hasId && (
-                    <Button
-                      variant="gradient"
-                      gradient={{ from: 'blue', to: 'cyan' }}
-                      size="xs"
-                      fullWidth
-                      mt={8}
-                      radius="md"
-                      onClick={() =>
-                        router.push(`/darmasaba/ppid/struktur-ppid/${node.data.id}`)
-                      }
-                      style={{
-                        height: 32,
-                        fontWeight: 600,
-                      }}
-                    >
-                      <Text fz={{ base: 12, md: 13 }} lh={1} ta="center">Lihat Detail</Text>
-                    </Button>
-                  )}
-                </Stack>
-              </Card>
+                <Text c={"white"} fz={{ base: 12, md: 13 }} lh={1} ta="center">Lihat Detail</Text>
+              </Button>
             )}
-          </Transition>
-        )
-      }
+          </Stack>
+        </Card>
+      )}
+    </Transition>
+  )
+}

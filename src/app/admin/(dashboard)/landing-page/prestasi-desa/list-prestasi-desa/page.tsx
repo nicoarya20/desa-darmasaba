@@ -1,7 +1,7 @@
 'use client'
 import colors from '@/con/colors';
 import { Box, Button, Center, Group, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title } from '@mantine/core';
-import { useShallowEffect } from '@mantine/hooks';
+import { useMediaQuery, useShallowEffect } from '@mantine/hooks';
 import { IconDeviceImacCog, IconPlus, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -28,6 +28,7 @@ function ListPrestasiDesa() {
 function ListPrestasi({ search }: { search: string }) {
   const listState = useProxy(prestasiState.prestasiDesa)
   const router = useRouter();
+  const isMobile = useMediaQuery('(max-width: 768px)');
 
   const {
     data,
@@ -39,60 +40,65 @@ function ListPrestasi({ search }: { search: string }) {
 
   useShallowEffect(() => {
     load(page, 10, search);
-  }, [page, search]);
+  }, []);
 
   const filteredData = data || []
 
   if (loading || !data) {
     return (
-      <Stack py={10}>
+      <Stack py={{ base: 'sm', md: 'md' }}>
         <Skeleton height={600} radius="md" />
       </Stack>
     );
   }
 
   return (
-    <Box py={10}>
-      <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
-        <Group justify="space-between" mb="md">
-          <Title order={4}>Daftar Prestasi Desa</Title>
+    <Box py={{ base: 'sm', md: 'md' }}>
+      <Paper withBorder bg={colors['white-1']} p={{ base: 'md', md: 'lg' }} shadow="md" radius="md">
+        <Group justify="space-between" mb={{ base: 'sm', md: 'md' }}>
+          <Title order={2} size={isMobile ? 'md' : 'lg'} lh={1.2}>
+            Daftar Prestasi Desa
+          </Title>
           <Button
             leftSection={<IconPlus size={18} />}
             color="blue"
             variant="light"
             onClick={() => router.push('/admin/landing-page/prestasi-desa/list-prestasi-desa/create')}
+            size={isMobile ? 'xs' : 'sm'}
           >
             Tambah Baru
           </Button>
         </Group>
-        <Box style={{ overflowX: 'auto' }}>
-          <Table highlightOnHover>
+
+        {/* Desktop Table */}
+        <Box visibleFrom="md">
+          <Table highlightOnHover miw={0}>
             <TableThead>
               <TableTr>
-                <TableTh style={{ width: '25%' }}>Nama Prestasi</TableTh>
-                <TableTh style={{ width: '25%' }}>Deskripsi</TableTh>
-                <TableTh style={{ width: '25%' }}>Kategori</TableTh>
-                <TableTh style={{ width: '25%', textAlign: 'center' }}>Aksi</TableTh>
+                <TableTh w="25%">Nama Prestasi</TableTh>
+                <TableTh w="25%">Deskripsi</TableTh>
+                <TableTh w="25%">Kategori</TableTh>
+                <TableTh w="25%" ta="center">Aksi</TableTh>
               </TableTr>
             </TableThead>
             <TableTbody>
               {filteredData.length > 0 ? (
                 filteredData.map((item) => (
                   <TableTr key={item.id}>
-                    <TableTd style={{ width: '25%' }}>
-                      <Box w={100}>
-                        <Text truncate="end" fz={"sm"}>{item.name}</Text>
-                      </Box>
+                    <TableTd w="25%">
+                      <Text truncate="end" fz="md" lh={1.5}>
+                        {item.name}
+                      </Text>
                     </TableTd>
-                    <TableTd style={{ width: '25%' }}>
-                      <Text lineClamp={1} fz="sm" c="dimmed" dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
+                    <TableTd w="25%">
+                      <Text lineClamp={1} fz="md" c="dimmed" lh={1.5} dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
                     </TableTd>
-                    <TableTd style={{ width: '25%' }}>
-                      <Box w={150}>
-                        <Text truncate="end" fz={"sm"}>{item.kategori?.name || 'Tidak ada kategori'}</Text>
-                      </Box>
+                    <TableTd w="25%">
+                      <Text truncate="end" fz="md" lh={1.5}>
+                        {item.kategori?.name || 'Tidak ada kategori'}
+                      </Text>
                     </TableTd>
-                    <TableTd style={{ width: '25%', textAlign: 'center' }}>
+                    <TableTd w="25%" ta="center">
                       <Button
                         size="xs"
                         radius="md"
@@ -108,23 +114,63 @@ function ListPrestasi({ search }: { search: string }) {
                 ))
               ) : (
                 <TableTr>
-                  <TableTd colSpan={4} style={{ textAlign: 'center' }}>
-                    <Text c="dimmed" py="md">Tidak ada data prestasi</Text>
+                  <TableTd colSpan={4} ta="center">
+                    <Text c="dimmed" py="md" fz="sm" lh={1.4}>
+                      Tidak ada data prestasi
+                    </Text>
                   </TableTd>
                 </TableTr>
               )}
             </TableTbody>
           </Table>
         </Box>
+
+        {/* Mobile Cards */}
+        <Stack hiddenFrom="md" gap="xs">
+            {filteredData.length > 0 ? (
+              filteredData.map((item) => (
+                <Paper key={item.id} withBorder p="sm" radius="sm">
+                  <Stack gap={4}>
+                    <Text fz="sm" fw={600} lh={1.4}>
+                      {item.name}
+                    </Text>
+                    <Text fz="xs" c="dimmed" lh={1.5} lineClamp={1} dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
+                    <Text fz="xs" c="dimmed" lh={1.4}>
+                      Kategori: {item.kategori?.name || 'Tidak ada kategori'}
+                    </Text>
+                    <Group justify="flex-end" mt="xs">
+                      <Button
+                        size="xs"
+                        radius="md"
+                        variant="light"
+                        color="blue"
+                        leftSection={<IconDeviceImacCog size={14} />}
+                        onClick={() => router.push(`/admin/landing-page/prestasi-desa/list-prestasi-desa/${item.id}`)}
+                      >
+                        Detail
+                      </Button>
+                    </Group>
+                  </Stack>
+                </Paper>
+              ))
+            ) : (
+              <Center py="md">
+                <Text c="dimmed" fz="sm" lh={1.4}>
+                  Tidak ada data prestasi
+                </Text>
+              </Center>
+            )}
+        </Stack>
       </Paper>
+
       {totalPages > 1 && (
-        <Center mt="lg">
+        <Center mt={{ base: 'md', md: 'lg' }}>
           <Pagination
             value={page}
             onChange={load}
             total={totalPages}
             withEdges
-            size="sm"
+            size={isMobile ? 'xs' : 'sm'}
           />
         </Center>
       )}

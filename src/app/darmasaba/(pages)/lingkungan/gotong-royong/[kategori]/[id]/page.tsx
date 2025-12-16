@@ -41,23 +41,23 @@ function DetailKegiatanDesaUser() {
         shadow="sm"
         maw={900}
         mx="auto"
-        >
+      >
         <Stack gap="md">
-        {data.image?.link && (
-          <Image
-            src={data.image.link}
-            alt={data.judul || 'Kegiatan Desa'}
-            radius="md"
-            fit="cover"
-            h={300}
-            mb="xl"
-            style={{ objectPosition: 'center', width: '100%' }}
-          />
-        )}
           {/* Judul */}
-          <Title order={2} c={colors['blue-button']}>
+          <Title order={1} ta={"center"} c={colors['blue-button']}>
             {data.judul || 'Kegiatan Desa'}
           </Title>
+          {data.image?.link && (
+            <Image
+              src={data.image.link}
+              alt={data.judul || 'Kegiatan Desa'}
+              radius="md"
+              fit="cover"
+              h={300}
+              mb="xl"
+              style={{ objectPosition: 'center', width: '100%' }}
+            />
+          )}
 
           {/* Meta Info */}
           <Group gap="xl" c="dimmed">

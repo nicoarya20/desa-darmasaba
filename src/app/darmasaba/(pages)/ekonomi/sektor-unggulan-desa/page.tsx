@@ -1,6 +1,6 @@
 'use client'
 import colors from '@/con/colors';
-import { Stack, Box, Text, Paper, Skeleton } from '@mantine/core';
+import { Stack, Box, Text, Paper, Skeleton, Center, Title } from '@mantine/core';
 import React from 'react';
 import BackButton from '../../desa/layanan/_com/BackButto';
 import { BarChart } from '@mantine/charts';
@@ -28,16 +28,15 @@ function Page() {
     )
   }
 
-  // Add this check before the return statement
   if (data.length === 0) {
     return (
       <Stack pos="relative" bg={colors.Bg} py="xl" gap={22}>
         <Box px={{ base: 'md', md: 100 }}>
           <BackButton />
-          <Text fz={{ base: 'h1', md: '2.5rem' }} c={colors['blue-button']} fw="bold">
+          <Title order={1} c={colors['blue-button']} fw="bold">
             Sektor Unggulan Desa Darmasaba
-          </Text>
-          <Text c="dimmed" mt="md">
+          </Title>
+          <Text c="dimmed" mt="md" fz={{ base: 'sm', md: 'md' }} lh={1.5}>
             Data sektor unggulan belum tersedia
           </Text>
         </Box>
@@ -53,53 +52,72 @@ function Page() {
       Ton: item.value,
     }));
 
-  const chartWidth = Math.max(600, chartData.length * 150); // contoh: 150px per bar
+  const chartWidth = Math.max(600, chartData.length * 150);
 
   return (
-    <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"22"}>
+    <Stack pos="relative" bg={colors.Bg} py="xl" gap="22">
       <Box px={{ base: 'md', md: 100 }}>
         <BackButton />
       </Box>
-      <Box px={{ base: 'md', md: 100 }} >
-        <Text ta={"center"} fz={{ base: "h1", md: "2.5rem" }} c={colors["blue-button"]} fw={"bold"}>
+      <Box px={{ base: 'md', md: 100 }}>
+        <Title ta="center" order={1} c={colors['blue-button']} fw="bold">
           Sektor Unggulan Desa Darmasaba
+        </Title>
+        <Text
+          ta="center"
+          fz={{ base: 'sm', md: 'md' }}
+          lh={{ base: 1.5, md: 1.6 }}
+          mt="sm"
+        >
+          Desa Darmasaba dikenal sebagai desa dengan potensi unggulan di sektor pertanian dan peternakan
         </Text>
-        <Text ta={'center'} fz={'h4'}> Desa Darmasaba dikenal sebagai desa dengan potensi unggulan di sektor pertanian dan peternakan</Text>
       </Box>
-      <Box px={{ base: "md", md: 100 }}>
-        <Stack gap={'lg'} justify='center'>
+      <Box px={{ base: 'md', md: 100 }}>
+        <Stack gap="lg" justify="center">
           {data.map((v, k) => {
             return (
-              <Paper p={'xl'} key={k}>
-                <Text fw={'bold'} fz={'h4'}>{v.name}</Text>
-                <Text fz={'h4'} ta={'justify'} style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: v.description || '' }} />
+              <Paper p="xl" key={k}>
+                <Title order={3} fw="bold">
+                  {v.name}
+                </Title>
+                <Text
+                  ta="justify"
+                  fz={{ base: 'sm', md: 'md' }}
+                  lh={{ base: 1.5, md: 1.6 }}
+                  style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
+                  dangerouslySetInnerHTML={{ __html: v.description || '' }}
+                />
               </Paper>
-            )
+            );
           })}
           <Box style={{ width: '100%', overflowX: 'auto' }}>
             <Paper p="xl">
-              <Text pb={10} fw="bold" fz="h4">Statistik Sektor Unggulan Darmasaba</Text>
+              <Title order={3} fw="bold" pb="md">
+                Statistik Sektor Unggulan Darmasaba
+              </Title>
               <Box style={{ width: '100%', overflowX: 'auto', maxWidth: `${chartWidth}px` }}>
-                <BarChart
-                  p={10}
-                  h={300}
-                  data={chartData}
-                  dataKey="sektor"
-                  series={[
-                    { name: 'Ton', color: colors['blue-button'] },
-                  ]}
-                  tickLine="y"
-                  tooltipAnimationDuration={200}
-                  withTooltip
-                  withXAxis
-                  withYAxis
-                  xAxisLabel="Sektor"
-                  yAxisLabel="Ton"
-                  style={{
-                    fontFamily: 'inherit',
-                    fontSize: '12px', // ukuran font lebih kecil di mobile
-                  }}
-                />
+                <Center>
+                  <BarChart
+                    p={10}
+                    h={300}
+                    data={chartData}
+                    dataKey="sektor"
+                    series={[
+                      { name: 'Ton', color: colors['blue-button'] },
+                    ]}
+                    tickLine="y"
+                    tooltipAnimationDuration={200}
+                    withTooltip
+                    withXAxis
+                    withYAxis
+                    xAxisLabel="Sektor"
+                    yAxisLabel="Ton"
+                    style={{
+                      fontFamily: 'inherit',
+                      fontSize: '12px',
+                    }}
+                  />
+                </Center>
               </Box>
             </Paper>
           </Box>

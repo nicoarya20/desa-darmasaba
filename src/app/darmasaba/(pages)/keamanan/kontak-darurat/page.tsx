@@ -1,7 +1,7 @@
 'use client'
 import kontakDarurat from '@/app/admin/(dashboard)/_state/keamanan/kontak-darurat-keamanan';
 import colors from '@/con/colors';
-import { Avatar, Box, Center, Flex, Group, Pagination, Paper, SimpleGrid, Skeleton, Stack, Text, TextInput } from '@mantine/core';
+import { Avatar, Box, Center, Flex, Group, Pagination, Paper, SimpleGrid, Skeleton, Stack, Text, TextInput, Title } from '@mantine/core';
 import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
 import { IconPhoneCall, IconSearch } from '@tabler/icons-react';
 import { useState } from 'react';
@@ -42,10 +42,10 @@ function Page() {
         </Box>
         <Group px={{ base: 'md', md: 100 }} justify={'space-between'} align='center'>
           <Box>
-            <Text fz={{ base: "h1", md: "2.5rem" }} c={colors["blue-button"]} fw={"bold"}>
+            <Title order={1} c={colors["blue-button"]} style={{ lineHeight: 1.15 }}>
               Kontak Darurat
-            </Text>
-            <Text fz="md" >
+            </Title>
+            <Text fz={{ base: 'sm', md: 'md' }} lh={1.5} c={colors['blue-button-2']} style={{ color: colors['blue-button-2'] }}>
               Desa Darmasaba, Kecamatan Abiansemal, Kabupaten Badung.
             </Text>
           </Box>
@@ -66,17 +66,21 @@ function Page() {
                   <IconPhoneCall size={30} color={colors["blue-button"]} />
                 </Avatar>
                 <Box>
-                  <Text ta={'center'} c={colors['blue-button']} py={10} fz={{ base: "md", md: "h4" }} fw={"bold"} >
+                  <Text ta={'center'} c={colors['blue-button']} py={10} fz={{ base: "sm", md: "md" }} fw={"bold"} lh={1.3} >
                     Nomor Darurat Utama
                   </Text>
-                  <Text ta={'center'} fw={"bold"} fz={'h2'} c={colors["blue-button"]}>112</Text>
+                  <Title order={2} ta={'center'} c={colors["blue-button"]} style={{ lineHeight: 1.15 }}>
+                    112
+                  </Title>
                 </Box>
               </Flex>
             </Paper>
           </Stack>
         </Box>
         <Center>
-          <Text fz={"h1"} c={colors["blue-button"]} fw={"bold"}>Tidak ada kontak darurat yang ditemukan</Text>
+          <Title order={2} c={colors["blue-button"]} style={{ lineHeight: 1.15 }}>
+            Tidak ada kontak darurat yang ditemukan
+          </Title>
         </Center>
       </Stack>
     );
@@ -89,10 +93,10 @@ function Page() {
       </Box>
       <Group px={{ base: 'md', md: 100 }} justify={'space-between'} align='center'>
         <Box>
-          <Text fz={{ base: "h1", md: "2.5rem" }} c={colors["blue-button"]} fw={"bold"}>
+          <Title order={1} c={colors["blue-button"]} style={{ lineHeight: 1.15 }}>
             Kontak Darurat
-          </Text>
-          <Text fz={{ base: "h4", md: "h3" }} >
+          </Title>
+          <Text fz={{ base: 'sm', md: 'md' }} lh={1.5} c={colors['blue-button-2']}>
             Desa Darmasaba, Kecamatan Abiansemal, Kabupaten Badung.
           </Text>
         </Box>
@@ -113,10 +117,12 @@ function Page() {
                 <IconPhoneCall size={30} color={colors["blue-button"]} />
               </Avatar>
               <Box>
-                <Text ta={'center'} c={colors['blue-button']} py={10} fz={{ base: "md", md: "h4" }} fw={"bold"} >
+                <Text ta={'center'} c={colors['blue-button']} py={10} fz={{ base: "sm", md: "md" }} fw={"bold"} lh={1.3} >
                   Nomor Darurat Utama
                 </Text>
-                <Text ta={'center'} fw={"bold"} fz={'h2'} c={colors["blue-button"]}>112</Text>
+                <Title order={2} ta={'center'} c={colors["blue-button"]} style={{ lineHeight: 1.15 }}>
+                  112
+                </Title>
               </Box>
             </Flex>
           </Paper>
@@ -124,19 +130,13 @@ function Page() {
       </Box>
       <Box px={{ base: "md", md: 100 }}>
         <SimpleGrid cols={{ base: 1, md: 2 }} spacing="xl">
-          {/* Layanan Darurat */}
           {data.map((item) => (
             <a
               key={item.id}
               href={`tel:${item.kontakItems[0]?.kontakItem?.nomorTelepon || '112'}`}
               style={{ textDecoration: 'none' }}
             >
-              <Paper
-
-                p="lg"
-                radius="md"
-                bg={colors['white-trans-1']}
-              >
+              <Paper p="lg" radius="md" bg={colors['white-trans-1']}>
                 <Group pb="md" align="center">
                   <Avatar radius="xl" size="lg" bg={colors['BG-trans']}>
                     {item.icon && (
@@ -147,12 +147,11 @@ function Page() {
                       />
                     )}
                   </Avatar>
-                  <Text fw="bold" fz={{ base: "lg", md: "xl" }} c={colors["blue-button"]}>
+                  <Title order={3} c={colors["blue-button"]} style={{ lineHeight: 1.2 }}>
                     {item.nama}
-                  </Text>
+                  </Title>
                 </Group>
 
-                {/* Kontak Items */}
                 {item.kontakItems?.map((kontak) => (
                   <Paper
                     key={kontak.id}
@@ -171,11 +170,11 @@ function Page() {
                             color={colors['blue-button']}
                           />
                         )}
-                        <Text fw="bold" fz={{ base: "sm", md: "md" }} c={colors["blue-button"]}>
+                        <Text fw="bold" fz={{ base: "xs", md: "sm" }} c={colors["blue-button"]} lh={1.45}>
                           {kontak.kontakItem?.nama}
                         </Text>
                       </Group>
-                      <Text fw="bold" fz={{ base: "sm", md: "md" }} c={colors["blue-button"]}>
+                      <Text fw="bold" fz={{ base: "xs", md: "sm" }} c={colors["blue-button"]} lh={1.45}>
                         {kontak.kontakItem?.nomorTelepon}
                       </Text>
                     </Group>

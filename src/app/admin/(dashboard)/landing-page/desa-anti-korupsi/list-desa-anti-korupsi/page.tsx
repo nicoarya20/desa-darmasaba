@@ -38,7 +38,7 @@ function ListDesaAntiKorupsi({ search }: { search: string }) {
 
   if (loading || !data) {
     return (
-      <Stack py="md">
+      <Stack py={{ base: 'sm', md: 'md' }}>
         <Skeleton height={650} radius="lg" />
       </Stack>
     );
@@ -46,11 +46,13 @@ function ListDesaAntiKorupsi({ search }: { search: string }) {
 
   if (data.length === 0) {
     return (
-      <Box py="md">
-        <Paper p="lg" radius="lg" shadow="md" withBorder>
+      <Box py={{ base: 'sm', md: 'md' }}>
+        <Paper p={{ base: 'md', md: 'lg' }} radius="lg" shadow="md" withBorder>
           <Stack align="center" gap="sm">
-            <Title order={4}>Data Program Desa Anti Korupsi</Title>
-            <Text c="dimmed" ta="center">
+            <Title order={2} lh={1.2}>
+              Data Program Desa Anti Korupsi
+            </Title>
+            <Text c="dimmed" ta="center" fz={{ base: 'xs', md: 'sm' }} lh={1.5}>
               Belum ada data program yang tersedia
             </Text>
           </Stack>
@@ -61,48 +63,56 @@ function ListDesaAntiKorupsi({ search }: { search: string }) {
 
   return (
     <Box>
-      <Stack gap="md">
-        <Paper p="lg" radius="lg" shadow="md" withBorder>
-          <Group justify="space-between" mb="md">
-            <Title order={4}>Daftar Program Desa Anti Korupsi</Title>
-              <Button leftSection={<IconPlus size={18} />} color="blue" variant="light"
-                onClick={() => router.push('/admin/landing-page/desa-anti-korupsi/list-desa-anti-korupsi/create')}
-              >
-                Tambah Baru
-              </Button>
+      <Stack gap={'md'}>
+        <Paper p={{ base: 'md', md: 'lg' }} radius="lg" shadow="md" withBorder>
+          <Group justify="space-between" mb={{ base: 'sm', md: 'md' }}>
+            <Title order={2} lh={1.2}>
+              Daftar Program Desa Anti Korupsi
+            </Title>
+            <Button
+              leftSection={<IconPlus size={18} />}
+              color="blue"
+              variant="light"
+              onClick={() =>
+                router.push('/admin/landing-page/desa-anti-korupsi/list-desa-anti-korupsi/create')
+              }
+            >
+              Tambah Baru
+            </Button>
           </Group>
-          <Box style={{ overflowX: 'auto' }}>
+
+          {/* Desktop Table */}
+          <Box visibleFrom="md">
             <Table
               striped
               highlightOnHover
-
               withRowBorders
               verticalSpacing="sm"
             >
               <TableThead>
                 <TableTr>
-                  <TableTh style={{ width: '50%' }}>Nama Program</TableTh>
-                  <TableTh style={{ width: '30%' }}>Kategori</TableTh>
-                  <TableTh style={{ width: '20%', textAlign: 'center' }}>Aksi</TableTh>
+                  <TableTh w="50%">Nama Program</TableTh>
+                  <TableTh w="30%">Kategori</TableTh>
+                  <TableTh w="20%" ta="center">
+                    Aksi
+                  </TableTh>
                 </TableTr>
               </TableThead>
               <TableTbody>
                 {filteredData.length > 0 ? (
                   filteredData.map((item) => (
                     <TableTr key={item.id}>
-                      <TableTd style={{ width: '50%' }}>
-                        <Text fw={500} lineClamp={1}>
+                      <TableTd w="50%">
+                        <Text fw={500} lineClamp={1} fz="md" lh={1.5}>
                           {item.name || '-'}
                         </Text>
                       </TableTd>
-                      <TableTd style={{ width: '30%' }}>
-                        <Box w={200}>
-                        <Text fz="sm" c="dimmed" lineClamp={1}>
+                      <TableTd w="30%">
+                        <Text fz="sm" c="dimmed" lineClamp={1} lh={1.5}>
                           {item.kategori?.name || '-'}
                         </Text>
-                        </Box>
                       </TableTd>
-                      <TableTd style={{ width: '20%', textAlign: 'center' }}>
+                      <TableTd w="20%" ta="center">
                         <Button
                           size="xs"
                           radius="md"
@@ -123,7 +133,7 @@ function ListDesaAntiKorupsi({ search }: { search: string }) {
                 ) : (
                   <TableTr>
                     <TableTd colSpan={3}>
-                      <Text ta="center" c="dimmed">
+                      <Text ta="center" c="dimmed" fz="sm" lh={1.5}>
                         Tidak ditemukan data dengan kata kunci pencarian
                       </Text>
                     </TableTd>
@@ -131,6 +141,48 @@ function ListDesaAntiKorupsi({ search }: { search: string }) {
                 )}
               </TableTbody>
             </Table>
+          </Box>
+
+          {/* Mobile Cards */}
+          <Box hiddenFrom="md">
+            <Stack gap="xs">
+              {filteredData.length > 0 ? (
+                filteredData.map((item) => (
+                  <Paper key={item.id} p="sm" radius="md" withBorder shadow="xs">
+                    <Stack gap="xs">
+                      <Text fw={500} fz="sm" lh={1.5} lineClamp={1}>
+                        {item.name || '-'}
+                      </Text>
+                      <Text fz="xs" c="dimmed" lh={1.5} lineClamp={1}>
+                        Kategori: {item.kategori?.name || '-'}
+                      </Text>
+                      <Group justify="flex-end">
+                        <Button
+                          size="xs"
+                          radius="md"
+                          variant="light"
+                          color="blue"
+                          leftSection={<IconDeviceImacCog size={16} />}
+                          onClick={() =>
+                            router.push(
+                              `/admin/landing-page/desa-anti-korupsi/list-desa-anti-korupsi/${item.id}`
+                            )
+                          }
+                        >
+                          Detail
+                        </Button>
+                      </Group>
+                    </Stack>
+                  </Paper>
+                ))
+              ) : (
+                <Paper p="sm" radius="md" withBorder>
+                  <Text ta="center" c="dimmed" fz="xs" lh={1.5}>
+                    Tidak ditemukan data dengan kata kunci pencarian
+                  </Text>
+                </Paper>
+              )}
+            </Stack>
           </Box>
         </Paper>
 
@@ -144,7 +196,6 @@ function ListDesaAntiKorupsi({ search }: { search: string }) {
             }}
             size="md"
             radius="md"
-            mt="md"
           />
         </Center>
       </Stack>

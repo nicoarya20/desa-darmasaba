@@ -56,6 +56,7 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
         radius="lg"
         keepMounted={false}
       >
+
         <ScrollArea type="auto" offsetScrollbars>
           <TabsList
             p="sm"
@@ -63,6 +64,10 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
               background: "linear-gradient(135deg, #e7ebf7, #f9faff)",
               borderRadius: "1rem",
               boxShadow: "inset 0 0 10px rgba(0,0,0,0.05)",
+              display: "flex",
+              flexWrap: "nowrap",
+              gap: "0.5rem",
+              paddingInline: "0.5rem", // ✅ biar nggak nempel ke tepi
             }}
           >
             {tabs.map((tab, i) => (
@@ -74,6 +79,7 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
                   fontWeight: 600,
                   fontSize: "0.9rem",
                   transition: "all 0.2s ease",
+                  flexShrink: 0, // ✅ jangan mengecil aneh-aneh
                 }}
               >
                 {tab.label}

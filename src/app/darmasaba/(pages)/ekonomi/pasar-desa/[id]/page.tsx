@@ -1,7 +1,7 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Paper, Stack, Text, Image, Skeleton, Group, Badge, Divider } from '@mantine/core';
-import { IconArrowBack, IconMapPin, IconPhone, IconStar } from '@tabler/icons-react';
+import { Box, Button, Paper, Stack, Text, Image, Skeleton, Group, Badge, Divider, Title } from '@mantine/core';
+import { IconArrowBack, IconBrandWhatsapp, IconMapPin, IconPhone, IconStar } from '@tabler/icons-react';
 import { useRouter, useParams } from 'next/navigation';
 import React from 'react';
 import { useProxy } from 'valtio/utils';
@@ -31,14 +31,16 @@ function DetailProdukPasarUser() {
     <Box py={20}>
       {/* Tombol kembali */}
       <Box px={{ base: 'md', md: 100 }}>
-      <Button
-        variant="subtle"
-        onClick={() => router.back()}
-        leftSection={<IconArrowBack size={20} color={colors['blue-button']} />}
-        mb={15}
-      >
-        Kembali ke daftar produk
-      </Button>
+        <Button
+          variant="subtle"
+          onClick={() => router.back()}
+          leftSection={<IconArrowBack size={20} color={colors['blue-button']} />}
+          mb={15}
+        >
+          <Text fz={{ base: 'md', md: 'lg' }} lh={1.5}>
+            Kembali ke daftar produk
+          </Text>
+        </Button>
       </Box>
 
       <Paper
@@ -65,26 +67,31 @@ function DetailProdukPasarUser() {
             <Box
               h={300}
               bg="gray.1"
-              display="flex"
-              style={{ alignItems: 'center', justifyContent: 'center', borderRadius: 'md' }}
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 'var(--mantine-radius-md)' }}
             >
-              <Text c="dimmed">Tidak ada gambar</Text>
+              <Text c="dimmed" fz={{ base: 'sm', md: 'md' }} lh={1.5}>
+                Tidak ada gambar
+              </Text>
             </Box>
           )}
 
           {/* Detail Produk */}
           <Stack gap="xs">
-            <Text fz="2xl" fw="bold" c={colors['blue-button']}>
+            <Title order={2} lh={1.1} c={colors['blue-button']}>
               {data.nama || 'Produk Tanpa Nama'}
-            </Text>
+            </Title>
             <Group>
               <Badge color="green" size="lg" radius="md">
-                Rp {data.harga?.toLocaleString('id-ID')}
+                <Text c={"white"} fz={{ base: 'sm', md: 'md' }} fw={600} lh={1.4}>
+                  Rp {data.harga?.toLocaleString('id-ID')}
+                </Text>
               </Badge>
               {data.rating && (
                 <Group gap={4}>
                   <IconStar size={18} color="#FFD43B" />
-                  <Text fz="md" fw={500}>{data.rating}</Text>
+                  <Text fz={{ base: 'sm', md: 'md' }} fw={500} lh={1.5}>
+                    {data.rating}
+                  </Text>
                 </Group>
               )}
             </Group>
@@ -95,16 +102,20 @@ function DetailProdukPasarUser() {
           {/* Info Tambahan */}
           <Stack gap="sm">
             <Box>
-              <Text fz="lg" fw={600}>Kategori</Text>
+              <Title order={3} lh={1.15}>
+                Kategori
+              </Title>
               <Group gap="xs" mt={4}>
                 {data.KategoriToPasar && data.KategoriToPasar.length > 0 ? (
                   data.KategoriToPasar.map((kategori) => (
-                    <Badge key={kategori.id} color="blue" variant="light">
+                    <Badge key={kategori.id} color="blue" variant="light" fz={{ base: 'xs', md: 'sm' }} lh={1.4}>
                       {kategori.kategori.nama}
                     </Badge>
                   ))
                 ) : (
-                  <Text fz="sm" c="dimmed">Tidak ada kategori</Text>
+                  <Text fz={{ base: 'xs', md: 'sm' }} c="dimmed" lh={1.5}>
+                    Tidak ada kategori
+                  </Text>
                 )}
               </Group>
             </Box>
@@ -112,14 +123,18 @@ function DetailProdukPasarUser() {
             {data.alamatUsaha && (
               <Group gap={6}>
                 <IconMapPin size={18} color={colors['blue-button']} />
-                <Text fz="md">{data.alamatUsaha}</Text>
+                <Text fz={{ base: 'sm', md: 'md' }} lh={1.5}>
+                  {data.alamatUsaha}
+                </Text>
               </Group>
             )}
 
             {data.kontak && (
               <Group gap={6}>
                 <IconPhone size={18} color={colors['blue-button']} />
-                <Text fz="md">{data.kontak}</Text>
+                <Text fz={{ base: 'sm', md: 'md' }} lh={1.5}>
+                  {data.kontak}
+                </Text>
               </Group>
             )}
           </Stack>
@@ -128,8 +143,10 @@ function DetailProdukPasarUser() {
 
           {/* Deskripsi */}
           <Box>
-            <Text fz="lg" fw={600}>Deskripsi Produk</Text>
-            <Text fz="md" c="dimmed" mt={4}>
+            <Title order={3} lh={1.15}>
+              Deskripsi Produk
+            </Title>
+            <Text fz={{ base: 'sm', md: 'md' }} c="dimmed" mt={4} lh={1.5}>
               Tidak ada deskripsi.
             </Text>
           </Box>
@@ -144,8 +161,11 @@ function DetailProdukPasarUser() {
               component="a"
               href={`https://wa.me/${data.kontak.replace(/[^0-9]/g, '')}`}
               target="_blank"
+              leftSection={<IconBrandWhatsapp/>}
             >
-              Hubungi Penjual via WhatsApp
+              <Text c={"white"} fz={{ base: 'sm', md: 'md' }} lh={1.5}>
+                Hubungi Penjual via WhatsApp
+              </Text>
             </Button>
           )}
         </Stack>

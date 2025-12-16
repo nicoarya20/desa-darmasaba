@@ -28,7 +28,7 @@ export default async function grafikJumlahPendudukMiskinFindMany(
         where,
         skip,
         take: limit,
-        orderBy: { createdAt: "desc" },
+        orderBy: { year: "asc" },
       }),
       prisma.grafikJumlahPendudukMiskin.count({
         where,

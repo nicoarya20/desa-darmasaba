@@ -1,10 +1,11 @@
 'use client'
 import stateKonservasiAdatBali from '@/app/admin/(dashboard)/_state/lingkungan/konservasi-adat-bali';
 import colors from '@/con/colors';
-import { Box, Center, Paper, SimpleGrid, Skeleton, Stack, Text } from '@mantine/core';
+import { Box, Center, Paper, SimpleGrid, Skeleton, Stack, Text, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { useProxy } from 'valtio/utils';
 import BackButton from '../../desa/layanan/_com/BackButto';
+
 
 function Page() {
   const filosofi = useProxy(stateKonservasiAdatBali.stateFilosofiTriHita.findById)
@@ -30,11 +31,24 @@ function Page() {
       <Box px={{ base: 'md', md: 100 }}>
         <BackButton />
       </Box>
-      <Box px={{ base: 'md', md: 100 }} pb={30}>
-        <Text ta="center" fz={{ base: '2xl', md: '3rem' }} c={colors['blue-button']} fw="bold">
+      <Box px={{ base: 'md', md: 100 }} >
+        <Title
+          order={1}
+          ta="center"
+          c={colors['blue-button']}
+          fw="bold"
+          style={{ lineHeight: 1.15 }}
+          
+        >
           Konservasi Adat Bali
-        </Text>
-        <Text px={20} ta="center" fz="lg" c="black">
+        </Title>
+        <Text
+          px={20}
+          ta="center"
+          fz={{ base: 'sm', md: 'lg' }}
+          c="black"
+          style={{ lineHeight: 1.55 }}
+        >
           Pelestarian lingkungan di Bali yang berpijak pada kearifan lokal, menjaga harmoni antara alam, budaya, dan manusia.
         </Text>
       </Box>
@@ -54,53 +68,31 @@ function Page() {
             >
               <Stack gap="md" px={20} style={{ height: '100%' }}>
                 <Center>
-                  <Text fz="xl" fw="bold" c="black">
+                  <Title
+                    order={3}
+                    c="black"
+                    fw="bold"
+                    style={{ lineHeight: 1.15 }}
+                  >
                     {filosofi.data?.judul}
-                  </Text> 
-                </Center>
-                <div 
-                  style={{ 
-                    wordBreak: "break-word", 
-                    whiteSpace: "normal",
-                    flexGrow: 1
-                  }} 
-                  dangerouslySetInnerHTML={{ __html: filosofi.data?.deskripsi || '' }} 
-                />
-              </Stack>
-            </Paper>
-         </Box>
-         {/* Nilai */}
-         <Box style={{ display: 'flex', height: '100%' }}>
-         <Paper
-              p="lg"
-              style={{ 
-                borderRadius: 16, 
-                width: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
-              }}
-            >
-              <Stack gap="md" px={20} style={{ height: '100%' }}>
-                <Center>
-                  <Text fz="xl" fw="bold" c="black">
-                    {nilai.data?.judul}
-                  </Text> 
+                  </Title>
                 </Center>
                 <div 
                   style={{ 
                     wordBreak: "break-word", 
                     whiteSpace: "normal",
                     flexGrow: 1,
-                    minHeight: 0
+                    fontSize: '14px',
+                    lineHeight: 1.55,
+                    color: 'black'
                   }} 
-                  dangerouslySetInnerHTML={{ __html: nilai.data?.deskripsi || '' }} 
+                  dangerouslySetInnerHTML={{ __html: filosofi.data?.deskripsi || '' }} 
                 />
               </Stack>
             </Paper>
-         </Box>
-         {/* Bentuk */}
-         <Box>
+          </Box>
+          {/* Nilai */}
+          <Box style={{ display: 'flex', height: '100%' }}>
             <Paper
               p="lg"
               style={{ 
@@ -113,22 +105,68 @@ function Page() {
             >
               <Stack gap="md" px={20} style={{ height: '100%' }}>
                 <Center>
-                  <Text fz="xl" fw="bold" c="black">
-                    {bentuk.data?.judul}
-                  </Text> 
+                  <Title
+                    order={3}
+                    c="black"
+                    fw="bold"
+                    style={{ lineHeight: 1.15 }}
+                  >
+                    {nilai.data?.judul}
+                  </Title>
                 </Center>
                 <div 
                   style={{ 
                     wordBreak: "break-word", 
                     whiteSpace: "normal",
                     flexGrow: 1,
-                    minHeight: 0
+                    minHeight: 0,
+                    fontSize: '14px',
+                    lineHeight: 1.55,
+                    color: 'black'
+                  }} 
+                  dangerouslySetInnerHTML={{ __html: nilai.data?.deskripsi || '' }} 
+                />
+              </Stack>
+            </Paper>
+          </Box>
+          {/* Bentuk */}
+          <Box>
+            <Paper
+              p="lg"
+              style={{ 
+                borderRadius: 16, 
+                width: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
+              }}
+            >
+              <Stack gap="md" px={20} style={{ height: '100%' }}>
+                <Center>
+                  <Title
+                    order={3}
+                    c="black"
+                    fw="bold"
+                    style={{ lineHeight: 1.15 }}
+                  >
+                    {bentuk.data?.judul}
+                  </Title>
+                </Center>
+                <div 
+                  style={{ 
+                    wordBreak: "break-word", 
+                    whiteSpace: "normal",
+                    flexGrow: 1,
+                    minHeight: 0,
+                    fontSize: '14px',
+                    lineHeight: 1.55,
+                    color: 'black'
                   }} 
                   dangerouslySetInnerHTML={{ __html: bentuk.data?.deskripsi || '' }} 
                 />
               </Stack>
             </Paper>
-         </Box>
+          </Box>
         </SimpleGrid>
       </Box>
     </Stack>
