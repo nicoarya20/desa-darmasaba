@@ -44,18 +44,56 @@ function CreatePolsekTerdekat() {
     };
   };
 
+  const isValidGoogleMapsEmbed = (url: string): boolean => {
+  try {
+    const u = new URL(url);
+    return (
+      u.hostname === 'www.google.com' &&
+      u.pathname === '/maps/embed' &&
+      u.searchParams.has('pb')
+    );
+  } catch {
+    return false;
+  }
+};
+
   const handleSubmit = async () => {
-    try {
-      setIsSubmitting(true);
-      await polsekState.create.create();
-      resetForm();
-      router.push("/admin/keamanan/polsek-terdekat");
-    } catch (error) {
-      console.error(error)
-      toast.error("Gagal menambah polsek terdekat");
-    } finally {
-      setIsSubmitting(false);
+  const { embedMapUrl } = polsekState.create.form;
+
+  // ✅ Validasi Google Maps Embed URL (jika diisi)
+  if (embedMapUrl && !isValidGoogleMapsEmbed(embedMapUrl)) {
+    toast.error("URL embed peta tidak valid. Harap paste iframe dari Google Maps.");
+    return;
+  }
+
+  try {
+    setIsSubmitting(true);
+    await polsekState.create.create();
+    resetForm();
+    router.push("/admin/keamanan/polsek-terdekat");
+  } catch (error) {
+    console.error(error);
+    toast.error("Gagal menambah polsek terdekat");
+  } finally {
+    setIsSubmitting(false);
+  }
+};
+
+  const extractEmbedUrl = (input: string): string => {
+    // Jika sudah berupa URL embed yang valid
+    if (input.startsWith('https://www.google.com/maps/embed?')) {
+      return input.trim();
     }
+
+    // Coba parse sebagai HTML string (iframe)
+    const iframeRegex = /<iframe[^>]*src=["']([^"']*)["'][^>]*>/i;
+    const match = input.match(iframeRegex);
+    if (match && match[1]?.startsWith('https://www.google.com/maps/embed?')) {
+      return match[1].trim();
+    }
+
+    // Jika tidak cocok, kembalikan input asli (atau string kosong)
+    return input.trim();
   };
 
   const fetchLayanan = async () => {
@@ -190,9 +228,14 @@ function CreatePolsekTerdekat() {
           />
           <TextInput
             value={polsekState.create.form.embedMapUrl}
-            onChange={(val) => (polsekState.create.form.embedMapUrl = val.target.value)}
+            onChange={(e) => {
+              const rawValue = e.currentTarget.value;
+              const cleanUrl = extractEmbedUrl(rawValue);
+              polsekState.create.form.embedMapUrl = cleanUrl;
+            }}
+            description="Contoh: https://www.google.com/maps/embed?pb=..."
             label={<Text fw="bold" fz="sm">Embed Map URL</Text>}
-            placeholder="Masukkan embed map url"
+            placeholder="Paste iframe dari Google Maps atau URL embed langsung"
           />
           <TextInput
             value={polsekState.create.form.namaTempatMaps}

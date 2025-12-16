@@ -11,7 +11,6 @@ import {
   Center,
   Container,
   Divider,
-  Flex,
   Grid,
   GridCol,
   Group,
@@ -23,7 +22,7 @@ import {
   Stack,
   Text,
   Title,
-  Transition,
+  Transition
 } from '@mantine/core';
 import { IconArrowRight, IconCalendar } from '@tabler/icons-react';
 import { motion } from 'framer-motion';
@@ -46,7 +45,7 @@ export default function Page() {
   // Load featured data once on component mount
   useEffect(() => {
     let mounted = true;
-    
+
     const loadFeatured = async () => {
       try {
         if (!featured.data && !loadingFeatured) {
@@ -68,7 +67,7 @@ export default function Page() {
 
   useEffect(() => {
     let mounted = true;
-    
+
     const loadData = async () => {
       try {
         const limit = 3;
@@ -92,7 +91,7 @@ export default function Page() {
     if (search) url.set('search', search);
     if (newPage > 1) url.set('page', newPage.toString());
     else url.delete('page');
-    
+
     // Use push instead of replace to keep browser history
     router.push(`?${url.toString()}`, { scroll: false });
   };
@@ -139,7 +138,6 @@ export default function Page() {
                         height={400}
                         fit="cover"
                         radius="md"
-                        style={{ borderBottomRightRadius: 0, borderTopRightRadius: 0 }}
                         loading="lazy"
                       />
                     </GridCol>
@@ -222,6 +220,7 @@ export default function Page() {
                             alt={item.judul}
                             fit="cover"
                             loading="lazy"
+                            radius={"md"}
                           />
                         </Card.Section>
 
@@ -241,14 +240,17 @@ export default function Page() {
                           dangerouslySetInnerHTML={{ __html: item.deskripsiSingkat }}
                         />
 
-                        <Flex align="center" justify="apart" mt="md" gap="xs">
-                          <Text size="xs" c="dimmed">
-                            {new Date(item.createdAt).toLocaleDateString('id-ID', {
-                              day: 'numeric',
-                              month: 'short',
-                              year: 'numeric',
-                            })}
-                          </Text>
+                        <Group justify="apart" mt="auto">
+                          <Group gap="xs">
+                            <IconCalendar size={18} />
+                            <Text size="xs" c="dimmed">
+                              {new Date(item.createdAt).toLocaleDateString('id-ID', {
+                                day: 'numeric',
+                                month: 'short',
+                                year: 'numeric',
+                              })}
+                            </Text>
+                          </Group>
 
                           <Button
                             p="xs"
@@ -262,7 +264,7 @@ export default function Page() {
                           >
                             Baca Selengkapnya
                           </Button>
-                        </Flex>
+                        </Group>
                       </Card>
                     ))}
                   </SimpleGrid>

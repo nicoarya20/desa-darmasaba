@@ -40,13 +40,15 @@ function DetailProgramInovasi() {
   const data = stateProgramInovasi.findUnique.data
 
   return (
-    <Box px={{ base: 'md', md: 'xl' }} py="lg">
-      <Button variant="subtle" onClick={() => router.back()} leftSection={<IconArrowBack size={22} color={colors['blue-button']} />}>
-        Kembali
-      </Button>
+    <Box px={{ base: 0, md: 'xs' }} py="xs">
+      <Box pb="20">
+        <Button variant="subtle" onClick={() => router.back()} leftSection={<IconArrowBack size={22} color={colors['blue-button']} />}>
+          Kembali
+        </Button>
+      </Box>
 
       <Paper
-        w={{ base: "100%", md: "60%" }}
+        w={{ base: "100%", md: "70%" }}
         bg={colors['white-1']}
         p="lg"
         radius="md"
@@ -68,9 +70,9 @@ function DetailProgramInovasi() {
               <Box>
                 <Text fz="lg" fw="bold">Gambar</Text>
                 {data.image?.link ? (
-                  <Image 
-                    src={data.image.link} 
-                    alt="Gambar Program" 
+                  <Image
+                    src={data.image.link}
+                    alt="Gambar Program"
                     radius="md"
                     style={{ maxWidth: '100%', maxHeight: 300, objectFit: 'contain' }}
                     loading="lazy"
@@ -106,28 +108,28 @@ function DetailProgramInovasi() {
               </Box>
 
               <Group gap="sm">
-                  <Button
-                    color="red"
-                    onClick={() => {
-                      setSelectedId(data.id);
-                      setModalHapus(true);
-                    }}
-                    variant="light"
-                    radius="md"
-                    size="md"
-                  >
-                    <IconTrash size={20} />
-                  </Button>
+                <Button
+                  color="red"
+                  onClick={() => {
+                    setSelectedId(data.id);
+                    setModalHapus(true);
+                  }}
+                  variant="light"
+                  radius="md"
+                  size="md"
+                >
+                  <IconTrash size={20} />
+                </Button>
 
-                  <Button
-                    color="green"
-                    onClick={() => router.push(`/admin/landing-page/profil/program-inovasi/${data.id}/edit`)}
-                    variant="light"
-                    radius="md"
-                    size="md"
-                  >
-                    <IconEdit size={20} />
-                  </Button>
+                <Button
+                  color="green"
+                  onClick={() => router.push(`/admin/landing-page/profil/program-inovasi/${data.id}/edit`)}
+                  variant="light"
+                  radius="md"
+                  size="md"
+                >
+                  <IconEdit size={20} />
+                </Button>
               </Group>
             </Stack>
           </Paper>

@@ -25,7 +25,6 @@ import { useProxy } from 'valtio/utils';
 import profileLandingPageState from '../../../../_state/landing-page/profile';
 import SelectSosialMedia from '@/app/admin/(dashboard)/_com/selectSocialMedia';
 
-
 // ⭐ Tambah type SosmedKey
 type SosmedKey =
   | 'facebook'
@@ -88,7 +87,6 @@ export default function CreateMediaSosial() {
         stateMediaSosial.create.form.imageId = null;
         stateMediaSosial.create.form.icon = sosmedMap[selectedSosmed].src!;
 
-
         await stateMediaSosial.create.create();
         resetForm();
         router.push('/admin/landing-page/profil/media-sosial');
@@ -129,13 +127,13 @@ export default function CreateMediaSosial() {
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Header */}
       <Group mb="md">
         <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
           <IconArrowBack color={colors['blue-button']} size={24} />
         </Button>
-        <Title order={4} ml="sm" c="dark">
+        <Title order={2} ml="sm" c="dark" lh={1.2} fz={{ base: 'md', md: 'lg' }}>
           Tambah Media Sosial
         </Title>
       </Group>
@@ -155,7 +153,7 @@ export default function CreateMediaSosial() {
           {/* Custom icon uploader */}
           {selectedSosmed === 'custom' && (
             <Box>
-              <Text fw="bold" fz="sm" mb={6}>
+              <Text fw="bold" fz={{ base: 'sm', md: 'md' }} lh={1.45} mb={6}>
                 Upload Custom Icon
               </Text>
 
@@ -185,8 +183,10 @@ export default function CreateMediaSosial() {
                   </Dropzone.Idle>
 
                   <Stack align="center" gap="xs">
-                    <Text fw={500}>Seret gambar atau klik untuk pilih</Text>
-                    <Text size="sm" c="dimmed">
+                    <Text fw={500} fz={{ base: 'sm', md: 'md' }} lh={1.45}>
+                      Seret gambar atau klik untuk pilih
+                    </Text>
+                    <Text fz={{ base: 12, md: 'sm' }} c="dimmed" lh={1.4}>
                       Maksimal 5MB, format .png, .jpg, .jpeg, webp
                     </Text>
                   </Stack>
@@ -229,7 +229,11 @@ export default function CreateMediaSosial() {
 
           {/* Input name */}
           <TextInput
-            label="Nama Media Sosial"
+            label={
+              <Text fw={500} fz={{ base: 'sm', md: 'md' }} lh={1.45}>
+                Nama Media Sosial
+              </Text>
+            }
             placeholder="Masukkan nama media sosial"
             value={stateMediaSosial.create.form.name ?? ''}
             onChange={(e) => (stateMediaSosial.create.form.name = e.target.value)}
@@ -238,7 +242,11 @@ export default function CreateMediaSosial() {
 
           {/* Input link */}
           <TextInput
-            label="Link / Kontak"
+            label={
+              <Text fw={500} fz={{ base: 'sm', md: 'md' }} lh={1.45}>
+                Link / Kontak
+              </Text>
+            }
             placeholder="Masukkan link atau nomor"
             value={stateMediaSosial.create.form.iconUrl ?? ''}
             onChange={(e) => (stateMediaSosial.create.form.iconUrl = e.target.value)}

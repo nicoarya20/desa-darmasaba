@@ -1,7 +1,7 @@
-// Create a new component: components/EdukasiCard.tsx
+// components/EdukasiCard.tsx
 'use client';
 
-import { Box, Paper, Stack, Text } from '@mantine/core';
+import { Box, Paper, Stack, Text, Title } from '@mantine/core';
 import { ReactNode } from 'react';
 
 interface EdukasiCardProps {
@@ -18,7 +18,7 @@ export function EdukasiCard({ icon, title, description, color = '#1e88e5' }: Edu
       radius="md"
       shadow="sm"
       withBorder
-      style={{ 
+      style={{
         height: '100%',
         transition: 'transform 0.2s, box-shadow 0.2s',
         '&:hover': {
@@ -31,32 +31,35 @@ export function EdukasiCard({ icon, title, description, color = '#1e88e5' }: Edu
         <Box>
           <Stack align="center" gap="xs" mb="md">
             <Box style={{ color }}>{icon}</Box>
-              <Text 
-                fz={{ base: 'h5', md: 'h4' }} 
-                fw={700} 
-                c={color}
-                ta="center"
-                lineClamp={2}
-                style={{ 
-                  wordBreak: 'break-word',
-                  minHeight: '3.5rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}
-                dangerouslySetInnerHTML={{ __html: title }}
-              />
+            <Title
+              order={3}
+              fz={{ base: 'sm', md: 'md' }}
+              c={color}
+              ta="center"
+              lineClamp={2}
+              style={{
+                wordBreak: 'break-word',
+                minHeight: '3.5rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                lineHeight: 1.2
+              }}
+              dangerouslySetInnerHTML={{ __html: title }}
+            />
           </Stack>
-          <Text
-            size="sm"
-            pl={20}
-            style={{
-              wordBreak: 'break-word',
-              lineHeight: 1.6,
-              color: 'var(--mantine-color-gray-7)'
-            }}
-            dangerouslySetInnerHTML={{ __html: description }}
-          />
+          <Box pl={20}>
+            <Text
+              fz={{ base: 'sm', md: 'md' }}
+              lh={1.5}
+              c="gray.7"
+              ta="justify"
+              style={{
+                wordBreak: 'break-word'
+              }}
+              dangerouslySetInnerHTML={{ __html: description }}
+            />
+          </Box>
         </Box>
       </Stack>
     </Paper>

@@ -3,7 +3,6 @@ import profileLandingPageState from '@/app/admin/(dashboard)/_state/landing-page
 import colors from '@/con/colors';
 import { Box, Button, Center, Divider, Grid, GridCol, Image, Paper, Skeleton, Stack, Text, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { IconEdit } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
 
@@ -35,15 +34,15 @@ function Page() {
             <Title order={3} c={colors['blue-button']}>Preview Pejabat Desa</Title>
           </GridCol>
           <GridCol span={{ base: 12, md: 1 }}>
-              <Button
-                c="green"
-                variant="light"
-                leftSection={<IconEdit size={18} stroke={2} />}
-                radius="md"
-                onClick={() => router.push(`/admin/landing-page/profil/pejabat-desa/${allList.findUnique.data?.id}`)}
-              >
-                Edit
-              </Button>
+            <Button
+              style={{fontSize: 15, fontWeight: "bold"}}
+              c="green"
+              variant="light"
+              radius="md"
+              onClick={() => router.push(`/admin/landing-page/profil/pejabat-desa/${allList.findUnique.data?.id}`)}
+            >
+              Edit
+            </Button>
           </GridCol>
         </Grid>
         {dataArray.map((item) => (
@@ -52,7 +51,7 @@ function Page() {
               <Grid>
                 <GridCol span={12}>
                   <Center>
-                    <Image src="/darmasaba-icon.png" w={{ base: 100, md: 150 }} alt="Logo Desa" loading="lazy"/>
+                    <Image src="/darmasaba-icon.png" w={{ base: 100, md: 150 }} alt="Logo Desa" loading="lazy" />
                   </Center>
                 </GridCol>
                 <GridCol span={12}>
@@ -93,7 +92,7 @@ function Page() {
               </Paper>
               <Box mt="lg">
                 <Text fz={{ base: "1.125rem", md: "1.5rem" }} fw="bold" mb={4}>Jabatan</Text>
-                <Text fz={{ base: "1rem", md: "1.4rem" }} ta="justify" c={colors['blue-button']}>
+                <Text fz={{ base: "1rem", md: "1.4rem" }} ta="left" c={colors['blue-button']}>
                   {item.position}
                 </Text>
               </Box>

@@ -60,7 +60,7 @@ function ListResponden({ search }: ListRespondenProps) {
 
   if (loading || !data) {
     return (
-      <Stack py="md">
+      <Stack py={{ base: 'md', md: 'lg' }}>
         <Skeleton height={650} radius="lg" />
       </Stack>
     );
@@ -68,11 +68,13 @@ function ListResponden({ search }: ListRespondenProps) {
 
   if (data.length === 0) {
     return (
-      <Box py="md">
-        <Paper p="lg" radius="lg" shadow="md" withBorder>
+      <Box py={{ base: 'md', md: 'lg' }}>
+        <Paper p={{ base: 'md', md: 'lg' }} radius="lg" shadow="md" withBorder>
           <Stack align="center" gap="sm">
-            <Title order={4}>Data Responden</Title>
-            <Text c="dimmed" ta="center">
+            <Title order={2} lh={1.2}>
+              Data Responden
+            </Title>
+            <Text c="dimmed" ta="center" fz={{ base: 'sm', md: 'md' }} lh={1.5}>
               Belum ada data responden yang tersedia
             </Text>
           </Stack>
@@ -83,12 +85,13 @@ function ListResponden({ search }: ListRespondenProps) {
 
   return (
     <Box>
-      <Stack gap="md">
-        <Paper p="lg" radius="lg" shadow="md" withBorder>
-          <Title order={4} mb="sm">
-            Daftar Responden
-          </Title>
-          <Box style={{ overflowX: 'auto' }}>
+      <Stack gap={'lg'}>
+        {/* Desktop Table */}
+        <Box visibleFrom="md">
+          <Paper p="lg" radius="lg" shadow="md" withBorder>
+            <Title order={2} size="lg" mb="md" lh={1.2}>
+              Daftar Responden
+            </Title>
             <Table
               striped
               highlightOnHover
@@ -97,18 +100,18 @@ function ListResponden({ search }: ListRespondenProps) {
             >
               <TableThead>
                 <TableTr>
-                  <TableTh style={{ width: '5%' }}>No</TableTh>
-                  <TableTh style={{ width: '25%' }}>Nama</TableTh>
-                  <TableTh style={{ width: '20%' }}>Tanggal</TableTh>
-                  <TableTh style={{ width: '20%' }}>Jenis Kelamin</TableTh>
-                  <TableTh style={{ width: '15%' }}>Aksi</TableTh>
+                  <TableTh fz="sm" fw={600} w={60}>No</TableTh>
+                  <TableTh fz="sm" fw={600}>Nama</TableTh>
+                  <TableTh fz="sm" fw={600}>Tanggal</TableTh>
+                  <TableTh fz="sm" fw={600}>Jenis Kelamin</TableTh>
+                  <TableTh fz="sm" fw={600} w={120}>Aksi</TableTh>
                 </TableTr>
               </TableThead>
               <TableTbody>
                 {filteredData.length === 0 ? (
                   <TableTr>
                     <TableTd colSpan={5}>
-                      <Text ta="center" c="dimmed">
+                      <Text ta="center" c="dimmed" fz="sm" lh={1.5}>
                         Tidak ditemukan data dengan kata kunci pencarian
                       </Text>
                     </TableTd>
@@ -116,24 +119,18 @@ function ListResponden({ search }: ListRespondenProps) {
                 ) : (
                   filteredData.map((item, index) => (
                     <TableTr key={item.id}>
-                      <TableTd>{index + 1}</TableTd>
-                      <TableTd>{item.name}</TableTd>
-                      <TableTd>
-                        <Box w={150}>
+                      <TableTd fz="md" lh={1.5}>{index + 1}</TableTd>
+                      <TableTd fz="md" lh={1.5}>{item.name}</TableTd>
+                      <TableTd fz="md" lh={1.5}>
                         {item.tanggal
                           ? new Date(item.tanggal).toLocaleDateString('id-ID', {
-                            day: '2-digit',
-                            month: 'long',
-                            year: 'numeric',
-                          })
+                              day: '2-digit',
+                              month: 'long',
+                              year: 'numeric',
+                            })
                           : '-'}
-                        </Box>
                       </TableTd>
-                      <TableTd>
-                        <Box w={100}>
-                        {item.jenisKelamin.name}
-                        </Box>
-                      </TableTd>
+                      <TableTd fz="md" lh={1.5}>{item.jenisKelamin.name}</TableTd>
                       <TableTd>
                         <Button
                           size="xs"
@@ -155,8 +152,64 @@ function ListResponden({ search }: ListRespondenProps) {
                 )}
               </TableTbody>
             </Table>
-          </Box>
-        </Paper>
+          </Paper>
+        </Box>
+
+        {/* Mobile Cards */}
+        <Box hiddenFrom="md">
+          <Stack gap="sm">
+            <Title order={2} size="md" lh={1.2} px="md">
+              Daftar Responden
+            </Title>
+            {filteredData.length === 0 ? (
+              <Paper p="md" radius="lg" shadow="sm" mx="md">
+                <Text ta="center" c="dimmed" fz="sm" lh={1.5}>
+                  Tidak ditemukan data dengan kata kunci pencarian
+                </Text>
+              </Paper>
+            ) : (
+              filteredData.map((item) => (
+                <Paper key={item.id} p="md" radius="lg" shadow="sm" mx="md">
+                  <Stack gap={4}>
+                    <Text fz="sm" c="dimmed" lh={1.4}>Nama</Text>
+                    <Text fz="md" lh={1.5}>{item.name}</Text>
+
+                    <Text fz="sm" c="dimmed" lh={1.4}>Tanggal</Text>
+                    <Text fz="md" lh={1.5}>
+                      {item.tanggal
+                        ? new Date(item.tanggal).toLocaleDateString('id-ID', {
+                            day: '2-digit',
+                            month: 'long',
+                            year: 'numeric',
+                          })
+                        : '-'}
+                    </Text>
+
+                    <Text fz="sm" c="dimmed" lh={1.4}>Jenis Kelamin</Text>
+                    <Text fz="md" lh={1.5}>{item.jenisKelamin.name}</Text>
+
+                    <Button
+                      size="xs"
+                      radius="md"
+                      variant="light"
+                      color="blue"
+                      leftSection={<IconDeviceImac size={16} />}
+                      onClick={() =>
+                        router.push(
+                          `/admin/landing-page/indeks-kepuasan-masyarakat/responden/${item.id}`
+                        )
+                      }
+                      mt="xs"
+                    >
+                      Detail
+                    </Button>
+                  </Stack>
+                </Paper>
+              ))
+            )}
+          </Stack>
+        </Box>
+
         <Center>
           <Pagination
             value={page}
@@ -167,7 +220,7 @@ function ListResponden({ search }: ListRespondenProps) {
             }}
             size="md"
             radius="md"
-            mt="md"
+            mt={{ base: 'md', md: 'lg' }}
           />
         </Center>
       </Stack>

@@ -1,6 +1,6 @@
 'use client'
 import colors from '@/con/colors';
-import { Stack, Box, Text, Paper, Skeleton } from '@mantine/core';
+import { Stack, Box, Text, Paper, Skeleton, Center } from '@mantine/core';
 import React from 'react';
 import BackButton from '../../desa/layanan/_com/BackButto';
 import { BarChart } from '@mantine/charts';
@@ -80,26 +80,28 @@ function Page() {
             <Paper p="xl">
               <Text pb={10} fw="bold" fz="h4">Statistik Sektor Unggulan Darmasaba</Text>
               <Box style={{ width: '100%', overflowX: 'auto', maxWidth: `${chartWidth}px` }}>
-                <BarChart
-                  p={10}
-                  h={300}
-                  data={chartData}
-                  dataKey="sektor"
-                  series={[
-                    { name: 'Ton', color: colors['blue-button'] },
-                  ]}
-                  tickLine="y"
-                  tooltipAnimationDuration={200}
-                  withTooltip
-                  withXAxis
-                  withYAxis
-                  xAxisLabel="Sektor"
-                  yAxisLabel="Ton"
-                  style={{
-                    fontFamily: 'inherit',
-                    fontSize: '12px', // ukuran font lebih kecil di mobile
-                  }}
-                />
+                <Center>
+                  <BarChart
+                    p={10}
+                    h={300}
+                    data={chartData}
+                    dataKey="sektor"
+                    series={[
+                      { name: 'Ton', color: colors['blue-button'] },
+                    ]}
+                    tickLine="y"
+                    tooltipAnimationDuration={200}
+                    withTooltip
+                    withXAxis
+                    withYAxis
+                    xAxisLabel="Sektor"
+                    yAxisLabel="Ton"
+                    style={{
+                      fontFamily: 'inherit',
+                      fontSize: '12px', // ukuran font lebih kecil di mobile
+                    }}
+                  />
+                </Center>
               </Box>
             </Paper>
           </Box>

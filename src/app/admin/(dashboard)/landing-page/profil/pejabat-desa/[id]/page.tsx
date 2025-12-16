@@ -178,7 +178,7 @@ function EditPejabatDesa() {
   }
 
   return (
-    <Box>
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       <Stack gap="xs">
         <Group mb="md">
           <Button variant="subtle" onClick={handleBack} p="xs" radius="md">
