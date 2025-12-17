@@ -52,7 +52,7 @@ function DetailDaftarInformasiPublik() {
 
       <Paper
         withBorder
-        w={{ base: '100%', md: '60%' }}
+        w={{ base: '100%', md: '70%' }}
         bg={colors['white-1']}
         p="lg"
         radius="md"
@@ -83,39 +83,39 @@ function DetailDaftarInformasiPublik() {
 
               <Box>
                 <Text fz="lg" fw="bold" mb={4}>Deskripsi</Text>
-                <Box 
-                  fz="md" 
-                  c="dimmed" 
+                <Text
+                  px={"xs"}
+                  fz="md"
+                  c="dimmed"
                   dangerouslySetInnerHTML={{ __html: data.deskripsi || '-' }}
-                  className="prose max-w-none"
                   style={{ wordBreak: "break-word", whiteSpace: "normal" }}
                 />
               </Box>
 
               <Group gap="sm" mt="md">
-                  <Button
-                    variant="light"
-                    color="green"
-                    leftSection={<IconEdit size={18} />}
-                    onClick={() => router.push(`/admin/ppid/daftar-informasi-publik/${data.id}/edit`)}
-                    disabled={!data}
-                  >
-                    Edit
-                  </Button>
+                <Button
+                  variant="light"
+                  color="green"
+                  leftSection={<IconEdit size={18} />}
+                  onClick={() => router.push(`/admin/ppid/daftar-informasi-publik/${data.id}/edit`)}
+                  disabled={!data}
+                >
+                  Edit
+                </Button>
 
-                  <Button
-                    variant="light"
-                    color="red"
-                    leftSection={<IconTrash size={18} />}
-                    onClick={() => {
-                      setSelectedId(data.id);
-                      setModalHapus(true);
-                    }}
-                    disabled={stateDaftarInformasi.delete.loading || !data}
-                    loading={stateDaftarInformasi.delete.loading}
-                  >
-                    Hapus
-                  </Button>
+                <Button
+                  variant="light"
+                  color="red"
+                  leftSection={<IconTrash size={18} />}
+                  onClick={() => {
+                    setSelectedId(data.id);
+                    setModalHapus(true);
+                  }}
+                  disabled={stateDaftarInformasi.delete.loading || !data}
+                  loading={stateDaftarInformasi.delete.loading}
+                >
+                  Hapus
+                </Button>
               </Group>
             </Stack>
           </Paper>

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiFetch from "@/lib/api-fetch";
 import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
@@ -136,12 +137,43 @@ const statepermohonanInformasiPublik = proxy({
           };
         }>[]
       | null,
-    async load() {
-      const res = await ApiFetch.api.ppid.permohonaninformasipublik[
-        "find-many"
-      ].get();
-      if (res.status === 200) {
-        statepermohonanInformasiPublik.findMany.data = res.data?.data ?? [];
+    page: 1,
+    totalPages: 1,
+    total: 0,
+    loading: false,
+    search: "",
+    load: async (page = 1, limit = 10, search = "") => {
+      // Change to arrow function
+      statepermohonanInformasiPublik.findMany.loading = true; // Use the full path to access the property
+      statepermohonanInformasiPublik.findMany.page = page;
+      statepermohonanInformasiPublik.findMany.search = search;
+      try {
+        const query: any = { page, limit };
+        if (search) query.search = search;
+
+        const res = await ApiFetch.api.ppid.permohonaninformasipublik[
+          "find-many"
+        ].get({
+          query,
+        });
+
+        if (res.status === 200 && res.data?.success) {
+          statepermohonanInformasiPublik.findMany.data = res.data.data || [];
+          statepermohonanInformasiPublik.findMany.total = res.data.total || 0;
+          statepermohonanInformasiPublik.findMany.totalPages = res.data.totalPages || 1;
+        } else {
+          console.error("Failed to load permohonan keberatan informasi:", res.data?.message);
+          statepermohonanInformasiPublik.findMany.data = [];
+          statepermohonanInformasiPublik.findMany.total = 0;
+          statepermohonanInformasiPublik.findMany.totalPages = 1;
+        }
+      } catch (error) {
+        console.error("Error loading permohonan keberatan informasi:", error);
+        statepermohonanInformasiPublik.findMany.data = [];
+        statepermohonanInformasiPublik.findMany.total = 0;
+        statepermohonanInformasiPublik.findMany.totalPages = 1;
+      } finally {
+        statepermohonanInformasiPublik.findMany.loading = false;
       }
     },
   },

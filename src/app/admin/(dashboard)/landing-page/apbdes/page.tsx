@@ -18,7 +18,7 @@ import {
   Text,
   Title,
 } from '@mantine/core';
-import { useShallowEffect } from '@mantine/hooks';
+import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
 import { IconDeviceImacCog, IconFile, IconPlus, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -45,12 +45,13 @@ function APBDes() {
 function ListAPBDes({ search }: { search: string }) {
   const listState = useProxy(apbdes);
   const router = useRouter();
+    const [debouncedSearch] = useDebouncedValue(search, 1000);
 
   const { data, page, totalPages, loading, load } = listState.findMany;
 
   useShallowEffect(() => {
-    load(page, 10, search);
-  }, [page, search]);
+    load(page, 10, debouncedSearch);
+  }, [page, debouncedSearch]);
 
   const filteredData = data || [];
 
@@ -197,17 +198,17 @@ function ListAPBDes({ search }: { search: string }) {
                     <Text fz="sm" fw={600} lh={1.4}>
                       APBDes {item.tahun}
                     </Text>
-                    <Group justify="space-between" wrap="nowrap">
-                      <Text fz="sm" c="dimmed" lh={1.4}>
+                    <Box>
+                      <Text fz="sm"fw={600} lh={1.4}>
                         Tahun
                       </Text>
                       <Text fz="sm" fw={500} lh={1.4}>
                         {item.tahun || '-'}
                       </Text>
-                    </Group>
+                    </Box>
 
-                    <Group justify="space-between" wrap="nowrap">
-                      <Text fz="sm" c="dimmed" lh={1.4}>
+                    <Box>
+                      <Text fz="sm"fw={600} lh={1.4}>
                         Dokumen
                       </Text>
                       {item.file?.link ? (
@@ -230,7 +231,7 @@ function ListAPBDes({ search }: { search: string }) {
                           Tidak ada
                         </Text>
                       )}
-                    </Group>
+                    </Box>
 
                     <Button
                       size="xs"

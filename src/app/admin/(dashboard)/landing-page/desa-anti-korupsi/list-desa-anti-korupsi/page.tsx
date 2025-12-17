@@ -150,12 +150,18 @@ function ListDesaAntiKorupsi({ search }: { search: string }) {
                 filteredData.map((item) => (
                   <Paper key={item.id} p="sm" radius="md" withBorder shadow="xs">
                     <Stack gap="xs">
-                      <Text fw={500} fz="sm" lh={1.5} lineClamp={1}>
+                      <Box>
+                        <Text fz="sm" fw={600} lh={1.4}>Nama Program</Text>
+                        <Text fw={500} fz="sm" lh={1.5} lineClamp={1}>
                         {item.name || '-'}
                       </Text>
-                      <Text fz="xs" c="dimmed" lh={1.5} lineClamp={1}>
-                        Kategori: {item.kategori?.name || '-'}
+                      </Box>
+                      <Box>
+                        <Text fz="sm" fw={600} lh={1.4}>Kategori</Text>
+                        <Text fz="xs" c="dimmed" lh={1.5} lineClamp={1}>
+                        {item.kategori?.name || '-'}
                       </Text>
+                      </Box>
                       <Group justify="flex-end">
                         <Button
                           size="xs"

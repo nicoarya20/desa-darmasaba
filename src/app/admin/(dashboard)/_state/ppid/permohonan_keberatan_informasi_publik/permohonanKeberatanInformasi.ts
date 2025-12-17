@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiFetch from "@/lib/api-fetch";
 import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
@@ -57,17 +58,48 @@ const permohonanKeberatanInformasi = proxy({
     },
   },
   findMany: {
-    data: null as
+   data: null as
+      | null
       | Prisma.FormulirPermohonanKeberatanGetPayload<{
           omit: { isActive: true };
-        }>[]
-      | null,
-    async load() {
-      const res = await ApiFetch.api.ppid.permohonankeberataninformasipublik[
-        "find-many"
-      ].get();
-      if (res.status === 200) {
-        permohonanKeberatanInformasi.findMany.data = res.data?.data ?? [];
+        }>[],
+    page: 1,
+    totalPages: 1,
+    total: 0,
+    loading: false,
+    search: "",
+    load: async (page = 1, limit = 10, search = "") => {
+      // Change to arrow function
+      permohonanKeberatanInformasi.findMany.loading = true; // Use the full path to access the property
+      permohonanKeberatanInformasi.findMany.page = page;
+      permohonanKeberatanInformasi.findMany.search = search;
+      try {
+        const query: any = { page, limit };
+        if (search) query.search = search;
+
+        const res = await ApiFetch.api.ppid.permohonankeberataninformasipublik[
+          "find-many"
+        ].get({
+          query,
+        });
+
+        if (res.status === 200 && res.data?.success) {
+          permohonanKeberatanInformasi.findMany.data = res.data.data || [];
+          permohonanKeberatanInformasi.findMany.total = res.data.total || 0;
+          permohonanKeberatanInformasi.findMany.totalPages = res.data.totalPages || 1;
+        } else {
+          console.error("Failed to load permohonan keberatan informasi:", res.data?.message);
+          permohonanKeberatanInformasi.findMany.data = [];
+          permohonanKeberatanInformasi.findMany.total = 0;
+          permohonanKeberatanInformasi.findMany.totalPages = 1;
+        }
+      } catch (error) {
+        console.error("Error loading permohonan keberatan informasi:", error);
+        permohonanKeberatanInformasi.findMany.data = [];
+        permohonanKeberatanInformasi.findMany.total = 0;
+        permohonanKeberatanInformasi.findMany.totalPages = 1;
+      } finally {
+        permohonanKeberatanInformasi.findMany.loading = false;
       }
     },
   },
