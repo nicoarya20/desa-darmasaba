@@ -216,105 +216,282 @@ export default function ModernNewsNotification({
       {/* Widget Panel */}
       <Transition mounted={widgetOpen} transition="slide-up" duration={300}>
         {(styles) => (
-          <Paper
-            style={{
-              ...styles,
-              position: "fixed",
-              bottom: "100px",
-              left: "24px",
-              width: "90vw",
-              maxWidth: 380,
-              maxHeight: "500px",
-              boxShadow: "0 8px 32px rgba(0,0,0,0.12)",
-              borderRadius: "16px",
-              overflow: "hidden",
-            }}
-          >
-            <Box
-              style={{
-                background: "linear-gradient(135deg, #1e5a7e 0%, #2c7da0 100%)",
-                padding: "16px 20px",
-                color: "white",
-              }}
-            >
-              <Group justify="space-between">
-                <Group gap="xs">
-                  <IconBell size={20} />
-                  <Text c="white" fw={600} size="md">
-                    Berita & Pengumuman
-                  </Text>
-                </Group>
-                <CloseButton
-                  onClick={() => {
-                    setWidgetOpen(false);
-                    onSeen?.();
+          <Box>
+            <Box hiddenFrom="md">
+              <Paper
+                style={{
+                  ...styles,
+                  position: "fixed",
+                  bottom: "100px",
+                  left: "24px",
+                  width: "90vw",
+                  maxWidth: 380,
+                  maxHeight: "500px",
+                  boxShadow: "0 8px 32px rgba(0,0,0,0.12)",
+                  borderRadius: "16px",
+                  overflow: "hidden",
+                }}
+              >
+                <Box
+                  style={{
+                    background: "linear-gradient(135deg, #1e5a7e 0%, #2c7da0 100%)",
+                    padding: "16px 20px",
+                    color: "white",
                   }}
-                  variant="transparent"
-                  c="white"
-                />
-              </Group>
-            </Box>
-
-            <Box style={{ maxHeight: "400px", overflowY: "auto", padding: "12px" }}>
-              {news.length === 0 ? (
-                <Box p="xl" style={{ textAlign: "center" }}>
-                  <Text c="dimmed" size="sm">
-                    Tidak ada berita terbaru
-                  </Text>
+                >
+                  <Group justify="space-between">
+                    <Group gap="xs">
+                      <IconBell size={20} />
+                      <Text c="white" fw={600} size="md">
+                        Berita & Pengumuman
+                      </Text>
+                    </Group>
+                    <CloseButton
+                      onClick={() => {
+                        setWidgetOpen(false);
+                        onSeen?.();
+                      }}
+                      variant="transparent"
+                      c="white"
+                    />
+                  </Group>
                 </Box>
-              ) : (
-                <Stack gap="xs">
-                  {news.map((item) => (
-                    <Paper
-                      key={item.id}
-                      p="md"
-                      radius="md"
-                      style={{
-                        border: "1px solid #e9ecef",
-                        cursor: "pointer",
-                        transition: "all 0.2s ease",
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.borderColor = "#1e5a7e";
-                        e.currentTarget.style.transform = "translateY(-2px)";
-                        e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.08)";
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.borderColor = "#e9ecef";
-                        e.currentTarget.style.transform = "translateY(0)";
-                        e.currentTarget.style.boxShadow = "none";
-                      }}
-                      onClick={() => handleNotificationClick(item)}
-                    >
-                      <Group justify="space-between" mb="xs">
-                        <Badge
-                          size="sm"
-                          color={item.type === "berita" ? "blue" : "orange"}
-                          variant="light"
+
+                <Box style={{ maxHeight: "400px", overflowY: "auto", padding: "12px" }}>
+                  {news.length === 0 ? (
+                    <Box p="xl" style={{ textAlign: "center" }}>
+                      <Text c="dimmed" size="sm">
+                        Tidak ada berita terbaru
+                      </Text>
+                    </Box>
+                  ) : (
+                    <Stack gap="xs">
+                      {news.map((item) => (
+                        <Paper
+                          key={item.id}
+                          p="md"
+                          radius="md"
+                          style={{
+                            border: "1px solid #e9ecef",
+                            cursor: "pointer",
+                            transition: "all 0.2s ease",
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.borderColor = "#1e5a7e";
+                            e.currentTarget.style.transform = "translateY(-2px)";
+                            e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.08)";
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.borderColor = "#e9ecef";
+                            e.currentTarget.style.transform = "translateY(0)";
+                            e.currentTarget.style.boxShadow = "none";
+                          }}
+                          onClick={() => handleNotificationClick(item)}
                         >
-                          {item.type === "berita" ? "Berita" : "Pengumuman"}
-                        </Badge>
-                        <IconChevronRight size={16} color="#adb5bd" />
-                      </Group>
-                      <Text fw={600} size="sm" mb={4} lineClamp={2}>
-                        {item.title || "Tanpa Judul"}
-                      </Text>
-                      <Text size="xs" c="dimmed" lineClamp={2}>
-                        {stripHtml(item.content).substring(0, 100)}...
-                      </Text>
-                    </Paper>
-                  ))}
-                </Stack>
-              )}
+                          <Group justify="space-between" mb="xs">
+                            <Badge
+                              size="sm"
+                              color={item.type === "berita" ? "blue" : "orange"}
+                              variant="light"
+                            >
+                              {item.type === "berita" ? "Berita" : "Pengumuman"}
+                            </Badge>
+                            <IconChevronRight size={16} color="#adb5bd" />
+                          </Group>
+                          <Text fw={600} size="sm" mb={4} lineClamp={2}>
+                            {item.title || "Tanpa Judul"}
+                          </Text>
+                          <Text size="xs" c="dimmed" lineClamp={2}>
+                            {stripHtml(item.content).substring(0, 100)}...
+                          </Text>
+                        </Paper>
+                      ))}
+                    </Stack>
+                  )}
+                </Box>
+              </Paper>
             </Box>
-          </Paper>
+            <Box visibleFrom="md">
+              <Paper
+                style={{
+                  ...styles,
+                  position: "fixed",
+                  bottom: "100px",
+                  right: "24px",
+                  width: "90vw",
+                  maxWidth: 380,
+                  maxHeight: "500px",
+                  boxShadow: "0 8px 32px rgba(0,0,0,0.12)",
+                  borderRadius: "16px",
+                  overflow: "hidden",
+                }}
+              >
+                <Box
+                  style={{
+                    background: "linear-gradient(135deg, #1e5a7e 0%, #2c7da0 100%)",
+                    padding: "16px 20px",
+                    color: "white",
+                  }}
+                >
+                  <Group justify="space-between">
+                    <Group gap="xs">
+                      <IconBell size={20} />
+                      <Text c="white" fw={600} size="md">
+                        Berita & Pengumuman
+                      </Text>
+                    </Group>
+                    <CloseButton
+                      onClick={() => {
+                        setWidgetOpen(false);
+                        onSeen?.();
+                      }}
+                      variant="transparent"
+                      c="white"
+                    />
+                  </Group>
+                </Box>
+
+                <Box style={{ maxHeight: "400px", overflowY: "auto", padding: "12px" }}>
+                  {news.length === 0 ? (
+                    <Box p="xl" style={{ textAlign: "center" }}>
+                      <Text c="dimmed" size="sm">
+                        Tidak ada berita terbaru
+                      </Text>
+                    </Box>
+                  ) : (
+                    <Stack gap="xs">
+                      {news.map((item) => (
+                        <Paper
+                          key={item.id}
+                          p="md"
+                          radius="md"
+                          style={{
+                            border: "1px solid #e9ecef",
+                            cursor: "pointer",
+                            transition: "all 0.2s ease",
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.borderColor = "#1e5a7e";
+                            e.currentTarget.style.transform = "translateY(-2px)";
+                            e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.08)";
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.borderColor = "#e9ecef";
+                            e.currentTarget.style.transform = "translateY(0)";
+                            e.currentTarget.style.boxShadow = "none";
+                          }}
+                          onClick={() => handleNotificationClick(item)}
+                        >
+                          <Group justify="space-between" mb="xs">
+                            <Badge
+                              size="sm"
+                              color={item.type === "berita" ? "blue" : "orange"}
+                              variant="light"
+                            >
+                              {item.type === "berita" ? "Berita" : "Pengumuman"}
+                            </Badge>
+                            <IconChevronRight size={16} color="#adb5bd" />
+                          </Group>
+                          <Text fw={600} size="sm" mb={4} lineClamp={2}>
+                            {item.title || "Tanpa Judul"}
+                          </Text>
+                          <Text size="xs" c="dimmed" lineClamp={2}>
+                            {stripHtml(item.content).substring(0, 100)}...
+                          </Text>
+                        </Paper>
+                      ))}
+                    </Stack>
+                  )}
+                </Box>
+              </Paper>
+            </Box>
+          </Box>
         )}
       </Transition>
 
       {/* Toast Notification */}
-      <Transition
+      <Box>
+        <Box hiddenFrom="md">
+          <Transition
+            mounted={toastVisible && !!currentNews}
+            transition="slide-left"
+            duration={300}
+          >
+            {(styles) => (
+              <Paper
+                style={{
+                  ...styles,
+                  position: "fixed",
+                  bottom: "100px",
+                  left: "24px",
+                  width: "90vw",
+                  maxWidth: 380,
+                  boxShadow: "0 8px 32px rgba(0,0,0,0.15)",
+                  borderRadius: "12px",
+                  overflow: "hidden",
+                  border: "1px solid #e9ecef",
+                }}
+                onClick={handleLihatSemua}
+              >
+                <Box
+                  style={{
+                    height: "3px",
+                    background: "#1e5a7e",
+                    animation: "shrink 8s linear forwards",
+                  }}
+                />
+                <style>{`
+              @keyframes shrink {
+                from { width: 100%; }
+                to { width: 0%; }
+              }
+            `}</style>
+
+                <Box p="md">
+                  <Group justify="space-between" mb="xs">
+                    <Badge
+                      size="md"
+                      color={currentNews?.type === "berita" ? "blue" : "orange"}
+                      variant="light"
+                    >
+                      {currentNews?.type === "berita"
+                        ? "Berita Terbaru"
+                        : "Pengumuman"}
+                    </Badge>
+                    <CloseButton onClick={handleDismissToast} size="sm" />
+                  </Group>
+
+                  <Text fw={600} size="sm" mb={6}>
+                    {currentNews?.title || "Informasi Terbaru"}
+                  </Text>
+
+                  <Text size="xs" c="dimmed" lineClamp={3}>
+                    {stripHtml(currentNews?.content || "")}
+                  </Text>
+
+                  <Group justify="space-between" mt="md">
+                    <Text size="xs" c="dimmed">
+                      {news.length > 1 ? `${news.length} berita tersedia` : "1 berita"}
+                    </Text>
+                    <Text
+                      size="xs"
+                      fw={500}
+                      c="#1e5a7e"
+                      style={{ cursor: "pointer" }}
+                      onClick={handleLihatSemua}
+                    >
+                      Lihat Semua →
+                    </Text>
+                  </Group>
+                </Box>
+              </Paper>
+            )}
+          </Transition>
+        </Box>
+        <Box visibleFrom="md">
+        <Transition
         mounted={toastVisible && !!currentNews}
-        transition="slide-left"
+        transition="slide-right"
         duration={300}
       >
         {(styles) => (
@@ -323,7 +500,7 @@ export default function ModernNewsNotification({
               ...styles,
               position: "fixed",
               bottom: "100px",
-              left: "24px",
+              right: "24px",
               width: "90vw",
               maxWidth: 380,
               boxShadow: "0 8px 32px rgba(0,0,0,0.15)",
@@ -387,6 +564,8 @@ export default function ModernNewsNotification({
           </Paper>
         )}
       </Transition>
+        </Box>
+      </Box>
     </>
   );
 }

@@ -1,7 +1,7 @@
 'use client'
 import colors from '@/con/colors';
 import { Box, Button, Center, Group, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title } from '@mantine/core';
-import { useShallowEffect } from '@mantine/hooks';
+import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
 import { IconDeviceImacCog, IconPlus, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -28,6 +28,8 @@ function SdgsDesa() {
 function ListSdgsDesa({ search }: { search: string }) {
   const listState = useProxy(sdgsDesa);
   const router = useRouter();
+  const [debouncedSearch] = useDebouncedValue(search, 1000);
+
 
   const {
     data,
@@ -38,8 +40,8 @@ function ListSdgsDesa({ search }: { search: string }) {
   } = listState.findMany;
 
   useShallowEffect(() => {
-    load(page, 10, search);
-  }, [page, search]);
+    load(page, 10, debouncedSearch);
+  }, [page, debouncedSearch]);
 
   const filteredData = data || [];
 
@@ -63,7 +65,7 @@ function ListSdgsDesa({ search }: { search: string }) {
           </Title>
           <Button
             leftSection={<IconPlus size={18} />}
-            color={colors['blue-button']}
+            color='blue'
             variant="light"
             onClick={() => router.push('/admin/landing-page/SDGs/create')}
           >
@@ -147,12 +149,18 @@ function ListSdgsDesa({ search }: { search: string }) {
               {filteredData.map((item) => (
                 <Paper key={item.id} withBorder p="md" radius="md">
                   <Stack gap={4}>
-                    <Text fz="sm" fw={600} lh={1.4}>
-                      {item.name}
-                    </Text>
-                    <Text fz="xs" c="dark.6" lh={1.4}>
-                      Jumlah: {item.jumlah || '0'}
-                    </Text>
+                    <Box>
+                      <Text fz="sm" fw={600} lh={1.4}>Nama SDGs Desa</Text>
+                      <Text fz="sm" fw={500} lh={1.4}>
+                        {item.name}
+                      </Text>
+                    </Box>
+                    <Box>
+                      <Text fz="sm" fw={600} lh={1.4}>Jumlah</Text>
+                      <Text fz="xs" c="dark.6" lh={1.4}>
+                        {item.jumlah || '0'}
+                      </Text>
+                    </Box>
                     <Group justify="flex-end" mt="xs">
                       <Button
                         size="xs"

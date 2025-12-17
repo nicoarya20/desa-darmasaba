@@ -1,7 +1,7 @@
 'use client'
 import colors from '@/con/colors';
 import { Box, Button, Center, Group, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title } from '@mantine/core';
-import { useShallowEffect } from '@mantine/hooks';
+import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
 import { IconEdit, IconPlus, IconSearch, IconTrash } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -32,6 +32,7 @@ function ListKategoriPrestasi({ search }: { search: string }) {
   const [modalHapus, setModalHapus] = useState(false)
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const router = useRouter()
+  const [debouncedSearch] = useDebouncedValue(search, 1000); // 500ms delay
 
   const handleHapus = () => {
     if (selectedId) {
@@ -50,8 +51,8 @@ function ListKategoriPrestasi({ search }: { search: string }) {
   } = stateKategori.findMany
 
   useShallowEffect(() => {
-    load(page, 10, search)
-  }, [page, search])
+    load(page, 10, debouncedSearch)
+  }, [page, debouncedSearch])
 
   const filteredData = data || []
 

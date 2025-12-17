@@ -368,6 +368,13 @@ function EditAPBDes() {
                     { value: '2', label: 'Level 2 (Sub-kelompok)' },
                     { value: '3', label: 'Level 3 (Detail)' },
                   ]}
+                  styles={{
+                    option: {
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                    },
+                  }}
                   value={String(newItem.level)}
                   onChange={(val) => setNewItem({ ...newItem, level: Number(val) || 1 })}
                 />
@@ -378,6 +385,13 @@ function EditAPBDes() {
                     { value: 'belanja', label: 'Belanja' },
                     { value: 'pembiayaan', label: 'Pembiayaan' },
                   ]}
+                  styles={{
+                    option: {
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                    },
+                  }}
                   value={newItem.tipe}
                   onChange={(val) => setNewItem({ ...newItem, tipe: (val as any) || 'pendapatan' })}
                 />

@@ -1,7 +1,7 @@
 'use client'
 import colors from '@/con/colors';
 import { Box, Button, Center, Group, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title, Tooltip } from '@mantine/core';
-import { useShallowEffect } from '@mantine/hooks';
+import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
 import { IconDeviceImacCog, IconPlus, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -29,12 +29,13 @@ function ProgramInovasi() {
 function ListProgramInovasi({ search }: { search: string }) {
   const stateProgramInovasi = useProxy(profileLandingPageState.programInovasi);
   const router = useRouter();
+  const [debouncedSearch] = useDebouncedValue(search, 1000); // 500ms delay
 
   const { data, page, totalPages, loading, load } = stateProgramInovasi.findMany;
 
   useShallowEffect(() => {
-    load(page, 10, search);
-  }, [page, search]);
+    load(page, 10, debouncedSearch);
+  }, [page, debouncedSearch]);
 
   const filteredData = data || [];
 
@@ -135,15 +136,22 @@ function ListProgramInovasi({ search }: { search: string }) {
               >
                 <Stack gap={6}>
                   {/* Title */}
-                  <Text fw={600}>{item.name}</Text>
+                  <Box>
+                    <Text fz="sm" fw={600} lh={1.4}>Nama Program</Text>
+                    <Text fw={500} lh={1.4}>{item.name}</Text>
+                  </Box>
 
                   {/* Description */}
-                  <Text fz="sm" c="gray.7" lineClamp={2}>
-                    {item.description || '-'}
+                  <Box>
+                    <Text fz="sm" fw={600} lh={1.4}>Deskripsi</Text>
+                    <Text fz="sm" c="gray.7" lineClamp={2}>
+                      {item.description || '-'}
                   </Text>
+                  </Box>
 
                   {/* Link */}
                   <Box>
+                    <Text fz="sm" fw={600} lh={1.4}>Link</Text>
                     <a
                       href={item.link}
                       target="_blank"

@@ -51,7 +51,7 @@ function DetailPegawai() {
   const data = statePegawai.findUnique.data;
 
   return (
-    <Box>
+    <Box px={{ base: 0, md: 'xs' }} py="xs">
       <Box mb={10}>
         <Button variant="subtle" onClick={() => router.back()}>
           <IconArrowBack color={colors['blue-button']} size={25} />
@@ -59,7 +59,7 @@ function DetailPegawai() {
       </Box>
       <Paper
         withBorder
-        w={{ base: "100%", md: "60%" }}
+        w={{ base: "100%", md: "70%" }}
         bg={colors['white-1']}
         p="lg"
         radius="md"

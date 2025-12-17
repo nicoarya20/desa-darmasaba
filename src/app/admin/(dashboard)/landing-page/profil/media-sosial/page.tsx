@@ -20,7 +20,7 @@ import {
   Text,
   Title,
 } from '@mantine/core';
-import { useShallowEffect } from '@mantine/hooks';
+import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
 import { IconDeviceImacCog, IconPlus, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -48,6 +48,7 @@ function MediaSosial() {
 function ListMediaSosial({ search }: { search: string }) {
   const stateMediaSosial = useProxy(profileLandingPageState.mediaSosial);
   const router = useRouter();
+  const [debouncedSearch] = useDebouncedValue(search, 1000); // 500ms delay
 
   const getIconSource = (item: any) => {
     if (item.image?.link) return item.image.link;
@@ -66,8 +67,8 @@ function ListMediaSosial({ search }: { search: string }) {
   } = stateMediaSosial.findMany;
 
   useShallowEffect(() => {
-    load(page, 10, search);
-  }, [page, search]);
+    load(page, 10, debouncedSearch);
+  }, [page, debouncedSearch]);
 
   const filteredData = data || [];
 
@@ -195,11 +196,14 @@ function ListMediaSosial({ search }: { search: string }) {
             {filteredData.length > 0 ? (
               filteredData.map((item) => (
                 <Paper key={item.id} withBorder p="sm" radius="md">
-                  <Group justify="space-between" wrap="nowrap" align='center'>
                     <Box>
-                      <Text fw={600} fz="sm" lh={1.45}>
+                      <Text fz="sm" fw={600} lh={1.4}>Nama Media Sosial / Kontak</Text>
+                      <Text fw={500} fz="sm" lh={1.45}>
                         {item.name}
                       </Text>
+                    </Box>
+                    <Box>
+                      <Text fz="sm" fw={600} lh={1.4}>Gambar</Text>
                     </Box>
                     <Box w={40} h={40} style={{ borderRadius: 6, overflow: 'hidden' }}>
                       {(() => {
@@ -217,8 +221,8 @@ function ListMediaSosial({ search }: { search: string }) {
                         return <Box bg={colors['blue-button']} w="100%" h="100%" />;
                       })()}
                     </Box>
-                  </Group>
                   <Box>
+                    <Text fz="sm" fw={600} lh={1.4}>Link / No. Telepon</Text>
                     <a
                       href={item.link}
                       target="_blank"

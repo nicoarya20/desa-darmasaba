@@ -1,5 +1,21 @@
 'use client';
-import { Box, Button, Center, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title } from '@mantine/core';
+import {
+  Box,
+  Button,
+  Center,
+  Pagination,
+  Paper,
+  Skeleton,
+  Stack,
+  Table,
+  TableTbody,
+  TableTd,
+  TableTh,
+  TableThead,
+  TableTr,
+  Text,
+  Title,
+} from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconDeviceImacCog, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
@@ -9,11 +25,11 @@ import HeaderSearch from '../../../_com/header';
 import indeksKepuasanState from '../../../_state/landing-page/indeks-kepuasan';
 
 function Responden() {
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
   return (
     <Box>
       <HeaderSearch
-        title="Data Responden"
+        title="Responden"
         placeholder="Cari nama responden..."
         searchIcon={<IconSearch size={18} />}
         value={search}
@@ -33,17 +49,13 @@ function ListResponden({ search }: ListRespondenProps) {
   const router = useRouter();
   const { data, page, totalPages, loading, load } = state.findMany;
 
-
   useShallowEffect(() => {
-    load(page, 10)
+    load(page, 10);
   }, [page]);
 
-
-  const filteredData = (data || []).filter(item => {
+  const filteredData = (data || []).filter((item) => {
     const keyword = search.toLowerCase();
-    return (
-      item.name.toLowerCase().includes(keyword)
-    );
+    return item.name.toLowerCase().includes(keyword);
   });
 
   if (loading || !data) {
@@ -56,21 +68,25 @@ function ListResponden({ search }: ListRespondenProps) {
 
   if (data.length === 0) {
     return (
-      <Paper withBorder bg="white" p="lg" radius="md" shadow="sm">
+      <Paper withBorder bg="white" p={{ base: 'md', sm: 'lg' }} radius="md" shadow="sm">
         <Stack gap="md">
-          <Title order={3}>Data Responden</Title>
-          <Table striped withRowBorders>
-            <TableThead>
-              <TableTr>
-                <TableTh style={{ textAlign: 'center' }}>No</TableTh>
-                <TableTh>Nama</TableTh>
-                <TableTh>Tanggal</TableTh>
-                <TableTh>Jenis Kelamin</TableTh>
-                <TableTh style={{ textAlign: 'center' }}>Aksi</TableTh>
-              </TableTr>
-            </TableThead>
-          </Table>
-          <Text c="dimmed" ta="center" py="md">
+          <Title order={2} lh={1.2}>
+            Data Responden
+          </Title>
+          <Box visibleFrom="md">
+            <Table striped withRowBorders>
+              <TableThead>
+                <TableTr>
+                  <TableTh ta="center">No</TableTh>
+                  <TableTh>Nama</TableTh>
+                  <TableTh>Tanggal</TableTh>
+                  <TableTh>Jenis Kelamin</TableTh>
+                  <TableTh ta="center">Aksi</TableTh>
+                </TableTr>
+              </TableThead>
+            </Table>
+          </Box>
+          <Text c="dimmed" ta="center" py="md" fz={{ base: 'sm', md: 'md' }} lh={1.4}>
             Belum ada data responden yang tersedia
           </Text>
         </Stack>
@@ -79,54 +95,133 @@ function ListResponden({ search }: ListRespondenProps) {
   }
 
   return (
-    <Paper withBorder bg="white" p="lg" radius="md" shadow="sm">
+    <Paper withBorder bg="white" p={{ base: 'md', sm: 'lg' }} radius="md" shadow="sm">
       <Stack gap="md">
-        <Title order={3}>Data Responden</Title>
-        <Table striped withRowBorders>
-          <TableThead>
-            <TableTr>
-              <TableTh style={{ width: '5%', textAlign: 'center' }}>No</TableTh>
-              <TableTh style={{ width: '25%' }}>Nama</TableTh>
-              <TableTh style={{ width: '25%' }}>Tanggal</TableTh>
-              <TableTh style={{ width: '20%' }}>Jenis Kelamin</TableTh>
-              <TableTh style={{ width: '15%', textAlign: 'center' }}>Aksi</TableTh>
-            </TableTr>
-          </TableThead>
-          <TableTbody>
-            {filteredData.length === 0 ? (
+        <Title order={2} lh={1.2}>
+          Data Responden
+        </Title>
+
+        {/* Desktop Table */}
+        <Box visibleFrom="md">
+          <Table striped withRowBorders>
+            <TableThead>
               <TableTr>
-                <TableTd colSpan={5}>
-                  <Text c="dimmed" ta="center" py="md">
-                    Tidak ada data yang cocok dengan pencarian
-                  </Text>
-                </TableTd>
+                <TableTh w="5%" ta="center">
+                  No
+                </TableTh>
+                <TableTh w="25%">Nama</TableTh>
+                <TableTh w="25%">Tanggal</TableTh>
+                <TableTh w="20%">Jenis Kelamin</TableTh>
+                <TableTh w="15%" ta="center">
+                  Aksi
+                </TableTh>
               </TableTr>
-            ) : (
-              filteredData.map((item, index) => (
-                <TableTr key={item.id}>
-                  <TableTd style={{ width: '5%', textAlign: 'center' }}>{index + 1}</TableTd>
-                  <TableTd style={{ width: '25%' }}>{item.name}</TableTd>
-                  <TableTd style={{ width: '25%' }}>
-                    {item.tanggal ? new Date(item.tanggal).toLocaleDateString('id-ID') : '-'}
-                  </TableTd>
-                  <TableTd style={{ width: '20%' }}>{item.jenisKelamin.name}</TableTd>
-                  <TableTd style={{ width: '15%', textAlign: 'center' }}>
-                    <Button
-                      size="xs"
-                      radius="md"
-                      variant="light"
-                      color="blue"
-                      leftSection={<IconDeviceImacCog size={16} />}
-                      onClick={() => router.push(`/admin/ppid/ikm-desa-darmasaba/responden/${item.id}`)}
-                    >
-                      Detail
-                    </Button>
+            </TableThead>
+            <TableTbody>
+              {filteredData.length === 0 ? (
+                <TableTr>
+                  <TableTd colSpan={5}>
+                    <Text c="dimmed" ta="center" py="md" fz="sm" lh={1.4}>
+                      Tidak ada data yang cocok dengan pencarian
+                    </Text>
                   </TableTd>
                 </TableTr>
-              ))
-            )}
-          </TableTbody>
-        </Table>
+              ) : (
+                filteredData.map((item, index) => (
+                  <TableTr key={item.id}>
+                    <TableTd ta="center">{index + 1}</TableTd>
+                    <TableTd>{item.name}</TableTd>
+                    <TableTd>
+                      {item.tanggal ? new Date(item.tanggal).toLocaleDateString('id-ID') : '-'}
+                    </TableTd>
+                    <TableTd>{item.jenisKelamin.name}</TableTd>
+                    <TableTd ta="center">
+                      <Button
+                        size="xs"
+                        radius="md"
+                        variant="light"
+                        color="blue"
+                        leftSection={<IconDeviceImacCog size={16} />}
+                        onClick={() =>
+                          router.push(`/admin/ppid/ikm-desa-darmasaba/responden/${item.id}`)
+                        }
+                      >
+                        Detail
+                      </Button>
+                    </TableTd>
+                  </TableTr>
+                ))
+              )}
+            </TableTbody>
+          </Table>
+        </Box>
+
+        {/* Mobile Card View */}
+        <Box hiddenFrom="md">
+          {filteredData.length === 0 ? (
+            <Text c="dimmed" ta="center" py="md" fz="sm" lh={1.4}>
+              Tidak ada data yang cocok dengan pencarian
+            </Text>
+          ) : (
+            <Stack gap="sm">
+              {filteredData.map((item, index) => (
+                <Paper key={item.id} withBorder p="sm" radius="md">
+                  <Stack gap={4}>
+                    <Box>
+                      <Text fz="sm" fw={600} lh={1.4}>
+                        No
+                      </Text>
+                      <Text fz="sm" fw={500} lh={1.4}>
+                        {index + 1}
+                      </Text>
+                    </Box>
+                    <Box>
+                      <Text fz="sm" fw={600} lh={1.4}>
+                        Nama
+                      </Text>
+                      <Text fz="sm" fw={500} lh={1.4}>
+                        {item.name}
+                      </Text>
+                    </Box>
+                    <Box>
+                      <Text fz="sm" fw={600} lh={1.4}>
+                        Tanggal
+                      </Text>
+                      <Text fz="sm" fw={500} lh={1.4}>
+                        {item.tanggal
+                          ? new Date(item.tanggal).toLocaleDateString('id-ID')
+                          : '-'}
+                      </Text>
+                    </Box>
+                    <Box>
+                      <Text fz="sm" fw={600} lh={1.4}>
+                        Jenis Kelamin
+                      </Text>
+                      <Text fz="sm" fw={500} lh={1.4}>
+                        {item.jenisKelamin.name}
+                      </Text>
+                    </Box>
+                    <Box ta="center">
+                      <Button
+                        size="xs"
+                        radius="md"
+                        variant="light"
+                        color="blue"
+                        leftSection={<IconDeviceImacCog size={16} />}
+                        onClick={() =>
+                          router.push(`/admin/ppid/ikm-desa-darmasaba/responden/${item.id}`)
+                        }
+                      >
+                        Detail
+                      </Button>
+                    </Box>
+                  </Stack>
+                </Paper>
+              ))}
+            </Stack>
+          )}
+        </Box>
+
         {filteredData.length > 0 && (
           <Center>
             <Pagination
@@ -138,7 +233,6 @@ function ListResponden({ search }: ListRespondenProps) {
               }}
               size="md"
               radius="md"
-              mt="md"
             />
           </Center>
         )}
@@ -148,5 +242,3 @@ function ListResponden({ search }: ListRespondenProps) {
 }
 
 export default Responden;
-
-

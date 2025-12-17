@@ -151,7 +151,7 @@ function ListKategoriKegiatan({ search }: { search: string }) {
                     {item.name}
                   </Text>
                 </TableTd>
-                <TableTd w={60}>
+                <TableTd w={120}>
                   <Button
                     variant="light"
                     color="green"
@@ -161,7 +161,7 @@ function ListKategoriKegiatan({ search }: { search: string }) {
                     <IconEdit size={18} />
                   </Button>
                 </TableTd>
-                <TableTd w={60}>
+                <TableTd w={120}>
                   <Button
                     variant="light"
                     color="red"
@@ -191,7 +191,7 @@ function ListKategoriKegiatan({ search }: { search: string }) {
   );
 
   return (
-    <Box py={{ base: 'xl', md: 'xl' }}>
+    <Box py={{ base: 20, md: 20 }}>
       <Paper bg={colors['white-1']} p={{ base: 'md', md: 'xl' }} shadow="md" radius="md">
         <Group justify="space-between" mb={{ base: 'md', md: 'lg' }}>
           <Title order={2} lh={1.2}>

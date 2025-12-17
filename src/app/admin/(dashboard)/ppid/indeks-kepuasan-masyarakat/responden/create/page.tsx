@@ -51,7 +51,7 @@ function RespondenCreate() {
     }
   }
   return (
-    <Box>
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       <Box mb={10}>
         <Button variant="subtle" onClick={() => router.back()}>
           <IconArrowBack size={20} />
@@ -96,24 +96,24 @@ function RespondenCreate() {
             }
             disabled={indeksKepuasanState.jenisKelaminResponden.findMany.loading}
           />
-            <Select
+          <Select
             key={"rating_responden"}
-              label={"Rating"}
-              placeholder={indeksKepuasanState.pilihanRatingResponden.findMany.loading ? 'Memuat...' : 'Pilih rating'}
-              value={stategrafikBerdasarkanResponden.create.form.ratingId || ""}
-              onChange={(val) => {
-                stategrafikBerdasarkanResponden.create.form.ratingId = val ?? "";
-              }}
-              data={
-                (indeksKepuasanState.pilihanRatingResponden.findMany.data || [])
-                  .filter(Boolean) // Hapus null, undefined, dll
-                  .map((item) => ({
-                    value: item.id,
-                    label: item.name || 'Tanpa Nama',
-                  }))
-              }
-              disabled={indeksKepuasanState.pilihanRatingResponden.findMany.loading}
-            />
+            label={"Rating"}
+            placeholder={indeksKepuasanState.pilihanRatingResponden.findMany.loading ? 'Memuat...' : 'Pilih rating'}
+            value={stategrafikBerdasarkanResponden.create.form.ratingId || ""}
+            onChange={(val) => {
+              stategrafikBerdasarkanResponden.create.form.ratingId = val ?? "";
+            }}
+            data={
+              (indeksKepuasanState.pilihanRatingResponden.findMany.data || [])
+                .filter(Boolean) // Hapus null, undefined, dll
+                .map((item) => ({
+                  value: item.id,
+                  label: item.name || 'Tanpa Nama',
+                }))
+            }
+            disabled={indeksKepuasanState.pilihanRatingResponden.findMany.loading}
+          />
           <Select
             key={"kelompokUmur"}
             label={"Kelompok Umur"}
