@@ -91,7 +91,7 @@ function Page() {
     }, [params?.id, router]);
 
     // 🔄 Check if form has changes
-    
+
 
     // 🔁 Reset Form to Original Data
     const handleResetForm = () => {
@@ -149,7 +149,7 @@ function Page() {
     // 🔄 Loading State
     if (isLoading) {
         return (
-            <Box>
+            <Box px={{ base: 0, md: 'lg' }} py="xs">
                 <Center h={400}>
                     <Stack align="center" gap="md">
                         <Loader size="lg" color={colors['blue-button']} />
@@ -165,7 +165,7 @@ function Page() {
     // ❌ Error State
     if (loadError) {
         return (
-            <Box px={{ base: 'sm', md: 'lg' }} py="md">
+            <Box px={{ base: 0, md: 'lg' }} py="xs">
                 <Stack gap="md">
                     <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
                         <IconArrowBack color={colors['blue-button']} size={24} />

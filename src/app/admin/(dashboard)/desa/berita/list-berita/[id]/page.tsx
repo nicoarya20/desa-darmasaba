@@ -41,7 +41,7 @@ function DetailBerita() {
   const data = beritaState.berita.findUnique.data;
 
   return (
-    <Box py={10}>
+    <Box px={{ base: 0, md: 'xs' }} py="xs">
       {/* Tombol Back */}
       <Button
         variant="subtle"

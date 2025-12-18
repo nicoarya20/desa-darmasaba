@@ -148,7 +148,7 @@ function Page() {
   // ❌ Error
   if (loadError) {
     return (
-      <Box px={{ base: 'sm', md: 'lg' }} py="md">
+      <Box px={{ base: 0, md: 'lg' }} py="xs">
         <Stack gap="md">
           <Button variant="subtle" onClick={handleBack} p="xs" radius="md">
             <IconArrowBack color={colors['blue-button']} size={24} />
@@ -166,7 +166,7 @@ function Page() {
 
   // 🧱 UI utama
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       <Stack gap="md">
         {/* Header */}
         <Group mb="sm">

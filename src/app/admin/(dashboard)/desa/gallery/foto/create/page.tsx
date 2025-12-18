@@ -72,7 +72,7 @@ function CreateFoto() {
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+   <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Header Back Button + Title */}
       <Group mb="md">
         <Button

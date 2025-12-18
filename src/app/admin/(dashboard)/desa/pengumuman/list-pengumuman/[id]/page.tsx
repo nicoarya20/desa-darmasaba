@@ -49,7 +49,7 @@ export default function DetailPengumuman() {
   const data = pengumumanState.pengumuman.findUnique.data;
 
   return (
-    <Box py={10}>
+   <Box px={{ base: 0, md: 'xs' }} py="xs">
       <Button
         variant="subtle"
         onClick={() => router.back()}
@@ -61,7 +61,7 @@ export default function DetailPengumuman() {
 
       <Paper
         withBorder
-        w={{ base: '100%', md: '60%' }}
+        w={{ base: '100%', md: '70%' }}
         bg={colors['white-1']}
         p="lg"
         radius="md"
@@ -74,14 +74,6 @@ export default function DetailPengumuman() {
 
           <Paper bg="#ECEEF8" p="md" radius="md" shadow="xs">
             <Stack gap="sm">
-              <Box>
-                <Text fz="lg" fw="bold">
-                  Kategori
-                </Text>
-                <Text fz="md" c="dimmed">
-                  {data?.CategoryPengumuman?.name || '-'}
-                </Text>
-              </Box>
 
               <Box>
                 <Text fz="lg" fw="bold">
@@ -89,6 +81,15 @@ export default function DetailPengumuman() {
                 </Text>
                 <Text fz="md" c="dimmed">
                   {data?.judul || '-'}
+                </Text>
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">
+                  Kategori
+                </Text>
+                <Text fz="md" c="dimmed">
+                  {data?.CategoryPengumuman?.name || '-'}
                 </Text>
               </Box>
 

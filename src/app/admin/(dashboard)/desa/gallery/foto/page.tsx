@@ -18,7 +18,7 @@ import {
   Text,
   Title
 } from '@mantine/core';
-import { useShallowEffect } from '@mantine/hooks';
+import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
 import { IconDeviceImac, IconPlus, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -45,6 +45,7 @@ function Foto() {
 function ListFoto({ search }: { search: string }) {
   const FotoState = useProxy(stateGallery.foto)
   const router = useRouter();
+  const [debouncedSearch] = useDebouncedValue(search, 1000);
 
   const {
     data,
@@ -55,76 +56,81 @@ function ListFoto({ search }: { search: string }) {
   } = FotoState.findMany;
 
   useShallowEffect(() => {
-    load(page, 10, search)
-  }, [page, search])
+    load(page, 10, debouncedSearch)
+  }, [page, debouncedSearch])
 
   const filteredData = data || []
 
   if (loading || !data) {
     return (
-      <Stack py={10}>
+      <Stack py={{ base: 'md', md: 'lg' }}>
         <Skeleton height={600} radius="md" />
       </Stack>
     )
   }
 
   return (
-    <Box py={10}>
-      <Paper withBorder bg={colors['white-1']} p={'lg'} shadow="md" radius="md">
-        <Group justify="space-between" mb="md">
-          <Title order={4}>Daftar Foto</Title>
-            <Button
-              leftSection={<IconPlus size={18} />}
-              color="blue"
-              variant="light"
-              onClick={() => router.push('/admin/desa/gallery/foto/create')}
-            >
-              Tambah Baru
-            </Button>
+    <Box py={{ base: 'md', md: 'lg' }}>
+      <Paper withBorder bg={colors['white-1']} p={{ base: 'md', md: 'lg' }} shadow="md" radius="md">
+        <Group justify="space-between" mb={{ base: 'sm', md: 'md' }}>
+          <Title order={2} lh={1.2}>Daftar Foto</Title>
+          <Button
+            leftSection={<IconPlus size={18} />}
+            color="blue"
+            variant="light"
+            onClick={() => router.push('/admin/desa/gallery/foto/create')}
+          >
+            Tambah Baru
+          </Button>
         </Group>
-        <Box style={{ overflowX: "auto" }}>
+
+        {/* Desktop Table */}
+        <Box visibleFrom="md">
           <Table highlightOnHover>
             <TableThead>
               <TableTr>
-                <TableTh style={{ width: '25%' }}>Judul Foto</TableTh>
-                <TableTh style={{ width: '20%' }}>Tanggal</TableTh>
-                <TableTh style={{ width: '30%' }}>Deskripsi</TableTh>
-                <TableTh style={{ width: '15%' }}>Aksi</TableTh>
+                <TableTh>Judul Foto</TableTh>
+                <TableTh>Tanggal</TableTh>
+                <TableTh>Deskripsi</TableTh>
+                <TableTh>Aksi</TableTh>
               </TableTr>
             </TableThead>
             <TableTbody>
               {filteredData.length > 0 ? (
                 filteredData.map((item) => (
                   <TableTr key={item.id}>
-                    <TableTd style={{ width: '25%' }}>
-                      <Box w={200}> 
-                        <Text fw={500} truncate="end" lineClamp={1}>{item.name}</Text>
-                      </Box>
+                    <TableTd>
+                      <Text fz="md" fw={500} lh={1.45} truncate="end" lineClamp={1}>
+                        {item.name}
+                      </Text>
                     </TableTd>
-                    <TableTd style={{ width: '20%' }}>
-                     <Box w={200}>
-                     <Text fz="sm" c="dimmed">
+                    <TableTd>
+                      <Text fz="sm" c="dimmed" lh={1.45}>
                         {new Date(item.createdAt).toLocaleDateString('id-ID', {
                           day: 'numeric',
                           month: 'long',
                           year: 'numeric',
                         })}
                       </Text>
-                     </Box>
                     </TableTd>
-                    <TableTd style={{ width: '30%' }}>
-                     <Box w={200}>
-                      <Text fz="sm" truncate="end" lineClamp={1} dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
-                     </Box>
+                    <TableTd>
+                      <Text
+                        fz="sm"
+                        lh={1.45}
+                        truncate="end"
+                        lineClamp={1}
+                        dangerouslySetInnerHTML={{ __html: item.deskripsi }}
+                      />
                     </TableTd>
-                    <TableTd style={{ width: '15%' }}>
+                    <TableTd>
                       <Button
                         variant="light"
                         color="blue"
+                        size="xs"
                         onClick={() => router.push(`/admin/desa/gallery/foto/${item.id}`)}
                       >
-                        <IconDeviceImac size={20} />
-                        <Text ml={5}>Detail</Text>
+                        <IconDeviceImac size={16} />
+                        <Text ml={5} fz="sm" fw={500}>Detail</Text>
                       </Button>
                     </TableTd>
                   </TableTr>
@@ -133,7 +139,7 @@ function ListFoto({ search }: { search: string }) {
                 <TableTr>
                   <TableTd colSpan={4}>
                     <Center py={20}>
-                      <Text c="dimmed">Tidak ada foto yang cocok</Text>
+                      <Text c="dimmed" fz="sm" lh={1.4}>Tidak ada foto yang cocok</Text>
                     </Center>
                   </TableTd>
                 </TableTr>
@@ -141,7 +147,54 @@ function ListFoto({ search }: { search: string }) {
             </TableTbody>
           </Table>
         </Box>
+
+        {/* Mobile Card View */}
+        <Box hiddenFrom="md">
+          <Stack gap="md">
+            {filteredData.length > 0 ? (
+              filteredData.map((item) => (
+                <Paper key={item.id} withBorder radius="sm" p="md">
+                  <Stack gap="xs">
+                    <Box>
+                      <Text fz="sm" fw={600} lh={1.4}>Judul Foto</Text>
+                      <Text fz="sm" fw={500} lh={1.45}>{item.name}</Text>
+                    </Box>
+                    <Box>
+                      <Text fz="sm" fw={600} lh={1.4}>Tanggal</Text>
+                      <Text fz="sm" fw={500} lh={1.45} c="dimmed">
+                        {new Date(item.createdAt).toLocaleDateString('id-ID', {
+                          day: 'numeric',
+                          month: 'long',
+                          year: 'numeric',
+                        })}
+                      </Text>
+                    </Box>
+                    <Box>
+                      <Text fz="sm" fw={600} lh={1.4}>Deskripsi</Text>
+                      <Text fz="sm" fw={500} lh={1.45} dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
+                    </Box>
+                    <Button
+                      variant="light"
+                      color="blue"
+                      size="xs"
+                      fullWidth
+                      onClick={() => router.push(`/admin/desa/gallery/foto/${item.id}`)}
+                    >
+                      <IconDeviceImac size={16} />
+                      <Text ml={5} fz="sm" fw={500}>Detail</Text>
+                    </Button>
+                  </Stack>
+                </Paper>
+              ))
+            ) : (
+              <Center py={20}>
+                <Text c="dimmed" fz="sm" lh={1.4}>Tidak ada foto yang cocok</Text>
+              </Center>
+            )}
+          </Stack>
+        </Box>
       </Paper>
+
       <Center>
         <Pagination
           value={page}

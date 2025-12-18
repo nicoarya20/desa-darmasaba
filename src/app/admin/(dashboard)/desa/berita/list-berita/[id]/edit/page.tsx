@@ -150,7 +150,7 @@ function EditBerita() {
   };
 
   return (
-    <Box px={{ base: "sm", md: "lg" }} py="md">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Header */}
       <Group mb="md">
         <Button

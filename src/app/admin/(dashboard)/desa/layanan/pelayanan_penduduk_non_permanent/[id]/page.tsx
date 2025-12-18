@@ -108,7 +108,7 @@ function EditPelayananPendudukNonPermanent() {
   };
 
   return (
-    <Box>
+    <Box px={{ base: 0, md: 'xs' }} py="xs">
       <Stack gap="xs">
         <Group mb="md">
           <Button

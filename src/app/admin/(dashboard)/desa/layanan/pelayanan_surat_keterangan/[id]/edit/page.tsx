@@ -64,7 +64,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({
   };
 
   return (
-    <Box>
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       <Text fw="bold" fz="sm" mb={6}>
         {title}
       </Text>
