@@ -142,7 +142,7 @@ function ListAjukanPermohonan({ search }: { search: string }) {
             {data.length > 0 ? (
               data.map((item) => (
                 <Paper key={item.id} withBorder p="md" radius="md" shadow="xs">
-                  <Stack gap={4}>
+                  <Stack gap={'xs'}>
                     <Box>
                       <Text fz="sm" fw={600} lh={1.4}>Nama</Text>
                       <Text fz="sm" fw={500} lh={1.5}>{item.nama}</Text>

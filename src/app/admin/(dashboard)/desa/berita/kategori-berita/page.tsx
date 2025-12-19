@@ -86,7 +86,7 @@ function ListKategoriBerita({ search }: { search: string }) {
     <Box py={{ base: 'sm', md: 'lg' }}>
       <Paper withBorder bg={colors['white-1']} p={{ base: 'md', md: 'lg' }} shadow="md" radius="md">
         <Group justify="space-between" mb={{ base: 'md', md: 'lg' }}>
-          <Title order={2} lh={1.2}>
+          <Title order={4} lh={1.2}>
             Daftar Kategori Berita
           </Title>
           <Button

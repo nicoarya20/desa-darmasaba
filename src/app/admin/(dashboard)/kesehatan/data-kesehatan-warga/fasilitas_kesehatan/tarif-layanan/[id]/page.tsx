@@ -95,7 +95,7 @@ function EditTarifLayanan() {
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Back Button + Title */}
       <Group mb="md">
         <Button

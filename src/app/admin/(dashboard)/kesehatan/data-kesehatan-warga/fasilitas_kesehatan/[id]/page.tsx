@@ -56,7 +56,7 @@ function DetailFasilitasKesehatan() {
   const data = state.findUnique.data;
 
   return (
-    <Box py={10}>
+    <Box px={{ base: 0, md: 'xs' }} py="xs">
       {/* Tombol Back */}
       <Button
         variant="subtle"
@@ -83,12 +83,12 @@ function DetailFasilitasKesehatan() {
 
           <Paper bg="#ECEEF8" p="md" radius="md" shadow="xs">
             <Stack gap="sm">
-              <Box>
+              <Box pl={10}>
                 <Text fz="lg" fw="bold">Nama Fasilitas</Text>
                 <Text fz="md" c="dimmed">{data.name || '-'}</Text>
               </Box>
 
-              <Box>
+              <Box pl={10}>
                 <Text fz="lg" fw="bold">Informasi Umum</Text>
                 <Text fz="md" fw="bold">Fasilitas</Text>
                 <Text fz="md" c="dimmed">{data.informasiumum?.fasilitas || '-'}</Text>
@@ -98,22 +98,22 @@ function DetailFasilitasKesehatan() {
                 <Text fz="md" c="dimmed">{data.informasiumum?.jamOperasional || '-'}</Text>
               </Box>
 
-              <Box>
+              <Box pl={10}>
                 <Text fz="lg" fw="bold">Layanan Unggulan</Text>
                 <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data.layananunggulan?.content || '-' }} />
               </Box>
 
-              <Box>
+              <Box pl={10}>
                 <Text fz="lg" fw="bold">Fasilitas Pendukung</Text>
                 <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data.fasilitaspendukung?.content || '-' }} />
               </Box>
 
-              <Box>
+              <Box pl={10}>
                 <Text fz="lg" fw="bold">Prosedur Pendaftaran</Text>
                 <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data.prosedurpendaftaran?.content || '-' }} />
               </Box>
 
-              <Box>
+              <Box pl={10}>
                 <Text fz="lg" fw="bold" mb="sm">Dokter & Tenaga Medis</Text>
                 {Array.isArray(data.dokterdantenagamedis) && data.dokterdantenagamedis.length > 0 ? (
                   <Box style={{ overflowX: 'auto', width: '100%' }}>
@@ -159,7 +159,7 @@ function DetailFasilitasKesehatan() {
                 )}
               </Box>
 
-              <Box mt="xl">
+              <Box pl={10} mt="xl">
                 <Text fz="lg" fw="bold" mb="sm">Tarif & Layanan</Text>
                 {Array.isArray(data.tarifdanlayanan) && data.tarifdanlayanan.length > 0 ? (
                   <Box style={{ overflowX: 'auto', width: '100%' }}>

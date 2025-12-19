@@ -41,7 +41,7 @@ function DetailGrafikHasilKepuasan() {
   const data = state.findUnique.data;
 
   return (
-    <Box py={10}>
+   <Box px={{ base: 0, md: 'xs' }} py="xs">
       {/* Tombol Back */}
       <Button
         variant="subtle"
@@ -55,7 +55,7 @@ function DetailGrafikHasilKepuasan() {
       {/* Wrapper Detail */}
       <Paper
         withBorder
-        w={{ base: "100%", md: "50%" }}
+        w={{ base: "100%", md: "70%" }}
         bg={colors['white-1']}
         p="lg"
         radius="md"

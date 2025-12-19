@@ -82,7 +82,7 @@ function ListKategoriPengumuman({ search }: { search: string }) {
             visibleFrom="md"
             style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
           >
-            <Title order={2} lh={1.1}>
+            <Title order={4} lh={1.1}>
               List Kategori Pengumuman
             </Title>
             <Button

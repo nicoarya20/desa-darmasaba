@@ -18,7 +18,7 @@ import {
   Text,
   Title
 } from '@mantine/core';
-import { useShallowEffect } from '@mantine/hooks';
+import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
 import { IconDeviceImacCog, IconPlus, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -48,27 +48,30 @@ function ListProgramKesehatan({ search }: { search: string }) {
   const router = useRouter();
 
   const { data, page, totalPages, loading, load } = stateProgram.findMany;
+  const [debouncedSearch] = useDebouncedValue(search, 1000);
 
   useShallowEffect(() => {
-    load(page, 10, search);
-  }, [page, search]);
+    load(page, 10, debouncedSearch);
+  }, [page, debouncedSearch]);
 
   const filteredData = data || [];
 
   if (loading || !data) {
     return (
-      <Stack py={10}>
+      <Stack py={{ base: 'md', md: 'lg' }}>
         <Skeleton height={600} radius="md" />
       </Stack>
     );
   }
 
   return (
-    <Box py={10}>
-      <Paper withBorder bg={colors['white-1']} p={'lg'} shadow="md" radius="md">
+    <Box py={{ base: 'md', md: 'lg' }}>
+      <Paper withBorder bg={colors['white-1']} p={{ base: 'md', md: 'lg' }} shadow="md" radius="md">
         {/* Header List + Tombol Tambah */}
-        <Group justify="space-between" mb="md">
-          <Title order={4}>Daftar Program Kesehatan</Title>
+        <Group justify="space-between" mb={{ base: 'sm', md: 'md' }}>
+          <Title order={4} lh={1.2}>
+            Daftar Program Kesehatan
+          </Title>
           <Button
             leftSection={<IconPlus size={18} />}
             color="blue"
@@ -79,15 +82,23 @@ function ListProgramKesehatan({ search }: { search: string }) {
           </Button>
         </Group>
 
-        {/* Tabel */}
-        <Box style={{ overflowX: "auto" }}>
+        {/* Desktop Table */}
+        <Box visibleFrom="md">
           <Table highlightOnHover>
             <TableThead>
               <TableTr>
-                <TableTh>Judul</TableTh>
-                <TableTh>Deskripsi Singkat</TableTh>
-                <TableTh>Deskripsi</TableTh>
-                <TableTh>Aksi</TableTh>
+                <TableTh>
+                  <Text fz="sm" fw={600} lh={1.4}>Judul</Text>
+                </TableTh>
+                <TableTh>
+                  <Text fz="sm" fw={600} lh={1.4}>Deskripsi Singkat</Text>
+                </TableTh>
+                <TableTh>
+                  <Text fz="sm" fw={600} lh={1.4}>Deskripsi</Text>
+                </TableTh>
+                <TableTh>
+                  <Text fz="sm" fw={600} lh={1.4}>Aksi</Text>
+                </TableTh>
               </TableTr>
             </TableThead>
             <TableTbody>
@@ -95,28 +106,25 @@ function ListProgramKesehatan({ search }: { search: string }) {
                 filteredData.map((item) => (
                   <TableTr key={item.id}>
                     <TableTd>
-                      <Text fw={500} truncate="end" lineClamp={1}>
+                      <Text fw={500} fz="md" lh={1.5} truncate="end" lineClamp={1}>
                         {item.name}
                       </Text>
                     </TableTd>
-                    <TableTd>
-                      <Box w={200}>
-                        <Text fz="sm" truncate="end" lineClamp={1} dangerouslySetInnerHTML={{ __html: item.deskripsiSingkat }} />
-                      </Box>
+                    <TableTd w={200}>
+                      <Text fz="sm" lh={1.5} truncate="end" lineClamp={1} dangerouslySetInnerHTML={{ __html: item.deskripsiSingkat }} />
                     </TableTd>
-                    <TableTd>
-                      <Box w={200}>
-                        <Text fz="sm" truncate="end" lineClamp={1} dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
-                      </Box>
+                    <TableTd w={200}>
+                      <Text fz="sm" lh={1.5} truncate="end" lineClamp={1} dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
                     </TableTd>
                     <TableTd>
                       <Button
                         variant="light"
                         color="blue"
                         onClick={() => router.push(`/admin/kesehatan/program-kesehatan/${item.id}`)}
+                        size="xs"
                       >
-                        <IconDeviceImacCog size={20} />
-                        <Text ml={5}>Detail</Text>
+                        <IconDeviceImacCog size={18} />
+                        <Text ml={5} fz="sm" fw={500} lh={1.4}>Detail</Text>
                       </Button>
                     </TableTd>
                   </TableTr>
@@ -125,13 +133,61 @@ function ListProgramKesehatan({ search }: { search: string }) {
                 <TableTr>
                   <TableTd colSpan={4}>
                     <Center py={20}>
-                      <Text color="dimmed">Tidak ada program kesehatan yang cocok</Text>
+                      <Text c="dimmed" fz="sm" lh={1.4}>
+                        Tidak ada program kesehatan yang cocok
+                      </Text>
                     </Center>
                   </TableTd>
                 </TableTr>
               )}
             </TableTbody>
           </Table>
+        </Box>
+
+        {/* Mobile Card View */}
+        <Box hiddenFrom="md">
+          <Stack gap="xs">
+            {filteredData.length > 0 ? (
+              filteredData.map((item) => (
+                <Paper key={item.id} withBorder p="sm" radius="sm">
+                  <Stack gap={'xs'}>
+                    <Box>
+                      <Text fz="sm" fw={600} lh={1.4}>Judul</Text>
+                      <Text fz="sm" fw={500} lh={1.4}>{item.name}</Text>
+                    </Box>
+                    <Box>
+                      <Text fz="sm" fw={600} lh={1.4}>Deskripsi Singkat</Text>
+                      <Box pl={10}>
+                        <Text fz="sm" lineClamp={3} fw={500} lh={1.4} dangerouslySetInnerHTML={{ __html: item.deskripsiSingkat }} />
+                      </Box>
+                    </Box>
+                    <Box>
+                      <Text fz="sm" fw={600} lh={1.4}>Deskripsi</Text>
+                      <Box pl={10}>
+                        <Text fz="sm" lineClamp={3} fw={500} lh={1.4} dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
+                      </Box>
+                    </Box>
+                    <Button
+                      variant="light"
+                      color="blue"
+                      fullWidth
+                      size="xs"
+                      onClick={() => router.push(`/admin/kesehatan/program-kesehatan/${item.id}`)}
+                    >
+                      <IconDeviceImacCog size={18} />
+                      <Text ml={5} fz="sm" fw={500} lh={1.4}>Detail</Text>
+                    </Button>
+                  </Stack>
+                </Paper>
+              ))
+            ) : (
+              <Center py={20}>
+                <Text c="dimmed" fz="sm" lh={1.4}>
+                  Tidak ada program kesehatan yang cocok
+                </Text>
+              </Center>
+            )}
+          </Stack>
         </Box>
       </Paper>
 

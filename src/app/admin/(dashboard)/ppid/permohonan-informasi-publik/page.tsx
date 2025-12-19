@@ -61,7 +61,7 @@ function Page() {
           <Stack gap={'sm'}>
             <Grid mb={10}>
               <GridCol span={{ base: 12, md: 9 }}>
-                <Title order={2} lh={1.2} c="dark">
+                <Title order={4} lh={1.2} c="dark">
                   Daftar Permohonan Informasi Publik
                 </Title>
               </GridCol>
@@ -100,7 +100,7 @@ function Page() {
         <Stack gap={'sm'}>
           <Grid mb={10}>
             <GridCol span={{ base: 12, md: 9 }}>
-              <Title order={2} lh={1.2} c="dark">
+              <Title order={4} lh={1.2} c="dark">
                 Daftar Permohonan Informasi Publik
               </Title>
             </GridCol>
@@ -202,7 +202,7 @@ function Page() {
               <Stack hiddenFrom="md" gap="xs">
                 {data.map((item, index) => (
                   <Paper key={item.id} p="sm" radius="md" withBorder bg="white">
-                    <Stack gap={4}>
+                    <Stack gap={'xs'}>
                       <Box>
                         <Text fz="xs" fw={600} lh={1.4} c="dark">
                           No

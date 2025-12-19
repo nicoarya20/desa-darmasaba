@@ -1,7 +1,7 @@
 'use client'
 import colors from '@/con/colors';
 import { Box, Button, Center, Group, Pagination, Paper, Skeleton, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title } from '@mantine/core';
-import { useShallowEffect } from '@mantine/hooks';
+import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack, IconDeviceImacCog, IconPlus, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
@@ -10,13 +10,12 @@ import HeaderSearch from '@/app/admin/(dashboard)/_com/header';
 import fasilitasKesehatanState from '@/app/admin/(dashboard)/_state/kesehatan/data_kesehatan_warga/fasilitasKesehatan';
 import { useState } from 'react';
 
-
 function DokterTenagaMedis() {
   const [search, setSearch] = useState("");
   const router = useRouter();
   return (
     <Box>
-      <Box mb={10}>
+      <Box mb="sm">
         <Button variant="subtle" onClick={() => router.push('/admin/kesehatan/data-kesehatan-warga/fasilitas_kesehatan')}>
           <IconArrowBack color={colors['blue-button']} size={25} />
         </Button>
@@ -44,25 +43,29 @@ function ListDokterTenagaMedis({ search }: { search: string }) {
     totalPages
   } = stateFasilitasKesehatan.findMany
 
+  const [debouncedSearch] = useDebouncedValue(search, 1000);
+
   useShallowEffect(() => {
-    load(page, 10, search)
-  }, [page, search])
+    load(page, 10, debouncedSearch)
+  }, [page, debouncedSearch])
 
   const filteredData = data || []
 
   if (loading || !data) {
     return (
-      <Box py={10}>
+      <Box py="md">
         <Skeleton h={500} />
       </Box>
     )
   }
+
   return (
-    <Box py={10}>
-      <Paper withBorder bg={colors['white-1']} p={'lg'} shadow="md" radius="md">
+    <Box py="md">
+      <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
         {/* Judul + Tombol Tambah */}
         <Group justify="space-between" mb="md">
-          <Title order={4}>Daftar Dokter dan Tenaga Medis</Title>
+          <Title order={3} visibleFrom="md">Daftar Dokter dan Tenaga Medis</Title>
+          <Title order={4} hiddenFrom="md">Daftar Dokter dan Tenaga Medis</Title>
           <Button
             leftSection={<IconPlus size={18} />}
             color="blue"
@@ -77,15 +80,15 @@ function ListDokterTenagaMedis({ search }: { search: string }) {
           </Button>
         </Group>
 
-        {/* Tabel */}
-        <Box style={{ overflowX: "auto" }}>
+        {/* Desktop Table */}
+        <Box visibleFrom="md">
           <Table highlightOnHover>
             <TableThead>
               <TableTr>
-                <TableTh>Nama Dokter</TableTh>
-                <TableTh>Spesialis</TableTh>
-                <TableTh>Jadwal</TableTh>
-                <TableTh>Aksi</TableTh>
+                <TableTh><Text fz="sm" fw={600} lh={1.4}>Nama Dokter</Text></TableTh>
+                <TableTh><Text fz="sm" fw={600} lh={1.4}>Spesialis</Text></TableTh>
+                <TableTh><Text fz="sm" fw={600} lh={1.4}>Jadwal</Text></TableTh>
+                <TableTh><Text fz="sm" fw={600} lh={1.4}>Aksi</Text></TableTh>
               </TableTr>
             </TableThead>
             <TableTbody>
@@ -93,21 +96,17 @@ function ListDokterTenagaMedis({ search }: { search: string }) {
                 filteredData.map((item) => (
                   <TableTr key={item.id}>
                     <TableTd>
-                      <Box w={150}>
-                        <Text fw={500} truncate="end" lineClamp={1}>
-                          {item.name}
-                        </Text>
-                      </Box>
+                      <Text fz="md" fw={500} lh={1.5} truncate="end" lineClamp={1}>
+                        {item.name}
+                      </Text>
                     </TableTd>
                     <TableTd>
-                      <Box w={150}>
+                      <Text fz="md" fw={500} lh={1.5}>
                         {item.specialist || '-'}
-                      </Box>
+                      </Text>
                     </TableTd>
                     <TableTd>
-                      <Box w={150}>
-                        <Text dangerouslySetInnerHTML={{ __html: item.jadwal || '-' }} />
-                      </Box>
+                      <Text fz="md" fw={500} lh={1.5} dangerouslySetInnerHTML={{ __html: item.jadwal || '-' }} />
                     </TableTd>
                     <TableTd>
                       <Button
@@ -120,7 +119,7 @@ function ListDokterTenagaMedis({ search }: { search: string }) {
                         }
                       >
                         <IconDeviceImacCog size={20} />
-                        <Text ml={5}>Detail</Text>
+                        <Text ml="xs" fz="sm" fw={500}>Detail</Text>
                       </Button>
                     </TableTd>
                   </TableTr>
@@ -128,8 +127,8 @@ function ListDokterTenagaMedis({ search }: { search: string }) {
               ) : (
                 <TableTr>
                   <TableTd colSpan={4}>
-                    <Center py={20}>
-                      <Text c="dimmed">
+                    <Center py="xl">
+                      <Text c="dimmed" fz="sm" lh={1.4}>
                         Tidak ada fasilitas kesehatan yang cocok
                       </Text>
                     </Center>
@@ -138,6 +137,47 @@ function ListDokterTenagaMedis({ search }: { search: string }) {
               )}
             </TableTbody>
           </Table>
+        </Box>
+
+        {/* Mobile Cards */}
+        <Box hiddenFrom="md">
+          {filteredData.length > 0 ? (
+            filteredData.map((item) => (
+              <Paper key={item.id} withBorder p="md" mb="xs" radius="sm">
+                <Box mb="xs">
+                  <Text fz="sm" fw={600} lh={1.4}>Nama Dokter</Text>
+                  <Text fz="sm" fw={500} lh={1.5}>{item.name}</Text>
+                </Box>
+                <Box mb="xs">
+                  <Text fz="sm" fw={600} lh={1.4}>Spesialis</Text>
+                  <Text fz="sm" fw={500} lh={1.5}>{item.specialist || '-'}</Text>
+                </Box>
+                <Box mb="md">
+                  <Text fz="sm" fw={600} lh={1.4}>Jadwal</Text>
+                  <Text fz="sm" fw={500} lh={1.5} dangerouslySetInnerHTML={{ __html: item.jadwal || '-' }} />
+                </Box>
+                <Button
+                  fullWidth
+                  variant="light"
+                  color="blue"
+                  onClick={() =>
+                    router.push(
+                      `/admin/kesehatan/data-kesehatan-warga/fasilitas_kesehatan/dokter-tenaga-medis/${item.id}`
+                    )
+                  }
+                >
+                  <IconDeviceImacCog size={20} />
+                  <Text ml="xs" fz="sm" fw={500}>Detail</Text>
+                </Button>
+              </Paper>
+            ))
+          ) : (
+            <Center py="xl">
+              <Text c="dimmed" fz="sm" lh={1.4}>
+                Tidak ada fasilitas kesehatan yang cocok
+              </Text>
+            </Center>
+          )}
         </Box>
       </Paper>
 

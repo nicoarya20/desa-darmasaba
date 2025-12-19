@@ -66,7 +66,7 @@ function ListPerbekelDariMasaKeMasa({ search }: { search: string }) {
     <Box py={{ base: 'sm', md: 'md' }}>
       <Paper withBorder bg={colors['white-1']} p={{ base: 'md', md: 'lg' }} shadow="md" radius="md">
         <Group justify='space-between' mb={{ base: 'sm', md: 'md' }}>
-          <Title order={2} lh={1.2}>
+          <Title order={4} lh={1.2}>
             List Perbekel Dari Masa Ke Masa
           </Title>
           <Button
@@ -134,7 +134,7 @@ function ListPerbekelDariMasaKeMasa({ search }: { search: string }) {
             {filteredData.length > 0 ? (
               filteredData.map((item) => (
                 <Paper key={item.id} withBorder p="sm" radius="md">
-                  <Stack gap={4}>
+                  <Stack gap={'xs'}>
                     <Box>
                       <Text fz="xs" fw={600} lh={1.4} c="dark.9">Nama Perbekel</Text>
                       <Text fz="sm" fw={500} lh={1.5}>{item.nama}</Text>

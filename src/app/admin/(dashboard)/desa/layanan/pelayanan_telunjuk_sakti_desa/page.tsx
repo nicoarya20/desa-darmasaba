@@ -69,7 +69,7 @@ function ListPelayananTelunjukSakti({ search }: { search: string }) {
     <Box py={{ base: 'sm', md: 'md' }}>
       <Paper withBorder bg={colors['white-1']} p={{ base: 'md', md: 'lg' }} shadow="md" radius="md">
         <Group justify="space-between" mb="md">
-          <Title order={2} lh={1.2}>
+          <Title order={4} lh={1.2}>
             Daftar Pelayanan Telunjuk Sakti
           </Title>
           <Button

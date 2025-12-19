@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
-'use client'
+'use client';
 import colors from '@/con/colors';
 import {
   Box,
@@ -18,26 +18,32 @@ import {
   TableThead,
   TableTr,
   Text,
-  Title
+  Title,
 } from '@mantine/core';
-import { useMediaQuery, useShallowEffect } from '@mantine/hooks';
+import { useDebouncedValue, useMediaQuery, useShallowEffect } from '@mantine/hooks';
 import { IconDeviceImacCog, IconPlus, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { Bar, BarChart, Tooltip as ChartTooltip, Legend, XAxis, YAxis } from 'recharts';
+import {
+  Bar,
+  BarChart,
+  Tooltip as ChartTooltip,
+  Legend,
+  XAxis,
+  YAxis,
+} from 'recharts';
 import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../../_com/header';
 import grafikkepuasan from '../../../_state/kesehatan/data_kesehatan_warga/grafikKepuasan';
 
 function GrafikHasilKepuasanMasyarakat() {
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
 
   return (
     <Box>
-      {/* Header Search */}
       <HeaderSearch
-        title='Penderita Penyakit'
-        placeholder='Cari nama atau alamat...'
+        title="Penderita Penyakit"
+        placeholder="Cari nama atau alamat..."
         searchIcon={<IconSearch size={20} />}
         value={search}
         onChange={(e) => setSearch(e.currentTarget.value)}
@@ -59,9 +65,9 @@ function ListGrafikHasilKepuasanMasyarakat({ search }: { search: string }) {
   };
 
   const stateGrafikKepuasan = useProxy(grafikkepuasan);
+  const [debouncedSearch] = useDebouncedValue(search, 1000);
   const [chartData, setChartData] = useState<PDKMGrafik[]>([]);
   const [mounted, setMounted] = useState(false);
-  const isTablet = useMediaQuery('(max-width: 1024px)');
   const isMobile = useMediaQuery('(max-width: 768px)');
   const router = useRouter();
 
@@ -69,21 +75,26 @@ function ListGrafikHasilKepuasanMasyarakat({ search }: { search: string }) {
 
   useShallowEffect(() => {
     setMounted(true);
-    load(page, 10, search);
-  }, [page, search]);
+    load(page, 10, debouncedSearch);
+  }, [page, debouncedSearch]);
 
   useEffect(() => {
     if (data) {
-      setChartData(data.map((item) => ({
-        ...item,
-        tanggal: item.tanggal instanceof Date ? item.tanggal.toISOString() : item.tanggal
-      })));
+      setChartData(
+        data.map((item) => ({
+          ...item,
+          tanggal:
+            item.tanggal instanceof Date
+              ? item.tanggal.toISOString()
+              : item.tanggal,
+        }))
+      );
     }
   }, [data]);
 
   const processDiseaseData = (data: PDKMGrafik[]) => {
     const diseaseCount: Record<string, number> = {};
-    data.forEach(item => {
+    data.forEach((item) => {
       const penyakit = item.penyakit.trim();
       if (penyakit) {
         diseaseCount[penyakit] = (diseaseCount[penyakit] || 0) + 1;
@@ -92,7 +103,7 @@ function ListGrafikHasilKepuasanMasyarakat({ search }: { search: string }) {
     return Object.entries(diseaseCount).map(([name, count]) => ({ name, count }));
   };
 
-  const [diseaseChartData, setDiseaseChartData] = useState<{ name: string, count: number }[]>([]);
+  const [diseaseChartData, setDiseaseChartData] = useState<{ name: string; count: number }[]>([]);
 
   useEffect(() => {
     if (data && data.length > 0) {
@@ -104,18 +115,23 @@ function ListGrafikHasilKepuasanMasyarakat({ search }: { search: string }) {
 
   if (loading || !data) {
     return (
-      <Stack py={10}>
+      <Stack py={{ base: 'md', md: 'lg' }}>
         <Skeleton height={600} radius="md" />
       </Stack>
     );
   }
 
   return (
-    <Box py={10}>
-      <Paper withBorder bg={colors['white-1']} p={'lg'} shadow="md" radius="md">
-        {/* Judul + Tombol Tambah */}
-        <Group justify="space-between" mb="md">
-          <Title order={4}>Daftar Penderita Penyakit</Title>
+    <Stack gap='lg' py={{ base: 'md', md: 'lg' }}>
+      {/* Daftar Penderita Penyakit */}
+      <Paper withBorder bg={colors['white-1']} p={{ base: 'md', md: 'lg' }} shadow="md" radius="md">
+        <Group justify="space-between" mb={{ base: 'sm', md: 'md' }}>
+          <Title
+            order={4}
+            lh={{ base: 1.2, md: 1.15 }}
+          >
+            Daftar Penderita Penyakit
+          </Title>
           <Button
             leftSection={<IconPlus size={18} />}
             color="blue"
@@ -130,8 +146,8 @@ function ListGrafikHasilKepuasanMasyarakat({ search }: { search: string }) {
           </Button>
         </Group>
 
-        {/* Tabel */}
-        <Box style={{ overflowX: "auto" }}>
+        {/* Desktop Table */}
+        <Box visibleFrom="md">
           <Table highlightOnHover>
             <TableThead>
               <TableTr>
@@ -146,29 +162,21 @@ function ListGrafikHasilKepuasanMasyarakat({ search }: { search: string }) {
               {filteredData.length > 0 ? (
                 filteredData.map((item) => (
                   <TableTr key={item.id}>
-                    <TableTd>
-                      <Box w={150}>
-                        {item.nama}
-                      </Box>
+                    <TableTd fz="md" fw={500} lh={1.5}>
+                      {item.nama}
                     </TableTd>
-                    <TableTd>
-                      <Box w={150}>
-                        {new Date(item.tanggal).toLocaleDateString('id-ID', {
-                          day: '2-digit',
-                          month: 'long',
-                          year: 'numeric',
-                        })}
-                      </Box>
+                    <TableTd fz="md" fw={500} lh={1.5}>
+                      {new Date(item.tanggal).toLocaleDateString('id-ID', {
+                        day: '2-digit',
+                        month: 'long',
+                        year: 'numeric',
+                      })}
                     </TableTd>
-                    <TableTd>
-                      <Box w={150}>
-                        {item.jenisKelamin}
-                      </Box>
+                    <TableTd fz="md" fw={500} lh={1.5}>
+                      {item.jenisKelamin}
                     </TableTd>
-                    <TableTd>
-                      <Box w={150}>
-                        {item.penyakit}
-                      </Box>
+                    <TableTd fz="md" fw={500} lh={1.5}>
+                      {item.penyakit}
                     </TableTd>
                     <TableTd>
                       <Button
@@ -181,7 +189,9 @@ function ListGrafikHasilKepuasanMasyarakat({ search }: { search: string }) {
                         }
                       >
                         <IconDeviceImacCog size={20} />
-                        <Text ml={5}>Detail</Text>
+                        <Text ml={5} fz="sm" fw={500}>
+                          Detail
+                        </Text>
                       </Button>
                     </TableTd>
                   </TableTr>
@@ -190,7 +200,7 @@ function ListGrafikHasilKepuasanMasyarakat({ search }: { search: string }) {
                 <TableTr>
                   <TableTd colSpan={5}>
                     <Center py={20}>
-                      <Text color="dimmed">
+                      <Text c="dimmed" fz="sm" lh={1.4}>
                         Tidak ada data kepuasan masyarakat yang cocok
                       </Text>
                     </Center>
@@ -200,6 +210,72 @@ function ListGrafikHasilKepuasanMasyarakat({ search }: { search: string }) {
             </TableTbody>
           </Table>
         </Box>
+
+        {/* Mobile Card View */}
+        <Stack gap="xs" hiddenFrom="md">
+          {filteredData.length > 0 ? (
+            filteredData.map((item) => (
+              <Paper key={item.id} withBorder p="sm" radius="sm">
+                <Stack gap={4}>
+                  <Text fz="sm" fw={600} lh={1.4}>
+                    Nama
+                  </Text>
+                  <Text fz="sm" fw={500} lh={1.4}>
+                    {item.nama}
+                  </Text>
+
+                  <Text fz="sm" fw={600} lh={1.4}>
+                    Tanggal
+                  </Text>
+                  <Text fz="sm" fw={500} lh={1.4}>
+                    {new Date(item.tanggal).toLocaleDateString('id-ID', {
+                      day: '2-digit',
+                      month: 'long',
+                      year: 'numeric',
+                    })}
+                  </Text>
+
+                  <Text fz="sm" fw={600} lh={1.4}>
+                    Jenis Kelamin
+                  </Text>
+                  <Text fz="sm" fw={500} lh={1.4}>
+                    {item.jenisKelamin}
+                  </Text>
+
+                  <Text fz="sm" fw={600} lh={1.4}>
+                    Penyakit
+                  </Text>
+                  <Text fz="sm" fw={500} lh={1.4}>
+                    {item.penyakit}
+                  </Text>
+
+                  <Button
+                    variant="light"
+                    color="blue"
+                    fullWidth
+                    mt="xs"
+                    onClick={() =>
+                      router.push(
+                        `/admin/kesehatan/data-kesehatan-warga/penderita_penyakit/${item.id}`
+                      )
+                    }
+                  >
+                    <IconDeviceImacCog size={20} />
+                    <Text ml={5} fz="sm" fw={500}>
+                      Detail
+                    </Text>
+                  </Button>
+                </Stack>
+              </Paper>
+            ))
+          ) : (
+            <Center py={20}>
+              <Text c="dimmed" fz="sm" lh={1.4}>
+                Tidak ada data kepuasan masyarakat yang cocok
+              </Text>
+            </Center>
+          )}
+        </Stack>
       </Paper>
 
       {/* Pagination */}
@@ -218,37 +294,46 @@ function ListGrafikHasilKepuasanMasyarakat({ search }: { search: string }) {
         />
       </Center>
 
-      {/* Chart */}
-      <Box mt="lg" style={{ width: '100%', minWidth: 300, height: 420, minHeight: 300 }}>
-        <Paper withBorder bg={colors['white-1']} p={'md'}>
-          <Title pb={10} order={4}>Penderita Penyakit</Title>
-          {mounted && diseaseChartData.length > 0 ? (
-            <Center>
-              <BarChart
-                width={isMobile ? 320 : isTablet ? 600 : 800} // kecilin biar muat
-                height={350}
-                data={diseaseChartData}
-              >
-                <XAxis
-                  dataKey="name"
-                  tick={{ fontSize: 12 }}
-                  interval={0}
-                  angle={-45}
-                  textAnchor="end"
-                  height={70}
-                />
-                <YAxis />
-                <ChartTooltip />
-                <Legend />
-                <Bar dataKey="count" fill={colors['blue-button']} name="Jumlah Kasus" />
-              </BarChart>
-            </Center>
-          ) : (
-            <Text c="dimmed">Belum ada data untuk ditampilkan dalam grafik</Text>
-          )}
-        </Paper>
-      </Box>
-    </Box>
+      {/* Chart Section */}
+      <Paper withBorder bg={colors['white-1']} p={{ base: 'md', md: 'lg' }} shadow="md" radius="md">
+        <Title
+          order={2}
+          lh={{ base: 1.2, md: 1.15 }}
+          mb={{ base: 'sm', md: 'md' }}
+        >
+          Penderita Penyakit
+        </Title>
+
+        {mounted && diseaseChartData.length > 0 ? (
+          <Center>
+            <BarChart
+              width={isMobile ? 320 : 800}
+              height={350}
+              data={diseaseChartData}
+            >
+              <XAxis
+                dataKey="name"
+                tick={{ fontSize: 12 }}
+                interval={0}
+                angle={-45}
+                textAnchor="end"
+                height={70}
+              />
+              <YAxis />
+              <ChartTooltip />
+              <Legend />
+              <Bar dataKey="count" fill={colors['blue-button']} name="Jumlah Kasus" />
+            </BarChart>
+          </Center>
+        ) : (
+          <Center py={20}>
+            <Text c="dimmed" fz="sm" lh={1.4}>
+              Belum ada data untuk ditampilkan dalam grafik
+            </Text>
+          </Center>
+        )}
+      </Paper>
+    </Stack>
   );
 }
 

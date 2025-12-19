@@ -69,8 +69,7 @@ function ListPenghargaan({ search }: { search: string }) {
     <Box py="md">
       <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
         <Group justify="space-between" mb="lg">
-          <Title order={2} visibleFrom="md">List Penghargaan</Title>
-          <Title order={3} hiddenFrom="md">List Penghargaan</Title>
+          <Title order={4}>List Penghargaan</Title>
           <Button
             leftSection={<IconPlus size={18} />}
             color="blue"

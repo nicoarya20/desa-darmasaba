@@ -73,7 +73,7 @@ function ListFoto({ search }: { search: string }) {
     <Box py={{ base: 'md', md: 'lg' }}>
       <Paper withBorder bg={colors['white-1']} p={{ base: 'md', md: 'lg' }} shadow="md" radius="md">
         <Group justify="space-between" mb={{ base: 'sm', md: 'md' }}>
-          <Title order={2} lh={1.2}>Daftar Foto</Title>
+          <Title order={4} lh={1.2}>Daftar Foto</Title>
           <Button
             leftSection={<IconPlus size={18} />}
             color="blue"

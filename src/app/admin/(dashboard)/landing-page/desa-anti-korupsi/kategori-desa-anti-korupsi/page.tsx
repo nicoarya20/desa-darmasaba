@@ -194,7 +194,7 @@ function ListKategoriKegiatan({ search }: { search: string }) {
     <Box py={{ base: 20, md: 20 }}>
       <Paper bg={colors['white-1']} p={{ base: 'md', md: 'xl' }} shadow="md" radius="md">
         <Group justify="space-between" mb={{ base: 'md', md: 'lg' }}>
-          <Title order={2} lh={1.2}>
+          <Title order={4} lh={1.2}>
             Daftar Kategori Kegiatan
           </Title>
           <Button

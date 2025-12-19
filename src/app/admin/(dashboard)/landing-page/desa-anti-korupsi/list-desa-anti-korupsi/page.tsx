@@ -66,7 +66,7 @@ function ListDesaAntiKorupsi({ search }: { search: string }) {
       <Stack gap={'md'}>
         <Paper p={{ base: 'md', md: 'lg' }} radius="lg" shadow="md" withBorder>
           <Group justify="space-between" mb={{ base: 'sm', md: 'md' }}>
-            <Title order={2} lh={1.2}>
+            <Title order={4} lh={1.2}>
               Daftar Program Desa Anti Korupsi
             </Title>
             <Button

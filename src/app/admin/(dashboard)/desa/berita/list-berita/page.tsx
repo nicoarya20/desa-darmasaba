@@ -67,8 +67,7 @@ function ListBerita({ search }: { search: string }) {
     <Box py="md">
       <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
         <Group justify="space-between" mb="md">
-          <Title order={2} visibleFrom="md">Daftar Berita</Title>
-          <Title order={3} hiddenFrom="md">Daftar Berita</Title>
+          <Title order={4}>Daftar Berita</Title>
           <Button
             leftSection={<IconCircleDashedPlus size={18} />}
             color="blue"
@@ -140,7 +139,7 @@ function ListBerita({ search }: { search: string }) {
           {filteredData.length > 0 ? (
             filteredData.map((item) => (
               <Paper key={item.id} withBorder p="md" radius="md">
-                <Stack gap={4}>
+                <Stack gap={"xs"}>
                   <Text fz="sm" fw={600} lh={1.4} c="dimmed">
                     Judul
                   </Text>

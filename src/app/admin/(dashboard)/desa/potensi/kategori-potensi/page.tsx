@@ -80,7 +80,7 @@ function ListKategoriPotensi({ search }: { search: string }) {
       <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
         <Stack gap="xl">
           <Group justify="space-between" align="center">
-            <Title order={2} lh={1.2}>
+            <Title order={4} lh={1.2}>
               List Kategori Potensi
             </Title>
             <Button
@@ -174,7 +174,7 @@ function ListKategoriPotensi({ search }: { search: string }) {
             {filteredData.length > 0 ? (
               filteredData.map((item, index) => (
                 <Paper key={item.id} withBorder p="sm" radius="md">
-                  <Stack gap={4}>
+                  <Stack gap={'xs'}>
                     <Box>
                       <Text fz="xs" fw={600} lh={1.4}>
                         No

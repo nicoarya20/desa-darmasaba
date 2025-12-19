@@ -18,7 +18,7 @@ import {
   Text,
   Title
 } from '@mantine/core';
-import { useShallowEffect } from '@mantine/hooks';
+import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
 import { IconDeviceImacCog, IconPlus, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -47,29 +47,35 @@ function PenangananDarurat() {
 function ListPenangananDarurat({ search }: { search: string }) {
   const state = useProxy(penangananDarurat);
   const router = useRouter();
+  const [debouncedSearch] = useDebouncedValue(search, 1000)
 
   const { data, page, totalPages, loading, load } = state.findMany;
 
   useShallowEffect(() => {
-    load(page, 10, search);
-  }, [page, search]);
+    load(page, 10, debouncedSearch);
+  }, [page, debouncedSearch]);
 
   const filteredData = data || [];
 
   if (loading || !data) {
     return (
-      <Stack py={10}>
+      <Stack py={{ base: 'sm', md: 'md' }}>
         <Skeleton height={600} radius="md" />
       </Stack>
     );
   }
 
   return (
-    <Box py={10}>
-      <Paper withBorder bg={colors['white-1']} p={'lg'} shadow="md" radius="md">
+    <Box py={{ base: 'sm', md: 'md' }}>
+      <Paper withBorder bg={colors['white-1']} p={{ base: 'md', md: 'lg' }} shadow="md" radius="md">
         {/* Judul + Tombol Tambah */}
-        <Group justify="space-between" mb="md">
-          <Title order={4}>Daftar Penanganan Darurat</Title>
+        <Group justify="space-between" mb={{ base: 'sm', md: 'md' }}>
+          <Title
+            order={4}
+            lh={1.2}
+          >
+            Daftar Penanganan Darurat
+          </Title>
           <Button
             leftSection={<IconPlus size={18} />}
             color="blue"
@@ -80,14 +86,14 @@ function ListPenangananDarurat({ search }: { search: string }) {
           </Button>
         </Group>
 
-        {/* Tabel */}
-        <Box style={{ overflowX: "auto" }}>
+        {/* Desktop Table */}
+        <Box visibleFrom="md">
           <Table highlightOnHover>
             <TableThead>
               <TableTr>
-                <TableTh>Judul</TableTh>
-                <TableTh>Deskripsi</TableTh>
-                <TableTh>Aksi</TableTh>
+                <TableTh fz="sm" fw={600} lh={1.4}>Judul</TableTh>
+                <TableTh fz="sm" fw={600} lh={1.4}>Deskripsi</TableTh>
+                <TableTh fz="sm" fw={600} lh={1.4}>Aksi</TableTh>
               </TableTr>
             </TableThead>
             <TableTbody>
@@ -95,22 +101,19 @@ function ListPenangananDarurat({ search }: { search: string }) {
                 filteredData.map((item) => (
                   <TableTr key={item.id}>
                     <TableTd>
-                      <Box w={150}>
-                        <Text fw={500} truncate="end" lineClamp={1}>
-                          {item.name}
-                        </Text>
-                      </Box>
+                      <Text fz="md" fw={500} lh={1.5} lineClamp={1}>
+                        {item.name}
+                      </Text>
                     </TableTd>
                     <TableTd>
-                      <Box w={200}>
-                        <Text
-                          fz="sm"
-                          c="dimmed"
-                          truncate
-                          lineClamp={1}
-                          dangerouslySetInnerHTML={{ __html: item.deskripsi }}
-                        />
-                      </Box>
+                      <Text
+                        fz="sm"
+                        fw={400}
+                        lh={1.5}
+                        c="gray.7"
+                        lineClamp={1}
+                        dangerouslySetInnerHTML={{ __html: item.deskripsi }}
+                      />
                     </TableTd>
                     <TableTd>
                       <Button
@@ -121,22 +124,74 @@ function ListPenangananDarurat({ search }: { search: string }) {
                         }
                       >
                         <IconDeviceImacCog size={20} />
-                        <Text ml={5}>Detail</Text>
+                        <Text ml={5} fz="sm" fw={500}>Detail</Text>
                       </Button>
                     </TableTd>
                   </TableTr>
                 ))
               ) : (
                 <TableTr>
-                  <TableTd colSpan={4}>
+                  <TableTd colSpan={3}>
                     <Center py={20}>
-                      <Text color="dimmed">Tidak ada data penanganan darurat</Text>
+                      <Text c="gray.6" fz="sm" fw={500} lh={1.4}>
+                        Tidak ada data penanganan darurat
+                      </Text>
                     </Center>
                   </TableTd>
                 </TableTr>
               )}
             </TableTbody>
           </Table>
+        </Box>
+
+        {/* Mobile Card View */}
+        <Box hiddenFrom="md">
+          <Stack gap="md">
+            {filteredData.length > 0 ? (
+              filteredData.map((item) => (
+                <Paper key={item.id} withBorder p="md" radius="sm">
+                  <Stack gap={'xs'}>
+                    <Box>
+                      <Text fz="sm" fw={600} lh={1.4}>Judul</Text>
+                      <Text fz="sm" fw={500} lh={1.45} lineClamp={1}>
+                        {item.name}
+                      </Text>
+                    </Box>
+                    <Box>
+                      <Text fz="sm" fw={600} lh={1.4}>Deskripsi</Text>
+                      <Text
+                        fz="sm"
+                        fw={500}
+                        lh={1.45}
+                        c="gray.7"
+                        lineClamp={2}
+                        dangerouslySetInnerHTML={{ __html: item.deskripsi }}
+                      />
+                    </Box>
+                    <Box>
+                      <Button
+                        variant="light"
+                        color="blue"
+                        fullWidth
+                        onClick={() =>
+                          router.push(`/admin/kesehatan/penanganan-darurat/${item.id}`)
+                        }
+                      >
+                        <IconDeviceImacCog size={20} />
+                        <Text ml={5} fz="sm" fw={500}>Detail</Text>
+                      </Button>
+                    </Box>
+                  </Stack>
+                </Paper>
+              ))
+            ) : (
+              <Center py={20}>
+                <Text c="gray.6" fz="sm" fw={500} lh={1.4}>
+                  Tidak ada data penanganan darurat
+                </Text>
+              </Center>
+            )}
+          </Stack>
         </Box>
       </Paper>
 

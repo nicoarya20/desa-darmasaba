@@ -73,7 +73,7 @@ function ListVideo({ search }: { search: string }) {
     <Box py={20}>
       <Paper withBorder bg={colors['white-1']} p={{ base: 'sm', md: 'lg' }} shadow="md" radius="md">
         <Group justify="space-between" mb={{ base: 'sm', md: 'md' }}>
-          <Title order={2} lh={1.2}>
+          <Title order={4} lh={1.2}>
             Daftar Video
           </Title>
           <Button
@@ -152,7 +152,7 @@ function ListVideo({ search }: { search: string }) {
           {filteredData.length > 0 ? (
             filteredData.map((item) => (
               <Paper key={item.id} p="sm" withBorder radius="sm">
-                <Stack gap={4}>
+                <Stack gap={"xs"}>
                   <Box>
                     <Text fz="xs" fw={600} lh={1.4}>Judul Video</Text>
                     <Text fz="sm" fw={500} lh={1.45}>

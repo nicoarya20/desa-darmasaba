@@ -49,7 +49,7 @@ function DetailInfoWabahPenyakit() {
   const data = state.findUnique.data;
 
   return (
-    <Box py={10}>
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Tombol Back */}
       <Button
         variant="subtle"
@@ -63,7 +63,7 @@ function DetailInfoWabahPenyakit() {
       {/* Wrapper Detail */}
       <Paper
         withBorder
-        w={{ base: '100%', md: '50%' }}
+        w={{ base: '100%', md: '70%' }}
         bg={colors['white-1']}
         p="lg"
         radius="md"
@@ -89,6 +89,7 @@ function DetailInfoWabahPenyakit() {
               <Box>
                 <Text fz="lg" fw="bold">Deskripsi Lengkap</Text>
                 <Text
+                  pl={10}
                   fz="md"
                   c="dimmed"
                   dangerouslySetInnerHTML={{ __html: data.deskripsiLengkap }}

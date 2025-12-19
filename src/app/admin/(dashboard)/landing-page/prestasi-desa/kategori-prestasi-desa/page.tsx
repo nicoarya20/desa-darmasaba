@@ -69,7 +69,7 @@ function ListKategoriPrestasi({ search }: { search: string }) {
       {/* DESKTOP: Table */}
       <Paper bg={colors['white-1']} p="lg" radius="md" shadow="sm" withBorder>
         <Group justify="space-between" mb="xl">
-          <Title order={2} size="lg" lh={1.2}>List Kategori Prestasi</Title>
+          <Title order={4} size="lg" lh={1.2}>List Kategori Prestasi</Title>
           <Button
             leftSection={<IconPlus size={18} />}
             color="blue"

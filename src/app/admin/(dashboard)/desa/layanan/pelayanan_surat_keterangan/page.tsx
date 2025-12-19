@@ -82,7 +82,7 @@ function ListSuratKeterangan({ search }: { search: string }) {
     <Box py={{ base: 'sm', md: 'md' }}>
       <Paper withBorder bg={colors['white-1']} p={{ base: 'sm', md: 'lg' }} shadow="md" radius="md">
         <Group justify="space-between" mb={{ base: 'sm', md: 'md' }}>
-          <Title order={2} lh={1.2}>
+          <Title order={4} lh={1.2}>
             List Surat Keterangan
           </Title>
           <Button
@@ -169,7 +169,7 @@ function ListSuratKeterangan({ search }: { search: string }) {
             {filteredData.length > 0 ? (
               filteredData.map((item) => (
                 <Paper key={item.id} withBorder p="sm" radius="md">
-                  <Stack gap={4}>
+                  <Stack gap={'xs'}>
                     <Box>
                       <Text fz="sm" fw={600} lh={1.4}>
                         Nama
