@@ -33,18 +33,18 @@ function Page() {
         {/* Header + tombol edit */}
         <Grid align="center">
           <GridCol span={{ base: 12, md: 11 }}>
-            <Title order={3} c={colors['blue-button']}>Preview Profil PPID</Title>
+            <Title order={2} c={colors['blue-button']} lh={1.2} />
           </GridCol>
           <GridCol span={{ base: 12, md: 1 }}>
-              <Button
-                c="green"
-                variant="light"
-                leftSection={<IconEdit size={18} stroke={2} />}
-                radius="md"
-                onClick={() => router.push(`/admin/desa/profil/profil-perbekel/${perbekel.id}`)}
-              >
-                Edit
-              </Button>
+            <Button
+              c="green"
+              variant="light"
+              leftSection={<IconEdit size={18} stroke={2} />}
+              radius="md"
+              onClick={() => router.push(`/admin/desa/profil/profil-perbekel/${perbekel.id}`)}
+            >
+              Edit
+            </Button>
           </GridCol>
         </Grid>
 
@@ -58,7 +58,13 @@ function Page() {
                 </Center>
               </GridCol>
               <GridCol span={12}>
-                <Text ta="center" fz={{ base: "1.2rem", md: "1.8rem" }} fw="bold" c={colors['blue-button']}>
+                <Text
+                  ta="center"
+                  fz={{ base: 'sm', md: 'md' }}
+                  fw="bold"
+                  c={colors['blue-button']}
+                  lh={{ base: 1.45, md: 1.45 }}
+                >
                   Profil Pimpinan Badan Publik Desa Darmasaba
                 </Text>
               </GridCol>
@@ -86,25 +92,55 @@ function Page() {
               className="glass3"
               style={{ mt: -30, boxShadow: '0 4px 20px rgba(0,0,0,0.15)' }}
             >
-              <Text ta="center" c={colors['white-1']} fw="bolder" fz={{ base: "1.2rem", md: "1.6rem" }}>
-              I.B. Surya Prabhawa Manuaba, S.H., M.H.
+              <Text
+                ta="center"
+                c={colors['white-1']}
+                fw="bolder"
+                fz={{ base: 'md', md: 'lg' }}
+                lh={{ base: 1.4, md: 1.4 }}
+              >
+                I.B. Surya Prabhawa Manuaba, S.H., M.H.
               </Text>
             </Paper>
           </Stack>
 
           {/* Biodata & Info */}
           <Box mt="lg">
-            <Text fz={{ base: "1.125rem", md: "1.5rem" }} fw="bold" mb={4}>Biodata</Text>
-            <Text fz={{ base: "1rem", md: "1.4rem" }} ta="justify" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: perbekel.biodata }} />
+            <Title order={3} lh={1.2} mb={4} />
+            <Text
+              fz={{ base: 'sm', md: 'md' }}
+              lh={{ base: 1.6, md: 1.6 }}
+              ta="justify"
+              style={{ wordBreak: "break-word", whiteSpace: "normal" }}
+              dangerouslySetInnerHTML={{ __html: perbekel.biodata }}
+            />
 
-            <Text fz={{ base: "1.125rem", md: "1.5rem" }} fw="bold" mt="md" mb={4}>Pengalaman</Text>
-            <Text fz={{ base: "1rem", md: "1.4rem" }} ta="justify" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: perbekel.pengalaman }} />
+            <Title order={3} lh={1.2} mt="md" mb={4} />
+            <Text
+              fz={{ base: 'sm', md: 'md' }}
+              lh={{ base: 1.6, md: 1.6 }}
+              ta="justify"
+              style={{ wordBreak: "break-word", whiteSpace: "normal" }}
+              dangerouslySetInnerHTML={{ __html: perbekel.pengalaman }}
+            />
 
-            <Text fz={{ base: "1.125rem", md: "1.5rem" }} fw="bold" mt="md" mb={4}>Pengalaman Organisasi</Text>
-            <Text fz={{ base: "1rem", md: "1.4rem" }} ta="justify" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: perbekel.pengalamanOrganisasi }} />
+            <Title order={3} lh={1.2} mt="md" mb={4} />
+            <Text
+              fz={{ base: 'sm', md: 'md' }}
+              lh={{ base: 1.6, md: 1.6 }}
+              ta="justify"
+              style={{ wordBreak: "break-word", whiteSpace: "normal" }}
+              dangerouslySetInnerHTML={{ __html: perbekel.pengalamanOrganisasi }}
+            />
 
-            <Text fz={{ base: "1.125rem", md: "1.5rem" }} fw="bold" mt="md" mb={4}>Program Kerja Unggulan</Text>
-            <Text fz={{ base: "1rem", md: "1.4rem" }} ta="justify" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: perbekel.programUnggulan }} />
+            <Title order={3} lh={1.2} mt="md" mb={4} />
+            <Text
+              fz={{ base: 'sm', md: 'md' }}
+              lh={{ base: 1.6, md: 1.6 }}
+              ta="justify"
+              style={{ wordBreak: "break-word", whiteSpace: "normal" }}
+              dangerouslySetInnerHTML={{ __html: perbekel.programUnggulan }}
+            />
           </Box>
         </Paper>
       </Stack>

@@ -69,7 +69,7 @@ function ListAPBDes({ search }: { search: string }) {
       <Box visibleFrom="md">
         <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
           <Group justify="space-between" mb="md">
-            <Title order={2} size="lg" lh={1.2}>
+            <Title order={4} size="lg" lh={1.2}>
               Daftar APBDes
             </Title>
             <Button

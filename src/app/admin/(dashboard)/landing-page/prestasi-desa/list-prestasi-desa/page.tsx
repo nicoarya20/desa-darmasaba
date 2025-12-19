@@ -57,7 +57,7 @@ function ListPrestasi({ search }: { search: string }) {
     <Box py={{ base: 'sm', md: 'md' }}>
       <Paper withBorder bg={colors['white-1']} p={{ base: 'md', md: 'lg' }} shadow="md" radius="md">
         <Group justify="space-between" mb={{ base: 'sm', md: 'md' }}>
-          <Title order={2} size={isMobile ? 'md' : 'lg'} lh={1.2}>
+          <Title order={4} size={isMobile ? 'md' : 'lg'} lh={1.2}>
             Daftar Prestasi Desa
           </Title>
           <Button

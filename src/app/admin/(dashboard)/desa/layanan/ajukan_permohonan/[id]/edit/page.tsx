@@ -115,7 +115,7 @@ function EditAjukanPermohonan() {
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+     <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Back Button */}
       <Group mb="md">
         <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">

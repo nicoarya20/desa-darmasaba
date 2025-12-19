@@ -58,7 +58,7 @@ function Page() {
                 </GridCol>
                 <GridCol span={12}>
                   <Title
-                    order={2}
+                    order={4}
                     c={colors['blue-button']}
                     ta="center"
                     lh={1.15}

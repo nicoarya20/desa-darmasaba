@@ -123,7 +123,7 @@ function EditPelayananPerizinanBerusaha() {
   }
 
   return (
-    <Box>
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       <Stack gap="xs">
         {/* Header */}
         <Group mb="md">

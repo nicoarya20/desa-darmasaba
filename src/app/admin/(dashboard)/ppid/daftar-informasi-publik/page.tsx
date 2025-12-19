@@ -69,7 +69,7 @@ function ListDaftarInformasi({ search }: { search: string }) {
     <Box py={{ base: 'md', md: 'lg' }}>
       <Paper withBorder bg={colors['white-1']} p={{ base: 'sm', md: 'lg' }} shadow="md" radius="md">
         <Group justify="space-between" mb={{ base: 'sm', md: 'md' }}>
-          <Title order={2} lh={1.2}>
+          <Title order={4} lh={1.2}>
             List Daftar Informasi Publik
           </Title>
           <Button
@@ -155,7 +155,7 @@ function ListDaftarInformasi({ search }: { search: string }) {
             <Stack hiddenFrom="md" gap="sm">
               {filteredData.map((item) => (
                 <Paper key={item.id} withBorder p="sm" radius="md">
-                  <Stack gap={4}>
+                  <Stack gap={'xs'}>
                     <Box>
                       <Text fw={600} lh={1.4}>
                         Jenis Informasi

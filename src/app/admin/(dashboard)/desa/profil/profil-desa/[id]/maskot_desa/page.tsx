@@ -170,7 +170,7 @@ function Page() {
   // Loading state
   if (maskotState.findUnique.loading || maskotState.update.loading) {
     return (
-      <Box>
+       <Box px={{ base: 0, md: 'lg' }} py="xs">
         <Center h={400}>
           <Text>Memuat data...</Text>
         </Center>
@@ -181,7 +181,7 @@ function Page() {
   // Error state
   if (maskotState.findUnique.error) {
     return (
-      <Box>
+       <Box px={{ base: 0, md: 'lg' }} py="xs">
         <Stack gap="md">
           <Button variant="subtle" onClick={handleBack}>
             <IconArrowBack color={colors['blue-button']} size={20} />
@@ -196,7 +196,7 @@ function Page() {
   }
 
   return (
-    <Box>
+     <Box px={{ base: 0, md: 'lg' }} py="xs">
       <Stack gap="xs">
         <Group mb="md">
           <Button variant="subtle" onClick={handleBack} p="xs" radius="md">

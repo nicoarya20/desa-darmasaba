@@ -89,7 +89,7 @@ function ListResponden({ search }: ListRespondenProps) {
         {/* Desktop Table */}
         <Box visibleFrom="md">
           <Paper p="lg" radius="lg" shadow="md" withBorder>
-            <Title order={2} size="lg" mb="md" lh={1.2}>
+            <Title order={4} size="lg" mb="md" lh={1.2}>
               Daftar Responden
             </Title>
             <Table
@@ -158,7 +158,7 @@ function ListResponden({ search }: ListRespondenProps) {
         {/* Mobile Cards */}
         <Box hiddenFrom="md">
           <Stack gap="sm">
-            <Title order={2} size="md" lh={1.2} px="md">
+            <Title order={4} size="md" lh={1.2} px="md">
               Daftar Responden
             </Title>
             {filteredData.length === 0 ? (
@@ -170,7 +170,7 @@ function ListResponden({ search }: ListRespondenProps) {
             ) : (
               filteredData.map((item) => (
                 <Paper key={item.id} p="md" radius="lg" shadow="sm" mx="md">
-                  <Stack gap={4}>
+                  <Stack gap={'xs'}>
                     <Text fz="sm" c="dimmed" lh={1.4}>Nama</Text>
                     <Text fz="md" lh={1.5}>{item.name}</Text>
 

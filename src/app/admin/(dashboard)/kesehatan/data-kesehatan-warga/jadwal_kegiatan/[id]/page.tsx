@@ -40,7 +40,7 @@ function DetailJadwalKegiatan() {
   const data = stateJadwalKegiatan.findUnique.data
 
   return (
-    <Box py={10}>
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Tombol Back */}
       <Button
         variant="subtle"
@@ -54,7 +54,7 @@ function DetailJadwalKegiatan() {
       {/* Wrapper Detail */}
       <Paper
         withBorder
-        w={{ base: "100%", md: "50%" }}
+        w={{ base: "100%", md: "70%" }}
         bg={colors['white-1']}
         p="lg"
         radius="md"

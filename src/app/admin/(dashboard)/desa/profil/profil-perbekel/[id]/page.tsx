@@ -97,7 +97,7 @@ function ProfilePerbekel() {
   }
 
   return (
-    <Box py={10}>
+     <Box px={{ base: 0, md: 'lg' }} py="xs">
       <Stack gap="xs">
         {/* Header */}
         <Group mb="md">

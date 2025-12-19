@@ -50,7 +50,7 @@ function DetailPelayananTelunjukSakti() {
   const data = telunjukSaktiState.findUnique.data;
 
   return (
-    <Box py={10}>
+    <Box px={{ base: 0, md: 'xs' }} py="xs">
       {/* Tombol Kembali */}
       <Button
         variant="subtle"
@@ -63,7 +63,7 @@ function DetailPelayananTelunjukSakti() {
 
       <Paper
         withBorder
-        w={{ base: '100%', md: '60%' }}
+        w={{ base: '100%', md: '70%' }}
         bg={colors['white-1']}
         p="lg"
         radius="md"

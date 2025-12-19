@@ -67,7 +67,7 @@ function ListPosisiOrganisasiPPID({ search }: { search: string }) {
     <Box py={{ base: 'sm', md: 'md' }}>
       <Paper withBorder bg={colors['white-1']} p={{ base: 'md', md: 'lg' }} shadow="md" radius="md">
         <Group justify="space-between" mb={{ base: 'sm', md: 'md' }}>
-          <Title order={2}>Daftar Posisi Organisasi PPID</Title>
+          <Title order={4}>Daftar Posisi Organisasi PPID</Title>
           <Button
             leftSection={<IconPlus size={18} />}
             color="blue"
@@ -148,7 +148,7 @@ function ListPosisiOrganisasiPPID({ search }: { search: string }) {
           {filteredData.length > 0 ? (
             filteredData.map((item) => (
               <Paper key={item.id} withBorder p="sm" radius="sm">
-                <Stack gap={4}>
+                <Stack gap={'xs'}>
                   <Box>
                     <Text fz="xs" fw={600} lh={1.4}>Nama Posisi</Text>
                     <Text fz="sm" fw={600} lh={1.5}>{item.nama}</Text>

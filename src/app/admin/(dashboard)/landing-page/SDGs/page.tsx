@@ -60,7 +60,7 @@ function ListSdgsDesa({ search }: { search: string }) {
     <Box py={{ base: 'sm', md: 'lg' }}>
       <Paper withBorder bg={colors['white-1']} p={{ base: 'md', md: 'lg' }} shadow="md" radius="md">
         <Group justify="space-between" mb={{ base: 'sm', md: 'md' }}>
-          <Title order={2} lh={1.2}>
+          <Title order={4} lh={1.2}>
             Daftar Sdgs Desa
           </Title>
           <Button
@@ -148,7 +148,7 @@ function ListSdgsDesa({ search }: { search: string }) {
             <Stack gap="sm">
               {filteredData.map((item) => (
                 <Paper key={item.id} withBorder p="md" radius="md">
-                  <Stack gap={4}>
+                  <Stack gap={'xs'}>
                     <Box>
                       <Text fz="sm" fw={600} lh={1.4}>Nama SDGs Desa</Text>
                       <Text fz="sm" fw={500} lh={1.4}>

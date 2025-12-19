@@ -45,7 +45,7 @@ function DetailFoto() {
   const imageUrl = data.imageGalleryFoto?.link;
 
   return (
-    <Box py={10}>
+   <Box px={{ base: 0, md: 'xs' }} py="xs">
       <Button
         variant="subtle"
         onClick={() => router.back()}
@@ -59,7 +59,7 @@ function DetailFoto() {
         withBorder
         // Gunakan max-width agar tidak terlalu lebar di desktop
         maw={800}
-        w="100%"
+        w={{ base: "100%", md: "70%" }}
         bg={colors['white-1']}
         p="lg"
         radius="md"

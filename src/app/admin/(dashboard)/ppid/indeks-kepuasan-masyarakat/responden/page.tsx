@@ -70,7 +70,7 @@ function ListResponden({ search }: ListRespondenProps) {
     return (
       <Paper withBorder bg="white" p={{ base: 'md', sm: 'lg' }} radius="md" shadow="sm">
         <Stack gap="md">
-          <Title order={2} lh={1.2}>
+          <Title order={4} lh={1.2}>
             Data Responden
           </Title>
           <Box visibleFrom="md">
@@ -97,7 +97,7 @@ function ListResponden({ search }: ListRespondenProps) {
   return (
     <Paper withBorder bg="white" p={{ base: 'md', sm: 'lg' }} radius="md" shadow="sm">
       <Stack gap="md">
-        <Title order={2} lh={1.2}>
+        <Title order={4} lh={1.2}>
           Data Responden
         </Title>
 
@@ -166,7 +166,7 @@ function ListResponden({ search }: ListRespondenProps) {
             <Stack gap="sm">
               {filteredData.map((item, index) => (
                 <Paper key={item.id} withBorder p="sm" radius="md">
-                  <Stack gap={4}>
+                  <Stack gap={'xs'}>
                     <Box>
                       <Text fz="sm" fw={600} lh={1.4}>
                         No
