@@ -204,17 +204,34 @@ function GrafikPersentaseKelahiranKematian() {
 
             {selectedYearData && (
               <Stack gap="md">
-                <Flex align="center" gap="sm">
+                <Group visibleFrom='md' align="center" justify='space-between'>
                   <Title order={4} fw={600} fz={{ base: 'xs', md: 'sm' }} lh={1.2}>
                     Rincian Tahun {selectedYear}
                   </Title>
-                  <Badge variant="light" color="blue" fz={{ base: 'xs', md: 'sm' }}>
-                    {formatNumber(selectedYearData.totalKelahiran)} kelahiran
-                  </Badge>
-                  <Badge variant="light" color="red" fz={{ base: 'xs', md: 'sm' }}>
-                    {formatNumber(selectedYearData.totalKematian)} kematian
-                  </Badge>
-                </Flex>
+                  <Group gap={"sm"}>
+                    <Badge variant="light" color="blue" fz={{ base: 'xs', md: 'sm' }}>
+                      {formatNumber(selectedYearData.totalKelahiran)} kelahiran
+                    </Badge>
+                    <Badge variant="light" color="red" fz={{ base: 'xs', md: 'sm' }}>
+                      {formatNumber(selectedYearData.totalKematian)} kematian
+                    </Badge>
+                  </Group>
+                </Group>
+
+                <Stack hiddenFrom='md' gap="sm">
+                  <Title order={4} fw={600} fz={{ base: 'xs', md: 'sm' }} lh={1.2}>
+                    Rincian Tahun {selectedYear}
+                  </Title>
+                  <Group>
+                    <Badge variant="light" color="blue" fz={{ base: 'xs', md: 'sm' }}>
+                      {formatNumber(selectedYearData.totalKelahiran)} kelahiran
+                    </Badge>
+                    <Badge variant="light" color="red" fz={{ base: 'xs', md: 'sm' }}>
+                      {formatNumber(selectedYearData.totalKematian)} kematian
+                    </Badge>
+                  </Group>
+                </Stack>
+
 
                 {/* Desktop: Table */}
                 <Box visibleFrom="md">

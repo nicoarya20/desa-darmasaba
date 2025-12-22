@@ -18,7 +18,7 @@ import {
   Text,
   Title
 } from '@mantine/core';
-import { useShallowEffect } from '@mantine/hooks';
+import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
 import { IconDeviceImacCog, IconPlus, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -48,6 +48,7 @@ function KontakDaruratKeamanan() {
 function ListKontakDaruratKeamanan({ search }: { search: string }) {
   const kontakState = useProxy(kontakDarurat.kontakDaruratKeamananState);
   const router = useRouter();
+  const [debouncedSearch] = useDebouncedValue(search, 1000);
 
   const {
     data,
@@ -58,26 +59,28 @@ function ListKontakDaruratKeamanan({ search }: { search: string }) {
   } = kontakState.findMany;
 
   useShallowEffect(() => {
-    load(page, 10, search);
+    load(page, 10, debouncedSearch);
     kontakDarurat.kontakDaruratItem.findMany.load();
-  }, [page, search]);
+  }, [page, debouncedSearch]);
 
-  const filteredData = data || []
+  const filteredData = data || [];
 
   if (loading || !data) {
     return (
-      <Stack py={10}>
+      <Stack py={{ base: 'md', md: 'lg' }}>
         <Skeleton height={600} radius="md" />
       </Stack>
     );
   }
 
   return (
-    <Box py={10}>
-      <Paper withBorder bg={colors['white-1']} p={'lg'} shadow="md" radius="md">
+    <Box py={{ base: 'md', md: 'lg' }}>
+      <Paper withBorder bg={colors['white-1']} p={{ base: 'md', md: 'lg' }} shadow="md" radius="md">
         {/* Judul + Tombol Tambah */}
-        <Group justify="space-between" mb="md">
-          <Title order={4}>Daftar Kontak Darurat Keamanan</Title>
+        <Group justify="space-between" mb={{ base: 'sm', md: 'md' }}>
+          <Title order={4} lh={1.2}>
+            Daftar Kontak Darurat Keamanan
+          </Title>
           <Button
             leftSection={<IconPlus size={18} />}
             color="blue"
@@ -88,15 +91,22 @@ function ListKontakDaruratKeamanan({ search }: { search: string }) {
           </Button>
         </Group>
 
-        {/* Tabel */}
-        <Box style={{ overflowX: "auto" }}>
-          <Table highlightOnHover>
+        {/* Desktop Table */}
+        <Box visibleFrom="md">
+          <Table
+            highlightOnHover
+            miw={0}
+            style={{
+              tableLayout: 'fixed',
+              width: '100%',
+            }}
+          >
             <TableThead>
               <TableTr>
-                <TableTh>Kontak Darurat</TableTh>
-                <TableTh>Nama Kontak</TableTh>
-                <TableTh>Nomor Telepon</TableTh>
-                <TableTh>Aksi</TableTh>
+                <TableTh style={{ width: '30%' }}>Kontak Darurat</TableTh>
+                <TableTh style={{ width: '25%' }}>Nama Kontak</TableTh>
+                <TableTh style={{ width: '25%' }}>Nomor Telepon</TableTh>
+                <TableTh style={{ width: '20%' }}>Aksi</TableTh>
               </TableTr>
             </TableThead>
             <TableTbody>
@@ -104,17 +114,17 @@ function ListKontakDaruratKeamanan({ search }: { search: string }) {
                 filteredData.map((item) => (
                   <TableTr key={item.id}>
                     <TableTd>
-                      <Text fw={500} truncate="end" lineClamp={1}>
+                      <Text fz="md" fw={500} lh={1.5} truncate="end" lineClamp={1}>
                         {item.nama}
                       </Text>
                     </TableTd>
                     <TableTd>
-                      <Text fz="sm" c="dimmed" truncate lineClamp={1}>
+                      <Text fz="sm" c="dimmed" lh={1.5} truncate lineClamp={1}>
                         {item.kategori?.nama}
                       </Text>
                     </TableTd>
                     <TableTd>
-                      <Text fz="sm" c="dimmed">
+                      <Text fz="sm" c="dimmed" lh={1.5}>
                         {item.kategori?.nomorTelepon || "-"}
                       </Text>
                     </TableTd>
@@ -125,7 +135,7 @@ function ListKontakDaruratKeamanan({ search }: { search: string }) {
                         onClick={() => router.push(`/admin/keamanan/kontak-darurat/kontak-darurat-keamanan/${item.id}`)}
                       >
                         <IconDeviceImacCog size={20} />
-                        <Text ml={5}>Detail</Text>
+                        <Text ml={5} fz="sm" fw={500}>Detail</Text>
                       </Button>
                     </TableTd>
                   </TableTr>
@@ -134,7 +144,7 @@ function ListKontakDaruratKeamanan({ search }: { search: string }) {
                 <TableTr>
                   <TableTd colSpan={4}>
                     <Center py={20}>
-                      <Text color="dimmed">
+                      <Text c="dimmed" fz="sm" lh={1.4}>
                         Tidak ada data kontak darurat keamanan yang cocok
                       </Text>
                     </Center>
@@ -143,6 +153,55 @@ function ListKontakDaruratKeamanan({ search }: { search: string }) {
               )}
             </TableTbody>
           </Table>
+        </Box>
+
+        {/* Mobile Cards */}
+        <Box hiddenFrom="md">
+          <Stack gap="md">
+            {filteredData.length > 0 ? (
+              filteredData.map((item) => (
+                <Paper key={item.id} withBorder radius="md" p="md">
+                  <Stack gap={"xs"}>
+                    <Box>
+                      <Text fz="sm" fw={600} lh={1.4}>Kontak Darurat</Text>
+                      <Text fz="sm" fw={500} lh={1.45}>
+                        {item.nama}
+                      </Text>
+                    </Box>
+                    <Box>
+                      <Text fz="sm" fw={600} lh={1.4}>Nama Kontak</Text>
+                      <Text fz="sm" fw={500} lh={1.45} c="dimmed">
+                        {item.kategori?.nama}
+                      </Text>
+                    </Box>
+                    <Box>
+                      <Text fz="sm" fw={600} lh={1.4}>Nomor Telepon</Text>
+                      <Text fz="sm" fw={500} lh={1.45} c="dimmed">
+                        {item.kategori?.nomorTelepon || "-"}
+                      </Text>
+                    </Box>
+                    <Box>
+                      <Button
+                        fullWidth
+                        variant="light"
+                        color="blue"
+                        onClick={() => router.push(`/admin/keamanan/kontak-darurat/kontak-darurat-keamanan/${item.id}`)}
+                      >
+                        <IconDeviceImacCog size={18} />
+                        <Text ml={5} fz="sm" fw={500}>Detail</Text>
+                      </Button>
+                    </Box>
+                  </Stack>
+                </Paper>
+              ))
+            ) : (
+              <Center py={20}>
+                <Text c="dimmed" fz="sm" lh={1.4}>
+                  Tidak ada data kontak darurat keamanan yang cocok
+                </Text>
+              </Center>
+            )}
+          </Stack>
         </Box>
       </Paper>
 
