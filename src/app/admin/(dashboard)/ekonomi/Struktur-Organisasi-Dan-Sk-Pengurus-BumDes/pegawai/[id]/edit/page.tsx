@@ -143,7 +143,7 @@ export default function EditPegawaiBumDes() {
       if (id && !stateOrganisasi.edit.id) stateOrganisasi.edit.id = id;
 
       const success = await stateOrganisasi.edit.submit();
-      if (success) router.push('/admin/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa/pegawai');
+      if (success) router.push('/admin/ekonomi/Struktur-Organisasi-Dan-Sk-Pengurus-BumDes/pegawai');
     } catch (error) {
       console.error('Error updating pegawai:', error);
       toast.error(error instanceof Error ? error.message : 'Gagal memperbarui data pegawai');
@@ -153,12 +153,12 @@ export default function EditPegawaiBumDes() {
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+     <Box px={{ base: 0, md: 'xs' }} py="xs">
       <Group mb="md">
         <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
           <IconArrowBack color={colors['blue-button']} size={24} />
         </Button>
-        <Title order={4} ml="sm" c="dark">Edit Data Pegawai PPID</Title>
+        <Title order={4} ml="sm" c="dark">Edit Data Pegawai BumDes</Title>
       </Group>
 
       <Paper

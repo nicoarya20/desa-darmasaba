@@ -54,7 +54,7 @@ function CreateLowonganKerja() {
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 0, md: 'xs' }} py="xs">
       <Group mb="md">
         <Button
           variant="subtle"

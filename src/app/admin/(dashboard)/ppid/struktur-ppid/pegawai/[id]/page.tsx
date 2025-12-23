@@ -1,5 +1,6 @@
 'use client'
 import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
+import { ModalKonfirmasiNonAktif } from '@/app/admin/(dashboard)/_com/modalNonaktif';
 import stateStrukturPPID from '@/app/admin/(dashboard)/_state/ppid/struktur_ppid/struktur_PPID';
 import colors from '@/con/colors';
 import { Box, Button, Group, Image, Paper, Skeleton, Stack, Text } from '@mantine/core';
@@ -186,7 +187,7 @@ function DetailPegawai() {
       />
 
       {/* Modal NonActive */}
-      <ModalKonfirmasiHapus
+      <ModalKonfirmasiNonAktif
         opened={modalNonActive}
         onClose={() => setModalNonActive(false)}
         onConfirm={handleNonActive}

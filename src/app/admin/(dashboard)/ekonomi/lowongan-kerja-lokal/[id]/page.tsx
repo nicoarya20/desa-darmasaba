@@ -42,7 +42,7 @@ function DetailLowonganKerjaLokal() {
   const data = lowonganState.findUnique.data;
 
   return (
-    <Box py={10}>
+    <Box px={{ base: 0, md: 'xs' }} py="xs">
       <Button
         variant="subtle"
         onClick={() => router.back()}
@@ -99,12 +99,16 @@ function DetailLowonganKerjaLokal() {
 
               <Box>
                 <Text fz="lg" fw="bold">Deskripsi</Text>
-                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data.deskripsi || '-' }} />
+                <Box pl={8}>
+                  <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data.deskripsi || '-' }} />
+                </Box>
               </Box>
 
               <Box>
                 <Text fz="lg" fw="bold">Kualifikasi</Text>
-                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data.kualifikasi || '-' }} />
+                <Box pl={8}>
+                  <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data.kualifikasi || '-' }} />
+                </Box>
               </Box>
 
               <Group gap="sm" mt="sm">

@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-'use client'
+'use client';
 import colors from '@/con/colors';
 import {
   Box,
   Button,
   Center,
   Flex,
+  Group,
   Pagination,
   Paper,
   Skeleton,
@@ -19,7 +20,7 @@ import {
   Text,
   Title,
 } from '@mantine/core';
-import { useShallowEffect } from '@mantine/hooks';
+import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
 import { IconEdit, IconPlus, IconSearch, IconTrash } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -51,6 +52,7 @@ function ListGrafikBerdasarkanUsiaKerjaYangMenganggur({ search }: { search: stri
   const [modalHapus, setModalHapus] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const router = useRouter();
+  const [debouncedSearch] = useDebouncedValue(search, 1000);
 
   const handleDelete = async () => {
     if (selectedId) {
@@ -64,8 +66,8 @@ function ListGrafikBerdasarkanUsiaKerjaYangMenganggur({ search }: { search: stri
   const { data, page, totalPages, loading, load } = stategrafik.findMany;
 
   useShallowEffect(() => {
-    load(page, 10, search);
-  }, [page, search]);
+    load(page, 10, debouncedSearch);
+  }, [page, debouncedSearch]);
 
   useEffect(() => {
     if (stategrafik.findMany.data) {
@@ -87,19 +89,21 @@ function ListGrafikBerdasarkanUsiaKerjaYangMenganggur({ search }: { search: stri
 
   if (loading || !data) {
     return (
-      <Stack py={10}>
+      <Stack py={{ base: 'sm', md: 'md' }}>
         <Skeleton height={500} radius="md" />
       </Stack>
     );
   }
 
   return (
-    <Box py={10}>
-      {/* Table */}
-      <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
-        <Stack>
-          <Flex justify="space-between" align="center" mb="md">
-            <Title order={4}>List Pengangguran Berdasarkan Usia Kerja</Title>
+    <Box py={{ base: 'sm', md: 'md' }}>
+      {/* Table - Desktop */}
+      <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md" mb="lg">
+        <Stack gap="md">
+          <Flex justify="space-between" align="center" visibleFrom='md'>
+            <Title order={4} lh={1.2}>
+              List Pengangguran Berdasarkan Usia Kerja
+            </Title>
             <Button
               leftSection={<IconPlus size={18} />}
               color="blue"
@@ -112,26 +116,58 @@ function ListGrafikBerdasarkanUsiaKerjaYangMenganggur({ search }: { search: stri
             </Button>
           </Flex>
 
-          <Box style={{ overflowX: 'auto' }}>
-            <Table highlightOnHover>
+          <Group align="center" hiddenFrom='md'>
+            <Title order={4} lh={1.2}>
+              List Pengangguran Berdasarkan Usia Kerja
+            </Title>
+            <Button
+              leftSection={<IconPlus size={18} />}
+              color="blue"
+              variant="light"
+              onClick={() =>
+                router.push('/admin/ekonomi/jumlah-penduduk-usia-kerja-yang-menganggur/pengangguran_berdasarkan_usia/create')
+              }
+            >
+              Tambah Baru
+            </Button>
+          </Group>
+
+          {/* Desktop Table */}
+          <Box visibleFrom="md">
+            <Table
+              highlightOnHover
+              miw={0}
+              style={{
+                tableLayout: 'fixed',
+                width: '100%',
+              }}
+            >
               <TableThead>
                 <TableTr>
-                  <TableTh>Usia 18-25</TableTh>
-                  <TableTh>Usia 26-35</TableTh>
-                  <TableTh>Usia 36-45</TableTh>
-                  <TableTh>Usia 46+</TableTh>
-                  <TableTh>Edit</TableTh>
-                  <TableTh>Delete</TableTh>
+                  <TableTh style={{ width: '20%' }}>Usia 18-25</TableTh>
+                  <TableTh style={{ width: '20%' }}>Usia 26-35</TableTh>
+                  <TableTh style={{ width: '20%' }}>Usia 36-45</TableTh>
+                  <TableTh style={{ width: '20%' }}>Usia 46+</TableTh>
+                  <TableTh style={{ width: '10%' }}>Edit</TableTh>
+                  <TableTh style={{ width: '10%' }}>Delete</TableTh>
                 </TableTr>
               </TableThead>
               <TableTbody>
                 {filteredData.length > 0 ? (
                   filteredData.map((item) => (
                     <TableTr key={item.id}>
-                      <TableTd>{item.usia18_25}</TableTd>
-                      <TableTd>{item.usia26_35}</TableTd>
-                      <TableTd>{item.usia36_45}</TableTd>
-                      <TableTd>{item.usia46_keatas}</TableTd>
+                      <TableTd fz="md" fw={500} lh={1.5}>
+                        {item.usia18_25}
+                      </TableTd>
+                      <TableTd fz="md" fw={500} lh={1.5}>
+                        {item.usia26_35}
+                      </TableTd>
+                      <TableTd fz="md" fw={500} lh={1.5}>
+                        {item.usia36_45}
+                      </TableTd>
+                      <TableTd fz="md" fw={500} lh={1.5}>
+                        {item.usia46_keatas}
+                      </TableTd>
                       <TableTd>
                         <Button
                           color="green"
@@ -160,13 +196,89 @@ function ListGrafikBerdasarkanUsiaKerjaYangMenganggur({ search }: { search: stri
                   <TableTr>
                     <TableTd colSpan={6}>
                       <Center py={20}>
-                        <Text color="dimmed">Belum ada data grafik responden</Text>
+                        <Text c="dimmed" fz="sm" lh={1.4}>
+                          Belum ada data grafik responden
+                        </Text>
                       </Center>
                     </TableTd>
                   </TableTr>
                 )}
               </TableTbody>
             </Table>
+          </Box>
+
+          {/* Mobile Card View */}
+          <Box hiddenFrom="md">
+            {filteredData.length > 0 ? (
+              <Stack gap="xs">
+                {filteredData.map((item) => (
+                  <Paper key={item.id} withBorder p="sm" radius="sm">
+                    <Stack gap={"xs"}>
+                      <Box>
+                        <Text fz="sm" fw={600} lh={1.4}>
+                          Usia 18-25
+                        </Text>
+                        <Text fz="sm" fw={500} lh={1.4}>
+                          {item.usia18_25}
+                        </Text>
+                      </Box>
+                      <Box>
+                        <Text fz="sm" fw={600} lh={1.4}>
+                          Usia 26-35
+                        </Text>
+                        <Text fz="sm" fw={500} lh={1.4}>
+                          {item.usia26_35}
+                        </Text>
+                      </Box>
+                      <Box>
+                        <Text fz="sm" fw={600} lh={1.4}>
+                          Usia 36-45
+                        </Text>
+                        <Text fz="sm" fw={500} lh={1.4}>
+                          {item.usia36_45}
+                        </Text>
+                      </Box>
+                      <Box>
+                        <Text fz="sm" fw={600} lh={1.4}>
+                          Usia 46+
+                        </Text>
+                        <Text fz="sm" fw={500} lh={1.4}>
+                          {item.usia46_keatas}
+                        </Text>
+                      </Box>
+                      <Flex gap="xs" mt="xs">
+                        <Button
+                          size="xs"
+                          color="green"
+                          onClick={() =>
+                            router.push(`/admin/ekonomi/jumlah-penduduk-usia-kerja-yang-menganggur/pengangguran_berdasarkan_usia/${item.id}`)
+                          }
+                        >
+                          <IconEdit size={16} />
+                        </Button>
+                        <Button
+                          size="xs"
+                          color="red"
+                          disabled={stategrafik.delete.loading}
+                          onClick={() => {
+                            setSelectedId(item.id);
+                            setModalHapus(true);
+                          }}
+                        >
+                          <IconTrash size={16} />
+                        </Button>
+                      </Flex>
+                    </Stack>
+                  </Paper>
+                ))}
+              </Stack>
+            ) : (
+              <Center py={20}>
+                <Text c="dimmed" fz="sm" lh={1.4}>
+                  Belum ada data grafik responden
+                </Text>
+              </Center>
+            )}
           </Box>
         </Stack>
       </Paper>
@@ -189,8 +301,8 @@ function ListGrafikBerdasarkanUsiaKerjaYangMenganggur({ search }: { search: stri
 
       {/* Donut Chart */}
       <Paper bg={colors['white-1']} p="md" mt="lg" withBorder radius="md">
-        <Stack>
-          <Title order={3} pb={10}>
+        <Stack gap="md">
+          <Title order={4} lh={1.2}>
             Grafik Pengangguran Berdasarkan Usia Kerja
           </Title>
           {donutData.length > 0 ? (
@@ -205,7 +317,9 @@ function ListGrafikBerdasarkanUsiaKerjaYangMenganggur({ search }: { search: stri
               />
             </Center>
           ) : (
-            <Text c="dimmed">Belum ada data untuk ditampilkan dalam grafik</Text>
+            <Text c="dimmed" fz={{ base: 'xs', md: 'sm' }} lh={1.4}>
+              Belum ada data untuk ditampilkan dalam grafik
+            </Text>
           )}
         </Stack>
       </Paper>

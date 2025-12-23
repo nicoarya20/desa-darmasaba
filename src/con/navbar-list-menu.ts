@@ -183,7 +183,7 @@ const navbarListMenu = [
             {
                 id: "5.3",
                 name: "Struktur Organisasi dan SK Pengurus BUMDesa",
-                href: "/darmasaba/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa"
+                href: "/darmasaba/ekonomi/Struktur-Organisasi-Dan-Sk-Pengurus-BumDes"
             },
             {
                 id: "5.4",

@@ -1,5 +1,6 @@
 'use client'
 import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
+import { ModalKonfirmasiNonAktif } from '@/app/admin/(dashboard)/_com/modalNonaktif';
 import stateStrukturBumDes from '@/app/admin/(dashboard)/_state/ekonomi/struktur-organisasi/struktur-organisasi';
 
 import colors from '@/con/colors';
@@ -28,7 +29,7 @@ function DetailPegawai() {
       statePegawai.delete.byId(selectedId);
       setModalHapus(false);
       setSelectedId(null);
-      router.push("/admin/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa/pegawai");
+      router.push("/admin/ekonomi/Struktur-Organisasi-Dan-Sk-Pengurus-BumDes/pegawai");
     }
   };
 
@@ -37,7 +38,7 @@ function DetailPegawai() {
       statePegawai.nonActive.byId(selectedId);
       setModalNonActive(false);
       setSelectedId(null);
-      router.push("/admin/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa/pegawai");
+      router.push("/admin/ekonomi/Struktur-Organisasi-Dan-Sk-Pengurus-BumDes/pegawai");
     }
   };
 
@@ -52,7 +53,7 @@ function DetailPegawai() {
   const data = statePegawai.findUnique.data;
 
   return (
-    <Box>
+     <Box px={{ base: 0, md: 'xs' }} py="xs">
       <Box mb={10}>
         <Button variant="subtle" onClick={() => router.back()}>
           <IconArrowBack color={colors['blue-button']} size={25} />
@@ -60,7 +61,7 @@ function DetailPegawai() {
       </Box>
       <Paper
         withBorder
-        w={{ base: "100%", md: "60%" }}
+        w={{ base: "100%", md: "70%" }}
         bg={colors['white-1']}
         p="lg"
         radius="md"
@@ -68,7 +69,7 @@ function DetailPegawai() {
       >
         <Stack gap="md">
           <Text fz="2xl" fw="bold" c={colors['blue-button']}>
-            Detail Pegawai PPID
+            Detail Pegawai BumDes
           </Text>
 
           <Paper bg="#ECEEF8" p="md" radius="md" shadow="xs">
@@ -165,7 +166,7 @@ function DetailPegawai() {
 
                 <Button
                   color="green"
-                  onClick={() => router.push(`/admin/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa/pegawai/${data.id}/edit`)}
+                  onClick={() => router.push(`/admin/ekonomi/Struktur-Organisasi-Dan-Sk-Pengurus-BumDes/pegawai/${data.id}/edit`)}
                   variant="light"
                   radius="md"
                   size="md"
@@ -187,7 +188,7 @@ function DetailPegawai() {
       />
 
       {/* Modal NonActive */}
-      <ModalKonfirmasiHapus
+      <ModalKonfirmasiNonAktif
         opened={modalNonActive}
         onClose={() => setModalNonActive(false)}
         onConfirm={handleNonActive}

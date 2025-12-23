@@ -36,7 +36,7 @@ function CreatePosisiOrganisasiBumDes() {
 
       await stateOrganisasi.create.submit();
       toast.success('Posisi organisasi berhasil ditambahkan');
-      router.push('/admin/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa/posisi-organisasi');
+      router.push('/admin/ekonomi/Struktur-Organisasi-Dan-Sk-Pengurus-BumDes/posisi-organisasi');
     } catch (error) {
       toast.error('Gagal menambahkan posisi organisasi');
       console.error('Error:', error);
@@ -46,7 +46,7 @@ function CreatePosisiOrganisasiBumDes() {
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+     <Box px={{ base: 0, md: 'xs' }} py="xs">
       <Group mb="md">
         <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
           <IconArrowBack color={colors['blue-button']} size={24} />

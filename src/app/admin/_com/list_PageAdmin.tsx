@@ -223,8 +223,8 @@ export const devBar = [
       },
       {
         id: "Ekonomi_3",
-        name: "Struktur Organisasi Dan Sk Pengurus Bumdesa",
-        path: "/admin/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa/pegawai"
+        name: "Struktur Organisasi Dan Sk Pengurus BumDes",
+        path: "/admin/ekonomi/Struktur-Organisasi-Dan-Sk-Pengurus-BumDes/pegawai"
       },
       {
         id: "Ekonomi_4",
@@ -628,7 +628,7 @@ export const navBar = [
       {
         id: "Ekonomi_3",
         name: "Struktur Organisasi Dan Sk Pengurus Bumdesa",
-        path: "/admin/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa/pegawai"
+        path: "/admin/ekonomi/Struktur-Organisasi-Dan-Sk-Pengurus-BumDes/pegawai"
       },
       {
         id: "Ekonomi_4",
@@ -990,7 +990,7 @@ export const role1 = [
       {
         id: "Ekonomi_3",
         name: "Struktur Organisasi Dan Sk Pengurus Bumdesa",
-        path: "/admin/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa/pegawai"
+        path: "/admin/ekonomi/Struktur-Organisasi-Dan-Sk-Pengurus-BumDes/pegawai"
       },
       {
         id: "Ekonomi_4",
