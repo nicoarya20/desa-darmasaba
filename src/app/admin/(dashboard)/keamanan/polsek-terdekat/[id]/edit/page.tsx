@@ -247,7 +247,7 @@ function EditPolsekTerdekat() {
   };
 
   return (
-    <Box px={{ base: "sm", md: "lg" }} py="md">
+     <Box px={{ base: 0, md: 'xs' }} py="xs">
       {/* Modal Tambah */}
       <Modal
         opened={modalOpen}

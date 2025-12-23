@@ -72,7 +72,7 @@ function CreatePegawaiBumDes() {
       // Reset form dan redirect
       resetForm();
       toast.success("Data pegawai berhasil ditambahkan");
-      router.push("/admin/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa/pegawai");
+      router.push("/admin/ekonomi/Struktur-Organisasi-Dan-Sk-Pengurus-BumDes/pegawai");
     } catch (error) {
       console.error("Error creating pegawai:", error);
       toast.error("Terjadi kesalahan saat menambahkan pegawai");
@@ -82,13 +82,13 @@ function CreatePegawaiBumDes() {
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 0, md: 'xs' }} py="xs">
       <Group mb="md">
         <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
           <IconArrowBack color={colors['blue-button']} size={24} />
         </Button>
         <Title order={4} ml="sm" c="dark">
-          Tambah Pegawai BUMDesa
+          Tambah Pegawai BUMDes
         </Title>
       </Group>
 

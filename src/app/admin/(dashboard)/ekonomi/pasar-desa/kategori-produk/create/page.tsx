@@ -51,7 +51,7 @@ function CreateKategoriProduk() {
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+     <Box px={{ base: 0, md: 'xs' }} py="xs">
       {/* Header dengan tombol kembali */}
       <Group mb="md">
         <Button

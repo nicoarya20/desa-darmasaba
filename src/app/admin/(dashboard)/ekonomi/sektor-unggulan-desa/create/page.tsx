@@ -57,7 +57,7 @@ function CreateSektorUnggulanDesa() {
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Header dengan back button */}
       <Group mb="md">
         <Button

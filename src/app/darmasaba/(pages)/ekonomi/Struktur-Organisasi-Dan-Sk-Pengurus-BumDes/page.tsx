@@ -509,7 +509,7 @@ function NodeCard({ node, router }: any) {
                 mt={8}
                 radius="md"
                 onClick={() =>
-                  router.push(`/darmasaba/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa/${node.data.id}`)
+                  router.push(`/darmasaba/ekonomi/Struktur-Organisasi-Dan-Sk-Pengurus-BumDes/${node.data.id}`)
                 }
                 style={{
                   height: 32,
