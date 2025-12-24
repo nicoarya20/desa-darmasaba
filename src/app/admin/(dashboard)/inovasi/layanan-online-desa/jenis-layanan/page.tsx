@@ -16,9 +16,10 @@ import {
   TableThead,
   TableTr,
   Text,
-  Title
+  Title,
+  useMantineTheme
 } from '@mantine/core';
-import { useShallowEffect } from '@mantine/hooks';
+import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
 import { IconDeviceImac, IconPlus, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -45,28 +46,35 @@ function JenisLayanan() {
 function ListJenisLayanan({ search }: { search: string }) {
   const stateList = useProxy(layananonlineDesa.jenisLayanan);
   const router = useRouter();
+  const [debouncedSearch] = useDebouncedValue(search, 1000);
 
   const { data, page, totalPages, loading, load } = stateList.findMany;
 
   useShallowEffect(() => {
-    load(page, 10, search);
-  }, [page, search]);
+    load(page, 10, debouncedSearch);
+  }, [page, debouncedSearch]);
 
   const filteredData = data || [];
+  const theme = useMantineTheme();
 
   if (loading || !data) {
     return (
-      <Stack py={10}>
+      <Stack py="lg">
         <Skeleton height={600} radius="md" />
       </Stack>
     );
   }
 
   return (
-    <Box py={10}>
+    <Stack py="lg" gap="xl">
       <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
         <Group justify="space-between" mb="md">
-          <Title order={4}>Daftar Jenis Layanan</Title>
+          <Title
+            order={4}
+            lh={{ base: 1.2, md: 1.15 }}
+          >
+            Daftar Jenis Layanan
+          </Title>
           <Button
             leftSection={<IconPlus size={18} />}
             color="blue"
@@ -80,13 +88,34 @@ function ListJenisLayanan({ search }: { search: string }) {
             Tambah Baru
           </Button>
         </Group>
-        <Box style={{ overflowX: 'auto' }}>
-          <Table highlightOnHover>
+
+        {/* Desktop Table */}
+        <Box visibleFrom="md">
+          <Table
+            highlightOnHover
+            miw={0}
+            style={{
+              tableLayout: 'fixed',
+              width: '100%',
+            }}
+          >
             <TableThead>
               <TableTr>
-                <TableTh style={{ width: '30%' }}>Nama Jenis Layanan</TableTh>
-                <TableTh style={{ width: '40%' }}>Deskripsi</TableTh>
-                <TableTh style={{ width: '15%' }}>Aksi</TableTh>
+                <TableTh style={{ width: '30%' }}>
+                  <Text fz="sm" fw={600} lh={1.4} c={theme.black}>
+                    Nama Jenis Layanan
+                  </Text>
+                </TableTh>
+                <TableTh style={{ width: '55%' }}>
+                  <Text fz="sm" fw={600} lh={1.4} c={theme.black}>
+                    Deskripsi
+                  </Text>
+                </TableTh>
+                <TableTh style={{ width: '15%' }}>
+                  <Text fz="sm" fw={600} lh={1.4} ta="center" c={theme.black}>
+                    Aksi
+                  </Text>
+                </TableTh>
               </TableTr>
             </TableThead>
             <TableTbody>
@@ -94,16 +123,29 @@ function ListJenisLayanan({ search }: { search: string }) {
                 filteredData.map((item) => (
                   <TableTr key={item.id}>
                     <TableTd style={{ width: '30%' }}>
-                      <Text fw={500} truncate="end" lineClamp={1}>
+                      <Text
+                        fz="md"
+                        fw={500}
+                        lh={1.5}
+                        c={theme.black}
+                        truncate="end"
+                        lineClamp={1}
+                      >
                         {item.nama}
                       </Text>
                     </TableTd>
-                    <TableTd style={{ width: '40%' }}>
-                      <Text fz="sm" c="dimmed" lineClamp={2}>
+                    <TableTd style={{ width: '55%' }}>
+                      <Text
+                        fz="sm"
+                        fw={500}
+                        lh={1.5}
+                        c={theme.black}
+                        lineClamp={2}
+                      >
                         {item.deskripsi || '-'}
                       </Text>
                     </TableTd>
-                    <TableTd style={{ width: '15%' }}>
+                    <TableTd style={{ width: '15%' }} ta="center">
                       <Button
                         size="xs"
                         radius="md"
@@ -124,8 +166,8 @@ function ListJenisLayanan({ search }: { search: string }) {
               ) : (
                 <TableTr>
                   <TableTd colSpan={3}>
-                    <Center py={20}>
-                      <Text color="dimmed">
+                    <Center py="xl">
+                      <Text c="dimmed" fz="sm" lh={1.4}>
                         Tidak ada jenis layanan yang cocok
                       </Text>
                     </Center>
@@ -135,22 +177,76 @@ function ListJenisLayanan({ search }: { search: string }) {
             </TableTbody>
           </Table>
         </Box>
+
+        {/* Mobile Cards */}
+        <Box hiddenFrom="md">
+          <Stack gap="sm">
+            {filteredData.length > 0 ? (
+              filteredData.map((item) => (
+                <Paper key={item.id} withBorder radius="md" p="md">
+                  <Stack gap="xs">
+                    <Box pl={5}>
+                      <Text fz="sm" fw={600} lh={1.4} c={theme.black}>
+                        Nama Jenis Layanan
+                      </Text>
+                      <Text fz="sm" fw={500} lh={1.5} c={theme.black}>
+                        {item.nama}
+                      </Text>
+                    </Box>
+                    <Box pl={5}>
+                      <Text fz="sm" fw={600} lh={1.4} c={theme.black}>
+                        Deskripsi
+                      </Text>
+                      <Text fz="sm" fw={500} lh={1.5} c={theme.black}>
+                        {item.deskripsi || '-'}
+                      </Text>
+                    </Box>
+                    <Group justify="flex-end" mt="xs">
+                      <Button
+                        size="xs"
+                        radius="md"
+                        variant="light"
+                        color="blue"
+                        leftSection={<IconDeviceImac size={16} />}
+                        onClick={() =>
+                          router.push(
+                            `/admin/inovasi/layanan-online-desa/jenis-layanan/${item.id}`
+                          )
+                        }
+                      >
+                        Detail
+                      </Button>
+                    </Group>
+                  </Stack>
+                </Paper>
+              ))
+            ) : (
+              <Center py="xl">
+                <Text c="dimmed" fz="sm" lh={1.4}>
+                  Tidak ada jenis layanan yang cocok
+                </Text>
+              </Center>
+            )}
+          </Stack>
+        </Box>
       </Paper>
-      <Center>
-        <Pagination
-          value={page}
-          onChange={(newPage) => {
-            load(newPage, 10);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }}
-          total={totalPages}
-          mt="md"
-          mb="md"
-          color="blue"
-          radius="md"
-        />
-      </Center>
-    </Box>
+
+      {totalPages > 1 && (
+        <Center>
+          <Pagination
+            value={page}
+            onChange={(newPage) => {
+              load(newPage, 10);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            total={totalPages}
+            mt="md"
+            color="blue"
+            radius="md"
+          />
+        </Center>
+      )}
+    </Stack>
   );
 }
 

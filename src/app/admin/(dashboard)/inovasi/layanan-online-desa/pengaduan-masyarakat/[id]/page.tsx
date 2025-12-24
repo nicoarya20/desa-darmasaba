@@ -41,7 +41,7 @@ function DetailPengaduanMasyarakat() {
   const data = pengaduanState.pengaduanMasyarakat.findUnique.data;
 
   return (
-    <Box py={10}>
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Tombol Kembali */}
       <Button
         variant="subtle"
@@ -55,7 +55,7 @@ function DetailPengaduanMasyarakat() {
       {/* Card Detail */}
       <Paper
         withBorder
-        w={{ base: "100%", md: "60%" }}
+        w={{ base: "100%", md: "70%" }}
         bg={colors['white-1']}
         p="lg"
         radius="md"

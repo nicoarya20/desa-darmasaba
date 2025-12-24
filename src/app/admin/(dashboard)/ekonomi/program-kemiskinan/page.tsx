@@ -194,7 +194,7 @@ function ListProgramKemiskinan({ search }: { search: string }) {
             {filteredData.length > 0 ? (
               filteredData.map((item) => (
                 <Paper key={item.id} withBorder p="md" radius="sm">
-                  <Stack gap={4}>
+                  <Stack gap={"xs"}>
                     <Box>
                       <Text fz="sm" fw={600} lh={1.4}>
                         Judul Program

@@ -17,7 +17,7 @@ import {
   Text,
   Title
 } from '@mantine/core';
-import { useShallowEffect } from '@mantine/hooks';
+import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
 import { IconDeviceImac, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -44,6 +44,7 @@ function AjukanIdeInovatif() {
 function ListAjukanIdeInovatif({ search }: { search: string }) {
   const state = useProxy(ajukanIdeInovatifState)
   const router = useRouter()
+  const [debouncedSearch] = useDebouncedValue(search, 1000); // 500ms delay
 
   const {
     data,
@@ -54,8 +55,8 @@ function ListAjukanIdeInovatif({ search }: { search: string }) {
   } = state.findMany;
 
   useShallowEffect(() => {
-    load(page, 10, search)
-  }, [page, search])
+    load(page, 10, debouncedSearch)
+  }, [page, debouncedSearch])
 
   const filteredData = data || []
 

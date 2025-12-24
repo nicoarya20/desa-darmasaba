@@ -49,7 +49,7 @@ function DetailDesaDigital() {
   const data = stateDesaDigital.findUnique.data;
 
   return (
-    <Box py={10}>
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Tombol Kembali */}
       <Button
         variant="subtle"
@@ -63,7 +63,7 @@ function DetailDesaDigital() {
       {/* Card Utama */}
       <Paper
         withBorder
-        w={{ base: "100%", md: "60%" }}
+        w={{ base: "100%", md: "70%" }}
         bg={colors['white-1']}
         p="lg"
         radius="md"
@@ -77,12 +77,12 @@ function DetailDesaDigital() {
           {/* Sub Card Detail */}
           <Paper bg="#ECEEF8" p="md" radius="md" shadow="xs">
             <Stack gap="sm">
-              <Box>
+              <Box pl={5}>
                 <Text fz="lg" fw="bold">Judul</Text>
                 <Text fz="md" c="dimmed">{data?.name || '-'}</Text>
               </Box>
 
-              <Box>
+              <Box pl={5}>
                 <Text fz="lg" fw="bold">Deskripsi</Text>
                 <Text
                   fz="md"
