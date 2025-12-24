@@ -18,7 +18,7 @@ import {
   TableThead,
   TableTr,
   Text,
-  Title
+  Title,
 } from '@mantine/core';
 import {
   IconCash,
@@ -50,9 +50,10 @@ import React, { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../_com/header';
 import programKreatifState from '../../_state/inovasi/program-kreatif';
+import { useDebouncedValue } from '@mantine/hooks';
 
 function ProgramKreatifDesa() {
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
   return (
     <Box>
       <HeaderSearch
@@ -71,12 +72,13 @@ function ListProgramKreatifDesa({ search }: { search: string }) {
   const listState = useProxy(programKreatifState);
   const { data, loading, page, totalPages, load } = listState.findMany;
   const router = useRouter();
+  const [debouncedSearch] = useDebouncedValue(search, 1000);
 
   useEffect(() => {
-    load(page, 10, search);
-  }, [page, search]);
+    load(page, 10, debouncedSearch);
+  }, [page, debouncedSearch]);
 
-  const filteredData = data || []
+  const filteredData = data || [];
 
   const iconMap: Record<string, React.FC<any>> = {
     ekowisata: IconLeaf,
@@ -103,7 +105,7 @@ function ListProgramKreatifDesa({ search }: { search: string }) {
 
   if (loading || !data) {
     return (
-      <Stack py={10}>
+      <Stack py={{ base: 'sm', md: 'xl' }}>
         <Skeleton height={650} radius="md" />
       </Stack>
     );
@@ -111,35 +113,44 @@ function ListProgramKreatifDesa({ search }: { search: string }) {
 
   if (data.length === 0) {
     return (
-      <Box py={10}>
-        <Paper p="md" radius="md" shadow="sm" withBorder>
-          <Stack>
-            <Group justify="space-between" mb="md">
-              <Title order={4}>Daftar Program Kreatif Desa</Title>
+      <Box py={{ base: 'sm', md: 'xl' }}>
+        <Paper p="lg" radius="md" shadow="sm" withBorder>
+          <Stack gap="xl">
+            <Group justify="space-between" wrap="nowrap">
+              <Title order={4} lh={1.15}>
+                Daftar Program Kreatif Desa
+              </Title>
               <Button
                 leftSection={<IconPlus size={18} />}
                 color="blue"
                 variant="light"
                 onClick={() =>
-                  router.push(
-                    '/admin/inovasi/program-kreatif-desa/create'
-                  )
+                  router.push('/admin/inovasi/program-kreatif-desa/create')
                 }
               >
                 Tambah Baru
               </Button>
             </Group>
-            <Table highlightOnHover striped>
-              <TableThead>
-                <TableTr>
-                  <TableTh>No</TableTh>
-                  <TableTh>Nama Program Kreatif Desa</TableTh>
-                  <TableTh>Deskripsi Singkat</TableTh>
-                  <TableTh>Ikon</TableTh>
-                  <TableTh>Detail</TableTh>
-                </TableTr>
-              </TableThead>
-            </Table>
+
+            <Box visibleFrom="md">
+              <Table
+                highlightOnHover
+                miw={0}
+                striped
+                style={{ tableLayout: 'fixed', width: '100%' }}
+              >
+                <TableThead>
+                  <TableTr>
+                    <TableTh style={{ width: '5%', textAlign: 'center' }}>No</TableTh>
+                    <TableTh style={{ width: '20%' }}>Nama Program Kreatif Desa</TableTh>
+                    <TableTh style={{ width: '35%' }}>Deskripsi Singkat</TableTh>
+                    <TableTh style={{ width: '10%', textAlign: 'center' }}>Ikon</TableTh>
+                    <TableTh style={{ width: '15%', textAlign: 'center' }}>Detail</TableTh>
+                  </TableTr>
+                </TableThead>
+              </Table>
+            </Box>
+
             <Text ta="center" c="dimmed" py="lg">
               Tidak ada data program kreatif desa yang tersedia
             </Text>
@@ -150,7 +161,7 @@ function ListProgramKreatifDesa({ search }: { search: string }) {
   }
 
   return (
-    <Box py={10}>
+    <Box py={{ base: 'sm', md: 'xl' }}>
       <Paper
         withBorder
         bg={colors['white-1']}
@@ -159,58 +170,83 @@ function ListProgramKreatifDesa({ search }: { search: string }) {
         radius="md"
         h={{ base: 'auto', md: 650 }}
       >
-        <Group justify="space-between" mb="md">
-          <Title order={4}>Daftar Program Kreatif Desa</Title>
+        <Group justify="space-between" mb="xl" wrap="nowrap">
+          <Title order={4} lh={1.15}>
+            Daftar Program Kreatif Desa
+          </Title>
           <Button
             leftSection={<IconPlus size={18} />}
             color="blue"
             variant="light"
             onClick={() =>
-              router.push(
-                '/admin/inovasi/program-kreatif-desa/create'
-              )
+              router.push('/admin/inovasi/program-kreatif-desa/create')
             }
           >
             Tambah Baru
           </Button>
         </Group>
-        <Box style={{ overflowY: 'auto' }}>
-          <Table highlightOnHover striped >
+
+        {/* Desktop Table */}
+        <Box visibleFrom="md" style={{ height: '100%', overflowY: 'auto' }}>
+          <Table
+            highlightOnHover
+            miw={0}
+            striped
+            style={{ tableLayout: 'fixed', width: '100%' }}
+          >
             <TableThead>
               <TableTr>
-                <TableTh style={{ width: '5%', textAlign: 'center' }}>No</TableTh>
-                <TableTh style={{ width: '20%' }}>
-                  <Text lineClamp={1} fw={"bold"} fz="sm">Nama Program Kreatif Desa</Text>
+                <TableTh style={{ width: '5%', textAlign: 'center' }}>
+                  <Text fz="xs" fw={600} lh={1.2}>
+                    No
+                  </Text>
                 </TableTh>
-                <TableTh style={{ width: '35%' }}>Deskripsi Singkat</TableTh>
-                <TableTh style={{ width: '10%', textAlign: 'center' }}>Ikon</TableTh>
-                <TableTh style={{ width: '15%', textAlign: 'center' }}>Detail</TableTh>
+                <TableTh style={{ width: '20%' }}>
+                  <Text fz="xs" fw={600} lh={1.2}>
+                    Nama Program Kreatif Desa
+                  </Text>
+                </TableTh>
+                <TableTh style={{ width: '35%' }}>
+                  <Text fz="xs" fw={600} lh={1.2}>
+                    Deskripsi Singkat
+                  </Text>
+                </TableTh>
+                <TableTh style={{ width: '10%', textAlign: 'center' }}>
+                  <Text fz="xs" fw={600} lh={1.2}>
+                    Ikon
+                  </Text>
+                </TableTh>
+                <TableTh style={{ width: '15%', textAlign: 'center' }}>
+                  <Text fz="xs" fw={600} lh={1.2}>
+                    Detail
+                  </Text>
+                </TableTh>
               </TableTr>
             </TableThead>
             <TableTbody>
               {filteredData.map((item, index) => (
                 <TableTr key={item.id}>
-                  <TableTd style={{ width: '5%', textAlign: 'center' }}>{index + 1}</TableTd>
-                  <TableTd style={{ width: '20%', wordWrap: 'break-word' }}>
-                    <Box w={200}>
-                      <Text fw={500} lineClamp={1}>{item.name}</Text>
-                    </Box>
+                  <TableTd ta="center" fz="sm" fw={500} lh={1.45}>
+                    {index + 1}
                   </TableTd>
-                  <TableTd style={{ width: '35%', wordWrap: 'break-word' }}>
-                    <Box w={150}>
-                      <Text fz="sm" c="dimmed" lineClamp={1}>
-                        {item.slug}
-                      </Text>
-                    </Box>
+                  <TableTd>
+                    <Text fz="sm" fw={500} lh={1.45} lineClamp={1}>
+                      {item.name}
+                    </Text>
                   </TableTd>
-                  <TableTd style={{ width: '10%', textAlign: 'center' }}>
+                  <TableTd>
+                    <Text fz="sm" c="dimmed" lh={1.45} lineClamp={1}>
+                      {item.slug}
+                    </Text>
+                  </TableTd>
+                  <TableTd ta="center">
                     {iconMap[item.icon] && (
                       <Box title={item.icon}>
                         {React.createElement(iconMap[item.icon], { size: 24 })}
                       </Box>
                     )}
                   </TableTd>
-                  <TableTd style={{ width: '15%', textAlign: 'center' }}>
+                  <TableTd ta="center">
                     <Button
                       size="xs"
                       radius="md"
@@ -221,7 +257,9 @@ function ListProgramKreatifDesa({ search }: { search: string }) {
                       }
                     >
                       <IconDeviceImac size={18} />
-                      <Text ml={6}>Detail</Text>
+                      <Text ml={6} fz="sm" fw={500}>
+                        Detail
+                      </Text>
                     </Button>
                   </TableTd>
                 </TableTr>
@@ -229,7 +267,72 @@ function ListProgramKreatifDesa({ search }: { search: string }) {
             </TableTbody>
           </Table>
         </Box>
+
+        {/* Mobile Cards */}
+        <Box hiddenFrom="md">
+          <Stack gap="md">
+            {filteredData.map((item, index) => (
+              <Paper key={item.id} p="md" withBorder radius="md">
+                <Stack gap={4}>
+                  <Box>
+                    <Text fz="sm" fw={600} lh={1.4}>
+                      No
+                    </Text>
+                    <Text fz="sm" fw={500} lh={1.4}>
+                      {index + 1}
+                    </Text>
+                  </Box>
+                  <Box>
+                    <Text fz="sm" fw={600} lh={1.4}>
+                      Nama Program Kreatif Desa
+                    </Text>
+                    <Text fz="sm" fw={500} lh={1.4} lineClamp={2}>
+                      {item.name}
+                    </Text>
+                  </Box>
+                  <Box>
+                    <Text fz="sm" fw={600} lh={1.4}>
+                      Deskripsi Singkat
+                    </Text>
+                    <Text fz="sm" fw={500} c="dimmed" lh={1.4} lineClamp={2}>
+                      {item.slug}
+                    </Text>
+                  </Box>
+                  <Box>
+                    <Text fz="sm" fw={600} lh={1.4}>
+                      Ikon
+                    </Text>
+                    <Box mt={4} ta="center">
+                      {iconMap[item.icon] && (
+                        <Box title={item.icon}>
+                          {React.createElement(iconMap[item.icon], { size: 24 })}
+                        </Box>
+                      )}
+                    </Box>
+                  </Box>
+                  <Box ta="center" mt="sm">
+                    <Button
+                      size="xs"
+                      radius="md"
+                      variant="light"
+                      color="blue"
+                      onClick={() =>
+                        router.push(`/admin/inovasi/program-kreatif-desa/${item.id}`)
+                      }
+                    >
+                      <IconDeviceImac size={18} />
+                      <Text ml={6} fz="sm" fw={500}>
+                        Detail
+                      </Text>
+                    </Button>
+                  </Box>
+                </Stack>
+              </Paper>
+            ))}
+          </Stack>
+        </Box>
       </Paper>
+
       <Center>
         <Pagination
           value={page}
@@ -238,8 +341,8 @@ function ListProgramKreatifDesa({ search }: { search: string }) {
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
           total={totalPages}
-          mt="md"
-          mb="md"
+          mt="xl"
+          mb="xl"
           color="blue"
           radius="md"
         />
