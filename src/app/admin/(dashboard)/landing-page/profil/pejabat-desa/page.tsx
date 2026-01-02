@@ -1,7 +1,7 @@
 'use client'
 import profileLandingPageState from '@/app/admin/(dashboard)/_state/landing-page/profile';
 import colors from '@/con/colors';
-import { Box, Button, Center, Divider, Grid, GridCol, Image, Paper, Skeleton, Stack, Text, Title } from '@mantine/core';
+import { Box, Button, Center, Divider, Grid, GridCol, Group, Image, Paper, Skeleton, Stack, Text, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { useRouter } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
@@ -29,22 +29,18 @@ function Page() {
   return (
     <Paper bg={colors['white-1']} p="lg" radius="md" shadow="sm">
       <Stack gap="md">
-        <Grid align="center">
-          <GridCol span={{ base: 12, md: 11 }}>
-            <Title order={3} c={colors['blue-button']}>Preview Pejabat Desa</Title>
-          </GridCol>
-          <GridCol span={{ base: 12, md: 1 }}>
-            <Button
-              style={{fontSize: 15, fontWeight: "bold"}}
-              c="green"
-              variant="light"
-              radius="md"
-              onClick={() => router.push(`/admin/landing-page/profil/pejabat-desa/${allList.findUnique.data?.id}`)}
-            >
-              Edit
-            </Button>
-          </GridCol>
-        </Grid>
+        <Group justify="space-between">
+          <Title order={3} c={colors['blue-button']}>Preview Pejabat Desa</Title>
+          <Button
+            style={{ fontSize: 15, fontWeight: "bold" }}
+            c="green"
+            variant="light"
+            radius="md"
+            onClick={() => router.push(`/admin/landing-page/profil/pejabat-desa/${allList.findUnique.data?.id}`)}
+          >
+            Edit
+          </Button>
+        </Group>
         {dataArray.map((item) => (
           <Paper key={item.id} p="xl" bg={'white'} withBorder radius="md" shadow="xs">
             <Box px={{ base: "sm", md: 100 }}>

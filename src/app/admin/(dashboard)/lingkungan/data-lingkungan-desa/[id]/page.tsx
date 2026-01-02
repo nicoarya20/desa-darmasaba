@@ -79,7 +79,7 @@ function DetailDataLingkunganDesa() {
   const data = stateDataLingkungan.findUnique.data;
 
   return (
-    <Box py={10}>
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Back Button */}
       <Button
         variant="subtle"
@@ -93,7 +93,7 @@ function DetailDataLingkunganDesa() {
       {/* Main Card */}
       <Paper
         withBorder
-        w={{ base: '100%', md: '60%' }}
+        w={{ base: '100%', md: '70%' }}
         bg={colors['white-1']}
         p="lg"
         radius="md"
@@ -131,7 +131,9 @@ function DetailDataLingkunganDesa() {
 
               <Box>
                 <Text fz="lg" fw="bold">Deskripsi</Text>
-                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data?.deskripsi || '-' }} />
+                <Box pl={5}>
+                  <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data?.deskripsi || '-' }} />
+                </Box>
               </Box>
 
               {/* Action Buttons */}

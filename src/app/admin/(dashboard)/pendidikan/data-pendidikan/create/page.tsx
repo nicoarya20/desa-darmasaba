@@ -39,7 +39,7 @@ export default function CreateDataPendidikan() {
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'xl' }} py="md">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       <Group mb="md" gap="sm">
         <Button variant="subtle" onClick={() => router.back()} radius="md">
           <IconArrowBack size={20} stroke={2} />

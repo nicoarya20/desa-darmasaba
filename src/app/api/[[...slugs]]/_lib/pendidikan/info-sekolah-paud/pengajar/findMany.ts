@@ -72,9 +72,6 @@ async function pengajarFindMany(context: Context) {
       })
     ]);
 
-    console.log('Fetched pengajar data count:', data.length);
-    console.log('Total pengajar count:', total);
-
     return {
       success: true,
       message: "Success fetch pengajar with pagination",

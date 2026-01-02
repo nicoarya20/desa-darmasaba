@@ -40,7 +40,7 @@ function DetailBeasiswaPendaftar() {
   const data = state.findUnique.data;
 
   return (
-    <Box py={10}>
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       <Button
         variant="subtle"
         onClick={() => router.back()}

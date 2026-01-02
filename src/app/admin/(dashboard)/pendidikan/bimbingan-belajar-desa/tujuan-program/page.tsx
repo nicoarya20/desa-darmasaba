@@ -4,8 +4,7 @@ import {
   Box,
   Button,
   Divider,
-  Grid,
-  GridCol,
+  Group,
   Paper,
   Skeleton,
   Stack,
@@ -40,28 +39,24 @@ function Page() {
     <Paper bg={colors['white-1']} p="lg" radius="md" shadow="sm">
       <Stack gap="md">
         {/* Header */}
-        <Grid align="center">
-          <GridCol span={{ base: 12, md: 11 }}>
-            <Title order={3} c={colors['blue-button']}>
-              Pratinjau Tujuan Program
-            </Title>
-          </GridCol>
-          <GridCol span={{ base: 12, md: 1 }}>
-            <Button
-              c="green"
-              variant="light"
-              leftSection={<IconEdit size={18} stroke={2} />}
-              radius="md"
-              onClick={() =>
-                router.push(
-                  '/admin/pendidikan/bimbingan-belajar-desa/tujuan-program/edit'
-                )
-              }
-            >
-              Edit
-            </Button>
-          </GridCol>
-        </Grid>
+        <Group justify='space-between' align="center">
+          <Title order={3} c={colors['blue-button']}>
+            Pratinjau Tujuan Program
+          </Title>
+          <Button
+            c="green"
+            variant="light"
+            leftSection={<IconEdit size={18} stroke={2} />}
+            radius="md"
+            onClick={() =>
+              router.push(
+                '/admin/pendidikan/bimbingan-belajar-desa/tujuan-program/edit'
+              )
+            }
+          >
+            Edit
+          </Button>
+        </Group>
 
         {/* Konten Preview */}
         <Paper
@@ -70,6 +65,7 @@ function Page() {
           withBorder
           radius="md"
           shadow="xs"
+          visibleFrom='md'
         >
           <Box px={{ base: 'sm', md: 50 }}>
             <Stack gap="lg">
@@ -91,6 +87,47 @@ function Page() {
                 c="dimmed"
                 dangerouslySetInnerHTML={{ __html: data.deskripsi }}
                 style={{ wordBreak: "break-word", whiteSpace: "normal" }}
+              />
+            </Stack>
+          </Box>
+        </Paper>
+
+         <Paper
+          p="xl"
+          bg={colors['white-1']}
+          withBorder
+          radius="md"
+          shadow="xs"
+          hiddenFrom='md'
+        >
+          <Box px={{ base: 'sm', md: 50 }}>
+            <Stack gap="lg">
+              {/* Judul */}
+              <Text
+                ta="center"
+                fz={{ base: '1.3rem', md: '1.8rem' }}
+                fw="bold"
+                c={colors['blue-button']}
+                dangerouslySetInnerHTML={{ __html: data.judul }}
+              />
+              <Divider my="md" color={colors['blue-button']} />
+
+              {/* Deskripsi */}
+              <Text
+                fz={{ base: '0.95rem', md: '1.2rem' }}
+                lh={1.7}
+                ta={{ base: 'left', md: 'justify' }}
+                c="dimmed"
+                dangerouslySetInnerHTML={{ __html: data.deskripsi }}
+                style={{
+                  wordBreak: 'break-word',
+                  whiteSpace: 'normal',
+                  textWrap: 'pretty',
+                  hyphens: 'auto',
+                  '& p': {
+                    marginBottom: '0.8em',
+                  },
+                }}
               />
             </Stack>
           </Box>

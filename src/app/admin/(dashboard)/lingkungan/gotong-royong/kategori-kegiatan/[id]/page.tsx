@@ -83,7 +83,7 @@ function EditKategoriKegiatan() {
   if (loading) return <Text>Loading...</Text>;
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       <Group mb="md" align="center">
         <Button variant="subtle" p="xs" radius="md" onClick={() => router.back()}>
           <IconArrowBack color={colors['blue-button']} size={24} />

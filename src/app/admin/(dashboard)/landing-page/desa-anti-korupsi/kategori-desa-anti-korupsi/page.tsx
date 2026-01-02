@@ -18,7 +18,7 @@ import {
   Text,
   Title,
 } from '@mantine/core';
-import { useShallowEffect } from '@mantine/hooks';
+import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
 import { IconEdit, IconPlus, IconSearch, IconTrash } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -50,6 +50,7 @@ function ListKategoriKegiatan({ search }: { search: string }) {
   const router = useRouter();
 
   const { data, page, totalPages, loading, load } = stateKategori.findMany;
+  const [debouncedSearch] = useDebouncedValue(search, 1000); // 500ms delay
 
   const handleHapus = () => {
     if (selectedId) {
@@ -60,8 +61,8 @@ function ListKategoriKegiatan({ search }: { search: string }) {
   };
 
   useShallowEffect(() => {
-    load(page, 10, search);
-  }, [page, search]);
+    load(page, 10, debouncedSearch);
+  }, [page, debouncedSearch]);
 
   const filteredData = data || [];
 
@@ -211,7 +212,7 @@ function ListKategoriKegiatan({ search }: { search: string }) {
         <Box hiddenFrom="md">{renderMobileCards()}</Box>
       </Paper>
 
-      {totalPages > 1 && (
+      
         <Center mt="xl">
           <Pagination
             value={page}
@@ -224,7 +225,6 @@ function ListKategoriKegiatan({ search }: { search: string }) {
             radius="md"
           />
         </Center>
-      )}
 
       <ModalKonfirmasiHapus
         opened={modalHapus}

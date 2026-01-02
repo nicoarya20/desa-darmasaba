@@ -68,7 +68,7 @@ const category = proxy({
         const res = await ApiFetch.api.desa.kategoripengumuman[
           "findMany"
         ].get({
-          query: { page, limit },
+          query: { page, limit, search },
         });
   
         if (res.status === 200 && res.data?.success) {

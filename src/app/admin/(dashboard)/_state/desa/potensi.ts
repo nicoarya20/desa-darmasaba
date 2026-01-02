@@ -65,7 +65,7 @@ const potensiDesa = proxy({
         const res = await ApiFetch.api.desa.potensi[
           "find-many"
         ].get({
-          query: { page, limit },
+          query: { page, limit, search },
         });
   
         if (res.status === 200 && res.data?.success) {
