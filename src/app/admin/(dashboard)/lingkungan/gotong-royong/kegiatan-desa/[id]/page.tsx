@@ -41,7 +41,7 @@ function DetailKegiatanDesa() {
   const data = kegiatanDesaState.findUnique.data;
 
   return (
-    <Box py={10}>
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Tombol Kembali */}
       <Button
         variant="subtle"
@@ -55,7 +55,7 @@ function DetailKegiatanDesa() {
       {/* Container Detail */}
       <Paper
         withBorder
-        w={{ base: "100%", md: "60%" }}
+        w={{ base: "100%", md: "70%" }}
         bg={colors['white-1']}
         p="lg"
         radius="md"
@@ -85,13 +85,17 @@ function DetailKegiatanDesa() {
               {/* Deskripsi Singkat */}
               <Box>
                 <Text fz="lg" fw="bold">Deskripsi Singkat</Text>
-                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data.deskripsiSingkat || '-' }} />
+                <Box pl={5}>
+                  <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data.deskripsiSingkat || '-' }} />
+                </Box>
               </Box>
 
               {/* Deskripsi Lengkap */}
               <Box>
                 <Text fz="lg" fw="bold">Deskripsi</Text>
-                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data.deskripsiLengkap || '-' }} />
+                <Box pl={5}>
+                  <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data.deskripsiLengkap || '-' }} />
+                </Box>
               </Box>
 
               {/* Kategori */}

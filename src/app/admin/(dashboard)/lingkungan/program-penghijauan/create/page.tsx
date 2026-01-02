@@ -49,7 +49,7 @@ function CreateProgramPenghijauan() {
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Tombol back + title */}
       <Group mb="md">
         <Button

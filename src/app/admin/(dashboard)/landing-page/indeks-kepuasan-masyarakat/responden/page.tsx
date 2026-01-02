@@ -50,7 +50,7 @@ function ListResponden({ search }: ListRespondenProps) {
   const { data, page, totalPages, loading, load } = state.findMany;
 
   useShallowEffect(() => {
-    load(page, 10);
+    load(page, 10,);
   }, [page]);
 
   const filteredData = (data || []).filter((item) => {

@@ -111,7 +111,7 @@ function EditTujuanProgram() {
   }
 
   return (
-    <Box>
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       <Stack gap="xs">
         {/* Back Button + Title */}
         <Group mb="md">

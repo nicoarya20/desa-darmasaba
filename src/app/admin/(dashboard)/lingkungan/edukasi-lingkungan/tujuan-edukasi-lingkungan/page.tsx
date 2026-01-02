@@ -1,5 +1,5 @@
 'use client'
-import { Box, Button, Grid, GridCol, Paper, Skeleton, Stack, Text, Title } from '@mantine/core';
+import { Box, Button, Group, Paper, Skeleton, Stack, Text, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconEdit } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
@@ -25,25 +25,21 @@ function Page() {
   return (
     <Box p="md">
       <Paper withBorder p={{ base: 'md', md: 'lg' }} radius="md">
-        <Grid align="center" mb={{ base: 'md', md: 'lg' }}>
-          <GridCol span={{ base: 12, md: 11 }}>
-            <Title order={3} fw={600}>Preview Tujuan Edukasi Lingkungan</Title>
-          </GridCol>
-          <GridCol span={{ base: 12, md: 1 }} style={{ textAlign: 'right' }}>
-            <Button
-              size="sm"
-              variant="light"
-              color="green"
-              radius="md"
-              leftSection={<IconEdit size={16} />}
-              onClick={() =>
-                router.push('/admin/lingkungan/edukasi-lingkungan/tujuan-edukasi-lingkungan/edit')
-              }
-            >
-              Edit
-            </Button>
-          </GridCol>
-        </Grid>
+        <Group align="center" justify='space-between' mb={{ base: 'md', md: 'lg' }}>
+          <Title order={3} fw={600}>Preview Tujuan Edukasi Lingkungan</Title>
+          <Button
+            size="sm"
+            variant="light"
+            color="green"
+            radius="md"
+            leftSection={<IconEdit size={16} />}
+            onClick={() =>
+              router.push('/admin/lingkungan/edukasi-lingkungan/tujuan-edukasi-lingkungan/edit')
+            }
+          >
+            Edit
+          </Button>
+        </Group>
 
         <Stack gap="md">
           <Paper p={{ base: 'md', md: 'xl' }} bg="#ECEEF8" radius="md">

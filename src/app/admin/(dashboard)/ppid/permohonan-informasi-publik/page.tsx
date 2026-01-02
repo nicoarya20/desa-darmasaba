@@ -57,7 +57,7 @@ function Page() {
   if (!data || data.length === 0) {
     return (
       <Box py={{ base: 'md', md: 'lg' }}>
-        <Paper bg={colors['white-1']} p={{ base: 'md', md: 'lg' }} radius="xl" shadow="sm" withBorder>
+        <Paper bg={colors['white-1']} p={{ base: 'md', md: 'lg' }} radius="md" shadow="sm" withBorder>
           <Stack gap={'sm'}>
             <Grid mb={10}>
               <GridCol span={{ base: 12, md: 9 }}>
@@ -96,7 +96,7 @@ function Page() {
 
   return (
     <Box py={{ base: 'sm', md: 'md' }}>
-      <Paper bg={colors['white-1']} p={{ base: 'md', md: 'lg' }} radius="xl" shadow="sm" withBorder>
+      <Paper bg={colors['white-1']} p={{ base: 'md', md: 'lg' }} radius="md" shadow="sm" withBorder>
         <Stack gap={'sm'}>
           <Grid mb={10}>
             <GridCol span={{ base: 12, md: 9 }}>

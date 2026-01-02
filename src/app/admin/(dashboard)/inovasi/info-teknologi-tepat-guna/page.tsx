@@ -183,7 +183,8 @@ function ListInfoTeknologiTepatGuna({ search }: { search: string }) {
                     <Text fz={"sm"} fw={600} lh={1.4}>
                       Deskripsi Singkat
                     </Text>
-                    <Text
+                   <Box pl={5}>
+                     <Text
                       fz="sm"
                       fw={500}
                       lh={1.4}
@@ -191,6 +192,7 @@ function ListInfoTeknologiTepatGuna({ search }: { search: string }) {
                         __html: item.deskripsi || '-',
                       }}
                     />
+                   </Box>
                   </Box>
                   <Group justify="flex-end">
                     <Button

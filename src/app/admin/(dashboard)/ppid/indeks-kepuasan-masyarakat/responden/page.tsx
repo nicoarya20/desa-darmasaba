@@ -16,7 +16,6 @@ import {
   Text,
   Title,
 } from '@mantine/core';
-import { useShallowEffect } from '@mantine/hooks';
 import { IconDeviceImacCog, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -48,10 +47,6 @@ function ListResponden({ search }: ListRespondenProps) {
   const state = useProxy(indeksKepuasanState.responden);
   const router = useRouter();
   const { data, page, totalPages, loading, load } = state.findMany;
-
-  useShallowEffect(() => {
-    load(page, 10);
-  }, [page]);
 
   const filteredData = (data || []).filter((item) => {
     const keyword = search.toLowerCase();

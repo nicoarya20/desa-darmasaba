@@ -79,7 +79,7 @@ function DetailProgramPenghijauan() {
   const data = stateProgramPenghijauan.findUnique.data
 
   return (
-    <Box py={10}>
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Tombol kembali */}
       <Button
         variant="subtle"
@@ -93,7 +93,7 @@ function DetailProgramPenghijauan() {
       {/* Konten detail */}
       <Paper
         withBorder
-        w={{ base: "100%", md: "60%" }}
+        w={{ base: "100%", md: "70%" }}
         bg={colors['white-1']}
         p="lg"
         radius="md"
@@ -129,7 +129,9 @@ function DetailProgramPenghijauan() {
 
               <Box>
                 <Text fz="lg" fw="bold">Deskripsi</Text>
-                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data?.deskripsi || '-' }} />
+                <Box pl={5}>
+                  <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data?.deskripsi || '-' }} />
+                </Box>
               </Box>
 
               {/* Tombol aksi */}

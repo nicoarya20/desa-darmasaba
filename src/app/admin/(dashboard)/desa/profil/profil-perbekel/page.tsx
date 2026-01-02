@@ -1,7 +1,7 @@
 'use client'
 
 import colors from '@/con/colors';
-import { Box, Button, Center, Divider, Grid, GridCol, Image, Paper, Skeleton, Stack, Text, Title } from '@mantine/core';
+import { Box, Button, Center, Divider, Grid, GridCol, Group, Image, Paper, Skeleton, Stack, Text, Title } from '@mantine/core';
 import { IconEdit } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
@@ -31,22 +31,18 @@ function Page() {
     <Paper bg={colors['white-1']} p="lg" radius="md" shadow="sm">
       <Stack gap="md">
         {/* Header + tombol edit */}
-        <Grid align="center">
-          <GridCol span={{ base: 12, md: 11 }}>
-            <Title order={2} c={colors['blue-button']} lh={1.2} />
-          </GridCol>
-          <GridCol span={{ base: 12, md: 1 }}>
-            <Button
-              c="green"
-              variant="light"
-              leftSection={<IconEdit size={18} stroke={2} />}
-              radius="md"
-              onClick={() => router.push(`/admin/desa/profil/profil-perbekel/${perbekel.id}`)}
-            >
-              Edit
-            </Button>
-          </GridCol>
-        </Grid>
+        <Group justify="space-between">
+          <Title order={2} c={colors['blue-button']} lh={1.2}>Profil Perbekel</Title>
+          <Button
+            c="green"
+            variant="light"
+            leftSection={<IconEdit size={18} stroke={2} />}
+            radius="md"
+            onClick={() => router.push(`/admin/desa/profil/profil-perbekel/${perbekel.id}`)}
+          >
+            Edit
+          </Button>
+        </Group>
 
         {/* Card Profil */}
         <Paper p="xl" bg={colors['white-1']} withBorder radius="md" shadow="xs">
@@ -60,7 +56,7 @@ function Page() {
               <GridCol span={12}>
                 <Text
                   ta="center"
-                  fz={{ base: 'sm', md: 'md' }}
+                  fz={{ base: 'sm', md: 'xl' }}
                   fw="bold"
                   c={colors['blue-button']}
                   lh={{ base: 1.45, md: 1.45 }}

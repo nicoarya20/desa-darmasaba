@@ -116,7 +116,7 @@ function EditFasilitasYangDisediakan() {
   }
 
   return (
-    <Box>
+   <Box px={{ base: 0, md: 'lg' }} py="xs">
       <Stack gap="xs">
         <Group mb="md">
           <Button

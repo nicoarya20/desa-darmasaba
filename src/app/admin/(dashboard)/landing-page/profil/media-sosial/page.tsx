@@ -196,6 +196,7 @@ function ListMediaSosial({ search }: { search: string }) {
             {filteredData.length > 0 ? (
               filteredData.map((item) => (
                 <Paper key={item.id} withBorder p="sm" radius="md">
+                  <Stack gap={"xs"}>
                     <Box>
                       <Text fz="sm" fw={600} lh={1.4}>Nama Media Sosial / Kontak</Text>
                       <Text fw={500} fz="sm" lh={1.45}>
@@ -221,37 +222,38 @@ function ListMediaSosial({ search }: { search: string }) {
                         return <Box bg={colors['blue-button']} w="100%" h="100%" />;
                       })()}
                     </Box>
-                  <Box>
-                    <Text fz="sm" fw={600} lh={1.4}>Link / No. Telepon</Text>
-                    <a
-                      href={item.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{ textDecoration: 'underline' }}
-                    >
-                      <Text
-                        fz="sm"
-                        c="blue"
-                        truncate
+                    <Box>
+                      <Text fz="sm" fw={600} lh={1.4}>Link / No. Telepon</Text>
+                      <a
+                        href={item.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ textDecoration: 'underline' }}
                       >
-                        {item.iconUrl || item.noTelp || '-'}
-                      </Text>
-                    </a>
-                  </Box>
-                  <Group mt="sm" justify="flex-end">
-                    <Button
-                      size="xs"
-                      radius="md"
-                      variant="light"
-                      color="blue"
-                      leftSection={<IconDeviceImacCog size={16} />}
-                      onClick={() =>
-                        router.push(`/admin/landing-page/profil/media-sosial/${item.id}`)
-                      }
-                    >
-                      Detail
-                    </Button>
-                  </Group>
+                        <Text
+                          fz="sm"
+                          c="blue"
+                          truncate
+                        >
+                          {item.iconUrl || item.noTelp || '-'}
+                        </Text>
+                      </a>
+                    </Box>
+                    <Group mt="sm" justify="flex-end">
+                      <Button
+                        size="xs"
+                        radius="md"
+                        variant="light"
+                        color="blue"
+                        leftSection={<IconDeviceImacCog size={16} />}
+                        onClick={() =>
+                          router.push(`/admin/landing-page/profil/media-sosial/${item.id}`)
+                        }
+                      >
+                        Detail
+                      </Button>
+                    </Group>
+                  </Stack>
                 </Paper>
               ))
             ) : (
