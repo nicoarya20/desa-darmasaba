@@ -88,63 +88,65 @@ function ListVideo({ search }: { search: string }) {
 
         {/* Desktop Table */}
         <Box visibleFrom="md">
-          <Table highlightOnHover w="100%">
-            <TableThead>
-              <TableTr>
-                <TableTh>Judul Video</TableTh>
-                <TableTh>Tanggal</TableTh>
-                <TableTh>Deskripsi</TableTh>
-                <TableTh>Aksi</TableTh>
-              </TableTr>
-            </TableThead>
-            <TableTbody>
-              {filteredData.length > 0 ? (
-                filteredData.map((item) => (
-                  <TableTr key={item.id}>
-                    <TableTd>
-                      <Text fz="md" fw={500} lh={1.45} truncate="end" lineClamp={1}>
-                        {item.name}
-                      </Text>
-                    </TableTd>
-                    <TableTd>
-                      <Text fz="sm" c="dimmed" lh={1.45}>
-                        {new Date(item.createdAt).toLocaleDateString('id-ID', {
-                          day: 'numeric',
-                          month: 'long',
-                          year: 'numeric',
-                        })}
-                      </Text>
-                    </TableTd>
-                    <TableTd>
-                      <Text fz="sm" lh={1.45} truncate="end" lineClamp={1} dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
-                    </TableTd>
-                    <TableTd>
-                      <Button
-                        variant="light"
-                        color="blue"
-                        onClick={() => router.push(`/admin/desa/gallery/video/${item.id}`)}
-                        fz="sm"
-                        px="xs"
-                      >
-                        <IconDeviceImac size={18} />
-                        <Text ml={5}>Detail</Text>
-                      </Button>
+          <Box style={{ overflowX: 'auto' }}>
+           <Table highlightOnHover striped verticalSpacing="sm">
+              <TableThead>
+                <TableTr>
+                  <TableTh>Judul Video</TableTh>
+                  <TableTh>Tanggal</TableTh>
+                  <TableTh>Deskripsi</TableTh>
+                  <TableTh>Aksi</TableTh>
+                </TableTr>
+              </TableThead>
+              <TableTbody>
+                {filteredData.length > 0 ? (
+                  filteredData.map((item) => (
+                    <TableTr key={item.id}>
+                      <TableTd style={{ maxWidth: 250 }}>
+                        <Text fz="md" fw={500} lh={1.45} truncate="end" lineClamp={1}>
+                          {item.name}
+                        </Text>
+                      </TableTd>
+                      <TableTd style={{ maxWidth: 250 }}>
+                        <Text fz="sm" c="dimmed" lh={1.45}>
+                          {new Date(item.createdAt).toLocaleDateString('id-ID', {
+                            day: 'numeric',
+                            month: 'long',
+                            year: 'numeric',
+                          })}
+                        </Text>
+                      </TableTd>
+                      <TableTd style={{ maxWidth: 250 }}>
+                        <Text fz="sm" lh={1.45} truncate="end" lineClamp={1} dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
+                      </TableTd>
+                      <TableTd style={{ maxWidth: 250 }}>
+                        <Button
+                          variant="light"
+                          color="blue"
+                          onClick={() => router.push(`/admin/desa/gallery/video/${item.id}`)}
+                          fz="sm"
+                          px="xs"
+                        >
+                          <IconDeviceImac size={18} />
+                          <Text ml={5}>Detail</Text>
+                        </Button>
+                      </TableTd>
+                    </TableTr>
+                  ))
+                ) : (
+                  <TableTr>
+                    <TableTd colSpan={4}>
+                      <Center py={24}>
+                        <Text c="dimmed" fz="sm" lh={1.4}>
+                          Tidak ada video yang cocok
+                        </Text>
+                      </Center>
                     </TableTd>
                   </TableTr>
-                ))
-              ) : (
-                <TableTr>
-                  <TableTd colSpan={4}>
-                    <Center py={24}>
-                      <Text c="dimmed" fz="sm" lh={1.4}>
-                        Tidak ada video yang cocok
-                      </Text>
-                    </Center>
-                  </TableTd>
-                </TableTr>
-              )}
-            </TableTbody>
-          </Table>
+                )}
+              </TableTbody>
+            </Table>
+          </Box>
         </Box>
 
         {/* Mobile Cards */}

@@ -194,7 +194,7 @@ const posisiOrganisasi = proxy({
 
       try {
         this.loading = true;
-        const res = await ApiFetch.api.ekonomi['struktur-organisasi']['posisi-organisasi']['create'].post(this.form);
+        const res = await ApiFetch.api.ekonomi["struktur-organisasi"]["posisi-organisasi"]["create"].post(this.form);
         if (res.status === 200) {
           toast.success("Berhasil menambahkan posisi organisasi");
           posisiOrganisasi.findMany.load();

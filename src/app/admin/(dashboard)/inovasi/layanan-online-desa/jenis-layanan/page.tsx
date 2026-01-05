@@ -141,9 +141,8 @@ function ListJenisLayanan({ search }: { search: string }) {
                         lh={1.5}
                         c={theme.black}
                         lineClamp={2}
-                      >
-                        {item.deskripsi || '-'}
-                      </Text>
+                        dangerouslySetInnerHTML={{ __html: item.deskripsi || '-' }}
+                      />
                     </TableTd>
                     <TableTd style={{ width: '15%' }} ta="center">
                       <Button
@@ -197,9 +196,13 @@ function ListJenisLayanan({ search }: { search: string }) {
                       <Text fz="sm" fw={600} lh={1.4} c={theme.black}>
                         Deskripsi
                       </Text>
-                      <Text fz="sm" fw={500} lh={1.5} c={theme.black}>
-                        {item.deskripsi || '-'}
-                      </Text>
+                      <Text 
+                        fz="sm" 
+                        fw={500} 
+                        lh={1.5} 
+                        c={theme.black}
+                        dangerouslySetInnerHTML={{ __html: item.deskripsi || '-' }}
+                      />
                     </Box>
                     <Group justify="flex-end" mt="xs">
                       <Button

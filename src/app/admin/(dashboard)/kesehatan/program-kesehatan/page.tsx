@@ -110,10 +110,10 @@ function ListProgramKesehatan({ search }: { search: string }) {
                         {item.name}
                       </Text>
                     </TableTd>
-                    <TableTd w={200}>
+                    <TableTd>
                       <Text fz="sm" lh={1.5} truncate="end" lineClamp={1} dangerouslySetInnerHTML={{ __html: item.deskripsiSingkat }} />
                     </TableTd>
-                    <TableTd w={200}>
+                    <TableTd>
                       <Text fz="sm" lh={1.5} truncate="end" lineClamp={1} dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
                     </TableTd>
                     <TableTd>

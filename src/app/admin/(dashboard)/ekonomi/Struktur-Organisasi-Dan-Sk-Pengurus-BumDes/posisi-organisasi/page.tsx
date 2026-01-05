@@ -153,9 +153,14 @@ function ListPosisiOrganisasiBumDes({ search }: { search: string }) {
                       </Text>
                     </TableTd>
                     <TableTd>
-                      <Text fz="sm" fw={500} lh={1.45} c="dimmed" lineClamp={2}>
-                        {item.deskripsi || '-'}
-                      </Text>
+                      <Text 
+                        fz="sm" 
+                        fw={500} 
+                        lh={1.45} 
+                        c="dimmed" 
+                        lineClamp={2} 
+                        dangerouslySetInnerHTML={{ __html: item.deskripsi || '-' }}
+                      />
                     </TableTd>
                     <TableTd>
                       <Text fz="md" fw={500} lh={1.45}>{item.hierarki || '-'}</Text>
@@ -223,9 +228,14 @@ function ListPosisiOrganisasiBumDes({ search }: { search: string }) {
                       <Text fz="sm" fw={600} lh={1.4}>
                         Deskripsi
                       </Text>
-                      <Text fz="sm" fw={500} lh={1.4}>
-                        {item.deskripsi || '-'}
-                      </Text>
+                      <Text 
+                        fz="sm" 
+                        fw={500} 
+                        lh={1.45} 
+                        c="dimmed" 
+                        lineClamp={2} 
+                        dangerouslySetInnerHTML={{ __html: item.deskripsi || '-' }}
+                      />
                     </Box>
                     <Box>
                       <Text fz="sm" fw={600} lh={1.4}>

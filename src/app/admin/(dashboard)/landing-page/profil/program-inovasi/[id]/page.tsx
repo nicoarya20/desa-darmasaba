@@ -84,7 +84,9 @@ function DetailProgramInovasi() {
 
               <Box>
                 <Text fz="lg" fw="bold">Deskripsi</Text>
-                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data.description || '-' }}></Text>
+               <Box pl={5}>
+                 <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data.description || '-' }}></Text>
+               </Box>
               </Box>
 
               <Box>

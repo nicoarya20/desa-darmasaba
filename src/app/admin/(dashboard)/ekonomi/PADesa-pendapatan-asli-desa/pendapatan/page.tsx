@@ -160,7 +160,6 @@ function ListPendapatan({ search }: { search: string }) {
                           px="xs"
                         >
                           <IconEdit size={16} />
-                          <Text ml={5}>Edit</Text>
                         </Button>
                       </TableTd>
                       <TableTd>
@@ -176,7 +175,6 @@ function ListPendapatan({ search }: { search: string }) {
                           px="xs"
                         >
                           <IconTrash size={16} />
-                          <Text ml={5}>Hapus</Text>
                         </Button>
                       </TableTd>
                     </TableTr>

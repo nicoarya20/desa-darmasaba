@@ -14,23 +14,23 @@ export const devBar = [
         name: "Desa Anti Korupsi",
         path: "/admin/landing-page/desa-anti-korupsi/list-desa-anti-korupsi"
       },
+      // {
+      //   id: "Landing_Page_3",
+      //   name: "Indeks Kepuasan Masyarakat",
+      //   path: "/admin/landing-page/indeks-kepuasan-masyarakat/grafik-kepuasan-masyarakat"
+      // },
       {
         id: "Landing_Page_3",
-        name: "Indeks Kepuasan Masyarakat",
-        path: "/admin/landing-page/indeks-kepuasan-masyarakat/grafik-kepuasan-masyarakat"
-      },
-      {
-        id: "Landing_Page_4",
         name: "SDGs",
         path: "/admin/landing-page/SDGs"
       },
       {
-        id: "Landing_Page_5",
+        id: "Landing_Page_4",
         name: "APBDes",
         path: "/admin/landing-page/apbdes"
       },
       {
-        id: "Landing_Page_6",
+        id: "Landing_Page_5",
         name: "Prestasi Desa",
         path: "/admin/landing-page/prestasi-desa/list-prestasi-desa"
       }
@@ -354,7 +354,7 @@ export const devBar = [
       {
         id: "Pendidikan_3",
         name: "Program Pendidikan Anak",
-        path: "/admin/pendidikan/program-pendidikan-anak/program-unggulan"
+        path: "/admin/pendidikan/program-pendidikan-anak/tujuan-program"
       },
       {
         id: "Pendidikan_4",
@@ -418,23 +418,23 @@ export const navBar = [
         name: "Desa Anti Korupsi",
         path: "/admin/landing-page/desa-anti-korupsi/list-desa-anti-korupsi"
       },
+      // {
+      //   id: "Landing_Page_3",
+      //   name: "Indeks Kepuasan Masyarakat",
+      //   path: "/admin/landing-page/indeks-kepuasan-masyarakat/grafik-kepuasan-masyarakat"
+      // },
       {
         id: "Landing_Page_3",
-        name: "Indeks Kepuasan Masyarakat",
-        path: "/admin/landing-page/indeks-kepuasan-masyarakat/grafik-kepuasan-masyarakat"
-      },
-      {
-        id: "Landing_Page_4",
         name: "SDGs",
         path: "/admin/landing-page/SDGs"
       },
       {
-        id: "Landing_Page_5",
+        id: "Landing_Page_4",
         name: "APBDes",
         path: "/admin/landing-page/apbdes"
       },
       {
-        id: "Landing_Page_6",
+        id: "Landing_Page_5",
         name: "Prestasi Desa",
         path: "/admin/landing-page/prestasi-desa/list-prestasi-desa"
       }
@@ -758,7 +758,7 @@ export const navBar = [
       {
         id: "Pendidikan_3",
         name: "Program Pendidikan Anak",
-        path: "/admin/pendidikan/program-pendidikan-anak/program-unggulan"
+        path: "/admin/pendidikan/program-pendidikan-anak/tujuan-program"
       },
       {
         id: "Pendidikan_4",
@@ -822,23 +822,23 @@ export const role1 = [
         name: "Desa Anti Korupsi",
         path: "/admin/landing-page/desa-anti-korupsi/list-desa-anti-korupsi"
       },
+      // {
+      //   id: "Landing_Page_3",
+      //   name: "Indeks Kepuasan Masyarakat",
+      //   path: "/admin/landing-page/indeks-kepuasan-masyarakat/grafik-kepuasan-masyarakat"
+      // },
       {
         id: "Landing_Page_3",
-        name: "Indeks Kepuasan Masyarakat",
-        path: "/admin/landing-page/indeks-kepuasan-masyarakat/grafik-kepuasan-masyarakat"
-      },
-      {
-        id: "Landing_Page_4",
         name: "SDGs",
         path: "/admin/landing-page/SDGs"
       },
       {
-        id: "Landing_Page_5",
+        id: "Landing_Page_4",
         name: "APBDes",
         path: "/admin/landing-page/apbdes"
       },
       {
-        id: "Landing_Page_6",
+        id: "Landing_Page_5",
         name: "Prestasi Desa",
         path: "/admin/landing-page/prestasi-desa/list-prestasi-desa"
       }
@@ -1170,7 +1170,7 @@ export const role3 = [
       {
         id: "Pendidikan_3",
         name: "Program Pendidikan Anak",
-        path: "/admin/pendidikan/program-pendidikan-anak/program-unggulan"
+        path: "/admin/pendidikan/program-pendidikan-anak/tujuan-program"
       },
       {
         id: "Pendidikan_4",

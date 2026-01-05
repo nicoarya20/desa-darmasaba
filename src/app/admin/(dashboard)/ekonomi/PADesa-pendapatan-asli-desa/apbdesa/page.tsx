@@ -166,7 +166,7 @@ function ListAPBDesa({ search }: { search: string }) {
                     <TableTd>
                       <Button
                         variant="light"
-                        color="green"
+                        color="blue"
                         onClick={() =>
                           router.push(
                             `/admin/ekonomi/PADesa-pendapatan-asli-desa/apbdesa/${item.id}`
@@ -243,7 +243,7 @@ function ListAPBDesa({ search }: { search: string }) {
                     </Box>
                     <Button
                       variant="light"
-                      color="green"
+                      color="blue"
                       fullWidth
                       onClick={() =>
                         router.push(

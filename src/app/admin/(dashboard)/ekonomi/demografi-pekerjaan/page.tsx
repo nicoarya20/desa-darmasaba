@@ -21,7 +21,7 @@ import {
   Text,
   Title
 } from '@mantine/core';
-import { useShallowEffect } from '@mantine/hooks';
+import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
 import { IconEdit, IconPlus, IconSearch, IconTrash } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -59,6 +59,8 @@ function ListDemografiPekerjaan({ search }: { search: string }) {
   const [chartData, setChartData] = useState<DemografiPekerjaan[]>([]);
   const [mounted, setMounted] = useState(false);
   const [modalHapus, setModalHapus] = useState(false);
+  const [debouncedSearch] = useDebouncedValue(search, 1000); // 500ms delay
+  
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const {
@@ -79,8 +81,8 @@ function ListDemografiPekerjaan({ search }: { search: string }) {
 
   useShallowEffect(() => {
     setMounted(true);
-    load(page, 10, search);
-  }, [page, search]);
+    load(page, 10, debouncedSearch);
+  }, [page, debouncedSearch]);
 
   useEffect(() => {
     if (data) {

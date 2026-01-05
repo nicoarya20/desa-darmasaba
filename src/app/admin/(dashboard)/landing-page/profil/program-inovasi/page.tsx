@@ -34,8 +34,8 @@ function ListProgramInovasi({ search }: { search: string }) {
   const { data, page, totalPages, loading, load } = stateProgramInovasi.findMany;
 
   useShallowEffect(() => {
-    load(page, 10, debouncedSearch);
-  }, [page, debouncedSearch]);
+      load(page, 10, debouncedSearch);
+    }, [page, debouncedSearch]);
 
   const filteredData = data || [];
 
@@ -144,9 +144,7 @@ function ListProgramInovasi({ search }: { search: string }) {
                   {/* Description */}
                   <Box>
                     <Text fz="sm" fw={600} lh={1.4}>Deskripsi</Text>
-                    <Text fz="sm" c="gray.7" lineClamp={2}>
-                      {item.description || '-'}
-                  </Text>
+                    <Text dangerouslySetInnerHTML={{ __html: item.description || '-' }} fz="sm" c="gray.7" lineClamp={2} />
                   </Box>
 
                   {/* Link */}

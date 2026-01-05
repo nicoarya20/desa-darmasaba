@@ -1,7 +1,7 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title } from '@mantine/core';
-import { useShallowEffect } from '@mantine/hooks';
+import { Box, Button, Center, Group, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title } from '@mantine/core';
+import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
 import { IconDatabase, IconEdit, IconPlus, IconSearch, IconTrash } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -35,6 +35,8 @@ function ListDataPendidikan({ search }: { search: string }) {
   const [modalHapus, setModalHapus] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const router = useRouter();
+  const [debouncedSearch] = useDebouncedValue(search, 1000); // 500ms delay
+  const { data, page, totalPages, loading, load } = dataPendidikan.findMany;
 
   const handleDelete = () => {
     if (selectedId) {
@@ -47,8 +49,8 @@ function ListDataPendidikan({ search }: { search: string }) {
 
   useShallowEffect(() => {
     setMounted(true);
-    stateDPM.findMany.load();
-  }, []);
+    load(page, 10, debouncedSearch);
+  }, [page, debouncedSearch]);
 
   useEffect(() => {
     setMounted(true);
@@ -68,9 +70,9 @@ function ListDataPendidikan({ search }: { search: string }) {
     return item.name.toLowerCase().includes(keyword) || item.jumlah.toString().includes(keyword);
   });
 
-  if (!stateDPM.findMany.data) {
+  if (loading || !data) {
     return (
-      <Stack gap="sm">
+      <Stack py={20}>
         <Skeleton height={500} radius="md" />
       </Stack>
     );
@@ -137,6 +139,17 @@ function ListDataPendidikan({ search }: { search: string }) {
               </TableTbody>
             </Table>
           )}
+          <Center mt="md">
+            <Pagination
+              value={page}
+              onChange={(newPage) => {
+                load(newPage, 10);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              total={totalPages}
+              color="blue"
+            />
+          </Center>
         </Paper>
 
         <Paper withBorder p="md" bg={colors['white-1']} shadow="sm" radius="md">

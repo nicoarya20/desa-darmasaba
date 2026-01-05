@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiFetch from "@/lib/api-fetch";
 import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
@@ -65,13 +66,46 @@ const dataPendidikan = proxy({
           select: { id: true; name: true; jumlah: true };
         }>[]
       | null,
+    page: 1,
+    totalPages: 1,
+    total: 0,
     loading: false,
-    async load() {
-      const res = await ApiFetch.api.pendidikan.datapendidikan[
-        "findMany"
-      ].get();
-      if (res.status === 200) {
-        dataPendidikan.findMany.data = res.data?.data ?? [];
+    search: "",
+    load: async (page = 1, limit = 10, search = "") => {
+      // Change to arrow function
+      dataPendidikan.findMany.loading = true; // Use the full path to access the property
+      dataPendidikan.findMany.page = page;
+      dataPendidikan.findMany.search = search;
+      try {
+        const query: any = { page, limit };
+        if (search) query.search = search;
+
+        const res = await ApiFetch.api.pendidikan.datapendidikan[
+          "findMany"
+        ].get({
+          query,
+        });
+
+        if (res.status === 200 && res.data?.success) {
+          dataPendidikan.findMany.data = res.data.data || [];
+          dataPendidikan.findMany.total = res.data.total || 0;
+          dataPendidikan.findMany.totalPages = res.data.totalPages || 1;
+        } else {
+          console.error(
+            "Failed to load data pendidikan:",
+            res.data?.message
+          );
+          dataPendidikan.findMany.data = [];
+          dataPendidikan.findMany.total = 0;
+          dataPendidikan.findMany.totalPages = 1;
+        }
+      } catch (error) {
+        console.error("Error loading data pendidikan:", error);
+        dataPendidikan.findMany.data = [];
+        dataPendidikan.findMany.total = 0;
+        dataPendidikan.findMany.totalPages = 1;
+      } finally {
+        dataPendidikan.findMany.loading = false;
       }
     },
   },

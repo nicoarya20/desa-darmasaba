@@ -28,27 +28,27 @@ import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
 import pasarDesaState from '../../../_state/ekonomi/pasar-desa/pasar-desa';
 
 function KategoriProduk() {
-  const [search2, setSearch2] = useState('');
+  const [search, setSearch] = useState('');
   return (
     <Box>
       <HeaderSearch
         title='Kategori Produk'
         placeholder='Cari nama kategori produk...'
         searchIcon={<IconSearch size={20} />}
-        value={search2}
-        onChange={(e) => setSearch2(e.currentTarget.value)}
+        value={search}
+        onChange={(e) => setSearch(e.currentTarget.value)}
       />
-      <ListKategoriProduk search2={search2} />
+      <ListKategoriProduk search={search} />
     </Box>
   );
 }
 
-function ListKategoriProduk({ search2 }: { search2: string }) {
+function ListKategoriProduk({ search }: { search: string }) {
   const statePasar = useProxy(pasarDesaState.kategoriProduk);
   const [modalHapus, setModalHapus] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const router = useRouter();
-  const [debouncedSearch] = useDebouncedValue(search2, 1000);
+  const [debouncedSearch] = useDebouncedValue(search, 1000);
 
   const { data, page, totalPages, loading, load } = statePasar.findMany;
 

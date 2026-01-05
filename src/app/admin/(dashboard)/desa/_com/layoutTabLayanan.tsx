@@ -73,17 +73,17 @@ function LayoutTabsLayanan({ children }: { children: React.ReactNode }) {
             >
                 {/* ✅ Scroll horizontal wrapper */}
                 <Box visibleFrom='md' pb={10}>
-                    <ScrollArea type="auto" offsetScrollbars>
+                    <ScrollArea type="auto" offsetScrollbars w="100%">
                         <TabsList
                             p="sm"
                             style={{
                                 background: "linear-gradient(135deg, #e7ebf7, #f9faff)",
                                 borderRadius: "1rem",
-                                boxShadow: "inset 0 0 10px rgba(0,0,0,0.05)",
                                 display: "flex",
                                 flexWrap: "nowrap",
                                 gap: "0.5rem",
-                                paddingInline: "0.5rem", // ✅ biar nggak nempel ke tepi
+                                width: "max-content", // ⬅️ kunci
+                                maxWidth: "100%",   
                             }}
                         >
                             {tabs.map((tab, i) => (
