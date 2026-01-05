@@ -60,13 +60,18 @@ const responden = proxy({
     totalPages: 1,
     total: 0,
     loading: false,
-    load: async (page = 1, limit = 10) => {
+    search: "",
+    load: async (page = 1, limit = 10, search = "") => {
       // Change to arrow function
       responden.findMany.loading = true; // Use the full path to access the property
       responden.findMany.page = page;
+      responden.findMany.search = search;
       try {
+        const query: any = { page, limit };
+        if (search) query.search = search;
+        
         const res = await ApiFetch.api.landingpage.responden["findMany"].get({
-          query: { page, limit },
+          query,
         });
 
         if (res.status === 200 && res.data?.success) {

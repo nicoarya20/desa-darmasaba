@@ -128,10 +128,18 @@ function ListBelanja({ search }: { search: string }) {
           >
             <TableThead>
               <TableTr>
-                <TableTh style={{ width: '35%' }}>Nama</TableTh>
-                <TableTh style={{ width: '25%' }}>Nilai</TableTh>
-                <TableTh style={{ width: '20%' }}>Persentase</TableTh>
-                <TableTh style={{ width: '20%' }}>Aksi</TableTh>
+                <TableTh style={{ width: '40%' }}>
+                  <Text fz="sm" fw={600} lh={1.4}>Nama</Text>
+                </TableTh>
+                <TableTh style={{ width: '25%' }}>
+                  <Text fz="sm" fw={600} lh={1.4}>Nilai</Text>
+                </TableTh>
+                <TableTh style={{ width: '15%' }}>
+                  <Text fz="sm" fw={600} lh={1.4}>Edit</Text>
+                </TableTh>
+                <TableTh style={{ width: '20%' }}>
+                  <Text fz="sm" fw={600} lh={1.4}>Delete</Text>
+                </TableTh>
               </TableTr>
             </TableThead>
             <TableTbody>

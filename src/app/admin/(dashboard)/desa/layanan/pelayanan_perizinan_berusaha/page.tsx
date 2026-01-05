@@ -6,8 +6,6 @@ import {
   Button,
   Center,
   Divider,
-  Grid,
-  GridCol,
   Group,
   Paper,
   Skeleton,
@@ -76,28 +74,24 @@ function PerizinanBerusaha() {
     <Paper bg={colors['white-1']} p="lg" radius="md" shadow="sm">
       <Stack gap="md">
         {/* Header */}
-        <Grid align="center">
-          <GridCol span={{ base: 12, md: 11 }}>
-            <Title order={3} c={colors['blue-button']} lh={1.2}>
-              Preview Pelayanan Perizinan Berusaha
-            </Title>
-          </GridCol>
-          <GridCol span={{ base: 12, md: 1 }}>
-            <Button
-              c="green"
-              variant="light"
-              leftSection={<IconEdit size={18} stroke={2} />}
-              radius="md"
-              onClick={() =>
-                router.push(
-                  `/admin/desa/layanan/pelayanan_perizinan_berusaha/${data.id}`
-                )
-              }
-            >
-              Edit
-            </Button>
-          </GridCol>
-        </Grid>
+        <Group justify='space-between' align="center">
+          <Title order={3} c={colors['blue-button']} lh={1.2}>
+            Preview Pelayanan Perizinan Berusaha
+          </Title>
+          <Button
+            c="green"
+            variant="light"
+            leftSection={<IconEdit size={18} stroke={2} />}
+            radius="md"
+            onClick={() =>
+              router.push(
+                `/admin/desa/layanan/pelayanan_perizinan_berusaha/${data.id}`
+              )
+            }
+          >
+            Edit
+          </Button>
+        </Group>
 
         {/* Content */}
         <Paper p="xl" bg={'white'} withBorder radius="md" shadow="xs">
@@ -136,7 +130,7 @@ function PerizinanBerusaha() {
                 umum:
               </Text>
 
-               <Box p="xl" w="100%" visibleFrom='md'>
+              <Box p="xl" w="100%" visibleFrom='md'>
                 <Stepper
                   active={active}
                   onStepClick={setActive}
@@ -221,37 +215,37 @@ function PerizinanBerusaha() {
                 >
                   <StepperStep label="Langkah Pertama" description="Pendaftaran Akun">
                     <Text fz="sm" lh={1.5}>
-                      
+
                     </Text>
                   </StepperStep>
                   <StepperStep label="Langkah Kedua" description="Pengisian Data Perusahaan">
                     <Text fz="sm" lh={1.5}>
-                      
+
                     </Text>
                   </StepperStep>
                   <StepperStep label="Langkah Ketiga" description="Pemilihan KBLI">
                     <Text fz="sm" lh={1.5}>
-                      
+
                     </Text>
                   </StepperStep>
                   <StepperStep label="Langkah Keempat" description="Pengunggahan Dokumen">
                     <Text fz="sm" lh={1.5}>
-                      
+
                     </Text>
                   </StepperStep>
                   <StepperStep label="Langkah Kelima" description="Verifikasi dan Persetujuan">
                     <Text fz="sm" lh={1.5}>
-                      
+
                     </Text>
                   </StepperStep>
                   <StepperStep label="Langkah Keenam" description="Penerimaan NIB">
                     <Text fz="sm" lh={1.5}>
-                      
+
                     </Text>
                   </StepperStep>
                   <StepperCompleted>
                     <Text fz="sm" lh={1.5}>
-                      
+
                     </Text>
                   </StepperCompleted>
                 </Stepper>

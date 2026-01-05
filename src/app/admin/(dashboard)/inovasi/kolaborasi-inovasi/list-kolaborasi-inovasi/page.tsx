@@ -142,9 +142,7 @@ function ListKolaborasiInovasi({ search }: { search: string }) {
                       </Text>
                     </TableTd>
                     <TableTd>
-                      <Text fz="sm" fw={500} lh={1.45} truncate="end" lineClamp={1}>
-                        {item.slug}
-                      </Text>
+                      <Text dangerouslySetInnerHTML={{ __html: item.slug }} fz="sm" fw={500} lh={1.45} truncate="end" lineClamp={1} />
                     </TableTd>
                     <TableTd ta="center">
                       <Button
@@ -214,9 +212,7 @@ function ListKolaborasiInovasi({ search }: { search: string }) {
                       <Text fz="sm" fw={600} lh={1.4}>
                         Deskripsi Singkat
                       </Text>
-                      <Text fz="sm" fw={500} lh={1.4}>
-                        {item.slug}
-                      </Text>
+                       <Text dangerouslySetInnerHTML={{ __html: item.slug }} fz="sm" fw={500} lh={1.45} truncate="end" lineClamp={1} />
                     </Box>
                     <Box>
                       <Button

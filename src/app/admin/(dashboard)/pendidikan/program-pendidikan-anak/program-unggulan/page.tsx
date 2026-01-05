@@ -29,7 +29,7 @@ function Page() {
     <Paper bg={colors['white-1']} p="lg" radius="md" shadow="sm">
       <Stack gap="md">
         {/* Header */}
-        <Group align="center">
+        <Group justify='space-between' align="center">
           <Title order={3} c={colors['blue-button']}>
             Pratinjau Program Unggulan
           </Title>

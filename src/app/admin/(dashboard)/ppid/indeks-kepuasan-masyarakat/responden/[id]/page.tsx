@@ -26,7 +26,7 @@ export default function DetailResponden() {
       stateDetail.delete.byId(selectedId)
       setModalHapus(false)
       setSelectedId(null)
-      router.push("/admin/ppid/ikm-desa-darmasaba/responden")
+      router.push("/admin/ppid/indeks-kepuasan-masyarakat/responden")
     }
   }
 
@@ -108,7 +108,7 @@ export default function DetailResponden() {
                     variant="light"
                     onClick={() => {
                       if (stateDetail.findUnique.data) {
-                        router.push(`/admin/ppid/ikm-desa-darmasaba/responden/${stateDetail.findUnique.data.id}/edit`);
+                        router.push(`/admin/ppid/indeks-kepuasan-masyarakat/responden/${stateDetail.findUnique.data.id}/edit`);
                       }
                     }}
                     disabled={!stateDetail.findUnique.data}

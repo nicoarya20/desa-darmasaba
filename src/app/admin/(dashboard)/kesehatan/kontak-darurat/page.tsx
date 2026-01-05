@@ -96,15 +96,15 @@ function ListKontakDarurat({ search }: { search: string }) {
               {filteredData.length > 0 ? (
                 filteredData.map((item) => (
                   <TableTr key={item.id}>
-                    <TableTd>
+                    <TableTd w={335}>
                       <Text fw={500} fz="md" lh={1.45} truncate="end" lineClamp={1}>
                         {item.name}
                       </Text>
                     </TableTd>
-                    <TableTd>
+                    <TableTd w={335}>
                       <Text fz="sm" lh={1.45} c="dimmed" lineClamp={1} dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
                     </TableTd>
-                    <TableTd>
+                    <TableTd w={335}>
                       <Button
                         variant="light"
                         color="blue"

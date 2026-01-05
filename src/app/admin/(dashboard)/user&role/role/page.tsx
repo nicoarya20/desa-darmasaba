@@ -1,10 +1,11 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import colors from '@/con/colors';
 import {
   Box,
   Button,
+  Center,
   Group,
+  Pagination,
   Paper,
   Skeleton,
   Stack,
@@ -17,9 +18,10 @@ import {
   Text,
   Title
 } from '@mantine/core';
+import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
 import { IconEdit, IconPlus, IconSearch, IconTrash } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../_com/header';
 import { ModalKonfirmasiHapus } from '../../_com/modalKonfirmasiHapus';
@@ -46,10 +48,12 @@ function ListRole({ search }: { search: string }) {
   const router = useRouter();
   const [modalHapus, setModalHapus] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [debouncedSearch] = useDebouncedValue(search, 1000); // 500ms delay
+  const { data, page, totalPages, loading, load } = listDataState.findMany;
 
-  useEffect(() => {
-    listDataState.findMany.load();
-  }, []);
+  useShallowEffect(() => {
+    load(page, 10, debouncedSearch);
+  }, [page, debouncedSearch]);
 
   const handleDelete = () => {
     if (selectedId) {
@@ -65,13 +69,14 @@ function ListRole({ search }: { search: string }) {
     return item.name.toLowerCase().includes(keyword);
   });
 
-  if (!listDataState.findMany.data) {
-    return (
-      <Stack py={{ base: 'sm', md: 'md' }}>
-        <Skeleton h={500} />
-      </Stack>
-    );
-  }
+  if (loading || !data) {
+      return (
+        <Stack py={20}>
+          <Skeleton height={500} radius="md" />
+        </Stack>
+      );
+    }
+  
 
   return (
     <Box py={{ base: 'sm', md: 'md' }}>
@@ -198,6 +203,18 @@ function ListRole({ search }: { search: string }) {
           </Stack>
         </Box>
       </Paper>
+
+      <Center mt="md">
+        <Pagination
+          value={page}
+          onChange={(newPage) => {
+            load(newPage, 10);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          total={totalPages}
+          color="blue"
+        />
+      </Center>
 
       {/* Modal Konfirmasi Hapus */}
       <ModalKonfirmasiHapus

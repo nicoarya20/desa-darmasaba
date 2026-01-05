@@ -1,21 +1,20 @@
 'use client'
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React from 'react';
-import { useRouter } from 'next/navigation';
-import grafikBerdasarkanJenisKelamin from '@/app/admin/(dashboard)/_state/ppid/indeks_kepuasan_masyarakat/grafikBerdasarkanJenisKelamin';
-import { useProxy } from 'valtio/utils';
-import { useState } from 'react';
-import colors from '@/con/colors';
-import { Box, Button, Paper, Stack, Title, TextInput, Select, Text } from '@mantine/core';
-import { IconArrowBack } from '@tabler/icons-react';
 import indeksKepuasanState from '@/app/admin/(dashboard)/_state/landing-page/indeks-kepuasan';
+import colors from '@/con/colors';
+import { Box, Button, Group, Loader, Paper, Select, Stack, TextInput, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
+import { IconArrowBack } from '@tabler/icons-react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { useProxy } from 'valtio/utils';
 
 function RespondenCreate() {
   const router = useRouter();
   const stategrafikBerdasarkanResponden = useProxy(indeksKepuasanState.responden)
   const [donutData, setDonutData] = useState<any[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const resetForm = () => {
     stategrafikBerdasarkanResponden.create.form = {
@@ -35,6 +34,7 @@ function RespondenCreate() {
   })
 
   const handleSubmit = async () => {
+    setIsSubmitting(true);
     try {
       const id = await stategrafikBerdasarkanResponden.create.create();
       if (typeof id !== 'undefined') {
@@ -45,13 +45,15 @@ function RespondenCreate() {
         }
       }
       resetForm();
-      router.push("/admin/ppid/ikm-desa-darmasaba/responden");
+      router.push("/admin/ppid/indeks-kepuasan-masyarakat/responden");
     } catch (error) {
       console.error('Error submitting form:', error);
+    } finally {
+      setIsSubmitting(false);
     }
   }
   return (
-    <Box px={{ base: 0, md: 'lg' }} py="xs">
+    <Box>
       <Box mb={10}>
         <Button variant="subtle" onClick={() => router.back()}>
           <IconArrowBack size={20} />
@@ -132,13 +134,32 @@ function RespondenCreate() {
             }
             disabled={indeksKepuasanState.kelompokUmurResponden.findMany.loading}
           />
-          <Button
-            mt={10}
-            bg={colors['blue-button']}
-            onClick={handleSubmit}
-          >
-            Submit
-          </Button>
+          <Group justify="right">
+            {/* Tombol Batal */}
+            <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
+              onClick={handleSubmit}
+              radius="md"
+              size="md"
+              style={{
+                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                color: '#fff',
+                boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
+              }}
+            >
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
+            </Button>
+          </Group>
         </Stack>
       </Paper>
     </Box>

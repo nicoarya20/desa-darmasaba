@@ -38,7 +38,7 @@ function ListTarifLayanan({ search }: { search: string }) {
   const router = useRouter();
   const [modalHapus, setModalHapus] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [debouncedSearch] = useDebouncedValue(search, 10000);
+  const [debouncedSearch] = useDebouncedValue(search, 1000);
 
   const {
     data,

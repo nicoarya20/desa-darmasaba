@@ -312,15 +312,15 @@ const kategoriProduk = proxy({
     page: 1,
     totalPages: 1,
     loading: false,
-    search2: "",
-   load: async (page = 1, limit = 10, search2 = "") => {
+    search: "",
+   load: async (page = 1, limit = 10, search = "") => {
       kategoriProduk.findMany.loading = true; // ✅ Akses langsung via nama path
       kategoriProduk.findMany.page = page;
-      kategoriProduk.findMany.search2 = search2;
+      kategoriProduk.findMany.search = search;
   
       try {
         const query: any = { page, limit };
-        if (search2) query.search2 = search2;
+        if (search) query.search = search;
     
         const res = await ApiFetch.api.ekonomi.kategoriproduk["find-many"].get({ query });
     

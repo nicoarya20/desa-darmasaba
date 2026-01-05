@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
-import { useShallowEffect } from '@mantine/hooks';
+import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
 import {
   Box,
   Button,
@@ -47,16 +47,14 @@ interface ListRespondenProps {
 function ListResponden({ search }: ListRespondenProps) {
   const state = useProxy(indeksKepuasanState.responden);
   const router = useRouter();
+  const [debouncedSearch] = useDebouncedValue(search, 1000); // 500ms delay
   const { data, page, totalPages, loading, load } = state.findMany;
 
   useShallowEffect(() => {
-    load(page, 10,);
-  }, [page]);
+    load(page, 10, debouncedSearch);
+  }, [page, debouncedSearch]);
 
-  const filteredData = (data || []).filter((item) => {
-    const keyword = search.toLowerCase();
-    return item.name.toLowerCase().includes(keyword);
-  });
+  const filteredData = data || [];
 
   if (loading || !data) {
     return (
