@@ -60,8 +60,37 @@ import jenjangPendidikan from "./data/pendidikan/info-sekolah/jenjang-pendidikan
 import seedAssets from "./seed_assets";
 import users from "./data/user/users.json";
 import { safeSeedUnique } from "./safeseedUnique";
+import safeImageId from "./data/safeImageId";
+import resolveImageIdForSeed from "./data/resolveImageId";
 
 (async () => {
+  // seed assets
+  await prisma.fileStorage.deleteMany();
+  console.log("🗑️ Cleared existing fileStorage records");
+  await seedAssets();
+
+  // // =========== FILE STORAGE ===========
+  console.log("🔄 Seeding file storage...");
+  for (const f of fileStorage) {
+    await safeSeedUnique(
+      "fileStorage",
+      { name: f.name },
+      {
+        id: f.id,
+        name: f.name,
+        realName: f.realName,
+        path: f.path,
+        mimeType: f.mimeType,
+        link: f.link,
+        category: f.category,
+        deletedAt: null,
+        isActive: true,
+      }
+    );
+  }
+
+  console.log("✅ File storage seeded");
+
   console.log("🔄 Seeding roles...");
 
   for (const r of roles) {
@@ -131,112 +160,119 @@ import { safeSeedUnique } from "./safeseedUnique";
     }
   }
   console.log("✅ Users seeding completed");
-
-  // =========== FILE STORAGE ===========
-  console.log("🔄 Seeding file storage...");
-  for (const f of fileStorage) {
-    try {
-      await prisma.fileStorage.upsert({
-        where: { id: f.id },
-        update: {
-          name: f.name,
-          realName: f.realName,
-          path: f.path,
-          mimeType: f.mimeType,
-          link: f.link,
-          category: f.category,
-        },
-        create: {
-          id: f.id,
-          name: f.name,
-          realName: f.realName,
-          path: f.path,
-          mimeType: f.mimeType,
-          link: f.link,
-          category: f.category,
-        },
-      });
-    } catch (error: any) {
-      console.error(`❌ Failed to seed file storage ${f.name}:`, error.message);
-    }
-  }
-  console.log("✅ File storage seeded");
   // =========== LANDING PAGE ===========
   // =========== SUBMENU PROFILE ===========
   // =========== PROFILE PEJABAT DESA ===========
+  // In your seed.ts file, update the PejabatDesa seeding section to:
+  console.log("🔄 Seeding Pejabat Desa...");
   for (const p of profilePejabatDesa) {
-    await prisma.pejabatDesa.upsert({
-      where: { id: p.id },
-      update: {
-        name: p.name,
-        position: p.position,
-        imageId: p.imageId,
-      },
-      create: {
-        id: p.id,
-        name: p.name,
-        position: p.position,
-        imageId: p.imageId,
-      },
-    });
+    try {
+      // First, verify the image exists
+      if (p.imageId) {
+        const imageExists = await prisma.fileStorage.findUnique({
+          where: { id: p.imageId },
+        });
+
+        if (!imageExists) {
+          console.warn(
+            `⚠️ Image not found for PejabatDesa ${p.name}, skipping...`
+          );
+          continue;
+        }
+      }
+
+      await safeSeedUnique(
+        "pejabatDesa",
+        { id: p.id },
+        {
+          id: p.id,
+          name: p.name,
+          position: p.position,
+          imageId: p.imageId,
+        }
+      );
+      console.log(`✅ Seeded Pejabat Desa -> ${p.name}`);
+    } catch (error: any) {
+      console.error(`❌ Failed to seed Pejabat Desa ${p.name}:`, error.message);
+    }
   }
-  console.log(
-    "✅ profilePejabatDesa seeded without imageId (editable later via UI)"
-  );
+  console.log("✅ Pejabat Desa seeding completed");
 
   // =========== PROGRAM INOVASI ===========
-  for (const p of programInovasi) {
-    let imageId: string | null = null;
+  // Add this section after the other seed operations in seed.ts
+  console.log("🔄 Seeding Program Inovasi...");
 
-    if (p.imageId) {
-      const imageExists = await prisma.fileStorage.findUnique({
+  for (const p of programInovasi) {
+    const existing = await prisma.programInovasi.findUnique({
+      where: { id: p.id },
+      select: { imageId: true },
+    });
+
+    let imageId = existing?.imageId; // Pertahankan existing
+
+    // Kalau belum ada imageId, cari berdasarkan name/realName
+    if (!imageId && p.imageId) {
+      // ✅ Cari langsung berdasarkan ID yang ada di p.imageId
+      const fileRecord = await prisma.fileStorage.findUnique({
         where: { id: p.imageId },
+        select: { id: true, name: true },
       });
 
-      if (imageExists) {
-        imageId = p.imageId;
-      } else {
-        console.warn(
-          `⚠️ imageId ${p.imageId} tidak ditemukan untuk ProgramInovasi ${p.name}`
+      if (fileRecord) {
+        imageId = fileRecord.id;
+        console.log(
+          `✅ Found file by ID: ${fileRecord.name} (${fileRecord.id})`
         );
+      } else {
+        console.warn(`⚠️ File with ID ${p.imageId} not found for ${p.name}`);
+        imageId = null;
       }
     }
+
     await prisma.programInovasi.upsert({
       where: { id: p.id },
       update: {
         name: p.name,
         description: p.description,
         link: p.link,
-        imageId: p.imageId,
+        imageId,
       },
       create: {
         id: p.id,
         name: p.name,
         description: p.description,
         link: p.link,
-        imageId: p.imageId,
+        imageId,
       },
     });
   }
-  console.log("program inovasi success ...");
 
   // =========== MEDIA SOSIAL ===========
-  for (const p of mediaSosial) {
+  for (const m of mediaSosial) {
+    const existing = await prisma.mediaSosial.findUnique({
+      where: { id: m.id },
+      select: { imageId: true },
+    });
+
+    const imageId = await resolveImageIdForSeed(existing?.imageId, m.imageId);
+
     await prisma.mediaSosial.upsert({
-      where: { id: p.id },
+      where: { id: m.id },
       update: {
-        name: p.name,
-        iconUrl: p.iconUrl,
-        imageId: p.imageId,
+        name: m.name,
+        iconUrl: m.iconUrl,
+        // ⛔ JANGAN overwrite imageId sembarangan
+        imageId,
       },
       create: {
-        id: p.id,
-        name: p.name,
-        iconUrl: p.iconUrl,
-        imageId: p.imageId,
+        id: m.id,
+        name: m.name,
+        iconUrl: m.iconUrl,
+        imageId,
       },
     });
   }
+
   console.log("media sosial success ...");
 
   // =========== SUBMENU DESA ANTI KORUPSI ===========
@@ -1245,9 +1281,6 @@ import { safeSeedUnique } from "./safeseedUnique";
   }
 
   console.log("✅ Jenjang Pendidikan seeded successfully");
-
-  // seed assets
-  await seedAssets();
 })()
   .then(() => prisma.$disconnect())
   .catch((e) => {
