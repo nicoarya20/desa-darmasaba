@@ -89,7 +89,7 @@ function ListVideo({ search }: { search: string }) {
         {/* Desktop Table */}
         <Box visibleFrom="md">
           <Box style={{ overflowX: 'auto' }}>
-           <Table highlightOnHover striped verticalSpacing="sm">
+            <Table highlightOnHover striped verticalSpacing="sm">
               <TableThead>
                 <TableTr>
                   <TableTh>Judul Video</TableTh>
@@ -200,20 +200,19 @@ function ListVideo({ search }: { search: string }) {
         </Stack>
       </Paper>
 
-      {totalPages > 1 && (
-        <Center mt="xl">
-          <Pagination
-            value={page}
-            onChange={(newPage) => {
-              load(newPage, 10)
-              window.scrollTo({ top: 0, behavior: 'smooth' })
-            }}
-            total={totalPages}
-            color="blue"
-            radius="md"
-          />
-        </Center>
-      )}
+
+      <Center mt="xl">
+        <Pagination
+          value={page}
+          onChange={(newPage) => {
+            load(newPage, 10)
+            window.scrollTo({ top: 0, behavior: 'smooth' })
+          }}
+          total={totalPages}
+          color="blue"
+          radius="md"
+        />
+      </Center>
     </Box>
   );
 }

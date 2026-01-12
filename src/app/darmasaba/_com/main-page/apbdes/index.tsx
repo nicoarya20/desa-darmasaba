@@ -50,9 +50,19 @@ function Apbdes() {
 
   const dataAPBDes = state.findMany.data || []
 
-  const years = Array.from(new Set(dataAPBDes.map((item: any) => item.tahun)))
-    .sort((a, b) => b - a)
-    .map(year => ({ value: year.toString(), label: `Tahun ${year}` }))
+  const years = Array.from(
+  new Set(
+    dataAPBDes
+      .map((item: any) => item?.tahun)
+      .filter((tahun): tahun is number => typeof tahun === 'number')
+  )
+)
+  .sort((a, b) => b - a)
+  .map(year => ({
+    value: year.toString(),
+    label: `Tahun ${year}`,
+  }))
+
 
   useEffect(() => {
     if (years.length > 0 && !selectedYear) {

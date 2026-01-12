@@ -98,7 +98,7 @@ function ListSuratKeterangan({ search }: { search: string }) {
         </Group>
 
         {/* Desktop Table */}
-        <Box visibleFrom="md">
+        <Box visibleFrom="md" style={{ overflowX: 'auto' }}>
           <Table highlightOnHover>
             <TableThead>
               <TableTr>
@@ -108,59 +108,61 @@ function ListSuratKeterangan({ search }: { search: string }) {
                 <TableTh fz="sm" fw={600} ta="left">
                   Deskripsi
                 </TableTh>
-                <TableTh fz="sm" fw={600} ta="left">
-                  Aksi
-                </TableTh>
-              </TableTr>
-            </TableThead>
-            <TableTbody>
-              {filteredData.length > 0 ? (
-                filteredData.map((item) => (
-                  <TableTr key={item.id}>
-                    <TableTd>
-                      <Text fz="md" fw={500} lh={1.5} truncate="end">
-                        {item.name}
-                      </Text>
-                    </TableTd>
-                    <TableTd>
-                      <Text
-                        fz="sm"
-                        lh={1.5}
-                        dangerouslySetInnerHTML={{ __html: item.deskripsi || '' }}
-                        style={{ wordBreak: 'break-word' }}
-                      />
-                    </TableTd>
-                    <TableTd>
-                      <Button
-                        size="xs"
-                        radius="md"
-                        variant="light"
-                        color="blue"
-                        leftSection={<IconDeviceImacCog size={16} />}
-                        onClick={() =>
-                          router.push(
-                            `/admin/desa/layanan/pelayanan_surat_keterangan/${item.id}`
-                          )
-                        }
-                      >
-                        Detail
-                      </Button>
+                  <TableTh fz="sm" fw={600} ta="left">
+                    Aksi
+                  </TableTh>
+                </TableTr>
+              </TableThead>
+              <TableTbody>
+                {filteredData.length > 0 ? (
+                  filteredData.map((item) => (
+                    <TableTr key={item.id}>
+                       <TableTd style={{ maxWidth: 250 }}>
+                        <Text fz="md" fw={500} lh={1.5} truncate="end">
+                          {item.name}
+                        </Text>
+                      </TableTd>
+                       <TableTd style={{ maxWidth: 250 }}>
+                        <Text
+                          fz="sm"
+                          lh={1.5}
+                          dangerouslySetInnerHTML={{ __html: item.deskripsi || '' }}
+                          style={{ wordBreak: 'break-word' }}
+                          lineClamp={1}
+                          truncate="end"
+                        />
+                      </TableTd>
+                       <TableTd style={{ maxWidth: 250 }}>
+                        <Button
+                          size="xs"
+                          radius="md"
+                          variant="light"
+                          color="blue"
+                          leftSection={<IconDeviceImacCog size={16} />}
+                          onClick={() =>
+                            router.push(
+                              `/admin/desa/layanan/pelayanan_surat_keterangan/${item.id}`
+                            )
+                          }
+                        >
+                          Detail
+                        </Button>
+                      </TableTd>
+                    </TableTr>
+                  ))
+                ) : (
+                  <TableTr>
+                    <TableTd colSpan={3}>
+                      <Center py="xl">
+                        <Text c="dimmed" fz="sm" ta="center">
+                          Tidak ada data surat keterangan yang cocok
+                        </Text>
+                      </Center>
                     </TableTd>
                   </TableTr>
-                ))
-              ) : (
-                <TableTr>
-                  <TableTd colSpan={3}>
-                    <Center py="xl">
-                      <Text c="dimmed" fz="sm" ta="center">
-                        Tidak ada data surat keterangan yang cocok
-                      </Text>
-                    </Center>
-                  </TableTd>
-                </TableTr>
-              )}
-            </TableTbody>
-          </Table>
+                )}
+              </TableTbody>
+            </Table>
         </Box>
 
         {/* Mobile Cards */}

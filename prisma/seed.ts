@@ -10,7 +10,6 @@ import sdgsDesa from "./data/landing-page/sdgs-desa/sdgs-desa.json";
 import apbdes from "./data/landing-page/apbdes/apbdes.json";
 import kategoriPrestasiDesa from "./data/landing-page/prestasi-desa/kategori-prestasi.json";
 import prestasiDesa from "./data/landing-page/prestasi-desa/prestasi-desa.json";
-import penghargaan from "./data/landing-page/penghargaan/penghargaan.json";
 import profilePPID from "./data/ppid/profile-ppid/profilePPid.json";
 import pegawaiPPID from "./data/ppid/struktur-ppid/pegawai-PPID.json";
 import posisiOrganisasiPPID from "./data/ppid/struktur-ppid/posisi-organisasi-PPID.json";
@@ -20,20 +19,25 @@ import jenisKelamin from "./data/ppid/ikm/jenis-kelamin/jenis-kelamin.json";
 import daftarInformasiPublik from "./data/ppid/daftar-informasi-publik-desa-darmasaba/daftarInformasi.json";
 import pilihanRatingResponden from "./data/ppid/ikm/pilihan-rating-responden/rating-responden.json";
 import umurResponden from "./data/ppid/ikm/umur-responden/umur-responden.json";
-import categoryPengumuman from "./data/category-pengumuman.json";
+import kategoriPengumuman from "./data/desa/pengumuman/kategori-pengumuman.json";
+import pengumuman from "./data/desa/pengumuman/pengumuman.json";
+import galleryVideo from "./data/desa/gallery/video/video.json";
 import pelayananPerizinanBerusaha from "./data/desa/layanan/pelayananPerizinanBerusaha.json";
 import pelayananSuratKeterangan from "./data/desa/layanan/pelayananSuratKeterangan.json";
 import pelayananTelunjukSaktiDesa from "./data/desa/layanan/pelayananTelunjukSaktiDesa.json";
 import pelayananPendudukNonPermanen from "./data/desa/layanan/pelayanaPendudukNonPermanen.json";
+import penghargaan from "./data/desa/penghargaan/penghargaan.json"
 import lambangDesa from "./data/desa/profile/lambang_desa.json";
 import maskotDesa from "./data/desa/profile/maskot_desa.json";
 import profilPerbekel from "./data/desa/profile/profil_perbekel.json";
+import perbekelDariMasaKeMasa from "./data/desa/profile/profile-perbekel-lalu.json";
 import sejarahDesa from "./data/desa/profile/sejarah_desa.json";
 import visiMisiDesa from "./data/desa/profile/visi_misi_desa.json";
 import detailDataPengangguran from "./data/ekonomi/jumlah-pengangguran/detail-data-pengangguran.json";
 import kategoriProduk from "./data/ekonomi/pasar-desa/kategori-produk.json";
 import pegawai from "./data/ekonomi/struktur-organisasi/pegawai-bumdes.json";
 import posisiOrganisasi from "./data/ekonomi/struktur-organisasi/posisi-organisasi-bumdes.json";
+import berita from "./data/desa/berita/berita.json";
 import kategoriBerita from "./data/desa/berita/kategori-berita.json";
 import contohEdukasiLingkungan from "./data/lingkungan/edukasi-lingkungan/contoh-kegiatan-di-desa-darmasaba.json";
 import materiEdukasiLingkungan from "./data/lingkungan/edukasi-lingkungan/materi-edukasi-yang-diberikan.json";
@@ -45,7 +49,8 @@ import nilaiKonservasiAdat from "./data/lingkungan/konservasi-adat-bali/nilai-ko
 import caraMemperolehInformasi from "./data/list-caraMemperolehInformasi.json";
 import caraMemperolehSalinanInformasi from "./data/list-caraMemperolehSalinanInformasi.json";
 import jenisInformasiDiminta from "./data/list-jenisInfromasi.json";
-import potensi from "./data/list-potensi.json";
+import potensi from "./data/desa/potensi/potensi-desa.json";
+import kategoriPotensi from "./data/desa/potensi/kategori-potensi.json";
 import fasilitasBimbinganBelajarDesa from "./data/pendidikan/bimbingan-belajar-desa/fasilitas-yang-disediakan.json";
 import lokasiJadwalBimbinganBelajarDesa from "./data/pendidikan/bimbingan-belajar-desa/lokasi-dan-jadwal.json";
 import tujuanBimbinganBelajarDesa from "./data/pendidikan/bimbingan-belajar-desa/tujuan-bimbingan-belajar-desa.json";
@@ -62,12 +67,24 @@ import users from "./data/user/users.json";
 import { safeSeedUnique } from "./safeseedUnique";
 import safeImageId from "./data/safeImageId";
 import resolveImageIdForSeed from "./data/resolveImageId";
+import resolveImageByName from "./resolveImageByName";
+import resolveImageById from "./resolveImageByName";
 
 (async () => {
   // seed assets
-  await prisma.fileStorage.deleteMany();
-  console.log("🗑️ Cleared existing fileStorage records");
-  await seedAssets();
+  const totalFiles = await prisma.fileStorage.count();
+
+  const hasImageAsset = await prisma.fileStorage.findFirst({
+    where: { category: "image" },
+    select: { id: true },
+  });
+
+  if (totalFiles === 0 || !hasImageAsset) {
+    console.log("📂 fileStorage not ready, seeding assets...");
+    await seedAssets();
+  } else {
+    console.log("ℹ️ fileStorage already initialized, skipping asset seed");
+  }
 
   // // =========== FILE STORAGE ===========
   console.log("🔄 Seeding file storage...");
@@ -139,8 +156,9 @@ import resolveImageIdForSeed from "./data/resolveImageId";
 
       await safeSeedUnique(
         "user",
-        { id: u.id },
+        { nomor: u.nomor },
         {
+          id: u.id,
           username: u.username,
           nomor: u.nomor,
           roleId: u.roleId.toString(),
@@ -201,7 +219,6 @@ import resolveImageIdForSeed from "./data/resolveImageId";
   // =========== PROGRAM INOVASI ===========
   // Add this section after the other seed operations in seed.ts
   console.log("🔄 Seeding Program Inovasi...");
-
   for (const p of programInovasi) {
     const existing = await prisma.programInovasi.findUnique({
       where: { id: p.id },
@@ -248,20 +265,39 @@ import resolveImageIdForSeed from "./data/resolveImageId";
   }
 
   // =========== MEDIA SOSIAL ===========
+  console.log("🔄 Seeding Media Sosial...");
   for (const m of mediaSosial) {
     const existing = await prisma.mediaSosial.findUnique({
       where: { id: m.id },
       select: { imageId: true },
     });
 
-    const imageId = await resolveImageIdForSeed(existing?.imageId, m.imageId);
+    let imageId = existing?.imageId; // Pertahankan existing
+
+    // Kalau belum ada imageId, cari berdasarkan name/realName
+    if (!imageId && m.imageId) {
+      // ✅ Cari langsung berdasarkan ID yang ada di p.imageId
+      const fileRecord = await prisma.fileStorage.findUnique({
+        where: { id: m.imageId },
+        select: { id: true, name: true },
+      });
+
+      if (fileRecord) {
+        imageId = fileRecord.id;
+        console.log(
+          `✅ Found file by ID: ${fileRecord.name} (${fileRecord.id})`
+        );
+      } else {
+        console.warn(`⚠️ File with ID ${m.imageId} not found for ${m.name}`);
+        imageId = null;
+      }
+    }
 
     await prisma.mediaSosial.upsert({
       where: { id: m.id },
       update: {
         name: m.name,
         iconUrl: m.iconUrl,
-        // ⛔ JANGAN overwrite imageId sembarangan
         imageId,
       },
       create: {
@@ -310,21 +346,6 @@ import resolveImageIdForSeed from "./data/resolveImageId";
   }
   console.log("desa anti korupsi success ...");
 
-  // =========== KATEGORI DESA ANTI KORUPSI ===========
-  for (const p of kategoriDesaAntiKorupsi) {
-    await prisma.kategoriDesaAntiKorupsi.upsert({
-      where: { id: p.id },
-      update: {
-        name: p.name,
-      },
-      create: {
-        id: p.id,
-        name: p.name,
-      },
-    });
-  }
-  console.log("desa anti korupsi success ...");
-
   // =========== KATEGORI PRESTASI DESA===========
   for (const c of kategoriPrestasiDesa) {
     await prisma.kategoriPrestasiDesa.upsert({
@@ -360,40 +381,107 @@ import resolveImageIdForSeed from "./data/resolveImageId";
   console.log("prestasi desa success ...");
 
   // =========== PENGHARGAAN ===========
+  console.log("🔄 Seeding Penghargaan...");
   for (const p of penghargaan) {
+    const existing = await prisma.penghargaan.findUnique({
+      where: { id: p.id },
+      select: { imageId: true },
+    });
+
+    let imageId = existing?.imageId; // Pertahankan existing
+
+    // Kalau belum ada imageId, cari berdasarkan name/realName
+    if (!imageId && p.imageId) {
+      // ✅ Cari langsung berdasarkan ID yang ada di p.imageId
+      const fileRecord = await prisma.fileStorage.findUnique({
+        where: { id: p.imageId },
+        select: { id: true, name: true },
+      });
+
+      if (fileRecord) {
+        imageId = fileRecord.id;
+        console.log(
+          `✅ Found file by ID: ${fileRecord.name} (${fileRecord.id})`
+        );
+      } else {
+        console.warn(`⚠️ File with ID ${p.imageId} not found for ${p.name}`);
+        imageId = null;
+      }
+    }
+
     await prisma.penghargaan.upsert({
       where: { id: p.id },
       update: {
         name: p.name,
         juara: p.juara,
         deskripsi: p.deskripsi,
+        imageId,
       },
       create: {
         id: p.id,
         name: p.name,
         juara: p.juara,
         deskripsi: p.deskripsi,
+        imageId,
       },
     });
   }
   console.log("penghargaan success ...");
 
   // =========== LAYANAN DESA ===========
+  console.log("🔄 Seeding Pelayanan Surat Keterangan...");
+
   for (const p of pelayananSuratKeterangan) {
+    const existing = await prisma.pelayananSuratKeterangan.findUnique({
+      where: { id: p.id },
+      select: { imageId: true, image2Id: true }, // 📌 tambahkan image2Id
+    });
+
+    // 1️⃣ Handle imageId
+    let imageId = existing?.imageId ?? null;
+
+    if (!imageId && p.image) {
+      imageId = await resolveImageById(p.image);
+
+      if (imageId) {
+        console.log(`✅ Image resolved for "${p.name}" → ${p.image}`);
+      } else {
+        console.warn(`⚠️ Image not resolved for "${p.name}" → ${p.image}`);
+      }
+    }
+
+    // 2️⃣ Handle image2Id
+    let image2Id = existing?.image2Id ?? null;
+
+    if (!image2Id && p.image2) {
+      image2Id = await resolveImageById(p.image2);
+
+      if (image2Id) {
+        console.log(`✅ Image2 resolved for "${p.name}" → ${p.image2}`);
+      } else {
+        console.warn(`⚠️ Image2 not resolved for "${p.name}" → ${p.image2}`);
+      }
+    }
+
+    // 3️⃣ Upsert dengan kedua image
     await prisma.pelayananSuratKeterangan.upsert({
       where: { id: p.id },
       update: {
         name: p.name,
         deskripsi: p.deskripsi,
+        imageId,
+        image2Id, // 📌 tambahkan ini
       },
       create: {
         id: p.id,
         name: p.name,
         deskripsi: p.deskripsi,
+        imageId,
+        image2Id, // 📌 tambahkan ini
       },
     });
   }
-  console.log("pelayanan surat keterangan success ...");
+  console.log("✅ Pelayanan Surat Keterangan success...");
 
   for (const p of pelayananTelunjukSaktiDesa) {
     await prisma.pelayananTelunjukSaktiDesa.upsert({
@@ -411,24 +499,91 @@ import resolveImageIdForSeed from "./data/resolveImageId";
       },
     });
   }
-  console.log("pelayanan surat keterangan success ...");
+  console.log("pelayanan telunjuk sakti desa success ...");
+
+  for (const l of pelayananPerizinanBerusaha) {
+    await prisma.pelayananPerizinanBerusaha.upsert({
+      where: {
+        id: l.id,
+      },
+      update: {
+        name: l.name,
+        deskripsi: l.deskripsi,
+        link: l.link,
+      },
+      create: {
+        id: l.id,
+        name: l.name,
+        deskripsi: l.deskripsi,
+        link: l.link,
+      },
+    });
+  }
+
+  console.log("pelayanan perizinan berusaha success ...");
+
+  for (const l of pelayananPendudukNonPermanen) {
+    await prisma.pelayananPendudukNonPermanen.upsert({
+      where: {
+        id: l.id,
+      },
+      update: {
+        name: l.name,
+        deskripsi: l.deskripsi,
+      },
+      create: {
+        id: l.id,
+        name: l.name,
+        deskripsi: l.deskripsi,
+      },
+    });
+  }
+  console.log("pelayanan penduduk non permanen success ...");
 
   // =========== SDGSDesa ===========
+  console.log("🔄 Seeding SDGS Desa...");
   for (const l of sdgsDesa) {
+    const existing = await prisma.sdgsDesa.findUnique({
+      where: { id: l.id },
+      select: { imageId: true },
+    });
+
+    let imageId = existing?.imageId; // Pertahankan existing
+
+    // Kalau belum ada imageId, cari berdasarkan name/realName
+    if (!imageId && l.imageId) {
+      // ✅ Cari langsung berdasarkan ID yang ada di p.imageId
+      const fileRecord = await prisma.fileStorage.findUnique({
+        where: { id: l.imageId },
+        select: { id: true, name: true },
+      });
+
+      if (fileRecord) {
+        imageId = fileRecord.id;
+        console.log(
+          `✅ Found file by ID: ${fileRecord.name} (${fileRecord.id})`
+        );
+      } else {
+        console.warn(`⚠️ File with ID ${l.imageId} not found for ${l.name}`);
+        imageId = null;
+      }
+    }
+
     await prisma.sdgsDesa.upsert({
       where: { id: l.id },
       update: {
         name: l.name,
         jumlah: l.jumlah,
+        imageId,
       },
       create: {
         id: l.id,
         name: l.name,
         jumlah: l.jumlah,
+        imageId,
       },
     });
   }
-
   console.log("sdgs desa success ...");
 
   // =========== APBDes ===========
@@ -513,7 +668,34 @@ import resolveImageIdForSeed from "./data/resolveImageId";
   console.log("lambang desa success ...");
 
   // =========== PROFIL PERBEKEL ===========
+  console.log("🔄 Seeding Profil Perbekel...");
   for (const c of profilPerbekel) {
+    const existing = await prisma.profilPerbekel.findUnique({
+      where: { id: c.id },
+      select: { imageId: true },
+    });
+
+    let imageId = existing?.imageId; // Pertahankan existing
+
+    // Kalau belum ada imageId, cari berdasarkan name/realName
+    if (!imageId && c.imageId) {
+      // ✅ Cari langsung berdasarkan ID yang ada di p.imageId
+      const fileRecord = await prisma.fileStorage.findUnique({
+        where: { id: c.imageId },
+        select: { id: true, name: true },
+      });
+
+      if (fileRecord) {
+        imageId = fileRecord.id;
+        console.log(
+          `✅ Found file by ID: ${fileRecord.name} (${fileRecord.id})`
+        );
+      } else {
+        console.warn(`⚠️ File with ID ${c.imageId} not found for ${c.biodata}`);
+        imageId = null;
+      }
+    }
+
     await prisma.profilPerbekel.upsert({
       where: { id: c.id },
       update: {
@@ -521,7 +703,7 @@ import resolveImageIdForSeed from "./data/resolveImageId";
         pengalaman: c.pengalaman,
         pengalamanOrganisasi: c.pengalamanOrganisasi,
         programUnggulan: c.programUnggulan,
-        // imageId tidak di-update
+        imageId,
       },
       create: {
         id: c.id,
@@ -529,13 +711,57 @@ import resolveImageIdForSeed from "./data/resolveImageId";
         pengalaman: c.pengalaman,
         pengalamanOrganisasi: c.pengalamanOrganisasi,
         programUnggulan: c.programUnggulan,
-        // imageId tidak di-create
+        imageId,
       },
     });
   }
-  console.log(
-    "✅ profilePerbekel seeded without imageId (editable later via UI)"
-  );
+
+  // ============ PERBEKEL DARI MASA KE MAS ============
+  console.log("🔄 Seeding Perbekel Dari Masa Ke Masa...");
+  for (const c of perbekelDariMasaKeMasa) {
+    const existing = await prisma.perbekelDariMasaKeMasa.findUnique({
+      where: { id: c.id },
+      select: { imageId: true },
+    });
+
+    let imageId = existing?.imageId; // Pertahankan existing
+
+    // Kalau belum ada imageId, cari berdasarkan name/realName
+    if (!imageId && c.imageId) {
+      // ✅ Cari langsung berdasarkan ID yang ada di p.imageId
+      const fileRecord = await prisma.fileStorage.findUnique({
+        where: { id: c.imageId },
+        select: { id: true, name: true },
+      });
+
+      if (fileRecord) {
+        imageId = fileRecord.id;
+        console.log(
+          `✅ Found file by ID: ${fileRecord.name} (${fileRecord.id})`
+        );
+      } else {
+        console.warn(`⚠️ File with ID ${c.imageId} not found for ${c.nama}`);
+        imageId = null;
+      }
+    }
+
+    await prisma.perbekelDariMasaKeMasa.upsert({
+      where: { id: c.id },
+      update: {
+        nama: c.nama,
+        periode: c.periode,
+        daerah: c.daerah,
+        imageId,
+      },
+      create: {
+        id: c.id,
+        nama: c.nama,
+        periode: c.periode,
+        daerah: c.daerah,
+        imageId,
+      },
+    });
+  }
 
   // =========== VISI MISI DESA ===========
   for (const l of visiMisiDesa) {
@@ -711,55 +937,68 @@ import resolveImageIdForSeed from "./data/resolveImageId";
   }
   console.log("daftar informasi publik PPID success ...");
 
-  for (const l of pelayananPerizinanBerusaha) {
-    await prisma.pelayananPerizinanBerusaha.upsert({
+  for (const c of kategoriPotensi) {
+    await prisma.kategoriPotensi.upsert({
       where: {
-        id: l.id,
+        id: c.id,
       },
       update: {
-        name: l.name,
-        deskripsi: l.deskripsi,
-        link: l.link,
+        nama: c.nama,
       },
       create: {
-        id: l.id,
-        name: l.name,
-        deskripsi: l.deskripsi,
-        link: l.link,
+        id: c.id,
+        nama: c.nama,
       },
     });
   }
 
-  console.log("pelayanan perizinan berusaha success ...");
+  console.log("kategori Potensi success ...");
 
-  for (const l of pelayananPendudukNonPermanen) {
-    await prisma.pelayananPendudukNonPermanen.upsert({
-      where: {
-        id: l.id,
-      },
-      update: {
-        name: l.name,
-        deskripsi: l.deskripsi,
-      },
-      create: {
-        id: l.id,
-        name: l.name,
-        deskripsi: l.deskripsi,
-      },
-    });
-  }
-  console.log("pelayanan penduduk non permanen success ...");
-
+  console.log("🔄 Seeding Potensi Desa...");
   for (const p of potensi) {
-    await prisma.potensi.upsert({
+    const existing = await prisma.potensiDesa.findUnique({
+      where: { id: p.id },
+      select: { imageId: true },
+    });
+
+    let imageId = existing?.imageId; // Pertahankan existing
+
+    // Kalau belum ada imageId, cari berdasarkan name/realName
+    if (!imageId && p.imageId) {
+      // ✅ Cari langsung berdasarkan ID yang ada di p.imageId
+      const fileRecord = await prisma.fileStorage.findUnique({
+        where: { id: p.imageId },
+        select: { id: true, name: true },
+      });
+
+      if (fileRecord) {
+        imageId = fileRecord.id;
+        console.log(
+          `✅ Found file by ID: ${fileRecord.name} (${fileRecord.id})`
+        );
+      } else {
+        console.warn(`⚠️ File with ID ${p.imageId} not found for ${p.name}`);
+        imageId = null;
+      }
+    }
+
+    await prisma.potensiDesa.upsert({
       where: {
-        name: p.name,
+        id: p.id,
       },
       update: {
         name: p.name,
+        deskripsi: p.deskripsi,
+        content: p.content,
+        kategoriId: p.kategoriId,
+        imageId,
       },
       create: {
         name: p.name,
+        deskripsi: p.deskripsi,
+        content: p.content,
+        kategoriId: p.kategoriId,
+        imageId,
       },
     });
   }
@@ -769,7 +1008,7 @@ import resolveImageIdForSeed from "./data/resolveImageId";
   for (const k of kategoriBerita) {
     await prisma.kategoriBerita.upsert({
       where: {
-        name: k.name,
+        id: k.id,
       },
       update: {
         name: k.name,
@@ -782,16 +1021,106 @@ import resolveImageIdForSeed from "./data/resolveImageId";
 
   console.log("kategori berita success ...");
 
-  for (const c of categoryPengumuman) {
-    await prisma.categoryPengumuman.upsert({
+  console.log("🔄 Seeding Berita...");
+  for (const b of berita) {
+    const existing = await prisma.berita.findUnique({
+      where: { id: b.id },
+      select: { imageId: true },
+    });
+
+    let imageId = existing?.imageId; // Pertahankan existing
+
+    // Kalau belum ada imageId, cari berdasarkan name/realName
+    if (!imageId && b.imageId) {
+      // ✅ Cari langsung berdasarkan ID yang ada di p.imageId
+      const fileRecord = await prisma.fileStorage.findUnique({
+        where: { id: b.imageId },
+        select: { id: true, name: true },
+      });
+
+      if (fileRecord) {
+        imageId = fileRecord.id;
+        console.log(
+          `✅ Found file by ID: ${fileRecord.name} (${fileRecord.id})`
+        );
+      } else {
+        console.warn(`⚠️ File with ID ${b.imageId} not found for ${b.judul}`);
+        imageId = null;
+      }
+    }
+
+    await prisma.berita.upsert({
       where: {
-        name: c.name,
+        id: b.id,
       },
       update: {
-        name: c.name,
+        judul: b.judul,
+        deskripsi: b.deskripsi,
+        content: b.content,
+        kategoriBeritaId: b.kategoriBeritaId,
+        imageId,
       },
       create: {
+        judul: b.judul,
+        deskripsi: b.deskripsi,
+        content: b.content,
+        kategoriBeritaId: b.kategoriBeritaId,
+        imageId,
+      },
+    });
+  }
+
+  console.log("potensi success ...");
+
+  for (const c of kategoriPengumuman) {
+    await safeSeedUnique(
+      "categoryPengumuman",
+      { name: c.name }, // ✅ where clause
+      {
+        id: c.id,
         name: c.name,
+      }
+    );
+  }
+
+  console.log("category pengumuman success ...");
+
+  for (const p of pengumuman) {
+    await prisma.pengumuman.upsert({
+      where: {
+        id: p.id,
+      },
+      update: {
+        judul: p.judul,
+        deskripsi: p.deskripsi,
+        content: p.content,
+        categoryPengumumanId: p.categoryPengumumanId,
+      },
+      create: {
+        judul: p.judul,
+        deskripsi: p.deskripsi,
+        content: p.content,
+        categoryPengumumanId: p.categoryPengumumanId,
+      },
+    });
+  }
+
+  console.log("category pengumuman success ...");
+
+  for (const v of galleryVideo) {
+    await prisma.galleryVideo.upsert({
+      where: {
+        id: v.id,
+      },
+      update: {
+        name: v.judul,
+        deskripsi: v.deskripsi,
+        linkVideo: v.linkVideo,
+      },
+      create: {
+        name: v.judul,
+        deskripsi: v.deskripsi,
+        linkVideo: v.linkVideo,
       },
     });
   }

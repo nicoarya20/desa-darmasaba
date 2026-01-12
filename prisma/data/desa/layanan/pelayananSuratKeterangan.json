@@ -1,57 +1,79 @@
 [
-    {
-        "id" : "cmdxyb9zi0010vniiaeyi55ui",
-        "name" : "Surat Keterangan Beda Biodata Diri",
-        "deskripsi" : "<p>Persyaratan Dokumen :</p><ul><li><p>Pengantar Kelian Banjar Dinas di Wilayah Masing - masing</p></li><li><p>Fotocopy KTP atau Kartu Keluarga</p></li><li><p>Fotocopy dokumen bersangkutan yang terdapat perbedaan biodata diri misal : Sertifikat Tanah/Ijazah/Polis Asuransi dan lainnya.</p></li></ul><p>Alur Pelayanan :</p>"
-    },
-    {
-        "id" : "cmdxycqz40014vniidftrixvf",
-        "name" : "Surat Keterangan Yatim Piatu",
-        "deskripsi" : "<p>Persyaratan Dokumen :</p><ul><li><p>Pengantar Kelian Banjar Dinas di Wilayah Masing - masing</p></li><li><p>Fotocopy KTP atau KIA atau Kartu Keluarga</p></li></ul><p>Alur Pelayanan :</p>"
-    },
-    {
-        "id" : "cmdwx3wph0003vnr74us2t7h7",
-        "name" : "Surat Keterangan Domisili Organisasi",
-        "deskripsi" : "<p>Persyaratan Dokumen:</p><ul><li><p>Pengantar Kelian Banjar Dinas di Wilayah Masing - masing</p></li><li><p>Fotocopy Surat Keterangan Terdaftar (SKT) organisasi atau Pengukuhan Kelompok</p></li><li><p>Jika Pengajuan baru pembuatan SKT maka melengkapi Susunan Pengurus lengkap dengan Kop Organisasi</p></li><li><p>Tanggal berdiri/Tahun berdiri/Sejak kapan berdirinya organisasi</p></li></ul><p>Alur Pelayanan:</p>"
-    },
-    {
-        "id" : "cmdxxv3i80004vniidg1mrucc",
-        "name" : "Surat Keterangan Penghasilan",
-        "deskripsi" : "<p>Persyaratan Dokumen :</p><ul><li><p>Pengantar Kelian Banjar Dinas di Wilayah Masing - masing</p></li><li><p>Fotocopy KTP orang tua atau Fotocopy Kartu keluarga</p></li><li><p>Membuat Surat Pernyataan Penghasilan bermaterai (disertai jumlah penghasilan)</p></li></ul><p>Alur Pelayanan :</p>"
-    },
-    {
-        "id" : "cmdxxwp070008vnii9jbdcto7",
-        "name" : "Surat Keterangan Tidak Mampu",
-        "deskripsi" : "<p>Persyaratan Dokumen :</p><ul><li><p>Pengantar Kelian Banjar Dinas di Wilayah Masing - masing</p></li><li><p>Fotocopy KTP/KIA atau Kartu Keluarga</p></li><li><p>Fotocopy Kartu Indonesia Pintar/Kartu Perlindungan Sosial/Terdaftar dalam DTKS</p></li><li><p>Jika tidak memiliki Kartu tersebut diatas diwajibkan membuat Surat Pernyataan Tidak Mampu</p></li></ul><p>Alur Pelayanan :</p>"
-    },
-    {
-        "id" : "cmdxxyfkl000cvnii1bxinnfi",
-        "name" : "Surat Keterangan Kelahiran",
-        "deskripsi" : "<p>Persyaratan Dokumen :</p><ul><li><p>Pengantar Kelian Banjar Dinas di Wilayah Masing - masing</p></li><li><p>Fotocopy Surat lahir dari dokter/bidan (jika ada)</p></li><li><p>Fotocopy Kartu Keluarga</p></li><li><p>Fotocopy KTP 2 orang saksi</p></li></ul><p>Alur Pelayanan :</p>"
-    },
-    {
-        "id" : "cmdxy23pl000gvniihsg38aq4",
-        "name" : "Surat Keterangan Usaha",
-        "deskripsi" : "<p>Persyaratan Dokumen :</p><ul><li><p>Pengantar Kelian Banjar Dinas di Wilayah Masing - masing</p></li><li><p>Fotocopy KTP atau Kartu Keluarga</p></li><li><p>Foto Lokasi dan Kegiatan Usaha di cetak dalam selembar kertas (diparaf dan stempel oleh Kelian Banjar Dinas)</p></li></ul><p>Alur Pelayanan :</p>"
-    },
-    {
-        "id" : "cmdxy4mgt000kvniib1nemjem",
-        "name" : "Surat Keterangan Kematian",
-        "deskripsi" : "<p>Persyaratan Dokumen :</p><ul><li><p>Pengantar Kelian Banjar Dinas di Wilayah Masing - masing</p></li><li><p>Fotocopy KTP atau Kartu Keluarga</p></li><li><p>Surat Kematian dari rumah sakit atau dokter (jika ada)</p></li><li><p>tanggal kematian</p></li></ul><p>Alur Pelayanan :</p>"
-    },
-    {
-        "id" : "cmdxy61a1000ovniif4ytb9hs",
-        "name" : "Surat Keterangan Tempat Usaha",
-        "deskripsi" : "<p>Persyaratan Dokumen :</p><ul><li><p>Pengantar Kelian Banjar Dinas di Wilayah Masing - masing</p></li><li><p>Fotocopy KTP atau Kartu Keluarga</p></li><li><p>Foto Lokasi&nbsp;dan Kegiatan Usaha di cetak dalam selembar kertas (diparaf dan stempel oleh Kelian Banjar Dinas)</p></li><li><p>Surat Perjanjian Sewa/Kontrak atau Kwintansi Pembayaran Sewa 3 bulan terakhir bagi yang mengontrak tempat usaha, apabila tempat usaha milik sendiri lampiri dengan dokumen kepemilikan tempat usaha (dapat berupa fotocopy sppt atau Fotocopy Sertipikat Hak Milik)</p></li></ul><p>Alur Pelayanan :</p>"
-    },
-    {
-        "id" : "cmdxy754q000svniiiz8oqyo0",
-        "name" : "Surat Keterangan Belum Kawin",
-        "deskripsi" : "<p>Persyaratan Dokumen :</p><ul><li><p>Pengantar Kelian Banjar Dinas di Wilayah Masing - masing</p></li><li><p>Fotocopy KTP atau Kartu Keluarga</p></li><li><p>Khusus bagi yang berstatus duda atau janda melampirkan fotocopy akta cerai atau dokumen pendukung lainnya</p></li></ul><p>Alur Pelayanan :</p>"
-    },
-    {
-        "id" : "cmdxy8pi2000wvnii48fc1sxd",
-        "name" : "Surat Keterangan Kelakuan Baik",
-        "deskripsi" : "<p>Persyaratan Dokumen :</p><ul><li><p>Pengantar Kelian Banjar Dinas di Wilayah Masing - masing</p></li><li><p>Fotocopy KTP atau Kartu Keluarga</p></li></ul><p>Alur Pelayanan :</p>"
-    }
+  {
+    "id": "cmdxyb9zi0010vniiaeyi55ui",
+    "name": "Surat Keterangan Beda Biodata Diri",
+    "deskripsi": "<p>Persyaratan Dokumen :</p><ul><li><p>Pengantar Kelian Banjar Dinas di Wilayah Masing - masing</p></li><li><p>Fotocopy KTP atau Kartu Keluarga</p></li><li><p>Fotocopy dokumen bersangkutan yang terdapat perbedaan biodata diri misal : Sertifikat Tanah/Ijazah/Polis Asuransi dan lainnya.</p></li></ul><p>Alur Pelayanan :</p>",
+    "image": "cmk6n68k80005vn6qtdbshoqi",
+    "image2": "cmk6n68vw0006vn6qv65lrdw8"
+  },
+  {
+    "id": "cmdxycqz40014vniidftrixvf",
+    "name": "Surat Keterangan Yatim Piatu",
+    "deskripsi": "<p>Persyaratan Dokumen :</p><ul><li><p>Pengantar Kelian Banjar Dinas di Wilayah Masing - masing</p></li><li><p>Fotocopy KTP atau KIA atau Kartu Keluarga</p></li></ul><p>Alur Pelayanan :</p>",
+    "image": "cmk6n8rwv0007vn6q312rawvt",
+    "image2": "cmk6n8s9b0008vn6qwd02eyjf"
+  },
+  {
+    "id": "cmdwx3wph0003vnr74us2t7h7",
+    "name": "Surat Keterangan Domisili Organisasi",
+    "deskripsi": "<p>Persyaratan Dokumen:</p><ul><li><p>Pengantar Kelian Banjar Dinas di Wilayah Masing - masing</p></li><li><p>Fotocopy Surat Keterangan Terdaftar (SKT) organisasi atau Pengukuhan Kelompok</p></li><li><p>Jika Pengajuan baru pembuatan SKT maka melengkapi Susunan Pengurus lengkap dengan Kop Organisasi</p></li><li><p>Tanggal berdiri/Tahun berdiri/Sejak kapan berdirinya organisasi</p></li></ul><p>Alur Pelayanan:</p>",
+    "image": "cmk6n9ti90009vn6qt48wbklu",
+    "image2": "cmk6n9tvx000avn6qwkguha7w"
+  },
+  {
+    "id": "cmdxxv3i80004vniidg1mrucc",
+    "name": "Surat Keterangan Penghasilan",
+    "deskripsi": "<p>Persyaratan Dokumen :</p><ul><li><p>Pengantar Kelian Banjar Dinas di Wilayah Masing - masing</p></li><li><p>Fotocopy KTP orang tua atau Fotocopy Kartu keluarga</p></li><li><p>Membuat Surat Pernyataan Penghasilan bermaterai (disertai jumlah penghasilan)</p></li></ul><p>Alur Pelayanan :</p>",
+    "image": "cmk6nb69n000bvn6qx67n06ee",
+    "image2": "cmk6nb6nq000cvn6q75730cr3"
+  },
+  {
+    "id": "cmdxxwp070008vnii9jbdcto7",
+    "name": "Surat Keterangan Tidak Mampu",
+    "deskripsi": "<p>Persyaratan Dokumen :</p><ul><li><p>Pengantar Kelian Banjar Dinas di Wilayah Masing - masing</p></li><li><p>Fotocopy KTP/KIA atau Kartu Keluarga</p></li><li><p>Fotocopy Kartu Indonesia Pintar/Kartu Perlindungan Sosial/Terdaftar dalam DTKS</p></li><li><p>Jika tidak memiliki Kartu tersebut diatas diwajibkan membuat Surat Pernyataan Tidak Mampu</p></li></ul><p>Alur Pelayanan :</p>",
+    "image": "cmk6nc438000dvn6q723r7phi",
+    "image2": "cmk6nc4aa000evn6qwl5t53h4"
+  },
+  {
+    "id": "cmdxxyfkl000cvnii1bxinnfi",
+    "name": "Surat Keterangan Kelahiran",
+    "deskripsi": "<p>Persyaratan Dokumen :</p><ul><li><p>Pengantar Kelian Banjar Dinas di Wilayah Masing - masing</p></li><li><p>Fotocopy Surat lahir dari dokter/bidan (jika ada)</p></li><li><p>Fotocopy Kartu Keluarga</p></li><li><p>Fotocopy KTP 2 orang saksi</p></li></ul><p>Alur Pelayanan :</p>",
+    "image": "cmk6ndw2z000fvn6q3b9wxswd",
+    "image2": "cmk6ndwbf000gvn6qusd4mkhq"
+  },
+  {
+    "id": "cmdxy23pl000gvniihsg38aq4",
+    "name": "Surat Keterangan Usaha",
+    "deskripsi": "<p>Persyaratan Dokumen :</p><ul><li><p>Pengantar Kelian Banjar Dinas di Wilayah Masing - masing</p></li><li><p>Fotocopy KTP atau Kartu Keluarga</p></li><li><p>Foto Lokasi dan Kegiatan Usaha di cetak dalam selembar kertas (diparaf dan stempel oleh Kelian Banjar Dinas)</p></li></ul><p>Alur Pelayanan :</p>",
+    "image": "cmk6nf4pu000hvn6qszs6xyp5",
+    "image2": "cmk6nf53c000ivn6qawvoxndb"
+  },
+  {
+    "id": "cmdxy4mgt000kvniib1nemjem",
+    "name": "Surat Keterangan Kematian",
+    "deskripsi": "<p>Persyaratan Dokumen :</p><ul><li><p>Pengantar Kelian Banjar Dinas di Wilayah Masing - masing</p></li><li><p>Fotocopy KTP atau Kartu Keluarga</p></li><li><p>Surat Kematian dari rumah sakit atau dokter (jika ada)</p></li><li><p>tanggal kematian</p></li></ul><p>Alur Pelayanan :</p>",
+    "image": "cmk6ng6yk000jvn6q0ditzufj",
+    "image2": "cmk6ng77b000kvn6q51j2s4q7"
+  },
+  {
+    "id": "cmdxy61a1000ovniif4ytb9hs",
+    "name": "Surat Keterangan Tempat Usaha",
+    "deskripsi": "<p>Persyaratan Dokumen :</p><ul><li><p>Pengantar Kelian Banjar Dinas di Wilayah Masing - masing</p></li><li><p>Fotocopy KTP atau Kartu Keluarga</p></li><li><p>Foto Lokasi&nbsp;dan Kegiatan Usaha di cetak dalam selembar kertas (diparaf dan stempel oleh Kelian Banjar Dinas)</p></li><li><p>Surat Perjanjian Sewa/Kontrak atau Kwintansi Pembayaran Sewa 3 bulan terakhir bagi yang mengontrak tempat usaha, apabila tempat usaha milik sendiri lampiri dengan dokumen kepemilikan tempat usaha (dapat berupa fotocopy sppt atau Fotocopy Sertipikat Hak Milik)</p></li></ul><p>Alur Pelayanan :</p>",
+    "image": "cmk6nh7ez000lvn6qjfkqeufn",
+    "image2": "cmk6nh7pq000mvn6qor967hjh"
+  },
+  {
+    "id": "cmdxy754q000svniiiz8oqyo0",
+    "name": "Surat Keterangan Belum Kawin",
+    "deskripsi": "<p>Persyaratan Dokumen :</p><ul><li><p>Pengantar Kelian Banjar Dinas di Wilayah Masing - masing</p></li><li><p>Fotocopy KTP atau Kartu Keluarga</p></li><li><p>Khusus bagi yang berstatus duda atau janda melampirkan fotocopy akta cerai atau dokumen pendukung lainnya</p></li></ul><p>Alur Pelayanan :</p>",
+    "image": "cmk6n37tp0003vn6qqyvelh5s",
+    "image2": "cmk6n388d0004vn6qby5fkuz8"
+  },
+  {
+    "id": "cmdxy8pi2000wvnii48fc1sxd",
+    "name": "Surat Keterangan Kelakuan Baik",
+    "deskripsi": "<p>Persyaratan Dokumen :</p><ul><li><p>Pengantar Kelian Banjar Dinas di Wilayah Masing - masing</p></li><li><p>Fotocopy KTP atau Kartu Keluarga</p></li></ul><p>Alur Pelayanan :</p>",
+    "image": "cmk6mvhwh0001vn6qa6ddzqfm",
+    "image2": "cmk6mvi8c0002vn6q9vfyv6yt"
+  }
 ]
