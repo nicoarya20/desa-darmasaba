@@ -66,7 +66,7 @@ function ListAPBDes({ search }: { search: string }) {
   return (
     <Box py={{ base: 'md', md: 'lg' }}>
       {/* Desktop Table */}
-      <Box visibleFrom="md">
+     <Box visibleFrom="md" style={{ overflowX: 'auto' }}>
         <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
           <Group justify="space-between" mb="md">
             <Title order={4} size="lg" lh={1.2}>
@@ -83,7 +83,9 @@ function ListAPBDes({ search }: { search: string }) {
           </Group>
 
           <Box>
-            <Table highlightOnHover miw={0}>
+           <Table highlightOnHover
+    layout="fixed" // 🔥 PENTING
+    withColumnBorders={false} miw={0}>
               <TableThead>
                 <TableTr>
                   <TableTh fz="md" fw={600} ta="left" w="25%">

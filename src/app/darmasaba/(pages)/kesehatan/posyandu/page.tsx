@@ -124,7 +124,7 @@ export default function Page() {
                   </Group>
                   <Center>
                     <Image
-                      src={v.image.link}
+                      src={v.image?.link ?? "/no-image.jpg"}
                       alt={`Gambar ${v.name}`}
                       radius="md"
                       w="100%"

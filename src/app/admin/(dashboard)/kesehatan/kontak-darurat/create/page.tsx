@@ -120,8 +120,8 @@ function CreateKontakDarurat() {
             onChange={(val) => {
               kontakDaruratState.create.form.whatsapp = val.target.value;
             }}
-            label={<Text fz="sm" fw="bold">Whatsapp</Text>}
-            placeholder="Masukkan whatsapp"
+            label={<Text fz="sm" fw="bold">Telepon</Text>}
+            placeholder="Masukkan telepon"
             required
           />
 

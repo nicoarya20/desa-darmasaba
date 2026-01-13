@@ -123,7 +123,9 @@ function ListKategoriKegiatan({ search }: { search: string }) {
   // Desktop table
   const renderDesktopTable = () => (
     <Box>
-      <Table highlightOnHover striped verticalSpacing="sm" miw={300}>
+     <Table highlightOnHover
+    layout="fixed" // 🔥 PENTING
+    withColumnBorders={false} striped verticalSpacing="sm" miw={300}>
         <TableThead>
           <TableTr>
             <TableTh>
@@ -208,7 +210,7 @@ function ListKategoriKegiatan({ search }: { search: string }) {
           </Button>
         </Group>
 
-        <Box visibleFrom="md">{renderDesktopTable()}</Box>
+       <Box visibleFrom="md" style={{ overflowX: 'auto' }}>{renderDesktopTable()}</Box>
         <Box hiddenFrom="md">{renderMobileCards()}</Box>
       </Paper>
 

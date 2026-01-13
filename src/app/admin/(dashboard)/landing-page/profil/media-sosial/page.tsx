@@ -100,8 +100,10 @@ function ListMediaSosial({ search }: { search: string }) {
 
         <Box>
           {/* Desktop: Table | Mobile: Card-based vertical layout */}
-          <Box visibleFrom="md">
-            <Table highlightOnHover>
+         <Box visibleFrom="md" style={{ overflowX: 'auto' }}>
+           <Table highlightOnHover
+    layout="fixed" // 🔥 PENTING
+    withColumnBorders={false}>
               <TableThead>
                 <TableTr>
                   <TableTh style={{ width: '25%' }}>

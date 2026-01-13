@@ -1,0 +1,30 @@
+[
+  {
+    "id": "cmkax1vks000qvn6yyxuvfsi8",
+    "name": "Puskesmas Pembantu Darmasaba",
+    "deskripsi": "<p>Puskesmas Pembantu Darmasaba merupakan fasilitas kesehatan tingkat pertama yang berada di Desa Darmasaba, melayani berbagai layanan kesehatan masyarakat termasuk pemeriksaan umum dan imunisasi.</p>",
+    "imageId": "cmkb6488i001fvn6ylkddch1j",
+    "whatsapp": "089647037430"
+  },
+  {
+    "id": "cmkawzrvg000nvn6ywyx529em",
+    "name": "UPTD Puskesmas Abiansemal III (melayani Darmasaba)",
+    "deskripsi": "<p>Puskesmas Abiansemal III adalah fasilitas kesehatan utama di kecamatan Abiansemal yang melayani wilayah Desa Darmasaba dan sekitarnya. Puskesmas ini memiliki layanan 24 jam serta pelayanan darurat kesehatan dasar.</p>",
+    "imageId": "cmkb681og001gvn6ykb5uasln",
+    "whatsapp": "03618463263"
+  },
+  {
+    "id": "cmkawy5in000kvn6yza82pkkg",
+    "name": "UPTD Puskesmas Abiansemal I",
+    "deskripsi": "<p>Puskesmas Abiansemal I melayani masyarakat di wilayah kecamatan Abiansemal, termasuk pelayanan kesehatan darurat dan program kesehatan masyarakat.</p>",
+    "imageId": "cmkb6brrf0000vn14u8c7wnox",
+    "whatsapp": "087858367111"
+  },
+  {
+    "id": "cmkb6ehu20003vn14ca4xr057",
+    "name": "Kantor Desa Darmasaba (Kontak Informasi Kesehatan)",
+    "deskripsi": "<p>Kantor Pemerintahan Desa Darmasaba dapat menjadi saluran kontak awal untuk rujukan layanan kesehatan darurat atau informasi lebih lanjut mengenai fasilitas kesehatan di wilayah desa.</p>",
+    "imageId": "cmkb6ehpi0001vn14hjp4tdye",
+    "whatsapp": "081239580000"
+  }
+]

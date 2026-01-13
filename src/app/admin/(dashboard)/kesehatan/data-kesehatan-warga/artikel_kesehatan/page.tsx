@@ -84,7 +84,9 @@ function ListArtikelKesehatan({ search }: { search: string }) {
 
         {/* Tabel */}
         <Box style={{ overflowX: "auto" }}>
-          <Table highlightOnHover>
+         <Table highlightOnHover
+    layout="fixed" // 🔥 PENTING
+    withColumnBorders={false}>
             <TableThead>
               <TableTr>
                 <TableTh style={{ minWidth: 200 }}>Judul</TableTh>

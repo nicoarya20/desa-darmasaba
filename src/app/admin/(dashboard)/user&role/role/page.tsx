@@ -99,7 +99,7 @@ function ListRole({ search }: { search: string }) {
         </Group>
 
         {/* Desktop Table */}
-        <Box visibleFrom="md">
+       <Box visibleFrom="md" style={{ overflowX: 'auto' }}>
           <Table
             striped
             highlightOnHover

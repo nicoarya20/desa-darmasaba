@@ -99,7 +99,9 @@ function ListSuratKeterangan({ search }: { search: string }) {
 
         {/* Desktop Table */}
         <Box visibleFrom="md" style={{ overflowX: 'auto' }}>
-          <Table highlightOnHover>
+         <Table highlightOnHover
+    layout="fixed" // 🔥 PENTING
+    withColumnBorders={false}>
             <TableThead>
               <TableTr>
                 <TableTh fz="sm" fw={600} ta="left">

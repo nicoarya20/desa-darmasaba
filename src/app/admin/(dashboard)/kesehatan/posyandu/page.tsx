@@ -87,31 +87,34 @@ function ListPosyandu({ search }: { search: string }) {
         </Group>
 
         {/* Desktop Table */}
-        <Box visibleFrom="md">
-          <Table highlightOnHover>
+       <Box visibleFrom="md" style={{ overflowX: 'auto' }}>
+         <Table highlightOnHover
+    layout="fixed" // 🔥 PENTING
+    withColumnBorders={false}
+    >
             <TableThead>
               <TableTr>
-                <TableTh fz="sm" fw={600} ta="left" lh={1.4}>Nama Posyandu</TableTh>
-                <TableTh fz="sm" fw={600} ta="left" lh={1.4}>Nomor Posyandu</TableTh>
-                <TableTh fz="sm" fw={600} ta="left" lh={1.4}>Deskripsi</TableTh>
-                <TableTh fz="sm" fw={600} ta="left" lh={1.4}>Aksi</TableTh>
+                <TableTh w={220} fz="sm" fw={600} ta="left" lh={1.4}>Nama Posyandu</TableTh>
+                <TableTh w={220} fz="sm" fw={600} ta="left" lh={1.4}>Nomor Posyandu</TableTh>
+                <TableTh w={220} fz="sm" fw={600} ta="left" lh={1.4}>Deskripsi</TableTh>
+                <TableTh w={150} fz="sm" fw={600} ta="left" lh={1.4}>Aksi</TableTh>
               </TableTr>
             </TableThead>
             <TableTbody>
               {filteredData.length > 0 ? (
                 filteredData.map((item) => (
                   <TableTr key={item.id}>
-                    <TableTd>
+                    <TableTd w={220}>
                       <Text fz="md" fw={500} lh={1.5} truncate="end" lineClamp={1}>
                         {item.name}
                       </Text>
                     </TableTd>
-                    <TableTd>
+                    <TableTd w={220}>
                       <Text fz="sm" c="dimmed" lh={1.5}>
                         {item.nomor || '-'}
                       </Text>
                     </TableTd>
-                    <TableTd>
+                    <TableTd w={220}>
                       <Text
                         fz="sm"
                         lh={1.5}
@@ -120,7 +123,7 @@ function ListPosyandu({ search }: { search: string }) {
                         dangerouslySetInnerHTML={{ __html: item.deskripsi }}
                       />
                     </TableTd>
-                    <TableTd>
+                    <TableTd w={220}>
                       <Button
                         size="xs"
                         radius="md"

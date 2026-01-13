@@ -311,7 +311,7 @@ export default function ModernNewsNotification({
                 </Box>
               </Paper>
             </Box>
-            <Box visibleFrom="md">
+           <Box visibleFrom="md" style={{ overflowX: 'auto' }}>
               <Paper
                 style={{
                   ...styles,
@@ -488,7 +488,7 @@ export default function ModernNewsNotification({
             )}
           </Transition>
         </Box>
-        <Box visibleFrom="md">
+       <Box visibleFrom="md" style={{ overflowX: 'auto' }}>
         <Transition
         mounted={toastVisible && !!currentNews}
         transition="slide-right"

@@ -76,8 +76,10 @@ function ListAjukanPermohonan({ search }: { search: string }) {
         </Title>
 
         {/* Desktop Table */}
-        <Box visibleFrom="md">
-          <Table highlightOnHover miw={0}>
+       <Box visibleFrom="md" style={{ overflowX: 'auto' }}>
+         <Table highlightOnHover
+    layout="fixed" // 🔥 PENTING
+    withColumnBorders={false} miw={0}>
             <TableThead>
               <TableTr>
                 <TableTh fz="sm" fw={600} lh={1.4}>Nama</TableTh>

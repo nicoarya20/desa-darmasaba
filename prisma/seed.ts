@@ -26,7 +26,7 @@ import pelayananPerizinanBerusaha from "./data/desa/layanan/pelayananPerizinanBe
 import pelayananSuratKeterangan from "./data/desa/layanan/pelayananSuratKeterangan.json";
 import pelayananTelunjukSaktiDesa from "./data/desa/layanan/pelayananTelunjukSaktiDesa.json";
 import pelayananPendudukNonPermanen from "./data/desa/layanan/pelayanaPendudukNonPermanen.json";
-import penghargaan from "./data/desa/penghargaan/penghargaan.json"
+import penghargaan from "./data/desa/penghargaan/penghargaan.json";
 import lambangDesa from "./data/desa/profile/lambang_desa.json";
 import maskotDesa from "./data/desa/profile/maskot_desa.json";
 import profilPerbekel from "./data/desa/profile/profil_perbekel.json";
@@ -37,6 +37,14 @@ import detailDataPengangguran from "./data/ekonomi/jumlah-pengangguran/detail-da
 import kategoriProduk from "./data/ekonomi/pasar-desa/kategori-produk.json";
 import pegawai from "./data/ekonomi/struktur-organisasi/pegawai-bumdes.json";
 import posisiOrganisasi from "./data/ekonomi/struktur-organisasi/posisi-organisasi-bumdes.json";
+import posyandu from "./data/kesehatan/posyandu/posyandu.json";
+import kontakPuskesmas from "./data/kesehatan/puskesmas/kontak-puskesmas/kontak.json"
+import jamPuskesmas from "./data/kesehatan/puskesmas/jam-puskesmas/jam.json"
+import puskesmas from "./data/kesehatan/puskesmas/puskesmas.json";
+import programKesehatan from "./data/kesehatan/program-kesehatan/program-kesehatan.json"
+import penangananDarurat from "./data/kesehatan/penanganan-darurat/penganan-darurat.json"
+import kontakDarurat from "./data/kesehatan/kontak-darurat/kontak-darurat.json"
+import infoWabahPenyakit from "./data/kesehatan/infowabahpenyakit/infowabahpenyakit.json"
 import berita from "./data/desa/berita/berita.json";
 import kategoriBerita from "./data/desa/berita/kategori-berita.json";
 import contohEdukasiLingkungan from "./data/lingkungan/edukasi-lingkungan/contoh-kegiatan-di-desa-darmasaba.json";
@@ -346,200 +354,6 @@ import resolveImageById from "./resolveImageByName";
   }
   console.log("desa anti korupsi success ...");
 
-  // =========== KATEGORI PRESTASI DESA===========
-  for (const c of kategoriPrestasiDesa) {
-    await prisma.kategoriPrestasiDesa.upsert({
-      where: { id: c.id },
-      update: {
-        name: c.name,
-      },
-      create: {
-        id: c.id,
-        name: c.name,
-      },
-    });
-  }
-  console.log("kategori prestasi desa success ...");
-
-  // =========== PRESTASI DESA===========
-  for (const p of prestasiDesa) {
-    await prisma.prestasiDesa.upsert({
-      where: { id: p.id },
-      update: {
-        name: p.name,
-        deskripsi: p.deskripsi,
-        kategoriId: p.kategoriId,
-      },
-      create: {
-        id: p.id,
-        name: p.name,
-        deskripsi: p.deskripsi,
-        kategoriId: p.kategoriId,
-      },
-    });
-  }
-  console.log("prestasi desa success ...");
-
-  // =========== PENGHARGAAN ===========
-  console.log("🔄 Seeding Penghargaan...");
-  for (const p of penghargaan) {
-    const existing = await prisma.penghargaan.findUnique({
-      where: { id: p.id },
-      select: { imageId: true },
-    });
-
-    let imageId = existing?.imageId; // Pertahankan existing
-
-    // Kalau belum ada imageId, cari berdasarkan name/realName
-    if (!imageId && p.imageId) {
-      // ✅ Cari langsung berdasarkan ID yang ada di p.imageId
-      const fileRecord = await prisma.fileStorage.findUnique({
-        where: { id: p.imageId },
-        select: { id: true, name: true },
-      });
-
-      if (fileRecord) {
-        imageId = fileRecord.id;
-        console.log(
-          `✅ Found file by ID: ${fileRecord.name} (${fileRecord.id})`
-        );
-      } else {
-        console.warn(`⚠️ File with ID ${p.imageId} not found for ${p.name}`);
-        imageId = null;
-      }
-    }
-
-    await prisma.penghargaan.upsert({
-      where: { id: p.id },
-      update: {
-        name: p.name,
-        juara: p.juara,
-        deskripsi: p.deskripsi,
-        imageId,
-      },
-      create: {
-        id: p.id,
-        name: p.name,
-        juara: p.juara,
-        deskripsi: p.deskripsi,
-        imageId,
-      },
-    });
-  }
-  console.log("penghargaan success ...");
-
-  // =========== LAYANAN DESA ===========
-  console.log("🔄 Seeding Pelayanan Surat Keterangan...");
-
-  for (const p of pelayananSuratKeterangan) {
-    const existing = await prisma.pelayananSuratKeterangan.findUnique({
-      where: { id: p.id },
-      select: { imageId: true, image2Id: true }, // 📌 tambahkan image2Id
-    });
-
-    // 1️⃣ Handle imageId
-    let imageId = existing?.imageId ?? null;
-
-    if (!imageId && p.image) {
-      imageId = await resolveImageById(p.image);
-
-      if (imageId) {
-        console.log(`✅ Image resolved for "${p.name}" → ${p.image}`);
-      } else {
-        console.warn(`⚠️ Image not resolved for "${p.name}" → ${p.image}`);
-      }
-    }
-
-    // 2️⃣ Handle image2Id
-    let image2Id = existing?.image2Id ?? null;
-
-    if (!image2Id && p.image2) {
-      image2Id = await resolveImageById(p.image2);
-
-      if (image2Id) {
-        console.log(`✅ Image2 resolved for "${p.name}" → ${p.image2}`);
-      } else {
-        console.warn(`⚠️ Image2 not resolved for "${p.name}" → ${p.image2}`);
-      }
-    }
-
-    // 3️⃣ Upsert dengan kedua image
-    await prisma.pelayananSuratKeterangan.upsert({
-      where: { id: p.id },
-      update: {
-        name: p.name,
-        deskripsi: p.deskripsi,
-        imageId,
-        image2Id, // 📌 tambahkan ini
-      },
-      create: {
-        id: p.id,
-        name: p.name,
-        deskripsi: p.deskripsi,
-        imageId,
-        image2Id, // 📌 tambahkan ini
-      },
-    });
-  }
-  console.log("✅ Pelayanan Surat Keterangan success...");
-
-  for (const p of pelayananTelunjukSaktiDesa) {
-    await prisma.pelayananTelunjukSaktiDesa.upsert({
-      where: { id: p.id },
-      update: {
-        name: p.name,
-        deskripsi: p.deskripsi,
-        link: p.link,
-      },
-      create: {
-        id: p.id,
-        name: p.name,
-        deskripsi: p.deskripsi,
-        link: p.link,
-      },
-    });
-  }
-  console.log("pelayanan telunjuk sakti desa success ...");
-
-  for (const l of pelayananPerizinanBerusaha) {
-    await prisma.pelayananPerizinanBerusaha.upsert({
-      where: {
-        id: l.id,
-      },
-      update: {
-        name: l.name,
-        deskripsi: l.deskripsi,
-        link: l.link,
-      },
-      create: {
-        id: l.id,
-        name: l.name,
-        deskripsi: l.deskripsi,
-        link: l.link,
-      },
-    });
-  }
-
-  console.log("pelayanan perizinan berusaha success ...");
-
-  for (const l of pelayananPendudukNonPermanen) {
-    await prisma.pelayananPendudukNonPermanen.upsert({
-      where: {
-        id: l.id,
-      },
-      update: {
-        name: l.name,
-        deskripsi: l.deskripsi,
-      },
-      create: {
-        id: l.id,
-        name: l.name,
-        deskripsi: l.deskripsi,
-      },
-    });
-  }
-  console.log("pelayanan penduduk non permanen success ...");
-
   // =========== SDGSDesa ===========
   console.log("🔄 Seeding SDGS Desa...");
   for (const l of sdgsDesa) {
@@ -603,7 +417,291 @@ import resolveImageById from "./resolveImageByName";
     });
   }
 
-  console.log("sdgs desa success ...");
+  console.log("apbdes success ...");
+
+  // =========== KATEGORI PRESTASI DESA===========
+  for (const c of kategoriPrestasiDesa) {
+    await prisma.kategoriPrestasiDesa.upsert({
+      where: { id: c.id },
+      update: {
+        name: c.name,
+      },
+      create: {
+        id: c.id,
+        name: c.name,
+      },
+    });
+  }
+  console.log("kategori prestasi desa success ...");
+
+  // =========== PRESTASI DESA===========
+  for (const p of prestasiDesa) {
+    await prisma.prestasiDesa.upsert({
+      where: { id: p.id },
+      update: {
+        name: p.name,
+        deskripsi: p.deskripsi,
+        kategoriId: p.kategoriId,
+      },
+      create: {
+        id: p.id,
+        name: p.name,
+        deskripsi: p.deskripsi,
+        kategoriId: p.kategoriId,
+      },
+    });
+  }
+  console.log("prestasi desa success ...");
+
+  // =========== MENU PPID ===========
+  // =========== SUBMENU PROFILE PPID ===========
+  for (const c of profilePPID) {
+    await prisma.profilePPID.upsert({
+      where: { id: c.id },
+      update: {
+        name: c.name,
+        biodata: c.biodata,
+        riwayat: c.riwayat,
+        pengalaman: c.pengalaman,
+        unggulan: c.unggulan,
+        // imageId tidak di-update
+      },
+      create: {
+        id: c.id,
+        name: c.name,
+        biodata: c.biodata,
+        riwayat: c.riwayat,
+        pengalaman: c.pengalaman,
+        unggulan: c.unggulan,
+        // imageId tidak di-create
+      },
+    });
+  }
+  console.log("✅ profilePPID seeded without imageId (editable later via UI)");
+
+  // =========== SUBMENU STRUKTUR PPID ===========
+  // =========== POSISI ORGANISASI PPID ===========
+
+  const flattenedPosisi = posisiOrganisasiPPID.flat();
+
+  // ✅ Urutkan berdasarkan hierarki
+  const sortedPosisi = flattenedPosisi.sort((a, b) => a.hierarki - b.hierarki);
+
+  for (const p of sortedPosisi) {
+    console.log(`Seeding: ${p.nama} (id: ${p.id}, parent: ${p.parentId})`);
+
+    if (p.parentId) {
+      const parentExists = flattenedPosisi.some((pos) => pos.id === p.parentId);
+      if (!parentExists) {
+        console.warn(
+          `⚠️ Parent tidak ditemukan: ${p.parentId} untuk ${p.nama}`
+        );
+        continue;
+      }
+    }
+
+    await prisma.posisiOrganisasiPPID.upsert({
+      where: { id: p.id },
+      update: p,
+      create: p,
+    });
+  }
+  console.log("posisi organisasi berhasil");
+
+  // =========== PEGAWAI PPID ===========
+  console.log("🔄 Seeding pegawai PPID...");
+  const flattenedPegawai = pegawaiPPID.flat();
+
+  // Check for duplicate emails
+  const emails = new Set();
+  for (const p of flattenedPegawai) {
+    if (emails.has(p.email)) {
+      console.warn(`⚠️ Duplicate email found in pegawaiPPID: ${p.email}`);
+    }
+    emails.add(p.email);
+  }
+
+  for (const p of flattenedPegawai) {
+    try {
+      await prisma.pegawaiPPID.upsert({
+        where: { id: p.id },
+        update: p,
+        create: p,
+      });
+      console.log(`✅ Seeded pegawai PPID -> ${p.namaLengkap}`);
+    } catch (error: any) {
+      if (error.code === "P2002") {
+        console.warn(
+          `⚠️ Pegawai PPID with duplicate email (skipping): ${p.email}`
+        );
+      } else {
+        console.error(
+          `❌ Failed to seed pegawai PPID ${p.namaLengkap}:`,
+          error.message
+        );
+      }
+    }
+  }
+  console.log("✅ pegawai PPID seeding completed");
+
+  // =========== SUBMENU VISI MISI PPID ===========
+
+  for (const v of visiMisiPPID) {
+    await prisma.visiMisiPPID.upsert({
+      where: {
+        id: v.id,
+      },
+      update: {
+        misi: v.misi,
+        visi: v.visi,
+      },
+      create: {
+        id: v.id,
+        misi: v.misi,
+        visi: v.visi,
+      },
+    });
+  }
+  console.log("visi misi PPID success ...");
+
+  // =========== SUBMENU DASAR HUKUM PPID ===========
+  for (const v of dasarHukumPPID) {
+    await prisma.dasarHukumPPID.upsert({
+      where: {
+        id: v.id,
+      },
+      update: {
+        judul: v.judul,
+        content: v.content,
+      },
+      create: {
+        id: v.id,
+        judul: v.judul,
+        content: v.content,
+      },
+    });
+  }
+  console.log("dasar hukum PPID success ...");
+
+  // =========== SUBMENU DAFTAR INFORMASI PUBLIK PPID ===========
+  for (const v of daftarInformasiPublik) {
+    // Convert string date to Date object
+    const tanggal = new Date(v.tanggal);
+
+    await prisma.daftarInformasiPublik.upsert({
+      where: {
+        id: v.id,
+      },
+      update: {
+        jenisInformasi: v.jenisInformasi,
+        deskripsi: v.deskripsi,
+        tanggal: tanggal,
+      },
+      create: {
+        id: v.id,
+        jenisInformasi: v.jenisInformasi,
+        deskripsi: v.deskripsi,
+        tanggal: tanggal,
+      },
+    });
+  }
+  console.log("daftar informasi publik PPID success ...");
+
+  // =========== SUBMENU PERMOHONAN INFORMASI PUBLIK ===========
+
+  for (const j of jenisInformasiDiminta) {
+    await prisma.jenisInformasiDiminta.upsert({
+      where: {
+        name: j.name,
+      },
+      update: {
+        name: j.name,
+      },
+      create: {
+        name: j.name,
+      },
+    });
+  }
+  console.log("jenis informasi diminta success ...");
+
+  for (const c of caraMemperolehInformasi) {
+    await prisma.caraMemperolehInformasi.upsert({
+      where: {
+        name: c.name,
+      },
+      update: {
+        name: c.name,
+      },
+      create: {
+        name: c.name,
+      },
+    });
+  }
+  console.log("cara memperoleh informasi success ...");
+
+  for (const c of caraMemperolehSalinanInformasi) {
+    await prisma.caraMemperolehSalinanInformasi.upsert({
+      where: {
+        name: c.name,
+      },
+      update: {
+        name: c.name,
+      },
+      create: {
+        name: c.name,
+      },
+    });
+  }
+  console.log("cara memperoleh salinan informasi success ...");
+
+  // =========== SUBMENU INDEKS KEPUASAN MASYARAKAT ===========
+  for (const j of jenisKelamin) {
+    await prisma.jenisKelaminResponden.upsert({
+      where: {
+        id: j.id,
+      },
+      update: {
+        name: j.name,
+      },
+      create: {
+        id: j.id,
+        name: j.name,
+      },
+    });
+  }
+  console.log("jenis kelamin responden success ...");
+
+  for (const r of pilihanRatingResponden) {
+    await prisma.pilihanRatingResponden.upsert({
+      where: {
+        id: r.id,
+      },
+      update: {
+        name: r.name,
+      },
+      create: {
+        id: r.id,
+        name: r.name,
+      },
+    });
+  }
+  console.log("pilihan rating responden success ...");
+
+  for (const u of umurResponden) {
+    await prisma.umurResponden.upsert({
+      where: {
+        id: u.id,
+      },
+      update: {
+        name: u.name,
+      },
+      create: {
+        id: u.id,
+        name: u.name,
+      },
+    });
+  }
+  console.log("umur responden success ...");
 
   // =========== MENU DESA ===========
   // =========== SUBMENU PROFILE ===========
@@ -783,160 +881,8 @@ import resolveImageById from "./resolveImageByName";
 
   console.log("visi misi desa success ...");
 
-  // =========== MENU PPID ===========
-  // =========== SUBMENU PROFILE PPID ===========
-  for (const c of profilePPID) {
-    await prisma.profilePPID.upsert({
-      where: { id: c.id },
-      update: {
-        name: c.name,
-        biodata: c.biodata,
-        riwayat: c.riwayat,
-        pengalaman: c.pengalaman,
-        unggulan: c.unggulan,
-        // imageId tidak di-update
-      },
-      create: {
-        id: c.id,
-        name: c.name,
-        biodata: c.biodata,
-        riwayat: c.riwayat,
-        pengalaman: c.pengalaman,
-        unggulan: c.unggulan,
-        // imageId tidak di-create
-      },
-    });
-  }
-  console.log("✅ profilePPID seeded without imageId (editable later via UI)");
-
-  // =========== SUBMENU STRUKTUR PPID ===========
-  // =========== POSISI ORGANISASI PPID ===========
-
-  const flattenedPosisi = posisiOrganisasiPPID.flat();
-
-  // ✅ Urutkan berdasarkan hierarki
-  const sortedPosisi = flattenedPosisi.sort((a, b) => a.hierarki - b.hierarki);
-
-  for (const p of sortedPosisi) {
-    console.log(`Seeding: ${p.nama} (id: ${p.id}, parent: ${p.parentId})`);
-
-    if (p.parentId) {
-      const parentExists = flattenedPosisi.some((pos) => pos.id === p.parentId);
-      if (!parentExists) {
-        console.warn(
-          `⚠️ Parent tidak ditemukan: ${p.parentId} untuk ${p.nama}`
-        );
-        continue;
-      }
-    }
-
-    await prisma.posisiOrganisasiPPID.upsert({
-      where: { id: p.id },
-      update: p,
-      create: p,
-    });
-  }
-  console.log("posisi organisasi berhasil");
-
-  // =========== PEGAWAI PPID ===========
-  console.log("🔄 Seeding pegawai PPID...");
-  const flattenedPegawai = pegawaiPPID.flat();
-
-  // Check for duplicate emails
-  const emails = new Set();
-  for (const p of flattenedPegawai) {
-    if (emails.has(p.email)) {
-      console.warn(`⚠️ Duplicate email found in pegawaiPPID: ${p.email}`);
-    }
-    emails.add(p.email);
-  }
-
-  for (const p of flattenedPegawai) {
-    try {
-      await prisma.pegawaiPPID.upsert({
-        where: { id: p.id },
-        update: p,
-        create: p,
-      });
-      console.log(`✅ Seeded pegawai PPID -> ${p.namaLengkap}`);
-    } catch (error: any) {
-      if (error.code === "P2002") {
-        console.warn(
-          `⚠️ Pegawai PPID with duplicate email (skipping): ${p.email}`
-        );
-      } else {
-        console.error(
-          `❌ Failed to seed pegawai PPID ${p.namaLengkap}:`,
-          error.message
-        );
-      }
-    }
-  }
-  console.log("✅ pegawai PPID seeding completed");
-
-  // =========== SUBMENU VISI MISI PPID ===========
-
-  for (const v of visiMisiPPID) {
-    await prisma.visiMisiPPID.upsert({
-      where: {
-        id: v.id,
-      },
-      update: {
-        misi: v.misi,
-        visi: v.visi,
-      },
-      create: {
-        id: v.id,
-        misi: v.misi,
-        visi: v.visi,
-      },
-    });
-  }
-  console.log("visi misi PPID success ...");
-
-  // =========== SUBMENU DASAR HUKUM PPID ===========
-  for (const v of dasarHukumPPID) {
-    await prisma.dasarHukumPPID.upsert({
-      where: {
-        id: v.id,
-      },
-      update: {
-        judul: v.judul,
-        content: v.content,
-      },
-      create: {
-        id: v.id,
-        judul: v.judul,
-        content: v.content,
-      },
-    });
-  }
-  console.log("dasar hukum PPID success ...");
-
-  // =========== SUBMENU DAFTAR INFORMASI PUBLIK PPID ===========
-  for (const v of daftarInformasiPublik) {
-    // Convert string date to Date object
-    const tanggal = new Date(v.tanggal);
-
-    await prisma.daftarInformasiPublik.upsert({
-      where: {
-        id: v.id,
-      },
-      update: {
-        jenisInformasi: v.jenisInformasi,
-        deskripsi: v.deskripsi,
-        tanggal: tanggal,
-      },
-      create: {
-        id: v.id,
-        jenisInformasi: v.jenisInformasi,
-        deskripsi: v.deskripsi,
-        tanggal: tanggal,
-      },
-    });
-  }
-  console.log("daftar informasi publik PPID success ...");
-
+  // =========== SUBMENU POTENSI DESA ===========
+  console.log("🔄Seeding Kategori Potensi Desa ...");
   for (const c of kategoriPotensi) {
     await prisma.kategoriPotensi.upsert({
       where: {
@@ -1005,6 +951,8 @@ import resolveImageById from "./resolveImageByName";
 
   console.log("potensi success ...");
 
+  // ================== SUBMENU BERITA ========================
+  console.log("🔄 Seeding Kategori Berita...");
   for (const k of kategoriBerita) {
     await prisma.kategoriBerita.upsert({
       where: {
@@ -1069,9 +1017,10 @@ import resolveImageById from "./resolveImageByName";
       },
     });
   }
+  console.log("berita success ...");
 
-  console.log("potensi success ...");
-
+  // ================== SUBMENU PENGUMUMAN ========================
+  console.log("🔄 Seeding Kategori Pengumuman...");
   for (const c of kategoriPengumuman) {
     await safeSeedUnique(
       "categoryPengumuman",
@@ -1083,8 +1032,9 @@ import resolveImageById from "./resolveImageByName";
     );
   }
 
-  console.log("category pengumuman success ...");
+  console.log("kategori pengumuman success ...");
 
+  console.log("🔄 Seeding Pengumuman...");
   for (const p of pengumuman) {
     await prisma.pengumuman.upsert({
       where: {
@@ -1105,8 +1055,10 @@ import resolveImageById from "./resolveImageByName";
     });
   }
 
-  console.log("category pengumuman success ...");
+  console.log("pengumuman success ...");
 
+  // ================== SUBMENU GALLERY ========================
+  console.log("🔄 Seeding Gallery Video...");
   for (const v of galleryVideo) {
     await prisma.galleryVideo.upsert({
       where: {
@@ -1125,100 +1077,167 @@ import resolveImageById from "./resolveImageByName";
     });
   }
 
-  console.log("category pengumuman success ...");
+  console.log("gallery video success ...");
 
-  for (const j of jenisInformasiDiminta) {
-    await prisma.jenisInformasiDiminta.upsert({
-      where: {
-        name: j.name,
-      },
+  // =========== LAYANAN DESA ===========
+  console.log("🔄 Seeding Pelayanan Surat Keterangan...");
+
+  for (const p of pelayananSuratKeterangan) {
+    const existing = await prisma.pelayananSuratKeterangan.findUnique({
+      where: { id: p.id },
+      select: { imageId: true, image2Id: true }, // 📌 tambahkan image2Id
+    });
+
+    // 1️⃣ Handle imageId
+    let imageId = existing?.imageId ?? null;
+
+    if (!imageId && p.image) {
+      imageId = await resolveImageById(p.image);
+
+      if (imageId) {
+        console.log(`✅ Image resolved for "${p.name}" → ${p.image}`);
+      } else {
+        console.warn(`⚠️ Image not resolved for "${p.name}" → ${p.image}`);
+      }
+    }
+
+    // 2️⃣ Handle image2Id
+    let image2Id = existing?.image2Id ?? null;
+
+    if (!image2Id && p.image2) {
+      image2Id = await resolveImageById(p.image2);
+
+      if (image2Id) {
+        console.log(`✅ Image2 resolved for "${p.name}" → ${p.image2}`);
+      } else {
+        console.warn(`⚠️ Image2 not resolved for "${p.name}" → ${p.image2}`);
+      }
+    }
+
+    // 3️⃣ Upsert dengan kedua image
+    await prisma.pelayananSuratKeterangan.upsert({
+      where: { id: p.id },
       update: {
-        name: j.name,
+        name: p.name,
+        deskripsi: p.deskripsi,
+        imageId,
+        image2Id, // 📌 tambahkan ini
       },
       create: {
-        name: j.name,
+        id: p.id,
+        name: p.name,
+        deskripsi: p.deskripsi,
+        imageId,
+        image2Id, // 📌 tambahkan ini
       },
     });
   }
-  console.log("jenis informasi diminta success ...");
+  console.log("✅ Pelayanan Surat Keterangan success...");
 
-  for (const c of caraMemperolehInformasi) {
-    await prisma.caraMemperolehInformasi.upsert({
-      where: {
-        name: c.name,
-      },
+  for (const p of pelayananTelunjukSaktiDesa) {
+    await prisma.pelayananTelunjukSaktiDesa.upsert({
+      where: { id: p.id },
       update: {
-        name: c.name,
+        name: p.name,
+        deskripsi: p.deskripsi,
+        link: p.link,
       },
       create: {
-        name: c.name,
+        id: p.id,
+        name: p.name,
+        deskripsi: p.deskripsi,
+        link: p.link,
       },
     });
   }
-  console.log("cara memperoleh informasi success ...");
+  console.log("pelayanan telunjuk sakti desa success ...");
 
-  for (const c of caraMemperolehSalinanInformasi) {
-    await prisma.caraMemperolehSalinanInformasi.upsert({
+  for (const l of pelayananPerizinanBerusaha) {
+    await prisma.pelayananPerizinanBerusaha.upsert({
       where: {
-        name: c.name,
+        id: l.id,
       },
       update: {
-        name: c.name,
+        name: l.name,
+        deskripsi: l.deskripsi,
+        link: l.link,
       },
       create: {
-        name: c.name,
+        id: l.id,
+        name: l.name,
+        deskripsi: l.deskripsi,
+        link: l.link,
       },
     });
   }
-  console.log("cara memperoleh salinan informasi success ...");
 
-  for (const j of jenisKelamin) {
-    await prisma.jenisKelaminResponden.upsert({
+  console.log("pelayanan perizinan berusaha success ...");
+
+  for (const l of pelayananPendudukNonPermanen) {
+    await prisma.pelayananPendudukNonPermanen.upsert({
       where: {
-        id: j.id,
+        id: l.id,
       },
       update: {
-        name: j.name,
+        name: l.name,
+        deskripsi: l.deskripsi,
       },
       create: {
-        id: j.id,
-        name: j.name,
+        id: l.id,
+        name: l.name,
+        deskripsi: l.deskripsi,
       },
     });
   }
-  console.log("jenis kelamin responden success ...");
+  console.log("pelayanan penduduk non permanen success ...");
 
-  for (const r of pilihanRatingResponden) {
-    await prisma.pilihanRatingResponden.upsert({
-      where: {
-        id: r.id,
-      },
+  // =========== PENGHARGAAN ===========
+  console.log("🔄 Seeding Penghargaan...");
+  for (const p of penghargaan) {
+    const existing = await prisma.penghargaan.findUnique({
+      where: { id: p.id },
+      select: { imageId: true },
+    });
+
+    let imageId = existing?.imageId; // Pertahankan existing
+
+    // Kalau belum ada imageId, cari berdasarkan name/realName
+    if (!imageId && p.imageId) {
+      // ✅ Cari langsung berdasarkan ID yang ada di p.imageId
+      const fileRecord = await prisma.fileStorage.findUnique({
+        where: { id: p.imageId },
+        select: { id: true, name: true },
+      });
+
+      if (fileRecord) {
+        imageId = fileRecord.id;
+        console.log(
+          `✅ Found file by ID: ${fileRecord.name} (${fileRecord.id})`
+        );
+      } else {
+        console.warn(`⚠️ File with ID ${p.imageId} not found for ${p.name}`);
+        imageId = null;
+      }
+    }
+
+    await prisma.penghargaan.upsert({
+      where: { id: p.id },
       update: {
-        name: r.name,
+        name: p.name,
+        juara: p.juara,
+        deskripsi: p.deskripsi,
+        imageId,
       },
       create: {
-        id: r.id,
-        name: r.name,
+        id: p.id,
+        name: p.name,
+        juara: p.juara,
+        deskripsi: p.deskripsi,
+        imageId,
       },
     });
   }
-  console.log("pilihan rating responden success ...");
-
-  for (const u of umurResponden) {
-    await prisma.umurResponden.upsert({
-      where: {
-        id: u.id,
-      },
-      update: {
-        name: u.name,
-      },
-      create: {
-        id: u.id,
-        name: u.name,
-      },
-    });
-  }
-  console.log("umur responden success ...");
+  console.log("penghargaan success ...");
 
   for (const k of kategoriProduk) {
     await prisma.kategoriProduk.upsert({
@@ -1237,6 +1256,341 @@ import resolveImageById from "./resolveImageByName";
   console.log("kategori produk success ...");
 
   const flattenedPosisiBumdes = posisiOrganisasi.flat();
+
+  // ====================== MENU KESEHATAN ========================
+  // ==================== SUBMENU POSYANDU =========================
+  console.log("🔄 Seeding Posyandu...");
+  for (const p of posyandu) {
+    const existing = await prisma.posyandu.findUnique({
+      where: { id: p.id },
+      select: { imageId: true },
+    });
+
+    let imageId = existing?.imageId; // Pertahankan existing
+
+    // Kalau belum ada imageId, cari berdasarkan name/realName
+    if (!imageId && p.imageId) {
+      // ✅ Cari langsung berdasarkan ID yang ada di p.imageId
+      const fileRecord = await prisma.fileStorage.findUnique({
+        where: { id: p.imageId },
+        select: { id: true, name: true },
+      });
+
+      if (fileRecord) {
+        imageId = fileRecord.id;
+        console.log(
+          `✅ Found file by ID: ${fileRecord.name} (${fileRecord.id})`
+        );
+      } else {
+        console.warn(`⚠️ File with ID ${p.imageId} not found for ${p.name}`);
+        imageId = null;
+      }
+    }
+
+    await prisma.posyandu.upsert({
+      where: { id: p.id },
+      update: {
+        name: p.name,
+        nomor: p.nomor,
+        deskripsi: p.deskripsi,
+        jadwalPelayanan: p.jadwalPelayanan,
+        imageId,
+      },
+      create: {
+        id: p.id,
+        name: p.name,
+        nomor: p.nomor,
+        deskripsi: p.deskripsi,
+        jadwalPelayanan: p.jadwalPelayanan,
+        imageId,
+      },
+    });
+  }
+  console.log("posyandu success ...");
+
+  // ==================== SUBMENU PUSKESMAS =========================
+  console.log("🔄 Seeding Kontak Puskesmas...");
+  for (const k of kontakPuskesmas) {
+    await prisma.kontakPuskesmas.upsert({
+      where: {
+        id: k.id,
+      },
+      update: {
+        kontakPuskesmas: k.kontakPuskesmas,
+        email: k.email,
+        facebook: k.facebook,
+        kontakUGD: k.kontakUGD,
+      },
+      create: {
+        id: k.id,
+        kontakPuskesmas: k.kontakPuskesmas,
+        email: k.email,
+        facebook: k.facebook,
+        kontakUGD: k.kontakUGD,
+      },
+    });
+  }
+  console.log("kontak puskesmas success ...");
+
+  console.log("🔄 Seeding Jam Puskesmas...");
+  for (const k of jamPuskesmas) {
+    await prisma.jamOperasional.upsert({
+      where: {
+        id: k.id,
+      },
+      update: {
+        workDays: k.workDays,
+        weekDays: k.weekDays,
+        holiday: k.holiday,
+      },
+      create: {
+        id: k.id,
+        workDays: k.workDays,
+        weekDays: k.weekDays,
+        holiday: k.holiday,
+      },
+    });
+  }
+  console.log("jam puskesmas success ...");
+
+  console.log("🔄 Seeding Puskesmas...");
+  for (const p of puskesmas) {
+    const existing = await prisma.puskesmas.findUnique({
+      where: { id: p.id },
+      select: { imageId: true },
+    });
+
+    let imageId = existing?.imageId; // Pertahankan existing
+
+    // Kalau belum ada imageId, cari berdasarkan name/realName
+    if (!imageId && p.imageId) {
+      // ✅ Cari langsung berdasarkan ID yang ada di p.imageId
+      const fileRecord = await prisma.fileStorage.findUnique({
+        where: { id: p.imageId },
+        select: { id: true, name: true },
+      });
+
+      if (fileRecord) {
+        imageId = fileRecord.id;
+        console.log(
+          `✅ Found file by ID: ${fileRecord.name} (${fileRecord.id})`
+        );
+      } else {
+        console.warn(`⚠️ File with ID ${p.imageId} not found for ${p.name}`);
+        imageId = null;
+      }
+    }
+
+    await prisma.puskesmas.upsert({
+      where: { id: p.id },
+      update: {
+        name: p.name,
+        alamat: p.alamat,
+        jamId: p.jamId,
+        imageId,
+        kontakId: p.kontakId,
+      },
+      create: {
+        id: p.id,
+        name: p.name,
+        alamat: p.alamat,
+        jamId: p.jamId,
+        imageId,
+        kontakId: p.kontakId,
+      },
+    });
+  }
+  console.log("puskesmas success ...");
+
+  // ==================== SUBMENU PROGRAM KESEHATAN =========================
+  console.log("🔄 Seeding Program Kesehatan...");
+  for (const p of programKesehatan) {
+    const existing = await prisma.programKesehatan.findUnique({
+      where: { id: p.id },
+      select: { imageId: true },
+    });
+
+    let imageId = existing?.imageId; // Pertahankan existing
+
+    // Kalau belum ada imageId, cari berdasarkan name/realName
+    if (!imageId && p.imageId) {
+      // ✅ Cari langsung berdasarkan ID yang ada di p.imageId
+      const fileRecord = await prisma.fileStorage.findUnique({
+        where: { id: p.imageId },
+        select: { id: true, name: true },
+      });
+
+      if (fileRecord) {
+        imageId = fileRecord.id;
+        console.log(
+          `✅ Found file by ID: ${fileRecord.name} (${fileRecord.id})`
+        );
+      } else {
+        console.warn(`⚠️ File with ID ${p.imageId} not found for ${p.name}`);
+        imageId = null;
+      }
+    }
+
+    await prisma.programKesehatan.upsert({
+      where: { id: p.id },
+      update: {
+        name: p.name,
+        deskripsiSingkat: p.deskripsiSingkat,
+        deskripsi: p.deskripsi,
+        imageId,
+      },
+      create: {
+        id: p.id,
+        name: p.name,
+        deskripsiSingkat: p.deskripsiSingkat,
+        deskripsi: p.deskripsi,
+        imageId,
+      },
+    });
+  }
+  console.log("program kesehatan success ...");
+
+  // ==================== SUBMENU PENANGANAN DARURAT =========================
+  console.log("🔄 Seeding Penanganan Darurat...");
+  for (const p of penangananDarurat) {
+    const existing = await prisma.penangananDarurat.findUnique({
+      where: { id: p.id },
+      select: { imageId: true },
+    });
+
+    let imageId = existing?.imageId; // Pertahankan existing
+
+    // Kalau belum ada imageId, cari berdasarkan name/realName
+    if (!imageId && p.imageId) {
+      // ✅ Cari langsung berdasarkan ID yang ada di p.imageId
+      const fileRecord = await prisma.fileStorage.findUnique({
+        where: { id: p.imageId },
+        select: { id: true, name: true },
+      });
+
+      if (fileRecord) {
+        imageId = fileRecord.id;
+        console.log(
+          `✅ Found file by ID: ${fileRecord.name} (${fileRecord.id})`
+        );
+      } else {
+        console.warn(`⚠️ File with ID ${p.imageId} not found for ${p.name}`);
+        imageId = null;
+      }
+    }
+
+    await prisma.penangananDarurat.upsert({
+      where: { id: p.id },
+      update: {
+        name: p.name,
+        deskripsi: p.deskripsi,
+        imageId,
+      },
+      create: {
+        id: p.id,
+        name: p.name,
+        deskripsi: p.deskripsi,
+        imageId,
+      },
+    });
+  }
+  console.log("penanganan darurat success ...");
+
+   // ==================== SUBMENU KONTAK DARURAT =========================
+  console.log("🔄 Seeding Kontak Darurat...");
+  for (const p of kontakDarurat) {
+    const existing = await prisma.kontakDarurat.findUnique({
+      where: { id: p.id },
+      select: { imageId: true },
+    });
+
+    let imageId = existing?.imageId; // Pertahankan existing
+
+    // Kalau belum ada imageId, cari berdasarkan name/realName
+    if (!imageId && p.imageId) {
+      // ✅ Cari langsung berdasarkan ID yang ada di p.imageId
+      const fileRecord = await prisma.fileStorage.findUnique({
+        where: { id: p.imageId },
+        select: { id: true, name: true },
+      });
+
+      if (fileRecord) {
+        imageId = fileRecord.id;
+        console.log(
+          `✅ Found file by ID: ${fileRecord.name} (${fileRecord.id})`
+        );
+      } else {
+        console.warn(`⚠️ File with ID ${p.imageId} not found for ${p.name}`);
+        imageId = null;
+      }
+    }
+
+    await prisma.kontakDarurat.upsert({
+      where: { id: p.id },
+      update: {
+        name: p.name,
+        deskripsi: p.deskripsi,
+        whatsapp: p.whatsapp,
+        imageId,
+      },
+      create: {
+        id: p.id,
+        name: p.name,
+        deskripsi: p.deskripsi,
+        whatsapp: p.whatsapp,
+        imageId,
+      },
+    });
+  }
+  console.log("kontak darurat success ...");
+
+   // ==================== SUBMENU INFO WABAH PENYAKIT =========================
+  console.log("🔄 Seeding Info Wabah Penyakit...");
+  for (const p of infoWabahPenyakit) {
+    const existing = await prisma.infoWabahPenyakit.findUnique({
+      where: { id: p.id },
+      select: { imageId: true },
+    });
+
+    let imageId = existing?.imageId; // Pertahankan existing
+
+    // Kalau belum ada imageId, cari berdasarkan name/realName
+    if (!imageId && p.imageId) {
+      // ✅ Cari langsung berdasarkan ID yang ada di p.imageId
+      const fileRecord = await prisma.fileStorage.findUnique({
+        where: { id: p.imageId },
+        select: { id: true, name: true },
+      });
+
+      if (fileRecord) {
+        imageId = fileRecord.id;
+        console.log(
+          `✅ Found file by ID: ${fileRecord.name} (${fileRecord.id})`
+        );
+      } else {
+        console.warn(`⚠️ File with ID ${p.imageId} not found for ${p.name}`);
+        imageId = null;
+      }
+    }
+
+    await prisma.infoWabahPenyakit.upsert({
+      where: { id: p.id },
+      update: {
+        name: p.name,
+        deskripsiSingkat: p.deskripsiSingkat,
+        deskripsiLengkap: p.deskripsiLengkap,
+        imageId,
+      },
+      create: {
+        id: p.id,
+        name: p.name,
+        deskripsiSingkat: p.deskripsiSingkat,
+        deskripsiLengkap: p.deskripsiLengkap,
+        imageId,
+      },
+    });
+  }
+  console.log("kontak darurat success ...");
 
   // ✅ Urutkan berdasarkan hierarki
   const sortedPosisiBumdes = flattenedPosisiBumdes.sort(

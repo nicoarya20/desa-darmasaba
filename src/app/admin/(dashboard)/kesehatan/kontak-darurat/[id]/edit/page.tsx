@@ -159,8 +159,8 @@ function EditKontakDarurat() {
           <TextInput
             value={formData.whatsapp}
             onChange={(e) => setFormData(prev => ({ ...prev, whatsapp: e.target.value }))}
-            label="Whatsapp"
-            placeholder="Masukkan whatsapp"
+            label="Telepon"
+            placeholder="Masukkan telepon"
             required
           />
 

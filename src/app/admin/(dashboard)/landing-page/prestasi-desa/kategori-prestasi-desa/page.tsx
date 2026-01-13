@@ -79,7 +79,7 @@ function ListKategoriPrestasi({ search }: { search: string }) {
             Tambah Baru
           </Button>
         </Group>
-        <Box visibleFrom="md">
+       <Box visibleFrom="md" style={{ overflowX: 'auto' }}>
           <Table verticalSpacing="sm" highlightOnHover>
             <TableThead>
               <TableTr>

@@ -95,8 +95,10 @@ function ListKematian({ search }: { search: string }) {
         </Group>
 
         {/* Tabel untuk desktop */}
-        <Box visibleFrom="md">
-          <Table highlightOnHover>
+       <Box visibleFrom="md" style={{ overflowX: 'auto' }}>
+         <Table highlightOnHover
+    layout="fixed" // 🔥 PENTING
+    withColumnBorders={false}>
             <TableThead>
               <TableTr>
                 <TableTh><Text fz="sm" fw={600} lh={1.2}>Nama</Text></TableTh>

@@ -77,7 +77,7 @@ export default function DetailPosyanduUser() {
           {data.image?.link ? (
             <Center>
               <Image
-                src={data.image.link}
+                src={data.image?.link ?? "/no-image.jpg"}
                 alt={`Gambar ${data.name}`}
                 w="100%"
                 h={300}

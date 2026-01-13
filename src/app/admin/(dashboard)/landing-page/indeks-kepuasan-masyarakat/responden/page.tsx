@@ -85,7 +85,7 @@ function ListResponden({ search }: ListRespondenProps) {
     <Box>
       <Stack gap={'lg'}>
         {/* Desktop Table */}
-        <Box visibleFrom="md">
+       <Box visibleFrom="md" style={{ overflowX: 'auto' }}>
           <Paper p="lg" radius="lg" shadow="md" withBorder>
             <Title order={4} size="lg" mb="md" lh={1.2}>
               Daftar Responden

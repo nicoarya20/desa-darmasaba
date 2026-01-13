@@ -93,7 +93,9 @@ function ListInfoWabahPenyakit({ search }: { search: string }) {
 
         {/* Desktop Table */}
         <Box visibleFrom="md" style={{ overflowX: 'auto' }}>
-          <Table highlightOnHover>
+         <Table highlightOnHover
+    layout="fixed" // 🔥 PENTING
+    withColumnBorders={false}>
             <TableThead>
               <TableTr>
                 <TableTh>Judul</TableTh>

@@ -234,7 +234,7 @@ function GrafikPersentaseKelahiranKematian() {
 
 
                 {/* Desktop: Table */}
-                <Box visibleFrom="md">
+               <Box visibleFrom="md" style={{ overflowX: 'auto' }}>
                   <Table striped withTableBorder highlightOnHover>
                     <Table.Thead>
                       <Table.Tr>

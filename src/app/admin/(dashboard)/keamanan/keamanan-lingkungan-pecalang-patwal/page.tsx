@@ -93,8 +93,10 @@ function ListKeamananLingkungan({ search }: { search: string }) {
         </Group>
 
         {/* Desktop Table */}
-        <Box visibleFrom="md">
-          <Table highlightOnHover
+       <Box visibleFrom="md" style={{ overflowX: 'auto' }}>
+         <Table highlightOnHover
+    layout="fixed" // 🔥 PENTING
+    withColumnBorders={false}
             miw={0}
             style={{ tableLayout: 'fixed', width: '100%' }}>
             <TableThead>

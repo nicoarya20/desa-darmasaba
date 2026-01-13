@@ -79,8 +79,10 @@ function ListBerita({ search }: { search: string }) {
         </Group>
 
         {/* Desktop Table */}
-        <Box visibleFrom="md">
-          <Table highlightOnHover miw={0}>
+        <Box visibleFrom="md" style={{ overflowX: 'auto' }}>
+          <Table highlightOnHover
+            layout="fixed" // 🔥 PENTING
+            withColumnBorders={false} miw={0}>
             <TableThead>
               <TableTr>
                 <TableTh w="50%">Judul</TableTh>
