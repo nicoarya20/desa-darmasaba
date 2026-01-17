@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // prisma/seedAssets.ts
+import prisma from "@/lib/prisma";
+import AdmZip from "adm-zip";
 import fs from "fs/promises";
 import path from "path";
 import sharp from "sharp";
-import fetch from "node-fetch";
-import AdmZip from "adm-zip";
-import prisma from "@/lib/prisma";
+import fetchWithRetry from "./data/fetchWithRetry";
 
 const UPLOADS_DIR =
   process.env.WIBU_UPLOAD_DIR || path.join(process.cwd(), "uploads");
@@ -18,7 +19,10 @@ function detectCategory(filename: string): "image" | "document" | "other" {
 }
 
 // --- Helper: recursive walk dir ---
-async function walkDir(dir: string, fileList: string[] = []): Promise<string[]> {
+async function walkDir(
+  dir: string,
+  fileList: string[] = []
+): Promise<string[]> {
   const entries = await fs.readdir(dir, { withFileTypes: true });
 
   for (const entry of entries) {
@@ -41,18 +45,45 @@ export default async function seedAssets() {
 
   // 1. Download zip
   const url =
-    "https://cld-dkr-makuro-seafile.wibudev.com/f/ffd5a548a04f47939474/?dl=1";
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`Gagal download assets: ${res.statusText}`);
+    "https://cld-dkr-makuro-seafile.wibudev.com/f/88293b915cf34b939819/?dl=1";
+  const res = await fetchWithRetry(url, 3, 20000);
+
+  // Validasi content-type
+  const contentType = res.headers.get("content-type");
+  if (!contentType?.includes("zip")) {
+    throw new Error(`Invalid content-type (${contentType}). Expected ZIP file`);
+  }
+
   const buffer = Buffer.from(await res.arrayBuffer());
+
+  // Validasi ukuran file
+  if (buffer.length < 100) {
+    throw new Error("Downloaded ZIP is empty or corrupted");
+  }
+
+  // Validasi signature ZIP ("PK")
+  if (buffer.toString("utf8", 0, 2) !== "PK") {
+    throw new Error("Invalid ZIP signature (PK not found)");
+  }
 
   // 2. Extract zip ke folder tmp
   const extractDir = path.join(process.cwd(), "tmp_assets");
   await fs.rm(extractDir, { recursive: true, force: true });
   await fs.mkdir(extractDir, { recursive: true });
 
-  const zip = new AdmZip(buffer);
-  zip.extractAllTo(extractDir, true);
+  let zip: AdmZip;
+
+  try {
+    zip = new AdmZip(buffer);
+  } catch (err) {
+    throw new Error("Failed to parse ZIP file (corrupted or invalid)");
+  }
+
+  try {
+    zip.extractAllTo(extractDir, true);
+  } catch (err) {
+    throw new Error("Failed to extract ZIP contents");
+  }
 
   // 3. Cari semua file valid (recursive)
   const files = await walkDir(extractDir);
@@ -84,17 +115,40 @@ export default async function seedAssets() {
       await fs.copyFile(filePath, targetPath);
     }
 
-    // 5. Simpan ke DB
-    await prisma.fileStorage.create({
-      data: {
-        name: finalName,
-        realName: entryName,
-        path: targetPath,
-        mimeType,
-        link: `/uploads/${category}/${finalName}`,
-        category,
-      },
+    const existing = await prisma.fileStorage.findUnique({
+      where: { name: finalName },
     });
+
+    if (existing) {
+      // Restore kalau soft deleted
+      await prisma.fileStorage.update({
+        where: { name: finalName },
+        data: {
+          path: targetPath,
+          realName: entryName,
+          mimeType,
+          link: `/uploads/${category}/${finalName}`,
+          category,
+          deletedAt: null,
+          isActive: true,
+        },
+      });
+
+      console.log(`♻️ restored: ${category}/${finalName}`);
+    } else {
+      await prisma.fileStorage.create({
+        data: {
+          name: finalName,
+          realName: entryName,
+          path: targetPath,
+          mimeType,
+          link: `/uploads/${category}/${finalName}`,
+          category,
+        },
+      });
+
+      console.log(`📂 created: ${category}/${finalName}`);
+    }
 
     console.log(`📂 saved: ${category}/${finalName}`);
   }
@@ -103,6 +157,8 @@ export default async function seedAssets() {
   await fs.rm(extractDir, { recursive: true, force: true });
 
   console.log("✅ Selesai seed assets!");
+  console.log("DB URL (asset):", process.env.DATABASE_URL);
+
 }
 
 // --- Auto run kalau dipanggil langsung ---

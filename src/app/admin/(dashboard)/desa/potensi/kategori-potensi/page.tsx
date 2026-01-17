@@ -96,8 +96,10 @@ function ListKategoriPotensi({ search }: { search: string }) {
           </Group>
 
           {/* Desktop Table */}
-          <Box visibleFrom="md">
-            <Table highlightOnHover striped withRowBorders miw={700}>
+         <Box visibleFrom="md" style={{ overflowX: 'auto' }}>
+           <Table highlightOnHover
+    layout="fixed" // 🔥 PENTING
+    withColumnBorders={false} striped withRowBorders miw={700}>
               <TableThead>
                 <TableTr>
                   <TableTh w="60%">

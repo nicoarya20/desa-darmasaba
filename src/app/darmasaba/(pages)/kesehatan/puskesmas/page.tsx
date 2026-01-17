@@ -84,7 +84,7 @@ function Page() {
               >
                 <Stack gap="sm">
                   <Image
-                    src={v.image.link}
+                    src={v.image?.link ?? "/no-image.jpg"}
                     alt={v.name}
                     radius="md"
                     height={160}

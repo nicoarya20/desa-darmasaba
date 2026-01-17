@@ -1,8 +1,8 @@
 [
-  { "name": "Pemerintahan" },
-  { "name": "Pembangunan" },
-  { "name": "Ekonomi" },
-  { "name": "Sosial" },
-  { "name": "Budaya" },
-  { "name": "Teknologi" }
+  { "id": "cmk69tght000svnv8ok5rid2v", "name": "Pemerintahan" },
+  { "id": "cmk69tghx000tvnv8g2d206wv", "name": "Pembangunan" },
+  { "id": "cmk69tghx000uvnv847ppcxqh", "name": "Ekonomi" },
+  { "id": "cmk69tghy000vvnv8xeouenv5", "name": "Sosial" },
+  { "id": "cmk69tghy000wvnv8umg2vloa", "name": "Budaya" },
+  { "id": "cmk69tghz000xvnv8kxzzt24h", "name": "Teknologi" }
 ]

@@ -1,17 +1,16 @@
 'use client'
-import polsekTerdekatState from '@/app/admin/(dashboard)/_state/keamanan/polsek-terdekat';
+import statePolsekTerdekat from '@/app/admin/(dashboard)/_state/keamanan/polsek-terdekat';
 import colors from '@/con/colors';
 import { Box, Button, Center, Grid, GridCol, Pagination, Paper, SimpleGrid, Skeleton, Stack, Text, TextInput, Title } from '@mantine/core';
-import { useShallowEffect } from '@mantine/hooks';
+import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
 import { IconNavigation, IconSearch } from '@tabler/icons-react';
-import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import BackButton from '../../../desa/layanan/_com/BackButto';
-import { useRouter } from 'next/navigation';
-import { useDebouncedValue } from '@mantine/hooks';
 
 function Page() {
-  const state = useProxy(polsekTerdekatState);
+  const state = useProxy(statePolsekTerdekat.polsekTerdekatState);
   const [search, setSearch] = useState('');
   const [debouncedSearch] = useDebouncedValue(search, 1000);
   const router = useRouter();

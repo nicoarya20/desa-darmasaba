@@ -1,0 +1,18 @@
+[
+  {
+    "id": "cmkao2zxk000bvntzbavkbg6p",
+    "name": "Puskesmas Abiansemal III",
+    "alamat": "Jl. Ratna, Sibang Kaja, Abiansemal, Badung, Bali 80352",
+    "jamId": "cmkao2zwx0008vntzmvqdsdzo",
+    "imageId": "cmkao2zm90007vntzxqkjy5mt",
+    "kontakId": "cmkao2zxc0009vntz00kev051"
+  },
+  {
+    "id": "cmkao2zxk000bvntzbavkbh7q",
+    "name": "Puskesmas Pembantu Darmasaba",
+    "alamat": "Desa Darmasaba, Kecamatan Abiansemal, Kabupaten Badung, Bali",
+    "jamId": "cmkao2zwx0008vntzmvqdseal",
+    "imageId": "cmkatoru10000vny38y0wxd6s",
+    "kontakId": "cmkao2zxc0009vntz00kev162"
+  }
+]

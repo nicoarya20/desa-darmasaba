@@ -27,8 +27,25 @@ import {
   IconFiretruck,
   IconBuilding,
   IconAlertTriangle,
+
+  // ===== Tambahan =====
+  IconLifebuoy,
+  IconRun,
+  IconShield,
+  IconPhoneCall,
+  IconFirstAidKit,
+  IconStethoscope,
+  IconBuildingCommunity,
+  IconFileText,
+  IconInfoCircle,
+  IconMessageReport,
+  IconUsers,
+  IconQuestionMark,
 } from '@tabler/icons-react'
 
+/* =======================
+   Icon Keys (DB Safe)
+======================= */
 export type IconKey =
   | 'ekowisata'
   | 'kompetisi'
@@ -50,14 +67,33 @@ export type IconKey =
   | 'pelatihan'
   | 'subsidi'
   | 'layananKesehatan'
+
+  // ===== Keamanan & Darurat =====
   | 'polisi'
   | 'ambulans'
   | 'pemadam'
-  | 'rumahSakit'
-  | 'bangunan'
   | 'darurat'
+  | 'sar'
+  | 'evakuasi'
+  | 'keamanan'
+  | 'teleponDarurat'
 
+  // ===== Kesehatan =====
+  | 'rumahSakit'
+  | 'puskesmas'
+  | 'klinik'
 
+  // ===== Pemerintahan =====
+  | 'bangunan'
+  | 'kantorDesa'
+  | 'administrasi'
+  | 'informasi'
+  | 'pengaduan'
+  | 'layananPublik'
+
+/* =======================
+   Icon Map
+======================= */
 const iconMap: Record<IconKey, React.FC<any>> = {
   ekowisata: IconLeaf,
   kompetisi: IconTrophy,
@@ -79,22 +115,45 @@ const iconMap: Record<IconKey, React.FC<any>> = {
   pelatihan: IconSchool,
   subsidi: IconShoppingCart,
   layananKesehatan: IconHospital,
+
+  // ===== Keamanan & Darurat =====
   polisi: IconShieldFilled,
   ambulans: IconAmbulance,
   pemadam: IconFiretruck,
+  darurat: IconAlertTriangle,
+  sar: IconLifebuoy,
+  evakuasi: IconRun,
+  keamanan: IconShield,
+  teleponDarurat: IconPhoneCall,
+
+  // ===== Kesehatan =====
   rumahSakit: IconHospital,
+  puskesmas: IconFirstAidKit,
+  klinik: IconStethoscope,
+
+  // ===== Pemerintahan =====
   bangunan: IconBuilding,
-  darurat: IconAlertTriangle
+  kantorDesa: IconBuildingCommunity,
+  administrasi: IconFileText,
+  informasi: IconInfoCircle,
+  pengaduan: IconMessageReport,
+  layananPublik: IconUsers,
 }
 
+/* =======================
+   Icon Mapper Component
+======================= */
 type Props = {
   name: IconKey
   size?: number
   color?: string
 }
 
-export const IconMapper: React.FC<Props> = ({ name, size = 24, color }) => {
-  const IconComponent = iconMap[name]
-  if (!IconComponent) return null
+export const IconMapper: React.FC<Props> = ({
+  name,
+  size = 24,
+  color,
+}) => {
+  const IconComponent = iconMap[name] ?? IconQuestionMark
   return <IconComponent size={size} color={color} />
 }

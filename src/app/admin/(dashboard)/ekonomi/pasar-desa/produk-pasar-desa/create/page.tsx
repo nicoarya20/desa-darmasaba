@@ -23,6 +23,7 @@ import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 import pasarDesaState from '../../../../_state/ekonomi/pasar-desa/pasar-desa';
+import CreateEditor from '@/app/admin/(dashboard)/_com/createEditor';
 
 export default function CreatePasarDesa() {
   const router = useRouter();
@@ -44,6 +45,7 @@ export default function CreatePasarDesa() {
       rating: 0,
       kategoriId: [],
       kontak: '',
+      deskripsi: ''
     };
     setPreviewImage(null);
     setFile(null);
@@ -80,7 +82,7 @@ export default function CreatePasarDesa() {
   };
 
   return (
-     <Box px={{ base: 0, md: 'xs' }} py="xs">
+    <Box px={{ base: 0, md: 'xs' }} py="xs">
       {/* Header dengan tombol kembali */}
       <Group mb="md">
         <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
@@ -233,6 +235,18 @@ export default function CreatePasarDesa() {
               })) || []
             }
           />
+
+          <Box>
+            <Text fw="bold" fz="sm" mb={6}>
+              Deskripsi Produk
+            </Text>
+            <CreateEditor
+              value={statePasar.pasarDesa.create.form.deskripsi}
+              onChange={(val) => {
+                statePasar.pasarDesa.create.form.deskripsi = val;
+              }}
+            />
+          </Box>
 
           {/* Tombol Submit */}
           <Group justify="right">

@@ -116,8 +116,10 @@ function ListKategoriPengumuman({ search }: { search: string }) {
             </Stack>
           </Box>
 
-          <Box visibleFrom="md">
-            <Table highlightOnHover striped withRowBorders>
+         <Box visibleFrom="md" style={{ overflowX: 'auto' }}>
+           <Table highlightOnHover
+    layout="fixed" // 🔥 PENTING
+    withColumnBorders={false} striped withRowBorders>
               <TableThead>
                 <TableTr>
                   <TableTh w="60%">

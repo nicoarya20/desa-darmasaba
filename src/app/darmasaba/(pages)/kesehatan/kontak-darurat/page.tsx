@@ -139,7 +139,7 @@ function Page() {
                     }}
                   >
                     <Image
-                      src={v.image.link}
+                      src={v.image?.link ?? "/no-image.jpg"}
                       alt={v.name}
                       fit="cover"
                       loading="lazy"

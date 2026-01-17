@@ -73,7 +73,9 @@ function ListPrestasi({ search }: { search: string }) {
 
         {/* Desktop Table */}
         <Box visibleFrom="md" style={{ overflowX: 'auto' }}>
-          <Table highlightOnHover striped verticalSpacing="sm" miw={800}>
+         <Table highlightOnHover
+    layout="fixed" // 🔥 PENTING
+    withColumnBorders={false} striped verticalSpacing="sm" miw={800}>
             <TableThead>
               <TableTr>
                 <TableTh>Nama Prestasi</TableTh>

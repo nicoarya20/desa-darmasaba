@@ -1,16 +1,16 @@
 'use client'
 /* eslint-disable react-hooks/exhaustive-deps */
-import polsekTerdekatState from '@/app/admin/(dashboard)/_state/keamanan/polsek-terdekat';
+import statePolsekTerdekat from '@/app/admin/(dashboard)/_state/keamanan/polsek-terdekat';
 import colors from '@/con/colors';
 import { Badge, Box, Button, Center, Flex, Paper, SimpleGrid, Skeleton, Stack, Text, Title } from '@mantine/core';
 import { IconArrowDown, IconClock, IconNavigation, IconPhone, IconPin } from '@tabler/icons-react';
+import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { useProxy } from 'valtio/utils';
 import BackButton from '../../desa/layanan/_com/BackButto';
-import { useRouter } from 'next/navigation';
 
 function Page() {
-  const state = useProxy(polsekTerdekatState.findFirst);
+  const state = useProxy(statePolsekTerdekat.polsekTerdekatState.findFirst);
   const router = useRouter();
   const { data, loading, load } = state;
 

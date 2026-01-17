@@ -3,7 +3,7 @@ import kontakDarurat from '@/app/admin/(dashboard)/_state/kesehatan/kontak-darur
 import colors from '@/con/colors';
 import { Box, Button, Group, Image, Paper, Skeleton, Stack, Text, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { IconArrowBack, IconBrandWhatsapp } from '@tabler/icons-react';
+import { IconArrowBack, IconPhoneCall } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
 
@@ -63,7 +63,7 @@ function Page() {
               </Box>
 
               <Box>
-                <Title order={3}>Whatsapp</Title>
+                <Title order={3}>Telepon</Title>
                 <Text fz={{ base: 'sm', md: 'md' }} c={data.whatsapp ? 'black' : 'dimmed'}>
                   {data.whatsapp || '-'}
                 </Text>
@@ -97,14 +97,14 @@ function Page() {
               <Group>
                 <Button
                   variant="light"
-                  leftSection={<IconBrandWhatsapp size={18} />}
+                  leftSection={<IconPhoneCall size={18} />}
                   component="a"
-                  href={`https://wa.me/${data.whatsapp.replace(/\D/g, '')}`}
+                  href={`tel:${data.whatsapp.replace(/\D/g, '')}`}
                   target="_blank"
-                  aria-label="Hubungi WhatsApp"
+                  aria-label="Hubungi Telepon"
                   fz={{ base: 'sm', md: 'md' }}
                 >
-                  WhatsApp
+                  Telepon
                 </Button>
               </Group>
             </Stack>

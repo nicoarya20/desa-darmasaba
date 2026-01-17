@@ -1,0 +1,17 @@
+[
+  {
+    "id": "map-polisi-1",
+    "kontakDaruratId": "keamanan-polisi",
+    "kontakItemId": "item-polsek-darmasaba"
+  },
+  {
+    "id": "map-polisi-2",
+    "kontakDaruratId": "keamanan-polisi",
+    "kontakItemId": "item-polres-badung"
+  },
+  {
+    "id": "map-damkar-1",
+    "kontakDaruratId": "keamanan-damkar",
+    "kontakItemId": "item-damkar-badung"
+  }
+]

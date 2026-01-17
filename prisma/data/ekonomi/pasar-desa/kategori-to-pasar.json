@@ -1,0 +1,42 @@
+[
+  {
+    "id": "f6b52033-5016-45d9-b0fd-b9d4b6c4729b",
+    "kategoriId": "5c06chf7-123f-9kif-0663-5e9h76e55060",
+    "pasarDesaId": "d62660a2-ac6b-428a-acf6-58cc837ef789"
+  },
+  {
+    "id": "d2ef373c-043c-44b5-adde-6a25a54199d3",
+    "kategoriId": "5c06chf7-123f-7igd-0663-5e9h76e55060",
+    "pasarDesaId": "d62660a2-ac6b-428a-acf6-58cc837ef789"
+  },
+  {
+    "id": "ad427752-fea0-4ef3-a312-5961eefd5ee3",
+    "kategoriId": "4b95bge6-012e-5ged-9552-4d8g65d44959",
+    "pasarDesaId": "d62660a2-ac6b-428a-acf6-58cc837ef789"
+  },
+  {
+    "id": "bd00ab59-7ac8-4d40-94de-a86bb0eb4557",
+    "kategoriId": "5c06chf7-123f-8jhe-0663-5e9h76e55060",
+    "pasarDesaId": "24c6b992-49da-4c6e-aebb-72cf89f75438"
+  },
+  {
+    "id": "b7d311a2-a23a-499d-a339-823c5e30849a",
+    "kategoriId": "5c06chf7-123f-7igd-0663-5e9h76e55060",
+    "pasarDesaId": "24c6b992-49da-4c6e-aebb-72cf89f75438"
+  },
+  {
+    "id": "50ccc6c9-92c1-4d86-9585-85d48d35f640",
+    "kategoriId": "4b95bge6-012e-5ged-9552-4d8g65d44959",
+    "pasarDesaId": "24c6b992-49da-4c6e-aebb-72cf89f75438"
+  },
+  {
+    "id": "3b27f795-1d1d-4655-90f9-b779a009094e",
+    "kategoriId": "4b95bge6-012e-5ged-9552-4d8g65d44959",
+    "pasarDesaId": "6dea2257-b710-4cd2-8d94-9b6737e658d8"
+  },
+  {
+    "id": "d45873c5-5948-40f9-a88d-aa0861132bae",
+    "kategoriId": "4b95bge6-012e-5ged-9552-4d8g65d44959",
+    "pasarDesaId": "1b7a17ea-83f7-4e73-a94d-96e2b4a623f2"
+  }
+]

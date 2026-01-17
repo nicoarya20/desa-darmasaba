@@ -226,7 +226,9 @@ function Page() {
               <Card radius="xl" p="lg" withBorder>
                 <Stack gap="md">
                   <Title order={4}>Dokter & Tenaga Medis</Title>
-                  <Table highlightOnHover withTableBorder withColumnBorders aria-label="Tabel Dokter">
+                  <Table highlightOnHover
+                    layout="fixed" // 🔥 PENTING
+                    withColumnBorders={false} withTableBorder aria-label="Tabel Dokter">
                     <TableThead>
                       <TableTr>
                         <TableTh>
@@ -301,7 +303,9 @@ function Page() {
                 <Stack gap="md">
                   <Title order={3}>Layanan & Tarif</Title>
                   <Divider />
-                  <Table highlightOnHover withTableBorder withColumnBorders aria-label="Tabel Layanan dan Tarif">
+                  <Table highlightOnHover
+                    layout="fixed" // 🔥 PENTING
+                    withColumnBorders={false} withTableBorder aria-label="Tabel Layanan dan Tarif">
                     <TableThead>
                       <TableTr>
                         <TableTh>

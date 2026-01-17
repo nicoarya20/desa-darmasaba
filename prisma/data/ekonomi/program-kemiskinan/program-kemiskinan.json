@@ -1,0 +1,23 @@
+[
+  {
+    "id": "dd92a029-cd7d-4b60-8a3b-dd88e61fe715",
+    "nama": "BLT-DD (Bantuan Langsung Tunai Dana Desa)",
+    "icon": "bantuan",
+    "deskripsi": "<p>Program pemberian Bantuan Langsung Tunai yang dibiayai dari Dana Desa untuk meringankan beban ekonomi keluarga miskin/prasejahtera di Desa Darmasaba.</p>",
+    "statistikId": "d59481a3-ff7f-4e52-cd5c-89e143eeb869"
+  },
+  {
+    "id": "dd92a029-cd7d-4b60-9b4c-dd88e61fe715",
+    "nama": "Penguatan Ketahanan Pangan",
+    "icon": "air",
+    "deskripsi": "<p>Kegiatan pemberdayaan masyarakat dalam ketahanan pangan untuk mendukung ketersediaan pangan keluarga kurang mampu dan meningkatkan kemampuan produksi pangan lokal.</p>",
+    "statistikId": "d59481a3-ff7f-4e52-de6d-89e143eeb869"
+  },
+  {
+    "id": "dd92a029-cd7d-4b60-0c5d-dd88e61fe715",
+    "nama": "Peningkatan IKM berbasis E-commerce",
+    "icon": "ekonomi",
+    "deskripsi": "<p>Program peningkatan keterampilan usaha mikro kecil (IKM) termasuk pelatihan branding, pengemasan, dan promosi digital untuk memperkuat ekonomi rumah tangga melalui pemasaran online.</p>",
+    "statistikId": "d59481a3-ff7f-4e52-df7e-89e143eeb869"
+  }
+]

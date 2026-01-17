@@ -114,7 +114,7 @@ function ListBelanja({ search }: { search: string }) {
           </Button>
         </Group>
 
-        <Box visibleFrom="md">
+       <Box visibleFrom="md" style={{ overflowX: 'auto' }}>
           <Table
             highlightOnHover
             miw={0}

@@ -79,8 +79,10 @@ function ListPosisiOrganisasiPPID({ search }: { search: string }) {
         </Group>
 
         {/* Desktop Table */}
-        <Box visibleFrom="md">
-          <Table highlightOnHover>
+       <Box visibleFrom="md" style={{ overflowX: 'auto' }}>
+         <Table highlightOnHover
+    layout="fixed" // 🔥 PENTING
+    withColumnBorders={false}>
             <TableThead>
               <TableTr>
                 <TableTh fz="sm" fw={600} lh={1.4}>Nama Posisi</TableTh>

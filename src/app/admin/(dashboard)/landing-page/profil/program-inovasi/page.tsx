@@ -13,7 +13,7 @@ function ProgramInovasi() {
   const [search, setSearch] = useState("");
 
   return (
-    <Box px={{base: 0, md: "md"}} py="lg">
+    <Box px={{ base: 0, md: "md" }} py="lg">
       <HeaderSearch
         title="Program Inovasi"
         placeholder="Cari program inovasi..."
@@ -34,8 +34,8 @@ function ListProgramInovasi({ search }: { search: string }) {
   const { data, page, totalPages, loading, load } = stateProgramInovasi.findMany;
 
   useShallowEffect(() => {
-      load(page, 10, debouncedSearch);
-    }, [page, debouncedSearch]);
+    load(page, 10, debouncedSearch);
+  }, [page, debouncedSearch]);
 
   const filteredData = data || [];
 
@@ -62,67 +62,67 @@ function ListProgramInovasi({ search }: { search: string }) {
             Tambah Program
           </Button>
         </Group>
-        <Box visibleFrom='md'>
-          <Box style={{ overflowX: 'auto' }}>
-            <Table highlightOnHover striped verticalSpacing="sm">
-              <TableThead>
+        <Box visibleFrom='md' style={{ overflowX: 'auto' }}>
+         <Table highlightOnHover
+    layout="fixed" // 🔥 PENTING
+    withColumnBorders={false} striped verticalSpacing="sm">
+            <TableThead>
+              <TableTr>
+                <TableTh>Nama Program</TableTh>
+                <TableTh>Deskripsi</TableTh>
+                <TableTh>Link</TableTh>
+                <TableTh>Aksi</TableTh>
+              </TableTr>
+            </TableThead>
+            <TableTbody>
+              {filteredData.length === 0 ? (
                 <TableTr>
-                  <TableTh>Nama Program</TableTh>
-                  <TableTh>Deskripsi</TableTh>
-                  <TableTh>Link</TableTh>
-                  <TableTh>Aksi</TableTh>
+                  <TableTd colSpan={4}>
+                    <Center py={20}>
+                      <Text color="dimmed">Belum ada data program inovasi</Text>
+                    </Center>
+                  </TableTd>
                 </TableTr>
-              </TableThead>
-              <TableTbody>
-                {filteredData.length === 0 ? (
-                  <TableTr>
-                    <TableTd colSpan={4}>
-                      <Center py={20}>
-                        <Text color="dimmed">Belum ada data program inovasi</Text>
-                      </Center>
+              ) : (
+                filteredData.map((item) => (
+                  <TableTr key={item.id}>
+                    <TableTd>
+                      <Text fw={500}>{item.name}</Text>
+                    </TableTd>
+                    <TableTd style={{ maxWidth: 250 }}>
+                      <Text fz="sm" lineClamp={1} dangerouslySetInnerHTML={{ __html: item.description || '-' }}></Text>
+                    </TableTd>
+                    <TableTd style={{ maxWidth: 250 }}>
+                      <Tooltip label="Buka tautan program" position="top" withArrow>
+                        <a
+                          href={item.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{ color: colors['blue-button'], textDecoration: 'underline' }}
+                        >
+                          <Text truncate fz="sm">{item.link}</Text>
+                        </a>
+                      </Tooltip>
+                    </TableTd>
+                    <TableTd>
+                      <Button
+                        size="xs"
+                        radius="md"
+                        variant="light"
+                        color="blue"
+                        leftSection={<IconDeviceImacCog size={16} />}
+                        onClick={() =>
+                          router.push(`/admin/landing-page/profil/program-inovasi/${item.id}`)
+                        }
+                      >
+                        Detail
+                      </Button>
                     </TableTd>
                   </TableTr>
-                ) : (
-                  filteredData.map((item) => (
-                    <TableTr key={item.id}>
-                      <TableTd>
-                        <Text fw={500}>{item.name}</Text>
-                      </TableTd>
-                      <TableTd style={{ maxWidth: 250 }}>
-                        <Text fz="sm" lineClamp={1} dangerouslySetInnerHTML={{ __html: item.description || '-' }}></Text>
-                      </TableTd>
-                      <TableTd style={{ maxWidth: 250 }}>
-                        <Tooltip label="Buka tautan program" position="top" withArrow>
-                          <a
-                            href={item.link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            style={{ color: colors['blue-button'], textDecoration: 'underline' }}
-                          >
-                            <Text truncate fz="sm">{item.link}</Text>
-                          </a>
-                        </Tooltip>
-                      </TableTd>
-                      <TableTd>
-                        <Button
-                          size="xs"
-                          radius="md"
-                          variant="light"
-                          color="blue"
-                          leftSection={<IconDeviceImacCog size={16} />}
-                          onClick={() =>
-                            router.push(`/admin/landing-page/profil/program-inovasi/${item.id}`)
-                          }
-                        >
-                          Detail
-                        </Button>
-                      </TableTd>
-                    </TableTr>
-                  ))
-                )}
-              </TableTbody>
-            </Table>
-          </Box>
+                ))
+              )}
+            </TableTbody>
+          </Table>
         </Box>
         <Box hiddenFrom="md" pt={20}>
           <Stack gap="sm">

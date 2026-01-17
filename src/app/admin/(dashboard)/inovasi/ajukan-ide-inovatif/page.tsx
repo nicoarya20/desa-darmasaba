@@ -73,7 +73,9 @@ function ListAjukanIdeInovatif({ search }: { search: string }) {
       <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
         <Title order={4}>Daftar Ide Inovatif</Title>
         <Box style={{ overflowX: "auto" }}>
-          <Table highlightOnHover>
+         <Table highlightOnHover
+    layout="fixed" // 🔥 PENTING
+    withColumnBorders={false}>
             <TableThead>
               <TableTr>
                 <TableTh style={{ width: '20%' }}>Nama</TableTh>

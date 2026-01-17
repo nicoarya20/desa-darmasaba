@@ -139,8 +139,10 @@ function ListDataLingkunganDesa({ search }: { search: string }) {
                 Tambah Baru
               </Button>
             </Group>
-            <Box visibleFrom="md">
-              <Table highlightOnHover miw={0} style={{ tableLayout: 'fixed', width: '100%' }}>
+           <Box visibleFrom="md" style={{ overflowX: 'auto' }}>
+             <Table highlightOnHover
+    layout="fixed" // 🔥 PENTING
+    withColumnBorders={false} miw={0} style={{ tableLayout: 'fixed', width: '100%' }}>
                 <TableThead>
                   <TableTr>
                     <TableTh style={{ width: '5%', textAlign: 'center' }}>No</TableTh>
@@ -181,8 +183,10 @@ function ListDataLingkunganDesa({ search }: { search: string }) {
         </Group>
 
         {/* Desktop Table */}
-        <Box visibleFrom="md">
-          <Table highlightOnHover miw={0} style={{ tableLayout: 'fixed', width: '100%' }}>
+       <Box visibleFrom="md" style={{ overflowX: 'auto' }}>
+         <Table highlightOnHover
+    layout="fixed" // 🔥 PENTING
+    withColumnBorders={false} miw={0} style={{ tableLayout: 'fixed', width: '100%' }}>
             <TableThead>
               <TableTr>
                 <TableTh style={{ width: '5%', textAlign: 'center' }}>No</TableTh>

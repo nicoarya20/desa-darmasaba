@@ -110,7 +110,9 @@ function Page() {
                     <Title order={2} fw="bold">{state.findUnique.data.mythvsfact?.title}</Title>
                     <Divider my="xs" />
                     <Box pb="md">
-                      <Table highlightOnHover withTableBorder withColumnBorders striped>
+                      <Table highlightOnHover
+                        layout="fixed" // 🔥 PENTING
+                        withColumnBorders={false} withTableBorder striped>
                         <TableThead>
                           <TableTr>
                             <TableTh fz={{ base: 'xs', md: 'sm' }} fw="bold">Mitos</TableTh>

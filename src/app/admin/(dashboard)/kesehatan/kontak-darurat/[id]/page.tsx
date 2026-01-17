@@ -73,7 +73,7 @@ function DetailKontakDarurat() {
               </Box>
 
               <Box>
-                <Text fz="lg" fw="bold">Whatsapp</Text>
+                <Text fz="lg" fw="bold">Telepon</Text>
                 <Text fz="md" c="dimmed">{data.whatsapp || '-'}</Text>
               </Box>
 

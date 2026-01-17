@@ -26,6 +26,17 @@ import {
   IconTruckFilled,
   IconBuilding,
   IconAlertTriangle,
+  IconBuildingCommunity,
+  IconFileText,
+  IconFirstAidKit,
+  IconInfoCircle,
+  IconLifebuoy,
+  IconMessageReport,
+  IconPhoneCall,
+  IconRun,
+  IconShield,
+  IconStethoscope,
+  IconUsers,
 } from '@tabler/icons-react';
 
 const iconMap = {
@@ -49,12 +60,29 @@ const iconMap = {
   pelatihan: { label: 'Pelatihan', icon: IconSchool },
   subsidi: { label: 'Subsidi', icon: IconShoppingCart },
   layananKesehatan: { label: 'Layanan Kesehatan', icon: IconHospital },
+
+  // ===== Keamanan & Darurat =====
   polisi: { label: 'Polisi', icon: IconShieldFilled },
   ambulans: { label: 'Ambulans', icon: IconAmbulance },
-  pemadam: { label: 'Pemadam', icon: IconFiretruck },
-  rumahSakit: { label: 'Rumah Sakit', icon: IconHospital },
-  bangunan: { label: 'Bangunan', icon: IconBuilding },
+  pemadam: { label: 'Pemadam Kebakaran', icon: IconFiretruck },
   darurat: { label: 'Darurat', icon: IconAlertTriangle },
+  sar: { label: 'SAR / Basarnas', icon: IconLifebuoy },
+  evakuasi: { label: 'Evakuasi', icon: IconRun },
+  keamanan: { label: 'Keamanan', icon: IconShield },
+  teleponDarurat: { label: 'Telepon Darurat', icon: IconPhoneCall },
+
+  // ===== Kesehatan =====
+  rumahSakit: { label: 'Rumah Sakit', icon: IconHospital },
+  puskesmas: { label: 'Puskesmas', icon: IconFirstAidKit },
+  klinik: { label: 'Klinik', icon: IconStethoscope },
+
+  // ===== Pemerintahan & Fasilitas =====
+  bangunan: { label: 'Bangunan', icon: IconBuilding },
+  kantorDesa: { label: 'Kantor Desa', icon: IconBuildingCommunity },
+  administrasi: { label: 'Administrasi', icon: IconFileText },
+  informasi: { label: 'Informasi', icon: IconInfoCircle },
+  pengaduan: { label: 'Pengaduan', icon: IconMessageReport },
+  layananPublik: { label: 'Layanan Publik', icon: IconUsers },
 };
 
 export type IconKey = keyof typeof iconMap;
