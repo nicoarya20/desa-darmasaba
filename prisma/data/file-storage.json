@@ -999,7 +999,7 @@
     "link": "/api/fileStorage/findUnique/M9QlgVKIEfCdY3g4F_tRZ-desktop.webp",
     "category": "image"
   },
-    {
+  {
     "id": "cmkayz2h8001cvn6yrb7uptjs",
     "name": "Gi8EX3pBmT719AfzXirDS-desktop.webp",
     "realName": "pd1.jpg",
@@ -1114,6 +1114,60 @@
     "path": "uploads/images",
     "mimeType": "image/webp",
     "link": "/api/fileStorage/findUnique/DyX82oztXbHfu6HEvbrpt-desktop.webp",
+    "category": "image"
+  },
+  {
+    "id": "cmkc2tcn30000vnt9esmx8kyb",
+    "name": "K0wY911212dinYA3AFB_f-desktop.webp",
+    "realName": "keamananl-1.jpg",
+    "path": "uploads/images",
+    "mimeType": "image/webp",
+    "link": "/api/fileStorage/findUnique/K0wY911212dinYA3AFB_f-desktop.webp",
+    "category": "image"
+  },
+  {
+    "id": "cmkc2xm1z0003vnt98682dv0a",
+    "name": "x0_-siY2V8IehBzo4_uph-desktop.webp",
+    "realName": "keamananl-2.jpg",
+    "path": "uploads/images",
+    "mimeType": "image/webp",
+    "link": "/api/fileStorage/findUnique/x0_-siY2V8IehBzo4_uph-desktop.webp",
+    "category": "image"
+  },
+  {
+    "id": "cmkc36q2j0006vnt9g87h5it4",
+    "name": "TXknK9CSRSxwvM2hPW6BO-desktop.webp",
+    "realName": "pecalang.jpeg",
+    "path": "uploads/images",
+    "mimeType": "image/webp",
+    "link": "/api/fileStorage/findUnique/TXknK9CSRSxwvM2hPW6BO-desktop.webp",
+    "category": "image"
+  },
+  {
+    "id": "cmkccs50d0000vn2mfuk0d9dw",
+    "name": "U7rePDZq5E59z-Eo9tLBe-desktop.webp",
+    "realName": "tips-keamanan-1.jpg",
+    "path": "uploads/images",
+    "mimeType": "image/webp",
+    "link": "/api/fileStorage/findUnique/U7rePDZq5E59z-Eo9tLBe-desktop.webp",
+    "category": "image"
+  },
+  {
+    "id": "cmkccyh7t0003vn2mjdrqtuu0",
+    "name": "TTur8BttDlAS9UgZVe3M8-desktop.webp",
+    "realName": "tipskaman.jpg",
+    "path": "uploads/images",
+    "mimeType": "image/webp",
+    "link": "/api/fileStorage/findUnique/TTur8BttDlAS9UgZVe3M8-desktop.webp",
+    "category": "image"
+  },
+  {
+    "id": "cmkdu8kb20002vn4lihwo4k86",
+    "name": "6DQbAvn0St-xHdPGW3vpY-desktop.webp",
+    "realName": "Jamban4.jpg",
+    "path": "uploads/images",
+    "mimeType": "image/webp",
+    "link": "/api/fileStorage/findUnique/6DQbAvn0St-xHdPGW3vpY-desktop.webp",
     "category": "image"
   }
 ]

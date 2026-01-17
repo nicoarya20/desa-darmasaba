@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 import colors from '@/con/colors';
 import {
@@ -6,9 +5,8 @@ import {
   Button,
   Group,
   Loader,
-  Modal,
+  MultiSelect,
   Paper,
-  Select,
   Stack,
   Text,
   TextInput,
@@ -19,15 +17,16 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
-import polsekTerdekat from '../../../_state/keamanan/polsek-terdekat';
+import statePolsekTerdekat from '../../../../_state/keamanan/polsek-terdekat';
 
 function CreatePolsekTerdekat() {
-  const polsekState = useProxy(polsekTerdekat);
+  const polsekState = useProxy(statePolsekTerdekat.polsekTerdekatState);
   const router = useRouter();
-  const [layananOptions, setLayananOptions] = useState<{ value: string; label: string }[]>([]);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [namaLayananBaru, setNamaLayananBaru] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    statePolsekTerdekat.layananPolsek.findManyAll.load();
+  }, []);
 
   const resetForm = () => {
     polsekState.create.form = {
@@ -40,44 +39,44 @@ function CreatePolsekTerdekat() {
       namaTempatMaps: "",
       alamatMaps: "",
       linkPetunjukArah: "",
-      layananPolsekId: "",
+      layananPolsekId: [],
     };
   };
 
   const isValidGoogleMapsEmbed = (url: string): boolean => {
-  try {
-    const u = new URL(url);
-    return (
-      u.hostname === 'www.google.com' &&
-      u.pathname === '/maps/embed' &&
-      u.searchParams.has('pb')
-    );
-  } catch {
-    return false;
-  }
-};
+    try {
+      const u = new URL(url);
+      return (
+        u.hostname === 'www.google.com' &&
+        u.pathname === '/maps/embed' &&
+        u.searchParams.has('pb')
+      );
+    } catch {
+      return false;
+    }
+  };
 
   const handleSubmit = async () => {
-  const { embedMapUrl } = polsekState.create.form;
+    const { embedMapUrl } = polsekState.create.form;
 
-  // ✅ Validasi Google Maps Embed URL (jika diisi)
-  if (embedMapUrl && !isValidGoogleMapsEmbed(embedMapUrl)) {
-    toast.error("URL embed peta tidak valid. Harap paste iframe dari Google Maps.");
-    return;
-  }
+    // ✅ Validasi Google Maps Embed URL (jika diisi)
+    if (embedMapUrl && !isValidGoogleMapsEmbed(embedMapUrl)) {
+      toast.error("URL embed peta tidak valid. Harap paste iframe dari Google Maps.");
+      return;
+    }
 
-  try {
-    setIsSubmitting(true);
-    await polsekState.create.create();
-    resetForm();
-    router.push("/admin/keamanan/polsek-terdekat");
-  } catch (error) {
-    console.error(error);
-    toast.error("Gagal menambah polsek terdekat");
-  } finally {
-    setIsSubmitting(false);
-  }
-};
+    try {
+      setIsSubmitting(true);
+      await polsekState.create.create();
+      resetForm();
+      router.push("/admin/keamanan/polsek-terdekat/daftar-polsek-terdekat");
+    } catch (error) {
+      console.error(error);
+      toast.error("Gagal menambah polsek terdekat");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const extractEmbedUrl = (input: string): string => {
     // Jika sudah berupa URL embed yang valid
@@ -96,77 +95,8 @@ function CreatePolsekTerdekat() {
     return input.trim();
   };
 
-  const fetchLayanan = async () => {
-    try {
-      const res = await fetch("/api/keamanan/layanan-polsek/find-many");
-      const data = await res.json();
-
-      if (data.success) {
-        const options = data.data.map((item: any) => ({
-          value: item.id,
-          label: item.nama,
-        }));
-        setLayananOptions(options);
-      }
-    } catch {
-      toast.error("Gagal memuat layanan polsek");
-    }
-  };
-
-  const handleTambahLayanan = async () => {
-    if (!namaLayananBaru.trim()) return toast.warn("Nama layanan tidak boleh kosong");
-
-    try {
-      const res = await fetch("/api/keamanan/layanan-polsek/create", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nama: namaLayananBaru }),
-      });
-      const data = await res.json();
-
-      if (data.success) {
-        const newLayanan = {
-          value: data.data.id,
-          label: data.data.nama,
-        };
-        setLayananOptions((prev) => [...prev, newLayanan]);
-        await fetchLayanan();
-        polsekState.create.form.layananPolsekId = data.data.id;
-        toast.success("Layanan baru ditambahkan!");
-        setModalOpen(false);
-        setNamaLayananBaru("");
-      } else {
-        toast.error(data.message || "Gagal menambah layanan");
-      }
-    } catch {
-      toast.error("Error menambah layanan");
-    }
-  };
-
-  useEffect(() => {
-    fetchLayanan();
-  }, []);
-
   return (
-     <Box px={{ base: 0, md: 'xs' }} py="xs">
-      {/* Modal Tambah Layanan */}
-      <Modal
-        opened={modalOpen}
-        onClose={() => setModalOpen(false)}
-        title="Tambah Layanan Polsek"
-        centered
-      >
-        <Stack>
-          <TextInput
-            label="Nama Layanan"
-            placeholder="Masukkan nama layanan"
-            value={namaLayananBaru}
-            onChange={(e) => setNamaLayananBaru(e.currentTarget.value)}
-          />
-          <Button onClick={handleTambahLayanan}>Simpan</Button>
-        </Stack>
-      </Modal>
-
+    <Box px={{ base: 0, md: 'xs' }} py="xs">
       {/* Header */}
       <Group mb="md">
         <Button
@@ -255,36 +185,23 @@ function CreatePolsekTerdekat() {
             label={<Text fw="bold" fz="sm">Link Petunjuk Arah</Text>}
             placeholder="Masukkan link petunjuk arah"
           />
-          <Select
+          <MultiSelect
             label="Layanan Polsek"
-            placeholder="Pilih layanan polsek"
-            data={layananOptions}
-            value={polsekState.create.form.layananPolsekId || null}
-            onChange={(val: string | null) => {
-              if (val) {
-                const selected = layananOptions.find(
-                  (item) => item.value === val
-                );
-                if (selected) {
-                  polsekState.create.form.layananPolsekId = selected.value;
-                }
-              } else {
-                polsekState.create.form.layananPolsekId = '';
-              }
+            placeholder="Pilih layanan polsek (bisa lebih dari satu)"
+            data={statePolsekTerdekat.layananPolsek.findManyAll.data?.map((v) => ({
+              value: v.id,
+              label: v.nama,
+            })) || []}
+            value={polsekState.create.form.layananPolsekId}
+            onChange={(val) => {
+              polsekState.create.form.layananPolsekId = val;
             }}
             searchable
             clearable
-            nothingFoundMessage="Tidak ditemukan"
+            nothingFoundMessage="Tidak ada layanan ditemukan"
             required
+            error={polsekState.create.form.layananPolsekId?.length === 0 ? "Pilih minimal 1 layanan polsek" : undefined}
           />
-          <Button
-            variant="light"
-            size="xs"
-            onClick={() => setModalOpen(true)}
-          >
-            + Tambah Layanan Baru
-          </Button>
-
           {/* Tombol Submit */}
           <Group justify="right">
             <Button

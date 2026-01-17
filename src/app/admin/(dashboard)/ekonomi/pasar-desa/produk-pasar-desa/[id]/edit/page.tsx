@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
+import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import pasarDesaState from '@/app/admin/(dashboard)/_state/ekonomi/pasar-desa/pasar-desa';
 import colors from '@/con/colors';
 import ApiFetch from '@/lib/api-fetch';
@@ -33,6 +34,7 @@ type FormData = {
   rating: number;
   kategoriId: string[];
   kontak: string;
+  deskripsi: string;
 };
 
 function EditPasarDesa() {
@@ -51,6 +53,7 @@ function EditPasarDesa() {
     rating: 0,
     kategoriId: [],
     kontak: '',
+    deskripsi: ''
   });
 
   const [originalData, setOriginalData] = useState({
@@ -62,6 +65,7 @@ function EditPasarDesa() {
     rating: 0,
     kategoriId: [],
     kontak: '',
+    deskripsi: ''
   });
 
   // load data awal
@@ -83,6 +87,7 @@ function EditPasarDesa() {
             rating: data.rating || 0,
             kategoriId: data.KategoriToPasar?.map((k: any) => k.kategoriId) || [],
             kontak: data.kontak || '',
+            deskripsi: data.deskripsi || ''
           });
           setOriginalData({
             nama: data.nama || '',
@@ -93,6 +98,7 @@ function EditPasarDesa() {
             rating: data.rating || 0,
             kategoriId: data.KategoriToPasar?.map((k: any) => k.kategoriId) || [],
             kontak: data.kontak || '',
+            deskripsi: data.deskripsi || ''
           });
           if (data.image?.link) setPreviewImage(data.image.link);
         }
@@ -120,12 +126,13 @@ function EditPasarDesa() {
       rating: originalData.rating,
       kategoriId: (originalData as any)?.KategoriToPasar?.map((k: any) => k.kategoriId) || [],
       kontak: originalData.kontak,
+      deskripsi: originalData.deskripsi
     });
     setPreviewImage(originalData.imageUrl || null);
     setFile(null);
     toast.info("Form dikembalikan ke data awal");
   };
-    
+
 
   const handleSubmit = async () => {
     try {
@@ -157,7 +164,7 @@ function EditPasarDesa() {
   };
 
   return (
-     <Box px={{ base: 0, md: 'xs' }} py="xs">
+    <Box px={{ base: 0, md: 'xs' }} py="xs">
       <Group mb="md">
         <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
           <IconArrowBack color={colors['blue-button']} size={24} />
@@ -315,6 +322,19 @@ function EditPasarDesa() {
             required
             error={!formData.kategoriId.length ? 'Pilih minimal satu kategori' : undefined}
           />
+
+          {/* Input Deskripsi */}
+          <Box>
+            <Text fz="sm" fw="bold" mb={6}>
+              Deskripsi
+            </Text>
+            <EditEditor
+              value={formData.deskripsi}
+              onChange={(htmlContent) =>
+                setFormData((prev) => ({ ...prev, deskripsi: htmlContent }))
+              }
+            />
+          </Box>
 
           <Group justify="right">
             <Button

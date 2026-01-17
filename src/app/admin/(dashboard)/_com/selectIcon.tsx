@@ -6,27 +6,38 @@ import {
   IconAlertTriangle,
   IconAmbulance,
   IconBuilding,
+  IconBuildingCommunity,
   IconCash,
   IconChartLine,
   IconChristmasTreeFilled,
   IconClipboardTextFilled,
   IconDroplet,
+  IconFileText,
   IconFiretruck,
+  IconFirstAidKit,
   IconHome,
   IconHomeEco,
   IconHospital,
+  IconInfoCircle,
   IconLeaf,
+  IconLifebuoy,
+  IconMessageReport,
+  IconPhoneCall,
   IconRecycle,
+  IconRun,
   IconScale,
   IconSchool,
+  IconShield,
   IconShieldFilled,
   IconShoppingCart,
+  IconStethoscope,
   IconTent,
   IconTrashFilled,
   IconTree,
   IconTrendingUp,
   IconTrophy,
   IconTruckFilled,
+  IconUsers,
 } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 
@@ -51,14 +62,31 @@ const iconMap = {
   pelatihan: { label: 'Pelatihan', icon: IconSchool },
   subsidi: { label: 'Subsidi', icon: IconShoppingCart },
   layananKesehatan: { label: 'Layanan Kesehatan', icon: IconHospital },
+
+  // ===== Keamanan & Darurat =====
   polisi: { label: 'Polisi', icon: IconShieldFilled },
   ambulans: { label: 'Ambulans', icon: IconAmbulance },
-  pemadam: { label: 'Pemadam', icon: IconFiretruck },
-  rumahSakit: { label: 'Rumah Sakit', icon: IconHospital },
-  bangunan: { label: 'Bangunan', icon: IconBuilding },
+  pemadam: { label: 'Pemadam Kebakaran', icon: IconFiretruck },
   darurat: { label: 'Darurat', icon: IconAlertTriangle },
+  sar: { label: 'SAR / Basarnas', icon: IconLifebuoy },
+  evakuasi: { label: 'Evakuasi', icon: IconRun },
+  keamanan: { label: 'Keamanan', icon: IconShield },
+  teleponDarurat: { label: 'Telepon Darurat', icon: IconPhoneCall },
 
+  // ===== Kesehatan =====
+  rumahSakit: { label: 'Rumah Sakit', icon: IconHospital },
+  puskesmas: { label: 'Puskesmas', icon: IconFirstAidKit },
+  klinik: { label: 'Klinik', icon: IconStethoscope },
+
+  // ===== Pemerintahan & Fasilitas =====
+  bangunan: { label: 'Bangunan', icon: IconBuilding },
+  kantorDesa: { label: 'Kantor Desa', icon: IconBuildingCommunity },
+  administrasi: { label: 'Administrasi', icon: IconFileText },
+  informasi: { label: 'Informasi', icon: IconInfoCircle },
+  pengaduan: { label: 'Pengaduan', icon: IconMessageReport },
+  layananPublik: { label: 'Layanan Publik', icon: IconUsers },
 };
+
 
 type IconKey = keyof typeof iconMap;
 

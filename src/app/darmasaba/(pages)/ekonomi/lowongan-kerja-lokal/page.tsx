@@ -83,7 +83,9 @@ function Page() {
                   <Stack gap={'md'}>
                     <Box>
                       <Flex gap={{ base: 'md', md: 'xl' }} align={'center'}>
-                        <IconBriefcase color={colors['blue-button']} size={40} />
+                        <Box style={{ flexShrink: 0 }}>
+                          <IconBriefcase color={colors['blue-button']} size={40} />
+                        </Box>
                         <Box>
                           <Text fw={'bold'} fz={{ base: 'lg', md: 'h4' }} c={colors['blue-button']} lh={1.3}>
                             {v.posisi}
@@ -95,16 +97,29 @@ function Page() {
                       </Flex>
                     </Box>
                     <Box>
-                      <Flex gap={{ base: 'md', md: 'xl' }} align={'center'}>
-                        <IconMapPin color={colors['blue-button']} size={40} />
-                        <Text fz={{ base: 'md', md: 'h4' }} lh={1.5}>
+                      <Flex gap={{ base: 'md', md: 'xl' }} align="center">
+                        <Box style={{ flexShrink: 0 }}>
+                          <IconMapPin
+                            color={colors['blue-button']}
+                            size={40}
+                          />
+                        </Box>
+
+                        <Text
+                          fz={{ base: 'md', md: 'h4' }}
+                          lh={1.5}
+                          lineClamp={1}
+                        >
                           {v.lokasi}
                         </Text>
                       </Flex>
+
                     </Box>
                     <Box>
                       <Flex gap={{ base: 'md', md: 'xl' }} align={'center'}>
-                        <IconClock color={colors['blue-button']} size={40} />
+                        <Box style={{ flexShrink: 0 }}>
+                          <IconClock color={colors['blue-button']} size={40} />
+                        </Box>
                         <Box>
                           <Text fw={'bold'} fz={{ base: 'md', md: 'h4' }} c={colors['blue-button']} lh={1.3}>
                             Full Time

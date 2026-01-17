@@ -23,8 +23,9 @@ import { IconDeviceImac, IconPlus, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
-import HeaderSearch from '../../_com/header';
-import polsekTerdekat from '../../_state/keamanan/polsek-terdekat';
+import HeaderSearch from '../../../_com/header';
+import statePolsekTerdekat from '../../../_state/keamanan/polsek-terdekat';
+
 
 function PolsekTerdekat() {
   const [search, setSearch] = useState("");
@@ -45,7 +46,7 @@ function PolsekTerdekat() {
 }
 
 function ListPolsekTerdekat({ search }: { search: string }) {
-  const polsekState = useProxy(polsekTerdekat);
+  const polsekState = useProxy(statePolsekTerdekat.polsekTerdekatState);
   const router = useRouter();
   const [debouncedSearch] = useDebouncedValue(search, 1000);
 
@@ -82,7 +83,7 @@ function ListPolsekTerdekat({ search }: { search: string }) {
             leftSection={<IconPlus size={18} />}
             color="blue"
             variant="light"
-            onClick={() => router.push('/admin/keamanan/polsek-terdekat/create')}
+            onClick={() => router.push('/admin/keamanan/polsek-terdekat/daftar-polsek-terdekat/create')}
           >
             Tambah Baru
           </Button>
@@ -145,7 +146,7 @@ function ListPolsekTerdekat({ search }: { search: string }) {
                       <Button
                         variant="light"
                         color="blue"
-                        onClick={() => router.push(`/admin/keamanan/polsek-terdekat/${item.id}`)}
+                        onClick={() => router.push(`/admin/keamanan/polsek-terdekat/daftar-polsek-terdekat/${item.id}`)}
                         w="100%"
                       >
                         <IconDeviceImac size={18} />
@@ -207,7 +208,7 @@ function ListPolsekTerdekat({ search }: { search: string }) {
                         variant="light"
                         color="blue"
                         fullWidth
-                        onClick={() => router.push(`/admin/keamanan/polsek-terdekat/${item.id}`)}
+                        onClick={() => router.push(`/admin/keamanan/polsek-terdekat/daftar-polsek-terdekat/${item.id}`)}
                       >
                         <IconDeviceImac size={18} />
                         <Text ml={5} fz="sm" fw={500} lh={1.4}>

@@ -14,11 +14,6 @@ export const devBar = [
         name: "Desa Anti Korupsi",
         path: "/admin/landing-page/desa-anti-korupsi/list-desa-anti-korupsi"
       },
-      // {
-      //   id: "Landing_Page_3",
-      //   name: "Indeks Kepuasan Masyarakat",
-      //   path: "/admin/landing-page/indeks-kepuasan-masyarakat/grafik-kepuasan-masyarakat"
-      // },
       {
         id: "Landing_Page_3",
         name: "SDGs",
@@ -182,7 +177,7 @@ export const devBar = [
       {
         id: "Keamanan_2",
         name: "Polsek Terdekat",
-        path: "/admin/keamanan/polsek-terdekat"
+        path: "/admin/keamanan/polsek-terdekat/daftar-polsek-terdekat"
       },
       {
         id: "Keamanan_3",
@@ -418,11 +413,6 @@ export const navBar = [
         name: "Desa Anti Korupsi",
         path: "/admin/landing-page/desa-anti-korupsi/list-desa-anti-korupsi"
       },
-      // {
-      //   id: "Landing_Page_3",
-      //   name: "Indeks Kepuasan Masyarakat",
-      //   path: "/admin/landing-page/indeks-kepuasan-masyarakat/grafik-kepuasan-masyarakat"
-      // },
       {
         id: "Landing_Page_3",
         name: "SDGs",
@@ -586,7 +576,7 @@ export const navBar = [
       {
         id: "Keamanan_2",
         name: "Polsek Terdekat",
-        path: "/admin/keamanan/polsek-terdekat"
+        path: "/admin/keamanan/polsek-terdekat/daftar-polsek-terdekat"
       },
       {
         id: "Keamanan_3",
@@ -822,11 +812,6 @@ export const role1 = [
         name: "Desa Anti Korupsi",
         path: "/admin/landing-page/desa-anti-korupsi/list-desa-anti-korupsi"
       },
-      // {
-      //   id: "Landing_Page_3",
-      //   name: "Indeks Kepuasan Masyarakat",
-      //   path: "/admin/landing-page/indeks-kepuasan-masyarakat/grafik-kepuasan-masyarakat"
-      // },
       {
         id: "Landing_Page_3",
         name: "SDGs",
@@ -948,7 +933,7 @@ export const role1 = [
       {
         id: "Keamanan_2",
         name: "Polsek Terdekat",
-        path: "/admin/keamanan/polsek-terdekat"
+        path: "/admin/keamanan/polsek-terdekat/daftar-polsek-terdekat"
       },
       {
         id: "Keamanan_3",

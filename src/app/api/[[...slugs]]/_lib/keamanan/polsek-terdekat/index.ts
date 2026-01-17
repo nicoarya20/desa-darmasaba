@@ -6,13 +6,18 @@ import polsekTerdekatFindUnique from "./findUnique";
 import polsekTerdekatUpdate from "./updt";
 import polsekTerdekatFindFirst from "./findFirst";
 
-
 const PolsekTerdekat = new Elysia({ prefix: "/polsekterdekat", tags: ["Keamanan/Polsek Terdekat"] })
 .get("/find-many", polsekTerdekatFindMany)
-.get("/:id", async (context) => {
-    const response = await polsekTerdekatFindUnique(new Request(context.request));
-    return response;
-})
+.get("/:id",
+    async (context) => {
+      return await polsekTerdekatFindUnique(context);
+    },
+    {
+      params: t.Object({
+        id: t.String(),
+      }),
+    }
+  )
 .get("/find-first", polsekTerdekatFindFirst)
 .post("/create", polsekTerdekatCreate, {
     body: t.Object({
@@ -25,7 +30,7 @@ const PolsekTerdekat = new Elysia({ prefix: "/polsekterdekat", tags: ["Keamanan/
         namaTempatMaps: t.String(),
         alamatMaps: t.String(),
         linkPetunjukArah: t.String(),
-        layananPolsekId: t.String(),
+        layananPolsekId: t.Array(t.String()),
     }),
 })
 .delete("/del/:id", polsekTerdekatDelete)
@@ -44,7 +49,7 @@ const PolsekTerdekat = new Elysia({ prefix: "/polsekterdekat", tags: ["Keamanan/
         namaTempatMaps: t.String(),
         alamatMaps: t.String(),
         linkPetunjukArah: t.String(),
-        layananPolsekId: t.String(),
+        layananPolsekId: t.Array(t.String()),
     }),
 })
 

@@ -1,0 +1,62 @@
+[
+  {
+    "id": "a50d52f2-e70f-4f29-9133-e294c40d14d3",
+    "layananId": "7ded635b-bf4a-4c1b-b6fa-2f13f4dfc478",
+    "polsekTerdekatId": "b92ee048-fb7f-44e9-aa5b-822e6cd0085d"
+  },
+  {
+    "id": "012454f8-f5d7-41c0-9dce-2754c0356523",
+    "layananId": "b5af284c-6aa1-4442-935f-869d78eb7ecf",
+    "polsekTerdekatId": "b92ee048-fb7f-44e9-aa5b-822e6cd0085d"
+  },
+  {
+    "id": "50736038-4ba6-47f8-8399-35b73b389f12",
+    "layananId": "56b37d7f-d717-4e33-b05d-ea22b5f7af91",
+    "polsekTerdekatId": "b92ee048-fb7f-44e9-aa5b-822e6cd0085d"
+  },
+  {
+    "id": "e2dc3487-1f62-4f63-9a12-49ac30da3372",
+    "layananId": "7ded635b-bf4a-4c1b-b6fa-2f13f4dfc478",
+    "polsekTerdekatId": "de769c40-10d4-4fbc-a5ef-12f2ce53a0a2"
+  },
+  {
+    "id": "47fe1f9c-4072-4203-90f9-3294d1369ac5",
+    "layananId": "b5af284c-6aa1-4442-935f-869d78eb7ecf",
+    "polsekTerdekatId": "de769c40-10d4-4fbc-a5ef-12f2ce53a0a2"
+  },
+  {
+    "id": "2cc1ba81-6b62-42ff-af21-09f8165a2dd0",
+    "layananId": "56b37d7f-d717-4e33-b05d-ea22b5f7af91",
+    "polsekTerdekatId": "de769c40-10d4-4fbc-a5ef-12f2ce53a0a2"
+  },
+  {
+    "id": "3ca2ce42-2e7d-4750-87b7-f1f52ed141de",
+    "layananId": "7ded635b-bf4a-4c1b-b6fa-2f13f4dfc478",
+    "polsekTerdekatId": "9a3fff54-8854-4929-b9b5-b5b2751011ea"
+  },
+  {
+    "id": "90472bca-cf3d-47ca-92e5-db43c4c7e579",
+    "layananId": "b5af284c-6aa1-4442-935f-869d78eb7ecf",
+    "polsekTerdekatId": "9a3fff54-8854-4929-b9b5-b5b2751011ea"
+  },
+  {
+    "id": "41cfc1fe-a193-446d-b574-64b1124c6f55",
+    "layananId": "56b37d7f-d717-4e33-b05d-ea22b5f7af91",
+    "polsekTerdekatId": "9a3fff54-8854-4929-b9b5-b5b2751011ea"
+  },
+  {
+    "id": "f35443e1-6aca-416d-8c55-00e3f4a0f5f9",
+    "layananId": "7ded635b-bf4a-4c1b-b6fa-2f13f4dfc478",
+    "polsekTerdekatId": "c2d272e1-737d-44f5-bd85-ae268cb06cbf"
+  },
+  {
+    "id": "e09797f6-82e5-4b77-946e-319eee431c8f",
+    "layananId": "b5af284c-6aa1-4442-935f-869d78eb7ecf",
+    "polsekTerdekatId": "c2d272e1-737d-44f5-bd85-ae268cb06cbf"
+  },
+  {
+    "id": "bd9b1f27-cd1b-4e23-b162-3a757745f78a",
+    "layananId": "56b37d7f-d717-4e33-b05d-ea22b5f7af91",
+    "polsekTerdekatId": "c2d272e1-737d-44f5-bd85-ae268cb06cbf"
+  }
+]

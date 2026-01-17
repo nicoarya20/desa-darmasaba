@@ -13,6 +13,7 @@ const templatePasarDesaForm = z.object({
   rating: z.number().min(1, "Rating minimal 1"),
   kategoriId: z.array(z.string()).min(1, "Minimal pilih satu kategori"),
   kontak: z.string().min(1, "Kontak wajib diisi"),
+  deskripsi: z.string().min(1, "Deskripsi wajib diisi"),
 });
 
 const defaultPasarDesaForm = {
@@ -23,6 +24,7 @@ const defaultPasarDesaForm = {
   rating: 0,
   kategoriId: [] as string[],
   kontak: "",
+  deskripsi: ""
 };
 
 const pasarDesa = proxy({
@@ -191,6 +193,7 @@ const pasarDesa = proxy({
             rating: data.rating,
             kategoriId: data.kategoriId,
             kontak: data.kontak,
+            deskripsi: data.deskripsi
           };
           return data;
         } else {
@@ -229,6 +232,7 @@ const pasarDesa = proxy({
             rating: this.form.rating,
             kategoriId: this.form.kategoriId,
             kontak: this.form.kontak,
+            deskripsi: this.form.deskripsi
           }),
         });
         if (!response.ok) {

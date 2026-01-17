@@ -607,7 +607,7 @@ model Berita {
   id               String          @id @default(cuid())
   judul            String
   deskripsi        String
-  image            FileStorage?     @relation(fields: [imageId], references: [id])
+  image            FileStorage?    @relation(fields: [imageId], references: [id])
   imageId          String?
   content          String          @db.Text
   createdAt        DateTime        @default(now())
@@ -1113,17 +1113,17 @@ model DoctorSign {
 
 // ========================================= POSYANDU ========================================= //
 model Posyandu {
-  id              String      @id @default(cuid())
+  id              String       @id @default(cuid())
   name            String
   nomor           String
   deskripsi       String
   jadwalPelayanan String
   image           FileStorage? @relation(fields: [imageId], references: [id])
   imageId         String?
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
-  deletedAt       DateTime    @default(now())
-  isActive        Boolean     @default(true)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  deletedAt       DateTime     @default(now())
+  isActive        Boolean      @default(true)
 }
 
 // ========================================= PUSKESMAS ========================================= //
@@ -1133,12 +1133,12 @@ model Puskesmas {
   alamat    String
   jam       JamOperasional  @relation(fields: [jamId], references: [id])
   jamId     String
-  image     FileStorage?     @relation(fields: [imageId], references: [id])
+  image     FileStorage?    @relation(fields: [imageId], references: [id])
   imageId   String?
   kontak    KontakPuskesmas @relation(fields: [kontakId], references: [id])
   kontakId  String
   createdAt DateTime        @default(now())
-  updatedAt DateTime        @updatedAt  
+  updatedAt DateTime        @updatedAt
   deletedAt DateTime        @default(now())
   isActive  Boolean         @default(true)
 }
@@ -1170,57 +1170,57 @@ model KontakPuskesmas {
 
 // ========================================= PROGRAM KESSEHATAN ========================================= //
 model ProgramKesehatan {
-  id               String      @id @default(cuid())
+  id               String       @id @default(cuid())
   name             String
   deskripsiSingkat String
   deskripsi        String
   image            FileStorage? @relation(fields: [imageId], references: [id])
   imageId          String?
-  createdAt        DateTime    @default(now())
-  updatedAt        DateTime    @updatedAt
-  deletedAt        DateTime    @default(now())
-  isActive         Boolean     @default(true)
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+  deletedAt        DateTime     @default(now())
+  isActive         Boolean      @default(true)
 }
 
 // ========================================= PENANGANAN DARURAT ========================================= //
 model PenangananDarurat {
-  id        String      @id @default(cuid())
+  id        String       @id @default(cuid())
   name      String
   deskripsi String
   image     FileStorage? @relation(fields: [imageId], references: [id])
   imageId   String?
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
-  deletedAt DateTime    @default(now())
-  isActive  Boolean     @default(true)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  deletedAt DateTime     @default(now())
+  isActive  Boolean      @default(true)
 }
 
 // ========================================= KONTAK DARURAT ========================================= //
 model KontakDarurat {
-  id        String      @id @default(cuid())
+  id        String       @id @default(cuid())
   name      String
   deskripsi String
   image     FileStorage? @relation(fields: [imageId], references: [id])
   imageId   String?
   whatsapp  String
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
-  deletedAt DateTime    @default(now())
-  isActive  Boolean     @default(true)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  deletedAt DateTime     @default(now())
+  isActive  Boolean      @default(true)
 }
 
 // ========================================= INFO WABAH PENYAKIT ========================================= //
 model InfoWabahPenyakit {
-  id               String      @id @default(cuid())
+  id               String       @id @default(cuid())
   name             String
   deskripsiSingkat String
   deskripsiLengkap String
   image            FileStorage? @relation(fields: [imageId], references: [id])
   imageId          String?
-  createdAt        DateTime    @default(now())
-  updatedAt        DateTime    @updatedAt
-  deletedAt        DateTime    @default(now())
-  isActive         Boolean     @default(true)
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+  deletedAt        DateTime     @default(now())
+  isActive         Boolean      @default(true)
 }
 
 // ========================================= MENU KEAMANAN ========================================= //
@@ -1239,7 +1239,7 @@ model KeamananLingkungan {
 
 // ========================================= POLSEK TERDEKAT ========================================= //
 model PolsekTerdekat {
-  id               String        @id @default(uuid())
+  id               String            @id @default(uuid())
   nama             String
   jarakKeDesa      String
   alamat           String
@@ -1249,22 +1249,36 @@ model PolsekTerdekat {
   namaTempatMaps   String
   alamatMaps       String
   linkPetunjukArah String
-  layananPolsek    LayananPolsek @relation(fields: [layananPolsekId], references: [id])
+  layananPolsek    LayananPolsek     @relation(fields: [layananPolsekId], references: [id])
   layananPolsekId  String
-  createdAt        DateTime      @default(now())
-  updatedAt        DateTime      @updatedAt
-  deletedAt        DateTime      @default(now())
-  isActive         Boolean       @default(true)
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  deletedAt        DateTime          @default(now())
+  isActive         Boolean           @default(true)
+  LayananToPolsek  LayananToPolsek[]
 }
 
 model LayananPolsek {
-  id             String           @id @default(uuid())
-  nama           String // contoh: "Pelayanan SKCK", "Laporan Kriminal"
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
-  deletedAt      DateTime?
-  isActive       Boolean          @default(true)
-  PolsekTerdekat PolsekTerdekat[]
+  id              String            @id @default(uuid())
+  nama            String // contoh: "Pelayanan SKCK", "Laporan Kriminal"
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  deletedAt       DateTime?
+  isActive        Boolean           @default(true)
+  PolsekTerdekat  PolsekTerdekat[]
+  LayananToPolsek LayananToPolsek[]
+}
+
+model LayananToPolsek {
+  id               String         @id @default(uuid())
+  layanan          LayananPolsek  @relation(fields: [layananId], references: [id])
+  layananId        String
+  polsekTerdekat   PolsekTerdekat @relation(fields: [polsekTerdekatId], references: [id])
+  polsekTerdekatId String
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  deletedAt        DateTime       @default(now())
+  isActive         Boolean        @default(true)
 }
 
 // ========================================= KONTAK DARURAT ========================================= //
@@ -1377,6 +1391,7 @@ model PasarDesa {
   rating           Float
   alamatUsaha      String
   kontak           String
+  deskripsi        String?
   createdAt        DateTime          @default(now())
   updatedAt        DateTime          @updatedAt
   deletedAt        DateTime          @default(now())

@@ -1,0 +1,44 @@
+[
+  {
+    "id": "053999e8-e5c4-4a50-b587-0e0ce15aba1a",
+    "name": "Pertanian",
+    "description": "Sektor pertanian meliputi kegiatan bercocok tanam padi, palawija, dan tanaman lain di subak yang menjadi basis mata pencaharian warga",
+    "value": 90
+  },
+  {
+    "id": "8e0d2f2d-512d-4c05-8880-b6e7d144a34d",
+    "name": "UMKM Kecil",
+    "description": "Usaha Mikro Kecil Menengah termasuk IKM berbasis pengolahan pangan dan kuliner yang tumbuh di desa sebagai penggerak ekonomi lokal",
+    "value": 45
+  },
+  {
+    "id": "0378b10a-f0e3-421c-9272-225d931179ce",
+    "name": "Peternakan",
+    "description": "Peternakan ikan lele dan mata pencaharian lain yang mendukung ketahanan pangan dan ekonomi masyarakat desa",
+    "value": 30
+  },
+  {
+    "id": "4fa28680-8014-4c46-9dd0-1aa910630fd3",
+    "name": "BUMDes",
+    "description": "BUMDes Pudak Mesari sebagai lembaga usaha desa yang mengembangkan potensi lokal dan layanan ekonomi",
+    "value": 20
+  },
+  {
+    "id": "669464b2-dd7e-44be-b609-97a9b844df8b",
+    "name": "Kawasan Kuliner",
+    "description": "Potensi kawasan kuliner desa yang menjadi daya tarik ekonomi dan pariwisata kecil di daerah Darmasaba",
+    "value": 15
+  },
+  {
+    "id": "ef65e122-84ce-4483-93e9-c1a8bcee9b79",
+    "name": "Pariwisata",
+    "description": "Potensi wisata lokal seperti Jogging Track, taman dan water park yang memberikan nilai tambah ekonomi masyarakat",
+    "value": 35
+  },
+  {
+    "id": "08443c84-8ca9-4690-b900-e5e3e753cc97",
+    "name": "Kerajinan Genteng",
+    "description": "Kerajinan genteng press di Desa Adat Tegal yang merupakan usaha kerajinan lokal dengan kontribusi ekonomi",
+    "value": 25
+  }
+]

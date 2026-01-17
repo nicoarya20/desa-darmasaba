@@ -34,17 +34,35 @@ import perbekelDariMasaKeMasa from "./data/desa/profile/profile-perbekel-lalu.js
 import sejarahDesa from "./data/desa/profile/sejarah_desa.json";
 import visiMisiDesa from "./data/desa/profile/visi_misi_desa.json";
 import detailDataPengangguran from "./data/ekonomi/jumlah-pengangguran/detail-data-pengangguran.json";
-import kategoriProduk from "./data/ekonomi/pasar-desa/kategori-produk.json";
 import pegawai from "./data/ekonomi/struktur-organisasi/pegawai-bumdes.json";
 import posisiOrganisasi from "./data/ekonomi/struktur-organisasi/posisi-organisasi-bumdes.json";
 import posyandu from "./data/kesehatan/posyandu/posyandu.json";
-import kontakPuskesmas from "./data/kesehatan/puskesmas/kontak-puskesmas/kontak.json"
-import jamPuskesmas from "./data/kesehatan/puskesmas/jam-puskesmas/jam.json"
+import kontakPuskesmas from "./data/kesehatan/puskesmas/kontak-puskesmas/kontak.json";
+import jamPuskesmas from "./data/kesehatan/puskesmas/jam-puskesmas/jam.json";
 import puskesmas from "./data/kesehatan/puskesmas/puskesmas.json";
-import programKesehatan from "./data/kesehatan/program-kesehatan/program-kesehatan.json"
-import penangananDarurat from "./data/kesehatan/penanganan-darurat/penganan-darurat.json"
-import kontakDarurat from "./data/kesehatan/kontak-darurat/kontak-darurat.json"
-import infoWabahPenyakit from "./data/kesehatan/infowabahpenyakit/infowabahpenyakit.json"
+import programKesehatan from "./data/kesehatan/program-kesehatan/program-kesehatan.json";
+import penangananDarurat from "./data/kesehatan/penanganan-darurat/penganan-darurat.json";
+import kontakDarurat from "./data/kesehatan/kontak-darurat/kontak-darurat.json";
+import infoWabahPenyakit from "./data/kesehatan/infowabahpenyakit/infowabahpenyakit.json";
+import keamananLingkungan from "./data/keamanan/keamanan-lingkungan/keamanan-lingkungan.json";
+import kontakDaruratKeamanan from "./data/keamanan/kontak-darurat-keamanan/kontak-darurat-keamanan.json";
+import kontakItem from "./data/keamanan/kontak-darurat-keamanan/kontakItem.json";
+import kontakDaruratToItem from "./data/keamanan/kontak-darurat-keamanan/kontakDaruratToItem.json";
+import pencegahanKriminalitas from "./data/keamanan/pencegahan-kriminalitas/pencegahan-kriminalitas.json";
+import tipsKeamanan from "./data/keamanan/tips-keamanan/tips-keamanan.json";
+import polsekTerdekat from "./data/keamanan/polsek-terdekat/polsek-terdekat.json";
+import layananPolsek from "./data/keamanan/polsek-terdekat/layanan-polsek.json";
+import layananToPolsek from "./data/keamanan/polsek-terdekat/layanan-to-polsek.json";
+import penangananLaporan from "./data/keamanan/laporan-publik/penanganan-laporan.json";
+import laporanPublik from "./data/keamanan/laporan-publik/laporan-publik.json";
+import pasarDesa from "./data/ekonomi/pasar-desa/pasar-desa.json";
+import kategoriProduk from "./data/ekonomi/pasar-desa/kategori-produk.json";
+import kategoriToPasar from "./data/ekonomi/pasar-desa/kategori-to-pasar.json";
+import lowonganKerjaLokal from "./data/ekonomi/lowongan-kerja-lokal/lowongan-kerja-lokal.json";
+import demografiPekerjaan from "./data/ekonomi/demografi-pekerjaan/demografi-pekerjaan.json";
+import sektorUnggulanDesa from "./data/ekonomi/sektor-unggulan/sektor-unggulan.json";
+import programKemiskinan from "./data/ekonomi/program-kemiskinan/program-kemiskinan.json";
+import statistikKemiskinan from "./data/ekonomi/program-kemiskinan/statistik-kemiskinan.json";
 import berita from "./data/desa/berita/berita.json";
 import kategoriBerita from "./data/desa/berita/kategori-berita.json";
 import contohEdukasiLingkungan from "./data/lingkungan/edukasi-lingkungan/contoh-kegiatan-di-desa-darmasaba.json";
@@ -1239,22 +1257,6 @@ import resolveImageById from "./resolveImageByName";
   }
   console.log("penghargaan success ...");
 
-  for (const k of kategoriProduk) {
-    await prisma.kategoriProduk.upsert({
-      where: {
-        id: k.id,
-      },
-      update: {
-        nama: k.nama,
-      },
-      create: {
-        id: k.id,
-        nama: k.nama,
-      },
-    });
-  }
-  console.log("kategori produk success ...");
-
   const flattenedPosisiBumdes = posisiOrganisasi.flat();
 
   // ====================== MENU KESEHATAN ========================
@@ -1496,7 +1498,7 @@ import resolveImageById from "./resolveImageByName";
   }
   console.log("penanganan darurat success ...");
 
-   // ==================== SUBMENU KONTAK DARURAT =========================
+  // ==================== SUBMENU KONTAK DARURAT =========================
   console.log("🔄 Seeding Kontak Darurat...");
   for (const p of kontakDarurat) {
     const existing = await prisma.kontakDarurat.findUnique({
@@ -1544,7 +1546,7 @@ import resolveImageById from "./resolveImageByName";
   }
   console.log("kontak darurat success ...");
 
-   // ==================== SUBMENU INFO WABAH PENYAKIT =========================
+  // ==================== SUBMENU INFO WABAH PENYAKIT =========================
   console.log("🔄 Seeding Info Wabah Penyakit...");
   for (const p of infoWabahPenyakit) {
     const existing = await prisma.infoWabahPenyakit.findUnique({
@@ -1590,9 +1592,406 @@ import resolveImageById from "./resolveImageByName";
       },
     });
   }
-  console.log("kontak darurat success ...");
+  console.log("info wabah penyakit success ...");
 
-  // ✅ Urutkan berdasarkan hierarki
+  // ====================== MENU KEAMANAN ========================
+  // ==================== SUBMENU KEAMANAN LINGKUNGAN ============
+  console.log("🔄 Seeding Keamanan Lingkungan...");
+  for (const k of keamananLingkungan) {
+    const existing = await prisma.keamananLingkungan.findUnique({
+      where: { id: k.id },
+      select: { imageId: true },
+    });
+
+    let imageId = existing?.imageId; // Pertahankan existing
+
+    // Kalau belum ada imageId, cari berdasarkan name/realName
+    if (!imageId && k.imageId) {
+      // ✅ Cari langsung berdasarkan ID yang ada di p.imageId
+      const fileRecord = await prisma.fileStorage.findUnique({
+        where: { id: k.imageId },
+        select: { id: true, name: true },
+      });
+
+      if (fileRecord) {
+        imageId = fileRecord.id;
+        console.log(
+          `✅ Found file by ID: ${fileRecord.name} (${fileRecord.id})`
+        );
+      } else {
+        console.warn(`⚠️ File with ID ${k.imageId} not found for ${k.name}`);
+        imageId = null;
+      }
+    }
+
+    await prisma.keamananLingkungan.upsert({
+      where: { id: k.id },
+      update: {
+        name: k.name,
+        deskripsi: k.deskripsi,
+        imageId,
+      },
+      create: {
+        id: k.id,
+        name: k.name,
+        deskripsi: k.deskripsi,
+        imageId,
+      },
+    });
+  }
+  console.log("info wabah penyakit success ...");
+
+  // ==================== SUBMENU POLSEK TERDEKAT ================
+  console.log("🔄 Seeding Polsek Terdekat...");
+  for (const k of polsekTerdekat) {
+    await prisma.polsekTerdekat.upsert({
+      where: {
+        id: k.id,
+      },
+      update: {
+        nama: k.nama,
+        jarakKeDesa: k.jarakKeDesa,
+        alamat: k.alamat,
+        nomorTelepon: k.nomorTelepon,
+        jamOperasional: k.jamOperasional,
+        embedMapUrl: k.embedMapUrl,
+        namaTempatMaps: k.namaTempatMaps,
+        alamatMaps: k.alamatMaps,
+        linkPetunjukArah: k.linkPetunjukArah,
+        layananPolsekId: k.layananPolsekId,
+      },
+      create: {
+        id: k.id,
+        nama: k.nama,
+        jarakKeDesa: k.jarakKeDesa,
+        alamat: k.alamat,
+        nomorTelepon: k.nomorTelepon,
+        jamOperasional: k.jamOperasional,
+        embedMapUrl: k.embedMapUrl,
+        namaTempatMaps: k.namaTempatMaps,
+        alamatMaps: k.alamatMaps,
+        linkPetunjukArah: k.linkPetunjukArah,
+        layananPolsekId: k.layananPolsekId,
+      },
+    });
+  }
+
+  console.log("polsek terdekat success ...");
+
+  console.log("🔄 Seeding Layanan Polsek...");
+  for (const k of layananPolsek) {
+    await prisma.layananPolsek.upsert({
+      where: {
+        id: k.id,
+      },
+      update: {
+        nama: k.nama,
+      },
+      create: {
+        id: k.id,
+        nama: k.nama,
+      },
+    });
+  }
+
+  console.log("layanan polsek success ...");
+
+  console.log("🔄 Seeding Layanan To Polsek...");
+  for (const k of layananToPolsek) {
+    await prisma.layananToPolsek.upsert({
+      where: {
+        id: k.id,
+      },
+      update: {
+        layananId: k.layananId,
+        polsekTerdekatId: k.polsekTerdekatId,
+      },
+      create: {
+        id: k.id,
+        layananId: k.layananId,
+        polsekTerdekatId: k.polsekTerdekatId,
+      },
+    });
+  }
+
+  console.log("layanan to polsek success ...");
+
+  // ==================== SUBMENU KONTAK DARURAT =================
+
+  console.log("🔄 Seeding Kontak Item...");
+  for (const e of kontakItem) {
+    await prisma.kontakItem.upsert({
+      where: {
+        id: e.id,
+      },
+      update: {
+        nama: e.nama,
+        icon: e.icon,
+        nomorTelepon: e.nomorTelepon,
+      },
+      create: {
+        id: e.id, // ✅ WAJIB
+        nama: e.nama,
+        icon: e.icon,
+        nomorTelepon: e.nomorTelepon,
+      },
+    });
+  }
+  console.log("✅ Kontak Item seeded successfully");
+
+  console.log("🔄 Seeding Kontak Darurat Keamanan...");
+  for (const d of kontakDaruratKeamanan) {
+    await prisma.kontakDaruratKeamanan.upsert({
+      where: {
+        id: d.id,
+      },
+      update: {
+        nama: d.nama,
+        icon: d.icon,
+        kategoriId: d.kategoriId,
+      },
+      create: {
+        id: d.id,
+        nama: d.nama,
+        icon: d.icon,
+        kategoriId: d.kategoriId,
+      },
+    });
+  }
+
+  console.log("✅ Kontak Darurat Keamanan seeded successfully");
+
+  console.log("🔄 Seeding Kontak Darurat To Item...");
+  for (const f of kontakDaruratToItem) {
+    // ✅ Validasi foreign keys
+    const kontakDaruratExists = await prisma.kontakDaruratKeamanan.findUnique({
+      where: { id: f.kontakDaruratId },
+    });
+
+    const kontakItemExists = await prisma.kontakItem.findUnique({
+      where: { id: f.kontakItemId },
+    });
+
+    if (!kontakDaruratExists) {
+      console.warn(
+        `⚠️ KontakDarurat ${f.kontakDaruratId} not found, skipping...`
+      );
+      continue;
+    }
+
+    if (!kontakItemExists) {
+      console.warn(`⚠️ KontakItem ${f.kontakItemId} not found, skipping...`);
+      continue;
+    }
+
+    await prisma.kontakDaruratToItem.upsert({
+      where: { id: f.id },
+      update: {
+        kontakDaruratId: f.kontakDaruratId,
+        kontakItemId: f.kontakItemId,
+      },
+      create: {
+        id: f.id,
+        kontakDaruratId: f.kontakDaruratId,
+        kontakItemId: f.kontakItemId,
+      },
+    });
+  }
+  console.log("✅ Kontak Darurat To Item seeded successfully");
+
+  // ==================== SUBMENU PENCEGAHAN KRIMINALITAS ========
+  console.log("🔄 Seeding Pencegahan Kriminalitas...");
+  for (const d of pencegahanKriminalitas) {
+    await prisma.pencegahanKriminalitas.upsert({
+      where: {
+        id: d.id,
+      },
+      update: {
+        judul: d.judul,
+        deskripsi: d.deskripsi,
+        deskripsiSingkat: d.deskripsiSingkat,
+        linkVideo: d.linkVideo,
+      },
+      create: {
+        id: d.id,
+        judul: d.judul,
+        deskripsi: d.deskripsi,
+        deskripsiSingkat: d.deskripsiSingkat,
+        linkVideo: d.linkVideo,
+      },
+    });
+  }
+
+  console.log("✅ Pencegahan Kriminalitas seeded successfully");
+  // ==================== SUBMENU LAPORAN PUBLIK =================
+  console.log("🔄 Seeding Laporan Publik...");
+  for (const l of laporanPublik) {
+    await prisma.laporanPublik.upsert({
+      where: {
+        id: l.id,
+      },
+      update: {
+        judul: l.judul,
+        lokasi: l.lokasi,
+        tanggalWaktu: l.tanggalWaktu,
+        kronologi: l.kronologi,
+      },
+      create: {
+        id: l.id,
+        judul: l.judul,
+        lokasi: l.lokasi,
+        tanggalWaktu: l.tanggalWaktu,
+        kronologi: l.kronologi,
+      },
+    });
+  }
+
+  console.log("laporan publik success ...");
+
+  console.log("🔄 Seeding Penanganan Laporan...");
+  for (const l of penangananLaporan) {
+    await prisma.penangananLaporanPublik.upsert({
+      where: {
+        id: l.id,
+      },
+      update: {
+        deskripsi: l.deskripsi,
+        laporanId: l.laporanId,
+      },
+      create: {
+        id: l.id,
+        deskripsi: l.deskripsi,
+        laporanId: l.laporanId,
+      },
+    });
+  }
+
+  console.log("penanganan laporan success ...");
+
+  // ==================== SUBMENU TIPS KEAMANAN ==================
+  console.log("🔄 Seeding Tips Keamanan...");
+  for (const t of tipsKeamanan) {
+    await prisma.menuTipsKeamanan.upsert({
+      where: {
+        id: t.id,
+      },
+      update: {
+        judul: t.judul,
+        deskripsi: t.deskripsi,
+        imageId: t.imageId,
+      },
+      create: {
+        id: t.id,
+        judul: t.judul,
+        deskripsi: t.deskripsi,
+        imageId: t.imageId,
+      },
+    });
+  }
+
+  console.log("✅ Tips Keamanan seeded successfully");
+
+  // ====================== MENU EKONOMI ========================
+  // ==================== SUBMENU PASAR DESA ====================
+  console.log("🔄 Seeding Kategori Produk...");
+  for (const k of kategoriProduk) {
+    await prisma.kategoriProduk.upsert({
+      where: {
+        id: k.id,
+      },
+      update: {
+        nama: k.nama,
+      },
+      create: {
+        id: k.id,
+        nama: k.nama,
+      },
+    });
+  }
+  console.log("✅ Kategori Produk seeded successfully");
+
+  console.log("🔄 Seeding Pasar Desa...");
+  for (const p of pasarDesa) {
+    await prisma.pasarDesa.upsert({
+      where: {
+        id: p.id,
+      },
+      update: {
+        nama: p.nama,
+        imageId: p.imageId,
+        harga: p.harga,
+        rating: p.rating,
+        alamatUsaha: p.alamatUsaha,
+        kontak: p.kontak,
+        deskripsi: p.deskripsi,
+        kategoriProdukId: p.kategoriProdukId,
+      },
+      create: {
+        id: p.id,
+        nama: p.nama,
+        imageId: p.imageId,
+        harga: p.harga,
+        rating: p.rating,
+        alamatUsaha: p.alamatUsaha,
+        kontak: p.kontak,
+        deskripsi: p.deskripsi,
+        kategoriProdukId: p.kategoriProdukId,
+      },
+    });
+  }
+  console.log("✅ Pasar Desa seeded successfully");
+
+  console.log("🔄 Seeding Kategori To Pasar...");
+  for (const p of kategoriToPasar) {
+    await prisma.kategoriToPasar.upsert({
+      where: {
+        id: p.id,
+      },
+      update: {
+        kategoriId: p.kategoriId,
+        pasarDesaId: p.pasarDesaId,
+      },
+      create: {
+        id: p.id,
+        kategoriId: p.kategoriId,
+        pasarDesaId: p.pasarDesaId,
+      },
+    });
+  }
+
+  // ==================== SUBMENU LOWONGAN KERJA LOKAL ==========
+  console.log("🔄 Seeding Lowongan Kerja Lokal...");
+  for (const k of lowonganKerjaLokal) {
+    await prisma.lowonganPekerjaan.upsert({
+      where: {
+        id: k.id,
+      },
+      update: {
+        posisi: k.posisi,
+        namaPerusahaan: k.namaPerusahaan,
+        lokasi: k.lokasi,
+        tipePekerjaan: k.tipePekerjaan,
+        gaji: k.gaji,
+        deskripsi: k.deskripsi,
+        kualifikasi: k.kualifikasi,
+        notelp: k.notelp,
+      },
+      create: {
+        id: k.id,
+        posisi: k.posisi,
+        namaPerusahaan: k.namaPerusahaan,
+        lokasi: k.lokasi,
+        tipePekerjaan: k.tipePekerjaan,
+        gaji: k.gaji,
+        deskripsi: k.deskripsi,
+        kualifikasi: k.kualifikasi,
+        notelp: k.notelp,
+      },
+    });
+  }
+  console.log("✅ Lowongan Kerja Lokal seeded successfully");
+
+  // ==================== SUBMENU STRUKTUR ORGANISASI DAN SK PENGURUS BUMDES ==========
   const sortedPosisiBumdes = flattenedPosisiBumdes.sort(
     (a, b) => a.hierarki - b.hierarki
   );
@@ -1648,6 +2047,9 @@ import resolveImageById from "./resolveImageByName";
   }
   console.log("pegawai success ...");
 
+  // ==================== SUBMENU PENDAPATAN ASLI DESA ==========
+
+  // ==================== SUBMENU JUMLAH PENGANGGURAN ==========
   for (const d of detailDataPengangguran) {
     await prisma.detailDataPengangguran.upsert({
       where: {
@@ -1670,6 +2072,96 @@ import resolveImageById from "./resolveImageByName";
     });
   }
   console.log("📊 detailDataPengangguran success ...");
+
+  // ==================== SUBMENU PENDUDUK USIA KERJA ==========
+
+  // ==================== SUBMENU PENDUDUK MISKIN =============
+
+  // ==================== SUBMENU PROGRAM KEMISKINAN =============
+  for (const k of statistikKemiskinan) {
+    await prisma.statistikKemiskinan.upsert({
+      where: {
+        id: k.id,
+      },
+      update: {
+        tahun: k.tahun,
+        jumlah: k.jumlah,
+      },
+      create: {
+        id: k.id,
+        tahun: k.tahun,
+        jumlah: k.jumlah,
+      },
+    });
+  }
+  console.log("📊 Statistik Kemiskinan seeded successfully");
+
+  console.log("🔄 Seeding Program Kemiskinan...");
+  for (const k of programKemiskinan) {
+    await prisma.programKemiskinan.upsert({
+      where: {
+        id: k.id,
+      },
+      update: {
+        nama: k.nama,
+        deskripsi: k.deskripsi,
+        icon: k.icon,
+        statistikId: k.statistikId,
+      },
+      create: {
+        id: k.id,
+        nama: k.nama,
+        deskripsi: k.deskripsi,
+        icon: k.icon,
+        statistikId: k.statistikId,
+      },
+    });
+  }
+  console.log("✅ Program Kemiskinan seeded successfully");
+
+  // ==================== SUBMENU SEKTOR UNGGULAN DESA =============
+  console.log("🔄 Seeding Sektor Unggulan Desa...");
+  for (const k of sektorUnggulanDesa) {
+    await prisma.sektorUnggulanDesa.upsert({
+      where: {
+        id: k.id,
+      },
+      update: {
+        name: k.name,
+        description: k.description,
+        value: k.value,
+      },
+      create: {
+        id: k.id,
+        name: k.name,
+        description: k.description,
+        value: k.value,
+      },
+    });
+  }
+  console.log("✅ Sektor Unggulan Desa seeded successfully");
+
+  // ==================== SUBMENU DEMOGRAFI PEKERJAAN =============
+  console.log("🔄 Seeding Demografi Pekerjaan...");
+  for (const k of demografiPekerjaan) {
+    await prisma.dataDemografiPekerjaan.upsert({
+      where: {
+        id: k.id,
+      },
+      update: {
+        pekerjaan: k.pekerjaan,
+        lakiLaki: k.lakiLaki,
+        perempuan: k.perempuan,
+      },
+      create: {
+        id: k.id,
+        pekerjaan: k.pekerjaan,
+        lakiLaki: k.lakiLaki,
+        perempuan: k.perempuan,
+      },
+    });
+  }
+  console.log("✅ Demografi Pekerjaan seeded successfully");
 
   // =========== KATEGORI GOTONG ROYONG ===========
   // Add IDs to the kategoriKegiatan data

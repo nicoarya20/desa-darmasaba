@@ -6,12 +6,12 @@ import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
-import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
-import polsekTerdekat from '../../../_state/keamanan/polsek-terdekat';
+import { ModalKonfirmasiHapus } from '../../../../_com/modalKonfirmasiHapus';
+import statePolsekTerdekat from '../../../../_state/keamanan/polsek-terdekat';
 
 function DetailPolsekTerdekat() {
   const router = useRouter();
-  const polsekState = useProxy(polsekTerdekat);
+  const polsekState = useProxy(statePolsekTerdekat.polsekTerdekatState);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [modalHapus, setModalHapus] = useState(false);
   const params = useParams();
@@ -25,7 +25,7 @@ function DetailPolsekTerdekat() {
       polsekState.delete.byId(selectedId);
       setModalHapus(false);
       setSelectedId(null);
-      router.push("/admin/keamanan/polsek-terdekat");
+      router.push("/admin/keamanan/polsek-terdekat/daftar-polsek-terdekat");
     }
   };
 
@@ -40,7 +40,7 @@ function DetailPolsekTerdekat() {
   const data = polsekState.findUnique.data;
 
   return (
-     <Box px={{ base: 0, md: 'xs' }} py="xs">
+    <Box px={{ base: 0, md: 'xs' }} py="xs">
       {/* Tombol Back */}
       <Button
         variant="subtle"
@@ -149,10 +149,20 @@ function DetailPolsekTerdekat() {
                 </Text>
               </Box>
 
-              {/* Layanan Polsek */}
+
               <Box>
                 <Text fz="lg" fw="bold">Layanan Polsek</Text>
-                <Text fz="md" c="dimmed">{data?.layananPolsek?.nama || "-"}</Text>
+                <Stack gap={4}>
+                  {data.LayananToPolsek && data.LayananToPolsek.length > 0 ? (
+                    data.LayananToPolsek.map((layanan) => (
+                      <Text fz="md" c="dimmed" key={layanan.id}>
+                        • {layanan.layanan.nama}
+                      </Text>
+                    ))
+                  ) : (
+                    <Text fz="sm" c="dimmed">Tidak ada layanan polsek</Text>
+                  )}
+                </Stack>
               </Box>
 
               {/* Aksi */}
@@ -172,7 +182,7 @@ function DetailPolsekTerdekat() {
 
                 <Button
                   color="green"
-                  onClick={() => router.push(`/admin/keamanan/polsek-terdekat/${data.id}/edit`)}
+                  onClick={() => router.push(`/admin/keamanan/polsek-terdekat/daftar-polsek-terdekat/${data.id}/edit`)}
                   variant="light"
                   radius="md"
                   size="md"
