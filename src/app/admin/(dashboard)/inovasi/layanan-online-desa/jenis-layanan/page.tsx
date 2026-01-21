@@ -234,7 +234,6 @@ function ListJenisLayanan({ search }: { search: string }) {
         </Box>
       </Paper>
 
-      {totalPages > 1 && (
         <Center>
           <Pagination
             value={page}
@@ -248,7 +247,6 @@ function ListJenisLayanan({ search }: { search: string }) {
             radius="md"
           />
         </Center>
-      )}
     </Stack>
   );
 }

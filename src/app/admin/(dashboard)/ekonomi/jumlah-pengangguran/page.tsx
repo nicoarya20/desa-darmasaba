@@ -224,7 +224,6 @@ function ListDetailDataPengangguran({ search }: { search: string }) {
       </Paper>
 
       {/* Pagination */}
-      {totalPages > 1 && (
         <Center>
           <Pagination
             value={page}
@@ -239,7 +238,6 @@ function ListDetailDataPengangguran({ search }: { search: string }) {
             radius="md"
           />
         </Center>
-      )}
 
       {/* Chart Section */}
       <Paper withBorder bg={colors['white-1']} p={{ base: 'sm', md: 'lg' }} shadow="md" radius="md">

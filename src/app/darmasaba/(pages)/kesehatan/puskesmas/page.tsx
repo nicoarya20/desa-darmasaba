@@ -127,7 +127,6 @@ function Page() {
         )}
       </Box>
 
-      {totalPages > 1 && (
         <Center>
           <Pagination
             value={page}
@@ -138,7 +137,6 @@ function Page() {
             mt="lg"
           />
         </Center>
-      )}
     </Stack>
   );
 }

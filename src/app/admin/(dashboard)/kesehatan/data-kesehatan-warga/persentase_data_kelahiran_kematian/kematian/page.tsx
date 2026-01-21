@@ -222,7 +222,6 @@ function ListKematian({ search }: { search: string }) {
       </Paper>
 
       {/* Pagination */}
-      {totalPages > 1 && (
         <Center mt="lg">
           <Pagination
             value={page}
@@ -235,7 +234,6 @@ function ListKematian({ search }: { search: string }) {
             radius="md"
           />
         </Center>
-      )}
     </Box>
   );
 }

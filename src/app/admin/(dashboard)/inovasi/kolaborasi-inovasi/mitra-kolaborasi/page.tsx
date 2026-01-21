@@ -20,14 +20,14 @@ import {
   Text,
   Title,
 } from '@mantine/core';
-import { IconEdit, IconPlus, IconSearch, IconX } from '@tabler/icons-react';
+import { useDebouncedValue } from '@mantine/hooks';
+import { IconEdit, IconPlus, IconSearch, IconTrash, IconX } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../../_com/header';
 import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
 import mitraKolaborasi from '../../../_state/inovasi/mitra-kolaborasi';
-import { useDebouncedValue } from '@mantine/hooks';
 
 function MitraKolaborasi() {
   const [search, setSearch] = useState('');
@@ -56,7 +56,6 @@ function ListMitraKolaborasi({ search }: { search: string }) {
       mitraKolaborasi.delete.byId(selectedId);
       setModalHapus(false);
       setSelectedId(null);
-      router.push('/admin/inovasi/kolaborasi-inovasi');
     }
   };
 
@@ -192,7 +191,7 @@ function ListMitraKolaborasi({ search }: { search: string }) {
                           setModalHapus(true);
                         }}
                       >
-                        <IconX size={16} />
+                        <IconTrash size={16} />
                       </Button>
                     </TableTd>
                     <TableTd>

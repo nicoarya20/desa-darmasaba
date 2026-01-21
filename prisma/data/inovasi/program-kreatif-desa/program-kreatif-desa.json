@@ -1,0 +1,44 @@
+[
+  {
+    "id": "cmkkyux9x000104jo4gwi9frv",
+    "name": "Pelatihan Pembuatan Eco-Enzyme",
+    "slug": "Pelatihan pembuatan cairan eco-enzyme dari limbah organik rumah tangga",
+    "deskripsi": "<p>Program ini mengajarkan masyarakat Desa Darmasaba cara membuat eco-enzyme dari limbah organik yang dapat digunakan sebagai pembersih alami, pupuk organik, dan produk ramah lingkungan untuk meningkatkan nilai tambah ekonomi lokal.</p>",
+    "icon": "lingkunganSehat"
+  },
+  {
+    "id": "cmkkyux9x000104jo4gwi0gsw",
+    "name": "Green House dan Biopori Berkelanjutan",
+    "slug": "Perancangan rumah kaca dan lubang biopori di TPS3R",
+    "deskripsi": "<p>Program perancangan dan pembangunan green house di kawasan TPS3R Pudak Mesari serta pembuatan lubang biopori untuk pengelolaan sampah organik dan konservasi air yang ramah lingkungan sebagai bagian dari pengembangan ekonomi hijau desa.</p>",
+    "icon": "lingkunganSehat"
+  },
+  {
+    "id": "cmkkyux9x000104jo4gwi1htx",
+    "name": "Ekowisata dan Eco-Kuliner Desa",
+    "slug": "Pengembangan paket ekowisata dan kuliner berbasis potensi lokal",
+    "deskripsi": "<p>Kolaborasi antara desa, BUMDes, dan akademisi untuk mengembangkan potensi ekowisata berkelanjutan serta produk kuliner khas desa dengan pendekatan pemasaran digital untuk memperkuat ekonomi kreatif dan pariwisata lokal.</p>",
+    "icon": "ekowisata"
+  },
+  {
+    "id": "cmkkyux9x000104jo4gwi2iuy",
+    "name": "Sosialisasi Kewirausahaan",
+    "slug": "Sosialisasi kewirausahaan bagi masyarakat desa",
+    "deskripsi": "<p>Program ini memberikan pengetahuan dan motivasi kepada warga Darmasaba tentang kewirausahaan, pemasaran digital, pencatatan usaha, dan strategi pengembangan UMKM agar produk lokal lebih produktif dan bernilai ekonomi.</p>",
+    "icon": "ekonomi"
+  },
+  {
+    "id": "cmkkyux9x000104jo4gwi3jvz",
+    "name": "E-Book Kuliner Lokal",
+    "slug": "Publikasi e-book tentang kuliner khas Desa Darmasaba",
+    "deskripsi": "<p>Produksi dan distribusi e-book yang mengangkat resep dan cerita kuliner khas Desa Darmasaba sebagai media edukatif dan promosi budaya pangan lokal yang kreatif serta bisa diperluas untuk pemasaran UMKM desa.</p>",
+    "icon": "book"
+  },
+  {
+    "id": "cmkkyux9x000104jo4gwi4kwa",
+    "name": "Tes Kompetensi",
+    "slug": "Program pemetaan minat dan keterampilan masyarakat untuk mendukung pengembangan potensi dan kesiapan kerja.",
+    "deskripsi": "<p>Tes Kompetensi merupakan program untuk membantu masyarakat, khususnya generasi muda, dalam mengenali minat, bakat, dan keterampilan yang dimiliki. Hasil tes dapat menjadi dasar dalam perencanaan pelatihan, pengembangan potensi diri, serta kesiapan menghadapi dunia kerja dan wirausaha.</p>",
+    "icon": "layananPublik"
+  }
+]

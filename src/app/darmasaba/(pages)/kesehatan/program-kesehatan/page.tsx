@@ -225,7 +225,6 @@ export default function Page() {
           ))}
         </SimpleGrid>
 
-        {totalPages > 1 && (
           <Center>
             <Pagination
               value={page}
@@ -242,7 +241,6 @@ export default function Page() {
               }}
             />
           </Center>
-        )}
       </Box>
 
       <Box px={{ base: "md", md: 100 }} py="xl">

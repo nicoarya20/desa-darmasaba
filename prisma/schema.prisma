@@ -1655,17 +1655,17 @@ model Pembiayaan {
 
 // ========================================= MENU INOVASI ========================================= //
 // ========================================= DESA DIGITAL / SMART VILLAGE ========================================= //
-model DesaDigital {
-  id        String      @id @default(cuid())
-  name      String
-  deskripsi String      @db.Text
-  image     FileStorage @relation(fields: [imageId], references: [id])
-  imageId   String
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
-  deletedAt DateTime    @default(now())
-  isActive  Boolean     @default(true)
-}
+  model DesaDigital {
+    id        String      @id @default(cuid())
+    name      String
+    deskripsi String      @db.Text
+    image     FileStorage @relation(fields: [imageId], references: [id])
+    imageId   String
+    createdAt DateTime    @default(now())
+    updatedAt DateTime    @updatedAt
+    deletedAt DateTime    @default(now())
+    isActive  Boolean     @default(true)
+  }
 
 // ========================================= PROGRAM KREATIF ========================================= //
 model ProgramKreatif {
@@ -1719,19 +1719,19 @@ model InfoTekno {
 }
 
 // ========================================= AJUKAN IDE INOVATIF ========================================= //
-model AjukanIdeInovatif {
-  id        String   @id @default(cuid())
-  name      String
-  alamat    String
-  namaIde   String
-  deskripsi String   @db.Text
-  masalah   String   @db.Text
-  benefit   String   @db.Text
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  deletedAt DateTime @default(now())
-  isActive  Boolean  @default(true)
-}
+  model AjukanIdeInovatif {
+    id        String   @id @default(cuid())
+    name      String
+    alamat    String
+    namaIde   String
+    deskripsi String   @db.Text
+    masalah   String   @db.Text
+    benefit   String   @db.Text
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    deletedAt DateTime @default(now())
+    isActive  Boolean  @default(true)
+  }
 
 // ========================================= LAYANAN ONLINE DESA ========================================= //
 model AdministrasiOnline {

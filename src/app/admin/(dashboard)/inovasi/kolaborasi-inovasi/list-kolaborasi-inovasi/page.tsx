@@ -245,7 +245,6 @@ function ListKolaborasiInovasi({ search }: { search: string }) {
         </Box>
       </Paper>
 
-      {totalPages > 1 && (
         <Center>
           <Pagination
             value={page}
@@ -260,7 +259,6 @@ function ListKolaborasiInovasi({ search }: { search: string }) {
             radius="md"
           />
         </Center>
-      )}
     </Box>
   );
 }

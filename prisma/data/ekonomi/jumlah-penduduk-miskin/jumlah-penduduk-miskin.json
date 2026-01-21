@@ -1,0 +1,27 @@
+[
+  {
+    "id": "795b3e69-2bdb-4d2b-8331-9433fc604723",
+    "year": 2021,
+    "totalPoorPopulation": 480
+  },
+  {
+    "id": "0e61ed28-1789-4329-86bc-67bdb715d4fa",
+    "year": 2022,
+    "totalPoorPopulation": 450
+  },
+  {
+    "id": "0f80e31e-56d7-42aa-aede-e3104f1bca4f",
+    "year": 2023,
+    "totalPoorPopulation": 430
+  },
+  {
+    "id": "3668ecd4-4c4c-4a87-a39a-72661fce5a2c",
+    "year": 2024,
+    "totalPoorPopulation": 410
+  },
+  {
+    "id": "854a375e-4662-4e4c-abd8-59115b4910a9",
+    "year": 2025,
+    "totalPoorPopulation": 390
+  }
+]

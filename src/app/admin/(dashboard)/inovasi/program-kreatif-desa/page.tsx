@@ -20,37 +20,53 @@ import {
   Text,
   Title,
 } from '@mantine/core';
+import { useDebouncedValue } from '@mantine/hooks';
 import {
+  IconAlertTriangle,
+  IconAmbulance,
+  IconBook,
+  IconBuilding,
+  IconBuildingCommunity,
   IconCash,
   IconChartLine,
   IconChristmasTreeFilled,
-  IconClipboard,
+  IconClipboardTextFilled,
   IconDeviceImac,
   IconDroplet,
+  IconFileText,
+  IconFiretruck,
+  IconFirstAidKit,
   IconHome,
   IconHomeEco,
   IconHospital,
+  IconInfoCircle,
   IconLeaf,
+  IconLifebuoy,
+  IconMessageReport,
+  IconPhoneCall,
   IconPlus,
   IconRecycle,
+  IconRun,
   IconScale,
   IconSchool,
   IconSearch,
+  IconShield,
   IconShieldFilled,
   IconShoppingCart,
+  IconStethoscope,
   IconTent,
-  IconTrash,
+  IconTrashFilled,
   IconTree,
   IconTrendingUp,
   IconTrophy,
-  IconTruck,
+  IconTruckFilled,
+  IconUsers
 } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../_com/header';
 import programKreatifState from '../../_state/inovasi/program-kreatif';
-import { useDebouncedValue } from '@mantine/hooks';
 
 function ProgramKreatifDesa() {
   const [search, setSearch] = useState('');
@@ -81,15 +97,16 @@ function ListProgramKreatifDesa({ search }: { search: string }) {
   const filteredData = data || [];
 
   const iconMap: Record<string, React.FC<any>> = {
+    // ===== Umum & Lingkungan =====
     ekowisata: IconLeaf,
     kompetisi: IconTrophy,
     wisata: IconTent,
     ekonomi: IconChartLine,
     sampah: IconRecycle,
-    truck: IconTruck,
+    truck: IconTruckFilled,
     scale: IconScale,
-    clipboard: IconClipboard,
-    trash: IconTrash,
+    clipboard: IconClipboardTextFilled,
+    trash: IconTrashFilled,
     lingkunganSehat: IconHomeEco,
     sumberOksigen: IconChristmasTreeFilled,
     ekonomiBerkelanjutan: IconTrendingUp,
@@ -101,6 +118,30 @@ function ListProgramKreatifDesa({ search }: { search: string }) {
     pelatihan: IconSchool,
     subsidi: IconShoppingCart,
     layananKesehatan: IconHospital,
+
+    // ===== Keamanan & Darurat =====
+    polisi: IconShieldFilled,
+    ambulans: IconAmbulance,
+    pemadam: IconFiretruck,
+    darurat: IconAlertTriangle,
+    sar: IconLifebuoy,
+    evakuasi: IconRun,
+    keamanan: IconShield,
+    teleponDarurat: IconPhoneCall,
+
+    // ===== Kesehatan =====
+    rumahSakit: IconHospital,
+    puskesmas: IconFirstAidKit,
+    klinik: IconStethoscope,
+
+    // ===== Pemerintahan & Fasilitas =====
+    bangunan: IconBuilding,
+    kantorDesa: IconBuildingCommunity,
+    administrasi: IconFileText,
+    informasi: IconInfoCircle,
+    pengaduan: IconMessageReport,
+    layananPublik: IconUsers,
+    book: IconBook
   };
 
   if (loading || !data) {
@@ -132,7 +173,7 @@ function ListProgramKreatifDesa({ search }: { search: string }) {
               </Button>
             </Group>
 
-           <Box visibleFrom="md" style={{ overflowX: 'auto' }}>
+            <Box visibleFrom="md" style={{ overflowX: 'auto' }}>
               <Table
                 highlightOnHover
                 miw={0}

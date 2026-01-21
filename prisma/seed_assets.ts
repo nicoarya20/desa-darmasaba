@@ -45,7 +45,7 @@ export default async function seedAssets() {
 
   // 1. Download zip
   const url =
-    "https://cld-dkr-makuro-seafile.wibudev.com/f/88293b915cf34b939819/?dl=1";
+    "https://cld-dkr-makuro-seafile.wibudev.com/f/eadd52c5bd654ec789a3/?dl=1";
   const res = await fetchWithRetry(url, 3, 20000);
 
   // Validasi content-type

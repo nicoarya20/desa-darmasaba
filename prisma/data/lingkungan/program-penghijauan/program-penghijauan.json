@@ -1,0 +1,23 @@
+[
+  {
+    "id": "cmkmdp3zg0000vn8issps1eg8",
+    "name": "Penghijauan Desa Darmasaba",
+    "judul": "Program Penghijauan Lingkungan",
+    "deskripsi": "<p>Program penghijauan desa Darmasaba bertujuan menanam pohon di area publik dan pinggiran jalan desa sebagai upaya meningkatkan kualitas lingkungan, menyerap karbon, dan memperindah desa.</p>",
+    "icon": "pohon"
+  },
+  {
+    "id": "cmkmdp3zg0000vn8isspt2fh9",
+    "name": "Komunitas Tanam Pohon",
+    "judul": "Gerakan Komunitas Tanam Pohon",
+    "deskripsi": "<p>Pelibatan warga desa dalam kegiatan rutin penanaman pohon di area perbukitan dan ruang terbuka hijau untuk meningkatkan kesadaran lingkungan dan mengurangi erosi.</p>",
+    "icon": "pohon"
+  },
+  {
+    "id": "cmkmdp3zg0000vn8isspu3gi0",
+    "name": "Taman Hijau Bersama",
+    "judul": "Pembangunan Taman Hijau Desa",
+    "deskripsi": "<p>Pembangunan taman hijau di beberapa titik strategis desa, melibatkan banjar adat dan kelompok pemuda untuk menciptakan ruang publik yang nyaman dan ramah lingkungan.</p>",
+    "icon": "pohon"
+  }
+]

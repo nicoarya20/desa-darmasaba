@@ -222,7 +222,6 @@ function ListKategoriBerita({ search }: { search: string }) {
         </Stack>
       </Paper>
 
-      {totalPages > 1 && (
         <Center mt={{ base: 'lg', md: 'xl' }}>
           <Pagination
             value={page}
@@ -235,7 +234,6 @@ function ListKategoriBerita({ search }: { search: string }) {
             radius="md"
           />
         </Center>
-      )}
 
       {/* Modal Konfirmasi Hapus */}
       <ModalKonfirmasiHapus

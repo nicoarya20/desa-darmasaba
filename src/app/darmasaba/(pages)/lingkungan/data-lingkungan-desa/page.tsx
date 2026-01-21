@@ -3,7 +3,7 @@ import dataLingkunganDesaState from '@/app/admin/(dashboard)/_state/lingkungan/d
 import colors from '@/con/colors';
 import { Badge, Box, Center, Group, Pagination, Paper, SimpleGrid, Skeleton, Stack, Text, TextInput, Tooltip } from '@mantine/core';
 import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
-import { Icon, IconChartLine, IconChristmasTreeFilled, IconClipboardTextFilled, IconDroplet, IconHome, IconHomeEco, IconLeaf, IconRecycle, IconScale, IconSearch, IconShieldFilled, IconTent, IconTrashFilled, IconTree, IconTrendingUp, IconTrophy, IconTruckFilled } from '@tabler/icons-react';
+import { Icon, IconAlertTriangle, IconAmbulance, IconBook, IconBuilding, IconBuildingCommunity, IconCash, IconChartLine, IconChristmasTreeFilled, IconClipboard, IconDroplet, IconFileText, IconFiretruck, IconFirstAidKit, IconHome, IconHomeEco, IconHospital, IconInfoCircle, IconLeaf, IconLifebuoy, IconMessageReport, IconPhoneCall, IconRecycle, IconRun, IconScale, IconSchool, IconSearch, IconShield, IconShieldFilled, IconShoppingCart, IconStethoscope, IconTent, IconTrash, IconTree, IconTrendingUp, IconTrophy, IconTruck, IconUsers } from '@tabler/icons-react';
 import React, { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import BackButton from '../../desa/layanan/_com/BackButto';
@@ -21,24 +21,51 @@ function Page() {
   } = state
 
   const iconMap: Record<string, Icon> = {
-    ekowisata: IconLeaf,
-    kompetisi: IconTrophy,
-    wisata: IconTent,
-    ekonomi: IconChartLine,
-    sampah: IconRecycle,
-    truck: IconTruckFilled,
-    scale: IconScale,
-    clipboard: IconClipboardTextFilled,
-    trash: IconTrashFilled,
-    lingkunganSehat: IconHomeEco,
-    sumberOksigen: IconChristmasTreeFilled,
-    ekonomiBerkelanjutan: IconTrendingUp,
-    mencegahBencana: IconShieldFilled,
-    rumah: IconHome,
-    pohon: IconTree,
-    air: IconDroplet
+  ekowisata: IconLeaf,
+  kompetisi: IconTrophy,
+  wisata: IconTent,
+  ekonomi: IconChartLine,
+  sampah: IconRecycle,
+  truck: IconTruck,
+  scale: IconScale,
+  clipboard: IconClipboard,
+  trash: IconTrash,
+  lingkunganSehat: IconHomeEco,
+  sumberOksigen: IconChristmasTreeFilled,
+  ekonomiBerkelanjutan: IconTrendingUp,
+  mencegahBencana: IconShieldFilled,
+  rumah: IconHome,
+  pohon: IconTree,
+  air: IconDroplet,
+  bantuan: IconCash,
+  pelatihan: IconSchool,
+  subsidi: IconShoppingCart,
+  layananKesehatan: IconHospital,
 
-  };
+  // ===== Keamanan & Darurat =====
+  polisi: IconShieldFilled,
+  ambulans: IconAmbulance,
+  pemadam: IconFiretruck,
+  darurat: IconAlertTriangle,
+  sar: IconLifebuoy,
+  evakuasi: IconRun,
+  keamanan: IconShield,
+  teleponDarurat: IconPhoneCall,
+
+  // ===== Kesehatan =====
+  rumahSakit: IconHospital,
+  puskesmas: IconFirstAidKit,
+  klinik: IconStethoscope,
+
+  // ===== Pemerintahan =====
+  bangunan: IconBuilding,
+  kantorDesa: IconBuildingCommunity,
+  administrasi: IconFileText,
+  informasi: IconInfoCircle,
+  pengaduan: IconMessageReport,
+  layananPublik: IconUsers,
+  book: IconBook
+};
 
   useShallowEffect(() => {
     load(page, 6, debouncedSearch)

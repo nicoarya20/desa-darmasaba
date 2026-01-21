@@ -1,0 +1,44 @@
+[
+  {
+    "id": "cmkkt91ma000004lb4dpq7ll1",
+    "name": "Surat Keterangan Domisili Organisasi",
+    "alamat": "Desa Darmasaba, Kecamatan Abiansemal, Kabupaten Badung, Bali",
+    "nomorTelepon": "0361-9876543",
+    "jenisLayananId": "dnllt91ma000004lb4dpq7ll1"
+  },
+  {
+    "id": "cmkkt91ma000004lb4dpq8mm2",
+    "name": "Surat Keterangan Penghasilan",
+    "alamat": "Desa Darmasaba, Kecamatan Abiansemal, Kabupaten Badung, Bali",
+    "nomorTelepon": "0361-9776543",
+    "jenisLayananId": "dnllt91ma000004lb4dpq8mm2"
+  },
+  {
+    "id": "cmkkt91ma000004lb4dpq9nn3",
+    "name": "Surat Keterangan Tidak Mampu",
+    "alamat": "Desa Darmasaba, Kecamatan Abiansemal, Kabupaten Badung, Bali",
+    "nomorTelepon": "0361-9676543",
+    "jenisLayananId": "dnllt91ma000004lb4dpq9nn3"
+  },
+  {
+    "id": "cmkkt91ma000004lb4dpq0oo4",
+    "name": "Surat Keterangan Kelahiran",
+    "alamat": "Desa Darmasaba, Kecamatan Abiansemal, Kabupaten Badung, Bali",
+    "nomorTelepon": "0361-9576543",
+    "jenisLayananId": "dnllt91ma000004lb4dpq0oo4"
+  },
+  {
+    "id": "cmkkt91ma000004lb4dpq1pp5",
+    "name": "Surat Keterangan Usaha",
+    "alamat": "Desa Darmasaba, Kecamatan Abiansemal, Kabupaten Badung, Bali",
+    "nomorTelepon": "0361-9476543",
+    "jenisLayananId": "dnllt91ma000004lb4dpq1pp5"
+  },
+  {
+    "id": "cmkkt91ma000004lb4dpq2qq6",
+    "name": "Perizinan Berusaha OSS",
+    "alamat": "Desa Darmasaba, Kecamatan Abiansemal, Kabupaten Badung, Bali",
+    "nomorTelepon": "0361-9376543",
+    "jenisLayananId": "dnllt91ma000004lb4dpq2qq6"
+  }
+]

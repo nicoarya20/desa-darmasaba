@@ -284,7 +284,6 @@ function ListPosisiOrganisasiBumDes({ search }: { search: string }) {
         </Box>
       </Paper>
 
-      {totalPages > 1 && (
         <Center>
           <Pagination
             value={page}
@@ -299,7 +298,6 @@ function ListPosisiOrganisasiBumDes({ search }: { search: string }) {
             radius="md"
           />
         </Center>
-      )}
 
       {/* Modal Hapus */}
       <ModalKonfirmasiHapus

@@ -37,6 +37,7 @@ import {
   IconShield,
   IconStethoscope,
   IconUsers,
+  IconBook,
 } from '@tabler/icons-react';
 
 const iconMap = {
@@ -83,6 +84,7 @@ const iconMap = {
   informasi: { label: 'Informasi', icon: IconInfoCircle },
   pengaduan: { label: 'Pengaduan', icon: IconMessageReport },
   layananPublik: { label: 'Layanan Publik', icon: IconUsers },
+  book: { label: 'Buku', icon: IconBook }
 };
 
 export type IconKey = keyof typeof iconMap;

@@ -134,7 +134,6 @@ function ListKategoriPrestasi({ search }: { search: string }) {
             </TableTbody>
           </Table>
 
-          {totalPages > 1 && (
             <Center mt="xl">
               <Pagination
                 value={page}
@@ -151,7 +150,6 @@ function ListKategoriPrestasi({ search }: { search: string }) {
                 }}
               />
             </Center>
-          )}
         </Box>
 
         {/* MOBILE: Card */}
@@ -194,7 +192,6 @@ function ListKategoriPrestasi({ search }: { search: string }) {
               ))
             )}
 
-            {totalPages > 1 && (
               <Center py="lg">
                 <Pagination
                   value={page}
@@ -211,7 +208,6 @@ function ListKategoriPrestasi({ search }: { search: string }) {
                   }}
                 />
               </Center>
-            )}
           </Stack>
         </Box>
 
