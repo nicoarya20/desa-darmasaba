@@ -179,7 +179,6 @@ export default function Page() {
             ))}
           </SimpleGrid>
 
-          {totalPages > 1 && (
             <Center>
               <Pagination
                 value={page}
@@ -191,7 +190,6 @@ export default function Page() {
                 mt="md"
               />
             </Center>
-          )}
 
           <Stack gap="sm">
             <Flex align="center" gap="xs">

@@ -267,8 +267,6 @@ function ListPendapatan({ search }: { search: string }) {
         </Stack>
       </Paper>
 
-      {/* Pagination */}
-      {totalPages > 1 && (
         <Center mt={{ base: 'sm', md: 'md' }} mb={{ base: 'sm', md: 'md' }}>
           <Pagination
             value={page}
@@ -282,7 +280,6 @@ function ListPendapatan({ search }: { search: string }) {
             size="sm"
           />
         </Center>
-      )}
 
       {/* Modal Konfirmasi Hapus */}
       <ModalKonfirmasiHapus

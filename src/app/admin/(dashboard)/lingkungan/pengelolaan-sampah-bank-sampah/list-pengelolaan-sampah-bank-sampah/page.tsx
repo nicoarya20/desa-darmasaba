@@ -2,7 +2,7 @@
 import colors from '@/con/colors';
 import { Box, Button, Center, Group, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title } from '@mantine/core';
 import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
-import { IconAlertTriangle, IconAmbulance, IconBuilding, IconCash, IconChartLine, IconChristmasTreeFilled, IconClipboardTextFilled, IconDroplet, IconEdit, IconFiretruck, IconHome, IconHomeEco, IconHospital, IconLeaf, IconPlus, IconRecycle, IconScale, IconSchool, IconSearch, IconShieldFilled, IconShoppingCart, IconTent, IconTrashFilled, IconTree, IconTrendingUp, IconTrophy, IconTruckFilled } from '@tabler/icons-react';
+import { IconAlertTriangle, IconAmbulance, IconBook, IconBuilding, IconBuildingCommunity, IconCash, IconChartLine, IconChristmasTreeFilled, IconClipboardTextFilled, IconDroplet, IconEdit, IconFileText, IconFiretruck, IconFirstAidKit, IconHome, IconHomeEco, IconHospital, IconInfoCircle, IconLeaf, IconLifebuoy, IconMessageReport, IconPhoneCall, IconPlus, IconRecycle, IconRun, IconScale, IconSchool, IconSearch, IconShield, IconShieldFilled, IconShoppingCart, IconStethoscope, IconTent, IconTrashFilled, IconTree, IconTrendingUp, IconTrophy, IconTruckFilled, IconUsers } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import { useProxy } from 'valtio/utils';
@@ -58,32 +58,51 @@ function ListPengelolaanSampahBankSampah({ search }: { search: string }) {
   const filteredData = data || []
 
   const iconMap: Record<string, React.FC<{ size: number; style?: React.CSSProperties }>> = {
-    ekowisata: IconLeaf,
-    kompetisi: IconTrophy,
-    wisata: IconTent,
-    ekonomi: IconChartLine,
-    sampah: IconRecycle,
-    truck: IconTruckFilled,
-    scale: IconScale,
-    clipboard: IconClipboardTextFilled,
-    trash: IconTrashFilled,
-    lingkunganSehat: IconHomeEco,
-    sumberOksigen: IconChristmasTreeFilled,
-    ekonomiBerkelanjutan: IconTrendingUp,
-    mencegahBencana: IconShieldFilled,
-    rumah: IconHome,
-    pohon: IconTree,
-    air: IconDroplet,
-    bantuan: IconCash,
-    pelatihan: IconSchool,
-    subsidi: IconShoppingCart,
-    layananKesehatan: IconHospital,
-    polisi: IconShieldFilled,
-    ambulans: IconAmbulance,
-    pemadam: IconFiretruck,
-    rumahSakit: IconHospital,
-    bangunan: IconBuilding,
-    darurat: IconAlertTriangle,
+   // ===== Umum & Lingkungan =====
+       ekowisata: IconLeaf,
+       kompetisi: IconTrophy,
+       wisata: IconTent,
+       ekonomi: IconChartLine,
+       sampah: IconRecycle,
+       truck: IconTruckFilled,
+       scale: IconScale,
+       clipboard: IconClipboardTextFilled,
+       trash: IconTrashFilled,
+       lingkunganSehat: IconHomeEco,
+       sumberOksigen: IconChristmasTreeFilled,
+       ekonomiBerkelanjutan: IconTrendingUp,
+       mencegahBencana: IconShieldFilled,
+       rumah: IconHome,
+       pohon: IconTree,
+       air: IconDroplet,
+       bantuan: IconCash,
+       pelatihan: IconSchool,
+       subsidi: IconShoppingCart,
+       layananKesehatan: IconHospital,
+   
+       // ===== Keamanan & Darurat =====
+       polisi: IconShieldFilled,
+       ambulans: IconAmbulance,
+       pemadam: IconFiretruck,
+       darurat: IconAlertTriangle,
+       sar: IconLifebuoy,
+       evakuasi: IconRun,
+       keamanan: IconShield,
+       teleponDarurat: IconPhoneCall,
+   
+       // ===== Kesehatan =====
+       rumahSakit: IconHospital,
+       puskesmas: IconFirstAidKit,
+       klinik: IconStethoscope,
+   
+       // ===== Pemerintahan & Fasilitas =====
+       bangunan: IconBuilding,
+       kantorDesa: IconBuildingCommunity,
+       administrasi: IconFileText,
+       informasi: IconInfoCircle,
+       pengaduan: IconMessageReport,
+       layananPublik: IconUsers,
+       book: IconBook
   };
 
   if (loading || !data) {

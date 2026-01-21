@@ -73,9 +73,9 @@ function ListPrestasi({ search }: { search: string }) {
 
         {/* Desktop Table */}
         <Box visibleFrom="md" style={{ overflowX: 'auto' }}>
-         <Table highlightOnHover
-    layout="fixed" // 🔥 PENTING
-    withColumnBorders={false} striped verticalSpacing="sm" miw={800}>
+          <Table highlightOnHover
+            layout="fixed" // 🔥 PENTING
+            withColumnBorders={false} striped verticalSpacing="sm" miw={800}>
             <TableThead>
               <TableTr>
                 <TableTh>Nama Prestasi</TableTh>
@@ -177,17 +177,15 @@ function ListPrestasi({ search }: { search: string }) {
         </Stack>
       </Paper>
 
-      {totalPages > 1 && (
-        <Center mt={{ base: 'md', md: 'lg' }}>
-          <Pagination
-            value={page}
-            onChange={load}
-            total={totalPages}
-            withEdges
-            size={isMobile ? 'xs' : 'sm'}
-          />
-        </Center>
-      )}
+      <Center mt={{ base: 'md', md: 'lg' }}>
+        <Pagination
+          value={page}
+          onChange={load}
+          total={totalPages}
+          withEdges
+          size={isMobile ? 'xs' : 'sm'}
+        />
+      </Center>
     </Box>
   )
 }

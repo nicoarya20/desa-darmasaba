@@ -94,6 +94,24 @@
     "educatedUnemployment": 78,
     "uneducatedUnemployment": 54,
     "percentageChange": -2.22
+  },
+  {
+    "id": "13f11e4f-c96e-4155-bf30-3f45076ee34c",
+    "month": "Jan",
+    "year": 2026,
+    "totalUnemployment": 350,
+    "educatedUnemployment": 200,
+    "uneducatedUnemployment": 150,
+    "percentageChange": 0.0
+  },
+  {
+    "id": "477b3b0c-af18-4816-a00b-dcac530d57cd",
+    "month": "Feb",
+    "year": 2026,
+    "totalUnemployment": 270,
+    "educatedUnemployment": 150,
+    "uneducatedUnemployment": 120,
+    "percentageChange": -22.9
   }
 ]
   

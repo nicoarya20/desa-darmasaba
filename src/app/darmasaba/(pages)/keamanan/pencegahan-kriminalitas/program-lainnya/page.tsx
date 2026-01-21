@@ -124,7 +124,6 @@ function ListPencegahanKriminalitas({ search }: { search: string }) {
         )}
       </Stack>
 
-      {totalPages > 1 && (
         <Center>
           <Pagination
             value={page}
@@ -138,7 +137,6 @@ function ListPencegahanKriminalitas({ search }: { search: string }) {
             radius="lg"
           />
         </Center>
-      )}
     </Box>
   );
 }

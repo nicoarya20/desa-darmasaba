@@ -40,6 +40,13 @@ function PengaduanMasyarakat() {
     };
   };
 
+  const resetAll = () => {
+    resetForm();
+    setFile(null);
+    setPreviewImage(null);
+  };
+
+
   const handleSubmit = async () => {
     if (!file) {
       return toast.error("Silahkan pilih file gambar terlebih dahulu")
@@ -64,7 +71,7 @@ function PengaduanMasyarakat() {
       const success = await state.pengaduanMasyarakat.create.create()
 
       if (success) {
-        resetForm()
+        resetAll()
         close()
       }
     } catch (error) {
@@ -190,7 +197,7 @@ function PengaduanMasyarakat() {
                     </Group>
                   </Dropzone>
                   {previewImage ? (
-                    <Image alt="" src={previewImage} w={200} h={200} loading="lazy"/>
+                    <Image alt="" src={previewImage} w={200} h={200} loading="lazy" />
                   ) : (
                     <Center w={200} h={200} bg={"gray"}>
                       <IconImageInPicture />

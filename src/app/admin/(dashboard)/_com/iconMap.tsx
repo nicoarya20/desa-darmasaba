@@ -41,6 +41,7 @@ import {
   IconMessageReport,
   IconUsers,
   IconQuestionMark,
+  IconBook,
 } from '@tabler/icons-react'
 
 /* =======================
@@ -90,6 +91,7 @@ export type IconKey =
   | 'informasi'
   | 'pengaduan'
   | 'layananPublik'
+  | 'book'
 
 /* =======================
    Icon Map
@@ -138,6 +140,7 @@ const iconMap: Record<IconKey, React.FC<any>> = {
   informasi: IconInfoCircle,
   pengaduan: IconMessageReport,
   layananPublik: IconUsers,
+  book: IconBook
 }
 
 /* =======================

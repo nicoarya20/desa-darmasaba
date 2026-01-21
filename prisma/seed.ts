@@ -63,6 +63,25 @@ import demografiPekerjaan from "./data/ekonomi/demografi-pekerjaan/demografi-pek
 import sektorUnggulanDesa from "./data/ekonomi/sektor-unggulan/sektor-unggulan.json";
 import programKemiskinan from "./data/ekonomi/program-kemiskinan/program-kemiskinan.json";
 import statistikKemiskinan from "./data/ekonomi/program-kemiskinan/statistik-kemiskinan.json";
+import grafikMenganggurBerdasarkanUsia from "./data/ekonomi/jumlah-penduduk-usia-kerja-yang-menganggur/pengangguran-berdasarkan-usia.json";
+import grafikMenganggurBerdasarkanPendidikan from "./data/ekonomi/jumlah-penduduk-usia-kerja-yang-menganggur/pengangguran-berdasarkan-pendidikan.json";
+import jumlahPendudukMiskin from "./data/ekonomi/jumlah-penduduk-miskin/jumlah-penduduk-miskin.json";
+import desaDigital from "./data/inovasi/desa-digital/desa-digital.json";
+import jenisLayanan from "./data/inovasi/layanan-online-desa/jenis-layanan.json";
+import jenisPengaduan from "./data/inovasi/layanan-online-desa/jenis-pengaduan.json";
+import administrasiOnline from "./data/inovasi/layanan-online-desa/administrasi-online.json";
+import pengaduanMasyarakat from "./data/inovasi/layanan-online-desa/pengaduan-masyarakat.json";
+import programKreatif from "./data/inovasi/program-kreatif-desa/program-kreatif-desa.json";
+import kolaborasiInovasi from "./data/inovasi/kolaborasi-inovasi/kolaborasi-inovasi.json";
+import mitraKolaborasi from "./data/inovasi/kolaborasi-inovasi/mitra-kolaborasi.json";
+import infoTeknologi from "./data/inovasi/info-teknologi/info-teknologi.json";
+import ajukanIde from "./data/inovasi/ajukan-ide/ajukan-ide.json";
+import pengelolaanSampah from "./data/lingkungan/pengelolaan-sampah/pengelolaan-sampah.json";
+import keteranganBankSampah from "./data/lingkungan/pengelolaan-sampah/keterangan-bank-sampah.json"
+import programPenghijauan from "./data/lingkungan/program-penghijauan/program-penghijauan.json"
+import dataLingkunganDesa from "./data/lingkungan/data-lingkungan-desa/data-lingkungan-desa.json";
+import kategoriGotongRoyong from "./data/lingkungan/gotong-royong/kategori-gotong-royong.json";
+import gotongRoyong from "./data/lingkungan/gotong-royong/gotong-royong.json"
 import berita from "./data/desa/berita/berita.json";
 import kategoriBerita from "./data/desa/berita/kategori-berita.json";
 import contohEdukasiLingkungan from "./data/lingkungan/edukasi-lingkungan/contoh-kegiatan-di-desa-darmasaba.json";
@@ -128,7 +147,7 @@ import resolveImageById from "./resolveImageByName";
         category: f.category,
         deletedAt: null,
         isActive: true,
-      }
+      },
     );
   }
 
@@ -150,7 +169,7 @@ import resolveImageById from "./resolveImageByName";
           description: roleData.description,
           permissions: roleData.permissions || {}, // ✅ Include permissions
           isActive: roleData.isActive,
-        }
+        },
       );
       console.log(`✅ Seeded role -> ${roleData.name}`);
     } catch (error: any) {
@@ -175,7 +194,7 @@ import resolveImageById from "./resolveImageByName";
 
       if (!roleExists) {
         console.error(
-          `❌ Role with id ${u.roleId} not found for user ${u.username}`
+          `❌ Role with id ${u.roleId} not found for user ${u.username}`,
         );
         continue;
       }
@@ -190,13 +209,13 @@ import resolveImageById from "./resolveImageByName";
           roleId: u.roleId.toString(),
           isActive: u.isActive,
           sessionInvalid: false,
-        }
+        },
       );
       console.log(`✅ Seeded user -> ${u.username}`);
     } catch (error: any) {
       if (error.code === "P2003") {
         console.error(
-          `❌ Foreign key constraint failed for user ${u.username}: Role ${u.roleId} does not exist`
+          `❌ Foreign key constraint failed for user ${u.username}: Role ${u.roleId} does not exist`,
         );
       } else {
         console.error(`❌ Failed to seed user ${u.username}:`, error.message);
@@ -219,7 +238,7 @@ import resolveImageById from "./resolveImageByName";
 
         if (!imageExists) {
           console.warn(
-            `⚠️ Image not found for PejabatDesa ${p.name}, skipping...`
+            `⚠️ Image not found for PejabatDesa ${p.name}, skipping...`,
           );
           continue;
         }
@@ -233,7 +252,7 @@ import resolveImageById from "./resolveImageByName";
           name: p.name,
           position: p.position,
           imageId: p.imageId,
-        }
+        },
       );
       console.log(`✅ Seeded Pejabat Desa -> ${p.name}`);
     } catch (error: any) {
@@ -264,7 +283,7 @@ import resolveImageById from "./resolveImageByName";
       if (fileRecord) {
         imageId = fileRecord.id;
         console.log(
-          `✅ Found file by ID: ${fileRecord.name} (${fileRecord.id})`
+          `✅ Found file by ID: ${fileRecord.name} (${fileRecord.id})`,
         );
       } else {
         console.warn(`⚠️ File with ID ${p.imageId} not found for ${p.name}`);
@@ -311,7 +330,7 @@ import resolveImageById from "./resolveImageByName";
       if (fileRecord) {
         imageId = fileRecord.id;
         console.log(
-          `✅ Found file by ID: ${fileRecord.name} (${fileRecord.id})`
+          `✅ Found file by ID: ${fileRecord.name} (${fileRecord.id})`,
         );
       } else {
         console.warn(`⚠️ File with ID ${m.imageId} not found for ${m.name}`);
@@ -393,7 +412,7 @@ import resolveImageById from "./resolveImageByName";
       if (fileRecord) {
         imageId = fileRecord.id;
         console.log(
-          `✅ Found file by ID: ${fileRecord.name} (${fileRecord.id})`
+          `✅ Found file by ID: ${fileRecord.name} (${fileRecord.id})`,
         );
       } else {
         console.warn(`⚠️ File with ID ${l.imageId} not found for ${l.name}`);
@@ -512,7 +531,7 @@ import resolveImageById from "./resolveImageByName";
       const parentExists = flattenedPosisi.some((pos) => pos.id === p.parentId);
       if (!parentExists) {
         console.warn(
-          `⚠️ Parent tidak ditemukan: ${p.parentId} untuk ${p.nama}`
+          `⚠️ Parent tidak ditemukan: ${p.parentId} untuk ${p.nama}`,
         );
         continue;
       }
@@ -550,12 +569,12 @@ import resolveImageById from "./resolveImageByName";
     } catch (error: any) {
       if (error.code === "P2002") {
         console.warn(
-          `⚠️ Pegawai PPID with duplicate email (skipping): ${p.email}`
+          `⚠️ Pegawai PPID with duplicate email (skipping): ${p.email}`,
         );
       } else {
         console.error(
           `❌ Failed to seed pegawai PPID ${p.namaLengkap}:`,
-          error.message
+          error.message,
         );
       }
     }
@@ -804,7 +823,7 @@ import resolveImageById from "./resolveImageByName";
       if (fileRecord) {
         imageId = fileRecord.id;
         console.log(
-          `✅ Found file by ID: ${fileRecord.name} (${fileRecord.id})`
+          `✅ Found file by ID: ${fileRecord.name} (${fileRecord.id})`,
         );
       } else {
         console.warn(`⚠️ File with ID ${c.imageId} not found for ${c.biodata}`);
@@ -853,7 +872,7 @@ import resolveImageById from "./resolveImageByName";
       if (fileRecord) {
         imageId = fileRecord.id;
         console.log(
-          `✅ Found file by ID: ${fileRecord.name} (${fileRecord.id})`
+          `✅ Found file by ID: ${fileRecord.name} (${fileRecord.id})`,
         );
       } else {
         console.warn(`⚠️ File with ID ${c.imageId} not found for ${c.nama}`);
@@ -938,7 +957,7 @@ import resolveImageById from "./resolveImageByName";
       if (fileRecord) {
         imageId = fileRecord.id;
         console.log(
-          `✅ Found file by ID: ${fileRecord.name} (${fileRecord.id})`
+          `✅ Found file by ID: ${fileRecord.name} (${fileRecord.id})`,
         );
       } else {
         console.warn(`⚠️ File with ID ${p.imageId} not found for ${p.name}`);
@@ -974,13 +993,16 @@ import resolveImageById from "./resolveImageByName";
   for (const k of kategoriBerita) {
     await prisma.kategoriBerita.upsert({
       where: {
-        id: k.id,
+        name: k.name, // ✅ cocok dengan @unique
       },
       update: {
         name: k.name,
+        isActive: true,
       },
       create: {
+        id: k.id, // ✅ id tetap bisa disimpan
         name: k.name,
+        isActive: true,
       },
     });
   }
@@ -1007,7 +1029,7 @@ import resolveImageById from "./resolveImageByName";
       if (fileRecord) {
         imageId = fileRecord.id;
         console.log(
-          `✅ Found file by ID: ${fileRecord.name} (${fileRecord.id})`
+          `✅ Found file by ID: ${fileRecord.name} (${fileRecord.id})`,
         );
       } else {
         console.warn(`⚠️ File with ID ${b.imageId} not found for ${b.judul}`);
@@ -1046,7 +1068,7 @@ import resolveImageById from "./resolveImageByName";
       {
         id: c.id,
         name: c.name,
-      }
+      },
     );
   }
 
@@ -1230,7 +1252,7 @@ import resolveImageById from "./resolveImageByName";
       if (fileRecord) {
         imageId = fileRecord.id;
         console.log(
-          `✅ Found file by ID: ${fileRecord.name} (${fileRecord.id})`
+          `✅ Found file by ID: ${fileRecord.name} (${fileRecord.id})`,
         );
       } else {
         console.warn(`⚠️ File with ID ${p.imageId} not found for ${p.name}`);
@@ -1281,7 +1303,7 @@ import resolveImageById from "./resolveImageByName";
       if (fileRecord) {
         imageId = fileRecord.id;
         console.log(
-          `✅ Found file by ID: ${fileRecord.name} (${fileRecord.id})`
+          `✅ Found file by ID: ${fileRecord.name} (${fileRecord.id})`,
         );
       } else {
         console.warn(`⚠️ File with ID ${p.imageId} not found for ${p.name}`);
@@ -1375,7 +1397,7 @@ import resolveImageById from "./resolveImageByName";
       if (fileRecord) {
         imageId = fileRecord.id;
         console.log(
-          `✅ Found file by ID: ${fileRecord.name} (${fileRecord.id})`
+          `✅ Found file by ID: ${fileRecord.name} (${fileRecord.id})`,
         );
       } else {
         console.warn(`⚠️ File with ID ${p.imageId} not found for ${p.name}`);
@@ -1425,7 +1447,7 @@ import resolveImageById from "./resolveImageByName";
       if (fileRecord) {
         imageId = fileRecord.id;
         console.log(
-          `✅ Found file by ID: ${fileRecord.name} (${fileRecord.id})`
+          `✅ Found file by ID: ${fileRecord.name} (${fileRecord.id})`,
         );
       } else {
         console.warn(`⚠️ File with ID ${p.imageId} not found for ${p.name}`);
@@ -1473,7 +1495,7 @@ import resolveImageById from "./resolveImageByName";
       if (fileRecord) {
         imageId = fileRecord.id;
         console.log(
-          `✅ Found file by ID: ${fileRecord.name} (${fileRecord.id})`
+          `✅ Found file by ID: ${fileRecord.name} (${fileRecord.id})`,
         );
       } else {
         console.warn(`⚠️ File with ID ${p.imageId} not found for ${p.name}`);
@@ -1519,7 +1541,7 @@ import resolveImageById from "./resolveImageByName";
       if (fileRecord) {
         imageId = fileRecord.id;
         console.log(
-          `✅ Found file by ID: ${fileRecord.name} (${fileRecord.id})`
+          `✅ Found file by ID: ${fileRecord.name} (${fileRecord.id})`,
         );
       } else {
         console.warn(`⚠️ File with ID ${p.imageId} not found for ${p.name}`);
@@ -1567,7 +1589,7 @@ import resolveImageById from "./resolveImageByName";
       if (fileRecord) {
         imageId = fileRecord.id;
         console.log(
-          `✅ Found file by ID: ${fileRecord.name} (${fileRecord.id})`
+          `✅ Found file by ID: ${fileRecord.name} (${fileRecord.id})`,
         );
       } else {
         console.warn(`⚠️ File with ID ${p.imageId} not found for ${p.name}`);
@@ -1616,7 +1638,7 @@ import resolveImageById from "./resolveImageByName";
       if (fileRecord) {
         imageId = fileRecord.id;
         console.log(
-          `✅ Found file by ID: ${fileRecord.name} (${fileRecord.id})`
+          `✅ Found file by ID: ${fileRecord.name} (${fileRecord.id})`,
         );
       } else {
         console.warn(`⚠️ File with ID ${k.imageId} not found for ${k.name}`);
@@ -1642,6 +1664,24 @@ import resolveImageById from "./resolveImageByName";
   console.log("info wabah penyakit success ...");
 
   // ==================== SUBMENU POLSEK TERDEKAT ================
+  console.log("🔄 Seeding Layanan Polsek...");
+  for (const k of layananPolsek) {
+    await prisma.layananPolsek.upsert({
+      where: {
+        id: k.id,
+      },
+      update: {
+        nama: k.nama,
+      },
+      create: {
+        id: k.id,
+        nama: k.nama,
+      },
+    });
+  }
+
+  console.log("layanan polsek success ...");
+
   console.log("🔄 Seeding Polsek Terdekat...");
   for (const k of polsekTerdekat) {
     await prisma.polsekTerdekat.upsert({
@@ -1677,24 +1717,6 @@ import resolveImageById from "./resolveImageByName";
   }
 
   console.log("polsek terdekat success ...");
-
-  console.log("🔄 Seeding Layanan Polsek...");
-  for (const k of layananPolsek) {
-    await prisma.layananPolsek.upsert({
-      where: {
-        id: k.id,
-      },
-      update: {
-        nama: k.nama,
-      },
-      create: {
-        id: k.id,
-        nama: k.nama,
-      },
-    });
-  }
-
-  console.log("layanan polsek success ...");
 
   console.log("🔄 Seeding Layanan To Polsek...");
   for (const k of layananToPolsek) {
@@ -1774,7 +1796,7 @@ import resolveImageById from "./resolveImageByName";
 
     if (!kontakDaruratExists) {
       console.warn(
-        `⚠️ KontakDarurat ${f.kontakDaruratId} not found, skipping...`
+        `⚠️ KontakDarurat ${f.kontakDaruratId} not found, skipping...`,
       );
       continue;
     }
@@ -1993,7 +2015,7 @@ import resolveImageById from "./resolveImageByName";
 
   // ==================== SUBMENU STRUKTUR ORGANISASI DAN SK PENGURUS BUMDES ==========
   const sortedPosisiBumdes = flattenedPosisiBumdes.sort(
-    (a, b) => a.hierarki - b.hierarki
+    (a, b) => a.hierarki - b.hierarki,
   );
 
   for (const p of sortedPosisiBumdes) {
@@ -2003,7 +2025,7 @@ import resolveImageById from "./resolveImageByName";
       const parentExists = flattenedPosisi.some((pos) => pos.id === p.parentId);
       if (!parentExists) {
         console.warn(
-          `⚠️ Parent tidak ditemukan: ${p.parentId} untuk ${p.nama}`
+          `⚠️ Parent tidak ditemukan: ${p.parentId} untuk ${p.nama}`,
         );
         continue;
       }
@@ -2074,8 +2096,71 @@ import resolveImageById from "./resolveImageByName";
   console.log("📊 detailDataPengangguran success ...");
 
   // ==================== SUBMENU PENDUDUK USIA KERJA ==========
+  for (const p of grafikMenganggurBerdasarkanUsia) {
+    await prisma.grafikMenganggurBerdasarkanUsia.upsert({
+      where: {
+        id: p.id,
+      },
+      update: {
+        usia18_25: p.usia18_25,
+        usia26_35: p.usia26_35,
+        usia36_45: p.usia36_45,
+        usia46_keatas: p.usia46_keatas,
+      },
+      create: {
+        id: p.id,
+        usia18_25: p.usia18_25,
+        usia26_35: p.usia26_35,
+        usia36_45: p.usia36_45,
+        usia46_keatas: p.usia46_keatas,
+      },
+    });
+  }
+  console.log("📊 grafikMenganggurBerdasarkanUsia success ...");
+
+  for (const p of grafikMenganggurBerdasarkanPendidikan) {
+    await prisma.grafikMenganggurBerdasarkanPendidikan.upsert({
+      where: {
+        id: p.id,
+      },
+      update: {
+        SD: p.SD,
+        SMP: p.SMP,
+        SMA: p.SMA,
+        D3: p.D3,
+        S1: p.S1,
+      },
+      create: {
+        id: p.id,
+        SD: p.SD,
+        SMP: p.SMP,
+        SMA: p.SMA,
+        D3: p.D3,
+        S1: p.S1,
+      },
+    });
+  }
+  console.log("📊 grafikMenganggurBerdasarkanUsia success ...");
 
   // ==================== SUBMENU PENDUDUK MISKIN =============
+  console.log("🔄 Seeding Jumlah Penduduk Miskin...");
+  for (const k of jumlahPendudukMiskin) {
+    await prisma.grafikJumlahPendudukMiskin.upsert({
+      where: {
+        id: k.id,
+      },
+      update: {
+        year: k.year,
+        totalPoorPopulation: k.totalPoorPopulation,
+      },
+      create: {
+        id: k.id,
+        year: k.year,
+        totalPoorPopulation: k.totalPoorPopulation,
+      },
+    });
+  }
+  console.log("✅ Jumlah Penduduk Miskin seeded successfully");
 
   // ==================== SUBMENU PROGRAM KEMISKINAN =============
   for (const k of statistikKemiskinan) {
@@ -2163,14 +2248,340 @@ import resolveImageById from "./resolveImageByName";
   }
   console.log("✅ Demografi Pekerjaan seeded successfully");
 
-  // =========== KATEGORI GOTONG ROYONG ===========
-  // Add IDs to the kategoriKegiatan data
-  const kategoriKegiatan = kategoriKegiatanData.map((k, index) => ({
-    ...k,
-    id: `kategori-${index + 1}`,
-  }));
+  // ====================== MENU INOVASI ==========================
+  // ====================== SUBMENU AJUKAN IDE INOVATIF ===========
+  console.log("🔄 Seeding Ajukan Ide Inovatif...");
+  for (const d of ajukanIde) {
+    await prisma.ajukanIdeInovatif.upsert({
+      where: {
+        id: d.id,
+      },
+      update: {
+        name: d.name,
+        alamat: d.alamat,
+        namaIde: d.namaIde,
+        deskripsi: d.deskripsi,
+        masalah: d.masalah,
+        benefit: d.benefit,
+      },
+      create: {
+        id: d.id,
+        name: d.name,
+        alamat: d.alamat,
+        namaIde: d.namaIde,
+        deskripsi: d.deskripsi,
+        masalah: d.masalah,
+        benefit: d.benefit,
+      },
+    });
+  }
+  console.log("✅ Ajukan Ide Inovatif seeded successfully");
+  // ==================== SUBMENU DESA DIGITAL ====================
+  console.log("🔄 Seeding Desa Digital...");
+  for (const d of desaDigital) {
+    await prisma.desaDigital.upsert({
+      where: {
+        id: d.id,
+      },
+      update: {
+        name: d.name,
+        deskripsi: d.deskripsi,
+        imageId: d.imageId,
+      },
+      create: {
+        id: d.id,
+        name: d.name,
+        deskripsi: d.deskripsi,
+        imageId: d.imageId,
+      },
+    });
+  }
+  console.log("✅ Desa Digital seeded successfully");
 
-  for (const k of kategoriKegiatan) {
+  // ==================== SUBMENU LAYANAN ONLINE DESA ==========
+  console.log("🔄 Seeding Jenis Layanan...");
+  for (const j of jenisLayanan) {
+    await prisma.jenisLayanan.upsert({
+      where: {
+        id: j.id,
+      },
+      update: {
+        nama: j.nama,
+        deskripsi: j.deskripsi,
+      },
+      create: {
+        id: j.id,
+        nama: j.nama,
+        deskripsi: j.deskripsi,
+      },
+    });
+  }
+  console.log("✅ Jenis Layanan seeded successfully");
+
+  console.log("🔄 Seeding Administrasi Online...");
+  for (const d of administrasiOnline) {
+    await prisma.administrasiOnline.upsert({
+      where: {
+        id: d.id,
+      },
+      update: {
+        name: d.name,
+        alamat: d.alamat,
+        nomorTelepon: d.nomorTelepon,
+        jenisLayananId: d.jenisLayananId,
+      },
+      create: {
+        id: d.id,
+        name: d.name,
+        alamat: d.alamat,
+        nomorTelepon: d.nomorTelepon,
+        jenisLayananId: d.jenisLayananId,
+      },
+    });
+  }
+  console.log("✅ Administrasi Online seeded successfully");
+
+  console.log("🔄 Seeding Jenis Pengaduan Masyarakat...");
+  for (const d of jenisPengaduan) {
+    await prisma.jenisPengaduan.upsert({
+      where: {
+        id: d.id,
+      },
+      update: {
+        nama: d.nama,
+      },
+      create: {
+        id: d.id,
+        nama: d.nama,
+      },
+    });
+  }
+  console.log("✅ Jenis Pengaduan Masyarakat seeded successfully");
+
+  console.log("🔄 Seeding Pengaduan Masyarakat...");
+  for (const d of pengaduanMasyarakat) {
+    await prisma.pengaduanMasyarakat.upsert({
+      where: {
+        id: d.id,
+      },
+      update: {
+        name: d.name,
+        email: d.email,
+        nik: d.nik,
+        nomorTelepon: d.nomorTelepon,
+        judulPengaduan: d.judulPengaduan,
+        lokasiKejadian: d.lokasiKejadian,
+        imageId: d.imageId,
+        deskripsiPengaduan: d.deskripsiPengaduan,
+        jenisPengaduanId: d.jenisPengaduanId,
+      },
+      create: {
+        id: d.id,
+        name: d.name,
+        email: d.email,
+        nik: d.nik,
+        nomorTelepon: d.nomorTelepon,
+        judulPengaduan: d.judulPengaduan,
+        lokasiKejadian: d.lokasiKejadian,
+        imageId: d.imageId,
+        deskripsiPengaduan: d.deskripsiPengaduan,
+        jenisPengaduanId: d.jenisPengaduanId,
+      },
+    });
+  }
+  console.log("✅ Pengaduan Masyarakat seeded successfully");
+
+  // ==================== SUBMENU PROGRAM KREATIF ==========
+  console.log("🔄 Seeding Program Kreatif...");
+  for (const p of programKreatif) {
+    await prisma.programKreatif.upsert({
+      where: {
+        id: p.id,
+      },
+      update: {
+        name: p.name,
+        deskripsi: p.deskripsi,
+        icon: p.icon,
+        slug: p.slug,
+      },
+      create: {
+        id: p.id,
+        name: p.name,
+        deskripsi: p.deskripsi,
+        icon: p.icon,
+        slug: p.slug,
+      },
+    });
+  }
+  console.log("✅ Program Kreatif seeded successfully");
+
+  // ==================== SUBMENU KOLABORASI INOVASI ==========
+  console.log("🔄 Seeding Kolaborasi Inovasi...");
+  for (const p of kolaborasiInovasi) {
+    await prisma.kolaborasiInovasi.upsert({
+      where: {
+        id: p.id,
+      },
+      update: {
+        name: p.name,
+        tahun: p.tahun,
+        slug: p.slug,
+        deskripsi: p.deskripsi,
+        kolaborator: p.kolaborator,
+      },
+      create: {
+        id: p.id,
+        name: p.name,
+        tahun: p.tahun,
+        slug: p.slug,
+        deskripsi: p.deskripsi,
+        kolaborator: p.kolaborator,
+      },
+    });
+  }
+  console.log("✅ Kolaborasi Inovasi seeded successfully");
+
+  console.log("🔄 Seeding Mitra Kolaborasi...");
+  for (const p of mitraKolaborasi) {
+    await prisma.mitraKolaborasi.upsert({
+      where: {
+        id: p.id,
+      },
+      update: {
+        name: p.name,
+        imageId: p.imageId,
+      },
+      create: {
+        id: p.id,
+        name: p.name,
+        imageId: p.imageId,
+      },
+    });
+  }
+  console.log("✅ Mitra Kolaborasi seeded successfully");
+
+  // ==================== SUBMENU INFO TEKNOLOGI TEPAT GUNA ==========
+  console.log("🔄 Seeding Info Teknologi...");
+  for (const p of infoTeknologi) {
+    await prisma.infoTekno.upsert({
+      where: {
+        id: p.id,
+      },
+      update: {
+        name: p.name,
+        deskripsi: p.deskripsi,
+        imageId: p.imageId,
+      },
+      create: {
+        id: p.id,
+        name: p.name,
+        deskripsi: p.deskripsi,
+        imageId: p.imageId,
+      },
+    });
+  }
+  console.log("✅ Info Teknologi seeded successfully");
+
+  // ====================== MENU LINGKUNGAN ==========================
+  // ==================== SUBMENU PENGELOLAAN SAMPAH ==========
+  console.log("🔄 Seeding Pengelolaan Sampah...");
+  for (const p of pengelolaanSampah) {
+    await prisma.pengelolaanSampah.upsert({
+      where: {
+        id: p.id,
+      },
+      update: {
+        name: p.name,
+        icon: p.icon
+      },
+      create: {
+        id: p.id,
+        name: p.name,
+        icon: p.icon
+      },
+    });
+  }
+  console.log("✅ Pengelolaan Sampah seeded successfully");
+
+  console.log("🔄 Seeding Keterangan Bank Sampah...");
+  for (const p of keteranganBankSampah) {
+    await prisma.keteranganBankSampahTerdekat.upsert({
+      where: {
+        id: p.id,
+      },
+      update: {
+        name: p.name,
+        alamat: p.alamat,
+        namaTempatMaps: p.namaTempatMaps,
+        linkPetunjukArah: p.linkPetunjukArah,
+        lat: p.lat,
+        lng: p.lng
+      },
+      create: {
+        id: p.id,
+        name: p.name,
+        alamat: p.alamat,
+        namaTempatMaps: p.namaTempatMaps,
+        linkPetunjukArah: p.linkPetunjukArah,
+        lat: p.lat,
+        lng: p.lng
+      },
+    });
+  }
+  console.log("✅ Keterangan Bank Sampah seeded successfully");
+
+  // ==================== SUBMENU PROGRAM PENGHIJAUAN ==========
+  console.log("🔄 Seeding Program Penghijauan...");
+  for (const p of programPenghijauan) {
+    await prisma.programPenghijauan.upsert({
+      where: {
+        id: p.id,
+      },
+      update: {
+        name: p.name,
+        judul: p.judul,
+        deskripsi: p.deskripsi,
+        icon: p.icon
+      },
+      create: {
+        id: p.id,
+        name: p.name,
+        judul: p.judul,
+        deskripsi: p.deskripsi,
+        icon: p.icon
+      },
+    });
+  }
+  console.log("✅ Program Penghijauan seeded successfully");
+
+  // ==================== SUBMENU DATA LINGKUNGAN DESA ==========
+  console.log("🔄 Seeding Data Lingkungan Desa...");
+  for (const p of dataLingkunganDesa) {
+    await prisma.dataLingkunganDesa.upsert({
+      where: {
+        id: p.id,
+      },
+      update: {
+        name: p.name,
+        jumlah: p.jumlah,
+        deskripsi: p.deskripsi,
+        icon: p.icon
+      },
+      create: {
+        id: p.id,
+        name: p.name,
+        jumlah: p.jumlah,
+        deskripsi: p.deskripsi,
+        icon: p.icon
+      },
+    });
+  }
+  console.log("✅ Data Lingkungan Desa seeded successfully");
+
+  // =========== SUBMENU GOTONG ROYONG ===========
+  console.log("🔄 Seeding Kategori Gotong Royong...");
+
+  for (const k of kategoriGotongRoyong) {
     await prisma.kategoriKegiatan.upsert({
       where: {
         id: k.id,
@@ -2185,8 +2596,44 @@ import resolveImageById from "./resolveImageByName";
     });
   }
 
-  console.log("kategori kegiatan success ...");
+  console.log("✅ Kategori Gotong Royong seeded successfully");
 
+  console.log("🔄 Seeding Gotong Royong...");
+
+  for (const k of gotongRoyong) {
+    await prisma.kegiatanDesa.upsert({
+      where: {
+        id: k.id,
+      },
+      update: {
+        judul: k.judul,
+        deskripsiSingkat: k.deskripsiSingkat,
+        deskripsiLengkap: k.deskripsiLengkap,
+        tanggal: k.tanggal,
+        lokasi: k.lokasi,
+        partisipan: k.partisipan,
+        imageId: k.imageId,
+        kategoriKegiatanId: k.kategoriKegiatanId,
+      },
+      create: {
+        id: k.id,
+        judul: k.judul,
+        deskripsiSingkat: k.deskripsiSingkat,
+        deskripsiLengkap: k.deskripsiLengkap,
+        tanggal: k.tanggal,
+        lokasi: k.lokasi,
+        partisipan: k.partisipan,
+        imageId: k.imageId,
+        kategoriKegiatanId: k.kategoriKegiatanId,
+      },
+    });
+  }
+
+  console.log("✅ Kategori Gotong Royong seeded successfully");
+
+  
+  
+  
   for (const e of tujuanEdukasiLingkungan) {
     await prisma.tujuanEdukasiLingkungan.upsert({
       where: {
@@ -2348,7 +2795,7 @@ import resolveImageById from "./resolveImageByName";
     });
   }
   console.log(
-    "✅ tujuan bimbingan belajar desa seeded (editable later via UI)"
+    "✅ tujuan bimbingan belajar desa seeded (editable later via UI)",
   );
 
   for (const t of lokasiJadwalBimbinganBelajarDesa) {
@@ -2366,7 +2813,7 @@ import resolveImageById from "./resolveImageByName";
     });
   }
   console.log(
-    "✅ lokasi jadwal bimbingan belajar desa seeded (editable later via UI)"
+    "✅ lokasi jadwal bimbingan belajar desa seeded (editable later via UI)",
   );
 
   for (const t of fasilitasBimbinganBelajarDesa) {
@@ -2384,7 +2831,7 @@ import resolveImageById from "./resolveImageByName";
     });
   }
   console.log(
-    "✅ fasilitas bimbingan belajar desa seeded (editable later via UI)"
+    "✅ fasilitas bimbingan belajar desa seeded (editable later via UI)",
   );
 
   for (const t of tujuanProgram2) {
@@ -2402,7 +2849,7 @@ import resolveImageById from "./resolveImageByName";
     });
   }
   console.log(
-    "✅ fasilitas bimbingan belajar desa seeded (editable later via UI)"
+    "✅ fasilitas bimbingan belajar desa seeded (editable later via UI)",
   );
 
   for (const t of tempatKegiatan) {
@@ -2420,7 +2867,7 @@ import resolveImageById from "./resolveImageByName";
     });
   }
   console.log(
-    "✅ fasilitas bimbingan belajar desa seeded (editable later via UI)"
+    "✅ fasilitas bimbingan belajar desa seeded (editable later via UI)",
   );
 
   for (const t of jenisProgramYangDiselenggarakan) {
@@ -2438,7 +2885,7 @@ import resolveImageById from "./resolveImageByName";
     });
   }
   console.log(
-    "✅ fasilitas bimbingan belajar desa seeded (editable later via UI)"
+    "✅ fasilitas bimbingan belajar desa seeded (editable later via UI)",
   );
 
   for (const j of jenjangPendidikan) {

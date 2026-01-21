@@ -1,0 +1,38 @@
+[
+  {
+    "id": "cmkm710n3000xvnsw1ni0vlam",
+    "name": "I Made Rudi",
+    "alamat": "Darmasaba, Abiansemal, Badung, Bali",
+    "namaIde": "Program Bersama Jaga Rabies (BAJRA)",
+    "deskripsi": "Inovasi berbasis komunitas yang mengintegrasikan pelaporan cepat masyarakat, edukasi berkelanjutan, serta koordinasi lintas sektor untuk penanggulangan rabies secara efektif di Desa Darmasaba.",
+    "masalah": "Tingginya kasus rabies dan rendahnya pelaporan serta koordinasi penanganan antar warga sehingga perlunya pendekatan komunitas yang terstruktur.",
+    "benefit": "Meningkatkan kesadaran vaksinasi, respons cepat terhadap kasus gigitan, serta memperkuat sistem kesiapsiagaan kesehatan hewan dan manusia di komunitas." 
+  },
+  {
+    "id": "cmkm710n3000xvnsw1ni1wmbn",
+    "name": "I Made Rudja",
+    "alamat": "Darmasaba, Abiansemal, Badung, Bali",
+    "namaIde": "Program LESTARI – Ekowisata dan Edukasi Lingkungan",
+    "deskripsi": "Inovasi pengembangan ekowisata berbasis persawahan yang menggabungkan edukasi lingkungan dan potensi desa untuk menarik wisatawan serta meningkatkan kesejahteraan masyarakat.",
+    "masalah": "Kurangnya sarana edukasi lingkungan dan kurang optimalnya pemanfaatan potensi lahan persawahan sebagai sumber pendapatan masyarakat.",
+    "benefit": "Menambah peluang ekonomi desa, meningkatkan kesadaran lingkungan, dan memperkuat daya tarik wisata lokal Desa Darmasaba." 
+  },
+  {
+    "id": "cmkm710n3000xvnsw1ni2xnco",
+    "name": "I Wayan Sumi",
+    "alamat": "Darmasaba, Abiansemal, Badung, Bali",
+    "namaIde": "Darmasaba Digital Project",
+    "deskripsi": "Ide inovatif untuk mengembangkan satu platform digital terpadu bagi layanan pemerintahan desa serta administrasi kerja desa yang lebih cepat dan transparan.",
+    "masalah": "Proses administrasi dan pelayanan publik desa yang masih belum terintegrasi secara digital sehingga kurang efisien.",
+    "benefit": "Meningkatkan efisiensi kerja perangkat desa, transparansi data, dan kecepatan layanan kepada masyarakat." 
+  },
+  {
+    "id": "cmkm710n3000xvnsw1ni3yodp",
+    "name": "I Ketut Surya",
+    "alamat": "Darmasaba, Abiansemal, Badung, Bali",
+    "namaIde": "Program CINTA – Cara Indah Tangani Sampah",
+    "deskripsi": "Inovasi pengelolaan sampah melalui mekanisme pilah, kompos, dan bursa sampah (BARES) untuk mengurangi volume sampah di desa dan meningkatkan nilai ekonomi dari sampah yang ternyata bernilai jual.",
+    "masalah": "Volume sampah meningkat yang berdampak pada lingkungan, kurangnya sistem pengelolaan sampah berbasis komunitas.",
+    "benefit": "Lingkungan desa menjadi bersih, sampah bernilai ekonomi dan peningkatan keterlibatan masyarakat dalam pengelolaan sampah." 
+  }
+]

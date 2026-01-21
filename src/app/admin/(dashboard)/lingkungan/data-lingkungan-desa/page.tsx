@@ -23,31 +23,43 @@ import {
 import {
   IconAlertTriangle,
   IconAmbulance,
+  IconBook,
   IconBuilding,
+  IconBuildingCommunity,
   IconCash,
   IconChartLine,
   IconChristmasTreeFilled,
   IconClipboardTextFilled,
   IconDeviceImacCog,
   IconDroplet,
+  IconFileText,
   IconFiretruck,
+  IconFirstAidKit,
   IconHome,
   IconHomeEco,
   IconHospital,
+  IconInfoCircle,
   IconLeaf,
+  IconLifebuoy,
+  IconMessageReport,
+  IconPhoneCall,
   IconPlus,
   IconRecycle,
+  IconRun,
   IconScale,
   IconSchool,
   IconSearch,
+  IconShield,
   IconShieldFilled,
   IconShoppingCart,
+  IconStethoscope,
   IconTent,
   IconTrashFilled,
   IconTree,
   IconTrendingUp,
   IconTrophy,
   IconTruckFilled,
+  IconUsers,
 } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
@@ -84,34 +96,53 @@ function ListDataLingkunganDesa({ search }: { search: string }) {
 
   const filteredData = data || [];
 
-  const iconMap: Record<string, React.FC<any>> = {
-    ekowisata: IconLeaf,
-    kompetisi: IconTrophy,
-    wisata: IconTent,
-    ekonomi: IconChartLine,
-    sampah: IconRecycle,
-    truck: IconTruckFilled,
-    scale: IconScale,
-    clipboard: IconClipboardTextFilled,
-    trash: IconTrashFilled,
-    lingkunganSehat: IconHomeEco,
-    sumberOksigen: IconChristmasTreeFilled,
-    ekonomiBerkelanjutan: IconTrendingUp,
-    mencegahBencana: IconShieldFilled,
-    rumah: IconHome,
-    pohon: IconTree,
-    air: IconDroplet,
-    bantuan: IconCash,
-    pelatihan: IconSchool,
-    subsidi: IconShoppingCart,
-    layananKesehatan: IconHospital,
-    polisi: IconShieldFilled,
-    ambulans: IconAmbulance,
-    pemadam: IconFiretruck,
-    rumahSakit: IconHospital,
-    bangunan: IconBuilding,
-    darurat: IconAlertTriangle
-  };
+ const iconMap: Record<string, React.FC<any>> = {
+     // ===== Umum & Lingkungan =====
+     ekowisata: IconLeaf,
+     kompetisi: IconTrophy,
+     wisata: IconTent,
+     ekonomi: IconChartLine,
+     sampah: IconRecycle,
+     truck: IconTruckFilled,
+     scale: IconScale,
+     clipboard: IconClipboardTextFilled,
+     trash: IconTrashFilled,
+     lingkunganSehat: IconHomeEco,
+     sumberOksigen: IconChristmasTreeFilled,
+     ekonomiBerkelanjutan: IconTrendingUp,
+     mencegahBencana: IconShieldFilled,
+     rumah: IconHome,
+     pohon: IconTree,
+     air: IconDroplet,
+     bantuan: IconCash,
+     pelatihan: IconSchool,
+     subsidi: IconShoppingCart,
+     layananKesehatan: IconHospital,
+ 
+     // ===== Keamanan & Darurat =====
+     polisi: IconShieldFilled,
+     ambulans: IconAmbulance,
+     pemadam: IconFiretruck,
+     darurat: IconAlertTriangle,
+     sar: IconLifebuoy,
+     evakuasi: IconRun,
+     keamanan: IconShield,
+     teleponDarurat: IconPhoneCall,
+ 
+     // ===== Kesehatan =====
+     rumahSakit: IconHospital,
+     puskesmas: IconFirstAidKit,
+     klinik: IconStethoscope,
+ 
+     // ===== Pemerintahan & Fasilitas =====
+     bangunan: IconBuilding,
+     kantorDesa: IconBuildingCommunity,
+     administrasi: IconFileText,
+     informasi: IconInfoCircle,
+     pengaduan: IconMessageReport,
+     layananPublik: IconUsers,
+     book: IconBook
+   };
 
   if (loading || !data) {
     return (

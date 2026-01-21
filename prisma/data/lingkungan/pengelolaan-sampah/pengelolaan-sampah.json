@@ -1,0 +1,27 @@
+[
+  {
+    "id": "cmkkshcox000504l88lp54coc",
+    "name": "Pilah sampah sesuai jenisnya",
+    "icon": "trash"
+  },
+  {
+    "id": "cmkkshcox000504l99mq65dpd",
+    "name": "Bawa sampah ke Bank Sampah",
+    "icon": "truck"
+  },
+  {
+    "id": "cmkkshcox000504l00nr76eqe",
+    "name": "Timbang sampah di Bank Sampah",
+    "icon": "scale"
+  },
+  {
+    "id": "cmkkshcox000504l11os87frf",
+    "name": "Catat hasil timbangan di buku tabungan",
+    "icon": "clipboard"
+  },
+  {
+    "id": "cmkkshcox000504l22pt98gsg",
+    "name": "Sampah didaur ulang oleh petugas Bank Sampah",
+    "icon": "sampah"
+  }
+]

@@ -230,7 +230,6 @@ function ListKelahiran({ search }: { search: string }) {
       </Paper>
 
       {/* Pagination */}
-      {totalPages > 1 && (
         <Center>
           <Pagination
             value={page}
@@ -245,7 +244,6 @@ function ListKelahiran({ search }: { search: string }) {
             radius="md"
           />
         </Center>
-      )}
     </Stack>
   );
 }

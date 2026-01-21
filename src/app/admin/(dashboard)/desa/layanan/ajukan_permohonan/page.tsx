@@ -186,7 +186,6 @@ function ListAjukanPermohonan({ search }: { search: string }) {
         </Box>
       </Paper>
 
-      {totalPages > 1 && (
         <Center mt="md">
           <Pagination
             value={page}
@@ -199,7 +198,6 @@ function ListAjukanPermohonan({ search }: { search: string }) {
             radius="md"
           />
         </Center>
-      )}
     </Box>
   );
 }

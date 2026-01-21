@@ -5,6 +5,7 @@ import { Box, rem, Select } from '@mantine/core';
 import {
   IconAlertTriangle,
   IconAmbulance,
+  IconBook,
   IconBuilding,
   IconBuildingCommunity,
   IconCash,
@@ -85,6 +86,7 @@ const iconMap = {
   informasi: { label: 'Informasi', icon: IconInfoCircle },
   pengaduan: { label: 'Pengaduan', icon: IconMessageReport },
   layananPublik: { label: 'Layanan Publik', icon: IconUsers },
+  book: { label: 'Buku', icon: IconBook }
 };
 
 

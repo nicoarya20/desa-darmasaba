@@ -84,6 +84,13 @@ function CreateProgramKreatifDesa() {
             required
           />
 
+          <TextInput
+            label={<Text fz="sm" fw="bold">Deskripsi Singkat</Text>}
+            placeholder="Masukkan deskripsi singkat"
+            value={stateCreate.create.form.slug || ''}
+            onChange={(e) => stateCreate.create.form.slug = e.currentTarget.value}
+          />
+
           <YearPickerInput
             clearable
             value={stateCreate.create.form.tahun ? new Date(stateCreate.create.form.tahun, 0, 1) : null}
@@ -95,6 +102,13 @@ function CreateProgramKreatifDesa() {
             }}
           />
 
+          <TextInput
+            label={<Text fz="sm" fw="bold">Kolaborator</Text>}
+            placeholder="Masukkan kolaborator"
+            value={stateCreate.create.form.kolaborator || ''}
+            onChange={(e) => stateCreate.create.form.kolaborator = e.currentTarget.value}
+          />
+
           <Box>
             <Text fw="bold" fz="sm" mb={6}>
               Deskripsi
@@ -103,14 +117,7 @@ function CreateProgramKreatifDesa() {
               value={stateCreate.create.form.deskripsi}
               onChange={(val) => stateCreate.create.form.deskripsi = val}
             />
-          </Box>
-
-          <TextInput
-            label={<Text fz="sm" fw="bold">Kolaborator</Text>}
-            placeholder="Masukkan kolaborator"
-            value={stateCreate.create.form.kolaborator || ''}
-            onChange={(e) => stateCreate.create.form.kolaborator = e.currentTarget.value}
-          />
+          </Box>  
 
           <Group justify="right" mt="md">
             <Button
