@@ -2166,14 +2166,12 @@ import resolveImageById from "./resolveImageByName";
   for (const k of statistikKemiskinan) {
     await prisma.statistikKemiskinan.upsert({
       where: {
-        id: k.id,
+        tahun: k.tahun,
       },
       update: {
-        tahun: k.tahun,
         jumlah: k.jumlah,
       },
       create: {
-        id: k.id,
         tahun: k.tahun,
         jumlah: k.jumlah,
       },
