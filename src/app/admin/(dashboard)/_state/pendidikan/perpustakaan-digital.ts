@@ -400,6 +400,42 @@ const kategoriBuku = proxy({
       }
     },
   },
+  findManyAll: {
+      data: [] as Prisma.KategoriBukuGetPayload<{
+      omit: {
+        isActive: true;
+      };
+    }>[],
+      loading: false,
+      search: "",
+      load: async (search = "") => {
+        // Change to arrow function
+        kategoriBuku.findManyAll.loading = true; // Use the full path to access the property
+        kategoriBuku.findManyAll.search = search;
+        try {
+          const query: any = { search };
+          if (search) query.search = search;
+  
+          const res = await ApiFetch.api.pendidikan.perpustakaandigital.kategoribuku[
+            "findManyAll"
+          ].get({
+            query,
+          });
+  
+          if (res.status === 200 && res.data?.success) {
+            kategoriBuku.findManyAll.data = res.data.data || [];
+          } else {
+            console.error("Failed to load pegawai:", res.data?.message);
+            kategoriBuku.findManyAll.data = [];
+          }
+        } catch (error) {
+          console.error("Error loading pegawai:", error);
+          kategoriBuku.findManyAll.data = [];
+        } finally {
+          kategoriBuku.findManyAll.loading = false;
+        }
+      },
+    }, 
   findUnique: {
     data: null as Prisma.KategoriBukuGetPayload<{
       omit: {

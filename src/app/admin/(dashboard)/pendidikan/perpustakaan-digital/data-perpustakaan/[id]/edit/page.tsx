@@ -40,7 +40,7 @@ function EditPerpustakaanDigital() {
 
   // Load kategori & data awal
   useEffect(() => {
-    perpustakaanDigitalState.kategoriBuku.findMany.load();
+    perpustakaanDigitalState.kategoriBuku.findManyAll.load();
 
     const loadData = async () => {
       const id = Array.isArray(params?.id) ? params.id[0] : params?.id;

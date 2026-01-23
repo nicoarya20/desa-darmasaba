@@ -173,9 +173,9 @@ function Content({ kategoriBuku }: { kategoriBuku: string }) {
       </Box>
       <Center mt="lg">
         <Pagination
+          total={totalPages}
           value={currentPage}
           onChange={handlePageChange}
-          total={totalPages}
           color="blue"
           radius="md"
         />
