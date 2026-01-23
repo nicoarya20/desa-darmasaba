@@ -1,0 +1,142 @@
+[
+  {
+    "id": "cmkqhbi6f0002vneao4my49k9",
+    "judul": "Laskar Pelangi",
+    "deskripsi": "<p>Novel inspiratif tentang perjuangan anak-anak di Belitung dalam meraih pendidikan dan mimpi mereka</p>",
+    "kategoriId": "cmkqb11mc000104jibq76bdzu",
+    "imageId": "cmkqhbhxi0000vneamj3din9u"
+  },
+  {
+    "id": "cmkqhedff0005vneas3rtbumi",
+    "judul": "Bumi Manusia",
+    "deskripsi": "<p>Kisah kehidupan Minke di masa kolonial yang menggambarkan perjuangan, pendidikan, dan identitas bangsa</p>",
+    "kategoriId": "cmkqb11mc000104jibqc7bdzu",
+    "imageId": "cmkqhed8x0003vneakx0c7me2"
+  },
+  {
+    "id": "cmkqhg1g70008vneajbpz8phh",
+    "judul": "Atomic Habits",
+    "deskripsi": "<p>Panduan membangun kebiasaan kecil yang konsisten untuk menghasilkan perubahan besar dalam hidup</p>",
+    "kategoriId": "cmkqb11mc000104jibqf7bdzu",
+    "imageId": "cmkqhg1cb0006vneagsxa6t4t"
+  },
+  {
+    "id": "cmkqhl6sr000bvneampx0svus",
+    "judul": "Clean Code",
+    "deskripsi": "<p>Buku wajib programmer tentang cara menulis kode yang bersih, mudah dibaca, dan mudah dirawat</p>",
+    "kategoriId": "cmkqb11mc000104jibqd7bdzu",
+    "imageId": "cmkqhl6mv0009vneasgix42ud"
+  },
+  {
+    "id": "cmkqhoaa1000evnearppgpyxo",
+    "judul": "Sejarah Indonesia Modern",
+    "deskripsi": "<p>Membahas perjalanan sejarah Indonesia dari masa kolonial hingga era modern</p>",
+    "kategoriId": "cmkqb11mc000104jibqc7bdzu",
+    "imageId": "cmkqhoa5w000cvneah15n28zq"
+  },
+  {
+    "id": "cmkqhr9oc000hvnea677ad3kb",
+    "judul": "Ensiklopedia Anak Pintar",
+    "deskripsi": "<p>Buku referensi bergambar yang membantu anak mengenal ilmu pengetahuan secara menyenangkan</p>",
+    "kategoriId": "cmkqb11mc000104jibqh7bdzu",
+    "imageId": "cmkqhr9lg000fvneai3q8qw0s"
+  },
+  {
+    "id": "cmkqi5ksf000kvnea9c04n2hy",
+    "judul": "Filosofi Teras",
+    "deskripsi": "<p>Pengenalan filsafat Stoikisme untuk menghadapi kehidupan modern dengan lebih tenang</p>",
+    "kategoriId": "cmkqb11mc000104jibq87bdzu",
+    "imageId": "cmkqi5knc000ivnea8grp7j06"
+  },
+  {
+    "id": "cmkqi97hq000nvneaparjbcrm",
+    "judul": "Pemrograman JavaScript Dasar",
+    "deskripsi": "<p>Panduan dasar belajar JavaScript untuk pemula dalam dunia pengembangan web</p>",
+    "kategoriId": "cmkqb11mc000104jibqd7bdzu",
+    "imageId": "cmkqi9799000lvneamskmvpq5"
+  },
+  {
+    "id": "cmkqibjt9000qvnea13ox7fmv",
+    "judul": "Pendidikan Karakter",
+    "deskripsi": "<p>Buku yang membahas pentingnya pendidikan karakter dalam membentuk generasi bangsa</p>",
+    "kategoriId": "cmkqb11mc000104jibqf7bdzu",
+    "imageId": "cmkqibjj2000ovnea3zmmvdop"
+  },
+  {
+    "id": "cmkqidnar000tvneaohk5v8k6",
+    "judul": "Psikologi Kepribadian",
+    "deskripsi": "<p>Mengenal teori-teori kepribadian manusia dalam perspektif psikologi</p>",
+    "kategoriId": "cmkqb11mc000104jibq87bdzu",
+    "imageId": "cmkqidn7e000rvnea5rl58f2e"
+  },
+  {
+    "id": "cmkqifdiu000wvnea7xd0yi4f",
+    "judul": "Ayat-Ayat Cinta",
+    "deskripsi": "<p>Novel religi yang mengangkat kisah cinta, iman, dan perjuangan hidup</p>",
+    "kategoriId": "cmkqb11mc000104jibqe7bdzu",
+    "imageId": "cmkqifdfs000uvneajss8zswp"
+  },
+  {
+    "id": "cmkqik7vi000zvneae7d5cq9i",
+    "judul": "Negeri 5 Menara",
+    "deskripsi": "<p>Cerita persahabatan dan perjuangan santri dalam mengejar mimpi hingga ke mancanegara</p>",
+    "kategoriId": "cmkqb11mc000104jibq76bdzu",
+    "imageId": "cmkqik7p5000xvnea6krii3vw"
+  },
+  {
+    "id": "cmkqinno30012vneac1sgsvis",
+    "judul": "Belajar UI/UX Design",
+    "deskripsi": "<p>Panduan praktis memahami desain antarmuka dan pengalaman pengguna</p>",
+    "kategoriId": "cmkqb11mc000104jibqd7bdzu",
+    "imageId": "cmkqinnih0010vneakpjb9egl"
+  },
+  {
+    "id": "cmkqiqegd0015vneawv5u5tpm",
+    "judul": "Manajemen Waktu Efektif",
+    "deskripsi": "<p>Teknik mengatur waktu agar lebih produktif dan fokus pada hal penting</p>",
+    "kategoriId": "cmkqb11mc000104jibqf7bdzu",
+    "imageId": "cmkqiqeb60013vnea2ygrq5rs"
+  },
+  {
+    "id": "cmkqiurc60018vneavyd3pj9q",
+    "judul": "Dongeng Nusantara",
+    "deskripsi": "<p>Kumpulan dongeng tradisional Indonesia yang sarat pesan moral</p>",
+    "kategoriId": "cmkqb11mc000104jibq76bdzu",
+    "imageId": "cmkqiur960016vnea3werdoey"
+  },
+  {
+    "id": "cmkqix2kb001bvnea5v81cw7p",
+    "judul": "Ekonomi Makro",
+    "deskripsi": "<p>Pembahasan konsep ekonomi makro secara sistematis dan mudah dipahami</p>",
+    "kategoriId": "cmkqb11mc000104jibq87bdzu",
+    "imageId": "cmkqix2go0019vnea8coousvn"
+  },
+  {
+    "id": "cmkqiyts2001evneahnk45ry5",
+    "judul": "Seni Berpikir Kritis",
+    "deskripsi": "<p>Buku yang membantu pembaca menghindari kesalahan berpikir dalam pengambilan keputusan</p>",
+    "kategoriId": "cmkqb11mc000104jibq87bdzu",
+    "imageId": "cmkqiytnv001cvnea7o2sv1vt"
+  },
+  {
+    "id": "cmkqj0nq0001hvnea06r8m3kj",
+    "judul": "Seni Berpikir Kritis",
+    "deskripsi": "<p>Buku yang membantu pembaca menghindari kesalahan berpikir dalam pengambilan keputusan</p>",
+    "kategoriId": "cmkqb11mc000104jibq87bdzu",
+    "imageId": "cmkqj0nn0001fvneaufur3nke"
+  },
+  {
+    "id": "cmkqj37w4001kvnea04n9w2bx",
+    "judul": "Panduan Shalat Lengkap",
+    "deskripsi": "<p>Panduan praktis dan lengkap tentang tata cara shalat sesuai tuntunan</p>",
+    "kategoriId": "cmkqb11mc000104jibqe7bdzu",
+    "imageId": "cmkqj37rg001ivneam29fgayr"
+  },
+  {
+    "id": "cmkqj5qp6001nvnea4xhvluz3",
+    "judul": "Cerita Sains untuk Anak",
+    "deskripsi": "<p>Cerita edukatif yang mengenalkan sains kepada anak dengan bahasa sederhana</p>",
+    "kategoriId": "cmkqb11mc000104jibqh7bdzu",
+    "imageId": "cmkqj5ql6001lvnea6p0afr9f"
+  }
+]

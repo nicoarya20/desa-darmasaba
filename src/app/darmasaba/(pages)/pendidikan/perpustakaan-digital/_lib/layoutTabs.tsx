@@ -46,7 +46,7 @@ export default function LayoutTabs({
 
   // 🟦 Ambil kategori buku saat mount
   useEffect(() => {
-    perpustakaanDigitalState.kategoriBuku.findMany.load();
+    perpustakaanDigitalState.kategoriBuku.findManyAll.load();
   }, []);
 
   useEffect(() => {
@@ -86,7 +86,7 @@ export default function LayoutTabs({
 
   // 🟩 Tabs dinamis berdasarkan kategori dari state
   const kategoriTabs =
-    snap.kategoriBuku.findMany.data?.map((item) => ({
+    snap.kategoriBuku.findManyAll.data?.map((item) => ({
       label: item.name,
       value: item.name.toLowerCase().replace(/\s+/g, '-'),
       href: `/darmasaba/pendidikan/perpustakaan-digital/${encodeURIComponent(item.name.toLowerCase().replace(/\s+/g, '-'))}`,

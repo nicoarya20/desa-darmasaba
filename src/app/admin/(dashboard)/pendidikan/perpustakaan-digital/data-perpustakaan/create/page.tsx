@@ -19,7 +19,7 @@ function CreateDataPerpustakaan() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    perpustakaanDigitalState.kategoriBuku.findMany.load();
+    perpustakaanDigitalState.kategoriBuku.findManyAll.load();
   }, []);
 
   const resetForm = () => {
@@ -109,7 +109,7 @@ function CreateDataPerpustakaan() {
             placeholder='Pilih kategori'
             value={createState.create.form.kategoriId || ""}
             onChange={(val) => { createState.create.form.kategoriId = val ?? ""; }}
-            data={perpustakaanDigitalState.kategoriBuku.findMany.data?.map((item) => ({
+            data={perpustakaanDigitalState.kategoriBuku.findManyAll.data?.map((item) => ({
               value: item.id,
               label: item.name,
             }))}

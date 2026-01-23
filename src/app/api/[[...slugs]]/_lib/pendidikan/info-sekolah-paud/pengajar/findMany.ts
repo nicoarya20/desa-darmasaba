@@ -8,7 +8,8 @@ async function pengajarFindMany(context: Context) {
     const limit = Number(context.query.limit) || 10;
     const skip = (page - 1) * limit;
     const search = (context.query.search as string) || "";
-    const jenjangPendidikanName = (context.query.jenjangPendidikanId as string) || "";
+    const jenjangPendidikanName =
+      (context.query.jenjangPendidikanId as string) || "";
 
     const where: any = { isActive: true };
 
@@ -19,17 +20,17 @@ async function pengajarFindMany(context: Context) {
         where: {
           nama: {
             equals: jenjangPendidikanName,
-            mode: 'insensitive'
+            mode: "insensitive",
           },
-          isActive: true
+          isActive: true,
         },
-        orderBy: { nama: 'desc' },
+        orderBy: { nama: "desc" },
       });
 
       if (jenjangPendidikan) {
         where.lembaga = {
           ...where.lembaga,
-          jenjangId: jenjangPendidikan.id
+          jenjangId: jenjangPendidikan.id,
         };
       } else {
         // Jika tidak ditemukan, return data kosong
@@ -48,8 +49,8 @@ async function pengajarFindMany(context: Context) {
     // Add search condition if search term exists
     if (search) {
       where.OR = [
-        { nama: { contains: search, mode: 'insensitive' } },
-        { lembaga: { nama: { contains: search, mode: 'insensitive' } } }
+        { nama: { contains: search, mode: "insensitive" } },
+        { lembaga: { nama: { contains: search, mode: "insensitive" } } },
       ];
     }
 
@@ -59,17 +60,15 @@ async function pengajarFindMany(context: Context) {
         include: {
           lembaga: {
             include: {
-              jenjangPendidikan: true
-            }
-          }
+              jenjangPendidikan: true,
+            },
+          },
         },
         skip,
         take: limit,
-        orderBy: { nama: 'asc' },
+        orderBy: [{ nama: "asc" }, { lembaga: { nama: "asc" } }],
       }),
-      prisma.pengajar.count({
-        where,
-      })
+      prisma.pengajar.count({ where }),
     ]);
 
     return {
@@ -85,7 +84,7 @@ async function pengajarFindMany(context: Context) {
     console.error("Error in pengajarFindMany:", error);
     return {
       success: false,
-      message: `Failed fetch pengajar: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      message: `Failed fetch pengajar: ${error instanceof Error ? error.message : "Unknown error"}`,
     };
   }
 }

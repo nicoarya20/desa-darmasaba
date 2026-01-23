@@ -77,20 +77,25 @@ import mitraKolaborasi from "./data/inovasi/kolaborasi-inovasi/mitra-kolaborasi.
 import infoTeknologi from "./data/inovasi/info-teknologi/info-teknologi.json";
 import ajukanIde from "./data/inovasi/ajukan-ide/ajukan-ide.json";
 import pengelolaanSampah from "./data/lingkungan/pengelolaan-sampah/pengelolaan-sampah.json";
-import keteranganBankSampah from "./data/lingkungan/pengelolaan-sampah/keterangan-bank-sampah.json"
-import programPenghijauan from "./data/lingkungan/program-penghijauan/program-penghijauan.json"
+import keteranganBankSampah from "./data/lingkungan/pengelolaan-sampah/keterangan-bank-sampah.json";
+import programPenghijauan from "./data/lingkungan/program-penghijauan/program-penghijauan.json";
 import dataLingkunganDesa from "./data/lingkungan/data-lingkungan-desa/data-lingkungan-desa.json";
 import kategoriGotongRoyong from "./data/lingkungan/gotong-royong/kategori-gotong-royong.json";
-import gotongRoyong from "./data/lingkungan/gotong-royong/gotong-royong.json"
+import gotongRoyong from "./data/lingkungan/gotong-royong/gotong-royong.json";
 import berita from "./data/desa/berita/berita.json";
 import kategoriBerita from "./data/desa/berita/kategori-berita.json";
 import contohEdukasiLingkungan from "./data/lingkungan/edukasi-lingkungan/contoh-kegiatan-di-desa-darmasaba.json";
 import materiEdukasiLingkungan from "./data/lingkungan/edukasi-lingkungan/materi-edukasi-yang-diberikan.json";
 import tujuanEdukasiLingkungan from "./data/lingkungan/edukasi-lingkungan/tujuan-edukasi-lingkungan.json";
 import bentukKonservasiBerdasarkanAdat from "./data/lingkungan/konservasi-adat-bali/bentuk-konservasi.json";
-import kategoriKegiatanData from "./data/lingkungan/gotong-royong/kategori-gotong-royong.json";
 import filosofiTriHita from "./data/lingkungan/konservasi-adat-bali/filosofi-tri-hita.json";
 import nilaiKonservasiAdat from "./data/lingkungan/konservasi-adat-bali/nilai-konservasi-adat.json";
+import jenjangPendidikan from "./data/pendidikan/info-sekolah/jenjang-pendidikan.json";
+import lembagaPendidikan from "./data/pendidikan/info-sekolah/lembaga.json";
+import siswa from "./data/pendidikan/info-sekolah/siswa.json";
+import pengajar from "./data/pendidikan/info-sekolah/pengajar.json";
+import dataPerpustakaan from "./data/pendidikan/perpustakaan-digital/perpustakaan-digital.json";
+import dataPendidikan from "./data/pendidikan/data-pendidikan/data-pendidikan.json"
 import caraMemperolehInformasi from "./data/list-caraMemperolehInformasi.json";
 import caraMemperolehSalinanInformasi from "./data/list-caraMemperolehSalinanInformasi.json";
 import jenisInformasiDiminta from "./data/list-jenisInfromasi.json";
@@ -104,15 +109,12 @@ import tempatKegiatan from "./data/pendidikan/pendidikan-non-formal/tempat-kegia
 import tujuanProgram2 from "./data/pendidikan/pendidikan-non-formal/tujuan-program2.json";
 import programUnggulan from "./data/pendidikan/program-pendidikan-anak/program-unggulan.json";
 import tujuanProgram from "./data/pendidikan/program-pendidikan-anak/tujuan-program.json";
+import kategoriBuku from "./data/pendidikan/perpustakaan-digital/kategori-buku.json";
 import roles from "./data/user/roles.json";
 import fileStorage from "./data/file-storage.json";
-import jenjangPendidikan from "./data/pendidikan/info-sekolah/jenjang-pendidikan.json";
 import seedAssets from "./seed_assets";
 import users from "./data/user/users.json";
 import { safeSeedUnique } from "./safeseedUnique";
-import safeImageId from "./data/safeImageId";
-import resolveImageIdForSeed from "./data/resolveImageId";
-import resolveImageByName from "./resolveImageByName";
 import resolveImageById from "./resolveImageByName";
 
 (async () => {
@@ -1903,7 +1905,6 @@ import resolveImageById from "./resolveImageByName";
         imageId: t.imageId,
       },
       create: {
-        id: t.id,
         judul: t.judul,
         deskripsi: t.deskripsi,
         imageId: t.imageId,
@@ -2163,40 +2164,46 @@ import resolveImageById from "./resolveImageByName";
   console.log("✅ Jumlah Penduduk Miskin seeded successfully");
 
   // ==================== SUBMENU PROGRAM KEMISKINAN =============
-  for (const k of statistikKemiskinan) {
+  for (const s of statistikKemiskinan) {
     await prisma.statistikKemiskinan.upsert({
-      where: {
-        tahun: k.tahun,
-      },
+      where: { tahun: s.tahun }, // ✅ FIX
       update: {
-        jumlah: k.jumlah,
+        jumlah: s.jumlah,
       },
       create: {
-        tahun: k.tahun,
-        jumlah: k.jumlah,
+        id: s.id, // id boleh tetap
+        tahun: s.tahun,
+        jumlah: s.jumlah,
       },
     });
   }
+
   console.log("📊 Statistik Kemiskinan seeded successfully");
 
   console.log("🔄 Seeding Program Kemiskinan...");
   for (const k of programKemiskinan) {
     await prisma.programKemiskinan.upsert({
-      where: {
-        id: k.id,
-      },
+      where: { id: k.id },
       update: {
         nama: k.nama,
         deskripsi: k.deskripsi,
         icon: k.icon,
-        statistikId: k.statistikId,
+        statistik: {
+          connect: {
+            tahun: k.tahun, // 👈 BUKAN ID
+          },
+        },
       },
       create: {
         id: k.id,
         nama: k.nama,
         deskripsi: k.deskripsi,
         icon: k.icon,
-        statistikId: k.statistikId,
+        statistik: {
+          connect: {
+            tahun: k.tahun,
+          },
+        },
       },
     });
   }
@@ -2490,12 +2497,12 @@ import resolveImageById from "./resolveImageByName";
       },
       update: {
         name: p.name,
-        icon: p.icon
+        icon: p.icon,
       },
       create: {
         id: p.id,
         name: p.name,
-        icon: p.icon
+        icon: p.icon,
       },
     });
   }
@@ -2513,7 +2520,7 @@ import resolveImageById from "./resolveImageByName";
         namaTempatMaps: p.namaTempatMaps,
         linkPetunjukArah: p.linkPetunjukArah,
         lat: p.lat,
-        lng: p.lng
+        lng: p.lng,
       },
       create: {
         id: p.id,
@@ -2522,7 +2529,7 @@ import resolveImageById from "./resolveImageByName";
         namaTempatMaps: p.namaTempatMaps,
         linkPetunjukArah: p.linkPetunjukArah,
         lat: p.lat,
-        lng: p.lng
+        lng: p.lng,
       },
     });
   }
@@ -2539,14 +2546,14 @@ import resolveImageById from "./resolveImageByName";
         name: p.name,
         judul: p.judul,
         deskripsi: p.deskripsi,
-        icon: p.icon
+        icon: p.icon,
       },
       create: {
         id: p.id,
         name: p.name,
         judul: p.judul,
         deskripsi: p.deskripsi,
-        icon: p.icon
+        icon: p.icon,
       },
     });
   }
@@ -2563,14 +2570,14 @@ import resolveImageById from "./resolveImageByName";
         name: p.name,
         jumlah: p.jumlah,
         deskripsi: p.deskripsi,
-        icon: p.icon
+        icon: p.icon,
       },
       create: {
         id: p.id,
         name: p.name,
         jumlah: p.jumlah,
         deskripsi: p.deskripsi,
-        icon: p.icon
+        icon: p.icon,
       },
     });
   }
@@ -2629,9 +2636,8 @@ import resolveImageById from "./resolveImageByName";
 
   console.log("✅ Kategori Gotong Royong seeded successfully");
 
-  
-  
-  
+  // =========== SUBMENU EDUKASI LINGKUNGAN ===========
+
   for (const e of tujuanEdukasiLingkungan) {
     await prisma.tujuanEdukasiLingkungan.upsert({
       where: {
@@ -2688,6 +2694,8 @@ import resolveImageById from "./resolveImageByName";
   }
 
   console.log("contoh edukasi lingkungan success ...");
+
+  // =========== SUBMENU KONSERVASI ADAT BALI ===========
 
   for (const f of filosofiTriHita) {
     await prisma.filosofiTriHita.upsert({
@@ -2746,6 +2754,85 @@ import resolveImageById from "./resolveImageByName";
 
   console.log("nilai konservasi adat success ...");
 
+  // ====================== MENU PENDIDIKAN ==========================
+  // =========== SUBMENU INFO SEKOLAH =====================
+
+  for (const j of jenjangPendidikan) {
+    await prisma.jenjangPendidikan.upsert({
+      where: {
+        id: j.id,
+      },
+      update: {
+        nama: j.nama,
+      },
+      create: {
+        id: j.id,
+        nama: j.nama,
+      },
+    });
+  }
+
+  console.log("✅ Jenjang Pendidikan seeded successfully");
+
+  for (const j of lembagaPendidikan) {
+    await prisma.lembaga.upsert({
+      where: {
+        id: j.id,
+      },
+      update: {
+        nama: j.nama,
+        jenjangId: j.jenjangId,
+      },
+      create: {
+        id: j.id,
+        nama: j.nama,
+        jenjangId: j.jenjangId,
+      },
+    });
+  }
+
+  console.log("✅ Lembaga Pendidikan seeded successfully");
+
+  for (const j of siswa) {
+    await prisma.siswa.upsert({
+      where: {
+        id: j.id,
+      },
+      update: {
+        nama: j.nama,
+        lembagaId: j.lembagaId,
+      },
+      create: {
+        id: j.id,
+        nama: j.nama,
+        lembagaId: j.lembagaId,
+      },
+    });
+  }
+
+  console.log("✅ siswa seeded successfully");
+
+  for (const j of pengajar) {
+    await prisma.pengajar.upsert({
+      where: {
+        id: j.id,
+      },
+      update: {
+        nama: j.nama,
+        lembagaId: j.lembagaId,
+      },
+      create: {
+        id: j.id,
+        nama: j.nama,
+        lembagaId: j.lembagaId,
+      },
+    });
+  }
+
+  console.log("✅ pengajar seeded successfully");
+
+  // =========== SUBMENU PROGRAM PENDIDIKAN ANAK =====================
+
   for (const t of tujuanProgram) {
     await prisma.tujuanProgram.upsert({
       where: { id: t.id },
@@ -2777,6 +2864,8 @@ import resolveImageById from "./resolveImageByName";
     });
   }
   console.log("✅ program unggulan seeded (editable later via UI)");
+
+  // =========== SUBMENU BIMBINGAN BELAJAR DESA =====================
 
   for (const t of tujuanBimbinganBelajarDesa) {
     await prisma.tujuanBimbinganBelajarDesa.upsert({
@@ -2832,6 +2921,8 @@ import resolveImageById from "./resolveImageByName";
     "✅ fasilitas bimbingan belajar desa seeded (editable later via UI)",
   );
 
+  // =========== SUBMENU PENDIDIKAN NON FORMAL =====================
+
   for (const t of tujuanProgram2) {
     await prisma.tujuanPendidikanNonFormal.upsert({
       where: { id: t.id },
@@ -2886,21 +2977,67 @@ import resolveImageById from "./resolveImageByName";
     "✅ fasilitas bimbingan belajar desa seeded (editable later via UI)",
   );
 
-  for (const j of jenjangPendidikan) {
-    await prisma.jenjangPendidikan.upsert({
+  // =========== SUBMENU PERPUSTAKAAN DIGITAL =====================
+  console.log("🔄 Seeding Kategori Buku...");
+  for (const k of kategoriBuku) {
+    await prisma.kategoriBuku.upsert({
       where: {
-        id: j.id || undefined,
+        id: k.id,
       },
       update: {
-        nama: j.nama,
+        name: k.name,
       },
       create: {
-        nama: j.nama,
+        id: k.id,
+        name: k.name,
       },
     });
   }
+  console.log("✅ Kategori Buku seeded successfully");
 
-  console.log("✅ Jenjang Pendidikan seeded successfully");
+  console.log("🔄 Seeding Data perpustakaan...");
+  for (const k of dataPerpustakaan) {
+    await prisma.dataPerpustakaan.upsert({
+      where: {
+        id: k.id,
+      },
+      update: {
+        judul: k.judul,
+        deskripsi: k.deskripsi,
+        kategoriId: k.kategoriId,
+        imageId: k.imageId,
+      },
+      create: {
+        id: k.id,
+        judul: k.judul,
+        deskripsi: k.deskripsi,
+        kategoriId: k.kategoriId,
+        imageId: k.imageId,
+      },
+    });
+  }
+  console.log("✅ Data perpustakaan seeded successfully");
+
+  console.log("🔄 Seeding Data pendidikan...");
+  for (const k of dataPendidikan) {
+    await prisma.dataPendidikan.upsert({
+      where: {
+        id: k.id,
+      },
+      update: {
+        name: k.name,
+        jumlah: k.jumlah
+      },
+      create: {
+        id: k.id,
+        name: k.name,
+        jumlah: k.jumlah
+      },
+    });
+  }
+  console.log("✅ Data pendidikan seeded successfully");
+
+  // =========== SUBMENU DATA PENDIDIKAN =====================
 })()
   .then(() => prisma.$disconnect())
   .catch((e) => {
