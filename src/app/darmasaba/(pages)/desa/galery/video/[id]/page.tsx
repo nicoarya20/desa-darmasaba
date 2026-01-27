@@ -1,7 +1,9 @@
 'use client';
 
+import stateGallery from '@/app/admin/(dashboard)/_state/desa/gallery';
 import colors from '@/con/colors';
 import {
+  ActionIcon,
   Alert,
   Box,
   Button,
@@ -15,12 +17,10 @@ import {
   Title,
 } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { IconArrowBack, IconInfoCircle, IconVideo } from '@tabler/icons-react';
+import { IconArrowBack, IconArrowLeft, IconInfoCircle, IconVideo } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
-import stateGallery from '@/app/admin/(dashboard)/_state/desa/gallery';
-import BackButton from '../../../layanan/_com/BackButto';
 
 
 function convertToEmbedUrl(youtubeUrl: string): string {
@@ -95,7 +95,9 @@ export default function DetailVideoUser() {
     <Box py="xl" px={{ base: 'md', md: 100 }}>
       {/* Tombol Kembali */}
       <Box>
-        <BackButton />
+        <ActionIcon bg={colors["blue-button"]} onClick={() => router.push('/darmasaba/desa/galery/video')}>
+          <IconArrowLeft />
+        </ActionIcon>
       </Box>
 
       {/* Header - Dijadikan Title */}

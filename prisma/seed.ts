@@ -3018,6 +3018,7 @@ import resolveImageById from "./resolveImageByName";
   }
   console.log("✅ Data perpustakaan seeded successfully");
 
+  // =========== SUBMENU DATA PENDIDIKAN =====================
   console.log("🔄 Seeding Data pendidikan...");
   for (const k of dataPendidikan) {
     await prisma.dataPendidikan.upsert({
@@ -3037,7 +3038,6 @@ import resolveImageById from "./resolveImageByName";
   }
   console.log("✅ Data pendidikan seeded successfully");
 
-  // =========== SUBMENU DATA PENDIDIKAN =====================
 })()
   .then(() => prisma.$disconnect())
   .catch((e) => {
