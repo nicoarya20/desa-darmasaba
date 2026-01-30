@@ -3,6 +3,9 @@ export default async function fetchWithRetry(
   retries = 3,
   timeoutMs = 20000
 ) {
+  if (!url || url.trim() === "") {
+    throw new Error("fetchWithRetry called with empty URL");
+  }
   for (let attempt = 1; attempt <= retries; attempt++) {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), timeoutMs);

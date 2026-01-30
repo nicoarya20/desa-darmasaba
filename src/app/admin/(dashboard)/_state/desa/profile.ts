@@ -552,7 +552,7 @@ const maskotDesa = proxy({
         deskripsi: profileData.deskripsi || "",
         images: (profileData.images || []).map((img) => ({
           label: img.label,
-          imageId: img.image.id,
+          imageId: img?.image?.id || "",
         })),
       };
     },

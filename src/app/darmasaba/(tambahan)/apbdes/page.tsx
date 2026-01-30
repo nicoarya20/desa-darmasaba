@@ -9,6 +9,7 @@ import { IconDownload } from '@tabler/icons-react'
 import { Link } from 'next-view-transitions'
 import { useEffect, useState } from 'react'
 import { useProxy } from 'valtio/utils'
+import { toast } from 'react-toastify'
 import BackButton from '../../(pages)/desa/layanan/_com/BackButto'
 import APBDesTable from './lib/apbDesaTable'
 import APBDesProgress from './lib/apbDesaProgress'
@@ -19,6 +20,7 @@ function Page() {
   const paDesaState = useProxy(PendapatanAsliDesa.ApbDesa)
   const [loading, setLoading] = useState(false)
   const [selectedYear, setSelectedYear] = useState<string | null>(null)
+
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -26,7 +28,8 @@ function Page() {
         await state.findMany.load()
         await paDesaState.findMany.load()
       } catch (error) {
-        console.error(error)
+        console.error('Error loading APBDes data:', error)
+        toast.error('Gagal memuat data APBDes')
       } finally {
         setLoading(false)
       }
@@ -37,7 +40,13 @@ function Page() {
   const dataAPBDes = state.findMany.data || []
 
   // Buat daftar tahun unik dari data
-  const years = Array.from(new Set(dataAPBDes.map((item: any) => item.tahun)))
+  const years = Array.from(
+    new Set(
+      dataAPBDes
+        .filter((item: any) => item?.tahun != null) // Filter out items with null/undefined tahun
+        .map((item: any) => item.tahun)
+    )
+  )
     .sort((a, b) => b - a) // urutkan descending
     .map(year => ({ value: year.toString(), label: `Tahun ${year}` }))
 
@@ -49,9 +58,16 @@ function Page() {
   }, [years, selectedYear])
 
   // Transform and filter data based on selected year
-  const currentApbdes = dataAPBDes.length > 0
-    ? transformAPBDesData(dataAPBDes.find(item => item?.tahun?.toString() === selectedYear) || dataAPBDes[0])
-    : null
+  let currentApbdes = null;
+  if (dataAPBDes.length > 0 && selectedYear) {
+    const selectedData = dataAPBDes.find((item: any) => item?.tahun?.toString() === selectedYear);
+    if (selectedData) {
+      currentApbdes = transformAPBDesData(selectedData);
+    }
+  } else if (dataAPBDes.length > 0 && !selectedYear && years.length > 0) {
+    // If no year is selected but data exists, use the first item
+    currentApbdes = transformAPBDesData(dataAPBDes[0]);
+  }
 
   return (
     <Stack pos="relative" bg={colors.Bg} py="xl" gap={32}>

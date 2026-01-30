@@ -32,11 +32,38 @@ export interface APBDesData {
 }
 
 export function transformAPBDesData(data: any): APBDesData {
+  if (!data) {
+    return {
+      id: '',
+      tahun: null,
+      items: [],
+      image: null,
+      file: null
+    };
+  }
+
   return {
-    ...data,
-    items: data.items.map((item: any) => ({
-      ...item,
-      tipe: isAPBDesTipe(item.tipe) ? item.tipe : null
-    }))
+    id: data.id || '',
+    tahun: data.tahun || null,
+    items: Array.isArray(data.items)
+      ? data.items.map((item: any) => ({
+          id: item.id || '',
+          kode: item.kode || '',
+          uraian: item.uraian || '',
+          anggaran: typeof item.anggaran === 'number' ? item.anggaran : 0,
+          realisasi: typeof item.realisasi === 'number' ? item.realisasi : 0,
+          selisih: typeof item.selisih === 'number' ? item.selisih : 0,
+          persentase: typeof item.persentase === 'number' ? item.persentase : 0,
+          level: typeof item.level === 'number' ? item.level : 1,
+          tipe: isAPBDesTipe(item.tipe) ? item.tipe : null,
+          createdAt: item.createdAt || undefined,
+          updatedAt: item.updatedAt || undefined,
+          deletedAt: item.deletedAt || null,
+          isActive: item.isActive !== undefined ? item.isActive : true,
+          apbdesId: item.apbdesId || undefined
+        }))
+      : [],
+    image: data.image ? { id: data.image.id || '', url: data.image.url || '' } : null,
+    file: data.file ? { id: data.file.id || '', url: data.file.url || '' } : null
   };
 }

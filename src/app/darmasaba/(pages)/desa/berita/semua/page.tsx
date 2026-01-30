@@ -61,7 +61,7 @@ function Semua() {
               <Grid gutter={0}>
                 <GridCol span={{ base: 12, md: 6 }}>
                   <Image
-                    src={featuredData.image?.link || '/images/placeholder.jpg'}
+                    src={featuredData.image?.link || '/images/placeholderx.jpg'}
                     alt={featuredData.judul || 'Berita Utama'}
                     height={400}
                     fit="cover"
