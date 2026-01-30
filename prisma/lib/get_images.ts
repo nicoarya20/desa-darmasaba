@@ -31,12 +31,18 @@ async function getDirItems(): Promise<DirItem[]> {
 
 async function getDownloadUrl(filePath: string): Promise<string> {
   const res = await fetch(
-    `${BASE_URL}/repos/${REPO_ID}/file/?p=${encodeURIComponent(filePath)}`,
+    `${BASE_URL}/repos/${REPO_ID}/file/?p=${encodeURIComponent(filePath)}&reuse=1`,
     { headers },
   );
 
   if (!res.ok) {
-    throw new Error(`Failed get file url: ${res.statusText}`);
+    const text = await res.text();
+    console.error("Seafile error:", {
+      status: res.status,
+      body: text,
+      url: res.url,
+    });
+    throw new Error(`Failed get file url`);
   }
 
   const data = await res.json();
@@ -65,11 +71,4 @@ export async function getAllDownloadUrls() {
   );
 
   return results;
-}
-
-if (import.meta.main) {
-  console.log("get data ...")
-  getAllDownloadUrls().then((res) => {
-    console.log(res);
-  });
 }
