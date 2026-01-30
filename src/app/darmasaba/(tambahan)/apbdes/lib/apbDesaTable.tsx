@@ -34,7 +34,36 @@ interface APBDesTableProps {
 }
 
 function APBDesTable({ apbdesData }: APBDesTableProps) {
+  // Handle case where apbdesData is null or undefined
+  if (!apbdesData) {
+    return (
+      <Box pt={"xs"} pb="md" px={{ base: 'md', md: 100 }}>
+        <Title order={4} c={colors['blue-button']} mb="sm">
+          Rincian APBDes
+        </Title>
+        <Paper withBorder radius="md" shadow="xs" p="md">
+          <Text>Tidak ada data APBDes tersedia.</Text>
+        </Paper>
+      </Box>
+    );
+  }
+
   const items = Array.isArray(apbdesData.items) ? apbdesData.items : [];
+
+  // Show message if no items exist
+  if (items.length === 0) {
+    return (
+      <Box pt={"xs"} pb="md" px={{ base: 'md', md: 100 }}>
+        <Title order={4} c={colors['blue-button']} mb="sm">
+          Rincian APBDes Tahun {apbdesData.tahun || 'N/A'}
+        </Title>
+        <Paper withBorder radius="md" shadow="xs" p="md">
+          <Text>Tidak ada rincian anggaran tersedia untuk tahun ini.</Text>
+        </Paper>
+      </Box>
+    );
+  }
+
   const sortedItems = [...items].sort((a, b) => a.kode.localeCompare(b.kode));
 
   // Calculate totals
@@ -46,7 +75,7 @@ function APBDesTable({ apbdesData }: APBDesTableProps) {
   return (
     <Box pt={"xs"} pb="md" px={{ base: 'md', md: 100 }}>
       <Title order={4} c={colors['blue-button']} mb="sm">
-        Rincian APBDes Tahun {apbdesData.tahun}
+        Rincian APBDes Tahun {apbdesData.tahun || 'N/A'}
       </Title>
 
       <Paper withBorder radius="md" shadow="xs" p="md">

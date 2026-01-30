@@ -143,29 +143,29 @@ function Apbdes() {
       )}
 
       {/* GRID */}
-      <SimpleGrid
-        mx={{ base: 'md', md: 100 }}
-        cols={{ base: 1, sm: 3 }}
-        spacing="lg"
-        pb="xl"
-      >
-        {loading ? (
-          <Center mih={200}>
-            <Loader size="lg" color="blue" />
-          </Center>
-        ) : data.length === 0 ? (
-          <Center mih={200}>
-            <Stack align="center" gap="xs">
-              <Text fz="lg" c="dimmed" lh={1.4}>
-                Belum ada data APBDes yang tersedia
-              </Text>
-              <Text fz="sm" c="dimmed" lh={1.4}>
-                Data akan ditampilkan di sini setelah diunggah
-              </Text>
-            </Stack>
-          </Center>
-        ) : (
-          data.map((v, k) => (
+      {loading ? (
+        <Center mx={{ base: 'md', md: 100 }} mih={200} pb="xl">
+          <Loader size="lg" color="blue" />
+        </Center>
+      ) : data.length === 0 ? (
+        <Center mx={{ base: 'md', md: 100 }} mih={200} pb="xl">
+          <Stack align="center" gap="xs">
+            <Text fz="lg" c="dimmed" lh={1.4}>
+              Belum ada data APBDes yang tersedia
+            </Text>
+            <Text fz="sm" c="dimmed" lh={1.4}>
+              Data akan ditampilkan di sini setelah diunggah
+            </Text>
+          </Stack>
+        </Center>
+      ) : (
+        <SimpleGrid
+          mx={{ base: 'md', md: 100 }}
+          cols={{ base: 1, sm: 3 }}
+          spacing="lg"
+          pb="xl"
+        >
+          {data.map((v, k) => (
             <BackgroundImage
               key={k}
               src={v.image?.link || ''}
@@ -213,9 +213,9 @@ function Apbdes() {
                 </Center>
               </Stack>
             </BackgroundImage>
-          ))
-        )}
-      </SimpleGrid>
+          ))}
+        </SimpleGrid>
+      )}
     </Stack>
   )
 }

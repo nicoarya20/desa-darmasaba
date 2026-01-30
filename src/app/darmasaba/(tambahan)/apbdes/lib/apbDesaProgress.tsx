@@ -19,20 +19,58 @@ interface APBDesProgressProps {
 function APBDesProgress({ apbdesData }: APBDesProgressProps) {
   // Return null if apbdesData is not available yet
   if (!apbdesData) {
-    return null;
+    return (
+      <Paper
+        mx={{ base: 'md', md: 100 }}
+        p="xl"
+        radius="md"
+        shadow="sm"
+        withBorder
+        bg={colors['white-1']}
+      >
+        <Stack gap="lg">
+          <Title order={4} c={colors['blue-button']} ta="center">
+            Grafik Pelaksanaan APBDes
+          </Title>
+          <Text ta="center">Tidak ada data APBDes tersedia.</Text>
+        </Stack>
+      </Paper>
+    );
   }
 
-  const items = apbdesData.items || [];
+  const items = Array.isArray(apbdesData.items) ? apbdesData.items : [];
+
+  // Show message if no items exist
+  if (items.length === 0) {
+    return (
+      <Paper
+        mx={{ base: 'md', md: 100 }}
+        p="xl"
+        radius="md"
+        shadow="sm"
+        withBorder
+        bg={colors['white-1']}
+      >
+        <Stack gap="lg">
+          <Title order={4} c={colors['blue-button']} ta="center">
+            Grafik Pelaksanaan APBDes Tahun {apbdesData.tahun || 'N/A'}
+          </Title>
+          <Text ta="center">Tidak ada rincian anggaran tersedia untuk tahun ini.</Text>
+        </Stack>
+      </Paper>
+    );
+  }
+
   const sortedItems = [...items].sort((a, b) => a.kode.localeCompare(b.kode));
 
   // Kelompokkan berdasarkan tipe
   const pendapatanItems = sortedItems.filter(item => item.tipe === 'pendapatan');
   const belanjaItems = sortedItems.filter(item => item.tipe === 'belanja');
   const pembiayaanItems = sortedItems.filter(item => item.tipe === 'pembiayaan');
-  
+
   // Items without a type (should be filtered out from calculations)
   const untypedItems = sortedItems.filter(item => !item.tipe);
-  
+
   if (untypedItems.length > 0) {
     console.warn(`Found ${untypedItems.length} items without a type. These will be excluded from calculations.`);
   }
@@ -99,7 +137,7 @@ function APBDesProgress({ apbdesData }: APBDesProgressProps) {
     >
       <Stack gap="lg">
         <Title order={4} c={colors['blue-button']} ta="center">
-          Grafik Pelaksanaan APBDes Tahun {apbdesData.tahun}
+          Grafik Pelaksanaan APBDes Tahun {apbdesData.tahun || 'N/A'}
         </Title>
 
         <Text ta="center" fw="bold" fz="sm" c="dimmed">

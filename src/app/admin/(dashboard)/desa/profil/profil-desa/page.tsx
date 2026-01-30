@@ -462,7 +462,7 @@ function Page() {
                         <Card withBorder key={idx} p="xs" w={{ base: '100%', md: 180 }}>
                           <Center>
                             <Image
-                              src={img.image.link}
+                              src={ img?.image?.link || '/no-image.jpg'}
                               alt={img.label}
                               w={150}
                               h={150}
@@ -562,7 +562,7 @@ function Page() {
                         <Card withBorder key={idx} p="xs" w={{ base: '100%', md: 180 }}>
                           <Center>
                             <Image
-                              src={img.image.link}
+                              src={img?.image?.link || '/no-image.jpg'}
                               alt={img.label}
                               w={150}
                               h={150}

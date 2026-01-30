@@ -83,7 +83,7 @@ function MaskotDesa() {
                   className="hover:scale-105 hover:shadow-lg"
                 >
                   <Image
-                    src={img.image.link}
+                    src={img.image?.link || '/no-image.jpg'}
                     alt={img.label}
                     w="100%"
                     h={200}
