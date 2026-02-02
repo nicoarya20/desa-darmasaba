@@ -6,31 +6,6 @@ import { getAllDownloadUrls } from "./lib/get_images";
 export default async function seedAssets() {
   const images = await getAllDownloadUrls();
 
-  // for (const img of images) {
-  //   try {
-  //     await prisma.fileStorage.upsert({
-  //       where: { name: img.name },
-  //       create: {
-  //         name: img.name,
-  //         category: "image",
-  //         mimeType: "image/webp",
-  //         link: img.downloadUrl,
-  //         path: "images",
-  //         realName: img.name,
-  //         isActive: true,
-  //       },
-  //       update: {
-  //         link: img.downloadUrl,
-  //         isActive: true,
-  //       },
-  //     });
-
-  //     console.log(`✅ ${img.name}`);
-  //   } catch (err: any) {
-  //     console.error(`❌ ${img.name}`, err.code ?? err);
-  //   }
-  // }
-
   for (const img of images) {
     try {
       await prisma.fileStorage.upsert({
@@ -57,12 +32,12 @@ export default async function seedAssets() {
   console.log("🎉 Image seeding completed");
 }
 
-if (import.meta.main) {
-  seedAssets()
-    .then(() => {
-      console.log("seed assets success");
-    })
-    .catch((err) => {
-      console.log("gagal seed assets", JSON.stringify(err));
-    });
-}
+// if (import.meta.main) {
+//   seedAssets()
+//     .then(() => {
+//       console.log("seed assets success");
+//     })
+//     .catch((err) => {
+//       console.log("gagal seed assets", JSON.stringify(err));
+//     });
+// }

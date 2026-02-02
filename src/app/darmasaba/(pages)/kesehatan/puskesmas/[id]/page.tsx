@@ -43,6 +43,7 @@ function Page() {
             <BackgroundImage
               radius="lg"
               h={{ base: 260, md: 480 }}
+              w="100%"
               src={data.image?.link ?? "/no-image.jpg"}
               style={{ position: 'relative', overflow: 'hidden' }}
             >

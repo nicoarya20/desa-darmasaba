@@ -91,12 +91,17 @@ function Page() {
               <Paper radius={10} key={k} bg={colors['white-trans-1']}>
                 <Stack gap="xs">
                   <Center p="10">
-                    <Image
-                      src={v.image?.link}
-                      radius={10}
-                      loading="lazy"
-                      alt=""
-                    />
+                    <Box h={200} w="100%" style={{ overflow: 'hidden' }}>
+                      <Image
+                        src={v.image?.link ?? "/no-image.jpg"}
+                        alt={v.judul}
+                        fit="cover"
+                        radius="md"
+                        h="100%"
+                        w="100%"
+                        loading="lazy"
+                      />
+                    </Box>
                   </Center>
                   <Box px="xl">
                     <Box pb="20">

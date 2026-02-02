@@ -3,7 +3,7 @@
     "id": "1b7a17ea-83f7-4e73-a94d-96e2b4a623f2",
     "nama": "Warung Pasar Darmasaba",
     "harga": 30000,
-    "imageId": "cmkew56ls0000vnysrnzr9ttx",
+    "imageName": "YdCBnK-bWxlyHjwsk4Qie-mobile.webp",
     "rating": 4.3,
     "alamatUsaha": "Br. Baler Pasar, Desa Darmasaba, Kec. Abiansemal",
     "kontak": "081234567890",
@@ -13,7 +13,7 @@
   {
     "id": "6dea2257-b710-4cd2-8d94-9b6737e658d8",
     "nama": "Jajanan Pasar Bu Made",
-    "imageId": "cmkewaa2s0001vnysvvs9tu56",
+    "imageName": "TWdNTZZbTOhFTNJGGPDyG-mobile.webp",
     "harga": 5000,
     "rating": 4.6,
     "alamatUsaha": "Jl. Raya Darmasaba, dekat Banjar Baler Pasar",
@@ -24,7 +24,7 @@
   {
     "id": "24c6b992-49da-4c6e-aebb-72cf89f75438",
     "nama": "Sayur Segar Pak Wayan",
-    "imageId": "cmkewcvfq0002vnys6985nm90",
+    "imageName": "mtQsaKtQnhxIYVIooCkiQ-mobile.webp",
     "harga": 20000,
     "rating": 4.4,
     "alamatUsaha": "Area Pasar Desa Darmasaba",
@@ -35,7 +35,7 @@
   {
     "id": "d62660a2-ac6b-428a-acf6-58cc837ef789",
     "nama": "Ayam & Daging Segar Darmasaba",
-    "imageId": "cmkewf4u90003vnys87en35nj",
+    "imageName": "Ez-SkRyf_F-1gksz_amNg-mobile.webp",
     "harga": 80000,
     "rating": 4.2,
     "alamatUsaha": "Br. Baler Pasar, Desa Darmasaba",

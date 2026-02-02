@@ -83,14 +83,17 @@ function Page() {
                 className="hover:scale-[1.02]"
               >
                 <Stack gap="sm">
-                  <Image
-                    src={v.image?.link ?? "/no-image.jpg"}
-                    alt={v.name}
-                    radius="md"
-                    height={160}
-                    fit="cover"
-                    loading="lazy"
-                  />
+                  <Box h={200} w="100%" style={{ overflow: 'hidden' }}>
+                    <Image
+                      src={v.image?.link ?? "/no-image.jpg"}
+                      alt={v.name}
+                      fit="cover"
+                      radius="md"
+                      h="100%"
+                      w="100%"
+                      loading="lazy"
+                    />
+                  </Box>
                   <Group justify="space-between">
                     <Title order={3} fw={600} lineClamp={1}>{v.name}</Title>
                     <Badge color="blue" variant="light" radius="sm" fz="xs">Aktif</Badge>
