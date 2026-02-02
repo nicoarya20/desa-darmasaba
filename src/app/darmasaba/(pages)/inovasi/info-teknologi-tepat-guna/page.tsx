@@ -86,7 +86,7 @@ function Page() {
               return (
                 <Paper p={'xl'} key={k}>
                   <Stack gap={"xs"}>
-                    <Image src={v.image.link || ''} pb={10} radius={10} alt='' loading="lazy" />
+                    <Image src={v.image?.link || "/no-image.jpg"} pb={10} radius={10} alt='' loading="lazy" />
                     <Title order={3} fw={'bold'} ta="left">
                       {v.name}
                     </Title>

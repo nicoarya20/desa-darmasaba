@@ -37,6 +37,22 @@ import { seedPolsekTerdekat } from "./_seeder_list/keamanan/seed_polsek_terdekat
 import { seedKontakDaruratKeamanan } from "./_seeder_list/keamanan/seed_kontak_darurat";
 import { seedPencegahanKriminalitas } from "./_seeder_list/keamanan/seed_pencegahan_kriminalitas";
 import { seedLaporanPublik } from "./_seeder_list/keamanan/seed_laporan_publik";
+import { seedPasarDesa } from "./_seeder_list/ekonomi/seed_pasar_desa";
+import { seedLowonganKerjaLokal } from "./_seeder_list/ekonomi/seed_lowongan_kerja_lokal";
+import { seedDemografiPekerjaan } from "./_seeder_list/ekonomi/seed_demografi_pekerjaan";
+import { seedSektorUnggulanDesa } from "./_seeder_list/ekonomi/seed_sektor_unggulan_desa";
+import { seedProgramKemiskinan } from "./_seeder_list/ekonomi/seed_program_kemiskinan";
+import { seedJumlahPendudukMiskin } from "./_seeder_list/ekonomi/seed_jumlah_penduduk_miskin";
+import { seedPendudukUsiaKerjaYangMenganggur } from "./_seeder_list/ekonomi/seed_penduduk_usia_kerja_yang_menganggur";
+import { seedJumlahPengangguran } from "./_seeder_list/ekonomi/seed_jumlah_pengangguran";
+import { seedPendapatanAsli } from "./_seeder_list/ekonomi/seed_pendapatan_asli";
+import { seedStrukturBumdes } from "./_seeder_list/ekonomi/seed_struktur_bumdes";
+import { seedAjukan } from "./_seeder_list/inovasi/seed_ajukan";
+import { seedDesaDigital } from "./_seeder_list/inovasi/seed_desa_digital";
+import { seedLayananOnlineDesa } from "./_seeder_list/inovasi/seed_layanan_online_desa";
+import { seedProgramKreatifDesa } from "./_seeder_list/inovasi/seed_program_kreatif_desa";
+import { seedKolaborasiInovasi } from "./_seeder_list/inovasi/seed_kolaborasi_inovasi";
+import { seedInfoTeknologi } from "./_seeder_list/inovasi/seed_info_teknologi";
 
 (async () => {
   const totalFiles = await prisma.fileStorage.count();
@@ -239,576 +255,51 @@ import { seedLaporanPublik } from "./_seeder_list/keamanan/seed_laporan_publik";
 
   // // ====================== MENU EKONOMI ========================
   // // ==================== SUBMENU PASAR DESA ====================
-  // console.log("🔄 Seeding Kategori Produk...");
-  // for (const k of kategoriProduk) {
-  //   await prisma.kategoriProduk.upsert({
-  //     where: {
-  //       id: k.id,
-  //     },
-  //     update: {
-  //       nama: k.nama,
-  //     },
-  //     create: {
-  //       id: k.id,
-  //       nama: k.nama,
-  //     },
-  //   });
-  // }
-  // console.log("✅ Kategori Produk seeded successfully");
-
-  // console.log("🔄 Seeding Pasar Desa...");
-  // for (const p of pasarDesa) {
-  //   await prisma.pasarDesa.upsert({
-  //     where: {
-  //       id: p.id,
-  //     },
-  //     update: {
-  //       nama: p.nama,
-  //       imageId: p.imageId,
-  //       harga: p.harga,
-  //       rating: p.rating,
-  //       alamatUsaha: p.alamatUsaha,
-  //       kontak: p.kontak,
-  //       deskripsi: p.deskripsi,
-  //       kategoriProdukId: p.kategoriProdukId,
-  //     },
-  //     create: {
-  //       id: p.id,
-  //       nama: p.nama,
-  //       imageId: p.imageId,
-  //       harga: p.harga,
-  //       rating: p.rating,
-  //       alamatUsaha: p.alamatUsaha,
-  //       kontak: p.kontak,
-  //       deskripsi: p.deskripsi,
-  //       kategoriProdukId: p.kategoriProdukId,
-  //     },
-  //   });
-  // }
-  // console.log("✅ Pasar Desa seeded successfully");
-
-  // console.log("🔄 Seeding Kategori To Pasar...");
-  // for (const p of kategoriToPasar) {
-  //   await prisma.kategoriToPasar.upsert({
-  //     where: {
-  //       id: p.id,
-  //     },
-  //     update: {
-  //       kategoriId: p.kategoriId,
-  //       pasarDesaId: p.pasarDesaId,
-  //     },
-  //     create: {
-  //       id: p.id,
-  //       kategoriId: p.kategoriId,
-  //       pasarDesaId: p.pasarDesaId,
-  //     },
-  //   });
-  // }
+  await seedPasarDesa();
 
   // // ==================== SUBMENU LOWONGAN KERJA LOKAL ==========
-  // console.log("🔄 Seeding Lowongan Kerja Lokal...");
-  // for (const k of lowonganKerjaLokal) {
-  //   await prisma.lowonganPekerjaan.upsert({
-  //     where: {
-  //       id: k.id,
-  //     },
-  //     update: {
-  //       posisi: k.posisi,
-  //       namaPerusahaan: k.namaPerusahaan,
-  //       lokasi: k.lokasi,
-  //       tipePekerjaan: k.tipePekerjaan,
-  //       gaji: k.gaji,
-  //       deskripsi: k.deskripsi,
-  //       kualifikasi: k.kualifikasi,
-  //       notelp: k.notelp,
-  //     },
-  //     create: {
-  //       id: k.id,
-  //       posisi: k.posisi,
-  //       namaPerusahaan: k.namaPerusahaan,
-  //       lokasi: k.lokasi,
-  //       tipePekerjaan: k.tipePekerjaan,
-  //       gaji: k.gaji,
-  //       deskripsi: k.deskripsi,
-  //       kualifikasi: k.kualifikasi,
-  //       notelp: k.notelp,
-  //     },
-  //   });
-  // }
-  // console.log("✅ Lowongan Kerja Lokal seeded successfully");
+  await seedLowonganKerjaLokal();
 
   // // ==================== SUBMENU STRUKTUR ORGANISASI DAN SK PENGURUS BUMDES ==========
-  // const sortedPosisiBumdes = flattenedPosisiBumdes.sort(
-  //   (a, b) => a.hierarki - b.hierarki,
-  // );
-
-  // for (const p of sortedPosisiBumdes) {
-  //   console.log(`Seeding: ${p.nama} (id: ${p.id}, parent: ${p.parentId})`);
-
-  //   if (p.parentId) {
-  //     const parentExists = flattenedPosisi.some((pos) => pos.id === p.parentId);
-  //     if (!parentExists) {
-  //       console.warn(
-  //         `⚠️ Parent tidak ditemukan: ${p.parentId} untuk ${p.nama}`,
-  //       );
-  //       continue;
-  //     }
-  //   }
-
-  //   await prisma.posisiOrganisasiBumDes.upsert({
-  //     where: { id: p.id },
-  //     update: p,
-  //     create: p,
-  //   });
-  // }
-  // console.log("posisi organisasi berhasil");
-
-  // for (const p of pegawai) {
-  //   await prisma.pegawaiBumDes.upsert({
-  //     where: {
-  //       id: p.id,
-  //     },
-  //     update: {
-  //       namaLengkap: p.namaLengkap,
-  //       gelarAkademik: p.gelarAkademik,
-  //       tanggalMasuk: new Date(p.tanggalMasuk),
-  //       email: p.email,
-  //       telepon: p.telepon,
-  //       alamat: p.alamat,
-  //       posisiId: p.posisiId,
-  //       isActive: p.isActive,
-  //     },
-  //     create: {
-  //       id: p.id,
-  //       namaLengkap: p.namaLengkap,
-  //       gelarAkademik: p.gelarAkademik,
-  //       tanggalMasuk: new Date(p.tanggalMasuk),
-  //       email: p.email,
-  //       telepon: p.telepon,
-  //       alamat: p.alamat,
-  //       posisiId: p.posisiId,
-  //       isActive: p.isActive,
-  //     },
-  //   });
-  // }
-  // console.log("pegawai success ...");
+  await seedStrukturBumdes();
 
   // // ==================== SUBMENU PENDAPATAN ASLI DESA ==========
+  await seedPendapatanAsli();
 
   // // ==================== SUBMENU JUMLAH PENGANGGURAN ==========
-  // for (const d of detailDataPengangguran) {
-  //   await prisma.detailDataPengangguran.upsert({
-  //     where: {
-  //       month_year: { month: d.month, year: d.year },
-  //     },
-  //     update: {
-  //       totalUnemployment: d.totalUnemployment,
-  //       educatedUnemployment: d.educatedUnemployment,
-  //       uneducatedUnemployment: d.uneducatedUnemployment,
-  //       percentageChange: d.percentageChange,
-  //     },
-  //     create: {
-  //       month: d.month,
-  //       year: d.year,
-  //       totalUnemployment: d.totalUnemployment,
-  //       educatedUnemployment: d.educatedUnemployment,
-  //       uneducatedUnemployment: d.uneducatedUnemployment,
-  //       percentageChange: d.percentageChange,
-  //     },
-  //   });
-  // }
-  // console.log("📊 detailDataPengangguran success ...");
+  await seedJumlahPengangguran();
 
   // // ==================== SUBMENU PENDUDUK USIA KERJA ==========
-  // for (const p of grafikMenganggurBerdasarkanUsia) {
-  //   await prisma.grafikMenganggurBerdasarkanUsia.upsert({
-  //     where: {
-  //       id: p.id,
-  //     },
-  //     update: {
-  //       usia18_25: p.usia18_25,
-  //       usia26_35: p.usia26_35,
-  //       usia36_45: p.usia36_45,
-  //       usia46_keatas: p.usia46_keatas,
-  //     },
-  //     create: {
-  //       id: p.id,
-  //       usia18_25: p.usia18_25,
-  //       usia26_35: p.usia26_35,
-  //       usia36_45: p.usia36_45,
-  //       usia46_keatas: p.usia46_keatas,
-  //     },
-  //   });
-  // }
-  // console.log("📊 grafikMenganggurBerdasarkanUsia success ...");
-
-  // for (const p of grafikMenganggurBerdasarkanPendidikan) {
-  //   await prisma.grafikMenganggurBerdasarkanPendidikan.upsert({
-  //     where: {
-  //       id: p.id,
-  //     },
-  //     update: {
-  //       SD: p.SD,
-  //       SMP: p.SMP,
-  //       SMA: p.SMA,
-  //       D3: p.D3,
-  //       S1: p.S1,
-  //     },
-  //     create: {
-  //       id: p.id,
-  //       SD: p.SD,
-  //       SMP: p.SMP,
-  //       SMA: p.SMA,
-  //       D3: p.D3,
-  //       S1: p.S1,
-  //     },
-  //   });
-  // }
-  // console.log("📊 grafikMenganggurBerdasarkanUsia success ...");
+  await seedPendudukUsiaKerjaYangMenganggur();
 
   // // ==================== SUBMENU PENDUDUK MISKIN =============
-  // console.log("🔄 Seeding Jumlah Penduduk Miskin...");
-  // for (const k of jumlahPendudukMiskin) {
-  //   await prisma.grafikJumlahPendudukMiskin.upsert({
-  //     where: {
-  //       id: k.id,
-  //     },
-  //     update: {
-  //       year: k.year,
-  //       totalPoorPopulation: k.totalPoorPopulation,
-  //     },
-  //     create: {
-  //       id: k.id,
-  //       year: k.year,
-  //       totalPoorPopulation: k.totalPoorPopulation,
-  //     },
-  //   });
-  // }
-  // console.log("✅ Jumlah Penduduk Miskin seeded successfully");
+  await seedJumlahPendudukMiskin();
 
   // // ==================== SUBMENU PROGRAM KEMISKINAN =============
-  // for (const s of statistikKemiskinan) {
-  //   await prisma.statistikKemiskinan.upsert({
-  //     where: { tahun: s.tahun }, // ✅ FIX
-  //     update: {
-  //       jumlah: s.jumlah,
-  //     },
-  //     create: {
-  //       id: s.id, // id boleh tetap
-  //       tahun: s.tahun,
-  //       jumlah: s.jumlah,
-  //     },
-  //   });
-  // }
-
-  // console.log("📊 Statistik Kemiskinan seeded successfully");
-
-  // console.log("🔄 Seeding Program Kemiskinan...");
-  // for (const k of programKemiskinan) {
-  //   await prisma.programKemiskinan.upsert({
-  //     where: { id: k.id },
-  //     update: {
-  //       nama: k.nama,
-  //       deskripsi: k.deskripsi,
-  //       icon: k.icon,
-  //       statistik: {
-  //         connect: {
-  //           tahun: k.tahun, // 👈 BUKAN ID
-  //         },
-  //       },
-  //     },
-  //     create: {
-  //       id: k.id,
-  //       nama: k.nama,
-  //       deskripsi: k.deskripsi,
-  //       icon: k.icon,
-  //       statistik: {
-  //         connect: {
-  //           tahun: k.tahun,
-  //         },
-  //       },
-  //     },
-  //   });
-  // }
-  // console.log("✅ Program Kemiskinan seeded successfully");
+  await seedProgramKemiskinan();
 
   // // ==================== SUBMENU SEKTOR UNGGULAN DESA =============
-  // console.log("🔄 Seeding Sektor Unggulan Desa...");
-  // for (const k of sektorUnggulanDesa) {
-  //   await prisma.sektorUnggulanDesa.upsert({
-  //     where: {
-  //       id: k.id,
-  //     },
-  //     update: {
-  //       name: k.name,
-  //       description: k.description,
-  //       value: k.value,
-  //     },
-  //     create: {
-  //       id: k.id,
-  //       name: k.name,
-  //       description: k.description,
-  //       value: k.value,
-  //     },
-  //   });
-  // }
-  // console.log("✅ Sektor Unggulan Desa seeded successfully");
+ await seedSektorUnggulanDesa();
 
   // // ==================== SUBMENU DEMOGRAFI PEKERJAAN =============
-  // console.log("🔄 Seeding Demografi Pekerjaan...");
-  // for (const k of demografiPekerjaan) {
-  //   await prisma.dataDemografiPekerjaan.upsert({
-  //     where: {
-  //       id: k.id,
-  //     },
-  //     update: {
-  //       pekerjaan: k.pekerjaan,
-  //       lakiLaki: k.lakiLaki,
-  //       perempuan: k.perempuan,
-  //     },
-  //     create: {
-  //       id: k.id,
-  //       pekerjaan: k.pekerjaan,
-  //       lakiLaki: k.lakiLaki,
-  //       perempuan: k.perempuan,
-  //     },
-  //   });
-  // }
-  // console.log("✅ Demografi Pekerjaan seeded successfully");
+  await seedDemografiPekerjaan();
 
   // // ====================== MENU INOVASI ==========================
   // // ====================== SUBMENU AJUKAN IDE INOVATIF ===========
-  // console.log("🔄 Seeding Ajukan Ide Inovatif...");
-  // for (const d of ajukanIde) {
-  //   await prisma.ajukanIdeInovatif.upsert({
-  //     where: {
-  //       id: d.id,
-  //     },
-  //     update: {
-  //       name: d.name,
-  //       alamat: d.alamat,
-  //       namaIde: d.namaIde,
-  //       deskripsi: d.deskripsi,
-  //       masalah: d.masalah,
-  //       benefit: d.benefit,
-  //     },
-  //     create: {
-  //       id: d.id,
-  //       name: d.name,
-  //       alamat: d.alamat,
-  //       namaIde: d.namaIde,
-  //       deskripsi: d.deskripsi,
-  //       masalah: d.masalah,
-  //       benefit: d.benefit,
-  //     },
-  //   });
-  // }
-  // console.log("✅ Ajukan Ide Inovatif seeded successfully");
+  await seedAjukan();
   // // ==================== SUBMENU DESA DIGITAL ====================
-  // console.log("🔄 Seeding Desa Digital...");
-  // for (const d of desaDigital) {
-  //   await prisma.desaDigital.upsert({
-  //     where: {
-  //       id: d.id,
-  //     },
-  //     update: {
-  //       name: d.name,
-  //       deskripsi: d.deskripsi,
-  //       imageId: d.imageId,
-  //     },
-  //     create: {
-  //       id: d.id,
-  //       name: d.name,
-  //       deskripsi: d.deskripsi,
-  //       imageId: d.imageId,
-  //     },
-  //   });
-  // }
-  // console.log("✅ Desa Digital seeded successfully");
+  await seedDesaDigital();
 
   // // ==================== SUBMENU LAYANAN ONLINE DESA ==========
-  // console.log("🔄 Seeding Jenis Layanan...");
-  // for (const j of jenisLayanan) {
-  //   await prisma.jenisLayanan.upsert({
-  //     where: {
-  //       id: j.id,
-  //     },
-  //     update: {
-  //       nama: j.nama,
-  //       deskripsi: j.deskripsi,
-  //     },
-  //     create: {
-  //       id: j.id,
-  //       nama: j.nama,
-  //       deskripsi: j.deskripsi,
-  //     },
-  //   });
-  // }
-  // console.log("✅ Jenis Layanan seeded successfully");
-
-  // console.log("🔄 Seeding Administrasi Online...");
-  // for (const d of administrasiOnline) {
-  //   await prisma.administrasiOnline.upsert({
-  //     where: {
-  //       id: d.id,
-  //     },
-  //     update: {
-  //       name: d.name,
-  //       alamat: d.alamat,
-  //       nomorTelepon: d.nomorTelepon,
-  //       jenisLayananId: d.jenisLayananId,
-  //     },
-  //     create: {
-  //       id: d.id,
-  //       name: d.name,
-  //       alamat: d.alamat,
-  //       nomorTelepon: d.nomorTelepon,
-  //       jenisLayananId: d.jenisLayananId,
-  //     },
-  //   });
-  // }
-  // console.log("✅ Administrasi Online seeded successfully");
-
-  // console.log("🔄 Seeding Jenis Pengaduan Masyarakat...");
-  // for (const d of jenisPengaduan) {
-  //   await prisma.jenisPengaduan.upsert({
-  //     where: {
-  //       id: d.id,
-  //     },
-  //     update: {
-  //       nama: d.nama,
-  //     },
-  //     create: {
-  //       id: d.id,
-  //       nama: d.nama,
-  //     },
-  //   });
-  // }
-  // console.log("✅ Jenis Pengaduan Masyarakat seeded successfully");
-
-  // console.log("🔄 Seeding Pengaduan Masyarakat...");
-  // for (const d of pengaduanMasyarakat) {
-  //   await prisma.pengaduanMasyarakat.upsert({
-  //     where: {
-  //       id: d.id,
-  //     },
-  //     update: {
-  //       name: d.name,
-  //       email: d.email,
-  //       nik: d.nik,
-  //       nomorTelepon: d.nomorTelepon,
-  //       judulPengaduan: d.judulPengaduan,
-  //       lokasiKejadian: d.lokasiKejadian,
-  //       imageId: d.imageId,
-  //       deskripsiPengaduan: d.deskripsiPengaduan,
-  //       jenisPengaduanId: d.jenisPengaduanId,
-  //     },
-  //     create: {
-  //       id: d.id,
-  //       name: d.name,
-  //       email: d.email,
-  //       nik: d.nik,
-  //       nomorTelepon: d.nomorTelepon,
-  //       judulPengaduan: d.judulPengaduan,
-  //       lokasiKejadian: d.lokasiKejadian,
-  //       imageId: d.imageId,
-  //       deskripsiPengaduan: d.deskripsiPengaduan,
-  //       jenisPengaduanId: d.jenisPengaduanId,
-  //     },
-  //   });
-  // }
-  // console.log("✅ Pengaduan Masyarakat seeded successfully");
+  await seedLayananOnlineDesa();
 
   // // ==================== SUBMENU PROGRAM KREATIF ==========
-  // console.log("🔄 Seeding Program Kreatif...");
-  // for (const p of programKreatif) {
-  //   await prisma.programKreatif.upsert({
-  //     where: {
-  //       id: p.id,
-  //     },
-  //     update: {
-  //       name: p.name,
-  //       deskripsi: p.deskripsi,
-  //       icon: p.icon,
-  //       slug: p.slug,
-  //     },
-  //     create: {
-  //       id: p.id,
-  //       name: p.name,
-  //       deskripsi: p.deskripsi,
-  //       icon: p.icon,
-  //       slug: p.slug,
-  //     },
-  //   });
-  // }
-  // console.log("✅ Program Kreatif seeded successfully");
-
+  await seedProgramKreatifDesa();
   // // ==================== SUBMENU KOLABORASI INOVASI ==========
-  // console.log("🔄 Seeding Kolaborasi Inovasi...");
-  // for (const p of kolaborasiInovasi) {
-  //   await prisma.kolaborasiInovasi.upsert({
-  //     where: {
-  //       id: p.id,
-  //     },
-  //     update: {
-  //       name: p.name,
-  //       tahun: p.tahun,
-  //       slug: p.slug,
-  //       deskripsi: p.deskripsi,
-  //       kolaborator: p.kolaborator,
-  //     },
-  //     create: {
-  //       id: p.id,
-  //       name: p.name,
-  //       tahun: p.tahun,
-  //       slug: p.slug,
-  //       deskripsi: p.deskripsi,
-  //       kolaborator: p.kolaborator,
-  //     },
-  //   });
-  // }
-  // console.log("✅ Kolaborasi Inovasi seeded successfully");
-
-  // console.log("🔄 Seeding Mitra Kolaborasi...");
-  // for (const p of mitraKolaborasi) {
-  //   await prisma.mitraKolaborasi.upsert({
-  //     where: {
-  //       id: p.id,
-  //     },
-  //     update: {
-  //       name: p.name,
-  //       imageId: p.imageId,
-  //     },
-  //     create: {
-  //       id: p.id,
-  //       name: p.name,
-  //       imageId: p.imageId,
-  //     },
-  //   });
-  // }
-  // console.log("✅ Mitra Kolaborasi seeded successfully");
+  await seedKolaborasiInovasi();
 
   // // ==================== SUBMENU INFO TEKNOLOGI TEPAT GUNA ==========
-  // console.log("🔄 Seeding Info Teknologi...");
-  // for (const p of infoTeknologi) {
-  //   await prisma.infoTekno.upsert({
-  //     where: {
-  //       id: p.id,
-  //     },
-  //     update: {
-  //       name: p.name,
-  //       deskripsi: p.deskripsi,
-  //       imageId: p.imageId,
-  //     },
-  //     create: {
-  //       id: p.id,
-  //       name: p.name,
-  //       deskripsi: p.deskripsi,
-  //       imageId: p.imageId,
-  //     },
-  //   });
-  // }
-  // console.log("✅ Info Teknologi seeded successfully");
+  await seedInfoTeknologi();
 
   // // ====================== MENU LINGKUNGAN ==========================
   // // ==================== SUBMENU PENGELOLAAN SAMPAH ==========
