@@ -214,14 +214,15 @@ export default function Page() {
                     {paginatedNews.map((item) => (
                       <Card key={item.id} shadow="sm" p="lg" radius="md" withBorder>
                         <Card.Section>
-                          <Image
-                            src={item.image?.link || '/images/placeholder-small.jpg'}
-                            height={200}
-                            alt={item.judul}
-                            fit="cover"
-                            loading="lazy"
-                            radius={"md"}
-                          />
+                          <Box h={160} w="100%" style={{ overflow: 'hidden' }}>
+                            <Image
+                              src={item.image?.link || '/images/placeholder-small.jpg'}
+                              alt={item.judul}
+                              fit="cover"
+                              loading="lazy"
+                              radius={"md"}
+                            />
+                          </Box>
                         </Card.Section>
 
                         <Badge color="blue" variant="light" mt="md">

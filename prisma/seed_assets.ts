@@ -8,24 +8,30 @@ export default async function seedAssets() {
 
   for (const img of images) {
     try {
-      await prisma.fileStorage.upsert({
-        where: {
-          id: img.name,
-        },
-        create: {
-          name: img.name,
-          category: "image",
-          mimeType: "image/webp",
-          link: img.downloadUrl,
-          path: "images",
-          realName: img.name,
-          isActive: true,
-        },
-        update: {},
+      // Check if the image already exists by name
+      const existingImage = await prisma.fileStorage.findUnique({
+        where: { name: img.name },
       });
-      console.log(img.name, ": success")
+
+      if (!existingImage) {
+        // Only create if it doesn't exist
+        await prisma.fileStorage.create({
+          data: {
+            name: img.name,
+            category: "image",
+            mimeType: "image/webp",
+            link: img.downloadUrl,
+            path: "images",
+            realName: img.name,
+            isActive: true,
+          },
+        });
+        console.log(`✅ Created new image: ${img.name}`);
+      } else {
+        console.log(`ℹ️ Image already exists, skipping: ${img.name}`);
+      }
     } catch (err) {
-      console.log("gagal seed assets", JSON.stringify(err));
+      console.log(`❌ Failed to seed asset ${img.name}:`, JSON.stringify(err));
     }
   }
 

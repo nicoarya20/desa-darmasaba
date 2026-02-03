@@ -36,8 +36,67 @@ const getCurrentTime = () => {
   return `${hours}:${minutes}`;
 };
 
-const isWorkingHours = (currentTime: string): boolean => {
-  const [openTime, closeTime] = ["08:00", "17:00"];
+// Fungsi untuk mendapatkan tanggal hari ini dalam format YYYY-MM-DD
+const getTodayDate = (): string => {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const day = String(today.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
+// Fungsi untuk memeriksa apakah tanggal tertentu adalah hari libur nasional
+// Daftar hari libur nasional Indonesia (bisa diperbarui sesuai tahun berjalan)
+const isNationalHoliday = (date: string): boolean => {
+  // Format tanggal harus dalam bentuk YYYY-MM-DD
+  const holidays = [
+    // Tahun 2026
+    '2026-01-01', // Tahun Baru Masehi
+    '2026-02-17', // Isra Mikraj Nabi Muhammad SAW
+    '2026-03-08', // Hari Raya Nyepi Tahun Baru Saka 1948
+    '2026-04-03', // Wafat Isa Almasih
+    '2026-05-01', // Hari Buruh Internasional
+    '2026-05-20', // Kenaikan Isa Almasih
+    '2026-06-01', // Hari Lahir Pancasila
+    '2026-06-05', // Hari Raya Idul Adha
+    '2026-08-17', // Hari Kemerdekaan RI
+    '2026-09-21', // Tahun Baru Islam 1448 H
+    '2026-10-02', // Maulid Nabi Muhammad SAW
+    '2026-12-25', // Hari Raya Natal
+
+    // Hari raya besar lainnya
+    '2026-04-06', // Hari Raya Idul Fitri
+    '2026-04-07', // Hari Raya Idul Fitri
+
+    // Hari libur pengganti
+    '2026-04-08', // Hari Libur Pengganti Idul Fitri
+    '2026-04-09', // Hari Libur Pengganti Idul Fitri
+  ];
+
+  return holidays.includes(date);
+};
+
+const isWorkingHours = (day: string, currentTime: string): boolean => {
+  // Cek apakah hari ini hari libur nasional
+  if (isNationalHoliday(getTodayDate())) {
+    return false;
+  }
+
+  let openTime = "";
+  let closeTime = "";
+
+  // Atur jam kerja berdasarkan hari
+  if (["Senin", "Selasa", "Rabu", "Kamis"].includes(day)) {
+    openTime = "07:30";
+    closeTime = "15:30";
+  } else if (day === "Jumat") {
+    openTime = "07:30";
+    closeTime = "12:00";
+  } else {
+    // Sabtu dan Minggu tutup
+    return false;
+  }
+
   const compareTimes = (time1: string, time2: string) => {
     const [hour1, minute1] = time1.split(":").map(Number);
     const [hour2, minute2] = time2.split(":").map(Number);
@@ -45,18 +104,33 @@ const isWorkingHours = (currentTime: string): boolean => {
     if (hour1 > hour2) return false;
     return minute1 <= minute2;
   };
+
   return compareTimes(currentTime, closeTime) && !compareTimes(currentTime, openTime);
 };
 
 const getWorkStatus = (day: string, currentTime: string): { status: string; message: string } => {
+  // Cek apakah hari ini hari libur nasional
+  if (isNationalHoliday(getTodayDate())) {
+    return { status: "Tutup", message: "Hari Libur Nasional" };
+  }
+
   const workingDays = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat"];
   if (!workingDays.includes(day)) {
     return { status: "Tutup", message: "Libur Akhir Pekan" };
   }
-  const isOpen = isWorkingHours(currentTime);
+
+  const isOpen = isWorkingHours(day, currentTime);
+
+  let workHoursMessage = "";
+  if (["Senin", "Selasa", "Rabu", "Kamis"].includes(day)) {
+    workHoursMessage = "07:30 - 15:10";
+  } else if (day === "Jumat") {
+    workHoursMessage = "07:30 - 12:00";
+  }
+
   return isOpen
-    ? { status: "Buka", message: "08:00 - 17:00" }
-    : { status: "Tutup", message: "08:00 - 17:00" };
+    ? { status: "Buka", message: workHoursMessage }
+    : { status: "Tutup", message: workHoursMessage };
 };
 
 // 🟦 Skeleton component untuk Social Media
