@@ -119,7 +119,13 @@ export default function DetailBukuUser() {
       <ModalPeminjaman
         opened={opened}
         onClose={() => setOpened(false)}
-        buku={data}
+        buku={{
+          id: data.id,
+          judul: data.judul,
+          deskripsi: data.deskripsi,
+          image: data.image ? { link: data.image.link } : undefined,
+          kategori: data.kategori ? { name: data.kategori.name } : undefined,
+        }}
       />
     </Box>
   );

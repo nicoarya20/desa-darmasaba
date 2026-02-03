@@ -223,7 +223,13 @@ export default function Content() {
                     fullWidth
                     leftSection={<IconBook2 size={20} />}
                     onClick={() => {
-                      setSelectedBook(v);
+                      setSelectedBook({
+                        id: v.id,
+                        judul: v.judul,
+                        deskripsi: v.deskripsi,
+                        image: v.image ? { link: v.image.link } : undefined,
+                        kategori: v.kategori ? { name: v.kategori.name } : undefined,
+                      });
                       setOpened(true);
                     }}
                   >

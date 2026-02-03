@@ -1659,8 +1659,8 @@ model DesaDigital {
   id        String      @id @default(cuid())
   name      String
   deskripsi String      @db.Text
-  image     FileStorage @relation(fields: [imageId], references: [id])
-  imageId   String
+  image     FileStorage? @relation(fields: [imageId], references: [id])
+  imageId   String?
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
   deletedAt DateTime    @default(now())
@@ -1766,8 +1766,8 @@ model PengaduanMasyarakat {
   nik                String
   judulPengaduan     String
   lokasiKejadian     String
-  image              FileStorage    @relation(fields: [imageId], references: [id])
-  imageId            String
+  image              FileStorage?    @relation(fields: [imageId], references: [id])
+  imageId            String?
   deskripsiPengaduan String         @db.Text
   jenisPengaduan     JenisPengaduan @relation(fields: [jenisPengaduanId], references: [id])
   jenisPengaduanId   String
@@ -1848,8 +1848,8 @@ model KegiatanDesa {
   tanggal            DateTime
   lokasi             String
   partisipan         Int
-  image              FileStorage      @relation(fields: [imageId], references: [id])
-  imageId            String
+  image              FileStorage?      @relation(fields: [imageId], references: [id])
+  imageId            String?
   createdAt          DateTime         @default(now())
   updatedAt          DateTime         @updatedAt
   deletedAt          DateTime         @default(now())
@@ -2133,8 +2133,8 @@ model DataPerpustakaan {
   deskripsi  String       @db.Text
   kategori   KategoriBuku @relation(fields: [kategoriId], references: [id])
   kategoriId String
-  image      FileStorage  @relation(fields: [imageId], references: [id])
-  imageId    String
+  image      FileStorage?  @relation(fields: [imageId], references: [id])
+  imageId    String?
   createdAt  DateTime     @default(now())
   updatedAt  DateTime     @updatedAt
   deletedAt  DateTime     @default(now())

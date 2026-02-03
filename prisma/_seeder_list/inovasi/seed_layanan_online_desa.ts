@@ -63,6 +63,23 @@ export async function seedLayananOnlineDesa() {
   console.log("✅ Jenis Pengaduan Masyarakat seeded successfully");
   console.log("🔄 Seeding Pengaduan Masyarakat...");
   for (const d of pengaduanMasyarakat) {
+    let imageId: string | null = null;
+
+    if (d.imageName) {
+      const image = await prisma.fileStorage.findUnique({
+        where: { name: d.imageName },
+        select: { id: true },
+      });
+
+      if (!image) {
+        console.warn(
+          `⚠️ Image not found for pengaduan masyarakat "${d.name}": ${d.imageName}`,
+        );
+      } else {
+        imageId = image.id;
+      }
+    }
+
     await prisma.pengaduanMasyarakat.upsert({
       where: {
         id: d.id,
@@ -74,7 +91,7 @@ export async function seedLayananOnlineDesa() {
         nomorTelepon: d.nomorTelepon,
         judulPengaduan: d.judulPengaduan,
         lokasiKejadian: d.lokasiKejadian,
-        imageId: d.imageId,
+        imageId: imageId,
         deskripsiPengaduan: d.deskripsiPengaduan,
         jenisPengaduanId: d.jenisPengaduanId,
       },
@@ -86,7 +103,7 @@ export async function seedLayananOnlineDesa() {
         nomorTelepon: d.nomorTelepon,
         judulPengaduan: d.judulPengaduan,
         lokasiKejadian: d.lokasiKejadian,
-        imageId: d.imageId,
+        imageId: imageId,
         deskripsiPengaduan: d.deskripsiPengaduan,
         jenisPengaduanId: d.jenisPengaduanId,
       },

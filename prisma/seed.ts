@@ -53,21 +53,23 @@ import { seedLayananOnlineDesa } from "./_seeder_list/inovasi/seed_layanan_onlin
 import { seedProgramKreatifDesa } from "./_seeder_list/inovasi/seed_program_kreatif_desa";
 import { seedKolaborasiInovasi } from "./_seeder_list/inovasi/seed_kolaborasi_inovasi";
 import { seedInfoTeknologi } from "./_seeder_list/inovasi/seed_info_teknologi";
+import { seedPengelolaanSampah } from "./_seeder_list/lingkungan/seed_pengelolaan_sampah";
+import { seedProgramPenghijauan } from "./_seeder_list/lingkungan/seed_program_penghijauan";
+import { seedDataLingkunganDesa } from "./_seeder_list/lingkungan/seed_data_lingkungan_desa";
+import { seedDataGotongRoyong } from "./_seeder_list/lingkungan/seed_data_gotong_royong";
+import { seedEdukasiLingkungan } from "./_seeder_list/lingkungan/seed_edukasi_lingkungan";
+import { seedKonservasiAdatBali } from "./_seeder_list/lingkungan/seed_konservasi_adat_bali";
+import { seedInfoSekolah } from "./_seeder_list/pendidikan/seed_info_sekolah";
+import { seedInfoProgramPendidikan } from "./_seeder_list/pendidikan/seed_info_program_pendidikan";
+import { seedBimbinganBelajar } from "./_seeder_list/pendidikan/seed_bimbingan_belajar";
+import { seedDataPendidikan } from "./_seeder_list/pendidikan/seed_data_pendidikan";
+import { seedPendidikanNonFormal } from "./_seeder_list/pendidikan/seed_pendidikan_non_formal";
+import { seedDataPerpustakaan } from "./_seeder_list/pendidikan/seed_data_perpustakaan";
 
 (async () => {
-  const totalFiles = await prisma.fileStorage.count();
-
-  const hasImageAsset = await prisma.fileStorage.findFirst({
-    where: { category: "image" },
-    select: { id: true },
-  });
-
-  if (totalFiles === 0 || !hasImageAsset) {
-    console.log("📂 fileStorage not ready, seeding assets...");
-    await seedAssets();
-  } else {
-    console.log("ℹ️ fileStorage already initialized, skipping asset seed");
-  }
+  // Always run seedAssets to handle new images without duplication
+  console.log("📂 Checking for new assets to seed...");
+  await seedAssets();
 
   // // =========== FILE STORAGE ===========
 
@@ -279,7 +281,7 @@ import { seedInfoTeknologi } from "./_seeder_list/inovasi/seed_info_teknologi";
   await seedProgramKemiskinan();
 
   // // ==================== SUBMENU SEKTOR UNGGULAN DESA =============
- await seedSektorUnggulanDesa();
+  await seedSektorUnggulanDesa();
 
   // // ==================== SUBMENU DEMOGRAFI PEKERJAAN =============
   await seedDemografiPekerjaan();
@@ -303,554 +305,41 @@ import { seedInfoTeknologi } from "./_seeder_list/inovasi/seed_info_teknologi";
 
   // // ====================== MENU LINGKUNGAN ==========================
   // // ==================== SUBMENU PENGELOLAAN SAMPAH ==========
-  // console.log("🔄 Seeding Pengelolaan Sampah...");
-  // for (const p of pengelolaanSampah) {
-  //   await prisma.pengelolaanSampah.upsert({
-  //     where: {
-  //       id: p.id,
-  //     },
-  //     update: {
-  //       name: p.name,
-  //       icon: p.icon,
-  //     },
-  //     create: {
-  //       id: p.id,
-  //       name: p.name,
-  //       icon: p.icon,
-  //     },
-  //   });
-  // }
-  // console.log("✅ Pengelolaan Sampah seeded successfully");
-
-  // console.log("🔄 Seeding Keterangan Bank Sampah...");
-  // for (const p of keteranganBankSampah) {
-  //   await prisma.keteranganBankSampahTerdekat.upsert({
-  //     where: {
-  //       id: p.id,
-  //     },
-  //     update: {
-  //       name: p.name,
-  //       alamat: p.alamat,
-  //       namaTempatMaps: p.namaTempatMaps,
-  //       linkPetunjukArah: p.linkPetunjukArah,
-  //       lat: p.lat,
-  //       lng: p.lng,
-  //     },
-  //     create: {
-  //       id: p.id,
-  //       name: p.name,
-  //       alamat: p.alamat,
-  //       namaTempatMaps: p.namaTempatMaps,
-  //       linkPetunjukArah: p.linkPetunjukArah,
-  //       lat: p.lat,
-  //       lng: p.lng,
-  //     },
-  //   });
-  // }
-  // console.log("✅ Keterangan Bank Sampah seeded successfully");
+  await seedPengelolaanSampah();
 
   // // ==================== SUBMENU PROGRAM PENGHIJAUAN ==========
-  // console.log("🔄 Seeding Program Penghijauan...");
-  // for (const p of programPenghijauan) {
-  //   await prisma.programPenghijauan.upsert({
-  //     where: {
-  //       id: p.id,
-  //     },
-  //     update: {
-  //       name: p.name,
-  //       judul: p.judul,
-  //       deskripsi: p.deskripsi,
-  //       icon: p.icon,
-  //     },
-  //     create: {
-  //       id: p.id,
-  //       name: p.name,
-  //       judul: p.judul,
-  //       deskripsi: p.deskripsi,
-  //       icon: p.icon,
-  //     },
-  //   });
-  // }
-  // console.log("✅ Program Penghijauan seeded successfully");
+  await seedProgramPenghijauan();
 
   // // ==================== SUBMENU DATA LINGKUNGAN DESA ==========
-  // console.log("🔄 Seeding Data Lingkungan Desa...");
-  // for (const p of dataLingkunganDesa) {
-  //   await prisma.dataLingkunganDesa.upsert({
-  //     where: {
-  //       id: p.id,
-  //     },
-  //     update: {
-  //       name: p.name,
-  //       jumlah: p.jumlah,
-  //       deskripsi: p.deskripsi,
-  //       icon: p.icon,
-  //     },
-  //     create: {
-  //       id: p.id,
-  //       name: p.name,
-  //       jumlah: p.jumlah,
-  //       deskripsi: p.deskripsi,
-  //       icon: p.icon,
-  //     },
-  //   });
-  // }
-  // console.log("✅ Data Lingkungan Desa seeded successfully");
+  await seedDataLingkunganDesa();
 
   // // =========== SUBMENU GOTONG ROYONG ===========
-  // console.log("🔄 Seeding Kategori Gotong Royong...");
-
-  // for (const k of kategoriGotongRoyong) {
-  //   await prisma.kategoriKegiatan.upsert({
-  //     where: {
-  //       id: k.id,
-  //     },
-  //     update: {
-  //       nama: k.nama,
-  //     },
-  //     create: {
-  //       id: k.id,
-  //       nama: k.nama,
-  //     },
-  //   });
-  // }
-
-  // console.log("✅ Kategori Gotong Royong seeded successfully");
-
-  // console.log("🔄 Seeding Gotong Royong...");
-
-  // for (const k of gotongRoyong) {
-  //   await prisma.kegiatanDesa.upsert({
-  //     where: {
-  //       id: k.id,
-  //     },
-  //     update: {
-  //       judul: k.judul,
-  //       deskripsiSingkat: k.deskripsiSingkat,
-  //       deskripsiLengkap: k.deskripsiLengkap,
-  //       tanggal: k.tanggal,
-  //       lokasi: k.lokasi,
-  //       partisipan: k.partisipan,
-  //       imageId: k.imageId,
-  //       kategoriKegiatanId: k.kategoriKegiatanId,
-  //     },
-  //     create: {
-  //       id: k.id,
-  //       judul: k.judul,
-  //       deskripsiSingkat: k.deskripsiSingkat,
-  //       deskripsiLengkap: k.deskripsiLengkap,
-  //       tanggal: k.tanggal,
-  //       lokasi: k.lokasi,
-  //       partisipan: k.partisipan,
-  //       imageId: k.imageId,
-  //       kategoriKegiatanId: k.kategoriKegiatanId,
-  //     },
-  //   });
-  // }
-
-  // console.log("✅ Kategori Gotong Royong seeded successfully");
+  await seedDataGotongRoyong();
 
   // // =========== SUBMENU EDUKASI LINGKUNGAN ===========
-
-  // for (const e of tujuanEdukasiLingkungan) {
-  //   await prisma.tujuanEdukasiLingkungan.upsert({
-  //     where: {
-  //       id: e.id,
-  //     },
-  //     update: {
-  //       judul: e.judul,
-  //       deskripsi: e.deskripsi,
-  //     },
-  //     create: {
-  //       id: e.id,
-  //       judul: e.judul,
-  //       deskripsi: e.deskripsi,
-  //     },
-  //   });
-  // }
-
-  // console.log("tujuan edukasi lingkungan success ...");
-
-  // for (const m of materiEdukasiLingkungan) {
-  //   await prisma.materiEdukasiLingkungan.upsert({
-  //     where: {
-  //       id: m.id,
-  //     },
-  //     update: {
-  //       judul: m.judul,
-  //       deskripsi: m.deskripsi,
-  //     },
-  //     create: {
-  //       id: m.id,
-  //       judul: m.judul,
-  //       deskripsi: m.deskripsi,
-  //     },
-  //   });
-  // }
-
-  // console.log("materi edukasi lingkungan success ...");
-
-  // for (const c of contohEdukasiLingkungan) {
-  //   await prisma.contohEdukasiLingkungan.upsert({
-  //     where: {
-  //       id: c.id,
-  //     },
-  //     update: {
-  //       judul: c.judul,
-  //       deskripsi: c.deskripsi,
-  //     },
-  //     create: {
-  //       id: c.id,
-  //       judul: c.judul,
-  //       deskripsi: c.deskripsi,
-  //     },
-  //   });
-  // }
-
-  // console.log("contoh edukasi lingkungan success ...");
+  await seedEdukasiLingkungan();
 
   // // =========== SUBMENU KONSERVASI ADAT BALI ===========
-
-  // for (const f of filosofiTriHita) {
-  //   await prisma.filosofiTriHita.upsert({
-  //     where: {
-  //       id: f.id,
-  //     },
-  //     update: {
-  //       judul: f.judul,
-  //       deskripsi: f.deskripsi,
-  //     },
-  //     create: {
-  //       id: f.id,
-  //       judul: f.judul,
-  //       deskripsi: f.deskripsi,
-  //     },
-  //   });
-  // }
-
-  // console.log("filosofi tri hita success ...");
-
-  // for (const b of bentukKonservasiBerdasarkanAdat) {
-  //   await prisma.bentukKonservasiBerdasarkanAdat.upsert({
-  //     where: {
-  //       id: b.id,
-  //     },
-  //     update: {
-  //       judul: b.judul,
-  //       deskripsi: b.deskripsi,
-  //     },
-  //     create: {
-  //       id: b.id,
-  //       judul: b.judul,
-  //       deskripsi: b.deskripsi,
-  //     },
-  //   });
-  // }
-
-  // console.log("bentuk konservasi berdasarkan adat success ...");
-
-  // for (const n of nilaiKonservasiAdat) {
-  //   await prisma.nilaiKonservasiAdat.upsert({
-  //     where: {
-  //       id: n.id,
-  //     },
-  //     update: {
-  //       judul: n.judul,
-  //       deskripsi: n.deskripsi,
-  //     },
-  //     create: {
-  //       id: n.id,
-  //       judul: n.judul,
-  //       deskripsi: n.deskripsi,
-  //     },
-  //   });
-  // }
-
-  // console.log("nilai konservasi adat success ...");
+  await seedKonservasiAdatBali();
 
   // // ====================== MENU PENDIDIKAN ==========================
   // // =========== SUBMENU INFO SEKOLAH =====================
-
-  // for (const j of jenjangPendidikan) {
-  //   await prisma.jenjangPendidikan.upsert({
-  //     where: {
-  //       id: j.id,
-  //     },
-  //     update: {
-  //       nama: j.nama,
-  //     },
-  //     create: {
-  //       id: j.id,
-  //       nama: j.nama,
-  //     },
-  //   });
-  // }
-
-  // console.log("✅ Jenjang Pendidikan seeded successfully");
-
-  // for (const j of lembagaPendidikan) {
-  //   await prisma.lembaga.upsert({
-  //     where: {
-  //       id: j.id,
-  //     },
-  //     update: {
-  //       nama: j.nama,
-  //       jenjangId: j.jenjangId,
-  //     },
-  //     create: {
-  //       id: j.id,
-  //       nama: j.nama,
-  //       jenjangId: j.jenjangId,
-  //     },
-  //   });
-  // }
-
-  // console.log("✅ Lembaga Pendidikan seeded successfully");
-
-  // for (const j of siswa) {
-  //   await prisma.siswa.upsert({
-  //     where: {
-  //       id: j.id,
-  //     },
-  //     update: {
-  //       nama: j.nama,
-  //       lembagaId: j.lembagaId,
-  //     },
-  //     create: {
-  //       id: j.id,
-  //       nama: j.nama,
-  //       lembagaId: j.lembagaId,
-  //     },
-  //   });
-  // }
-
-  // console.log("✅ siswa seeded successfully");
-
-  // for (const j of pengajar) {
-  //   await prisma.pengajar.upsert({
-  //     where: {
-  //       id: j.id,
-  //     },
-  //     update: {
-  //       nama: j.nama,
-  //       lembagaId: j.lembagaId,
-  //     },
-  //     create: {
-  //       id: j.id,
-  //       nama: j.nama,
-  //       lembagaId: j.lembagaId,
-  //     },
-  //   });
-  // }
-
-  // console.log("✅ pengajar seeded successfully");
+  await seedInfoSekolah();
 
   // // =========== SUBMENU PROGRAM PENDIDIKAN ANAK =====================
 
-  // for (const t of tujuanProgram) {
-  //   await prisma.tujuanProgram.upsert({
-  //     where: { id: t.id },
-  //     update: {
-  //       judul: t.judul,
-  //       deskripsi: t.deskripsi,
-  //     },
-  //     create: {
-  //       id: t.id,
-  //       judul: t.judul,
-  //       deskripsi: t.deskripsi,
-  //     },
-  //   });
-  // }
-  // console.log("✅ tujuan program seeded (editable later via UI)");
-
-  // for (const t of programUnggulan) {
-  //   await prisma.programUnggulan.upsert({
-  //     where: { id: t.id },
-  //     update: {
-  //       judul: t.judul,
-  //       deskripsi: t.deskripsi,
-  //     },
-  //     create: {
-  //       id: t.id,
-  //       judul: t.judul,
-  //       deskripsi: t.deskripsi,
-  //     },
-  //   });
-  // }
-  // console.log("✅ program unggulan seeded (editable later via UI)");
+  await seedInfoProgramPendidikan();
 
   // // =========== SUBMENU BIMBINGAN BELAJAR DESA =====================
-
-  // for (const t of tujuanBimbinganBelajarDesa) {
-  //   await prisma.tujuanBimbinganBelajarDesa.upsert({
-  //     where: { id: t.id },
-  //     update: {
-  //       judul: t.judul,
-  //       deskripsi: t.deskripsi,
-  //     },
-  //     create: {
-  //       id: t.id,
-  //       judul: t.judul,
-  //       deskripsi: t.deskripsi,
-  //     },
-  //   });
-  // }
-  // console.log(
-  //   "✅ tujuan bimbingan belajar desa seeded (editable later via UI)",
-  // );
-
-  // for (const t of lokasiJadwalBimbinganBelajarDesa) {
-  //   await prisma.lokasiJadwalBimbinganBelajarDesa.upsert({
-  //     where: { id: t.id },
-  //     update: {
-  //       judul: t.judul,
-  //       deskripsi: t.deskripsi,
-  //     },
-  //     create: {
-  //       id: t.id,
-  //       judul: t.judul,
-  //       deskripsi: t.deskripsi,
-  //     },
-  //   });
-  // }
-  // console.log(
-  //   "✅ lokasi jadwal bimbingan belajar desa seeded (editable later via UI)",
-  // );
-
-  // for (const t of fasilitasBimbinganBelajarDesa) {
-  //   await prisma.fasilitasBimbinganBelajarDesa.upsert({
-  //     where: { id: t.id },
-  //     update: {
-  //       judul: t.judul,
-  //       deskripsi: t.deskripsi,
-  //     },
-  //     create: {
-  //       id: t.id,
-  //       judul: t.judul,
-  //       deskripsi: t.deskripsi,
-  //     },
-  //   });
-  // }
-  // console.log(
-  //   "✅ fasilitas bimbingan belajar desa seeded (editable later via UI)",
-  // );
+  await seedBimbinganBelajar();
 
   // // =========== SUBMENU PENDIDIKAN NON FORMAL =====================
-
-  // for (const t of tujuanProgram2) {
-  //   await prisma.tujuanPendidikanNonFormal.upsert({
-  //     where: { id: t.id },
-  //     update: {
-  //       judul: t.judul,
-  //       deskripsi: t.deskripsi,
-  //     },
-  //     create: {
-  //       id: t.id,
-  //       judul: t.judul,
-  //       deskripsi: t.deskripsi,
-  //     },
-  //   });
-  // }
-  // console.log(
-  //   "✅ fasilitas bimbingan belajar desa seeded (editable later via UI)",
-  // );
-
-  // for (const t of tempatKegiatan) {
-  //   await prisma.tempatKegiatan.upsert({
-  //     where: { id: t.id },
-  //     update: {
-  //       judul: t.judul,
-  //       deskripsi: t.deskripsi,
-  //     },
-  //     create: {
-  //       id: t.id,
-  //       judul: t.judul,
-  //       deskripsi: t.deskripsi,
-  //     },
-  //   });
-  // }
-  // console.log(
-  //   "✅ fasilitas bimbingan belajar desa seeded (editable later via UI)",
-  // );
-
-  // for (const t of jenisProgramYangDiselenggarakan) {
-  //   await prisma.jenisProgramYangDiselenggarakan.upsert({
-  //     where: { id: t.id },
-  //     update: {
-  //       judul: t.judul,
-  //       deskripsi: t.deskripsi,
-  //     },
-  //     create: {
-  //       id: t.id,
-  //       judul: t.judul,
-  //       deskripsi: t.deskripsi,
-  //     },
-  //   });
-  // }
-  // console.log(
-  //   "✅ fasilitas bimbingan belajar desa seeded (editable later via UI)",
-  // );
-
+  await seedPendidikanNonFormal();
   // // =========== SUBMENU PERPUSTAKAAN DIGITAL =====================
-  // console.log("🔄 Seeding Kategori Buku...");
-  // for (const k of kategoriBuku) {
-  //   await prisma.kategoriBuku.upsert({
-  //     where: {
-  //       id: k.id,
-  //     },
-  //     update: {
-  //       name: k.name,
-  //     },
-  //     create: {
-  //       id: k.id,
-  //       name: k.name,
-  //     },
-  //   });
-  // }
-  // console.log("✅ Kategori Buku seeded successfully");
-
-  // console.log("🔄 Seeding Data perpustakaan...");
-  // for (const k of dataPerpustakaan) {
-  //   await prisma.dataPerpustakaan.upsert({
-  //     where: {
-  //       id: k.id,
-  //     },
-  //     update: {
-  //       judul: k.judul,
-  //       deskripsi: k.deskripsi,
-  //       kategoriId: k.kategoriId,
-  //       imageId: k.imageId,
-  //     },
-  //     create: {
-  //       id: k.id,
-  //       judul: k.judul,
-  //       deskripsi: k.deskripsi,
-  //       kategoriId: k.kategoriId,
-  //       imageId: k.imageId,
-  //     },
-  //   });
-  // }
-  // console.log("✅ Data perpustakaan seeded successfully");
+  await seedDataPerpustakaan();
 
   // =========== SUBMENU DATA PENDIDIKAN =====================
-  console.log("🔄 Seeding Data pendidikan...");
-  for (const k of dataPendidikan) {
-    await prisma.dataPendidikan.upsert({
-      where: {
-        id: k.id,
-      },
-      update: {
-        name: k.name,
-        jumlah: k.jumlah,
-      },
-      create: {
-        id: k.id,
-        name: k.name,
-        jumlah: k.jumlah,
-      },
-    });
-  }
-  console.log("✅ Data pendidikan seeded successfully");
+  await seedDataPendidikan();
 })()
   .then(() => prisma.$disconnect())
   .catch((e) => {
