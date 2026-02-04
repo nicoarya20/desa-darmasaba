@@ -123,7 +123,7 @@ const getWorkStatus = (day: string, currentTime: string): { status: string; mess
 
   let workHoursMessage = "";
   if (["Senin", "Selasa", "Rabu", "Kamis"].includes(day)) {
-    workHoursMessage = "07:30 - 15:10";
+    workHoursMessage = "07:30 - 15:30";
   } else if (day === "Jumat") {
     workHoursMessage = "07:30 - 12:00";
   }

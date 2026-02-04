@@ -60,3 +60,12 @@ export async function seedDataPerpustakaan() {
   }
   console.log("✅ Data perpustakaan seeded successfully");
 }
+if (import.meta.main) {
+  seedDataPerpustakaan()
+    .then(() => {
+      console.log("seed data perpustakaan success");
+    })
+    .catch((err) => {
+      console.log("gagal seed data perpustakaan", JSON.stringify(err));
+    });
+}

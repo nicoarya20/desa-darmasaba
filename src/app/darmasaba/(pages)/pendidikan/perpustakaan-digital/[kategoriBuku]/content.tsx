@@ -19,19 +19,27 @@ function Content({ kategoriBuku }: { kategoriBuku: string }) {
   const searchQuery = searchParams.get('search') || '';
   const router = useTransitionRouter()
 
+  // Convert kebab-case back to original category name format
+  // This reverses the transformation done in layoutTabs: item.name.toLowerCase().replace(/\s+/g, '-')
+  const convertKebabCaseToOriginal = (kebabStr: string): string => {
+    // Replace hyphens with spaces
+    return kebabStr.replace(/-/g, ' ');
+  };
+
   const decodedKategoriBuku = decodeURIComponent(kategoriBuku);
+  const originalKategoriName = convertKebabCaseToOriginal(decodedKategoriBuku);
 
   const loadData = useCallback(async (searchQuery: string = '', page: number = 1) => {
     try {
       setIsLoading(true);
-      const currentKategoriFilter = decodedKategoriBuku.toLowerCase() === 'semua' ? '' : decodedKategoriBuku;
+      const currentKategoriFilter = decodedKategoriBuku.toLowerCase() === 'semua' ? '' : originalKategoriName;
       await state.dataPerpustakaan.findMany.load(page, 3, searchQuery, currentKategoriFilter);
       setCurrentPage(page);
       setTotalPages(state.dataPerpustakaan.findMany.totalPages);
     } finally {
       setIsLoading(false);
     }
-  }, [state.dataPerpustakaan.findMany, decodedKategoriBuku]);
+  }, [state.dataPerpustakaan.findMany, originalKategoriName, decodedKategoriBuku]);
 
   useShallowEffect(() => {
     loadData(searchQuery);
