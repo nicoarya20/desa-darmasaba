@@ -162,6 +162,9 @@ function Page() {
               p="lg"
               shadow="sm"
               style={{
+                height: '100%',
+                display: 'flex',
+                flexDirection: 'column',
                 '&:hover': {
                   transform: 'translateY(-4px)',
                   boxShadow: '0 8px 20px rgba(0,0,0,0.1)',
@@ -169,7 +172,7 @@ function Page() {
                 transition: 'transform 0.2s ease, box-shadow 0.2s ease',
               }}
             >
-              <Stack gap="sm">
+              <Stack gap="sm" style={{ flex: 1 }}>
                 <Text
                   c={colors['blue-button']}
                   lineClamp={2}
@@ -190,7 +193,7 @@ function Page() {
                     : '-'}
                 </Text>
 
-                <Box>
+                <Box style={{ flex: 1 }}>
                   <Text fw="bold" fz="sm">
                     Penanganan:
                   </Text>
@@ -257,6 +260,7 @@ function Page() {
                   onClick={() => router.push(`/darmasaba/keamanan/laporan-publik/${v.id}`)}
                   size={mobile ? 'sm' : 'md'}
                   fullWidth
+                  style={{ marginTop: 'auto' }}
                 >
                   {mobile ? 'Detail' : 'Lihat Detail Kronologi'}
                 </Button>

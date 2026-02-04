@@ -20,12 +20,25 @@ export default async function handler(request: Request) {
       }, { status: 400 });
     }
 
-    const data = await prisma.profilePPID.findUnique({
-      where: { id },
-      include: {
-        image: true,
-      }
-    });
+    let data;
+
+    // Special handling for 'edit' - get the first/only record
+    if (id === 'edit') {
+      data = await prisma.profilePPID.findFirst({
+        where: { isActive: true },
+        include: {
+          image: true,
+        },
+        orderBy: { createdAt: 'asc' } // Get the oldest one first
+      });
+    } else {
+      data = await prisma.profilePPID.findUnique({
+        where: { id },
+        include: {
+          image: true,
+        }
+      });
+    }
 
     if (!data) {
       return Response.json({

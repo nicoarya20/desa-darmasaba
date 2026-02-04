@@ -20,12 +20,25 @@ export default async function profilePerbekelFindById(request: Request) {
             }, { status: 400 });
         }
 
-        const data = await prisma.profilPerbekel.findUnique({
+        let data;
+
+        // Special handling for 'edit' - get the first/only record
+        if (id === 'edit') {
+          data = await prisma.profilPerbekel.findFirst({
+            where: { isActive: true },
+            include: {
+              image: true,
+            },
+            orderBy: { createdAt: 'asc' } // Get the oldest one first
+          });
+        } else {
+          data = await prisma.profilPerbekel.findUnique({
             where: { id },
             include: {
-                image: true,
+              image: true,
             }
-        });
+          });
+        }
 
         if (!data) {
             return Response.json({
