@@ -38,12 +38,12 @@ export default async function seedAssets() {
   console.log("🎉 Image seeding completed");
 }
 
-// if (import.meta.main) {
-//   seedAssets()
-//     .then(() => {
-//       console.log("seed assets success");
-//     })
-//     .catch((err) => {
-//       console.log("gagal seed assets", JSON.stringify(err));
-//     });
-// }
+if (import.meta.main) {
+  seedAssets()
+    .then(() => {
+      console.log("seed assets success");
+    })
+    .catch((err) => {
+      console.log("gagal seed assets", JSON.stringify(err));
+    });
+}

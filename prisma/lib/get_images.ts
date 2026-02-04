@@ -1,3 +1,5 @@
+import { getValidAuthToken } from "../../src/lib/seafile-auth-service";
+
 type DirItem = {
   type: "file" | "dir";
   name: string;
@@ -5,7 +7,6 @@ type DirItem = {
   size?: number;
 };
 
-const TOKEN = process.env.SEAFILE_TOKEN!;
 const REPO_ID = process.env.SEAFILE_REPO_ID!;
 
 // ⛔ PENTING: RELATIVE PATH (tanpa slash depan)
@@ -13,11 +14,12 @@ const DIR_TARGET = "asset-web";
 
 const BASE_URL = process.env.SEAFILE_URL;
 
-const headers = {
-  Authorization: `Token ${TOKEN}`,
-};
-
 async function getDirItems(): Promise<DirItem[]> {
+  const token = await getValidAuthToken();
+  const headers = {
+    Authorization: `Token ${token}`,
+  };
+
   const res = await fetch(`${BASE_URL}/repos/${REPO_ID}/dir/?p=${DIR_TARGET}`, {
     headers,
   });
@@ -30,6 +32,11 @@ async function getDirItems(): Promise<DirItem[]> {
 }
 
 async function getDownloadUrl(filePath: string): Promise<string> {
+  const token = await getValidAuthToken();
+  const headers = {
+    Authorization: `Token ${token}`,
+  };
+
   const res = await fetch(
     `${BASE_URL}/repos/${REPO_ID}/file/?p=${encodeURIComponent(filePath)}&reuse=1`,
     { headers },

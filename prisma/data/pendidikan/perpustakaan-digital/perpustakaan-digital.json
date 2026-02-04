@@ -138,5 +138,61 @@
     "deskripsi": "<p>Cerita edukatif yang mengenalkan sains kepada anak dengan bahasa sederhana</p>",
     "kategoriId": "cmkqb11mc000104jibqh7bdzu",
     "imageName": "G0iELZb2DhQDCCP5OdzJR-desktop.webp"
+  },
+  {
+    "id": "cml7fq776000104jscnj58sgm",
+    "judul": "Pedagogy of the Oppressed",
+    "deskripsi": "<p>Klasik pemikiran pendidikan kritis; menggali hubungan guru-murid dan peran pendidikan dalam pembebasan sosial</p>",
+    "kategoriId": "cmkqb11mc000104jibq97bdzu",
+    "imageName": "pendidikan-1.webp"
+  },
+  {
+    "id": "cml7fqurm000204js5p60hkym",
+    "judul": "The Courage to Teach",
+    "deskripsi": "<p>Tentang refleksi diri seorang pendidik; cocok untuk pengajar yang ingin lebih dari sekedar “metode mengajar”</p>",
+    "kategoriId": "cmkqb11mc000104jibq97bdzu",
+    "imageName": "pendidikan-2.webp"
+  },
+  {
+    "id": "cml7fqurm000204js5p60hkzn",
+    "judul": "A Brief History of Time",
+    "deskripsi": "<p>Penjelasan kosmologi yang terkenal dunia; sains kompleks dibahas dengan bahasa yang bisa dinikmati pembaca umum</p>",
+    "kategoriId": "cmkqb11mc000104jibqa7bdzu",
+    "imageName": "ilmiah-1.webp"
+  },
+  {
+    "id": "cml7fqurm000204js5p60hkao",
+    "judul": "The Selfish Gene",
+    "deskripsi": "<p>Membawa perspektif baru tentang evolusi melalui “gen” sebagai unit seleksi</p>",
+    "kategoriId": "cmkqb11mc000104jibqa7bdzu",
+    "imageName": "ilmiah-2.webp"
+  },
+  {
+    "id": "cml7fx09c000304jshams3xbg",
+    "judul": "A Little Life",
+    "deskripsi": "<p>Novel yang menggambarkan hidup seorang remaja yang mengalami kehidupan yang sangat sulit</p>",
+    "kategoriId": "cmkqb11mc000104jibqb7bdzu",
+    "imageName": "drama-1.webp"
+  },
+  {
+    "id": "cml7fx09c000304jshams3xch",
+    "judul": "Death of a Salesman",
+    "deskripsi": "<p>Drama teater klasik Amerika tentang harapan, keluarga, dan realitas hidup.</p>",
+    "kategoriId": "cmkqb11mc000104jibqb7bdzu",
+    "imageName": "drama-2.webp"
+  },
+  {
+    "id": "cml7fx09c000304jshams3xdi",
+    "judul": "How Not to Die",
+    "deskripsi": "<p>Panduan berbasis penelitian tentang pola makan untuk mencegah dan menangani penyakit.</p>",
+    "kategoriId": "cmkqb11mc000104jibqg7bdzu",
+    "imageName": "kesehatan-1.webp"
+  },
+  {
+    "id": "cml7fx09c000304jshams3xej",
+    "judul": "The Body Keeps the Score",
+    "deskripsi": "<p>Fokus pada trauma, otak & tubuh; penting untuk memahami kesehatan mental secara mendalam.</p>",
+    "kategoriId": "cmkqb11mc000104jibqg7bdzu",
+    "imageName": "kesehatan-2.webp"
   }
 ]
