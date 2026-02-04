@@ -4,7 +4,7 @@ export default async function visiMisiDesaFindById(request: Request) {
     const url = new URL(request.url);
     const pathSegments = url.pathname.split('/');
     const id = pathSegments[pathSegments.length - 1];
- 
+
     if (!id) {
       return Response.json({
         success: false,
@@ -20,9 +20,19 @@ export default async function visiMisiDesaFindById(request: Request) {
         }, {status: 400})
       }
 
-      const data = await prisma.visiMisiDesa.findUnique({
-        where: { id },
-      })
+      let data;
+
+      // Special handling for 'edit' - get the first/only record
+      if (id === 'edit') {
+        data = await prisma.visiMisiDesa.findFirst({
+          where: { isActive: true },
+          orderBy: { createdAt: 'asc' } // Get the oldest one first
+        });
+      } else {
+        data = await prisma.visiMisiDesa.findUnique({
+          where: { id },
+        })
+      }
 
       if (!data) {
         return Response.json({

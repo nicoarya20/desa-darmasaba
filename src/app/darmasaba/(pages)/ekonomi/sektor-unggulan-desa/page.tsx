@@ -1,7 +1,16 @@
 'use client'
 import colors from '@/con/colors';
-import { Stack, Box, Text, Paper, Skeleton, Center, Title } from '@mantine/core';
-import React from 'react';
+import {
+  Stack,
+  Box,
+  Text,
+  Paper,
+  Skeleton,
+  Center,
+  Title,
+  Pagination
+} from '@mantine/core';
+import React, { useState } from 'react';
 import BackButton from '../../desa/layanan/_com/BackButto';
 import { BarChart } from '@mantine/charts';
 import { useProxy } from 'valtio/utils';
@@ -13,11 +22,15 @@ function Page() {
 
   const {
     data,
-    loading,
+    loading
   } = state.findMany
 
+  const [activePage, setActivePage] = useState(1);
+  const itemsPerPage = 3;
+
   useShallowEffect(() => {
-    state.findMany.load()
+    // Muat semua data tanpa batasan jumlah per halaman
+    state.findMany.load() // Ambil banyak data sekaligus
   }, [])
 
   if (loading || !data) {
@@ -43,6 +56,11 @@ function Page() {
       </Stack>
     );
   }
+
+  // Filter data untuk halaman saat ini
+  const startIndex = (activePage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentData = data.slice(startIndex, endIndex);
 
   const chartData = data
     .filter(item => item?.name && typeof item.value === 'number')
@@ -74,9 +92,9 @@ function Page() {
       </Box>
       <Box px={{ base: 'md', md: 100 }}>
         <Stack gap="lg" justify="center">
-          {data.map((v, k) => {
+          {currentData.map((v, k) => {
             return (
-              <Paper p="xl" key={k}>
+              <Paper p="xl" key={`${startIndex + k}`}>
                 <Title order={3} fw="bold">
                   {v.name}
                 </Title>
@@ -90,6 +108,18 @@ function Page() {
               </Paper>
             );
           })}
+
+          {/* Pagination */}
+          <Center mt="xl">
+            <Pagination
+              total={Math.ceil(data.length / itemsPerPage)}
+              value={activePage}
+              onChange={setActivePage}
+              size="lg"
+              radius="md"
+            />
+          </Center>
+
           <Box style={{ width: '100%', overflowX: 'auto' }}>
             <Paper p="xl">
               <Title order={3} fw="bold" pb="md">

@@ -55,9 +55,9 @@ function Page() {
         <SimpleGrid
           px={{ base: 20, md: 100 }}
           cols={{ base: 1, md: 2 }}
-          spacing="xl"
+          spacing={{ base: 'md', md: 'xl' }}
         >
-          <Paper p="xl" radius="xl" shadow="lg" >
+          <Paper p="xl" radius="xl" shadow="lg" bg="white">
             <Title order={2} c={colors['blue-button']} fw="bold" lh={1.2}>
               Program Keamanan Berjalan
             </Title>
@@ -85,9 +85,9 @@ function Page() {
       <SimpleGrid
         px={{ base: 20, md: 100 }}
         cols={{ base: 1, md: 2 }}
-        spacing="xl"
+        spacing={{ base: 'md', md: 'xl' }}
       >
-        <Paper p="xl" radius="xl" shadow="lg" >
+        <Paper p="xl" radius="xl" shadow="lg" bg="white">
           <Title order={2} c={colors['blue-button']} fw="bold" lh={1.2}>
             Program Keamanan Berjalan
           </Title>
@@ -108,6 +108,7 @@ function Page() {
                       cursor: 'pointer',
                       backgroundColor: colors['blue-button'],
                       transition: 'all 0.2s ease',
+                      marginBottom: '10px' // Add space between items
                     }}
                     onClick={() =>
                       router.push(`/darmasaba/keamanan/pencegahan-kriminalitas/${item.id}`)
@@ -160,7 +161,7 @@ function Page() {
           {findFirst.loading ? (
             <Center><Skeleton h={400} /></Center>
           ) : findFirst.data ? (
-            <Paper p="xl" radius="xl" shadow="lg">
+            <Paper p="xl" radius="xl" shadow="lg" bg="white">
               {findFirst.data?.linkVideo ? (
                 <Box
                   component="iframe"
@@ -168,7 +169,7 @@ function Page() {
                   width="100%"
                   height={300}
                   allowFullScreen
-                  style={{ borderRadius: 8 }}
+                  style={{ borderRadius: 8, marginBottom: 15 }}
                 />
               ) : (
                 <Text fz={{ base: 'xs', md: 'sm' }} c="dimmed" lh={1.4}>

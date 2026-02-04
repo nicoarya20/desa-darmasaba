@@ -26,9 +26,19 @@ export default async function lambangDesaFindById(request: Request) {
       );
     }
 
-    const data = await prisma.lambangDesa.findUnique({
-      where: { id },
-    });
+    let data;
+
+    // Special handling for 'edit' - get the first/only record
+    if (id === 'edit') {
+      data = await prisma.lambangDesa.findFirst({
+        where: { isActive: true },
+        orderBy: { createdAt: 'asc' } // Get the oldest one first
+      });
+    } else {
+      data = await prisma.lambangDesa.findUnique({
+        where: { id },
+      });
+    }
 
     if (!data) {
       return Response.json(

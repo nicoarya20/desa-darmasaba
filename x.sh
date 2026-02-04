@@ -1,8 +1,8 @@
 
 # ambil token
-# curl -X POST https://cld-dkr-makuro-seafile.wibudev.com/api2/auth-token/ \
-#   -d "username=nico@bip.com" \
-#   -d "password=Production_123"
+curl -X POST https://cld-dkr-makuro-seafile.wibudev.com/api2/auth-token/ \
+  -d "username=nico@bip.com" \
+  -d "password=Production_123"
 
 # ambil list repo / library
 
