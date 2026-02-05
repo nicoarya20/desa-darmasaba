@@ -227,7 +227,8 @@ export async function getAllPublicCdnUrls(): Promise<CdnItem[]> {
   return items
     .filter((item) => item.type === "file")
     .map((file) => {
-      const path = `${DIR_TARGET}/${file.name}`;
+    //   const path = `${DIR_TARGET}/${file.name}`;
+    const path = `/${file.name}`;
       return {
         name: file.name,
         path,
