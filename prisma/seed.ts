@@ -65,6 +65,7 @@ import { seedBimbinganBelajar } from "./_seeder_list/pendidikan/seed_bimbingan_b
 import { seedDataPendidikan } from "./_seeder_list/pendidikan/seed_data_pendidikan";
 import { seedPendidikanNonFormal } from "./_seeder_list/pendidikan/seed_pendidikan_non_formal";
 import { seedDataPerpustakaan } from "./_seeder_list/pendidikan/seed_data_perpustakaan";
+import { seedProfilPpd } from "./_seeder_list/ppid/profil-ppid/seed_profil_ppd";
 
 (async () => {
   // Always run seedAssets to handle new images without duplication
@@ -178,6 +179,9 @@ import { seedDataPerpustakaan } from "./_seeder_list/pendidikan/seed_data_perpus
   await seedPrestasiDesa();
 
   // // =========== MENU PPID ===========
+
+  // // =========== SUBMENU PROFIL PPID ===========
+  await seedProfilPpd();
 
   // // =========== SUBMENU STRUKTUR PPID ===========
   await seedPegawaiPpid();
