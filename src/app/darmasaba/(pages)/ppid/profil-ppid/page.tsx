@@ -34,7 +34,7 @@ function Page() {
   }, []);
 
   // LOADING SKELETON
-  if (!allList.profile.data)
+  if (allList.profile.loading)
     return (
       <Stack bg={colors.Bg} py="xl" gap="22">
         <Box px={{ base: 'md', md: 100 }}>
@@ -48,6 +48,50 @@ function Page() {
             {Array.from({ length: 8 }).map((_, i) => (
               <Skeleton key={i} h={40} mb="sm" />
             ))}
+          </Paper>
+        </Box>
+      </Stack>
+    );
+
+  // ERROR HANDLING
+  if (allList.profile.error)
+    return (
+      <Stack bg={colors.Bg} py="xl" gap="22" justify="center" align="center">
+        <Box px={{ base: 'md', md: 100 }}>
+          <Paper p="xl" bg={colors['white-trans-1']} radius="lg" shadow="xl">
+            {allList.profile.error === "Belum ada data profil PPID yang aktif" ? (
+              <>
+                <Title order={3} ta="center" c={"orange"} fw={700}>
+                  Data Profile PPID Belum Tersedia
+                </Title>
+                <Text ta="center" mt="md">Mohon maaf, data profil PPID belum tersedia saat ini</Text>
+              </>
+            ) : (
+              <>
+                <Title order={3} ta="center" c={"red"} fw={700}>
+                  Gagal Memuat Data Profile
+                </Title>
+                <Text ta="center" mt="md">Silakan coba beberapa saat lagi</Text>
+                <Text ta="center" size="sm" c={"gray"} mt="sm">
+                  Error: {allList.profile.error}
+                </Text>
+              </>
+            )}
+          </Paper>
+        </Box>
+      </Stack>
+    );
+
+  // NO DATA HANDLING
+  if (!allList.profile.data)
+    return (
+      <Stack bg={colors.Bg} py="xl" gap="22" justify="center" align="center">
+        <Box px={{ base: 'md', md: 100 }}>
+          <Paper p="xl" bg={colors['white-trans-1']} radius="lg" shadow="xl">
+            <Title order={3} ta="center" c={"orange"} fw={700}>
+              Data Profile PPID Belum Tersedia
+            </Title>
+            <Text ta="center" mt="md">Mohon maaf, data profil PPID belum tersedia saat ini</Text>
           </Paper>
         </Box>
       </Stack>

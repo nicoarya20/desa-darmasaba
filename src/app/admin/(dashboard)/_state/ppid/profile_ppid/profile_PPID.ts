@@ -57,12 +57,24 @@ const stateProfilePPID = proxy({
         if (result.success) {
           this.data = result.data;
           return result.data;
-        } else throw new Error(result.message || "Gagal memuat data profile");
+        } else {
+          // Jika pesan adalah "Data tidak ditemukan" atau "Belum ada data profil PPID yang aktif",
+          // tetap simpan sebagai error tapi tidak perlu menampilkan toast error karena ini bukan error sebenarnya
+          if (result.message === "Data tidak ditemukan" || result.message === "Belum ada data profil PPID yang aktif") {
+            this.error = result.message;
+            return null;
+          } else {
+            throw new Error(result.message || "Gagal memuat data profile");
+          }
+        }
       } catch (err) {
         const msg = (err as Error).message;
         this.error = msg;
         console.error("Load profile error:", msg);
-        toast.error("Gagal memuat data profile");
+        // Hanya tampilkan toast error jika bukan karena data tidak ditemukan
+        if (msg !== "Data tidak ditemukan" && msg !== "Belum ada data profil PPID yang aktif") {
+          toast.error("Gagal memuat data profile");
+        }
         return null;
       } finally {
         this.loading = false;

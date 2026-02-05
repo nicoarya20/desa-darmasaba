@@ -41,10 +41,18 @@ export default async function handler(request: Request) {
     }
 
     if (!data) {
-      return Response.json({
-        success: false,
-        message: "Data tidak ditemukan",
-      }, { status: 404 });
+      // Untuk ID 'edit', kembalikan pesan khusus karena mungkin memang belum ada data
+      if (id === 'edit') {
+        return Response.json({
+          success: false,
+          message: "Belum ada data profil PPID yang aktif",
+        }, { status: 404 });
+      } else {
+        return Response.json({
+          success: false,
+          message: "Data tidak ditemukan",
+        }, { status: 404 });
+      }
     }
 
     return Response.json({
