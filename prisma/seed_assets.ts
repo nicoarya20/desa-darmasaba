@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import prisma from "@/lib/prisma";
 
-import { getAllDownloadUrls } from "./lib/get_images";
+import { getAllPublicCdnUrls } from "./lib/create_file_share_folder";
 
 export default async function seedAssets() {
-  const images = await getAllDownloadUrls();
+  const images = await getAllPublicCdnUrls();
 
   for (const img of images) {
     try {
@@ -20,7 +20,7 @@ export default async function seedAssets() {
             name: img.name,
             category: "image",
             mimeType: "image/webp",
-            link: img.downloadUrl,
+            link: img.cdnUrl,
             path: "images",
             realName: img.name,
             isActive: true,

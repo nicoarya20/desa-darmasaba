@@ -13,12 +13,27 @@ function VisiMisiDesa() {
     state.findUnique.load('edit');
   }, []);
 
-  const { data, loading } = state.findUnique;
+  const { data, loading, error } = state.findUnique;
 
-  if (loading || !data) {
+  if (loading) {
     return (
       <Box py="xl">
         <Skeleton h={500} radius="lg" />
+      </Box>
+    );
+  }
+
+  if (error || !data) {
+    return (
+      <Box py="xl">
+        <Paper p="xl" radius="lg" shadow="md" withBorder>
+          <Title order={2} c="red" ta="center" mb="md">
+            Terjadi Kesalahan
+          </Title>
+          <Text ta="center" c="dimmed">
+            {error || 'Data visi dan misi desa tidak ditemukan'}
+          </Text>
+        </Paper>
       </Box>
     );
   }
