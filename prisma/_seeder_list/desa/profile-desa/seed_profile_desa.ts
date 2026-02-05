@@ -4,6 +4,7 @@ import maskotDesa from "../../../data/desa/profile/maskot_desa.json";
 import profilePerbekel from "../../../data/desa/profile/profil_perbekel.json";
 import profileDesaImage from "../../../data/desa/profile/profileDesaImage.json";
 import sejarahDesa from "../../../data/desa/profile/sejarah_desa.json";
+import visiMisiDesa from "../../../data/desa/profile/visi_misi_desa.json";
 
 export async function seedProfileDesa() {
   // =========== SEJARAH DESA ===========
@@ -25,6 +26,26 @@ export async function seedProfileDesa() {
   }
 
   console.log("sejarah desa success ...");
+
+  // =========== VISI MISI DESA ===========
+  for (const l of visiMisiDesa) {
+    await prisma.visiMisiDesa.upsert({
+      where: {
+        id: l.id,
+      },
+      update: {
+        visi: l.visi,
+        misi: l.misi,
+      },
+      create: {
+        id: l.id,
+        visi: l.visi,
+        misi: l.misi,
+      },
+    });
+  }
+
+  console.log("visi misi desa success ...");
 
   // =========== MASKOT DESA ===========
   for (const l of maskotDesa) {

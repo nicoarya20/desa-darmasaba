@@ -11,14 +11,14 @@ type DirItem = {
   name: string;
 };
 
-const BASE_URL = "https://cld-dkr-makuro-seafile.wibudev.com";
+const BASE_URL = process.env.SEAFILE_BASE_URL!;
 const REPO_ID = process.env.SEAFILE_REPO_ID!;
 
 // folder yang dishare (RELATIVE, tanpa slash depan)
 const DIR_TARGET = "asset-web";
 
 // 🔑 TOKEN DIRECTORY SHARE (/d/{token})
-const PUBLIC_SHARE_TOKEN = "3a9a9ecb5e244f4da8ae";
+const PUBLIC_SHARE_TOKEN = process.env.SEAFILE_PUBLIC_SHARE_TOKEN!;
 
 /**
  * Ambil list file dari repo (butuh token sekali)
