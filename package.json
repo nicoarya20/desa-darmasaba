@@ -5,7 +5,10 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "test:api": "vitest run",
+    "test:e2e": "playwright test",
+    "test": "bun run test:api && bun run test:e2e"
   },
   "prisma": {
     "seed": "bun run prisma/seed.ts"
@@ -106,17 +109,23 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@playwright/test": "^1.58.2",
+    "@testing-library/jest-dom": "^6.9.1",
     "@types/cli-progress": "^3.11.6",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@vitest/ui": "^4.0.18",
     "eslint": "^9",
     "eslint-config-next": "15.1.6",
+    "jsdom": "^28.0.0",
+    "msw": "^2.12.9",
     "parcel": "^2.6.2",
     "postcss": "^8.5.1",
     "postcss-preset-mantine": "^1.17.0",
     "postcss-simple-vars": "^7.0.1",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.0.18"
   }
 }

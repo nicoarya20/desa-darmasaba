@@ -70,6 +70,15 @@ function EditMediaSosial() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Check if form is valid
+  const isFormValid = () => {
+    const isNameValid = formData.name?.trim() !== '';
+    const isIconUrlValid = formData.iconUrl?.trim() !== '';
+    const isCustomIconValid = selectedSosmed !== 'custom' || file !== null;
+
+    return isNameValid && isIconUrlValid && isCustomIconValid;
+  };
+
   const [originalData, setOriginalData] = useState({
     name: '',
     icon: '',
@@ -340,8 +349,11 @@ function EditMediaSosial() {
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? 'linear-gradient(135deg, #cccccc, #999999)'
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}

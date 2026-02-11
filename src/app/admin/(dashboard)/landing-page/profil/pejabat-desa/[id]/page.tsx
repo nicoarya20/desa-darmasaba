@@ -40,6 +40,15 @@ function EditPejabatDesa() {
   const [file, setFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      formData.name?.trim() !== '' &&
+      formData.position?.trim() !== '' &&
+      (formData.imageId?.trim() !== '' || file !== null)
+    );
+  };
+
   // Load data on mount
   useEffect(() => {
     const loadData = async () => {
@@ -327,11 +336,13 @@ function EditPejabatDesa() {
               <Button
                 onClick={handleSubmit}
                 loading={isSubmitting || allState.edit.loading}
-                disabled={!formData.name}
+                disabled={!isFormValid() || isSubmitting || allState.edit.loading}
                 radius="md"
                 size="md"
                 style={{
-                  background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                  background: !isFormValid() || isSubmitting || allState.edit.loading
+                    ? 'linear-gradient(135deg, #cccccc, #999999)'
+                    : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                   color: '#fff',
                   boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
                 }}

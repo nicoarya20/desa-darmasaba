@@ -31,6 +31,16 @@ function CreateProgramInovasi() {
   const [file, setFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      stateProgramInovasi.create.form.name?.trim() !== '' &&
+      stateProgramInovasi.create.form.description?.trim() !== '' &&
+      stateProgramInovasi.create.form.link?.trim() !== '' &&
+      file !== null
+    );
+  };
+
   useEffect(() => {
     stateProgramInovasi.findMany.load();
   }, []);
@@ -221,8 +231,11 @@ function CreateProgramInovasi() {
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting 
+                  ? 'linear-gradient(135deg, #cccccc, #999999)' 
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}

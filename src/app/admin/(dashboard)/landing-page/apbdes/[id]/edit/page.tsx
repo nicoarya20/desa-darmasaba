@@ -53,6 +53,14 @@ function EditAPBDes() {
   const params = useParams();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      apbdesState.edit.form.items.length > 0
+    );
+  };
+
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [previewDoc, setPreviewDoc] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -492,9 +500,11 @@ function EditAPBDes() {
             <Button
               onClick={handleSubmit}
               radius="md"
-              disabled={apbdesState.edit.form.items.length === 0 || apbdesState.edit.loading}
+              disabled={!isFormValid() || isSubmitting || apbdesState.edit.loading}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting || apbdesState.edit.loading
+                  ? 'linear-gradient(135deg, #cccccc, #999999)'
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
               }}
             >

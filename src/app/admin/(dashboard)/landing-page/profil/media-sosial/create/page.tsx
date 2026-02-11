@@ -24,6 +24,7 @@ import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 import profileLandingPageState from '../../../../_state/landing-page/profile';
 import SelectSosialMedia from '@/app/admin/(dashboard)/_com/selectSocialMedia';
+import { sosmedMap } from '@/app/admin/(dashboard)/landing-page/profil/_lib/sosmed';
 
 // ⭐ Tambah type SosmedKey
 type SosmedKey =
@@ -38,20 +39,6 @@ type SosmedKey =
   | 'telephone'
   | 'custom';
 
-// ⭐ mapping icon sosmed bawaan
-const sosmedMap: Record<SosmedKey, { label: string; src: string | null }> = {
-  facebook: { label: 'Facebook', src: '/assets/images/sosmed/facebook.png' },
-  instagram: { label: 'Instagram', src: '/assets/images/sosmed/instagram.png' },
-  tiktok: { label: 'Tiktok', src: '/assets/images/sosmed/tiktok.png' },
-  youtube: { label: 'YouTube', src: '/assets/images/sosmed/youtube.png' },
-  whatsapp: { label: 'WhatsApp', src: '/assets/images/sosmed/whatsapp.png' },
-  gmail: { label: 'Gmail', src: '/assets/images/sosmed/gmail.png' },
-  telegram: { label: 'Telegram', src: '/assets/images/sosmed/telegram.png' },
-  x: { label: 'X (Twitter)', src: '/assets/images/sosmed/x-twitter.png' },
-  telephone: { label: 'Telephone', src: '/assets/images/sosmed/telephone-call.png' },
-  custom: { label: 'Custom Icon', src: null },
-};
-
 export default function CreateMediaSosial() {
   const router = useRouter();
   const stateMediaSosial = useProxy(profileLandingPageState.mediaSosial);
@@ -60,6 +47,15 @@ export default function CreateMediaSosial() {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Check if form is valid
+  const isFormValid = () => {
+    const isNameValid = stateMediaSosial.create.form.name?.trim() !== '';
+    const isIconUrlValid = stateMediaSosial.create.form.iconUrl?.trim() !== '';
+    const isCustomIconValid = selectedSosmed !== 'custom' || file !== null;
+
+    return isNameValid && isIconUrlValid && isCustomIconValid;
+  };
 
   useEffect(() => {
     stateMediaSosial.findMany.load();
@@ -85,7 +81,7 @@ export default function CreateMediaSosial() {
       // ──────────────── ⭐ CASE 1: PAKAI ICON DEFAULT ────────────────
       if (selectedSosmed !== 'custom') {
         stateMediaSosial.create.form.imageId = null;
-        stateMediaSosial.create.form.icon = sosmedMap[selectedSosmed].src!;
+        stateMediaSosial.create.form.icon = selectedSosmed; // Store the key, not the path
 
         await stateMediaSosial.create.create();
         resetForm();
@@ -261,8 +257,11 @@ export default function CreateMediaSosial() {
             <Button
               radius="md"
               onClick={handleSubmit}
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? 'linear-gradient(135deg, #cccccc, #999999)'
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}

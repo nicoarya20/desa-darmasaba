@@ -31,6 +31,15 @@ export default function CreateDesaAntiKorupsi() {
   const [file, setFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      file !== null &&
+      stateKorupsi.create.form.name?.trim() !== '' &&
+      stateKorupsi.create.form.kategoriId?.trim() !== ''
+    );
+  };
+
   useEffect(() => {
     stateKorupsi.findMany.load();
     korupsiState.kategoriDesaAntiKorupsi.findMany.load();
@@ -238,8 +247,11 @@ export default function CreateDesaAntiKorupsi() {
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? 'linear-gradient(135deg, #cccccc, #999999)'
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
