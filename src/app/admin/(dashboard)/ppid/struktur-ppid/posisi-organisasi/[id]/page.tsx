@@ -26,6 +26,15 @@ function EditPosisiOrganisasiPPID() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      formData.nama?.trim() !== '' &&
+      formData.hierarki?.toString().trim() !== '' &&
+      formData.deskripsi?.trim() !== ''
+    );
+  };
+
   const [originalData, setOriginalData] = useState({
     nama: "",
     deskripsi: "",
@@ -174,8 +183,11 @@ function EditPosisiOrganisasiPPID() {
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}

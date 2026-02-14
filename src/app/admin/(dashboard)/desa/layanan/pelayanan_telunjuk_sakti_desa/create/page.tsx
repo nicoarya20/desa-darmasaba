@@ -23,6 +23,15 @@ function CreatePelayananTelunjukDesa() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      stateTelunjukDesa.create.form.name?.trim() !== '' &&
+      stateTelunjukDesa.create.form.deskripsi?.trim() !== '' &&
+      stateTelunjukDesa.create.form.link?.trim() !== ''
+    );
+  };
+
   const resetForm = () => {
     stateTelunjukDesa.create.form = {
       name: '',
@@ -32,6 +41,21 @@ function CreatePelayananTelunjukDesa() {
   };
 
   const handleSubmit = async () => {
+    if (!stateTelunjukDesa.create.form.name?.trim()) {
+      toast.error('Nama pelayanan wajib diisi');
+      return;
+    }
+
+    if (!stateTelunjukDesa.create.form.deskripsi?.trim()) {
+      toast.error('Judul link wajib diisi');
+      return;
+    }
+
+    if (!stateTelunjukDesa.create.form.link?.trim()) {
+      toast.error('Link wajib diisi');
+      return;
+    }
+
     try {
       setIsSubmitting(true);
       await stateTelunjukDesa.create.create();
@@ -118,8 +142,11 @@ function CreatePelayananTelunjukDesa() {
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}

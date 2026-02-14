@@ -30,6 +30,23 @@ function CreatePenghargaan() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Helper function to check if HTML content is empty
+  const isHtmlEmpty = (html: string) => {
+    // Remove all HTML tags and check if there's any text content
+    const textContent = html.replace(/<[^>]*>/g, '').trim();
+    return textContent === '';
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      statePenghargaan.create.form.name?.trim() !== '' &&
+      statePenghargaan.create.form.juara?.trim() !== '' &&
+      !isHtmlEmpty(statePenghargaan.create.form.deskripsi) &&
+      file !== null
+    );
+  };
+
   const resetForm = () => {
     statePenghargaan.create.form = {
       name: '',
@@ -42,6 +59,26 @@ function CreatePenghargaan() {
   };
 
   const handleSubmit = async () => {
+    if (!statePenghargaan.create.form.name?.trim()) {
+      toast.error('Nama penghargaan wajib diisi');
+      return;
+    }
+
+    if (!statePenghargaan.create.form.juara?.trim()) {
+      toast.error('Juara wajib diisi');
+      return;
+    }
+
+    if (isHtmlEmpty(statePenghargaan.create.form.deskripsi)) {
+      toast.error('Deskripsi wajib diisi');
+      return;
+    }
+
+    if (!file) {
+      toast.error('Gambar wajib dipilih');
+      return;
+    }
+
     try {
       setIsSubmitting(true);
       if (!file) {
@@ -201,8 +238,11 @@ function CreatePenghargaan() {
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}

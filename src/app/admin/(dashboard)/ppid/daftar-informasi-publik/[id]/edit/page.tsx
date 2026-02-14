@@ -28,6 +28,15 @@ function EditDaftarInformasiPublik() {
     tanggal: '',
   });
 
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      formData.jenisInformasi?.trim() !== '' &&
+      formData.deskripsi?.trim() !== '' &&
+      formData.tanggal?.trim() !== ''
+    );
+  };
+
   const formatDateForInput = (dateString: string) => {
     if (!dateString) return '';
     const date = new Date(dateString);
@@ -128,10 +137,13 @@ function EditDaftarInformasiPublik() {
           <Group justify="right" mt="md">
             <Button
               onClick={handleSubmit}
+              disabled={!isFormValid()}
               radius="md"
               size="md"
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid()
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}

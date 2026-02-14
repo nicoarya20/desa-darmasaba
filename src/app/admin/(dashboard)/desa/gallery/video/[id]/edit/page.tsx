@@ -28,6 +28,24 @@ function EditVideo() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Helper function to check if HTML content is empty
+  const isHtmlEmpty = (html: string) => {
+    // Remove all HTML tags and check if there's any text content
+    const textContent = html.replace(/<[^>]*>/g, '').trim();
+    return textContent === '';
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    const embedLink = convertYoutubeUrlToEmbed(formData.linkVideo);
+    return (
+      formData.name?.trim() !== '' &&
+      formData.linkVideo?.trim() !== '' &&
+      !isHtmlEmpty(formData.deskripsi) &&
+      embedLink !== null // Make sure the embed link is valid
+    );
+  };
+
   const [originalData, setOriginalData] = useState({
     name: "",
     deskripsi: "",
@@ -86,6 +104,21 @@ function EditVideo() {
   };
 
   const handleSubmit = async () => {
+    if (!formData.name?.trim()) {
+      toast.error('Judul wajib diisi');
+      return;
+    }
+    
+    if (!formData.linkVideo?.trim()) {
+      toast.error('Link YouTube wajib diisi');
+      return;
+    }
+    
+    if (isHtmlEmpty(formData.deskripsi)) {
+      toast.error('Deskripsi wajib diisi');
+      return;
+    }
+
     try {
       setIsSubmitting(true);
       const converted = convertYoutubeUrlToEmbed(formData.linkVideo);
@@ -218,8 +251,11 @@ function EditVideo() {
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}

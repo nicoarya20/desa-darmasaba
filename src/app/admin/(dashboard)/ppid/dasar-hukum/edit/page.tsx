@@ -27,6 +27,21 @@ function EditDasarHukum() {
     content: '',
   });
 
+  // Helper function to check if rich text content is empty
+  const isRichTextEmpty = (content: string) => {
+    // Remove HTML tags and check if the resulting text is empty
+    const plainText = content.replace(/<[^>]*>/g, '').trim();
+    return plainText === '' || content.trim() === '<p></p>' || content.trim() === '<p><br></p>';
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      !isRichTextEmpty(formData.judul) &&
+      !isRichTextEmpty(formData.content)
+    );
+  };
+
   // Load data awal sekali
   useShallowEffect(() => {
     if (!dasarHukumState.findById.data) {
@@ -137,8 +152,11 @@ function EditDasarHukum() {
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}

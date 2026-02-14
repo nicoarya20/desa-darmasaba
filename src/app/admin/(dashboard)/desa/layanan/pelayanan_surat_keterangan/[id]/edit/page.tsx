@@ -149,6 +149,22 @@ function EditSuratKeterangan() {
   const [previewImage2, setPreviewImage2] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Helper function to check if HTML content is empty
+  const isHtmlEmpty = (html: string) => {
+    // Remove all HTML tags and check if there's any text content
+    const textContent = html.replace(/<[^>]*>/g, '').trim();
+    return textContent === '';
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      formData.name?.trim() !== '' &&
+      !isHtmlEmpty(formData.deskripsi) &&
+      (previewImage !== null || originalData.imageId !== '') // Either a new file is selected or an existing image exists
+    );
+  };
+
   // 🧭 Load Initial Data
   useEffect(() => {
     const loadSurat = async () => {
@@ -209,6 +225,21 @@ function EditSuratKeterangan() {
 
   // 💾 Submit Handler
   const handleSubmit = useCallback(async () => {
+    if (!formData.name?.trim()) {
+      toast.error('Nama surat keterangan wajib diisi');
+      return;
+    }
+
+    if (isHtmlEmpty(formData.deskripsi)) {
+      toast.error('Konten wajib diisi');
+      return;
+    }
+
+    if (!previewImage && !originalData.imageId) {
+      toast.error('Gambar konten pelayanan wajib dipilih');
+      return;
+    }
+
     try {
       setIsSubmitting(true);
 
@@ -251,7 +282,7 @@ function EditSuratKeterangan() {
     } finally {
       setIsSubmitting(false);
     }
-  }, [formData, file, file2, router]);
+  }, [formData, file, file2, router, previewImage, originalData.imageId]);
 
   // 📝 Form Field Handlers
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -324,10 +355,10 @@ function EditSuratKeterangan() {
 
           {/* Action Buttons */}
           <Group justify="right">
-            <Button 
-              variant="outline" 
-              color="gray" 
-              radius="md" 
+            <Button
+              variant="outline"
+              color="gray"
+              radius="md"
               onClick={handleResetForm}
               disabled={isSubmitting}
             >
@@ -336,9 +367,11 @@ function EditSuratKeterangan() {
             <Button
               onClick={handleSubmit}
               radius="md"
-              disabled={isSubmitting}
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79,172,254,0.4)',
               }}

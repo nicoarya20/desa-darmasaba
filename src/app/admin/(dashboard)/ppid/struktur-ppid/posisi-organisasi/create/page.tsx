@@ -15,6 +15,15 @@ function CreatePosisiOrganisasiPPID() {
   const stateOrganisasi = useProxy(stateStrukturPPID.posisiOrganisasi);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      stateOrganisasi.create.form.nama?.trim() !== '' &&
+      stateOrganisasi.create.form.hierarki?.toString().trim() !== '' &&
+      stateOrganisasi.create.form.deskripsi?.trim() !== ''
+    );
+  };
+
   useEffect(() => {
     stateOrganisasi.findMany.load();
   }, []);
@@ -115,8 +124,11 @@ function CreatePosisiOrganisasiPPID() {
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}

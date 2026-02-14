@@ -56,6 +56,24 @@ function Page() {
   const stateKeberatan = useProxy(permohonanKeberatanInformasi);
   const router = useRouter();
 
+  // Helper function to validate email format
+  const isValidEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    const form = stateKeberatan.create.form;
+    return (
+      form.name?.trim() !== '' &&
+      form.email?.trim() !== '' &&
+      isValidEmail(form.email) &&
+      form.notelp?.trim() !== '' &&
+      form.alasan?.trim() !== ''
+    );
+  };
+
   const submit = async () => {
     const hasil = await stateKeberatan.create.create();
     if (hasil) router.push('/darmasaba/permohonan/berhasil');
@@ -232,6 +250,7 @@ function Page() {
                       radius="md"
                       fw={600}
                       bg={colors['blue-button']}
+                      disabled={!isFormValid()}
                     >
                       Kirim Permohonan
                     </Button>
