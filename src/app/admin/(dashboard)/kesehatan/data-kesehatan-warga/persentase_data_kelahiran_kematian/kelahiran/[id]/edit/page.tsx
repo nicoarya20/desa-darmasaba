@@ -26,6 +26,16 @@ function EditKelahiran() {
   const params = useParams();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      formData.nama?.trim() !== '' &&
+      formData.tanggal !== '' &&
+      formData.jenisKelamin?.trim() !== '' &&
+      formData.alamat?.trim() !== ''
+    );
+  };
+
   const [formData, setFormData] = useState({
     nama: '',
     tanggal: '',
@@ -90,6 +100,26 @@ function EditKelahiran() {
 
 
   const handleSubmit = async () => {
+    if (!formData.nama?.trim()) {
+      toast.error('Nama wajib diisi');
+      return;
+    }
+
+    if (!formData.tanggal) {
+      toast.error('Tanggal wajib diisi');
+      return;
+    }
+
+    if (!formData.jenisKelamin?.trim()) {
+      toast.error('Jenis kelamin wajib diisi');
+      return;
+    }
+
+    if (!formData.alamat?.trim()) {
+      toast.error('Alamat wajib diisi');
+      return;
+    }
+
     try {
       setIsSubmitting(true);
       // Update global state hanya saat submit
@@ -173,8 +203,11 @@ function EditKelahiran() {
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}

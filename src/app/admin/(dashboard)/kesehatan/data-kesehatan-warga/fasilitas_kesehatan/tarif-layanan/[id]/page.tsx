@@ -25,6 +25,14 @@ function EditTarifLayanan() {
   const params = useParams();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      formData.layanan?.trim() !== '' &&
+      formData.tarif?.trim() !== ''
+    );
+  };
+
   const [originalData, setOriginalData] = useState({
     tarif: '',
     layanan: ''
@@ -74,6 +82,16 @@ function EditTarifLayanan() {
   };
 
   const handleSubmit = async () => {
+    if (!formData.layanan?.trim()) {
+      toast.error('Layanan wajib diisi');
+      return;
+    }
+
+    if (!formData.tarif?.trim()) {
+      toast.error('Tarif wajib diisi');
+      return;
+    }
+
     try {
       setIsSubmitting(true);
       // update global state hanya saat submit
@@ -155,8 +173,11 @@ function EditTarifLayanan() {
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}

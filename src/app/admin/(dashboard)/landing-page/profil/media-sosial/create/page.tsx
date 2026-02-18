@@ -24,7 +24,6 @@ import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 import profileLandingPageState from '../../../../_state/landing-page/profile';
 import SelectSosialMedia from '@/app/admin/(dashboard)/_com/selectSocialMedia';
-import { sosmedMap } from '@/app/admin/(dashboard)/landing-page/profil/_lib/sosmed';
 
 // ⭐ Tambah type SosmedKey
 type SosmedKey =

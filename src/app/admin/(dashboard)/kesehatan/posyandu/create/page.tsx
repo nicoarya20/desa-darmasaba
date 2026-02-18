@@ -31,6 +31,23 @@ function CreatePosyandu() {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Helper function to check if HTML content is empty
+  const isHtmlEmpty = (html: string) => {
+    // Remove all HTML tags and check if there's any text content
+    const textContent = html.replace(/<[^>]*>/g, '').trim();
+    return textContent === '';
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      statePosyandu.create.form.name?.trim() !== '' &&
+      statePosyandu.create.form.nomor?.trim() !== '' &&
+      !isHtmlEmpty(statePosyandu.create.form.deskripsi) &&
+      !isHtmlEmpty(statePosyandu.create.form.jadwalPelayanan) &&
+      file !== null
+    );
+  };
 
   const resetForm = () => {
     statePosyandu.create.form = {
@@ -46,6 +63,31 @@ function CreatePosyandu() {
 
 
   const handleSubmit = async () => {
+    if (!statePosyandu.create.form.name?.trim()) {
+      toast.error('Nama posyandu wajib diisi');
+      return;
+    }
+
+    if (!statePosyandu.create.form.nomor?.trim()) {
+      toast.error('Nomor telepon wajib diisi');
+      return;
+    }
+
+    if (isHtmlEmpty(statePosyandu.create.form.deskripsi)) {
+      toast.error('Deskripsi wajib diisi');
+      return;
+    }
+
+    if (isHtmlEmpty(statePosyandu.create.form.jadwalPelayanan)) {
+      toast.error('Jadwal pelayanan wajib diisi');
+      return;
+    }
+
+    if (!file) {
+      toast.error('Gambar wajib dipilih');
+      return;
+    }
+
     try {
       setIsSubmitting(true);
       if (!file) {
@@ -221,8 +263,11 @@ function CreatePosyandu() {
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
