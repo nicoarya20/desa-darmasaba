@@ -46,6 +46,14 @@ export default function EditKontakDaruratKeamanan() {
     kategoriId: [],
   });
 
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      formData.name?.trim() !== '' &&
+      formData.kategoriId.length > 0
+    );
+  };
+
   // 🔁 Load data saat ID berubah
   useEffect(() => {
     const loadInitialData = async () => {
@@ -213,8 +221,11 @@ export default function EditKontakDaruratKeamanan() {
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}

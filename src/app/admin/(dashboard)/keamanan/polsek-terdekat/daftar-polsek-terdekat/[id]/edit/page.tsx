@@ -67,6 +67,17 @@ function EditPolsekTerdekat() {
     layananPolsekId: []
   });
 
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      formData.nama?.trim() !== '' &&
+      formData.jarakKeDesa?.trim() !== '' &&
+      formData.alamat?.trim() !== '' &&
+      formData.nomorTelepon?.trim() !== '' &&
+      formData.layananPolsekId.length > 0
+    );
+  };
+
     useEffect(() => {
     statePolsekTerdekat.layananPolsek.findManyAll.load();
   }, []);
@@ -261,8 +272,11 @@ function EditPolsekTerdekat() {
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
