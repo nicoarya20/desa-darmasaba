@@ -27,6 +27,23 @@ function CreateSektorUnggulanDesa() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Helper function to check if HTML content is empty
+  const isHtmlEmpty = (html: string) => {
+    // Remove all HTML tags and check if there's any text content
+    const textContent = html.replace(/<[^>]*>/g, '').trim();
+    return textContent === '';
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      stateGrafik.create.form.name?.trim() !== '' &&
+      !isHtmlEmpty(stateGrafik.create.form.description) &&
+      stateGrafik.create.form.value !== null &&
+      stateGrafik.create.form.value >= 0
+    );
+  };
+
   const resetForm = () => {
     stateGrafik.create.form = {
       name: '',
@@ -132,8 +149,11 @@ function CreateSektorUnggulanDesa() {
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}

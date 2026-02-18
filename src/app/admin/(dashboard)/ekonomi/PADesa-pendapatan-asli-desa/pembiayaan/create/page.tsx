@@ -23,6 +23,15 @@ function CreatePembiayaan() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      pembiayaanState.create.form.name?.trim() !== '' &&
+      pembiayaanState.create.form.value !== null &&
+      pembiayaanState.create.form.value > 0
+    );
+  };
+
   const formatRupiah = (value: number | string) => {
     const number =
       typeof value === 'number' ? value : Number(value.replace(/\D/g, ''));
@@ -127,8 +136,11 @@ function CreatePembiayaan() {
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}

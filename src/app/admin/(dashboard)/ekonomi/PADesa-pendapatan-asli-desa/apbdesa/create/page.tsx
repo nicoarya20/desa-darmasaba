@@ -27,6 +27,17 @@ function CreateAPBDesa() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      apbDesaState.create.form.tahun !== null &&
+      apbDesaState.create.form.tahun > 0 &&
+      apbDesaState.create.form.pendapatanIds.length > 0 &&
+      apbDesaState.create.form.belanjaIds.length > 0 &&
+      apbDesaState.create.form.pembiayaanIds.length > 0
+    );
+  };
+
   const resetForm = () => {
     apbDesaState.create.form = {
       tahun: 0,
@@ -121,8 +132,11 @@ function CreateAPBDesa() {
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}

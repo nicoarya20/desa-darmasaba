@@ -27,6 +27,19 @@ function CreateJumlahPengangguran() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      stateDetail.create.form.month?.trim() !== '' &&
+      stateDetail.create.form.year !== null &&
+      stateDetail.create.form.year > 0 &&
+      stateDetail.create.form.educatedUnemployment !== null &&
+      stateDetail.create.form.educatedUnemployment >= 0 &&
+      stateDetail.create.form.uneducatedUnemployment !== null &&
+      stateDetail.create.form.uneducatedUnemployment >= 0
+    );
+  };
+
   const monthOptions = [
     'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun',
     'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'
@@ -204,8 +217,11 @@ function CreateJumlahPengangguran() {
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
