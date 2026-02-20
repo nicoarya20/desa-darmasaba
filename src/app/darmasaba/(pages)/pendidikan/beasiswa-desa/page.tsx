@@ -37,6 +37,24 @@ function Page() {
     };
   };
 
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      beasiswaDesa.create.form.namaLengkap?.trim() !== '' &&
+      beasiswaDesa.create.form.nis?.trim() !== '' &&
+      beasiswaDesa.create.form.kelas?.trim() !== '' &&
+      beasiswaDesa.create.form.jenisKelamin?.trim() !== '' &&
+      beasiswaDesa.create.form.alamatDomisili?.trim() !== '' &&
+      beasiswaDesa.create.form.tempatLahir?.trim() !== '' &&
+      beasiswaDesa.create.form.tanggalLahir?.trim() !== '' &&
+      beasiswaDesa.create.form.namaOrtu?.trim() !== '' &&
+      beasiswaDesa.create.form.nik?.trim() !== '' &&
+      beasiswaDesa.create.form.pekerjaanOrtu?.trim() !== '' &&
+      beasiswaDesa.create.form.penghasilan?.trim() !== '' &&
+      beasiswaDesa.create.form.noHp?.trim() !== ''
+    );
+  };
+
   const { data, page, totalPages, loading, load } = ungggulanDesa.findMany;
 
   useShallowEffect(() => {
@@ -238,7 +256,7 @@ function Page() {
               onChange={(val) => { beasiswaDesa.create.form.noHp = val.target.value }} />
             <Group justify="flex-end" mt="md">
               <Button variant="default" radius="xl" onClick={close}>Batal</Button>
-              <Button radius="xl" bg={colors['blue-button']} onClick={handleSubmit}>Kirim</Button>
+              <Button radius="xl" bg={colors['blue-button']} onClick={handleSubmit} disabled={!isFormValid()}>Kirim</Button>
             </Group>
           </Stack>
         </Paper>
