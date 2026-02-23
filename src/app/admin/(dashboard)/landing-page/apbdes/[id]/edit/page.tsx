@@ -53,7 +53,7 @@ function EditAPBDes() {
   const params = useParams();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+
   // Check if form is valid
   const isFormValid = () => {
     return (
@@ -76,33 +76,62 @@ function EditAPBDes() {
     tipe: 'pendapatan',
   });
 
-  // Type for the API response
-  interface APBDesResponse {
-    id: string;
-    image?: {
-      link: string;
-      id: string;
-    };
-    file?: {
-      link: string;
-      id: string;
-    };
-    // Add other properties as needed
-  }
+  // Simpan data original untuk reset form
+  const [originalData, setOriginalData] = useState({
+    tahun: 0,
+    imageId: '',
+    fileId: '',
+    imageUrl: '',
+    fileUrl: '',
+  });
 
   // Load data saat pertama kali
   useEffect(() => {
     const id = params?.id as string;
-    if (id) {
-      apbdesState.edit.load(id).then((response) => {
-        const data = response as unknown as APBDesResponse;
-        if (data) {
-          // ✅ Ambil link langsung dari response
-          setPreviewImage(data.image?.link || null);
-          setPreviewDoc(data.file?.link || null);
-        }
-      });
-    }
+    if (!id) return;
+
+    const loadData = async () => {
+      try {
+        const data = await apbdesState.edit.load(id);
+
+        if (!data) return;
+
+        // Set preview dari data lama
+        setPreviewImage(data.image?.link || null);
+        setPreviewDoc(data.file?.link || null);
+
+        // Simpan data original untuk reset
+        setOriginalData({
+          tahun: data.tahun || new Date().getFullYear(),
+          imageId: data.imageId || '',
+          fileId: data.fileId || '',
+          imageUrl: data.image?.link || '',
+          fileUrl: data.file?.link || '',
+        });
+
+        // Set form dengan data lama (termasuk imageId dan fileId)
+        apbdesState.edit.form = {
+          tahun: data.tahun || new Date().getFullYear(),
+          imageId: data.imageId || '',
+          fileId: data.fileId || '',
+          items: (data.items || []).map((item: any) => ({
+            kode: item.kode,
+            uraian: item.uraian,
+            anggaran: item.anggaran,
+            realisasi: item.realisasi,
+            selisih: item.selisih,
+            persentase: item.persentase,
+            level: item.level,
+            tipe: item.tipe || 'pendapatan',
+          })),
+        };
+      } catch (error) {
+        console.error('Error loading APBDes:', error);
+        toast.error('Gagal memuat data APBDes');
+      }
+    };
+
+    loadData();
   }, [params?.id]);
 
   const handleDrop = (fileType: 'image' | 'doc') => (files: File[]) => {
@@ -162,23 +191,38 @@ function EditAPBDes() {
     try {
       setIsSubmitting(true);
 
-      // Upload file baru jika ada
+      // Upload file baru jika ada perubahan
       if (imageFile) {
+        // Hapus file lama dari form jika ada file baru
         const res = await ApiFetch.api.fileStorage.create.post({
           file: imageFile,
           name: imageFile.name,
         });
         const imageId = res.data?.data?.id;
-        if (imageId) apbdesState.edit.form.imageId = imageId;
+        if (imageId) {
+          apbdesState.edit.form.imageId = imageId;
+        }
       }
 
       if (docFile) {
+        // Hapus file lama dari form jika ada file baru
         const res = await ApiFetch.api.fileStorage.create.post({
           file: docFile,
           name: docFile.name,
         });
         const fileId = res.data?.data?.id;
-        if (fileId) apbdesState.edit.form.fileId = fileId;
+        if (fileId) {
+          apbdesState.edit.form.fileId = fileId;
+        }
+      }
+
+      // Jika tidak ada file baru, gunakan ID lama (sudah ada di form)
+      // Pastikan imageId dan fileId tetap ada
+      if (!apbdesState.edit.form.imageId) {
+        return toast.warn('Gambar wajib diunggah');
+      }
+      if (!apbdesState.edit.form.fileId) {
+        return toast.warn('Dokumen wajib diunggah');
       }
 
       const success = await apbdesState.edit.update();
@@ -194,21 +238,33 @@ function EditAPBDes() {
   };
 
   const handleReset = () => {
-    const id = params?.id as string;
-    if (id) {
-      apbdesState.edit.load(id);
-      setImageFile(null);
-      setDocFile(null);
-      setNewItem({
-        kode: '',
-        uraian: '',
-        anggaran: 0,
-        realisasi: 0,
-        level: 1,
-        tipe: 'pendapatan',
-      });
-      toast.info('Form dikembalikan ke data awal');
-    }
+    // Reset ke data original (tahun, imageId, fileId)
+    apbdesState.edit.form = {
+      tahun: originalData.tahun,
+      imageId: originalData.imageId,
+      fileId: originalData.fileId,
+      items: [...apbdesState.edit.form.items], // keep existing items
+    };
+
+    // Reset preview ke data original
+    setPreviewImage(originalData.imageUrl || null);
+    setPreviewDoc(originalData.fileUrl || null);
+    
+    // Reset file uploads
+    setImageFile(null);
+    setDocFile(null);
+    
+    // Reset new item form
+    setNewItem({
+      kode: '',
+      uraian: '',
+      anggaran: 0,
+      realisasi: 0,
+      level: 1,
+      tipe: 'pendapatan',
+    });
+    
+    toast.info('Form dikembalikan ke data awal');
   };
 
   return (

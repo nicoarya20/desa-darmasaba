@@ -69,8 +69,8 @@ import { seedProfilPpd } from "./_seeder_list/ppid/profil-ppid/seed_profil_ppd";
 
 (async () => {
   // Always run seedAssets to handle new images without duplication
-  console.log("📂 Checking for new assets to seed...");
-  await seedAssets();
+  // console.log("📂 Checking for new assets to seed...");
+  // await seedAssets();
 
   // // =========== FILE STORAGE ===========
 

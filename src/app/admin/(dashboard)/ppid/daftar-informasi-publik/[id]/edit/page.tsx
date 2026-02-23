@@ -82,17 +82,17 @@ function EditDaftarInformasiPublik() {
       await daftarInformasi.edit.update();
       router.push('/admin/ppid/daftar-informasi-publik');
     } catch (error) {
-      console.error('Error updating berita:', error);
-      toast.error('Terjadi kesalahan saat memperbarui berita');
+      console.error('Error updating daftar informasi:', error);
+      toast.error('Terjadi kesalahan saat memperbarui daftar informasi');
     }
   };
 
   return (
-        <Box px={{ base: 0, md: 'lg' }} py="xs">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       <Group mb="md">
-          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
+        <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Edit Daftar Informasi Publik
         </Title>
