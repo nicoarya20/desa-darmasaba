@@ -8,6 +8,7 @@ import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
+import DOMPurify from 'dompurify';
 
 function DetailProgramInovasi() {
   const stateProgramInovasi = useProxy(profileLandingPageState.programInovasi)
@@ -85,7 +86,7 @@ function DetailProgramInovasi() {
               <Box>
                 <Text fz="lg" fw="bold">Deskripsi</Text>
                <Box pl={5}>
-                 <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data.description || '-' }}></Text>
+                 <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(data.description || '-') }}></Text>
                </Box>
               </Box>
 
