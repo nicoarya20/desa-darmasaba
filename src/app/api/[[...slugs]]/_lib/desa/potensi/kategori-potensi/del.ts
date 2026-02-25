@@ -17,7 +17,6 @@ export default async function kategoriPotensiDelete(context: Context) {
             where: {
                 kategoriId: id,
                 isActive: true,
-                deletedAt: null,
             },
         });
 

@@ -5,6 +5,8 @@ import { themeTokens, getResponsiveFz } from '@/utils/themeTokens';
 import { Text, Title, Box, BoxProps } from '@mantine/core';
 import React from 'react';
 
+type TextTruncate = 'end' | 'start' | boolean;
+
 /**
  * Unified Typography Components
  * 
@@ -73,7 +75,7 @@ export function UnifiedTitle({
   const getColor = () => {
     if (color === 'primary') return tokens.colors.text.primary;
     if (color === 'secondary') return tokens.colors.text.secondary;
-    if (color === 'brand') return tokens.colors.brand;
+    if (color === 'brand') return tokens.colors.text.brand;
     return color;
   };
 
@@ -109,8 +111,14 @@ interface UnifiedTextProps {
   align?: 'left' | 'center' | 'right';
   color?: 'primary' | 'secondary' | 'tertiary' | 'muted' | 'brand' | 'link' | string;
   lineClamp?: number;
-  truncate?: 'start' | 'end' | 'middle' | boolean;
+  truncate?: TextTruncate;
   span?: boolean;
+  mt?: string;
+  mb?: string;
+  ml?: string;
+  mr?: string;
+  mx?: string;
+  my?: string;
   style?: React.CSSProperties;
 }
 
@@ -123,6 +131,12 @@ export function UnifiedText({
   lineClamp,
   truncate,
   span = false,
+  mt,
+  mb,
+  ml,
+  mr,
+  mx,
+  my,
   style,
 }: UnifiedTextProps) {
   const { isDark } = useDarkMode();
@@ -163,7 +177,7 @@ export function UnifiedText({
       case 'muted':
         return tokens.colors.text.muted;
       case 'brand':
-        return tokens.colors.brand;
+        return tokens.colors.text.brand;
       case 'link':
         return tokens.colors.text.link;
       default:
@@ -177,7 +191,7 @@ export function UnifiedText({
 
   if (span) {
     return (
-      <Text.Span
+      <Text
         ta={align}
         fz={typo.fz}
         fw={fw}
@@ -185,10 +199,16 @@ export function UnifiedText({
         c={textColor}
         lineClamp={lineClamp}
         truncate={truncate}
+        mt={mt}
+        mb={mb}
+        ml={ml}
+        mr={mr}
+        mx={mx}
+        my={my}
         style={style}
       >
         {children}
-      </Text.Span>
+      </Text>
     );
   }
 
@@ -201,6 +221,12 @@ export function UnifiedText({
       c={textColor}
       lineClamp={lineClamp}
       truncate={truncate}
+      mt={mt}
+      mb={mb}
+      ml={ml}
+      mr={mr}
+      mx={mx}
+      my={my}
       style={style}
     >
       {children}

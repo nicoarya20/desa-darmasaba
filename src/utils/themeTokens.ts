@@ -223,6 +223,10 @@ export const themeTokens = (isDark: boolean = false): ThemeTokens => {
     hoverSoft: 'rgba(25, 113, 194, 0.03)',
     hoverMedium: 'rgba(25, 113, 194, 0.05)',
     activeAccent: 'rgba(25, 113, 194, 0.1)',
+    success: '#22c55e',
+    warning: '#facc15',
+    error: '#ef4444',
+    info: '#38bdf8',
   };
 
   const current = isDark ? darkColors : lightColors;
@@ -381,3 +385,7 @@ export const getActiveStateStyles = (isActive: boolean, isDark: boolean = false)
     },
   };
 };
+
+
+
+

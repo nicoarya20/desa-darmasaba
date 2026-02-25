@@ -1,10 +1,9 @@
 import prisma from "@/lib/prisma";
 import { requireAuth } from "@/lib/api-auth";
 
-export default async function sejarahDesaFindFirst(request: Request) {
+export default async function sejarahDesaFindFirst() {
     // ✅ Authentication check
-    const headers = new Headers(request.url);
-    const authResult = await requireAuth({ headers });
+    const authResult = await requireAuth();
     if (!authResult.authenticated) {
         return authResult.response;
     }
@@ -12,9 +11,8 @@ export default async function sejarahDesaFindFirst(request: Request) {
     try {
       // Get the first active record
       const data = await prisma.sejarahDesa.findFirst({
-        where: { 
+        where: {
           isActive: true,
-          deletedAt: null 
         },
         orderBy: { createdAt: 'asc' } // Get the oldest one first
       });
