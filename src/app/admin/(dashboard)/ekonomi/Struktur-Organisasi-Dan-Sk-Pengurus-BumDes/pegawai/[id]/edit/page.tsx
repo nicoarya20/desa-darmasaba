@@ -56,6 +56,14 @@ export default function EditPegawaiBumDes() {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
 
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      formData.namaLengkap?.trim() !== '' &&
+      formData.posisiId?.trim() !== ''
+    );
+  };
+
   // Format date for <input type="date">
   const formatDateForInput = (dateString: string) => {
     if (!dateString) return '';
@@ -325,8 +333,11 @@ export default function EditPegawaiBumDes() {
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}

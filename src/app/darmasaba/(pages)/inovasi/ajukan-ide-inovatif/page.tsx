@@ -12,6 +12,25 @@ function Page() {
   const [opened, { open, close }] = useDisclosure(false);
   const ideInovatif = useProxy(ajukanIdeInovatifState);
 
+  // Helper function to check if HTML content is empty
+  const isHtmlEmpty = (html: string) => {
+    // Remove all HTML tags and check if there's any text content
+    const textContent = html.replace(/<[^>]*>/g, '').trim();
+    return textContent === '';
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      ideInovatif.create.form.name?.trim() !== '' &&
+      ideInovatif.create.form.alamat?.trim() !== '' &&
+      ideInovatif.create.form.namaIde?.trim() !== '' &&
+      !isHtmlEmpty(ideInovatif.create.form.deskripsi) &&
+      ideInovatif.create.form.masalah?.trim() !== '' &&
+      ideInovatif.create.form.benefit?.trim() !== ''
+    );
+  };
+
   const resetForm = () => {
     ideInovatif.create.form = {
       name: "",
@@ -168,7 +187,11 @@ function Page() {
                 ideInovatif.create.form.benefit = val.target.value;
               }}
             />
-            <Button bg={colors['blue-button']} onClick={handleSubmit}>
+            <Button 
+              bg={colors['blue-button']} 
+              onClick={handleSubmit}
+              disabled={!isFormValid()}
+            >
               Simpan
             </Button>
           </Stack>

@@ -16,6 +16,20 @@ function CreateDokter() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      createState.create.create.form.name?.trim() !== '' &&
+      createState.create.create.form.specialist?.trim() !== '' &&
+      createState.create.create.form.jadwal?.trim() !== '' &&
+      createState.create.create.form.jadwalLibur?.trim() !== '' &&
+      createState.create.create.form.jamBukaOperasional !== '' &&
+      createState.create.create.form.jamTutupOperasional !== '' &&
+      createState.create.create.form.jamBukaLibur !== '' &&
+      createState.create.create.form.jamTutupLibur !== ''
+    );
+  };
+
   const resetForm = () => {
     createState.create.create.form = {
       name: "",
@@ -41,7 +55,49 @@ function CreateDokter() {
   );
 
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault(); // Prevent default form submission
+    
+    if (!createState.create.create.form.name?.trim()) {
+      toast.error('Nama dokter wajib diisi');
+      return;
+    }
+
+    if (!createState.create.create.form.specialist?.trim()) {
+      toast.error('Specialist wajib diisi');
+      return;
+    }
+
+    if (!createState.create.create.form.jadwal?.trim()) {
+      toast.error('Jadwal wajib diisi');
+      return;
+    }
+
+    if (!createState.create.create.form.jadwalLibur?.trim()) {
+      toast.error('Jadwal libur wajib diisi');
+      return;
+    }
+
+    if (!createState.create.create.form.jamBukaOperasional) {
+      toast.error('Jam buka operasional wajib diisi');
+      return;
+    }
+
+    if (!createState.create.create.form.jamTutupOperasional) {
+      toast.error('Jam tutup operasional wajib diisi');
+      return;
+    }
+
+    if (!createState.create.create.form.jamBukaLibur) {
+      toast.error('Jam buka hari libur wajib diisi');
+      return;
+    }
+
+    if (!createState.create.create.form.jamTutupLibur) {
+      toast.error('Jam tutup hari libur wajib diisi');
+      return;
+    }
+
     try {
       setIsSubmitting(true);
       await createState.create.create.create();
@@ -170,8 +226,11 @@ function CreateDokter() {
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}

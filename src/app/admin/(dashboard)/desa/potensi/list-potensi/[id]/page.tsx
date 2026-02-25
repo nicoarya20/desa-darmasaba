@@ -8,6 +8,7 @@ import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
+import DOMPurify from 'dompurify';
 
 export default function DetailPotensi() {
   const router = useRouter();
@@ -77,7 +78,17 @@ export default function DetailPotensi() {
 
               <Box>
                 <Text fz="lg" fw="bold">Deskripsi</Text>
-                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data.deskripsi || '-' }}></Text>
+                <Text 
+                  fz="md" 
+                  c="dimmed" 
+                  style={{ wordBreak: "break-word", whiteSpace: "normal" }} 
+                  dangerouslySetInnerHTML={{ 
+                    __html: DOMPurify.sanitize(data.deskripsi || '-', {
+                      ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'ul', 'ol', 'li'],
+                      ALLOWED_ATTR: []
+                    })
+                  }}
+                ></Text>
               </Box>
 
               <Box>
@@ -102,7 +113,12 @@ export default function DetailPotensi() {
                 <Text
                   fz="md"
                   c="dimmed"
-                  dangerouslySetInnerHTML={{ __html: data.content || '-' }}
+                  dangerouslySetInnerHTML={{
+                    __html: DOMPurify.sanitize(data.content || '-', {
+                      ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'ul', 'ol', 'li'],
+                      ALLOWED_ATTR: []
+                    })
+                  }}
                   style={{ wordBreak: "break-word", whiteSpace: "normal" }}
                 />
               </Box>

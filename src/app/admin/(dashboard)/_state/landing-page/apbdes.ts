@@ -38,11 +38,9 @@ function normalizeItem(item: Partial<z.infer<typeof ApbdesItemSchema>>): z.infer
   const anggaran = item.anggaran ?? 0;
   const realisasi = item.realisasi ?? 0;
 
-  
 
-  
   // ✅ Formula yang benar
-  const selisih = anggaran - realisasi; // positif = sisa anggaran, negatif = over budget
+  const selisih = realisasi - anggaran; // positif = sisa anggaran, negatif = over budget
   const persentase = anggaran > 0 ? (realisasi / anggaran) * 100 : 0; // persentase realisasi terhadap anggaran
 
   return {

@@ -23,6 +23,24 @@ function CreateKematian() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Helper function to check if HTML content is empty
+  const isHtmlEmpty = (html: string) => {
+    // Remove all HTML tags and check if there's any text content
+    const textContent = html.replace(/<[^>]*>/g, '').trim();
+    return textContent === '';
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      createState.create.form.nama?.trim() !== '' &&
+      createState.create.form.tanggal !== '' &&
+      createState.create.form.jenisKelamin?.trim() !== '' &&
+      createState.create.form.alamat?.trim() !== '' &&
+      !isHtmlEmpty(createState.create.form.penyebab)
+    );
+  };
+
   const resetForm = () => {
     createState.create.form = {
       nama: '',
@@ -35,16 +53,33 @@ function CreateKematian() {
 
 
   const handleSubmit = async () => {
+    if (!createState.create.form.nama?.trim()) {
+      toast.error('Nama wajib diisi');
+      return;
+    }
+
+    if (!createState.create.form.tanggal) {
+      toast.error('Tanggal wajib diisi');
+      return;
+    }
+
+    if (!createState.create.form.jenisKelamin?.trim()) {
+      toast.error('Jenis kelamin wajib diisi');
+      return;
+    }
+
+    if (!createState.create.form.alamat?.trim()) {
+      toast.error('Alamat wajib diisi');
+      return;
+    }
+
+    if (isHtmlEmpty(createState.create.form.penyebab)) {
+      toast.error('Penyebab wajib diisi');
+      return;
+    }
+
     try {
       setIsSubmitting(true);
-      if (!createState.create.form.nama) {
-        return toast.warn('Nama wajib diisi');
-      }
-      if (!createState.create.form.tanggal) {
-        return toast.warn('Tanggal wajib diisi');
-      }
-
-
       await createState.create.create();
       resetForm();
       router.push(
@@ -140,8 +175,11 @@ function CreateKematian() {
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}

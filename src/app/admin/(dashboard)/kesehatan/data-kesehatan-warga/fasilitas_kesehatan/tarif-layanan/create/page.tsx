@@ -22,6 +22,14 @@ function CreateTarifLayanan() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      createState.create.form.layanan?.trim() !== '' &&
+      createState.create.form.tarif?.trim() !== ''
+    );
+  };
+
   const resetForm = () => {
     createState.create.form = {
       tarif: '',
@@ -30,6 +38,16 @@ function CreateTarifLayanan() {
   };
 
   const handleSubmit = async () => {
+    if (!createState.create.form.layanan?.trim()) {
+      toast.error('Layanan wajib diisi');
+      return;
+    }
+
+    if (!createState.create.form.tarif?.trim()) {
+      toast.error('Tarif wajib diisi');
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       await createState.create.create();
@@ -101,8 +119,11 @@ function CreateTarifLayanan() {
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}

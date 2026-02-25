@@ -26,6 +26,14 @@ function CreateKontakDaruratKeamanan() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      kontakState.create.form.nama?.trim() !== '' &&
+      kontakState.create.form.icon?.trim() !== ''
+    );
+  };
+
   useShallowEffect(() => {
     kontakDarurat.kontakDaruratItem.findMany.load();
   }, []);
@@ -127,8 +135,11 @@ function CreateKontakDaruratKeamanan() {
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}

@@ -6,6 +6,7 @@ import { IconEdit } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
 import stateVisiMisiPPID from '../../_state/ppid/visi_misi_ppid/visimisiPPID';
+import DOMPurify from 'dompurify'
 
 function VisiMisiPPIDList() {
   const router = useRouter();
@@ -96,7 +97,7 @@ function VisiMisiPPIDList() {
               </Title>
               <Text
                 ta={{ base: "center", md: "justify" }}
-                dangerouslySetInnerHTML={{ __html: listVisiMisi.findById.data.visi }}
+                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(listVisiMisi.findById.data.visi) }}
                 style={{
                   wordBreak: 'break-word',
                   whiteSpace: 'normal',
@@ -121,7 +122,7 @@ function VisiMisiPPIDList() {
               </Title>
               <Text
                 ta={"justify"}
-                dangerouslySetInnerHTML={{ __html: listVisiMisi.findById.data.misi }}
+                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(listVisiMisi.findById.data.misi) }}
                 style={{
                   wordBreak: 'break-word',
                   whiteSpace: 'normal',

@@ -24,6 +24,16 @@ function CreateKelahiran() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      createState.create.form.nama?.trim() !== '' &&
+      createState.create.form.tanggal !== '' &&
+      createState.create.form.jenisKelamin?.trim() !== '' &&
+      createState.create.form.alamat?.trim() !== ''
+    );
+  };
+
   const resetForm = () => {
     createState.create.form = {
       nama: '',
@@ -35,6 +45,26 @@ function CreateKelahiran() {
 
 
   const handleSubmit = async () => {
+    if (!createState.create.form.nama?.trim()) {
+      toast.error('Nama wajib diisi');
+      return;
+    }
+
+    if (!createState.create.form.tanggal) {
+      toast.error('Tanggal wajib diisi');
+      return;
+    }
+
+    if (!createState.create.form.jenisKelamin?.trim()) {
+      toast.error('Jenis kelamin wajib diisi');
+      return;
+    }
+
+    if (!createState.create.form.alamat?.trim()) {
+      toast.error('Alamat wajib diisi');
+      return;
+    }
+
     try {
       setIsSubmitting(true);
       await createState.create.create();
@@ -126,8 +156,11 @@ function CreateKelahiran() {
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}

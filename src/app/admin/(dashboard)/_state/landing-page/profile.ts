@@ -55,10 +55,15 @@ const programInovasi = proxy({
           programInovasi.findMany.load();
           return toast.success("Sukses menambahkan");
         }
-        console.log(res);
+        if (process.env.NODE_ENV === 'development') {
+          console.log(res);
+        }
         return toast.error("failed create");
       } catch (error) {
-        console.log((error as Error).message);
+        if (process.env.NODE_ENV === 'development') {
+          console.error("Create error:", error);
+        }
+        toast.error("Gagal menambahkan data");
       } finally {
         programInovasi.create.loading = false;
       }
@@ -91,13 +96,17 @@ const programInovasi = proxy({
           programInovasi.findMany.total = res.data.total || 0;
           programInovasi.findMany.totalPages = res.data.totalPages || 1;
         } else {
-          console.error("Failed to load pegawai:", res.data?.message);
+          if (process.env.NODE_ENV === 'development') {
+            console.error("Failed to load pegawai:", res.data?.message);
+          }
           programInovasi.findMany.data = [];
           programInovasi.findMany.total = 0;
           programInovasi.findMany.totalPages = 1;
         }
       } catch (error) {
-        console.error("Error loading pegawai:", error);
+        if (process.env.NODE_ENV === 'development') {
+          console.error("Error loading pegawai:", error);
+        }
         programInovasi.findMany.data = [];
         programInovasi.findMany.total = 0;
         programInovasi.findMany.totalPages = 1;
@@ -112,19 +121,25 @@ const programInovasi = proxy({
         image: true;
       };
     }> | null,
+    loading: false,
     async load(id: string) {
       try {
-        const res = await fetch(`/api/landingpage/programinovasi/${id}`);
-        if (res.ok) {
-          const data = await res.json();
-          programInovasi.findUnique.data = data.data ?? null;
+        programInovasi.findUnique.loading = true;
+        const res = await (ApiFetch.api.landingpage.programinovasi as any)[id].get();
+        if (res.data?.success) {
+          programInovasi.findUnique.data = res.data.data ?? null;
+          return res.data.data;
         } else {
-          console.error("Failed to fetch program inovasi:", res.statusText);
+          toast.error(res.data?.message || "Gagal memuat data program inovasi");
           programInovasi.findUnique.data = null;
+          return null;
         }
       } catch (error) {
         console.error("Error fetching program inovasi:", error);
         programInovasi.findUnique.data = null;
+        return null;
+      } finally {
+        programInovasi.findUnique.loading = false;
       }
     },
   },
@@ -135,27 +150,18 @@ const programInovasi = proxy({
 
       try {
         programInovasi.delete.loading = true;
+        const res = await (ApiFetch.api.landingpage.programinovasi as any)["del"][id].delete();
 
-        const response = await fetch(
-          `/api/landingpage/programinovasi/del/${id}`,
-          {
-            method: "DELETE",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-
-        const result = await response.json();
-
-        if (response.ok && result?.success) {
-          toast.success(result.message || "Program inovasi berhasil dihapus");
-          await programInovasi.findMany.load(); // refresh list
+        if (res.data?.success) {
+          toast.success(res.data.message || "Program inovasi berhasil dihapus");
+          await programInovasi.findMany.load();
         } else {
-          toast.error(result?.message || "Gagal menghapus program inovasi");
+          toast.error(res.data?.message || "Gagal menghapus program inovasi");
         }
       } catch (error) {
-        console.error("Gagal delete:", error);
+        if (process.env.NODE_ENV === 'development') {
+          console.error("Gagal delete:", error);
+        }
         toast.error("Terjadi kesalahan saat menghapus program inovasi");
       } finally {
         programInovasi.delete.loading = false;
@@ -174,20 +180,11 @@ const programInovasi = proxy({
       }
 
       try {
-        const response = await fetch(`/api/landingpage/programinovasi/${id}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
+        programInovasi.update.loading = true;
+        const res = await (ApiFetch.api.landingpage.programinovasi as any)[id].get();
 
-        const result = await response.json();
-
-        if (result?.success) {
-          const data = result.data;
+        if (res.data?.success) {
+          const data = res.data.data;
           this.id = data.id;
           this.form = {
             name: data.name,
@@ -197,13 +194,15 @@ const programInovasi = proxy({
           };
           return data;
         } else {
-          throw new Error(
-            result?.message || "Gagal mengambil data program inovasi"
-          );
+          toast.error(res.data?.message || "Gagal mengambil data program inovasi");
+          return null;
         }
       } catch (error) {
-        console.error((error as Error).message);
+        if (process.env.NODE_ENV === 'development') {
+          console.error("Error loading program inovasi:", error);
+        }
         toast.error("Terjadi kesalahan saat mengambil data program inovasi");
+        return null;
       } finally {
         programInovasi.update.loading = false;
       }
@@ -221,41 +220,25 @@ const programInovasi = proxy({
 
       try {
         programInovasi.update.loading = true;
+        const res = await (ApiFetch.api.landingpage.programinovasi as any)[this.id].put({
+          name: this.form.name,
+          description: this.form.description,
+          imageId: this.form.imageId,
+          link: this.form.link,
+        });
 
-        const response = await fetch(
-          `/api/landingpage/programinovasi/${this.id}`,
-          {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              name: this.form.name,
-              description: this.form.description,
-              imageId: this.form.imageId,
-              link: this.form.link,
-            }),
-          }
-        );
-
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}));
-          throw new Error(
-            errorData.message || `HTTP error! status: ${response.status}`
-          );
-        }
-
-        const result = await response.json();
-
-        if (result.success) {
+        if (res.data?.success) {
           toast.success("Berhasil update program inovasi");
-          await programInovasi.findMany.load(); // refresh list
+          await programInovasi.findMany.load();
           return true;
         } else {
-          throw new Error(result.message || "Gagal update program inovasi");
+          toast.error(res.data?.message || "Gagal update program inovasi");
+          return false;
         }
       } catch (error) {
-        console.error("Error updating program inovasi:", error);
+        if (process.env.NODE_ENV === 'development') {
+          console.error("Error updating program inovasi:", error);
+        }
         toast.error(
           error instanceof Error
             ? error.message
@@ -443,7 +426,7 @@ const pejabatDesa = proxy({
 const templateMediaSosial = z.object({
   name: z.string().min(3, "Nama minimal 3 karakter"),
   imageId: z.string().nullable().optional(),
-  iconUrl: z.string().min(3, "Icon URL minimal 3 karakter"),
+  iconUrl: z.string().optional(), // ✅ Optional - tidak selalu required
   icon: z.string().nullable().optional(),
 });
 
@@ -484,10 +467,15 @@ const mediaSosial = proxy({
           mediaSosial.findMany.load();
           return toast.success("Sukses menambahkan");
         }
-        console.log(res);
+        if (process.env.NODE_ENV === 'development') {
+          console.log(res);
+        }
         return toast.error("failed create");
       } catch (error) {
-        console.log((error as Error).message);
+        if (process.env.NODE_ENV === 'development') {
+          console.log((error as Error).message);
+        }
+        toast.error("Gagal menambahkan data");
       } finally {
         mediaSosial.create.loading = false;
       }
@@ -518,13 +506,17 @@ const mediaSosial = proxy({
           mediaSosial.findMany.total = res.data.total || 0;
           mediaSosial.findMany.totalPages = res.data.totalPages || 1;
         } else {
-          console.error("Failed to load media sosial:", res.data?.message);
+          if (process.env.NODE_ENV === 'development') {
+            console.error("Failed to load media sosial:", res.data?.message);
+          }
           mediaSosial.findMany.data = [];
           mediaSosial.findMany.total = 0;
           mediaSosial.findMany.totalPages = 1;
         }
       } catch (error) {
-        console.error("Error loading media sosial:", error);
+        if (process.env.NODE_ENV === 'development') {
+          console.error("Error loading media sosial:", error);
+        }
         mediaSosial.findMany.data = [];
         mediaSosial.findMany.total = 0;
         mediaSosial.findMany.totalPages = 1;
@@ -539,25 +531,32 @@ const mediaSosial = proxy({
         image: true;
       };
     }> | null,
+    loading: false,
     async load(id: string) {
       if (!id) {
         toast.warn("ID tidak valid");
         return null;
       }
 
-      mediaSosial.update.loading = true;
+      mediaSosial.findUnique.loading = true;
       try {
-        const res = await fetch(`/api/landingpage/mediasosial/${id}`);
-        if (res.ok) {
-          const data = await res.json();
-          mediaSosial.findUnique.data = data.data ?? null;
+        const res = await (ApiFetch.api.landingpage.mediasosial as any)[id].get();
+        if (res.data?.success) {
+          mediaSosial.findUnique.data = res.data.data ?? null;
+          return res.data.data;
         } else {
-          console.error("Failed to fetch media sosial:", res.statusText);
+          toast.error(res.data?.message || "Gagal memuat data media sosial");
           mediaSosial.findUnique.data = null;
+          return null;
         }
       } catch (error) {
-        console.error("Error fetching media sosial:", error);
+        if (process.env.NODE_ENV === 'development') {
+          console.error("Error fetching media sosial:", error);
+        }
         mediaSosial.findUnique.data = null;
+        return null;
+      } finally {
+        mediaSosial.findUnique.loading = false;
       }
     },
   },
@@ -568,24 +567,18 @@ const mediaSosial = proxy({
 
       try {
         mediaSosial.delete.loading = true;
+        const res = await (ApiFetch.api.landingpage.mediasosial as any)["del"][id].delete();
 
-        const response = await fetch(`/api/landingpage/mediasosial/del/${id}`, {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-
-        const result = await response.json();
-
-        if (response.ok && result?.success) {
-          toast.success(result.message || "Media Sosial berhasil dihapus");
-          await mediaSosial.findMany.load(); // refresh list
+        if (res.data?.success) {
+          toast.success(res.data.message || "Media Sosial berhasil dihapus");
+          await mediaSosial.findMany.load();
         } else {
-          toast.error(result?.message || "Gagal menghapus media sosial");
+          toast.error(res.data?.message || "Gagal menghapus media sosial");
         }
       } catch (error) {
-        console.error("Gagal delete:", error);
+        if (process.env.NODE_ENV === 'development') {
+          console.error("Gagal delete:", error);
+        }
         toast.error("Terjadi kesalahan saat menghapus media sosial");
       } finally {
         mediaSosial.delete.loading = false;
@@ -603,43 +596,32 @@ const mediaSosial = proxy({
         return null;
       }
 
-      mediaSosial.update.loading = true; // ✅ Tambahkan ini di awal
-
+      mediaSosial.update.loading = true;
       try {
-        const response = await fetch(`/api/landingpage/mediasosial/${id}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        const res = await (ApiFetch.api.landingpage.mediasosial as any)[id].get();
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const result = await response.json();
-
-        if (result?.success) {
-          const data = result.data;
+        if (res.data?.success) {
+          const data = res.data.data;
           this.id = data.id;
           this.form = {
             name: data.name || "",
             imageId: data.imageId || null,
             iconUrl: data.iconUrl || "",
             icon: data.icon || null,
-            
           };
           return data;
         } else {
-          throw new Error(
-            result?.message || "Gagal mengambil data media sosial"
-          );
+          toast.error(res.data?.message || "Gagal mengambil data media sosial");
+          return null;
         }
       } catch (error) {
-        console.error((error as Error).message);
+        if (process.env.NODE_ENV === 'development') {
+          console.error("Error loading media sosial:", error);
+        }
         toast.error("Terjadi kesalahan saat mengambil data media sosial");
+        return null;
       } finally {
-        mediaSosial.update.loading = false; // ✅ Supaya berhenti loading walau error
+        mediaSosial.update.loading = false;
       }
     },
 
@@ -655,41 +637,25 @@ const mediaSosial = proxy({
 
       try {
         mediaSosial.update.loading = true;
+        const res = await (ApiFetch.api.landingpage.mediasosial as any)[this.id].put({
+          name: this.form.name,
+          imageId: this.form.imageId,
+          iconUrl: this.form.iconUrl,
+          icon: this.form.icon,
+        });
 
-        const response = await fetch(
-          `/api/landingpage/mediasosial/${this.id}`,
-          {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              name: this.form.name,
-              imageId: this.form.imageId,
-              iconUrl: this.form.iconUrl,
-              icon: this.form.icon,
-            }),
-          }
-        );
-
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}));
-          throw new Error(
-            errorData.message || `HTTP error! status: ${response.status}`
-          );
-        }
-
-        const result = await response.json();
-
-        if (result.success) {
+        if (res.data?.success) {
           toast.success("Berhasil update media sosial");
-          await mediaSosial.findMany.load(); // refresh list
+          await mediaSosial.findMany.load();
           return true;
         } else {
-          throw new Error(result.message || "Gagal update media sosial");
+          toast.error(res.data?.message || "Gagal update media sosial");
+          return false;
         }
       } catch (error) {
-        console.error("Error updating media sosial:", error);
+        if (process.env.NODE_ENV === 'development') {
+          console.error("Error updating media sosial:", error);
+        }
         toast.error(
           error instanceof Error
             ? error.message

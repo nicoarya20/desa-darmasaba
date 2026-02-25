@@ -31,6 +31,23 @@ function EditPosisiOrganisasiBumDes() {
     hierarki: 0,
   });
 
+  // Helper function to check if HTML content is empty
+  const isHtmlEmpty = (html: string) => {
+    // Remove all HTML tags and check if there's any text content
+    const textContent = html.replace(/<[^>]*>/g, '').trim();
+    return textContent === '';
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      formData.nama?.trim() !== '' &&
+      !isHtmlEmpty(formData.deskripsi) &&
+      formData.hierarki !== null &&
+      formData.hierarki >= 0
+    );
+  };
+
   // Fungsi generik untuk update formData
   const handleChange = (field: keyof typeof formData, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -173,8 +190,11 @@ function EditPosisiOrganisasiBumDes() {
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}

@@ -28,6 +28,21 @@ export default function EditTujuanEdukasiLingkungan() {
     deskripsi: '',
   });
 
+  // Helper function to check if HTML content is empty
+  const isHtmlEmpty = (html: string) => {
+    // Remove all HTML tags and check if there's any text content
+    const textContent = html.replace(/<[^>]*>/g, '').trim();
+    return textContent === '';
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      !isHtmlEmpty(formData.judul) &&
+      !isHtmlEmpty(formData.deskripsi)
+    );
+  };
+
   // Initialize global state
   useShallowEffect(() => {
     if (!tujuanEdukasiState.findById.data) {
@@ -147,8 +162,11 @@ export default function EditTujuanEdukasiLingkungan() {
               onClick={submit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}

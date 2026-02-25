@@ -41,6 +41,17 @@ export default function EditDemografiPekerjaan() {
     perempuan: 0,
   });
 
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      formData.pekerjaan?.trim() !== '' &&
+      formData.lakiLaki !== null &&
+      formData.lakiLaki >= 0 &&
+      formData.perempuan !== null &&
+      formData.perempuan >= 0
+    );
+  };
+
   // ✅ Load data hanya sekali di awal (tidak reset form)
   useEffect(() => {
     if (!id) return;
@@ -186,8 +197,11 @@ export default function EditDemografiPekerjaan() {
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}

@@ -27,11 +27,48 @@ function CreatePengumuman() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Helper function to check if HTML content is empty
+  const isHtmlEmpty = (html: string) => {
+    // Remove all HTML tags and check if there's any text content
+    const textContent = html.replace(/<[^>]*>/g, '').trim();
+    return textContent === '';
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      pengumumanState.pengumuman.create.form.judul?.trim() !== '' &&
+      pengumumanState.pengumuman.create.form.categoryPengumumanId !== '' &&
+      pengumumanState.pengumuman.create.form.deskripsi?.trim() !== '' &&
+      !isHtmlEmpty(pengumumanState.pengumuman.create.form.content)
+    );
+  };
+
   useShallowEffect(() => {
     pengumumanState.category.findMany.load();
   }, []);
 
   const handleSubmit = async () => {
+    if (!pengumumanState.pengumuman.create.form.judul?.trim()) {
+      toast.error('Judul wajib diisi');
+      return;
+    }
+    
+    if (!pengumumanState.pengumuman.create.form.categoryPengumumanId) {
+      toast.error('Kategori wajib dipilih');
+      return;
+    }
+    
+    if (!pengumumanState.pengumuman.create.form.deskripsi?.trim()) {
+      toast.error('Deskripsi singkat wajib diisi');
+      return;
+    }
+    
+    if (isHtmlEmpty(pengumumanState.pengumuman.create.form.content)) {
+      toast.error('Konten lengkap wajib diisi');
+      return;
+    }
+
     try {
       setIsSubmitting(true);
       await pengumumanState.pengumuman.create.create();
@@ -150,8 +187,11 @@ function CreatePengumuman() {
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}

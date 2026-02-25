@@ -54,6 +54,28 @@ function Page() {
   const permohonanInformasiPublikState = useProxy(statePermohonanInformasi);
   const router = useRouter();
 
+  // Helper function to validate email format
+  const isValidEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    const form = permohonanInformasiPublikState.statepermohonanInformasiPublik.create.form;
+    return (
+      form.name?.trim() !== '' &&
+      form.nik?.trim() !== '' &&
+      form.notelp?.trim() !== '' &&
+      form.alamat?.trim() !== '' &&
+      form.email?.trim() !== '' &&
+      isValidEmail(form.email) &&
+      form.jenisInformasiDimintaId &&
+      form.caraMemperolehInformasiId &&
+      form.caraMemperolehSalinanInformasiId
+    );
+  };
+
   const submitForms = async () => {
     const { create } = permohonanInformasiPublikState.statepermohonanInformasiPublik;
     const hasil = await create.create();
@@ -266,6 +288,7 @@ function Page() {
                       bg={colors['blue-button']}
                       leftSection={<IconSend2 size={20} color={colors['white-1']} />}
                       onClick={submitForms}
+                      disabled={!isFormValid()}
                     >
                       Kirim Permohonan
                     </Button>

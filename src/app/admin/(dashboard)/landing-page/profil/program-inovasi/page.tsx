@@ -6,6 +6,7 @@ import { IconDeviceImacCog, IconPlus, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
+import DOMPurify from 'dompurify';
 import HeaderSearch from '../../../_com/header';
 import profileLandingPageState from '../../../_state/landing-page/profile';
 
@@ -90,7 +91,7 @@ function ListProgramInovasi({ search }: { search: string }) {
                       <Text fw={500}>{item.name}</Text>
                     </TableTd>
                     <TableTd style={{ maxWidth: 250 }}>
-                      <Text fz="sm" lineClamp={1} dangerouslySetInnerHTML={{ __html: item.description || '-' }}></Text>
+                      <Text fz="sm" lineClamp={1} dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(item.description || '-') }}></Text>
                     </TableTd>
                     <TableTd style={{ maxWidth: 250 }}>
                       <Tooltip label="Buka tautan program" position="top" withArrow>
@@ -144,7 +145,7 @@ function ListProgramInovasi({ search }: { search: string }) {
                   {/* Description */}
                   <Box>
                     <Text fz="sm" fw={600} lh={1.4}>Deskripsi</Text>
-                    <Text dangerouslySetInnerHTML={{ __html: item.description || '-' }} fz="sm" c="gray.7" lineClamp={2} />
+                    <Text dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(item.description || '-') }} fz="sm" c="gray.7" lineClamp={2} />
                   </Box>
 
                   {/* Link */}

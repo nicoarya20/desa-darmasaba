@@ -28,6 +28,15 @@ function EditDaftarInformasiPublik() {
     tanggal: '',
   });
 
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      formData.jenisInformasi?.trim() !== '' &&
+      formData.deskripsi?.trim() !== '' &&
+      formData.tanggal?.trim() !== ''
+    );
+  };
+
   const formatDateForInput = (dateString: string) => {
     if (!dateString) return '';
     const date = new Date(dateString);
@@ -73,17 +82,17 @@ function EditDaftarInformasiPublik() {
       await daftarInformasi.edit.update();
       router.push('/admin/ppid/daftar-informasi-publik');
     } catch (error) {
-      console.error('Error updating berita:', error);
-      toast.error('Terjadi kesalahan saat memperbarui berita');
+      console.error('Error updating daftar informasi:', error);
+      toast.error('Terjadi kesalahan saat memperbarui daftar informasi');
     }
   };
 
   return (
-        <Box px={{ base: 0, md: 'lg' }} py="xs">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       <Group mb="md">
-          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
+        <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Edit Daftar Informasi Publik
         </Title>
@@ -128,10 +137,13 @@ function EditDaftarInformasiPublik() {
           <Group justify="right" mt="md">
             <Button
               onClick={handleSubmit}
+              disabled={!isFormValid()}
               radius="md"
               size="md"
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid()
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}

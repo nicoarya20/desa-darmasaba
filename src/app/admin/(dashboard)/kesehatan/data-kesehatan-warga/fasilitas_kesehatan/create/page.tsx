@@ -26,6 +26,28 @@ function CreateFasilitasKesehatan() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Helper function to check if HTML content is empty
+  const isHtmlEmpty = (html: string) => {
+    // Remove all HTML tags and check if there's any text content
+    const textContent = html.replace(/<[^>]*>/g, '').trim();
+    return textContent === '';
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      stateFasilitasKesehatan.create.form.name?.trim() !== '' &&
+      stateFasilitasKesehatan.create.form.informasiUmum.fasilitas?.trim() !== '' &&
+      stateFasilitasKesehatan.create.form.informasiUmum.alamat?.trim() !== '' &&
+      stateFasilitasKesehatan.create.form.informasiUmum.jamOperasional?.trim() !== '' &&
+      !isHtmlEmpty(stateFasilitasKesehatan.create.form.layananUnggulan.content) &&
+      stateFasilitasKesehatan.create.form.dokterdanTenagaMedis.length > 0 &&
+      !isHtmlEmpty(stateFasilitasKesehatan.create.form.fasilitasPendukung.content) &&
+      stateFasilitasKesehatan.create.form.tarifDanLayanan.length > 0 &&
+      !isHtmlEmpty(stateFasilitasKesehatan.create.form.prosedurPendaftaran.content)
+    );
+  };
+
   const resetForm = () => {
     stateFasilitasKesehatan.create.form = {
       name: '',
@@ -50,6 +72,52 @@ function CreateFasilitasKesehatan() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!stateFasilitasKesehatan.create.form.name?.trim()) {
+      toast.error('Nama fasilitas kesehatan wajib diisi');
+      return;
+    }
+
+    if (!stateFasilitasKesehatan.create.form.informasiUmum.fasilitas?.trim()) {
+      toast.error('Fasilitas wajib diisi');
+      return;
+    }
+
+    if (!stateFasilitasKesehatan.create.form.informasiUmum.alamat?.trim()) {
+      toast.error('Alamat wajib diisi');
+      return;
+    }
+
+    if (!stateFasilitasKesehatan.create.form.informasiUmum.jamOperasional?.trim()) {
+      toast.error('Jam operasional wajib diisi');
+      return;
+    }
+
+    if (isHtmlEmpty(stateFasilitasKesehatan.create.form.layananUnggulan.content)) {
+      toast.error('Layanan unggulan wajib diisi');
+      return;
+    }
+
+    if (stateFasilitasKesehatan.create.form.dokterdanTenagaMedis.length === 0) {
+      toast.error('Dokter dan tenaga medis wajib dipilih');
+      return;
+    }
+
+    if (isHtmlEmpty(stateFasilitasKesehatan.create.form.fasilitasPendukung.content)) {
+      toast.error('Fasilitas pendukung wajib diisi');
+      return;
+    }
+
+    if (stateFasilitasKesehatan.create.form.tarifDanLayanan.length === 0) {
+      toast.error('Layanan wajib dipilih');
+      return;
+    }
+
+    if (isHtmlEmpty(stateFasilitasKesehatan.create.form.prosedurPendaftaran.content)) {
+      toast.error('Prosedur pendaftaran wajib diisi');
+      return;
+    }
+
     try {
       setIsSubmitting(true);
       await stateFasilitasKesehatan.create.submit();
@@ -214,8 +282,11 @@ function CreateFasilitasKesehatan() {
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}

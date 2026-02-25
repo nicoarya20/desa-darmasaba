@@ -10,8 +10,7 @@ import {
   SimpleGrid,
   Skeleton,
   Stack,
-  Text,
-  useMantineColorScheme
+  Text
 } from "@mantine/core";
 import { useShallowEffect } from "@mantine/hooks";
 import { Prisma } from "@prisma/client";
@@ -24,8 +23,6 @@ type ProgramInovasiItem = Prisma.ProgramInovasiGetPayload<{ include: { image: tr
 
 function ModuleItem({ data }: { data: ProgramInovasiItem }) {
   const router = useTransitionRouter();
-  const { colorScheme } = useMantineColorScheme();
-  const isDark = colorScheme === "dark";
 
   return (
     <motion.div whileHover={{ scale: 1.03 }}>
@@ -37,7 +34,7 @@ function ModuleItem({ data }: { data: ProgramInovasiItem }) {
         role="button"
         tabIndex={0}
         className="cursor-pointer transition-all"
-        bg={isDark ? "dark.6" : "white"}
+        bg="white"
       >
         <Center h={160}>
           {data.image?.link ? (

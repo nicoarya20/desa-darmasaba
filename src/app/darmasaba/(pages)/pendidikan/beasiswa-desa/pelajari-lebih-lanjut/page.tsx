@@ -46,6 +46,24 @@ export default function BeasiswaPage() {
     };
   };
 
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      beasiswaDesa.create.form.namaLengkap?.trim() !== '' &&
+      beasiswaDesa.create.form.nis?.trim() !== '' &&
+      beasiswaDesa.create.form.kelas?.trim() !== '' &&
+      beasiswaDesa.create.form.jenisKelamin?.trim() !== '' &&
+      beasiswaDesa.create.form.alamatDomisili?.trim() !== '' &&
+      beasiswaDesa.create.form.tempatLahir?.trim() !== '' &&
+      beasiswaDesa.create.form.tanggalLahir?.trim() !== '' &&
+      beasiswaDesa.create.form.namaOrtu?.trim() !== '' &&
+      beasiswaDesa.create.form.nik?.trim() !== '' &&
+      beasiswaDesa.create.form.pekerjaanOrtu?.trim() !== '' &&
+      beasiswaDesa.create.form.penghasilan?.trim() !== '' &&
+      beasiswaDesa.create.form.noHp?.trim() !== ''
+    );
+  };
+
   const handleSubmit = async () => {
     await beasiswaDesa.create.create();
     resetForm();
@@ -391,6 +409,7 @@ export default function BeasiswaPage() {
                 radius="xl"
                 bg={colors['blue-button']}
                 onClick={handleSubmit}
+                disabled={!isFormValid()}
                 style={{ fontSize: '0.9375rem', fontWeight: 600, lineHeight: 1.4 }}
               >
                 Kirim

@@ -47,6 +47,15 @@ function CreateAPBDes() {
   const [docFile, setDocFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      imageFile !== null &&
+      docFile !== null &&
+      stateAPBDes.create.form.items.length > 0
+    );
+  };
+
   // Form sementara untuk input item baru
   const [newItem, setNewItem] = useState<ItemForm>({
     kode: '',
@@ -468,9 +477,11 @@ function CreateAPBDes() {
             <Button
               onClick={handleSubmit}
               radius="md"
-              disabled={stateAPBDes.create.form.items.length === 0}
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? 'linear-gradient(135deg, #cccccc, #999999)'
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
               }}
             >

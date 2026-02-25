@@ -29,6 +29,20 @@ function EditDokterTenagaMedis() {
   const params = useParams();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      formData.name?.trim() !== '' &&
+      formData.specialist?.trim() !== '' &&
+      formData.jadwal?.trim() !== '' &&
+      formData.jadwalLibur?.trim() !== '' &&
+      formData.jamBukaOperasional !== '' &&
+      formData.jamTutupOperasional !== '' &&
+      formData.jamBukaLibur !== '' &&
+      formData.jamTutupLibur !== ''
+    );
+  };
+
   const [formData, setFormData] = useState({
     name: '',
     specialist: '',
@@ -108,6 +122,46 @@ function EditDokterTenagaMedis() {
 
   // Submit
   const handleSubmit = async () => {
+    if (!formData.name?.trim()) {
+      toast.error('Nama dokter wajib diisi');
+      return;
+    }
+
+    if (!formData.specialist?.trim()) {
+      toast.error('Specialist wajib diisi');
+      return;
+    }
+
+    if (!formData.jadwal?.trim()) {
+      toast.error('Jadwal wajib diisi');
+      return;
+    }
+
+    if (!formData.jadwalLibur?.trim()) {
+      toast.error('Jadwal libur wajib diisi');
+      return;
+    }
+
+    if (!formData.jamBukaOperasional) {
+      toast.error('Jam buka operasional wajib diisi');
+      return;
+    }
+
+    if (!formData.jamTutupOperasional) {
+      toast.error('Jam tutup operasional wajib diisi');
+      return;
+    }
+
+    if (!formData.jamBukaLibur) {
+      toast.error('Jam buka hari libur wajib diisi');
+      return;
+    }
+
+    if (!formData.jamTutupLibur) {
+      toast.error('Jam tutup hari libur wajib diisi');
+      return;
+    }
+
     try {
       setIsSubmitting(true);
       state.update.form = { ...state.update.form, ...formData };
@@ -223,8 +277,11 @@ function EditDokterTenagaMedis() {
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}

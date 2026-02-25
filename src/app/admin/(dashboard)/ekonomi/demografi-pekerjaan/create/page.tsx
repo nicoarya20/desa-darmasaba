@@ -26,6 +26,17 @@ function CreateDemografiPekerjaan() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      stateDemografi.create.form.pekerjaan?.trim() !== '' &&
+      stateDemografi.create.form.lakiLaki !== null &&
+      stateDemografi.create.form.lakiLaki >= 0 &&
+      stateDemografi.create.form.perempuan !== null &&
+      stateDemografi.create.form.perempuan >= 0
+    );
+  };
+
   const resetForm = () => {
     stateDemografi.create.form = {
       pekerjaan: '',
@@ -128,8 +139,11 @@ function CreateDemografiPekerjaan() {
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}

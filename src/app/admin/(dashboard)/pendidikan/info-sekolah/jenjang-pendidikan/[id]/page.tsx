@@ -31,6 +31,11 @@ function EditJenjangPendidikan() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loading, setLoading] = useState(true);
 
+  // Check if form is valid
+  const isFormValid = () => {
+    return formData.nama?.trim() !== '';
+  };
+
   // Load data sekali saat component mount
   useEffect(() => {
     if (!id) return;
@@ -136,8 +141,11 @@ function EditJenjangPendidikan() {
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}

@@ -1,7 +1,9 @@
 'use client'
 
-import colors from "@/con/colors";
 import { authStore } from "@/store/authStore";
+import { useDarkMode } from "@/state/darkModeStore";
+import { themeTokens, getActiveStateStyles } from "@/utils/themeTokens";
+import { DarkModeToggle } from "@/components/admin/DarkModeToggle";
 import {
   ActionIcon,
   AppShell,
@@ -33,13 +35,21 @@ import { useEffect, useState } from "react";
 import { getNavbar } from "./(dashboard)/user&role/_com/dynamicNavbar";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  const [opened, { toggle, close }] = useDisclosure(); // ✅ Tambahkan 'close'
+  const { isDark } = useDarkMode();
+  const tokens = themeTokens(isDark);
+  
+  const [mounted, setMounted] = useState(false);
+  const [opened, { toggle, close }] = useDisclosure();
   const [loading, setLoading] = useState(true);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true);
   const router = useRouter();
   const segments = useSelectedLayoutSegments().map((s) => _.lowerCase(s));
-  
+
+  // Ensure component is mounted on client side
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -74,7 +84,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           });
 
           const currentPath = window.location.pathname;
-          
+
           if (currentPath === '/admin') {
             const expectedPath = getRedirectPath(Number(data.user.roleId));
             console.log('🔄 Redirecting from /admin to:', expectedPath);
@@ -112,11 +122,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     }
   };
 
-  if (loading) {
+  if (loading || !mounted) {
     return (
       <AppShell>
         <AppShellMain>
-          <Center h="100vh">
+          <Center h="100vh" bg="#f6f9fc">
             <Loader />
           </Center>
         </AppShellMain>
@@ -132,7 +142,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     try {
       setIsLoggingOut(true);
 
-      const response = await fetch('/api/auth/logout', { 
+      const response = await fetch('/api/auth/logout', {
         method: 'POST',
         credentials: 'include'
       });
@@ -158,10 +168,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // ✅ Handler untuk menutup mobile menu saat navigasi
   const handleNavClick = (path: string) => {
     router.push(path);
-    close(); // Tutup mobile menu
+    close();
   };
 
   return (
@@ -178,11 +187,16 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       }}
       padding="md"
     >
+      {/*
+        HEADER / TOPBAR
+        Spec: Background gradient, border bawah wajib
+      */}
       <AppShellHeader
         style={{
-          background: "linear-gradient(90deg, #ffffff, #f9fbff)",
-          borderBottom: `1px solid ${colors["blue-button"]}20`,
+          background: mounted ? tokens.colors.bg.header : 'linear-gradient(90deg, #ffffff, #f9fbff)',
+          borderBottom: `1px solid ${mounted ? tokens.colors.border.soft : '#e9ecef'}`,
           padding: '0 16px',
+          transition: 'background 0.3s ease, border-color 0.3s ease',
         }}
         px={{ base: 'sm', sm: 'md' }}
         py={{ base: 'xs', sm: 'sm' }}
@@ -198,30 +212,49 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               loading="lazy"
               style={{ minWidth: '32px', height: 'auto' }}
             />
-            <Text fw={700} c={colors["blue-button"]} fz={{ base: 'md', sm: 'xl' }}>
+            <Text fw={700} c={mounted ? tokens.colors.text.brand : '#0A4E78'} fz={{ base: 'md', sm: 'xl' }}>
               Admin Darmasaba
             </Text>
           </Flex>
 
           <Group gap="xs">
+            {/* Dark Mode Toggle */}
+            <DarkModeToggle variant="light" size="lg" showTooltip tooltipPosition="bottom" />
+
             {!desktopOpened && (
               <Tooltip label="Buka Navigasi" position="bottom" withArrow>
-                <ActionIcon variant="light" radius="xl" size="lg" onClick={toggleDesktop} color={colors["blue-button"]}>
+                <ActionIcon variant="light" radius="xl" size="lg" onClick={toggleDesktop} color={mounted ? tokens.colors.primary : '#3B82F6'}>
                   <IconChevronRight />
                 </ActionIcon>
               </Tooltip>
             )}
 
-            <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="md" color={colors["blue-button"]} mr="xs" />
+            <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="md" color={mounted ? tokens.colors.text.brand : '#0A4E78'} mr="xs" />
 
             <Tooltip label="Kembali ke Website Desa" position="bottom" withArrow>
-              <ActionIcon onClick={() => router.push("/darmasaba")} color={colors["blue-button"]} radius="xl" size="lg" variant="gradient" gradient={{ from: colors["blue-button"], to: "#228be6" }}>
+              <ActionIcon
+                onClick={() => router.push("/darmasaba")}
+                color={mounted ? tokens.colors.primary : '#3B82F6'}
+                radius="xl"
+                size="lg"
+                variant="gradient"
+                gradient={mounted ? tokens.colors.gradient : { from: '#3B82F6', to: '#60A5FA' }}
+              >
                 <Image src="/assets/images/darmasaba-icon.png" alt="Logo Darmasaba" w={20} h={20} radius="md" loading="lazy" style={{ minWidth: '20px', height: 'auto' }} />
               </ActionIcon>
             </Tooltip>
 
             <Tooltip label="Keluar" position="bottom" withArrow>
-              <ActionIcon onClick={handleLogout} color={colors["blue-button"]} radius="xl" size="lg" variant="gradient" gradient={{ from: colors["blue-button"], to: "#228be6" }} loading={isLoggingOut} disabled={isLoggingOut}>
+              <ActionIcon
+                onClick={handleLogout}
+                color={mounted ? tokens.colors.primary : '#3B82F6'}
+                radius="xl"
+                size="lg"
+                variant="gradient"
+                gradient={mounted ? tokens.colors.gradient : { from: '#3B82F6', to: '#60A5FA' }}
+                loading={isLoggingOut}
+                disabled={isLoggingOut}
+              >
                 <IconLogout2 size={22} />
               </ActionIcon>
             </Tooltip>
@@ -229,47 +262,105 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         </Group>
       </AppShellHeader>
 
-      <AppShellNavbar component={ScrollArea} style={{ background: "#ffffff", borderRight: `1px solid ${colors["blue-button"]}20` }} p={{ base: 'xs', sm: 'sm' }}>
+      {/*
+        SIDEBAR / NAVBAR
+        Spec: Background --bg-app, active state dengan accent bar
+      */}
+      <AppShellNavbar
+        component={ScrollArea}
+        style={{
+          background: mounted ? tokens.colors.bg.app : '#ffffff',
+          borderRight: `1px solid ${mounted ? tokens.colors.border.soft : '#e9ecef'}`,
+          transition: 'background 0.3s ease, border-color 0.3s ease',
+        }}
+        p={{ base: 'xs', sm: 'sm' }}
+      >
         <AppShell.Section p="sm">
           {currentNav.map((v, k) => {
             const isParentActive = segments.includes(_.lowerCase(v.name));
             return (
-              <NavLink 
-                key={k} 
-                defaultOpened={isParentActive} 
-                c={isParentActive ? colors["blue-button"] : "gray"} 
-                label={<Text fw={isParentActive ? 600 : 400} fz="sm">{v.name}</Text>} 
-                style={{ borderRadius: rem(10), marginBottom: rem(4), transition: "background 150ms ease" }} 
-                styles={{ root: { '&:hover': { backgroundColor: 'rgba(25, 113, 194, 0.05)' } } }} 
-                variant="light" 
+              <NavLink
+                key={k}
+                defaultOpened={isParentActive}
+                c={mounted && isParentActive ? tokens.colors.primary : mounted && isDark ? '#E5E7EB' : tokens.colors.text.secondary}
+                label={
+                  <Text
+                    fw={isParentActive ? 600 : 400}
+                    fz="sm"
+                    style={{
+                      color: mounted && isDark ? '#E5E7EB' : 'inherit',
+                      transition: 'color 150ms ease',
+                    }}
+                  >
+                    {v.name}
+                  </Text>
+                }
+                style={{
+                  borderRadius: rem(10),
+                  marginBottom: rem(4),
+                  transition: "background 150ms ease",
+                  ...(mounted && isParentActive && !isDark && {
+                    borderLeft: `3px solid ${tokens.colors.primary}`,
+                  }),
+                }}
+                styles={{
+                  root: {
+                    '&:hover': {
+                      backgroundColor: mounted && isDark ? '#1E293B' : tokens.colors.bg.hover,
+                    },
+                    ...(mounted && isParentActive && isDark && {
+                      backgroundColor: 'rgba(59,130,246,0.25)',
+                      borderLeft: `3px solid ${tokens.colors.primary}`,
+                    }),
+                  }
+                }}
+                variant="light"
                 active={isParentActive}
               >
                 {v.children.map((child, key) => {
                   const isChildActive = segments.includes(_.lowerCase(child.name));
                   return (
-                    <NavLink 
-                      key={key} 
-                      // ✅ PERBAIKAN: Gunakan onClick untuk handle navigasi dan close menu
+                    <NavLink
+                      key={key}
                       onClick={(e) => {
                         e.preventDefault();
                         handleNavClick(child.path);
                       }}
                       href={child.path}
-                      c={isChildActive ? colors["blue-button"] : "gray"} 
-                      label={<Text fw={isChildActive ? 600 : 400} fz="sm">{child.name}</Text>} 
-                      styles={{ 
-                        root: { 
-                          borderRadius: rem(8), 
-                          marginBottom: rem(2), 
-                          transition: 'background 150ms ease', 
-                          padding: '6px 12px', 
-                          '&:hover': { 
-                            backgroundColor: isChildActive ? 'rgba(25, 113, 194, 0.15)' : 'rgba(25, 113, 194, 0.05)' 
-                          }, 
-                          ...(isChildActive && { backgroundColor: 'rgba(25, 113, 194, 0.1)' }) 
-                        } 
-                      }} 
-                      active={isChildActive} 
+                      c={mounted && isChildActive ? tokens.colors.primary : mounted && isDark ? '#E5E7EB' : tokens.colors.text.secondary}
+                      label={
+                        <Text
+                          fw={isChildActive ? 600 : 400}
+                          fz="sm"
+                          style={{
+                            color: mounted && isDark ? '#E5E7EB' : 'inherit',
+                            transition: 'color 150ms ease',
+                          }}
+                        >
+                          {child.name}
+                        </Text>
+                      }
+                      styles={{
+                        root: {
+                          borderRadius: rem(8),
+                          marginBottom: rem(2),
+                          transition: 'background 150ms ease',
+                          padding: '6px 12px',
+                          '&:hover': {
+                            backgroundColor: mounted && isDark ? 'rgba(255, 255, 255, 0.05)' : tokens.colors.bg.hover,
+                          },
+                          ...(mounted && isChildActive && isDark && {
+                            backgroundColor: 'rgba(59,130,246,0.15)',
+                            borderLeft: `2px solid ${tokens.colors.primary}`,
+                          }),
+                          ...(mounted && isChildActive && !isDark && {
+                            backgroundColor: 'rgba(25, 113, 194, 0.1)',
+                            borderLeft: `2px solid ${tokens.colors.primary}`,
+                          }),
+                        }
+                      }}
+                      active={isChildActive}
+                      variant="subtle"
                       component={Link}
                     />
                   );
@@ -282,7 +373,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <AppShell.Section py="md">
           <Group justify="end" pr="sm">
             <Tooltip label={desktopOpened ? "Tutup Navigasi" : "Buka Navigasi"} position="top" withArrow>
-              <ActionIcon variant="light" radius="xl" size="lg" onClick={toggleDesktop} color={colors["blue-button"]}>
+              <ActionIcon variant="light" radius="xl" size="lg" onClick={toggleDesktop} color={mounted ? tokens.colors.primary : '#3B82F6'}>
                 <IconChevronLeft />
               </ActionIcon>
             </Tooltip>
@@ -290,7 +381,17 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         </AppShell.Section>
       </AppShellNavbar>
 
-      <AppShellMain style={{ background: "linear-gradient(180deg, #fdfdfd, #f6f9fc)", minHeight: "100vh" }}>
+      {/*
+        MAIN CONTENT
+        Spec: Background --bg-base
+      */}
+      <AppShellMain
+        style={{
+          background: mounted ? tokens.colors.bg.base : '#f6f9fc',
+          minHeight: "100vh",
+          transition: 'background 0.3s ease',
+        }}
+      >
         {children}
       </AppShellMain>
     </AppShell>

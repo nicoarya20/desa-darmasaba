@@ -6,6 +6,7 @@ import { IconEdit } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
 import stateDasarHukumPPID from '../../_state/ppid/dasar_hukum/dasarHukum';
+import DOMPurify from 'dompurify';
 
 function Page() {
   const router = useRouter();
@@ -68,7 +69,7 @@ function Page() {
                   lh={{ base: 1.15, md: 1.1 }}
                   fw="bold"
                   c={colors['blue-button']}
-                  dangerouslySetInnerHTML={{ __html: listDasarHukum.findById.data.judul }}
+                  dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(listDasarHukum.findById.data.judul) }}
                   style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
                 />
               </GridCol>
@@ -77,7 +78,7 @@ function Page() {
             <Divider my="xl" color={colors['blue-button']} />
 
             <Text
-              dangerouslySetInnerHTML={{ __html: listDasarHukum.findById.data.content }}
+              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(listDasarHukum.findById.data.content) }}
               style={{
                 wordBreak: 'break-word',
                 whiteSpace: 'normal',

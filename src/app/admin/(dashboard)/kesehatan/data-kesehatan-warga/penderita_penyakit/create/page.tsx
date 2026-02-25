@@ -25,6 +25,17 @@ function CreateGrafikHasilKepuasanMasyarakat() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      stateGrafikKepuasan.create.form.nama?.trim() !== '' &&
+      stateGrafikKepuasan.create.form.tanggal !== '' &&
+      stateGrafikKepuasan.create.form.jenisKelamin?.trim() !== '' &&
+      stateGrafikKepuasan.create.form.alamat?.trim() !== '' &&
+      stateGrafikKepuasan.create.form.penyakit?.trim() !== ''
+    );
+  };
+
   const resetForm = () => {
     stateGrafikKepuasan.create.form = {
       nama: "",
@@ -36,6 +47,31 @@ function CreateGrafikHasilKepuasanMasyarakat() {
   };
 
   const handleSubmit = async () => {
+    if (!stateGrafikKepuasan.create.form.nama?.trim()) {
+      toast.error('Nama wajib diisi');
+      return;
+    }
+
+    if (!stateGrafikKepuasan.create.form.tanggal) {
+      toast.error('Tanggal wajib diisi');
+      return;
+    }
+
+    if (!stateGrafikKepuasan.create.form.jenisKelamin?.trim()) {
+      toast.error('Jenis kelamin wajib diisi');
+      return;
+    }
+
+    if (!stateGrafikKepuasan.create.form.alamat?.trim()) {
+      toast.error('Alamat wajib diisi');
+      return;
+    }
+
+    if (!stateGrafikKepuasan.create.form.penyakit?.trim()) {
+      toast.error('Penyakit wajib diisi');
+      return;
+    }
+
     try {
       setIsSubmitting(true);
       await stateGrafikKepuasan.create.create();
@@ -129,8 +165,11 @@ function CreateGrafikHasilKepuasanMasyarakat() {
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}

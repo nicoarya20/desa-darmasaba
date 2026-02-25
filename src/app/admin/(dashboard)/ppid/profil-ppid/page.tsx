@@ -6,6 +6,7 @@ import { IconEdit } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
 import stateProfilePPID from '../../_state/ppid/profile_ppid/profile_PPID';
+import DOMPurify from 'dompurify';
 
 function Page() {
   const router = useRouter();
@@ -114,7 +115,7 @@ function Page() {
                   c={colors['blue-button']}
                   lh={1.5}
                   style={{ wordBreak: "break-word", whiteSpace: "normal" }}
-                  dangerouslySetInnerHTML={{ __html: item.biodata }}
+                  dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(item.biodata) }}
                 />
               </Box>
 
@@ -129,7 +130,7 @@ function Page() {
                     c={colors['blue-button']}
                     lh={1.5}
                     style={{ wordBreak: "break-word", whiteSpace: "normal" }}
-                    dangerouslySetInnerHTML={{ __html: item.riwayat }}
+                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(item.riwayat) }}
                   />
                 </Box>
               </Box>
@@ -145,7 +146,7 @@ function Page() {
                     c={colors['blue-button']}
                     lh={1.5}
                     style={{ wordBreak: "break-word", whiteSpace: "normal" }}
-                    dangerouslySetInnerHTML={{ __html: item.pengalaman }}
+                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(item.pengalaman) }}
                   />
                 </Box>
               </Box>
@@ -161,7 +162,7 @@ function Page() {
                     c={colors['blue-button']}
                     lh={1.5}
                     style={{ wordBreak: "break-word", whiteSpace: "normal" }}
-                    dangerouslySetInnerHTML={{ __html: item.unggulan }}
+                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(item.unggulan) }}
                   />
                 </Box>
               </Box>

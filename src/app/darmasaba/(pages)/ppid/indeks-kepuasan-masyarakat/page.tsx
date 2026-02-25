@@ -56,6 +56,17 @@ function Kepuasan() {
     indeksKepuasanState.kelompokUmurResponden.findMany.load();
   }, []);
 
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      state.create.form.name?.trim() !== '' &&
+      state.create.form.tanggal?.trim() !== '' &&
+      state.create.form.jenisKelaminId?.trim() !== '' &&
+      state.create.form.ratingId?.trim() !== '' &&
+      state.create.form.kelompokUmurId?.trim() !== ''
+    );
+  };
+
   const handleSubmit = async () => {
     try {
       const id = await state.create.create();
@@ -442,7 +453,17 @@ function Kepuasan() {
                 disabled={indeksKepuasanState.kelompokUmurResponden.findMany.loading}
                 labelProps={{ style: { fontSize: '0.95rem', lineHeight: '1.4' } } as any}
               />
-              <Button mt={10} bg={colors['blue-button']} onClick={handleSubmit}>
+              <Button 
+                mt={10} 
+                bg={colors['blue-button']} 
+                onClick={handleSubmit}
+                disabled={!isFormValid()}
+                style={{
+                  background: !isFormValid()
+                    ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                    : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                }}
+              >
                 Submit
               </Button>
             </Stack>

@@ -16,6 +16,17 @@ function RespondenCreate() {
   const [donutData, setDonutData] = useState<any[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      stategrafikBerdasarkanResponden.create.form.name?.trim() !== '' &&
+      stategrafikBerdasarkanResponden.create.form.tanggal?.trim() !== '' &&
+      stategrafikBerdasarkanResponden.create.form.jenisKelaminId?.trim() !== '' &&
+      stategrafikBerdasarkanResponden.create.form.ratingId?.trim() !== '' &&
+      stategrafikBerdasarkanResponden.create.form.kelompokUmurId?.trim() !== ''
+    );
+  };
+
   const resetForm = () => {
     stategrafikBerdasarkanResponden.create.form = {
       ...stategrafikBerdasarkanResponden.create.form,
@@ -151,8 +162,11 @@ function RespondenCreate() {
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}

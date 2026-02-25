@@ -95,7 +95,7 @@ function Page() {
                 fz={{ base: 'md', md: 'lg' }}
                 lh={{ base: 1.4, md: 1.4 }}
               >
-                I.B. Surya Prabhawa Manuaba, S.H., M.H.
+                {perbekel.nama || "I.B. Surya Prabhawa Manuaba, S.H., M.H."}
               </Text>
             </Paper>
           </Stack>

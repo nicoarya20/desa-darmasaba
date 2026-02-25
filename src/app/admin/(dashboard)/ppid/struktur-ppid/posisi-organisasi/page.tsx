@@ -9,6 +9,7 @@ import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../../_com/header';
 import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
 import stateStrukturPPID from '../../../_state/ppid/struktur_ppid/struktur_PPID';
+import DOMPurify from 'dompurify';
 
 function PosisiOrganisasiPPID() {
   const [search, setSearch] = useState("");
@@ -100,7 +101,7 @@ function ListPosisiOrganisasiPPID({ search }: { search: string }) {
                       <Text fz="md" fw={600} lh={1.5} truncate="end" lineClamp={1}>{item.nama}</Text>
                     </TableTd>
                     <TableTd w={200}>
-                      <Text fz="sm" lh={1.5} c="dimmed" lineClamp={1} dangerouslySetInnerHTML={{ __html: item.deskripsi || '-' }} />
+                      <Text fz="sm" lh={1.5} c="dimmed" lineClamp={1} dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(item.deskripsi || '-') }} />
                     </TableTd>
                     <TableTd>
                       <Text fz="md" lh={1.5}>{item.hierarki || '-'}</Text>

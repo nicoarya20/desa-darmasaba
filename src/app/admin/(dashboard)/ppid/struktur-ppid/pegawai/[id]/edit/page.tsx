@@ -56,11 +56,31 @@ export default function EditPegawaiPPID() {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
 
+  // Helper function to validate email format
+  const isValidEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
   // Format date for <input type="date">
   const formatDateForInput = (dateString: string) => {
     if (!dateString) return '';
     const date = new Date(dateString);
     return date.toISOString().split('T')[0];
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      formData.namaLengkap?.trim() !== '' &&
+      formData.gelarAkademik?.trim() !== '' &&
+      formData.posisiId !== '' &&
+      formData.tanggalMasuk !== '' &&
+      formData.email !== '' &&
+      isValidEmail(formData.email) &&
+      formData.telepon !== '' &&
+      formData.alamat !== ''
+    );
   };
 
   useEffect(() => {
@@ -347,8 +367,11 @@ export default function EditPegawaiPPID() {
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}

@@ -32,6 +32,24 @@ export default function CreateBerita() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Helper function to check if HTML content is empty
+  const isHtmlEmpty = (html: string) => {
+    // Remove all HTML tags and check if there's any text content
+    const textContent = html.replace(/<[^>]*>/g, '').trim();
+    return textContent === '';
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      beritaState.berita.create.form.judul?.trim() !== '' &&
+      beritaState.berita.create.form.kategoriBeritaId !== '' &&
+      !isHtmlEmpty(beritaState.berita.create.form.deskripsi) &&
+      file !== null &&
+      !isHtmlEmpty(beritaState.berita.create.form.content)
+    );
+  };
+
   useShallowEffect(() => {
     beritaState.kategoriBerita.findMany.load();
   }, []);
@@ -49,6 +67,31 @@ export default function CreateBerita() {
   };
 
   const handleSubmit = async () => {
+    if (!beritaState.berita.create.form.judul?.trim()) {
+      toast.error('Judul wajib diisi');
+      return;
+    }
+    
+    if (!beritaState.berita.create.form.kategoriBeritaId) {
+      toast.error('Kategori wajib dipilih');
+      return;
+    }
+    
+    if (isHtmlEmpty(beritaState.berita.create.form.deskripsi)) {
+      toast.error('Deskripsi singkat wajib diisi');
+      return;
+    }
+    
+    if (!file) {
+      toast.error('Gambar wajib dipilih');
+      return;
+    }
+    
+    if (isHtmlEmpty(beritaState.berita.create.form.content)) {
+      toast.error('Konten wajib diisi');
+      return;
+    }
+
     try {
       setIsSubmitting(true);
       if (!file) {
@@ -250,8 +293,11 @@ export default function CreateBerita() {
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
