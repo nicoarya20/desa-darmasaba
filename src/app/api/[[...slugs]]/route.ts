@@ -46,11 +46,17 @@ fs.mkdir(UPLOAD_DIR_IMAGE, {
 }).catch(() => {});
 
 const corsConfig = {
-  origin: "*",
-  methods: ["GET", "POST", "PATCH", "DELETE", "PUT"] as HTTPMethod[],
-  allowedHeaders: "*",
+  origin: [
+    "http://localhost:3000",
+    "http://localhost:3001",
+    "https://cld-dkr-desa-darmasaba-stg.wibudev.com",
+    "https://cld-dkr-staging-desa-darmasaba.wibudev.com",
+    "*", // Allow all origins in development
+  ],
+  methods: ["GET", "POST", "PATCH", "DELETE", "PUT", "OPTIONS"] as HTTPMethod[],
+  allowedHeaders: ["Content-Type", "Authorization", "*"],
   exposedHeaders: "*",
-  maxAge: 5,
+  maxAge: 86400, // 24 hours
   credentials: true,
 };
 
