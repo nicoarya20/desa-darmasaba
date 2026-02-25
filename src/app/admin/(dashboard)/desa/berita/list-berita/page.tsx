@@ -187,7 +187,7 @@ function ListBerita({ search }: { search: string }) {
         <Pagination
           value={page}
           onChange={(newPage) => {
-            load(newPage, 10);
+            load(newPage, 10, debouncedSearch);  // ✅ Include search parameter
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
           total={totalPages}

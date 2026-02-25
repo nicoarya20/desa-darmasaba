@@ -160,7 +160,7 @@ function ListKategoriBerita({ search }: { search: string }) {
                 ))
               ) : (
                 <TableTr>
-                  <TableTd colSpan={4}>
+                  <TableTd colSpan={3}>  {/* ✅ Match column count (3 columns) */}
                     <Center py={24}>
                       <Text c="dimmed" fz="sm" lh={1.4}>
                         Tidak ada data kategori berita yang cocok
