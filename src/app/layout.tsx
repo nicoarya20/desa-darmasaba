@@ -98,16 +98,16 @@ export default function RootLayout({
       <html lang="id" {...mantineHtmlProps}>
         <head>
           <meta charSet="utf-8" />
-          <ColorSchemeScript />
+          <ColorSchemeScript defaultColorScheme="light" />
         </head>
         <body>
-          <MantineProvider theme={theme}>
+          <MantineProvider theme={theme} defaultColorScheme="light">
             {children}
             <LoadDataFirstClient />
-            <ToastContainer 
-              position="bottom-center" 
-              hideProgressBar 
-              style={{ zIndex: 9999 }} 
+            <ToastContainer
+              position="bottom-center"
+              hideProgressBar
+              style={{ zIndex: 9999 }}
             />
           </MantineProvider>
         </body>

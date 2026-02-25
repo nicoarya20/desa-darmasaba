@@ -21,17 +21,18 @@ import { proxy, useSnapshot } from 'valtio';
 
 const STORAGE_KEY = 'darmasaba-admin-dark-mode';
 
-// Initialize from localStorage or system preference
+// Initialize from localStorage or default to light mode
 const getInitialDarkMode = (): boolean => {
   if (typeof window === 'undefined') return false;
-  
+
   const stored = localStorage.getItem(STORAGE_KEY);
   if (stored !== null) {
     return stored === 'true';
   }
-  
-  // Fallback to system preference
-  return window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+  // Default to light mode for first-time users
+  // System preference is NOT used as default to ensure consistent UX
+  return false;
 };
 
 class DarkModeStore {
