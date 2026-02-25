@@ -385,3 +385,4 @@ export const getActiveStateStyles = (isActive: boolean, isDark: boolean = false)
     },
   };
 };
+
