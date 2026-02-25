@@ -354,7 +354,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                             borderLeft: `2px solid ${tokens.colors.primary}`,
                           }),
                           ...(mounted && isChildActive && !isDark && {
-                            backgroundColor: tokens.colors.bg.hover,
+                            backgroundColor: 'rgba(25, 113, 194, 0.1)',
+                            borderLeft: `2px solid ${tokens.colors.primary}`,
                           }),
                         }
                       }}

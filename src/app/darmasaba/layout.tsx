@@ -1,19 +1,14 @@
 "use client";
 
 import colors from "@/con/colors";
-import { MantineProvider, createTheme } from "@mantine/core";
 import { Box, Space, Stack } from "@mantine/core";
 
 import { Navbar } from "@/app/darmasaba/_com/Navbar";
 import Footer from "./_com/Footer";
 
-const theme = createTheme({
-  defaultColorScheme: "light",
-});
 
 export default function Layout({ children }: { children: React.ReactNode }) {
     return (
-        <MantineProvider theme={theme} defaultColorScheme="light">
             <Stack gap={0} bg={colors.grey[1]}>
                 <Navbar />
                 <Space h={{
@@ -27,6 +22,5 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 </Box>
                 <Footer />
             </Stack>
-        </MantineProvider>
     )
 }

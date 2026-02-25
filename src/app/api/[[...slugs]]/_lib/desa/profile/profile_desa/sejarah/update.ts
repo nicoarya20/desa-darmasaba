@@ -1,7 +1,14 @@
 import prisma from "@/lib/prisma";
+import { requireAuth } from "@/lib/api-auth";
 import { Context } from "elysia";
 
 export default async function sejarahDesaUpdate(context: Context) {
+    // ✅ Authentication check
+    const authResult = await requireAuth(context);
+    if (!authResult.authenticated) {
+        return authResult.response;
+    }
+
     try {
         const id = context.params?.id as string;
         const body = await context.body as {
