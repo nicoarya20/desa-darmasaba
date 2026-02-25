@@ -633,25 +633,25 @@ model KategoriBerita {
 // ========================================= POTENSI DESA ========================================= //
 model PotensiDesa {
   id         String           @id @default(cuid())
-  name       String
-  deskripsi  String
+  name       String           @unique @db.VarChar(255)
+  deskripsi  String           @db.Text
   kategori   KategoriPotensi? @relation(fields: [kategoriId], references: [id])
-  kategoriId String?
+  kategoriId String           @db.VarChar(36)
   image      FileStorage?     @relation(fields: [imageId], references: [id])
   imageId    String?
   content    String           @db.Text
   createdAt  DateTime         @default(now())
   updatedAt  DateTime         @updatedAt
-  deletedAt  DateTime         @default(now())
+  deletedAt  DateTime?
   isActive   Boolean          @default(true)
 }
 
 model KategoriPotensi {
   id          String        @id @default(cuid())
-  nama        String
+  nama        String        @unique @db.VarChar(100)
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
-  deletedAt   DateTime      @default(now())
+  deletedAt   DateTime?
   isActive    Boolean       @default(true)
   PotensiDesa PotensiDesa[]
 }

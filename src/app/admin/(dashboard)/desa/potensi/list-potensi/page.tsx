@@ -27,6 +27,7 @@ import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../../_com/header';
 import potensiDesaState from '../../../_state/desa/potensi';
 import { useDebouncedValue } from '@mantine/hooks';
+import DOMPurify from 'dompurify';
 
 function Potensi() {
   const [search, setSearch] = useState("");
@@ -137,7 +138,12 @@ function ListPotensi({ search }: { search: string }) {
                         fz="sm"
                         lh={1.5}
                         lineClamp={2}
-                        dangerouslySetInnerHTML={{ __html: item.deskripsi }}
+                        dangerouslySetInnerHTML={{
+                          __html: DOMPurify.sanitize(item.deskripsi, {
+                            ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'ul', 'ol', 'li'],
+                            ALLOWED_ATTR: []
+                          })
+                        }}
                         style={{ wordBreak: 'break-word' }}
                       />
                     </TableTd>
@@ -199,7 +205,12 @@ function ListPotensi({ search }: { search: string }) {
                     <Text
                       fz="sm"
                       lh={1.5}
-                      dangerouslySetInnerHTML={{ __html: item.deskripsi }}
+                      dangerouslySetInnerHTML={{
+                        __html: DOMPurify.sanitize(item.deskripsi, {
+                          ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'ul', 'ol', 'li'],
+                          ALLOWED_ATTR: []
+                        })
+                      }}
                       style={{ wordBreak: 'break-word' }}
                     />
                   </Box>
