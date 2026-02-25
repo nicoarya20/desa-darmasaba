@@ -23,7 +23,7 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   // ✅ Tambahkan metadataBase
   metadataBase: new URL("https://cld-dkr-staging-desa-darmasaba.wibudev.com"),
-  
+
   title: {
     default: "Desa Darmasaba",
     template: "%s | Desa Darmasaba",
@@ -96,22 +96,24 @@ export default function RootLayout({
   return (
     <ViewTransitions>
       <html lang="id" {...mantineHtmlProps}>
-        <head>
-          <meta charSet="utf-8" />
-          <ColorSchemeScript />
-        </head>
-        <body>
-          <MantineProvider theme={theme}>
-            {children}
-            <LoadDataFirstClient />
-            <ToastContainer 
-              position="bottom-center" 
-              hideProgressBar 
-              style={{ zIndex: 9999 }} 
-            />
-          </MantineProvider>
-        </body>
-      </html>
+      <head>
+        <ColorSchemeScript defaultColorScheme="light" />
+      </head>
+      <body>
+        <MantineProvider
+          theme={theme}
+          defaultColorScheme="light"
+        >
+          {children}
+          <LoadDataFirstClient />
+          <ToastContainer
+            position="bottom-center"
+            hideProgressBar
+            style={{ zIndex: 9999 }}
+          />
+        </MantineProvider>
+      </body>
+    </html>
     </ViewTransitions>
   );
 }
