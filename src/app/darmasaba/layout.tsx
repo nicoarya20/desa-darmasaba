@@ -7,9 +7,7 @@ import { Box, Space, Stack } from "@mantine/core";
 import { Navbar } from "@/app/darmasaba/_com/Navbar";
 import Footer from "./_com/Footer";
 
-const theme = createTheme({
-  defaultColorScheme: "light",
-});
+const theme = createTheme({});
 
 export default function Layout({ children }: { children: React.ReactNode }) {
     return (
