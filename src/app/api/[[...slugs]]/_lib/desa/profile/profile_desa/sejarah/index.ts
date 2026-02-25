@@ -7,8 +7,8 @@ const SejarahDesa = new Elysia({
   prefix: "/sejarah",
   tags: ["Desa/Profile"],
 })
-  .get("/first", async (context) => {
-    const response = await sejarahDesaFindFirst(new Request(context.request));
+  .get("/first", async () => {
+    const response = await sejarahDesaFindFirst();
     return response;
   })
   .get("/:id", async (context) => {

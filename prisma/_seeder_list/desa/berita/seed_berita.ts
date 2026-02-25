@@ -26,7 +26,24 @@ export async function seedBerita() {
 
   console.log("🔄 Seeding Berita...");
 
+  // Build a map of valid kategori IDs
+  const validKategoriIds = new Set<string>();
+  const kategoriList = await prisma.kategoriBerita.findMany({
+    select: { id: true, name: true },
+  });
+  kategoriList.forEach((k) => validKategoriIds.add(k.id));
+
+  console.log(`📋 Found ${validKategoriIds.size} valid kategori IDs in database`);
+
   for (const b of beritaJson) {
+    // Validate kategoriBeritaId exists
+    if (!b.kategoriBeritaId || !validKategoriIds.has(b.kategoriBeritaId)) {
+      console.warn(
+        `⚠️ Skipping berita "${b.judul}": Invalid kategoriBeritaId "${b.kategoriBeritaId}"`,
+      );
+      continue;
+    }
+
     let imageId: string | null = null;
 
     if (b.imageName) {
@@ -44,26 +61,32 @@ export async function seedBerita() {
       }
     }
 
-    await prisma.berita.upsert({
-      where: { id: b.id },
-      update: {
-        judul: b.judul,
-        deskripsi: b.deskripsi,
-        content: b.content,
-        kategoriBeritaId: b.kategoriBeritaId,
-        imageId,
-      },
-      create: {
-        id: b.id,
-        judul: b.judul,
-        deskripsi: b.deskripsi,
-        content: b.content,
-        kategoriBeritaId: b.kategoriBeritaId,
-        imageId,
-      },
-    });
+    try {
+      await prisma.berita.upsert({
+        where: { id: b.id },
+        update: {
+          judul: b.judul,
+          deskripsi: b.deskripsi,
+          content: b.content,
+          kategoriBeritaId: b.kategoriBeritaId,
+          imageId,
+        },
+        create: {
+          id: b.id,
+          judul: b.judul,
+          deskripsi: b.deskripsi,
+          content: b.content,
+          kategoriBeritaId: b.kategoriBeritaId,
+          imageId,
+        },
+      });
 
-    console.log(`✅ Berita seeded: ${b.judul}`);
+      console.log(`✅ Berita seeded: ${b.judul}`);
+    } catch (error: any) {
+      console.error(
+        `❌ Failed to seed berita "${b.judul}": ${error.message}`,
+      );
+    }
   }
 
   console.log("🎉 Berita seed selesai");

@@ -23,10 +23,9 @@ export default async function findUnique(
 
         // ✅ Filter by isActive and deletedAt
         const data = await prisma.potensiDesa.findFirst({
-            where: { 
+            where: {
                 id,
                 isActive: true,
-                deletedAt: null,
             },
             include: {
                 image: true,

@@ -4,7 +4,7 @@ import { Context } from "elysia";
 
 export default async function sejarahDesaUpdate(context: Context) {
     // ✅ Authentication check
-    const authResult = await requireAuth(context);
+    const authResult = await requireAuth();
     if (!authResult.authenticated) {
         return authResult.response;
     }

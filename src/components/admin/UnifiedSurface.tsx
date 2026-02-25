@@ -2,7 +2,7 @@
 
 import { useDarkMode } from '@/state/darkModeStore';
 import { themeTokens } from '@/utils/themeTokens';
-import { Paper, Box, BoxProps, Divider, DividerProps } from '@mantine/core';
+import { Box, BoxProps, Divider, DividerProps, Paper } from '@mantine/core';
 import React from 'react';
 
 /**
@@ -22,7 +22,6 @@ import React from 'react';
 
 // ============================================================================
 // Unified Card Component
- * ============================================================================
 
 interface UnifiedCardProps extends BoxProps {
   withBorder?: boolean;
@@ -63,12 +62,18 @@ export function UnifiedCard({
     }
   };
 
+  const getShadow = () => {
+    if (shadow === 'none') return 'none';
+    return tokens.shadows[shadow];
+  };
+
   return (
     <Paper
       withBorder={withBorder}
       bg={tokens.colors.bg.card}
       p={getPadding()}
       radius={tokens.radius.lg}  // 12-16px sesuai spec
+      shadow={getShadow()}
       style={{
         borderColor: tokens.colors.border.default,
         transition: hoverable

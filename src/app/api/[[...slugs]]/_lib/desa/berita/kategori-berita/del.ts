@@ -17,7 +17,6 @@ export default async function kategoriBeritaDelete(context: Context) {
             where: {
                 kategoriBeritaId: id,
                 isActive: true,
-                deletedAt: null,
             },
         });
 
