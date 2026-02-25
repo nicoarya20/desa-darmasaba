@@ -13,7 +13,7 @@ import { NavbarSubMenu } from "./NavbarSubMenu"
 import { authStore } from "@/store/authStore";
 
 // contoh state auth (dummy aja dulu, bisa diganti sesuai sistem auth kamu)
-const isAdmin = authStore.user?.roleId === 0 || authStore.user?.roleId === 1 || authStore.user?.roleId === 2 || authStore.user?.roleId === 3 || authStore.user?.roleId === 4; 
+const isAdmin = authStore.user?.roleId === 0 || authStore.user?.roleId === 1 || authStore.user?.roleId === 2 || authStore.user?.roleId === 3 || authStore.user?.roleId === 4;
 
 export function NavbarMainMenu({ listNavbar }: { listNavbar: MenuItem[] }) {
   const { item, isSearch } = useSnapshot(stateNav)
@@ -46,11 +46,11 @@ export function NavbarMainMenu({ listNavbar }: { listNavbar: MenuItem[] }) {
           </Tooltip>
 
           {listNavbar.map((item, k) => (
-            <MenuItemCom 
-            key={k} 
-            item={item}
-            isActive={item.href && pathname.startsWith(item.href) || 
-              (item.children?.some(child => child.href && pathname.startsWith(child.href)))}
+            <MenuItemCom
+              key={k}
+              item={item}
+              isActive={item.href && pathname.startsWith(item.href) ||
+                (item.children?.some(child => child.href && pathname.startsWith(child.href)))}
             />
           ))}
 
@@ -73,7 +73,7 @@ export function NavbarMainMenu({ listNavbar }: { listNavbar: MenuItem[] }) {
             <Tooltip label="Kembali ke Admin" position="bottom" withArrow>
               <ActionIcon
                 onClick={() => {
-                  next.push("/admin/landing-page/profil/program-inovasi")
+                  next.push("/admin/landing-page/profile/program-inovasi")
                 }}
                 color={colors["blue-button"]}
                 radius="xl"

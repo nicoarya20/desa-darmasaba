@@ -236,7 +236,7 @@ model PrestasiDesa {
   imageId    String?
   createdAt  DateTime             @default(now())
   updatedAt  DateTime             @updatedAt
-  deletedAt  DateTime             @default(now())
+  deletedAt  DateTime?
   isActive   Boolean              @default(true)
 }
 
@@ -245,7 +245,7 @@ model KategoriPrestasiDesa {
   name         String         @unique
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
-  deletedAt    DateTime       @default(now())
+  deletedAt    DateTime?
   isActive     Boolean        @default(true)
   PrestasiDesa PrestasiDesa[]
 }
@@ -263,7 +263,7 @@ model Responden {
   kelompokUmurId String
   createdAt      DateTime               @default(now())
   updatedAt      DateTime               @updatedAt
-  deletedAt      DateTime               @default(now())
+  deletedAt  DateTime?
   isActive       Boolean                @default(true)
 }
 
@@ -272,7 +272,7 @@ model JenisKelaminResponden {
   name      String      @unique
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
-  deletedAt DateTime    @default(now())
+  deletedAt  DateTime?
   isActive  Boolean     @default(true)
   Responden Responden[]
 }
@@ -282,7 +282,7 @@ model PilihanRatingResponden {
   name      String      @unique
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
-  deletedAt DateTime    @default(now())
+  deletedAt  DateTime?
   isActive  Boolean     @default(true)
   Responden Responden[]
 }
@@ -292,7 +292,7 @@ model UmurResponden {
   name      String      @unique
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
-  deletedAt DateTime    @default(now())
+  deletedAt  DateTime?
   isActive  Boolean     @default(true)
   Responden Responden[]
 }
@@ -326,6 +326,7 @@ model PosisiOrganisasiPPID {
   isActive               Boolean                  @default(true)
   createdAt              DateTime                 @default(now())
   updatedAt              DateTime                 @updatedAt
+  deletedAt              DateTime?
   parent                 PosisiOrganisasiPPID?    @relation("Parent", fields: [parentId], references: [id])
   children               PosisiOrganisasiPPID[]   @relation("Parent")
   StrukturOrganisasiPPID StrukturOrganisasiPPID[]
@@ -345,6 +346,7 @@ model PegawaiPPID {
   isActive               Boolean                  @default(true)
   createdAt              DateTime                 @default(now())
   updatedAt              DateTime                 @updatedAt
+  deletedAt              DateTime?
   posisi                 PosisiOrganisasiPPID     @relation(fields: [posisiId], references: [id])
   strukturOrganisasi     StrukturPPID[] // Relasi balik
   StrukturOrganisasiPPID StrukturOrganisasiPPID[]
@@ -370,7 +372,7 @@ model VisiMisiPPID {
   misi      String   @db.Text
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  deletedAt DateTime @default(now())
+  deletedAt DateTime?
   isActive  Boolean  @default(true)
 }
 
@@ -381,7 +383,7 @@ model DasarHukumPPID {
   content   String   @db.Text
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  deletedAt DateTime @default(now())
+  deletedAt DateTime?
   isActive  Boolean  @default(true)
 }
 
@@ -398,7 +400,7 @@ model ProfilePPID {
   imageId    String?
   createdAt  DateTime     @default(now())
   updatedAt  DateTime     @updatedAt
-  deletedAt  DateTime     @default(now())
+  deletedAt  DateTime?
   isActive   Boolean      @default(true)
 }
 
@@ -410,7 +412,7 @@ model DaftarInformasiPublik {
   tanggal        DateTime @db.Date
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
-  deletedAt      DateTime @default(now())
+  deletedAt      DateTime?
   isActive       Boolean  @default(true)
 }
 
@@ -431,7 +433,7 @@ model PermohonanInformasiPublik {
   caraMemperolehSalinanInformasiId String?
   createdAt                        DateTime                        @default(now())
   updatedAt                        DateTime                        @updatedAt
-  deletedAt                        DateTime                        @default(now())
+  deletedAt                        DateTime?
   isActive                         Boolean                         @default(true)
 }
 
@@ -440,7 +442,7 @@ model JenisInformasiDiminta {
   name                      String                      @unique
   createdAt                 DateTime                    @default(now())
   updatedAt                 DateTime                    @updatedAt
-  deletedAt                 DateTime                    @default(now())
+  deletedAt                 DateTime?
   isActive                  Boolean                     @default(true)
   PermohonanInformasiPublik PermohonanInformasiPublik[]
 }
@@ -450,7 +452,7 @@ model CaraMemperolehInformasi {
   name                      String                      @unique
   createdAt                 DateTime                    @default(now())
   updatedAt                 DateTime                    @updatedAt
-  deletedAt                 DateTime                    @default(now())
+  deletedAt                 DateTime?
   isActive                  Boolean                     @default(true)
   PermohonanInformasiPublik PermohonanInformasiPublik[]
 }
@@ -460,7 +462,7 @@ model CaraMemperolehSalinanInformasi {
   name                      String                      @unique
   createdAt                 DateTime                    @default(now())
   updatedAt                 DateTime                    @updatedAt
-  deletedAt                 DateTime                    @default(now())
+  deletedAt                 DateTime?
   isActive                  Boolean                     @default(true)
   PermohonanInformasiPublik PermohonanInformasiPublik[]
 }
@@ -474,7 +476,7 @@ model FormulirPermohonanKeberatan {
   alasan    String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  deletedAt DateTime @default(now())
+  deletedAt DateTime?
   isActive  Boolean  @default(true)
 }
 

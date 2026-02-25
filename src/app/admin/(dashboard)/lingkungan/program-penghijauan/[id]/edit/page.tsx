@@ -64,6 +64,23 @@ function EditProgramPenghijauan() {
     icon: '',
   });
 
+  // Helper function to check if HTML content is empty
+  const isHtmlEmpty = (html: string) => {
+    // Remove all HTML tags and check if there's any text content
+    const textContent = html.replace(/<[^>]*>/g, '').trim();
+    return textContent === '';
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      formData.name?.trim() !== '' &&
+      formData.judul?.trim() !== '' &&
+      !isHtmlEmpty(formData.deskripsi) &&
+      formData.icon?.trim() !== ''
+    );
+  };
+
   // Load data program penghijauan
   useEffect(() => {
     const loadProgram = async () => {
@@ -216,8 +233,11 @@ function EditProgramPenghijauan() {
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
