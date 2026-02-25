@@ -170,7 +170,7 @@ function Slider() {
   const handleWheel = (e: React.WheelEvent) => {
     if (!containerRef.current || mobile) return;
 
-    e.preventDefault();
+    // Horizontal scroll dengan wheel delta
     containerRef.current.scrollLeft += e.deltaY;
     scrollPosRef.current = containerRef.current.scrollLeft;
     lastScrollRef.current = Date.now();
