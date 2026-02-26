@@ -316,8 +316,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 }}
                 variant="light"
                 active={isParentActive}
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (v.path) handleNavClick(v.path);
+                }}
+                href={v.path || undefined}
               >
-                {v.children.map((child, key) => {
+                {v.children?.map((child, key) => {
                   const isChildActive = segments.includes(_.lowerCase(child.name));
                   return (
                     <NavLink

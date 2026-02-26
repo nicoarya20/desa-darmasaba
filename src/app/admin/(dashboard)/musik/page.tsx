@@ -23,8 +23,8 @@ import { IconCircleDashedPlus, IconDeviceImacCog, IconSearch } from '@tabler/ico
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
-import HeaderSearch from '../../_com/header';
-import stateDashboardMusik from '../../_state/desa/musik';
+import HeaderSearch from '../_com/header';
+import stateDashboardMusik from '../_state/desa/musik';
 
 
 function Musik() {
@@ -73,7 +73,7 @@ function ListMusik({ search }: { search: string }) {
             leftSection={<IconCircleDashedPlus size={18} />}
             color="blue"
             variant="light"
-            onClick={() => router.push('/admin/desa/musik/create')}
+            onClick={() => router.push('/admin/musik/create')}
           >
             Tambah Baru
           </Button>
@@ -122,7 +122,7 @@ function ListMusik({ search }: { search: string }) {
                         variant="light"
                         color="blue"
                         onClick={() =>
-                          router.push(`/admin/desa/musik/${item.id}`)
+                          router.push(`/admin/musik/${item.id}`)
                         }
                         fz="sm"
                         px="sm"
@@ -189,7 +189,7 @@ function ListMusik({ search }: { search: string }) {
                     fullWidth
                     mt="sm"
                     onClick={() =>
-                      router.push(`/admin/desa/musik/${item.id}`)
+                      router.push(`/admin/musik/${item.id}`)
                     }
                     fz="sm"
                     h={36}

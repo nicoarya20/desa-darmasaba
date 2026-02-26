@@ -1,6 +1,6 @@
 'use client'
-import CreateEditor from '@/app/admin/(dashboard)/_com/createEditor';
-import stateDashboardMusik from '@/app/admin/(dashboard)/_state/desa/musik';
+import CreateEditor from '../../_com/createEditor';
+import stateDashboardMusik from '../../_state/desa/musik';
 import colors from '@/con/colors';
 import ApiFetch from '@/lib/api-fetch';
 import {
@@ -126,7 +126,7 @@ export default function CreateMusik() {
       await musikState.musik.create.create();
 
       resetForm();
-      router.push('/admin/desa/musik');
+      router.push('/admin/musik');
     } catch (error) {
       console.error('Error creating musik:', error);
       toast.error('Terjadi kesalahan saat membuat musik');

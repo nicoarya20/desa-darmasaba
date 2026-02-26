@@ -19,7 +19,7 @@ import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
-import stateDashboardMusik from '../../../_state/desa/musik';
+import stateDashboardMusik from '../../_state/desa/musik';
 
 export default function DetailMusik() {
   const musikState = useProxy(stateDashboardMusik);
@@ -63,7 +63,7 @@ export default function DetailMusik() {
       setIsDeleting(true);
       await musikState.musik.delete.byId(id);
       setShowDeleteModal(false);
-      router.push('/admin/desa/musik');
+      router.push('/admin/musik');
     } catch (error) {
       console.error('Error deleting musik:', error);
     } finally {
@@ -77,7 +77,7 @@ export default function DetailMusik() {
       <Group mb="md">
         <Button
           variant="subtle"
-          onClick={() => router.push('/admin/desa/musik')}
+          onClick={() => router.push('/admin/musik')}
           p="xs"
           radius="md"
         >
@@ -99,15 +99,22 @@ export default function DetailMusik() {
         <Stack gap="md">
           {/* Cover Image */}
           {data.coverImage && (
-            <Box style={{ textAlign: 'center' }}>
+            <Box
+              style={{
+                width: '100%',
+                maxWidth: 400,
+                margin: '0 auto',
+              }}
+            >
               <Image
                 src={data.coverImage.link}
                 alt={data.judul}
                 radius="md"
                 style={{
-                  maxHeight: 300,
+                  width: '100%',
+                  aspectRatio: '1/1',
                   objectFit: 'cover',
-                  margin: '0 auto',
+                  display: 'block',
                 }}
               />
             </Box>
@@ -219,7 +226,7 @@ export default function DetailMusik() {
               radius="md"
               size="md"
               leftSection={<IconEdit size={18} />}
-              onClick={() => router.push(`/admin/desa/musik/${id}/edit`)}
+              onClick={() => router.push(`/admin/musik/${id}/edit`)}
             >
               Edit
             </Button>

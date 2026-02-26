@@ -60,7 +60,7 @@ model FileStorage {
   deletedAt                      DateTime?
   isActive                       Boolean                    @default(true)
   link                           String
-  category                       String // "image" / "document" / "other"
+  category                       String // "image" / "document" / "audio" / "other"
   Berita                         Berita[]
   PotensiDesa                    PotensiDesa[]
   Posyandu                       Posyandu[]
