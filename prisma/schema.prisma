@@ -102,6 +102,9 @@ model FileStorage {
 
   ArtikelKesehatan ArtikelKesehatan[]
   StrukturBumDes   StrukturBumDes[]
+  
+  MusikDesaAudio   MusikDesa[] @relation("MusikAudioFile")
+  MusikDesaCover   MusikDesa[] @relation("MusikCoverImage")
 }
 
 //========================================= MENU LANDING PAGE ========================================= //
@@ -2262,4 +2265,26 @@ model UserMenuAccess {
   user User @relation(fields: [userId], references: [id])
 
   @@unique([userId, menuId]) // Satu user tidak bisa punya akses menu yang sama dua kali
+}
+
+// ========================================= MUSIK DESA ========================================= //
+model MusikDesa {
+  id          String       @id @default(cuid())
+  judul       String       @db.VarChar(255)
+  artis       String       @db.VarChar(255)
+  deskripsi   String?      @db.Text
+  durasi      String       @db.VarChar(20) // format: "MM:SS"
+  audioFile   FileStorage? @relation("MusikAudioFile", fields: [audioFileId], references: [id])
+  audioFileId String?
+  coverImage  FileStorage? @relation("MusikCoverImage", fields: [coverImageId], references: [id])
+  coverImageId String?
+  genre       String?      @db.VarChar(100)
+  tahunRilis  Int?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  deletedAt   DateTime?
+  isActive    Boolean      @default(true)
+
+  @@index([judul])
+  @@index([artis])
 }
