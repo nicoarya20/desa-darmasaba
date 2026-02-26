@@ -33,37 +33,34 @@ export async function POST(req: Request) {
       const codeOtp = randomOTP();
       const otpNumber = Number(codeOtp);
 
-      // ✅ PERBAIKAN: Gunakan format pesan yang lebih sederhana
-      // Hapus karakter khusus yang bisa bikin masalah
-      // const waMessage = `Website Desa Darmasaba\nKode verifikasi Anda ${codeOtp}`;
+      const waMessage = `Website Desa Darmasaba - Kode ini bersifat RAHASIA dan JANGAN DI BAGIKAN KEPADA SIAPAPUN, termasuk anggota ataupun Admin lainnya.\n\n>> Kode OTP anda: ${codeOtp}.`;
+      const waUrl = `https://wa.wibudev.com/code?nom=${encodeURIComponent(nomor)}&text=${encodeURIComponent(waMessage)}`;
       
-      // // ✅ OPSI 1: Tanpa encoding (coba dulu ini)
-      // const waUrl = `https://wa.wibudev.com/code?nom=${nomor}&text=${waMessage}`;
+      console.log("🔍 Debug WA URL:", waUrl); 
       
-      // ✅ OPSI 2: Dengan encoding (kalau opsi 1 gagal)
-      // const waUrl = `https://wa.wibudev.com/code?nom=${nomor}&text=${encodeURIComponent(waMessage)}`;
-      
-      // ✅ OPSI 3: Encoding manual untuk URL-safe (alternatif terakhir)
-      // const encodedMessage = waMessage.replace(/\n/g, '%0A').replace(/ /g, '%20');
-      // const waUrl = `https://wa.wibudev.com/code?nom=${nomor}&text=${encodedMessage}`;
+      try {
+        const res = await fetch(waUrl);
+        const sendWa = await res.json();
+        console.log("📱 WA Response:", sendWa);
 
-      // console.log("🔍 Debug WA URL:", waUrl); // Untuk debugging
-      
-      // const res = await fetch(waUrl);
-      // const sendWa = await res.json();
-
-      // console.log("📱 WA Response:", sendWa); // Debug response
-
-      // if (sendWa.status !== "success") {
-      //   return NextResponse.json(
-      //     { 
-      //       success: false, 
-      //       message: "Gagal mengirim OTP via WhatsApp",
-      //       debug: sendWa // Tampilkan error detail
-      //     },
-      //     { status: 400 }
-      //   );
-      // }
+        if (sendWa.status !== "success") {
+          console.error("❌ WA Service Error:", sendWa);
+          return NextResponse.json(
+            { 
+              success: false, 
+              message: "Gagal mengirim OTP via WhatsApp",
+              debug: sendWa 
+            },
+            { status: 400 }
+          );
+        }
+      } catch (waError) {
+        console.error("❌ Fetch WA Error:", waError);
+        return NextResponse.json(
+          { success: false, message: "Terjadi kesalahan saat mengirim WA" },
+          { status: 500 }
+        );
+      }
 
       const createOtpId = await prisma.kodeOtp.create({
         data: { nomor, otp: otpNumber, isActive: true },
