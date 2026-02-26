@@ -19,7 +19,7 @@ export async function POST(req: Request) {
     const otpNumber = Number(codeOtp);
 
     // Kirim OTP via WhatsApp
-    const waMessage = `Kode verifikasi Anda: ${codeOtp}`;
+    const waMessage = `Website Desa Darmasaba - Kode ini bersifat RAHASIA dan JANGAN DI BAGIKAN KEPADA SIAPAPUN, termasuk anggota ataupun Admin lainnya.\n\n>> Kode OTP anda: ${codeOtp}.`;
     const waUrl = `https://wa.wibudev.com/code?nom=${encodeURIComponent(nomor)}&text=${encodeURIComponent(waMessage)}`;
     const waRes = await fetch(waUrl);
     const waData = await waRes.json();
