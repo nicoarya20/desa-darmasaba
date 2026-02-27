@@ -32,8 +32,33 @@ export default function CreateMusik() {
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [previewAudio, setPreviewAudio] = useState<string | null>(null);
   const [audioFile, setAudioFile] = useState<File | null>(null);
+  const [isExtractingDuration, setIsExtractingDuration] = useState(false);
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Fungsi untuk mendapatkan durasi dari file audio
+  const getAudioDuration = (file: File): Promise<string> => {
+    return new Promise((resolve) => {
+      const audio = new Audio();
+      const url = URL.createObjectURL(file);
+      
+      audio.addEventListener('loadedmetadata', () => {
+        const duration = audio.duration;
+        const minutes = Math.floor(duration / 60);
+        const seconds = Math.floor(duration % 60);
+        const formatted = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        URL.revokeObjectURL(url);
+        resolve(formatted);
+      });
+      
+      audio.addEventListener('error', () => {
+        URL.revokeObjectURL(url);
+        resolve('0:00');
+      });
+      
+      audio.src = url;
+    });
+  };
 
   const isFormValid = () => {
     return (
@@ -294,11 +319,24 @@ export default function CreateMusik() {
               File Audio
             </Text>
             <Dropzone
-              onDrop={(files) => {
+              onDrop={async (files) => {
                 const selectedFile = files[0];
                 if (selectedFile) {
                   setAudioFile(selectedFile);
                   setPreviewAudio(selectedFile.name);
+                  
+                  // Extract durasi otomatis dari audio
+                  setIsExtractingDuration(true);
+                  try {
+                    const duration = await getAudioDuration(selectedFile);
+                    musikState.musik.create.form.durasi = duration;
+                    toast.success(`Durasi audio terdeteksi: ${duration}`);
+                  } catch (error) {
+                    console.error('Error extracting audio duration:', error);
+                    toast.error('Gagal mendeteksi durasi audio, silakan isi manual');
+                  } finally {
+                    setIsExtractingDuration(false);
+                  }
                 }
               }}
               onReject={() => toast.error('File tidak valid, gunakan format audio (MP3, WAV, OGG)')}
@@ -331,6 +369,11 @@ export default function CreateMusik() {
                     <Text fz="sm" truncate style={{ flex: 1 }}>
                       {previewAudio}
                     </Text>
+                    {isExtractingDuration && (
+                      <Text fz="xs" c="blue">
+                        Mendeteksi durasi...
+                      </Text>
+                    )}
                     <ActionIcon
                       variant="filled"
                       color="red"
