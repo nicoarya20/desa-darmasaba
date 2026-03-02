@@ -149,10 +149,6 @@ const MusicPlayer = () => {
     handleRepeatOrNext(audioRef, isRepeat, playNext);
   };
 
-  const handleSeek = (value: number) => {
-    seekTo(audioRef, value);
-  };
-
   const toggleMute = () => {
     toggleMuteUtil(audioRef, isMuted, setIsMuted);
   };
@@ -267,7 +263,14 @@ const MusicPlayer = () => {
                         <Slider
                           value={currentTime}
                           max={duration}
-                          onChange={handleSeek}
+                          onChange={(v) => {
+                            setIsSeeking(true);
+                            setCurrentTime(v);
+                          }}
+                          onChangeEnd={(v) => {
+                            setIsSeeking(false);
+                            seekTo(audioRef, v, setCurrentTime);
+                          }}
                           color="#0B4F78"
                           size="sm"
                           style={{ flex: 1 }}
@@ -404,11 +407,11 @@ const MusicPlayer = () => {
                 max={duration}
                 onChange={(v) => {
                   setIsSeeking(true);
-                  setCurrentTime(v); // preview
+                  setCurrentTime(v); // preview - update UI saja
                 }}
                 onChangeEnd={(v) => {
-                  seekTo(audioRef, v); // commit
                   setIsSeeking(false);
+                  seekTo(audioRef, v); // commit - update audio player
                 }}
                 color="#0B4F78"
                 size="xs"
