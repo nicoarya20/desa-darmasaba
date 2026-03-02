@@ -1,9 +1,14 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 import { ActionIcon, Avatar, Badge, Box, Card, Flex, Grid, Group, Paper, ScrollArea, Slider, Stack, Text, TextInput } from '@mantine/core';
 import { IconArrowsShuffle, IconPlayerPauseFilled, IconPlayerPlayFilled, IconPlayerSkipBackFilled, IconPlayerSkipForwardFilled, IconRepeat, IconRepeatOff, IconSearch, IconVolume, IconVolumeOff, IconX } from '@tabler/icons-react';
 import { useEffect, useRef, useState } from 'react';
 import BackButton from '../../desa/layanan/_com/BackButto';
+import { togglePlayPause } from '../lib/playPause';
+import { getNextIndex, getPrevIndex } from '../lib/nextPrev';
+import { handleRepeatOrNext } from '../lib/repeat';
+import { seekTo } from '../lib/seek';
+import { toggleShuffle } from '../lib/shuffle';
+import { setAudioVolume, toggleMute as toggleMuteUtil } from '../lib/volume';
 
 interface MusicFile {
   id: string;
@@ -39,9 +44,8 @@ const MusicPlayer = () => {
   const [musikData, setMusikData] = useState<Musik[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentSongIndex, setCurrentSongIndex] = useState(-1);
-
+  const [isSeeking, setIsSeeking] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const progressInterval = useRef<number | null>(null);
 
   // Fetch musik data from API
   useEffect(() => {
@@ -71,30 +75,30 @@ const MusicPlayer = () => {
     (musik.genre && musik.genre.toLowerCase().includes(search.toLowerCase()))
   );
 
-  const currentSong = currentSongIndex >= 0 && currentSongIndex < filteredMusik.length 
-    ? filteredMusik[currentSongIndex] 
+  const currentSong = currentSongIndex >= 0 && currentSongIndex < filteredMusik.length
+    ? filteredMusik[currentSongIndex]
     : null;
 
-  // Update progress bar
-  useEffect(() => {
-    if (isPlaying && audioRef.current) {
-      progressInterval.current = window.setInterval(() => {
-        if (audioRef.current) {
-          setCurrentTime(Math.floor(audioRef.current.currentTime));
-        }
-      }, 1000);
-    } else {
-      if (progressInterval.current) {
-        clearInterval(progressInterval.current);
-      }
-    }
+  // // Update progress bar
+  // useEffect(() => {
+  //   if (isPlaying && audioRef.current) {
+  //     progressInterval.current = window.setInterval(() => {
+  //       if (audioRef.current) {
+  //         setCurrentTime(Math.floor(audioRef.current.currentTime));
+  //       }
+  //     }, 1000);
+  //   } else {
+  //     if (progressInterval.current) {
+  //       clearInterval(progressInterval.current);
+  //     }
+  //   }
 
-    return () => {
-      if (progressInterval.current) {
-        clearInterval(progressInterval.current);
-      }
-    };
-  }, [isPlaying]);
+  //   return () => {
+  //     if (progressInterval.current) {
+  //       clearInterval(progressInterval.current);
+  //     }
+  //   };
+  // }, [isPlaying]);
 
   // Update duration when song changes
   useEffect(() => {
@@ -110,7 +114,7 @@ const MusicPlayer = () => {
         });
       }
     }
-  }, [currentSongIndex]);
+  }, [currentSongIndex, currentSong, isPlaying]);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -120,84 +124,64 @@ const MusicPlayer = () => {
 
   const playSong = (index: number) => {
     if (index < 0 || index >= filteredMusik.length) return;
-    
+
     setCurrentSongIndex(index);
     setIsPlaying(true);
   };
 
   const handleSongEnd = () => {
-    if (isRepeat) {
-      if (audioRef.current) {
-        audioRef.current.currentTime = 0;
-        audioRef.current.play();
-      }
-    } else {
-      // Play next song
+    const playNext = () => {
       let nextIndex: number;
       if (isShuffle) {
         nextIndex = Math.floor(Math.random() * filteredMusik.length);
       } else {
         nextIndex = (currentSongIndex + 1) % filteredMusik.length;
       }
-      
+
       if (filteredMusik.length > 1) {
         playSong(nextIndex);
       } else {
         setIsPlaying(false);
         setCurrentTime(0);
       }
-    }
+    };
+
+    handleRepeatOrNext(audioRef, isRepeat, playNext);
   };
 
   const handleSeek = (value: number) => {
-    setCurrentTime(value);
-    if (audioRef.current) {
-      audioRef.current.currentTime = value;
-    }
+    seekTo(audioRef, value);
   };
 
   const toggleMute = () => {
-    const newMuted = !isMuted;
-    setIsMuted(newMuted);
-    if (audioRef.current) {
-      audioRef.current.muted = newMuted;
-    }
+    toggleMuteUtil(audioRef, isMuted, setIsMuted);
   };
 
   const handleVolumeChange = (val: number) => {
-    setVolume(val);
-    if (audioRef.current) {
-      audioRef.current.volume = val / 100;
-    }
-    if (val > 0 && isMuted) {
-      setIsMuted(false);
-    }
+    setAudioVolume(audioRef, val, setVolume, setIsMuted);
   };
 
   const skipBack = () => {
-    if (audioRef.current) {
-      audioRef.current.currentTime = Math.max(0, audioRef.current.currentTime - 10);
+    const prevIndex = getPrevIndex(currentSongIndex, filteredMusik.length, isShuffle);
+    if (prevIndex >= 0) {
+      playSong(prevIndex);
     }
   };
 
   const skipForward = () => {
-    if (audioRef.current) {
-      audioRef.current.currentTime = Math.min(duration, audioRef.current.currentTime + 10);
+    const nextIndex = getNextIndex(currentSongIndex, filteredMusik.length, isShuffle);
+    if (nextIndex >= 0) {
+      playSong(nextIndex);
     }
   };
 
-  const togglePlayPause = () => {
+  const toggleShuffleHandler = () => {
+    toggleShuffle(isShuffle, setIsShuffle);
+  };
+
+  const togglePlayPauseHandler = () => {
     if (!currentSong) return;
-    
-    if (isPlaying) {
-      audioRef.current?.pause();
-      setIsPlaying(false);
-    } else {
-      audioRef.current?.play().catch(err => {
-        console.error('Error playing audio:', err);
-      });
-      setIsPlaying(true);
-    }
+    togglePlayPause(audioRef, isPlaying, setIsPlaying);
   };
 
   if (loading) {
@@ -217,13 +201,16 @@ const MusicPlayer = () => {
         <audio
           ref={audioRef}
           src={currentSong.audioFile.link}
-          onEnded={handleSongEnd}
-          onLoadedMetadata={() => {
-            if (audioRef.current) {
-              setDuration(Math.floor(audioRef.current.duration));
-            }
-          }}
           muted={isMuted}
+          onLoadedMetadata={() => {
+            if (!audioRef.current) return;
+            setDuration(Math.floor(audioRef.current.duration));
+          }}
+          onTimeUpdate={() => {
+            if (!audioRef.current || isSeeking) return;
+            setCurrentTime(Math.floor(audioRef.current.currentTime));
+          }}
+          onEnded={handleSongEnd}
         />
       )}
 
@@ -262,10 +249,10 @@ const MusicPlayer = () => {
               {currentSong ? (
                 <Card radius="md" p="xl" shadow="md">
                   <Group align="center" gap="xl">
-                    <Avatar 
-                      src={currentSong.coverImage?.link || 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=400&h=400&fit=crop'} 
-                      size={180} 
-                      radius="md" 
+                    <Avatar
+                      src={currentSong.coverImage?.link || 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=400&h=400&fit=crop'}
+                      size={180}
+                      radius="md"
                     />
                     <Stack gap="md" style={{ flex: 1 }}>
                       <div>
@@ -319,10 +306,10 @@ const MusicPlayer = () => {
                           onClick={() => playSong(index)}
                         >
                           <Group gap="md" align="center">
-                            <Avatar 
-                              src={song.coverImage?.link || 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=400&h=400&fit=crop'} 
-                              size={64} 
-                              radius="md" 
+                            <Avatar
+                              src={song.coverImage?.link || 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=400&h=400&fit=crop'}
+                              size={64}
+                              radius="md"
                             />
                             <Stack gap={4} style={{ flex: 1, minWidth: 0 }}>
                               <Text size="sm" fw={600} c="#0B4F78" truncate>{song.judul}</Text>
@@ -359,10 +346,10 @@ const MusicPlayer = () => {
       >
         <Flex align="center" justify="space-between" gap="xl" h="100%">
           <Group gap="md" style={{ flex: 1 }}>
-            <Avatar 
-              src={currentSong?.coverImage?.link || 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=400&h=400&fit=crop'} 
-              size={56} 
-              radius="md" 
+            <Avatar
+              src={currentSong?.coverImage?.link || 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=400&h=400&fit=crop'}
+              size={56}
+              radius="md"
             />
             <div style={{ flex: 1, minWidth: 0 }}>
               {currentSong ? (
@@ -381,7 +368,7 @@ const MusicPlayer = () => {
               <ActionIcon
                 variant={isShuffle ? 'filled' : 'subtle'}
                 color="#0B4F78"
-                onClick={() => setIsShuffle(!isShuffle)}
+                onClick={toggleShuffleHandler}
                 radius="xl"
               >
                 {isShuffle ? <IconArrowsShuffle size={18} /> : <IconX size={18} />}
@@ -394,7 +381,7 @@ const MusicPlayer = () => {
                 color="#0B4F78"
                 size={56}
                 radius="xl"
-                onClick={togglePlayPause}
+                onClick={togglePlayPauseHandler}
               >
                 {isPlaying ? <IconPlayerPauseFilled size={26} /> : <IconPlayerPlayFilled size={26} />}
               </ActionIcon>
@@ -415,7 +402,14 @@ const MusicPlayer = () => {
               <Slider
                 value={currentTime}
                 max={duration}
-                onChange={handleSeek}
+                onChange={(v) => {
+                  setIsSeeking(true);
+                  setCurrentTime(v); // preview
+                }}
+                onChangeEnd={(v) => {
+                  seekTo(audioRef, v); // commit
+                  setIsSeeking(false);
+                }}
                 color="#0B4F78"
                 size="xs"
                 style={{ flex: 1 }}

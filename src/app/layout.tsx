@@ -12,6 +12,9 @@ import { Metadata, Viewport } from "next";
 import { ViewTransitions } from "next-view-transitions";
 import { ToastContainer } from "react-toastify";
 
+// Force dynamic rendering untuk menghindari error prerendering
+export const dynamic = 'force-dynamic';
+
 // ✅ Pisahkan viewport ke export tersendiri
 export const viewport: Viewport = {
   width: "device-width",
