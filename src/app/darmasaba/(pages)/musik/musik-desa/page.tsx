@@ -103,6 +103,7 @@ const MusicPlayer = () => {
   // Update duration when song changes
   useEffect(() => {
     if (currentSong && audioRef.current) {
+      // Gunakan durasi dari database sebagai acuan utama
       const durationParts = currentSong.durasi.split(':');
       const durationInSeconds = parseInt(durationParts[0]) * 60 + parseInt(durationParts[1]);
       setDuration(durationInSeconds);
@@ -199,12 +200,22 @@ const MusicPlayer = () => {
           src={currentSong.audioFile.link}
           muted={isMuted}
           onLoadedMetadata={() => {
-            if (!audioRef.current) return;
-            setDuration(Math.floor(audioRef.current.duration));
+            // Jangan override duration dari database
+            // Audio element duration bisa berbeda beberapa ms
+            if (audioRef.current) {
+              audioRef.current.currentTime = 0;
+            }
           }}
           onTimeUpdate={() => {
             if (!audioRef.current || isSeeking) return;
-            setCurrentTime(Math.floor(audioRef.current.currentTime));
+            // Gunakan pembulatan yang lebih smooth
+            const time = audioRef.current.currentTime;
+            const roundedTime = Math.round(time);
+            // Debug: log jika ada perbedaan besar antara time dan state
+            if (Math.abs(time - roundedTime) > 0.5) {
+              console.log('[onTimeUpdate] Time:', time, 'Rounded:', roundedTime);
+            }
+            setCurrentTime(roundedTime);
           }}
           onEnded={handleSongEnd}
         />
@@ -269,7 +280,10 @@ const MusicPlayer = () => {
                           }}
                           onChangeEnd={(v) => {
                             setIsSeeking(false);
-                            seekTo(audioRef, v, setCurrentTime);
+                            // Validasi: jangan seek melebihi durasi
+                            const seekTime = Math.min(Math.max(0, v), duration);
+                            seekTo(audioRef, seekTime, setCurrentTime);
+                            console.log('[Slider Atas] Seek end:', seekTime, 'Duration:', duration);
                           }}
                           color="#0B4F78"
                           size="sm"
@@ -411,7 +425,10 @@ const MusicPlayer = () => {
                 }}
                 onChangeEnd={(v) => {
                   setIsSeeking(false);
-                  seekTo(audioRef, v); // commit - update audio player
+                  // Validasi: jangan seek melebihi durasi
+                  const seekTime = Math.min(Math.max(0, v), duration);
+                  seekTo(audioRef, seekTime, setCurrentTime);
+                  console.log('[Slider Bawah] Seek end:', seekTime, 'Duration:', duration);
                 }}
                 color="#0B4F78"
                 size="xs"

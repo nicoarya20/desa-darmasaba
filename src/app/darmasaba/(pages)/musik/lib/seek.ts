@@ -5,10 +5,14 @@ export function seekTo(
 ) {
   if (!audioRef.current) return;
   
+  // Set waktu audio
   audioRef.current.currentTime = time;
   
   // Update state jika provided
   if (setCurrentTime) {
-    setCurrentTime(time);
+    setCurrentTime(Math.round(time));
   }
+  
+  // Debug log (bisa dihapus nanti)
+  console.log('[seekTo] Seek to:', time, 'seconds');
 }
