@@ -103,6 +103,7 @@ const MusicPlayer = () => {
   // Update duration when song changes
   useEffect(() => {
     if (currentSong && audioRef.current) {
+      console.log('[useEffect Song Change] currentSong:', currentSong.judul, 'Index:', currentSongIndex);
       // Gunakan durasi dari database sebagai acuan utama
       const durationParts = currentSong.durasi.split(':');
       const durationInSeconds = parseInt(durationParts[0]) * 60 + parseInt(durationParts[1]);
@@ -161,6 +162,7 @@ const MusicPlayer = () => {
   const skipBack = () => {
     const prevIndex = getPrevIndex(currentSongIndex, filteredMusik.length, isShuffle);
     if (prevIndex >= 0) {
+      console.log('[skipBack] Changing song to index:', prevIndex);
       playSong(prevIndex);
     }
   };
@@ -168,6 +170,7 @@ const MusicPlayer = () => {
   const skipForward = () => {
     const nextIndex = getNextIndex(currentSongIndex, filteredMusik.length, isShuffle);
     if (nextIndex >= 0) {
+      console.log('[skipForward] Changing song to index:', nextIndex);
       playSong(nextIndex);
     }
   };
@@ -193,13 +196,15 @@ const MusicPlayer = () => {
 
   return (
     <Box px={{ base: 'md', md: 100 }} py="xl">
-      {/* Hidden audio element */}
+      {/* Hidden audio element - gunakan key yang stabil untuk mencegah remount */}
       {currentSong?.audioFile && (
         <audio
+          key={`audio-${currentSong.id}`}
           ref={audioRef}
           src={currentSong.audioFile.link}
           muted={isMuted}
-          onLoadedMetadata={() => {
+          onLoadedMetadata={(e) => {
+            console.log('[onLoadedMetadata] Audio loaded, duration:', e.currentTarget.duration);
             // Jangan override duration dari database
             // Audio element duration bisa berbeda beberapa ms
             if (audioRef.current) {
@@ -211,10 +216,7 @@ const MusicPlayer = () => {
             // Gunakan pembulatan yang lebih smooth
             const time = audioRef.current.currentTime;
             const roundedTime = Math.round(time);
-            // Debug: log jika ada perbedaan besar antara time dan state
-            if (Math.abs(time - roundedTime) > 0.5) {
-              console.log('[onTimeUpdate] Time:', time, 'Rounded:', roundedTime);
-            }
+            console.log('[onTimeUpdate] currentTime:', time, 'rounded:', roundedTime, 'isSeeking:', isSeeking);
             setCurrentTime(roundedTime);
           }}
           onEnded={handleSongEnd}
@@ -279,11 +281,13 @@ const MusicPlayer = () => {
                             setCurrentTime(v);
                           }}
                           onChangeEnd={(v) => {
-                            setIsSeeking(false);
+                            console.log('[Slider Atas onChangeEnd] START - value:', v);
                             // Validasi: jangan seek melebihi durasi
                             const seekTime = Math.min(Math.max(0, v), duration);
+                            // Set seeking false DULUAN sebelum seekTo
+                            setIsSeeking(false);
+                            console.log('[Slider Atas onChangeEnd] Calling seekTo with:', seekTime);
                             seekTo(audioRef, seekTime, setCurrentTime);
-                            console.log('[Slider Atas] Seek end:', seekTime, 'Duration:', duration);
                           }}
                           color="#0B4F78"
                           size="sm"
