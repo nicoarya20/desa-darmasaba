@@ -47,7 +47,6 @@ next-env.d.ts
 # cache
 /cache
 
-.github/
 
 .env.*
 
