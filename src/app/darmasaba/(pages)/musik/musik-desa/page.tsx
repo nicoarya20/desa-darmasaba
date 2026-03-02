@@ -6,9 +6,9 @@ import BackButton from '../../desa/layanan/_com/BackButto';
 import { togglePlayPause } from '../lib/playPause';
 import { getNextIndex, getPrevIndex } from '../lib/nextPrev';
 import { handleRepeatOrNext } from '../lib/repeat';
-import { seekTo } from '../lib/seek';
 import { toggleShuffle } from '../lib/shuffle';
 import { setAudioVolume, toggleMute as toggleMuteUtil } from '../lib/volume';
+import { useAudioProgress } from '../lib/useAudioProgress';
 
 interface MusicFile {
   id: string;
@@ -44,8 +44,13 @@ const MusicPlayer = () => {
   const [musikData, setMusikData] = useState<Musik[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentSongIndex, setCurrentSongIndex] = useState(-1);
-  const [isSeeking, setIsSeeking] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const isSeekingRef = useRef(false);
+  const lastPlayedSongIdRef = useRef<string | null>(null);
+  const lastSeekTimeRef = useRef<number>(0); // Track last seek time
+
+  // Smooth progress update dengan requestAnimationFrame
+  useAudioProgress(audioRef as React.RefObject<HTMLAudioElement>, isPlaying, setCurrentTime, isSeekingRef, lastSeekTimeRef);
 
   // Fetch musik data from API
   useEffect(() => {
@@ -102,26 +107,57 @@ const MusicPlayer = () => {
   //   };
   // }, [isPlaying]);
 
-  // Update duration when song changes
+  // Update duration when song changes (HANYA saat ganti lagu, bukan saat isPlaying berubah)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (currentSong && audioRef.current) {
-      // Gunakan durasi dari database sebagai acuan utama
-      const durationParts = currentSong.durasi.split(':');
-      const durationInSeconds = parseInt(durationParts[0]) * 60 + parseInt(durationParts[1]);
-      setDuration(durationInSeconds);
-      
-      // Reset audio currentTime ke 0 hanya untuk lagu baru
-      audioRef.current.currentTime = 0;
-      setCurrentTime(0);
-      
-      if (isPlaying) {
-        audioRef.current.play().catch(err => {
-          console.error('Error playing audio:', err);
-          setIsPlaying(false);
-        });
+      // Cek apakah ini benar-benar lagu baru
+      const isNewSong = lastPlayedSongIdRef.current !== currentSong.id;
+
+      if (isNewSong) {
+        // Gunakan durasi dari database sebagai acuan utama
+        const durationParts = currentSong.durasi.split(':');
+        const durationInSeconds = parseInt(durationParts[0]) * 60 + parseInt(durationParts[1]);
+        setDuration(durationInSeconds);
+
+        // Reset audio currentTime ke 0 untuk lagu baru
+        audioRef.current.currentTime = 0;
+        setCurrentTime(0);
+
+        // Update ref
+        lastPlayedSongIdRef.current = currentSong.id;
+
+        if (isPlaying) {
+          audioRef.current.play().catch(err => {
+            console.error('Error playing audio:', err);
+            setIsPlaying(false);
+          });
+        }
       }
+      // Jika bukan lagu baru, jangan reset currentTime (biar seek tidak kembali ke 0)
     }
-  }, [currentSong?.id, currentSongIndex]);
+  }, [currentSong?.id]);
+
+  // Sync duration dari audio element jika berbeda signifikan (> 1 detik)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio || !currentSong) return;
+
+    const handleLoadedMetadata = () => {
+      const audioDuration = Math.floor(audio.duration);
+      const durationParts = currentSong.durasi.split(':');
+      const dbDuration = parseInt(durationParts[0]) * 60 + parseInt(durationParts[1]);
+
+      // Jika perbedaan > 2 detik, gunakan audio duration (lebih akurat)
+      if (Math.abs(audioDuration - dbDuration) > 2) {
+        setDuration(audioDuration);
+      }
+    };
+
+    audio.addEventListener('loadedmetadata', handleLoadedMetadata);
+    return () => audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
+  }, [currentSong?.id]);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -202,24 +238,9 @@ const MusicPlayer = () => {
       {/* Hidden audio element - gunakan key yang stabil untuk mencegah remount */}
       {currentSong?.audioFile && (
         <audio
-          key={`audio-${currentSong.id}`}
           ref={audioRef}
-          src={currentSong.audioFile.link}
+          src={currentSong?.audioFile?.link}
           muted={isMuted}
-          onLoadedMetadata={(e) => {
-            // Jangan override duration dari database
-            // Audio element duration bisa berbeda beberapa ms
-            if (audioRef.current) {
-              audioRef.current.currentTime = 0;
-            }
-          }}
-          onTimeUpdate={() => {
-            if (!audioRef.current || isSeeking) return;
-            // Gunakan pembulatan yang lebih smooth
-            const time = audioRef.current.currentTime;
-            const roundedTime = Math.round(time);
-            setCurrentTime(roundedTime);
-          }}
           onEnded={handleSongEnd}
         />
       )}
@@ -278,15 +299,29 @@ const MusicPlayer = () => {
                           value={currentTime}
                           max={duration}
                           onChange={(v) => {
-                            setIsSeeking(true);
+                            isSeekingRef.current = true;
                             setCurrentTime(v);
                           }}
                           onChangeEnd={(v) => {
                             // Validasi: jangan seek melebihi durasi
                             const seekTime = Math.min(Math.max(0, v), duration);
-                            // Set seeking false DULUAN sebelum seekTo
-                            setIsSeeking(false);
-                            seekTo(audioRef, seekTime, setCurrentTime);
+
+                            if (audioRef.current) {
+                              // Set audio currentTime
+                              audioRef.current.currentTime = seekTime;
+                              setCurrentTime(seekTime);
+                              lastSeekTimeRef.current = seekTime;
+
+                              // Jika audio tidak sedang playing, mainkan
+                              if (!audioRef.current.paused && !isPlaying) {
+                                audioRef.current.play().catch(console.error);
+                              }
+                            }
+
+                            // Set seeking false SETELAH semua operasi selesai
+                            setTimeout(() => {
+                              isSeekingRef.current = false;
+                            }, 0);
                           }}
                           color="#0B4F78"
                           size="sm"
@@ -423,15 +458,29 @@ const MusicPlayer = () => {
                 value={currentTime}
                 max={duration}
                 onChange={(v) => {
-                  setIsSeeking(true);
+                  isSeekingRef.current = true;
                   setCurrentTime(v); // preview - update UI saja
                 }}
                 onChangeEnd={(v) => {
                   // Validasi: jangan seek melebihi durasi
                   const seekTime = Math.min(Math.max(0, v), duration);
-                  // Set seeking false DULUAN sebelum seekTo
-                  setIsSeeking(false);
-                  seekTo(audioRef, seekTime, setCurrentTime);
+
+                  if (audioRef.current) {
+                    // Set audio currentTime
+                    audioRef.current.currentTime = seekTime;
+                    setCurrentTime(seekTime);
+                    lastSeekTimeRef.current = seekTime;
+
+                    // Jika audio tidak sedang playing, mainkan
+                    if (!audioRef.current.paused && !isPlaying) {
+                      audioRef.current.play().catch(console.error);
+                    }
+                  }
+
+                  // Set seeking false SETELAH semua operasi selesai
+                  setTimeout(() => {
+                    isSeekingRef.current = false;
+                  }, 0);
                 }}
                 color="#0B4F78"
                 size="xs"
@@ -461,3 +510,85 @@ const MusicPlayer = () => {
 };
 
 export default MusicPlayer;
+
+// 'use client'
+// import {
+//   Box, Paper, Group, Stack, Text, Slider, ActionIcon
+// } from '@mantine/core';
+// import {
+//   IconPlayerPlayFilled,
+//   IconPlayerPauseFilled
+// } from '@tabler/icons-react';
+// import { useEffect, useState } from 'react';
+// import { useAudioEngine } from '../lib/useAudioProgress';
+
+// interface Musik {
+//   id: string;
+//   judul: string;
+//   artis: string;
+//   audioFile: { link: string };
+// }
+
+// export default function MusicPlayer() {
+//   const {
+//     audioRef,
+//     isPlaying,
+//     currentTime,
+//     duration,
+//     load,
+//     toggle,
+//     seek,
+//   } = useAudioEngine();
+
+//   const [songs, setSongs] = useState<Musik[]>([]);
+//   const [index, setIndex] = useState(0);
+
+//   useEffect(() => {
+//     fetch('/api/desa/musik/find-many?page=1&limit=50')
+//       .then(r => r.json())
+//       .then(r => setSongs(r.data ?? []));
+//   }, []);
+
+//   useEffect(() => {
+//     if (!songs[index]) return;
+//     load(songs[index].audioFile.link);
+//   }, [songs, index, load]);
+
+//   const format = (n: number) => {
+//     const m = Math.floor(n / 60);
+//     const s = Math.floor(n % 60);
+//     return `${m}:${s.toString().padStart(2, '0')}`;
+//   };
+
+//   return (
+//     <Box p="xl">
+//       <audio ref={audioRef} />
+
+//       <Paper p="lg">
+//         <Stack>
+//           <Text fw={700}>{songs[index]?.judul}</Text>
+//           <Text size="sm">{songs[index]?.artis}</Text>
+
+//           <Group>
+//             <Text size="xs">{format(currentTime)}</Text>
+
+//             <Slider
+//               value={currentTime}
+//               max={duration}
+//               onChange={seek}
+//               style={{ flex: 1 }}
+//             />
+
+//             <Text size="xs">{format(duration)}</Text>
+//           </Group>
+
+//           <ActionIcon size={56} radius="xl" onClick={toggle}>
+//             {isPlaying
+//               ? <IconPlayerPauseFilled />
+//               : <IconPlayerPlayFilled />}
+//           </ActionIcon>
+//         </Stack>
+//       </Paper>
+//     </Box>
+//   );
+// }
