@@ -4,6 +4,7 @@ import { ActionIcon, Avatar, Badge, Box, Card, Flex, Grid, Group, Paper, ScrollA
 import { IconArrowsShuffle, IconPlayerPauseFilled, IconPlayerPlayFilled, IconPlayerSkipBackFilled, IconPlayerSkipForwardFilled, IconRepeat, IconRepeatOff, IconSearch, IconVolume, IconVolumeOff, IconX } from '@tabler/icons-react';
 import { useEffect, useRef, useState } from 'react';
 import BackButton from '../../desa/layanan/_com/BackButto';
+import { formatTime } from '../lib/audio-player';
 
 interface MusicFile {
   id: string;
@@ -14,7 +15,7 @@ interface MusicFile {
   link: string;
 }
 
-interface Musik {
+export interface Musik {
   id: string;
   judul: string;
   artis: string;
@@ -28,6 +29,12 @@ interface Musik {
 }
 
 const MusicPlayer = () => {
+  const [search, setSearch] = useState('');
+  const [musikData, setMusikData] = useState<Musik[]>([]);
+  const [loading, setLoading] = useState(true);
+  
+  // Player state
+  const [currentSongIndex, setCurrentSongIndex] = useState(-1);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -35,13 +42,9 @@ const MusicPlayer = () => {
   const [isMuted, setIsMuted] = useState(false);
   const [isRepeat, setIsRepeat] = useState(false);
   const [isShuffle, setIsShuffle] = useState(false);
-  const [search, setSearch] = useState('');
-  const [musikData, setMusikData] = useState<Musik[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [currentSongIndex, setCurrentSongIndex] = useState(-1);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const progressInterval = useRef<number | null>(null);
+  const progressIntervalRef = useRef<number | null>(null);
 
   // Fetch musik data from API
   useEffect(() => {
@@ -71,61 +74,106 @@ const MusicPlayer = () => {
     (musik.genre && musik.genre.toLowerCase().includes(search.toLowerCase()))
   );
 
-  const currentSong = currentSongIndex >= 0 && currentSongIndex < filteredMusik.length 
-    ? filteredMusik[currentSongIndex] 
+  const currentSong = currentSongIndex >= 0 && currentSongIndex < filteredMusik.length
+    ? filteredMusik[currentSongIndex]
     : null;
 
-  // Update progress bar
+  // Setup progress interval
   useEffect(() => {
     if (isPlaying && audioRef.current) {
-      progressInterval.current = window.setInterval(() => {
+      progressIntervalRef.current = window.setInterval(() => {
         if (audioRef.current) {
           setCurrentTime(Math.floor(audioRef.current.currentTime));
         }
       }, 1000);
     } else {
-      if (progressInterval.current) {
-        clearInterval(progressInterval.current);
+      if (progressIntervalRef.current) {
+        clearInterval(progressIntervalRef.current);
       }
     }
 
     return () => {
-      if (progressInterval.current) {
-        clearInterval(progressInterval.current);
+      if (progressIntervalRef.current) {
+        clearInterval(progressIntervalRef.current);
       }
     };
   }, [isPlaying]);
 
-  // Update duration when song changes
+  // Update duration and play when song changes
   useEffect(() => {
     if (currentSong && audioRef.current) {
       const durationParts = currentSong.durasi.split(':');
       const durationInSeconds = parseInt(durationParts[0]) * 60 + parseInt(durationParts[1]);
       setDuration(durationInSeconds);
       setCurrentTime(0);
+      audioRef.current.currentTime = 0;
+      
       if (isPlaying) {
-        audioRef.current.play().catch(err => {
+        audioRef.current.play().catch((err) => {
           console.error('Error playing audio:', err);
           setIsPlaying(false);
         });
       }
     }
-  }, [currentSongIndex]);
+  }, [currentSongIndex, currentSong]);
 
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
-  };
-
+  // Play specific song
   const playSong = (index: number) => {
     if (index < 0 || index >= filteredMusik.length) return;
-    
     setCurrentSongIndex(index);
     setIsPlaying(true);
   };
 
-  const handleSongEnd = () => {
+  // Skip to previous song
+  const skipBack = () => {
+    if (filteredMusik.length === 0) return;
+    
+    let prevIndex: number;
+    if (isShuffle) {
+      do {
+        prevIndex = Math.floor(Math.random() * filteredMusik.length);
+      } while (prevIndex === currentSongIndex && filteredMusik.length > 1);
+    } else {
+      prevIndex = currentSongIndex === 0 ? filteredMusik.length - 1 : currentSongIndex - 1;
+    }
+    
+    setCurrentSongIndex(prevIndex);
+    setIsPlaying(true);
+  };
+
+  // Skip to next song
+  const skipForward = () => {
+    if (filteredMusik.length === 0) return;
+    
+    let nextIndex: number;
+    if (isShuffle) {
+      do {
+        nextIndex = Math.floor(Math.random() * filteredMusik.length);
+      } while (nextIndex === currentSongIndex && filteredMusik.length > 1);
+    } else {
+      nextIndex = (currentSongIndex + 1) % filteredMusik.length;
+    }
+    
+    setCurrentSongIndex(nextIndex);
+    setIsPlaying(true);
+  };
+
+  // Toggle play/pause
+  const togglePlayPause = () => {
+    if (!currentSong) return;
+    setIsPlaying(!isPlaying);
+  };
+
+  // Handle seek
+  const handleSeek = (value: number) => {
+    setCurrentTime(value);
+    if (audioRef.current) {
+      audioRef.current.currentTime = value;
+    }
+  };
+
+  // Handle song ended
+  const handleSongEnded = () => {
     if (isRepeat) {
       if (audioRef.current) {
         audioRef.current.currentTime = 0;
@@ -139,9 +187,10 @@ const MusicPlayer = () => {
       } else {
         nextIndex = (currentSongIndex + 1) % filteredMusik.length;
       }
-      
+
       if (filteredMusik.length > 1) {
-        playSong(nextIndex);
+        setCurrentSongIndex(nextIndex);
+        setIsPlaying(true);
       } else {
         setIsPlaying(false);
         setCurrentTime(0);
@@ -149,21 +198,7 @@ const MusicPlayer = () => {
     }
   };
 
-  const handleSeek = (value: number) => {
-    setCurrentTime(value);
-    if (audioRef.current) {
-      audioRef.current.currentTime = value;
-    }
-  };
-
-  const toggleMute = () => {
-    const newMuted = !isMuted;
-    setIsMuted(newMuted);
-    if (audioRef.current) {
-      audioRef.current.muted = newMuted;
-    }
-  };
-
+  // Handle volume
   const handleVolumeChange = (val: number) => {
     setVolume(val);
     if (audioRef.current) {
@@ -174,29 +209,12 @@ const MusicPlayer = () => {
     }
   };
 
-  const skipBack = () => {
+  // Toggle mute
+  const toggleMute = () => {
+    const newMuted = !isMuted;
+    setIsMuted(newMuted);
     if (audioRef.current) {
-      audioRef.current.currentTime = Math.max(0, audioRef.current.currentTime - 10);
-    }
-  };
-
-  const skipForward = () => {
-    if (audioRef.current) {
-      audioRef.current.currentTime = Math.min(duration, audioRef.current.currentTime + 10);
-    }
-  };
-
-  const togglePlayPause = () => {
-    if (!currentSong) return;
-    
-    if (isPlaying) {
-      audioRef.current?.pause();
-      setIsPlaying(false);
-    } else {
-      audioRef.current?.play().catch(err => {
-        console.error('Error playing audio:', err);
-      });
-      setIsPlaying(true);
+      audioRef.current.muted = newMuted;
     }
   };
 
@@ -217,7 +235,7 @@ const MusicPlayer = () => {
         <audio
           ref={audioRef}
           src={currentSong.audioFile.link}
-          onEnded={handleSongEnd}
+          onEnded={handleSongEnded}
           onLoadedMetadata={() => {
             if (audioRef.current) {
               setDuration(Math.floor(audioRef.current.duration));
@@ -262,10 +280,10 @@ const MusicPlayer = () => {
               {currentSong ? (
                 <Card radius="md" p="xl" shadow="md">
                   <Group align="center" gap="xl">
-                    <Avatar 
-                      src={currentSong.coverImage?.link || 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=400&h=400&fit=crop'} 
-                      size={180} 
-                      radius="md" 
+                    <Avatar
+                      src={currentSong.coverImage?.link || 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=400&h=400&fit=crop'}
+                      size={180}
+                      radius="md"
                     />
                     <Stack gap="md" style={{ flex: 1 }}>
                       <div>
@@ -279,8 +297,8 @@ const MusicPlayer = () => {
                         <Text size="xs" c="#5A6C7D" w={42}>{formatTime(currentTime)}</Text>
                         <Slider
                           value={currentTime}
-                          max={duration}
-                          onChange={handleSeek}
+                          max={duration || 1}
+                          onChange={(value) => handleSeek(value)}
                           color="#0B4F78"
                           size="sm"
                           style={{ flex: 1 }}
@@ -319,10 +337,10 @@ const MusicPlayer = () => {
                           onClick={() => playSong(index)}
                         >
                           <Group gap="md" align="center">
-                            <Avatar 
-                              src={song.coverImage?.link || 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=400&h=400&fit=crop'} 
-                              size={64} 
-                              radius="md" 
+                            <Avatar
+                              src={song.coverImage?.link || 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=400&h=400&fit=crop'}
+                              size={64}
+                              radius="md"
                             />
                             <Stack gap={4} style={{ flex: 1, minWidth: 0 }}>
                               <Text size="sm" fw={600} c="#0B4F78" truncate>{song.judul}</Text>
@@ -359,10 +377,10 @@ const MusicPlayer = () => {
       >
         <Flex align="center" justify="space-between" gap="xl" h="100%">
           <Group gap="md" style={{ flex: 1 }}>
-            <Avatar 
-              src={currentSong?.coverImage?.link || 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=400&h=400&fit=crop'} 
-              size={56} 
-              radius="md" 
+            <Avatar
+              src={currentSong?.coverImage?.link || '/mp3-logo.png'}
+              size={56}
+              radius="md"
             />
             <div style={{ flex: 1, minWidth: 0 }}>
               {currentSong ? (
@@ -383,10 +401,11 @@ const MusicPlayer = () => {
                 color="#0B4F78"
                 onClick={() => setIsShuffle(!isShuffle)}
                 radius="xl"
+                title={isShuffle ? 'Matikan acak' : 'Acak lagu'}
               >
                 {isShuffle ? <IconArrowsShuffle size={18} /> : <IconX size={18} />}
               </ActionIcon>
-              <ActionIcon variant="light" color="#0B4F78" size={40} radius="xl" onClick={skipBack}>
+              <ActionIcon variant="light" color="#0B4F78" size={40} radius="xl" onClick={skipBack} title="Lagu sebelumnya">
                 <IconPlayerSkipBackFilled size={20} />
               </ActionIcon>
               <ActionIcon
@@ -395,10 +414,11 @@ const MusicPlayer = () => {
                 size={56}
                 radius="xl"
                 onClick={togglePlayPause}
+                title={isPlaying ? 'Jeda' : 'Putar'}
               >
                 {isPlaying ? <IconPlayerPauseFilled size={26} /> : <IconPlayerPlayFilled size={26} />}
               </ActionIcon>
-              <ActionIcon variant="light" color="#0B4F78" size={40} radius="xl" onClick={skipForward}>
+              <ActionIcon variant="light" color="#0B4F78" size={40} radius="xl" onClick={skipForward} title="Lagu berikutnya">
                 <IconPlayerSkipForwardFilled size={20} />
               </ActionIcon>
               <ActionIcon
@@ -406,6 +426,7 @@ const MusicPlayer = () => {
                 color="#0B4F78"
                 onClick={() => setIsRepeat(!isRepeat)}
                 radius="xl"
+                title={isRepeat ? 'Matikan ulang' : 'Ulangi lagu'}
               >
                 {isRepeat ? <IconRepeat size={18} /> : <IconRepeatOff size={18} />}
               </ActionIcon>
@@ -414,8 +435,8 @@ const MusicPlayer = () => {
               <Text size="xs" c="#5A6C7D" w={40} ta="right">{formatTime(currentTime)}</Text>
               <Slider
                 value={currentTime}
-                max={duration}
-                onChange={handleSeek}
+                max={duration || 1}
+                onChange={(value) => handleSeek(value)}
                 color="#0B4F78"
                 size="xs"
                 style={{ flex: 1 }}
@@ -425,7 +446,12 @@ const MusicPlayer = () => {
           </Stack>
 
           <Group gap="xs" style={{ flex: 1 }} justify="flex-end">
-            <ActionIcon variant="subtle" color="gray" onClick={toggleMute}>
+            <ActionIcon 
+              variant="subtle" 
+              color="gray" 
+              onClick={toggleMute}
+              title={isMuted ? 'Hidupkan suara' : 'Bisukan suara'}
+            >
               {isMuted || volume === 0 ? <IconVolumeOff size={20} /> : <IconVolume size={20} />}
             </ActionIcon>
             <Slider
@@ -434,6 +460,7 @@ const MusicPlayer = () => {
               color="#0B4F78"
               size="xs"
               w={100}
+              aria-label="Volume control"
             />
             <Text size="xs" c="#5A6C7D" w={32}>{isMuted ? 0 : volume}%</Text>
           </Group>
