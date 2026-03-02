@@ -8,8 +8,7 @@ export function useAudioProgress(
   audioRef: React.RefObject<HTMLAudioElement>,
   isPlaying: boolean,
   setCurrentTime: (time: number) => void,
-  isSeekingRef: React.RefObject<boolean>,
-  lastSeekTimeRef?: React.RefObject<number>
+  isSeekingRef: React.RefObject<boolean>
 ) {
   const rafRef = useRef<number | null>(null);
   const lastTimeRef = useRef<number>(0);

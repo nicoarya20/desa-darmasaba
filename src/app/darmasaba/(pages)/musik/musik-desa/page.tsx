@@ -50,7 +50,7 @@ const MusicPlayer = () => {
   const lastSeekTimeRef = useRef<number>(0); // Track last seek time
 
   // Smooth progress update dengan requestAnimationFrame
-  useAudioProgress(audioRef as React.RefObject<HTMLAudioElement>, isPlaying, setCurrentTime, isSeekingRef, lastSeekTimeRef);
+  useAudioProgress(audioRef as React.RefObject<HTMLAudioElement>, isPlaying, setCurrentTime, isSeekingRef);
 
   // Fetch musik data from API
   useEffect(() => {
@@ -108,7 +108,6 @@ const MusicPlayer = () => {
   // }, [isPlaying]);
 
   // Update duration when song changes (HANYA saat ganti lagu, bukan saat isPlaying berubah)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (currentSong && audioRef.current) {
       // Cek apakah ini benar-benar lagu baru
@@ -136,10 +135,9 @@ const MusicPlayer = () => {
       }
       // Jika bukan lagu baru, jangan reset currentTime (biar seek tidak kembali ke 0)
     }
-  }, [currentSong?.id]);
+  }, [currentSong?.id]); // Intentional: hanya depend on song ID, bukan isPlaying
 
   // Sync duration dari audio element jika berbeda signifikan (> 1 detik)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio || !currentSong) return;
@@ -157,7 +155,7 @@ const MusicPlayer = () => {
 
     audio.addEventListener('loadedmetadata', handleLoadedMetadata);
     return () => audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
-  }, [currentSong?.id]);
+  }, [currentSong?.id]); // Intentional: hanya depend on song ID
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);

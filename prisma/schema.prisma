@@ -61,7 +61,8 @@ model FileStorage {
   isActive                       Boolean                    @default(true)
   link                           String
   category                       String // "image" / "document" / "audio" / "other"
-  Berita                         Berita[]
+  Berita                         Berita[]                 @relation("BeritaFeaturedImage")
+  BeritaImages                   Berita[]                 @relation("BeritaImages")
   PotensiDesa                    PotensiDesa[]
   Posyandu                       Posyandu[]
   StrukturPPID                   StrukturPPID[]
@@ -612,15 +613,19 @@ model Berita {
   id               String          @id @default(cuid())
   judul            String
   deskripsi        String
-  image            FileStorage?    @relation(fields: [imageId], references: [id])
+  image            FileStorage?    @relation("BeritaFeaturedImage", fields: [imageId], references: [id])
   imageId          String?
+  images           FileStorage[]   @relation("BeritaImages")
   content          String          @db.Text
+  linkVideo        String?         @db.VarChar(500)
   createdAt        DateTime        @default(now())
   updatedAt        DateTime        @updatedAt
   deletedAt        DateTime        @default(now())
   isActive         Boolean         @default(true)
   kategoriBerita   KategoriBerita? @relation(fields: [kategoriBeritaId], references: [id])
   kategoriBeritaId String?
+
+  @@index([kategoriBeritaId])
 }
 
 model KategoriBerita {

@@ -12,6 +12,8 @@ const templateForm = z.object({
   content: z.string().min(3, "Content minimal 3 karakter"),
   kategoriBeritaId: z.string().nonempty(),
   imageId: z.string().nonempty(),
+  imageIds: z.array(z.string()),
+  linkVideo: z.string().optional(),
 });
 
 // 2. Default value form berita (hindari uncontrolled input)
@@ -21,6 +23,8 @@ const defaultForm = {
   imageId: "",
   content: "",
   kategoriBeritaId: "",
+  imageIds: [] as string[],
+  linkVideo: "",
 };
 
 // 4. Berita proxy
@@ -62,14 +66,7 @@ const berita = proxy({
   // State untuk berita utama (hanya 1)
 
   findMany: {
-    data: null as
-      | Prisma.BeritaGetPayload<{
-          include: {
-            image: true;
-            kategoriBerita: true;
-          };
-        }>[]
-      | null,
+    data: null as any[] | null,
     page: 1,
     totalPages: 1,
     loading: false,
@@ -79,14 +76,14 @@ const berita = proxy({
       berita.findMany.loading = true;
       berita.findMany.page = page;
       berita.findMany.search = search;
-    
+
       try {
         const query: any = { page, limit };
         if (search) query.search = search;
         if (kategori) query.kategori = kategori;
-    
+
         const res = await ApiFetch.api.desa.berita["find-many"].get({ query });
-    
+
         if (res.status === 200 && res.data?.success) {
           berita.findMany.data = res.data.data ?? [];
           berita.findMany.totalPages = res.data.totalPages ?? 1;
@@ -103,18 +100,19 @@ const berita = proxy({
         const elapsed = Date.now() - startTime;
         const minDelay = 300;
         const delay = elapsed < minDelay ? minDelay - elapsed : 0;
-    
+
         setTimeout(() => {
           berita.findMany.loading = false;
         }, delay);
       }
-    },    
+    },
   },
 
   findUnique: {
     data: null as Prisma.BeritaGetPayload<{
       include: {
         image: true;
+        images: true;
         kategoriBerita: true;
       };
     }> | null,
@@ -199,6 +197,8 @@ const berita = proxy({
             content: data.content,
             kategoriBeritaId: data.kategoriBeritaId || "",
             imageId: data.imageId || "",
+            imageIds: data.images?.map((img: any) => img.id) || [],
+            linkVideo: data.linkVideo || "",
           };
           return data; // Return the loaded data
         } else {
@@ -237,6 +237,8 @@ const berita = proxy({
             content: this.form.content,
             kategoriBeritaId: this.form.kategoriBeritaId || null,
             imageId: this.form.imageId,
+            imageIds: this.form.imageIds,
+            linkVideo: this.form.linkVideo,
           }),
         });
 
