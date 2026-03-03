@@ -33,6 +33,7 @@ type ItemForm = {
   kode: string;
   uraian: string;
   anggaran: number;
+  realisasiAwal?: number; // Realisasi pertama saat create
   level: number;
   tipe: 'pendapatan' | 'belanja' | 'pembiayaan';
 };
@@ -60,6 +61,7 @@ function CreateAPBDes() {
     kode: '',
     uraian: '',
     anggaran: 0,
+    realisasiAwal: 0,
     level: 1,
     tipe: 'pendapatan',
   });
@@ -78,6 +80,7 @@ function CreateAPBDes() {
       kode: '',
       uraian: '',
       anggaran: 0,
+      realisasiAwal: 0,
       level: 1,
       tipe: 'pendapatan',
     });
@@ -124,7 +127,7 @@ function CreateAPBDes() {
 
   // Tambahkan item ke state
   const handleAddItem = () => {
-    const { kode, uraian, anggaran, level, tipe } = newItem;
+    const { kode, uraian, anggaran, realisasiAwal, level, tipe } = newItem;
     if (!kode || !uraian) {
       return toast.warn("Kode dan uraian wajib diisi");
     }
@@ -135,6 +138,7 @@ function CreateAPBDes() {
       kode,
       uraian,
       anggaran,
+      realisasiAwal: realisasiAwal || 0,
       level,
       tipe: finalTipe,
     });
@@ -144,6 +148,7 @@ function CreateAPBDes() {
       kode: '',
       uraian: '',
       anggaran: 0,
+      realisasiAwal: 0,
       level: 1,
       tipe: 'pendapatan',
     });
@@ -418,6 +423,14 @@ function CreateAPBDes() {
                   thousandSeparator
                   min={0}
                 />
+                <NumberInput
+                  label="Realisasi Awal (Rp) - Opsional"
+                  value={newItem.realisasiAwal}
+                  onChange={(val) => setNewItem({ ...newItem, realisasiAwal: Number(val) || 0 })}
+                  thousandSeparator
+                  min={0}
+                  description="Isi jika sudah ada realisasi saat create"
+                />
               </Group>
               <Button
                 leftSection={<IconPlus size={16} />}
@@ -439,17 +452,19 @@ function CreateAPBDes() {
                     <th>Kode</th>
                     <th>Uraian</th>
                     <th>Anggaran</th>
+                    <th>Realisasi Awal</th>
                     <th>Level</th>
                     <th>Tipe</th>
                     <th style={{ width: 50 }}>Aksi</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {stateAPBDes.create.form.items.map((item, idx) => (
+                  {stateAPBDes.create.form.items.map((item: any, idx) => (
                     <tr key={idx}>
                       <td><Text size="sm" fw={500}>{item.kode}</Text></td>
                       <td>{item.uraian}</td>
                       <td>{item.anggaran.toLocaleString('id-ID')}</td>
+                      <td>{(item.realisasiAwal || 0).toLocaleString('id-ID')}</td>
                       <td>
                         <Badge size="sm" color={item.level === 1 ? 'blue' : item.level === 2 ? 'green' : 'grape'}>
                           L{item.level}

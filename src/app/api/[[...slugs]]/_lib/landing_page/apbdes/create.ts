@@ -10,6 +10,7 @@ type APBDesItemInput = {
   anggaran: number;
   level: number;
   tipe?: string | null;
+  realisasiAwal?: number; // Realisasi pertama saat create
 };
 
 type FormCreate = {
@@ -55,14 +56,15 @@ export default async function apbdesCreate(context: Context) {
         },
       });
 
-      // Create items dengan auto-calculate totalRealisasi=0, selisih, persentase
+      // Create items dengan auto-calculate totalRealisasi, selisih, persentase
       const items = await Promise.all(
-        body.items.map(item => {
+        body.items.map(async item => {
           const anggaran = item.anggaran;
-          const totalRealisasi = 0; // Belum ada realisasi saat create
-          const selisih = totalRealisasi - anggaran;
-          const persentase = anggaran > 0 ? (totalRealisasi / anggaran) * 100 : 0;
-
+          const realisasiAwal = item.realisasiAwal || 0;
+          
+          // Jika ada realisasiAwal, buat realisasi item pertama
+          let totalRealisasi = realisasiAwal;
+          
           const itemData = {
             kode: item.kode,
             uraian: item.uraian,
@@ -70,15 +72,29 @@ export default async function apbdesCreate(context: Context) {
             level: item.level,
             tipe: item.tipe || null,
             totalRealisasi,
-            selisih,
-            persentase,
+            selisih: totalRealisasi - anggaran,
+            persentase: anggaran > 0 ? (totalRealisasi / anggaran) * 100 : 0,
             apbdesId: apbdes.id,
           };
 
-          return prisma.aPBDesItem.create({
+          const createdItem = await prisma.aPBDesItem.create({
             data: itemData,
             select: { id: true, kode: true },
           });
+
+          // Jika ada realisasiAwal, buat realisasi item pertama
+          if (realisasiAwal > 0) {
+            await prisma.realisasiItem.create({
+              data: {
+                apbdesItemId: createdItem.id,
+                jumlah: realisasiAwal,
+                tanggal: new Date(),
+                keterangan: 'Realisasi awal saat create APBDes',
+              },
+            });
+          }
+
+          return createdItem;
         })
       );
 

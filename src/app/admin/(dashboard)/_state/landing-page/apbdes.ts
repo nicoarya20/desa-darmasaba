@@ -5,11 +5,12 @@ import { toast } from "react-toastify";
 import { proxy } from "valtio";
 import { z } from "zod";
 
-// --- Zod Schema untuk APBDes Item (tanpa field kalkulasi) ---
+// --- Zod Schema untuk APBDes Item (dengan realisasiAwal opsional) ---
 const ApbdesItemSchema = z.object({
   kode: z.string().min(1, "Kode wajib diisi"),
   uraian: z.string().min(1, "Uraian wajib diisi"),
   anggaran: z.number().min(0, "Anggaran tidak boleh negatif"),
+  realisasiAwal: z.number().min(0).optional(), // Realisasi pertama saat create
   level: z.number().int().min(1).max(3),
   tipe: z.enum(['pendapatan', 'belanja', 'pembiayaan']).nullable().optional(),
 });
@@ -91,7 +92,21 @@ const apbdes = proxy({
 
       try {
         this.loading = true;
-        const res = await ApiFetch.api.landingpage.apbdes["create"].post(parsed.data);
+        
+        // Extract realisasiAwal dari items
+        const itemsWithRealisasi = this.form.items.map(item => ({
+          kode: item.kode,
+          uraian: item.uraian,
+          anggaran: item.anggaran,
+          level: item.level,
+          tipe: item.tipe,
+          realisasiAwal: item.realisasiAwal || 0,
+        }));
+
+        const res = await ApiFetch.api.landingpage.apbdes["create"].post({
+          ...parsed.data,
+          items: itemsWithRealisasi,
+        });
 
         if (res.data?.success) {
           toast.success("APBDes berhasil dibuat");
