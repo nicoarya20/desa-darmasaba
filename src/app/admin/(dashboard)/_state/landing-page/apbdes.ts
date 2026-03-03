@@ -5,16 +5,21 @@ import { toast } from "react-toastify";
 import { proxy } from "valtio";
 import { z } from "zod";
 
-// --- Zod Schema ---
+// --- Zod Schema untuk APBDes Item (tanpa field kalkulasi) ---
 const ApbdesItemSchema = z.object({
   kode: z.string().min(1, "Kode wajib diisi"),
   uraian: z.string().min(1, "Uraian wajib diisi"),
-  anggaran: z.number().min(0),
-  realisasi: z.number().min(0),
-  selisih: z.number(),
-  persentase: z.number(),
+  anggaran: z.number().min(0, "Anggaran tidak boleh negatif"),
   level: z.number().int().min(1).max(3),
   tipe: z.enum(['pendapatan', 'belanja', 'pembiayaan']).nullable().optional(),
+});
+
+// --- Zod Schema untuk Realisasi Item ---
+const RealisasiItemSchema = z.object({
+  jumlah: z.number().min(0, "Jumlah tidak boleh negatif"),
+  tanggal: z.string(),
+  keterangan: z.string().optional(),
+  buktiFileId: z.string().optional(),
 });
 
 const ApbdesFormSchema = z.object({
@@ -38,26 +43,14 @@ const defaultApbdesForm = {
   items: [] as z.infer<typeof ApbdesItemSchema>[],
 };
 
-// --- Helper: hitung selisih & persentase otomatis (opsional di frontend) ---
-// --- Helper: hitung selisih & persentase otomatis (opsional di frontend) ---
+// --- Helper: Normalize item (tanpa kalkulasi, backend yang hitung) ---
 function normalizeItem(item: Partial<z.infer<typeof ApbdesItemSchema>>): z.infer<typeof ApbdesItemSchema> {
-  const anggaran = item.anggaran ?? 0;
-  const realisasi = item.realisasi ?? 0;
-
-
-  // ✅ Formula yang benar
-  const selisih = realisasi - anggaran; // positif = sisa anggaran, negatif = over budget
-  const persentase = anggaran > 0 ? (realisasi / anggaran) * 100 : 0; // persentase realisasi terhadap anggaran
-
   return {
     kode: item.kode || "",
     uraian: item.uraian || "",
-    anggaran,
-    realisasi,
-    selisih,
-    persentase,
+    anggaran: item.anggaran ?? 0,
     level: item.level || 1,
-    tipe: item.tipe, // biarkan null jika memang null
+    tipe: item.tipe ?? null,
   };
 }
 
@@ -259,9 +252,6 @@ const apbdes = proxy({
               kode: item.kode,
               uraian: item.uraian,
               anggaran: item.anggaran,
-              realisasi: item.realisasi,
-              selisih: item.selisih,
-              persentase: item.persentase,
               level: item.level,
               tipe: item.tipe || 'pendapatan',
             })),
@@ -324,6 +314,80 @@ const apbdes = proxy({
     reset() {
       this.id = "";
       this.form = { ...defaultApbdesForm };
+    },
+  },
+
+  // =========================================
+  // REALISASI STATE MANAGEMENT
+  // =========================================
+  realisasi: {
+    // Create realisasi
+    async create(itemId: string, data: { jumlah: number; tanggal: string; keterangan?: string; buktiFileId?: string }) {
+      try {
+        const res = await (ApiFetch.api.landingpage.apbdes as any)[itemId].realisasi.post(data);
+
+        if (res.data?.success) {
+          toast.success("Realisasi berhasil ditambahkan");
+          // Reload findUnique untuk update data
+          if (apbdes.findUnique.data) {
+            await apbdes.findUnique.load(apbdes.findUnique.data.id);
+          }
+          return true;
+        } else {
+          toast.error(res.data?.message || "Gagal menambahkan realisasi");
+          return false;
+        }
+      } catch (error: any) {
+        console.error("Create realisasi error:", error);
+        toast.error(error?.message || "Terjadi kesalahan saat menambahkan realisasi");
+        return false;
+      }
+    },
+
+    // Update realisasi
+    async update(realisasiId: string, data: { jumlah?: number; tanggal?: string; keterangan?: string; buktiFileId?: string }) {
+      try {
+        const res = await (ApiFetch.api.landingpage.apbdes as any).realisasi[realisasiId].put(data);
+
+        if (res.data?.success) {
+          toast.success("Realisasi berhasil diperbarui");
+          // Reload findUnique untuk update data
+          if (apbdes.findUnique.data) {
+            await apbdes.findUnique.load(apbdes.findUnique.data.id);
+          }
+          return true;
+        } else {
+          toast.error(res.data?.message || "Gagal memperbarui realisasi");
+          return false;
+        }
+      } catch (error: any) {
+        console.error("Update realisasi error:", error);
+        toast.error(error?.message || "Terjadi kesalahan saat memperbarui realisasi");
+        return false;
+      }
+    },
+
+    // Delete realisasi
+    async delete(realisasiId: string) {
+      try {
+        const res = await (ApiFetch.api.landingpage.apbdes as any).realisasi[realisasiId].delete();
+
+        if (res.data?.success) {
+          toast.success("Realisasi berhasil dihapus");
+          // Reload findUnique untuk update data
+          if (apbdes.findUnique.data) {
+            await apbdes.findUnique.load(apbdes.findUnique.data.id);
+          }
+          return true;
+        } else {
+          toast.error(res.data?.message || "Gagal menghapus realisasi");
+          return false;
+        }
+      } catch (error: any) {
+        console.error("Delete realisasi error:", error);
+        toast.error(error?.message || "Terjadi kesalahan saat menghapus realisasi");
+        return false;
+      }
     },
   },
 });

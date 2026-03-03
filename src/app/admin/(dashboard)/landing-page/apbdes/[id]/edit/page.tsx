@@ -42,7 +42,6 @@ type ItemForm = {
   kode: string;
   uraian: string;
   anggaran: number;
-  realisasi: number;
   level: number;
   tipe: 'pendapatan' | 'belanja' | 'pembiayaan';
 };
@@ -71,7 +70,6 @@ function EditAPBDes() {
     kode: '',
     uraian: '',
     anggaran: 0,
-    realisasi: 0,
     level: 1,
     tipe: 'pendapatan',
   });
@@ -157,32 +155,25 @@ function EditAPBDes() {
   };
 
   const handleAddItem = () => {
-    const { kode, uraian, anggaran, realisasi, level, tipe } = newItem;
+    const { kode, uraian, anggaran, level, tipe } = newItem;
     if (!kode || !uraian) {
       return toast.warn('Kode dan uraian wajib diisi');
     }
 
     const finalTipe = level === 1 ? null : tipe;
-    const selisih = realisasi - anggaran;
-    const persentase = anggaran > 0 ? (realisasi / anggaran) * 100 : 0;
 
     apbdesState.edit.addItem({
       kode,
       uraian,
       anggaran,
-      realisasi,
-      selisih,
-      persentase,
       level,
-      tipe: finalTipe, // ✅ Tidak akan undefined
+      tipe: finalTipe,
     });
-
 
     setNewItem({
       kode: '',
       uraian: '',
       anggaran: 0,
-      realisasi: 0,
       level: 1,
       tipe: 'pendapatan',
     });
@@ -271,7 +262,6 @@ function EditAPBDes() {
       kode: '',
       uraian: '',
       anggaran: 0,
-      realisasi: 0,
       level: 1,
       tipe: 'pendapatan',
     });
@@ -514,13 +504,6 @@ function EditAPBDes() {
                   thousandSeparator
                   min={0}
                 />
-                <NumberInput
-                  label="Realisasi (Rp)"
-                  value={newItem.realisasi}
-                  onChange={(val) => setNewItem({ ...newItem, realisasi: Number(val) || 0 })}
-                  thousandSeparator
-                  min={0}
-                />
               </Group>
               <Button
                 leftSection={<IconPlus size={16} />}
@@ -544,7 +527,6 @@ function EditAPBDes() {
                     <th>Kode</th>
                     <th>Uraian</th>
                     <th>Anggaran</th>
-                    <th>Realisasi</th>
                     <th>Level</th>
                     <th>Tipe</th>
                     <th style={{ width: '50px' }}>Aksi</th>
@@ -560,7 +542,6 @@ function EditAPBDes() {
                       </td>
                       <td>{item.uraian}</td>
                       <td>{item.anggaran.toLocaleString('id-ID')}</td>
-                      <td>{item.realisasi.toLocaleString('id-ID')}</td>
                       <td>
                         <Badge size="sm" color={item.level === 1 ? 'blue' : item.level === 2 ? 'green' : 'grape'}>
                           L{item.level}
@@ -572,7 +553,7 @@ function EditAPBDes() {
                             {item.tipe}
                           </Badge>
                         ) : (
-                          '-'
+                          <Text size="sm" c="dimmed">-</Text>
                         )}
                       </td>
                       <td>
