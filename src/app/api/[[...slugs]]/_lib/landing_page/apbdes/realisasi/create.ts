@@ -47,7 +47,7 @@ export default async function realisasiCreate(context: Context) {
     });
 
     const totalRealisasi = allRealisasi.reduce((sum, r) => sum + r.jumlah, 0);
-    const selisih = totalRealisasi - item.anggaran;
+    const selisih = item.anggaran - totalRealisasi; // Sisa anggaran (positif = belum digunakan)
     const persentase = item.anggaran > 0 ? (totalRealisasi / item.anggaran) * 100 : 0;
 
     await prisma.aPBDesItem.update({

@@ -60,7 +60,7 @@ export default async function apbdesCreate(context: Context) {
         body.items.map(async item => {
           const anggaran = item.anggaran;
           const totalRealisasi = 0; // Belum ada realisasi saat create
-          const selisih = totalRealisasi - anggaran;
+          const selisih = anggaran - totalRealisasi; // Sisa anggaran (positif = belum digunakan)
           const persentase = anggaran > 0 ? (totalRealisasi / anggaran) * 100 : 0;
 
           const itemData = {

@@ -48,7 +48,7 @@ export default async function apbdesUpdate(context: Context) {
       data: body.items.map((item) => {
         const anggaran = item.anggaran;
         const totalRealisasi = 0; // Reset karena items baru
-        const selisih = totalRealisasi - anggaran;
+        const selisih = anggaran - totalRealisasi; // Sisa anggaran (positif = belum digunakan)
         const persentase = anggaran > 0 ? (totalRealisasi / anggaran) * 100 : 0;
 
         return {
