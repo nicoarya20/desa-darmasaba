@@ -2,15 +2,9 @@ import prisma from "@/lib/prisma";
 import { Context } from "elysia";
 
 export default async function apbdesFindUnique(context: Context) {
-  // ✅ Parse URL secara manual
   const url = new URL(context.request.url);
   const pathSegments = url.pathname.split('/').filter(Boolean);
-  
-  console.log("🔍 DEBUG INFO:");
-  console.log("- Full URL:", context.request.url);
-  console.log("- Pathname:", url.pathname);
-  console.log("- Path segments:", pathSegments);
-  
+
   // Expected: ['api', 'landingpage', 'apbdes', 'ID']
   if (pathSegments.length < 4) {
     context.set.status = 400;
@@ -20,9 +14,9 @@ export default async function apbdesFindUnique(context: Context) {
       debug: { pathSegments }
     };
   }
-  
-  if (pathSegments[0] !== 'api' || 
-      pathSegments[1] !== 'landingpage' || 
+
+  if (pathSegments[0] !== 'api' ||
+      pathSegments[1] !== 'landingpage' ||
       pathSegments[2] !== 'apbdes') {
     context.set.status = 400;
     return {
@@ -31,9 +25,9 @@ export default async function apbdesFindUnique(context: Context) {
       debug: { pathSegments }
     };
   }
-  
-  const id = pathSegments[3]; // ✅ ID ada di index ke-3
-  
+
+  const id = pathSegments[3];
+
   if (!id || id.trim() === '') {
     context.set.status = 400;
     return {
@@ -50,7 +44,10 @@ export default async function apbdesFindUnique(context: Context) {
           where: { isActive: true },
           orderBy: { kode: 'asc' },
           include: {
-            parent: true, // Include parent item for hierarchy
+            realisasiItems: {
+              where: { isActive: true },
+              orderBy: { tanggal: 'asc' },
+            },
           },
         },
         image: true,

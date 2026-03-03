@@ -18,7 +18,7 @@ function Section({ title, data }: any) {
             {item.kode} - {item.uraian}
           </Table.Td>
           <Table.Td ta="right">
-            Rp {item.realisasi.toLocaleString('id-ID')}
+            Rp {item.totalRealisasi.toLocaleString('id-ID')}
           </Table.Td>
           <Table.Td ta="center">
             <Badge

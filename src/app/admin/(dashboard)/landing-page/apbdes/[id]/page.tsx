@@ -218,7 +218,7 @@ function DetailAPBDes() {
                             </Group>
                           </TableTd>
                           <TableTd>{item.anggaran.toLocaleString('id-ID')}</TableTd>
-                          <TableTd>{item.realisasi.toLocaleString('id-ID')}</TableTd>
+                          <TableTd>{item.totalRealisasi.toLocaleString('id-ID')}</TableTd>
                           <TableTd>
                             <Text c={item.selisih >= 0 ? 'green' : 'red'}>
                               {item.selisih.toLocaleString('id-ID')}

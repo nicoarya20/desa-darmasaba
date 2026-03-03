@@ -209,16 +209,22 @@ model APBDesItem {
   kode       String // contoh: "4", "4.1", "4.1.2"
   uraian     String // nama item, contoh: "Pendapatan Asli Desa", "Hasil Usaha"
   anggaran   Float // dalam satuan Rupiah (bisa DECIMAL di DB, tapi Float umum di TS/JS)
-  realisasi  Float
-  selisih    Float // realisasi - anggaran
-  persentase Float
-  tipe       String? // (realisasi / anggaran) * 100
+  tipe       String? // "pendapatan" | "belanja" | "pembiayaan" | null
   level      Int // 1 = kelompok utama, 2 = sub-kelompok, 3 = detail
   parentId   String? // untuk relasi hierarki
   parent     APBDesItem?  @relation("APBDesItemParent", fields: [parentId], references: [id])
   children   APBDesItem[] @relation("APBDesItemParent")
   apbdesId   String
   apbdes     APBDes       @relation(fields: [apbdesId], references: [id])
+  
+  // Field kalkulasi (auto-calculated dari realisasi items)
+  totalRealisasi Float      @default(0) // Sum dari semua realisasi
+  selisih        Float      @default(0) // totalRealisasi - anggaran
+  persentase     Float      @default(0) // (totalRealisasi / anggaran) * 100
+  
+  // Relasi ke realisasi items
+  realisasiItems RealisasiItem[]
+  
   createdAt  DateTime     @default(now())
   updatedAt  DateTime     @updatedAt
   deletedAt  DateTime?
@@ -227,6 +233,26 @@ model APBDesItem {
   @@index([kode])
   @@index([level])
   @@index([apbdesId])
+}
+
+// Model baru untuk multiple realisasi per item
+model RealisasiItem {
+  id           String     @id @default(cuid())
+  apbdesItemId String
+  apbdesItem   APBDesItem @relation(fields: [apbdesItemId], references: [id], onDelete: Cascade)
+  
+  jumlah       Float      // Jumlah realisasi dalam Rupiah
+  tanggal      DateTime   @db.Date // Tanggal realisasi
+  keterangan   String?    @db.Text // Keterangan tambahan (opsional)
+  buktiFileId  String?    // FileStorage ID untuk bukti/foto (opsional)
+  
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  deletedAt    DateTime?
+  isActive     Boolean    @default(true)
+
+  @@index([apbdesItemId])
+  @@index([tanggal])
 }
 
 //========================================= PRESTASI DESA ========================================= //
