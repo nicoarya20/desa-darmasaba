@@ -2,12 +2,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import apbdes from '@/app/admin/(dashboard)/_state/landing-page/apbdes'
-import APBDesProgress from '@/app/darmasaba/(tambahan)/apbdes/lib/apbDesaProgress'
-import { transformAPBDesData } from '@/app/darmasaba/(tambahan)/apbdes/lib/types'
 import colors from '@/con/colors'
 import {
   ActionIcon,
-  BackgroundImage,
   Box,
   Button,
   Center,
@@ -23,6 +20,9 @@ import { IconDownload } from '@tabler/icons-react'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { useProxy } from 'valtio/utils'
+import PaguTable from './lib/paguTable'
+import RealisasiTable from './lib/realisasiTable'
+import GrafikRealisasi from './lib/grafikRealisasi'
 
 function Apbdes() {
   const state = useProxy(apbdes)
@@ -51,18 +51,17 @@ function Apbdes() {
   const dataAPBDes = state.findMany.data || []
 
   const years = Array.from(
-  new Set(
-    dataAPBDes
-      .map((item: any) => item?.tahun)
-      .filter((tahun): tahun is number => typeof tahun === 'number')
+    new Set(
+      dataAPBDes
+        .map((item: any) => item?.tahun)
+        .filter((tahun): tahun is number => typeof tahun === 'number')
+    )
   )
-)
-  .sort((a, b) => b - a)
-  .map(year => ({
-    value: year.toString(),
-    label: `Tahun ${year}`,
-  }))
-
+    .sort((a, b) => b - a)
+    .map(year => ({
+      value: year.toString(),
+      label: `Tahun ${year}`,
+    }))
 
   useEffect(() => {
     if (years.length > 0 && !selectedYear) {
@@ -71,7 +70,7 @@ function Apbdes() {
   }, [years, selectedYear])
 
   const currentApbdes = dataAPBDes.length > 0
-    ? transformAPBDesData(dataAPBDes.find(item => item?.tahun?.toString() === selectedYear) || dataAPBDes[0])
+    ? dataAPBDes.find((item: any) => item?.tahun?.toString() === selectedYear) || dataAPBDes[0]
     : null
 
   const data = (state.findMany.data || []).slice(0, 3)
@@ -131,18 +130,22 @@ function Apbdes() {
         />
       </Box>
 
-      {/* Progress */}
-      {currentApbdes ? (
-        <APBDesProgress apbdesData={currentApbdes} />
-      ) : (
+      {/* Tabel & Grafik - Hanya tampilkan jika ada data */}
+      {currentApbdes && currentApbdes.items?.length > 0 ? (
+        <Stack gap="xl">
+          <PaguTable apbdesData={currentApbdes} />
+          <RealisasiTable apbdesData={currentApbdes} />
+          <GrafikRealisasi apbdesData={currentApbdes} />
+        </Stack>
+      ) : currentApbdes ? (
         <Box px={{ base: 'md', md: 100 }} py="md">
           <Text fz="sm" c="dimmed" ta="center" lh={1.5}>
-            Tidak ada data APBDes untuk tahun yang dipilih.
+            Tidak ada data item untuk tahun yang dipilih.
           </Text>
         </Box>
-      )}
+      ) : null}
 
-      {/* GRID */}
+      {/* GRID - Card Preview */}
       {loading ? (
         <Center mx={{ base: 'md', md: 100 }} mih={200} pb="xl">
           <Loader size="lg" color="blue" />
@@ -165,14 +168,18 @@ function Apbdes() {
           spacing="lg"
           pb="xl"
         >
-          {data.map((v, k) => (
-            <BackgroundImage
+          {data.map((v: any, k: number) => (
+            <Box
               key={k}
-              src={v.image?.link || ''}
-              h={360}
-              radius="xl"
               pos="relative"
-              style={{ overflow: 'hidden' }}
+              style={{
+                backgroundImage: `url(${v.image?.link || ''})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                borderRadius: 16,
+                height: 360,
+                overflow: 'hidden',
+              }}
             >
               <Box pos="absolute" inset={0} bg="rgba(0,0,0,0.45)" style={{ borderRadius: 16 }} />
 
@@ -185,7 +192,7 @@ function Apbdes() {
                   lh={1.35}
                   lineClamp={2}
                 >
-                  {v.name}
+                  {v.name || `APBDes Tahun ${v.tahun}`}
                 </Text>
 
                 <Text
@@ -196,7 +203,7 @@ function Apbdes() {
                   lh={1}
                   style={{ textShadow: '0 2px 8px rgba(0,0,0,0.6)' }}
                 >
-                  {v.jumlah}
+                  {v.jumlah || '-'}
                 </Text>
 
                 <Center>
@@ -212,7 +219,7 @@ function Apbdes() {
                   </ActionIcon>
                 </Center>
               </Stack>
-            </BackgroundImage>
+            </Box>
           ))}
         </SimpleGrid>
       )}
