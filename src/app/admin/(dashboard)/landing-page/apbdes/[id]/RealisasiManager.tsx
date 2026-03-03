@@ -328,9 +328,9 @@ export default function RealisasiManager({
           resetForm();
         }}
         title={
-          <Title order={5}>
+          <Text fz="lg" fw={600}>
             {editingId ? 'Edit Realisasi' : 'Tambah Realisasi Baru'}
-          </Title>
+          </Text>
         }
         size="md"
         centered
