@@ -79,6 +79,9 @@ function EditAPBDes() {
   // Simpan data original untuk reset form
   const [originalData, setOriginalData] = useState({
     tahun: 0,
+    name: '',
+    deskripsi: '',
+    jumlah: '',
     imageId: '',
     fileId: '',
     imageUrl: '',
@@ -103,6 +106,9 @@ function EditAPBDes() {
         // Simpan data original untuk reset
         setOriginalData({
           tahun: data.tahun || new Date().getFullYear(),
+          name: data.name || '',
+          deskripsi: data.deskripsi || '',
+          jumlah: data.jumlah || '',
           imageId: data.imageId || '',
           fileId: data.fileId || '',
           imageUrl: data.image?.link || '',
@@ -112,6 +118,9 @@ function EditAPBDes() {
         // Set form dengan data lama (termasuk imageId dan fileId)
         apbdesState.edit.form = {
           tahun: data.tahun || new Date().getFullYear(),
+          name: data.name || '',
+          deskripsi: data.deskripsi || '',
+          jumlah: data.jumlah || '',
           imageId: data.imageId || '',
           fileId: data.fileId || '',
           items: (data.items || []).map((item: any) => ({
@@ -238,9 +247,12 @@ function EditAPBDes() {
   };
 
   const handleReset = () => {
-    // Reset ke data original (tahun, imageId, fileId)
+    // Reset ke data original (tahun, name, deskripsi, jumlah, imageId, fileId)
     apbdesState.edit.form = {
       tahun: originalData.tahun,
+      name: originalData.name,
+      deskripsi: originalData.deskripsi,
+      jumlah: originalData.jumlah,
       imageId: originalData.imageId,
       fileId: originalData.fileId,
       items: [...apbdesState.edit.form.items], // keep existing items
@@ -249,11 +261,11 @@ function EditAPBDes() {
     // Reset preview ke data original
     setPreviewImage(originalData.imageUrl || null);
     setPreviewDoc(originalData.fileUrl || null);
-    
+
     // Reset file uploads
     setImageFile(null);
     setDocFile(null);
-    
+
     // Reset new item form
     setNewItem({
       kode: '',
@@ -263,7 +275,7 @@ function EditAPBDes() {
       level: 1,
       tipe: 'pendapatan',
     });
-    
+
     toast.info('Form dikembalikan ke data awal');
   };
 
@@ -288,6 +300,33 @@ function EditAPBDes() {
       >
         <Stack gap="md">
           {/* Header Form */}
+          <TextInput
+            label="Nama APBDes"
+            placeholder="Contoh: APBDes Tahun 2025"
+            value={apbdesState.edit.form.name}
+            onChange={(e) =>
+              (apbdesState.edit.form.name = e.target.value)
+            }
+            description="Opsional - akan diisi otomatis jika kosong"
+          />
+          <TextInput
+            label="Deskripsi"
+            placeholder="Deskripsi APBDes (opsional)"
+            value={apbdesState.edit.form.deskripsi}
+            onChange={(e) =>
+              (apbdesState.edit.form.deskripsi = e.target.value)
+            }
+            description="Opsional"
+          />
+          <TextInput
+            label="Jumlah Total"
+            placeholder="Contoh: Rp 1.000.000.000"
+            value={apbdesState.edit.form.jumlah}
+            onChange={(e) =>
+              (apbdesState.edit.form.jumlah = e.target.value)
+            }
+            description="Opsional - total keseluruhan anggaran"
+          />
           <NumberInput
             label="Tahun"
             value={apbdesState.edit.form.tahun || new Date().getFullYear()}

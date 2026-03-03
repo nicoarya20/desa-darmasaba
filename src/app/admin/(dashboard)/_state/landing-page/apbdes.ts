@@ -19,6 +19,9 @@ const ApbdesItemSchema = z.object({
 
 const ApbdesFormSchema = z.object({
   tahun: z.number().int().min(2000, "Tahun tidak valid"),
+  name: z.string().optional(),
+  deskripsi: z.string().optional(),
+  jumlah: z.string().optional(),
   imageId: z.string().min(1, "Gambar wajib diunggah"),
   fileId: z.string().min(1, "File wajib diunggah"),
   items: z.array(ApbdesItemSchema).min(1, "Minimal ada 1 item"),
@@ -27,6 +30,9 @@ const ApbdesFormSchema = z.object({
 // --- Default Form ---
 const defaultApbdesForm = {
   tahun: new Date().getFullYear(),
+  name: "",
+  deskripsi: "",
+  jumlah: "",
   imageId: "",
   fileId: "",
   items: [] as z.infer<typeof ApbdesItemSchema>[],
@@ -244,6 +250,9 @@ const apbdes = proxy({
           this.id = data.id;
           this.form = {
             tahun: data.tahun || new Date().getFullYear(),
+            name: data.name || "",
+            deskripsi: data.deskripsi || "",
+            jumlah: data.jumlah || "",
             imageId: data.imageId || "",
             fileId: data.fileId || "",
             items: (data.items || []).map((item: any) => ({

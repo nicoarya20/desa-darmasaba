@@ -94,7 +94,7 @@ function DetailAPBDes() {
               <Box>
                 <Text fz="lg" fw="bold">Nama APBDes</Text>
                 <Text fz="md" c="dimmed">
-                  {data.name || '-'}
+                  {data.name || `APBDes Tahun ${data.tahun}`}
                 </Text>
               </Box>
 
@@ -104,6 +104,24 @@ function DetailAPBDes() {
                   {data.tahun || '-'}
                 </Text>
               </Box>
+
+              {data.deskripsi && (
+                <Box>
+                  <Text fz="lg" fw="bold">Deskripsi</Text>
+                  <Text fz="md" c="dimmed">
+                    {data.deskripsi}
+                  </Text>
+                </Box>
+              )}
+
+              {data.jumlah && (
+                <Box>
+                  <Text fz="lg" fw="bold">Jumlah Total</Text>
+                  <Text fz="md" c="dimmed">
+                    {data.jumlah}
+                  </Text>
+                </Box>
+              )}
 
               <Box>
                 <Text fz="lg" fw="bold">Gambar</Text>

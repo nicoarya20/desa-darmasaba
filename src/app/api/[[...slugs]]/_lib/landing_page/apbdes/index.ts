@@ -33,6 +33,9 @@ const APBDes = new Elysia({
   .post("/create", apbdesCreate, {
     body: t.Object({
       tahun: t.Number(),
+      name: t.Optional(t.String()),
+      deskripsi: t.Optional(t.String()),
+      jumlah: t.Optional(t.String()),
       imageId: t.String(),
       fileId: t.String(),
       items: t.Array(ApbdesItemSchema),
@@ -44,6 +47,9 @@ const APBDes = new Elysia({
     params: t.Object({ id: t.String() }),
     body: t.Object({
       tahun: t.Number(),
+      name: t.Optional(t.String()),
+      deskripsi: t.Optional(t.String()),
+      jumlah: t.Optional(t.String()),
       imageId: t.String(),
       fileId: t.String(),
       items: t.Array(ApbdesItemSchema),

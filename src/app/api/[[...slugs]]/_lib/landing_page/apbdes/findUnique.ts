@@ -48,11 +48,14 @@ export default async function apbdesFindUnique(context: Context) {
       include: {
         items: {
           where: { isActive: true },
-          orderBy: { kode: 'asc' }
+          orderBy: { kode: 'asc' },
+          include: {
+            parent: true, // Include parent item for hierarchy
+          },
         },
         image: true,
-        file: true
-      }
+        file: true,
+      },
     });
 
     if (!result || !result.isActive) {

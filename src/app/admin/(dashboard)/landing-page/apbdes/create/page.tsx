@@ -117,9 +117,9 @@ function CreateAPBDes() {
       toast.success("Berhasil menambahkan APBDes");
       resetForm();
       router.push("/admin/landing-page/apbdes");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Gagal submit:", error);
-      toast.error("Gagal menyimpan data");
+      toast.error(error?.message || "Gagal menyimpan data");
     } finally {
       setIsSubmitting(false);
     }
@@ -334,6 +334,27 @@ function CreateAPBDes() {
           </Stack>
 
           {/* Form Header */}
+          <TextInput
+            label="Nama APBDes"
+            placeholder="Contoh: APBDes Tahun 2025"
+            value={stateAPBDes.create.form.name}
+            onChange={(e) => (stateAPBDes.create.form.name = e.target.value)}
+            description="Opsional - akan diisi otomatis jika kosong"
+          />
+          <TextInput
+            label="Deskripsi"
+            placeholder="Deskripsi APBDes (opsional)"
+            value={stateAPBDes.create.form.deskripsi}
+            onChange={(e) => (stateAPBDes.create.form.deskripsi = e.target.value)}
+            description="Opsional"
+          />
+          <TextInput
+            label="Jumlah Total"
+            placeholder="Contoh: Rp 1.000.000.000"
+            value={stateAPBDes.create.form.jumlah}
+            onChange={(e) => (stateAPBDes.create.form.jumlah = e.target.value)}
+            description="Opsional - total keseluruhan anggaran"
+          />
           <NumberInput
             label="Tahun"
             value={stateAPBDes.create.form.tahun || new Date().getFullYear()}

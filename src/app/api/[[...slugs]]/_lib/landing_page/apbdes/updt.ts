@@ -15,6 +15,9 @@ type APBDesItemInput = {
 
 type FormUpdateBody = {
   tahun: number;
+  name?: string;
+  deskripsi?: string;
+  jumlah?: string;
   imageId: string;
   fileId: string;
   items: APBDesItemInput[];
@@ -79,6 +82,9 @@ export default async function apbdesUpdate(context: Context) {
       where: { id },
       data: {
         tahun: body.tahun,
+        name: body.name || `APBDes Tahun ${body.tahun}`,
+        deskripsi: body.deskripsi,
+        jumlah: body.jumlah,
         imageId: body.imageId,
         fileId: body.fileId,
       },

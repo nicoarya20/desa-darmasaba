@@ -47,7 +47,13 @@ export default async function apbdesFindMany(context: Context) {
         include: {
           image: true,
           file: true,
-          items: true,
+          items: {
+            where: { isActive: true },
+            orderBy: { kode: "asc" },
+            include: {
+              parent: true,
+            },
+          },
         },
       }),
       prisma.aPBDes.count({ where }),

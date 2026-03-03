@@ -17,6 +17,9 @@ type APBDesItemInput = {
 
 type FormCreate = {
   tahun: number;
+  name?: string;
+  deskripsi?: string;
+  jumlah?: string;
   imageId: string;
   fileId: string;
   items: APBDesItemInput[];
@@ -48,7 +51,9 @@ export default async function apbdesCreate(context: Context) {
       const apbdes = await prisma.aPBDes.create({
         data: {
           tahun: body.tahun,
-          name: `APBDes Tahun ${body.tahun}`,
+          name: body.name || `APBDes Tahun ${body.tahun}`,
+          deskripsi: body.deskripsi,
+          jumlah: body.jumlah,
           imageId: body.imageId,
           fileId: body.fileId,
         },

@@ -150,13 +150,13 @@ export default function Page() {
     <Box id="page-root">
       <Stack bg={colors.grey[1]} gap={0}>
         <LandingPage />
+        <Apbdes />
         <Penghargaan />
         <Layanan />
         <Potensi />
         <DesaAntiKorupsi />
         <Kepuasan />
         <SDGS />
-        <Apbdes />
         <Prestasi />
       <ScrollToTopButton />
       <NewsReaderLanding />
