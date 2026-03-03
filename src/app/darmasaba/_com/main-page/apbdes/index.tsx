@@ -132,11 +132,13 @@ function Apbdes() {
 
       {/* Tabel & Grafik - Hanya tampilkan jika ada data */}
       {currentApbdes && currentApbdes.items?.length > 0 ? (
-        <SimpleGrid cols={{ base: 1, sm: 3 }}>
-          <PaguTable apbdesData={currentApbdes} />
-          <RealisasiTable apbdesData={currentApbdes} />
-          <GrafikRealisasi apbdesData={currentApbdes} />
-        </SimpleGrid>
+        <Box px={{ base: 'md', md: 100 }}>
+          <SimpleGrid cols={{ base: 1, sm: 3 }}>
+            <PaguTable apbdesData={currentApbdes} />
+            <RealisasiTable apbdesData={currentApbdes} />
+            <GrafikRealisasi apbdesData={currentApbdes} />
+          </SimpleGrid>
+        </Box>
       ) : currentApbdes ? (
         <Box px={{ base: 'md', md: 100 }} py="md">
           <Text fz="sm" c="dimmed" ta="center" lh={1.5}>
