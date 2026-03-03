@@ -25,6 +25,7 @@ import { useEffect, useState } from 'react';
 import colors from '@/con/colors';
 import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
 import apbdes from '../../../_state/landing-page/apbdes';
+import RealisasiManager from './RealisasiManager';
 
 
 
@@ -191,48 +192,60 @@ function DetailAPBDes() {
 
           {/* Tabel Items */}
           {data.items && data.items.length > 0 ? (
-            <Paper withBorder p="md" radius="md">
-              <Text fz="lg" fw="bold" mb="sm">
+            <Stack gap="md">
+              <Text fz="lg" fw="bold">
                 Rincian Pendapatan & Belanja ({data.items.length} item)
               </Text>
-              <Box style={{ overflowX: 'auto' }}>
-                <Table striped highlightOnHover>
-                  <TableThead>
-                    <TableTr>
-                      <TableTh>Uraian</TableTh>
-                      <TableTh>Anggaran (Rp)</TableTh>
-                      <TableTh>Realisasi (Rp)</TableTh>
-                      <TableTh>Selisih (Rp)</TableTh>
-                      <TableTh>Persentase (%)</TableTh>
-                    </TableTr>
-                  </TableThead>
-                  <TableTbody>
-                    {[...data.items] // Create a new array before sorting
-                      .sort((a, b) => a.kode.localeCompare(b.kode))
-                      .map((item) => (
-                        <TableTr key={item.id}>
-                          <TableTd style={getIndent(item.level)}>
-                            <Group>
-                              <Text fw={item.level === 1 ? 'bold' : 'normal'}>{item.kode}</Text>
-                              <Text fz="sm" c="dimmed">{item.uraian}</Text>
-                            </Group>
-                          </TableTd>
-                          <TableTd>{item.anggaran.toLocaleString('id-ID')}</TableTd>
-                          <TableTd>{item.totalRealisasi.toLocaleString('id-ID')}</TableTd>
-                          <TableTd>
-                            <Text c={item.selisih >= 0 ? 'green' : 'red'}>
-                              {item.selisih.toLocaleString('id-ID')}
-                            </Text>
-                          </TableTd>
-                          <TableTd>
-                            <Text fw={500}>{item.persentase.toFixed(2)}%</Text>
-                          </TableTd>
-                        </TableTr>
-                      ))}
-                  </TableTbody>
-                </Table>
-              </Box>
-            </Paper>
+              <Table striped highlightOnHover>
+                <TableThead>
+                  <TableTr>
+                    <TableTh>Uraian</TableTh>
+                    <TableTh>Anggaran (Rp)</TableTh>
+                    <TableTh>Realisasi (Rp)</TableTh>
+                    <TableTh>Selisih (Rp)</TableTh>
+                    <TableTh>Persentase (%)</TableTh>
+                  </TableTr>
+                </TableThead>
+                <TableTbody>
+                  {[...data.items]
+                    .sort((a, b) => a.kode.localeCompare(b.kode))
+                    .map((item) => (
+                      <TableTr key={item.id}>
+                        <TableTd style={getIndent(item.level)}>
+                          <Group>
+                            <Text fw={item.level === 1 ? 'bold' : 'normal'}>{item.kode}</Text>
+                            <Text fz="sm" c="dimmed">{item.uraian}</Text>
+                          </Group>
+                        </TableTd>
+                        <TableTd>{item.anggaran.toLocaleString('id-ID')}</TableTd>
+                        <TableTd>{item.totalRealisasi.toLocaleString('id-ID')}</TableTd>
+                        <TableTd>
+                          <Text c={item.selisih >= 0 ? 'green' : 'red'}>
+                            {item.selisih.toLocaleString('id-ID')}
+                          </Text>
+                        </TableTd>
+                        <TableTd>
+                          <Text fw={500}>{item.persentase.toFixed(2)}%</Text>
+                        </TableTd>
+                      </TableTr>
+                    ))}
+                </TableTbody>
+              </Table>
+
+              {/* Realisasi Manager untuk setiap item */}
+              {data.items.map((item: any) => (
+                <RealisasiManager
+                  key={item.id}
+                  itemId={item.id}
+                  itemKode={item.kode}
+                  itemUraian={item.uraian}
+                  itemAnggaran={item.anggaran}
+                  itemTotalRealisasi={item.totalRealisasi}
+                  itemPersentase={item.persentase}
+                  realisasiItems={item.realisasiItems || []}
+                />
+              ))}
+            </Stack>
           ) : (
             <Text>Belum ada data item</Text>
           )}
