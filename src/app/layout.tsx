@@ -2,6 +2,7 @@ import "@mantine/core/styles.css";
 import "./globals.css"; // Sisanya import di globals.css
 
 import LoadDataFirstClient from "@/app/darmasaba/_com/LoadDataFirstClient";
+import { MusicProvider } from "@/app/context/MusicContext";
 import {
   ColorSchemeScript,
   MantineProvider,
@@ -105,15 +106,17 @@ export default function RootLayout({
           <ColorSchemeScript defaultColorScheme="light" />
         </head>
         <body>
-          <MantineProvider theme={theme} defaultColorScheme="light">
-            {children}
-            <LoadDataFirstClient />
-            <ToastContainer
-              position="bottom-center"
-              hideProgressBar
-              style={{ zIndex: 9999 }}
-            />
-          </MantineProvider>
+          <MusicProvider>
+            <MantineProvider theme={theme} defaultColorScheme="light">
+              {children}
+              <LoadDataFirstClient />
+              <ToastContainer
+                position="bottom-center"
+                hideProgressBar
+                style={{ zIndex: 9999 }}
+              />
+            </MantineProvider>
+          </MusicProvider>
         </body>
       </html>
     </ViewTransitions>

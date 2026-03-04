@@ -5,6 +5,7 @@ import { Box, Space, Stack } from "@mantine/core";
 
 import { Navbar } from "@/app/darmasaba/_com/Navbar";
 import Footer from "./_com/Footer";
+import FixedPlayerBar from "./_com/FixedPlayerBar";
 
 
 export default function Layout({ children }: { children: React.ReactNode }) {
@@ -21,6 +22,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                     {children}
                 </Box>
                 <Footer />
+                <FixedPlayerBar />
             </Stack>
     )
 }
