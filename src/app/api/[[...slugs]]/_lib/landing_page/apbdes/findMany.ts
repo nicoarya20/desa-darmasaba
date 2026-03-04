@@ -21,7 +21,7 @@ export default async function apbdesFindMany(context: Context) {
 
   try {
     const where: any = { isActive: true };
-    
+
     if (search) {
       where.OR = [
         { name: { contains: search, mode: "insensitive" } },
@@ -47,7 +47,16 @@ export default async function apbdesFindMany(context: Context) {
         include: {
           image: true,
           file: true,
-          items: true,
+          items: {
+            where: { isActive: true },
+            orderBy: { kode: "asc" },
+            include: {
+              realisasiItems: {
+                where: { isActive: true },
+                orderBy: { tanggal: 'asc' },
+              },
+            },
+          },
         },
       }),
       prisma.aPBDes.count({ where }),

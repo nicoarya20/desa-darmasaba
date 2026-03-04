@@ -2,31 +2,27 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import apbdes from '@/app/admin/(dashboard)/_state/landing-page/apbdes'
-import APBDesProgress from '@/app/darmasaba/(tambahan)/apbdes/lib/apbDesaProgress'
-import { transformAPBDesData } from '@/app/darmasaba/(tambahan)/apbdes/lib/types'
 import colors from '@/con/colors'
 import {
-  ActionIcon,
-  BackgroundImage,
   Box,
   Button,
-  Center,
+  Divider,
   Group,
-  Loader,
   Select,
   SimpleGrid,
   Stack,
   Text,
-  Title,
+  Title
 } from '@mantine/core'
-import { IconDownload } from '@tabler/icons-react'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { useProxy } from 'valtio/utils'
+import GrafikRealisasi from './lib/grafikRealisasi'
+import PaguTable from './lib/paguTable'
+import RealisasiTable from './lib/realisasiTable'
 
 function Apbdes() {
   const state = useProxy(apbdes)
-  const [loading, setLoading] = useState(false)
   const [selectedYear, setSelectedYear] = useState<string | null>(null)
 
   const textHeading = {
@@ -37,12 +33,9 @@ function Apbdes() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        setLoading(true)
         await state.findMany.load()
       } catch (error) {
         console.error('Error loading data:', error)
-      } finally {
-        setLoading(false)
       }
     }
     loadData()
@@ -51,18 +44,17 @@ function Apbdes() {
   const dataAPBDes = state.findMany.data || []
 
   const years = Array.from(
-  new Set(
-    dataAPBDes
-      .map((item: any) => item?.tahun)
-      .filter((tahun): tahun is number => typeof tahun === 'number')
+    new Set(
+      dataAPBDes
+        .map((item: any) => item?.tahun)
+        .filter((tahun): tahun is number => typeof tahun === 'number')
+    )
   )
-)
-  .sort((a, b) => b - a)
-  .map(year => ({
-    value: year.toString(),
-    label: `Tahun ${year}`,
-  }))
-
+    .sort((a, b) => b - a)
+    .map(year => ({
+      value: year.toString(),
+      label: `Tahun ${year}`,
+    }))
 
   useEffect(() => {
     if (years.length > 0 && !selectedYear) {
@@ -71,13 +63,15 @@ function Apbdes() {
   }, [years, selectedYear])
 
   const currentApbdes = dataAPBDes.length > 0
-    ? transformAPBDesData(dataAPBDes.find(item => item?.tahun?.toString() === selectedYear) || dataAPBDes[0])
+    ? dataAPBDes.find((item: any) => item?.tahun?.toString() === selectedYear) || dataAPBDes[0]
     : null
 
-  const data = (state.findMany.data || []).slice(0, 3)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const previewData = (state.findMany.data || []).slice(0, 3)
 
   return (
     <Stack p="sm" gap="xl" bg={colors.Bg}>
+      <Divider c="gray.3" size="sm" />
       {/* 📌 HEADING */}
       <Box mt="xl">
         <Stack gap="sm">
@@ -117,7 +111,7 @@ function Apbdes() {
       </Group>
 
       {/* COMBOBOX */}
-      <Box px={{ base: 'md', md: 100 }}>
+      <Box px={{ base: 'md', md: "sm" }}>
         <Select
           label={<Text fw={600} fz="sm">Pilih Tahun APBDes</Text>}
           placeholder="Pilih tahun"
@@ -131,23 +125,29 @@ function Apbdes() {
         />
       </Box>
 
-      {/* Progress */}
-      {currentApbdes ? (
-        <APBDesProgress apbdesData={currentApbdes} />
-      ) : (
-        <Box px={{ base: 'md', md: 100 }} py="md">
+      {/* Tabel & Grafik - Hanya tampilkan jika ada data */}
+      {currentApbdes && currentApbdes.items?.length > 0 ? (
+        <Box px={{ base: 'md', md: 'sm' }} mb="xl">
+          <SimpleGrid cols={{ base: 1, sm: 3 }}>
+            <PaguTable apbdesData={currentApbdes} />
+            <RealisasiTable apbdesData={currentApbdes} />
+            <GrafikRealisasi apbdesData={currentApbdes} />
+          </SimpleGrid>
+        </Box>
+      ) : currentApbdes ? (
+        <Box px={{ base: 'md', md: 100 }} py="md" mb="xl">
           <Text fz="sm" c="dimmed" ta="center" lh={1.5}>
-            Tidak ada data APBDes untuk tahun yang dipilih.
+            Tidak ada data item untuk tahun yang dipilih.
           </Text>
         </Box>
-      )}
+      ) : null}
 
-      {/* GRID */}
-      {loading ? (
+      {/* GRID - Card Preview
+      {state.findMany.loading ? (
         <Center mx={{ base: 'md', md: 100 }} mih={200} pb="xl">
           <Loader size="lg" color="blue" />
         </Center>
-      ) : data.length === 0 ? (
+      ) : previewData.length === 0 ? (
         <Center mx={{ base: 'md', md: 100 }} mih={200} pb="xl">
           <Stack align="center" gap="xs">
             <Text fz="lg" c="dimmed" lh={1.4}>
@@ -165,14 +165,18 @@ function Apbdes() {
           spacing="lg"
           pb="xl"
         >
-          {data.map((v, k) => (
-            <BackgroundImage
+          {previewData.map((v, k) => (
+            <Box
               key={k}
-              src={v.image?.link || ''}
-              h={360}
-              radius="xl"
               pos="relative"
-              style={{ overflow: 'hidden' }}
+              style={{
+                backgroundImage: `url(${v.image?.link || ''})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                borderRadius: 16,
+                height: 360,
+                overflow: 'hidden',
+              }}
             >
               <Box pos="absolute" inset={0} bg="rgba(0,0,0,0.45)" style={{ borderRadius: 16 }} />
 
@@ -185,7 +189,7 @@ function Apbdes() {
                   lh={1.35}
                   lineClamp={2}
                 >
-                  {v.name}
+                  {v.name || `APBDes Tahun ${v.tahun}`}
                 </Text>
 
                 <Text
@@ -196,7 +200,7 @@ function Apbdes() {
                   lh={1}
                   style={{ textShadow: '0 2px 8px rgba(0,0,0,0.6)' }}
                 >
-                  {v.jumlah}
+                  {v.jumlah || '-'}
                 </Text>
 
                 <Center>
@@ -212,10 +216,10 @@ function Apbdes() {
                   </ActionIcon>
                 </Center>
               </Stack>
-            </BackgroundImage>
+            </Box>
           ))}
         </SimpleGrid>
-      )}
+      )} */}
     </Stack>
   )
 }

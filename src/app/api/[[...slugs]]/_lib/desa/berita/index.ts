@@ -21,6 +21,8 @@ const Berita = new Elysia({ prefix: "/berita", tags: ["Desa/Berita"] })
       imageId: t.String(),
       content: t.String(),
       kategoriBeritaId: t.Union([t.String(), t.Null()]),
+      imageIds: t.Array(t.String()),
+      linkVideo: t.Optional(t.String()),
     }),
   })
   .get("/find-first", beritaFindFirst)
@@ -39,6 +41,8 @@ const Berita = new Elysia({ prefix: "/berita", tags: ["Desa/Berita"] })
         imageId: t.String(),
         content: t.String(),
         kategoriBeritaId: t.Union([t.String(), t.Null()]),
+        imageIds: t.Array(t.String()),
+        linkVideo: t.Optional(t.String()),
       }),
     }
   );

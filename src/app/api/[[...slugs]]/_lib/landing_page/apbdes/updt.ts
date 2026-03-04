@@ -6,15 +6,15 @@ type APBDesItemInput = {
   kode: string;
   uraian: string;
   anggaran: number;
-  realisasi: number;
-  selisih: number;
-  persentase: number;
   level: number;
   tipe?: string | null;
 };
 
 type FormUpdateBody = {
   tahun: number;
+  name?: string;
+  deskripsi?: string;
+  jumlah?: string;
   imageId: string;
   fileId: string;
   items: APBDesItemInput[];
@@ -38,25 +38,32 @@ export default async function apbdesUpdate(context: Context) {
       };
     }
 
-    // 2. Hapus semua item lama
+    // 2. Hapus semua item lama (cascade akan menghapus realisasiItems juga)
     await prisma.aPBDesItem.deleteMany({
       where: { apbdesId: id },
     });
 
-    // 3. Buat item baru tanpa parentId terlebih dahulu
+    // 3. Buat item baru dengan auto-calculate fields
     await prisma.aPBDesItem.createMany({
-      data: body.items.map((item) => ({
-        apbdesId: id,
-        kode: item.kode,
-        uraian: item.uraian,
-        anggaran: item.anggaran,
-        realisasi: item.realisasi,
-        selisih: item.anggaran - item.realisasi,
-        persentase: item.anggaran > 0 ? (item.realisasi / item.anggaran) * 100 : 0,
-        level: item.level,
-        tipe: item.tipe || null,
-        isActive: true,
-      })),
+      data: body.items.map((item) => {
+        const anggaran = item.anggaran;
+        const totalRealisasi = 0; // Reset karena items baru
+        const selisih = anggaran - totalRealisasi; // Sisa anggaran (positif = belum digunakan)
+        const persentase = anggaran > 0 ? (totalRealisasi / anggaran) * 100 : 0;
+
+        return {
+          apbdesId: id,
+          kode: item.kode,
+          uraian: item.uraian,
+          anggaran: anggaran,
+          level: item.level,
+          tipe: item.tipe || null,
+          totalRealisasi,
+          selisih,
+          persentase,
+          isActive: true,
+        };
+      }),
     });
 
     // 4. Dapatkan semua item yang baru dibuat untuk mendapatkan ID-nya
@@ -66,12 +73,11 @@ export default async function apbdesUpdate(context: Context) {
     });
 
     // 5. Update parentId untuk setiap item
-    // Pastikan allItems memiliki tipe yang benar
     const itemsForParentUpdate = allItems.map(item => ({
       id: item.id,
       kode: item.kode,
     }));
-    
+
     await assignParentIdsToApbdesItems(itemsForParentUpdate);
 
     // 6. Update data APBDes
@@ -79,18 +85,27 @@ export default async function apbdesUpdate(context: Context) {
       where: { id },
       data: {
         tahun: body.tahun,
+        name: body.name || `APBDes Tahun ${body.tahun}`,
+        deskripsi: body.deskripsi,
+        jumlah: body.jumlah,
         imageId: body.imageId,
         fileId: body.fileId,
       },
     });
 
-    // 5. Ambil data lengkap untuk response
+    // 7. Ambil data lengkap untuk response (include realisasiItems)
     const result = await prisma.aPBDes.findUnique({
       where: { id },
       include: {
         items: {
           where: { isActive: true },
-          orderBy: { kode: 'asc' }
+          orderBy: { kode: 'asc' },
+          include: {
+            realisasiItems: {
+              where: { isActive: true },
+              orderBy: { tanggal: 'asc' },
+            },
+          },
         },
         image: true,
         file: true,

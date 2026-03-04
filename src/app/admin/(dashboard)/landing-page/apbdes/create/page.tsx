@@ -33,7 +33,6 @@ type ItemForm = {
   kode: string;
   uraian: string;
   anggaran: number;
-  realisasi: number;
   level: number;
   tipe: 'pendapatan' | 'belanja' | 'pembiayaan';
 };
@@ -61,7 +60,6 @@ function CreateAPBDes() {
     kode: '',
     uraian: '',
     anggaran: 0,
-    realisasi: 0,
     level: 1,
     tipe: 'pendapatan',
   });
@@ -80,7 +78,6 @@ function CreateAPBDes() {
       kode: '',
       uraian: '',
       anggaran: 0,
-      realisasi: 0,
       level: 1,
       tipe: 'pendapatan',
     });
@@ -117,9 +114,9 @@ function CreateAPBDes() {
       toast.success("Berhasil menambahkan APBDes");
       resetForm();
       router.push("/admin/landing-page/apbdes");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Gagal submit:", error);
-      toast.error("Gagal menyimpan data");
+      toast.error(error?.message || "Gagal menyimpan data");
     } finally {
       setIsSubmitting(false);
     }
@@ -127,22 +124,17 @@ function CreateAPBDes() {
 
   // Tambahkan item ke state
   const handleAddItem = () => {
-    const { kode, uraian, anggaran, realisasi, level, tipe } = newItem;
+    const { kode, uraian, anggaran, level, tipe } = newItem;
     if (!kode || !uraian) {
       return toast.warn("Kode dan uraian wajib diisi");
     }
 
     const finalTipe = level === 1 ? null : tipe;
-    const selisih = realisasi - anggaran;
-    const persentase = anggaran > 0 ? (realisasi / anggaran) * 100 : 0;
 
     stateAPBDes.create.addItem({
       kode,
       uraian,
       anggaran,
-      realisasi,
-      selisih,
-      persentase,
       level,
       tipe: finalTipe,
     });
@@ -152,7 +144,6 @@ function CreateAPBDes() {
       kode: '',
       uraian: '',
       anggaran: 0,
-      realisasi: 0,
       level: 1,
       tipe: 'pendapatan',
     });
@@ -334,6 +325,27 @@ function CreateAPBDes() {
           </Stack>
 
           {/* Form Header */}
+          <TextInput
+            label="Nama APBDes"
+            placeholder="Contoh: APBDes Tahun 2025"
+            value={stateAPBDes.create.form.name}
+            onChange={(e) => (stateAPBDes.create.form.name = e.target.value)}
+            description="Opsional - akan diisi otomatis jika kosong"
+          />
+          <TextInput
+            label="Deskripsi"
+            placeholder="Deskripsi APBDes (opsional)"
+            value={stateAPBDes.create.form.deskripsi}
+            onChange={(e) => (stateAPBDes.create.form.deskripsi = e.target.value)}
+            description="Opsional"
+          />
+          <TextInput
+            label="Jumlah Total"
+            placeholder="Contoh: Rp 1.000.000.000"
+            value={stateAPBDes.create.form.jumlah}
+            onChange={(e) => (stateAPBDes.create.form.jumlah = e.target.value)}
+            description="Opsional - total keseluruhan anggaran"
+          />
           <NumberInput
             label="Tahun"
             value={stateAPBDes.create.form.tahun || new Date().getFullYear()}
@@ -406,13 +418,6 @@ function CreateAPBDes() {
                   thousandSeparator
                   min={0}
                 />
-                <NumberInput
-                  label="Realisasi (Rp)"
-                  value={newItem.realisasi}
-                  onChange={(val) => setNewItem({ ...newItem, realisasi: Number(val) || 0 })}
-                  thousandSeparator
-                  min={0}
-                />
               </Group>
               <Button
                 leftSection={<IconPlus size={16} />}
@@ -434,28 +439,30 @@ function CreateAPBDes() {
                     <th>Kode</th>
                     <th>Uraian</th>
                     <th>Anggaran</th>
-                    <th>Realisasi</th>
                     <th>Level</th>
                     <th>Tipe</th>
                     <th style={{ width: 50 }}>Aksi</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {stateAPBDes.create.form.items.map((item, idx) => (
+                  {stateAPBDes.create.form.items.map((item: any, idx) => (
                     <tr key={idx}>
                       <td><Text size="sm" fw={500}>{item.kode}</Text></td>
                       <td>{item.uraian}</td>
                       <td>{item.anggaran.toLocaleString('id-ID')}</td>
-                      <td>{item.realisasi.toLocaleString('id-ID')}</td>
                       <td>
                         <Badge size="sm" color={item.level === 1 ? 'blue' : item.level === 2 ? 'green' : 'grape'}>
                           L{item.level}
                         </Badge>
                       </td>
                       <td>
-                        <Badge size="sm" color={item.tipe === 'pendapatan' ? 'teal' : 'red'}>
-                          {item.tipe}
-                        </Badge>
+                        {item.tipe ? (
+                          <Badge size="sm" color={item.tipe === 'pendapatan' ? 'teal' : 'red'}>
+                            {item.tipe}
+                          </Badge>
+                        ) : (
+                          <Text size="sm" c="dimmed">-</Text>
+                        )}
                       </td>
                       <td>
                         <ActionIcon color="red" onClick={() => handleRemoveItem(idx)}>

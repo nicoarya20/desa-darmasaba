@@ -60,8 +60,9 @@ model FileStorage {
   deletedAt                      DateTime?
   isActive                       Boolean                    @default(true)
   link                           String
-  category                       String // "image" / "document" / "other"
-  Berita                         Berita[]
+  category                       String // "image" / "document" / "audio" / "other"
+  Berita                         Berita[]                 @relation("BeritaFeaturedImage")
+  BeritaImages                   Berita[]                 @relation("BeritaImages")
   PotensiDesa                    PotensiDesa[]
   Posyandu                       Posyandu[]
   StrukturPPID                   StrukturPPID[]
@@ -102,6 +103,9 @@ model FileStorage {
 
   ArtikelKesehatan ArtikelKesehatan[]
   StrukturBumDes   StrukturBumDes[]
+  
+  MusikDesaAudio   MusikDesa[] @relation("MusikAudioFile")
+  MusikDesaCover   MusikDesa[] @relation("MusikCoverImage")
 }
 
 //========================================= MENU LANDING PAGE ========================================= //
@@ -205,16 +209,22 @@ model APBDesItem {
   kode       String // contoh: "4", "4.1", "4.1.2"
   uraian     String // nama item, contoh: "Pendapatan Asli Desa", "Hasil Usaha"
   anggaran   Float // dalam satuan Rupiah (bisa DECIMAL di DB, tapi Float umum di TS/JS)
-  realisasi  Float
-  selisih    Float // realisasi - anggaran
-  persentase Float
-  tipe       String? // (realisasi / anggaran) * 100
+  tipe       String? // "pendapatan" | "belanja" | "pembiayaan" | null
   level      Int // 1 = kelompok utama, 2 = sub-kelompok, 3 = detail
   parentId   String? // untuk relasi hierarki
   parent     APBDesItem?  @relation("APBDesItemParent", fields: [parentId], references: [id])
   children   APBDesItem[] @relation("APBDesItemParent")
   apbdesId   String
   apbdes     APBDes       @relation(fields: [apbdesId], references: [id])
+  
+  // Field kalkulasi (auto-calculated dari realisasi items)
+  totalRealisasi Float      @default(0) // Sum dari semua realisasi
+  selisih        Float      @default(0) // totalRealisasi - anggaran
+  persentase     Float      @default(0) // (totalRealisasi / anggaran) * 100
+  
+  // Relasi ke realisasi items
+  realisasiItems RealisasiItem[]
+  
   createdAt  DateTime     @default(now())
   updatedAt  DateTime     @updatedAt
   deletedAt  DateTime?
@@ -223,6 +233,28 @@ model APBDesItem {
   @@index([kode])
   @@index([level])
   @@index([apbdesId])
+}
+
+// Model baru untuk multiple realisasi per item
+model RealisasiItem {
+  id           String     @id @default(cuid())
+  kode         String?     // Kode realisasi, mirip dengan APBDesItem
+  apbdesItemId String
+  apbdesItem   APBDesItem @relation(fields: [apbdesItemId], references: [id], onDelete: Cascade)
+
+  jumlah       Float      // Jumlah realisasi dalam Rupiah
+  tanggal      DateTime   @db.Date // Tanggal realisasi
+  keterangan   String?    @db.Text // Keterangan tambahan (opsional)
+  buktiFileId  String?    // FileStorage ID untuk bukti/foto (opsional)
+
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  deletedAt    DateTime?
+  isActive     Boolean    @default(true)
+
+  @@index([kode])
+  @@index([apbdesItemId])
+  @@index([tanggal])
 }
 
 //========================================= PRESTASI DESA ========================================= //
@@ -609,15 +641,19 @@ model Berita {
   id               String          @id @default(cuid())
   judul            String
   deskripsi        String
-  image            FileStorage?    @relation(fields: [imageId], references: [id])
+  image            FileStorage?    @relation("BeritaFeaturedImage", fields: [imageId], references: [id])
   imageId          String?
+  images           FileStorage[]   @relation("BeritaImages")
   content          String          @db.Text
+  linkVideo        String?         @db.VarChar(500)
   createdAt        DateTime        @default(now())
   updatedAt        DateTime        @updatedAt
   deletedAt        DateTime        @default(now())
   isActive         Boolean         @default(true)
   kategoriBerita   KategoriBerita? @relation(fields: [kategoriBeritaId], references: [id])
   kategoriBeritaId String?
+
+  @@index([kategoriBeritaId])
 }
 
 model KategoriBerita {
@@ -2262,4 +2298,26 @@ model UserMenuAccess {
   user User @relation(fields: [userId], references: [id])
 
   @@unique([userId, menuId]) // Satu user tidak bisa punya akses menu yang sama dua kali
+}
+
+// ========================================= MUSIK DESA ========================================= //
+model MusikDesa {
+  id          String       @id @default(cuid())
+  judul       String       @db.VarChar(255)
+  artis       String       @db.VarChar(255)
+  deskripsi   String?      @db.Text
+  durasi      String       @db.VarChar(20) // format: "MM:SS"
+  audioFile   FileStorage? @relation("MusikAudioFile", fields: [audioFileId], references: [id])
+  audioFileId String?
+  coverImage  FileStorage? @relation("MusikCoverImage", fields: [coverImageId], references: [id])
+  coverImageId String?
+  genre       String?      @db.VarChar(100)
+  tahunRilis  Int?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  deletedAt   DateTime?
+  isActive    Boolean      @default(true)
+
+  @@index([judul])
+  @@index([artis])
 }

@@ -330,7 +330,7 @@ export const devBar = [
         path: "/admin/lingkungan/konservasi-adat-bali/filosofi-tri-hita-karana"
       }
     ]
-  }, 
+  },
   {
     id: "Pendidikan",
     name: "Pendidikan",
@@ -372,6 +372,11 @@ export const devBar = [
         path: "/admin/pendidikan/data-pendidikan"
       }
     ]
+  },
+  {
+    id: "Musik",
+    name: "Musik",
+    path: "/admin/musik"
   },
   {
     id: "User & Role",
@@ -729,7 +734,7 @@ export const navBar = [
         path: "/admin/lingkungan/konservasi-adat-bali/filosofi-tri-hita-karana"
       }
     ]
-  }, 
+  },
   {
     id: "Pendidikan",
     name: "Pendidikan",
@@ -771,6 +776,11 @@ export const navBar = [
         path: "/admin/pendidikan/data-pendidikan"
       }
     ]
+  },
+  {
+    id: "Musik",
+    name: "Musik",
+    path: "/admin/musik"
   },
   {
     id: "User & Role",
@@ -1051,7 +1061,7 @@ export const role1 = [
       }
 
     ]
-  }, 
+  },
   {
     id: "Lingkungan",
     name: "Lingkungan",
@@ -1088,6 +1098,11 @@ export const role1 = [
         path: "/admin/lingkungan/konservasi-adat-bali/filosofi-tri-hita-karana"
       }
     ]
+  },
+  {
+    id: "Musik",
+    name: "Musik",
+    path: "/admin/musik"
   }
 ]
 
@@ -1133,6 +1148,11 @@ export const role2 = [
         path: "/admin/kesehatan/info-wabah-penyakit"
       }
     ]
+  },
+  {
+    id: "Musik",
+    name: "Musik",
+    path: "/admin/musik"
   }
 ]
 
@@ -1178,5 +1198,10 @@ export const role3 = [
         path: "/admin/pendidikan/data-pendidikan"
       }
     ]
+  },
+  {
+    id: "Musik",
+    name: "Musik",
+    path: "/admin/musik"
   }
 ]

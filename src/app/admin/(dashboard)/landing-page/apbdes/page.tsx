@@ -45,7 +45,7 @@ function APBDes() {
 function ListAPBDes({ search }: { search: string }) {
   const listState = useProxy(apbdes);
   const router = useRouter();
-    const [debouncedSearch] = useDebouncedValue(search, 1000);
+  const [debouncedSearch] = useDebouncedValue(search, 1000);
 
   const { data, page, totalPages, loading, load } = listState.findMany;
 

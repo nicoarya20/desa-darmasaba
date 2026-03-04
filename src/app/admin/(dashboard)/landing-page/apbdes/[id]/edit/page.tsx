@@ -42,7 +42,6 @@ type ItemForm = {
   kode: string;
   uraian: string;
   anggaran: number;
-  realisasi: number;
   level: number;
   tipe: 'pendapatan' | 'belanja' | 'pembiayaan';
 };
@@ -71,7 +70,6 @@ function EditAPBDes() {
     kode: '',
     uraian: '',
     anggaran: 0,
-    realisasi: 0,
     level: 1,
     tipe: 'pendapatan',
   });
@@ -79,6 +77,9 @@ function EditAPBDes() {
   // Simpan data original untuk reset form
   const [originalData, setOriginalData] = useState({
     tahun: 0,
+    name: '',
+    deskripsi: '',
+    jumlah: '',
     imageId: '',
     fileId: '',
     imageUrl: '',
@@ -103,6 +104,9 @@ function EditAPBDes() {
         // Simpan data original untuk reset
         setOriginalData({
           tahun: data.tahun || new Date().getFullYear(),
+          name: data.name || '',
+          deskripsi: data.deskripsi || '',
+          jumlah: data.jumlah || '',
           imageId: data.imageId || '',
           fileId: data.fileId || '',
           imageUrl: data.image?.link || '',
@@ -112,6 +116,9 @@ function EditAPBDes() {
         // Set form dengan data lama (termasuk imageId dan fileId)
         apbdesState.edit.form = {
           tahun: data.tahun || new Date().getFullYear(),
+          name: data.name || '',
+          deskripsi: data.deskripsi || '',
+          jumlah: data.jumlah || '',
           imageId: data.imageId || '',
           fileId: data.fileId || '',
           items: (data.items || []).map((item: any) => ({
@@ -148,32 +155,25 @@ function EditAPBDes() {
   };
 
   const handleAddItem = () => {
-    const { kode, uraian, anggaran, realisasi, level, tipe } = newItem;
+    const { kode, uraian, anggaran, level, tipe } = newItem;
     if (!kode || !uraian) {
       return toast.warn('Kode dan uraian wajib diisi');
     }
 
     const finalTipe = level === 1 ? null : tipe;
-    const selisih = realisasi - anggaran;
-    const persentase = anggaran > 0 ? (realisasi / anggaran) * 100 : 0;
 
     apbdesState.edit.addItem({
       kode,
       uraian,
       anggaran,
-      realisasi,
-      selisih,
-      persentase,
       level,
-      tipe: finalTipe, // ✅ Tidak akan undefined
+      tipe: finalTipe,
     });
-
 
     setNewItem({
       kode: '',
       uraian: '',
       anggaran: 0,
-      realisasi: 0,
       level: 1,
       tipe: 'pendapatan',
     });
@@ -238,9 +238,12 @@ function EditAPBDes() {
   };
 
   const handleReset = () => {
-    // Reset ke data original (tahun, imageId, fileId)
+    // Reset ke data original (tahun, name, deskripsi, jumlah, imageId, fileId)
     apbdesState.edit.form = {
       tahun: originalData.tahun,
+      name: originalData.name,
+      deskripsi: originalData.deskripsi,
+      jumlah: originalData.jumlah,
       imageId: originalData.imageId,
       fileId: originalData.fileId,
       items: [...apbdesState.edit.form.items], // keep existing items
@@ -249,21 +252,20 @@ function EditAPBDes() {
     // Reset preview ke data original
     setPreviewImage(originalData.imageUrl || null);
     setPreviewDoc(originalData.fileUrl || null);
-    
+
     // Reset file uploads
     setImageFile(null);
     setDocFile(null);
-    
+
     // Reset new item form
     setNewItem({
       kode: '',
       uraian: '',
       anggaran: 0,
-      realisasi: 0,
       level: 1,
       tipe: 'pendapatan',
     });
-    
+
     toast.info('Form dikembalikan ke data awal');
   };
 
@@ -288,6 +290,33 @@ function EditAPBDes() {
       >
         <Stack gap="md">
           {/* Header Form */}
+          <TextInput
+            label="Nama APBDes"
+            placeholder="Contoh: APBDes Tahun 2025"
+            value={apbdesState.edit.form.name}
+            onChange={(e) =>
+              (apbdesState.edit.form.name = e.target.value)
+            }
+            description="Opsional - akan diisi otomatis jika kosong"
+          />
+          <TextInput
+            label="Deskripsi"
+            placeholder="Deskripsi APBDes (opsional)"
+            value={apbdesState.edit.form.deskripsi}
+            onChange={(e) =>
+              (apbdesState.edit.form.deskripsi = e.target.value)
+            }
+            description="Opsional"
+          />
+          <TextInput
+            label="Jumlah Total"
+            placeholder="Contoh: Rp 1.000.000.000"
+            value={apbdesState.edit.form.jumlah}
+            onChange={(e) =>
+              (apbdesState.edit.form.jumlah = e.target.value)
+            }
+            description="Opsional - total keseluruhan anggaran"
+          />
           <NumberInput
             label="Tahun"
             value={apbdesState.edit.form.tahun || new Date().getFullYear()}
@@ -475,13 +504,6 @@ function EditAPBDes() {
                   thousandSeparator
                   min={0}
                 />
-                <NumberInput
-                  label="Realisasi (Rp)"
-                  value={newItem.realisasi}
-                  onChange={(val) => setNewItem({ ...newItem, realisasi: Number(val) || 0 })}
-                  thousandSeparator
-                  min={0}
-                />
               </Group>
               <Button
                 leftSection={<IconPlus size={16} />}
@@ -505,7 +527,6 @@ function EditAPBDes() {
                     <th>Kode</th>
                     <th>Uraian</th>
                     <th>Anggaran</th>
-                    <th>Realisasi</th>
                     <th>Level</th>
                     <th>Tipe</th>
                     <th style={{ width: '50px' }}>Aksi</th>
@@ -521,7 +542,6 @@ function EditAPBDes() {
                       </td>
                       <td>{item.uraian}</td>
                       <td>{item.anggaran.toLocaleString('id-ID')}</td>
-                      <td>{item.realisasi.toLocaleString('id-ID')}</td>
                       <td>
                         <Badge size="sm" color={item.level === 1 ? 'blue' : item.level === 2 ? 'green' : 'grape'}>
                           L{item.level}
@@ -533,7 +553,7 @@ function EditAPBDes() {
                             {item.tipe}
                           </Badge>
                         ) : (
-                          '-'
+                          <Text size="sm" c="dimmed">-</Text>
                         )}
                       </td>
                       <td>
