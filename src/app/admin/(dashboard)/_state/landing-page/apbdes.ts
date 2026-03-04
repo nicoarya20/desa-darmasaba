@@ -104,7 +104,7 @@ const apbdes = proxy({
   findMany: {
     data: null as
       | Prisma.APBDesGetPayload<{
-          include: { image: true; file: true; items: true };
+          include: { image: true; file: true; items: { include: { realisasiItems: true } } };
         }>[]
       | null,
     page: 1,

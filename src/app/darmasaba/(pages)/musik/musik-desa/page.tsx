@@ -1,77 +1,41 @@
 'use client'
+import { useMusic } from '@/app/context/MusicContext';
 import { ActionIcon, Avatar, Badge, Box, Card, Flex, Grid, Group, Paper, ScrollArea, Slider, Stack, Text, TextInput } from '@mantine/core';
 import { IconArrowsShuffle, IconPlayerPauseFilled, IconPlayerPlayFilled, IconPlayerSkipBackFilled, IconPlayerSkipForwardFilled, IconRepeat, IconRepeatOff, IconSearch, IconVolume, IconVolumeOff, IconX } from '@tabler/icons-react';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import BackButton from '../../desa/layanan/_com/BackButto';
-import { togglePlayPause } from '../lib/playPause';
-import { getNextIndex, getPrevIndex } from '../lib/nextPrev';
-import { handleRepeatOrNext } from '../lib/repeat';
-import { toggleShuffle } from '../lib/shuffle';
-import { setAudioVolume, toggleMute as toggleMuteUtil } from '../lib/volume';
-import { useAudioProgress } from '../lib/useAudioProgress';
-
-interface MusicFile {
-  id: string;
-  name: string;
-  realName: string;
-  path: string;
-  mimeType: string;
-  link: string;
-}
-
-interface Musik {
-  id: string;
-  judul: string;
-  artis: string;
-  deskripsi: string | null;
-  durasi: string;
-  genre: string | null;
-  tahunRilis: number | null;
-  audioFile: MusicFile | null;
-  coverImage: MusicFile | null;
-  isActive: boolean;
-}
 
 const MusicPlayer = () => {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(0);
-  const [volume, setVolume] = useState(70);
-  const [isMuted, setIsMuted] = useState(false);
-  const [isRepeat, setIsRepeat] = useState(false);
-  const [isShuffle, setIsShuffle] = useState(false);
+  const {
+    isPlaying,
+    currentSong,
+    currentTime,
+    duration,
+    volume,
+    isMuted,
+    isRepeat,
+    isShuffle,
+    isLoading,
+    musikData,
+    playSong,
+    togglePlayPause,
+    playNext,
+    playPrev,
+    seek,
+    setVolume,
+    toggleMute,
+    toggleRepeat,
+    toggleShuffle,
+  } = useMusic();
+
   const [search, setSearch] = useState('');
-  const [musikData, setMusikData] = useState<Musik[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [currentSongIndex, setCurrentSongIndex] = useState(-1);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-  const isSeekingRef = useRef(false);
-  const lastPlayedSongIdRef = useRef<string | null>(null);
-  const lastSeekTimeRef = useRef<number>(0); // Track last seek time
 
-  // Smooth progress update dengan requestAnimationFrame
-  useAudioProgress(audioRef as React.RefObject<HTMLAudioElement>, isPlaying, setCurrentTime, isSeekingRef);
+  // Fetch musik data from global state
+  const { loadMusikData } = useMusic();
 
-  // Fetch musik data from API
   useEffect(() => {
-    const fetchMusik = async () => {
-      try {
-        setLoading(true);
-        const res = await fetch('/api/desa/musik/find-many?page=1&limit=50');
-        const data = await res.json();
-        if (data.success && data.data) {
-          const activeMusik = data.data.filter((m: Musik) => m.isActive);
-          setMusikData(activeMusik);
-        }
-      } catch (error) {
-        console.error('Error fetching musik:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchMusik();
-  }, []);
+    loadMusikData();
+  }, [loadMusikData]);
 
   // Filter musik based on search - gunakan useMemo untuk mencegah re-calculate setiap render
   const filteredMusik = useMemo(() => {
@@ -82,146 +46,42 @@ const MusicPlayer = () => {
     );
   }, [musikData, search]);
 
-  const currentSong = currentSongIndex >= 0 && currentSongIndex < filteredMusik.length
-    ? filteredMusik[currentSongIndex]
-    : null;
-
-  // // Update progress bar
-  // useEffect(() => {
-  //   if (isPlaying && audioRef.current) {
-  //     progressInterval.current = window.setInterval(() => {
-  //       if (audioRef.current) {
-  //         setCurrentTime(Math.floor(audioRef.current.currentTime));
-  //       }
-  //     }, 1000);
-  //   } else {
-  //     if (progressInterval.current) {
-  //       clearInterval(progressInterval.current);
-  //     }
-  //   }
-
-  //   return () => {
-  //     if (progressInterval.current) {
-  //       clearInterval(progressInterval.current);
-  //     }
-  //   };
-  // }, [isPlaying]);
-
-  // Update duration when song changes (HANYA saat ganti lagu, bukan saat isPlaying berubah)
-  useEffect(() => {
-    if (currentSong && audioRef.current) {
-      // Cek apakah ini benar-benar lagu baru
-      const isNewSong = lastPlayedSongIdRef.current !== currentSong.id;
-
-      if (isNewSong) {
-        // Gunakan durasi dari database sebagai acuan utama
-        const durationParts = currentSong.durasi.split(':');
-        const durationInSeconds = parseInt(durationParts[0]) * 60 + parseInt(durationParts[1]);
-        setDuration(durationInSeconds);
-
-        // Reset audio currentTime ke 0 untuk lagu baru
-        audioRef.current.currentTime = 0;
-        setCurrentTime(0);
-
-        // Update ref
-        lastPlayedSongIdRef.current = currentSong.id;
-
-        if (isPlaying) {
-          audioRef.current.play().catch(err => {
-            console.error('Error playing audio:', err);
-            setIsPlaying(false);
-          });
-        }
-      }
-      // Jika bukan lagu baru, jangan reset currentTime (biar seek tidak kembali ke 0)
-    }
-  }, [currentSong?.id]); // eslint-disable-line react-hooks/exhaustive-deps -- Intentional: hanya depend on song ID, bukan isPlaying
-
-  // Sync duration dari audio element jika berbeda signifikan (> 1 detik)
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio || !currentSong) return;
-
-    const handleLoadedMetadata = () => {
-      const audioDuration = Math.floor(audio.duration);
-      const durationParts = currentSong.durasi.split(':');
-      const dbDuration = parseInt(durationParts[0]) * 60 + parseInt(durationParts[1]);
-
-      // Jika perbedaan > 2 detik, gunakan audio duration (lebih akurat)
-      if (Math.abs(audioDuration - dbDuration) > 2) {
-        setDuration(audioDuration);
-      }
-    };
-
-    audio.addEventListener('loadedmetadata', handleLoadedMetadata);
-    return () => audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
-  }, [currentSong?.id]); // eslint-disable-line react-hooks/exhaustive-deps -- Intentional: hanya depend on song ID
-
+  // Format time helper
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
-  const playSong = (index: number) => {
-    if (index < 0 || index >= filteredMusik.length) return;
-
-    setCurrentSongIndex(index);
-    setIsPlaying(true);
+  const handleVolumeChange = (value: number) => {
+    setVolume(value);
   };
 
-  const handleSongEnd = () => {
-    const playNext = () => {
-      let nextIndex: number;
-      if (isShuffle) {
-        nextIndex = Math.floor(Math.random() * filteredMusik.length);
-      } else {
-        nextIndex = (currentSongIndex + 1) % filteredMusik.length;
-      }
-
-      if (filteredMusik.length > 1) {
-        playSong(nextIndex);
-      } else {
-        setIsPlaying(false);
-        setCurrentTime(0);
-      }
-    };
-
-    handleRepeatOrNext(audioRef, isRepeat, playNext);
-  };
-
-  const toggleMute = () => {
-    toggleMuteUtil(audioRef, isMuted, setIsMuted);
-  };
-
-  const handleVolumeChange = (val: number) => {
-    setAudioVolume(audioRef, val, setVolume, setIsMuted);
-  };
-
-  const skipBack = () => {
-    const prevIndex = getPrevIndex(currentSongIndex, filteredMusik.length, isShuffle);
-    if (prevIndex >= 0) {
-      playSong(prevIndex);
-    }
-  };
-
-  const skipForward = () => {
-    const nextIndex = getNextIndex(currentSongIndex, filteredMusik.length, isShuffle);
-    if (nextIndex >= 0) {
-      playSong(nextIndex);
-    }
-  };
-
-  const toggleShuffleHandler = () => {
-    toggleShuffle(isShuffle, setIsShuffle);
+  const toggleMuteHandler = () => {
+    toggleMute();
   };
 
   const togglePlayPauseHandler = () => {
-    if (!currentSong) return;
-    togglePlayPause(audioRef, isPlaying, setIsPlaying);
+    togglePlayPause();
   };
 
-  if (loading) {
+  const skipBack = () => {
+    playPrev();
+  };
+
+  const skipForward = () => {
+    playNext();
+  };
+
+  const toggleShuffleHandler = () => {
+    toggleShuffle();
+  };
+
+  const toggleRepeatHandler = () => {
+    toggleRepeat();
+  };
+
+  if (isLoading) {
     return (
       <Box px={{ base: 'md', md: 100 }} py="xl">
         <Paper mx="auto" p="xl" radius="lg" shadow="sm" bg="white">
@@ -233,16 +93,6 @@ const MusicPlayer = () => {
 
   return (
     <Box px={{ base: 'md', md: 100 }} py="xl">
-      {/* Hidden audio element - gunakan key yang stabil untuk mencegah remount */}
-      {currentSong?.audioFile && (
-        <audio
-          ref={audioRef}
-          src={currentSong?.audioFile?.link}
-          muted={isMuted}
-          onEnded={handleSongEnd}
-        />
-      )}
-
       <Paper
         mx="auto"
         p="xl"
@@ -279,7 +129,7 @@ const MusicPlayer = () => {
                 <Card radius="md" p="xl" shadow="md">
                   <Group align="center" gap="xl">
                     <Avatar
-                      src={currentSong.coverImage?.link || 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=400&h=400&fit=crop'}
+                      src={currentSong.coverImage?.link || '/mp3-logo.png'}
                       size={180}
                       radius="md"
                     />
@@ -295,38 +145,14 @@ const MusicPlayer = () => {
                         <Text size="xs" c="#5A6C7D" w={42}>{formatTime(currentTime)}</Text>
                         <Slider
                           value={currentTime}
-                          max={duration}
-                          onChange={(v) => {
-                            isSeekingRef.current = true;
-                            setCurrentTime(v);
-                          }}
-                          onChangeEnd={(v) => {
-                            // Validasi: jangan seek melebihi durasi
-                            const seekTime = Math.min(Math.max(0, v), duration);
-
-                            if (audioRef.current) {
-                              // Set audio currentTime
-                              audioRef.current.currentTime = seekTime;
-                              setCurrentTime(seekTime);
-                              lastSeekTimeRef.current = seekTime;
-
-                              // Jika audio tidak sedang playing, mainkan
-                              if (!audioRef.current.paused && !isPlaying) {
-                                audioRef.current.play().catch(console.error);
-                              }
-                            }
-
-                            // Set seeking false SETELAH semua operasi selesai
-                            setTimeout(() => {
-                              isSeekingRef.current = false;
-                            }, 0);
-                          }}
+                          max={duration || 100}
+                          onChange={(v) => seek(v)}
                           color="#0B4F78"
                           size="sm"
                           style={{ flex: 1 }}
                           styles={{ thumb: { borderWidth: 2 } }}
                         />
-                        <Text size="xs" c="#5A6C7D" w={42}>{formatTime(duration)}</Text>
+                        <Text size="xs" c="#5A6C7D" w={42}>{formatTime(duration || 0)}</Text>
                       </Group>
                     </Stack>
                   </Group>
@@ -345,7 +171,7 @@ const MusicPlayer = () => {
               ) : (
                 <ScrollArea.Autosize mah={400}>
                   <Grid gutter="md">
-                    {filteredMusik.map((song, index) => (
+                    {filteredMusik.map((song) => (
                       <Grid.Col span={{ base: 12, sm: 6, lg: 4 }} key={song.id}>
                         <Card
                           radius="md"
@@ -356,7 +182,7 @@ const MusicPlayer = () => {
                             border: currentSong?.id === song.id ? '2px solid #0B4F78' : '2px solid transparent',
                             transition: 'all 0.2s'
                           }}
-                          onClick={() => playSong(index)}
+                          onClick={() => playSong(song)}
                         >
                           <Group gap="md" align="center">
                             <Avatar
@@ -444,7 +270,7 @@ const MusicPlayer = () => {
               <ActionIcon
                 variant={isRepeat ? 'filled' : 'subtle'}
                 color="#0B4F78"
-                onClick={() => setIsRepeat(!isRepeat)}
+                onClick={toggleRepeatHandler}
                 radius="xl"
               >
                 {isRepeat ? <IconRepeat size={18} /> : <IconRepeatOff size={18} />}
@@ -454,42 +280,18 @@ const MusicPlayer = () => {
               <Text size="xs" c="#5A6C7D" w={40} ta="right">{formatTime(currentTime)}</Text>
               <Slider
                 value={currentTime}
-                max={duration}
-                onChange={(v) => {
-                  isSeekingRef.current = true;
-                  setCurrentTime(v); // preview - update UI saja
-                }}
-                onChangeEnd={(v) => {
-                  // Validasi: jangan seek melebihi durasi
-                  const seekTime = Math.min(Math.max(0, v), duration);
-
-                  if (audioRef.current) {
-                    // Set audio currentTime
-                    audioRef.current.currentTime = seekTime;
-                    setCurrentTime(seekTime);
-                    lastSeekTimeRef.current = seekTime;
-
-                    // Jika audio tidak sedang playing, mainkan
-                    if (!audioRef.current.paused && !isPlaying) {
-                      audioRef.current.play().catch(console.error);
-                    }
-                  }
-
-                  // Set seeking false SETELAH semua operasi selesai
-                  setTimeout(() => {
-                    isSeekingRef.current = false;
-                  }, 0);
-                }}
+                max={duration || 100}
+                onChange={(v) => seek(v)}
                 color="#0B4F78"
                 size="xs"
                 style={{ flex: 1 }}
               />
-              <Text size="xs" c="#5A6C7D" w={40}>{formatTime(duration)}</Text>
+              <Text size="xs" c="#5A6C7D" w={40}>{formatTime(duration || 0)}</Text>
             </Group>
           </Stack>
 
           <Group gap="xs" style={{ flex: 1 }} justify="flex-end">
-            <ActionIcon variant="subtle" color="gray" onClick={toggleMute}>
+            <ActionIcon variant="subtle" color="gray" onClick={toggleMuteHandler}>
               {isMuted || volume === 0 ? <IconVolumeOff size={20} /> : <IconVolume size={20} />}
             </ActionIcon>
             <Slider
@@ -508,85 +310,3 @@ const MusicPlayer = () => {
 };
 
 export default MusicPlayer;
-
-// 'use client'
-// import {
-//   Box, Paper, Group, Stack, Text, Slider, ActionIcon
-// } from '@mantine/core';
-// import {
-//   IconPlayerPlayFilled,
-//   IconPlayerPauseFilled
-// } from '@tabler/icons-react';
-// import { useEffect, useState } from 'react';
-// import { useAudioEngine } from '../lib/useAudioProgress';
-
-// interface Musik {
-//   id: string;
-//   judul: string;
-//   artis: string;
-//   audioFile: { link: string };
-// }
-
-// export default function MusicPlayer() {
-//   const {
-//     audioRef,
-//     isPlaying,
-//     currentTime,
-//     duration,
-//     load,
-//     toggle,
-//     seek,
-//   } = useAudioEngine();
-
-//   const [songs, setSongs] = useState<Musik[]>([]);
-//   const [index, setIndex] = useState(0);
-
-//   useEffect(() => {
-//     fetch('/api/desa/musik/find-many?page=1&limit=50')
-//       .then(r => r.json())
-//       .then(r => setSongs(r.data ?? []));
-//   }, []);
-
-//   useEffect(() => {
-//     if (!songs[index]) return;
-//     load(songs[index].audioFile.link);
-//   }, [songs, index, load]);
-
-//   const format = (n: number) => {
-//     const m = Math.floor(n / 60);
-//     const s = Math.floor(n % 60);
-//     return `${m}:${s.toString().padStart(2, '0')}`;
-//   };
-
-//   return (
-//     <Box p="xl">
-//       <audio ref={audioRef} />
-
-//       <Paper p="lg">
-//         <Stack>
-//           <Text fw={700}>{songs[index]?.judul}</Text>
-//           <Text size="sm">{songs[index]?.artis}</Text>
-
-//           <Group>
-//             <Text size="xs">{format(currentTime)}</Text>
-
-//             <Slider
-//               value={currentTime}
-//               max={duration}
-//               onChange={seek}
-//               style={{ flex: 1 }}
-//             />
-
-//             <Text size="xs">{format(duration)}</Text>
-//           </Group>
-
-//           <ActionIcon size={56} radius="xl" onClick={toggle}>
-//             {isPlaying
-//               ? <IconPlayerPauseFilled />
-//               : <IconPlayerPlayFilled />}
-//           </ActionIcon>
-//         </Stack>
-//       </Paper>
-//     </Box>
-//   );
-// }

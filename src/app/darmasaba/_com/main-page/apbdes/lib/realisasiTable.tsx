@@ -48,18 +48,18 @@ export default function RealisasiTable({ apbdesData }: any) {
           </Table.Thead>
           <Table.Tbody>
             {allRealisasiRows.map(({ realisasi, parentItem }) => {
-              const persentase = parentItem.anggaran > 0 
-                ? (realisasi.jumlah / parentItem.anggaran) * 100 
+              const persentase = parentItem.anggaran > 0
+                ? (realisasi.jumlah / parentItem.anggaran) * 100
                 : 0;
 
               return (
                 <Table.Tr key={realisasi.id}>
                   <Table.Td>
-                    <Text>{realisasi.kode} - {realisasi.keterangan}</Text>
+                    <Text>{realisasi.kode || '-'} - {realisasi.keterangan || '-'}</Text>
                   </Table.Td>
                   <Table.Td ta="right">
                     <Text fw={600} c="blue">
-                      {formatRupiah(realisasi.jumlah)}
+                      {formatRupiah(realisasi.jumlah || 0)}
                     </Text>
                   </Table.Td>
                   <Table.Td ta="center">
