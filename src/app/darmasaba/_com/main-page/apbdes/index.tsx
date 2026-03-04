@@ -4,29 +4,25 @@
 import apbdes from '@/app/admin/(dashboard)/_state/landing-page/apbdes'
 import colors from '@/con/colors'
 import {
-  ActionIcon,
   Box,
   Button,
-  Center,
+  Divider,
   Group,
-  Loader,
   Select,
   SimpleGrid,
   Stack,
   Text,
-  Title,
+  Title
 } from '@mantine/core'
-import { IconDownload } from '@tabler/icons-react'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { useProxy } from 'valtio/utils'
+import GrafikRealisasi from './lib/grafikRealisasi'
 import PaguTable from './lib/paguTable'
 import RealisasiTable from './lib/realisasiTable'
-import GrafikRealisasi from './lib/grafikRealisasi'
 
 function Apbdes() {
   const state = useProxy(apbdes)
-  const [loading, setLoading] = useState(false)
   const [selectedYear, setSelectedYear] = useState<string | null>(null)
 
   const textHeading = {
@@ -37,12 +33,9 @@ function Apbdes() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        setLoading(true)
         await state.findMany.load()
       } catch (error) {
         console.error('Error loading data:', error)
-      } finally {
-        setLoading(false)
       }
     }
     loadData()
@@ -73,10 +66,12 @@ function Apbdes() {
     ? dataAPBDes.find((item: any) => item?.tahun?.toString() === selectedYear) || dataAPBDes[0]
     : null
 
-  const data = (state.findMany.data || []).slice(0, 3)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const previewData = (state.findMany.data || []).slice(0, 3)
 
   return (
     <Stack p="sm" gap="xl" bg={colors.Bg}>
+      <Divider c="gray.3" size="sm" />
       {/* 📌 HEADING */}
       <Box mt="xl">
         <Stack gap="sm">
@@ -116,7 +111,7 @@ function Apbdes() {
       </Group>
 
       {/* COMBOBOX */}
-      <Box px={{ base: 'md', md: 100 }}>
+      <Box px={{ base: 'md', md: "sm" }}>
         <Select
           label={<Text fw={600} fz="sm">Pilih Tahun APBDes</Text>}
           placeholder="Pilih tahun"
@@ -132,7 +127,7 @@ function Apbdes() {
 
       {/* Tabel & Grafik - Hanya tampilkan jika ada data */}
       {currentApbdes && currentApbdes.items?.length > 0 ? (
-        <Box px={{ base: 'md', md: 100 }}>
+        <Box px={{ base: 'md', md: 'sm' }} mb="xl">
           <SimpleGrid cols={{ base: 1, sm: 3 }}>
             <PaguTable apbdesData={currentApbdes} />
             <RealisasiTable apbdesData={currentApbdes} />
@@ -140,19 +135,19 @@ function Apbdes() {
           </SimpleGrid>
         </Box>
       ) : currentApbdes ? (
-        <Box px={{ base: 'md', md: 100 }} py="md">
+        <Box px={{ base: 'md', md: 100 }} py="md" mb="xl">
           <Text fz="sm" c="dimmed" ta="center" lh={1.5}>
             Tidak ada data item untuk tahun yang dipilih.
           </Text>
         </Box>
       ) : null}
 
-      {/* GRID - Card Preview */}
-      {loading ? (
+      {/* GRID - Card Preview
+      {state.findMany.loading ? (
         <Center mx={{ base: 'md', md: 100 }} mih={200} pb="xl">
           <Loader size="lg" color="blue" />
         </Center>
-      ) : data.length === 0 ? (
+      ) : previewData.length === 0 ? (
         <Center mx={{ base: 'md', md: 100 }} mih={200} pb="xl">
           <Stack align="center" gap="xs">
             <Text fz="lg" c="dimmed" lh={1.4}>
@@ -170,7 +165,7 @@ function Apbdes() {
           spacing="lg"
           pb="xl"
         >
-          {data.map((v: any, k: number) => (
+          {previewData.map((v, k) => (
             <Box
               key={k}
               pos="relative"
@@ -224,7 +219,7 @@ function Apbdes() {
             </Box>
           ))}
         </SimpleGrid>
-      )}
+      )} */}
     </Stack>
   )
 }

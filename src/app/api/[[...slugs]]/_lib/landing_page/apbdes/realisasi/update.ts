@@ -3,6 +3,7 @@ import prisma from "@/lib/prisma";
 import { Context } from "elysia";
 
 type RealisasiUpdateBody = {
+  kode?: string;
   jumlah?: number;
   tanggal?: string;
   keterangan?: string;
@@ -33,6 +34,7 @@ export default async function realisasiUpdate(context: Context) {
     const updated = await prisma.realisasiItem.update({
       where: { id: realisasiId },
       data: {
+        ...(body.kode !== undefined && { kode: body.kode }),
         ...(body.jumlah !== undefined && { jumlah: body.jumlah }),
         ...(body.tanggal !== undefined && { tanggal: new Date(body.tanggal) }),
         ...(body.keterangan !== undefined && { keterangan: body.keterangan }),

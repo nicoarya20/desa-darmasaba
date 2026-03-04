@@ -106,7 +106,7 @@ export default function GrafikRealisasi({ apbdesData }: any) {
       </Title>
 
       {/* Summary Total Keseluruhan */}
-      <Box mb="lg" p="md" bg="gray.0" radius="md">
+      <Box mb="lg" p="md" bg="gray.0">
         <>
           <Group justify="space-between" mb="xs">
             <Text fw={700} fz="lg">TOTAL KESELURUHAN</Text>

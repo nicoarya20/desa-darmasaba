@@ -238,19 +238,21 @@ model APBDesItem {
 // Model baru untuk multiple realisasi per item
 model RealisasiItem {
   id           String     @id @default(cuid())
+  kode         String?     // Kode realisasi, mirip dengan APBDesItem
   apbdesItemId String
   apbdesItem   APBDesItem @relation(fields: [apbdesItemId], references: [id], onDelete: Cascade)
-  
+
   jumlah       Float      // Jumlah realisasi dalam Rupiah
   tanggal      DateTime   @db.Date // Tanggal realisasi
   keterangan   String?    @db.Text // Keterangan tambahan (opsional)
   buktiFileId  String?    // FileStorage ID untuk bukti/foto (opsional)
-  
+
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
   deletedAt    DateTime?
   isActive     Boolean    @default(true)
 
+  @@index([kode])
   @@index([apbdesItemId])
   @@index([tanggal])
 }

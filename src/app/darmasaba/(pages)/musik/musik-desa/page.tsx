@@ -135,7 +135,7 @@ const MusicPlayer = () => {
       }
       // Jika bukan lagu baru, jangan reset currentTime (biar seek tidak kembali ke 0)
     }
-  }, [currentSong?.id]); // Intentional: hanya depend on song ID, bukan isPlaying
+  }, [currentSong?.id]); // eslint-disable-line react-hooks/exhaustive-deps -- Intentional: hanya depend on song ID, bukan isPlaying
 
   // Sync duration dari audio element jika berbeda signifikan (> 1 detik)
   useEffect(() => {
@@ -155,7 +155,7 @@ const MusicPlayer = () => {
 
     audio.addEventListener('loadedmetadata', handleLoadedMetadata);
     return () => audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
-  }, [currentSong?.id]); // Intentional: hanya depend on song ID
+  }, [currentSong?.id]); // eslint-disable-line react-hooks/exhaustive-deps -- Intentional: hanya depend on song ID
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);

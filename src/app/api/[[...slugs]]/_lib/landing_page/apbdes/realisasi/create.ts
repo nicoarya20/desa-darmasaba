@@ -3,6 +3,7 @@ import prisma from "@/lib/prisma";
 import { Context } from "elysia";
 
 type RealisasiCreateBody = {
+  kode: string;
   jumlah: number;
   tanggal: string; // ISO format
   keterangan?: string;
@@ -33,6 +34,7 @@ export default async function realisasiCreate(context: Context) {
     const realisasi = await prisma.realisasiItem.create({
       data: {
         apbdesItemId: itemId,
+        kode: body.kode,
         jumlah: body.jumlah,
         tanggal: new Date(body.tanggal),
         keterangan: body.keterangan,

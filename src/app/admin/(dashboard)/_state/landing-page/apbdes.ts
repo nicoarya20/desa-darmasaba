@@ -14,14 +14,6 @@ const ApbdesItemSchema = z.object({
   tipe: z.enum(['pendapatan', 'belanja', 'pembiayaan']).nullable().optional(),
 });
 
-// --- Zod Schema untuk Realisasi Item ---
-const RealisasiItemSchema = z.object({
-  jumlah: z.number().min(0, "Jumlah tidak boleh negatif"),
-  tanggal: z.string(),
-  keterangan: z.string().optional(),
-  buktiFileId: z.string().optional(),
-});
-
 const ApbdesFormSchema = z.object({
   tahun: z.number().int().min(2000, "Tahun tidak valid"),
   name: z.string().optional(),
@@ -157,33 +149,37 @@ const apbdes = proxy({
   findUnique: {
     data: null as
       | Prisma.APBDesGetPayload<{
-          include: { image: true; file: true; items: true };
+          include: { image: true; file: true; items: { include: { realisasiItems: true } } };
         }>
       | null,
     loading: false,
     error: null as string | null,
-  
+
     async load(id: string) {
       if (!id || id.trim() === '') {
         this.data = null;
         this.error = "ID tidak valid";
         return;
       }
-  
+
+      // Prevent multiple simultaneous loads
+      if (this.loading) {
+        console.log("⚠️ Already loading, skipping...");
+        return;
+      }
+
       this.loading = true;
       this.error = null;
-  
+
       try {
-        // Pastikan URL-nya benar
         const url = `/api/landingpage/apbdes/${id}`;
         console.log("🌐 Fetching:", url);
-  
-        // Gunakan fetch biasa atau ApiFetch dengan cara yang benar
+
         const response = await fetch(url);
         const res = await response.json();
-  
+
         console.log("📦 Response:", res);
-  
+
         if (res.success && res.data) {
           this.data = res.data;
         } else {
@@ -322,15 +318,16 @@ const apbdes = proxy({
   // =========================================
   realisasi: {
     // Create realisasi
-    async create(itemId: string, data: { jumlah: number; tanggal: string; keterangan?: string; buktiFileId?: string }) {
+    async create(itemId: string, data: { kode: string; jumlah: number; tanggal: string; keterangan?: string; buktiFileId?: string }) {
       try {
         const res = await (ApiFetch.api.landingpage.apbdes as any)[itemId].realisasi.post(data);
 
         if (res.data?.success) {
           toast.success("Realisasi berhasil ditambahkan");
           // Reload findUnique untuk update data
-          if (apbdes.findUnique.data) {
-            await apbdes.findUnique.load(apbdes.findUnique.data.id);
+          const currentId = apbdes.findUnique.data?.id;
+          if (currentId) {
+            await apbdes.findUnique.load(currentId);
           }
           return true;
         } else {
@@ -345,15 +342,16 @@ const apbdes = proxy({
     },
 
     // Update realisasi
-    async update(realisasiId: string, data: { jumlah?: number; tanggal?: string; keterangan?: string; buktiFileId?: string }) {
+    async update(realisasiId: string, data: { kode?: string; jumlah?: number; tanggal?: string; keterangan?: string; buktiFileId?: string }) {
       try {
         const res = await (ApiFetch.api.landingpage.apbdes as any).realisasi[realisasiId].put(data);
 
         if (res.data?.success) {
           toast.success("Realisasi berhasil diperbarui");
           // Reload findUnique untuk update data
-          if (apbdes.findUnique.data) {
-            await apbdes.findUnique.load(apbdes.findUnique.data.id);
+          const currentId = apbdes.findUnique.data?.id;
+          if (currentId) {
+            await apbdes.findUnique.load(currentId);
           }
           return true;
         } else {

@@ -3,6 +3,8 @@
 
 import { useProxy } from 'valtio/utils';
 import apbdes from '@/app/admin/(dashboard)/_state/landing-page/apbdes';
+import { useState } from 'react';
+import { toast } from 'react-toastify';
 import {
   Box,
   Button,
@@ -23,7 +25,6 @@ import {
   Badge,
   Modal,
   Divider,
-  Loader,
   Center,
 } from '@mantine/core';
 import {
@@ -33,9 +34,6 @@ import {
   IconCalendar,
   IconCoin,
 } from '@tabler/icons-react';
-import { useState } from 'react';
-import { toast } from 'react-toastify';
-import colors from '@/con/colors';
 
 interface RealisasiManagerProps {
   itemId: string;
@@ -63,6 +61,7 @@ export default function RealisasiManager({
 
   // Form state
   const [formData, setFormData] = useState({
+    kode: '',
     jumlah: 0,
     tanggal: new Date().toISOString().split('T')[0], // YYYY-MM-DD format for input
     keterangan: '',
@@ -70,6 +69,7 @@ export default function RealisasiManager({
 
   const resetForm = () => {
     setFormData({
+      kode: '',
       jumlah: 0,
       tanggal: new Date().toISOString().split('T')[0],
       keterangan: '',
@@ -85,8 +85,9 @@ export default function RealisasiManager({
   const handleOpenEdit = (realisasi: any) => {
     const tanggal = new Date(realisasi.tanggal);
     const tanggalStr = tanggal.toISOString().split('T')[0]; // YYYY-MM-DD
-    
+
     setFormData({
+      kode: realisasi.kode || '',
       jumlah: realisasi.jumlah,
       tanggal: tanggalStr,
       keterangan: realisasi.keterangan || '',
@@ -100,12 +101,17 @@ export default function RealisasiManager({
       return toast.warn('Jumlah realisasi harus lebih dari 0');
     }
 
+    if (!formData.kode || formData.kode.trim() === '') {
+      return toast.warn('Kode realisasi wajib diisi');
+    }
+
     try {
       setLoading(true);
 
       if (editingId) {
         // Update existing realisasi
         const success = await state.realisasi.update(editingId, {
+          kode: formData.kode,
           jumlah: formData.jumlah,
           tanggal: new Date(formData.tanggal).toISOString(),
           keterangan: formData.keterangan,
@@ -117,6 +123,7 @@ export default function RealisasiManager({
       } else {
         // Create new realisasi
         const success = await state.realisasi.create(itemId, {
+          kode: formData.kode,
           jumlah: formData.jumlah,
           tanggal: new Date(formData.tanggal).toISOString(),
           keterangan: formData.keterangan,
@@ -257,6 +264,7 @@ export default function RealisasiManager({
             <Table striped highlightOnHover fz="sm">
               <TableThead>
                 <TableTr>
+                  <TableTh>Kode</TableTh>
                   <TableTh>Tanggal</TableTh>
                   <TableTh>Uraian</TableTh>
                   <TableTh ta="right">Jumlah</TableTh>
@@ -266,6 +274,11 @@ export default function RealisasiManager({
               <TableTbody>
                 {realisasiItems.map((realisasi) => (
                   <TableTr key={realisasi.id}>
+                    <TableTd>
+                      <Badge variant="light" color="blue" size="sm">
+                        {realisasi.kode || '-'}
+                      </Badge>
+                    </TableTd>
                     <TableTd>
                       <Group gap="xs">
                         <IconCalendar size={16} />
@@ -314,7 +327,7 @@ export default function RealisasiManager({
               Belum ada realisasi untuk item ini
             </Text>
             <Text fz="xs" c="dimmed">
-              Klik tombol "Tambah Realisasi" untuk menambahkan
+              Klik tombol &quot;Tambah Realisasi&quot; untuk menambahkan
             </Text>
           </Stack>
         </Center>
@@ -348,6 +361,15 @@ export default function RealisasiManager({
               Sudah terealisasi: {formatRupiah(itemTotalRealisasi)}
             </Text>
           </Paper>
+
+          <TextInput
+            label="Kode Realisasi"
+            placeholder="Contoh: 4.1.1-R1"
+            value={formData.kode}
+            onChange={(e) => setFormData({ ...formData, kode: e.target.value })}
+            description="Kode unik untuk realisasi ini"
+            required
+          />
 
           <NumberInput
             label="Jumlah Realisasi (Rp)"

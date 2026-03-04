@@ -233,7 +233,7 @@ function DetailAPBDes() {
               </Table>
 
               {/* Realisasi Manager untuk setiap item */}
-              {data.items.map((item: any) => (
+              {data.items.map((item) => (
                 <RealisasiManager
                   key={item.id}
                   itemId={item.id}

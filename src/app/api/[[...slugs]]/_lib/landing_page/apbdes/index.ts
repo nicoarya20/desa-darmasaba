@@ -69,6 +69,7 @@ const APBDes = new Elysia({
   .post("/:itemId/realisasi", realisasiCreate, {
     params: t.Object({ itemId: t.String() }),
     body: t.Object({
+      kode: t.String(),
       jumlah: t.Number(),
       tanggal: t.String(),
       keterangan: t.Optional(t.String()),
@@ -80,6 +81,7 @@ const APBDes = new Elysia({
   .put("/realisasi/:realisasiId", realisasiUpdate, {
     params: t.Object({ realisasiId: t.String() }),
     body: t.Object({
+      kode: t.Optional(t.String()),
       jumlah: t.Optional(t.Number()),
       tanggal: t.Optional(t.String()),
       keterangan: t.Optional(t.String()),
