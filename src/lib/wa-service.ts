@@ -15,7 +15,7 @@ interface SendWaOtpResponse {
 }
 
 /**
- * Send WhatsApp message using otp.wibudev.com API with authentication
+ * Send WhatsApp message using wibudev.com API with authentication
  * @param params - { nomor: string, message: string }
  * @returns Promise<SendWaOtpResponse>
  */
@@ -24,7 +24,7 @@ export async function sendWhatsAppOtp({
   message,
 }: SendWaOtpParams): Promise<SendWaOtpResponse> {
   const apiKey = process.env.WIBU_WA_API_KEY;
-  const waApiUrl = process.env.WIBU_WA_API_URL || 'https://otp.wibudev.com';
+  const waApiUrl = process.env.WIBU_WA_API_URL || 'https://wa.wibudev.com';
 
   if (!apiKey) {
     console.error('❌ WIBU_WA_API_KEY is not configured');
@@ -35,14 +35,14 @@ export async function sendWhatsAppOtp({
   }
 
   try {
-    // Using the new API endpoint with authentication
-    // Format: POST https://otp.wibudev.com/code?nom=...&text=...
+    // Using the API endpoint with authentication
+    // Format: GET https://wa.wibudev.com/code?nom=...&text=...
+    // With Authorization header for API key
     const url = `${waApiUrl}/code?nom=${encodeURIComponent(nomor)}&text=${encodeURIComponent(message)}`;
     
     const response = await fetch(url, {
-      method: 'POST',
+      method: 'GET',
       headers: {
-        'Content-Type': 'application/json',
         'Authorization': `Bearer ${apiKey}`,
         'X-API-Key': apiKey,
       },
