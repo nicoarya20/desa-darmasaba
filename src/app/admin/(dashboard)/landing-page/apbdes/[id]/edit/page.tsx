@@ -377,6 +377,7 @@ function EditAPBDes() {
                     onClick={() => {
                       setPreviewImage(null);
                       setImageFile(null);
+                      apbdesState.edit.form.imageId = ''; // Clear imageId from form
                     }}
                   >
                     <IconX size={14} />
@@ -436,6 +437,7 @@ function EditAPBDes() {
                     onClick={() => {
                       setPreviewDoc(null);
                       setDocFile(null);
+                      apbdesState.edit.form.fileId = ''; // Clear fileId from form
                     }}
                   >
                     <IconX size={14} />
