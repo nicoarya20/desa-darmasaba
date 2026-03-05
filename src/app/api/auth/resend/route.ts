@@ -3,6 +3,7 @@ import prisma from "@/lib/prisma";
 
 import { NextResponse } from "next/server";
 import { randomOTP } from "../_lib/randomOTP";
+import { sendWhatsAppOtp } from "@/lib/wa-service";
 
 export async function POST(req: Request) {
   try {
@@ -18,15 +19,17 @@ export async function POST(req: Request) {
     const codeOtp = randomOTP();
     const otpNumber = Number(codeOtp);
 
-    // Kirim OTP via WhatsApp
+    // Kirim OTP via WhatsApp menggunakan API terautentikasi
     const waMessage = `Website Desa Darmasaba - Kode ini bersifat RAHASIA dan JANGAN DI BAGIKAN KEPADA SIAPAPUN, termasuk anggota ataupun Admin lainnya.\n\n>> Kode OTP anda: ${codeOtp}.`;
-    const waUrl = `https://wa.wibudev.com/code?nom=${encodeURIComponent(nomor)}&text=${encodeURIComponent(waMessage)}`;
-    const waRes = await fetch(waUrl);
-    const waData = await waRes.json();
 
-    if (waData.status !== "success") {
+    const waResult = await sendWhatsAppOtp({
+      nomor,
+      message: waMessage,
+    });
+
+    if (!waResult.success) {
       return NextResponse.json(
-        { success: false, message: "Gagal mengirim OTP via WhatsApp" },
+        { success: false, message: waResult.message || "Gagal mengirim OTP via WhatsApp", debug: waResult.data },
         { status: 400 }
       );
     }

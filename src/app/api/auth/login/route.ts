@@ -3,6 +3,7 @@ import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { randomOTP } from "../_lib/randomOTP";
 import { cookies } from "next/headers";
+import { sendWhatsAppOtp } from "@/lib/wa-service";
 
 export async function POST(req: Request) {
   if (req.method !== "POST") {
@@ -34,31 +35,22 @@ export async function POST(req: Request) {
       const otpNumber = Number(codeOtp);
 
       const waMessage = `Website Desa Darmasaba - Kode ini bersifat RAHASIA dan JANGAN DI BAGIKAN KEPADA SIAPAPUN, termasuk anggota ataupun Admin lainnya.\n\n>> Kode OTP anda: ${codeOtp}.`;
-      const waUrl = `https://wa.wibudev.com/code?nom=${encodeURIComponent(nomor)}&text=${encodeURIComponent(waMessage)}`;
-      
-      console.log("🔍 Debug WA URL:", waUrl); 
-      
-      try {
-        const res = await fetch(waUrl);
-        const sendWa = await res.json();
-        console.log("📱 WA Response:", sendWa);
 
-        if (sendWa.status !== "success") {
-          console.error("❌ WA Service Error:", sendWa);
-          return NextResponse.json(
-            { 
-              success: false, 
-              message: "Gagal mengirim OTP via WhatsApp",
-              debug: sendWa 
-            },
-            { status: 400 }
-          );
-        }
-      } catch (waError) {
-        console.error("❌ Fetch WA Error:", waError);
+      // Send OTP via WhatsApp using authenticated API
+      const waResult = await sendWhatsAppOtp({
+        nomor,
+        message: waMessage,
+      });
+
+      if (!waResult.success) {
+        console.error("❌ WA Service Error:", waResult);
         return NextResponse.json(
-          { success: false, message: "Terjadi kesalahan saat mengirim WA" },
-          { status: 500 }
+          {
+            success: false,
+            message: waResult.message || "Gagal mengirim OTP via WhatsApp",
+            debug: waResult.data
+          },
+          { status: 400 }
         );
       }
 

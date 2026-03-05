@@ -1,6 +1,7 @@
 import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { randomOTP } from "../_lib/randomOTP";
+import { sendWhatsAppOtp } from "@/lib/wa-service";
 
 export async function POST(req: Request) {
   try {
@@ -22,13 +23,18 @@ export async function POST(req: Request) {
     const codeOtp = randomOTP();
     const otpNumber = Number(codeOtp);
 
-    // Kirim WA
-    const waUrl = `https://wa.wibudev.com/code?nom=${encodeURIComponent(nomor)}&text=Website Desa Darmasaba - Kode verifikasi Anda: ${codeOtp}`;
-    const res = await fetch(waUrl);
-    const sendWa = await res.json();
+    // Kirim WA menggunakan API terautentikasi
+    const waMessage = `Website Desa Darmasaba - Kode verifikasi Anda: ${codeOtp}`;
+    const waResult = await sendWhatsAppOtp({
+      nomor,
+      message: waMessage,
+    });
 
-    if (sendWa.status !== "success") {
-      return NextResponse.json({ success: false, message: 'Gagal mengirim OTP' }, { status: 400 });
+    if (!waResult.success) {
+      return NextResponse.json(
+        { success: false, message: waResult.message || 'Gagal mengirim OTP', debug: waResult.data },
+        { status: 400 }
+      );
     }
 
     // Simpan OTP
