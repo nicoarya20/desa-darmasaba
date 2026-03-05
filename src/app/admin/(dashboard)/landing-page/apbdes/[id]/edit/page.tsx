@@ -205,7 +205,6 @@ function EditAPBDes() {
 
       // Upload file baru jika ada perubahan
       if (imageFile) {
-        // Hapus file lama dari form jika ada file baru
         const res = await ApiFetch.api.fileStorage.create.post({
           file: imageFile,
           name: imageFile.name,
@@ -217,7 +216,6 @@ function EditAPBDes() {
       }
 
       if (docFile) {
-        // Hapus file lama dari form jika ada file baru
         const res = await ApiFetch.api.fileStorage.create.post({
           file: docFile,
           name: docFile.name,
@@ -228,15 +226,7 @@ function EditAPBDes() {
         }
       }
 
-      // Jika tidak ada file baru, gunakan ID lama (sudah ada di form)
-      // Pastikan imageId dan fileId tetap ada
-      if (!apbdesState.edit.form.imageId) {
-        return toast.warn('Gambar wajib diunggah');
-      }
-      if (!apbdesState.edit.form.fileId) {
-        return toast.warn('Dokumen wajib diunggah');
-      }
-
+      // Image dan file sekarang opsional, tidak perlu validasi
       const success = await apbdesState.edit.update();
       if (success) {
         router.push('/admin/landing-page/apbdes');
@@ -343,11 +333,11 @@ function EditAPBDes() {
             required
           />
 
-          {/* Gambar & Dokumen */}
+          {/* Gambar & Dokumen (Opsional) */}
           <Stack gap="xs">
             <Box>
               <Text fw="bold" fz="sm" mb={6}>
-                Gambar APBDes
+                Gambar APBDes (Opsional)
               </Text>
               <Dropzone
                 onDrop={handleDrop('image')}
@@ -397,7 +387,7 @@ function EditAPBDes() {
 
             <Box>
               <Text fw="bold" fz="sm" mb={6}>
-                Dokumen APBDes
+                Dokumen APBDes (Opsional)
               </Text>
               <Dropzone
                 onDrop={handleDrop('doc')}

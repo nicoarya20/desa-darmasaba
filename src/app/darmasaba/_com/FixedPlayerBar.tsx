@@ -134,7 +134,7 @@ export default function FixedPlayerBar() {
         p="sm"
         shadow="lg"
         style={{
-          zIndex: 1000,
+          zIndex: 1,
           borderTop: '1px solid rgba(0,0,0,0.1)',
         }}
       >

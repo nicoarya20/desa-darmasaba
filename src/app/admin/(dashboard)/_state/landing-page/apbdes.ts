@@ -23,8 +23,9 @@ const ApbdesFormSchema = z.object({
   name: z.string().optional(),
   deskripsi: z.string().optional(),
   jumlah: z.string().optional(),
-  imageId: z.string().min(1, "Gambar wajib diunggah"),
-  fileId: z.string().min(1, "File wajib diunggah"),
+  // Image dan file opsional (bisa kosong)
+  imageId: z.string().optional(),
+  fileId: z.string().optional(),
   items: z.array(ApbdesItemSchema).min(1, "Minimal ada 1 item"),
 });
 

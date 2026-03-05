@@ -15,8 +15,8 @@ type FormUpdateBody = {
   name?: string;
   deskripsi?: string;
   jumlah?: string;
-  imageId: string;
-  fileId: string;
+  imageId?: string | null;
+  fileId?: string | null;
   items: APBDesItemInput[];
 };
 
