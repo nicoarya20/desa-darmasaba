@@ -1,6 +1,7 @@
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
 import { assignParentIdsToApbdesItems } from "./lib/getParentsID";
+import { RealisasiItem } from "@prisma/client";
 
 type APBDesItemInput = {
   kode: string;
@@ -49,9 +50,9 @@ export default async function apbdesUpdate(context: Context) {
     }
 
     // 2. Build map untuk preserve realisasiItems berdasarkan kode
-    const existingItemsMap = new Map<string, { 
-      id: string; 
-      realisasiItems: any[]; 
+    const existingItemsMap = new Map<string, {
+      id: string;
+      realisasiItems: RealisasiItem[];
     }>();
     
     existing.items.forEach(item => {
@@ -128,7 +129,7 @@ export default async function apbdesUpdate(context: Context) {
     }
 
     // 8. Recalculate totalRealisasi setelah re-create realisasiItems
-    for (const [kode, _] of existingItemsMap.entries()) {
+    for (const kode of existingItemsMap.keys()) {
       const newItemId = newItemIdsMap.get(kode);
       if (newItemId) {
         const realisasiItems = await prisma.realisasiItem.findMany({
@@ -168,8 +169,8 @@ export default async function apbdesUpdate(context: Context) {
         name: body.name || `APBDes Tahun ${body.tahun}`,
         deskripsi: body.deskripsi,
         jumlah: body.jumlah,
-        imageId: body.imageId,
-        fileId: body.fileId,
+        imageId: body.imageId === '' ? null : body.imageId,
+        fileId: body.fileId === '' ? null : body.fileId,
       },
     });
 
