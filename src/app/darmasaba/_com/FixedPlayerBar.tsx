@@ -12,6 +12,7 @@ import {
 } from '@mantine/core';
 import {
   IconArrowsShuffle,
+  IconMusic,
   IconPlayerPauseFilled,
   IconPlayerPlayFilled,
   IconPlayerSkipBackFilled,
@@ -45,7 +46,7 @@ export default function FixedPlayerBar() {
   } = useMusic();
 
   const [showVolume, setShowVolume] = useState(false);
-  const [isPlayerVisible, setIsPlayerVisible] = useState(true);
+  const [isMinimized, setIsMinimized] = useState(false);
 
   // Format time
   const formatTime = (seconds: number) => {
@@ -69,12 +70,52 @@ export default function FixedPlayerBar() {
     toggleShuffle();
   };
 
-  // Handle close player
-  const handleClosePlayer = () => {
-    setIsPlayerVisible(false);
+  // Handle minimize player (show floating icon)
+  const handleMinimizePlayer = () => {
+    setIsMinimized(true);
   };
 
-  if (!currentSong || !isPlayerVisible) {
+  // Handle restore player from floating icon
+  const handleRestorePlayer = () => {
+    setIsMinimized(false);
+  };
+
+  // If minimized, show floating icon instead of player bar
+  if (isMinimized) {
+    return (
+      <>
+        {/* Floating Music Icon - Shows when player is minimized */}
+        <Paper
+          pos="fixed"
+          bottom={20}
+          right={20}
+          p="md"
+          shadow="xl"
+          radius="xl"
+          bg="blue"
+          style={{
+            zIndex: 1001,
+            cursor: 'pointer',
+            transition: 'transform 0.2s',
+          }}
+          onClick={handleRestorePlayer}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'scale(1.1)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'scale(1)';
+          }}
+        >
+          <IconMusic size={28} color="white" />
+        </Paper>
+
+        {/* Spacer to prevent content from being hidden behind player */}
+        <Box h={20} />
+      </>
+    );
+  }
+
+  if (!currentSong) {
     return null;
   }
 
@@ -94,7 +135,7 @@ export default function FixedPlayerBar() {
         }}
       >
         <Flex align="center" gap="md" justify="space-between">
-          {/* Song Info */}
+          {/* Song Info - Left */}
           <Group gap="sm" flex={1} style={{ minWidth: 0 }}>
             <Avatar
               src={currentSong.coverImage?.link || ''}
@@ -113,78 +154,81 @@ export default function FixedPlayerBar() {
             </Box>
           </Group>
 
-          {/* Controls */}
-          <Group gap="xs">
-            <ActionIcon
-              variant={isShuffle ? 'filled' : 'subtle'}
-              color={isShuffle ? 'blue' : 'gray'}
-              size="lg"
-              onClick={handleToggleShuffle}
-              title="Shuffle"
-            >
-              <IconArrowsShuffle size={18} />
-            </ActionIcon>
+          {/* Controls + Progress - Center */}
+          <Group gap="xs" flex={2} justify="center">
+            {/* Control Buttons */}
+            <Group gap="xs">
+              <ActionIcon
+                variant={isShuffle ? 'filled' : 'subtle'}
+                color={isShuffle ? 'blue' : 'gray'}
+                size="lg"
+                onClick={handleToggleShuffle}
+                title="Shuffle"
+              >
+                <IconArrowsShuffle size={18} />
+              </ActionIcon>
 
-            <ActionIcon
-              variant="subtle"
-              color="gray"
-              size="lg"
-              onClick={playPrev}
-              title="Previous"
-            >
-              <IconPlayerSkipBackFilled size={20} />
-            </ActionIcon>
+              <ActionIcon
+                variant="subtle"
+                color="gray"
+                size="lg"
+                onClick={playPrev}
+                title="Previous"
+              >
+                <IconPlayerSkipBackFilled size={20} />
+              </ActionIcon>
 
-            <ActionIcon
-              variant="filled"
-              color={isPlaying ? 'blue' : 'gray'}
-              size="xl"
-              radius="xl"
-              onClick={togglePlayPause}
-              title={isPlaying ? 'Pause' : 'Play'}
-            >
-              {isPlaying ? (
-                <IconPlayerPauseFilled size={24} />
-              ) : (
-                <IconPlayerPlayFilled size={24} />
-              )}
-            </ActionIcon>
+              <ActionIcon
+                variant="filled"
+                color={isPlaying ? 'blue' : 'gray'}
+                size="xl"
+                radius="xl"
+                onClick={togglePlayPause}
+                title={isPlaying ? 'Pause' : 'Play'}
+              >
+                {isPlaying ? (
+                  <IconPlayerPauseFilled size={24} />
+                ) : (
+                  <IconPlayerPlayFilled size={24} />
+                )}
+              </ActionIcon>
 
-            <ActionIcon
-              variant="subtle"
-              color="gray"
-              size="lg"
-              onClick={playNext}
-              title="Next"
-            >
-              <IconPlayerSkipForwardFilled size={20} />
-            </ActionIcon>
+              <ActionIcon
+                variant="subtle"
+                color="gray"
+                size="lg"
+                onClick={playNext}
+                title="Next"
+              >
+                <IconPlayerSkipForwardFilled size={20} />
+              </ActionIcon>
 
-            <ActionIcon
-              variant="subtle"
-              color={isRepeat ? 'blue' : 'gray'}
-              size="lg"
-              onClick={toggleRepeat}
-              title={isRepeat ? 'Repeat On' : 'Repeat Off'}
-            >
-              {isRepeat ? <IconRepeat size={18} /> : <IconRepeatOff size={18} />}
-            </ActionIcon>
+              <ActionIcon
+                variant="subtle"
+                color={isRepeat ? 'blue' : 'gray'}
+                size="lg"
+                onClick={toggleRepeat}
+                title={isRepeat ? 'Repeat On' : 'Repeat Off'}
+              >
+                {isRepeat ? <IconRepeat size={18} /> : <IconRepeatOff size={18} />}
+              </ActionIcon>
+            </Group>
+
+            {/* Progress Bar - Desktop */}
+            <Box w={200} display={{ base: 'none', md: 'block' }}>
+              <Slider
+                value={currentTime}
+                max={duration || 100}
+                onChange={handleSeek}
+                size="sm"
+                color="blue"
+                label={(value) => formatTime(value)}
+              />
+            </Box>
           </Group>
 
-          {/* Progress Bar - Desktop */}
-          <Box w={200} display={{ base: 'none', md: 'block' }}>
-            <Slider
-              value={currentTime}
-              max={duration || 100}
-              onChange={handleSeek}
-              size="sm"
-              color="blue"
-              label={(value) => formatTime(value)}
-            />
-          </Box>
-
-          {/* Right Controls */}
-          <Group gap="xs">
+          {/* Right Controls - Volume + Close */}
+          <Group gap="xs" flex={1} justify="flex-end">
             <Box
               onMouseEnter={() => setShowVolume(true)}
               onMouseLeave={() => setShowVolume(false)}
@@ -241,8 +285,8 @@ export default function FixedPlayerBar() {
               variant="subtle"
               color="gray"
               size="lg"
-              onClick={handleClosePlayer}
-              title="Close player"
+              onClick={handleMinimizePlayer}
+              title="Minimize player"
             >
               <IconX size={18} />
             </ActionIcon>
