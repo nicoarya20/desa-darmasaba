@@ -68,6 +68,7 @@ function APBDesTable({ apbdesData }: APBDesTableProps) {
 
   // Calculate totals
   const totalAnggaran = items.reduce((sum, item) => sum + (item.anggaran || 0), 0);
+  // Use realisasi field (already mapped from totalRealisasi in transformAPBDesData)
   const totalRealisasi = items.reduce((sum, item) => sum + (item.realisasi || 0), 0);
   const totalSelisih = totalAnggaran - totalRealisasi;
   const totalPersentase = totalAnggaran > 0 ? (totalRealisasi / totalAnggaran) * 100 : 0;
