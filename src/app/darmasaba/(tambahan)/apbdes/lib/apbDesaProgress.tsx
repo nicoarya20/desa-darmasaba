@@ -78,7 +78,8 @@ function APBDesProgress({ apbdesData }: APBDesProgressProps) {
   // Hitung total per kategori
   const calcTotal = (items: { anggaran: number; realisasi: number }[]) => {
     const anggaran = items.reduce((sum, item) => sum + item.anggaran, 0);
-    const realisasi = items.reduce((sum, item) => sum + item.realisasi, 0);
+    // Use realisasi field (already mapped from totalRealisasi in transformAPBDesData)
+    const realisasi = items.reduce((sum, item) => sum + (item.realisasi || 0), 0);
     const persen = anggaran > 0 ? (realisasi / anggaran) * 100 : 0;
     return { anggaran, realisasi, persen };
   };

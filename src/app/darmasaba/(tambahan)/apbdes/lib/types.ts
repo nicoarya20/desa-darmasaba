@@ -51,7 +51,8 @@ export function transformAPBDesData(data: any): APBDesData {
           kode: item.kode || '',
           uraian: item.uraian || '',
           anggaran: typeof item.anggaran === 'number' ? item.anggaran : 0,
-          realisasi: typeof item.realisasi === 'number' ? item.realisasi : 0,
+          // Map totalRealisasi from backend to realisasi field
+          realisasi: typeof item.totalRealisasi === 'number' ? item.totalRealisasi : (typeof item.realisasi === 'number' ? item.realisasi : 0),
           selisih: typeof item.selisih === 'number' ? item.selisih : 0,
           persentase: typeof item.persentase === 'number' ? item.persentase : 0,
           level: typeof item.level === 'number' ? item.level : 1,

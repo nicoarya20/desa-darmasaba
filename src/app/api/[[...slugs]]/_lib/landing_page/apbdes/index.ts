@@ -36,8 +36,8 @@ const APBDes = new Elysia({
       name: t.Optional(t.String()),
       deskripsi: t.Optional(t.String()),
       jumlah: t.Optional(t.String()),
-      imageId: t.String(),
-      fileId: t.String(),
+      imageId: t.Optional(t.String()),
+      fileId: t.Optional(t.String()),
       items: t.Array(ApbdesItemSchema),
     }),
   })
@@ -50,8 +50,8 @@ const APBDes = new Elysia({
       name: t.Optional(t.String()),
       deskripsi: t.Optional(t.String()),
       jumlah: t.Optional(t.String()),
-      imageId: t.String(),
-      fileId: t.String(),
+      imageId: t.Optional(t.String()),
+      fileId: t.Optional(t.String()),
       items: t.Array(ApbdesItemSchema),
     }),
   })

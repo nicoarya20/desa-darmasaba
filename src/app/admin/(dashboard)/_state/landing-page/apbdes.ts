@@ -5,13 +5,17 @@ import { toast } from "react-toastify";
 import { proxy } from "valtio";
 import { z } from "zod";
 
-// --- Zod Schema untuk APBDes Item (tanpa field kalkulasi) ---
+// --- Zod Schema untuk APBDes Item (dengan field kalkulasi) ---
 const ApbdesItemSchema = z.object({
   kode: z.string().min(1, "Kode wajib diisi"),
   uraian: z.string().min(1, "Uraian wajib diisi"),
   anggaran: z.number().min(0, "Anggaran tidak boleh negatif"),
   level: z.number().int().min(1).max(3),
   tipe: z.enum(['pendapatan', 'belanja', 'pembiayaan']).nullable().optional(),
+  // Field kalkulasi dari realisasiItems (auto-calculated di backend)
+  realisasi: z.number().min(0).default(0),
+  selisih: z.number().default(0),
+  persentase: z.number().default(0),
 });
 
 const ApbdesFormSchema = z.object({
@@ -19,8 +23,9 @@ const ApbdesFormSchema = z.object({
   name: z.string().optional(),
   deskripsi: z.string().optional(),
   jumlah: z.string().optional(),
-  imageId: z.string().min(1, "Gambar wajib diunggah"),
-  fileId: z.string().min(1, "File wajib diunggah"),
+  // Image dan file opsional (bisa kosong)
+  imageId: z.string().optional(),
+  fileId: z.string().optional(),
   items: z.array(ApbdesItemSchema).min(1, "Minimal ada 1 item"),
 });
 
@@ -35,7 +40,7 @@ const defaultApbdesForm = {
   items: [] as z.infer<typeof ApbdesItemSchema>[],
 };
 
-// --- Helper: Normalize item (tanpa kalkulasi, backend yang hitung) ---
+// --- Helper: Normalize item (dengan field kalkulasi) ---
 function normalizeItem(item: Partial<z.infer<typeof ApbdesItemSchema>>): z.infer<typeof ApbdesItemSchema> {
   return {
     kode: item.kode || "",
@@ -43,6 +48,9 @@ function normalizeItem(item: Partial<z.infer<typeof ApbdesItemSchema>>): z.infer
     anggaran: item.anggaran ?? 0,
     level: item.level || 1,
     tipe: item.tipe ?? null,
+    realisasi: item.realisasi ?? 0,
+    selisih: item.selisih ?? 0,
+    persentase: item.persentase ?? 0,
   };
 }
 
@@ -248,6 +256,9 @@ const apbdes = proxy({
               kode: item.kode,
               uraian: item.uraian,
               anggaran: item.anggaran,
+              realisasi: item.totalRealisasi || 0,
+              selisih: item.selisih || 0,
+              persentase: item.persentase || 0,
               level: item.level,
               tipe: item.tipe || 'pendapatan',
             })),
@@ -275,11 +286,24 @@ const apbdes = proxy({
       try {
         this.loading = true;
         // Include the ID in the request body
+        // Omit realisasi, selisih, persentase karena itu calculated fields di backend
         const requestData = {
-          ...parsed.data,
-          id: this.id, // Add the ID to the request body
+          tahun: parsed.data.tahun,
+          name: parsed.data.name,
+          deskripsi: parsed.data.deskripsi,
+          jumlah: parsed.data.jumlah,
+          imageId: parsed.data.imageId,
+          fileId: parsed.data.fileId,
+          id: this.id,
+          items: parsed.data.items.map(item => ({
+            kode: item.kode,
+            uraian: item.uraian,
+            anggaran: item.anggaran,
+            level: item.level,
+            tipe: item.tipe ?? null,
+          })),
         };
-        
+
         const res = await (ApiFetch.api.landingpage.apbdes as any)[this.id].put(requestData);
 
         if (res.data?.success) {

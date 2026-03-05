@@ -17,8 +17,8 @@ type FormCreate = {
   name?: string;
   deskripsi?: string;
   jumlah?: string;
-  imageId: string;
-  fileId: string;
+  imageId?: string | null; // Opsional
+  fileId?: string | null; // Opsional
   items: APBDesItemInput[];
 };
 
@@ -32,12 +32,7 @@ export default async function apbdesCreate(context: Context) {
     if (!body.tahun) {
       throw new Error('Tahun is required');
     }
-    if (!body.imageId) {
-      throw new Error('Image ID is required');
-    }
-    if (!body.fileId) {
-      throw new Error('File ID is required');
-    }
+    // Image dan file sekarang opsional
     if (!body.items || body.items.length === 0) {
       throw new Error('At least one item is required');
     }
@@ -50,8 +45,8 @@ export default async function apbdesCreate(context: Context) {
           name: body.name || `APBDes Tahun ${body.tahun}`,
           deskripsi: body.deskripsi,
           jumlah: body.jumlah,
-          imageId: body.imageId,
-          fileId: body.fileId,
+          imageId: body.imageId || null, // null jika tidak ada
+          fileId: body.fileId || null, // null jika tidak ada
         },
       });
 

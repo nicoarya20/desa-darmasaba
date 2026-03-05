@@ -46,13 +46,9 @@ function CreateAPBDes() {
   const [docFile, setDocFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Check if form is valid
+  // Check if form is valid - hanya cek items, gambar dan file opsional
   const isFormValid = () => {
-    return (
-      imageFile !== null &&
-      docFile !== null &&
-      stateAPBDes.create.form.items.length > 0
-    );
+    return stateAPBDes.create.form.items.length > 0;
   };
 
   // Form sementara untuk input item baru
@@ -84,28 +80,34 @@ function CreateAPBDes() {
   };
 
   const handleSubmit = async () => {
-    if (!imageFile || !docFile) {
-      return toast.warn("Pilih gambar dan dokumen terlebih dahulu");
-    }
     if (stateAPBDes.create.form.items.length === 0) {
       return toast.warn("Minimal tambahkan 1 item APBDes");
     }
 
     try {
       setIsSubmitting(true);
-      const [uploadImageRes, uploadDocRes] = await Promise.all([
-        ApiFetch.api.fileStorage.create.post({ file: imageFile, name: imageFile.name }),
-        ApiFetch.api.fileStorage.create.post({ file: docFile, name: docFile.name }),
-      ]);
 
-      const imageId = uploadImageRes?.data?.data?.id;
-      const fileId = uploadDocRes?.data?.data?.id;
+      // Upload files hanya jika ada file yang dipilih
+      let imageId = '';
+      let fileId = '';
 
-      if (!imageId || !fileId) {
-        return toast.error("Gagal mengupload file");
+      if (imageFile) {
+        const uploadImageRes = await ApiFetch.api.fileStorage.create.post({
+          file: imageFile,
+          name: imageFile.name,
+        });
+        imageId = uploadImageRes?.data?.data?.id || '';
       }
 
-      // Update form dengan ID file
+      if (docFile) {
+        const uploadDocRes = await ApiFetch.api.fileStorage.create.post({
+          file: docFile,
+          name: docFile.name,
+        });
+        fileId = uploadDocRes?.data?.data?.id || '';
+      }
+
+      // Update form dengan ID file (bisa kosong)
       stateAPBDes.create.form.imageId = imageId;
       stateAPBDes.create.form.fileId = fileId;
 
@@ -174,12 +176,16 @@ function CreateAPBDes() {
         style={{ border: '1px solid #e0e0e0' }}
       >
         <Stack gap="md">
-          {/* Gambar & Dokumen (dipendekkan untuk fokus pada items) */}
+          {/* Info: File opsional */}
+          <Text fz="sm" c="dimmed" mb="xs">
+            * Upload gambar dan dokumen bersifat opsional. Bisa dikosongkan jika belum ada.
+          </Text>
+
           <Stack gap={"xs"}>
             {/* Gambar APBDes */}
             <Box>
               <Text fw="bold" fz="sm" mb={6}>
-                Gambar APBDes
+                Gambar APBDes (Opsional)
               </Text>
               <Dropzone
                 onDrop={(files) => {
@@ -249,10 +255,10 @@ function CreateAPBDes() {
               )}
             </Box>
 
-            {/* Dokumen APBDes */}
+            {/* Dokumen APBDes (Opsional) */}
             <Box>
               <Text fw="bold" fz="sm" mb={6}>
-                Dokumen APBDes
+                Dokumen APBDes (Opsional)
               </Text>
               <Dropzone
                 onDrop={(files) => {

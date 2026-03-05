@@ -82,6 +82,12 @@ export function MusicProvider({ children }: { children: ReactNode }) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const isSeekingRef = useRef(false);
   const animationFrameRef = useRef<number | null>(null);
+  const isRepeatRef = useRef(false); // Ref untuk avoid stale closure
+
+  // Sync ref dengan state
+  useEffect(() => {
+    isRepeatRef.current = isRepeat;
+  }, [isRepeat]);
 
   // Load musik data
   const loadMusikData = useCallback(async () => {
@@ -111,7 +117,8 @@ export function MusicProvider({ children }: { children: ReactNode }) {
     });
 
     audioRef.current.addEventListener('ended', () => {
-      if (isRepeat) {
+      // Gunakan ref untuk avoid stale closure
+      if (isRepeatRef.current) {
         audioRef.current!.currentTime = 0;
         audioRef.current!.play();
       } else {
@@ -132,7 +139,7 @@ export function MusicProvider({ children }: { children: ReactNode }) {
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps -- playNext is intentionally not in deps to avoid circular dependency
-  }, [loadMusikData, isRepeat]);
+  }, [loadMusikData]); // Remove isRepeat dari deps karena sudah pakai ref
 
   // Update time with requestAnimationFrame for smooth progress
   const updateTime = useCallback(() => {

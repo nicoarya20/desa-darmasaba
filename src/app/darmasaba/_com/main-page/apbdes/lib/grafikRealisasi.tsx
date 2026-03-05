@@ -5,7 +5,8 @@ function Summary({ title, data }: any) {
   if (!data || data.length === 0) return null;
 
   const totalAnggaran = data.reduce((s: number, i: any) => s + i.anggaran, 0);
-  const totalRealisasi = data.reduce((s: number, i: any) => s + i.totalRealisasi, 0);
+  // Use realisasi field (already mapped from totalRealisasi in transformAPBDesData)
+  const totalRealisasi = data.reduce((s: number, i: any) => s + (i.realisasi || i.totalRealisasi || 0), 0);
 
   const persen =
     totalAnggaran > 0 ? (totalRealisasi / totalAnggaran) * 100 : 0;
@@ -87,7 +88,8 @@ export default function GrafikRealisasi({ apbdesData }: any) {
 
   // Hitung total keseluruhan
   const totalAnggaranSemua = items.reduce((s: number, i: any) => s + i.anggaran, 0);
-  const totalRealisasiSemua = items.reduce((s: number, i: any) => s + i.totalRealisasi, 0);
+  // Use realisasi field (already mapped from totalRealisasi in transformAPBDesData)
+  const totalRealisasiSemua = items.reduce((s: number, i: any) => s + (i.realisasi || i.totalRealisasi || 0), 0);
   const persenSemua = totalAnggaranSemua > 0 ? (totalRealisasiSemua / totalAnggaranSemua) * 100 : 0;
 
   const formatRupiah = (angka: number) => {
@@ -105,8 +107,14 @@ export default function GrafikRealisasi({ apbdesData }: any) {
         GRAFIK REALISASI APBDes {tahun}
       </Title>
 
-      {/* Summary Total Keseluruhan */}
-      <Box mb="lg" p="md" bg="gray.0">
+      <Stack gap="lg" mb="lg">
+        <Summary title="💰 Pendapatan" data={pendapatan} />
+        <Summary title="💸 Belanja" data={belanja} />
+        <Summary title="📊 Pembiayaan" data={pembiayaan} />
+      </Stack>
+
+      {/* Summary Total Keseluruhan
+      <Box p="md" bg="gray.0">
         <>
           <Group justify="space-between" mb="xs">
             <Text fw={700} fz="lg">TOTAL KESELURUHAN</Text>
@@ -124,13 +132,7 @@ export default function GrafikRealisasi({ apbdesData }: any) {
             color={persenSemua >= 100 ? 'teal' : persenSemua >= 80 ? 'blue' : 'red'}
           />
         </>
-      </Box>
-
-      <Stack gap="lg">
-        <Summary title="💰 Pendapatan" data={pendapatan} />
-        <Summary title="💸 Belanja" data={belanja} />
-        <Summary title="📊 Pembiayaan" data={pembiayaan} />
-      </Stack>
+      </Box> */}
     </Paper>
   );
 }
