@@ -44,6 +44,9 @@ type ItemForm = {
   anggaran: number;
   level: number;
   tipe: 'pendapatan' | 'belanja' | 'pembiayaan';
+  realisasi?: number;
+  selisih?: number;
+  persentase?: number;
 };
 
 function EditAPBDes() {
@@ -72,6 +75,9 @@ function EditAPBDes() {
     anggaran: 0,
     level: 1,
     tipe: 'pendapatan',
+    realisasi: 0,
+    selisih: 0,
+    persentase: 0,
   });
 
   // Simpan data original untuk reset form
@@ -125,9 +131,9 @@ function EditAPBDes() {
             kode: item.kode,
             uraian: item.uraian,
             anggaran: item.anggaran,
-            realisasi: item.realisasi,
-            selisih: item.selisih,
-            persentase: item.persentase,
+            realisasi: item.totalRealisasi || 0,
+            selisih: item.selisih || 0,
+            persentase: item.persentase || 0,
             level: item.level,
             tipe: item.tipe || 'pendapatan',
           })),
@@ -155,7 +161,7 @@ function EditAPBDes() {
   };
 
   const handleAddItem = () => {
-    const { kode, uraian, anggaran, level, tipe } = newItem;
+    const { kode, uraian, anggaran, level, tipe, realisasi, selisih, persentase } = newItem;
     if (!kode || !uraian) {
       return toast.warn('Kode dan uraian wajib diisi');
     }
@@ -166,6 +172,9 @@ function EditAPBDes() {
       kode,
       uraian,
       anggaran,
+      realisasi: realisasi || 0,
+      selisih: selisih || 0,
+      persentase: persentase || 0,
       level,
       tipe: finalTipe,
     });
@@ -176,6 +185,9 @@ function EditAPBDes() {
       anggaran: 0,
       level: 1,
       tipe: 'pendapatan',
+      realisasi: 0,
+      selisih: 0,
+      persentase: 0,
     });
   };
 
@@ -264,6 +276,9 @@ function EditAPBDes() {
       anggaran: 0,
       level: 1,
       tipe: 'pendapatan',
+      realisasi: 0,
+      selisih: 0,
+      persentase: 0,
     });
 
     toast.info('Form dikembalikan ke data awal');
@@ -527,6 +542,9 @@ function EditAPBDes() {
                     <th>Kode</th>
                     <th>Uraian</th>
                     <th>Anggaran</th>
+                    <th>Realisasi</th>
+                    <th>Selisih</th>
+                    <th>%</th>
                     <th>Level</th>
                     <th>Tipe</th>
                     <th style={{ width: '50px' }}>Aksi</th>
@@ -542,6 +560,11 @@ function EditAPBDes() {
                       </td>
                       <td>{item.uraian}</td>
                       <td>{item.anggaran.toLocaleString('id-ID')}</td>
+                      <td>{item.realisasi?.toLocaleString('id-ID') || '0'}</td>
+                      <td style={{ color: item.selisih && item.selisih > 0 ? 'red' : 'green' }}>
+                        {item.selisih?.toLocaleString('id-ID') || '0'}
+                      </td>
+                      <td>{item.persentase?.toFixed(2) || '0'}%</td>
                       <td>
                         <Badge size="sm" color={item.level === 1 ? 'blue' : item.level === 2 ? 'green' : 'grape'}>
                           L{item.level}

@@ -105,8 +105,14 @@ export default function GrafikRealisasi({ apbdesData }: any) {
         GRAFIK REALISASI APBDes {tahun}
       </Title>
 
+      <Stack gap="lg" mb="lg">
+        <Summary title="💰 Pendapatan" data={pendapatan} />
+        <Summary title="💸 Belanja" data={belanja} />
+        <Summary title="📊 Pembiayaan" data={pembiayaan} />
+      </Stack>
+
       {/* Summary Total Keseluruhan */}
-      <Box mb="lg" p="md" bg="gray.0">
+      <Box p="md" bg="gray.0">
         <>
           <Group justify="space-between" mb="xs">
             <Text fw={700} fz="lg">TOTAL KESELURUHAN</Text>
@@ -125,12 +131,6 @@ export default function GrafikRealisasi({ apbdesData }: any) {
           />
         </>
       </Box>
-
-      <Stack gap="lg">
-        <Summary title="💰 Pendapatan" data={pendapatan} />
-        <Summary title="💸 Belanja" data={belanja} />
-        <Summary title="📊 Pembiayaan" data={pembiayaan} />
-      </Stack>
     </Paper>
   );
 }
