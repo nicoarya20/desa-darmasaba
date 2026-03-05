@@ -3,6 +3,7 @@ import {
   ActionIcon,
   Avatar,
   Box,
+  Button,
   Flex,
   Group,
   Paper,
@@ -85,29 +86,32 @@ export default function FixedPlayerBar() {
     return (
       <>
         {/* Floating Music Icon - Shows when player is minimized */}
-        <Paper
-          pos="fixed"
-          bottom={20}
-          right={20}
-          p="md"
-          shadow="xl"
-          radius="xl"
-          bg="blue"
+        <Button
+          color="#0B4F78"
+          variant="filled"
+          size="md"
+          mt="md"
           style={{
-            zIndex: 1001,
+            position: 'fixed',
+            top: '50%', // Menempatkan titik atas ikon di tengah layar
+            left: '0px',
+            transform: 'translateY(-50%)', // Menggeser ikon ke atas sebesar setengah tingginya sendiri agar benar-benar di tengah
+            borderBottomRightRadius: '20px',
+            borderTopRightRadius: '20px',
             cursor: 'pointer',
-            transition: 'transform 0.2s',
+            transition: 'transform 0.2s ease',
+            zIndex: 1
           }}
           onClick={handleRestorePlayer}
           onMouseEnter={(e) => {
-            e.currentTarget.style.transform = 'scale(1.1)';
+            e.currentTarget.style.transform = 'translateY(-50%) scale(1.1)';
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.transform = 'scale(1)';
+            e.currentTarget.style.transform = 'translateY(-50%)';
           }}
         >
           <IconMusic size={28} color="white" />
-        </Paper>
+        </Button>
 
         {/* Spacer to prevent content from being hidden behind player */}
         <Box h={20} />

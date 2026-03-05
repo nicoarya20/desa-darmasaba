@@ -113,7 +113,7 @@ export default function GrafikRealisasi({ apbdesData }: any) {
         <Summary title="📊 Pembiayaan" data={pembiayaan} />
       </Stack>
 
-      {/* Summary Total Keseluruhan */}
+      {/* Summary Total Keseluruhan
       <Box p="md" bg="gray.0">
         <>
           <Group justify="space-between" mb="xs">
@@ -132,7 +132,7 @@ export default function GrafikRealisasi({ apbdesData }: any) {
             color={persenSemua >= 100 ? 'teal' : persenSemua >= 80 ? 'blue' : 'red'}
           />
         </>
-      </Box>
+      </Box> */}
     </Paper>
   );
 }
