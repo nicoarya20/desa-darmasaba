@@ -1,15 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Paper, Title, Progress, Stack, Text, Group, Box } from '@mantine/core';
 
 interface APBDesItem {
-  tipe: string;
+  tipe: string | null;
   anggaran: number;
   realisasi?: number;
   totalRealisasi?: number;
-}
-
-interface APBDesData {
-  tahun?: number;
-  items?: APBDesItem[];
 }
 
 interface SummaryProps {
@@ -97,9 +93,17 @@ function Summary({ title, data }: SummaryProps) {
   );
 }
 
-export default function GrafikRealisasi({ apbdesData }: { apbdesData: APBDesData }) {
-  const items = apbdesData.items || [];
-  const tahun = apbdesData.tahun || new Date().getFullYear();
+export default function GrafikRealisasi({
+  apbdesData,
+}: {
+  apbdesData: {
+    tahun?: number | null;
+    items?: APBDesItem[] | null;
+    [key: string]: any;
+  };
+}) {
+  const items = apbdesData?.items || [];
+  const tahun = apbdesData?.tahun || new Date().getFullYear();
 
   const pendapatan = items.filter((i: APBDesItem) => i.tipe === 'pendapatan');
   const belanja = items.filter((i: APBDesItem) => i.tipe === 'belanja');
