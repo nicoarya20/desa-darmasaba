@@ -1,30 +1,8 @@
-// src/app/admin/(dashboard)/landing-page/APBDes/APBDesTable.tsx
 'use client';
 
 import { Box, Paper, Table, Text, Title, Badge, Group } from '@mantine/core';
-import { useProxy } from 'valtio/utils';
-import apbdes from '@/app/admin/(dashboard)/_state/landing-page/apbdes';
 import colors from '@/con/colors';
-
-interface APBDesItem {
-  id: string;
-  kode: string;
-  uraian: string;
-  anggaran: number;
-  realisasi: number;
-  selisih: number;
-  persentase: number;
-  level: number;
-  tipe: 'pendapatan' | 'belanja' | 'pembiayaan';
-}
-
-interface APBDesData {
-  id: string;
-  tahun: number;
-  items: APBDesItem[];
-  image?: { id: string; url: string } | null;
-  file?: { id: string; url: string } | null;
-}
+import { APBDesData } from './types';
 
 // Helper: Format Rupiah, tapi jika 0 → tampilkan '-'
 function formatRupiahOrEmpty(value: number): string {
@@ -51,38 +29,58 @@ function getIndent(level: number) {
   };
 }
 
-function APBDesTable() {
-  const state = useProxy(apbdes);
-  const data = state.findMany.data || [];
+interface APBDesTableProps {
+  apbdesData: APBDesData;
+}
 
-  // Get the first APBDes item
-  const apbdesItem = data[0] as unknown as APBDesData | undefined;
-
-  if (!apbdesItem) {
+function APBDesTable({ apbdesData }: APBDesTableProps) {
+  // Handle case where apbdesData is null or undefined
+  if (!apbdesData) {
     return (
-      <Box py="md" px={{ base: 'md', md: 100 }}>
-        <Text c="dimmed">Belum ada data APBDes untuk ditampilkan.</Text>
+      <Box pt={"xs"} pb="md" px={{ base: 'md', md: 100 }}>
+        <Title order={4} c={colors['blue-button']} mb="sm">
+          Rincian APBDes
+        </Title>
+        <Paper withBorder radius="md" shadow="xs" p="md">
+          <Text>Tidak ada data APBDes tersedia.</Text>
+        </Paper>
       </Box>
     );
   }
 
-  const items = Array.isArray(apbdesItem.items) ? apbdesItem.items : [];
+  const items = Array.isArray(apbdesData.items) ? apbdesData.items : [];
+
+  // Show message if no items exist
+  if (items.length === 0) {
+    return (
+      <Box pt={"xs"} pb="md" px={{ base: 'md', md: 100 }}>
+        <Title order={4} c={colors['blue-button']} mb="sm">
+          Rincian APBDes Tahun {apbdesData.tahun || 'N/A'}
+        </Title>
+        <Paper withBorder radius="md" shadow="xs" p="md">
+          <Text>Tidak ada rincian anggaran tersedia untuk tahun ini.</Text>
+        </Paper>
+      </Box>
+    );
+  }
+
   const sortedItems = [...items].sort((a, b) => a.kode.localeCompare(b.kode));
 
   // Calculate totals
   const totalAnggaran = items.reduce((sum, item) => sum + (item.anggaran || 0), 0);
+  // Use realisasi field (already mapped from totalRealisasi in transformAPBDesData)
   const totalRealisasi = items.reduce((sum, item) => sum + (item.realisasi || 0), 0);
   const totalSelisih = totalAnggaran - totalRealisasi;
   const totalPersentase = totalAnggaran > 0 ? (totalRealisasi / totalAnggaran) * 100 : 0;
 
   return (
-    <Box py="md" px={{ base: 'md', md: 100 }}>
+    <Box pt={"xs"} pb="md" px={{ base: 'md', md: 100 }}>
       <Title order={4} c={colors['blue-button']} mb="sm">
-        Rincian APBDes Tahun {apbdesItem.tahun}
+        Rincian APBDes Tahun {apbdesData.tahun || 'N/A'}
       </Title>
 
       <Paper withBorder radius="md" shadow="xs" p="md">
-        <Box style={{overflowY: 'auto' }}>
+        <Box style={{ overflowY: 'auto' }}>
           <Table withColumnBorders highlightOnHover>
             <Table.Thead bg="#2c5f78">
               <Table.Tr>
@@ -109,9 +107,7 @@ function APBDesTable() {
                   <Table.Td style={getIndent(item.level)}>
                     <Group gap="xs" align="flex-start">
                       <Text fw={item.level === 1 ? 'bold' : 'normal'}>{item.kode}</Text>
-                      <Text fz="sm" >
-                        {item.uraian}
-                      </Text>
+                      <Text fz="sm">{item.uraian}</Text>
                     </Group>
                   </Table.Td>
                   <Table.Td ta="right">{formatRupiahOrEmpty(item.anggaran)}</Table.Td>

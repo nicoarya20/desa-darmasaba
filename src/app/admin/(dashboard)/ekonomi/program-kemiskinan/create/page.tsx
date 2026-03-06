@@ -29,6 +29,25 @@ function CreateProgramKemiskinan() {
   const [lineChart, setLineChart] = useState<any[]>([]);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Helper function to check if HTML content is empty
+  const isHtmlEmpty = (html: string) => {
+    // Remove all HTML tags and check if there's any text content
+    const textContent = html.replace(/<[^>]*>/g, '').trim();
+    return textContent === '';
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      programState.create.form.nama?.trim() !== '' &&
+      programState.create.form.icon?.trim() !== '' &&
+      !isHtmlEmpty(programState.create.form.deskripsi) &&
+      programState.create.form.statistik.jumlah?.trim() !== '' &&
+      programState.create.form.statistik.tahun?.trim() !== ''
+    );
+  };
+
   const resetForm = () => {
     programState.create.form = {
       nama: '',
@@ -71,7 +90,7 @@ function CreateProgramKemiskinan() {
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Header dengan tombol back */}
       <Group mb="md">
         <Button
@@ -172,8 +191,11 @@ function CreateProgramKemiskinan() {
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}

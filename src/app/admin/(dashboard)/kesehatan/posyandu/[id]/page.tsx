@@ -46,7 +46,7 @@ function DetailPosyandu() {
 
 
   return (
-    <Box py={10}>
+    <Box px={{ base: 0, md: 'xs' }} py="xs">
       {/* Tombol kembali */}
       <Button
         variant="subtle"
@@ -61,7 +61,7 @@ function DetailPosyandu() {
       {/* Card utama */}
       <Paper
         withBorder
-        w={{ base: "100%", md: "60%" }}
+        w={{ base: "100%", md: "70%" }}
         bg={colors['white-1']}
         p="lg"
         radius="md"
@@ -89,12 +89,14 @@ function DetailPosyandu() {
 
               <Box>
                 <Text fz="lg" fw="bold">Deskripsi</Text>
-                <Text
-                  fz="md"
-                  c="dimmed"
-                  dangerouslySetInnerHTML={{ __html: data.deskripsi || '-' }}
-                  style={{ wordBreak: "break-word", whiteSpace: "normal" }}
-                />
+                <Box pl={10}>
+                  <Text
+                    fz="md"
+                    c="dimmed"
+                    dangerouslySetInnerHTML={{ __html: data.deskripsi || '-' }}
+                    style={{ wordBreak: "break-word", whiteSpace: "normal" }}
+                  />
+                </Box>
               </Box>
 
 
@@ -109,7 +111,7 @@ function DetailPosyandu() {
               </Box>
 
 
-              <Box>
+              <Stack gap={3}>
                 <Text fz="lg" fw="bold">Gambar</Text>
                 {data.image?.link ? (
                   <Image
@@ -124,7 +126,7 @@ function DetailPosyandu() {
                 ) : (
                   <Text fz="sm" c="dimmed">Tidak ada gambar</Text>
                 )}
-              </Box>
+              </Stack>
 
 
               {/* Aksi */}

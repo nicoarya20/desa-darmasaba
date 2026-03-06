@@ -18,7 +18,7 @@ import {
   Text,
   Title
 } from '@mantine/core';
-import { useShallowEffect } from '@mantine/hooks';
+import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
 import { IconDeviceImacCog, IconPlus, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -50,10 +50,11 @@ function ListArtikelKesehatan({ search }: { search: string }) {
   const router = useRouter();
 
   const { data, page, totalPages, loading, load } = stateArtikel.findMany;
+  const [debouncedSearch] = useDebouncedValue(search, 1000);
 
   useShallowEffect(() => {
-    load(page, 10, search);
-  }, [page, search]);
+    load(page, 10, debouncedSearch);
+  }, [page, debouncedSearch]);
 
   const filteredData = data || [];
 
@@ -83,7 +84,9 @@ function ListArtikelKesehatan({ search }: { search: string }) {
 
         {/* Tabel */}
         <Box style={{ overflowX: "auto" }}>
-          <Table highlightOnHover>
+         <Table highlightOnHover
+    layout="fixed" // 🔥 PENTING
+    withColumnBorders={false}>
             <TableThead>
               <TableTr>
                 <TableTh style={{ minWidth: 200 }}>Judul</TableTh>

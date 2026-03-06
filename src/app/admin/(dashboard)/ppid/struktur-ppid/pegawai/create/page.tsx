@@ -24,6 +24,27 @@ function CreatePegawaiPPID() {
     resetForm();
   }, []);
 
+  // Helper function to validate email format
+  const isValidEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      stateOrganisasi.create.form.namaLengkap?.trim() !== '' &&
+      stateOrganisasi.create.form.gelarAkademik?.trim() !== '' &&
+      stateOrganisasi.create.form.posisiId !== '' &&
+      stateOrganisasi.create.form.tanggalMasuk !== '' &&
+      stateOrganisasi.create.form.email !== '' &&
+      isValidEmail(stateOrganisasi.create.form.email) &&
+      stateOrganisasi.create.form.telepon !== '' &&
+      stateOrganisasi.create.form.alamat !== '' &&
+      file !== null
+    );
+  };
+
   const resetForm = () => {
     stateOrganisasi.create.form = {
       namaLengkap: "",
@@ -78,7 +99,7 @@ function CreatePegawaiPPID() {
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       <Group mb="md">
         <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
           <IconArrowBack color={colors['blue-button']} size={24} />
@@ -99,15 +120,16 @@ function CreatePegawaiPPID() {
         <Stack gap="md">
           <Box>
             <TextInput
+              required
               label="Nama Lengkap"
               placeholder="Masukkan nama lengkap"
               value={stateOrganisasi.create.form.namaLengkap}
               onChange={(e) => (stateOrganisasi.create.form.namaLengkap = e.currentTarget.value)}
-              required
             />
           </Box>
           <Box>
             <TextInput
+              required
               label="Gelar Akademik"
               placeholder="Contoh: S.Kom"
               value={stateOrganisasi.create.form.gelarAkademik}
@@ -191,6 +213,7 @@ function CreatePegawaiPPID() {
           </Box>
           <Box>
             <TextInput
+              required
               label="Tanggal Masuk"
               type="date"
               placeholder="Contoh: 2022-01-01"
@@ -201,6 +224,7 @@ function CreatePegawaiPPID() {
 
           <Box>
             <TextInput
+              required
               label="Email"
               type="email"
               placeholder="Contoh: email@example.com"
@@ -211,6 +235,7 @@ function CreatePegawaiPPID() {
 
           <Box>
             <TextInput
+              required
               type='number'
               label="Nomor Telepon"
               placeholder="Contoh: 08123456789"
@@ -221,6 +246,7 @@ function CreatePegawaiPPID() {
 
           <Box>
             <TextInput
+              required
               label="Alamat"
               placeholder="Contoh: Jl. Contoh No. 1"
               value={stateOrganisasi.create.form.alamat}
@@ -229,35 +255,8 @@ function CreatePegawaiPPID() {
           </Box>
 
           <Box>
-            <Text fw="bold" fz="sm" mb={6}>
-              Posisi
-            </Text>
             <Select
-              label="Kategori"
-              placeholder="Pilih kategori"
-              data={stateStrukturPPID.posisiOrganisasi.findManyAll.data?.map((item) => ({
-                label: item.nama,
-                value: item.id,
-              })) || []}
-              value={stateOrganisasi.create.form.posisiId || null}
-              onChange={(val: string | null) => {
-                if (val) {
-                  const selected = stateStrukturPPID.posisiOrganisasi.findManyAll.data?.find(
-                    (item) => item.id === val
-                  );
-                  if (selected) {
-                    stateOrganisasi.create.form.posisiId = selected.id;
-                  }
-                } else {
-                  stateOrganisasi.create.form.posisiId = '';
-                }
-              }}
-              searchable
-              clearable
-              nothingFoundMessage="Tidak ditemukan"
-              required
-            />
-            {/* <Select
+              label="Posisi"
               placeholder="Pilih posisi"
               data={stateStrukturPPID.posisiOrganisasi.findManyAll.data?.map(p => ({
                 value: p.id,
@@ -269,9 +268,9 @@ function CreatePegawaiPPID() {
               }}
               searchable
               clearable
-            /> */}
+              required
+            />
           </Box>
-
 
           {/* ======= Tombol Aksi ======= */}
           <Group justify="right">
@@ -291,8 +290,11 @@ function CreatePegawaiPPID() {
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}

@@ -33,6 +33,13 @@ function EditKategoriBerita() {
     name: '',
   });
 
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      formData.name?.trim() !== ''
+    );
+  };
+
   useEffect(() => {
     const loadKategori = async () => {
       const id = params?.id as string;
@@ -72,6 +79,11 @@ function EditKategoriBerita() {
   };
 
   const handleSubmit = async () => {
+    if (!formData.name?.trim()) {
+      toast.error('Nama kategori berita wajib diisi');
+      return;
+    }
+    
     try {
       setIsSubmitting(true);
       // update global state hanya saat submit
@@ -92,7 +104,7 @@ function EditKategoriBerita() {
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+   <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Back Button + Title */}
       <Group mb="md">
           <Button
@@ -111,7 +123,7 @@ function EditKategoriBerita() {
       {/* Form Wrapper */}
       <Paper
         w={{ base: '100%', md: '50%' }}
-        bg={colors['white-1']}
+        bg={colors['white-1']}  
         p="lg"
         radius="md"
         shadow="sm"
@@ -143,8 +155,11 @@ function EditKategoriBerita() {
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}

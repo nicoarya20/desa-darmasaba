@@ -5,8 +5,8 @@ const navbarListMenu = [
         children: [
             {
                 id: "1.1",
-                name: "Profile PPID",
-                href: "/darmasaba/ppid/profile-ppid"
+                name: "Profil PPID",
+                href: "/darmasaba/ppid/profil-ppid"
             },
             {
                 id: "1.2",
@@ -53,8 +53,8 @@ const navbarListMenu = [
         children: [
             {
                 id: "2.1",
-                name: "Profile",
-                href: "/darmasaba/desa/profile"
+                name: "Profil",
+                href: "/darmasaba/desa/profil"
             },
             {
                 id: "2.2",
@@ -183,7 +183,7 @@ const navbarListMenu = [
             {
                 id: "5.3",
                 name: "Struktur Organisasi dan SK Pengurus BUMDesa",
-                href: "/darmasaba/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa"
+                href: "/darmasaba/ekonomi/Struktur-Organisasi-Dan-Sk-Pengurus-BumDes"
             },
             {
                 id: "5.4",

@@ -49,7 +49,7 @@ function DetailSuratKeterangan() {
   const data = suratKeteranganState.findUnique.data;
 
   return (
-    <Box py={10}>
+    <Box px={{ base: 0, md: 'xs' }} py="xs">
       {/* Tombol Kembali */}
       <Button
         variant="subtle"
@@ -62,7 +62,7 @@ function DetailSuratKeterangan() {
 
       <Paper
         withBorder
-        w={{ base: '100%', md: '60%' }}
+        w={{ base: '100%', md: '70%' }}
         bg={colors['white-1']}
         p="lg"
         radius="md"
@@ -75,20 +75,21 @@ function DetailSuratKeterangan() {
 
           <Paper bg="#ECEEF8" p="md" radius="md" shadow="xs">
             <Stack gap="sm">
-              <Box>
+              <Stack gap={"xs"}>
                 <Text fz="lg" fw="bold">
                   Nama
                 </Text>
                 <Text fz="md" c="dimmed">
                   {data?.name || '-'}
                 </Text>
-              </Box>
+              </Stack>
 
-              <Box>
+              <Stack gap={"xs"}>
                 <Text fz="lg" fw="bold">
                   Deskripsi
                 </Text>
-                <Text
+                <Box pl={10}>
+                  <Text
                   fz="md"
                   c="dimmed"
                   dangerouslySetInnerHTML={{
@@ -96,9 +97,10 @@ function DetailSuratKeterangan() {
                   }}
                   style={{ wordBreak: "break-word", whiteSpace: "normal" }}
                 />
-              </Box>
+                </Box>
+              </Stack>
 
-              <Box>
+              <Stack gap={"xs"}>
                 <Text fz="lg" fw="bold">
                 Gambar Konten Pelayanan
                 </Text>
@@ -117,7 +119,7 @@ function DetailSuratKeterangan() {
                     Tidak ada gambar
                   </Text>
                 )}
-              </Box>
+              </Stack>
 
               <Box>
                 <Text fz="lg" fw="bold">

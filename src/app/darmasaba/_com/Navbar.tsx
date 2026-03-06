@@ -25,7 +25,7 @@ export function Navbar() {
         style={{ zIndex: 100 }}
       >
         {/* Desktop navbar (muncul mulai 992px ke atas) */}
-        <Box visibleFrom="md">
+       <Box visibleFrom="md" style={{ overflowX: 'auto' }}>
           <NavbarMainMenu listNavbar={navbarListMenu} />
         </Box>
 

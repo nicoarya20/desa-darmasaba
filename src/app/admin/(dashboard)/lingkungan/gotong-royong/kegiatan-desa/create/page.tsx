@@ -38,6 +38,28 @@ function CreateKegiatanDesa() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Helper function to check if HTML content is empty
+  const isHtmlEmpty = (html: string) => {
+    // Remove all HTML tags and check if there's any text content
+    const textContent = html.replace(/<[^>]*>/g, '').trim();
+    return textContent === '';
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      stateKegiatanDesa.create.form.judul?.trim() !== '' &&
+      !isHtmlEmpty(stateKegiatanDesa.create.form.deskripsiSingkat) &&
+      stateKegiatanDesa.create.form.partisipan !== null &&
+      stateKegiatanDesa.create.form.partisipan >= 0 &&
+      stateKegiatanDesa.create.form.tanggal !== null &&
+      stateKegiatanDesa.create.form.lokasi?.trim() !== '' &&
+      !isHtmlEmpty(stateKegiatanDesa.create.form.deskripsiLengkap) &&
+      stateKegiatanDesa.create.form.kategoriKegiatanId?.trim() !== '' &&
+      file !== null
+    );
+  };
+
   const resetForm = () => {
     stateKegiatanDesa.create.form = {
       judul: '',
@@ -86,7 +108,7 @@ function CreateKegiatanDesa() {
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Header */}
       <Group mb="md">
         <Button
@@ -273,8 +295,11 @@ function CreateKegiatanDesa() {
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}

@@ -23,6 +23,7 @@ import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 import pasarDesaState from '../../../../_state/ekonomi/pasar-desa/pasar-desa';
+import CreateEditor from '@/app/admin/(dashboard)/_com/createEditor';
 
 export default function CreatePasarDesa() {
   const router = useRouter();
@@ -30,6 +31,24 @@ export default function CreatePasarDesa() {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Helper function to check if HTML content is empty
+  const isHtmlEmpty = (html: string) => {
+    // Remove all HTML tags and check if there's any text content
+    const textContent = html.replace(/<[^>]*>/g, '').trim();
+    return textContent === '';
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      statePasar.pasarDesa.create.form.nama?.trim() !== '' &&
+      statePasar.pasarDesa.create.form.harga !== null &&
+      statePasar.pasarDesa.create.form.harga > 0 &&
+      !isHtmlEmpty(statePasar.pasarDesa.create.form.deskripsi) &&
+      file !== null
+    );
+  };
 
   useEffect(() => {
     statePasar.kategoriProduk.findManyAll.load();
@@ -44,6 +63,7 @@ export default function CreatePasarDesa() {
       rating: 0,
       kategoriId: [],
       kontak: '',
+      deskripsi: ''
     };
     setPreviewImage(null);
     setFile(null);
@@ -80,7 +100,7 @@ export default function CreatePasarDesa() {
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 0, md: 'xs' }} py="xs">
       {/* Header dengan tombol kembali */}
       <Group mb="md">
         <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
@@ -234,6 +254,18 @@ export default function CreatePasarDesa() {
             }
           />
 
+          <Box>
+            <Text fw="bold" fz="sm" mb={6}>
+              Deskripsi Produk
+            </Text>
+            <CreateEditor
+              value={statePasar.pasarDesa.create.form.deskripsi}
+              onChange={(val) => {
+                statePasar.pasarDesa.create.form.deskripsi = val;
+              }}
+            />
+          </Box>
+
           {/* Tombol Submit */}
           <Group justify="right">
             <Button
@@ -251,8 +283,11 @@ export default function CreatePasarDesa() {
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}

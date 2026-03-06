@@ -20,18 +20,39 @@ export default async function handler(request: Request) {
       }, { status: 400 });
     }
 
-    const data = await prisma.profilePPID.findUnique({
-      where: { id },
-      include: {
-        image: true,
-      }
-    });
+    let data;
+
+    // Special handling for 'edit' - get the first/only record
+    if (id === 'edit') {
+      data = await prisma.profilePPID.findFirst({
+        where: { isActive: true },
+        include: {
+          image: true,
+        },
+        orderBy: { createdAt: 'asc' } // Get the oldest one first
+      });
+    } else {
+      data = await prisma.profilePPID.findUnique({
+        where: { id },
+        include: {
+          image: true,
+        }
+      });
+    }
 
     if (!data) {
-      return Response.json({
-        success: false,
-        message: "Data tidak ditemukan",
-      }, { status: 404 });
+      // Untuk ID 'edit', kembalikan pesan khusus karena mungkin memang belum ada data
+      if (id === 'edit') {
+        return Response.json({
+          success: false,
+          message: "Belum ada data profil PPID yang aktif",
+        }, { status: 404 });
+      } else {
+        return Response.json({
+          success: false,
+          message: "Data tidak ditemukan",
+        }, { status: 404 });
+      }
     }
 
     return Response.json({

@@ -1,67 +1,79 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import prisma from "@/lib/prisma";
-import profilePejabatDesa from "./data/landing-page/profile/profile.json";
-import programInovasi from "./data/landing-page/profile/programInovasi.json";
-import mediaSosial from "./data/landing-page/profile/mediaSosial.json";
-import desaAntiKorupsi from "./data/landing-page/desa-anti-korupsi/desaantiKorpusi.json";
-import kategoriDesaAntiKorupsi from "./data/landing-page/desa-anti-korupsi/kategoriDesaAntiKorupsi.json";
-import sdgsDesa from "./data/landing-page/sdgs-desa/sdgs-desa.json";
-import apbdes from "./data/landing-page/apbdes/apbdes.json";
-import kategoriPrestasiDesa from "./data/landing-page/prestasi-desa/kategori-prestasi.json";
-import prestasiDesa from "./data/landing-page/prestasi-desa/prestasi-desa.json";
-import penghargaan from "./data/landing-page/penghargaan/penghargaan.json";
-import profilePPID from "./data/ppid/profile-ppid/profilePPid.json";
-import pegawaiPPID from "./data/ppid/struktur-ppid/pegawai-PPID.json";
-import posisiOrganisasiPPID from "./data/ppid/struktur-ppid/posisi-organisasi-PPID.json";
-import visiMisiPPID from "./data/ppid/visi-misi-ppid/visimisiPPID.json";
-import dasarHukumPPID from "./data/ppid/dasar-hukum-ppid/dasarhukumPPID.json";
-import jenisKelamin from "./data/ppid/ikm/jenis-kelamin/jenis-kelamin.json";
-import daftarInformasiPublik from "./data/ppid/daftar-informasi-publik-desa-darmasaba/daftarInformasi.json";
-import pilihanRatingResponden from "./data/ppid/ikm/pilihan-rating-responden/rating-responden.json";
-import umurResponden from "./data/ppid/ikm/umur-responden/umur-responden.json";
-import categoryPengumuman from "./data/category-pengumuman.json";
-import pelayananPerizinanBerusaha from "./data/desa/layanan/pelayananPerizinanBerusaha.json";
-import pelayananSuratKeterangan from "./data/desa/layanan/pelayananSuratKeterangan.json";
-import pelayananTelunjukSaktiDesa from "./data/desa/layanan/pelayananTelunjukSaktiDesa.json";
-import pelayananPendudukNonPermanen from "./data/desa/layanan/pelayanaPendudukNonPermanen.json";
-import lambangDesa from "./data/desa/profile/lambang_desa.json";
-import maskotDesa from "./data/desa/profile/maskot_desa.json";
-import profilPerbekel from "./data/desa/profile/profil_perbekel.json";
-import sejarahDesa from "./data/desa/profile/sejarah_desa.json";
-import visiMisiDesa from "./data/desa/profile/visi_misi_desa.json";
-import detailDataPengangguran from "./data/ekonomi/jumlah-pengangguran/detail-data-pengangguran.json";
-import kategoriProduk from "./data/ekonomi/pasar-desa/kategori-produk.json";
-import pegawai from "./data/ekonomi/struktur-organisasi/pegawai-bumdes.json";
-import posisiOrganisasi from "./data/ekonomi/struktur-organisasi/posisi-organisasi-bumdes.json";
-import kategoriBerita from "./data/desa/berita/kategori-berita.json";
-import contohEdukasiLingkungan from "./data/lingkungan/edukasi-lingkungan/contoh-kegiatan-di-desa-darmasaba.json";
-import materiEdukasiLingkungan from "./data/lingkungan/edukasi-lingkungan/materi-edukasi-yang-diberikan.json";
-import tujuanEdukasiLingkungan from "./data/lingkungan/edukasi-lingkungan/tujuan-edukasi-lingkungan.json";
-import bentukKonservasiBerdasarkanAdat from "./data/lingkungan/konservasi-adat-bali/bentuk-konservasi.json";
-import kategoriKegiatanData from "./data/lingkungan/gotong-royong/kategori-gotong-royong.json";
-import filosofiTriHita from "./data/lingkungan/konservasi-adat-bali/filosofi-tri-hita.json";
-import nilaiKonservasiAdat from "./data/lingkungan/konservasi-adat-bali/nilai-konservasi-adat.json";
-import caraMemperolehInformasi from "./data/list-caraMemperolehInformasi.json";
-import caraMemperolehSalinanInformasi from "./data/list-caraMemperolehSalinanInformasi.json";
-import jenisInformasiDiminta from "./data/list-jenisInfromasi.json";
-import potensi from "./data/list-potensi.json";
-import fasilitasBimbinganBelajarDesa from "./data/pendidikan/bimbingan-belajar-desa/fasilitas-yang-disediakan.json";
-import lokasiJadwalBimbinganBelajarDesa from "./data/pendidikan/bimbingan-belajar-desa/lokasi-dan-jadwal.json";
-import tujuanBimbinganBelajarDesa from "./data/pendidikan/bimbingan-belajar-desa/tujuan-bimbingan-belajar-desa.json";
-import jenisProgramYangDiselenggarakan from "./data/pendidikan/pendidikan-non-formal/jenis-program-yang-diselenggarakan.json";
-import tempatKegiatan from "./data/pendidikan/pendidikan-non-formal/tempat-kegiatan.json";
-import tujuanProgram2 from "./data/pendidikan/pendidikan-non-formal/tujuan-program2.json";
-import programUnggulan from "./data/pendidikan/program-pendidikan-anak/program-unggulan.json";
-import tujuanProgram from "./data/pendidikan/program-pendidikan-anak/tujuan-program.json";
+import { seedVideo } from "./_seeder_list/desa/gallery/video/seed_video";
+import { seedLayanan } from "./_seeder_list/desa/layanan/seed_layanan";
+import { seedPenghargaan } from "./_seeder_list/desa/penghargaan/penghargaan";
+import { seedPengumuman } from "./_seeder_list/desa/pengumuman/seed_pengumuman";
+import { seedPotensi } from "./_seeder_list/desa/potensi/seed_potensi";
+import { seedProfileDesa } from "./_seeder_list/desa/profile-desa/seed_profile_desa";
+import { seedProfilePerbekel } from "./_seeder_list/desa/profile-desa/seed_profile_perbekel";
+import { seedDesaAntiKorupsi } from "./_seeder_list/landing-page/desa-anti-korupsi/seed_desa_anti_korupsi";
+import { seedPrestasiDesa } from "./_seeder_list/landing-page/prestasi-desa/seed_prestasi_desa";
+import { seedMediaSosial } from "./_seeder_list/landing-page/profil_landing_page/seed_media_sosial";
+import { seedProfileLP } from "./_seeder_list/landing-page/profil_landing_page/seed_profile_lp";
+import { seedProgramInovasi } from "./_seeder_list/landing-page/profil_landing_page/seed_program_inovasi";
+import { seedSDGSDesa } from "./_seeder_list/landing-page/sdgs/seed_sdgs";
+import { seedDaftarInformasiPublikPpid } from "./_seeder_list/ppid/daftar-informasi-publik-ppid/seed_daftar_informasi_publik_ppid";
+import { seedDasarHukumPpid } from "./_seeder_list/ppid/dasar-hukum-ppid/seed_dasar_hukum_ppid";
+import { seedIkmPpid } from "./_seeder_list/ppid/ikm/seed_ikm";
+import { seedPegawaiPpid } from "./_seeder_list/ppid/struktur-ppid/seed_struktur_ppid";
+import { seedVisiMisiPpid } from "./_seeder_list/ppid/visi-misi-ppid/seed_visi_misi_ppid";
+import dataPendidikan from "./data/pendidikan/data-pendidikan/data-pendidikan.json";
 import roles from "./data/user/roles.json";
-import fileStorage from "./data/file-storage.json";
-import jenjangPendidikan from "./data/pendidikan/info-sekolah/jenjang-pendidikan.json";
-import seedAssets from "./seed_assets";
 import users from "./data/user/users.json";
 import { safeSeedUnique } from "./safeseedUnique";
+import seedAssets from "./seed_assets";
+import { seedBerita } from "./_seeder_list/desa/berita/seed_berita";
+import { seedFoto } from "./_seeder_list/desa/gallery/foto/seed_foto";
+import { seedPosyandu } from "./_seeder_list/kesehatan/posyandu/seed_posyandu";
+import { seedPuskesmas } from "./_seeder_list/kesehatan/puskesmas/seed_puskesmas";
+import { seedProgramKesehatan } from "./_seeder_list/kesehatan/program-kesehatan/seed_program_kesehatan";
+import { seedPenangananDarurat } from "./_seeder_list/kesehatan/penanganan-darurat/seed_penanganan_darurat";
+import { seedKontakDarurat } from "./_seeder_list/kesehatan/kontak-darurat/seed_kontak_darurat";
+import { seedInfoWabahPenyakit } from "./_seeder_list/kesehatan/info-wabah-penyakit/seed_info_wabah_penyakit";
+import { seedKeamananLingkungan } from "./_seeder_list/keamanan/seed_keamanan_lingkungan";
+import { seedPolsekTerdekat } from "./_seeder_list/keamanan/seed_polsek_terdekat";
+import { seedKontakDaruratKeamanan } from "./_seeder_list/keamanan/seed_kontak_darurat";
+import { seedPencegahanKriminalitas } from "./_seeder_list/keamanan/seed_pencegahan_kriminalitas";
+import { seedLaporanPublik } from "./_seeder_list/keamanan/seed_laporan_publik";
+import { seedPasarDesa } from "./_seeder_list/ekonomi/seed_pasar_desa";
+import { seedLowonganKerjaLokal } from "./_seeder_list/ekonomi/seed_lowongan_kerja_lokal";
+import { seedDemografiPekerjaan } from "./_seeder_list/ekonomi/seed_demografi_pekerjaan";
+import { seedSektorUnggulanDesa } from "./_seeder_list/ekonomi/seed_sektor_unggulan_desa";
+import { seedProgramKemiskinan } from "./_seeder_list/ekonomi/seed_program_kemiskinan";
+import { seedJumlahPendudukMiskin } from "./_seeder_list/ekonomi/seed_jumlah_penduduk_miskin";
+import { seedPendudukUsiaKerjaYangMenganggur } from "./_seeder_list/ekonomi/seed_penduduk_usia_kerja_yang_menganggur";
+import { seedJumlahPengangguran } from "./_seeder_list/ekonomi/seed_jumlah_pengangguran";
+import { seedPendapatanAsli } from "./_seeder_list/ekonomi/seed_pendapatan_asli";
+import { seedStrukturBumdes } from "./_seeder_list/ekonomi/seed_struktur_bumdes";
+import { seedAjukan } from "./_seeder_list/inovasi/seed_ajukan";
+import { seedDesaDigital } from "./_seeder_list/inovasi/seed_desa_digital";
+import { seedLayananOnlineDesa } from "./_seeder_list/inovasi/seed_layanan_online_desa";
+import { seedProgramKreatifDesa } from "./_seeder_list/inovasi/seed_program_kreatif_desa";
+import { seedKolaborasiInovasi } from "./_seeder_list/inovasi/seed_kolaborasi_inovasi";
+import { seedInfoTeknologi } from "./_seeder_list/inovasi/seed_info_teknologi";
+import { seedPengelolaanSampah } from "./_seeder_list/lingkungan/seed_pengelolaan_sampah";
+import { seedProgramPenghijauan } from "./_seeder_list/lingkungan/seed_program_penghijauan";
+import { seedDataLingkunganDesa } from "./_seeder_list/lingkungan/seed_data_lingkungan_desa";
+import { seedDataGotongRoyong } from "./_seeder_list/lingkungan/seed_data_gotong_royong";
+import { seedEdukasiLingkungan } from "./_seeder_list/lingkungan/seed_edukasi_lingkungan";
+import { seedKonservasiAdatBali } from "./_seeder_list/lingkungan/seed_konservasi_adat_bali";
+import { seedInfoSekolah } from "./_seeder_list/pendidikan/seed_info_sekolah";
+import { seedInfoProgramPendidikan } from "./_seeder_list/pendidikan/seed_info_program_pendidikan";
+import { seedBimbinganBelajar } from "./_seeder_list/pendidikan/seed_bimbingan_belajar";
+import { seedDataPendidikan } from "./_seeder_list/pendidikan/seed_data_pendidikan";
+import { seedPendidikanNonFormal } from "./_seeder_list/pendidikan/seed_pendidikan_non_formal";
+import { seedDataPerpustakaan } from "./_seeder_list/pendidikan/seed_data_perpustakaan";
+import { seedProfilPpd } from "./_seeder_list/ppid/profil-ppid/seed_profil_ppd";
 
 (async () => {
+  // Always run seedAssets to handle new images without duplication
+  console.log("📂 Checking for new assets to seed...");
+  await seedAssets();
+
+  // // =========== FILE STORAGE ===========
+
   console.log("🔄 Seeding roles...");
 
   for (const r of roles) {
@@ -78,7 +90,7 @@ import { safeSeedUnique } from "./safeseedUnique";
           description: roleData.description,
           permissions: roleData.permissions || {}, // ✅ Include permissions
           isActive: roleData.isActive,
-        }
+        },
       );
       console.log(`✅ Seeded role -> ${roleData.name}`);
     } catch (error: any) {
@@ -103,27 +115,28 @@ import { safeSeedUnique } from "./safeseedUnique";
 
       if (!roleExists) {
         console.error(
-          `❌ Role with id ${u.roleId} not found for user ${u.username}`
+          `❌ Role with id ${u.roleId} not found for user ${u.username}`,
         );
         continue;
       }
 
       await safeSeedUnique(
         "user",
-        { id: u.id },
+        { nomor: u.nomor },
         {
+          id: u.id,
           username: u.username,
           nomor: u.nomor,
           roleId: u.roleId.toString(),
           isActive: u.isActive,
           sessionInvalid: false,
-        }
+        },
       );
       console.log(`✅ Seeded user -> ${u.username}`);
     } catch (error: any) {
       if (error.code === "P2003") {
         console.error(
-          `❌ Foreign key constraint failed for user ${u.username}: Role ${u.roleId} does not exist`
+          `❌ Foreign key constraint failed for user ${u.username}: Role ${u.roleId} does not exist`,
         );
       } else {
         console.error(`❌ Failed to seed user ${u.username}:`, error.message);
@@ -131,1123 +144,206 @@ import { safeSeedUnique } from "./safeseedUnique";
     }
   }
   console.log("✅ Users seeding completed");
-
-  // =========== FILE STORAGE ===========
-  console.log("🔄 Seeding file storage...");
-  for (const f of fileStorage) {
-    try {
-      await prisma.fileStorage.upsert({
-        where: { id: f.id },
-        update: {
-          name: f.name,
-          realName: f.realName,
-          path: f.path,
-          mimeType: f.mimeType,
-          link: f.link,
-          category: f.category,
-        },
-        create: {
-          id: f.id,
-          name: f.name,
-          realName: f.realName,
-          path: f.path,
-          mimeType: f.mimeType,
-          link: f.link,
-          category: f.category,
-        },
-      });
-    } catch (error: any) {
-      console.error(`❌ Failed to seed file storage ${f.name}:`, error.message);
-    }
-  }
-  console.log("✅ File storage seeded");
   // =========== LANDING PAGE ===========
   // =========== SUBMENU PROFILE ===========
-  // =========== PROFILE PEJABAT DESA ===========
-  for (const p of profilePejabatDesa) {
-    await prisma.pejabatDesa.upsert({
-      where: { id: p.id },
-      update: {
-        name: p.name,
-        position: p.position,
-        imageId: p.imageId,
-      },
-      create: {
-        id: p.id,
-        name: p.name,
-        position: p.position,
-        imageId: p.imageId,
-      },
-    });
-  }
-  console.log(
-    "✅ profilePejabatDesa seeded without imageId (editable later via UI)"
-  );
-
-  // =========== PROGRAM INOVASI ===========
-  for (const p of programInovasi) {
-    let imageId: string | null = null;
-
-    if (p.imageId) {
-      const imageExists = await prisma.fileStorage.findUnique({
-        where: { id: p.imageId },
-      });
-
-      if (imageExists) {
-        imageId = p.imageId;
-      } else {
-        console.warn(
-          `⚠️ imageId ${p.imageId} tidak ditemukan untuk ProgramInovasi ${p.name}`
-        );
-      }
-    }
-    await prisma.programInovasi.upsert({
-      where: { id: p.id },
-      update: {
-        name: p.name,
-        description: p.description,
-        link: p.link,
-        imageId: p.imageId,
-      },
-      create: {
-        id: p.id,
-        name: p.name,
-        description: p.description,
-        link: p.link,
-        imageId: p.imageId,
-      },
-    });
-  }
-  console.log("program inovasi success ...");
-
-  // =========== MEDIA SOSIAL ===========
-  for (const p of mediaSosial) {
-    await prisma.mediaSosial.upsert({
-      where: { id: p.id },
-      update: {
-        name: p.name,
-        iconUrl: p.iconUrl,
-        imageId: p.imageId,
-      },
-      create: {
-        id: p.id,
-        name: p.name,
-        iconUrl: p.iconUrl,
-        imageId: p.imageId,
-      },
-    });
-  }
-  console.log("media sosial success ...");
-
-  // =========== SUBMENU DESA ANTI KORUPSI ===========
-  // =========== KATEGORI DESA ANTI KORUPSI ===========
-  for (const k of kategoriDesaAntiKorupsi) {
-    await prisma.kategoriDesaAntiKorupsi.upsert({
-      where: { id: k.id },
-      update: {
-        name: k.name,
-      },
-      create: {
-        id: k.id,
-        name: k.name,
-      },
-    });
-  }
-  console.log("kategori desa anti korupsi success ...");
-
-  // =========== DESA ANTI KORUPSI ===========
-  for (const p of desaAntiKorupsi) {
-    await prisma.desaAntiKorupsi.upsert({
-      where: { id: p.id },
-      update: {
-        name: p.name,
-        deskripsi: p.deskripsi,
-        kategoriId: p.kategoriId,
-      },
-      create: {
-        id: p.id,
-        name: p.name,
-        deskripsi: p.deskripsi,
-        kategoriId: p.kategoriId,
-      },
-    });
-  }
-  console.log("desa anti korupsi success ...");
-
-  // =========== KATEGORI DESA ANTI KORUPSI ===========
-  for (const p of kategoriDesaAntiKorupsi) {
-    await prisma.kategoriDesaAntiKorupsi.upsert({
-      where: { id: p.id },
-      update: {
-        name: p.name,
-      },
-      create: {
-        id: p.id,
-        name: p.name,
-      },
-    });
-  }
-  console.log("desa anti korupsi success ...");
-
-  // =========== KATEGORI PRESTASI DESA===========
-  for (const c of kategoriPrestasiDesa) {
-    await prisma.kategoriPrestasiDesa.upsert({
-      where: { id: c.id },
-      update: {
-        name: c.name,
-      },
-      create: {
-        id: c.id,
-        name: c.name,
-      },
-    });
-  }
-  console.log("kategori prestasi desa success ...");
-
-  // =========== PRESTASI DESA===========
-  for (const p of prestasiDesa) {
-    await prisma.prestasiDesa.upsert({
-      where: { id: p.id },
-      update: {
-        name: p.name,
-        deskripsi: p.deskripsi,
-        kategoriId: p.kategoriId,
-      },
-      create: {
-        id: p.id,
-        name: p.name,
-        deskripsi: p.deskripsi,
-        kategoriId: p.kategoriId,
-      },
-    });
-  }
-  console.log("prestasi desa success ...");
-
-  // =========== PENGHARGAAN ===========
-  for (const p of penghargaan) {
-    await prisma.penghargaan.upsert({
-      where: { id: p.id },
-      update: {
-        name: p.name,
-        juara: p.juara,
-        deskripsi: p.deskripsi,
-      },
-      create: {
-        id: p.id,
-        name: p.name,
-        juara: p.juara,
-        deskripsi: p.deskripsi,
-      },
-    });
-  }
-  console.log("penghargaan success ...");
-
-  // =========== LAYANAN DESA ===========
-  for (const p of pelayananSuratKeterangan) {
-    await prisma.pelayananSuratKeterangan.upsert({
-      where: { id: p.id },
-      update: {
-        name: p.name,
-        deskripsi: p.deskripsi,
-      },
-      create: {
-        id: p.id,
-        name: p.name,
-        deskripsi: p.deskripsi,
-      },
-    });
-  }
-  console.log("pelayanan surat keterangan success ...");
-
-  for (const p of pelayananTelunjukSaktiDesa) {
-    await prisma.pelayananTelunjukSaktiDesa.upsert({
-      where: { id: p.id },
-      update: {
-        name: p.name,
-        deskripsi: p.deskripsi,
-        link: p.link,
-      },
-      create: {
-        id: p.id,
-        name: p.name,
-        deskripsi: p.deskripsi,
-        link: p.link,
-      },
-    });
-  }
-  console.log("pelayanan surat keterangan success ...");
-
-  // =========== SDGSDesa ===========
-  for (const l of sdgsDesa) {
-    await prisma.sdgsDesa.upsert({
-      where: { id: l.id },
-      update: {
-        name: l.name,
-        jumlah: l.jumlah,
-      },
-      create: {
-        id: l.id,
-        name: l.name,
-        jumlah: l.jumlah,
-      },
-    });
-  }
-
-  console.log("sdgs desa success ...");
-
-  // =========== APBDes ===========
-  for (const l of apbdes) {
-    await prisma.aPBDes.upsert({
-      where: {
-        id: l.id,
-      },
-      update: {
-        name: l.name,
-        jumlah: l.jumlah,
-      },
-      create: {
-        name: l.name,
-        jumlah: l.jumlah,
-      },
-    });
-  }
-
-  console.log("sdgs desa success ...");
-
-  // =========== MENU DESA ===========
-  // =========== SUBMENU PROFILE ===========
-  // =========== SEJARAH DESA ===========
-  for (const l of sejarahDesa) {
-    await prisma.sejarahDesa.upsert({
-      where: {
-        id: l.id,
-      },
-      update: {
-        judul: l.judul,
-        deskripsi: l.deskripsi,
-      },
-      create: {
-        id: l.id,
-        judul: l.judul,
-        deskripsi: l.deskripsi,
-      },
-    });
-  }
-
-  console.log("sejarah desa success ...");
-
-  // =========== MASKOT DESA ===========
-  for (const l of maskotDesa) {
-    await prisma.maskotDesa.upsert({
-      where: {
-        id: l.id,
-      },
-      update: {
-        judul: l.judul,
-        deskripsi: l.deskripsi,
-      },
-      create: {
-        id: l.id,
-        judul: l.judul,
-        deskripsi: l.deskripsi,
-      },
-    });
-  }
-
-  console.log("maskot desa success ...");
-
-  // =========== LAMBANG DESA ===========
-  for (const l of lambangDesa) {
-    await prisma.lambangDesa.upsert({
-      where: {
-        id: l.id,
-      },
-      update: {
-        judul: l.judul,
-        deskripsi: l.deskripsi,
-      },
-      create: {
-        id: l.id,
-        judul: l.judul,
-        deskripsi: l.deskripsi,
-      },
-    });
-  }
-
-  console.log("lambang desa success ...");
-
-  // =========== PROFIL PERBEKEL ===========
-  for (const c of profilPerbekel) {
-    await prisma.profilPerbekel.upsert({
-      where: { id: c.id },
-      update: {
-        biodata: c.biodata,
-        pengalaman: c.pengalaman,
-        pengalamanOrganisasi: c.pengalamanOrganisasi,
-        programUnggulan: c.programUnggulan,
-        // imageId tidak di-update
-      },
-      create: {
-        id: c.id,
-        biodata: c.biodata,
-        pengalaman: c.pengalaman,
-        pengalamanOrganisasi: c.pengalamanOrganisasi,
-        programUnggulan: c.programUnggulan,
-        // imageId tidak di-create
-      },
-    });
-  }
-  console.log(
-    "✅ profilePerbekel seeded without imageId (editable later via UI)"
-  );
-
-  // =========== VISI MISI DESA ===========
-  for (const l of visiMisiDesa) {
-    await prisma.visiMisiDesa.upsert({
-      where: {
-        id: l.id,
-      },
-      update: {
-        visi: l.visi,
-        misi: l.misi,
-      },
-      create: {
-        id: l.id,
-        visi: l.visi,
-        misi: l.misi,
-      },
-    });
-  }
-
-  console.log("visi misi desa success ...");
-
-  // =========== MENU PPID ===========
-  // =========== SUBMENU PROFILE PPID ===========
-  for (const c of profilePPID) {
-    await prisma.profilePPID.upsert({
-      where: { id: c.id },
-      update: {
-        name: c.name,
-        biodata: c.biodata,
-        riwayat: c.riwayat,
-        pengalaman: c.pengalaman,
-        unggulan: c.unggulan,
-        // imageId tidak di-update
-      },
-      create: {
-        id: c.id,
-        name: c.name,
-        biodata: c.biodata,
-        riwayat: c.riwayat,
-        pengalaman: c.pengalaman,
-        unggulan: c.unggulan,
-        // imageId tidak di-create
-      },
-    });
-  }
-  console.log("✅ profilePPID seeded without imageId (editable later via UI)");
-
-  // =========== SUBMENU STRUKTUR PPID ===========
-  // =========== POSISI ORGANISASI PPID ===========
-
-  const flattenedPosisi = posisiOrganisasiPPID.flat();
-
-  // ✅ Urutkan berdasarkan hierarki
-  const sortedPosisi = flattenedPosisi.sort((a, b) => a.hierarki - b.hierarki);
-
-  for (const p of sortedPosisi) {
-    console.log(`Seeding: ${p.nama} (id: ${p.id}, parent: ${p.parentId})`);
-
-    if (p.parentId) {
-      const parentExists = flattenedPosisi.some((pos) => pos.id === p.parentId);
-      if (!parentExists) {
-        console.warn(
-          `⚠️ Parent tidak ditemukan: ${p.parentId} untuk ${p.nama}`
-        );
-        continue;
-      }
-    }
-
-    await prisma.posisiOrganisasiPPID.upsert({
-      where: { id: p.id },
-      update: p,
-      create: p,
-    });
-  }
-  console.log("posisi organisasi berhasil");
-
-  // =========== PEGAWAI PPID ===========
-  console.log("🔄 Seeding pegawai PPID...");
-  const flattenedPegawai = pegawaiPPID.flat();
-
-  // Check for duplicate emails
-  const emails = new Set();
-  for (const p of flattenedPegawai) {
-    if (emails.has(p.email)) {
-      console.warn(`⚠️ Duplicate email found in pegawaiPPID: ${p.email}`);
-    }
-    emails.add(p.email);
-  }
-
-  for (const p of flattenedPegawai) {
-    try {
-      await prisma.pegawaiPPID.upsert({
-        where: { id: p.id },
-        update: p,
-        create: p,
-      });
-      console.log(`✅ Seeded pegawai PPID -> ${p.namaLengkap}`);
-    } catch (error: any) {
-      if (error.code === "P2002") {
-        console.warn(
-          `⚠️ Pegawai PPID with duplicate email (skipping): ${p.email}`
-        );
-      } else {
-        console.error(
-          `❌ Failed to seed pegawai PPID ${p.namaLengkap}:`,
-          error.message
-        );
-      }
-    }
-  }
-  console.log("✅ pegawai PPID seeding completed");
-
-  // =========== SUBMENU VISI MISI PPID ===========
-
-  for (const v of visiMisiPPID) {
-    await prisma.visiMisiPPID.upsert({
-      where: {
-        id: v.id,
-      },
-      update: {
-        misi: v.misi,
-        visi: v.visi,
-      },
-      create: {
-        id: v.id,
-        misi: v.misi,
-        visi: v.visi,
-      },
-    });
-  }
-  console.log("visi misi PPID success ...");
-
-  // =========== SUBMENU DASAR HUKUM PPID ===========
-  for (const v of dasarHukumPPID) {
-    await prisma.dasarHukumPPID.upsert({
-      where: {
-        id: v.id,
-      },
-      update: {
-        judul: v.judul,
-        content: v.content,
-      },
-      create: {
-        id: v.id,
-        judul: v.judul,
-        content: v.content,
-      },
-    });
-  }
-  console.log("dasar hukum PPID success ...");
-
-  // =========== SUBMENU DAFTAR INFORMASI PUBLIK PPID ===========
-  for (const v of daftarInformasiPublik) {
-    // Convert string date to Date object
-    const tanggal = new Date(v.tanggal);
-
-    await prisma.daftarInformasiPublik.upsert({
-      where: {
-        id: v.id,
-      },
-      update: {
-        jenisInformasi: v.jenisInformasi,
-        deskripsi: v.deskripsi,
-        tanggal: tanggal,
-      },
-      create: {
-        id: v.id,
-        jenisInformasi: v.jenisInformasi,
-        deskripsi: v.deskripsi,
-        tanggal: tanggal,
-      },
-    });
-  }
-  console.log("daftar informasi publik PPID success ...");
-
-  for (const l of pelayananPerizinanBerusaha) {
-    await prisma.pelayananPerizinanBerusaha.upsert({
-      where: {
-        id: l.id,
-      },
-      update: {
-        name: l.name,
-        deskripsi: l.deskripsi,
-        link: l.link,
-      },
-      create: {
-        id: l.id,
-        name: l.name,
-        deskripsi: l.deskripsi,
-        link: l.link,
-      },
-    });
-  }
-
-  console.log("pelayanan perizinan berusaha success ...");
-
-  for (const l of pelayananPendudukNonPermanen) {
-    await prisma.pelayananPendudukNonPermanen.upsert({
-      where: {
-        id: l.id,
-      },
-      update: {
-        name: l.name,
-        deskripsi: l.deskripsi,
-      },
-      create: {
-        id: l.id,
-        name: l.name,
-        deskripsi: l.deskripsi,
-      },
-    });
-  }
-  console.log("pelayanan penduduk non permanen success ...");
-
-  for (const p of potensi) {
-    await prisma.potensi.upsert({
-      where: {
-        name: p.name,
-      },
-      update: {
-        name: p.name,
-      },
-      create: {
-        name: p.name,
-      },
-    });
-  }
-
-  console.log("potensi success ...");
-
-  for (const k of kategoriBerita) {
-    await prisma.kategoriBerita.upsert({
-      where: {
-        name: k.name,
-      },
-      update: {
-        name: k.name,
-      },
-      create: {
-        name: k.name,
-      },
-    });
-  }
-
-  console.log("kategori berita success ...");
-
-  for (const c of categoryPengumuman) {
-    await prisma.categoryPengumuman.upsert({
-      where: {
-        name: c.name,
-      },
-      update: {
-        name: c.name,
-      },
-      create: {
-        name: c.name,
-      },
-    });
-  }
-
-  console.log("category pengumuman success ...");
-
-  for (const j of jenisInformasiDiminta) {
-    await prisma.jenisInformasiDiminta.upsert({
-      where: {
-        name: j.name,
-      },
-      update: {
-        name: j.name,
-      },
-      create: {
-        name: j.name,
-      },
-    });
-  }
-  console.log("jenis informasi diminta success ...");
-
-  for (const c of caraMemperolehInformasi) {
-    await prisma.caraMemperolehInformasi.upsert({
-      where: {
-        name: c.name,
-      },
-      update: {
-        name: c.name,
-      },
-      create: {
-        name: c.name,
-      },
-    });
-  }
-  console.log("cara memperoleh informasi success ...");
-
-  for (const c of caraMemperolehSalinanInformasi) {
-    await prisma.caraMemperolehSalinanInformasi.upsert({
-      where: {
-        name: c.name,
-      },
-      update: {
-        name: c.name,
-      },
-      create: {
-        name: c.name,
-      },
-    });
-  }
-  console.log("cara memperoleh salinan informasi success ...");
-
-  for (const j of jenisKelamin) {
-    await prisma.jenisKelaminResponden.upsert({
-      where: {
-        id: j.id,
-      },
-      update: {
-        name: j.name,
-      },
-      create: {
-        id: j.id,
-        name: j.name,
-      },
-    });
-  }
-  console.log("jenis kelamin responden success ...");
-
-  for (const r of pilihanRatingResponden) {
-    await prisma.pilihanRatingResponden.upsert({
-      where: {
-        id: r.id,
-      },
-      update: {
-        name: r.name,
-      },
-      create: {
-        id: r.id,
-        name: r.name,
-      },
-    });
-  }
-  console.log("pilihan rating responden success ...");
-
-  for (const u of umurResponden) {
-    await prisma.umurResponden.upsert({
-      where: {
-        id: u.id,
-      },
-      update: {
-        name: u.name,
-      },
-      create: {
-        id: u.id,
-        name: u.name,
-      },
-    });
-  }
-  console.log("umur responden success ...");
-
-  for (const k of kategoriProduk) {
-    await prisma.kategoriProduk.upsert({
-      where: {
-        id: k.id,
-      },
-      update: {
-        nama: k.nama,
-      },
-      create: {
-        id: k.id,
-        nama: k.nama,
-      },
-    });
-  }
-  console.log("kategori produk success ...");
-
-  const flattenedPosisiBumdes = posisiOrganisasi.flat();
-
-  // ✅ Urutkan berdasarkan hierarki
-  const sortedPosisiBumdes = flattenedPosisiBumdes.sort(
-    (a, b) => a.hierarki - b.hierarki
-  );
-
-  for (const p of sortedPosisiBumdes) {
-    console.log(`Seeding: ${p.nama} (id: ${p.id}, parent: ${p.parentId})`);
-
-    if (p.parentId) {
-      const parentExists = flattenedPosisi.some((pos) => pos.id === p.parentId);
-      if (!parentExists) {
-        console.warn(
-          `⚠️ Parent tidak ditemukan: ${p.parentId} untuk ${p.nama}`
-        );
-        continue;
-      }
-    }
-
-    await prisma.posisiOrganisasiBumDes.upsert({
-      where: { id: p.id },
-      update: p,
-      create: p,
-    });
-  }
-  console.log("posisi organisasi berhasil");
-
-  for (const p of pegawai) {
-    await prisma.pegawaiBumDes.upsert({
-      where: {
-        id: p.id,
-      },
-      update: {
-        namaLengkap: p.namaLengkap,
-        gelarAkademik: p.gelarAkademik,
-        tanggalMasuk: new Date(p.tanggalMasuk),
-        email: p.email,
-        telepon: p.telepon,
-        alamat: p.alamat,
-        posisiId: p.posisiId,
-        isActive: p.isActive,
-      },
-      create: {
-        id: p.id,
-        namaLengkap: p.namaLengkap,
-        gelarAkademik: p.gelarAkademik,
-        tanggalMasuk: new Date(p.tanggalMasuk),
-        email: p.email,
-        telepon: p.telepon,
-        alamat: p.alamat,
-        posisiId: p.posisiId,
-        isActive: p.isActive,
-      },
-    });
-  }
-  console.log("pegawai success ...");
-
-  for (const d of detailDataPengangguran) {
-    await prisma.detailDataPengangguran.upsert({
-      where: {
-        month_year: { month: d.month, year: d.year },
-      },
-      update: {
-        totalUnemployment: d.totalUnemployment,
-        educatedUnemployment: d.educatedUnemployment,
-        uneducatedUnemployment: d.uneducatedUnemployment,
-        percentageChange: d.percentageChange,
-      },
-      create: {
-        month: d.month,
-        year: d.year,
-        totalUnemployment: d.totalUnemployment,
-        educatedUnemployment: d.educatedUnemployment,
-        uneducatedUnemployment: d.uneducatedUnemployment,
-        percentageChange: d.percentageChange,
-      },
-    });
-  }
-  console.log("📊 detailDataPengangguran success ...");
-
-  // =========== KATEGORI GOTONG ROYONG ===========
-  // Add IDs to the kategoriKegiatan data
-  const kategoriKegiatan = kategoriKegiatanData.map((k, index) => ({
-    ...k,
-    id: `kategori-${index + 1}`,
-  }));
-
-  for (const k of kategoriKegiatan) {
-    await prisma.kategoriKegiatan.upsert({
-      where: {
-        id: k.id,
-      },
-      update: {
-        nama: k.nama,
-      },
-      create: {
-        id: k.id,
-        nama: k.nama,
-      },
-    });
-  }
-
-  console.log("kategori kegiatan success ...");
-
-  for (const e of tujuanEdukasiLingkungan) {
-    await prisma.tujuanEdukasiLingkungan.upsert({
-      where: {
-        id: e.id,
-      },
-      update: {
-        judul: e.judul,
-        deskripsi: e.deskripsi,
-      },
-      create: {
-        id: e.id,
-        judul: e.judul,
-        deskripsi: e.deskripsi,
-      },
-    });
-  }
-
-  console.log("tujuan edukasi lingkungan success ...");
-
-  for (const m of materiEdukasiLingkungan) {
-    await prisma.materiEdukasiLingkungan.upsert({
-      where: {
-        id: m.id,
-      },
-      update: {
-        judul: m.judul,
-        deskripsi: m.deskripsi,
-      },
-      create: {
-        id: m.id,
-        judul: m.judul,
-        deskripsi: m.deskripsi,
-      },
-    });
-  }
-
-  console.log("materi edukasi lingkungan success ...");
-
-  for (const c of contohEdukasiLingkungan) {
-    await prisma.contohEdukasiLingkungan.upsert({
-      where: {
-        id: c.id,
-      },
-      update: {
-        judul: c.judul,
-        deskripsi: c.deskripsi,
-      },
-      create: {
-        id: c.id,
-        judul: c.judul,
-        deskripsi: c.deskripsi,
-      },
-    });
-  }
-
-  console.log("contoh edukasi lingkungan success ...");
-
-  for (const f of filosofiTriHita) {
-    await prisma.filosofiTriHita.upsert({
-      where: {
-        id: f.id,
-      },
-      update: {
-        judul: f.judul,
-        deskripsi: f.deskripsi,
-      },
-      create: {
-        id: f.id,
-        judul: f.judul,
-        deskripsi: f.deskripsi,
-      },
-    });
-  }
-
-  console.log("filosofi tri hita success ...");
-
-  for (const b of bentukKonservasiBerdasarkanAdat) {
-    await prisma.bentukKonservasiBerdasarkanAdat.upsert({
-      where: {
-        id: b.id,
-      },
-      update: {
-        judul: b.judul,
-        deskripsi: b.deskripsi,
-      },
-      create: {
-        id: b.id,
-        judul: b.judul,
-        deskripsi: b.deskripsi,
-      },
-    });
-  }
-
-  console.log("bentuk konservasi berdasarkan adat success ...");
-
-  for (const n of nilaiKonservasiAdat) {
-    await prisma.nilaiKonservasiAdat.upsert({
-      where: {
-        id: n.id,
-      },
-      update: {
-        judul: n.judul,
-        deskripsi: n.deskripsi,
-      },
-      create: {
-        id: n.id,
-        judul: n.judul,
-        deskripsi: n.deskripsi,
-      },
-    });
-  }
-
-  console.log("nilai konservasi adat success ...");
-
-  for (const t of tujuanProgram) {
-    await prisma.tujuanProgram.upsert({
-      where: { id: t.id },
-      update: {
-        judul: t.judul,
-        deskripsi: t.deskripsi,
-      },
-      create: {
-        id: t.id,
-        judul: t.judul,
-        deskripsi: t.deskripsi,
-      },
-    });
-  }
-  console.log("✅ tujuan program seeded (editable later via UI)");
-
-  for (const t of programUnggulan) {
-    await prisma.programUnggulan.upsert({
-      where: { id: t.id },
-      update: {
-        judul: t.judul,
-        deskripsi: t.deskripsi,
-      },
-      create: {
-        id: t.id,
-        judul: t.judul,
-        deskripsi: t.deskripsi,
-      },
-    });
-  }
-  console.log("✅ program unggulan seeded (editable later via UI)");
-
-  for (const t of tujuanBimbinganBelajarDesa) {
-    await prisma.tujuanBimbinganBelajarDesa.upsert({
-      where: { id: t.id },
-      update: {
-        judul: t.judul,
-        deskripsi: t.deskripsi,
-      },
-      create: {
-        id: t.id,
-        judul: t.judul,
-        deskripsi: t.deskripsi,
-      },
-    });
-  }
-  console.log(
-    "✅ tujuan bimbingan belajar desa seeded (editable later via UI)"
-  );
-
-  for (const t of lokasiJadwalBimbinganBelajarDesa) {
-    await prisma.lokasiJadwalBimbinganBelajarDesa.upsert({
-      where: { id: t.id },
-      update: {
-        judul: t.judul,
-        deskripsi: t.deskripsi,
-      },
-      create: {
-        id: t.id,
-        judul: t.judul,
-        deskripsi: t.deskripsi,
-      },
-    });
-  }
-  console.log(
-    "✅ lokasi jadwal bimbingan belajar desa seeded (editable later via UI)"
-  );
-
-  for (const t of fasilitasBimbinganBelajarDesa) {
-    await prisma.fasilitasBimbinganBelajarDesa.upsert({
-      where: { id: t.id },
-      update: {
-        judul: t.judul,
-        deskripsi: t.deskripsi,
-      },
-      create: {
-        id: t.id,
-        judul: t.judul,
-        deskripsi: t.deskripsi,
-      },
-    });
-  }
-  console.log(
-    "✅ fasilitas bimbingan belajar desa seeded (editable later via UI)"
-  );
-
-  for (const t of tujuanProgram2) {
-    await prisma.tujuanPendidikanNonFormal.upsert({
-      where: { id: t.id },
-      update: {
-        judul: t.judul,
-        deskripsi: t.deskripsi,
-      },
-      create: {
-        id: t.id,
-        judul: t.judul,
-        deskripsi: t.deskripsi,
-      },
-    });
-  }
-  console.log(
-    "✅ fasilitas bimbingan belajar desa seeded (editable later via UI)"
-  );
-
-  for (const t of tempatKegiatan) {
-    await prisma.tempatKegiatan.upsert({
-      where: { id: t.id },
-      update: {
-        judul: t.judul,
-        deskripsi: t.deskripsi,
-      },
-      create: {
-        id: t.id,
-        judul: t.judul,
-        deskripsi: t.deskripsi,
-      },
-    });
-  }
-  console.log(
-    "✅ fasilitas bimbingan belajar desa seeded (editable later via UI)"
-  );
-
-  for (const t of jenisProgramYangDiselenggarakan) {
-    await prisma.jenisProgramYangDiselenggarakan.upsert({
-      where: { id: t.id },
-      update: {
-        judul: t.judul,
-        deskripsi: t.deskripsi,
-      },
-      create: {
-        id: t.id,
-        judul: t.judul,
-        deskripsi: t.deskripsi,
-      },
-    });
-  }
-  console.log(
-    "✅ fasilitas bimbingan belajar desa seeded (editable later via UI)"
-  );
-
-  for (const j of jenjangPendidikan) {
-    await prisma.jenjangPendidikan.upsert({
-      where: {
-        id: j.id || undefined,
-      },
-      update: {
-        nama: j.nama,
-      },
-      create: {
-        nama: j.nama,
-      },
-    });
-  }
-
-  console.log("✅ Jenjang Pendidikan seeded successfully");
-
-  // seed assets
-  await seedAssets();
+  await seedProgramInovasi();
+  await seedProfileLP();
+  await seedMediaSosial();
+
+  // // =========== SUBMENU DESA ANTI KORUPSI ===========
+  await seedDesaAntiKorupsi();
+
+  // // =========== SDGSDesa ===========
+  await seedSDGSDesa();
+
+  // // =========== APBDes ===========
+  // for (const l of apbdes) {
+  //   await prisma.aPBDes.upsert({
+  //     where: {
+  //       id: l.id,
+  //     },
+  //     update: {
+  //       name: l.name,
+  //       jumlah: l.jumlah,
+  //     },
+  //     create: {
+  //       name: l.name,
+  //       jumlah: l.jumlah,
+  //     },
+  //   });
+  // }
+
+  // console.log("apbdes success ...");
+
+  // // =========== PRESTASI DESA===========
+  await seedPrestasiDesa();
+
+  // // =========== MENU PPID ===========
+
+  // // =========== SUBMENU PROFIL PPID ===========
+  await seedProfilPpd();
+
+  // // =========== SUBMENU STRUKTUR PPID ===========
+  await seedPegawaiPpid();
+
+  // // =========== SUBMENU VISI MISI PPID ===========
+  await seedVisiMisiPpid();
+
+  // // =========== SUBMENU DASAR HUKUM PPID ===========
+  await seedDasarHukumPpid();
+
+  // // =========== SUBMENU DAFTAR INFORMASI PUBLIK PPID ===========
+  await seedDaftarInformasiPublikPpid();
+
+  // // =========== SUBMENU INDEKS KEPUASAN MASYARAKAT ===========
+  await seedIkmPpid();
+
+  // // =========== MENU DESA ===========
+  // // =========== SUBMENU PROFILE ===========
+  await seedProfileDesa();
+  await seedProfilePerbekel();
+
+  // // =========== SUBMENU POTENSI DESA ===========
+  await seedPotensi();
+
+  // // =========== SUBMENU BERITA ===========
+  await seedBerita();
+
+  // // ================== SUBMENU PENGUMUMAN ========================
+  await seedPengumuman();
+
+  // // ================== SUBMENU GALLERY ========================
+  await seedVideo();
+  await seedFoto();
+
+  // // =========== SUBMENU LAYANAN ===========
+  await seedLayanan();
+
+  // // =========== PENGHARGAAN ===========
+  await seedPenghargaan();
+
+  // // ====================== MENU KESEHATAN ========================
+  // // ==================== SUBMENU POSYANDU =========================
+  await seedPosyandu();
+
+  // // ==================== SUBMENU PUSKESMAS =========================
+  await seedPuskesmas();
+
+  // // ==================== SUBMENU PROGRAM KESEHATAN =========================
+  await seedProgramKesehatan();
+
+  // // ==================== SUBMENU PENANGANAN DARURAT =========================
+  await seedPenangananDarurat();
+
+  // // ==================== SUBMENU KONTAK DARURAT =========================
+  await seedKontakDarurat();
+
+  // // ==================== SUBMENU INFO WABAH PENYAKIT =========================
+  await seedInfoWabahPenyakit();
+
+  // // ====================== MENU KEAMANAN ========================
+  // // ==================== SUBMENU KEAMANAN LINGKUNGAN ============
+  await seedKeamananLingkungan();
+
+  // // ==================== SUBMENU POLSEK TERDEKAT ================
+  await seedPolsekTerdekat();
+
+  // // ==================== SUBMENU KONTAK DARURAT =================
+  await seedKontakDaruratKeamanan();
+
+  // // ==================== SUBMENU PENCEGAHAN KRIMINALITAS ========
+  await seedPencegahanKriminalitas();
+  // // ==================== SUBMENU LAPORAN PUBLIK =================
+  await seedLaporanPublik();
+
+  // // ==================== SUBMENU TIPS KEAMANAN ==================
+  await seedKeamananLingkungan();
+
+  // // ====================== MENU EKONOMI ========================
+  // // ==================== SUBMENU PASAR DESA ====================
+  await seedPasarDesa();
+
+  // // ==================== SUBMENU LOWONGAN KERJA LOKAL ==========
+  await seedLowonganKerjaLokal();
+
+  // // ==================== SUBMENU STRUKTUR ORGANISASI DAN SK PENGURUS BUMDES ==========
+  await seedStrukturBumdes();
+
+  // // ==================== SUBMENU PENDAPATAN ASLI DESA ==========
+  await seedPendapatanAsli();
+
+  // // ==================== SUBMENU JUMLAH PENGANGGURAN ==========
+  await seedJumlahPengangguran();
+
+  // // ==================== SUBMENU PENDUDUK USIA KERJA ==========
+  await seedPendudukUsiaKerjaYangMenganggur();
+
+  // // ==================== SUBMENU PENDUDUK MISKIN =============
+  await seedJumlahPendudukMiskin();
+
+  // // ==================== SUBMENU PROGRAM KEMISKINAN =============
+  await seedProgramKemiskinan();
+
+  // // ==================== SUBMENU SEKTOR UNGGULAN DESA =============
+  await seedSektorUnggulanDesa();
+
+  // // ==================== SUBMENU DEMOGRAFI PEKERJAAN =============
+  await seedDemografiPekerjaan();
+
+  // // ====================== MENU INOVASI ==========================
+  // // ====================== SUBMENU AJUKAN IDE INOVATIF ===========
+  await seedAjukan();
+  // // ==================== SUBMENU DESA DIGITAL ====================
+  await seedDesaDigital();
+
+  // // ==================== SUBMENU LAYANAN ONLINE DESA ==========
+  await seedLayananOnlineDesa();
+
+  // // ==================== SUBMENU PROGRAM KREATIF ==========
+  await seedProgramKreatifDesa();
+  // // ==================== SUBMENU KOLABORASI INOVASI ==========
+  await seedKolaborasiInovasi();
+
+  // // ==================== SUBMENU INFO TEKNOLOGI TEPAT GUNA ==========
+  await seedInfoTeknologi();
+
+  // // ====================== MENU LINGKUNGAN ==========================
+  // // ==================== SUBMENU PENGELOLAAN SAMPAH ==========
+  await seedPengelolaanSampah();
+
+  // // ==================== SUBMENU PROGRAM PENGHIJAUAN ==========
+  await seedProgramPenghijauan();
+
+  // // ==================== SUBMENU DATA LINGKUNGAN DESA ==========
+  await seedDataLingkunganDesa();
+
+  // // =========== SUBMENU GOTONG ROYONG ===========
+  await seedDataGotongRoyong();
+
+  // // =========== SUBMENU EDUKASI LINGKUNGAN ===========
+  await seedEdukasiLingkungan();
+
+  // // =========== SUBMENU KONSERVASI ADAT BALI ===========
+  await seedKonservasiAdatBali();
+
+  // // ====================== MENU PENDIDIKAN ==========================
+  // // =========== SUBMENU INFO SEKOLAH =====================
+  await seedInfoSekolah();
+
+  // // =========== SUBMENU PROGRAM PENDIDIKAN ANAK =====================
+
+  await seedInfoProgramPendidikan();
+
+  // // =========== SUBMENU BIMBINGAN BELAJAR DESA =====================
+  await seedBimbinganBelajar();
+
+  // // =========== SUBMENU PENDIDIKAN NON FORMAL =====================
+  await seedPendidikanNonFormal();
+  // // =========== SUBMENU PERPUSTAKAAN DIGITAL =====================
+  await seedDataPerpustakaan();
+
+  // =========== SUBMENU DATA PENDIDIKAN =====================
+  await seedDataPendidikan();
 })()
   .then(() => prisma.$disconnect())
   .catch((e) => {

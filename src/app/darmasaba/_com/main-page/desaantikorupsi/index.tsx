@@ -2,7 +2,16 @@
 'use client'
 import korupsiState from "@/app/admin/(dashboard)/_state/landing-page/desa-anti-korupsi";
 import colors from "@/con/colors";
-import { Button, Center, Container, Flex, Paper, SimpleGrid, Stack, Text } from "@mantine/core";
+import {
+  Button,
+  Center,
+  Container,
+  Flex,
+  Paper,
+  SimpleGrid,
+  Stack,
+  Text
+} from "@mantine/core";
 import { IconClipboardText } from "@tabler/icons-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -11,7 +20,6 @@ import { useProxy } from "valtio/utils";
 function DesaAntiKorupsi() {
   const state = useProxy(korupsiState);
   const [loading, setLoading] = useState(false);
- 
 
   useEffect(() => {
     const loadData = async () => {
@@ -19,30 +27,64 @@ function DesaAntiKorupsi() {
         setLoading(true);
         await state.desaAntikorupsi.findMany.load();
       } catch (error) {
-        console.error('Error loading data:', error);
+        console.error("Error loading data:", error);
       } finally {
         setLoading(false);
       }
-    }
+    };
     loadData();
-  }, [])
+  }, []);
 
   const data = (state.desaAntikorupsi.findMany.data || []).slice(0, 6);
+
   return (
-    <Stack gap={"0"} bg={colors.Bg} p={"sm"} my={"xs"}>
-      <Container w={{ base: "100%", md: "80%" }} p={"md"} >
+    <Stack gap="0" bg={colors.Bg} p="sm" my="xs">
+      {/* ===================== HEADER ===================== */}
+      <Container w={{ base: "100%", md: "80%" }} p="md">
         <Center>
-          <Text fw={"bold"} c={colors["blue-button"]} fz={{ base: "1.8rem", md: "3.4rem" }}>Desa Anti Korupsi</Text>
+          <Text
+            fw={700}
+            ta="center"
+            c={colors["blue-button"]}
+            fz={{ base: "1.8rem", md: "3.2rem" }}
+            lh={{ base: "2.2rem", md: "3.4rem" }}
+          >
+            Desa Anti Korupsi
+          </Text>
         </Center>
-        <Text ta={"center"} fz={{ base: "1rem", md: "1.3rem" }}>Desa antikorupsi mendorong pemerintahan jujur dan transparan. Keuangan desa dikelola terbuka dengan melibatkan warga mengawasi anggaran, sehingga digunakan tepat sasaran sesuai kebutuhan.</Text>
-        <Center py={20}>
-          <Button radius={"lg"} fz={"h4"} bg={colors["blue-button"]} component={Link} href={"/darmasaba/desa-anti-korupsi/detail"}>Selengkapnya</Button>
+
+        <Text
+          ta="center"
+          c="black"
+          fz={{ base: "1rem", md: "1.25rem" }}
+          lh={{ base: "1.5rem", md: "1.8rem" }}
+          mt="sm"
+        >
+          Desa antikorupsi mendorong pemerintahan jujur dan transparan.
+          Keuangan desa dikelola secara terbuka dengan melibatkan warga
+          dalam pengawasan anggaran, sehingga digunakan tepat sasaran dan
+          sesuai kebutuhan masyarakat.
+        </Text>
+
+        <Center py={25}>
+          <Button
+            radius="lg"
+            fz={{ base: "md", md: "lg" }}
+            bg={colors["blue-button"]}
+            component={Link}
+            href="/darmasaba/desa-anti-korupsi/detail"
+            style={{ paddingInline: "2rem" }}
+          >
+            Selengkapnya
+          </Button>
         </Center>
       </Container>
+
+      {/* ===================== LIST ===================== */}
       <Container w="100%" maw="80rem" px="md">
         {loading ? (
           <Center mih={200}>
-            <Text fz="lg">Memuat Data...</Text>
+            <Text fz={{ base: "md", md: "lg" }}>Memuat Data...</Text>
           </Center>
         ) : (
           <SimpleGrid
@@ -64,26 +106,35 @@ function DesaAntiKorupsi() {
                   <IconClipboardText
                     color={colors["blue-button"]}
                     size={40}
-                    style={{ flexShrink: 0 }} // biar icon nggak ketekan
+                    style={{ flexShrink: 0 }}
                   />
-                  <Stack gap={2} style={{ flex: 1, minWidth: 0 }}>
+
+                  <Stack gap={6} style={{ flex: 1, minWidth: 0 }}>
+                    {/* Title */}
                     <Text
-                      fz={{ base: "sm", sm: "md", md: "lg", lg: "xl" }} // lebih besar di desktop
+                      fw={700}
                       c={colors["blue-button"]}
-                      fw={600}
-                      style={{ wordBreak: "break-word", whiteSpace: "normal" }}
+                      fz={{ base: "1rem", sm: "1.1rem", md: "1.25rem" }}
+                      lh={{ base: "1.3rem", md: "1.5rem" }}
+                      style={{
+                        wordBreak: "break-word",
+                        whiteSpace: "normal"
+                      }}
                     >
                       {v.kategori?.name || "Kategori"}
                     </Text>
+
+                    {/* Description */}
                     <Text
                       dangerouslySetInnerHTML={{
-                        __html: v.name || "Name",
+                        __html: v.name || "Name"
                       }}
-                      fz={{ base: "sm", sm: "md", md: "lg", lg: "xl" }} // sama, scaling responsif
                       c="dark"
+                      fz={{ base: "0.9rem", sm: "1rem", md: "1.15rem" }}
+                      lh={{ base: "1.3rem", md: "1.6rem" }}
                       style={{
                         wordBreak: "break-word",
-                        whiteSpace: "normal",
+                        whiteSpace: "normal"
                       }}
                     />
                   </Stack>
@@ -91,7 +142,6 @@ function DesaAntiKorupsi() {
               </Paper>
             ))}
           </SimpleGrid>
-
         )}
       </Container>
     </Stack>

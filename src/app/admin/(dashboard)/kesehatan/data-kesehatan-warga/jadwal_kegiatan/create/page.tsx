@@ -24,6 +24,25 @@ function CreateJadwalKegiatan() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Helper function to check if HTML content is empty
+  const isHtmlEmpty = (html: string) => {
+    // Remove all HTML tags and check if there's any text content
+    const textContent = html.replace(/<[^>]*>/g, '').trim();
+    return textContent === '';
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      stateJadwalKegiatan.create.form.content?.trim() !== '' &&
+      stateJadwalKegiatan.create.form.informasiJadwalKegiatan.name?.trim() !== '' &&
+      stateJadwalKegiatan.create.form.informasiJadwalKegiatan.tanggal?.trim() !== '' &&
+      stateJadwalKegiatan.create.form.informasiJadwalKegiatan.waktu?.trim() !== '' &&
+      stateJadwalKegiatan.create.form.informasiJadwalKegiatan.lokasi?.trim() !== '' &&
+      !isHtmlEmpty(stateJadwalKegiatan.create.form.deskripsiJadwalKegiatan.deskripsi)
+    );
+  };
+
   const resetForm = () => {
     stateJadwalKegiatan.create.form = {
       content: '',
@@ -65,7 +84,7 @@ function CreateJadwalKegiatan() {
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md" component="form" onSubmit={handleSubmit}>
+    <Box px={{ base: 0, md: 'lg' }} py="xs" component="form" onSubmit={handleSubmit}>
       {/* Header */}
       <Group mb="md">
         <Button
@@ -198,8 +217,11 @@ function CreateJadwalKegiatan() {
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}

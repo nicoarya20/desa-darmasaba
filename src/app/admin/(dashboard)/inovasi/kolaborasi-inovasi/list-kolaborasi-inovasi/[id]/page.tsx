@@ -41,7 +41,7 @@ function DetailKolaborasiInovasi() {
   const data = kolaborasiState.findUnique.data;
 
   return (
-    <Box py={10}>
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Tombol kembali */}
       <Button
         variant="subtle"

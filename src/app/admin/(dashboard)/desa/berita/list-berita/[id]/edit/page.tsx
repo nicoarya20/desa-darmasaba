@@ -9,6 +9,8 @@ import {
   ActionIcon,
   Box,
   Button,
+  Card,
+  Grid,
   Group,
   Image,
   Paper,
@@ -17,7 +19,7 @@ import {
   Text,
   TextInput,
   Title,
-  Loader
+  Loader,
 } from "@mantine/core";
 import { Dropzone } from "@mantine/dropzone";
 import {
@@ -25,19 +27,51 @@ import {
   IconPhoto,
   IconUpload,
   IconX,
+  IconVideo,
+  IconTrash,
 } from "@tabler/icons-react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useProxy } from "valtio/utils";
+import { convertYoutubeUrlToEmbed } from '@/app/admin/(dashboard)/desa/gallery/lib/youtube-utils';
+
+interface ExistingImage {
+  id: string;
+  link: string;
+  name: string;
+}
+
+interface BeritaData {
+  id: string;
+  judul: string;
+  deskripsi: string;
+  content: string;
+  kategoriBeritaId: string | null;
+  imageId: string | null;
+  image?: { link: string } | null;
+  images?: ExistingImage[];
+  linkVideo?: string | null;
+}
 
 function EditBerita() {
   const beritaState = useProxy(stateDashboardBerita);
   const router = useRouter();
   const params = useParams();
 
+  // Featured image state
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
+  
+  // Gallery images state
+  const [existingGalleryImages, setExistingGalleryImages] = useState<ExistingImage[]>([]);
+  const [galleryFiles, setGalleryFiles] = useState<File[]>([]);
+  const [galleryPreviews, setGalleryPreviews] = useState<string[]>([]);
+  
+  // YouTube link state
+  const [youtubeLink, setYoutubeLink] = useState('');
+  const [originalYoutubeLink, setOriginalYoutubeLink] = useState('');
+
   const [formData, setFormData] = useState({
     judul: "",
     deskripsi: "",
@@ -57,7 +91,24 @@ function EditBerita() {
     imageUrl: ""
   });
 
-  // Load kategori + berita
+  // Helper function to check if HTML content is empty
+  const isHtmlEmpty = (html: string) => {
+    const textContent = html.replace(/<[^>]*>/g, '').trim();
+    return textContent === '';
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      formData.judul?.trim() !== '' &&
+      formData.kategoriBeritaId !== '' &&
+      !isHtmlEmpty(formData.deskripsi) &&
+      (file !== null || originalData.imageId !== '') &&
+      !isHtmlEmpty(formData.content)
+    );
+  };
+
+  // Load data
   useEffect(() => {
     beritaState.kategoriBerita.findMany.load();
 
@@ -66,7 +117,7 @@ function EditBerita() {
       if (!id) return;
 
       try {
-        const data = await stateDashboardBerita.berita.edit.load(id);
+        const data = await stateDashboardBerita.berita.edit.load(id) as BeritaData | null;
         if (data) {
           setFormData({
             judul: data.judul || "",
@@ -88,6 +139,17 @@ function EditBerita() {
           if (data?.image?.link) {
             setPreviewImage(data.image.link);
           }
+
+          // Load gallery images
+          if (data?.images && data.images.length > 0) {
+            setExistingGalleryImages(data.images);
+          }
+
+          // Load YouTube link
+          if (data?.linkVideo) {
+            setYoutubeLink(data.linkVideo);
+            setOriginalYoutubeLink(data.linkVideo);
+          }
         }
       } catch (error) {
         console.error("Error loading berita:", error);
@@ -102,15 +164,74 @@ function EditBerita() {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
+  const handleGalleryDrop = (files: File[]) => {
+    const maxImages = 10;
+    const currentCount = existingGalleryImages.length + galleryFiles.length;
+    const availableSlots = maxImages - currentCount;
+    
+    if (availableSlots <= 0) {
+      toast.warn('Maksimal 10 gambar untuk galeri');
+      return;
+    }
+
+    const newFiles = files.slice(0, availableSlots);
+    
+    if (newFiles.length === 0) {
+      toast.warn('Tidak ada slot tersisa untuk gambar galeri');
+      return;
+    }
+
+    setGalleryFiles([...galleryFiles, ...newFiles]);
+    
+    const newPreviews = newFiles.map((f) => URL.createObjectURL(f));
+    setGalleryPreviews([...galleryPreviews, ...newPreviews]);
+  };
+
+  const removeGalleryImage = (index: number, isExisting: boolean = false) => {
+    if (isExisting) {
+      setExistingGalleryImages(existingGalleryImages.filter((_, i) => i !== index));
+    } else {
+      setGalleryFiles(galleryFiles.filter((_, i) => i !== index));
+      setGalleryPreviews(galleryPreviews.filter((_, i) => i !== index));
+    }
+  };
+
   const handleSubmit = async () => {
+    if (!formData.judul?.trim()) {
+      toast.error('Judul wajib diisi');
+      return;
+    }
+
+    if (!formData.kategoriBeritaId) {
+      toast.error('Kategori wajib dipilih');
+      return;
+    }
+
+    if (isHtmlEmpty(formData.deskripsi)) {
+      toast.error('Deskripsi singkat wajib diisi');
+      return;
+    }
+
+    if (!file && !originalData.imageId) {
+      toast.error('Gambar utama wajib dipilih');
+      return;
+    }
+
+    if (isHtmlEmpty(formData.content)) {
+      toast.error('Konten wajib diisi');
+      return;
+    }
+
     try {
       setIsSubmitting(true);
-      // Update global state hanya sekali di sini
+
+      // Update global state
       beritaState.berita.edit.form = {
         ...beritaState.berita.edit.form,
         ...formData,
       };
 
+      // Upload new featured image if changed
       if (file) {
         const res = await ApiFetch.api.fileStorage.create.post({
           file,
@@ -119,11 +240,32 @@ function EditBerita() {
         const uploaded = res.data?.data;
 
         if (!uploaded?.id) {
-          return toast.error("Gagal upload gambar");
+          return toast.error("Gagal upload gambar utama");
         }
 
         beritaState.berita.edit.form.imageId = uploaded.id;
       }
+
+      // Upload new gallery images
+      const newGalleryIds: string[] = [];
+      for (const galleryFile of galleryFiles) {
+        const galleryRes = await ApiFetch.api.fileStorage.create.post({
+          file: galleryFile,
+          name: galleryFile.name,
+        });
+        const galleryUploaded = galleryRes.data?.data;
+        if (galleryUploaded?.id) {
+          newGalleryIds.push(galleryUploaded.id);
+        }
+      }
+
+      // Combine existing (not removed) and new gallery images
+      const remainingExistingIds = existingGalleryImages.map(img => img.id);
+      beritaState.berita.edit.form.imageIds = [...remainingExistingIds, ...newGalleryIds];
+
+      // Set YouTube link
+      const embedLink = convertYoutubeUrlToEmbed(youtubeLink);
+      beritaState.berita.edit.form.linkVideo = embedLink || '';
 
       await beritaState.berita.edit.update();
       toast.success("Berita berhasil diperbarui!");
@@ -146,11 +288,14 @@ function EditBerita() {
     });
     setPreviewImage(originalData.imageUrl || null);
     setFile(null);
+    setYoutubeLink(originalYoutubeLink);
     toast.info("Form dikembalikan ke data awal");
   };
 
+  const embedLink = convertYoutubeUrlToEmbed(youtubeLink);
+
   return (
-    <Box px={{ base: "sm", md: "lg" }} py="md">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Header */}
       <Group mb="md">
         <Button
@@ -176,6 +321,7 @@ function EditBerita() {
         style={{ border: "1px solid #e0e0e0" }}
       >
         <Stack gap="md">
+          {/* Judul */}
           <TextInput
             label="Judul"
             placeholder="Masukkan judul"
@@ -184,6 +330,7 @@ function EditBerita() {
             required
           />
 
+          {/* Kategori */}
           <Select
             value={formData.kategoriBeritaId}
             onChange={(val) => handleChange("kategoriBeritaId", val || "")}
@@ -198,9 +345,9 @@ function EditBerita() {
             clearable
             searchable
             required
-            error={!formData.kategoriBeritaId ? "Pilih kategori" : undefined}
           />
 
+          {/* Deskripsi */}
           <Box>
             <Text fz="sm" fw="bold">
               Deskripsi Singkat
@@ -213,11 +360,10 @@ function EditBerita() {
             />
           </Box>
 
-
-          {/* Upload Gambar */}
+          {/* Featured Image */}
           <Box>
             <Text fw="bold" fz="sm" mb={6}>
-              Gambar Berita
+              Gambar Utama (Featured)
             </Text>
             <Dropzone
               onDrop={(files) => {
@@ -231,17 +377,13 @@ function EditBerita() {
                 toast.error("File tidak valid, gunakan format gambar")
               }
               maxSize={5 * 1024 ** 2}
-              accept={{ "image/*": [] }}
+              accept={{ "image/*": ['.jpeg', '.jpg', '.png', '.webp'] }}
               radius="md"
               p="xl"
             >
               <Group justify="center" gap="xl" mih={180}>
                 <Dropzone.Accept>
-                  <IconUpload
-                    size={48}
-                    color={colors["blue-button"]}
-                    stroke={1.5}
-                  />
+                  <IconUpload size={48} color={colors["blue-button"]} stroke={1.5} />
                 </Dropzone.Accept>
                 <Dropzone.Reject>
                   <IconX size={48} color="red" stroke={1.5} />
@@ -249,14 +391,6 @@ function EditBerita() {
                 <Dropzone.Idle>
                   <IconPhoto size={48} color="#868e96" stroke={1.5} />
                 </Dropzone.Idle>
-                <Stack gap="xs" align="center">
-                  <Text size="md" fw={500}>
-                    Seret gambar atau klik untuk memilih file
-                  </Text>
-                  <Text size="sm" c="dimmed">
-                    Maksimal 5MB, format gambar .png, .jpg, .jpeg, webp
-                  </Text>
-                </Stack>
               </Group>
             </Dropzone>
 
@@ -285,12 +419,142 @@ function EditBerita() {
                     setPreviewImage(null);
                     setFile(null);
                   }}
-                  style={{
-                    boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
-                  }}
+                  style={{ boxShadow: '0 2px 6px rgba(0,0,0,0.15)' }}
                 >
                   <IconX size={14} />
                 </ActionIcon>
+              </Box>
+            )}
+          </Box>
+
+          {/* Gallery Images */}
+          <Box>
+            <Text fw="bold" fz="sm" mb={6}>
+              Galeri Gambar (Opsional - Maksimal 10)
+            </Text>
+            <Dropzone
+              onDrop={handleGalleryDrop}
+              onReject={() => toast.error("File tidak valid, gunakan format gambar")}
+              maxSize={5 * 1024 ** 2}
+              accept={{ "image/*": ['.jpeg', '.jpg', '.png', '.webp'] }}
+              radius="md"
+              p="md"
+              multiple
+            >
+              <Group justify="center" gap="xl" mih={120}>
+                <Dropzone.Accept>
+                  <IconUpload size={40} color={colors["blue-button"]} stroke={1.5} />
+                </Dropzone.Accept>
+                <Dropzone.Reject>
+                  <IconX size={40} color="red" stroke={1.5} />
+                </Dropzone.Reject>
+                <Dropzone.Idle>
+                  <IconPhoto size={40} color="#868e96" stroke={1.5} />
+                </Dropzone.Idle>
+              </Group>
+              <Text ta="center" mt="sm" size="xs" color="dimmed">
+                Seret gambar untuk menambahkan ke galeri
+              </Text>
+            </Dropzone>
+
+            {/* Existing Gallery Images */}
+            {existingGalleryImages.length > 0 && (
+              <Box mt="sm">
+                <Text fz="xs" fw="bold" mb={6} c="dimmed">
+                  Gambar Existing ({existingGalleryImages.length})
+                </Text>
+                <Grid gutter="sm">
+                  {existingGalleryImages.map((img, index) => (
+                    <Grid.Col span={4} key={img.id}>
+                      <Card p="xs" radius="md" withBorder>
+                        <Image src={img.link} alt={img.name} radius="sm" height={100} fit="cover" />
+                        <ActionIcon
+                          variant="filled"
+                          color="red"
+                          radius="xl"
+                          size="sm"
+                          pos="absolute"
+                          top={5}
+                          right={5}
+                          onClick={() => removeGalleryImage(index, true)}
+                          style={{ boxShadow: '0 2px 6px rgba(0,0,0,0.15)' }}
+                        >
+                          <IconTrash size={14} />
+                        </ActionIcon>
+                      </Card>
+                    </Grid.Col>
+                  ))}
+                </Grid>
+              </Box>
+            )}
+
+            {/* New Gallery Images */}
+            {galleryPreviews.length > 0 && (
+              <Box mt="sm">
+                <Text fz="xs" fw="bold" mb={6} c="dimmed">
+                  Gambar Baru ({galleryPreviews.length})
+                </Text>
+                <Grid gutter="sm">
+                  {galleryPreviews.map((preview, index) => (
+                    <Grid.Col span={4} key={index}>
+                      <Card p="xs" radius="md" withBorder>
+                        <Image src={preview} alt={`New ${index}`} radius="sm" height={100} fit="cover" />
+                        <ActionIcon
+                          variant="filled"
+                          color="red"
+                          radius="xl"
+                          size="sm"
+                          pos="absolute"
+                          top={5}
+                          right={5}
+                          onClick={() => removeGalleryImage(index, false)}
+                          style={{ boxShadow: '0 2px 6px rgba(0,0,0,0.15)' }}
+                        >
+                          <IconTrash size={14} />
+                        </ActionIcon>
+                      </Card>
+                    </Grid.Col>
+                  ))}
+                </Grid>
+              </Box>
+            )}
+          </Box>
+
+          {/* YouTube Video */}
+          <Box>
+            <Text fw="bold" fz="sm" mb={6}>
+              Link Video YouTube (Opsional)
+            </Text>
+            <TextInput
+              placeholder="https://www.youtube.com/watch?v=..."
+              value={youtubeLink}
+              onChange={(e) => setYoutubeLink(e.currentTarget.value)}
+              leftSection={<IconVideo size={18} />}
+              rightSection={
+                youtubeLink && (
+                  <ActionIcon
+                    variant="subtle"
+                    color="gray"
+                    onClick={() => setYoutubeLink('')}
+                  >
+                    <IconX size={18} />
+                  </ActionIcon>
+                )
+              }
+            />
+            {embedLink && (
+              <Box mt="sm" pos="relative">
+                <iframe
+                  style={{
+                    borderRadius: 10,
+                    width: '100%',
+                    height: 250,
+                    border: '1px solid #ddd',
+                  }}
+                  src={embedLink}
+                  title="Preview Video"
+                  allowFullScreen
+                />
               </Box>
             )}
           </Box>
@@ -308,9 +572,8 @@ function EditBerita() {
             />
           </Box>
 
-          {/* Action */}
+          {/* Action Buttons */}
           <Group justify="right">
-            {/* Tombol Batal */}
             <Button
               variant="outline"
               color="gray"
@@ -320,14 +583,15 @@ function EditBerita() {
             >
               Batal
             </Button>
-
-            {/* Tombol Simpan */}
             <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}

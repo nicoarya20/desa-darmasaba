@@ -3,11 +3,11 @@ import pengelolaanSampahState from '@/app/admin/(dashboard)/_state/lingkungan/pe
 import colors from '@/con/colors';
 import { Box, Center, Flex, Group, Pagination, Paper, SimpleGrid, Skeleton, Stack, Text, TextInput } from '@mantine/core';
 import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
-import { Icon, IconChartLine, IconClipboardTextFilled, IconLeaf, IconRecycle, IconRoute, IconScale, IconSearch, IconTent, IconTrashFilled, IconTrophy, IconTruckFilled } from '@tabler/icons-react';
+import { Icon, IconAlertTriangle, IconAmbulance, IconBook, IconBuilding, IconBuildingCommunity, IconCash, IconChartLine, IconChristmasTreeFilled, IconClipboard, IconDroplet, IconFileText, IconFiretruck, IconFirstAidKit, IconHome, IconHomeEco, IconHospital, IconInfoCircle, IconLeaf, IconLifebuoy, IconMessageReport, IconPhoneCall, IconRecycle, IconRoute, IconRun, IconScale, IconSchool, IconSearch, IconShield, IconShieldFilled, IconShoppingCart, IconStethoscope, IconTent, IconTrash, IconTree, IconTrendingUp, IconTrophy, IconTruck, IconUsers } from '@tabler/icons-react';
+import dynamic from 'next/dynamic';
 import React, { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import BackButton from '../../desa/layanan/_com/BackButto';
-import dynamic from 'next/dynamic';
 
 // Dynamically import the map component to avoid SSR issues with Leaflet
 const LeafletMultiMarkerMap = dynamic(
@@ -21,7 +21,7 @@ function Page() {
   const state2 = useProxy(pengelolaanSampahState.keteranganSampah)
 
   const [search, setSearch] = useState('')
-  const [debouncedSearch] = useDebouncedValue(search, 500);
+  const [debouncedSearch] = useDebouncedValue(search, 1000);
 
   const {
     data,
@@ -42,16 +42,51 @@ function Page() {
   }, [page, debouncedSearch])
 
   const iconMap: Record<string, Icon> = {
-    ekowisata: IconLeaf,
-    kompetisi: IconTrophy,
-    wisata: IconTent,
-    ekonomi: IconChartLine,
-    sampah: IconRecycle,
-    truck: IconTruckFilled,
-    scale: IconScale,
-    clipboard: IconClipboardTextFilled,
-    trash: IconTrashFilled,
-  };
+  ekowisata: IconLeaf,
+  kompetisi: IconTrophy,
+  wisata: IconTent,
+  ekonomi: IconChartLine,
+  sampah: IconRecycle,
+  truck: IconTruck,
+  scale: IconScale,
+  clipboard: IconClipboard,
+  trash: IconTrash,
+  lingkunganSehat: IconHomeEco,
+  sumberOksigen: IconChristmasTreeFilled,
+  ekonomiBerkelanjutan: IconTrendingUp,
+  mencegahBencana: IconShieldFilled,
+  rumah: IconHome,
+  pohon: IconTree,
+  air: IconDroplet,
+  bantuan: IconCash,
+  pelatihan: IconSchool,
+  subsidi: IconShoppingCart,
+  layananKesehatan: IconHospital,
+
+  // ===== Keamanan & Darurat =====
+  polisi: IconShieldFilled,
+  ambulans: IconAmbulance,
+  pemadam: IconFiretruck,
+  darurat: IconAlertTriangle,
+  sar: IconLifebuoy,
+  evakuasi: IconRun,
+  keamanan: IconShield,
+  teleponDarurat: IconPhoneCall,
+
+  // ===== Kesehatan =====
+  rumahSakit: IconHospital,
+  puskesmas: IconFirstAidKit,
+  klinik: IconStethoscope,
+
+  // ===== Pemerintahan =====
+  bangunan: IconBuilding,
+  kantorDesa: IconBuildingCommunity,
+  administrasi: IconFileText,
+  informasi: IconInfoCircle,
+  pengaduan: IconMessageReport,
+  layananPublik: IconUsers,
+  book: IconBook
+};
 
   if (state.findMany.loading || !data) {
     return (

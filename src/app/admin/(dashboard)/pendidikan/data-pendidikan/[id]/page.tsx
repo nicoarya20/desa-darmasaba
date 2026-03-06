@@ -28,6 +28,14 @@ export default function EditDataPendidikan() {
     jumlah: '',
   });
 
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      formData.name?.trim() !== '' &&
+      formData.jumlah?.trim() !== ''
+    );
+  };
+
   // Load data saat mount
   useEffect(() => {
     if (id) {
@@ -76,7 +84,7 @@ export default function EditDataPendidikan() {
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'xl' }} py="md">
+   <Box px={{ base: 0, md: 'lg' }} py="xs">
       <Group mb="md" gap="sm">
         <Button variant="subtle" onClick={() => router.back()} radius="md">
           <IconArrowBack size={20} stroke={2} />
@@ -127,8 +135,11 @@ export default function EditDataPendidikan() {
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}

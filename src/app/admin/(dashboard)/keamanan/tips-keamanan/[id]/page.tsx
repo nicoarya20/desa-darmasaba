@@ -41,7 +41,7 @@ function DetailTipsKeamanan() {
   const data = stateKeamanan.findUnique.data;
 
   return (
-    <Box py={10}>
+     <Box px={{ base: 0, md: 'xs' }} py="xs">
       <Button
         variant="subtle"
         onClick={() => router.back()}
@@ -53,7 +53,7 @@ function DetailTipsKeamanan() {
 
       <Paper
         withBorder
-        w={{ base: "100%", md: "60%" }}
+        w={{ base: "100%", md: "70%" }}
         bg={colors['white-1']}
         p="lg"
         radius="md"
@@ -73,12 +73,14 @@ function DetailTipsKeamanan() {
 
               <Box>
                 <Text fz="lg" fw="bold">Deskripsi</Text>
-                <Text
+                <Box pl={8}>
+                  <Text
                   fz="md"
                   c="dimmed"
                   style={{ wordBreak: "break-word", whiteSpace: "normal" }}
                   dangerouslySetInnerHTML={{ __html: data.deskripsi || '-' }}
                 />
+                </Box>
               </Box>
 
               <Box>

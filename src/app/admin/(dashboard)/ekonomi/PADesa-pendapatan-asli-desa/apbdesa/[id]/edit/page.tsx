@@ -51,6 +51,17 @@ function EditAPBDesa() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      formData.tahun?.trim() !== '' &&
+      Number(formData.tahun) > 0 &&
+      formData.pendapatanIds.length > 0 &&
+      formData.belanjaIds.length > 0 &&
+      formData.pembiayaanIds.length > 0
+    );
+  };
+
   // ==================== LOAD DATA ====================
   useEffect(() => {
     const loadAPBdesa = async () => {
@@ -139,7 +150,7 @@ function EditAPBDesa() {
   }
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 0, md: 'xs' }} py="xs">
       {/* Header */}
       <Group mb="md">
         <Button
@@ -213,8 +224,11 @@ function EditAPBDesa() {
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}

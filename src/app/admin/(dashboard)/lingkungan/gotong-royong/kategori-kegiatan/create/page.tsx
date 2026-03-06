@@ -14,6 +14,11 @@ function CreateKategoriKegiatan() {
   const stateKategori = useProxy(gotongRoyongState.kategoriKegiatan)
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Check if form is valid
+  const isFormValid = () => {
+    return stateKategori.create.form.nama?.trim() !== '';
+  };
+
   useEffect(() => {
     stateKategori.findMany.load();
   }, []);
@@ -39,7 +44,7 @@ function CreateKategoriKegiatan() {
   }
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Header */}
       <Group mb="md" align="center">
         <Button variant="subtle" p="xs" radius="md" onClick={() => router.back()}>
@@ -84,8 +89,11 @@ function CreateKategoriKegiatan() {
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}

@@ -6,13 +6,14 @@ import { IconEdit } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
 import stateDasarHukumPPID from '../../_state/ppid/dasar_hukum/dasarHukum';
+import DOMPurify from 'dompurify';
 
 function Page() {
-  const router = useRouter()
-  const listDasarHukum = useProxy(stateDasarHukumPPID)
+  const router = useRouter();
+  const listDasarHukum = useProxy(stateDasarHukumPPID);
   useShallowEffect(() => {
-    listDasarHukum.findById.load('1')
-  }, [])
+    listDasarHukum.findById.load('1');
+  }, []);
 
   if (listDasarHukum.findById.loading) {
     return (
@@ -40,15 +41,16 @@ function Page() {
             <Title order={3} c={colors['blue-button']}>Preview Dasar Hukum PPID</Title>
           </GridCol>
           <GridCol span={{ base: 12, md: 1 }}>
-              <Button
-                c="green"
-                variant="light"
-                leftSection={<IconEdit size={18} stroke={2} />}
-                radius="md"
-                onClick={() => router.push('/admin/ppid/dasar-hukum/edit')}
-              >
-                Edit
-              </Button>
+            <Button
+              w={{ base: '100%', md: "110%" }}
+              c="green"
+              variant="light"
+              leftSection={<IconEdit size={18} stroke={2} />}
+              radius="md"
+              onClick={() => router.push('/admin/ppid/dasar-hukum/edit')}
+            >
+              Edit
+            </Button>
           </GridCol>
         </Grid>
 
@@ -57,33 +59,39 @@ function Page() {
             <Grid>
               <GridCol span={12}>
                 <Center>
-                  <Image loading='lazy' src="/darmasaba-icon.png" w={{ base: 100, md: 150 }} alt="Logo PPID" />
+                  <Image loading="lazy" src="/darmasaba-icon.png" w={{ base: 100, md: 150 }} alt="Logo PPID" />
                 </Center>
               </GridCol>
               <GridCol span={12}>
-                <Text 
-                  ta="center" 
-                  fz={{ base: '1.5rem', md: '2rem' }} 
-                  fw="bold" 
+                <Title
+                  order={3}
+                  ta="center"
+                  lh={{ base: 1.15, md: 1.1 }}
+                  fw="bold"
                   c={colors['blue-button']}
-                  dangerouslySetInnerHTML={{ __html: listDasarHukum.findById.data.judul }} 
-                  style={{ wordBreak: "break-word", whiteSpace: "normal" }}
+                  dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(listDasarHukum.findById.data.judul) }}
+                  style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
                 />
               </GridCol>
             </Grid>
 
             <Divider my="xl" color={colors['blue-button']} />
 
-            <Box 
-              className="prose max-w-none"
-              dangerouslySetInnerHTML={{ __html: listDasarHukum.findById.data.content }}
-              style={{ wordBreak: "break-word", whiteSpace: "normal", fontSize: '1.1rem', lineHeight: 1.7, textAlign: 'justify' }}
+            <Text
+              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(listDasarHukum.findById.data.content) }}
+              style={{
+                wordBreak: 'break-word',
+                whiteSpace: 'normal',
+                fontSize: '1rem',
+                lineHeight: 1.55,
+                textAlign: 'justify',
+              }}
             />
           </Box>
         </Paper>
       </Stack>
     </Paper>
-  )
+  );
 }
 
 export default Page;

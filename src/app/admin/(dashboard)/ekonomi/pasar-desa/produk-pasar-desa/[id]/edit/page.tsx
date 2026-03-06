@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
+import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import pasarDesaState from '@/app/admin/(dashboard)/_state/ekonomi/pasar-desa/pasar-desa';
 import colors from '@/con/colors';
 import ApiFetch from '@/lib/api-fetch';
@@ -33,6 +34,7 @@ type FormData = {
   rating: number;
   kategoriId: string[];
   kontak: string;
+  deskripsi: string;
 };
 
 function EditPasarDesa() {
@@ -51,6 +53,7 @@ function EditPasarDesa() {
     rating: 0,
     kategoriId: [],
     kontak: '',
+    deskripsi: ''
   });
 
   const [originalData, setOriginalData] = useState({
@@ -62,7 +65,25 @@ function EditPasarDesa() {
     rating: 0,
     kategoriId: [],
     kontak: '',
+    deskripsi: ''
   });
+
+  // Helper function to check if HTML content is empty
+  const isHtmlEmpty = (html: string) => {
+    // Remove all HTML tags and check if there's any text content
+    const textContent = html.replace(/<[^>]*>/g, '').trim();
+    return textContent === '';
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      formData.nama?.trim() !== '' &&
+      formData.harga !== null &&
+      formData.harga > 0 &&
+      !isHtmlEmpty(formData.deskripsi)
+    );
+  };
 
   // load data awal
   useEffect(() => {
@@ -83,6 +104,7 @@ function EditPasarDesa() {
             rating: data.rating || 0,
             kategoriId: data.KategoriToPasar?.map((k: any) => k.kategoriId) || [],
             kontak: data.kontak || '',
+            deskripsi: data.deskripsi || ''
           });
           setOriginalData({
             nama: data.nama || '',
@@ -93,6 +115,7 @@ function EditPasarDesa() {
             rating: data.rating || 0,
             kategoriId: data.KategoriToPasar?.map((k: any) => k.kategoriId) || [],
             kontak: data.kontak || '',
+            deskripsi: data.deskripsi || ''
           });
           if (data.image?.link) setPreviewImage(data.image.link);
         }
@@ -120,12 +143,13 @@ function EditPasarDesa() {
       rating: originalData.rating,
       kategoriId: (originalData as any)?.KategoriToPasar?.map((k: any) => k.kategoriId) || [],
       kontak: originalData.kontak,
+      deskripsi: originalData.deskripsi
     });
     setPreviewImage(originalData.imageUrl || null);
     setFile(null);
     toast.info("Form dikembalikan ke data awal");
   };
-    
+
 
   const handleSubmit = async () => {
     try {
@@ -157,7 +181,7 @@ function EditPasarDesa() {
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 0, md: 'xs' }} py="xs">
       <Group mb="md">
         <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
           <IconArrowBack color={colors['blue-button']} size={24} />
@@ -316,6 +340,19 @@ function EditPasarDesa() {
             error={!formData.kategoriId.length ? 'Pilih minimal satu kategori' : undefined}
           />
 
+          {/* Input Deskripsi */}
+          <Box>
+            <Text fz="sm" fw="bold" mb={6}>
+              Deskripsi
+            </Text>
+            <EditEditor
+              value={formData.deskripsi}
+              onChange={(htmlContent) =>
+                setFormData((prev) => ({ ...prev, deskripsi: htmlContent }))
+              }
+            />
+          </Box>
+
           <Group justify="right">
             <Button
               variant="outline"
@@ -332,8 +369,11 @@ function EditPasarDesa() {
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}

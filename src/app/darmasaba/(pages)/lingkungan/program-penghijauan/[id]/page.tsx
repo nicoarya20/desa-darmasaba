@@ -4,10 +4,21 @@ import programPenghijauanState from '@/app/admin/(dashboard)/_state/lingkungan/p
 import { Box, Button, Paper, Skeleton, Stack, Text, ThemeIcon } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import {
-  IconArrowLeft, IconChartLine, IconChristmasTreeFilled, IconClipboard,
-  IconHomeEco, IconLeaf, IconRecycle, IconScale,
-  IconShieldFilled, IconTent, IconTrash,
-  IconTrendingUp, IconTrophy, IconTruck
+  IconAlertTriangle,
+  IconAmbulance,
+  IconArrowLeft, IconBook, IconBuilding, IconBuildingCommunity, IconCash, IconChartLine, IconChristmasTreeFilled, IconClipboard,
+  IconDroplet,
+  IconFileText,
+  IconFiretruck,
+  IconFirstAidKit,
+  IconHome,
+  IconHomeEco, IconHospital, IconInfoCircle, IconLeaf, IconLifebuoy, IconMessageReport, IconPhoneCall, IconRecycle, IconRun, IconScale,
+  IconSchool,
+  IconShield,
+  IconShieldFilled, IconShoppingCart, IconStethoscope, IconTent, IconTrash,
+  IconTree,
+  IconTrendingUp, IconTrophy, IconTruck,
+  IconUsers
 } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import React from 'react';
@@ -32,6 +43,37 @@ function Page() {
     sumberOksigen: IconChristmasTreeFilled,
     ekonomiBerkelanjutan: IconTrendingUp,
     mencegahBencana: IconShieldFilled,
+    rumah: IconHome,
+    pohon: IconTree,
+    air: IconDroplet,
+    bantuan: IconCash,
+    pelatihan: IconSchool,
+    subsidi: IconShoppingCart,
+    layananKesehatan: IconHospital,
+  
+    // ===== Keamanan & Darurat =====
+    polisi: IconShieldFilled,
+    ambulans: IconAmbulance,
+    pemadam: IconFiretruck,
+    darurat: IconAlertTriangle,
+    sar: IconLifebuoy,
+    evakuasi: IconRun,
+    keamanan: IconShield,
+    teleponDarurat: IconPhoneCall,
+  
+    // ===== Kesehatan =====
+    rumahSakit: IconHospital,
+    puskesmas: IconFirstAidKit,
+    klinik: IconStethoscope,
+  
+    // ===== Pemerintahan =====
+    bangunan: IconBuilding,
+    kantorDesa: IconBuildingCommunity,
+    administrasi: IconFileText,
+    informasi: IconInfoCircle,
+    pengaduan: IconMessageReport,
+    layananPublik: IconUsers,
+    book: IconBook
   };
 
   useShallowEffect(() => {

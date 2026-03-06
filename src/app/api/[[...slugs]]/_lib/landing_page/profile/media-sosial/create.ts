@@ -5,6 +5,7 @@ type FormCreate = {
   name: string;
   imageId: string;
   iconUrl: string;
+  icon: string;
 };
 
 export default async function mediaSosialCreate(context: Context) {
@@ -14,8 +15,9 @@ export default async function mediaSosialCreate(context: Context) {
     const result = await prisma.mediaSosial.create({
       data: {
         name: body.name,
-        imageId: body.imageId,
+        imageId: body.imageId || null,
         iconUrl: body.iconUrl,
+        icon: body.icon || null,
       },
       include: {
         image: true,
@@ -29,8 +31,6 @@ export default async function mediaSosialCreate(context: Context) {
     };
   } catch (error) {
     console.error("Error creating media sosial:", error);
-    throw new Error(
-      "Gagal membuat media sosial: " + (error as Error).message
-    );
+    throw new Error("Gagal membuat media sosial: " + (error as Error).message);
   }
 }

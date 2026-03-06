@@ -4,7 +4,7 @@ export default async function maskotDesaFindById(request: Request){
     const url = new URL(request.url);
     const pathSegments = url.pathname.split('/');
     const id = pathSegments[pathSegments.length - 1];
- 
+
     if (!id) {
       return Response.json({
         success: false,
@@ -20,16 +20,33 @@ export default async function maskotDesaFindById(request: Request){
         }, {status: 400})
       }
 
-      const data = await prisma.maskotDesa.findUnique({
-        where: { id },
-        include: {
-          images: {
-            include: {
-              image: true,
+      let data;
+
+      // Special handling for 'edit' - get the first/only record
+      if (id === 'edit') {
+        data = await prisma.maskotDesa.findFirst({
+          where: { isActive: true },
+          include: {
+            images: {
+              include: {
+                image: true,
+              }
+            }
+          },
+          orderBy: { createdAt: 'asc' } // Get the oldest one first
+        });
+      } else {
+        data = await prisma.maskotDesa.findUnique({
+          where: { id },
+          include: {
+            images: {
+              include: {
+                image: true,
+              }
             }
           }
-        }
-      })
+        })
+      }
 
       if(!data) {
         return Response.json({

@@ -1,7 +1,7 @@
 'use client'
 import { Box, Button, Group, Image, Paper, Skeleton, Stack, Text } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { IconArrowBack, IconEdit, IconX } from '@tabler/icons-react';
+import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
@@ -42,7 +42,7 @@ function DetailSDGSDesa() {
   const data = sdgsState.findUnique.data;
 
   return (
-    <Box py={10}>
+     <Box px={{ base: 0, md: 'xs' }} py="xs">
       <Button
         variant="subtle"
         onClick={() => router.back()}
@@ -54,7 +54,7 @@ function DetailSDGSDesa() {
 
       <Paper
         withBorder
-        w={{ base: '100%', md: '60%' }}
+        w={{ base: '100%', md: '70%' }}
         bg={colors['white-1']}
         p="lg"
         radius="md"
@@ -106,7 +106,7 @@ function DetailSDGSDesa() {
                     size="md"
                     disabled={sdgsState.delete.loading}
                   >
-                    <IconX size={20} />
+                    <IconTrash size={20} />
                   </Button>
 
                   <Button

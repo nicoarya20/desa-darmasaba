@@ -220,11 +220,34 @@ const roleState = proxy({
         isActive: true;
       };
     }>[],
+    page: 1,
+    totalPages: 1,
     loading: false,
-    async load() {
-      const res = await ApiFetch.api.role["findMany"].get();
-      if (res.status === 200) {
-        roleState.findMany.data = res.data?.data ?? [];
+    search: "",
+    load: async (page = 1, limit = 10, search = "") => {
+      roleState.findMany.loading = true; // ✅ Akses langsung via nama path
+      roleState.findMany.page = page;
+      roleState.findMany.search = search;
+
+      try {
+        const query: any = { page, limit };
+        if (search) query.search = search;
+
+        const res = await ApiFetch.api.role["findMany"].get({ query });
+
+        if (res.status === 200 && res.data?.success) {
+          roleState.findMany.data = res.data.data ?? [];
+          roleState.findMany.totalPages = res.data.totalPages ?? 1;
+        } else {
+          roleState.findMany.data = [];
+          roleState.findMany.totalPages = 1;
+        }
+      } catch (err) {
+        console.error("Gagal fetch role paginated:", err);
+        roleState.findMany.data = [];
+        roleState.findMany.totalPages = 1;
+      } finally {
+        roleState.findMany.loading = false;
       }
     },
   },

@@ -46,11 +46,17 @@ fs.mkdir(UPLOAD_DIR_IMAGE, {
 }).catch(() => {});
 
 const corsConfig = {
-  origin: "*",
-  methods: ["GET", "POST", "PATCH", "DELETE", "PUT"] as HTTPMethod[],
-  allowedHeaders: "*",
+  origin: [
+    "http://localhost:3000",
+    "http://localhost:3001",
+    "https://cld-dkr-desa-darmasaba-stg.wibudev.com",
+    "https://cld-dkr-staging-desa-darmasaba.wibudev.com",
+    "*", // Allow all origins in development
+  ],
+  methods: ["GET", "POST", "PATCH", "DELETE", "PUT", "OPTIONS"] as HTTPMethod[],
+  allowedHeaders: ["Content-Type", "Authorization", "*"],
   exposedHeaders: "*",
-  maxAge: 5,
+  maxAge: 86400, // 24 hours
   credentials: true,
 };
 
@@ -65,7 +71,7 @@ const Utils = new Elysia({
 }).get("/version", async () => {
   const packageJson = await fs.readFile(
     path.join(ROOT, "package.json"),
-    "utf-8"
+    "utf-8",
   );
   const version = JSON.parse(packageJson).version;
   return { version };
@@ -78,9 +84,9 @@ const ApiServer = new Elysia()
   .use(swagger({ path: "/api/docs" }))
   .use(
     staticPlugin({
-      assets: process.env.WIBU_UPLOAD_DIR,
+      assets: UPLOAD_DIR,
       prefix: "/uploads",
-    })
+    }),
   )
   .use(cors(corsConfig))
   .use(Utils)
@@ -127,9 +133,9 @@ const ApiServer = new Elysia()
           query: t.Optional(
             t.Object({
               size: t.Optional(t.Number()),
-            })
+            }),
           ),
-        }
+        },
       )
       .delete(
         "/img/:name",
@@ -143,7 +149,7 @@ const ApiServer = new Elysia()
           params: t.Object({
             name: t.String(),
           }),
-        }
+        },
       )
       .get(
         "/imgs",
@@ -161,9 +167,9 @@ const ApiServer = new Elysia()
               page: t.Number({ default: 1 }),
               count: t.Number({ default: 10 }),
               search: t.String({ default: "" }),
-            })
+            }),
           ),
-        }
+        },
       )
       .post(
         "/upl-img",
@@ -176,7 +182,7 @@ const ApiServer = new Elysia()
             title: t.String(),
             files: t.Files({ multiple: true }),
           }),
-        }
+        },
       )
       .post(
         "/upl-img-single",
@@ -192,7 +198,7 @@ const ApiServer = new Elysia()
             name: t.String(),
             file: t.File(),
           }),
-        }
+        },
       )
       .post(
         "/upl-csv-single",
@@ -204,7 +210,7 @@ const ApiServer = new Elysia()
             name: t.String(),
             file: t.File(),
           }),
-        }
+        },
       )
       .post(
         "/upl-csv",
@@ -215,8 +221,8 @@ const ApiServer = new Elysia()
           body: t.Object({
             files: t.Files(),
           }),
-        }
-      )
+        },
+      ),
   );
 
 export const GET = ApiServer.handle;

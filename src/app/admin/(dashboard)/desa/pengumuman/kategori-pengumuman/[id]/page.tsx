@@ -27,6 +27,13 @@ function EditKategoriPengumuman() {
   const [formData, setFormData] = useState({ name: '' });
   const [originalData, setOriginalData] = useState({ name: '' });
 
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      formData.name?.trim() !== ''
+    );
+  };
+
   // Load data awal sekali aja
   useEffect(() => {
     const loadKategori = async () => {
@@ -56,6 +63,11 @@ function EditKategoriPengumuman() {
   };
 
   const handleSubmit = async () => {
+    if (!formData.name?.trim()) {
+      toast.error('Nama kategori pengumuman wajib diisi');
+      return;
+    }
+    
     try {
       setIsSubmitting(true);
       // Update global state hanya di sini
@@ -84,7 +96,7 @@ function EditKategoriPengumuman() {
   
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Header */}
       <Group mb="md">
           <Button
@@ -134,8 +146,11 @@ function EditKategoriPengumuman() {
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}

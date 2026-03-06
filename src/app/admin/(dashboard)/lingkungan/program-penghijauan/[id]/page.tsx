@@ -6,12 +6,14 @@ import { useShallowEffect } from '@mantine/hooks';
 import {
   IconAlertTriangle,
   IconAmbulance,
-  IconArrowBack, IconBuilding, IconCash, IconChartLine, IconChristmasTreeFilled, IconClipboard,
+  IconArrowBack, IconBook, IconBuilding, IconBuildingCommunity, IconCash, IconChartLine, IconChristmasTreeFilled, IconClipboard,
   IconDroplet,
-  IconEdit, IconFiretruck, IconHome, IconHomeEco, IconHospital, IconLeaf, IconRecycle, IconScale,
+  IconEdit, IconFileText, IconFiretruck, IconFirstAidKit, IconHome, IconHomeEco, IconHospital, IconInfoCircle, IconLeaf, IconLifebuoy, IconMessageReport, IconPhoneCall, IconRecycle, IconRun, IconScale,
   IconSchool,
-  IconShieldFilled, IconShoppingCart, IconTent, IconTrash, IconTree, IconTrendingUp,
-  IconTrophy, IconTruck
+  IconShield,
+  IconShieldFilled, IconShoppingCart, IconStethoscope, IconTent, IconTrash, IconTree, IconTrendingUp,
+  IconTrophy, IconTruck,
+  IconUsers
 } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import React, { useState } from 'react';
@@ -28,31 +30,49 @@ function DetailProgramPenghijauan() {
 
   const iconMap: Record<string, React.FC<any>> = {
     ekowisata: IconLeaf,
-  kompetisi: IconTrophy,
-  wisata: IconTent,
-  ekonomi: IconChartLine,
-  sampah: IconRecycle,
-  truck: IconTruck,
-  scale: IconScale,
-  clipboard: IconClipboard,
-  trash: IconTrash,
-  lingkunganSehat: IconHomeEco,
-  sumberOksigen: IconChristmasTreeFilled,
-  ekonomiBerkelanjutan: IconTrendingUp,
-  mencegahBencana: IconShieldFilled,
-  rumah: IconHome,
-  pohon: IconTree,
-  air: IconDroplet,
-  bantuan: IconCash,
-  pelatihan: IconSchool,
-  subsidi: IconShoppingCart,
-  layananKesehatan: IconHospital,
-  polisi: IconShieldFilled,
-  ambulans: IconAmbulance,
-  pemadam: IconFiretruck,
-  rumahSakit: IconHospital,
-  bangunan: IconBuilding,
-  darurat: IconAlertTriangle
+    kompetisi: IconTrophy,
+    wisata: IconTent,
+    ekonomi: IconChartLine,
+    sampah: IconRecycle,
+    truck: IconTruck,
+    scale: IconScale,
+    clipboard: IconClipboard,
+    trash: IconTrash,
+    lingkunganSehat: IconHomeEco,
+    sumberOksigen: IconChristmasTreeFilled,
+    ekonomiBerkelanjutan: IconTrendingUp,
+    mencegahBencana: IconShieldFilled,
+    rumah: IconHome,
+    pohon: IconTree,
+    air: IconDroplet,
+    bantuan: IconCash,
+    pelatihan: IconSchool,
+    subsidi: IconShoppingCart,
+    layananKesehatan: IconHospital,
+
+    // ===== Keamanan & Darurat =====
+    polisi: IconShieldFilled,
+    ambulans: IconAmbulance,
+    pemadam: IconFiretruck,
+    darurat: IconAlertTriangle,
+    sar: IconLifebuoy,
+    evakuasi: IconRun,
+    keamanan: IconShield,
+    teleponDarurat: IconPhoneCall,
+
+    // ===== Kesehatan =====
+    rumahSakit: IconHospital,
+    puskesmas: IconFirstAidKit,
+    klinik: IconStethoscope,
+
+    // ===== Pemerintahan =====
+    bangunan: IconBuilding,
+    kantorDesa: IconBuildingCommunity,
+    administrasi: IconFileText,
+    informasi: IconInfoCircle,
+    pengaduan: IconMessageReport,
+    layananPublik: IconUsers,
+    book: IconBook
   };
 
   useShallowEffect(() => {
@@ -79,7 +99,7 @@ function DetailProgramPenghijauan() {
   const data = stateProgramPenghijauan.findUnique.data
 
   return (
-    <Box py={10}>
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Tombol kembali */}
       <Button
         variant="subtle"
@@ -93,7 +113,7 @@ function DetailProgramPenghijauan() {
       {/* Konten detail */}
       <Paper
         withBorder
-        w={{ base: "100%", md: "60%" }}
+        w={{ base: "100%", md: "70%" }}
         bg={colors['white-1']}
         p="lg"
         radius="md"
@@ -113,7 +133,7 @@ function DetailProgramPenghijauan() {
 
               <Box>
                 <Text fz="lg" fw="bold">Ikon Program</Text>
-                {iconMap[data?.icon]  ? (
+                {iconMap[data?.icon] ? (
                   <Box title={data?.icon}>
                     {React.createElement(iconMap[data.icon], { size: 28, color: colors['blue-button'] })}
                   </Box>
@@ -129,7 +149,9 @@ function DetailProgramPenghijauan() {
 
               <Box>
                 <Text fz="lg" fw="bold">Deskripsi</Text>
-                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data?.deskripsi || '-' }} />
+                <Box pl={5}>
+                  <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data?.deskripsi || '-' }} />
+                </Box>
               </Box>
 
               {/* Tombol aksi */}

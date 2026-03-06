@@ -19,6 +19,7 @@ import {
   Text,
   Title
 } from '@mantine/core';
+import { useDebouncedValue } from '@mantine/hooks';
 import { IconDeviceImac, IconPlus, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -45,69 +46,105 @@ function KolaborasiInovasi() {
 function ListKolaborasiInovasi({ search }: { search: string }) {
   const listState = useProxy(kolaborasiInovasiState);
   const router = useRouter();
-
+  const [debouncedSearch] = useDebouncedValue(search, 1000);
   const { data, loading, page, totalPages, load } = listState.findMany;
 
   useEffect(() => {
-    load(page, 10, search);
-  }, [page, search]);
+    load(page, 10, debouncedSearch);
+  }, [page, debouncedSearch]);
 
   const filteredData = data || [];
 
   if (loading || !data) {
     return (
-      <Stack py={10}>
+      <Stack py={{ base: 'xs', md: 'md' }}>
         <Skeleton height={600} radius="md" />
       </Stack>
     );
   }
 
+
   return (
-    <Box py={10}>
-      <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
-        <Group justify="space-between" mb="md">
-          <Title order={4}>Daftar Kolaborasi Inovasi</Title>
+    <Box py={{ base: 'xs', md: 'md' }}>
+      <Paper withBorder bg={colors['white-1']} p={{ base: 'sm', md: 'lg' }} shadow="md" radius="md">
+        <Group justify="space-between" mb={{ base: 'sm', md: 'md' }}>
+          <Title order={4} lh={1.2}>
+            Daftar Kolaborasi Inovasi
+          </Title>
           <Button
             leftSection={<IconPlus size={18} />}
             color="blue"
             variant="light"
-            onClick={() => router.push('/admin/inovasi/kolaborasi-inovasi/list-kolaborasi-inovasi/create')}
+            onClick={() =>
+              router.push('/admin/inovasi/kolaborasi-inovasi/list-kolaborasi-inovasi/create')
+            }
           >
             Tambah Baru
           </Button>
         </Group>
-        <Box style={{ overflowX: 'auto' }}>
-          <Table highlightOnHover>
+
+        {/* Desktop Table */}
+       <Box visibleFrom="md" style={{ overflowX: 'auto' }}>
+          <Table
+            highlightOnHover
+            miw={0}
+            style={{
+              tableLayout: 'fixed',
+              width: '100%',
+            }}
+          >
             <TableThead>
               <TableTr>
-                <TableTh style={{ width: '5%' }}>No</TableTh>
-                <TableTh style={{ width: '25%' }}>Nama Kolaborasi Inovasi</TableTh>
-                <TableTh style={{ width: '15%' }}>Tahun</TableTh>
-                <TableTh style={{ width: '35%' }}>Deskripsi Singkat</TableTh>
-                <TableTh style={{ width: '10%' }}>Aksi</TableTh>
+                <TableTh style={{ width: '5%' }}>
+                  <Text fz="xs" fw={600} lh={1.4} ta="center">
+                    No
+                  </Text>
+                </TableTh>
+                <TableTh style={{ width: '25%' }}>
+                  <Text fz="xs" fw={600} lh={1.4}>
+                    Nama Kolaborasi Inovasi
+                  </Text>
+                </TableTh>
+                <TableTh style={{ width: '15%' }}>
+                  <Text fz="xs" fw={600} lh={1.4} ta="center">
+                    Tahun
+                  </Text>
+                </TableTh>
+                <TableTh style={{ width: '35%' }}>
+                  <Text fz="xs" fw={600} lh={1.4}>
+                    Deskripsi Singkat
+                  </Text>
+                </TableTh>
+                <TableTh style={{ width: '10%' }}>
+                  <Text fz="xs" fw={600} lh={1.4} ta="center">
+                    Aksi
+                  </Text>
+                </TableTh>
               </TableTr>
             </TableThead>
             <TableTbody>
               {filteredData.length > 0 ? (
                 filteredData.map((item, index) => (
                   <TableTr key={item.id}>
-                    <TableTd>{index + 1}</TableTd>
-                    <TableTd>
-                      <Text fw={500} truncate="end" lineClamp={1}>
-                        {item.name}
+                    <TableTd ta="center">
+                      <Text fz="sm" fw={500} lh={1.45}>
+                        {index + 1}
                       </Text>
                     </TableTd>
                     <TableTd>
-                      <Text fz="sm" c="dimmed">
+                      <Text fz="sm" fw={500} lh={1.45} truncate="end" lineClamp={1}>
+                        {item.name}
+                      </Text>
+                    </TableTd>
+                    <TableTd ta="center">
+                      <Text fz="sm" fw={500} lh={1.45}>
                         {item.tahun}
                       </Text>
                     </TableTd>
                     <TableTd>
-                      <Text fz="sm" truncate="end" lineClamp={1} c="dimmed">
-                        {item.slug}
-                      </Text>
+                      <Text dangerouslySetInnerHTML={{ __html: item.slug }} fz="sm" fw={500} lh={1.45} truncate="end" lineClamp={1} />
                     </TableTd>
-                    <TableTd>
+                    <TableTd ta="center">
                       <Button
                         size="xs"
                         radius="md"
@@ -115,7 +152,9 @@ function ListKolaborasiInovasi({ search }: { search: string }) {
                         color="blue"
                         leftSection={<IconDeviceImac size={16} />}
                         onClick={() =>
-                          router.push(`/admin/inovasi/kolaborasi-inovasi/list-kolaborasi-inovasi/${item.id}`)
+                          router.push(
+                            `/admin/inovasi/kolaborasi-inovasi/list-kolaborasi-inovasi/${item.id}`
+                          )
                         }
                       >
                         Detail
@@ -127,7 +166,9 @@ function ListKolaborasiInovasi({ search }: { search: string }) {
                 <TableTr>
                   <TableTd colSpan={5}>
                     <Center py={20}>
-                      <Text color="dimmed">Tidak ada data kolaborasi inovasi yang tersedia</Text>
+                      <Text c="dimmed" fz="sm" lh={1.4}>
+                        Tidak ada data kolaborasi inovasi yang tersedia
+                      </Text>
                     </Center>
                   </TableTd>
                 </TableTr>
@@ -135,21 +176,89 @@ function ListKolaborasiInovasi({ search }: { search: string }) {
             </TableTbody>
           </Table>
         </Box>
+
+        {/* Mobile Card View */}
+        <Box hiddenFrom="md">
+          <Stack gap="sm">
+            {filteredData.length > 0 ? (
+              filteredData.map((item, index) => (
+                <Paper key={item.id} withBorder radius="md" p="sm">
+                  <Stack gap={"xs"}>
+                    <Box>
+                      <Text fz="sm" fw={600} lh={1.4}>
+                        No
+                      </Text>
+                      <Text fz="sm" fw={500} lh={1.4}>
+                        {index + 1}
+                      </Text>
+                    </Box>
+                    <Box>
+                      <Text fz="sm" fw={600} lh={1.4}>
+                        Nama Kolaborasi Inovasi
+                      </Text>
+                      <Text fz="sm" fw={500} lh={1.4}>
+                        {item.name}
+                      </Text>
+                    </Box>
+                    <Box>
+                      <Text fz="sm" fw={600} lh={1.4}>
+                        Tahun
+                      </Text>
+                      <Text fz="sm" fw={500} lh={1.4}>
+                        {item.tahun}
+                      </Text>
+                    </Box>
+                    <Box>
+                      <Text fz="sm" fw={600} lh={1.4}>
+                        Deskripsi Singkat
+                      </Text>
+                       <Text dangerouslySetInnerHTML={{ __html: item.slug }} fz="sm" fw={500} lh={1.45} truncate="end" lineClamp={1} />
+                    </Box>
+                    <Box>
+                      <Button
+                        fullWidth
+                        size="xs"
+                        radius="md"
+                        variant="light"
+                        color="blue"
+                        leftSection={<IconDeviceImac size={16} />}
+                        onClick={() =>
+                          router.push(
+                            `/admin/inovasi/kolaborasi-inovasi/list-kolaborasi-inovasi/${item.id}`
+                          )
+                        }
+                      >
+                        Detail
+                      </Button>
+                    </Box>
+                  </Stack>
+                </Paper>
+              ))
+            ) : (
+              <Center py={20}>
+                <Text c="dimmed" fz="sm" lh={1.4}>
+                  Tidak ada data kolaborasi inovasi yang tersedia
+                </Text>
+              </Center>
+            )}
+          </Stack>
+        </Box>
       </Paper>
-      <Center>
-        <Pagination
-          value={page}
-          onChange={(newPage) => {
-            load(newPage, 10);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }}
-          total={totalPages}
-          mt="md"
-          mb="md"
-          color="blue"
-          radius="md"
-        />
-      </Center>
+
+        <Center>
+          <Pagination
+            value={page}
+            onChange={(newPage) => {
+              load(newPage, 10);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            total={totalPages}
+            mt={{ base: 'sm', md: 'md' }}
+            mb={{ base: 'sm', md: 'md' }}
+            color="blue"
+            radius="md"
+          />
+        </Center>
     </Box>
   );
 }

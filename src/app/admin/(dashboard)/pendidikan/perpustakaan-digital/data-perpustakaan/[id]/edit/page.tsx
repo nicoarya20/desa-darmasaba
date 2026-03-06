@@ -38,9 +38,25 @@ function EditPerpustakaanDigital() {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
 
+  // Helper function to check if HTML content is empty
+  const isHtmlEmpty = (html: string) => {
+    // Remove all HTML tags and check if there's any text content
+    const textContent = html.replace(/<[^>]*>/g, '').trim();
+    return textContent === '';
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      formData.judul?.trim() !== '' &&
+      !isHtmlEmpty(formData.deskripsi) &&
+      formData.kategoriId?.trim() !== ''
+    );
+  };
+
   // Load kategori & data awal
   useEffect(() => {
-    perpustakaanDigitalState.kategoriBuku.findMany.load();
+    perpustakaanDigitalState.kategoriBuku.findManyAll.load();
 
     const loadData = async () => {
       const id = Array.isArray(params?.id) ? params.id[0] : params?.id;
@@ -116,7 +132,7 @@ function EditPerpustakaanDigital() {
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Header */}
       <Group mb="md">
         <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
@@ -254,8 +270,11 @@ function EditPerpustakaanDigital() {
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}

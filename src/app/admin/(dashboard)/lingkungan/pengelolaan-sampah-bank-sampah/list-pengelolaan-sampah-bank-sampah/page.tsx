@@ -1,8 +1,8 @@
 'use client'
 import colors from '@/con/colors';
 import { Box, Button, Center, Group, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title } from '@mantine/core';
-import { useShallowEffect } from '@mantine/hooks';
-import { IconChartLine, IconClipboardTextFilled, IconEdit, IconLeaf, IconPlus, IconRecycle, IconScale, IconSearch, IconTent, IconTrashFilled, IconTrophy, IconTruckFilled } from '@tabler/icons-react';
+import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
+import { IconAlertTriangle, IconAmbulance, IconBook, IconBuilding, IconBuildingCommunity, IconCash, IconChartLine, IconChristmasTreeFilled, IconClipboardTextFilled, IconDroplet, IconEdit, IconFileText, IconFiretruck, IconFirstAidKit, IconHome, IconHomeEco, IconHospital, IconInfoCircle, IconLeaf, IconLifebuoy, IconMessageReport, IconPhoneCall, IconPlus, IconRecycle, IconRun, IconScale, IconSchool, IconSearch, IconShield, IconShieldFilled, IconShoppingCart, IconStethoscope, IconTent, IconTrashFilled, IconTree, IconTrendingUp, IconTrophy, IconTruckFilled, IconUsers } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import { useProxy } from 'valtio/utils';
@@ -32,6 +32,7 @@ function ListPengelolaanSampahBankSampah({ search }: { search: string }) {
   const [modalHapus, setModalHapus] = useState(false)
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const router = useRouter()
+  const [debouncedSearch] = useDebouncedValue(search, 1000); // 500ms delay
 
   const {
     data,
@@ -42,8 +43,8 @@ function ListPengelolaanSampahBankSampah({ search }: { search: string }) {
   } = stateList.findMany
 
   useShallowEffect(() => {
-    load(page, 10, search)
-  }, [page, search])
+    load(page, 10, debouncedSearch)
+  }, [page, debouncedSearch])
 
 
   const handleHapus = () => {
@@ -57,15 +58,51 @@ function ListPengelolaanSampahBankSampah({ search }: { search: string }) {
   const filteredData = data || []
 
   const iconMap: Record<string, React.FC<{ size: number; style?: React.CSSProperties }>> = {
-    ekowisata: IconLeaf,
-    kompetisi: IconTrophy,
-    wisata: IconTent,
-    ekonomi: IconChartLine,
-    sampah: IconRecycle,
-    truck: IconTruckFilled,
-    scale: IconScale,
-    clipboard: IconClipboardTextFilled,
-    trash: IconTrashFilled,
+   // ===== Umum & Lingkungan =====
+       ekowisata: IconLeaf,
+       kompetisi: IconTrophy,
+       wisata: IconTent,
+       ekonomi: IconChartLine,
+       sampah: IconRecycle,
+       truck: IconTruckFilled,
+       scale: IconScale,
+       clipboard: IconClipboardTextFilled,
+       trash: IconTrashFilled,
+       lingkunganSehat: IconHomeEco,
+       sumberOksigen: IconChristmasTreeFilled,
+       ekonomiBerkelanjutan: IconTrendingUp,
+       mencegahBencana: IconShieldFilled,
+       rumah: IconHome,
+       pohon: IconTree,
+       air: IconDroplet,
+       bantuan: IconCash,
+       pelatihan: IconSchool,
+       subsidi: IconShoppingCart,
+       layananKesehatan: IconHospital,
+   
+       // ===== Keamanan & Darurat =====
+       polisi: IconShieldFilled,
+       ambulans: IconAmbulance,
+       pemadam: IconFiretruck,
+       darurat: IconAlertTriangle,
+       sar: IconLifebuoy,
+       evakuasi: IconRun,
+       keamanan: IconShield,
+       teleponDarurat: IconPhoneCall,
+   
+       // ===== Kesehatan =====
+       rumahSakit: IconHospital,
+       puskesmas: IconFirstAidKit,
+       klinik: IconStethoscope,
+   
+       // ===== Pemerintahan & Fasilitas =====
+       bangunan: IconBuilding,
+       kantorDesa: IconBuildingCommunity,
+       administrasi: IconFileText,
+       informasi: IconInfoCircle,
+       pengaduan: IconMessageReport,
+       layananPublik: IconUsers,
+       book: IconBook
   };
 
   if (loading || !data) {
@@ -77,28 +114,45 @@ function ListPengelolaanSampahBankSampah({ search }: { search: string }) {
   }
 
   return (
-    <Box py={10}>
-      <Paper bg={colors['white-1']} p="lg" shadow="md" radius="md">
-        <Group justify="space-between" mb="md">
-          <Title order={4}>Daftar Pengelolaan Sampah Bank Sampah</Title>
+    <Box py={{ base: 'sm', md: 'lg' }}>
+      <Paper bg={colors['white-1']} p={{ base: 'md', md: 'lg' }} shadow="md" radius="md">
+        <Group justify="space-between" mb={{ base: 'md', md: 'lg' }}>
+          <Title
+            order={4}
+            lh={{ base: 1.2, md: 1.15 }}
+          >
+            Daftar Pengelolaan Sampah Bank Sampah
+          </Title>
           <Button
             leftSection={<IconPlus size={18} />}
             color="blue"
             variant="light"
-            onClick={() => router.push('/admin/lingkungan/pengelolaan-sampah-bank-sampah/list-pengelolaan-sampah-bank-sampah/create')}
+            onClick={() =>
+              router.push(
+                '/admin/lingkungan/pengelolaan-sampah-bank-sampah/list-pengelolaan-sampah-bank-sampah/create'
+              )
+            }
           >
             Tambah Baru
           </Button>
         </Group>
 
-        <Box style={{ overflowX: 'auto' }}>
-          <Table highlightOnHover>
+        {/* Desktop Table */}
+       <Box visibleFrom="md" style={{ overflowX: 'auto' }}>
+          <Table
+            highlightOnHover
+            miw={0}
+            style={{
+              tableLayout: 'fixed',
+              width: '100%',
+            }}
+          >
             <TableThead>
               <TableTr>
-                <TableTh>Nama Pengelolaan Sampah</TableTh>
-                <TableTh>Icon</TableTh>
-                <TableTh>Edit</TableTh>
-                <TableTh>Delete</TableTh>
+                <TableTh style={{ width: '50%' }}>Nama Pengelolaan Sampah</TableTh>
+                <TableTh style={{ width: '20%' }}>Icon</TableTh>
+                <TableTh style={{ width: '15%' }}>Edit</TableTh>
+                <TableTh style={{ width: '15%' }}>Delete</TableTh>
               </TableTr>
             </TableThead>
             <TableTbody>
@@ -106,18 +160,22 @@ function ListPengelolaanSampahBankSampah({ search }: { search: string }) {
                 filteredData.map((item) => (
                   <TableTr key={item.id}>
                     <TableTd>
-                      <Text lineClamp={1} truncate="end" fw={500}>{item.name}</Text>
+                      <Text fz="md" fw={500} lh={1.5} lineClamp={1} truncate="end">
+                        {item.name}
+                      </Text>
                     </TableTd>
                     <TableTd>
                       {iconMap[item.icon] ? (
                         <Box>
                           {React.createElement(iconMap[item.icon], {
                             size: 24,
-                            style: { color: colors['blue-button'] }
+                            style: { color: colors['blue-button'] },
                           })}
                         </Box>
                       ) : (
-                        <Text c="dimmed" fz="sm">-</Text>
+                        <Text c="dimmed" fz="sm">
+                          -
+                        </Text>
                       )}
                     </TableTd>
                     <TableTd>
@@ -125,7 +183,11 @@ function ListPengelolaanSampahBankSampah({ search }: { search: string }) {
                         variant="light"
                         color="green"
                         size="sm"
-                        onClick={() => router.push(`/admin/lingkungan/pengelolaan-sampah-bank-sampah/list-pengelolaan-sampah-bank-sampah/${item.id}`)}
+                        onClick={() =>
+                          router.push(
+                            `/admin/lingkungan/pengelolaan-sampah-bank-sampah/list-pengelolaan-sampah-bank-sampah/${item.id}`
+                          )
+                        }
                       >
                         <IconEdit size={18} />
                       </Button>
@@ -147,8 +209,10 @@ function ListPengelolaanSampahBankSampah({ search }: { search: string }) {
                 ))
               ) : (
                 <TableTr>
-                  <TableTd colSpan={3} align="center" py="xl">
-                    <Text c="dimmed">Tidak ada data pengelolaan sampah</Text>
+                  <TableTd colSpan={4} ta="center" py="xl">
+                    <Text c="dimmed" fz="sm" lh={1.4}>
+                      Tidak ada data pengelolaan sampah
+                    </Text>
                   </TableTd>
                 </TableTr>
               )}
@@ -156,19 +220,82 @@ function ListPengelolaanSampahBankSampah({ search }: { search: string }) {
           </Table>
         </Box>
 
-        {totalPages > 1 && (
-          <Center mt="xl">
-            <Pagination
-              value={page}
-              onChange={(newPage) => load(newPage)}
-              total={totalPages}
-              siblings={1}
-              boundaries={1}
-              withEdges
-            />
-          </Center>
-        )}
+        {/* Mobile Cards */}
+        <Box hiddenFrom="md">
+          {filteredData.length > 0 ? (
+            <Stack gap="md">
+              {filteredData.map((item) => (
+                <Paper key={item.id} p="sm" withBorder>
+                  <Stack gap={"xs"}>
+                    <Text fz="sm" fw={600} lh={1.4}>
+                      Nama Pengelolaan Sampah
+                    </Text>
+                    <Text fz="sm" fw={500} lh={1.45} lineClamp={1}>
+                      {item.name}
+                    </Text>
+                    {iconMap[item.icon] ? (
+                      React.createElement(iconMap[item.icon], {
+                        size: 20,
+                        style: { color: colors['blue-button'] },
+                      })
+                    ) : (
+                      <Text c="dimmed" fz="sm">
+                        -
+                      </Text>
+                    )}
+                    <Group justify='right'>
+                      <Button
+                        variant="light"
+                        color="green"
+                        size="xs"
+                        onClick={() =>
+                          router.push(
+                            `/admin/lingkungan/pengelolaan-sampah-bank-sampah/list-pengelolaan-sampah-bank-sampah/${item.id}`
+                          )
+                        }
+                        radius="sm"
+                        p={4}
+                      >
+                        <IconEdit size={18} />
+                      </Button>
+                      <Button
+                        variant="light"
+                        color="red"
+                        size="xs"
+                        onClick={() => {
+                          setSelectedId(item.id);
+                          setModalHapus(true);
+                        }}
+                        radius="sm"
+                        p={4}
+                      >
+                        <IconTrashFilled size={18} />
+                      </Button>
+                    </Group>
+                  </Stack>
+                </Paper>
+              ))}
+            </Stack>
+          ) : (
+            <Center py="xl">
+              <Text c="dimmed" fz="xs" lh={1.4}>
+                Tidak ada data pengelolaan sampah
+              </Text>
+            </Center>
+          )}
+        </Box>
 
+
+        <Center mt={{ base: 'lg', md: 'xl' }}>
+          <Pagination
+            value={page}
+            onChange={(newPage) => load(newPage)}
+            total={totalPages}
+            siblings={1}
+            boundaries={1}
+            withEdges
+          />
+        </Center>
       </Paper>
 
       {/* Modal Konfirmasi Hapus */}

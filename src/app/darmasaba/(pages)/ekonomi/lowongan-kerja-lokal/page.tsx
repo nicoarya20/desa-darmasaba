@@ -1,7 +1,7 @@
 'use client'
 import lowonganKerjaState from '@/app/admin/(dashboard)/_state/ekonomi/lowongan-kerja';
 import colors from '@/con/colors';
-import { Box, Button, Center, Flex, Group, Pagination, Paper, SimpleGrid, Skeleton, Stack, Text, TextInput } from '@mantine/core';
+import { Box, Button, Center, Flex, Group, Pagination, Paper, SimpleGrid, Skeleton, Stack, Text, TextInput, Title } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
 import { IconBriefcase, IconClock, IconMapPin, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
@@ -26,7 +26,7 @@ function Page() {
   const state = useProxy(lowonganKerjaState)
   const router = useRouter()
   const [search, setSearch] = useState('')
-  const [debouncedSearch] = useDebouncedValue(search, 500); // 500ms delay
+  const [debouncedSearch] = useDebouncedValue(search, 1000); // 500ms delay
 
   const {
     data,
@@ -53,17 +53,19 @@ function Page() {
         <BackButton />
       </Box>
       <Box px={{ base: 'md', md: 100 }} pb={80}>
-        <Text ta={"center"} fz={{ base: "h1", md: "2.5rem" }} c={colors["blue-button"]} fw={"bold"}>
+        <Title order={1} ta="center" c={colors["blue-button"]} fw="bold" lh={1.15}>
           Lowongan Kerja Lokal
-        </Text>
+        </Title>
         <Group justify='center'>
           <TextInput
             radius={'xl'}
-            w={{ base: 500, md: 700 }}
+            w={{ base: '100%', md: 700 }}
             placeholder='Cari Pekerjaan'
             leftSection={<IconSearch size={20} />}
             value={search}
             onChange={(e) => setSearch(e.currentTarget.value)}
+            fz={{ base: 'sm', md: 'md' }}
+            lh={1.5}
           />
         </Group>
       </Box>
@@ -80,30 +82,57 @@ function Page() {
                 <Paper key={k} p={'xl'}>
                   <Stack gap={'md'}>
                     <Box>
-                      <Flex gap={'xl'} align={'center'}>
-                        <IconBriefcase color={colors['blue-button']} size={50} />
+                      <Flex gap={{ base: 'md', md: 'xl' }} align={'center'}>
+                        <Box style={{ flexShrink: 0 }}>
+                          <IconBriefcase color={colors['blue-button']} size={40} />
+                        </Box>
                         <Box>
-                          <Text fw={'bold'} fz={'h4'} c={colors['blue-button']}>{v.posisi}</Text>
-                          <Text fz={'h4'}>{v.namaPerusahaan}</Text>
+                          <Text fw={'bold'} fz={{ base: 'lg', md: 'h4' }} c={colors['blue-button']} lh={1.3}>
+                            {v.posisi}
+                          </Text>
+                          <Text fz={{ base: 'md', md: 'h4' }} lh={1.5}>
+                            {v.namaPerusahaan}
+                          </Text>
                         </Box>
                       </Flex>
                     </Box>
                     <Box>
-                      <Flex gap={'xl'} align={'center'}>
-                        <IconMapPin color={colors['blue-button']} size={50} />
-                        <Text fz={'h4'}>{v.lokasi}</Text>
+                      <Flex gap={{ base: 'md', md: 'xl' }} align="center">
+                        <Box style={{ flexShrink: 0 }}>
+                          <IconMapPin
+                            color={colors['blue-button']}
+                            size={40}
+                          />
+                        </Box>
+
+                        <Text
+                          fz={{ base: 'md', md: 'h4' }}
+                          lh={1.5}
+                          lineClamp={1}
+                        >
+                          {v.lokasi}
+                        </Text>
                       </Flex>
+
                     </Box>
                     <Box>
-                      <Flex gap={'xl'} align={'center'}>
-                        <IconClock color={colors['blue-button']} size={50} />
+                      <Flex gap={{ base: 'md', md: 'xl' }} align={'center'}>
+                        <Box style={{ flexShrink: 0 }}>
+                          <IconClock color={colors['blue-button']} size={40} />
+                        </Box>
                         <Box>
-                          <Text fw={'bold'} fz={'h4'} c={colors['blue-button']}>Full Time</Text>
-                          <Text fz={'h4'}>{formatCurrency(v.gaji)}</Text>
+                          <Text fw={'bold'} fz={{ base: 'md', md: 'h4' }} c={colors['blue-button']} lh={1.3}>
+                            Full Time
+                          </Text>
+                          <Text fz={{ base: 'sm', md: 'h4' }} lh={1.5}>
+                            {formatCurrency(v.gaji)}
+                          </Text>
                         </Box>
                       </Flex>
                     </Box>
-                    <Button onClick={() => router.push(`/darmasaba/ekonomi/lowongan-kerja-lokal/${v.id}`)}>Detail</Button>
+                    <Button onClick={() => router.push(`/darmasaba/ekonomi/lowongan-kerja-lokal/${v.id}`)} fz={{ base: 'sm', md: 'md' }} lh={1.5}>
+                      Detail
+                    </Button>
                   </Stack>
                 </Paper>
               )

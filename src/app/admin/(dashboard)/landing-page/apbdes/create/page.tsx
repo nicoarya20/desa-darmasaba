@@ -33,7 +33,6 @@ type ItemForm = {
   kode: string;
   uraian: string;
   anggaran: number;
-  realisasi: number;
   level: number;
   tipe: 'pendapatan' | 'belanja' | 'pembiayaan';
 };
@@ -47,12 +46,16 @@ function CreateAPBDes() {
   const [docFile, setDocFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Check if form is valid - hanya cek items, gambar dan file opsional
+  const isFormValid = () => {
+    return stateAPBDes.create.form.items.length > 0;
+  };
+
   // Form sementara untuk input item baru
   const [newItem, setNewItem] = useState<ItemForm>({
     kode: '',
     uraian: '',
     anggaran: 0,
-    realisasi: 0,
     level: 1,
     tipe: 'pendapatan',
   });
@@ -71,35 +74,40 @@ function CreateAPBDes() {
       kode: '',
       uraian: '',
       anggaran: 0,
-      realisasi: 0,
       level: 1,
       tipe: 'pendapatan',
     });
   };
 
   const handleSubmit = async () => {
-    if (!imageFile || !docFile) {
-      return toast.warn("Pilih gambar dan dokumen terlebih dahulu");
-    }
     if (stateAPBDes.create.form.items.length === 0) {
       return toast.warn("Minimal tambahkan 1 item APBDes");
     }
 
     try {
       setIsSubmitting(true);
-      const [uploadImageRes, uploadDocRes] = await Promise.all([
-        ApiFetch.api.fileStorage.create.post({ file: imageFile, name: imageFile.name }),
-        ApiFetch.api.fileStorage.create.post({ file: docFile, name: docFile.name }),
-      ]);
 
-      const imageId = uploadImageRes?.data?.data?.id;
-      const fileId = uploadDocRes?.data?.data?.id;
+      // Upload files hanya jika ada file yang dipilih
+      let imageId = '';
+      let fileId = '';
 
-      if (!imageId || !fileId) {
-        return toast.error("Gagal mengupload file");
+      if (imageFile) {
+        const uploadImageRes = await ApiFetch.api.fileStorage.create.post({
+          file: imageFile,
+          name: imageFile.name,
+        });
+        imageId = uploadImageRes?.data?.data?.id || '';
       }
 
-      // Update form dengan ID file
+      if (docFile) {
+        const uploadDocRes = await ApiFetch.api.fileStorage.create.post({
+          file: docFile,
+          name: docFile.name,
+        });
+        fileId = uploadDocRes?.data?.data?.id || '';
+      }
+
+      // Update form dengan ID file (bisa kosong)
       stateAPBDes.create.form.imageId = imageId;
       stateAPBDes.create.form.fileId = fileId;
 
@@ -108,9 +116,9 @@ function CreateAPBDes() {
       toast.success("Berhasil menambahkan APBDes");
       resetForm();
       router.push("/admin/landing-page/apbdes");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Gagal submit:", error);
-      toast.error("Gagal menyimpan data");
+      toast.error(error?.message || "Gagal menyimpan data");
     } finally {
       setIsSubmitting(false);
     }
@@ -118,22 +126,17 @@ function CreateAPBDes() {
 
   // Tambahkan item ke state
   const handleAddItem = () => {
-    const { kode, uraian, anggaran, realisasi, level, tipe } = newItem;
+    const { kode, uraian, anggaran, level, tipe } = newItem;
     if (!kode || !uraian) {
       return toast.warn("Kode dan uraian wajib diisi");
     }
 
     const finalTipe = level === 1 ? null : tipe;
-    const selisih = realisasi - anggaran;
-    const persentase = anggaran > 0 ? (realisasi / anggaran) * 100 : 0;
 
     stateAPBDes.create.addItem({
       kode,
       uraian,
       anggaran,
-      realisasi,
-      selisih,
-      persentase,
       level,
       tipe: finalTipe,
     });
@@ -143,7 +146,6 @@ function CreateAPBDes() {
       kode: '',
       uraian: '',
       anggaran: 0,
-      realisasi: 0,
       level: 1,
       tipe: 'pendapatan',
     });
@@ -155,7 +157,7 @@ function CreateAPBDes() {
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       <Group mb="md">
         <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
           <IconArrowBack color={colors['blue-button']} size={24} />
@@ -174,12 +176,16 @@ function CreateAPBDes() {
         style={{ border: '1px solid #e0e0e0' }}
       >
         <Stack gap="md">
-          {/* Gambar & Dokumen (dipendekkan untuk fokus pada items) */}
+          {/* Info: File opsional */}
+          <Text fz="sm" c="dimmed" mb="xs">
+            * Upload gambar dan dokumen bersifat opsional. Bisa dikosongkan jika belum ada.
+          </Text>
+
           <Stack gap={"xs"}>
             {/* Gambar APBDes */}
             <Box>
               <Text fw="bold" fz="sm" mb={6}>
-                Gambar APBDes
+                Gambar APBDes (Opsional)
               </Text>
               <Dropzone
                 onDrop={(files) => {
@@ -249,10 +255,10 @@ function CreateAPBDes() {
               )}
             </Box>
 
-            {/* Dokumen APBDes */}
+            {/* Dokumen APBDes (Opsional) */}
             <Box>
               <Text fw="bold" fz="sm" mb={6}>
-                Dokumen APBDes
+                Dokumen APBDes (Opsional)
               </Text>
               <Dropzone
                 onDrop={(files) => {
@@ -325,6 +331,27 @@ function CreateAPBDes() {
           </Stack>
 
           {/* Form Header */}
+          <TextInput
+            label="Nama APBDes"
+            placeholder="Contoh: APBDes Tahun 2025"
+            value={stateAPBDes.create.form.name}
+            onChange={(e) => (stateAPBDes.create.form.name = e.target.value)}
+            description="Opsional - akan diisi otomatis jika kosong"
+          />
+          <TextInput
+            label="Deskripsi"
+            placeholder="Deskripsi APBDes (opsional)"
+            value={stateAPBDes.create.form.deskripsi}
+            onChange={(e) => (stateAPBDes.create.form.deskripsi = e.target.value)}
+            description="Opsional"
+          />
+          <TextInput
+            label="Jumlah Total"
+            placeholder="Contoh: Rp 1.000.000.000"
+            value={stateAPBDes.create.form.jumlah}
+            onChange={(e) => (stateAPBDes.create.form.jumlah = e.target.value)}
+            description="Opsional - total keseluruhan anggaran"
+          />
           <NumberInput
             label="Tahun"
             value={stateAPBDes.create.form.tahun || new Date().getFullYear()}
@@ -353,6 +380,13 @@ function CreateAPBDes() {
                     { value: '2', label: 'Level 2 (Sub-kelompok)' },
                     { value: '3', label: 'Level 3 (Detail)' },
                   ]}
+                  styles={{
+                    option: {
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                    },
+                  }}
                   value={String(newItem.level)}
                   onChange={(val) => setNewItem({ ...newItem, level: Number(val) || 1 })}
                 />
@@ -361,7 +395,15 @@ function CreateAPBDes() {
                   data={[
                     { value: 'pendapatan', label: 'Pendapatan' },
                     { value: 'belanja', label: 'Belanja' },
+                    { value: 'pembiayaan', label: 'Pembiayaan' },
                   ]}
+                  styles={{
+                    option: {
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                    },
+                  }}
                   value={newItem.level === 1 ? null : newItem.tipe}
                   onChange={(val) => setNewItem({ ...newItem, tipe: val as any })}
                   disabled={newItem.level === 1}
@@ -379,13 +421,6 @@ function CreateAPBDes() {
                   label="Anggaran (Rp)"
                   value={newItem.anggaran}
                   onChange={(val) => setNewItem({ ...newItem, anggaran: Number(val) || 0 })}
-                  thousandSeparator
-                  min={0}
-                />
-                <NumberInput
-                  label="Realisasi (Rp)"
-                  value={newItem.realisasi}
-                  onChange={(val) => setNewItem({ ...newItem, realisasi: Number(val) || 0 })}
                   thousandSeparator
                   min={0}
                 />
@@ -410,28 +445,30 @@ function CreateAPBDes() {
                     <th>Kode</th>
                     <th>Uraian</th>
                     <th>Anggaran</th>
-                    <th>Realisasi</th>
                     <th>Level</th>
                     <th>Tipe</th>
                     <th style={{ width: 50 }}>Aksi</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {stateAPBDes.create.form.items.map((item, idx) => (
+                  {stateAPBDes.create.form.items.map((item: any, idx) => (
                     <tr key={idx}>
                       <td><Text size="sm" fw={500}>{item.kode}</Text></td>
                       <td>{item.uraian}</td>
                       <td>{item.anggaran.toLocaleString('id-ID')}</td>
-                      <td>{item.realisasi.toLocaleString('id-ID')}</td>
                       <td>
                         <Badge size="sm" color={item.level === 1 ? 'blue' : item.level === 2 ? 'green' : 'grape'}>
                           L{item.level}
                         </Badge>
                       </td>
                       <td>
-                        <Badge size="sm" color={item.tipe === 'pendapatan' ? 'teal' : 'red'}>
-                          {item.tipe}
-                        </Badge>
+                        {item.tipe ? (
+                          <Badge size="sm" color={item.tipe === 'pendapatan' ? 'teal' : 'red'}>
+                            {item.tipe}
+                          </Badge>
+                        ) : (
+                          <Text size="sm" c="dimmed">-</Text>
+                        )}
                       </td>
                       <td>
                         <ActionIcon color="red" onClick={() => handleRemoveItem(idx)}>
@@ -453,9 +490,11 @@ function CreateAPBDes() {
             <Button
               onClick={handleSubmit}
               radius="md"
-              disabled={stateAPBDes.create.form.items.length === 0}
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? 'linear-gradient(135deg, #cccccc, #999999)'
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
               }}
             >

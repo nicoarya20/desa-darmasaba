@@ -67,6 +67,27 @@ export default function EditKegiatanDesa() {
   const [file, setFile] = useState<File | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
 
+  // Helper function to check if HTML content is empty
+  const isHtmlEmpty = (html: string) => {
+    // Remove all HTML tags and check if there's any text content
+    const textContent = html.replace(/<[^>]*>/g, '').trim();
+    return textContent === '';
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      formData.judul?.trim() !== '' &&
+      !isHtmlEmpty(formData.deskripsiSingkat) &&
+      !isHtmlEmpty(formData.deskripsiLengkap) &&
+      formData.tanggal?.trim() !== '' &&
+      formData.lokasi?.trim() !== '' &&
+      formData.partisipan !== null &&
+      formData.partisipan >= 0 &&
+      formData.kategoriKegiatanId?.trim() !== ''
+    );
+  };
+
   const formatDateForInput = (dateString: string) => {
     if (!dateString) return '';
     return new Date(dateString).toISOString().split('T')[0];
@@ -162,7 +183,7 @@ export default function EditKegiatanDesa() {
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       <Group mb="md">
         <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
           <IconArrowBack color={colors['blue-button']} size={24} />
@@ -312,8 +333,11 @@ export default function EditKegiatanDesa() {
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}

@@ -40,7 +40,7 @@ function DetailKontakDarurat() {
   const data = state.findUnique.data;
 
   return (
-    <Box py={10}>
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Tombol Back */}
       <Button
         variant="subtle"
@@ -54,7 +54,7 @@ function DetailKontakDarurat() {
       {/* Wrapper Detail */}
       <Paper
         withBorder
-        w={{ base: "100%", md: "50%" }}
+        w={{ base: "100%", md: "70%" }}
         bg={colors['white-1']}
         p="lg"
         radius="md"
@@ -73,7 +73,7 @@ function DetailKontakDarurat() {
               </Box>
 
               <Box>
-                <Text fz="lg" fw="bold">Whatsapp</Text>
+                <Text fz="lg" fw="bold">Telepon</Text>
                 <Text fz="md" c="dimmed">{data.whatsapp || '-'}</Text>
               </Box>
 

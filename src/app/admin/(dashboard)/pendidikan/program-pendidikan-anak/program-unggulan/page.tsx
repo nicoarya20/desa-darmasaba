@@ -1,6 +1,6 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Divider, Grid, GridCol, Paper, Skeleton, Stack, Text, Title } from '@mantine/core';
+import { Box, Button, Divider, Group, Paper, Skeleton, Stack, Text, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconEdit } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
@@ -29,28 +29,24 @@ function Page() {
     <Paper bg={colors['white-1']} p="lg" radius="md" shadow="sm">
       <Stack gap="md">
         {/* Header */}
-        <Grid align="center">
-          <GridCol span={{ base: 12, md: 11 }}>
-            <Title order={3} c={colors['blue-button']}>
-              Pratinjau Program Unggulan
-            </Title>
-          </GridCol>
-          <GridCol span={{ base: 12, md: 1 }}>
-            <Button
-              c="green"
-              variant="light"
-              leftSection={<IconEdit size={18} stroke={2} />}
-              radius="md"
-              onClick={() =>
-                router.push(
-                  '/admin/pendidikan/program-pendidikan-anak/program-unggulan/edit'
-                )
-              }
-            >
-              Edit
-            </Button>
-          </GridCol>
-        </Grid>
+        <Group justify='space-between' align="center">
+          <Title order={3} c={colors['blue-button']}>
+            Pratinjau Program Unggulan
+          </Title>
+          <Button
+            c="green"
+            variant="light"
+            leftSection={<IconEdit size={18} stroke={2} />}
+            radius="md"
+            onClick={() =>
+              router.push(
+                '/admin/pendidikan/program-pendidikan-anak/program-unggulan/edit'
+              )
+            }
+          >
+            Edit
+          </Button>
+        </Group>
 
         {/* Konten Preview */}
         <Paper
@@ -75,13 +71,22 @@ function Page() {
 
               {/* Deskripsi */}
               <Text
-                fz={{ base: '1rem', md: '1.2rem' }}
+                fz={{ base: '0.95rem', md: '1.2rem' }}
                 lh={1.7}
-                ta="justify"
+                ta={{ base: 'left', md: 'justify' }}
                 c="dimmed"
                 dangerouslySetInnerHTML={{ __html: data.deskripsi }}
-                style={{ wordBreak: "break-word", whiteSpace: "normal" }}
+                style={{
+                  wordBreak: 'break-word',
+                  whiteSpace: 'normal',
+                  textWrap: 'pretty',
+                  hyphens: 'auto',
+                  '& p': {
+                    marginBottom: '0.8em',
+                  },
+                }}
               />
+
             </Stack>
           </Box>
         </Paper>

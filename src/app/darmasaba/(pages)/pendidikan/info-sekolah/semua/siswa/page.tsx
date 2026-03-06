@@ -9,7 +9,7 @@ import { useState } from 'react';
 
 function Page() {
   const [search, setSearch] = useState("")
-  const [debouncedSearch] = useDebouncedValue(search, 500); // 500ms delay
+  const [debouncedSearch] = useDebouncedValue(search, 1000); // 500ms delay
   const stateList = useProxy(infoSekolahPaud.siswa)
 
   const {

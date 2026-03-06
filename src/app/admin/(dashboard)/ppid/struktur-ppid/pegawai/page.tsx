@@ -1,13 +1,32 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import colors from '@/con/colors';
-import { Badge, Box, Button, Center, Group, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, ThemeIcon, Title } from '@mantine/core';
-import { IconCheck, IconDeviceImacCog, IconPlus, IconSearch, IconX } from '@tabler/icons-react';
+import {
+  Badge,
+  Box,
+  Button,
+  Center,
+  Group,
+  Pagination,
+  Paper,
+  Skeleton,
+  Stack,
+  Table,
+  TableTbody,
+  TableTd,
+  TableTh,
+  TableThead,
+  TableTr,
+  Text,
+  Title
+} from '@mantine/core';
+import { IconDeviceImacCog, IconPlus, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../../_com/header';
 import stateStrukturPPID from '../../../_state/ppid/struktur_ppid/struktur_PPID';
+import { useDebouncedValue } from '@mantine/hooks';
 
 function PegawaiPPID() {
   const [search, setSearch] = useState("");
@@ -28,6 +47,7 @@ function PegawaiPPID() {
 function ListPegawaiPPID({ search }: { search: string }) {
   const stateOrganisasi = useProxy(stateStrukturPPID.pegawai);
   const router = useRouter();
+    const [debouncedSearch] = useDebouncedValue(search, 1000);
 
   const {
     data,
@@ -38,47 +58,28 @@ function ListPegawaiPPID({ search }: { search: string }) {
   } = stateOrganisasi.findMany;
 
   useEffect(() => {
-    load(page, 10, search);
-  }, [page, search]);
+    load(page, 10, debouncedSearch);
+  }, [page, debouncedSearch]);
 
-  const filteredData = data || []
+  const filteredData = data || [];
 
   // Handle loading state
   if (loading || !data) {
     return (
-      <Stack py={10}>
-        <Skeleton height={300} />
+      <Stack py="xl">
+        <Skeleton height={300} radius="md" />
       </Stack>
     );
   }
 
   if (data.length === 0) {
     return (
-      <Box py={10}>
+      <Box py="xl">
         <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
           <Group justify="space-between" mb="md">
-            <Title order={4}>Daftar Pegawai PPID</Title>
-              <Button
-                leftSection={<IconPlus size={18} />}
-                color="blue"
-                variant="light"
-                onClick={() => router.push('/admin/ppid/struktur-ppid/pegawai/create')}
-              >
-                Tambah Baru
-              </Button>
-          </Group>
-          <Center py="xl">
-            <Text c="dimmed">Tidak ada data pegawai yang ditemukan</Text>
-          </Center>
-        </Paper>
-      </Box>
-    );
-  }
-  return (
-    <Box py={10}>
-      <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
-        <Group justify="space-between" mb="md">
-          <Title order={4}>Daftar Pegawai PPID</Title>
+            <Title order={4} lh={1.2}>
+              Daftar Pegawai PPID
+            </Title>
             <Button
               leftSection={<IconPlus size={18} />}
               color="blue"
@@ -87,53 +88,72 @@ function ListPegawaiPPID({ search }: { search: string }) {
             >
               Tambah Baru
             </Button>
+          </Group>
+          <Center py="xl">
+            <Text c="dimmed" fz={{ base: 'sm', md: 'md' }} lh={1.5}>
+              Tidak ada data pegawai yang ditemukan
+            </Text>
+          </Center>
+        </Paper>
+      </Box>
+    );
+  }
+
+  return (
+    <Box py="xl">
+      <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
+        <Group justify="space-between" mb="md">
+          <Title order={4} lh={1.2}>
+            Daftar Pegawai PPID
+          </Title>
+          <Button
+            leftSection={<IconPlus size={18} />}
+            color="blue"
+            variant="light"
+            onClick={() => router.push('/admin/ppid/struktur-ppid/pegawai/create')}
+          >
+            Tambah Baru
+          </Button>
         </Group>
-        <Box style={{ overflowX: "auto" }}>
-          <Table highlightOnHover>
+
+        {/* Desktop: Table */}
+       <Box visibleFrom="md" style={{ overflowX: 'auto' }}>
+         <Table highlightOnHover
+    layout="fixed" // 🔥 PENTING
+    withColumnBorders={false} miw={0}>
             <TableThead>
               <TableTr>
-                <TableTh style={{ width: '25%' }}>Nama Lengkap</TableTh>
-                <TableTh style={{ width: '20%' }}>Posisi</TableTh>
-                <TableTh style={{ width: '10%' }}>Status</TableTh>
-                <TableTh style={{ width: '10%' }}>Aksi</TableTh>
+                <TableTh fz="sm" fw={600} lh={1.4}>
+                  Nama Lengkap
+                </TableTh>
+                <TableTh fz="sm" fw={600} lh={1.4}>
+                  Posisi
+                </TableTh>
+                <TableTh fz="sm" fw={600} lh={1.4}>
+                  Status
+                </TableTh>
+                <TableTh fz="sm" fw={600} lh={1.4}>
+                  Aksi
+                </TableTh>
               </TableTr>
             </TableThead>
             <TableTbody>
               {filteredData.map((item) => (
                 <TableTr key={item.id}>
                   <TableTd>
-                    <Box w={150}>
-                      <Text fw={500} truncate="end" lineClamp={1}>
-                        {item.namaLengkap}
-                      </Text>
-                    </Box>
+                    <Text fz="md" fw={500} lh={1.5} truncate="end">
+                      {item.namaLengkap}
+                    </Text>
                   </TableTd>
                   <TableTd>
-                    <Box w={150}>
-                      <Badge variant="light" color="blue">
-                        {item.posisi?.nama || 'Belum diatur'}
-                      </Badge>
-                    </Box>
+                    <Badge variant="light" color="blue" fz="sm" lh={1.4}>
+                      {item.posisi?.nama || 'Belum diatur'}
+                    </Badge>
                   </TableTd>
                   <TableTd>
-                    <Group gap="xs" wrap="nowrap">
-                      <Box visibleFrom="sm">
-                        <Badge color={item.isActive ? "green" : "red"}>
-                          {item.isActive ? "Aktif" : "Tidak Aktif"}
-                        </Badge>
-                      </Box>
-                      <Box hiddenFrom="sm">
-                        {item.isActive ? (
-                          <ThemeIcon color="green" variant="light" size="sm">
-                            <IconCheck size={16} />
-                          </ThemeIcon>
-                        ) : (
-                          <ThemeIcon color="red" variant="light" size="sm">
-                            <IconX size={16} />
-                          </ThemeIcon>
-                        )}
-                      </Box>
-                    </Group>
+                    <Badge color={item.isActive ? "green" : "red"} fz="sm" lh={1.4}>
+                      {item.isActive ? "Aktif" : "Tidak Aktif"}
+                    </Badge>
                   </TableTd>
                   <TableTd>
                     <Button
@@ -143,6 +163,7 @@ function ListPegawaiPPID({ search }: { search: string }) {
                       color="blue"
                       leftSection={<IconDeviceImacCog size={16} />}
                       onClick={() => router.push(`/admin/ppid/struktur-ppid/pegawai/${item.id}`)}
+                      fz="sm"
                     >
                       Detail
                     </Button>
@@ -152,7 +173,47 @@ function ListPegawaiPPID({ search }: { search: string }) {
             </TableTbody>
           </Table>
         </Box>
-        <Center mt="lg">
+
+        {/* Mobile: Card List */}
+        <Stack hiddenFrom="md" gap="sm" mt="md">
+          {filteredData.map((item) => (
+            <Paper key={item.id} withBorder p="md" radius="md">
+              <Stack gap={"xs"}>
+               <Box>
+                <Text fz="sm" fw={600} lh={1.4}>Nama Lengkap</Text>
+                 <Text fz="md" fw={500} lh={1.4}>
+                  {item.namaLengkap}
+                </Text>
+               </Box>
+               <Box>
+                <Text fz="sm" fw={600} lh={1.4}>Posisi</Text>
+                <Badge variant="light" color="blue" fz="xs" lh={1.4}>
+                  {item.posisi?.nama || 'Belum diatur'}
+                </Badge>
+               </Box>
+               <Box>
+                <Text fz="sm" fw={600} lh={1.4}>Status</Text>
+                <Badge color={item.isActive ? "green" : "red"} fz="xs" lh={1.4}>
+                  {item.isActive ? "Aktif" : "Tidak Aktif"}
+                </Badge>
+               </Box>
+                <Button
+                  size="xs"
+                  radius="md"
+                  variant="light"
+                  color="blue"
+                  leftSection={<IconDeviceImacCog size={16} />}
+                  onClick={() => router.push(`/admin/ppid/struktur-ppid/pegawai/${item.id}`)}
+                  fz="xs"
+                >
+                  Detail
+                </Button>
+              </Stack>
+            </Paper>
+          ))}
+        </Stack>
+
+        <Center mt="xl">
           <Pagination
             value={page}
             onChange={(newPage) => {

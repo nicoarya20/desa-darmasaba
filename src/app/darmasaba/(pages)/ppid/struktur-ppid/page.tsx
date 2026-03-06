@@ -14,6 +14,9 @@ import {
   Loader,
   Paper,
   Stack,
+  Tabs,
+  TabsList,
+  TabsTab,
   Text,
   TextInput,
   Title,
@@ -35,6 +38,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useProxy } from 'valtio/utils'
 import BackButton from '../../desa/layanan/_com/BackButto'
 import './struktur.css'
+import { useMediaQuery } from '@mantine/hooks'
 
 export default function Page() {
   return (
@@ -55,10 +59,11 @@ export default function Page() {
             ta="center"
             c={colors['blue-button']}
             fz={{ base: 28, md: 36, lg: 44 }}
+            lh={{ base: 1.05, md: 1.03 }}
           >
             Struktur Organisasi PPID
           </Title>
-          <Text ta="center" c="black" maw={800}>
+          <Text ta="center" c="black" maw={800} fz={{ base: 13, md: 15 }} lh={1.45}>
             Gambaran visual peran dan pegawai yang ditugaskan. Arahkan kursor
             untuk melihat detail atau klik node untuk fokus tampilan.
           </Text>
@@ -86,7 +91,7 @@ function StrukturOrganisasiPPID() {
   const debouncedSearch = useRef(
     debounce((value: string) => {
       setSearchQuery(value)
-    }, 400)
+    }, 1000)
   ).current
 
   useEffect(() => {
@@ -101,8 +106,8 @@ function StrukturOrganisasiPPID() {
       <Center py={48}>
         <Stack align="center" gap="sm">
           <Loader size="lg" />
-          <Text fw={600}>Memuat struktur organisasi…</Text>
-          <Text c="dimmed" size="sm">
+          <Text fw={600} fz={{ base: 15, md: 16 }} lh={1.2}>Memuat struktur organisasi…</Text>
+          <Text c="dimmed" fz={{ base: 12, md: 13 }} lh={1.4}>
             Mengambil data pegawai dan posisi. Mohon tunggu sebentar.
           </Text>
         </Stack>
@@ -128,10 +133,10 @@ function StrukturOrganisasiPPID() {
             <Center>
               <IconUsers size={56} />
             </Center>
-            <Title order={3} mt="md">
+            <Title order={3} mt="md" fz={{ base: 16, md: 18 }} lh={1.15}>
               Data pegawai belum tersedia
             </Title>
-            <Text c="dimmed" mt="xs">
+            <Text c="dimmed" mt="xs" fz={{ base: 13, md: 14 }} lh={1.4}>
               Belum ada data pegawai yang tercatat untuk PPID.
             </Text>
             <Group justify="center" mt="lg">
@@ -228,90 +233,137 @@ function StrukturOrganisasiPPID() {
       {/* 🔍 Controls */}
       <Paper
         shadow="xs"
+        w={{
+          base: '100%',       // Mobile: 100%
+          sm: '40%',          // Tablet: 95%
+          md: '39%',          // Desktop: 70%
+          lg: '38%',          // Desktop L: 60%
+          xl: '37%',          // 4K: 50%
+          '2xl': '36%',       // Ultra-wide: 45%
+        }}
         p="md"
         radius="md"
         style={{
-          background: colors['blue-button']
+          background: colors['blue-button'],       // ⬅️ penting
+          maxWidth: '100%',    // ⬅️ penting
+          overflowX: 'auto'    // ⬅️ untuk mencegah overflow
         }}
       >
-        <Group gap="sm" wrap="wrap" justify="center">
-          <TextInput
-            placeholder="Cari nama atau jabatan..."
-            leftSection={<IconSearch size={16} />}
-            onChange={(e) => debouncedSearch(e.target.value)}
+
+        <Stack gap="sm">
+          <Group justify='center'>
+            <TextInput
+              placeholder="Cari nama atau jabatan..."
+              leftSection={<IconSearch size={16} />}
+              onChange={(e) => debouncedSearch(e.target.value)}
+              styles={{
+                input: {
+                  minWidth: 250,
+                },
+              }}
+            />
+          </Group>
+          <Tabs
+            defaultValue="zoom-out"
+            variant="outline"
+            radius="md"
             styles={{
-              input: {
-                minWidth: 250,
+              panel: { display: 'none' },
+              tab: {
+                color: colors['blue-button'],
+                backgroundColor: colors['blue-button-2'],
+                border: 'none',
+                fontWeight: 600,
+                fontSize: '0.875rem',
+                padding: '6px 12px',
+                minHeight: 'auto',
+                flexShrink: 0,
               },
             }}
-          />
-
-          <Group gap="xs">
-            <Button
-              variant="light"
-              bg={colors['blue-button-2']}
-              size="sm"
-              onClick={handleZoomOut}
-              leftSection={<IconZoomOut size={16} />}
-              c={colors['blue-button']}
-            >
-              Zoom Out
-            </Button>
-
-            <Box
-              bg={colors['blue-button-2']}
-              c={colors['blue-button']}
-              px={16}
-              py={8}
+            style={{ width: '100%' }} // 👈 penting
+          >
+            <TabsList
               style={{
-                fontSize: 14,
-                fontWeight: 700,
-                borderRadius: '8px',
-                minWidth: 70,
-                textAlign: 'center',
+                display: 'flex',
+                overflowX: 'auto',
+                overflowY: 'hidden',
+                gap: '4px',
+                paddingBottom: '4px',
+                flexWrap: 'nowrap',
+                WebkitOverflowScrolling: 'touch',
+                scrollbarWidth: 'thin',
+                msOverflowStyle: '-ms-autohiding-scrollbar',
+                maxWidth: '100%',
+                scrollBehavior: 'smooth', // 👈 smooth scroll
               }}
             >
-              {Math.round(scale * 100)}%
-            </Box>
+              <TabsTab
+                value="zoom-out"
+                onClick={handleZoomOut}
+                leftSection={<IconZoomOut size={16} />}
+                style={{ flexShrink: 0 }}
+              >
+                <Text fz={{ base: 12, sm: 13 }} lh={1} ta="center">Zoom Out</Text>
+              </TabsTab>
 
-            <Button
-              bg={colors['blue-button-2']}
-              c={colors['blue-button']}
-              variant="light"
-              size="sm"
-              onClick={handleZoomIn}
-              leftSection={<IconZoomIn size={16} />}
-            >
-              Zoom In
-            </Button>
+              <Box
+                bg={colors['blue-button-2']}
+                c={colors['blue-button']}
+                px={12}
+                py={6}
+                style={{
+                  fontWeight: 700,
+                  borderRadius: '6px',
+                  minWidth: 60,
+                  textAlign: 'center',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0,
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                <Text fz={{ base: 12, sm: 13 }} lh={1} c={colors['blue-button']}>
+                  {Math.round(scale * 100)}%
+                </Text>
+              </Box>
 
-            <Button
-              bg={colors['blue-button-2']}
-              c={colors['blue-button']}
-              variant="light"
-              size="sm"
-              onClick={resetZoom}
-            >
-              Reset
-            </Button>
+              <TabsTab
+                value="zoom-in"
+                onClick={handleZoomIn}
+                leftSection={<IconZoomIn size={16} />}
+                style={{ flexShrink: 0 }}
+              >
+                <Text fz={{ base: 12, sm: 13 }} lh={1} ta="center">Zoom In</Text>
+              </TabsTab>
 
-            <Button
-              bg={colors['blue-button-2']}
-              c={colors['blue-button']}
-              size="sm"
-              onClick={toggleFullscreen}
-              leftSection={
-                isFullscreen ? (
-                  <IconArrowsMinimize size={16} />
-                ) : (
-                  <IconArrowsMaximize size={16} />
-                )
-              }
-            >
-              Fullscreen
-            </Button>
-          </Group>
-        </Group>
+              <TabsTab
+                value="reset"
+                onClick={resetZoom}
+                style={{ flexShrink: 0 }}
+              >
+                <Text fz={{ base: 12, sm: 13 }} lh={1} ta="center">Reset</Text>
+              </TabsTab>
+
+              <TabsTab
+                value="fullscreen"
+                onClick={toggleFullscreen}
+                leftSection={
+                  isFullscreen ? (
+                    <IconArrowsMinimize size={16} />
+                  ) : (
+                    <IconArrowsMaximize size={16} />
+                  )
+                }
+                style={{ flexShrink: 0 }}
+              >
+                <Text fz={{ base: 12, sm: 13 }} lh={1} ta="center">
+                  {isFullscreen ? 'Exit' : 'Fullscreen'}
+                </Text>
+              </TabsTab>
+            </TabsList>
+          </Tabs>
+        </Stack>
       </Paper>
 
       {/* 🧩 Chart Container */}
@@ -325,15 +377,20 @@ function StrukturOrganisasiPPID() {
             maxWidth: '100%',
             padding: '32px 16px',
             transition: 'transform 0.2s ease',
-            transform: `scale(${scale})`,
-            transformOrigin: 'center top',
           }}
         >
-          <OrganizationChart
-            value={chartData}
-            nodeTemplate={(node) => <NodeCard node={node} router={router} />}
-            className="p-organizationchart p-organizationchart-horizontal"
-          />
+          <Box style={{
+            transform: `scale(${scale})`,
+            transformOrigin: 'center top',
+            display: 'inline-block', // 👈 agar tidak memenuhi lebar parent
+            minWidth: 'min-content', // 👈 penting agar chart tidak dipaksa muat di width 100%
+          }}>
+            <OrganizationChart
+              value={chartData}
+              nodeTemplate={(node) => <NodeCard node={node} router={router} />}
+              className="p-organizationchart p-organizationchart-horizontal"
+            />
+          </Box>
         </Box>
       </Center>
     </Stack>
@@ -345,6 +402,7 @@ function NodeCard({ node, router }: any) {
   const name = node?.data?.name || 'Tanpa Nama'
   const title = node?.data?.title || 'Tanpa Jabatan'
   const hasId = Boolean(node?.data?.id)
+  const isMobile = useMediaQuery("(max-width: 768px)");
 
   return (
     <Transition mounted transition="pop" duration={300}>
@@ -355,9 +413,10 @@ function NodeCard({ node, router }: any) {
           withBorder
           style={{
             ...styles,
-            width: 240,
-            minHeight: 280,
-            padding: 20,
+            width: '100%',
+            maxWidth: isMobile ? 200 : 240, // lebih kecil di mobile
+            minHeight: isMobile ? 240 : 280,
+            padding: isMobile ? 16 : 20,
             background: 'linear-gradient(135deg, rgba(28,110,164,0.15) 0%, rgba(255,255,255,0.95) 100%)',
             borderColor: 'rgba(28, 110, 164, 0.3)',
             borderWidth: 2,
@@ -406,17 +465,17 @@ function NodeCard({ node, router }: any) {
             {/* Name */}
             <Text
               fw={700}
-              size="sm"
               ta="center"
               c={colors['blue-button']}
               lineClamp={2}
+              fz={{ base: 13, md: 15 }}
+              lh={1.2}
               style={{
                 minHeight: 40,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 wordBreak: 'break-word',
-                lineHeight: 1.3,
               }}
             >
               {name}
@@ -424,18 +483,18 @@ function NodeCard({ node, router }: any) {
 
             {/* Title/Position */}
             <Text
-              size="xs"
               c="dimmed"
               ta="center"
               fw={500}
               lineClamp={2}
+              fz={{ base: 12, md: 13 }}
+              lh={1.3}
               style={{
                 minHeight: 32,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 wordBreak: 'break-word',
-                lineHeight: 1.2,
               }}
             >
               {title}
@@ -458,7 +517,7 @@ function NodeCard({ node, router }: any) {
                   fontWeight: 600,
                 }}
               >
-                Lihat Detail
+                <Text c={"white"} fz={{ base: 12, md: 13 }} lh={1} ta="center">Lihat Detail</Text>
               </Button>
             )}
           </Stack>

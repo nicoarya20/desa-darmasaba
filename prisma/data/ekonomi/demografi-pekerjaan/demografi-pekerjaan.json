@@ -1,0 +1,56 @@
+[
+  {
+    "id": "cmkf3kv0b0004vnys6hh7ugj2",
+    "pekerjaan": "Petani/Pekebun",
+    "lakiLaki": 180,
+    "perempuan": 120
+  },
+  {
+    "id": "cmkf3kv0b0004vnys6hh8vhk3",
+    "pekerjaan": "Perajin Industri",
+    "lakiLaki": 95,
+    "perempuan": 140
+  },
+  {
+    "id": "cmkf3kv0b0004vnys6hh9wil4",
+    "pekerjaan": "Pedagang/UMKM",
+    "lakiLaki": 130,
+    "perempuan": 170
+  },
+  {
+    "id": "cmkf3kv0b0004vnys6hh0xjm5",
+    "pekerjaan": "Karyawan Swasta",
+    "lakiLaki": 260,
+    "perempuan": 310
+  },
+  {
+    "id": "cmkf3kv0b0004vnys6hh1ykn6",
+    "pekerjaan": "PNS/TNI/Polri",
+    "lakiLaki": 85,
+    "perempuan": 75
+  },
+  {
+    "id": "cmkf3kv0b0004vnys6hh2zlo7",
+    "pekerjaan": "Buruh Harian Lepas",
+    "lakiLaki": 140,
+    "perempuan": 90
+  },
+  {
+    "id": "cmkf3kv0b0004vnys6hh3amp8",
+    "pekerjaan": "Wiraswasta",
+    "lakiLaki": 165,
+    "perempuan": 110
+  },
+  {
+    "id": "cmkf3kv0b0004vnys6hh4bnq9",
+    "pekerjaan": "Pelajar/Mahasiswa",
+    "lakiLaki": 220,
+    "perempuan": 240
+  },
+  {
+    "id": "cmkf3kv0b0004vnys6hh5cor0",
+    "pekerjaan": "Belum/Tidak Bekerja",
+    "lakiLaki": 70,
+    "perempuan": 95
+  }
+]

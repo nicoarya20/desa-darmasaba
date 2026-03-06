@@ -15,6 +15,14 @@ export default function CreateDataPendidikan() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      stateDPM.create.form.name?.trim() !== '' &&
+      stateDPM.create.form.jumlah?.trim() !== ''
+    );
+  };
+
   const resetForm = () => {
     stateDPM.create.form = { name: '', jumlah: '' };
   };
@@ -39,7 +47,7 @@ export default function CreateDataPendidikan() {
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'xl' }} py="md">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       <Group mb="md" gap="sm">
         <Button variant="subtle" onClick={() => router.back()} radius="md">
           <IconArrowBack size={20} stroke={2} />
@@ -90,8 +98,11 @@ export default function CreateDataPendidikan() {
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}

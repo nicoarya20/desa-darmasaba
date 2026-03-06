@@ -24,6 +24,15 @@ function EditPelayananTelunjukSakti() {
   const params = useParams();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      formData.name?.trim() !== '' &&
+      formData.deskripsi?.trim() !== '' &&
+      formData.link?.trim() !== ''
+    );
+  };
+
   const [formData, setFormData] = useState({
     name: '',
     deskripsi: '',
@@ -74,16 +83,31 @@ function EditPelayananTelunjukSakti() {
   );
 
   const handleResetForm = () => {
-      setFormData({
-        name: originalData.name,
-        deskripsi: originalData.deskripsi,
-        link: originalData.link,
-      });
-      toast.info("Form dikembalikan ke data awal");
-    };
+    setFormData({
+      name: originalData.name,
+      deskripsi: originalData.deskripsi,
+      link: originalData.link,
+    });
+    toast.info("Form dikembalikan ke data awal");
+  };
 
   // Submit: update global state hanya saat simpan
   const handleSubmit = async () => {
+    if (!formData.name?.trim()) {
+      toast.error('Nama pelayanan wajib diisi');
+      return;
+    }
+
+    if (!formData.deskripsi?.trim()) {
+      toast.error('Judul link wajib diisi');
+      return;
+    }
+
+    if (!formData.link?.trim()) {
+      toast.error('Link wajib diisi');
+      return;
+    }
+
     try {
       setIsSubmitting(true);
       stateTelunjukDesa.edit.form = {
@@ -102,12 +126,12 @@ function EditPelayananTelunjukSakti() {
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Back Button + Title */}
       <Group mb="md">
-          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
+        <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Edit Pelayanan Telunjuk Sakti Desa
         </Title>
@@ -165,8 +189,11 @@ function EditPelayananTelunjukSakti() {
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}

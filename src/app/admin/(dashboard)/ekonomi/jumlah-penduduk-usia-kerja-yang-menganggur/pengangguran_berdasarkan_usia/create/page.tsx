@@ -17,6 +17,16 @@ function CreateGrafikBerdasarkanUsiaKerjaYangMenganggur() {
   const [donutData, setDonutData] = useState<any[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      stategrafik.create.form.usia18_25?.trim() !== '' &&
+      stategrafik.create.form.usia26_35?.trim() !== '' &&
+      stategrafik.create.form.usia36_45?.trim() !== '' &&
+      stategrafik.create.form.usia46_keatas?.trim() !== ''
+    );
+  };
+
   const resetForm = () => {
     stategrafik.create.form = {
       ...stategrafik.create.form,
@@ -49,7 +59,7 @@ function CreateGrafikBerdasarkanUsiaKerjaYangMenganggur() {
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Header */}
       <Group mb="md">
         <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
@@ -120,8 +130,11 @@ function CreateGrafikBerdasarkanUsiaKerjaYangMenganggur() {
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}

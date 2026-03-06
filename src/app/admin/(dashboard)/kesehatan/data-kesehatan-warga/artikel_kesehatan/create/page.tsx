@@ -30,6 +30,33 @@ function CreateArtikelKesehatan() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Helper function to check if HTML content is empty
+  const isHtmlEmpty = (html: string) => {
+    // Remove all HTML tags and check if there's any text content
+    const textContent = html.replace(/<[^>]*>/g, '').trim();
+    return textContent === '';
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      stateArtikelKesehatan.create.form.title?.trim() !== '' &&
+      stateArtikelKesehatan.create.form.content?.trim() !== '' &&
+      !isHtmlEmpty(stateArtikelKesehatan.create.form.introduction.content) &&
+      stateArtikelKesehatan.create.form.symptom.title?.trim() !== '' &&
+      !isHtmlEmpty(stateArtikelKesehatan.create.form.symptom.content) &&
+      stateArtikelKesehatan.create.form.prevention.title?.trim() !== '' &&
+      !isHtmlEmpty(stateArtikelKesehatan.create.form.prevention.content) &&
+      stateArtikelKesehatan.create.form.firstAid.title?.trim() !== '' &&
+      !isHtmlEmpty(stateArtikelKesehatan.create.form.firstAid.content) &&
+      stateArtikelKesehatan.create.form.mythVsFact.title?.trim() !== '' &&
+      !isHtmlEmpty(stateArtikelKesehatan.create.form.mythVsFact.mitos) &&
+      !isHtmlEmpty(stateArtikelKesehatan.create.form.mythVsFact.fakta) &&
+      !isHtmlEmpty(stateArtikelKesehatan.create.form.doctorSign.content) &&
+      file !== null
+    );
+  };
+
   const resetForm = () => {
     stateArtikelKesehatan.create.form = {
       title: '',
@@ -65,10 +92,79 @@ function CreateArtikelKesehatan() {
 
   const handleSubmit = async (e?: React.FormEvent) => {
     e?.preventDefault();
+
+    if (!stateArtikelKesehatan.create.form.title?.trim()) {
+      toast.error('Judul wajib diisi');
+      return;
+    }
+
+    if (!stateArtikelKesehatan.create.form.content?.trim()) {
+      toast.error('Deskripsi wajib diisi');
+      return;
+    }
+
+    if (isHtmlEmpty(stateArtikelKesehatan.create.form.introduction.content)) {
+      toast.error('Pendahuluan wajib diisi');
+      return;
+    }
+
+    if (!stateArtikelKesehatan.create.form.symptom.title?.trim()) {
+      toast.error('Judul gejala wajib diisi');
+      return;
+    }
+
+    if (isHtmlEmpty(stateArtikelKesehatan.create.form.symptom.content)) {
+      toast.error('Deskripsi gejala wajib diisi');
+      return;
+    }
+
+    if (!stateArtikelKesehatan.create.form.prevention.title?.trim()) {
+      toast.error('Judul pencegahan wajib diisi');
+      return;
+    }
+
+    if (isHtmlEmpty(stateArtikelKesehatan.create.form.prevention.content)) {
+      toast.error('Deskripsi pencegahan wajib diisi');
+      return;
+    }
+
+    if (!stateArtikelKesehatan.create.form.firstAid.title?.trim()) {
+      toast.error('Judul pertolongan pertama wajib diisi');
+      return;
+    }
+
+    if (isHtmlEmpty(stateArtikelKesehatan.create.form.firstAid.content)) {
+      toast.error('Deskripsi pertolongan pertama wajib diisi');
+      return;
+    }
+
+    if (!stateArtikelKesehatan.create.form.mythVsFact.title?.trim()) {
+      toast.error('Judul mitos vs fakta wajib diisi');
+      return;
+    }
+
+    if (isHtmlEmpty(stateArtikelKesehatan.create.form.mythVsFact.mitos)) {
+      toast.error('Deskripsi mitos wajib diisi');
+      return;
+    }
+
+    if (isHtmlEmpty(stateArtikelKesehatan.create.form.mythVsFact.fakta)) {
+      toast.error('Deskripsi fakta wajib diisi');
+      return;
+    }
+
+    if (isHtmlEmpty(stateArtikelKesehatan.create.form.doctorSign.content)) {
+      toast.error('Deskripsi kapan harus ke dokter wajib diisi');
+      return;
+    }
+
+    if (!file) {
+      toast.error('Gambar wajib dipilih');
+      return;
+    }
+
     try {
-      if (!file) {
-        return toast.warn('Silakan pilih file gambar terlebih dahulu');
-      }
+      setIsSubmitting(true);
 
       const res = await ApiFetch.api.fileStorage.create.post({
         file,
@@ -94,7 +190,7 @@ function CreateArtikelKesehatan() {
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md" component="form" onSubmit={handleSubmit}>
+    <Box px={{ base: 0, md: 'lg' }} py="xs" component="form" onSubmit={handleSubmit}>
       {/* Header */}
       <Group mb="md">
         <Button
@@ -344,8 +440,11 @@ function CreateArtikelKesehatan() {
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}

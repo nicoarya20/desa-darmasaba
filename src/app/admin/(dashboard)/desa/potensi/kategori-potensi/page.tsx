@@ -1,7 +1,24 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-'use client'
+'use client';
 import colors from '@/con/colors';
-import { Box, Button, Center, Group, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title } from '@mantine/core';
+import {
+  Box,
+  Button,
+  Center,
+  Group,
+  Pagination,
+  Paper,
+  Skeleton,
+  Stack,
+  Table,
+  TableTbody,
+  TableTd,
+  TableTh,
+  TableThead,
+  TableTr,
+  Text,
+  Title,
+} from '@mantine/core';
 import { IconEdit, IconPlus, IconSearch, IconTrash } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -9,6 +26,7 @@ import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../../_com/header';
 import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
 import potensiDesaState from '../../../_state/desa/potensi';
+import { useDebouncedValue } from '@mantine/hooks';
 
 function KategoriPotensi() {
   const [search, setSearch] = useState('');
@@ -27,85 +45,112 @@ function KategoriPotensi() {
 }
 
 function ListKategoriPotensi({ search }: { search: string }) {
-  const listDataState = useProxy(potensiDesaState.kategoriPotensi)
+  const listDataState = useProxy(potensiDesaState.kategoriPotensi);
   const router = useRouter();
-  const [modalHapus, setModalHapus] = useState(false)
-  const [selectedId, setSelectedId] = useState<string | null>(null)
+  const [modalHapus, setModalHapus] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const { data, page, totalPages, loading, load } = listDataState.findMany;
+  const [debouncedSearch] = useDebouncedValue(search, 1000);
 
   useEffect(() => {
-    load(1, 10, search)
-  }, [search])
+    load(1, 10, debouncedSearch);
+  }, [debouncedSearch]);
 
   const handleDelete = () => {
     if (selectedId) {
-      listDataState.delete.delete(selectedId)
-      setModalHapus(false)
-      setSelectedId(null)
-      load(page, 10, search)
+      listDataState.delete.delete(selectedId);
+      setModalHapus(false);
+      setSelectedId(null);
+      load(page, 10, search);
     }
-  }
+  };
 
-  const filteredData = data || []
+  const filteredData = data || [];
 
   if (loading || !data) {
     return (
-      <Stack py={10}>
+      <Stack py="md">
         <Skeleton height={500} radius="md" />
       </Stack>
-    )
+    );
   }
 
   return (
-    <Box py={10}>
+    <Box py="md">
       <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
-        <Stack>
-          <Group justify="space-between">
-            <Title order={4}>List Kategori Potensi</Title>
-              <Button
-                leftSection={<IconPlus size={18} />}
-                color="blue"
-                variant="light"
-                onClick={() => router.push('/admin/desa/potensi/kategori-potensi/create')}
-              >
-                Tambah Baru
-              </Button>
+        <Stack gap="xl">
+          <Group justify="space-between" align="center">
+            <Title order={4} lh={1.2}>
+              List Kategori Potensi
+            </Title>
+            <Button
+              leftSection={<IconPlus size={18} />}
+              color="blue"
+              variant="light"
+              onClick={() =>
+                router.push('/admin/desa/potensi/kategori-potensi/create')
+              }
+            >
+              Tambah Baru
+            </Button>
           </Group>
 
-          <Box style={{ overflowX: 'auto' }}>
-            <Table highlightOnHover striped withRowBorders style={{ minWidth: '700px' }}>
+          {/* Desktop Table */}
+         <Box visibleFrom="md" style={{ overflowX: 'auto' }}>
+           <Table highlightOnHover
+    layout="fixed" // 🔥 PENTING
+    withColumnBorders={false} striped withRowBorders miw={700}>
               <TableThead>
                 <TableTr>
-                  <TableTh style={{ width: '10%' }}>No</TableTh>
-                  <TableTh style={{ width: '60%' }}>Nama</TableTh>
-                  <TableTh style={{ width: '15%' }}>Edit</TableTh>
-                  <TableTh style={{ width: '15%' }}>Hapus</TableTh>
+                  <TableTh w="60%">
+                    <Text fz="xs" fw={600} lh={1.4} c="black">
+                      Nama
+                    </Text>
+                  </TableTh>
+                  <TableTh w="15%">
+                    <Text fz="xs" fw={600} lh={1.4} c="black">
+                      Edit
+                    </Text>
+                  </TableTh>
+                  <TableTh w="15%">
+                    <Text fz="xs" fw={600} lh={1.4} c="black">
+                      Hapus
+                    </Text>
+                  </TableTh>
                 </TableTr>
               </TableThead>
               <TableTbody>
                 {filteredData.length > 0 ? (
-                  filteredData.map((item, index) => (
+                  filteredData.map((item) => (
                     <TableTr key={item.id}>
                       <TableTd>
-                        <Text fz="sm">{(page - 1) * 10 + index + 1}</Text>
+                        <Text fz="sm" lh={1.5} truncate>
+                          {item.nama}
+                        </Text>
                       </TableTd>
                       <TableTd>
-                        <Text truncate lineClamp={1}>{item.nama}</Text>
-                      </TableTd>
-                      <TableTd>
-                        <Button variant='light' color='green' onClick={() => router.push(`/admin/desa/potensi/kategori-potensi/${item.id}`)}>
+                        <Button
+                          variant="light"
+                          color="green"
+                          onClick={() =>
+                            router.push(
+                              `/admin/desa/potensi/kategori-potensi/${item.id}`
+                            )
+                          }
+                        >
                           <IconEdit size={20} />
                         </Button>
                       </TableTd>
                       <TableTd>
                         <Button
-                          variant='light'
-                          color='red'
+                          variant="light"
+                          color="red"
                           disabled={listDataState.delete.loading}
                           onClick={() => {
-                            setSelectedId(item.id)
-                            setModalHapus(true)
-                          }}>
+                            setSelectedId(item.id);
+                            setModalHapus(true);
+                          }}
+                        >
                           <IconTrash size={20} />
                         </Button>
                       </TableTd>
@@ -114,8 +159,10 @@ function ListKategoriPotensi({ search }: { search: string }) {
                 ) : (
                   <TableTr>
                     <TableTd colSpan={4}>
-                      <Center py={20}>
-                        <Text color="dimmed">Tidak ada data kategori potensi yang cocok</Text>
+                      <Center py="lg">
+                        <Text c="dimmed" fz="sm" lh={1.5}>
+                          Tidak ada data kategori potensi yang cocok
+                        </Text>
                       </Center>
                     </TableTd>
                   </TableTr>
@@ -123,10 +170,70 @@ function ListKategoriPotensi({ search }: { search: string }) {
               </TableTbody>
             </Table>
           </Box>
+
+          {/* Mobile Cards */}
+          <Stack gap="sm" hiddenFrom="md">
+            {filteredData.length > 0 ? (
+              filteredData.map((item, index) => (
+                <Paper key={item.id} withBorder p="sm" radius="md">
+                  <Stack gap={'xs'}>
+                    <Box>
+                      <Text fz="xs" fw={600} lh={1.4}>
+                        No
+                      </Text>
+                      <Text fz="sm" lh={1.5}>
+                        {(page - 1) * 10 + index + 1}
+                      </Text>
+                    </Box>
+                    <Box>
+                      <Text fz="xs" fw={600} lh={1.4}>
+                        Nama
+                      </Text>
+                      <Text fz="sm" lh={1.5}>
+                        {item.nama}
+                      </Text>
+                    </Box>
+                    <Group justify="flex-end" mt="xs">
+                      <Button
+                        variant="light"
+                        color="green"
+                        size="xs"
+                        onClick={() =>
+                          router.push(
+                            `/admin/desa/potensi/kategori-potensi/${item.id}`
+                          )
+                        }
+                      >
+                        <IconEdit size={16} />
+                      </Button>
+                      <Button
+                        variant="light"
+                        color="red"
+                        size="xs"
+                        disabled={listDataState.delete.loading}
+                        onClick={() => {
+                          setSelectedId(item.id);
+                          setModalHapus(true);
+                        }}
+                      >
+                        <IconTrash size={16} />
+                      </Button>
+                    </Group>
+                  </Stack>
+                </Paper>
+              ))
+            ) : (
+              <Center py="lg">
+                <Text c="dimmed" fz="sm" lh={1.5}>
+                  Tidak ada data kategori potensi yang cocok
+                </Text>
+              </Center>
+            )}
+          </Stack>
         </Stack>
       </Paper>
 
-      <Center mt="md">
+      <Center mt="xl">
         <Pagination
           value={page}
           onChange={(newPage) => load(newPage, 10, search)}
@@ -143,7 +250,7 @@ function ListKategoriPotensi({ search }: { search: string }) {
         text='Apakah anda yakin ingin menghapus kategori Potensi ini?'
       />
     </Box>
-  )
+  );
 }
 
 export default KategoriPotensi;

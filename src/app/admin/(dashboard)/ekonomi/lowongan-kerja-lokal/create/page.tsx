@@ -24,6 +24,27 @@ function CreateLowonganKerja() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Helper function to check if HTML content is empty
+  const isHtmlEmpty = (html: string) => {
+    // Remove all HTML tags and check if there's any text content
+    const textContent = html.replace(/<[^>]*>/g, '').trim();
+    return textContent === '';
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      lowonganState.create.form.posisi?.trim() !== '' &&
+      lowonganState.create.form.namaPerusahaan?.trim() !== '' &&
+      lowonganState.create.form.notelp?.trim() !== '' &&
+      lowonganState.create.form.lokasi?.trim() !== '' &&
+      lowonganState.create.form.tipePekerjaan?.trim() !== '' &&
+      lowonganState.create.form.gaji?.trim() !== '' &&
+      !isHtmlEmpty(lowonganState.create.form.deskripsi) &&
+      !isHtmlEmpty(lowonganState.create.form.kualifikasi)
+    );
+  };
+
   const resetForm = () => {
     lowonganState.create.form = {
       posisi: '',
@@ -54,7 +75,7 @@ function CreateLowonganKerja() {
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 0, md: 'xs' }} py="xs">
       <Group mb="md">
         <Button
           variant="subtle"
@@ -175,8 +196,11 @@ function CreateLowonganKerja() {
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}

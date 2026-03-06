@@ -6,14 +6,15 @@ import { IconEdit } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
 import stateProfilePPID from '../../_state/ppid/profile_ppid/profile_PPID';
-
+import DOMPurify from 'dompurify';
 
 function Page() {
-  const router = useRouter()
-  const allList = useProxy(stateProfilePPID)
+  const router = useRouter();
+  const allList = useProxy(stateProfilePPID);
+
   useShallowEffect(() => {
-    allList.profile.load("edit") // Assuming "1" is your default ID, adjust as needed
-  }, [])
+    allList.profile.load("edit");
+  }, []);
 
   if (!allList.profile.data) {
     return (
@@ -30,20 +31,21 @@ function Page() {
   return (
     <Paper bg={colors['white-1']} p="lg" radius="md" shadow="sm">
       <Stack gap="md">
-        <Grid align="center">
+        <Grid>
           <GridCol span={{ base: 12, md: 11 }}>
-            <Title order={3} c={colors['blue-button']}>Preview Profil PPID</Title>
+            <Title order={3} c={colors['blue-button']} lh={1.2}>Preview Profil PPID</Title>
           </GridCol>
           <GridCol span={{ base: 12, md: 1 }}>
-              <Button
-                c="green"
-                variant="light"
-                leftSection={<IconEdit size={18} stroke={2} />}
-                radius="md"
-                onClick={() => router.push(`/admin/ppid/profil-ppid/${allList.profile.data?.id}`)}
-              >
-                Edit
-              </Button>
+            <Button
+              w={{ base: '100%', md: "110%" }}
+              c="green"
+              variant="light"
+              leftSection={<IconEdit size={18} stroke={2} />}
+              radius="md"
+              onClick={() => router.push(`/admin/ppid/profil-ppid/${allList.profile.data?.id}`)}
+            >
+              Edit
+            </Button>
           </GridCol>
         </Grid>
         {dataArray.map((item) => (
@@ -56,9 +58,14 @@ function Page() {
                   </Center>
                 </GridCol>
                 <GridCol span={12}>
-                  <Text ta="center" fz={{ base: "1.2rem", md: "1.8rem" }} fw="bold" c={colors['blue-button']}>
+                  <Title
+                    order={4}
+                    c={colors['blue-button']}
+                    ta="center"
+                    lh={1.15}
+                  >
                     PROFIL PIMPINAN BADAN PUBLIK DESA DARMASABA
-                  </Text>
+                  </Title>
                 </GridCol>
               </Grid>
             </Box>
@@ -86,34 +93,77 @@ function Page() {
                     className="glass3"
                     style={{ mt: -30, boxShadow: '0 4px 20px rgba(0,0,0,0.15)' }}
                   >
-                    <Text ta="center" c={colors['white-1']} fw="bolder" fz={{ base: "1.2rem", md: "1.6rem" }}>
+                    <Title
+                      order={3}
+                      c={colors['white-1']}
+                      ta="center"
+                      lh={1.2}
+                    >
                       {item.name}
-                    </Text>
+                    </Title>
                   </Paper>
                 </Stack>
               </Paper>
-              
+
               <Box mt="lg">
-                <Text fz={{ base: "1.125rem", md: "1.5rem" }} fw="bold" mb={4}>Biodata</Text>
-                <Text fz={{ base: "1rem", md: "1.4rem" }} ta="justify" c={colors['blue-button']} style={{wordBreak: "break-word", whiteSpace: "normal"}}  dangerouslySetInnerHTML={{ __html: item.biodata }} />
+                <Title order={3} lh={1.2} mb={4}>
+                  Biodata
+                </Title>
+                <Text
+                  fz={{ base: 'sm', md: 'md' }}
+                  ta="justify"
+                  c={colors['blue-button']}
+                  lh={1.5}
+                  style={{ wordBreak: "break-word", whiteSpace: "normal" }}
+                  dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(item.biodata) }}
+                />
               </Box>
-              
+
               <Box mt="xl">
-                <Text fz={{ base: "1.125rem", md: "1.5rem" }} fw="bold" mb={4}>Riwayat Karir</Text>
-                <Text fz={{ base: "1rem", md: "1.4rem" }} ta="justify" c={colors['blue-button']} style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: item.riwayat }} />
-              </Box>
-              
-              <Box mt="xl">
-                <Text fz={{ base: "1.125rem", md: "1.5rem" }} fw="bold" mb={4}>Pengalaman Organisasi</Text>
+                <Title order={3} lh={1.2} mb={4}>
+                  Riwayat Karir
+                </Title>
                 <Box px={20}>
-                  <Text fz={{ base: "1rem", md: "1.4rem" }} ta="justify" c={colors['blue-button']} style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: item.pengalaman }} />
+                  <Text
+                    fz={{ base: 'sm', md: 'md' }}
+                    ta="justify"
+                    c={colors['blue-button']}
+                    lh={1.5}
+                    style={{ wordBreak: "break-word", whiteSpace: "normal" }}
+                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(item.riwayat) }}
+                  />
                 </Box>
               </Box>
-              
-              <Box mt="xl" mb="lg">
-                <Text fz={{ base: "1.125rem", md: "1.5rem" }} fw="bold" mb={4}>Program Kerja Unggulan</Text>
+
+              <Box mt="xl">
+                <Title order={3} lh={1.2} mb={4}>
+                  Pengalaman Organisasi
+                </Title>
                 <Box px={20}>
-                  <Text fz={{ base: "1rem", md: "1.4rem" }} ta="justify" c={colors['blue-button']} style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: item.unggulan }} />
+                  <Text
+                    fz={{ base: 'sm', md: 'md' }}
+                    ta="justify"
+                    c={colors['blue-button']}
+                    lh={1.5}
+                    style={{ wordBreak: "break-word", whiteSpace: "normal" }}
+                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(item.pengalaman) }}
+                  />
+                </Box>
+              </Box>
+
+              <Box mt="xl" mb="lg">
+                <Title order={3} lh={1.2} mb={4}>
+                  Program Kerja Unggulan
+                </Title>
+                <Box px={20}>
+                  <Text
+                    fz={{ base: 'sm', md: 'md' }}
+                    ta="justify"
+                    c={colors['blue-button']}
+                    lh={1.5}
+                    style={{ wordBreak: "break-word", whiteSpace: "normal" }}
+                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(item.unggulan) }}
+                  />
                 </Box>
               </Box>
             </Box>
@@ -121,9 +171,7 @@ function Page() {
         ))}
       </Stack>
     </Paper>
-  )
+  );
 }
-
-
 
 export default Page;

@@ -1,7 +1,7 @@
 'use client'
 import programKemiskinanState from '@/app/admin/(dashboard)/_state/ekonomi/program-kemiskinan';
 import colors from '@/con/colors';
-import { Box, Center, Grid, GridCol, Pagination, Paper, SimpleGrid, Skeleton, Stack, Text, TextInput } from '@mantine/core';
+import { Box, Center, Grid, GridCol, Pagination, Paper, SimpleGrid, Skeleton, Stack, Text, TextInput, Title } from '@mantine/core';
 import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
 import { IconSearch } from '@tabler/icons-react';
 import { useState } from 'react';
@@ -32,10 +32,9 @@ interface ProgramKemiskinanData {
 
 function Page() {
   const [search, setSearch] = useState('')
-  const [debouncedSearch] = useDebouncedValue(search, 500); // 500ms delay
+  const [debouncedSearch] = useDebouncedValue(search, 1000);
   const state = useProxy(programKemiskinanState)
 
-  // 🔧 Get valid statistics data with proper type checking
   const statistikData = state.findMany.data
     .filter((item): item is ProgramKemiskinanData & { statistik: StatistikData } => {
       return !!item?.statistik && 
@@ -43,11 +42,11 @@ function Page() {
              item.statistik.jumlah !== undefined;
     })
     .map(item => ({
-      tahun: Number(item.statistik.tahun) || 0, // Ensure tahun is a number
-      jumlah: Number(item.statistik.jumlah) || 0, // Ensure jumlah is a number
+      tahun: Number(item.statistik.tahun) || 0,
+      jumlah: Number(item.statistik.jumlah) || 0,
     }))
     .sort((a, b) => a.tahun - b.tahun)
-    .filter(item => !isNaN(item.tahun) && !isNaN(item.jumlah)); // Remove any invalid entries
+    .filter(item => !isNaN(item.tahun) && !isNaN(item.jumlah));
 
   const {
     data,
@@ -70,34 +69,47 @@ function Page() {
   }
 
   return (
-    <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"22"}>
+    <Stack pos="relative" bg={colors.Bg} py={{ base: 'xl', md: 'xl' }} gap={'22'}>
       <Box px={{ base: 'md', md: 100 }}>
         <BackButton />
       </Box>
-      <Box px={{ base: 'md', md: 100 }} >
-        <Grid align='center'>
+      <Box px={{ base: 'md', md: 100 }}>
+        <Grid align="center">
           <GridCol span={{ base: 12, md: 9 }}>
-            <Text fz={{ base: "h1", md: "2.5rem" }} c={colors["blue-button"]} fw={"bold"}>
+            <Title
+              order={1}
+              c={colors["blue-button"]}
+              fw="bold"
+              lh={{ base: 1.2, md: 1.2 }}
+            >
               Program Kemiskinan
-            </Text>
+            </Title>
           </GridCol>
           <GridCol span={{ base: 12, md: 3 }}>
             <TextInput
-              radius={"lg"}
-              placeholder='Cari Program'
+              radius="lg"
+              placeholder="Cari Program"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               leftSection={<IconSearch size={20} />}
-              w={{ base: "50%", md: "100%" }}
+              w="100%"
             />
           </GridCol>
         </Grid>
-        <Text fz={'h4'}>Berbagai program bantuan untuk mengurangi kemiskinan dan meningkatkan kesejahteraan masyarakat</Text>
+        <Text
+          fz={{ base: 'sm', md: 'md' }}
+          lh={{ base: 1.5, md: 1.6 }}
+          c="black"
+          ta="left"
+          pt={{ base: 'sm', md: 20 }}
+        >
+          Berbagai program bantuan untuk mengurangi kemiskinan dan meningkatkan kesejahteraan masyarakat
+        </Text>
       </Box>
       <Box px={{ base: "md", md: 100 }}>
-        <Stack gap={'lg'} justify='center'>
+        <Stack gap={'lg'} justify="center">
           <SimpleGrid
-            pb={10}
+            pb={{ base: 'md', md: 10 }}
             cols={{
               base: 1,
               md: 2
@@ -105,14 +117,27 @@ function Page() {
           >
             {state.findMany.data.map(v => {
               return (
-                <Paper p={'xl'} key={v.id}>
-                  <Text fz={'h3'} fw={'bold'} c={colors['blue-button']}>{v.nama}</Text>
-                  <Text fz={'lg'} c={'black'} style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: v.deskripsi }}></Text>
+                <Paper p={{ base: 'lg', md: 'xl' }} key={v.id}>
+                  <Title
+                    order={3}
+                    fw="bold"
+                    c={colors['blue-button']}
+                    lh={{ base: 1.2, md: 1.2 }}
+                  >
+                    {v.nama}
+                  </Title>
+                  <Text
+                    fz={{ base: 'sm', md: 'md' }}
+                    lh={{ base: 1.5, md: 1.6 }}
+                    c="black"
+                    style={{ wordBreak: "break-word", whiteSpace: "normal" }}
+                    dangerouslySetInnerHTML={{ __html: v.deskripsi }}
+                  />
                 </Paper>
               )
             })}
           </SimpleGrid>
-          <Center my={10}>
+          <Center my={{ base: 'md', md: 10 }}>
             <Pagination
               value={page}
               onChange={(newPage) => {
@@ -120,17 +145,25 @@ function Page() {
                 window.scrollTo({ top: 0, behavior: 'smooth' })
               }}
               total={totalPages}
-              my={"md"}
+              my="md"
             />
           </Center>
-          <Paper p={'xl'}>
-            <Text fz={'h3'} fw={'bold'} c={colors['blue-button']} mb="md">Statistik Kemiskinan Masyarakat</Text>
+          <Paper p={{ base: 'lg', md: 'xl' }}>
+            <Title
+              order={3}
+              fw="bold"
+              c={colors['blue-button']}
+              lh={{ base: 1.2, md: 1.2 }}
+              mb="md"
+            >
+              Statistik Kemiskinan Masyarakat
+            </Title>
             <Box style={{ width: '100%', height: 'auto' }}>
               {statistikData.length > 0 ? (
                 <Box w="100%" style={{ overflowX: 'auto' }}>
                   <Center>
                     <RechartsLineChart 
-                      width={Math.min(800, window.innerWidth - 100)} 
+                      width={Math.min(800, typeof window !== 'undefined' ? window.innerWidth - 100 : 800)} 
                       height={400}
                       data={statistikData}
                       margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
@@ -139,10 +172,12 @@ function Page() {
                       <XAxis 
                         dataKey="tahun" 
                         label={{ value: 'Tahun', position: 'insideBottomRight', offset: -5 }} 
+                        tick={{ fontSize: 12 }}
                       />
                       <YAxis 
                         label={{ value: 'Jumlah', angle: -90, position: 'insideLeft' }}
                         domain={[0, 'auto']}
+                        tick={{ fontSize: 12 }}
                       />
                       <Tooltip
                         formatter={(value) => [`${value} orang`, 'Jumlah']}
@@ -162,7 +197,11 @@ function Page() {
                 </Box>
               ) : (
                 <Box p="md" ta="center" bg="gray.0" style={{ borderRadius: '8px' }}>
-                  <Text c="dimmed">
+                  <Text
+                    fz={{ base: 'xs', md: 'sm' }}
+                    c="dimmed"
+                    lh={{ base: 1.4, md: 1.4 }}
+                  >
                     {state.findMany.loading 
                       ? 'Memuat data statistik...' 
                       : 'Belum ada data statistik yang tersedia atau data tidak valid'}

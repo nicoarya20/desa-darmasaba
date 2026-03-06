@@ -21,7 +21,8 @@ import {
   TableTr,
   Text,
   TextInput,
-  Tooltip
+  Tooltip,
+  Title
 } from '@mantine/core';
 import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
 import { IconBrandWhatsapp, IconDeviceImacCog, IconFileInfo, IconMail, IconSearch } from '@tabler/icons-react';
@@ -33,7 +34,7 @@ import { useTransitionRouter } from 'next-view-transitions';
 function Page() {
   const listData = useProxy(daftarInformasiPublik)
   const [search, setSearch] = useState('')
-  const [debouncedSearch] = useDebouncedValue(search, 500); // 500ms delay
+  const [debouncedSearch] = useDebouncedValue(search, 1000); // 1000ms delay
   const router = useTransitionRouter()
   const {
     data,
@@ -65,20 +66,49 @@ function Page() {
       <Box px={{ base: 'md', md: 100 }}>
         <BackButton />
       </Box>
+
       <Center>
-        <Image src="/darmasaba-icon.png" w={{ base: 70, md: 100 }} alt="Logo Desa Darmasaba" loading="lazy" />
+        <Image
+          src="/darmasaba-icon.png"
+          w={{ base: 70, md: 100 }}
+          alt="Logo Desa Darmasaba"
+          loading="lazy"
+        />
       </Center>
-      <Text ta="center" fz={{ base: "1.8rem", md: "2.5rem" }} c={colors["blue-button"]} fw="bold" lh={1.4}>
+
+      <Title
+        order={2}
+        ta="center"
+        fz={{ base: '1.6rem', md: '2.4rem' }}
+        c={colors['blue-button']}
+        lh={1.35}
+        style={{ fontWeight: 700 }}
+      >
         Daftar Informasi Publik
-      </Text>
-      <Box px={{ base: "md", md: 100 }}>
+      </Title>
+
+      <Box px={{ base: 'md', md: 100 }}>
         <Stack gap="lg">
           <Paper p="lg" radius="xl" shadow="sm" withBorder>
             <Stack gap="sm">
-              <Text ta={"center"} fz={{ base: 'lg', md: 'xl' }} fw="bold" c={colors["blue-button"]}>
+              <Title
+                order={4}
+                ta="center"
+                fz={{ base: 'lg', md: 'xl' }}
+                c={colors['blue-button']}
+                lh={1.2}
+                style={{ fontWeight: 700 }}
+              >
                 Tentang Informasi Publik
-              </Text>
-              <Text ta={"center"} fz={{ base: 'sm', md: 'md' }} c="dimmed">
+              </Title>
+
+              <Text
+                ta="center"
+                fz={{ base: 'sm', md: 'md' }}
+                c="black"
+                lh={1.6}
+                style={{ maxWidth: 900, margin: '0 auto' }}
+              >
                 Daftar Informasi Publik Desa Darmasaba adalah kumpulan data yang dapat diakses oleh masyarakat sesuai dengan ketentuan peraturan yang berlaku.
               </Text>
             </Stack>
@@ -97,8 +127,8 @@ function Page() {
           {data.length === 0 ? (
             <Center py="xl">
               <Stack align="center" gap="sm">
-                <IconFileInfo size={48} stroke={1.5} color={colors["blue-button"]} />
-                <Text fz="md" c="dimmed">Tidak ada informasi publik yang ditemukan.</Text>
+                <IconFileInfo size={48} stroke={1.5} color={colors['blue-button']} />
+                <Text fz="md" c="dimmed" lh={1.5}>Tidak ada informasi publik yang ditemukan.</Text>
               </Stack>
             </Center>
           ) : (
@@ -113,27 +143,42 @@ function Page() {
                     <TableTh fz="sm" ta="center" w="15%">Aksi</TableTh>
                   </TableTr>
                 </TableThead>
+
                 <TableTbody bg={colors['white-1']}>
                   {data.map((item, index) => (
                     <TableTr key={item.id}>
-                      <TableTd ta="center">{(page - 1) * 5 + index + 1}</TableTd>
+                      <TableTd ta="center">
+                        <Text fz="sm" lh={1.4}>
+                          {(page - 1) * 5 + index + 1}
+                        </Text>
+                      </TableTd>
+
                       <TableTd>
                         <Box>
                           <Badge variant="light" size="lg" color="blue">
-                            <Text fw={650} fz={"sm"} c={'blue'} lineClamp={1}>
+                            <Text fw={650} fz="sm" c="blue" lineClamp={1} lh={1.2}>
                               {item.jenisInformasi}
                             </Text>
                           </Badge>
                         </Box>
                       </TableTd>
+
                       <TableTd>
                         <Box>
-                          <Text lineClamp={1} fz="sm" c="dark" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
+                          <Text
+                            lineClamp={1}
+                            fz={{ base: 'sm', md: 'md' }}
+                            c="dark"
+                            lh={1.5}
+                            style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
+                            dangerouslySetInnerHTML={{ __html: item.deskripsi }}
+                          />
                         </Box>
                       </TableTd>
+
                       <TableTd ta="center">
                         <Box>
-                          <Text ta={"center"}>
+                          <Text ta="center" fz="sm" lh={1.4}>
                             {item.tanggal ? new Date(item.tanggal).toLocaleDateString('id-ID', {
                               day: '2-digit',
                               month: 'long',
@@ -142,6 +187,7 @@ function Page() {
                           </Text>
                         </Box>
                       </TableTd>
+
                       <TableTd style={{ textAlign: 'center' }}>
                         <Box>
                           <Tooltip label="Lihat Detail" withArrow>
@@ -151,9 +197,10 @@ function Page() {
                               variant="light"
                               color="blue"
                               leftSection={<IconDeviceImacCog size={16} />}
-                              onClick={() => router.push(`/darmasaba/ppid/daftar-informasi-publik-desa-darmasaba/${item.id}`)}
+                              onClick={() => router.push(`/darmasaba/ppid/daftar-informasi-publik/${item.id}`)}
+                              aria-label={`Detail ${item.jenisInformasi}`}
                             >
-                              Detail
+                              <Text fz="xs" lh={1.2}>Detail</Text>
                             </Button>
                           </Tooltip>
                         </Box>
@@ -178,17 +225,27 @@ function Page() {
 
           <Paper p="lg" radius="xl" shadow="xs" withBorder>
             <Stack gap="xs">
-              <Text fz="lg" fw="bold" c={colors["blue-button"]}>Kontak PPID</Text>
+              <Title order={5} fz={{ base: 'lg', md: 'xl' }} fw="bold" c={colors['blue-button']} lh={1.2}>
+                Kontak PPID
+              </Title>
+
               <Group>
-                <IconMail color='gray' size={16} style={{ marginRight: 6 }} />
-                <Text c={"dimmed"} fz="sm" lh={1.6}>
-                  Email: <Text c={"dimmed"} span fw="500">ppid@desadarmasaba.id</Text>
+                <IconMail color="gray" size={16} style={{ marginRight: 6 }} />
+                <Text c="dimmed" fz="sm" lh={1.6}>
+                  Email:{' '}
+                  <Text c="dimmed" span fw={500} fz="sm" lh={1.6}>
+                    ppid@desadarmasaba.id
+                  </Text>
                 </Text>
               </Group>
+
               <Group>
-                <IconBrandWhatsapp color='gray' size={16} style={{ marginRight: 6 }} />
-                <Text c={"dimmed"} fz="sm" lh={1.6}>
-                  WhatsApp: <Text c={"dimmed"} span fw="500">081-xxx-xxx-xxx</Text>
+                <IconBrandWhatsapp color="gray" size={16} style={{ marginRight: 6 }} />
+                <Text c="dimmed" fz="sm" lh={1.6}>
+                  WhatsApp:{' '}
+                  <Text c="dimmed" span fw={500} fz="sm" lh={1.6}>
+                    081-xxx-xxx-xxx
+                  </Text>
                 </Text>
               </Group>
             </Stack>

@@ -1,6 +1,6 @@
 'use client';
 import { Button } from '@mantine/core';
-import { IconMusic, IconMusicOff } from '@tabler/icons-react';
+import { IconDisabled, IconDisabledOff } from '@tabler/icons-react';
 import { useEffect, useRef, useState } from 'react';
 
 const NewsReaderLanding = () => {
@@ -95,14 +95,17 @@ const NewsReaderLanding = () => {
       mt="md"
       style={{
         position: 'fixed',
-        bottom: '350px',
+        top: '50%', // Menempatkan titik atas ikon di tengah layar
         left: '0px',
+        transform: 'translateY(80%)', // Menggeser ikon ke atas sebesar setengah tingginya sendiri agar benar-benar di tengah
         borderBottomRightRadius: '20px',
         borderTopRightRadius: '20px',
-        transition: 'all 0.3s ease',
+        cursor: 'pointer',
+        transition: 'transform 0.2s',
+        zIndex: 1
       }}
     >
-      {isPointerMode ? <IconMusicOff /> : <IconMusic />}
+      {isPointerMode ? <IconDisabledOff /> : <IconDisabled />}
     </Button>
   );
 };

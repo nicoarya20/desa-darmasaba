@@ -16,21 +16,16 @@ export const devBar = [
       },
       {
         id: "Landing_Page_3",
-        name: "Indeks Kepuasan Masyarakat",
-        path: "/admin/landing-page/indeks-kepuasan-masyarakat/grafik-kepuasan-masyarakat"
-      },
-      {
-        id: "Landing_Page_4",
         name: "SDGs",
         path: "/admin/landing-page/SDGs"
       },
       {
-        id: "Landing_Page_5",
+        id: "Landing_Page_4",
         name: "APBDes",
         path: "/admin/landing-page/apbdes"
       },
       {
-        id: "Landing_Page_6",
+        id: "Landing_Page_5",
         name: "Prestasi Desa",
         path: "/admin/landing-page/prestasi-desa/list-prestasi-desa"
       }
@@ -91,8 +86,8 @@ export const devBar = [
     children: [
       {
         id: "Desa_1",
-        name: "Profile",
-        path: "/admin/desa/profile/profile-desa"
+        name: "Profil",
+        path: "/admin/desa/profil/profil-desa"
       },
       {
         id: "Desa_2",
@@ -182,7 +177,7 @@ export const devBar = [
       {
         id: "Keamanan_2",
         name: "Polsek Terdekat",
-        path: "/admin/keamanan/polsek-terdekat"
+        path: "/admin/keamanan/polsek-terdekat/daftar-polsek-terdekat"
       },
       {
         id: "Keamanan_3",
@@ -223,8 +218,8 @@ export const devBar = [
       },
       {
         id: "Ekonomi_3",
-        name: "Struktur Organisasi Dan Sk Pengurus Bumdesa",
-        path: "/admin/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa/pegawai"
+        name: "Struktur Organisasi Dan Sk Pengurus BumDes",
+        path: "/admin/ekonomi/Struktur-Organisasi-Dan-Sk-Pengurus-BumDes/pegawai"
       },
       {
         id: "Ekonomi_4",
@@ -335,7 +330,7 @@ export const devBar = [
         path: "/admin/lingkungan/konservasi-adat-bali/filosofi-tri-hita-karana"
       }
     ]
-  }, 
+  },
   {
     id: "Pendidikan",
     name: "Pendidikan",
@@ -354,7 +349,7 @@ export const devBar = [
       {
         id: "Pendidikan_3",
         name: "Program Pendidikan Anak",
-        path: "/admin/pendidikan/program-pendidikan-anak/program-unggulan"
+        path: "/admin/pendidikan/program-pendidikan-anak/tujuan-program"
       },
       {
         id: "Pendidikan_4",
@@ -377,6 +372,11 @@ export const devBar = [
         path: "/admin/pendidikan/data-pendidikan"
       }
     ]
+  },
+  {
+    id: "Musik",
+    name: "Musik",
+    path: "/admin/musik"
   },
   {
     id: "User & Role",
@@ -420,21 +420,16 @@ export const navBar = [
       },
       {
         id: "Landing_Page_3",
-        name: "Indeks Kepuasan Masyarakat",
-        path: "/admin/landing-page/indeks-kepuasan-masyarakat/grafik-kepuasan-masyarakat"
-      },
-      {
-        id: "Landing_Page_4",
         name: "SDGs",
         path: "/admin/landing-page/SDGs"
       },
       {
-        id: "Landing_Page_5",
+        id: "Landing_Page_4",
         name: "APBDes",
         path: "/admin/landing-page/apbdes"
       },
       {
-        id: "Landing_Page_6",
+        id: "Landing_Page_5",
         name: "Prestasi Desa",
         path: "/admin/landing-page/prestasi-desa/list-prestasi-desa"
       }
@@ -495,8 +490,8 @@ export const navBar = [
     children: [
       {
         id: "Desa_1",
-        name: "Profile",
-        path: "/admin/desa/profile/profile-desa"
+        name: "Profil",
+        path: "/admin/desa/profil/profil-desa"
       },
       {
         id: "Desa_2",
@@ -586,7 +581,7 @@ export const navBar = [
       {
         id: "Keamanan_2",
         name: "Polsek Terdekat",
-        path: "/admin/keamanan/polsek-terdekat"
+        path: "/admin/keamanan/polsek-terdekat/daftar-polsek-terdekat"
       },
       {
         id: "Keamanan_3",
@@ -628,7 +623,7 @@ export const navBar = [
       {
         id: "Ekonomi_3",
         name: "Struktur Organisasi Dan Sk Pengurus Bumdesa",
-        path: "/admin/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa/pegawai"
+        path: "/admin/ekonomi/Struktur-Organisasi-Dan-Sk-Pengurus-BumDes/pegawai"
       },
       {
         id: "Ekonomi_4",
@@ -739,7 +734,7 @@ export const navBar = [
         path: "/admin/lingkungan/konservasi-adat-bali/filosofi-tri-hita-karana"
       }
     ]
-  }, 
+  },
   {
     id: "Pendidikan",
     name: "Pendidikan",
@@ -758,7 +753,7 @@ export const navBar = [
       {
         id: "Pendidikan_3",
         name: "Program Pendidikan Anak",
-        path: "/admin/pendidikan/program-pendidikan-anak/program-unggulan"
+        path: "/admin/pendidikan/program-pendidikan-anak/tujuan-program"
       },
       {
         id: "Pendidikan_4",
@@ -781,6 +776,11 @@ export const navBar = [
         path: "/admin/pendidikan/data-pendidikan"
       }
     ]
+  },
+  {
+    id: "Musik",
+    name: "Musik",
+    path: "/admin/musik"
   },
   {
     id: "User & Role",
@@ -824,21 +824,16 @@ export const role1 = [
       },
       {
         id: "Landing_Page_3",
-        name: "Indeks Kepuasan Masyarakat",
-        path: "/admin/landing-page/indeks-kepuasan-masyarakat/grafik-kepuasan-masyarakat"
-      },
-      {
-        id: "Landing_Page_4",
         name: "SDGs",
         path: "/admin/landing-page/SDGs"
       },
       {
-        id: "Landing_Page_5",
+        id: "Landing_Page_4",
         name: "APBDes",
         path: "/admin/landing-page/apbdes"
       },
       {
-        id: "Landing_Page_6",
+        id: "Landing_Page_5",
         name: "Prestasi Desa",
         path: "/admin/landing-page/prestasi-desa/list-prestasi-desa"
       }
@@ -899,8 +894,8 @@ export const role1 = [
     children: [
       {
         id: "Desa_1",
-        name: "Profile",
-        path: "/admin/desa/profile/profile-desa"
+        name: "Profil",
+        path: "/admin/desa/profil/profil-desa"
       },
       {
         id: "Desa_2",
@@ -948,7 +943,7 @@ export const role1 = [
       {
         id: "Keamanan_2",
         name: "Polsek Terdekat",
-        path: "/admin/keamanan/polsek-terdekat"
+        path: "/admin/keamanan/polsek-terdekat/daftar-polsek-terdekat"
       },
       {
         id: "Keamanan_3",
@@ -990,7 +985,7 @@ export const role1 = [
       {
         id: "Ekonomi_3",
         name: "Struktur Organisasi Dan Sk Pengurus Bumdesa",
-        path: "/admin/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa/pegawai"
+        path: "/admin/ekonomi/Struktur-Organisasi-Dan-Sk-Pengurus-BumDes/pegawai"
       },
       {
         id: "Ekonomi_4",
@@ -1066,7 +1061,7 @@ export const role1 = [
       }
 
     ]
-  }, 
+  },
   {
     id: "Lingkungan",
     name: "Lingkungan",
@@ -1103,6 +1098,11 @@ export const role1 = [
         path: "/admin/lingkungan/konservasi-adat-bali/filosofi-tri-hita-karana"
       }
     ]
+  },
+  {
+    id: "Musik",
+    name: "Musik",
+    path: "/admin/musik"
   }
 ]
 
@@ -1148,6 +1148,11 @@ export const role2 = [
         path: "/admin/kesehatan/info-wabah-penyakit"
       }
     ]
+  },
+  {
+    id: "Musik",
+    name: "Musik",
+    path: "/admin/musik"
   }
 ]
 
@@ -1170,7 +1175,7 @@ export const role3 = [
       {
         id: "Pendidikan_3",
         name: "Program Pendidikan Anak",
-        path: "/admin/pendidikan/program-pendidikan-anak/program-unggulan"
+        path: "/admin/pendidikan/program-pendidikan-anak/tujuan-program"
       },
       {
         id: "Pendidikan_4",
@@ -1193,5 +1198,10 @@ export const role3 = [
         path: "/admin/pendidikan/data-pendidikan"
       }
     ]
+  },
+  {
+    id: "Musik",
+    name: "Musik",
+    path: "/admin/musik"
   }
 ]

@@ -2,6 +2,7 @@ import "@mantine/core/styles.css";
 import "./globals.css"; // Sisanya import di globals.css
 
 import LoadDataFirstClient from "@/app/darmasaba/_com/LoadDataFirstClient";
+import { MusicProvider } from "@/app/context/MusicContext";
 import {
   ColorSchemeScript,
   MantineProvider,
@@ -13,12 +14,16 @@ import { Metadata, Viewport } from "next";
 import { ViewTransitions } from "next-view-transitions";
 import { ToastContainer } from "react-toastify";
 
+// Force dynamic rendering untuk menghindari error prerendering
+export const dynamic = 'force-dynamic';
+
 // ✅ Pisahkan viewport ke export tersendiri
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
 };
+
 
 export const metadata: Metadata = {
   // ✅ Tambahkan metadataBase
@@ -98,18 +103,20 @@ export default function RootLayout({
       <html lang="id" {...mantineHtmlProps}>
         <head>
           <meta charSet="utf-8" />
-          <ColorSchemeScript />
+          <ColorSchemeScript defaultColorScheme="light" />
         </head>
         <body>
-          <MantineProvider theme={theme}>
-            {children}
-            <LoadDataFirstClient />
-            <ToastContainer 
-              position="bottom-center" 
-              hideProgressBar 
-              style={{ zIndex: 9999 }} 
-            />
-          </MantineProvider>
+          <MusicProvider>
+            <MantineProvider theme={theme} defaultColorScheme="light">
+              {children}
+              <LoadDataFirstClient />
+              <ToastContainer
+                position="bottom-center"
+                hideProgressBar
+                style={{ zIndex: 9999 }}
+              />
+            </MantineProvider>
+          </MusicProvider>
         </body>
       </html>
     </ViewTransitions>

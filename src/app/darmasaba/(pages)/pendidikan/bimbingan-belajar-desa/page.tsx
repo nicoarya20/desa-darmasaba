@@ -38,11 +38,17 @@ function Page() {
       </Box>
       <Box px={{ base: 'md', md: 120 }} pb={80}>
         <Box mb="lg">
-          <Title ta="center" order={1} fw="bold" c={colors['blue-button']} fz={{ base: 28, md: 38 }}>
+          <Title ta="center" order={1} fw="bold" c={colors['blue-button']} fz={{ base: 'xl', md: '2em' }} lh={1.15}>
             Program Bimbingan Belajar Desa
           </Title>
           <Divider size="sm" my="md" mx="auto" w="60%" color={colors['blue-button']} />
-          <Text ta="center" fz="lg" c="black" px={{ base: 'sm', md: 120 }}>
+          <Text
+            ta="center"
+            fz={{ base: 'sm', md: 'md' }}
+            c="black"
+            lh={{ base: 1.6, md: 1.5 }}
+            px={{ base: 'sm', md: 120 }}
+          >
             Program unggulan untuk mendukung siswa Desa Darmasaba memahami pelajaran sekolah, meningkatkan prestasi akademik, dan menumbuhkan semangat belajar sejak dini.
           </Text>
         </Box>
@@ -55,11 +61,16 @@ function Page() {
                     <IconBook2 size={36} stroke={1.5} color={colors['blue-button']} />
                   </Box>
                 </Tooltip>
-                <Title order={3} fw={700} c={colors['blue-button']} mb="xs">
+                <Title order={3} fw={700} c={colors['blue-button']} lh={1.2} fz={{ base: 'sm', md: 'md' }}>
                   {stateTujuanProgram.findById.data?.judul}
                 </Title>
               </Group>
-              <Text fz="md" style={{wordBreak: "break-word", whiteSpace: "normal"}} lh={1.6} dangerouslySetInnerHTML={{ __html: stateTujuanProgram.findById.data?.deskripsi }} />
+              <Text
+                fz={{ base: 'xs', md: 'md' }}
+                lh={{ base: 1.6, md: 1.5 }}
+                style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
+                dangerouslySetInnerHTML={{ __html: stateTujuanProgram.findById.data?.deskripsi }}
+              />
             </Stack>
           </Paper>
           <Paper p="xl" radius="lg" shadow="md" withBorder bg={colors['white-trans-1']}>
@@ -70,11 +81,16 @@ function Page() {
                     <IconMapPin size={36} stroke={1.5} color={colors['blue-button']} />
                   </Box>
                 </Tooltip>
-                <Title order={3} fw={700} c={colors['blue-button']} mb="xs">
+                <Title order={3} fw={700} c={colors['blue-button']} lh={1.2} fz={{ base: 'sm', md: 'md' }}>
                   {stateLokasiDanJadwal.findById.data?.judul}
                 </Title>
               </Group>
-              <Text fz="md" lh={1.6} style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: stateLokasiDanJadwal.findById.data?.deskripsi }} />
+              <Text
+                fz={{ base: 'xs', md: 'md' }}
+                lh={{ base: 1.6, md: 1.5 }}
+                style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
+                dangerouslySetInnerHTML={{ __html: stateLokasiDanJadwal.findById.data?.deskripsi }}
+              />
             </Stack>
           </Paper>
           <Paper p="xl" radius="lg" shadow="md" withBorder bg={colors['white-trans-1']}>
@@ -85,11 +101,16 @@ function Page() {
                     <IconCalendarTime size={36} stroke={1.5} color={colors['blue-button']} />
                   </Box>
                 </Tooltip>
-                <Title order={3} fw={700} c={colors['blue-button']} mb="xs">
+                <Title order={3} fw={700} c={colors['blue-button']} lh={1.2} fz={{ base: 'sm', md: 'md' }}>
                   {stateFasilitas.findById.data?.judul}
                 </Title>
               </Group>
-              <Text fz="md" lh={1.6} style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: stateFasilitas.findById.data?.deskripsi }} />
+              <Text
+                fz={{ base: 'xs', md: 'md' }}
+                lh={{ base: 1.6, md: 1.5 }}
+                style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
+                dangerouslySetInnerHTML={{ __html: stateFasilitas.findById.data?.deskripsi }}
+              />
             </Stack>
           </Paper>
         </SimpleGrid>

@@ -6,10 +6,10 @@ import { IconEdit } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
 import stateVisiMisiPPID from '../../_state/ppid/visi_misi_ppid/visimisiPPID';
-
+import DOMPurify from 'dompurify'
 
 function VisiMisiPPIDList() {
-  const router = useRouter()
+  const router = useRouter();
   const listVisiMisi = useProxy(stateVisiMisiPPID);
   useShallowEffect(() => {
     listVisiMisi.findById.load('1');
@@ -41,15 +41,16 @@ function VisiMisiPPIDList() {
             <Title order={3} c={colors['blue-button']}>Preview Visi Misi PPID</Title>
           </GridCol>
           <GridCol span={{ base: 12, md: 1 }}>
-              <Button
-                c="green"
-                variant="light"
-                leftSection={<IconEdit size={18} stroke={2} />}
-                radius="md"
-                onClick={() => router.push('/admin/ppid/visi-misi-ppid/edit')}
-              >
-                Edit
-              </Button>
+            <Button
+            w={{ base: '100%', md: "110%" }}
+              c="green"
+              variant="light"
+              leftSection={<IconEdit size={18} stroke={2} />}
+              radius="md"
+              onClick={() => router.push('/admin/ppid/visi-misi-ppid/edit')}
+            >
+              Edit
+            </Button>
           </GridCol>
         </Grid>
 
@@ -58,14 +59,25 @@ function VisiMisiPPIDList() {
             <Grid>
               <GridCol span={12}>
                 <Center>
-                  <Image loading='lazy' src="/darmasaba-icon.png" w={{ base: 100, md: 150 }} alt="Logo PPID" />
+                  <Image loading="lazy" src="/darmasaba-icon.png" w={{ base: 100, md: 150 }} alt="Logo PPID" />
                 </Center>
               </GridCol>
               <GridCol span={12}>
-                <Text ta="center" fz={{ base: '1.2rem', md: '1.8rem' }} fw="bold" c={colors['blue-button']}>
+                <Title
+                  order={2}
+                  ta="center"
+                  c={colors['blue-button']}
+                  style={{ lineHeight: 1.15 }}
+                >
                   MOTO PPID DESA DARMASABA
-                </Text>
-                <Text ta="center" fz={{ base: '1rem', md: '1.2rem' }} mt="sm">
+                </Title>
+                <Text
+                  ta="center"
+                  fz={{ base: 'sm', md: 'md' }}
+                  lh={{ base: 1.5, md: 1.5 }}
+                  mt="sm"
+                  c="black"
+                >
                   MEMBERIKAN INFORMASI YANG CEPAT, MUDAH, TEPAT DAN TRANSPARAN
                 </Text>
               </GridCol>
@@ -74,26 +86,50 @@ function VisiMisiPPIDList() {
             <Divider my="xl" color={colors['blue-button']} />
 
             <Box>
-              <Text fz={{ base: '1.5rem', md: '1.75rem' }} fw="bold" ta="center" mb="lg" c={colors['blue-button']}>
+              <Title
+                order={2}
+                ta="center"
+                mb="lg"
+                c={colors['blue-button']}
+                style={{ lineHeight: 1.15 }}
+              >
                 VISI PPID
-              </Text>
-              <Box 
-                className="prose max-w-none"
-                dangerouslySetInnerHTML={{ __html: listVisiMisi.findById.data.visi }}
-                style={{wordBreak: "break-word", whiteSpace: "normal", textAlign: "justify"}}
+              </Title>
+              <Text
+                ta={{ base: "center", md: "justify" }}
+                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(listVisiMisi.findById.data.visi) }}
+                style={{
+                  wordBreak: 'break-word',
+                  whiteSpace: 'normal',
+                  fontSize: '1rem',
+                  lineHeight: 1.55,
+                  color: 'black',
+                }}
               />
             </Box>
 
             <Divider my="xl" color={colors['blue-button']} />
 
             <Box mt="xl">
-              <Text fz={{ base: '1.5rem', md: '1.75rem' }} fw="bold" ta="center" mb="lg" c={colors['blue-button']}>
+              <Title
+                order={2}
+                ta="center"
+                mb="lg"
+                c={colors['blue-button']}
+                style={{ lineHeight: 1.15 }}
+              >
                 MISI PPID
-              </Text>
-              <Box 
-                className="prose max-w-none"
-                dangerouslySetInnerHTML={{ __html: listVisiMisi.findById.data.misi }}
-                style={{wordBreak: "break-word", whiteSpace: "normal", textAlign: "justify"}}
+              </Title>
+              <Text
+                ta={"justify"}
+                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(listVisiMisi.findById.data.misi) }}
+                style={{
+                  wordBreak: 'break-word',
+                  whiteSpace: 'normal',
+                  fontSize: '1rem',
+                  lineHeight: 1.55,
+                  color: 'black',
+                }}
               />
             </Box>
           </Box>

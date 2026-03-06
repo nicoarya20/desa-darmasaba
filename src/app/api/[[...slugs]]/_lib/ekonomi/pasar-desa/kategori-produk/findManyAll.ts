@@ -5,19 +5,19 @@ import { Context } from "elysia";
 
 async function kategoriProdukFindManyAll(context: Context) {
   // Ambil query search (opsional)
-  const search2 = (context.query.search as string) || "";
+  const search = (context.query.search as string) || "";
 
   // Buat where clause
   const where: any = { isActive: true };
 
-  if (search2) {
+  if (search) {
     where.OR = [
-      { nama: { contains: search2, mode: "insensitive" } },
+      { nama: { contains: search, mode: "insensitive" } },
       {
         KategoriToPasar: {
           some: {
             kategori: {
-              nama: { contains: search2, mode: "insensitive" },
+              nama: { contains: search, mode: "insensitive" },
             },
           },
         },

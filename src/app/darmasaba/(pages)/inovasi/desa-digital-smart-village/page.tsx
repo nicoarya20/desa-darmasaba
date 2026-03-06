@@ -11,7 +11,7 @@ import { useRouter } from 'next/navigation';
 
 function Page() {
   const [search, setSearch] = useState("")
-  const [debouncedSearch] = useDebouncedValue(search, 500); // 500ms delay
+  const [debouncedSearch] = useDebouncedValue(search, 1000); // 500ms delay
   const state = useProxy(desaDigitalState)
   const router = useRouter()
   const {
@@ -54,11 +54,11 @@ function Page() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               leftSection={<IconSearch size={20} />}
-              w={{ base: "50%", md: "100%" }}
+              w={"100%"}
             />
           </GridCol>
         </Grid>
-        <Text fz={'md'}>Menjadikan Desa Darmasaba pusat inovasi digital untuk pemberdayaan masyarakat</Text>
+        <Text pt={20} fz={'md'}>Menjadikan Desa Darmasaba pusat inovasi digital untuk pemberdayaan masyarakat</Text>
         <Text fz={'md'}>dan peningkatan ekonomi berbasis teknologi.</Text>
       </Box>
       <Box px={{ base: "md", md: 100 }}>
@@ -99,7 +99,7 @@ function Page() {
                       }}
                     >
                       <Image
-                        src={v.image.link}
+                        src={v.image?.link || "/no-image.jpg"}
                         alt={v.name}
                         fit="cover"
                         loading="lazy"

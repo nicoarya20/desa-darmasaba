@@ -4,24 +4,45 @@ import colors from '@/con/colors';
 import { Box, Button, Group, Paper, Skeleton, Stack, Text } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import {
+  IconAlertTriangle,
+  IconAmbulance,
   IconArrowBack,
+  IconBook,
+  IconBuilding,
+  IconBuildingCommunity,
+  IconCash,
   IconChartLine,
   IconChristmasTreeFilled,
-  IconClipboard,
+  IconClipboardTextFilled,
   IconDroplet,
   IconEdit,
+  IconFileText,
+  IconFiretruck,
+  IconFirstAidKit,
   IconHome,
   IconHomeEco,
+  IconHospital,
+  IconInfoCircle,
   IconLeaf,
+  IconLifebuoy,
+  IconMessageReport,
+  IconPhoneCall,
   IconRecycle,
+  IconRun,
   IconScale,
+  IconSchool,
+  IconShield,
   IconShieldFilled,
+  IconShoppingCart,
+  IconStethoscope,
   IconTent,
   IconTrash,
+  IconTrashFilled,
   IconTree,
   IconTrendingUp,
   IconTrophy,
-  IconTruck,
+  IconTruckFilled,
+  IconUsers
 } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import React, { useState } from 'react';
@@ -36,24 +57,53 @@ function DetailDataLingkunganDesa() {
   const params = useParams();
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
-  const iconMap: Record<string, React.FC<any>> = {
-    ekowisata: IconLeaf,
-    kompetisi: IconTrophy,
-    wisata: IconTent,
-    ekonomi: IconChartLine,
-    sampah: IconRecycle,
-    truck: IconTruck,
-    scale: IconScale,
-    clipboard: IconClipboard,
-    trash: IconTrash,
-    lingkunganSehat: IconHomeEco,
-    sumberOksigen: IconChristmasTreeFilled,
-    ekonomiBerkelanjutan: IconTrendingUp,
-    mencegahBencana: IconShieldFilled,
-    rumah: IconHome,
-    pohon: IconTree,
-    air: IconDroplet,
-  };
+ const iconMap: Record<string, React.FC<any>> = {
+     // ===== Umum & Lingkungan =====
+     ekowisata: IconLeaf,
+     kompetisi: IconTrophy,
+     wisata: IconTent,
+     ekonomi: IconChartLine,
+     sampah: IconRecycle,
+     truck: IconTruckFilled,
+     scale: IconScale,
+     clipboard: IconClipboardTextFilled,
+     trash: IconTrashFilled,
+     lingkunganSehat: IconHomeEco,
+     sumberOksigen: IconChristmasTreeFilled,
+     ekonomiBerkelanjutan: IconTrendingUp,
+     mencegahBencana: IconShieldFilled,
+     rumah: IconHome,
+     pohon: IconTree,
+     air: IconDroplet,
+     bantuan: IconCash,
+     pelatihan: IconSchool,
+     subsidi: IconShoppingCart,
+     layananKesehatan: IconHospital,
+ 
+     // ===== Keamanan & Darurat =====
+     polisi: IconShieldFilled,
+     ambulans: IconAmbulance,
+     pemadam: IconFiretruck,
+     darurat: IconAlertTriangle,
+     sar: IconLifebuoy,
+     evakuasi: IconRun,
+     keamanan: IconShield,
+     teleponDarurat: IconPhoneCall,
+ 
+     // ===== Kesehatan =====
+     rumahSakit: IconHospital,
+     puskesmas: IconFirstAidKit,
+     klinik: IconStethoscope,
+ 
+     // ===== Pemerintahan & Fasilitas =====
+     bangunan: IconBuilding,
+     kantorDesa: IconBuildingCommunity,
+     administrasi: IconFileText,
+     informasi: IconInfoCircle,
+     pengaduan: IconMessageReport,
+     layananPublik: IconUsers,
+     book: IconBook
+   };
 
   useShallowEffect(() => {
     stateDataLingkungan.findUnique.load(params?.id as string);
@@ -79,7 +129,7 @@ function DetailDataLingkunganDesa() {
   const data = stateDataLingkungan.findUnique.data;
 
   return (
-    <Box py={10}>
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Back Button */}
       <Button
         variant="subtle"
@@ -93,7 +143,7 @@ function DetailDataLingkunganDesa() {
       {/* Main Card */}
       <Paper
         withBorder
-        w={{ base: '100%', md: '60%' }}
+        w={{ base: '100%', md: '70%' }}
         bg={colors['white-1']}
         p="lg"
         radius="md"
@@ -131,7 +181,9 @@ function DetailDataLingkunganDesa() {
 
               <Box>
                 <Text fz="lg" fw="bold">Deskripsi</Text>
-                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data?.deskripsi || '-' }} />
+                <Box pl={5}>
+                  <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data?.deskripsi || '-' }} />
+                </Box>
               </Box>
 
               {/* Action Buttons */}

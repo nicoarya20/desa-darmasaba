@@ -5,32 +5,26 @@ type FasilitasKesehatanInput = {
   name: string;
   informasiUmum: { fasilitas: string; alamat: string; jamOperasional: string };
   layananUnggulan: { content: string };
-  dokterdanTenagaMedis: { name: string; specialist: string; jadwal: string };
+  dokterdanTenagaMedis: string[]; // ← ID saja
   fasilitasPendukung: { content: string };
   prosedurPendaftaran: { content: string };
-  tarifDanLayanan: { layanan: string; tarif: string };
+  tarifDanLayanan: string[]; // ← ID saja
 };
 
 const fasilitasKesehatanUpdate = async (context: Context) => {
   const id = context.params?.id as string;
-  const body = await context.body as FasilitasKesehatanInput;
-
-  if (!id) {
-    return new Response(
-      JSON.stringify({ success: false, message: "ID is required" }),
-      { status: 400, headers: { "Content-Type": "application/json" } }
-    );
-  }
+  const body = (await context.body) as FasilitasKesehatanInput;
 
   const existing = await prisma.fasilitasKesehatan.findUnique({
     where: { id },
+    include: {
+      dokterdantenagamedis: true,
+      tarifdanlayanan: true,
+    },
   });
 
   if (!existing) {
-    return new Response(
-      JSON.stringify({ success: false, message: "Data not found" }),
-      { status: 404, headers: { "Content-Type": "application/json" } }
-    );
+    return { success: false, message: "Data tidak ditemukan" };
   }
 
   const {
@@ -43,38 +37,46 @@ const fasilitasKesehatanUpdate = async (context: Context) => {
     tarifDanLayanan,
   } = body;
 
-  // Update data masing-masing relasi
+  // update relasi 1-1
   await Promise.all([
     prisma.informasiUmum.update({
       where: { id: existing.informasiUmumId },
       data: informasiUmum,
     }),
+
     prisma.layananUnggulan.update({
       where: { id: existing.layananUnggulanId },
       data: layananUnggulan,
     }),
-    prisma.dokterdanTenagaMedis.update({
-      where: { id: existing.dokterdanTenagaMedisId },
-      data: dokterdanTenagaMedis,
-    }),
+
     prisma.fasilitasPendukung.update({
       where: { id: existing.fasilitasPendukungId },
       data: fasilitasPendukung,
     }),
+
     prisma.prosedurPendaftaran.update({
       where: { id: existing.prosedurPendaftaranId },
       data: prosedurPendaftaran,
     }),
-    prisma.tarifDanLayanan.update({
-      where: { id: existing.tarifDanLayananId },
-      data: tarifDanLayanan,
-    }),
   ]);
 
-  // Update main record
+  // update m2m
   const updated = await prisma.fasilitasKesehatan.update({
     where: { id },
-    data: { name },
+
+    data: {
+      name,
+
+      // reset dokter lama → ganti baru
+      dokterdantenagamedis: {
+        set: dokterdanTenagaMedis.map((id) => ({ id })),
+      },
+
+      tarifdanlayanan: {
+        set: tarifDanLayanan.map((id) => ({ id })),
+      },
+    },
+
     include: {
       informasiumum: true,
       layananunggulan: true,
@@ -87,7 +89,7 @@ const fasilitasKesehatanUpdate = async (context: Context) => {
 
   return {
     success: true,
-    message: "Fasilitas berhasil diupdate",
+    message: "Fasilitas diupdate",
     data: updated,
   };
 };

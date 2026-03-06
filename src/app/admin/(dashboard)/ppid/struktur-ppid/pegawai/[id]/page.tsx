@@ -1,5 +1,6 @@
 'use client'
 import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
+import { ModalKonfirmasiNonAktif } from '@/app/admin/(dashboard)/_com/modalNonaktif';
 import stateStrukturPPID from '@/app/admin/(dashboard)/_state/ppid/struktur_ppid/struktur_PPID';
 import colors from '@/con/colors';
 import { Box, Button, Group, Image, Paper, Skeleton, Stack, Text } from '@mantine/core';
@@ -51,7 +52,7 @@ function DetailPegawai() {
   const data = statePegawai.findUnique.data;
 
   return (
-    <Box>
+    <Box px={{ base: 0, md: 'xs' }} py="xs">
       <Box mb={10}>
         <Button variant="subtle" onClick={() => router.back()}>
           <IconArrowBack color={colors['blue-button']} size={25} />
@@ -59,7 +60,7 @@ function DetailPegawai() {
       </Box>
       <Paper
         withBorder
-        w={{ base: "100%", md: "60%" }}
+        w={{ base: "100%", md: "70%" }}
         bg={colors['white-1']}
         p="lg"
         radius="md"
@@ -186,7 +187,7 @@ function DetailPegawai() {
       />
 
       {/* Modal NonActive */}
-      <ModalKonfirmasiHapus
+      <ModalKonfirmasiNonAktif
         opened={modalNonActive}
         onClose={() => setModalNonActive(false)}
         onConfirm={handleNonActive}

@@ -23,6 +23,11 @@ function CreateKategoriProduk() {
   const statePasar = useProxy(pasarDesaState.kategoriProduk);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Check if form is valid
+  const isFormValid = () => {
+    return statePasar.create.form.nama?.trim() !== '';
+  };
+
   useEffect(() => {
     statePasar.findMany.load();
   }, []);
@@ -51,7 +56,7 @@ function CreateKategoriProduk() {
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+     <Box px={{ base: 0, md: 'xs' }} py="xs">
       {/* Header dengan tombol kembali */}
       <Group mb="md">
         <Button
@@ -101,8 +106,11 @@ function CreateKategoriProduk() {
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}

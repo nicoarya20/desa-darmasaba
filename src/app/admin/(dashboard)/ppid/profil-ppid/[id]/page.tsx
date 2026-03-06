@@ -138,7 +138,7 @@ function EditProfilePPID() {
   }
 
   return (
-    <Box p="md">
+   <Box px={{ base: 0, md: 'lg' }} py="xs">
       <Stack gap="md">
         <Group mb="md">
           <Button variant="subtle" onClick={handleBack} p="xs" radius="md">

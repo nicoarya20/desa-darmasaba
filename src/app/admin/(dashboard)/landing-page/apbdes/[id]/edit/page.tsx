@@ -42,9 +42,11 @@ type ItemForm = {
   kode: string;
   uraian: string;
   anggaran: number;
-  realisasi: number;
   level: number;
   tipe: 'pendapatan' | 'belanja' | 'pembiayaan';
+  realisasi?: number;
+  selisih?: number;
+  persentase?: number;
 };
 
 function EditAPBDes() {
@@ -53,6 +55,14 @@ function EditAPBDes() {
   const params = useParams();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      apbdesState.edit.form.items.length > 0
+    );
+  };
+
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [previewDoc, setPreviewDoc] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -63,38 +73,78 @@ function EditAPBDes() {
     kode: '',
     uraian: '',
     anggaran: 0,
-    realisasi: 0,
     level: 1,
     tipe: 'pendapatan',
+    realisasi: 0,
+    selisih: 0,
+    persentase: 0,
   });
 
-  // Type for the API response
-  interface APBDesResponse {
-    id: string;
-    image?: {
-      link: string;
-      id: string;
-    };
-    file?: {
-      link: string;
-      id: string;
-    };
-    // Add other properties as needed
-  }
+  // Simpan data original untuk reset form
+  const [originalData, setOriginalData] = useState({
+    tahun: 0,
+    name: '',
+    deskripsi: '',
+    jumlah: '',
+    imageId: '',
+    fileId: '',
+    imageUrl: '',
+    fileUrl: '',
+  });
 
   // Load data saat pertama kali
   useEffect(() => {
     const id = params?.id as string;
-    if (id) {
-      apbdesState.edit.load(id).then((response) => {
-        const data = response as unknown as APBDesResponse;
-        if (data) {
-          // ✅ Ambil link langsung dari response
-          setPreviewImage(data.image?.link || null);
-          setPreviewDoc(data.file?.link || null);
-        }
-      });
-    }
+    if (!id) return;
+
+    const loadData = async () => {
+      try {
+        const data = await apbdesState.edit.load(id);
+
+        if (!data) return;
+
+        // Set preview dari data lama
+        setPreviewImage(data.image?.link || null);
+        setPreviewDoc(data.file?.link || null);
+
+        // Simpan data original untuk reset
+        setOriginalData({
+          tahun: data.tahun || new Date().getFullYear(),
+          name: data.name || '',
+          deskripsi: data.deskripsi || '',
+          jumlah: data.jumlah || '',
+          imageId: data.imageId || '',
+          fileId: data.fileId || '',
+          imageUrl: data.image?.link || '',
+          fileUrl: data.file?.link || '',
+        });
+
+        // Set form dengan data lama (termasuk imageId dan fileId)
+        apbdesState.edit.form = {
+          tahun: data.tahun || new Date().getFullYear(),
+          name: data.name || '',
+          deskripsi: data.deskripsi || '',
+          jumlah: data.jumlah || '',
+          imageId: data.imageId || '',
+          fileId: data.fileId || '',
+          items: (data.items || []).map((item: any) => ({
+            kode: item.kode,
+            uraian: item.uraian,
+            anggaran: item.anggaran,
+            realisasi: item.totalRealisasi || 0,
+            selisih: item.selisih || 0,
+            persentase: item.persentase || 0,
+            level: item.level,
+            tipe: item.tipe || 'pendapatan',
+          })),
+        };
+      } catch (error) {
+        console.error('Error loading APBDes:', error);
+        toast.error('Gagal memuat data APBDes');
+      }
+    };
+
+    loadData();
   }, [params?.id]);
 
   const handleDrop = (fileType: 'image' | 'doc') => (files: File[]) => {
@@ -111,34 +161,33 @@ function EditAPBDes() {
   };
 
   const handleAddItem = () => {
-    const { kode, uraian, anggaran, realisasi, level, tipe } = newItem;
+    const { kode, uraian, anggaran, level, tipe, realisasi, selisih, persentase } = newItem;
     if (!kode || !uraian) {
       return toast.warn('Kode dan uraian wajib diisi');
     }
 
     const finalTipe = level === 1 ? null : tipe;
-    const selisih = realisasi - anggaran;
-    const persentase = anggaran > 0 ? (realisasi / anggaran) * 100 : 0;
 
     apbdesState.edit.addItem({
       kode,
       uraian,
       anggaran,
-      realisasi,
-      selisih,
-      persentase,
+      realisasi: realisasi || 0,
+      selisih: selisih || 0,
+      persentase: persentase || 0,
       level,
-      tipe: finalTipe, // ✅ Tidak akan undefined
+      tipe: finalTipe,
     });
-
 
     setNewItem({
       kode: '',
       uraian: '',
       anggaran: 0,
-      realisasi: 0,
       level: 1,
       tipe: 'pendapatan',
+      realisasi: 0,
+      selisih: 0,
+      persentase: 0,
     });
   };
 
@@ -154,14 +203,16 @@ function EditAPBDes() {
     try {
       setIsSubmitting(true);
 
-      // Upload file baru jika ada
+      // Upload file baru jika ada perubahan
       if (imageFile) {
         const res = await ApiFetch.api.fileStorage.create.post({
           file: imageFile,
           name: imageFile.name,
         });
         const imageId = res.data?.data?.id;
-        if (imageId) apbdesState.edit.form.imageId = imageId;
+        if (imageId) {
+          apbdesState.edit.form.imageId = imageId;
+        }
       }
 
       if (docFile) {
@@ -170,9 +221,12 @@ function EditAPBDes() {
           name: docFile.name,
         });
         const fileId = res.data?.data?.id;
-        if (fileId) apbdesState.edit.form.fileId = fileId;
+        if (fileId) {
+          apbdesState.edit.form.fileId = fileId;
+        }
       }
 
+      // Image dan file sekarang opsional, tidak perlu validasi
       const success = await apbdesState.edit.update();
       if (success) {
         router.push('/admin/landing-page/apbdes');
@@ -186,25 +240,42 @@ function EditAPBDes() {
   };
 
   const handleReset = () => {
-    const id = params?.id as string;
-    if (id) {
-      apbdesState.edit.load(id);
-      setImageFile(null);
-      setDocFile(null);
-      setNewItem({
-        kode: '',
-        uraian: '',
-        anggaran: 0,
-        realisasi: 0,
-        level: 1,
-        tipe: 'pendapatan',
-      });
-      toast.info('Form dikembalikan ke data awal');
-    }
+    // Reset ke data original (tahun, name, deskripsi, jumlah, imageId, fileId)
+    apbdesState.edit.form = {
+      tahun: originalData.tahun,
+      name: originalData.name,
+      deskripsi: originalData.deskripsi,
+      jumlah: originalData.jumlah,
+      imageId: originalData.imageId,
+      fileId: originalData.fileId,
+      items: [...apbdesState.edit.form.items], // keep existing items
+    };
+
+    // Reset preview ke data original
+    setPreviewImage(originalData.imageUrl || null);
+    setPreviewDoc(originalData.fileUrl || null);
+
+    // Reset file uploads
+    setImageFile(null);
+    setDocFile(null);
+
+    // Reset new item form
+    setNewItem({
+      kode: '',
+      uraian: '',
+      anggaran: 0,
+      level: 1,
+      tipe: 'pendapatan',
+      realisasi: 0,
+      selisih: 0,
+      persentase: 0,
+    });
+
+    toast.info('Form dikembalikan ke data awal');
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       <Group mb="md">
         <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
           <IconArrowBack color={colors['blue-button']} size={24} />
@@ -215,7 +286,7 @@ function EditAPBDes() {
       </Group>
 
       <Paper
-        w={{ base: '100%', md: '100%' }}
+        w={{ base: '100%', md: '50%' }}
         bg={colors['white-1']}
         p="lg"
         radius="md"
@@ -224,6 +295,33 @@ function EditAPBDes() {
       >
         <Stack gap="md">
           {/* Header Form */}
+          <TextInput
+            label="Nama APBDes"
+            placeholder="Contoh: APBDes Tahun 2025"
+            value={apbdesState.edit.form.name}
+            onChange={(e) =>
+              (apbdesState.edit.form.name = e.target.value)
+            }
+            description="Opsional - akan diisi otomatis jika kosong"
+          />
+          <TextInput
+            label="Deskripsi"
+            placeholder="Deskripsi APBDes (opsional)"
+            value={apbdesState.edit.form.deskripsi}
+            onChange={(e) =>
+              (apbdesState.edit.form.deskripsi = e.target.value)
+            }
+            description="Opsional"
+          />
+          <TextInput
+            label="Jumlah Total"
+            placeholder="Contoh: Rp 1.000.000.000"
+            value={apbdesState.edit.form.jumlah}
+            onChange={(e) =>
+              (apbdesState.edit.form.jumlah = e.target.value)
+            }
+            description="Opsional - total keseluruhan anggaran"
+          />
           <NumberInput
             label="Tahun"
             value={apbdesState.edit.form.tahun || new Date().getFullYear()}
@@ -235,11 +333,11 @@ function EditAPBDes() {
             required
           />
 
-          {/* Gambar & Dokumen */}
+          {/* Gambar & Dokumen (Opsional) */}
           <Stack gap="xs">
             <Box>
               <Text fw="bold" fz="sm" mb={6}>
-                Gambar APBDes
+                Gambar APBDes (Opsional)
               </Text>
               <Dropzone
                 onDrop={handleDrop('image')}
@@ -279,6 +377,7 @@ function EditAPBDes() {
                     onClick={() => {
                       setPreviewImage(null);
                       setImageFile(null);
+                      apbdesState.edit.form.imageId = ''; // Clear imageId from form
                     }}
                   >
                     <IconX size={14} />
@@ -289,7 +388,7 @@ function EditAPBDes() {
 
             <Box>
               <Text fw="bold" fz="sm" mb={6}>
-                Dokumen APBDes
+                Dokumen APBDes (Opsional)
               </Text>
               <Dropzone
                 onDrop={handleDrop('doc')}
@@ -338,6 +437,7 @@ function EditAPBDes() {
                     onClick={() => {
                       setPreviewDoc(null);
                       setDocFile(null);
+                      apbdesState.edit.form.fileId = ''; // Clear fileId from form
                     }}
                   >
                     <IconX size={14} />
@@ -368,6 +468,13 @@ function EditAPBDes() {
                     { value: '2', label: 'Level 2 (Sub-kelompok)' },
                     { value: '3', label: 'Level 3 (Detail)' },
                   ]}
+                  styles={{
+                    option: {
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                    },
+                  }}
                   value={String(newItem.level)}
                   onChange={(val) => setNewItem({ ...newItem, level: Number(val) || 1 })}
                 />
@@ -378,6 +485,13 @@ function EditAPBDes() {
                     { value: 'belanja', label: 'Belanja' },
                     { value: 'pembiayaan', label: 'Pembiayaan' },
                   ]}
+                  styles={{
+                    option: {
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                    },
+                  }}
                   value={newItem.tipe}
                   onChange={(val) => setNewItem({ ...newItem, tipe: (val as any) || 'pendapatan' })}
                 />
@@ -394,13 +508,6 @@ function EditAPBDes() {
                   label="Anggaran (Rp)"
                   value={newItem.anggaran}
                   onChange={(val) => setNewItem({ ...newItem, anggaran: Number(val) || 0 })}
-                  thousandSeparator
-                  min={0}
-                />
-                <NumberInput
-                  label="Realisasi (Rp)"
-                  value={newItem.realisasi}
-                  onChange={(val) => setNewItem({ ...newItem, realisasi: Number(val) || 0 })}
                   thousandSeparator
                   min={0}
                 />
@@ -428,6 +535,8 @@ function EditAPBDes() {
                     <th>Uraian</th>
                     <th>Anggaran</th>
                     <th>Realisasi</th>
+                    <th>Selisih</th>
+                    <th>%</th>
                     <th>Level</th>
                     <th>Tipe</th>
                     <th style={{ width: '50px' }}>Aksi</th>
@@ -443,7 +552,11 @@ function EditAPBDes() {
                       </td>
                       <td>{item.uraian}</td>
                       <td>{item.anggaran.toLocaleString('id-ID')}</td>
-                      <td>{item.realisasi.toLocaleString('id-ID')}</td>
+                      <td>{item.realisasi?.toLocaleString('id-ID') || '0'}</td>
+                      <td style={{ color: item.selisih && item.selisih > 0 ? 'red' : 'green' }}>
+                        {item.selisih?.toLocaleString('id-ID') || '0'}
+                      </td>
+                      <td>{item.persentase?.toFixed(2) || '0'}%</td>
                       <td>
                         <Badge size="sm" color={item.level === 1 ? 'blue' : item.level === 2 ? 'green' : 'grape'}>
                           L{item.level}
@@ -455,7 +568,7 @@ function EditAPBDes() {
                             {item.tipe}
                           </Badge>
                         ) : (
-                          '-'
+                          <Text size="sm" c="dimmed">-</Text>
                         )}
                       </td>
                       <td>
@@ -478,9 +591,11 @@ function EditAPBDes() {
             <Button
               onClick={handleSubmit}
               radius="md"
-              disabled={apbdesState.edit.form.items.length === 0 || apbdesState.edit.loading}
+              disabled={!isFormValid() || isSubmitting || apbdesState.edit.loading}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting || apbdesState.edit.loading
+                  ? 'linear-gradient(135deg, #cccccc, #999999)'
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
               }}
             >

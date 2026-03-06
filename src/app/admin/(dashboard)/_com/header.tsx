@@ -1,7 +1,11 @@
+'use client';
+
 import React from 'react';
-import { Grid, GridCol, Paper, TextInput, Title } from '@mantine/core';
+import { Grid, GridCol, Paper, TextInput } from '@mantine/core';
 import { IconSearch } from '@tabler/icons-react';
-import colors from '@/con/colors';
+import { useDarkMode } from '@/state/darkModeStore';
+import { themeTokens } from '@/utils/themeTokens';
+import { UnifiedTitle } from '@/components/admin/UnifiedTypography';
 
 type HeaderSearchProps = {
   title: string;
@@ -18,13 +22,16 @@ const HeaderSearch = ({
   value,
   onChange,
 }: HeaderSearchProps) => {
+  const { isDark } = useDarkMode();
+  const tokens = themeTokens(isDark);
+
   return (
     <Grid mb={10}>
       <GridCol span={{ base: 12, md: 9 }}>
-        <Title order={3}>{title}</Title>
+        <UnifiedTitle order={3}>{title}</UnifiedTitle>
       </GridCol>
       <GridCol span={{ base: 12, md: 3 }}>
-        <Paper radius="lg" bg={colors['white-1']}>
+        <Paper radius="lg" bg={tokens.colors.bg.surface}>
           <TextInput
             radius="lg"
             placeholder={placeholder}
@@ -32,6 +39,16 @@ const HeaderSearch = ({
             w="100%"
             value={value}
             onChange={onChange}
+            style={{
+              input: {
+                backgroundColor: tokens.colors.bg.surface,
+                color: tokens.colors.text.primary,
+                borderColor: tokens.colors.border.default,
+                '::placeholder': {
+                  color: tokens.colors.text.muted,
+                },
+              },
+            }}
           />
         </Paper>
       </GridCol>

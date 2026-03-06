@@ -43,6 +43,16 @@ function EditGrafikBerdasarkanUsiaKerjaYangMenganggur() {
     usia46_keatas: '',
   });
 
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      formData.usia18_25?.trim() !== '' &&
+      formData.usia26_35?.trim() !== '' &&
+      formData.usia36_45?.trim() !== '' &&
+      formData.usia46_keatas?.trim() !== ''
+    );
+  };
+
   // load data dari global state -> masukin ke local state
   useEffect(() => {
     if (id) {
@@ -106,7 +116,7 @@ function EditGrafikBerdasarkanUsiaKerjaYangMenganggur() {
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       <Group mb="md">
         <Button
           variant="subtle"
@@ -179,8 +189,11 @@ function EditGrafikBerdasarkanUsiaKerjaYangMenganggur() {
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}

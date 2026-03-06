@@ -19,6 +19,7 @@ async function dokterTenagaMedisFindMany(context: Context) {
       { name: { contains: search, mode: 'insensitive' } },
       { specialist: { contains: search, mode: 'insensitive' } },
       { jadwal: { contains: search, mode: 'insensitive' } },
+      { jadwalLibur: { contains: search, mode: 'insensitive' } },
     ];
   }
 

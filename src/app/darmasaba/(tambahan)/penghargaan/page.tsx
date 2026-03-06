@@ -2,7 +2,7 @@
 'use client';
 import penghargaanState from "@/app/admin/(dashboard)/_state/desa/penghargaan";
 import colors from "@/con/colors";
-import { Box, Button, Container, Group, Paper, Skeleton, Stack, Text } from "@mantine/core";
+import { Box, Button, Container, Group, Paper, Skeleton, Stack, Text, Title } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { IconArrowRight, IconAward } from "@tabler/icons-react";
 import { useTransitionRouter } from "next-view-transitions";
@@ -20,11 +20,21 @@ export default function Page() {
         <Stack align="center" gap="sm">
           <Group gap="xs">
             <IconAward size={40} color={colors["blue-button"]} />
-            <Text fz={{ base: "2rem", md: "3.2rem" }} fw={800} variant="gradient" gradient={{ from: "#1C6EA4", to: "#69BFF8" }}>
+            <Title
+              order={1}
+              fw={800}
+              c={colors["blue-button"]}
+              ta="center"
+            >
               Penghargaan Desa
-            </Text>
+            </Title>
           </Group>
-          <Text fz="lg" c="dimmed" ta="center">
+          <Text
+            fz={{ base: "sm", md: "md" }}
+            lh={{ base: "1.5", md: "1.6" }}
+            c="black"
+            ta="center"
+          >
             Desa Darmasaba berhasil meraih beragam penghargaan bergengsi yang mencerminkan dedikasi dan kerja keras masyarakat dalam membangun desa yang maju dan berkelanjutan.
           </Text>
         </Stack>
@@ -39,22 +49,20 @@ function Slider() {
   const state = useProxy(penghargaanState);
   const router = useTransitionRouter();
 
-  // Refs for smooth animation
   const containerRef = useRef<HTMLDivElement>(null);
-  const scrollPositionRef = useRef(0);
-  const animationFrameRef = useRef<number>(0);
+  const scrollPosRef = useRef(0);
+  const animFrameRef = useRef<number>(0);
   const isHoveredRef = useRef(false);
-  
-  // Refs for drag functionality
   const isDraggingRef = useRef(false);
   const startXRef = useRef(0);
   const scrollLeftRef = useRef(0);
   const velocityRef = useRef(0);
-  const lastScrollTimeRef = useRef(0);
+  const lastScrollRef = useRef(0);
 
-  // Speed configuration
-  const normalSpeed = 1.0; // pixels per frame
-  const hoverSpeed = 0.5; // slower speed on hover
+  const SPEED_NORMAL = 1.0;
+  const SPEED_HOVER = 0.5;
+  const VELOCITY_DECAY = 0.95;
+  const SCROLL_THRESHOLD = 100;
 
   useEffect(() => {
     state.findMany.load();
@@ -63,120 +71,109 @@ function Slider() {
   const data = state.findMany.data || [];
   const loading = state.findMany.loading;
 
-  // Duplicate slides for seamless infinite loop
-  const slidesData = [...data, ...data, ...data];
+  const slidesData = mobile ? data : [...data, ...data, ...data];
 
   useEffect(() => {
-    if (loading || !containerRef.current || slidesData.length === 0) return;
+    if (loading || !containerRef.current || data.length === 0 || mobile) return;
 
     const container = containerRef.current;
     const slideWidth = container.scrollWidth / slidesData.length;
-    const originalDataLength = data.length;
+    const originalLength = data.length;
 
-    // Start from the middle set of slides
-    scrollPositionRef.current = slideWidth * originalDataLength;
-    container.scrollLeft = scrollPositionRef.current;
+    scrollPosRef.current = slideWidth * originalLength;
+    container.scrollLeft = scrollPosRef.current;
 
     const animate = () => {
       if (!containerRef.current) return;
 
       const container = containerRef.current;
       const slideWidth = container.scrollWidth / slidesData.length;
+      const timeSinceScroll = Date.now() - lastScrollRef.current;
+      const isUserScrolling = timeSinceScroll < SCROLL_THRESHOLD;
 
-      // Check if user recently scrolled manually
-      const timeSinceLastScroll = Date.now() - lastScrollTimeRef.current;
-      const isUserScrolling = timeSinceLastScroll < 100;
-
-      // Only auto-scroll if user is not actively scrolling or dragging
       if (!isDraggingRef.current && !isUserScrolling) {
-        const currentSpeed = isHoveredRef.current ? hoverSpeed : normalSpeed;
-        scrollPositionRef.current += currentSpeed;
+        const speed = isHoveredRef.current ? SPEED_HOVER : SPEED_NORMAL;
+        scrollPosRef.current += speed;
 
-        // Reset position for infinite loop
-        if (scrollPositionRef.current >= slideWidth * (originalDataLength * 2)) {
-          scrollPositionRef.current -= slideWidth * originalDataLength;
+        if (scrollPosRef.current >= slideWidth * (originalLength * 2)) {
+          scrollPosRef.current -= slideWidth * originalLength;
+        }
+        if (scrollPosRef.current <= 0) {
+          scrollPosRef.current += slideWidth * originalLength;
         }
 
-        if (scrollPositionRef.current <= 0) {
-          scrollPositionRef.current += slideWidth * originalDataLength;
-        }
-
-        container.scrollLeft = scrollPositionRef.current;
+        container.scrollLeft = scrollPosRef.current;
       } else {
-        // Sync scroll position when user is scrolling
-        scrollPositionRef.current = container.scrollLeft;
-        
-        // Apply momentum/velocity for smooth drag release
+        scrollPosRef.current = container.scrollLeft;
+
         if (!isDraggingRef.current && Math.abs(velocityRef.current) > 0.1) {
-          scrollPositionRef.current += velocityRef.current;
-          velocityRef.current *= 0.95; // Decay velocity
-          container.scrollLeft = scrollPositionRef.current;
+          scrollPosRef.current += velocityRef.current;
+          velocityRef.current *= VELOCITY_DECAY;
+          container.scrollLeft = scrollPosRef.current;
         }
       }
 
-      animationFrameRef.current = requestAnimationFrame(animate);
+      animFrameRef.current = requestAnimationFrame(animate);
     };
 
-    animationFrameRef.current = requestAnimationFrame(animate);
+    animFrameRef.current = requestAnimationFrame(animate);
 
     return () => {
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
+      if (animFrameRef.current) {
+        cancelAnimationFrame(animFrameRef.current);
       }
     };
-  }, [loading, slidesData.length, data.length, mobile]);
+  }, [loading, data.length, mobile]);
 
   const handleMouseEnter = () => {
-    isHoveredRef.current = true;
+    if (!mobile) isHoveredRef.current = true;
   };
 
   const handleMouseLeave = () => {
-    isHoveredRef.current = false;
-    isDraggingRef.current = false;
+    if (!mobile) {
+      isHoveredRef.current = false;
+      isDraggingRef.current = false;
+    }
   };
 
-  // Mouse drag handlers
   const handleMouseDown = (e: React.MouseEvent) => {
-    if (!containerRef.current) return;
-    
+    if (!containerRef.current || mobile) return;
+
     isDraggingRef.current = true;
     startXRef.current = e.pageX - containerRef.current.offsetLeft;
     scrollLeftRef.current = containerRef.current.scrollLeft;
     velocityRef.current = 0;
-    
     containerRef.current.style.cursor = 'grabbing';
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDraggingRef.current || !containerRef.current) return;
-    
+    if (!isDraggingRef.current || !containerRef.current || mobile) return;
+
     e.preventDefault();
     const x = e.pageX - containerRef.current.offsetLeft;
     const walk = (x - startXRef.current) * 2;
     const newScrollLeft = scrollLeftRef.current - walk;
-    
+
     velocityRef.current = containerRef.current.scrollLeft - newScrollLeft;
-    
     containerRef.current.scrollLeft = newScrollLeft;
-    scrollPositionRef.current = newScrollLeft;
-    lastScrollTimeRef.current = Date.now();
+    scrollPosRef.current = newScrollLeft;
+    lastScrollRef.current = Date.now();
   };
 
   const handleMouseUp = () => {
-    if (!containerRef.current) return;
-    
+    if (!containerRef.current || mobile) return;
+
     isDraggingRef.current = false;
     containerRef.current.style.cursor = 'grab';
   };
 
-  // Wheel scroll handler
   const handleWheel = (e: React.WheelEvent) => {
-    if (!containerRef.current) return;
-    
+    if (!containerRef.current || mobile) return;
+
     e.preventDefault();
     containerRef.current.scrollLeft += e.deltaY;
-    scrollPositionRef.current = containerRef.current.scrollLeft;
-    lastScrollTimeRef.current = Date.now();
+    scrollPosRef.current = containerRef.current.scrollLeft;
+    lastScrollRef.current = Date.now();
   };
 
   if (loading) {
@@ -193,7 +190,7 @@ function Slider() {
     return (
       <Stack align="center" py="xl">
         <IconAward size={56} color={colors["blue-button"]} />
-        <Text fz="lg" fw={600} c="dimmed">
+        <Text fz={{ base: "sm", md: "md" }} fw={600} c="dimmed" ta="center">
           Belum ada penghargaan yang ditambahkan
         </Text>
       </Stack>
@@ -211,37 +208,44 @@ function Slider() {
       onWheel={handleWheel}
       py="xl"
       style={{
-        overflow: "hidden",
-        cursor: "grab",
+        overflowX: mobile ? "auto" : "hidden",
+        overflowY: "hidden",
+        cursor: mobile ? "default" : "grab",
         userSelect: "none",
         position: "relative",
+        WebkitOverflowScrolling: "touch",
+        scrollbarWidth: "none",
+        msOverflowStyle: "none",
       }}
     >
-      {/* Blur edges effect */}
-      <Box
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: "120px",
-          height: "100%",
-          background: "linear-gradient(to right, rgba(249, 250, 251, 1), rgba(249, 250, 251, 0))",
-          zIndex: 10,
-          pointerEvents: "none",
-        }}
-      />
-      <Box
-        style={{
-          position: "absolute",
-          top: 0,
-          right: 0,
-          width: "120px",
-          height: "100%",
-          background: "linear-gradient(to left, rgba(249, 250, 251, 1), rgba(249, 250, 251, 0))",
-          zIndex: 10,
-          pointerEvents: "none",
-        }}
-      />
+      {!mobile && (
+        <>
+          <Box
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "120px",
+              height: "100%",
+              background: "linear-gradient(to right, rgba(249, 250, 251, 1), rgba(249, 250, 251, 0))",
+              zIndex: 10,
+              pointerEvents: "none",
+            }}
+          />
+          <Box
+            style={{
+              position: "absolute",
+              top: 0,
+              right: 0,
+              width: "120px",
+              height: "100%",
+              background: "linear-gradient(to left, rgba(249, 250, 251, 1), rgba(249, 250, 251, 0))",
+              zIndex: 10,
+              pointerEvents: "none",
+            }}
+          />
+        </>
+      )}
 
       <Box
         style={{
@@ -255,8 +259,8 @@ function Slider() {
           <Box
             key={`${item.id}-${index}`}
             style={{
-              flex: `0 0 ${mobile ? "90%" : "calc(33.333% - 1rem)"}`,
-              minWidth: mobile ? "90%" : "calc(33.333% - 1rem)",
+              flex: `0 0 ${mobile ? "85%" : "calc(33.333% - 1rem)"}`,
+              minWidth: mobile ? "85%" : "calc(33.333% - 1rem)",
             }}
           >
             <Paper
@@ -272,12 +276,16 @@ function Slider() {
                 overflow: "hidden",
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateY(-8px) scale(1.02)";
-                e.currentTarget.style.boxShadow = "0 12px 28px rgba(0,0,0,0.25)";
+                if (!mobile) {
+                  e.currentTarget.style.transform = "translateY(-8px) scale(1.02)";
+                  e.currentTarget.style.boxShadow = "0 12px 28px rgba(0,0,0,0.25)";
+                }
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "translateY(0) scale(1)";
-                e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.15)";
+                if (!mobile) {
+                  e.currentTarget.style.transform = "translateY(0) scale(1)";
+                  e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.15)";
+                }
               }}
             >
               <Box
@@ -287,8 +295,8 @@ function Slider() {
                 style={{ borderRadius: 16 }}
               />
               <Stack justify="flex-end" h="100%" gap="sm" p="lg" pos="relative">
-                <Text
-                  fz={{ base: "lg", sm: "xl", md: "1.5rem" }}
+                <Title
+                  order={3}
                   fw={700}
                   ta="center"
                   c="white"
@@ -296,7 +304,7 @@ function Slider() {
                   style={{ textShadow: "0 2px 8px rgba(0,0,0,0.8)" }}
                 >
                   {item.name}
-                </Text>
+                </Title>
                 <Group justify="center">
                   <Button
                     onClick={() => router.push(`/darmasaba/penghargaan/${item.id}`)}

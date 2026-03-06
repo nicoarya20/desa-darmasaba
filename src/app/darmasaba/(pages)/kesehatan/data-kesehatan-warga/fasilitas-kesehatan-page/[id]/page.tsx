@@ -16,7 +16,6 @@ interface Kontak {
   email: string;
 }
 
-
 interface Lokasi {
   mapsEmbed: string;
 }
@@ -35,16 +34,14 @@ function Page() {
     state.findUnique.load(params?.id as string);
   }, []);
 
-  const data = state.findUnique.data as any; // Temporary any to fix type issues
+  const data = state.findUnique.data as any;
 
   const nama = data?.name || 'Fasilitas Kesehatan';
   const prosedur = data?.prosedurpendaftaran.content || '';
   const alamat = data?.informasiumum?.alamat || '-';
   const jam = data?.informasiumum?.jamOperasional || '-';
   const layananUnggulan = data?.layananunggulan?.content || '';
-  const tenaga = data?.dokterdantenagamedis || null;
   const fasilitasPendukungHtml = data?.fasilitaspendukung?.content || '';
-  const tarif = (data?.tarifdanlayanan as TarifDanLayanan) || null;
   const kontak = (data?.kontak as Kontak) || {
     telepon: '(0361) 123456',
     whatsapp: '6289647037426',
@@ -113,11 +110,11 @@ function Page() {
             <Group gap="md" wrap="wrap">
               <Group gap="xs">
                 <ThemeIcon variant="light" radius="xl"><IconMapPin size={18} /></ThemeIcon>
-                <Text>{alamat}</Text>
+                <Text fz={{ base: 'sm', md: 'md' }} lh={1.5}>{alamat}</Text>
               </Group>
               <Group gap="xs">
                 <ThemeIcon variant="light" radius="xl"><IconDeviceLandlinePhone size={18} /></ThemeIcon>
-                <Text>{kontak.telepon}</Text>
+                <Text fz={{ base: 'sm', md: 'md' }} lh={1.5}>{kontak.telepon}</Text>
                 <CopyButton value={kontak.telepon}>
                   {({ copied, copy }) => (
                     <Tooltip label={copied ? 'Disalin' : 'Salin nomor'}>
@@ -128,7 +125,7 @@ function Page() {
               </Group>
               <Group gap="xs">
                 <ThemeIcon variant="light" radius="xl"><IconBrandWhatsapp size={18} /></ThemeIcon>
-                <Text>{kontak.whatsapp}</Text>
+                <Text fz={{ base: 'sm', md: 'md' }} lh={1.5}>{kontak.whatsapp}</Text>
                 <CopyButton value={kontak.whatsapp}>
                   {({ copied, copy }) => (
                     <Tooltip label={copied ? 'Disalin' : 'Salin WhatsApp'}>
@@ -139,7 +136,7 @@ function Page() {
               </Group>
               <Group gap="xs">
                 <ThemeIcon variant="light" radius="xl"><IconMail size={18} /></ThemeIcon>
-                <Text>{kontak.email}</Text>
+                <Text fz={{ base: 'sm', md: 'md' }} lh={1.5}>{kontak.email}</Text>
                 <CopyButton value={kontak.email}>
                   {({ copied, copy }) => (
                     <Tooltip label={copied ? 'Disalin' : 'Salin email'}>
@@ -165,31 +162,43 @@ function Page() {
                 <Divider />
                 <Group gap="xl" align="start">
                   <Stack gap={2}>
-                    <Text c="dimmed" fz="sm">Nama Fasilitas</Text>
-                    <Text fw={600}>{nama}</Text>
+                    <Text c="dimmed" fz={{ base: 'xs', md: 'sm' }}>Nama Fasilitas</Text>
+                    <Text fz={{ base: 'sm', md: 'md' }} fw={600} lh={1.5}>{nama}</Text>
                   </Stack>
                   <Stack gap={2}>
-                    <Text c="dimmed" fz="sm">Jam Operasional</Text>
-                    <Text fw={600}>{jam}</Text>
+                    <Text c="dimmed" fz={{ base: 'xs', md: 'sm' }}>Jam Operasional</Text>
+                    <Text fz={{ base: 'sm', md: 'md' }} fw={600} lh={1.5}>{jam}</Text>
                   </Stack>
                 </Group>
                 <Divider />
                 <Title order={4}>Layanan Unggulan</Title>
                 <Divider />
                 {layananUnggulan ? (
-                  <Text fz="md" style={{ lineHeight: 1.7, wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: layananUnggulan }} />
+                  <Box pl="lg">
+                    <Text
+                      fz={{ base: 'sm', md: 'md' }}
+                      lh={{ base: 1.6, md: 1.7 }}
+                      style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
+                      dangerouslySetInnerHTML={{ __html: layananUnggulan }}
+                    />
+                  </Box>
                 ) : (
                   <Paper withBorder radius="md" p="md">
                     <Group gap="sm">
                       <IconMoodEmpty />
-                      <Text>Belum ada informasi fasilitas pendukung.</Text>
+                      <Text fz={{ base: 'sm', md: 'md' }} c="dimmed">Belum ada informasi layanan unggulan.</Text>
                     </Group>
                   </Paper>
                 )}
                 <Divider />
                 <Title order={4}>Peta Lokasi</Title>
                 <AspectRatio ratio={16 / 9}>
-                  <iframe src={lokasi.mapsEmbed} style={{ border: 0, width: '100%', height: '100%', borderRadius: 16 }} loading="lazy" aria-label="Peta Lokasi" />
+                  <iframe
+                    src={lokasi.mapsEmbed}
+                    style={{ border: 0, width: '100%', height: '100%', borderRadius: 16 }}
+                    loading="lazy"
+                    aria-label="Peta Lokasi"
+                  />
                 </AspectRatio>
               </Stack>
             </Card>
@@ -201,9 +210,15 @@ function Page() {
                 <Stack gap="md">
                   <Title order={4}>Kontak Cepat</Title>
                   <Group gap="sm" wrap="wrap">
-                    <Button variant="light" leftSection={<IconDeviceLandlinePhone size={18} />} component="a" href={`tel:${kontak.telepon}`} aria-label="Hubungi Telepon">Telepon</Button>
-                    <Button variant="light" leftSection={<IconBrandWhatsapp size={18} />} component="a" href={`https://wa.me/${kontak.whatsapp.replace(/\D/g, '')}`} target="_blank" aria-label="Hubungi WhatsApp">WhatsApp</Button>
-                    <Button variant="light" leftSection={<IconMail size={18} />} component="a" href={`mailto:${kontak.email}`} aria-label="Kirim Email">Email</Button>
+                    <Button variant="light" leftSection={<IconDeviceLandlinePhone size={18} />} component="a" href={`tel:${kontak.telepon}`} aria-label="Hubungi Telepon">
+                      <Text fz={{ base: 'xs', md: 'sm' }}>Telepon</Text>
+                    </Button>
+                    <Button variant="light" leftSection={<IconBrandWhatsapp size={18} />} component="a" href={`https://wa.me/${kontak.whatsapp.replace(/\D/g, '')}`} target="_blank" aria-label="Hubungi WhatsApp">
+                      <Text fz={{ base: 'xs', md: 'sm' }}>WhatsApp</Text>
+                    </Button>
+                    <Button variant="light" leftSection={<IconMail size={18} />} component="a" href={`mailto:${kontak.email}`} aria-label="Kirim Email">
+                      <Text fz={{ base: 'xs', md: 'sm' }}>Email</Text>
+                    </Button>
                   </Group>
                 </Stack>
               </Card>
@@ -211,27 +226,46 @@ function Page() {
               <Card radius="xl" p="lg" withBorder>
                 <Stack gap="md">
                   <Title order={4}>Dokter & Tenaga Medis</Title>
-                  <Table highlightOnHover withTableBorder withColumnBorders stickyHeader stickyHeaderOffset={0} aria-label="Tabel Dokter">
+                  <Table highlightOnHover
+                    layout="fixed" // 🔥 PENTING
+                    withColumnBorders={false} withTableBorder aria-label="Tabel Dokter">
                     <TableThead>
                       <TableTr>
-                        <TableTh>Nama</TableTh>
-                        <TableTh>Spesialisasi</TableTh>
-                        <TableTh>Jadwal</TableTh>
+                        <TableTh>
+                          <Text fz={{ base: 'xs', md: 'sm' }} fw={600}>Nama</Text>
+                        </TableTh>
+                        <TableTh>
+                          <Text fz={{ base: 'xs', md: 'sm' }} fw={600}>Spesialisasi</Text>
+                        </TableTh>
+                        <TableTh>
+                          <Text fz={{ base: 'xs', md: 'sm' }} fw={600}>Jadwal</Text>
+                        </TableTh>
                       </TableTr>
                     </TableThead>
                     <TableTbody>
-                      {tenaga ? (
-                        <TableTr>
-                          <TableTd><Group gap="xs"><IconUser size={16} /><Text>{tenaga?.name || '-'}</Text></Group></TableTd>
-                          <TableTd>{tenaga?.specialist || '-'}</TableTd>
-                          <TableTd>{tenaga?.jadwal || '-'}</TableTd>
-                        </TableTr>
+                      {Array.isArray(data?.dokterdantenagamedis) && data.dokterdantenagamedis.length > 0 ? (
+                        data.dokterdantenagamedis.map((dokter: any) => (
+                          <TableTr key={dokter.id}>
+                            <TableTd>
+                              <Group gap="xs">
+                                <IconUser size={16} />
+                                <Text fz={{ base: 'sm', md: 'md' }}>{dokter.name || '-'}</Text>
+                              </Group>
+                            </TableTd>
+                            <TableTd>
+                              <Text fz={{ base: 'sm', md: 'md' }}>{dokter.specialist || '-'}</Text>
+                            </TableTd>
+                            <TableTd>
+                              <Text fz={{ base: 'sm', md: 'md' }}>{dokter.jadwal || '-'}</Text>
+                            </TableTd>
+                          </TableTr>
+                        ))
                       ) : (
                         <TableTr>
                           <TableTd colSpan={3}>
                             <Group justify="center" gap="xs" c="dimmed">
                               <IconSearch size={18} />
-                              <Text>Tidak ada data tenaga medis.</Text>
+                              <Text fz={{ base: 'sm', md: 'md' }}>Tidak ada data tenaga medis.</Text>
                             </Group>
                           </TableTd>
                         </TableTr>
@@ -241,74 +275,100 @@ function Page() {
                 </Stack>
               </Card>
 
-             <Card radius="xl" p="lg" withBorder>
-              <Stack gap="md">
-                <Title order={3}>Fasilitas Pendukung</Title>
-                <Divider />
-                {fasilitasPendukungHtml ? (
-                  <Text fz="md" style={{wordBreak: "break-word", whiteSpace: "normal", lineHeight: 1.7 }} dangerouslySetInnerHTML={{ __html: fasilitasPendukungHtml }} />
-                ) : (
-                  <Paper withBorder radius="md" p="md">
-                    <Group gap="sm">
-                      <IconMoodEmpty />
-                      <Text>Belum ada informasi fasilitas pendukung.</Text>
-                    </Group>
-                  </Paper>
-                )}
-              </Stack>
-            </Card>
+              <Card radius="xl" p="lg" withBorder>
+                <Stack gap="md">
+                  <Title order={3}>Fasilitas Pendukung</Title>
+                  <Divider />
+                  {fasilitasPendukungHtml ? (
+                    <Box pl="lg">
+                      <Text
+                        fz={{ base: 'sm', md: 'md' }}
+                        lh={{ base: 1.6, md: 1.7 }}
+                        style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
+                        dangerouslySetInnerHTML={{ __html: fasilitasPendukungHtml }}
+                      />
+                    </Box>
+                  ) : (
+                    <Paper withBorder radius="md" p="md">
+                      <Group gap="sm">
+                        <IconMoodEmpty />
+                        <Text fz={{ base: 'sm', md: 'md' }} c="dimmed">Belum ada informasi fasilitas pendukung.</Text>
+                      </Group>
+                    </Paper>
+                  )}
+                </Stack>
+              </Card>
 
-            <Card radius="xl" p="lg" withBorder>
-              <Stack gap="md">
-                <Title order={3}>Layanan & Tarif</Title>
-                <Divider />
-                <Table highlightOnHover withTableBorder withColumnBorders aria-label="Tabel Layanan dan Tarif">
-                  <TableThead>
-                    <TableTr>
-                      <TableTh>Layanan</TableTh>
-                      <TableTh>Tarif</TableTh>
-                    </TableTr>
-                  </TableThead>
-                  <TableTbody>
-                    {tarif ? (
+              <Card radius="xl" p="lg" withBorder>
+                <Stack gap="md">
+                  <Title order={3}>Layanan & Tarif</Title>
+                  <Divider />
+                  <Table highlightOnHover
+                    layout="fixed" // 🔥 PENTING
+                    withColumnBorders={false} withTableBorder aria-label="Tabel Layanan dan Tarif">
+                    <TableThead>
                       <TableTr>
-                        <TableTd>{tarif?.layanan || '-'}</TableTd>
-                        <TableTd>{formatRupiah(tarif?.tarif)}</TableTd>
+                        <TableTh>
+                          <Text fz={{ base: 'xs', md: 'sm' }} fw={600}>Layanan</Text>
+                        </TableTh>
+                        <TableTh>
+                          <Text fz={{ base: 'xs', md: 'sm' }} fw={600}>Tarif</Text>
+                        </TableTh>
                       </TableTr>
-                    ) : (
-                      <TableTr>
-                        <TableTd colSpan={2}>
-                          <Group justify="center" gap="xs" c="dimmed">
-                            <IconSearch size={18} />
-                            <Text>Tidak ada data tarif.</Text>
-                          </Group>
-                        </TableTd>
-                      </TableTr>
-                    )}
-                  </TableTbody>
-                </Table>
-                {gratisBpjs && (
-                  <Group gap="xs">
-                    <ThemeIcon variant="light" radius="xl"><IconCheck size={18} /></ThemeIcon>
-                    <Text fw={600}>Gratis dengan BPJS Kesehatan</Text>
-                  </Group>
-                )}
-              </Stack>
-            </Card>
+                    </TableThead>
+                    <TableTbody>
+                      {Array.isArray(data?.tarifdanlayanan) && data.tarifdanlayanan.length > 0 ? (
+                        data.tarifdanlayanan.map((item: any) => (
+                          <TableTr key={item.id}>
+                            <TableTd>
+                              <Text fz={{ base: 'sm', md: 'md' }}>{item.layanan || '-'}</Text>
+                            </TableTd>
+                            <TableTd>
+                              <Text fz={{ base: 'sm', md: 'md' }}>{formatRupiah(item.tarif)}</Text>
+                            </TableTd>
+                          </TableTr>
+                        ))
+                      ) : (
+                        <TableTr>
+                          <TableTd colSpan={2}>
+                            <Group justify="center" gap="xs" c="dimmed">
+                              <IconSearch size={18} />
+                              <Text fz={{ base: 'sm', md: 'md' }}>Tidak ada data tarif.</Text>
+                            </Group>
+                          </TableTd>
+                        </TableTr>
+                      )}
+                    </TableTbody>
+                  </Table>
+                  {gratisBpjs && (
+                    <Group gap="xs">
+                      <ThemeIcon variant="light" radius="xl"><IconCheck size={18} /></ThemeIcon>
+                      <Text fz={{ base: 'sm', md: 'md' }} fw={600}>Gratis dengan BPJS Kesehatan</Text>
+                    </Group>
+                  )}
+                </Stack>
+              </Card>
             </Stack>
           </Grid.Col>
         </Grid>
       </Box>
-      
+
       <Box px={{ base: 'md', md: 100 }} pb="xl">
         <Paper radius="xl" p="lg" withBorder>
           <Stack gap="md">
             <Title order={3}>Prosedur Pendaftaran</Title>
             <Divider />
             {prosedur ? (
-              <Text fz="md" style={{wordBreak: "break-word", whiteSpace: "normal", lineHeight: 1.7 }} dangerouslySetInnerHTML={{ __html: prosedur }} />
+              <Box pl="lg">
+                <Text
+                  fz={{ base: 'sm', md: 'md' }}
+                  lh={{ base: 1.6, md: 1.7 }}
+                  style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
+                  dangerouslySetInnerHTML={{ __html: prosedur }}
+                />
+              </Box>
             ) : (
-              <Text fz="md" c="dimmed">Belum ada prosedur pendaftaran</Text>
+              <Text fz={{ base: 'sm', md: 'md' }} c="dimmed">Belum ada prosedur pendaftaran</Text>
             )}
           </Stack>
         </Paper>

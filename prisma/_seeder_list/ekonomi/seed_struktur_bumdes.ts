@@ -1,0 +1,58 @@
+import prisma from "@/lib/prisma";
+import posisiOrganisasiBumDes from "../../data/ekonomi/struktur-organisasi/posisi-organisasi-bumdes.json";
+import pegawai from "../../data/ekonomi/struktur-organisasi/pegawai-bumdes.json";
+
+export async function seedStrukturBumdes() {
+  const flattenedPosisi = posisiOrganisasiBumDes.flat();
+
+  // ✅ Urutkan berdasarkan hierarki
+  const sortedPosisi = flattenedPosisi.sort((a, b) => a.hierarki - b.hierarki);
+
+  for (const p of sortedPosisi) {
+    console.log(`Seeding: ${p.nama} (id: ${p.id}, parent: ${p.parentId})`);
+    if (p.parentId) {
+      const parentExists = flattenedPosisi.some((pos) => pos.id === p.parentId);
+      if (!parentExists) {
+        console.warn(
+          `⚠️ Parent tidak ditemukan: ${p.parentId} untuk ${p.nama}`,
+        );
+        continue;
+      }
+    }
+    await prisma.posisiOrganisasiBumDes.upsert({
+      where: { id: p.id },
+      update: p,
+      create: p,
+    });
+  }
+  console.log("posisi organisasi berhasil");
+  for (const p of pegawai) {
+    await prisma.pegawaiBumDes.upsert({
+      where: {
+        id: p.id,
+      },
+      update: {
+        namaLengkap: p.namaLengkap,
+        gelarAkademik: p.gelarAkademik,
+        tanggalMasuk: new Date(p.tanggalMasuk),
+        email: p.email,
+        telepon: p.telepon,
+        alamat: p.alamat,
+        posisiId: p.posisiId,
+        isActive: p.isActive,
+      },
+      create: {
+        id: p.id,
+        namaLengkap: p.namaLengkap,
+        gelarAkademik: p.gelarAkademik,
+        tanggalMasuk: new Date(p.tanggalMasuk),
+        email: p.email,
+        telepon: p.telepon,
+        alamat: p.alamat,
+        posisiId: p.posisiId,
+        isActive: p.isActive,
+      },
+    });
+  }
+  console.log("pegawai success ...");
+}

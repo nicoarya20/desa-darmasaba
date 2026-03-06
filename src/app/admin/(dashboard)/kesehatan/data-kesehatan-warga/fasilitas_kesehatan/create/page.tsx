@@ -7,23 +7,46 @@ import {
   Button,
   Group,
   Loader,
+  MultiSelect,
   Paper,
   Stack,
   Text,
   TextInput,
   Title
 } from '@mantine/core';
+import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
-
 function CreateFasilitasKesehatan() {
   const stateFasilitasKesehatan = useProxy(fasilitasKesehatanState.fasilitasKesehatan);
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Helper function to check if HTML content is empty
+  const isHtmlEmpty = (html: string) => {
+    // Remove all HTML tags and check if there's any text content
+    const textContent = html.replace(/<[^>]*>/g, '').trim();
+    return textContent === '';
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      stateFasilitasKesehatan.create.form.name?.trim() !== '' &&
+      stateFasilitasKesehatan.create.form.informasiUmum.fasilitas?.trim() !== '' &&
+      stateFasilitasKesehatan.create.form.informasiUmum.alamat?.trim() !== '' &&
+      stateFasilitasKesehatan.create.form.informasiUmum.jamOperasional?.trim() !== '' &&
+      !isHtmlEmpty(stateFasilitasKesehatan.create.form.layananUnggulan.content) &&
+      stateFasilitasKesehatan.create.form.dokterdanTenagaMedis.length > 0 &&
+      !isHtmlEmpty(stateFasilitasKesehatan.create.form.fasilitasPendukung.content) &&
+      stateFasilitasKesehatan.create.form.tarifDanLayanan.length > 0 &&
+      !isHtmlEmpty(stateFasilitasKesehatan.create.form.prosedurPendaftaran.content)
+    );
+  };
 
   const resetForm = () => {
     stateFasilitasKesehatan.create.form = {
@@ -34,28 +57,67 @@ function CreateFasilitasKesehatan() {
         jamOperasional: '',
       },
       layananUnggulan: {
-        content: '',
+        content: ''
       },
-      dokterdanTenagaMedis: {
-        name: '',
-        specialist: '',
-        jadwal: '',
-      },
+      dokterdanTenagaMedis: [] as string[],
       fasilitasPendukung: {
         content: '',
       },
       prosedurPendaftaran: {
         content: '',
       },
-      tarifDanLayanan: {
-        layanan: '',
-        tarif: '',
-      },
+      tarifDanLayanan: [] as string[],
     };
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!stateFasilitasKesehatan.create.form.name?.trim()) {
+      toast.error('Nama fasilitas kesehatan wajib diisi');
+      return;
+    }
+
+    if (!stateFasilitasKesehatan.create.form.informasiUmum.fasilitas?.trim()) {
+      toast.error('Fasilitas wajib diisi');
+      return;
+    }
+
+    if (!stateFasilitasKesehatan.create.form.informasiUmum.alamat?.trim()) {
+      toast.error('Alamat wajib diisi');
+      return;
+    }
+
+    if (!stateFasilitasKesehatan.create.form.informasiUmum.jamOperasional?.trim()) {
+      toast.error('Jam operasional wajib diisi');
+      return;
+    }
+
+    if (isHtmlEmpty(stateFasilitasKesehatan.create.form.layananUnggulan.content)) {
+      toast.error('Layanan unggulan wajib diisi');
+      return;
+    }
+
+    if (stateFasilitasKesehatan.create.form.dokterdanTenagaMedis.length === 0) {
+      toast.error('Dokter dan tenaga medis wajib dipilih');
+      return;
+    }
+
+    if (isHtmlEmpty(stateFasilitasKesehatan.create.form.fasilitasPendukung.content)) {
+      toast.error('Fasilitas pendukung wajib diisi');
+      return;
+    }
+
+    if (stateFasilitasKesehatan.create.form.tarifDanLayanan.length === 0) {
+      toast.error('Layanan wajib dipilih');
+      return;
+    }
+
+    if (isHtmlEmpty(stateFasilitasKesehatan.create.form.prosedurPendaftaran.content)) {
+      toast.error('Prosedur pendaftaran wajib diisi');
+      return;
+    }
+
     try {
       setIsSubmitting(true);
       await stateFasilitasKesehatan.create.submit();
@@ -70,8 +132,13 @@ function CreateFasilitasKesehatan() {
     }
   };
 
+  useShallowEffect(() => {
+    fasilitasKesehatanState.dokter.findMany.load();
+    fasilitasKesehatanState.tarif.findMany.load();
+  }, []);
+
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md" component="form" onSubmit={handleSubmit}>
+    <Box px={{ base: 0, md: 'xs' }} py="xs" component="form" onSubmit={handleSubmit}>
       {/* Header */}
       <Group mb="md">
         <Button
@@ -140,31 +207,25 @@ function CreateFasilitasKesehatan() {
             />
           </Box>
 
+
           {/* Dokter dan Tenaga Medis */}
-          <Box>
-            <Text fz="md" fw="bold" mb={5}>Dokter dan Tenaga Medis</Text>
-            <TextInput
-              label="Nama Dokter"
-              placeholder="Masukkan nama dokter"
-              value={stateFasilitasKesehatan.create.form.dokterdanTenagaMedis.name}
-              onChange={(e) => (stateFasilitasKesehatan.create.form.dokterdanTenagaMedis.name = e.target.value)}
-              required
-            />
-            <TextInput
-              label="Spesialis"
-              placeholder="Masukkan spesialis"
-              value={stateFasilitasKesehatan.create.form.dokterdanTenagaMedis.specialist}
-              onChange={(e) => (stateFasilitasKesehatan.create.form.dokterdanTenagaMedis.specialist = e.target.value)}
-              required
-            />
-            <TextInput
-              label="Jadwal"
-              placeholder="Masukkan jadwal"
-              value={stateFasilitasKesehatan.create.form.dokterdanTenagaMedis.jadwal}
-              onChange={(e) => (stateFasilitasKesehatan.create.form.dokterdanTenagaMedis.jadwal = e.target.value)}
-              required
-            />
-          </Box>
+          <MultiSelect
+            label="Dokter & Tenaga Medis"
+            placeholder="Pilih dokter / tenaga medis"
+            data={
+              fasilitasKesehatanState.dokter.findMany.data?.map((item) => ({
+                label: item.name,
+                value: item.id,
+              })) || []
+            }
+            value={stateFasilitasKesehatan.create.form.dokterdanTenagaMedis}
+            onChange={(val: string[]) => {
+              stateFasilitasKesehatan.create.form.dokterdanTenagaMedis = val;
+            }}
+            searchable
+            clearable
+            required
+          />
 
           {/* Fasilitas Pendukung */}
           <Box>
@@ -175,6 +236,24 @@ function CreateFasilitasKesehatan() {
             />
           </Box>
 
+          <MultiSelect
+            label="Layanan"
+            placeholder="Pilih layanan"
+            data={
+              fasilitasKesehatanState.tarif.findMany.data?.map((item) => ({
+                label: item.layanan,
+                value: item.id,
+              })) || []
+            }
+            value={stateFasilitasKesehatan.create.form.tarifDanLayanan} // string[]
+            onChange={(val: string[]) => {
+              stateFasilitasKesehatan.create.form.tarifDanLayanan = val;
+            }}
+            searchable
+            clearable
+            required
+          />
+
           {/* Prosedur Pendaftaran */}
           <Box>
             <Text fz="md" fw="bold" mb={5}>Prosedur Pendaftaran</Text>
@@ -184,24 +263,6 @@ function CreateFasilitasKesehatan() {
             />
           </Box>
 
-          {/* Tarif dan Layanan */}
-          <Box>
-            <Text fz="md" fw="bold" mb={5}>Tarif dan Layanan</Text>
-            <TextInput
-              label="Tarif"
-              placeholder="Masukkan tarif"
-              value={stateFasilitasKesehatan.create.form.tarifDanLayanan.tarif}
-              onChange={(e) => (stateFasilitasKesehatan.create.form.tarifDanLayanan.tarif = e.target.value)}
-              required
-            />
-            <TextInput
-              label="Layanan"
-              placeholder="Masukkan layanan"
-              value={stateFasilitasKesehatan.create.form.tarifDanLayanan.layanan}
-              onChange={(e) => (stateFasilitasKesehatan.create.form.tarifDanLayanan.layanan = e.target.value)}
-              required
-            />
-          </Box>
 
           {/* Submit */}
           <Group justify="right">
@@ -221,8 +282,11 @@ function CreateFasilitasKesehatan() {
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}

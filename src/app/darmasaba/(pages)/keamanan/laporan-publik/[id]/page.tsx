@@ -71,14 +71,14 @@ function Page() {
             <Stack gap="md">
               <Box>
                 <Text fw={600} fz="lg" >Judul</Text>
-                <Text fz="sm" c="dimmed">{data.judul || '-'}</Text>
+                <Text fz="sm" c="black">{data.judul || '-'}</Text>
               </Box>
 
               <Divider />
 
               <Box>
                 <Text fw={600} fz="lg" >Tanggal</Text>
-                <Text fz="sm" c="dimmed">
+                <Text fz="sm" c="black">
                   {data.tanggalWaktu
                     ? new Date(data.tanggalWaktu).toLocaleString('id-ID', { dateStyle: 'full', timeStyle: 'short' })
                     : '-'}
@@ -89,7 +89,7 @@ function Page() {
 
               <Box>
                 <Text fw={600} fz="lg" >Lokasi</Text>
-                <Text fz="sm" c="dimmed">{data.lokasi || '-'}</Text>
+                <Text fz="sm" c="black">{data.lokasi || '-'}</Text>
               </Box>
 
               <Divider />
@@ -120,7 +120,7 @@ function Page() {
 
               <Box>
                 <Text fw={600} fz="lg" >Kronologi</Text>
-                <Text fz="sm" c="dimmed" style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: data.kronologi || '-' }} />
+                <Text fz="sm" c="black" style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: data.kronologi || '-' }} />
               </Box>
 
               <Divider />
@@ -136,11 +136,11 @@ function Page() {
                         radius="md"
                         shadow="xs"
                         withBorder
-                        bg="dark.5"
+                        bg={colors['blue-button-1']}
                       >
                         <Text
                           fz="sm"
-                          c="dimmed"
+                          c="black"
                           dangerouslySetInnerHTML={{ __html: item.deskripsi || '-' }}
                           style={{wordBreak: "break-word", whiteSpace: "normal"}}
                         />

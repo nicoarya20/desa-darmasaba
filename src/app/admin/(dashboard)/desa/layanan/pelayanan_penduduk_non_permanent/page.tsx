@@ -5,8 +5,7 @@ import {
   Button,
   Center,
   Divider,
-  Grid,
-  GridCol,
+  Group,
   Paper,
   Skeleton,
   Stack,
@@ -43,41 +42,42 @@ function PelayananPendudukNonPermanent() {
     <Paper bg={colors['white-1']} p="lg" radius="md" shadow="sm">
       <Stack gap="md">
         {/* Header */}
-        <Grid align="center">
-          <GridCol span={{ base: 12, md: 11 }}>
-            <Title order={3} c={colors['blue-button']}>
-              Preview Pelayanan Penduduk Non Permanen
-            </Title>
-          </GridCol>
-          <GridCol span={{ base: 12, md: 1 }}>
-              <Button
-                c="green"
-                variant="light"
-                leftSection={<IconEdit size={18} stroke={2} />}
-                radius="md"
-                onClick={() =>
-                  router.push(
-                    `/admin/desa/layanan/pelayanan_penduduk_non_permanent/${data.id}`
-                  )
-                }
-              >
-                Edit
-              </Button>
-          </GridCol>
-        </Grid>
+        <Group justify='space-between' align="center">
+
+          <Title
+            order={3}
+            lh={1.2}
+            c={colors['blue-button']}
+          >
+            Preview Pelayanan Penduduk Non Permanen
+          </Title>
+          <Button
+            c="green"
+            variant="light"
+            leftSection={<IconEdit size={18} stroke={2} />}
+            radius="md"
+            onClick={() =>
+              router.push(
+                `/admin/desa/layanan/pelayanan_penduduk_non_permanent/${data.id}`
+              )
+            }
+          >
+            Edit
+          </Button>
+        </Group>
 
         {/* Content */}
         <Paper p="xl" bg={'white'} withBorder radius="md" shadow="xs">
           <Box px={{ base: 0, md: 50 }} pb="xl">
             <Center>
-              <Text
+              <Title
+                order={2}
+                lh={1.2}
                 ta="center"
-                fz={{ base: '1.2rem', md: '1.8rem' }}
-                fw="bold"
                 c={colors['blue-button']}
               >
                 {data.name}
-              </Text>
+              </Title>
             </Center>
 
             <Divider my="md" color={colors['blue-button']} />
@@ -86,9 +86,11 @@ function PelayananPendudukNonPermanent() {
               <Text
                 py={10}
                 ta="justify"
-                fz={{ base: '1rem', md: '1.2rem' }}
+                fz={{ base: 'sm', md: 'md' }}
+                lh={{ base: 1.5, md: 1.55 }}
+                c="dark"
                 dangerouslySetInnerHTML={{ __html: data.deskripsi }}
-                style={{wordBreak: "break-word", whiteSpace: "normal"}}
+                style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
               />
             </Box>
           </Box>

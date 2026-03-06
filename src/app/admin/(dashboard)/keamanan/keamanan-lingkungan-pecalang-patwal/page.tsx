@@ -18,7 +18,7 @@ import {
   Text,
   Title
 } from '@mantine/core';
-import { useShallowEffect } from '@mantine/hooks';
+import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
 import { IconDeviceImacCog, IconPlus, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -48,6 +48,7 @@ function KeamananLingkungan() {
 function ListKeamananLingkungan({ search }: { search: string }) {
   const keamananState = useProxy(keamananLingkunganState)
   const router = useRouter();
+  const [debouncedSearch] = useDebouncedValue(search, 1000)
 
   const {
     data,
@@ -58,25 +59,27 @@ function ListKeamananLingkungan({ search }: { search: string }) {
   } = keamananState.findMany;
 
   useShallowEffect(() => {
-    load(page, 10, search)
-  }, [page, search])
+    load(page, 10, debouncedSearch)
+  }, [page, debouncedSearch])
 
   const filteredData = data || []
 
   if (loading || !data) {
     return (
-      <Stack py={10}>
+      <Stack py={{ base: 'sm', md: 'md' }}>
         <Skeleton height={600} radius="md" />
       </Stack>
     )
   }
 
   return (
-    <Box py={10}>
-      <Paper withBorder bg={colors['white-1']} p={'lg'} shadow="md" radius="md">
+    <Box py={{ base: 'sm', md: 'md' }}>
+      <Paper withBorder bg={colors['white-1']} p={{ base: 'md', md: 'lg' }} shadow="md" radius="md">
         {/* Judul + Tombol Tambah */}
-        <Group justify="space-between" mb="md">
-          <Title order={4}>Daftar Keamanan Lingkungan</Title>
+        <Group justify="space-between" mb={{ base: 'sm', md: 'md' }}>
+          <Title order={4} lh={1.2}>
+            Daftar Keamanan Lingkungan
+          </Title>
           <Button
             leftSection={<IconPlus size={18} />}
             color="blue"
@@ -89,14 +92,20 @@ function ListKeamananLingkungan({ search }: { search: string }) {
           </Button>
         </Group>
 
-        {/* Tabel */}
-        <Box style={{ overflowX: "auto" }}>
-          <Table highlightOnHover>
+        {/* Desktop Table */}
+       <Box visibleFrom="md" style={{ overflowX: 'auto' }}>
+         <Table highlightOnHover
+    layout="fixed" // 🔥 PENTING
+    withColumnBorders={false}
+            miw={0}
+            style={{ tableLayout: 'fixed', width: '100%' }}>
             <TableThead>
               <TableTr>
                 <TableTh>Nama</TableTh>
                 <TableTh>Deskripsi</TableTh>
-                <TableTh>Aksi</TableTh>
+                <TableTh style={{ width: 140, textAlign: 'center' }}>
+                  Aksi
+                </TableTh>
               </TableTr>
             </TableThead>
             <TableTbody>
@@ -104,25 +113,32 @@ function ListKeamananLingkungan({ search }: { search: string }) {
                 filteredData.map((item) => (
                   <TableTr key={item.id}>
                     <TableTd>
-                      <Box w={200}>
-                        <Text fw={500} truncate="end" lineClamp={1}>
-                          {item.name}
-                        </Text>
-                      </Box>
+                      <Text fz="md" fw={500} lh={1.5} truncate="end" lineClamp={1}>
+                        {item.name}
+                      </Text>
                     </TableTd>
-                    <TableTd>
-                      <Box w={200}>
-                        <Text fz="sm" c="dimmed" truncate lineClamp={1} dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
-                      </Box>
+                    <TableTd style={{ overflow: 'hidden' }}>
+                      <Text
+                        fz="sm"
+                        c="dimmed"
+                        lh={1.5}
+                        lineClamp={1}
+                        style={{
+                          whiteSpace: 'nowrap',
+                          textOverflow: 'ellipsis',
+                          overflow: 'hidden',
+                        }}
+                        dangerouslySetInnerHTML={{ __html: item.deskripsi }}
+                      />
                     </TableTd>
-                    <TableTd>
+                    <TableTd style={{ width: 140, textAlign: 'center' }}>
                       <Button
                         variant="light"
                         color="blue"
                         onClick={() => router.push(`/admin/keamanan/keamanan-lingkungan-pecalang-patwal/${item.id}`)}
+                        leftSection={<IconDeviceImacCog size={20} />}
                       >
-                        <IconDeviceImacCog size={20} />
-                        <Text ml={5}>Detail</Text>
+                        Detail
                       </Button>
                     </TableTd>
                   </TableTr>
@@ -130,8 +146,8 @@ function ListKeamananLingkungan({ search }: { search: string }) {
               ) : (
                 <TableTr>
                   <TableTd colSpan={3}>
-                    <Center py={20}>
-                      <Text color="dimmed">
+                    <Center py={{ base: 'sm', md: 'lg' }}>
+                      <Text c="dimmed" fz="sm" lh={1.4}>
                         Tidak ada data keamanan lingkungan yang cocok
                       </Text>
                     </Center>
@@ -140,6 +156,49 @@ function ListKeamananLingkungan({ search }: { search: string }) {
               )}
             </TableTbody>
           </Table>
+        </Box>
+
+        {/* Mobile Cards */}
+        <Box hiddenFrom="md">
+          <Stack gap="sm">
+            {filteredData.length > 0 ? (
+              filteredData.map((item) => (
+                <Paper key={item.id} withBorder radius="md" p="sm">
+                  <Stack gap={"xs"}>
+                    <Box>
+                      <Text fz="sm" fw={600} lh={1.4}>Nama</Text>
+                      <Text fz="sm" fw={500} lh={1.5}>{item.name}</Text>
+                    </Box>
+                    <Box>
+                      <Text fz="sm" fw={600} lh={1.4}>Deskripsi</Text>
+                      <Box pl={8}>
+                        <Text fz="sm" lineClamp={3} style={{ wordBreak: 'break-word' }} fw={500} lh={1.5} c="dimmed" dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
+                      </Box>
+                    </Box>
+                    <Box>
+                      <Button
+                        variant="light"
+                        color="blue"
+                        fullWidth
+                        onClick={() => router.push(`/admin/keamanan/keamanan-lingkungan-pecalang-patwal/${item.id}`)}
+                      >
+                        <IconDeviceImacCog size={18} />
+                        <Text ml={5} fz="sm" fw={500} lh={1.4}>
+                          Detail
+                        </Text>
+                      </Button>
+                    </Box>
+                  </Stack>
+                </Paper>
+              ))
+            ) : (
+              <Center py="lg">
+                <Text c="dimmed" fz="sm" lh={1.4}>
+                  Tidak ada data keamanan lingkungan yang cocok
+                </Text>
+              </Center>
+            )}
+          </Stack>
         </Box>
       </Paper>
 
@@ -152,8 +211,8 @@ function ListKeamananLingkungan({ search }: { search: string }) {
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
           total={totalPages}
-          mt="md"
-          mb="md"
+          mt={{ base: 'sm', md: 'md' }}
+          mb={{ base: 'sm', md: 'md' }}
           color="blue"
           radius="md"
         />

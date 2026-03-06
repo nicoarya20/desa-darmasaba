@@ -33,6 +33,25 @@ function EditPosyandu() {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Helper function to check if HTML content is empty
+  const isHtmlEmpty = (html: string) => {
+    // Remove all HTML tags and check if there's any text content
+    const textContent = html.replace(/<[^>]*>/g, '').trim();
+    return textContent === '';
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      formData.name?.trim() !== '' &&
+      formData.nomor?.trim() !== '' &&
+      !isHtmlEmpty(formData.deskripsi) &&
+      !isHtmlEmpty(formData.jadwalPelayanan) &&
+      (file !== null || originalData.imageId !== '') // Either a new file is selected or an existing image exists
+    );
+  };
+
   const [formData, setFormData] = useState({
     name: '',
     nomor: '',
@@ -84,6 +103,31 @@ function EditPosyandu() {
   }, [params?.id]);
 
   const handleSubmit = async () => {
+    if (!formData.name?.trim()) {
+      toast.error('Nama posyandu wajib diisi');
+      return;
+    }
+
+    if (!formData.nomor?.trim()) {
+      toast.error('Nomor telepon wajib diisi');
+      return;
+    }
+
+    if (isHtmlEmpty(formData.deskripsi)) {
+      toast.error('Deskripsi wajib diisi');
+      return;
+    }
+
+    if (isHtmlEmpty(formData.jadwalPelayanan)) {
+      toast.error('Jadwal pelayanan wajib diisi');
+      return;
+    }
+
+    if (!file && !originalData.imageId) {
+      toast.error('Gambar wajib dipilih');
+      return;
+    }
+
     try {
       setIsSubmitting(true);
       const updatedForm = { ...statePosyandu.edit.form, ...formData };
@@ -124,7 +168,7 @@ function EditPosyandu() {
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+     <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Tombol Back */}
       <Group mb="md">
         <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
@@ -278,8 +322,11 @@ function EditPosyandu() {
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}

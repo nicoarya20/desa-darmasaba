@@ -7,6 +7,7 @@ import {
   Button,
   Center,
   Flex,
+  Group,
   Pagination,
   Paper,
   Skeleton,
@@ -20,7 +21,7 @@ import {
   Text,
   Title
 } from '@mantine/core';
-import { useShallowEffect } from '@mantine/hooks';
+import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
 import { IconEdit, IconPlus, IconSearch, IconTrash } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -51,6 +52,7 @@ function ListGrafikBerdasarkanPendidikan({ search }: { search: string }) {
   const [modalHapus, setModalHapus] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const router = useRouter();
+  const [debouncedSearch] = useDebouncedValue(search, 1000);
 
   const handleDelete = async () => {
     if (selectedId) {
@@ -64,8 +66,8 @@ function ListGrafikBerdasarkanPendidikan({ search }: { search: string }) {
   const { data, page, totalPages, loading, load } = stategrafik.findMany;
 
   useShallowEffect(() => {
-    load(page, 10, search);
-  }, [page, search]);
+    load(page, 10, debouncedSearch);
+  }, [page, debouncedSearch]);
 
   useEffect(() => {
     if (stategrafik.findMany.data) {
@@ -103,18 +105,20 @@ function ListGrafikBerdasarkanPendidikan({ search }: { search: string }) {
 
   if (loading || !data) {
     return (
-      <Stack py={10}>
+      <Stack py={{ base: 'sm', md: 'lg' }}>
         <Skeleton height={500} radius="md" />
       </Stack>
     );
   }
 
   return (
-    <Box py={10}>
-      {/* Table Data */}
-      <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
-        <Flex justify="space-between" align="center" mb="md">
-          <Title order={4}>List Pengangguran Berdasarkan Pendidikan</Title>
+    <Stack py={{ base: 'sm', md: 'lg' }} gap='md'>
+      {/* Section: List Table */}
+      <Paper withBorder bg={colors['white-1']} p={{ base: 'sm', md: 'lg' }} shadow="md" radius="md">
+        <Flex visibleFrom='md' justify="space-between" align="center" mb={{ base: 'sm', md: 'md' }}>
+          <Title order={4} lh={1.2}>
+            List Pengangguran Berdasarkan Pendidikan
+          </Title>
           <Button
             leftSection={<IconPlus size={18} />}
             color="blue"
@@ -129,17 +133,43 @@ function ListGrafikBerdasarkanPendidikan({ search }: { search: string }) {
           </Button>
         </Flex>
 
-        <Box style={{ overflowX: 'auto' }}>
-          <Table highlightOnHover>
+        <Group hiddenFrom='md' align="center" mb={{ base: 'sm', md: 'md' }}>
+          <Title order={4} lh={1.2}>
+            List Pengangguran Berdasarkan Pendidikan
+          </Title>
+          <Button
+            leftSection={<IconPlus size={18} />}
+            color="blue"
+            variant="light"
+            onClick={() =>
+              router.push(
+                '/admin/ekonomi/jumlah-penduduk-usia-kerja-yang-menganggur/pengangguran_berdasarkan_pendidikan/create',
+              )
+            }
+          >
+            Tambah Baru
+          </Button>
+        </Group>
+
+        {/* Desktop Table */}
+       <Box visibleFrom="md" style={{ overflowX: 'auto' }}>
+          <Table
+            highlightOnHover
+            miw={0}
+            style={{
+              tableLayout: 'fixed',
+              width: '100%',
+            }}
+          >
             <TableThead>
               <TableTr>
-                <TableTh>SD</TableTh>
-                <TableTh>SMP</TableTh>
-                <TableTh>SMA</TableTh>
-                <TableTh>D3</TableTh>
-                <TableTh>S1</TableTh>
-                <TableTh>Edit</TableTh>
-                <TableTh>Delete</TableTh>
+                <TableTh style={{ width: '16%' }}>SD</TableTh>
+                <TableTh style={{ width: '16%' }}>SMP</TableTh>
+                <TableTh style={{ width: '16%' }}>SMA</TableTh>
+                <TableTh style={{ width: '16%' }}>D3</TableTh>
+                <TableTh style={{ width: '16%' }}>S1</TableTh>
+                <TableTh style={{ width: '10%' }}>Edit</TableTh>
+                <TableTh style={{ width: '10%' }}>Delete</TableTh>
               </TableTr>
             </TableThead>
             <TableTbody>
@@ -147,7 +177,7 @@ function ListGrafikBerdasarkanPendidikan({ search }: { search: string }) {
                 <TableTr>
                   <TableTd colSpan={7}>
                     <Center py={20}>
-                      <Text color="dimmed">
+                      <Text c="dimmed" fz="sm" lh={1.4}>
                         Belum ada data grafik responden
                       </Text>
                     </Center>
@@ -156,11 +186,31 @@ function ListGrafikBerdasarkanPendidikan({ search }: { search: string }) {
               ) : (
                 filteredData.map((item) => (
                   <TableTr key={item.id}>
-                    <TableTd>{item.SD}</TableTd>
-                    <TableTd>{item.SMP}</TableTd>
-                    <TableTd>{item.SMA}</TableTd>
-                    <TableTd>{item.D3}</TableTd>
-                    <TableTd>{item.S1}</TableTd>
+                    <TableTd>
+                      <Text fz="md" fw={500} lh={1.5}>
+                        {item.SD}
+                      </Text>
+                    </TableTd>
+                    <TableTd>
+                      <Text fz="md" fw={500} lh={1.5}>
+                        {item.SMP}
+                      </Text>
+                    </TableTd>
+                    <TableTd>
+                      <Text fz="md" fw={500} lh={1.5}>
+                        {item.SMA}
+                      </Text>
+                    </TableTd>
+                    <TableTd>
+                      <Text fz="md" fw={500} lh={1.5}>
+                        {item.D3}
+                      </Text>
+                    </TableTd>
+                    <TableTd>
+                      <Text fz="md" fw={500} lh={1.5}>
+                        {item.S1}
+                      </Text>
+                    </TableTd>
                     <TableTd>
                       <Button
                         color="green"
@@ -193,6 +243,92 @@ function ListGrafikBerdasarkanPendidikan({ search }: { search: string }) {
             </TableTbody>
           </Table>
         </Box>
+
+        {/* Mobile Cards */}
+        <Box hiddenFrom="md">
+          {filteredData.length === 0 ? (
+            <Center py="sm">
+              <Text c="dimmed" fz="sm" lh={1.4}>
+                Belum ada data grafik responden
+              </Text>
+            </Center>
+          ) : (
+            <Stack gap="sm">
+              {filteredData.map((item) => (
+                <Paper key={item.id} withBorder p="sm" radius="md">
+                  <Stack gap={"xs"}>
+                    <Box>
+                      <Text fz="sm" fw={600} lh={1.4}>
+                        SD
+                      </Text>
+                      <Text fz="sm" fw={500} lh={1.4}>
+                        {item.SD}
+                      </Text>
+                    </Box>
+                    <Box>
+                      <Text fz="sm" fw={600} lh={1.4}>
+                        SMP
+                      </Text>
+                      <Text fz="sm" fw={500} lh={1.4}>
+                        {item.SMP}
+                      </Text>
+                    </Box>
+                    <Box>
+                      <Text fz="sm" fw={600} lh={1.4}>
+                        SMA
+                      </Text>
+                      <Text fz="sm" fw={500} lh={1.4}>
+                        {item.SMA}
+                      </Text>
+                    </Box>
+                    <Box>
+                      <Text fz="sm" fw={600} lh={1.4}>
+                        D3
+                      </Text>
+                      <Text fz="sm" fw={500} lh={1.4}>
+                        {item.D3}
+                      </Text>
+                    </Box>
+                    <Box>
+                      <Text fz="sm" fw={600} lh={1.4}>
+                        S1
+                      </Text>
+                      <Text fz="sm" fw={500} lh={1.4}>
+                        {item.S1}
+                      </Text>
+                    </Box>
+                    <Flex gap="xs" mt="xs">
+                      <Button
+                        size="compact-sm"
+                        color="green"
+                        variant="light"
+                        onClick={() =>
+                          router.push(
+                            `/admin/ekonomi/jumlah-penduduk-usia-kerja-yang-menganggur/pengangguran_berdasarkan_pendidikan/${item.id}`,
+                          )
+                        }
+                      >
+                        <IconEdit size={16} />
+                      </Button>
+                      <Button
+                        size="compact-sm"
+                        color="red"
+                        variant="light"
+                        disabled={stategrafik.delete.loading}
+                        onClick={() => {
+                          setSelectedId(item.id);
+                          setModalHapus(true);
+                        }}
+                      >
+                        <IconTrash size={16} />
+                      </Button>
+                    </Flex>
+                  </Stack>
+                </Paper>
+              ))}
+            </Stack>
+          )}
+        </Box>
       </Paper>
 
       {/* Pagination */}
@@ -211,10 +347,10 @@ function ListGrafikBerdasarkanPendidikan({ search }: { search: string }) {
         />
       </Center>
 
-      {/* Donut Chart */}
-      <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md" mt="md">
-        <Stack>
-          <Title order={3} pb={10}>
+      {/* Section: Donut Chart */}
+      <Paper withBorder bg={colors['white-1']} p={{ base: 'sm', md: 'lg' }} shadow="md" radius="md">
+        <Stack gap="md">
+          <Title order={4} lh={1.2}>
             Grafik Pengangguran Berdasarkan Pendidikan
           </Title>
           <Center>
@@ -228,7 +364,7 @@ function ListGrafikBerdasarkanPendidikan({ search }: { search: string }) {
                 thickness={40}
               />
             ) : (
-              <Text color="dimmed">
+              <Text c="dimmed" fz={{ base: 'xs', md: 'sm' }} lh={1.4}>
                 Belum ada data untuk ditampilkan dalam grafik
               </Text>
             )}
@@ -243,7 +379,7 @@ function ListGrafikBerdasarkanPendidikan({ search }: { search: string }) {
         onConfirm={handleDelete}
         text="Apakah anda yakin ingin menghapus grafik pengangguran berdasarkan pendidikan ini?"
       />
-    </Box>
+    </Stack>
   );
 }
 

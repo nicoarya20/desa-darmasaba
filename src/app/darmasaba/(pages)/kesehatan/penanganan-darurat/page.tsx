@@ -15,6 +15,7 @@ import {
   Stack,
   Text,
   TextInput,
+  Title,
   Tooltip
 } from '@mantine/core'
 import { useDebouncedValue, useShallowEffect } from '@mantine/hooks'
@@ -26,7 +27,7 @@ import BackButton from '../../desa/layanan/_com/BackButto'
 function Page() {
   const state = useProxy(penangananDarurat)
   const [search, setSearch] = useState('')
-  const [debouncedSearch] = useDebouncedValue(search, 500)
+  const [debouncedSearch] = useDebouncedValue(search, 1000)
   const { data, page, totalPages, loading, load } = state.findMany
 
   useShallowEffect(() => {
@@ -49,10 +50,19 @@ function Page() {
 
       <Grid align="center" px={{ base: 'md', md: 100 }} mb="lg">
         <GridCol span={{ base: 12, md: 9 }}>
-          <Text fz={{ base: 30, md: 40 }} c={colors['blue-button']} fw={800} lh={1.2}>
+          <Title 
+            order={1}
+            c={colors['blue-button']} 
+            fw={800} 
+            lh={{ base: 1.3, md: 1.2 }}
+          >
             Penanganan Darurat
-          </Text>
-          <Text fz="md" mt={4}>
+          </Title>
+          <Text 
+            fz={{ base: 'sm', md: 'md' }} 
+            mt={4}
+            lh={{ base: 1.5, md: 1.5 }}
+          >
             Informasi cepat dan jelas untuk situasi darurat kesehatan
           </Text>
         </GridCol>
@@ -74,10 +84,10 @@ function Page() {
         {data.length === 0 ? (
           <Center py={100}>
             <Stack align="center" gap="xs">
-              <Text fz="lg" fw={600} c={colors['blue-button']}>
+              <Title order={2} fw={600} c={colors['blue-button']}>
                 Tidak ada data ditemukan
-              </Text>
-              <Text fz="sm" c="dimmed">
+              </Title>
+              <Text fz={{ base: 'xs', md: 'sm' }}>
                 Coba gunakan kata kunci lain
               </Text>
             </Stack>
@@ -115,7 +125,7 @@ function Page() {
                     }}
                   >
                     <Image
-                      src={v.image.link}
+                      src={v.image?.link ?? "/no-image.jpg"}
                       alt={v.name}
                       fit="cover"
                       loading="lazy"
@@ -128,18 +138,21 @@ function Page() {
                   </Box>
 
                   <Stack gap={4} w="100%">
-                    <Text
-                      fz="lg"
+                    <Title
+                      order={3}
                       fw={700}
                       c={colors['blue-button']}
                       ta="center"
                       lineClamp={2}
+                      fz={{ base: 'sm', md: 'lg' }}
+                      lh={{ base: 1.4, md: 1.4 }}
                     >
                       {v.name}
-                    </Text>
+                    </Title>
                     <Box>
                       <Text
-                        fz="md"
+                        fz={{ base: 'xs', md: 'md' }}
+                        lh={{ base: 1.5, md: 1.5 }}
                         lineClamp={3}
                         dangerouslySetInnerHTML={{ __html: v.deskripsi }}
                         style={{ wordBreak: "break-word", whiteSpace: "normal" }}
@@ -177,10 +190,8 @@ function Page() {
               '&:hover': { backgroundColor: colors['blue-button'], color: 'white' },
             },
           }}
-
         />
       </Center>
-
     </Stack>
   )
 }

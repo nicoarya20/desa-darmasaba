@@ -1,7 +1,7 @@
 'use client'
 import fasilitasKesehatanState from '@/app/admin/(dashboard)/_state/kesehatan/data_kesehatan_warga/fasilitasKesehatan';
 import colors from '@/con/colors';
-import { Badge, Box, Button, Card, Divider, Group, Paper, Skeleton, Stack, Text } from '@mantine/core';
+import { Badge, Box, Button, Card, Divider, Group, Paper, Skeleton, Stack, Text, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconChevronRight, IconClock, IconMapPin } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
@@ -17,12 +17,8 @@ function FasilitasKesehatanPage() {
 
   if (!state.findMany.data) {
     return (
-      <Box py="xl" px="md">
-        <Stack gap="md">
-          <Skeleton height={80} radius="lg" />
-          <Skeleton height={80} radius="lg" />
-          <Skeleton height={80} radius="lg" />
-        </Stack>
+      <Box py="lg">
+        <Skeleton h={500} radius="lg" />
       </Box>
     );
   }
@@ -31,14 +27,24 @@ function FasilitasKesehatanPage() {
     <Box>
       <Paper bg={colors['white-trans-1']} p="xl" radius="xl" shadow="md" h="100%">
         <Stack gap="lg">
-          <Text ta="center" fw={700} fz="32px" c={colors['blue-button']}>
+          <Title
+            order={1}
+            ta="center"
+            fw={700}
+            c={colors['blue-button']}
+            style={{ lineHeight: '1.2' }}
+          >
             Fasilitas Kesehatan
-          </Text>
+          </Title>
           <Divider size="sm" color={colors['blue-button']} />
           <Stack gap="lg">
             {state.findMany.data.length === 0 ? (
               <Box py="xl" ta="center">
-                <Text fz="lg" c="dimmed">
+                <Text
+                  fz={{ base: 'sm', sm: 'md' }}
+                  c={colors['blue-button']}
+                  lh={{ base: '1.5', sm: '1.6' }}
+                >
                   Belum ada fasilitas kesehatan yang tersedia
                 </Text>
               </Box>
@@ -65,22 +71,36 @@ function FasilitasKesehatanPage() {
                 >
                   <Stack gap="sm">
                     <Group justify="space-between" align="center">
-                      <Text fw={700} fz="lg" c={colors['blue-button']}>
+                      <Title
+                        order={3}
+                        fw={700}
+                        c={colors['blue-button']}
+                        fz={{ base: 'sm', sm: 'md' }}
+                        lh={{ base: '1.3', sm: '1.3' }}
+                      >
                         {item.name}
-                      </Text>
-                      <Badge color="blue" radius="sm" variant="light" fz="xs">
+                      </Title>
+                      <Badge color="blue" radius="sm" variant="light" size="xs">
                         Aktif
                       </Badge>
                     </Group>
                     <Group gap="xs">
                       <IconMapPin size={18} stroke={1.5} />
-                      <Text fz="sm">
+                      <Text
+                        fz={{ base: 'xs', sm: 'sm' }}
+                        lh={{ base: '1.5', sm: '1.5' }}
+                        c="text"
+                      >
                         {item.informasiumum.alamat}
                       </Text>
                     </Group>
                     <Group gap="xs">
                       <IconClock size={18} stroke={1.5} />
-                      <Text fz="sm">
+                      <Text
+                        fz={{ base: 'xs', sm: 'sm' }}
+                        lh={{ base: '1.5', sm: '1.5' }}
+                        c="text"
+                      >
                         {item.informasiumum.jamOperasional}
                       </Text>
                     </Group>

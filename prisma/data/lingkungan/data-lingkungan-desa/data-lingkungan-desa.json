@@ -1,0 +1,44 @@
+[
+  {
+    "id": "bnlneq3zg0000vn8issps1eg8",
+    "name": "Pelaksanaan Kebersihan Lingkungan Desa",
+    "jumlah": "1 paket kegiatan",
+    "deskripsi": "Kegiatan pelaksanaan kebersihan lingkungan desa Darmasaba untuk meningkatkan kualitas lingkungan dan kesehatan masyarakat.",
+    "icon": "lingkunganSehat"
+  },
+  {
+    "id": "bnlneq3zg0000vn8issps2fh9",
+    "name": "Penataan Taman Telajakan",
+    "jumlah": "1 paket kegiatan",
+    "deskripsi": "Program penataan taman telajakan sebagai upaya memperindah lingkungan desa serta ruang terbuka publik di desa Darmasaba.",
+    "icon": "lingkunganSehat"
+  },
+  {
+    "id": "bnlneq3zg0000vn8issps3gi0",
+    "name": "Pelatihan/Sosialisasi Peduli Lingkungan",
+    "jumlah": "1 paket kegiatan",
+    "deskripsi": "Pelatihan dan sosialisasi penyuluhan tentang kepedulian lingkungan hidup dan kehutanan bagi masyarakat.",
+    "icon": "pelatihan"
+  },
+  {
+    "id": "bnlneq3zg0000vn8issps4hj2",
+    "name": "Pemanfaatan Pekarangan Rumah",
+    "jumlah": "1 paket kegiatan",
+    "deskripsi": "Program pemanfaatan lingkungan pekarangan rumah menjadi produktif untuk mendukung ketahanan pangan keluarga.",
+    "icon": "sumberOksigen"
+  },
+  {
+    "id": "bnlneq3zg0000vn8issps5ik3",
+    "name": "Pengelolaan Daerah Aliran Sungai",
+    "jumlah": "1 paket kegiatan",
+    "deskripsi": "Kegiatan pengelolaan dan pemeliharaan daerah aliran sungai untuk menjaga kualitas sumber air dan mencegah erosi.",
+    "icon": "air"
+  },
+  {
+    "id": "bnlneq3zg0000vn8issps6jl4",
+    "name": "Pengelolaan Sampah Desa (Inovasi CINtA)",
+    "jumlah": "1 paket kegiatan",
+    "deskripsi": "Program inovatif cara indah tangani sampah (CINtA) di desa Darmasaba termasuk TPS3R dan pemilahan sampah berbasis rumah tangga.",
+    "icon": "sampah"
+  }
+]

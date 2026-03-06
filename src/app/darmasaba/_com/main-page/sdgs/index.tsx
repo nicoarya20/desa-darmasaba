@@ -20,12 +20,11 @@ export default function SDGS() {
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`)
         const result = await response.json()
         let data = []
+
         if (Array.isArray(result.data)) data = result.data
         else if (Array.isArray(result)) data = result
-        else {
-          setSdgsDesa([])
-          return
-        }
+        else return setSdgsDesa([])
+
         const top4Sdgs = [...data].sort((a, b) => parseInt(b.jumlah) - parseInt(a.jumlah)).slice(0, 4)
         setSdgsDesa(top4Sdgs)
       } catch {
@@ -36,24 +35,38 @@ export default function SDGS() {
   }, [])
 
   return (
-    <Stack p="sm" my={"xs"}>
+    <Stack p="sm" my="xs">
       <Container w={{ base: "100%", md: "80%" }} p="xl">
+
+        {/* ========== TITLE SECTION ========== */}
         <Center>
           <Title
             order={1}
-            fz={{ base: "2.4rem", md: "3.6rem" }}
+            fz={{ base: "2.2rem", md: "3.4rem" }}
+            lh={{ base: 1.1, md: 1.1 }}
             fw={900}
             c={colors["blue-button"]}
+            ta="center"
           >
             SDGs Desa
           </Title>
         </Center>
-        <Text ta={"center"} fz={{ base: "1rem", md: "1.3rem" }}>
-          SDGs Desa merupakan langkah nyata untuk mewujudkan desa yang maju, inklusif, dan berkelanjutan melalui 17 tujuan pembangunan dari pengentasan kemiskinan, pendidikan, kesehatan, kesetaraan gender, hingga pelestarian lingkungan.
+
+        <Text
+          ta="center"
+          fz={{ base: "1rem", md: "1.2rem" }}
+          lh={{ base: 1.5, md: 1.6 }}
+          c="black"
+          mt="xs"
+          mb="md"
+        >
+          SDGs Desa adalah upaya desa untuk menciptakan pembangunan yang maju, inklusif, dan berkelanjutan melalui 17 tujuan mulai dari pengentasan kemiskinan, pendidikan, kesehatan, hingga pelestarian lingkungan.
         </Text>
 
         <Box py="lg">
           {sdgsDesa && sdgsDesa.length > 0 ? (
+
+            /* ========== LIST GRID ========== */
             <SimpleGrid cols={{ base: 1, sm: 4 }} spacing="xl" verticalSpacing="xl" pb={30}>
               {sdgsDesa.map((item) => (
                 <motion.div
@@ -70,7 +83,7 @@ export default function SDGS() {
                       background: "linear-gradient(180deg, #FFFFFF, #F6F8FA)",
                       border: "1px solid rgba(0,0,0,0.05)",
                       transition: "all 0.3s ease",
-                      height: "100%", // biar tinggi antar card konsisten
+                      height: "100%",
                       display: "flex",
                       flexDirection: "column",
                     }}
@@ -101,23 +114,26 @@ export default function SDGS() {
                       </Box>
                     </Center>
 
-                    {/* Stack isi teks & angka */}
                     <Stack justify="space-between" align="center" gap="xs" h="100%">
+                      
+                      {/* JUDUL ITEM */}
                       <Text
                         ta="center"
                         fz={{ base: "lg", md: "xl" }}
+                        lh={{ base: 1.3, md: 1.3 }}
                         fw={700}
-                        mb="xs"
-                        style={{ minHeight: mobile ? 60 : 70 }} // biar judulnya punya tinggi tetap
+                        style={{ minHeight: mobile ? 60 : 70 }}
                       >
                         {item.name}
                       </Text>
 
+                      {/* ANGKA */}
                       <Title
                         order={2}
                         ta="center"
                         style={{
-                          fontSize: mobile ? "2.4rem" : "3.2rem",
+                          fontSize: mobile ? "2.2rem" : "3rem",
+                          lineHeight: 1.1,
                           fontWeight: 900,
                           letterSpacing: "-0.5px",
                           color: "#124170",
@@ -132,14 +148,15 @@ export default function SDGS() {
             </SimpleGrid>
 
           ) : (
+
+            /* ========== EMPTY STATE ========== */
             <Center mih={200} style={{ flexDirection: "column" }}>
               <IconMoodSad size={48} stroke={1.5} style={{ marginBottom: "1rem" }} />
-              <Text fz="lg" c="dimmed">
-                Data SDGs Desa belum tersedia
-              </Text>
+              <Text fz="lg" lh={1.4} c="dimmed">Data SDGs Desa belum tersedia</Text>
             </Center>
           )}
 
+          {/* BUTTON */}
           <Center>
             <Button
               component={Link}
@@ -152,18 +169,19 @@ export default function SDGS() {
               style={{
                 boxShadow: "0 6px 14px rgba(18,65,112,0.25)",
                 transition: "all 0.3s ease",
-                transform: "translateY(0)",
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateY(-4px)";
-                e.currentTarget.style.boxShadow = "0 10px 20px rgba(18,65,112,0.35)";
+                e.currentTarget.style.transform = "translateY(-4px)"
+                e.currentTarget.style.boxShadow = "0 10px 20px rgba(18,65,112,0.35)"
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "translateY(0)";
-                e.currentTarget.style.boxShadow = "0 6px 14px rgba(18,65,112,0.25)";
+                e.currentTarget.style.transform = "translateY(0)"
+                e.currentTarget.style.boxShadow = "0 6px 14px rgba(18,65,112,0.25)"
               }}
             >
-              <Text c="white" fz={{ base: "md", md: "lg" }} fw="bold">Jelajahi Semua Tujuan SDGs Desa</Text>
+              <Text c="white" fz={{ base: "md", md: "lg" }} lh={1.3} fw={600}>
+                Jelajahi Semua Tujuan SDGs Desa
+              </Text>
             </Button>
           </Center>
         </Box>

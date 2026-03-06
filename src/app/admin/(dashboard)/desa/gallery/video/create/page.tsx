@@ -28,6 +28,23 @@ function CreateVideo() {
   const embedLink = convertYoutubeUrlToEmbed(link);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Helper function to check if HTML content is empty
+  const isHtmlEmpty = (html: string) => {
+    // Remove all HTML tags and check if there's any text content
+    const textContent = html.replace(/<[^>]*>/g, '').trim();
+    return textContent === '';
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      videoState.create.form.name?.trim() !== '' &&
+      link.trim() !== '' &&
+      !isHtmlEmpty(videoState.create.form.deskripsi) &&
+      embedLink !== null // Make sure the embed link is valid
+    );
+  };
+
   const resetForm = () => {
     videoState.create.form = {
       name: '',
@@ -38,6 +55,26 @@ function CreateVideo() {
   };
 
   const handleSubmit = async () => {
+    if (!videoState.create.form.name?.trim()) {
+      toast.error('Judul wajib diisi');
+      return;
+    }
+    
+    if (!link.trim()) {
+      toast.error('Link YouTube wajib diisi');
+      return;
+    }
+    
+    if (isHtmlEmpty(videoState.create.form.deskripsi)) {
+      toast.error('Deskripsi wajib diisi');
+      return;
+    }
+    
+    if (!embedLink) {
+      toast.error('Link YouTube tidak valid. Pastikan formatnya benar.');
+      return;
+    }
+
     try {
       setIsSubmitting(true);
       if (!embedLink) {
@@ -58,7 +95,7 @@ function CreateVideo() {
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Header Back Button + Title */}
       <Group mb="md">
         <Button
@@ -168,8 +205,11 @@ function CreateVideo() {
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}

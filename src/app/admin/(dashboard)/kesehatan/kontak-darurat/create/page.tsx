@@ -35,6 +35,23 @@ function CreateKontakDarurat() {
   const [file, setFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Helper function to check if HTML content is empty
+  const isHtmlEmpty = (html: string) => {
+    // Remove all HTML tags and check if there's any text content
+    const textContent = html.replace(/<[^>]*>/g, '').trim();
+    return textContent === '';
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      kontakDaruratState.create.form.name?.trim() !== '' &&
+      kontakDaruratState.create.form.whatsapp?.trim() !== '' &&
+      !isHtmlEmpty(kontakDaruratState.create.form.deskripsi) &&
+      file !== null
+    );
+  };
+
   const resetForm = () => {
     kontakDaruratState.create.form = {
       name: '',
@@ -78,7 +95,7 @@ function CreateKontakDarurat() {
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Header */}
       <Group mb="md">
         <Button
@@ -120,8 +137,8 @@ function CreateKontakDarurat() {
             onChange={(val) => {
               kontakDaruratState.create.form.whatsapp = val.target.value;
             }}
-            label={<Text fz="sm" fw="bold">Whatsapp</Text>}
-            placeholder="Masukkan whatsapp"
+            label={<Text fz="sm" fw="bold">Telepon</Text>}
+            placeholder="Masukkan telepon"
             required
           />
 
@@ -240,8 +257,11 @@ function CreateKontakDarurat() {
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}

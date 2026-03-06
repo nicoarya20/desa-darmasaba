@@ -13,6 +13,7 @@ const templatePasarDesaForm = z.object({
   rating: z.number().min(1, "Rating minimal 1"),
   kategoriId: z.array(z.string()).min(1, "Minimal pilih satu kategori"),
   kontak: z.string().min(1, "Kontak wajib diisi"),
+  deskripsi: z.string().min(1, "Deskripsi wajib diisi"),
 });
 
 const defaultPasarDesaForm = {
@@ -23,6 +24,7 @@ const defaultPasarDesaForm = {
   rating: 0,
   kategoriId: [] as string[],
   kontak: "",
+  deskripsi: ""
 };
 
 const pasarDesa = proxy({
@@ -191,6 +193,7 @@ const pasarDesa = proxy({
             rating: data.rating,
             kategoriId: data.kategoriId,
             kontak: data.kontak,
+            deskripsi: data.deskripsi
           };
           return data;
         } else {
@@ -229,6 +232,7 @@ const pasarDesa = proxy({
             rating: this.form.rating,
             kategoriId: this.form.kategoriId,
             kontak: this.form.kontak,
+            deskripsi: this.form.deskripsi
           }),
         });
         if (!response.ok) {
@@ -312,15 +316,15 @@ const kategoriProduk = proxy({
     page: 1,
     totalPages: 1,
     loading: false,
-    search2: "",
-   load: async (page = 1, limit = 10, search2 = "") => {
+    search: "",
+   load: async (page = 1, limit = 10, search = "") => {
       kategoriProduk.findMany.loading = true; // ✅ Akses langsung via nama path
       kategoriProduk.findMany.page = page;
-      kategoriProduk.findMany.search2 = search2;
+      kategoriProduk.findMany.search = search;
   
       try {
         const query: any = { page, limit };
-        if (search2) query.search2 = search2;
+        if (search) query.search = search;
     
         const res = await ApiFetch.api.ekonomi.kategoriproduk["find-many"].get({ query });
     

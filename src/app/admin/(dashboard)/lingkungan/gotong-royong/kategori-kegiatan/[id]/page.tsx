@@ -21,6 +21,11 @@ function EditKategoriKegiatan() {
   const [originalData, setOriginalData] = useState({ nama: '' });
   const [loading, setLoading] = useState(true);
 
+  // Check if form is valid
+  const isFormValid = () => {
+    return formData.nama?.trim() !== '';
+  };
+
   // Load data once
   useEffect(() => {
     if (!id) return;
@@ -83,7 +88,7 @@ function EditKategoriKegiatan() {
   if (loading) return <Text>Loading...</Text>;
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       <Group mb="md" align="center">
         <Button variant="subtle" p="xs" radius="md" onClick={() => router.back()}>
           <IconArrowBack color={colors['blue-button']} size={24} />
@@ -126,8 +131,11 @@ function EditKategoriKegiatan() {
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}

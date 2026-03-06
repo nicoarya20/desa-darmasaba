@@ -1,0 +1,38 @@
+[
+  {
+    "id": "cmkkrxmub0004vni41cwyhid4",
+    "name": "Nyoman Putra",
+    "email": "nyoman.putra@example.com",
+    "nomorTelepon": "081234567890",
+    "nik": "3175011234567890",
+    "judulPengaduan": "Permintaan Pemasangan Spanduk Larangan Bagi Hewan",
+    "deskripsiPengaduan": "<p>Permintaan Pemasangan Spanduk Larangan Bagi Hewan</p>",
+    "lokasiKejadian": "Banjar Darmasaba Tengah",
+    "jenisPengaduanId": "eommt91ma000004lb4dpq7ll1",
+    "imageName": "gyNi4s8TnK2UrViU-gN2C-mobile.webp"
+  },
+  {
+    "id": "cmkkrxmub0004vni41cwyhid5",
+    "name": "I Made Sari",
+    "email": "imade.sari@example.com",
+    "nomorTelepon": "087654321098",
+    "nik": "3175010987654321",
+    "judulPengaduan": "Laporan Anjing Liar Sering Menyerang Warga",
+    "deskripsiPengaduan": "<p>Laporan Anjing Liar Sering Menyerang Warga</p>",
+    "lokasiKejadian": "Jl. Raya Darmasaba",
+    "jenisPengaduanId": "eommt91ma000004lb4dpq8mm2",
+    "imageName": "SQqSobKRg3ShvgPw_H41h-mobile.webp"
+  },
+  {
+    "id": "cmkkrxmub0004vni41cwyhid6",
+    "name": "Ketut Widi",
+    "email": "ketut.widi@example.com",
+    "nomorTelepon": "085612347890",
+    "nik": "3175011122334455",
+    "judulPengaduan": "Pengelolaan Sampah Rumah Tangga Belum Efektif",
+    "deskripsiPengaduan": "<p>Pengelolaan Sampah Rumah Tangga Belum Efektif</p>",
+    "lokasiKejadian": "Banjar Bucu",
+    "jenisPengaduanId": "eommt91ma000004lb4dpq7ll1",
+    "imageName": "y78xZ2axTOjz87gRKjVAf-mobile.webp"
+  }
+]

@@ -18,7 +18,7 @@ import {
   Text,
   Title
 } from '@mantine/core';
-import { useShallowEffect } from '@mantine/hooks';
+import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
 import { IconEdit, IconPlus, IconSearch, IconTrashFilled } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -48,12 +48,13 @@ function ListKeunggulanProgram({ search }: { search: string }) {
   const router = useRouter();
   const [modalHapus, setModalHapus] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [debouncedSearch] = useDebouncedValue(search, 1000);
 
   const { data, page, totalPages, loading, load } = stateList.findMany;
 
   useShallowEffect(() => {
-    load(page, 10, search);
-  }, [page, search]);
+    load(page, 10, debouncedSearch);
+  }, [page, debouncedSearch]);
 
   const handleHapus = () => {
     if (selectedId) {
@@ -67,14 +68,14 @@ function ListKeunggulanProgram({ search }: { search: string }) {
 
   if (loading || !data) {
     return (
-      <Stack py={10}>
+      <Stack py="md">
         <Skeleton height={600} radius="md" />
       </Stack>
     );
   }
 
   return (
-    <Box py={10}>
+    <Box py="md">
       <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
         <Group justify="space-between" mb="md">
           <Title order={4}>Daftar Keunggulan Program</Title>
@@ -92,34 +93,44 @@ function ListKeunggulanProgram({ search }: { search: string }) {
           </Button>
         </Group>
 
-        <Box style={{ overflowX: 'auto' }}>
-          <Table highlightOnHover>
+        {/* Desktop Table */}
+       <Box visibleFrom="md" style={{ overflowX: 'auto' }}>
+          <Table
+            highlightOnHover
+            miw={0}
+            style={{
+              tableLayout: 'fixed',
+              width: '100%',
+            }}
+          >
             <TableThead>
               <TableTr>
-                <TableTh style={{ minWidth: 200 }}>Nama Keunggulan Program</TableTh>
-                <TableTh style={{ minWidth: 200 }}>Deskripsi</TableTh>
-                <TableTh style={{ minWidth: 200 }}>Edit</TableTh>
-                <TableTh style={{ minWidth: 200 }}>Delete</TableTh>
+                <TableTh style={{ width: '30%' }}>Nama Keunggulan Program</TableTh>
+                <TableTh style={{ width: '40%' }}>Deskripsi</TableTh>
+                <TableTh style={{ width: '15%' }}>Edit</TableTh>
+                <TableTh style={{ width: '15%' }}>Delete</TableTh>
               </TableTr>
             </TableThead>
             <TableTbody>
               {filteredData.length > 0 ? (
                 filteredData.map((item) => (
                   <TableTr key={item.id}>
-                    <TableTd style={{ minWidth: 200 }}>
-                      <Text fw={500} truncate="end" lineClamp={1}>
+                    <TableTd>
+                      <Text fz="md" fw={500} lh={1.45} truncate="end" lineClamp={1}>
                         {item.judul}
                       </Text>
                     </TableTd>
-                    <TableTd style={{ minWidth: 200 }}>
+                    <TableTd>
                       <Text
+                        fz="md"
                         fw={500}
+                        lh={1.45}
                         truncate="end"
                         lineClamp={1}
                         dangerouslySetInnerHTML={{ __html: item.deskripsi }}
                       />
                     </TableTd>
-                    <TableTd style={{ minWidth: 200 }}>
+                    <TableTd>
                       <Button
                         variant="light"
                         color="green"
@@ -133,7 +144,7 @@ function ListKeunggulanProgram({ search }: { search: string }) {
                         <IconEdit size={18} />
                       </Button>
                     </TableTd>
-                    <TableTd style={{ minWidth: 200 }}>
+                    <TableTd>
                       <Button
                         variant="light"
                         color="red"
@@ -151,8 +162,8 @@ function ListKeunggulanProgram({ search }: { search: string }) {
               ) : (
                 <TableTr>
                   <TableTd colSpan={4}>
-                    <Center py={20}>
-                      <Text c="dimmed">
+                    <Center py="xl">
+                      <Text c="dimmed" fz="sm" lh={1.4}>
                         Tidak ada data keunggulan program yang cocok
                       </Text>
                     </Center>
@@ -162,9 +173,70 @@ function ListKeunggulanProgram({ search }: { search: string }) {
             </TableTbody>
           </Table>
         </Box>
+
+        {/* Mobile Cards */}
+        <Box hiddenFrom="md">
+          <Stack gap="sm">
+            {filteredData.length > 0 ? (
+              filteredData.map((item) => (
+                <Paper key={item.id} withBorder p="md" radius="sm">
+                  <Stack gap={"xs"}>
+                    <Box>
+                      <Text fz="sm" fw={600} lh={1.4}>Nama Keunggulan Program</Text>
+                      <Text fz="sm" fw={500} lh={1.4} truncate="end">
+                        {item.judul}
+                      </Text>
+                    </Box>
+                    <Box>
+                      <Text fz="sm" fw={600} lh={1.4}>Deskripsi</Text>
+                      <Text
+                        fz="sm"
+                        fw={500}
+                        lh={1.4}
+                        truncate="end"
+                        dangerouslySetInnerHTML={{ __html: item.deskripsi }}
+                      />
+                    </Box>
+                    <Group justify="flex-end" mt="xs">
+                      <Button
+                        variant="light"
+                        color="green"
+                        size="xs"
+                        onClick={() =>
+                          router.push(
+                            `/admin/pendidikan/beasiswa-desa/keunggulan-program/${item.id}`
+                          )
+                        }
+                      >
+                        <IconEdit size={16} />
+                      </Button>
+                      <Button
+                        variant="light"
+                        color="red"
+                        size="xs"
+                        onClick={() => {
+                          setSelectedId(item.id);
+                          setModalHapus(true);
+                        }}
+                      >
+                        <IconTrashFilled size={16} />
+                      </Button>
+                    </Group>
+                  </Stack>
+                </Paper>
+              ))
+            ) : (
+              <Center py="xl">
+                <Text c="dimmed" fz="sm" lh={1.4}>
+                  Tidak ada data keunggulan program yang cocok
+                </Text>
+              </Center>
+            )}
+          </Stack>
+        </Box>
       </Paper>
 
-      {totalPages > 1 && (
+     
         <Center>
           <Pagination
             value={page}
@@ -179,9 +251,7 @@ function ListKeunggulanProgram({ search }: { search: string }) {
             radius="md"
           />
         </Center>
-      )}
 
-      {/* Modal Konfirmasi Hapus */}
       <ModalKonfirmasiHapus
         opened={modalHapus}
         onClose={() => setModalHapus(false)}

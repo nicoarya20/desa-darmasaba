@@ -24,6 +24,16 @@ function AdministrasiOnline() {
   const [opened, { open, close }] = useDisclosure(false);
   const state = useProxy(layananonlineDesa);
 
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      state.administrasiOnline.create.form.name?.trim() !== '' &&
+      state.administrasiOnline.create.form.alamat?.trim() !== '' &&
+      state.administrasiOnline.create.form.nomorTelepon?.trim() !== '' &&
+      state.administrasiOnline.create.form.jenisLayananId?.trim() !== ''
+    );
+  };
+
   useEffect(() => {
     // ✅ Panggil load data jenis layanan dari backend
     if (!state.jenisLayanan.findMany.data) {
@@ -104,7 +114,11 @@ function AdministrasiOnline() {
               }
             />
 
-            <Button bg={colors['blue-button']} onClick={handleSubmit}>
+            <Button 
+              bg={colors['blue-button']} 
+              onClick={handleSubmit}
+              disabled={!isFormValid()}
+            >
               Simpan
             </Button>
           </Stack>

@@ -44,7 +44,7 @@ function DetailKeamananLingkungan() {
   const data = keamananState.findUnique.data
 
   return (
-    <Box py={10}>
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Tombol Back */}
       <Button
         variant="subtle"
@@ -58,7 +58,7 @@ function DetailKeamananLingkungan() {
       {/* Wrapper Detail */}
       <Paper
         withBorder
-        w={{ base: "100%", md: "50%" }}
+        w={{ base: "100%", md: "70%" }}
         bg={colors['white-1']}
         p="lg"
         radius="md"
@@ -88,7 +88,9 @@ function DetailKeamananLingkungan() {
 
               <Box>
                 <Text fz="lg" fw="bold">Deskripsi</Text>
-                <Text fz="md" c="dimmed" dangerouslySetInnerHTML={{ __html: data?.deskripsi }} style={{ wordBreak: "break-word", whiteSpace: "normal" }} />
+                <Box pl={8}>
+                  <Text fz="md" c="dimmed" dangerouslySetInnerHTML={{ __html: data?.deskripsi }} style={{ wordBreak: "break-word", whiteSpace: "normal" }} />
+                </Box>
               </Box>
 
               {/* Aksi */}

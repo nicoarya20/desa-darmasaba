@@ -49,7 +49,7 @@ function DetailPenghargaan() {
   const data = statePenghargaan.findUnique.data;
 
   return (
-    <Box py={10}>
+    <Box px={{ base: 0, md: 'xs' }} py="xs">
       <Button
         variant="subtle"
         onClick={() => router.back()}

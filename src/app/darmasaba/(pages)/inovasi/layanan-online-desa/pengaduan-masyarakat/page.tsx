@@ -19,6 +19,28 @@ function PengaduanMasyarakat() {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
 
+  // Helper function to check if HTML content is empty
+  const isHtmlEmpty = (html: string) => {
+    // Remove all HTML tags and check if there's any text content
+    const textContent = html.replace(/<[^>]*>/g, '').trim();
+    return textContent === '';
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      state.pengaduanMasyarakat.create.form.name?.trim() !== '' &&
+      state.pengaduanMasyarakat.create.form.email?.trim() !== '' &&
+      state.pengaduanMasyarakat.create.form.nomorTelepon?.trim() !== '' &&
+      state.pengaduanMasyarakat.create.form.nik?.trim() !== '' &&
+      state.pengaduanMasyarakat.create.form.judulPengaduan?.trim() !== '' &&
+      state.pengaduanMasyarakat.create.form.lokasiKejadian?.trim() !== '' &&
+      !isHtmlEmpty(state.pengaduanMasyarakat.create.form.deskripsiPengaduan) &&
+      state.pengaduanMasyarakat.create.form.jenisPengaduanId?.trim() !== '' &&
+      file !== null
+    );
+  };
+
   useEffect(() => {
     // ✅ Panggil load data jenis layanan dari backend
     if (!state.jenisPengaduan.findMany.data) {
@@ -39,6 +61,13 @@ function PengaduanMasyarakat() {
       imageId: '',
     };
   };
+
+  const resetAll = () => {
+    resetForm();
+    setFile(null);
+    setPreviewImage(null);
+  };
+
 
   const handleSubmit = async () => {
     if (!file) {
@@ -64,7 +93,7 @@ function PengaduanMasyarakat() {
       const success = await state.pengaduanMasyarakat.create.create()
 
       if (success) {
-        resetForm()
+        resetAll()
         close()
       }
     } catch (error) {
@@ -190,7 +219,7 @@ function PengaduanMasyarakat() {
                     </Group>
                   </Dropzone>
                   {previewImage ? (
-                    <Image alt="" src={previewImage} w={200} h={200} loading="lazy"/>
+                    <Image alt="" src={previewImage} w={200} h={200} loading="lazy" />
                   ) : (
                     <Center w={200} h={200} bg={"gray"}>
                       <IconImageInPicture />
@@ -200,7 +229,11 @@ function PengaduanMasyarakat() {
               </Box>
             </Box>
 
-            <Button bg={colors['blue-button']} onClick={handleSubmit}>
+            <Button 
+              bg={colors['blue-button']} 
+              onClick={handleSubmit}
+              disabled={!isFormValid()}
+            >
               Simpan
             </Button>
           </Stack>

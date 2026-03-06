@@ -18,7 +18,7 @@ import {
   Text,
   Title
 } from '@mantine/core';
-import { useShallowEffect } from '@mantine/hooks';
+import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
 import { IconDeviceImac, IconPlus, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -58,6 +58,8 @@ function ListSektorUnggulanDesa({ search }: { search: string }) {
     load,
   } = state.findMany;
 
+  const [debouncedSearch] = useDebouncedValue(search, 1000);
+
   useEffect(() => {
     if (state.findMany.data) {
       setChartData(
@@ -72,14 +74,14 @@ function ListSektorUnggulanDesa({ search }: { search: string }) {
   }, [state.findMany.data]);
 
   useShallowEffect(() => {
-    load(page, 10, search)
-  }, [page, search])
+    load(page, 10, debouncedSearch)
+  }, [page, debouncedSearch])
 
-  const filteredData = data || []
+  const filteredData = data || [];
 
   if (loading || !data) {
     return (
-      <Stack py={10}>
+      <Stack py="md">
         <Skeleton height={600} radius="md" />
       </Stack>
     );
@@ -87,69 +89,131 @@ function ListSektorUnggulanDesa({ search }: { search: string }) {
 
   return (
     <Stack gap="md" py="md">
-      {/* List Table */}
-      <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
-        <Group justify="space-between" mb="md">
-          <Title order={4}>List Sektor Unggulan Desa</Title>
-          <Button leftSection={<IconPlus size={18} />} color="blue" variant="light" onClick={() => router.push('/admin/ekonomi/sektor-unggulan-desa/create')}>
+      {/* List Section */}
+      <Paper withBorder bg={colors['white-1']} p={{ base: 'md', md: 'lg' }} shadow="md" radius="md">
+        <Group justify="space-between" mb={{ base: 'sm', md: 'md' }}>
+          <Title order={4} lh={1.2}>
+            List Sektor Unggulan Desa
+          </Title>
+          <Button
+            leftSection={<IconPlus size={18} />}
+            color="blue"
+            variant="light"
+            onClick={() => router.push('/admin/ekonomi/sektor-unggulan-desa/create')}
+          >
             Tambah Baru
           </Button>
         </Group>
-        {loading ? (
-          <Skeleton height={300} radius="md" />
-        ) : (
-          <Box style={{ overflowX: 'auto' }}>
-            <Table highlightOnHover>
-              <TableThead>
-                <TableTr>
-                  <TableTh style={{ width: '30%' }}>Nama Sektor</TableTh>
-                  <TableTh style={{ width: '40%' }}>Deskripsi</TableTh>
-                  <TableTh style={{ width: '15%' }}>Detail</TableTh>
-                </TableTr>
-              </TableThead>
-              <TableTbody>
-                {filteredData.length > 0 ? (
-                  filteredData.map((item) => (
-                    <TableTr key={item.id}>
-                      <TableTd>
-                        <Box w={200}>
-                          <Text fw={500} truncate="end" lineClamp={1}>
-                            {item.name}
-                          </Text>
-                        </Box>
-                      </TableTd>
-                      <TableTd>
-                        <Box w={200}>
-                          <Text truncate="end" fz="sm" c="dimmed" lineClamp={1} dangerouslySetInnerHTML={{ __html: item.description || '-' }} />
-                        </Box>
-                      </TableTd>
-                      <TableTd>
-                        <Button
-                          variant="light"
-                          color="blue"
-                          onClick={() => router.push(`/admin/ekonomi/sektor-unggulan-desa/${item.id}`)}
-                        >
-                          <IconDeviceImac size={20} />
-                          <Text ml={6}>Detail</Text>
-                        </Button>
-                      </TableTd>
-                    </TableTr>
-                  ))
-                ) : (
-                  <TableTr>
-                    <TableTd colSpan={3}>
-                      <Center py={20}>
-                        <Text color="dimmed">Tidak ada data sektor unggulan yang cocok</Text>
-                      </Center>
+
+        {/* Desktop Table */}
+       <Box visibleFrom="md" style={{ overflowX: 'auto' }}>
+          <Table
+            highlightOnHover
+            miw={0}
+            style={{
+              tableLayout: 'fixed',
+              width: '100%',
+            }}
+          >
+            <TableThead>
+              <TableTr>
+                <TableTh style={{ width: '35%' }}>Nama Sektor</TableTh>
+                <TableTh style={{ width: '45%' }}>Deskripsi</TableTh>
+                <TableTh style={{ width: '20%' }}>Detail</TableTh>
+              </TableTr>
+            </TableThead>
+            <TableTbody>
+              {filteredData.length > 0 ? (
+                filteredData.map((item) => (
+                  <TableTr key={item.id}>
+                    <TableTd>
+                      <Text fz="md" fw={500} lh={1.45} truncate="end">
+                        {item.name}
+                      </Text>
+                    </TableTd>
+                    <TableTd>
+                      <Text fz="sm" lineClamp={3} fw={500} lh={1.4} c={item.description ? 'inherit' : 'dimmed'} dangerouslySetInnerHTML={{ __html: item.description || '-' }} />
+                    </TableTd>
+                    <TableTd>
+                      <Button
+                        variant="light"
+                        color="blue"
+                        onClick={() => router.push(`/admin/ekonomi/sektor-unggulan-desa/${item.id}`)}
+                        radius="md"
+                        fz="sm"
+                        px="sm"
+                      >
+                        <IconDeviceImac size={18} />
+                        <Text ml={6}>Detail</Text>
+                      </Button>
                     </TableTd>
                   </TableTr>
-                )}
-              </TableTbody>
-            </Table>
-          </Box>
-        )}
+                ))
+              ) : (
+                <TableTr>
+                  <TableTd colSpan={3}>
+                    <Center py={24}>
+                      <Text c="dimmed" fz="sm" lh={1.4}>
+                        Tidak ada data sektor unggulan yang cocok
+                      </Text>
+                    </Center>
+                  </TableTd>
+                </TableTr>
+              )}
+            </TableTbody>
+          </Table>
+        </Box>
+
+        {/* Mobile Cards */}
+        <Stack gap="sm" hiddenFrom="md">
+          {filteredData.length > 0 ? (
+            filteredData.map((item) => (
+              <Paper key={item.id} withBorder p="sm" radius="md">
+                <Stack gap={"xs"}>
+                  <Box>
+                    <Text fz="sm" fw={600} lh={1.4}>
+                      Nama Sektor
+                    </Text>
+                    <Text fz="sm" fw={500} lh={1.4}>
+                      {item.name}
+                    </Text>
+                  </Box>
+                  <Box>
+                    <Text fz="sm" fw={600} lh={1.4}>
+                      Deskripsi
+                    </Text>
+                    <Box pl={8}>
+                      <Text fz="sm" lineClamp={3} fw={500} lh={1.4} c={item.description ? 'inherit' : 'dimmed'} dangerouslySetInnerHTML={{ __html: item.description || '-' }} />
+                    </Box>
+                  </Box>
+                  <Box>
+                    <Button
+                      variant="light"
+                      color="blue"
+                      onClick={() => router.push(`/admin/ekonomi/sektor-unggulan-desa/${item.id}`)}
+                      fullWidth
+                      mt="xs"
+                      radius="md"
+                      fz="sm"
+                    >
+                      <IconDeviceImac size={18} />
+                      <Text ml={6}>Detail</Text>
+                    </Button>
+                  </Box>
+                </Stack>
+              </Paper>
+            ))
+          ) : (
+            <Center py={24}>
+              <Text c="dimmed" fz="sm" lh={1.4}>
+                Tidak ada data sektor unggulan yang cocok
+              </Text>
+            </Center>
+          )}
+        </Stack>
       </Paper>
 
+      {/* Pagination */}
       <Center>
         <Pagination
           value={page}
@@ -158,22 +222,20 @@ function ListSektorUnggulanDesa({ search }: { search: string }) {
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
           total={totalPages}
-          mt="md"
-          mb="md"
           color="blue"
           radius="md"
         />
       </Center>
 
-      {/* Chart */}
-      <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
-        <Title order={4} pb="sm">
+      {/* Chart Section */}
+      <Paper withBorder bg={colors['white-1']} p={{ base: 'md', md: 'lg' }} shadow="md" radius="md">
+        <Title order={4} lh={1.2} pb={{ base: 'sm', md: 'md' }}>
           Grafik Sektor Unggulan Desa
         </Title>
         {loading ? (
           <Skeleton height={350} radius="md" />
         ) : chartData.length > 0 ? (
-          <Box style={{ width: '100%', height: 400 }}>
+          <Box style={{ width: '100%', height: 350 }}>
             <ResponsiveContainer>
               <BarChart data={chartData}>
                 <XAxis dataKey="name" />
@@ -186,7 +248,9 @@ function ListSektorUnggulanDesa({ search }: { search: string }) {
           </Box>
         ) : (
           <Center py={50}>
-            <Text c="dimmed">Belum ada data untuk ditampilkan dalam grafik</Text>
+            <Text c="dimmed" fz="sm" lh={1.4}>
+              Belum ada data untuk ditampilkan dalam grafik
+            </Text>
           </Center>
         )}
       </Paper>

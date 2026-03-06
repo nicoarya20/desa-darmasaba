@@ -36,6 +36,23 @@ function EditPengumuman() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Helper function to check if HTML content is empty
+  const isHtmlEmpty = (html: string) => {
+    // Remove all HTML tags and check if there's any text content
+    const textContent = html.replace(/<[^>]*>/g, '').trim();
+    return textContent === '';
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      formData.judul?.trim() !== '' &&
+      formData.deskripsi?.trim() !== '' &&
+      formData.categoryPengumumanId !== '' &&
+      !isHtmlEmpty(formData.content)
+    );
+  };
+
   const [originalData, setOriginalData] = useState({
     judul: "",
     deskripsi: "",
@@ -81,6 +98,26 @@ function EditPengumuman() {
   };
 
   const handleSubmit = async () => {
+    if (!formData.judul?.trim()) {
+      toast.error('Judul wajib diisi');
+      return;
+    }
+    
+    if (!formData.deskripsi?.trim()) {
+      toast.error('Deskripsi singkat wajib diisi');
+      return;
+    }
+    
+    if (!formData.categoryPengumumanId) {
+      toast.error('Kategori wajib dipilih');
+      return;
+    }
+    
+    if (isHtmlEmpty(formData.content)) {
+      toast.error('Konten lengkap wajib diisi');
+      return;
+    }
+
     try {
       setIsSubmitting(true);
       // update global state hanya sekali pas submit
@@ -111,7 +148,7 @@ function EditPengumuman() {
   };
 
   return (
-    <Box px={{ base: "sm", md: "lg" }} py="md">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       <Group mb="md">
         <Button
           variant="subtle"
@@ -197,8 +234,11 @@ function EditPengumuman() {
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}

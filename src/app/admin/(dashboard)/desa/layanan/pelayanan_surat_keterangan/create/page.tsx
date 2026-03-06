@@ -31,6 +31,22 @@ function CreateSuratKeterangan() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Helper function to check if HTML content is empty
+  const isHtmlEmpty = (html: string) => {
+    // Remove all HTML tags and check if there's any text content
+    const textContent = html.replace(/<[^>]*>/g, '').trim();
+    return textContent === '';
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      stateSurat.create.form.name?.trim() !== '' &&
+      !isHtmlEmpty(stateSurat.create.form.deskripsi) &&
+      previewImage !== null
+    );
+  };
+
   const resetForm = () => {
     stateSurat.create.form = {
       name: '',
@@ -43,8 +59,19 @@ function CreateSuratKeterangan() {
   };
 
   const handleSubmit = async () => {
+    if (!stateSurat.create.form.name?.trim()) {
+      toast.error('Nama surat keterangan wajib diisi');
+      return;
+    }
+
+    if (isHtmlEmpty(stateSurat.create.form.deskripsi)) {
+      toast.error('Konten wajib diisi');
+      return;
+    }
+
     if (!previewImage) {
-      return toast.warn('Pilih file gambar utama terlebih dahulu');
+      toast.error('Gambar konten pelayanan wajib dipilih');
+      return;
     }
 
     try {
@@ -87,7 +114,7 @@ function CreateSuratKeterangan() {
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Header */}
       <Group mb="md">
         <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
@@ -284,8 +311,11 @@ function CreateSuratKeterangan() {
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
