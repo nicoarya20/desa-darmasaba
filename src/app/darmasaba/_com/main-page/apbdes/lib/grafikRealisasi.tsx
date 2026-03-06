@@ -1,11 +1,31 @@
 import { Paper, Title, Progress, Stack, Text, Group, Box } from '@mantine/core';
 
-function Summary({ title, data }: any) {
+interface APBDesItem {
+  tipe: string;
+  anggaran: number;
+  realisasi?: number;
+  totalRealisasi?: number;
+}
+
+interface APBDesData {
+  tahun?: number;
+  items?: APBDesItem[];
+}
+
+interface SummaryProps {
+  title: string;
+  data: APBDesItem[];
+}
+
+function Summary({ title, data }: SummaryProps) {
   if (!data || data.length === 0) return null;
 
-  const totalAnggaran = data.reduce((s: number, i: any) => s + i.anggaran, 0);
+  const totalAnggaran = data.reduce((s: number, i: APBDesItem) => s + i.anggaran, 0);
   // Use realisasi field (already mapped from totalRealisasi in transformAPBDesData)
-  const totalRealisasi = data.reduce((s: number, i: any) => s + (i.realisasi || i.totalRealisasi || 0), 0);
+  const totalRealisasi = data.reduce(
+    (s: number, i: APBDesItem) => s + (i.realisasi || i.totalRealisasi || 0),
+    0
+  );
 
   const persen =
     totalAnggaran > 0 ? (totalRealisasi / totalAnggaran) * 100 : 0;
@@ -77,28 +97,13 @@ function Summary({ title, data }: any) {
   );
 }
 
-export default function GrafikRealisasi({ apbdesData }: any) {
+export default function GrafikRealisasi({ apbdesData }: { apbdesData: APBDesData }) {
   const items = apbdesData.items || [];
   const tahun = apbdesData.tahun || new Date().getFullYear();
 
-  const pendapatan = items.filter((i: any) => i.tipe === 'pendapatan');
-  const belanja = items.filter((i: any) => i.tipe === 'belanja');
-  const pembiayaan = items.filter((i: any) => i.tipe === 'pembiayaan');
-
-  // // Hitung total keseluruhan
-  // const totalAnggaranSemua = items.reduce((s: number, i: any) => s + i.anggaran, 0);
-  // // Use realisasi field (already mapped from totalRealisasi in transformAPBDesData)
-  // const totalRealisasiSemua = items.reduce((s: number, i: any) => s + (i.realisasi || i.totalRealisasi || 0), 0);
-  // const persenSemua = totalAnggaranSemua > 0 ? (totalRealisasiSemua / totalAnggaranSemua) * 100 : 0;
-
-  // const formatRupiah = (angka: number) => {
-  //   return new Intl.NumberFormat('id-ID', {
-  //     style: 'currency',
-  //     currency: 'IDR',
-  //     minimumFractionDigits: 0,
-  //     maximumFractionDigits: 0,
-  //   }).format(angka);
-  // };
+  const pendapatan = items.filter((i: APBDesItem) => i.tipe === 'pendapatan');
+  const belanja = items.filter((i: APBDesItem) => i.tipe === 'belanja');
+  const pembiayaan = items.filter((i: APBDesItem) => i.tipe === 'pembiayaan');
 
   return (
     <Paper withBorder p="md" radius="md">
@@ -111,27 +116,6 @@ export default function GrafikRealisasi({ apbdesData }: any) {
         <Summary title="💸 Belanja" data={belanja} />
         <Summary title="📊 Pembiayaan" data={pembiayaan} />
       </Stack>
-
-      {/* Summary Total Keseluruhan
-      <Box p="md" bg="gray.0">
-        <>
-          <Group justify="space-between" mb="xs">
-            <Text fw={700} fz="lg">TOTAL KESELURUHAN</Text>
-            <Text fw={700} fz="xl" c={persenSemua >= 100 ? 'teal' : persenSemua >= 80 ? 'blue' : 'red'}>
-              {persenSemua.toFixed(2)}%
-            </Text>
-          </Group>
-          <Text fz="sm" c="dimmed" mb="xs">
-            {formatRupiah(totalRealisasiSemua)} / {formatRupiah(totalAnggaranSemua)}
-          </Text>
-          <Progress
-            value={persenSemua}
-            size="lg"
-            radius="xl"
-            color={persenSemua >= 100 ? 'teal' : persenSemua >= 80 ? 'blue' : 'red'}
-          />
-        </>
-      </Box> */}
     </Paper>
   );
 }
