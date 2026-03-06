@@ -92,10 +92,10 @@ const MusicPlayer = () => {
   }
 
   return (
-    <Box px={{ base: 'md', md: 100 }} py="xl">
+    <Box px={{ base: 'xs', sm: 'md', md: 100 }} py="xl">
       <Paper
         mx="auto"
-        p="xl"
+        p={{ base: 'md', sm: 'xl' }}
         radius="lg"
         shadow="sm"
         bg="white"
@@ -105,42 +105,52 @@ const MusicPlayer = () => {
       >
         <Stack gap="md">
           <BackButton />
-          <Group justify="space-between" mb="xl" mt={"md"}>
+          <Flex
+            justify="space-between"
+            align={{ base: 'flex-start', sm: 'center' }}
+            direction={{ base: 'column', sm: 'row' }}
+            gap="md"
+            mb="xl"
+            mt="md"
+          >
             <div>
-              <Text size="32px" fw={700} c="#0B4F78">Selamat Datang Kembali</Text>
-              <Text size="md" c="#5A6C7D">Temukan musik favorit Anda hari ini</Text>
+              <Text fz={{ base: '24px', sm: '32px' }} fw={700} c="#0B4F78" lh={1.2}>Selamat Datang Kembali</Text>
+              <Text size="sm" c="#5A6C7D">Temukan musik favorit Anda hari ini</Text>
             </div>
-            <Group gap="md">
-              <TextInput
-                placeholder="Cari lagu..."
-                leftSection={<IconSearch size={18} />}
-                radius="xl"
-                w={280}
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                styles={{ input: { backgroundColor: '#fff' } }}
-              />
-            </Group>
-          </Group>
+            <TextInput
+              placeholder="Cari lagu..."
+              leftSection={<IconSearch size={18} />}
+              radius="xl"
+              w={{ base: '100%', sm: 280 }}
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              styles={{ input: { backgroundColor: '#fff' } }}
+            />
+          </Flex>
+
           <Stack gap="xl">
             <div>
               <Text size="xl" fw={700} c="#0B4F78" mb="md">Sedang Diputar</Text>
               {currentSong ? (
-                <Card radius="md" p="xl" shadow="md">
-                  <Group align="center" gap="xl">
+                <Card radius="md" p={{ base: 'md', sm: 'xl' }} shadow="md" withBorder>
+                  <Flex
+                    direction={{ base: 'column', sm: 'row' }}
+                    align="center"
+                    gap={{ base: 'md', sm: 'xl' }}
+                  >
                     <Avatar
                       src={currentSong.coverImage?.link || '/mp3-logo.png'}
-                      size={180}
+                      size={120}
                       radius="md"
                     />
-                    <Stack gap="md" style={{ flex: 1 }}>
-                      <div>
-                        <Text size="28px" fw={700} c="#0B4F78">{currentSong.judul}</Text>
+                    <Stack gap="md" style={{ flex: 1, width: '100%' }}>
+                      <Box ta={{ base: 'center', sm: 'left' }}>
+                        <Text fz={{ base: '20px', sm: '28px' }} fw={700} c="#0B4F78" lineClamp={1}>{currentSong.judul}</Text>
                         <Text size="lg" c="#5A6C7D">{currentSong.artis}</Text>
                         {currentSong.genre && (
                           <Badge mt="xs" color="#0B4F78" variant="light">{currentSong.genre}</Badge>
                         )}
-                      </div>
+                      </Box>
                       <Group gap="xs" align="center">
                         <Text size="xs" c="#5A6C7D" w={42}>{formatTime(currentTime)}</Text>
                         <Slider
@@ -155,7 +165,7 @@ const MusicPlayer = () => {
                         <Text size="xs" c="#5A6C7D" w={42}>{formatTime(duration || 0)}</Text>
                       </Group>
                     </Stack>
-                  </Group>
+                  </Flex>
                 </Card>
               ) : (
                 <Card radius="md" p="xl" shadow="md">
@@ -175,28 +185,29 @@ const MusicPlayer = () => {
                       <Grid.Col span={{ base: 12, sm: 6, lg: 4 }} key={song.id}>
                         <Card
                           radius="md"
-                          p="md"
+                          p="sm"
                           shadow="sm"
+                          withBorder
                           style={{
                             cursor: 'pointer',
-                            border: currentSong?.id === song.id ? '2px solid #0B4F78' : '2px solid transparent',
+                            borderColor: currentSong?.id === song.id ? '#0B4F78' : 'transparent',
+                            backgroundColor: currentSong?.id === song.id ? '#F0F7FA' : 'white',
                             transition: 'all 0.2s'
                           }}
                           onClick={() => playSong(song)}
                         >
-                          <Group gap="md" align="center">
+                          <Group gap="sm" align="center" wrap="nowrap">
                             <Avatar
-                              src={song.coverImage?.link || 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=400&h=400&fit=crop'}
-                              size={64}
+                              src={song.coverImage?.link || '/mp3-logo.png'}
+                              size={50}
                               radius="md"
                             />
-                            <Stack gap={4} style={{ flex: 1, minWidth: 0 }}>
+                            <Stack gap={0} style={{ flex: 1, minWidth: 0 }}>
                               <Text size="sm" fw={600} c="#0B4F78" truncate>{song.judul}</Text>
-                              <Text size="xs" c="#5A6C7D">{song.artis}</Text>
-                              <Text size="xs" c="#8A9BA8">{song.durasi}</Text>
+                              <Text size="xs" c="#5A6C7D" truncate>{song.artis}</Text>
                             </Stack>
                             {currentSong?.id === song.id && isPlaying && (
-                              <Badge color="#0B4F78" variant="filled">Memutar</Badge>
+                              <Badge color="#0B4F78" variant="filled" size="xs">Playing</Badge>
                             )}
                           </Group>
                         </Card>
@@ -207,34 +218,42 @@ const MusicPlayer = () => {
               )}
             </div>
           </Stack>
-
         </Stack>
-
       </Paper>
 
+      {/* Control Player Section */}
       <Paper
         mt="xl"
         mx="auto"
-        p="xl"
+        p={{ base: 'md', sm: 'xl' }}
         radius="lg"
         shadow="sm"
         bg="white"
         style={{
           border: '1px solid #eaeaea',
+          position: 'sticky',
+          bottom: 20,
+          zIndex: 10
         }}
       >
-        <Flex align="center" justify="space-between" gap="xl" h="100%">
-          <Group gap="md" style={{ flex: 1 }}>
+        <Flex
+          direction={{ base: 'column', md: 'row' }}
+          align="center"
+          justify="space-between"
+          gap={{ base: 'md', md: 'xl' }}
+        >
+          {/* Song Info */}
+          <Group gap="md" style={{ flex: 1, width: '100%' }} wrap="nowrap">
             <Avatar
-              src={currentSong?.coverImage?.link || 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=400&h=400&fit=crop'}
-              size={56}
+              src={currentSong?.coverImage?.link || '/mp3-logo.png'}
+              size={48}
               radius="md"
             />
             <div style={{ flex: 1, minWidth: 0 }}>
               {currentSong ? (
                 <>
                   <Text size="sm" fw={600} c="#0B4F78" truncate>{currentSong.judul}</Text>
-                  <Text size="xs" c="#5A6C7D">{currentSong.artis}</Text>
+                  <Text size="xs" c="#5A6C7D" truncate>{currentSong.artis}</Text>
                 </>
               ) : (
                 <Text size="sm" c="dimmed">Tidak ada lagu</Text>
@@ -242,29 +261,31 @@ const MusicPlayer = () => {
             </div>
           </Group>
 
-          <Stack gap="xs" style={{ flex: 1 }} align="center">
-            <Group gap="md">
+          {/* Controls + Progress */}
+          <Stack gap="xs" style={{ flex: 2, width: '100%' }} align="center">
+            <Group gap="sm">
               <ActionIcon
                 variant={isShuffle ? 'filled' : 'subtle'}
                 color="#0B4F78"
                 onClick={toggleShuffleHandler}
                 radius="xl"
+                size={48}
               >
                 {isShuffle ? <IconArrowsShuffle size={18} /> : <IconX size={18} />}
               </ActionIcon>
-              <ActionIcon variant="light" color="#0B4F78" size={40} radius="xl" onClick={skipBack}>
+              <ActionIcon variant="light" color="#0B4F78" size={48} radius="xl" onClick={skipBack}>
                 <IconPlayerSkipBackFilled size={20} />
               </ActionIcon>
               <ActionIcon
                 variant="filled"
                 color="#0B4F78"
-                size={56}
+                size={48}
                 radius="xl"
                 onClick={togglePlayPauseHandler}
               >
                 {isPlaying ? <IconPlayerPauseFilled size={26} /> : <IconPlayerPlayFilled size={26} />}
               </ActionIcon>
-              <ActionIcon variant="light" color="#0B4F78" size={40} radius="xl" onClick={skipForward}>
+              <ActionIcon variant="light" color="#0B4F78" size={48} radius="xl" onClick={skipForward}>
                 <IconPlayerSkipForwardFilled size={20} />
               </ActionIcon>
               <ActionIcon
@@ -272,6 +293,7 @@ const MusicPlayer = () => {
                 color="#0B4F78"
                 onClick={toggleRepeatHandler}
                 radius="xl"
+                size="md"
               >
                 {isRepeat ? <IconRepeat size={18} /> : <IconRepeatOff size={18} />}
               </ActionIcon>
@@ -290,7 +312,8 @@ const MusicPlayer = () => {
             </Group>
           </Stack>
 
-          <Group gap="xs" style={{ flex: 1 }} justify="flex-end">
+          {/* Volume Control - Hidden on mobile, shown on md and up */}
+          <Group gap="xs" style={{ flex: 1 }} justify="flex-end" visibleFrom="md">
             <ActionIcon variant="subtle" color="gray" onClick={toggleMuteHandler}>
               {isMuted || volume === 0 ? <IconVolumeOff size={20} /> : <IconVolume size={20} />}
             </ActionIcon>

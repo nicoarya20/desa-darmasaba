@@ -30,56 +30,62 @@ export default function RealisasiTable({ apbdesData }: any) {
   };
 
   return (
-    <Paper withBorder p="md" radius="md">
-      <Title order={5} mb="md">{title}</Title>
+    <Paper withBorder p={{ base: 'sm', sm: 'md' }} radius="md">
+      <Title order={5} mb="md" fz={{ base: 'sm', sm: 'md' }}>{title}</Title>
 
       {allRealisasiRows.length === 0 ? (
         <Text fz="sm" c="dimmed" ta="center" py="md">
           Belum ada data realisasi
         </Text>
       ) : (
-        <Table>
-          <Table.Thead>
-            <Table.Tr>
-              <Table.Th>Uraian</Table.Th>
-              <Table.Th ta="right">Realisasi (Rp)</Table.Th>
-              <Table.Th ta="center">%</Table.Th>
-            </Table.Tr>
-          </Table.Thead>
-          <Table.Tbody>
-            {allRealisasiRows.map(({ realisasi, parentItem }) => {
-              const persentase = parentItem.anggaran > 0
-                ? (realisasi.jumlah / parentItem.anggaran) * 100
-                : 0;
+        <Table.ScrollContainer minWidth={300}>
+          <Table verticalSpacing="xs">
+            <Table.Thead>
+              <Table.Tr>
+                <Table.Th fz={{ base: 'xs', sm: 'sm' }}>Uraian</Table.Th>
+                <Table.Th ta="right" fz={{ base: 'xs', sm: 'sm' }}>Realisasi (Rp)</Table.Th>
+                <Table.Th ta="center" fz={{ base: 'xs', sm: 'sm' }}>%</Table.Th>
+              </Table.Tr>
+            </Table.Thead>
+            <Table.Tbody>
+              {allRealisasiRows.map(({ realisasi, parentItem }) => {
+                const persentase = parentItem.anggaran > 0
+                  ? (realisasi.jumlah / parentItem.anggaran) * 100
+                  : 0;
 
-              return (
-                <Table.Tr key={realisasi.id}>
-                  <Table.Td>
-                    <Text>{realisasi.kode || '-'} - {realisasi.keterangan || '-'}</Text>
-                  </Table.Td>
-                  <Table.Td ta="right">
-                    <Text fw={600} c="blue">
-                      {formatRupiah(realisasi.jumlah || 0)}
-                    </Text>
-                  </Table.Td>
-                  <Table.Td ta="center">
-                    <Badge
-                      color={
-                        persentase >= 100
-                          ? 'teal'
-                          : persentase >= 60
-                          ? 'yellow'
-                          : 'red'
-                      }
-                    >
-                      {persentase.toFixed(2)}%
-                    </Badge>
-                  </Table.Td>
-                </Table.Tr>
-              );
-            })}
-          </Table.Tbody>
-        </Table>
+                return (
+                  <Table.Tr key={realisasi.id}>
+                    <Table.Td>
+                      <Text fz={{ base: 'xs', sm: 'sm' }} lineClamp={2}>
+                        {realisasi.kode || '-'} - {realisasi.keterangan || '-'}
+                      </Text>
+                    </Table.Td>
+                    <Table.Td ta="right">
+                      <Text fw={600} c="blue" fz={{ base: 'xs', sm: 'sm' }} style={{ whiteSpace: 'nowrap' }}>
+                        {formatRupiah(realisasi.jumlah || 0)}
+                      </Text>
+                    </Table.Td>
+                    <Table.Td ta="center">
+                      <Badge
+                        size="sm"
+                        variant="light"
+                        color={
+                          persentase >= 100
+                            ? 'teal'
+                            : persentase >= 60
+                            ? 'yellow'
+                            : 'red'
+                        }
+                      >
+                        {persentase.toFixed(1)}%
+                      </Badge>
+                    </Table.Td>
+                  </Table.Tr>
+                );
+              })}
+            </Table.Tbody>
+          </Table>
+        </Table.ScrollContainer>
       )}
     </Paper>
   );
