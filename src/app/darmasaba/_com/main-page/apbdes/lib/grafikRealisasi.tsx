@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Paper, Title, Progress, Stack, Text, Group, Box } from '@mantine/core';
 
 function Summary({ title, data }: any) {
@@ -86,20 +85,20 @@ export default function GrafikRealisasi({ apbdesData }: any) {
   const belanja = items.filter((i: any) => i.tipe === 'belanja');
   const pembiayaan = items.filter((i: any) => i.tipe === 'pembiayaan');
 
-  // Hitung total keseluruhan
-  const totalAnggaranSemua = items.reduce((s: number, i: any) => s + i.anggaran, 0);
-  // Use realisasi field (already mapped from totalRealisasi in transformAPBDesData)
-  const totalRealisasiSemua = items.reduce((s: number, i: any) => s + (i.realisasi || i.totalRealisasi || 0), 0);
-  const persenSemua = totalAnggaranSemua > 0 ? (totalRealisasiSemua / totalAnggaranSemua) * 100 : 0;
+  // // Hitung total keseluruhan
+  // const totalAnggaranSemua = items.reduce((s: number, i: any) => s + i.anggaran, 0);
+  // // Use realisasi field (already mapped from totalRealisasi in transformAPBDesData)
+  // const totalRealisasiSemua = items.reduce((s: number, i: any) => s + (i.realisasi || i.totalRealisasi || 0), 0);
+  // const persenSemua = totalAnggaranSemua > 0 ? (totalRealisasiSemua / totalAnggaranSemua) * 100 : 0;
 
-  const formatRupiah = (angka: number) => {
-    return new Intl.NumberFormat('id-ID', {
-      style: 'currency',
-      currency: 'IDR',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(angka);
-  };
+  // const formatRupiah = (angka: number) => {
+  //   return new Intl.NumberFormat('id-ID', {
+  //     style: 'currency',
+  //     currency: 'IDR',
+  //     minimumFractionDigits: 0,
+  //     maximumFractionDigits: 0,
+  //   }).format(angka);
+  // };
 
   return (
     <Paper withBorder p="md" radius="md">
