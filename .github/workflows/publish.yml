@@ -1,17 +1,30 @@
 name: Publish Docker to GHCR
+
 on:
   workflow_dispatch:
     inputs:
-      tag:
-        description: "Image tag (e.g. v1.0.0)"
+      stack_env:
+        description: "stack env"
         required: true
-        default: "latest"
+        type: choice
+        default: "dev"
+        options:
+          - dev
+          - prod
+          - stg
+      tag:
+        description: "Image tag (e.g. 1.0.0)"
+        required: true
+        default: "1.0.0"
+
+
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
+
 jobs:
   publish:
-    name: Build & Push to GHCR
+    name: Build & Push to GHCR ${{ github.repository }}:${{ github.event.inputs.stack_env }}-${{ github.event.inputs.tag }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -26,12 +39,10 @@ jobs:
           sudo docker image prune --all --force
           df -h
 
-      - name: Checkout repository
+      - name: Checkout branch ${{ github.event.inputs.stack_env }}
         uses: actions/checkout@v4
-
-      - name: Extract tag name
-        id: meta
-        run: echo "tag=${{ github.event.inputs.tag }}" >> $GITHUB_OUTPUT
+        with:
+          ref: ${{ github.event.inputs.stack_env }}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -46,6 +57,15 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Generate image metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=raw,value=${{ github.event.inputs.stack_env }}-${{ github.event.inputs.tag }}
+            type=raw,value=${{ github.event.inputs.stack_env }}-latest
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
@@ -53,8 +73,26 @@ jobs:
           file: ./Dockerfile
           push: true
           platforms: linux/amd64
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tag }}
+          tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          no-cache: true
 
+      - name: Notify success
+        if: success()
+        run: bash ./.github/workflows/script/notify.sh
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          NOTIFY_STATUS: success
+          NOTIFY_WORKFLOW: "Publish Docker"
+          NOTIFY_DETAIL: "Image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.event.inputs.stack_env }}-${{ github.event.inputs.tag }}"
+
+      - name: Notify failure
+        if: failure()
+        run: bash ./.github/workflows/script/notify.sh
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          NOTIFY_STATUS: failure
+          NOTIFY_WORKFLOW: "Publish Docker"
+          NOTIFY_DETAIL: "Image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.event.inputs.stack_env }}-${{ github.event.inputs.tag }}"
