@@ -1,19 +1,17 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import ApiFetch from "@/lib/api-fetch";
-import { proxy } from "valtio";
-import useSwr from "swr";
+/**
+ * DEPRECATED: File ini dipertahankan untuk backward compatibility.
+ * Gunakan state management baru dari `@/state/admin/` atau `@/state/public/`
+ */
 
+import { proxy } from "valtio";
+
+// Simple state untuk backward compatibility
 type Layanan = {
     layanan: string | null
-    useLoad: any
 }
 
 const stateLayanan = proxy<Layanan>({
-    layanan: null,
-    useLoad: () => {
-        
-    }
+    layanan: null
 })
 
 export default stateLayanan

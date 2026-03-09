@@ -1,24 +1,10 @@
-import { proxy } from "valtio"
-import { MenuItem } from "../../types/menu-item"
+/**
+ * DEPRECATED: File ini dipertahankan untuk backward compatibility.
+ * Gunakan `import { adminNavState } from '@/state/admin/adminNavState'` untuk state management baru.
+ */
 
-const stateNav = proxy<{
-    hover: boolean,
-    item: MenuItem[] | null
-    isSearch: boolean,
-    clear: () => void,
-    module: string | null,
-    mobileOpen: boolean
-}>({
-    hover: false,
-    item: null,
-    isSearch: false,
-    clear: () => {
-        stateNav.hover = false
-        stateNav.item = null
-        stateNav.isSearch = false
-    },
-    module: null,
-    mobileOpen: false
-})
+import { adminNavState } from './admin/adminNavState';
 
-export default stateNav
+// Re-export untuk backward compatibility
+export const stateNav = adminNavState;
+export default stateNav;

@@ -176,16 +176,16 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <AppShell
       suppressHydrationWarning
-      header={{ height: 64 }}
+      header={{ height: { base: 56, sm: 64 } }}
       navbar={{
-        width: { base: 260, sm: 280, lg: 300 },
+        width: { base: 280, sm: 280, lg: 300 },
         breakpoint: 'sm',
         collapsed: {
           mobile: !opened,
           desktop: !desktopOpened,
         },
       }}
-      padding="md"
+      padding={{ base: 'xs', sm: 'md' }}
     >
       {/*
         HEADER / TOPBAR
@@ -195,67 +195,73 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         style={{
           background: mounted ? tokens.colors.bg.header : 'linear-gradient(90deg, #ffffff, #f9fbff)',
           borderBottom: `1px solid ${mounted ? tokens.colors.border.soft : '#e9ecef'}`,
-          padding: '0 16px',
+          padding: '0 12px',
           transition: 'background 0.3s ease, border-color 0.3s ease',
         }}
-        px={{ base: 'sm', sm: 'md' }}
-        py={{ base: 'xs', sm: 'sm' }}
+        px={{ base: 'xs', sm: 'md' }}
+        py={{ base: '4px', sm: 'sm' }}
       >
         <Group w="100%" h="100%" justify="space-between" wrap="nowrap">
-          <Flex align="center" gap="sm">
+          <Flex align="center" gap={{ base: 'xs', sm: 'sm' }}>
+            <Burger opened={opened} onClick={toggle} visibleFrom="sm" size="sm" color={mounted ? tokens.colors.text.brand : '#0A4E78'} />
             <Image
               src="/assets/images/darmasaba-icon.png"
               alt="Logo Darmasaba"
-              w={{ base: 32, sm: 40 }}
-              h={{ base: 32, sm: 40 }}
+              w={{ base: 28, sm: 40 }}
+              h={{ base: 28, sm: 40 }}
               radius="md"
               loading="lazy"
-              style={{ minWidth: '32px', height: 'auto' }}
+              style={{ minWidth: '28px', height: 'auto' }}
             />
-            <Text fw={700} c={mounted ? tokens.colors.text.brand : '#0A4E78'} fz={{ base: 'md', sm: 'xl' }}>
-              Admin Darmasaba
+            <Text fw={700} c={mounted ? tokens.colors.text.brand : '#0A4E78'} fz={{ base: 'sm', sm: 'xl' }} lineClamp={1}>
+              <span className="hidden sm:inline">Admin Darmasaba</span>
             </Text>
           </Flex>
 
-          <Group gap="xs">
-            {/* Dark Mode Toggle */}
-            <DarkModeToggle variant="light" size="lg" showTooltip tooltipPosition="bottom" />
+          <Group gap="xs" wrap="nowrap">
+            {/* Mobile: Show menu button */}
+            <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" color={mounted ? tokens.colors.text.brand : '#0A4E78'} />
 
+            {/* Desktop: Show collapse button */}
             {!desktopOpened && (
               <Tooltip label="Buka Navigasi" position="bottom" withArrow>
-                <ActionIcon variant="light" radius="xl" size="lg" onClick={toggleDesktop} color={mounted ? tokens.colors.primary : '#3B82F6'}>
+                <ActionIcon variant="light" radius="xl" size="lg" onClick={toggleDesktop} color={mounted ? tokens.colors.primary : '#3B82F6'} visibleFrom="sm">
                   <IconChevronRight />
                 </ActionIcon>
               </Tooltip>
             )}
 
-            <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="md" color={mounted ? tokens.colors.text.brand : '#0A4E78'} mr="xs" />
+            {/* Dark Mode Toggle - smaller on mobile */}
+            <DarkModeToggle variant="light" size="md" showTooltip tooltipPosition="bottom" />
 
+            {/* Home Button - hide on very small screens */}
             <Tooltip label="Kembali ke Website Desa" position="bottom" withArrow>
               <ActionIcon
                 onClick={() => router.push("/darmasaba")}
                 color={mounted ? tokens.colors.primary : '#3B82F6'}
                 radius="xl"
-                size="lg"
+                size="md"
                 variant="gradient"
                 gradient={mounted ? tokens.colors.gradient : { from: '#3B82F6', to: '#60A5FA' }}
+                visibleFrom="xs"
               >
-                <Image src="/assets/images/darmasaba-icon.png" alt="Logo Darmasaba" w={20} h={20} radius="md" loading="lazy" style={{ minWidth: '20px', height: 'auto' }} />
+                <Image src="/assets/images/darmasaba-icon.png" alt="Logo Darmasaba" w={18} h={18} radius="md" loading="lazy" style={{ minWidth: '18px', height: 'auto' }} />
               </ActionIcon>
             </Tooltip>
 
+            {/* Logout Button */}
             <Tooltip label="Keluar" position="bottom" withArrow>
               <ActionIcon
                 onClick={handleLogout}
                 color={mounted ? tokens.colors.primary : '#3B82F6'}
                 radius="xl"
-                size="lg"
+                size="md"
                 variant="gradient"
                 gradient={mounted ? tokens.colors.gradient : { from: '#3B82F6', to: '#60A5FA' }}
                 loading={isLoggingOut}
                 disabled={isLoggingOut}
               >
-                <IconLogout2 size={22} />
+                <IconLogout2 size={18} />
               </ActionIcon>
             </Tooltip>
           </Group>
@@ -275,7 +281,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         }}
         p={{ base: 'xs', sm: 'sm' }}
       >
-        <AppShell.Section p="sm">
+        <AppShell.Section p={{ base: 'xs', sm: 'sm' }}>
           {currentNav.map((v, k) => {
             const isParentActive = segments.includes(_.lowerCase(v.name));
             return (
@@ -286,7 +292,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 label={
                   <Text
                     fw={isParentActive ? 600 : 400}
-                    fz="sm"
+                    fz={{ base: 'xs', sm: 'sm' }}
                     style={{
                       color: mounted && isDark ? '#E5E7EB' : 'inherit',
                       transition: 'color 150ms ease',
@@ -336,7 +342,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                       label={
                         <Text
                           fw={isChildActive ? 600 : 400}
-                          fz="sm"
+                          fz={{ base: 'xs', sm: 'sm' }}
                           style={{
                             color: mounted && isDark ? '#E5E7EB' : 'inherit',
                             transition: 'color 150ms ease',
@@ -375,7 +381,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           })}
         </AppShell.Section>
 
-        <AppShell.Section py="md">
+        <AppShell.Section py={{ base: 'sm', sm: 'md' }} visibleFrom="sm">
           <Group justify="end" pr="sm">
             <Tooltip label={desktopOpened ? "Tutup Navigasi" : "Buka Navigasi"} position="top" withArrow>
               <ActionIcon variant="light" radius="xl" size="lg" onClick={toggleDesktop} color={mounted ? tokens.colors.primary : '#3B82F6'}>

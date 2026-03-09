@@ -5,7 +5,7 @@
  * Persist ke localStorage
  * 
  * Usage:
- * import { darkModeStore } from '@/state/darkModeStore';
+ * import { darkModeStore, useDarkMode } from '@/state/darkModeStore';
  * 
  * // Toggle
  * darkModeStore.toggle();
@@ -15,6 +15,9 @@
  * 
  * // Get current state
  * const isDark = darkModeStore.isDark;
+ * 
+ * // In React components
+ * const { isDark, toggle, setDarkMode } = useDarkMode();
  */
 
 import { proxy, useSnapshot } from 'valtio';

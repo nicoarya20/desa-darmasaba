@@ -10,7 +10,7 @@ Desa Darmasaba is a Next.js 15 application for village management services in Ba
 - **Styling**: Mantine UI components with custom CSS
 - **Backend**: Elysia.js API server integrated with Next.js
 - **Database**: PostgreSQL with Prisma ORM
-- **State Management**: Jotai for global state
+- **State Management**: Valtio for global state
 - **Authentication**: JWT with iron-session
 
 ## Build Commands
@@ -105,10 +105,38 @@ import { MyComponent } from '@/components/my-component'
 - Add loading states and error states for async operations
 
 ### State Management
-- Use Jotai atoms for global state
+- Use Valtio for global state (proxy pattern)
+- State dibagi menjadi admin dan public domains
 - Keep local state in components when possible
-- Use React Query (SWR) for server state caching
+- Use SWR for server state caching
 - Implement optimistic updates for better UX
+
+**State Structure:**
+```
+src/state/
+├── admin/              # Admin dashboard state
+│   ├── adminNavState.ts
+│   ├── adminAuthState.ts
+│   ├── adminFormState.ts
+│   └── adminModuleState.ts
+├── public/             # Public pages state
+│   ├── publicNavState.ts
+│   └── publicMusicState.ts
+├── darkModeStore.ts    # Dark mode state
+└── index.ts            # Central exports
+```
+
+**Usage Examples:**
+```typescript
+// Import state
+import { adminNavState, useAdminNav } from '@/state';
+
+// In non-React code
+adminNavState.mobileOpen = true;
+
+// In React components
+const { mobileOpen, toggleMobile } = useAdminNav();
+```
 
 ### Styling
 - Primary: Mantine UI components
@@ -127,9 +155,13 @@ import { MyComponent } from '@/components/my-component'
 ```
 src/
 ├── app/                 # Next.js app router pages
-├── components/          # Reusable React components  
+├── components/          # Reusable React components
 ├── lib/                # Utility functions and configurations
-├── state/              # Jotai atoms and state management
+├── state/              # Valtio state management
+│   ├── admin/          # Admin domain state
+│   ├── public/         # Public domain state
+│   └── index.ts        # Central exports
+├── store/              # Legacy store (deprecated)
 ├── types/              # TypeScript type definitions
 └── con/                # Constants and static data
 ```

@@ -3,6 +3,7 @@ import "./globals.css"; // Sisanya import di globals.css
 
 import LoadDataFirstClient from "@/app/darmasaba/_com/LoadDataFirstClient";
 import { MusicProvider } from "@/app/context/MusicContext";
+import DebugStateProvider from '@/components/DebugStateProvider';
 import {
   ColorSchemeScript,
   MantineProvider,
@@ -106,6 +107,7 @@ export default function RootLayout({
           <ColorSchemeScript defaultColorScheme="light" />
         </head>
         <body>
+          <DebugStateProvider />
           <MusicProvider>
             <MantineProvider theme={theme} defaultColorScheme="light">
               {children}

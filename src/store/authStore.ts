@@ -1,20 +1,13 @@
-// src/store/authStore.ts
-import { proxy } from 'valtio';
+/**
+ * DEPRECATED: File ini dipertahankan untuk backward compatibility.
+ * Gunakan `import { adminAuthState } from '@/state/admin/adminAuthState'` untuk state management baru.
+ */
 
-export type User = {
-  id: string;
-  name: string;
-  roleId: number;
-  menuIds?: string[] | null; // ✅ Pastikan pakai `string[]`
-  isActive?: boolean;
-};
+import { adminAuthState } from '../state/admin/adminAuthState';
 
-export const authStore = proxy<{
-  user: User | null;
-  setUser: (user: User | null) => void;
-}>({
-  user: null,
-  setUser(user) {
-    authStore.user = user;
-  },
-});
+// Re-export untuk backward compatibility
+export const authStore = adminAuthState;
+export default authStore;
+
+// Re-export types
+export type { User } from '../state/admin/adminAuthState';

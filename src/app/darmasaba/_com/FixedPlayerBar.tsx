@@ -8,6 +8,7 @@ import {
   Group,
   Paper,
   Slider,
+  Stack,
   Text,
   Transition
 } from '@mantine/core';
@@ -61,9 +62,16 @@ export default function FixedPlayerBar() {
     seek(value);
   };
 
-  // Handle volume change
+  // Handle volume change - called continuously while dragging
   const handleVolumeChange = (value: number) => {
+    console.log('[FixedPlayerBar] Volume changing:', value);
     setVolume(value);
+  };
+
+  // Handle volume change commit - called when user releases slider
+  const handleVolumeChangeEnd = (value: number) => {
+    console.log('[FixedPlayerBar] Volume changed end:', value);
+    // Volume already set by onChange, no need to set again
   };
 
   // Handle shuffle toggle
@@ -100,7 +108,7 @@ export default function FixedPlayerBar() {
             borderTopRightRadius: '20px',
             cursor: 'pointer',
             transition: 'transform 0.2s ease',
-            zIndex: 1000 // Higher z-index
+            zIndex: 40// Higher z-index
           }}
           onClick={handleRestorePlayer}
         >
@@ -125,7 +133,7 @@ export default function FixedPlayerBar() {
         p={{ base: 'xs', sm: 'sm' }}
         shadow="xl"
         style={{
-          zIndex: 1000,
+          zIndex: 40,
           borderTop: '1px solid rgba(0,0,0,0.1)',
           backgroundColor: 'rgba(255, 255, 255, 0.95)',
           backdropFilter: 'blur(10px)',
@@ -242,28 +250,46 @@ export default function FixedPlayerBar() {
                 transition="scale-y"
                 duration={200}
               >
-                {(style) => (
+                {(styles) => (
                   <Paper
                     style={{
-                      ...style,
+                      ...styles,
                       position: 'absolute',
                       bottom: '100%',
                       right: 0,
                       marginBottom: '10px',
-                      padding: '10px',
-                      zIndex: 1001,
+                      padding: '12px',
+                      zIndex: 40,
                     }}
                     shadow="md"
                     withBorder
                   >
-                    <Slider
-                      value={isMuted ? 0 : volume}
-                      max={100}
-                      onChange={handleVolumeChange}
-                      h={80}
-                      color="#0B4F78"
-                      size="sm"
-                    />
+                    <Stack gap="xs" align="center">
+                      <Text size="xs" c="#5A6C7D" ta="center">{isMuted ? 0 : volume}%</Text>
+                      <Box
+                        style={{
+                          height: '120px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}
+                      >
+                        <Slider
+                          value={isMuted ? 0 : volume}
+                          max={100}
+                          onChange={handleVolumeChange}
+                          onChangeEnd={handleVolumeChangeEnd}
+                          w={120}
+                          color="#0B4F78"
+                          size="sm"
+                          label={(value) => `${value}%`}
+                          style={{
+                            transform: 'rotate(-90deg)',
+                            transformOrigin: 'center',
+                          }}
+                        />
+                      </Box>
+                    </Stack>
                   </Paper>
                 )}
               </Transition>
