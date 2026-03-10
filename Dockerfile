@@ -1,69 +1,62 @@
-# ==============================
-# Stage 1: Builder (Debian)
-# ==============================
-FROM node:20-bookworm-slim AS builder
+# Stage 1: Build
+FROM oven/bun:1.3 AS build
 
-WORKDIR /app
-
-# Install dependencies yang sebelumnya pakai apk
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    libc6 \
-    git \
-    openssl \
-    ca-certificates \
+# Install build dependencies for native modules
+RUN apt-get update && apt-get install -y \
+    python3 \
+    make \
+    g++ \
     && rm -rf /var/lib/apt/lists/*
 
-COPY package.json bun.lockb* ./
+# Set the working directory
+WORKDIR /app
 
-ENV ONNXRUNTIME_NODE_INSTALL_CUDA=0
-ENV SHARP_IGNORE_GLOBAL_LIBVIPS=1
+# Copy package files
+COPY package.json bun.lock* ./
 
-RUN npm install --ignore-scripts
+# Install dependencies
+RUN bun install --frozen-lockfile
 
+# Copy the rest of the application code
 COPY . .
 
-# Skip telemetry & limit memory
-ENV NEXT_TELEMETRY_DISABLED=1
-ENV NODE_OPTIONS="--max-old-space-size=4096"
+# Use .env.example as default env for build
+RUN cp .env.example .env
 
-# Generate prisma client
-RUN npx prisma generate
+# Generate Prisma client
+RUN bun x prisma generate
 
-# Build Next.js
-RUN npm run build
+# Generate API types
+RUN bun run gen:api
 
+# Build the application frontend
+RUN bun run build
 
-# ==============================
-# Stage 2: Runner (Debian)
-# ==============================
-FROM node:20-bookworm-slim AS runner
+# Stage 2: Runtime
+FROM oven/bun:1.3-slim AS runtime
 
-WORKDIR /app
-
+# Set environment variables
 ENV NODE_ENV=production
-ENV NEXT_TELEMETRY_DISABLED=1
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    openssl \
-    ca-certificates \
+# Install runtime dependencies
+RUN apt-get update && apt-get install -y \
+    postgresql-client \
     && rm -rf /var/lib/apt/lists/*
 
-# Buat user non-root (cara Debian)
-RUN groupadd --system --gid 1001 nodejs \
-    && useradd --system --uid 1001 --gid nodejs nextjs
+# Set the working directory
+WORKDIR /app
 
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./package.json
+# Copy necessary files from build stage
+COPY --from=build /app/package.json ./
+COPY --from=build /app/tsconfig.json ./
+COPY --from=build /app/dist ./dist
+COPY --from=build /app/generated ./generated
+COPY --from=build /app/src ./src
+COPY --from=build /app/node_modules ./node_modules
+COPY --from=build /app/prisma ./prisma
 
-RUN chown -R nextjs:nodejs /app
-
-USER nextjs
-
+# Expose the port
 EXPOSE 3000
 
-ENV PORT=3000
-ENV HOSTNAME="0.0.0.0"
-
-CMD ["npx", "next", "start"]
+# Start the application
+CMD ["bun", "start"]
