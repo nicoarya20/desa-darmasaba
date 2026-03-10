@@ -27,6 +27,7 @@ RUN cp .env.example .env
 RUN bun x prisma generate
 
 # Build the application frontend
+ENV NODE_ENV=production
 RUN bun run build
 
 # Stage 2: Runtime
@@ -43,17 +44,14 @@ RUN apt-get update && apt-get install -y \
 # Set the working directory
 WORKDIR /app
 
-# Copy necessary files from build stage
-COPY --from=build /app/package.json ./
-COPY --from=build /app/tsconfig.json ./
-COPY --from=build /app/.next ./.next
+# Copy necessary files from build stage (standalone output)
+COPY --from=build /app/.next/standalone ./
+COPY --from=build /app/.next/static ./.next/static
 COPY --from=build /app/public ./public
-COPY --from=build /app/src ./src
-COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/prisma ./prisma
 
 # Expose the port
 EXPOSE 3000
 
 # Start the application
-CMD ["bun", "start"]
+CMD ["bun", "server.js"]
