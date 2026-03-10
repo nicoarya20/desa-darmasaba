@@ -26,9 +26,6 @@ RUN cp .env.example .env
 # Generate Prisma client
 RUN bun x prisma generate
 
-# Generate API types
-RUN bun run gen:api
-
 # Build the application frontend
 RUN bun run build
 
@@ -49,8 +46,8 @@ WORKDIR /app
 # Copy necessary files from build stage
 COPY --from=build /app/package.json ./
 COPY --from=build /app/tsconfig.json ./
-COPY --from=build /app/dist ./dist
-COPY --from=build /app/generated ./generated
+COPY --from=build /app/.next ./.next
+COPY --from=build /app/public ./public
 COPY --from=build /app/src ./src
 COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/prisma ./prisma
