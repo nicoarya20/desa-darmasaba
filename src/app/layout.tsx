@@ -99,13 +99,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ViewTransitions>
-      <html lang="id" {...mantineHtmlProps}>
-        <head>
-          <meta charSet="utf-8" />
-          <ColorSchemeScript defaultColorScheme="light" />
-        </head>
-        <body>
+    <html lang="id" {...mantineHtmlProps}>
+      <head>
+        <meta charSet="utf-8" />
+        <ColorSchemeScript defaultColorScheme="light" />
+      </head>
+      <body>
+        <ViewTransitions>
           <MusicProvider>
             <MantineProvider theme={theme} defaultColorScheme="light">
               {children}
@@ -117,8 +117,8 @@ export default function RootLayout({
               />
             </MantineProvider>
           </MusicProvider>
-        </body>
-      </html>
-    </ViewTransitions>
+        </ViewTransitions>
+      </body>
+    </html>
   );
 }
