@@ -59,6 +59,7 @@ const corsConfig = {
     "http://localhost:3001",
     "https://cld-dkr-desa-darmasaba-stg.wibudev.com",
     "https://cld-dkr-staging-desa-darmasaba.wibudev.com",
+    "https://desa-darmasaba-stg.wibudev.com"
   ],
   methods: ["GET", "POST", "PATCH", "DELETE", "PUT", "OPTIONS"] as HTTPMethod[],
   allowedHeaders: ["Content-Type", "Authorization", "Accept"],
