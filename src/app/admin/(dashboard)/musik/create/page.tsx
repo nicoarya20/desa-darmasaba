@@ -123,37 +123,51 @@ export default function CreateMusik() {
       setIsSubmitting(true);
 
       // Upload cover image
+      console.log('Uploading cover image:', coverFile.name);
       const coverRes = await ApiFetch.api.fileStorage.create.post({
         file: coverFile,
         name: coverFile.name,
       });
 
+      console.log('Cover upload response:', coverRes);
       const coverUploaded = coverRes.data?.data;
       if (!coverUploaded?.id) {
-        return toast.error('Gagal mengunggah cover, silakan coba lagi');
+        console.error('Cover upload failed:', coverRes);
+        toast.error('Gagal mengunggah cover, silakan coba lagi');
+        return;
       }
 
       musikState.musik.create.form.coverImageId = coverUploaded.id;
 
       // Upload audio file
+      console.log('Uploading audio file:', audioFile.name);
       const audioRes = await ApiFetch.api.fileStorage.create.post({
         file: audioFile,
         name: audioFile.name,
       });
 
+      console.log('Audio upload response:', audioRes);
       const audioUploaded = audioRes.data?.data;
       if (!audioUploaded?.id) {
-        return toast.error('Gagal mengunggah audio, silakan coba lagi');
+        console.error('Audio upload failed:', audioRes);
+        toast.error('Gagal mengunggah audio, silakan coba lagi');
+        return;
       }
 
       musikState.musik.create.form.audioFileId = audioUploaded.id;
 
+      // Create musik entry
+      console.log('Creating musik entry with form:', musikState.musik.create.form);
       await musikState.musik.create.create();
 
       resetForm();
       router.push('/admin/musik');
     } catch (error) {
-      console.error('Error creating musik:', error);
+      console.error('Error creating musik:', {
+        error,
+        message: error instanceof Error ? error.message : 'Unknown error',
+        stack: error instanceof Error ? error.stack : undefined,
+      });
       toast.error('Terjadi kesalahan saat membuat musik');
     } finally {
       setIsSubmitting(false);

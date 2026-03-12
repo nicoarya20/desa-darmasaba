@@ -1,8 +1,9 @@
 import { AppServer } from '@/app/api/[[...slugs]]/route'
 import { treaty } from '@elysiajs/eden'
 
-// const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'localhost:3000'
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
+// Use relative URL '/' for better deployment flexibility
+// This allows the API to work correctly in both development and staging/production
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || '/'
 
 const ApiFetch = treaty<AppServer>(BASE_URL)
 
