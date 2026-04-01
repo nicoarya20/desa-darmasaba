@@ -83,17 +83,6 @@ if (!process.env.WIBU_UPLOAD_DIR)
 
 const ApiServer = new Elysia()
   .use(
-    swagger({
-      path: "/api/docs",
-      documentation: {
-        info: {
-          title: "Desa Darmasaba API Documentation",
-          version: "1.0.0",
-        },
-      },
-    }),
-  )
-  .use(
     staticPlugin({
       assets: UPLOAD_DIR,
       prefix: "/uploads",
@@ -110,6 +99,17 @@ const ApiServer = new Elysia()
   })
   .group("/api", (app) =>
     app
+      .use(
+        swagger({
+          path: "/docs",
+          documentation: {
+            info: {
+              title: "Desa Darmasaba API Documentation",
+              version: "1.0.0",
+            },
+          },
+        }),
+      )
       .use(Utils)
       .use(FileStorage)
       .use(LandingPage)
