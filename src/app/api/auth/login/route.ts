@@ -43,7 +43,6 @@ export async function POST(req: Request) {
       try {
         const res = await fetch(waUrl);
         if (!res.ok) {
-           const errorText = await res.text();
            console.error(`⚠️ WA Service HTTP Error: ${res.status} ${res.statusText}. Continuing since OTP is logged.`);
            console.log(`💡 Use this OTP to login: ${codeOtp}`);
         } else {
@@ -53,8 +52,9 @@ export async function POST(req: Request) {
             console.error("⚠️ WA Service Logic Error:", sendWa);
           }
         }
-      } catch (waError: any) {
-        console.error("⚠️ WA Connection Exception. Continuing since OTP is logged.", waError.message);
+      } catch (waError: unknown) {
+        const errorMessage = waError instanceof Error ? waError.message : String(waError);
+        console.error("⚠️ WA Connection Exception. Continuing since OTP is logged.", errorMessage);
       }
 
       const createOtpId = await prisma.kodeOtp.create({

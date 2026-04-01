@@ -34,8 +34,9 @@ export async function POST(req: Request) {
         const sendWa = await res.json();
         console.log("📱 WA Response (SendOTPRegister):", sendWa);
       }
-    } catch (waError: any) {
-      console.warn("⚠️ WA Connection Exception (SendOTPRegister). Continuing since OTP is logged.", waError.message);
+    } catch (waError: unknown) {
+      const errorMessage = waError instanceof Error ? waError.message : String(waError);
+      console.warn("⚠️ WA Connection Exception (SendOTPRegister). Continuing since OTP is logged.", errorMessage);
     }
 
     // Simpan OTP
