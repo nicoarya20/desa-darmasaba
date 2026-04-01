@@ -13,7 +13,7 @@ import PendapatanAsliDesa from "./pendapatan-asli-desa";
 import StrukturOrganisasi from "./struktur-bumdes";
 
 const Ekonomi = new Elysia({
-  prefix: "/api/ekonomi",
+  prefix: "/ekonomi",
   tags: ["Ekonomi"],
 })
 .use(PasarDesa)

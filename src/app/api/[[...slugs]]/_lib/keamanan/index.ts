@@ -9,7 +9,7 @@ import KontakDaruratKeamanan from "./kontak-darurat-keamanan";
 import KontakItem from "./kontak-darurat-keamanan/kontak-item";
 import LayananPolsek from "./polsek-terdekat/layanan-polsek";
 
-const Keamanan = new Elysia({ prefix: "/api/keamanan", tags: ["Keamanan"] })
+const Keamanan = new Elysia({ prefix: "/keamanan", tags: ["Keamanan"] })
 .use(KeamananLingkungan)
 .use(PolsekTerdekat)
 .use(PencegahanKriminalitas)

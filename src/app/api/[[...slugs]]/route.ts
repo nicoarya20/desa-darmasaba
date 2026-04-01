@@ -67,7 +67,7 @@ async function layanan() {
 }
 
 const Utils = new Elysia({
-  prefix: "/api/utils",
+  prefix: "/utils",
   tags: ["Utils"],
 }).get("/version", async () => {
   const packageJson = await fs.readFile(
@@ -82,7 +82,17 @@ if (!process.env.WIBU_UPLOAD_DIR)
   throw new Error("WIBU_UPLOAD_DIR is not defined");
 
 const ApiServer = new Elysia()
-  .use(swagger({ path: "/api/docs" }))
+  .use(
+    swagger({
+      path: "/api/docs",
+      documentation: {
+        info: {
+          title: "Desa Darmasaba API Documentation",
+          version: "1.0.0",
+        },
+      },
+    }),
+  )
   .use(
     staticPlugin({
       assets: UPLOAD_DIR,
@@ -90,21 +100,6 @@ const ApiServer = new Elysia()
     }),
   )
   .use(cors(corsConfig))
-  .use(Utils)
-  .use(FileStorage)
-  .use(LandingPage)
-  .use(PPID)
-  .use(Desa)
-  .use(Kesehatan)
-  .use(Keamanan)
-  .use(Ekonomi)
-  .use(Inovasi)
-  .use(Lingkungan)
-  .use(Pendidikan)
-  .use(User)
-  .use(Role)
-  .use(Search)
-
   .onError(({ code }) => {
     if (code === "NOT_FOUND") {
       return {
@@ -115,6 +110,20 @@ const ApiServer = new Elysia()
   })
   .group("/api", (app) =>
     app
+      .use(Utils)
+      .use(FileStorage)
+      .use(LandingPage)
+      .use(PPID)
+      .use(Desa)
+      .use(Kesehatan)
+      .use(Keamanan)
+      .use(Ekonomi)
+      .use(Inovasi)
+      .use(Lingkungan)
+      .use(Pendidikan)
+      .use(User)
+      .use(Role)
+      .use(Search)
       .get("/layanan", layanan)
       .get("/potensi", getPotensi)
       .get(

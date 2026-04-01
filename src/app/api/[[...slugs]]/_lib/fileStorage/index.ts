@@ -5,7 +5,7 @@ import { fileStorageFindMany } from "./_lib/findMany";
 import fileStorageDelete from "./_lib/del";
 
 const FileStorage = new Elysia({
-  prefix: "/api/fileStorage",
+  prefix: "/fileStorage",
   tags: ["FileStorage"],
 })
   .post("/create", fileStorageCreate, {

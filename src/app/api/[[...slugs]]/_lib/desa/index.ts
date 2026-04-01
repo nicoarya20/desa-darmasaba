@@ -15,7 +15,7 @@ import AjukanPermohonan from "./layanan/ajukan_permohonan";
 import Musik from "./musik";
 
 
-const Desa = new Elysia({ prefix: "/api/desa", tags: ["Desa"] })
+const Desa = new Elysia({ prefix: "/desa", tags: ["Desa"] })
   .use(Berita)
   .use(Pengumuman)
   .use(ProfileDesa)

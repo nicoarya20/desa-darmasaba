@@ -7,7 +7,7 @@ import userDelete from "./del"; // `delete` nggak boleh jadi nama file JS langsu
 import userUpdate from "./updt";
 import userDeleteAccount from "./delUser";
 
-const User = new Elysia({ prefix: "/api/user" })
+const User = new Elysia({ prefix: "/user" })
   .get("/findMany", userFindMany)
   .get("/findUnique/:id", userFindUnique)
   .put("/del/:id", userDelete, {

@@ -24,7 +24,7 @@ import TarifLayanan from "./data_kesehatan_warga/fasilitas_kesehatan/tarif-layan
 
 
 const Kesehatan = new Elysia({
-  prefix: "/api/kesehatan",
+  prefix: "/kesehatan",
   tags: ["Kesehatan"],
 })
 .use(PersentaseKelahiranKematian)
