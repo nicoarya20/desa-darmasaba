@@ -8,7 +8,7 @@ import Beasiswa from "./beasiswa-desa";
 import PerpustakaanDigital from "./perpustakaan-digital";
 
 const Pendidikan = new Elysia({
-    prefix: "/api/pendidikan",
+    prefix: "/pendidikan",
     tags: ["Pendidikan"]
 })
 

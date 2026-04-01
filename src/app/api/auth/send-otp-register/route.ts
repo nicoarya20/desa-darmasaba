@@ -21,14 +21,21 @@ export async function POST(req: Request) {
     // Generate OTP
     const codeOtp = randomOTP();
     const otpNumber = Number(codeOtp);
+    console.log(`🔑 DEBUG SEND-OTP-REGISTER [${nomor}]: ${codeOtp}`);
 
     // Kirim WA
     const waUrl = `https://wa.wibudev.com/code?nom=${encodeURIComponent(nomor)}&text=Website Desa Darmasaba - Kode verifikasi Anda: ${codeOtp}`;
-    const res = await fetch(waUrl);
-    const sendWa = await res.json();
-
-    if (sendWa.status !== "success") {
-      return NextResponse.json({ success: false, message: 'Gagal mengirim OTP' }, { status: 400 });
+    
+    try {
+      const res = await fetch(waUrl);
+      if (!res.ok) {
+        console.warn(`⚠️ WA Service HTTP Error (SendOTPRegister): ${res.status} ${res.statusText}. Continuing since OTP is logged.`);
+      } else {
+        const sendWa = await res.json();
+        console.log("📱 WA Response (SendOTPRegister):", sendWa);
+      }
+    } catch (waError: any) {
+      console.warn("⚠️ WA Connection Exception (SendOTPRegister). Continuing since OTP is logged.", waError.message);
     }
 
     // Simpan OTP

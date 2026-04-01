@@ -22,14 +22,21 @@ export async function POST(req: Request) {
     // ✅ Generate dan kirim OTP
     const codeOtp = randomOTP();
     const otpNumber = Number(codeOtp);
+    console.log(`🔑 DEBUG REGISTER OTP [${nomor}]: ${codeOtp}`);
 
     const waMessage = `Website Desa Darmasaba - Kode verifikasi Anda: ${codeOtp}`;
     const waUrl = `https://wa.wibudev.com/code?nom=${encodeURIComponent(nomor)}&text=${encodeURIComponent(waMessage)}`;
-    const waRes = await fetch(waUrl);
-    const waData = await waRes.json();
-
-    if (waData.status !== "success") {
-      return NextResponse.json({ success: false, message: 'Gagal mengirim OTP via WhatsApp' }, { status: 400 });
+    
+    try {
+      const waRes = await fetch(waUrl);
+      if (!waRes.ok) {
+        console.warn(`⚠️ WA Service HTTP Error (Register): ${waRes.status} ${waRes.statusText}. Continuing since OTP is logged.`);
+      } else {
+        const waData = await waRes.json();
+        console.log("📱 WA Response (Register):", waData);
+      }
+    } catch (waError: any) {
+      console.warn("⚠️ WA Connection Exception (Register). Continuing since OTP is logged.", waError.message);
     }
 
     // ✅ Simpan OTP ke database

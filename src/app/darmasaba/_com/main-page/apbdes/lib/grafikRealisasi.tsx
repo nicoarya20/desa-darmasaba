@@ -1,125 +1,224 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Paper, Title, Progress, Stack, Text, Group, Box } from '@mantine/core';
-
-interface APBDesItem {
-  tipe: string | null;
-  anggaran: number;
-  realisasi?: number;
-  totalRealisasi?: number;
-}
+import { Paper, Title, Progress, Stack, Text, Group, Box, rem } from '@mantine/core'
+import { IconArrowUpRight, IconArrowDownRight } from '@tabler/icons-react'
+import { APBDes, APBDesItem, SummaryData } from '../types/apbdes'
 
 interface SummaryProps {
-  title: string;
-  data: APBDesItem[];
+  title: string
+  data: APBDesItem[]
+  icon?: React.ReactNode
 }
 
-function Summary({ title, data }: SummaryProps) {
-  if (!data || data.length === 0) return null;
+function Summary({ title, data, icon }: SummaryProps) {
+  if (!data || data.length === 0) return null
 
-  const totalAnggaran = data.reduce((s: number, i: APBDesItem) => s + i.anggaran, 0);
-  // Use realisasi field (already mapped from totalRealisasi in transformAPBDesData)
-  const totalRealisasi = data.reduce(
-    (s: number, i: APBDesItem) => s + (i.realisasi || i.totalRealisasi || 0),
-    0
-  );
+  const totalAnggaran = data.reduce((sum, i) => sum + i.anggaran, 0)
+  
+  // Hitung total realisasi dari realisasiItems (konsisten dengan RealisasiTable)
+  const totalRealisasi = data.reduce((sum, i) => {
+    if (i.realisasiItems && i.realisasiItems.length > 0) {
+      return sum + i.realisasiItems.reduce((sumReal, real) => sumReal + (real.jumlah || 0), 0)
+    }
+    return sum
+  }, 0)
 
-  const persen =
-    totalAnggaran > 0 ? (totalRealisasi / totalAnggaran) * 100 : 0;
+  const persentase = totalAnggaran > 0 ? (totalRealisasi / totalAnggaran) * 100 : 0
 
-  // Format angka ke dalam format Rupiah
   const formatRupiah = (angka: number) => {
     return new Intl.NumberFormat('id-ID', {
       style: 'currency',
       currency: 'IDR',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
-    }).format(angka);
-  };
+    }).format(angka)
+  }
 
-  // Tentukan warna berdasarkan persentase
   const getProgressColor = (persen: number) => {
-    if (persen >= 100) return 'teal';
-    if (persen >= 80) return 'blue';
-    if (persen >= 60) return 'yellow';
-    return 'red';
-  };
+    if (persen >= 100) return 'teal'
+    if (persen >= 80) return 'blue'
+    if (persen >= 60) return 'yellow'
+    return 'red'
+  }
+
+  const getStatusMessage = (persen: number) => {
+    if (persen >= 100) {
+      return { text: 'Realisasi mencapai 100% dari anggaran', color: 'teal' }
+    }
+    if (persen >= 80) {
+      return { text: 'Realisasi baik, mendekati target', color: 'blue' }
+    }
+    if (persen >= 60) {
+      return { text: 'Realisasi cukup, perlu ditingkatkan', color: 'yellow' }
+    }
+    return { text: 'Realisasi rendah, perlu perhatian khusus', color: 'red' }
+  }
+
+  const statusMessage = getStatusMessage(persentase)
 
   return (
     <Box>
       <Group justify="space-between" mb="xs">
-        <Text fw={600} fz="md">{title}</Text>
-        <Text fw={700} fz="lg" c={getProgressColor(persen)}>
-          {persen.toFixed(2)}%
-        </Text>
+        <Group gap="xs">
+          {icon}
+          <Text fw={700} fz="md" c="gray.8">{title}</Text>
+        </Group>
+        <Group gap="xs">
+          {persentase >= 100 ? (
+            <IconArrowUpRight 
+              size={18} 
+              color="var(--mantine-color-teal-7)" 
+              stroke={2.5}
+            />
+          ) : persentase < 60 ? (
+            <IconArrowDownRight 
+              size={18} 
+              color="var(--mantine-color-red-7)" 
+              stroke={2.5}
+            />
+          ) : null}
+          <Text 
+            fw={700} 
+            fz="lg" 
+            c={getProgressColor(persentase)}
+            style={{ 
+              minWidth: 60,
+              textAlign: 'right',
+            }}
+          >
+            {persentase.toFixed(1)}%
+          </Text>
+        </Group>
       </Group>
 
-      <Text fz="sm" c="dimmed" mb="xs">
-        Realisasi: {formatRupiah(totalRealisasi)} / Anggaran: {formatRupiah(totalAnggaran)}
+      <Text fz="xs" c="gray.6" mb="sm" lh={1.5}>
+        Realisasi: <Text component="span" fw={700} c="blue.9">{formatRupiah(totalRealisasi)}</Text>
+        {' '}/ Anggaran: <Text component="span" fw={700} c="gray.7">{formatRupiah(totalAnggaran)}</Text>
       </Text>
 
       <Progress
-        value={persen}
+        value={persentase}
         size="xl"
         radius="xl"
-        color={getProgressColor(persen)}
-        striped={persen < 100}
-        animated={persen < 100}
+        color={getProgressColor(persentase)}
+        striped={persentase < 100}
+        animated={persentase < 100}
+        mb="xs"
       />
 
-      {persen >= 100 && (
-        <Text fz="xs" c="teal" mt="xs" fw={500}>
-          ✓ Realisasi mencapai 100% dari anggaran
-        </Text>
-      )}
-
-      {persen < 100 && persen >= 80 && (
-        <Text fz="xs" c="blue" mt="xs" fw={500}>
-          ⚡ Realisasi baik, mendekati target
-        </Text>
-      )}
-
-      {persen < 80 && persen >= 60 && (
-        <Text fz="xs" c="yellow" mt="xs" fw={500}>
-          ⚠️ Realisasi cukup, perlu ditingkatkan
-        </Text>
-      )}
-
-      {persen < 60 && (
-        <Text fz="xs" c="red" mt="xs" fw={500}>
-          ⚠️ Realisasi rendah, perlu perhatian khusus
-        </Text>
-      )}
+      <Text 
+        fz="xs" 
+        c={statusMessage.color as any} 
+        fw={600}
+        style={{ 
+          backgroundColor: `var(--mantine-color-${statusMessage.color}-0)`,
+          padding: '6px 10px',
+          borderRadius: 6,
+          display: 'inline-block',
+        }}
+      >
+        {persentase >= 100 && '✓ '}{statusMessage.text}
+      </Text>
     </Box>
-  );
+  )
 }
 
-export default function GrafikRealisasi({
-  apbdesData,
-}: {
-  apbdesData: {
-    tahun?: number | null;
-    items?: APBDesItem[] | null;
-    [key: string]: any;
-  };
-}) {
-  const items = apbdesData?.items || [];
-  const tahun = apbdesData?.tahun || new Date().getFullYear();
+interface GrafikRealisasiProps {
+  apbdesData: APBDes
+}
 
-  const pendapatan = items.filter((i: APBDesItem) => i.tipe === 'pendapatan');
-  const belanja = items.filter((i: APBDesItem) => i.tipe === 'belanja');
-  const pembiayaan = items.filter((i: APBDesItem) => i.tipe === 'pembiayaan');
+export default function GrafikRealisasi({ apbdesData }: GrafikRealisasiProps) {
+  const items = apbdesData?.items || []
+  const tahun = apbdesData?.tahun || new Date().getFullYear()
+
+  const pendapatan = items.filter((i: APBDesItem) => i.tipe === 'pendapatan')
+  const belanja = items.filter((i: APBDesItem) => i.tipe === 'belanja')
+  const pembiayaan = items.filter((i: APBDesItem) => i.tipe === 'pembiayaan')
 
   return (
-    <Paper withBorder p="md" radius="md">
-      <Title order={5} mb="md">
+    <Paper
+      withBorder
+      p="lg"
+      radius="lg"
+      shadow="sm"
+      style={{
+        transition: 'box-shadow 0.3s ease',
+        ':hover': {
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+        },
+      }}
+      h={"100%"}
+    >
+      <Title
+        order={5}
+        mb="lg"
+        c="blue.9"
+        fz={{ base: '1rem', md: '1.1rem' }}
+        fw={700}
+      >
         GRAFIK REALISASI APBDes {tahun}
       </Title>
 
-      <Stack gap="lg" mb="lg">
-        <Summary title="💰 Pendapatan" data={pendapatan} />
-        <Summary title="💸 Belanja" data={belanja} />
-        <Summary title="📊 Pembiayaan" data={pembiayaan} />
+      <Stack gap="xl">
+        <Summary
+          title="Pendapatan"
+          data={pendapatan}
+          icon={
+            <Box 
+              style={{
+                width: 32,
+                height: 32,
+                borderRadius: 8,
+                backgroundColor: 'var(--mantine-color-green-0)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Text fz="lg">💰</Text>
+            </Box>
+          }
+        />
+        
+        <Summary
+          title="Belanja"
+          data={belanja}
+          icon={
+            <Box
+              style={{
+                width: 32,
+                height: 32,
+                borderRadius: 8,
+                backgroundColor: 'var(--mantine-color-red-0)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Text fz="lg">💸</Text>
+            </Box>
+          }
+        />
+        
+        <Summary
+          title="Pembiayaan"
+          data={pembiayaan}
+          icon={
+            <Box
+              style={{
+                width: 32,
+                height: 32,
+                borderRadius: 8,
+                backgroundColor: 'var(--mantine-color-orange-0)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Text fz="lg">📊</Text>
+            </Box>
+          }
+        />
       </Stack>
     </Paper>
-  );
+  )
 }

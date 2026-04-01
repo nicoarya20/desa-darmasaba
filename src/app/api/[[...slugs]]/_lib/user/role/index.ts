@@ -6,7 +6,7 @@ import roleFindUnique from "./findUnique";
 import roleUpdate from "./updt";
 
 const Role = new Elysia({
-    prefix: "/api/role",
+    prefix: "/role",
     tags: ["User / Role"],
 })
 

@@ -14,7 +14,7 @@ import GrafikHasilKepuasanMasyarakat from "./ikm/grafik_hasil_kepuasan_masyaraka
 
 
 
-const PPID = new Elysia({ prefix: "/api/ppid", tags: ["PPID"] })
+const PPID = new Elysia({ prefix: "/ppid", tags: ["PPID"] })
 .use(ProfilePPID)
 .use(DaftarInformasiPublik)
 .use(GrafikHasilKepuasanMasyarakat)
