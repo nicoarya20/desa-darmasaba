@@ -1,0 +1,36 @@
+import prisma from "@/lib/prisma";
+import tujuanProgram from "../../data/pendidikan/program-pendidikan-anak/tujuan-program.json";
+import programUnggulan from "../../data/pendidikan/program-pendidikan-anak/program-unggulan.json";
+
+export async function seedInfoProgramPendidikan() {
+  for (const t of tujuanProgram) {
+    await prisma.tujuanProgram.upsert({
+      where: { id: t.id },
+      update: {
+        judul: t.judul,
+        deskripsi: t.deskripsi,
+      },
+      create: {
+        id: t.id,
+        judul: t.judul,
+        deskripsi: t.deskripsi,
+      },
+    });
+  }
+  console.log("✅ tujuan program seeded (editable later via UI)");
+  for (const t of programUnggulan) {
+    await prisma.programUnggulan.upsert({
+      where: { id: t.id },
+      update: {
+        judul: t.judul,
+        deskripsi: t.deskripsi,
+      },
+      create: {
+        id: t.id,
+        judul: t.judul,
+        deskripsi: t.deskripsi,
+      },
+    });
+  }
+  console.log("✅ program unggulan seeded (editable later via UI)");
+}

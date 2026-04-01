@@ -11,7 +11,7 @@ import {
   Stack,
   TextInput,
   Title,
-  Tooltip,
+  Loader
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -23,8 +23,16 @@ function EditKategoriPengumuman() {
   const editState = useProxy(stateDesaPengumuman.category);
   const router = useRouter();
   const params = useParams();
-
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({ name: '' });
+  const [originalData, setOriginalData] = useState({ name: '' });
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      formData.name?.trim() !== ''
+    );
+  };
 
   // Load data awal sekali aja
   useEffect(() => {
@@ -36,6 +44,7 @@ function EditKategoriPengumuman() {
         const data = await editState.update.load(id);
         if (data) {
           setFormData({ name: data.name || '' });
+          setOriginalData({ name: data.name || '' });
         }
       } catch (error) {
         console.error('Error loading kategori Pengumuman:', error);
@@ -54,7 +63,13 @@ function EditKategoriPengumuman() {
   };
 
   const handleSubmit = async () => {
+    if (!formData.name?.trim()) {
+      toast.error('Nama kategori pengumuman wajib diisi');
+      return;
+    }
+    
     try {
+      setIsSubmitting(true);
       // Update global state hanya di sini
       editState.update.form = {
         ...editState.update.form,
@@ -67,14 +82,23 @@ function EditKategoriPengumuman() {
     } catch (error) {
       console.error('Error updating kategori Pengumuman:', error);
       toast.error('Terjadi kesalahan saat memperbarui kategori Pengumuman');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
+  const handleResetForm = () => {
+      setFormData({
+        name: originalData.name,
+      });
+      toast.info("Form dikembalikan ke data awal");
+    };
+  
+
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Header */}
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
           <Button
             variant="subtle"
             onClick={() => router.back()}
@@ -83,7 +107,6 @@ function EditKategoriPengumuman() {
           >
             <IconArrowBack color={colors['blue-button']} size={24} />
           </Button>
-        </Tooltip>
         <Title order={4} ml="sm" c="dark">
           Edit Kategori Pengumuman
         </Title>
@@ -109,16 +132,30 @@ function EditKategoriPengumuman() {
 
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

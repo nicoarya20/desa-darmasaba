@@ -42,6 +42,24 @@ export default function ModalPeminjaman({
 
   const BATAS_HARI_PINJAM = 4;
 
+  // Helper function to check if HTML content is empty
+  const isHtmlEmpty = (html: string) => {
+    // Remove all HTML tags and check if there's any text content
+    const textContent = html.replace(/<[^>]*>/g, '').trim();
+    return textContent === '';
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      snap.create.form.nama?.trim() !== '' &&
+      snap.create.form.noTelp?.trim() !== '' &&
+      snap.create.form.alamat?.trim() !== '' &&
+      snap.create.form.tanggalPinjam?.trim() !== '' &&
+      !isHtmlEmpty(snap.create.form.catatan)
+    );
+  };
+
   // Reset form setiap modal dibuka
   useEffect(() => {
     if (opened && buku) {
@@ -222,13 +240,13 @@ export default function ModalPeminjaman({
           <Button
             onClick={handleSubmit}
             loading={snap.create.loading}
-            disabled={
-              !snap.create.form.nama || !snap.create.form.tanggalPinjam
-            }
+            disabled={!isFormValid() || snap.create.loading}
             rightSection={<IconArrowRight size={16} />}
             radius="xl"
             style={{
-              background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+              background: !isFormValid() || snap.create.loading
+                ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
               color: '#fff',
               boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
             }}

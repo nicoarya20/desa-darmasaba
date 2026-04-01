@@ -1,6 +1,6 @@
 'use client'
 
-import { Box, Button, Group, Paper, Skeleton, Stack, Text, Tooltip } from '@mantine/core';
+import { Box, Button, Group, Paper, Skeleton, Stack, Text } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -42,7 +42,7 @@ function DetailLowonganKerjaLokal() {
   const data = lowonganState.findUnique.data;
 
   return (
-    <Box py={10}>
+    <Box px={{ base: 0, md: 'xs' }} py="xs">
       <Button
         variant="subtle"
         onClick={() => router.back()}
@@ -99,41 +99,41 @@ function DetailLowonganKerjaLokal() {
 
               <Box>
                 <Text fz="lg" fw="bold">Deskripsi</Text>
-                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data.deskripsi || '-' }} />
+                <Box pl={8}>
+                  <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data.deskripsi || '-' }} />
+                </Box>
               </Box>
 
               <Box>
                 <Text fz="lg" fw="bold">Kualifikasi</Text>
-                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data.kualifikasi || '-' }} />
+                <Box pl={8}>
+                  <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data.kualifikasi || '-' }} />
+                </Box>
               </Box>
 
               <Group gap="sm" mt="sm">
-                <Tooltip label="Hapus Lowongan" withArrow position="top">
-                  <Button
-                    color="red"
-                    onClick={() => {
-                      setSelectedId(data.id);
-                      setModalHapus(true);
-                    }}
-                    variant="light"
-                    radius="md"
-                    size="md"
-                  >
-                    <IconTrash size={20} />
-                  </Button>
-                </Tooltip>
+                <Button
+                  color="red"
+                  onClick={() => {
+                    setSelectedId(data.id);
+                    setModalHapus(true);
+                  }}
+                  variant="light"
+                  radius="md"
+                  size="md"
+                >
+                  <IconTrash size={20} />
+                </Button>
 
-                <Tooltip label="Edit Lowongan" withArrow position="top">
-                  <Button
-                    color="green"
-                    onClick={() => router.push(`/admin/ekonomi/lowongan-kerja-lokal/${data.id}/edit`)}
-                    variant="light"
-                    radius="md"
-                    size="md"
-                  >
-                    <IconEdit size={20} />
-                  </Button>
-                </Tooltip>
+                <Button
+                  color="green"
+                  onClick={() => router.push(`/admin/ekonomi/lowongan-kerja-lokal/${data.id}/edit`)}
+                  variant="light"
+                  radius="md"
+                  size="md"
+                >
+                  <IconEdit size={20} />
+                </Button>
               </Group>
             </Stack>
           </Paper>

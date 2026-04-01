@@ -3,7 +3,7 @@
 
 import pengelolaanSampahState from '@/app/admin/(dashboard)/_state/lingkungan/pengelolaan-sampah';
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, Stack, Text, TextInput, Title, Tooltip } from '@mantine/core';
+import { Box, Button, Group, Loader, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import dynamic from 'next/dynamic';
 import { useParams, useRouter } from 'next/navigation';
@@ -18,7 +18,7 @@ function EditKeteranganBankSampahTerdekat() {
   const router = useRouter();
   const params = useParams();
   const [markerPosition, setMarkerPosition] = useState<{ lat: number; lng: number } | null>(null);
-
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     alamat: '',
@@ -26,6 +26,24 @@ function EditKeteranganBankSampahTerdekat() {
     lat: 0,
     lng: 0,
   });
+
+  const [originalData, setOriginalData] = useState({
+    name: '',
+    alamat: '',
+    namaTempatMaps: '',
+    lat: 0,
+    lng: 0,
+  });
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      formData.name?.trim() !== '' &&
+      formData.alamat?.trim() !== '' &&
+      formData.namaTempatMaps?.trim() !== '' &&
+      markerPosition !== null
+    );
+  };
 
   // Load data ketika component mount
   useEffect(() => {
@@ -40,6 +58,15 @@ function EditKeteranganBankSampahTerdekat() {
 
           // Update local formData dan markerPosition
           setFormData({
+            name: data.name,
+            alamat: data.alamat,
+            namaTempatMaps: data.namaTempatMaps,
+            lat: data.lat,
+            lng: data.lng,
+          });
+
+          // simpan juga versi original
+          setOriginalData({
             name: data.name,
             alamat: data.alamat,
             namaTempatMaps: data.namaTempatMaps,
@@ -61,8 +88,21 @@ function EditKeteranganBankSampahTerdekat() {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
+  const handleResetForm = () => {
+    setFormData({
+      name: originalData.name,
+      alamat: originalData.alamat,
+      namaTempatMaps: originalData.namaTempatMaps,
+      lat: originalData.lat,
+      lng: originalData.lng,
+    });
+    setMarkerPosition({ lat: originalData.lat, lng: originalData.lng });
+    toast.info('Form dikembalikan ke data awal');
+  };
+
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       if (!formData.name.trim()) return toast.error('Nama bank sampah harus diisi');
       if (!formData.alamat.trim()) return toast.error('Alamat harus diisi');
       if (!formData.namaTempatMaps.trim()) return toast.error('Nama tempat di Maps harus diisi');
@@ -84,17 +124,17 @@ function EditKeteranganBankSampahTerdekat() {
     } catch (error) {
       console.error(error);
       toast.error(error instanceof Error ? error.message : 'Gagal memperbarui data bank sampah');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
-        </Tooltip>
+        <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Edit Bank Sampah Terdekat
         </Title>
@@ -153,16 +193,30 @@ function EditKeteranganBankSampahTerdekat() {
 
           <Group justify="right" mt="md">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

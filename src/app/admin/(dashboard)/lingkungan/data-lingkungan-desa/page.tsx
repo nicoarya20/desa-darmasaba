@@ -1,31 +1,77 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
-'use client'
+'use client';
 import colors from '@/con/colors';
 import {
-  Box, Button, Center, Group, Pagination, Paper, Skeleton, Stack,
-  Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text,
+  Box,
+  Button,
+  Center,
+  Group,
+  Pagination,
+  Paper,
+  Skeleton,
+  Stack,
+  Table,
+  TableTbody,
+  TableTd,
+  TableTh,
+  TableThead,
+  TableTr,
+  Text,
   Title,
-  Tooltip
 } from '@mantine/core';
 import {
-  IconChartLine, IconChristmasTreeFilled, IconClipboardTextFilled,
-  IconDeviceImacCog, IconDroplet, IconHome, IconHomeEco, IconLeaf,
+  IconAlertTriangle,
+  IconAmbulance,
+  IconBook,
+  IconBuilding,
+  IconBuildingCommunity,
+  IconCash,
+  IconChartLine,
+  IconChristmasTreeFilled,
+  IconClipboardTextFilled,
+  IconDeviceImacCog,
+  IconDroplet,
+  IconFileText,
+  IconFiretruck,
+  IconFirstAidKit,
+  IconHome,
+  IconHomeEco,
+  IconHospital,
+  IconInfoCircle,
+  IconLeaf,
+  IconLifebuoy,
+  IconMessageReport,
+  IconPhoneCall,
   IconPlus,
-  IconRecycle, IconScale, IconSearch, IconShieldFilled, IconTent,
-  IconTrashFilled, IconTree, IconTrendingUp, IconTrophy, IconTruckFilled
+  IconRecycle,
+  IconRun,
+  IconScale,
+  IconSchool,
+  IconSearch,
+  IconShield,
+  IconShieldFilled,
+  IconShoppingCart,
+  IconStethoscope,
+  IconTent,
+  IconTrashFilled,
+  IconTree,
+  IconTrendingUp,
+  IconTrophy,
+  IconTruckFilled,
+  IconUsers,
 } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../_com/header';
 import dataLingkunganDesaState from '../../_state/lingkungan/data-lingkungan-desa';
-
+import { useDebouncedValue } from '@mantine/hooks';
 
 function DataLingkunganDesa() {
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
   return (
-    <Box>
+    <Box py={{ base: 'md', md: 'lg' }} px={{ base: 'sm', md: 0 }}>
       <HeaderSearch
         title='Data Lingkungan Desa'
         placeholder='Cari data lingkungan...'
@@ -39,38 +85,68 @@ function DataLingkunganDesa() {
 }
 
 function ListDataLingkunganDesa({ search }: { search: string }) {
-  const listState = useProxy(dataLingkunganDesaState)
-  const { data, loading, page, totalPages, load } = listState.findMany
+  const listState = useProxy(dataLingkunganDesaState);
+  const { data, loading, page, totalPages, load } = listState.findMany;
   const router = useRouter();
+  const [debouncedSearch] = useDebouncedValue(search, 1000);
 
   useEffect(() => {
-    load(page, 10, search)
-  }, [page, search])
+    load(page, 10, debouncedSearch);
+  }, [page, debouncedSearch]);
 
-  const filteredData = data || []
+  const filteredData = data || [];
 
-  const iconMap: Record<string, React.FC<any>> = {
-    ekowisata: IconLeaf,
-    kompetisi: IconTrophy,
-    wisata: IconTent,
-    ekonomi: IconChartLine,
-    sampah: IconRecycle,
-    truck: IconTruckFilled,
-    scale: IconScale,
-    clipboard: IconClipboardTextFilled,
-    trash: IconTrashFilled,
-    lingkunganSehat: IconHomeEco,
-    sumberOksigen: IconChristmasTreeFilled,
-    ekonomiBerkelanjutan: IconTrendingUp,
-    mencegahBencana: IconShieldFilled,
-    rumah: IconHome,
-    pohon: IconTree,
-    air: IconDroplet
-  };
+ const iconMap: Record<string, React.FC<any>> = {
+     // ===== Umum & Lingkungan =====
+     ekowisata: IconLeaf,
+     kompetisi: IconTrophy,
+     wisata: IconTent,
+     ekonomi: IconChartLine,
+     sampah: IconRecycle,
+     truck: IconTruckFilled,
+     scale: IconScale,
+     clipboard: IconClipboardTextFilled,
+     trash: IconTrashFilled,
+     lingkunganSehat: IconHomeEco,
+     sumberOksigen: IconChristmasTreeFilled,
+     ekonomiBerkelanjutan: IconTrendingUp,
+     mencegahBencana: IconShieldFilled,
+     rumah: IconHome,
+     pohon: IconTree,
+     air: IconDroplet,
+     bantuan: IconCash,
+     pelatihan: IconSchool,
+     subsidi: IconShoppingCart,
+     layananKesehatan: IconHospital,
+ 
+     // ===== Keamanan & Darurat =====
+     polisi: IconShieldFilled,
+     ambulans: IconAmbulance,
+     pemadam: IconFiretruck,
+     darurat: IconAlertTriangle,
+     sar: IconLifebuoy,
+     evakuasi: IconRun,
+     keamanan: IconShield,
+     teleponDarurat: IconPhoneCall,
+ 
+     // ===== Kesehatan =====
+     rumahSakit: IconHospital,
+     puskesmas: IconFirstAidKit,
+     klinik: IconStethoscope,
+ 
+     // ===== Pemerintahan & Fasilitas =====
+     bangunan: IconBuilding,
+     kantorDesa: IconBuildingCommunity,
+     administrasi: IconFileText,
+     informasi: IconInfoCircle,
+     pengaduan: IconMessageReport,
+     layananPublik: IconUsers,
+     book: IconBook
+   };
 
   if (loading || !data) {
     return (
-      <Stack py={10}>
+      <Stack py="md">
         <Skeleton height={600} radius="md" />
       </Stack>
     );
@@ -78,50 +154,70 @@ function ListDataLingkunganDesa({ search }: { search: string }) {
 
   if (data.length === 0) {
     return (
-      <Box py={10}>
-        <Paper withBorder shadow="md" radius="md" p="lg" bg={colors['white-1']}>
+      <Box py="md">
+        <Paper withBorder shadow="md" radius="md" p={{ base: 'md', md: 'lg' }} bg={colors['white-1']}>
           <Stack>
             <Group justify="space-between" mb="md">
-              <Title order={4}>Daftar Data Lingkungan Desa</Title>
-              <Tooltip label="Tambah Data Lingkungan Desa" withArrow>
-                <Button leftSection={<IconPlus size={18} />} color="blue" variant="light" onClick={() => router.push('/admin/lingkungan/data-lingkungan-desa/create')}>
-                  Tambah Baru
-                </Button>
-              </Tooltip>
+              <Title order={4} lh={1.2}>
+                Daftar Data Lingkungan Desa
+              </Title>
+              <Button
+                leftSection={<IconPlus size={18} />}
+                color="blue"
+                variant="light"
+                onClick={() => router.push('/admin/lingkungan/data-lingkungan-desa/create')}
+              >
+                Tambah Baru
+              </Button>
             </Group>
-            <Table highlightOnHover>
-              <TableThead>
-                <TableTr>
-                  <TableTh>No</TableTh>
-                  <TableTh>Nama Data Lingkungan Desa</TableTh>
-                  <TableTh>Jumlah</TableTh>
-                  <TableTh>Ikon</TableTh>
-                  <TableTh>Detail</TableTh>
-                </TableTr>
-              </TableThead>
-            </Table>
-            <Center py={20}>
-              <Text c="dimmed">Tidak ada data lingkungan desa yang tersedia</Text>
+           <Box visibleFrom="md" style={{ overflowX: 'auto' }}>
+             <Table highlightOnHover
+    layout="fixed" // 🔥 PENTING
+    withColumnBorders={false} miw={0} style={{ tableLayout: 'fixed', width: '100%' }}>
+                <TableThead>
+                  <TableTr>
+                    <TableTh style={{ width: '5%', textAlign: 'center' }}>No</TableTh>
+                    <TableTh style={{ width: '25%' }}>Nama Data Lingkungan Desa</TableTh>
+                    <TableTh style={{ width: '35%' }}>Jumlah</TableTh>
+                    <TableTh style={{ width: '15%' }}>Ikon</TableTh>
+                    <TableTh style={{ width: '20%', textAlign: 'center' }}>Detail</TableTh>
+                  </TableTr>
+                </TableThead>
+              </Table>
+            </Box>
+            <Center py="xl">
+              <Text c="dimmed" fz={{ base: 'sm', md: 'md' }} lh={1.4}>
+                Tidak ada data lingkungan desa yang tersedia
+              </Text>
             </Center>
           </Stack>
         </Paper>
-      </Box >
+      </Box>
     );
   }
 
   return (
-    <Box py={10}>
-      <Paper withBorder shadow="md" radius="md" bg={colors['white-1']} p="lg">
+    <Box py="md">
+      <Paper withBorder shadow="md" radius="md" p={{ base: 'md', md: 'lg' }} bg={colors['white-1']}>
         <Group justify="space-between" mb="md">
-          <Title order={4}>Daftar Data Lingkungan Desa</Title>
-          <Tooltip label="Tambah Data Lingkungan Desa" withArrow>
-            <Button leftSection={<IconPlus size={18} />} color="blue" variant="light" onClick={() => router.push('/admin/lingkungan/data-lingkungan-desa/create')}>
-              Tambah Baru
-            </Button>
-          </Tooltip>
+          <Title order={4} lh={1.2}>
+            Daftar Data Lingkungan Desa
+          </Title>
+          <Button
+            leftSection={<IconPlus size={18} />}
+            color="blue"
+            variant="light"
+            onClick={() => router.push('/admin/lingkungan/data-lingkungan-desa/create')}
+          >
+            Tambah Baru
+          </Button>
         </Group>
-        <Box style={{ overflowX: 'auto' }}>
-          <Table highlightOnHover>
+
+        {/* Desktop Table */}
+       <Box visibleFrom="md" style={{ overflowX: 'auto' }}>
+         <Table highlightOnHover
+    layout="fixed" // 🔥 PENTING
+    withColumnBorders={false} miw={0} style={{ tableLayout: 'fixed', width: '100%' }}>
             <TableThead>
               <TableTr>
                 <TableTh style={{ width: '5%', textAlign: 'center' }}>No</TableTh>
@@ -134,21 +230,21 @@ function ListDataLingkunganDesa({ search }: { search: string }) {
             <TableTbody>
               {filteredData.map((item, index) => (
                 <TableTr key={item.id}>
-                  <TableTd style={{ textAlign: 'center' }}>{index + 1}</TableTd>
+                  <TableTd ta="center">{index + 1}</TableTd>
                   <TableTd>
-                    <Text fw={500} truncate="end" lineClamp={1}>{item.name}</Text>
+                    <Text fz="md" fw={500} lh={1.5} truncate="end" lineClamp={1}>
+                      {item.name}
+                    </Text>
                   </TableTd>
                   <TableTd>
-                    <Text fz="sm" c="dimmed">± {item.jumlah}</Text>
+                    <Text fz="sm" c="dimmed" lh={1.5}>
+                      ± {item.jumlah}
+                    </Text>
                   </TableTd>
                   <TableTd>
-                    {iconMap[item.icon] && (
-                      <Box title={item.icon}>
-                        {React.createElement(iconMap[item.icon], { size: 22 })}
-                      </Box>
-                    )}
+                    {iconMap[item.icon] && <Box title={item.icon}>{React.createElement(iconMap[item.icon], { size: 22 })}</Box>}
                   </TableTd>
-                  <TableTd style={{ textAlign: 'center' }}>
+                  <TableTd ta="center">
                     <Button
                       size="xs"
                       radius="md"
@@ -165,7 +261,62 @@ function ListDataLingkunganDesa({ search }: { search: string }) {
             </TableTbody>
           </Table>
         </Box>
+
+        {/* Mobile Cards */}
+        <Box hiddenFrom="md">
+          <Stack gap="sm">
+            {filteredData.map((item, index) => (
+              <Paper key={item.id} withBorder radius="md" p="sm" bg={colors['white-1']}>
+                <Stack gap={"xs"}>
+                  <Box>
+                    <Text fz="sm" fw={600} lh={1.4}>
+                      No
+                    </Text>
+                    <Text fz="sm" fw={500} lh={1.4}>
+                      {index + 1}
+                    </Text>
+                  </Box>
+                  <Box>
+                    <Text fz="sm" fw={600} lh={1.4}>
+                      Nama Data
+                    </Text>
+                    <Text fz="sm" fw={500} lh={1.4} truncate="end">
+                      {item.name}
+                    </Text>
+                  </Box>
+                  <Box>
+                    <Text fz="sm" fw={600} lh={1.4}>
+                      Jumlah
+                    </Text>
+                    <Text fz="sm" fw={500} lh={1.4}>
+                      ± {item.jumlah}
+                    </Text>
+                  </Box>
+                  <Box>
+                    <Text fz="sm" fw={600} lh={1.4}>
+                      Ikon
+                    </Text>
+                    {iconMap[item.icon] && <Box title={item.icon}>{React.createElement(iconMap[item.icon], { size: 22 })}</Box>}
+                  </Box>
+                  <Center>
+                    <Button
+                      size="xs"
+                      radius="md"
+                      variant="light"
+                      color="blue"
+                      leftSection={<IconDeviceImacCog size={16} />}
+                      onClick={() => router.push(`/admin/lingkungan/data-lingkungan-desa/${item.id}`)}
+                    >
+                      Detail
+                    </Button>
+                  </Center>
+                </Stack>
+              </Paper>
+            ))}
+          </Stack>
+        </Box>
       </Paper>
+
       <Center>
         <Pagination
           value={page}
@@ -183,4 +334,5 @@ function ListDataLingkunganDesa({ search }: { search: string }) {
     </Box>
   );
 }
+
 export default DataLingkunganDesa;

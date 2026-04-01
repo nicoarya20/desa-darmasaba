@@ -89,7 +89,7 @@ const jumlahPengangguran = proxy({
         if (res.status === 200) {
           const id = res.data?.id;
           if (id) {
-            toast.success("Success create");
+            toast.success("Sukses menambahkan");
             jumlahPengangguran.create.form = { ...jumlahPengangguranForm };
             jumlahPengangguran.findMany.load();
             return id;

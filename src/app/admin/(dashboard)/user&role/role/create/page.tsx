@@ -5,16 +5,16 @@ import {
   Box,
   Button,
   Group,
-  MultiSelect,
+  Loader,
   Paper,
   Stack,
   TextInput,
-  Title,
-  Tooltip
+  Title
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 import user from '../../../_state/user/user-state';
 
@@ -26,28 +26,35 @@ export default function CreateRole() {
     stateRole.findMany.load();
   }, []);
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const resetForm = () => {
     stateRole.create.form = {
-      name: '',
-      permissions: [] ,
+      name: ''
     };
   };
 
   const handleSubmit = async () => {
-    await stateRole.create.create();
+    try {
+      setIsSubmitting(true);
+      await stateRole.create.create();
 
-    resetForm();
-    router.push('/admin/user&role/role');
+      resetForm();
+      router.push('/admin/user&role/role');
+    } catch (error) {
+      console.error('Error creating role:', error);
+      toast.error('Terjadi kesalahan saat membuat role');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
-        </Tooltip>
+        <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Tambah Role
         </Title>
@@ -66,35 +73,24 @@ export default function CreateRole() {
             <TextInput
               label="Nama Role"
               placeholder="Masukkan nama role"
-              defaultValue={stateRole.create.form.name || ''}
+              value={stateRole.create.form.name || ''}
               onChange={(e) => (stateRole.create.form.name = e.target.value)}
               required
             />
           </Box>
-          <Box>
-            <MultiSelect
-              label="Permission"
-              placeholder="Pilih permission"
-              data={
-                Array.from(
-                  new Set(
-                    stateRole.findMany.data
-                      ?.map((item) => item.permissions)
-                      .flat()
-                  )
-                )
-                .filter((p): p is string => typeof p === 'string')
-                .map((p) => ({ label: p, value: p }))
-              }
-              value={stateRole.create.form.permissions}
-              onChange={(value) => (stateRole.create.form.permissions = value)}
-              required
-            />
-
-
-          </Box>
 
           <Group justify="right">
+            <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
             <Button
               onClick={handleSubmit}
               radius="md"
@@ -105,7 +101,7 @@ export default function CreateRole() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

@@ -16,10 +16,9 @@ import {
   TableThead,
   TableTr,
   Text,
-  Title,
-  Tooltip,
+  Title
 } from '@mantine/core';
-import { useShallowEffect } from '@mantine/hooks';
+import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
 import { IconDeviceImacCog, IconPlus, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -51,10 +50,11 @@ function ListArtikelKesehatan({ search }: { search: string }) {
   const router = useRouter();
 
   const { data, page, totalPages, loading, load } = stateArtikel.findMany;
+  const [debouncedSearch] = useDebouncedValue(search, 1000);
 
   useShallowEffect(() => {
-    load(page, 10, search);
-  }, [page, search]);
+    load(page, 10, debouncedSearch);
+  }, [page, debouncedSearch]);
 
   const filteredData = data || [];
 
@@ -72,21 +72,21 @@ function ListArtikelKesehatan({ search }: { search: string }) {
         {/* Judul + Tombol Tambah */}
         <Group justify="space-between" mb="md">
           <Title order={4}>Daftar Artikel Kesehatan</Title>
-          <Tooltip label="Tambah Artikel Kesehatan" withArrow>
-            <Button
-              leftSection={<IconPlus size={18} />}
-              color="blue"
-              variant="light"
-              onClick={() => router.push('/admin/kesehatan/data-kesehatan-warga/artikel_kesehatan/create')}
-            >
-              Tambah Baru
-            </Button>
-          </Tooltip>
+          <Button
+            leftSection={<IconPlus size={18} />}
+            color="blue"
+            variant="light"
+            onClick={() => router.push('/admin/kesehatan/data-kesehatan-warga/artikel_kesehatan/create')}
+          >
+            Tambah Baru
+          </Button>
         </Group>
 
         {/* Tabel */}
         <Box style={{ overflowX: "auto" }}>
-          <Table highlightOnHover>
+         <Table highlightOnHover
+    layout="fixed" // 🔥 PENTING
+    withColumnBorders={false}>
             <TableThead>
               <TableTr>
                 <TableTh style={{ minWidth: 200 }}>Judul</TableTh>

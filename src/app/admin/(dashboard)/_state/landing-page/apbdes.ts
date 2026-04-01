@@ -5,58 +5,114 @@ import { toast } from "react-toastify";
 import { proxy } from "valtio";
 import { z } from "zod";
 
-const templateapbDesaForm = z.object({
-  name: z.string().min(1, "Judul minimal 1 karakter"),
-  jumlah: z.string().min(1, "Deskripsi minimal 1 karakter"),
-  imageId: z.string().min(1, "File minimal 1"),
-  fileId: z.string().min(1, "File minimal 1"),
+// --- Zod Schema untuk APBDes Item (dengan field kalkulasi) ---
+const ApbdesItemSchema = z.object({
+  kode: z.string().min(1, "Kode wajib diisi"),
+  uraian: z.string().min(1, "Uraian wajib diisi"),
+  anggaran: z.number().min(0, "Anggaran tidak boleh negatif"),
+  level: z.number().int().min(1).max(3),
+  tipe: z.enum(['pendapatan', 'belanja', 'pembiayaan']).nullable().optional(),
+  // Field kalkulasi dari realisasiItems (auto-calculated di backend)
+  realisasi: z.number().min(0).default(0),
+  selisih: z.number().default(0),
+  persentase: z.number().default(0),
 });
 
-const defaultapbdesForm = {
+const ApbdesFormSchema = z.object({
+  tahun: z.number().int().min(2000, "Tahun tidak valid"),
+  name: z.string().optional(),
+  deskripsi: z.string().optional(),
+  jumlah: z.string().optional(),
+  // Image dan file opsional (bisa kosong)
+  imageId: z.string().optional(),
+  fileId: z.string().optional(),
+  items: z.array(ApbdesItemSchema).min(1, "Minimal ada 1 item"),
+});
+
+// --- Default Form ---
+const defaultApbdesForm = {
+  tahun: new Date().getFullYear(),
   name: "",
+  deskripsi: "",
   jumlah: "",
   imageId: "",
   fileId: "",
+  items: [] as z.infer<typeof ApbdesItemSchema>[],
 };
 
+// --- Helper: Normalize item (dengan field kalkulasi) ---
+function normalizeItem(item: Partial<z.infer<typeof ApbdesItemSchema>>): z.infer<typeof ApbdesItemSchema> {
+  return {
+    kode: item.kode || "",
+    uraian: item.uraian || "",
+    anggaran: item.anggaran ?? 0,
+    level: item.level || 1,
+    tipe: item.tipe ?? null,
+    realisasi: item.realisasi ?? 0,
+    selisih: item.selisih ?? 0,
+    persentase: item.persentase ?? 0,
+  };
+}
+
+// --- State Utama ---
 const apbdes = proxy({
   create: {
-    form: { ...defaultapbdesForm },
+    form: { ...defaultApbdesForm },
     loading: false,
-    async create() {
-      const cek = templateapbDesaForm.safeParse(apbdes.create.form);
-      if (!cek.success) {
-        const err = `[${cek.error.issues
-          .map((v) => `${v.path.join(".")}`)
-          .join("\n")}] required`;
-        return toast.error(err);
-      }
-      try {
-        apbdes.create.loading = true;
-        const res = await ApiFetch.api.landingpage.apbdes["create"].post({
-          ...apbdes.create.form,
-        });
 
-        if (res.status === 200) {
+    addItem(item: Partial<z.infer<typeof ApbdesItemSchema>>) {
+      const normalized = normalizeItem(item);
+      this.form.items.push(normalized);
+    },
+
+    removeItem(index: number) {
+      this.form.items.splice(index, 1);
+    },
+
+    updateItem(index: number, updates: Partial<z.infer<typeof ApbdesItemSchema>>) {
+      const current = this.form.items[index];
+      if (current) {
+        const updated = normalizeItem({ ...current, ...updates });
+        this.form.items[index] = updated;
+      }
+    },
+
+    reset() {
+      this.form = { ...defaultApbdesForm };
+    },
+
+    async create() {
+      const parsed = ApbdesFormSchema.safeParse(this.form);
+      if (!parsed.success) {
+        const errors = parsed.error.issues.map((issue) => `${issue.path.join(".")} - ${issue.message}`);
+        toast.error(`Validasi gagal:\n${errors.join("\n")}`);
+        return;
+      }
+
+      try {
+        this.loading = true;
+        const res = await ApiFetch.api.landingpage.apbdes["create"].post(parsed.data);
+
+        if (res.data?.success) {
+          toast.success("APBDes berhasil dibuat");
           apbdes.findMany.load();
-          return toast.success("Data berhasil ditambahkan");
+          this.reset();
+        } else {
+          toast.error(res.data?.message || "Gagal membuat APBDes");
         }
-        return toast.error("Gagal menambahkan data");
-      } catch (error) {
-        console.log(error);
-        toast.error("Gagal menambahkan data");
+      } catch (error: any) {
+        console.error("Create APBDes error:", error);
+        toast.error(error?.message || "Terjadi kesalahan saat membuat APBDes");
       } finally {
-        apbdes.create.loading = false;
+        this.loading = false;
       }
     },
   },
+
   findMany: {
     data: null as
       | Prisma.APBDesGetPayload<{
-          include: {
-            image: true;
-            file: true;
-          };
+          include: { image: true; file: true; items: { include: { realisasiItems: true } } };
         }>[]
       | null,
     page: 1,
@@ -64,192 +120,296 @@ const apbdes = proxy({
     total: 0,
     loading: false,
     search: "",
-    load: async (page = 1, limit = 10, search = "") => {  // Change to arrow function
-      apbdes.findMany.loading = true;  // Use the full path to access the property
+
+    load: async (page = 1, limit = 10, search = "") => {
+      apbdes.findMany.loading = true;
       apbdes.findMany.page = page;
       apbdes.findMany.search = search;
+    
       try {
-        const query: any = { page, limit };
+        const query: Record<string, string> = { page: String(page), limit: String(limit) };
         if (search) query.search = search;
-        
-        const res = await ApiFetch.api.landingpage.apbdes[
-          "findMany"
-        ].get({
-          query
-        });
-  
-        if (res.status === 200 && res.data?.success) {
+    
+        const res = await ApiFetch.api.landingpage.apbdes["findMany"].get({ query });
+    
+        if (res.data?.success) {
           apbdes.findMany.data = res.data.data || [];
-          apbdes.findMany.total = res.data.total || 0;
-          apbdes.findMany.totalPages = res.data.totalPages || 1;
+          apbdes.findMany.total = res.data.meta?.total || 0;
+          apbdes.findMany.totalPages = res.data.meta?.totalPages || 1;
         } else {
-          console.error("Failed to load pegawai:", res.data?.message);
           apbdes.findMany.data = [];
           apbdes.findMany.total = 0;
           apbdes.findMany.totalPages = 1;
+          toast.error(res.data?.message || "Gagal memuat data");
         }
       } catch (error) {
-        console.error("Error loading pegawai:", error);
+        console.error("FindMany error:", error);
         apbdes.findMany.data = [];
         apbdes.findMany.total = 0;
         apbdes.findMany.totalPages = 1;
+        toast.error("Gagal memuat daftar APBDes");
       } finally {
         apbdes.findMany.loading = false;
       }
     },
   },
+
   findUnique: {
-    data: null as Prisma.APBDesGetPayload<{
-      include: {
-        image: true;
-        file: true;
-      };
-    }> | null,
+    data: null as
+      | Prisma.APBDesGetPayload<{
+          include: { image: true; file: true; items: { include: { realisasiItems: true } } };
+        }>
+      | null,
+    loading: false,
+    error: null as string | null,
+
     async load(id: string) {
+      if (!id || id.trim() === '') {
+        this.data = null;
+        this.error = "ID tidak valid";
+        return;
+      }
+
+      // Prevent multiple simultaneous loads
+      if (this.loading) {
+        console.log("⚠️ Already loading, skipping...");
+        return;
+      }
+
+      this.loading = true;
+      this.error = null;
+
       try {
-        const res = await fetch(`/api/landingpage/apbdes/${id}`);
-        if (res.ok) {
-          const data = await res.json();
-          apbdes.findUnique.data = data.data ?? null;
+        const url = `/api/landingpage/apbdes/${id}`;
+        console.log("🌐 Fetching:", url);
+
+        const response = await fetch(url);
+        const res = await response.json();
+
+        console.log("📦 Response:", res);
+
+        if (res.success && res.data) {
+          this.data = res.data;
         } else {
-          console.error("Failed to fetch data", res.status, res.statusText);
-          apbdes.findUnique.data = null;
+          this.data = null;
+          this.error = res.message || "Gagal memuat detail APBDes";
+          toast.error(this.error);
         }
       } catch (error) {
-        console.error("Error fetching data:", error);
-        apbdes.findUnique.data = null;
+        console.error("❌ FindUnique error:", error);
+        this.data = null;
+        this.error = "Gagal memuat detail APBDes";
+        toast.error(this.error);
+      } finally {
+        this.loading = false;
       }
-    },
+    }
   },
+
   delete: {
     loading: false,
     async byId(id: string) {
       if (!id) return toast.warn("ID tidak valid");
 
       try {
-        apbdes.delete.loading = true;
+        this.loading = true;
+        const res = await (ApiFetch.api.landingpage.apbdes as any)["del"][id].delete();
 
-        const response = await fetch(`/api/landingpage/apbdes/del/${id}`, {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-
-        const result = await response.json();
-
-        if (response.ok && result?.success) {
-          toast.success(result.message || "apbdes berhasil dihapus");
-          await apbdes.findMany.load(); // refresh list
+        if (res.data?.success) {
+          toast.success("APBDes berhasil dihapus");
+          apbdes.findMany.load();
         } else {
-          toast.error(result?.message || "Gagal menghapus apbdes");
+          toast.error(res.data?.message || "Gagal menghapus APBDes");
         }
-      } catch (error) {
-        console.error("Gagal delete:", error);
-        toast.error("Terjadi kesalahan saat menghapus apbdes");
+      } catch (error: any) {
+        console.error("Delete error:", error);
+        toast.error(error?.message || "Terjadi kesalahan saat menghapus");
       } finally {
-        apbdes.delete.loading = false;
+        this.loading = false;
       }
     },
   },
+
   edit: {
     id: "",
-    form: { ...defaultapbdesForm },
+    form: { ...defaultApbdesForm },
     loading: false,
 
     async load(id: string) {
-      if (!id) {
-        toast.warn("ID tidak valid");
-        return null;
-      }
+      if (!id) return toast.warn("ID tidak valid");
 
       try {
-        apbdes.edit.loading = true;
+        this.loading = true;
+        const res = await (ApiFetch.api.landingpage.apbdes as any)[id].get();
 
-        const response = await fetch(`/api/landingpage/apbdes/${id}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const result = await response.json();
-        if (result?.success) {
-          const data = result.data;
+        if (res.data?.success) {
+          const data = res.data.data;
           this.id = data.id;
           this.form = {
-            name: data.name,
-            jumlah: data.jumlah,
-            imageId: data.imageId,
-            fileId: data.fileId,
+            tahun: data.tahun || new Date().getFullYear(),
+            name: data.name || "",
+            deskripsi: data.deskripsi || "",
+            jumlah: data.jumlah || "",
+            imageId: data.imageId || "",
+            fileId: data.fileId || "",
+            items: (data.items || []).map((item: any) => ({
+              kode: item.kode,
+              uraian: item.uraian,
+              anggaran: item.anggaran,
+              realisasi: item.totalRealisasi || 0,
+              selisih: item.selisih || 0,
+              persentase: item.persentase || 0,
+              level: item.level,
+              tipe: item.tipe || 'pendapatan',
+            })),
           };
           return data;
         } else {
-          throw new Error(result?.message || "Gagal memuat data");
+          throw new Error(res.data?.message || "Gagal memuat data");
         }
-      } catch (error) {
-        console.error("Error loading apbdes:", error);
-        toast.error(
-          error instanceof Error ? error.message : "Gagal memuat data"
-        );
-        return null;
+      } catch (error: any) {
+        console.error("Edit load error:", error);
+        toast.error(error.message || "Gagal memuat data untuk diedit");
       } finally {
-        apbdes.edit.loading = false;
+        this.loading = false;
       }
     },
 
     async update() {
-      const cek = templateapbDesaForm.safeParse(apbdes.edit.form);
-      if (!cek.success) {
-        const err = `[${cek.error.issues
-          .map((v) => `${v.path.join(".")}`)
-          .join("\n")}] required`;
-        return toast.error(err);
+      const parsed = ApbdesFormSchema.safeParse(this.form);
+      if (!parsed.success) {
+        const errors = parsed.error.issues.map((issue) => `${issue.path.join(".")} - ${issue.message}`);
+        toast.error(`Validasi gagal:\n${errors.join("\n")}`);
+        return false;
       }
 
       try {
-        apbdes.edit.loading = true;
-        const response = await fetch(`/api/landingpage/apbdes/${this.id}`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            name: this.form.name,
-            jumlah: this.form.jumlah,
-            imageId: this.form.imageId,
-            fileId: this.form.fileId,
-          }),
-        });
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}));
-          throw new Error(
-            errorData.message || `HTTP error! status: ${response.status}`
-          );
-        }
-        const result = await response.json();
-        if (result.success) {
-          toast.success("Berhasil update apbdes");
-          await apbdes.findMany.load(); // refresh list
+        this.loading = true;
+        // Include the ID in the request body
+        // Omit realisasi, selisih, persentase karena itu calculated fields di backend
+        const requestData = {
+          tahun: parsed.data.tahun,
+          name: parsed.data.name,
+          deskripsi: parsed.data.deskripsi,
+          jumlah: parsed.data.jumlah,
+          imageId: parsed.data.imageId,
+          fileId: parsed.data.fileId,
+          id: this.id,
+          items: parsed.data.items.map(item => ({
+            kode: item.kode,
+            uraian: item.uraian,
+            anggaran: item.anggaran,
+            level: item.level,
+            tipe: item.tipe ?? null,
+          })),
+        };
+
+        const res = await (ApiFetch.api.landingpage.apbdes as any)[this.id].put(requestData);
+
+        if (res.data?.success) {
+          toast.success("APBDes berhasil diperbarui");
+          apbdes.findMany.load();
           return true;
         } else {
-          throw new Error(result.message || "Gagal mengupdate apbdes");
+          throw new Error(res.data?.message || "Gagal memperbarui APBDes");
         }
-      } catch (error) {
-        console.error("Error updating apbdes:", error);
-        toast.error(
-          error instanceof Error ? error.message : "Gagal mengupdate apbdes"
-        );
+      } catch (error: any) {
+        console.error("Update error:", error);
+        toast.error(error.message || "Gagal memperbarui APBDes");
         return false;
       } finally {
-        apbdes.edit.loading = false;
+        this.loading = false;
       }
     },
+
+    addItem(item: Partial<z.infer<typeof ApbdesItemSchema>>) {
+      const normalized = normalizeItem(item);
+      this.form.items.push(normalized);
+    },
+
+    removeItem(index: number) {
+      this.form.items.splice(index, 1);
+    },
+
     reset() {
-      apbdes.edit.id = "";
-      apbdes.edit.form = { ...defaultapbdesForm };
+      this.id = "";
+      this.form = { ...defaultApbdesForm };
+    },
+  },
+
+  // =========================================
+  // REALISASI STATE MANAGEMENT
+  // =========================================
+  realisasi: {
+    // Create realisasi
+    async create(itemId: string, data: { kode: string; jumlah: number; tanggal: string; keterangan?: string; buktiFileId?: string }) {
+      try {
+        const res = await (ApiFetch.api.landingpage.apbdes as any)[itemId].realisasi.post(data);
+
+        if (res.data?.success) {
+          toast.success("Realisasi berhasil ditambahkan");
+          // Reload findUnique untuk update data
+          const currentId = apbdes.findUnique.data?.id;
+          if (currentId) {
+            await apbdes.findUnique.load(currentId);
+          }
+          return true;
+        } else {
+          toast.error(res.data?.message || "Gagal menambahkan realisasi");
+          return false;
+        }
+      } catch (error: any) {
+        console.error("Create realisasi error:", error);
+        toast.error(error?.message || "Terjadi kesalahan saat menambahkan realisasi");
+        return false;
+      }
+    },
+
+    // Update realisasi
+    async update(realisasiId: string, data: { kode?: string; jumlah?: number; tanggal?: string; keterangan?: string; buktiFileId?: string }) {
+      try {
+        const res = await (ApiFetch.api.landingpage.apbdes as any).realisasi[realisasiId].put(data);
+
+        if (res.data?.success) {
+          toast.success("Realisasi berhasil diperbarui");
+          // Reload findUnique untuk update data
+          const currentId = apbdes.findUnique.data?.id;
+          if (currentId) {
+            await apbdes.findUnique.load(currentId);
+          }
+          return true;
+        } else {
+          toast.error(res.data?.message || "Gagal memperbarui realisasi");
+          return false;
+        }
+      } catch (error: any) {
+        console.error("Update realisasi error:", error);
+        toast.error(error?.message || "Terjadi kesalahan saat memperbarui realisasi");
+        return false;
+      }
+    },
+
+    // Delete realisasi
+    async delete(realisasiId: string) {
+      try {
+        const res = await (ApiFetch.api.landingpage.apbdes as any).realisasi[realisasiId].delete();
+
+        if (res.data?.success) {
+          toast.success("Realisasi berhasil dihapus");
+          // Reload findUnique untuk update data
+          if (apbdes.findUnique.data) {
+            await apbdes.findUnique.load(apbdes.findUnique.data.id);
+          }
+          return true;
+        } else {
+          toast.error(res.data?.message || "Gagal menghapus realisasi");
+          return false;
+        }
+      } catch (error: any) {
+        console.error("Delete realisasi error:", error);
+        toast.error(error?.message || "Terjadi kesalahan saat menghapus realisasi");
+        return false;
+      }
     },
   },
 });

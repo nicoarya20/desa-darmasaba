@@ -1,26 +1,23 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { SignJWT } from "jose";
 
 export async function encrypt({
   user,
-  exp = "7 year",
-  encodedKey,
+  exp = "7d",
+  jwtSecret,
 }: {
-  user: Record<string, any>;
-  exp?: string;
-  encodedKey: string;
+  user: Record<string, unknown>;
+  exp?: string | number;
+  jwtSecret: string;
 }): Promise<string | null> {
   try {
-    const enc = new TextEncoder().encode(encodedKey);
+    const secret = new TextEncoder().encode(jwtSecret);
     return new SignJWT({ user })
       .setProtectedHeader({ alg: "HS256" })
       .setIssuedAt()
       .setExpirationTime(exp)
-      .sign(enc);
+      .sign(secret);
   } catch (error) {
-    console.error("Gagal mengenkripsi", error);
+    console.error("JWT Encrypt failed:", error);
     return null;
   }
 }
-
-// wibu:0.2.82

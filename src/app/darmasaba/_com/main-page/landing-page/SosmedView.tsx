@@ -1,7 +1,9 @@
-import { ActionIcon, Card, Flex, Image, Text, Tooltip } from "@mantine/core";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { sosmedMap } from "@/app/admin/(dashboard)/landing-page/profil/_lib/sosmed";
+import colors from "@/con/colors";
+import { ActionIcon, Box, Card, Flex, Image, Text, Tooltip } from "@mantine/core";
 import { Prisma } from "@prisma/client";
 import { useTransitionRouter } from "next-view-transitions";
-import { IconBrandInstagram, IconBrandFacebook, IconBrandTwitter, IconWorld } from "@tabler/icons-react";
 
 function SosmedView({
   data,
@@ -10,17 +12,12 @@ function SosmedView({
 }) {
   const router = useTransitionRouter();
 
-  const fallbackIcon = (platform?: string) => {
-    switch (platform?.toLowerCase()) {
-      case "instagram":
-        return <IconBrandInstagram size={22} />;
-      case "facebook":
-        return <IconBrandFacebook size={22} />;
-      case "twitter":
-        return <IconBrandTwitter size={22} />;
-      default:
-        return <IconWorld size={22} />;
+  const getIconSource = (item: any) => {
+    if (item.image?.link) return item.image.link;
+    if (item.icon && sosmedMap[item.icon as keyof typeof sosmedMap]?.src) {
+      return sosmedMap[item.icon as keyof typeof sosmedMap].src;
     }
+    return null;
   };
 
   return (
@@ -29,7 +26,11 @@ function SosmedView({
         data.map((item, k) => (
           <Tooltip
             key={k}
-            label={item.name || "Tautan Sosial"}
+            label={
+              <Text fz={{ base: 12, md: 14 }}>
+                {item.name || "Tautan Sosial"}
+              </Text>
+            }
             withArrow
             position="top"
             transitionProps={{ transition: "pop", duration: 150 }}
@@ -44,18 +45,24 @@ function SosmedView({
                 boxShadow: "0 0 12px rgba(28, 110, 164, 0.6)",
               }}
             >
-              {item.image?.link ? (
-                <Image
-                  src={item.image.link}
-                  alt={item.name || "ikon"}
-                  w={24}
-                  h={24}
-                  fit="contain"
-                  loading="lazy"
-                />
-              ) : (
-                fallbackIcon(item.name)
-              )}
+              {(() => {
+                const src = getIconSource(item);
+
+                if (src) {
+                  return (
+                    <Image
+                      loading="lazy"
+                      src={src}
+                      alt={item.name}
+                      w={24}
+                      h={24}
+                      fit="contain"
+                    />
+                  );
+                }
+
+                return <Box bg={colors["blue-button"]} w="100%" h="100%" />;
+              })()}
             </ActionIcon>
           </Tooltip>
         ))
@@ -69,7 +76,12 @@ function SosmedView({
             background: "linear-gradient(135deg, #1C6EA4 0%, #000 100%)",
           }}
         >
-          <Text ta="center" c="dimmed" size="sm">
+          <Text
+            ta="center"
+            c="dimmed"
+            fz={{ base: 13, md: 15 }}
+            lh={1.4}
+          >
             Belum ada media sosial yang terhubung
           </Text>
         </Card>

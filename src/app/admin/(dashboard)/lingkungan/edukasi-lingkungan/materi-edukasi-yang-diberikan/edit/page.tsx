@@ -1,12 +1,13 @@
 'use client'
 import stateEdukasiLingkungan from '@/app/admin/(dashboard)/_state/lingkungan/edukasi-lingkungan';
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, Stack, Text, Title } from '@mantine/core';
+import { Box, Button, Group, Loader, Paper, Stack, Text, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack } from '@tabler/icons-react';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
 const EdukasiLingkunganTextEditor = dynamic(
@@ -17,9 +18,29 @@ const EdukasiLingkunganTextEditor = dynamic(
 export default function EditMateriEdukasiYangDiberikan() {
   const router = useRouter();
   const materiEdukasiState = useProxy(stateEdukasiLingkungan.stateMateriEdukasiLingkungan);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // State lokal gabungan untuk form
   const [formData, setFormData] = useState({ judul: '', content: '' });
+  const [originalData, setOriginalData] = useState({
+    judul: '',
+    content: '',
+  });
+
+  // Helper function to check if HTML content is empty
+  const isHtmlEmpty = (html: string) => {
+    // Remove all HTML tags and check if there's any text content
+    const textContent = html.replace(/<[^>]*>/g, '').trim();
+    return textContent === '';
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      !isHtmlEmpty(formData.judul) &&
+      !isHtmlEmpty(formData.content)
+    );
+  };
 
   // Initialize data kalau belum ada
   useShallowEffect(() => {
@@ -35,6 +56,10 @@ export default function EditMateriEdukasiYangDiberikan() {
         judul: materiEdukasiState.findById.data.judul ?? '',
         content: materiEdukasiState.findById.data.deskripsi ?? '',
       });
+      setOriginalData({
+        judul: materiEdukasiState.findById.data.judul ?? '',
+        content: materiEdukasiState.findById.data.deskripsi ?? '',
+      });
     }
   }, [materiEdukasiState.findById.data]);
 
@@ -42,21 +67,36 @@ export default function EditMateriEdukasiYangDiberikan() {
   const handleChange = (field: 'judul' | 'content', value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
+  const handleResetForm = () => {
+    setFormData({
+      judul: originalData.judul,
+      content: originalData.content,
+    });
+    toast.info("Form dikembalikan ke data awal");
+  };
 
   const submit = () => {
-    if (materiEdukasiState.findById.data) {
-      const updatedData = {
-        ...materiEdukasiState.findById.data,
-        judul: formData.judul,
-        deskripsi: formData.content,
-      };
-      materiEdukasiState.update.save(updatedData);
+    try {
+      setIsSubmitting(true);
+      if (materiEdukasiState.findById.data) {
+        const updatedData = {
+          ...materiEdukasiState.findById.data,
+          judul: formData.judul,
+          deskripsi: formData.content,
+        };
+        materiEdukasiState.update.save(updatedData);
+      }
+      router.push('/admin/lingkungan/edukasi-lingkungan/materi-edukasi-yang-diberikan');
+    } catch (error) {
+      console.error("Error updating materi edukasi yang diberikan:", error);
+      toast.error("Terjadi kesalahan saat memperbarui materi edukasi yang diberikan");
+    } finally {
+      setIsSubmitting(false);
     }
-    router.push('/admin/lingkungan/edukasi-lingkungan/materi-edukasi-yang-diberikan');
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+   <Box px={{ base: 0, md: 'lg' }} py="xs">
       <Group mb="md">
         <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
           <IconArrowBack color={colors['blue-button']} size={24} />
@@ -97,19 +137,33 @@ export default function EditMateriEdukasiYangDiberikan() {
             />
           </Box>
 
-          <Group justify="right" mt="md">
+          <Group justify="right">
+            {/* Tombol Batal */}
+            <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
             <Button
               onClick={submit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
-              loading={materiEdukasiState.update.loading}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

@@ -7,24 +7,43 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Stack,
   TextInput,
-  Title,
-  Tooltip,
+  Title
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
+import { convertToISODate } from '../../../lib/dateUtils';
 
 function EditKelahiran() {
   const editState = useProxy(persentaseKelahiranKematian.kelahiran);
   const router = useRouter();
   const params = useParams();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      formData.nama?.trim() !== '' &&
+      formData.tanggal !== '' &&
+      formData.jenisKelamin?.trim() !== '' &&
+      formData.alamat?.trim() !== ''
+    );
+  };
 
   const [formData, setFormData] = useState({
+    nama: '',
+    tanggal: '',
+    jenisKelamin: '',
+    alamat: '',
+  });
+
+  const [originalData, setOriginalData] = useState({
     nama: '',
     tanggal: '',
     jenisKelamin: '',
@@ -36,21 +55,32 @@ function EditKelahiran() {
     const loadKelahiran = async () => {
       const id = params?.id as string;
       if (!id) return;
-
+  
       try {
         const data = await editState.edit.load(id);
-        if (data) setFormData({ 
-          nama: data.nama || '',
-          tanggal: data.tanggal || '',
-          jenisKelamin: data.jenisKelamin || '',
-          alamat: data.alamat || ''
-        });
+        if (data) {
+          const formattedTanggal = convertToISODate(data.tanggal);
+  
+          setFormData({
+            nama: data.nama || '',
+            tanggal: formattedTanggal,
+            jenisKelamin: data.jenisKelamin || '',
+            alamat: data.alamat || ''
+          });
+  
+          setOriginalData({
+            nama: data.nama || '',
+            tanggal: formattedTanggal,
+            jenisKelamin: data.jenisKelamin || '',
+            alamat: data.alamat || ''
+          });
+        }
       } catch (error) {
         console.error('Error loading data kelahiran:', error);
         toast.error('Gagal memuat data kelahiran');
       }
     };
-
+  
     loadKelahiran();
   }, [params?.id]);
 
@@ -58,8 +88,40 @@ function EditKelahiran() {
     setFormData((prev) => ({ ...prev, [key]: value }));
   };
 
+  const handleResetForm = () => {
+    setFormData({
+      nama: originalData.nama,
+      tanggal: originalData.tanggal,
+      jenisKelamin: originalData.jenisKelamin,
+      alamat: originalData.alamat,
+    });
+    toast.info("Form dikembalikan ke data awal");
+  };
+
+
   const handleSubmit = async () => {
+    if (!formData.nama?.trim()) {
+      toast.error('Nama wajib diisi');
+      return;
+    }
+
+    if (!formData.tanggal) {
+      toast.error('Tanggal wajib diisi');
+      return;
+    }
+
+    if (!formData.jenisKelamin?.trim()) {
+      toast.error('Jenis kelamin wajib diisi');
+      return;
+    }
+
+    if (!formData.alamat?.trim()) {
+      toast.error('Alamat wajib diisi');
+      return;
+    }
+
     try {
+      setIsSubmitting(true);
       // Update global state hanya saat submit
       editState.edit.form = { ...editState.edit.form, ...formData };
       await editState.edit.update();
@@ -68,18 +130,18 @@ function EditKelahiran() {
     } catch (error) {
       console.error('Error updating data kelahiran:', error);
       toast.error('Terjadi kesalahan saat memperbarui data kelahiran');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+   <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Header */}
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
-        </Tooltip>
+        <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Edit Data Kelahiran
         </Title>
@@ -127,16 +189,30 @@ function EditKelahiran() {
 
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

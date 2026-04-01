@@ -13,18 +13,17 @@ const BeasiswaPendaftar = new Elysia({
   .post("/create", beasiswaPendaftarCreate, {
     body: t.Object({
       namaLengkap: t.String(),
-      nik: t.String(),
+      nis: t.String(),
+      kelas: t.String(),
+      jenisKelamin: t.String(),
+      alamatDomisili: t.String(),
       tempatLahir: t.String(),
       tanggalLahir: t.String(),
-      jenisKelamin: t.String(),
-      kewarganegaraan: t.String(),
-      agama: t.String(),
-      alamatKTP: t.String(),
-      alamatDomisili: t.String(),
+      namaOrtu: t.String(),
+      nik: t.String(),
+      pekerjaanOrtu: t.String(),
+      penghasilan: t.String(),
       noHp: t.String(),
-      email: t.String(),
-      statusPernikahan: t.String(),
-      ukuranBaju: t.String(),
     }),
   })
   .get("/findMany", beasiswaPendaftarFindMany)
@@ -43,18 +42,17 @@ const BeasiswaPendaftar = new Elysia({
     {
       body: t.Object({
         namaLengkap: t.String(),
-        nik: t.String(),
+        nis: t.String(),
+        kelas: t.String(),
+        jenisKelamin: t.String(),
+        alamatDomisili: t.String(),
         tempatLahir: t.String(),
         tanggalLahir: t.String(),
-        jenisKelamin: t.String(),
-        kewarganegaraan: t.String(),
-        agama: t.String(),
-        alamatKTP: t.String(),
-        alamatDomisili: t.String(),
+        namaOrtu: t.String(),
+        nik: t.String(),
+        pekerjaanOrtu: t.String(),
+        penghasilan: t.String(),
         noHp: t.String(),
-        email: t.String(),
-        statusPernikahan: t.String(),
-        ukuranBaju: t.String(),
       }),
     }
   )

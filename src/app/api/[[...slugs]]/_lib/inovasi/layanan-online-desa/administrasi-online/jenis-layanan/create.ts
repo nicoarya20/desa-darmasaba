@@ -20,7 +20,7 @@ export default async function jenisLayananCreate(context: Context) {
     });
     return {
         success: true,
-        message: "Success create jenis layanan",
+        message: "Sukses menambahkan jenis layanan",
         data: jenisLayanan
     };
 }

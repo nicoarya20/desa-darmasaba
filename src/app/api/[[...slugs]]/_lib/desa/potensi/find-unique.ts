@@ -21,8 +21,12 @@ export default async function findUnique(
             }, { status: 400 });
         }
 
-        const data = await prisma.potensiDesa.findUnique({
-            where: { id },
+        // ✅ Filter by isActive and deletedAt
+        const data = await prisma.potensiDesa.findFirst({
+            where: {
+                id,
+                isActive: true,
+            },
             include: {
                 image: true,
                 kategori: true
@@ -48,5 +52,5 @@ export default async function findUnique(
             message: "Gagal mengambil potensi desa: " + (error instanceof Error ? error.message : 'Unknown error'),
         }, { status: 500 });
     }
-    
+
 }

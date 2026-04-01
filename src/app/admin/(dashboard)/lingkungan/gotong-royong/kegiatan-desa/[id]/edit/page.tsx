@@ -5,17 +5,18 @@ import gotongRoyongState from '@/app/admin/(dashboard)/_state/lingkungan/gotong-
 import colors from '@/con/colors';
 import ApiFetch from '@/lib/api-fetch';
 import {
+  ActionIcon,
   Box,
   Button,
   Group,
   Image,
+  Loader,
   Paper,
   Select,
   Stack,
   Text,
   TextInput,
-  Title,
-  Tooltip,
+  Title
 } from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
 import { IconArrowBack, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
@@ -39,6 +40,7 @@ export default function EditKegiatanDesa() {
   const kegiatanDesaState = useProxy(gotongRoyongState.kegiatanDesa);
   const params = useParams();
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [formData, setFormData] = useState<FormKegiatanDesa>({
     judul: '',
@@ -50,8 +52,41 @@ export default function EditKegiatanDesa() {
     imageId: '',
     kategoriKegiatanId: '',
   });
+  const [originalData, setOriginalData] = useState({
+    judul: '',
+    deskripsiSingkat: '',
+    deskripsiLengkap: '',
+    tanggal: '',
+    lokasi: '',
+    partisipan: 0,
+    imageId: '',
+    imageUrl: '',
+    kategoriKegiatanId: '',
+  });
+
   const [file, setFile] = useState<File | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+
+  // Helper function to check if HTML content is empty
+  const isHtmlEmpty = (html: string) => {
+    // Remove all HTML tags and check if there's any text content
+    const textContent = html.replace(/<[^>]*>/g, '').trim();
+    return textContent === '';
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      formData.judul?.trim() !== '' &&
+      !isHtmlEmpty(formData.deskripsiSingkat) &&
+      !isHtmlEmpty(formData.deskripsiLengkap) &&
+      formData.tanggal?.trim() !== '' &&
+      formData.lokasi?.trim() !== '' &&
+      formData.partisipan !== null &&
+      formData.partisipan >= 0 &&
+      formData.kategoriKegiatanId?.trim() !== ''
+    );
+  };
 
   const formatDateForInput = (dateString: string) => {
     if (!dateString) return '';
@@ -78,10 +113,18 @@ export default function EditKegiatanDesa() {
             imageId: data.imageId || '',
             kategoriKegiatanId: data.kategoriKegiatanId || '',
           });
-          if (data.imageId) {
-            // Optional: bisa fetch URL image dari backend
-            setPreviewImage(`/api/file/${data.imageId}`);
-          }
+          setOriginalData({
+            judul: data.judul || '',
+            deskripsiSingkat: data.deskripsiSingkat || '',
+            deskripsiLengkap: data.deskripsiLengkap || '',
+            tanggal: data.tanggal || '',
+            lokasi: data.lokasi || '',
+            partisipan: data.partisipan || 0,
+            imageId: data.imageId || '',
+            kategoriKegiatanId: data.kategoriKegiatanId || '',
+            imageUrl: data.image?.link || "",
+          });
+          setPreviewImage(data.image?.link || null);
         }
       } catch (error) {
         console.error(error);
@@ -91,8 +134,24 @@ export default function EditKegiatanDesa() {
     loadData();
   }, [params?.id]);
 
+  const handleResetForm = () => {
+    setFormData({
+      judul: originalData.judul,
+      deskripsiSingkat: originalData.deskripsiSingkat,
+      deskripsiLengkap: originalData.deskripsiLengkap,
+      tanggal: originalData.tanggal,
+      lokasi: originalData.lokasi,
+      partisipan: originalData.partisipan,
+      imageId: originalData.imageId,
+      kategoriKegiatanId: originalData.kategoriKegiatanId,
+    });
+    setPreviewImage(originalData.imageUrl || null);
+    setFile(null);
+  };
+
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       let imageId = formData.imageId;
       if (file) {
         const res = await ApiFetch.api.fileStorage.create.post({ file, name: file.name });
@@ -118,17 +177,17 @@ export default function EditKegiatanDesa() {
     } catch (error) {
       console.error(error);
       toast.error('Terjadi kesalahan saat memperbarui kegiatan desa');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
-        </Tooltip>
+        <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Edit Kegiatan Desa
         </Title>
@@ -206,7 +265,7 @@ export default function EditKegiatanDesa() {
               }}
               onReject={() => toast.error('File tidak valid.')}
               maxSize={5 * 1024 ** 2}
-              accept={{ 'image/*': [] }}
+              accept={{ 'image/*': ['.jpeg', '.jpg', '.png', '.webp'] }}
               radius="md"
               p="xl"
             >
@@ -222,13 +281,13 @@ export default function EditKegiatanDesa() {
                 </Dropzone.Idle>
                 <Stack gap="xs" align="center">
                   <Text size="md" fw={500}>Drag gambar atau klik untuk pilih file</Text>
-                  <Text size="sm" c="dimmed">Maksimal 5MB, format gambar wajib</Text>
+                  <Text size="sm" c="dimmed">Maksimal 5MB, format gambar .png, .jpg, .jpeg, webp</Text>
                 </Stack>
               </Group>
             </Dropzone>
 
             {previewImage && (
-              <Box mt="sm" style={{ display: 'flex', justifyContent: 'center' }}>
+              <Box pos={"relative"} mt="sm" style={{ display: 'flex', justifyContent: 'center' }}>
                 <Image
                   src={previewImage}
                   alt="Preview"
@@ -236,22 +295,54 @@ export default function EditKegiatanDesa() {
                   style={{ maxHeight: 220, objectFit: 'contain', border: `1px solid ${colors['blue-button']}` }}
                   loading="lazy"
                 />
+                <ActionIcon
+                  variant="filled"
+                  color="red"
+                  radius="xl"
+                  size="sm"
+                  pos="absolute"
+                  top={5}
+                  right={5}
+                  onClick={() => {
+                    setPreviewImage(null);
+                    setFile(null);
+                  }}
+                  style={{
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                  }}
+                >
+                  <IconX size={14} />
+                </ActionIcon>
               </Box>
             )}
           </Box>
 
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

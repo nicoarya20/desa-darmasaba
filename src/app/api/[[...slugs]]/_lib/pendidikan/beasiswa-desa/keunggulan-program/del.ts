@@ -11,6 +11,6 @@ export default async function keunggulanProgramDelete(context: Context) {
   return {
     status: 200,
     success: true,
-    message: "Success delete keunggulan program",
+    message: "Sukses Menghapus keunggulan program",
   };
 }

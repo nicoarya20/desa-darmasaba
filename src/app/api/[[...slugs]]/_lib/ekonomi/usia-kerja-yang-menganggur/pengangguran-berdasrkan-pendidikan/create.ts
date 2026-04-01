@@ -33,7 +33,7 @@ export default async function grafikMenganggurBerdasarkanPendidikanCreate(contex
     });
     return {
         success: true,
-        message: "Success create grafik menganggur berdasarkan pendidikan",
+        message: "Sukses menambahkan grafik menganggur berdasarkan pendidikan",
         data: created,
     };
 }

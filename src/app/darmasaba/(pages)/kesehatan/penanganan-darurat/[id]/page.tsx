@@ -1,15 +1,14 @@
 'use client';
 import penangananDarurat from '@/app/admin/(dashboard)/_state/kesehatan/penanganan-darurat/penangananDarurat';
 import colors from '@/con/colors';
-import { Box, Button, Image, Paper, Skeleton, Stack, Text } from '@mantine/core';
+import { Box, Center, Image, Paper, Skeleton, Stack, Text, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { IconArrowBack } from '@tabler/icons-react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
+import BackButton from '../../../desa/layanan/_com/BackButto';
 
 function DetailPenangananDaruratUser() {
   const state = useProxy(penangananDarurat);
-  const router = useRouter();
   const params = useParams();
 
   useShallowEffect(() => {
@@ -32,53 +31,53 @@ function DetailPenangananDaruratUser() {
     <Box py={20}>
       {/* Tombol Back */}
       <Box px={{ base: 'md', md: 100 }}>
-        <Button
-          variant="subtle"
-          onClick={() => router.back()}
-          leftSection={<IconArrowBack size={22} color={colors['blue-button']} />}
-          mb={20}
-        >
-          Kembali
-        </Button>
+        <BackButton />
       </Box>
 
       {/* Wrapper Detail */}
-      <Paper
-        withBorder
-        w={{ base: '100%', md: '70%', lg: '60%' }}
-        mx="auto"
-        bg={colors['white-1']}
-        p="xl"
-        radius="lg"
-        shadow="sm"
-      >
-        <Stack gap="md" align="center" ta="center">
-          <Text fz="xl" fw={700} c={colors['blue-button']}>
-            {data.name || 'Penanganan Darurat'}
-          </Text>
+      <Box pt={20} px={{ base: 'md', md: 100 }}>
+        <Paper
+          withBorder
+          w={'100%'}
+          bg={colors['white-1']}
+          p="xl"
+          radius="lg"
+          shadow="sm"
+        >
+          <Stack gap="md">
+            <Title
+              ta={"center"}
+              order={1}
+              fw={700}
+              c={colors['blue-button']}
+              style={{ wordBreak: 'break-word' }}
+            >
+              {data.name || 'Penanganan Darurat'}
+            </Title>
+            <Center>
+              {data.image?.link && (
+                <Image
+                  src={data.image.link}
+                  alt={data.name}
+                  radius="md"
+                  mah={300}
+                  fit="contain"
+                  loading="lazy"
+                  mb="md"
+                />
+              )}
+            </Center>
 
-          {data.image?.link && (
-            <Image
-              src={data.image.link}
-              alt={data.name}
-              radius="md"
-              mah={300}
-              fit="contain"
-              loading="lazy"
-              mb="md"
-            />
-          )}
-
-          <Box>
-            <Text
-              fz="md"
-              ta="justify"
-              dangerouslySetInnerHTML={{ __html: data.deskripsi }}
-              style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
-            />
-          </Box>
-        </Stack>
-      </Paper>
+            <Box >
+              <Text
+                ta="justify"
+                dangerouslySetInnerHTML={{ __html: data.deskripsi }}
+                style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
+              />
+            </Box>
+          </Stack>
+        </Paper>
+      </Box>
     </Box>
   );
 }

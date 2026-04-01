@@ -1,10 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import colors from '@/con/colors';
-import { ScrollArea, Stack, Tabs, TabsList, TabsPanel, TabsTab, Title, Tooltip } from '@mantine/core';
+import { ScrollArea, Stack, Tabs, TabsList, TabsPanel, TabsTab, Title } from '@mantine/core';
+import { IconPhoto, IconVideo } from '@tabler/icons-react';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
-import { IconPhoto, IconVideo } from '@tabler/icons-react';
 
 function LayoutTabsGallery({ children }: { children: React.ReactNode }) {
     const router = useRouter()
@@ -14,15 +14,13 @@ function LayoutTabsGallery({ children }: { children: React.ReactNode }) {
             label: "Foto",
             value: "foto",
             href: "/admin/desa/gallery/foto",
-            icon: <IconPhoto size={18} stroke={1.8} />,
-            tooltip: "Kelola foto-foto galeri desa"
+            icon: <IconPhoto size={18} stroke={1.8} />
         },
         {
             label: "Video",
             value: "video",
             href: "/admin/desa/gallery/video",
-            icon: <IconVideo size={18} stroke={1.8} />,
-            tooltip: "Kelola video galeri desa"
+            icon: <IconVideo size={18} stroke={1.8} />
         },
     ];
 
@@ -70,25 +68,18 @@ function LayoutTabsGallery({ children }: { children: React.ReactNode }) {
                         }}
                     >
                         {tabs.map((tab, i) => (
-                            <Tooltip
+                            <TabsTab
                                 key={i}
-                                label={tab.tooltip}
-                                position="bottom"
-                                withArrow
-                                transitionProps={{ transition: 'pop', duration: 200 }}
+                                value={tab.value}
+                                leftSection={tab.icon}
+                                style={{
+                                    fontWeight: 600,
+                                    fontSize: "0.9rem",
+                                    transition: "all 0.2s ease",
+                                }}
                             >
-                                <TabsTab
-                                    value={tab.value}
-                                    leftSection={tab.icon}
-                                    style={{
-                                        fontWeight: 600,
-                                        fontSize: "0.9rem",
-                                        transition: "all 0.2s ease",
-                                    }}
-                                >
-                                    {tab.label}
-                                </TabsTab>
-                            </Tooltip>
+                                {tab.label}
+                            </TabsTab>
                         ))}
                     </TabsList>
                 </ScrollArea>

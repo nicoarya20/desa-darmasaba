@@ -4,7 +4,7 @@
 import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import jadwalKegiatanState from '@/app/admin/(dashboard)/_state/kesehatan/data_kesehatan_warga/jadwalKegiatan';
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, Stack, Text, TextInput, Title, Tooltip } from '@mantine/core';
+import { Box, Button, Group, Loader, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -39,7 +39,29 @@ function EditJadwalKegiatan() {
   const router = useRouter();
   const params = useParams();
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState<JadwalKegiatanFormBase>(emptyForm());
+  const [originalData, setOriginalData] = useState<JadwalKegiatanFormBase>(emptyForm());
+
+  // Helper function to check if HTML content is empty
+  const isHtmlEmpty = (html: string) => {
+    // Remove all HTML tags and check if there's any text content
+    const textContent = html.replace(/<[^>]*>/g, '').trim();
+    return textContent === '';
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      formData.content?.trim() !== '' &&
+      formData.informasiJadwalKegiatan.name?.trim() !== '' &&
+      formData.informasiJadwalKegiatan.tanggal?.trim() !== '' &&
+      formData.informasiJadwalKegiatan.waktu?.trim() !== '' &&
+      formData.informasiJadwalKegiatan.lokasi?.trim() !== '' &&
+      !isHtmlEmpty(formData.deskripsiJadwalKegiatan.deskripsi)
+    );
+  };
+
 
   // Helper untuk update nested state
   const updateNested = <
@@ -85,6 +107,19 @@ function EditJadwalKegiatan() {
             syaratKetentuanJadwalKegiatan: { content: form.syaratKetentuanJadwalKegiatan?.content || '' },
             dokumenJadwalKegiatan: { content: form.dokumenJadwalKegiatan?.content || '' },
           });
+          setOriginalData({
+            content: form.content || '',
+            informasiJadwalKegiatan: {
+              name: form.informasiJadwalKegiatan?.name || '',
+              tanggal: form.informasiJadwalKegiatan?.tanggal || '',
+              waktu: form.informasiJadwalKegiatan?.waktu || '',
+              lokasi: form.informasiJadwalKegiatan?.lokasi || '',
+            },
+            deskripsiJadwalKegiatan: { deskripsi: form.deskripsiJadwalKegiatan?.deskripsi || '' },
+            layananJadwalKegiatan: { content: form.layananJadwalKegiatan?.content || '' },
+            syaratKetentuanJadwalKegiatan: { content: form.syaratKetentuanJadwalKegiatan?.content || '' },
+            dokumenJadwalKegiatan: { content: form.dokumenJadwalKegiatan?.content || '' },
+          });
         }
       } catch (error) {
         console.error("Error loading jadwal kegiatan:", error);
@@ -94,8 +129,26 @@ function EditJadwalKegiatan() {
     loadJadwalKegiatan();
   }, [params?.id]);
 
+  const handleResetForm = () => {
+    setFormData({
+      content: originalData.content || '',
+      informasiJadwalKegiatan: {
+        name: originalData.informasiJadwalKegiatan?.name || '',
+        tanggal: originalData.informasiJadwalKegiatan?.tanggal || '',
+        waktu: originalData.informasiJadwalKegiatan?.waktu || '',
+        lokasi: originalData.informasiJadwalKegiatan?.lokasi || '',
+      },
+      deskripsiJadwalKegiatan: { deskripsi: originalData.deskripsiJadwalKegiatan?.deskripsi || '' },
+      layananJadwalKegiatan: { content: originalData.layananJadwalKegiatan?.content || '' },
+      syaratKetentuanJadwalKegiatan: { content: originalData.syaratKetentuanJadwalKegiatan?.content || '' },
+      dokumenJadwalKegiatan: { content: originalData.dokumenJadwalKegiatan?.content || '' },
+    });
+    toast.info("Form dikembalikan ke data awal");
+  };
+
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       stateJadwalKegiatan.edit.form = { ...stateJadwalKegiatan.edit.form, ...formData };
       const success = await stateJadwalKegiatan.edit.submit();
       if (success) {
@@ -105,18 +158,18 @@ function EditJadwalKegiatan() {
     } catch (error) {
       console.error("Error updating jadwal kegiatan:", error);
       toast.error(error instanceof Error ? error.message : "Gagal memperbarui data jadwal kegiatan");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Header */}
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
-        </Tooltip>
+        <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Edit Jadwal Kegiatan
         </Title>
@@ -193,16 +246,30 @@ function EditJadwalKegiatan() {
           {/* Submit */}
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

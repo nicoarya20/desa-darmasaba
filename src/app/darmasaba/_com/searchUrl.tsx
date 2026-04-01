@@ -1,4 +1,4 @@
-const getDetailUrl = (item: { type?: string; id: string | number; [key: string]: unknown }) => {
+const getDetailUrl = (item: { type?: string; id: string | number;[key: string]: unknown }) => {
   const { type, id, kategori } = item;
   const map: Record<string, (id: string | number, kategori?: string) => string> = {
     programinovasi: (id) => `/darmasaba/program-inovasi/${id}`,
@@ -6,20 +6,20 @@ const getDetailUrl = (item: { type?: string; id: string | number; [key: string]:
     sdgsdesa: () => '/darmasaba/sdgs-desa',
     apbdes: () => '/darmasaba/apbdes',
     prestasidesa: () => '/darmasaba/prestasi-desa',
-    pejabatdesa: () => '/darmasaba/ppid/profile-ppid',
+    pejabatdesa: () => '/darmasaba/ppid/profil-ppid',
     strukturppid: () => '/darmasaba/ppid/struktur-ppid',
     visimisippid: () => '/darmasaba/ppid/visi-misi',
     dasarhukumppid: () => '/darmasaba/ppid/dasar-hukum',
-    profileppid: () => '/darmasaba/ppid/profile',
+    profileppid: () => '/darmasaba/ppid/profil',
     daftarinformasipublik: () => '/darmasaba/ppid/daftar-informasi-publik',
-    perbekeldarmasaba: () => '/darmasaba/desa/profile',
+    perbekeldarmasaba: () => '/darmasaba/desa/profil',
     berita: (id, kategori) => `/darmasaba/desa/berita/${kategori}/${id}`,
     pengumuman: (id, kategori) => `/darmasaba/desa/pengumuman/${kategori}/${id}`,
-    sejarahdesa: () => '/darmasaba/desa/profile',
-    visimisidesa: () => '/darmasaba/desa/profile',
-    lambangdesa: () => '/darmasaba/desa/profile',
-    maskotdesa: () => '/darmasaba/desa/profile',
-    profilperbekel: () => '/darmasaba/desa/profile',
+    sejarahdesa: () => '/darmasaba/desa/profil',
+    visimisidesa: () => '/darmasaba/desa/profil',
+    lambangdesa: () => '/darmasaba/desa/profil',
+    maskotdesa: () => '/darmasaba/desa/profil',
+    profilperbekel: () => '/darmasaba/desa/profil',
     potensi: () => '/darmasaba/desa/potensi-desa',
     galleryFoto: () => '/darmasaba/desa/gallery/foto',
     galleryVideo: () => '/darmasaba/desa/gallery/video',
@@ -30,6 +30,8 @@ const getDetailUrl = (item: { type?: string; id: string | number; [key: string]:
     penghargaan: () => '/darmasaba/desa/penghargaan',
     posyandu: (id) => `/darmasaba/kesehatan/posyandu/${id}`,
     fasilitasKesehatan: () => '/darmasaba/kesehatan/data-kesehatan-warga',
+    dokterDanTenagaMedis: () => '/darmasaba/kesehatan/data-kesehatan-warga',
+    tarifDanLayanan: () => '/darmasaba/kesehatan/data-kesehatan-warga',
     jadwalKegiatan: () => '/darmasaba/kesehatan/data-kesehatan-warga',
     artikelKesehatan: () => '/darmasaba/kesehatan/data-kesehatan-warga',
     puskesmas: () => '/darmasaba/kesehatan/puskesmas',
@@ -45,7 +47,7 @@ const getDetailUrl = (item: { type?: string; id: string | number; [key: string]:
     tipsKeamanan: () => '/darmasaba/keamanan/tips-keamanan',
     pasarDesa: () => '/darmasaba/ekonomi/pasar-desa',
     lowonganKerjaLokal: () => '/darmasaba/ekonomi/lowongan-kerja-lokal',
-    strukturOrganisasi: () => '/darmasaba/ekonomi/struktur-organisasi-dan-sk-pengurus-bumdesa',
+    strukturOrganisasi: () => '/darmasaba/ekonomi/Struktur-Organisasi-Dan-Sk-Pengurus-BumDes',
     jumlahPendudukUsiaKerjaYangMenganggurUsia: () => '/darmasaba/ekonomi/jumlah-penduduk-usia-kerja-yang-menganggur',
     jumlahPendudukUsiaKerjaYangMenganggurPendidikan: () => '/darmasaba/ekonomi/jumlah-penduduk-usia-kerja-yang-menganggur',
     jumlahPendudukMiskin: () => '/darmasaba/ekonomi/jumlah-penduduk-miskin',
@@ -82,7 +84,7 @@ const getDetailUrl = (item: { type?: string; id: string | number; [key: string]:
     jenisProgramYangDiselenggarakan: () => '/darmasaba/pendidikan/pendidikan-non-formal',
     dataPerpustakaan: () => '/darmasaba/pendidikan/perpustakaan-digital/semua',
     dataPendidikan: () => '/darmasaba/pendidikan/data-pendidikan',
-    
+
   };
 
   if (type && map[type]) return map[type](id, kategori as string | undefined);

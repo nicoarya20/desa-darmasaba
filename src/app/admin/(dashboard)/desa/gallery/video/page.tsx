@@ -16,10 +16,9 @@ import {
   TableThead,
   TableTr,
   Text,
-  Title,
-  Tooltip
+  Title
 } from '@mantine/core';
-import { useShallowEffect } from '@mantine/hooks';
+import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
 import { IconDeviceImac, IconPlus, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -46,6 +45,7 @@ function Video() {
 function ListVideo({ search }: { search: string }) {
   const videoState = useProxy(stateGallery.video)
   const router = useRouter();
+  const [debouncedSearch] = useDebouncedValue(search, 1000);
 
   const {
     data,
@@ -56,77 +56,79 @@ function ListVideo({ search }: { search: string }) {
   } = videoState.findMany;
 
   useShallowEffect(() => {
-    load(page, 10, search)
-  }, [page, search])
+    load(page, 10, debouncedSearch)
+  }, [page, debouncedSearch])
 
   const filteredData = data || []
 
   if (loading || !data) {
     return (
-      <Stack py={10}>
+      <Stack py={20}>
         <Skeleton height={600} radius="md" />
       </Stack>
     )
   }
 
   return (
-    <Box py={10}>
-      <Paper withBorder bg={colors['white-1']} p={'lg'} shadow="md" radius="md">
-        <Group justify="space-between" mb="md">
-          <Title order={4}>Daftar Video</Title>
-          <Tooltip label="Tambah Video Baru" withArrow>
-            <Button
-              leftSection={<IconPlus size={18} />}
-              color="blue"
-              variant="light"
-              onClick={() => router.push('/admin/desa/gallery/video/create')}
-            >
-              Tambah Baru
-            </Button>
-          </Tooltip>
+    <Box py={20}>
+      <Paper withBorder bg={colors['white-1']} p={{ base: 'sm', md: 'lg' }} shadow="md" radius="md">
+        <Group justify="space-between" mb={{ base: 'sm', md: 'md' }}>
+          <Title order={4} lh={1.2}>
+            Daftar Video
+          </Title>
+          <Button
+            leftSection={<IconPlus size={18} />}
+            color="blue"
+            variant="light"
+            onClick={() => router.push('/admin/desa/gallery/video/create')}
+          >
+            Tambah Baru
+          </Button>
         </Group>
-        <Box style={{ overflowX: "auto" }}>
-          <Table highlightOnHover>
+
+        {/* Desktop Table */}
+        <Box visibleFrom="md" style={{ overflowX: 'auto' }}>
+         <Table highlightOnHover
+    layout="fixed" // 🔥 PENTING
+    withColumnBorders={false} striped verticalSpacing="sm">
             <TableThead>
               <TableTr>
-                <TableTh style={{ width: '25%' }}>Judul Video</TableTh>
-                <TableTh style={{ width: '20%' }}>Tanggal</TableTh>
-                <TableTh style={{ width: '30%' }}>Deskripsi</TableTh>
-                <TableTh style={{ width: '15%' }}>Aksi</TableTh>
+                <TableTh>Judul Video</TableTh>
+                <TableTh>Tanggal</TableTh>
+                <TableTh>Deskripsi</TableTh>
+                <TableTh>Aksi</TableTh>
               </TableTr>
             </TableThead>
             <TableTbody>
               {filteredData.length > 0 ? (
                 filteredData.map((item) => (
                   <TableTr key={item.id}>
-                    <TableTd style={{ width: '25%' }}>
-                      <Box w={200}> 
-                        <Text fw={500} truncate="end" lineClamp={1}>{item.name}</Text>
-                      </Box>
+                    <TableTd style={{ maxWidth: 250 }}>
+                      <Text fz="md" fw={500} lh={1.45} truncate="end" lineClamp={1}>
+                        {item.name}
+                      </Text>
                     </TableTd>
-                    <TableTd style={{ width: '20%' }}>
-                     <Box w={200}>
-                     <Text fz="sm" c="dimmed">
+                    <TableTd style={{ maxWidth: 250 }}>
+                      <Text fz="sm" c="dimmed" lh={1.45}>
                         {new Date(item.createdAt).toLocaleDateString('id-ID', {
                           day: 'numeric',
                           month: 'long',
                           year: 'numeric',
                         })}
                       </Text>
-                     </Box>
                     </TableTd>
-                    <TableTd style={{ width: '30%' }}>
-                     <Box w={200}>
-                      <Text fz="sm" truncate="end" lineClamp={1} dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
-                     </Box>
+                    <TableTd style={{ maxWidth: 250 }}>
+                      <Text fz="sm" lh={1.45} truncate="end" lineClamp={1} dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
                     </TableTd>
-                    <TableTd style={{ width: '15%' }}>
+                    <TableTd style={{ maxWidth: 250 }}>
                       <Button
                         variant="light"
                         color="blue"
                         onClick={() => router.push(`/admin/desa/gallery/video/${item.id}`)}
+                        fz="sm"
+                        px="xs"
                       >
-                        <IconDeviceImac size={20} />
+                        <IconDeviceImac size={18} />
                         <Text ml={5}>Detail</Text>
                       </Button>
                     </TableTd>
@@ -135,8 +137,10 @@ function ListVideo({ search }: { search: string }) {
               ) : (
                 <TableTr>
                   <TableTd colSpan={4}>
-                    <Center py={20}>
-                      <Text c="dimmed">Tidak ada video yang cocok</Text>
+                    <Center py={24}>
+                      <Text c="dimmed" fz="sm" lh={1.4}>
+                        Tidak ada video yang cocok
+                      </Text>
                     </Center>
                   </TableTd>
                 </TableTr>
@@ -144,8 +148,60 @@ function ListVideo({ search }: { search: string }) {
             </TableTbody>
           </Table>
         </Box>
+
+        {/* Mobile Cards */}
+        <Stack hiddenFrom="md" gap="xs" mt="sm">
+          {filteredData.length > 0 ? (
+            filteredData.map((item) => (
+              <Paper key={item.id} p="sm" withBorder radius="sm">
+                <Stack gap={"xs"}>
+                  <Box>
+                    <Text fz="xs" fw={600} lh={1.4}>Judul Video</Text>
+                    <Text fz="sm" fw={500} lh={1.45}>
+                      {item.name}
+                    </Text>
+                  </Box>
+                  <Box>
+                    <Text fz="xs" fw={600} lh={1.4}>Tanggal</Text>
+                    <Text fz="sm" fw={500} lh={1.45}>
+                      {new Date(item.createdAt).toLocaleDateString('id-ID', {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric',
+                      })}
+                    </Text>
+                  </Box>
+                  <Box>
+                    <Text fz="xs" fw={600} lh={1.4}>Deskripsi</Text>
+                    <Text fz="sm" lineClamp={5} fw={500} lh={1.45} dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
+                  </Box>
+                  <Box>
+                    <Button
+                      variant="light"
+                      color="blue"
+                      fullWidth
+                      onClick={() => router.push(`/admin/desa/gallery/video/${item.id}`)}
+                      fz="sm"
+                    >
+                      <IconDeviceImac size={18} />
+                      <Text ml={5}>Detail</Text>
+                    </Button>
+                  </Box>
+                </Stack>
+              </Paper>
+            ))
+          ) : (
+            <Center py={24}>
+              <Text c="dimmed" fz="sm" lh={1.4}>
+                Tidak ada video yang cocok
+              </Text>
+            </Center>
+          )}
+        </Stack>
       </Paper>
-      <Center>
+
+
+      <Center mt="xl">
         <Pagination
           value={page}
           onChange={(newPage) => {
@@ -153,8 +209,6 @@ function ListVideo({ search }: { search: string }) {
             window.scrollTo({ top: 0, behavior: 'smooth' })
           }}
           total={totalPages}
-          mt="md"
-          mb="md"
           color="blue"
           radius="md"
         />

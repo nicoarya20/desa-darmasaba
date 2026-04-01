@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import BackButton from '../../layanan/_com/BackButto';
 
+
 function Page() {
   const params = useParams<{ id: string }>();
   const id = Array.isArray(params.id) ? params.id[0] : params.id;
@@ -35,7 +36,9 @@ function Page() {
       <Center h="80vh">
         <Stack align="center" gap="md">
           <Loader size="lg" color="blue" />
-          <Text c="dimmed" fz="sm">Sedang memuat informasi...</Text>
+          <Text c="dimmed" fz={{ base: 'xs', md: 'sm' }} ta="center">
+            Sedang memuat informasi...
+          </Text>
         </Stack>
       </Center>
     );
@@ -46,38 +49,59 @@ function Page() {
       <Center h="80vh">
         <Stack align="center" gap="sm">
           <IconMoodSad size={64} stroke={1.5} color="var(--mantine-color-blue-6)" />
-          <Title order={3}>Data Tidak Ditemukan</Title>
-          <Text c="dimmed" fz="sm">Mohon periksa kembali atau coba beberapa saat lagi</Text>
+          <Title order={3} ta="center">
+            Data Tidak Ditemukan
+          </Title>
+          <Text c="dimmed" fz={{ base: 'xs', md: 'sm' }} ta="center">
+            Mohon periksa kembali atau coba beberapa saat lagi
+          </Text>
         </Stack>
       </Center>
     );
   }
 
   return (
-    <Stack pos="relative" bg={colors.Bg} py="xl" gap="xl" px={{ base: "md", md: 0 }}>
-      <Box px={{ base: "md", md: 100 }}>
+    <Stack pos="relative" bg={colors.Bg} py="xl" gap="xl" px={{ base: 'md', md: 0 }}>
+      <Box px={{ base: 'md', md: 100 }}>
         <BackButton />
       </Box>
-      <Container w={{ base: "100%", md: "60%" }}>
+      <Container w={{ base: '100%', md: '60%' }}>
         <Paper radius="2xl" shadow="lg" p="xl" withBorder>
           <Stack gap="lg" align="center">
-            <Title ta="center" fz={{ base: "2rem", md: "3rem" }} c={colors["blue-button"]} fw={800}>
+            <Title order={1} ta="center" c={colors['blue-button']} fw={800}>
               {state.findUnique.data?.name}
             </Title>
-            <Text ta="center" fw={600} fz={{ base: "md", md: "lg" }} c="dimmed">
+            <Text ta="center" fw={600} fz={{ base: 'md', md: 'lg' }} c="dimmed">
               Informasi & Pelayanan Potensi Desa Digital
             </Text>
-            <Image
-              src={state.findUnique.data?.image?.link || ''}
-              alt={state.findUnique.data?.name || 'Potensi Desa'}
-              radius="lg"
-              fit="cover"
+            <Box
               w="100%"
               h={{ base: 220, md: 400 }}
-              fallbackSrc="https://placehold.co/800x400?text=Gambar+tidak+tersedia"
-              loading="lazy"
+              style={{
+                overflow: 'hidden',
+                borderRadius: 'var(--mantine-radius-lg)',
+              }}
+            >
+              <Image
+                src={state.findUnique.data?.image?.link || ''}
+                alt={state.findUnique.data?.name || 'Potensi Desa'}
+                fit="cover"
+                w="100%"
+                h="100%"
+                fallbackSrc="https://placehold.co/800x400?text=Gambar+tidak+tersedia"
+                loading="lazy"
+                radius="lg"
+              />
+            </Box>
+            <Text
+              py="md"
+              fz={{ base: 'sm', md: 'md' }}
+              ta="justify"
+              lh={{ base: 1.6, md: 1.8 }}
+              dangerouslySetInnerHTML={{
+                __html: state.findUnique.data?.content || 'Belum ada deskripsi untuk potensi desa ini.',
+              }}
             />
-            <Text py="md" fz={{ base: "sm", md: "md" }} ta="justify" lh={1.8} dangerouslySetInnerHTML={{ __html: state.findUnique.data?.deskripsi || 'Belum ada deskripsi untuk potensi desa ini.' }} />
           </Stack>
         </Paper>
       </Container>

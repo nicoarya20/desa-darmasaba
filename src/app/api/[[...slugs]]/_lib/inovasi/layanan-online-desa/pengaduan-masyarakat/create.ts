@@ -31,7 +31,7 @@ export default async function pengaduanMasyarakatCreate(context: Context){
 
     return {
         success: true,
-        message: "Success create pengaduan masyarakat",
+        message: "Sukses menambahkan pengaduan masyarakat",
         data: {
             ...body,
         }

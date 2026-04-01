@@ -1,13 +1,13 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Paper, Stack, Text, Image, Skeleton, Group, Tooltip } from '@mantine/core';
+import { Box, Button, Group, Image, Paper, Skeleton, Stack, Text } from '@mantine/core';
+import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
-import React, { useState } from 'react';
-import puskesmasState from '../../../_state/kesehatan/puskesmas/puskesmas';
+import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
-import { useShallowEffect } from '@mantine/hooks';
 import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
+import puskesmasState from '../../../_state/kesehatan/puskesmas/puskesmas';
 
 function DetailPuskesmas() {
   const params = useParams();
@@ -40,7 +40,7 @@ function DetailPuskesmas() {
   const data = statePuskesmas.findUnique.data;
 
   return (
-    <Box py={10}>
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Tombol kembali */}
       <Button
         variant="subtle"
@@ -53,7 +53,7 @@ function DetailPuskesmas() {
 
       <Paper
         withBorder
-        w={{ base: "100%", md: "50%" }}
+        w={{ base: "100%", md: "70%" }}
         bg={colors['white-1']}
         p="lg"
         radius="md"
@@ -106,7 +106,6 @@ function DetailPuskesmas() {
               </Box>
 
               <Group gap="sm">
-                <Tooltip label="Hapus Data" withArrow position="top">
                   <Button
                     color="red"
                     onClick={() => {
@@ -119,9 +118,7 @@ function DetailPuskesmas() {
                   >
                     <IconTrash size={20} />
                   </Button>
-                </Tooltip>
 
-                <Tooltip label="Edit Data" withArrow position="top">
                   <Button
                     color="green"
                     onClick={() =>
@@ -133,7 +130,6 @@ function DetailPuskesmas() {
                   >
                     <IconEdit size={20} />
                   </Button>
-                </Tooltip>
               </Group>
             </Stack>
           </Paper>

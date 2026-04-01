@@ -8,8 +8,7 @@ import {
   Paper,
   Skeleton,
   Stack,
-  Text,
-  Tooltip,
+  Text
 } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
@@ -49,7 +48,7 @@ function DetailSektorUnggulanDesa() {
   const data = stateGrafik.findUnique.data;
 
   return (
-    <Box py={10}>
+   <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Tombol kembali */}
       <Button
         variant="subtle"
@@ -62,7 +61,7 @@ function DetailSektorUnggulanDesa() {
 
       <Paper
         withBorder
-        w={{ base: '100%', md: '60%' }}
+        w={{ base: '100%', md: '70%' }}
         bg={colors['white-1']}
         p="lg"
         radius="md"
@@ -82,7 +81,9 @@ function DetailSektorUnggulanDesa() {
 
               <Box>
                 <Text fz="lg" fw="bold">Deskripsi</Text>
-                <Text ta={"justify"} fz="md" c="dimmed" dangerouslySetInnerHTML={{ __html: data.description || '-' }} style={{ wordBreak: "break-word", whiteSpace: "normal" }} />
+                <Box pl={8}>
+                  <Text ta={"justify"} fz="md" c="dimmed" dangerouslySetInnerHTML={{ __html: data.description || '-' }} style={{ wordBreak: "break-word", whiteSpace: "normal" }} />
+                </Box>
               </Box>
 
               <Box>
@@ -92,36 +93,32 @@ function DetailSektorUnggulanDesa() {
 
               {/* Tombol Aksi */}
               <Group gap="sm">
-                <Tooltip label="Hapus Sektor Unggulan" withArrow position="top">
-                  <Button
-                    color="red"
-                    onClick={() => {
-                      setSelectedId(data.id);
-                      setModalHapus(true);
-                    }}
-                    variant="light"
-                    radius="md"
-                    size="md"
-                  >
-                    <IconTrash size={20} />
-                  </Button>
-                </Tooltip>
+                <Button
+                  color="red"
+                  onClick={() => {
+                    setSelectedId(data.id);
+                    setModalHapus(true);
+                  }}
+                  variant="light"
+                  radius="md"
+                  size="md"
+                >
+                  <IconTrash size={20} />
+                </Button>
 
-                <Tooltip label="Edit Sektor Unggulan" withArrow position="top">
-                  <Button
-                    color="green"
-                    onClick={() =>
-                      router.push(
-                        `/admin/ekonomi/sektor-unggulan-desa/${data.id}/edit`
-                      )
-                    }
-                    variant="light"
-                    radius="md"
-                    size="md"
-                  >
-                    <IconEdit size={20} />
-                  </Button>
-                </Tooltip>
+                <Button
+                  color="green"
+                  onClick={() =>
+                    router.push(
+                      `/admin/ekonomi/sektor-unggulan-desa/${data.id}/edit`
+                    )
+                  }
+                  variant="light"
+                  radius="md"
+                  size="md"
+                >
+                  <IconEdit size={20} />
+                </Button>
               </Group>
             </Stack>
           </Paper>

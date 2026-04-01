@@ -1,6 +1,6 @@
 'use client';
 
-import { Box, Container, SimpleGrid, Skeleton, Stack, Text } from '@mantine/core';
+import { Box, Container, SimpleGrid, Skeleton, Stack, Text, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconLeaf, IconPlant2, IconRecycle } from '@tabler/icons-react';
 import { useProxy } from 'valtio/utils';
@@ -51,20 +51,21 @@ export default function EdukasiLingkunganPage() {
       </Box>
 
       <Container size="lg" ta="center">
-        <Text
-          component="h1"
-          fz={{ base: 'h2', md: '2.5rem' }}
+        <Title
+          order={1}
           c={colors['blue-button']}
           fw={700}
           mb="md"
+          lh={1.15}
         >
           Edukasi Lingkungan
-        </Text>
+        </Title>
         <Text
-          fz={{ base: 'md', md: 'lg' }}
-          c="dimmed"
+          fz={{ base: 'sm', md: 'md' }}
+          lh={1.5}
           maw={800}
           mx="auto"
+          c="dark.9"
         >
           Program edukasi ini membimbing masyarakat untuk peduli dan bertanggung jawab terhadap alam,
           meningkatkan kesehatan, kenyamanan, dan keberlanjutan hidup bersama.
@@ -78,21 +79,21 @@ export default function EdukasiLingkunganPage() {
           verticalSpacing={{ base: 'md', md: 'xl' }}
         >
           <EdukasiCard
-            icon={<IconLeaf size={32} />}
+            icon={<IconLeaf size={45} />}
             title={tujuan.data?.judul || ''}
             description={tujuan.data?.deskripsi || ''}
             color={colors['blue-button']}
           />
 
           <EdukasiCard
-            icon={<IconRecycle size={32} />}
+            icon={<IconRecycle size={45} />}
             title={materi.data?.judul || ''}
             description={materi.data?.deskripsi || ''}
             color={colors['blue-button']}
           />
 
           <EdukasiCard
-            icon={<IconPlant2 size={32} />}
+            icon={<IconPlant2 size={45} />}
             title={contoh.data?.judul || ''}
             description={contoh.data?.deskripsi || ''}
             color={colors['blue-button']}

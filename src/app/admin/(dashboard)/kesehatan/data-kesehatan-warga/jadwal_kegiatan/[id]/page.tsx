@@ -2,7 +2,7 @@
 import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
 import jadwalKegiatanState from '@/app/admin/(dashboard)/_state/kesehatan/data_kesehatan_warga/jadwalKegiatan';
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, Skeleton, Stack, Text, Tooltip } from '@mantine/core';
+import { Box, Button, Group, Paper, Skeleton, Stack, Text } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -40,7 +40,7 @@ function DetailJadwalKegiatan() {
   const data = stateJadwalKegiatan.findUnique.data
 
   return (
-    <Box py={10}>
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Tombol Back */}
       <Button
         variant="subtle"
@@ -54,7 +54,7 @@ function DetailJadwalKegiatan() {
       {/* Wrapper Detail */}
       <Paper
         withBorder
-        w={{ base: "100%", md: "50%" }}
+        w={{ base: "100%", md: "70%" }}
         bg={colors['white-1']}
         p="lg"
         radius="md"
@@ -109,37 +109,33 @@ function DetailJadwalKegiatan() {
                 <Text fz="lg" fw="bold">Dokumen</Text>
                 <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data.dokumenjadwalkegiatan.content }} />
               </Box>
-              
+
               {/* Aksi */}
               <Group gap="sm">
-                <Tooltip label="Hapus Data" withArrow position="top">
-                  <Button
-                    color="red"
-                    onClick={() => {
-                      setSelectedId(data.id)
-                      setModalHapus(true)
-                    }}
-                    variant="light"
-                    radius="md"
-                    size="md"
-                  >
-                    <IconTrash size={20} />
-                  </Button>
-                </Tooltip>
+                <Button
+                  color="red"
+                  onClick={() => {
+                    setSelectedId(data.id)
+                    setModalHapus(true)
+                  }}
+                  variant="light"
+                  radius="md"
+                  size="md"
+                >
+                  <IconTrash size={20} />
+                </Button>
 
-                <Tooltip label="Edit Data" withArrow position="top">
-                  <Button
-                    color="green"
-                    onClick={() =>
-                      router.push(`/admin/kesehatan/data-kesehatan-warga/jadwal_kegiatan/${data.id}/edit`)
-                    }
-                    variant="light"
-                    radius="md"
-                    size="md"
-                  >
-                    <IconEdit size={20} />
-                  </Button>
-                </Tooltip>
+                <Button
+                  color="green"
+                  onClick={() =>
+                    router.push(`/admin/kesehatan/data-kesehatan-warga/jadwal_kegiatan/${data.id}/edit`)
+                  }
+                  variant="light"
+                  radius="md"
+                  size="md"
+                >
+                  <IconEdit size={20} />
+                </Button>
               </Group>
             </Stack>
           </Paper>

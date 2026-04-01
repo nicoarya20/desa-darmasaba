@@ -9,12 +9,12 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Stack,
   Text,
   TextInput,
-  Title,
-  Tooltip,
+  Title
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -48,6 +48,7 @@ function EditProgramPenghijauan() {
   const stateProgramPenghijauan = useProxy(programPenghijauanState);
   const params = useParams();
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [formData, setFormData] = useState<FormProgramPenghijauan>({
     name: '',
@@ -55,6 +56,30 @@ function EditProgramPenghijauan() {
     deskripsi: '',
     icon: '',
   });
+
+  const [originalData, setOriginalData] = useState<FormProgramPenghijauan>({
+    name: '',
+    judul: '',
+    deskripsi: '',
+    icon: '',
+  });
+
+  // Helper function to check if HTML content is empty
+  const isHtmlEmpty = (html: string) => {
+    // Remove all HTML tags and check if there's any text content
+    const textContent = html.replace(/<[^>]*>/g, '').trim();
+    return textContent === '';
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      formData.name?.trim() !== '' &&
+      formData.judul?.trim() !== '' &&
+      !isHtmlEmpty(formData.deskripsi) &&
+      formData.icon?.trim() !== ''
+    );
+  };
 
   // Load data program penghijauan
   useEffect(() => {
@@ -72,6 +97,12 @@ function EditProgramPenghijauan() {
             deskripsi: data.deskripsi,
             icon: data.icon,
           });
+          setOriginalData({
+            name: data.name,
+            judul: data.judul,
+            deskripsi: data.deskripsi,
+            icon: data.icon,
+          });
         }
       } catch (error) {
         console.error('Error loading program penghijauan:', error);
@@ -82,9 +113,20 @@ function EditProgramPenghijauan() {
     loadProgram();
   }, [params?.id]);
 
+  const handleResetForm = () => {
+    setFormData({
+      name: originalData.name,
+      judul: originalData.judul,
+      deskripsi: originalData.deskripsi,
+      icon: originalData.icon,
+    });
+    toast.info('Form dikembalikan ke data awal');
+  };
+
   // Hanya update global state saat submit
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       stateProgramPenghijauan.update.form = {
         name: formData.name.trim(),
         judul: formData.judul.trim(),
@@ -98,23 +140,23 @@ function EditProgramPenghijauan() {
     } catch (error) {
       console.error('Error updating program penghijauan:', error);
       toast.error('Gagal memperbarui program penghijauan');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+   <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Header */}
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button
-            variant="subtle"
-            onClick={() => router.back()}
-            p="xs"
-            radius="md"
-          >
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
-        </Tooltip>
+        <Button
+          variant="subtle"
+          onClick={() => router.back()}
+          p="xs"
+          radius="md"
+        >
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Edit Program Penghijauan
         </Title>
@@ -177,16 +219,30 @@ function EditProgramPenghijauan() {
           {/* Tombol simpan */}
           <Group justify="flex-end">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

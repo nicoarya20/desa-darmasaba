@@ -28,7 +28,7 @@ export default async function demografiPekerjaanCreate(context: Context) {
     });
     return {
         success: true,
-        message: "Success create demografi pekerjaan",
+        message: "Sukses menambahkan demografi pekerjaan",
         data: created,
     };
 }

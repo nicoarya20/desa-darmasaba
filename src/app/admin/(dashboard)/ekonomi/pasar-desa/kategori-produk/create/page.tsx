@@ -5,15 +5,15 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Stack,
   TextInput,
-  Title,
-  Tooltip
+  Title
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 import pasarDesaState from '../../../../_state/ekonomi/pasar-desa/pasar-desa';
@@ -21,6 +21,12 @@ import pasarDesaState from '../../../../_state/ekonomi/pasar-desa/pasar-desa';
 function CreateKategoriProduk() {
   const router = useRouter();
   const statePasar = useProxy(pasarDesaState.kategoriProduk);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return statePasar.create.form.nama?.trim() !== '';
+  };
 
   useEffect(() => {
     statePasar.findMany.load();
@@ -33,29 +39,34 @@ function CreateKategoriProduk() {
   };
 
   const handleSubmit = async () => {
-    if (!statePasar.create.form.nama) {
-      return toast.warn('Nama kategori produk wajib diisi');
+    try {
+      if (!statePasar.create.form.nama) {
+        return toast.warn('Nama kategori produk wajib diisi');
+      }
+      setIsSubmitting(true);
+      await statePasar.create.create();
+      resetForm();
+      router.push('/admin/ekonomi/pasar-desa/kategori-produk');
+    } catch (error) {
+      console.error(error)
+      toast.error('Gagal menambahkan kategori produk');
+    } finally {
+      setIsSubmitting(false);
     }
-
-    await statePasar.create.create();
-    resetForm();
-    router.push('/admin/ekonomi/pasar-desa/kategori-produk');
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+     <Box px={{ base: 0, md: 'xs' }} py="xs">
       {/* Header dengan tombol kembali */}
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button
-            variant="subtle"
-            onClick={() => router.back()}
-            p="xs"
-            radius="md"
-          >
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
-        </Tooltip>
+        <Button
+          variant="subtle"
+          onClick={() => router.back()}
+          p="xs"
+          radius="md"
+        >
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Tambah Kategori Produk
         </Title>
@@ -74,23 +85,37 @@ function CreateKategoriProduk() {
           <TextInput
             label="Nama Kategori Produk"
             placeholder="Masukkan nama kategori produk"
-            defaultValue={statePasar.create.form.nama || ''}
+            value={statePasar.create.form.nama || ''}
             onChange={(e) => (statePasar.create.form.nama = e.target.value)}
             required
           />
 
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

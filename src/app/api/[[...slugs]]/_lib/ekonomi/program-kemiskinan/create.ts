@@ -35,7 +35,7 @@ export default async function programKemiskinanCreate(context: Context) {
 
   return {
     success: true,
-    message: "Success create program kemiskinan dengan relasi statistik",
+    message: "Sukses menambahkan program kemiskinan dengan relasi statistik",
     data: program,
   };
 }

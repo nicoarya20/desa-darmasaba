@@ -11,7 +11,7 @@ export default async function grafikRespondenCreate(context: Context) {
 
   return {
     success: true,
-    message: "Success create grafik berdasarkan responden",
+    message: "Sukses menambahkan grafik berdasarkan responden",
     data: created, // ini termasuk id
   };
 }

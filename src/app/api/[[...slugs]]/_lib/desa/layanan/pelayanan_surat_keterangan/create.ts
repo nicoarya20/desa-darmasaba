@@ -23,7 +23,7 @@ async function createPelayananSuratKeterangan(context: Context) {
     });
     return {
         success: true,
-        message: "Success create pelayanan surat keterangan",
+        message: "Sukses menambahkan pelayanan surat keterangan",
         data: {
             ...body,
         },

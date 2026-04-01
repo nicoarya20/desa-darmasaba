@@ -1,6 +1,6 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Group, Image, Paper, Skeleton, Stack, Text, Tooltip } from '@mantine/core';
+import { Box, Button, Group, Image, Paper, Skeleton, Stack, Text } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -40,7 +40,7 @@ function DetailInfoTeknologiTepatGuna() {
   const data = stateInfoTekno.findUnique.data
 
   return (
-    <Box py={10}>
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Tombol Kembali */}
       <Button
         variant="subtle"
@@ -54,8 +54,8 @@ function DetailInfoTeknologiTepatGuna() {
       {/* Card Utama */}
       <Paper
         withBorder
-        w={{ base: "100%", md: "70%", lg: "60%" }}
-        bg="#ECEEF8"
+        w={{ base: "100%", md: "70%" }}
+        bg={colors['white-1']}
         p="lg"
         radius="md"
         shadow="sm"
@@ -65,7 +65,7 @@ function DetailInfoTeknologiTepatGuna() {
             Detail Info Teknologi Tepat Guna
           </Text>
 
-          <Paper bg={colors['BG-trans']} p="md" radius="md" shadow="xs">
+          <Paper bg="#ECEEF8" p="md" radius="md" shadow="xs">
             <Stack gap="sm">
               <Box>
                 <Text fz="lg" fw="bold">Judul</Text>
@@ -101,35 +101,31 @@ function DetailInfoTeknologiTepatGuna() {
 
               {/* Action Buttons */}
               <Group gap="sm" mt={10}>
-                <Tooltip label="Hapus Info Teknologi" withArrow position="top">
-                  <Button
-                    color="red"
-                    onClick={() => {
-                      setSelectedId(data.id);
-                      setModalHapus(true);
-                    }}
-                    variant="light"
-                    radius="md"
-                    size="md"
-                    disabled={stateInfoTekno.delete.loading}
-                  >
-                    <IconTrash size={20} />
-                  </Button>
-                </Tooltip>
+                <Button
+                  color="red"
+                  onClick={() => {
+                    setSelectedId(data.id);
+                    setModalHapus(true);
+                  }}
+                  variant="light"
+                  radius="md"
+                  size="md"
+                  disabled={stateInfoTekno.delete.loading}
+                >
+                  <IconTrash size={20} />
+                </Button>
 
-                <Tooltip label="Edit Info Teknologi" withArrow position="top">
-                  <Button
-                    color="green"
-                    onClick={() =>
-                      router.push(`/admin/inovasi/info-teknologi-tepat-guna/${data.id}/edit`)
-                    }
-                    variant="light"
-                    radius="md"
-                    size="md"
-                  >
-                    <IconEdit size={20} />
-                  </Button>
-                </Tooltip>
+                <Button
+                  color="green"
+                  onClick={() =>
+                    router.push(`/admin/inovasi/info-teknologi-tepat-guna/${data.id}/edit`)
+                  }
+                  variant="light"
+                  radius="md"
+                  size="md"
+                >
+                  <IconEdit size={20} />
+                </Button>
               </Group>
             </Stack>
           </Paper>

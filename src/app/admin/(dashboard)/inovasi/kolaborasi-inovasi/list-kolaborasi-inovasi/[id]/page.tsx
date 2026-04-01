@@ -1,5 +1,5 @@
 'use client'
-import { Box, Button, Group, Paper, Skeleton, Stack, Text, Tooltip } from '@mantine/core';
+import { Box, Button, Group, Paper, Skeleton, Stack, Text } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -41,7 +41,7 @@ function DetailKolaborasiInovasi() {
   const data = kolaborasiState.findUnique.data;
 
   return (
-    <Box py={10}>
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Tombol kembali */}
       <Button
         variant="subtle"
@@ -96,33 +96,29 @@ function DetailKolaborasiInovasi() {
 
               {/* Tombol aksi */}
               <Group gap="sm">
-                <Tooltip label="Hapus Kolaborasi Inovasi" withArrow position="top">
-                  <Button
-                    color="red"
-                    onClick={() => {
-                      setSelectedId(data.id);
-                      setModalHapus(true);
-                    }}
-                    variant="light"
-                    radius="md"
-                    size="md"
-                    disabled={kolaborasiState.delete.loading}
-                  >
-                    <IconTrash size={20} />
-                  </Button>
-                </Tooltip>
+                <Button
+                  color="red"
+                  onClick={() => {
+                    setSelectedId(data.id);
+                    setModalHapus(true);
+                  }}
+                  variant="light"
+                  radius="md"
+                  size="md"
+                  disabled={kolaborasiState.delete.loading}
+                >
+                  <IconTrash size={20} />
+                </Button>
 
-                <Tooltip label="Edit Kolaborasi Inovasi" withArrow position="top">
-                  <Button
-                    color="green"
-                    onClick={() => router.push(`/admin/inovasi/kolaborasi-inovasi/list-kolaborasi-inovasi/${data.id}/edit`)}
-                    variant="light"
-                    radius="md"
-                    size="md"
-                  >
-                    <IconEdit size={20} />
-                  </Button>
-                </Tooltip>
+                <Button
+                  color="green"
+                  onClick={() => router.push(`/admin/inovasi/kolaborasi-inovasi/list-kolaborasi-inovasi/${data.id}/edit`)}
+                  variant="light"
+                  radius="md"
+                  size="md"
+                >
+                  <IconEdit size={20} />
+                </Button>
               </Group>
             </Stack>
           </Paper>

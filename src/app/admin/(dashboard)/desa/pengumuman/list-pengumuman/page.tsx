@@ -17,10 +17,9 @@ import {
   TableThead,
   TableTr,
   Text,
-  Title,
-  Tooltip
+  Title
 } from '@mantine/core';
-import { useShallowEffect } from '@mantine/hooks';
+import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
 import { IconCircleDashedPlus, IconDeviceImacCog, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -47,46 +46,58 @@ function Pengumuman() {
 function ListPengumuman({ search }: { search: string }) {
   const pengumumanState = useProxy(stateDesaPengumuman);
   const router = useRouter();
+  const [debouncedSearch] = useDebouncedValue(search, 1000);
 
   const { data, page, totalPages, loading, load } = pengumumanState.pengumuman.findMany;
 
   useShallowEffect(() => {
-    load(page, 10, search);
-  }, [page, search]);
+    load(page, 10, debouncedSearch);
+  }, [page, debouncedSearch]);
 
   const filteredData = data || [];
 
   if (loading || !data) {
     return (
-      <Stack py={10}>
+      <Stack py={{ base: 'sm', md: 'md' }}>
         <Skeleton height={600} radius="md" />
       </Stack>
     );
   }
 
   return (
-    <Box py={10}>
-      <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
-        <Group justify="space-between" mb="md">
-          <Title order={4}>Daftar Pengumuman</Title>
-          <Tooltip label="Tambah Pengumuman" withArrow>
-            <Button
-              leftSection={<IconCircleDashedPlus size={18} />}
-              color="blue"
-              variant="light"
-              onClick={() => router.push('/admin/desa/pengumuman/list-pengumuman/create')}
-            >
-              Tambah Baru
-            </Button>
-          </Tooltip>
+    <Box py={{ base: 'sm', md: 'md' }}>
+      <Paper withBorder bg={colors['white-1']} p={{ base: 'md', md: 'lg' }} shadow="md" radius="md">
+        <Group justify="space-between" mb={{ base: 'sm', md: 'md' }}>
+          <Title order={4} lh={1.2}>
+            Daftar Pengumuman
+          </Title>
+          <Button
+            leftSection={<IconCircleDashedPlus size={18} />}
+            color="blue"
+            variant="light"
+            onClick={() => router.push('/admin/desa/pengumuman/list-pengumuman/create')}
+            fz={{ base: 'sm', md: 'md' }}
+          >
+            Tambah Baru
+          </Button>
         </Group>
-        <Box style={{ overflowX: 'auto' }}>
-          <Table highlightOnHover style={{ minWidth: '700px' }}>
+
+        {/* Desktop Table */}
+       <Box visibleFrom="md" style={{ overflowX: 'auto' }}>
+         <Table highlightOnHover
+    layout="fixed" // 🔥 PENTING
+    withColumnBorders={false}>
             <TableThead>
               <TableTr>
-                <TableTh style={{ width: '40%' }}>Judul</TableTh>
-                <TableTh style={{ width: '30%' }}>Kategori</TableTh>
-                <TableTh style={{ width: '20%' }}>Detail</TableTh>
+                <TableTh fz="sm" fw={600} ta="left">
+                  Judul
+                </TableTh>
+                <TableTh fz="sm" fw={600} ta="left">
+                  Kategori
+                </TableTh>
+                <TableTh fz="sm" fw={600} ta="left">
+                  Detail
+                </TableTh>
               </TableTr>
             </TableThead>
             <TableTbody>
@@ -94,14 +105,12 @@ function ListPengumuman({ search }: { search: string }) {
                 filteredData.map((item) => (
                   <TableTr key={item.id}>
                     <TableTd>
-                      <Box w={150}>
-                        <Text fw={500} truncate="end" lineClamp={1}>
-                          {item.judul}
-                        </Text>
-                      </Box>
+                      <Text fz="md" fw={500} lh={1.45} truncate="end" lineClamp={1}>
+                        {item.judul}
+                      </Text>
                     </TableTd>
                     <TableTd>
-                      <Text fz="sm" c="dimmed">
+                      <Text fz="sm" fw={500} lh={1.45} c="dimmed">
                         {item.CategoryPengumuman?.name || '-'}
                       </Text>
                     </TableTd>
@@ -112,9 +121,12 @@ function ListPengumuman({ search }: { search: string }) {
                         onClick={() =>
                           router.push(`/admin/desa/pengumuman/list-pengumuman/${item.id}`)
                         }
+                        fz="sm"
+                        px="sm"
+                        py="xs"
                       >
-                        <IconDeviceImacCog size={20} />
-                        <Text ml={5}>Detail</Text>
+                        <IconDeviceImacCog size={18} />
+                        <Text ml="xs">Detail</Text>
                       </Button>
                     </TableTd>
                   </TableTr>
@@ -122,8 +134,10 @@ function ListPengumuman({ search }: { search: string }) {
               ) : (
                 <TableTr>
                   <TableTd colSpan={3}>
-                    <Center py={20}>
-                      <Text color="dimmed">Tidak ada pengumuman yang cocok</Text>
+                    <Center py={{ base: 'sm', md: 'md' }}>
+                      <Text c="dimmed" fz="sm" lh={1.4}>
+                        Tidak ada pengumuman yang cocok
+                      </Text>
                     </Center>
                   </TableTd>
                 </TableTr>
@@ -131,7 +145,59 @@ function ListPengumuman({ search }: { search: string }) {
             </TableTbody>
           </Table>
         </Box>
+
+        {/* Mobile Card List */}
+        <Box hiddenFrom="md">
+          <Stack gap="xs">
+            {filteredData.length > 0 ? (
+              filteredData.map((item) => (
+                <Paper key={item.id} withBorder p="md" radius="sm">
+                  <Stack gap="xs">
+                    <Box>
+                      <Text fz="sm" fw={600} lh={1.4}>
+                        Judul
+                      </Text>
+                      <Text fz="sm" fw={500} lh={1.45}>
+                        {item.judul}
+                      </Text>
+                    </Box>
+                    <Box>
+                      <Text fz="sm" fw={600} lh={1.4}>
+                        Kategori
+                      </Text>
+                      <Text fz="sm" fw={500} lh={1.45} c="dimmed">
+                        {item.CategoryPengumuman?.name || '-'}
+                      </Text>
+                    </Box>
+                    <Box>
+                      <Button
+                        variant="light"
+                        color="blue"
+                        onClick={() =>
+                          router.push(`/admin/desa/pengumuman/list-pengumuman/${item.id}`)
+                        }
+                        fullWidth
+                        fz="sm"
+                        mt="xs"
+                      >
+                        <IconDeviceImacCog size={18} />
+                        <Text ml="xs">Detail</Text>
+                      </Button>
+                    </Box>
+                  </Stack>
+                </Paper>
+              ))
+            ) : (
+              <Center py="sm">
+                <Text c="dimmed" fz="sm" lh={1.4}>
+                  Tidak ada pengumuman yang cocok
+                </Text>
+              </Center>
+            )}
+          </Stack>
+        </Box>
       </Paper>
+
       <Center>
         <Pagination
           value={page}

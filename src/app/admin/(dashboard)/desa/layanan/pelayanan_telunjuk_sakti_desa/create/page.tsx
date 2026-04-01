@@ -6,20 +6,31 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Stack,
   TextInput,
-  Title,
-  Tooltip
+  Title
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
 function CreatePelayananTelunjukDesa() {
   const stateTelunjukDesa = useProxy(stateLayananDesa.pelayananTelunjukSaktiDesa);
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      stateTelunjukDesa.create.form.name?.trim() !== '' &&
+      stateTelunjukDesa.create.form.deskripsi?.trim() !== '' &&
+      stateTelunjukDesa.create.form.link?.trim() !== ''
+    );
+  };
 
   const resetForm = () => {
     stateTelunjukDesa.create.form = {
@@ -30,7 +41,23 @@ function CreatePelayananTelunjukDesa() {
   };
 
   const handleSubmit = async () => {
+    if (!stateTelunjukDesa.create.form.name?.trim()) {
+      toast.error('Nama pelayanan wajib diisi');
+      return;
+    }
+
+    if (!stateTelunjukDesa.create.form.deskripsi?.trim()) {
+      toast.error('Judul link wajib diisi');
+      return;
+    }
+
+    if (!stateTelunjukDesa.create.form.link?.trim()) {
+      toast.error('Link wajib diisi');
+      return;
+    }
+
     try {
+      setIsSubmitting(true);
       await stateTelunjukDesa.create.create();
       resetForm();
       toast.success('Data pelayanan telunjuk sakti berhasil ditambahkan');
@@ -38,18 +65,18 @@ function CreatePelayananTelunjukDesa() {
     } catch (error) {
       console.error('Error create pelayanan telunjuk sakti:', error);
       toast.error('Terjadi kesalahan saat menambahkan data');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+   <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Header */}
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
           <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
             <IconArrowBack color={colors['blue-button']} size={24} />
           </Button>
-        </Tooltip>
         <Title order={4} ml="sm" c="dark">
           Tambah Pelayanan Telunjuk Sakti Desa
         </Title>
@@ -67,7 +94,7 @@ function CreatePelayananTelunjukDesa() {
         <Stack gap="md">
           {/* Nama */}
           <TextInput
-            defaultValue={stateTelunjukDesa.create.form.name}
+            value={stateTelunjukDesa.create.form.name}
             onChange={(val) => {
               stateTelunjukDesa.create.form.name = val.target.value;
             }}
@@ -78,7 +105,7 @@ function CreatePelayananTelunjukDesa() {
 
           {/* Deskripsi */}
           <TextInput
-            defaultValue={stateTelunjukDesa.create.form.deskripsi}
+            value={stateTelunjukDesa.create.form.deskripsi}
             onChange={(val) => {
               stateTelunjukDesa.create.form.deskripsi = val.target.value;
             }}
@@ -89,7 +116,7 @@ function CreatePelayananTelunjukDesa() {
 
           {/* Link */}
           <TextInput
-            defaultValue={stateTelunjukDesa.create.form.link}
+            value={stateTelunjukDesa.create.form.link}
             onChange={(val) => {
               stateTelunjukDesa.create.form.link = val.target.value;
             }}
@@ -101,16 +128,30 @@ function CreatePelayananTelunjukDesa() {
           {/* Tombol Simpan */}
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

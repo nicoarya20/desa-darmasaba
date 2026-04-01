@@ -4,6 +4,7 @@ import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import stateGallery from '@/app/admin/(dashboard)/_state/desa/gallery';
 import colors from '@/con/colors';
 import {
+  ActionIcon,
   Box,
   Button,
   Group,
@@ -11,11 +12,11 @@ import {
   Stack,
   TextInput,
   Title,
-  Tooltip
+  Loader
 } from '@mantine/core';
-import { IconArrowBack } from '@tabler/icons-react';
+import { IconArrowBack, IconX } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState, useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 import { convertYoutubeUrlToEmbed } from '../../../lib/youtube-utils';
@@ -24,6 +25,32 @@ function EditVideo() {
   const router = useRouter();
   const videoState = useProxy(stateGallery.video);
   const params = useParams();
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Helper function to check if HTML content is empty
+  const isHtmlEmpty = (html: string) => {
+    // Remove all HTML tags and check if there's any text content
+    const textContent = html.replace(/<[^>]*>/g, '').trim();
+    return textContent === '';
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    const embedLink = convertYoutubeUrlToEmbed(formData.linkVideo);
+    return (
+      formData.name?.trim() !== '' &&
+      formData.linkVideo?.trim() !== '' &&
+      !isHtmlEmpty(formData.deskripsi) &&
+      embedLink !== null // Make sure the embed link is valid
+    );
+  };
+
+  const [originalData, setOriginalData] = useState({
+    name: "",
+    deskripsi: "",
+    linkVideo: "",
+  });
 
   const [formData, setFormData] = useState({
     name: '',
@@ -45,6 +72,11 @@ function EditVideo() {
             deskripsi: data.deskripsi ?? '',
             linkVideo: data.linkVideo ?? '',
           });
+          setOriginalData({
+            name: data.name ?? '',
+            deskripsi: data.deskripsi ?? '',
+            linkVideo: data.linkVideo ?? '',
+          });
         }
       } catch (error) {
         console.error('Error loading video:', error);
@@ -62,43 +94,73 @@ function EditVideo() {
     []
   );
 
+  const handleResetForm = () => {
+    setFormData({
+      name: originalData.name,
+      deskripsi: originalData.deskripsi,
+      linkVideo: originalData.linkVideo,
+    });
+    toast.info("Form dikembalikan ke data awal");
+  };
+
   const handleSubmit = async () => {
-    const converted = convertYoutubeUrlToEmbed(formData.linkVideo);
-    if (!converted) {
-      toast.error("Link YouTube tidak valid. Pastikan formatnya benar.");
+    if (!formData.name?.trim()) {
+      toast.error('Judul wajib diisi');
+      return;
+    }
+    
+    if (!formData.linkVideo?.trim()) {
+      toast.error('Link YouTube wajib diisi');
+      return;
+    }
+    
+    if (isHtmlEmpty(formData.deskripsi)) {
+      toast.error('Deskripsi wajib diisi');
       return;
     }
 
     try {
-      videoState.update.form = {
-        name: formData.name,
-        deskripsi: formData.deskripsi,
-        linkVideo: formData.linkVideo,
-      };
-      await videoState.update.update();
-      toast.success('Video berhasil diperbarui!');
-      router.push('/admin/desa/gallery/video');
+      setIsSubmitting(true);
+      const converted = convertYoutubeUrlToEmbed(formData.linkVideo);
+      if (!converted) {
+        toast.error("Link YouTube tidak valid. Pastikan formatnya benar.");
+        return;
+      }
+
+      try {
+        videoState.update.form = {
+          name: formData.name,
+          deskripsi: formData.deskripsi,
+          linkVideo: formData.linkVideo,
+        };
+        await videoState.update.update();
+        toast.success('Video berhasil diperbarui!');
+        router.push('/admin/desa/gallery/video');
+      } catch (error) {
+        console.error('Error updating video:', error);
+        toast.error('Terjadi kesalahan saat memperbarui video');
+      }
     } catch (error) {
       console.error('Error updating video:', error);
       toast.error('Terjadi kesalahan saat memperbarui video');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   const embedLink = convertYoutubeUrlToEmbed(formData.linkVideo);
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+   <Box px={{ base: 0, md: 'lg' }} py="xs">
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button
-            variant="subtle"
-            onClick={() => router.back()}
-            p="xs"
-            radius="md"
-          >
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
-        </Tooltip>
+        <Button
+          variant="subtle"
+          onClick={() => router.back()}
+          p="xs"
+          radius="md"
+        >
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Edit Video
         </Title>
@@ -130,7 +192,7 @@ function EditVideo() {
               required
             />
             {embedLink && (
-              <Box mt="sm" style={{ display: 'flex', justifyContent: 'center' }}>
+              <Box mt="sm" pos="relative" style={{ display: 'flex', justifyContent: 'center' }}>
                 <iframe
                   className="rounded"
                   width="100%"
@@ -138,7 +200,27 @@ function EditVideo() {
                   src={embedLink}
                   title="Preview Video"
                   allowFullScreen
-                ></iframe>
+                />
+                <ActionIcon
+                  variant="filled"
+                  color="red"
+                  radius="xl"
+                  size="sm"
+                  pos="absolute"
+                  top={5}
+                  right={5}
+                  onClick={() => {
+                    setFormData({
+                      ...formData,
+                      linkVideo: '',
+                    });
+                  }}
+                  style={{
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                  }}
+                >
+                  <IconX size={14} />
+                </ActionIcon>
               </Box>
             )}
           </Box>
@@ -155,16 +237,30 @@ function EditVideo() {
 
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

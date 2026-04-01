@@ -1,6 +1,6 @@
 'use client';
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, Stack, Title, Tooltip } from '@mantine/core';
+import { Loader, Box, Button, Group, Paper, Stack, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
@@ -9,6 +9,7 @@ import { useProxy } from 'valtio/utils';
 import stateVisiMisiPPID from '../../../_state/ppid/visi_misi_ppid/visimisiPPID';
 import MisiPPID from '../misiPPID/misi-PPID';
 import VisiPPID from '../visiPPID/visi-PPID';
+import { toast } from 'react-toastify';
 
 function VisiMisiPPIDEdit() {
   const router = useRouter();
@@ -16,6 +17,23 @@ function VisiMisiPPIDEdit() {
 
   // Gabung state lokal menjadi satu object
   const [formData, setFormData] = useState({ visi: '', misi: '' });
+  const [originalData, setOriginalData] = useState({ visi: '', misi: '' });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Helper function to check if rich text content is empty
+  const isRichTextEmpty = (content: string) => {
+    // Remove HTML tags and check if the resulting text is empty
+    const plainText = content.replace(/<[^>]*>/g, '').trim();
+    return plainText === '' || content.trim() === '<p></p>' || content.trim() === '<p><br></p>';
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      !isRichTextEmpty(formData.visi) &&
+      !isRichTextEmpty(formData.misi)
+    );
+  };
 
   // Initialize global data ke state lokal saat pertama load
   useShallowEffect(() => {
@@ -30,6 +48,10 @@ function VisiMisiPPIDEdit() {
         visi: visiMisi.findById.data.visi ?? '',
         misi: visiMisi.findById.data.misi ?? '',
       });
+      setOriginalData({
+        visi: visiMisi.findById.data.visi ?? '',
+        misi: visiMisi.findById.data.misi ?? '',
+      });
     }
   }, [visiMisi.findById.data]);
 
@@ -37,24 +59,38 @@ function VisiMisiPPIDEdit() {
     setFormData(prev => ({ ...prev, [key]: value }));
   };
 
+  const handleResetForm = () => {
+    setFormData({
+      visi: originalData.visi,
+      misi: originalData.misi,
+    });
+    toast.info('Form dikembalikan ke data awal');
+  };
+
   const submit = () => {
-    if (visiMisi.findById.data) {
-      // update nilai global hanya saat submit
-      visiMisi.findById.data.visi = formData.visi;
-      visiMisi.findById.data.misi = formData.misi;
-      visiMisi.update.save(visiMisi.findById.data);
+    try {
+      setIsSubmitting(true);
+      if (visiMisi.findById.data) {
+        // update nilai global hanya saat submit
+        visiMisi.findById.data.visi = formData.visi;
+        visiMisi.findById.data.misi = formData.misi;
+        visiMisi.update.save(visiMisi.findById.data);
+      }
+      router.push('/admin/ppid/visi-misi-ppid');
+    } catch (error) {
+      console.error("Error updating visi misi:", error);
+      toast.error("Terjadi kesalahan saat memperbarui visi misi");
+    } finally {
+      setIsSubmitting(false);
     }
-    router.push('/admin/ppid/visi-misi-ppid');
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+        <Box px={{ base: 0, md: 'lg' }} py="xs">
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
-        </Tooltip>
+        <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Edit Visi Misi PPID
         </Title>
@@ -77,19 +113,34 @@ function VisiMisiPPIDEdit() {
             <MisiPPID value={formData.misi} onChange={value => handleChange('misi', value)} />
           </Box>
 
-          <Group justify="flex-end" mt="md">
+          {/* ======= Tombol Aksi ======= */}
+          <Group justify="right">
+            {/* Tombol Batal */}
             <Button
-              onClick={submit}
-              loading={visiMisi.update.loading}
+              variant="outline"
+              color="gray"
               radius="md"
               size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
+              onClick={submit}
+              radius="md"
+              size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

@@ -4,11 +4,12 @@ import PolsekTerdekat from "./polsek-terdekat";
 import PencegahanKriminalitas from "./pencegahan-kriminalitas";
 import MenuTipsKeamanan from "./tips-keamanan";
 import LaporanPublik from "./laporan-publik";
-import LayananPolsek from "./layanan-polsek";
+
 import KontakDaruratKeamanan from "./kontak-darurat-keamanan";
 import KontakItem from "./kontak-darurat-keamanan/kontak-item";
+import LayananPolsek from "./polsek-terdekat/layanan-polsek";
 
-const Keamanan = new Elysia({ prefix: "/api/keamanan", tags: ["Keamanan"] })
+const Keamanan = new Elysia({ prefix: "/keamanan", tags: ["Keamanan"] })
 .use(KeamananLingkungan)
 .use(PolsekTerdekat)
 .use(PencegahanKriminalitas)

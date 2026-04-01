@@ -10,7 +10,7 @@ import { useProxy } from 'valtio/utils';
 function Page() {
   const stateList = useProxy(infoSekolahPaud.pengajar)
   const [search, setSearch] = useState("")
-  const [debouncedSearch] = useDebouncedValue(search, 500); // 500ms delay
+  const [debouncedSearch] = useDebouncedValue(search, 1000); // 500ms delay
   const {
     data,
     page,
@@ -46,7 +46,7 @@ function Page() {
         <Group justify="space-between" align="center" mb="md">
           <Group gap="sm">
             <IconMicroscope size={28} stroke={1.5} color={colors['blue-button']} />
-            <Title order={2} fz="xl">Daftar Pengajar</Title>
+            <Title order={2} fz="xl" c={colors['blue-button']}>Daftar Pengajar</Title>
           </Group>
           <TextInput
             placeholder='pencarian'

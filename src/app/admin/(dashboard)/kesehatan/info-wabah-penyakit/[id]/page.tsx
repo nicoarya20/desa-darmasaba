@@ -3,21 +3,20 @@ import colors from '@/con/colors';
 import {
   Box,
   Button,
-  Paper,
-  Stack,
-  Text,
-  Skeleton,
-  Tooltip,
   Group,
   Image,
+  Paper,
+  Skeleton,
+  Stack,
+  Text
 } from '@mantine/core';
+import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
-import React, { useState } from 'react';
-import infoWabahPenyakit from '../../../_state/kesehatan/info-wabah-penyakit/infoWabahPenyakit';
+import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
-import { useShallowEffect } from '@mantine/hooks';
 import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
+import infoWabahPenyakit from '../../../_state/kesehatan/info-wabah-penyakit/infoWabahPenyakit';
 
 function DetailInfoWabahPenyakit() {
   const state = useProxy(infoWabahPenyakit);
@@ -50,7 +49,7 @@ function DetailInfoWabahPenyakit() {
   const data = state.findUnique.data;
 
   return (
-    <Box py={10}>
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Tombol Back */}
       <Button
         variant="subtle"
@@ -64,7 +63,7 @@ function DetailInfoWabahPenyakit() {
       {/* Wrapper Detail */}
       <Paper
         withBorder
-        w={{ base: '100%', md: '50%' }}
+        w={{ base: '100%', md: '70%' }}
         bg={colors['white-1']}
         p="lg"
         radius="md"
@@ -90,6 +89,7 @@ function DetailInfoWabahPenyakit() {
               <Box>
                 <Text fz="lg" fw="bold">Deskripsi Lengkap</Text>
                 <Text
+                  pl={10}
                   fz="md"
                   c="dimmed"
                   dangerouslySetInnerHTML={{ __html: data.deskripsiLengkap }}
@@ -114,36 +114,32 @@ function DetailInfoWabahPenyakit() {
 
               {/* Aksi */}
               <Group gap="sm">
-                <Tooltip label="Hapus Data" withArrow position="top">
-                  <Button
-                    color="red"
-                    onClick={() => {
-                      setSelectedId(data.id);
-                      setModalHapus(true);
-                    }}
-                    variant="light"
-                    radius="md"
-                    size="md"
-                  >
-                    <IconTrash size={20} />
-                  </Button>
-                </Tooltip>
+                <Button
+                  color="red"
+                  onClick={() => {
+                    setSelectedId(data.id);
+                    setModalHapus(true);
+                  }}
+                  variant="light"
+                  radius="md"
+                  size="md"
+                >
+                  <IconTrash size={20} />
+                </Button>
 
-                <Tooltip label="Edit Data" withArrow position="top">
-                  <Button
-                    color="green"
-                    onClick={() =>
-                      router.push(
-                        `/admin/kesehatan/info-wabah-penyakit/${data.id}/edit`
-                      )
-                    }
-                    variant="light"
-                    radius="md"
-                    size="md"
-                  >
-                    <IconEdit size={20} />
-                  </Button>
-                </Tooltip>
+                <Button
+                  color="green"
+                  onClick={() =>
+                    router.push(
+                      `/admin/kesehatan/info-wabah-penyakit/${data.id}/edit`
+                    )
+                  }
+                  variant="light"
+                  radius="md"
+                  size="md"
+                >
+                  <IconEdit size={20} />
+                </Button>
               </Group>
             </Stack>
           </Paper>

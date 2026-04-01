@@ -3,7 +3,7 @@
 import { ModalKonfirmasiHapus } from "@/app/admin/(dashboard)/_com/modalKonfirmasiHapus"
 import indeksKepuasanState from "@/app/admin/(dashboard)/_state/landing-page/indeks-kepuasan"
 import colors from "@/con/colors"
-import { Box, Button, Group, Paper, Skeleton, Stack, Text, Tooltip } from "@mantine/core"
+import { Box, Button, Group, Paper, Skeleton, Stack, Text } from "@mantine/core"
 import { useShallowEffect } from "@mantine/hooks"
 import { IconArrowBack, IconEdit, IconTrash } from "@tabler/icons-react"
 import { useParams, useRouter } from "next/navigation"
@@ -38,7 +38,7 @@ export default function DetailResponden() {
     )
   }
   return (
-    <Box py={10}>
+    <Box px={{ base: 0, md: 'xs' }} py="xs">
       <Button
         variant="subtle"
         onClick={() => router.back()}
@@ -50,7 +50,7 @@ export default function DetailResponden() {
 
       <Paper
         withBorder
-        w={{ base: "100%", md: "60%" }}
+        w={{ base: "100%", md: "70%" }}
         bg={colors['white-1']}
         p="lg"
         radius="md"
@@ -89,7 +89,6 @@ export default function DetailResponden() {
               </Box>
               
               <Group gap="sm" mt="md">
-                <Tooltip label="Hapus Responden" withArrow position="top">
                   <Button
                     color="red"
                     variant="light"
@@ -104,9 +103,8 @@ export default function DetailResponden() {
                   >
                     Hapus
                   </Button>
-                </Tooltip>
-                <Tooltip label="Edit Responden" withArrow position="top">
-                  <Button
+                
+                <Button
                     color="green"
                     variant="light"
                     onClick={() => {
@@ -119,7 +117,6 @@ export default function DetailResponden() {
                   >
                     Edit
                   </Button>
-                </Tooltip>
               </Group>
             </Stack>
           </Paper>

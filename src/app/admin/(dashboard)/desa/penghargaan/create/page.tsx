@@ -2,16 +2,17 @@
 import colors from '@/con/colors';
 import ApiFetch from '@/lib/api-fetch';
 import {
+  ActionIcon,
   Box,
   Button,
   Group,
   Image,
+  Loader,
   Paper,
   Stack,
   Text,
   TextInput,
-  Title,
-  Tooltip,
+  Title
 } from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
 import { IconArrowBack, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
@@ -27,6 +28,24 @@ function CreatePenghargaan() {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Helper function to check if HTML content is empty
+  const isHtmlEmpty = (html: string) => {
+    // Remove all HTML tags and check if there's any text content
+    const textContent = html.replace(/<[^>]*>/g, '').trim();
+    return textContent === '';
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      statePenghargaan.create.form.name?.trim() !== '' &&
+      statePenghargaan.create.form.juara?.trim() !== '' &&
+      !isHtmlEmpty(statePenghargaan.create.form.deskripsi) &&
+      file !== null
+    );
+  };
 
   const resetForm = () => {
     statePenghargaan.create.form = {
@@ -40,37 +59,63 @@ function CreatePenghargaan() {
   };
 
   const handleSubmit = async () => {
+    if (!statePenghargaan.create.form.name?.trim()) {
+      toast.error('Nama penghargaan wajib diisi');
+      return;
+    }
+
+    if (!statePenghargaan.create.form.juara?.trim()) {
+      toast.error('Juara wajib diisi');
+      return;
+    }
+
+    if (isHtmlEmpty(statePenghargaan.create.form.deskripsi)) {
+      toast.error('Deskripsi wajib diisi');
+      return;
+    }
+
     if (!file) {
-      return toast.warn('Silakan pilih file gambar terlebih dahulu');
+      toast.error('Gambar wajib dipilih');
+      return;
     }
 
-    const res = await ApiFetch.api.fileStorage.create.post({
-      file,
-      name: file.name,
-    });
+    try {
+      setIsSubmitting(true);
+      if (!file) {
+        return toast.warn('Silakan pilih file gambar terlebih dahulu');
+      }
 
-    const uploaded = res.data?.data;
+      const res = await ApiFetch.api.fileStorage.create.post({
+        file,
+        name: file.name,
+      });
 
-    if (!uploaded?.id) {
-      return toast.error('Gagal mengunggah gambar, silakan coba lagi');
+      const uploaded = res.data?.data;
+
+      if (!uploaded?.id) {
+        return toast.error('Gagal mengunggah gambar, silakan coba lagi');
+      }
+
+      statePenghargaan.create.form.imageId = uploaded.id;
+
+      await statePenghargaan.create.create();
+      resetForm();
+      router.push('/admin/desa/penghargaan');
+    } catch (error) {
+      console.error('Error creating penghargaan:', error);
+      toast.error('Terjadi kesalahan saat menambahkan penghargaan');
+    } finally {
+      setIsSubmitting(false);
     }
-
-    statePenghargaan.create.form.imageId = uploaded.id;
-
-    await statePenghargaan.create.create();
-    resetForm();
-    router.push('/admin/desa/penghargaan');
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Header */}
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
-        </Tooltip>
+        <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Tambah Penghargaan
         </Title>
@@ -87,7 +132,7 @@ function CreatePenghargaan() {
       >
         <Stack gap="md">
           <TextInput
-            defaultValue={statePenghargaan.create.form.name}
+            value={statePenghargaan.create.form.name}
             onChange={(val) => (statePenghargaan.create.form.name = val.target.value)}
             label="Nama Penghargaan"
             placeholder="Masukkan nama penghargaan"
@@ -95,7 +140,7 @@ function CreatePenghargaan() {
           />
 
           <TextInput
-            defaultValue={statePenghargaan.create.form.juara}
+            value={statePenghargaan.create.form.juara}
             onChange={(val) => (statePenghargaan.create.form.juara = val.target.value)}
             label="Juara"
             placeholder="Masukkan juara"
@@ -125,7 +170,7 @@ function CreatePenghargaan() {
               }}
               onReject={() => toast.error('File tidak valid, gunakan format gambar')}
               maxSize={5 * 1024 ** 2}
-              accept={{ 'image/*': [] }}
+              accept={{ 'image/*': ['.jpeg', '.jpg', '.png', '.webp'] }}
               radius="md"
               p="xl"
             >
@@ -146,7 +191,7 @@ function CreatePenghargaan() {
             </Dropzone>
 
             {previewImage && (
-              <Box mt="sm" style={{ textAlign: 'center' }}>
+              <Box pos={"relative"} mt="sm" style={{ textAlign: 'center' }}>
                 <Image
                   src={previewImage}
                   alt="Preview Gambar"
@@ -154,6 +199,24 @@ function CreatePenghargaan() {
                   style={{ maxHeight: 200, objectFit: 'contain', border: '1px solid #ddd' }}
                   loading="lazy"
                 />
+                <ActionIcon
+                  variant="filled"
+                  color="red"
+                  radius="xl"
+                  size="sm"
+                  pos="absolute"
+                  top={5}
+                  right={5}
+                  onClick={() => {
+                    setPreviewImage(null);
+                    setFile(null);
+                  }}
+                  style={{
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                  }}
+                >
+                  <IconX size={14} />
+                </ActionIcon>
               </Box>
             )}
           </Box>
@@ -161,16 +224,30 @@ function CreatePenghargaan() {
           {/* Button Submit */}
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

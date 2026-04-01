@@ -11,6 +11,6 @@ export default async function umurRespondenDelete(context: Context) {
     return {
         status: 200,
         success: true,
-        message: "Success delete umur responden",
+        message: "Sukses Menghapus umur responden",
     };
 }

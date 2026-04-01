@@ -19,7 +19,7 @@ export default async function kategoriKegiatanCreate(context: Context) {
     });
     return {
         success: true,
-        message: "Success create kategori kegiatan",
+        message: "Sukses menambahkan kategori kegiatan",
         data: kategoriKegiatan
     };
 }

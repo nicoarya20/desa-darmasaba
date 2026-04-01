@@ -43,7 +43,7 @@ function DetailKeteranganBankSampahTerdekat() {
   }
 
   return (
-    <Box>
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       <Box mb="md">
         <Button
           variant="light"
@@ -57,7 +57,7 @@ function DetailKeteranganBankSampahTerdekat() {
       </Box>
 
       <Paper
-        w={{ base: "100%", md: "60%" }}
+        w={{ base: "100%", md: "70%" }}
         p="xl"
         radius="lg"
         withBorder

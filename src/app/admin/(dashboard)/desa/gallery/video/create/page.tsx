@@ -3,6 +3,7 @@ import CreateEditor from '@/app/admin/(dashboard)/_com/createEditor';
 import stateGallery from '@/app/admin/(dashboard)/_state/desa/gallery';
 import colors from '@/con/colors';
 import {
+  ActionIcon,
   Box,
   Button,
   Group,
@@ -11,9 +12,9 @@ import {
   Text,
   TextInput,
   Title,
-  Tooltip,
+  Loader
 } from '@mantine/core';
-import { IconArrowBack } from '@tabler/icons-react';
+import { IconArrowBack, IconX } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
@@ -25,6 +26,24 @@ function CreateVideo() {
   const router = useRouter();
   const [link, setLink] = useState('');
   const embedLink = convertYoutubeUrlToEmbed(link);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Helper function to check if HTML content is empty
+  const isHtmlEmpty = (html: string) => {
+    // Remove all HTML tags and check if there's any text content
+    const textContent = html.replace(/<[^>]*>/g, '').trim();
+    return textContent === '';
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      videoState.create.form.name?.trim() !== '' &&
+      link.trim() !== '' &&
+      !isHtmlEmpty(videoState.create.form.deskripsi) &&
+      embedLink !== null // Make sure the embed link is valid
+    );
+  };
 
   const resetForm = () => {
     videoState.create.form = {
@@ -36,31 +55,57 @@ function CreateVideo() {
   };
 
   const handleSubmit = async () => {
+    if (!videoState.create.form.name?.trim()) {
+      toast.error('Judul wajib diisi');
+      return;
+    }
+    
+    if (!link.trim()) {
+      toast.error('Link YouTube wajib diisi');
+      return;
+    }
+    
+    if (isHtmlEmpty(videoState.create.form.deskripsi)) {
+      toast.error('Deskripsi wajib diisi');
+      return;
+    }
+    
     if (!embedLink) {
       toast.error('Link YouTube tidak valid. Pastikan formatnya benar.');
       return;
     }
 
-    videoState.create.form.linkVideo = embedLink;
-    await videoState.create.create();
-    resetForm();
-    router.push('/admin/desa/gallery/video');
+    try {
+      setIsSubmitting(true);
+      if (!embedLink) {
+        toast.error('Link YouTube tidak valid. Pastikan formatnya benar.');
+        return;
+      }
+
+      videoState.create.form.linkVideo = embedLink;
+      await videoState.create.create();
+      resetForm();
+      router.push('/admin/desa/gallery/video');
+    } catch (error) {
+      console.error("Error creating video:", error);
+      toast.error("Terjadi kesalahan saat menambahkan video");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Header Back Button + Title */}
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button
-            variant="subtle"
-            onClick={() => router.back()}
-            p="xs"
-            radius="md"
-          >
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
-        </Tooltip>
+        <Button
+          variant="subtle"
+          onClick={() => router.back()}
+          p="xs"
+          radius="md"
+        >
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Tambah Video
         </Title>
@@ -80,7 +125,7 @@ function CreateVideo() {
           <TextInput
             label="Judul Video"
             placeholder="Masukkan judul video"
-            defaultValue={videoState.create.form.name}
+            value={videoState.create.form.name}
             onChange={(e) => {
               videoState.create.form.name = e.currentTarget.value;
             }}
@@ -91,14 +136,14 @@ function CreateVideo() {
           <TextInput
             label="Link Video YouTube"
             placeholder="https://www.youtube.com/watch?v=abc123"
-            defaultValue={link}
+            value={link}
             onChange={(e) => setLink(e.currentTarget.value)}
             required
           />
 
           {/* Preview Video */}
           {embedLink && (
-            <Box mt="sm">
+            <Box mt="sm" pos="relative">
               <iframe
                 style={{
                   borderRadius: 10,
@@ -109,7 +154,24 @@ function CreateVideo() {
                 src={embedLink}
                 title="Preview Video"
                 allowFullScreen
-              ></iframe>
+              />
+              <ActionIcon
+                variant="filled"
+                color="red"
+                radius="xl"
+                size="sm"
+                pos="absolute"
+                top={5}
+                right={5}
+                onClick={() => {
+                  setLink('');
+                }}
+                style={{
+                  boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                }}
+              >
+                <IconX size={14} />
+              </ActionIcon>
             </Box>
           )}
 
@@ -129,16 +191,30 @@ function CreateVideo() {
           {/* Button Submit */}
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

@@ -7,13 +7,13 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Select,
   Stack,
   Text,
   TextInput,
-  Title,
-  Tooltip,
+  Title
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -30,11 +30,25 @@ function EditSiswa() {
   const siswaState = useProxy(infoSekolahPaud.siswa);
   const params = useParams();
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [originalData, setOriginalData] = useState({
+    nama: "",
+    lembagaId: "",
+  });
 
   const [formData, setFormData] = useState<FormSiswa>({
     nama: '',
     lembagaId: '',
   });
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      formData.nama?.trim() !== '' &&
+      formData.lembagaId?.trim() !== ''
+    );
+  };
 
   // Load data siswa
   useEffect(() => {
@@ -46,6 +60,10 @@ function EditSiswa() {
         const data = await siswaState.edit.load(id);
         if (data) {
           setFormData({
+            nama: data.nama || '',
+            lembagaId: data.lembagaId || '',
+          });
+          setOriginalData({
             nama: data.nama || '',
             lembagaId: data.lembagaId || '',
           });
@@ -68,9 +86,18 @@ function EditSiswa() {
     }));
   };
 
+  const handleResetForm = () => {
+    setFormData({
+      nama: originalData.nama,
+      lembagaId: originalData.lembagaId,
+    });
+    toast.info('Form dikembalikan ke data awal');
+  };
+
   // Submit ke global state
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       siswaState.edit.form = {
         ...siswaState.edit.form,
         nama: formData.nama.trim(),
@@ -82,18 +109,18 @@ function EditSiswa() {
     } catch (error) {
       console.error('Error updating siswa:', error);
       toast.error('Terjadi kesalahan saat memperbarui siswa');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Header */}
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
-        </Tooltip>
+        <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Edit Siswa
         </Title>
@@ -133,16 +160,30 @@ function EditSiswa() {
 
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

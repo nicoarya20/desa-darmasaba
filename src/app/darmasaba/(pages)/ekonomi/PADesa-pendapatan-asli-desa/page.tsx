@@ -1,7 +1,7 @@
 'use client'
 import PendapatanAsliDesa from '@/app/admin/(dashboard)/_state/ekonomi/PADesa';
 import colors from '@/con/colors';
-import { Box, Grid, GridCol, Paper, SimpleGrid, Stack, Table, Text, Title } from '@mantine/core';
+import { Box, Flex, Group, Paper, SimpleGrid, Stack, Table, Text, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { useProxy } from 'valtio/utils';
 import BackButton from '../../desa/layanan/_com/BackButto';
@@ -30,196 +30,265 @@ function Page() {
   // Hasil akhir
   const sisaAnggaran = totalPendapatan - totalBelanja - totalPembiayaan;
 
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      minimumFractionDigits: 0
+    }).format(value);
+  };
+
   return (
     <Stack pos="relative" bg={colors.Bg} py="xl" gap="lg">
       <Box px={{ base: 'md', md: 100 }}>
         <BackButton />
       </Box>
-      <Text ta="center" fz={{ base: "h1", md: "2.5rem" }} c={colors["blue-button"]} fw="bold">
+
+      {/* Page Title */}
+      <Title
+        ta="center"
+        c={colors["blue-button"]}
+        fw="bold"
+        order={1}
+        fz={{ base: 28, md: 36 }}
+      >
         Pendapatan Asli Desa
-      </Text>
+      </Title>
+
       <Box px={{ base: "md", md: 100 }}>
         <Stack gap="lg" justify="center">
-          <Paper bg={colors['white-1']} p="xl">
-            <SimpleGrid cols={{ base: 1, md: 3 }} spacing="md">
+          <Paper bg={colors['white-1']} p={{ base: 'md', md: 'xl' }}>
+            <SimpleGrid cols={{ base: 1, md: 3 }} spacing="lg">
               {/* Pendapatan Card */}
-              <Box p="md" style={{ border: '1px solid #e9ecef', borderRadius: '8px' }}>
-                <Stack gap={"xs"}>
-                  <Title order={3}>Pendapatan</Title>
-                  {latestApb?.pendapatan?.map((item) => (
-                    <Box key={item.id}>
-                      <Grid>
-                        <GridCol span={{ base: 12, md: 6 }} style={{ maxWidth: '180px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                          <Text fz="md" fw={500}>{item.name}</Text>
-                        </GridCol>
-                        <GridCol span={{ base: 12, md: 6 }} style={{ maxWidth: '180px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              <Box
+                p="md"
+                style={{
+                  border: '1px solid #e9ecef',
+                  borderRadius: '8px',
+                  height: '100%'
+                }}
+              >
+                <Stack gap="md">
+                  <Title order={3} fz={{ base: 18, md: 20 }} c={colors['blue-button']}>
+                    Pendapatan
+                  </Title>
+
+                  <Stack gap="sm">
+                    {latestApb?.pendapatan?.map((item) => (
+                      <Box key={item.id}>
+                        <Flex gap={1}>
                           <Text
-                            fz="md"
+                            fz={{ base: 13, md: 14 }}
                             fw={500}
-                            style={{
-                              wordBreak: 'break-word',
-                              whiteSpace: 'normal',
-                              textAlign: 'right',
-                            }}
+                            lh={1.4}
+                            c="black"
+                            style={{ wordBreak: 'break-word' }}
                           >
-                            {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(item.value)}
+                            {item.name} {formatCurrency(item.value)}
                           </Text>
-                        </GridCol>
-                      </Grid>
-                    </Box>
-                  ))}
-                  <Grid>
-                    <GridCol span={{ base: 12, md: 6 }} style={{ maxWidth: '180px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                      <Text fz="lg" fw={600} mb="xs">Total Pendapatan</Text>
-                    </GridCol>
-                    <GridCol span={{ base: 12, md: 6 }} style={{ maxWidth: '180px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                      <Text style={{
-                        wordBreak: 'break-word',
-                        whiteSpace: 'normal'
-                      }} fz="xl" fw={700} c={colors['blue-button']}>
-                        {new Intl.NumberFormat('id-ID', {
-                          style: 'currency',
-                          currency: 'IDR',
-                          minimumFractionDigits: 0
-                        }).format(totalPendapatan)}
+                        </Flex>
+                      </Box>
+                    ))}
+                  </Stack>
+
+                  <Box
+                    pt="sm"
+                    mt="auto"
+                    style={{
+                      borderTop: `2px solid ${colors['blue-button']}`
+                    }}
+                  >
+                    <Flex direction="column" gap={4}>
+                      <Text fz={{ base: 14, md: 16 }} fw={600} lh={1.4}>
+                        Total Pendapatan
                       </Text>
-                    </GridCol>
-                  </Grid>
+                      <Text
+                        fz={{ base: 18, md: 22 }}
+                        fw={700}
+                        c={colors['blue-button']}
+                        lh={1.4}
+                      >
+                        {formatCurrency(totalPendapatan)}
+                      </Text>
+                    </Flex>
+                  </Box>
                 </Stack>
               </Box>
 
               {/* Belanja Card */}
-              <Box p="md" style={{ border: '1px solid #e9ecef', borderRadius: '8px' }}>
-                <Stack gap={"xs"}>
-                  <Title order={3}>Belanja</Title>
-                  {latestApb?.belanja?.map((item) => (
-                    <Box key={item.id}>
-                      <Grid>
-                        <GridCol span={{ base: 12, md: 6 }} style={{ maxWidth: '180px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                          <Text fz="md" fw={500}>{item.name}</Text>
-                        </GridCol>
-                        <GridCol span={{ base: 12, md: 6 }} style={{ maxWidth: '180px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                          <Text 
-                            fz="md" 
+              <Box
+                p="md"
+                style={{
+                  border: '1px solid #e9ecef',
+                  borderRadius: '8px',
+                  height: '100%'
+                }}
+              >
+                <Stack gap="md">
+                  <Title order={3} fz={{ base: 18, md: 20 }} c="orange">
+                    Belanja
+                  </Title>
+
+                  <Stack gap="sm">
+                    {latestApb?.belanja?.map((item) => (
+                      <Box key={item.id}>
+                        <Group gap={1}>
+                          <Text
+                            fz={{ base: 13, md: 14 }}
                             fw={500}
-                            style={{
-                              wordBreak: 'break-word',
-                              whiteSpace: 'normal',
-                              textAlign: 'right',
-                            }}
+                            lh={1.4}
+                            c="black"
+                            style={{ wordBreak: 'break-word' }}
                           >
-                            {new Intl.NumberFormat('id-ID', {
-                              style: 'currency',
-                              currency: 'IDR',
-                              minimumFractionDigits: 0
-                            }).format(item.value)}
+                            {item.name} {formatCurrency(item.value)}
                           </Text>
-                        </GridCol>
-                      </Grid>
-                    </Box>
-                  ))}
-                  <Grid>
-                    <GridCol span={{ base: 12, md: 6 }}>
-                      <Text fz="lg" fw={600} mb="xs">Total Belanja</Text>
-                    </GridCol>
-                    <GridCol span={{ base: 12, md: 6 }}>
-                      <Text fz="xl" fw={700} c="orange">
-                        {new Intl.NumberFormat('id-ID', {
-                          style: 'currency',
-                          currency: 'IDR',
-                          minimumFractionDigits: 0
-                        }).format(totalBelanja)}
+                        </Group>
+                      </Box>
+                    ))}
+                  </Stack>
+
+                  <Box
+                    pt="sm"
+                    mt="auto"
+                    style={{
+                      borderTop: '2px solid orange'
+                    }}
+                  >
+                    <Flex direction="column" gap={4}>
+                      <Text fz={{ base: 14, md: 16 }} fw={600} lh={1.4}>
+                        Total Belanja
                       </Text>
-                    </GridCol>
-                  </Grid>
+                      <Text
+                        fz={{ base: 18, md: 22 }}
+                        fw={700}
+                        c="orange"
+                        lh={1.4}
+                      >
+                        {formatCurrency(totalBelanja)}
+                      </Text>
+                    </Flex>
+                  </Box>
                 </Stack>
               </Box>
 
               {/* Pembiayaan Card */}
-              <Box p="md" style={{ border: '1px solid #e9ecef', borderRadius: '8px' }}>
-                <Stack gap={"xs"}>
-                  <Title order={3}>Pembiayaan</Title>
-                  {latestApb?.pembiayaan?.map((item) => (
-                    <Box key={item.id}>
-                      <Grid>
-                        <GridCol span={{ base: 12, md: 6 }} style={{ maxWidth: '180px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                          <Text fz="md" fw={500}>{item.name}</Text>
-                        </GridCol>
-                        <GridCol span={{ base: 12, md: 6 }} style={{ maxWidth: '180px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                          <Text 
-                            fz="md" 
+              <Box
+                p="md"
+                style={{
+                  border: '1px solid #e9ecef',
+                  borderRadius: '8px',
+                  height: '100%'
+                }}
+              >
+                <Stack gap="md">
+                  <Title order={3} fz={{ base: 18, md: 20 }} c="green">
+                    Pembiayaan
+                  </Title>
+
+                  <Stack gap="sm">
+                    {latestApb?.pembiayaan?.map((item) => (
+                      <Box key={item.id}>
+                        <Group gap={1}>
+                          <Text
+                            fz={{ base: 13, md: 14 }}
                             fw={500}
-                            style={{
-                              wordBreak: 'break-word',
-                              whiteSpace: 'normal',
-                              textAlign: 'right',
-                            }}
+                            lh={1.4}
+                            c="black"
+                            style={{ wordBreak: 'break-word' }}
                           >
-                            {new Intl.NumberFormat('id-ID', {
-                              style: 'currency',
-                              currency: 'IDR',
-                              minimumFractionDigits: 0
-                            }).format(item.value)}
+                            {item.name} {formatCurrency(item.value)}
                           </Text>
-                        </GridCol>
-                      </Grid>
-                    </Box>
-                  ))}
-                  <Grid>
-                    <GridCol span={{ base: 12, md: 6 }}>
-                      <Text fz="lg" fw={600} mb="xs">Total Pembiayaan</Text>
-                    </GridCol>
-                    <GridCol span={{ base: 12, md: 6 }}>
-                      <Text fz="xl" fw={700} c="green">
-                        {new Intl.NumberFormat('id-ID', {
-                          style: 'currency',
-                          currency: 'IDR',
-                          minimumFractionDigits: 0
-                        }).format(totalPembiayaan)}
+                        </Group>
+                      </Box>
+                    ))}
+                  </Stack>
+
+                  <Box
+                    pt="sm"
+                    mt="auto"
+                    style={{
+                      borderTop: '2px solid green'
+                    }}
+                  >
+                    <Flex direction="column" gap={4}>
+                      <Text fz={{ base: 14, md: 16 }} fw={600} lh={1.4}>
+                        Total Pembiayaan
                       </Text>
-                    </GridCol>
-                  </Grid>
+                      <Text
+                        fz={{ base: 18, md: 22 }}
+                        fw={700}
+                        c="green"
+                        lh={1.4}
+                      >
+                        {formatCurrency(totalPembiayaan)}
+                      </Text>
+                    </Flex>
+                  </Box>
                 </Stack>
               </Box>
-
             </SimpleGrid>
           </Paper>
 
-          {/* 🔽 Tambahan Ringkasan Anggaran */}
-          <Paper bg={colors['white-1']} p="xl" shadow="sm" withBorder>
-            <Title order={3} mb="md">Ringkasan Anggaran</Title>
+          {/* Ringkasan Anggaran */}
+          <Paper bg={colors['white-1']} p={{ base: 'md', md: 'xl' }} shadow="sm" withBorder>
+            <Title order={3} mb="md" fz={{ base: 18, md: 20 }}>
+              Ringkasan Anggaran
+            </Title>
             <Table striped highlightOnHover withTableBorder>
               <Table.Thead>
                 <Table.Tr>
-                  <Table.Th>Keterangan</Table.Th>
-                  <Table.Th ta={"right"}>Jumlah</Table.Th>
+                  <Table.Th>
+                    <Text fz={{ base: 13, md: 14 }} fw={600}>Keterangan</Text>
+                  </Table.Th>
+                  <Table.Th ta="right">
+                    <Text fz={{ base: 13, md: 14 }} fw={600}>Jumlah</Text>
+                  </Table.Th>
                 </Table.Tr>
               </Table.Thead>
               <Table.Tbody>
                 <Table.Tr>
-                  <Table.Td>Total Pendapatan</Table.Td>
-                  <Table.Td align="right">
-                    {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(totalPendapatan)}
+                  <Table.Td>
+                    <Text fz={{ base: 13, md: 14 }} lh={1.4}>Total Pendapatan</Text>
+                  </Table.Td>
+                  <Table.Td ta="right">
+                    <Text fz={{ base: 13, md: 14 }} fw={600} lh={1.4}>
+                      {formatCurrency(totalPendapatan)}
+                    </Text>
                   </Table.Td>
                 </Table.Tr>
                 <Table.Tr>
-                  <Table.Td>Total Belanja</Table.Td>
-                  <Table.Td align="right" c="orange">
-                    {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(totalBelanja)}
+                  <Table.Td>
+                    <Text fz={{ base: 13, md: 14 }} lh={1.4} c="orange">Total Belanja</Text>
+                  </Table.Td>
+                  <Table.Td ta="right">
+                    <Text fz={{ base: 13, md: 14 }} fw={600} lh={1.4} c="orange">
+                      {formatCurrency(totalBelanja)}
+                    </Text>
                   </Table.Td>
                 </Table.Tr>
                 <Table.Tr>
-                  <Table.Td>Total Pembiayaan</Table.Td>
-                  <Table.Td align="right" c="green">
-                    {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(totalPembiayaan)}
+                  <Table.Td>
+                    <Text fz={{ base: 13, md: 14 }} lh={1.4} c="green">Total Pembiayaan</Text>
+                  </Table.Td>
+                  <Table.Td ta="right">
+                    <Text fz={{ base: 13, md: 14 }} fw={600} lh={1.4} c="green">
+                      {formatCurrency(totalPembiayaan)}
+                    </Text>
                   </Table.Td>
                 </Table.Tr>
-                <Table.Tr>
-                  <Table.Td><b>Sisa Anggaran</b></Table.Td>
-                  <Table.Td align="right" c={sisaAnggaran >= 0 ? "blue" : "red"}>
-                    <b>
-                      {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(sisaAnggaran)}
-                    </b>
+                <Table.Tr style={{ backgroundColor: '#f8f9fa' }}>
+                  <Table.Td>
+                    <Text fz={{ base: 14, md: 15 }} fw={700} lh={1.4}>Sisa Anggaran</Text>
+                  </Table.Td>
+                  <Table.Td ta="right">
+                    <Text
+                      fz={{ base: 14, md: 15 }}
+                      fw={700}
+                      c={sisaAnggaran >= 0 ? colors['blue-button'] : "red"}
+                      lh={1.4}
+                    >
+                      {formatCurrency(sisaAnggaran)}
+                    </Text>
                   </Table.Td>
                 </Table.Tr>
               </Table.Tbody>

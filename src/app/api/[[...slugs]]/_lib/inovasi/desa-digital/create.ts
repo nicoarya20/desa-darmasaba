@@ -22,7 +22,7 @@ export default async function desaDigitalCreate(context: Context){
 
     return {
         success: true,
-        message: "Success create desa digital",
+        message: "Sukses menambahkan desa digital",
         data: {
             ...body,
         }

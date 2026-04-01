@@ -6,14 +6,13 @@ import roleFindUnique from "./findUnique";
 import roleUpdate from "./updt";
 
 const Role = new Elysia({
-    prefix: "/api/role",
+    prefix: "/role",
     tags: ["User / Role"],
 })
 
  .post("/create", roleCreate, {
     body: t.Object({
       name: t.String(),
-      permissions: t.Array(t.String()),
     }),
   })
 
@@ -27,7 +26,6 @@ const Role = new Elysia({
   .put("/:id", roleUpdate, {
     body: t.Object({
       name: t.String(),
-      permissions: t.Array(t.String()),
     }),
   })
   .delete("/del/:id", roleDelete);

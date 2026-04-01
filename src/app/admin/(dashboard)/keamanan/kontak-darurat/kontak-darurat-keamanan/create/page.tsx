@@ -6,22 +6,33 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   MultiSelect,
   Paper,
   Stack,
   Text,
   TextInput,
-  Title,
-  Tooltip
+  Title
 } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
 function CreateKontakDaruratKeamanan() {
   const kontakState = useProxy(kontakDarurat.kontakDaruratKeamananState);
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      kontakState.create.form.nama?.trim() !== '' &&
+      kontakState.create.form.icon?.trim() !== ''
+    );
+  };
 
   useShallowEffect(() => {
     kontakDarurat.kontakDaruratItem.findMany.load();
@@ -36,25 +47,31 @@ function CreateKontakDaruratKeamanan() {
   };
 
   const handleSubmit = async () => {
-    await kontakState.create.create();
-    resetForm();
-    router.push('/admin/keamanan/kontak-darurat/kontak-darurat-keamanan');
+    try {
+      setIsSubmitting(true);
+      await kontakState.create.create();
+      resetForm();
+      router.push('/admin/keamanan/kontak-darurat/kontak-darurat-keamanan');
+    } catch (error) {
+      console.error('Error creating kontak darurat:', error);
+      toast.error('Terjadi kesalahan saat menambah kontak darurat');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+     <Box px={{ base: 0, md: 'xs' }} py="xs">
       {/* Header */}
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button
-            variant="subtle"
-            onClick={() => router.back()}
-            p="xs"
-            radius="md"
-          >
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
-        </Tooltip>
+        <Button
+          variant="subtle"
+          onClick={() => router.back()}
+          p="xs"
+          radius="md"
+        >
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Tambah Kontak Darurat Keamanan
         </Title>
@@ -72,7 +89,7 @@ function CreateKontakDaruratKeamanan() {
         <Stack gap="md">
           {/* Input Nama Kategori */}
           <TextInput
-            defaultValue={kontakState.create.form.nama}
+            value={kontakState.create.form.nama}
             onChange={(val) => {
               kontakState.create.form.nama = val.target.value;
             }}
@@ -104,16 +121,30 @@ function CreateKontakDaruratKeamanan() {
           {/* Tombol Submit */}
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

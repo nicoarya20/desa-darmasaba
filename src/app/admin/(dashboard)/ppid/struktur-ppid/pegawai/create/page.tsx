@@ -3,7 +3,7 @@
 import stateStrukturPPID from '@/app/admin/(dashboard)/_state/ppid/struktur_ppid/struktur_PPID';
 import colors from '@/con/colors';
 import ApiFetch from '@/lib/api-fetch';
-import { Box, Button, Group, Image, Paper, Select, Stack, Text, TextInput, Title, Tooltip } from '@mantine/core';
+import { ActionIcon, Box, Button, Group, Image, Paper, Select, Stack, Text, TextInput, Title, Loader } from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
 import { IconArrowBack, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
@@ -13,12 +13,37 @@ import { useProxy } from 'valtio/utils';
 
 function CreatePegawaiPPID() {
   const router = useRouter();
-  const [previewImage, setPreviewImage] = useState<{ preview: string; file: File } | null>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [file, setFile] = useState<File | null>(null);
   const stateOrganisasi = useProxy(stateStrukturPPID.pegawai)
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+
   useEffect(() => {
     stateStrukturPPID.posisiOrganisasi.findManyAll.load();
     resetForm();
   }, []);
+
+  // Helper function to validate email format
+  const isValidEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      stateOrganisasi.create.form.namaLengkap?.trim() !== '' &&
+      stateOrganisasi.create.form.gelarAkademik?.trim() !== '' &&
+      stateOrganisasi.create.form.posisiId !== '' &&
+      stateOrganisasi.create.form.tanggalMasuk !== '' &&
+      stateOrganisasi.create.form.email !== '' &&
+      isValidEmail(stateOrganisasi.create.form.email) &&
+      stateOrganisasi.create.form.telepon !== '' &&
+      stateOrganisasi.create.form.alamat !== '' &&
+      file !== null
+    );
+  };
 
   const resetForm = () => {
     stateOrganisasi.create.form = {
@@ -32,23 +57,23 @@ function CreatePegawaiPPID() {
       posisiId: "",
       isActive: true,
     };
+    setPreviewImage(null);
+    setFile(null);
   };
 
   const handleSubmit = async () => {
-    if (!previewImage) {
-      return toast.warn("Pilih file gambar terlebih dahulu");
-    }
-
     try {
-      // Upload gambar dulu
+      setIsSubmitting(true);
+      if (!file) {
+        return toast.warn('Silakan pilih file gambar terlebih dahulu');
+      }
       const res = await ApiFetch.api.fileStorage.create.post({
-        file: previewImage.file,
-        name: previewImage.file.name,
+        file,
+        name: file.name,
       });
-
       const uploaded = res.data?.data;
       if (!uploaded?.id) {
-        return toast.error("Gagal upload gambar");
+        return toast.error('Gagal mengunggah gambar, silakan coba lagi');
       }
 
       // Set status aktif secara otomatis
@@ -68,17 +93,17 @@ function CreatePegawaiPPID() {
     } catch (error) {
       console.error("Error creating pegawai:", error);
       toast.error("Terjadi kesalahan saat menambahkan pegawai");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
-        </Tooltip>
+        <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Tambah Pegawai PPID
         </Title>
@@ -95,18 +120,19 @@ function CreatePegawaiPPID() {
         <Stack gap="md">
           <Box>
             <TextInput
+              required
               label="Nama Lengkap"
               placeholder="Masukkan nama lengkap"
-              defaultValue={stateOrganisasi.create.form.namaLengkap}
+              value={stateOrganisasi.create.form.namaLengkap}
               onChange={(e) => (stateOrganisasi.create.form.namaLengkap = e.currentTarget.value)}
-              required
             />
           </Box>
           <Box>
             <TextInput
+              required
               label="Gelar Akademik"
               placeholder="Contoh: S.Kom"
-              defaultValue={stateOrganisasi.create.form.gelarAkademik}
+              value={stateOrganisasi.create.form.gelarAkademik}
               onChange={(e) => (stateOrganisasi.create.form.gelarAkademik = e.currentTarget.value)}
             />
           </Box>
@@ -116,117 +142,121 @@ function CreatePegawaiPPID() {
             </Text>
             <Dropzone
               onDrop={(files) => {
-                const file = files[0];
-                if (file) {
-                  setPreviewImage({
-                    file,
-                    preview: URL.createObjectURL(file)
-                  });
+                const selectedFile = files[0];
+                if (selectedFile) {
+                  setFile(selectedFile);
+                  setPreviewImage(URL.createObjectURL(selectedFile));
                 }
               }}
-              maxSize={5 * 1024 ** 2} // 5MB
-              accept={{
-                'image/*': ['.jpeg', '.jpg', '.png', '.webp']
-              }}
-              styles={{
-                root: {
-                  border: '2px dashed #ced4da',
-                  borderRadius: '8px',
-                  padding: '20px',
-                  textAlign: 'center',
-                  cursor: 'pointer',
-                  '&:hover': {
-                    borderColor: '#228be6',
-                  },
-                },
-              }}
+              onReject={() => toast.error('File tidak valid, gunakan format gambar')}
+              maxSize={5 * 1024 ** 2}
+              accept={{ 'image/*': ['.jpeg', '.jpg', '.png', '.webp'] }}
+              radius="md"
+              p="xl"
             >
-              <Group justify="center" gap="xl" mih={160} style={{ pointerEvents: 'none' }}>
+              <Group justify="center" gap="xl" mih={180}>
                 <Dropzone.Accept>
-                  <IconUpload size={52} color="var(--mantine-color-blue-6)" stroke={1.5} />
+                  <IconUpload size={48} color={colors['blue-button']} stroke={1.5} />
                 </Dropzone.Accept>
                 <Dropzone.Reject>
-                  <IconX size={52} color="var(--mantine-color-red-6)" stroke={1.5} />
+                  <IconX size={48} color="red" stroke={1.5} />
                 </Dropzone.Reject>
                 <Dropzone.Idle>
-                  <IconPhoto size={52} color="var(--mantine-color-dimmed)" stroke={1.5} />
+                  <IconPhoto size={48} color="#868e96" stroke={1.5} />
                 </Dropzone.Idle>
-
-                <div>
-                  <Text size="md" inline>
-                    Seret gambar ke sini atau klik untuk memilih file
+                <Stack gap="xs" align="center">
+                  <Text size="md" fw={500}>
+                    Seret gambar atau klik untuk memilih file
                   </Text>
-                  <Text size="sm" c="dimmed" inline mt={7}>
-                    Format yang didukung: JPG, PNG, WebP. Maksimal 5MB
+                  <Text size="sm" c="dimmed">
+                    Maksimal 5MB, format gambar .png, .jpg, .jpeg, webp
                   </Text>
-                </div>
+                </Stack>
               </Group>
             </Dropzone>
 
             {previewImage && (
-              <Box mt="md">
-                <Text fw="bold" fz="sm" mb={6}>
-                  Preview Gambar
-                </Text>
+              <Box mt="sm" pos="relative" style={{ textAlign: 'center' }}>
                 <Image
-                  src={previewImage.preview}
-                  alt="Preview"
-                  width={200}
-                  height={200}
-                  fit="cover"
+                  src={previewImage}
+                  alt="Preview Gambar"
                   radius="md"
                   style={{
-                    border: '1px solid #e0e0e0',
-                    borderRadius: '8px',
+                    maxHeight: 200,
+                    objectFit: 'contain',
+                    border: '1px solid #ddd',
                   }}
-                  loading='lazy'
+                  loading="lazy"
                 />
+
+                {/* Tombol hapus (pojok kanan atas) */}
+                <ActionIcon
+                  variant="filled"
+                  color="red"
+                  radius="xl"
+                  size="sm"
+                  pos="absolute"
+                  top={5}
+                  right={5}
+                  onClick={() => {
+                    setPreviewImage(null);
+                    setFile(null);
+                  }}
+                  style={{
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                  }}
+                >
+                  <IconX size={14} />
+                </ActionIcon>
               </Box>
             )}
           </Box>
           <Box>
             <TextInput
+              required
               label="Tanggal Masuk"
               type="date"
               placeholder="Contoh: 2022-01-01"
-              defaultValue={stateOrganisasi.create.form.tanggalMasuk}
+              value={stateOrganisasi.create.form.tanggalMasuk}
               onChange={(e) => (stateOrganisasi.create.form.tanggalMasuk = e.currentTarget.value)}
             />
           </Box>
 
           <Box>
             <TextInput
+              required
               label="Email"
               type="email"
               placeholder="Contoh: email@example.com"
-              defaultValue={stateOrganisasi.create.form.email}
+              value={stateOrganisasi.create.form.email}
               onChange={(e) => (stateOrganisasi.create.form.email = e.currentTarget.value)}
             />
           </Box>
 
           <Box>
             <TextInput
+              required
+              type='number'
               label="Nomor Telepon"
               placeholder="Contoh: 08123456789"
-              defaultValue={stateOrganisasi.create.form.telepon}
+              value={stateOrganisasi.create.form.telepon}
               onChange={(e) => (stateOrganisasi.create.form.telepon = e.currentTarget.value)}
             />
           </Box>
 
           <Box>
             <TextInput
+              required
               label="Alamat"
               placeholder="Contoh: Jl. Contoh No. 1"
-              defaultValue={stateOrganisasi.create.form.alamat}
+              value={stateOrganisasi.create.form.alamat}
               onChange={(e) => (stateOrganisasi.create.form.alamat = e.currentTarget.value)}
             />
           </Box>
 
           <Box>
-            <Text fw="bold" fz="sm" mb={6}>
-              Posisi
-            </Text>
             <Select
+              label="Posisi"
               placeholder="Pilih posisi"
               data={stateStrukturPPID.posisiOrganisasi.findManyAll.data?.map(p => ({
                 value: p.id,
@@ -238,22 +268,38 @@ function CreatePegawaiPPID() {
               }}
               searchable
               clearable
+              required
             />
           </Box>
 
+          {/* ======= Tombol Aksi ======= */}
+          <Group justify="right">
+            {/* Tombol Batal */}
+            <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
 
-          <Group justify="flex-end" mt="md">
+            {/* Tombol Simpan */}
             <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

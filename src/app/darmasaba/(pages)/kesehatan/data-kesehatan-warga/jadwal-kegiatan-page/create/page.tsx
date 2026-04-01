@@ -2,15 +2,14 @@
 'use client'
 import pendaftaranJadwalKegiatanState from '@/app/admin/(dashboard)/_state/kesehatan/data_kesehatan_warga/pendafataranJadwalKegiatan';
 import colors from '@/con/colors';
-import { Button, Divider, Stack, Text, Textarea, TextInput } from '@mantine/core';
+import { Button, Divider, Stack, Text, Textarea, TextInput, Title } from '@mantine/core';
 import { useEffect } from 'react';
 import { useProxy } from 'valtio/utils';
 
 function CreatePendaftaran() {
   const stateCreate = useProxy(pendaftaranJadwalKegiatanState);
 
-
-useEffect(() => {
+  useEffect(() => {
     stateCreate.findMany.load();
   }, []);
 
@@ -32,15 +31,19 @@ useEffect(() => {
 
   return (
     <Stack gap="sm">
-      <Text fz="lg" fw="bold">Formulir Pendaftaran</Text>
+      <Title order={2} ta="left">Formulir Pendaftaran</Title>
       <Divider />
       <Stack gap="md">
         <TextInput 
-        label="Nama Balita" 
-        placeholder="Masukkan nama balita" 
-        size="md" 
-        value={stateCreate.create.form.name}
-        onChange={(e) => stateCreate.create.form.name = e.target.value}
+          label="Nama Balita" 
+          placeholder="Masukkan nama balita" 
+          size="md" 
+          value={stateCreate.create.form.name}
+          onChange={(e) => stateCreate.create.form.name = e.target.value}
+          styles={{
+            label: { fontSize: '14px', lineHeight: 1.4, fontWeight: 500 },
+            input: { fontSize: '16px', lineHeight: 1.5 },
+          }}
         />
         <TextInput
           type='date'
@@ -50,37 +53,59 @@ useEffect(() => {
           w={{ base: '100%', md: '85%', lg: '75%', xl: '50%' }}
           value={stateCreate.create.form.tanggal}
           onChange={(e) => stateCreate.create.form.tanggal = e.target.value}
+          styles={{
+            label: { fontSize: '14px', lineHeight: 1.4, fontWeight: 500 },
+            input: { fontSize: '16px', lineHeight: 1.5 },
+          }}
         />
         <TextInput 
-        label="Nama Orang Tua / Wali" 
-        placeholder="Masukkan nama orang tua / wali" 
-        size="md" 
-        value={stateCreate.create.form.namaOrangtua}
-        onChange={(e) => stateCreate.create.form.namaOrangtua = e.target.value}
+          label="Nama Orang Tua / Wali" 
+          placeholder="Masukkan nama orang tua / wali" 
+          size="md" 
+          value={stateCreate.create.form.namaOrangtua}
+          onChange={(e) => stateCreate.create.form.namaOrangtua = e.target.value}
+          styles={{
+            label: { fontSize: '14px', lineHeight: 1.4, fontWeight: 500 },
+            input: { fontSize: '16px', lineHeight: 1.5 },
+          }}
         />
         <TextInput 
-        label="Nomor Telepon" 
-        placeholder="Masukkan nomor telepon" 
-        size="md" 
-        value={stateCreate.create.form.nomor}
-        onChange={(e) => stateCreate.create.form.nomor = e.target.value}
+          label="Nomor Telepon" 
+          placeholder="Masukkan nomor telepon" 
+          size="md" 
+          value={stateCreate.create.form.nomor}
+          onChange={(e) => stateCreate.create.form.nomor = e.target.value}
+          styles={{
+            label: { fontSize: '14px', lineHeight: 1.4, fontWeight: 500 },
+            input: { fontSize: '16px', lineHeight: 1.5 },
+          }}
         />
         <TextInput 
-        label="Alamat" 
-        placeholder="Masukkan alamat lengkap" 
-        size="md" 
-        value={stateCreate.create.form.alamat}
-        onChange={(e) => stateCreate.create.form.alamat = e.target.value}
+          label="Alamat" 
+          placeholder="Masukkan alamat lengkap" 
+          size="md" 
+          value={stateCreate.create.form.alamat}
+          onChange={(e) => stateCreate.create.form.alamat = e.target.value}
+          styles={{
+            label: { fontSize: '14px', lineHeight: 1.4, fontWeight: 500 },
+            input: { fontSize: '16px', lineHeight: 1.5 },
+          }}
         />
         <Textarea 
-        label="Catatan Khusus (Opsional)" 
-        placeholder="Masukkan catatan jika ada" 
-        size="md" 
-        value={stateCreate.create.form.catatan}
-        onChange={(e) => stateCreate.create.form.catatan = e.target.value}
+          label="Catatan Khusus (Opsional)" 
+          placeholder="Masukkan catatan jika ada" 
+          size="md" 
+          value={stateCreate.create.form.catatan}
+          onChange={(e) => stateCreate.create.form.catatan = e.target.value}
+          styles={{
+            label: { fontSize: '14px', lineHeight: 1.4, fontWeight: 500 },
+            input: { fontSize: '16px', lineHeight: 1.5 },
+          }}
         />
         <Button size="md" radius="lg" bg={colors['blue-button']} onClick={handleSubmit}>
-          Daftar Sekarang
+          <Text fz={{ base: 'sm', md: 'md' }} fw={600} c="white">
+            Daftar Sekarang
+          </Text>
         </Button>
       </Stack>
     </Stack>

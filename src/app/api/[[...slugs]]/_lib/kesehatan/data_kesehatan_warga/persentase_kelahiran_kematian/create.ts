@@ -21,7 +21,7 @@ export default async function persentaseKelahiranKematianCreate(context: Context
     })
     return{
         success: true,
-        message: "Success create persentase kelahiran kematian",
+        message: "Sukses menambahkan persentase kelahiran kematian",
         data: created
     }
 }

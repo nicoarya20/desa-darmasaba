@@ -2,17 +2,19 @@
 import colors from '@/con/colors';
 import ApiFetch from '@/lib/api-fetch';
 import {
+  ActionIcon,
   Box,
   Button,
   Group,
   Image,
+  Loader,
   Paper,
   Stack,
   Text,
   TextInput,
-  Title,
-  Tooltip,
+  Title
 } from '@mantine/core';
+import { Dropzone } from '@mantine/dropzone';
 import {
   IconArrowBack,
   IconPhoto,
@@ -25,13 +27,30 @@ import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 import CreateEditor from '../../../_com/createEditor';
 import kontakDarurat from '../../../_state/kesehatan/kontak-darurat/kontakDarurat';
-import { Dropzone } from '@mantine/dropzone';
 
 function CreateKontakDarurat() {
   const router = useRouter();
   const kontakDaruratState = useProxy(kontakDarurat);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Helper function to check if HTML content is empty
+  const isHtmlEmpty = (html: string) => {
+    // Remove all HTML tags and check if there's any text content
+    const textContent = html.replace(/<[^>]*>/g, '').trim();
+    return textContent === '';
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      kontakDaruratState.create.form.name?.trim() !== '' &&
+      kontakDaruratState.create.form.whatsapp?.trim() !== '' &&
+      !isHtmlEmpty(kontakDaruratState.create.form.deskripsi) &&
+      file !== null
+    );
+  };
 
   const resetForm = () => {
     kontakDaruratState.create.form = {
@@ -45,42 +64,48 @@ function CreateKontakDarurat() {
   };
 
   const handleSubmit = async () => {
-    if (!file) {
-      return toast.warn('Pilih file gambar terlebih dahulu');
+    try {
+      setIsSubmitting(true);
+      if (!file) {
+        return toast.warn('Pilih file gambar terlebih dahulu');
+      }
+
+      const res = await ApiFetch.api.fileStorage.create.post({
+        file,
+        name: file.name,
+      });
+
+      const uploaded = res.data?.data;
+      if (!uploaded?.id) {
+        return toast.error('Gagal upload gambar');
+      }
+
+      kontakDaruratState.create.form.imageId = uploaded.id;
+
+      await kontakDaruratState.create.create();
+
+      resetForm();
+      router.push('/admin/kesehatan/kontak-darurat');
+    } catch (error) {
+      console.error('Error creating kontak darurat:', error);
+      toast.error('Gagal menambahkan kontak darurat');
+    } finally {
+      setIsSubmitting(false);
     }
-
-    const res = await ApiFetch.api.fileStorage.create.post({
-      file,
-      name: file.name,
-    });
-
-    const uploaded = res.data?.data;
-    if (!uploaded?.id) {
-      return toast.error('Gagal upload gambar');
-    }
-
-    kontakDaruratState.create.form.imageId = uploaded.id;
-
-    await kontakDaruratState.create.create();
-
-    resetForm();
-    router.push('/admin/kesehatan/kontak-darurat');
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Header */}
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button
-            variant="subtle"
-            onClick={() => router.back()}
-            p="xs"
-            radius="md"
-          >
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
-        </Tooltip>
+        <Button
+          variant="subtle"
+          onClick={() => router.back()}
+          p="xs"
+          radius="md"
+        >
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Tambah Kontak Darurat
         </Title>
@@ -97,7 +122,7 @@ function CreateKontakDarurat() {
       >
         <Stack gap="md">
           <TextInput
-            defaultValue={kontakDaruratState.create.form.name}
+            value={kontakDaruratState.create.form.name}
             onChange={(val) => {
               kontakDaruratState.create.form.name = val.target.value;
             }}
@@ -107,13 +132,13 @@ function CreateKontakDarurat() {
           />
 
           <TextInput
-          type='number'
-            defaultValue={kontakDaruratState.create.form.whatsapp}
+            type='number'
+            value={kontakDaruratState.create.form.whatsapp}
             onChange={(val) => {
               kontakDaruratState.create.form.whatsapp = val.target.value;
             }}
-            label={<Text fz="sm" fw="bold">Whatsapp</Text>}
-            placeholder="Masukkan whatsapp"
+            label={<Text fz="sm" fw="bold">Telepon</Text>}
+            placeholder="Masukkan telepon"
             required
           />
 
@@ -139,7 +164,7 @@ function CreateKontakDarurat() {
               }}
               onReject={() => toast.error('File tidak valid.')}
               maxSize={5 * 1024 ** 2}
-              accept={{ 'image/*': [] }}
+              accept={{ 'image/*': ['.jpeg', '.jpg', '.png', '.webp'] }}
             >
               <Group
                 justify="center"
@@ -181,7 +206,7 @@ function CreateKontakDarurat() {
             </Dropzone>
 
             {previewImage && (
-              <Box mt="sm">
+              <Box mt="sm" pos={"relative"}>
                 <Image
                   src={previewImage}
                   alt="Preview"
@@ -194,22 +219,54 @@ function CreateKontakDarurat() {
                   }}
                   loading="lazy"
                 />
+                <ActionIcon
+                  variant="filled"
+                  color="red"
+                  radius="xl"
+                  size="sm"
+                  pos="absolute"
+                  top={5}
+                  right={5}
+                  onClick={() => {
+                    setPreviewImage(null);
+                    setFile(null);
+                  }}
+                  style={{
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                  }}
+                >
+                  <IconX size={14} />
+                </ActionIcon>
               </Box>
             )}
           </Box>
 
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

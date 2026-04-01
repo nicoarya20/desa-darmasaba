@@ -8,7 +8,7 @@ import LayananOnlineDesa from "./layanan-online-desa";
 import MitraKolaborasi from "./kolaborasi-inovasi/mitra-kolaborasi";
 
 const Inovasi = new Elysia({
-  prefix: "/api/inovasi",
+  prefix: "/inovasi",
   tags: ["Inovasi"],
 })
   .use(DesaDigital)

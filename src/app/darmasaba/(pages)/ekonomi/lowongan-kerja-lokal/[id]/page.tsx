@@ -2,7 +2,7 @@
 
 import lowonganKerjaState from '@/app/admin/(dashboard)/_state/ekonomi/lowongan-kerja';
 import colors from '@/con/colors';
-import { Box, Button, Center, Group, Paper, Skeleton, Stack, Text } from '@mantine/core';
+import { Box, Button, Center, Group, Paper, Skeleton, Stack, Text, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack, IconBrandWhatsapp, IconBriefcase, IconCurrencyDollar, IconMapPin, IconPhone } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -33,18 +33,25 @@ function DetailLowonganKerjaUser() {
     );
   }
 
+  const formatRupiah = (value: number) =>
+    new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+      minimumFractionDigits: 0,
+    }).format(value);
+
   return (
     <Stack bg={colors.Bg} py="xl" px={{ base: 'md', md: 100 }} align="center">
       <Box w={{ base: '100%', md: '70%' }}>
-          <Button
-            variant="subtle"
-            color="blue"
-            leftSection={<IconArrowBack size={20} />}
-            mb="md"
-            onClick={() => router.back()}
-          >
-            Kembali
-          </Button>
+        <Button
+          variant="subtle"
+          color="blue"
+          leftSection={<IconArrowBack size={20} />}
+          mb="md"
+          onClick={() => router.back()}
+        >
+          Kembali
+        </Button>
 
         <Paper
           radius="lg"
@@ -54,11 +61,17 @@ function DetailLowonganKerjaUser() {
           bg={colors['white-1']}
         >
           <Stack gap="lg">
-            {/* Judul */}
-            <Text fz={{ base: '1.6rem', md: '2rem' }} fw={700} c={colors['blue-button']}>
+            {/* Judul Posisi - H1 */}
+            <Title
+              order={1}
+              c={colors['blue-button']}
+              style={{ lineHeight: 1.15 }}
+            >
               {data.posisi}
-            </Text>
-            <Text c="dimmed" fz="sm">
+            </Title>
+
+            {/* Tanggal Posting - Caption */}
+            <Text c="dimmed" fz={{ base: 12, md: 'sm' }} lh={1.4}>
               Diposting: {new Date(data.createdAt).toLocaleDateString('id-ID', {
                 day: '2-digit',
                 month: 'long',
@@ -70,44 +83,72 @@ function DetailLowonganKerjaUser() {
             <Stack gap="sm" mt="md">
               <Group gap="xs">
                 <IconBriefcase size={20} color={colors['blue-button']} />
-                <Text fz="md" fw={600}>{data.namaPerusahaan}</Text>
+                <Text
+                  fz={{ base: 'sm', md: 'md' }}
+                  fw={600}
+                  lh={1.5}
+                >
+                  {data.namaPerusahaan}
+                </Text>
               </Group>
               <Group gap="xs">
                 <IconMapPin size={20} color={colors['blue-button']} />
-                <Text fz="md">{data.lokasi}</Text>
+                <Text
+                  fz={{ base: 'sm', md: 'md' }}
+                  lh={1.5}
+                >
+                  {data.lokasi}
+                </Text>
               </Group>
               <Group gap="xs">
                 <IconPhone size={20} color={colors['blue-button']} />
-                <Text fz="md">{data.notelp}</Text>
+                <Text
+                  fz={{ base: 'sm', md: 'md' }}
+                  lh={1.5}
+                >
+                  {data.notelp}
+                </Text>
               </Group>
               <Group gap="xs">
                 <IconCurrencyDollar size={20} color={colors['blue-button']} />
-                <Text fz="md">{data.gaji || '-'}</Text>
+                <Text
+                  fz={{ base: 'sm', md: 'md' }}
+                  lh={1.5}
+                >
+                  {formatRupiah(Number(data.gaji)) || '-'}
+                </Text>
               </Group>
               <Group gap="xs">
                 <IconBriefcase size={20} color={colors['blue-button']} />
-                <Text fz="md">{data.tipePekerjaan}</Text>
+                <Text
+                  fz={{ base: 'sm', md: 'md' }}
+                  lh={1.5}
+                >
+                  {data.tipePekerjaan}
+                </Text>
               </Group>
             </Stack>
 
+            {/* Deskripsi Pekerjaan - H2 */}
             <Box>
-              <Text fw={600} fz="lg" mb={4}>
+              <Title order={2} mb={8} style={{ lineHeight: 1.2 }}>
                 Deskripsi Pekerjaan
-              </Text>
+              </Title>
               <Text
-                fz="sm"
+                fz={{ base: 'xs', md: 'sm' }}
                 lh={1.6}
                 style={{ wordBreak: 'break-word' }}
                 dangerouslySetInnerHTML={{ __html: data.deskripsi || '-' }}
               />
             </Box>
 
+            {/* Kualifikasi - H2 */}
             <Box>
-              <Text fw={600} fz="lg" mb={4}>
+              <Title order={2} mb={8} style={{ lineHeight: 1.2 }}>
                 Kualifikasi
-              </Text>
+              </Title>
               <Text
-                fz="sm"
+                fz={{ base: 'xs', md: 'sm' }}
                 lh={1.6}
                 style={{ wordBreak: 'break-word' }}
                 dangerouslySetInnerHTML={{ __html: data.kualifikasi || '-' }}

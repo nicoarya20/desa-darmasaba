@@ -8,8 +8,7 @@ import {
   Paper,
   Skeleton,
   Stack,
-  Text,
-  Tooltip,
+  Text
 } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
@@ -50,7 +49,7 @@ function DetailDesaDigital() {
   const data = stateDesaDigital.findUnique.data;
 
   return (
-    <Box py={10}>
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Tombol Kembali */}
       <Button
         variant="subtle"
@@ -64,7 +63,7 @@ function DetailDesaDigital() {
       {/* Card Utama */}
       <Paper
         withBorder
-        w={{ base: "100%", md: "60%" }}
+        w={{ base: "100%", md: "70%" }}
         bg={colors['white-1']}
         p="lg"
         radius="md"
@@ -78,12 +77,12 @@ function DetailDesaDigital() {
           {/* Sub Card Detail */}
           <Paper bg="#ECEEF8" p="md" radius="md" shadow="xs">
             <Stack gap="sm">
-              <Box>
+              <Box pl={5}>
                 <Text fz="lg" fw="bold">Judul</Text>
                 <Text fz="md" c="dimmed">{data?.name || '-'}</Text>
               </Box>
 
-              <Box>
+              <Box pl={5}>
                 <Text fz="lg" fw="bold">Deskripsi</Text>
                 <Text
                   fz="md"
@@ -112,32 +111,28 @@ function DetailDesaDigital() {
 
               {/* Tombol Aksi */}
               <Group gap="sm">
-                <Tooltip label="Hapus Data" withArrow position="top">
-                  <Button
-                    color="red"
-                    onClick={() => {
-                      setSelectedId(data.id);
-                      setModalHapus(true);
-                    }}
-                    variant="light"
-                    radius="md"
-                    size="md"
-                  >
-                    <IconTrash size={20} />
-                  </Button>
-                </Tooltip>
+                <Button
+                  color="red"
+                  onClick={() => {
+                    setSelectedId(data.id);
+                    setModalHapus(true);
+                  }}
+                  variant="light"
+                  radius="md"
+                  size="md"
+                >
+                  <IconTrash size={20} />
+                </Button>
 
-                <Tooltip label="Edit Data" withArrow position="top">
-                  <Button
-                    color="green"
-                    onClick={() => router.push(`/admin/inovasi/desa-digital-smart-village/${data.id}/edit`)}
-                    variant="light"
-                    radius="md"
-                    size="md"
-                  >
-                    <IconEdit size={20} />
-                  </Button>
-                </Tooltip>
+                <Button
+                  color="green"
+                  onClick={() => router.push(`/admin/inovasi/desa-digital-smart-village/${data.id}/edit`)}
+                  variant="light"
+                  radius="md"
+                  size="md"
+                >
+                  <IconEdit size={20} />
+                </Button>
               </Group>
             </Stack>
           </Paper>

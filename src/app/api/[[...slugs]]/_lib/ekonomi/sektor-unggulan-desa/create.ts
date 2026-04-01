@@ -27,7 +27,7 @@ export default async function sektorUnggulanDesaCreate(context: Context) {
     });
     return {
         success: true,
-        message: "Success create sektor unggulan desa",
+        message: "Sukses menambahkan sektor unggulan desa",
         data: created,
     };
 }

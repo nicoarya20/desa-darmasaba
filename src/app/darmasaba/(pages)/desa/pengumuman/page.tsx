@@ -9,7 +9,6 @@ import {
   Center,
   Container,
   Divider,
-  Flex,
   Grid,
   GridCol,
   Group,
@@ -22,7 +21,7 @@ import {
   Text,
   TextInput,
   Title,
-  UnstyledButton,
+  UnstyledButton
 } from '@mantine/core';
 import { IconCalendar, IconClock, IconSearch } from '@tabler/icons-react';
 import { useTransitionRouter } from 'next-view-transitions';
@@ -98,10 +97,14 @@ function Page() {
 
       <Container size="lg" px="md">
         <Stack align="center" gap="0">
-          <Text fz={{ base: '2rem', md: '3.4rem' }} c={colors['blue-button']} fw="bold" ta="center">
+          <Title
+            order={1}
+            c={colors['blue-button']}
+            ta="center"
+          >
             Pengumuman Desa Darmasaba
-          </Text>
-          <Text ta="center" px="md" pb={10}>
+          </Title>
+          <Text ta="center" px="md" pb={10} fz={{ base: 'sm', md: 'md' }} lh="sm">
             Informasi dan pengumuman resmi terkait kegiatan dan kebijakan Desa Darmasaba
           </Text>
         </Stack>
@@ -126,17 +129,17 @@ function Page() {
                     withCloseButton={false}
                     title={item.CategoryPengumuman?.name || 'Pengumuman'}
                   >
-                    <Stack gap={"xs"}>
-                      <Text fz="sm" fw="bold" c="black" style={{ textTransform: 'uppercase' }}>
+                    <Stack gap="xs">
+                      <Text fz={{ base: 'sm', md: 'sm' }} fw="bold" c="black" style={{ textTransform: 'uppercase' }}>
                         {item.judul}
                       </Text>
-                      <Text ta="justify" fz="sm" c="black" lineClamp={3} dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
+                      <Text ta="justify" fz={{ base: 'xs', md: 'sm' }} c="black" lineClamp={3} dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
                     </Stack>
-                    <Flex pt={20} gap="md" justify="space-between">
+                    <Group pt={20} gap="md" justify="space-between">
                       <Group style={{ color: 'black' }}>
                         <Group gap="xs">
                           <IconCalendar size={18} />
-                          <Text size="sm">
+                          <Text fz={{ base: 'xs', md: 'sm' }}>
                             {new Date(item.createdAt).toLocaleDateString('id-ID', {
                               weekday: 'long',
                               day: 'numeric',
@@ -147,7 +150,7 @@ function Page() {
                         </Group>
                         <Group gap="xs">
                           <IconClock size={18} />
-                          <Text size="sm">
+                          <Text fz={{ base: 'xs', md: 'sm' }}>
                             {new Date(item.createdAt).toLocaleTimeString('id-ID', {
                               hour: '2-digit',
                               minute: '2-digit',
@@ -157,11 +160,11 @@ function Page() {
                         </Group>
                       </Group>
                       <Anchor variant="transparent" href={`/darmasaba/desa/pengumuman/${item.CategoryPengumuman?.name}/${item.id}`}>
-                        <Text fs="unset" c={colors['blue-button']} fz="sm">
+                        <Text fs="unset" c={colors['blue-button']} fz={{ base: 'xs', md: 'sm' }}>
                           Baca Selengkapnya
                         </Text>
                       </Anchor>
-                    </Flex>
+                    </Group>
                   </Notification>
                 ))
             )}
@@ -169,19 +172,19 @@ function Page() {
 
           <Paper p="md">
             <Stack gap="xs">
-              <Text fw="bold" fz="lg" c={colors['blue-button']}>
+              <Title order={3} c={colors['blue-button']}>
                 Kategori
-              </Text>
+              </Title>
               {stateDesaPengumuman.category.findMany.data?.map((v: any, k) => {
                 const count = v._count?.pengumumans || 0;
                 return (
                   <UnstyledButton component={Link} href={`/darmasaba/desa/pengumuman/${v.name}`} key={k}>
                     <Paper bg={colors['BG-trans']} p={5}>
                       <Group px={3} justify="space-between">
-                        <Text fz="md" c="black">
+                        <Text fz={{ base: 'sm', md: 'md' }} c="black">
                           {v.name}
                         </Text>
-                        <Text fz="md" c="black">
+                        <Text fz={{ base: 'sm', md: 'md' }} c="black">
                           {count}
                         </Text>
                       </Group>
@@ -200,7 +203,7 @@ function Page() {
           <Divider mb={10} color={colors['blue-button']} />
           <Grid>
             <GridCol span={{ base: 12, md: 8 }}>
-              <Title order={3}>Daftar Pengumuman</Title>
+              <Title order={2}>Daftar Pengumuman</Title>
             </GridCol>
             <GridCol span={{ base: 12, md: 4 }}>
               <TextInput
@@ -210,6 +213,7 @@ function Page() {
                 w="100%"
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
+                fz={{ base: 'sm', md: 'md' }}
               />
             </GridCol>
           </Grid>
@@ -223,7 +227,9 @@ function Page() {
             </SimpleGrid>
           ) : !state.findMany.data?.length ? (
             <Notification withCloseButton={false} h={100}>
-              Tidak ada pengumuman yang ditemukan
+              <Text fz={{ base: 'sm', md: 'md' }} ta="center">
+                Tidak ada pengumuman yang ditemukan
+              </Text>
             </Notification>
           ) : (
             <SimpleGrid cols={{ base: 1, md: 3 }} spacing="lg" verticalSpacing="lg">
@@ -231,26 +237,26 @@ function Page() {
                 <Paper key={item.id} p="md" withBorder radius="md" h="100%">
                   <Stack h="100%" justify="space-between">
                     <div>
-                      <Text fw={600} c={colors['blue-button']} mb={5}>
+                      <Text fw={600} c={colors['blue-button']} mb={5} fz={{ base: 'sm', md: 'md' }}>
                         {item.CategoryPengumuman?.name || 'Pengumuman'}
                       </Text>
-                      <Text fz="lg" fw={700} mb="sm" lineClamp={2} style={{ textTransform: 'uppercase' }}>
+                      <Text fw={700} mb="sm" lineClamp={2} style={{ textTransform: 'uppercase' }} fz={{ base: 'sm', md: 'lg' }}>
                         {item.judul}
                       </Text>
                       <Text
-                        fz="sm"
                         c="dimmed"
                         lineClamp={4}
                         dangerouslySetInnerHTML={{ __html: item.deskripsi }}
                         mb="md"
-                        style={{wordBreak: "break-word", whiteSpace: "normal"}}
+                        style={{ wordBreak: "break-word", whiteSpace: "normal" }}
+                        fz={{ base: 'xs', md: 'sm' }}
                       />
                     </div>
                     <div>
                       <Group mb="sm" c="dimmed">
                         <Group gap={5}>
                           <IconCalendar size={16} />
-                          <Text size="xs">
+                          <Text fz={{ base: 'xs', md: 'xs' }}>
                             {new Date(item.createdAt).toLocaleDateString('id-ID', {
                               day: 'numeric',
                               month: 'short',
@@ -260,19 +266,19 @@ function Page() {
                         </Group>
                         <Group gap={5}>
                           <IconClock size={16} />
-                          <Text size="xs">
+                          <Text fz={{ base: 'xs', md: 'xs' }}>
                             {new Date(item.createdAt).toLocaleTimeString('id-ID', {
                               hour: '2-digit',
                               minute: '2-digit',
                             })}
                           </Text>
                         </Group>
+                        <Anchor variant="transparent" href={`/darmasaba/desa/pengumuman/${item.CategoryPengumuman?.name}/${item.id}`}>
+                          <Text fw={600} c={colors['blue-button']} fz={{ base: 'sm', md: 'sm' }}>
+                            Baca Selengkapnya →
+                          </Text>
+                        </Anchor>
                       </Group>
-                      <Anchor variant="transparent" href={`/darmasaba/desa/pengumuman/${item.CategoryPengumuman?.name}/${item.id}`}>
-                        <Text fw={600} c={colors['blue-button']} size="sm">
-                          Baca Selengkapnya →
-                        </Text>
-                      </Anchor>
                     </div>
                   </Stack>
                 </Paper>
@@ -289,6 +295,7 @@ function Page() {
               siblings={1}
               boundaries={1}
               withEdges
+              fz={{ base: 'xs', md: 'sm' }}
             />
           </Center>
         </Stack>

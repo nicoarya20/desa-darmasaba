@@ -1,10 +1,10 @@
 'use client'
-import { useProxy } from 'valtio/utils';
-import { Box, Button, Group, Image, Paper, Skeleton, Stack, Text, Tooltip } from '@mantine/core';
+import { Box, Button, Group, Image, Paper, Skeleton, Stack, Text } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack, IconTrash } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { useProxy } from 'valtio/utils';
 
 import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
 import layananonlineDesa from '@/app/admin/(dashboard)/_state/inovasi/layanan-online-desa';
@@ -41,7 +41,7 @@ function DetailPengaduanMasyarakat() {
   const data = pengaduanState.pengaduanMasyarakat.findUnique.data;
 
   return (
-    <Box py={10}>
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Tombol Kembali */}
       <Button
         variant="subtle"
@@ -55,7 +55,7 @@ function DetailPengaduanMasyarakat() {
       {/* Card Detail */}
       <Paper
         withBorder
-        w={{ base: "100%", md: "60%" }}
+        w={{ base: "100%", md: "70%" }}
         bg={colors['white-1']}
         p="lg"
         radius="md"
@@ -129,21 +129,19 @@ function DetailPengaduanMasyarakat() {
 
               {/* Action Button */}
               <Group gap="sm">
-                <Tooltip label="Hapus Pengaduan" withArrow position="top">
-                  <Button
-                    color="red"
-                    onClick={() => {
-                      setSelectedId(data.id);
-                      setModalHapus(true);
-                    }}
-                    variant="light"
-                    radius="md"
-                    size="md"
-                    disabled={pengaduanState.pengaduanMasyarakat.delete.loading}
-                  >
-                    <IconTrash size={20} />
-                  </Button>
-                </Tooltip>
+                <Button
+                  color="red"
+                  onClick={() => {
+                    setSelectedId(data.id);
+                    setModalHapus(true);
+                  }}
+                  variant="light"
+                  radius="md"
+                  size="md"
+                  disabled={pengaduanState.pengaduanMasyarakat.delete.loading}
+                >
+                  <IconTrash size={20} />
+                </Button>
               </Group>
             </Stack>
           </Paper>

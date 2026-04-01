@@ -2,7 +2,7 @@
 import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
 import stateGallery from '@/app/admin/(dashboard)/_state/desa/gallery';
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, Skeleton, Stack, Text, Tooltip } from '@mantine/core';
+import { Box, Button, Group, Paper, Skeleton, Stack, Text } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -40,7 +40,7 @@ function DetailVideo() {
   const data = videoState.findUnique.data;
 
   return (
-    <Box py={10}>
+    <Box px={{ base: 0, md: 'xs' }} py="xs">
       {/* Tombol Kembali */}
       <Button
         variant="subtle"
@@ -54,7 +54,7 @@ function DetailVideo() {
       {/* Detail Video */}
       <Paper
         withBorder
-        w={{ base: "100%", md: "50%" }}
+        w={{ base: "100%", md: "70%" }}
         bg={colors['white-1']}
         p="lg"
         radius="md"
@@ -111,7 +111,6 @@ function DetailVideo() {
 
               {/* Tombol Aksi */}
               <Group gap="sm">
-                <Tooltip label="Hapus Video" withArrow position="top">
                   <Button
                     color="red"
                     onClick={() => {
@@ -124,9 +123,7 @@ function DetailVideo() {
                   >
                     <IconTrash size={20} />
                   </Button>
-                </Tooltip>
 
-                <Tooltip label="Edit Video" withArrow position="top">
                   <Button
                     color="green"
                     onClick={() =>
@@ -138,7 +135,6 @@ function DetailVideo() {
                   >
                     <IconEdit size={20} />
                   </Button>
-                </Tooltip>
               </Group>
             </Stack>
           </Paper>

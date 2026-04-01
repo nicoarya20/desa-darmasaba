@@ -1,5 +1,7 @@
 'use client'
 
+import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
+import stateDesaPengumuman from '@/app/admin/(dashboard)/_state/desa/pengumuman';
 import colors from '@/con/colors';
 import {
   Box,
@@ -8,16 +10,13 @@ import {
   Paper,
   Skeleton,
   Stack,
-  Text,
-  Tooltip,
+  Text
 } from '@mantine/core';
+import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
-import { useRouter, useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
-import { useShallowEffect } from '@mantine/hooks';
-import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
-import stateDesaPengumuman from '@/app/admin/(dashboard)/_state/desa/pengumuman';
 
 export default function DetailPengumuman() {
   const pengumumanState = useProxy(stateDesaPengumuman);
@@ -50,7 +49,7 @@ export default function DetailPengumuman() {
   const data = pengumumanState.pengumuman.findUnique.data;
 
   return (
-    <Box py={10}>
+   <Box px={{ base: 0, md: 'xs' }} py="xs">
       <Button
         variant="subtle"
         onClick={() => router.back()}
@@ -62,7 +61,7 @@ export default function DetailPengumuman() {
 
       <Paper
         withBorder
-        w={{ base: '100%', md: '60%' }}
+        w={{ base: '100%', md: '70%' }}
         bg={colors['white-1']}
         p="lg"
         radius="md"
@@ -75,14 +74,6 @@ export default function DetailPengumuman() {
 
           <Paper bg="#ECEEF8" p="md" radius="md" shadow="xs">
             <Stack gap="sm">
-              <Box>
-                <Text fz="lg" fw="bold">
-                  Kategori
-                </Text>
-                <Text fz="md" c="dimmed">
-                  {data?.CategoryPengumuman?.name || '-'}
-                </Text>
-              </Box>
 
               <Box>
                 <Text fz="lg" fw="bold">
@@ -90,6 +81,15 @@ export default function DetailPengumuman() {
                 </Text>
                 <Text fz="md" c="dimmed">
                   {data?.judul || '-'}
+                </Text>
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">
+                  Kategori
+                </Text>
+                <Text fz="md" c="dimmed">
+                  {data?.CategoryPengumuman?.name || '-'}
                 </Text>
               </Box>
 
@@ -117,7 +117,6 @@ export default function DetailPengumuman() {
               </Box>
 
               <Group gap="sm">
-                <Tooltip label="Hapus Pengumuman" withArrow position="top">
                   <Button
                     color="red"
                     onClick={() => {
@@ -130,9 +129,7 @@ export default function DetailPengumuman() {
                   >
                     <IconTrash size={20} />
                   </Button>
-                </Tooltip>
 
-                <Tooltip label="Edit Pengumuman" withArrow position="top">
                   <Button
                     color="green"
                     onClick={() =>
@@ -146,7 +143,6 @@ export default function DetailPengumuman() {
                   >
                     <IconEdit size={20} />
                   </Button>
-                </Tooltip>
               </Group>
             </Stack>
           </Paper>

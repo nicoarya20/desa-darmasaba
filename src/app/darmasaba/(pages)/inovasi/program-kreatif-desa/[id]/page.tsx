@@ -1,16 +1,16 @@
 'use client'
-import colors from '@/con/colors';
-import { Box, Paper, Stack, Text, Skeleton } from '@mantine/core';
-import { useShallowEffect } from '@mantine/hooks';
-import { useParams, useRouter } from 'next/navigation';
-import { useProxy } from 'valtio/utils';
 import programKreatifState from '@/app/admin/(dashboard)/_state/inovasi/program-kreatif';
+import colors from '@/con/colors';
+import { Box, Paper, Skeleton, Stack, Text } from '@mantine/core';
+import { useShallowEffect } from '@mantine/hooks';
+import { useParams } from 'next/navigation';
+import { useProxy } from 'valtio/utils';
 
-import { IconMapper, IconKey } from '@/app/admin/(dashboard)/_com/iconMap';
+import { IconKey, IconMapper } from '@/app/admin/(dashboard)/_com/iconMap';
+import BackButton from '../../../desa/layanan/_com/BackButto';
 
 function Page() {
   const stateProgramKreatif = useProxy(programKreatifState);
-  const router = useRouter();
   const params = useParams();
 
   useShallowEffect(() => {
@@ -31,14 +31,7 @@ function Page() {
     <Box px={{ base: 'md', md: 100 }} py="md">
       {/* Tombol Kembali */}
       <Box mb="md">
-        <Text
-          c={colors['blue-button']}
-          fw="bold"
-          style={{ cursor: 'pointer' }}
-          onClick={() => router.back()}
-        >
-          &larr; Kembali
-        </Text>
+        <BackButton/>
       </Box>
 
       {/* Konten Utama */}

@@ -16,10 +16,9 @@ import {
   TableThead,
   TableTr,
   Text,
-  Title,
-  Tooltip
+  Title
 } from '@mantine/core';
-import { useShallowEffect } from '@mantine/hooks';
+import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
 import { IconDeviceImac, IconPlus, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -47,72 +46,87 @@ function LowonganKerjaLokal() {
 function ListLowonganKerjaLokal({ search }: { search: string }) {
   const stateLowongan = useProxy(lowonganKerjaState);
   const router = useRouter();
+  const [debouncedSearch] = useDebouncedValue(search, 1000);
 
   const { data, page, totalPages, loading, load } = stateLowongan.findMany;
 
   useShallowEffect(() => {
-    load(page, 10, search);
-  }, [page, search]);
+    load(page, 10, debouncedSearch);
+  }, [page, debouncedSearch]);
 
   const filteredData = data || [];
 
   if (loading || !data) {
     return (
-      <Stack py={10}>
+      <Stack py="md">
         <Skeleton height={600} radius="md" />
       </Stack>
     );
   }
 
   return (
-    <Box py={10}>
+    <Box py="md">
       <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
-        <Group justify="space-between" mb="md">
+        <Group justify="space-between" mb="lg">
           <Title order={4}>Daftar Lowongan Kerja Lokal</Title>
-          <Tooltip label="Tambah Lowongan Kerja" withArrow>
-            <Button
-              leftSection={<IconPlus size={18} />}
-              color="blue"
-              variant="light"
-              onClick={() =>
-                router.push('/admin/ekonomi/lowongan-kerja-lokal/create')
-              }
-            >
-              Tambah Baru
-            </Button>
-          </Tooltip>
+          <Button
+            leftSection={<IconPlus size={18} />}
+            color="blue"
+            variant="light"
+            onClick={() =>
+              router.push('/admin/ekonomi/lowongan-kerja-lokal/create')
+            }
+          >
+            Tambah Baru
+          </Button>
         </Group>
 
-        <Box style={{ overflowX: 'auto' }}>
-          <Table highlightOnHover>
+        {/* Desktop Table */}
+       <Box visibleFrom="md" style={{ overflowX: 'auto' }}>
+          <Table
+            highlightOnHover
+            miw={0}
+            style={{
+              tableLayout: 'fixed',
+              width: '100%',
+            }}
+          >
             <TableThead>
               <TableTr>
-                <TableTh style={{ width: '25%' }}>Pekerjaan</TableTh>
-                <TableTh style={{ width: '25%' }}>Nama Perusahaan</TableTh>
-                <TableTh style={{ width: '20%' }}>Lokasi</TableTh>
-                <TableTh style={{ width: '15%' }}>Aksi</TableTh>
+                <TableTh style={{ width: '25%' }}>
+                  <Text fz="sm" fw={600} lh={1.2} c="black">Pekerjaan</Text>
+                </TableTh>
+                <TableTh style={{ width: '25%' }}>
+                  <Text fz="sm" fw={600} lh={1.2} c="black">Nama Perusahaan</Text>
+                </TableTh>
+                <TableTh style={{ width: '20%' }}>
+                  <Text fz="sm" fw={600} lh={1.2} c="black">Lokasi</Text>
+                </TableTh>
+                <TableTh style={{ width: '15%' }}>
+                  <Text fz="sm" fw={600} lh={1.2} c="black">Aksi</Text>
+                </TableTh>
               </TableTr>
             </TableThead>
             <TableTbody>
               {filteredData.length > 0 ? (
                 filteredData.map((item) => (
                   <TableTr key={item.id}>
-                    <TableTd style={{ width: '25%' }}>
-                      <Text fw={500} truncate="end" lineClamp={1}>
+                    <TableTd>
+                      <Text fz="md" fw={500} lh={1.5} truncate="end" lineClamp={1}>
                         {item.posisi}
                       </Text>
                     </TableTd>
-                    <TableTd style={{ width: '25%' }}>
-                      <Text truncate fz="sm" c="dimmed">
+                    <TableTd>
+                      <Text fz="sm" fw={500} lh={1.5} truncate="end">
                         {item.namaPerusahaan}
                       </Text>
                     </TableTd>
-                    <TableTd style={{ width: '20%' }}>
-                      <Text truncate fz="sm" c="dimmed">
+                    <TableTd>
+                      <Text fz="sm" fw={500} lh={1.5} truncate="end">
                         {item.lokasi}
                       </Text>
                     </TableTd>
-                    <TableTd style={{ width: '15%' }}>
+                    <TableTd>
                       <Button
                         variant="light"
                         color="blue"
@@ -121,9 +135,11 @@ function ListLowonganKerjaLokal({ search }: { search: string }) {
                             `/admin/ekonomi/lowongan-kerja-lokal/${item.id}`
                           )
                         }
+                        fullWidth
+                        radius="sm"
                       >
                         <IconDeviceImac size={20} />
-                        <Text ml={5}>Detail</Text>
+                        <Text ml="xs">Detail</Text>
                       </Button>
                     </TableTd>
                   </TableTr>
@@ -131,8 +147,8 @@ function ListLowonganKerjaLokal({ search }: { search: string }) {
               ) : (
                 <TableTr>
                   <TableTd colSpan={4}>
-                    <Center py={20}>
-                      <Text color="dimmed">
+                    <Center py="xl">
+                      <Text fz="sm" c="dimmed" lh={1.4}>
                         Tidak ada data lowongan kerja yang cocok
                       </Text>
                     </Center>
@@ -142,6 +158,57 @@ function ListLowonganKerjaLokal({ search }: { search: string }) {
             </TableTbody>
           </Table>
         </Box>
+
+        {/* Mobile Card List */}
+        <Stack gap="sm" hiddenFrom="md">
+          {filteredData.length > 0 ? (
+            filteredData.map((item) => (
+              <Paper key={item.id} withBorder p="md" radius="md">
+                <Stack gap={"xs"}>
+                  <Box>
+                    <Text fz="sm" fw={600} lh={1.4}>Pekerjaan</Text>
+                    <Text fz="sm" fw={500} lh={1.5}>
+                      {item.posisi}
+                    </Text>
+                  </Box>
+                  <Box>
+                    <Text fz="sm" fw={600} lh={1.4}>Nama Perusahaan</Text>
+                    <Text fz="sm" fw={500} lh={1.5}>
+                      {item.namaPerusahaan}
+                    </Text>
+                  </Box>
+                  <Box>
+                    <Text fz="sm" fw={600} lh={1.4}>Lokasi</Text>
+                    <Text fz="sm" fw={500} lh={1.5}>
+                      {item.lokasi}
+                    </Text>
+                  </Box>
+                  <Button
+                    variant="light"
+                    color="blue"
+                    onClick={() =>
+                      router.push(
+                        `/admin/ekonomi/lowongan-kerja-lokal/${item.id}`
+                      )
+                    }
+                    fullWidth
+                    radius="sm"
+                    mt="xs"
+                  >
+                    <IconDeviceImac size={20} />
+                    <Text ml="xs">Detail</Text>
+                  </Button>
+                </Stack>
+              </Paper>
+            ))
+          ) : (
+            <Center py="xl">
+              <Text fz="sm" c="dimmed" lh={1.4}>
+                Tidak ada data lowongan kerja yang cocok
+              </Text>
+            </Center>
+          )}
+        </Stack>
       </Paper>
 
       <Center>

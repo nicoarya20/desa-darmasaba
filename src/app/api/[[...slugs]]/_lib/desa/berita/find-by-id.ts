@@ -28,6 +28,7 @@ export default async function handler(
       where: { id },
       include: {
         image: true,
+        images: true,
         kategoriBerita: true,
       },
     });

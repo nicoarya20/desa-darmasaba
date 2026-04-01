@@ -11,6 +11,6 @@ export default async function dataPerpustakaanDelete(context: Context) {
   return {
     status: 200,
     success: true,
-    message: "Success delete data perpustakaan",
+    message: "Sukses Menghapus data perpustakaan",
   };
 }

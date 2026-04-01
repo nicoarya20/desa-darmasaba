@@ -5,8 +5,8 @@ import {
   Button,
   Center,
   Group,
-  Paper,
   Pagination,
+  Paper,
   Skeleton,
   Stack,
   Table,
@@ -16,30 +16,21 @@ import {
   TableThead,
   TableTr,
   Text,
-  Title,
-  Tooltip,
+  Title
 } from '@mantine/core';
-import { useShallowEffect } from '@mantine/hooks';
-import { IconArrowBack, IconDeviceImacCog, IconPlus, IconSearch } from '@tabler/icons-react';
+import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
+import { IconDeviceImacCog, IconPlus, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../../_com/header';
 import jadwalKegiatanState from '../../../_state/kesehatan/data_kesehatan_warga/jadwalKegiatan';
-import { useState } from 'react';
 
 function JadwalKegiatan() {
-  const router = useRouter();
   const [search, setSearch] = useState("");
 
   return (
     <Box>
-      {/* Tombol Back */}
-      <Box mb={10}>
-        <Button variant="subtle" onClick={() => router.back()}>
-          <IconArrowBack color={colors["blue-button"]} size={25} />
-        </Button>
-      </Box>
-
       {/* Header Search */}
       <HeaderSearch
         title="Jadwal Kegiatan"
@@ -59,51 +50,52 @@ function ListJadwalKegiatan({ search }: { search: string }) {
   const router = useRouter();
 
   const { data, page, totalPages, loading, load } = state.findMany;
+  const [debouncedSearch] = useDebouncedValue(search, 1000);
 
   useShallowEffect(() => {
-    load(page, 10, search);
-  }, [page, search]);
+    load(page, 10, debouncedSearch);
+  }, [page, debouncedSearch]);
 
   const filteredData = data || [];
 
   if (loading || !data) {
     return (
-      <Stack py={10}>
+      <Stack py="lg">
         <Skeleton height={600} radius="md" />
       </Stack>
     );
   }
 
   return (
-    <Box py={10}>
+    <Box py="lg">
       <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
         {/* Judul + Tombol Tambah */}
         <Group justify="space-between" mb="md">
           <Title order={4}>Daftar Jadwal Kegiatan</Title>
-          <Tooltip label="Tambah Jadwal Kegiatan" withArrow>
-            <Button
-              leftSection={<IconPlus size={18} />}
-              color="blue"
-              variant="light"
-              onClick={() =>
-                router.push('/admin/kesehatan/data-kesehatan-warga/jadwal_kegiatan/create')
-              }
-            >
-              Tambah Baru
-            </Button>
-          </Tooltip>
+          <Button
+            leftSection={<IconPlus size={18} />}
+            color="blue"
+            variant="light"
+            onClick={() =>
+              router.push('/admin/kesehatan/data-kesehatan-warga/jadwal_kegiatan/create')
+            }
+          >
+            Tambah Baru
+          </Button>
         </Group>
 
-        {/* Tabel */}
-        <Box style={{ overflowX: "auto" }}>
-          <Table highlightOnHover>
+        {/* Desktop Table */}
+       <Box visibleFrom="md" style={{ overflowX: 'auto' }}>
+         <Table highlightOnHover
+    layout="fixed" // 🔥 PENTING
+    withColumnBorders={false}>
             <TableThead>
               <TableTr>
-                <TableTh>Nama</TableTh>
-                <TableTh>Tanggal</TableTh>
-                <TableTh>Waktu</TableTh>
-                <TableTh>Lokasi</TableTh>
-                <TableTh>Aksi</TableTh>
+                <TableTh fz="sm" fw={600} lh={1.2}>Nama</TableTh>
+                <TableTh fz="sm" fw={600} lh={1.2}>Tanggal</TableTh>
+                <TableTh fz="sm" fw={600} lh={1.2}>Waktu</TableTh>
+                <TableTh fz="sm" fw={600} lh={1.2}>Lokasi</TableTh>
+                <TableTh fz="sm" fw={600} lh={1.2}>Aksi</TableTh>
               </TableTr>
             </TableThead>
             <TableTbody>
@@ -111,35 +103,31 @@ function ListJadwalKegiatan({ search }: { search: string }) {
                 filteredData.map((item) => (
                   <TableTr key={item.id}>
                     <TableTd>
-                      <Box w={150}>
-                        <Text fw={500} truncate="end" lineClamp={1}>
-                          {item.informasijadwalkegiatan.name}
-                        </Text>
-                      </Box>
+                      <Text fz="md" fw={500} lh={1.5} truncate="end" lineClamp={1}>
+                        {item.informasijadwalkegiatan.name}
+                      </Text>
                     </TableTd>
                     <TableTd>
-                      <Box w={150}>
-                      {new Date(item.informasijadwalkegiatan.tanggal).toLocaleDateString(
-                        'id-ID',
-                        {
-                          day: '2-digit',
-                          month: 'long',
-                          year: 'numeric',
-                        }
-                      )}
-                      </Box>
+                      <Text fz="md" lh={1.5}>
+                        {new Date(item.informasijadwalkegiatan.tanggal).toLocaleDateString(
+                          'id-ID',
+                          {
+                            day: '2-digit',
+                            month: 'long',
+                            year: 'numeric',
+                          }
+                        )}
+                      </Text>
                     </TableTd>
                     <TableTd>
-                      <Box w={150}>
+                      <Text fz="md" lh={1.5}>
                         {item.informasijadwalkegiatan.waktu}
-                      </Box>
+                      </Text>
                     </TableTd>
                     <TableTd>
-                      <Box w={150}>
-                        <Text truncate fz="sm" c="dimmed">
-                          {item.informasijadwalkegiatan.lokasi}
-                        </Text>
-                      </Box>
+                      <Text fz="md" lh={1.5} c="dimmed" truncate="end">
+                        {item.informasijadwalkegiatan.lokasi}
+                      </Text>
                     </TableTd>
                     <TableTd>
                       <Button
@@ -152,7 +140,9 @@ function ListJadwalKegiatan({ search }: { search: string }) {
                         }
                       >
                         <IconDeviceImacCog size={20} />
-                        <Text ml={5}>Detail</Text>
+                        <Text ml={5} fz="sm" fw={500} lh={1.5}>
+                          Detail
+                        </Text>
                       </Button>
                     </TableTd>
                   </TableTr>
@@ -160,8 +150,8 @@ function ListJadwalKegiatan({ search }: { search: string }) {
               ) : (
                 <TableTr>
                   <TableTd colSpan={5}>
-                    <Center py={20}>
-                      <Text color="dimmed">
+                    <Center py="xl">
+                      <Text c="dimmed" fz="sm" lh={1.4}>
                         Tidak ada jadwal kegiatan yang cocok
                       </Text>
                     </Center>
@@ -171,6 +161,72 @@ function ListJadwalKegiatan({ search }: { search: string }) {
             </TableTbody>
           </Table>
         </Box>
+
+        {/* Mobile Cards */}
+        <Stack gap="sm" hiddenFrom="md">
+          {filteredData.length > 0 ? (
+            filteredData.map((item) => (
+              <Paper key={item.id} withBorder p="md" radius="md">
+                <Stack gap={"xs"}>
+                  <Box>
+                    <Text fz="sm" fw={600} lh={1.4}>Nama</Text>
+                    <Text fz="sm" fw={500} lh={1.5}>
+                      {item.informasijadwalkegiatan.name}
+                    </Text>
+                  </Box>
+                  <Box>
+                    <Text fz="sm" fw={600} lh={1.4}>Tanggal</Text>
+                    <Text fz="sm" fw={500} lh={1.5}>
+                      {new Date(item.informasijadwalkegiatan.tanggal).toLocaleDateString(
+                        'id-ID',
+                        {
+                          day: '2-digit',
+                          month: 'long',
+                          year: 'numeric',
+                        }
+                      )}
+                    </Text>
+                  </Box>
+                  <Box>
+                    <Text fz="sm" fw={600} lh={1.4}>Waktu</Text>
+                    <Text fz="sm" fw={500} lh={1.5}>
+                      {item.informasijadwalkegiatan.waktu}
+                    </Text>
+                  </Box>
+                  <Box>
+                    <Text fz="sm" fw={600} lh={1.4}>Lokasi</Text>
+                    <Text fz="sm" fw={500} lh={1.5} c="dimmed">
+                      {item.informasijadwalkegiatan.lokasi}
+                    </Text>
+                  </Box>
+                  <Box>
+                    <Button
+                      fullWidth
+                      variant="light"
+                      color="blue"
+                      onClick={() =>
+                        router.push(
+                          `/admin/kesehatan/data-kesehatan-warga/jadwal_kegiatan/${item.id}`
+                        )
+                      }
+                    >
+                      <IconDeviceImacCog size={20} />
+                      <Text ml={5} fz="sm" fw={500} lh={1.5}>
+                        Detail
+                      </Text>
+                    </Button>
+                  </Box>
+                </Stack>
+              </Paper>
+            ))
+          ) : (
+            <Center py="xl">
+              <Text c="dimmed" fz="sm" lh={1.4}>
+                Tidak ada jadwal kegiatan yang cocok
+              </Text>
+            </Center>
+          )}
+        </Stack>
       </Paper>
 
       {/* Pagination */}

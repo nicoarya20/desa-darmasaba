@@ -7,23 +7,38 @@ import {
   Box,
   Button,
   Group,
+  Loader,
+  NumberInput,
   Paper,
+  Select,
   Stack,
   Text,
-  NumberInput,
-  Title,
-  Select,
-  Tooltip,
+  Title
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
 function CreateJumlahPengangguran() {
   const stateDetail = useProxy(jumlahPengangguranState.jumlahPengangguran);
   const [chartData, setChartData] = useState<any[]>([]);
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      stateDetail.create.form.month?.trim() !== '' &&
+      stateDetail.create.form.year !== null &&
+      stateDetail.create.form.year > 0 &&
+      stateDetail.create.form.educatedUnemployment !== null &&
+      stateDetail.create.form.educatedUnemployment >= 0 &&
+      stateDetail.create.form.uneducatedUnemployment !== null &&
+      stateDetail.create.form.uneducatedUnemployment >= 0
+    );
+  };
 
   const monthOptions = [
     'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun',
@@ -73,32 +88,38 @@ function CreateJumlahPengangguran() {
   };
 
   const handleSubmit = async () => {
-    await calculateTotalAndChange();
-    const id = await stateDetail.create.create();
-    if (id) {
-      await stateDetail.findUnique.load(String(id));
-      if (stateDetail.findUnique.data) {
-        setChartData([stateDetail.findUnique.data]);
+    try {
+      setIsSubmitting(true);
+      await calculateTotalAndChange();
+      const id = await stateDetail.create.create();
+      if (id) {
+        await stateDetail.findUnique.load(String(id));
+        if (stateDetail.findUnique.data) {
+          setChartData([stateDetail.findUnique.data]);
+        }
+        resetForm();
+        router.push('/admin/ekonomi/jumlah-pengangguran');
       }
-      resetForm();
-      router.push('/admin/ekonomi/jumlah-pengangguran');
+    } catch (error) {
+      console.error("Error creating jumlah pengangguran:", error);
+      toast.error("Gagal menambahkan data pengangguran");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+   <Box px={{ base: 0, md: 'xs' }} py="xs">
       {/* Header */}
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button
-            variant="subtle"
-            onClick={() => router.back()}
-            p="xs"
-            radius="md"
-          >
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
-        </Tooltip>
+        <Button
+          variant="subtle"
+          onClick={() => router.back()}
+          p="xs"
+          radius="md"
+        >
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Tambah Data Pengangguran
         </Title>
@@ -179,19 +200,33 @@ function CreateJumlahPengangguran() {
           </Box>
 
           {/* Action Button */}
-          <Group justify="right" mt="md">
+          <Group justify="right">
+            {/* Tombol Batal */}
+            <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
             <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
-              disabled={!stateDetail.create.form.month || !stateDetail.create.form.year}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

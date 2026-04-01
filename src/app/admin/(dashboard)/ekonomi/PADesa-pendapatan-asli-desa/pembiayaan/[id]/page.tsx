@@ -6,11 +6,11 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Stack,
   TextInput,
-  Title,
-  Tooltip
+  Title
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -22,11 +22,26 @@ function EditPembiayaan() {
   const pembiayaanState = useProxy(PendapatanAsliDesa.pembiayaan);
   const router = useRouter();
   const params = useParams();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [formData, setFormData] = useState({
     name: '',
     value: '',
   });
+
+  const [originalData, setOriginalData] = useState({
+    name: '',
+    value: '',
+  });
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      formData.name?.trim() !== '' &&
+      formData.value !== '' &&
+      Number(formData.value) > 0
+    );
+  };
 
   const formatRupiah = (value: number | string) => {
     const number =
@@ -56,6 +71,10 @@ function EditPembiayaan() {
             name: data.name || '',
             value: String(data.value || ''),
           });
+          setOriginalData({
+            name: data.name || '',
+            value: String(data.value || ''),
+          });
         }
       } catch (error) {
         console.error('Error loading pembiayaan:', error);
@@ -66,8 +85,17 @@ function EditPembiayaan() {
     loadPembiayaan();
   }, [params?.id]);
 
+  const handleResetForm = () => {
+    setFormData({
+      name: originalData.name,
+      value: originalData.value,
+    });
+    toast.info('Form dikembalikan ke data awal');
+  };
+
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       pembiayaanState.update.form = {
         ...pembiayaanState.update.form,
         name: formData.name,
@@ -80,23 +108,23 @@ function EditPembiayaan() {
     } catch (error) {
       console.error('Error updating jenis pembiayaan:', error);
       toast.error('Terjadi kesalahan saat memperbarui jenis pembiayaan');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 0, md: 'xs' }} py="xs">
       {/* Header */}
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button
-            variant="subtle"
-            onClick={() => router.back()}
-            p="xs"
-            radius="md"
-          >
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
-        </Tooltip>
+        <Button
+          variant="subtle"
+          onClick={() => router.back()}
+          p="xs"
+          radius="md"
+        >
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Edit Jenis Pembiayaan
         </Title>
@@ -136,16 +164,30 @@ function EditPembiayaan() {
 
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

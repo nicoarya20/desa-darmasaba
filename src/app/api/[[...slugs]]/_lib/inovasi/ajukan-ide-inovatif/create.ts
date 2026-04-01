@@ -28,7 +28,7 @@ export default async function ajukanIdeInovatifCreate(context: Context){
 
     return {
         success: true,
-        message: "Success create ajukan ide inovatif",
+        message: "Sukses menambahkan ajukan ide inovatif",
         data: {
             ...body,
         }

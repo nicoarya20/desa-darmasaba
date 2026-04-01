@@ -66,7 +66,7 @@ function Page() {
       </Container>
 
       {/* Tabs Menu */}
-      <Tabs color={colors['blue-button']} variant="pills" defaultValue="semua">
+      <Tabs color={colors['blue-button']} variant="pills" value="semua">
         <Box px={{ base: "md", md: 100 }} py="md" bg={colors['BG-trans']} >
           <Grid>
             <GridCol span={{ base: 12, md: 9, lg: 8, xl: 9 }}>

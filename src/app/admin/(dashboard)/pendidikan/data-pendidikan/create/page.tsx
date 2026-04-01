@@ -1,41 +1,57 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, Stack, Text, TextInput, Title, Tooltip } from '@mantine/core';
+import { Box, Button, Group, Loader, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import dataPendidikan from '../../../_state/pendidikan/data-pendidikan';
+import { toast } from 'react-toastify';
 
 export default function CreateDataPendidikan() {
   const stateDPM = useProxy(dataPendidikan);
   const [chartData, setChartData] = useState<any[]>([]);
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      stateDPM.create.form.name?.trim() !== '' &&
+      stateDPM.create.form.jumlah?.trim() !== ''
+    );
+  };
 
   const resetForm = () => {
     stateDPM.create.form = { name: '', jumlah: '' };
   };
 
   const handleSubmit = async () => {
-    const id = await stateDPM.create.create();
-    if (id) {
-      const idStr = String(id);
-      await stateDPM.findUnique.load(idStr);
-      if (stateDPM.findUnique.data) setChartData([stateDPM.findUnique.data]);
+    try {
+      setIsSubmitting(true);
+      const id = await stateDPM.create.create();
+      if (id) {
+        const idStr = String(id);
+        await stateDPM.findUnique.load(idStr);
+        if (stateDPM.findUnique.data) setChartData([stateDPM.findUnique.data]);
+      }
+      resetForm();
+      router.push('/admin/pendidikan/data-pendidikan');
+    } catch (error) {
+      console.error("Error creating data pendidikan:", error);
+      toast.error("Terjadi kesalahan saat menambahkan data pendidikan");
+    } finally {
+      setIsSubmitting(false);
     }
-    resetForm();
-    router.push('/admin/pendidikan/data-pendidikan');
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'xl' }} py="md">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       <Group mb="md" gap="sm">
-        <Tooltip label="Kembali ke halaman sebelumnya" position="bottom" withArrow>
-          <Button variant="subtle" onClick={() => router.back()} radius="md">
-            <IconArrowBack size={20} stroke={2} />
-          </Button>
-        </Tooltip>
+        <Button variant="subtle" onClick={() => router.back()} radius="md">
+          <IconArrowBack size={20} stroke={2} />
+        </Button>
         <Title order={3} c='black'>Tambah Data Pendidikan</Title>
       </Group>
 
@@ -51,7 +67,7 @@ export default function CreateDataPendidikan() {
           <TextInput
             label="Nama Pendidikan"
             placeholder="Contoh: SD, SMP, SMA"
-            defaultValue={stateDPM.create.form.name}
+            value={stateDPM.create.form.name}
             onChange={(e) => (stateDPM.create.form.name = e.currentTarget.value)}
             radius="md"
             required
@@ -59,25 +75,39 @@ export default function CreateDataPendidikan() {
           <TextInput
             label="Jumlah Peserta"
             placeholder="Masukkan jumlah peserta"
-            defaultValue={stateDPM.create.form.jumlah}
+            value={stateDPM.create.form.jumlah}
             onChange={(e) => (stateDPM.create.form.jumlah = e.currentTarget.value)}
             radius="md"
             type="number"
             required
           />
-          <Group justify="right" mt="sm">
+          <Group justify="right">
+            {/* Tombol Batal */}
             <Button
-              onClick={handleSubmit}
-              style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, ${colors['blue-button-trans']})`,
-                color: 'white',
-                boxShadow: '0 0 10px rgba(0,123,255,0.5)',
-                '&:hover': { opacity: 0.9 },
-              }}
+              variant="outline"
+              color="gray"
               radius="md"
               size="md"
+              onClick={resetForm}
             >
-              Simpan
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
+              onClick={handleSubmit}
+              radius="md"
+              size="md"
+              disabled={!isFormValid() || isSubmitting}
+              style={{
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                color: '#fff',
+                boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
+              }}
+            >
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

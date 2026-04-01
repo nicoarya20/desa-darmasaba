@@ -25,7 +25,7 @@ const jenisLayananDelete = async (context: Context) => {
 
     return {
         success: true,
-        message: "Success delete jenis layanan",
+        message: "Sukses Menghapus jenis layanan",
         data: jenisLayanan,
     }
 }

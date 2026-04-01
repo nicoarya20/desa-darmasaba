@@ -9,8 +9,7 @@ import {
   Paper,
   Skeleton,
   Stack,
-  Text,
-  Tooltip
+  Text
 } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
@@ -49,7 +48,7 @@ function DetailAjukanPermohonan() {
   const data = ajukanPermohonanState.findUnique.data;
 
   return (
-    <Box py={10}>
+   <Box px={{ base: 0, md: 'xs' }} py="xs">
       {/* Tombol Kembali */}
       <Button
         variant="subtle"
@@ -62,7 +61,7 @@ function DetailAjukanPermohonan() {
 
       <Paper
         withBorder
-        w={{ base: '100%', md: '60%' }}
+        w={{ base: '100%', md: '70%' }}
         bg={colors['white-1']}
         p="lg"
         radius="md"
@@ -121,7 +120,6 @@ function DetailAjukanPermohonan() {
               </Box>
 
               <Group gap="sm">
-                <Tooltip label="Hapus Surat" withArrow position="top">
                   <Button
                     color="red"
                     onClick={() => {
@@ -135,9 +133,7 @@ function DetailAjukanPermohonan() {
                   >
                     <IconTrash size={20} />
                   </Button>
-                </Tooltip>
 
-                <Tooltip label="Edit Surat" withArrow position="top">
                   <Button
                     color="green"
                     onClick={() =>
@@ -151,7 +147,6 @@ function DetailAjukanPermohonan() {
                   >
                     <IconEdit size={20} />
                   </Button>
-                </Tooltip>
               </Group>
             </Stack>
           </Paper>

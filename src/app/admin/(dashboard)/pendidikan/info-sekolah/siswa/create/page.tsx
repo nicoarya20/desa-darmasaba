@@ -6,22 +6,32 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Select,
   Stack,
   Text,
   TextInput,
-  Title,
-  Tooltip,
+  Title
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
 function CreateSiswa() {
   const router = useRouter();
   const stateCreate = useProxy(infoSekolahPaud.siswa);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      stateCreate.create.form.nama?.trim() !== '' &&
+      stateCreate.create.form.lembagaId?.trim() !== ''
+    );
+  };
 
   useEffect(() => {
     stateCreate.findMany.load();
@@ -36,21 +46,26 @@ function CreateSiswa() {
   };
 
   const handleSubmit = async () => {
-    await stateCreate.create.create();
-
-    resetForm();
-    router.push('/admin/pendidikan/info-sekolah/siswa');
+    try {
+      setIsSubmitting(true);
+      await stateCreate.create.create();
+      resetForm();
+      router.push('/admin/pendidikan/info-sekolah/siswa');
+    } catch (error) {
+      console.error('Error creating siswa:', error);
+      toast.error('Gagal menambahkan siswa');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Header + Back Button */}
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
-        </Tooltip>
+        <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Tambah Siswa
         </Title>
@@ -67,7 +82,7 @@ function CreateSiswa() {
       >
         <Stack gap="md">
           <TextInput
-            defaultValue={stateCreate.create.form.nama}
+            value={stateCreate.create.form.nama}
             onChange={(val) => {
               stateCreate.create.form.nama = val.target.value;
             }}
@@ -94,16 +109,30 @@ function CreateSiswa() {
 
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

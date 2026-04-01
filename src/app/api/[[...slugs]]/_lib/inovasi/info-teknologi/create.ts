@@ -22,7 +22,7 @@ export default async function infoTeknoCreate(context: Context){
 
     return {
         success: true,
-        message: "Success create info teknologi",
+        message: "Sukses menambahkan info teknologi",
         data: {
             ...body,
         }

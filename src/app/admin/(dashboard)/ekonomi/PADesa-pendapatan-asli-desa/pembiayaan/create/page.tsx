@@ -1,26 +1,36 @@
 'use client';
-import React from 'react';
-import { useProxy } from 'valtio/utils';
 import PendapatanAsliDesa from '@/app/admin/(dashboard)/_state/ekonomi/PADesa';
-import { useRouter } from 'next/navigation';
 import colors from '@/con/colors';
 import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Stack,
-  Title,
-  TextInput,
   Text,
-  Tooltip,
+  TextInput,
+  Title
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { toast } from 'react-toastify';
+import { useProxy } from 'valtio/utils';
 
 function CreatePembiayaan() {
   const pembiayaanState = useProxy(PendapatanAsliDesa.pembiayaan);
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      pembiayaanState.create.form.name?.trim() !== '' &&
+      pembiayaanState.create.form.value !== null &&
+      pembiayaanState.create.form.value > 0
+    );
+  };
 
   const formatRupiah = (value: number | string) => {
     const number =
@@ -44,29 +54,35 @@ function CreatePembiayaan() {
   };
 
   const handleSubmit = async () => {
-    if (!pembiayaanState.create.form.name || !pembiayaanState.create.form.value) {
-      return toast.warn('Nama dan nilai wajib diisi');
-    }
+    try {
+      setIsSubmitting(true);
+      if (!pembiayaanState.create.form.name || !pembiayaanState.create.form.value) {
+        return toast.warn('Nama dan nilai wajib diisi');
+      }
 
-    await pembiayaanState.create.submit();
-    resetForm();
-    router.push('/admin/ekonomi/PADesa-pendapatan-asli-desa/pembiayaan');
+      await pembiayaanState.create.submit();
+      resetForm();
+      router.push('/admin/ekonomi/PADesa-pendapatan-asli-desa/pembiayaan');
+    } catch (error) {
+      console.error('Error creating pembiayaan:', error);
+      toast.error('Gagal menambahkan jenis pembiayaan');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 0, md: 'xs' }} py="xs">
       {/* Header */}
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button
-            variant="subtle"
-            onClick={() => router.back()}
-            p="xs"
-            radius="md"
-          >
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
-        </Tooltip>
+        <Button
+          variant="subtle"
+          onClick={() => router.back()}
+          p="xs"
+          radius="md"
+        >
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Tambah Jenis Pembiayaan
         </Title>
@@ -85,7 +101,7 @@ function CreatePembiayaan() {
           <TextInput
             label={<Text fw="bold" fz="sm">Nama Jenis Pembiayaan</Text>}
             placeholder="Masukkan nama jenis pembiayaan"
-            defaultValue={pembiayaanState.create.form.name}
+            value={pembiayaanState.create.form.name}
             onChange={(e) => {
               pembiayaanState.create.form.name = e.currentTarget.value;
             }}
@@ -96,7 +112,7 @@ function CreatePembiayaan() {
             type="text"
             label={<Text fw="bold" fz="sm">Nilai</Text>}
             placeholder="Masukkan nilai"
-            defaultValue={formatRupiah(pembiayaanState.create.form.value)}
+            value={formatRupiah(pembiayaanState.create.form.value)}
             onChange={(e) => {
               const raw = e.currentTarget.value;
               pembiayaanState.create.form.value = unformatRupiah(raw);
@@ -106,16 +122,30 @@ function CreatePembiayaan() {
 
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

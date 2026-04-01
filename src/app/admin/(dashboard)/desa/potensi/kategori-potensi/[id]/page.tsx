@@ -10,7 +10,7 @@ import {
   Stack,
   TextInput,
   Title,
-  Tooltip
+  Loader
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -27,6 +27,19 @@ function EditKategoriPotensi() {
     nama: '',
   });
 
+  const [originalData, setOriginalData] = useState({
+    nama: '',
+  });
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      formData.nama?.trim() !== ''
+    );
+  };
+
   // Load data dari backend -> isi ke formData lokal
   useEffect(() => {
     const loadKategori = async () => {
@@ -37,6 +50,9 @@ function EditKategoriPotensi() {
         const data = await editState.update.load(id);
         if (data) {
           setFormData({
+            nama: data.nama || '',
+          });
+          setOriginalData({
             nama: data.nama || '',
           });
         }
@@ -56,8 +72,21 @@ function EditKategoriPotensi() {
     }));
   };
 
+  const handleResetForm = () => {
+    setFormData({
+      nama: originalData.nama,
+    });
+    toast.info("Form dikembalikan ke data awal");
+  };
+
   const handleSubmit = async () => {
+    if (!formData.nama?.trim()) {
+      toast.error('Nama kategori potensi wajib diisi');
+      return;
+    }
+    
     try {
+      setIsSubmitting(true);
       // Update global state hanya pas submit
       editState.update.form = {
         ...editState.update.form,
@@ -70,13 +99,14 @@ function EditKategoriPotensi() {
     } catch (error) {
       console.error('Error updating kategori potensi:', error);
       toast.error('Terjadi kesalahan saat memperbarui kategori potensi');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
           <Button
             variant="subtle"
             onClick={() => router.back()}
@@ -85,7 +115,6 @@ function EditKategoriPotensi() {
           >
             <IconArrowBack color={colors['blue-button']} size={24} />
           </Button>
-        </Tooltip>
         <Title order={4} ml="sm" c="dark">
           Edit Kategori Potensi
         </Title>
@@ -110,16 +139,30 @@ function EditKategoriPotensi() {
 
           <Group justify="flex-end">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

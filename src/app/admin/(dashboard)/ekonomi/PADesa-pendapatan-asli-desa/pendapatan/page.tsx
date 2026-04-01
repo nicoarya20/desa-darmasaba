@@ -17,10 +17,9 @@ import {
   TableThead,
   TableTr,
   Text,
-  Title,
-  Tooltip
+  Title
 } from '@mantine/core';
-import { useShallowEffect } from '@mantine/hooks';
+import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
 import { IconEdit, IconPlus, IconSearch, IconTrash } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -50,6 +49,7 @@ function ListPendapatan({ search }: { search: string }) {
   const router = useRouter();
   const [modalHapus, setModalHapus] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [debouncedSearch] = useDebouncedValue(search, 1000);
 
   const {
     data,
@@ -71,19 +71,19 @@ function ListPendapatan({ search }: { search: string }) {
       pendapatanState.delete.byId(selectedId);
       setModalHapus(false);
       setSelectedId(null);
-      load(page, 10, search);
+      load(page, 10, debouncedSearch);
     }
   };
 
   useShallowEffect(() => {
-    load(page, 10, search);
-  }, [page, search]);
+    load(page, 10, debouncedSearch);
+  }, [page, debouncedSearch]);
 
   const filteredData = data || [];
 
   if (loading || !data) {
     return (
-      <Stack py={10}>
+      <Stack py={{ base: 'sm', md: 'md' }}>
         <Skeleton height={600} radius="md" />
       </Stack>
     );
@@ -92,32 +92,48 @@ function ListPendapatan({ search }: { search: string }) {
   const totalValue = filteredData.reduce((total, item) => total + item.value, 0);
 
   return (
-    <Box py={10}>
-      <Paper withBorder bg={colors['white-1']} p={'lg'} shadow="md" radius="md">
+    <Box py={{ base: 'sm', md: 'md' }}>
+      <Paper withBorder bg={colors['white-1']} p={{ base: 'md', md: 'lg' }} shadow="md" radius="md">
         <Group justify="space-between" mb="md">
-          <Title order={4}>Daftar Pendapatan</Title>
-          <Tooltip label="Tambah Pendapatan Baru" withArrow>
-            <Button
-              leftSection={<IconPlus size={18} />}
-              color="blue"
-              variant="light"
-              onClick={() =>
-                router.push('/admin/ekonomi/PADesa-pendapatan-asli-desa/pendapatan/create')
-              }
-            >
-              Tambah Baru
-            </Button>
-          </Tooltip>
+          <Title order={2} lh={1.2}>
+          Daftar Pendapatan
+          </Title>
+          <Button
+            leftSection={<IconPlus size={18} />}
+            color="blue"
+            variant="light"
+            onClick={() =>
+              router.push('/admin/ekonomi/PADesa-pendapatan-asli-desa/pendapatan/create')
+            }
+          >
+            Tambah Baru
+          </Button>
         </Group>
 
-        <Box style={{ overflowX: 'auto' }}>
-          <Table highlightOnHover striped withTableBorder withRowBorders>
+        {/* Desktop Table */}
+       <Box visibleFrom="md" style={{ overflowX: 'auto' }}>
+          <Table
+            highlightOnHover
+            miw={0}
+            style={{
+              tableLayout: 'fixed',
+              width: '100%',
+            }}
+          >
             <TableThead>
               <TableTr>
-                <TableTh style={{ width: '40%' }}>Nama</TableTh>
-                <TableTh style={{ width: '25%' }}>Nilai</TableTh>
-                <TableTh style={{ width: '15%' }}>Edit</TableTh>
-                <TableTh style={{ width: '15%' }}>Delete</TableTh>
+                <TableTh style={{ width: '40%' }}>
+                  <Text fz="sm" fw={600} lh={1.4}>Nama</Text>
+                </TableTh>
+                <TableTh style={{ width: '25%' }}>
+                  <Text fz="sm" fw={600} lh={1.4}>Nilai</Text>
+                </TableTh>
+                <TableTh style={{ width: '15%' }}>
+                  <Text fz="sm" fw={600} lh={1.4}>Edit</Text>
+                </TableTh>
+                <TableTh style={{ width: '20%' }}>
+                  <Text fz="sm" fw={600} lh={1.4}>Delete</Text>
+                </TableTh>
               </TableTr>
             </TableThead>
             <TableTbody>
@@ -126,11 +142,13 @@ function ListPendapatan({ search }: { search: string }) {
                   {filteredData.map((item) => (
                     <TableTr key={item.id}>
                       <TableTd>
-                        <Text fw={500} truncate="end" lineClamp={1}>
+                        <Text fz="md" fw={500} lh={1.5} truncate="end">
                           {item.name}
                         </Text>
                       </TableTd>
-                      <TableTd>{formatRupiah(item.value)}</TableTd>
+                      <TableTd>
+                        <Text fz="md" fw={500} lh={1.5}>{formatRupiah(item.value)}</Text>
+                      </TableTd>
                       <TableTd>
                         <Button
                           variant="light"
@@ -138,9 +156,10 @@ function ListPendapatan({ search }: { search: string }) {
                           onClick={() =>
                             router.push(`/admin/ekonomi/PADesa-pendapatan-asli-desa/pendapatan/${item.id}`)
                           }
+                          fz="sm"
+                          px="xs"
                         >
-                          <IconEdit size={18} />
-                          <Text ml={5}>Edit</Text>
+                          <IconEdit size={16} />
                         </Button>
                       </TableTd>
                       <TableTd>
@@ -152,9 +171,10 @@ function ListPendapatan({ search }: { search: string }) {
                             setSelectedId(item.id);
                             setModalHapus(true);
                           }}
+                          fz="sm"
+                          px="xs"
                         >
-                          <IconTrash size={18} />
-                          <Text ml={5}>Hapus</Text>
+                          <IconTrash size={16} />
                         </Button>
                       </TableTd>
                     </TableTr>
@@ -162,19 +182,21 @@ function ListPendapatan({ search }: { search: string }) {
 
                   {/* Row total */}
                   <TableTr>
-                    <TableTd colSpan={1}>
-                      <Text fw={'bold'}>Total</Text>
+                    <TableTd>
+                      <Text fz="md" fw={700} lh={1.5}>Total</Text>
                     </TableTd>
                     <TableTd colSpan={3}>
-                      <Text fw={'bold'}>{formatRupiah(totalValue)}</Text>
+                      <Text fz="md" fw={700} lh={1.5}>{formatRupiah(totalValue)}</Text>
                     </TableTd>
                   </TableTr>
                 </>
               ) : (
                 <TableTr>
                   <TableTd colSpan={4}>
-                    <Center py={20}>
-                      <Text color="dimmed">Tidak ada data pendapatan yang cocok</Text>
+                    <Center py={24}>
+                      <Text c="dimmed" fz="sm" lh={1.4}>
+                        Tidak ada data pendapatan yang cocok
+                      </Text>
                     </Center>
                   </TableTd>
                 </TableTr>
@@ -182,23 +204,82 @@ function ListPendapatan({ search }: { search: string }) {
             </TableTbody>
           </Table>
         </Box>
+
+        {/* Mobile Cards */}
+        <Stack gap="xs" hiddenFrom="md">
+          {filteredData.length > 0 ? (
+            filteredData.map((item) => (
+              <Paper key={item.id} withBorder radius="md" p="md">
+                <Stack gap={4}>
+                  <Box>
+                    <Text fz="sm" fw={600} lh={1.4}>Nama</Text>
+                    <Text fz="sm" fw={500} lh={1.4}>{item.name}</Text>
+                  </Box>
+                  <Box>
+                    <Text fz="sm" fw={600} lh={1.4}>Nilai</Text>
+                    <Text fz="sm" fw={500} lh={1.4}>{formatRupiah(item.value)}</Text>
+                  </Box>
+                  <Group justify="flex-end" mt="xs">
+                    <Button
+                      variant="light"
+                      color="green"
+                      size="xs"
+                      onClick={() =>
+                        router.push(`/admin/ekonomi/PADesa-pendapatan-asli-desa/pendapatan/${item.id}`)
+                      }
+                    >
+                      <IconEdit size={14} />
+                      <Text ml={4}>Edit</Text>
+                    </Button>
+                    <Button
+                      variant="light"
+                      color="red"
+                      size="xs"
+                      disabled={pendapatanState.delete.loading}
+                      onClick={() => {
+                        setSelectedId(item.id);
+                        setModalHapus(true);
+                      }}
+                    >
+                      <IconTrash size={14} />
+                      <Text ml={4}>Hapus</Text>
+                    </Button>
+                  </Group>
+                </Stack>
+              </Paper>
+            ))
+          ) : (
+            <Center py={24}>
+              <Text c="dimmed" fz="sm" lh={1.4}>
+                Tidak ada data pendapatan yang cocok
+              </Text>
+            </Center>
+          )}
+
+          {filteredData.length > 0 && (
+            <Paper withBorder radius="md" p="md">
+              <Box>
+                <Text fz="xs" fw={600} lh={1.4}>Total</Text>
+                <Text fz="sm" fw={700} lh={1.4}>{formatRupiah(totalValue)}</Text>
+              </Box>
+            </Paper>
+          )}
+        </Stack>
       </Paper>
 
-      {/* Pagination */}
-      <Center>
-        <Pagination
-          value={page}
-          onChange={(newPage) => {
-            load(newPage, 10, search);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }}
-          total={totalPages}
-          mt="md"
-          mb="md"
-          color="blue"
-          radius="md"
-        />
-      </Center>
+        <Center mt={{ base: 'sm', md: 'md' }} mb={{ base: 'sm', md: 'md' }}>
+          <Pagination
+            value={page}
+            onChange={(newPage) => {
+              load(newPage, 10, search);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            total={totalPages}
+            color="blue"
+            radius="md"
+            size="sm"
+          />
+        </Center>
 
       {/* Modal Konfirmasi Hapus */}
       <ModalKonfirmasiHapus

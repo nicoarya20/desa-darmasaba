@@ -7,20 +7,20 @@ import {
   Button,
   Center,
   Group,
+  Loader,
   Paper,
   Stack,
   Text,
   TextInput,
-  Title,
-  Tooltip,
+  Title
 } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack } from '@tabler/icons-react';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { useProxy } from 'valtio/utils';
 import { toast } from 'react-toastify';
+import { useProxy } from 'valtio/utils';
 
 const BimbinganBelajarDesaTextEditor = dynamic(
   () =>
@@ -37,6 +37,22 @@ function EditTujuanProgram() {
   // gabung judul & content jadi formData
   const [formData, setFormData] = useState({ judul: '', deskripsi: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [originalData, setOriginalData] = useState({ judul: '', deskripsi: '' });
+
+  // Helper function to check if HTML content is empty
+  const isHtmlEmpty = (html: string) => {
+    // Remove all HTML tags and check if there's any text content
+    const textContent = html.replace(/<[^>]*>/g, '').trim();
+    return textContent === '';
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      formData.judul?.trim() !== '' &&
+      !isHtmlEmpty(formData.deskripsi)
+    );
+  };
 
   // load data sekali
   useShallowEffect(() => {
@@ -50,6 +66,10 @@ function EditTujuanProgram() {
         judul: editState.findById.data.judul ?? '',
         deskripsi: editState.findById.data.deskripsi ?? '',
       });
+      setOriginalData({
+        judul: editState.findById.data.judul ?? '',
+        deskripsi: editState.findById.data.deskripsi ?? '',
+      });
     }
   }, [editState.findById.data]);
 
@@ -57,12 +77,15 @@ function EditTujuanProgram() {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = async () => {
-    if (!formData.judul.trim()) {
-      toast.error('Judul wajib diisi');
-      return;
-    }
+  const handleResetForm = () => {
+    setFormData({
+      judul: originalData.judul,
+      deskripsi: originalData.deskripsi,
+    });
+    toast.info("Form dikembalikan ke data awal");
+  };
 
+  const handleSubmit = async () => {
     setIsSubmitting(true);
     try {
       if (editState.findById.data) {
@@ -96,14 +119,12 @@ function EditTujuanProgram() {
   }
 
   return (
-    <Box>
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       <Stack gap="xs">
         <Group mb="md">
-          <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-            <Button variant="subtle" onClick={handleBack} p="xs" radius="md">
-              <IconArrowBack color={colors['blue-button']} size={24} />
-            </Button>
-          </Tooltip>
+          <Button variant="subtle" onClick={handleBack} p="xs" radius="md">
+            <IconArrowBack color={colors['blue-button']} size={24} />
+          </Button>
           <Title order={4} ml="sm" c="dark">
             Edit Tujuan Program
           </Title>
@@ -142,22 +163,33 @@ function EditTujuanProgram() {
             </Box>
 
             {/* Submit & Cancel */}
-            <Group>
-              <Button
-                bg={colors['blue-button']}
-                onClick={handleSubmit}
-                loading={isSubmitting || editState.update.loading}
-                disabled={!formData.judul}
-              >
-                {isSubmitting ? 'Menyimpan...' : 'Simpan Perubahan'}
-              </Button>
-
+            <Group justify="right">
+              {/* Tombol Batal */}
               <Button
                 variant="outline"
-                onClick={handleBack}
-                disabled={isSubmitting || editState.update.loading}
+                color="gray"
+                radius="md"
+                size="md"
+                onClick={handleResetForm}
               >
                 Batal
+              </Button>
+
+              {/* Tombol Simpan */}
+              <Button
+                onClick={handleSubmit}
+                radius="md"
+                size="md"
+                disabled={!isFormValid() || isSubmitting}
+                style={{
+                  background: !isFormValid() || isSubmitting
+                    ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                    : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                  color: '#fff',
+                  boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
+                }}
+              >
+                {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
               </Button>
             </Group>
           </Stack>

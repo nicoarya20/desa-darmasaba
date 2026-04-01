@@ -93,6 +93,34 @@ const sdgsDesa = proxy({
       }
     },
   },
+  findManyAll: {
+    data: null as any[] | null,
+    loading: false,
+    load: async () => {  // Change to arrow function
+      sdgsDesa.findManyAll.loading = true;  // Use the full path to access the property
+      try {
+        const query: any = {};
+        
+        const res = await ApiFetch.api.landingpage.sdgsdesa[
+          "findManyAll"
+        ].get({
+          query,
+        });
+        
+        if (res.status === 200 && res.data?.success) {
+          sdgsDesa.findManyAll.data = res.data.data || [];
+        } else {
+          console.error("Failed to load media sosial:", res.data?.message);
+          sdgsDesa.findManyAll.data = [];
+        }
+      } catch (error) {
+        console.error("Error loading media sosial:", error);
+        sdgsDesa.findManyAll.data = [];
+      } finally {
+        sdgsDesa.findManyAll.loading = false;
+      }
+    },
+  },
   findUnique: {
     data: null as Prisma.SdgsDesaGetPayload<{
       include: {

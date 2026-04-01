@@ -5,18 +5,18 @@ import colors from '@/con/colors';
 import {
   Box,
   Button,
+  Group,
+  Loader,
   Paper,
   Stack,
   TextInput,
-  Title,
-  Group,
-  Tooltip,
+  Title
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { useProxy } from 'valtio/utils';
 import { toast } from 'react-toastify';
+import { useProxy } from 'valtio/utils';
 
 function EditGrafikBerdasarkanUsiaKerjaYangMenganggur() {
   const router = useRouter();
@@ -26,6 +26,8 @@ function EditGrafikBerdasarkanUsiaKerjaYangMenganggur() {
   );
   const id = params.id;
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   // ✅ state lokal, controlled
   const [formData, setFormData] = useState({
     usia18_25: '',
@@ -33,6 +35,23 @@ function EditGrafikBerdasarkanUsiaKerjaYangMenganggur() {
     usia36_45: '',
     usia46_keatas: '',
   });
+
+  const [originalData, setOriginalData] = useState({
+    usia18_25: '',
+    usia26_35: '',
+    usia36_45: '',
+    usia46_keatas: '',
+  });
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      formData.usia18_25?.trim() !== '' &&
+      formData.usia26_35?.trim() !== '' &&
+      formData.usia36_45?.trim() !== '' &&
+      formData.usia46_keatas?.trim() !== ''
+    );
+  };
 
   // load data dari global state -> masukin ke local state
   useEffect(() => {
@@ -46,6 +65,13 @@ function EditGrafikBerdasarkanUsiaKerjaYangMenganggur() {
             usia36_45: data.usia36_45 || '',
             usia46_keatas: data.usia46_keatas || '',
           });
+          setOriginalData({
+            usia18_25: data.usia18_25 || '',
+            usia26_35: data.usia26_35 || '',
+            usia36_45: data.usia36_45 || '',
+            usia46_keatas: data.usia46_keatas || '',
+          });
+          
         }
       });
     }
@@ -58,8 +84,19 @@ function EditGrafikBerdasarkanUsiaKerjaYangMenganggur() {
     }));
   };
 
+  const handleResetForm = () => {
+    setFormData({
+      usia18_25: originalData.usia18_25,
+      usia26_35: originalData.usia26_35,
+      usia36_45: originalData.usia36_45,
+      usia46_keatas: originalData.usia46_keatas,
+    });
+    toast.info('Form dikembalikan ke data awal');
+  };
+
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       // ✅ baru update global state pas submit
       stategrafik.update.id = id;
       stategrafik.update.form = { ...formData };
@@ -73,22 +110,22 @@ function EditGrafikBerdasarkanUsiaKerjaYangMenganggur() {
     } catch (error) {
       console.error(error);
       toast.error('Terjadi kesalahan saat memperbarui data grafik');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button
-            variant="subtle"
-            onClick={() => router.back()}
-            p="xs"
-            radius="md"
-          >
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
-        </Tooltip>
+        <Button
+          variant="subtle"
+          onClick={() => router.back()}
+          p="xs"
+          radius="md"
+        >
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Edit Grafik Pengangguran Berdasarkan Usia Kerja
         </Title>
@@ -138,16 +175,30 @@ function EditGrafikBerdasarkanUsiaKerjaYangMenganggur() {
 
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

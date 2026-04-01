@@ -5,16 +5,17 @@ import programKesehatan from '@/app/admin/(dashboard)/_state/kesehatan/program-k
 import colors from '@/con/colors';
 import ApiFetch from '@/lib/api-fetch';
 import {
+  ActionIcon,
   Box,
   Button,
   Group,
   Image,
+  Loader,
   Paper,
   Stack,
   Text,
   TextInput,
-  Title,
-  Tooltip,
+  Title
 } from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
 import { IconArrowBack, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
@@ -30,12 +31,36 @@ function EditProgramKesehatan() {
 
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     deskripsiSingkat: '',
     deskripsi: '',
     imageId: '',
   });
+  const [originalData, setOriginalData] = useState({
+    name: '',
+    deskripsiSingkat: '',
+    deskripsi: '',
+    imageId: '',
+    imageUrl: ''
+  });
+
+  // Helper function to check if HTML content is empty
+  const isHtmlEmpty = (html: string) => {
+    // Remove all HTML tags and check if there's any text content
+    const textContent = html.replace(/<[^>]*>/g, '').trim();
+    return textContent === '';
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      formData.name?.trim() !== '' &&
+      !isHtmlEmpty(formData.deskripsiSingkat) &&
+      !isHtmlEmpty(formData.deskripsi)
+    );
+  };
 
   // Load data awal
   useEffect(() => {
@@ -53,6 +78,13 @@ function EditProgramKesehatan() {
           deskripsi: data.deskripsi || '',
           imageId: data.imageId || '',
         });
+        setOriginalData({
+          name: data.name || '',
+          deskripsiSingkat: data.deskripsiSingkat || '',
+          deskripsi: data.deskripsi || '',
+          imageId: data.imageId || '',
+          imageUrl: data.image?.link || '',
+        });
 
         if (data?.image?.link) setPreviewImage(data.image.link);
       } catch (err) {
@@ -69,9 +101,22 @@ function EditProgramKesehatan() {
     setFormData((prev) => ({ ...prev, [key]: value }));
   };
 
+  const handleResetForm = () => {
+    setFormData({
+      name: originalData.name,
+      deskripsiSingkat: originalData.deskripsiSingkat,
+      deskripsi: originalData.deskripsi,
+      imageId: originalData.imageId,
+    });
+    setPreviewImage(originalData.imageUrl || null);
+    setFile(null);
+    toast.info("Form dikembalikan ke data awal");
+  };
+
   // Submit form
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       const updatedForm = { ...programKesehatanState.edit.form, ...formData };
 
       // Upload file kalau ada
@@ -90,17 +135,17 @@ function EditProgramKesehatan() {
     } catch (err) {
       console.error(err);
       toast.error('Terjadi kesalahan saat memperbarui program kesehatan');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
-        </Tooltip>
+        <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Edit Program Kesehatan
         </Title>
@@ -161,7 +206,7 @@ function EditProgramKesehatan() {
               }}
               onReject={() => toast.error('File tidak valid.')}
               maxSize={5 * 1024 ** 2}
-              accept={{ 'image/*': [] }}
+              accept={{ 'image/*': ['.jpeg', '.jpg', '.png', '.webp'] }}
             >
               <Group justify="center" gap="xl" mih={220} style={{ pointerEvents: 'none' }}>
                 <Dropzone.Accept>
@@ -186,7 +231,7 @@ function EditProgramKesehatan() {
             </Dropzone>
 
             {previewImage && (
-              <Box mt="sm">
+              <Box mt="sm" pos={"relative"}>
                 <Image
                   src={previewImage}
                   alt="Preview"
@@ -199,22 +244,54 @@ function EditProgramKesehatan() {
                   }}
                   loading="lazy"
                 />
+                <ActionIcon
+                  variant="filled"
+                  color="red"
+                  radius="xl"
+                  size="sm"
+                  pos="absolute"
+                  top={5}
+                  right={5}
+                  onClick={() => {
+                    setPreviewImage(null);
+                    setFile(null);
+                  }}
+                  style={{
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                  }}
+                >
+                  <IconX size={14} />
+                </ActionIcon>
               </Box>
             )}
           </Box>
 
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

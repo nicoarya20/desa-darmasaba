@@ -7,22 +7,35 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Stack,
   TextInput,
-  Title,
-  Tooltip,
+  Title
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import demografiPekerjaan from '../../../_state/ekonomi/demografi-pekerjaan';
+import { toast } from 'react-toastify';
 
 function CreateDemografiPekerjaan() {
   const stateDemografi = useProxy(demografiPekerjaan);
   const [chartData, setChartData] = useState<any[]>([]);
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      stateDemografi.create.form.pekerjaan?.trim() !== '' &&
+      stateDemografi.create.form.lakiLaki !== null &&
+      stateDemografi.create.form.lakiLaki >= 0 &&
+      stateDemografi.create.form.perempuan !== null &&
+      stateDemografi.create.form.perempuan >= 0
+    );
+  };
 
   const resetForm = () => {
     stateDemografi.create.form = {
@@ -33,32 +46,37 @@ function CreateDemografiPekerjaan() {
   };
 
   const handleSubmit = async () => {
-    const id = await stateDemografi.create.create();
-    if (id) {
-      const idStr = String(id);
-      await stateDemografi.findUnique.load(idStr);
-      if (stateDemografi.findUnique.data) {
-        setChartData([stateDemografi.findUnique.data]);
+    try {
+      const id = await stateDemografi.create.create();
+      if (id) {
+        const idStr = String(id);
+        await stateDemografi.findUnique.load(idStr);
+        if (stateDemografi.findUnique.data) {
+          setChartData([stateDemografi.findUnique.data]);
+        }
       }
+      resetForm();
+      router.push('/admin/ekonomi/demografi-pekerjaan');
+    } catch (error) {
+      console.error('Error creating demografi pekerjaan:', error);
+      toast.error('Terjadi kesalahan saat menambah demografi pekerjaan');
+    } finally {
+      setIsSubmitting(false);
     }
-    resetForm();
-    router.push('/admin/ekonomi/demografi-pekerjaan');
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+     <Box px={{ base: 0, md: 'xs' }} py="xs">
       {/* Header */}
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button
-            variant="subtle"
-            onClick={() => router.back()}
-            p="xs"
-            radius="md"
-          >
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
-        </Tooltip>
+        <Button
+          variant="subtle"
+          onClick={() => router.back()}
+          p="xs"
+          radius="md"
+        >
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Tambah Demografi Pekerjaan
         </Title>
@@ -77,7 +95,7 @@ function CreateDemografiPekerjaan() {
           <TextInput
             label="Pekerjaan"
             type="text"
-            defaultValue={stateDemografi.create.form.pekerjaan}
+            value={stateDemografi.create.form.pekerjaan}
             placeholder="Masukkan pekerjaan"
             onChange={(val) => {
               stateDemografi.create.form.pekerjaan = val.currentTarget.value;
@@ -87,7 +105,7 @@ function CreateDemografiPekerjaan() {
           <TextInput
             label="Jumlah Pekerja Laki-Laki"
             type="number"
-            defaultValue={stateDemografi.create.form.lakiLaki}
+            value={stateDemografi.create.form.lakiLaki}
             placeholder="Masukkan jumlah pekerja laki-laki"
             onChange={(val) => {
               stateDemografi.create.form.lakiLaki = Number(val.currentTarget.value);
@@ -97,7 +115,7 @@ function CreateDemografiPekerjaan() {
           <TextInput
             label="Jumlah Pekerja Perempuan"
             type="number"
-            defaultValue={stateDemografi.create.form.perempuan}
+            value={stateDemografi.create.form.perempuan}
             placeholder="Masukkan jumlah pekerja perempuan"
             onChange={(val) => {
               stateDemografi.create.form.perempuan = Number(val.currentTarget.value);
@@ -107,16 +125,30 @@ function CreateDemografiPekerjaan() {
 
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

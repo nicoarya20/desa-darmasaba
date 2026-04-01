@@ -45,7 +45,7 @@ import BackButton from '../../desa/layanan/_com/BackButto';
 function Page() {
   const listState = useProxy(programKreatifState);
   const [search, setSearch] = useState("");
-  const [debouncedSearch] = useDebouncedValue(search, 500);
+  const [debouncedSearch] = useDebouncedValue(search, 1000);
   const router = useTransitionRouter()
   const {
     data,
@@ -117,7 +117,7 @@ function Page() {
                       )}
                     </Center>
                     <Text ta={'center'} fz={'h3'} fw={'bold'} c={colors['blue-button']}>{v.name}</Text>
-                    <Text py={10} ta={'center'} fz={'lg'} c={'black'}>{v.slug}</Text>
+                    <Text lineClamp={2} lh={"1.9"} py={10} ta={'center'} fz={'lg'} c={'black'}>{v.slug}</Text>
                     <Center>
                       <Button onClick={() => router.push(`/darmasaba/inovasi/program-kreatif-desa/${v.id}`)} bg={colors['blue-button']}>Selengkapnya</Button>
                     </Center>

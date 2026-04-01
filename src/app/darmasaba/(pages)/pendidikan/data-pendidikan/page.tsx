@@ -57,7 +57,7 @@ function Page() {
           <Title order={1} fw={700} ta="center" c={colors['blue-button']}>
             Statistik Data Pendidikan
           </Title>
-          <Text c="dimmed" size="sm" ta="center">
+          <Text fz="md" ta="center">
             Visualisasi jumlah pendidikan berdasarkan kategori yang tersedia
           </Text>
         </Stack>

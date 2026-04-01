@@ -20,8 +20,9 @@ const MediaSosial = new Elysia({
   .post("/create", MediaSosialCreate, {
     body: t.Object({
       name: t.String(),
-      imageId: t.String(),
-      iconUrl: t.String(),
+      imageId: t.Union([t.String(), t.Null()]),
+      iconUrl: t.Union([t.String(), t.Null()]),
+      icon: t.Union([t.String(), t.Null()]),
     }),
   })
 
@@ -29,8 +30,9 @@ const MediaSosial = new Elysia({
   .put("/:id", MediaSosialUpdate, {
     body: t.Object({
       name: t.String(),
-      imageId: t.Optional(t.String()),
-      iconUrl: t.Optional(t.String()),
+      imageId: t.Optional(t.Union([t.String(), t.Null()])),
+      iconUrl: t.Optional(t.Union([t.String(), t.Null()])),
+      icon: t.Optional(t.Union([t.String(), t.Null()])),
     }),
   })
   // ✅ Delete

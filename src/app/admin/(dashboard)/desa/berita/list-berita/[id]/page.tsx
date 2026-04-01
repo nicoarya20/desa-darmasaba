@@ -1,14 +1,31 @@
 'use client'
-import { useProxy } from 'valtio/utils';
-import { Box, Button, Group, Image, Paper, Skeleton, Stack, Text, Tooltip } from '@mantine/core';
+import { Box, Button, Card, Grid, Group, Image, Paper, Skeleton, Stack, Text, Badge, AspectRatio } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
+import { IconArrowBack, IconEdit, IconTrash, IconVideo } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { useProxy } from 'valtio/utils';
 
-import colors from '@/con/colors';
 import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
 import stateDashboardBerita from '@/app/admin/(dashboard)/_state/desa/berita';
+import colors from '@/con/colors';
+
+interface ExistingImage {
+  id: string;
+  link: string;
+  name: string;
+}
+
+interface BeritaDetail {
+  id: string;
+  judul: string;
+  deskripsi: string;
+  content: string;
+  image?: { link: string } | null;
+  images?: ExistingImage[];
+  linkVideo?: string | null;
+  kategoriBerita?: { name: string } | null;
+}
 
 function DetailBerita() {
   const beritaState = useProxy(stateDashboardBerita);
@@ -38,10 +55,10 @@ function DetailBerita() {
     );
   }
 
-  const data = beritaState.berita.findUnique.data;
+  const data = beritaState.berita.findUnique.data as unknown as BeritaDetail;
 
   return (
-    <Box py={10}>
+    <Box px={{ base: 0, md: 'xs' }} py="xs">
       {/* Tombol Back */}
       <Button
         variant="subtle"
@@ -68,75 +85,131 @@ function DetailBerita() {
 
           <Paper bg="#ECEEF8" p="md" radius="md" shadow="xs">
             <Stack gap="sm">
+              {/* Kategori */}
               <Box>
                 <Text fz="lg" fw="bold">Kategori</Text>
                 <Text fz="md" c="dimmed">{data.kategoriBerita?.name || '-'}</Text>
               </Box>
 
+              {/* Judul */}
               <Box>
                 <Text fz="lg" fw="bold">Judul</Text>
                 <Text fz="md" c="dimmed">{data.judul || '-'}</Text>
               </Box>
 
+              {/* Deskripsi */}
               <Box>
                 <Text fz="lg" fw="bold">Deskripsi</Text>
-                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data.deskripsi || '-' }} />
+                <Text 
+                  fz="md" 
+                  c="dimmed" 
+                  style={{ wordBreak: "break-word", whiteSpace: "normal" }} 
+                  dangerouslySetInnerHTML={{ __html: data.deskripsi || '-' }} 
+                />
               </Box>
 
+              {/* Gambar Utama (Featured) */}
               <Box>
-                <Text fz="lg" fw="bold">Gambar</Text>
+                <Text fz="lg" fw="bold">Gambar Utama</Text>
                 {data.image?.link ? (
                   <Image
                     src={data.image.link}
                     alt={data.judul || 'Gambar Berita'}
-                    w={200}
-                    h={200}
+                    w={{ base: '100%', md: 400 }}
+                    h={300}
                     radius="md"
                     fit="cover"
-                    loading='lazy'
+                    loading="lazy"
                   />
                 ) : (
-                  <Text fz="sm" c="dimmed">Tidak ada gambar</Text>
+                  <Text fz="sm" c="dimmed">Tidak ada gambar utama</Text>
                 )}
               </Box>
 
+              {/* Gallery Images */}
+              {data.images && data.images.length > 0 && (
+                <Box>
+                  <Group gap="xs" mb="sm">
+                    <Text fz="lg" fw="bold">Galeri Gambar</Text>
+                    <Badge color="blue" variant="light">
+                      {data.images.length}
+                    </Badge>
+                  </Group>
+                  <Grid gutter="md">
+                    {data.images.map((img, index) => (
+                      <Grid.Col span={{ base: 6, md: 4 }} key={img.id}>
+                        <Card p="xs" radius="md" withBorder>
+                          <Image
+                            src={img.link}
+                            alt={img.name || `Gallery ${index + 1}`}
+                            h={150}
+                            radius="sm"
+                            fit="cover"
+                            loading="lazy"
+                          />
+                        </Card>
+                      </Grid.Col>
+                    ))}
+                  </Grid>
+                </Box>
+              )}
+
+              {/* YouTube Video */}
+              {data.linkVideo && (
+                <Box>
+                  <Group gap="xs" mb="sm">
+                    <Text fz="lg" fw="bold">Video YouTube</Text>
+                    <IconVideo size={20} color={colors['blue-button']} />
+                  </Group>
+                  <AspectRatio ratio={16 / 9} mah={400}>
+                    <iframe
+                      src={data.linkVideo}
+                      title="YouTube Video"
+                      allowFullScreen
+                      style={{ borderRadius: 10, border: '1px solid #ddd' }}
+                    />
+                  </AspectRatio>
+                </Box>
+              )}
+
+              {/* Konten */}
               <Box>
                 <Text fz="lg" fw="bold">Konten</Text>
-                <Text
-                  fz="md"
-                  c="dimmed"
-                  dangerouslySetInnerHTML={{ __html: data.content || '-' }}
-                />
+                <Paper bg="white" p="md" radius="md" mt="xs">
+                  <Text
+                    fz="md"
+                    c="dimmed"
+                    dangerouslySetInnerHTML={{ __html: data.content || '-' }}
+                  />
+                </Paper>
               </Box>
 
-              {/* Action Button */}
-              <Group gap="sm">
-                <Tooltip label="Hapus Berita" withArrow position="top">
-                  <Button
-                    color="red"
-                    onClick={() => {
-                      setSelectedId(data.id);
-                      setModalHapus(true);
-                    }}
-                    variant="light"
-                    radius="md"
-                    size="md"
-                  >
-                    <IconTrash size={20} />
-                  </Button>
-                </Tooltip>
+              {/* Action Buttons */}
+              <Group gap="sm" mt="md">
+                <Button
+                  color="red"
+                  onClick={() => {
+                    setSelectedId(data.id);
+                    setModalHapus(true);
+                  }}
+                  variant="light"
+                  radius="md"
+                  size="md"
+                  leftSection={<IconTrash size={20} />}
+                >
+                  Hapus
+                </Button>
 
-                <Tooltip label="Edit Berita" withArrow position="top">
-                  <Button
-                    color="green"
-                    onClick={() => router.push(`/admin/desa/berita/list-berita/${data.id}/edit`)}
-                    variant="light"
-                    radius="md"
-                    size="md"
-                  >
-                    <IconEdit size={20} />
-                  </Button>
-                </Tooltip>
+                <Button
+                  color="green"
+                  onClick={() => router.push(`/admin/desa/berita/list-berita/${data.id}/edit`)}
+                  variant="light"
+                  radius="md"
+                  size="md"
+                  leftSection={<IconEdit size={20} />}
+                >
+                  Edit
+                </Button>
               </Group>
             </Stack>
           </Paper>

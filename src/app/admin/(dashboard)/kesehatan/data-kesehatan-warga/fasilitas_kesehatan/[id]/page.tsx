@@ -9,8 +9,13 @@ import {
   Paper,
   Skeleton,
   Stack,
-  Text,
-  Tooltip,
+  Table,
+  TableTbody,
+  TableTd,
+  TableTh,
+  TableThead,
+  TableTr,
+  Text
 } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
@@ -51,7 +56,7 @@ function DetailFasilitasKesehatan() {
   const data = state.findUnique.data;
 
   return (
-    <Box py={10}>
+    <Box px={{ base: 0, md: 'xs' }} py="xs">
       {/* Tombol Back */}
       <Button
         variant="subtle"
@@ -78,12 +83,12 @@ function DetailFasilitasKesehatan() {
 
           <Paper bg="#ECEEF8" p="md" radius="md" shadow="xs">
             <Stack gap="sm">
-              <Box>
+              <Box pl={10}>
                 <Text fz="lg" fw="bold">Nama Fasilitas</Text>
                 <Text fz="md" c="dimmed">{data.name || '-'}</Text>
               </Box>
 
-              <Box>
+              <Box pl={10}>
                 <Text fz="lg" fw="bold">Informasi Umum</Text>
                 <Text fz="md" fw="bold">Fasilitas</Text>
                 <Text fz="md" c="dimmed">{data.informasiumum?.fasilitas || '-'}</Text>
@@ -93,71 +98,125 @@ function DetailFasilitasKesehatan() {
                 <Text fz="md" c="dimmed">{data.informasiumum?.jamOperasional || '-'}</Text>
               </Box>
 
-              <Box>
+              <Box pl={10}>
                 <Text fz="lg" fw="bold">Layanan Unggulan</Text>
                 <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data.layananunggulan?.content || '-' }} />
               </Box>
 
-              <Box>
+              <Box pl={10}>
                 <Text fz="lg" fw="bold">Fasilitas Pendukung</Text>
                 <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data.fasilitaspendukung?.content || '-' }} />
               </Box>
 
-              <Box>
+              <Box pl={10}>
                 <Text fz="lg" fw="bold">Prosedur Pendaftaran</Text>
                 <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data.prosedurpendaftaran?.content || '-' }} />
               </Box>
 
-              <Box>
-                <Text fz="lg" fw="bold">Dokter & Tenaga Medis</Text>
-                <Text fz="md" fw="bold">Nama</Text>
-                <Text fz="md" c="dimmed">{data.dokterdantenagamedis?.name || '-'}</Text>
-                <Text fz="md" fw="bold">Spesialis</Text>
-                <Text fz="md" c="dimmed">{data.dokterdantenagamedis?.specialist || '-'}</Text>
-                <Text fz="md" fw="bold">Jadwal</Text>
-                <Text fz="md" c="dimmed">{data.dokterdantenagamedis?.jadwal || '-'}</Text>
+              <Box pl={10}>
+                <Text fz="lg" fw="bold" mb="sm">Dokter & Tenaga Medis</Text>
+                {Array.isArray(data.dokterdantenagamedis) && data.dokterdantenagamedis.length > 0 ? (
+                  <Box style={{ overflowX: 'auto', width: '100%' }}>
+                    <Table striped highlightOnHover withTableBorder>
+                      <TableThead>
+                        <TableTr>
+                          <TableTh style={{ whiteSpace: 'nowrap' }}>Nama</TableTh>
+                          <TableTh style={{ whiteSpace: 'nowrap' }}>Spesialis</TableTh>
+                          <TableTh style={{ whiteSpace: 'nowrap' }}>Jadwal</TableTh>
+                          <TableTh style={{ whiteSpace: 'nowrap' }}>Jam Operasional</TableTh>
+                        </TableTr>
+                      </TableThead>
+                      <TableTbody>
+                        {data.dokterdantenagamedis.map((dokter) => (
+                          <TableTr key={dokter.id}>
+                            <TableTd style={{ whiteSpace: 'normal', wordBreak: 'break-word' }}>
+                              {dokter.name || '-'}
+                            </TableTd>
+                            <TableTd style={{ whiteSpace: 'normal', wordBreak: 'break-word' }}>
+                              {dokter.specialist || '-'}
+                            </TableTd>
+                            <TableTd style={{ whiteSpace: 'normal', wordBreak: 'break-word' }}>
+                              {dokter.jadwal || '-'}
+                            </TableTd>
+                            <TableTd style={{ whiteSpace: 'normal', wordBreak: 'break-word' }}>
+                              {dokter.jamBukaOperasional} – {dokter.jamTutupOperasional}
+                              {dokter.jadwalLibur && (
+                                <>
+                                  <br />
+                                  <Text span c="dimmed" fz="xs">
+                                    Libur: {dokter.jadwalLibur} ({dokter.jamBukaLibur}–{dokter.jamTutupLibur})
+                                  </Text>
+                                </>
+                              )}
+                            </TableTd>
+                          </TableTr>
+                        ))}
+                      </TableTbody>
+                    </Table>
+                  </Box>
+                ) : (
+                  <Text c="dimmed">Tidak ada dokter atau tenaga medis terdaftar.</Text>
+                )}
               </Box>
 
-              <Box>
-                <Text fz="lg" fw="bold">Tarif & Layanan</Text>
-                <Text fz="md" fw="bold">Layanan</Text>
-                <Text fz="md" c="dimmed">{data.tarifdanlayanan?.layanan || '-'}</Text>
-                <Text fz="md" fw="bold">Tarif</Text>
-                <Text fz="md" c="dimmed">{data.tarifdanlayanan?.tarif || '-'}</Text>
+              <Box pl={10} mt="xl">
+                <Text fz="lg" fw="bold" mb="sm">Tarif & Layanan</Text>
+                {Array.isArray(data.tarifdanlayanan) && data.tarifdanlayanan.length > 0 ? (
+                  <Box style={{ overflowX: 'auto', width: '100%' }}>
+                    <Table striped highlightOnHover withTableBorder>
+                      <TableThead>
+                        <TableTr>
+                          <TableTh style={{ whiteSpace: 'nowrap' }}>Layanan</TableTh>
+                          <TableTh style={{ whiteSpace: 'nowrap' }}>Tarif</TableTh>
+                        </TableTr>
+                      </TableThead>
+                      <TableTbody>
+                        {data.tarifdanlayanan.map((tarif) => (
+                          <TableTr key={tarif.id}>
+                            <TableTd style={{ whiteSpace: 'normal', wordBreak: 'break-word' }}>
+                              {tarif.layanan || '-'}
+                            </TableTd>
+                            <TableTd style={{ whiteSpace: 'normal', wordBreak: 'break-word' }}>
+                              {tarif.tarif || '-'}
+                            </TableTd>
+                          </TableTr>
+                        ))}
+                      </TableTbody>
+                    </Table>
+                  </Box>
+                ) : (
+                  <Text c="dimmed">Tidak ada tarif atau layanan terdaftar.</Text>
+                )}
               </Box>
 
               {/* Aksi */}
               <Group gap="sm">
-                <Tooltip label="Hapus Data" withArrow position="top">
-                  <Button
-                    color="red"
-                    onClick={() => {
-                      setSelectedId(data.id);
-                      setModalHapus(true);
-                    }}
-                    variant="light"
-                    radius="md"
-                    size="md"
-                  >
-                    <IconTrash size={20} />
-                  </Button>
-                </Tooltip>
+                <Button
+                  color="red"
+                  onClick={() => {
+                    setSelectedId(data.id);
+                    setModalHapus(true);
+                  }}
+                  variant="light"
+                  radius="md"
+                  size="md"
+                >
+                  <IconTrash size={20} />
+                </Button>
 
-                <Tooltip label="Edit Data" withArrow position="top">
-                  <Button
-                    color="green"
-                    onClick={() =>
-                      router.push(
-                        `/admin/kesehatan/data-kesehatan-warga/fasilitas_kesehatan/${data.id}/edit`
-                      )
-                    }
-                    variant="light"
-                    radius="md"
-                    size="md"
-                  >
-                    <IconEdit size={20} />
-                  </Button>
-                </Tooltip>
+                <Button
+                  color="green"
+                  onClick={() =>
+                    router.push(
+                      `/admin/kesehatan/data-kesehatan-warga/fasilitas_kesehatan/${data.id}/edit`
+                    )
+                  }
+                  variant="light"
+                  radius="md"
+                  size="md"
+                >
+                  <IconEdit size={20} />
+                </Button>
               </Group>
             </Stack>
           </Paper>

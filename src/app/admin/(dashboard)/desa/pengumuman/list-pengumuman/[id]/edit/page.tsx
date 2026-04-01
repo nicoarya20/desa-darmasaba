@@ -14,7 +14,7 @@ import {
   Text,
   TextInput,
   Title,
-  Tooltip,
+  Loader
 } from "@mantine/core";
 import { IconArrowBack } from "@tabler/icons-react";
 import { useParams, useRouter } from "next/navigation";
@@ -28,6 +28,32 @@ function EditPengumuman() {
   const params = useParams();
 
   const [formData, setFormData] = useState({
+    judul: "",
+    deskripsi: "",
+    categoryPengumumanId: "",
+    content: "",
+  });
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Helper function to check if HTML content is empty
+  const isHtmlEmpty = (html: string) => {
+    // Remove all HTML tags and check if there's any text content
+    const textContent = html.replace(/<[^>]*>/g, '').trim();
+    return textContent === '';
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      formData.judul?.trim() !== '' &&
+      formData.deskripsi?.trim() !== '' &&
+      formData.categoryPengumumanId !== '' &&
+      !isHtmlEmpty(formData.content)
+    );
+  };
+
+  const [originalData, setOriginalData] = useState({
     judul: "",
     deskripsi: "",
     categoryPengumumanId: "",
@@ -51,6 +77,12 @@ function EditPengumuman() {
             categoryPengumumanId: data.categoryPengumumanId || "",
             content: data.content || "",
           });
+          setOriginalData({
+            judul: data.judul || "",
+            deskripsi: data.deskripsi || "",
+            categoryPengumumanId: data.categoryPengumumanId || "",
+            content: data.content || "",
+          });
         }
       } catch (error) {
         console.error("Error loading pengumuman:", error);
@@ -66,7 +98,28 @@ function EditPengumuman() {
   };
 
   const handleSubmit = async () => {
+    if (!formData.judul?.trim()) {
+      toast.error('Judul wajib diisi');
+      return;
+    }
+    
+    if (!formData.deskripsi?.trim()) {
+      toast.error('Deskripsi singkat wajib diisi');
+      return;
+    }
+    
+    if (!formData.categoryPengumumanId) {
+      toast.error('Kategori wajib dipilih');
+      return;
+    }
+    
+    if (isHtmlEmpty(formData.content)) {
+      toast.error('Konten lengkap wajib diisi');
+      return;
+    }
+
     try {
+      setIsSubmitting(true);
       // update global state hanya sekali pas submit
       editState.pengumuman.edit.form = {
         ...editState.pengumuman.edit.form,
@@ -79,22 +132,32 @@ function EditPengumuman() {
     } catch (error) {
       console.error("Error updating pengumuman:", error);
       toast.error("Terjadi kesalahan saat memperbarui pengumuman");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
+  const handleResetForm = () => {
+    setFormData({
+      judul: originalData.judul,
+      deskripsi: originalData.deskripsi,
+      categoryPengumumanId: originalData.categoryPengumumanId,
+      content: originalData.content,
+    });
+    toast.info("Form dikembalikan ke data awal");
+  };
+
   return (
-    <Box px={{ base: "sm", md: "lg" }} py="md">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button
-            variant="subtle"
-            onClick={() => router.back()}
-            p="xs"
-            radius="md"
-          >
-            <IconArrowBack color={colors["blue-button"]} size={24} />
-          </Button>
-        </Tooltip>
+        <Button
+          variant="subtle"
+          onClick={() => router.back()}
+          p="xs"
+          radius="md"
+        >
+          <IconArrowBack color={colors["blue-button"]} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Edit Pengumuman
         </Title>
@@ -155,17 +218,32 @@ function EditPengumuman() {
           </Box>
 
           <Group justify="right">
+            {/* Tombol Batal */}
+            <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
             <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors["blue-button"]}, #4facfe)`,
-                color: "#fff",
-                boxShadow: "0 4px 15px rgba(79, 172, 254, 0.4)",
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                color: '#fff',
+                boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

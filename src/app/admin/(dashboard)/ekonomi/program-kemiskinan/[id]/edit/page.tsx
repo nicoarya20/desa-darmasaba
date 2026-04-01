@@ -9,18 +9,18 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Stack,
   Text,
   TextInput,
-  Title,
-  Tooltip,
+  Title
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState, useCallback } from 'react';
-import { useProxy } from 'valtio/utils';
+import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
+import { useProxy } from 'valtio/utils';
 
 type Statistik = {
   tahun: string;
@@ -50,6 +50,26 @@ function EditProgramKemiskinan() {
   const stateProgram = useProxy(programKemiskinanState);
 
   const [formData, setFormData] = useState<FormData>(initialForm);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [originalData, setOriginalData] = useState<FormData>(initialForm);
+
+  // Helper function to check if HTML content is empty
+  const isHtmlEmpty = (html: string) => {
+    // Remove all HTML tags and check if there's any text content
+    const textContent = html.replace(/<[^>]*>/g, '').trim();
+    return textContent === '';
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      formData.nama?.trim() !== '' &&
+      formData.icon?.trim() !== '' &&
+      !isHtmlEmpty(formData.deskripsi) &&
+      formData.statistik.jumlah?.trim() !== '' &&
+      formData.statistik.tahun?.trim() !== ''
+    );
+  };
 
   // Load data 1x dari global state → isi local state
   useEffect(() => {
@@ -61,6 +81,15 @@ function EditProgramKemiskinan() {
         const data = stateProgram.findUnique.data;
         if (data) {
           setFormData({
+            nama: data.nama ?? '',
+            deskripsi: data.deskripsi ?? '',
+            icon: data.icon ?? '',
+            statistik: {
+              tahun: data.statistik?.tahun?.toString() ?? '',
+              jumlah: data.statistik?.jumlah?.toString() ?? '',
+            },
+          });
+          setOriginalData({
             nama: data.nama ?? '',
             deskripsi: data.deskripsi ?? '',
             icon: data.icon ?? '',
@@ -100,8 +129,22 @@ function EditProgramKemiskinan() {
     []
   );
 
+  const handleResetForm = () => {
+    setFormData({
+      nama: originalData.nama,
+      deskripsi: originalData.deskripsi,
+      icon: originalData.icon,
+      statistik: {
+        tahun: originalData.statistik.tahun,
+        jumlah: originalData.statistik.jumlah,
+      },
+    });
+    toast.info('Form dikembalikan ke data awal');
+  };
+
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       stateProgram.update.id = id;
       stateProgram.update.form = formData;
       await stateProgram.update.update();
@@ -111,23 +154,23 @@ function EditProgramKemiskinan() {
     } catch (error) {
       console.error('Error update program:', error);
       toast.error('Terjadi kesalahan saat memperbarui program');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+   <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Header */}
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button
-            variant="subtle"
-            onClick={() => router.back()}
-            p="xs"
-            radius="md"
-          >
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
-        </Tooltip>
+        <Button
+          variant="subtle"
+          onClick={() => router.back()}
+          p="xs"
+          radius="md"
+        >
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Edit Program Kemiskinan
         </Title>
@@ -196,16 +239,30 @@ function EditProgramKemiskinan() {
 
           <Group justify="right" mt="md">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

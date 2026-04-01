@@ -18,7 +18,7 @@ import {
   Text,
   Title,
 } from '@mantine/core';
-import { useShallowEffect } from '@mantine/hooks';
+import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
 import { IconDeviceImacCog, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -47,10 +47,11 @@ function ListPeminjamBuku({ search }: { search: string }) {
   const router = useRouter();
 
   const { data, page, totalPages, loading, load } = statePeminjam.findMany;
+  const [debouncedSearch] = useDebouncedValue(search, 1000);
 
   useShallowEffect(() => {
-    load(page, 10, search);
-  }, [page, search]);
+    load(page, 10, debouncedSearch);
+  }, [page, debouncedSearch]);
 
   const filteredData = data || [];
 
@@ -81,37 +82,61 @@ function ListPeminjamBuku({ search }: { search: string }) {
   }
 
   return (
-    <Box py={10}>
-      <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
-        <Title order={4} mb="md">Daftar Peminjam Buku</Title>
-        <Box style={{ overflowX: 'auto' }}>
-          <Table highlightOnHover>
+    <Box py={{ base: 'sm', md: 'lg' }}>
+      <Paper withBorder bg={colors['white-1']} p={{ base: 'md', md: 'lg' }} shadow="md" radius="md">
+        <Title order={4} lh={1.2} mb={{ base: 'md', md: 'lg' }}>
+          Daftar Peminjam Buku
+        </Title>
+
+        {/* Desktop Table */}
+       <Box visibleFrom="md" style={{ overflowX: 'auto' }}>
+          <Table
+            highlightOnHover
+            miw={0}
+            style={{
+              tableLayout: 'fixed',
+              width: '100%',
+            }}
+          >
             <TableThead>
               <TableTr>
-                <TableTh style={{ width: '10%' }}>No</TableTh>
-                <TableTh style={{ width: '60%' }}>Nama Peminjam</TableTh>
-                <TableTh style={{ width: '15%' }}>Status</TableTh>
-                <TableTh style={{ width: '15%' }}>Detail</TableTh>
+                <TableTh style={{ width: '8%' }}>No</TableTh>
+                <TableTh style={{ width: '28%' }}>Nama Peminjam</TableTh>
+                <TableTh style={{ width: '20%' }}>Status</TableTh>
+                <TableTh style={{ width: '28%' }}>Alamat</TableTh>
+                <TableTh style={{ width: '16%' }}>Detail</TableTh>
               </TableTr>
             </TableThead>
             <TableTbody>
               {filteredData.length > 0 ? (
                 filteredData.map((item, index) => (
                   <TableTr key={item.id}>
-                    <TableTd>{index + 1}</TableTd>
                     <TableTd>
-                      <Text truncate fz="sm">{item.nama}</Text>
+                      <Text fz="sm" lh={1.5}>
+                        {index + 1}
+                      </Text>
                     </TableTd>
                     <TableTd>
-                      {renderStatusBadge(item.status)}
+                      <Text fz="sm" lh={1.5} truncate>
+                        {item.nama}
+                      </Text>
+                    </TableTd>
+                    <TableTd>{renderStatusBadge(item.status)}</TableTd>
+                    <TableTd>
+                      <Text fz="sm" lh={1.5} truncate>
+                        {item.alamat}
+                      </Text>
                     </TableTd>
                     <TableTd>
                       <Button
                         variant="light"
                         color="green"
                         onClick={() =>
-                          router.push(`/admin/pendidikan/perpustakaan-digital/peminjam/${item.id}`)
+                          router.push(
+                            `/admin/pendidikan/perpustakaan-digital/peminjam/${item.id}`
+                          )
                         }
+                        radius="md"
                       >
                         <IconDeviceImacCog size={20} />
                       </Button>
@@ -120,9 +145,9 @@ function ListPeminjamBuku({ search }: { search: string }) {
                 ))
               ) : (
                 <TableTr>
-                  <TableTd colSpan={4}>
-                    <Center py={20}>
-                      <Text c="dimmed">
+                  <TableTd colSpan={5}>
+                    <Center py={32}>
+                      <Text c="dimmed" fz="sm" lh={1.5}>
                         Tidak ada data Peminjam buku yang cocok
                       </Text>
                     </Center>
@@ -132,10 +157,84 @@ function ListPeminjamBuku({ search }: { search: string }) {
             </TableTbody>
           </Table>
         </Box>
+
+        {/* Mobile Cards */}
+        <Box hiddenFrom="md">
+          <Stack gap="md">
+            {filteredData.length > 0 ? (
+              filteredData.map((item, index) => (
+                <Paper
+                  key={item.id}
+                  withBorder
+                  p="md"
+                  radius="md"
+                  bg={colors['white-1']}
+                >
+                  <Stack gap="xs">
+                    <Box>
+                      <Text fz="xs" fw={600} lh={1.4}>
+                        No
+                      </Text>
+                      <Text fz="sm" fw={500} lh={1.4}>
+                        {index + 1}
+                      </Text>
+                    </Box>
+                    <Box>
+                      <Text fz="xs" fw={600} lh={1.4}>
+                        Nama Peminjam
+                      </Text>
+                      <Text fz="sm" fw={500} lh={1.4}>
+                        {item.nama}
+                      </Text>
+                    </Box>
+                    <Box>
+                      <Text fz="xs" fw={600} lh={1.4}>
+                        Status
+                      </Text>
+                      {renderStatusBadge(item.status)}
+                    </Box>
+                    <Box>
+                      <Text fz="xs" fw={600} lh={1.4}>
+                        Alamat
+                      </Text>
+                      <Text fz="sm" fw={500} lh={1.4}>
+                        {item.alamat}
+                      </Text>
+                    </Box>
+                    <Box>
+                      <Text fz="xs" fw={600} lh={1.4}>
+                        Detail
+                      </Text>
+                      <Button
+                        variant="light"
+                        color="green"
+                        onClick={() =>
+                          router.push(
+                            `/admin/pendidikan/perpustakaan-digital/peminjam/${item.id}`
+                          )
+                        }
+                        mt="xs"
+                        radius="md"
+                        fullWidth
+                      >
+                        <IconDeviceImacCog size={20} />
+                      </Button>
+                    </Box>
+                  </Stack>
+                </Paper>
+              ))
+            ) : (
+              <Center py={32}>
+                <Text c="dimmed" fz="sm" lh={1.5}>
+                  Tidak ada data Peminjam buku yang cocok
+                </Text>
+              </Center>
+            )}
+          </Stack>
+        </Box>
       </Paper>
 
-      {totalPages > 1 && (
-        <Center>
+        <Center mt={{ base: 'sm', md: 'lg' }}>
           <Pagination
             value={page}
             onChange={(newPage) => {
@@ -149,7 +248,6 @@ function ListPeminjamBuku({ search }: { search: string }) {
             radius="md"
           />
         </Center>
-      )}
     </Box>
   );
 }

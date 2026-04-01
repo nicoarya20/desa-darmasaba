@@ -18,7 +18,7 @@ export default async function doctorSignCreate(context: Context) {
     });
     return {
         success: true,
-        message: "Success create doctor sign",
+        message: "Sukses menambahkan doctor sign",
         data: {
             ...body,
         },

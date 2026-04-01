@@ -7,20 +7,20 @@ async function kategoriProdukFindMany(context: Context) {
   // Ambil parameter dari query
   const page = Number(context.query.page) || 1;
   const limit = Number(context.query.limit) || 10;
-  const search2 = (context.query.search as string) || '';
+  const search = (context.query.search as string) || '';
   const skip = (page - 1) * limit;
 
   // Buat where clause
   const where: any = { isActive: true };
 
   // Tambahkan pencarian (jika ada)
-  if (search2) {
+  if (search) {
     where.OR = [
-      { nama: { contains: search2, mode: 'insensitive' } },
+      { nama: { contains: search, mode: 'insensitive' } },
       {KategoriToPasar : {
         some: {
           kategori: {
-            nama: { contains: search2, mode: 'insensitive' }
+            nama: { contains: search, mode: 'insensitive' }
           }
         }
       }}

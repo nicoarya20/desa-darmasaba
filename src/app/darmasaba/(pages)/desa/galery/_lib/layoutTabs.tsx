@@ -8,76 +8,59 @@ import { useEffect, useState } from 'react';
 import BackButton from '../../layanan/_com/BackButto';
 import type { SearchBarProps } from './searchBar';
 
-// Define tabs outside the component to ensure consistency between server and client
+// ✅ Definisikan tabs di luar komponen (statis, aman untuk SSR)
 const TABS = [
-  {
-    label: "Foto",
-    value: "foto",
-    href: "/darmasaba/desa/galery/foto",
-  },
-  {
-    label: "Video",
-    value: "video",
-    href: "/darmasaba/desa/galery/video",
-  },
+  { label: 'Foto', value: 'foto', href: '/darmasaba/desa/galery/foto' },
+  { label: 'Video', value: 'video', href: '/darmasaba/desa/galery/video' },
 ] as const;
 
 const SearchBar = dynamic<SearchBarProps>(
-  () => import('./searchBar').then(mod => mod.SearchBar),
+  () => import('./searchBar').then((mod) => mod.SearchBar),
   { ssr: false }
 );
 
-type HeaderSearchProps = {
+type LayoutTabsGaleryProps = {
   children?: React.ReactNode;
 };
 
-function LayoutTabsGalery({ children }: HeaderSearchProps) {
+export default function LayoutTabsGalery({ children }: LayoutTabsGaleryProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const [isClient, setIsClient] = useState(false);
+  const [activeTab, setActiveTab] = useState<string>(TABS[0].value);
 
-  // Set default active tab to empty string to prevent hydration mismatch
-  const [activeTab, setActiveTab] = useState('');
-
-  // Set client flag on mount
+  // 🧠 Update tab aktif berdasarkan URL
   useEffect(() => {
-    setIsClient(true);
-  }, []);
+    const found = TABS.find((tab) => pathname.includes(tab.value));
+    if (found) setActiveTab(found.value);
+    else setActiveTab(TABS[0].value);
+  }, [pathname]);
 
-  // Update active tab based on current route - only on client side
-  useEffect(() => {
-    if (!isClient) return;
-
-    const currentTab = TABS.find(tab => pathname.includes(tab.value));
-    if (currentTab) {
-      setActiveTab(currentTab.value);
-    } else {
-      // Default to first tab if no match found
-      setActiveTab(TABS[0].value);
-    }
-  }, [pathname, isClient]);
-
+  // 🖱️ Handle perubahan tab
   const handleTabChange = (value: string | null) => {
     if (!value) return;
-    const tab = TABS.find(tab => tab.value === value);
-    if (tab) {
-      // Only update if we're on the client
-      if (typeof window !== 'undefined') {
-        setActiveTab(value);
-        router.push(tab.href);
-      }
+    const selected = TABS.find((tab) => tab.value === value);
+    if (selected) {
+      setActiveTab(selected.value);
+      router.push(selected.href);
     }
   };
 
   return (
     <Stack pos="relative" bg={colors.Bg} py="xl" gap="22">
-      {/* Header */}
-      <Box px={{ base: "md", md: 100 }}>
+      {/* 🔙 Header */}
+      <Box px={{ base: 'md', md: 100 }}>
         <BackButton />
       </Box>
-      <Box px={{ base: "md", md: 100 }}>
+
+      {/* 🏷️ Title & Search */}
+      <Box px={{ base: 'md', md: 100 }}>
         <Stack align="center" gap="0">
-          <Text fz={{ base: "2rem", md: "3.4rem" }} c={colors["blue-button"]} fw="bold" ta="center">
+          <Text
+            fz={{ base: '2rem', md: '3.4rem' }}
+            c={colors['blue-button']}
+            fw="bold"
+            ta="center"
+          >
             Galeri Kegiatan Desa Darmasaba
           </Text>
         </Stack>
@@ -86,35 +69,26 @@ function LayoutTabsGalery({ children }: HeaderSearchProps) {
         </Box>
       </Box>
 
+      {/* 🗂️ Tabs Section */}
       <Tabs
-        value={isClient ? activeTab : undefined}
-        defaultValue={TABS[0].value}
+        value={activeTab}
         onChange={handleTabChange}
         color={colors['blue-button']}
         variant="pills"
         keepMounted={false}
       >
-        <Box px={{ base: "md", md: 100 }} py="md" bg={colors['BG-trans']}>
+        <Box px={{ base: 'md', md: 100 }} py="md" bg={colors['BG-trans']}>
           <TabsList>
             {TABS.map((tab) => (
-              <TabsTab
-                key={tab.value}
-                value={tab.value}
-                component="button"
-                type="button"
-              >
+              <TabsTab key={tab.value} value={tab.value}>
                 {tab.label}
               </TabsTab>
             ))}
           </TabsList>
         </Box>
 
-        <Container size={'xl'}>
-          {children}
-        </Container>
+        <Container size="xl">{children}</Container>
       </Tabs>
     </Stack>
   );
 }
-
-export default LayoutTabsGalery;

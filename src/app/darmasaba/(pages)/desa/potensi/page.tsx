@@ -2,7 +2,7 @@
 'use client'
 import potensiDesaState from '@/app/admin/(dashboard)/_state/desa/potensi';
 import colors from '@/con/colors';
-import { BackgroundImage, Box, Button, Center, Flex, Group, Paper, SimpleGrid, Skeleton, Stack, Text, Tooltip } from '@mantine/core';
+import { BackgroundImage, Box, Button, Flex, Group, Paper, SimpleGrid, Skeleton, Stack, Text, Title } from '@mantine/core';
 import { IconEye } from '@tabler/icons-react';
 import { useTransitionRouter } from 'next-view-transitions';
 import { useEffect, useState } from 'react';
@@ -12,6 +12,7 @@ import BackButton from '../layanan/_com/BackButto';
 function Page() {
   const router = useTransitionRouter()
   const [loading, setLoading] = useState(false)
+  const [hoveredId, setHoveredId] = useState<string | null>(null)
   const state = useProxy(potensiDesaState)
 
   useEffect(() => {
@@ -40,10 +41,10 @@ function Page() {
       <Box px={{ base: "md", md: 100 }}>
         <Flex justify="space-between" align="center" direction={{ base: "column", md: "row" }} gap="lg">
           <Stack gap="sm" maw={600}>
-            <Text fz={{ base: "2rem", md: "3rem" }} fw={900} c={colors["blue-button"]} lh={1.2}>
+            <Title order={1} fz={{ base: 28, md: 36 }} lh={1.2} c={colors["blue-button"]}>
               Potensi Desa Darmasaba
-            </Text>
-            <Text fz="lg" ta="justify">
+            </Title>
+            <Text fz={{ base: 14, md: 16 }} lh={1.6} ta="justify">
               Temukan berbagai potensi unggulan, peluang, dan daya tarik yang menjadikan Desa Darmasaba istimewa.
             </Text>
           </Stack>
@@ -57,18 +58,18 @@ function Page() {
           >
             <Flex justify="center" align="center" gap="xl">
               <Box>
-                <Text ta="center" fz="2rem" fw={800} c="white">
+                <Text ta="center" fz={{ base: 20, md: 32 }} fw={800} c="white" lh={1.2}>
                   {data?.filter(item => item.kategori?.nama.toLowerCase() !== 'wisata').length || 0}
                 </Text>
-                <Text ta="center" fz="sm" c="white" fw={500}>
+                <Text ta="center" fz={{ base: 12, md: 14 }} c="white" fw={500}>
                   Potensi
                 </Text>
               </Box>
               <Box>
-                <Text ta="center" fz="2rem" fw={800} c="white">
+                <Text ta="center" fz={{ base: 20, md: 32 }} fw={800} c="white" lh={1.2}>
                   {data?.filter(item => item.kategori?.nama.toLowerCase() === 'wisata').length || 0}
                 </Text>
-                <Text ta="center" fz="sm" c="white" fw={500}>
+                <Text ta="center" fz={{ base: 12, md: 14 }} c="white" fw={500}>
                   Wisata
                 </Text>
               </Box>
@@ -88,60 +89,96 @@ function Page() {
                 src={v.image?.link || ''}
                 h={360}
                 radius="xl"
-                style={{ overflow: 'hidden', position: 'relative' }}
+                onMouseEnter={() => setHoveredId(v.id)}
+                onMouseLeave={() => setHoveredId(null)}
+                style={{
+                  overflow: 'hidden',
+                  position: 'relative',
+                  cursor: 'pointer',
+                  transition: 'transform 0.3s ease'
+                }}
               >
                 <Box
                   pos="absolute"
                   inset={0}
-                  bg="linear-gradient(180deg, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.7) 100%)"
+                  bg={hoveredId === v.id
+                    ? "linear-gradient(180deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.75) 100%)"
+                    : "linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.15) 100%)"
+                  }
+                  style={{
+                    transition: 'background 0.3s ease'
+                  }}
                 />
+
                 <Stack justify="space-between" h="100%" gap="md" p="lg" pos="relative">
                   <Group>
-                    <Paper radius="lg" py={6} px={12} shadow="md" withBorder bg="rgba(255,255,255,0.85)">
-                      <Text fz="sm" fw={600}>{v.kategori?.nama}</Text>
+                    <Paper
+                      radius="lg"
+                      py={6}
+                      px={12}
+                      shadow="md"
+                      withBorder
+                      bg="rgba(255,255,255,0.9)"
+                      style={{ transition: 'all 0.3s ease' }}
+                    >
+                      <Text fz={{ base: 11, md: 14 }} fw={600}>{v.kategori?.nama}</Text>
                     </Paper>
                   </Group>
-                  <Box>
-                    <Text
+
+                  <Box
+                    style={{
+                      opacity: hoveredId === v.id ? 1 : 0,
+                      transform: hoveredId === v.id ? 'translateY(0)' : 'translateY(10px)',
+                      transition: 'all 0.3s ease',
+                      pointerEvents: hoveredId === v.id ? 'auto' : 'none'
+                    }}
+                  >
+                    <Title
+                      order={3}
                       fw={800}
                       c="white"
-                      fz="xl"
+                      fz={{ base: 18, md: 20 }}
                       ta="center"
                       lineClamp={2}
                       lh={1.3}
                     >
                       {v.name}
-                    </Text>
+                    </Title>
                   </Box>
-                  <Group justify="center">
-                    <Tooltip label="Lihat detail potensi" withArrow>
-                      <Button
-                        radius="xl"
-                        size="md"
-                        leftSection={<IconEye size={18} />}
-                        bg={colors["blue-button"]}
-                        variant="gradient"
-                        gradient={{ from: colors["blue-button"], to: "#4dabf7", deg: 45 }}
-                        onClick={() => router.push(`/darmasaba/desa/potensi/${v.id}`)}
-                      >
-                        Lihat Detail
-                      </Button>
-                    </Tooltip>
+
+                  <Group
+                    justify="center"
+                    style={{
+                      opacity: hoveredId === v.id ? 1 : 0,
+                      transform: hoveredId === v.id ? 'translateY(0)' : 'translateY(10px)',
+                      transition: 'all 0.3s ease',
+                      pointerEvents: hoveredId === v.id ? 'auto' : 'none'
+                    }}
+                  >
+                    <Button
+                      radius="xl"
+                      size="md"
+                      leftSection={<IconEye size={18} />}
+                      bg={colors["blue-button"]}
+                      variant="gradient"
+                      gradient={{ from: colors["blue-button"], to: "#4dabf7", deg: 45 }}
+                      onClick={() => router.push(`/darmasaba/desa/potensi/${v.id}`)}
+                    >
+                      <Text c={'white'} fz={{ base: 12, md: 14 }} fw={500}>Lihat Detail</Text>
+                    </Button>
                   </Group>
                 </Stack>
               </BackgroundImage>
             ))
           ) : (
-            <Center h={240}>
-              <Stack align="center" gap="xs">
-                <Text fz="lg" fw={600} c="dimmed">
-                  Belum ada potensi desa
-                </Text>
-                <Text fz="sm" c="dimmed">
-                  Data potensi akan tampil di sini setelah tersedia.
-                </Text>
-              </Stack>
-            </Center>
+            <Stack align="center" gap="xs">
+              <Text fz={{ base: 14, md: 16 }} fw={600} c="dimmed">
+                Belum ada potensi desa
+              </Text>
+              <Text fz={{ base: 12, md: 14 }} c="dimmed">
+                Data potensi akan tampil di sini setelah tersedia.
+              </Text>
+            </Stack>
           )}
         </SimpleGrid>
       </Box>

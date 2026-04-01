@@ -4,6 +4,7 @@ import stateStrukturPPID from '@/app/admin/(dashboard)/_state/ppid/struktur_ppid
 import colors from '@/con/colors';
 import ApiFetch from '@/lib/api-fetch';
 import {
+  ActionIcon,
   Box,
   Button,
   Group,
@@ -14,7 +15,7 @@ import {
   Text,
   TextInput,
   Title,
-  Tooltip
+  Loader
 } from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
 import { IconArrowBack, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
@@ -27,7 +28,20 @@ export default function EditPegawaiPPID() {
   const router = useRouter();
   const { id } = useParams<{ id: string }>();
   const stateOrganisasi = useProxy(stateStrukturPPID.pegawai);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const [originalData, setOriginalData] = useState({
+    namaLengkap: "",
+    gelarAkademik: "",
+    imageId: "",
+    tanggalMasuk: "",
+    email: "",
+    telepon: "",
+    alamat: "",
+    posisiId: "",
+    imageUrl: "",
+    isActive: true,
+  });
   const [formData, setFormData] = useState({
     namaLengkap: '',
     gelarAkademik: '',
@@ -42,11 +56,31 @@ export default function EditPegawaiPPID() {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
 
+  // Helper function to validate email format
+  const isValidEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
   // Format date for <input type="date">
   const formatDateForInput = (dateString: string) => {
     if (!dateString) return '';
     const date = new Date(dateString);
     return date.toISOString().split('T')[0];
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      formData.namaLengkap?.trim() !== '' &&
+      formData.gelarAkademik?.trim() !== '' &&
+      formData.posisiId !== '' &&
+      formData.tanggalMasuk !== '' &&
+      formData.email !== '' &&
+      isValidEmail(formData.email) &&
+      formData.telepon !== '' &&
+      formData.alamat !== ''
+    );
   };
 
   useEffect(() => {
@@ -67,6 +101,18 @@ export default function EditPegawaiPPID() {
             posisiId: data.posisiId || '',
             isActive: data.isActive ?? true,
           });
+          setOriginalData({
+            namaLengkap: data.namaLengkap || '',
+            gelarAkademik: data.gelarAkademik || '',
+            imageId: data.imageId || '',
+            tanggalMasuk: data.tanggalMasuk || '',
+            email: data.email || '',
+            telepon: data.telepon || '',
+            alamat: data.alamat || '',
+            posisiId: data.posisiId || '',
+            imageUrl: data.image?.link || '',
+            isActive: data.isActive ?? true,
+          });
 
           setPreviewImage(data.image?.link || null);
         }
@@ -79,8 +125,26 @@ export default function EditPegawaiPPID() {
     loadPegawai();
   }, [id]);
 
+  const handleResetForm = () => {
+    setFormData({
+      namaLengkap: originalData.namaLengkap,
+      gelarAkademik: originalData.gelarAkademik,
+      imageId: originalData.imageId,
+      tanggalMasuk: originalData.tanggalMasuk,
+      email: originalData.email,
+      telepon: originalData.telepon,
+      alamat: originalData.alamat,
+      posisiId: originalData.posisiId,
+      isActive: originalData.isActive,
+    });
+    setPreviewImage(originalData.imageUrl || null);
+    setFile(null);
+    toast.info("Form dikembalikan ke data awal");
+  };
+
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       if (!formData.namaLengkap.trim()) {
         return toast.error('Nama lengkap tidak boleh kosong');
       }
@@ -103,17 +167,17 @@ export default function EditPegawaiPPID() {
     } catch (error) {
       console.error('Error updating pegawai:', error);
       toast.error(error instanceof Error ? error.message : 'Gagal memperbarui data pegawai');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+     <Box px={{ base: 0, md: 'lg' }} py="xs">
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
-        </Tooltip>
+        <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">Edit Data Pegawai PPID</Title>
       </Group>
 
@@ -166,20 +230,44 @@ export default function EditPegawaiPPID() {
                 <Dropzone.Idle><IconPhoto size={48} color="#868e96" stroke={1.5} /></Dropzone.Idle>
                 <Stack gap="xs" align="center">
                   <Text size="md" fw={500}>Seret gambar atau klik untuk memilih file</Text>
-                  <Text size="sm" c="dimmed">Maksimal 5MB, format gambar wajib</Text>
+                  <Text size="sm" c="dimmed">Maksimal 5MB, format gambar .png, .jpg, .jpeg, webp</Text>
                 </Stack>
               </Group>
             </Dropzone>
 
             {previewImage && (
-              <Box mt="sm" style={{ display: 'flex', justifyContent: 'center' }}>
+              <Box mt="sm" pos="relative" style={{ textAlign: 'center' }}>
                 <Image
                   src={previewImage}
                   alt="Preview Gambar"
                   radius="md"
-                  style={{ maxHeight: 220, objectFit: 'contain', border: `1px solid ${colors['blue-button']}` }}
+                  style={{
+                    maxHeight: 200,
+                    objectFit: 'contain',
+                    border: '1px solid #ddd',
+                  }}
                   loading="lazy"
                 />
+
+                {/* Tombol hapus (pojok kanan atas) */}
+                <ActionIcon
+                  variant="filled"
+                  color="red"
+                  radius="xl"
+                  size="sm"
+                  pos="absolute"
+                  top={5}
+                  right={5}
+                  onClick={() => {
+                    setPreviewImage(null);
+                    setFile(null);
+                  }}
+                  style={{
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                  }}
+                >
+                  <IconX size={14} />
+                </ActionIcon>
               </Box>
             )}
           </Box>
@@ -222,12 +310,29 @@ export default function EditPegawaiPPID() {
           <Box>
             <Text fw="bold" fz="sm" mb={6}>Posisi</Text>
             <Select
+              label="Posisi"
               placeholder="Pilih posisi"
-              data={stateStrukturPPID.posisiOrganisasi.findManyAll.data?.map(p => ({ value: p.id, label: p.nama })) || []}
-              value={formData.posisiId}
-              onChange={(value) => value && setFormData({ ...formData, posisiId: value })}
+              data={stateStrukturPPID.posisiOrganisasi.findManyAll.data?.map((item) => ({
+                label: item.nama,
+                value: item.id,
+              })) || []}
+              value={formData.posisiId || null}
+              onChange={(val: string | null) => {
+                if (val) {
+                  const selected = stateStrukturPPID.posisiOrganisasi.findManyAll.data?.find(
+                    (item) => item.id === val
+                  );
+                  if (selected) {
+                    formData.posisiId = selected.id;
+                  }
+                } else {
+                  formData.posisiId = '';
+                }
+              }}
               searchable
               clearable
+              nothingFoundMessage="Tidak ditemukan"
+              required
             />
           </Box>
 
@@ -246,19 +351,32 @@ export default function EditPegawaiPPID() {
           </Box>
 
           {/* Submit Button */}
-          <Group justify="flex-end" mt="md">
+          <Group justify="right">
             <Button
-              onClick={handleSubmit}
-              loading={stateOrganisasi.edit.loading}
+              variant="outline"
+              color="gray"
               radius="md"
               size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
+              onClick={handleSubmit}
+              radius="md"
+              size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

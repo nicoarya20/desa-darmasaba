@@ -21,7 +21,7 @@ export default async function penangananDaruratCreate(context: Context) {
     })
     return {
         success: true,
-        message: "Success create penanganan darurat",
+        message: "Sukses menambahkan penanganan darurat",
         data: {
             ...body,
         },

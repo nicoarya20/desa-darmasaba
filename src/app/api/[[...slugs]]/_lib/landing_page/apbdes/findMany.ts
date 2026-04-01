@@ -1,56 +1,83 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// /api/berita/findManyPaginated.ts
+// src/app/api/.../apbdes/findMany.ts
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
 
-async function apbdesFindMany(context: Context) {
-  const page = Number(context.query.page) || 1;
-  const limit = Number(context.query.limit) || 10;
-  const search = (context.query.search as string) || '';
-  const skip = (page - 1) * limit;
+export default async function apbdesFindMany(context: Context) {
+  const {
+    page = "1",
+    limit = "10",
+    tahun,
+  } = context.query as {
+    page?: string;
+    limit?: string;
+    tahun?: string;
+  };
 
-  // Buat where clause
-  const where: any = { isActive: true };
-
-  // Tambahkan pencarian (jika ada)
-  if (search) {
-    where.OR = [
-      { name: { contains: search, mode: 'insensitive' } },
-    ];
-  }
+  const pageNumber = Math.max(1, parseInt(page, 10) || 1);
+  const limitNumber = Math.min(100, Math.max(1, parseInt(limit, 10) || 10));
+  const search = (context.query.search as string) || "";
+  const skip = (pageNumber - 1) * limitNumber;
 
   try {
+    const where: any = { isActive: true };
+
+    if (search) {
+      where.OR = [
+        { name: { contains: search, mode: "insensitive" } },
+        { deskripsi: { contains: search, mode: "insensitive" } },
+      ];
+
+      // Kalau search berupa angka, anggap itu tahun
+      if (!isNaN(Number(search))) {
+        where.OR.push({ tahun: Number(search) });
+      }
+    }
+
+    if (tahun) {
+      where.tahun = parseInt(tahun, 10);
+    }
+
     const [data, total] = await Promise.all([
       prisma.aPBDes.findMany({
         where,
+        skip,
+        take: limitNumber,
+        orderBy: { createdAt: "desc" },
         include: {
           image: true,
           file: true,
+          items: {
+            where: { isActive: true },
+            orderBy: { kode: "asc" },
+            include: {
+              realisasiItems: {
+                where: { isActive: true },
+                orderBy: { tanggal: 'asc' },
+              },
+            },
+          },
         },
-        skip,
-        take: limit,
-        orderBy: { name: "asc" }, // opsional, kalau mau urut berdasarkan waktu
       }),
-      prisma.aPBDes.count({
-        where,
-      }),
+      prisma.aPBDes.count({ where }),
     ]);
 
     return {
       success: true,
-      message: "Success fetch APB Des with pagination",
       data,
-      page,
-      totalPages: Math.ceil(total / limit),
-      total,
+      meta: {
+        page: pageNumber,
+        limit: limitNumber,
+        total,
+        totalPages: Math.ceil(total / limitNumber),
+      },
     };
-  } catch (e) {
-    console.error("Find many paginated error:", e);
+  } catch (error) {
+    console.error("Error fetching APBDes list:", error);
+    context.set.status = 500;
     return {
       success: false,
-      message: "Failed fetch APB Des with pagination",
+      message: "Gagal mengambil daftar APBDes",
     };
   }
 }
-
-export default apbdesFindMany;

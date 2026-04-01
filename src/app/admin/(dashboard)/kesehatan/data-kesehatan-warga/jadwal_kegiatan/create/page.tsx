@@ -6,21 +6,42 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Stack,
   Text,
   TextInput,
-  Title,
-  Tooltip,
+  Title
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
 function CreateJadwalKegiatan() {
   const stateJadwalKegiatan = useProxy(jadwalKegiatanState);
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Helper function to check if HTML content is empty
+  const isHtmlEmpty = (html: string) => {
+    // Remove all HTML tags and check if there's any text content
+    const textContent = html.replace(/<[^>]*>/g, '').trim();
+    return textContent === '';
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      stateJadwalKegiatan.create.form.content?.trim() !== '' &&
+      stateJadwalKegiatan.create.form.informasiJadwalKegiatan.name?.trim() !== '' &&
+      stateJadwalKegiatan.create.form.informasiJadwalKegiatan.tanggal?.trim() !== '' &&
+      stateJadwalKegiatan.create.form.informasiJadwalKegiatan.waktu?.trim() !== '' &&
+      stateJadwalKegiatan.create.form.informasiJadwalKegiatan.lokasi?.trim() !== '' &&
+      !isHtmlEmpty(stateJadwalKegiatan.create.form.deskripsiJadwalKegiatan.deskripsi)
+    );
+  };
 
   const resetForm = () => {
     stateJadwalKegiatan.create.form = {
@@ -48,27 +69,32 @@ function CreateJadwalKegiatan() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await stateJadwalKegiatan.create.submit();
-
-    toast.success('Data berhasil disimpan');
-    resetForm();
-    router.push('/admin/kesehatan/data-kesehatan-warga/jadwal_kegiatan');
+    try {
+      setIsSubmitting(true);
+      await stateJadwalKegiatan.create.submit();
+      toast.success('Data berhasil disimpan');
+      resetForm();
+      router.push('/admin/kesehatan/data-kesehatan-warga/jadwal_kegiatan');
+    } catch (error) {
+      console.error(error);
+      toast.error('Gagal menyimpan data jadwal kegiatan');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md" component="form" onSubmit={handleSubmit}>
+    <Box px={{ base: 0, md: 'lg' }} py="xs" component="form" onSubmit={handleSubmit}>
       {/* Header */}
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button
-            variant="subtle"
-            onClick={() => router.back()}
-            p="xs"
-            radius="md"
-          >
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
-        </Tooltip>
+        <Button
+          variant="subtle"
+          onClick={() => router.back()}
+          p="xs"
+          radius="md"
+        >
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Tambah Jadwal Kegiatan
         </Title>
@@ -87,7 +113,7 @@ function CreateJadwalKegiatan() {
           <TextInput
             label="Nama Jadwal Kegiatan"
             placeholder="Masukkan nama jadwal kegiatan"
-            defaultValue={stateJadwalKegiatan.create.form.content}
+            value={stateJadwalKegiatan.create.form.content}
             onChange={(e) => {
               stateJadwalKegiatan.create.form.content = e.target.value;
             }}
@@ -110,7 +136,7 @@ function CreateJadwalKegiatan() {
               label="Nama"
               required
               placeholder="Masukkan nama"
-              defaultValue={stateJadwalKegiatan.create.form.informasiJadwalKegiatan.name}
+              value={stateJadwalKegiatan.create.form.informasiJadwalKegiatan.name}
               onChange={(e) => {
                 stateJadwalKegiatan.create.form.informasiJadwalKegiatan.name = e.target.value;
               }}
@@ -119,7 +145,7 @@ function CreateJadwalKegiatan() {
               type="date"
               required
               label="Tanggal"
-              defaultValue={stateJadwalKegiatan.create.form.informasiJadwalKegiatan.tanggal}
+              value={stateJadwalKegiatan.create.form.informasiJadwalKegiatan.tanggal}
               onChange={(e) => {
                 stateJadwalKegiatan.create.form.informasiJadwalKegiatan.tanggal = e.target.value;
               }}
@@ -128,7 +154,7 @@ function CreateJadwalKegiatan() {
               label="Waktu"
               required
               placeholder="Masukkan waktu"
-              defaultValue={stateJadwalKegiatan.create.form.informasiJadwalKegiatan.waktu}
+              value={stateJadwalKegiatan.create.form.informasiJadwalKegiatan.waktu}
               onChange={(e) => {
                 stateJadwalKegiatan.create.form.informasiJadwalKegiatan.waktu = e.target.value;
               }}
@@ -137,7 +163,7 @@ function CreateJadwalKegiatan() {
               label="Lokasi"
               required
               placeholder="Masukkan lokasi"
-              defaultValue={stateJadwalKegiatan.create.form.informasiJadwalKegiatan.lokasi}
+              value={stateJadwalKegiatan.create.form.informasiJadwalKegiatan.lokasi}
               onChange={(e) => {
                 stateJadwalKegiatan.create.form.informasiJadwalKegiatan.lokasi = e.target.value;
               }}
@@ -175,17 +201,32 @@ function CreateJadwalKegiatan() {
           </Box>
           {/* Save Button */}
           <Group justify="right">
+            {/* Tombol Batal */}
             <Button
-              type="submit"
+              variant="outline"
+              color="gray"
               radius="md"
               size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
+              onClick={handleSubmit}
+              radius="md"
+              size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

@@ -1,0 +1,20 @@
+[
+  {
+    "id": "cmkm8z5v70000vnrmu60qyd7b",
+    "name": "TPS 3R Pudak Mesari",
+    "alamat": "Desa Darmasaba, Kecamatan Abiansemal, Kabupaten Badung, Bali 80352",
+    "namaTempatMaps": "TPS 3R Pudak Mesari",
+    "linkPetunjukArah": "https://www.google.com/maps/dir/?api=1&destination=-8.5680,115.2040",
+    "lat": -8.5680,
+    "lng": 115.2040
+  },
+  {
+    "id": "dummy0000000000000000000001",
+    "name": "Bank Sampah Darmasaba Mandiri",
+    "alamat": "Banjar Darmasaba Tengah, Desa Darmasaba, Kecamatan Abiansemal, Kabupaten Badung, Bali",
+    "namaTempatMaps": "Bank Sampah Darmasaba Mandiri",
+    "linkPetunjukArah": "https://www.google.com/maps/dir/?api=1&destination=-8.5670,115.2000",
+    "lat": -8.5670,
+    "lng": 115.2000
+  }
+]

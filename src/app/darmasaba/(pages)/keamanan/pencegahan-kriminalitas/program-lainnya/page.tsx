@@ -1,27 +1,26 @@
 'use client'
 import {
   Box,
+  Button,
   Card,
   Center,
   Group,
   Pagination,
+  Paper,
   Skeleton,
   Stack,
   Text,
-  Title,
-  Tooltip,
-  Button,
-  Paper,
+  Title
 } from '@mantine/core';
-import { IconSearch, IconArrowRight } from '@tabler/icons-react';
+import { IconArrowRight, IconSearch } from '@tabler/icons-react';
 
-import { useRouter } from 'next/navigation';
-import { useProxy } from 'valtio/utils';
+import HeaderSearch from '@/app/admin/(dashboard)/_com/header';
 import pencegahanKriminalitasState from '@/app/admin/(dashboard)/_state/keamanan/pencegahan-kriminalitas';
 import { useShallowEffect } from '@mantine/hooks';
-import { useState } from 'react';
-import HeaderSearch from '@/app/admin/(dashboard)/_com/header';
 import { IconArrowLeft } from '@tabler/icons-react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { useProxy } from 'valtio/utils';
 
 function PencegahanKriminalitas() {
   const [search, setSearch] = useState("");
@@ -96,7 +95,6 @@ function ListPencegahanKriminalitas({ search }: { search: string }) {
                   style={{ wordBreak: "break-word", whiteSpace: "normal" }}
                 />
                 <Group justify="flex-end" mt="sm">
-                  <Tooltip label="Lihat detail program" withArrow>
                     <Button
                       size="sm"
                       variant="gradient"
@@ -106,7 +104,6 @@ function ListPencegahanKriminalitas({ search }: { search: string }) {
                     >
                       Lihat Detail
                     </Button>
-                  </Tooltip>
                 </Group>
               </Stack>
             </Card>
@@ -127,7 +124,6 @@ function ListPencegahanKriminalitas({ search }: { search: string }) {
         )}
       </Stack>
 
-      {totalPages > 1 && (
         <Center>
           <Pagination
             value={page}
@@ -141,7 +137,6 @@ function ListPencegahanKriminalitas({ search }: { search: string }) {
             radius="lg"
           />
         </Center>
-      )}
     </Box>
   );
 }

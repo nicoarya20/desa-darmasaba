@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import laporanPublikState from '@/app/admin/(dashboard)/_state/keamanan/laporan-publik';
@@ -6,13 +7,13 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Select,
   Stack,
   Text,
   TextInput,
-  Title,
-  Tooltip,
+  Title
 } from '@mantine/core';
 import { DateTimePicker } from '@mantine/dates';
 import { IconArrowBack } from '@tabler/icons-react';
@@ -27,6 +28,7 @@ function EditLaporanPublik() {
   const stateLaporan = useProxy(laporanPublikState);
   const router = useRouter();
   const params = useParams();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [formData, setFormData] = useState<{
     judul: string;
@@ -44,40 +46,89 @@ function EditLaporanPublik() {
     kronologi: '',
   });
 
+  const [originalData, setOriginalData] = useState({
+    judul: '',
+    lokasi: '',
+    tanggalWaktu: '',
+    status: 'Proses', // Default status
+    penanganan: '',
+    kronologi: '',
+  });
+
+  // Helper function to check if HTML content is empty
+  const isHtmlEmpty = (html: string) => {
+    // Remove all HTML tags and check if there's any text content
+    const textContent = html.replace(/<[^>]*>/g, '').trim();
+    return textContent === '';
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      formData.judul?.trim() !== '' &&
+      formData.lokasi?.trim() !== '' &&
+      formData.tanggalWaktu?.trim() !== '' &&
+      formData.status?.trim() !== '' &&
+      !isHtmlEmpty(formData.kronologi) &&
+      !isHtmlEmpty(formData.penanganan)
+    );
+  };
+
   useEffect(() => {
     const loadLaporanPublik = async () => {
       const id = params?.id as string;
       if (!id) return;
-  
+
       try {
         const data = await stateLaporan.edit.load(id);
         if (data) {
-          setFormData((prev) => ({
-            ...prev,
-            judul: data.judul ?? prev.judul,
-            lokasi: data.lokasi ?? prev.lokasi,
-            tanggalWaktu: data.tanggalWaktu ?? prev.tanggalWaktu,
-            status: (data.status as Status) ?? prev.status,
-            penanganan: data.penanganan?.[0]?.deskripsi ?? prev.penanganan,
-            kronologi: data.kronologi ?? prev.kronologi,
-          }));
+          setFormData({
+            judul: data.judul ?? '',
+            lokasi: data.lokasi ?? '',
+            tanggalWaktu: data.tanggalWaktu ?? '',
+            status: (data.status as Status) ?? 'Proses',
+            penanganan: data.penanganan?.[0]?.deskripsi ?? '',
+            kronologi: data.kronologi ?? '',
+          });
+          setOriginalData({
+            judul: data.judul ?? '',
+            lokasi: data.lokasi ?? '',
+            tanggalWaktu: data.tanggalWaktu ?? '',
+            status: (data.status as Status) ?? 'Proses',
+            penanganan: data.penanganan?.[0]?.deskripsi ?? '',
+            kronologi: data.kronologi ?? '',
+          });
         }
       } catch (error) {
         console.error("Error loading laporan publik:", error);
         toast.error("Gagal mengambil data laporan publik");
       }
     };
-  
+
     loadLaporanPublik();
-  }, [params?.id, stateLaporan.edit]);
-  
+  }, [params?.id]);
+
+
 
   const handleChange = (field: string, value: string | Status) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
+  const handleResetForm = () => {
+    setFormData({
+      judul: originalData.judul,
+      lokasi: originalData.lokasi,
+      tanggalWaktu: originalData.tanggalWaktu,
+      status: (originalData.status as Status),
+      penanganan: originalData.penanganan,
+      kronologi: originalData.kronologi,
+    });
+    toast.info("Form dikembalikan ke data awal");
+  };
+
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       stateLaporan.edit.form = {
         ...stateLaporan.edit.form,
         ...formData,
@@ -89,18 +140,18 @@ function EditLaporanPublik() {
     } catch (error) {
       console.error("Error updating laporan publik:", error);
       toast.error("Terjadi kesalahan saat memperbarui laporan publik");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+     <Box px={{ base: 0, md: 'xs' }} py="xs">
       {/* Header */}
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
-        </Tooltip>
+        <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Edit Laporan Publik
         </Title>
@@ -177,16 +228,30 @@ function EditLaporanPublik() {
 
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

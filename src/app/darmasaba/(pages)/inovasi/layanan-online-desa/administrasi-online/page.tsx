@@ -24,6 +24,16 @@ function AdministrasiOnline() {
   const [opened, { open, close }] = useDisclosure(false);
   const state = useProxy(layananonlineDesa);
 
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      state.administrasiOnline.create.form.name?.trim() !== '' &&
+      state.administrasiOnline.create.form.alamat?.trim() !== '' &&
+      state.administrasiOnline.create.form.nomorTelepon?.trim() !== '' &&
+      state.administrasiOnline.create.form.jenisLayananId?.trim() !== ''
+    );
+  };
+
   useEffect(() => {
     // ✅ Panggil load data jenis layanan dari backend
     if (!state.jenisLayanan.findMany.data) {
@@ -75,18 +85,18 @@ function AdministrasiOnline() {
             <Title order={3}>Ajukan Administrasi Online</Title>
             <TextInput
               label={<Text fz="sm" fw="bold">Nama</Text>}
-              placeholder="masukkan nama"
+              placeholder="Masukkan nama"
               onChange={(val) => (state.administrasiOnline.create.form.name = val.target.value)}
             />
             <TextInput
               label={<Text fz="sm" fw="bold">Alamat</Text>}
-              placeholder="masukkan alamat"
+              placeholder="Masukkan alamat"
               onChange={(val) => (state.administrasiOnline.create.form.alamat = val.target.value)}
             />
             <TextInput
               type="number"
               label={<Text fz="sm" fw="bold">Nomor Telepon</Text>}
-              placeholder="masukkan nomor telepon"
+              placeholder="Masukkan nomor telepon"
               onChange={(val) => (state.administrasiOnline.create.form.nomorTelepon = val.target.value)}
             />
             <Select
@@ -95,7 +105,7 @@ function AdministrasiOnline() {
                 state.administrasiOnline.create.form.jenisLayananId = val ?? "";
               }}
               label={<Text fw={"bold"} fz={"sm"}>Jenis Layanan</Text>}
-              placeholder="Pilih kategori produk"
+              placeholder="Pilih jenis layanan"
               data={
                 state.jenisLayanan.findMany.data?.map((v) => ({
                   value: v.id,
@@ -104,7 +114,11 @@ function AdministrasiOnline() {
               }
             />
 
-            <Button bg={colors['blue-button']} onClick={handleSubmit}>
+            <Button 
+              bg={colors['blue-button']} 
+              onClick={handleSubmit}
+              disabled={!isFormValid()}
+            >
               Simpan
             </Button>
           </Stack>

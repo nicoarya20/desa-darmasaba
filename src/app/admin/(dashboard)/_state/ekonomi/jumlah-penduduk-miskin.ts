@@ -47,7 +47,7 @@ const jumlahPendudukMiskin = proxy({
         if (res.status === 200) {
           const id = res.data?.data?.id;
           if (id) {
-            toast.success("Success create");
+            toast.success("Sukses menambahkan");
             jumlahPendudukMiskin.create.form = {
               year: 0,
               totalPoorPopulation: 0,

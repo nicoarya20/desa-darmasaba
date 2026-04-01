@@ -8,7 +8,8 @@
       "telepon": "081234567891",
       "alamat": "Jl. Raya Desa No. 1",
       "posisiId": "kepala_desa",
-      "isActive": true
+      "isActive": true,
+      "imageName": ""
     },
     {
       "id": "cmgewxfvw000004ibee5013f4",
@@ -19,7 +20,8 @@
       "telepon": "081234567892",
       "alamat": "Jl. Raya Desa No. 2",
       "posisiId": "sekretaris_desa",
-      "isActive": true
+      "isActive": true,
+      "imageName": ""
     },
     {
       "id": "cmgewxvqw000104ibgm5l8fzs",
@@ -30,7 +32,8 @@
       "telepon": "081234567892",
       "alamat": "Jl. Raya Desa No. 2",
       "posisiId": "kaur_keuangan",
-      "isActive": true
+      "isActive": true,
+      "imageName": ""
     },
     {
       "id": "cmgewy1g9000204ib2n7hbx0i",
@@ -41,7 +44,8 @@
       "telepon": "081234567892",
       "alamat": "Jl. Raya Desa No. 2",
       "posisiId": "kadus_banjar_dinas_menesa",
-      "isActive": true
+      "isActive": true,
+      "imageName": ""
     },
     {
       "id": "cmgewybah000304ibgqhn1gm2",
@@ -52,7 +56,8 @@
       "telepon": "081234567893",
       "alamat": "Jl. Raya Desa No. 2",
       "posisiId": "kadus_banjar_dinas_darmasaba",
-      "isActive": true
+      "isActive": true,
+      "imageName": ""
     },
     {
       "id": "cmgewygqz000404ib20sv8nvg",
@@ -63,7 +68,8 @@
       "telepon": "081234567893",
       "alamat": "Jl. Raya Desa No. 2",
       "posisiId": "kadus_banjar_dinas_bucu",
-      "isActive": true
+      "isActive": true,
+      "imageName": ""
     },
     {
       "id": "cmgewyos1000504ibcu8o2gyk",
@@ -74,7 +80,8 @@
       "telepon": "081234567893",
       "alamat": "Jl. Raya Desa No. 2",
       "posisiId": "kadus_banjar_dinas_gulingan",
-      "isActive": true
+      "isActive": true,
+      "imageName": ""
     },
     {
       "id": "cmgewyxk7000604ib8djs3i6c",
@@ -85,7 +92,8 @@
       "telepon": "081234567893",
       "alamat": "Jl. Raya Desa No. 2",
       "posisiId": "kadus_banjar_dinas_taman",
-      "isActive": true
+      "isActive": true,
+      "imageName": ""
     }
 
   ]

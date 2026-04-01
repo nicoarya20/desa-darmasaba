@@ -1,0 +1,45 @@
+[
+  {
+    "id": "item-polisi",
+    "nama": "Polisi",
+    "nomorTelepon": "110",
+    "icon": "keamanan"
+  },
+  {
+    "id": "item-damkar",
+    "nama": "Pemadam Kebakaran",
+    "nomorTelepon": "113",
+    "icon": "pemadam"
+  },
+  {
+    "id": "item-sar",
+    "nama": "BASARNAS",
+    "nomorTelepon": "115",
+    "icon": "sar"
+  },
+
+  {
+    "id": "item-polsek-darmasaba",
+    "nama": "Polsek Darmasaba",
+    "nomorTelepon": "0361123456",
+    "icon": "bangunan"
+  },
+  {
+    "id": "item-polres-badung",
+    "nama": "Polres Badung",
+    "nomorTelepon": "0361123999",
+    "icon": "bangunan"
+  },
+  {
+    "id": "item-damkar-badung",
+    "nama": "Damkar Kabupaten Badung",
+    "nomorTelepon": "0361900113",
+    "icon": "pemadam"
+  },
+  {
+    "id": "item-bpbd-badung",
+    "nama": "BPBD Badung",
+    "nomorTelepon": "0361900113",
+    "icon": "sar"
+  }
+]

@@ -8,12 +8,12 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Stack,
   Text,
   TextInput,
-  Title,
-  Tooltip,
+  Title
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -51,6 +51,7 @@ export default function EditDataLingkunganDesa() {
   const stateDataLingkunganDesa = useProxy(dataLingkunganDesaState);
   const params = useParams();
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [formData, setFormData] = useState<FormDataLingkunganDesa>({
     name: '',
@@ -58,6 +59,30 @@ export default function EditDataLingkunganDesa() {
     jumlah: '',
     icon: '',
   });
+
+  const [originalData, setOriginalData] = useState<FormDataLingkunganDesa>({
+    name: '',
+    deskripsi: '',
+    jumlah: '',
+    icon: '',
+  });
+
+  // Helper function to check if HTML content is empty
+  const isHtmlEmpty = (html: string) => {
+    // Remove all HTML tags and check if there's any text content
+    const textContent = html.replace(/<[^>]*>/g, '').trim();
+    return textContent === '';
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      formData.name?.trim() !== '' &&
+      formData.jumlah?.trim() !== '' &&
+      !isHtmlEmpty(formData.deskripsi) &&
+      formData.icon?.trim() !== ''
+    );
+  };
 
   // Load data saat komponen mount
   useEffect(() => {
@@ -75,6 +100,12 @@ export default function EditDataLingkunganDesa() {
             jumlah: data.jumlah,
             icon: data.icon,
           });
+          setOriginalData({
+            name: data.name,
+            deskripsi: data.deskripsi,
+            jumlah: data.jumlah,
+            icon: data.icon,
+          });
         }
       } catch (error) {
         console.error('Error loading data lingkungan desa:', error);
@@ -85,8 +116,19 @@ export default function EditDataLingkunganDesa() {
     loadData();
   }, [params?.id]);
 
+  const handleResetForm = () => {
+    setFormData({
+      name: originalData.name,
+      deskripsi: originalData.deskripsi,
+      jumlah: originalData.jumlah,
+      icon: originalData.icon,
+    });
+    toast.info('Form dikembalikan ke data awal');
+  };
+
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       // Update global state hanya saat submit
       stateDataLingkunganDesa.update.form = {
         ...formData,
@@ -101,17 +143,17 @@ export default function EditDataLingkunganDesa() {
     } catch (error) {
       console.error('Error updating data lingkungan desa:', error);
       toast.error('Terjadi kesalahan saat memperbarui data lingkungan desa');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
-        </Tooltip>
+        <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Edit Data Lingkungan Desa
         </Title>
@@ -172,16 +214,30 @@ export default function EditDataLingkunganDesa() {
 
           <Group justify="flex-end">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

@@ -24,7 +24,7 @@ async function createPendaftaran(context: Context) {
   });
   return {
     success: true,
-    message: "Success create pendaftaran jadwal kegiatan",
+    message: "Sukses menambahkan pendaftaran jadwal kegiatan",
     data: {
       ...body,
     },

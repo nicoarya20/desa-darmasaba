@@ -1,0 +1,57 @@
+[
+  {
+    "id": "3b3e817b-c136-4488-ac79-9a7d408939a2",
+    "posisi": "Lowongan TPS3R Pudak Mesari",
+    "namaPerusahaan": "TPS3R Pudak Mesari Desa Darmasaba",
+    "lokasi": "Desa Darmasaba, Abiansemal, Kabupaten Badung, Bali",
+    "tipePekerjaan": "Freelance",
+    "gaji": "1.500.000",
+    "deskripsi": "Menjalankan tugas di TPS3R Pudak Mesari.",
+    "kualifikasi": "Usia 18-30 tahun, SMA/SMK minimal",
+    "notelp": "089647037426"
+  },
+  {
+    "id": "3b3e817b-c136-4488-bd80-9a7d408939a2",
+    "posisi": "Marketing Executive",
+    "namaPerusahaan": "PT Mitra Krida Mandiri (Dealer Honda MKM Darmasaba)",
+    "lokasi": "Jalan Raya Darmasaba No.169, Abiansemal, Badung, Bali",
+    "tipePekerjaan": "Full Time",
+    "gaji": "2.500.000",
+    "deskripsi": "Menjalankan tugas pemasaran dan penjualan produk Honda di area Darmasaba.",
+    "kualifikasi": "Usia 18-30 tahun, SMA/SMK minimal, memiliki sepeda motor Honda dan smartphone.",
+    "notelp": "081296001047"
+  },
+  {
+    "id": "3b3e817b-c136-4488-ce91-9a7d408939a2",
+    "posisi": "Kasir",
+    "namaPerusahaan": "GOGO DARMASABA",
+    "lokasi": "Jl. Raya Darmasaba, Darmasaba, Kec. Abiansemal, Kabupaten Badung, Bali",
+    "tipePekerjaan": "Full Time",
+    "gaji": "2.500.000",
+    "deskripsi": "Melakukan pelayanan kasir dan administrasi pelanggan di restoran/food service.",
+    "kualifikasi": "Wanita, 18-30 tahun, SMA/SMK minimal pengalaman 1-3 tahun sebagai kasir atau Customer Service.",
+    "notelp": "089647037426"
+  },
+  {
+    "id": "3b3e817b-c136-4488-df02-9a7d408939a2",
+    "posisi": "Kasir / Teknisi Handphone",
+    "namaPerusahaan": "Jaya Cell Darmasaba",
+    "lokasi": "Jl. Raya Darmasaba, Darmasaba, Abiansemal, Badung, Bali",
+    "tipePekerjaan": "Full Time",
+    "gaji": "2.000.000",
+    "deskripsi": "Melakukan pelayanan kasir serta teknisi ponsel termasuk troubleshooting dan perbaikan.",
+    "kualifikasi": "Tidak disebutkan pengalaman khusus, memiliki KTP dan keinginan kuat untuk bekerja.",
+    "notelp": "089647037426"
+  },
+  {
+    "id": "3b3e817b-c136-4488-eg13-9a7d408939a2",
+    "posisi": "Guru Les (Pengajar Anak)",
+    "namaPerusahaan": "Bimba AIUEO Darmasaba",
+    "lokasi": "Darmasaba, Kabupaten Badung, Bali",
+    "tipePekerjaan": "Full Time",
+    "gaji": "2.000.000",
+    "deskripsi": "Mengajar calistung dan perkembangan dasar anak usia 3-6 tahun.",
+    "kualifikasi": "Minimal SMA/SMK, komunikasi baik, berinteraksi dengan anak-anak.",
+    "notelp": "089647037426"
+  }
+]

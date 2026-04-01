@@ -8,12 +8,12 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Stack,
   Text,
   TextInput,
-  Title,
-  Tooltip,
+  Title
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -25,12 +25,28 @@ function EditKontakItem() {
   const router = useRouter();
   const kontakState = useProxy(kontakDarurat.kontakDaruratItem);
   const params = useParams();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [formData, setFormData] = useState({
     name: '',
     nomorTelepon: '',
     icon: '',
   });
+
+  const [originalData, setOriginalData] = useState({
+    name: '',
+    nomorTelepon: '',
+    icon: '',
+  });
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      formData.name?.trim() !== '' &&
+      formData.nomorTelepon?.trim() !== '' &&
+      formData.icon?.trim() !== ''
+    );
+  };
 
   // Load data sekali dari global state
   useEffect(() => {
@@ -42,6 +58,11 @@ function EditKontakItem() {
         const data = await kontakState.update.load(id);
         if (data) {
           setFormData({
+            name: data.nama || '',
+            nomorTelepon: data.nomorTelepon || '',
+            icon: data.icon || '',
+          });
+          setOriginalData({
             name: data.nama || '',
             nomorTelepon: data.nomorTelepon || '',
             icon: data.icon || '',
@@ -63,8 +84,18 @@ function EditKontakItem() {
     }));
   };
 
+  const handleResetForm = () => {
+    setFormData({
+      name: originalData.name,
+      nomorTelepon: originalData.nomorTelepon,
+      icon: originalData.icon,
+    });
+    toast.info('Form dikembalikan ke data awal');
+  };
+
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       // Update global state sekali pas submit
       kontakState.update.form = {
         ...kontakState.update.form,
@@ -79,18 +110,18 @@ function EditKontakItem() {
     } catch (error) {
       console.error('Error updating kontak darurat:', error);
       toast.error('Terjadi kesalahan saat memperbarui kontak darurat');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+     <Box px={{ base: 0, md: 'xs' }} py="xs">
       {/* Header */}
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
-        </Tooltip>
+        <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Edit Kontak Darurat Item
         </Title>
@@ -134,16 +165,30 @@ function EditKontakItem() {
 
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

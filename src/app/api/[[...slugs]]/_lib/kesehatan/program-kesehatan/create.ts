@@ -23,7 +23,7 @@ export default async function programKesehatanCreate(context: Context) {
     })
     return {
         success: true,
-        message: "Success create program kesehatan",
+        message: "Sukses menambahkan program kesehatan",
         data: {
             ...body,
         },

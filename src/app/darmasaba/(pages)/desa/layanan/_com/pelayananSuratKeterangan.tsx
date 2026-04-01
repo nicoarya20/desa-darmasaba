@@ -2,7 +2,7 @@
 
 import stateLayananDesa from '@/app/admin/(dashboard)/_state/desa/layananDesa';
 import colors from '@/con/colors';
-import { BackgroundImage, Box, Button, Center, Group, Pagination, SimpleGrid, Skeleton, Stack, Text, Tooltip } from '@mantine/core';
+import { BackgroundImage, Box, Button, Center, Group, Pagination, SimpleGrid, Skeleton, Stack, Text, Title, Tooltip } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconFileDescription, IconInfoCircle } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
@@ -35,7 +35,7 @@ function PelayananSuratKeterangan({ search }: { search: string }) {
       <Center py="xl">
         <Stack align="center" gap="xs">
           <IconFileDescription size={40} stroke={1.5} color={colors["blue-button"]} />
-          <Text c="dimmed" ta="center">
+          <Text c="dimmed" ta="center" fz={{ base: 'sm', md: 'md' }} lh="sm">
             Tidak ada layanan surat keterangan yang ditemukan
           </Text>
         </Stack>
@@ -48,9 +48,9 @@ function PelayananSuratKeterangan({ search }: { search: string }) {
       <Group justify="space-between" align="center" mb="md">
         <Group gap="xs">
           <IconFileDescription size={28} stroke={1.8} />
-          <Text fz={{ base: "h4", md: "h2" }} fw={700}>
+          <Title order={2} c="black">
             Layanan Surat Keterangan
-          </Text>
+          </Title>
         </Group>
         <Tooltip label="Pilih layanan surat keterangan sesuai kebutuhan Anda" withArrow>
           <IconInfoCircle size={22} stroke={1.8} />
@@ -82,15 +82,15 @@ function PelayananSuratKeterangan({ search }: { search: string }) {
               style={{ borderRadius: 16 }}
             />
             <Stack justify="space-between" h="100%" gap="md" p="lg" pos="relative">
-              <Text
+              <Title
+                order={3}
                 c="white"
-                fw={600}
-                fz="lg"
                 ta="center"
                 lineClamp={2}
+                lh="sm"
               >
                 {v.name}
-              </Text>
+              </Title>
               <Group justify="center">
                 <Button
                   size="md"

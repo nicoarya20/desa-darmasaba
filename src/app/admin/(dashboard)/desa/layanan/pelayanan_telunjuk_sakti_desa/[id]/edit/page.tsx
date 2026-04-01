@@ -6,11 +6,11 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Stack,
   TextInput,
-  Title,
-  Tooltip
+  Title
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -22,8 +22,24 @@ function EditPelayananTelunjukSakti() {
   const stateTelunjukDesa = useProxy(stateLayananDesa.pelayananTelunjukSaktiDesa);
   const router = useRouter();
   const params = useParams();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      formData.name?.trim() !== '' &&
+      formData.deskripsi?.trim() !== '' &&
+      formData.link?.trim() !== ''
+    );
+  };
 
   const [formData, setFormData] = useState({
+    name: '',
+    deskripsi: '',
+    link: '',
+  });
+
+  const [originalData, setOriginalData] = useState({
     name: '',
     deskripsi: '',
     link: '',
@@ -39,6 +55,11 @@ function EditPelayananTelunjukSakti() {
         const data = await stateTelunjukDesa.edit.load(id);
         if (data) {
           setFormData({
+            name: data.name ?? '',
+            deskripsi: data.deskripsi ?? '',
+            link: data.link ?? '',
+          });
+          setOriginalData({
             name: data.name ?? '',
             deskripsi: data.deskripsi ?? '',
             link: data.link ?? '',
@@ -61,9 +82,34 @@ function EditPelayananTelunjukSakti() {
     []
   );
 
+  const handleResetForm = () => {
+    setFormData({
+      name: originalData.name,
+      deskripsi: originalData.deskripsi,
+      link: originalData.link,
+    });
+    toast.info("Form dikembalikan ke data awal");
+  };
+
   // Submit: update global state hanya saat simpan
   const handleSubmit = async () => {
+    if (!formData.name?.trim()) {
+      toast.error('Nama pelayanan wajib diisi');
+      return;
+    }
+
+    if (!formData.deskripsi?.trim()) {
+      toast.error('Judul link wajib diisi');
+      return;
+    }
+
+    if (!formData.link?.trim()) {
+      toast.error('Link wajib diisi');
+      return;
+    }
+
     try {
+      setIsSubmitting(true);
       stateTelunjukDesa.edit.form = {
         ...stateTelunjukDesa.edit.form,
         ...formData,
@@ -74,18 +120,18 @@ function EditPelayananTelunjukSakti() {
     } catch (error) {
       console.error('Error updating pelayanan telunjuk sakti:', error);
       toast.error('Terjadi kesalahan saat memperbarui pelayanan telunjuk sakti');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Back Button + Title */}
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
-        </Tooltip>
+        <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Edit Pelayanan Telunjuk Sakti Desa
         </Title>
@@ -129,16 +175,30 @@ function EditPelayananTelunjukSakti() {
           {/* Tombol Simpan */}
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

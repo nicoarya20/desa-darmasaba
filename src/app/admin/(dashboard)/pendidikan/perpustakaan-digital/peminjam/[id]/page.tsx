@@ -10,8 +10,7 @@ import {
   Paper,
   Skeleton,
   Stack,
-  Text,
-  Tooltip
+  Text
 } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
@@ -43,21 +42,21 @@ function DetailDataPeminjaman() {
   };
 
   const renderStatusBadge = (status: string) => {
-      const normalized = status?.toUpperCase();
-  
-      switch (normalized) {
-        case 'DIPINJAM':
-          return <Badge color="blue" variant="light">Dipinjam</Badge>;
-        case 'DIKEMBALIKAN':
-          return <Badge color="green" variant="light">Dikembalikan</Badge>;
-        case 'TERLAMBAT':
-          return <Badge color="orange" variant="light">Terlambat</Badge>;
-        case 'DIBATALKAN':
-          return <Badge color="red" variant="light">Dibatalkan</Badge>;
-        default:
-          return <Badge color="gray" variant="light">Tidak diketahui</Badge>;
-      }
-    };
+    const normalized = status?.toUpperCase();
+
+    switch (normalized) {
+      case 'DIPINJAM':
+        return <Badge color="blue" variant="light">Dipinjam</Badge>;
+      case 'DIKEMBALIKAN':
+        return <Badge color="green" variant="light">Dikembalikan</Badge>;
+      case 'TERLAMBAT':
+        return <Badge color="orange" variant="light">Terlambat</Badge>;
+      case 'DIBATALKAN':
+        return <Badge color="red" variant="light">Dibatalkan</Badge>;
+      default:
+        return <Badge color="gray" variant="light">Tidak diketahui</Badge>;
+    }
+  };
 
   if (!data) {
     return (
@@ -189,35 +188,31 @@ function DetailDataPeminjaman() {
               </Box>
 
               <Group gap="sm" mt="sm">
-                <Tooltip label="Hapus Peminjam Buku" withArrow position="top">
-                  <Button
-                    color="red"
-                    onClick={() => {
-                      setSelectedId(data.id);
-                      setModalHapus(true);
-                    }}
-                    variant="light"
-                    radius="md"
-                    size="md"
-                    disabled={stateDetail.delete.loading}
-                  >
-                    <IconTrash size={20} />
-                  </Button>
-                </Tooltip>
+                <Button
+                  color="red"
+                  onClick={() => {
+                    setSelectedId(data.id);
+                    setModalHapus(true);
+                  }}
+                  variant="light"
+                  radius="md"
+                  size="md"
+                  disabled={stateDetail.delete.loading}
+                >
+                  <IconTrash size={20} />
+                </Button>
 
-                <Tooltip label="Edit Peminjam Buku" withArrow position="top">
-                  <Button
-                    color="green"
-                    onClick={() =>
-                      router.push(`/admin/pendidikan/perpustakaan-digital/peminjam/${data.id}/edit`)
-                    }
-                    variant="light"
-                    radius="md"
-                    size="md"
-                  >
-                    <IconEdit size={20} />
-                  </Button>
-                </Tooltip>
+                <Button
+                  color="green"
+                  onClick={() =>
+                    router.push(`/admin/pendidikan/perpustakaan-digital/peminjam/${data.id}/edit`)
+                  }
+                  variant="light"
+                  radius="md"
+                  size="md"
+                >
+                  <IconEdit size={20} />
+                </Button>
               </Group>
             </Stack>
           </Paper>

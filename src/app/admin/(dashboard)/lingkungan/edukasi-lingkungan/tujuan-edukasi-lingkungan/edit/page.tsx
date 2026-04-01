@@ -2,12 +2,13 @@
 
 import stateEdukasiLingkungan from '@/app/admin/(dashboard)/_state/lingkungan/edukasi-lingkungan';
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, Stack, Text, Title } from '@mantine/core';
+import { Box, Button, Group, Loader, Paper, Stack, Text, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack } from '@tabler/icons-react';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
 const EdukasiLingkunganTextEditor = dynamic(
@@ -18,9 +19,29 @@ const EdukasiLingkunganTextEditor = dynamic(
 export default function EditTujuanEdukasiLingkungan() {
   const router = useRouter();
   const tujuanEdukasiState = useProxy(stateEdukasiLingkungan.stateTujuanEdukasi);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // State lokal untuk form, gak tergantung global state
   const [formData, setFormData] = useState({ judul: '', deskripsi: '' });
+  const [originalData, setOriginalData] = useState({
+    judul: '',
+    deskripsi: '',
+  });
+
+  // Helper function to check if HTML content is empty
+  const isHtmlEmpty = (html: string) => {
+    // Remove all HTML tags and check if there's any text content
+    const textContent = html.replace(/<[^>]*>/g, '').trim();
+    return textContent === '';
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      !isHtmlEmpty(formData.judul) &&
+      !isHtmlEmpty(formData.deskripsi)
+    );
+  };
 
   // Initialize global state
   useShallowEffect(() => {
@@ -36,8 +57,20 @@ export default function EditTujuanEdukasiLingkungan() {
         judul: tujuanEdukasiState.findById.data.judul ?? '',
         deskripsi: tujuanEdukasiState.findById.data.deskripsi ?? '',
       });
+      setOriginalData({
+        judul: tujuanEdukasiState.findById.data.judul ?? '',
+        deskripsi: tujuanEdukasiState.findById.data.deskripsi ?? '',
+      });
     }
   }, [tujuanEdukasiState.findById.data]);
+
+  const handleResetForm = () => {
+    setFormData({
+      judul: originalData.judul,
+      deskripsi: originalData.deskripsi,
+    });
+    toast.info("Form dikembalikan ke data awal");
+  };
 
   // Handler input
   const handleChange = (field: 'judul' | 'deskripsi', value: string) => {
@@ -45,20 +78,28 @@ export default function EditTujuanEdukasiLingkungan() {
   };
 
   const submit = () => {
-    if (tujuanEdukasiState.findById.data) {
-      // Update global state hanya saat submit
-      const updatedData = {
-        ...tujuanEdukasiState.findById.data,
-        judul: formData.judul,
-        deskripsi: formData.deskripsi,
-      };
-      tujuanEdukasiState.update.save(updatedData);
+    try {
+      setIsSubmitting(true);
+      if (tujuanEdukasiState.findById.data) {
+        // Update global state hanya saat submit
+        const updatedData = {
+          ...tujuanEdukasiState.findById.data,
+          judul: formData.judul,
+          deskripsi: formData.deskripsi,
+        };
+        tujuanEdukasiState.update.save(updatedData);
+      }
+      router.push('/admin/lingkungan/edukasi-lingkungan/tujuan-edukasi-lingkungan');
+    } catch (error) {
+      console.error(error);
+      toast.error('Gagal memuat data tujuan edukasi lingkungan');
+    } finally {
+      setIsSubmitting(false);
     }
-    router.push('/admin/lingkungan/edukasi-lingkungan/tujuan-edukasi-lingkungan');
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       <Group mb="md">
         <Button
           variant="subtle"
@@ -104,19 +145,33 @@ export default function EditTujuanEdukasiLingkungan() {
             />
           </Box>
 
-          <Group justify="right" mt="md">
+          <Group justify="right">
+            {/* Tombol Batal */}
+            <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
             <Button
               onClick={submit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
-              loading={tujuanEdukasiState.update.loading}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

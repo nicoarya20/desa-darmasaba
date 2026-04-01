@@ -9,15 +9,25 @@ import {
   Stack,
   TextInput,
   Title,
-  Tooltip
+  Loader
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
+import { useState } from 'react';
+import { toast } from 'react-toastify';
 
 function CreateKategoriPengumuman() {
   const createState = useProxy(stateDesaPengumuman.category);
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      createState.create.form.name?.trim() !== ''
+    );
+  };
 
   const resetForm = () => {
     createState.create.form = {
@@ -26,16 +36,27 @@ function CreateKategoriPengumuman() {
   };
 
   const handleSubmit = async () => {
-    await createState.create.create();
-    resetForm();
-    router.push('/admin/desa/pengumuman/kategori-pengumuman');
+    if (!createState.create.form.name?.trim()) {
+      toast.error('Nama kategori pengumuman wajib diisi');
+      return;
+    }
+    
+    try {
+      await createState.create.create();
+      resetForm();
+      router.push('/admin/desa/pengumuman/kategori-pengumuman');
+    } catch (error) {
+      console.error(error);
+      toast.error('Gagal menambahkan kategori pengumuman');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Header dengan back button */}
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
           <Button
             variant="subtle"
             onClick={() => router.back()}
@@ -44,7 +65,6 @@ function CreateKategoriPengumuman() {
           >
             <IconArrowBack color={colors['blue-button']} size={24} />
           </Button>
-        </Tooltip>
         <Title order={4} ml="sm" c="dark">
           Tambah Kategori Pengumuman
         </Title>
@@ -63,23 +83,37 @@ function CreateKategoriPengumuman() {
           <TextInput
             label="Nama Kategori Pengumuman"
             placeholder="Masukkan nama kategori pengumuman"
-            defaultValue={createState.create.form.name || ''}
+            value={createState.create.form.name || ''}
             onChange={(e) => (createState.create.form.name = e.target.value)}
             required
           />
 
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

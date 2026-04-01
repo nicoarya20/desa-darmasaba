@@ -19,7 +19,7 @@ export default async function kategoriProdukCreate(context: Context) {
     });
     return {
         success: true,
-        message: "Success create kategori produk",
+        message: "Sukses menambahkan kategori produk",
         data: kategoriProduk
     };
 }

@@ -24,6 +24,7 @@ import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../../_com/header';
 import stateLayananDesa from '../../../_state/desa/layananDesa';
+import { useDebouncedValue } from '@mantine/hooks';
 
 function AjukanPermohonan() {
   const [search, setSearch] = useState("");
@@ -44,6 +45,7 @@ function AjukanPermohonan() {
 function ListAjukanPermohonan({ search }: { search: string }) {
   const AjukanPermohonanState = useProxy(stateLayananDesa.ajukanPermohonan);
   const router = useRouter();
+  const [debouncedSearch] = useDebouncedValue(search, 1000); // 500ms delay
 
   const {
     data,
@@ -54,58 +56,58 @@ function ListAjukanPermohonan({ search }: { search: string }) {
   } = AjukanPermohonanState.findMany;
 
   useEffect(() => {
-    load(page, 10, search);
-  }, [page, search]);
+    load(page, 10, debouncedSearch);
+  }, [page, debouncedSearch]);
 
   // Loading state
   if (loading || !data) {
     return (
-      <Stack py={10}>
+      <Stack py={{ base: 'sm', md: 'md' }}>
         <Skeleton height={600} radius="md" />
       </Stack>
     );
   }
 
   return (
-    <Box py={10}>
-      <Paper withBorder bg={colors['white-1']} p={'lg'} shadow="md" radius="md">
-        <Title order={4}>List Ajukan Permohonan</Title>
-        <Box style={{ overflowX: "auto" }}>
-          <Table highlightOnHover>
+    <Box py={{ base: 'sm', md: 'md' }}>
+      <Paper withBorder bg={colors['white-1']} p={{ base: 'md', md: 'lg' }} shadow="md" radius="md">
+        <Title order={2} lh={1.2} mb={{ base: 'md', md: 'lg' }}>
+          List Ajukan Permohonan
+        </Title>
+
+        {/* Desktop Table */}
+       <Box visibleFrom="md" style={{ overflowX: 'auto' }}>
+         <Table highlightOnHover
+    layout="fixed" // 🔥 PENTING
+    withColumnBorders={false} miw={0}>
             <TableThead>
               <TableTr>
-                <TableTh style={{ width: '30%' }}>Nama</TableTh>
-                <TableTh style={{ width: '45%' }}>Alamat</TableTh>
-                <TableTh style={{ width: '15%' }}>NIK</TableTh>
-                <TableTh style={{ width: '15%' }}>Aksi</TableTh>
+                <TableTh fz="sm" fw={600} lh={1.4}>Nama</TableTh>
+                <TableTh fz="sm" fw={600} lh={1.4}>Alamat</TableTh>
+                <TableTh fz="sm" fw={600} lh={1.4}>NIK</TableTh>
+                <TableTh fz="sm" fw={600} lh={1.4}>Aksi</TableTh>
               </TableTr>
             </TableThead>
             <TableTbody>
               {data.length > 0 ? (
                 data.map((item) => (
                   <TableTr key={item.id}>
-                    <TableTd style={{ width: '30%' }}>
-                      <Box w={200}>
-                        <Text fw={500} truncate="end" lineClamp={1}>
-                          {item.nama}
-                        </Text>
-                      </Box>
+                    <TableTd>
+                      <Text fz="md" fw={500} lh={1.5} truncate="end" lineClamp={1}>
+                        {item.nama}
+                      </Text>
                     </TableTd>
-                    <TableTd style={{ width: '45%' }}>
-                      <Box w={200}>
-                        <Text fw={500} truncate="end" lineClamp={1}>
-                          {item.alamat}
-                        </Text>
-                      </Box>
+                    <TableTd>
+                      <Text fz="md" fw={500} lh={1.5} truncate="end" lineClamp={1}>
+                        {item.alamat}
+                      </Text>
                     </TableTd>
-                    <TableTd style={{ width: '45%' }}>
-                      <Box w={200}>
-                        <Text fw={500} truncate="end" lineClamp={1}>
-                          {item.nik}
-                        </Text>
-                      </Box>
+                    <TableTd>
+                      <Text fz="md" fw={500} lh={1.5} truncate="end" lineClamp={1}>
+                        {item.nik}
+                      </Text>
                     </TableTd>
-                    <TableTd style={{ width: '15%' }}>
+                    <TableTd>
                       <Button
                         size="xs"
                         radius="md"
@@ -123,9 +125,11 @@ function ListAjukanPermohonan({ search }: { search: string }) {
                 ))
               ) : (
                 <TableTr>
-                  <TableTd colSpan={3}>
-                    <Center py={20}>
-                      <Text color="dimmed">Tidak ada data ajukan permohonan yang cocok</Text>
+                  <TableTd colSpan={4}>
+                    <Center py="xl">
+                      <Text c="dimmed" fz="sm" lh={1.4}>
+                        Tidak ada data ajukan permohonan yang cocok
+                      </Text>
                     </Center>
                   </TableTd>
                 </TableTr>
@@ -133,21 +137,67 @@ function ListAjukanPermohonan({ search }: { search: string }) {
             </TableTbody>
           </Table>
         </Box>
+
+        {/* Mobile Card View */}
+        <Box hiddenFrom="md">
+          <Stack gap="md">
+            {data.length > 0 ? (
+              data.map((item) => (
+                <Paper key={item.id} withBorder p="md" radius="md" shadow="xs">
+                  <Stack gap={'xs'}>
+                    <Box>
+                      <Text fz="sm" fw={600} lh={1.4}>Nama</Text>
+                      <Text fz="sm" fw={500} lh={1.5}>{item.nama}</Text>
+                    </Box>
+                    <Box>
+                      <Text fz="sm" fw={600} lh={1.4}>Alamat</Text>
+                      <Text fz="sm" fw={500} lh={1.5}>{item.alamat}</Text>
+                    </Box>
+                    <Box>
+                      <Text fz="sm" fw={600} lh={1.4}>NIK</Text>
+                      <Text fz="sm" fw={500} lh={1.5}>{item.nik}</Text>
+                    </Box>
+                    <Box>
+                      <Button
+                        size="xs"
+                        radius="md"
+                        variant="light"
+                        color="blue"
+                        leftSection={<IconDeviceImacCog size={16} />}
+                        onClick={() =>
+                          router.push(`/admin/desa/layanan/ajukan_permohonan/${item.id}`)
+                        }
+                        fullWidth
+                      >
+                        Detail
+                      </Button>
+                    </Box>
+                  </Stack>
+                </Paper>
+              ))
+            ) : (
+              <Center py="xl">
+                <Text c="dimmed" fz="sm" lh={1.4}>
+                  Tidak ada data ajukan permohonan yang cocok
+                </Text>
+              </Center>
+            )}
+          </Stack>
+        </Box>
       </Paper>
-      <Center>
-        <Pagination
-          value={page}
-          onChange={(newPage) => {
-            load(newPage, 10, search);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }}
-          total={totalPages}
-          mt="md"
-          mb="md"
-          color="blue"
-          radius="md"
-        />
-      </Center>
+
+        <Center mt="md">
+          <Pagination
+            value={page}
+            onChange={(newPage) => {
+              load(newPage, 10, search);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            total={totalPages}
+            color="blue"
+            radius="md"
+          />
+        </Center>
     </Box>
   );
 }

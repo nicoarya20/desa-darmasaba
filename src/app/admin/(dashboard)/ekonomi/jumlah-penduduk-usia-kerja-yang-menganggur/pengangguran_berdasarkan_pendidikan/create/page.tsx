@@ -1,19 +1,31 @@
 'use client';
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React from 'react';
-import { useRouter } from 'next/navigation';
 import grafikNganggur from '@/app/admin/(dashboard)/_state/ekonomi/usia-kerja-nganggur';
-import { useProxy } from 'valtio/utils';
-import { useState } from 'react';
 import colors from '@/con/colors';
-import { Box, Button, Paper, Stack, Title, TextInput, Group, Tooltip } from '@mantine/core';
+import { Box, Button, Loader, Group, Paper, Stack, TextInput, Title } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { toast } from 'react-toastify';
+import { useProxy } from 'valtio/utils';
 
 function CreateGrafikBerdasarkanPendidikan() {
   const router = useRouter();
   const stategrafik = useProxy(grafikNganggur.grafikBerdasarkanPendidikan);
   const [donutData, setDonutData] = useState<any[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      stategrafik.create.form.SD?.trim() !== '' &&
+      stategrafik.create.form.SMP?.trim() !== '' &&
+      stategrafik.create.form.SMA?.trim() !== '' &&
+      stategrafik.create.form.D3?.trim() !== '' &&
+      stategrafik.create.form.S1?.trim() !== ''
+    );
+  };
 
   const resetForm = () => {
     stategrafik.create.form = {
@@ -27,28 +39,34 @@ function CreateGrafikBerdasarkanPendidikan() {
   };
 
   const handleSubmit = async () => {
-    const id = await stategrafik.create.create();
-    if (id) {
-      const idStr = String(id);
-      await stategrafik.findUnique.load(idStr);
-      if (stategrafik.findUnique.data) {
-        setDonutData([stategrafik.findUnique.data]);
+    try {
+      setIsSubmitting(true);
+      const id = await stategrafik.create.create();
+      if (id) {
+        const idStr = String(id);
+        await stategrafik.findUnique.load(idStr);
+        if (stategrafik.findUnique.data) {
+          setDonutData([stategrafik.findUnique.data]);
+        }
       }
+      resetForm();
+      router.push(
+        '/admin/ekonomi/jumlah-penduduk-usia-kerja-yang-menganggur/pengangguran_berdasarkan_pendidikan'
+      );
+    } catch (error) {
+      console.error(error);
+      toast.error('Terjadi kesalahan saat menambahkan data grafik');
+    } finally {
+      setIsSubmitting(false);
     }
-    resetForm();
-    router.push(
-      '/admin/ekonomi/jumlah-penduduk-usia-kerja-yang-menganggur/pengangguran_berdasarkan_pendidikan'
-    );
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
-        </Tooltip>
+        <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Tambah Data Pengangguran Berdasarkan Pendidikan
         </Title>
@@ -67,7 +85,7 @@ function CreateGrafikBerdasarkanPendidikan() {
             label="SD"
             type="number"
             placeholder="Masukkan jumlah"
-            defaultValue={stategrafik.create.form.SD}
+            value={stategrafik.create.form.SD}
             onChange={(val) => (stategrafik.create.form.SD = val.currentTarget.value)}
             required
           />
@@ -75,7 +93,7 @@ function CreateGrafikBerdasarkanPendidikan() {
             label="SMP"
             type="number"
             placeholder="Masukkan jumlah"
-            defaultValue={stategrafik.create.form.SMP}
+            value={stategrafik.create.form.SMP}
             onChange={(val) => (stategrafik.create.form.SMP = val.currentTarget.value)}
             required
           />
@@ -83,7 +101,7 @@ function CreateGrafikBerdasarkanPendidikan() {
             label="SMA"
             type="number"
             placeholder="Masukkan jumlah"
-            defaultValue={stategrafik.create.form.SMA}
+            value={stategrafik.create.form.SMA}
             onChange={(val) => (stategrafik.create.form.SMA = val.currentTarget.value)}
             required
           />
@@ -91,7 +109,7 @@ function CreateGrafikBerdasarkanPendidikan() {
             label="D3"
             type="number"
             placeholder="Masukkan jumlah"
-            defaultValue={stategrafik.create.form.D3}
+            value={stategrafik.create.form.D3}
             onChange={(val) => (stategrafik.create.form.D3 = val.currentTarget.value)}
             required
           />
@@ -99,23 +117,37 @@ function CreateGrafikBerdasarkanPendidikan() {
             label="S1"
             type="number"
             placeholder="Masukkan jumlah"
-            defaultValue={stategrafik.create.form.S1}
+            value={stategrafik.create.form.S1}
             onChange={(val) => (stategrafik.create.form.S1 = val.currentTarget.value)}
             required
           />
 
           <Group justify="right" mt="md">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

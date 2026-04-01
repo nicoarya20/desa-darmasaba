@@ -147,7 +147,7 @@ function Page() {
                   <Center mb="sm">
                     {m.image?.link ? (
                       <Image
-                        src={`${process.env.NEXT_PUBLIC_BASE_URL || ''}${m.image.link}`}
+                        src={m.image.link}
                         alt={m.name}
                         w={150}
                         h={100}

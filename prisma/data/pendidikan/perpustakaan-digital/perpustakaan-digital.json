@@ -1,0 +1,198 @@
+[
+  {
+    "id": "cmkqhbi6f0002vneao4my49k9",
+    "judul": "Laskar Pelangi",
+    "deskripsi": "<p>Novel inspiratif tentang perjuangan anak-anak di Belitung dalam meraih pendidikan dan mimpi mereka</p>",
+    "kategoriId": "cmkqb11mc000104jibq76bdzu",
+    "imageName": "RnAdv7O0QAFrxkFLAXJSa-mobile.webp"
+  },
+  {
+    "id": "cmkqhedff0005vneas3rtbumi",
+    "judul": "Bumi Manusia",
+    "deskripsi": "<p>Kisah kehidupan Minke di masa kolonial yang menggambarkan perjuangan, pendidikan, dan identitas bangsa</p>",
+    "kategoriId": "cmkqb11mc000104jibqc7bdzu",
+    "imageName": "71eZShq4FYAFLxpLfZB0W-mobile.webp"
+  },
+  {
+    "id": "cmkqhg1g70008vneajbpz8phh",
+    "judul": "Atomic Habits",
+    "deskripsi": "<p>Panduan membangun kebiasaan kecil yang konsisten untuk menghasilkan perubahan besar dalam hidup</p>",
+    "kategoriId": "cmkqb11mc000104jibqf7bdzu",
+    "imageName": "Uxq3GXPqh7HN9fHmRkr3r-mobile.webp"
+  },
+  {
+    "id": "cmkqhl6sr000bvneampx0svus",
+    "judul": "Clean Code",
+    "deskripsi": "<p>Buku wajib programmer tentang cara menulis kode yang bersih, mudah dibaca, dan mudah dirawat</p>",
+    "kategoriId": "cmkqb11mc000104jibqd7bdzu",
+    "imageName": "W5Fc0uRADNkIY3nZicvQA-mobile.webp"
+  },
+  {
+    "id": "cmkqhoaa1000evnearppgpyxo",
+    "judul": "Sejarah Indonesia Modern",
+    "deskripsi": "<p>Membahas perjalanan sejarah Indonesia dari masa kolonial hingga era modern</p>",
+    "kategoriId": "cmkqb11mc000104jibqc7bdzu",
+    "imageName": "mp77Op-MwtPQZnH3so4JY-mobile.webp"
+  },
+  {
+    "id": "cmkqhr9oc000hvnea677ad3kb",
+    "judul": "Ensiklopedia Anak Pintar",
+    "deskripsi": "<p>Buku referensi bergambar yang membantu anak mengenal ilmu pengetahuan secara menyenangkan</p>",
+    "kategoriId": "cmkqb11mc000104jibqh7bdzu",
+    "imageName": "V09ZxN1wOwbSFLQiDK0VQ-mobile.webp"
+  },
+  {
+    "id": "cmkqi5ksf000kvnea9c04n2hy",
+    "judul": "Filosofi Teras",
+    "deskripsi": "<p>Pengenalan filsafat Stoikisme untuk menghadapi kehidupan modern dengan lebih tenang</p>",
+    "kategoriId": "cmkqb11mc000104jibq87bdzu",
+    "imageName": "Wqp4AyVkGjqRMED9Q5XAs-mobile.webp"
+  },
+  {
+    "id": "cmkqi97hq000nvneaparjbcrm",
+    "judul": "Pemrograman JavaScript Dasar",
+    "deskripsi": "<p>Panduan dasar belajar JavaScript untuk pemula dalam dunia pengembangan web</p>",
+    "kategoriId": "cmkqb11mc000104jibqd7bdzu",
+    "imageName": "NH4aLc7cVuutdQBCofTC0-mobile.webp"
+  },
+  {
+    "id": "cmkqibjt9000qvnea13ox7fmv",
+    "judul": "Pendidikan Karakter",
+    "deskripsi": "<p>Buku yang membahas pentingnya pendidikan karakter dalam membentuk generasi bangsa</p>",
+    "kategoriId": "cmkqb11mc000104jibqf7bdzu",
+    "imageName": "MLrsPrD6oiHsrNP4Lc8J7-mobile.webp"
+  },
+  {
+    "id": "cmkqidnar000tvneaohk5v8k6",
+    "judul": "Psikologi Kepribadian",
+    "deskripsi": "<p>Mengenal teori-teori kepribadian manusia dalam perspektif psikologi</p>",
+    "kategoriId": "cmkqb11mc000104jibq87bdzu",
+    "imageName": "iaIeNdhuxqltqKP7aZncQ-mobile.webp"
+  },
+  {
+    "id": "cmkqifdiu000wvnea7xd0yi4f",
+    "judul": "Ayat-Ayat Cinta",
+    "deskripsi": "<p>Novel religi yang mengangkat kisah cinta, iman, dan perjuangan hidup</p>",
+    "kategoriId": "cmkqb11mc000104jibqe7bdzu",
+    "imageName": "WUDssJ59pTKE_3IuTiZ2s-mobile.webp"
+  },
+  {
+    "id": "cmkqik7vi000zvneae7d5cq9i",
+    "judul": "Negeri 5 Menara",
+    "deskripsi": "<p>Cerita persahabatan dan perjuangan santri dalam mengejar mimpi hingga ke mancanegara</p>",
+    "kategoriId": "cmkqb11mc000104jibq76bdzu",
+    "imageName": "RJH_-4_R_nlP7GVEQeD1M-mobile.webp"
+  },
+  {
+    "id": "cmkqinno30012vneac1sgsvis",
+    "judul": "Belajar UI/UX Design",
+    "deskripsi": "<p>Panduan praktis memahami desain antarmuka dan pengalaman pengguna</p>",
+    "kategoriId": "cmkqb11mc000104jibqd7bdzu",
+    "imageName": "9MA-Jx_36uoho2Tg40_G9-mobile.webp"
+  },
+  {
+    "id": "cmkqiqegd0015vneawv5u5tpm",
+    "judul": "Manajemen Waktu Efektif",
+    "deskripsi": "<p>Teknik mengatur waktu agar lebih produktif dan fokus pada hal penting</p>",
+    "kategoriId": "cmkqb11mc000104jibqf7bdzu",
+    "imageName": "dkb7ZWFl28TREVcvH8sWd-mobile.webp"
+  },
+  {
+    "id": "cmkqiurc60018vneavyd3pj9q",
+    "judul": "Dongeng Nusantara",
+    "deskripsi": "<p>Kumpulan dongeng tradisional Indonesia yang sarat pesan moral</p>",
+    "kategoriId": "cmkqb11mc000104jibq76bdzu",
+    "imageName": "nVj3one6CLuWRd04QnsWo-mobile.webp"
+  },
+  {
+    "id": "cmkqix2kb001bvnea5v81cw7p",
+    "judul": "Ekonomi Makro",
+    "deskripsi": "<p>Pembahasan konsep ekonomi makro secara sistematis dan mudah dipahami</p>",
+    "kategoriId": "cmkqb11mc000104jibq87bdzu",
+    "imageName": "AnB7JO4_6tlPTX3ypOVLi-mobile.webp"
+  },
+  {
+    "id": "cmkqiyts2001evneahnk45ry5",
+    "judul": "Seni Berpikir Kritis",
+    "deskripsi": "<p>Buku yang membantu pembaca menghindari kesalahan berpikir dalam pengambilan keputusan</p>",
+    "kategoriId": "cmkqb11mc000104jibq87bdzu",
+    "imageName": "sAyoMERxL6JgFfiO22KPb-mobile.webp"
+  },
+  {
+    "id": "cmkqj0nq0001hvnea06r8m3kj",
+    "judul": "Seni Berpikir Kritis",
+    "deskripsi": "<p>Buku yang membantu pembaca menghindari kesalahan berpikir dalam pengambilan keputusan</p>",
+    "kategoriId": "cmkqb11mc000104jibq87bdzu",
+    "imageName": "WeA-JP2Ks_32fv1k529vj-mobile.webp"
+  },
+  {
+    "id": "cmkqj37w4001kvnea04n9w2bx",
+    "judul": "Panduan Shalat Lengkap",
+    "deskripsi": "<p>Panduan praktis dan lengkap tentang tata cara shalat sesuai tuntunan</p>",
+    "kategoriId": "cmkqb11mc000104jibqe7bdzu",
+    "imageName": "pxlHu2kDmIprQqC2PuXaL-mobile.webp"
+  },
+  {
+    "id": "cmkqj5qp6001nvnea4xhvluz3",
+    "judul": "Cerita Sains untuk Anak",
+    "deskripsi": "<p>Cerita edukatif yang mengenalkan sains kepada anak dengan bahasa sederhana</p>",
+    "kategoriId": "cmkqb11mc000104jibqh7bdzu",
+    "imageName": "G0iELZb2DhQDCCP5OdzJR-desktop.webp"
+  },
+  {
+    "id": "cml7fq776000104jscnj58sgm",
+    "judul": "Pedagogy of the Oppressed",
+    "deskripsi": "<p>Klasik pemikiran pendidikan kritis; menggali hubungan guru-murid dan peran pendidikan dalam pembebasan sosial</p>",
+    "kategoriId": "cmkqb11mc000104jibq97bdzu",
+    "imageName": "pendidikan-1.webp"
+  },
+  {
+    "id": "cml7fqurm000204js5p60hkym",
+    "judul": "The Courage to Teach",
+    "deskripsi": "<p>Tentang refleksi diri seorang pendidik; cocok untuk pengajar yang ingin lebih dari sekedar “metode mengajar”</p>",
+    "kategoriId": "cmkqb11mc000104jibq97bdzu",
+    "imageName": "pendidikan-2.webp"
+  },
+  {
+    "id": "cml7fqurm000204js5p60hkzn",
+    "judul": "A Brief History of Time",
+    "deskripsi": "<p>Penjelasan kosmologi yang terkenal dunia; sains kompleks dibahas dengan bahasa yang bisa dinikmati pembaca umum</p>",
+    "kategoriId": "cmkqb11mc000104jibqa7bdzu",
+    "imageName": "ilmiah-1.webp"
+  },
+  {
+    "id": "cml7fqurm000204js5p60hkao",
+    "judul": "The Selfish Gene",
+    "deskripsi": "<p>Membawa perspektif baru tentang evolusi melalui “gen” sebagai unit seleksi</p>",
+    "kategoriId": "cmkqb11mc000104jibqa7bdzu",
+    "imageName": "ilmiah-2.webp"
+  },
+  {
+    "id": "cml7fx09c000304jshams3xbg",
+    "judul": "A Little Life",
+    "deskripsi": "<p>Novel yang menggambarkan hidup seorang remaja yang mengalami kehidupan yang sangat sulit</p>",
+    "kategoriId": "cmkqb11mc000104jibqb7bdzu",
+    "imageName": "drama-1.webp"
+  },
+  {
+    "id": "cml7fx09c000304jshams3xch",
+    "judul": "Death of a Salesman",
+    "deskripsi": "<p>Drama teater klasik Amerika tentang harapan, keluarga, dan realitas hidup.</p>",
+    "kategoriId": "cmkqb11mc000104jibqb7bdzu",
+    "imageName": "drama-2.webp"
+  },
+  {
+    "id": "cml7fx09c000304jshams3xdi",
+    "judul": "How Not to Die",
+    "deskripsi": "<p>Panduan berbasis penelitian tentang pola makan untuk mencegah dan menangani penyakit.</p>",
+    "kategoriId": "cmkqb11mc000104jibqg7bdzu",
+    "imageName": "kesehatan-1.webp"
+  },
+  {
+    "id": "cml7fx09c000304jshams3xej",
+    "judul": "The Body Keeps the Score",
+    "deskripsi": "<p>Fokus pada trauma, otak & tubuh; penting untuk memahami kesehatan mental secara mendalam.</p>",
+    "kategoriId": "cmkqb11mc000104jibqg7bdzu",
+    "imageName": "kesehatan-2.webp"
+  }
+]

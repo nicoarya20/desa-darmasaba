@@ -4,6 +4,7 @@ import kategoriBukuDelete from "./del";
 import kategoriBukuFindMany from "./findMany";
 import kategoriBukuFindUnique from "./findUnique";
 import kategoriBukuUpdate from "./updt";
+import kategoriBukuFindManyAll from "./findManyAll";
 
 const KategoriBuku = new Elysia({
     prefix: "/kategoribuku",
@@ -17,6 +18,7 @@ const KategoriBuku = new Elysia({
   })
 
   .get("/findMany", kategoriBukuFindMany)
+  .get("/findManyAll", kategoriBukuFindManyAll)
   .get("/:id", async (context) => {
     const response = await kategoriBukuFindUnique(
       new Request(context.request)

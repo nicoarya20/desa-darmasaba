@@ -9,7 +9,7 @@ import KategoriKegiatan from "./gotong-royong/kategori-kegiatan";
 import KeteranganBankSampahTerdekat from "./pengelolaan-sampah/keterangan-bank-sampah";
 
 const Lingkungan = new Elysia({
-  prefix: "/api/lingkungan",
+  prefix: "/lingkungan",
   tags: ["Lingkungan"],
 })
 

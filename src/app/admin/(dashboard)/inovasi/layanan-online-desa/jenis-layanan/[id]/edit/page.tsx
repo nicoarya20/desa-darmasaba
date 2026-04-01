@@ -7,12 +7,12 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Stack,
   Text,
   TextInput,
-  Title,
-  Tooltip,
+  Title
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -24,6 +24,12 @@ function EditJenisLayanan() {
   const state = useProxy(layananonlineDesa.jenisLayanan);
   const router = useRouter();
   const params = useParams();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [originalData, setOriginalData] = useState({
+    nama: '',
+    deskripsi: '',
+  });
 
   const [formData, setFormData] = useState({
     nama: '',
@@ -42,6 +48,10 @@ function EditJenisLayanan() {
             nama: data.nama ?? '',
             deskripsi: data.deskripsi ?? '',
           });
+          setOriginalData({
+            nama: data.nama ?? '',
+            deskripsi: data.deskripsi ?? '',
+          });
         }
       } catch (error) {
         console.error('Error loading jenis layanan:', error);
@@ -52,8 +62,17 @@ function EditJenisLayanan() {
     loadJenisLayanan();
   }, [params?.id]);
 
+  const handleResetForm = () => {
+    setFormData({
+      nama: originalData.nama,
+      deskripsi: originalData.deskripsi,
+    });
+    toast.info('Form dikembalikan ke data awal');
+  };
+
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       state.edit.form = {
         ...state.edit.form,
         ...formData,
@@ -65,23 +84,23 @@ function EditJenisLayanan() {
     } catch (error) {
       console.error('Error updating jenis layanan:', error);
       toast.error('Terjadi kesalahan saat memperbarui jenis layanan');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Header */}
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button
-            variant="subtle"
-            onClick={() => router.back()}
-            p="xs"
-            radius="md"
-          >
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
-        </Tooltip>
+        <Button
+          variant="subtle"
+          onClick={() => router.back()}
+          p="xs"
+          radius="md"
+        >
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Edit Jenis Layanan
         </Title>
@@ -127,6 +146,17 @@ function EditJenisLayanan() {
           {/* Tombol Submit */}
           <Group justify="right" mt="sm">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
@@ -136,7 +166,7 @@ function EditJenisLayanan() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

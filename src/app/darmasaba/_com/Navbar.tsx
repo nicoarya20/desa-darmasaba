@@ -25,7 +25,7 @@ export function Navbar() {
         style={{ zIndex: 100 }}
       >
         {/* Desktop navbar (muncul mulai 992px ke atas) */}
-        <Box visibleFrom="md">
+       <Box visibleFrom="md" style={{ overflowX: 'auto' }}>
           <NavbarMainMenu listNavbar={navbarListMenu} />
         </Box>
 
@@ -116,7 +116,7 @@ function NavbarMobile({ listNavbar }: { listNavbar: MenuItem[] }) {
                 radius="md"
                 p="sm"
                 withBorder
-                bg={active ? "blue.0" : "gray.0"}
+                bg={active ? colors["blue-button-2"] : "gray.0"}
                 onClick={() => {
                   if (item.href) {
                     router.push(item.href);
@@ -126,21 +126,21 @@ function NavbarMobile({ listNavbar }: { listNavbar: MenuItem[] }) {
                 style={{
                   cursor: item.href ? "pointer" : "default",
                   transition: "background 0.15s ease",
-                  borderLeft: active ? "4px solid #1e66f5" : "4px solid transparent",
+                  borderLeft: active ? `4px solid ${colors['blue-button']}` : "4px solid transparent",
                 }}
               >
                 <Group justify="space-between" align="center" wrap="nowrap">
                   <Text
                     fw={active ? 700 : 600}
                     fz="md"
-                    c={active ? "blue.7" : "dark.9"}
+                    c={active ? colors['blue-button'] : "dark.9"}
                   >
                     {item.name}
                   </Text>
                   {item.href && (
                     <IconSquareArrowRight
                       size={18}
-                      color={active ? "#1e66f5" : "inherit"}
+                      color={active ? colors['blue-button'] : "inherit"}
                     />
                   )}
                 </Group>
@@ -167,21 +167,21 @@ function NavbarMobile({ listNavbar }: { listNavbar: MenuItem[] }) {
                           cursor: child.href ? "pointer" : "default",
                           opacity: child.href ? 1 : 0.8,
                           borderRadius: "0.5rem",
-                          backgroundColor: childActive ? "#e7f0ff" : "transparent",
-                          borderLeft: childActive ? "3px solid #1e66f5" : "3px solid transparent",
+                          backgroundColor: childActive ? colors["blue-button-2"] : "transparent",
+                          borderLeft: childActive ? `3px solid ${colors['blue-button']}` : "3px solid transparent",
                           transition: "background 0.15s ease",
                         }}
                       >
                         <Text
                           fz="sm"
                           fw={childActive ? 600 : 400}
-                          c={childActive ? "blue.7" : "dark.8"}
+                          c={childActive ? colors['blue-button'] : "dark.8"}
                         >
                           {child.name}
                         </Text>
                         <IconSquareArrowRight
                           size={14}
-                          color={childActive ? "#1e66f5" : "inherit"}
+                          color={childActive ? colors['blue-button'] : "inherit"}
                         />
                       </Group>
                     );

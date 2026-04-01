@@ -50,32 +50,53 @@ function Potensi() {
 
   return (
     <Stack p="sm" gap="xl">
-      <Container w={{ base: "100%", md: "80%" }} p={"md"} >
-       <Text ta={"center"} fw={"bold"} c={colors["blue-button"]} fz={{ base: "1.8rem", md: "3.4rem" }}>
+      {/* HEADER */}
+      <Container w={{ base: "100%", md: "80%" }} p="md">
+        <Text
+          id="news-title"
+          ta="center"
+          fw={800}
+          c={colors["blue-button"]}
+          fz={{ base: "2rem", md: "3.2rem" }}
+          lh={{ base: "2.6rem", md: "3.6rem" }}
+          style={{ letterSpacing: "-0.5px" }}
+        >
           {textHeading.title}
         </Text>
-        <Text ta={"center"} fz={{ base: "1rem", md: "1.3rem" }}>
+
+        <Text
+          id="news-content"
+          ta="center"
+          c="gray.7"
+          fz={{ base: "1rem", md: "1.25rem" }}
+          lh={{ base: "1.5rem", md: "1.9rem" }}
+          style={{ marginTop: 8, maxWidth: 800, marginInline: "auto" }}
+        >
           {textHeading.des}
         </Text>
       </Container>
 
+      {/* LOADING STATE */}
       {loading ? (
         <Stack align="center" justify="center" h={300}>
           <Loader size="lg" color={colors["blue-button"]} />
-          <Text c="gray.4">Sedang memuat potensi desa...</Text>
+          <Text c="gray.4" fz="1rem" lh="1.4rem">
+            Sedang memuat potensi desa...
+          </Text>
         </Stack>
       ) : data.length === 0 ? (
         <Stack align="center" justify="center" h={300} gap="xs">
           <IconInfoCircle size={48} color={colors["blue-button"]} />
-          <Text fw={600} c="gray.3">
+          <Text fw={600} c="gray.3" fz="1.2rem" lh="1.4rem">
             Belum ada potensi tersedia
           </Text>
-          <Text size="sm" c="gray.5">
+          <Text fz="0.9rem" lh="1.3rem" c="gray.5">
             Silakan cek kembali nanti untuk pembaruan terbaru.
           </Text>
         </Stack>
       ) : (
-        <SimpleGrid cols={{ base: 1, sm: 2 }}>
+        /* CARD LIST */
+        <SimpleGrid cols={{ base: 1, sm: 2 }} px={{base: 'md', md: 80}}>
           {_.take(data, 4).map((v, k) => (
             <motion.div
               key={k}
@@ -84,7 +105,12 @@ function Potensi() {
               onClick={() => router.push(`/darmasaba/desa/potensi/${v.id}`)}
               style={{ cursor: "pointer" }}
             >
-              <BackgroundImage src={v.image?.link} h={320} radius={20} pos="relative">
+              <BackgroundImage
+                src={v.image?.link}
+                h={320}
+                radius={20}
+                pos="relative"
+              >
                 <Box
                   pos="absolute"
                   w="100%"
@@ -92,6 +118,8 @@ function Potensi() {
                   bg={colors.trans.dark[2]}
                   style={{ borderRadius: 20, zIndex: 0 }}
                 />
+
+                {/* CARD CONTENT */}
                 <Stack
                   justify="end"
                   h="100%"
@@ -101,11 +129,24 @@ function Potensi() {
                   style={{ zIndex: 1 }}
                 >
                   <Tooltip label={v.name} position="top-start">
-                    <Text fw={700} c="white" fz={{ base: "1.2rem", md: "1.4rem" }} truncate>
+                    <Text
+                      fw={700}
+                      c="white"
+                      fz={{ base: "1.25rem", md: "1.45rem" }}
+                      lh={{ base: "1.6rem", md: "1.8rem" }}
+                      truncate
+                    >
                       {v.name}
                     </Text>
                   </Tooltip>
-                  <Text lineClamp={2} c="gray.2" fz={{ base: "0.8rem", md: "1rem" }} dangerouslySetInnerHTML={{ __html: v.deskripsi }} />
+
+                  <Text
+                    lineClamp={2}
+                    c="gray.2"
+                    fz={{ base: "0.85rem", md: "1rem" }}
+                    lh={{ base: "1.2rem", md: "1.4rem" }}
+                    dangerouslySetInnerHTML={{ __html: v.deskripsi }}
+                  />
                 </Stack>
               </BackgroundImage>
             </motion.div>
@@ -113,16 +154,18 @@ function Potensi() {
         </SimpleGrid>
       )}
 
+      {/* BUTTON */}
       <Stack align="center">
         <Group>
           <Button
             onClick={() => router.push("/darmasaba/desa/potensi")}
             color={colors["blue-button"]}
             variant="gradient"
-            gradient={{ from: "#26667F", to: "#124170", }}
+            gradient={{ from: "#26667F", to: "#124170" }}
             radius="xl"
             size="md"
             rightSection={<IconArrowRight size={18} />}
+            style={{ fontWeight: 600 }}
           >
             Lihat Semua Potensi
           </Button>

@@ -1,80 +1,132 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-'use client'
+'use client';
 
-import gotongRoyongState from '@/app/admin/(dashboard)/_state/lingkungan/gotong-royong';
-import BackButton from '@/app/darmasaba/(pages)/desa/layanan/_com/BackButto';
-import colors from '@/con/colors';
-import { Box, Center, Container, Image, Skeleton, Stack, Text } from '@mantine/core';
-import { useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
+import { Box, Image, Paper, Skeleton, Stack, Text, Title, Group } from '@mantine/core';
+import { useShallowEffect } from '@mantine/hooks';
+import { IconCalendar, IconMapPin, IconUsers } from '@tabler/icons-react';
+import { useParams } from 'next/navigation';
+import colors from '@/con/colors';
+import gotongRoyongState from '@/app/admin/(dashboard)/_state/lingkungan/gotong-royong';
 
+function DetailKegiatanDesaUser() {
+  const kegiatanDesaState = useProxy(gotongRoyongState.kegiatanDesa);
+  const params = useParams();
 
+  useShallowEffect(() => {
+    kegiatanDesaState.findUnique.load(params?.id as string);
+  }, []);
 
+  const data = kegiatanDesaState.findUnique.data;
 
-function Page() {
-  const params = useParams<{ id: string }>();
-  const id = Array.isArray(params.id) ? params.id[0] : params.id;
-  const state = useProxy(gotongRoyongState.kegiatanDesa)
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    const loadData = async () => {
-      if (!id) return;
-      try {
-        setLoading(true);
-        await state.findUnique.load(id);
-      } catch (error) {
-        console.error('Error loading data:', error);
-      } finally {
-        setLoading(false);
-      }
-    }
-    loadData()
-  }, [id])
-
-  if (loading) {
+  if (!data) {
     return (
-      <Center>
-        <Skeleton height={500} />
-      </Center>
+      <Stack py={20}>
+        <Skeleton height={400} radius="md" />
+        <Skeleton height={20} width="70%" />
+        <Skeleton height={15} width="50%" />
+        <Skeleton height={300} radius="md" />
+      </Stack>
     );
   }
-
-  if (!state.findUnique.data) {
-    return (
-      <Center>
-        <Text>Data tidak ditemukan</Text>
-      </Center>
-    );
-  }
-
 
   return (
-    <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"22"} px={{ base: "md", md: 0 }}>
-      <Box px={{ base: "md", md: 100 }}><BackButton /></Box>
-      <Container w={{ base: "100%", md: "50%" }} >
-        <Box pb={20}>
-          <Text ta={"center"} fz={"2.4rem"} c={colors["blue-button"]} fw={"bold"}>
-            {state.findUnique.data?.judul}
-          </Text>
-          <Text
-            ta={"center"}
-            fw={"bold"}
-            fz={"1.5rem"}
-          >
-            Informasi Kegiatan Gotong Royong
-          </Text>
-        </Box>
-        <Image src={state.findUnique.data?.image?.link || ''} alt='' w={"100%"} loading="lazy"/>
-      </Container>
-      <Box px={{ base: "md", md: 100 }}>
-        <Stack gap={"xs"}>
-          <Text py={20} style={{wordBreak: "break-word", whiteSpace: "normal"}} fz={{ base: "sm", md: "lg" }} ta={"justify"} dangerouslySetInnerHTML={{ __html: state.findUnique.data?.deskripsiLengkap || '' }} />
+    <Box py={30}>
+      {/* Header Gambar */}
+
+      {/* Konten */}
+      <Paper
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+        maw={900}
+        mx="auto"
+      >
+        <Stack gap="md">
+          {/* Judul */}
+          <Title order={1} ta={"center"} c={colors['blue-button']}>
+            {data.judul || 'Kegiatan Desa'}
+          </Title>
+          {data.image?.link && (
+            <Image
+              src={data.image.link}
+              alt={data.judul || 'Kegiatan Desa'}
+              radius="md"
+              fit="cover"
+              h={300}
+              mb="xl"
+              style={{ objectPosition: 'center', width: '100%' }}
+            />
+          )}
+
+          {/* Meta Info */}
+          <Group gap="xl" c="dimmed">
+            <Group gap={6}>
+              <IconCalendar size={18} />
+              <Text fz="sm">
+                {data.tanggal ? new Date(data.tanggal).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : '-'}
+              </Text>
+            </Group>
+
+            {data.lokasi && (
+              <Group gap={6}>
+                <IconMapPin size={18} />
+                <Text fz="sm">{data.lokasi}</Text>
+              </Group>
+            )}
+
+            {data.partisipan && (
+              <Group gap={6}>
+                <IconUsers size={18} />
+                <Text fz="sm">{data.partisipan}</Text>
+              </Group>
+            )}
+          </Group>
+
+          {/* Deskripsi Singkat */}
+          {data.deskripsiSingkat && (
+            <Box>
+              <Text fw={600} fz="lg" mb={4}>
+                Ringkasan
+              </Text>
+              <Text
+                fz="md"
+                c="dimmed"
+                dangerouslySetInnerHTML={{ __html: data.deskripsiSingkat }}
+              />
+            </Box>
+          )}
+
+          {/* Deskripsi Lengkap */}
+          {data.deskripsiLengkap && (
+            <Box>
+              <Text fw={600} fz="lg" mb={4}>
+                Detail Kegiatan
+              </Text>
+              <Text
+                fz="md"
+                c="dimmed"
+                style={{ lineHeight: 1.6 }}
+                dangerouslySetInnerHTML={{ __html: data.deskripsiLengkap }}
+              />
+            </Box>
+          )}
+
+          {/* Kategori */}
+          {data.kategoriKegiatan?.nama && (
+            <Box mt="md">
+              <Text fw={600} fz="lg">
+                Kategori
+              </Text>
+              <Text fz="md" c="dimmed">
+                {data.kategoriKegiatan.nama}
+              </Text>
+            </Box>
+          )}
         </Stack>
-      </Box>
-    </Stack>
+      </Paper>
+    </Box>
   );
 }
 
-export default Page;
+export default DetailKegiatanDesaUser;

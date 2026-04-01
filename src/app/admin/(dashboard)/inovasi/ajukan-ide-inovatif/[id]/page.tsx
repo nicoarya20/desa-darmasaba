@@ -1,6 +1,6 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Flex, Paper, Skeleton, Stack, Text, Tooltip } from '@mantine/core';
+import { Box, Button, Flex, Paper, Skeleton, Stack, Text } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack, IconTrash } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -40,7 +40,7 @@ function DetailAjukanIdeInofativDesa() {
   const data = state.findUnique.data;
 
   return (
-    <Box py={10}>
+   <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Tombol Kembali */}
       <Button
         variant="subtle"
@@ -54,7 +54,7 @@ function DetailAjukanIdeInofativDesa() {
       {/* Card Utama */}
       <Paper
         withBorder
-        w={{ base: "100%", md: "80%", lg: "60%" }}
+        w={{ base: "100%", md: "70%" }}
         bg={colors['white-1']}
         p="lg"
         radius="md"
@@ -67,21 +67,19 @@ function DetailAjukanIdeInofativDesa() {
               Detail Ajukan Ide Inovatif Desa
             </Text>
 
-            <Tooltip label="Hapus Ide Inovatif" withArrow position="top">
-              <Button
-                color="red"
-                onClick={() => {
-                  setSelectedId(data.id);
-                  setModalHapus(true);
-                }}
-                variant="light"
-                radius="md"
-                size="md"
-                disabled={state.delete.loading}
-              >
-                <IconTrash size={20} />
-              </Button>
-            </Tooltip>
+            <Button
+              color="red"
+              onClick={() => {
+                setSelectedId(data.id);
+                setModalHapus(true);
+              }}
+              variant="light"
+              radius="md"
+              size="md"
+              disabled={state.delete.loading}
+            >
+              <IconTrash size={20} />
+            </Button>
           </Flex>
 
           {/* Detail Data */}
@@ -104,7 +102,7 @@ function DetailAjukanIdeInofativDesa() {
 
               <Box>
                 <Text fz="lg" fw="bold">Deskripsi</Text>
-                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }}  dangerouslySetInnerHTML={{ __html: data?.deskripsi || '-' }} />
+                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data?.deskripsi || '-' }} />
               </Box>
 
               <Box>

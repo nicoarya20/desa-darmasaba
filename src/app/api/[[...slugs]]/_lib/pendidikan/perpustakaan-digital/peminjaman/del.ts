@@ -11,6 +11,6 @@ export default async function peminjamanBukuDelete(context: Context) {
   return {
     status: 200,
     success: true,
-    message: "Success delete peminjaman buku",
+    message: "Sukses Menghapus peminjaman buku",
   };
 }

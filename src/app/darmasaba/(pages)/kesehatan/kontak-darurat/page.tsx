@@ -7,6 +7,7 @@ import {
   Center,
   Grid,
   GridCol,
+  Group,
   Image,
   Pagination,
   Paper,
@@ -15,19 +16,21 @@ import {
   Stack,
   Text,
   TextInput,
+  Title,
   Tooltip
 } from '@mantine/core';
-import { useShallowEffect } from '@mantine/hooks';
-import { IconBrandWhatsapp, IconSearch } from '@tabler/icons-react';
+import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
+import { IconSearch } from '@tabler/icons-react';
+import { useTransitionRouter } from 'next-view-transitions';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import BackButton from '../../desa/layanan/_com/BackButto';
-import { useDebouncedValue } from '@mantine/hooks';
 
 function Page() {
   const state = useProxy(kontakDarurat);
+  const router = useTransitionRouter()
   const [search, setSearch] = useState('');
-  const [debouncedSearch] = useDebouncedValue(search, 500)
+  const [debouncedSearch] = useDebouncedValue(search, 1000)
   const { data, page, totalPages, loading, load } = state.findMany;
 
   useShallowEffect(() => {
@@ -50,10 +53,21 @@ function Page() {
 
       <Grid align="center" px={{ base: 'md', md: 100 }} gutter="lg">
         <GridCol span={{ base: 12, md: 8 }}>
-          <Text fz={{ base: '2rem', md: '2.8rem' }} c={colors['blue-button']} fw={800}>
+          <Title
+            order={1}
+            c={colors['blue-button']}
+            fw={800}
+            fz={{ base: '28px', md: '32px' }}
+            lh={{ base: 1.2, md: 1.25 }}
+          >
             Kontak Darurat
-          </Text>
-          <Text c="dimmed" fz="md" mt={4}>
+          </Title>
+          <Text
+            fz={{ base: 'sm', md: 'md' }}
+            lh={{ base: 1.5, md: 1.6 }}
+            mt={4}
+            c="dark.9"
+          >
             Hubungi layanan penting dengan cepat dan mudah
           </Text>
         </GridCol>
@@ -77,10 +91,20 @@ function Page() {
           <Center mih={300}>
             <Stack align="center" gap="xs">
               <IconSearch size={50} color={colors['blue-button']} />
-              <Text fz="lg" fw={600} c={colors['blue-button']}>
+              <Title
+                order={2}
+                fw={600}
+                c={colors['blue-button']}
+                fz={{ base: '20px', md: '24px' }}
+                lh={{ base: 1.3, md: 1.35 }}
+              >
                 Tidak ada kontak ditemukan
-              </Text>
-              <Text fz="sm" c="dimmed">
+              </Title>
+              <Text
+                fz={{ base: 'xs', md: 'sm' }}
+                lh={{ base: 1.4, md: 1.5 }}
+                c="dark.7"
+              >
                 Coba kata kunci lain untuk pencarian
               </Text>
             </Stack>
@@ -98,9 +122,13 @@ function Page() {
                 style={{
                   transition: 'all 200ms ease',
                   cursor: 'pointer',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  height: '100%',
                 }}
               >
-                <Stack align="center" gap="sm">
+                <Stack align="center" gap="sm" style={{ flexGrow: 1 }}>
                   <Box
                     style={{
                       width: '100%',
@@ -111,7 +139,7 @@ function Page() {
                     }}
                   >
                     <Image
-                      src={v.image.link}
+                      src={v.image?.link ?? "/no-image.jpg"}
                       alt={v.name}
                       fit="cover"
                       loading="lazy"
@@ -125,21 +153,32 @@ function Page() {
                     />
                   </Box>
 
-                  <Text ta="center" fw={700} fz="lg" c={colors['blue-button']}>
+                  <Text ta="center" fw={700} fz={{ base: '18px', md: '20px' }} lh={1.3} c={colors['blue-button']}>
                     {v.name}
                   </Text>
-                  <Text fz="sm" c="dimmed" ta="center" lineClamp={3}>
-                    <span style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: v.deskripsi }} />
-                  </Text>
-                  <Button
-                    variant="light"
-                    leftSection={<IconBrandWhatsapp size={18} />}
-                    component="a"
-                    href={`https://wa.me/${v.whatsapp.replace(/\D/g, '')}`}
-                    target="_blank"
-                    aria-label="Hubungi WhatsApp"
-                  >WhatsApp</Button>
+
+                  <Text
+                    fz={{ base: 'xs', md: 'sm' }}
+                    ta="center"
+                    lineClamp={3}
+                    lh={{ base: 1.5, md: 1.6 }}
+                    style={{
+                      minHeight: '4.8em',
+                      wordBreak: 'break-word',
+                      whiteSpace: 'normal',
+                    }}
+                    dangerouslySetInnerHTML={{ __html: v.deskripsi }}
+                  />
                 </Stack>
+
+                <Group mt="md" justify='center'>
+                  <Button
+                    bg={colors['blue-button']}
+                    onClick={() => router.push(`/darmasaba/kesehatan/kontak-darurat/${v.id}`)}
+                  >
+                    Detail
+                  </Button>
+                </Group>
               </Paper>
             ))}
           </SimpleGrid>

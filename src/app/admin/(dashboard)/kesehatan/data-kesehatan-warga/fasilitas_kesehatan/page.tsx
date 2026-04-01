@@ -1,12 +1,13 @@
 'use client'
 import colors from '@/con/colors';
 import {
+  ActionIcon,
   Box,
   Button,
   Center,
   Group,
-  Paper,
   Pagination,
+  Paper,
   Skeleton,
   Stack,
   Table,
@@ -16,96 +17,168 @@ import {
   TableThead,
   TableTr,
   Text,
+  TextInput,
   Title,
-  Tooltip,
+  Tooltip
 } from '@mantine/core';
-import { useShallowEffect } from '@mantine/hooks';
-import { IconArrowBack, IconDeviceImacCog, IconPlus, IconSearch } from '@tabler/icons-react';
+import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
+import { IconCoin, IconDeviceImacCog, IconPlus, IconReportMedical, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
-import HeaderSearch from '../../../_com/header';
 import fasilitasKesehatanState from '../../../_state/kesehatan/data_kesehatan_warga/fasilitasKesehatan';
 
-
 function FasilitasKesehatan() {
-  const router = useRouter();
   const [search, setSearch] = useState("");
-
+  const router = useRouter();
   return (
     <Box>
-      {/* Tombol Back */}
-      <Box mb={10}>
-        <Button variant="subtle" onClick={() => router.back()}>
-          <IconArrowBack color={colors["blue-button"]} size={25} />
-        </Button>
-      </Box>
+      <Paper p="lg" radius="md" mb="lg" bg={colors['white-1']} shadow="sm">
+        <Group justify='space-between' visibleFrom='md'>
+          <Title order={2} visibleFrom="md" size="lg" lh={1.2}>
+            Fasilitas Kesehatan
+          </Title>
+          <Title order={2} hiddenFrom="md" size="md" lh={1.2}>
+            Fasilitas Kesehatan
+          </Title>
+          <Group gap="xs" justify="flex-end">
+            <Tooltip label="List Dokter" withArrow>
+              <ActionIcon
+                onClick={() => router.push('/admin/kesehatan/data-kesehatan-warga/fasilitas_kesehatan/dokter-tenaga-medis')}
+                size="lg"
+                radius="xl"
+                color="green.6"
+              >
+                <IconReportMedical size={20} />
+              </ActionIcon>
+            </Tooltip>
+            <Tooltip label="List Tarif Layanan" withArrow>
+              <ActionIcon
+                onClick={() => router.push('/admin/kesehatan/data-kesehatan-warga/fasilitas_kesehatan/tarif-layanan')}
+                size="lg"
+                radius="xl"
+                color="blue.6"
+              >
+                <IconCoin size={20} />
+              </ActionIcon>
+            </Tooltip>
+              <TextInput
+                radius="lg"
+                placeholder='Cari nama, alamat, atau jam operasional...'
+                leftSection={<IconSearch size={20} />}
+                value={search}
+                onChange={(e) => setSearch(e.currentTarget.value)}
+                fz={{ base: 'xs', md: 'sm' }}
+                px="sm"
+                py="xs"
+              />
+          </Group>
+        </Group>
 
-      {/* Header Search */}
-      <HeaderSearch
-        title='Fasilitas Kesehatan'
-        placeholder='Cari nama, alamat, atau jam operasional...'
-        searchIcon={<IconSearch size={20} />}
-        value={search}
-        onChange={(e) => setSearch(e.currentTarget.value)}
-      />
+        <Group justify='space-between' hiddenFrom='md'>
+          <Title order={2} visibleFrom="md" size="lg" lh={1.2}>
+            Fasilitas Kesehatan
+          </Title>
+          <Title order={2} hiddenFrom="md" size="md" lh={1.2}>
+            Fasilitas Kesehatan
+          </Title>
+          <Group gap="xs" justify="flex-start">
+            <Tooltip label="List Dokter" withArrow>
+              <ActionIcon
+                onClick={() => router.push('/admin/kesehatan/data-kesehatan-warga/fasilitas_kesehatan/dokter-tenaga-medis')}
+                size="lg"
+                radius="xl"
+                color="green.6"
+              >
+                <IconReportMedical size={20} />
+              </ActionIcon>
+            </Tooltip>
+            <Tooltip label="List Tarif Layanan" withArrow>
+              <ActionIcon
+                onClick={() => router.push('/admin/kesehatan/data-kesehatan-warga/fasilitas_kesehatan/tarif-layanan')}
+                size="lg"
+                radius="xl"
+                color="blue.6"
+              >
+                <IconCoin size={20} />
+              </ActionIcon>
+            </Tooltip>
+              <TextInput
+                radius="lg"
+                placeholder='Cari nama, alamat, atau jam operasional...'
+                leftSection={<IconSearch size={20} />}
+                value={search}
+                onChange={(e) => setSearch(e.currentTarget.value)}
+                fz={{ base: 'xs', md: 'sm' }}
+                px="sm"
+                py="xs"
+              />
+          </Group>
+        </Group>
+      </Paper>
 
       <ListFasilitasKesehatan search={search} />
     </Box>
   );
 }
 
-
 function ListFasilitasKesehatan({ search }: { search: string }) {
-  const stateFasilitasKesehatan = useProxy(fasilitasKesehatanState.fasilitasKesehatan)
+  const stateFasilitasKesehatan = useProxy(fasilitasKesehatanState.fasilitasKesehatan);
   const router = useRouter();
+  const [debouncedSearch] = useDebouncedValue(search, 1000);
 
   const { data, page, totalPages, loading, load } = stateFasilitasKesehatan.findMany;
 
   useShallowEffect(() => {
-    load(page, 10, search);
-  }, [page, search]);
+    load(page, 10, debouncedSearch);
+  }, [page, debouncedSearch]);
 
   const filteredData = data || [];
 
   if (loading || !data) {
     return (
-      <Stack py={10}>
+      <Stack py="lg">
         <Skeleton height={600} radius="md" />
       </Stack>
-    )
+    );
   }
 
   return (
-    <Box py={10}>
-      <Paper withBorder bg={colors['white-1']} p={'lg'} shadow="md" radius="md">
-        {/* Judul + Tombol Tambah */}
+    <Box py="lg">
+      <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
         <Group justify="space-between" mb="md">
-          <Title order={4}>Daftar Fasilitas Kesehatan</Title>
-          <Tooltip label="Tambah Fasilitas Kesehatan" withArrow>
-            <Button
-              leftSection={<IconPlus size={18} />}
-              color="blue"
-              variant="light"
-              onClick={() =>
-                router.push(
-                  '/admin/kesehatan/data-kesehatan-warga/fasilitas_kesehatan/create'
-                )
-              }
-            >
-              Tambah Baru
-            </Button>
-          </Tooltip>
+          <Title order={3} visibleFrom="md" size="md" lh={1.2}>
+            Daftar Fasilitas Kesehatan
+          </Title>
+          <Title order={3} hiddenFrom="md" size="sm" lh={1.2}>
+            Daftar Fasilitas Kesehatan
+          </Title>
+          <Button
+            leftSection={<IconPlus size={18} />}
+            color="blue"
+            variant="light"
+            onClick={() =>
+              router.push(
+                '/admin/kesehatan/data-kesehatan-warga/fasilitas_kesehatan/create'
+              )
+            }
+            fz={{ base: 'sm', md: 'md' }}
+            px="sm"
+          >
+            Tambah Baru
+          </Button>
         </Group>
 
-        {/* Tabel */}
-        <Box style={{ overflowX: "auto" }}>
-          <Table highlightOnHover>
+        {/* Desktop Table */}
+       <Box visibleFrom="md" style={{ overflowX: 'auto' }}>
+         <Table highlightOnHover
+    layout="fixed" // 🔥 PENTING
+    withColumnBorders={false}>
             <TableThead>
               <TableTr>
                 <TableTh>Fasilitas Kesehatan</TableTh>
-                <TableTh>Dokter</TableTh>
-                <TableTh>Layanan</TableTh>
+                <TableTh>Jumlah Dokter</TableTh>
+                <TableTh>Jumlah Layanan</TableTh>
                 <TableTh>Aksi</TableTh>
               </TableTr>
             </TableThead>
@@ -114,23 +187,23 @@ function ListFasilitasKesehatan({ search }: { search: string }) {
                 filteredData.map((item) => (
                   <TableTr key={item.id}>
                     <TableTd>
-                      <Box w={150}>
-                        <Text fw={500} truncate="end" lineClamp={1}>
-                          {item.name}
-                        </Text>
-                      </Box>
+                      <Text fz="md" fw={500} lh={1.5} truncate="end" lineClamp={1}>
+                        {item.name}
+                      </Text>
                     </TableTd>
                     <TableTd>
-                      <Box w={150}>
-                        {item.dokterdantenagamedis?.name || '-'}
-                      </Box>
+                      <Text fz="md" lh={1.5}>
+                        {item.dokterdantenagamedis?.length
+                          ? `${item.dokterdantenagamedis.length} dokter`
+                          : '-'}
+                      </Text>
                     </TableTd>
                     <TableTd>
-                      <Box w={150}>
-                        <Text truncate="end" lineClamp={1}>
-                          {item.tarifdanlayanan?.layanan || '-'}
-                        </Text>
-                      </Box>
+                      <Text fz="md" lh={1.5}>
+                        {item.tarifdanlayanan?.length
+                          ? `${item.tarifdanlayanan.length} layanan`
+                          : '-'}
+                      </Text>
                     </TableTd>
                     <TableTd>
                       <Button
@@ -141,6 +214,9 @@ function ListFasilitasKesehatan({ search }: { search: string }) {
                             `/admin/kesehatan/data-kesehatan-warga/fasilitas_kesehatan/${item.id}`
                           )
                         }
+                        fz="sm"
+                        px="sm"
+                        h={36}
                       >
                         <IconDeviceImacCog size={20} />
                         <Text ml={5}>Detail</Text>
@@ -151,8 +227,8 @@ function ListFasilitasKesehatan({ search }: { search: string }) {
               ) : (
                 <TableTr>
                   <TableTd colSpan={4}>
-                    <Center py={20}>
-                      <Text color="dimmed">
+                    <Center py="xl">
+                      <Text c="dimmed" fz="sm" lh={1.4}>
                         Tidak ada fasilitas kesehatan yang cocok
                       </Text>
                     </Center>
@@ -162,6 +238,65 @@ function ListFasilitasKesehatan({ search }: { search: string }) {
             </TableTbody>
           </Table>
         </Box>
+
+        {/* Mobile Card View */}
+        <Stack gap="sm" hiddenFrom="md">
+          {filteredData.length > 0 ? (
+            filteredData.map((item) => (
+              <Paper key={item.id} withBorder p="md" radius="md">
+                <Box mb="xs">
+                  <Text fz="xs" fw={600} lh={1.4}>
+                    Fasilitas Kesehatan
+                  </Text>
+                  <Text fz="sm" fw={500} lh={1.4}>
+                    {item.name}
+                  </Text>
+                </Box>
+                <Box mb="xs">
+                  <Text fz="xs" fw={600} lh={1.4}>
+                    Jumlah Dokter
+                  </Text>
+                  <Text fz="sm" fw={500} lh={1.4}>
+                    {item.dokterdantenagamedis?.length
+                      ? `${item.dokterdantenagamedis.length} dokter`
+                      : '-'}
+                  </Text>
+                </Box>
+                <Box mb="xs">
+                  <Text fz="xs" fw={600} lh={1.4}>
+                    Jumlah Layanan
+                  </Text>
+                  <Text fz="sm" fw={500} lh={1.4}>
+                    {item.tarifdanlayanan?.length
+                      ? `${item.tarifdanlayanan.length} layanan`
+                      : '-'}
+                  </Text>
+                </Box>
+                <Button
+                  variant="light"
+                  color="blue"
+                  onClick={() =>
+                    router.push(
+                      `/admin/kesehatan/data-kesehatan-warga/fasilitas_kesehatan/${item.id}`
+                    )
+                  }
+                  fullWidth
+                  fz="sm"
+                  mt="md"
+                >
+                  <IconDeviceImacCog size={20} />
+                  <Text ml={5}>Detail</Text>
+                </Button>
+              </Paper>
+            ))
+          ) : (
+            <Center py="xl">
+              <Text c="dimmed" fz="sm" lh={1.4}>
+                Tidak ada fasilitas kesehatan yang cocok
+              </Text>
+            </Center>
+          )}
+        </Stack>
       </Paper>
 
       {/* Pagination */}
@@ -180,7 +315,7 @@ function ListFasilitasKesehatan({ search }: { search: string }) {
         />
       </Center>
     </Box>
-  )
+  );
 }
 
 export default FasilitasKesehatan;

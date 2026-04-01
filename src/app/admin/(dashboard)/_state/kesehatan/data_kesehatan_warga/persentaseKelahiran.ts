@@ -50,7 +50,7 @@ const persentasekelahiran = proxy({
         if (res.status === 200) {
           const id = res.data?.data;
           if (id) {
-            toast.success("Success create");
+            toast.success("Sukses menambahkan");
             persentasekelahiran.create.form = { ...defaultForm };
             persentasekelahiran.findMany.load();
             return id;

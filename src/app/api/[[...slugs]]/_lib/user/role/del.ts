@@ -11,6 +11,6 @@ export default async function roleDelete(context: Context) {
     return {
         status: 200,
         success: true,
-        message: "Success delete role",
+        message: "Sukses Menghapus role",
     };
 }

@@ -19,6 +19,28 @@ function PengaduanMasyarakat() {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
 
+  // Helper function to check if HTML content is empty
+  const isHtmlEmpty = (html: string) => {
+    // Remove all HTML tags and check if there's any text content
+    const textContent = html.replace(/<[^>]*>/g, '').trim();
+    return textContent === '';
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      state.pengaduanMasyarakat.create.form.name?.trim() !== '' &&
+      state.pengaduanMasyarakat.create.form.email?.trim() !== '' &&
+      state.pengaduanMasyarakat.create.form.nomorTelepon?.trim() !== '' &&
+      state.pengaduanMasyarakat.create.form.nik?.trim() !== '' &&
+      state.pengaduanMasyarakat.create.form.judulPengaduan?.trim() !== '' &&
+      state.pengaduanMasyarakat.create.form.lokasiKejadian?.trim() !== '' &&
+      !isHtmlEmpty(state.pengaduanMasyarakat.create.form.deskripsiPengaduan) &&
+      state.pengaduanMasyarakat.create.form.jenisPengaduanId?.trim() !== '' &&
+      file !== null
+    );
+  };
+
   useEffect(() => {
     // ✅ Panggil load data jenis layanan dari backend
     if (!state.jenisPengaduan.findMany.data) {
@@ -39,6 +61,13 @@ function PengaduanMasyarakat() {
       imageId: '',
     };
   };
+
+  const resetAll = () => {
+    resetForm();
+    setFile(null);
+    setPreviewImage(null);
+  };
+
 
   const handleSubmit = async () => {
     if (!file) {
@@ -64,7 +93,7 @@ function PengaduanMasyarakat() {
       const success = await state.pengaduanMasyarakat.create.create()
 
       if (success) {
-        resetForm()
+        resetAll()
         close()
       }
     } catch (error) {
@@ -100,33 +129,33 @@ function PengaduanMasyarakat() {
             <Title order={3}>Ajukan Pengaduan Masyarakat</Title>
             <TextInput
               label={<Text fz="sm" fw="bold">Nama</Text>}
-              placeholder="masukkan nama"
+              placeholder="Masukkan nama"
               onChange={(val) => (state.pengaduanMasyarakat.create.form.name = val.target.value)}
             />
             <TextInput
               label={<Text fz="sm" fw="bold">Email</Text>}
-              placeholder="masukkan email"
+              placeholder="Masukkan email"
               onChange={(val) => (state.pengaduanMasyarakat.create.form.email = val.target.value)}
             />
             <TextInput
               type="number"
               label={<Text fz="sm" fw="bold">Nomor Telepon</Text>}
-              placeholder="masukkan nomor telepon"
+              placeholder="Masukkan nomor telepon"
               onChange={(val) => (state.pengaduanMasyarakat.create.form.nomorTelepon = val.target.value)}
             />
             <TextInput
               label={<Text fz="sm" fw="bold">NIK</Text>}
-              placeholder="masukkan nik"
+              placeholder="Masukkan nik"
               onChange={(val) => (state.pengaduanMasyarakat.create.form.nik = val.target.value)}
             />
             <TextInput
               label={<Text fz="sm" fw="bold">Judul Pengaduan</Text>}
-              placeholder="masukkan judul pengaduan"
+              placeholder="Masukkan judul pengaduan"
               onChange={(val) => (state.pengaduanMasyarakat.create.form.judulPengaduan = val.target.value)}
             />
             <TextInput
               label={<Text fz="sm" fw="bold">Lokasi Kejadian</Text>}
-              placeholder="masukkan lokasi kejadian"
+              placeholder="Masukkan lokasi kejadian"
               onChange={(val) => (state.pengaduanMasyarakat.create.form.lokasiKejadian = val.target.value)}
             />
             <Box>
@@ -144,7 +173,7 @@ function PengaduanMasyarakat() {
                 state.pengaduanMasyarakat.create.form.jenisPengaduanId = val ?? "";
               }}
               label={<Text fw={"bold"} fz={"sm"}>Jenis Pengaduan</Text>}
-              placeholder="Pilih kategori produk"
+              placeholder="Pilih jenis pengaduan"
               data={
                 state.jenisPengaduan.findMany.data?.map((v) => ({
                   value: v.id,
@@ -166,7 +195,7 @@ function PengaduanMasyarakat() {
                     }}
                     onReject={() => toast.error('File tidak valid.')}
                     maxSize={5 * 1024 ** 2} // Maks 5MB
-                    accept={{ 'image/*': [] }}
+                    accept={{ 'image/*': ['.jpeg', '.jpg', '.png', '.webp'] }}
                   >
                     <Group justify="center" gap="xl" mih={220} style={{ pointerEvents: 'none' }}>
                       <Dropzone.Accept>
@@ -190,7 +219,7 @@ function PengaduanMasyarakat() {
                     </Group>
                   </Dropzone>
                   {previewImage ? (
-                    <Image alt="" src={previewImage} w={200} h={200} loading="lazy"/>
+                    <Image alt="" src={previewImage} w={200} h={200} loading="lazy" />
                   ) : (
                     <Center w={200} h={200} bg={"gray"}>
                       <IconImageInPicture />
@@ -200,7 +229,11 @@ function PengaduanMasyarakat() {
               </Box>
             </Box>
 
-            <Button bg={colors['blue-button']} onClick={handleSubmit}>
+            <Button 
+              bg={colors['blue-button']} 
+              onClick={handleSubmit}
+              disabled={!isFormValid()}
+            >
               Simpan
             </Button>
           </Stack>

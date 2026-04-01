@@ -36,8 +36,67 @@ const getCurrentTime = () => {
   return `${hours}:${minutes}`;
 };
 
-const isWorkingHours = (currentTime: string): boolean => {
-  const [openTime, closeTime] = ["08:00", "17:00"];
+// Fungsi untuk mendapatkan tanggal hari ini dalam format YYYY-MM-DD
+const getTodayDate = (): string => {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const day = String(today.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
+// Fungsi untuk memeriksa apakah tanggal tertentu adalah hari libur nasional
+// Daftar hari libur nasional Indonesia (bisa diperbarui sesuai tahun berjalan)
+const isNationalHoliday = (date: string): boolean => {
+  // Format tanggal harus dalam bentuk YYYY-MM-DD
+  const holidays = [
+    // Tahun 2026
+    '2026-01-01', // Tahun Baru Masehi
+    '2026-02-17', // Isra Mikraj Nabi Muhammad SAW
+    '2026-03-08', // Hari Raya Nyepi Tahun Baru Saka 1948
+    '2026-04-03', // Wafat Isa Almasih
+    '2026-05-01', // Hari Buruh Internasional
+    '2026-05-20', // Kenaikan Isa Almasih
+    '2026-06-01', // Hari Lahir Pancasila
+    '2026-06-05', // Hari Raya Idul Adha
+    '2026-08-17', // Hari Kemerdekaan RI
+    '2026-09-21', // Tahun Baru Islam 1448 H
+    '2026-10-02', // Maulid Nabi Muhammad SAW
+    '2026-12-25', // Hari Raya Natal
+
+    // Hari raya besar lainnya
+    '2026-04-06', // Hari Raya Idul Fitri
+    '2026-04-07', // Hari Raya Idul Fitri
+
+    // Hari libur pengganti
+    '2026-04-08', // Hari Libur Pengganti Idul Fitri
+    '2026-04-09', // Hari Libur Pengganti Idul Fitri
+  ];
+
+  return holidays.includes(date);
+};
+
+const isWorkingHours = (day: string, currentTime: string): boolean => {
+  // Cek apakah hari ini hari libur nasional
+  if (isNationalHoliday(getTodayDate())) {
+    return false;
+  }
+
+  let openTime = "";
+  let closeTime = "";
+
+  // Atur jam kerja berdasarkan hari
+  if (["Senin", "Selasa", "Rabu", "Kamis"].includes(day)) {
+    openTime = "07:30";
+    closeTime = "15:30";
+  } else if (day === "Jumat") {
+    openTime = "07:30";
+    closeTime = "12:00";
+  } else {
+    // Sabtu dan Minggu tutup
+    return false;
+  }
+
   const compareTimes = (time1: string, time2: string) => {
     const [hour1, minute1] = time1.split(":").map(Number);
     const [hour2, minute2] = time2.split(":").map(Number);
@@ -45,19 +104,63 @@ const isWorkingHours = (currentTime: string): boolean => {
     if (hour1 > hour2) return false;
     return minute1 <= minute2;
   };
+
   return compareTimes(currentTime, closeTime) && !compareTimes(currentTime, openTime);
 };
 
 const getWorkStatus = (day: string, currentTime: string): { status: string; message: string } => {
+  // Cek apakah hari ini hari libur nasional
+  if (isNationalHoliday(getTodayDate())) {
+    return { status: "Tutup", message: "Hari Libur Nasional" };
+  }
+
   const workingDays = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat"];
   if (!workingDays.includes(day)) {
     return { status: "Tutup", message: "Libur Akhir Pekan" };
   }
-  const isOpen = isWorkingHours(currentTime);
+
+  const isOpen = isWorkingHours(day, currentTime);
+
+  let workHoursMessage = "";
+  if (["Senin", "Selasa", "Rabu", "Kamis"].includes(day)) {
+    workHoursMessage = "07:30 - 15:30";
+  } else if (day === "Jumat") {
+    workHoursMessage = "07:30 - 12:00";
+  }
+
   return isOpen
-    ? { status: "Buka", message: "08:00 - 17:00" }
-    : { status: "Tutup", message: "08:00 - 17:00" };
+    ? { status: "Buka", message: workHoursMessage }
+    : { status: "Tutup", message: workHoursMessage };
 };
+
+// 🟦 Skeleton component untuk Social Media
+const SosmedSkeleton = () => (
+  <Flex gap="md" justify="center" wrap="wrap">
+    {[1, 2, 3, 4].map((i) => (
+      <Skeleton key={i} height={56} width={56} circle />
+    ))}
+  </Flex>
+);
+
+// 🟦 Skeleton component untuk Profile
+const ProfileSkeleton = () => (
+  <Card
+    radius="xl"
+    bg={colors.grey[1]}
+    p="lg"
+    shadow="xl"
+    w={{ base: "100%", md: "35%" }}
+    style={{ height: "fit-content" }}
+  >
+    <Stack gap="lg" align="center">
+      <Skeleton height={300} width="100%" radius="lg" />
+      <Stack gap="xs" w="100%" align="center">
+        <Skeleton height={20} width="60%" />
+        <Skeleton height={32} width="80%" />
+      </Stack>
+    </Stack>
+  </Card>
+);
 
 function LandingPage() {
   const [socialMedia, setSocialMedia] = useState<
@@ -66,7 +169,8 @@ function LandingPage() {
   const [profile, setProfile] = useState<
     Prisma.PejabatDesaGetPayload<{ include: { image: true } }> | null
   >(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingSosmed, setIsLoadingSosmed] = useState(true);
+  const [isLoadingProfile, setIsLoadingProfile] = useState(true);
 
   useEffect(() => {
     const fetchSocialMedia = async () => {
@@ -84,7 +188,7 @@ function LandingPage() {
       } catch {
         setSocialMedia([]);
       } finally {
-        setIsLoading(false);
+        setIsLoadingSosmed(false);
       }
     };
 
@@ -96,6 +200,8 @@ function LandingPage() {
         setProfile(result.data || null);
       } catch {
         setProfile(null);
+      } finally {
+        setIsLoadingProfile(false);
       }
     };
 
@@ -122,10 +228,12 @@ function LandingPage() {
 
   return (
     <Stack bg={colors.Bg} p="md" gap="lg">
-      <Flex gap="lg" wrap={{ base: "wrap", md: "nowrap" }}>
+      <Flex gap="lg" wrap={{ base: "wrap", md: "nowrap" }} pb={30}>
         <Stack w={{ base: "100%", md: "65%" }} gap="lg">
-          <Card radius="xl" bg={colors.grey[1]} p="lg" shadow="xl">
+          <Card radius="xl" bg={colors.grey[1]} p="lg" mt={10} shadow="xl">
             <Stack gap="xl">
+
+              {/* Header Logo */}
               <Flex gap="md" wrap="wrap">
                 <Group>
                   <Box bg="white" w={72} h={72} p="sm" style={{ borderRadius: 24 }}>
@@ -135,6 +243,8 @@ function LandingPage() {
                     <Image loading="lazy" src="/pudak-icon.png" alt="Logo Pudak" fit="contain" />
                   </Box>
                 </Group>
+
+                {/* Jam Operasional */}
                 <Grid w="100%">
                   <Grid.Col span={12}>
                     <Paper
@@ -145,36 +255,58 @@ function LandingPage() {
                       style={{ position: "relative", overflow: "hidden" }}
                     >
                       <Grid gutter="md">
+
+                        {/* Kolom 1 */}
                         <GridCol span={{ base: 12, md: 6 }}>
                           <Stack gap="xs">
                             <Flex align="center" gap="xs">
                               <IconCalendarTime size={16} color="white" />
-                              <Text c="white" fz="sm">Jam Operasional</Text>
+                              <Text c="white" fz={{ base: "xs", md: "sm" }}>
+                                Jam Operasional
+                              </Text>
                             </Flex>
+
                             <Paper p="sm" radius="md" bg="white">
                               <Tooltip label="Status saat ini berdasarkan jam operasional kantor">
                                 <Badge
                                   color={workStatus.status === "Buka" ? "green" : "red"}
                                   radius="sm"
                                   variant="filled"
+                                  size="md"
                                 >
                                   {workStatus.status}
                                 </Badge>
                               </Tooltip>
-                              <Text fw="bold" fz="lg">{workStatus.message}</Text>
+
+                              <Text
+                                fw={700}
+                                fz={{ base: "md", md: "lg" }}
+                                mt={4}
+                              >
+                                {workStatus.message}
+                              </Text>
                             </Paper>
                           </Stack>
                         </GridCol>
+
+                        {/* Kolom 2 */}
                         <GridCol span={{ base: 12, md: 6 }}>
                           <Stack gap="xs">
                             <Flex align="center" gap="xs">
                               <IconInfoCircle size={16} color="white" />
-                              <Text c="white" fz="sm">Hari Ini</Text>
+                              <Text c="white" fz={{ base: "xs", md: "sm" }}>
+                                Hari Ini
+                              </Text>
                             </Flex>
+
                             <Paper p="sm" radius="md" bg="white">
-                              <Text fz="sm">Status Kantor</Text>
-                              <Text fw="bold" fz="lg">
-                                {workStatus.status === "Buka" ? "Sedang Beroperasi" : "Tidak Beroperasi"}
+                              <Text fz={{ base: "xs", md: "sm" }} c="dimmed">
+                                Status Kantor
+                              </Text>
+                              <Text fw={700} fz={{ base: "md", md: "lg" }}>
+                                {workStatus.status === "Buka"
+                                  ? "Sedang Beroperasi"
+                                  : "Tidak Beroperasi"}
                               </Text>
                             </Paper>
                           </Stack>
@@ -185,19 +317,29 @@ function LandingPage() {
                 </Grid>
               </Flex>
 
+              {/* MODULE VIEW */}
               <ModuleView />
 
-              {isLoading ? (
-                <Skeleton height={32} width="100%" />
+              {/* Sosmed */}
+              {isLoadingSosmed ? (
+                <SosmedSkeleton />
               ) : socialMedia.length > 0 ? (
                 <SosmedView data={socialMedia} />
               ) : (
                 <Center>
-                  <Text c="dimmed">Belum ada tautan media sosial yang tersedia</Text>
+                  <Text fz={{ base: "sm", md: "md" }} c="dimmed">
+                    Belum ada tautan media sosial yang tersedia
+                  </Text>
                 </Center>
               )}
 
-              <Text ta="center" c={colors.trans.dark[2]}>
+              {/* CTA Text */}
+              <Text
+                ta="center"
+                c={colors.trans.dark[2]}
+                fz={{ base: "sm", md: "md" }}
+                lh={1.5}
+              >
                 Bagikan ide, kritik, atau saran Anda untuk mendukung pembangunan desa.
                 Semua lebih mudah dengan fitur interaktif yang kami sediakan.
               </Text>
@@ -205,14 +347,26 @@ function LandingPage() {
           </Card>
         </Stack>
 
-        {isLoading ? (
-          <Skeleton height={300} width="100%" radius="lg" />
+        {/* PROFIL */}
+        {isLoadingProfile ? (
+          <ProfileSkeleton />
         ) : profile ? (
           <ProfileView data={profile} />
         ) : (
-          <Center w="100%">
-            <Text c="dimmed">Informasi profil belum tersedia</Text>
-          </Center>
+          <Card
+            radius="xl"
+            bg={colors.grey[1]}
+            p="lg"
+            shadow="xl"
+            w={{ base: "100%", md: "35%" }}
+            style={{ height: "fit-content" }}
+          >
+            <Center h={300}>
+              <Text fz={{ base: "sm", md: "md" }} c="dimmed">
+                Informasi profil belum tersedia
+              </Text>
+            </Center>
+          </Card>
         )}
       </Flex>
     </Stack>

@@ -18,7 +18,7 @@ export default async function kontakItemCreate(context: Context){
     })
     return {
         success: true,
-        message: "Success create kontak item",
+        message: "Sukses menambahkan kontak item",
         data: {
             ...body,
         },

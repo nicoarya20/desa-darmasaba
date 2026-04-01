@@ -4,16 +4,17 @@ import artikelKesehatanState from '@/app/admin/(dashboard)/_state/kesehatan/data
 import colors from '@/con/colors';
 import ApiFetch from '@/lib/api-fetch';
 import {
+  ActionIcon,
   Box,
   Button,
   Group,
   Image,
+  Loader,
   Paper,
   Stack,
   Text,
   TextInput,
-  Title,
-  Tooltip,
+  Title
 } from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
 import { IconArrowBack, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
@@ -27,6 +28,34 @@ function CreateArtikelKesehatan() {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Helper function to check if HTML content is empty
+  const isHtmlEmpty = (html: string) => {
+    // Remove all HTML tags and check if there's any text content
+    const textContent = html.replace(/<[^>]*>/g, '').trim();
+    return textContent === '';
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      stateArtikelKesehatan.create.form.title?.trim() !== '' &&
+      stateArtikelKesehatan.create.form.content?.trim() !== '' &&
+      !isHtmlEmpty(stateArtikelKesehatan.create.form.introduction.content) &&
+      stateArtikelKesehatan.create.form.symptom.title?.trim() !== '' &&
+      !isHtmlEmpty(stateArtikelKesehatan.create.form.symptom.content) &&
+      stateArtikelKesehatan.create.form.prevention.title?.trim() !== '' &&
+      !isHtmlEmpty(stateArtikelKesehatan.create.form.prevention.content) &&
+      stateArtikelKesehatan.create.form.firstAid.title?.trim() !== '' &&
+      !isHtmlEmpty(stateArtikelKesehatan.create.form.firstAid.content) &&
+      stateArtikelKesehatan.create.form.mythVsFact.title?.trim() !== '' &&
+      !isHtmlEmpty(stateArtikelKesehatan.create.form.mythVsFact.mitos) &&
+      !isHtmlEmpty(stateArtikelKesehatan.create.form.mythVsFact.fakta) &&
+      !isHtmlEmpty(stateArtikelKesehatan.create.form.doctorSign.content) &&
+      file !== null
+    );
+  };
 
   const resetForm = () => {
     stateArtikelKesehatan.create.form = {
@@ -63,41 +92,115 @@ function CreateArtikelKesehatan() {
 
   const handleSubmit = async (e?: React.FormEvent) => {
     e?.preventDefault();
+
+    if (!stateArtikelKesehatan.create.form.title?.trim()) {
+      toast.error('Judul wajib diisi');
+      return;
+    }
+
+    if (!stateArtikelKesehatan.create.form.content?.trim()) {
+      toast.error('Deskripsi wajib diisi');
+      return;
+    }
+
+    if (isHtmlEmpty(stateArtikelKesehatan.create.form.introduction.content)) {
+      toast.error('Pendahuluan wajib diisi');
+      return;
+    }
+
+    if (!stateArtikelKesehatan.create.form.symptom.title?.trim()) {
+      toast.error('Judul gejala wajib diisi');
+      return;
+    }
+
+    if (isHtmlEmpty(stateArtikelKesehatan.create.form.symptom.content)) {
+      toast.error('Deskripsi gejala wajib diisi');
+      return;
+    }
+
+    if (!stateArtikelKesehatan.create.form.prevention.title?.trim()) {
+      toast.error('Judul pencegahan wajib diisi');
+      return;
+    }
+
+    if (isHtmlEmpty(stateArtikelKesehatan.create.form.prevention.content)) {
+      toast.error('Deskripsi pencegahan wajib diisi');
+      return;
+    }
+
+    if (!stateArtikelKesehatan.create.form.firstAid.title?.trim()) {
+      toast.error('Judul pertolongan pertama wajib diisi');
+      return;
+    }
+
+    if (isHtmlEmpty(stateArtikelKesehatan.create.form.firstAid.content)) {
+      toast.error('Deskripsi pertolongan pertama wajib diisi');
+      return;
+    }
+
+    if (!stateArtikelKesehatan.create.form.mythVsFact.title?.trim()) {
+      toast.error('Judul mitos vs fakta wajib diisi');
+      return;
+    }
+
+    if (isHtmlEmpty(stateArtikelKesehatan.create.form.mythVsFact.mitos)) {
+      toast.error('Deskripsi mitos wajib diisi');
+      return;
+    }
+
+    if (isHtmlEmpty(stateArtikelKesehatan.create.form.mythVsFact.fakta)) {
+      toast.error('Deskripsi fakta wajib diisi');
+      return;
+    }
+
+    if (isHtmlEmpty(stateArtikelKesehatan.create.form.doctorSign.content)) {
+      toast.error('Deskripsi kapan harus ke dokter wajib diisi');
+      return;
+    }
+
     if (!file) {
-      return toast.warn('Silakan pilih file gambar terlebih dahulu');
+      toast.error('Gambar wajib dipilih');
+      return;
     }
 
-    const res = await ApiFetch.api.fileStorage.create.post({
-      file,
-      name: file.name,
-    });
+    try {
+      setIsSubmitting(true);
 
-    const uploaded = res.data?.data;
-    if (!uploaded?.id) {
-      return toast.error('Gagal mengunggah gambar, silakan coba lagi');
+      const res = await ApiFetch.api.fileStorage.create.post({
+        file,
+        name: file.name,
+      });
+
+      const uploaded = res.data?.data;
+      if (!uploaded?.id) {
+        return toast.error('Gagal mengunggah gambar, silakan coba lagi');
+      }
+
+      stateArtikelKesehatan.create.form.imageId = uploaded.id;
+      await stateArtikelKesehatan.create.submit();
+      toast.success('Data berhasil disimpan');
+      resetForm();
+      router.push('/admin/kesehatan/data-kesehatan-warga/artikel_kesehatan');
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      toast.error('Gagal menyimpan data, silakan coba lagi');
+    } finally {
+      setIsSubmitting(false);
     }
-
-    stateArtikelKesehatan.create.form.imageId = uploaded.id;
-    await stateArtikelKesehatan.create.submit();
-    toast.success('Data berhasil disimpan');
-    resetForm();
-    router.push('/admin/kesehatan/data-kesehatan-warga/artikel_kesehatan');
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md" component="form" onSubmit={handleSubmit}>
+    <Box px={{ base: 0, md: 'lg' }} py="xs" component="form" onSubmit={handleSubmit}>
       {/* Header */}
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button
-            variant="subtle"
-            onClick={() => router.back()}
-            p="xs"
-            radius="md"
-          >
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
-        </Tooltip>
+        <Button
+          variant="subtle"
+          onClick={() => router.back()}
+          p="xs"
+          radius="md"
+        >
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Tambah Artikel Kesehatan
         </Title>
@@ -127,7 +230,7 @@ function CreateArtikelKesehatan() {
               }}
               onReject={() => toast.error('File tidak valid, gunakan format gambar')}
               maxSize={5 * 1024 ** 2}
-              accept={{ 'image/*': [] }}
+              accept={{ 'image/*': ['.jpeg', '.jpg', '.png', '.webp'] }}
               radius="md"
               p="xl"
             >
@@ -148,7 +251,7 @@ function CreateArtikelKesehatan() {
             </Dropzone>
 
             {previewImage && (
-              <Box mt="sm" style={{ textAlign: 'center' }}>
+              <Box pos={"relative"} mt="sm" style={{ textAlign: 'center' }}>
                 <Image
                   src={previewImage}
                   alt="Preview Gambar"
@@ -160,6 +263,24 @@ function CreateArtikelKesehatan() {
                   }}
                   loading="lazy"
                 />
+                <ActionIcon
+                  variant="filled"
+                  color="red"
+                  radius="xl"
+                  size="sm"
+                  pos="absolute"
+                  top={5}
+                  right={5}
+                  onClick={() => {
+                    setPreviewImage(null);
+                    setFile(null);
+                  }}
+                  style={{
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                  }}
+                >
+                  <IconX size={14} />
+                </ActionIcon>
               </Box>
             )}
           </Box>
@@ -167,7 +288,7 @@ function CreateArtikelKesehatan() {
           <TextInput
             label={"Judul"}
             placeholder="Masukkan judul"
-            defaultValue={stateArtikelKesehatan.create.form.title}
+            value={stateArtikelKesehatan.create.form.title}
             onChange={(e) => {
               stateArtikelKesehatan.create.form.title = e.target.value;
             }}
@@ -176,7 +297,7 @@ function CreateArtikelKesehatan() {
           <TextInput
             label={"Deskripsi"}
             placeholder="Masukkan deskripsi"
-            defaultValue={stateArtikelKesehatan.create.form.content}
+            value={stateArtikelKesehatan.create.form.content}
             onChange={(e) => {
               stateArtikelKesehatan.create.form.content = e.target.value;
             }}
@@ -199,7 +320,7 @@ function CreateArtikelKesehatan() {
                 label={"Judul Gejala"}
                 required
                 placeholder="Masukkan judul gejala penyakit"
-                defaultValue={stateArtikelKesehatan.create.form.symptom.title}
+                value={stateArtikelKesehatan.create.form.symptom.title}
                 onChange={(e) => {
                   stateArtikelKesehatan.create.form.symptom.title = e.target.value;
                 }}
@@ -223,7 +344,7 @@ function CreateArtikelKesehatan() {
               label={"Judul Pencegahan"}
               required
               placeholder="Masukkan judul"
-              defaultValue={stateArtikelKesehatan.create.form.prevention.title}
+              value={stateArtikelKesehatan.create.form.prevention.title}
               onChange={(e) => {
                 stateArtikelKesehatan.create.form.prevention.title = e.target.value;
               }}
@@ -244,7 +365,7 @@ function CreateArtikelKesehatan() {
               label={"Judul Pertolongan Pertama"}
               required
               placeholder="Masukkan judul"
-              defaultValue={stateArtikelKesehatan.create.form.firstAid.title}
+              value={stateArtikelKesehatan.create.form.firstAid.title}
               onChange={(e) => {
                 stateArtikelKesehatan.create.form.firstAid.title = e.target.value;
               }}
@@ -265,7 +386,7 @@ function CreateArtikelKesehatan() {
               label={"Judul Mitos dan Fakta"}
               required
               placeholder="Masukkan judul"
-              defaultValue={stateArtikelKesehatan.create.form.mythVsFact.title}
+              value={stateArtikelKesehatan.create.form.mythVsFact.title}
               onChange={(e) => {
                 stateArtikelKesehatan.create.form.mythVsFact.title = e.target.value;
               }}
@@ -303,17 +424,32 @@ function CreateArtikelKesehatan() {
 
           {/* Submit Button */}
           <Group justify="right">
+            {/* Tombol Batal */}
             <Button
-              type="submit"
+              variant="outline"
+              color="gray"
               radius="md"
               size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
+              onClick={handleSubmit}
+              radius="md"
+              size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

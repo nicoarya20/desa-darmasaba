@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import colors from '@/con/colors';
-import { ScrollArea, Stack, Tabs, TabsList, TabsPanel, TabsTab, Title, Tooltip } from '@mantine/core';
+import { Box, ScrollArea, Stack, Tabs, TabsList, TabsPanel, TabsTab, Title } from '@mantine/core';
 import { IconChartBar, IconUsers } from '@tabler/icons-react';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
@@ -53,37 +53,41 @@ function LayoutTabsKepuasan({ children }: { children: React.ReactNode }) {
         radius="lg"
         keepMounted={false}
       >
+
         {/* ✅ Scroll horizontal wrapper */}
-        <ScrollArea type="auto" offsetScrollbars>
-          <TabsList
-            p="sm"
-            style={{
-              background: "linear-gradient(135deg, #e7ebf7, #f9faff)",
-              borderRadius: "1rem",
-              boxShadow: "inset 0 0 10px rgba(0,0,0,0.05)",
-              display: "flex",
-              flexWrap: "nowrap",
-              gap: "0.5rem",
-              paddingInline: "0.5rem", // ✅ biar nggak nempel ke tepi
-            }}
-          >
-            {tabs.map((e, i) => (
-              <Tooltip key={i} label={e.description} withArrow position="bottom" transitionProps={{ transition: 'pop', duration: 200 }}>
+        <Box>
+          <ScrollArea type="auto" offsetScrollbars>
+            <TabsList
+              p="sm"
+              style={{
+                background: "linear-gradient(135deg, #e7ebf7, #f9faff)",
+                borderRadius: "1rem",
+                boxShadow: "inset 0 0 10px rgba(0,0,0,0.05)",
+                display: "flex",
+                flexWrap: "nowrap",
+                gap: "0.5rem",
+                paddingInline: "0.5rem", // ✅ biar nggak nempel ke tepi
+              }}
+            >
+              {tabs.map((tab, i) => (
                 <TabsTab
-                  value={e.value}
-                  leftSection={e.icon}
+                  key={i}
+                  value={tab.value}
+                  leftSection={tab.icon}
                   style={{
-                    fontWeight: 500,
+                    fontWeight: 600,
                     fontSize: "0.9rem",
                     transition: "all 0.2s ease",
+                    flexShrink: 0, // ✅ jangan mengecil aneh-aneh
                   }}
                 >
-                  {e.label}
+                  {tab.label}
                 </TabsTab>
-              </Tooltip>
-            ))}
-          </TabsList>
-        </ScrollArea>
+              ))}
+            </TabsList>
+          </ScrollArea>
+        </Box>
+
         {tabs.map((e, i) => (
           <TabsPanel key={i} value={e.value}>
             <></>

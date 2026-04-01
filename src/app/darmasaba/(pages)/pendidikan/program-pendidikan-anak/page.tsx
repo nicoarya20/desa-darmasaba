@@ -37,13 +37,15 @@ function Page() {
 
       <Box px={{ base: 'md', md: 100 }} pb={50}>
         <Box mb="xl">
-          <Title ta="center" order={1} fw="bold" c={colors['blue-button']} mb="sm">
+          <Title ta="center" order={1} fw="bold" c={colors['blue-button']}>
             Program Pendidikan Anak
           </Title>
+          <Box my={"sm"}>
+            <Divider size="sm" color={colors['blue-button']} mx="auto" maw={550} />
+          </Box>
           <Text ta="center" fz="lg" c="black" mb="lg" maw={800} mx="auto">
             Desa Darmasaba berkomitmen mencetak generasi muda yang cerdas, berkarakter, dan siap bersaing melalui program pendidikan yang inklusif dan berkelanjutan.
           </Text>
-          <Divider size="sm" color={colors['blue-button']} mx="auto" maw={120} />
         </Box>
 
         <SimpleGrid
@@ -66,7 +68,7 @@ function Page() {
                 </Title>
               </Group>
               <Tooltip label="Detail tujuan program pendidikan anak" position="top-start" withArrow>
-                <Text fz="lg" lh={1.6} c="dark" style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: stateTujuan.findById.data?.deskripsi }} />
+                <Text fz="lg" lh={1.6} c="dark" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: stateTujuan.findById.data?.deskripsi }} />
               </Tooltip>
             </Stack>
           </Paper>
@@ -87,7 +89,7 @@ function Page() {
                 </Title>
               </Group>
               <Tooltip label="Detail program unggulan yang sedang berjalan" position="top-start" withArrow>
-                <Text fz="lg" lh={1.6} c="dark" style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: stateUnggulan.findById.data?.deskripsi }} />
+                <Text fz="lg" lh={1.6} c="dark" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: stateUnggulan.findById.data?.deskripsi }} />
               </Tooltip>
             </Stack>
           </Paper>

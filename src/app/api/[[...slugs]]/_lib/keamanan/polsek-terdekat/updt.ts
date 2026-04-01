@@ -1,94 +1,89 @@
 import prisma from "@/lib/prisma";
-import { Prisma } from "@prisma/client";
 import { Context } from "elysia";
 
-type FormUpdate = Prisma.PolsekTerdekatGetPayload<{
-    select: {
-        nama: true;
-        jarakKeDesa: true;
-        alamat: true;
-        nomorTelepon: true;
-        jamOperasional: true;
-        embedMapUrl: true;
-        namaTempatMaps: true;
-        alamatMaps: true;
-        linkPetunjukArah: true;
-        layananPolsekId: true;
-    };
-}>;
+type FormUpdate = {
+    nama: string;
+    jarakKeDesa: string;
+    alamat: string;
+    nomorTelepon: string;
+    jamOperasional: string;
+    embedMapUrl: string;
+    namaTempatMaps: string;
+    alamatMaps: string;
+    linkPetunjukArah: string;
+    layananPolsekId: string[];
+};
+
 export default async function polsekTerdekatUpdate(context: Context) {
+    const id = context.params?.id;
+    const body = context.body as FormUpdate;
+
+    if (!id) {
+        return {
+            success: false,
+            message: "ID tidak diberikan",
+        };
+    }
+
+    // Validate that layananPolsekId is provided and not empty
+    if (!body.layananPolsekId || body.layananPolsekId.length === 0) {
+        return {
+            success: false,
+            message: "Pilih minimal 1 layanan polsek",
+        };
+    }
+
+    // Since the relationship is one-to-many, we'll use the first ID
+    const layananPolsekId = body.layananPolsekId[0];
+
     try {
-        const id = context.params?.id;
-        const body = (await context.body) as Omit<FormUpdate, "id">;
-
-        const { nama, jarakKeDesa, alamat, nomorTelepon, jamOperasional, embedMapUrl, namaTempatMaps, alamatMaps, linkPetunjukArah, layananPolsekId } = body;
-
-        if (!id) {
-            return new Response(JSON.stringify({
-                success: false,
-                message: "ID tidak diberikan",
-            }), {
-                status: 400,
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            });
-        }
+        // First check if the record exists
         const existing = await prisma.polsekTerdekat.findUnique({
             where: { id },
-            include: {
-                layananPolsek: true,
-            }
         });
 
         if (!existing) {
-            return new Response(JSON.stringify({
+            return {
                 success: false,
                 message: "Polsek terdekat tidak ditemukan",
-            }), {
-                status: 404,
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            });
+            };
         }
 
+        // Update the PolsekTerdekat record with the relationship
         const updated = await prisma.polsekTerdekat.update({
             where: { id },
             data: {
-                nama,
-                jarakKeDesa,
-                alamat,
-                nomorTelepon,
-                jamOperasional,
-                embedMapUrl,
-                namaTempatMaps,
-                alamatMaps,
-                linkPetunjukArah,
-                layananPolsekId,
+                nama: body.nama,
+                jarakKeDesa: body.jarakKeDesa,
+                alamat: body.alamat,
+                nomorTelepon: body.nomorTelepon,
+                jamOperasional: body.jamOperasional,
+                embedMapUrl: body.embedMapUrl,
+                namaTempatMaps: body.namaTempatMaps,
+                alamatMaps: body.alamatMaps,
+                linkPetunjukArah: body.linkPetunjukArah,
+                layananPolsek: {
+                    connect: { id: layananPolsekId }
+                }
             },
+            include: {
+                layananPolsek: true
+            }
         });
 
-        return new Response(JSON.stringify({
+        return {
             success: true,
-            message: "Success update polsek terdekat",
-            data: updated,
-        }), {
-            status: 200,
-            headers: {
-                "Content-Type": "application/json",
+            message: "Data polsek terdekat berhasil diperbarui",
+            data: {
+                ...updated,
+                layananPolsekId: [layananPolsekId] // Keep it as array for consistency
             },
-        });
+        };
     } catch (error) {
         console.error("Error updating polsek terdekat:", error);
-        return new Response(JSON.stringify({
+        return {
             success: false,
-            message: "Terjadi kesalahan saat mengupdate polsek terdekat",
-        }), {
-            status: 500,
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
+            message: "Gagal memperbarui data polsek terdekat"
+        };
     }
 }

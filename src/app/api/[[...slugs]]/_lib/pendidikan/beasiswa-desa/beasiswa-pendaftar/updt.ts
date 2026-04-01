@@ -3,25 +3,17 @@ import { Context } from "elysia";
 
 type FormUpdate = {
   namaLengkap: string;
-  nik: string;
+  nis: string;
+  kelas: string;
+  jenisKelamin: "LAKI_LAKI" | "PEREMPUAN";
+  alamatDomisili?: string;
   tempatLahir: string;
   tanggalLahir: string; // ISO date string
-  jenisKelamin: "LAKI_LAKI" | "PEREMPUAN";
-  kewarganegaraan: string;
-  agama:
-    | "ISLAM"
-    | "KRISTEN_PROTESTAN"
-    | "KRISTEN_KATOLIK"
-    | "HINDU"
-    | "BUDDHA"
-    | "KONGHUCU"
-    | "LAINNYA";
-  alamatKTP: string;
-  alamatDomisili?: string;
+  namaOrtu?: string;
+  nik: string;
+  pekerjaanOrtu?: string;
+  penghasilan?: string;
   noHp: string;
-  email: string;
-  statusPernikahan: "BELUM_MENIKAH" | "MENIKAH" | "JANDA_DUDA";
-  ukuranBaju?: "S" | "M" | "L" | "XL" | "XXL" | "LAINNYA";
 };
 
 export default async function beasiswaPendaftarUpdate(context: Context) {
@@ -40,18 +32,17 @@ export default async function beasiswaPendaftarUpdate(context: Context) {
       where: { id },
       data: {
         namaLengkap: body.namaLengkap,
-        nik: body.nik,
+        nis: body.nis,
+        kelas: body.kelas,
+        jenisKelamin: body.jenisKelamin,
+        alamatDomisili: body.alamatDomisili,
         tempatLahir: body.tempatLahir,
         tanggalLahir: new Date(body.tanggalLahir),
-        jenisKelamin: body.jenisKelamin,
-        kewarganegaraan: body.kewarganegaraan,
-        agama: body.agama,
-        alamatKTP: body.alamatKTP,
-        alamatDomisili: body.alamatDomisili,
+        namaOrtu: body.namaOrtu,
+        nik: body.nik,
+        pekerjaanOrtu: body.pekerjaanOrtu,
+        penghasilan: body.penghasilan,
         noHp: body.noHp,
-        email: body.email,
-        statusPernikahan: body.statusPernikahan,
-        ukuranBaju: body.ukuranBaju,
       },
     });
 

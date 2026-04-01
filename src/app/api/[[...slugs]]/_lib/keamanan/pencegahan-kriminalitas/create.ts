@@ -25,7 +25,7 @@ const pencegahanKriminalitasCreate = async (context: Context) => {
 
   return {
     success: true,
-    message: "Success create pencegahan kriminalitas",
+    message: "Sukses menambahkan pencegahan kriminalitas",
     data: {
       ...body,
     },

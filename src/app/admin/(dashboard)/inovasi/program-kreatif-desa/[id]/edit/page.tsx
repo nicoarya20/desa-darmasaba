@@ -1,18 +1,19 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
+import { IconKey } from '@/app/admin/(dashboard)/_com/iconMap';
 import programKreatifState from '@/app/admin/(dashboard)/_state/inovasi/program-kreatif';
 import colors from '@/con/colors';
 import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Stack,
   Text,
   TextInput,
-  Title,
-  Tooltip,
+  Title
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -20,7 +21,6 @@ import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 import SelectIconProgramEdit from '../../../../_com/selectIconEdit';
-import { IconKey } from '@/app/admin/(dashboard)/_com/iconMap';
 
 interface FormProgramKreatif {
   name: string;
@@ -33,6 +33,7 @@ function EditProgramKreatifDesa() {
   const stateProgramKreatif = useProxy(programKreatifState);
   const params = useParams();
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [formData, setFormData] = useState<FormProgramKreatif>({
     name: '',
@@ -40,6 +41,32 @@ function EditProgramKreatifDesa() {
     slug: '',
     icon: '',
   });
+
+  const [originalData, setOriginalData] = useState<FormProgramKreatif>({
+    name: '',
+    deskripsi: '',
+    slug: '',
+    icon: '',
+  });
+
+  const [isDataChanged, setIsDataChanged] = useState(false);
+
+  // Helper function to check if HTML content is empty
+  const isHtmlEmpty = (html: string) => {
+    // Remove all HTML tags and check if there's any text content
+    const textContent = html.replace(/<[^>]*>/g, '').trim();
+    return textContent === '';
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      formData.name?.trim() !== '' &&
+      formData.slug?.trim() !== '' &&
+      !isHtmlEmpty(formData.deskripsi) &&
+      formData.icon?.trim() !== ''
+    );
+  };
 
   // Load data hanya sekali berdasarkan params.id
   useEffect(() => {
@@ -51,12 +78,14 @@ function EditProgramKreatifDesa() {
         const data = await stateProgramKreatif.update.load(id);
         if (data) {
           stateProgramKreatif.update.id = id;
-          setFormData({
+          const loadedData = {
             name: data.name || '',
             slug: data.slug || '',
             deskripsi: data.deskripsi || '',
             icon: data.icon || '',
-          });
+          };
+          setFormData(loadedData);
+          setOriginalData(loadedData);
         }
       } catch (error) {
         console.error('Error loading program kreatif:', error);
@@ -67,14 +96,65 @@ function EditProgramKreatifDesa() {
     loadProgramKreatif();
   }, [params?.id]);
 
+  // Deteksi perubahan data
+  useEffect(() => {
+    const hasChanged = 
+      formData.name !== originalData.name ||
+      formData.slug !== originalData.slug ||
+      formData.deskripsi !== originalData.deskripsi ||
+      formData.icon !== originalData.icon;
+    
+    setIsDataChanged(hasChanged);
+  }, [formData, originalData]);
+
+  // Prevent browser back/refresh jika ada perubahan
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (isDataChanged) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [isDataChanged]);
+
   const handleChange =
     (field: keyof FormProgramKreatif) =>
     (value: string) => {
       setFormData((prev) => ({ ...prev, [field]: value }));
     };
 
+  const handleBackClick = () => {
+    if (isDataChanged) {
+      const confirmed = window.confirm(
+        'Anda memiliki perubahan yang belum disimpan. Apakah Anda yakin ingin keluar dari halaman ini? Semua perubahan akan hilang.'
+      );
+      if (confirmed) {
+        router.back();
+      }
+    } else {
+      router.back();
+    }
+  };
+
+  const handleResetForm = () => {
+    setFormData({
+      name: originalData.name,
+      slug: originalData.slug,
+      deskripsi: originalData.deskripsi,
+      icon: originalData.icon,
+    });
+    setOriginalData({
+      ...originalData,
+    });
+    toast.info("Form dikembalikan ke data awal");
+  };
+
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       stateProgramKreatif.update.form = {
         name: formData.name.trim(),
         deskripsi: formData.deskripsi.trim(),
@@ -82,26 +162,31 @@ function EditProgramKreatifDesa() {
         icon: formData.icon.trim(),
       };
       await stateProgramKreatif.update.submit();
+      
+      // Reset isDataChanged agar tidak muncul konfirmasi setelah save
+      setOriginalData(formData);
+      setIsDataChanged(false);
+      
       router.push('/admin/inovasi/program-kreatif-desa');
     } catch (error) {
       console.error('Error updating program kreatif:', error);
       toast.error('Gagal menyimpan program kreatif');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button
-            variant="subtle"
-            onClick={() => router.back()}
-            p="xs"
-            radius="md"
-          >
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
-        </Tooltip>
+        <Button
+          variant="subtle"
+          onClick={handleBackClick}
+          p="xs"
+          radius="md"
+        >
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Edit Program Kreatif Desa
         </Title>
@@ -154,16 +239,30 @@ function EditProgramKreatifDesa() {
 
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

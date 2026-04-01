@@ -96,23 +96,21 @@
 'use client'
 import colors from '@/con/colors';
  // pastikan path benar
+import infoSekolahPaud from '@/app/admin/(dashboard)/_state/pendidikan/info-sekolah-paud';
 import {
-  ActionIcon,
   Box,
   Button,
   Container,
   Group,
+  Loader,
   Paper,
   Stack,
-  Text,
-  VisuallyHidden,
-  Loader,
+  Text
 } from '@mantine/core';
-import { IconArrowLeft } from '@tabler/icons-react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useSnapshot } from 'valtio';
 import React, { useEffect, useState } from 'react';
-import infoSekolahPaud from '@/app/admin/(dashboard)/_state/pendidikan/info-sekolah-paud';
+import { useSnapshot } from 'valtio';
+import BackButton from '../../../desa/layanan/_com/BackButto';
 
 type LayoutSekolahProps = {
   title?: string;
@@ -153,10 +151,7 @@ export default function LayoutSekolah({
       <Container size="xl" py={{ base: 'md', md: 'xl' }}>
         <Stack gap="lg">
           {/* Back Button */}
-          <ActionIcon onClick={() => window.history.back()} variant="light" radius="md" size="lg">
-            <IconArrowLeft size={20} />
-            <VisuallyHidden>Kembali</VisuallyHidden>
-          </ActionIcon>
+          <BackButton/>
 
           {/* Search & Filter */}
           <Paper radius="lg" p="xl" withBorder>
@@ -185,6 +180,8 @@ export default function LayoutSekolah({
                         radius="xl"
                         size="sm"
                         variant={aktif ? 'filled' : 'light'}
+                        bg={aktif? colors['blue-button'] : '#BDCADE'}
+                        c={aktif ? colors['white-1'] : colors['blue-button']}
                       >
                         {k}
                       </Button>

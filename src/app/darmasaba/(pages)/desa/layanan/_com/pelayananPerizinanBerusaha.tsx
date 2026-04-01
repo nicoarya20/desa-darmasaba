@@ -47,7 +47,7 @@ function PelayananPerizinanBerusaha() {
     return (
       <Center mih={300}>
         <Stack align="center" gap="sm">
-          <Text fz="lg" fw={500} c="dimmed">
+          <Text fz={{ base: 'md', md: 'lg' }} fw={500} c="dimmed" lh="sm">
             Belum ada informasi layanan yang tersedia
           </Text>
           <Button component="a" href="https://oss.go.id" target="_blank" radius="xl">
@@ -67,10 +67,10 @@ function PelayananPerizinanBerusaha() {
       ) : (
         <Stack gap="lg">
           <Box>
-            <Title order={2} fw={700} fz={{ base: 22, md: 32 }} mb="sm">
+            <Title order={2} fw={700} mb="sm">
               Perizinan Berusaha Berbasis Risiko melalui OSS
             </Title>
-            <Text fz={{ base: 'sm', md: 'md' }} c="dimmed">
+            <Text fz={{ base: 'sm', md: 'md' }} c="black" lh="sm">
               Sistem Online Single Submission (OSS) untuk pendaftaran NIB
             </Text>
           </Box>
@@ -83,13 +83,13 @@ function PelayananPerizinanBerusaha() {
           />
 
           <Box>
-            <Text fw={600} mb="sm" fz={{ base: 'sm', md: 'lg' }}>
+            <Title order={3} fw={600} mb="sm">
               Alur pendaftaran NIB:
-            </Text>
+            </Title>
             <Stepper
               active={active}
               onStepClick={(step) => {
-                if (step <= active) { // Only allow clicking on previous or current steps
+                if (step <= active) {
                   setActive(step);
                 }
               }}
@@ -102,28 +102,42 @@ function PelayananPerizinanBerusaha() {
               }}
             >
               <StepperStep label="Langkah 1" description="Daftar Akun">
-                <Text fz="sm">Membuat akun di portal OSS</Text>
+                <Text fz={{ base: 'xs', md: 'sm' }} lh="sm">
+                  Membuat akun di portal OSS
+                </Text>
               </StepperStep>
               <StepperStep label="Langkah 2" description="Isi Data Perusahaan">
-                <Text fz="sm">Lengkapi informasi perusahaan, data pemegang saham, dan alamat</Text>
+                <Text fz={{ base: 'xs', md: 'sm' }} lh="sm">
+                  Lengkapi informasi perusahaan, data pemegang saham, dan alamat
+                </Text>
               </StepperStep>
               <StepperStep label="Langkah 3" description="Pilih KBLI">
-                <Text fz="sm">Menentukan kode KBLI sesuai jenis usaha</Text>
+                <Text fz={{ base: 'xs', md: 'sm' }} lh="sm">
+                  Menentukan kode KBLI sesuai jenis usaha
+                </Text>
               </StepperStep>
               <StepperStep label="Langkah 4" description="Unggah Dokumen">
-                <Text fz="sm">Unggah akta pendirian, surat izin, dan dokumen wajib lainnya</Text>
+                <Text fz={{ base: 'xs', md: 'sm' }} lh="sm">
+                  Unggah akta pendirian, surat izin, dan dokumen wajib lainnya
+                </Text>
               </StepperStep>
               <StepperStep label="Langkah 5" description="Verifikasi Instansi">
-                <Text fz="sm">Menunggu verifikasi dan persetujuan dari pihak berwenang</Text>
+                <Text fz={{ base: 'xs', md: 'sm' }} lh="sm">
+                  Menunggu verifikasi dan persetujuan dari pihak berwenang
+                </Text>
               </StepperStep>
               <StepperStep label="Langkah 6" description="Terbit NIB">
-                <Text fz="sm">Menerima NIB sebagai identitas resmi usaha</Text>
+                <Text fz={{ base: 'xs', md: 'sm' }} lh="sm">
+                  Menerima NIB sebagai identitas resmi usaha
+                </Text>
               </StepperStep>
               <StepperCompleted>
                 <Center>
                   <Stack align="center" gap="xs">
                     <IconCheck size={40} color="green" />
-                    <Text fz="sm" fw={500}>Proses pendaftaran selesai</Text>
+                    <Text fz={{ base: 'xs', md: 'sm' }} fw={500} lh="sm">
+                      Proses pendaftaran selesai
+                    </Text>
                   </Stack>
                 </Center>
               </StepperCompleted>
@@ -159,7 +173,7 @@ function PelayananPerizinanBerusaha() {
             )}
           </Box>
 
-          <Text fz="sm" ta="justify" c="dimmed" mt="md">
+          <Text fz={{ base: 'xs', md: 'sm' }} ta="justify" c="black" lh="sm" mt="md">
             Catatan: Persyaratan dan prosedur dapat berubah sewaktu-waktu. Untuk informasi resmi terbaru, silakan kunjungi situs{' '}
             <a href="https://oss.go.id/" target="_blank" rel="noopener noreferrer">
               oss.go.id

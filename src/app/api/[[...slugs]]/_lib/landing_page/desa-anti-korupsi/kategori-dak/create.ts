@@ -19,7 +19,7 @@ export default async function kategoriDesaAntiKorupsiCreate(context: Context) {
     });
     return {
         success: true,
-        message: "Success create kategori desa anti korupsi",
+        message: "Sukses menambahkan kategori desa anti korupsi",
         data: kategoriDesaAntiKorupsi
     };
 }

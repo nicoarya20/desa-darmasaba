@@ -2,11 +2,9 @@
 'use client';
 import penghargaanState from "@/app/admin/(dashboard)/_state/desa/penghargaan";
 import colors from "@/con/colors";
-import { Carousel } from "@mantine/carousel";
-import { Box, Button, Container, Group, Paper, Skeleton, Stack, Text, useMantineTheme } from "@mantine/core";
+import { Box, Button, Container, Group, Paper, Skeleton, Stack, Text, Title } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { IconArrowRight, IconAward } from "@tabler/icons-react";
-import Autoplay from "embla-carousel-autoplay";
 import { useTransitionRouter } from "next-view-transitions";
 import { useEffect, useRef } from "react";
 import { useProxy } from "valtio/utils";
@@ -19,31 +17,52 @@ export default function Page() {
         <BackButton />
       </Box>
       <Container w={{ base: "100%", md: "90%", lg: "60%" }}>
-
         <Stack align="center" gap="sm">
           <Group gap="xs">
             <IconAward size={40} color={colors["blue-button"]} />
-            <Text fz={{ base: "2rem", md: "3.2rem" }} fw={800} variant="gradient" gradient={{ from: "#1C6EA4", to: "#69BFF8" }}>
+            <Title
+              order={1}
+              fw={800}
+              c={colors["blue-button"]}
+              ta="center"
+            >
               Penghargaan Desa
-            </Text>
+            </Title>
           </Group>
-          <Text fz="lg" c="dimmed" ta="center">
+          <Text
+            fz={{ base: "sm", md: "md" }}
+            lh={{ base: "1.5", md: "1.6" }}
+            c="black"
+            ta="center"
+          >
             Desa Darmasaba berhasil meraih beragam penghargaan bergengsi yang mencerminkan dedikasi dan kerja keras masyarakat dalam membangun desa yang maju dan berkelanjutan.
           </Text>
-          <Slider />
         </Stack>
       </Container>
+      <Slider />
     </Stack>
   );
 }
 
 function Slider() {
-  const theme = useMantineTheme();
-  const mobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
-  const tablet = useMediaQuery(`(max-width: ${theme.breakpoints.md})`);
-  const autoplay = useRef(Autoplay({ delay: 3000, stopOnInteraction: false }));
+  const mobile = useMediaQuery("(max-width: 768px)", false);
   const state = useProxy(penghargaanState);
   const router = useTransitionRouter();
+
+  const containerRef = useRef<HTMLDivElement>(null);
+  const scrollPosRef = useRef(0);
+  const animFrameRef = useRef<number>(0);
+  const isHoveredRef = useRef(false);
+  const isDraggingRef = useRef(false);
+  const startXRef = useRef(0);
+  const scrollLeftRef = useRef(0);
+  const velocityRef = useRef(0);
+  const lastScrollRef = useRef(0);
+
+  const SPEED_NORMAL = 1.0;
+  const SPEED_HOVER = 0.5;
+  const VELOCITY_DECAY = 0.95;
+  const SCROLL_THRESHOLD = 100;
 
   useEffect(() => {
     state.findMany.load();
@@ -52,12 +71,117 @@ function Slider() {
   const data = state.findMany.data || [];
   const loading = state.findMany.loading;
 
+  const slidesData = mobile ? data : [...data, ...data, ...data];
+
+  useEffect(() => {
+    if (loading || !containerRef.current || data.length === 0 || mobile) return;
+
+    const container = containerRef.current;
+    const slideWidth = container.scrollWidth / slidesData.length;
+    const originalLength = data.length;
+
+    scrollPosRef.current = slideWidth * originalLength;
+    container.scrollLeft = scrollPosRef.current;
+
+    const animate = () => {
+      if (!containerRef.current) return;
+
+      const container = containerRef.current;
+      const slideWidth = container.scrollWidth / slidesData.length;
+      const timeSinceScroll = Date.now() - lastScrollRef.current;
+      const isUserScrolling = timeSinceScroll < SCROLL_THRESHOLD;
+
+      if (!isDraggingRef.current && !isUserScrolling) {
+        const speed = isHoveredRef.current ? SPEED_HOVER : SPEED_NORMAL;
+        scrollPosRef.current += speed;
+
+        if (scrollPosRef.current >= slideWidth * (originalLength * 2)) {
+          scrollPosRef.current -= slideWidth * originalLength;
+        }
+        if (scrollPosRef.current <= 0) {
+          scrollPosRef.current += slideWidth * originalLength;
+        }
+
+        container.scrollLeft = scrollPosRef.current;
+      } else {
+        scrollPosRef.current = container.scrollLeft;
+
+        if (!isDraggingRef.current && Math.abs(velocityRef.current) > 0.1) {
+          scrollPosRef.current += velocityRef.current;
+          velocityRef.current *= VELOCITY_DECAY;
+          container.scrollLeft = scrollPosRef.current;
+        }
+      }
+
+      animFrameRef.current = requestAnimationFrame(animate);
+    };
+
+    animFrameRef.current = requestAnimationFrame(animate);
+
+    return () => {
+      if (animFrameRef.current) {
+        cancelAnimationFrame(animFrameRef.current);
+      }
+    };
+  }, [loading, data.length, mobile]);
+
+  const handleMouseEnter = () => {
+    if (!mobile) isHoveredRef.current = true;
+  };
+
+  const handleMouseLeave = () => {
+    if (!mobile) {
+      isHoveredRef.current = false;
+      isDraggingRef.current = false;
+    }
+  };
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (!containerRef.current || mobile) return;
+
+    isDraggingRef.current = true;
+    startXRef.current = e.pageX - containerRef.current.offsetLeft;
+    scrollLeftRef.current = containerRef.current.scrollLeft;
+    velocityRef.current = 0;
+    containerRef.current.style.cursor = 'grabbing';
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDraggingRef.current || !containerRef.current || mobile) return;
+
+    e.preventDefault();
+    const x = e.pageX - containerRef.current.offsetLeft;
+    const walk = (x - startXRef.current) * 2;
+    const newScrollLeft = scrollLeftRef.current - walk;
+
+    velocityRef.current = containerRef.current.scrollLeft - newScrollLeft;
+    containerRef.current.scrollLeft = newScrollLeft;
+    scrollPosRef.current = newScrollLeft;
+    lastScrollRef.current = Date.now();
+  };
+
+  const handleMouseUp = () => {
+    if (!containerRef.current || mobile) return;
+
+    isDraggingRef.current = false;
+    containerRef.current.style.cursor = 'grab';
+  };
+
+  const handleWheel = (e: React.WheelEvent) => {
+    if (!containerRef.current || mobile) return;
+
+    e.preventDefault();
+    containerRef.current.scrollLeft += e.deltaY;
+    scrollPosRef.current = containerRef.current.scrollLeft;
+    lastScrollRef.current = Date.now();
+  };
+
   if (loading) {
     return (
       <Group justify="center" py="xl" gap="md">
-        <Skeleton w={300} h={200} radius="lg" />
-        <Skeleton w={300} h={200} radius="lg" visibleFrom="sm" />
-        <Skeleton w={300} h={200} radius="lg" visibleFrom="md" />
+        <Skeleton w={300} h={400} radius="lg" />
+        <Skeleton w={300} h={400} radius="lg" visibleFrom="sm" />
+        <Skeleton w={300} h={400} radius="lg" visibleFrom="md" />
       </Group>
     );
   }
@@ -66,145 +190,147 @@ function Slider() {
     return (
       <Stack align="center" py="xl">
         <IconAward size={56} color={colors["blue-button"]} />
-        <Text fz="lg" fw={600} c="dimmed">
+        <Text fz={{ base: "sm", md: "md" }} fw={600} c="dimmed" ta="center">
           Belum ada penghargaan yang ditambahkan
         </Text>
       </Stack>
     );
   }
 
-  const slides = data.map((item) => (
-    <Carousel.Slide key={item.id}>
-      <Paper
-        radius="lg"
-        shadow="md"
-        pos="relative"
-        style={{
-          height: "100%",
-          backgroundImage: `url(${item.image?.link})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          transition: "transform 0.3s ease, box-shadow 0.3s ease",
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.transform = "translateY(-4px)";
-          e.currentTarget.style.boxShadow = "0 8px 20px rgba(0,0,0,0.2)";
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.transform = "translateY(0)";
-          e.currentTarget.style.boxShadow = "none";
-        }}
-      >
-        <Box
-          pos="absolute"
-          inset={0}
-          bg="linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0.2))"
-          style={{ borderRadius: 16 }}
-        />
-        <Stack justify="flex-end" h="100%" gap="sm" p="lg" pos="relative">
-          <Text
-            fz={{ base: "md", sm: "lg", md: "xl" }}
-            fw={700}
-            ta="center"
-            c="white"
-            lineClamp={3}
-            style={{ textShadow: "0 2px 4px rgba(0,0,0,0.6)" }}
-          >
-            {item.name}
-          </Text>
-          <Group justify="center">
-            <Button
-              onClick={() =>
-                router.push(`/darmasaba/penghargaan/${item.id}`)
-              }
-              size="md"
-              radius="xl"
-              rightSection={<IconArrowRight size={18} />}
-              variant="gradient"
-              gradient={{ from: "#1C6EA4", to: "#69BFF8" }}
-            >
-              Lihat Detail
-            </Button>
-          </Group>
-        </Stack>
-      </Paper>
-    </Carousel.Slide>
-  ));
-
   return (
-    <Box 
-      pos="relative" 
-      w="100%" 
-      mx="auto" 
-      px={{ base: "md", sm: "xl", md: "2rem", lg: "3rem" }}
-      style={{ 
-        maxWidth: 1300,
+    <Box
+      ref={containerRef}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      onMouseDown={handleMouseDown}
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
+      onWheel={handleWheel}
+      py="xl"
+      style={{
+        overflowX: mobile ? "auto" : "hidden",
+        overflowY: "hidden",
+        cursor: mobile ? "default" : "grab",
+        userSelect: "none",
+        position: "relative",
+        WebkitOverflowScrolling: "touch",
+        scrollbarWidth: "none",
+        msOverflowStyle: "none",
       }}
     >
-      <Carousel
-        py="xl"
-        w="100%"
-        h={{ base: 320, sm: 380, md: 420, lg: 450 }}
-        slideSize={{
-          base: "100%",  // Mobile: 1
-          sm: "50%",     // Tablet kecil (≥768): 2
-          md: "50%",     // 1024px: tetap 2
-          lg: "33.333%", // Desktop besar: 3
+      {!mobile && (
+        <>
+          <Box
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "120px",
+              height: "100%",
+              background: "linear-gradient(to right, rgba(249, 250, 251, 1), rgba(249, 250, 251, 0))",
+              zIndex: 10,
+              pointerEvents: "none",
+            }}
+          />
+          <Box
+            style={{
+              position: "absolute",
+              top: 0,
+              right: 0,
+              width: "120px",
+              height: "100%",
+              background: "linear-gradient(to left, rgba(249, 250, 251, 1), rgba(249, 250, 251, 0))",
+              zIndex: 10,
+              pointerEvents: "none",
+            }}
+          />
+        </>
+      )}
+
+      <Box
+        style={{
+          display: "flex",
+          gap: mobile ? "1rem" : "1.5rem",
+          paddingLeft: mobile ? "1rem" : "2rem",
+          paddingRight: mobile ? "1rem" : "2rem",
         }}
-        slideGap={{ base: "md", sm: "md", md: "lg" }}
-        loop
-        align="start"
-        slidesToScroll={mobile ? 1 : tablet ? 2 : 3}
-        plugins={[autoplay.current]}
-        onMouseEnter={autoplay.current.stop}
-        onMouseLeave={autoplay.current.reset}
-        withControls={data.length > 3}
-        draggable={data.length > 1}
-        styles={{
-          root: {
-            position: "relative",
-          },
-          viewport: {
-            overflow: "hidden",
-          },
-          container: {
-            alignItems: "stretch",
-          },
-          control: {
-            zIndex: 20,
-            backgroundColor: "rgba(255,255,255,0.95)",
-            color: colors["blue-button"],
-            border: `2px solid ${colors["blue-button"]}`,
-            width: 46,
-            height: 46,
-            borderRadius: "50%",
-            boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-            transition: "all 0.2s ease",
-            '&:hover': {
-              backgroundColor: colors["blue-button"],
-              color: "white",
-              transform: "scale(1.1)",
-            },
-            '&[data-inactive]': {
-              opacity: 0,
-              cursor: 'default',
-            },
-          },
-          controls: {
-            position: "absolute",
-            top: mobile ? "70%" : tablet ? "65%" : "60%",
-            transform: "translateY(-50%)",
-            width: mobile ? "100%" : tablet ? "calc(100% + 60px)" : "calc(100% + 100px)",
-            left: mobile ? "0" : tablet ? "-30px" : "-50px",
-            right: mobile ? "0" : tablet ? "-30px" : "-50px",
-            padding: "0",
-            justifyContent: "space-between",
-            zIndex: 30,
-          },
-        }} 
       >
-        {slides}
-      </Carousel>
+        {slidesData.map((item, index) => (
+          <Box
+            key={`${item.id}-${index}`}
+            style={{
+              flex: `0 0 ${mobile ? "85%" : "calc(33.333% - 1rem)"}`,
+              minWidth: mobile ? "85%" : "calc(33.333% - 1rem)",
+            }}
+          >
+            <Paper
+              radius="lg"
+              shadow="md"
+              pos="relative"
+              style={{
+                height: mobile ? "380px" : "450px",
+                backgroundImage: `url(${item.image?.link})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                transition: "transform 0.3s ease, box-shadow 0.3s ease",
+                overflow: "hidden",
+              }}
+              onMouseEnter={(e) => {
+                if (!mobile) {
+                  e.currentTarget.style.transform = "translateY(-8px) scale(1.02)";
+                  e.currentTarget.style.boxShadow = "0 12px 28px rgba(0,0,0,0.25)";
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!mobile) {
+                  e.currentTarget.style.transform = "translateY(0) scale(1)";
+                  e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.15)";
+                }
+              }}
+            >
+              <Box
+                pos="absolute"
+                inset={0}
+                bg="linear-gradient(to top, rgba(0,0,0,0.85), rgba(0,0,0,0.3))"
+                style={{ borderRadius: 16 }}
+              />
+              <Stack justify="flex-end" h="100%" gap="sm" p="lg" pos="relative">
+                <Title
+                  order={3}
+                  fw={700}
+                  ta="center"
+                  c="white"
+                  lineClamp={3}
+                  style={{ textShadow: "0 2px 8px rgba(0,0,0,0.8)" }}
+                >
+                  {item.name}
+                </Title>
+                <Group justify="center">
+                  <Button
+                    onClick={() => router.push(`/darmasaba/penghargaan/${item.id}`)}
+                    size="md"
+                    radius="xl"
+                    rightSection={<IconArrowRight size={18} />}
+                    variant="gradient"
+                    gradient={{ from: "#1C6EA4", to: "#69BFF8" }}
+                    style={{
+                      transition: "transform 0.2s ease",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = "scale(1.05)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = "scale(1)";
+                    }}
+                  >
+                    Lihat Detail
+                  </Button>
+                </Group>
+              </Stack>
+            </Paper>
+          </Box>
+        ))}
+      </Box>
     </Box>
   );
 }

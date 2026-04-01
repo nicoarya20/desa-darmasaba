@@ -14,7 +14,7 @@ interface PageProps {
 
 function Page({ params }: PageProps) {
   const [search, setSearch] = useState("")
-  const [debouncedSearch] = useDebouncedValue(search, 500); // 500ms delay
+  const [debouncedSearch] = useDebouncedValue(search, 1000); // 500ms delay
   const stateList = useProxy(infoSekolahPaud.siswa)
   const { jenjangPendidikan } = use(params);
 
@@ -55,7 +55,7 @@ function Page({ params }: PageProps) {
         <Group justify="space-between" align="center" mb="md">
           <Group gap="sm">
             <IconSchool size={28} stroke={1.5} color={colors['blue-button']} />
-            <Title order={2} fz="xl">Daftar Siswa</Title>
+            <Title order={2} fz="xl" c={colors['blue-button']}>Daftar Siswa</Title>
           </Group>
           <TextInput
             placeholder='pencarian'

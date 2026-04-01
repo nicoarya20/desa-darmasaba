@@ -1,13 +1,13 @@
 'use client'
+import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
 import colors from '@/con/colors';
-import { Box, Button, Paper, Stack, Text, Image, Skeleton, Group, Tooltip } from '@mantine/core';
-import { IconArrowBack, IconTrash, IconEdit } from '@tabler/icons-react';
-import { useRouter, useParams } from 'next/navigation';
-import React, { useState } from 'react';
+import { Box, Button, Group, Image, Paper, Skeleton, Stack, Text } from '@mantine/core';
+import { useShallowEffect } from '@mantine/hooks';
+import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
+import { useParams, useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import pasarDesaState from '../../../../_state/ekonomi/pasar-desa/pasar-desa';
-import { useShallowEffect } from '@mantine/hooks';
-import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
 
 function DetailPasarDesa() {
   const statePasar = useProxy(pasarDesaState);
@@ -40,7 +40,7 @@ function DetailPasarDesa() {
   const data = statePasar.pasarDesa.findUnique.data;
 
   return (
-    <Box py={10}>
+    <Box px={{ base: 0, md: 'xs' }} py="xs">
       <Button
         variant="subtle"
         onClick={() => router.back()}
@@ -52,7 +52,7 @@ function DetailPasarDesa() {
 
       <Paper
         withBorder
-        w={{ base: "100%", md: "60%" }}
+        w={{ base: "100%", md: "70%" }}
         bg={colors['white-1']}
         p="lg"
         radius="md"
@@ -123,32 +123,28 @@ function DetailPasarDesa() {
               </Box>
 
               <Group gap="sm">
-                <Tooltip label="Hapus Produk" withArrow position="top">
-                  <Button
-                    color="red"
-                    onClick={() => {
-                      setSelectedId(data.id);
-                      setModalHapus(true);
-                    }}
-                    variant="light"
-                    radius="md"
-                    size="md"
-                  >
-                    <IconTrash size={20} />
-                  </Button>
-                </Tooltip>
+                <Button
+                  color="red"
+                  onClick={() => {
+                    setSelectedId(data.id);
+                    setModalHapus(true);
+                  }}
+                  variant="light"
+                  radius="md"
+                  size="md"
+                >
+                  <IconTrash size={20} />
+                </Button>
 
-                <Tooltip label="Edit Produk" withArrow position="top">
-                  <Button
-                    color="green"
-                    onClick={() => router.push(`/admin/ekonomi/pasar-desa/produk-pasar-desa/${data.id}/edit`)}
-                    variant="light"
-                    radius="md"
-                    size="md"
-                  >
-                    <IconEdit size={20} />
-                  </Button>
-                </Tooltip>
+                <Button
+                  color="green"
+                  onClick={() => router.push(`/admin/ekonomi/pasar-desa/produk-pasar-desa/${data.id}/edit`)}
+                  variant="light"
+                  radius="md"
+                  size="md"
+                >
+                  <IconEdit size={20} />
+                </Button>
               </Group>
             </Stack>
           </Paper>

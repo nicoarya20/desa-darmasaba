@@ -1,0 +1,54 @@
+[
+  {
+    "id": "b92ee048-fb7f-44e9-aa5b-822e6cd0085d",
+    "nama": "Kantor Polisi Abian Semal",
+    "jarakKeDesa": "9,6 Km",
+    "alamat": "ABIAN SEMAL POLICE STAT, JL. Pasar, Blahkiuh, Kec. Abiansemal, Kabupaten Badung, Bali 80352",
+    "nomorTelepon": "0361813972",
+    "jamOperasional": "Buka 24 Jam",
+    "embedMapUrl": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d63127.118683990586!2d115.16592643905703!3d-8.553143643198624!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd23ceb4f6e5363%3A0xa353662f070f47d8!2sAbian%20Semal%20Police%20Station!5e0!3m2!1sid!2sid!4v1768376981008!5m2!1sid!2sid",
+    "namaTempatMaps": "Abian Semal Police Station",
+    "alamatMaps": "ABIAN SEMAL POLICE STAT, JL. Pasar, Blahkiuh, Kec. Abiansemal, Kabupaten Badung, Bali 80352",
+    "linkPetunjukArah": "https://maps.app.goo.gl/GhHVNQqffNrXSMFX7",
+    "layananPolsekId": "7ded635b-bf4a-4c1b-b6fa-2f13f4dfc478"
+  },
+  {
+    "id": "de769c40-10d4-4fbc-a5ef-12f2ce53a0a2",
+    "nama": "Polres Badung",
+    "jarakKeDesa": "5,8 Km",
+    "alamat": "Jl. Kebo Iwa No.1, Mengwitani, Kec. Mengwi, Kabupaten Badung, Bali 80351",
+    "nomorTelepon": "0361829949",
+    "jamOperasional": "Buka 24 Jam",
+    "embedMapUrl": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15780.907469872707!2d115.17829950197888!3d-8.574172113520685!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd238cade1488c3%3A0x918ba5cac3ef00b7!2sPolres%20Badung!5e0!3m2!1sid!2sid!4v1768377100998!5m2!1sid!2sid",
+    "namaTempatMaps": "Polres Badung",
+    "alamatMaps": "Jl. Kebo Iwa No.1, Mengwitani, Kec. Mengwi, Kabupaten Badung, Bali 80351",
+    "linkPetunjukArah": "https://maps.app.goo.gl/7yQQod4PFhpqqe7Z8",
+    "layananPolsekId": "7ded635b-bf4a-4c1b-b6fa-2f13f4dfc478"
+  },
+  {
+    "id": "9a3fff54-8854-4929-b9b5-b5b2751011ea",
+    "nama": "Polsek Mengwi",
+    "jarakKeDesa": "9,7 Km",
+    "alamat": "Jl. I Gusti Ngurah Rai No.110, Werdi Bhuwana, Kec. Mengwi, Kabupaten Badung, Bali 80351",
+    "nomorTelepon": "0361411270",
+    "jamOperasional": "Buka 24 Jam",
+    "embedMapUrl": "https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d63126.100310757916!2d115.1716545!3d-8.5592871!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd23b9ddc3980af%3A0xa1f4f195483537b!2sPolsek%20Mengwi!5e0!3m2!1sid!2sid!4v1768377317955!5m2!1sid!2sid",
+    "namaTempatMaps": "Polsek Mengwi",
+    "alamatMaps": "Jl. I Gusti Ngurah Rai No.110, Werdi Bhuwana, Kec. Mengwi, Kabupaten Badung, Bali 80351",
+    "linkPetunjukArah": "https://maps.app.goo.gl/cJD44NSUdpA7Ly2m6",
+    "layananPolsekId": "7ded635b-bf4a-4c1b-b6fa-2f13f4dfc478"
+  },
+  {
+    "id": "c2d272e1-737d-44f5-bd85-ae268cb06cbf",
+    "nama": "Pos Polisi Ahmad Yani",
+    "jarakKeDesa": "7 Km",
+    "alamat": "Jl. Ahmad Yani Utara No.5, Peguyangan, Kec. Denpasar Utara, Kota Denpasar, Bali 80239",
+    "nomorTelepon": "-",
+    "jamOperasional": "-",
+    "embedMapUrl": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d31558.650325984465!2d115.18791122296605!3d-8.612190901728288!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd23f635f1186b1%3A0xcfdde508d897fb04!2sPos%20Polisi%20Simpang%20Ahmad%20Yani!5e0!3m2!1sid!2sid!4v1768377470154!5m2!1sid!2sid",
+    "namaTempatMaps": "Pos Polisi Simpang Ahmad Yani",
+    "alamatMaps": "Jl. Ahmad Yani Utara No.5, Peguyangan, Kec. Denpasar Utara, Kota Denpasar, Bali 80239",
+    "linkPetunjukArah": "https://maps.app.goo.gl/D8HGs4mSAQqJm9KRA",
+    "layananPolsekId": "7ded635b-bf4a-4c1b-b6fa-2f13f4dfc478"
+  }
+]

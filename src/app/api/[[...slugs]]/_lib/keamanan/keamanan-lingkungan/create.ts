@@ -21,7 +21,7 @@ async function createKeamananLingkungan(context: Context) {
     });
     return {
         success: true,
-        message: "Success create keamanan lingkungan",
+        message: "Sukses menambahkan keamanan lingkungan",
         data: {
             ...body,
         },

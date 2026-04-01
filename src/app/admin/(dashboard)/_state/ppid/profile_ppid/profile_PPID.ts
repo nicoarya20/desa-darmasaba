@@ -3,9 +3,6 @@ import { toast } from "react-toastify";
 import { proxy } from "valtio";
 import { z } from "zod";
 
-/**
- * Schema validasi form ProfilePPID menggunakan Zod.
- */
 const templateForm = z.object({
   name: z.string().min(3, "Nama minimal 3 karakter"),
   biodata: z.string().min(3, "Biodata minimal 3 karakter"),
@@ -33,25 +30,16 @@ type ProfilePPIDForm = Prisma.ProfilePPIDGetPayload<{
     pengalaman: true;
     unggulan: true;
     imageId: true;
-    image?: {
-      select: {
-        link: true;
-      };
-    };
+    image?: { select: { link: true } };
   };
 }>;
 
-/**
- * Improved State Management - Consolidated and more robust
- */
 const stateProfilePPID = proxy({
-  // Consolidated data management
   profile: {
     data: null as ProfilePPIDForm | null,
     loading: false,
     error: null as string | null,
 
-    // Single method to load profile data
     async load(id: string) {
       if (!id) {
         toast.warn("ID tidak valid");
@@ -62,52 +50,54 @@ const stateProfilePPID = proxy({
       this.error = null;
 
       try {
-        const response = await fetch(`/api/ppid/profileppid/${id}`);
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
+        const res = await fetch(`/api/ppid/profileppid/${id}`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
-        const result = await response.json();
-        
+        const result = await res.json();
         if (result.success) {
           this.data = result.data;
           return result.data;
         } else {
-          throw new Error(result.message || "Gagal mengambil data profile");
+          // Jika pesan adalah "Data tidak ditemukan" atau "Belum ada data profil PPID yang aktif",
+          // tetap simpan sebagai error tapi tidak perlu menampilkan toast error karena ini bukan error sebenarnya
+          if (result.message === "Data tidak ditemukan" || result.message === "Belum ada data profil PPID yang aktif") {
+            this.error = result.message;
+            return null;
+          } else {
+            throw new Error(result.message || "Gagal memuat data profile");
+          }
         }
-      } catch (error) {
-        const errorMessage = (error as Error).message;
-        this.error = errorMessage;
-        console.error("Load profile error:", errorMessage);
-        toast.error("Terjadi kesalahan saat mengambil data profile");
+      } catch (err) {
+        const msg = (err as Error).message;
+        this.error = msg;
+        console.error("Load profile error:", msg);
+        // Hanya tampilkan toast error jika bukan karena data tidak ditemukan
+        if (msg !== "Data tidak ditemukan" && msg !== "Belum ada data profil PPID yang aktif") {
+          toast.error("Gagal memuat data profile");
+        }
         return null;
       } finally {
         this.loading = false;
       }
     },
 
-    // Reset profile data
     reset() {
       this.data = null;
       this.error = null;
       this.loading = false;
-    }
+    },
   },
 
-  // Edit form management
   editForm: {
     id: "",
     form: { ...defaultForm },
+    originalForm: { ...defaultForm }, // ✅ Tambah field originalForm
     loading: false,
     error: null as string | null,
-    isReadOnly: false, // Flag untuk data yang tidak bisa diedit
 
-    // Initialize form with profile data
     initialize(profileData: ProfilePPIDForm) {
       this.id = profileData.id;
-      this.isReadOnly = false; // Semua data bisa diedit
-      this.form = {
+      const data = {
         name: profileData.name || "",
         biodata: profileData.biodata || "",
         riwayat: profileData.riwayat || "",
@@ -115,23 +105,20 @@ const stateProfilePPID = proxy({
         unggulan: profileData.unggulan || "",
         imageId: profileData.imageId || "",
       };
+      this.form = { ...data };
+      this.originalForm = { ...data }; // ✅ Simpan versi original
     },
 
-    // Update form field
     updateField(field: keyof typeof defaultForm, value: string) {
       this.form[field] = value;
     },
 
-    // Submit form
     async submit() {
-      // Validate form
-      const validation = templateForm.safeParse(this.form);
-      
-      if (!validation.success) {
-        const errors = validation.error.issues
-          .map((issue) => `${issue.path.join(".")}: ${issue.message}`)
-          .join(", ");
-        toast.error(`Form tidak valid: ${errors}`);
+      const check = templateForm.safeParse(this.form);
+      if (!check.success) {
+        toast.error(
+          check.error.issues.map((i) => `${i.path.join(".")}: ${i.message}`).join(", ")
+        );
         return false;
       }
 
@@ -139,63 +126,54 @@ const stateProfilePPID = proxy({
       this.error = null;
 
       try {
-        const response = await fetch(`/api/ppid/profileppid/${this.id}`, {
+        const res = await fetch(`/api/ppid/profileppid/${this.id}`, {
           method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(this.form),
         });
-
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}));
-          throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
-        }
-
-        const result = await response.json();
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const result = await res.json();
 
         if (result.success) {
           toast.success("Berhasil update profile");
-          // Refresh profile data
-          await stateProfilePPID.profile.load(this.id);
+          this.originalForm = { ...this.form }; // ✅ Update original setelah sukses
           return true;
-        } else {
-          throw new Error(result.message || "Gagal update profile");
-        }
-      } catch (error) {
-        const errorMessage = (error as Error).message;
-        this.error = errorMessage;
-        console.error("Update profile error:", errorMessage);
-        toast.error("Terjadi kesalahan saat update profile");
+        } else throw new Error(result.message || "Gagal update profile");
+      } catch (err) {
+        const msg = (err as Error).message;
+        this.error = msg;
+        toast.error(msg);
         return false;
       } finally {
         this.loading = false;
       }
     },
 
-    // Reset form
+    // ✅ Tambahan reset ke original data
+    resetToOriginal() {
+      this.form = { ...this.originalForm };
+      toast.info("Data dikembalikan ke kondisi awal");
+    },
+
     reset() {
       this.id = "";
       this.form = { ...defaultForm };
+      this.originalForm = { ...defaultForm };
       this.error = null;
       this.loading = false;
-      this.isReadOnly = false;
-    }
+    },
   },
 
-  // Helper methods
   async loadForEdit(id: string) {
-    const profileData = await this.profile.load(id);
-    if (profileData) {
-      this.editForm.initialize(profileData);
-    }
-    return profileData;
+    const data = await this.profile.load(id);
+    if (data) this.editForm.initialize(data);
+    return data;
   },
 
   reset() {
     this.profile.reset();
     this.editForm.reset();
-  }
+  },
 });
 
 export default stateProfilePPID;

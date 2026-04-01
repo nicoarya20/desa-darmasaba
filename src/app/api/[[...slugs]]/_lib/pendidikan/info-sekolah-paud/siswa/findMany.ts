@@ -8,7 +8,8 @@ async function siswaFindMany(context: Context) {
     const limit = Number(context.query.limit) || 10;
     const skip = (page - 1) * limit;
     const search = (context.query.search as string) || "";
-    const jenjangPendidikanName = (context.query.jenjangPendidikanName as string) || "";
+    const jenjangPendidikanName =
+      (context.query.jenjangPendidikanName as string) || "";
 
     // Buat where clause
     const where: any = { isActive: true };
@@ -20,16 +21,16 @@ async function siswaFindMany(context: Context) {
         where: {
           nama: {
             equals: jenjangPendidikanName,
-            mode: 'insensitive'
+            mode: "insensitive",
           },
           isActive: true,
-        }
+        },
       });
 
       if (jenjangPendidikan) {
         where.lembaga = {
           ...where.lembaga,
-          jenjangId: jenjangPendidikan.id
+          jenjangId: jenjangPendidikan.id,
         };
       } else {
         // Jika tidak ditemukan, return data kosong
@@ -48,8 +49,8 @@ async function siswaFindMany(context: Context) {
     // Add search functionality
     if (search) {
       where.OR = [
-        { nama: { contains: search, mode: 'insensitive' } },
-        { lembaga: { nama: { contains: search, mode: 'insensitive' } } }
+        { nama: { contains: search, mode: "insensitive" } },
+        { lembaga: { nama: { contains: search, mode: "insensitive" } } },
       ];
     }
 
@@ -65,15 +66,13 @@ async function siswaFindMany(context: Context) {
         },
         skip,
         take: limit,
-        orderBy: { nama: 'asc' },
+        orderBy: [{ nama: "asc" }, { lembaga: { nama: "asc" } }],
       }),
-      prisma.siswa.count({
-        where,
-      })
+      prisma.siswa.count({ where }),
     ]);
 
-    console.log('Fetched siswa data count:', data.length);
-    console.log('Total siswa count:', total);
+    console.log("Fetched siswa data count:", data.length);
+    console.log("Total siswa count:", total);
 
     return {
       success: true,
@@ -88,7 +87,7 @@ async function siswaFindMany(context: Context) {
     console.error("Error in siswaFindMany:", error);
     return {
       success: false,
-      message: `Failed fetch siswa: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      message: `Failed fetch siswa: ${error instanceof Error ? error.message : "Unknown error"}`,
     };
   }
 }

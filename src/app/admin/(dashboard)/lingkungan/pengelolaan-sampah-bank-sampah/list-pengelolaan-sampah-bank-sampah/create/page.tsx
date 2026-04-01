@@ -1,18 +1,25 @@
 'use client';
-import pengelolaanSampahState from '@/app/admin/(dashboard)/_state/lingkungan/pengelolaan-sampah';
 import SelectIconProgram from '@/app/admin/(dashboard)/_com/selectIcon';
+import pengelolaanSampahState from '@/app/admin/(dashboard)/_state/lingkungan/pengelolaan-sampah';
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, Stack, Text, TextInput, Title, Tooltip } from '@mantine/core';
+import { Box, Button, Group, Loader, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
-
-
-
 
 function CreatePengelolaanSampahBankSampah() {
   const stateCreate = useProxy(pengelolaanSampahState.pengelolaanSampah);
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      stateCreate.create.form.name?.trim() !== '' &&
+      stateCreate.create.form.icon?.trim() !== ''
+    );
+  };
 
   const resetForm = () => {
     stateCreate.create.form = {
@@ -23,18 +30,20 @@ function CreatePengelolaanSampahBankSampah() {
 
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       await stateCreate.create.create();
       resetForm();
       router.push("/admin/lingkungan/pengelolaan-sampah-bank-sampah/list-pengelolaan-sampah-bank-sampah");
     } catch (error) {
       console.error('Error creating pengelolaan sampah:', error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" color="blue" position="bottom">
           <Button 
             variant="subtle" 
             onClick={() => router.back()} 
@@ -43,7 +52,6 @@ function CreatePengelolaanSampahBankSampah() {
           >
             <IconArrowBack color={colors['blue-button']} size={24} />
           </Button>
-        </Tooltip>
         <Title order={4} ml="sm" c="dark">
           Tambah Pengelolaan Sampah Bank Sampah
         </Title>
@@ -61,7 +69,7 @@ function CreatePengelolaanSampahBankSampah() {
           <TextInput
             label="Nama Pengelolaan Sampah"
             placeholder="Masukkan nama pengelolaan sampah"
-            defaultValue={stateCreate.create.form.name || ''}
+            value={stateCreate.create.form.name || ''}
             onChange={(e) => (stateCreate.create.form.name = e.target.value)}
             required
           />
@@ -77,16 +85,30 @@ function CreatePengelolaanSampahBankSampah() {
 
           <Group justify="right" mt="md">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

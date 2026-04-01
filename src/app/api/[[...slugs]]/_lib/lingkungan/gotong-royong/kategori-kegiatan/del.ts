@@ -25,7 +25,7 @@ const kategoriKegiatanDelete = async (context: Context) => {
 
     return {
         success: true,
-        message: "Success delete kategori produk",
+        message: "Sukses Menghapus kategori produk",
         data: kategoriKegiatan,
     }
 }

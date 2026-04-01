@@ -4,24 +4,37 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Stack,
   Text,
   TextInput,
-  Title,
-  Tooltip
+  Title
 } from '@mantine/core';
 import { DateTimePicker } from '@mantine/dates';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
 import laporanPublikState from '../../../_state/keamanan/laporan-publik';
+import { useState } from 'react';
+import { toast } from 'react-toastify';
 
 export type Status = 'Selesai' | 'Proses' | 'Gagal';
 
 function CreateLaporanPublik() {
   const stateLaporan = useProxy(laporanPublikState);
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      stateLaporan.create.form.judul?.trim() !== '' &&
+      stateLaporan.create.form.lokasi?.trim() !== '' &&
+      stateLaporan.create.form.tanggalWaktu?.trim() !== '' &&
+      stateLaporan.create.form.kronologi?.trim() !== ''
+    );
+  };
 
   const resetForm = () => {
     stateLaporan.create.form = {
@@ -33,20 +46,26 @@ function CreateLaporanPublik() {
   };
 
   const handleSubmit = async () => {
-    await stateLaporan.create.create();
-    resetForm();
-    router.push('/admin/keamanan/laporan-publik');
+    try {
+      setIsSubmitting(true);
+      await stateLaporan.create.create();
+      resetForm();
+      router.push('/admin/keamanan/laporan-publik');
+    } catch (error) {
+      console.error('Error creating laporan publik:', error);
+      toast.error('Terjadi kesalahan saat membuat laporan publik');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+     <Box px={{ base: 0, md: 'xs' }} py="xs">
       {/* Header with Back Button */}
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
-        </Tooltip>
+        <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Tambah Laporan Publik
         </Title>
@@ -63,7 +82,7 @@ function CreateLaporanPublik() {
       >
         <Stack gap="md">
           <TextInput
-            defaultValue={stateLaporan.create.form.judul}
+            value={stateLaporan.create.form.judul}
             onChange={(e) => (stateLaporan.create.form.judul = e.target.value)}
             label={<Text fw="bold" fz="sm">Judul Laporan Publik</Text>}
             placeholder="Masukkan judul laporan publik"
@@ -71,7 +90,7 @@ function CreateLaporanPublik() {
           />
 
           <TextInput
-            defaultValue={stateLaporan.create.form.lokasi}
+            value={stateLaporan.create.form.lokasi}
             onChange={(e) => (stateLaporan.create.form.lokasi = e.target.value)}
             label={<Text fw="bold" fz="sm">Lokasi Laporan Publik</Text>}
             placeholder="Masukkan lokasi laporan publik"
@@ -91,7 +110,7 @@ function CreateLaporanPublik() {
           />
 
           <TextInput
-            defaultValue={stateLaporan.create.form.kronologi}
+            value={stateLaporan.create.form.kronologi}
             onChange={(e) => (stateLaporan.create.form.kronologi = e.target.value)}
             label={<Text fw="bold" fz="sm">Kronologi Laporan Publik</Text>}
             placeholder="Masukkan kronologi laporan publik"
@@ -100,16 +119,30 @@ function CreateLaporanPublik() {
 
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

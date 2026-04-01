@@ -5,19 +5,31 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Stack,
   TextInput,
-  Title,
-  Tooltip
+  Title
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
 function CreatePendapatan() {
   const pendapatanState = useProxy(PendapatanAsliDesa.pendapatan);
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      pendapatanState.create.form.name?.trim() !== '' &&
+      pendapatanState.create.form.value !== null &&
+      pendapatanState.create.form.value > 0
+    );
+  };
 
   const formatRupiah = (value: number | string) => {
     const number = typeof value === 'number' ? value : Number(value.replace(/\D/g, ''));
@@ -40,25 +52,31 @@ function CreatePendapatan() {
   };
 
   const handleSubmit = async () => {
-    await pendapatanState.create.submit();
-    resetForm();
-    router.push('/admin/ekonomi/PADesa-pendapatan-asli-desa/pendapatan');
+    try {
+      setIsSubmitting(true);
+      await pendapatanState.create.submit();
+      resetForm();
+      router.push('/admin/ekonomi/PADesa-pendapatan-asli-desa/pendapatan');
+    } catch (error) {
+      console.error('Error creating pendapatan:', error);
+      toast.error('Gagal menambahkan jenis pendapatan');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 0, md: 'xs' }} py="xs">
       {/* Header dengan tombol back + judul */}
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button
-            variant="subtle"
-            onClick={() => router.back()}
-            p="xs"
-            radius="md"
-          >
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
-        </Tooltip>
+        <Button
+          variant="subtle"
+          onClick={() => router.back()}
+          p="xs"
+          radius="md"
+        >
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Tambah Jenis Pendapatan
         </Title>
@@ -75,7 +93,7 @@ function CreatePendapatan() {
       >
         <Stack gap="md">
           <TextInput
-            defaultValue={pendapatanState.create.form.name}
+            value={pendapatanState.create.form.name}
             onChange={(val) => {
               pendapatanState.create.form.name = val.target.value;
             }}
@@ -86,7 +104,7 @@ function CreatePendapatan() {
 
           <TextInput
             type="text"
-            defaultValue={formatRupiah(pendapatanState.create.form.value)}
+            value={formatRupiah(pendapatanState.create.form.value)}
             onChange={(val) => {
               const raw = val.currentTarget.value;
               const cleanValue = unformatRupiah(raw);
@@ -99,16 +117,30 @@ function CreatePendapatan() {
 
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

@@ -1,8 +1,7 @@
-import { Box, Card, Image, Stack, Text, Tooltip } from '@mantine/core';
-import { IconUserCircle } from '@tabler/icons-react';
-import React from 'react';
-import { Prisma } from '@prisma/client';
 import colors from '@/con/colors';
+import { Box, Card, Image, Stack, Text } from '@mantine/core';
+import { Prisma } from '@prisma/client';
+import { IconUserCircle } from '@tabler/icons-react';
 
 interface ProfileViewProps {
   data: Prisma.PejabatDesaGetPayload<{ include: { image: true } }> | null;
@@ -14,10 +13,23 @@ export default function ProfileView({ data }: ProfileViewProps) {
       <Card radius="2xl" className="glass3" py="xl" px="lg" withBorder>
         <Stack align="center" gap="sm">
           <IconUserCircle size={72} stroke={1.4} />
-          <Text fw={500} c="dimmed">
+
+          {/* TITLE EMPTY */}
+          <Text
+            fw={600}
+            c="dimmed"
+            fz={{ base: 'lg', sm: 'xl', md: 'xl' }}  
+            ta="center"
+          >
             Profil belum tersedia
           </Text>
-          <Text fz="sm" c="dimmed">
+
+          {/* DESCRIPTION EMPTY */}
+          <Text
+            fz={{ base: 'sm', sm: 'md' }}
+            c="dimmed"
+            ta="center"
+          >
             Data pejabat desa akan muncul di sini
           </Text>
         </Stack>
@@ -31,12 +43,12 @@ export default function ProfileView({ data }: ProfileViewProps) {
       align="end"
       pos="relative"
       w={{
-        base: '100%',    // mobile: full width
-        xs: '100%',      // small mobile
-        sm: '85%',       // tablet: 85%
-        md: '60%',       // laptop: 60%
-        lg: '55%',       // laptop large: 55%
-        xl: '50%'        // extra large (4K): 50%
+        base: '100%',
+        xs: '100%',
+        sm: '85%',
+        md: '60%',
+        lg: '55%',
+        xl: '50%',
       }}
       px={{ base: 'md', sm: 'lg', md: 'xl', xl: '2xl' }}
       h={{ base: 'auto', sm: '500px', md: '600px', lg: '650px', xl: '700px' }}
@@ -68,13 +80,17 @@ export default function ProfileView({ data }: ProfileViewProps) {
       ) : (
         <Stack align="center" gap="xs" w="100%" py="xl">
           <IconUserCircle size={96} stroke={1.5} />
-          <Text c="dimmed" fz="sm">
+          <Text
+            c="dimmed"
+            fz={{ base: 'sm', sm: 'md' }}
+            ta="center"
+          >
             Belum ada foto
           </Text>
         </Stack>
       )}
 
-      {/* Box nama dan jabatan - responsive positioning */}
+      {/* Box nama & jabatan */}
       <Box
         pos="absolute"
         bottom={{ base: -30, sm: -25, md: -20 }}
@@ -95,19 +111,21 @@ export default function ProfileView({ data }: ProfileViewProps) {
             backgroundColor: 'rgba(255, 255, 255, 0.95)',
           }}
         >
-          <Tooltip label="Jabatan Resmi" withArrow>
-            <Text
-              fz={{ base: 'xs', sm: 'sm' }}
-              c="dimmed"
-              lineClamp={1}
-            >
-              {data.position || 'Tidak ada jabatan'}
-            </Text>
-          </Tooltip>
+
+          {/* POSITION / JABATAN */}
+          <Text
+            fz={{ base: 'xs', sm: 'sm', md: 'md' }}
+            c="dimmed"
+            lineClamp={1}
+          >
+            {data.position || 'Tidak ada jabatan'}
+          </Text>
+
+          {/* NAME */}
           <Text
             c={colors['blue-button']}
             fw={700}
-            fz={{ base: 'lg', sm: 'xl' }}
+            fz={{ base: 'lg', sm: 'xl', md: 'xl', lg: '2xl' }}
             mt={4}
             lineClamp={2}
           >

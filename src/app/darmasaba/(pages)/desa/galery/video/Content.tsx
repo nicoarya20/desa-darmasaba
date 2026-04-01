@@ -4,29 +4,29 @@ import stateGallery from '@/app/admin/(dashboard)/_state/desa/gallery';
 import colors from '@/con/colors';
 import {
   Box,
+  Button,
   Center,
+  Group,
   Pagination,
   Paper,
   SimpleGrid,
-  Spoiler,
   Stack,
   Text,
+  Title
 } from '@mantine/core';
-import { useCallback, useEffect, useState } from 'react';
+import { useTransitionRouter } from 'next-view-transitions';
+import { useCallback, useEffect } from 'react';
 import { useSnapshot } from 'valtio';
 
 export default function VideoContent() {
-  // ✅ expanded state per index
-  const [expandedMap, setExpandedMap] = useState<Record<number, boolean>>({});
   const videoState = useSnapshot(stateGallery.video);
+  const router = useTransitionRouter();
   const { data, page, totalPages, loading } = videoState.findMany;
 
-  // Handle search and pagination changes
   const loadData = useCallback((pageNum: number, searchTerm: string) => {
-    stateGallery.video.findMany.load(pageNum, 10, searchTerm.trim());
+    stateGallery.video.findMany.load(pageNum, 3, searchTerm.trim());
   }, []);
 
-  // Initial load and URL change handler
   useEffect(() => {
     const handleRouteChange = () => {
       const urlParams = new URLSearchParams(window.location.search);
@@ -56,19 +56,14 @@ export default function VideoContent() {
     loadData(newPage, search);
   };
 
-  const toggleExpanded = (index: number, value: boolean) => {
-    setExpandedMap((prev) => ({
-      ...prev,
-      [index]: value,
-    }));
-  };
-
   const dataVideo = data || [];
 
   if (loading && !data) {
     return (
       <Box py={10}>
-        <Text>Memuat Video...</Text>
+        <Text fz={{ base: 'sm', md: 'md' }} c="dimmed" ta="center">
+          Memuat Video...
+        </Text>
       </Box>
     );
   }
@@ -83,60 +78,71 @@ export default function VideoContent() {
               p="md"
               radius={26}
               bg={colors['white-trans-1']}
-              w={{ base: '100%', md: '100%' }}
+              w="100%"
             >
-              <Box>
-                <Center>
-                  <Box
-                    component="iframe"
-                    src={convertToEmbedUrl(v.linkVideo)}
-                    width="100%"
-                    height={300}
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    style={{ borderRadius: 8 }}
-                  />
-                </Center>
-              </Box>
-              <Box>
-                <Stack gap="sm" py={10}>
-                  <Text fz="sm" c="dimmed">
-                    {new Date(v.createdAt).toLocaleDateString('id-ID', {
-                      day: 'numeric',
-                      month: 'long',
-                      year: 'numeric',
-                    })}
-                  </Text>
-                  <Text fw="bold" fz="sm" lineClamp={1}>
-                    {v.name}
-                  </Text>
-                  <Spoiler
-                    showLabel={
-                      <Text fw="bold" fz="sm" c={colors['blue-button']}>
-                        Show more
-                      </Text>
-                    }
-                    hideLabel={
-                      <Text fw="bold" fz="sm" c={colors['blue-button']}>
-                        Hide details
-                      </Text>
-                    }
-                    expanded={expandedMap[k] || false}
-                    onExpandedChange={(val) => toggleExpanded(k, val)}
+              <Center>
+                <Box
+                  component="iframe"
+                  src={convertToEmbedUrl(v.linkVideo)}
+                  width="100%"
+                  height={300}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  style={{ borderRadius: 8 }}
+                />
+              </Center>
+
+              <Stack gap="sm" py={10}>
+                {/* Tanggal: Caption */}
+                <Text
+                  fz={{ base: 12, md: 14 }}
+                  c="dimmed"
+                  ta="left"
+                >
+                  {new Date(v.createdAt).toLocaleDateString('id-ID', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric',
+                  })}
+                </Text>
+
+                {/* Judul Video: Subsection (H3) */}
+                <Title
+                  order={3}
+                  c="dark"
+                  ta="left"
+                  lh={1.3}
+                  style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+                >
+                  {v.name}
+                </Title>
+
+                {/* Deskripsi: Body kecil */}
+                <Text
+                  ta="justify"
+                  fz={{ base: 13, md: 14 }}
+                  c="dimmed"
+                  style={{ wordBreak: 'break-word' }}
+                  lineClamp={3}
+                >
+                  <span dangerouslySetInnerHTML={{ __html: v.deskripsi }} />
+                </Text>
+
+                <Group justify="right">
+                  <Button
+                    onClick={() => router.push(`/darmasaba/desa/galery/video/${v.id}`)}
+                    bg={colors['blue-button']}
+                    fz={{ base: 'sm', md: 'md' }}
                   >
-                    <Text
-                      ta="justify"
-                      fz="sm"
-                      dangerouslySetInnerHTML={{ __html: v.deskripsi }}
-                      style={{wordBreak: "break-word", whiteSpace: "normal"}}
-                    />
-                  </Spoiler>
-                </Stack>
-              </Box>
+                    Detail
+                  </Button>
+                </Group>
+              </Stack>
             </Paper>
           </Box>
         ))}
       </SimpleGrid>
+
       <Center>
         <Pagination
           value={page}
@@ -150,7 +156,6 @@ export default function VideoContent() {
   );
 }
 
-// ✅ Fix: convert YouTube URL ke embed
 function convertToEmbedUrl(youtubeUrl: string): string {
   try {
     const url = new URL(youtubeUrl);

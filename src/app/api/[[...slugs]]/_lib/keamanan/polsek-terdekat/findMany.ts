@@ -28,6 +28,11 @@ async function polsekTerdekatFindMany(context: Context) {
         where,
         include: {
           layananPolsek: true,
+          LayananToPolsek: {
+            include: {
+              layanan: true,
+            }
+          }
         },
         skip,
         take: limit,

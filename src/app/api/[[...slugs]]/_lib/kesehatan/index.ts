@@ -20,10 +20,11 @@ import Kelahiran from "./data_kesehatan_warga/persentase_kelahiran_kematian/kela
 import Kematian from "./data_kesehatan_warga/persentase_kelahiran_kematian/kematian";
 import DokterTenagaMedis from "./data_kesehatan_warga/fasilitas_kesehatan/dokter-tenaga-medis";
 import PendaftaranJadwalKegiatan from "./data_kesehatan_warga/jadwal_kegiatan/pendaftaran";
+import TarifLayanan from "./data_kesehatan_warga/fasilitas_kesehatan/tarif-layanan";
 
 
 const Kesehatan = new Elysia({
-  prefix: "/api/kesehatan",
+  prefix: "/kesehatan",
   tags: ["Kesehatan"],
 })
 .use(PersentaseKelahiranKematian)
@@ -46,5 +47,6 @@ const Kesehatan = new Elysia({
 .use(Kelahiran)
 .use(Kematian)
 .use(DokterTenagaMedis)
+.use(TarifLayanan)
 .use(PendaftaranJadwalKegiatan)
 export default Kesehatan;

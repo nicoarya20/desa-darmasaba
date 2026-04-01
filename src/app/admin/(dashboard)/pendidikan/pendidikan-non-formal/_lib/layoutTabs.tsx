@@ -1,10 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import colors from '@/con/colors';
-import { ScrollArea, Stack, Tabs, TabsList, TabsPanel, TabsTab, Title, Tooltip } from '@mantine/core';
+import { Box, ScrollArea, Stack, Tabs, TabsList, TabsPanel, TabsTab, Title } from '@mantine/core';
+import { IconBook2, IconMapPin, IconSchool } from '@tabler/icons-react';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
-import { IconSchool, IconMapPin, IconBook2 } from '@tabler/icons-react';
 
 function LayoutTabs({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -15,22 +15,19 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
       label: "Tujuan Program",
       value: "tujuan-program",
       href: "/admin/pendidikan/pendidikan-non-formal/tujuan-program",
-      icon: <IconSchool size={18} stroke={1.8} />,
-      tooltip: "Atur tujuan program pendidikan non formal",
+      icon: <IconSchool size={18} stroke={1.8} />
     },
     {
       label: "Tempat Kegiatan",
       value: "tempat-kegiatan",
       href: "/admin/pendidikan/pendidikan-non-formal/tempat-kegiatan",
-      icon: <IconMapPin size={18} stroke={1.8} />,
-      tooltip: "Kelola daftar tempat kegiatan",
+      icon: <IconMapPin size={18} stroke={1.8} />
     },
     {
       label: "Jenis Program yang Diselenggarakan",
       value: "jenis-program-yang-diselenggarakan",
       href: "/admin/pendidikan/pendidikan-non-formal/jenis-program-yang-diselenggarakan",
-      icon: <IconBook2 size={18} stroke={1.8} />,
-      tooltip: "Lihat & atur jenis program yang tersedia",
+      icon: <IconBook2 size={18} stroke={1.8} />
     },
   ];
 
@@ -66,42 +63,76 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
         radius="lg"
         keepMounted={false}
       >
-        <ScrollArea type="auto" offsetScrollbars>
-          <TabsList
-            p="sm"
-            style={{
-              background: "linear-gradient(135deg, #e7ebf7, #f9faff)",
-              borderRadius: "1rem",
-              boxShadow: "inset 0 0 10px rgba(0,0,0,0.05)",
-              display: "flex",
-              flexWrap: "nowrap",
-              gap: "0.5rem",
-              paddingInline: "0.5rem", // ✅ biar nggak nempel ke tepi
-          }}
-          >
-            {tabs.map((tab, i) => (
-              <Tooltip
-                key={i}
-                label={tab.tooltip}
-                position="bottom"
-                withArrow
-                transitionProps={{ transition: 'pop', duration: 200 }}
-              >
+        <Box visibleFrom='md' pb={10}>
+          <ScrollArea type="auto" offsetScrollbars>
+            <TabsList
+              p="sm"
+              style={{
+                background: "linear-gradient(135deg, #e7ebf7, #f9faff)",
+                borderRadius: "1rem",
+                boxShadow: "inset 0 0 10px rgba(0,0,0,0.05)",
+                display: "flex",
+                flexWrap: "nowrap",
+                gap: "0.5rem",
+                paddingInline: "0.5rem", // ✅ biar nggak nempel ke tepi
+              }}
+            >
+              {tabs.map((tab, i) => (
                 <TabsTab
+                  key={i}
                   value={tab.value}
                   leftSection={tab.icon}
                   style={{
                     fontWeight: 600,
                     fontSize: "0.9rem",
                     transition: "all 0.2s ease",
+                    flexShrink: 0, // ✅ jangan mengecil aneh-aneh
                   }}
                 >
                   {tab.label}
                 </TabsTab>
-              </Tooltip>
-            ))}
-          </TabsList>
-        </ScrollArea>
+              ))}
+            </TabsList>
+          </ScrollArea>
+        </Box>
+
+        <Box hiddenFrom='md' pb={10}>
+          <ScrollArea
+            type="auto"
+            offsetScrollbars={false}
+            w="100%"
+          >
+
+            <TabsList
+              p="xs" // lebih kecil
+              style={{
+                background: "linear-gradient(135deg, #e7ebf7, #f9faff)",
+                borderRadius: "1rem",
+                display: "flex",
+                flexWrap: "nowrap",
+                gap: "0.5rem",
+                width: "max-content", // ⬅️ kunci
+                maxWidth: "100%",     // ⬅️ penting
+              }}
+            >
+              {tabs.map((tab, i) => (
+                <TabsTab
+                  key={i}
+                  value={tab.value}
+                  leftSection={tab.icon}
+                  style={{
+                    fontWeight: 600,
+                    fontSize: "0.9rem",
+                    paddingInline: "0.75rem", // ⬅️ lebih ramping
+                    flexShrink: 0, // ✅ jangan mengecil aneh-aneh
+                  }}
+                >
+                  {tab.label}
+                </TabsTab>
+              ))}
+            </TabsList>
+          </ScrollArea>
+        </Box>
 
         {tabs.map((tab, i) => (
           <TabsPanel

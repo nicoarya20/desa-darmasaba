@@ -4,6 +4,7 @@ import sdgsDesaDelete from "./del";
 import sdgsDesaFindMany from "./findMany";
 import sdgsDesaFindUnique from "./findUnique";
 import sdgsDesaUpdate from "./updt";
+import sdgsDesaFindManyAll from "./findManyAll";
 
 const SDGSDesa = new Elysia({
   prefix: "/sdgsdesa",
@@ -12,6 +13,9 @@ const SDGSDesa = new Elysia({
 
   // ✅ Find all
   .get("/findMany", sdgsDesaFindMany)
+
+  // ✅ Find all
+  .get("/findManyAll", sdgsDesaFindManyAll)
 
   // ✅ Find by ID
   .get("/:id", sdgsDesaFindUnique)

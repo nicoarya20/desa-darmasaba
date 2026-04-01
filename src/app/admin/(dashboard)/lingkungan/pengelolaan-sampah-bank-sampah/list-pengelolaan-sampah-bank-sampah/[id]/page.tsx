@@ -1,9 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
-import pengelolaanSampahState from '@/app/admin/(dashboard)/_state/lingkungan/pengelolaan-sampah';
 import SelectIconProgramEdit from '@/app/admin/(dashboard)/_com/selectIconEdit';
+import pengelolaanSampahState from '@/app/admin/(dashboard)/_state/lingkungan/pengelolaan-sampah';
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, Stack, Text, TextInput, Title, Tooltip } from '@mantine/core';
+import { Box, Button, Group, Loader, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -21,12 +21,26 @@ function EditProgramKreatifDesa() {
   const stateSampah = useProxy(pengelolaanSampahState.pengelolaanSampah)
   const params = useParams()
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // State lokal untuk form controlled
   const [formData, setFormData] = useState<FormProgramKreatif>({
     name: '',
     icon: '',
   });
+
+  const [originalData, setOriginalData] = useState<FormProgramKreatif>({
+    name: '',
+    icon: '',
+  });
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      formData.name?.trim() !== '' &&
+      formData.icon?.trim() !== ''
+    );
+  };
 
   useEffect(() => {
     const loadProgramKreatif = async () => {
@@ -41,6 +55,10 @@ function EditProgramKreatifDesa() {
             name: data.name,
             icon: data.icon,
           });
+          setOriginalData({
+            name: data.name,
+            icon: data.icon,
+          });
         }
       } catch (error) {
         console.error("Error loading pengelolaan sampah:", error);
@@ -51,8 +69,17 @@ function EditProgramKreatifDesa() {
     loadProgramKreatif();
   }, [params?.id]);
 
+  const handleResetForm = () => {
+    setFormData({
+      name: originalData.name,
+      icon: originalData.icon,
+    });
+    toast.info("Form dikembalikan ke data awal");
+  };
+
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       // Update global state HANYA saat submit
       stateSampah.update.form = {
         name: formData.name.trim(),
@@ -65,17 +92,17 @@ function EditProgramKreatifDesa() {
     } catch (error) {
       console.error("Error updating pengelolaan sampah:", error);
       toast.error(error instanceof Error ? error.message : "Gagal memperbarui data pengelolaan sampah");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+   <Box px={{ base: 0, md: 'lg' }} py="xs">
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
-        </Tooltip>
+        <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Edit Pengelolaan Sampah Bank Sampah
         </Title>
@@ -110,16 +137,30 @@ function EditProgramKreatifDesa() {
 
           <Group justify="right" mt="md">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

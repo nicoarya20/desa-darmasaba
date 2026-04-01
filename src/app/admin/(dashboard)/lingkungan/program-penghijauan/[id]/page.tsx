@@ -1,13 +1,19 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, Skeleton, Stack, Text, Tooltip } from '@mantine/core';
+import { Box, Button, Group, Paper, Skeleton, Stack, Text } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import {
-  IconArrowBack, IconChartLine, IconChristmasTreeFilled, IconClipboard,
-  IconEdit, IconHomeEco, IconLeaf, IconRecycle, IconScale,
-  IconShieldFilled, IconTent, IconTrash, IconTrendingUp,
-  IconTrophy, IconTruck
+  IconAlertTriangle,
+  IconAmbulance,
+  IconArrowBack, IconBook, IconBuilding, IconBuildingCommunity, IconCash, IconChartLine, IconChristmasTreeFilled, IconClipboard,
+  IconDroplet,
+  IconEdit, IconFileText, IconFiretruck, IconFirstAidKit, IconHome, IconHomeEco, IconHospital, IconInfoCircle, IconLeaf, IconLifebuoy, IconMessageReport, IconPhoneCall, IconRecycle, IconRun, IconScale,
+  IconSchool,
+  IconShield,
+  IconShieldFilled, IconShoppingCart, IconStethoscope, IconTent, IconTrash, IconTree, IconTrendingUp,
+  IconTrophy, IconTruck,
+  IconUsers
 } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import React, { useState } from 'react';
@@ -36,6 +42,37 @@ function DetailProgramPenghijauan() {
     sumberOksigen: IconChristmasTreeFilled,
     ekonomiBerkelanjutan: IconTrendingUp,
     mencegahBencana: IconShieldFilled,
+    rumah: IconHome,
+    pohon: IconTree,
+    air: IconDroplet,
+    bantuan: IconCash,
+    pelatihan: IconSchool,
+    subsidi: IconShoppingCart,
+    layananKesehatan: IconHospital,
+
+    // ===== Keamanan & Darurat =====
+    polisi: IconShieldFilled,
+    ambulans: IconAmbulance,
+    pemadam: IconFiretruck,
+    darurat: IconAlertTriangle,
+    sar: IconLifebuoy,
+    evakuasi: IconRun,
+    keamanan: IconShield,
+    teleponDarurat: IconPhoneCall,
+
+    // ===== Kesehatan =====
+    rumahSakit: IconHospital,
+    puskesmas: IconFirstAidKit,
+    klinik: IconStethoscope,
+
+    // ===== Pemerintahan =====
+    bangunan: IconBuilding,
+    kantorDesa: IconBuildingCommunity,
+    administrasi: IconFileText,
+    informasi: IconInfoCircle,
+    pengaduan: IconMessageReport,
+    layananPublik: IconUsers,
+    book: IconBook
   };
 
   useShallowEffect(() => {
@@ -62,7 +99,7 @@ function DetailProgramPenghijauan() {
   const data = stateProgramPenghijauan.findUnique.data
 
   return (
-    <Box py={10}>
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Tombol kembali */}
       <Button
         variant="subtle"
@@ -76,7 +113,7 @@ function DetailProgramPenghijauan() {
       {/* Konten detail */}
       <Paper
         withBorder
-        w={{ base: "100%", md: "60%" }}
+        w={{ base: "100%", md: "70%" }}
         bg={colors['white-1']}
         p="lg"
         radius="md"
@@ -112,37 +149,35 @@ function DetailProgramPenghijauan() {
 
               <Box>
                 <Text fz="lg" fw="bold">Deskripsi</Text>
-                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data?.deskripsi || '-' }} />
+                <Box pl={5}>
+                  <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data?.deskripsi || '-' }} />
+                </Box>
               </Box>
 
               {/* Tombol aksi */}
               <Group gap="sm" mt="md">
-                <Tooltip label="Hapus Program" withArrow position="top">
-                  <Button
-                    color="red"
-                    onClick={() => {
-                      setSelectedId(data.id);
-                      setModalHapus(true);
-                    }}
-                    variant="light"
-                    radius="md"
-                    size="md"
-                  >
-                    <IconTrash size={20} />
-                  </Button>
-                </Tooltip>
+                <Button
+                  color="red"
+                  onClick={() => {
+                    setSelectedId(data.id);
+                    setModalHapus(true);
+                  }}
+                  variant="light"
+                  radius="md"
+                  size="md"
+                >
+                  <IconTrash size={20} />
+                </Button>
 
-                <Tooltip label="Edit Program" withArrow position="top">
-                  <Button
-                    color="green"
-                    onClick={() => router.push(`/admin/lingkungan/program-penghijauan/${data.id}/edit`)}
-                    variant="light"
-                    radius="md"
-                    size="md"
-                  >
-                    <IconEdit size={20} />
-                  </Button>
-                </Tooltip>
+                <Button
+                  color="green"
+                  onClick={() => router.push(`/admin/lingkungan/program-penghijauan/${data.id}/edit`)}
+                  variant="light"
+                  radius="md"
+                  size="md"
+                >
+                  <IconEdit size={20} />
+                </Button>
               </Group>
             </Stack>
           </Paper>
@@ -155,7 +190,7 @@ function DetailProgramPenghijauan() {
         onClose={() => setModalHapus(false)}
         onConfirm={handleHapus}
         text="Apakah Anda yakin ingin menghapus program penghijauan ini?"
-      /> 
+      />
     </Box>
   );
 }

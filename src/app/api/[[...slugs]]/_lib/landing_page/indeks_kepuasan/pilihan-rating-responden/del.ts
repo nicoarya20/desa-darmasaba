@@ -11,6 +11,6 @@ export default async function pilihanRatingRespondenDelete(context: Context) {
     return {
         status: 200,
         success: true,
-        message: "Success delete pilihan rating responden",
+        message: "Sukses Menghapus pilihan rating responden",
     };
 }

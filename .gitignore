@@ -29,7 +29,15 @@ yarn-error.log*
 .pnpm-debug.log*
 
 # env 
-.env*
+# env local files (keep .env.example)
+.env.local
+.env*.local
+.env.production
+.env.development
+!.env.example
+
+# QC
+QC
 
 # vercel
 .vercel
@@ -47,8 +55,6 @@ next-env.d.ts
 # cache
 /cache
 
-
-.env.*
 
 *.tar.gz
 

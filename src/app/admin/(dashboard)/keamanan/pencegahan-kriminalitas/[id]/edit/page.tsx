@@ -8,12 +8,12 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Stack,
   Text,
   TextInput,
-  Title,
-  Tooltip,
+  Title
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -25,6 +25,7 @@ function EditPencegahanKriminalitas() {
   const router = useRouter();
   const params = useParams();
   const kriminalitasState = useProxy(pencegahanKriminalitasState);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [formData, setFormData] = useState({
     judul: '',
@@ -32,6 +33,30 @@ function EditPencegahanKriminalitas() {
     deskripsiSingkat: '',
     linkVideo: '',
   });
+
+  const [originalData, setOriginalData] = useState({
+    judul: '',
+    deskripsi: '',
+    deskripsiSingkat: '',
+    linkVideo: '',
+  });
+
+  // Helper function to check if HTML content is empty
+  const isHtmlEmpty = (html: string) => {
+    // Remove all HTML tags and check if there's any text content
+    const textContent = html.replace(/<[^>]*>/g, '').trim();
+    return textContent === '';
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      formData.judul?.trim() !== '' &&
+      !isHtmlEmpty(formData.deskripsiSingkat) &&
+      !isHtmlEmpty(formData.deskripsi) &&
+      convertYoutubeUrlToEmbed(formData.linkVideo) !== ''
+    );
+  };
 
   // load data hanya sekali pas id berubah
   useEffect(() => {
@@ -43,6 +68,12 @@ function EditPencegahanKriminalitas() {
         const data = await kriminalitasState.update.load(id);
         if (data) {
           setFormData({
+            judul: data.judul ?? '',
+            deskripsi: data.deskripsi ?? '',
+            deskripsiSingkat: data.deskripsiSingkat ?? '',
+            linkVideo: data.linkVideo ?? '',
+          });
+          setOriginalData({
             judul: data.judul ?? '',
             deskripsi: data.deskripsi ?? '',
             deskripsiSingkat: data.deskripsiSingkat ?? '',
@@ -66,6 +97,16 @@ function EditPencegahanKriminalitas() {
         setFormData((prev) => ({ ...prev, [field]: e.target.value }));
       };
 
+  const handleResetForm = () => {
+    setFormData({
+      judul: originalData.judul,
+      deskripsi: originalData.deskripsi,
+      deskripsiSingkat: originalData.deskripsiSingkat,
+      linkVideo: originalData.linkVideo,
+    });
+    toast.info("Form dikembalikan ke data awal");
+  };
+
   const handleSubmit = async () => {
     const converted = convertYoutubeUrlToEmbed(formData.linkVideo);
     if (!converted) {
@@ -74,6 +115,7 @@ function EditPencegahanKriminalitas() {
     }
 
     try {
+      setIsSubmitting(true);
       // update global state saat submit
       kriminalitasState.update.form = {
         judul: formData.judul,
@@ -89,23 +131,23 @@ function EditPencegahanKriminalitas() {
     } catch (error) {
       console.error('Error updating pencegahan kriminalitas:', error);
       toast.error('Terjadi kesalahan saat memperbarui data');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 0, md: 'xs' }} py="xs">
       {/* Back button + Title */}
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button
-            variant="subtle"
-            onClick={() => router.back()}
-            p="xs"
-            radius="md"
-          >
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
-        </Tooltip>
+        <Button
+          variant="subtle"
+          onClick={() => router.back()}
+          p="xs"
+          radius="md"
+        >
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Edit Pencegahan Kriminalitas
         </Title>
@@ -181,16 +223,30 @@ function EditPencegahanKriminalitas() {
           {/* Action button */}
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

@@ -3,7 +3,7 @@
 
 import gotongRoyongState from '@/app/admin/(dashboard)/_state/lingkungan/gotong-royong';
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, Stack, Text, TextInput, Title, Tooltip } from '@mantine/core';
+import { Box, Button, Group, Loader, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -15,9 +15,16 @@ function EditKategoriKegiatan() {
   const params = useParams();
   const id = params?.id as string;
   const stateKategori = useProxy(gotongRoyongState.kategoriKegiatan);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [formData, setFormData] = useState({ nama: '' });
+  const [originalData, setOriginalData] = useState({ nama: '' });
   const [loading, setLoading] = useState(true);
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return formData.nama?.trim() !== '';
+  };
 
   // Load data once
   useEffect(() => {
@@ -29,6 +36,7 @@ function EditKategoriKegiatan() {
         if (data) {
           stateKategori.edit.id = id;
           setFormData({ nama: data.nama || '' });
+          setOriginalData({ nama: data.nama || '' });
         }
       } catch (err) {
         console.error('Error loading kategori kegiatan:', err);
@@ -53,6 +61,7 @@ function EditKategoriKegiatan() {
     }
 
     try {
+      setIsSubmitting(true);
       stateKategori.edit.form = { nama: trimmedNama };
       if (!stateKategori.edit.id) stateKategori.edit.id = id;
 
@@ -64,19 +73,26 @@ function EditKategoriKegiatan() {
     } catch (err) {
       console.error('Error updating kategori kegiatan:', err);
       toast.error('Gagal memperbarui kategori kegiatan');
+    } finally {
+      setIsSubmitting(false);
     }
+  };
+
+  const handleResetForm = () => {
+    setFormData({
+      nama: originalData.nama,
+    });
+    toast.info('Form dikembalikan ke data awal');
   };
 
   if (loading) return <Text>Loading...</Text>;
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       <Group mb="md" align="center">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button variant="subtle" p="xs" radius="md" onClick={() => router.back()}>
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
-        </Tooltip>
+        <Button variant="subtle" p="xs" radius="md" onClick={() => router.back()}>
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Edit Kategori Kegiatan
         </Title>
@@ -101,16 +117,30 @@ function EditKategoriKegiatan() {
 
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

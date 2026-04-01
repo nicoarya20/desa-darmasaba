@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import colors from '@/con/colors';
-import { ScrollArea, Stack, Tabs, TabsList, TabsPanel, TabsTab, Title, Tooltip } from '@mantine/core';
+import { Box, ScrollArea, Stack, Tabs, TabsList, TabsPanel, TabsTab, Title } from '@mantine/core';
 import { IconActivity, IconBuildingHospital, IconCalendarEvent, IconGauge, IconNotes } from '@tabler/icons-react';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
@@ -17,36 +17,31 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
       label: "Presentase Kelahiran & Kematian",
       value: "presentasekelahiran&kematian",
       href: "/admin/kesehatan/data-kesehatan-warga/persentase_data_kelahiran_kematian",
-      icon: <IconActivity size={18} stroke={1.8} />,
-      tooltip: "Lihat data kelahiran dan kematian"
+      icon: <IconActivity size={18} stroke={1.8} />
     },
     {
-      label: "Grafik Hasil Kepuasan Masyarakat",
-      value: "grafikhasilkepuasan",
-      href: "/admin/kesehatan/data-kesehatan-warga/grafik_hasil_kepuasan",
-      icon: <IconGauge size={18} stroke={1.8} />,
-      tooltip: "Grafik kepuasan masyarakat terhadap pelayanan"
+      label: "Penderita Penyakit",
+      value: "penderitapenyakit",
+      href: "/admin/kesehatan/data-kesehatan-warga/penderita_penyakit",
+      icon: <IconGauge size={18} stroke={1.8} />
     },
     {
       label: "Fasilitas Kesehatan",
       value: "fasilitaskesehatan",
       href: "/admin/kesehatan/data-kesehatan-warga/fasilitas_kesehatan",
-      icon: <IconBuildingHospital size={18} stroke={1.8} />,
-      tooltip: "Data fasilitas kesehatan desa"
+      icon: <IconBuildingHospital size={18} stroke={1.8} />
     },
     {
       label: "Jadwal Kegiatan",
       value: "jadwalkegiatan",
       href: "/admin/kesehatan/data-kesehatan-warga/jadwal_kegiatan",
-      icon: <IconCalendarEvent size={18} stroke={1.8} />,
-      tooltip: "Atur jadwal kegiatan kesehatan"
+      icon: <IconCalendarEvent size={18} stroke={1.8} />
     },
     {
       label: "Artikel Kesehatan",
       value: "artikelkesehatan",
       href: "/admin/kesehatan/data-kesehatan-warga/artikel_kesehatan",
-      icon: <IconNotes size={18} stroke={1.8} />,
-      tooltip: "Artikel & informasi seputar kesehatan"
+      icon: <IconNotes size={18} stroke={1.8} />
     },
   ];
 
@@ -86,42 +81,76 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
         keepMounted={false}
       >
         {/* ✅ Scroll horizontal wrapper */}
-        <ScrollArea type="auto" offsetScrollbars>
-          <TabsList
-            p="sm"
-            style={{
-              background: "linear-gradient(135deg, #e7ebf7, #f9faff)",
-              borderRadius: "1rem",
-              boxShadow: "inset 0 0 10px rgba(0,0,0,0.05)",
-              display: "flex",
-              flexWrap: "nowrap",
-              gap: "0.5rem",
-              paddingInline: "0.5rem", // ✅ biar nggak nempel ke tepi
-            }}
-          >
-            {tabs.map((tab, i) => (
-              <Tooltip
-                key={i}
-                label={tab.tooltip}
-                position="bottom"
-                withArrow
-                transitionProps={{ transition: 'pop', duration: 200 }}
-              >
+        <Box visibleFrom='md' pb={10}>
+          <ScrollArea type="auto" offsetScrollbars>
+            <TabsList
+              p="sm"
+              style={{
+                background: "linear-gradient(135deg, #e7ebf7, #f9faff)",
+                borderRadius: "1rem",
+                boxShadow: "inset 0 0 10px rgba(0,0,0,0.05)",
+                display: "flex",
+                flexWrap: "nowrap",
+                gap: "0.5rem",
+                paddingInline: "0.5rem", // ✅ biar nggak nempel ke tepi
+              }}
+            >
+              {tabs.map((tab, i) => (
                 <TabsTab
+                  key={i}
                   value={tab.value}
                   leftSection={tab.icon}
                   style={{
                     fontWeight: 600,
                     fontSize: "0.9rem",
                     transition: "all 0.2s ease",
+                    flexShrink: 0, // ✅ jangan mengecil aneh-aneh
                   }}
                 >
                   {tab.label}
                 </TabsTab>
-              </Tooltip>
-            ))}
-          </TabsList>
-        </ScrollArea>
+              ))}
+            </TabsList>
+          </ScrollArea>
+        </Box>
+
+        <Box hiddenFrom='md' pb={10}>
+          <ScrollArea
+            type="auto"
+            offsetScrollbars={false}
+            w="100%"
+          >
+
+            <TabsList
+              p="xs" // lebih kecil
+              style={{
+                background: "linear-gradient(135deg, #e7ebf7, #f9faff)",
+                borderRadius: "1rem",
+                display: "flex",
+                flexWrap: "nowrap",
+                gap: "0.5rem",
+                width: "max-content", // ⬅️ kunci
+                maxWidth: "100%",     // ⬅️ penting
+              }}
+            >
+              {tabs.map((tab, i) => (
+                <TabsTab
+                  key={i}
+                  value={tab.value}
+                  leftSection={tab.icon}
+                  style={{
+                    fontWeight: 600,
+                    fontSize: "0.9rem",
+                    paddingInline: "0.75rem", // ⬅️ lebih ramping
+                    flexShrink: 0, // ✅ jangan mengecil aneh-aneh
+                  }}
+                >
+                  {tab.label}
+                </TabsTab>
+              ))}
+            </TabsList>
+          </ScrollArea>
+        </Box>
 
 
         {tabs.map((tab, i) => (
@@ -139,7 +168,7 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
           </TabsPanel>
         ))}
       </Tabs>
-    </Stack>
+    </Stack >
   );
 }
 

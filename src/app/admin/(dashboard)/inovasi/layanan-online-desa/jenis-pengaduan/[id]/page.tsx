@@ -6,11 +6,11 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Stack,
   TextInput,
-  Title,
-  Tooltip,
+  Title
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -23,8 +23,13 @@ function EditJenisPengaduan() {
   const params = useParams();
   const id = params?.id as string;
   const state = useProxy(layananonlineDesa.jenisPengaduan);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [formData, setFormData] = useState({
+    nama: '',
+  });
+
+  const [originalData, setOriginalData] = useState({
     nama: '',
   });
 
@@ -39,6 +44,9 @@ function EditJenisPengaduan() {
         if (data) {
           state.edit.id = id; // inject id ke state global (hanya sekali)
           setFormData({
+            nama: data.nama || '',
+          });
+          setOriginalData({
             nama: data.nama || '',
           });
         }
@@ -58,6 +66,13 @@ function EditJenisPengaduan() {
     }));
   };
 
+  const handleResetForm = () => {
+    setFormData({
+      nama: originalData.nama,
+    });
+    toast.info('Form dikembalikan ke data awal');
+  };
+
   const handleSubmit = async () => {
     if (!formData.nama.trim()) {
       toast.error('Nama jenis pengaduan tidak boleh kosong');
@@ -75,6 +90,7 @@ function EditJenisPengaduan() {
     }
 
     try {
+      setIsSubmitting(true);
       const success = await state.edit.update();
 
       if (success) {
@@ -83,23 +99,23 @@ function EditJenisPengaduan() {
     } catch (error) {
       console.error('Error updating jenis pengaduan:', error);
       // toast ditangani di dalam state.update
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Header */}
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button
-            variant="subtle"
-            onClick={() => router.back()}
-            p="xs"
-            radius="md"
-          >
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
-        </Tooltip>
+        <Button
+          variant="subtle"
+          onClick={() => router.back()}
+          p="xs"
+          radius="md"
+        >
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Edit Jenis Pengaduan
         </Title>
@@ -125,6 +141,17 @@ function EditJenisPengaduan() {
 
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
@@ -134,7 +161,7 @@ function EditJenisPengaduan() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

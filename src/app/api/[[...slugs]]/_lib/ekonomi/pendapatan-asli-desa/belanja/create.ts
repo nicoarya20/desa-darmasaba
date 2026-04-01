@@ -22,7 +22,7 @@ export default async function belanjaCreate(context: Context) {
     });
     return {
         success: true,
-        message: "Success create belanja",
+        message: "Sukses menambahkan belanja",
         data: created,
     };
 }

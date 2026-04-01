@@ -28,6 +28,6 @@ export default async function respondenDelete(context: Context) {
     return {
         status: 200,
         success: true,
-        message: "Success delete responden",
+        message: "Sukses Menghapus responden",
 };
 }

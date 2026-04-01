@@ -1,6 +1,6 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Group, Image, Paper, Skeleton, Stack, Text, Tooltip } from '@mantine/core';
+import { Box, Button, Group, Image, Paper, Skeleton, Stack, Text } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -40,7 +40,7 @@ function DetailKontakDarurat() {
   const data = state.findUnique.data;
 
   return (
-    <Box py={10}>
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Tombol Back */}
       <Button
         variant="subtle"
@@ -54,7 +54,7 @@ function DetailKontakDarurat() {
       {/* Wrapper Detail */}
       <Paper
         withBorder
-        w={{ base: "100%", md: "50%" }}
+        w={{ base: "100%", md: "70%" }}
         bg={colors['white-1']}
         p="lg"
         radius="md"
@@ -73,7 +73,7 @@ function DetailKontakDarurat() {
               </Box>
 
               <Box>
-                <Text fz="lg" fw="bold">Whatsapp</Text>
+                <Text fz="lg" fw="bold">Telepon</Text>
                 <Text fz="md" c="dimmed">{data.whatsapp || '-'}</Text>
               </Box>
 
@@ -104,35 +104,31 @@ function DetailKontakDarurat() {
 
               {/* Aksi */}
               <Group gap="sm">
-                <Tooltip label="Hapus Data" withArrow position="top">
-                  <Button
-                    color="red"
-                    onClick={() => {
-                      setSelectedId(data.id);
-                      setModalHapus(true);
-                    }}
-                    variant="light"
-                    radius="md"
-                    size="md"
-                    disabled={state.delete.loading}
-                  >
-                    <IconTrash size={20} />
-                  </Button>
-                </Tooltip>
+                <Button
+                  color="red"
+                  onClick={() => {
+                    setSelectedId(data.id);
+                    setModalHapus(true);
+                  }}
+                  variant="light"
+                  radius="md"
+                  size="md"
+                  disabled={state.delete.loading}
+                >
+                  <IconTrash size={20} />
+                </Button>
 
-                <Tooltip label="Edit Data" withArrow position="top">
-                  <Button
-                    color="green"
-                    onClick={() =>
-                      router.push(`/admin/kesehatan/kontak-darurat/${data.id}/edit`)
-                    }
-                    variant="light"
-                    radius="md"
-                    size="md"
-                  >
-                    <IconEdit size={20} />
-                  </Button>
-                </Tooltip>
+                <Button
+                  color="green"
+                  onClick={() =>
+                    router.push(`/admin/kesehatan/kontak-darurat/${data.id}/edit`)
+                  }
+                  variant="light"
+                  radius="md"
+                  size="md"
+                >
+                  <IconEdit size={20} />
+                </Button>
               </Group>
             </Stack>
           </Paper>

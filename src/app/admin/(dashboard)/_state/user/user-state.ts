@@ -90,42 +90,96 @@ const userState = proxy({
       }
     },
   },
-  updateActive: {
+  deleteUser: {
     loading: false,
-    async submit(id: string, isActive: boolean) {
-      this.loading = true;
+  
+    async delete(id: string) {
+      if (!id) return toast.warn("ID tidak valid");
+  
       try {
-        const res = await fetch(`/api/user/updt`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ id, isActive }),
+        userState.deleteUser.loading = true;
+  
+        const response = await fetch(`/api/user/delUser/${id}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
         });
-
-        const data = await res.json();
-        if (res.status === 200 && data.success) {
-          toast.success(data.message);
-          userState.findMany.load(userState.findMany.page, 10, userState.findMany.search);
+  
+        const result = await response.json();
+  
+        if (response.ok && result?.success) {
+          toast.success(result.message || "User berhasil dihapus permanen");
+          await userState.findMany.load(); // refresh list user setelah delete
         } else {
-          toast.error(data.message || "Gagal update status user");
+          toast.error(result?.message || "Gagal menghapus user");
         }
-      } catch (e) {
-        console.error(e);
-        toast.error("Gagal update status user");
+      } catch (error) {
+        console.error("Gagal delete user:", error);
+        toast.error("Terjadi kesalahan saat menghapus user");
       } finally {
-        this.loading = false;
+        userState.deleteUser.loading = false;
       }
     },
+  },  
+  // Di file userState.ts atau dimana state user berada
+
+update: {
+  loading: false,
+
+  async submit(payload: { id: string; isActive?: boolean; roleId?: string }) {
+    this.loading = true;
+    try {
+      const res = await fetch(`/api/user/updt`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+
+      if (res.status === 200 && data.success) {
+        // ✅ Tampilkan pesan yang berbeda jika role berubah
+        if (data.roleChanged) {
+          toast.success(
+            `${data.message}\n\nUser akan logout otomatis dalam beberapa detik.`,
+            {
+              autoClose: 5000,
+            }
+          );
+        } else {
+          toast.success(data.message);
+        }
+
+        // Refresh list
+        await userState.findMany.load(
+          userState.findMany.page,
+          10,
+          userState.findMany.search
+        );
+
+        return true; // ✅ Return success untuk handling di component
+      } else {
+        toast.error(data.message || "Gagal update user");
+        return false;
+      }
+    } catch (e) {
+      console.error("❌ Error update user:", e);
+      toast.error("Gagal update user");
+      return false;
+    } finally {
+      this.loading = false;
+    }
   },
+},
 });
 
 const templateRole = z.object({
   name: z.string().min(1, "Nama harus diisi"),
-  permissions: z.array(z.string()).min(1, "Permission harus diisi"),
 });
 
 const defaultRole = {
   name: "",
-  permissions: [] as string[],
 };
 
 const roleState = proxy({
@@ -166,11 +220,34 @@ const roleState = proxy({
         isActive: true;
       };
     }>[],
+    page: 1,
+    totalPages: 1,
     loading: false,
-    async load() {
-      const res = await ApiFetch.api.role["findMany"].get();
-      if (res.status === 200) {
-        roleState.findMany.data = res.data?.data ?? [];
+    search: "",
+    load: async (page = 1, limit = 10, search = "") => {
+      roleState.findMany.loading = true; // ✅ Akses langsung via nama path
+      roleState.findMany.page = page;
+      roleState.findMany.search = search;
+
+      try {
+        const query: any = { page, limit };
+        if (search) query.search = search;
+
+        const res = await ApiFetch.api.role["findMany"].get({ query });
+
+        if (res.status === 200 && res.data?.success) {
+          roleState.findMany.data = res.data.data ?? [];
+          roleState.findMany.totalPages = res.data.totalPages ?? 1;
+        } else {
+          roleState.findMany.data = [];
+          roleState.findMany.totalPages = 1;
+        }
+      } catch (err) {
+        console.error("Gagal fetch role paginated:", err);
+        roleState.findMany.data = [];
+        roleState.findMany.totalPages = 1;
+      } finally {
+        roleState.findMany.loading = false;
       }
     },
   },
@@ -237,7 +314,7 @@ const roleState = proxy({
         toast.warn("ID tidak valid");
         return null;
       }
-
+    
       try {
         const response = await fetch(`/api/role/${id}`, {
           method: "GET",
@@ -245,31 +322,25 @@ const roleState = proxy({
             "Content-Type": "application/json",
           },
         });
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
+    
         const result = await response.json();
-
+    
         if (result?.success) {
           const data = result.data;
-          this.id = data.id;
-          this.form = {
+    
+          // langsung set melalui root state, bukan this
+          roleState.update.id = data.id;
+          roleState.update.form = {
             name: data.name,
-            permissions: data.permissions,
           };
-          return data; // Return the loaded data
-        } else {
-          throw new Error(result?.message || "Gagal memuat data");
+    
+          return data;
         }
       } catch (error) {
         console.error("Error loading role:", error);
-        toast.error(
-          error instanceof Error ? error.message : "Gagal memuat data"
-        );
-        return null;
+        toast.error("Gagal memuat data");
       }
-    },
+    },    
     async update() {
       const cek = templateRole.safeParse(roleState.update.form);
       if (!cek.success) {
@@ -290,7 +361,6 @@ const roleState = proxy({
           },
           body: JSON.stringify({
             name: this.form.name,
-            permissions: this.form.permissions,
           }),
         });
 

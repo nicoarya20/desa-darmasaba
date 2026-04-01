@@ -19,7 +19,7 @@ export default async function symptomCreate(context: Context) {
     });
     return {
         success: true,
-        message: "Success create symptom",
+        message: "Sukses menambahkan symptom",
         data: {
             ...body,
         },

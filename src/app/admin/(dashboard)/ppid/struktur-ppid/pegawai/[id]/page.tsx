@@ -1,8 +1,9 @@
 'use client'
 import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
+import { ModalKonfirmasiNonAktif } from '@/app/admin/(dashboard)/_com/modalNonaktif';
 import stateStrukturPPID from '@/app/admin/(dashboard)/_state/ppid/struktur_ppid/struktur_PPID';
 import colors from '@/con/colors';
-import { Box, Button, Group, Image, Paper, Skeleton, Stack, Text, Tooltip } from '@mantine/core';
+import { Box, Button, Group, Image, Paper, Skeleton, Stack, Text } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -51,7 +52,7 @@ function DetailPegawai() {
   const data = statePegawai.findUnique.data;
 
   return (
-    <Box>
+    <Box px={{ base: 0, md: 'xs' }} py="xs">
       <Box mb={10}>
         <Button variant="subtle" onClick={() => router.back()}>
           <IconArrowBack color={colors['blue-button']} size={25} />
@@ -59,7 +60,7 @@ function DetailPegawai() {
       </Box>
       <Paper
         withBorder
-        w={{ base: "100%", md: "60%" }}
+        w={{ base: "100%", md: "70%" }}
         bg={colors['white-1']}
         p="lg"
         radius="md"
@@ -149,7 +150,6 @@ function DetailPegawai() {
               </Button>
 
               <Group gap="sm" mt="md">
-                <Tooltip label="Hapus Pegawai" withArrow position="top">
                   <Button
                     color="red"
                     onClick={() => {
@@ -162,9 +162,7 @@ function DetailPegawai() {
                   >
                     <IconTrash size={20} />
                   </Button>
-                </Tooltip>
 
-                <Tooltip label="Edit Pegawai" withArrow position="top">
                   <Button
                     color="green"
                     onClick={() => router.push(`/admin/ppid/struktur-ppid/pegawai/${data.id}/edit`)}
@@ -174,7 +172,6 @@ function DetailPegawai() {
                   >
                     <IconEdit size={20} />
                   </Button>
-                </Tooltip>
               </Group>
             </Stack>
           </Paper>
@@ -190,7 +187,7 @@ function DetailPegawai() {
       />
 
       {/* Modal NonActive */}
-      <ModalKonfirmasiHapus
+      <ModalKonfirmasiNonAktif
         opened={modalNonActive}
         onClose={() => setModalNonActive(false)}
         onConfirm={handleNonActive}

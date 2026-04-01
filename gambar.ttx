@@ -1,0 +1,99 @@
+type DirItem = {
+  type: "file" | "dir";
+  name: string;
+  path: string;
+  size?: number;
+};
+
+// type FileDownloadResponse = {
+//   url: string;
+// };
+
+// const TOKEN = "20a19f4a04032215d50ce53292e6abdd38b9f806";
+// const REPO_ID = "8814bfe1-30d5-4e77-ab36-3122fa59a022";
+// const DIR_TARGET = "image";
+
+// const BASE_URL = "https://cld-dkr-makuro-seafile.wibudev.com/api2";
+
+const TOKEN = process.env.SEAFILE_TOKEN!;
+const REPO_ID = process.env.SEAFILE_REPO_ID!;
+
+// ⛔ PENTING: RELATIVE PATH (tanpa slash depan)
+const DIR_TARGET = "asset-web";
+
+const BASE_URL = "https://cld-dkr-makuro-seafile.wibudev.com/api2";
+
+const headers = {
+  Authorization: `Token ${TOKEN}`,
+};
+
+/**
+ * Ambil list file di directory
+ */
+async function getDirItems(): Promise<DirItem[]> {
+  const res = await fetch(
+    `${BASE_URL}/repos/${REPO_ID}/dir/?p=${DIR_TARGET}`,
+    { headers }
+  );
+
+  if (!res.ok) {
+    throw new Error(`Failed get dir items: ${res.statusText}`);
+  }
+
+  return res.json();
+}
+
+/**
+ * Ambil download URL file
+ */
+async function getDownloadUrl(filePath: string): Promise<string> {
+
+
+  const res = await fetch(
+    `${BASE_URL}/repos/${REPO_ID}/file/?p=${encodeURIComponent(filePath)}`,
+    { headers }
+  );
+
+  if (!res.ok) {
+    throw new Error(`Failed get file url: ${res.statusText}`);
+  }
+
+  const data = await res.json();
+
+  return data;
+}
+
+/**
+ * Ambil semua download URL dari target dir
+ */
+async function getAllDownloadUrls() {
+  const items = await getDirItems();
+
+  const files = items.filter((item) => item.type === "file");
+
+  const results = await Promise.all(
+    files.map(async (file) => {
+      const filePath = `${DIR_TARGET}/${file.name}`;
+      const url = await getDownloadUrl(filePath);
+      return {
+        name: file.name,
+        path: filePath,
+        downloadUrl: url,
+      };
+    })
+  );
+
+  return results;
+}
+
+// contoh eksekusi
+(async () => {
+  try {
+    console.log("ambil gambar")
+    const urls = await getAllDownloadUrls();
+    await Bun.write("list_image2.json", JSON.stringify(urls))
+    console.log("selesai !")
+  } catch (err) {
+    console.error(err);
+  }
+})();

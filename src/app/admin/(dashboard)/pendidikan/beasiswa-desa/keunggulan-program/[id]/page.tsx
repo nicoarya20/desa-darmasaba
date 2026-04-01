@@ -3,7 +3,7 @@
 import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import beasiswaDesaState from '@/app/admin/(dashboard)/_state/pendidikan/beasiswa-desa';
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, Stack, Text, TextInput, Title, Tooltip } from '@mantine/core';
+import { Box, Button, Group, Loader, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -14,10 +14,30 @@ function EditProgramKreatifDesa() {
   const state = useProxy(beasiswaDesaState.keunggulanProgram)
   const params = useParams()
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     judul: '',
     deskripsi: '',
   })
+  const [originalData, setOriginalData] = useState({
+    judul: '',
+    deskripsi: '',
+  })
+
+  // Helper function to check if HTML content is empty
+  const isHtmlEmpty = (html: string) => {
+    // Remove all HTML tags and check if there's any text content
+    const textContent = html.replace(/<[^>]*>/g, '').trim();
+    return textContent === '';
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      formData.judul?.trim() !== '' &&
+      !isHtmlEmpty(formData.deskripsi)
+    );
+  };
 
   useEffect(() => {
     const loadProgramKreatif = async () => {
@@ -39,6 +59,10 @@ function EditProgramKreatifDesa() {
             judul: data.judul,
             deskripsi: data.deskripsi,
           });
+          setOriginalData({
+            judul: data.judul,
+            deskripsi: data.deskripsi,
+          });
         }
       } catch (error) {
         console.error("Error loading pengelolaan sampah:", error);
@@ -49,37 +73,51 @@ function EditProgramKreatifDesa() {
     loadProgramKreatif();
   }, [params?.id]);
 
-
+  const handleResetForm = () => {
+    const resetData = {
+      judul: originalData.judul,
+      deskripsi: originalData.deskripsi,
+    };
+  
+    setFormData(resetData);
+  
+    // ⬇️ tambahkan sinkronisasi ke state global
+    state.update.form = { ...resetData };
+  
+    toast.info("Form dikembalikan ke data awal");
+  };
+  
 
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       state.update.form = {
         ...state.update.form,
         judul: formData.judul.trim(),
         deskripsi: formData.deskripsi.trim(),
       };
-      
+
       await state.update.update();
       toast.success('Data keunggulan program berhasil diperbarui!');
       router.push("/admin/pendidikan/beasiswa-desa/keunggulan-program");
     } catch (error) {
       console.error("Error updating keunggulan program:", error);
       toast.error(error instanceof Error ? error.message : "Gagal memperbarui data keunggulan program");
+    } finally {
+      setIsSubmitting(false);
     }
   }
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button 
-            variant="subtle" 
-            onClick={() => router.back()} 
-            p="xs" 
-            radius="md"
-          >
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
-        </Tooltip>
+        <Button
+          variant="subtle"
+          onClick={() => router.back()}
+          p="xs"
+          radius="md"
+        >
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Edit Keunggulan Program
         </Title>
@@ -97,7 +135,7 @@ function EditProgramKreatifDesa() {
           <TextInput
             label="Judul"
             placeholder="Masukkan judul"
-            defaultValue={formData.judul}
+            value={formData.judul}
             onChange={(e) => {
               const value = e.target.value;
               setFormData(prev => ({
@@ -123,16 +161,30 @@ function EditProgramKreatifDesa() {
 
           <Group justify="right" mt="md">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

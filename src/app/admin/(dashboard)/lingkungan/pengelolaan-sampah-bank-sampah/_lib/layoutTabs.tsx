@@ -1,10 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
+import colors from '@/con/colors';
+import { Box, ScrollArea, Stack, Tabs, TabsList, TabsPanel, TabsTab, Title } from '@mantine/core';
+import { IconRecycle, IconTrash } from '@tabler/icons-react';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
-import { ScrollArea, Stack, Tabs, TabsList, TabsPanel, TabsTab, Title, Tooltip } from '@mantine/core';
-import { IconTrash, IconRecycle } from '@tabler/icons-react';
-import colors from '@/con/colors';
 
 function LayoutTabsPengelolaanSampahBankSampah({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -16,14 +16,12 @@ function LayoutTabsPengelolaanSampahBankSampah({ children }: { children: React.R
       value: "listpengelolaansampahbanksampah",
       href: "/admin/lingkungan/pengelolaan-sampah-bank-sampah/list-pengelolaan-sampah-bank-sampah",
       icon: <IconTrash size={18} stroke={1.8} />,
-      tooltip: "Kelola data pengelolaan sampah bank sampah",
     },
     {
       label: "Keterangan Bank Sampah Terdekat",
       value: "keteranganbanksampahterdekat",
       href: "/admin/lingkungan/pengelolaan-sampah-bank-sampah/keterangan-bank-sampah-terdekat",
       icon: <IconRecycle size={18} stroke={1.8} />,
-      tooltip: "Kelola data bank sampah terdekat",
     },
   ];
 
@@ -60,42 +58,76 @@ function LayoutTabsPengelolaanSampahBankSampah({ children }: { children: React.R
         keepMounted={false}
       >
         {/* ✅ Scroll horizontal wrapper */}
-        <ScrollArea type="auto" offsetScrollbars>
-          <TabsList
-            p="sm"
-            style={{
-              background: "linear-gradient(135deg, #e7ebf7, #f9faff)",
-              borderRadius: "1rem",
-              boxShadow: "inset 0 0 10px rgba(0,0,0,0.05)",
-              display: "flex",
-              flexWrap: "nowrap",
-              gap: "0.5rem",
-              paddingInline: "0.5rem",
-            }}
-          >
-            {tabs.map((tab, i) => (
-              <Tooltip
-                key={i}
-                label={tab.tooltip}
-                position="bottom"
-                withArrow
-                transitionProps={{ transition: 'pop', duration: 200 }}
-              >
-                <TabsTab
-                  value={tab.value}
-                  leftSection={tab.icon}
-                  style={{
-                    fontWeight: 600,
-                    fontSize: "0.9rem",
-                    transition: "all 0.2s ease",
-                  }}
-                >
-                  {tab.label}
-                </TabsTab>
-              </Tooltip>
-            ))}
-          </TabsList>
-        </ScrollArea>
+        <Box visibleFrom='md' pb={10}>
+                 <ScrollArea type="auto" offsetScrollbars>
+                   <TabsList
+                     p="sm"
+                     style={{
+                       background: "linear-gradient(135deg, #e7ebf7, #f9faff)",
+                       borderRadius: "1rem",
+                       boxShadow: "inset 0 0 10px rgba(0,0,0,0.05)",
+                       display: "flex",
+                       flexWrap: "nowrap",
+                       gap: "0.5rem",
+                       paddingInline: "0.5rem", // ✅ biar nggak nempel ke tepi
+                     }}
+                   >
+                     {tabs.map((tab, i) => (
+                       <TabsTab
+                         key={i}
+                         value={tab.value}
+                         leftSection={tab.icon}
+                         style={{
+                           fontWeight: 600,
+                           fontSize: "0.9rem",
+                           transition: "all 0.2s ease",
+                           flexShrink: 0, // ✅ jangan mengecil aneh-aneh
+                         }}
+                       >
+                         {tab.label}
+                       </TabsTab>
+                     ))}
+                   </TabsList>
+                 </ScrollArea>
+               </Box>
+       
+               <Box hiddenFrom='md' pb={10}>
+                 <ScrollArea
+                   type="auto"
+                   offsetScrollbars={false}
+                   w="100%"
+                 >
+       
+                   <TabsList
+                     p="xs" // lebih kecil
+                     style={{
+                       background: "linear-gradient(135deg, #e7ebf7, #f9faff)",
+                       borderRadius: "1rem",
+                       display: "flex",
+                       flexWrap: "nowrap",
+                       gap: "0.5rem",
+                       width: "max-content", // ⬅️ kunci
+                       maxWidth: "100%",     // ⬅️ penting
+                     }}
+                   >
+                     {tabs.map((tab, i) => (
+                       <TabsTab
+                         key={i}
+                         value={tab.value}
+                         leftSection={tab.icon}
+                         style={{
+                           fontWeight: 600,
+                           fontSize: "0.9rem",
+                           paddingInline: "0.75rem", // ⬅️ lebih ramping
+                           flexShrink: 0, // ✅ jangan mengecil aneh-aneh
+                         }}
+                       >
+                         {tab.label}
+                       </TabsTab>
+                     ))}
+                   </TabsList>
+                 </ScrollArea>
+               </Box>
 
         {tabs.map((tab, i) => (
           <TabsPanel

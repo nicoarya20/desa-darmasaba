@@ -2,31 +2,49 @@
 import colors from '@/con/colors';
 import ApiFetch from '@/lib/api-fetch';
 import {
+  ActionIcon,
   Box,
   Button,
   Group,
-  Image,
+  Loader,
   Paper,
   Stack,
   Text,
   TextInput,
-  Title,
-  Tooltip,
+  Title
 } from '@mantine/core';
+import { Dropzone } from '@mantine/dropzone';
 import { IconArrowBack, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import ExifOrientationImg from 'react-exif-orientation-img';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 import CreateEditor from '../../../_com/createEditor';
 import desaDigitalState from '../../../_state/inovasi/desa-digital';
-import { Dropzone } from '@mantine/dropzone';
 
 export default function CreateDesaDigital() {
   const stateDesaDigital = useProxy(desaDigitalState);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Helper function to check if HTML content is empty
+  const isHtmlEmpty = (html: string) => {
+    // Remove all HTML tags and check if there's any text content
+    const textContent = html.replace(/<[^>]*>/g, '').trim();
+    return textContent === '';
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      stateDesaDigital.create.form.name?.trim() !== '' &&
+      !isHtmlEmpty(stateDesaDigital.create.form.deskripsi) &&
+      file !== null
+    );
+  };
 
   const resetForm = () => {
     stateDesaDigital.create.form = {
@@ -44,6 +62,7 @@ export default function CreateDesaDigital() {
     }
 
     try {
+      setIsSubmitting(true);
       const uploadRes = await ApiFetch.api.fileStorage.create.post({
         file,
         name: file.name,
@@ -64,24 +83,24 @@ export default function CreateDesaDigital() {
     } catch (error) {
       console.error('Error in handleSubmit:', error);
       toast.error('Terjadi kesalahan saat menyimpan data');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Header dengan tombol kembali */}
       <Group mb="md" align="center">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button
-            variant="subtle"
-            onClick={() => router.back()}
-            p="xs"
-            radius="md"
-            style={{ transition: 'background 0.2s ease' }}
-          >
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
-        </Tooltip>
+        <Button
+          variant="subtle"
+          onClick={() => router.back()}
+          p="xs"
+          radius="md"
+          style={{ transition: 'background 0.2s ease' }}
+        >
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Tambah Desa Digital Smart Village
         </Title>
@@ -104,7 +123,7 @@ export default function CreateDesaDigital() {
           <TextInput
             label="Nama Desa Digital"
             placeholder="Masukkan nama desa digital"
-            defaultValue={stateDesaDigital.create.form.name}
+            value={stateDesaDigital.create.form.name}
             onChange={(e) => (stateDesaDigital.create.form.name = e.target.value)}
             radius="md"
             withAsterisk
@@ -138,7 +157,7 @@ export default function CreateDesaDigital() {
               }}
               onReject={() => toast.error('File tidak valid, gunakan format gambar')}
               maxSize={5 * 1024 ** 2}
-              accept={{ 'image/*': [] }}
+              accept={{ 'image/*': ['.jpeg', '.jpg', '.png', '.webp'] }}
               radius="md"
               p="xl"
               style={{
@@ -166,6 +185,7 @@ export default function CreateDesaDigital() {
             {/* Preview */}
             {previewImage && (
               <Box
+                pos={"relative"}
                 mt="sm"
                 style={{
                   textAlign: 'center',
@@ -173,45 +193,66 @@ export default function CreateDesaDigital() {
                   overflow: 'hidden',
                 }}
               >
-                <Image
+                <ExifOrientationImg
                   src={previewImage}
                   alt="Preview"
-                  radius="md"
                   style={{
                     maxHeight: 220,
                     objectFit: 'cover',
                     border: '1px solid #e0e0e0',
+                    borderRadius: 12,
                   }}
-                  loading="lazy"
                 />
+                <ActionIcon
+                  variant="filled"
+                  color="red"
+                  radius="xl"
+                  size="sm"
+                  pos="absolute"
+                  top={5}
+                  right={5}
+                  onClick={() => {
+                    setPreviewImage(null);
+                    setFile(null);
+                  }}
+                  style={{
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                  }}
+                >
+                  <IconX size={14} />
+                </ActionIcon>
               </Box>
             )}
           </Box>
 
           {/* Tombol Submit */}
-          <Group justify="flex-end" mt="sm">
+          <Group justify="right">
+            {/* Tombol Batal */}
+            <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
             <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
-                transition: 'transform 0.2s ease, box-shadow 0.2s ease',
-              }}
-              onMouseEnter={(e) => {
-                (e.currentTarget.style.transform = 'translateY(-2px)');
-                (e.currentTarget.style.boxShadow =
-                  '0 6px 20px rgba(79, 172, 254, 0.5)');
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget.style.transform = 'translateY(0)');
-                (e.currentTarget.style.boxShadow =
-                  '0 4px 15px rgba(79, 172, 254, 0.4)');
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

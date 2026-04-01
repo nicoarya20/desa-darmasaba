@@ -1,14 +1,15 @@
 module.exports = {
-    plugins: {
-      'postcss-preset-mantine': {},
-      'postcss-simple-vars': {
-        variables: {
-          'mantine-breakpoint-xs': '36em',
-          'mantine-breakpoint-sm': '48em',
-          'mantine-breakpoint-md': '62em',
-          'mantine-breakpoint-lg': '75em',
-          'mantine-breakpoint-xl': '88em',
-        },
+  plugins: {
+    'postcss-preset-mantine': {},
+    'postcss-simple-vars': {
+      variables: {
+        /* Mobile first */
+        'mantine-breakpoint-xs': '30em', // 480px → mobile kecil–normal
+        'mantine-breakpoint-sm': '48em', // 768px → tablet / mobile landscape
+        'mantine-breakpoint-md': '64em', // 1024px → laptop & desktop kecil
+        'mantine-breakpoint-lg': '80em', // 1280px → desktop standar
+        'mantine-breakpoint-xl': '90em', // 1440px+ → desktop besar
       },
     },
-  };
+  },
+};

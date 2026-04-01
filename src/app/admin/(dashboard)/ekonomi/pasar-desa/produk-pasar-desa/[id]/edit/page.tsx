@@ -1,21 +1,23 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
+import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import pasarDesaState from '@/app/admin/(dashboard)/_state/ekonomi/pasar-desa/pasar-desa';
 import colors from '@/con/colors';
 import ApiFetch from '@/lib/api-fetch';
 import {
+  ActionIcon,
   Box,
   Button,
   Group,
   Image,
+  Loader,
   MultiSelect,
   Paper,
   Stack,
   Text,
   TextInput,
-  Title,
-  Tooltip,
+  Title
 } from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
 import { IconArrowBack, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
@@ -32,6 +34,7 @@ type FormData = {
   rating: number;
   kategoriId: string[];
   kontak: string;
+  deskripsi: string;
 };
 
 function EditPasarDesa() {
@@ -41,6 +44,7 @@ function EditPasarDesa() {
 
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     nama: '',
     harga: 0,
@@ -49,7 +53,37 @@ function EditPasarDesa() {
     rating: 0,
     kategoriId: [],
     kontak: '',
+    deskripsi: ''
   });
+
+  const [originalData, setOriginalData] = useState({
+    nama: '',
+    harga: 0,
+    alamatUsaha: '',
+    imageId: '',
+    imageUrl: "",
+    rating: 0,
+    kategoriId: [],
+    kontak: '',
+    deskripsi: ''
+  });
+
+  // Helper function to check if HTML content is empty
+  const isHtmlEmpty = (html: string) => {
+    // Remove all HTML tags and check if there's any text content
+    const textContent = html.replace(/<[^>]*>/g, '').trim();
+    return textContent === '';
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      formData.nama?.trim() !== '' &&
+      formData.harga !== null &&
+      formData.harga > 0 &&
+      !isHtmlEmpty(formData.deskripsi)
+    );
+  };
 
   // load data awal
   useEffect(() => {
@@ -70,6 +104,18 @@ function EditPasarDesa() {
             rating: data.rating || 0,
             kategoriId: data.KategoriToPasar?.map((k: any) => k.kategoriId) || [],
             kontak: data.kontak || '',
+            deskripsi: data.deskripsi || ''
+          });
+          setOriginalData({
+            nama: data.nama || '',
+            harga: data.harga || 0,
+            alamatUsaha: data.alamatUsaha || '',
+            imageId: data.imageId || '',
+            imageUrl: data.image?.link || "",
+            rating: data.rating || 0,
+            kategoriId: data.KategoriToPasar?.map((k: any) => k.kategoriId) || [],
+            kontak: data.kontak || '',
+            deskripsi: data.deskripsi || ''
           });
           if (data.image?.link) setPreviewImage(data.image.link);
         }
@@ -88,8 +134,26 @@ function EditPasarDesa() {
     setFormData((prev) => ({ ...prev, [key]: value }));
   };
 
+  const handleResetForm = () => {
+    setFormData({
+      nama: originalData.nama,
+      harga: originalData.harga,
+      alamatUsaha: originalData.alamatUsaha,
+      imageId: originalData.imageId,
+      rating: originalData.rating,
+      kategoriId: (originalData as any)?.KategoriToPasar?.map((k: any) => k.kategoriId) || [],
+      kontak: originalData.kontak,
+      deskripsi: originalData.deskripsi
+    });
+    setPreviewImage(originalData.imageUrl || null);
+    setFile(null);
+    toast.info("Form dikembalikan ke data awal");
+  };
+
+
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       // upload image kalau ada file baru
       let imageId = formData.imageId;
       if (file) {
@@ -111,17 +175,17 @@ function EditPasarDesa() {
     } catch (error) {
       console.error('Error updating pasar desa:', error);
       toast.error('Terjadi kesalahan saat memperbarui pasar desa');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 0, md: 'xs' }} py="xs">
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
-        </Tooltip>
+        <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Edit Pasar Desa
         </Title>
@@ -151,7 +215,7 @@ function EditPasarDesa() {
               }}
               onReject={() => toast.error('File tidak valid, gunakan format gambar')}
               maxSize={5 * 1024 ** 2}
-              accept={{ 'image/*': [] }}
+              accept={{ 'image/*': ['.jpeg', '.jpg', '.png', '.webp'] }}
               radius="md"
               p="xl"
             >
@@ -170,25 +234,45 @@ function EditPasarDesa() {
                     Seret gambar atau klik untuk memilih file
                   </Text>
                   <Text size="sm" c="dimmed">
-                    Maksimal 5MB, format gambar wajib
+                    Maksimal 5MB, format gambar .png, .jpg, .jpeg, webp
                   </Text>
                 </Stack>
               </Group>
             </Dropzone>
 
             {previewImage && (
-              <Box mt="sm" style={{ display: 'flex', justifyContent: 'center' }}>
+              <Box pos={"relative"} mt="sm" style={{ display: 'flex', justifyContent: 'center' }}>
                 <Image
                   src={previewImage}
                   alt="Preview Gambar"
                   radius="md"
                   style={{
-                    maxHeight: 220,
+                    maxHeight: 200,
                     objectFit: 'contain',
-                    border: `1px solid ${colors['blue-button']}`,
+                    border: '1px solid #ddd',
                   }}
                   loading="lazy"
                 />
+
+                {/* Tombol hapus (pojok kanan atas) */}
+                <ActionIcon
+                  variant="filled"
+                  color="red"
+                  radius="xl"
+                  size="sm"
+                  pos="absolute"
+                  top={5}
+                  right={5}
+                  onClick={() => {
+                    setPreviewImage(null);
+                    setFile(null);
+                  }}
+                  style={{
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                  }}
+                >
+                  <IconX size={14} />
+                </ActionIcon>
               </Box>
             )}
           </Box>
@@ -256,18 +340,45 @@ function EditPasarDesa() {
             error={!formData.kategoriId.length ? 'Pilih minimal satu kategori' : undefined}
           />
 
+          {/* Input Deskripsi */}
+          <Box>
+            <Text fz="sm" fw="bold" mb={6}>
+              Deskripsi
+            </Text>
+            <EditEditor
+              value={formData.deskripsi}
+              onChange={(htmlContent) =>
+                setFormData((prev) => ({ ...prev, deskripsi: htmlContent }))
+              }
+            />
+          </Box>
+
           <Group justify="right">
+            <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
             <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

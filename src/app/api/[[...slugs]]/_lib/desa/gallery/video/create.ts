@@ -21,7 +21,7 @@ async function galleryVideoCreate(context: Context) {
     });
     return {
         success: true,
-        message: "Success create gallery video",
+        message: "Sukses menambahkan gallery video",
         data: {
             ...body,
         },

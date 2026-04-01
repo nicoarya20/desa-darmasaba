@@ -24,7 +24,7 @@ export default async function grafikHasilKepuasanMasyarakatCreate(context: Conte
   });
   return {
     success: true,
-    message: "Success create grafik hasil kepuasan masyarakat",
+    message: "Sukses menambahkan grafik hasil kepuasan masyarakat",
     data: created,
   };
 }

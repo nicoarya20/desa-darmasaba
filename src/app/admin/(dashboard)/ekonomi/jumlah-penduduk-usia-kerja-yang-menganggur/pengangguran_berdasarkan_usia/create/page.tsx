@@ -2,18 +2,30 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useProxy } from 'valtio/utils';
 import grafikNganggur from '@/app/admin/(dashboard)/_state/ekonomi/usia-kerja-nganggur';
 import colors from '@/con/colors';
-import { Box, Button, Paper, Stack, Title, TextInput, Group, Tooltip } from '@mantine/core';
+import { Box, Button, Group, Loader, Paper, Stack, TextInput, Title } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { toast } from 'react-toastify';
+import { useProxy } from 'valtio/utils';
 
 function CreateGrafikBerdasarkanUsiaKerjaYangMenganggur() {
   const router = useRouter();
   const stategrafik = useProxy(grafikNganggur.grafikBerdasarkanUsiaKerjaNganggur);
   const [donutData, setDonutData] = useState<any[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      stategrafik.create.form.usia18_25?.trim() !== '' &&
+      stategrafik.create.form.usia26_35?.trim() !== '' &&
+      stategrafik.create.form.usia36_45?.trim() !== '' &&
+      stategrafik.create.form.usia46_keatas?.trim() !== ''
+    );
+  };
 
   const resetForm = () => {
     stategrafik.create.form = {
@@ -26,27 +38,33 @@ function CreateGrafikBerdasarkanUsiaKerjaYangMenganggur() {
   };
 
   const handleSubmit = async () => {
-    const id = await stategrafik.create.create();
-    if (id) {
-      const idStr = String(id);
-      await stategrafik.findUnique.load(idStr);
-      if (stategrafik.findUnique.data) {
-        setDonutData([stategrafik.findUnique.data]);
+    try {
+      setIsSubmitting(true);
+      const id = await stategrafik.create.create();
+      if (id) {
+        const idStr = String(id);
+        await stategrafik.findUnique.load(idStr);
+        if (stategrafik.findUnique.data) {
+          setDonutData([stategrafik.findUnique.data]);
+        }
       }
+      resetForm();
+      router.push('/admin/ekonomi/jumlah-penduduk-usia-kerja-yang-menganggur/pengangguran_berdasarkan_usia');
+    } catch (error) {
+      console.error('Error creating:', error);
+      toast.error('Terjadi kesalahan saat membuat data');
+    } finally {
+      setIsSubmitting(false);
     }
-    resetForm();
-    router.push('/admin/ekonomi/jumlah-penduduk-usia-kerja-yang-menganggur/pengangguran_berdasarkan_usia');
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Header */}
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
-        </Tooltip>
+        <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Tambah Data Pengangguran Berdasarkan Usia
         </Title>
@@ -66,7 +84,7 @@ function CreateGrafikBerdasarkanUsiaKerjaYangMenganggur() {
             label="Usia 18 - 25"
             type="number"
             placeholder="Masukkan jumlah"
-            defaultValue={stategrafik.create.form.usia18_25}
+            value={stategrafik.create.form.usia18_25}
             onChange={(val) => (stategrafik.create.form.usia18_25 = val.currentTarget.value)}
             required
           />
@@ -74,7 +92,7 @@ function CreateGrafikBerdasarkanUsiaKerjaYangMenganggur() {
             label="Usia 26 - 35"
             type="number"
             placeholder="Masukkan jumlah"
-            defaultValue={stategrafik.create.form.usia26_35}
+            value={stategrafik.create.form.usia26_35}
             onChange={(val) => (stategrafik.create.form.usia26_35 = val.currentTarget.value)}
             required
           />
@@ -82,7 +100,7 @@ function CreateGrafikBerdasarkanUsiaKerjaYangMenganggur() {
             label="Usia 36 - 45"
             type="number"
             placeholder="Masukkan jumlah"
-            defaultValue={stategrafik.create.form.usia36_45}
+            value={stategrafik.create.form.usia36_45}
             onChange={(val) => (stategrafik.create.form.usia36_45 = val.currentTarget.value)}
             required
           />
@@ -90,7 +108,7 @@ function CreateGrafikBerdasarkanUsiaKerjaYangMenganggur() {
             label="Usia 46 +"
             type="number"
             placeholder="Masukkan jumlah"
-            defaultValue={stategrafik.create.form.usia46_keatas}
+            value={stategrafik.create.form.usia46_keatas}
             onChange={(val) => (stategrafik.create.form.usia46_keatas = val.currentTarget.value)}
             required
           />
@@ -98,16 +116,30 @@ function CreateGrafikBerdasarkanUsiaKerjaYangMenganggur() {
           {/* Submit Button */}
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

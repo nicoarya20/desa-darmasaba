@@ -27,7 +27,7 @@ export default async function keteranganBankSampahTerdekatCreate(context: Contex
 
     return {
         success: true,
-        message: "Success create keterangan bank sampah terdekat",
+        message: "Sukses menambahkan keterangan bank sampah terdekat",
         data: created,
     };
 }

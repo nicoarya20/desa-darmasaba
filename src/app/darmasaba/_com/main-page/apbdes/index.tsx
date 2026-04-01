@@ -1,134 +1,261 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
-import apbdes from '@/app/admin/(dashboard)/_state/landing-page/apbdes'
+
+import apbdesState from '@/app/admin/(dashboard)/_state/landing-page/apbdes'
 import colors from '@/con/colors'
-import { ActionIcon, BackgroundImage, Box, Button, Center, Flex, Group, Loader, SimpleGrid, Stack, Text } from '@mantine/core'
-import { IconDownload } from '@tabler/icons-react'
+import {
+  Box,
+  Button,
+  Divider,
+  Group,
+  Select,
+  SimpleGrid,
+  Stack,
+  Text,
+  Title,
+  LoadingOverlay,
+  Transition,
+} from '@mantine/core'
+import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { useProxy } from 'valtio/utils'
 
+import { ApbdesMainSkeleton } from './components/apbdesSkeleton'
+import ComparisonChart from './lib/comparisonChart'
+import GrafikRealisasi from './lib/grafikRealisasi'
+import PaguTable from './lib/paguTable'
+import RealisasiTable from './lib/realisasiTable'
+
+const MotionStack = motion.create(Stack)
+
 function Apbdes() {
-  const state = useProxy(apbdes)
-  const [loading, setLoading] = useState(false)
+  const state = useProxy(apbdesState)
+  const [selectedYear, setSelectedYear] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [isChangingYear, setIsChangingYear] = useState(false)
 
   const textHeading = {
     title: 'APBDes',
-    des: 'Transparansi APBDes Darmasaba adalah langkah nyata menuju tata kelola desa yang bersih, terbuka, dan bertanggung jawab.'
+    des: 'Transparansi APBDes Darmasaba adalah langkah nyata menuju tata kelola desa yang bersih, terbuka, dan bertanggung jawab.',
   }
 
   useEffect(() => {
     const loadData = async () => {
       try {
-        setLoading(true)
+        setIsLoading(true)
         await state.findMany.load()
       } catch (error) {
         console.error('Error loading data:', error)
       } finally {
-        setLoading(false)
+        setIsLoading(false)
       }
     }
     loadData()
   }, [])
 
-  const data = (state.findMany.data || []).slice(0, 3)
+  const dataAPBDes = state.findMany.data || []
+
+  const years = Array.from(
+    new Set(
+      dataAPBDes
+        .map((item: any) => item?.tahun)
+        .filter((tahun): tahun is number => typeof tahun === 'number')
+    )
+  )
+    .sort((a, b) => b - a)
+    .map((year) => ({
+      value: year.toString(),
+      label: `Tahun ${year}`,
+    }))
+
+  useEffect(() => {
+    if (years.length > 0 && !selectedYear) {
+      setSelectedYear(years[0].value)
+    }
+  }, [years])
+
+  const currentApbdes = dataAPBDes.length > 0
+    ? (dataAPBDes.find((item: any) => item?.tahun?.toString() === selectedYear) || dataAPBDes[0])
+    : null
+
+  const handleYearChange = (value: string | null) => {
+    if (value !== selectedYear) {
+      setIsChangingYear(true)
+      setSelectedYear(value)
+      setTimeout(() => setIsChangingYear(false), 500)
+    }
+  }
 
   return (
-    <Stack p="sm" gap="xl" bg={colors.Bg}>
-      <Box>
-        <Stack gap="sm">
-          <Text c={colors["blue-button"]} ta={"center"} fw={"bold"} fz={{ base: "1.8rem", md: "3.4rem" }}>
-            {textHeading.title}
-          </Text>
-          <Text ta={"center"} fz={{ base: "1rem", md: "1.3rem" }}>
-            {textHeading.des}
-          </Text>
-        </Stack>
-      </Box>
+    <Stack p="sm" gap="xl" bg={colors.Bg} pos="relative">
+      <LoadingOverlay
+        visible={isLoading}
+        zIndex={1000}
+        overlayProps={{ radius: 'sm', blur: 2 }}
+        loaderProps={{ color: colors['blue-button'], type: 'dots' }}
+      />
+      
+      <Transition mounted={!isLoading} transition="fade" duration={600}>
+        {(styles) => (
+          <MotionStack
+            style={styles}
+            gap="xl"
+          >
+            <Divider c="gray.3" size="sm" />
+            
+            {/* 📌 HEADING */}
+            <Box mt="xl">
+              <Stack gap="sm">
+                <Title
+                  order={1}
+                  ta="center"
+                  c={colors['blue-button']}
+                  fz={{ base: '2rem', md: '3.6rem' }}
+                  lh={{ base: 1.2, md: 1.1 }}
+                >
+                  {textHeading.title}
+                </Title>
 
-      <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="lg">
-        {loading ? (
-          <Center mih={200}>
-            <Loader size="lg" color="blue" />
-          </Center>
-        ) : data.length === 0 ? (
-          <Center mih={200}>
-            <Stack align="center" gap="xs">
-              <Text fz="lg" c="dimmed">
-                Belum ada data APBDes yang tersedia
-              </Text>
-              <Text fz="sm" c="dimmed">
-                Data akan ditampilkan di sini setelah diunggah
-              </Text>
-            </Stack>
-          </Center>
-        ) : (
-          data.map((v, k) => (
-            <BackgroundImage
-              key={k}
-              src={v.image?.link || ''}
-              h={360}
-              radius="xl"
-              pos="relative"
-              style={{ overflow: 'hidden' }}
-            >
-              <Box
-                pos="absolute"
-                inset={0}
-                bg="rgba(0,0,0,0.55)"
-                style={{ backdropFilter: 'blur(4px)' }}
-              />
-              <Stack justify="space-between" h="100%" p="xl" pos="relative">
                 <Text
-                  c="white"
-                  fw={600}
-                  fz="lg"
                   ta="center"
-                  lineClamp={2}
+                  fz={{ base: '1rem', md: '1.25rem' }}
+                  lh={{ base: 1.5, md: 1.55 }}
+                  c="black"
+                  maw={800}
+                  mx="auto"
                 >
-                  {v.name}
+                  {textHeading.des}
                 </Text>
-                <Text
-                  fw="bold"
-                  c="white"
-                  fz="3rem"
-                  ta="center"
-                  style={{ textShadow: '0 2px 8px rgba(0,0,0,0.6)' }}
-                >
-                  {v.jumlah}
-                </Text>
-                <Group justify="center">
-                  <ActionIcon
-                    component={Link}
-                    href={v.file?.link || ''}
-                    radius="xl"
-                    size="lg"
-                    variant="gradient"
-                    gradient={{ from: '#1C6EA4', to: '#1C6EA4' }}
-                  >
-                    <Flex align="center" gap="xs" px="md" py={6}>
-                      <IconDownload size={18} color="white" />
-                    </Flex>
-                  </ActionIcon>
-                </Group>
               </Stack>
-            </BackgroundImage>
-          ))
-        )}
-      </SimpleGrid>
+            </Box>
 
-      <Group justify="center" pb={10}>
-        <Button
-          component={Link}
-          href="/darmasaba/apbdes"
-          radius="xl"
-          size="lg"
-          variant="gradient"
-          gradient={{ from: "#26667F", to: "#124170" }}
-        >
-          Lihat Semua Data
-        </Button>
-      </Group>
+            {/* Button Lihat Semua */}
+            <Group justify="center">
+              <Button
+                component={Link}
+                href="/darmasaba/apbdes"
+                radius="xl"
+                size="lg"
+                variant="gradient"
+                gradient={{ from: '#26667F', to: '#124170' }}
+                style={{ 
+                  transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+                  ':hover': {
+                    transform: 'translateY(-2px)',
+                    boxShadow: '0 4px 12px rgba(38, 102, 127, 0.4)',
+                  },
+                }}
+              >
+                Lihat Semua Data
+              </Button>
+            </Group>
+
+            {/* COMBOBOX */}
+            <Box px={{ base: 'md', md: 'sm' }}>
+              <Select
+                label={<Text fw={600} fz="sm">Pilih Tahun APBDes</Text>}
+                placeholder="Pilih tahun"
+                value={selectedYear}
+                onChange={handleYearChange}
+                data={years}
+                w={{ base: '100%', sm: 220 }}
+                searchable
+                clearable
+                nothingFoundMessage="Tidak ada tahun tersedia"
+                disabled={isChangingYear}
+              />
+            </Box>
+
+            {/* Tables & Charts */}
+            {currentApbdes && currentApbdes.items && currentApbdes.items.length > 0 ? (
+              <Box px={{ base: 'md', md: 'sm' }} mb="xl">
+                <Transition
+                  mounted={!isChangingYear}
+                  transition="slide-up"
+                  duration={400}
+                  timingFunction="ease"
+                >
+                  {(styles) => (
+                    <SimpleGrid 
+                      cols={{ base: 1, sm: 3 }}
+                      style={styles}
+                    >
+                      <MotionStack
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.4, delay: 0.1 }}
+                      >
+                        <PaguTable apbdesData={currentApbdes as any} />
+                      </MotionStack>
+                      
+                      <MotionStack
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.4, delay: 0.2 }}
+                      >
+                        <RealisasiTable apbdesData={currentApbdes as any} />
+                      </MotionStack>
+                      
+                      <MotionStack
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.4, delay: 0.3 }}
+                      >
+                        <GrafikRealisasi apbdesData={currentApbdes as any} />
+                      </MotionStack>
+                    </SimpleGrid>
+                  )}
+                </Transition>
+
+                {/* Comparison Chart */}
+                <Box mt="lg">
+                  <Transition
+                    mounted={!isChangingYear}
+                    transition="slide-up"
+                    duration={400}
+                    timingFunction="ease"
+                  >
+                    {(styles) => (
+                      <MotionStack
+                        style={styles}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.4, delay: 0.4 }}
+                      >
+                        <ComparisonChart apbdesData={currentApbdes as any} />
+                      </MotionStack>
+                    )}
+                  </Transition>
+                </Box>
+              </Box>
+            ) : currentApbdes ? (
+              <Box px={{ base: 'md', md: 100 }} py="xl" mb="xl">
+                <Stack align="center" gap="sm">
+                  <Text fz="2rem">📊</Text>
+                  <Text fz="sm" c="dimmed" ta="center" lh={1.5}>
+                    Tidak ada data item untuk tahun yang dipilih.
+                  </Text>
+                </Stack>
+              </Box>
+            ) : null}
+
+            {/* Loading State for Year Change */}
+            <Transition mounted={isChangingYear} transition="fade" duration={200}>
+              {(styles) => (
+                <Box 
+                  px={{ base: 'md', md: 'sm' }} 
+                  mb="xl"
+                  style={styles}
+                >
+                  <ApbdesMainSkeleton />
+                </Box>
+              )}
+            </Transition>
+          </MotionStack>
+        )}
+      </Transition>
     </Stack>
   )
 }

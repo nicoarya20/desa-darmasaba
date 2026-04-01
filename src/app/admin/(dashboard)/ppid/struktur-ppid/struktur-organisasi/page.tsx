@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
-import { Box, Center, Image, Loader, Paper, Stack, Text, Tooltip } from '@mantine/core';
+import { Box, Center, Image, Loader, Paper, Stack, Text } from '@mantine/core';
 import { IconUsers } from '@tabler/icons-react';
 import { OrganizationChart } from 'primereact/organizationchart';
 import { useEffect } from 'react';
@@ -110,7 +110,6 @@ function nodeTemplate(node: any) {
 
   return (
     <Stack align="center" gap={6} p="sm" style={{ minWidth: 160 }}>
-      <Tooltip label={name} position="top" withArrow>
         <Image
           src={imageSrc}
           alt={name}
@@ -123,7 +122,6 @@ function nodeTemplate(node: any) {
           }}
           loading='lazy'
         />
-      </Tooltip>
       <Text fw={600} ta="center" size="sm">{name}</Text>
       <Text size="xs" c="dimmed" ta="center">{status}</Text>
     </Stack>

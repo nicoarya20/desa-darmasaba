@@ -35,7 +35,7 @@ export async function pengumumanCreate(context: Context) {
 
   return {
     success: true,
-    message: "Success create pengumuman",
+    message: "Sukses menambahkan pengumuman",
     data: {
       ...body,
     },

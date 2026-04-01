@@ -22,9 +22,10 @@ const fileStorageCreate = async (context: Context) => {
   if (!UPLOAD_DIR) return { status: 500, body: "UPLOAD_DIR is not defined" };
 
   const isImage = file.type.startsWith("image/");
-  const category = isImage ? "image" : "document";
+  const isAudio = file.type.startsWith("audio/");
+  const category = isImage ? "image" : isAudio ? "audio" : "document";
 
-  const pathName = category === "image" ? "images" : "documents";
+  const pathName = category === "image" ? "images" : category === "audio" ? "audio" : "documents";
   const rootPath = path.join(UPLOAD_DIR, pathName);
   await fs.mkdir(rootPath, { recursive: true });
 
@@ -54,6 +55,11 @@ const fileStorageCreate = async (context: Context) => {
     // Simpan metadata untuk versi desktop sebagai default
     finalName = desktopName;
     finalMimeType = "image/webp";
+  } else if (isAudio) {
+    // Simpan file audio tanpa kompresi
+    const ext = file.name.split(".").pop() || "mp3";
+    finalName = `${finalName}.${ext}`;
+    await fs.writeFile(path.join(rootPath, finalName), buffer);
   } else {
     // Jika file adalah PDF, simpan tanpa kompresi
     if (file.type === "application/pdf") {

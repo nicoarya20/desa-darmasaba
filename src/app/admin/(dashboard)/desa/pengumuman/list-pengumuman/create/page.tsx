@@ -13,25 +13,73 @@ import {
   Text,
   TextInput,
   Title,
-  Tooltip,
+  Loader
 } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
 function CreatePengumuman() {
   const pengumumanState = useProxy(stateDesaPengumuman);
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Helper function to check if HTML content is empty
+  const isHtmlEmpty = (html: string) => {
+    // Remove all HTML tags and check if there's any text content
+    const textContent = html.replace(/<[^>]*>/g, '').trim();
+    return textContent === '';
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      pengumumanState.pengumuman.create.form.judul?.trim() !== '' &&
+      pengumumanState.pengumuman.create.form.categoryPengumumanId !== '' &&
+      pengumumanState.pengumuman.create.form.deskripsi?.trim() !== '' &&
+      !isHtmlEmpty(pengumumanState.pengumuman.create.form.content)
+    );
+  };
 
   useShallowEffect(() => {
     pengumumanState.category.findMany.load();
   }, []);
 
   const handleSubmit = async () => {
-    await pengumumanState.pengumuman.create.create();
-    resetForm();
-    router.push('/admin/desa/pengumuman/list-pengumuman');
+    if (!pengumumanState.pengumuman.create.form.judul?.trim()) {
+      toast.error('Judul wajib diisi');
+      return;
+    }
+    
+    if (!pengumumanState.pengumuman.create.form.categoryPengumumanId) {
+      toast.error('Kategori wajib dipilih');
+      return;
+    }
+    
+    if (!pengumumanState.pengumuman.create.form.deskripsi?.trim()) {
+      toast.error('Deskripsi singkat wajib diisi');
+      return;
+    }
+    
+    if (isHtmlEmpty(pengumumanState.pengumuman.create.form.content)) {
+      toast.error('Konten lengkap wajib diisi');
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      await pengumumanState.pengumuman.create.create();
+      resetForm();
+      router.push('/admin/desa/pengumuman/list-pengumuman');
+    } catch (error) {
+      console.error('Error creating pengumuman:', error);
+      toast.error('Terjadi kesalahan saat membuat pengumuman');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const resetForm = () => {
@@ -44,14 +92,12 @@ function CreatePengumuman() {
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+   <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Header */}
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
-        </Tooltip>
+        <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Tambah Pengumuman
         </Title>
@@ -68,7 +114,7 @@ function CreatePengumuman() {
         <Stack gap="md">
           {/* Judul */}
           <TextInput
-            defaultValue={pengumumanState.pengumuman.create.form.judul}
+            value={pengumumanState.pengumuman.create.form.judul}
             onChange={(val) => (pengumumanState.pengumuman.create.form.judul = val.target.value)}
             label="Judul"
             placeholder="Masukkan judul pengumuman"
@@ -79,21 +125,32 @@ function CreatePengumuman() {
           <Select
             label="Kategori"
             placeholder="Pilih kategori"
-            value={pengumumanState.pengumuman.create.form.categoryPengumumanId || ""}
-            onChange={(val) => {
-              pengumumanState.pengumuman.create.form.categoryPengumumanId = val ?? "";
-            }}
             data={pengumumanState.category.findMany.data?.map((item) => ({
               label: item.name,
               value: item.id,
-            }))}
+            })) || []}
+            value={pengumumanState.pengumuman.create.form.categoryPengumumanId || null}
+            onChange={(val: string | null) => {
+              if (val) {
+                const selected = pengumumanState.category.findMany.data?.find(
+                  (item) => item.id === val
+                );
+                if (selected) {
+                  pengumumanState.pengumuman.create.form.categoryPengumumanId = selected.id;
+                }
+              } else {
+                pengumumanState.pengumuman.create.form.categoryPengumumanId = '';
+              }
+            }}
             searchable
+            clearable
             nothingFoundMessage="Tidak ditemukan"
+            required
           />
 
           {/* Deskripsi Singkat */}
           <TextInput
-            defaultValue={pengumumanState.pengumuman.create.form.deskripsi}
+            value={pengumumanState.pengumuman.create.form.deskripsi}
             onChange={(val) => (pengumumanState.pengumuman.create.form.deskripsi = val.target.value)}
             label="Deskripsi Singkat"
             placeholder="Masukkan deskripsi singkat"
@@ -116,16 +173,30 @@ function CreatePengumuman() {
           {/* Tombol Submit */}
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

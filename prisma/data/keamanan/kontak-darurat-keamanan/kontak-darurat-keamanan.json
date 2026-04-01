@@ -1,0 +1,20 @@
+[
+  {
+    "id": "keamanan-polisi",
+    "nama": "Kepolisian",
+    "icon": "keamanan",
+    "kategoriId": "item-polisi"
+  },
+  {
+    "id": "keamanan-damkar",
+    "nama": "Pemadam Kebakaran",
+    "icon": "pemadam",
+    "kategoriId": "item-damkar"
+  },
+  {
+    "id": "keamanan-sar",
+    "nama": "SAR & Evakuasi",
+    "icon": "sar",
+    "kategoriId": "item-sar"
+  }
+]

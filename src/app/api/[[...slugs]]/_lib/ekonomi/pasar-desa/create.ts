@@ -9,6 +9,7 @@ type FormCreate = {
   rating: number;
   kategoriId: string[];
   kontak: string;
+  deskripsi: string;
   // Array of KategoriProduk IDs
 };
 
@@ -31,7 +32,8 @@ export default async function pasarDesaCreate(context: Context) {
           imageId: body.imageId,
           rating: Number(body.rating),
           kategoriProdukId: body.kategoriId[0],
-          kontak: body.kontak 
+          kontak: body.kontak,
+          deskripsi: body.deskripsi,
           // Use the first category as the main one
         },
       });
@@ -61,7 +63,7 @@ export default async function pasarDesaCreate(context: Context) {
 
     return {
       success: true,
-      message: "Success create pasar desa",
+      message: "Sukses menambahkan pasar desa",
       data: result,
     };
   } catch (error) {

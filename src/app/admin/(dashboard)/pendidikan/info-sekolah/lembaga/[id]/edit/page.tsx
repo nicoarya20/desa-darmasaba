@@ -1,35 +1,49 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import infoSekolahPaud from '@/app/admin/(dashboard)/_state/pendidikan/info-sekolah-paud';
+import colors from '@/con/colors';
 import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Select,
   Stack,
   TextInput,
-  Title,
-  Tooltip,
+  Title
 } from '@mantine/core';
+import { IconArrowBack } from '@tabler/icons-react';
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
-import infoSekolahPaud from '@/app/admin/(dashboard)/_state/pendidikan/info-sekolah-paud';
-import colors from '@/con/colors';
-import { IconArrowBack } from '@tabler/icons-react';
 
 export default function EditLembaga() {
   const router = useRouter();
   const { id } = useParams<{ id: string }>();
   const state = useProxy(infoSekolahPaud.lembagaPendidikan);
   const jenjangPendidikanList = infoSekolahPaud.jenjangPendidikan.findMany.data;
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [form, setForm] = useState({
     nama: '',
     jenjangId: '',
   });
+
+  const [originalData, setOriginalData] = useState({
+    nama: '',
+    jenjangId: '',
+  });
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      form.nama?.trim() !== '' &&
+      form.jenjangId?.trim() !== ''
+    );
+  };
 
   // Load jenjang pendidikan dan data lembaga
   useEffect(() => {
@@ -42,6 +56,10 @@ export default function EditLembaga() {
             nama: data.nama,
             jenjangId: data.jenjangId,
           });
+          setOriginalData({
+            nama: data.nama,
+            jenjangId: data.jenjangId,
+          });
         }
       });
     }
@@ -51,38 +69,52 @@ export default function EditLembaga() {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
+  const handleResetForm = () => {
+    setForm({
+      nama: originalData.nama,
+      jenjangId: originalData.jenjangId,
+    });
+    toast.info('Form dikembalikan ke data awal');
+  };
+
   const handleSubmit = async () => {
-    if (!form.nama || !form.jenjangId) {
-      toast.warn('Nama dan jenjang pendidikan harus diisi');
-      return;
-    }
+    try {
+      setIsSubmitting(true);
+      if (!form.nama || !form.jenjangId) {
+        toast.warn('Nama dan jenjang pendidikan harus diisi');
+        return;
+      }
 
-    // Update global state hanya saat submit
-    state.edit.id = id;
-    state.edit.form = form;
+      // Update global state hanya saat submit
+      state.edit.id = id;
+      state.edit.form = form;
 
-    const result = await state.edit.update();
+      const result = await state.edit.update();
 
-    if (result) {
-      toast.success('Data berhasil diperbarui');
-      router.push('/admin/pendidikan/info-sekolah/lembaga');
+      if (result) {
+        toast.success('Data berhasil diperbarui');
+        router.push('/admin/pendidikan/info-sekolah/lembaga');
+      }
+    } catch (error) {
+      console.error('Error updating lembaga:', error);
+      toast.error('Gagal memperbarui lembaga');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Header */}
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button
-            variant="subtle"
-            onClick={() => router.back()}
-            p="xs"
-            radius="md"
-          >
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
-        </Tooltip>
+        <Button
+          variant="subtle"
+          onClick={() => router.back()}
+          p="xs"
+          radius="md"
+        >
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Edit Lembaga Pendidikan
         </Title>
@@ -123,16 +155,30 @@ export default function EditLembaga() {
 
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

@@ -3,7 +3,7 @@
 
 import prestasiState from '@/app/admin/(dashboard)/_state/landing-page/prestasi-desa';
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, Stack, TextInput, Title, Tooltip } from '@mantine/core';
+import { Box, Button, Group, Paper, Stack, TextInput, Title, Loader } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -17,7 +17,14 @@ function EditKategoriPrestasi() {
   const stateKategori = useProxy(prestasiState.kategoriPrestasi);
 
   const [formData, setFormData] = useState({ name: '' });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [resetData, setResetData] = useState({ name: '' });
   const [loading, setLoading] = useState(false);
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return formData.name?.trim() !== '';
+  };
 
   // Load data kategori prestasi saat component mount
   useEffect(() => {
@@ -30,6 +37,7 @@ function EditKategoriPrestasi() {
         if (data) {
           stateKategori.edit.id = id;
           setFormData({ name: data.name || '' });
+          setResetData({ name: data.name || '' });
         }
       } catch (err) {
         console.error(err);
@@ -42,6 +50,13 @@ function EditKategoriPrestasi() {
     loadKategori();
   }, [id]);
 
+  const resetForm = () => {
+    setFormData({
+      name: resetData.name,
+    });
+    toast.info('Form dikembalikan ke data awal');
+  };
+
   // Submit: update global state hanya saat submit
   const handleSubmit = async () => {
     if (!formData.name.trim()) {
@@ -50,6 +65,7 @@ function EditKategoriPrestasi() {
     }
 
     try {
+      setIsSubmitting(true);
       stateKategori.edit.form = { name: formData.name.trim() };
       stateKategori.edit.id ||= id; // fallback jika id belum ada
 
@@ -61,17 +77,17 @@ function EditKategoriPrestasi() {
     } catch (err) {
       console.error(err);
       toast.error('Gagal memperbarui kategori prestasi desa');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
-        </Tooltip>
+        <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Edit Kategori Prestasi
         </Title>
@@ -96,18 +112,32 @@ function EditKategoriPrestasi() {
           />
 
           <Group justify="right">
+            {/* Tombol Batal */}
+            <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
             <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
-              loading={loading}
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? 'linear-gradient(135deg, #cccccc, #999999)'
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

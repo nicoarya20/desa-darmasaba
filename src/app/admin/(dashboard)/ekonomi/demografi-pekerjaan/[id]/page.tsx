@@ -6,15 +6,15 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Stack,
   TextInput,
-  Title,
-  Tooltip,
+  Title
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState, useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 import demografiPekerjaan from '../../../_state/ekonomi/demografi-pekerjaan';
@@ -29,12 +29,28 @@ export default function EditDemografiPekerjaan() {
   const router = useRouter();
   const { id } = useParams() as { id: string };
   const stateDemografi = useProxy(demografiPekerjaan);
-
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     pekerjaan: '',
     lakiLaki: 0,
     perempuan: 0,
   });
+  const [originalData, setOriginalData] = useState<FormData>({
+    pekerjaan: '',
+    lakiLaki: 0,
+    perempuan: 0,
+  });
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      formData.pekerjaan?.trim() !== '' &&
+      formData.lakiLaki !== null &&
+      formData.lakiLaki >= 0 &&
+      formData.perempuan !== null &&
+      formData.perempuan >= 0
+    );
+  };
 
   // ✅ Load data hanya sekali di awal (tidak reset form)
   useEffect(() => {
@@ -42,6 +58,7 @@ export default function EditDemografiPekerjaan() {
 
     const loadData = async () => {
       try {
+        setIsSubmitting(true);
         stateDemografi.update.id = id;
         await stateDemografi.findUnique.load(id);
 
@@ -52,10 +69,17 @@ export default function EditDemografiPekerjaan() {
             lakiLaki: Number(data.lakiLaki ?? 0),
             perempuan: Number(data.perempuan ?? 0),
           });
+          setOriginalData({
+            pekerjaan: data.pekerjaan ?? '',
+            lakiLaki: Number(data.lakiLaki ?? 0),
+            perempuan: Number(data.perempuan ?? 0),
+          });
         }
       } catch (error) {
         console.error('Error loading data:', error);
         toast.error('Gagal memuat data');
+      } finally {
+        setIsSubmitting(false);
       }
     };
 
@@ -76,9 +100,19 @@ export default function EditDemografiPekerjaan() {
     []
   );
 
+  const handleResetForm = () => {
+    setFormData({
+      pekerjaan: originalData.pekerjaan,
+      lakiLaki: Number(originalData.lakiLaki),
+      perempuan: Number(originalData.perempuan),
+    });
+    toast.info("Form dikembalikan ke data awal");
+  };
+
   // ✅ Submit hanya update global state sekali
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       stateDemografi.update.id = id;
       stateDemografi.update.form = { ...formData };
 
@@ -89,23 +123,23 @@ export default function EditDemografiPekerjaan() {
     } catch (error) {
       console.error('Error updating data:', error);
       toast.error('Gagal memperbarui data');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+     <Box px={{ base: 0, md: 'xs' }} py="xs">
       {/* Header */}
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button
-            variant="subtle"
-            onClick={() => router.back()}
-            p="xs"
-            radius="md"
-          >
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
-        </Tooltip>
+        <Button
+          variant="subtle"
+          onClick={() => router.back()}
+          p="xs"
+          radius="md"
+        >
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Edit Demografi Pekerjaan
         </Title>
@@ -149,16 +183,30 @@ export default function EditDemografiPekerjaan() {
 
           <Group justify="flex-end">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

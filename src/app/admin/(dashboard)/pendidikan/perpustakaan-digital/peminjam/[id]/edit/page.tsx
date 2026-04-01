@@ -8,13 +8,13 @@ import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Select,
   Stack,
   Text,
   TextInput,
-  Title,
-  Tooltip,
+  Title
 } from '@mantine/core';
 import { DateInput } from '@mantine/dates';
 import { useShallowEffect } from '@mantine/hooks';
@@ -30,6 +30,7 @@ function EditPeminjam() {
   const stateEdit = useProxy(perpustakaanDigitalState.peminjamanBuku);
   const router = useRouter();
   const params = useParams();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [formData, setFormData] = useState<{
     nama: string;
@@ -56,6 +57,38 @@ function EditPeminjam() {
     status: 'Dipinjam', // Default status
     catatan: '',
   });
+
+  const [originalData, setOriginalData] = useState({
+    nama: "",
+    noTelp: "",
+    alamat: "",
+    bukuId: "",
+    tanggalPinjam: "",
+    batasKembali: "",
+    tanggalKembali: "",
+    status: "Dipinjam", // Default status
+    catatan: "",
+  })
+
+  // Helper function to check if HTML content is empty
+  const isHtmlEmpty = (html: string) => {
+    // Remove all HTML tags and check if there's any text content
+    const textContent = html.replace(/<[^>]*>/g, '').trim();
+    return textContent === '';
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      formData.nama?.trim() !== '' &&
+      formData.noTelp?.trim() !== '' &&
+      formData.alamat?.trim() !== '' &&
+      formData.bukuId?.trim() !== '' &&
+      formData.tanggalPinjam?.trim() !== '' &&
+      formData.status?.trim() !== '' &&
+      !isHtmlEmpty(formData.catatan)
+    );
+  };
 
   useShallowEffect(() => {
     perpustakaanDigitalState.dataPerpustakaan.findManyAll.load()
@@ -85,6 +118,22 @@ function EditPeminjam() {
             status: (data.status as Status) ?? prev.status,
             catatan: data.catatan ?? prev.catatan,
           }));
+          setOriginalData((prev) => ({
+            ...prev,
+            nama: data.nama ?? prev.nama,
+            noTelp: data.noTelp ?? prev.noTelp,
+            alamat: data.alamat ?? prev.alamat,
+            bukuId: data.bukuId ?? prev.bukuId,
+            buku: data.buku ? {
+              id: data.buku.id,
+              judul: data.buku.judul
+            } : undefined,
+            tanggalPinjam: data.tanggalPinjam ?? prev.tanggalPinjam,
+            batasKembali: data.batasKembali ?? prev.batasKembali,
+            tanggalKembali: data.tanggalKembali ?? prev.tanggalKembali,
+            status: (data.status as Status) ?? prev.status,
+            catatan: data.catatan ?? prev.catatan,
+          }));
         }
       } catch (error) {
         console.error("Error loading peminjam:", error);
@@ -95,6 +144,22 @@ function EditPeminjam() {
     loadPeminjam();
   }, [params?.id]);
 
+  const handleResetForm = () => {
+    setFormData((prev) => ({
+      ...prev,
+      nama: originalData.nama ?? prev.nama,
+      noTelp: originalData.noTelp ?? prev.noTelp,
+      alamat: originalData.alamat ?? prev.alamat,
+      bukuId: originalData.bukuId ?? prev.bukuId,
+      tanggalPinjam: originalData.tanggalPinjam ?? prev.tanggalPinjam,
+      batasKembali: originalData.batasKembali ?? prev.batasKembali,
+      tanggalKembali: originalData.tanggalKembali ?? prev.tanggalKembali,
+      status: (originalData.status as Status) ?? prev.status,
+      catatan: originalData.catatan ?? prev.catatan,
+    }));
+    toast.info("Form dikembalikan ke data awal");
+  };
+
 
   const handleChange = (field: string, value: string | Status) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -102,6 +167,7 @@ function EditPeminjam() {
 
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       stateEdit.update.form = {
         ...stateEdit.update.form,
         ...formData,
@@ -113,6 +179,8 @@ function EditPeminjam() {
     } catch (error) {
       console.error("Error updating peminjam:", error);
       toast.error("Terjadi kesalahan saat memperbarui peminjam");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -120,11 +188,9 @@ function EditPeminjam() {
     <Box px={{ base: 'sm', md: 'lg' }} py="md">
       {/* Header */}
       <Group mb="md">
-        <Tooltip label="Kembali ke halaman sebelumnya" withArrow>
-          <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
-            <IconArrowBack color={colors['blue-button']} size={24} />
-          </Button>
-        </Tooltip>
+        <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
+          <IconArrowBack color={colors['blue-button']} size={24} />
+        </Button>
         <Title order={4} ml="sm" c="dark">
           Edit Peminjam Buku
         </Title>
@@ -177,6 +243,7 @@ function EditPeminjam() {
           </Box>
 
           <DateInput
+            disabled
             value={formData.tanggalPinjam}
             onChange={(date) => {
               perpustakaanDigitalState.peminjamanBuku.update.form.tanggalPinjam =
@@ -188,6 +255,7 @@ function EditPeminjam() {
           />
 
           <DateInput
+            disabled
             value={formData.tanggalKembali}
             onChange={(date) => {
               perpustakaanDigitalState.peminjamanBuku.update.form.tanggalKembali =
@@ -199,6 +267,7 @@ function EditPeminjam() {
           />
 
           <DateInput
+            disabled
             value={formData.batasKembali}
             onChange={(date) => {
               perpustakaanDigitalState.peminjamanBuku.update.form.batasKembali =
@@ -233,16 +302,30 @@ function EditPeminjam() {
 
           <Group justify="right">
             <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

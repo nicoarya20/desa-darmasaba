@@ -1,11 +1,11 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, Skeleton, Stack, Text, Tooltip, Image } from '@mantine/core';
-import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
-import { useRouter, useParams } from 'next/navigation';
-import React, { useState } from 'react';
-import { useProxy } from 'valtio/utils';
+import { Box, Button, Group, Image, Paper, Skeleton, Stack, Text } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
+import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
+import { useParams, useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { useProxy } from 'valtio/utils';
 import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
 import penangananDarurat from '../../../_state/kesehatan/penanganan-darurat/penangananDarurat';
 
@@ -40,7 +40,7 @@ function DetailPenangananDarurat() {
   const data = state.findUnique.data;
 
   return (
-    <Box py={10}>
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Tombol Back */}
       <Button
         variant="subtle"
@@ -54,7 +54,7 @@ function DetailPenangananDarurat() {
       {/* Wrapper Detail */}
       <Paper
         withBorder
-        w={{ base: "100%", md: "50%" }}
+        w={{ base: "100%", md: "70%" }}
         bg={colors['white-1']}
         p="lg"
         radius="md"
@@ -75,6 +75,7 @@ function DetailPenangananDarurat() {
               <Box>
                 <Text fz="lg" fw="bold">Deskripsi</Text>
                 <Text
+                  pl={10}
                   fz="md"
                   c="dimmed"
                   dangerouslySetInnerHTML={{ __html: data.deskripsi }}
@@ -96,34 +97,30 @@ function DetailPenangananDarurat() {
 
               {/* Aksi */}
               <Group gap="sm">
-                <Tooltip label="Hapus Data" withArrow position="top">
-                  <Button
-                    color="red"
-                    onClick={() => {
-                      setSelectedId(data.id);
-                      setModalHapus(true);
-                    }}
-                    variant="light"
-                    radius="md"
-                    size="md"
-                  >
-                    <IconTrash size={20} />
-                  </Button>
-                </Tooltip>
+                <Button
+                  color="red"
+                  onClick={() => {
+                    setSelectedId(data.id);
+                    setModalHapus(true);
+                  }}
+                  variant="light"
+                  radius="md"
+                  size="md"
+                >
+                  <IconTrash size={20} />
+                </Button>
 
-                <Tooltip label="Edit Data" withArrow position="top">
-                  <Button
-                    color="green"
-                    onClick={() =>
-                      router.push(`/admin/kesehatan/penanganan-darurat/${data.id}/edit`)
-                    }
-                    variant="light"
-                    radius="md"
-                    size="md"
-                  >
-                    <IconEdit size={20} />
-                  </Button>
-                </Tooltip>
+                <Button
+                  color="green"
+                  onClick={() =>
+                    router.push(`/admin/kesehatan/penanganan-darurat/${data.id}/edit`)
+                  }
+                  variant="light"
+                  radius="md"
+                  size="md"
+                >
+                  <IconEdit size={20} />
+                </Button>
               </Group>
             </Stack>
           </Paper>

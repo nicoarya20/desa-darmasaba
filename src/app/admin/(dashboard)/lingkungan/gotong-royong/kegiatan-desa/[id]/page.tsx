@@ -1,14 +1,14 @@
 'use client'
-import { useProxy } from 'valtio/utils';
-import { Box, Button, Flex, Image, Paper, Skeleton, Stack, Text, Tooltip } from '@mantine/core';
+import { Box, Button, Flex, Image, Paper, Skeleton, Stack, Text } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack, IconEdit, IconX } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { useProxy } from 'valtio/utils';
 
-import colors from '@/con/colors';
-import gotongRoyongState from '@/app/admin/(dashboard)/_state/lingkungan/gotong-royong';
 import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
+import gotongRoyongState from '@/app/admin/(dashboard)/_state/lingkungan/gotong-royong';
+import colors from '@/con/colors';
 
 function DetailKegiatanDesa() {
   const kegiatanDesaState = useProxy(gotongRoyongState.kegiatanDesa);
@@ -41,7 +41,7 @@ function DetailKegiatanDesa() {
   const data = kegiatanDesaState.findUnique.data;
 
   return (
-    <Box py={10}>
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Tombol Kembali */}
       <Button
         variant="subtle"
@@ -55,7 +55,7 @@ function DetailKegiatanDesa() {
       {/* Container Detail */}
       <Paper
         withBorder
-        w={{ base: "100%", md: "60%" }}
+        w={{ base: "100%", md: "70%" }}
         bg={colors['white-1']}
         p="lg"
         radius="md"
@@ -85,13 +85,17 @@ function DetailKegiatanDesa() {
               {/* Deskripsi Singkat */}
               <Box>
                 <Text fz="lg" fw="bold">Deskripsi Singkat</Text>
-                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data.deskripsiSingkat || '-' }} />
+                <Box pl={5}>
+                  <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data.deskripsiSingkat || '-' }} />
+                </Box>
               </Box>
 
               {/* Deskripsi Lengkap */}
               <Box>
                 <Text fz="lg" fw="bold">Deskripsi</Text>
-                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data.deskripsiLengkap || '-' }} />
+                <Box pl={5}>
+                  <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data.deskripsiLengkap || '-' }} />
+                </Box>
               </Box>
 
               {/* Kategori */}
@@ -132,32 +136,28 @@ function DetailKegiatanDesa() {
 
               {/* Tombol Hapus & Edit */}
               <Flex gap="sm" mt={10}>
-                <Tooltip label="Hapus Kegiatan Desa" withArrow position="top">
-                  <Button
-                    color="red"
-                    onClick={() => {
-                      setSelectedId(data.id);
-                      setModalHapus(true);
-                    }}
-                    variant="light"
-                    radius="md"
-                    size="md"
-                  >
-                    <IconX size={20} />
-                  </Button>
-                </Tooltip>
+                <Button
+                  color="red"
+                  onClick={() => {
+                    setSelectedId(data.id);
+                    setModalHapus(true);
+                  }}
+                  variant="light"
+                  radius="md"
+                  size="md"
+                >
+                  <IconX size={20} />
+                </Button>
 
-                <Tooltip label="Edit Kegiatan Desa" withArrow position="top">
-                  <Button
-                    color="green"
-                    onClick={() => router.push(`/admin/lingkungan/gotong-royong/kegiatan-desa/${data.id}/edit`)}
-                    variant="light"
-                    radius="md"
-                    size="md"
-                  >
-                    <IconEdit size={20} />
-                  </Button>
-                </Tooltip>
+                <Button
+                  color="green"
+                  onClick={() => router.push(`/admin/lingkungan/gotong-royong/kegiatan-desa/${data.id}/edit`)}
+                  variant="light"
+                  radius="md"
+                  size="md"
+                >
+                  <IconEdit size={20} />
+                </Button>
               </Flex>
             </Stack>
           </Paper>

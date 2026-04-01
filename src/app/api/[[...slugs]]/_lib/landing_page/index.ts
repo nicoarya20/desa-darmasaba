@@ -14,7 +14,7 @@ import UmurResponden from "./indeks_kepuasan/umur-responden";
 import Responden from "./indeks_kepuasan/responden";
 
 const LandingPage = new Elysia({
-    prefix: "/api/landingpage",
+    prefix: "/landingpage",
     tags: ["Landing Page/Profile"]
 })
 

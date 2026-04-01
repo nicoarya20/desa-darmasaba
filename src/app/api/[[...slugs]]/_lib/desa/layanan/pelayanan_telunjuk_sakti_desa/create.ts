@@ -21,7 +21,7 @@ export default async function pelayananTelunjukSaktiDesaCreate(context: Context)
     });
     return {
         success: true,
-        message: "Success create pelayanan telunjuk sakti desa",
+        message: "Sukses menambahkan pelayanan telunjuk sakti desa",
         data: {
             ...body,
         },

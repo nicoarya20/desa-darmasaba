@@ -1,10 +1,10 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Flex, Paper, Skeleton, Stack, Text, Tooltip } from '@mantine/core';
-import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
-import { useRouter, useParams } from 'next/navigation';
-import { useState } from 'react';
+import { Box, Button, Flex, Paper, Skeleton, Stack, Text } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
+import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
+import { useParams, useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
 import pencegahanKriminalitasState from '../../../_state/keamanan/pencegahan-kriminalitas';
@@ -40,7 +40,7 @@ function DetailPencegahanKriminalitas() {
   const data = kriminalitasState.findUnique.data;
 
   return (
-    <Box py={10}>
+     <Box px={{ base: 0, md: 'xs' }} py="xs">
       {/* Tombol Kembali */}
       <Button
         variant="subtle"
@@ -54,7 +54,7 @@ function DetailPencegahanKriminalitas() {
       {/* Detail */}
       <Paper
         withBorder
-        w={{ base: "100%", md: "50%" }}
+        w={{ base: "100%", md: "70%" }}
         bg={colors['white-1']}
         p="lg"
         radius="md"
@@ -108,32 +108,28 @@ function DetailPencegahanKriminalitas() {
 
               {/* Tombol Aksi */}
               <Flex gap="sm" mt="sm">
-                <Tooltip label="Hapus" withArrow position="top">
-                  <Button
-                    color="red"
-                    onClick={() => {
-                      setSelectedId(data.id);
-                      setModalHapus(true);
-                    }}
-                    variant="light"
-                    radius="md"
-                    size="md"
-                  >
-                    <IconTrash size={20} />
-                  </Button>
-                </Tooltip>
+                <Button
+                  color="red"
+                  onClick={() => {
+                    setSelectedId(data.id);
+                    setModalHapus(true);
+                  }}
+                  variant="light"
+                  radius="md"
+                  size="md"
+                >
+                  <IconTrash size={20} />
+                </Button>
 
-                <Tooltip label="Edit" withArrow position="top">
-                  <Button
-                    color="green"
-                    onClick={() => router.push(`/admin/keamanan/pencegahan-kriminalitas/${data.id}/edit`)}
-                    variant="light"
-                    radius="md"
-                    size="md"
-                  >
-                    <IconEdit size={20} />
-                  </Button>
-                </Tooltip>
+                <Button
+                  color="green"
+                  onClick={() => router.push(`/admin/keamanan/pencegahan-kriminalitas/${data.id}/edit`)}
+                  variant="light"
+                  radius="md"
+                  size="md"
+                >
+                  <IconEdit size={20} />
+                </Button>
               </Flex>
             </Stack>
           </Paper>

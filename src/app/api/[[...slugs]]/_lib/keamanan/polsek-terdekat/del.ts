@@ -2,38 +2,28 @@ import prisma from "@/lib/prisma";
 import { Context } from "elysia";
 
 const polsekTerdekatDelete = async (context: Context) => {
-    const id = context.params?.id as string;
+  const { params } = context;
+  const id = params?.id as string;
 
-    if (!id) {
-        return {
-            status: 400,
-            body: "ID tidak diberikan",
-        };
-    }
+  if (!id) {
+    throw new Error("ID tidak ditemukan dalam parameter");
+  }
 
-    const polsekTerdekat = await prisma.polsekTerdekat.findUnique({
-        where: { id },
-        include: {
-            layananPolsek: true,
-        }
-    });
+  // 1. Hapus relasi dari pivot
+  await prisma.layananToPolsek.deleteMany({
+    where: { polsekTerdekatId: id },
+  });
 
-    if (!polsekTerdekat) {
-        return {
-            status: 404,
-            body: "Polsek terdekat tidak ditemukan",
-        };
-    }
+  // 2. Hapus pasar desa utama
+  const deleted = await prisma.polsekTerdekat.delete({
+    where: { id },
+  });
 
-    await prisma.polsekTerdekat.delete({
-        where: { id },
-    });
-
-    return {
-        success: true,
-        status: 200,
-        message: "Polsek terdekat berhasil dihapus",
-    };
+  return {
+    success: true,
+    message: "Berhasil menghapus polsek terdekat",
+    data: deleted,
+  };
 };
 
 export default polsekTerdekatDelete;

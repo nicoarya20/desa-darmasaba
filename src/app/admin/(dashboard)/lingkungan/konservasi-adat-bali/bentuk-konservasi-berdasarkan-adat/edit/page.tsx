@@ -1,12 +1,13 @@
 'use client'
 import stateKonservasiAdatBali from '@/app/admin/(dashboard)/_state/lingkungan/konservasi-adat-bali';
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, Stack, Text, Title } from '@mantine/core';
+import { Box, Button, Group, Loader, Paper, Stack, Text, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack } from '@tabler/icons-react';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
 const KonservasiAdatBaliTextEditor = dynamic(
@@ -17,9 +18,29 @@ const KonservasiAdatBaliTextEditor = dynamic(
 function EditBentukKonservasiBerdasarkanAdat() {
   const router = useRouter();
   const bentukKonservasiState = useProxy(stateKonservasiAdatBali.stateBentukKonservasiBerdasarkanAdat);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Gabung semua field form jadi satu object
   const [formData, setFormData] = useState({ judul: '', deskripsi: '' });
+  const [originalData, setOriginalData] = useState({
+    judul: '',
+    deskripsi: '',
+  });
+
+  // Helper function to check if HTML content is empty
+  const isHtmlEmpty = (html: string) => {
+    // Remove all HTML tags and check if there's any text content
+    const textContent = html.replace(/<[^>]*>/g, '').trim();
+    return textContent === '';
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      !isHtmlEmpty(formData.judul) &&
+      !isHtmlEmpty(formData.deskripsi)
+    );
+  };
 
   // Initialize data dari global state
   useShallowEffect(() => {
@@ -34,6 +55,10 @@ function EditBentukKonservasiBerdasarkanAdat() {
         judul: bentukKonservasiState.findById.data.judul ?? '',
         deskripsi: bentukKonservasiState.findById.data.deskripsi ?? '',
       });
+      setOriginalData({
+        judul: bentukKonservasiState.findById.data.judul ?? '',
+        deskripsi: bentukKonservasiState.findById.data.deskripsi ?? '',
+      });
     }
   }, [bentukKonservasiState.findById.data]);
 
@@ -41,17 +66,33 @@ function EditBentukKonservasiBerdasarkanAdat() {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const submit = () => {
-    if (bentukKonservasiState.findById.data) {
-      // Update global state cuma pas submit
-      const updatedData = { ...bentukKonservasiState.findById.data, ...formData };
-      bentukKonservasiState.update.save(updatedData);
+  const handleResetForm = () => {
+    setFormData({
+      judul: originalData.judul,
+      deskripsi: originalData.deskripsi,
+    });
+    toast.info("Form dikembalikan ke data awal");
+  };
+
+  const handleSubmit = () => {
+    try {
+      setIsSubmitting(true);
+      if (bentukKonservasiState.findById.data) {
+        // Update global state cuma pas submit
+        const updatedData = { ...bentukKonservasiState.findById.data, ...formData };
+        bentukKonservasiState.update.save(updatedData);
+      }
+      router.push('/admin/lingkungan/konservasi-adat-bali/bentuk-konservasi-berdasarkan-adat');
+    } catch (error) {
+      console.error("Error updating bentuk konservasi berdasarkan adat:", error);
+      toast.error("Terjadi kesalahan saat memperbarui bentuk konservasi berdasarkan adat");
+    } finally {
+      setIsSubmitting(false);
     }
-    router.push('/admin/lingkungan/konservasi-adat-bali/bentuk-konservasi-berdasarkan-adat');
   };
 
   return (
-    <Box px={{ base: 'sm', md: 'lg' }} py="md">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Header */}
       <Group mb="md">
         <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
@@ -94,19 +135,33 @@ function EditBentukKonservasiBerdasarkanAdat() {
             />
           </Box>
 
-          <Group justify="right" mt="md">
+          <Group justify="right">
+            {/* Tombol Batal */}
             <Button
-              onClick={submit}
+              variant="outline"
+              color="gray"
               radius="md"
               size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
+            {/* Tombol Simpan */}
+            <Button
+              onClick={handleSubmit}
+              radius="md"
+              size="md"
+              disabled={!isFormValid() || isSubmitting}
               style={{
-                background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
-              loading={bentukKonservasiState.update.loading}
             >
-              Simpan
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

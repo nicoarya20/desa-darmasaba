@@ -101,6 +101,38 @@ const ApbDesa = proxy({
       }
     },
   },
+  findFirst: {
+    data: null as Prisma.ApbDesaGetPayload<{
+      include: { pendapatan: true; belanja: true; pembiayaan: true };
+    }> | null,
+    loading: false,
+    async load(params?: Record<string, any>) {
+      try {
+        this.loading = true;
+  
+        // ✅ request ke endpoint find-first
+        const res = await ApiFetch.api.ekonomi.pendapatanaslidesa.apbdesa[
+          "find-first"
+        ].get({ query: params || {} });
+  
+        if (res.status === 200 && res.data?.success) {
+          this.data = res.data.data ?? null;
+        } else {
+          this.data = null;
+          toast.error(res.data?.message || "Gagal memuat data pertama APB Desa");
+        }
+      } catch (error) {
+        console.error("Error findFirst APB Desa:", error);
+        toast.error("Gagal memuat data APB Desa pertama");
+        this.data = null;
+      } finally {
+        this.loading = false;
+      }
+    },
+    reset() {
+      this.data = null;
+    },
+  },  
   update: {
     id: "",
     form: { ...ApbDesaDefaultForm },

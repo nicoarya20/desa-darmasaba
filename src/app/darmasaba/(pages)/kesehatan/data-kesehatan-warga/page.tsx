@@ -6,9 +6,7 @@ import { Box, Center, ColorSwatch, Flex, Paper, SimpleGrid, Skeleton, Stack, Tex
 import { useEffect, useState } from 'react';
 import BackButton from '../../desa/layanan/_com/BackButto';
 
-// import { useRouter } from 'next/navigation';
 import { useMediaQuery, useShallowEffect } from '@mantine/hooks';
-
 import persentasekelahiran from '@/app/admin/(dashboard)/_state/kesehatan/data_kesehatan_warga/persentaseKelahiran';
 import { useProxy } from 'valtio/utils';
 
@@ -16,7 +14,6 @@ import FasilitasKesehatan from './fasilitas-kesehatan-page/page';
 import GrafikPenyakit from './grafik-penyakit/page';
 import JadwalKegiatan from './jadwal-kegiatan-page/page';
 import ArtikelKesehatanPage from './artikel-kesehatan-page/page';
-
 
 function Page() {
   type DataTahunan = {
@@ -31,7 +28,6 @@ function Page() {
     }>;
   };
 
-  // Count occurrences per year
   const countByYear = (data: any[], dateField: string) => {
     const counts: Record<string, number> = {};
     data?.forEach(item => {
@@ -43,28 +39,23 @@ function Page() {
 
   const statePersentase = useProxy(persentasekelahiran);
   const [chartData, setChartData] = useState<DataTahunan[]>([]);
-  const isTablet = useMediaQuery('(max-width: 1024px)');
   const isMobile = useMediaQuery('(max-width: 768px)');
 
-
   useShallowEffect(() => {
-    statePersentase.kelahiran.findMany.load(1, 1000); // Load all kelahiran data
-    statePersentase.kematian.findMany.load(1, 1000); // Load all kematian data
+    statePersentase.kelahiran.findMany.load(1, 1000);
+    statePersentase.kematian.findMany.load(1, 1000);
   }, []);
 
   useEffect(() => {
     if (statePersentase.kelahiran.findMany.data && statePersentase.kematian.findMany.data) {
-      // Count kelahiran and kematian by year
       const kelahiranByYear = countByYear(statePersentase.kelahiran.findMany.data, 'tanggal');
       const kematianByYear = countByYear(statePersentase.kematian.findMany.data, 'tanggal');
 
-      // Get all unique years
       const allYears = new Set([
         ...Object.keys(kelahiranByYear),
         ...Object.keys(kematianByYear)
       ]);
 
-      // Create data structure for the chart
       const dataByYear = Array.from(allYears).reduce<Record<string, DataTahunan>>((acc, year) => {
         acc[year] = {
           tahun: year,
@@ -93,32 +84,44 @@ function Page() {
       </Stack>
     );
   }
+
   return (
-    <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"22"}>
+    <Stack pos="relative" bg={colors.Bg} py="xl" gap="22">
       <Box px={{ base: 'md', md: 100 }}>
         <BackButton />
       </Box>
-      <Text ta={"center"} fz={{ base: "h1", md: "2.5rem" }} c={colors["blue-button"]} fw={"bold"}>
+
+      {/* Page Title */}
+      <Title
+        order={1}
+        ta="center"
+        c={colors['blue-button']}
+        fw="bold"
+        lh={1.2}
+      >
         Data Kesehatan Masyarakat Puskesmas Darmasaba
-      </Text>
-      <Box px={{ base: "md", md: 100 }}>
-        <Stack gap={'lg'}>
+      </Title>
+
+      <Box px={{ base: 'md', md: 100 }}>
+        <Stack gap="lg">
           {/* Bar Chart Kematian Kelahiran */}
           <Box>
-            <Paper p={"xl"} bg={colors['white-trans-1']}>
+            <Paper p="xl" bg={colors['white-trans-1']}>
               <Box pb={30}>
-                <Title order={2} mb="md">Data Kematian dan Kelahiran</Title>
+                <Title order={2} mb="md" ta="center">
+                  Data Kematian dan Kelahiran
+                </Title>
+
                 {chartData.length === 0 ? (
-                  <Text c="dimmed" ta="center" py="xl">
+                  <Text c="dimmed" ta="center" py="xl" size="md">
                     Belum ada data yang tersedia untuk ditampilkan
                   </Text>
                 ) : (
                   <>
-                    {/* Main Chart */}
                     <Center>
                       <Box h={400}>
                         <Box style={{
-                          width: isMobile ? '90vw' : isTablet ? '700px' : '800px',
+                          width: isMobile ? '90vw' : '800px',
                           maxWidth: '100%',
                           margin: '0 auto'
                         }}>
@@ -137,16 +140,21 @@ function Page() {
                     </Center>
                   </>
                 )}
-                <Flex pb={30} justify={'center'} gap={'xl'} align={'center'}>
+
+                <Flex pb={30} justify="center" gap="xl" align="center" wrap="wrap">
                   <Box>
-                    <Flex gap={{ base: 0, md: 5 }} align={'center'}>
-                      <Text fw={'bold'} fz={{ base: 'md', md: 'h4' }}>Angka Kematian</Text>
-                      <ColorSwatch  color="#EF3E3E" size={30} />
+                    <Flex gap={{ base: 'xs', md: 'sm' }} align="center">
+                      <Text fw="bold" fz={{ base: 'sm', md: 'md' }}>
+                        Angka Kematian
+                      </Text>
+                      <ColorSwatch color="#EF3E3E" size={30} />
                     </Flex>
                   </Box>
                   <Box>
-                    <Flex gap={{ base: 0, md: 5 }} align={'center'}>
-                      <Text fw={'bold'} fz={{ base: 'md', md: 'h4' }}>Angka Kelahiran</Text>
+                    <Flex gap={{ base: 'xs', md: 'sm' }} align="center">
+                      <Text fw="bold" fz={{ base: 'sm', md: 'md' }}>
+                        Angka Kelahiran
+                      </Text>
                       <ColorSwatch color="#3290CA" size={30} />
                     </Flex>
                   </Box>
@@ -154,20 +162,13 @@ function Page() {
               </Box>
             </Paper>
           </Box>
+
           <GrafikPenyakit />
-          {/* Artikel Kesehatan */}
+
           <Box>
-            <SimpleGrid
-              cols={{
-                base: 1,
-                md: 3,
-              }}
-            >
-              {/* Fasilitas Kesehatan */}
+            <SimpleGrid cols={{ base: 1, md: 3 }}>
               <FasilitasKesehatan />
-              {/* Jadwal Kegiatan */}
               <JadwalKegiatan />
-              {/* Artikel Kesehatan */}
               <ArtikelKesehatanPage />
             </SimpleGrid>
           </Box>

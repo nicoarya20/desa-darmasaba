@@ -49,7 +49,7 @@ const jadwalKegiatanCreate = async (context: Context) => {
     })
     return {
         success: true,
-        message: "Success create jadwal kegiatan",
+        message: "Sukses menambahkan jadwal kegiatan",
         data: jadwalKegiatan
     }
 }

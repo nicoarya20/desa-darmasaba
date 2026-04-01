@@ -1,7 +1,7 @@
 'use client'
 import jadwalkegiatanState from '@/app/admin/(dashboard)/_state/kesehatan/data_kesehatan_warga/jadwalKegiatan';
 import colors from '@/con/colors';
-import { Box, Button, Card, Divider, Group, Paper, Skeleton, Stack, Text } from '@mantine/core';
+import { Box, Button, Card, Divider, Group, Paper, Skeleton, Stack, Text, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconChevronRight, IconClockHour4, IconMapPin } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
@@ -27,13 +27,13 @@ function JadwalKegiatanPage() {
     <Box>
       <Paper bg={colors['white-trans-1']} p="xl" radius="xl" shadow="md" h="auto" mih="100vh">
         <Stack gap="lg">
-          <Text ta="center" fw={700} fz="32px" c={colors['blue-button']}>
+          <Title ta="center" order={1} c={colors['blue-button']} fw={700}>
             Jadwal Kegiatan Warga
-          </Text>
+          </Title>
           <Divider size="sm" color={colors['blue-button']} />
           {state.findMany.data.length === 0 ? (
             <Box py="xl" ta="center">
-              <Text fz="lg" c="dimmed">
+              <Text fz={{ base: 'sm', sm: 'md' }} c="dimmed">
                 Belum ada jadwal kegiatan yang tersedia
               </Text>
             </Box>
@@ -48,11 +48,11 @@ function JadwalKegiatanPage() {
                 style={{ backdropFilter: 'blur(8px)' }}
               >
                 <Stack gap="sm">
-                  <Group justify="space-between">
-                    <Text fw={700} fz="xl">
+                  <Group justify="space-between" wrap="nowrap">
+                    <Title order={2} c={colors['blue-button']} fw={700} fz={{ base: 'md', sm: 'xl' }}>
                       {item.informasijadwalkegiatan.name}
-                    </Text>
-                    <Text fw={600} fz="sm" c={colors['blue-button']}>
+                    </Title>
+                    <Text fw={600} fz={{ base: 'xs', sm: 'sm' }} c={colors['blue-button']} lh="1.4">
                       {new Date(item.informasijadwalkegiatan.tanggal).toLocaleDateString('id-ID', {
                         day: '2-digit',
                         month: 'long',
@@ -62,13 +62,17 @@ function JadwalKegiatanPage() {
                   </Group>
 
                   <Group gap="xs">
-                    <IconClockHour4 size={18} color={colors['blue-button']} />
-                    <Text fz="sm">{item.informasijadwalkegiatan.waktu}</Text>
+                    <IconClockHour4 size={18} />
+                    <Text fz={{ base: 'xs', sm: 'sm' }} lh="1.5">
+                      {item.informasijadwalkegiatan.waktu}
+                    </Text>
                   </Group>
 
                   <Group gap="xs">
-                    <IconMapPin size={18} color={colors['blue-button']} />
-                    <Text fz="sm">{item.informasijadwalkegiatan.lokasi}</Text>
+                    <IconMapPin size={18} />
+                    <Text fz={{ base: 'xs', sm: 'sm' }} lh="1.5">
+                      {item.informasijadwalkegiatan.lokasi}
+                    </Text>
                   </Group>
 
                   <Divider my="sm" />

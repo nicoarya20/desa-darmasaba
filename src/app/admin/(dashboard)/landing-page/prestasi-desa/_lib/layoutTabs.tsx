@@ -1,10 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
+import colors from '@/con/colors';
+import { ScrollArea, Stack, Tabs, TabsList, TabsPanel, TabsTab, Title } from '@mantine/core';
+import { IconCategory, IconListDetails } from '@tabler/icons-react';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
-import { ScrollArea, Stack, Tabs, TabsList, TabsPanel, TabsTab, Title, Tooltip } from '@mantine/core';
-import { IconCategory, IconListDetails } from '@tabler/icons-react';
-import colors from '@/con/colors';
 
 function LayoutTabs({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -16,14 +16,12 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
       value: "listPrestasiDesa",
       href: "/admin/landing-page/prestasi-desa/list-prestasi-desa",
       icon: <IconListDetails size={18} stroke={1.8} />,
-      tooltip: "Kelola daftar prestasi desa",
     },
     {
       label: "Kategori Prestasi",
       value: "kategoriPrestasiDesa",
       href: "/admin/landing-page/prestasi-desa/kategori-prestasi-desa",
       icon: <IconCategory size={18} stroke={1.8} />,
-      tooltip: "Kelola kategori prestasi desa",
     },
   ];
 
@@ -58,31 +56,36 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
         radius="lg"
         keepMounted={false}
       >
+
         <ScrollArea type="auto" offsetScrollbars>
-        <TabsList
-          p="sm"
-          style={{
-            background: "linear-gradient(135deg, #e7ebf7, #f9faff)",
-            borderRadius: "1rem",
-            boxShadow: "inset 0 0 10px rgba(0,0,0,0.05)",
-          }}
-        >
-          {tabs.map((tab, i) => (
-            <Tooltip key={i} label={tab.tooltip} position="bottom" withArrow transitionProps={{ transition: 'pop', duration: 200 }}>
+          <TabsList
+            p="sm"
+            style={{
+              background: "linear-gradient(135deg, #e7ebf7, #f9faff)",
+              borderRadius: "1rem",
+              boxShadow: "inset 0 0 10px rgba(0,0,0,0.05)",
+              display: "flex",
+              flexWrap: "nowrap",
+              gap: "0.5rem",
+              paddingInline: "0.5rem", // ✅ biar nggak nempel ke tepi
+            }}
+          >
+            {tabs.map((tab, i) => (
               <TabsTab
+                key={i}
                 value={tab.value}
                 leftSection={tab.icon}
                 style={{
                   fontWeight: 600,
                   fontSize: "0.9rem",
                   transition: "all 0.2s ease",
+                  flexShrink: 0, // ✅ jangan mengecil aneh-aneh
                 }}
               >
                 {tab.label}
               </TabsTab>
-            </Tooltip>
-          ))}
-        </TabsList>
+            ))}
+          </TabsList>
         </ScrollArea>
 
         {tabs.map((tab, i) => (

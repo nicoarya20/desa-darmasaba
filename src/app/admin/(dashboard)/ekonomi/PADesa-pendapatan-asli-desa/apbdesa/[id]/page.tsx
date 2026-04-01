@@ -9,8 +9,7 @@ import {
   Paper,
   Skeleton,
   Stack,
-  Text,
-  Tooltip
+  Text
 } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
@@ -58,7 +57,7 @@ function DetailAPBDesa() {
   const data = apbState.findUnique.data;
 
   return (
-    <Box py={10}>
+    <Box px={{ base: 0, md: 'xs' }} py="xs">
       <Button
         variant="subtle"
         onClick={() => router.back()}
@@ -81,7 +80,7 @@ function DetailAPBDesa() {
             Detail APB Desa
           </Text>
 
-          <Paper bg={colors['BG-trans']} p="md" radius="md" shadow="xs">
+          <Paper bg="#EEF3FBFF" p="md" radius="md" shadow="xs">
             <Stack gap="sm">
               <Box>
                 <Text fz="lg" fw="bold">
@@ -159,36 +158,32 @@ function DetailAPBDesa() {
               </Box>
 
               <Group gap="sm" mt={10}>
-                <Tooltip label="Hapus APB Desa" withArrow position="top">
-                  <Button
-                    color="red"
-                    onClick={() => {
-                      setSelectedId(data.id);
-                      setModalHapus(true);
-                    }}
-                    variant="light"
-                    radius="md"
-                    size="md"
-                  >
-                    <IconTrash size={20} />
-                  </Button>
-                </Tooltip>
+                <Button
+                  color="red"
+                  onClick={() => {
+                    setSelectedId(data.id);
+                    setModalHapus(true);
+                  }}
+                  variant="light"
+                  radius="md"
+                  size="md"
+                >
+                  <IconTrash size={20} />
+                </Button>
 
-                <Tooltip label="Edit APB Desa" withArrow position="top">
-                  <Button
-                    color="green"
-                    onClick={() =>
-                      router.push(
-                        `/admin/ekonomi/PADesa-pendapatan-asli-desa/apbdesa/${data.id}/edit`
-                      )
-                    }
-                    variant="light"
-                    radius="md"
-                    size="md"
-                  >
-                    <IconEdit size={20} />
-                  </Button>
-                </Tooltip>
+                <Button
+                  color="green"
+                  onClick={() =>
+                    router.push(
+                      `/admin/ekonomi/PADesa-pendapatan-asli-desa/apbdesa/${data.id}/edit`
+                    )
+                  }
+                  variant="light"
+                  radius="md"
+                  size="md"
+                >
+                  <IconEdit size={20} />
+                </Button>
               </Group>
             </Stack>
           </Paper>
