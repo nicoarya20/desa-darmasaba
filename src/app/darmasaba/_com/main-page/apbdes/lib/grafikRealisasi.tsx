@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Paper, Title, Progress, Stack, Text, Group, Box } from '@mantine/core'
 import { IconArrowUpRight, IconArrowDownRight } from '@tabler/icons-react'
 import { APBDes, APBDesItem } from '../types/apbdes'
@@ -107,7 +106,7 @@ function Summary({ title, data, icon }: SummaryProps) {
 
       <Text 
         fz="xs" 
-        c={statusMessage.color as any} 
+        c={statusMessage.color} 
         fw={600}
         style={{ 
           backgroundColor: `var(--mantine-color-${statusMessage.color}-0)`,
