@@ -29,16 +29,18 @@ process.on('unhandledRejection', async (error) => {
 });
 
 // Handle graceful shutdown
-process.on('SIGINT', async () => {
-    console.log('Received SIGINT signal. Closing database connections...');
-    await prisma.$disconnect();
-    process.exit(0);
-});
+if (process.env.NODE_ENV === 'production' && !process.env.NEXT_PHASE) {
+    process.on('SIGINT', async () => {
+        console.log('Received SIGINT signal. Closing database connections...');
+        await prisma.$disconnect();
+        // Allow natural exit
+    });
 
-process.on('SIGTERM', async () => {
-    console.log('Received SIGTERM signal. Closing database connections...');
-    await prisma.$disconnect();
-    process.exit(0);
-});
+    process.on('SIGTERM', async () => {
+        console.log('Received SIGTERM signal. Closing database connections...');
+        await prisma.$disconnect();
+        // Allow natural exit
+    });
+}
 
 export default prisma;
