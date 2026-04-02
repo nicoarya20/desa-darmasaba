@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Paper, Title, Progress, Stack, Text, Group, Box, rem } from '@mantine/core'
+import { Paper, Title, Progress, Stack, Text, Group, Box } from '@mantine/core'
 import { IconArrowUpRight, IconArrowDownRight } from '@tabler/icons-react'
-import { APBDes, APBDesItem, SummaryData } from '../types/apbdes'
+import { APBDes, APBDesItem } from '../types/apbdes'
 
 interface SummaryProps {
   title: string

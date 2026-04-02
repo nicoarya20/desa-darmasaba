@@ -35,8 +35,9 @@ export async function POST(req: Request) {
         const waData = await waRes.json();
         console.log("📱 WA Response (Register):", waData);
       }
-    } catch (waError: any) {
-      console.warn("⚠️ WA Connection Exception (Register). Continuing since OTP is logged.", waError.message);
+    } catch (waError: unknown) {
+      const errorMessage = waError instanceof Error ? waError.message : String(waError);
+      console.warn("⚠️ WA Connection Exception (Register). Continuing since OTP is logged.", errorMessage);
     }
 
     // ✅ Simpan OTP ke database

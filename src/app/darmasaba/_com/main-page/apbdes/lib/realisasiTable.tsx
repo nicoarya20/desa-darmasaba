@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Paper, Table, Title, Badge, Text, Box, ScrollArea } from '@mantine/core'
 import { APBDes, APBDesItem, RealisasiItem } from '../types/apbdes'
 
