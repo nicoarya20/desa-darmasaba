@@ -2,6 +2,7 @@
 import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { randomOTP } from "../_lib/randomOTP";
+import { sendCodeOtp } from "../_lib/sendCodeOtp";
 import { cookies } from "next/headers";
 
 export async function POST(req: Request) {
@@ -35,18 +36,17 @@ export async function POST(req: Request) {
 
       console.log(`🔑 DEBUG OTP [${nomor}]: ${codeOtp}`);
 
-      const waMessage = `Website Desa Darmasaba - Kode ini bersifat RAHASIA dan JANGAN DI BAGIKAN KEPADA SIAPAPUN, termasuk anggota ataupun Admin lainnya.\n\n>> Kode OTP anda: ${codeOtp}.`;
-      const waUrl = `https://wa.wibudev.com/code?nom=${encodeURIComponent(nomor)}&text=${encodeURIComponent(waMessage)}`;
-      
-      console.log("🔍 Debug WA URL:", waUrl); 
-      
       try {
-        const res = await fetch(waUrl);
-        if (!res.ok) {
-           console.error(`⚠️ WA Service HTTP Error: ${res.status} ${res.statusText}. Continuing since OTP is logged.`);
-           console.log(`💡 Use this OTP to login: ${codeOtp}`);
+        const waResponse = await sendCodeOtp({
+          nomor,
+          codeOtp,
+        });
+
+        if (!waResponse.ok) {
+          console.error(`⚠️ WA Service HTTP Error: ${waResponse.status} ${waResponse.statusText}. Continuing since OTP is logged.`);
+          console.log(`💡 Use this OTP to login: ${codeOtp}`);
         } else {
-          const sendWa = await res.json();
+          const sendWa = await waResponse.json();
           console.log("📱 WA Response:", sendWa);
           if (sendWa.status !== "success") {
             console.error("⚠️ WA Service Logic Error:", sendWa);
