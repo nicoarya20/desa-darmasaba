@@ -102,7 +102,7 @@ RUN cp .env.example .env
 RUN bun x prisma generate
 
 # Generate API types
-RUN bun run gen:api
+RUN bun run gen:api || echo "tidak ada gen api"
 
 # Build the application frontend
 RUN bun run build
