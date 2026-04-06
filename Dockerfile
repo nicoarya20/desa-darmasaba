@@ -1,61 +1,68 @@
-# Stage 1: Build
-FROM oven/bun:1.3 AS build
+# ==============================
+# Stage 1: Builder
+# ==============================
+FROM oven/bun:1-debian AS builder
 
-# Install build dependencies for native modules
-RUN apt-get update && apt-get install -y \
-    python3 \
-    make \
-    g++ \
-    && rm -rf /var/lib/apt/lists/*
-
-# Set the working directory
 WORKDIR /app
 
-# Copy package files
-COPY package.json bun.lock* ./
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libc6 \
+    git \
+    openssl \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
 
-# Install dependencies
-# RUN bun install --frozen-lockfile
-RUN bun install --no-save
+COPY package.json bun.lockb* ./
 
-# Copy the rest of the application code
+ENV SHARP_IGNORE_GLOBAL_LIBVIPS=1
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV NODE_OPTIONS="--max-old-space-size=4096"
+
+RUN bun install --frozen-lockfile
 COPY . .
 
-# Use .env.example as default env for build
-RUN cp .env.example .env
+RUN cp .env.example .env || true
 
-# Generate Prisma client
-RUN bun x prisma generate
+ENV PRISMA_CLI_BINARY_TARGETS=debian-openssl-3.0.x
+RUN bunx prisma generate
 
-# Build the application frontend
-ENV NODE_ENV=production
 RUN bun run build
 
-# Stage 2: Runtime
-FROM oven/bun:1.3-slim AS runtime
+# ==============================
+# Stage 2: Runner (Production)
+# ==============================
+FROM oven/bun:1-debian AS runner
 
-# Set environment variables
-ENV NODE_ENV=production
-
-# Install runtime dependencies
-RUN apt-get update && apt-get install -y \
-    postgresql-client \
-    && rm -rf /var/lib/apt/lists/*
-
-# Set the working directory
 WORKDIR /app
 
-# Copy necessary files from build stage
-COPY --from=build /app/package.json ./
-COPY --from=build /app/tsconfig.json ./
-COPY --from=build /app/.next ./.next
-COPY --from=build /app/public ./public
-COPY --from=build /app/src ./src
-COPY --from=build /app/node_modules ./node_modules
-COPY --from=build /app/prisma ./prisma
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV PRISMA_CLI_BINARY_TARGETS=debian-openssl-3.0.x
 
-# Expose the port
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    openssl \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN groupadd --system --gid 1001 nodejs \
+    && useradd --system --uid 1001 --gid nodejs nextjs
+
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/src ./src
+COPY --from=builder /app/next.config.js ./next.config.js
+COPY --from=builder /app/tsconfig.json ./tsconfig.json
+
+RUN chown -R nextjs:nodejs /app
+
+USER nextjs
+
 EXPOSE 3000
 
-# Start the application
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
+
 CMD ["bun", "start"]

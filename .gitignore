@@ -30,10 +30,7 @@ yarn-error.log*
 
 # env 
 # env local files (keep .env.example)
-.env.local
-.env*.local
-.env.production
-.env.development
+.env*
 !.env.example
 
 # QC
