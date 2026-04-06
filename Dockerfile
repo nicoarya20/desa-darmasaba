@@ -26,6 +26,9 @@ RUN cp .env.example .env || true
 ENV PRISMA_CLI_BINARY_TARGETS=debian-openssl-3.0.x
 RUN bunx prisma generate
 
+# Generate API types
+RUN bun run gen:api || echo "tidak ada gen api"
+
 RUN bun run build
 
 # ==============================
