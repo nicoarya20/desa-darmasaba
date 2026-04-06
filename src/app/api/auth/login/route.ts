@@ -2,16 +2,10 @@
 import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { randomOTP } from "../_lib/randomOTP";
+import { sendCodeOtp } from "../_lib/sendCodeOtp";
 import { cookies } from "next/headers";
 
 export async function POST(req: Request) {
-  if (req.method !== "POST") {
-    return NextResponse.json(
-      { success: false, message: "Method Not Allowed" },
-      { status: 405 }
-    );
-  }
-
   try {
     const { nomor } = await req.json();
 
@@ -35,26 +29,33 @@ export async function POST(req: Request) {
 
       console.log(`🔑 DEBUG OTP [${nomor}]: ${codeOtp}`);
 
-      const waMessage = `Website Desa Darmasaba - Kode ini bersifat RAHASIA dan JANGAN DI BAGIKAN KEPADA SIAPAPUN, termasuk anggota ataupun Admin lainnya.\n\n>> Kode OTP anda: ${codeOtp}.`;
-      const waUrl = `https://wa.wibudev.com/code?nom=${encodeURIComponent(nomor)}&text=${encodeURIComponent(waMessage)}`;
-      
-      console.log("🔍 Debug WA URL:", waUrl); 
-      
       try {
-        const res = await fetch(waUrl);
-        if (!res.ok) {
-           console.error(`⚠️ WA Service HTTP Error: ${res.status} ${res.statusText}. Continuing since OTP is logged.`);
-           console.log(`💡 Use this OTP to login: ${codeOtp}`);
+        const waResponse = await sendCodeOtp({
+          nomor,
+          codeOtp,
+        });
+
+        if (!waResponse.ok) {
+          console.error(
+            `⚠️ WA Service HTTP Error: ${waResponse.status} ${waResponse.statusText}. Continuing since OTP is logged.`
+          );
+          console.log(`💡 Use this OTP to login: ${codeOtp}`);
         } else {
-          const sendWa = await res.json();
+          const sendWa = await waResponse.json();
           console.log("📱 WA Response:", sendWa);
+
           if (sendWa.status !== "success") {
             console.error("⚠️ WA Service Logic Error:", sendWa);
           }
         }
       } catch (waError: unknown) {
-        const errorMessage = waError instanceof Error ? waError.message : String(waError);
-        console.error("⚠️ WA Connection Exception. Continuing since OTP is logged.", errorMessage);
+        const errorMessage =
+          waError instanceof Error ? waError.message : String(waError);
+
+        console.error(
+          "⚠️ WA Connection Exception. Continuing since OTP is logged.",
+          errorMessage
+        );
       }
 
       const createOtpId = await prisma.kodeOtp.create({
@@ -62,12 +63,12 @@ export async function POST(req: Request) {
       });
 
       const cookieStore = await cookies();
-      cookieStore.set('auth_flow', 'login', {
+      cookieStore.set("auth_flow", "login", {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        maxAge: 60 * 5, // 5 menit
-        path: '/'
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        maxAge: 60 * 5,
+        path: "/",
       });
 
       return NextResponse.json({
@@ -85,6 +86,7 @@ export async function POST(req: Request) {
     }
   } catch (error) {
     console.error("❌ Error Login:", error);
+
     return NextResponse.json(
       { success: false, message: "Terjadi kesalahan saat login" },
       { status: 500 }
