@@ -19,6 +19,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_OPTIONS="--max-old-space-size=4096"
 
 RUN bun install --frozen-lockfile
+
 COPY . .
 
 RUN cp .env.example .env || true
@@ -26,7 +27,7 @@ RUN cp .env.example .env || true
 ENV PRISMA_CLI_BINARY_TARGETS=debian-openssl-3.0.x
 RUN bunx prisma generate
 
-# Generate API types
+# Generate API types (opsional)
 RUN bun run gen:api || echo "tidak ada gen api"
 
 RUN bun run build
@@ -41,6 +42,8 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV PRISMA_CLI_BINARY_TARGETS=debian-openssl-3.0.x
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     openssl \
@@ -50,22 +53,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN groupadd --system --gid 1001 nodejs \
     && useradd --system --uid 1001 --gid nodejs nextjs
 
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/prisma ./prisma
-COPY --from=builder /app/src ./src
-COPY --from=builder /app/next.config.js ./next.config.js
-COPY --from=builder /app/tsconfig.json ./tsconfig.json
-
-RUN chown -R nextjs:nodejs /app
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
+COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
+COPY --from=builder --chown=nextjs:nodejs /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/package.json ./package.json
+COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
+COPY --from=builder --chown=nextjs:nodejs /app/src/prisma ./src/prisma
+COPY --from=builder --chown=nextjs:nodejs /app/next.config.* ./
 
 USER nextjs
 
 EXPOSE 3000
-
-ENV PORT=3000
-ENV HOSTNAME="0.0.0.0"
 
 CMD ["bun", "start"]
