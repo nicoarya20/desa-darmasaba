@@ -127,7 +127,7 @@ export default function Registrasi() {
                             color: colors["blue-button"],
                             textDecoration: "underline",
                             fontWeight: 500,
-                          }}
+                          }} rel="noopener"
                         >
                           syarat dan ketentuan
                         </a>

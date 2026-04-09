@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
-import { IconKey } from '@/app/admin/(dashboard)/_com/iconMap';
+import type { IconKey } from '@/app/admin/(dashboard)/_com/iconMap';
 import programKreatifState from '@/app/admin/(dashboard)/_state/inovasi/program-kreatif';
 import colors from '@/con/colors';
 import {

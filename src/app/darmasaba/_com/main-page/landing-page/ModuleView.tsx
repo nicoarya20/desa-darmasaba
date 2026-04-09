@@ -13,7 +13,7 @@ import {
   Text
 } from "@mantine/core";
 import { useShallowEffect } from "@mantine/hooks";
-import { Prisma } from "@prisma/client";
+import type { Prisma } from "@prisma/client";
 import { IconPhotoOff } from "@tabler/icons-react";
 import { motion } from "framer-motion";
 import { useTransitionRouter } from "next-view-transitions";

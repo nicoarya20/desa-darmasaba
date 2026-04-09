@@ -4,7 +4,8 @@ import colors from '@/con/colors';
 import { ScrollArea, Stack, Tabs, TabsList, TabsPanel, TabsTab, Title } from '@mantine/core';
 import { IconPhoto, IconVideo } from '@tabler/icons-react';
 import { usePathname, useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import type React from 'react';
+import { useEffect, useState } from 'react';
 
 function LayoutTabsGallery({ children }: { children: React.ReactNode }) {
     const router = useRouter()

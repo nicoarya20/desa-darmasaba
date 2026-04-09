@@ -2,8 +2,8 @@
 
 import { useDarkMode } from '@/state/darkModeStore';
 import { themeTokens, getResponsiveFz } from '@/utils/themeTokens';
-import { Text, Title, Box, BoxProps } from '@mantine/core';
-import React from 'react';
+import { Text, Title, Box, type BoxProps } from '@mantine/core';
+import type React from 'react';
 
 type TextTruncate = 'end' | 'start' | boolean;
 

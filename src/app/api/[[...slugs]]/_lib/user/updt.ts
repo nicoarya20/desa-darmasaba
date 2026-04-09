@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { getMenuIdsByRoleId } from "@/app/admin/(dashboard)/user&role/_com/getMenuIdByRole";
 import prisma from "@/lib/prisma";
-import { Context } from "elysia";
+import type { Context } from "elysia";
 
 // API update user
 export default async function userUpdate(context: Context) {

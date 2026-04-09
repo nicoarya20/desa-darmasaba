@@ -1,6 +1,6 @@
 'use client';
 
-import { Box, Group, rem, Select, SelectProps } from '@mantine/core';
+import { Box, Group, rem, Select, type SelectProps } from '@mantine/core';
 import {
   IconAmbulance,
   IconCash,

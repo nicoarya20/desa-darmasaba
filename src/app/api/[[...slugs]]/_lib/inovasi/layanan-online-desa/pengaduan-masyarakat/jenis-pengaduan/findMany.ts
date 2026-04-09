@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import prisma from "@/lib/prisma";
-import { Context } from "elysia";
+import type { Context } from "elysia";
 
 export default async function jenisPengaduanFindMany(context: Context) {
   // Ambil parameter dari query

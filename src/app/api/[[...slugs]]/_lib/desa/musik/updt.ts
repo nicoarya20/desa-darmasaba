@@ -1,4 +1,4 @@
-import { Context } from "elysia";
+import type { Context } from "elysia";
 import prisma from "@/lib/prisma";
 
 type FormUpdate = {

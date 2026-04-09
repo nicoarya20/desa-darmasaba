@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // /api/berita/findManyAll.ts
 import prisma from "@/lib/prisma";
-import { Context } from "elysia";
+import type { Context } from "elysia";
 
 async function kategoriProdukFindManyAll(context: Context) {
   // Ambil query search (opsional)

@@ -1,5 +1,5 @@
 import { Paper, Table, Title, Badge, Text, Box, ScrollArea } from '@mantine/core'
-import { APBDes, APBDesItem, RealisasiItem } from '../types/apbdes'
+import type { APBDes, APBDesItem, RealisasiItem } from '../types/apbdes'
 
 interface RealisasiRowProps {
   realisasi: RealisasiItem

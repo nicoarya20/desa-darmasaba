@@ -7,7 +7,7 @@ import { IconSquareArrowRight } from "@tabler/icons-react";
 import { motion } from "framer-motion";
 import { usePathname, useRouter } from "next/navigation";
 import { useSnapshot } from "valtio";
-import { MenuItem } from "../../../../types/menu-item";
+import type { MenuItem } from "../../../../types/menu-item";
 import { NavbarMainMenu } from "./NavbarMainMenu";
 
 export function Navbar() {

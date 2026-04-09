@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma";
-import { Context } from "elysia";
+import type { Context } from "elysia";
 
 // Define month order for calculation
 const monthOrder = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];

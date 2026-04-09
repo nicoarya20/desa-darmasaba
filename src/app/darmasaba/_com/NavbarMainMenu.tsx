@@ -7,7 +7,7 @@ import { IconSearch, IconUserCog } from "@tabler/icons-react"
 import { useTransitionRouter } from 'next-view-transitions'
 import { usePathname, useRouter } from "next/navigation"
 import { useSnapshot } from "valtio"
-import { MenuItem } from "../../../../types/menu-item"
+import type { MenuItem } from "../../../../types/menu-item"
 import { NavbarSearch } from "./NavBarSearch"
 import { NavbarSubMenu } from "./NavbarSubMenu"
 import { authStore } from "@/store/authStore";

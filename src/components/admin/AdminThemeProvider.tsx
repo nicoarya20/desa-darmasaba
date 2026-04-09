@@ -5,7 +5,7 @@ import { themeTokens } from '@/utils/themeTokens';
 import { MantineProvider, createTheme } from '@mantine/core';
 import '@mantine/core/styles.css';
 import '@/styles/dark-mode-table.css';
-import React from 'react';
+import type React from 'react';
 
 /**
  * Admin Theme Provider

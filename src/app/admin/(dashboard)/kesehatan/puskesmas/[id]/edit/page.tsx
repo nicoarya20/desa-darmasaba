@@ -21,7 +21,7 @@ import {
 import { Dropzone } from '@mantine/dropzone';
 import { IconArrowBack, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { type ChangeEvent, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 

@@ -14,7 +14,8 @@ import {
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import type React from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 import pasarDesaState from '../../../../_state/ekonomi/pasar-desa/pasar-desa';

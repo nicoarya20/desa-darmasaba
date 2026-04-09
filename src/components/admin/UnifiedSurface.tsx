@@ -2,8 +2,8 @@
 
 import { useDarkMode } from '@/state/darkModeStore';
 import { themeTokens } from '@/utils/themeTokens';
-import { Box, BoxProps, Divider, DividerProps, Paper } from '@mantine/core';
-import React from 'react';
+import { Box, type BoxProps, Divider, type DividerProps, Paper } from '@mantine/core';
+import type React from 'react';
 
 /**
  * Unified Surface Components

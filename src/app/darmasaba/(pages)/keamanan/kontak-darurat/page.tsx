@@ -7,7 +7,7 @@ import { IconPhoneCall, IconSearch } from '@tabler/icons-react';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import BackButton from '../../desa/layanan/_com/BackButto';
-import { IconKey, IconMapper } from '@/app/admin/(dashboard)/_com/iconMap';
+import { type IconKey, IconMapper } from '@/app/admin/(dashboard)/_com/iconMap';
 
 function Page() {
   const kontakState = useProxy(kontakDarurat.kontakDaruratKeamananState);

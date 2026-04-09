@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // find-first.ts
 import prisma from "@/lib/prisma";
-import { Context } from "elysia";
+import type { Context } from "elysia";
 
 async function beritaFindFirst(context: Context) {
   const kategori = (context.query.kategori as string) || '';

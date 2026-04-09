@@ -7,7 +7,7 @@ import {
   useRef,
   useEffect,
   useCallback,
-  ReactNode,
+  type ReactNode,
 } from 'react';
 
 interface MusicFile {

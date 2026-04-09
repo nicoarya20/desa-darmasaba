@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma";
-import { Context } from "elysia";
+import type { Context } from "elysia";
 
 // Di findMany.ts
 export default async function grafikHasilKepuasanMasyarakatFindMany(context: Context) {

@@ -31,7 +31,9 @@ export async function seedBerita() {
   const kategoriList = await prisma.kategoriBerita.findMany({
     select: { id: true, name: true },
   });
-  kategoriList.forEach((k) => validKategoriIds.add(k.id));
+  for (const k of kategoriList) {
+    validKategoriIds.add(k.id);
+  }
 
   console.log(`📋 Found ${validKategoriIds.size} valid kategori IDs in database`);
 

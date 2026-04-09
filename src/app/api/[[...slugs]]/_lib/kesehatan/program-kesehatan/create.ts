@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma";
-import { Prisma } from "@prisma/client";
-import { Context } from "elysia";
+import type { Prisma } from "@prisma/client";
+import type { Context } from "elysia";
 
 type FormCreate = Prisma.ProgramKesehatanGetPayload<{
     select: {

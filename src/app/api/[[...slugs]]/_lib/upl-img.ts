@@ -46,7 +46,7 @@ async function uplImg({
 
 // Fungsi untuk membersihkan nama file dari karakter yang tidak aman
 function sanitizeFileName(fileName: string): string {
-  return fileName.replace(/[^a-zA-Z0-9._\-]/g, "_");
+  return fileName.replace(/[^a-zA-Z0-9._-]/g, "_");
 }
 
 export default uplImg;

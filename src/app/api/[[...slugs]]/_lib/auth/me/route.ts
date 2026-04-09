@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma";
-import { NextRequest } from "next/server";
+import type { NextRequest } from "next/server";
 // Jika pakai custom session (bukan next-auth), ganti dengan logic session-mu
 
 export async function GET(req: NextRequest) {

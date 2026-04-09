@@ -22,7 +22,7 @@ import { IconArrowBack, IconPhoto, IconUpload, IconX } from '@tabler/icons-react
 import { useParams, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
-import * as React from 'react';
+import type * as React from 'react';
 
 // 🔹 Types
 interface FormData {

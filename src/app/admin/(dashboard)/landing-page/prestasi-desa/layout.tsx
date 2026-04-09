@@ -1,5 +1,5 @@
 'use client'
-import React from 'react';
+import type React from 'react';
 import LayoutTabs from './_lib/layoutTabs';
 import { Box } from '@mantine/core';
 import { usePathname } from 'next/navigation';

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiFetch from "@/lib/api-fetch";
-import { Prisma } from "@prisma/client";
+import type { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
 import { proxy } from "valtio";
 import { z } from "zod";

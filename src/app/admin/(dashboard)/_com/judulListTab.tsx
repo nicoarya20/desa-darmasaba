@@ -2,7 +2,7 @@
 import { Grid, GridCol, Button, Paper, TextInput } from '@mantine/core';
 import { IconCircleDashedPlus, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import React from 'react';
+import type React from 'react';
 import { useDarkMode } from '@/state/darkModeStore';
 import { themeTokens } from '@/utils/themeTokens';
 import { UnifiedText } from '@/components/admin/UnifiedTypography';

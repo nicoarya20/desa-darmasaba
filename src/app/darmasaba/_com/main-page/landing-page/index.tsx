@@ -16,7 +16,7 @@ import {
   Text,
   Tooltip,
 } from "@mantine/core";
-import { Prisma } from "@prisma/client";
+import type { Prisma } from "@prisma/client";
 import { IconCalendarTime, IconInfoCircle } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import ModuleView from "./ModuleView";

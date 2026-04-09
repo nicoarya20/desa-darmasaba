@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import prisma from "@/lib/prisma";
-import { PrismaClient } from "@prisma/client";
+import type { PrismaClient } from "@prisma/client";
 
 type SafeSeedOptions = {
   skipUpdate?: boolean;

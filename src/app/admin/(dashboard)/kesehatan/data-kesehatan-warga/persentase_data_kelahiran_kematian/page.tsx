@@ -8,7 +8,7 @@ import { useShallowEffect } from '@mantine/hooks';
 import { IconBabyCarriage, IconGrave2 } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { Bar, BarChart, Legend, ResponsiveContainer, Tooltip as RechartsTooltip, TooltipProps, XAxis, YAxis } from 'recharts';
+import { Bar, BarChart, Legend, ResponsiveContainer, Tooltip as RechartsTooltip, type TooltipProps, XAxis, YAxis } from 'recharts';
 import { useProxy } from 'valtio/utils';
 
 type TooltipPayload = {

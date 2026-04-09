@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma";
-import { Context } from "elysia";
+import type { Context } from "elysia";
 
 export default async function posisiOrganisasiFindUnique(context: Context) {
     const url = new URL(context.request.url);

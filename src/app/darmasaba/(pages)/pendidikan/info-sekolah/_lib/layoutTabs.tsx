@@ -108,7 +108,8 @@ import {
   Text
 } from '@mantine/core';
 import { useRouter, useSearchParams } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import type React from 'react';
+import { useEffect, useState } from 'react';
 import { useSnapshot } from 'valtio';
 import BackButton from '../../../desa/layanan/_com/BackButto';
 

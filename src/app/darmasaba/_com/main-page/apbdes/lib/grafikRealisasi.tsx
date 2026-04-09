@@ -1,6 +1,6 @@
 import { Paper, Title, Progress, Stack, Text, Group, Box, type MantineColor } from '@mantine/core'
 import { IconArrowUpRight, IconArrowDownRight } from '@tabler/icons-react'
-import { APBDes, APBDesItem } from '../types/apbdes'
+import type { APBDes, APBDesItem } from '../types/apbdes'
 
 interface SummaryProps {
   title: string

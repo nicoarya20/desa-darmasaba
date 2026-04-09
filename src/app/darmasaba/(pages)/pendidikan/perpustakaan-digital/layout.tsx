@@ -2,7 +2,8 @@
 import colors from '@/con/colors';
 import { Box } from '@mantine/core';
 import { usePathname } from 'next/navigation';
-import React, { Suspense } from 'react';
+import type React from 'react';
+import { Suspense } from 'react';
 import LayoutTabs from './_lib/layoutTabs';
 
 function Layout({ children }: { children: React.ReactNode }) {

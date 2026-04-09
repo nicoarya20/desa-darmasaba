@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { PrismaClient } from "@prisma/client";
+import type { PrismaClient } from "@prisma/client";
 import { safeSeedUnique } from "./safeseedUnique";
 import cliProgress from 'cli-progress';
 

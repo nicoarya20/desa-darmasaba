@@ -1,5 +1,5 @@
 'use client'
-import { IconKey, IconMapper } from '@/app/admin/(dashboard)/_com/iconMap';
+import { type IconKey, IconMapper } from '@/app/admin/(dashboard)/_com/iconMap';
 import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
 import kontakDarurat from '@/app/admin/(dashboard)/_state/keamanan/kontak-darurat-keamanan';
 import colors from '@/con/colors';

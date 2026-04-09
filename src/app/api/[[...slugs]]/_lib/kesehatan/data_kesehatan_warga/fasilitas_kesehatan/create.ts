@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma";
-import { Context } from "elysia";
+import type { Context } from "elysia";
 
 const fasilitasKesehatanCreate = async (context: Context) => {
   const body = (await context.body) as {

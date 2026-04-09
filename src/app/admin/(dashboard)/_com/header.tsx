@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import type React from 'react';
 import { Grid, GridCol, Paper, TextInput } from '@mantine/core';
 import { IconSearch } from '@tabler/icons-react';
 import { useDarkMode } from '@/state/darkModeStore';

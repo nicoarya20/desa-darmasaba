@@ -18,7 +18,8 @@ import {
   IconWallet,
 } from '@tabler/icons-react';
 import { usePathname, useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import type React from 'react';
+import { useEffect, useState } from 'react';
 
 function LayoutTabs({ children }: { children: React.ReactNode }) {
   const router = useRouter();

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import prisma from "@/lib/prisma";
-import { Context } from "elysia";
+import type { Context } from "elysia";
 
 export default async function pegawaiFindMany(context: Context) {
   const page = Number(context.query.page) || 1;

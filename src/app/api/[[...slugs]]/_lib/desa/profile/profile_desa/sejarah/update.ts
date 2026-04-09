@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma";
 import { requireAuth } from "@/lib/api-auth";
-import { Context } from "elysia";
+import type { Context } from "elysia";
 
 export default async function sejarahDesaUpdate(context: Context) {
     // ✅ Authentication check

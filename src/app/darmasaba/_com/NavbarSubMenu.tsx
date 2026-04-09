@@ -4,7 +4,7 @@ import stateNav from "@/state/state-nav";
 import { Button, Container, Stack, Text } from "@mantine/core";
 import { motion } from "motion/react";
 import { IconArrowRight } from "@tabler/icons-react";
-import { MenuItem } from "../../../../types/menu-item";
+import type { MenuItem } from "../../../../types/menu-item";
 import { useTransitionRouter } from "next-view-transitions";
 import colors from "@/con/colors";
 import { usePathname } from "next/navigation";

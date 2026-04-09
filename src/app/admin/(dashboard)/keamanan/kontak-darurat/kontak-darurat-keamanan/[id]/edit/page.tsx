@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
-import { IconKey } from '@/app/admin/(dashboard)/_com/iconMap';
+import type { IconKey } from '@/app/admin/(dashboard)/_com/iconMap';
 import SelectIconProgramEdit from '@/app/admin/(dashboard)/_com/selectIconEdit';
 import kontakDarurat from '@/app/admin/(dashboard)/_state/keamanan/kontak-darurat-keamanan';
 import colors from '@/con/colors';

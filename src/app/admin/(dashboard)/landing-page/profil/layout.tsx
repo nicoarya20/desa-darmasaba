@@ -1,7 +1,7 @@
 'use client'
 import { Box } from '@mantine/core';
 import { usePathname } from 'next/navigation';
-import React from 'react';
+import type React from 'react';
 import LayoutTabs from './_lib/layoutTabs';
 
 function Layout({ children }: { children: React.ReactNode }) {

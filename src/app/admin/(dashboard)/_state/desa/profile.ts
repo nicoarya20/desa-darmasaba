@@ -2,7 +2,7 @@
 import { toast } from "react-toastify";
 import { proxy } from "valtio";
 import { z } from "zod";
-import { Prisma } from "@prisma/client";
+import type { Prisma } from "@prisma/client";
 import ApiFetch from "@/lib/api-fetch";
 
 // ========================================= SEJARAH DESA ========================================= //

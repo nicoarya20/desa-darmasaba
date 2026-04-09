@@ -1,0 +1,379 @@
+eslint.config.mjs:1:25 lint/style/useNodejsImportProtocol  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i A Node.js builtin module should be imported with the node: protocol.
+  
+  > 1 │ import { dirname } from "path";
+      │                         ^^^^^^
+    2 │ import { fileURLToPath } from "url";
+    3 │ import { FlatCompat } from "@eslint/eslintrc";
+  
+  i Using the node: protocol is more explicit and signals that the imported module belongs to Node.js.
+  
+  i Unsafe fix: Add the node: protocol.
+  
+     1    │ - import·{·dirname·}·from·"path";
+        1 │ + import·{·dirname·}·from·"node:path";
+     2  2 │   import { fileURLToPath } from "url";
+     3  3 │   import { FlatCompat } from "@eslint/eslintrc";
+  
+
+eslint.config.mjs:2:31 lint/style/useNodejsImportProtocol  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i A Node.js builtin module should be imported with the node: protocol.
+  
+    1 │ import { dirname } from "path";
+  > 2 │ import { fileURLToPath } from "url";
+      │                               ^^^^^
+    3 │ import { FlatCompat } from "@eslint/eslintrc";
+    4 │ 
+  
+  i Using the node: protocol is more explicit and signals that the imported module belongs to Node.js.
+  
+  i Unsafe fix: Add the node: protocol.
+  
+     1  1 │   import { dirname } from "path";
+     2    │ - import·{·fileURLToPath·}·from·"url";
+        2 │ + import·{·fileURLToPath·}·from·"node:url";
+     3  3 │   import { FlatCompat } from "@eslint/eslintrc";
+     4  4 │   
+  
+
+find-port.ts:56:13 lint/complexity/noUselessContinue  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i Unnecessary continue statement
+  
+    54 │         } catch (error) {
+    55 │             console.warn(`Gagal memeriksa port ${port}:`, error);
+  > 56 │             continue; // Lanjutkan ke port berikutnya
+       │             ^^^^^^^^^
+    57 │         }
+    58 │     }
+  
+  i Safe fix: Delete the unnecessary continue statement
+  
+    54 54 │           } catch (error) {
+    55 55 │               console.warn(`Gagal memeriksa port ${port}:`, error);
+    56    │ - ············continue;·//·Lanjutkan·ke·port·berikutnya
+    57 56 │           }
+    58 57 │       }
+  
+
+vitest.config.ts:2:18 lint/style/useNodejsImportProtocol  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i A Node.js builtin module should be imported with the node: protocol.
+  
+    1 │ import { defineConfig } from 'vitest/config';
+  > 2 │ import path from 'path';
+      │                  ^^^^^^
+    3 │ 
+    4 │ export default defineConfig({
+  
+  i Using the node: protocol is more explicit and signals that the imported module belongs to Node.js.
+  
+  i Unsafe fix: Add the node: protocol.
+  
+     1  1 │   import { defineConfig } from 'vitest/config';
+     2    │ - import·path·from·'path';
+        2 │ + import·path·from·'node:path';
+     3  3 │   
+     4  4 │   export default defineConfig({
+  
+
+zgen/image.ts:2:16 lint/style/useNodejsImportProtocol  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i A Node.js builtin module should be imported with the node: protocol.
+  
+    1 │ /* eslint-disable @typescript-eslint/no-explicit-any */
+  > 2 │ import fs from "fs";
+      │                ^^^^
+    3 │ import path from "path";
+    4 │ 
+  
+  i Using the node: protocol is more explicit and signals that the imported module belongs to Node.js.
+  
+  i Unsafe fix: Add the node: protocol.
+  
+     1  1 │   /* eslint-disable @typescript-eslint/no-explicit-any */
+     2    │ - import·fs·from·"fs";
+        2 │ + import·fs·from·"node:fs";
+     3  3 │   import path from "path";
+     4  4 │   
+  
+
+zgen/image.ts:3:18 lint/style/useNodejsImportProtocol  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i A Node.js builtin module should be imported with the node: protocol.
+  
+    1 │ /* eslint-disable @typescript-eslint/no-explicit-any */
+    2 │ import fs from "fs";
+  > 3 │ import path from "path";
+      │                  ^^^^^^
+    4 │ 
+    5 │ // Fungsi untuk membaca direktori secara rekursif
+  
+  i Using the node: protocol is more explicit and signals that the imported module belongs to Node.js.
+  
+  i Unsafe fix: Add the node: protocol.
+  
+     1  1 │   /* eslint-disable @typescript-eslint/no-explicit-any */
+     2  2 │   import fs from "fs";
+     3    │ - import·path·from·"path";
+        3 │ + import·path·from·"node:path";
+     4  4 │   
+     5  5 │   // Fungsi untuk membaca direktori secara rekursif
+  
+
+__tests__/api/fileStorage.test.ts:10:43 lint/suspicious/noExplicitAny ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ! Unexpected any. Specify a different type.
+  
+     8 │     expect(response.status).toBe(200);
+     9 │ 
+  > 10 │     const responseBody = response.data as any;
+       │                                           ^^^
+    11 │     
+    12 │     expect(responseBody.data).toBeInstanceOf(Array);
+  
+  i any disables many type checking rules. Its use should be avoided.
+  
+
+__tests__/api/fileStorage.test.ts:25:43 lint/suspicious/noExplicitAny ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ! Unexpected any. Specify a different type.
+  
+    24 │     expect(response.status).toBe(200);
+  > 25 │     const responseBody = response.data as any;
+       │                                           ^^^
+    26 │ 
+    27 │     expect(responseBody.data.realName).toBe('hello.png');
+  
+  i any disables many type checking rules. Its use should be avoided.
+  
+
+biome.json:10:5 deserialize  DEPRECATED  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ! The property experimentalScannerIgnores is deprecated.
+  
+     8 │   "files": {
+     9 │     "ignoreUnknown": false,
+  > 10 │     "experimentalScannerIgnores": [
+       │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    11 │       "node_modules",
+    12 │       ".next",
+  
+  i You may want to add the following entries to files.includes instead:
+  
+  - "!!**/node_modules"
+  - "!!**/.next"
+  - "!!**/out"
+  - "!!**/public"
+  
+  i See the files.includes documentation for more information.
+  
+
+prisma/_seeder_list/desa/berita/seed_berita.ts:85:21 lint/suspicious/noExplicitAny ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ! Unexpected any. Specify a different type.
+  
+    84 │       console.log(`✅ Berita seeded: ${b.judul}`);
+  > 85 │     } catch (error: any) {
+       │                     ^^^
+    86 │       console.error(
+    87 │         `❌ Failed to seed berita "${b.judul}": ${error.message}`,
+  
+  i any disables many type checking rules. Its use should be avoided.
+  
+
+src/styles/dark-mode-table.css:12:49 lint/complexity/noImportantStyles  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ! Avoid the use of the !important style.
+  
+    10 │   /* Table hover */
+    11 │   .mantine-Table-tr:hover {
+  > 12 │     background-color: rgba(255, 255, 255, 0.08) !important;
+       │                                                 ^^^^^^^^^^
+    13 │   }
+    14 │   
+  
+  i This style reverses the cascade logic, and precedence is reversed. This could lead to having styles with higher specificity being overridden by styles with lower specificity.
+  
+  i Unsafe fix: Remove the style.
+  
+    12 │ ····background-color:·rgba(255,·255,·255,·0.08)·!important;
+       │                                                ----------- 
+
+src/styles/dark-mode-table.css:17:49 lint/complexity/noImportantStyles  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ! Avoid the use of the !important style.
+  
+    15 │   /* Table striped hover */
+    16 │   .mantine-Table-striped .mantine-Table-tr:nth-of-type(odd):hover {
+  > 17 │     background-color: rgba(255, 255, 255, 0.08) !important;
+       │                                                 ^^^^^^^^^^
+    18 │   }
+    19 │   
+  
+  i This style reverses the cascade logic, and precedence is reversed. This could lead to having styles with higher specificity being overridden by styles with lower specificity.
+  
+  i Unsafe fix: Remove the style.
+  
+    17 │ ····background-color:·rgba(255,·255,·255,·0.08)·!important;
+       │                                                ----------- 
+
+src/styles/dark-mode-table.css:22:49 lint/complexity/noImportantStyles  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ! Avoid the use of the !important style.
+  
+    20 │   /* Table with column borders */
+    21 │   .mantine-Table-withColumnBorders .mantine-Table-tr:hover {
+  > 22 │     background-color: rgba(255, 255, 255, 0.08) !important;
+       │                                                 ^^^^^^^^^^
+    23 │   }
+    24 │ }
+  
+  i This style reverses the cascade logic, and precedence is reversed. This could lead to having styles with higher specificity being overridden by styles with lower specificity.
+  
+  i Unsafe fix: Remove the style.
+  
+    22 │ ····background-color:·rgba(255,·255,·255,·0.08)·!important;
+       │                                                ----------- 
+
+src/styles/dark-mode-table.css:29:43 lint/complexity/noImportantStyles  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ! Avoid the use of the !important style.
+  
+    27 │ [data-mantine-color-scheme="light"] {
+    28 │   .mantine-Table-tr:hover {
+  > 29 │     background-color: rgba(0, 0, 0, 0.02) !important;
+       │                                           ^^^^^^^^^^
+    30 │   }
+    31 │ }
+  
+  i This style reverses the cascade logic, and precedence is reversed. This could lead to having styles with higher specificity being overridden by styles with lower specificity.
+  
+  i Unsafe fix: Remove the style.
+  
+    29 │ ····background-color:·rgba(0,·0,·0,·0.02)·!important;
+       │                                          ----------- 
+
+xcoba.ts:41:13 lint/complexity/useOptionalChain  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ! Change to an optional chain.
+  
+    39 │         const resErr = new Response(child.stderr)
+    40 │ 
+  > 41 │         if (resOut && resOut.body) {
+       │             ^^^^^^^^^^^^^^^^^^^^^
+    42 │             for await (const chunk of resOut.body as unknown as AsyncIterable<Uint8Array>) {
+    43 │                 const text = decoder.decode(chunk)
+  
+  i Unsafe fix: Change to an optional chain.
+  
+    39 39 │           const resErr = new Response(child.stderr)
+    40 40 │   
+    41    │ - ········if·(resOut·&&·resOut.body)·{
+       41 │ + ········if·(resOut?.body)·{
+    42 42 │               for await (const chunk of resOut.body as unknown as AsyncIterable<Uint8Array>) {
+    43 43 │                   const text = decoder.decode(chunk)
+  
+
+xcoba.ts:51:13 lint/complexity/useOptionalChain  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ! Change to an optional chain.
+  
+    49 │         }
+    50 │ 
+  > 51 │         if (resErr && resErr.body) {
+       │             ^^^^^^^^^^^^^^^^^^^^^
+    52 │             for await (const chunk of resErr.body as unknown as AsyncIterable<Uint8Array>) {
+    53 │                 const text = decoder.decode(chunk)
+  
+  i Unsafe fix: Change to an optional chain.
+  
+    49 49 │           }
+    50 50 │   
+    51    │ - ········if·(resErr·&&·resErr.body)·{
+       51 │ + ········if·(resErr?.body)·{
+    52 52 │               for await (const chunk of resErr.body as unknown as AsyncIterable<Uint8Array>) {
+    53 53 │                   const text = decoder.decode(chunk)
+  
+
+zgen/image.ts:29:32 lint/suspicious/noExplicitAny ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ! Unexpected any. Specify a different type.
+  
+    28 │   // Objek untuk menyimpan hasil
+  > 29 │   const images: Record<string, any> = {};
+       │                                ^^^
+    30 │ 
+    31 │   try {
+  
+  i any disables many type checking rules. Its use should be avoided.
+  
+
+prisma/_seeder_list/desa/berita/seed_berita.ts:34:16 lint/suspicious/useIterableCallbackReturn ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × This callback passed to forEach() iterable method should not return a value.
+  
+    32 │     select: { id: true, name: true },
+    33 │   });
+  > 34 │   kategoriList.forEach((k) => validKategoriIds.add(k.id));
+       │                ^^^^^^^
+    35 │ 
+    36 │   console.log(`📋 Found ${validKategoriIds.size} valid kategori IDs in database`);
+  
+  i Either remove this return or remove the returned value.
+  
+    32 │     select: { id: true, name: true },
+    33 │   });
+  > 34 │   kategoriList.forEach((k) => validKategoriIds.add(k.id));
+       │                               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    35 │ 
+    36 │   console.log(`📋 Found ${validKategoriIds.size} valid kategori IDs in database`);
+  
+
+xcoba.ts:12:24 lint/suspicious/noAsyncPromiseExecutor ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Promise executor functions should not be `async`.
+  
+    10 │ }) {
+    11 │     const { env = {}, cmd, cwd = "./", timeout = 30000 } = params || {}
+  > 12 │     return new Promise(async (resolve, reject) => {
+       │                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 13 │         const std = {
+        ...
+  > 64 │         resolve(std)
+  > 65 │     })
+       │     ^
+    66 │ }
+    67 │ 
+  
+
+xcoba2.ts:14:24 lint/suspicious/noAsyncPromiseExecutor ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Promise executor functions should not be `async`.
+  
+    12 │ }) {
+    13 │     const { env = {}, cmd, cwd = "./", timeout = 600000 } = params || {};
+  > 14 │     return new Promise(async (resolve, reject) => {
+       │                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 15 │         if (!cmd || typeof cmd !== "string") {
+        ...
+  > 75 │         }
+  > 76 │     });
+       │     ^
+    77 │ }
+    78 │ 
+  
+
+The number of diagnostics exceeds the limit allowed. Use --max-diagnostics to increase it.
+Diagnostics not shown: 8971.
+Checked 1951 files in 886ms. No fixes applied.
+Found 4516 errors.
+Found 3861 warnings.
+Found 614 infos.
+lint ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Some errors were emitted while running checks.
+  
+

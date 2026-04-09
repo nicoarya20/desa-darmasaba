@@ -11,7 +11,7 @@ async function proc(params?: {
     onStdio?: (chunk: string) => void;
 }) {
     const { env = {}, cmd, cwd = "./", timeout = 600000 } = params || {};
-    return new Promise(async (resolve, reject) => {
+    return new Promise((resolve, reject) => {
         if (!cmd || typeof cmd !== "string") {
             return reject(new Error("Invalid or missing command"));
         }
@@ -43,33 +43,38 @@ async function proc(params?: {
             }, timeout);
 
             // Read stdout and stderr as text
-            const [stdout, stderr] = await Promise.all([
+            Promise.all([
                 readStream(child.stdout),
-                child.stderr ? readStream(child.stderr) : undefined,
-            ]);
+                child.stderr ? readStream(child.stderr) : Promise.resolve(""),
+            ])
+                .then(([stdout, stderr]) => {
+                    // Handle stdout
+                    std.stdout = stdout;
+                    std.stdio += stdout;
+                    if (params?.onStdOut) {
+                        params.onStdOut(stdout.trim());
+                    }
+                    if (params?.onStdio) {
+                        params.onStdio(stdout.trim());
+                    }
 
-            // Handle stdout
-            std.stdout = stdout;
-            std.stdio += stdout;
-            if (params?.onStdOut) {
-                params.onStdOut(stdout.trim());
-            }
-            if (params?.onStdio) {
-                params.onStdio(stdout.trim());
-            }
+                    // Handle stderr
+                    std.stderr = stderr ?? "";
+                    std.stdio += stderr;
+                    if (params?.onStdErr) {
+                        params.onStdErr((stderr ?? "").trim());
+                    }
+                    if (params?.onStdio) {
+                        params.onStdio((stderr ?? "").trim());
+                    }
 
-            // Handle stderr
-            std.stderr = stderr ?? "";
-            std.stdio += stderr;
-            if (params?.onStdErr) {
-                params.onStdErr((stderr ?? "").trim());
-            }
-            if (params?.onStdio) {
-                params.onStdio((stderr ?? "").trim());
-            }
-
-            clearTimeout(timeOut);
-            resolve(std);
+                    clearTimeout(timeOut);
+                    resolve(std);
+                })
+                .catch((err) => {
+                    clearTimeout(timeOut);
+                    reject(err);
+                });
         } catch (err) {
             reject(err);
         }

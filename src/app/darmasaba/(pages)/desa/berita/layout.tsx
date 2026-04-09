@@ -2,7 +2,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import dynamic from 'next/dynamic';
 import { Box } from '@mantine/core';
 import BackButton from '../layanan/_com/BackButto';

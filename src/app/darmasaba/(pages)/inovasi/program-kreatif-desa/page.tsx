@@ -1,5 +1,5 @@
 'use client'
-import { IconKey, IconMapper } from '@/app/admin/(dashboard)/_com/iconMap';
+import { type IconKey, IconMapper } from '@/app/admin/(dashboard)/_com/iconMap';
 import programKreatifState from '@/app/admin/(dashboard)/_state/inovasi/program-kreatif';
 import colors from '@/con/colors';
 import { Box, Button, Center, Grid, GridCol, Pagination, Paper, SimpleGrid, Skeleton, Stack, Text, TextInput } from '@mantine/core';

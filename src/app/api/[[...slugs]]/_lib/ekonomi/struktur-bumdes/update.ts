@@ -1,8 +1,8 @@
 import prisma from "@/lib/prisma";
-import { Context } from "elysia";
+import type { Context } from "elysia";
 import path from "path";
 import fs from "fs/promises";
-import { Prisma } from "@prisma/client";
+import type { Prisma } from "@prisma/client";
 
 type FormUpdate = Prisma.StrukturBumDesGetPayload<{
     select: {

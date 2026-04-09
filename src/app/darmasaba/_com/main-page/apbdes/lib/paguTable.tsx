@@ -1,5 +1,5 @@
 import { Paper, Table, Title, Box, ScrollArea, Badge } from '@mantine/core'
-import { APBDes, APBDesItem } from '../types/apbdes'
+import type { APBDes, APBDesItem } from '../types/apbdes'
 
 interface SectionProps {
   title: string

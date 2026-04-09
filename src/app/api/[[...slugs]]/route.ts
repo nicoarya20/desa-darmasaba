@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma";
-import cors, { HTTPMethod } from "@elysiajs/cors";
+import cors, { type HTTPMethod } from "@elysiajs/cors";
 import { staticPlugin } from "@elysiajs/static";
 import swagger from "@elysiajs/swagger";
 import { Elysia, t } from "elysia";
@@ -19,6 +19,7 @@ import { uplImgSingle } from "./_lib/upl-img-single";
 import FileStorage from "./_lib/fileStorage";
 import Keamanan from "./_lib/keamanan";
 import Ekonomi from "./_lib/ekonomi";
+import Kependudukan from "./_lib/kependudukan";
 import Inovasi from "./_lib/inovasi";
 import Lingkungan from "./_lib/lingkungan";
 import LandingPage from "./_lib/landing_page";
@@ -116,6 +117,7 @@ const ApiServer = new Elysia({ prefix: "/api" })
   .use(Kesehatan)
   .use(Keamanan)
   .use(Ekonomi)
+  .use(Kependudukan)
   .use(Inovasi)
   .use(Lingkungan)
   .use(Pendidikan)

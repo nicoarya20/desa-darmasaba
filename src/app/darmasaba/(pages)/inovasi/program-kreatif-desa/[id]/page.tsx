@@ -6,7 +6,7 @@ import { useShallowEffect } from '@mantine/hooks';
 import { useParams } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
 
-import { IconKey, IconMapper } from '@/app/admin/(dashboard)/_com/iconMap';
+import { type IconKey, IconMapper } from '@/app/admin/(dashboard)/_com/iconMap';
 import BackButton from '../../../desa/layanan/_com/BackButto';
 
 function Page() {

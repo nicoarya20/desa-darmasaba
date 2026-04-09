@@ -13,7 +13,7 @@
  * }
  */
 
-import { getSession, SessionData } from "@/lib/session";
+import { getSession, type SessionData } from "@/lib/session";
 
 export type AuthResult =
   | { authenticated: true; user: NonNullable<SessionData["user"]> }

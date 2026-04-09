@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma";
 import fs from "fs/promises";
-import { Context } from "elysia";
+import type { Context } from "elysia";
 import path from "path";
 
 const penangananDaruratDelete = async (context: Context) => {

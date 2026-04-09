@@ -10,7 +10,7 @@ import {
   mantineHtmlProps,
   // mantineHtmlProps,
 } from "@mantine/core";
-import { Metadata, Viewport } from "next";
+import type { Metadata, Viewport } from "next";
 import { ViewTransitions } from "next-view-transitions";
 import { ToastContainer } from "react-toastify";
 

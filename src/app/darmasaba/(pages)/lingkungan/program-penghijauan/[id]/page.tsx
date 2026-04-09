@@ -21,7 +21,7 @@ import {
   IconUsers
 } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
-import React from 'react';
+import type React from 'react';
 import { useProxy } from 'valtio/utils';
 
 function Page() {

@@ -1,6 +1,6 @@
 import colors from '@/con/colors';
 import { Box, Card, Image, Stack, Text } from '@mantine/core';
-import { Prisma } from '@prisma/client';
+import type { Prisma } from '@prisma/client';
 import { IconUserCircle } from '@tabler/icons-react';
 
 interface ProfileViewProps {

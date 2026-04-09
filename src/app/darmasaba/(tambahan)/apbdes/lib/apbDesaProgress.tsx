@@ -2,7 +2,7 @@
 
 import colors from '@/con/colors';
 import { Box, Paper, Progress, Stack, Text, Title } from '@mantine/core';
-import { APBDesData } from './types';
+import type { APBDesData } from './types';
 
 function formatRupiah(value: number) {
   return new Intl.NumberFormat('id-ID', {

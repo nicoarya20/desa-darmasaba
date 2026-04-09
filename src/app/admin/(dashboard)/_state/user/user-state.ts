@@ -2,7 +2,7 @@
 import { proxy } from "valtio";
 import { toast } from "react-toastify";
 import ApiFetch from "@/lib/api-fetch";
-import { Prisma } from "@prisma/client";
+import type { Prisma } from "@prisma/client";
 import { z } from "zod";
 
 // State Valtio

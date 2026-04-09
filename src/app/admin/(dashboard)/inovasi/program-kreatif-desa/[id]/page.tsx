@@ -6,7 +6,7 @@ import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
-import { IconKey, IconMapper } from '../../../_com/iconMap';
+import { type IconKey, IconMapper } from '../../../_com/iconMap';
 import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
 import programKreatifState from '../../../_state/inovasi/program-kreatif';
 

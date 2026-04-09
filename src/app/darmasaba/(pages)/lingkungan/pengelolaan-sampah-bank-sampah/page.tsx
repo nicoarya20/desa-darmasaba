@@ -3,7 +3,7 @@ import pengelolaanSampahState from '@/app/admin/(dashboard)/_state/lingkungan/pe
 import colors from '@/con/colors';
 import { Box, Center, Flex, Group, Pagination, Paper, SimpleGrid, Skeleton, Stack, Text, TextInput } from '@mantine/core';
 import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
-import { Icon, IconAlertTriangle, IconAmbulance, IconBook, IconBuilding, IconBuildingCommunity, IconCash, IconChartLine, IconChristmasTreeFilled, IconClipboard, IconDroplet, IconFileText, IconFiretruck, IconFirstAidKit, IconHome, IconHomeEco, IconHospital, IconInfoCircle, IconLeaf, IconLifebuoy, IconMessageReport, IconPhoneCall, IconRecycle, IconRoute, IconRun, IconScale, IconSchool, IconSearch, IconShield, IconShieldFilled, IconShoppingCart, IconStethoscope, IconTent, IconTrash, IconTree, IconTrendingUp, IconTrophy, IconTruck, IconUsers } from '@tabler/icons-react';
+import { type Icon, IconAlertTriangle, IconAmbulance, IconBook, IconBuilding, IconBuildingCommunity, IconCash, IconChartLine, IconChristmasTreeFilled, IconClipboard, IconDroplet, IconFileText, IconFiretruck, IconFirstAidKit, IconHome, IconHomeEco, IconHospital, IconInfoCircle, IconLeaf, IconLifebuoy, IconMessageReport, IconPhoneCall, IconRecycle, IconRoute, IconRun, IconScale, IconSchool, IconSearch, IconShield, IconShieldFilled, IconShoppingCart, IconStethoscope, IconTent, IconTrash, IconTree, IconTrendingUp, IconTrophy, IconTruck, IconUsers } from '@tabler/icons-react';
 import dynamic from 'next/dynamic';
 import React, { useState } from 'react';
 import { useProxy } from 'valtio/utils';

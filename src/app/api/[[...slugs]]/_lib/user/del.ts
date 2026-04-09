@@ -1,6 +1,6 @@
 // /api/user/delete.ts
 import prisma from '@/lib/prisma';
-import { Context } from 'elysia';
+import type { Context } from 'elysia';
 
 export default async function userDelete(context: Context) {
   const { id } = context.params as { id: string };

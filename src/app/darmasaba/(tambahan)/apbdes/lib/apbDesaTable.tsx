@@ -2,7 +2,7 @@
 
 import { Box, Paper, Table, Text, Title, Badge, Group } from '@mantine/core';
 import colors from '@/con/colors';
-import { APBDesData } from './types';
+import type { APBDesData } from './types';
 
 // Helper: Format Rupiah, tapi jika 0 → tampilkan '-'
 function formatRupiahOrEmpty(value: number): string {

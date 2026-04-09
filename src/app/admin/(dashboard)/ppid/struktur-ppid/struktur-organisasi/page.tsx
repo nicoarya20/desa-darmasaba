@@ -57,7 +57,7 @@ function ListStrukturOrganisasiPPID() {
     posisiMap.get(posisiId)!.pegawaiList.push(pegawai);
   }
 
-  let root: any[] = [];
+  const root: any[] = [];
   posisiMap.forEach((posisi) => {
     if (posisi.parentId) {
       const parent = posisiMap.get(posisi.parentId);

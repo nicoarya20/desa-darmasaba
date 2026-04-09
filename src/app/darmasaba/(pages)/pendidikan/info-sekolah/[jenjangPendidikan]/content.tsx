@@ -3,7 +3,7 @@
 import infoSekolahPaud from '@/app/admin/(dashboard)/_state/pendidikan/info-sekolah-paud';
 import colors from '@/con/colors';
 import { Box, Button, Center, Container, Group, Paper, SimpleGrid, Skeleton, Stack, Text, Tooltip, ActionIcon } from '@mantine/core';
-import { IconChalkboard, IconMicroscope, IconProps, IconRefresh, IconSchool, IconInfoCircle } from '@tabler/icons-react';
+import { IconChalkboard, IconMicroscope, type IconProps, IconRefresh, IconSchool, IconInfoCircle } from '@tabler/icons-react';
 import { motion } from 'framer-motion';
 import { useTransitionRouter } from 'next-view-transitions';
 import React from 'react';

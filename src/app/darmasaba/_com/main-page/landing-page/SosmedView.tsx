@@ -2,7 +2,7 @@
 import { sosmedMap } from "@/app/admin/(dashboard)/landing-page/profil/_lib/sosmed";
 import colors from "@/con/colors";
 import { ActionIcon, Box, Card, Flex, Image, Text, Tooltip } from "@mantine/core";
-import { Prisma } from "@prisma/client";
+import type { Prisma } from "@prisma/client";
 import { useTransitionRouter } from "next-view-transitions";
 
 function SosmedView({

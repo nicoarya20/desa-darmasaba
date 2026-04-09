@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // /api/posisi-organisasi/findManyAll.ts
 import prisma from "@/lib/prisma";
-import { Context } from "elysia";
+import type { Context } from "elysia";
 
 async function posisiOrganisasiFindManyAll(context: Context) {
   const search = (context.query.search as string) || "";

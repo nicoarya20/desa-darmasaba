@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // /api/berita/findManyPaginated.ts
 import prisma from "@/lib/prisma";
-import { Context } from "elysia";
+import type { Context } from "elysia";
 
 async function kelahiranFindMany(context: Context) {
   // Ambil parameter dari query

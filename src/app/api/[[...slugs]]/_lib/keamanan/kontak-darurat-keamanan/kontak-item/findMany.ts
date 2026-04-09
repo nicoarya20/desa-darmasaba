@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma";
-import { Context } from "elysia";
-import { Prisma } from "@prisma/client";
+import type { Context } from "elysia";
+import type { Prisma } from "@prisma/client";
 
 export default async function kontakItemFindMany(context: Context) {
   // Ambil parameter dari query

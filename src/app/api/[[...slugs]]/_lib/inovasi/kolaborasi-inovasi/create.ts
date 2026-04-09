@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma";
-import { Context } from "elysia";
-import { Prisma } from "@prisma/client";
+import type { Context } from "elysia";
+import type { Prisma } from "@prisma/client";
 
 // Define validation schema
 type FormCreateKolaborasiInovasi = Prisma.KolaborasiInovasiGetPayload<{

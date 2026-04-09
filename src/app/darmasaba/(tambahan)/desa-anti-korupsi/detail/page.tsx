@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client';
-import React, { useEffect, useState } from 'react';
+import type React from 'react';
+import { useEffect, useState } from 'react';
 import korupsiState from '@/app/admin/(dashboard)/_state/landing-page/desa-anti-korupsi';
 import BackButton from '@/app/darmasaba/(pages)/desa/layanan/_com/BackButto';
 import colors from '@/con/colors';

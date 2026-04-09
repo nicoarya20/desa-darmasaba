@@ -2,7 +2,7 @@
 import colors from "@/con/colors"
 import { Box, Button, Center, Container, Image, Paper, SimpleGrid, Stack, Text, Title, useMantineTheme } from "@mantine/core"
 import { useMediaQuery } from "@mantine/hooks"
-import { Prisma } from "@prisma/client"
+import type { Prisma } from "@prisma/client"
 import { IconMoodSad } from "@tabler/icons-react"
 import Link from "next/link"
 import { useEffect, useState } from "react"

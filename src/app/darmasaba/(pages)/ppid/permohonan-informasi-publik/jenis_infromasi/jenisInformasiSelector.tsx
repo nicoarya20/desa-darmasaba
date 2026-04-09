@@ -2,7 +2,7 @@
 'use client';
 import { Skeleton, Group, Select } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { Prisma } from '@prisma/client';
+import type { Prisma } from '@prisma/client';
 import React from 'react';
 import { useProxy } from 'valtio/utils';
 import statePermohonanInformasi from '@/app/admin/(dashboard)/_state/ppid/permohonan_informasi_publik/permohonanInformasiPublik';

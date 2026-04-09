@@ -1,5 +1,5 @@
 import { proxy } from "valtio"
-import { MenuItem } from "../../types/menu-item"
+import type { MenuItem } from "../../types/menu-item"
 
 const stateNav = proxy<{
     hover: boolean,

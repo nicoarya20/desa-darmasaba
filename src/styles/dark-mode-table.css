@@ -1,6 +1,6 @@
 /**
  * Dark Mode Table Styles
- * 
+ *
  * Override Mantine table hover styles untuk dark mode
  * Agar teks putih tetap terlihat saat hover
  */
@@ -9,16 +9,19 @@
 [data-mantine-color-scheme="dark"] {
   /* Table hover */
   .mantine-Table-tr:hover {
+    /* biome-ignore lint/complexity/noImportantStyles: Required to override Mantine table styles */
     background-color: rgba(255, 255, 255, 0.08) !important;
   }
-  
+
   /* Table striped hover */
   .mantine-Table-striped .mantine-Table-tr:nth-of-type(odd):hover {
+    /* biome-ignore lint/complexity/noImportantStyles: Required to override Mantine striped table styles */
     background-color: rgba(255, 255, 255, 0.08) !important;
   }
-  
+
   /* Table with column borders */
   .mantine-Table-withColumnBorders .mantine-Table-tr:hover {
+    /* biome-ignore lint/complexity/noImportantStyles: Required to override Mantine bordered table styles */
     background-color: rgba(255, 255, 255, 0.08) !important;
   }
 }
@@ -26,6 +29,7 @@
 /* Light mode table hover - default Mantine behavior */
 [data-mantine-color-scheme="light"] {
   .mantine-Table-tr:hover {
+    /* biome-ignore lint/complexity/noImportantStyles: Required to override Mantine table styles */
     background-color: rgba(0, 0, 0, 0.02) !important;
   }
 }

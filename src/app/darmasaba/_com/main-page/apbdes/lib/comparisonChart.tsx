@@ -11,7 +11,7 @@ import {
   ResponsiveContainer,
   Cell,
 } from 'recharts'
-import { APBDes, APBDesItem } from '../types/apbdes'
+import type { APBDes, APBDesItem } from '../types/apbdes'
 
 interface ComparisonChartProps {
   apbdesData: APBDes

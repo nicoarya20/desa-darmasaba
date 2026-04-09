@@ -4,7 +4,7 @@
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
 import { useEffect, useState } from 'react';
 import 'leaflet/dist/leaflet.css';
-import L, { LeafletMouseEvent } from 'leaflet';
+import L, { type LeafletMouseEvent } from 'leaflet';
 
 type Props = {
   defaultCenter: { lat: number; lng: number };

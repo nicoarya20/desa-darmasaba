@@ -1,7 +1,7 @@
 'use client'
 
 import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
-import { IconKey } from '@/app/admin/(dashboard)/_com/iconMap';
+import type { IconKey } from '@/app/admin/(dashboard)/_com/iconMap';
 import SelectIconProgramEdit from '@/app/admin/(dashboard)/_com/selectIconEdit';
 import programKemiskinanState from '@/app/admin/(dashboard)/_state/ekonomi/program-kemiskinan';
 import colors from '@/con/colors';

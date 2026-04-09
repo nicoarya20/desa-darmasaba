@@ -1,7 +1,7 @@
 import prisma from "@/lib/prisma";
-import { Context } from "elysia";
+import type { Context } from "elysia";
 import { assignParentIdsToApbdesItems } from "./lib/getParentsID";
-import { RealisasiItem } from "@prisma/client";
+import type { RealisasiItem } from "@prisma/client";
 
 type APBDesItemInput = {
   kode: string;

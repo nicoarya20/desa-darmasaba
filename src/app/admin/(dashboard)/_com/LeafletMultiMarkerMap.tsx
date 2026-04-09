@@ -2,7 +2,7 @@
 'use client';
 
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import { LatLngExpression } from 'leaflet';
+import type { LatLngExpression } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { useEffect } from 'react';

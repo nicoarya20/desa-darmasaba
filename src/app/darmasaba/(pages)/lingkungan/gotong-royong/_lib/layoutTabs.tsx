@@ -7,7 +7,8 @@ import colors from '@/con/colors';
 import { Box, Group, Stack, Tabs, TabsList, TabsTab, Text, TextInput } from '@mantine/core';
 import { IconSearch } from '@tabler/icons-react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import type React from 'react';
+import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import BackButton from '../../../desa/layanan/_com/BackButto';
 

@@ -53,7 +53,6 @@ async function findPort(params?: { count?: number, portStart?: number, portEnd?:
             }
         } catch (error) {
             console.warn(`Gagal memeriksa port ${port}:`, error);
-            continue; // Lanjutkan ke port berikutnya
         }
     }
 

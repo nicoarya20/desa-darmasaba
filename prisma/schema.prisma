@@ -2321,3 +2321,72 @@ model MusikDesa {
   @@index([judul])
   @@index([artis])
 }
+
+// ========================================= KEPENDUDUKAN ========================================= //
+
+// Dashboard Summary
+model DashboardKependudukan {
+  id              String   @id @default(cuid())
+  totalPenduduk   Int
+  totalKK         Int
+  totalKelahiran  Int
+  totalKemiskinan Int
+  tahun           Int
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  deletedAt       DateTime @default(now())
+  isActive        Boolean  @default(true)
+}
+
+// Distribusi Agama
+model DistribusiAgama {
+  id        String   @id @default(cuid())
+  agama     String
+  jumlah    Int
+  tahun     Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive  Boolean  @default(true)
+}
+
+// Distribusi Umur
+model DistribusiUmur {
+  id           String   @id @default(cuid())
+  rentangUmur  String // "17-25", "26-35", "36-45", "46-55", "56-65", "65+"
+  jumlah       Int
+  tahun        Int
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  deletedAt    DateTime @default(now())
+  isActive     Boolean  @default(true)
+}
+
+// Data per Banjar
+model DataBanjar {
+  id        String   @id @default(cuid())
+  nama      String
+  penduduk  Int
+  kk        Int
+  miskin    Int
+  tahun     Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @default(now())
+  isActive  Boolean  @default(true)
+}
+
+// Migrasi Penduduk (Pindah Masuk/Keluar)
+model MigrasiPenduduk {
+  id           String   @id @default(cuid())
+  jenis        String // "MASUK" atau "KELUAR"
+  nama         String
+  tanggal      DateTime
+  asalTujuan   String // Asal (untuk masuk) / Tujuan (untuk keluar)
+  alasan       String?
+  jenisKelamin String? // "L" atau "P"
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  deletedAt    DateTime @default(now())
+  isActive     Boolean  @default(true)
+}

@@ -9,7 +9,7 @@ async function proc(params?: {
     onStdErr?: (chunk: string) => void
 }) {
     const { env = {}, cmd, cwd = "./", timeout = 30000 } = params || {}
-    return new Promise(async (resolve, reject) => {
+    return new Promise((resolve, reject) => {
         const std = {
             stdout: "",
             stderr: "",
@@ -38,7 +38,7 @@ async function proc(params?: {
         const resOut = new Response(child.stdout)
         const resErr = new Response(child.stderr)
 
-        if (resOut && resOut.body) {
+        if (resOut?.body) {
             for await (const chunk of resOut.body as unknown as AsyncIterable<Uint8Array>) {
                 const text = decoder.decode(chunk)
                 std.stdout += text
@@ -48,7 +48,7 @@ async function proc(params?: {
             }
         }
 
-        if (resErr && resErr.body) {
+        if (resErr?.body) {
             for await (const chunk of resErr.body as unknown as AsyncIterable<Uint8Array>) {
                 const text = decoder.decode(chunk)
                 std.stderr += text
