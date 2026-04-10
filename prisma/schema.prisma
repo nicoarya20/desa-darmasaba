@@ -2335,14 +2335,14 @@ model DistribusiAgama {
 
 // ========================================= DISTRIBUSI UMUR ========================================= //
 model DistribusiUmur {
-  id        String   @id @default(cuid())
-  kelompok  String // Kelompok umur (e.g., "0-14", "15-24", "25-54", "55-64", "65+")
-  jumlah    Int // Jumlah penduduk
-  tahun     Int // Tahun data
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  deletedAt DateTime?
-  isActive  Boolean  @default(true)
+  id          String   @id @default(cuid())
+  rentangUmur String // Rentang umur (e.g., "0-14", "15-24", "25-54", "55-64", "65+")
+  jumlah      Int // Jumlah penduduk
+  tahun       Int // Tahun data
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  deletedAt   DateTime?
+  isActive    Boolean  @default(true)
 
   @@index([tahun])
   @@index([isActive])

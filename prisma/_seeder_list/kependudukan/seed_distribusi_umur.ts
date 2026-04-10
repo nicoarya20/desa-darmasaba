@@ -10,18 +10,18 @@ export async function seedDistribusiUmur() {
     await prisma.distribusiUmur.upsert({
       where: { id: item.id },
       update: {
-        kelompok: item.kelompok,
+        rentangUmur: item.rentangUmur,
         jumlah: item.jumlah,
         tahun: item.tahun,
       },
       create: {
         id: item.id,
-        kelompok: item.kelompok,
+        rentangUmur: item.rentangUmur,
         jumlah: item.jumlah,
         tahun: item.tahun,
       },
     });
-    console.log(`  Kelompok ${item.kelompok}: ${item.jumlah} jiwa`);
+    console.log(`  Rentang ${item.rentangUmur}: ${item.jumlah} jiwa`);
   }
 
   console.log("Distribusi Umur seed selesai");
