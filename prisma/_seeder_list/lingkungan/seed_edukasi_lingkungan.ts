@@ -1,7 +1,9 @@
 import prisma from "@/lib/prisma";
-import tujuanEdukasiLingkungan from "../../data/lingkungan/edukasi-lingkungan/tujuan-edukasi-lingkungan.json";
-import materiEdukasiLingkungan from "../../data/lingkungan/edukasi-lingkungan/materi-edukasi-yang-diberikan.json";
-import contohEdukasiLingkungan from "../../data/lingkungan/edukasi-lingkungan/contoh-kegiatan-di-desa-darmasaba.json";
+import { loadJsonData } from "../../load-json";
+
+const tujuanEdukasiLingkungan = loadJsonData("lingkungan/edukasi-lingkungan/tujuan-edukasi-lingkungan.json");
+const materiEdukasiLingkungan = loadJsonData("lingkungan/edukasi-lingkungan/materi-edukasi-yang-diberikan.json");
+const contohEdukasiLingkungan = loadJsonData("lingkungan/edukasi-lingkungan/contoh-kegiatan-di-desa-darmasaba.json");
 
 export async function seedEdukasiLingkungan() {
   for (const e of tujuanEdukasiLingkungan) {

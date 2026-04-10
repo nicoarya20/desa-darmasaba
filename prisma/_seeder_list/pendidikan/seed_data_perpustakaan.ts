@@ -1,6 +1,8 @@
 import prisma from "@/lib/prisma";
-import dataPerpustakaan from "../../data/pendidikan/perpustakaan-digital/perpustakaan-digital.json";
-import kategoriBuku from "../../data/pendidikan/perpustakaan-digital/kategori-buku.json";
+import { loadJsonData } from "../../load-json";
+
+const dataPerpustakaan = loadJsonData("pendidikan/perpustakaan-digital/perpustakaan-digital.json");
+const kategoriBuku = loadJsonData("pendidikan/perpustakaan-digital/kategori-buku.json");
 
 export async function seedDataPerpustakaan() {
   console.log("🔄 Seeding Kategori Buku...");

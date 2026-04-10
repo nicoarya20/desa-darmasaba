@@ -1,6 +1,8 @@
 import prisma from "@/lib/prisma";
-import kategoriDesaAntiKorupsi from "../../../data/landing-page/desa-anti-korupsi/kategoriDesaAntiKorupsi.json"
-import desaAntiKorupsi from "../../../data/landing-page/desa-anti-korupsi/desaantiKorpusi.json"
+import { loadJsonData } from "../../../load-json";
+
+const kategoriDesaAntiKorupsi = loadJsonData("landing-page/desa-anti-korupsi/kategoriDesaAntiKorupsi.json");
+const desaAntiKorupsi = loadJsonData("landing-page/desa-anti-korupsi/desaantiKorpusi.json");
 
 export async function seedDesaAntiKorupsi() {
     for (const k of kategoriDesaAntiKorupsi) {

@@ -1,5 +1,7 @@
 import prisma from "@/lib/prisma";
-import galleryVideo from "../../../../data/desa/gallery/video/video.json";
+import { loadJsonData } from "../../../../load-json";
+
+const galleryVideo = loadJsonData("desa/gallery/video/video.json");
 
 export async function seedVideo() {
   console.log("🔄 Seeding Gallery Video...");

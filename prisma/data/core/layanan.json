@@ -1,0 +1,22 @@
+[
+  {
+    "id": "layanan-001",
+    "name": "Administrasi"
+  },
+  {
+    "id": "layanan-002",
+    "name": "Kesehatan"
+  },
+  {
+    "id": "layanan-003",
+    "name": "Pendidikan"
+  },
+  {
+    "id": "layanan-004",
+    "name": "Keamanan"
+  },
+  {
+    "id": "layanan-005",
+    "name": "Lingkungan"
+  }
+]

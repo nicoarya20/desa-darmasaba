@@ -1,8 +1,10 @@
 import prisma from "@/lib/prisma";
-import apbdes from "../../data/ekonomi/pendapatan-asli-desa/apbDesa.json";
-import pendapatan from "../../data/ekonomi/pendapatan-asli-desa/pendapatanDesa.json";
-import belanja from "../../data/ekonomi/pendapatan-asli-desa/belanjaDesa.json";
-import pembiayaan from "../../data/ekonomi/pendapatan-asli-desa/pembiayaanDesa.json";
+import { loadJsonData } from "../../load-json";
+
+const apbdes = loadJsonData("ekonomi/pendapatan-asli-desa/apbDesa.json");
+const pendapatan = loadJsonData("ekonomi/pendapatan-asli-desa/pendapatanDesa.json");
+const belanja = loadJsonData("ekonomi/pendapatan-asli-desa/belanjaDesa.json");
+const pembiayaan = loadJsonData("ekonomi/pendapatan-asli-desa/pembiayaanDesa.json");
 
 export async function seedPendapatanAsli() {
   console.log("🔄 Seeding Pendapatan Asli...");

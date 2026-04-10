@@ -1,8 +1,10 @@
 import prisma from "@/lib/prisma";
-import daftarInformasiPublik from "../../../data/ppid/daftar-informasi-publik-desa-darmasaba/daftarInformasi.json"
-import jenisInformasiDiminta from "../../../data/list-jenisInfromasi.json"
-import caraMemperolehInformasi from "../../../data/list-caraMemperolehInformasi.json"
-import caraMemperolehSalinanInformasi from "../../../data/list-caraMemperolehSalinanInformasi.json"
+import { loadJsonData } from "../../../load-json";
+
+const daftarInformasiPublik = loadJsonData("ppid/daftar-informasi-publik-desa-darmasaba/daftarInformasi.json");
+const jenisInformasiDiminta = loadJsonData("list-jenisInfromasi.json");
+const caraMemperolehInformasi = loadJsonData("list-caraMemperolehInformasi.json");
+const caraMemperolehSalinanInformasi = loadJsonData("list-caraMemperolehSalinanInformasi.json");
 
 export async function seedDaftarInformasiPublikPpid() {
 

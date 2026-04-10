@@ -1,5 +1,7 @@
 import prisma from "@/lib/prisma";
-import infoTeknologi from "../../data/inovasi/info-teknologi/info-teknologi.json";
+import { loadJsonData } from "../../load-json";
+
+const infoTeknologi = loadJsonData("inovasi/info-teknologi/info-teknologi.json");
 
 export async function seedInfoTeknologi() {
   console.log("🔄 Seeding Info Teknologi...");

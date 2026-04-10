@@ -5,10 +5,15 @@ import { Context } from "elysia";
 export default async function distribusiUmurFindMany(context: Context) {
   const page = Number(context.query.page) || 1;
   const limit = Number(context.query.limit) || 100;
-  const tahun = Number(context.query.tahun) || new Date().getFullYear();
+  const tahun = context.query.tahun ? Number(context.query.tahun) : undefined;
   const skip = (page - 1) * limit;
 
-  const where: any = { isActive: true, tahun };
+  const where: any = { isActive: true };
+
+  // Filter by tahun hanya jika dikirim
+  if (tahun) {
+    where.tahun = tahun;
+  }
 
   try {
     const [data, total] = await Promise.all([

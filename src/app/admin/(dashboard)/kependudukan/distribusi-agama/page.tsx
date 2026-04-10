@@ -25,12 +25,14 @@ import { IconEdit, IconPlus, IconSearch, IconTrash } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
+import { YearFilter } from '../_components/YearFilter';
 import HeaderSearch from '../../_com/header';
 import { ModalKonfirmasiHapus } from '../../_com/modalKonfirmasiHapus';
 import distribusiAgama from '../../_state/kependudukan/distribusi-agama';
 
 function DistribusiAgamaAdmin() {
   const [search, setSearch] = useState('');
+  const [selectedYear, setSelectedYear] = useState<number | undefined>(undefined);
   return (
     <Box>
       <HeaderSearch
@@ -40,12 +42,18 @@ function DistribusiAgamaAdmin() {
         value={search}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.currentTarget.value)}
       />
-      <ListDistribusiAgama search={search} />
+      <Box mt="md">
+        <YearFilter value={selectedYear} onChange={(year) => {
+          setSelectedYear(year);
+          distribusiAgama.findMany.page = 1;
+        }} />
+      </Box>
+      <ListDistribusiAgama search={search} year={selectedYear} />
     </Box>
   );
 }
 
-function ListDistribusiAgama({ search }: { search: string }) {
+function ListDistribusiAgama({ search, year }: { search: string; year?: number }) {
   type DistribusiAgamaType = {
     id: string;
     agama: string;
@@ -76,8 +84,8 @@ function ListDistribusiAgama({ search }: { search: string }) {
   };
 
   useShallowEffect(() => {
-    load(page, 10, debouncedSearch);
-  }, [page, debouncedSearch]);
+    load(page, 10, debouncedSearch, year);
+  }, [page, debouncedSearch, year]);
 
   const filteredData = data || [];
 

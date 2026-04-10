@@ -1,5 +1,7 @@
 import prisma from "@/lib/prisma";
-import programKreatif from "../../data/inovasi/program-kreatif-desa/program-kreatif-desa.json";
+import { loadJsonData } from "../../load-json";
+
+const programKreatif = loadJsonData("inovasi/program-kreatif-desa/program-kreatif-desa.json");
 
 export async function seedProgramKreatifDesa() {
   console.log("🔄 Seeding Program Kreatif...");

@@ -58,14 +58,17 @@ const dataBanjar = proxy({
     totalPages: 1,
     loading: false,
     search: "",
-    load: async (page = 1, limit = 10, search = "", tahun = new Date().getFullYear()) => {
+    tahun: undefined as number | undefined,
+    load: async (page = 1, limit = 10, search = "", tahun?: number) => {
       dataBanjar.findMany.loading = true;
       dataBanjar.findMany.page = page;
       dataBanjar.findMany.search = search;
+      dataBanjar.findMany.tahun = tahun;
 
       try {
-        const query: any = { page, limit, tahun };
+        const query: any = { page, limit };
         if (search) query.search = search;
+        if (tahun) query.tahun = tahun;
 
         const res = await ApiFetch.api.kependudukan.databanjar["find-many"].get({ query });
 

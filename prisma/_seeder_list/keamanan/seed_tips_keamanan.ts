@@ -1,5 +1,7 @@
 import prisma from "@/lib/prisma";
-import tipsKeamananJson from "../../data/keamanan/tips-keamanan/tips-keamanan.json";
+import { loadJsonData } from "../../load-json";
+
+const tipsKeamananJson = loadJsonData("keamanan/tips-keamanan/tips-keamanan.json");
 
 export async function seedTipsKeamanan() {
    console.log("🔄 Seeding Tips Keamanan...");

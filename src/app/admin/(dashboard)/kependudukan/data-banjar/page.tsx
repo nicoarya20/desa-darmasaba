@@ -27,9 +27,12 @@ import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../_com/header';
 import { ModalKonfirmasiHapus } from '../../_com/modalKonfirmasiHapus';
 import dataBanjar from '../../_state/kependudukan/data-banjar';
+import { YearFilter } from '../_components/YearFilter';
 
 function DataBanjarAdmin() {
   const [search, setSearch] = useState('');
+  const [selectedYear, setSelectedYear] = useState<number | undefined>(undefined);
+  
   return (
     <Box>
       <HeaderSearch
@@ -39,12 +42,18 @@ function DataBanjarAdmin() {
         value={search}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.currentTarget.value)}
       />
-      <ListDataBanjar search={search} />
+      <Box mt="md">
+        <YearFilter value={selectedYear} onChange={(year) => {
+          setSelectedYear(year);
+          dataBanjar.findMany.page = 1;
+        }} />
+      </Box>
+      <ListDataBanjar search={search} year={selectedYear} />
     </Box>
   );
 }
 
-function ListDataBanjar({ search }: { search: string }) {
+function ListDataBanjar({ search, year }: { search: string; year?: number }) {
   type DataBanjarType = {
     id: string;
     nama: string;
@@ -77,8 +86,8 @@ function ListDataBanjar({ search }: { search: string }) {
   };
 
   useShallowEffect(() => {
-    load(page, 10, debouncedSearch);
-  }, [page, debouncedSearch]);
+    load(page, 10, debouncedSearch, year);
+  }, [page, debouncedSearch, year]);
 
   const filteredData = data || [];
 

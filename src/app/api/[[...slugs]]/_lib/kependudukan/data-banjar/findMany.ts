@@ -6,10 +6,15 @@ export default async function dataBanjarFindMany(context: Context) {
   const page = Number(context.query.page) || 1;
   const limit = Number(context.query.limit) || 100;
   const search = (context.query.search as string) || '';
-  const tahun = Number(context.query.tahun) || new Date().getFullYear();
+  const tahun = context.query.tahun ? Number(context.query.tahun) : undefined;
   const skip = (page - 1) * limit;
 
-  const where: any = { isActive: true, tahun };
+  const where: any = { isActive: true };
+
+  // Filter by tahun hanya jika dikirim
+  if (tahun) {
+    where.tahun = tahun;
+  }
 
   if (search) {
     where.OR = [

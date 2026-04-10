@@ -1,0 +1,26 @@
+[
+  {
+    "id": "cmk-kematian-001",
+    "nama": "I Ketut Sudarma",
+    "tanggal": "2025-01-25",
+    "jenisKelamin": "Laki-laki",
+    "alamat": "Banjar Adat Kauh, Desa Darmasaba",
+    "penyebab": "Sakit tua"
+  },
+  {
+    "id": "cmk-kematian-002",
+    "nama": "Ni Made Sari",
+    "tanggal": "2025-03-18",
+    "jenisKelamin": "Perempuan",
+    "alamat": "Banjar Adat Kangin, Desa Darmasaba",
+    "penyebab": "Gagal jantung"
+  },
+  {
+    "id": "cmk-kematian-003",
+    "nama": "I Wayan Sura",
+    "tanggal": "2025-04-12",
+    "jenisKelamin": "Laki-laki",
+    "alamat": "Banjar Adat Tengah, Desa Darmasaba",
+    "penyebab": "Stroke"
+  }
+]

@@ -1,5 +1,7 @@
-import kontakDaruratJson from "../../../data/kesehatan/kontak-darurat/kontak-darurat.json";
+import { loadJsonData } from "../../../load-json";
 import prisma from "@/lib/prisma";
+
+const kontakDaruratJson = loadJsonData("kesehatan/kontak-darurat/kontak-darurat.json");
 
 export async function seedKontakDarurat() {
   console.log("🔄 Seeding Kontak Darurat...");

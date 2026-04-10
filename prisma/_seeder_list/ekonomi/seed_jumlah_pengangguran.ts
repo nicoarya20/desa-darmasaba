@@ -1,5 +1,7 @@
 import prisma from "@/lib/prisma";
-import jumlahPengangguran from "../../data/ekonomi/jumlah-pengangguran/detail-data-pengangguran.json";
+import { loadJsonData } from "../../load-json";
+
+const jumlahPengangguran = loadJsonData("ekonomi/jumlah-pengangguran/detail-data-pengangguran.json");
 
 export async function seedJumlahPengangguran() {
   for (const d of jumlahPengangguran) {

@@ -1,5 +1,7 @@
 import prisma from "@/lib/prisma";
-import sdgsDesa from "../../../data/landing-page/sdgs-desa/sdgs-desa.json";
+import { loadJsonData } from "../../../load-json";
+
+const sdgsDesa = loadJsonData("landing-page/sdgs-desa/sdgs-desa.json");
 
 export async function seedSDGSDesa() {
   console.log("🔄 Seeding SDGS Desa...");

@@ -23,6 +23,7 @@ import Inovasi from "./_lib/inovasi";
 import Lingkungan from "./_lib/lingkungan";
 import LandingPage from "./_lib/landing_page";
 import Pendidikan from "./_lib/pendidikan";
+import Kependudukan from "./_lib/kependudukan";
 import User from "./_lib/user";
 import Role from "./_lib/user/role";
 import Search from "./_lib/search";
@@ -119,6 +120,7 @@ const ApiServer = new Elysia({ prefix: "/api" })
   .use(Inovasi)
   .use(Lingkungan)
   .use(Pendidikan)
+  .use(Kependudukan)
   .use(User)
   .use(Role)
   .use(Search)

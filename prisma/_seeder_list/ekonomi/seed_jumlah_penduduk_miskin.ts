@@ -1,5 +1,7 @@
 import prisma from "@/lib/prisma";
-import jumlahPendudukMiskin from "../../data/ekonomi/jumlah-penduduk-miskin/jumlah-penduduk-miskin.json";
+import { loadJsonData } from "../../load-json";
+
+const jumlahPendudukMiskin = loadJsonData("ekonomi/jumlah-penduduk-miskin/jumlah-penduduk-miskin.json");
 
 export async function seedJumlahPendudukMiskin() {
   console.log("🔄 Seeding Jumlah Penduduk Miskin...");

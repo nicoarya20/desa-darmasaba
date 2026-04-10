@@ -54,13 +54,14 @@ const distribusiAgama = proxy({
     totalPages: 1,
     loading: false,
     search: "",
-    load: async (page = 1, limit = 10, search = "", tahun = new Date().getFullYear()) => {
+    load: async (page = 1, limit = 10, search = "", tahun?: number) => {
       distribusiAgama.findMany.loading = true;
       distribusiAgama.findMany.page = page;
       distribusiAgama.findMany.search = search;
 
       try {
-        const query: any = { page, limit, tahun };
+        const query: any = { page, limit };
+        if (tahun) query.tahun = tahun;
         if (search) query.search = search;
 
         const res = await ApiFetch.api.kependudukan.distribusiagama["find-many"].get({ query });

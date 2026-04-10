@@ -7,7 +7,7 @@ export default async function migrasiPendudukFindMany(context: Context) {
   const limit = Number(context.query.limit) || 10;
   const search = (context.query.search as string) || '';
   const jenis = (context.query.jenis as string) || '';
-  const tahun = Number(context.query.tahun) || new Date().getFullYear();
+  const tahun = context.query.tahun ? Number(context.query.tahun) : undefined;
   const skip = (page - 1) * limit;
 
   const where: any = { isActive: true };
@@ -16,6 +16,7 @@ export default async function migrasiPendudukFindMany(context: Context) {
     where.jenis = jenis;
   }
 
+  // Filter by tahun hanya jika dikirim
   if (tahun) {
     where.tanggal = {
       gte: new Date(`${tahun}-01-01`),

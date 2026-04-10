@@ -1,7 +1,9 @@
 import prisma from "@/lib/prisma";
-import tujuanProgram from "../../data/pendidikan/pendidikan-non-formal/tujuan-program2.json";
-import tempatKegiatan from "../../data/pendidikan/pendidikan-non-formal/tempat-kegiatan.json";
-import jenisProgramYangDiselenggarakan from "../../data/pendidikan/pendidikan-non-formal/jenis-program-yang-diselenggarakan.json";
+import { loadJsonData } from "../../load-json";
+
+const tujuanProgram = loadJsonData("pendidikan/pendidikan-non-formal/tujuan-program2.json");
+const tempatKegiatan = loadJsonData("pendidikan/pendidikan-non-formal/tempat-kegiatan.json");
+const jenisProgramYangDiselenggarakan = loadJsonData("pendidikan/pendidikan-non-formal/jenis-program-yang-diselenggarakan.json");
 
 export async function seedPendidikanNonFormal() {
   for (const t of tujuanProgram) {

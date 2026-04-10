@@ -1,6 +1,8 @@
 import prisma from "@/lib/prisma";
-import kolaborasiInovasi from "../../data/inovasi/kolaborasi-inovasi/kolaborasi-inovasi.json";
-import mitraKolaborasi from "../../data/inovasi/kolaborasi-inovasi/mitra-kolaborasi.json";
+import { loadJsonData } from "../../load-json";
+
+const kolaborasiInovasi = loadJsonData("inovasi/kolaborasi-inovasi/kolaborasi-inovasi.json");
+const mitraKolaborasi = loadJsonData("inovasi/kolaborasi-inovasi/mitra-kolaborasi.json");
 
 export async function seedKolaborasiInovasi() {
   console.log("🔄 Seeding Kolaborasi Inovasi...");

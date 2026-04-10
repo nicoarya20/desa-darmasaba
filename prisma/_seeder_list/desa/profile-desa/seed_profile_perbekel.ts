@@ -1,5 +1,7 @@
 import prisma from "@/lib/prisma";
-import perbekelDariMasaKeMasa from "../../../data/desa/profile/profile-perbekel-lalu.json";
+import { loadJsonData } from "../../../load-json";
+
+const perbekelDariMasaKeMasa = loadJsonData("desa/profile/profile-perbekel-lalu.json");
 
 export async function seedProfilePerbekel() {
    console.log("🔄 Seeding Perbekel Dari Masa Ke Masa...");

@@ -1,0 +1,98 @@
+[
+  {
+    "id": "cmk-banjar-001",
+    "nama": "Banjar Adat Kauh",
+    "penduduk": 450,
+    "kk": 120,
+    "miskin": 25,
+    "tahun": 2026
+  },
+  {
+    "id": "cmk-banjar-002",
+    "nama": "Banjar Adat Kangin",
+    "penduduk": 520,
+    "kk": 145,
+    "miskin": 30,
+    "tahun": 2026
+  },
+  {
+    "id": "cmk-banjar-003",
+    "nama": "Banjar Adat Tengah",
+    "penduduk": 380,
+    "kk": 105,
+    "miskin": 20,
+    "tahun": 2026
+  },
+  {
+    "id": "cmk-banjar-004",
+    "nama": "Banjar Dinas Cabe",
+    "penduduk": 290,
+    "kk": 85,
+    "miskin": 15,
+    "tahun": 2026
+  },
+  {
+    "id": "cmk-banjar-005",
+    "nama": "Banjar Dinas Menesa",
+    "penduduk": 310,
+    "kk": 90,
+    "miskin": 18,
+    "tahun": 2026
+  },
+  {
+    "id": "cmk-banjar-006",
+    "nama": "Banjar Dinas Penenjoan",
+    "penduduk": 275,
+    "kk": 78,
+    "miskin": 12,
+    "tahun": 2026
+  },
+  {
+    "id": "cmk-banjar-007",
+    "nama": "Banjar Dinas Telanga",
+    "penduduk": 340,
+    "kk": 95,
+    "miskin": 22,
+    "tahun": 2026
+  },
+  {
+    "id": "cmk-banjar-008",
+    "nama": "Banjar Dinas Baler Pasar",
+    "penduduk": 405,
+    "kk": 115,
+    "miskin": 28,
+    "tahun": 2026
+  },
+  {
+    "id": "cmk-banjar-009",
+    "nama": "Banjar Dinas Bucu",
+    "penduduk": 260,
+    "kk": 75,
+    "miskin": 14,
+    "tahun": 2026
+  },
+  {
+    "id": "cmk-banjar-010",
+    "nama": "Banjar Dinas Gulingan",
+    "penduduk": 295,
+    "kk": 82,
+    "miskin": 16,
+    "tahun": 2026
+  },
+  {
+    "id": "cmk-banjar-011",
+    "nama": "Banjar Dinas Bersih",
+    "penduduk": 320,
+    "kk": 88,
+    "miskin": 19,
+    "tahun": 2026
+  },
+  {
+    "id": "cmk-banjar-012",
+    "nama": "Banjar Dinas Umahanyar",
+    "penduduk": 355,
+    "kk": 98,
+    "miskin": 21,
+    "tahun": 2026
+  }
+]

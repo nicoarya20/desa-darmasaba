@@ -2300,6 +2300,95 @@ model UserMenuAccess {
   @@unique([userId, menuId]) // Satu user tidak bisa punya akses menu yang sama dua kali
 }
 
+// ========================================= KEPENDUDUKAN ========================================= //
+// ========================================= DATA BANJAR ========================================= //
+model DataBanjar {
+  id        String   @id @default(cuid())
+  nama      String // Nama banjar
+  penduduk  Int // Jumlah penduduk
+  kk        Int // Jumlah kepala keluarga
+  miskin    Int // Jumlah penduduk miskin
+  tahun     Int // Tahun data
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+  isActive  Boolean  @default(true)
+
+  @@index([tahun])
+  @@index([isActive])
+}
+
+// ========================================= DISTRIBUSI AGAMA ========================================= //
+model DistribusiAgama {
+  id        String   @id @default(cuid())
+  agama     String // Nama agama
+  jumlah    Int // Jumlah penganut
+  tahun     Int // Tahun data
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+  isActive  Boolean  @default(true)
+
+  @@index([tahun])
+  @@index([isActive])
+}
+
+// ========================================= DISTRIBUSI UMUR ========================================= //
+model DistribusiUmur {
+  id        String   @id @default(cuid())
+  kelompok  String // Kelompok umur (e.g., "0-14", "15-24", "25-54", "55-64", "65+")
+  jumlah    Int // Jumlah penduduk
+  tahun     Int // Tahun data
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+  isActive  Boolean  @default(true)
+
+  @@index([tahun])
+  @@index([isActive])
+}
+
+// ========================================= MIGRASI PENDUDUK ========================================= //
+model MigrasiPenduduk {
+  id          String   @id @default(cuid())
+  nama        String // Nama penduduk
+  jenis       JenisMigrasi // MASUK atau KELUAR
+  tanggal     DateTime // Tanggal migrasi
+  asal        String? // Asal (untuk masuk)
+  tujuan      String? // Tujuan (untuk keluar)
+  alasan      String? // Alasan migrasi
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  deletedAt   DateTime?
+  isActive    Boolean  @default(true)
+
+  @@index([tanggal])
+  @@index([isActive])
+}
+
+enum JenisMigrasi {
+  MASUK
+  KELUAR
+}
+
+// ========================================= DINAMIKA PENDUDUK ========================================= //
+model DinamikaPenduduk {
+  id        String   @id @default(cuid())
+  tahun     Int // Tahun data
+  kelahiran Int // Jumlah kelahiran
+  kematian  Int // Jumlah kematian
+  masuk     Int // Jumlah penduduk masuk
+  keluar    Int // Jumlah penduduk keluar
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+  isActive  Boolean  @default(true)
+
+  @@index([tahun])
+  @@index([isActive])
+  @@unique([tahun])
+}
+
 // ========================================= MUSIK DESA ========================================= //
 model MusikDesa {
   id          String       @id @default(cuid())

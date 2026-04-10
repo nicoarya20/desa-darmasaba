@@ -1,7 +1,9 @@
 import prisma from "@/lib/prisma";
-import filosofiTriHita from "../../data/lingkungan/konservasi-adat-bali/filosofi-tri-hita.json";
-import bentukKonservasiBerdasarkanAdat from "../../data/lingkungan/konservasi-adat-bali/bentuk-konservasi.json";
-import nilaiKonservasiAdat from "../../data/lingkungan/konservasi-adat-bali/nilai-konservasi-adat.json";
+import { loadJsonData } from "../../load-json";
+
+const filosofiTriHita = loadJsonData("lingkungan/konservasi-adat-bali/filosofi-tri-hita.json");
+const bentukKonservasiBerdasarkanAdat = loadJsonData("lingkungan/konservasi-adat-bali/bentuk-konservasi.json");
+const nilaiKonservasiAdat = loadJsonData("lingkungan/konservasi-adat-bali/nilai-konservasi-adat.json");
 
 export async function seedKonservasiAdatBali() {
   for (const f of filosofiTriHita) {

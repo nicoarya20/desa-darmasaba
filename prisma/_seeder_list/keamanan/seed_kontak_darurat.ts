@@ -1,7 +1,9 @@
 import prisma from "@/lib/prisma";
-import kontakDaruratKeamanan from "../../data/keamanan/kontak-darurat-keamanan/kontak-darurat-keamanan.json";
-import kontakItem from "../../data/keamanan/kontak-darurat-keamanan/kontakItem.json";
-import kontakDaruratToItem from "../../data/keamanan/kontak-darurat-keamanan/kontakDaruratToItem.json";
+import { loadJsonData } from "../../load-json";
+
+const kontakDaruratKeamanan = loadJsonData("keamanan/kontak-darurat-keamanan/kontak-darurat-keamanan.json");
+const kontakItem = loadJsonData("keamanan/kontak-darurat-keamanan/kontakItem.json");
+const kontakDaruratToItem = loadJsonData("keamanan/kontak-darurat-keamanan/kontakDaruratToItem.json");
 
 export async function seedKontakDaruratKeamanan() {
  console.log("🔄 Seeding Kontak Item...");

@@ -1,5 +1,7 @@
 import prisma from "@/lib/prisma";
-import pencegahanKriminalitas from "../../data/keamanan/pencegahan-kriminalitas/pencegahan-kriminalitas.json";
+import { loadJsonData } from "../../load-json";
+
+const pencegahanKriminalitas = loadJsonData("keamanan/pencegahan-kriminalitas/pencegahan-kriminalitas.json");
 
 export async function seedPencegahanKriminalitas() {
   console.log("🔄 Seeding Pencegahan Kriminalitas...");

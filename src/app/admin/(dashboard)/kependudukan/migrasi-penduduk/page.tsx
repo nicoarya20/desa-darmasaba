@@ -24,12 +24,14 @@ import { IconEdit, IconPlus, IconSearch, IconTrash } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
+import { YearFilter } from '../_components/YearFilter';
 import HeaderSearch from '../../_com/header';
 import { ModalKonfirmasiHapus } from '../../_com/modalKonfirmasiHapus';
 import migrasiPenduduk from '../../_state/kependudukan/migrasi-penduduk';
 
 function MigrasiPendudukAdmin() {
   const [search, setSearch] = useState('');
+  const [selectedYear, setSelectedYear] = useState<number | undefined>(undefined);
   return (
     <Box>
       <HeaderSearch
@@ -39,12 +41,18 @@ function MigrasiPendudukAdmin() {
         value={search}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.currentTarget.value)}
       />
-      <ListMigrasiPenduduk search={search} />
+      <Box mt="md">
+        <YearFilter value={selectedYear} onChange={(year) => {
+          setSelectedYear(year);
+          migrasiPenduduk.findMany.page = 1;
+        }} />
+      </Box>
+      <ListMigrasiPenduduk search={search} year={selectedYear} />
     </Box>
   );
 }
 
-function ListMigrasiPenduduk({ search }: { search: string }) {
+function ListMigrasiPenduduk({ search, year }: { search: string; year?: number }) {
   type MigrasiPendudukType = {
     id: string;
     jenis: string;
@@ -78,8 +86,8 @@ function ListMigrasiPenduduk({ search }: { search: string }) {
   };
 
   useShallowEffect(() => {
-    load(page, 10, debouncedSearch);
-  }, [page, debouncedSearch]);
+    load(page, 10, debouncedSearch, year);
+  }, [page, debouncedSearch, year]);
 
   const filteredData = data || [];
 

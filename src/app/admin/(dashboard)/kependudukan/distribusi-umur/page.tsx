@@ -25,12 +25,14 @@ import { IconEdit, IconPlus, IconSearch, IconTrash } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
+import { YearFilter } from '../_components/YearFilter';
 import HeaderSearch from '../../_com/header';
 import { ModalKonfirmasiHapus } from '../../_com/modalKonfirmasiHapus';
 import distribusiUmur from '../../_state/kependudukan/distribusi-umur';
 
 function DistribusiUmurAdmin() {
   const [search, setSearch] = useState('');
+  const [selectedYear, setSelectedYear] = useState<number | undefined>(undefined);
   return (
     <Box>
       <HeaderSearch
@@ -40,12 +42,18 @@ function DistribusiUmurAdmin() {
         value={search}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.currentTarget.value)}
       />
-      <ListDistribusiUmur search={search} />
+      <Box mt="md">
+        <YearFilter value={selectedYear} onChange={(year) => {
+          setSelectedYear(year);
+          distribusiUmur.findMany.page = 1;
+        }} />
+      </Box>
+      <ListDistribusiUmur search={search} year={selectedYear} />
     </Box>
   );
 }
 
-function ListDistribusiUmur({ search }: { search: string }) {
+function ListDistribusiUmur({ search, year }: { search: string; year?: number }) {
   type DistribusiUmurType = {
     id: string;
     rentangUmur: string;
@@ -77,8 +85,8 @@ function ListDistribusiUmur({ search }: { search: string }) {
   };
 
   useShallowEffect(() => {
-    load(page, 10, debouncedSearch);
-  }, [page, debouncedSearch]);
+    load(page, 10, debouncedSearch, year);
+  }, [page, debouncedSearch, year]);
 
   const filteredData = data || [];
 

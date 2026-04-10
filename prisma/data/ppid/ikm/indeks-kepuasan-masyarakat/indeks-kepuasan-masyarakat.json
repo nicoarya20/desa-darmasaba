@@ -1,0 +1,17 @@
+[
+  {
+    "id": "ikm-001",
+    "label": "Kepuasan Pelayanan Administrasi",
+    "kepuasan": "85%"
+  },
+  {
+    "id": "ikm-002",
+    "label": "Kepuasan Pelayanan Kesehatan",
+    "kepuasan": "90%"
+  },
+  {
+    "id": "ikm-003",
+    "label": "Kepuasan Pelayanan Pendidikan",
+    "kepuasan": "88%"
+  }
+]

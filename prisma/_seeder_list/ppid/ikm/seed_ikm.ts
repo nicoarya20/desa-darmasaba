@@ -1,7 +1,9 @@
 import prisma from "@/lib/prisma";
-import jenisKelamin from "../../../data/ppid/ikm/jenis-kelamin/jenis-kelamin.json";
-import pilihanRatingResponden from "../../../data/ppid/ikm/pilihan-rating-responden/rating-responden.json";
-import umurResponden from "../../../data/ppid/ikm/umur-responden/umur-responden.json";
+import { loadJsonData } from "../../../load-json";
+
+const jenisKelamin = loadJsonData("ppid/ikm/jenis-kelamin/jenis-kelamin.json");
+const pilihanRatingResponden = loadJsonData("ppid/ikm/pilihan-rating-responden/rating-responden.json");
+const umurResponden = loadJsonData("ppid/ikm/umur-responden/umur-responden.json");
 
 export async function seedIkmPpid() {
  for (const j of jenisKelamin) {
