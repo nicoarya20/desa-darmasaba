@@ -230,3 +230,23 @@ Common issues and solutions:
 4. Use the integrated Swagger docs at `/api/docs` for API testing
 5. Check environment variables are properly configured
 6. Verify responsive design on different screen sizes
+
+## Qwen Added Memories
+- **GitHub Workflow Execution**: Project ini memiliki 3 workflow GitHub Action:
+1. `publish.yml` - Build & push Docker image ke GHCR (manual trigger, butuh input: stack_env + tag)
+2. `re-pull.yml` - Re-pull Docker image di Portainer (manual trigger, butuh input: stack_name + stack_env)
+3. `docker-publish.yml` - Auto build & push saat ada tag versi v*
+
+Workflow bisa dijalankan via GitHub CLI: `gh workflow run <nama.yml> -f param=value --ref branch`
+
+Setelah commit ke branch deployment (dev/stg/prod), otomatis trigger workflow publish + re-pull untuk deploy ke server.
+- **Deployment Workflow Sistematis**:
+1. **Version Bump** - Update `version` di `package.json` sebelum deploy (ikuti semver: major.minor.patch)
+2. **Commit** - Commit perubahan + version bump dengan pesan yang jelas
+3. **Push ke Branch** - Push ke branch target (biasanya `stg` untuk staging atau `prod` untuk production)
+4. **Trigger Publish** - Jalankan `gh workflow run publish.yml --ref <branch> -f stack_env=<env> -f tag=<version>`
+5. **Trigger Re-Pull** - Jalankan `gh workflow run re-pull.yml -f stack_name=desa-darmasaba -f stack_env=<env>`
+6. **Verifikasi** - Cek workflow berhasil dan aplikasi berjalan
+
+Branch deployment: `stg` (staging) atau `prod` (production)
+Version format di package.json: `"version": "major.minor.patch"`
