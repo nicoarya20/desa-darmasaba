@@ -20,7 +20,7 @@ import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 import dataBanjar from '../../../_state/kependudukan/data-banjar';
 
-interface FormData {
+interface DataBanjarForm {
   nama: string;
   penduduk: number;
   kk: number;
@@ -33,14 +33,14 @@ export default function EditDataBanjar() {
   const { id } = useParams() as { id: string };
   const stateDataBanjar = useProxy(dataBanjar);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formData, setFormData] = useState<FormData>({
+  const [formData, setFormData] = useState<DataBanjarForm>({
     nama: '',
     penduduk: 0,
     kk: 0,
     miskin: 0,
     tahun: new Date().getFullYear(),
   });
-  const [originalData, setOriginalData] = useState<FormData>({
+  const [originalData, setOriginalData] = useState<DataBanjarForm>({
     nama: '',
     penduduk: 0,
     kk: 0,
@@ -72,7 +72,7 @@ export default function EditDataBanjar() {
         stateDataBanjar.update.id = id;
         await stateDataBanjar.findUnique.load(id);
 
-        const data = stateDataBanjar.findUnique.data;
+        const data = stateDataBanjar.findUnique.data as DataBanjarForm | null;
         if (data) {
           setFormData({
             nama: data.nama ?? '',
@@ -101,14 +101,22 @@ export default function EditDataBanjar() {
   }, [id]);
 
   const handleChange = useCallback(
-    (field: keyof FormData) =>
-      (value: any) => {
+    (field: keyof DataBanjarForm) =>
+      (value: string | number | undefined) => {
         const val =
           field === 'penduduk' || field === 'kk' || field === 'miskin' || field === 'tahun'
             ? Number(value || 0)
             : value;
 
-        setFormData((prev) => ({ ...prev, [field]: val }));
+        setFormData((prev) => ({ ...prev, [field]: val as never }));
+      },
+    []
+  );
+
+  const handleChangeText = useCallback(
+    (field: keyof DataBanjarForm) =>
+      (e: React.ChangeEvent<HTMLInputElement>) => {
+        setFormData((prev) => ({ ...prev, [field]: e.currentTarget.value as never }));
       },
     []
   );
@@ -173,7 +181,7 @@ export default function EditDataBanjar() {
             label="Nama Banjar"
             placeholder="Masukkan nama banjar"
             value={formData.nama}
-            onChange={handleChange('nama')}
+            onChange={handleChangeText('nama')}
             required
           />
 

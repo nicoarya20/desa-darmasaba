@@ -55,7 +55,7 @@ const migrasiPenduduk = proxy({
   },
 
   findMany: {
-    data: null as any[] | null,
+    data: null as unknown[] | null,
     page: 1,
     totalPages: 1,
     loading: false,
@@ -66,7 +66,7 @@ const migrasiPenduduk = proxy({
       migrasiPenduduk.findMany.search = search;
 
       try {
-        const query: any = { page, limit };
+        const query: Record<string, string | number> = { page, limit };
         if (tahun) query.tahun = tahun;
         if (search) query.search = search;
 
@@ -90,7 +90,7 @@ const migrasiPenduduk = proxy({
   },
 
   findUnique: {
-    data: null as any | null,
+    data: null as unknown | null,
     async load(id: string) {
       try {
         const res = await fetch(`/api/kependudukan/migrasipenduduk/${id}`);

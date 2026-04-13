@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 import colors from '@/con/colors';
 import {
@@ -89,7 +88,7 @@ function ListMigrasiPenduduk({ search, year }: { search: string; year?: number }
     load(page, 10, debouncedSearch, year);
   }, [page, debouncedSearch, year]);
 
-  const filteredData = data || [];
+  const filteredData = (data as MigrasiPendudukType[]) || [];
 
   if (loading || !data) {
     return (
@@ -152,7 +151,7 @@ function ListMigrasiPenduduk({ search, year }: { search: string; year?: number }
             </TableThead>
             <TableTbody>
               {filteredData.length > 0 ? (
-                filteredData.map((item: MigrasiPendudukType) => (
+                filteredData.map((item) => (
                   <TableTr key={item.id}>
                     <TableTd>
                       <Text
@@ -218,7 +217,7 @@ function ListMigrasiPenduduk({ search, year }: { search: string; year?: number }
         <Box hiddenFrom="md">
           <Stack gap="xs">
             {filteredData.length > 0 ? (
-              filteredData.map((item: MigrasiPendudukType) => (
+              filteredData.map((item) => (
                 <Paper key={item.id} withBorder p="sm" radius="sm">
                   <Stack gap={"xs"}>
                     <Box>

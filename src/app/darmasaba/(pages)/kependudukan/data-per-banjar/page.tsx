@@ -2,7 +2,6 @@
 import colors from '@/con/colors';
 import { Stack, Box, Paper, Text, Title, Skeleton, Table, Center } from '@mantine/core';
 import { IconDatabaseOff } from '@tabler/icons-react';
-import React from 'react';
 import BackButton from '../../desa/layanan/_com/BackButto';
 import { useProxy } from 'valtio/utils';
 import dataBanjar from '@/app/admin/(dashboard)/_state/kependudukan/data-banjar';
@@ -15,7 +14,16 @@ function Page() {
     state.findMany.load()
   }, [])
 
-  const data = state.findMany.data || [];
+  interface DataBanjarItem {
+    id: string;
+    nama: string;
+    penduduk: number;
+    kk: number;
+    miskin: number;
+    tahun: number;
+  }
+
+  const data = (state.findMany.data as DataBanjarItem[]) || [];
 
   if (state.findMany.loading) {
     return (

@@ -10,7 +10,6 @@ export default async function dashboardSummary() {
             totalKK,
             totalKelahiran,
             totalKemiskinan,
-            kelahiranData,
             kematianData,
             pindahMasukData,
             pindahKeluarData,

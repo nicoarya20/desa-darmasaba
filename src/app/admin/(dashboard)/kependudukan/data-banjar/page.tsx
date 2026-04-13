@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 import colors from '@/con/colors';
 import {
@@ -89,7 +88,7 @@ function ListDataBanjar({ search, year }: { search: string; year?: number }) {
     load(page, 10, debouncedSearch, year);
   }, [page, debouncedSearch, year]);
 
-  const filteredData = data || [];
+  const filteredData = (data as DataBanjarType[]) || [];
 
   if (loading || !data) {
     return (
@@ -140,7 +139,7 @@ function ListDataBanjar({ search, year }: { search: string; year?: number }) {
             </TableThead>
             <TableTbody>
               {filteredData.length > 0 ? (
-                filteredData.map((item: DataBanjarType) => (
+                filteredData.map((item) => (
                   <TableTr key={item.id}>
                     <TableTd>{item.nama}</TableTd>
                     <TableTd>{item.penduduk.toLocaleString('id-ID')}</TableTd>
@@ -198,7 +197,7 @@ function ListDataBanjar({ search, year }: { search: string; year?: number }) {
         <Box hiddenFrom="md">
           <Stack gap="xs">
             {filteredData.length > 0 ? (
-              filteredData.map((item: DataBanjarType) => (
+              filteredData.map((item) => (
                 <Paper key={item.id} withBorder p="sm" radius="sm">
                   <Stack gap={"xs"}>
                     <Box>

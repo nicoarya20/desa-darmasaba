@@ -1,11 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 import colors from '@/con/colors';
 import {
   Box,
   Button,
   Center,
-  Flex,
   Group,
   Pagination,
   Paper,
@@ -23,7 +21,7 @@ import {
 import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
 import { IconEdit, IconPlus, IconSearch, IconTrash } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import { YearFilter } from '../_components/YearFilter';
 import HeaderSearch from '../../_com/header';
@@ -87,7 +85,7 @@ function ListDistribusiAgama({ search, year }: { search: string; year?: number }
     load(page, 10, debouncedSearch, year);
   }, [page, debouncedSearch, year]);
 
-  const filteredData = data || [];
+  const filteredData = (data as DistribusiAgamaType[]) || [];
 
   if (loading || !data) {
     return (
@@ -136,7 +134,7 @@ function ListDistribusiAgama({ search, year }: { search: string; year?: number }
             </TableThead>
             <TableTbody>
               {filteredData.length > 0 ? (
-                filteredData.map((item: DistribusiAgamaType) => (
+                filteredData.map((item) => (
                   <TableTr key={item.id}>
                     <TableTd>{item.agama}</TableTd>
                     <TableTd>{item.jumlah.toLocaleString('id-ID')}</TableTd>
@@ -192,7 +190,7 @@ function ListDistribusiAgama({ search, year }: { search: string; year?: number }
         <Box hiddenFrom="md">
           <Stack gap="xs">
             {filteredData.length > 0 ? (
-              filteredData.map((item: DistribusiAgamaType) => (
+              filteredData.map((item) => (
                 <Paper key={item.id} withBorder p="sm" radius="sm">
                   <Stack gap={"xs"}>
                     <Box>

@@ -2,7 +2,6 @@
 import colors from '@/con/colors';
 import { Stack, Box, Paper, Text, Title, Skeleton, Center } from '@mantine/core';
 import { IconDatabaseOff } from '@tabler/icons-react';
-import React from 'react';
 import BackButton from '../../desa/layanan/_com/BackButto';
 import { useProxy } from 'valtio/utils';
 import distribusiUmur from '@/app/admin/(dashboard)/_state/kependudukan/distribusi-umur';
@@ -16,7 +15,14 @@ function Page() {
     state.findMany.load()
   }, [])
 
-  const data = state.findMany.data || [];
+  interface DistribusiUmurItem {
+    id: string;
+    rentangUmur: string;
+    jumlah: number;
+    tahun: number;
+  }
+
+  const data = (state.findMany.data as DistribusiUmurItem[]) || [];
 
   if (state.findMany.loading) {
     return (

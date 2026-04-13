@@ -53,7 +53,7 @@ const dataBanjar = proxy({
   },
 
   findMany: {
-    data: null as any[] | null,
+    data: null as unknown[] | null,
     page: 1,
     totalPages: 1,
     loading: false,
@@ -66,7 +66,7 @@ const dataBanjar = proxy({
       dataBanjar.findMany.tahun = tahun;
 
       try {
-        const query: any = { page, limit };
+        const query: Record<string, string | number> = { page, limit };
         if (search) query.search = search;
         if (tahun) query.tahun = tahun;
 
@@ -90,7 +90,7 @@ const dataBanjar = proxy({
   },
 
   findUnique: {
-    data: null as any | null,
+    data: null as unknown | null,
     async load(id: string) {
       try {
         const res = await fetch(`/api/kependudukan/databanjar/${id}`);

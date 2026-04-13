@@ -1,38 +1,34 @@
 import prisma from "@/lib/prisma";
-import { Prisma } from "@prisma/client";
 import { Context } from "elysia";
 
-type FormCreate = Prisma.MigrasiPendudukGetPayload<{
-    select: {
-        jenis: true;
-        nama: true;
-        tanggal: true;
-        asalTujuan: true;
-        alasan: true;
-        jenisKelamin: true;
-    }
-}>
+type FormCreate = {
+    jenis: string;
+    nama: string;
+    tanggal: string;
+    asalTujuan: string;
+    alasan: string | null;
+}
 
 export default async function migrasiPendudukCreate(context: Context) {
     const body = context.body as FormCreate;
 
+    const isMasuk = body.jenis === 'MASUK';
+
     const created = await prisma.migrasiPenduduk.create({
         data: {
-            jenis: body.jenis,
+            jenis: body.jenis as 'MASUK' | 'KELUAR',
             nama: body.nama,
             tanggal: new Date(body.tanggal),
-            asalTujuan: body.asalTujuan,
+            asal: isMasuk ? body.asalTujuan : undefined,
+            tujuan: !isMasuk ? body.asalTujuan : undefined,
             alasan: body.alasan,
-            jenisKelamin: body.jenisKelamin,
         },
         select: {
             id: true,
             jenis: true,
             nama: true,
             tanggal: true,
-            asalTujuan: true,
             alasan: true,
-            jenisKelamin: true,
         }
     });
     return {

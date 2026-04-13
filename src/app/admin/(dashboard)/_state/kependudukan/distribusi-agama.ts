@@ -49,7 +49,7 @@ const distribusiAgama = proxy({
   },
 
   findMany: {
-    data: null as any[] | null,
+    data: null as unknown[] | null,
     page: 1,
     totalPages: 1,
     loading: false,
@@ -60,7 +60,7 @@ const distribusiAgama = proxy({
       distribusiAgama.findMany.search = search;
 
       try {
-        const query: any = { page, limit };
+        const query: Record<string, string | number> = { page, limit };
         if (tahun) query.tahun = tahun;
         if (search) query.search = search;
 
@@ -84,7 +84,7 @@ const distribusiAgama = proxy({
   },
 
   findUnique: {
-    data: null as any | null,
+    data: null as unknown | null,
     async load(id: string) {
       try {
         const res = await fetch(`/api/kependudukan/distribusiagama/${id}`);
