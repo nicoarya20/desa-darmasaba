@@ -31,11 +31,6 @@ function CreateMigrasiPenduduk() {
     { value: 'KELUAR', label: 'Keluar' },
   ];
 
-  const jenisKelaminOptions = [
-    { value: 'L', label: 'Laki-laki' },
-    { value: 'P', label: 'Perempuan' },
-  ];
-
   const isFormValid = () => {
     return (
       stateMigrasiPenduduk.create.form.jenis?.trim() !== '' &&
@@ -52,12 +47,12 @@ function CreateMigrasiPenduduk() {
       tanggal: '',
       asalTujuan: '',
       alasan: '',
-      jenisKelamin: '',
     };
   };
 
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       const id = await stateMigrasiPenduduk.create.create();
       if (id) {
         resetForm();
@@ -126,6 +121,7 @@ function CreateMigrasiPenduduk() {
             onChange={(val: string | null) => {
               stateMigrasiPenduduk.create.form.tanggal = val || '';
             }}
+            valueFormat="YYYY-MM-DD"
             required
           />
 
@@ -148,16 +144,6 @@ function CreateMigrasiPenduduk() {
             }}
             autosize
             minRows={2}
-          />
-
-          <Select
-            label="Jenis Kelamin"
-            placeholder="Pilih jenis kelamin"
-            data={jenisKelaminOptions}
-            value={stateMigrasiPenduduk.create.form.jenisKelamin}
-            onChange={(val) => {
-              stateMigrasiPenduduk.create.form.jenisKelamin = val || '';
-            }}
           />
 
           <Group justify="right">

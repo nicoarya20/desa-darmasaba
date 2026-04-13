@@ -38,9 +38,18 @@ export default async function migrasiPendudukUpdate(context: Context) {
             jenis: jenis as 'MASUK' | 'KELUAR',
             nama,
             tanggal: new Date(tanggal),
-            asal: jenis === 'MASUK' ? asalTujuan : undefined,
-            tujuan: jenis === 'KELUAR' ? asalTujuan : undefined,
+            asal: jenis === 'MASUK' ? asalTujuan : null,
+            tujuan: jenis === 'KELUAR' ? asalTujuan : null,
             alasan,
+        },
+        select: {
+            id: true,
+            jenis: true,
+            nama: true,
+            tanggal: true,
+            asal: true,
+            tujuan: true,
+            alasan: true,
         },
     })
 

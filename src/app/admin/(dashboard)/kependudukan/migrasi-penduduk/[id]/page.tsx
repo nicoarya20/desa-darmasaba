@@ -28,7 +28,6 @@ interface MigrasiPendudukForm {
   tanggal: string;
   asalTujuan: string;
   alasan: string;
-  jenisKelamin: string;
 }
 
 export default function EditMigrasiPenduduk() {
@@ -42,7 +41,6 @@ export default function EditMigrasiPenduduk() {
     tanggal: '',
     asalTujuan: '',
     alasan: '',
-    jenisKelamin: '',
   });
   const [originalData, setOriginalData] = useState<MigrasiPendudukForm>({
     jenis: '',
@@ -50,17 +48,11 @@ export default function EditMigrasiPenduduk() {
     tanggal: '',
     asalTujuan: '',
     alasan: '',
-    jenisKelamin: '',
   });
 
   const jenisOptions = [
     { value: 'MASUK', label: 'Masuk' },
     { value: 'KELUAR', label: 'Keluar' },
-  ];
-
-  const jenisKelaminOptions = [
-    { value: 'L', label: 'Laki-laki' },
-    { value: 'P', label: 'Perempuan' },
   ];
 
   const isFormValid = () => {
@@ -81,23 +73,23 @@ export default function EditMigrasiPenduduk() {
         stateMigrasiPenduduk.update.id = id;
         await stateMigrasiPenduduk.findUnique.load(id);
 
-        const data = stateMigrasiPenduduk.findUnique.data as MigrasiPendudukForm | null;
+        const data = stateMigrasiPenduduk.findUnique.data as any;
         if (data) {
+          const asalTujuan = data.jenis === 'MASUK' ? (data.asal || '') : (data.tujuan || '');
+          
           setFormData({
             jenis: data.jenis ?? '',
             nama: data.nama ?? '',
-            tanggal: data.tanggal ?? '',
-            asalTujuan: data.asalTujuan ?? '',
+            tanggal: data.tanggal ? new Date(data.tanggal).toISOString().split('T')[0] : '',
+            asalTujuan: asalTujuan,
             alasan: data.alasan ?? '',
-            jenisKelamin: data.jenisKelamin ?? '',
           });
           setOriginalData({
             jenis: data.jenis ?? '',
             nama: data.nama ?? '',
-            tanggal: data.tanggal ?? '',
-            asalTujuan: data.asalTujuan ?? '',
+            tanggal: data.tanggal ? new Date(data.tanggal).toISOString().split('T')[0] : '',
+            asalTujuan: asalTujuan,
             alasan: data.alasan ?? '',
-            jenisKelamin: data.jenisKelamin ?? '',
           });
         }
       } catch (error) {
@@ -114,7 +106,7 @@ export default function EditMigrasiPenduduk() {
   const handleChangeText = useCallback(
     (field: keyof MigrasiPendudukForm) =>
       (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setFormData((prev) => ({ ...prev, [field]: e.currentTarget.value as never }));
+        setFormData((prev) => ({ ...prev, [field]: e.currentTarget.value }));
       },
     []
   );
@@ -122,7 +114,7 @@ export default function EditMigrasiPenduduk() {
   const handleChangeSelect = useCallback(
     (field: keyof MigrasiPendudukForm) =>
       (value: string | null) => {
-        setFormData((prev) => ({ ...prev, [field]: (value || '') as never }));
+        setFormData((prev) => ({ ...prev, [field]: value || '' }));
       },
     []
   );
@@ -134,7 +126,6 @@ export default function EditMigrasiPenduduk() {
       tanggal: originalData.tanggal,
       asalTujuan: originalData.asalTujuan,
       alasan: originalData.alasan,
-      jenisKelamin: originalData.jenisKelamin,
     });
     toast.info("Form dikembalikan ke data awal");
   };
@@ -211,6 +202,7 @@ export default function EditMigrasiPenduduk() {
                 tanggal: val || '',
               }));
             }}
+            valueFormat="YYYY-MM-DD"
             required
           />
 
@@ -229,14 +221,6 @@ export default function EditMigrasiPenduduk() {
             onChange={handleChangeText('alasan')}
             autosize
             minRows={2}
-          />
-
-          <Select
-            label="Jenis Kelamin"
-            placeholder="Pilih jenis kelamin"
-            data={jenisKelaminOptions}
-            value={formData.jenisKelamin}
-            onChange={handleChangeSelect('jenisKelamin')}
           />
 
           <Group justify="flex-end">

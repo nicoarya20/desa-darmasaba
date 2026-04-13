@@ -57,9 +57,9 @@ function ListMigrasiPenduduk({ search, year }: { search: string; year?: number }
     jenis: string;
     nama: string;
     tanggal: string;
-    asalTujuan: string;
+    asal: string | null;
+    tujuan: string | null;
     alasan: string | null;
-    jenisKelamin: string | null;
   };
 
   const router = useRouter();
@@ -142,16 +142,17 @@ function ListMigrasiPenduduk({ search, year }: { search: string; year?: number }
               <TableTr>
                 <TableTh style={{ width: '10%' }}>Jenis</TableTh>
                 <TableTh style={{ width: '20%' }}>Nama</TableTh>
-                <TableTh style={{ width: '12%' }}>Tanggal</TableTh>
-                <TableTh style={{ width: '20%' }}>Asal/Tujuan</TableTh>
-                <TableTh style={{ width: '10%' }}>L/P</TableTh>
+                <TableTh style={{ width: '15%' }}>Tanggal</TableTh>
+                <TableTh style={{ width: '25%' }}>Asal/Tujuan</TableTh>
                 <TableTh style={{ width: '10%' }}>Edit</TableTh>
                 <TableTh style={{ width: '10%' }}>Hapus</TableTh>
               </TableTr>
             </TableThead>
             <TableTbody>
               {filteredData.length > 0 ? (
-                filteredData.map((item) => (
+                filteredData.map((item) => {
+                  const asalTujuan = item.jenis === 'MASUK' ? (item.asal || '-') : (item.tujuan || '-');
+                  return (
                   <TableTr key={item.id}>
                     <TableTd>
                       <Text
@@ -164,8 +165,7 @@ function ListMigrasiPenduduk({ search, year }: { search: string; year?: number }
                     </TableTd>
                     <TableTd>{item.nama}</TableTd>
                     <TableTd>{formatTanggal(item.tanggal)}</TableTd>
-                    <TableTd>{item.asalTujuan}</TableTd>
-                    <TableTd>{item.jenisKelamin || '-'}</TableTd>
+                    <TableTd>{asalTujuan}</TableTd>
                     <TableTd>
                       <Button
                         variant="light"
@@ -197,10 +197,11 @@ function ListMigrasiPenduduk({ search, year }: { search: string; year?: number }
                       </Button>
                     </TableTd>
                   </TableTr>
-                ))
+                );
+                })
               ) : (
                 <TableTr>
-                  <TableTd colSpan={7}>
+                  <TableTd colSpan={6}>
                     <Center py={20}>
                       <Text c="dimmed" fz="sm" lh={1.4}>
                         Tidak ada data migrasi penduduk yang cocok
@@ -217,7 +218,9 @@ function ListMigrasiPenduduk({ search, year }: { search: string; year?: number }
         <Box hiddenFrom="md">
           <Stack gap="xs">
             {filteredData.length > 0 ? (
-              filteredData.map((item) => (
+              filteredData.map((item) => {
+                const asalTujuan = item.jenis === 'MASUK' ? (item.asal || '-') : (item.tujuan || '-');
+                return (
                 <Paper key={item.id} withBorder p="sm" radius="sm">
                   <Stack gap={"xs"}>
                     <Box>
@@ -250,10 +253,10 @@ function ListMigrasiPenduduk({ search, year }: { search: string; year?: number }
                     </Box>
                     <Box>
                       <Text fz="sm" fw={600} lh={1.4}>
-                        Asal/Tujuan
+                        {item.jenis === 'MASUK' ? 'Asal' : 'Tujuan'}
                       </Text>
                       <Text fz="sm" fw={500} lh={1.4}>
-                        {item.asalTujuan}
+                        {asalTujuan}
                       </Text>
                     </Box>
                     {item.alasan && (
@@ -266,14 +269,6 @@ function ListMigrasiPenduduk({ search, year }: { search: string; year?: number }
                         </Text>
                       </Box>
                     )}
-                    <Box>
-                      <Text fz="sm" fw={600} lh={1.4}>
-                        Jenis Kelamin
-                      </Text>
-                      <Text fz="sm" fw={500} lh={1.4}>
-                        {item.jenisKelamin || '-'}
-                      </Text>
-                    </Box>
                     <Group justify="flex-end" gap="xs">
                       <Button
                         variant="light"
@@ -304,7 +299,8 @@ function ListMigrasiPenduduk({ search, year }: { search: string; year?: number }
                     </Group>
                   </Stack>
                 </Paper>
-              ))
+              );
+              })
             ) : (
               <Center py={20}>
                 <Text c="dimmed" fz="sm" lh={1.4}>
