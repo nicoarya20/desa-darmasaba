@@ -250,3 +250,24 @@ Setelah commit ke branch deployment (dev/stg/prod), otomatis trigger workflow pu
 
 Branch deployment: `stg` (staging) atau `prod` (production)
 Version format di package.json: `"version": "major.minor.patch"`
+- **Deployment Workflow HARUS Sequential (Berurutan)**:
+
+Saat deploy ke stg atau prod, workflow TIDAK BOLEH dijalankan bersamaan. Harus menunggu yang pertama SELESAI total baru trigger yang kedua.
+
+**Urutan yang BENAR:**
+1. ✅ **publish.yml** - Tunggu sampai SELESAI (status: ✓ success)
+2. ✅ **Setelah publish selesai**, baru trigger **re-pull.yml**
+
+**JANGAN trigger keduanya bersamaan!** Ini akan menyebabkan race condition karena re-pull akan menarik image yang belum selesai di-build.
+
+**Cara cek workflow selesai:**
+```bash
+gh run view <run_id> --json status --jq '.status'
+# Harus return "completed" baru lanjut ke re-pull
+```
+
+**Atau polling sampai selesai:**
+```bash
+gh run watch <publish_run_id>
+# Tunggu sampai ada checkmark ✓
+```
