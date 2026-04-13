@@ -21,7 +21,6 @@ const MigrasiPenduduk = new Elysia({
       tanggal: t.String(),
       asalTujuan: t.String(),
       alasan: t.Optional(t.String()),
-      jenisKelamin: t.Optional(t.String()),
     }),
   })
   .put("/:id", migrasiPendudukUpdate, {
@@ -34,7 +33,6 @@ const MigrasiPenduduk = new Elysia({
       tanggal: t.String(),
       asalTujuan: t.String(),
       alasan: t.Optional(t.String()),
-      jenisKelamin: t.Optional(t.String()),
     }),
   })
   .delete("/del/:id", migrasiPendudukDelete, {

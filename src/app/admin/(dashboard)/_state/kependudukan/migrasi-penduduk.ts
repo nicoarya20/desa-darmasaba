@@ -9,7 +9,6 @@ const templateMigrasiPenduduk = z.object({
   tanggal: z.string().min(1, "Tanggal harus diisi"),
   asalTujuan: z.string().min(1, "Asal/Tujuan harus diisi"),
   alasan: z.string().optional(),
-  jenisKelamin: z.string().optional(),
 });
 
 const migrasiPenduduk = proxy({
@@ -20,7 +19,6 @@ const migrasiPenduduk = proxy({
       tanggal: "",
       asalTujuan: "",
       alasan: "",
-      jenisKelamin: "",
     },
     loading: false,
     async create() {
@@ -38,7 +36,7 @@ const migrasiPenduduk = proxy({
           const id = res.data?.data?.id;
           if (id) {
             toast.success("Sukses menambahkan data migrasi penduduk");
-            migrasiPenduduk.create.form = { jenis: "", nama: "", tanggal: "", asalTujuan: "", alasan: "", jenisKelamin: "" };
+            migrasiPenduduk.create.form = { jenis: "", nama: "", tanggal: "", asalTujuan: "", alasan: "" };
             migrasiPenduduk.findMany.load();
             return id;
           }
@@ -116,7 +114,6 @@ const migrasiPenduduk = proxy({
       tanggal: "",
       asalTujuan: "",
       alasan: "",
-      jenisKelamin: "",
     },
     loading: false,
     async submit() {
@@ -132,7 +129,6 @@ const migrasiPenduduk = proxy({
         tanggal: this.form.tanggal,
         asalTujuan: this.form.asalTujuan,
         alasan: this.form.alasan,
-        jenisKelamin: this.form.jenisKelamin,
       };
 
       const cek = templateMigrasiPenduduk.safeParse(formData);

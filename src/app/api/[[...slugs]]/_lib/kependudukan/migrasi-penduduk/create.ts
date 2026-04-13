@@ -19,8 +19,8 @@ export default async function migrasiPendudukCreate(context: Context) {
             jenis: body.jenis as 'MASUK' | 'KELUAR',
             nama: body.nama,
             tanggal: new Date(body.tanggal),
-            asal: isMasuk ? body.asalTujuan : undefined,
-            tujuan: !isMasuk ? body.asalTujuan : undefined,
+            asal: isMasuk ? body.asalTujuan : null,
+            tujuan: !isMasuk ? body.asalTujuan : null,
             alasan: body.alasan,
         },
         select: {
@@ -28,6 +28,8 @@ export default async function migrasiPendudukCreate(context: Context) {
             jenis: true,
             nama: true,
             tanggal: true,
+            asal: true,
+            tujuan: true,
             alasan: true,
         }
     });
