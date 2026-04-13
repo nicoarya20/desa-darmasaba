@@ -1,7 +1,9 @@
 import prisma from "@/lib/prisma";
-import tujuanBimbinganBelajarDesa from "../../data/pendidikan/bimbingan-belajar-desa/tujuan-bimbingan-belajar-desa.json";
-import lokasiJadwalBimbinganBelajarDesa from "../../data/pendidikan/bimbingan-belajar-desa/lokasi-dan-jadwal.json";
-import fasilitasBimbinganBelajarDesa from "../../data/pendidikan/bimbingan-belajar-desa/fasilitas-yang-disediakan.json";
+import { loadJsonData } from "../../load-json";
+
+const tujuanBimbinganBelajarDesa = loadJsonData("pendidikan/bimbingan-belajar-desa/tujuan-bimbingan-belajar-desa.json");
+const lokasiJadwalBimbinganBelajarDesa = loadJsonData("pendidikan/bimbingan-belajar-desa/lokasi-dan-jadwal.json");
+const fasilitasBimbinganBelajarDesa = loadJsonData("pendidikan/bimbingan-belajar-desa/fasilitas-yang-disediakan.json");
 
 export async function seedBimbinganBelajar() {
 for (const t of tujuanBimbinganBelajarDesa) {

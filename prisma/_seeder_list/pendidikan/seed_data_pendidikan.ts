@@ -1,5 +1,7 @@
 import prisma from "@/lib/prisma";
-import dataPendidikan from "../../data/pendidikan/data-pendidikan/data-pendidikan.json";
+import { loadJsonData } from "../../load-json";
+
+const dataPendidikan = loadJsonData("pendidikan/data-pendidikan/data-pendidikan.json");
 
 export async function seedDataPendidikan() {
  console.log("🔄 Seeding Data pendidikan...");

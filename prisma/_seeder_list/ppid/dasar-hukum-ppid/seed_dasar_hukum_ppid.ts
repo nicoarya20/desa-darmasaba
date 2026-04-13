@@ -1,5 +1,7 @@
 import prisma from "@/lib/prisma";
-import dasarHukumPPID from "../../../data/ppid/dasar-hukum-ppid/dasarhukumPPID.json"
+import { loadJsonData } from "../../../load-json";
+
+const dasarHukumPPID = loadJsonData("ppid/dasar-hukum-ppid/dasarhukumPPID.json");
 
 export async function seedDasarHukumPpid() {
   for (const v of dasarHukumPPID) {

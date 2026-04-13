@@ -1,0 +1,41 @@
+[
+  {
+    "id": "cmk-musik-001",
+    "judul": "Darmasaba Swara",
+    "artis": "Gamelan Desa Darmasaba",
+    "deskripsi": "Lagu tradisional Bali yang dibawakan oleh grup gamelan desa Darmasaba. Lagu ini menceritakan keindahan alam dan kearifan lokal desa.",
+    "durasi": "04:32",
+    "audioFileId": null,
+    "audioFileName": null,
+    "coverImageId": null,
+    "coverImageName": "TDQReg1lQ73s39crXW0ra-mobile.webp",
+    "genre": "Gamelan Tradisional",
+    "tahunRilis": 2024
+  },
+  {
+    "id": "cmk-musik-002",
+    "judul": "Mekar di Badung",
+    "artis": "Kadek Wira & Darmasaba Band",
+    "deskripsi": "Lagu pop Bali modern yang mengangkat tema semangat pemuda desa dalam membangun kampung halaman.",
+    "durasi": "03:45",
+    "audioFileId": null,
+    "audioFileName": null,
+    "coverImageId": null,
+    "coverImageName": "EcQIGOF6LW1dIKE53vmba-mobile.webp",
+    "genre": "Pop Bali",
+    "tahunRilis": 2025
+  },
+  {
+    "id": "cmk-musik-003",
+    "judul": "Tri Hita Karana",
+    "artis": "Sekaa Gong Darmasaba",
+    "deskripsi": "Komposisi gamelan yang terinspirasi dari filosofi Tri Hita Karana - tiga penyebab kebahagiaan dalam kehidupan masyarakat Bali.",
+    "durasi": "05:18",
+    "audioFileId": null,
+    "audioFileName": null,
+    "coverImageId": null,
+    "coverImageName": "Gc79mlIlGuoRQuTqskFj--mobile.webp",
+    "genre": "Gamelan Kontemporer",
+    "tahunRilis": 2024
+  }
+]

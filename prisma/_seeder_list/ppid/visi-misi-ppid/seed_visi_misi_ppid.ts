@@ -1,5 +1,7 @@
 import prisma from "@/lib/prisma";
-import visiMisiPPID from "../../../data/ppid/visi-misi-ppid/visimisiPPID.json"
+import { loadJsonData } from "../../../load-json";
+
+const visiMisiPPID = loadJsonData("ppid/visi-misi-ppid/visimisiPPID.json");
 
 export async function seedVisiMisiPpid() {
      for (const v of visiMisiPPID) {

@@ -1,7 +1,9 @@
 import prisma from "@/lib/prisma";
-import layananPolsek from "../../data/keamanan/polsek-terdekat/layanan-polsek.json";
-import polsekTerdekat from "../../data/keamanan/polsek-terdekat/polsek-terdekat.json";
-import layananToPolsek from "../../data/keamanan/polsek-terdekat/layanan-to-polsek.json";
+import { loadJsonData } from "../../load-json";
+
+const layananPolsek = loadJsonData("keamanan/polsek-terdekat/layanan-polsek.json");
+const polsekTerdekat = loadJsonData("keamanan/polsek-terdekat/polsek-terdekat.json");
+const layananToPolsek = loadJsonData("keamanan/polsek-terdekat/layanan-to-polsek.json");
 
 export async function seedPolsekTerdekat() {
    console.log("🔄 Seeding Layanan Polsek...");

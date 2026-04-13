@@ -1,6 +1,8 @@
 import prisma from "@/lib/prisma";
-import kategoriGotongRoyong from "../../data/lingkungan/gotong-royong/kategori-gotong-royong.json";
-import gotongRoyong from "../../data/lingkungan/gotong-royong/gotong-royong.json";
+import { loadJsonData } from "../../load-json";
+
+const kategoriGotongRoyong = loadJsonData("lingkungan/gotong-royong/kategori-gotong-royong.json");
+const gotongRoyong = loadJsonData("lingkungan/gotong-royong/gotong-royong.json");
 
 export async function seedDataGotongRoyong() {
   console.log("🔄 Seeding Kategori Gotong Royong...");

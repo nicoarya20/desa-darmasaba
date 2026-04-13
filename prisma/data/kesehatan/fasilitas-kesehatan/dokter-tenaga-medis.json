@@ -1,0 +1,35 @@
+[
+  {
+    "id": "cmk-dokter-001",
+    "name": "dr. I Wayan Suardana, Sp.PD",
+    "specialist": "Spesialis Penyakit Dalam",
+    "jadwal": "Senin - Jumat: 08:00 - 12:00 WITA",
+    "jadwalLibur": "Sabtu: 08:00 - 11:00 WITA",
+    "jamBukaOperasional": "08:00",
+    "jamTutupOperasional": "12:00",
+    "jamBukaLibur": "08:00",
+    "jamTutupLibur": "11:00"
+  },
+  {
+    "id": "cmk-dokter-002",
+    "name": "dr. Ni Made Aryani",
+    "specialist": "Dokter Umum",
+    "jadwal": "Senin - Jumat: 08:00 - 14:00 WITA",
+    "jadwalLibur": null,
+    "jamBukaOperasional": "08:00",
+    "jamTutupOperasional": "14:00",
+    "jamBukaLibur": null,
+    "jamTutupLibur": null
+  },
+  {
+    "id": "cmk-dokter-003",
+    "name": "dr. I Ketut Wirawan, Sp.A",
+    "specialist": "Spesialis Anak",
+    "jadwal": "Selasa & Kamis: 09:00 - 13:00 WITA",
+    "jadwalLibur": null,
+    "jamBukaOperasional": "09:00",
+    "jamTutupOperasional": "13:00",
+    "jamBukaLibur": null,
+    "jamTutupLibur": null
+  }
+]

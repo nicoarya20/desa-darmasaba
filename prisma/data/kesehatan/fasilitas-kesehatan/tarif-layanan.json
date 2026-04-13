@@ -1,0 +1,32 @@
+[
+  {
+    "id": "cmk-tarif-001",
+    "layanan": "Pemeriksaan Umum",
+    "tarif": "Gratis (BPJS) / Rp 25.000 (Umum)"
+  },
+  {
+    "id": "cmk-tarif-002",
+    "layanan": "Pemeriksaan Gigi",
+    "tarif": "Gratis (BPJS) / Rp 35.000 (Umum)"
+  },
+  {
+    "id": "cmk-tarif-003",
+    "layanan": "Laboratorium (Tes Darah)",
+    "tarif": "Gratis (BPJS) / Rp 50.000 - Rp 150.000 (Umum)"
+  },
+  {
+    "id": "cmk-tarif-004",
+    "layanan": "Konsultasi Gizi",
+    "tarif": "Gratis (BPJS) / Rp 30.000 (Umum)"
+  },
+  {
+    "id": "cmk-tarif-005",
+    "layanan": "Imunisasi Anak",
+    "tarif": "Gratis (Program Nasional)"
+  },
+  {
+    "id": "cmk-tarif-006",
+    "layanan": "KB (Keluarga Berencana)",
+    "tarif": "Gratis (BPJS) / Rp 20.000 - Rp 100.000 (Umum)"
+  }
+]

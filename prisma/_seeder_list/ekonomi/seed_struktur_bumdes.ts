@@ -1,6 +1,8 @@
 import prisma from "@/lib/prisma";
-import posisiOrganisasiBumDes from "../../data/ekonomi/struktur-organisasi/posisi-organisasi-bumdes.json";
-import pegawai from "../../data/ekonomi/struktur-organisasi/pegawai-bumdes.json";
+import { loadJsonData } from "../../load-json";
+
+const posisiOrganisasiBumDes = loadJsonData("ekonomi/struktur-organisasi/posisi-organisasi-bumdes.json");
+const pegawai = loadJsonData("ekonomi/struktur-organisasi/pegawai-bumdes.json");
 
 export async function seedStrukturBumdes() {
   const flattenedPosisi = posisiOrganisasiBumDes.flat();

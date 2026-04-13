@@ -295,51 +295,82 @@ const navbarListMenu = [
     }, 
     {
         id: "8",
-        name: "Pendidikan",
+        name: "Kependudukan",
         children: [
             {
                 id: "8.1",
+                name: "Dashboard Kependudukan",
+                href: "/darmasaba/kependudukan/dashboard"
+            },
+            {
+                id: "8.2",
+                name: "Data Per Banjar",
+                href: "/darmasaba/kependudukan/data-per-banjar"
+            },
+            {
+                id: "8.3",
+                name: "Dinamika Penduduk",
+                href: "/darmasaba/kependudukan/dinamika-penduduk"
+            },
+            {
+                id: "8.4",
+                name: "Distribusi Agama",
+                href: "/darmasaba/kependudukan/distribusi-agama"
+            },
+            {
+                id: "8.5",
+                name: "Distribusi Umur",
+                href: "/darmasaba/kependudukan/distribusi-umur"
+            }
+        ]
+    },
+    {
+        id: "9",
+        name: "Pendidikan",
+        children: [
+            {
+                id: "9.1",
                 name: "Info Sekolah",
                 href: "/darmasaba/pendidikan/info-sekolah/semua"
             },
             {
-                id: "8.2",
+                id: "9.2",
                 name: "Beasiswa Desa",
                 href: "/darmasaba/pendidikan/beasiswa-desa"
             },
             {
-                id: "8.3",
+                id: "9.3",
                 name: "Program Pendidikan Anak",
                 href: "/darmasaba/pendidikan/program-pendidikan-anak"
             },
             {
-                id: "8.4",
+                id: "9.4",
                 name: "Bimbingan Belajar Desa",
                 href: "/darmasaba/pendidikan/bimbingan-belajar-desa"
             },
             {
-                id: "8.5",
+                id: "9.5",
                 name: "Pendidikan Non Formal",
                 href: "/darmasaba/pendidikan/pendidikan-non-formal"
             },
             {
-                id: "8.6",
+                id: "9.6",
                 name: "Perpustakaan Digital",
                 href: "/darmasaba/pendidikan/perpustakaan-digital/semua"
             },
             {
-                id: "8.7",
+                id: "9.7",
                 name: "Data Pendidikan",
                 href: "/darmasaba/pendidikan/data-pendidikan"
             }
         ]
     },
     {
-        id: "9",
+        id: "10",
         name: "Musik",
         children: [
             {
-                id: "9.1",
+                id: "10.1",
                 name: "Musik Desa",
                 href: "/darmasaba/musik/musik-desa"
             }

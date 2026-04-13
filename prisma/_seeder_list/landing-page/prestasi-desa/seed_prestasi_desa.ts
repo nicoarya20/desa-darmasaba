@@ -1,6 +1,8 @@
 import prisma from "@/lib/prisma";
-import prestasiDesa from "../../../data/landing-page/prestasi-desa/prestasi-desa.json"
-import kategoriPrestasiDesa from "../../../data/landing-page/prestasi-desa/kategori-prestasi.json"
+import { loadJsonData } from "../../../load-json";
+
+const prestasiDesa = loadJsonData("landing-page/prestasi-desa/prestasi-desa.json");
+const kategoriPrestasiDesa = loadJsonData("landing-page/prestasi-desa/kategori-prestasi.json");
 
 export async function seedPrestasiDesa() {
 

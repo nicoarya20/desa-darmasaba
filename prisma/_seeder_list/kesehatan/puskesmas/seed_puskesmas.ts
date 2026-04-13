@@ -1,7 +1,9 @@
 import prisma from "@/lib/prisma";
-import puskesmasJson from "../../../data/kesehatan/puskesmas/puskesmas.json";
-import kontakPuskesmasJson from "../../../data/kesehatan/puskesmas/kontak-puskesmas/kontak.json";
-import jamPuskesmasJson from "../../../data/kesehatan/puskesmas/jam-puskesmas/jam.json";
+import { loadJsonData } from "../../../load-json";
+
+const puskesmasJson = loadJsonData("kesehatan/puskesmas/puskesmas.json");
+const kontakPuskesmasJson = loadJsonData("kesehatan/puskesmas/kontak-puskesmas/kontak.json");
+const jamPuskesmasJson = loadJsonData("kesehatan/puskesmas/jam-puskesmas/jam.json");
 
 export async function seedPuskesmas() {
   console.log("🔄 Seeding Kontak Puskesmas...");

@@ -1,7 +1,9 @@
 import prisma from "@/lib/prisma";
+import { loadJsonData } from "../../../load-json";
 import { safeSeedUnique } from "../../../safeseedUnique";
-import kategoriPengumuman from "../../../data/desa/pengumuman/kategori-pengumuman.json";
-import pengumuman from "../../../data/desa/pengumuman/pengumuman.json";
+
+const kategoriPengumuman = loadJsonData("desa/pengumuman/kategori-pengumuman.json");
+const pengumuman = loadJsonData("desa/pengumuman/pengumuman.json");
 
 export async function seedPengumuman() {
   console.log("🔄 Seeding Kategori Pengumuman...");

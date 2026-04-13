@@ -374,6 +374,33 @@ export const devBar = [
     ]
   },
   {
+    id: "Kependudukan",
+    name: "Kependudukan",
+    path: "",
+    children: [
+      {
+        id: "Kependudukan_1",
+        name: "Distribusi Agama",
+        path: "/admin/kependudukan/distribusi-agama"
+      },
+      {
+        id: "Kependudukan_2",
+        name: "Distribusi Umur",
+        path: "/admin/kependudukan/distribusi-umur"
+      },
+      {
+        id: "Kependudukan_3",
+        name: "Data Banjar",
+        path: "/admin/kependudukan/data-banjar"
+      },
+      {
+        id: "Kependudukan_4",
+        name: "Migrasi Penduduk",
+        path: "/admin/kependudukan/migrasi-penduduk"
+      }
+    ]
+  },
+  {
     id: "Musik",
     name: "Musik",
     path: "/admin/musik"
@@ -778,6 +805,33 @@ export const navBar = [
     ]
   },
   {
+    id: "Kependudukan",
+    name: "Kependudukan",
+    path: "",
+    children: [
+      {
+        id: "Kependudukan_1",
+        name: "Distribusi Agama",
+        path: "/admin/kependudukan/distribusi-agama"
+      },
+      {
+        id: "Kependudukan_2",
+        name: "Distribusi Umur",
+        path: "/admin/kependudukan/distribusi-umur"
+      },
+      {
+        id: "Kependudukan_3",
+        name: "Data Banjar",
+        path: "/admin/kependudukan/data-banjar"
+      },
+      {
+        id: "Kependudukan_4",
+        name: "Migrasi Penduduk",
+        path: "/admin/kependudukan/migrasi-penduduk"
+      }
+    ]
+  },
+  {
     id: "Musik",
     name: "Musik",
     path: "/admin/musik"
@@ -1096,6 +1150,33 @@ export const role1 = [
         id: "Lingkungan_6",
         name: "Konservasi Adat Bali",
         path: "/admin/lingkungan/konservasi-adat-bali/filosofi-tri-hita-karana"
+      }
+    ]
+  },
+   {
+    id: "Kependudukan",
+    name: "Kependudukan",
+    path: "",
+    children: [
+      {
+        id: "Kependudukan_1",
+        name: "Distribusi Agama",
+        path: "/admin/kependudukan/distribusi-agama"
+      },
+      {
+        id: "Kependudukan_2",
+        name: "Distribusi Umur",
+        path: "/admin/kependudukan/distribusi-umur"
+      },
+      {
+        id: "Kependudukan_3",
+        name: "Data Banjar",
+        path: "/admin/kependudukan/data-banjar"
+      },
+      {
+        id: "Kependudukan_4",
+        name: "Migrasi Penduduk",
+        path: "/admin/kependudukan/migrasi-penduduk"
       }
     ]
   },

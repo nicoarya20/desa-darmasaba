@@ -1,7 +1,9 @@
 import prisma from "@/lib/prisma";
-import kategoriProduk from "../../data/ekonomi/pasar-desa/kategori-produk.json";
-import pasarDesa from "../../data/ekonomi/pasar-desa/pasar-desa.json";
-import kategoriToPasar from "../../data/ekonomi/pasar-desa/kategori-to-pasar.json";
+import { loadJsonData } from "../../load-json";
+
+const kategoriProduk = loadJsonData("ekonomi/pasar-desa/kategori-produk.json");
+const pasarDesa = loadJsonData("ekonomi/pasar-desa/pasar-desa.json");
+const kategoriToPasar = loadJsonData("ekonomi/pasar-desa/kategori-to-pasar.json");
 
 export async function seedPasarDesa() {
   console.log("🔄 Seeding Kategori Produk...");

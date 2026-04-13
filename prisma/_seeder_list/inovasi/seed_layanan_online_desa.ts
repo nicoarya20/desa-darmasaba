@@ -1,8 +1,10 @@
 import prisma from "@/lib/prisma";
-import jenisLayanan from "../../data/inovasi/layanan-online-desa/jenis-layanan.json";
-import administrasiOnline from "../../data/inovasi/layanan-online-desa/administrasi-online.json";
-import jenisPengaduan from "../../data/inovasi/layanan-online-desa/jenis-pengaduan.json";
-import pengaduanMasyarakat from "../../data/inovasi/layanan-online-desa/pengaduan-masyarakat.json";
+import { loadJsonData } from "../../load-json";
+
+const jenisLayanan = loadJsonData("inovasi/layanan-online-desa/jenis-layanan.json");
+const administrasiOnline = loadJsonData("inovasi/layanan-online-desa/administrasi-online.json");
+const jenisPengaduan = loadJsonData("inovasi/layanan-online-desa/jenis-pengaduan.json");
+const pengaduanMasyarakat = loadJsonData("inovasi/layanan-online-desa/pengaduan-masyarakat.json");
 
 export async function seedLayananOnlineDesa() {
   console.log("🔄 Seeding Jenis Layanan...");

@@ -1,6 +1,8 @@
 import prisma from "@/lib/prisma";
-import laporanPublik from "../../data/keamanan/laporan-publik/laporan-publik.json";
-import penangananLaporan from "../../data/keamanan/laporan-publik/penanganan-laporan.json";
+import { loadJsonData } from "../../load-json";
+
+const laporanPublik = loadJsonData("keamanan/laporan-publik/laporan-publik.json");
+const penangananLaporan = loadJsonData("keamanan/laporan-publik/penanganan-laporan.json");
 
 export async function seedLaporanPublik() {
   console.log("🔄 Seeding Laporan Publik...");

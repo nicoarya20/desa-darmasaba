@@ -1,0 +1,30 @@
+[
+  {
+    "id": "cmk-kelahiran-001",
+    "nama": "Baby Komang Arya Putrama",
+    "tanggal": "2025-01-15",
+    "jenisKelamin": "Laki-laki",
+    "alamat": "Banjar Adat Kauh, Desa Darmasaba"
+  },
+  {
+    "id": "cmk-kelahiran-002",
+    "nama": "Baby Ni Luh Putri Ayu",
+    "tanggal": "2025-02-20",
+    "jenisKelamin": "Perempuan",
+    "alamat": "Banjar Adat Kangin, Desa Darmasaba"
+  },
+  {
+    "id": "cmk-kelahiran-003",
+    "nama": "Baby I Made Dewa Kencana",
+    "tanggal": "2025-03-10",
+    "jenisKelamin": "Laki-laki",
+    "alamat": "Banjar Adat Tengah, Desa Darmasaba"
+  },
+  {
+    "id": "cmk-kelahiran-004",
+    "nama": "Baby Ni Wayan Sari",
+    "tanggal": "2025-04-05",
+    "jenisKelamin": "Perempuan",
+    "alamat": "Banjar Adat Kauh, Desa Darmasaba"
+  }
+]

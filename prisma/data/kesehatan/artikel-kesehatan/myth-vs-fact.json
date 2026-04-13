@@ -1,0 +1,14 @@
+[
+  {
+    "id": "cmk-myth-001",
+    "title": "Mitos vs Fakta: Demam Berdarah Dengue",
+    "mitos": "Jus daun jambu biji dapat menyembuhkan DBD secara total",
+    "fakta": "Jus daun jambu biji memang mengandung senyawa yang dapat membantu meningkatkan trombosit, namun tidak dapat menggantikan perawatan medis. Pasien DBD tetap memerlukan penanganan medis yang tepat, terutama pemantauan trombosit dan hidrasi. Jus daun jambu bisa menjadi terapi pendamping, bukan pengganti pengobatan."
+  },
+  {
+    "id": "cmk-myth-002",
+    "title": "Mitos vs Fakta: Diare pada Anak",
+    "mitos": "Obat anti-diare dapat diberikan untuk anak agar cepat sembuh",
+    "fakta": "Obat anti-diare tidak boleh diberikan pada anak tanpa resep dokter. Diare pada anak sebenarnya adalah cara tubuh mengeluarkan kuman penyebab infeksi. Pemberian obat anti-diare justru bisa menahan kuman di dalam usus dan memperparah infeksi. Yang terpenting adalah pemberian oralit dan cairan yang cukup."
+  }
+]

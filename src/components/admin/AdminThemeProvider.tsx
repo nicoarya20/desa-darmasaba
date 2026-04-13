@@ -46,6 +46,7 @@ export function AdminThemeProvider({ children, forceTheme }: AdminThemeProviderP
         tokens.colors.primaryDark,
         tokens.colors.primaryDark,
         tokens.colors.primaryDark,
+        tokens.colors.primaryDark,
       ],
     },
     primaryColor: 'primary',

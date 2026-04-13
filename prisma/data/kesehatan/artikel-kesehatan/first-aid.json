@@ -1,0 +1,12 @@
+[
+  {
+    "id": "cmk-firstaid-001",
+    "title": "Pertolongan Pertama DBD",
+    "content": "<ol><li><strong>Beri banyak minum</strong> - air putih, oralit, jus buah untuk mencegah dehidrasi</li><li><strong>Kompres dengan air hangat</strong> untuk menurunkan demam</li><li><strong>Beri parasetamol</strong> untuk menurunkan demam dan meredakan nyeri (hindari aspirin dan ibuprofen karena dapat meningkatkan risiko pendarahan)</li><li><strong>Istirahat total</strong></li><li><strong>Pantau tanda-tanda bahaya:</strong> muntah terus-menerus, pendarahan, lemas ekstrem, nyeri perut hebat</li><li><strong>Segera bawa ke fasilitas kesehatan</strong> jika demam lebih dari 3 hari atau muncul tanda bahaya</li><li><strong>Pemeriksaan darah</strong> untuk mengecek trombosit dan hematokrit</li></ol><p><strong>Catatan:</strong> Tidak ada obat spesifik untuk DBD. Pengobatan bersifat suportif (mengatasi gejala). Yang terpenting adalah menjaga cairan tubuh dan memantau perkembangan pasien.</p>"
+  },
+  {
+    "id": "cmk-firstaid-002",
+    "title": "Pertolongan Pertama Diare pada Anak",
+    "content": "<ol><li><strong>Beri oralit</strong> (larutan gula dan garam) untuk mengganti cairan dan elektrolit yang hilang. Dosis: anak < 1 tahun: 50-100 ml per BAB, anak > 1 tahun: 100-200 ml per BAB</li><li><strong>Tetap berikan ASI</strong> atau susu formula</li><li><strong>Beri makanan lunak</strong> seperti bubur, pisang, atau nasi tim</li><li><strong>Hindari jus buah manis</strong> dan minuman bersoda karena dapat memperparah diare</li><li><strong>Beri suplemen zinc</strong> selama 10 hari (dosis sesuai anjuran dokter)</li><li><strong>Pantau tanda dehidrasi:</strong> mulut kering, mata cekung, jarang BAK</li><li><strong>Jangan berikan obat anti-diare</strong> tanpa resep dokter untuk anak</li><li><strong>Segera bawa ke dokter</strong> jika: diare lebih dari 3 hari, ada darah di tinja, demam tinggi, anak tampak sangat lemas</li></ol>"
+  }
+]

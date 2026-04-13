@@ -1,8 +1,10 @@
 import prisma from "@/lib/prisma";
-import pelayananSuratKeterangan from "../../../data/desa/layanan/pelayananSuratKeterangan.json";
-import pelayananTelunjukSaktiDesa from "../../../data/desa/layanan/pelayananTelunjukSaktiDesa.json";
-import pelayananPerizinanBerusaha from "../../../data/desa/layanan/pelayananPerizinanBerusaha.json";
-import pelayananPendudukNonPermanen from "../../../data/desa/layanan/pelayananPendudukNonPermanen.json";
+import { loadJsonData } from "../../../load-json";
+
+const pelayananSuratKeterangan = loadJsonData("desa/layanan/pelayananSuratKeterangan.json");
+const pelayananTelunjukSaktiDesa = loadJsonData("desa/layanan/pelayananTelunjukSaktiDesa.json");
+const pelayananPerizinanBerusaha = loadJsonData("desa/layanan/pelayananPerizinanBerusaha.json");
+const pelayananPendudukNonPermanen = loadJsonData("desa/layanan/pelayananPendudukNonPermanen.json");
 
 export async function seedLayanan() {
   console.log("🔄 Seeding Pelayanan Surat Keterangan...");

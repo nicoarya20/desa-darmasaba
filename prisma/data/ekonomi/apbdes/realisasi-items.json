@@ -1,0 +1,58 @@
+[
+  {
+    "id": "cmk-realisasi-001",
+    "kode": "R-4.1.1-01",
+    "apbdesItemId": "cmk-apbdes-item-003",
+    "jumlah": 45000000,
+    "tanggal": "2025-02-15",
+    "keterangan": "Realisasi Q1 hasil usaha BUMDes"
+  },
+  {
+    "id": "cmk-realisasi-002",
+    "kode": "R-4.1.1-02",
+    "apbdesItemId": "cmk-apbdes-item-003",
+    "jumlah": 52000000,
+    "tanggal": "2025-05-10",
+    "keterangan": "Realisasi Q2 hasil usaha BUMDes"
+  },
+  {
+    "id": "cmk-realisasi-003",
+    "kode": "R-4.1.2-01",
+    "apbdesItemId": "cmk-apbdes-item-004",
+    "jumlah": 35000000,
+    "tanggal": "2025-03-01",
+    "keterangan": "Sewa tanah kas desa"
+  },
+  {
+    "id": "cmk-realisasi-004",
+    "kode": "R-5.1.1-01",
+    "apbdesItemId": "cmk-apbdes-item-012",
+    "jumlah": 120000000,
+    "tanggal": "2025-01-31",
+    "keterangan": "Operasional pemerintahan semester 1"
+  },
+  {
+    "id": "cmk-realisasi-005",
+    "kode": "R-5.2.1-01",
+    "apbdesItemId": "cmk-apbdes-item-015",
+    "jumlah": 150000000,
+    "tanggal": "2025-04-20",
+    "keterangan": "Pembangunan jalan desa tahap 1"
+  },
+  {
+    "id": "cmk-realisasi-006",
+    "kode": "R-5.3.1-01",
+    "apbdesItemId": "cmk-apbdes-item-018",
+    "jumlah": 40000000,
+    "tanggal": "2025-03-15",
+    "keterangan": "Program posyandu dan imunisasi"
+  },
+  {
+    "id": "cmk-realisasi-007",
+    "kode": "R-5.4.1-01",
+    "apbdesItemId": "cmk-apbdes-item-022",
+    "jumlah": 75000000,
+    "tanggal": "2025-05-01",
+    "keterangan": "Pelatihan UMKM warga"
+  }
+]

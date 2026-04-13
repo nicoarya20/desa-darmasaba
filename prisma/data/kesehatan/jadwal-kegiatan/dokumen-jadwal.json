@@ -1,0 +1,10 @@
+[
+  {
+    "id": "cmk-dokumen-jadwal-001",
+    "content": "<ul><li>KTP/Kartu Keluarga</li><li>Buku KIA (Kesehatan Ibu dan Anak)</li><li>Kartu BPJS Kesehatan</li><li>Kartu posyandu (jika sudah memiliki)</li></ul>"
+  },
+  {
+    "id": "cmk-dokumen-jadwal-002",
+    "content": "<ul><li>KTP/Kartu Keluarga</li><li>Kartu BPJS Kesehatan</li><li>Kartu peserta lansia (jika sudah memiliki)</li><li>Hasil pemeriksaan sebelumnya (jika ada)</li></ul>"
+  }
+]

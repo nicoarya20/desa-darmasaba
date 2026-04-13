@@ -1,5 +1,7 @@
 import prisma from "@/lib/prisma";
-import profilPpd from "../../../data/ppid/profile-ppid/profilePPid.json"
+import { loadJsonData } from "../../../load-json";
+
+const profilPpd = loadJsonData("ppid/profile-ppid/profilePPid.json");
 
 export async function seedProfilPpd() {
   console.log("🔄 Seeding Profil PPD...");

@@ -1,0 +1,12 @@
+[
+  {
+    "id": "cmk-symptom-001",
+    "title": "Gejala Demam Berdarah Dengue",
+    "content": "<ul><li><strong>Demam tinggi mendadak</strong> (39-40 derajat Celsius) selama 2-7 hari</li><li><strong>Sakit kepala berat</strong>, terutama di bagian dahi</li><li><strong>Nyeri di belakang mata</strong></li><li><strong>Nyeri otot dan sendi</strong> (disebut juga \"breakbone fever\")</li><li><strong>Mual dan muntah</strong></li><li><strong>Bintik merah di kulit</strong> (petechiae)</li><li><strong>Pendarahan ringan</strong> (gusi berdarah, mimisan)</li><li><strong>Lemas dan lesu</strong></li><li><strong>Sakit perut</strong></li></ul><p><strong>Tanda bahaya (waspada):</strong> Muntah terus-menerus, sakit perut hebat, pendarahan hebat, penurunan kesadaran, tangan dan kaki dingin. Segera bawa ke fasilitas kesehatan jika muncul tanda-tanda ini.</p>"
+  },
+  {
+    "id": "cmk-symptom-002",
+    "title": "Gejala Diare pada Anak",
+    "content": "<ul><li><strong>Buang air besar encer</strong> 3 kali atau lebih dalam sehari</li><li><strong>Tinja berair</strong> atau berlendir</li><li><strong>Demam ringan</strong></li><li><strong>Mual dan muntah</strong></li><li><strong>Sakit perut atau kram</strong></li><li><strong>Nafsu makan menurun</strong></li><li><strong>Dehidrasi:</strong> mulut kering, mata cekung, jarang buang air kecil, anak rewel atau lemas</li></ul><p><strong>Tanda dehidrasi berat:</strong> Anak tampak sangat lemas, mata sangat cekung, kulit perut kembali lambat saat dicubit, tidak buang air kecil lebih dari 6 jam. Segera bawa ke dokter jika tanda ini muncul.</p>"
+  }
+]

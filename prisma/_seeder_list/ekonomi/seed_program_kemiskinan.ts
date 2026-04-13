@@ -1,6 +1,8 @@
 import prisma from "@/lib/prisma";
-import programKemiskinan from "../../data/ekonomi/program-kemiskinan/program-kemiskinan.json";
-import statistikKemiskinan from "../../data/ekonomi/program-kemiskinan/statistik-kemiskinan.json";
+import { loadJsonData } from "../../load-json";
+
+const programKemiskinan = loadJsonData("ekonomi/program-kemiskinan/program-kemiskinan.json");
+const statistikKemiskinan = loadJsonData("ekonomi/program-kemiskinan/statistik-kemiskinan.json");
 
 export async function seedProgramKemiskinan() {
   for (const s of statistikKemiskinan) {

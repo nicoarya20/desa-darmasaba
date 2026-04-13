@@ -1,0 +1,56 @@
+[
+  {
+    "id": "cmk-migrasi-001",
+    "nama": "I Ketut Sudarma",
+    "jenis": "MASUK",
+    "tanggal": "2025-01-15",
+    "asal": "Denpasar, Bali",
+    "tujuan": null,
+    "alasan": "Pekerjaan"
+  },
+  {
+    "id": "cmk-migrasi-002",
+    "nama": "Ni Luh Ayu Wati",
+    "jenis": "KELUAR",
+    "tanggal": "2025-02-10",
+    "asal": null,
+    "tujuan": "Tabanan, Bali",
+    "alasan": "Menikah"
+  },
+  {
+    "id": "cmk-migrasi-003",
+    "nama": "I Made Surya",
+    "jenis": "MASUK",
+    "tanggal": "2025-03-05",
+    "asal": "Gianyar, Bali",
+    "tujuan": null,
+    "alasan": "Pendidikan"
+  },
+  {
+    "id": "cmk-migrasi-004",
+    "nama": "Ni Wayan Sari",
+    "jenis": "KELUAR",
+    "tanggal": "2025-03-20",
+    "asal": null,
+    "tujuan": "Jakarta",
+    "alasan": "Pekerjaan"
+  },
+  {
+    "id": "cmk-migrasi-005",
+    "nama": "I Komang Pratama",
+    "jenis": "MASUK",
+    "tanggal": "2025-04-12",
+    "asal": "Karangasem, Bali",
+    "tujuan": null,
+    "alasan": "Keluarga"
+  },
+  {
+    "id": "cmk-migrasi-006",
+    "nama": "I Wayan Putra",
+    "jenis": "KELUAR",
+    "tanggal": "2025-05-08",
+    "asal": null,
+    "tujuan": "Surabaya",
+    "alasan": "Pekerjaan"
+  }
+]

@@ -1,6 +1,8 @@
 import prisma from "@/lib/prisma";
-import kategoriPotensi from "../../../data/desa/potensi/kategori-potensi.json";
-import potensiDesa from "../../../data/desa/potensi/potensi-desa.json";
+import { loadJsonData } from "../../../load-json";
+
+const kategoriPotensi = loadJsonData("desa/potensi/kategori-potensi.json");
+const potensiDesa = loadJsonData("desa/potensi/potensi-desa.json");
 
 export async function seedPotensi() {
   console.log("🔄Seeding Kategori Potensi Desa ...");
