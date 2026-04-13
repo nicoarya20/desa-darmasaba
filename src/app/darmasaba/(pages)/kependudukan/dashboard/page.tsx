@@ -1,8 +1,7 @@
 'use client'
 import colors from '@/con/colors';
-import { Stack, Box, Paper, Text, Title, SimpleGrid, Skeleton, Group, Badge, Center, Image } from '@mantine/core';
+import { Stack, Box, Paper, Text, Title, SimpleGrid, Skeleton, Group, Badge, Center } from '@mantine/core';
 import { IconUsers, IconHome, IconBasket, IconCoin, IconDatabaseOff } from '@tabler/icons-react';
-import React from 'react';
 import BackButton from '../../desa/layanan/_com/BackButto';
 import { useProxy } from 'valtio/utils';
 import kependudukanDashboard from '@/app/admin/(dashboard)/_state/kependudukan/dashboard';

@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import colors from '@/con/colors';
@@ -27,10 +25,6 @@ function CreateDataBanjar() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const currentYear = new Date().getFullYear();
-  const yearOptions = Array.from({ length: 10 }, (_, i) => ({
-    value: String(currentYear - i),
-    label: String(currentYear - i),
-  }));
 
   const isFormValid = () => {
     return (

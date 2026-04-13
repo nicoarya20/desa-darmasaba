@@ -1,11 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 import colors from '@/con/colors';
 import {
   Box,
   Button,
   Center,
-  Flex,
   Group,
   Pagination,
   Paper,
@@ -88,7 +86,7 @@ function ListDistribusiUmur({ search, year }: { search: string; year?: number })
     load(page, 10, debouncedSearch, year);
   }, [page, debouncedSearch, year]);
 
-  const filteredData = data || [];
+  const filteredData = (data as DistribusiUmurType[]) || [];
 
   if (loading || !data) {
     return (
@@ -137,7 +135,7 @@ function ListDistribusiUmur({ search, year }: { search: string; year?: number })
             </TableThead>
             <TableTbody>
               {filteredData.length > 0 ? (
-                filteredData.map((item: DistribusiUmurType) => (
+                filteredData.map((item) => (
                   <TableTr key={item.id}>
                     <TableTd>{item.rentangUmur}</TableTd>
                     <TableTd>{item.jumlah.toLocaleString('id-ID')}</TableTd>
@@ -193,7 +191,7 @@ function ListDistribusiUmur({ search, year }: { search: string; year?: number })
         <Box hiddenFrom="md">
           <Stack gap="xs">
             {filteredData.length > 0 ? (
-              filteredData.map((item: DistribusiUmurType) => (
+              filteredData.map((item) => (
                 <Paper key={item.id} withBorder p="sm" radius="sm">
                   <Stack gap={"xs"}>
                     <Box>

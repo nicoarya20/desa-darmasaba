@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import colors from '@/con/colors';
@@ -10,7 +8,6 @@ import {
   Loader,
   Paper,
   Stack,
-  TextInput,
   Title,
   NumberInput,
   Select

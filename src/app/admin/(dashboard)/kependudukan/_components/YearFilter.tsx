@@ -1,4 +1,4 @@
-import { Select, Group } from '@mantine/core';
+import { Select } from '@mantine/core';
 import { IconCalendar } from '@tabler/icons-react';
 
 interface YearFilterProps {

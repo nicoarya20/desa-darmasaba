@@ -9,7 +9,6 @@ import {
   Loader,
   Paper,
   Stack,
-  TextInput,
   Title,
   NumberInput,
   Select
@@ -21,7 +20,7 @@ import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 import distribusiAgama from '../../../_state/kependudukan/distribusi-agama';
 
-interface FormData {
+interface DistribusiAgamaForm {
   agama: string;
   jumlah: number;
   tahun: number;
@@ -32,12 +31,12 @@ export default function EditDistribusiAgama() {
   const { id } = useParams() as { id: string };
   const stateDistribusiAgama = useProxy(distribusiAgama);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formData, setFormData] = useState<FormData>({
+  const [formData, setFormData] = useState<DistribusiAgamaForm>({
     agama: '',
     jumlah: 0,
     tahun: new Date().getFullYear(),
   });
-  const [originalData, setOriginalData] = useState<FormData>({
+  const [originalData, setOriginalData] = useState<DistribusiAgamaForm>({
     agama: '',
     jumlah: 0,
     tahun: new Date().getFullYear(),
@@ -78,7 +77,7 @@ export default function EditDistribusiAgama() {
         stateDistribusiAgama.update.id = id;
         await stateDistribusiAgama.findUnique.load(id);
 
-        const data = stateDistribusiAgama.findUnique.data;
+        const data = stateDistribusiAgama.findUnique.data as DistribusiAgamaForm | null;
         if (data) {
           setFormData({
             agama: data.agama ?? '',
@@ -102,15 +101,18 @@ export default function EditDistribusiAgama() {
     loadData();
   }, [id]);
 
-  const handleChange = useCallback(
-    (field: keyof FormData) =>
-      (value: any) => {
-        const val =
-          field === 'jumlah' || field === 'tahun'
-            ? Number(value || 0)
-            : value;
+  const handleChangeNumber = useCallback(
+    (field: keyof DistribusiAgamaForm) =>
+      (value: string | number) => {
+        setFormData((prev) => ({ ...prev, [field]: (typeof value === 'string' ? Number(value) || 0 : (value ?? 0)) as never }));
+      },
+    []
+  );
 
-        setFormData((prev) => ({ ...prev, [field]: val }));
+  const handleChangeSelect = useCallback(
+    (field: keyof DistribusiAgamaForm) =>
+      (value: string | null) => {
+        setFormData((prev) => ({ ...prev, [field]: (value || '') as never }));
       },
     []
   );
@@ -174,7 +176,7 @@ export default function EditDistribusiAgama() {
             placeholder="Pilih agama"
             data={agamaOptions}
             value={formData.agama}
-            onChange={handleChange('agama')}
+            onChange={handleChangeSelect('agama')}
             required
             searchable
           />
@@ -183,7 +185,7 @@ export default function EditDistribusiAgama() {
             label="Jumlah"
             placeholder="Masukkan jumlah"
             value={formData.jumlah}
-            onChange={handleChange('jumlah')}
+            onChange={handleChangeNumber('jumlah')}
             min={0}
             required
           />
@@ -193,7 +195,7 @@ export default function EditDistribusiAgama() {
             placeholder="Pilih tahun"
             data={yearOptions}
             value={String(formData.tahun)}
-            onChange={handleChange('tahun')}
+            onChange={handleChangeSelect('tahun')}
             required
           />
 

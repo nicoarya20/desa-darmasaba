@@ -11,13 +11,12 @@ export default async function migrasiPendudukUpdate(context: Context) {
         }
     }
 
-    const {jenis, nama, tanggal, asalTujuan, alasan, jenisKelamin} = context.body as {
+    const {jenis, nama, tanggal, asalTujuan, alasan} = context.body as {
         jenis: string;
         nama: string;
         tanggal: string;
         asalTujuan: string;
         alasan?: string;
-        jenisKelamin?: string;
     }
 
     const existing = await prisma.migrasiPenduduk.findUnique({
@@ -36,12 +35,12 @@ export default async function migrasiPendudukUpdate(context: Context) {
     const updated = await prisma.migrasiPenduduk.update({
         where: { id },
         data: {
-            jenis,
+            jenis: jenis as 'MASUK' | 'KELUAR',
             nama,
             tanggal: new Date(tanggal),
-            asalTujuan,
+            asal: jenis === 'MASUK' ? asalTujuan : undefined,
+            tujuan: jenis === 'KELUAR' ? asalTujuan : undefined,
             alasan,
-            jenisKelamin,
         },
     })
 

@@ -22,7 +22,7 @@ import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 import migrasiPenduduk from '../../../_state/kependudukan/migrasi-penduduk';
 
-interface FormData {
+interface MigrasiPendudukForm {
   jenis: string;
   nama: string;
   tanggal: string;
@@ -36,7 +36,7 @@ export default function EditMigrasiPenduduk() {
   const { id } = useParams() as { id: string };
   const stateMigrasiPenduduk = useProxy(migrasiPenduduk);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formData, setFormData] = useState<FormData>({
+  const [formData, setFormData] = useState<MigrasiPendudukForm>({
     jenis: '',
     nama: '',
     tanggal: '',
@@ -44,7 +44,7 @@ export default function EditMigrasiPenduduk() {
     alasan: '',
     jenisKelamin: '',
   });
-  const [originalData, setOriginalData] = useState<FormData>({
+  const [originalData, setOriginalData] = useState<MigrasiPendudukForm>({
     jenis: '',
     nama: '',
     tanggal: '',
@@ -81,7 +81,7 @@ export default function EditMigrasiPenduduk() {
         stateMigrasiPenduduk.update.id = id;
         await stateMigrasiPenduduk.findUnique.load(id);
 
-        const data = stateMigrasiPenduduk.findUnique.data;
+        const data = stateMigrasiPenduduk.findUnique.data as MigrasiPendudukForm | null;
         if (data) {
           setFormData({
             jenis: data.jenis ?? '',
@@ -111,11 +111,18 @@ export default function EditMigrasiPenduduk() {
     loadData();
   }, [id]);
 
-  const handleChange = useCallback(
-    (field: keyof FormData) =>
-      (value: any) => {
-        const val = value || '';
-        setFormData((prev) => ({ ...prev, [field]: val }));
+  const handleChangeText = useCallback(
+    (field: keyof MigrasiPendudukForm) =>
+      (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        setFormData((prev) => ({ ...prev, [field]: e.currentTarget.value as never }));
+      },
+    []
+  );
+
+  const handleChangeSelect = useCallback(
+    (field: keyof MigrasiPendudukForm) =>
+      (value: string | null) => {
+        setFormData((prev) => ({ ...prev, [field]: (value || '') as never }));
       },
     []
   );
@@ -182,7 +189,7 @@ export default function EditMigrasiPenduduk() {
             placeholder="Pilih jenis migrasi"
             data={jenisOptions}
             value={formData.jenis}
-            onChange={handleChange('jenis')}
+            onChange={handleChangeSelect('jenis')}
             required
           />
 
@@ -190,7 +197,7 @@ export default function EditMigrasiPenduduk() {
             label="Nama"
             placeholder="Masukkan nama lengkap"
             value={formData.nama}
-            onChange={handleChange('nama')}
+            onChange={handleChangeText('nama')}
             required
           />
 
@@ -211,7 +218,7 @@ export default function EditMigrasiPenduduk() {
             label={formData.jenis === 'MASUK' ? 'Asal' : 'Tujuan'}
             placeholder={formData.jenis === 'MASUK' ? 'Masukkan asal' : 'Masukkan tujuan'}
             value={formData.asalTujuan}
-            onChange={handleChange('asalTujuan')}
+            onChange={handleChangeText('asalTujuan')}
             required
           />
 
@@ -219,7 +226,7 @@ export default function EditMigrasiPenduduk() {
             label="Alasan"
             placeholder="Masukkan alasan (opsional)"
             value={formData.alasan}
-            onChange={handleChange('alasan')}
+            onChange={handleChangeText('alasan')}
             autosize
             minRows={2}
           />
@@ -229,7 +236,7 @@ export default function EditMigrasiPenduduk() {
             placeholder="Pilih jenis kelamin"
             data={jenisKelaminOptions}
             value={formData.jenisKelamin}
-            onChange={handleChange('jenisKelamin')}
+            onChange={handleChangeSelect('jenisKelamin')}
           />
 
           <Group justify="flex-end">
