@@ -233,3 +233,4 @@ Common issues and solutions:
 
 ## Qwen Added Memories
 - **GitHub Workflows**: Project ini memiliki workflow GitHub Action untuk deployment. User akan menangani workflow secara manual di GitHub.
+- **Auto Branch Creation**: Saat memperbaiki/mengerjakan sesuatu, otomatis buat branch baru dengan format: `fix/<deskripsi>-<YYYY-MM-DD>` atau `feat/<deskripsi>-<YYYY-MM-DD>` lalu push ke `deploy/stg`. Contoh: `fix/filestorage-path-2026-04-14`
