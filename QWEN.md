@@ -233,3 +233,32 @@ Common issues and solutions:
 
 ## Qwen Added Memories
 - **GitHub Workflows**: Project ini memiliki workflow GitHub Action untuk deployment. User akan menangani workflow secara manual di GitHub.
+- **Deployment Workflow Sistematis**:
+1. **Version Bump** - Update `version` di `package.json` sebelum deploy (ikuti semver: major.minor.patch)
+2. **Commit** - Commit perubahan + version bump dengan pesan yang jelas
+3. **Push ke Branch** - Push ke branch target (biasanya `stg` untuk staging atau `prod` untuk production)
+4. **Trigger publish.yml** - Gunakan GitHub API dengan: `ref: main`, `stack_env: stg`, `tag: <versi-dari-package.json>`
+5. **Tunggu publish selesai** - Workflow harus completed baru lanjut ke re-pull
+6. **Trigger re-pull.yml** - Gunakan GitHub API dengan: `ref: main`, `stack_name: desa-darmasaba`, `stack_env: stg`
+
+Branch deployment: `stg` (staging) atau `prod` (production)
+Version format di package.json: `"version": "major.minor.patch"`
+
+- **Auto Deploy After Push to deploy/stg**: Setelah push ke `deploy/stg`, otomatis trigger deployment workflow:
+1. Bump version di `package.json` (increment patch)
+2. Commit version bump
+3. Trigger `publish.yml` via GitHub API: `ref=main`, `stack_env=stg`, `tag=<version>`
+4. Polling sampai publish workflow completed
+5. Trigger `re-pull.yml` via GitHub API: `ref=main`, `stack_name=desa-darmasaba`, `stack_env=stg`
+
+Cara trigger workflow via GitHub CLI:
+```bash
+# Trigger publish
+gh workflow run publish.yml --ref main -f stack_env=stg -f tag=<version>
+
+# Cek status (polling)
+gh run watch <run_id>
+
+# Trigger re-pull
+gh workflow run re-pull.yml --ref main -f stack_name=desa-darmasaba -f stack_env=stg
+```
