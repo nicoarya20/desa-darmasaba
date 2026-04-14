@@ -79,7 +79,7 @@ const fileStorageCreate = async (context: Context) => {
     data: {
       name: finalName,
       realName: file.name,
-      path: rootPath,
+      path: pathName, // Store relative path (e.g., "images", "audio", "documents")
       mimeType: finalMimeType,
       category,
       link: `/api/fileStorage/findUnique/${finalName}`,

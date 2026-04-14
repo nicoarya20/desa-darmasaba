@@ -61,7 +61,13 @@ COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
 COPY --from=builder --chown=nextjs:nodejs /app/next.config.* ./
 COPY --chmod=755 docker-entrypoint.sh ./docker-entrypoint.sh
 
+# Create uploads directory with proper permissions
+RUN mkdir -p /app/uploads && chown nextjs:nodejs /app/uploads
+
 USER nextjs
+
+# Persistent storage for uploaded files
+VOLUME ["/app/uploads"]
 
 EXPOSE 3000
 
