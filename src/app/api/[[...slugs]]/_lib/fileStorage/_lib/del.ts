@@ -36,7 +36,7 @@ const fileStorageDelete = async (context: Context) => {
     };
   }
 
-  const filePath = path.join(file.path, file.name);
+  const filePath = path.join(UPLOAD_DIR, file.path, file.name);
 
   try {
     // Hapus file dari filesystem
