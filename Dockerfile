@@ -59,7 +59,6 @@ COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/package.json ./package.json
 COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
 COPY --from=builder --chown=nextjs:nodejs /app/src/lib ./src/lib
-COPY --from=builder --chown=nextjs:nodejs /app/src/_seeder_list ./src/_seeder_list
 COPY --from=builder --chown=nextjs:nodejs /app/tsconfig.json ./tsconfig.json
 COPY --from=builder --chown=nextjs:nodejs /app/next.config.* ./
 COPY --chmod=755 docker-entrypoint.sh ./docker-entrypoint.sh
