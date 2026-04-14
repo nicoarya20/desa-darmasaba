@@ -1,3 +1,6 @@
+-- CreateEnum
+CREATE TYPE "JenisMigrasi" AS ENUM ('MASUK', 'KELUAR');
+
 -- CreateTable
 CREATE TABLE "DataBanjar" (
     "id" TEXT NOT NULL,
@@ -107,6 +110,3 @@ CREATE INDEX "DinamikaPenduduk_isActive_idx" ON "DinamikaPenduduk"("isActive");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "DinamikaPenduduk_tahun_key" ON "DinamikaPenduduk"("tahun");
-
--- CreateEnum
-CREATE TYPE "JenisMigrasi" AS ENUM ('MASUK', 'KELUAR');
