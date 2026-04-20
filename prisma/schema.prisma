@@ -106,6 +106,8 @@ model FileStorage {
   
   MusikDesaAudio   MusikDesa[] @relation("MusikAudioFile")
   MusikDesaCover   MusikDesa[] @relation("MusikCoverImage")
+  UmkmImage       Umkm[]       @relation("UmkmImage")
+  ProdukUmkmImage ProdukUmkm[] @relation("ProdukUmkmImage")
 }
 
 //========================================= MENU LANDING PAGE ========================================= //
@@ -1448,6 +1450,7 @@ model KategoriProduk {
   isActive        Boolean           @default(true)
   KategoriToPasar KategoriToPasar[]
   PasarDesa       PasarDesa[]
+  Umkm            Umkm[]
 }
 
 model KategoriToPasar {
@@ -2410,3 +2413,58 @@ model MusikDesa {
   @@index([judul])
   @@index([artis])
 }
+
+model Umkm {
+  id         String         @id @default(cuid())
+  nama       String
+  pemilik    String
+  deskripsi  String?
+  alamat     String?
+  kontak     String?
+  image      FileStorage?   @relation("UmkmImage", fields: [imageId], references: [id])
+  imageId    String?
+  kategori   KategoriProduk @relation(fields: [kategoriId], references: [id])
+  kategoriId String
+  isActive   Boolean        @default(true)
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+  deletedAt  DateTime?
+  produk     ProdukUmkm[]
+}
+
+model ProdukUmkm {
+  id        String            @id @default(cuid())
+  nama      String
+  harga     Int
+  stok      Int               @default(0)
+  deskripsi String?
+  image     FileStorage?      @relation("ProdukUmkmImage", fields: [imageId], references: [id])
+  imageId   String?
+  umkm      Umkm              @relation(fields: [umkmId], references: [id])
+  umkmId    String
+  isActive  Boolean           @default(true)
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+  deletedAt DateTime?
+  penjualan PenjualanProduk[]
+}
+
+model PenjualanProduk {
+  id           String     @id @default(cuid())
+  produk       ProdukUmkm @relation(fields: [produkId], references: [id])
+  produkId     String
+  jumlah       Int
+  hargaSatuan  Int        // snapshot harga saat transaksi, agar histori tetap akurat
+  totalNilai   Int        // hargaSatuan * jumlah
+  tanggal      DateTime   @default(now())
+  periode      String     // format "YYYY-MM" untuk grouping bulanan
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  deletedAt    DateTime?
+  isActive     Boolean    @default(true)
+
+  @@index([periode])
+  @@index([produkId])
+  @@index([tanggal])
+}
+

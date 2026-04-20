@@ -55,3 +55,6 @@ next-env.d.ts
 
 *.tar.gz
 
+# local scripts
+ai.sh
+

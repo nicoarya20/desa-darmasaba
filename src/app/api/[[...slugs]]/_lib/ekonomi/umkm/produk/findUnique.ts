@@ -1,0 +1,42 @@
+import prisma from "@/lib/prisma";
+import { Context } from "elysia";
+
+async function produkUmkmFindUnique(context: Context) {
+  const id = context.params.id;
+
+  try {
+    const data = await prisma.produkUmkm.findUnique({
+      where: { id },
+      include: {
+        image: true,
+        umkm: true,
+        penjualan: {
+          where: { deletedAt: null },
+          orderBy: { tanggal: 'desc' },
+          take: 10
+        }
+      },
+    });
+
+    if (!data) {
+      return {
+        success: false,
+        message: "Produk UMKM tidak ditemukan",
+      };
+    }
+
+    return {
+      success: true,
+      message: "Berhasil mengambil detail produk UMKM",
+      data,
+    };
+  } catch (e) {
+    console.error("Error di produkUmkmFindUnique:", e);
+    return {
+      success: false,
+      message: "Gagal mengambil detail produk UMKM",
+    };
+  }
+}
+
+export default produkUmkmFindUnique;
