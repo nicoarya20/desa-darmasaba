@@ -207,6 +207,26 @@ export const devBar = [
     path: "",
     children: [
       {
+        id: "Ekonomi_UMKM_1",
+        name: "UMKM - Dashboard",
+        path: "/admin/ekonomi/umkm/dashboard"
+      },
+      {
+        id: "Ekonomi_UMKM_2",
+        name: "UMKM - Data UMKM",
+        path: "/admin/ekonomi/umkm/data-umkm"
+      },
+      {
+        id: "Ekonomi_UMKM_3",
+        name: "UMKM - Produk",
+        path: "/admin/ekonomi/umkm/produk"
+      },
+      {
+        id: "Ekonomi_UMKM_4",
+        name: "UMKM - Penjualan",
+        path: "/admin/ekonomi/umkm/penjualan"
+      },
+      {
         id: "Ekonomi_1",
         name: "Pasar Desa",
         path: "/admin/ekonomi/pasar-desa/produk-pasar-desa"
@@ -638,6 +658,26 @@ export const navBar = [
     path: "",
     children: [
       {
+        id: "Ekonomi_UMKM_1",
+        name: "UMKM - Dashboard",
+        path: "/admin/ekonomi/umkm/dashboard"
+      },
+      {
+        id: "Ekonomi_UMKM_2",
+        name: "UMKM - Data UMKM",
+        path: "/admin/ekonomi/umkm/data-umkm"
+      },
+      {
+        id: "Ekonomi_UMKM_3",
+        name: "UMKM - Produk",
+        path: "/admin/ekonomi/umkm/produk"
+      },
+      {
+        id: "Ekonomi_UMKM_4",
+        name: "UMKM - Penjualan",
+        path: "/admin/ekonomi/umkm/penjualan"
+      },
+      {
         id: "Ekonomi_1",
         name: "Pasar Desa",
         path: "/admin/ekonomi/pasar-desa/produk-pasar-desa"
@@ -1026,6 +1066,26 @@ export const role1 = [
     name: "Ekonomi",
     path: "",
     children: [
+      {
+        id: "Ekonomi_UMKM_1",
+        name: "UMKM - Dashboard",
+        path: "/admin/ekonomi/umkm/dashboard"
+      },
+      {
+        id: "Ekonomi_UMKM_2",
+        name: "UMKM - Data UMKM",
+        path: "/admin/ekonomi/umkm/data-umkm"
+      },
+      {
+        id: "Ekonomi_UMKM_3",
+        name: "UMKM - Produk",
+        path: "/admin/ekonomi/umkm/produk"
+      },
+      {
+        id: "Ekonomi_UMKM_4",
+        name: "UMKM - Penjualan",
+        path: "/admin/ekonomi/umkm/penjualan"
+      },
       {
         id: "Ekonomi_1",
         name: "Pasar Desa",
