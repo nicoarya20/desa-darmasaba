@@ -8,6 +8,9 @@
 - Implemented the Admin UI with a modern tab-based layout.
 - Created four main admin pages: Dashboard, Data UMKM, Produk, and Penjualan.
 - Registered the new UMKM module in the Admin Navigation Menu for all roles.
+- Implemented the Public UI for citizens to browse local businesses.
+- Created three public pages: Direktori UMKM, UMKM Detail, and Katalog Produk.
+- Registered the public UMKM pages in the main Website Navbar under the Ekonomi section.
 - Verified the implementation with `tsc` and `bun run build`.
 
 ## Files Created/Modified

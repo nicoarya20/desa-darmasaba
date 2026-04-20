@@ -122,6 +122,20 @@ export const umkmState = proxy({
         }
         return false;
       }
+    },
+    findUnique: {
+      data: null as any,
+      loading: false,
+      async load(id: string) {
+        this.loading = true;
+        try {
+          const res = await fetch(`/api/ekonomi/umkm/${id}`);
+          const result = await res.json();
+          if (result.success) {
+            this.data = result.data;
+          }
+        } catch (e) { console.error(e); } finally { this.loading = false; }
+      }
     }
   },
 
@@ -132,10 +146,17 @@ export const umkmState = proxy({
       page: 1,
       totalPages: 1,
       loading: false,
-      async load(page = 1, limit = 10, search = "", umkmId = "") {
+      async load(page = 1, limit = 10, search = "", umkmId = "", kategoriId = "") {
         this.loading = true;
+        this.page = page;
         try {
-          const params = new URLSearchParams({ page: page.toString(), limit: limit.toString(), search, umkmId });
+          const params = new URLSearchParams({ 
+            page: page.toString(), 
+            limit: limit.toString(), 
+            search, 
+            umkmId,
+            kategoriId
+          });
           const res = await fetch(`/api/ekonomi/umkm/produk/find-many?${params}`);
           const result = await res.json();
           if (result.success) {
@@ -211,6 +232,24 @@ export const umkmState = proxy({
           }
         } catch (e) { toast.error("Gagal mencatat penjualan"); } finally { this.loading = false; }
         return false;
+      }
+    }
+  },
+
+  // Kategori Produk (Share with Pasar Desa)
+  kategoriProduk: {
+    findManyAll: {
+      data: [] as any[],
+      loading: false,
+      async load() {
+        this.loading = true;
+        try {
+          const res = await fetch("/api/ekonomi/pasar-desa/kategori-produk/find-many-all");
+          const result = await res.json();
+          if (result.success) {
+            this.data = result.data;
+          }
+        } catch (e) { console.error(e); } finally { this.loading = false; }
       }
     }
   },

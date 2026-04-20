@@ -28,3 +28,7 @@ Implement UMKM, ProdukUmkm, and PenjualanProduk module with CRUD API and Dashboa
 - [x] Step 12: Implement Produk UI Page
 - [x] Step 13: Implement Penjualan UI Page
 - [x] Step 14: Register UI pages in Admin Menu
+- [x] Step 15: Implement Public UMKM Directory Page
+- [x] Step 16: Implement Public UMKM Detail Page
+- [x] Step 17: Implement Public Product Catalog Page
+- [x] Step 18: Register public pages in Navbar
