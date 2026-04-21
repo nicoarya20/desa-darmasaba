@@ -6,7 +6,7 @@ async function produkUmkmUpdate(context: Context) {
   const id = context.params.id;
 
   try {
-    const data = await prisma.produkUmkm.update({
+    const data = await prisma.pasarDesa.update({
       where: { id },
       data: {
         nama: body.nama,
@@ -16,12 +16,13 @@ async function produkUmkmUpdate(context: Context) {
         umkmId: body.umkmId,
         imageId: body.imageId,
         isActive: body.isActive,
+        kategoriProdukId: body.kategoriId, // Now editable via PasarDesa
       },
     });
 
     return {
       success: true,
-      message: "Berhasil memperbarui produk UMKM",
+      message: "Berhasil memperbarui produk UMKM (PasarDesa)",
       data,
     };
   } catch (e) {

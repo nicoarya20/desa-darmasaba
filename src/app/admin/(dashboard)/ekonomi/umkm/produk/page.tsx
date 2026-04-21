@@ -21,11 +21,13 @@ import {
 } from '@mantine/core';
 import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
 import { IconPlus, IconSearch, IconEdit, IconTrash } from '@tabler/icons-react';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import umkmState from '../../../_state/ekonomi/umkm/umkm';
 
 function ProdukUmkm() {
+  const router = useRouter();
   const [search, setSearch] = useState("");
   const state = useProxy(umkmState.produk.findMany);
   const [debouncedSearch] = useDebouncedValue(search, 1000);
@@ -38,7 +40,11 @@ function ProdukUmkm() {
     <Stack gap="lg">
       <Group justify="space-between">
         <Title order={3}>Daftar Produk UMKM</Title>
-        <Button leftSection={<IconPlus size={18} />} color="blue">
+        <Button 
+          leftSection={<IconPlus size={18} />} 
+          color="blue"
+          onClick={() => router.push('/admin/ekonomi/umkm/produk/create')}
+        >
           Tambah Produk
         </Button>
       </Group>

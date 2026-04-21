@@ -5,7 +5,7 @@ async function produkUmkmCreate(context: Context) {
   const body = context.body as any;
 
   try {
-    const data = await prisma.produkUmkm.create({
+    const data = await prisma.pasarDesa.create({
       data: {
         nama: body.nama,
         harga: body.harga,
@@ -14,12 +14,14 @@ async function produkUmkmCreate(context: Context) {
         umkmId: body.umkmId,
         imageId: body.imageId,
         isActive: body.isActive ?? true,
+        rating: 0, // Default for UMKM products
+        kategoriProdukId: body.kategoriId, // Now required via PasarDesa
       },
     });
 
     return {
       success: true,
-      message: "Berhasil membuat produk UMKM baru",
+      message: "Berhasil membuat produk UMKM baru (PasarDesa)",
       data,
     };
   } catch (e) {

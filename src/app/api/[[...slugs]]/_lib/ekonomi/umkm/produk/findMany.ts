@@ -10,16 +10,19 @@ async function produkUmkmFindMany(context: Context) {
   const kategoriId = context.query.kategoriId as string | undefined;
   const skip = (page - 1) * limit;
 
-  const where: any = { deletedAt: null };
+  // Filter: ONLY products that belong to an UMKM
+  const where: any = { 
+    deletedAt: null,
+    isActive: true,
+    umkmId: { not: null } 
+  };
 
   if (umkmId) {
     where.umkmId = umkmId;
   }
 
   if (kategoriId) {
-    where.umkm = {
-      kategoriId: kategoriId
-    };
+    where.kategoriProdukId = kategoriId;
   }
 
   if (search) {
@@ -28,19 +31,20 @@ async function produkUmkmFindMany(context: Context) {
 
   try {
     const [data, total] = await Promise.all([
-      prisma.produkUmkm.findMany({
+      prisma.pasarDesa.findMany({
         where,
         include: {
           image: true,
           umkm: {
             include: { kategori: true }
-          }
+          },
+          kategoriProduk: true
         },
         skip,
         take: limit,
         orderBy: { createdAt: 'desc' },
       }),
-      prisma.produkUmkm.count({ where }),
+      prisma.pasarDesa.count({ where }),
     ]);
 
     return {

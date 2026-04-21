@@ -5,8 +5,8 @@ async function produkUmkmDelete(context: Context) {
   const id = context.params.id;
 
   try {
-    // Soft delete
-    const data = await prisma.produkUmkm.update({
+    // Soft delete on PasarDesa
+    const data = await prisma.pasarDesa.update({
       where: { id },
       data: {
         deletedAt: new Date(),
@@ -16,7 +16,7 @@ async function produkUmkmDelete(context: Context) {
 
     return {
       success: true,
-      message: "Berhasil menghapus produk UMKM",
+      message: "Berhasil menghapus produk UMKM (PasarDesa)",
       data,
     };
   } catch (e) {

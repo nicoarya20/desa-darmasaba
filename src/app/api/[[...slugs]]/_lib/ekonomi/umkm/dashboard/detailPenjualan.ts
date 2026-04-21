@@ -22,8 +22,9 @@ async function umkmDashboardDetailPenjualan(context: Context) {
         where: { periode: periodeLalu, deletedAt: null },
         _sum: { totalNilai: true }
       }),
-      prisma.produkUmkm.findMany({
-        where: { deletedAt: null },
+      // Use PasarDesa with umkmId filter
+      prisma.pasarDesa.findMany({
+        where: { deletedAt: null, umkmId: { not: null } },
         select: { id: true, nama: true, stok: true }
       })
     ]);
@@ -33,11 +34,11 @@ async function umkmDashboardDetailPenjualan(context: Context) {
       const laluRaw = produkLalu.find(l => l.produkId === p.id)?._sum || { totalNilai: 0 };
       
       const skrg = {
-        totalNilai: skrgRaw.totalNilai || 0,
-        jumlah: skrgRaw.jumlah || 0
+        totalNilai: (skrgRaw as any).totalNilai || 0,
+        jumlah: (skrgRaw as any).jumlah || 0
       };
       const lalu = {
-        totalNilai: laluRaw.totalNilai || 0
+        totalNilai: (laluRaw as any).totalNilai || 0
       };
       
       let trend = "stable";

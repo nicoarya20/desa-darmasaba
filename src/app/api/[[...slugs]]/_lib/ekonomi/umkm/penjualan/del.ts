@@ -23,8 +23,8 @@ async function penjualanProdukDelete(context: Context) {
         },
       });
 
-      // 3. Kembalikan stok produk
-      await tx.produkUmkm.update({
+      // 3. Kembalikan stok produk ke PasarDesa
+      await tx.pasarDesa.update({
         where: { id: data.produkId },
         data: {
           stok: {
@@ -38,7 +38,7 @@ async function penjualanProdukDelete(context: Context) {
 
     return {
       success: true,
-      message: "Berhasil menghapus data penjualan dan mengembalikan stok",
+      message: "Berhasil menghapus data penjualan dan mengembalikan stok (PasarDesa)",
       data: result,
     };
   } catch (e) {

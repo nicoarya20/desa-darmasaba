@@ -11,9 +11,9 @@ async function penjualanProdukCreate(context: Context) {
   const totalNilai = body.jumlah * body.hargaSatuan;
 
   try {
-    // Gunakan transaction untuk update stok produk
+    // Gunakan transaction untuk update stok produk (PasarDesa)
     const result = await prisma.$transaction(async (tx) => {
-      // 1. Catat penjualan
+      // 1. Catat penjualan (relasi ke PasarDesa)
       const penjualan = await tx.penjualanProduk.create({
         data: {
           produkId: body.produkId,
@@ -26,8 +26,8 @@ async function penjualanProdukCreate(context: Context) {
         },
       });
 
-      // 2. Update stok produk
-      await tx.produkUmkm.update({
+      // 2. Update stok di model PasarDesa
+      await tx.pasarDesa.update({
         where: { id: body.produkId },
         data: {
           stok: {
@@ -41,7 +41,7 @@ async function penjualanProdukCreate(context: Context) {
 
     return {
       success: true,
-      message: "Berhasil mencatat penjualan produk",
+      message: "Berhasil mencatat penjualan produk (PasarDesa)",
       data: result,
     };
   } catch (e) {

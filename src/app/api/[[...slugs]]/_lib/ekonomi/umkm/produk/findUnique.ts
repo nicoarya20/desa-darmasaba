@@ -5,7 +5,7 @@ async function produkUmkmFindUnique(context: Context) {
   const id = context.params.id;
 
   try {
-    const data = await prisma.produkUmkm.findUnique({
+    const data = await prisma.pasarDesa.findUnique({
       where: { id },
       include: {
         image: true,
@@ -14,7 +14,8 @@ async function produkUmkmFindUnique(context: Context) {
           where: { deletedAt: null },
           orderBy: { tanggal: 'desc' },
           take: 10
-        }
+        },
+        kategoriProduk: true
       },
     });
 
@@ -27,7 +28,7 @@ async function produkUmkmFindUnique(context: Context) {
 
     return {
       success: true,
-      message: "Berhasil mengambil detail produk UMKM",
+      message: "Berhasil mengambil detail produk UMKM (PasarDesa)",
       data,
     };
   } catch (e) {

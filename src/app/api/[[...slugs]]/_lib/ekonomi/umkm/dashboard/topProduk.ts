@@ -15,17 +15,18 @@ async function umkmDashboardTopProduk(context: Context) {
     });
 
     const data = await Promise.all(topPenjualan.map(async (item) => {
-      const produk = await prisma.produkUmkm.findUnique({
+      // Find from PasarDesa now
+      const produk = await prisma.pasarDesa.findUnique({
         where: { id: item.produkId },
         include: { umkm: true }
       });
 
       return {
         namaProduk: produk?.nama || "Unknown",
-        namaUmkm: produk?.umkm.nama || "Unknown",
+        namaUmkm: produk?.umkm?.nama || "Unknown",
         totalPenjualan: item._sum.totalNilai || 0,
         jumlahTerjual: item._sum.jumlah || 0,
-        growth: 0 // logic growth bisa ditambah jika diperlukan
+        growth: 0 
       };
     }));
 

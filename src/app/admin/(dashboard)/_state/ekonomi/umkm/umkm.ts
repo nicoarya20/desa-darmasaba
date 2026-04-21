@@ -25,7 +25,7 @@ const defaultUmkmForm = {
   isActive: true,
 };
 
-// Produk Form Validation
+// Produk Form Validation (Now using PasarDesa model)
 const produkFormSchema = z.object({
   nama: z.string().min(1, "Nama produk minimal 1 karakter"),
   harga: z.number().min(0, "Harga tidak boleh negatif"),
@@ -33,6 +33,7 @@ const produkFormSchema = z.object({
   umkmId: z.string().min(1, "UMKM wajib dipilih"),
   deskripsi: z.string().optional(),
   imageId: z.string().optional(),
+  kategoriId: z.string().min(1, "Kategori wajib dipilih"), // PasarDesa needs category
 });
 
 const defaultProdukForm = {
@@ -42,6 +43,7 @@ const defaultProdukForm = {
   umkmId: "",
   deskripsi: "",
   imageId: "",
+  kategoriId: "",
   isActive: true,
 };
 

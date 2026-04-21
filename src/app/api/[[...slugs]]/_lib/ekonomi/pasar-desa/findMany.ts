@@ -11,8 +11,12 @@ async function pasarDesaFindMany(context: Context) {
   const categoryId = context.query.categoryId as string | undefined;
   const skip = (page - 1) * limit;
 
-  // Buat where clause
-  const where: any = { isActive: true };
+  // Buat where clause: Tampilkan hanya yang TIDAK punya umkmId (Produk Pasar Murni)
+  const where: any = { 
+    isActive: true,
+    deletedAt: null,
+    umkmId: null 
+  };
 
   // Tambahkan filter kategori (jika ada)
   if (categoryId) {
@@ -65,7 +69,7 @@ async function pasarDesaFindMany(context: Context) {
 
     return {
       success: true,
-      message: "Berhasil ambil pasar desa dengan pagination",
+      message: "Berhasil ambil pasar desa dengan pagination (Non-UMKM)",
       data,
       page,
       limit,

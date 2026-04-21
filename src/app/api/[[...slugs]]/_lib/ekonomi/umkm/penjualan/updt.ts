@@ -32,10 +32,10 @@ async function penjualanProdukUpdate(context: Context) {
         },
       });
 
-      // 3. Update stok jika produk sama, sesuaikan selisih
+      // 3. Update stok di PasarDesa jika produk sama, sesuaikan selisih
       if (oldData.produkId === body.produkId) {
         const diff = body.jumlah - oldData.jumlah;
-        await tx.produkUmkm.update({
+        await tx.pasarDesa.update({
           where: { id: body.produkId },
           data: {
             stok: {
@@ -44,8 +44,8 @@ async function penjualanProdukUpdate(context: Context) {
           }
         });
       } else {
-        // Jika produk berubah, kembalikan stok lama dan kurangi stok baru
-        await tx.produkUmkm.update({
+        // Jika produk berubah, kembalikan stok lama dan kurangi stok baru di PasarDesa
+        await tx.pasarDesa.update({
           where: { id: oldData.produkId },
           data: {
             stok: {
@@ -53,7 +53,7 @@ async function penjualanProdukUpdate(context: Context) {
             }
           }
         });
-        await tx.produkUmkm.update({
+        await tx.pasarDesa.update({
           where: { id: body.produkId },
           data: {
             stok: {
@@ -68,7 +68,7 @@ async function penjualanProdukUpdate(context: Context) {
 
     return {
       success: true,
-      message: "Berhasil memperbarui data penjualan",
+      message: "Berhasil memperbarui data penjualan (PasarDesa)",
       data: result,
     };
   } catch (e) {
