@@ -1434,8 +1434,8 @@ model PasarDesa {
   
   // Data Stok & UMKM
   stok             Int               @default(0)
-  umkm             Umkm?             @relation(fields: [umkmId], references: [id])
-  umkmId           String?
+  umkm             Umkm              @relation(fields: [umkmId], references: [id])
+  umkmId           String
   
   // Relasi Penjualan
   penjualan        PenjualanProduk[]

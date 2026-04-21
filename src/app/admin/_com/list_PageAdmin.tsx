@@ -208,28 +208,8 @@ export const devBar = [
     children: [
       {
         id: "Ekonomi_UMKM_1",
-        name: "UMKM - Dashboard",
+        name: "UMKM",
         path: "/admin/ekonomi/umkm/dashboard"
-      },
-      {
-        id: "Ekonomi_UMKM_2",
-        name: "UMKM - Data UMKM",
-        path: "/admin/ekonomi/umkm/data-umkm"
-      },
-      {
-        id: "Ekonomi_UMKM_3",
-        name: "UMKM - Produk",
-        path: "/admin/ekonomi/umkm/produk"
-      },
-      {
-        id: "Ekonomi_UMKM_4",
-        name: "UMKM - Penjualan",
-        path: "/admin/ekonomi/umkm/penjualan"
-      },
-      {
-        id: "Ekonomi_1",
-        name: "Pasar Desa",
-        path: "/admin/ekonomi/pasar-desa/produk-pasar-desa"
       },
       {
         id: "Ekonomi_2",
@@ -678,11 +658,6 @@ export const navBar = [
         path: "/admin/ekonomi/umkm/penjualan"
       },
       {
-        id: "Ekonomi_1",
-        name: "Pasar Desa",
-        path: "/admin/ekonomi/pasar-desa/produk-pasar-desa"
-      },
-      {
         id: "Ekonomi_2",
         name: "Lowongan Kerja Lokal",
         path: "/admin/ekonomi/lowongan-kerja-lokal"
@@ -1085,11 +1060,6 @@ export const role1 = [
         id: "Ekonomi_UMKM_4",
         name: "UMKM - Penjualan",
         path: "/admin/ekonomi/umkm/penjualan"
-      },
-      {
-        id: "Ekonomi_1",
-        name: "Pasar Desa",
-        path: "/admin/ekonomi/pasar-desa/produk-pasar-desa"
       },
       {
         id: "Ekonomi_2",

@@ -1,8 +1,6 @@
 import Elysia from "elysia";
-import PasarDesa from "./pasar-desa";
 import LowonganKerja from "./lowongan-kerja";
 import ProgramKemiskinan from "./program-kemiskinan";
-import KategoriProduk from "./pasar-desa/kategori-produk";
 import GrafikUsiaKerjaYangMenganggur from "./usia-kerja-yang-menganggur";
 import GrafikMenganggurBerdasarkanPendidikan from "./usia-kerja-yang-menganggur/pengangguran-berdasrkan-pendidikan";
 import JumlahPendudukMiskin from "./jumlah-penduduk-miskin";
@@ -20,8 +18,6 @@ const Ekonomi = new Elysia({
   prefix: "/ekonomi",
   tags: ["Ekonomi"],
 })
-.use(PasarDesa)
-.use(KategoriProduk)
 .use(LowonganKerja)
 .use(ProgramKemiskinan)
 .use(StrukturOrganisasi)

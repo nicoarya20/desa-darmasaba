@@ -1,14 +1,15 @@
 'use client'
 import umkmState from '@/app/admin/(dashboard)/_state/ekonomi/umkm/umkm';
 import colors from '@/con/colors';
-import { Box, Card, Flex, Grid, GridCol, Image, Paper, Skeleton, Stack, Text, Title, Badge, SimpleGrid, Group, Divider, Button, Center } from '@mantine/core';
+import { Box, Card, Flex, Grid, GridCol, Image, Skeleton, Stack, Text, Title, Badge, SimpleGrid, Group, Divider, Button, Center } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { IconBrandWhatsapp, IconMapPinFilled, IconPackage, IconUser } from '@tabler/icons-react';
-import { useParams } from 'next/navigation';
+import { IconBrandWhatsapp, IconMapPinFilled, IconUser } from '@tabler/icons-react';
+import { useParams, useRouter } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
 import BackButton from '../../../desa/layanan/_com/BackButto';
 
 function Page() {
+  const router = useRouter();
   const params = useParams();
   const id = params.id as string;
   const state = useProxy(umkmState.umkm.findUnique);
@@ -83,7 +84,14 @@ function Page() {
         <Title order={2} mb="xl">Katalog Produk</Title>
         <SimpleGrid cols={{ base: 1, sm: 2, md: 4 }} spacing="lg">
           {u.produk?.map((p: any, k: number) => (
-            <Card key={k} withBorder padding="lg" radius="md">
+            <Card 
+              key={k} 
+              withBorder 
+              padding="lg" 
+              radius="md" 
+              style={{ cursor: 'pointer' }}
+              onClick={() => router.push(`/darmasaba/ekonomi/umkm/produk/${p.id}`)}
+            >
               <Card.Section>
                 <Image
                   src={p.image?.link || '/no-image.jpg'}

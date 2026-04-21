@@ -25,8 +25,11 @@ export async function seedPasarDesa() {
 
   console.log("🔄 Seeding Pasar Desa...");
   
+    let i = 1;
     for (const p of pasarDesa) {
       let imageId: string | null = null;
+      const umkmId = `umkm-${i}`; // Map to umkm-1, umkm-2, etc.
+      i = (i % 4) + 1;
   
       if (p.imageName) {
         const image = await prisma.fileStorage.findUnique({
@@ -54,6 +57,7 @@ export async function seedPasarDesa() {
           kontak: p.kontak,
           imageId,
           kategoriProdukId: p.kategoriProdukId,
+          umkmId: umkmId,
         },
         create: {
           id: p.id,
@@ -65,6 +69,7 @@ export async function seedPasarDesa() {
           kontak: p.kontak,
           imageId,
           kategoriProdukId: p.kategoriProdukId,
+          umkmId: umkmId,
         },
       });
   

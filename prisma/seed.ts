@@ -23,6 +23,7 @@ import { seedPendudukUsiaKerjaYangMenganggur } from "./_seeder_list/ekonomi/seed
 import { seedProgramKemiskinan } from "./_seeder_list/ekonomi/seed_program_kemiskinan";
 import { seedSektorUnggulanDesa } from "./_seeder_list/ekonomi/seed_sektor_unggulan_desa";
 import { seedStrukturBumdes } from "./_seeder_list/ekonomi/seed_struktur_bumdes";
+import { seedUmkm } from "./_seeder_list/ekonomi/seed_umkm";
 import { seedAjukan } from "./_seeder_list/inovasi/seed_ajukan";
 import { seedDesaDigital } from "./_seeder_list/inovasi/seed_desa_digital";
 import { seedInfoTeknologi } from "./_seeder_list/inovasi/seed_info_teknologi";
@@ -274,6 +275,9 @@ import seedAssets from "./seed_assets";
   await seedKeamananLingkungan();
 
   // // ====================== MENU EKONOMI ========================
+  // // ==================== SUBMENU UMKM ==========================
+  await seedUmkm();
+
   // // ==================== SUBMENU PASAR DESA ====================
   await seedPasarDesa();
 

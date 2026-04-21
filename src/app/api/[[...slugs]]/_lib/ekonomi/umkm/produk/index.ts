@@ -20,6 +20,7 @@ const ProdukUmkm = new Elysia({
       nama: t.String(),
       harga: t.Number(),
       umkmId: t.String(),
+      kategoriId: t.String(), // Added validation
       stok: t.Optional(t.Number()),
       deskripsi: t.Optional(t.String()),
       imageId: t.Optional(t.String()),
@@ -34,6 +35,7 @@ const ProdukUmkm = new Elysia({
       nama: t.String(),
       harga: t.Number(),
       umkmId: t.String(),
+      kategoriId: t.String(), // Added validation
       stok: t.Number(),
       deskripsi: t.Optional(t.String()),
       imageId: t.Optional(t.String()),

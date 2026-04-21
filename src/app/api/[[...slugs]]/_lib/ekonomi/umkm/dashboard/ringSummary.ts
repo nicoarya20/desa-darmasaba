@@ -20,9 +20,9 @@ async function umkmDashboardRingSummary(context: Context) {
         where: { periode: periodeLalu, deletedAt: null },
         _sum: { totalNilai: true }
       }),
-      // Count from PasarDesa with umkmId filter
-      prisma.pasarDesa.count({ 
-        where: { isActive: true, deletedAt: null, umkmId: { not: null } } 
+      // Count from PasarDesa
+      prisma.pasarDesa.count({
+        where: { isActive: true, deletedAt: null }
       }),
       prisma.penjualanProduk.count({ where: { periode, deletedAt: null } })
     ]);

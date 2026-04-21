@@ -22,9 +22,9 @@ async function umkmDashboardDetailPenjualan(context: Context) {
         where: { periode: periodeLalu, deletedAt: null },
         _sum: { totalNilai: true }
       }),
-      // Use PasarDesa with umkmId filter
+      // Use PasarDesa
       prisma.pasarDesa.findMany({
-        where: { deletedAt: null, umkmId: { not: null } },
+        where: { deletedAt: null },
         select: { id: true, nama: true, stok: true }
       })
     ]);

@@ -10,13 +10,11 @@ async function produkUmkmFindMany(context: Context) {
   const kategoriId = context.query.kategoriId as string | undefined;
   const skip = (page - 1) * limit;
 
-  // Filter: ONLY products that belong to an UMKM
-  const where: any = { 
+  // Filter: ONLY active products
+  const where: any = {
     deletedAt: null,
     isActive: true,
-    umkmId: { not: null } 
   };
-
   if (umkmId) {
     where.umkmId = umkmId;
   }

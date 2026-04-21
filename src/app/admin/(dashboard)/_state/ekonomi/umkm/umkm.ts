@@ -167,6 +167,20 @@ export const umkmState = proxy({
         } catch (e) { console.error(e); } finally { this.loading = false; }
       }
     },
+    findUnique: {
+      data: null as any,
+      loading: false,
+      async load(id: string) {
+        this.loading = true;
+        try {
+          const res = await fetch(`/api/ekonomi/umkm/produk/${id}`);
+          const result = await res.json();
+          if (result.success) {
+            this.data = result.data;
+          }
+        } catch (e) { console.error(e); } finally { this.loading = false; }
+      }
+    },
     create: {
       form: { ...defaultProdukForm },
       loading: false,
