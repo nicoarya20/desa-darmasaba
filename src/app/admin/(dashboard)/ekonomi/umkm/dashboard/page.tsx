@@ -21,6 +21,7 @@ import {
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowUpRight, IconArrowDownRight, IconMinus } from '@tabler/icons-react';
 import { useProxy } from 'valtio/utils';
+import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import umkmState from '../../../_state/ekonomi/umkm/umkm';
 
 function UmkmDashboard() {
@@ -53,6 +54,27 @@ function UmkmDashboard() {
       </SimpleGrid>
 
       <Grid>
+        <Grid.Col span={12}>
+          <Card withBorder radius="md" p="lg" shadow="sm">
+            <Title order={4} mb="md">Grafik Penjualan per Produk</Title>
+            <Box style={{ height: 350 }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={detail.map(item => ({
+                  name: item.namaProduk,
+                  penjualan: item.penjualanBulanIni
+                }))}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip formatter={(value: any) => `Rp ${value.toLocaleString()}`} />
+                  <Legend />
+                  <Bar dataKey="penjualan" fill={colors['blue-button']} name="Penjualan" />
+                </BarChart>
+              </ResponsiveContainer>
+            </Box>
+          </Card>
+        </Grid.Col>
+
         <Grid.Col span={{ base: 12, md: 4 }}>
           <Card withBorder radius="md" p="lg" shadow="sm">
             <Title order={4} mb="md">Top 3 Produk</Title>

@@ -1,7 +1,7 @@
 'use client'
 import umkmState from '@/app/admin/(dashboard)/_state/ekonomi/umkm/umkm';
 import colors from '@/con/colors';
-import { Box, Card, Flex, Grid, GridCol, Image, Paper, Skeleton, Stack, Text, Title, Badge, SimpleGrid, Group, Divider, Button } from '@mantine/core';
+import { Box, Card, Flex, Grid, GridCol, Image, Paper, Skeleton, Stack, Text, Title, Badge, SimpleGrid, Group, Divider, Button, Center } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconBrandWhatsapp, IconMapPinFilled, IconPackage, IconUser } from '@tabler/icons-react';
 import { useParams } from 'next/navigation';

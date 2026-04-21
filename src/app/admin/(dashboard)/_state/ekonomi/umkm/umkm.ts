@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
 import { proxy } from "valtio";
 import { z } from "zod";
@@ -244,7 +243,7 @@ export const umkmState = proxy({
       async load() {
         this.loading = true;
         try {
-          const res = await fetch("/api/ekonomi/pasar-desa/kategori-produk/find-many-all");
+          const res = await fetch("/api/ekonomi/kategoriproduk/find-many-all");
           const result = await res.json();
           if (result.success) {
             this.data = result.data;

@@ -5,12 +5,12 @@ import colors from '@/con/colors';
 import { 
   Box, Center, Flex, Grid, GridCol, Image, Pagination, Paper, 
   Select, SimpleGrid, Skeleton, Stack, Text, TextInput, Title, 
-  Tabs, Badge, Card, Group
+  Tabs, Badge, Card
 } from '@mantine/core';
 import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
 import { 
   IconBrandWhatsapp, IconMapPinFilled, IconSearch, 
-  IconStarFilled, IconBuildingStore, IconTag, IconUser,
+  IconStarFilled, IconBuildingStore, IconUser,
   IconShoppingBag, IconPackage
 } from '@tabler/icons-react';
 import { motion } from 'motion/react';
@@ -76,14 +76,14 @@ function TabProdukPasar({ router }: { router: any }) {
   const [debouncedSearch] = useDebouncedValue(search, 1000);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   
-  const { data, page, loading, totalPages, load } = state.findMany;
+  const { data, page, loading, totalPages } = state.findMany;
 
   useShallowEffect(() => {
     pasarDesaState.kategoriProduk.findManyAll.load();
   }, []);
 
   useShallowEffect(() => {
-    load(page, 8, debouncedSearch, selectedCategory || undefined);
+    pasarDesaState.pasarDesa.findMany.load(page, 8, debouncedSearch, selectedCategory || undefined);
   }, [page, debouncedSearch, selectedCategory]);
 
   return (
@@ -152,7 +152,7 @@ function TabProdukPasar({ router }: { router: any }) {
             ))}
           </SimpleGrid>
           <Center>
-            <Pagination total={totalPages} value={page} onChange={(p) => load(p)} radius="md" />
+            <Pagination total={totalPages} value={page} onChange={(p) => pasarDesaState.pasarDesa.findMany.load(p)} radius="md" />
           </Center>
         </>
       )}
@@ -166,14 +166,14 @@ function TabProdukUmkm({ router }: { router: any }) {
   const [debouncedSearch] = useDebouncedValue(search, 1000);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   
-  const { data, page, loading, totalPages, load } = state.findMany;
+  const { data, page, loading, totalPages } = state.findMany;
 
   useShallowEffect(() => {
     umkmState.kategoriProduk.findManyAll.load();
   }, []);
 
   useShallowEffect(() => {
-    load(page, 8, debouncedSearch, undefined, selectedCategory || undefined);
+    umkmState.produk.findMany.load(page, 8, debouncedSearch, undefined, selectedCategory || undefined);
   }, [page, debouncedSearch, selectedCategory]);
 
   return (
@@ -234,7 +234,7 @@ function TabProdukUmkm({ router }: { router: any }) {
             ))}
           </SimpleGrid>
           <Center>
-            <Pagination total={totalPages} value={page} onChange={(p) => load(p)} radius="md" />
+            <Pagination total={totalPages} value={page} onChange={(p) => umkmState.produk.findMany.load(p)} radius="md" />
           </Center>
         </>
       )}
@@ -247,10 +247,10 @@ function TabDirektoriUmkm({ router }: { router: any }) {
   const [search, setSearch] = useState('');
   const [debouncedSearch] = useDebouncedValue(search, 1000);
   
-  const { data, page, loading, totalPages, load } = state.findMany;
+  const { data, page, loading, totalPages } = state.findMany;
 
   useShallowEffect(() => {
-    load(page, 8, debouncedSearch);
+    umkmState.umkm.findMany.load(page, 8, debouncedSearch);
   }, [page, debouncedSearch]);
 
   return (
@@ -300,7 +300,7 @@ function TabDirektoriUmkm({ router }: { router: any }) {
             ))}
           </SimpleGrid>
           <Center>
-            <Pagination total={totalPages} value={page} onChange={(p) => load(p)} radius="md" />
+            <Pagination total={totalPages} value={page} onChange={(p) => umkmState.umkm.findMany.load(p)} radius="md" />
           </Center>
         </>
       )}
