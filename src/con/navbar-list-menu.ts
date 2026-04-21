@@ -182,51 +182,41 @@ const navbarListMenu = [
             },
             {
                 id: "5.3",
-                name: "Direktori UMKM",
-                href: "/darmasaba/ekonomi/umkm"
-            },
-            {
-                id: "5.4",
-                name: "Produk UMKM",
-                href: "/darmasaba/ekonomi/umkm/produk"
-            },
-            {
-                id: "5.5",
                 name: "Struktur Organisasi dan SK Pengurus BUMDesa",
                 href: "/darmasaba/ekonomi/Struktur-Organisasi-Dan-Sk-Pengurus-BumDes"
             },
             {
-                id: "5.6",
+                id: "5.4",
                 name: "PADesa (Pendapatan Asli Desa)",
                 href: "/darmasaba/ekonomi/PADesa-pendapatan-asli-desa"
             },
             {
-                id: "5.7",
+                id: "5.5",
                 name: "Jumlah Pengangguran",
                 href: "/darmasaba/ekonomi/jumlah-pengangguran"
             },
             {
-                id: "5.8",
+                id: "5.6",
                 name: "Jumlah penduduk usia kerja yang menganggur",
                 href: "/darmasaba/ekonomi/jumlah-penduduk-usia-kerja-yang-menganggur"
             },
             {
-                id: "5.9",
+                id: "5.7",
                 name: "Jumlah Penduduk Miskin",
                 href: "/darmasaba/ekonomi/jumlah-penduduk-miskin"
             },
             {
-                id: "5.10",
+                id: "5.8",
                 name: "Program Kemiskinan",
                 href: "/darmasaba/ekonomi/program-kemiskinan"
             },
             {
-                id: "5.11",
+                id: "5.9",
                 name: "Sektor Unggulan Desa",
                 href: "/darmasaba/ekonomi/sektor-unggulan-desa"
             },
             {
-                id: "5.12",
+                id: "5.10",
                 name: "Demografi Pekerjaan",
                 href: "/darmasaba/ekonomi/demografi-pekerjaan"
             }
