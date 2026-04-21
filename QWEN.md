@@ -244,10 +244,12 @@ Setelah commit ke branch deployment (dev/stg/prod), otomatis trigger workflow pu
 - **Deployment Workflow Sistematis**:
 1. **Version Bump** - Update `version` di `package.json` sebelum deploy (ikuti semver: major.minor.patch)
 2. **Commit** - Commit perubahan + version bump dengan pesan yang jelas
-3. **Push ke Branch** - Push ke branch target (biasanya `stg` untuk staging atau `prod` untuk production)
-4. **Trigger publish.yml** - Gunakan GitHub API atau CLI dengan: `ref: main`, `stack_env: stg`, `tag: <versi-dari-package.json>`
-5. **Tunggu publish selesai** - Workflow harus completed baru lanjut ke re-pull
-6. **Trigger re-pull.yml** - Gunakan GitHub API atau CLI dengan: `ref: main`, `stack_name: desa-darmasaba`, `stack_env: stg`
+3. **Buat Branch dan Push ke Branch yang baru dibuat** - Untuk branchnya buat sesuai dengan apa yang dikerjakan dengan format [apa-yang-dikerjakan]-[date-time]
+4. **Push ke 2 Remote** - Push ke 2 remote origin dan deploy
+5. **Merge ke Branch** - Merge ke branch target (biasanya `stg` untuk staging atau `prod` untuk production) ke 2 remote origin dan deploy
+6. **Trigger publish.yml** - Gunakan GitHub API atau CLI dengan: `ref: main`, `stack_env: stg`, `tag: <versi-dari-package.json>`
+7. **Tunggu publish selesai** - Workflow harus completed baru lanjut ke re-pull
+8. **Trigger re-pull.yml** - Gunakan GitHub API atau CLI dengan: `ref: main`, `stack_name: desa-darmasaba`, `stack_env: stg`
 
 Branch deployment: `stg` (staging) atau `prod` (production)
 Version format di package.json: `"version": "major.minor.patch"`

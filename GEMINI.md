@@ -1,62 +1,244 @@
-# Project: Desa Darmasaba
+# Desa Darmasaba - Village Management System
 
 ## Project Overview
 
-The `desa-darmasaba` project is a Next.js (version 15+) application developed with TypeScript. It serves as an official platform for Desa Darmasaba (a village in Badung, Bali), offering various public services, news, and detailed village profiles.
+Desa Darmasaba is a comprehensive Next.js 15 application designed for village management services in Darmasaba, Badung, Bali. The application serves as a digital platform for government services, public information, and community engagement. It features multiple sections including PPID (Public Information Disclosure), health services, security, education, environment, economy, innovation, and more.
 
-**Key Technologies:**
+### Key Technologies
+- **Framework**: Next.js 15 with App Router
+- **Language**: TypeScript with strict mode
+- **Styling**: Mantine UI components with custom CSS
+- **Backend**: Elysia.js API server integrated with Next.js
+- **Database**: PostgreSQL with Prisma ORM
+- **State Management**: Valtio for global state
+- **Authentication**: JWT with iron-session
 
-*   **Frontend Framework:** Next.js (v15+) with React (v19+)
-*   **Language:** TypeScript
-*   **UI Library:** Mantine UI
-*   **Database ORM:** Prisma (v6+)
-*   **Database:** PostgreSQL (as configured in `prisma/schema.prisma`)
-*   **API Framework:** Elysia (used for API routes, as seen in dependencies)
-*   **State Management:** Potentially Jotai and Valtio (listed in dependencies)
-*   **Image Processing:** Sharp
-*   **Package Manager:** Likely Bun, given `bun.lockb` and the `prisma:seed` script.
-
-The application architecture follows the Next.js App Router structure, with comprehensive data models defined in `prisma/schema.prisma` covering various domains like public information, health, security, economy, innovation, environment, and education. It also includes configurations for image handling and caching.
+### Architecture
+The application follows a modular architecture with:
+- A main frontend built with Next.js and Mantine UI
+- An integrated Elysia.js API server for backend operations
+- Prisma ORM for database interactions
+- File storage integration with Seafile
+- Multiple domain-specific modules (PPID, health, security, education, etc.)
 
 ## Building and Running
 
-This project uses `bun` as the package manager. Ensure Bun is installed to run these commands.
+### Prerequisites
+- Node.js (with Bun runtime)
+- PostgreSQL database
+- Seafile server for file storage
 
-*   **Install Dependencies:**
-    ```bash
-    bun install
-    ```
+### Setup Instructions
+1. Install dependencies:
+   ```bash
+   bun install
+   ```
 
-*   **Development Server:**
-    Runs the Next.js development server.
-    ```bash
-    bun run dev
-    ```
+2. Set up environment variables in `.env.local`:
+   ```
+   DATABASE_URL=your_postgresql_connection_string
+   SEAFILE_TOKEN=your_seafile_token
+   SEAFILE_REPO_ID=your_seafile_repo_id
+   SEAFILE_BASE_URL=your_seafile_base_url
+   SEAFILE_PUBLIC_SHARE_TOKEN=your_seafile_public_share_token
+   SEAFILE_URL=your_seafile_api_url
+   WIBU_UPLOAD_DIR=your_upload_directory
+   ```
 
-*   **Build for Production:**
-    Builds the Next.js application for production deployment.
-    ```bash
-    bun run build
-    ```
+3. Generate Prisma client:
+   ```bash
+   bunx prisma generate
+   ```
 
-*   **Start Production Server:**
-    Starts the Next.js application in production mode.
-    ```bash
-    bun run start
-    ```
+4. Push database schema:
+   ```bash
+   bunx prisma db push
+   ```
 
-*   **Database Seeding:**
-    Executes the Prisma seeding script to populate the database.
-    ```bash
-    bun run prisma:seed
-    ```
+5. Seed the database:
+   ```bash
+   bun run prisma/seed.ts
+   ```
+
+6. Run the development server:
+   ```bash
+   bun run dev
+   ```
+
+### Available Scripts
+- `bun run dev` - Start development server
+- `bun run build` - Build for production
+- `bun run start` - Start production server
+- `bun run prisma/seed.ts` - Run database seeding
+- `bunx prisma generate` - Generate Prisma client
+- `bunx prisma db push` - Push schema changes to database
+- `bunx prisma studio` - Open Prisma Studio GUI
 
 ## Development Conventions
 
-*   **Coding Language:** TypeScript is strictly enforced.
-*   **Frontend Framework:** Next.js App Router for page and component structuring.
-*   **UI/UX:** Adherence to Mantine UI component library for consistent styling and user experience.
-*   **Database Interaction:** Prisma ORM is used for all database operations, with a PostgreSQL database.
-*   **Linting:** ESLint is configured with `next/core-web-vitals` and `next/typescript` to maintain code quality and adherence to Next.js and TypeScript best practices.
-*   **Styling:** PostCSS is used, with `postcss-preset-mantine` and `postcss-simple-vars` defining Mantine-specific breakpoints and other CSS variables.
-*   **Imports:** Absolute imports are configured using `@/*` which resolves to the `src/` directory.
+### Code Structure
+```
+src/
+├── app/                 # Next.js app router pages
+│   ├── admin/           # Admin dashboard pages
+│   ├── api/             # API routes with Elysia.js
+│   ├── darmasaba/       # Public-facing village pages
+│   └── ...
+├── con/                 # Constants and configuration
+├── hooks/               # React hooks
+├── lib/                 # Utility functions and configurations
+├── middlewares/         # Next.js middleware
+├── state/               # Global state management
+├── store/               # Additional state management
+├── types/               # TypeScript type definitions
+└── utils/               # Utility functions
+```
+
+### Import Conventions
+- Use absolute imports with `@/` alias (configured in tsconfig.json)
+- Group imports: external libraries first, then internal modules
+- Keep import statements organized and remove unused imports
+
+```typescript
+// External libraries
+import { useState } from 'react'
+import { Button, Stack } from '@mantine/core'
+
+// Internal modules
+import ApiFetch from '@/lib/api-fetch'
+import { MyComponent } from '@/components/my-component'
+```
+
+### TypeScript Configuration
+- Strict mode enabled (`"strict": true`)
+- Target: ES2017
+- Module resolution: bundler
+- Path alias: `@/*` maps to `./src/*`
+
+### Naming Conventions
+- **Components**: PascalCase (e.g., `UploadImage.tsx`)
+- **Files**: kebab-case for utilities (e.g., `api-fetch.ts`)
+- **Variables/Functions**: camelCase
+- **Constants**: UPPER_SNAKE_CASE
+- **Database Models**: PascalCase (Prisma convention)
+
+### Error Handling
+- Use try-catch blocks for async operations
+- Implement proper error boundaries in React components
+- Log errors appropriately without exposing sensitive data
+- Use Zod for runtime validation and type safety
+
+### API Structure
+- Backend uses Elysia.js with TypeScript
+- API routes are in `src/app/api/[[...slugs]]/` directory
+- Use treaty client for type-safe API calls
+- Follow RESTful conventions for endpoints
+- Include proper HTTP status codes and error responses
+
+### Database Operations
+- Use Prisma client from `@/lib/prisma.ts`
+- Database connection includes graceful shutdown handling
+- Use transactions for complex operations
+- Implement proper error handling for database queries
+
+### Component Guidelines
+- Use functional components with hooks
+- Implement proper prop types with TypeScript interfaces
+- Use Mantine components for UI consistency
+- Follow atomic design principles when possible
+- Add loading states and error states for async operations
+
+### State Management
+- Use Valtio proxies for global state
+- Keep local state in components when possible
+- Use SWR for server state caching
+- Implement optimistic updates for better UX
+
+### Styling
+- Primary: Mantine UI components
+- Use Mantine theme system for customization
+- Custom CSS should be minimal and scoped
+- Follow responsive design principles
+- Use semantic HTML5 elements
+
+### Security Practices
+- Validate all user inputs with Zod schemas
+- Use JWT tokens for authentication
+- Implement proper CORS configuration
+- Never expose database credentials or API keys
+- Use HTTPS in production
+- Implement rate limiting for sensitive endpoints
+
+### Performance Considerations
+- Use Next.js Image optimization
+- Implement proper caching strategies
+- Use React.memo for expensive components
+- Optimize bundle size with dynamic imports
+- Use Prisma query optimization
+
+## Domain Modules
+
+The application is organized into several domain modules:
+
+1. **PPID (Public Information Disclosure)**: Profile, structure, information requests, legal basis
+2. **Health**: Health facilities, programs, emergency response, disease information
+3. **Security**: Community security, emergency contacts, crime prevention
+4. **Education**: Schools, scholarships, educational programs
+5. **Economy**: Local markets, BUMDes, employment data
+6. **Environment**: Environmental data, conservation, waste management
+7. **Innovation**: Digital services, innovation programs
+8. **Culture**: Village traditions, music, cultural preservation
+
+Each module has its own section in both the admin panel and public-facing areas.
+
+## File Storage Integration
+
+The application integrates with Seafile for file storage, with specific handling for:
+- Images and documents
+- Public sharing capabilities
+- CDN URL generation
+- Batch processing of assets
+
+## Testing
+
+Currently no formal test framework is configured. When adding tests:
+- Consider Jest or Vitest for unit testing
+- Use Playwright for E2E testing
+- Update this section with specific test commands
+
+## Deployment
+
+The application includes deployment scripts in the `NOTE.md` file that outline:
+- Automated deployment with GitHub API integration
+- Environment-specific configurations
+- PM2 process management
+- Release management with versioning
+
+## Troubleshooting
+
+Common issues and solutions:
+- **API endpoints returning 404**: Check that environment variables are properly configured
+- **Database connection errors**: Verify DATABASE_URL in environment variables
+- **File upload issues**: Ensure Seafile integration is properly configured
+- **Build failures**: Run `bunx prisma generate` before building
+
+### Workflow for Code Changes
+1.  **Commit** existing changes before starting new work
+2.  **Create plan** at `MIND/PLAN/[plan-name].md`
+3.  **Create task** at `MIND/PLAN/[task-name].md`
+4.  **Execute the task** and update task progress
+5.  **Create summary** at `MIND/SUMMARY/[summary-name].md` when done
+6.  **Run build** (`bun run build`) to ensure no compile errors
+7.  **Fix any build errors** if they occur
+8.  **Commit** all changes AFTER successful build
+9.  **Update version** in `package.json` for every change
+10. **Push** to new branch with format: `tasks/[task-name]/[what-is-being-done]/[date-time]`
+11. **Push ke 2 Remote** - Push ke 2 remote origin dan deploy
+12. **Merge ke Branch** - Merge ke branch target (biasanya `stg` untuk staging atau `prod` untuk production) ke 2 remote origin dan deploy
+
+### GitHub Workflows
+1.  **publish.yml**: Uses branch `main`, stack env and image tag matching version from `package.json`.
+2.  **re-pull.yml**: **Wait for `publish.yml` to complete successfully before running.** Uses branch `main`, stack env and stack name `desa-darmasaba`.
+
+### After Progress
+-   Always give option to continue to GitHub workflows or not
