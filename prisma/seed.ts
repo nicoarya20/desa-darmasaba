@@ -17,7 +17,7 @@ import { seedDemografiPekerjaan } from "./_seeder_list/ekonomi/seed_demografi_pe
 import { seedJumlahPendudukMiskin } from "./_seeder_list/ekonomi/seed_jumlah_penduduk_miskin";
 import { seedJumlahPengangguran } from "./_seeder_list/ekonomi/seed_jumlah_pengangguran";
 import { seedLowonganKerjaLokal } from "./_seeder_list/ekonomi/seed_lowongan_kerja_lokal";
-import { seedPasarDesa } from "./_seeder_list/ekonomi/seed_pasar_desa";
+import { seedKategoriProduk, seedPasarDesa } from "./_seeder_list/ekonomi/seed_pasar_desa";
 import { seedPendapatanAsli } from "./_seeder_list/ekonomi/seed_pendapatan_asli";
 import { seedPendudukUsiaKerjaYangMenganggur } from "./_seeder_list/ekonomi/seed_penduduk_usia_kerja_yang_menganggur";
 import { seedProgramKemiskinan } from "./_seeder_list/ekonomi/seed_program_kemiskinan";
@@ -275,10 +275,13 @@ import seedAssets from "./seed_assets";
   await seedKeamananLingkungan();
 
   // // ====================== MENU EKONOMI ========================
+  // // ==================== SUBMENU PASAR DESA ====================
+  await seedKategoriProduk();
+
   // // ==================== SUBMENU UMKM ==========================
   await seedUmkm();
 
-  // // ==================== SUBMENU PASAR DESA ====================
+  // // ==================== SUBMENU PASAR DESA (PASAR) ============
   await seedPasarDesa();
 
   // // ==================== SUBMENU LOWONGAN KERJA LOKAL ==========
