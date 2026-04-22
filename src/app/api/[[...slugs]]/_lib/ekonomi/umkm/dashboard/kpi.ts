@@ -6,29 +6,72 @@ async function umkmDashboardKpi(context: Context) {
     `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`;
 
   try {
-    const [umkmAktif, totalUmkm, omzetBulanan, kategoriTerbanyak] = await Promise.all([
+    const [umkmAktif, totalUmkm, omzetBulanan] = await Promise.all([
       prisma.umkm.count({ where: { isActive: true, deletedAt: null } }),
       prisma.umkm.count({ where: { deletedAt: null } }),
       prisma.penjualanProduk.aggregate({
         where: { periode, deletedAt: null },
         _sum: { totalNilai: true }
       }),
-      prisma.umkm.groupBy({
+    ]);
+
+    // Hitung Kategori Terpopuler berdasarkan jumlah penjualan
+    const salesByCategory = await prisma.penjualanProduk.findMany({
+      where: { periode, deletedAt: null },
+      select: {
+        jumlah: true,
+        produk: {
+          select: {
+            kategoriProdukId: true
+          }
+        }
+      }
+    });
+
+    let kategoriNama = "-";
+
+    if (salesByCategory.length > 0) {
+      const categoryCounts: Record<string, number> = {};
+      salesByCategory.forEach(sale => {
+        const catId = sale.produk.kategoriProdukId;
+        if (catId) {
+          categoryCounts[catId] = (categoryCounts[catId] || 0) + sale.jumlah;
+        }
+      });
+
+      // Cari ID kategori dengan penjualan tertinggi
+      let topCategoryId = null;
+      let maxSales = 0;
+      for (const [id, count] of Object.entries(categoryCounts)) {
+        if (count > maxSales) {
+          maxSales = count;
+          topCategoryId = id;
+        }
+      }
+
+      if (topCategoryId) {
+        const kat = await prisma.kategoriProduk.findUnique({
+          where: { id: topCategoryId },
+          select: { nama: true }
+        });
+        kategoriNama = kat?.nama || "-";
+      }
+    } else {
+      // Fallback: Jika tidak ada penjualan, ambil kategori dengan UMKM terbanyak
+      const kategoriTerbanyakUmkm = await prisma.umkm.groupBy({
         by: ['kategoriId'],
         _count: { _all: true },
         orderBy: { _count: { kategoriId: 'desc' } },
         take: 1
-      })
-    ]);
-
-    // Ambil nama kategori jika ada
-    let kategoriNama = "-";
-    if (kategoriTerbanyak.length > 0) {
-      const kat = await prisma.kategoriProduk.findUnique({
-        where: { id: kategoriTerbanyak[0].kategoriId },
-        select: { nama: true }
       });
-      kategoriNama = kat?.nama || "-";
+
+      if (kategoriTerbanyakUmkm.length > 0) {
+        const kat = await prisma.kategoriProduk.findUnique({
+          where: { id: kategoriTerbanyakUmkm[0].kategoriId },
+          select: { nama: true }
+        });
+        kategoriNama = kat?.nama || "-";
+      }
     }
 
     return {
