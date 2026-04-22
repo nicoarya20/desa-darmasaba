@@ -124,6 +124,34 @@ export const umkmState = proxy({
         return false;
       }
     },
+    update: {
+      form: { ...defaultUmkmForm },
+      loading: false,
+      async submit(id: string) {
+        const cek = umkmFormSchema.safeParse(this.form);
+        if (!cek.success) return toast.error("Cek kembali form anda");
+        this.loading = true;
+        try {
+          const res = await fetch(`/api/ekonomi/umkm/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(this.form)
+          });
+          const result = await res.json();
+          if (result.success) {
+            toast.success("UMKM berhasil diperbarui");
+            umkmState.umkm.findMany.load();
+            return true;
+          }
+          toast.error(result.message);
+        } catch (e) {
+          toast.error("Gagal memperbarui UMKM");
+        } finally {
+          this.loading = false;
+        }
+        return false;
+      }
+    },
     findUnique: {
       data: null as any,
       loading: false,
@@ -201,6 +229,34 @@ export const umkmState = proxy({
             return true;
           }
         } catch (e) { toast.error("Gagal membuat produk"); } finally { this.loading = false; }
+        return false;
+      }
+    },
+    update: {
+      form: { ...defaultProdukForm },
+      loading: false,
+      async submit(id: string) {
+        const cek = produkFormSchema.safeParse(this.form);
+        if (!cek.success) return toast.error("Cek kembali form anda");
+        this.loading = true;
+        try {
+          const res = await fetch(`/api/ekonomi/umkm/produk/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(this.form)
+          });
+          const result = await res.json();
+          if (result.success) {
+            toast.success("Produk berhasil diperbarui");
+            umkmState.produk.findMany.load();
+            return true;
+          }
+          toast.error(result.message);
+        } catch (e) {
+          toast.error("Gagal memperbarui produk");
+        } finally {
+          this.loading = false;
+        }
         return false;
       }
     }

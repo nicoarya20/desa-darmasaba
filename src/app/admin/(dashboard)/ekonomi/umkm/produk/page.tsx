@@ -87,7 +87,12 @@ function ProdukUmkm() {
                     </TableTd>
                     <TableTd>
                       <Group gap="xs">
-                        <Button variant="subtle" color="blue" size="xs">
+                        <Button
+                          variant="subtle"
+                          color="blue"
+                          size="xs"
+                          onClick={() => router.push(`/admin/ekonomi/umkm/produk/${item.id}/edit`)}
+                        >
                           <IconEdit size={16} />
                         </Button>
                         <Button variant="subtle" color="red" size="xs">
