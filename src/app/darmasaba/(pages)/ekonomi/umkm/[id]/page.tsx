@@ -68,7 +68,7 @@ function Page() {
                   color="green"
                   radius="md"
                   component="a"
-                  href={`https://wa.me/${u.kontak}`}
+                  href={`https://wa.me/${u.kontak?.replace(/[^0-9]/g, '').replace(/^0/, '62')}`}
                   target="_blank"
                   w="fit-content"
                 >
