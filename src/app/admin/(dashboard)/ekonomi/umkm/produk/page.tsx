@@ -39,7 +39,19 @@ function ProdukUmkm() {
   return (
     <Stack gap="lg">
       <Group justify="space-between">
-        <Title order={3}>Daftar Produk UMKM</Title>
+        <Title order={3}>Produk UMKM</Title>
+        <TextInput
+          placeholder="Cari nama produk..."
+          leftSection={<IconSearch size={18} />}
+          value={search}
+          onChange={(e) => setSearch(e.currentTarget.value)}
+          mb="md"
+        />
+      </Group>
+
+      <Paper withBorder p="md" radius="md">
+        <Group justify="space-between" pb={"sm"}>
+        <Title order={4}>Daftar Produk UMKM</Title>
         <Button 
           leftSection={<IconPlus size={18} />} 
           color="blue"
@@ -48,15 +60,6 @@ function ProdukUmkm() {
           Tambah Produk
         </Button>
       </Group>
-
-      <Paper withBorder p="md" radius="md">
-        <TextInput
-          placeholder="Cari nama produk..."
-          leftSection={<IconSearch size={18} />}
-          value={search}
-          onChange={(e) => setSearch(e.currentTarget.value)}
-          mb="md"
-        />
 
         {state.loading ? (
           <Skeleton height={400} />

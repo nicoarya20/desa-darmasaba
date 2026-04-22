@@ -312,10 +312,14 @@ export const umkmState = proxy({
     findManyAll: {
       data: [] as any[],
       loading: false,
-      async load() {
+      async load(search = "") {
         this.loading = true;
         try {
-          const res = await fetch("/api/ekonomi/kategoriproduk/find-many-all");
+          const params = new URLSearchParams();
+          if (search) params.append("search", search);
+          
+          const url = `/api/ekonomi/kategoriproduk/find-many-all${params.toString() ? `?${params.toString()}` : ""}`;
+          const res = await fetch(url);
           const result = await res.json();
           if (result.success) {
             this.data = result.data;
@@ -356,6 +360,8 @@ export const umkmState = proxy({
       }
     }
   }
+
+
 });
 
 export default umkmState;

@@ -37,7 +37,7 @@ function Page() {
           Temukan berbagai produk unggulan dan dukung ekonomi pengusaha desa kami.
         </Text>
 
-        <Tabs value={activeTab} onChange={setActiveTab} color="blue" variant="pills" radius="md">
+        <Tabs value={activeTab} onChange={setActiveTab} color={colors['blue-button']} variant="pills" radius="md">
           <Tabs.List mb="xl">
             <Tabs.Tab value="produk-umkm" leftSection={<IconPackage size={18} />}>
               Katalog Produk

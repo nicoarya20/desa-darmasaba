@@ -20,7 +20,7 @@ import {
   TextInput
 } from '@mantine/core';
 import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
-import { IconPlus, IconSearch, IconEdit, IconTrash } from '@tabler/icons-react';
+import { IconPlus, IconSearch, IconEdit, IconTrash, IconCircleDashedPlus } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
@@ -40,16 +40,6 @@ function DataUmkm() {
     <Stack gap="lg">
       <Group justify="space-between">
         <Title order={3}>Data UMKM</Title>
-        <Button 
-          leftSection={<IconPlus size={18} />} 
-          color="blue"
-          onClick={() => router.push('/admin/ekonomi/umkm/data-umkm/create')}
-        >
-          Tambah UMKM
-        </Button>
-      </Group>
-
-      <Paper withBorder p="md" radius="md">
         <TextInput
           placeholder="Cari UMKM atau Pemilik..."
           leftSection={<IconSearch size={18} />}
@@ -57,6 +47,21 @@ function DataUmkm() {
           onChange={(e) => setSearch(e.currentTarget.value)}
           mb="md"
         />
+
+      </Group>
+
+      <Paper withBorder p="md" radius="md">
+        <Group justify="space-between" mb="md" pb={"sm"}>
+          <Title order={4}>Daftar Berita</Title>
+          <Button
+            leftSection={<IconCircleDashedPlus size={18} />}
+            color="blue"
+            onClick={() => router.push('/admin/ekonomi/umkm/data-umkm/create')}
+          >
+            Tambah UMKM
+          </Button>
+        </Group>
+
 
         {state.loading ? (
           <Skeleton height={400} />

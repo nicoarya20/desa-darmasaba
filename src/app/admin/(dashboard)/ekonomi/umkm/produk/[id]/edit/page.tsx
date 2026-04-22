@@ -108,11 +108,11 @@ export default function EditProdukUmkm() {
         >
           Kembali
         </Button>
-        <Title order={3}>Edit Produk UMKM</Title>
       </Group>
 
-      <Paper withBorder p="xl" radius="md" shadow="sm">
+      <Paper w={{ base: '100%', md: '50%' }} withBorder p="xl" radius="md" shadow="sm">
         <Stack gap="lg">
+          <Title order={3}>Edit Produk UMKM</Title>
           <Box>
             <Text fw={500} size="sm" mb={4}>Foto Produk</Text>
             {!previewImage ? (
