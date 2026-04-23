@@ -1,9 +1,11 @@
 import prisma from "@/lib/prisma";
-import kategoriProduk from "../../data/ekonomi/pasar-desa/kategori-produk.json";
-import pasarDesa from "../../data/ekonomi/pasar-desa/pasar-desa.json";
-import kategoriToPasar from "../../data/ekonomi/pasar-desa/kategori-to-pasar.json";
+import { loadJsonData } from "../../load-json";
 
-export async function seedPasarDesa() {
+const kategoriProduk = loadJsonData("ekonomi/pasar-desa/kategori-produk.json");
+const pasarDesa = loadJsonData("ekonomi/pasar-desa/pasar-desa.json");
+const kategoriToPasar = loadJsonData("ekonomi/pasar-desa/kategori-to-pasar.json");
+
+export async function seedKategoriProduk() {
   console.log("🔄 Seeding Kategori Produk...");
   for (const k of kategoriProduk) {
     await prisma.kategoriProduk.upsert({
@@ -20,11 +22,19 @@ export async function seedPasarDesa() {
     });
   }
   console.log("✅ Kategori Produk seeded successfully");
+}
+
+export async function seedPasarDesa() {
+  // Ensure KategoriProduk is seeded first
+  await seedKategoriProduk();
 
   console.log("🔄 Seeding Pasar Desa...");
   
+    let i = 1;
     for (const p of pasarDesa) {
       let imageId: string | null = null;
+      const umkmId = `umkm-${i}`; // Map to umkm-1, umkm-2, etc.
+      i = (i % 4) + 1;
   
       if (p.imageName) {
         const image = await prisma.fileStorage.findUnique({
@@ -52,6 +62,7 @@ export async function seedPasarDesa() {
           kontak: p.kontak,
           imageId,
           kategoriProdukId: p.kategoriProdukId,
+          umkmId: umkmId,
         },
         create: {
           id: p.id,
@@ -63,6 +74,7 @@ export async function seedPasarDesa() {
           kontak: p.kontak,
           imageId,
           kategoriProdukId: p.kategoriProdukId,
+          umkmId: umkmId,
         },
       });
   

@@ -1,6 +1,29 @@
 import prisma from "@/lib/prisma";
-import pegawaiPpid from "../../../data/ppid/struktur-ppid/pegawai-PPID.json"
-import posisiOrganisasiPPID from "../../../data/ppid/struktur-ppid/posisi-organisasi-PPID.json"
+import { loadJsonData } from "../../../load-json";
+
+interface PegawaiPPID {
+  id: string;
+  namaLengkap: string;
+  gelarAkademik: string;
+  tanggalMasuk: string;
+  email: string;
+  telepon: string;
+  alamat: string;
+  imageName?: string;
+  posisiId: string;
+  isActive: boolean;
+}
+
+interface PosisiOrganisasiPPID {
+  id: string;
+  nama: string;
+  deskripsi: string;
+  hierarki: number;
+  parentId: string | null;
+}
+
+const pegawaiPpid = loadJsonData<PegawaiPPID[]>("ppid/struktur-ppid/pegawai-PPID.json");
+const posisiOrganisasiPPID = loadJsonData<PosisiOrganisasiPPID[][]>("ppid/struktur-ppid/posisi-organisasi-PPID.json");
 
 export async function seedPegawaiPpid() {
 

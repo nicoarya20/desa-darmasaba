@@ -1,0 +1,20 @@
+[
+  {
+    "id": "cmk-daftar-jadwal-001",
+    "name": "Ni Luh Ayu Sri Wati",
+    "tanggal": "2025-06-10",
+    "namaOrtu": "-",
+    "nomor": "081234567890",
+    "alamat": "Banjar Adat Kauh, Desa Darmasaba",
+    "catatan": "Ibu hamil anak ke-2, usia kehamilan 20 minggu"
+  },
+  {
+    "id": "cmk-daftar-jadwal-002",
+    "name": "I Ketut Suardana",
+    "tanggal": "2025-06-06",
+    "namaOrtu": "-",
+    "nomor": "081987654321",
+    "alamat": "Banjar Adat Kangin, Desa Darmasaba",
+    "catatan": "Lansia 72 tahun, riwayat hipertensi"
+  }
+]

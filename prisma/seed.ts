@@ -1,71 +1,86 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import prisma from "@/lib/prisma";
+import { seedBerita } from "./_seeder_list/desa/berita/seed_berita";
+import { seedFoto } from "./_seeder_list/desa/gallery/foto/seed_foto";
 import { seedVideo } from "./_seeder_list/desa/gallery/video/seed_video";
 import { seedLayanan } from "./_seeder_list/desa/layanan/seed_layanan";
+import { seedMusikDesa } from "./_seeder_list/desa/musik-desa/seed_musik_desa";
 import { seedPenghargaan } from "./_seeder_list/desa/penghargaan/penghargaan";
 import { seedPengumuman } from "./_seeder_list/desa/pengumuman/seed_pengumuman";
 import { seedPotensi } from "./_seeder_list/desa/potensi/seed_potensi";
 import { seedProfileDesa } from "./_seeder_list/desa/profile-desa/seed_profile_desa";
 import { seedProfilePerbekel } from "./_seeder_list/desa/profile-desa/seed_profile_perbekel";
+import { seedAPBDes } from "./_seeder_list/ekonomi/seed_apbdes";
+import { seedAPBDesItem } from "./_seeder_list/ekonomi/seed_apbdes_item";
+import { seedDemografiPekerjaan } from "./_seeder_list/ekonomi/seed_demografi_pekerjaan";
+import { seedJumlahPendudukMiskin } from "./_seeder_list/ekonomi/seed_jumlah_penduduk_miskin";
+import { seedJumlahPengangguran } from "./_seeder_list/ekonomi/seed_jumlah_pengangguran";
+import { seedLowonganKerjaLokal } from "./_seeder_list/ekonomi/seed_lowongan_kerja_lokal";
+import { seedKategoriProduk, seedPasarDesa } from "./_seeder_list/ekonomi/seed_pasar_desa";
+import { seedPendapatanAsli } from "./_seeder_list/ekonomi/seed_pendapatan_asli";
+import { seedPendudukUsiaKerjaYangMenganggur } from "./_seeder_list/ekonomi/seed_penduduk_usia_kerja_yang_menganggur";
+import { seedProgramKemiskinan } from "./_seeder_list/ekonomi/seed_program_kemiskinan";
+import { seedSektorUnggulanDesa } from "./_seeder_list/ekonomi/seed_sektor_unggulan_desa";
+import { seedStrukturBumdes } from "./_seeder_list/ekonomi/seed_struktur_bumdes";
+import { seedUmkm } from "./_seeder_list/ekonomi/seed_umkm";
+import { seedAjukan } from "./_seeder_list/inovasi/seed_ajukan";
+import { seedDesaDigital } from "./_seeder_list/inovasi/seed_desa_digital";
+import { seedInfoTeknologi } from "./_seeder_list/inovasi/seed_info_teknologi";
+import { seedKolaborasiInovasi } from "./_seeder_list/inovasi/seed_kolaborasi_inovasi";
+import { seedLayananOnlineDesa } from "./_seeder_list/inovasi/seed_layanan_online_desa";
+import { seedProgramKreatifDesa } from "./_seeder_list/inovasi/seed_program_kreatif_desa";
+import { seedKeamananLingkungan } from "./_seeder_list/keamanan/seed_keamanan_lingkungan";
+import { seedKontakDaruratKeamanan } from "./_seeder_list/keamanan/seed_kontak_darurat";
+import { seedLaporanPublik } from "./_seeder_list/keamanan/seed_laporan_publik";
+import { seedPencegahanKriminalitas } from "./_seeder_list/keamanan/seed_pencegahan_kriminalitas";
+import { seedPolsekTerdekat } from "./_seeder_list/keamanan/seed_polsek_terdekat";
+import { seedArtikelKesehatan } from "./_seeder_list/kesehatan/artikel-kesehatan/seed_artikel_kesehatan";
+import { seedFasilitasKesehatan } from "./_seeder_list/kesehatan/fasilitas-kesehatan/seed_fasilitas_kesehatan";
+import { seedInfoWabahPenyakit } from "./_seeder_list/kesehatan/info-wabah-penyakit/seed_info_wabah_penyakit";
+import { seedJadwalKegiatan } from "./_seeder_list/kesehatan/jadwal-kegiatan/seed_jadwal_kegiatan";
+import { seedKontakDarurat } from "./_seeder_list/kesehatan/kontak-darurat/seed_kontak_darurat";
+import { seedPenangananDarurat } from "./_seeder_list/kesehatan/penanganan-darurat/seed_penanganan_darurat";
+import { seedPosyandu } from "./_seeder_list/kesehatan/posyandu/seed_posyandu";
+import { seedProgramKesehatan } from "./_seeder_list/kesehatan/program-kesehatan/seed_program_kesehatan";
+import { seedPuskesmas } from "./_seeder_list/kesehatan/puskesmas/seed_puskesmas";
+import { seedGrafikKepuasan } from "./_seeder_list/kesehatan/seed_grafik_kepuasan";
+import { seedKelahiranKematian } from "./_seeder_list/kesehatan/seed_kelahiran_kematian";
 import { seedDesaAntiKorupsi } from "./_seeder_list/landing-page/desa-anti-korupsi/seed_desa_anti_korupsi";
 import { seedPrestasiDesa } from "./_seeder_list/landing-page/prestasi-desa/seed_prestasi_desa";
 import { seedMediaSosial } from "./_seeder_list/landing-page/profil_landing_page/seed_media_sosial";
 import { seedProfileLP } from "./_seeder_list/landing-page/profil_landing_page/seed_profile_lp";
 import { seedProgramInovasi } from "./_seeder_list/landing-page/profil_landing_page/seed_program_inovasi";
 import { seedSDGSDesa } from "./_seeder_list/landing-page/sdgs/seed_sdgs";
+import { seedDataGotongRoyong } from "./_seeder_list/lingkungan/seed_data_gotong_royong";
+import { seedDataLingkunganDesa } from "./_seeder_list/lingkungan/seed_data_lingkungan_desa";
+import { seedEdukasiLingkungan } from "./_seeder_list/lingkungan/seed_edukasi_lingkungan";
+import { seedKonservasiAdatBali } from "./_seeder_list/lingkungan/seed_konservasi_adat_bali";
+import { seedPengelolaanSampah } from "./_seeder_list/lingkungan/seed_pengelolaan_sampah";
+import { seedProgramPenghijauan } from "./_seeder_list/lingkungan/seed_program_penghijauan";
+import { seedBeasiswaPendaftar } from "./_seeder_list/pendidikan/seed_beasiswa_pendaftar";
+import { seedBimbinganBelajar } from "./_seeder_list/pendidikan/seed_bimbingan_belajar";
+import { seedDataPendidikan } from "./_seeder_list/pendidikan/seed_data_pendidikan";
+import { seedDataPerpustakaan } from "./_seeder_list/pendidikan/seed_data_perpustakaan";
+import { seedInfoProgramPendidikan } from "./_seeder_list/pendidikan/seed_info_program_pendidikan";
+import { seedInfoSekolah } from "./_seeder_list/pendidikan/seed_info_sekolah";
+import { seedKeunggulanProgram } from "./_seeder_list/pendidikan/seed_keunggulan_program";
+import { seedPendidikanNonFormal } from "./_seeder_list/pendidikan/seed_pendidikan_non_formal";
+import { seedDataBanjar } from "./_seeder_list/kependudukan/seed_data_banjar";
+import { seedDinamikaPenduduk } from "./_seeder_list/kependudukan/seed_dinamika_penduduk";
+import { seedDistribusiAgama } from "./_seeder_list/kependudukan/seed_distribusi_agama";
+import { seedDistribusiUmur } from "./_seeder_list/kependudukan/seed_distribusi_umur";
+import { seedMigrasiPenduduk } from "./_seeder_list/kependudukan/seed_migrasi_penduduk";
 import { seedDaftarInformasiPublikPpid } from "./_seeder_list/ppid/daftar-informasi-publik-ppid/seed_daftar_informasi_publik_ppid";
 import { seedDasarHukumPpid } from "./_seeder_list/ppid/dasar-hukum-ppid/seed_dasar_hukum_ppid";
 import { seedIkmPpid } from "./_seeder_list/ppid/ikm/seed_ikm";
+import { seedProfilPpd } from "./_seeder_list/ppid/profil-ppid/seed_profil_ppd";
 import { seedPegawaiPpid } from "./_seeder_list/ppid/struktur-ppid/seed_struktur_ppid";
 import { seedVisiMisiPpid } from "./_seeder_list/ppid/visi-misi-ppid/seed_visi_misi_ppid";
-import dataPendidikan from "./data/pendidikan/data-pendidikan/data-pendidikan.json";
 import roles from "./data/user/roles.json";
 import users from "./data/user/users.json";
 import { safeSeedUnique } from "./safeseedUnique";
 import seedAssets from "./seed_assets";
-import { seedBerita } from "./_seeder_list/desa/berita/seed_berita";
-import { seedFoto } from "./_seeder_list/desa/gallery/foto/seed_foto";
-import { seedPosyandu } from "./_seeder_list/kesehatan/posyandu/seed_posyandu";
-import { seedPuskesmas } from "./_seeder_list/kesehatan/puskesmas/seed_puskesmas";
-import { seedProgramKesehatan } from "./_seeder_list/kesehatan/program-kesehatan/seed_program_kesehatan";
-import { seedPenangananDarurat } from "./_seeder_list/kesehatan/penanganan-darurat/seed_penanganan_darurat";
-import { seedKontakDarurat } from "./_seeder_list/kesehatan/kontak-darurat/seed_kontak_darurat";
-import { seedInfoWabahPenyakit } from "./_seeder_list/kesehatan/info-wabah-penyakit/seed_info_wabah_penyakit";
-import { seedKeamananLingkungan } from "./_seeder_list/keamanan/seed_keamanan_lingkungan";
-import { seedPolsekTerdekat } from "./_seeder_list/keamanan/seed_polsek_terdekat";
-import { seedKontakDaruratKeamanan } from "./_seeder_list/keamanan/seed_kontak_darurat";
-import { seedPencegahanKriminalitas } from "./_seeder_list/keamanan/seed_pencegahan_kriminalitas";
-import { seedLaporanPublik } from "./_seeder_list/keamanan/seed_laporan_publik";
-import { seedPasarDesa } from "./_seeder_list/ekonomi/seed_pasar_desa";
-import { seedLowonganKerjaLokal } from "./_seeder_list/ekonomi/seed_lowongan_kerja_lokal";
-import { seedDemografiPekerjaan } from "./_seeder_list/ekonomi/seed_demografi_pekerjaan";
-import { seedSektorUnggulanDesa } from "./_seeder_list/ekonomi/seed_sektor_unggulan_desa";
-import { seedProgramKemiskinan } from "./_seeder_list/ekonomi/seed_program_kemiskinan";
-import { seedJumlahPendudukMiskin } from "./_seeder_list/ekonomi/seed_jumlah_penduduk_miskin";
-import { seedPendudukUsiaKerjaYangMenganggur } from "./_seeder_list/ekonomi/seed_penduduk_usia_kerja_yang_menganggur";
-import { seedJumlahPengangguran } from "./_seeder_list/ekonomi/seed_jumlah_pengangguran";
-import { seedPendapatanAsli } from "./_seeder_list/ekonomi/seed_pendapatan_asli";
-import { seedStrukturBumdes } from "./_seeder_list/ekonomi/seed_struktur_bumdes";
-import { seedAjukan } from "./_seeder_list/inovasi/seed_ajukan";
-import { seedDesaDigital } from "./_seeder_list/inovasi/seed_desa_digital";
-import { seedLayananOnlineDesa } from "./_seeder_list/inovasi/seed_layanan_online_desa";
-import { seedProgramKreatifDesa } from "./_seeder_list/inovasi/seed_program_kreatif_desa";
-import { seedKolaborasiInovasi } from "./_seeder_list/inovasi/seed_kolaborasi_inovasi";
-import { seedInfoTeknologi } from "./_seeder_list/inovasi/seed_info_teknologi";
-import { seedPengelolaanSampah } from "./_seeder_list/lingkungan/seed_pengelolaan_sampah";
-import { seedProgramPenghijauan } from "./_seeder_list/lingkungan/seed_program_penghijauan";
-import { seedDataLingkunganDesa } from "./_seeder_list/lingkungan/seed_data_lingkungan_desa";
-import { seedDataGotongRoyong } from "./_seeder_list/lingkungan/seed_data_gotong_royong";
-import { seedEdukasiLingkungan } from "./_seeder_list/lingkungan/seed_edukasi_lingkungan";
-import { seedKonservasiAdatBali } from "./_seeder_list/lingkungan/seed_konservasi_adat_bali";
-import { seedInfoSekolah } from "./_seeder_list/pendidikan/seed_info_sekolah";
-import { seedInfoProgramPendidikan } from "./_seeder_list/pendidikan/seed_info_program_pendidikan";
-import { seedBimbinganBelajar } from "./_seeder_list/pendidikan/seed_bimbingan_belajar";
-import { seedDataPendidikan } from "./_seeder_list/pendidikan/seed_data_pendidikan";
-import { seedPendidikanNonFormal } from "./_seeder_list/pendidikan/seed_pendidikan_non_formal";
-import { seedDataPerpustakaan } from "./_seeder_list/pendidikan/seed_data_perpustakaan";
-import { seedProfilPpd } from "./_seeder_list/ppid/profil-ppid/seed_profil_ppd";
 
 (async () => {
   // Always run seedAssets to handle new images without duplication
@@ -261,6 +276,12 @@ import { seedProfilPpd } from "./_seeder_list/ppid/profil-ppid/seed_profil_ppd";
 
   // // ====================== MENU EKONOMI ========================
   // // ==================== SUBMENU PASAR DESA ====================
+  await seedKategoriProduk();
+
+  // // ==================== SUBMENU UMKM ==========================
+  await seedUmkm();
+
+  // // ==================== SUBMENU PASAR DESA (PASAR) ============
   await seedPasarDesa();
 
   // // ==================== SUBMENU LOWONGAN KERJA LOKAL ==========
@@ -344,6 +365,32 @@ import { seedProfilPpd } from "./_seeder_list/ppid/profil-ppid/seed_profil_ppd";
 
   // =========== SUBMENU DATA PENDIDIKAN =====================
   await seedDataPendidikan();
+
+  // =========== NEW SEEDERS =====================
+  // ===== KESEHATAN =====
+  await seedFasilitasKesehatan();
+  await seedArtikelKesehatan();
+  await seedJadwalKegiatan();
+  await seedKelahiranKematian();
+  await seedGrafikKepuasan();
+
+  // ===== EKONOMI =====
+  await seedAPBDes();
+  await seedAPBDesItem();
+
+  // ===== PENDIDIKAN =====
+  await seedKeunggulanProgram();
+  await seedBeasiswaPendaftar();
+
+  // ===== DESA =====
+  await seedMusikDesa();
+
+  // ===== KEPENDUDUKAN =====
+  await seedDataBanjar();
+  await seedDistribusiAgama();
+  await seedDistribusiUmur();
+  await seedMigrasiPenduduk();
+  await seedDinamikaPenduduk();
 })()
   .then(() => prisma.$disconnect())
   .catch((e) => {

@@ -1,0 +1,17 @@
+[
+  {
+    "id": "cmk-data-001",
+    "kematianId": "cmk-kematian-001",
+    "kelahiranId": "cmk-kelahiran-001"
+  },
+  {
+    "id": "cmk-data-002",
+    "kematianId": "cmk-kematian-002",
+    "kelahiranId": "cmk-kelahiran-002"
+  },
+  {
+    "id": "cmk-data-003",
+    "kematianId": "cmk-kematian-003",
+    "kelahiranId": "cmk-kelahiran-003"
+  }
+]

@@ -1,5 +1,7 @@
 import prisma from "@/lib/prisma";
-import demografiPekerjaan from "../../data/ekonomi/demografi-pekerjaan/demografi-pekerjaan.json";
+import { loadJsonData } from "../../load-json";
+
+const demografiPekerjaan = loadJsonData("ekonomi/demografi-pekerjaan/demografi-pekerjaan.json");
 
 export async function seedDemografiPekerjaan() {
   console.log("🔄 Seeding Demografi Pekerjaan...");

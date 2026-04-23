@@ -1,6 +1,8 @@
 import prisma from "@/lib/prisma";
-import kategoriBerita from "../../../data/desa/berita/kategori-berita.json";
-import beritaJson from "../../../data/desa/berita/berita.json";
+import { loadJsonData } from "../../../load-json";
+
+const kategoriBerita = loadJsonData("desa/berita/kategori-berita.json");
+const beritaJson = loadJsonData("desa/berita/berita.json");
 
 export async function seedBerita() {
   // ================== SUBMENU BERITA ========================

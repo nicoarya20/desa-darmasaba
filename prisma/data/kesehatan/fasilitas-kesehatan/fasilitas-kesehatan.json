@@ -1,0 +1,11 @@
+[
+  {
+    "id": "cmk-faskes-001",
+    "name": "Puskesmas Darmasaba",
+    "informasiUmumId": "cmk-info-001",
+    "layananUnggulanId": "cmk-layanan-001",
+    "fasilitasPendukungId": "cmk-fasilitas-001",
+    "prosedurPendaftaranId": "cmk-prosedur-001",
+    "imageName": null
+  }
+]

@@ -1,0 +1,38 @@
+[
+  {
+    "id": "cmk-agama-001",
+    "agama": "HINDU",
+    "jumlah": 3850,
+    "tahun": 2026
+  },
+  {
+    "id": "cmk-agama-002",
+    "agama": "ISLAM",
+    "jumlah": 285,
+    "tahun": 2026
+  },
+  {
+    "id": "cmk-agama-003",
+    "agama": "KRISTEN_PROTESTAN",
+    "jumlah": 42,
+    "tahun": 2026
+  },
+  {
+    "id": "cmk-agama-004",
+    "agama": "KRISTEN_KATOLIK",
+    "jumlah": 28,
+    "tahun": 2026
+  },
+  {
+    "id": "cmk-agama-005",
+    "agama": "BUDDHA",
+    "jumlah": 8,
+    "tahun": 2026
+  },
+  {
+    "id": "cmk-agama-006",
+    "agama": "KONGHUCU",
+    "jumlah": 2,
+    "tahun": 2026
+  }
+]

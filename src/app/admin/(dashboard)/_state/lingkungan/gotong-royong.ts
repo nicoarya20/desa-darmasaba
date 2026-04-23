@@ -155,11 +155,11 @@ const kegiatanDesa = proxy({
           toast.success(result.message || "kegiatan desa berhasil dihapus");
           await kegiatanDesa.findMany.load(); // refresh list
         } else {
-          toast.error(result?.message || "Gagal menghapus pasar desa");
+          toast.error(result?.message || "Gagal menghapus gotong royong");
         }
       } catch (error) {
         console.error("Gagal delete:", error);
-        toast.error("Terjadi kesalahan saat menghapus pasar desa");
+        toast.error("Terjadi kesalahan saat menghapus gotong royong");
       } finally {
         kegiatanDesa.delete.loading = false;
       }

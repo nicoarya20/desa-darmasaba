@@ -1,0 +1,44 @@
+[
+  {
+    "id": "menu-child-001",
+    "name": "Sejarah Desa",
+    "link": "/profil-desa/sejarah",
+    "isActive": true,
+    "appMenuId": "menu-002"
+  },
+  {
+    "id": "menu-child-002",
+    "name": "Visi Misi",
+    "link": "/profil-desa/visi-misi",
+    "isActive": true,
+    "appMenuId": "menu-002"
+  },
+  {
+    "id": "menu-child-003",
+    "name": "Surat Keterangan",
+    "link": "/layanan/surat-keterangan",
+    "isActive": true,
+    "appMenuId": "menu-003"
+  },
+  {
+    "id": "menu-child-004",
+    "name": "Perizinan",
+    "link": "/layanan/perizinan",
+    "isActive": true,
+    "appMenuId": "menu-003"
+  },
+  {
+    "id": "menu-child-005",
+    "name": "Berita Desa",
+    "link": "/informasi/berita",
+    "isActive": true,
+    "appMenuId": "menu-004"
+  },
+  {
+    "id": "menu-child-006",
+    "name": "Pengumuman",
+    "link": "/informasi/pengumuman",
+    "isActive": true,
+    "appMenuId": "menu-004"
+  }
+]

@@ -29,6 +29,9 @@ export async function POST(req: Request) {
 
       console.log(`🔑 DEBUG OTP [${nomor}]: ${codeOtp}`);
 
+      let waSuccess = false;
+      let waErrorMessage = "";
+
       try {
         const waResponse = await sendCodeOtp({
           nomor,
@@ -36,25 +39,29 @@ export async function POST(req: Request) {
         });
 
         if (!waResponse.ok) {
-          console.error(
-            `⚠️ WA Service HTTP Error: ${waResponse.status} ${waResponse.statusText}. Continuing since OTP is logged.`
-          );
+          waErrorMessage = `WA Service HTTP Error: ${waResponse.status} ${waResponse.statusText}`;
+          console.error(`⚠️ ${waErrorMessage}. Continuing since OTP is logged.`);
           console.log(`💡 Use this OTP to login: ${codeOtp}`);
         } else {
           const sendWa = await waResponse.json();
           console.log("📱 WA Response:", sendWa);
 
           if (sendWa.status !== "success") {
-            console.error("⚠️ WA Service Logic Error:", sendWa);
+            waErrorMessage = `WA Service Logic Error: ${JSON.stringify(sendWa)}`;
+            console.error("⚠️", waErrorMessage);
+          } else {
+            waSuccess = true;
           }
         }
       } catch (waError: unknown) {
         const errorMessage =
           waError instanceof Error ? waError.message : String(waError);
 
+        waErrorMessage = `WA Connection Exception: ${errorMessage}`;
         console.error(
-          "⚠️ WA Connection Exception. Continuing since OTP is logged.",
-          errorMessage
+          "⚠️",
+          waErrorMessage,
+          ". Continuing since OTP is logged."
         );
       }
 
@@ -71,11 +78,25 @@ export async function POST(req: Request) {
         path: "/",
       });
 
+      // Include debug info for non-production environments when WA fails
+      const isNonProd = process.env.NODE_ENV !== "production";
+      const includeDebug = isNonProd && !waSuccess;
+
       return NextResponse.json({
         success: true,
-        message: "Kode verifikasi dikirim",
+        message: waSuccess
+          ? "Kode verifikasi dikirim"
+          : "Kode verifikasi dibuat (WhatsApp gagal terkirim)",
         kodeId: createOtpId.id,
         isRegistered: true,
+        waSuccess,
+        ...(includeDebug && {
+          debug: {
+            codeOtp,
+            waErrorMessage,
+            note: "Hanya muncul di development/staging. Hapus di production.",
+          },
+        }),
       });
     } else {
       return NextResponse.json({

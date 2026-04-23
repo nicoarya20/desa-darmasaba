@@ -1,5 +1,7 @@
 import prisma from "@/lib/prisma";
-import posyanduJson from "../../../data/kesehatan/posyandu/posyandu.json";
+import { loadJsonData } from "../../../load-json";
+
+const posyanduJson = loadJsonData("kesehatan/posyandu/posyandu.json");
 
 export async function seedPosyandu() {
   console.log("🔄 Seeding Posyandu...");

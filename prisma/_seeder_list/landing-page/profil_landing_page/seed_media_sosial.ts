@@ -1,5 +1,7 @@
 import prisma from "@/lib/prisma";
-import mediaSosial from "../../../data/landing-page/profile/mediaSosial.json"
+import { loadJsonData } from "../../../load-json";
+
+const mediaSosial = loadJsonData("landing-page/profile/mediaSosial.json");
 
 export async function seedMediaSosial() {
   console.log("🔄 Seeding Media Sosial...");

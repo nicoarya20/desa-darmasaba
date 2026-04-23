@@ -1,0 +1,28 @@
+[
+  {
+    "id": "cmk-artikel-001",
+    "title": "Demam Berdarah Dengue (DBD): Kenali Gejala dan Cara Pencegahannya",
+    "content": "<p>Demam Berdarah Dengue (DBD) adalah penyakit yang disebabkan oleh virus dengue yang ditularkan melalui gigitan nyamuk <em>Aedes aegypti</em>. Penyakit ini masih menjadi masalah kesehatan utama di Indonesia, termasuk di Bali. Setiap tahunnya, terutama pada musim hujan, kasus DBD cenderung meningkat.</p><p>Di Desa Darmasaba, upaya pencegahan dilakukan melalui program 3M Plus (Menguras, Menutup, Mengubur) serta fogging pada area yang terdampak. Artikel ini akan membantu Anda mengenali gejala, cara pencegahan, dan pertolongan pertama jika terinfeksi.</p>",
+    "imageId": null,
+    "imageName": "TDQReg1lQ73s39crXW0ra-mobile.webp",
+    "introductionId": "cmk-intro-001",
+    "symptomId": "cmk-symptom-001",
+    "preventionId": "cmk-prevention-001",
+    "firstAidId": "cmk-firstaid-001",
+    "mythVsFactId": "cmk-myth-001",
+    "doctorSignId": "cmk-doctor-001"
+  },
+  {
+    "id": "cmk-artikel-002",
+    "title": "Diare pada Anak: Penyebab, Gejala, dan Cara Mengatasinya",
+    "content": "<p>Diare merupakan salah satu penyakit yang sering menyerang anak-anak, terutama di daerah tropis seperti Indonesia. Diare pada anak bisa disebabkan oleh infeksi virus, bakteri, atau parasit yang masuk melalui makanan dan minuman yang tidak bersih.</p><p>Dehidrasi adalah komplikasi paling berbahaya dari diare pada anak. Oleh karena itu, pemberian cairan yang cukup sangat penting. Artikel ini membahas tanda-tanda diare, cara pencegahan, dan pertolongan pertama yang bisa dilakukan orang tua di rumah.</p>",
+    "imageId": null,
+    "imageName": "EcQIGOF6LW1dIKE53vmba-mobile.webp",
+    "introductionId": "cmk-intro-002",
+    "symptomId": "cmk-symptom-002",
+    "preventionId": "cmk-prevention-002",
+    "firstAidId": "cmk-firstaid-002",
+    "mythVsFactId": "cmk-myth-002",
+    "doctorSignId": "cmk-doctor-002"
+  }
+]

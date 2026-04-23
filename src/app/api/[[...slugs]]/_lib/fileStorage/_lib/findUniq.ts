@@ -3,6 +3,8 @@ import { Context } from "elysia";
 import fs from "fs/promises";
 import path from "path";
 
+const UPLOAD_DIR = process.env.WIBU_UPLOAD_DIR;
+
 const fileStorageFindUnique = async (context: Context) => {
   const { name } = context.params;
 
@@ -20,9 +22,17 @@ const fileStorageFindUnique = async (context: Context) => {
     };
   }
 
+  if (!UPLOAD_DIR) {
+    context.set.status = "Internal Server Error";
+    return {
+      status: 500,
+      message: "UPLOAD_DIR is not defined",
+    };
+  }
+
   console.log(data);
 
-  const file = await fs.readFile(path.join(data.path, data.name));
+  const file = await fs.readFile(path.join(UPLOAD_DIR, data.path, data.name));
   context.set.headers = {
     "Content-Type": data.mimeType,
     "Content-Length": file.length,

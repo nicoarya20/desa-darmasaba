@@ -207,9 +207,9 @@ export const devBar = [
     path: "",
     children: [
       {
-        id: "Ekonomi_1",
-        name: "Pasar Desa",
-        path: "/admin/ekonomi/pasar-desa/produk-pasar-desa"
+        id: "Ekonomi_UMKM_1",
+        name: "UMKM",
+        path: "/admin/ekonomi/umkm/dashboard"
       },
       {
         id: "Ekonomi_2",
@@ -370,6 +370,33 @@ export const devBar = [
         id: "Pendidikan_7",
         name: "Data Pendidikan",
         path: "/admin/pendidikan/data-pendidikan"
+      }
+    ]
+  },
+  {
+    id: "Kependudukan",
+    name: "Kependudukan",
+    path: "",
+    children: [
+      {
+        id: "Kependudukan_1",
+        name: "Distribusi Agama",
+        path: "/admin/kependudukan/distribusi-agama"
+      },
+      {
+        id: "Kependudukan_2",
+        name: "Distribusi Umur",
+        path: "/admin/kependudukan/distribusi-umur"
+      },
+      {
+        id: "Kependudukan_3",
+        name: "Data Banjar",
+        path: "/admin/kependudukan/data-banjar"
+      },
+      {
+        id: "Kependudukan_4",
+        name: "Migrasi Penduduk",
+        path: "/admin/kependudukan/migrasi-penduduk"
       }
     ]
   },
@@ -611,9 +638,24 @@ export const navBar = [
     path: "",
     children: [
       {
-        id: "Ekonomi_1",
-        name: "Pasar Desa",
-        path: "/admin/ekonomi/pasar-desa/produk-pasar-desa"
+        id: "Ekonomi_UMKM_1",
+        name: "UMKM - Dashboard",
+        path: "/admin/ekonomi/umkm/dashboard"
+      },
+      {
+        id: "Ekonomi_UMKM_2",
+        name: "UMKM - Data UMKM",
+        path: "/admin/ekonomi/umkm/data-umkm"
+      },
+      {
+        id: "Ekonomi_UMKM_3",
+        name: "UMKM - Produk",
+        path: "/admin/ekonomi/umkm/produk"
+      },
+      {
+        id: "Ekonomi_UMKM_4",
+        name: "UMKM - Penjualan",
+        path: "/admin/ekonomi/umkm/penjualan"
       },
       {
         id: "Ekonomi_2",
@@ -774,6 +816,33 @@ export const navBar = [
         id: "Pendidikan_7",
         name: "Data Pendidikan",
         path: "/admin/pendidikan/data-pendidikan"
+      }
+    ]
+  },
+  {
+    id: "Kependudukan",
+    name: "Kependudukan",
+    path: "",
+    children: [
+      {
+        id: "Kependudukan_1",
+        name: "Distribusi Agama",
+        path: "/admin/kependudukan/distribusi-agama"
+      },
+      {
+        id: "Kependudukan_2",
+        name: "Distribusi Umur",
+        path: "/admin/kependudukan/distribusi-umur"
+      },
+      {
+        id: "Kependudukan_3",
+        name: "Data Banjar",
+        path: "/admin/kependudukan/data-banjar"
+      },
+      {
+        id: "Kependudukan_4",
+        name: "Migrasi Penduduk",
+        path: "/admin/kependudukan/migrasi-penduduk"
       }
     ]
   },
@@ -973,9 +1042,24 @@ export const role1 = [
     path: "",
     children: [
       {
-        id: "Ekonomi_1",
-        name: "Pasar Desa",
-        path: "/admin/ekonomi/pasar-desa/produk-pasar-desa"
+        id: "Ekonomi_UMKM_1",
+        name: "UMKM - Dashboard",
+        path: "/admin/ekonomi/umkm/dashboard"
+      },
+      {
+        id: "Ekonomi_UMKM_2",
+        name: "UMKM - Data UMKM",
+        path: "/admin/ekonomi/umkm/data-umkm"
+      },
+      {
+        id: "Ekonomi_UMKM_3",
+        name: "UMKM - Produk",
+        path: "/admin/ekonomi/umkm/produk"
+      },
+      {
+        id: "Ekonomi_UMKM_4",
+        name: "UMKM - Penjualan",
+        path: "/admin/ekonomi/umkm/penjualan"
       },
       {
         id: "Ekonomi_2",
@@ -1096,6 +1180,33 @@ export const role1 = [
         id: "Lingkungan_6",
         name: "Konservasi Adat Bali",
         path: "/admin/lingkungan/konservasi-adat-bali/filosofi-tri-hita-karana"
+      }
+    ]
+  },
+   {
+    id: "Kependudukan",
+    name: "Kependudukan",
+    path: "",
+    children: [
+      {
+        id: "Kependudukan_1",
+        name: "Distribusi Agama",
+        path: "/admin/kependudukan/distribusi-agama"
+      },
+      {
+        id: "Kependudukan_2",
+        name: "Distribusi Umur",
+        path: "/admin/kependudukan/distribusi-umur"
+      },
+      {
+        id: "Kependudukan_3",
+        name: "Data Banjar",
+        path: "/admin/kependudukan/data-banjar"
+      },
+      {
+        id: "Kependudukan_4",
+        name: "Migrasi Penduduk",
+        path: "/admin/kependudukan/migrasi-penduduk"
       }
     ]
   },

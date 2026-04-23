@@ -1,8 +1,10 @@
 import prisma from "@/lib/prisma";
-import jenjangPendidikan from "../../data/pendidikan/info-sekolah/jenjang-pendidikan.json";
-import lembagaPendidikan from "../../data/pendidikan/info-sekolah/lembaga.json";
-import siswa from "../../data/pendidikan/info-sekolah/siswa.json";
-import pengajar from "../../data/pendidikan/info-sekolah/pengajar.json";
+import { loadJsonData } from "../../load-json";
+
+const jenjangPendidikan = loadJsonData("pendidikan/info-sekolah/jenjang-pendidikan.json");
+const lembagaPendidikan = loadJsonData("pendidikan/info-sekolah/lembaga.json");
+const siswa = loadJsonData("pendidikan/info-sekolah/siswa.json");
+const pengajar = loadJsonData("pendidikan/info-sekolah/pengajar.json");
 
 export async function seedInfoSekolah() {
   for (const j of jenjangPendidikan) {

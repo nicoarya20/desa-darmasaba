@@ -1,0 +1,32 @@
+[
+  {
+    "id": "cmk-umur-001",
+    "rentangUmur": "0-14",
+    "jumlah": 820,
+    "tahun": 2026
+  },
+  {
+    "id": "cmk-umur-002",
+    "rentangUmur": "15-24",
+    "jumlah": 650,
+    "tahun": 2026
+  },
+  {
+    "id": "cmk-umur-003",
+    "rentangUmur": "25-54",
+    "jumlah": 1680,
+    "tahun": 2026
+  },
+  {
+    "id": "cmk-umur-004",
+    "rentangUmur": "55-64",
+    "jumlah": 520,
+    "tahun": 2026
+  },
+  {
+    "id": "cmk-umur-005",
+    "rentangUmur": "65+",
+    "jumlah": 545,
+    "tahun": 2026
+  }
+]

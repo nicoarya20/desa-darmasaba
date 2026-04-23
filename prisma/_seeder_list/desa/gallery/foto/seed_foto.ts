@@ -1,5 +1,7 @@
 import prisma from "@/lib/prisma";
-import foto from "../../../../data/desa/gallery/foto/foto.json";
+import { loadJsonData } from "../../../../load-json";
+
+const foto = loadJsonData("desa/gallery/foto/foto.json");
 
 export async function seedFoto() {
   console.log("🔄 Seeding Foto...");

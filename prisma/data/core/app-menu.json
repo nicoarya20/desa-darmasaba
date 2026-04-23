@@ -1,0 +1,32 @@
+[
+  {
+    "id": "menu-001",
+    "name": "Beranda",
+    "link": "/",
+    "isActive": true
+  },
+  {
+    "id": "menu-002",
+    "name": "Profil Desa",
+    "link": "/profil-desa",
+    "isActive": true
+  },
+  {
+    "id": "menu-003",
+    "name": "Layanan",
+    "link": "/layanan",
+    "isActive": true
+  },
+  {
+    "id": "menu-004",
+    "name": "Informasi",
+    "link": "/informasi",
+    "isActive": true
+  },
+  {
+    "id": "menu-005",
+    "name": "Kontak",
+    "link": "/kontak",
+    "isActive": true
+  }
+]

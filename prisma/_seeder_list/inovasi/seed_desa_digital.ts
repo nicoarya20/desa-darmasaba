@@ -1,5 +1,7 @@
 import prisma from "@/lib/prisma";
-import desaDigital from "../../data/inovasi/desa-digital/desa-digital.json";
+import { loadJsonData } from "../../load-json";
+
+const desaDigital = loadJsonData("inovasi/desa-digital/desa-digital.json");
 
 export async function seedDesaDigital() {
   console.log("🔄 Seeding Desa Digital...");

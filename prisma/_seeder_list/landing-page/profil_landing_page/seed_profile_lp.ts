@@ -1,5 +1,7 @@
 import prisma from "@/lib/prisma";
-import profilePejabatDesa from "../../../data/landing-page/profile/profile.json";
+import { loadJsonData } from "../../../load-json";
+
+const profilePejabatDesa = loadJsonData("landing-page/profile/profile.json");
 
 export async function seedProfileLP() {
   console.log("🔄 Seeding Pejabat Desa...");

@@ -1,10 +1,12 @@
 import prisma from "@/lib/prisma";
-import lambangDesa from "../../../data/desa/profile/lambang_desa.json";
-import maskotDesa from "../../../data/desa/profile/maskot_desa.json";
-import profilePerbekel from "../../../data/desa/profile/profil_perbekel.json";
-import profileDesaImage from "../../../data/desa/profile/profileDesaImage.json";
-import sejarahDesa from "../../../data/desa/profile/sejarah_desa.json";
-import visiMisiDesa from "../../../data/desa/profile/visi_misi_desa.json";
+import { loadJsonData } from "../../../load-json";
+
+const lambangDesa = loadJsonData("desa/profile/lambang_desa.json");
+const maskotDesa = loadJsonData("desa/profile/maskot_desa.json");
+const profilePerbekel = loadJsonData("desa/profile/profil_perbekel.json");
+const profileDesaImage = loadJsonData("desa/profile/profileDesaImage.json");
+const sejarahDesa = loadJsonData("desa/profile/sejarah_desa.json");
+const visiMisiDesa = loadJsonData("desa/profile/visi_misi_desa.json");
 
 export async function seedProfileDesa() {
   // =========== SEJARAH DESA ===========

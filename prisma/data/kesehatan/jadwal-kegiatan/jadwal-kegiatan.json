@@ -1,0 +1,22 @@
+[
+  {
+    "id": "cmk-jadwal-001",
+    "content": "<p>Jadwal kegiatan posyandu dan program kesehatan di Desa Darmasaba dilaksanakan secara rutin setiap bulan. Kegiatan ini meliputi penimbangan balita, imunisasi, pemeriksaan ibu hamil, dan program kesehatan lainnya.</p>",
+    "informasiJadwalKegiatanId": "cmk-info-jadwal-001",
+    "deskripsiJadwalKegiatanId": "cmk-desk-jadwal-001",
+    "layananJadwalKegiatanId": "cmk-layanan-jadwal-001",
+    "syaratKetentuanJadwalKegiatanId": "cmk-syarat-jadwal-001",
+    "dokumenJadwalKegiatanId": "cmk-dokumen-jadwal-001",
+    "pendaftaranJadwalKegiatanId": "cmk-daftar-jadwal-001"
+  },
+  {
+    "id": "cmk-jadwal-002",
+    "content": "<p>Program senam bersama dan pemeriksaan kesehatan lansia dilaksanakan setiap hari Jumat minggu pertama di Balai Desa Darmasaba. Kegiatan ini bertujuan untuk menjaga kesehatan dan kebugaran warga lansia.</p>",
+    "informasiJadwalKegiatanId": "cmk-info-jadwal-002",
+    "deskripsiJadwalKegiatanId": "cmk-desk-jadwal-002",
+    "layananJadwalKegiatanId": "cmk-layanan-jadwal-002",
+    "syaratKetentuanJadwalKegiatanId": "cmk-syarat-jadwal-002",
+    "dokumenJadwalKegiatanId": "cmk-dokumen-jadwal-002",
+    "pendaftaranJadwalKegiatanId": "cmk-daftar-jadwal-002"
+  }
+]

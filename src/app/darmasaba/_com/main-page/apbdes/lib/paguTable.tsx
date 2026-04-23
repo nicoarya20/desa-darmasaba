@@ -21,10 +21,10 @@ function Section({ title, data, badgeColor = 'blue' }: SectionProps) {
       </Table.Tr>
 
       {data.map((item, index) => (
-        <Table.Tr 
-          key={item.id} 
-          bg={index % 2 === 1 ? 'gray.50' : 'white'}
-          style={{ 
+        <Table.Tr
+          key={item.id}
+          bg={index % 2 === 1 ? 'gray.1' : 'white'}
+          style={{
             transition: 'background-color 0.2s ease',
             ':hover': {
               backgroundColor: 'var(--mantine-color-blue-0)',

@@ -1,5 +1,7 @@
 import prisma from "@/lib/prisma";
-import programInovasi from "../../../data/landing-page/profile/programInovasi.json";
+import { loadJsonData } from "../../../load-json";
+
+const programInovasi = loadJsonData("landing-page/profile/programInovasi.json");
 
 export async function seedProgramInovasi() {
     console.log("🔄 Seeding Program Inovasi...");

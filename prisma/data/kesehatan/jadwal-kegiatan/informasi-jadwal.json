@@ -1,0 +1,16 @@
+[
+  {
+    "id": "cmk-info-jadwal-001",
+    "name": "Posyandu Balita & Ibu Hamil",
+    "tanggal": "Setiap minggu ke-2",
+    "waktu": "08:00 - 12:00 WITA",
+    "lokasi": "Posyandu Pudak Amara, Desa Darmasaba"
+  },
+  {
+    "id": "cmk-info-jadwal-002",
+    "name": "Senam & Pemeriksaan Kesehatan Lansia",
+    "tanggal": "Setiap Jumat minggu ke-1",
+    "waktu": "06:30 - 09:00 WITA",
+    "lokasi": "Balai Desa Darmasaba"
+  }
+]

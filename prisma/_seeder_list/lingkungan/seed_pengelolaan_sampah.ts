@@ -1,6 +1,8 @@
 import prisma from "@/lib/prisma";
-import pengelolaanSampah from "../../data/lingkungan/pengelolaan-sampah/pengelolaan-sampah.json";
-import keteranganBankSampah from "../../data/lingkungan/pengelolaan-sampah/keterangan-bank-sampah.json";
+import { loadJsonData } from "../../load-json";
+
+const pengelolaanSampah = loadJsonData("lingkungan/pengelolaan-sampah/pengelolaan-sampah.json");
+const keteranganBankSampah = loadJsonData("lingkungan/pengelolaan-sampah/keterangan-bank-sampah.json");
 
 export async function seedPengelolaanSampah() {
   console.log("🔄 Seeding Pengelolaan Sampah...");

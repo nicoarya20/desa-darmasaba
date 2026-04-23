@@ -230,3 +230,42 @@ Common issues and solutions:
 4. Use the integrated Swagger docs at `/api/docs` for API testing
 5. Check environment variables are properly configured
 6. Verify responsive design on different screen sizes
+
+## Qwen Added Memories
+- **GitHub Workflow Execution**: Project ini memiliki 3 workflow GitHub Action:
+1. `publish.yml` - Build & push Docker image ke GHCR (manual trigger, butuh input: stack_env + tag)
+2. `re-pull.yml` - Re-pull Docker image di Portainer (manual trigger, butuh input: stack_name + stack_env)
+3. `docker-publish.yml` - Auto build & push saat ada tag versi v*
+
+Workflow bisa dijalankan via GitHub CLI: `gh workflow run <nama.yml> -f param=value --ref branch`
+
+Setelah commit ke branch deployment (dev/stg/prod), otomatis trigger workflow publish + re-pull untuk deploy ke server.
+
+- **Deployment Workflow Sistematis**:
+1. **Version Bump** - Update `version` di `package.json` sebelum deploy (ikuti semver: major.minor.patch)
+2. **Commit** - Commit perubahan + version bump dengan pesan yang jelas
+3. **Buat Branch dan Push ke Branch yang baru dibuat** - Untuk branchnya buat sesuai dengan apa yang dikerjakan dengan format [apa-yang-dikerjakan]-[date-time]
+4. **Push ke 2 Remote** - Push ke 2 remote origin dan deploy
+5. **Merge ke Branch** - Merge ke branch target (biasanya `stg` untuk staging atau `prod` untuk production) ke 2 remote origin dan deploy
+6. **Trigger publish.yml** - Gunakan GitHub API atau CLI dengan: `ref: main`, `stack_env: stg`, `tag: <versi-dari-package.json>`
+7. **Tunggu publish selesai** - Workflow harus completed baru lanjut ke re-pull
+8. **Trigger re-pull.yml** - Gunakan GitHub API atau CLI dengan: `ref: main`, `stack_name: desa-darmasaba`, `stack_env: stg`
+
+Branch deployment: `stg` (staging) atau `prod` (production)
+Version format di package.json: `"version": "major.minor.patch"`
+
+- **Deployment Workflow HARUS Sequential (Berurutan)**:
+
+Saat deploy ke stg atau prod, workflow TIDAK BOLEH dijalankan bersamaan. Harus menunggu yang pertama SELESAI total baru trigger yang kedua.
+
+**Urutan yang BENAR:**
+1. ✅ **publish.yml** - Tunggu sampai SELESAI (status: ✓ success)
+2. ✅ **Setelah publish selesai**, baru trigger **re-pull.yml**
+
+**JANGAN trigger keduanya bersamaan!** Ini akan menyebabkan race condition karena re-pull akan menarik image yang belum selesai di-build.
+
+**Cara cek workflow selesai via GitHub CLI:**
+```bash
+gh run watch <publish_run_id>
+# Tunggu sampai ada checkmark ✓
+```

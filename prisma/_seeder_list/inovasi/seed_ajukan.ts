@@ -1,5 +1,7 @@
 import prisma from "@/lib/prisma";
-import ajukanIde from "../../data/inovasi/ajukan-ide/ajukan-ide.json";
+import { loadJsonData } from "../../load-json";
+
+const ajukanIde = loadJsonData("inovasi/ajukan-ide/ajukan-ide.json");
 
 export async function seedAjukan() {
   console.log("🔄 Seeding Ajukan Ide Inovatif...");

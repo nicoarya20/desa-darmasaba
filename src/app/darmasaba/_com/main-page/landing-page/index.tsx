@@ -70,7 +70,6 @@ const isNationalHoliday = (date: string): boolean => {
 
     // Hari libur pengganti
     '2026-04-08', // Hari Libur Pengganti Idul Fitri
-    '2026-04-09', // Hari Libur Pengganti Idul Fitri
   ];
 
   return holidays.includes(date);

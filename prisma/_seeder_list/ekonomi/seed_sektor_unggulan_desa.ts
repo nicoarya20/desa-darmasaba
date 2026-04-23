@@ -1,5 +1,7 @@
 import prisma from "@/lib/prisma";
-import sektorUnggulanDesa from "../../data/ekonomi/sektor-unggulan/sektor-unggulan.json";
+import { loadJsonData } from "../../load-json";
+
+const sektorUnggulanDesa = loadJsonData("ekonomi/sektor-unggulan/sektor-unggulan.json");
 
 export async function seedSektorUnggulanDesa() {
    console.log("🔄 Seeding Sektor Unggulan Desa...");

@@ -1,6 +1,8 @@
 import prisma from "@/lib/prisma";
-import grafikMenganggurBerdasarkanUsia from "../../data/ekonomi/jumlah-penduduk-usia-kerja-yang-menganggur/pengangguran-berdasarkan-usia.json";
-import grafikMenganggurBerdasarkanPendidikan from "../../data/ekonomi/jumlah-penduduk-usia-kerja-yang-menganggur/pengangguran-berdasarkan-pendidikan.json";
+import { loadJsonData } from "../../load-json";
+
+const grafikMenganggurBerdasarkanUsia = loadJsonData("ekonomi/jumlah-penduduk-usia-kerja-yang-menganggur/pengangguran-berdasarkan-usia.json");
+const grafikMenganggurBerdasarkanPendidikan = loadJsonData("ekonomi/jumlah-penduduk-usia-kerja-yang-menganggur/pengangguran-berdasarkan-pendidikan.json");
 
 export async function seedPendudukUsiaKerjaYangMenganggur() {
   for (const p of grafikMenganggurBerdasarkanUsia) {
