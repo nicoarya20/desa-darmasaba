@@ -1,8 +1,7 @@
 import prisma from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
-import path from "path";
-import fs from "fs/promises";
 import { Context } from "elysia";
+import minio, { MINIO_BUCKET } from "@/lib/minio";
 
 type FormUpdate = Prisma.KeamananLingkunganGetPayload<{
   select: {
@@ -59,8 +58,7 @@ export default async function updateKeamananLingkungan(context: Context) {
       const oldImage = existing.image;
       if (oldImage) {
         try {
-          const filePath = path.join(oldImage.path, oldImage.name);
-          await fs.unlink(filePath);
+          await minio.removeObject(MINIO_BUCKET, `${oldImage.path}/${oldImage.name}`);
           await prisma.fileStorage.delete({
             where: { id: oldImage.id },
           });

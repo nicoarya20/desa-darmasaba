@@ -1,7 +1,6 @@
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
-import fs from "fs/promises";
-import path from "path";
+import minio, { MINIO_BUCKET } from "@/lib/minio";
 
 export default async function pengaduanMasyarakatDelete(context: Context) {
   const id = context.params?.id as string;
@@ -25,8 +24,7 @@ export default async function pengaduanMasyarakatDelete(context: Context) {
 
   if (pengaduan.image) {
     try {
-      const filePath = path.join(pengaduan.image.path, pengaduan.image.name);
-      await fs.unlink(filePath);
+      await minio.removeObject(MINIO_BUCKET, `${pengaduan.image.path}/${pengaduan.image.name}`);
       await prisma.fileStorage.delete({
         where: { id: pengaduan.image.id },
       });

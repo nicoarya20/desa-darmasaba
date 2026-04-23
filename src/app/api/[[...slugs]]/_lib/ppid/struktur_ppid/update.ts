@@ -1,8 +1,7 @@
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
-import path from "path";
-import fs from "fs/promises";
 import { Prisma } from "@prisma/client";
+import minio, { MINIO_BUCKET } from "@/lib/minio";
 
 type FormUpdate = Prisma.StrukturPPIDGetPayload<{
     select: {
@@ -62,13 +61,12 @@ try {
        const oldImage = existing.image;
        if (oldImage) {
         try {
-            const filePath = path.join(oldImage.path, oldImage.name);
-            await fs.unlink(filePath);
+            await minio.removeObject(MINIO_BUCKET, `${oldImage.path}/${oldImage.name}`);
             await prisma.fileStorage.delete({
                 where: { id: oldImage.id },
             })
         } catch (error) {
-            console.error("Gagal hapus gambar lama:", error);
+            console.error("Gagal hapus gambar lama dari MinIO/DB:", error);
         }
        } 
     }

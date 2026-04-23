@@ -1,7 +1,6 @@
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
-import fs from "fs/promises";
-import path from "path";
+import minio, { MINIO_BUCKET } from "@/lib/minio";
 
 export default async function infoTeknoDelete(context: Context) {
   const id = context.params?.id as string;
@@ -29,11 +28,7 @@ export default async function infoTeknoDelete(context: Context) {
 
   if (infoTekno.image) {
     try {
-      const filePath = path.join(
-        infoTekno.image.path,
-        infoTekno.image.name
-      );
-      await fs.unlink(filePath);
+      await minio.removeObject(MINIO_BUCKET, `${infoTekno.image.path}/${infoTekno.image.name}`);
       await prisma.fileStorage.delete({
         where: { id: infoTekno.image.id },
       });

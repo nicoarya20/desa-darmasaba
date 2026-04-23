@@ -1,7 +1,6 @@
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
-import path from "path";
-import fs from "fs/promises";
+import minio, { MINIO_BUCKET } from "@/lib/minio";
 
 const menuTipsKeamananDelete = async (context: Context) => {
     const id = context.params?.id as string;
@@ -30,8 +29,7 @@ const menuTipsKeamananDelete = async (context: Context) => {
     // Hapus file gambar dari filesystem jika ada
     if (tipsKeamanan.image) {
         try {
-            const filePath = path.join(tipsKeamanan.image.path, tipsKeamanan.image.name);
-            await fs.unlink(filePath);
+            await minio.removeObject(MINIO_BUCKET, `${tipsKeamanan.image.path}/${tipsKeamanan.image.name}`);
             await prisma.fileStorage.delete({
                 where: { id: tipsKeamanan.image.id },
             });

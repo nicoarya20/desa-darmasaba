@@ -1,7 +1,6 @@
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
-import path from "path";
-import fs from "fs/promises";
+import minio, { MINIO_BUCKET } from "@/lib/minio";
 
 const pelayananSuratKeteranganDelete = async (context: Context) => {
     const id = context.params?.id as string;
@@ -31,8 +30,7 @@ const pelayananSuratKeteranganDelete = async (context: Context) => {
     // Hapus file gambar dari filesystem jika ada
     if (pelayananSuratKeterangan.image) {
         try {
-            const filePath = path.join(pelayananSuratKeterangan.image.path, pelayananSuratKeterangan.image.name);
-            await fs.unlink(filePath);
+            await minio.removeObject(MINIO_BUCKET, `${pelayananSuratKeterangan.image.path}/${pelayananSuratKeterangan.image.name}`);
             await prisma.fileStorage.delete({
                 where: { id: pelayananSuratKeterangan.image.id },
             });
@@ -43,8 +41,7 @@ const pelayananSuratKeteranganDelete = async (context: Context) => {
 
     if (pelayananSuratKeterangan.image2) {
         try {
-            const filePath = path.join(pelayananSuratKeterangan.image2.path, pelayananSuratKeterangan.image2.name);
-            await fs.unlink(filePath);
+            await minio.removeObject(MINIO_BUCKET, `${pelayananSuratKeterangan.image2.path}/${pelayananSuratKeterangan.image2.name}`);
             await prisma.fileStorage.delete({
                 where: { id: pelayananSuratKeterangan.image2.id },
             });

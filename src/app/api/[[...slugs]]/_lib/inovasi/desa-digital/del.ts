@@ -1,7 +1,6 @@
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
-import fs from "fs/promises";
-import path from "path";
+import minio, { MINIO_BUCKET } from "@/lib/minio";
 
 export default async function desaDigitalDelete(context: Context) {
   const id = context.params?.id as string;
@@ -29,11 +28,7 @@ export default async function desaDigitalDelete(context: Context) {
 
   if (desaDigital.image) {
     try {
-      const filePath = path.join(
-        desaDigital.image.path,
-        desaDigital.image.name
-      );
-      await fs.unlink(filePath);
+      await minio.removeObject(MINIO_BUCKET, `${desaDigital.image.path}/${desaDigital.image.name}`);
       await prisma.fileStorage.delete({
         where: { id: desaDigital.image.id },
       });

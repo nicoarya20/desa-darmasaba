@@ -1,8 +1,7 @@
 import prisma from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import { Context } from "elysia";
-import fs from "fs/promises";
-import path from "path";
+import minio, { MINIO_BUCKET } from "@/lib/minio";
 
 type FormUpdate = Prisma.GalleryFotoGetPayload<{
   select: {
@@ -48,8 +47,7 @@ async function galleryFotoUpdate(context: Context) {
       const oldImage = existing.imageGalleryFoto;
       if (oldImage) {
         try {
-          const filePath = path.join(oldImage.path, oldImage.name);
-          await fs.unlink(filePath);
+          await minio.removeObject(MINIO_BUCKET, `${oldImage.path}/${oldImage.name}`);
           await prisma.fileStorage.delete({
             where: { id: oldImage.id },
           });

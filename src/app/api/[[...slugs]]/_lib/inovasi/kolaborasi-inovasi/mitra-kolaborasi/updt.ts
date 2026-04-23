@@ -1,7 +1,6 @@
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
-import fs from "fs/promises";
-import path from "path";
+import minio, { MINIO_BUCKET } from "@/lib/minio";
 
 type FormUpdate = {
     id: string;
@@ -12,12 +11,12 @@ export default async function mitraKolaborasiUpdate(context: Context) {
     try {
         const id = context.params?.id as string;
         const body = (await context.body) as Omit<FormUpdate, "id">;
-    
+
         const {
             name,
             imageId
         } = body;
-    
+
         if (!id) {
             return new Response(JSON.stringify({
                 success: false,
@@ -29,14 +28,14 @@ export default async function mitraKolaborasiUpdate(context: Context) {
                 }
             })
         }
-    
+
         const existing = await prisma.mitraKolaborasi.findUnique({
             where: {id},
             include: {
                 image: true,
             }
         })
-    
+
         if (!existing) {
             return new Response(JSON.stringify({
                 success: false,
@@ -48,13 +47,12 @@ export default async function mitraKolaborasiUpdate(context: Context) {
                 }
             })
         }
-    
+
         if (existing.imageId && existing.imageId !== imageId) {
         const oldImage = existing.image;
         if (oldImage) {
             try {
-                const filePath = path.join(oldImage.path, oldImage.name);
-                await fs.unlink(filePath);
+                await minio.removeObject(MINIO_BUCKET, `${oldImage.path}/${oldImage.name}`);
                 await prisma.fileStorage.delete({
                     where: { id: oldImage.id },
                 });
@@ -63,7 +61,7 @@ export default async function mitraKolaborasiUpdate(context: Context) {
             }
         }
         }
-    
+
         const updated = await prisma.mitraKolaborasi.update({
             where: { id },
             data: {
@@ -71,7 +69,6 @@ export default async function mitraKolaborasiUpdate(context: Context) {
                 imageId,
             }
         })
-    
         return new Response(JSON.stringify({
             success: true,
             message: "Mitra kolaborasi berhasil diupdate",

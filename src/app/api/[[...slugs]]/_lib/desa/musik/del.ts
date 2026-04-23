@@ -1,6 +1,6 @@
 import { Context } from "elysia";
 import prisma from "@/lib/prisma";
-import path from "path";
+import minio, { MINIO_BUCKET } from "@/lib/minio";
 
 const musikDelete = async (context: Context) => {
   const { id } = context.params as { id: string };
@@ -18,9 +18,7 @@ const musikDelete = async (context: Context) => {
   // 2. HAPUS FILE AUDIO (jika ada)
   if (musik.audioFile) {
     try {
-      const fs = await import("fs/promises");
-      const filePath = path.join(musik.audioFile.path, musik.audioFile.name);
-      await fs.unlink(filePath);
+      await minio.removeObject(MINIO_BUCKET, `${musik.audioFile.path}/${musik.audioFile.name}`);
 
       await prisma.fileStorage.delete({
         where: { id: musik.audioFile.id },
@@ -33,9 +31,7 @@ const musikDelete = async (context: Context) => {
   // 3. HAPUS FILE COVER (jika ada)
   if (musik.coverImage) {
     try {
-      const fs = await import("fs/promises");
-      const filePath = path.join(musik.coverImage.path, musik.coverImage.name);
-      await fs.unlink(filePath);
+      await minio.removeObject(MINIO_BUCKET, `${musik.coverImage.path}/${musik.coverImage.name}`);
 
       await prisma.fileStorage.delete({
         where: { id: musik.coverImage.id },

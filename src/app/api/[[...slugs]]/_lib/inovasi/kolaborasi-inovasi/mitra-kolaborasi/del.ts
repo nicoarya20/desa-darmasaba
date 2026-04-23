@@ -1,7 +1,6 @@
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
-import fs from "fs/promises";
-import path from "path";
+import minio, { MINIO_BUCKET } from "@/lib/minio";
 
 export default async function mitraKolaborasiDelete(context: Context) {
   const id = context.params?.id as string;
@@ -29,11 +28,7 @@ export default async function mitraKolaborasiDelete(context: Context) {
 
   if (mitraKolaborasi.image) {
     try {
-      const filePath = path.join(
-        mitraKolaborasi.image.path,
-        mitraKolaborasi.image.name
-      );
-      await fs.unlink(filePath);
+      await minio.removeObject(MINIO_BUCKET, `${mitraKolaborasi.image.path}/${mitraKolaborasi.image.name}`);
       await prisma.fileStorage.delete({
         where: { id: mitraKolaborasi.image.id },
       });
