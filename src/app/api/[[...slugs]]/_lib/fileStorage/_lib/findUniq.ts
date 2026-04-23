@@ -1,44 +1,36 @@
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
-import fs from "fs/promises";
-import path from "path";
-
-const UPLOAD_DIR = process.env.WIBU_UPLOAD_DIR;
+import minio, { MINIO_BUCKET } from "@/lib/minio";
 
 const fileStorageFindUnique = async (context: Context) => {
   const { name } = context.params;
 
-  const data = await prisma.fileStorage.findUnique({
-    where: {
-      name,
-    },
-  });
+  const data = await prisma.fileStorage.findUnique({ where: { name } });
 
   if (!data) {
-    context.set.status = "No Content";
-    return {
-      status: 404,
-      message: "File not found",
-    };
+    context.set.status = "Not Found";
+    return { status: 404, message: "File not found" };
   }
 
-  if (!UPLOAD_DIR) {
-    context.set.status = "Internal Server Error";
-    return {
-      status: 500,
-      message: "UPLOAD_DIR is not defined",
+  try {
+    const stream = await minio.getObject(MINIO_BUCKET, `${data.path}/${data.name}`);
+    const chunks: Buffer[] = [];
+    for await (const chunk of stream) {
+      chunks.push(Buffer.from(chunk));
+    }
+    const file = Buffer.concat(chunks);
+
+    context.set.headers = {
+      "Content-Type": data.mimeType,
+      "Content-Length": String(file.length),
+      "Cache-Control": "public, max-age=3600, stale-while-revalidate=600",
     };
+
+    return file;
+  } catch {
+    context.set.status = "Not Found";
+    return { status: 404, message: "File not found in storage" };
   }
-
-  console.log(data);
-
-  const file = await fs.readFile(path.join(UPLOAD_DIR, data.path, data.name));
-  context.set.headers = {
-    "Content-Type": data.mimeType,
-    "Content-Length": file.length,
-  };
-
-  return file;
 };
 
 export default fileStorageFindUnique;

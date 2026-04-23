@@ -1,60 +1,26 @@
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
-import fs from "fs/promises";
-import path from "path";
-
-const UPLOAD_DIR = process.env.WIBU_UPLOAD_DIR;
+import minio, { MINIO_BUCKET } from "@/lib/minio";
 
 const fileStorageDelete = async (context: Context) => {
-  const { params } = context;
+  const id = (context.params as { id: string })?.id;
 
-  const id = params?.id as string;
+  if (!id) return { status: 400, body: "ID file tidak ditemukan" };
 
-  if (!id) {
-    return {
-      status: 400,
-      body: "ID file tidak ditemukan",
-    };
-  }
+  const file = await prisma.fileStorage.findUnique({ where: { id } });
 
-  if (!UPLOAD_DIR) {
-    return {
-      status: 500,
-      body: "UPLOAD_DIR belum dikonfigurasi",
-    };
-  }
-
-  // Cek file dari database
-  const file = await prisma.fileStorage.findUnique({
-    where: { id },
-  });
-
-  if (!file) {
-    return {
-      status: 404,
-      body: "File tidak ditemukan di database",
-    };
-  }
-
-  const filePath = path.join(UPLOAD_DIR, file.path, file.name);
+  if (!file) return { status: 404, body: "File tidak ditemukan di database" };
 
   try {
-    // Hapus file dari filesystem
-    await fs.unlink(filePath);
+    await minio.removeObject(MINIO_BUCKET, `${file.path}/${file.name}`);
   } catch (err) {
-    console.error("Gagal hapus file:", err);
-    // Tetap lanjutkan hapus dari database meskipun file fisik tidak ditemukan
+    console.error("Gagal hapus file dari MinIO:", err);
+    // Tetap lanjutkan hapus dari database
   }
 
-  // Hapus dari database
-  await prisma.fileStorage.delete({
-    where: { id },
-  });
+  await prisma.fileStorage.delete({ where: { id } });
 
-  return {
-    message: "File berhasil dihapus",
-    deletedId: id,
-  };
+  return { message: "File berhasil dihapus", deletedId: id };
 };
 
 export default fileStorageDelete;
