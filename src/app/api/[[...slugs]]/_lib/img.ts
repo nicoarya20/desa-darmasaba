@@ -3,6 +3,14 @@ import fs from "fs/promises";
 import sharp from "sharp";
 import minio, { MINIO_BUCKET } from "@/lib/minio";
 
+const MIME_MAP: Record<string, string> = {
+  ".webp": "image/webp",
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".png": "image/png",
+  ".gif": "image/gif",
+};
+
 async function img({
   name,
   ROOT,
@@ -14,12 +22,12 @@ async function img({
 }) {
   const noImage = path.join(ROOT, "public/no-image.jpg");
   const ext = path.extname(name).toLowerCase();
+  const contentType = MIME_MAP[ext];
 
-  if (![".jpg", ".jpeg", ".png", ".webp"].includes(ext)) {
+  if (!contentType) {
     console.warn(`Ekstensi file tidak didukung: ${ext}`);
     const buffer = await fs.readFile(noImage);
-    const uint8Array = new Uint8Array(buffer);
-    return new Response(new Blob([uint8Array], { type: 'image/jpeg' }), {
+    return new Response(new Uint8Array(buffer), {
       headers: { "Content-Type": "image/jpeg" },
     });
   }
@@ -32,15 +40,17 @@ async function img({
     }
     const buffer = Buffer.concat(chunks);
 
-    const metadata = await sharp(buffer).metadata();
-    const resized = await sharp(buffer)
-      .resize(size || metadata.width)
-      .toBuffer();
+    let resized: Buffer;
+    if (size) {
+      resized = await sharp(buffer).resize(size).toBuffer();
+    } else {
+      resized = buffer;
+    }
 
     return new Response(new Uint8Array(resized), {
       headers: {
         "Cache-Control": "public, max-age=3600, stale-while-revalidate=600",
-        "Content-Type": "image/jpeg",
+        "Content-Type": contentType,
       },
     });
   } catch (error) {
