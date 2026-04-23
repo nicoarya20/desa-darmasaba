@@ -30,22 +30,6 @@ import Search from "./_lib/search";
 
 const ROOT = process.cwd();
 
-if (!process.env.WIBU_UPLOAD_DIR)
-  throw new Error("WIBU_UPLOAD_DIR is not defined");
-
-const UPLOAD_DIR = path.join(ROOT, process.env.WIBU_UPLOAD_DIR);
-const UPLOAD_DIR_IMAGE = path.join(UPLOAD_DIR, "image");
-
-// create uploads dir
-fs.mkdir(UPLOAD_DIR, {
-  recursive: true,
-}).catch(() => {});
-
-// create image uploads dir
-fs.mkdir(UPLOAD_DIR_IMAGE, {
-  recursive: true,
-}).catch(() => {});
-
 const corsConfig = {
   origin: [
     "*", // Allow all origins - must be first when using credentials: true
@@ -79,16 +63,8 @@ const Utils = new Elysia({
   return { version };
 });
 
-if (!process.env.WIBU_UPLOAD_DIR)
-  throw new Error("WIBU_UPLOAD_DIR is not defined");
-
-const ApiServer = new Elysia({ prefix: "/api" })
-  .use(
-    staticPlugin({
-      assets: UPLOAD_DIR,
-      prefix: "/uploads",
-    }),
-  )
+const ApiServer = new Elysia()
+  .use(swagger({ path: "/api/docs" }))
   .use(cors(corsConfig))
   .use(
     swagger({
@@ -109,129 +85,128 @@ const ApiServer = new Elysia({ prefix: "/api" })
       };
     }
   })
-  .use(Utils)
-  .use(FileStorage)
-  .use(LandingPage)
-  .use(PPID)
-  .use(Desa)
-  .use(Kesehatan)
-  .use(Keamanan)
-  .use(Ekonomi)
-  .use(Inovasi)
-  .use(Lingkungan)
-  .use(Pendidikan)
-  .use(Kependudukan)
-  .use(User)
-  .use(Role)
-  .use(Search)
-  .get("/layanan", layanan)
-  .get("/potensi", getPotensi)
-  .get(
-    "/img/:name",
-    ({ params, query }) => {
-      return img({
-        name: params.name,
-        UPLOAD_DIR_IMAGE,
-        ROOT,
-        size: query.size,
-      });
-    },
-    {
-      params: t.Object({
-        name: t.String(),
-      }),
-      query: t.Optional(
-        t.Object({
-          size: t.Optional(t.Number()),
-        }),
+  .group("/api", (app) =>
+    app
+      .use(Utils)
+      .use(FileStorage)
+      .use(LandingPage)
+      .use(PPID)
+      .use(Desa)
+      .use(Kesehatan)
+      .use(Keamanan)
+      .use(Ekonomi)
+      .use(Inovasi)
+      .use(Lingkungan)
+      .use(Pendidikan)
+      .use(Kependudukan)
+      .use(User)
+      .use(Role)
+      .use(Search)
+      .get("/layanan", layanan)
+      .get("/potensi", getPotensi)
+      .get(
+        "/img/:name",
+        ({ params, query }) => {
+          return img({
+            name: params.name,
+            ROOT,
+            size: query.size,
+          });
+        },
+        {
+          params: t.Object({
+            name: t.String(),
+          }),
+          query: t.Optional(
+            t.Object({
+              size: t.Optional(t.Number()),
+            }),
+          ),
+        },
+      )
+      .delete(
+        "/img/:name",
+        ({ params }) => {
+          return imgDel({
+            name: params.name,
+          });
+        },
+        {
+          params: t.Object({
+            name: t.String(),
+          }),
+        },
+      )
+      .get(
+        "/imgs",
+        ({ query }) => {
+          return imgs({
+            search: query.search,
+            page: query.page,
+            count: query.count,
+          });
+        },
+        {
+          query: t.Optional(
+            t.Object({
+              page: t.Number({ default: 1 }),
+              count: t.Number({ default: 10 }),
+              search: t.String({ default: "" }),
+            }),
+          ),
+        },
+      )
+      .post(
+        "/upl-img",
+        ({ body }) => {
+          console.log(body.title);
+          return uplImg({ files: body.files });
+        },
+        {
+          body: t.Object({
+            title: t.String(),
+            files: t.Files({ multiple: true }),
+          }),
+        },
+      )
+      .post(
+        "/upl-img-single",
+        ({ body }) => {
+          return uplImgSingle({
+            fileName: body.name,
+            file: body.file,
+          });
+        },
+        {
+          body: t.Object({
+            name: t.String(),
+            file: t.File(),
+          }),
+        },
+      )
+      .post(
+        "/upl-csv-single",
+        ({ body }) => {
+          return uplCsvSingle({ fileName: body.name, file: body.file });
+        },
+        {
+          body: t.Object({
+            name: t.String(),
+            file: t.File(),
+          }),
+        },
+      )
+      .post(
+        "/upl-csv",
+        ({ body }) => {
+          return uplCsv({ files: body.files });
+        },
+        {
+          body: t.Object({
+            files: t.Files(),
+          }),
+        },
       ),
-    },
-  )
-  .delete(
-    "/img/:name",
-    ({ params }) => {
-      return imgDel({
-        name: params.name,
-        UPLOAD_DIR_IMAGE,
-      });
-    },
-    {
-      params: t.Object({
-        name: t.String(),
-      }),
-    },
-  )
-  .get(
-    "/imgs",
-    ({ query }) => {
-      return imgs({
-        search: query.search,
-        page: query.page,
-        count: query.count,
-        UPLOAD_DIR_IMAGE,
-      });
-    },
-    {
-      query: t.Optional(
-        t.Object({
-          page: t.Number({ default: 1 }),
-          count: t.Number({ default: 10 }),
-          search: t.String({ default: "" }),
-        }),
-      ),
-    },
-  )
-  .post(
-    "/upl-img",
-    ({ body }) => {
-      console.log(body.title);
-      return uplImg({ files: body.files, UPLOAD_DIR_IMAGE });
-    },
-    {
-      body: t.Object({
-        title: t.String(),
-        files: t.Files({ multiple: true }),
-      }),
-    },
-  )
-  .post(
-    "/upl-img-single",
-    ({ body }) => {
-      return uplImgSingle({
-        fileName: body.name,
-        file: body.file,
-        UPLOAD_DIR_IMAGE,
-      });
-    },
-    {
-      body: t.Object({
-        name: t.String(),
-        file: t.File(),
-      }),
-    },
-  )
-  .post(
-    "/upl-csv-single",
-    ({ body }) => {
-      return uplCsvSingle({ fileName: body.name, file: body.file });
-    },
-    {
-      body: t.Object({
-        name: t.String(),
-        file: t.File(),
-      }),
-    },
-  )
-  .post(
-    "/upl-csv",
-    ({ body }) => {
-      return uplCsv({ files: body.files });
-    },
-    {
-      body: t.Object({
-        files: t.Files(),
-      }),
-    },
   );
 
 export const GET = ApiServer.handle;

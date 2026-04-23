@@ -1,15 +1,8 @@
-import fs from "fs/promises";
-import path from "path";
+import minio, { MINIO_BUCKET } from "@/lib/minio";
 
-async function imgDel({
-  name,
-  UPLOAD_DIR_IMAGE,
-}: {
-  name: string;
-  UPLOAD_DIR_IMAGE: string;
-}) {
+async function imgDel({ name }: { name: string }) {
   try {
-    await fs.unlink(path.join(UPLOAD_DIR_IMAGE, name));
+    await minio.removeObject(MINIO_BUCKET, `image/${name}`);
     return "ok";
   } catch (error) {
     console.log(error);
