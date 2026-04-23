@@ -76,7 +76,7 @@ function UmkmDashboard() {
         </Grid.Col>
 
         <Grid.Col span={{ base: 12, md: 4 }}>
-          <Card withBorder radius="md" p="lg" shadow="sm">
+          <Card withBorder radius="md" p="lg" shadow="sm" h={"100%"}>
             <Title order={4} mb="md">Top 3 Produk</Title>
             <Stack gap="sm">
               {topProduk.map((item, i) => (

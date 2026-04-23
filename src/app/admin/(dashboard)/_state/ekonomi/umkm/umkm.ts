@@ -165,6 +165,29 @@ export const umkmState = proxy({
           }
         } catch (e) { console.error(e); } finally { this.loading = false; }
       }
+    },
+    delete: {
+      loading: false,
+      async byId(id: string) {
+        this.loading = true;
+        try {
+          const res = await fetch(`/api/ekonomi/umkm/del/${id}`, {
+            method: "DELETE"
+          });
+          const result = await res.json();
+          if (result.success) {
+            toast.success("UMKM berhasil dihapus");
+            umkmState.umkm.findMany.load();
+            return true;
+          }
+          toast.error(result.message);
+        } catch (e) {
+          toast.error("Gagal menghapus UMKM");
+        } finally {
+          this.loading = false;
+        }
+        return false;
+      }
     }
   },
 
@@ -259,6 +282,29 @@ export const umkmState = proxy({
         }
         return false;
       }
+    },
+    delete: {
+      loading: false,
+      async byId(id: string) {
+        this.loading = true;
+        try {
+          const res = await fetch(`/api/ekonomi/umkm/produk/del/${id}`, {
+            method: "DELETE"
+          });
+          const result = await res.json();
+          if (result.success) {
+            toast.success("Produk berhasil dihapus");
+            umkmState.produk.findMany.load();
+            return true;
+          }
+          toast.error(result.message);
+        } catch (e) {
+          toast.error("Gagal menghapus produk");
+        } finally {
+          this.loading = false;
+        }
+        return false;
+      }
     }
   },
 
@@ -302,6 +348,29 @@ export const umkmState = proxy({
             return true;
           }
         } catch (e) { toast.error("Gagal mencatat penjualan"); } finally { this.loading = false; }
+        return false;
+      }
+    },
+    delete: {
+      loading: false,
+      async byId(id: string) {
+        this.loading = true;
+        try {
+          const res = await fetch(`/api/ekonomi/umkm/penjualan/del/${id}`, {
+            method: "DELETE"
+          });
+          const result = await res.json();
+          if (result.success) {
+            toast.success("Histori penjualan berhasil dihapus");
+            umkmState.penjualan.findMany.load();
+            return true;
+          }
+          toast.error(result.message);
+        } catch (e) {
+          toast.error("Gagal menghapus histori penjualan");
+        } finally {
+          this.loading = false;
+        }
         return false;
       }
     }

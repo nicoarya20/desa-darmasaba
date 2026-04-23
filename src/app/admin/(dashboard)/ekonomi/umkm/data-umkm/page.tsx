@@ -1,5 +1,4 @@
 'use client'
-import colors from '@/con/colors';
 import {
   Box,
   Button,
@@ -15,26 +14,39 @@ import {
   TableTh,
   TableThead,
   TableTr,
-  Text,
   Title,
   TextInput
 } from '@mantine/core';
-import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
-import { IconPlus, IconSearch, IconEdit, IconTrash, IconCircleDashedPlus } from '@tabler/icons-react';
+import { useDebouncedValue, useShallowEffect, useDisclosure } from '@mantine/hooks';
+import { IconSearch, IconEdit, IconTrash, IconCircleDashedPlus } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import umkmState from '../../../_state/ekonomi/umkm/umkm';
+import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
 
 function DataUmkm() {
   const router = useRouter();
   const [search, setSearch] = useState("");
   const state = useProxy(umkmState.umkm.findMany);
+  const deleteState = useProxy(umkmState.umkm.delete);
   const [debouncedSearch] = useDebouncedValue(search, 1000);
+  const [opened, { open, close }] = useDisclosure(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
 
   useShallowEffect(() => {
     state.load(state.page, 10, debouncedSearch);
   }, [state.page, debouncedSearch]);
+
+  const handleDelete = async () => {
+    if (selectedId) {
+      const success = await umkmState.umkm.delete.byId(selectedId);
+      if (success) {
+        close();
+        setSelectedId(null);
+      }
+    }
+  };
 
   return (
     <Stack gap="lg">
@@ -47,12 +59,11 @@ function DataUmkm() {
           onChange={(e) => setSearch(e.currentTarget.value)}
           mb="md"
         />
-
       </Group>
 
       <Paper withBorder p="md" radius="md">
         <Group justify="space-between" mb="md" pb={"sm"}>
-          <Title order={4}>Daftar Berita</Title>
+          <Title order={4}>Daftar UMKM</Title>
           <Button
             leftSection={<IconCircleDashedPlus size={18} />}
             color="blue"
@@ -61,7 +72,6 @@ function DataUmkm() {
             Tambah UMKM
           </Button>
         </Group>
-
 
         {state.loading ? (
           <Skeleton height={400} />
@@ -94,7 +104,15 @@ function DataUmkm() {
                         >
                           <IconEdit size={16} />
                         </Button>
-                        <Button variant="subtle" color="red" size="xs">
+                        <Button
+                          variant="subtle"
+                          color="red"
+                          size="xs"
+                          onClick={() => {
+                            setSelectedId(item.id);
+                            open();
+                          }}
+                        >
                           <IconTrash size={16} />
                         </Button>
                       </Group>
@@ -114,6 +132,14 @@ function DataUmkm() {
           />
         </Center>
       </Paper>
+
+      <ModalKonfirmasiHapus
+        opened={opened}
+        onClose={close}
+        onConfirm={handleDelete}
+        loading={deleteState.loading}
+        text="Apakah Anda yakin ingin menghapus data UMKM ini? Tindakan ini tidak dapat dibatalkan."
+      />
     </Stack>
   );
 }
