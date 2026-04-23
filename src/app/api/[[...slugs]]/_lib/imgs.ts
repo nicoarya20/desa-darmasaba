@@ -1,30 +1,30 @@
-import fs from "fs/promises";
+import minio, { MINIO_BUCKET } from "@/lib/minio";
 
 async function imgs({
   search = "",
   page = 1,
   count = 20,
-  UPLOAD_DIR_IMAGE,
 }: {
   search?: string;
   page?: number;
   count?: number;
-  UPLOAD_DIR_IMAGE: string;
 }) {
-  const files = await fs.readdir(UPLOAD_DIR_IMAGE);
+  const objects: { name: string; url: string }[] = [];
 
-  return files
-    .filter(
-      (file) =>
-        file.endsWith(".jpg") || file.endsWith(".png") || file.endsWith(".jpeg")
-    )
-    .filter((file) => file.includes(search))
+  const stream = minio.listObjects(MINIO_BUCKET, "image/", true);
+
+  for await (const obj of stream) {
+    if (!obj.name) continue;
+    const fileName = obj.name.replace("image/", "");
+    if (!fileName) continue;
+    if (search && !fileName.includes(search)) continue;
+    objects.push({ name: fileName, url: `/api/img/${fileName}` });
+  }
+
+  const total = objects.length;
+  return objects
     .slice((page - 1) * count, page * count)
-    .map((file) => ({
-      name: file,
-      url: `/api/img/${file}`,
-      total: files.length,
-    }));
+    .map((o) => ({ ...o, total }));
 }
 
 export default imgs;

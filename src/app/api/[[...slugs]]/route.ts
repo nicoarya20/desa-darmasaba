@@ -4,31 +4,14 @@ import swagger from "@elysiajs/swagger";
 import { Elysia, t } from "elysia";
 import getPotensi from "./_lib/get-potensi";
 import img from "./_lib/img";
-import fs from "fs/promises";
-import path from "path";
 import uplImg from "./_lib/upl-img";
 import imgs from "./_lib/imgs";
 import uplCsv from "./_lib/upl-csv";
 import imgDel from "./_lib/img-del";
 import { uplImgSingle } from "./_lib/upl-img-single";
 import { uplCsvSingle } from "./_lib/upl-csv-single";
+
 const ROOT = process.cwd();
-
-if (!process.env.WIBU_UPLOAD_DIR)
-  throw new Error("WIBU_UPLOAD_DIR is not defined");
-
-const UPLOAD_DIR = path.join(ROOT, process.env.WIBU_UPLOAD_DIR);
-const UPLOAD_DIR_IMAGE = path.join(UPLOAD_DIR, "image");
-
-// create uploads dir
-fs.mkdir(UPLOAD_DIR, {
-  recursive: true,
-}).catch(() => {});
-
-// create image uploads dir
-fs.mkdir(UPLOAD_DIR_IMAGE, {
-  recursive: true,
-}).catch(() => {});
 
 const corsConfig = {
   origin: "*",
@@ -43,6 +26,7 @@ async function layanan() {
   const data = await prisma.layanan.findMany();
   return { data };
 }
+
 const ApiServer = new Elysia()
   .use(swagger({ path: "/api/docs" }))
   .use(cors(corsConfig))
@@ -63,7 +47,6 @@ const ApiServer = new Elysia()
         ({ params, query }) => {
           return img({
             name: params.name,
-            UPLOAD_DIR_IMAGE,
             ROOT,
             size: query.size,
           });
@@ -82,10 +65,7 @@ const ApiServer = new Elysia()
       .delete(
         "/img/:name",
         ({ params }) => {
-          return imgDel({
-            name: params.name,
-            UPLOAD_DIR_IMAGE,
-          });
+          return imgDel({ name: params.name });
         },
         {
           params: t.Object({
@@ -100,7 +80,6 @@ const ApiServer = new Elysia()
             search: query.search,
             page: query.page,
             count: query.count,
-            UPLOAD_DIR_IMAGE,
           });
         },
         {
@@ -117,7 +96,7 @@ const ApiServer = new Elysia()
         "/upl-img",
         ({ body }) => {
           console.log(body.title);
-          return uplImg({ files: body.files, UPLOAD_DIR_IMAGE });
+          return uplImg({ files: body.files });
         },
         {
           body: t.Object({
@@ -132,7 +111,6 @@ const ApiServer = new Elysia()
           return uplImgSingle({
             fileName: body.name,
             file: body.file,
-            UPLOAD_DIR_IMAGE,
           });
         },
         {
