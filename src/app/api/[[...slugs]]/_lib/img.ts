@@ -37,7 +37,7 @@ async function img({
       .resize(size || metadata.width)
       .toBuffer();
 
-    return new Response(resized, {
+    return new Response(new Uint8Array(resized), {
       headers: {
         "Cache-Control": "public, max-age=3600, stale-while-revalidate=600",
         "Content-Type": "image/jpeg",
@@ -45,7 +45,8 @@ async function img({
     });
   } catch (error) {
     console.error(`Gagal mengambil file dari MinIO: ${name}`, error);
-    return new Response(await fs.readFile(noImage), {
+    const buffer = await fs.readFile(noImage);
+    return new Response(new Uint8Array(buffer), {
       headers: { "Content-Type": "image/jpeg" },
     });
   }

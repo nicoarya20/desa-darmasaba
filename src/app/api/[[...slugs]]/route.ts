@@ -1,6 +1,5 @@
 import prisma from "@/lib/prisma";
 import cors, { HTTPMethod } from "@elysiajs/cors";
-import { staticPlugin } from "@elysiajs/static";
 import swagger from "@elysiajs/swagger";
 import { Elysia, t } from "elysia";
 import fs from "fs/promises";
