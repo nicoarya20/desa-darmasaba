@@ -14,7 +14,7 @@ import {
   NumberInput
 } from '@mantine/core';
 import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone';
-import { IconArrowBack, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
+import { IconArrowBack, IconPhoto,  IconX } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
@@ -43,7 +43,7 @@ export default function CreateProdukUmkm() {
       stok: 0,
       umkmId: "",
       deskripsi: "",
-      imageId: "",
+      imageId: null,
       kategoriId: "",
       isActive: true,
     };
@@ -54,7 +54,7 @@ export default function CreateProdukUmkm() {
   const handleCreate = async () => {
     setIsSubmitting(true);
     try {
-      let uploadedImageId = "";
+      let uploadedImageId = null;
       if (file) {
         const res = await ApiFetch.api.fileStorage.create.post({
           file,

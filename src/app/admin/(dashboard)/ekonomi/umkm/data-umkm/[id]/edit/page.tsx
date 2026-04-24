@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import EditEditor from "@/app/admin/(dashboard)/_com/editEditor";
@@ -41,7 +40,7 @@ interface UmkmData {
   alamat: string | null;
   kontak: string | null;
   imageId: string | null;
-  image?: { url: string } | null;
+  image?: { link: string } | null;
 }
 
 interface UmkmForm {
@@ -51,7 +50,7 @@ interface UmkmForm {
   deskripsi: string;
   alamat: string;
   kontak: string;
-  imageId: string;
+  imageId: string | null;
 }
 
 function EditDataUmkm() {
@@ -71,7 +70,7 @@ function EditDataUmkm() {
     deskripsi: "",
     alamat: "",
     kontak: "",
-    imageId: "",
+    imageId: null,
   });
 
   const [originalData, setOriginalData] = useState<UmkmForm & { imageUrl: string }>({
@@ -81,7 +80,7 @@ function EditDataUmkm() {
     deskripsi: "",
     alamat: "",
     kontak: "",
-    imageId: "",
+    imageId: null,
     imageUrl: ""
   });
 
@@ -115,11 +114,11 @@ function EditDataUmkm() {
         setFormData(initialForm);
         setOriginalData({
           ...initialForm,
-          imageUrl: data.image?.url || ""
+          imageUrl: data.image?.link || ""
         });
 
-        if (data.image?.url) {
-          setPreviewImage(data.image.url);
+        if (data.image?.link) {
+          setPreviewImage(data.image.link);
         }
       }
       setIsInitialLoading(false);
@@ -281,6 +280,7 @@ function EditDataUmkm() {
                   onClick={() => {
                     setPreviewImage(null);
                     setFile(null);
+                    setFormData(prev => ({ ...prev, imageId: null }));
                   }}
                   style={{ boxShadow: '0 2px 6px rgba(0,0,0,0.15)' }}
                 >

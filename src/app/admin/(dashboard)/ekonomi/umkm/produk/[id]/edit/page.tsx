@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import EditEditor from "@/app/admin/(dashboard)/_com/editEditor";
@@ -41,8 +40,8 @@ interface ProdukData {
   umkmId: string | null;
   deskripsi: string | null;
   imageId: string | null;
-  kategoriId: string | null;
-  image?: { url: string } | null;
+  kategoriProdukId: string | null;
+  image?: { link: string } | null;
 }
 
 interface ProdukForm {
@@ -51,7 +50,7 @@ interface ProdukForm {
   stok: number;
   umkmId: string;
   deskripsi: string;
-  imageId: string;
+  imageId: string | null;
   kategoriId: string;
 }
 
@@ -71,7 +70,7 @@ function EditProdukUmkm() {
     stok: 0,
     umkmId: "",
     deskripsi: "",
-    imageId: "",
+    imageId: null,
     kategoriId: "",
   });
 
@@ -81,7 +80,7 @@ function EditProdukUmkm() {
     stok: 0,
     umkmId: "",
     deskripsi: "",
-    imageId: "",
+    imageId: null,
     kategoriId: "",
     imageUrl: ""
   });
@@ -113,17 +112,17 @@ function EditProdukUmkm() {
           umkmId: data.umkmId || "",
           deskripsi: data.deskripsi || "",
           imageId: data.imageId || "",
-          kategoriId: data.kategoriId || "",
+          kategoriId: data.kategoriProdukId || "",
         };
 
         setFormData(initialForm);
         setOriginalData({
           ...initialForm,
-          imageUrl: data.image?.url || ""
+          imageUrl: data.image?.link || ""
         });
 
-        if (data.image?.url) {
-          setPreviewImage(data.image.url);
+        if (data.image?.link) {
+          setPreviewImage(data.image.link);
         }
       }
       setIsInitialLoading(false);
@@ -285,6 +284,7 @@ function EditProdukUmkm() {
                   onClick={() => {
                     setPreviewImage(null);
                     setFile(null);
+                    setFormData(prev => ({ ...prev, imageId: null }));
                   }}
                   style={{ boxShadow: '0 2px 6px rgba(0,0,0,0.15)' }}
                 >

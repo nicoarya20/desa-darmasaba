@@ -213,7 +213,7 @@ function Page() {
                     <Button variant="light" leftSection={<IconDeviceLandlinePhone size={18} />} component="a" href={`tel:${kontak.telepon}`} aria-label="Hubungi Telepon">
                       <Text fz={{ base: 'xs', md: 'sm' }}>Telepon</Text>
                     </Button>
-                    <Button variant="light" leftSection={<IconBrandWhatsapp size={18} />} component="a" href={`https://wa.me/${kontak.whatsapp.replace(/\D/g, '')}`} target="_blank" aria-label="Hubungi WhatsApp">
+                    <Button variant="light" leftSection={<IconBrandWhatsapp size={18} />} component="a" href={`https://wa.me/${kontak.whatsapp.replace(/\D/g, '').replace(/^0/, '62')}`} target="_blank" aria-label="Hubungi WhatsApp">
                       <Text fz={{ base: 'xs', md: 'sm' }}>WhatsApp</Text>
                     </Button>
                     <Button variant="light" leftSection={<IconMail size={18} />} component="a" href={`mailto:${kontak.email}`} aria-label="Kirim Email">

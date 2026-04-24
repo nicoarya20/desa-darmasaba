@@ -8,10 +8,10 @@ const umkmFormSchema = z.object({
   nama: z.string().min(1, "Nama minimal 1 karakter"),
   pemilik: z.string().min(1, "Nama pemilik wajib diisi"),
   kategoriId: z.string().min(1, "Kategori wajib dipilih"),
-  deskripsi: z.string().optional(),
-  alamat: z.string().optional(),
-  kontak: z.string().optional(),
-  imageId: z.string().optional(),
+  deskripsi: z.string().optional().nullable(),
+  alamat: z.string().optional().nullable(),
+  kontak: z.string().optional().nullable(),
+  imageId: z.string().optional().nullable(),
 });
 
 const defaultUmkmForm = {
@@ -21,7 +21,7 @@ const defaultUmkmForm = {
   deskripsi: "",
   alamat: "",
   kontak: "",
-  imageId: "",
+  imageId: null as string | null,
   isActive: true,
 };
 
@@ -31,8 +31,8 @@ const produkFormSchema = z.object({
   harga: z.number().min(0, "Harga tidak boleh negatif"),
   stok: z.number().min(0, "Stok tidak boleh negatif"),
   umkmId: z.string().min(1, "UMKM wajib dipilih"),
-  deskripsi: z.string().optional(),
-  imageId: z.string().optional(),
+  deskripsi: z.string().optional().nullable(),
+  imageId: z.string().optional().nullable(),
   kategoriId: z.string().min(1, "Kategori wajib dipilih"), // PasarDesa needs category
 });
 
@@ -42,7 +42,7 @@ const defaultProdukForm = {
   stok: 0,
   umkmId: "",
   deskripsi: "",
-  imageId: "",
+  imageId: null as string | null,
   kategoriId: "",
   isActive: true,
 };
@@ -338,6 +338,29 @@ export const umkmState = proxy({
             return true;
           }
         } catch (e) { toast.error("Gagal mencatat penjualan"); } finally { this.loading = false; }
+        return false;
+      }
+    },
+    del: {
+      loading: false,
+      async submit(id: string) {
+        this.loading = true;
+        try {
+          const res = await fetch(`/api/ekonomi/umkm/penjualan/del/${id}`, {
+            method: "DELETE"
+          });
+          const result = await res.json();
+          if (result.success) {
+            toast.success("Histori penjualan berhasil dihapus");
+            umkmState.penjualan.findMany.load();
+            return true;
+          }
+          toast.error(result.message);
+        } catch (e) {
+          toast.error("Gagal menghapus histori penjualan");
+        } finally {
+          this.loading = false;
+        }
         return false;
       }
     }

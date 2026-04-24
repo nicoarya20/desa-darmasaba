@@ -13,7 +13,21 @@ async function penjualanProdukCreate(context: Context) {
   try {
     // Gunakan transaction untuk update stok produk (PasarDesa)
     const result = await prisma.$transaction(async (tx) => {
-      // 1. Catat penjualan (relasi ke PasarDesa)
+      // 1. Validasi stok produk
+      const produk = await tx.pasarDesa.findUnique({
+        where: { id: body.produkId },
+        select: { stok: true }
+      });
+
+      if (!produk) {
+        throw new Error("Produk tidak ditemukan");
+      }
+
+      if (produk.stok < body.jumlah) {
+        throw new Error(`Stok tidak mencukupi. Tersedia: ${produk.stok}`);
+      }
+
+      // 2. Catat penjualan (relasi ke PasarDesa)
       const penjualan = await tx.penjualanProduk.create({
         data: {
           produkId: body.produkId,
@@ -26,7 +40,7 @@ async function penjualanProdukCreate(context: Context) {
         },
       });
 
-      // 2. Update stok di model PasarDesa
+      // 3. Update stok di model PasarDesa
       await tx.pasarDesa.update({
         where: { id: body.produkId },
         data: {

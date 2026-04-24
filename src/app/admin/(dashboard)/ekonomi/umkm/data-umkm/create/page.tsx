@@ -42,7 +42,7 @@ export default function CreateDataUmkm() {
       deskripsi: "",
       alamat: "",
       kontak: "",
-      imageId: "",
+      imageId: null,
       isActive: true,
     };
     setPreviewImage(null);
@@ -53,7 +53,7 @@ export default function CreateDataUmkm() {
     setIsSubmitting(true);
     try {
       // 1. Upload image first if exists
-      let uploadedImageId = "";
+      let uploadedImageId = null;
       if (file) {
         const res = await ApiFetch.api.fileStorage.create.post({
           file,

@@ -1,132 +1,227 @@
-'use client'
-import colors from '@/con/colors';
-import { Box, Button, Paper, Stack, Text, Image, Skeleton, Group, Badge, Divider, Title } from '@mantine/core';
-import { IconArrowBack, IconBrandWhatsapp, IconMapPin, IconUser } from '@tabler/icons-react';
+'use client';
+
+import React, { useState } from 'react';
+import {
+  Box,
+  Button,
+  Paper,
+  Stack,
+  Text,
+  Image,
+  Skeleton,
+  Group,
+  Badge,
+  Divider,
+  Title,
+  Modal,
+  NumberInput,
+  TextInput,
+  Textarea,
+  Alert,
+} from '@mantine/core';
+import {
+  IconArrowBack,
+  IconBrandWhatsapp,
+  IconMapPin,
+  IconUser,
+  IconShoppingCart,
+} from '@tabler/icons-react';
 import { useRouter, useParams } from 'next/navigation';
-import React from 'react';
 import { useProxy } from 'valtio/utils';
 import { useShallowEffect } from '@mantine/hooks';
+import { toast } from 'react-toastify';
+
+import colors from '@/con/colors';
 import umkmState from '@/app/admin/(dashboard)/_state/ekonomi/umkm/umkm';
+import ApiFetch from '@/lib/api-fetch';
+
+interface OrderForm {
+  nama: string;
+  jumlah: number;
+  catatan: string;
+}
+
+const DEFAULT_FORM: OrderForm = {
+  nama: '',
+  jumlah: 1,
+  catatan: '',
+};
 
 function DetailProdukPasarUser() {
   const router = useRouter();
   const params = useParams();
   const state = useProxy(umkmState.produk.findUnique);
 
+  const [modalOpen, setModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [form, setForm] = useState<OrderForm>(DEFAULT_FORM);
+  const [error, setError] = useState('');
+
   useShallowEffect(() => {
     state.load(params?.id as string);
   }, []);
 
   const data = state.data;
+  const total = data ? form.jumlah * (data.harga ?? 0) : 0;
+
+  const handleClose = () => {
+    setModalOpen(false);
+    setError('');
+    setForm(DEFAULT_FORM);
+  };
+
+  const handleOrder = async () => {
+    if (!data) return;
+
+    if (!form.nama.trim()) {
+      setError('Nama pemesan wajib diisi');
+      return;
+    }
+
+    if (form.jumlah < 1) {
+      setError('Jumlah minimal 1');
+      return;
+    }
+
+    if (form.jumlah > data.stok) {
+      setError(`Stok tersedia hanya ${data.stok}`);
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+
+    try {
+      const res = await ApiFetch.api.ekonomi.umkm.penjualan.create.post({
+        produkId: data.id,
+        jumlah: form.jumlah,
+        hargaSatuan: data.harga || 0,
+        tanggal: new Date().toISOString(),
+      });
+
+      if (!res.data?.success) {
+        throw new Error(res.data?.message || 'Gagal membuat pesanan');
+      }
+
+      state.load(params?.id as string);
+      handleClose();
+
+      toast.success('Pesanan berhasil dicatat!');
+
+      let kontak = data.umkm?.kontak?.replace(/[^0-9]/g, '') || '';
+      if (kontak.startsWith('0')) {
+        kontak = '62' + kontak.slice(1);
+      }
+
+      if (kontak) {
+        const message = [
+          `Halo *${data.umkm?.nama}*, saya ingin memesan:`,
+          '',
+          `*${data.nama}*`,
+          `Jumlah: ${form.jumlah}`,
+          `Harga Satuan: Rp ${data.harga?.toLocaleString('id-ID')}`,
+          `*Total: Rp ${total.toLocaleString('id-ID')}*`,
+          '',
+          `Nama Pemesan: ${form.nama}`,
+          form.catatan ? `Catatan: ${form.catatan}` : null,
+        ]
+          .filter(Boolean)
+          .join('\n');
+
+        window.open(
+          `https://wa.me/${kontak}?text=${encodeURIComponent(message)}`,
+          '_blank'
+        );
+      }
+    } catch (e: any) {
+      setError(e.message || 'Terjadi kesalahan');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (state.loading || !data) {
-    return (
-      <Stack py={10} px={{ base: 'md', md: 100 }}>
-        <Skeleton height={400} radius="md" />
-      </Stack>
-    );
+    return <Skeleton h={400} />;
   }
 
   return (
     <Box py={20} bg={colors.Bg}>
-      {/* Tombol kembali */}
       <Box px={{ base: 'md', md: 100 }}>
         <Button
           variant="subtle"
-          onClick={() => router.push('/darmasaba/ekonomi/umkm')}
-          leftSection={<IconArrowBack size={20} color={colors['blue-button']} />}
-          mb={15}
+          leftSection={<IconArrowBack size={16} />}
+          onClick={() => router.back()}
         >
-          <Text fz={{ base: 'md', md: 'lg' }} lh={1.5}>
-            Kembali ke Katalog
-          </Text>
+          Kembali
         </Button>
       </Box>
 
-      <Paper
-        w={{ base: '90%', md: '70%' }}
-        mx="auto"
-        p="lg"
-        radius="md"
-        shadow="sm"
-        bg="white"
-      >
-        <Stack gap="lg">
-          {/* Gambar Produk */}
+      <Paper mt="md" mx={{ base: 'md', md: 100 }} p="lg" radius="md">
+        <Stack>
           <Image
             src={data.image?.link || '/no-image.jpg'}
             alt={data.nama}
             radius="md"
-            h={{ base: 250, md: 400 }}
-            w="100%"
-            fit="cover"
-            fallbackSrc="/no-image.jpg"
           />
 
-          {/* Detail Produk */}
-          <Stack gap="xs">
-            <Group justify="space-between" align="flex-start">
-              <Stack gap={5}>
-                <Badge color="blue" variant="light">{data.kategoriProduk?.nama}</Badge>
-                <Title order={1} fw={800} c={colors['blue-button']}>
-                  {data.nama}
-                </Title>
-              </Stack>
-              <Badge color={data.stok > 0 ? 'green' : 'red'} size="lg">
-                {data.stok > 0 ? `Stok: ${data.stok}` : 'Stok Habis'}
-              </Badge>
-            </Group>
-            
-            <Text fz="2rem" fw={900} c="orange">
-              Rp {data.harga?.toLocaleString('id-ID')}
-            </Text>
+          <Title>{data.nama}</Title>
 
-            <Divider my="sm" />
+          <Text fw={900} c="orange">
+            Rp {data.harga?.toLocaleString('id-ID')}
+          </Text>
 
-            <Stack gap="md">
-              <Box>
-                <Title order={3} mb="xs">Informasi Penjual</Title>
-                <Paper withBorder p="md" radius="md" bg="gray.0">
-                  <Group justify="space-between">
-                    <Stack gap={4}>
-                      <Text fw={700} fz="lg" c="blue" style={{ cursor: 'pointer' }} onClick={() => router.push(`/darmasaba/ekonomi/umkm/${data.umkmId}`)}>
-                        {data.umkm?.nama}
-                      </Text>
-                      <Group gap="xs">
-                        <IconUser size={16} color="gray" />
-                        <Text size="sm" c="dimmed">{data.umkm?.pemilik}</Text>
-                      </Group>
-                      <Group gap="xs">
-                        <IconMapPin size={16} color="red" />
-                        <Text size="sm" c="dimmed">{data.umkm?.alamat || 'Darmasaba'}</Text>
-                      </Group>
-                    </Stack>
-                    {data.umkm?.kontak && (
-                      <Button
-                        color="green"
-                        radius="md"
-                        component="a"
-                        href={`https://wa.me/${data.umkm.kontak.replace(/[^0-9]/g, '')}`}
-                        target="_blank"
-                        leftSection={<IconBrandWhatsapp size={20}/>}
-                      >
-                        WhatsApp
-                      </Button>
-                    )}
-                  </Group>
-                </Paper>
-              </Box>
+          <Badge color={data.stok > 0 ? 'green' : 'red'}>
+            {data.stok > 0 ? `Stok: ${data.stok}` : 'Stok Habis'}
+          </Badge>
 
-              <Box>
-                <Title order={3} mb="xs">Deskripsi Produk</Title>
-                <Text fz="md" lh={1.6} c="dark">
-                  {data.deskripsi || 'Tidak ada deskripsi tersedia untuk produk ini.'}
-                </Text>
-              </Box>
-            </Stack>
-          </Stack>
+          <Text>{data.deskripsi}</Text>
+
+          <Button
+            leftSection={<IconShoppingCart />}
+            disabled={data.stok === 0}
+            onClick={() => setModalOpen(true)}
+          >
+            Pesan Sekarang
+          </Button>
         </Stack>
       </Paper>
+
+      {/* Modal */}
+      <Modal opened={modalOpen} onClose={handleClose} title="Pesanan">
+        <Stack>
+          <TextInput
+            label="Nama"
+            value={form.nama}
+            onChange={(e) =>
+              setForm({ ...form, nama: e.target.value })
+            }
+          />
+
+          <NumberInput
+            label="Jumlah"
+            min={1}
+            max={data.stok}
+            value={form.jumlah}
+            onChange={(v) =>
+              setForm({ ...form, jumlah: Number(v) || 1 })
+            }
+          />
+
+          <Textarea
+            label="Catatan"
+            value={form.catatan}
+            onChange={(e) =>
+              setForm({ ...form, catatan: e.target.value })
+            }
+          />
+
+          {error && <Alert color="red">{error}</Alert>}
+
+          <Button loading={loading} onClick={handleOrder}>
+            Kirim via WhatsApp
+          </Button>
+        </Stack>
+      </Modal>
     </Box>
   );
 }

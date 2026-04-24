@@ -161,7 +161,7 @@ function DetailLowonganKerjaUser() {
                 size="md"
                 mt="md"
                 bg={colors['blue-button']}
-                onClick={() => window.open(`https://wa.me/${data.notelp}`, '_blank')}
+                onClick={() => window.open(`https://wa.me/${data.notelp?.replace(/[^0-9]/g, '').replace(/^0/, '62')}`, '_blank')}
                 leftSection={<IconBrandWhatsapp size={20} />}
               >
                 Hubungi Sekarang

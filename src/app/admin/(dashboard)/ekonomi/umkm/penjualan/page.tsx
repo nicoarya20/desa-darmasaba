@@ -1,4 +1,5 @@
-'use client'
+'use client';
+
 import {
   Box,
   Button,
@@ -14,20 +15,39 @@ import {
   TableTh,
   TableThead,
   TableTr,
-  Text,
-  Title
+  Title,
 } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconPlus, IconTrash } from '@tabler/icons-react';
 import { useProxy } from 'valtio/utils';
+import { useState } from 'react';
+
 import umkmState from '../../../_state/ekonomi/umkm/umkm';
+import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
 
 function PenjualanUmkm() {
   const state = useProxy(umkmState.penjualan.findMany);
 
+  const [modalHapus, setModalHapus] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+
   useShallowEffect(() => {
     state.load(state.page, 10);
   }, [state.page]);
+
+  const handleHapus = async () => {
+    if (!selectedId) return;
+
+    const success = await umkmState.penjualan.del.submit(selectedId);
+
+    if (success) {
+      setModalHapus(false);
+      setSelectedId(null);
+
+      // 🔥 reload data
+      state.load(state.page, 10);
+    }
+  };
 
   return (
     <Stack gap="lg">
@@ -54,16 +74,30 @@ function PenjualanUmkm() {
                   <TableTh>Aksi</TableTh>
                 </TableTr>
               </TableThead>
+
               <TableTbody>
                 {state.data.map((item) => (
                   <TableTr key={item.id}>
-                    <TableTd>{new Date(item.tanggal).toLocaleDateString('id-ID')}</TableTd>
+                    <TableTd>
+                      {new Date(item.tanggal).toLocaleDateString('id-ID')}
+                    </TableTd>
                     <TableTd fw={500}>{item.produk?.nama}</TableTd>
                     <TableTd>{item.produk?.umkm?.nama}</TableTd>
                     <TableTd>{item.jumlah}</TableTd>
-                    <TableTd fw={600}>Rp {item.totalNilai.toLocaleString()}</TableTd>
+                    <TableTd fw={600}>
+                      Rp {item.totalNilai.toLocaleString()}
+                    </TableTd>
+
                     <TableTd>
-                      <Button variant="subtle" color="red" size="xs">
+                      <Button
+                        variant="subtle"
+                        color="red"
+                        size="xs"
+                        onClick={() => {
+                          setSelectedId(item.id);
+                          setModalHapus(true);
+                        }}
+                      >
                         <IconTrash size={16} />
                       </Button>
                     </TableTd>
@@ -82,6 +116,14 @@ function PenjualanUmkm() {
           />
         </Center>
       </Paper>
+
+      {/* 🔥 Modal Konfirmasi */}
+      <ModalKonfirmasiHapus
+        opened={modalHapus}
+        onClose={() => setModalHapus(false)}
+        onConfirm={handleHapus}
+        text="Apakah Anda yakin ingin menghapus data penjualan ini?"
+      />
     </Stack>
   );
 }
