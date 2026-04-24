@@ -132,7 +132,7 @@ export const umkmState = proxy({
         if (!cek.success) return toast.error("Cek kembali form anda");
         this.loading = true;
         try {
-          const res = await fetch(`/api/ekonomi/umkm/update/${id}`, {
+          const res = await fetch(`/api/ekonomi/umkm/${id}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(this.form)
@@ -157,7 +157,7 @@ export const umkmState = proxy({
       async submit(id: string) {
         this.loading = true;
         try {
-          const res = await fetch(`/api/ekonomi/umkm/delete/${id}`, {
+          const res = await fetch(`/api/ekonomi/umkm/del/${id}`, {
             method: "DELETE"
           });
           const result = await res.json();
@@ -263,7 +263,7 @@ export const umkmState = proxy({
         if (!cek.success) return toast.error("Cek kembali form anda");
         this.loading = true;
         try {
-          const res = await fetch(`/api/ekonomi/umkm/produk/update/${id}`, {
+          const res = await fetch(`/api/ekonomi/umkm/produk/${id}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(this.form)
@@ -283,7 +283,7 @@ export const umkmState = proxy({
       async submit(id: string) {
         this.loading = true;
         try {
-          const res = await fetch(`/api/ekonomi/umkm/produk/delete/${id}`, {
+          const res = await fetch(`/api/ekonomi/umkm/produk/del/${id}`, {
             method: "DELETE"
           });
           const result = await res.json();
