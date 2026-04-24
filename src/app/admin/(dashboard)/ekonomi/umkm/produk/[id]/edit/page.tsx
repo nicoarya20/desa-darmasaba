@@ -33,18 +33,39 @@ import { toast } from "react-toastify";
 import { useProxy } from "valtio/utils";
 import umkmState from "../../../../../_state/ekonomi/umkm/umkm";
 
+interface ProdukData {
+  id: string;
+  nama: string;
+  harga: number;
+  stok: number;
+  umkmId: string | null;
+  deskripsi: string | null;
+  imageId: string | null;
+  kategoriId: string | null;
+  image?: { url: string } | null;
+}
+
+interface ProdukForm {
+  nama: string;
+  harga: number;
+  stok: number;
+  umkmId: string;
+  deskripsi: string;
+  imageId: string;
+  kategoriId: string;
+}
+
 function EditProdukUmkm() {
   const router = useRouter();
   const params = useParams();
   const id = params.id as string;
-  const state = useProxy(umkmState.produk);
   
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<ProdukForm>({
     nama: "",
     harga: 0,
     stok: 0,
@@ -54,7 +75,7 @@ function EditProdukUmkm() {
     kategoriId: "",
   });
 
-  const [originalData, setOriginalData] = useState({
+  const [originalData, setOriginalData] = useState<ProdukForm & { imageUrl: string }>({
     nama: "",
     harga: 0,
     stok: 0,
@@ -64,11 +85,6 @@ function EditProdukUmkm() {
     kategoriId: "",
     imageUrl: ""
   });
-
-  const isHtmlEmpty = (html: string) => {
-    const textContent = html.replace(/<[^>]*>/g, '').trim();
-    return textContent === '';
-  };
 
   const isFormValid = () => {
     return (
@@ -88,9 +104,9 @@ function EditProdukUmkm() {
         umkmState.produk.findUnique.load(id)
       ]);
 
-      const data = umkmState.produk.findUnique.data;
+      const data = umkmState.produk.findUnique.data as ProdukData | null;
       if (data) {
-        const initialForm = {
+        const initialForm: ProdukForm = {
           nama: data.nama || "",
           harga: data.harga || 0,
           stok: data.stok || 0,
@@ -115,7 +131,7 @@ function EditProdukUmkm() {
     init();
   }, [id]);
 
-  const handleChange = (field: string, value: any) => {
+  const handleChange = (field: keyof ProdukForm, value: string | number) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -284,7 +300,7 @@ function EditProdukUmkm() {
             placeholder="Siapa pemilik produk ini?"
             required
             searchable
-            data={umkmState.umkm.findMany.data?.map(v => ({
+            data={umkmState.umkm.findMany.data?.map((v: any) => ({
               value: v.id, label: v.nama
             })) || []}
             value={formData.umkmId}
@@ -327,7 +343,7 @@ function EditProdukUmkm() {
             label="Kategori Produk"
             placeholder="Pilih kategori produk"
             required
-            data={umkmState.kategoriProduk.findManyAll.data?.map(v => ({
+            data={umkmState.kategoriProduk.findManyAll.data?.map((v: any) => ({
               value: v.id, label: v.nama
             })) || []}
             value={formData.kategoriId}

@@ -32,18 +32,39 @@ import { toast } from "react-toastify";
 import { useProxy } from "valtio/utils";
 import umkmState from "../../../../../_state/ekonomi/umkm/umkm";
 
+interface UmkmData {
+  id: string;
+  nama: string;
+  pemilik: string;
+  kategoriId: string | null;
+  deskripsi: string | null;
+  alamat: string | null;
+  kontak: string | null;
+  imageId: string | null;
+  image?: { url: string } | null;
+}
+
+interface UmkmForm {
+  nama: string;
+  pemilik: string;
+  kategoriId: string;
+  deskripsi: string;
+  alamat: string;
+  kontak: string;
+  imageId: string;
+}
+
 function EditDataUmkm() {
   const router = useRouter();
   const params = useParams();
   const id = params.id as string;
-  const state = useProxy(umkmState.umkm);
   
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<UmkmForm>({
     nama: "",
     pemilik: "",
     kategoriId: "",
@@ -53,7 +74,7 @@ function EditDataUmkm() {
     imageId: "",
   });
 
-  const [originalData, setOriginalData] = useState({
+  const [originalData, setOriginalData] = useState<UmkmForm & { imageUrl: string }>({
     nama: "",
     pemilik: "",
     kategoriId: "",
@@ -79,9 +100,9 @@ function EditDataUmkm() {
         umkmState.umkm.findUnique.load(id)
       ]);
 
-      const data = umkmState.umkm.findUnique.data;
+      const data = umkmState.umkm.findUnique.data as UmkmData | null;
       if (data) {
-        const initialForm = {
+        const initialForm: UmkmForm = {
           nama: data.nama || "",
           pemilik: data.pemilik || "",
           kategoriId: data.kategoriId || "",
@@ -106,7 +127,7 @@ function EditDataUmkm() {
     init();
   }, [id]);
 
-  const handleChange = (field: string, value: string) => {
+  const handleChange = (field: keyof UmkmForm, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -291,7 +312,7 @@ function EditDataUmkm() {
               label="Kategori Bisnis"
               placeholder="Pilih kategori"
               required
-              data={umkmState.kategoriProduk.findManyAll.data?.map(v => ({
+              data={umkmState.kategoriProduk.findManyAll.data?.map((v: any) => ({
                 value: v.id, label: v.nama
               })) || []}
               value={formData.kategoriId}

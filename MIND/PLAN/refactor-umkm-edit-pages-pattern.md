@@ -14,9 +14,9 @@ The edit pages for UMKM (Data UMKM and Produk) use an older UI pattern. The user
 
 ## Progress
 - [x] Analyze Berita edit page pattern
-- [x] Refactor UMKM Produk edit page
-- [x] Refactor Data UMKM edit page
-- [ ] Run build and fix any errors
+- [x] Refactor UMKM Produk edit page (with interfaces)
+- [x] Refactor Data UMKM edit page (with interfaces)
+- [x] Run build and fix any errors
 - [ ] Update version in package.json
 - [ ] Commit and push to task branch
 - [ ] Merge to stg branch
