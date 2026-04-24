@@ -1,30 +1,38 @@
-'use client';
+/* eslint-disable react-hooks/exhaustive-deps */
+"use client";
+
+import EditEditor from "@/app/admin/(dashboard)/_com/editEditor";
+import colors from "@/con/colors";
+import ApiFetch from "@/lib/api-fetch";
 import {
+  ActionIcon,
   Box,
   Button,
   Group,
+  Image,
   Paper,
+  Select,
   Stack,
+  Text,
   TextInput,
   Title,
-  Text,
-  Select,
-  ActionIcon,
-  Image,
   Loader,
-  Center
-} from '@mantine/core';
-import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone';
-import { IconArrowBack, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
-import { useRouter, useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
-import { useProxy } from 'valtio/utils';
-import umkmState from '../../../../../_state/ekonomi/umkm/umkm';
-import CreateEditor from '@/app/admin/(dashboard)/_com/createEditor';
-import ApiFetch from '@/lib/api-fetch';
+  Center,
+} from "@mantine/core";
+import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
+import {
+  IconArrowBack,
+  IconPhoto,
+  IconUpload,
+  IconX,
+} from "@tabler/icons-react";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import { useProxy } from "valtio/utils";
+import umkmState from "../../../../../_state/ekonomi/umkm/umkm";
 
-export default function EditDataUmkm() {
+function EditDataUmkm() {
   const router = useRouter();
   const params = useParams();
   const id = params.id as string;
@@ -35,16 +43,45 @@ export default function EditDataUmkm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
 
+  const [formData, setFormData] = useState({
+    nama: "",
+    pemilik: "",
+    kategoriId: "",
+    deskripsi: "",
+    alamat: "",
+    kontak: "",
+    imageId: "",
+  });
+
+  const [originalData, setOriginalData] = useState({
+    nama: "",
+    pemilik: "",
+    kategoriId: "",
+    deskripsi: "",
+    alamat: "",
+    kontak: "",
+    imageId: "",
+    imageUrl: ""
+  });
+
+  const isFormValid = () => {
+    return (
+      formData.nama?.trim() !== '' &&
+      formData.pemilik?.trim() !== '' &&
+      formData.kategoriId !== ''
+    );
+  };
+
   useEffect(() => {
     const init = async () => {
       await Promise.all([
         umkmState.kategoriProduk.findManyAll.load(),
-        state.findUnique.load(id)
+        umkmState.umkm.findUnique.load(id)
       ]);
 
-      if (state.findUnique.data) {
-        const data = state.findUnique.data;
-        state.update.form = {
+      const data = umkmState.umkm.findUnique.data;
+      if (data) {
+        const initialForm = {
           nama: data.nama || "",
           pemilik: data.pemilik || "",
           kategoriId: data.kategoriId || "",
@@ -52,9 +89,14 @@ export default function EditDataUmkm() {
           alamat: data.alamat || "",
           kontak: data.kontak || "",
           imageId: data.imageId || "",
-          isActive: data.isActive ?? true,
         };
-        
+
+        setFormData(initialForm);
+        setOriginalData({
+          ...initialForm,
+          imageUrl: data.image?.url || ""
+        });
+
         if (data.image?.url) {
           setPreviewImage(data.image.url);
         }
@@ -62,13 +104,20 @@ export default function EditDataUmkm() {
       setIsInitialLoading(false);
     };
     init();
-  }, [id, state.findUnique, state.update]);
+  }, [id]);
+
+  const handleChange = (field: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
 
   const handleUpdate = async () => {
+    if (!formData.nama?.trim()) return toast.error("Nama UMKM wajib diisi");
+    if (!formData.pemilik?.trim()) return toast.error("Nama pemilik wajib diisi");
+    if (!formData.kategoriId) return toast.error("Kategori wajib dipilih");
+
     setIsSubmitting(true);
     try {
-      // 1. Upload image if new file selected
-      let uploadedImageId = state.update.form.imageId;
+      let uploadedImageId = formData.imageId;
       if (file) {
         const res = await ApiFetch.api.fileStorage.create.post({
           file,
@@ -84,10 +133,14 @@ export default function EditDataUmkm() {
         }
       }
 
-      // 2. Submit UMKM data
-      state.update.form.imageId = uploadedImageId;
-      const success = await state.update.submit(id);
+      // Update proxy state
+      umkmState.umkm.update.form = {
+        ...umkmState.umkm.update.form,
+        ...formData,
+        imageId: uploadedImageId
+      };
 
+      const success = await umkmState.umkm.update.submit(id);
       if (success) {
         router.push('/admin/ekonomi/umkm/data-umkm');
       }
@@ -99,6 +152,21 @@ export default function EditDataUmkm() {
     }
   };
 
+  const handleResetForm = () => {
+    setFormData({
+      nama: originalData.nama,
+      pemilik: originalData.pemilik,
+      kategoriId: originalData.kategoriId,
+      deskripsi: originalData.deskripsi,
+      alamat: originalData.alamat,
+      kontak: originalData.kontak,
+      imageId: originalData.imageId,
+    });
+    setPreviewImage(originalData.imageUrl || null);
+    setFile(null);
+    toast.info("Form dikembalikan ke data awal");
+  };
+
   if (isInitialLoading) {
     return (
       <Center h={400}>
@@ -108,69 +176,92 @@ export default function EditDataUmkm() {
   }
 
   return (
-    <Box>
-      <Group mb="lg">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
+      {/* Header */}
+      <Group mb="md">
         <Button
           variant="subtle"
           onClick={() => router.back()}
-          leftSection={<IconArrowBack size={20} />}
+          p="xs"
+          radius="md"
         >
-          Kembali
+          <IconArrowBack color={colors["blue-button"]} size={24} />
         </Button>
-        <Title order={3}>Edit Data UMKM</Title>
+        <Title order={4} ml="sm" c="dark">
+          Edit Data UMKM
+        </Title>
       </Group>
 
-      <Paper withBorder p="xl" radius="md" shadow="sm">
-        <Stack gap="lg">
-          {/* Logo / Image UMKM */}
+      {/* Form */}
+      <Paper
+        w={{ base: "100%", md: "50%" }}
+        bg={colors["white-1"]}
+        p="lg"
+        radius="md"
+        shadow="sm"
+        style={{ border: "1px solid #e0e0e0" }}
+      >
+        <Stack gap="md">
+          {/* Logo / Foto UMKM */}
           <Box>
-            <Text fw={500} size="sm" mb={4}>Logo / Foto UMKM</Text>
-            {!previewImage ? (
-              <Dropzone
-                onDrop={(files) => {
-                  const file = files[0];
-                  setFile(file);
-                  setPreviewImage(URL.createObjectURL(file));
-                }}
-                maxSize={3 * 1024 ** 2}
-                accept={IMAGE_MIME_TYPE}
-                radius="md"
-              >
-                <Group justify="center" gap="xl" mih={120} style={{ pointerEvents: 'none' }}>
-                  <Dropzone.Accept>
-                    <IconUpload size={42} stroke={1.5} />
-                  </Dropzone.Accept>
-                  <Dropzone.Reject>
-                    <IconX size={42} stroke={1.5} />
-                  </Dropzone.Reject>
-                  <Dropzone.Idle>
-                    <IconPhoto size={42} stroke={1.5} />
-                  </Dropzone.Idle>
+            <Text fw="bold" fz="sm" mb={6}>
+              Logo / Foto UMKM
+            </Text>
+            <Dropzone
+              onDrop={(files) => {
+                const selectedFile = files[0];
+                if (selectedFile) {
+                  setFile(selectedFile);
+                  setPreviewImage(URL.createObjectURL(selectedFile));
+                }
+              }}
+              onReject={() =>
+                toast.error("File tidak valid, gunakan format gambar")
+              }
+              maxSize={5 * 1024 ** 2}
+              accept={IMAGE_MIME_TYPE}
+              radius="md"
+              p="xl"
+            >
+              <Group justify="center" gap="xl" mih={140}>
+                <Dropzone.Accept>
+                  <IconUpload size={48} color={colors["blue-button"]} stroke={1.5} />
+                </Dropzone.Accept>
+                <Dropzone.Reject>
+                  <IconX size={48} color="red" stroke={1.5} />
+                </Dropzone.Reject>
+                <Dropzone.Idle>
+                  <IconPhoto size={48} color="#868e96" stroke={1.5} />
+                </Dropzone.Idle>
+              </Group>
+            </Dropzone>
 
-                  <Box>
-                    <Text size="xl" inline>
-                      Klik atau tarik gambar di sini
-                    </Text>
-                    <Text size="sm" c="dimmed" inline mt={7}>
-                      Maksimal 3MB
-                    </Text>
-                  </Box>
-                </Group>
-              </Dropzone>
-            ) : (
-              <Box pos="relative" w="fit-content">
-                <Image src={previewImage} h={200} radius="md" alt="Preview" />
+            {previewImage && (
+              <Box mt="sm" pos="relative" style={{ textAlign: 'center' }}>
+                <Image
+                  src={previewImage}
+                  alt="Preview Logo"
+                  radius="md"
+                  style={{
+                    maxHeight: 220,
+                    objectFit: "contain",
+                    border: `1px solid ${colors["blue-button"]}`,
+                  }}
+                  loading="lazy"
+                />
                 <ActionIcon
-                  color="red"
                   variant="filled"
+                  color="red"
+                  radius="xl"
+                  size="sm"
                   pos="absolute"
                   top={5}
                   right={5}
                   onClick={() => {
                     setPreviewImage(null);
                     setFile(null);
-                    state.update.form.imageId = "";
                   }}
+                  style={{ boxShadow: '0 2px 6px rgba(0,0,0,0.15)' }}
                 >
                   <IconX size={14} />
                 </ActionIcon>
@@ -183,15 +274,15 @@ export default function EditDataUmkm() {
               label="Nama UMKM / Bisnis"
               placeholder="Contoh: Warung Sate Bu Komang"
               required
-              value={state.update.form.nama}
-              onChange={(e) => (state.update.form.nama = e.target.value)}
+              value={formData.nama}
+              onChange={(e) => handleChange("nama", e.target.value)}
             />
             <TextInput
               label="Nama Pemilik"
               placeholder="Masukkan nama lengkap pemilik"
               required
-              value={state.update.form.pemilik}
-              onChange={(e) => (state.update.form.pemilik = e.target.value)}
+              value={formData.pemilik}
+              onChange={(e) => handleChange("pemilik", e.target.value)}
             />
           </Group>
 
@@ -203,39 +294,61 @@ export default function EditDataUmkm() {
               data={umkmState.kategoriProduk.findManyAll.data?.map(v => ({
                 value: v.id, label: v.nama
               })) || []}
-              value={state.update.form.kategoriId}
-              onChange={(val) => (state.update.form.kategoriId = val || "")}
+              value={formData.kategoriId}
+              onChange={(val) => handleChange("kategoriId", val || "")}
             />
             <TextInput
               label="Nomor WA / Kontak"
               placeholder="Contoh: 08123456789"
-              value={state.update.form.kontak}
-              onChange={(e) => (state.update.form.kontak = e.target.value)}
+              value={formData.kontak}
+              onChange={(e) => handleChange("kontak", e.target.value)}
             />
           </Group>
 
           <TextInput
             label="Alamat Lengkap"
             placeholder="Masukkan alamat fisik usaha"
-            value={state.update.form.alamat}
-            onChange={(e) => (state.update.form.alamat = e.target.value)}
+            value={formData.alamat}
+            onChange={(e) => handleChange("alamat", e.target.value)}
           />
 
           <Box>
-            <Text fw={500} size="sm" mb={4}>Deskripsi UMKM</Text>
-            <CreateEditor
-              value={state.update.form.deskripsi || ""}
-              onChange={(val) => (state.update.form.deskripsi = val)}
+            <Text fw="bold" fz="sm" mb={4}>
+              Deskripsi UMKM
+            </Text>
+            <EditEditor
+              value={formData.deskripsi}
+              onChange={(htmlContent) =>
+                setFormData((prev) => ({ ...prev, deskripsi: htmlContent }))
+              }
             />
           </Box>
 
-          <Group justify="flex-end" mt="xl">
-            <Button 
-              color="blue" 
-              onClick={handleUpdate}
-              loading={isSubmitting}
+          {/* Action Buttons */}
+          <Group justify="right" mt="md">
+            <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
             >
-              Simpan Perubahan
+              Batal
+            </Button>
+            <Button
+              onClick={handleUpdate}
+              radius="md"
+              size="md"
+              disabled={!isFormValid() || isSubmitting}
+              style={{
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                color: '#fff',
+                boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
+              }}
+            >
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>
@@ -243,3 +356,5 @@ export default function EditDataUmkm() {
     </Box>
   );
 }
+
+export default EditDataUmkm;
