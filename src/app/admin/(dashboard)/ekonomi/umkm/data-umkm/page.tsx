@@ -1,5 +1,4 @@
 'use client'
-import colors from '@/con/colors';
 import {
   Box,
   Button,
@@ -15,7 +14,6 @@ import {
   TableTh,
   TableThead,
   TableTr,
-  Text,
   Title,
   TextInput
 } from '@mantine/core';
@@ -25,6 +23,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import umkmState from '../../../_state/ekonomi/umkm/umkm';
+import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
 
 function DataUmkm() {
   const router = useRouter();
@@ -32,9 +31,22 @@ function DataUmkm() {
   const state = useProxy(umkmState.umkm.findMany);
   const [debouncedSearch] = useDebouncedValue(search, 1000);
 
+  const [modalHapus, setModalHapus] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+
   useShallowEffect(() => {
     state.load(state.page, 10, debouncedSearch);
   }, [state.page, debouncedSearch]);
+
+  const handleHapus = async () => {
+    if (selectedId) {
+      const success = await umkmState.umkm.del.submit(selectedId);
+      if (success) {
+        setModalHapus(false);
+        setSelectedId(null);
+      }
+    }
+  };
 
   return (
     <Stack gap="lg">
@@ -81,10 +93,23 @@ function DataUmkm() {
                     <TableTd>{item.kontak || '-'}</TableTd>
                     <TableTd>
                       <Group gap="xs">
-                        <Button variant="subtle" color="blue" size="xs">
+                        <Button 
+                          variant="subtle" 
+                          color="blue" 
+                          size="xs"
+                          onClick={() => router.push(`/admin/ekonomi/umkm/data-umkm/${item.id}/edit`)}
+                        >
                           <IconEdit size={16} />
                         </Button>
-                        <Button variant="subtle" color="red" size="xs">
+                        <Button 
+                          variant="subtle" 
+                          color="red" 
+                          size="xs"
+                          onClick={() => {
+                            setSelectedId(item.id);
+                            setModalHapus(true);
+                          }}
+                        >
                           <IconTrash size={16} />
                         </Button>
                       </Group>
@@ -104,6 +129,13 @@ function DataUmkm() {
           />
         </Center>
       </Paper>
+
+      <ModalKonfirmasiHapus
+        opened={modalHapus}
+        onClose={() => setModalHapus(false)}
+        onConfirm={handleHapus}
+        text="Apakah Anda yakin ingin menghapus UMKM ini? Menghapus UMKM juga akan berdampak pada produk dan penjualan yang terkait."
+      />
     </Stack>
   );
 }
