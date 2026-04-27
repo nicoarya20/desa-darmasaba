@@ -58,6 +58,12 @@ END $$;
 -- DropTable (idempotent)
 DROP TABLE IF EXISTS "ProdukUmkm";
 
+-- Clean up rows with invalid umkmId (empty string) before adding FK constraint
+DELETE FROM "PenjualanProduk" WHERE "produkId" IN (
+  SELECT id FROM "PasarDesa" WHERE "umkmId" = '' OR "umkmId" NOT IN (SELECT id FROM "Umkm")
+);
+DELETE FROM "PasarDesa" WHERE "umkmId" = '' OR "umkmId" NOT IN (SELECT id FROM "Umkm");
+
 -- AddForeignKey (idempotent)
 DO $$
 BEGIN
