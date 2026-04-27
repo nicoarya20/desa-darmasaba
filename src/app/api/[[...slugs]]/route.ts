@@ -87,6 +87,13 @@ const ApiServer = new Elysia()
   .group("/api", (app) =>
     app
       .use(Utils)
+      .get("/version", async () => {
+        const packageJson = await fs.readFile(
+          path.join(ROOT, "package.json"),
+          "utf-8",
+        );
+        return { version: JSON.parse(packageJson).version };
+      })
       .use(FileStorage)
       .use(LandingPage)
       .use(PPID)
