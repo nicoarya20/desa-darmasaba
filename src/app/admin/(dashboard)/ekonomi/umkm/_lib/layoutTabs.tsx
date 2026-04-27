@@ -11,7 +11,7 @@ import {
   TabsTab,
   Title
 } from '@mantine/core';
-import { IconDashboard, IconBuildingStore, IconPackage, IconShoppingCart } from '@tabler/icons-react';
+import { IconDashboard, IconBuildingStore, IconPackage, IconShoppingCart, IconTag } from '@tabler/icons-react';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
@@ -43,6 +43,12 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
       value: "penjualan",
       href: "/admin/ekonomi/umkm/penjualan",
       icon: <IconShoppingCart size={18} stroke={1.8} />
+    },
+    {
+      label: "Kategori Produk",
+      value: "kategori-produk",
+      href: "/admin/ekonomi/umkm/kategori-produk",
+      icon: <IconTag size={18} stroke={1.8} />
     },
   ];
 

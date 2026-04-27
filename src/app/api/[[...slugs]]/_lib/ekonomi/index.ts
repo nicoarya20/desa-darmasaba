@@ -9,7 +9,7 @@ import DemografiPekerjaan from "./demografi-pekerjaan";
 import JumlahPengangguran from "./jumlah-pengangguran";
 import PendapatanAsliDesa from "./pendapatan-asli-desa";
 import StrukturOrganisasi from "./struktur-bumdes";
-import KategoriProduk from "./kategori-produk";
+import KategoriProduk from "./umkm/kategori-produk/kategori-produk";
 import Umkm from "./umkm";
 import ProdukUmkm from "./umkm/produk";
 import PenjualanProduk from "./umkm/penjualan";
