@@ -1,8 +1,8 @@
 # deploy-stg
 
-Deploy ke staging environment secara penuh: version bump, cek migrasi, commit, push, trigger GitHub workflow (publish + re-pull), dan verifikasi versi.
+Deploy ke staging environment secara penuh menggunakan MCP server `deploy-stg`.
 
-**Repo GitHub:** `bipproductbali/desa-darmasaba`  
+**Repo GitHub:** `bipprojectbali/desa-darmasaba`  
 **Branch stg:** `stg`  
 **STG URL:** `https://desa-darmasaba-stg.wibudev.com`
 
@@ -10,37 +10,30 @@ Deploy ke staging environment secara penuh: version bump, cek migrasi, commit, p
 
 ## Alur Eksekusi
 
-### Langkah 0 — Cek /api/version
-Sebelum apapun, pastikan endpoint `/api/version` sudah ada:
+### Langkah 0 — Cek /api/version endpoint
+Pastikan endpoint `/api/version` sudah ada di API:
 ```bash
 grep -n '"/version"' src/app/api/\[\[...slugs\]\]/route.ts
 ```
-Jika belum ada, tambahkan langsung ke main API group (referensi dari package.json via `fs.readFile`).
+Jika belum ada, tambahkan ke main API group yang membaca `version` dari `package.json`.
 
 ---
 
 ### Langkah 1 — Version Bump
 
-Baca versi saat ini dari `package.json`, bump patch version (+1), lalu tulis ulang:
-```bash
-# Baca versi saat ini
-node -e "const p=require('./package.json'); const [maj,min,pat]=p.version.split('.').map(Number); console.log(maj+'.'+min+'.'+(pat+1))"
-```
-Update `package.json` dengan versi baru. Simpan versi baru sebagai `$NEW_VERSION`.
+Gunakan MCP tool `bump_version` (server: `deploy-stg`).
+
+Tool otomatis baca `package.json`, increment patch (+1), tulis kembali.  
+Catat `new_version` dari response — akan dipakai di Langkah 5 dan 6.
 
 ---
 
-### Langkah 2 — Cek Prisma Migration
+### Langkah 2 — Cek & Buat Migration
 
-```bash
-bunx prisma migrate status
-```
+Gunakan MCP tool `check_migrations` (server: `deploy-stg`).
 
-- Jika output mengandung kata `pending` atau `drift` → buat migrasi baru:
-  ```bash
-  bunx prisma migrate dev --name bump-stg-<new_version>
-  ```
-- Jika sudah up-to-date → lanjut ke langkah berikutnya.
+- Jika `needs_migration: true` → jalankan `create_migration` dengan `name: bump-stg-<new_version>`
+- Jika `is_up_to_date: true` → lanjut ke Langkah 3
 
 ---
 
@@ -50,126 +43,78 @@ bunx prisma migrate status
 bun run build
 ```
 
-Jika build gagal, **stop** dan perbaiki error dulu sebelum melanjutkan deploy.
+Jika build gagal → **stop**, perbaiki error sebelum melanjutkan.
 
 ---
 
-### Langkah 4 — Commit
+### Langkah 4 — Commit & Push ke stg
 
-Stage semua perubahan dan commit:
-```bash
-git add package.json
-git add prisma/migrations/ # jika ada migrasi baru
-git commit -m "chore: bump version to $NEW_VERSION for stg deploy"
-```
+Gunakan MCP tool `commit_and_push_stg` (server: `deploy-stg`).
+
+Tool otomatis stage `package.json` + `prisma/migrations/`, commit dengan message yang menyertakan versi baru, lalu push ke branch `stg` menggunakan `GH_TOKEN`.
 
 ---
 
-### Langkah 5 — Push ke origin/stg
+### Langkah 5 — Trigger publish.yml
 
-```bash
-git push origin HEAD:stg
-```
+Gunakan MCP tool `trigger_publish` (server: `deploy-stg`):
+- `stack_env`: `stg` (default)
+- `tag`: nilai `new_version` dari Langkah 1 (sama persis dengan versi di `package.json`)
 
-Tunggu push selesai sebelum trigger workflow.
-
----
-
-### Langkah 6 — Trigger publish.yml
-
-**Input 1:** `stack_env` = `stg`  
-**Input 2:** `tag` = versi dari package.json (contoh: `0.1.25`)
-
-```bash
-gh workflow run publish.yml \
-  --repo bipprojectbali/desa-darmasaba \
-  --ref stg \
-  -f stack_env=stg \
-  -f tag=$NEW_VERSION
-```
-
-Tunggu 5 detik lalu dapatkan run ID:
-```bash
-sleep 5
-RUN_ID=$(gh run list \
-  --workflow=publish.yml \
-  --repo bipprojectbali/desa-darmasaba \
-  --limit 1 \
-  --json databaseId \
-  -q '.[0].databaseId')
-```
-
-Monitor sampai selesai:
-```bash
-gh run watch $RUN_ID --repo bipprojectbali/desa-darmasaba
-```
-
-Jika publish **gagal** → **stop**, jangan lanjut ke re-pull.
+Tool mengembalikan `run_id`. Poll dengan `watch_workflow_run` setiap 30 detik hingga `status == "completed"`:
+- `conclusion == "success"` → lanjut ke Langkah 6
+- `conclusion != "success"` → **stop**, tampilkan error, jangan lanjut ke re-pull
 
 ---
 
-### Langkah 7 — Trigger re-pull.yml
+### Langkah 6 — Trigger re-pull.yml
 
-Setelah publish berhasil, trigger re-pull:
+Setelah publish berhasil, gunakan MCP tool `trigger_repull` (server: `deploy-stg`):
+- `stack_name`: otomatis dari env `STACK_NAME` (tidak perlu diisi manual)
+- `stack_env`: `stg`
 
-**Input 1:** `stack_env` = `stg`  
-**Input 2:** `stack_name` = `desa-darmasaba` → stack yang di-deploy: `desa-darmasaba-stg`
-
-```bash
-gh workflow run re-pull.yml \
-  --repo bipprojectbali/desa-darmasaba \
-  --ref main \
-  -f stack_name=desa-darmasaba \
-  -f stack_env=stg
-```
-
-Tunggu 5 detik lalu monitor:
-```bash
-sleep 5
-REPULL_ID=$(gh run list \
-  --workflow=re-pull.yml \
-  --repo bipprojectbali/desa-darmasaba \
-  --limit 1 \
-  --json databaseId \
-  -q '.[0].databaseId')
-gh run watch $REPULL_ID --repo bipprojectbali/desa-darmasaba
-```
+Stack yang di-deploy: `<STACK_NAME>-stg`. Poll dengan `watch_workflow_run` setiap 30 detik hingga `status == "completed"`.
 
 ---
 
-### Langkah 8 — Verifikasi Versi
+### Langkah 7 — Verifikasi Versi
 
-Bandingkan versi di stg dengan versi lokal:
+Gunakan MCP tool `check_stg_version` (server: `deploy-stg`):
+- `wait_seconds`: `30` (tunggu container siap)
 
-```bash
-# Versi lokal
-LOCAL_VER=$(node -e "console.log(require('./package.json').version)")
-
-# Versi di STG (tunggu container siap ~30 detik)
-sleep 30
-STG_VER=$(curl -s https://desa-darmasaba-stg.wibudev.com/api/version | node -e "process.stdin.resume();let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>console.log(JSON.parse(d).version))")
-
-echo "Local  : $LOCAL_VER"
-echo "STG    : $STG_VER"
-```
-
-- Jika `LOCAL_VER == STG_VER` → **Deploy berhasil!**
-- Jika berbeda → cek logs container di Portainer atau jalankan `gh run view $REPULL_ID --repo bipprojectbali/desa-darmasaba --log`
+Tool otomatis fetch `BASE_URL/api/version` dan bandingkan dengan versi lokal.
+- `match: true` → **Deploy berhasil!**
+- `match: false` → cek container logs di Portainer atau jalankan `gh run view <run_id> --repo bipprojectbali/desa-darmasaba --log`
 
 ---
+
+## Ringkasan MCP Tools
+
+| Tool | Server | Tujuan |
+|------|--------|--------|
+| `bump_version` | `deploy-stg` | Increment patch version di package.json |
+| `check_migrations` | `deploy-stg` | Cek status Prisma migrations |
+| `create_migration` | `deploy-stg` | Buat migration baru jika diperlukan |
+| `commit_and_push_stg` | `deploy-stg` | Commit + push ke branch stg |
+| `trigger_publish` | `deploy-stg` | Trigger publish.yml (build Docker image) |
+| `watch_workflow_run` | `deploy-stg` | Poll status workflow run |
+| `trigger_repull` | `deploy-stg` | Trigger re-pull.yml (redeploy di Portainer) |
+| `check_stg_version` | `deploy-stg` | Bandingkan versi lokal vs STG |
 
 ## Ringkasan Workflow Inputs
 
 | Workflow | Input | Value |
 |----------|-------|-------|
 | `publish.yml` | `stack_env` | `stg` |
-| `publish.yml` | `tag` | versi dari `package.json` (e.g. `0.1.25`) |
-| `re-pull.yml` | `stack_name` | `desa-darmasaba` |
+| `publish.yml` | `tag` | versi dari `package.json` (e.g. `0.1.26`) |
+| `publish.yml` | `stack_name` | dari env `STACK_NAME` (opsional) |
+| `re-pull.yml` | `stack_name` | dari env `STACK_NAME` (otomatis) |
 | `re-pull.yml` | `stack_env` | `stg` |
 
 ## Catatan
 
 - Jangan jalankan `re-pull.yml` jika `publish.yml` belum selesai/berhasil.
-- Verifikasi versi dilakukan via `/api/version` (bukan `/api/utils/version`).
-- Jika `gh` belum login: `gh auth login`.
-- Untuk cek status workflow manual: `gh run list --repo bipprojectbali/desa-darmasaba`.
+- Isi `GH_TOKEN` di `.env` sebelum menjalankan deploy (bisa sama dengan `GH_TOKEN`).
+- `BASE_URL` di `.env` sudah diset ke `https://desa-darmasaba-stg.wibudev.com`.
+- `STACK_NAME` di `.env` diset ke nama stack (e.g. `desa-darmasaba`) — dipakai otomatis oleh `trigger_publish` dan `trigger_repull`.
+- Verifikasi versi via `/api/version` (bukan `/api/utils/version`).

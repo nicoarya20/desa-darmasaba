@@ -1,15 +1,13 @@
 {
   "mcpServers": {
-    "github": {
-      "command": "sh",
-      "args": [
-        "-c",
-        "GITHUB_PERSONAL_ACCESS_TOKEN=$(gh auth token) npx -y @modelcontextprotocol/server-github"
-      ]
-    },
-    "github-actions": {
+    "deploy-stg": {
       "command": "node",
-      "args": [".claude/mcp/github-actions.mjs"]
+      "args": ["--env-file=.env", ".claude/mcp/github-actions.mjs"],
+      "env": {
+        "GH_TOKEN": "${GH_TOKEN}",
+        "BASE_URL": "${BASE_URL}",
+        "STACK_NAME": "${STACK_NAME}"
+      }
     }
   }
 }

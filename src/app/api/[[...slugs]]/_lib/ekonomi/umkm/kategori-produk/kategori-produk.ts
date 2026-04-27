@@ -6,7 +6,7 @@ const KategoriProduk = new Elysia({
 })
   .get("/find-many-all", async () => {
     try {
-      const data = await prisma.kategoriProduk.findMany({
+      const data = await prisma.kategoriProdukUmkm.findMany({
         where: {
           isActive: true,
           deletedAt: null,
@@ -40,13 +40,13 @@ const KategoriProduk = new Elysia({
       };
 
       const [data, total] = await Promise.all([
-        prisma.kategoriProduk.findMany({
+        prisma.kategoriProdukUmkm.findMany({
           where,
           skip,
           take,
           orderBy: { createdAt: 'desc' },
         }),
-        prisma.kategoriProduk.count({ where }),
+        prisma.kategoriProdukUmkm.count({ where }),
       ]);
 
       return {
@@ -74,7 +74,7 @@ const KategoriProduk = new Elysia({
   })
   .post("/create", async ({ body }) => {
     try {
-      const data = await prisma.kategoriProduk.create({
+      const data = await prisma.kategoriProdukUmkm.create({
         data: {
           nama: body.nama,
           isActive: true,
@@ -100,7 +100,7 @@ const KategoriProduk = new Elysia({
   })
   .put("/:id", async ({ params, body }) => {
     try {
-      const data = await prisma.kategoriProduk.update({
+      const data = await prisma.kategoriProdukUmkm.update({
         where: { id: params.id },
         data: {
           nama: body.nama,
@@ -129,7 +129,7 @@ const KategoriProduk = new Elysia({
   })
   .delete("/del/:id", async ({ params }) => {
     try {
-      const data = await prisma.kategoriProduk.update({
+      const data = await prisma.kategoriProdukUmkm.update({
         where: { id: params.id },
         data: {
           isActive: false,
