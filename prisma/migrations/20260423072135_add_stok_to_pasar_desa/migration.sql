@@ -58,7 +58,11 @@ END $$;
 -- DropTable (idempotent)
 DROP TABLE IF EXISTS "ProdukUmkm";
 
--- Clean up rows with invalid umkmId (empty string) before adding FK constraint
+-- Clean up rows with invalid umkmId before adding FK constraint
+-- Must delete child tables first to avoid FK violations
+DELETE FROM "KategoriToPasar" WHERE "pasarDesaId" IN (
+  SELECT id FROM "PasarDesa" WHERE "umkmId" = '' OR "umkmId" NOT IN (SELECT id FROM "Umkm")
+);
 DELETE FROM "PenjualanProduk" WHERE "produkId" IN (
   SELECT id FROM "PasarDesa" WHERE "umkmId" = '' OR "umkmId" NOT IN (SELECT id FROM "Umkm")
 );
