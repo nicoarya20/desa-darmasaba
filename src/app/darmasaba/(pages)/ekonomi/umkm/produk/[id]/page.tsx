@@ -174,7 +174,10 @@ function DetailProdukPasarUser() {
             {data.stok > 0 ? `Stok: ${data.stok}` : 'Stok Habis'}
           </Badge>
 
-          <Text>{data.deskripsi}</Text>
+          <Text
+            style={{ wordBreak: 'break-word' }}
+            dangerouslySetInnerHTML={{ __html: data.deskripsi || '-' }}
+          />
 
           <Button
             leftSection={<IconShoppingCart />}

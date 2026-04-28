@@ -63,7 +63,7 @@ async function umkmDashboardKpi(context: Context) {
       }
 
       if (topCategoryId) {
-        const kategori = await prisma.kategoriProduk.findUnique({
+        const kategori = await prisma.kategoriProdukUmkm.findUnique({
           where: { id: topCategoryId },
           select: { nama: true },
         });
