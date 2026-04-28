@@ -493,23 +493,31 @@ export const umkmState = proxy({
     summary: { data: null as any, loading: false },
     topProduk: { data: [] as any[], loading: false },
     detail: { data: [] as any[], loading: false },
-    async loadAll(periode = "") {
+    mode: "month" as "week" | "month",
+    async loadAll(periode = "", mode?: "week" | "month", kategoriId = "", umkmId = "") {
       const p = periode || `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`;
+      const m = mode ?? this.mode;
+      const modeParam = m === "week" ? "&mode=week" : "";
+      const detailFilter = [
+        kategoriId ? `&kategoriId=${kategoriId}` : "",
+        umkmId ? `&umkmId=${umkmId}` : "",
+      ].join("");
       this.kpi.loading = true;
       this.summary.loading = true;
       this.topProduk.loading = true;
       this.detail.loading = true;
       try {
         const [kpi, sum, top, det] = await Promise.all([
-          fetch(`/api/ekonomi/umkm/dashboard/kpi?periode=${p}`).then(r => r.json()),
-          fetch(`/api/ekonomi/umkm/dashboard/ringkasan-penjualan?periode=${p}`).then(r => r.json()),
-          fetch(`/api/ekonomi/umkm/dashboard/top-produk?periode=${p}`).then(r => r.json()),
-          fetch(`/api/ekonomi/umkm/dashboard/detail-penjualan?periode=${p}`).then(r => r.json())
+          fetch(`/api/ekonomi/umkm/dashboard/kpi?periode=${p}${modeParam}`).then(r => r.json()),
+          fetch(`/api/ekonomi/umkm/dashboard/ringkasan-penjualan?periode=${p}${modeParam}`).then(r => r.json()),
+          fetch(`/api/ekonomi/umkm/dashboard/top-produk?periode=${p}${modeParam}`).then(r => r.json()),
+          fetch(`/api/ekonomi/umkm/dashboard/detail-penjualan?periode=${p}${modeParam}${detailFilter}`).then(r => r.json()),
         ]);
         if (kpi.success) this.kpi.data = kpi.data;
         if (sum.success) this.summary.data = sum.data;
         if (top.success) this.topProduk.data = top.data;
         if (det.success) this.detail.data = det.data;
+        this.mode = m;
       } catch (e) { console.error(e); } finally {
         this.kpi.loading = false;
         this.summary.loading = false;
