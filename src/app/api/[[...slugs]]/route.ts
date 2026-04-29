@@ -63,16 +63,18 @@ const Utils = new Elysia({
 });
 
 const ApiServer = new Elysia()
-  .use(swagger({ path: "/api/docs" }))
   .use(cors(corsConfig))
   .use(
     swagger({
-      path: "/docs",
+      path: "/api/docs",
       documentation: {
         info: {
           title: "Desa Darmasaba API Documentation",
           version: "1.0.0",
         },
+      },
+      scalarConfig: {
+        spec: { url: "/api/docs/json" },
       },
     }),
   )
