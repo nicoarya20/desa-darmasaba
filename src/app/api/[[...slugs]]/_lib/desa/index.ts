@@ -13,6 +13,7 @@ import KategoriPengumuman from "./pengumuman/kategori-pengumuman";
 import MantanPerbekel from "./profile/profile-mantan-perbekel";
 import AjukanPermohonan from "./layanan/ajukan_permohonan";
 import Musik from "./musik";
+import KegiatanDesa from "./kegiatan-desa";
 
 
 const Desa = new Elysia({ prefix: "/desa", tags: ["Desa"] })
@@ -30,6 +31,7 @@ const Desa = new Elysia({ prefix: "/desa", tags: ["Desa"] })
   .use(KategoriPengumuman)
   .use(AjukanPermohonan)
   .use(Musik)
+  .use(KegiatanDesa)
 
 
 export default Desa;

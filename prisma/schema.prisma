@@ -1213,6 +1213,7 @@ model ProgramKesehatan {
   name             String
   deskripsiSingkat String
   deskripsi        String
+  persentase       Int          @default(0)
   image            FileStorage? @relation(fields: [imageId], references: [id])
   imageId          String?
   createdAt        DateTime     @default(now())
@@ -2468,5 +2469,26 @@ model PenjualanProduk {
   @@index([periode])
   @@index([produkId])
   @@index([tanggal])
+}
+
+// ========================================= BEASISWA CONFIG ========================================= //
+model BeasiswaConfig {
+  id              String   @id @default(cuid())
+  tahunAjaran     String
+  danaTersalurkan BigInt   @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  isActive        Boolean  @default(true)
+}
+
+// ========================================= RINGKASAN KESEHATAN DESA ========================================= //
+model RingkasanKesehatanDesa {
+  id              String   @id @default(cuid())
+  ibuHamilAkh     Int      @default(0)
+  balitaTerdaftar Int      @default(0)
+  alertStunting   Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  isActive        Boolean  @default(true)
 }
 
