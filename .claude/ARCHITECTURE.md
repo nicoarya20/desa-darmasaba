@@ -8,7 +8,7 @@
 - **UI**: Mantine UI v7-8
 - **State**: Jotai (atoms), Valtio (proxies), SWR (data fetching)
 - **Auth**: iron-session + JWT
-- **File storage**: Local uploads + Seafile (self-hosted)
+- **File storage**: Local uploads + MinIO (object storage) + Seafile (self-hosted fallback)
 
 ## Request Flow
 
@@ -20,13 +20,15 @@ Browser → Next.js middleware (src/middleware.ts)
                        └── _lib/*.ts  (domain modules)
 ```
 
-The Elysia server is a single entry point with domain-specific modules: `desa.ts`, `kesehatan.ts`, `ekonomi.ts`, `keamanan.ts`, `lingkungan.ts`, `pendidikan.ts`, `kependudukan.ts`, `ppid.ts`, `inovasi.ts`, `auth/`, `user/`, `fileStorage/`. Swagger docs are auto-generated at `/api/docs`.
+The Elysia server is a single entry point with domain-specific modules: `desa/`, `kesehatan/`, `ekonomi/`, `keamanan/`, `lingkungan/`, `pendidikan/`, `kependudukan/`, `ppid/`, `inovasi/`, `landing_page/`, `search/`, `auth/`, `user/`, `fileStorage/`. Swagger docs are auto-generated at `/api/docs`.
 
 ## Domain Modules
 Each domain (desa, kesehatan, ekonomi, etc.) has:
-- API handler in `src/app/api/[[...slugs]]/_lib/<domain>.ts`
+- API handler in `src/app/api/[[...slugs]]/_lib/<domain>/`
 - Admin CMS pages in `src/app/admin/(dashboard)/<domain>/`
 - Public pages in `src/app/darmasaba/(pages)/<domain>/`
+
+Active domains: `desa`, `ekonomi`, `inovasi`, `keamanan`, `kependudukan`, `kesehatan`, `lingkungan`, `musik`, `pendidikan`, `ppid` — plus `landing_page` and `search` (API-only, no public/admin pages).
 
 ## Key Files
 

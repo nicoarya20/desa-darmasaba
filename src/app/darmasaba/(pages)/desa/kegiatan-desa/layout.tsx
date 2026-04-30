@@ -1,0 +1,35 @@
+'use client'
+import colors from '@/con/colors';
+import { Box } from '@mantine/core';
+import dynamic from 'next/dynamic';
+import { usePathname } from 'next/navigation';
+import { ReactNode } from 'react';
+import BackButton from '../layanan/_com/BackButto';
+
+const LayoutTabsKegiatanDesa = dynamic(
+  () => import('./_lib/layoutTabs'),
+  { ssr: false }
+);
+
+export default function KegiatanDesaLayout({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
+
+  // /darmasaba/desa/kegiatan-desa/semua          → 4 segments → list
+  // /darmasaba/desa/kegiatan-desa/[kategori]     → 4 segments → list
+  // /darmasaba/desa/kegiatan-desa/[kategori]/[id]→ 5 segments → detail
+  const segments = pathname.split('/').filter(Boolean);
+  const isDetailPage = segments.length === 5;
+
+  if (isDetailPage) {
+    return (
+      <Box bg={colors.Bg}>
+        <Box pt={33} px={{ base: 'md', md: 100 }}>
+          <BackButton />
+        </Box>
+        {children}
+      </Box>
+    );
+  }
+
+  return <LayoutTabsKegiatanDesa>{children}</LayoutTabsKegiatanDesa>;
+}

@@ -118,6 +118,11 @@ export const devBar = [
         id: "Desa_7",
         name: "Penghargaan",
         path: "/admin/desa/penghargaan"
+      },
+      {
+        id: "Desa_8",
+        name: "Kegiatan Desa",
+        path: "/admin/desa/kegiatan-desa/list-kegiatan-desa"
       }
 
     ]
@@ -549,6 +554,11 @@ export const navBar = [
         id: "Desa_7",
         name: "Penghargaan",
         path: "/admin/desa/penghargaan"
+      },
+      {
+        id: "Desa_8",
+        name: "Kegiatan Desa",
+        path: "/admin/desa/kegiatan-desa/list-kegiatan-desa"
       }
 
     ]
@@ -995,6 +1005,11 @@ export const role1 = [
         id: "Desa_7",
         name: "Penghargaan",
         path: "/admin/desa/penghargaan"
+      },
+      {
+        id: "Desa_8",
+        name: "Kegiatan Desa",
+        path: "/admin/desa/kegiatan-desa/list-kegiatan-desa"
       }
 
     ]
