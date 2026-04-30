@@ -43,15 +43,17 @@ export function KegiatanCard({
       style={{ cursor: 'pointer', transition: 'box-shadow 0.2s' }}
       onClick={onNavigate}
     >
-      <Card.Section>
-        <Image
-          src={item.image?.link || '/images/placeholder-small.jpg'}
-          height={200}
-          alt={item.judul}
-          fit="cover"
-          loading="lazy"
-        />
-      </Card.Section>
+      {item.image?.link && (
+        <Card.Section>
+          <Image
+            src={item.image.link}
+            height={200}
+            alt={item.judul}
+            fit="cover"
+            loading="lazy"
+          />
+        </Card.Section>
+      )}
 
       <Stack mt="md" gap="xs">
         <Badge color="blue" variant="light" size="sm" radius="md" w="fit-content">

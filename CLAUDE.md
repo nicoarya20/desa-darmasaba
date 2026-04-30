@@ -30,6 +30,7 @@ bun eslint . --fix
 - Architecture, request flow, domain modules, key files: @.claude/ARCHITECTURE.md
 - Database conventions, auth flow, file handling: @.claude/DATABASE.md
 - Env vars, Docker, CI/CD, releasing: @.claude/DEPLOYMENT.md
+- AI collaboration contract, rules, and guidelines: @AI-CONTRACT.md
 
 ### Workflow for Code Changes
 1.  **Commit** existing changes before starting new work
