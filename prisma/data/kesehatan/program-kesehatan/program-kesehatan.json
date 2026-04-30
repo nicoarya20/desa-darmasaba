@@ -1,9 +1,38 @@
 [
   {
+    "id": "prog_kes_imunisasi_001",
+    "name": "Imunisasi Lengkap",
+    "deskripsiSingkat": "<p>Persentase balita yang mendapatkan imunisasi lengkap sesuai jadwal di Desa Darmasaba.</p>",
+    "deskripsi": "<p>Program imunisasi lengkap mencakup vaksin BCG, DPT-HB-Hib, Polio, Campak, dan PCV yang diberikan kepada seluruh balita di Desa Darmasaba melalui posyandu dan puskesmas setempat untuk membangun kekebalan komunitas.</p>",
+    "persentase": 92
+  },
+  {
+    "id": "prog_kes_pemeriksaan_001",
+    "name": "Pemeriksaan Rutin",
+    "deskripsiSingkat": "<p>Persentase ibu hamil dan balita yang melakukan pemeriksaan kesehatan rutin secara berkala.</p>",
+    "deskripsi": "<p>Pemeriksaan kesehatan rutin dilakukan setiap bulan di posyandu dan puskesmas, mencakup penimbangan berat badan, pengukuran tinggi badan, pemeriksaan tekanan darah ibu hamil, dan konsultasi gizi untuk memantau perkembangan kesehatan masyarakat.</p>",
+    "persentase": 88
+  },
+  {
+    "id": "prog_kes_gizi_001",
+    "name": "Gizi Baik",
+    "deskripsiSingkat": "<p>Persentase balita dengan status gizi baik berdasarkan hasil pemantauan tumbuh kembang.</p>",
+    "deskripsi": "<p>Program pemantauan gizi balita dilaksanakan melalui posyandu dengan penimbangan bulanan dan pengukuran tinggi badan. Balita dengan status gizi baik menunjukkan berat dan tinggi badan sesuai standar WHO, didukung dengan program pemberian makanan tambahan bagi balita berisiko.</p>",
+    "persentase": 86
+  },
+  {
+    "id": "prog_kes_stunting_001",
+    "name": "Target Stunting",
+    "deskripsiSingkat": "<p>Persentase balita yang teridentifikasi berisiko stunting dan perlu penanganan khusus.</p>",
+    "deskripsi": "<p>Penanganan stunting di Desa Darmasaba dilakukan melalui deteksi dini, intervensi gizi spesifik, dan intervensi gizi sensitif. Program ini melibatkan kader posyandu, bidan desa, dan puskesmas untuk memantau pertumbuhan balita secara berkala dan memberikan penanganan tepat.</p>",
+    "persentase": 14
+  },
+  {
     "id": "cmkawkji50002vn6yzyrlqhh1",
     "name": "Gerakan Kulkul PKK dan Posyandu Desa Darmasaba",
     "deskripsiSingkat": "<p>Kegiatan bersama PKK dan Posyandu untuk meningkatkan pelayanan kesehatan masyarakat.</p>",
     "deskripsi": "<p>Pada hari Minggu, 11 Januari 2025, Pemerintah Desa Darmasaba melalui TP PKK dan TP Posyandu melaksanakan kegiatan Gerakan Kulkul PKK dan Posyandu yang berlangsung serentak di seluruh wilayah Desa Darmasaba untuk memperkuat pelayanan kesehatan dasar dan peningkatan partisipasi masyarakat dalam program Posyandu.</p>",
+    "persentase": 0,
     "imageName": "hLeF0GRFZqDUngZnDMAAk-mobile.webp"
   },
   {
@@ -11,6 +40,7 @@
     "name": "Pendampingan Kunjungan Rumah oleh Puskesmas Abiansemal 3",
     "deskripsiSingkat": "<p>Pendataan kesehatan penyandang disabilitas lewat kunjungan rumah di Desa Darmasaba.</p>",
     "deskripsi": "<p>Pemerintah Desa Darmasaba bersama Kelian Banjar Dinas dan kader kesehatan mendampingi kegiatan kunjungan rumah yang dilaksanakan oleh Puskesmas Abiansemal 3 pada 21 Juli 2025, difokuskan pada pendataan dan pemantauan kondisi kesehatan penyandang disabilitas di Banjar Bersih, Desa Darmasaba.</p>",
+    "persentase": 0,
     "imageName": "hyyTFi8EApjzFEZ9EvJgB-mobile.webp"
   },
   {
@@ -18,6 +48,7 @@
     "name": "Kegiatan Aksi Sosial Tim Penggerak Posyandu Provinsi Bali di Desa Darmasaba",
     "deskripsiSingkat": "<p>Aksi sosial TP Posyandu Bali untuk memperkuat pelayanan posyandu di desa.</p>",
     "deskripsi": "<p>Pada 10 Desember 2025, Desa Darmasaba menjadi lokasi pelaksanaan Aksi Sosial Tim Penggerak Posyandu Provinsi Bali yang bertujuan memperkuat pelayanan Posyandu serta meningkatkan kesejahteraan masyarakat, khususnya keluarga dan balita.</p>",
+    "persentase": 0,
     "imageName": "l4qsUEw2JiclGAkkrXp9g-mobile.webp"
   },
   {
@@ -25,6 +56,7 @@
     "name": "Inovasi BAJRA dalam Penanggulangan Rabies",
     "deskripsiSingkat": "<p>Program BAJRA untuk penanggulangan rabies di Desa Darmasaba.</p>",
     "deskripsi": "<p>Desa Darmasaba mengembangkan inovasi BAJRA (Bersama Jaga Rabies), sebuah program berbasis komunitas untuk penanggulangan rabies yang mengintegrasikan pelaporan cepat masyarakat, edukasi berkelanjutan dan koordinasi lintas sektor antara kesehatan hewan, manusia, dan pemerintahan desa.</p>",
+    "persentase": 0,
     "imageName": "Gc79mlIlGuoRQuTqskFj--mobile.webp"
   },
   {
@@ -32,6 +64,7 @@
     "name": "Posyandu Pudak Amara Berkompetisi",
     "deskripsiSingkat": "<p>Partisipasi Posyandu Pudak Amara dalam lomba prestasi Posyandu tingkat provinsi.</p>",
     "deskripsi": "<p>Kader Posyandu Pudak Amara Br. Cabe mendapat pendampingan dari Perbekel Darmasaba, Dinas Kesehatan Kab. Badung, Puskesmas Abiansemal III, dan Pustu Desa Darmasaba dalam ajang lomba kader dan Posyandu berprestasi tingkat Provinsi Bali tahun 2025.</p>",
+    "persentase": 0,
     "imageName": "OsMY3AYPyGC_CoN1xUjOn-mobile.webp"
   },
   {
@@ -39,13 +72,15 @@
     "name": "Outbound Kader Posyandu Darmasaba",
     "deskripsiSingkat": "<p>Program pembinaan dan pengembangan kapasitas kader Posyandu.</p>",
     "deskripsi": "<p>Pemdes Darmasaba melaksanakan kegiatan Outbound Posyandu untuk meningkatkan kapasitas dan wawasan Kader Posyandu se-Desa Darmasaba sebagai bagian dari upaya peningkatan kualitas pelayanan kesehatan dasar di masyarakat.</p>",
+    "persentase": 0,
     "imageName": "M9QlgVKIEfCdY3g4F_tRZ-mobile.webp"
   },
   {
     "id": "cmkdu8ki10004vn4lpbxm2zqo",
     "name": "PEMBANGUNAN JAMBAN BAGI MASYARAKAT",
     "deskripsiSingkat": "<p>Program pengadaan jamban bagi Masyarakat ini diharapkan menjadi stimulus agar masyarakat peduli terhadap lingkungan sehat sehingga Badung Open Defection Free atau terbebas dari buang air besar di tempat terbuka dapat terwujud.</p>",
-    "deskripsi": "<p>Desa Darmasaba sebagai desa yang berkomitmen selalu selaras dengan pembangunan Pemerintah Kabupaten Badung pada tahun anggaran 2023 ini turut ambil bagian dalam menyukseskan program Bupati Badung I Nyoman Giri Prasta, S.Sos dalam bidang kesehatan sanitasi masyarakat. Program pengadaan jamban bagi Masyarakat ini diharapkan menjadi stimulus agar masyarakat peduli terhadap lingkungan sehat sehingga Badung Open Defection Free atau terbebas dari buang air besar di tempat terbuka dapat terwujud.</p><p style=\"text-align: justify\">Pemberian bantuan jamban ini dilaksanakan di 11 banjar dengan menyasar 22 keluarga yang memang belum memiliki jamban yang sumber dananya sepenuhnya dari APBDes Darmasaba T. A. 2023. Pembangunan Jamban bagi Masyarakat ini juga menjadi bukti komitmen Pemerintah Desa Darmasaba dalam melaksanakan salah satu visi mewujudkan masyarakat yang sejahtera dan berbudaya untuk menjaga lingkungan yang bersih dan sehat.</p>",
+    "deskripsi": "<p>Desa Darmasaba sebagai desa yang berkomitmen selalu selaras dengan pembangunan Pemerintah Kabupaten Badung pada tahun anggaran 2023 ini turut ambil bagian dalam menyukseskan program Bupati Badung I Nyoman Giri Prasta, S.Sos dalam bidang kesehatan sanitasi masyarakat.</p>",
+    "persentase": 0,
     "imageName": "6DQbAvn0St-xHdPGW3vpY-mobile.webp"
   }
 ]

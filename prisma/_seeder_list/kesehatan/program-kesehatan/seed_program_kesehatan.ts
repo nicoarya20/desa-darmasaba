@@ -28,6 +28,7 @@ export async function seedProgramKesehatan() {
         name: p.name,
         deskripsiSingkat: p.deskripsiSingkat,
         deskripsi: p.deskripsi,
+        persentase: p.persentase ?? 0,
         imageId,
       },
       create: {
@@ -35,6 +36,7 @@ export async function seedProgramKesehatan() {
         name: p.name,
         deskripsiSingkat: p.deskripsiSingkat,
         deskripsi: p.deskripsi,
+        persentase: p.persentase ?? 0,
         imageId,
       },
     });

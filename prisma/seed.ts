@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import prisma from "@/lib/prisma";
 import { seedBerita } from "./_seeder_list/desa/berita/seed_berita";
+import { seedKegiatanDesa } from "./_seeder_list/desa/seed_kegiatan_desa";
 import { seedFoto } from "./_seeder_list/desa/gallery/foto/seed_foto";
 import { seedVideo } from "./_seeder_list/desa/gallery/video/seed_video";
 import { seedLayanan } from "./_seeder_list/desa/layanan/seed_layanan";
@@ -46,6 +47,7 @@ import { seedProgramKesehatan } from "./_seeder_list/kesehatan/program-kesehatan
 import { seedPuskesmas } from "./_seeder_list/kesehatan/puskesmas/seed_puskesmas";
 import { seedGrafikKepuasan } from "./_seeder_list/kesehatan/seed_grafik_kepuasan";
 import { seedKelahiranKematian } from "./_seeder_list/kesehatan/seed_kelahiran_kematian";
+import { seedRingkasanKesehatan } from "./_seeder_list/kesehatan/seed_ringkasan_kesehatan";
 import { seedDesaAntiKorupsi } from "./_seeder_list/landing-page/desa-anti-korupsi/seed_desa_anti_korupsi";
 import { seedPrestasiDesa } from "./_seeder_list/landing-page/prestasi-desa/seed_prestasi_desa";
 import { seedMediaSosial } from "./_seeder_list/landing-page/profil_landing_page/seed_media_sosial";
@@ -59,6 +61,7 @@ import { seedKonservasiAdatBali } from "./_seeder_list/lingkungan/seed_konservas
 import { seedPengelolaanSampah } from "./_seeder_list/lingkungan/seed_pengelolaan_sampah";
 import { seedProgramPenghijauan } from "./_seeder_list/lingkungan/seed_program_penghijauan";
 import { seedBeasiswaPendaftar } from "./_seeder_list/pendidikan/seed_beasiswa_pendaftar";
+import { seedBeasiswaConfig } from "./_seeder_list/pendidikan/seed_beasiswa_config";
 import { seedBimbinganBelajar } from "./_seeder_list/pendidikan/seed_bimbingan_belajar";
 import { seedDataPendidikan } from "./_seeder_list/pendidikan/seed_data_pendidikan";
 import { seedDataPerpustakaan } from "./_seeder_list/pendidikan/seed_data_perpustakaan";
@@ -378,6 +381,11 @@ import seedAssets from "./seed_assets";
   // ===== PENDIDIKAN =====
   await seedKeunggulanProgram();
   await seedBeasiswaPendaftar();
+  await seedBeasiswaConfig();
+
+  // ===== SOSIAL DASHBOARD =====
+  await seedRingkasanKesehatan();
+  await seedKegiatanDesa();
 
   // ===== DESA =====
   await seedMusikDesa();

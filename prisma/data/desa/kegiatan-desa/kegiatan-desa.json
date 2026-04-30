@@ -1,0 +1,52 @@
+[
+  {
+    "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567801",
+    "judul": "Hari Kesaktian Pancasila",
+    "deskripsiSingkat": "Peringatan Hari Kesaktian Pancasila di Balai Desa Darmasaba sebagai momentum menguatkan nilai-nilai Pancasila dalam kehidupan bermasyarakat.",
+    "deskripsiLengkap": "Pemerintah Desa Darmasaba menyelenggarakan upacara peringatan Hari Kesaktian Pancasila yang dihadiri oleh perangkat desa, tokoh masyarakat, perwakilan pemuda, dan warga desa. Kegiatan ini sebagai bentuk penghormatan atas perjuangan bangsa dan komitmen untuk terus mengamalkan nilai-nilai Pancasila dalam kehidupan sehari-hari di lingkungan desa.",
+    "tanggal": "2025-10-01T00:00:00.000Z",
+    "lokasi": "Balai Desa",
+    "partisipan": 250,
+    "kategoriKegiatanId": "katbudaya000001"
+  },
+  {
+    "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567802",
+    "judul": "Festival Budaya Desa",
+    "deskripsiSingkat": "Festival tahunan menampilkan kesenian dan budaya lokal Bali sebagai upaya pelestarian warisan budaya Desa Darmasaba.",
+    "deskripsiLengkap": "Festival Budaya Desa Darmasaba merupakan agenda tahunan yang menampilkan berbagai pertunjukan seni tradisional Bali seperti tari Kecak, Legong, Barong, serta pameran kerajinan tangan dan kuliner khas desa. Festival ini bertujuan untuk melestarikan warisan budaya leluhur, memperkenalkan kekayaan budaya kepada generasi muda, dan meningkatkan daya tarik wisata budaya Desa Darmasaba.",
+    "tanggal": "2026-05-20T00:00:00.000Z",
+    "lokasi": "Lapangan Desa",
+    "partisipan": 500,
+    "kategoriKegiatanId": "katbudaya000001"
+  },
+  {
+    "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567803",
+    "judul": "Perayaan HUT Desa",
+    "deskripsiSingkat": "Perayaan hari ulang tahun Desa Darmasaba dengan berbagai kegiatan seni budaya dan olahraga yang melibatkan seluruh lapisan masyarakat.",
+    "deskripsiLengkap": "Hari Ulang Tahun Desa Darmasaba dirayakan dengan serangkaian kegiatan meriah meliputi upacara adat, pertunjukan seni budaya Bali, lomba olahraga tradisional, dan pameran produk unggulan desa. Perayaan ini menjadi ajang mempererat kebersamaan warga, mengenang sejarah desa, dan merayakan pencapaian pembangunan yang telah diraih bersama.",
+    "tanggal": "2026-08-17T00:00:00.000Z",
+    "lokasi": "Balai Desa",
+    "partisipan": 600,
+    "kategoriKegiatanId": "katbudaya000001"
+  },
+  {
+    "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567804",
+    "judul": "Gotong Royong Pembersihan Desa",
+    "deskripsiSingkat": "Kegiatan gotong royong rutin membersihkan lingkungan desa sebagai wujud kebersamaan dan kepedulian masyarakat terhadap kebersihan.",
+    "deskripsiLengkap": "Kegiatan gotong royong pembersihan lingkungan desa dilaksanakan secara rutin setiap bulan dengan melibatkan seluruh warga, kader PKK, karang taruna, dan perangkat desa. Kegiatan ini mencakup pembersihan jalan desa, sungai, tempat ibadah, dan fasilitas umum sebagai bentuk nyata kepedulian masyarakat terhadap kebersihan dan keindahan lingkungan.",
+    "tanggal": "2026-03-15T00:00:00.000Z",
+    "lokasi": "Seluruh Wilayah Desa",
+    "partisipan": 400,
+    "kategoriKegiatanId": "katsosia000001"
+  },
+  {
+    "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567805",
+    "judul": "Turnamen Olahraga Antar Banjar",
+    "deskripsiSingkat": "Turnamen olahraga tahunan antar banjar untuk mempererat tali persaudaraan dan mendorong gaya hidup sehat masyarakat desa.",
+    "deskripsiLengkap": "Turnamen olahraga antar banjar di Desa Darmasaba menampilkan berbagai cabang olahraga seperti bola voli, bulu tangkis, tenis meja, dan sepak bola. Kegiatan ini diikuti oleh perwakilan dari setiap banjar di desa dan bertujuan untuk menumbuhkan semangat sportivitas, mempererat silaturahmi antar warga, serta mendorong pola hidup sehat melalui olahraga.",
+    "tanggal": "2026-06-10T00:00:00.000Z",
+    "lokasi": "Lapangan Desa",
+    "partisipan": 350,
+    "kategoriKegiatanId": "katolahraga0001"
+  }
+]
