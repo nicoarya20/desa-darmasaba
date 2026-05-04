@@ -166,6 +166,11 @@ export const devBar = [
         id: "Kesehatan_7",
         name: "Info Wabah/Penyakit",
         path: "/admin/kesehatan/info-wabah-penyakit"
+      },
+      {
+        id: "Kesehatan_8",
+        name: "Ringkasan Kesehatan",
+        path: "/admin/kesehatan/ringkasan-kesehatan"
       }
     ]
   },
@@ -602,6 +607,11 @@ export const navBar = [
         id: "Kesehatan_7",
         name: "Info Wabah/Penyakit",
         path: "/admin/kesehatan/info-wabah-penyakit"
+      },
+      {
+        id: "Kesehatan_8",
+        name: "Ringkasan Kesehatan",
+        path: "/admin/kesehatan/ringkasan-kesehatan"
       }
     ]
   },
@@ -1272,6 +1282,11 @@ export const role2 = [
         id: "Kesehatan_7",
         name: "Info Wabah/Penyakit",
         path: "/admin/kesehatan/info-wabah-penyakit"
+      },
+      {
+        id: "Kesehatan_8",
+        name: "Ringkasan Kesehatan",
+        path: "/admin/kesehatan/ringkasan-kesehatan"
       }
     ]
   },

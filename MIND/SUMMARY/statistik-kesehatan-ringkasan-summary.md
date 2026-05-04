@@ -49,7 +49,9 @@ prisma/migrations/20260504000000_add_statistik_pct_ringkasan_kesehatan/migration
 src/app/api/[[...slugs]]/_lib/kesehatan/ringkasan-kesehatan/updt.ts
 src/app/api/[[...slugs]]/_lib/kesehatan/ringkasan-kesehatan/index.ts
 src/app/admin/(dashboard)/_state/kesehatan/ringkasan-kesehatan/ringkasanKesehatan.ts  [NEW]
-package.json (0.1.48 → 0.1.50)
+src/app/admin/(dashboard)/kesehatan/ringkasan-kesehatan/page.tsx  [NEW]
+src/app/admin/_com/list_PageAdmin.tsx  (3 sidebar instances → tambah Kesehatan_8)
+package.json (0.1.48 → 0.1.51)
 MIND/PLAN/task-statistik-kesehatan-ringkasan.md  [NEW]
 ```
 
@@ -57,3 +59,4 @@ MIND/PLAN/task-statistik-kesehatan-ringkasan.md  [NEW]
 
 - `ba2b90be` feat(kesehatan): tambah 4 field statistik pct ke RingkasanKesehatanDesa - bump ke 0.1.49
 - `68a2a639` feat(kesehatan): tambah state file ringkasanKesehatan + bump ke 0.1.50
+- (next) feat(kesehatan): admin page ringkasan-kesehatan + sidebar entry - bump ke 0.1.51
