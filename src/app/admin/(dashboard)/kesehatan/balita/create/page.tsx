@@ -27,9 +27,9 @@ export default function BalitaCreatePage() {
   const form = state.create.form;
 
   const handleSubmit = async () => {
-    const ok = await state.create.submit();
+    const ok = await balitaState.create.submit();
     if (ok) {
-      state.create.reset();
+      balitaState.create.reset();
       router.push('/admin/kesehatan/balita');
     }
   };
@@ -51,14 +51,14 @@ export default function BalitaCreatePage() {
               required
               placeholder="Nama balita"
               value={form.nama}
-              onChange={(e) => { form.nama = e.currentTarget.value; }}
+              onChange={(e) => { balitaState.create.form.nama = e.currentTarget.value; }}
               radius="md"
             />
             <TextInput
               label="NIK"
               placeholder="Nomor Induk Kependudukan"
               value={form.nik}
-              onChange={(e) => { form.nik = e.currentTarget.value; }}
+              onChange={(e) => { balitaState.create.form.nik = e.currentTarget.value; }}
               radius="md"
             />
             <TextInput
@@ -66,7 +66,7 @@ export default function BalitaCreatePage() {
               required
               type="date"
               value={form.tanggalLahir}
-              onChange={(e) => { form.tanggalLahir = e.currentTarget.value; }}
+              onChange={(e) => { balitaState.create.form.tanggalLahir = e.currentTarget.value; }}
               radius="md"
             />
             <Select
@@ -77,7 +77,7 @@ export default function BalitaCreatePage() {
                 { value: 'P', label: 'Perempuan' },
               ]}
               value={form.jenisKelamin}
-              onChange={(v) => { if (v) form.jenisKelamin = v as typeof form.jenisKelamin; }}
+              onChange={(v) => { if (v) balitaState.create.form.jenisKelamin = v as typeof form.jenisKelamin; }}
               radius="md"
             />
             <NumberInput
@@ -86,7 +86,7 @@ export default function BalitaCreatePage() {
               min={0}
               decimalScale={1}
               value={form.beratBadanKg ?? ''}
-              onChange={(v) => { form.beratBadanKg = v === '' ? undefined : Number(v); }}
+              onChange={(v) => { balitaState.create.form.beratBadanKg = v === '' ? undefined : Number(v); }}
               radius="md"
             />
             <NumberInput
@@ -95,21 +95,21 @@ export default function BalitaCreatePage() {
               min={0}
               decimalScale={1}
               value={form.tinggiBadanCm ?? ''}
-              onChange={(v) => { form.tinggiBadanCm = v === '' ? undefined : Number(v); }}
+              onChange={(v) => { balitaState.create.form.tinggiBadanCm = v === '' ? undefined : Number(v); }}
               radius="md"
             />
             <TextInput
               label="Nama Orang Tua"
               placeholder="Nama ayah/ibu"
               value={form.namaOrtu}
-              onChange={(e) => { form.namaOrtu = e.currentTarget.value; }}
+              onChange={(e) => { balitaState.create.form.namaOrtu = e.currentTarget.value; }}
               radius="md"
             />
             <TextInput
               label="No. HP Orang Tua"
               placeholder="08xx-xxxx-xxxx"
               value={form.noHpOrtu}
-              onChange={(e) => { form.noHpOrtu = e.currentTarget.value; }}
+              onChange={(e) => { balitaState.create.form.noHpOrtu = e.currentTarget.value; }}
               radius="md"
             />
             <Select
@@ -121,7 +121,7 @@ export default function BalitaCreatePage() {
                 { value: 'STUNTING', label: 'Stunting' },
               ]}
               value={form.statusStunting}
-              onChange={(v) => { if (v) form.statusStunting = v as typeof form.statusStunting; }}
+              onChange={(v) => { if (v) balitaState.create.form.statusStunting = v as typeof form.statusStunting; }}
               radius="md"
             />
           </SimpleGrid>
@@ -130,7 +130,7 @@ export default function BalitaCreatePage() {
             label="Alamat"
             placeholder="Alamat lengkap"
             value={form.alamat}
-            onChange={(e) => { form.alamat = e.currentTarget.value; }}
+            onChange={(e) => { balitaState.create.form.alamat = e.currentTarget.value; }}
             radius="md"
           />
 
@@ -138,17 +138,17 @@ export default function BalitaCreatePage() {
             <Checkbox
               label="Imunisasi Lengkap"
               checked={form.imunisasiLengkap}
-              onChange={(e) => { form.imunisasiLengkap = e.currentTarget.checked; }}
+              onChange={(e) => { balitaState.create.form.imunisasiLengkap = e.currentTarget.checked; }}
             />
             <Checkbox
               label="Gizi Baik"
               checked={form.giziBaik}
-              onChange={(e) => { form.giziBaik = e.currentTarget.checked; }}
+              onChange={(e) => { balitaState.create.form.giziBaik = e.currentTarget.checked; }}
             />
             <Checkbox
               label="Pemeriksaan Rutin"
               checked={form.pemeriksaanRutin}
-              onChange={(e) => { form.pemeriksaanRutin = e.currentTarget.checked; }}
+              onChange={(e) => { balitaState.create.form.pemeriksaanRutin = e.currentTarget.checked; }}
             />
           </Group>
 
@@ -156,7 +156,7 @@ export default function BalitaCreatePage() {
             label="Catatan"
             placeholder="Catatan tambahan"
             value={form.catatan}
-            onChange={(e) => { form.catatan = e.currentTarget.value; }}
+            onChange={(e) => { balitaState.create.form.catatan = e.currentTarget.value; }}
             radius="md"
             rows={3}
           />

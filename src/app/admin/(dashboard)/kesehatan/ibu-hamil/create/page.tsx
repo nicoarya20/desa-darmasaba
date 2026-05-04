@@ -25,9 +25,9 @@ export default function IbuHamilCreatePage() {
   const form = state.create.form;
 
   const handleSubmit = async () => {
-    const ok = await state.create.submit();
+    const ok = await ibuHamilState.create.submit();
     if (ok) {
-      state.create.reset();
+      ibuHamilState.create.reset();
       router.push('/admin/kesehatan/ibu-hamil');
     }
   };
@@ -49,14 +49,14 @@ export default function IbuHamilCreatePage() {
               required
               placeholder="Nama ibu hamil"
               value={form.nama}
-              onChange={(e) => { form.nama = e.currentTarget.value; }}
+              onChange={(e) => { ibuHamilState.create.form.nama = e.currentTarget.value; }}
               radius="md"
             />
             <TextInput
               label="NIK"
               placeholder="Nomor Induk Kependudukan"
               value={form.nik}
-              onChange={(e) => { form.nik = e.currentTarget.value; }}
+              onChange={(e) => { ibuHamilState.create.form.nik = e.currentTarget.value; }}
               radius="md"
             />
             <TextInput
@@ -64,28 +64,28 @@ export default function IbuHamilCreatePage() {
               type="number"
               placeholder="0"
               value={String(form.usiaKehamilan)}
-              onChange={(e) => { form.usiaKehamilan = Number(e.currentTarget.value) || 0; }}
+              onChange={(e) => { ibuHamilState.create.form.usiaKehamilan = Number(e.currentTarget.value) || 0; }}
               radius="md"
             />
             <TextInput
               label="No. HP"
               placeholder="08xx-xxxx-xxxx"
               value={form.noHp}
-              onChange={(e) => { form.noHp = e.currentTarget.value; }}
+              onChange={(e) => { ibuHamilState.create.form.noHp = e.currentTarget.value; }}
               radius="md"
             />
             <TextInput
               label="HPHT (Hari Pertama Haid Terakhir)"
               type="date"
               value={form.hpht}
-              onChange={(e) => { form.hpht = e.currentTarget.value; }}
+              onChange={(e) => { ibuHamilState.create.form.hpht = e.currentTarget.value; }}
               radius="md"
             />
             <TextInput
               label="Taksiran Persalinan"
               type="date"
               value={form.taksiranLahir}
-              onChange={(e) => { form.taksiranLahir = e.currentTarget.value; }}
+              onChange={(e) => { ibuHamilState.create.form.taksiranLahir = e.currentTarget.value; }}
               radius="md"
             />
             <Select
@@ -98,7 +98,7 @@ export default function IbuHamilCreatePage() {
                 { value: 'NONAKTIF', label: 'Nonaktif' },
               ]}
               value={form.status}
-              onChange={(v) => { if (v) form.status = v as typeof form.status; }}
+              onChange={(v) => { if (v) ibuHamilState.create.form.status = v as typeof form.status; }}
               radius="md"
             />
           </SimpleGrid>
@@ -107,7 +107,7 @@ export default function IbuHamilCreatePage() {
             label="Alamat"
             placeholder="Alamat lengkap"
             value={form.alamat}
-            onChange={(e) => { form.alamat = e.currentTarget.value; }}
+            onChange={(e) => { ibuHamilState.create.form.alamat = e.currentTarget.value; }}
             radius="md"
           />
 
@@ -115,7 +115,7 @@ export default function IbuHamilCreatePage() {
             label="Catatan"
             placeholder="Catatan tambahan"
             value={form.catatan}
-            onChange={(e) => { form.catatan = e.currentTarget.value; }}
+            onChange={(e) => { ibuHamilState.create.form.catatan = e.currentTarget.value; }}
             radius="md"
             rows={3}
           />
