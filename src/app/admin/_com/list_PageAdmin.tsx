@@ -171,6 +171,16 @@ export const devBar = [
         id: "Kesehatan_8",
         name: "Ringkasan Kesehatan",
         path: "/admin/kesehatan/ringkasan-kesehatan"
+      },
+      {
+        id: "Kesehatan_9",
+        name: "Ibu Hamil",
+        path: "/admin/kesehatan/ibu-hamil"
+      },
+      {
+        id: "Kesehatan_10",
+        name: "Balita",
+        path: "/admin/kesehatan/balita"
       }
     ]
   },
@@ -612,6 +622,16 @@ export const navBar = [
         id: "Kesehatan_8",
         name: "Ringkasan Kesehatan",
         path: "/admin/kesehatan/ringkasan-kesehatan"
+      },
+      {
+        id: "Kesehatan_9",
+        name: "Ibu Hamil",
+        path: "/admin/kesehatan/ibu-hamil"
+      },
+      {
+        id: "Kesehatan_10",
+        name: "Balita",
+        path: "/admin/kesehatan/balita"
       }
     ]
   },
@@ -1287,6 +1307,16 @@ export const role2 = [
         id: "Kesehatan_8",
         name: "Ringkasan Kesehatan",
         path: "/admin/kesehatan/ringkasan-kesehatan"
+      },
+      {
+        id: "Kesehatan_9",
+        name: "Ibu Hamil",
+        path: "/admin/kesehatan/ibu-hamil"
+      },
+      {
+        id: "Kesehatan_10",
+        name: "Balita",
+        path: "/admin/kesehatan/balita"
       }
     ]
   },

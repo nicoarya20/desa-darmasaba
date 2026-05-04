@@ -1159,6 +1159,8 @@ model Posyandu {
   jadwalPelayanan String
   image           FileStorage? @relation(fields: [imageId], references: [id])
   imageId         String?
+  ibuHamil        IbuHamil[]
+  balita          Balita[]
   createdAt       DateTime     @default(now())
   updatedAt       DateTime     @updatedAt
   deletedAt       DateTime     @default(now())
@@ -2479,6 +2481,67 @@ model BeasiswaConfig {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
   isActive        Boolean  @default(true)
+}
+
+// ========================================= IBU HAMIL ========================================= //
+enum IbuHamilStatus {
+  AKTIF
+  MELAHIRKAN
+  KEGUGURAN
+  NONAKTIF
+}
+
+model IbuHamil {
+  id            String         @id @default(cuid())
+  nama          String
+  nik           String?
+  usiaKehamilan Int            @default(0)
+  hpht          DateTime?
+  taksiranLahir DateTime?
+  alamat        String?
+  noHp          String?
+  catatan       String?
+  posyanduId    String?
+  posyandu      Posyandu?      @relation(fields: [posyanduId], references: [id], onDelete: SetNull)
+  status        IbuHamilStatus @default(AKTIF)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  isActive      Boolean        @default(true)
+}
+
+// ========================================= BALITA ========================================= //
+enum JenisKelaminBalita {
+  L
+  P
+}
+
+enum StatusStunting {
+  NORMAL
+  ALERT
+  STUNTING
+}
+
+model Balita {
+  id               String             @id @default(cuid())
+  nama             String
+  nik              String?
+  tanggalLahir     DateTime
+  jenisKelamin     JenisKelaminBalita
+  beratBadanKg     Float?
+  tinggiBadanCm    Float?
+  namaOrtu         String?
+  alamat           String?
+  noHpOrtu         String?
+  posyanduId       String?
+  posyandu         Posyandu?          @relation(fields: [posyanduId], references: [id], onDelete: SetNull)
+  imunisasiLengkap Boolean            @default(false)
+  giziBaik         Boolean            @default(true)
+  pemeriksaanRutin Boolean            @default(true)
+  statusStunting   StatusStunting     @default(NORMAL)
+  catatan          String?
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  isActive         Boolean            @default(true)
 }
 
 // ========================================= RINGKASAN KESEHATAN DESA ========================================= //

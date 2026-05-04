@@ -1,8 +1,17 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
 import { proxy } from "valtio";
 import { z } from "zod";
+
+type StatsData = {
+  ibuHamilAktif: number;
+  balitaTerdaftar: number;
+  alertStunting: number;
+  imunisasiLengkapPct: number;
+  pemeriksaanRutinPct: number;
+  giziBaikPct: number;
+  targetStuntingPct: number;
+};
 
 const intPct = z
   .number({ invalid_type_error: "Harus berupa angka" })
@@ -36,10 +45,35 @@ const defaultForm = {
 };
 
 const ringkasanKesehatanState = proxy({
+  // Derived stats aggregated from IbuHamil + Balita tables
+  findStats: {
+    data: null as StatsData | null,
+    loading: false,
+    async load() {
+      try {
+        ringkasanKesehatanState.findStats.loading = true;
+        const res = await fetch(`/api/kesehatan/ringkasankesehatan/stats`);
+        if (res.ok) {
+          const result = await res.json();
+          ringkasanKesehatanState.findStats.data = result?.data ?? null;
+          if (result?.data) {
+            ringkasanKesehatanState.update.form.targetStuntingPct = result.data.targetStuntingPct;
+          }
+        } else {
+          ringkasanKesehatanState.findStats.data = null;
+        }
+      } catch (error) {
+        console.error("Error fetching ringkasan stats:", error);
+        ringkasanKesehatanState.findStats.data = null;
+      } finally {
+        ringkasanKesehatanState.findStats.loading = false;
+      }
+    },
+  },
+
+  // Kept for backward-compat — now only used internally for targetStuntingPct config
   findUnique: {
-    data: null as Prisma.RingkasanKesehatanDesaGetPayload<{
-      omit: { isActive: true };
-    }> | null,
+    data: null as Prisma.RingkasanKesehatanDesaGetPayload<object> | null,
     loading: false,
     async load() {
       try {
@@ -70,9 +104,41 @@ const ringkasanKesehatanState = proxy({
       }
     },
   },
+
   update: {
     form: { ...defaultForm },
     loading: false,
+    async submitTarget() {
+      const pct = ringkasanKesehatanState.update.form.targetStuntingPct;
+      const cek = intPct.safeParse(pct);
+      if (!cek.success) {
+        toast.error("Target stunting harus 0-100");
+        return false;
+      }
+      try {
+        ringkasanKesehatanState.update.loading = true;
+        const response = await fetch(`/api/kesehatan/ringkasankesehatan/update`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(ringkasanKesehatanState.update.form),
+        });
+        const result = await response.json();
+        if (result.success) {
+          toast.success("Target stunting berhasil disimpan");
+          await ringkasanKesehatanState.findStats.load();
+          return true;
+        }
+        toast.error(result.message || "Gagal menyimpan");
+        return false;
+      } catch (error) {
+        console.error("Error saving target stunting:", error);
+        toast.error("Gagal menyimpan target stunting");
+        return false;
+      } finally {
+        ringkasanKesehatanState.update.loading = false;
+      }
+    },
+    // Kept for backward-compat (full update)
     async submit() {
       const cek = templateForm.safeParse(ringkasanKesehatanState.update.form);
       if (!cek.success) {
@@ -82,7 +148,6 @@ const ringkasanKesehatanState = proxy({
         toast.error(err);
         return false;
       }
-
       try {
         ringkasanKesehatanState.update.loading = true;
         const response = await fetch(`/api/kesehatan/ringkasankesehatan/update`, {
@@ -90,26 +155,16 @@ const ringkasanKesehatanState = proxy({
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(ringkasanKesehatanState.update.form),
         });
-
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}));
-          throw new Error(
-            errorData.message || `HTTP error! status: ${response.status}`
-          );
-        }
-
         const result = await response.json();
         if (result.success) {
-          toast.success(result.message || "Ringkasan kesehatan berhasil disimpan");
+          toast.success(result.message || "Berhasil disimpan");
           await ringkasanKesehatanState.findUnique.load();
           return true;
         }
-        throw new Error(result.message || "Gagal menyimpan ringkasan kesehatan");
+        throw new Error(result.message || "Gagal menyimpan");
       } catch (error) {
         console.error("Error updating ringkasan kesehatan:", error);
-        toast.error(
-          error instanceof Error ? error.message : "Gagal menyimpan ringkasan kesehatan"
-        );
+        toast.error(error instanceof Error ? error.message : "Gagal menyimpan");
         return false;
       } finally {
         ringkasanKesehatanState.update.loading = false;

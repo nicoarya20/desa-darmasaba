@@ -22,6 +22,8 @@ import DokterTenagaMedis from "./data_kesehatan_warga/fasilitas_kesehatan/dokter
 import PendaftaranJadwalKegiatan from "./data_kesehatan_warga/jadwal_kegiatan/pendaftaran";
 import TarifLayanan from "./data_kesehatan_warga/fasilitas_kesehatan/tarif-layanan";
 import RingkasanKesehatan from "./ringkasan-kesehatan";
+import IbuHamil from "./ibu-hamil";
+import Balita from "./balita";
 
 
 const Kesehatan = new Elysia({
@@ -51,4 +53,6 @@ const Kesehatan = new Elysia({
 .use(TarifLayanan)
 .use(PendaftaranJadwalKegiatan)
 .use(RingkasanKesehatan)
+.use(IbuHamil)
+.use(Balita)
 export default Kesehatan;
