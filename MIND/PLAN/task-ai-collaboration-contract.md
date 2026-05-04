@@ -6,6 +6,6 @@
 - [x] Fix `KegiatanCard.tsx` image rendering logic
 - [x] Bump version in `package.json` to 0.1.48
 - [x] Verify build successful
-- [ ] Commit changes
-- [ ] Create branch and push
-- [ ] Merge to `stg`
+- [x] Commit changes
+- [x] Create branch and push
+- [x] Merge to `stg`
