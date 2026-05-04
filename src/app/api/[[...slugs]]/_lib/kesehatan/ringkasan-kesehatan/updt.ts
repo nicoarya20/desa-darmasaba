@@ -18,6 +18,10 @@ async function ringkasanKesehatanUpdate(context: Context) {
             ibuHamilAkh: Number(body.ibuHamilAkh),
             balitaTerdaftar: Number(body.balitaTerdaftar),
             alertStunting: Number(body.alertStunting),
+            imunisasiLengkapPct: Number(body.imunisasiLengkapPct),
+            pemeriksaanRutinPct: Number(body.pemeriksaanRutinPct),
+            giziBaikPct: Number(body.giziBaikPct),
+            targetStuntingPct: Number(body.targetStuntingPct),
           },
         })
       : await prisma.ringkasanKesehatanDesa.create({
@@ -25,6 +29,10 @@ async function ringkasanKesehatanUpdate(context: Context) {
             ibuHamilAkh: Number(body.ibuHamilAkh),
             balitaTerdaftar: Number(body.balitaTerdaftar),
             alertStunting: Number(body.alertStunting),
+            imunisasiLengkapPct: Number(body.imunisasiLengkapPct),
+            pemeriksaanRutinPct: Number(body.pemeriksaanRutinPct),
+            giziBaikPct: Number(body.giziBaikPct),
+            targetStuntingPct: Number(body.targetStuntingPct),
           },
         });
 
