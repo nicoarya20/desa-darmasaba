@@ -190,7 +190,7 @@ export default function Validasi() {
       case 2:
         return '/admin/landing-page/profil/program-inovasi';
       case 3:
-        return '/admin/kesehatan/posyandu';
+        return '/admin/kesehatan/posyandu/list-posyandu';
       case 4:
         return '/admin/pendidikan/info-sekolah/jenjang-pendidikan';
       default:

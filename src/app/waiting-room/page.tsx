@@ -47,7 +47,7 @@ export default function WaitingRoom() {
   const [error, setError] = useState<string | null>(null);
   const [isRedirecting, setIsRedirecting] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
-  
+
   // ⏱️ Countdown timer
   const [timeLeft, setTimeLeft] = useState(CONFIG.TIMEOUT_DURATION / 1000); // dalam detik
   const [hasTimedOut, setHasTimedOut] = useState(false);
@@ -128,7 +128,7 @@ export default function WaitingRoom() {
                   redirectPath = '/admin/landing-page/profil/program-inovasi';
                   break;
                 case "3":
-                  redirectPath = '/admin/kesehatan/posyandu';
+                  redirectPath = '/admin/kesehatan/posyandu/list-posyandu';
                   break;
                 case "4":
                   redirectPath = '/admin/pendidikan/info-sekolah/jenjang-pendidikan';
@@ -200,9 +200,9 @@ export default function WaitingRoom() {
               Silakan hubungi Superadmin atau coba login ulang nanti.
             </Text>
             <Group gap="sm" w="100%">
-              <Button 
-                fullWidth 
-                variant="outline" 
+              <Button
+                fullWidth
+                variant="outline"
                 onClick={handleLogout}
               >
                 Kembali ke Login
@@ -243,11 +243,11 @@ export default function WaitingRoom() {
           <Title order={2} c={colors['blue-button']} ta="center">
             ⏳ Menunggu Persetujuan
           </Title>
-          
+
           <Text ta="center" c="dimmed">
             Akun Anda sedang dalam proses verifikasi oleh Superadmin.
           </Text>
-          
+
           <Text ta="center" size="sm" fw={500}>
             Nomor: {user?.nomor || '...'}
           </Text>
@@ -260,8 +260,8 @@ export default function WaitingRoom() {
                 {formatTime(timeLeft)}
               </Text>
             </Group>
-            <Progress 
-              value={progressValue} 
+            <Progress
+              value={progressValue}
               color={timeLeft < 60 ? 'red' : colors['blue-button']}
               size="sm"
               animated
@@ -269,15 +269,15 @@ export default function WaitingRoom() {
           </Stack>
 
           <Loader size="sm" color={colors['blue-button']} />
-          
+
           <Text ta="center" size="xs" c="dimmed">
             Jangan tutup halaman ini. Anda akan dialihkan otomatis setelah disetujui.
           </Text>
 
           {/* 🚪 Tombol Keluar */}
-          <Button 
-            variant="subtle" 
-            size="xs" 
+          <Button
+            variant="subtle"
+            size="xs"
             onClick={handleLogout}
             c="dimmed"
           >
