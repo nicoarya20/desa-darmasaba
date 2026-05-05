@@ -6,6 +6,7 @@ import PendidikanNonFormal from "./pendidikan-non-formal";
 import DataPendidikan from "./data-pendidikan";
 import Beasiswa from "./beasiswa-desa";
 import PerpustakaanDigital from "./perpustakaan-digital";
+import RingkasanPendidikan from "./ringkasan";
 
 const Pendidikan = new Elysia({
     prefix: "/pendidikan",
@@ -19,5 +20,6 @@ const Pendidikan = new Elysia({
 .use(DataPendidikan)
 .use(Beasiswa)
 .use(PerpustakaanDigital)
+.use(RingkasanPendidikan)
 
 export default Pendidikan;

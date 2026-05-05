@@ -1,0 +1,58 @@
+[
+  {
+    "id": "event-budaya-1",
+    "nama": "Hari Kesaktian Pancasila",
+    "tanggal": "2025-10-01T07:00:00.000Z",
+    "lokasi": "Balai Desa Darmasaba",
+    "deskripsi": "Peringatan Hari Kesaktian Pancasila diikuti seluruh perangkat desa dan warga Desa Darmasaba dengan upacara bendera dan kegiatan budaya."
+  },
+  {
+    "id": "event-budaya-2",
+    "nama": "Upacara Ngusaba Desa",
+    "tanggal": "2025-11-15T08:00:00.000Z",
+    "lokasi": "Pura Puseh Desa Darmasaba",
+    "deskripsi": "Upacara adat tahunan Ngusaba Desa sebagai bentuk rasa syukur kepada Ida Sang Hyang Widhi Wasa atas keselamatan dan kemakmuran desa."
+  },
+  {
+    "id": "event-budaya-3",
+    "nama": "Festival Budaya Desa Darmasaba",
+    "tanggal": "2026-05-20T09:00:00.000Z",
+    "lokasi": "Lapangan Desa Darmasaba",
+    "deskripsi": "Festival tahunan menampilkan kesenian tradisional Bali seperti tari kecak, legong, dan barong oleh sanggar seni dari Desa Darmasaba."
+  },
+  {
+    "id": "event-budaya-4",
+    "nama": "Perayaan HUT Desa Darmasaba",
+    "tanggal": "2026-08-17T07:30:00.000Z",
+    "lokasi": "Balai Desa Darmasaba",
+    "deskripsi": "Peringatan Hari Ulang Tahun Kemerdekaan Republik Indonesia sekaligus hari jadi Desa Darmasaba dengan berbagai lomba dan pertunjukan budaya."
+  },
+  {
+    "id": "event-budaya-5",
+    "nama": "Perayaan Galungan dan Kuningan",
+    "tanggal": "2026-03-04T06:00:00.000Z",
+    "lokasi": "Seluruh wilayah Desa Darmasaba",
+    "deskripsi": "Rangkaian perayaan Hari Raya Galungan dan Kuningan sebagai hari kemenangan dharma melawan adharma, dirayakan seluruh umat Hindu di Desa Darmasaba."
+  },
+  {
+    "id": "event-budaya-6",
+    "nama": "Lomba Ogoh-Ogoh Desa",
+    "tanggal": "2026-03-18T15:00:00.000Z",
+    "lokasi": "Lapangan Desa Darmasaba",
+    "deskripsi": "Lomba pembuatan dan parade ogoh-ogoh antar banjar se-Desa Darmasaba dalam rangka menyambut Hari Raya Nyepi."
+  },
+  {
+    "id": "event-budaya-7",
+    "nama": "Pementasan Wayang Kulit",
+    "tanggal": "2026-06-10T19:00:00.000Z",
+    "lokasi": "Wantilan Desa Darmasaba",
+    "deskripsi": "Pementasan wayang kulit semalam suntuk oleh dalang dari Desa Darmasaba sebagai bagian dari pelestarian seni budaya Bali."
+  },
+  {
+    "id": "event-budaya-8",
+    "nama": "Upacara Melaspas Gedung Balai Banjar",
+    "tanggal": "2026-09-05T08:00:00.000Z",
+    "lokasi": "Banjar Desa Darmasaba",
+    "deskripsi": "Upacara Melaspas sebagai ritual penyucian bangunan baru balai banjar agar membawa keselamatan dan kesejahteraan bagi krama banjar."
+  }
+]

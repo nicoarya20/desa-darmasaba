@@ -2553,3 +2553,15 @@ model RingkasanKesehatanDesa {
   isActive          Boolean  @default(true)
 }
 
+// ========================================= EVENT BUDAYA ========================================= //
+model EventBudaya {
+  id        String   @id @default(cuid())
+  nama      String
+  tanggal   DateTime
+  lokasi    String
+  deskripsi String?  @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  isActive  Boolean  @default(true)
+}
+

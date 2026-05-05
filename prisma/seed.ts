@@ -3,6 +3,7 @@
 import prisma from "@/lib/prisma";
 import { seedBerita } from "./_seeder_list/desa/berita/seed_berita";
 import { seedKegiatanDesa } from "./_seeder_list/desa/seed_kegiatan_desa";
+import { seedEventBudaya } from "./_seeder_list/desa/event-budaya/seed_event_budaya";
 import { seedFoto } from "./_seeder_list/desa/gallery/foto/seed_foto";
 import { seedVideo } from "./_seeder_list/desa/gallery/video/seed_video";
 import { seedLayanan } from "./_seeder_list/desa/layanan/seed_layanan";
@@ -392,6 +393,7 @@ import seedAssets from "./seed_assets";
   // ===== SOSIAL DASHBOARD =====
   await seedRingkasanKesehatan();
   await seedKegiatanDesa();
+  await seedEventBudaya();
 
   // ===== DESA =====
   await seedMusikDesa();

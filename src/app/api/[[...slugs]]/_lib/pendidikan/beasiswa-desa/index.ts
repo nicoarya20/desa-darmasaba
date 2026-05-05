@@ -2,6 +2,7 @@ import Elysia from "elysia";
 import BeasiswaPendaftar from "./beasiswa-pendaftar";
 import KeunggulanProgram from "./keunggulan-program";
 import BeasiswaConfig from "./beasiswa-config";
+import RingkasanBeasiswa from "./ringkasan";
 
 const Beasiswa = new Elysia({
     prefix: "/beasiswa",
@@ -10,5 +11,6 @@ const Beasiswa = new Elysia({
 .use(BeasiswaPendaftar)
 .use(KeunggulanProgram)
 .use(BeasiswaConfig)
+.use(RingkasanBeasiswa)
 
 export default Beasiswa
