@@ -24,7 +24,7 @@ import {
   IconAlertTriangle,
 } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { useProxy } from 'valtio/utils';
 import ringkasanKesehatanState from '../../_state/kesehatan/ringkasan-kesehatan/ringkasanKesehatan';
 
@@ -71,13 +71,8 @@ export default function RingkasanKesehatanPage() {
   const state = useProxy(ringkasanKesehatanState);
   const stats = state.findStats.data;
 
-  useEffect(() => {
-    state.findStats.load();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const handleSaveTarget = async () => {
-    await state.update.submitTarget();
-  };
+  const loadStats = useCallback(() => { ringkasanKesehatanState.findStats.load(); }, []);
+  useEffect(() => { loadStats(); }, [loadStats]);
 
   const isLoading = state.findStats.loading;
 
@@ -175,7 +170,7 @@ export default function RingkasanKesehatanPage() {
                 style={{ flex: 1 }}
               />
               <Button
-                onClick={handleSaveTarget}
+                onClick={() => state.update.submitTarget()}
                 radius="md"
                 disabled={state.update.loading}
                 style={{

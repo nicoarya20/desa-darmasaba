@@ -2546,16 +2546,10 @@ model Balita {
 
 // ========================================= RINGKASAN KESEHATAN DESA ========================================= //
 model RingkasanKesehatanDesa {
-  id                    String   @id @default(cuid())
-  ibuHamilAkh           Int      @default(0)
-  balitaTerdaftar       Int      @default(0)
-  alertStunting         Int      @default(0)
-  imunisasiLengkapPct   Int      @default(0)
-  pemeriksaanRutinPct   Int      @default(0)
-  giziBaikPct           Int      @default(0)
-  targetStuntingPct     Int      @default(0)
-  createdAt             DateTime @default(now())
-  updatedAt             DateTime @updatedAt
-  isActive              Boolean  @default(true)
+  id                String   @id @default(cuid())
+  targetStuntingPct Int      @default(0)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  isActive          Boolean  @default(true)
 }
 

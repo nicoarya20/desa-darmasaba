@@ -48,6 +48,8 @@ import { seedPuskesmas } from "./_seeder_list/kesehatan/puskesmas/seed_puskesmas
 import { seedGrafikKepuasan } from "./_seeder_list/kesehatan/seed_grafik_kepuasan";
 import { seedKelahiranKematian } from "./_seeder_list/kesehatan/seed_kelahiran_kematian";
 import { seedRingkasanKesehatan } from "./_seeder_list/kesehatan/seed_ringkasan_kesehatan";
+import { seedIbuHamil } from "./_seeder_list/kesehatan/seed_ibu_hamil";
+import { seedBalita } from "./_seeder_list/kesehatan/seed_balita";
 import { seedDesaAntiKorupsi } from "./_seeder_list/landing-page/desa-anti-korupsi/seed_desa_anti_korupsi";
 import { seedPrestasiDesa } from "./_seeder_list/landing-page/prestasi-desa/seed_prestasi_desa";
 import { seedMediaSosial } from "./_seeder_list/landing-page/profil_landing_page/seed_media_sosial";
@@ -243,6 +245,10 @@ import seedAssets from "./seed_assets";
   // // ====================== MENU KESEHATAN ========================
   // // ==================== SUBMENU POSYANDU =========================
   await seedPosyandu();
+
+  // // ==================== SUBMENU IBU HAMIL + BALITA =========================
+  await seedIbuHamil();
+  await seedBalita();
 
   // // ==================== SUBMENU PUSKESMAS =========================
   await seedPuskesmas();

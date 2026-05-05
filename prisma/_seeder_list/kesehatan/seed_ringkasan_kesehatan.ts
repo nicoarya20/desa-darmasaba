@@ -7,17 +7,8 @@ export async function seedRingkasanKesehatan() {
 
   await prisma.ringkasanKesehatanDesa.upsert({
     where: { id: SINGLETON_ID },
-    update: {
-      ibuHamilAkh: 87,
-      balitaTerdaftar: 342,
-      alertStunting: 12,
-    },
-    create: {
-      id: SINGLETON_ID,
-      ibuHamilAkh: 87,
-      balitaTerdaftar: 342,
-      alertStunting: 12,
-    },
+    update: { targetStuntingPct: 10 },
+    create: { id: SINGLETON_ID, targetStuntingPct: 10 },
   });
 
   console.log("✅ Ringkasan Kesehatan Desa seeded");

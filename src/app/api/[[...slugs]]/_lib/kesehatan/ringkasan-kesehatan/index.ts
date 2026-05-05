@@ -8,12 +8,6 @@ const RingkasanKesehatan = new Elysia({ prefix: "/ringkasankesehatan", tags: ["K
   .get("/stats", ringkasanKesehatanStats)
   .put("/update", ringkasanKesehatanUpdate, {
     body: t.Object({
-      ibuHamilAkh: t.Number(),
-      balitaTerdaftar: t.Number(),
-      alertStunting: t.Number(),
-      imunisasiLengkapPct: t.Number({ minimum: 0, maximum: 100 }),
-      pemeriksaanRutinPct: t.Number({ minimum: 0, maximum: 100 }),
-      giziBaikPct: t.Number({ minimum: 0, maximum: 100 }),
       targetStuntingPct: t.Number({ minimum: 0, maximum: 100 }),
     }),
   });
