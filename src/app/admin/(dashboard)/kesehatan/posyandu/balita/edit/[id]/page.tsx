@@ -1,5 +1,6 @@
 'use client';
 
+import balitaState from '@/app/admin/(dashboard)/_state/kesehatan/balita/balita';
 import colors from '@/con/colors';
 import {
   Box,
@@ -17,21 +18,25 @@ import {
   Title,
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 import { useProxy } from 'valtio/utils';
-import balitaState from '../../../_state/kesehatan/balita/balita';
 
-export default function BalitaCreatePage() {
+
+export default function BalitaEditPage() {
   const router = useRouter();
+  const params = useParams();
+  const id = params.id as string;
   const state = useProxy(balitaState);
-  const form = state.create.form;
+  const form = state.edit.form;
+
+  useEffect(() => {
+    if (id) balitaState.edit.load(id);
+  }, [id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleSubmit = async () => {
-    const ok = await balitaState.create.submit();
-    if (ok) {
-      balitaState.create.reset();
-      router.push('/admin/kesehatan/balita');
-    }
+    const ok = await balitaState.edit.update();
+    if (ok) router.push('/admin/kesehatan/posyandu/balita');
   };
 
   return (
@@ -40,7 +45,7 @@ export default function BalitaCreatePage() {
         <Button variant="subtle" onClick={() => router.back()} radius="md">
           <IconArrowBack size={20} />
         </Button>
-        <Title order={3} c="black">Tambah Balita</Title>
+        <Title order={3} c="black">Edit Balita</Title>
       </Group>
 
       <Paper withBorder w={{ base: '100%', md: '80%' }} p="lg" radius="md" shadow="xl" bg="white">
@@ -51,14 +56,14 @@ export default function BalitaCreatePage() {
               required
               placeholder="Nama balita"
               value={form.nama}
-              onChange={(e) => { balitaState.create.form.nama = e.currentTarget.value; }}
+              onChange={(e) => { balitaState.edit.form.nama = e.currentTarget.value; }}
               radius="md"
             />
             <TextInput
               label="NIK"
               placeholder="Nomor Induk Kependudukan"
               value={form.nik}
-              onChange={(e) => { balitaState.create.form.nik = e.currentTarget.value; }}
+              onChange={(e) => { balitaState.edit.form.nik = e.currentTarget.value; }}
               radius="md"
             />
             <TextInput
@@ -66,7 +71,7 @@ export default function BalitaCreatePage() {
               required
               type="date"
               value={form.tanggalLahir}
-              onChange={(e) => { balitaState.create.form.tanggalLahir = e.currentTarget.value; }}
+              onChange={(e) => { balitaState.edit.form.tanggalLahir = e.currentTarget.value; }}
               radius="md"
             />
             <Select
@@ -77,7 +82,7 @@ export default function BalitaCreatePage() {
                 { value: 'P', label: 'Perempuan' },
               ]}
               value={form.jenisKelamin}
-              onChange={(v) => { if (v) balitaState.create.form.jenisKelamin = v as typeof form.jenisKelamin; }}
+              onChange={(v) => { if (v) balitaState.edit.form.jenisKelamin = v as typeof form.jenisKelamin; }}
               radius="md"
             />
             <NumberInput
@@ -86,7 +91,7 @@ export default function BalitaCreatePage() {
               min={0}
               decimalScale={1}
               value={form.beratBadanKg ?? ''}
-              onChange={(v) => { balitaState.create.form.beratBadanKg = v === '' ? undefined : Number(v); }}
+              onChange={(v) => { balitaState.edit.form.beratBadanKg = v === '' ? undefined : Number(v); }}
               radius="md"
             />
             <NumberInput
@@ -95,21 +100,21 @@ export default function BalitaCreatePage() {
               min={0}
               decimalScale={1}
               value={form.tinggiBadanCm ?? ''}
-              onChange={(v) => { balitaState.create.form.tinggiBadanCm = v === '' ? undefined : Number(v); }}
+              onChange={(v) => { balitaState.edit.form.tinggiBadanCm = v === '' ? undefined : Number(v); }}
               radius="md"
             />
             <TextInput
               label="Nama Orang Tua"
               placeholder="Nama ayah/ibu"
               value={form.namaOrtu}
-              onChange={(e) => { balitaState.create.form.namaOrtu = e.currentTarget.value; }}
+              onChange={(e) => { balitaState.edit.form.namaOrtu = e.currentTarget.value; }}
               radius="md"
             />
             <TextInput
               label="No. HP Orang Tua"
               placeholder="08xx-xxxx-xxxx"
               value={form.noHpOrtu}
-              onChange={(e) => { balitaState.create.form.noHpOrtu = e.currentTarget.value; }}
+              onChange={(e) => { balitaState.edit.form.noHpOrtu = e.currentTarget.value; }}
               radius="md"
             />
             <Select
@@ -121,7 +126,7 @@ export default function BalitaCreatePage() {
                 { value: 'STUNTING', label: 'Stunting' },
               ]}
               value={form.statusStunting}
-              onChange={(v) => { if (v) balitaState.create.form.statusStunting = v as typeof form.statusStunting; }}
+              onChange={(v) => { if (v) balitaState.edit.form.statusStunting = v as typeof form.statusStunting; }}
               radius="md"
             />
           </SimpleGrid>
@@ -130,7 +135,7 @@ export default function BalitaCreatePage() {
             label="Alamat"
             placeholder="Alamat lengkap"
             value={form.alamat}
-            onChange={(e) => { balitaState.create.form.alamat = e.currentTarget.value; }}
+            onChange={(e) => { balitaState.edit.form.alamat = e.currentTarget.value; }}
             radius="md"
           />
 
@@ -138,17 +143,17 @@ export default function BalitaCreatePage() {
             <Checkbox
               label="Imunisasi Lengkap"
               checked={form.imunisasiLengkap}
-              onChange={(e) => { balitaState.create.form.imunisasiLengkap = e.currentTarget.checked; }}
+              onChange={(e) => { balitaState.edit.form.imunisasiLengkap = e.currentTarget.checked; }}
             />
             <Checkbox
               label="Gizi Baik"
               checked={form.giziBaik}
-              onChange={(e) => { balitaState.create.form.giziBaik = e.currentTarget.checked; }}
+              onChange={(e) => { balitaState.edit.form.giziBaik = e.currentTarget.checked; }}
             />
             <Checkbox
               label="Pemeriksaan Rutin"
               checked={form.pemeriksaanRutin}
-              onChange={(e) => { balitaState.create.form.pemeriksaanRutin = e.currentTarget.checked; }}
+              onChange={(e) => { balitaState.edit.form.pemeriksaanRutin = e.currentTarget.checked; }}
             />
           </Group>
 
@@ -156,7 +161,7 @@ export default function BalitaCreatePage() {
             label="Catatan"
             placeholder="Catatan tambahan"
             value={form.catatan}
-            onChange={(e) => { balitaState.create.form.catatan = e.currentTarget.value; }}
+            onChange={(e) => { balitaState.edit.form.catatan = e.currentTarget.value; }}
             radius="md"
             rows={3}
           />
@@ -168,15 +173,15 @@ export default function BalitaCreatePage() {
             <Button
               onClick={handleSubmit}
               radius="md"
-              disabled={state.create.loading}
+              disabled={state.edit.loading}
               style={{
-                background: state.create.loading
+                background: state.edit.loading
                   ? 'linear-gradient(135deg, #ccc, #eee)'
                   : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
               }}
             >
-              {state.create.loading ? <Loader size="sm" color="white" /> : 'Simpan'}
+              {state.edit.loading ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

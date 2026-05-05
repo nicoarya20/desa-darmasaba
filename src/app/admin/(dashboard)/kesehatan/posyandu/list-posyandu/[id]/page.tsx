@@ -1,4 +1,6 @@
 'use client'
+import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
+import posyandustate from '@/app/admin/(dashboard)/_state/kesehatan/posyandu/posyandu';
 import colors from '@/con/colors';
 import { Box, Button, Group, Image, Paper, Skeleton, Stack, Text } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
@@ -6,12 +8,11 @@ import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
-import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
-import posyanduState from '../../../_state/kesehatan/posyandu/posyandu';
+
 
 
 function DetailPosyandu() {
-  const statePosyandu = useProxy(posyanduState);
+  const statePosyandu = useProxy(posyandustate);
   const params = useParams();
   const router = useRouter();
   const [modalHapus, setModalHapus] = useState(false);
@@ -28,7 +29,7 @@ function DetailPosyandu() {
       statePosyandu.delete.byId(selectedId);
       setModalHapus(false);
       setSelectedId(null);
-      router.push("/admin/kesehatan/posyandu");
+      router.push("/admin/kesehatan/posyandu/list-posyandu");
     }
   };
 
@@ -147,7 +148,7 @@ function DetailPosyandu() {
 
                 <Button
                   color="green"
-                  onClick={() => router.push(`/admin/kesehatan/posyandu/${data.id}/edit`)}
+                  onClick={() => router.push(`/admin/kesehatan/posyandu/list-posyandu/${data.id}/edit`)}
                   variant="light"
                   radius="md"
                   size="md"

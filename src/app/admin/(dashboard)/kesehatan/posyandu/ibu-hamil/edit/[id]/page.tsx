@@ -1,5 +1,6 @@
 'use client';
 
+import ibuHamilState from '@/app/admin/(dashboard)/_state/kesehatan/ibu-hamil/ibuHamil';
 import colors from '@/con/colors';
 import {
   Box,
@@ -15,21 +16,24 @@ import {
   Title,
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 import { useProxy } from 'valtio/utils';
-import ibuHamilState from '../../../_state/kesehatan/ibu-hamil/ibuHamil';
 
-export default function IbuHamilCreatePage() {
+export default function IbuHamilEditPage() {
   const router = useRouter();
+  const params = useParams();
+  const id = params.id as string;
   const state = useProxy(ibuHamilState);
-  const form = state.create.form;
+  const form = state.edit.form;
+
+  useEffect(() => {
+    if (id) ibuHamilState.edit.load(id);
+  }, [id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleSubmit = async () => {
-    const ok = await ibuHamilState.create.submit();
-    if (ok) {
-      ibuHamilState.create.reset();
-      router.push('/admin/kesehatan/ibu-hamil');
-    }
+    const ok = await ibuHamilState.edit.update();
+    if (ok) router.push('/admin/kesehatan/posyandu/ibu-hamil');
   };
 
   return (
@@ -38,7 +42,7 @@ export default function IbuHamilCreatePage() {
         <Button variant="subtle" onClick={() => router.back()} radius="md">
           <IconArrowBack size={20} />
         </Button>
-        <Title order={3} c="black">Tambah Ibu Hamil</Title>
+        <Title order={3} c="black">Edit Ibu Hamil</Title>
       </Group>
 
       <Paper withBorder w={{ base: '100%', md: '80%' }} p="lg" radius="md" shadow="xl" bg="white">
@@ -49,14 +53,14 @@ export default function IbuHamilCreatePage() {
               required
               placeholder="Nama ibu hamil"
               value={form.nama}
-              onChange={(e) => { ibuHamilState.create.form.nama = e.currentTarget.value; }}
+              onChange={(e) => { ibuHamilState.edit.form.nama = e.currentTarget.value; }}
               radius="md"
             />
             <TextInput
               label="NIK"
               placeholder="Nomor Induk Kependudukan"
               value={form.nik}
-              onChange={(e) => { ibuHamilState.create.form.nik = e.currentTarget.value; }}
+              onChange={(e) => { ibuHamilState.edit.form.nik = e.currentTarget.value; }}
               radius="md"
             />
             <TextInput
@@ -64,28 +68,28 @@ export default function IbuHamilCreatePage() {
               type="number"
               placeholder="0"
               value={String(form.usiaKehamilan)}
-              onChange={(e) => { ibuHamilState.create.form.usiaKehamilan = Number(e.currentTarget.value) || 0; }}
+              onChange={(e) => { ibuHamilState.edit.form.usiaKehamilan = Number(e.currentTarget.value) || 0; }}
               radius="md"
             />
             <TextInput
               label="No. HP"
               placeholder="08xx-xxxx-xxxx"
               value={form.noHp}
-              onChange={(e) => { ibuHamilState.create.form.noHp = e.currentTarget.value; }}
+              onChange={(e) => { ibuHamilState.edit.form.noHp = e.currentTarget.value; }}
               radius="md"
             />
             <TextInput
-              label="HPHT (Hari Pertama Haid Terakhir)"
+              label="HPHT"
               type="date"
               value={form.hpht}
-              onChange={(e) => { ibuHamilState.create.form.hpht = e.currentTarget.value; }}
+              onChange={(e) => { ibuHamilState.edit.form.hpht = e.currentTarget.value; }}
               radius="md"
             />
             <TextInput
               label="Taksiran Persalinan"
               type="date"
               value={form.taksiranLahir}
-              onChange={(e) => { ibuHamilState.create.form.taksiranLahir = e.currentTarget.value; }}
+              onChange={(e) => { ibuHamilState.edit.form.taksiranLahir = e.currentTarget.value; }}
               radius="md"
             />
             <Select
@@ -98,7 +102,7 @@ export default function IbuHamilCreatePage() {
                 { value: 'NONAKTIF', label: 'Nonaktif' },
               ]}
               value={form.status}
-              onChange={(v) => { if (v) ibuHamilState.create.form.status = v as typeof form.status; }}
+              onChange={(v) => { if (v) ibuHamilState.edit.form.status = v as typeof form.status; }}
               radius="md"
             />
           </SimpleGrid>
@@ -107,7 +111,7 @@ export default function IbuHamilCreatePage() {
             label="Alamat"
             placeholder="Alamat lengkap"
             value={form.alamat}
-            onChange={(e) => { ibuHamilState.create.form.alamat = e.currentTarget.value; }}
+            onChange={(e) => { ibuHamilState.edit.form.alamat = e.currentTarget.value; }}
             radius="md"
           />
 
@@ -115,7 +119,7 @@ export default function IbuHamilCreatePage() {
             label="Catatan"
             placeholder="Catatan tambahan"
             value={form.catatan}
-            onChange={(e) => { ibuHamilState.create.form.catatan = e.currentTarget.value; }}
+            onChange={(e) => { ibuHamilState.edit.form.catatan = e.currentTarget.value; }}
             radius="md"
             rows={3}
           />
@@ -127,15 +131,15 @@ export default function IbuHamilCreatePage() {
             <Button
               onClick={handleSubmit}
               radius="md"
-              disabled={state.create.loading}
+              disabled={state.edit.loading}
               style={{
-                background: state.create.loading
+                background: state.edit.loading
                   ? 'linear-gradient(135deg, #ccc, #eee)'
                   : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
               }}
             >
-              {state.create.loading ? <Loader size="sm" color="white" /> : 'Simpan'}
+              {state.edit.loading ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

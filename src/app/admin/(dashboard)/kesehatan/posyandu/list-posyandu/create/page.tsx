@@ -1,4 +1,6 @@
 'use client';
+import CreateEditor from '@/app/admin/(dashboard)/_com/createEditor';
+import posyandustate from '@/app/admin/(dashboard)/_state/kesehatan/posyandu/posyandu';
 import colors from '@/con/colors';
 import ApiFetch from '@/lib/api-fetch';
 import {
@@ -20,8 +22,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
-import CreateEditor from '../../../_com/createEditor';
-import posyandustate from '../../../_state/kesehatan/posyandu/posyandu';
+
 
 
 function CreatePosyandu() {
@@ -105,7 +106,7 @@ function CreatePosyandu() {
       statePosyandu.create.form.imageId = uploaded.id;
       await statePosyandu.create.create();
       resetForm();
-      router.push('/admin/kesehatan/posyandu');
+      router.push('/admin/kesehatan/posyandu/list-posyandu');
     } catch (error) {
       console.error('Error creating posyandu:', error);
       toast.error('Gagal menambahkan posyandu');

@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client';
-
 import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import posyandustate from '@/app/admin/(dashboard)/_state/kesehatan/posyandu/posyandu';
 import colors from '@/con/colors';
@@ -145,7 +144,7 @@ function EditPosyandu() {
       await statePosyandu.edit.update();
 
       toast.success('Posyandu berhasil diperbarui!');
-      router.push('/admin/kesehatan/posyandu');
+      router.push('/admin/kesehatan/posyandu/list-posyandu');
     } catch (error) {
       console.error('Error updating posyandu:', error);
       toast.error('Terjadi kesalahan saat memperbarui posyandu');
@@ -168,7 +167,7 @@ function EditPosyandu() {
   };
 
   return (
-     <Box px={{ base: 0, md: 'lg' }} py="xs">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       {/* Tombol Back */}
       <Group mb="md">
         <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
