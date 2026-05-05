@@ -135,7 +135,7 @@ export const devBar = [
       {
         id: "Kesehatan_1",
         name: "Posyandu",
-        path: "/admin/kesehatan/posyandu"
+        path: "/admin/kesehatan/posyandu/list-posyandu"
       },
       {
         id: "Kesehatan_2",
@@ -166,21 +166,6 @@ export const devBar = [
         id: "Kesehatan_7",
         name: "Info Wabah/Penyakit",
         path: "/admin/kesehatan/info-wabah-penyakit"
-      },
-      {
-        id: "Kesehatan_8",
-        name: "Ringkasan Kesehatan",
-        path: "/admin/kesehatan/ringkasan-kesehatan"
-      },
-      {
-        id: "Kesehatan_9",
-        name: "Ibu Hamil",
-        path: "/admin/kesehatan/ibu-hamil"
-      },
-      {
-        id: "Kesehatan_10",
-        name: "Balita",
-        path: "/admin/kesehatan/balita"
       }
     ]
   },
@@ -586,7 +571,7 @@ export const navBar = [
       {
         id: "Kesehatan_1",
         name: "Posyandu",
-        path: "/admin/kesehatan/posyandu"
+        path: "/admin/kesehatan/posyandu/list-posyandu/list_posyandu"
       },
       {
         id: "Kesehatan_2",
@@ -617,21 +602,6 @@ export const navBar = [
         id: "Kesehatan_7",
         name: "Info Wabah/Penyakit",
         path: "/admin/kesehatan/info-wabah-penyakit"
-      },
-      {
-        id: "Kesehatan_8",
-        name: "Ringkasan Kesehatan",
-        path: "/admin/kesehatan/ringkasan-kesehatan"
-      },
-      {
-        id: "Kesehatan_9",
-        name: "Ibu Hamil",
-        path: "/admin/kesehatan/ibu-hamil"
-      },
-      {
-        id: "Kesehatan_10",
-        name: "Balita",
-        path: "/admin/kesehatan/balita"
       }
     ]
   },
@@ -1228,7 +1198,7 @@ export const role1 = [
       }
     ]
   },
-   {
+  {
     id: "Kependudukan",
     name: "Kependudukan",
     path: "",
@@ -1271,7 +1241,7 @@ export const role2 = [
       {
         id: "Kesehatan_1",
         name: "Posyandu",
-        path: "/admin/kesehatan/posyandu"
+        path: "/admin/kesehatan/posyandu/list-posyandu/list_posyandu"
       },
       {
         id: "Kesehatan_2",
@@ -1302,21 +1272,6 @@ export const role2 = [
         id: "Kesehatan_7",
         name: "Info Wabah/Penyakit",
         path: "/admin/kesehatan/info-wabah-penyakit"
-      },
-      {
-        id: "Kesehatan_8",
-        name: "Ringkasan Kesehatan",
-        path: "/admin/kesehatan/ringkasan-kesehatan"
-      },
-      {
-        id: "Kesehatan_9",
-        name: "Ibu Hamil",
-        path: "/admin/kesehatan/ibu-hamil"
-      },
-      {
-        id: "Kesehatan_10",
-        name: "Balita",
-        path: "/admin/kesehatan/balita"
       }
     ]
   },

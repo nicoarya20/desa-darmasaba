@@ -26,7 +26,8 @@ import {
 import { useRouter } from 'next/navigation';
 import { useEffect, useCallback } from 'react';
 import { useProxy } from 'valtio/utils';
-import ringkasanKesehatanState from '../../_state/kesehatan/ringkasan-kesehatan/ringkasanKesehatan';
+import ringkasanKesehatanState from '../../../_state/kesehatan/ringkasan-kesehatan/ringkasanKesehatan';
+
 
 type StatCardProps = {
   label: string;
@@ -197,7 +198,7 @@ export default function RingkasanKesehatanPage() {
                 color="pink"
                 radius="md"
                 rightSection={<IconArrowRight size={16} />}
-                onClick={() => router.push('/admin/kesehatan/ibu-hamil')}
+                onClick={() => router.push('/admin/kesehatan/posyandu/ibu-hamil')}
               >
                 Kelola Ibu Hamil
               </Button>
@@ -206,7 +207,7 @@ export default function RingkasanKesehatanPage() {
                 color="blue"
                 radius="md"
                 rightSection={<IconArrowRight size={16} />}
-                onClick={() => router.push('/admin/kesehatan/balita')}
+                onClick={() => router.push('/admin/kesehatan/posyandu/balita')}
               >
                 Kelola Balita
               </Button>

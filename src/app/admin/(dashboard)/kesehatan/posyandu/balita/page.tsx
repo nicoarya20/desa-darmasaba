@@ -20,18 +20,18 @@ import { IconEdit, IconPlus, IconSearch, IconTrash } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
-import ibuHamilState from '../../_state/kesehatan/ibu-hamil/ibuHamil';
+import balitaState from '../../../_state/kesehatan/balita/balita';
 
-const STATUS_COLORS: Record<string, string> = {
-  AKTIF: 'green',
-  MELAHIRKAN: 'blue',
-  KEGUGURAN: 'gray',
-  NONAKTIF: 'red',
+
+const STUNTING_COLORS: Record<string, string> = {
+  NORMAL: 'green',
+  ALERT: 'yellow',
+  STUNTING: 'red',
 };
 
-export default function IbuHamilPage() {
+export default function BalitaPage() {
   const router = useRouter();
-  const state = useProxy(ibuHamilState);
+  const state = useProxy(balitaState);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
 
@@ -44,19 +44,37 @@ export default function IbuHamilPage() {
   };
 
   const handleDelete = async (id: string, nama: string) => {
-    if (!confirm(`Hapus data ibu hamil "${nama}"?`)) return;
+    if (!confirm(`Hapus data balita "${nama}"?`)) return;
     await state.delete.byId(id);
   };
 
   const rows = state.findMany.data?.map((d) => (
     <Table.Tr key={d.id}>
       <Table.Td>{d.nama}</Table.Td>
-      <Table.Td>{d.nik || '-'}</Table.Td>
-      <Table.Td>{d.usiaKehamilan} minggu</Table.Td>
-      <Table.Td>{d.noHp || '-'}</Table.Td>
+      <Table.Td>{d.jenisKelamin}</Table.Td>
       <Table.Td>
-        <Badge color={STATUS_COLORS[d.status] ?? 'gray'} variant="light">
-          {d.status}
+        {d.tanggalLahir
+          ? new Date(d.tanggalLahir).toLocaleDateString('id-ID')
+          : '-'}
+      </Table.Td>
+      <Table.Td>
+        <Badge color={d.imunisasiLengkap ? 'green' : 'red'} variant="light">
+          {d.imunisasiLengkap ? 'Lengkap' : 'Belum'}
+        </Badge>
+      </Table.Td>
+      <Table.Td>
+        <Badge color={d.giziBaik ? 'green' : 'orange'} variant="light">
+          {d.giziBaik ? 'Baik' : 'Kurang'}
+        </Badge>
+      </Table.Td>
+      <Table.Td>
+        <Badge color={d.pemeriksaanRutin ? 'green' : 'orange'} variant="light">
+          {d.pemeriksaanRutin ? 'Rutin' : 'Tidak'}
+        </Badge>
+      </Table.Td>
+      <Table.Td>
+        <Badge color={STUNTING_COLORS[d.statusStunting] ?? 'gray'} variant="light">
+          {d.statusStunting}
         </Badge>
       </Table.Td>
       <Table.Td>
@@ -64,7 +82,7 @@ export default function IbuHamilPage() {
           <ActionIcon
             variant="light"
             color="blue"
-            onClick={() => router.push(`/admin/kesehatan/ibu-hamil/edit/${d.id}`)}
+            onClick={() => router.push(`/admin/kesehatan/posyandu/balita/edit/${d.id}`)}
           >
             <IconEdit size={16} />
           </ActionIcon>
@@ -84,10 +102,10 @@ export default function IbuHamilPage() {
   return (
     <Box px={{ base: 0, md: 'lg' }} py="xs">
       <Group justify="space-between" mb="md">
-        <Title order={3} c="black">Ibu Hamil</Title>
+        <Title order={3} c="black">Balita Terdaftar</Title>
         <Button
           leftSection={<IconPlus size={16} />}
-          onClick={() => router.push('/admin/kesehatan/ibu-hamil/create')}
+          onClick={() => router.push('/admin/kesehatan/posyandu/balita/create')}
           radius="md"
           style={{
             background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
@@ -100,7 +118,7 @@ export default function IbuHamilPage() {
 
       <Group mb="md" gap="sm">
         <TextInput
-          placeholder="Cari nama / NIK..."
+          placeholder="Cari nama / NIK / ortu..."
           leftSection={<IconSearch size={16} />}
           value={search}
           onChange={(e) => setSearch(e.currentTarget.value)}
@@ -109,13 +127,12 @@ export default function IbuHamilPage() {
           style={{ flex: 1, maxWidth: 300 }}
         />
         <Select
-          placeholder="Filter status"
+          placeholder="Filter stunting"
           data={[
-            { value: '', label: 'Semua Status' },
-            { value: 'AKTIF', label: 'Aktif' },
-            { value: 'MELAHIRKAN', label: 'Melahirkan' },
-            { value: 'KEGUGURAN', label: 'Keguguran' },
-            { value: 'NONAKTIF', label: 'Nonaktif' },
+            { value: '', label: 'Semua' },
+            { value: 'NORMAL', label: 'Normal' },
+            { value: 'ALERT', label: 'Alert' },
+            { value: 'STUNTING', label: 'Stunting' },
           ]}
           value={statusFilter}
           onChange={(v) => {
@@ -136,17 +153,19 @@ export default function IbuHamilPage() {
             <Table.Thead>
               <Table.Tr>
                 <Table.Th>Nama</Table.Th>
-                <Table.Th>NIK</Table.Th>
-                <Table.Th>Usia Kehamilan</Table.Th>
-                <Table.Th>No. HP</Table.Th>
-                <Table.Th>Status</Table.Th>
+                <Table.Th>JK</Table.Th>
+                <Table.Th>Tgl Lahir</Table.Th>
+                <Table.Th>Imunisasi</Table.Th>
+                <Table.Th>Gizi</Table.Th>
+                <Table.Th>Pemeriksaan</Table.Th>
+                <Table.Th>Stunting</Table.Th>
                 <Table.Th>Aksi</Table.Th>
               </Table.Tr>
             </Table.Thead>
             <Table.Tbody>
               {rows && rows.length > 0 ? rows : (
                 <Table.Tr>
-                  <Table.Td colSpan={6}>
+                  <Table.Td colSpan={8}>
                     <Text c="dimmed" ta="center" py="md">Tidak ada data</Text>
                   </Table.Td>
                 </Table.Tr>

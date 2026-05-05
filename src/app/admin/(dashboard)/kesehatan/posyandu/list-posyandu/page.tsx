@@ -23,8 +23,10 @@ import { IconDeviceImacCog, IconPlus, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
-import HeaderSearch from '../../_com/header';
-import posyandustate from '../../_state/kesehatan/posyandu/posyandu';
+import HeaderSearch from '../../../_com/header';
+import posyandustate from '../../../_state/kesehatan/posyandu/posyandu';
+
+
 
 function Posyandu() {
   const [search, setSearch] = useState("");
@@ -80,18 +82,18 @@ function ListPosyandu({ search }: { search: string }) {
             leftSection={<IconPlus size={18} />}
             color="blue"
             variant="light"
-            onClick={() => router.push('/admin/kesehatan/posyandu/create')}
+            onClick={() => router.push('/admin/kesehatan/posyandu/list-posyandu/create')}
           >
             Tambah Baru
           </Button>
         </Group>
 
         {/* Desktop Table */}
-       <Box visibleFrom="md" style={{ overflowX: 'auto' }}>
-         <Table highlightOnHover
-    layout="fixed" // 🔥 PENTING
-    withColumnBorders={false}
-    >
+        <Box visibleFrom="md" style={{ overflowX: 'auto' }}>
+          <Table highlightOnHover
+            layout="fixed" // 🔥 PENTING
+            withColumnBorders={false}
+          >
             <TableThead>
               <TableTr>
                 <TableTh w={220} fz="sm" fw={600} ta="left" lh={1.4}>Nama Posyandu</TableTh>
@@ -130,7 +132,7 @@ function ListPosyandu({ search }: { search: string }) {
                         variant="light"
                         color="blue"
                         leftSection={<IconDeviceImacCog size={16} />}
-                        onClick={() => router.push(`/admin/kesehatan/posyandu/${item.id}`)}
+                        onClick={() => router.push(`/admin/kesehatan/posyandu/list-posyandu/${item.id}`)}
                       >
                         Detail
                       </Button>
@@ -192,7 +194,7 @@ function ListPosyandu({ search }: { search: string }) {
                       variant="light"
                       color="blue"
                       leftSection={<IconDeviceImacCog size={16} />}
-                      onClick={() => router.push(`/admin/kesehatan/posyandu/${item.id}`)}
+                      onClick={() => router.push(`/admin/kesehatan/posyandu/list-posyandu/${item.id}`)}
                       fullWidth
                     >
                       Detail
