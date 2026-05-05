@@ -37,7 +37,7 @@ import { getNavbar } from "./(dashboard)/user&role/_com/dynamicNavbar";
 export default function Layout({ children }: { children: React.ReactNode }) {
   const { isDark } = useDarkMode();
   const tokens = themeTokens(isDark);
-  
+
   const [mounted, setMounted] = useState(false);
   const [opened, { toggle, close }] = useDisclosure();
   const [loading, setLoading] = useState(true);
@@ -114,7 +114,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       case 2:
         return '/admin/landing-page/profil/program-inovasi';
       case 3:
-        return '/admin/kesehatan/posyandu';
+        return '/admin/kesehatan/posyandu/list-posyandu';
       case 4:
         return '/admin/pendidikan/info-sekolah/jenjang-pendidikan';
       default:

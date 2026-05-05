@@ -1,27 +1,34 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
+import ibuHamilState from '@/app/admin/(dashboard)/_state/kesehatan/ibu-hamil/ibuHamil';
 import colors from '@/con/colors';
 import {
-  ActionIcon,
   Badge,
   Box,
   Button,
+  Center,
   Group,
-  Loader,
   Pagination,
+  Paper,
   Select,
+  Skeleton,
   Stack,
   Table,
+  TableTbody,
+  TableTd,
+  TableTh,
+  TableThead,
+  TableTr,
   Text,
-  TextInput,
   Title,
 } from '@mantine/core';
-import { IconEdit, IconPlus, IconSearch, IconTrash } from '@tabler/icons-react';
+import { useDebouncedValue } from '@mantine/hooks';
+import { IconDeviceImacCog, IconPlus, IconSearch, IconTrash } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
-import ibuHamilState from '../../../_state/kesehatan/ibu-hamil/ibuHamil';
-
+import HeaderSearch from '../../../_com/header';
 
 const STATUS_COLORS: Record<string, string> = {
   AKTIF: 'green',
@@ -30,142 +37,242 @@ const STATUS_COLORS: Record<string, string> = {
   NONAKTIF: 'red',
 };
 
-export default function IbuHamilPage() {
-  const router = useRouter();
-  const state = useProxy(ibuHamilState);
+function IbuHamilPage() {
   const [search, setSearch] = useState('');
+  return (
+    <Box>
+      <HeaderSearch
+        title="Ibu Hamil"
+        placeholder="Cari nama / NIK..."
+        searchIcon={<IconSearch size={20} />}
+        value={search}
+        onChange={(e) => setSearch(e.currentTarget.value)}
+      />
+      <ListIbuHamil search={search} />
+    </Box>
+  );
+}
+
+function ListIbuHamil({ search }: { search: string }) {
+  const state = useProxy(ibuHamilState);
+  const router = useRouter();
   const [statusFilter, setStatusFilter] = useState('');
+  const [debouncedSearch] = useDebouncedValue(search, 1000);
+
+  const { data, page, totalPages, loading, load } = state.findMany;
 
   useEffect(() => {
-    state.findMany.load(1, 10, search, statusFilter);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const handleSearch = () => {
-    state.findMany.load(1, 10, search, statusFilter);
-  };
+    load(page, 10, debouncedSearch, statusFilter);
+  }, [page, debouncedSearch, statusFilter]);
 
   const handleDelete = async (id: string, nama: string) => {
     if (!confirm(`Hapus data ibu hamil "${nama}"?`)) return;
     await state.delete.byId(id);
   };
 
-  const rows = state.findMany.data?.map((d) => (
-    <Table.Tr key={d.id}>
-      <Table.Td>{d.nama}</Table.Td>
-      <Table.Td>{d.nik || '-'}</Table.Td>
-      <Table.Td>{d.usiaKehamilan} minggu</Table.Td>
-      <Table.Td>{d.noHp || '-'}</Table.Td>
-      <Table.Td>
-        <Badge color={STATUS_COLORS[d.status] ?? 'gray'} variant="light">
-          {d.status}
-        </Badge>
-      </Table.Td>
-      <Table.Td>
-        <Group gap="xs">
-          <ActionIcon
-            variant="light"
-            color="blue"
-            onClick={() => router.push(`/admin/kesehatan/posyandu/ibu-hamil/edit/${d.id}`)}
-          >
-            <IconEdit size={16} />
-          </ActionIcon>
-          <ActionIcon
-            variant="light"
-            color="red"
-            onClick={() => handleDelete(d.id, d.nama)}
-            loading={state.delete.loading}
-          >
-            <IconTrash size={16} />
-          </ActionIcon>
-        </Group>
-      </Table.Td>
-    </Table.Tr>
-  ));
+  const filteredData = data || [];
+
+  if (loading || !data) {
+    return (
+      <Stack py="md">
+        <Skeleton h={600} radius="md" />
+      </Stack>
+    );
+  }
 
   return (
-    <Box px={{ base: 0, md: 'lg' }} py="xs">
-      <Group justify="space-between" mb="md">
-        <Title order={3} c="black">Ibu Hamil</Title>
-        <Button
-          leftSection={<IconPlus size={16} />}
-          onClick={() => router.push('/admin/kesehatan/posyandu/ibu-hamil/create')}
-          radius="md"
-          style={{
-            background: `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
-            color: '#fff',
-          }}
-        >
-          Tambah
-        </Button>
-      </Group>
+    <Box py="md">
+      <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
+        <Group justify="space-between" mb="lg">
+          <Title order={4}>List Ibu Hamil</Title>
+          <Button
+            leftSection={<IconPlus size={18} />}
+            color="blue"
+            variant="light"
+            onClick={() => router.push('/admin/kesehatan/posyandu/ibu-hamil/create')}
+          >
+            Tambah Baru
+          </Button>
+        </Group>
 
-      <Group mb="md" gap="sm">
-        <TextInput
-          placeholder="Cari nama / NIK..."
-          leftSection={<IconSearch size={16} />}
-          value={search}
-          onChange={(e) => setSearch(e.currentTarget.value)}
-          onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-          radius="md"
-          style={{ flex: 1, maxWidth: 300 }}
-        />
-        <Select
-          placeholder="Filter status"
-          data={[
-            { value: '', label: 'Semua Status' },
-            { value: 'AKTIF', label: 'Aktif' },
-            { value: 'MELAHIRKAN', label: 'Melahirkan' },
-            { value: 'KEGUGURAN', label: 'Keguguran' },
-            { value: 'NONAKTIF', label: 'Nonaktif' },
-          ]}
-          value={statusFilter}
-          onChange={(v) => {
-            setStatusFilter(v ?? '');
-            state.findMany.load(1, 10, search, v ?? '');
-          }}
-          radius="md"
-          clearable
-        />
-        <Button onClick={handleSearch} radius="md" variant="light">Cari</Button>
-      </Group>
+        <Group mb="md">
+          <Select
+            placeholder="Filter status"
+            data={[
+              { value: '', label: 'Semua Status' },
+              { value: 'AKTIF', label: 'Aktif' },
+              { value: 'MELAHIRKAN', label: 'Melahirkan' },
+              { value: 'KEGUGURAN', label: 'Keguguran' },
+              { value: 'NONAKTIF', label: 'Nonaktif' },
+            ]}
+            value={statusFilter}
+            onChange={(v) => setStatusFilter(v ?? '')}
+            radius="md"
+            clearable
+          />
+        </Group>
 
-      {state.findMany.loading ? (
-        <Group justify="center" py="xl"><Loader /></Group>
-      ) : (
-        <Stack gap="md">
-          <Table striped highlightOnHover withTableBorder>
-            <Table.Thead>
-              <Table.Tr>
-                <Table.Th>Nama</Table.Th>
-                <Table.Th>NIK</Table.Th>
-                <Table.Th>Usia Kehamilan</Table.Th>
-                <Table.Th>No. HP</Table.Th>
-                <Table.Th>Status</Table.Th>
-                <Table.Th>Aksi</Table.Th>
-              </Table.Tr>
-            </Table.Thead>
-            <Table.Tbody>
-              {rows && rows.length > 0 ? rows : (
-                <Table.Tr>
-                  <Table.Td colSpan={6}>
-                    <Text c="dimmed" ta="center" py="md">Tidak ada data</Text>
-                  </Table.Td>
-                </Table.Tr>
+        {/* Desktop Table */}
+        <Box visibleFrom="md" style={{ overflowX: 'auto' }}>
+          <Table highlightOnHover layout="fixed" withColumnBorders={false}>
+            <TableThead>
+              <TableTr>
+                <TableTh w="25%">Nama</TableTh>
+                <TableTh w="18%">NIK</TableTh>
+                <TableTh w="17%">Usia Kehamilan</TableTh>
+                <TableTh w="15%">No. HP</TableTh>
+                <TableTh w="12%">Status</TableTh>
+                <TableTh w="13%">Aksi</TableTh>
+              </TableTr>
+            </TableThead>
+            <TableTbody>
+              {filteredData.length > 0 ? (
+                filteredData.map((d) => (
+                  <TableTr key={d.id}>
+                    <TableTd>{d.nama}</TableTd>
+                    <TableTd>{d.nik || '-'}</TableTd>
+                    <TableTd>{d.usiaKehamilan} minggu</TableTd>
+                    <TableTd>{d.noHp || '-'}</TableTd>
+                    <TableTd>
+                      <Badge
+                        color={STATUS_COLORS[d.status] ?? 'gray'}
+                        variant="light"
+                      >
+                        {d.status}
+                      </Badge>
+                    </TableTd>
+                    <TableTd>
+                      <Group gap="xs">
+                        <Button
+                          size="xs"
+                          radius="md"
+                          variant="light"
+                          color="blue"
+                          leftSection={<IconDeviceImacCog size={16} />}
+                          onClick={() =>
+                            router.push(`/admin/kesehatan/posyandu/ibu-hamil/edit/${d.id}`)
+                          }
+                        >
+                          Edit
+                        </Button>
+                        <Button
+                          size="xs"
+                          radius="md"
+                          variant="light"
+                          color="red"
+                          leftSection={<IconTrash size={16} />}
+                          onClick={() => handleDelete(d.id, d.nama)}
+                          loading={state.delete.loading}
+                        >
+                          Hapus
+                        </Button>
+                      </Group>
+                    </TableTd>
+                  </TableTr>
+                ))
+              ) : (
+                <TableTr>
+                  <TableTd colSpan={6}>
+                    <Center py="xl">
+                      <Text c="dimmed" fz="sm" lh={1.4}>
+                        Tidak ada data ibu hamil yang cocok
+                      </Text>
+                    </Center>
+                  </TableTd>
+                </TableTr>
               )}
-            </Table.Tbody>
+            </TableTbody>
           </Table>
+        </Box>
 
-          {(state.findMany.totalPages ?? 1) > 1 && (
-            <Group justify="center">
-              <Pagination
-                total={state.findMany.totalPages}
-                value={state.findMany.page}
-                onChange={(p) => state.findMany.load(p, 10, search, statusFilter)}
-              />
-            </Group>
+        {/* Mobile Cards */}
+        <Stack gap="sm" hiddenFrom="md">
+          {filteredData.length > 0 ? (
+            filteredData.map((d) => (
+              <Paper key={d.id} withBorder p="md" radius="md">
+                <Box>
+                  <Text fz="sm" fw={600} mb={4}>
+                    {d.nama}
+                  </Text>
+                  <Group gap="xs" mb={6}>
+                    <Text fz="xs" c="dimmed">
+                      NIK: {d.nik || '-'}
+                    </Text>
+                    <Text fz="xs" c="dimmed">
+                      ·
+                    </Text>
+                    <Text fz="xs" c="dimmed">
+                      {d.usiaKehamilan} minggu
+                    </Text>
+                  </Group>
+                  <Group gap="xs" mb={8}>
+                    <Badge
+                      size="xs"
+                      color={STATUS_COLORS[d.status] ?? 'gray'}
+                      variant="light"
+                    >
+                      {d.status}
+                    </Badge>
+                    {d.noHp && (
+                      <Text fz="xs" c="dimmed">
+                        {d.noHp}
+                      </Text>
+                    )}
+                  </Group>
+                  <Group gap="xs">
+                    <Button
+                      size="xs"
+                      radius="md"
+                      variant="light"
+                      color="blue"
+                      leftSection={<IconDeviceImacCog size={16} />}
+                      onClick={() =>
+                        router.push(`/admin/kesehatan/posyandu/ibu-hamil/edit/${d.id}`)
+                      }
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      size="xs"
+                      radius="md"
+                      variant="light"
+                      color="red"
+                      leftSection={<IconTrash size={16} />}
+                      onClick={() => handleDelete(d.id, d.nama)}
+                      loading={state.delete.loading}
+                    >
+                      Hapus
+                    </Button>
+                  </Group>
+                </Box>
+              </Paper>
+            ))
+          ) : (
+            <Center py="xl">
+              <Text c="dimmed" fz="sm" lh={1.4}>
+                Tidak ada data ibu hamil yang cocok
+              </Text>
+            </Center>
           )}
         </Stack>
-      )}
+      </Paper>
+
+      <Center>
+        <Pagination
+          value={page}
+          onChange={(newPage) => {
+            load(newPage, 10, search, statusFilter);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          total={totalPages}
+          mt="lg"
+          mb="md"
+          color="blue"
+          radius="md"
+        />
+      </Center>
     </Box>
   );
 }
+
+export default IbuHamilPage;
