@@ -208,6 +208,11 @@ export const devBar = [
         id: "Keamanan_6",
         name: "Tips Keamanan",
         path: "/admin/keamanan/tips-keamanan"
+      },
+      {
+        id: "Keamanan_7",
+        name: "CCTV",
+        path: "/admin/keamanan/cctv"
       }
     ]
   },
@@ -649,6 +654,11 @@ export const navBar = [
         id: "Keamanan_6",
         name: "Tips Keamanan",
         path: "/admin/keamanan/tips-keamanan"
+      },
+      {
+        id: "Keamanan_7",
+        name: "CCTV",
+        path: "/admin/keamanan/cctv"
       }
     ]
   },
@@ -1063,6 +1073,11 @@ export const role1 = [
         id: "Keamanan_6",
         name: "Tips Keamanan",
         path: "/admin/keamanan/tips-keamanan"
+      },
+      {
+        id: "Keamanan_7",
+        name: "CCTV",
+        path: "/admin/keamanan/cctv"
       }
     ]
   },

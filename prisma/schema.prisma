@@ -1395,9 +1395,31 @@ model PenangananLaporanPublik {
 }
 
 enum StatusLaporan {
+  Baru
   Selesai
   Proses
   Gagal
+}
+
+// ========================================= CCTV KEAMANAN ========================================= //
+enum StatusCctv {
+  Online
+  Offline
+}
+
+model CctvKeamanan {
+  id         String     @id @default(cuid())
+  kode       String     // e.g. "CCTV-01"
+  nama       String     // e.g. "Balai Desa"
+  lokasi     String
+  latitude   Float?
+  longitude  Float?
+  status     StatusCctv @default(Online)
+  lastActive DateTime   @default(now())
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  deletedAt  DateTime?
+  isActive   Boolean    @default(true)
 }
 
 model Pelapor {
