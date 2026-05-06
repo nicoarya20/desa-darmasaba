@@ -2,7 +2,7 @@ import prisma from "@/lib/prisma";
 
 type StatsResult = {
   jumlahPenerima: number;
-  danaTersalurkan: bigint;
+  danaTersalurkan: string;
   tahunAjaran: string;
 };
 
@@ -24,7 +24,7 @@ export default async function beasiswaRingkasanStats(): Promise<{
       success: true,
       data: {
         jumlahPenerima,
-        danaTersalurkan: config?.danaTersalurkan ?? BigInt(0),
+        danaTersalurkan: (config?.danaTersalurkan ?? BigInt(0)).toString(),
         tahunAjaran: config?.tahunAjaran ?? "-",
       },
     };
