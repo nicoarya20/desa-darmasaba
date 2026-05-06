@@ -4,6 +4,7 @@ import PolsekTerdekat from "./polsek-terdekat";
 import PencegahanKriminalitas from "./pencegahan-kriminalitas";
 import MenuTipsKeamanan from "./tips-keamanan";
 import LaporanPublik from "./laporan-publik";
+import CctvKeamanan from "./cctv";
 
 import KontakDaruratKeamanan from "./kontak-darurat-keamanan";
 import KontakItem from "./kontak-darurat-keamanan/kontak-item";
@@ -15,6 +16,7 @@ const Keamanan = new Elysia({ prefix: "/keamanan", tags: ["Keamanan"] })
 .use(PencegahanKriminalitas)
 .use(MenuTipsKeamanan)
 .use(LaporanPublik)
+.use(CctvKeamanan)
 .use(LayananPolsek)
 .use(KontakDaruratKeamanan)
 .use(KontakItem)

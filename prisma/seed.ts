@@ -32,6 +32,7 @@ import { seedInfoTeknologi } from "./_seeder_list/inovasi/seed_info_teknologi";
 import { seedKolaborasiInovasi } from "./_seeder_list/inovasi/seed_kolaborasi_inovasi";
 import { seedLayananOnlineDesa } from "./_seeder_list/inovasi/seed_layanan_online_desa";
 import { seedProgramKreatifDesa } from "./_seeder_list/inovasi/seed_program_kreatif_desa";
+import { seedCctv } from "./_seeder_list/keamanan/seed_cctv";
 import { seedKeamananLingkungan } from "./_seeder_list/keamanan/seed_keamanan_lingkungan";
 import { seedKontakDaruratKeamanan } from "./_seeder_list/keamanan/seed_kontak_darurat";
 import { seedLaporanPublik } from "./_seeder_list/keamanan/seed_laporan_publik";
@@ -280,6 +281,8 @@ import seedAssets from "./seed_assets";
   await seedPencegahanKriminalitas();
   // // ==================== SUBMENU LAPORAN PUBLIK =================
   await seedLaporanPublik();
+  // // ==================== SUBMENU CCTV KEAMANAN ==================
+  await seedCctv();
 
   // // ==================== SUBMENU TIPS KEAMANAN ==================
   await seedKeamananLingkungan();

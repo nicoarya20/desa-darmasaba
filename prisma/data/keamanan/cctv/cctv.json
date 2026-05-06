@@ -1,0 +1,82 @@
+[
+  {
+    "id": "cctv_darmasaba_01",
+    "kode": "CCTV-01",
+    "nama": "Balai Desa",
+    "lokasi": "Jl. Raya Darmasaba, Depan Balai Desa",
+    "latitude": -8.5712,
+    "longitude": 115.1923,
+    "status": "Online",
+    "lastActive": "2026-02-12T14:30:00.000Z"
+  },
+  {
+    "id": "cctv_darmasaba_02",
+    "kode": "CCTV-02",
+    "nama": "Pintu Masuk Desa Utara",
+    "lokasi": "Jl. Raya Darmasaba, Pintu Masuk Utara",
+    "latitude": -8.5685,
+    "longitude": 115.1917,
+    "status": "Online",
+    "lastActive": "2026-02-12T13:45:00.000Z"
+  },
+  {
+    "id": "cctv_darmasaba_03",
+    "kode": "CCTV-03",
+    "nama": "Taman Desa",
+    "lokasi": "Area Taman Desa Darmasaba",
+    "latitude": -8.5730,
+    "longitude": 115.1935,
+    "status": "Offline",
+    "lastActive": "2026-02-11T09:00:00.000Z"
+  },
+  {
+    "id": "cctv_darmasaba_04",
+    "kode": "CCTV-04",
+    "nama": "Pasar Desa",
+    "lokasi": "Pasar Tradisional Darmasaba",
+    "latitude": -8.5698,
+    "longitude": 115.1945,
+    "status": "Online",
+    "lastActive": "2026-02-12T15:00:00.000Z"
+  },
+  {
+    "id": "cctv_darmasaba_05",
+    "kode": "CCTV-05",
+    "nama": "Pintu Masuk Desa Selatan",
+    "lokasi": "Jl. Raya Darmasaba, Pintu Masuk Selatan",
+    "latitude": -8.5755,
+    "longitude": 115.1920,
+    "status": "Online",
+    "lastActive": "2026-02-12T14:55:00.000Z"
+  },
+  {
+    "id": "cctv_darmasaba_06",
+    "kode": "CCTV-06",
+    "nama": "SD Negeri Darmasaba",
+    "lokasi": "Depan SD Negeri 1 Darmasaba",
+    "latitude": -8.5720,
+    "longitude": 115.1910,
+    "status": "Online",
+    "lastActive": "2026-02-12T12:30:00.000Z"
+  },
+  {
+    "id": "cctv_darmasaba_07",
+    "kode": "CCTV-07",
+    "nama": "Pura Desa",
+    "lokasi": "Area Pura Desa Darmasaba",
+    "latitude": -8.5708,
+    "longitude": 115.1950,
+    "status": "Offline",
+    "lastActive": "2026-02-10T18:00:00.000Z"
+  },
+  {
+    "id": "cctv_darmasaba_08",
+    "kode": "CCTV-08",
+    "nama": "Persimpangan Utama",
+    "lokasi": "Persimpangan Jl. Raya Darmasaba - Jl. Abiansemal",
+    "latitude": -8.5695,
+    "longitude": 115.1930,
+    "status": "Online",
+    "lastActive": "2026-02-12T15:10:00.000Z"
+  }
+]
