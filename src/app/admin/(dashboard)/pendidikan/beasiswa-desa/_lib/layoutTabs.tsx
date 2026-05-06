@@ -2,7 +2,7 @@
 'use client'
 import colors from '@/con/colors';
 import { Box, ScrollArea, Stack, Tabs, TabsList, TabsPanel, TabsTab, Title } from '@mantine/core';
-import { IconSchool, IconStar } from '@tabler/icons-react';
+import { IconSchool, IconSettings2, IconStar } from '@tabler/icons-react';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
@@ -22,6 +22,12 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
       value: "keunggulan-program",
       href: "/admin/pendidikan/beasiswa-desa/keunggulan-program",
       icon: <IconStar size={18} stroke={1.8} />
+    },
+    {
+      label: "Konfigurasi Beasiswa",
+      value: "beasiswa-config",
+      href: "/admin/pendidikan/beasiswa-desa/beasiswa-config",
+      icon: <IconSettings2 size={18} stroke={1.8} />
     },
   ];
 
