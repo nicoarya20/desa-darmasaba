@@ -7,7 +7,12 @@ async function beasiswaConfigFindUnique() {
       orderBy: { createdAt: 'desc' },
     });
 
-    return { success: true, data };
+    return {
+      success: true,
+      data: data
+        ? { ...data, danaTersalurkan: data.danaTersalurkan.toString() }
+        : null,
+    };
   } catch (e) {
     console.error("Error di beasiswaConfigFindUnique:", e);
     return { success: false, message: "Gagal mengambil konfigurasi beasiswa" };
