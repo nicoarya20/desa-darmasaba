@@ -1,5 +1,6 @@
 'use client'
 import beasiswaDesaState from '@/app/admin/(dashboard)/_state/pendidikan/beasiswa-desa';
+import ringkasanBeasiswaState from '@/app/admin/(dashboard)/_state/pendidikan/ringkasan-beasiswa';
 import colors from '@/con/colors';
 import { Box, Button, Center, Divider, Group, Image, Modal, Pagination, Paper, Select, SimpleGrid, Skeleton, Stack, Stepper, Text, TextInput, Title } from '@mantine/core';
 import { useDisclosure, useShallowEffect } from '@mantine/hooks';
@@ -9,15 +10,20 @@ import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import BackButton from '../../desa/layanan/_com/BackButto';
 
-const dataBeasiswa = [
-  { id: 1, nama: 'Penerima Beasiswa', jumlah: '250+', icon: IconUsers },
-  { id: 2, nama: 'Peluang Kelulusan', jumlah: '90%', icon: IconSchool },
-  { id: 3, nama: 'Dana Tersalurkan', jumlah: '1.5M', icon: IconCoin },
-];
+function formatDana(value: string | number): string {
+  const num = typeof value === 'string' ? parseFloat(value.replace(/[^0-9.-]/g, '')) : value;
+  if (isNaN(num)) return String(value);
+  if (num >= 1_000_000_000_000) return `${(num / 1_000_000_000_000).toFixed(num % 1_000_000_000_000 === 0 ? 0 : 1)}T`;
+  if (num >= 1_000_000_000) return `${(num / 1_000_000_000).toFixed(num % 1_000_000_000 === 0 ? 0 : 1)}M`;
+  if (num >= 1_000_000) return `${(num / 1_000_000).toFixed(num % 1_000_000 === 0 ? 0 : 1)}Jt`;
+  if (num >= 1_000) return `${(num / 1_000).toFixed(num % 1_000 === 0 ? 0 : 1)}Rb`;
+  return String(num);
+}
 
 function Page() {
   const beasiswaDesa = useProxy(beasiswaDesaState.beasiswaPendaftar)
   const ungggulanDesa = useProxy(beasiswaDesaState.keunggulanProgram)
+  const statsBeasiswa = useProxy(ringkasanBeasiswaState.findStats)
   const [opened, { open, close }] = useDisclosure(false);
   const router = useTransitionRouter()
   const resetForm = () => {
@@ -60,6 +66,16 @@ function Page() {
   useShallowEffect(() => {
     load(page, 3, "");
   }, [page])
+
+  useShallowEffect(() => {
+    statsBeasiswa.load();
+  }, [])
+
+  const dataBeasiswa = [
+    { id: 1, nama: 'Penerima Beasiswa', jumlah: statsBeasiswa.data?.jumlahPenerima?.toString() ?? '-', icon: IconUsers },
+    { id: 2, nama: 'Peluang Kelulusan', jumlah: '90%', icon: IconSchool },
+    { id: 3, nama: 'Dana Tersalurkan', jumlah: statsBeasiswa.data?.danaTersalurkan ? formatDana(statsBeasiswa.data.danaTersalurkan) : '-', icon: IconCoin },
+  ];
 
   const handleSubmit = async () => {
     await beasiswaDesa.create.create();
