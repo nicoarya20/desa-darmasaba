@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma";
 
-type PerJenjang = { nama: string; jumlahSiswa: number };
+type PerJenjang = { nama: string; jumlahSiswa: number, jumlahPengajar: number };
 
 type StatsResult = {
   perJenjang: PerJenjang[];
@@ -21,7 +21,7 @@ export default async function pendidikanRingkasanStats(): Promise<{
           lembagas: {
             where: { isActive: true },
             include: {
-              _count: { select: { siswa: { where: { isActive: true } } } },
+              _count: { select: { siswa: { where: { isActive: true } }, pengajar: { where: { isActive: true } } } },
             },
           },
         },
@@ -33,6 +33,7 @@ export default async function pendidikanRingkasanStats(): Promise<{
     const perJenjang = jenjangList.map((j) => ({
       nama: j.nama,
       jumlahSiswa: j.lembagas.reduce((acc, l) => acc + l._count.siswa, 0),
+      jumlahPengajar: j.lembagas.reduce((acc, l) => acc + l._count.pengajar, 0),
     }));
 
     return {

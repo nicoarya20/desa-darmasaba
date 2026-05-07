@@ -1401,6 +1401,15 @@ enum StatusLaporan {
   Gagal
 }
 
+model Pelapor {
+  id           String      @id @default(cuid())
+  nama         String
+  alamat       String
+  nomorTelepon String
+  image        FileStorage @relation(fields: [imageId], references: [id])
+  imageId      String
+}
+
 // ========================================= CCTV KEAMANAN ========================================= //
 enum StatusCctv {
   Online
@@ -1420,15 +1429,6 @@ model CctvKeamanan {
   updatedAt  DateTime   @updatedAt
   deletedAt  DateTime?
   isActive   Boolean    @default(true)
-}
-
-model Pelapor {
-  id           String      @id @default(cuid())
-  nama         String
-  alamat       String
-  nomorTelepon String
-  image        FileStorage @relation(fields: [imageId], references: [id])
-  imageId      String
 }
 
 // ========================================= TIPS KEAMANAN ========================================= //
