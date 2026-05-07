@@ -1,6 +1,6 @@
 import { proxy } from "valtio";
 
-type PerJenjang = { nama: string; jumlahSiswa: number };
+type PerJenjang = { nama: string; jumlahSiswa: number; jumlahPengajar: number };
 
 type StatsPendidikan = {
   perJenjang: PerJenjang[];
