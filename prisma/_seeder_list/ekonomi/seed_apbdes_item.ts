@@ -7,8 +7,9 @@ const realisasiJson = loadJsonData("ekonomi/apbdes/realisasi-items.json");
 export async function seedAPBDesItem() {
   console.log("Seeding APBDes Items...");
 
-  // Seed items first (sorted by level to ensure parents exist)
-  const sortedItems = [...itemsJson].sort((a, b) => a.level - b.level);
+  // Flatten items from nested APBDes objects, sorted by level to ensure parents exist
+  const allItems = itemsJson.flatMap((apbdes: any) => apbdes.items ?? []);
+  const sortedItems = [...allItems].sort((a: any, b: any) => a.level - b.level);
 
   for (const item of sortedItems) {
     await prisma.aPBDesItem.upsert({
