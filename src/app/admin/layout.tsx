@@ -219,7 +219,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
           <Group gap="xs">
             {/* Dark Mode Toggle */}
-            <DarkModeToggle variant="light" size="lg" showTooltip tooltipPosition="bottom" />
+            {/* <DarkModeToggle variant="light" size="lg" showTooltip tooltipPosition="bottom" /> */}
 
             {!desktopOpened && (
               <Tooltip label="Buka Navigasi" position="bottom" withArrow>
