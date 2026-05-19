@@ -22,6 +22,8 @@ export async function seedAPBDesItem() {
         level: item.level,
         parentId: item.parentId,
         apbdesId: item.apbdesId,
+        isActive: true,
+        deletedAt: null,
       },
       create: {
         id: item.id,

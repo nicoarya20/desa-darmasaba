@@ -27,6 +27,8 @@ export async function seedAPBDes() {
         jumlah: item.jumlah,
         imageId,
         fileId,
+        isActive: true,
+        deletedAt: null,
       },
       create: {
         id: item.id,
