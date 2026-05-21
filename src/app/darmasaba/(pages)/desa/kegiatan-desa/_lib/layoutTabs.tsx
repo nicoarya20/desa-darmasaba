@@ -39,10 +39,11 @@ function LayoutTabsKegiatanDesa({ children }: { children: React.ReactNode }) {
     router.push(`/darmasaba/desa/kegiatan-desa/semua?${params.toString()}`);
   };
 
-  const kategoriOptions = (kategoriState.findMany.data || []).map((k: any) => ({
-    value: k.nama,
-    label: k.nama,
-  }));
+  const kategoriOptions = Array.from(
+    new Map(
+      (kategoriState.findMany.data || []).map((k: any) => [k.nama, { value: k.nama, label: k.nama }])
+    ).values()
+  );
 
   return (
     <Stack pos="relative" bg={colors.Bg} py="xl" gap="22">

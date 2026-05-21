@@ -182,6 +182,28 @@ const eventBudayaState = proxy({
     },
   },
 
+  findUpcoming: {
+    data: null as Prisma.EventBudayaGetPayload<object>[] | null,
+    loading: false,
+    async load() {
+      eventBudayaState.findUpcoming.loading = true;
+      try {
+        const res = await fetch("/api/desa/eventbudaya/find-upcoming");
+        const result = await res.json();
+        if (result?.success) {
+          eventBudayaState.findUpcoming.data = result.data ?? [];
+        } else {
+          eventBudayaState.findUpcoming.data = [];
+        }
+      } catch (error) {
+        console.error("Error loading upcoming events:", error);
+        eventBudayaState.findUpcoming.data = [];
+      } finally {
+        eventBudayaState.findUpcoming.loading = false;
+      }
+    },
+  },
+
   delete: {
     loading: false,
     async byId(id: string) {
