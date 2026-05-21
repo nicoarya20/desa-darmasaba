@@ -90,6 +90,11 @@ const navbarListMenu = [
                 id: "2.8",
                 name: "Kegiatan Desa",
                 href: "/darmasaba/desa/kegiatan-desa/semua"
+            },
+            {
+                id: "2.9",
+                name: "Kalender Event Budaya",
+                href: "/darmasaba/desa/event-budaya"
             }
 
         ]

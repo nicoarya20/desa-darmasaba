@@ -1,58 +1,240 @@
 [
   {
     "id": "event-budaya-1",
-    "nama": "Hari Kesaktian Pancasila",
-    "tanggal": "2025-10-01T07:00:00.000Z",
-    "lokasi": "Balai Desa Darmasaba",
-    "deskripsi": "Peringatan Hari Kesaktian Pancasila diikuti seluruh perangkat desa dan warga Desa Darmasaba dengan upacara bendera dan kegiatan budaya."
+    "nama": "Hari Raya Galungan",
+    "tanggal": "2025-01-15T06:00:00.000Z",
+    "lokasi": "Seluruh wilayah Desa Darmasaba",
+    "deskripsi": "Hari Raya Galungan adalah perayaan kemenangan dharma melawan adharma. Warga Desa Darmasaba merayakannya dengan memasang penjor di depan rumah, sembahyang di pura, dan berkumpul bersama keluarga."
   },
   {
     "id": "event-budaya-2",
+    "nama": "Hari Raya Kuningan",
+    "tanggal": "2025-01-25T06:00:00.000Z",
+    "lokasi": "Seluruh wilayah Desa Darmasaba",
+    "deskripsi": "Hari Raya Kuningan menandai akhir perayaan Galungan. Umat Hindu di Desa Darmasaba melaksanakan persembahyangan terakhir sebagai tanda pamitan para leluhur kembali ke alam nirwana."
+  },
+  {
+    "id": "event-budaya-3",
+    "nama": "Upacara Melasti",
+    "tanggal": "2025-03-27T05:00:00.000Z",
+    "lokasi": "Pantai dan Sumber Air Suci, Badung",
+    "deskripsi": "Upacara Melasti dilaksanakan menjelang Hari Raya Nyepi sebagai ritual penyucian diri dan alam semesta. Masyarakat Desa Darmasaba bersama-sama melakukan persembahyangan dan membersihkan pratima pura ke sumber air suci."
+  },
+  {
+    "id": "event-budaya-4",
+    "nama": "Parade Ogoh-Ogoh",
+    "tanggal": "2025-03-28T15:00:00.000Z",
+    "lokasi": "Jalan Utama Desa Darmasaba",
+    "deskripsi": "Parade ogoh-ogoh antar banjar se-Desa Darmasaba dalam rangka menyambut Hari Raya Nyepi. Ogoh-ogoh melambangkan kekuatan negatif yang kemudian dibakar sebagai simbol penyucian."
+  },
+  {
+    "id": "event-budaya-5",
+    "nama": "Hari Raya Nyepi",
+    "tanggal": "2025-03-29T00:00:00.000Z",
+    "lokasi": "Seluruh wilayah Desa Darmasaba",
+    "deskripsi": "Hari Raya Nyepi adalah Tahun Baru Saka bagi umat Hindu. Seluruh warga Desa Darmasaba melaksanakan Catur Brata Penyepian: amati geni, amati karya, amati lelungan, dan amati lelanguan."
+  },
+  {
+    "id": "event-budaya-6",
+    "nama": "Hari Raya Saraswati",
+    "tanggal": "2025-04-05T06:00:00.000Z",
+    "lokasi": "Pura dan Sekolah se-Desa Darmasaba",
+    "deskripsi": "Hari Raya Saraswati adalah hari turunnya ilmu pengetahuan. Warga Desa Darmasaba, khususnya pelajar dan akademisi, melaksanakan persembahyangan sebagai rasa syukur atas anugerah ilmu pengetahuan."
+  },
+  {
+    "id": "event-budaya-7",
+    "nama": "Hari Raya Pagerwesi",
+    "tanggal": "2025-04-09T06:00:00.000Z",
+    "lokasi": "Pura Puseh Desa Darmasaba",
+    "deskripsi": "Hari Raya Pagerwesi adalah hari untuk memperkuat keimanan dan menghalau pengaruh negatif. Umat Hindu Desa Darmasaba melaksanakan persembahyangan dan meditasi bersama."
+  },
+  {
+    "id": "event-budaya-8",
+    "nama": "Hari Raya Galungan",
+    "tanggal": "2025-05-14T06:00:00.000Z",
+    "lokasi": "Seluruh wilayah Desa Darmasaba",
+    "deskripsi": "Hari Raya Galungan periode kedua tahun 2025. Kemenangan dharma melawan adharma dirayakan dengan pemasangan penjor, persembahyangan di pura, dan acara adat bersama keluarga besar."
+  },
+  {
+    "id": "event-budaya-9",
+    "nama": "Hari Raya Kuningan",
+    "tanggal": "2025-05-24T06:00:00.000Z",
+    "lokasi": "Seluruh wilayah Desa Darmasaba",
+    "deskripsi": "Hari Raya Kuningan periode kedua tahun 2025. Warga Desa Darmasaba melaksanakan persembahyangan akhir Galungan sebagai tanda pamitan para leluhur."
+  },
+  {
+    "id": "event-budaya-10",
+    "nama": "Festival Budaya Desa Darmasaba",
+    "tanggal": "2025-06-15T09:00:00.000Z",
+    "lokasi": "Lapangan Desa Darmasaba",
+    "deskripsi": "Festival tahunan menampilkan kesenian tradisional Bali seperti tari kecak, legong, dan barong oleh sanggar seni dari Desa Darmasaba. Festival ini terbuka untuk umum dan menjadi ajang pelestarian budaya."
+  },
+  {
+    "id": "event-budaya-11",
+    "nama": "Tumpek Landep",
+    "tanggal": "2025-06-28T06:00:00.000Z",
+    "lokasi": "Pura Desa Darmasaba",
+    "deskripsi": "Tumpek Landep adalah hari persembahan kepada benda-benda tajam dan peralatan yang menggunakan logam. Warga Desa Darmasaba melakukan pembersihan dan pemujaan terhadap peralatan kerja, kendaraan, dan senjata."
+  },
+  {
+    "id": "event-budaya-12",
+    "nama": "Upacara Ngusaba Desa",
+    "tanggal": "2025-08-10T08:00:00.000Z",
+    "lokasi": "Pura Puseh Desa Darmasaba",
+    "deskripsi": "Upacara adat tahunan Ngusaba Desa sebagai bentuk rasa syukur kepada Ida Sang Hyang Widhi Wasa atas keselamatan dan kemakmuran desa sepanjang tahun."
+  },
+  {
+    "id": "event-budaya-13",
+    "nama": "Perayaan HUT RI ke-80",
+    "tanggal": "2025-08-17T07:30:00.000Z",
+    "lokasi": "Balai Desa Darmasaba",
+    "deskripsi": "Peringatan Hari Ulang Tahun Kemerdekaan Republik Indonesia ke-80. Warga Desa Darmasaba melaksanakan upacara bendera, lomba-lomba tradisional, dan pertunjukan budaya."
+  },
+  {
+    "id": "event-budaya-14",
+    "nama": "Hari Raya Galungan",
+    "tanggal": "2025-09-10T06:00:00.000Z",
+    "lokasi": "Seluruh wilayah Desa Darmasaba",
+    "deskripsi": "Hari Raya Galungan periode ketiga tahun 2025. Seluruh umat Hindu Desa Darmasaba merayakan kemenangan kebaikan dengan berbagai rangkaian upacara adat dan kegiatan budaya."
+  },
+  {
+    "id": "event-budaya-15",
+    "nama": "Hari Raya Kuningan",
+    "tanggal": "2025-09-20T06:00:00.000Z",
+    "lokasi": "Seluruh wilayah Desa Darmasaba",
+    "deskripsi": "Hari Raya Kuningan periode ketiga tahun 2025. Rangkaian Galungan-Kuningan ditutup dengan persembahyangan dan acara kekeluargaan bersama warga Desa Darmasaba."
+  },
+  {
+    "id": "event-budaya-16",
+    "nama": "Hari Kesaktian Pancasila",
+    "tanggal": "2025-10-01T07:00:00.000Z",
+    "lokasi": "Balai Desa Darmasaba",
+    "deskripsi": "Peringatan Hari Kesaktian Pancasila diikuti seluruh perangkat desa dan warga Desa Darmasaba dengan upacara bendera dan kegiatan budaya sebagai wujud rasa nasionalisme."
+  },
+  {
+    "id": "event-budaya-17",
+    "nama": "Pementasan Wayang Kulit",
+    "tanggal": "2025-10-25T19:00:00.000Z",
+    "lokasi": "Wantilan Desa Darmasaba",
+    "deskripsi": "Pementasan wayang kulit semalam suntuk oleh dalang ternama dari Desa Darmasaba sebagai bagian dari pelestarian seni budaya Bali dan perayaan ulang tahun pura banjar."
+  },
+  {
+    "id": "event-budaya-18",
     "nama": "Upacara Ngusaba Desa",
     "tanggal": "2025-11-15T08:00:00.000Z",
     "lokasi": "Pura Puseh Desa Darmasaba",
     "deskripsi": "Upacara adat tahunan Ngusaba Desa sebagai bentuk rasa syukur kepada Ida Sang Hyang Widhi Wasa atas keselamatan dan kemakmuran desa."
   },
   {
-    "id": "event-budaya-3",
-    "nama": "Festival Budaya Desa Darmasaba",
-    "tanggal": "2026-05-20T09:00:00.000Z",
-    "lokasi": "Lapangan Desa Darmasaba",
-    "deskripsi": "Festival tahunan menampilkan kesenian tradisional Bali seperti tari kecak, legong, dan barong oleh sanggar seni dari Desa Darmasaba."
+    "id": "event-budaya-19",
+    "nama": "Tumpek Uduh",
+    "tanggal": "2025-11-22T06:00:00.000Z",
+    "lokasi": "Seluruh wilayah Desa Darmasaba",
+    "deskripsi": "Tumpek Uduh adalah hari pemujaan kepada tumbuh-tumbuhan. Warga Desa Darmasaba melakukan persembahan kepada pepohonan dan tanaman sebagai bentuk syukur atas anugerah alam."
   },
   {
-    "id": "event-budaya-4",
-    "nama": "Perayaan HUT Desa Darmasaba",
-    "tanggal": "2026-08-17T07:30:00.000Z",
-    "lokasi": "Balai Desa Darmasaba",
-    "deskripsi": "Peringatan Hari Ulang Tahun Kemerdekaan Republik Indonesia sekaligus hari jadi Desa Darmasaba dengan berbagai lomba dan pertunjukan budaya."
+    "id": "event-budaya-20",
+    "nama": "Pujawali Pura Puseh",
+    "tanggal": "2025-12-10T06:00:00.000Z",
+    "lokasi": "Pura Puseh Desa Darmasaba",
+    "deskripsi": "Upacara pujawali (ulang tahun pura) di Pura Puseh Desa Darmasaba. Seluruh krama desa bersama-sama melaksanakan persembahyangan dan menampilkan berbagai kesenian sakral."
   },
   {
-    "id": "event-budaya-5",
+    "id": "event-budaya-21",
     "nama": "Perayaan Galungan dan Kuningan",
     "tanggal": "2026-03-04T06:00:00.000Z",
     "lokasi": "Seluruh wilayah Desa Darmasaba",
     "deskripsi": "Rangkaian perayaan Hari Raya Galungan dan Kuningan sebagai hari kemenangan dharma melawan adharma, dirayakan seluruh umat Hindu di Desa Darmasaba."
   },
   {
-    "id": "event-budaya-6",
+    "id": "event-budaya-22",
+    "nama": "Upacara Melasti",
+    "tanggal": "2026-03-17T05:00:00.000Z",
+    "lokasi": "Pantai dan Sumber Air Suci, Badung",
+    "deskripsi": "Ritual penyucian diri dan benda sakral sebelum Nyepi 2026. Seluruh krama Desa Darmasaba beriringan membawa pratima pura menuju sumber air suci."
+  },
+  {
+    "id": "event-budaya-23",
     "nama": "Lomba Ogoh-Ogoh Desa",
     "tanggal": "2026-03-18T15:00:00.000Z",
     "lokasi": "Lapangan Desa Darmasaba",
-    "deskripsi": "Lomba pembuatan dan parade ogoh-ogoh antar banjar se-Desa Darmasaba dalam rangka menyambut Hari Raya Nyepi."
+    "deskripsi": "Lomba pembuatan dan parade ogoh-ogoh antar banjar se-Desa Darmasaba dalam rangka menyambut Hari Raya Nyepi 2026."
   },
   {
-    "id": "event-budaya-7",
+    "id": "event-budaya-24",
+    "nama": "Hari Raya Nyepi",
+    "tanggal": "2026-03-19T00:00:00.000Z",
+    "lokasi": "Seluruh wilayah Desa Darmasaba",
+    "deskripsi": "Tahun Baru Saka 1948. Seluruh warga Desa Darmasaba melaksanakan Catur Brata Penyepian dalam keheningan dan introspeksi diri."
+  },
+  {
+    "id": "event-budaya-25",
+    "nama": "Hari Raya Kuningan",
+    "tanggal": "2026-03-14T06:00:00.000Z",
+    "lokasi": "Seluruh wilayah Desa Darmasaba",
+    "deskripsi": "Hari Raya Kuningan 2026. Warga Desa Darmasaba melaksanakan persembahyangan akhir Galungan sebagai tanda pamitan para leluhur kembali ke nirwana."
+  },
+  {
+    "id": "event-budaya-26",
+    "nama": "Festival Budaya Desa Darmasaba",
+    "tanggal": "2026-05-20T09:00:00.000Z",
+    "lokasi": "Lapangan Desa Darmasaba",
+    "deskripsi": "Festival tahunan menampilkan kesenian tradisional Bali seperti tari kecak, legong, dan barong oleh sanggar seni dari Desa Darmasaba."
+  },
+  {
+    "id": "event-budaya-27",
+    "nama": "Tumpek Krulut",
+    "tanggal": "2026-05-30T06:00:00.000Z",
+    "lokasi": "Pura Desa Darmasaba",
+    "deskripsi": "Tumpek Krulut adalah hari pemujaan kepada alat musik dan kesenian. Seniman dan pengrawit di Desa Darmasaba melaksanakan persembahan kepada gamelan dan alat musik tradisional."
+  },
+  {
+    "id": "event-budaya-28",
     "nama": "Pementasan Wayang Kulit",
     "tanggal": "2026-06-10T19:00:00.000Z",
     "lokasi": "Wantilan Desa Darmasaba",
     "deskripsi": "Pementasan wayang kulit semalam suntuk oleh dalang dari Desa Darmasaba sebagai bagian dari pelestarian seni budaya Bali."
   },
   {
-    "id": "event-budaya-8",
+    "id": "event-budaya-29",
+    "nama": "Hari Raya Galungan",
+    "tanggal": "2026-08-01T06:00:00.000Z",
+    "lokasi": "Seluruh wilayah Desa Darmasaba",
+    "deskripsi": "Hari Raya Galungan 2026. Umat Hindu Desa Darmasaba merayakan kemenangan kebenaran dengan upacara adat, penjor, dan kegiatan budaya bersama."
+  },
+  {
+    "id": "event-budaya-30",
+    "nama": "Perayaan HUT RI ke-81",
+    "tanggal": "2026-08-17T07:30:00.000Z",
+    "lokasi": "Balai Desa Darmasaba",
+    "deskripsi": "Peringatan Hari Ulang Tahun Kemerdekaan Republik Indonesia ke-81 sekaligus hari jadi Desa Darmasaba dengan berbagai lomba dan pertunjukan budaya."
+  },
+  {
+    "id": "event-budaya-31",
     "nama": "Upacara Melaspas Gedung Balai Banjar",
     "tanggal": "2026-09-05T08:00:00.000Z",
     "lokasi": "Banjar Desa Darmasaba",
     "deskripsi": "Upacara Melaspas sebagai ritual penyucian bangunan baru balai banjar agar membawa keselamatan dan kesejahteraan bagi krama banjar."
+  },
+  {
+    "id": "event-budaya-32",
+    "nama": "Hari Raya Kuningan",
+    "tanggal": "2026-08-11T06:00:00.000Z",
+    "lokasi": "Seluruh wilayah Desa Darmasaba",
+    "deskripsi": "Hari Raya Kuningan 2026. Warga Desa Darmasaba bersama keluarga besar melaksanakan persembahyangan penutup rangkaian Galungan-Kuningan."
+  },
+  {
+    "id": "event-budaya-33",
+    "nama": "Hari Raya Saraswati",
+    "tanggal": "2026-10-03T06:00:00.000Z",
+    "lokasi": "Pura dan Sekolah se-Desa Darmasaba",
+    "deskripsi": "Hari Raya Saraswati 2026. Warga Desa Darmasaba, terutama pelajar dan pendidik, melaksanakan persembahyangan dan puja saraswati sebagai rasa syukur atas ilmu pengetahuan."
+  },
+  {
+    "id": "event-budaya-34",
+    "nama": "Pujawali Pura Puseh",
+    "tanggal": "2026-11-20T06:00:00.000Z",
+    "lokasi": "Pura Puseh Desa Darmasaba",
+    "deskripsi": "Upacara pujawali tahunan di Pura Puseh Desa Darmasaba disertai pertunjukan topeng, gambuh, dan kesenian sakral lainnya."
   }
 ]
