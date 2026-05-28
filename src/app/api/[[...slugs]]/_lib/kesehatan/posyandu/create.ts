@@ -2,15 +2,14 @@ import prisma from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import { Context } from "elysia";
 
-type FormCreate = Prisma.PosyanduGetPayload<{
-    select: {
-        name: true;
-        nomor: true;
-        deskripsi: true;
-        imageId: true;
-        jadwalPelayanan: true;
-    };
-}>;
+type FormCreate = {
+    name: string;
+    nomor: string;
+    deskripsi: string;
+    imageId: string;
+    jadwalPelayanan: string;
+    banjarId?: string;
+};
 export default async function posyanduCreate(context: Context) {
     const body = context.body as FormCreate;
 
@@ -21,6 +20,7 @@ export default async function posyanduCreate(context: Context) {
             deskripsi: body.deskripsi,
             imageId: body.imageId,
             jadwalPelayanan: body.jadwalPelayanan,
+            banjarId: body.banjarId || null,
         }
     })
     return {

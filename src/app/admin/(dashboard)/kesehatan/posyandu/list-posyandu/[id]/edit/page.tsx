@@ -2,6 +2,7 @@
 'use client';
 import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import posyandustate from '@/app/admin/(dashboard)/_state/kesehatan/posyandu/posyandu';
+import ringkasanKesehatanState from '@/app/admin/(dashboard)/_state/kesehatan/ringkasan-kesehatan/ringkasanKesehatan';
 import colors from '@/con/colors';
 import ApiFetch from '@/lib/api-fetch';
 import {
@@ -12,6 +13,7 @@ import {
   Image,
   Loader,
   Paper,
+  Select,
   Stack,
   Text,
   TextInput,
@@ -26,6 +28,7 @@ import { useProxy } from 'valtio/utils';
 
 function EditPosyandu() {
   const statePosyandu = useProxy(posyandustate);
+  const stateBanjar = useProxy(ringkasanKesehatanState);
   const router = useRouter();
   const params = useParams();
 
@@ -57,6 +60,7 @@ function EditPosyandu() {
     deskripsi: '',
     imageId: '',
     jadwalPelayanan: '',
+    banjarId: '',
   });
   const [originalData, setOriginalData] = useState({
     name: "",
@@ -64,11 +68,13 @@ function EditPosyandu() {
     deskripsi: "",
     imageId: "",
     jadwalPelayanan: "",
+    banjarId: "",
     imageUrl: ""
   });
 
-  // Load data posyandu
+  // Load data posyandu dan banjar
   useEffect(() => {
+    ringkasanKesehatanState.findBanjar.load();
     const loadPosyandu = async () => {
       const id = params?.id as string;
       if (!id) return;
@@ -82,6 +88,7 @@ function EditPosyandu() {
             deskripsi: data.deskripsi || '',
             imageId: data.imageId || '',
             jadwalPelayanan: data.jadwalPelayanan || '',
+            banjarId: data.banjarId || '',
           });
           setOriginalData({
             name: data.name || '',
@@ -89,6 +96,7 @@ function EditPosyandu() {
             deskripsi: data.deskripsi || '',
             imageId: data.imageId || '',
             jadwalPelayanan: data.jadwalPelayanan || '',
+            banjarId: data.banjarId || '',
             imageUrl: data.image?.link || '',
           });
           if (data?.image?.link) setPreviewImage(data.image.link);
@@ -129,7 +137,7 @@ function EditPosyandu() {
 
     try {
       setIsSubmitting(true);
-      const updatedForm = { ...statePosyandu.edit.form, ...formData };
+      const updatedForm = { ...statePosyandu.edit.form, ...formData, banjarId: formData.banjarId };
 
       // Upload file jika ada
       if (file) {
@@ -160,6 +168,7 @@ function EditPosyandu() {
       deskripsi: originalData.deskripsi,
       imageId: originalData.imageId,
       jadwalPelayanan: originalData.jadwalPelayanan,
+      banjarId: originalData.banjarId,
     });
     setPreviewImage(originalData.imageUrl || null);
     setFile(null);
@@ -280,6 +289,15 @@ function EditPosyandu() {
             value={formData.nomor}
             onChange={(e) => setFormData({ ...formData, nomor: e.target.value })}
             required
+          />
+
+          <Select
+            label="Banjar"
+            placeholder="Pilih banjar"
+            clearable
+            data={stateBanjar.findBanjar.data.map((b) => ({ value: b.id, label: b.name }))}
+            value={formData.banjarId || null}
+            onChange={(val) => setFormData({ ...formData, banjarId: val ?? '' })}
           />
 
           <Box>

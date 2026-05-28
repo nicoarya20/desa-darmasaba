@@ -30,6 +30,7 @@ async function posyanduFindMany(context: Context) {
         where,
         include: {
           image: true,
+          banjar: { select: { id: true, name: true } },
         },
         skip,
         take: limit,

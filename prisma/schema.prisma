@@ -1150,6 +1150,16 @@ model DoctorSign {
   ArtikelKesehatan ArtikelKesehatan[]
 }
 
+// ========================================= BANJAR ========================================= //
+model Banjar {
+  id        String     @id @default(cuid())
+  name      String
+  isActive  Boolean    @default(true)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  posyandus Posyandu[]
+}
+
 // ========================================= POSYANDU ========================================= //
 model Posyandu {
   id              String       @id @default(cuid())
@@ -1159,6 +1169,8 @@ model Posyandu {
   jadwalPelayanan String
   image           FileStorage? @relation(fields: [imageId], references: [id])
   imageId         String?
+  banjar          Banjar?      @relation(fields: [banjarId], references: [id])
+  banjarId        String?
   ibuHamil        IbuHamil[]
   balita          Balita[]
   createdAt       DateTime     @default(now())

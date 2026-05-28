@@ -96,27 +96,33 @@ function ListPosyandu({ search }: { search: string }) {
           >
             <TableThead>
               <TableTr>
-                <TableTh w={220} fz="sm" fw={600} ta="left" lh={1.4}>Nama Posyandu</TableTh>
-                <TableTh w={220} fz="sm" fw={600} ta="left" lh={1.4}>Nomor Posyandu</TableTh>
-                <TableTh w={220} fz="sm" fw={600} ta="left" lh={1.4}>Deskripsi</TableTh>
-                <TableTh w={150} fz="sm" fw={600} ta="left" lh={1.4}>Aksi</TableTh>
+                <TableTh w={200} fz="sm" fw={600} ta="left" lh={1.4}>Nama Posyandu</TableTh>
+                <TableTh w={160} fz="sm" fw={600} ta="left" lh={1.4}>Banjar</TableTh>
+                <TableTh w={160} fz="sm" fw={600} ta="left" lh={1.4}>Nomor Posyandu</TableTh>
+                <TableTh w={200} fz="sm" fw={600} ta="left" lh={1.4}>Deskripsi</TableTh>
+                <TableTh w={120} fz="sm" fw={600} ta="left" lh={1.4}>Aksi</TableTh>
               </TableTr>
             </TableThead>
             <TableTbody>
               {filteredData.length > 0 ? (
                 filteredData.map((item) => (
                   <TableTr key={item.id}>
-                    <TableTd w={220}>
+                    <TableTd w={200}>
                       <Text fz="md" fw={500} lh={1.5} truncate="end" lineClamp={1}>
                         {item.name}
                       </Text>
                     </TableTd>
-                    <TableTd w={220}>
+                    <TableTd w={160}>
+                      <Text fz="sm" c={item.banjar ? undefined : 'dimmed'} lh={1.5}>
+                        {item.banjar?.name || '-'}
+                      </Text>
+                    </TableTd>
+                    <TableTd w={160}>
                       <Text fz="sm" c="dimmed" lh={1.5}>
                         {item.nomor || '-'}
                       </Text>
                     </TableTd>
-                    <TableTd w={220}>
+                    <TableTd w={200}>
                       <Text
                         fz="sm"
                         lh={1.5}
@@ -125,7 +131,7 @@ function ListPosyandu({ search }: { search: string }) {
                         dangerouslySetInnerHTML={{ __html: item.deskripsi }}
                       />
                     </TableTd>
-                    <TableTd w={220}>
+                    <TableTd w={120}>
                       <Button
                         size="xs"
                         radius="md"
@@ -141,7 +147,7 @@ function ListPosyandu({ search }: { search: string }) {
                 ))
               ) : (
                 <TableTr>
-                  <TableTd colSpan={4}>
+                  <TableTd colSpan={5}>
                     <Center py={20}>
                       <Text c="dimmed" fz="sm" lh={1.4}>
                         Tidak ada data posyandu yang cocok
@@ -167,6 +173,14 @@ function ListPosyandu({ search }: { search: string }) {
                       </Text>
                       <Text fz="sm" fw={500} lh={1.5}>
                         {item.name}
+                      </Text>
+                    </Box>
+                    <Box>
+                      <Text fz="sm" fw={600} lh={1.4}>
+                        Banjar
+                      </Text>
+                      <Text fz="sm" fw={500} lh={1.5} c={item.banjar ? undefined : 'dimmed'}>
+                        {item.banjar?.name || '-'}
                       </Text>
                     </Box>
                     <Box>

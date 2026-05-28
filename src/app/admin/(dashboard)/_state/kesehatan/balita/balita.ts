@@ -82,7 +82,15 @@ const balitaState = proxy({
   findMany: {
     data: null as
       | Prisma.BalitaGetPayload<{
-          include: { posyandu: { select: { id: true; name: true } } };
+          include: {
+            posyandu: {
+              select: {
+                id: true;
+                name: true;
+                banjar: { select: { id: true; name: true } };
+              };
+            };
+          };
         }>[]
       | null,
     page: 1,

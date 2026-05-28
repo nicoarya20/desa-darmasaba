@@ -27,7 +27,15 @@ export default async function ibuHamilFindMany(context: Context) {
     const [data, total] = await Promise.all([
       prisma.ibuHamil.findMany({
         where,
-        include: { posyandu: { select: { id: true, name: true } } },
+        include: {
+          posyandu: {
+            select: {
+              id: true,
+              name: true,
+              banjar: { select: { id: true, name: true } },
+            },
+          },
+        },
         skip,
         take: limit,
         orderBy: { createdAt: "desc" },

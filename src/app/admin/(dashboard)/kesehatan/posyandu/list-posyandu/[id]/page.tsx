@@ -83,6 +83,11 @@ function DetailPosyandu() {
 
 
               <Box>
+                <Text fz="lg" fw="bold">Banjar</Text>
+                <Text fz="md" c="dimmed">{data.banjar?.name || '-'}</Text>
+              </Box>
+
+              <Box>
                 <Text fz="lg" fw="bold">Nomor Posyandu</Text>
                 <Text fz="md" c="dimmed">{data.nomor || '-'}</Text>
               </Box>

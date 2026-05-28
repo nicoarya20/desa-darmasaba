@@ -72,7 +72,15 @@ const ibuHamilState = proxy({
   findMany: {
     data: null as
       | Prisma.IbuHamilGetPayload<{
-          include: { posyandu: { select: { id: true; name: true } } };
+          include: {
+            posyandu: {
+              select: {
+                id: true;
+                name: true;
+                banjar: { select: { id: true; name: true } };
+              };
+            };
+          };
         }>[]
       | null,
     page: 1,

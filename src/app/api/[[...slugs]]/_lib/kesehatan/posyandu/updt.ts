@@ -1,23 +1,20 @@
 import prisma from "@/lib/prisma";
-import { Prisma } from "@prisma/client";
 import { Context } from "elysia";
 import minio, { MINIO_BUCKET } from "@/lib/minio";
 
-type FormUpdate = Prisma.PosyanduGetPayload<{
-    select: {
-        id: true;
-        name: true;
-        nomor: true;
-        deskripsi: true;
-        imageId: true;
-        jadwalPelayanan: true;
-    }
-}>
+type FormUpdate = {
+    name: string;
+    nomor: string;
+    deskripsi: string;
+    imageId: string;
+    jadwalPelayanan: string;
+    banjarId?: string;
+};
 
 export default async function posyanduUpdate(context: Context) {
     try {
         const id = context.params?.id as string;
-        const body = (await context.body) as Omit<FormUpdate, "id">;
+        const body = (await context.body) as FormUpdate;
 
         const {
             name,
@@ -25,6 +22,7 @@ export default async function posyanduUpdate(context: Context) {
             deskripsi,
             imageId,
             jadwalPelayanan,
+            banjarId,
         } = body;
 
         if(!id) {
@@ -80,6 +78,7 @@ export default async function posyanduUpdate(context: Context) {
                 deskripsi,
                 imageId,
                 jadwalPelayanan,
+                banjarId: banjarId || null,
             }
         })
 

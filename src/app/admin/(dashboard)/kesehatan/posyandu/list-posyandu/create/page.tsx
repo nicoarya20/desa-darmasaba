@@ -11,6 +11,7 @@ import {
   Image,
   Loader,
   Paper,
+  Select,
   Stack,
   Text,
   TextInput,
@@ -19,18 +20,22 @@ import {
 import { Dropzone } from '@mantine/dropzone';
 import { IconArrowBack, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
+import ringkasanKesehatanState from '../../../../_state/kesehatan/ringkasan-kesehatan/ringkasanKesehatan';
 
 
 
 function CreatePosyandu() {
   const statePosyandu = useProxy(posyandustate);
+  const stateBanjar = useProxy(ringkasanKesehatanState);
   const router = useRouter();
   const [file, setFile] = useState<File | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => { ringkasanKesehatanState.findBanjar.load(); }, []);
 
   // Helper function to check if HTML content is empty
   const isHtmlEmpty = (html: string) => {
@@ -57,6 +62,7 @@ function CreatePosyandu() {
       deskripsi: '',
       imageId: '',
       jadwalPelayanan: '',
+      banjarId: '',
     };
     setFile(null);
     setPreviewImage(null);
@@ -222,6 +228,14 @@ function CreatePosyandu() {
             value={statePosyandu.create.form.nomor || ''}
             onChange={(e) => (statePosyandu.create.form.nomor = e.target.value)}
             required
+          />
+          <Select
+            label="Banjar"
+            placeholder="Pilih banjar"
+            clearable
+            data={stateBanjar.findBanjar.data.map((b) => ({ value: b.id, label: b.name }))}
+            value={statePosyandu.create.form.banjarId || null}
+            onChange={(val) => { statePosyandu.create.form.banjarId = val ?? ''; }}
           />
           <Box>
             <Text fw="bold" fz="sm" mb={6}>

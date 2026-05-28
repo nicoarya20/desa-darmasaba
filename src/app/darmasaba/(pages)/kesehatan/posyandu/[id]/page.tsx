@@ -2,19 +2,14 @@
 
 import colors from '@/con/colors';
 import {
-  Button,
-  Center,
-  Flex,
-  Group,
-  Image,
-  Paper,
-  Skeleton,
-  Stack,
-  Text,
-  Title,
+  Box, Button, Flex, Group, Image,
+  Paper, Skeleton, Stack, Text, Title,
 } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { IconArrowBack, IconCalendar, IconInfoCircle, IconPhone } from '@tabler/icons-react';
+import {
+  IconArrowBack, IconCalendar, IconInfoCircle,
+  IconMapPin, IconPhone,
+} from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
 import posyanduState from '@/app/admin/(dashboard)/_state/kesehatan/posyandu/posyandu';
@@ -30,8 +25,8 @@ export default function DetailPosyanduUser() {
 
   if (!statePosyandu.findUnique.data) {
     return (
-      <Stack py="xl" px={{ base: 'md', md: 100 }}>
-        <Skeleton height={500} radius="md" />
+      <Stack py="xl" px={{ base: 'md', md: 100 }} bg={colors.Bg} mih="100vh">
+        <Skeleton height={500} radius="lg" />
       </Stack>
     );
   }
@@ -39,97 +34,104 @@ export default function DetailPosyanduUser() {
   const data = statePosyandu.findUnique.data;
 
   return (
-    <Stack pos="relative" bg={colors.Bg} py="xl" px={{ base: 'md', md: 100 }} gap="xl">
-      {/* Tombol Kembali */}
+    <Stack pos="relative" bg={colors.Bg} py="xl" px={{ base: 'md', md: 100 }} gap="xl" mih="100vh">
       <Group>
         <Button
           variant="subtle"
           onClick={() => router.back()}
           leftSection={<IconArrowBack size={22} color={colors['blue-button']} />}
-          mb="sm"
           c={colors['blue-button']}
         >
           Kembali
         </Button>
       </Group>
 
-      {/* Konten utama */}
       <Paper
         withBorder
         p="xl"
         radius="lg"
         shadow="md"
-        bg={colors['white-trans-1']}
+        bg="white"
         maw={800}
         mx="auto"
+        w="100%"
       >
-        <Stack gap="md">
-          {/* Header — Dijadikan Title */}
-          <Title
-            ta="center"
-            order={1}
-            c={colors['blue-button']}
-          >
+        <Stack gap="lg">
+          <Title ta="center" order={2} c={colors['blue-button']}>
             {data.name || 'Posyandu Desa'}
           </Title>
 
-          {/* Gambar */}
           {data.image?.link ? (
-            <Center>
-              <Image
-                src={data.image?.link ?? "/no-image.jpg"}
-                alt={`Gambar ${data.name}`}
-                w="100%"
-                h={300}
-                radius="md"
-                fit="cover"
-                loading="lazy"
-              />
-            </Center>
+            <Image
+              src={data.image.link}
+              alt={`Gambar ${data.name}`}
+              w="100%"
+              h={300}
+              radius="md"
+              fit="cover"
+              loading="lazy"
+            />
           ) : (
-            <Center>
-              <Text
-                fz={{ base: 'xs', md: 'sm' }}
-                c="dimmed"
-                ta="center"
-              >
-                Tidak ada gambar
-              </Text>
-            </Center>
+            <Box
+              h={200}
+              style={{
+                background: '#f4f5f6',
+                borderRadius: 12,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Text fz="sm" c="dimmed">Tidak ada gambar</Text>
+            </Box>
           )}
 
-          {/* Info utama */}
-          <Stack gap="sm" mt="md">
+          <Stack gap="sm" mt="sm">
+            {data.banjar && (
+              <Flex align="center" gap="xs">
+                <IconMapPin size={18} stroke={1.5} color={colors['blue-button']} />
+                <Text fz={{ base: 'sm', md: 'md' }} c="black">
+                  Banjar {data.banjar.name}
+                </Text>
+              </Flex>
+            )}
+
             <Flex align="center" gap="xs">
-              <IconPhone size={18} stroke={1.5} />
-              <Text
-                fz={{ base: 'sm', md: 'md' }}
-                c="black"
-                lh={{ base: 1.5, md: 1.6 }}
-              >
+              <IconPhone size={18} stroke={1.5} color="gray" />
+              <Text fz={{ base: 'sm', md: 'md' }} c="black">
                 {data.nomor || 'Nomor tidak tersedia'}
               </Text>
             </Flex>
 
-            <Flex align="center" gap="xs">
-              <IconCalendar size={18} stroke={1.5} />
+            <Flex align="flex-start" gap="xs">
+              <IconCalendar
+                size={18}
+                stroke={1.5}
+                color="gray"
+                style={{ marginTop: 2, flexShrink: 0 }}
+              />
               <Text
                 fz={{ base: 'sm', md: 'md' }}
                 c="black"
-                lh={{ base: 1.5, md: 1.6 }}
-                dangerouslySetInnerHTML={{ __html: data.jadwalPelayanan || '-' }}
-                style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
+                lh={1.6}
+                dangerouslySetInnerHTML={{ __html: data.jadwalPelayanan || '–' }}
+                style={{ wordBreak: 'break-word' }}
               />
             </Flex>
 
-            <Flex align="center" gap="xs">
-              <IconInfoCircle size={18} stroke={1.5} />
+            <Flex align="flex-start" gap="xs">
+              <IconInfoCircle
+                size={18}
+                stroke={1.5}
+                color="gray"
+                style={{ marginTop: 2, flexShrink: 0 }}
+              />
               <Text
                 fz={{ base: 'sm', md: 'md' }}
                 c="black"
-                lh={{ base: 1.5, md: 1.6 }}
-                dangerouslySetInnerHTML={{ __html: data.deskripsi || '-' }}
-                style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
+                lh={1.6}
+                dangerouslySetInnerHTML={{ __html: data.deskripsi || '–' }}
+                style={{ wordBreak: 'break-word' }}
               />
             </Flex>
           </Stack>

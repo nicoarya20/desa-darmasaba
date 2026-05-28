@@ -18,14 +18,39 @@ const intPct = z
   .min(0, { message: "Minimal 0" })
   .max(100, { message: "Maksimal 100" });
 
+type BanjarOption = { id: string; name: string };
+
 const ringkasanKesehatanState = proxy({
+  banjarId: "" as string,
+
+  findBanjar: {
+    data: [] as BanjarOption[],
+    loading: false,
+    async load() {
+      try {
+        ringkasanKesehatanState.findBanjar.loading = true;
+        const res = await fetch(`/api/kesehatan/banjar/find-many`);
+        if (res.ok) {
+          const result = await res.json();
+          ringkasanKesehatanState.findBanjar.data = result?.data ?? [];
+        }
+      } catch (error) {
+        console.error("Error fetching banjar:", error);
+      } finally {
+        ringkasanKesehatanState.findBanjar.loading = false;
+      }
+    },
+  },
+
   findStats: {
     data: null as StatsData | null,
     loading: false,
     async load() {
       try {
         ringkasanKesehatanState.findStats.loading = true;
-        const res = await fetch(`/api/kesehatan/ringkasankesehatan/stats`);
+        const banjarId = ringkasanKesehatanState.banjarId;
+        const params = banjarId ? `?banjarId=${encodeURIComponent(banjarId)}` : "";
+        const res = await fetch(`/api/kesehatan/ringkasankesehatan/stats${params}`);
         if (res.ok) {
           const result = await res.json();
           ringkasanKesehatanState.findStats.data = result?.data ?? null;
