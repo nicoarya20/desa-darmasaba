@@ -19,6 +19,7 @@ const defaultForm = {
   deskripsi: "",
   imageId: "",
   jadwalPelayanan: "",
+  banjarId: "",
 };
 
 const posyandustate = proxy({
@@ -57,6 +58,7 @@ const posyandustate = proxy({
       | Prisma.PosyanduGetPayload<{
           include: {
             image: true;
+            banjar: { select: { id: true; name: true } };
           };
         }>[]
       | null,
@@ -92,10 +94,11 @@ const posyandustate = proxy({
     },
   },
   findUnique: {
-    data: null as 
+    data: null as
     | Prisma.PosyanduGetPayload<{
         include: {
             image: true;
+            banjar: { select: { id: true; name: true } };
         }
     }> | null,
     async load(id: string) {
@@ -176,6 +179,7 @@ const posyandustate = proxy({
                     deskripsi: data.deskripsi,
                     imageId: data.imageId || "",
                     jadwalPelayanan: data.jadwalPelayanan || "",
+                    banjarId: data.banjarId || "",
                 };
                 return data;
             } else {
@@ -210,6 +214,7 @@ const posyandustate = proxy({
                     deskripsi: this.form.deskripsi,
                     imageId: this.form.imageId,
                     jadwalPelayanan: this.form.jadwalPelayanan,
+                    banjarId: this.form.banjarId || undefined,
                 }),
             });
             

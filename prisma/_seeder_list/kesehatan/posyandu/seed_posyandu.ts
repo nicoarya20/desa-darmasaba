@@ -32,6 +32,7 @@ export async function seedPosyandu() {
         deskripsi: p.deskripsi,
         jadwalPelayanan: p.jadwalPelayanan,
         imageId,
+        banjarId: p.banjarId || null,
       },
       create: {
         id: p.id,
@@ -40,6 +41,7 @@ export async function seedPosyandu() {
         deskripsi: p.deskripsi,
         jadwalPelayanan: p.jadwalPelayanan,
         imageId,
+        banjarId: p.banjarId || null,
       },
     });
 

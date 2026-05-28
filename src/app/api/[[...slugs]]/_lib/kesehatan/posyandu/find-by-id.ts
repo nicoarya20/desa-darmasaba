@@ -23,7 +23,8 @@ export default async function findPosyanduById(request: Request) {
         const data = await prisma.posyandu.findUnique({
             where: {id},
             include: {
-                image: true
+                image: true,
+                banjar: { select: { id: true, name: true } },
             }
         })
 

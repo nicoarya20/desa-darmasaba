@@ -117,12 +117,13 @@ function ListIbuHamil({ search }: { search: string }) {
           <Table highlightOnHover layout="fixed" withColumnBorders={false}>
             <TableThead>
               <TableTr>
-                <TableTh w="25%">Nama</TableTh>
-                <TableTh w="18%">NIK</TableTh>
-                <TableTh w="17%">Usia Kehamilan</TableTh>
-                <TableTh w="15%">No. HP</TableTh>
-                <TableTh w="12%">Status</TableTh>
-                <TableTh w="13%">Aksi</TableTh>
+                <TableTh w="20%">Nama</TableTh>
+                <TableTh w="15%">NIK</TableTh>
+                <TableTh w="15%">Usia Kehamilan</TableTh>
+                <TableTh w="13%">No. HP</TableTh>
+                <TableTh w="15%">Banjar</TableTh>
+                <TableTh w="10%">Status</TableTh>
+                <TableTh w="12%">Aksi</TableTh>
               </TableTr>
             </TableThead>
             <TableTbody>
@@ -133,6 +134,7 @@ function ListIbuHamil({ search }: { search: string }) {
                     <TableTd>{d.nik || '-'}</TableTd>
                     <TableTd>{d.usiaKehamilan} minggu</TableTd>
                     <TableTd>{d.noHp || '-'}</TableTd>
+                    <TableTd>{d.posyandu?.banjar?.name ?? '-'}</TableTd>
                     <TableTd>
                       <Badge
                         color={STATUS_COLORS[d.status] ?? 'gray'}
@@ -172,7 +174,7 @@ function ListIbuHamil({ search }: { search: string }) {
                 ))
               ) : (
                 <TableTr>
-                  <TableTd colSpan={6}>
+                  <TableTd colSpan={7}>
                     <Center py="xl">
                       <Text c="dimmed" fz="sm" lh={1.4}>
                         Tidak ada data ibu hamil yang cocok
@@ -194,17 +196,20 @@ function ListIbuHamil({ search }: { search: string }) {
                   <Text fz="sm" fw={600} mb={4}>
                     {d.nama}
                   </Text>
-                  <Group gap="xs" mb={6}>
+                  <Group gap="xs" mb={4}>
                     <Text fz="xs" c="dimmed">
                       NIK: {d.nik || '-'}
                     </Text>
-                    <Text fz="xs" c="dimmed">
-                      ·
-                    </Text>
+                    <Text fz="xs" c="dimmed">·</Text>
                     <Text fz="xs" c="dimmed">
                       {d.usiaKehamilan} minggu
                     </Text>
                   </Group>
+                  {d.posyandu?.banjar?.name && (
+                    <Text fz="xs" c="dimmed" mb={4}>
+                      Banjar: {d.posyandu.banjar.name}
+                    </Text>
+                  )}
                   <Group gap="xs" mb={8}>
                     <Badge
                       size="xs"

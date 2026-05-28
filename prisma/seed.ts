@@ -38,6 +38,7 @@ import { seedKontakDaruratKeamanan } from "./_seeder_list/keamanan/seed_kontak_d
 import { seedLaporanPublik } from "./_seeder_list/keamanan/seed_laporan_publik";
 import { seedPencegahanKriminalitas } from "./_seeder_list/keamanan/seed_pencegahan_kriminalitas";
 import { seedPolsekTerdekat } from "./_seeder_list/keamanan/seed_polsek_terdekat";
+import { seedTipsKeamanan } from "./_seeder_list/keamanan/seed_tips_keamanan";
 import { seedArtikelKesehatan } from "./_seeder_list/kesehatan/artikel-kesehatan/seed_artikel_kesehatan";
 import { seedFasilitasKesehatan } from "./_seeder_list/kesehatan/fasilitas-kesehatan/seed_fasilitas_kesehatan";
 import { seedInfoWabahPenyakit } from "./_seeder_list/kesehatan/info-wabah-penyakit/seed_info_wabah_penyakit";
@@ -49,6 +50,7 @@ import { seedProgramKesehatan } from "./_seeder_list/kesehatan/program-kesehatan
 import { seedPuskesmas } from "./_seeder_list/kesehatan/puskesmas/seed_puskesmas";
 import { seedGrafikKepuasan } from "./_seeder_list/kesehatan/seed_grafik_kepuasan";
 import { seedKelahiranKematian } from "./_seeder_list/kesehatan/seed_kelahiran_kematian";
+import { seedBanjar } from "./_seeder_list/kesehatan/seed_banjar";
 import { seedRingkasanKesehatan } from "./_seeder_list/kesehatan/seed_ringkasan_kesehatan";
 import { seedIbuHamil } from "./_seeder_list/kesehatan/seed_ibu_hamil";
 import { seedBalita } from "./_seeder_list/kesehatan/seed_balita";
@@ -84,6 +86,7 @@ import { seedIkmPpid } from "./_seeder_list/ppid/ikm/seed_ikm";
 import { seedProfilPpd } from "./_seeder_list/ppid/profil-ppid/seed_profil_ppd";
 import { seedPegawaiPpid } from "./_seeder_list/ppid/struktur-ppid/seed_struktur_ppid";
 import { seedVisiMisiPpid } from "./_seeder_list/ppid/visi-misi-ppid/seed_visi_misi_ppid";
+import { seedStrukturOrganisasiPpid, seedFormulirPermohonanKeberatan, seedIndeksKepuasanMasyarakat, seedGrafikBerdasarkanJenisKelamin, seedGrafikBerdasarkanResponden, seedGrafikBerdasarkanUmur } from "./_seeder_list/ppid/seed_ppid_extra";
 import roles from "./data/user/roles.json";
 import users from "./data/user/users.json";
 import { safeSeedUnique } from "./safeseedUnique";
@@ -219,6 +222,12 @@ import seedAssets from "./seed_assets";
 
   // // =========== SUBMENU INDEKS KEPUASAN MASYARAKAT ===========
   await seedIkmPpid();
+  await seedStrukturOrganisasiPpid();
+  await seedFormulirPermohonanKeberatan();
+  await seedIndeksKepuasanMasyarakat();
+  await seedGrafikBerdasarkanJenisKelamin();
+  await seedGrafikBerdasarkanResponden();
+  await seedGrafikBerdasarkanUmur();
 
   // // =========== MENU DESA ===========
   // // =========== SUBMENU PROFILE ===========
@@ -245,6 +254,9 @@ import seedAssets from "./seed_assets";
   await seedPenghargaan();
 
   // // ====================== MENU KESEHATAN ========================
+  // // ==================== SUBMENU BANJAR =========================
+  await seedBanjar();
+
   // // ==================== SUBMENU POSYANDU =========================
   await seedPosyandu();
 
@@ -285,7 +297,7 @@ import seedAssets from "./seed_assets";
   await seedCctv();
 
   // // ==================== SUBMENU TIPS KEAMANAN ==================
-  await seedKeamananLingkungan();
+  await seedTipsKeamanan();
 
   // // ====================== MENU EKONOMI ========================
   // // ==================== SUBMENU UMKM ==========================

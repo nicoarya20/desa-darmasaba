@@ -10,6 +10,7 @@ import {
   Loader,
   NumberInput,
   Paper,
+  Select,
   SimpleGrid,
   Stack,
   Text,
@@ -73,13 +74,29 @@ export default function RingkasanKesehatanPage() {
   const stats = state.findStats.data;
 
   const loadStats = useCallback(() => { ringkasanKesehatanState.findStats.load(); }, []);
-  useEffect(() => { loadStats(); }, [loadStats]);
+  useEffect(() => {
+    ringkasanKesehatanState.findBanjar.load();
+    loadStats();
+  }, [loadStats]);
 
   const isLoading = state.findStats.loading;
 
   return (
     <Box px={{ base: 0, md: 'lg' }} py="xs">
-      <Title order={3} c="black" mb="md">Ringkasan Kesehatan Desa</Title>
+      <Group justify="space-between" align="flex-end" mb="md" wrap="wrap" gap="sm">
+        <Title order={3} c="black">Ringkasan Kesehatan Desa</Title>
+        <Select
+          placeholder="Semua Banjar"
+          clearable
+          data={state.findBanjar.data.map((b) => ({ value: b.id, label: b.name }))}
+          value={state.banjarId || null}
+          onChange={(val) => {
+            ringkasanKesehatanState.banjarId = val ?? "";
+            ringkasanKesehatanState.findStats.load();
+          }}
+          style={{ minWidth: 200 }}
+        />
+      </Group>
 
       {isLoading ? (
         <Group justify="center" py="xl"><Loader /></Group>

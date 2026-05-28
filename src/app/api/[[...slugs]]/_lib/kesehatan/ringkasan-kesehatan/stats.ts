@@ -10,8 +10,12 @@ type StatsResult = {
   targetStuntingPct: number;
 };
 
-export default async function ringkasanKesehatanStats(): Promise<{ success: boolean; data?: StatsResult; message?: string }> {
+export default async function ringkasanKesehatanStats(
+  banjarId?: string
+): Promise<{ success: boolean; data?: StatsResult; message?: string }> {
   try {
+    const posyanduFilter = banjarId ? { posyandu: { banjarId } } : {};
+
     const [
       ibuHamilAktif,
       balitaTotal,
@@ -21,12 +25,12 @@ export default async function ringkasanKesehatanStats(): Promise<{ success: bool
       giziBaik,
       config,
     ] = await Promise.all([
-      prisma.ibuHamil.count({ where: { status: "AKTIF", isActive: true } }),
-      prisma.balita.count({ where: { isActive: true } }),
-      prisma.balita.count({ where: { isActive: true, statusStunting: { in: ["ALERT", "STUNTING"] } } }),
-      prisma.balita.count({ where: { isActive: true, imunisasiLengkap: true } }),
-      prisma.balita.count({ where: { isActive: true, pemeriksaanRutin: true } }),
-      prisma.balita.count({ where: { isActive: true, giziBaik: true } }),
+      prisma.ibuHamil.count({ where: { status: "AKTIF", isActive: true, ...posyanduFilter } }),
+      prisma.balita.count({ where: { isActive: true, ...posyanduFilter } }),
+      prisma.balita.count({ where: { isActive: true, statusStunting: { in: ["ALERT", "STUNTING"] }, ...posyanduFilter } }),
+      prisma.balita.count({ where: { isActive: true, imunisasiLengkap: true, ...posyanduFilter } }),
+      prisma.balita.count({ where: { isActive: true, pemeriksaanRutin: true, ...posyanduFilter } }),
+      prisma.balita.count({ where: { isActive: true, giziBaik: true, ...posyanduFilter } }),
       prisma.ringkasanKesehatanDesa.findFirst({ where: { isActive: true }, orderBy: { createdAt: "desc" } }),
     ]);
 

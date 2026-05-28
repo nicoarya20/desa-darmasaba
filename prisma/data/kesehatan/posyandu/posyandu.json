@@ -5,55 +5,63 @@
     "nomor": "(0361) 8463263",
     "deskripsi": "<p>Posyandu Pudak Amara merupakan salah satu posyandu aktif di Desa Darmasaba dan pernah berkompetisi dalam lomba kader dan posyandu berprestasi tingkat Provinsi Bali tahun 2025.</p>",
     "jadwalPelayanan": "Senin, 10 Feb 2026, 08:00 - 11:00 WITA",
-    "imageName": "TDQReg1lQ73s39crXW0ra-mobile.webp"
+    "imageName": "TDQReg1lQ73s39crXW0ra-mobile.webp",
+    "banjarId": "banjar_pudak_amara_001"
   },
   {
     "id": "posyandu_mawar_001",
     "name": "Posyandu Mawar",
     "nomor": "(0361) 8463264",
     "deskripsi": "<p>Posyandu Mawar melayani kesehatan ibu dan anak di wilayah Banjar Mawar, Desa Darmasaba, dengan fokus pada pemantauan tumbuh kembang balita dan kesehatan ibu hamil.</p>",
-    "jadwalPelayanan": "Senin, 15 Feb 2026, 08:00 - 11:00 WITA"
+    "jadwalPelayanan": "Senin, 15 Feb 2026, 08:00 - 11:00 WITA",
+    "banjarId": "banjar_mawar_001"
   },
   {
     "id": "posyandu_melati_001",
     "name": "Posyandu Melati",
     "nomor": "(0361) 8463265",
     "deskripsi": "<p>Posyandu Melati berperan aktif dalam pelayanan kesehatan dasar masyarakat di Banjar Melati, meliputi imunisasi, penimbangan balita, dan konsultasi gizi.</p>",
-    "jadwalPelayanan": "Selasa, 16 Feb 2026, 08:00 - 11:00 WITA"
+    "jadwalPelayanan": "Selasa, 16 Feb 2026, 08:00 - 11:00 WITA",
+    "banjarId": "banjar_melati_001"
   },
   {
     "id": "posyandu_dahlia_001",
     "name": "Posyandu Dahlia",
     "nomor": "(0361) 8463266",
     "deskripsi": "<p>Posyandu Dahlia aktif melayani masyarakat Banjar Dahlia dengan program unggulan pemantauan stunting dan pemberian makanan tambahan bagi balita berisiko.</p>",
-    "jadwalPelayanan": "Rabu, 17 Feb 2026, 08:00 - 11:00 WITA"
+    "jadwalPelayanan": "Rabu, 17 Feb 2026, 08:00 - 11:00 WITA",
+    "banjarId": "banjar_dahlia_001"
   },
   {
     "id": "posyandu_anggrek_001",
     "name": "Posyandu Anggrek",
     "nomor": "(0361) 8463267",
     "deskripsi": "<p>Posyandu Anggrek melayani ibu hamil, ibu menyusui, dan balita di wilayah Banjar Anggrek dengan dukungan tenaga kesehatan dari Puskesmas Abiansemal 3.</p>",
-    "jadwalPelayanan": "Kamis, 18 Feb 2026, 08:00 - 11:00 WITA"
+    "jadwalPelayanan": "Kamis, 18 Feb 2026, 08:00 - 11:00 WITA",
+    "banjarId": "banjar_anggrek_001"
   },
   {
     "id": "posyandu_kamboja_001",
     "name": "Posyandu Kamboja",
     "nomor": "(0361) 8463268",
     "deskripsi": "<p>Posyandu Kamboja hadir untuk mendukung kesehatan masyarakat Banjar Kamboja melalui layanan pemeriksaan rutin, imunisasi lengkap, dan edukasi gizi keluarga.</p>",
-    "jadwalPelayanan": "Jumat, 19 Feb 2026, 08:00 - 11:00 WITA"
+    "jadwalPelayanan": "Jumat, 19 Feb 2026, 08:00 - 11:00 WITA",
+    "banjarId": "banjar_kamboja_001"
   },
   {
     "id": "posyandu_melur_001",
     "name": "Posyandu Melur",
     "nomor": "(0361) 8463269",
     "deskripsi": "<p>Posyandu Melur aktif memberikan layanan kesehatan preventif bagi ibu dan anak di Banjar Melur, termasuk deteksi dini stunting dan pemantauan gizi balita.</p>",
-    "jadwalPelayanan": "Sabtu, 20 Feb 2026, 08:00 - 11:00 WITA"
+    "jadwalPelayanan": "Sabtu, 20 Feb 2026, 08:00 - 11:00 WITA",
+    "banjarId": "banjar_melur_001"
   },
   {
     "id": "posyandu_kenanga_001",
     "name": "Posyandu Kenanga",
     "nomor": "(0361) 8463270",
     "deskripsi": "<p>Posyandu Kenanga melayani masyarakat Banjar Kenanga dengan program kesehatan ibu dan anak, pemberian vitamin A, dan konseling laktasi bagi ibu menyusui.</p>",
-    "jadwalPelayanan": "Senin, 23 Feb 2026, 08:00 - 11:00 WITA"
+    "jadwalPelayanan": "Senin, 23 Feb 2026, 08:00 - 11:00 WITA",
+    "banjarId": "banjar_kenanga_001"
   }
 ]

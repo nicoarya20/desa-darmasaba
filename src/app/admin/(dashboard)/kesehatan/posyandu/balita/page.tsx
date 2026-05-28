@@ -115,13 +115,14 @@ function ListBalita({ search }: { search: string }) {
           <Table highlightOnHover layout="fixed" withColumnBorders={false}>
             <TableThead>
               <TableTr>
-                <TableTh w="22%">Nama</TableTh>
-                <TableTh w="7%">JK</TableTh>
-                <TableTh w="12%">Tgl Lahir</TableTh>
-                <TableTh w="12%">Imunisasi</TableTh>
-                <TableTh w="10%">Gizi</TableTh>
-                <TableTh w="12%">Pemeriksaan</TableTh>
-                <TableTh w="11%">Stunting</TableTh>
+                <TableTh w="18%">Nama</TableTh>
+                <TableTh w="6%">JK</TableTh>
+                <TableTh w="11%">Tgl Lahir</TableTh>
+                <TableTh w="13%">Banjar</TableTh>
+                <TableTh w="10%">Imunisasi</TableTh>
+                <TableTh w="8%">Gizi</TableTh>
+                <TableTh w="10%">Pemeriksaan</TableTh>
+                <TableTh w="10%">Stunting</TableTh>
                 <TableTh w="14%">Aksi</TableTh>
               </TableTr>
             </TableThead>
@@ -136,6 +137,7 @@ function ListBalita({ search }: { search: string }) {
                         ? new Date(d.tanggalLahir).toLocaleDateString('id-ID')
                         : '-'}
                     </TableTd>
+                    <TableTd>{d.posyandu?.banjar?.name ?? '-'}</TableTd>
                     <TableTd>
                       <Badge color={d.imunisasiLengkap ? 'green' : 'red'} variant="light">
                         {d.imunisasiLengkap ? 'Lengkap' : 'Belum'}
@@ -190,7 +192,7 @@ function ListBalita({ search }: { search: string }) {
                 ))
               ) : (
                 <TableTr>
-                  <TableTd colSpan={8}>
+                  <TableTd colSpan={9}>
                     <Center py="xl">
                       <Text c="dimmed" fz="sm" lh={1.4}>
                         Tidak ada data balita yang cocok
@@ -212,19 +214,22 @@ function ListBalita({ search }: { search: string }) {
                   <Text fz="sm" fw={600} mb={4}>
                     {d.nama}
                   </Text>
-                  <Group gap="xs" mb={6}>
+                  <Group gap="xs" mb={4}>
                     <Text fz="xs" c="dimmed">
                       {d.jenisKelamin}
                     </Text>
-                    <Text fz="xs" c="dimmed">
-                      ·
-                    </Text>
+                    <Text fz="xs" c="dimmed">·</Text>
                     <Text fz="xs" c="dimmed">
                       {d.tanggalLahir
                         ? new Date(d.tanggalLahir).toLocaleDateString('id-ID')
                         : '-'}
                     </Text>
                   </Group>
+                  {d.posyandu?.banjar?.name && (
+                    <Text fz="xs" c="dimmed" mb={4}>
+                      Banjar: {d.posyandu.banjar.name}
+                    </Text>
+                  )}
                   <Group gap="xs" mb={8}>
                     <Badge
                       size="xs"
