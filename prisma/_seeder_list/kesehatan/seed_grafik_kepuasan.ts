@@ -15,6 +15,7 @@ export async function seedGrafikKepuasan() {
         jenisKelamin: item.jenisKelamin,
         alamat: item.alamat,
         penyakit: item.penyakit,
+        banjarId: item.banjarId ?? null,
       },
       create: {
         id: item.id,
@@ -23,6 +24,7 @@ export async function seedGrafikKepuasan() {
         jenisKelamin: item.jenisKelamin,
         alamat: item.alamat,
         penyakit: item.penyakit,
+        banjarId: item.banjarId ?? null,
       },
     });
     console.log(`  Grafik Kepuasan: ${item.nama}`);
