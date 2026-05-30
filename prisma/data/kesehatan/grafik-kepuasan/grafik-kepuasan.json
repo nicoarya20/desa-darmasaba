@@ -5,7 +5,8 @@
     "tanggal": "2025-03-15",
     "jenisKelamin": "Laki-laki",
     "alamat": "Banjar Adat Kauh, Desa Darmasaba",
-    "penyakit": "Hipertensi"
+    "penyakit": "Hipertensi",
+    "banjarId": "banjar_pudak_amara_001"
   },
   {
     "id": "cmk-kepuasan-002",
@@ -13,7 +14,8 @@
     "tanggal": "2025-03-18",
     "jenisKelamin": "Perempuan",
     "alamat": "Banjar Adat Kangin, Desa Darmasaba",
-    "penyakit": "Diabetes Tipe 2"
+    "penyakit": "Diabetes Tipe 2",
+    "banjarId": "banjar_mawar_001"
   },
   {
     "id": "cmk-kepuasan-003",
@@ -21,7 +23,8 @@
     "tanggal": "2025-03-20",
     "jenisKelamin": "Laki-laki",
     "alamat": "Banjar Adat Tengah, Desa Darmasaba",
-    "penyakit": "ISPA"
+    "penyakit": "ISPA",
+    "banjarId": "banjar_melati_001"
   },
   {
     "id": "cmk-kepuasan-004",
@@ -29,7 +32,8 @@
     "tanggal": "2025-04-02",
     "jenisKelamin": "Perempuan",
     "alamat": "Banjar Adat Kauh, Desa Darmasaba",
-    "penyakit": "Rematik"
+    "penyakit": "Rematik",
+    "banjarId": "banjar_pudak_amara_001"
   },
   {
     "id": "cmk-kepuasan-005",
@@ -37,6 +41,7 @@
     "tanggal": "2025-04-10",
     "jenisKelamin": "Laki-laki",
     "alamat": "Banjar Adat Kangin, Desa Darmasaba",
-    "penyakit": "Asam Urat"
+    "penyakit": "Asam Urat",
+    "banjarId": "banjar_dahlia_001"
   }
 ]
