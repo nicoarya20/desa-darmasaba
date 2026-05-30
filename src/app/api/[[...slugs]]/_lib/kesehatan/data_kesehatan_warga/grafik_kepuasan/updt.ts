@@ -7,6 +7,7 @@ type FormUpdate = {
     jenisKelamin: string;
     alamat: string;
     penyakit: string;
+    banjarId?: string;
 }
 
 export default async function grafikKepuasanUpdate(context: Context) {
@@ -22,7 +23,9 @@ export default async function grafikKepuasanUpdate(context: Context) {
                 jenisKelamin: body.jenisKelamin,
                 alamat: body.alamat,
                 penyakit: body.penyakit,
+                banjarId: body.banjarId || null,
             },
+            include: { banjar: { select: { id: true, name: true } } },
         });
         return {
             success: true,

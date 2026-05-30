@@ -9,10 +9,12 @@ import {
   Group,
   Loader,
   Paper,
+  Select,
   Stack,
   TextInput,
   Title
 } from '@mantine/core';
+import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -24,6 +26,10 @@ function CreateGrafikHasilKepuasanMasyarakat() {
   const [chartData, setChartData] = useState<any[]>([]);
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useShallowEffect(() => {
+    stateGrafikKepuasan.banjarList.load();
+  }, []);
 
   // Check if form is valid
   const isFormValid = () => {
@@ -43,6 +49,7 @@ function CreateGrafikHasilKepuasanMasyarakat() {
       jenisKelamin: "",
       alamat: "",
       penyakit: "",
+      banjarId: "",
     };
   };
 
@@ -147,6 +154,15 @@ function CreateGrafikHasilKepuasanMasyarakat() {
             value={stateGrafikKepuasan.create.form.penyakit}
             onChange={(e) => (stateGrafikKepuasan.create.form.penyakit = e.target.value)}
             required
+          />
+          <Select
+            label="Banjar"
+            placeholder="Pilih banjar (opsional)"
+            data={stateGrafikKepuasan.banjarList.data.map((b) => ({ value: b.id, label: b.name }))}
+            value={stateGrafikKepuasan.create.form.banjarId || null}
+            onChange={(val) => (stateGrafikKepuasan.create.form.banjarId = val ?? '')}
+            clearable
+            searchable
           />
 
           <Group justify="right">

@@ -1050,6 +1050,8 @@ model GrafikKepuasan {
   jenisKelamin String
   alamat       String
   penyakit     String
+  banjar       Banjar?  @relation(fields: [banjarId], references: [id])
+  banjarId     String?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   deletedAt    DateTime @default(now())
@@ -1152,12 +1154,13 @@ model DoctorSign {
 
 // ========================================= BANJAR ========================================= //
 model Banjar {
-  id        String     @id @default(cuid())
-  name      String
-  isActive  Boolean    @default(true)
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  posyandus Posyandu[]
+  id               String           @id @default(cuid())
+  name             String
+  isActive         Boolean          @default(true)
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  posyandus        Posyandu[]
+  grafikKepuasans  GrafikKepuasan[]
 }
 
 // ========================================= POSYANDU ========================================= //

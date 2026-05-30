@@ -11,6 +11,7 @@ const templateGrafikKepuasan = z.object({
   jenisKelamin: z.string().min(1, "Jenis kelamin harus diisi"),
   alamat: z.string().min(1, "Alamat harus diisi"),
   penyakit: z.string().min(1, "Penyakit harus diisi"),
+  banjarId: z.string().optional(),
 });
 
 const defaultForm = {
@@ -19,6 +20,7 @@ const defaultForm = {
   jenisKelamin: "",
   alamat: "",
   penyakit: "",
+  banjarId: "",
 };
 
 const grafikkepuasan = proxy({
@@ -62,23 +64,24 @@ const grafikkepuasan = proxy({
   findMany: {
     data: null as
       | Prisma.GrafikKepuasanGetPayload<{
-          omit: {
-            isActive: true;
-          };
+          include: { banjar: { select: { id: true; name: true } } };
         }>[]
       | null,
     page: 1,
     totalPages: 1,
     loading: false,
     search: "",
-    load: async (page = 1, limit = 10, search = "") => {
-      grafikkepuasan.findMany.loading = true; // ✅ Akses langsung via nama path
+    banjarId: "",
+    load: async (page = 1, limit = 10, search = "", banjarId = "") => {
+      grafikkepuasan.findMany.loading = true;
       grafikkepuasan.findMany.page = page;
       grafikkepuasan.findMany.search = search;
+      grafikkepuasan.findMany.banjarId = banjarId;
 
       try {
         const query: any = { page, limit };
         if (search) query.search = search;
+        if (banjarId) query.banjarId = banjarId;
 
         const res = await ApiFetch.api.kesehatan.grafikkepuasan[
           "find-many"
@@ -153,6 +156,7 @@ const grafikkepuasan = proxy({
             jenisKelamin: data.jenisKelamin,
             alamat: data.alamat,
             penyakit: data.penyakit,
+            banjarId: data.banjarId || "",
           };
           return data; // Return the loaded data
         } else {
@@ -179,6 +183,7 @@ const grafikkepuasan = proxy({
         jenisKelamin: this.form.jenisKelamin,
         alamat: this.form.alamat,
         penyakit: this.form.penyakit,
+        banjarId: this.form.banjarId || undefined,
       };
 
       const cek = templateGrafikKepuasan.safeParse(formData);
@@ -250,6 +255,24 @@ const grafikkepuasan = proxy({
         toast.error("Terjadi kesalahan saat menghapus grafik kepuasan");
       } finally {
         grafikkepuasan.delete.loading = false;
+      }
+    },
+  },
+  banjarList: {
+    data: [] as { id: string; name: string }[],
+    loading: false,
+    async load() {
+      try {
+        grafikkepuasan.banjarList.loading = true;
+        const res = await fetch("/api/desa/banjar/findMany?limit=100");
+        const result = await res.json();
+        if (res.ok && result?.success) {
+          grafikkepuasan.banjarList.data = result.data ?? [];
+        }
+      } catch (err) {
+        console.error("Gagal fetch banjar list:", err);
+      } finally {
+        grafikkepuasan.banjarList.loading = false;
       }
     },
   },

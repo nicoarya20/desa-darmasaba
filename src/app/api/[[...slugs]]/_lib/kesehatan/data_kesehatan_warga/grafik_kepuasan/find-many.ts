@@ -23,6 +23,12 @@ async function grafikKepuasanFindMany(context: Context) {
     ];
   }
 
+  // Filter berdasarkan banjarId jika ada
+  const banjarId = (context.query.banjarId as string) || '';
+  if (banjarId) {
+    where.banjarId = banjarId;
+  }
+
   try {
     // Ambil data dan total count secara paralel
     const [data, total] = await Promise.all([
@@ -31,6 +37,7 @@ async function grafikKepuasanFindMany(context: Context) {
         skip,
         take: limit,
         orderBy: { nama: 'asc' },
+        include: { banjar: { select: { id: true, name: true } } },
       }),
       prisma.grafikKepuasan.count({ where }),
     ]);

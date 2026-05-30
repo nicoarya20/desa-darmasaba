@@ -9,10 +9,12 @@ import {
   Group,
   Loader,
   Paper,
+  Select,
   Stack,
   TextInput,
   Title
 } from '@mantine/core';
+import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -43,6 +45,7 @@ function EditGrafikHasilKepuasan() {
     jenisKelamin: '',
     alamat: '',
     penyakit: '',
+    banjarId: '',
   });
 
   const [originalData, setOriginalData] = useState({
@@ -51,7 +54,12 @@ function EditGrafikHasilKepuasan() {
     jenisKelamin: '',
     alamat: '',
     penyakit: '',
+    banjarId: '',
   });
+
+  useShallowEffect(() => {
+    editState.banjarList.load();
+  }, []);
 
   // Load data once
   useEffect(() => {
@@ -70,6 +78,7 @@ function EditGrafikHasilKepuasan() {
             jenisKelamin: data.jenisKelamin || '',
             alamat: data.alamat || '',
             penyakit: data.penyakit || '',
+            banjarId: data.banjarId || '',
           });
 
           setOriginalData({
@@ -78,6 +87,7 @@ function EditGrafikHasilKepuasan() {
             jenisKelamin: data.jenisKelamin || '',
             alamat: data.alamat || '',
             penyakit: data.penyakit || '',
+            banjarId: data.banjarId || '',
           });
         }
       } catch (err) {
@@ -95,13 +105,7 @@ function EditGrafikHasilKepuasan() {
   };
 
   const handleResetForm = () => {
-    setFormData({
-      nama: originalData.nama,
-      tanggal: originalData.tanggal,
-      jenisKelamin: originalData.jenisKelamin,
-      alamat: originalData.alamat,
-      penyakit: originalData.penyakit,
-    });
+    setFormData({ ...originalData });
     toast.info("Form dikembalikan ke data awal");
   };
 
@@ -183,6 +187,15 @@ function EditGrafikHasilKepuasan() {
               required
             />
           ))}
+          <Select
+            label="Banjar"
+            placeholder="Pilih banjar (opsional)"
+            data={editState.banjarList.data.map((b) => ({ value: b.id, label: b.name }))}
+            value={formData.banjarId || null}
+            onChange={(val) => handleChange('banjarId', val ?? '')}
+            clearable
+            searchable
+          />
 
           <Group justify="right">
             <Button

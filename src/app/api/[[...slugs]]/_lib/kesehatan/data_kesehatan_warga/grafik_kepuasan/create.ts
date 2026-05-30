@@ -7,6 +7,7 @@ type FormCreate = {
   jenisKelamin: string;
   alamat: string;
   penyakit: string;
+  banjarId?: string;
 };
 
 export default async function grafikKepuasanCreate(context: Context) {
@@ -19,14 +20,9 @@ export default async function grafikKepuasanCreate(context: Context) {
       jenisKelamin: body.jenisKelamin,
       alamat: body.alamat,
       penyakit: body.penyakit,
+      ...(body.banjarId ? { banjarId: body.banjarId } : {}),
     },
-    select: {
-      nama: true,
-      tanggal: true,
-      jenisKelamin: true,
-      alamat: true,
-      penyakit: true,
-    }
+    include: { banjar: { select: { id: true, name: true } } },
   });
   return {
     success: true,

@@ -23,6 +23,7 @@ export default async function grafikKepuasanFindUnique(request: Request) {
 
         const data = await prisma.grafikKepuasan.findUnique({
             where: { id },
+            include: { banjar: { select: { id: true, name: true } } },
         });
 
         if (!data) {

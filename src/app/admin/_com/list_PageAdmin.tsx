@@ -128,6 +128,11 @@ export const devBar = [
         id: "Desa_9",
         name: "Event Budaya",
         path: "/admin/desa/event-budaya"
+      },
+      {
+        id: "Desa_10",
+        name: "Banjar",
+        path: "/admin/desa/banjar"
       }
 
     ]
@@ -574,6 +579,11 @@ export const navBar = [
         id: "Desa_9",
         name: "Event Budaya",
         path: "/admin/desa/event-budaya"
+      },
+      {
+        id: "Desa_10",
+        name: "Banjar",
+        path: "/admin/desa/banjar"
       }
 
     ]
@@ -1035,6 +1045,11 @@ export const role1 = [
         id: "Desa_9",
         name: "Event Budaya",
         path: "/admin/desa/event-budaya"
+      },
+      {
+        id: "Desa_10",
+        name: "Banjar",
+        path: "/admin/desa/banjar"
       }
 
     ]
