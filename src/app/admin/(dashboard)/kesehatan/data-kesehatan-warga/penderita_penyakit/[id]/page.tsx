@@ -99,6 +99,11 @@ function DetailGrafikHasilKepuasan() {
                 <Text fz="md" c="dimmed">{data.penyakit || '-'}</Text>
               </Box>
 
+              <Box>
+                <Text fz="lg" fw="bold">Banjar</Text>
+                <Text fz="md" c="dimmed">{(data as any).banjar?.name || '-'}</Text>
+              </Box>
+
               {/* Aksi */}
               <Group gap="sm">
                 <Button

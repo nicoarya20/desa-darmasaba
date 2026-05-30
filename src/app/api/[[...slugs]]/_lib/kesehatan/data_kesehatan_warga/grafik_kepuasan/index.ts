@@ -21,6 +21,7 @@ const GrafikKepuasan = new Elysia({
             jenisKelamin: t.String(),
             alamat: t.String(),
             penyakit: t.String(),
+            banjarId: t.Optional(t.String()),
         }),
     })
     .put("/:id", grafikKepuasanUpdate, {
@@ -30,6 +31,7 @@ const GrafikKepuasan = new Elysia({
             jenisKelamin: t.String(),
             alamat: t.String(),
             penyakit: t.String(),
+            banjarId: t.Optional(t.String()),
         }),
     })
     .delete("/del/:id", grafikKepuasanDelete)

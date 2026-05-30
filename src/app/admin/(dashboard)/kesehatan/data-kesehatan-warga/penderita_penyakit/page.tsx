@@ -9,6 +9,7 @@ import {
   Group,
   Pagination,
   Paper,
+  Select,
   Skeleton,
   Stack,
   Table,
@@ -62,21 +63,28 @@ function ListGrafikHasilKepuasanMasyarakat({ search }: { search: string }) {
     jenisKelamin: string;
     alamat: string;
     penyakit: string;
+    banjar?: { id: string; name: string } | null;
   };
 
   const stateGrafikKepuasan = useProxy(grafikkepuasan);
   const [debouncedSearch] = useDebouncedValue(search, 1000);
   const [chartData, setChartData] = useState<PDKMGrafik[]>([]);
   const [mounted, setMounted] = useState(false);
+  const [selectedBanjar, setSelectedBanjar] = useState<string | null>(null);
   const isMobile = useMediaQuery('(max-width: 768px)');
   const router = useRouter();
 
   const { data, page, totalPages, loading, load } = stateGrafikKepuasan.findMany;
+  const { data: banjarList } = stateGrafikKepuasan.banjarList;
+
+  useShallowEffect(() => {
+    stateGrafikKepuasan.banjarList.load();
+  }, []);
 
   useShallowEffect(() => {
     setMounted(true);
-    load(page, 10, debouncedSearch);
-  }, [page, debouncedSearch]);
+    load(page, 10, debouncedSearch, selectedBanjar ?? '');
+  }, [page, debouncedSearch, selectedBanjar]);
 
   useEffect(() => {
     if (data) {
@@ -113,6 +121,11 @@ function ListGrafikHasilKepuasanMasyarakat({ search }: { search: string }) {
 
   const filteredData = data || [];
 
+  const banjarOptions = [
+    { value: '', label: 'Semua Banjar' },
+    ...banjarList.map((b) => ({ value: b.id, label: b.name })),
+  ];
+
   if (loading || !data) {
     return (
       <Stack py={{ base: 'md', md: 'lg' }}>
@@ -146,16 +159,32 @@ function ListGrafikHasilKepuasanMasyarakat({ search }: { search: string }) {
           </Button>
         </Group>
 
+        {/* Filter Banjar */}
+        <Box mb="sm" maw={280}>
+          <Select
+            placeholder="Filter berdasarkan banjar"
+            data={banjarOptions}
+            value={selectedBanjar ?? ''}
+            onChange={(val) => {
+              setSelectedBanjar(val || null);
+              load(1, 10, debouncedSearch, val ?? '');
+            }}
+            clearable
+            searchable
+          />
+        </Box>
+
         {/* Desktop Table */}
        <Box visibleFrom="md" style={{ overflowX: 'auto' }}>
          <Table highlightOnHover
-    layout="fixed" // 🔥 PENTING
+    layout="fixed"
     withColumnBorders={false}>
             <TableThead>
               <TableTr>
                 <TableTh>Nama</TableTh>
                 <TableTh>Tanggal</TableTh>
                 <TableTh>Jenis Kelamin</TableTh>
+                <TableTh>Banjar</TableTh>
                 <TableTh>Penyakit</TableTh>
                 <TableTh>Aksi</TableTh>
               </TableTr>
@@ -176,6 +205,9 @@ function ListGrafikHasilKepuasanMasyarakat({ search }: { search: string }) {
                     </TableTd>
                     <TableTd fz="md" fw={500} lh={1.5}>
                       {item.jenisKelamin}
+                    </TableTd>
+                    <TableTd fz="md" fw={500} lh={1.5}>
+                      {item.banjar?.name ?? '-'}
                     </TableTd>
                     <TableTd fz="md" fw={500} lh={1.5}>
                       {item.penyakit}
@@ -200,7 +232,7 @@ function ListGrafikHasilKepuasanMasyarakat({ search }: { search: string }) {
                 ))
               ) : (
                 <TableTr>
-                  <TableTd colSpan={5}>
+                  <TableTd colSpan={6}>
                     <Center py={20}>
                       <Text c="dimmed" fz="sm" lh={1.4}>
                         Tidak ada data kepuasan masyarakat yang cocok
@@ -245,6 +277,13 @@ function ListGrafikHasilKepuasanMasyarakat({ search }: { search: string }) {
                   </Text>
 
                   <Text fz="sm" fw={600} lh={1.4}>
+                    Banjar
+                  </Text>
+                  <Text fz="sm" fw={500} lh={1.4}>
+                    {item.banjar?.name ?? '-'}
+                  </Text>
+
+                  <Text fz="sm" fw={600} lh={1.4}>
                     Penyakit
                   </Text>
                   <Text fz="sm" fw={500} lh={1.4}>
@@ -285,7 +324,7 @@ function ListGrafikHasilKepuasanMasyarakat({ search }: { search: string }) {
         <Pagination
           value={page}
           onChange={(newPage) => {
-            load(newPage, 10);
+            load(newPage, 10, debouncedSearch, selectedBanjar ?? '');
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
           total={totalPages}
