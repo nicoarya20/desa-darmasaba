@@ -33,7 +33,7 @@
     "jenisKelamin": "Perempuan",
     "alamat": "Banjar Adat Kauh, Desa Darmasaba",
     "penyakit": "Rematik",
-    "banjarId": "banjar_pudak_amara_001"
+    "banjarId": "banjar_anggrek_001"
   },
   {
     "id": "cmk-kepuasan-005",
@@ -43,5 +43,32 @@
     "alamat": "Banjar Adat Kangin, Desa Darmasaba",
     "penyakit": "Asam Urat",
     "banjarId": "banjar_dahlia_001"
+  },
+  {
+    "id": "cmk-kepuasan-006",
+    "nama": "Ni Nyoman Sari",
+    "tanggal": "2025-04-15",
+    "jenisKelamin": "Perempuan",
+    "alamat": "Banjar Dinas Tengah, Desa Darmasaba",
+    "penyakit": "Hipertensi",
+    "banjarId": "banjar_kamboja_001"
+  },
+  {
+    "id": "cmk-kepuasan-007",
+    "nama": "I Made Darmawan",
+    "tanggal": "2025-04-20",
+    "jenisKelamin": "Laki-laki",
+    "alamat": "Banjar Dinas Gulingan, Desa Darmasaba",
+    "penyakit": "Diabetes Tipe 2",
+    "banjarId": "banjar_melur_001"
+  },
+  {
+    "id": "cmk-kepuasan-008",
+    "nama": "Ni Kadek Ayu Lestari",
+    "tanggal": "2025-05-01",
+    "jenisKelamin": "Perempuan",
+    "alamat": "Banjar Dinas Umahanyar, Desa Darmasaba",
+    "penyakit": "Asma",
+    "banjarId": "banjar_kenanga_001"
   }
 ]
