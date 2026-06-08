@@ -17,23 +17,24 @@ export async function POST(req: Request) {
 
     const codeOtp = randomOTP();
     const otpNumber = Number(codeOtp);
-    console.log(`🔑 DEBUG RESEND OTP [${nomor}]: ${codeOtp}`);
 
     // Kirim OTP via WhatsApp
     const waMessage = `Website Desa Darmasaba - Kode ini bersifat RAHASIA dan JANGAN DI BAGIKAN KEPADA SIAPAPUN, termasuk anggota ataupun Admin lainnya.\n\n>> Kode OTP anda: ${codeOtp}.`;
     const waUrl = `https://wa.wibudev.com/code?nom=${encodeURIComponent(nomor)}&text=${encodeURIComponent(waMessage)}`;
-    
+
     try {
       const waRes = await fetch(waUrl);
       if (!waRes.ok) {
-        console.warn(`⚠️ WA Service HTTP Error (Resend): ${waRes.status} ${waRes.statusText}. Continuing since OTP is logged.`);
-      } else {
-        const waData = await waRes.json();
-        console.log("📱 WA Response (Resend):", waData);
+        return NextResponse.json(
+          { success: false, message: 'Gagal mengirim kode verifikasi. Silakan coba lagi.' },
+          { status: 503 }
+        );
       }
-    } catch (waError: unknown) {
-      const errorMessage = waError instanceof Error ? waError.message : String(waError);
-      console.warn("⚠️ WA Connection Exception (Resend). Continuing since OTP is logged.", errorMessage);
+    } catch {
+      return NextResponse.json(
+        { success: false, message: 'Gagal mengirim kode verifikasi. Silakan coba lagi.' },
+        { status: 503 }
+      );
     }
 
     // Simpan OTP ke database

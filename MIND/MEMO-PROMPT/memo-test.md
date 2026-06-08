@@ -1,38 +1,27 @@
-Ini penjelasannya:
+Masalahnya lebih dalam dari sekadar satu baris. Ini analisisnya:
 
   ---
-  Masalah: dynamic = 'force-dynamic' di Root Layout
+  Masalah utama di baris 24:
+  console.log(`🔑 DEBUG SEND-OTP-REGISTER [${nomor}]: ${codeOtp}`);
+  Log ini mencetak nomor HP (PII) + nilai OTP ke stdout di production. Siapa pun yang punya akses ke log container/server bisa membaca OTP aktif dan menyalahgunakannya untuk mendaftar atas nama orang
+  lain.
 
-  Apa artinya?
+  ---
+  Masalah lebih serius — baris 32 dan 39:
+  console.warn(`⚠️  WA Service HTTP Error ... Continuing since OTP is logged.`);
+  console.warn("⚠️  WA Connection Exception ... Continuing since OTP is logged.", ...);
+  Frasa "Continuing since OTP is logged" menunjukkan ini bukan debug log yang kelewat dihapus — log di baris 24 sengaja dijadikan fallback. Logikanya: "kalau WA gagal kirim, admin bisa baca OTP dari log."
+  Ini desain backdoor yang disengaja.
 
-  export const dynamic = 'force-dynamic' adalah Next.js route segment config yang memberitahu Next.js: "render ulang halaman ini dari awal di setiap request."
+  ---
+  Implikasinya:
+  1. Jika WA service down, flow register masih jalan (success 200) tapi user tidak menerima OTP-nya — hanya admin yang bisa lihat dari log
+  2. Tidak ada mekanisme retry atau notifikasi kegagalan yang proper
+  3. Nomor HP bocor ke log = pelanggaran privasi
+  4. OTP bocor ke log = autentikasi bisa di-bypass siapa pun yang akses log
 
-  Ketika diletakkan di root layout (src/app/layout.tsx), efeknya menular ke SEMUA halaman di seluruh aplikasi — karena semua halaman mewarisi root layout.
-
-  Dampak konkret
-  
-  ┌─────────────────────────────────────┬────────────────────────────────────────────────────────────────────────┐
-  │               Kondisi               │                            Apa yang terjadi                            │
-  ├─────────────────────────────────────┼────────────────────────────────────────────────────────────────────────┤
-  │ Tanpa force-dynamic                 │ Next.js bisa SSG (render saat build) atau ISR (cache + regenerate)     │
-  ├─────────────────────────────────────┼────────────────────────────────────────────────────────────────────────┤
-  │ Dengan force-dynamic di root layout │ Semua halaman render ulang di setiap request, persis seperti SSR murni │
-  └─────────────────────────────────────┴────────────────────────────────────────────────────────────────────────┘
-
-  Untuk halaman statis seperti profil desa, berita, atau landing page — halaman yang datanya jarang berubah — ini membuang performance karena server harus render ulang terus meski kontennya sama.
-
-  Kenapa bisa ada di sini?
-  
-  Komentar di baris 17 menjelaskan: "menghindari error prerendering". Ini adalah solusi cepat — seseorang menemukan error saat build (biasanya karena ada cookies(), headers(), atau useSession() di suatu
-  halaman) dan menambahkan force-dynamic di root layout agar semua halaman skip prerendering dan error hilang.
-
-  Masalahnya: ini seperti mematikan lampu seluruh rumah karena satu bohlam bermasalah.
-
-  Solusi yang benar
-  
-  Cari halaman mana yang benar-benar butuh force-dynamic (biasanya halaman yang membaca cookies/session secara langsung), lalu:
-
-  1. Pindahkan export const dynamic = 'force-dynamic' ke file halaman spesifik tersebut (misal src/app/admin/layout.tsx atau halaman tertentu).
-  2. Hapus dari root layout.
-
-  Halaman publik statis seperti profil desa bisa di-cache dan di-prerender dengan normal, sehingga response lebih cepat dan beban server berkurang.
+  ---
+  Yang perlu diperbaiki:
+  1. Hapus console.log di baris 24 sepenuhnya
+  2. Ubah perilaku saat WA gagal — jangan continue, tapi return error ke user supaya mereka tahu OTP tidak terkirim
+  3. Hapus pesan "Continuing since OTP is logged" karena reasoning-nya salah
