@@ -28,9 +28,14 @@ export type Session = SessionData & {
   destroy: () => Promise<void>;
 };
 
+const sessionPassword = process.env.SESSION_PASSWORD;
+if (!sessionPassword) {
+  throw new Error('SESSION_PASSWORD env var is not set. Set it to a random string of at least 32 characters.');
+}
+
 const SESSION_OPTIONS = {
   cookieName: 'desa-session',
-  password: process.env.SESSION_PASSWORD || 'default-password-change-in-production',
+  password: sessionPassword,
   cookieOptions: {
     secure: process.env.NODE_ENV === 'production',
     httpOnly: true,
