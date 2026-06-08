@@ -1,4 +1,4 @@
-import { AppServer } from '@/app/api/[[...slugs]]/route'
+import type { AppServer } from '@/app/api/[[...slugs]]/route'
 import { treaty } from '@elysiajs/eden'
 
 // Determine the base URL based on environment
