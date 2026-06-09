@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import { randomOTP } from "../_lib/randomOTP";
 import { sendCodeOtp } from "../_lib/sendCodeOtp";
 import { cookies } from "next/headers";
+import { otpSendLimiter, rateLimitResponse } from "../_lib/rateLimiter";
 
 export async function POST(req: Request) {
   try {
@@ -15,6 +16,9 @@ export async function POST(req: Request) {
         { status: 400 }
       );
     }
+
+    const limit = otpSendLimiter.check(nomor)
+    if (!limit.allowed) return rateLimitResponse(limit.retryAfterMs)
 
     const existingUser = await prisma.user.findUnique({
       where: { nomor },

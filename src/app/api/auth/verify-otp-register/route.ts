@@ -1,6 +1,7 @@
 // src/app/api/auth/verify-otp-register/route.ts
 import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import { otpVerifyLimiter, rateLimitResponse } from "../_lib/rateLimiter";
 
 export async function POST(req: Request) {
   try {
@@ -12,6 +13,9 @@ export async function POST(req: Request) {
         { status: 400 }
       );
     }
+
+    const limit = otpVerifyLimiter.check(kodeId)
+    if (!limit.allowed) return rateLimitResponse(limit.retryAfterMs)
 
     const otpRecord = await prisma.kodeOtp.findUnique({
       where: { id: kodeId },
@@ -31,8 +35,20 @@ export async function POST(req: Request) {
       );
     }
 
+    const OTP_TTL_MS = 5 * 60 * 1000;
+    if (Date.now() - otpRecord.createdAt.getTime() > OTP_TTL_MS) {
+      await prisma.kodeOtp.update({ where: { id: kodeId }, data: { isActive: false } });
+      return NextResponse.json(
+        { success: false, message: "Kode OTP sudah kadaluarsa, silakan minta kode baru" },
+        { status: 400 }
+      );
+    }
+
     const receivedOtp = Number(otp);
     if (isNaN(receivedOtp) || otpRecord.otp !== receivedOtp) {
+      if (limit.remaining === 0) {
+        await prisma.kodeOtp.update({ where: { id: kodeId }, data: { isActive: false } })
+      }
       return NextResponse.json(
         { success: false, message: "Kode OTP salah" },
         { status: 400 }

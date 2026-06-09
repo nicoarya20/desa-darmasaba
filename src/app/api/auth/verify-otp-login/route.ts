@@ -3,6 +3,7 @@
 import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { sessionCreate } from "../_lib/session_create";
+import { otpVerifyLimiter, rateLimitResponse } from "../_lib/rateLimiter";
 
 export async function POST(req: Request) {
   try {
@@ -15,6 +16,9 @@ export async function POST(req: Request) {
       );
     }
 
+    const limit = otpVerifyLimiter.check(kodeId)
+    if (!limit.allowed) return rateLimitResponse(limit.retryAfterMs)
+
     const otpRecord = await prisma.kodeOtp.findUnique({ where: { id: kodeId } });
     if (!otpRecord || !otpRecord.isActive || otpRecord.nomor !== nomor) {
       return NextResponse.json(
@@ -23,8 +27,21 @@ export async function POST(req: Request) {
       );
     }
 
+    const OTP_TTL_MS = 5 * 60 * 1000;
+    if (Date.now() - otpRecord.createdAt.getTime() > OTP_TTL_MS) {
+      await prisma.kodeOtp.update({ where: { id: kodeId }, data: { isActive: false } });
+      return NextResponse.json(
+        { success: false, message: "Kode OTP sudah kadaluarsa, silakan minta kode baru" },
+        { status: 400 }
+      );
+    }
+
     const receivedOtp = Number(otp);
     if (isNaN(receivedOtp) || otpRecord.otp !== receivedOtp) {
+      // Last allowed attempt — permanently invalidate the OTP session in DB
+      if (limit.remaining === 0) {
+        await prisma.kodeOtp.update({ where: { id: kodeId }, data: { isActive: false } })
+      }
       return NextResponse.json(
         { success: false, message: "Kode OTP salah" },
         { status: 400 }
