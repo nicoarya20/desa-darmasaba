@@ -3,6 +3,7 @@ import prisma from "@/lib/prisma";
 
 import { NextResponse } from "next/server";
 import { randomOTP } from "../_lib/randomOTP";
+import { otpSendLimiter, rateLimitResponse } from "../_lib/rateLimiter";
 
 export async function POST(req: Request) {
   try {
@@ -14,6 +15,9 @@ export async function POST(req: Request) {
         { status: 400 }
       );
     }
+
+    const limit = otpSendLimiter.check(nomor)
+    if (!limit.allowed) return rateLimitResponse(limit.retryAfterMs)
 
     const codeOtp = randomOTP();
     const otpNumber = Number(codeOtp);

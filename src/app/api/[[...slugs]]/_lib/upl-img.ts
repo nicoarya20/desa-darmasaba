@@ -1,6 +1,9 @@
 import { nanoid } from "nanoid";
 import minio, { MINIO_BUCKET } from "@/lib/minio";
 
+const ALLOWED_EXTENSIONS = new Set(["jpg", "jpeg", "png", "gif", "webp"]);
+const ALLOWED_MIMES = new Set(["image/jpeg", "image/png", "image/gif", "image/webp"]);
+
 function sanitizeFileName(fileName: string): string {
   return fileName.replace(/[^a-zA-Z0-9._\-]/g, "_");
 }
@@ -18,13 +21,23 @@ async function uplImg({ files }: { files: File[] }) {
       fileName = nanoid() + ".jpg";
     }
 
+    const ext = fileName.split(".").pop()?.toLowerCase() ?? "";
+    if (!ALLOWED_EXTENSIONS.has(ext)) {
+      throw new Error(`Ekstensi file tidak diizinkan: .${ext}`);
+    }
+
+    const mime = file.type.toLowerCase();
+    if (!ALLOWED_MIMES.has(mime)) {
+      throw new Error(`Tipe file tidak diizinkan: ${mime}`);
+    }
+
     const sanitized = sanitizeFileName(fileName);
     const objectName = `image/${sanitized}`;
 
     try {
       const buffer = Buffer.from(await file.arrayBuffer());
       await minio.putObject(MINIO_BUCKET, objectName, buffer, buffer.length, {
-        "Content-Type": file.type || "image/jpeg",
+        "Content-Type": mime,
       });
       console.log(`File berhasil diunggah ke MinIO: ${objectName}`);
     } catch (error) {

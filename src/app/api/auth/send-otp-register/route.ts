@@ -1,6 +1,7 @@
 import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { randomOTP } from "../_lib/randomOTP";
+import { otpSendLimiter, rateLimitResponse } from "../_lib/rateLimiter";
 
 export async function POST(req: Request) {
   try {
@@ -9,6 +10,9 @@ export async function POST(req: Request) {
     if (!username || !nomor) {
       return NextResponse.json({ success: false, message: 'Data tidak lengkap' }, { status: 400 });
     }
+
+    const limit = otpSendLimiter.check(nomor)
+    if (!limit.allowed) return rateLimitResponse(limit.retryAfterMs)
 
     // Cek duplikat
     if (await prisma.user.findUnique({ where: { nomor } })) {
