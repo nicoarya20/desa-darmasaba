@@ -18,6 +18,7 @@ import {
   TextInput,
   Textarea,
   Alert,
+  Grid,
 } from '@mantine/core';
 import {
   IconArrowBack,
@@ -157,36 +158,48 @@ function DetailProdukPasarUser() {
       </Box>
 
       <Paper mt="md" mx={{ base: 'md', md: 100 }} p="lg" radius="md">
-        <Stack>
-          <Image
-            src={data.image?.link || '/no-image.jpg'}
-            alt={data.nama}
-            radius="md"
-          />
+        <Grid gutter="xl" align="flex-start">
+          <Grid.Col span={{ base: 12, md: 5 }}>
+            <Image
+              src={data.image?.link || '/no-image.jpg'}
+              alt={data.nama}
+              radius="md"
+              h={{ base: 260, md: 360 }}
+              w="100%"
+              fit="cover"
+            />
+          </Grid.Col>
 
-          <Title>{data.nama}</Title>
+          <Grid.Col span={{ base: 12, md: 7 }}>
+            <Stack gap="sm">
+              <Title order={2}>{data.nama}</Title>
 
-          <Text fw={900} c="orange">
-            Rp {data.harga?.toLocaleString('id-ID')}
-          </Text>
+              <Text fw={900} fz="xl" c="orange">
+                Rp {data.harga?.toLocaleString('id-ID')}
+              </Text>
 
-          <Badge color={data.stok > 0 ? 'green' : 'red'}>
-            {data.stok > 0 ? `Stok: ${data.stok}` : 'Stok Habis'}
-          </Badge>
+              <Badge size="lg" color={data.stok > 0 ? 'green' : 'red'}>
+                {data.stok > 0 ? `Stok: ${data.stok}` : 'Stok Habis'}
+              </Badge>
 
-          <Text
-            style={{ wordBreak: 'break-word' }}
-            dangerouslySetInnerHTML={{ __html: data.deskripsi || '-' }}
-          />
+              <Divider />
 
-          <Button
-            leftSection={<IconShoppingCart />}
-            disabled={data.stok === 0}
-            onClick={() => setModalOpen(true)}
-          >
-            Pesan Sekarang
-          </Button>
-        </Stack>
+              <Text
+                style={{ wordBreak: 'break-word' }}
+                dangerouslySetInnerHTML={{ __html: data.deskripsi || '-' }}
+              />
+
+              <Button
+                leftSection={<IconShoppingCart />}
+                disabled={data.stok === 0}
+                onClick={() => setModalOpen(true)}
+                mt="sm"
+              >
+                Pesan Sekarang
+              </Button>
+            </Stack>
+          </Grid.Col>
+        </Grid>
       </Paper>
 
       {/* Modal */}

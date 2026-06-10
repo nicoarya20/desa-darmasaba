@@ -112,18 +112,20 @@ function TabProdukUmkm({ router }: { router: any }) {
         <>
           <SimpleGrid cols={{ base: 1, sm: 2, md: 4 }} spacing="lg">
             {data?.map((v, k) => (
-              <motion.div 
-                key={k} 
+              <motion.div
+                key={k}
                 whileHover={{ scale: 1.03 }}
                 onClick={() => router.push(`/darmasaba/ekonomi/umkm/produk/${v.id}`)}
-                style={{ cursor: 'pointer' }}
+                style={{ cursor: 'pointer', height: '100%' }}
               >
-                <Card shadow="xs" padding="md" radius="md" withBorder>
+                <Card shadow="xs" padding="md" radius="md" withBorder style={{ height: '100%' }}>
                   <Card.Section>
                     <Image
                       src={v.image?.link || '/no-image.jpg'}
-                      height={160}
+                      h={160}
+                      w="100%"
                       alt={v.nama}
+                      fit="cover"
                     />
                   </Card.Section>
                   <Stack mt="md" gap="xs">
