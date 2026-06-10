@@ -42,7 +42,7 @@ export async function POST(req: Request) {
         }
 
         const sendWa = await waResponse.json();
-        if (sendWa.status !== "success") {
+        if (!sendWa.success) {
           return NextResponse.json(
             { success: false, message: 'Gagal mengirim kode verifikasi. Silakan coba lagi.' },
             { status: 503 }

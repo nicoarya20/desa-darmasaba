@@ -17,7 +17,6 @@ function Login() {
   async function onLogin() {
 
     const cleanPhone = phone.replace(/\D/g, '');
-    console.log(cleanPhone);
     if (cleanPhone.length < 10) {
       toast.error('Nomor telepon tidak valid');
       return;
@@ -26,8 +25,6 @@ function Login() {
     try {
       setLoading(true);
       const response = await apiFetchLogin({ nomor: cleanPhone });
-
-      console.log(response);
 
       if (!response.success) {
         toast.error(response.message || 'Gagal memproses login');
