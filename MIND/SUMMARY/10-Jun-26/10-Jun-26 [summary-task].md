@@ -1,50 +1,66 @@
-# Summary: Security Review — Validasi Upload File (upl-img-single)
+# Summary: Fix Login 503 + UMKM UI — Card Image & Product Detail
 
 **Tanggal:** 10 Juni 2026  
-**Versi:** 0.1.74  
-**Branch:** tasks/security/validasi-upload-upl-img-single/10-06-26
+**Versi:** 0.1.77  
+**Branch:** tasks/umkm-ui/fix-card-image-product-detail/10-Jun-26
 
 ---
 
-## Konteks
+## Perubahan 1 — Fix Login 503 (WA OTP Response Format)
 
-Analisis temuan security review terhadap beberapa endpoint auth dan file upload. Dari 4 temuan yang dianalisis:
+**File:** `src/app/api/auth/login/route.ts` (line 45)
 
-| Temuan | Status |
-|---|---|
-| OTP log leak di `send-otp-register` | Sudah diperbaiki sebelumnya (v0.1.71) — tidak applicable |
-| Rate limiting tidak ada di endpoint OTP | Sudah ada `otpSendLimiter` + `otpVerifyLimiter` — tidak applicable |
-| `force-dynamic` di `layout.tsx` | Tidak ada di file aktual — tidak applicable |
-| Validasi upload `upl-img-single.ts` | **Applicable — diperbaiki di rilis ini** |
+**Masalah:** Endpoint POST `/api/auth/login` selalu return 503 saat user yang terdaftar mencoba login. WA OTP terkirim ke WhatsApp tapi backend tetap reject.
 
----
-
-## Perubahan
-
-### `src/app/api/[[...slugs]]/_lib/upl-img-single.ts`
-
-**Masalah:** Tidak ada validasi ekstensi maupun MIME type. File apapun bisa diupload, dengan `Content-Type` sepenuhnya dari client (`file.type || "image/jpeg"`). Error handling mengembalikan string `"error"` alih-alih throw, sehingga caller tidak bisa detect kegagalan.
+**Akar masalah:** Kode lama mengecek `sendWa.status !== "success"`, padahal WA server `otp.wibudev.com` mengembalikan `{ "success": true }` — bukan `{ status: "success" }`. Field `sendWa.status` selalu `undefined`, sehingga kondisi selalu `true` → selalu return 503.
 
 **Perbaikan:**
-- Tambah `ALLOWED_EXTENSIONS` whitelist: `jpg, jpeg, png, gif, webp`
-- Tambah `ALLOWED_MIMES` whitelist: `image/jpeg, image/png, image/gif, image/webp`
-- Validasi ekstensi dari nama file sebelum upload
-- Validasi MIME dari `file.type` sebelum upload
-- Ganti `return "error"` → `throw new Error(...)` agar konsisten dengan `upl-img.ts`
-- Perbaiki ekstraksi ekstensi menggunakan `.replace(".", "")` agar format konsisten dengan whitelist
+```ts
+// Sebelum
+if (sendWa.status !== "success")
 
-**Pola disalin dari:** `upl-img.ts` yang sudah memiliki validasi serupa — tidak ada dependency baru.
+// Sesudah
+if (!sendWa.success)
+```
+
+---
+
+## Perubahan 2 — UMKM Katalog Produk: Card Image Uniform
+
+**File:** `src/app/darmasaba/(pages)/ekonomi/umkm/page.tsx` (TabProdukUmkm)
+
+**Masalah:** Card produk di grid memiliki tinggi berbeda-beda karena:
+1. `height={160}` (HTML attribute) tidak enforce CSS height dengan benar
+2. `motion.div` dan `Card` tidak stretch ke tinggi row grid
+
+**Perbaikan:**
+- Ganti `height={160}` → `h={160} w="100%" fit="cover"` (Mantine CSS props)
+- Tambah `style={{ height: '100%' }}` pada `motion.div` dan `Card`
+
+---
+
+## Perubahan 3 — UMKM Product Detail: Layout 2 Kolom
+
+**File:** `src/app/darmasaba/(pages)/ekonomi/umkm/produk/[id]/page.tsx`
+
+**Masalah:** Image produk stretch full-width container tanpa constraint — terlalu besar dan mengambil hampir seluruh layar.
+
+**Perbaikan:** Refactor layout menjadi 2 kolom menggunakan Mantine `Grid`:
+- **Kiri (5/12):** Image dengan `h={260}` mobile / `h={360}` desktop + `fit="cover"`
+- **Kanan (7/12):** Nama produk, harga, badge stok, divider, deskripsi, tombol pesan
+- Mobile tetap stacked (base: 12)
 
 ---
 
 ## Yang Tidak Diubah
 
-- `upl-img.ts` — sudah punya whitelist, hanya kurang magic bytes (risiko minim karena `img.ts` serve handler menentukan Content-Type dari ekstensi server-side, dan `sharp` bertindak sebagai implicit validator)
-- `fileStorage/_lib/create.ts` — path gambar sudah diproses `sharp` (implicit magic bytes), audio/document low priority
+- Logic order/WA message — tidak berubah
+- State management (`umkmState`) — tidak berubah
+- API endpoints — tidak berubah
 
 ---
 
-## Dampak
+## Deployment
 
-- Semua caller `uplImgSingle` yang selama ini mengabaikan return value `"error"` sekarang perlu wrap dengan try/catch jika belum
-- Tidak ada breaking change pada interface — parameter tidak berubah
+- Fix login 503 sudah di-deploy ke STG pada v0.1.77
+- UMKM UI fix (perubahan 2 & 3) belum di-deploy, menunggu deploy berikutnya
