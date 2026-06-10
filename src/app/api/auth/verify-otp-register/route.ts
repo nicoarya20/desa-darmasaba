@@ -35,8 +35,10 @@ export async function POST(req: Request) {
       );
     }
 
-    const OTP_TTL_MS = 5 * 60 * 1000;
-    if (Date.now() - otpRecord.createdAt.getTime() > OTP_TTL_MS) {
+    const isExpired = otpRecord.expiresAt
+      ? Date.now() > otpRecord.expiresAt.getTime()
+      : Date.now() - otpRecord.createdAt.getTime() > 5 * 60 * 1000;
+    if (isExpired) {
       await prisma.kodeOtp.update({ where: { id: kodeId }, data: { isActive: false } });
       return NextResponse.json(
         { success: false, message: "Kode OTP sudah kadaluarsa, silakan minta kode baru" },

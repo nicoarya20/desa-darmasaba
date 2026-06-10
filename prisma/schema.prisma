@@ -2314,12 +2314,13 @@ model Role {
 }
 
 model KodeOtp {
-  id        String   @id @default(cuid())
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id        String    @id @default(cuid())
+  isActive  Boolean   @default(true)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   nomor     String
   otp       Int
+  expiresAt DateTime?
 }
 
 model UserSession {

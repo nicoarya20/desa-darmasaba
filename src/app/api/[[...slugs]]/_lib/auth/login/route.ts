@@ -50,7 +50,8 @@ export async function POST(req: Request) {
     const otpRecord = await prisma.kodeOtp.create({
       data: {
         nomor: nomor,
-        otp: codeOtp, // Pastikan tipe ini number (Int di Prisma = number di TS)
+        otp: codeOtp,
+        expiresAt: new Date(Date.now() + 5 * 60 * 1000),
       },
     });
 
