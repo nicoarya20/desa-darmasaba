@@ -2,6 +2,7 @@ import prisma from "@/lib/prisma";
 import cors, { HTTPMethod } from "@elysiajs/cors";
 import swagger from "@elysiajs/swagger";
 import { Elysia, t } from "elysia";
+import { requireAuth } from "@/lib/api-auth";
 import fs from "fs/promises";
 import path from "path";
 import Desa from "./_lib/desa";
@@ -87,6 +88,25 @@ const ApiServer = new Elysia()
   })
   .group("/api", (app) =>
     app
+      .onBeforeHandle(async ({ request, set }) => {
+        const method = request.method;
+        const { pathname } = new URL(request.url);
+
+        // GET paths yang hanya boleh diakses admin
+        const ADMIN_ONLY_GET_PATHS = ["/api/user", "/api/role", "/api/fileStorage", "/api/imgs"];
+
+        const needsAuth =
+          ["POST", "PUT", "DELETE", "PATCH"].includes(method) ||
+          ADMIN_ONLY_GET_PATHS.some((p) => pathname.startsWith(p));
+
+        if (!needsAuth) return;
+
+        const authResult = await requireAuth();
+        if (!authResult.authenticated) {
+          set.status = 401;
+          return { success: false, message: "Unauthorized - Silakan login terlebih dahulu" };
+        }
+      })
       .use(Utils)
       .get("/version", async () => {
         const packageJson = await fs.readFile(
