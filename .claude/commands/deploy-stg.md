@@ -37,17 +37,7 @@ Gunakan MCP tool `check_migrations` (server: `deploy-stg`).
 
 ---
 
-### Langkah 3 — Build Check
-
-```bash
-bun run build
-```
-
-Jika build gagal → **stop**, perbaiki error sebelum melanjutkan.
-
----
-
-### Langkah 4 — Commit & Push ke stg
+### Langkah 3 — Commit & Push ke stg
 
 Gunakan MCP tool `commit_and_push_stg` (server: `deploy-stg`).
 
@@ -55,19 +45,19 @@ Tool otomatis stage `package.json` + `prisma/migrations/`, commit dengan message
 
 ---
 
-### Langkah 5 — Trigger publish.yml
+### Langkah 4 — Trigger publish.yml
 
 Gunakan MCP tool `trigger_publish` (server: `deploy-stg`):
 - `stack_env`: `stg` (default)
 - `tag`: nilai `new_version` dari Langkah 1 (sama persis dengan versi di `package.json`)
 
 Tool mengembalikan `run_id`. Poll dengan `watch_workflow_run` setiap 30 detik hingga `status == "completed"`:
-- `conclusion == "success"` → lanjut ke Langkah 6
+- `conclusion == "success"` → lanjut ke Langkah 5
 - `conclusion != "success"` → **stop**, tampilkan error, jangan lanjut ke re-pull
 
 ---
 
-### Langkah 6 — Trigger re-pull.yml
+### Langkah 5 — Trigger re-pull.yml
 
 Setelah publish berhasil, gunakan MCP tool `trigger_repull` (server: `deploy-stg`):
 - `stack_name`: otomatis dari env `STACK_NAME` (tidak perlu diisi manual)
@@ -77,10 +67,11 @@ Stack yang di-deploy: `<STACK_NAME>-stg`. Poll dengan `watch_workflow_run` setia
 
 ---
 
-### Langkah 7 — Verifikasi Versi
+### Langkah 6 — Verifikasi Versi
 
 Gunakan MCP tool `check_stg_version` (server: `deploy-stg`):
 - `wait_seconds`: `30` (tunggu container siap)
+
 
 Tool otomatis fetch `BASE_URL/api/version` dan bandingkan dengan versi lokal.
 - `match: true` → **Deploy berhasil!**
