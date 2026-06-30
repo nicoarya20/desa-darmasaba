@@ -28,5 +28,11 @@
     "name": "ADMIN PENDIDIKAN",
     "description": "Administrator Bidang Pendidikan",
     "isActive": true
+  },
+  {
+    "id": "5",
+    "name": "USER",
+    "description": "User Publik (Login Google)",
+    "isActive": true
   }
 ]

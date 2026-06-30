@@ -145,15 +145,19 @@ import seedAssets from "./seed_assets";
         continue;
       }
 
+      const uu = u as typeof u & { email?: string };
+      // Identifikasi unik: pakai nomor jika ada (admin OTP lama), fallback email (admin Google-only)
+      const where = uu.nomor ? { nomor: uu.nomor } : { email: uu.email };
       await safeSeedUnique(
         "user",
-        { nomor: u.nomor },
+        where,
         {
-          id: u.id,
-          username: u.username,
-          nomor: u.nomor,
-          roleId: u.roleId.toString(),
-          isActive: u.isActive,
+          id: uu.id,
+          username: uu.username,
+          nomor: uu.nomor ?? null,
+          email: uu.email ?? null,
+          roleId: uu.roleId.toString(),
+          isActive: uu.isActive,
           sessionInvalid: false,
         },
       );

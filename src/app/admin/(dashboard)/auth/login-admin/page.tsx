@@ -1,17 +1,28 @@
 'use client';
 import { apiFetchLogin } from '@/app/api/auth/_lib/api_fetch_auth';
 import colors from '@/con/colors';
-import { Box, Button, Center, Image, Paper, Stack, Title } from '@mantine/core';
+import { Box, Button, Center, Divider, Image, Paper, Stack, Text, Title } from '@mantine/core';
+import { IconBrandGoogle } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { PhoneInput } from 'react-international-phone';
 import 'react-international-phone/style.css';
 import { toast } from 'react-toastify';
 
+// Toggle UI login OTP. Backend OTP (/api/auth/*) tetap utuh — ini hanya
+// menyembunyikan form phone/OTP di tampilan. Set true untuk memunculkan lagi.
+const SHOW_OTP_LOGIN = false;
+
 function Login() {
   const router = useRouter();
   const [phone, setPhone] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // Mulai alur Google OAuth. Pakai full-page navigation (bukan router.push)
+  // karena OAuth butuh redirect HTTP ke Google, bukan client-side nav.
+  function onGoogleLogin() {
+    window.location.href = '/api/auth/google';
+  }
 
   // Login.tsx
   async function onLogin() {
@@ -72,29 +83,49 @@ function Login() {
                 </Center>
               </Box>
               <Box w="100%">
-                <PhoneInput
-                  countrySelectorStyleProps={{
-                    buttonStyle: {
-                      backgroundColor: colors['blue-button'],
-                    },
-                  }}
-                  inputStyle={{ width: '100%' }}
-                  defaultCountry="id"
-                  value={phone}
-                  onChange={(val) => setPhone(val)}
-                />
+                {SHOW_OTP_LOGIN && (
+                  <>
+                    <PhoneInput
+                      countrySelectorStyleProps={{
+                        buttonStyle: {
+                          backgroundColor: colors['blue-button'],
+                        },
+                      }}
+                      inputStyle={{ width: '100%' }}
+                      defaultCountry="id"
+                      value={phone}
+                      onChange={(val) => setPhone(val)}
+                    />
 
-                <Box py={20}>
-                  <Button
-                    fullWidth
-                    bg={colors['blue-button']}
-                    radius="xl"
-                    onClick={onLogin}
-                    loading={loading}
-                  >
-                    Masuk
-                  </Button>
-                </Box>
+                    <Box py={20}>
+                      <Button
+                        fullWidth
+                        bg={colors['blue-button']}
+                        radius="xl"
+                        onClick={onLogin}
+                        loading={loading}
+                      >
+                        Masuk
+                      </Button>
+                    </Box>
+
+                    <Divider my="sm" label="atau" labelPosition="center" />
+                  </>
+                )}
+
+                <Button
+                  fullWidth
+                  variant="default"
+                  radius="xl"
+                  leftSection={<IconBrandGoogle size={18} />}
+                  onClick={onGoogleLogin}
+                >
+                  Login dengan Google
+                </Button>
+
+                <Text ta="center" size="xs" c="dimmed" mt="sm">
+                  Masuk menggunakan akun Google Anda
+                </Text>
               </Box>
             </Stack>
           </Paper>

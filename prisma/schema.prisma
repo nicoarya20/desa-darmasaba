@@ -2284,7 +2284,10 @@ model DataPendidikan {
 model User {
   id             String           @id @default(cuid())
   username       String
-  nomor          String           @unique
+  nomor          String?          @unique // nullable: user login Google tidak punya nomor HP
+  email          String?          @unique // identitas dari Google OAuth
+  googleId       String?          @unique // Google account ID, di-link saat login Google pertama
+  avatarUrl      String? // foto profil dari Google
   roleId         String           @default("2")
   isActive       Boolean          @default(false)
   sessionInvalid Boolean          @default(false)

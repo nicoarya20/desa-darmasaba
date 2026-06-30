@@ -53,6 +53,10 @@ export async function middleware(request: NextRequest) {
     if (!user || !user.isActive) {
       return NextResponse.redirect(new URL('/login', request.url));
     }
+    // Guard role: roleId 0-4 = admin; user biasa (5+, mis. login Google) tidak boleh /admin
+    if (Number(user.roleId) > 4) {
+      return NextResponse.redirect(new URL('/profile', request.url));
+    }
     return NextResponse.next();
   } catch (error) {
     console.error('Middleware auth error:', error);
