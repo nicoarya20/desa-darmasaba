@@ -21,6 +21,8 @@ export async function GET() {
           id: true,
           username: true,
           nomor: true,
+          email: true,
+          avatarUrl: true,
           roleId: true,   // STRING!
           isActive: true, // BOOLEAN!
         },
@@ -45,6 +47,8 @@ export async function GET() {
         name: dbUser.username,
         username: dbUser.username,
         nomor: dbUser.nomor,
+        email: dbUser.email,
+        avatar: dbUser.avatarUrl,
         roleId: dbUser.roleId,     // STRING!
         isActive: dbUser.isActive, // BOOLEAN!
         menuIds: menuAccess.map(m => m.menuId),

@@ -18,9 +18,10 @@ function Login() {
   const [phone, setPhone] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Placeholder sampai backend Google OAuth (/api/auth/google) tersedia.
+  // Mulai alur Google OAuth. Pakai full-page navigation (bukan router.push)
+  // karena OAuth butuh redirect HTTP ke Google, bukan client-side nav.
   function onGoogleLogin() {
-    toast.info('Login dengan Google segera hadir');
+    window.location.href = '/api/auth/google';
   }
 
   // Login.tsx
