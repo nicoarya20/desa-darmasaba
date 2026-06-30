@@ -4,6 +4,7 @@ import { describe, it, expect } from 'vitest';
 import { buildConsentUrl, DEFAULT_SCOPE } from '@/app/api/auth/_lib/google/oauth_client';
 import { mapUserInfoToUser } from '@/app/api/auth/_lib/google/user_resolver';
 import { redirectByRole, PROFILE_PATH } from '@/app/api/auth/_lib/google/redirect_by_role';
+import { getRequestOrigin } from '@/app/api/auth/_lib/google/request_origin';
 
 describe('buildConsentUrl', () => {
   const base = {
@@ -74,5 +75,33 @@ describe('redirectByRole', () => {
     expect(redirectByRole('5')).toBe(PROFILE_PATH);
     expect(redirectByRole(5)).toBe('/profile');
     expect(redirectByRole('9')).toBe(PROFILE_PATH);
+  });
+});
+
+describe('getRequestOrigin', () => {
+  const req = (headers: Record<string, string>) =>
+    new Request('http://localhost:3000/api/auth/google/callback', { headers });
+
+  it('uses X-Forwarded-* headers set by the proxy', () => {
+    const origin = getRequestOrigin(
+      req({ 'x-forwarded-proto': 'https', 'x-forwarded-host': 'desa-darmasaba-stg.wibudev.com' }),
+    );
+    expect(origin).toBe('https://desa-darmasaba-stg.wibudev.com');
+  });
+
+  it('falls back to host header when forwarded host absent', () => {
+    const origin = getRequestOrigin(req({ host: 'example.com' }));
+    expect(origin).toBe('https://example.com');
+  });
+
+  it('takes the first entry when a header carries a proxy-chain list', () => {
+    const origin = getRequestOrigin(
+      req({ 'x-forwarded-proto': 'https, http', 'x-forwarded-host': 'public.com, internal:3000' }),
+    );
+    expect(origin).toBe('https://public.com');
+  });
+
+  it('defaults proto to https when only host is present', () => {
+    expect(getRequestOrigin(req({ 'x-forwarded-host': 'a.com' }))).toBe('https://a.com');
   });
 });
