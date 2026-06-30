@@ -3,6 +3,7 @@
 import { NextResponse } from "next/server";
 import { randomBytes } from "node:crypto";
 import { buildConsentUrl, OAUTH_STATE_COOKIE } from "../_lib/google/oauth_client";
+import { getRequestOrigin } from "../_lib/google/request_origin";
 
 export async function GET(req: Request) {
   const clientId = process.env.GOOGLE_CLIENT_ID;
@@ -10,9 +11,9 @@ export async function GET(req: Request) {
 
   if (!clientId || !redirectUri) {
     console.error("❌ Google OAuth: GOOGLE_CLIENT_ID / GOOGLE_REDIRECT_URI belum di-set");
-    // base URL diambil dari origin request (req.url) — NEXT_PUBLIC_BASE_URL bisa "/" yang
-    // membuat new URL() melempar TypeError → 500 buram. Origin selalu absolut & aman.
-    return NextResponse.redirect(new URL("/login?error=oauth_config", req.url));
+    // base URL dari forwarded headers — req.url bisa jadi host internal (localhost:3000)
+    // di belakang proxy, dan NEXT_PUBLIC_BASE_URL bisa "/" yang membuat new URL() throw.
+    return NextResponse.redirect(new URL("/login?error=oauth_config", getRequestOrigin(req)));
   }
 
   const state = randomBytes(16).toString("hex");

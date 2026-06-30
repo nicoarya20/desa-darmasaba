@@ -6,11 +6,15 @@ import { sessionCreate } from "../../_lib/session_create";
 import { exchangeCodeForToken, fetchUserInfo, OAUTH_STATE_COOKIE } from "../../_lib/google/oauth_client";
 import { mapUserInfoToUser, resolveOrCreateUser } from "../../_lib/google/user_resolver";
 import { redirectByRole } from "../../_lib/google/redirect_by_role";
+import { getRequestOrigin } from "../../_lib/google/request_origin";
 
 export async function GET(req: Request) {
   const url = new URL(req.url);
+  // origin publik dari forwarded headers — req.url bisa jadi host internal (localhost:3000)
+  // di belakang proxy, yang membuat redirect mendarat ke host yang salah.
+  const origin = getRequestOrigin(req);
   const loginError = (reason: string) =>
-    NextResponse.redirect(new URL(`/login?error=${reason}`, req.url));
+    NextResponse.redirect(new URL(`/login?error=${reason}`, origin));
 
   // Google bisa balik dengan ?error= (mis. user batal)
   if (url.searchParams.get("error")) return loginError("oauth_denied");
@@ -59,7 +63,7 @@ export async function GET(req: Request) {
     });
 
     // sessionCreate sudah set cookie sesi via next/headers; tinggal redirect.
-    const response = NextResponse.redirect(new URL(redirectByRole(user.roleId), req.url));
+    const response = NextResponse.redirect(new URL(redirectByRole(user.roleId), origin));
     response.cookies.delete(OAUTH_STATE_COOKIE);
     return response;
   } catch (error) {
