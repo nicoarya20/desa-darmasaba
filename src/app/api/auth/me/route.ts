@@ -1,11 +1,13 @@
 // src/app/api/auth/me/route.ts
 import { NextResponse } from 'next/server';
-import { verifySession } from '../_lib/session_verify';
+import { headers } from 'next/headers';
+import { auth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 
 export async function GET() {
   try {
-    const sessionUser = await verifySession();
+    const session = await auth.api.getSession({ headers: await headers() });
+    const sessionUser = session?.user;
     if (!sessionUser) {
       return NextResponse.json(
         { success: false, message: "Unauthorized", user: null },
