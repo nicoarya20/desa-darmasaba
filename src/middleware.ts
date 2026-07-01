@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { betterFetch } from "@better-fetch/fetch";
-import { isAdminRole, isAccountActive } from "./lib/auth-policy";
+import { isAdminRole, isAccountActive, publicOriginFromHeaders } from "./lib/auth-policy";
 
 // Bentuk minimal sesi Better Auth yang dibutuhkan guard (roleId/isActive
 // dari additionalFields). cookieCache dimatikan → wajib fetch get-session.
@@ -13,7 +13,7 @@ async function getSession(request: NextRequest): Promise<SessionResponse> {
   const { data } = await betterFetch<SessionResponse>(
     "/api/auth/get-session",
     {
-      baseURL: request.nextUrl.origin,
+      baseURL: publicOriginFromHeaders((n) => request.headers.get(n)),
       headers: { cookie: request.headers.get("cookie") ?? "" },
     },
   );
@@ -30,7 +30,14 @@ export async function middleware(request: NextRequest) {
   }
 
   // /admin/*: butuh sesi Better Auth valid + aktif + role admin (roleId <= 4).
-  const session = await getSession(request);
+  // getSession bisa gagal (jaringan/proxy) — perlakukan sebagai tidak-terautentikasi
+  // dan redirect ke login, jangan sampai melempar 500 di guard.
+  let session: SessionResponse = null;
+  try {
+    session = await getSession(request);
+  } catch {
+    return NextResponse.redirect(loginUrl);
+  }
   if (!session?.user || !isAccountActive(session.user.isActive)) {
     return NextResponse.redirect(loginUrl);
   }

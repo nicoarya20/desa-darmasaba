@@ -36,6 +36,22 @@ export function isAccountActive(
 // Halaman profil publik untuk user non-admin (roleId 5+).
 export const PROFILE_PATH = "/profile";
 
+/**
+ * Origin publik (proto://host) dari header request. Di belakang proxy
+ * (Cloudflare → Portainer), `nextUrl.origin` ter-resolve ke host internal container
+ * (`https://localhost:3000`) → fetch HTTPS ke localhost gagal TLS
+ * (ERR_TLS_CERT_ALTNAME_INVALID). Prioritaskan X-Forwarded-* dari proxy.
+ * Fungsi murni — header bisa berupa list "a, b" (rantai proxy), ambil entri pertama.
+ */
+export function publicOriginFromHeaders(get: (name: string) => string | null): string {
+  const proto = get("x-forwarded-proto")?.split(",")[0]?.trim() || "https";
+  const host =
+    get("x-forwarded-host")?.split(",")[0]?.trim() ||
+    get("host")?.split(",")[0]?.trim() ||
+    "";
+  return `${proto}://${host}`;
+}
+
 /** Tujuan redirect setelah login berdasar role (admin → dashboard, user → profil). */
 export function defaultRouteForRole(roleId: string | number | null | undefined): string {
   switch (Number(roleId)) {

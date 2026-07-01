@@ -7,6 +7,7 @@ import {
   resolveRoleForNewUser,
   isAdminRole,
   isAccountActive,
+  publicOriginFromHeaders,
 } from '@/lib/auth-policy';
 
 describe('resolveRoleForNewUser', () => {
@@ -66,5 +67,33 @@ describe('isAccountActive', () => {
   it('isActive null/undefined → dianggap aktif (default Google user aktif)', () => {
     expect(isAccountActive(null)).toBe(true);
     expect(isAccountActive(undefined)).toBe(true);
+  });
+});
+
+describe('publicOriginFromHeaders', () => {
+  const mk = (h: Record<string, string>) => (n: string) => h[n.toLowerCase()] ?? null;
+
+  it('pakai X-Forwarded-* dari proxy (bukan localhost internal)', () => {
+    expect(
+      publicOriginFromHeaders(
+        mk({ 'x-forwarded-proto': 'https', 'x-forwarded-host': 'desa-darmasaba-stg.wibudev.com' }),
+      ),
+    ).toBe('https://desa-darmasaba-stg.wibudev.com');
+  });
+
+  it('ambil entri pertama saat header berupa rantai proxy "a, b"', () => {
+    expect(
+      publicOriginFromHeaders(
+        mk({ 'x-forwarded-proto': 'https, http', 'x-forwarded-host': 'public.com, localhost:3000' }),
+      ),
+    ).toBe('https://public.com');
+  });
+
+  it('fallback ke host header bila forwarded-host absen', () => {
+    expect(publicOriginFromHeaders(mk({ host: 'example.com' }))).toBe('https://example.com');
+  });
+
+  it('default proto https bila hanya host tersedia', () => {
+    expect(publicOriginFromHeaders(mk({ 'x-forwarded-host': 'a.com' }))).toBe('https://a.com');
   });
 });
