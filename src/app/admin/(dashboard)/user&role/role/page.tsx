@@ -19,13 +19,20 @@ import {
   Title
 } from '@mantine/core';
 import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
-import { IconEdit, IconPlus, IconSearch, IconTrash } from '@tabler/icons-react';
+import { IconEdit, IconLock, IconPlus, IconSearch, IconTrash } from '@tabler/icons-react';
+import { Tooltip } from '@mantine/core';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../_com/header';
 import { ModalKonfirmasiHapus } from '../../_com/modalKonfirmasiHapus';
 import user from '../../_state/user/user-state';
+
+// Role bawaan sistem (0-5). Tidak boleh diedit/dihapus dari UI: role "5" (USER)
+// adalah default login Google (DEFAULT_USER_ROLE_ID di user_resolver.ts) —
+// menghapusnya akan mematahkan pembuatan user Google. Hanya role custom baru
+// (id di luar 0-5) yang boleh diubah.
+const SYSTEM_ROLE_IDS = ["0", "1", "2", "3", "4", "5"];
 
 function Role() {
   const [search, setSearch] = useState('');
@@ -118,15 +125,25 @@ function ListRole({ search }: { search: string }) {
               </TableTr>
             </TableThead>
             <TableTbody>
-              {filteredData.map((item) => (
+              {filteredData.map((item) => {
+                const isSystemRole = SYSTEM_ROLE_IDS.includes(item.id);
+                return (
                 <TableTr key={item.id}>
                   <TableTd fz="md" fw={500} lh={1.5}>
-                    {item.name}
+                    <Group gap="xs">
+                      {item.name}
+                      {isSystemRole && (
+                        <Tooltip label="Role sistem — tidak bisa diubah/dihapus" withArrow>
+                          <IconLock size={16} color={colors['blue-button']} />
+                        </Tooltip>
+                      )}
+                    </Group>
                   </TableTd>
                   <TableTd>
                     <Button
                       variant="light"
                       color="green"
+                      disabled={isSystemRole}
                       onClick={() => router.push(`/admin/user&role/role/${item.id}`)}
                       fz="sm"
                       px="xs"
@@ -139,7 +156,7 @@ function ListRole({ search }: { search: string }) {
                     <Button
                       variant="light"
                       color="red"
-                      disabled={listDataState.delete.loading}
+                      disabled={isSystemRole || listDataState.delete.loading}
                       onClick={() => {
                         setSelectedId(item.id);
                         setModalHapus(true);
@@ -152,7 +169,8 @@ function ListRole({ search }: { search: string }) {
                     </Button>
                   </TableTd>
                 </TableTr>
-              ))}
+                );
+              })}
             </TableTbody>
           </Table>
         </Box>
@@ -160,21 +178,29 @@ function ListRole({ search }: { search: string }) {
         {/* Mobile Card View */}
         <Box hiddenFrom="md">
           <Stack gap="md">
-            {filteredData.map((item) => (
+            {filteredData.map((item) => {
+              const isSystemRole = SYSTEM_ROLE_IDS.includes(item.id);
+              return (
               <Paper key={item.id} withBorder p="md" radius="sm">
                 <Stack gap="xs">
                   <Box>
                     <Text fz="xs" fw={600} lh={1.4}>
                       Role
                     </Text>
-                    <Text fz="sm" fw={500} lh={1.4}>
-                      {item.name}
-                    </Text>
+                    <Group gap="xs">
+                      <Text fz="sm" fw={500} lh={1.4}>
+                        {item.name}
+                      </Text>
+                      {isSystemRole && (
+                        <IconLock size={14} color={colors['blue-button']} />
+                      )}
+                    </Group>
                   </Box>
                   <Group justify="flex-end" gap="xs">
                     <Button
                       variant="light"
                       color="green"
+                      disabled={isSystemRole}
                       onClick={() => router.push(`/admin/user&role/role/${item.id}`)}
                       fz="xs"
                       px="xs"
@@ -185,7 +211,7 @@ function ListRole({ search }: { search: string }) {
                     <Button
                       variant="light"
                       color="red"
-                      disabled={listDataState.delete.loading}
+                      disabled={isSystemRole || listDataState.delete.loading}
                       onClick={() => {
                         setSelectedId(item.id);
                         setModalHapus(true);
@@ -199,7 +225,8 @@ function ListRole({ search }: { search: string }) {
                   </Group>
                 </Stack>
               </Paper>
-            ))}
+              );
+            })}
           </Stack>
         </Box>
       </Paper>

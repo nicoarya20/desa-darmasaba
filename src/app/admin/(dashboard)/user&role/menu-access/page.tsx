@@ -11,6 +11,11 @@ import user from '../../_state/user/user-state'
 import { useShallowEffect } from '@mantine/hooks'
 
 
+// Menu-access hanya relevan untuk akun admin (role 0-4). Warga publik (role "5",
+// login Google) diarahkan ke /profile tanpa menu dashboard, jadi tidak perlu
+// muncul di sini.
+const ADMIN_ROLE_IDS = ["0", "1", "2", "3", "4"];
+
 // ✅ Helper: ekstrak semua menu ID dari struktur navBar
 const extractMenuIds = (navSections: typeof navBar) => {
   return navSections.map(section => ({
@@ -91,10 +96,12 @@ function MenuAccessPage() {
             <Text fw={500}>Pilih User:</Text>
             <Select
               placeholder="Pilih user"
-              data={stateUser.findMany.data.map(u => ({
-                value: u.id,
-                label: `${u.username} (${u.nomor})`,
-              }))}
+              data={stateUser.findMany.data
+                .filter(u => ADMIN_ROLE_IDS.includes(u.roleId))
+                .map(u => ({
+                  value: u.id,
+                  label: `${u.username} (${u.email ?? '-'})`,
+                }))}
               value={selectedUserId}
               onChange={setSelectedUserId}
               w={300}
