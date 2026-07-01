@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.84] - 2026-07-01
+### Fixed
+- Login Google user lama (`account_not_linked`): user yang dibuat sistem manual (`emailVerified=false`) kini bisa login — `accountLinking` dengan `trustedProviders: ["google"]` + `requireLocalEmailVerified: false`.
+- Redirect setelah login mengikuti role lagi: gateway `/auth/callback` membaca sesi server-side lalu mengarahkan admin ke dashboard sesuai role, user Google ke `/profile` (sebelumnya semua ke `/`).
+
+### Changed
+- Untrack file junk/generated dari repo (MIND/, QC/, test-results/, dll) + perluas `.gitignore`.
+
 ## [0.1.83] - 2026-07-01
 ### Added
 - Migrasi autentikasi ke **Better Auth** (Google OAuth saja), menyelaraskan dengan standar tim (`base-template2`). Session store di PostgreSQL, **tanpa Redis** (rate-limit storage `database`). Handler di `/api/auth/*` via `toNextJsHandler` — Elysia catch-all `/api/[[...slugs]]` tak berubah.
