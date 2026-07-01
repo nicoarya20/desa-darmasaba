@@ -1,30 +1,21 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { betterFetch } from "@better-fetch/fetch";
+import { getCookieCache } from "better-auth/cookies";
 import { isAdminRole, isAccountActive } from "./lib/auth-policy";
 
-// Bentuk minimal sesi Better Auth yang dibutuhkan guard (roleId/isActive
-// dari additionalFields). cookieCache dimatikan → wajib fetch get-session.
-type SessionResponse = {
-  user: { id: string; roleId?: string; isActive?: boolean };
-} | null;
+// User dari cookie cache Better Auth (additionalFields roleId/isActive ikut).
+type CachedUser = { id: string; roleId?: string; isActive?: boolean };
 
-// Validasi sesi lewat loopback INTERNAL container (127.0.0.1:PORT), bukan origin
-// publik. Memakai X-Forwarded-Host membuat container memanggil dirinya sendiri
-// lewat Cloudflare (round-trip eksternal) → lambat/hang (timeout). Sedangkan
-// nextUrl.origin ter-resolve ke https://localhost → gagal TLS. Loopback HTTP
-// menghindari keduanya. Cookie tetap diteruskan agar get-session bisa verifikasi.
-const INTERNAL_BASE_URL = `http://127.0.0.1:${process.env.PORT ?? "3000"}`;
-
-async function getSession(request: NextRequest): Promise<SessionResponse> {
-  const { data } = await betterFetch<SessionResponse>(
-    "/api/auth/get-session",
-    {
-      baseURL: INTERNAL_BASE_URL,
-      headers: { cookie: request.headers.get("cookie") ?? "" },
-    },
-  );
-  return data;
+// Baca sesi dari COOKIE CACHE — decode lokal di middleware, TANPA fetch/DB.
+// Sebelumnya middleware fetch get-session (loopback/proxy) → hang/timeout di
+// container. getCookieCache membaca & memverifikasi cookie signed langsung.
+// Cache TTL 60 dtk (lihat session.cookieCache di auth.ts) → role tetap fresh.
+async function getCachedUser(request: NextRequest): Promise<CachedUser | null> {
+  const cache = await getCookieCache(request, {
+    secret: process.env.BETTER_AUTH_SECRET,
+    isSecure: process.env.NODE_ENV === "production",
+  });
+  return (cache?.user as CachedUser | undefined) ?? null;
 }
 
 export async function middleware(request: NextRequest) {
@@ -37,20 +28,20 @@ export async function middleware(request: NextRequest) {
   }
 
   // /admin/*: butuh sesi Better Auth valid + aktif + role admin (roleId <= 4).
-  // getSession bisa gagal (jaringan/proxy) — perlakukan sebagai tidak-terautentikasi
-  // dan redirect ke login, jangan sampai melempar 500 di guard.
-  let session: SessionResponse = null;
+  // Gagal decode cookie → perlakukan sebagai tidak-terautentikasi (redirect login,
+  // bukan 500). Validasi penuh sesi tetap terjadi di server (getSession/requireAuth).
+  let user: CachedUser | null = null;
   try {
-    session = await getSession(request);
+    user = await getCachedUser(request);
   } catch {
     return NextResponse.redirect(loginUrl);
   }
-  if (!session?.user || !isAccountActive(session.user.isActive)) {
+  if (!user || !isAccountActive(user.isActive)) {
     return NextResponse.redirect(loginUrl);
   }
 
   // roleId 0-4 = admin; user biasa (5+, login Google) diarahkan ke profil.
-  if (!isAdminRole(session.user.roleId)) {
+  if (!isAdminRole(user.roleId)) {
     return NextResponse.redirect(new URL("/profile", request.url));
   }
 
