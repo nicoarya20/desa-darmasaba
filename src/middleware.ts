@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { betterFetch } from "@better-fetch/fetch";
-import { isAdminRole, isAccountActive, publicOriginFromHeaders } from "./lib/auth-policy";
+import { isAdminRole, isAccountActive } from "./lib/auth-policy";
 
 // Bentuk minimal sesi Better Auth yang dibutuhkan guard (roleId/isActive
 // dari additionalFields). cookieCache dimatikan → wajib fetch get-session.
@@ -9,11 +9,18 @@ type SessionResponse = {
   user: { id: string; roleId?: string; isActive?: boolean };
 } | null;
 
+// Validasi sesi lewat loopback INTERNAL container (127.0.0.1:PORT), bukan origin
+// publik. Memakai X-Forwarded-Host membuat container memanggil dirinya sendiri
+// lewat Cloudflare (round-trip eksternal) → lambat/hang (timeout). Sedangkan
+// nextUrl.origin ter-resolve ke https://localhost → gagal TLS. Loopback HTTP
+// menghindari keduanya. Cookie tetap diteruskan agar get-session bisa verifikasi.
+const INTERNAL_BASE_URL = `http://127.0.0.1:${process.env.PORT ?? "3000"}`;
+
 async function getSession(request: NextRequest): Promise<SessionResponse> {
   const { data } = await betterFetch<SessionResponse>(
     "/api/auth/get-session",
     {
-      baseURL: publicOriginFromHeaders((n) => request.headers.get(n)),
+      baseURL: INTERNAL_BASE_URL,
       headers: { cookie: request.headers.get("cookie") ?? "" },
     },
   );
