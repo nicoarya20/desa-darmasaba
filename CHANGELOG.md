@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.86] - 2026-07-01
+### Fixed
+- **`/admin/*` timeout intermiten (HTTP 524/hang) di STG**: setelah fix TLS 0.1.85, middleware memanggil `get-session` via `X-Forwarded-Host` (domain publik) sehingga container memanggil dirinya sendiri lewat Cloudflare (round-trip eksternal) → kadang hang >25s. Diganti ke loopback internal `http://127.0.0.1:PORT` — validasi sesi tetap jalan, tanpa keluar ke proxy, tanpa masalah TLS localhost.
+
 ## [0.1.85] - 2026-07-01
 ### Fixed
 - **500 Internal Server Error di `/admin/*` pada STG**: middleware memanggil `get-session` memakai `request.nextUrl.origin` yang di dalam container ter-resolve ke `https://localhost:3000` → fetch HTTPS ke localhost gagal validasi TLS (`ERR_TLS_CERT_ALTNAME_INVALID`) → guard melempar 500 di tiap akses admin. Origin kini diambil dari header `X-Forwarded-*` proxy (`publicOriginFromHeaders`), dan `getSession` yang gagal me-redirect ke `/login` alih-alih 500.
