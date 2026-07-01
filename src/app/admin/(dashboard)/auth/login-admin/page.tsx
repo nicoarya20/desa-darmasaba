@@ -1,63 +1,24 @@
 'use client';
-import { apiFetchLogin } from '@/app/api/auth/_lib/api_fetch_auth';
+import { authClient } from '@/lib/auth-client';
 import colors from '@/con/colors';
-import { Box, Button, Center, Divider, Image, Paper, Stack, Text, Title } from '@mantine/core';
+import { Box, Button, Center, Image, Paper, Stack, Text, Title } from '@mantine/core';
 import { IconBrandGoogle } from '@tabler/icons-react';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { PhoneInput } from 'react-international-phone';
-import 'react-international-phone/style.css';
 import { toast } from 'react-toastify';
 
-// Toggle UI login OTP. Backend OTP (/api/auth/*) tetap utuh — ini hanya
-// menyembunyikan form phone/OTP di tampilan. Set true untuk memunculkan lagi.
-const SHOW_OTP_LOGIN = false;
-
 function Login() {
-  const router = useRouter();
-  const [phone, setPhone] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Mulai alur Google OAuth. Pakai full-page navigation (bukan router.push)
-  // karena OAuth butuh redirect HTTP ke Google, bukan client-side nav.
-  function onGoogleLogin() {
-    window.location.href = '/api/auth/google';
-  }
-
-  // Login.tsx
-  async function onLogin() {
-
-    const cleanPhone = phone.replace(/\D/g, '');
-    if (cleanPhone.length < 10) {
-      toast.error('Nomor telepon tidak valid');
-      return;
-    }
-
+  // Mulai alur Google OAuth via Better Auth. Redirect ke consent Google,
+  // callback ke /api/auth/callback/google, lalu kembali ke callbackURL.
+  async function onGoogleLogin() {
     try {
       setLoading(true);
-      const response = await apiFetchLogin({ nomor: cleanPhone });
-
-      if (!response.success) {
-        toast.error(response.message || 'Gagal memproses login');
-        return;
-      }
-
-      // Simpan nomor untuk register
-      localStorage.setItem('auth_nomor', cleanPhone);
-      if (response.isRegistered) {
-        // ✅ User lama: simpan kodeId
-        localStorage.setItem('auth_kodeId', response.kodeId);
-
-        // ✅ Cookie sudah di-set oleh API, langsung redirect
-        router.push('/validasi'); // Clean URL
-      } else {
-        // ❌ User baru: langsung ke registrasi (tanpa kodeId)
-        router.push('/registrasi');
-      }
+      // callbackURL → gateway yang redirect sesuai role user (admin/profil).
+      await authClient.signIn.social({ provider: 'google', callbackURL: '/auth/callback' });
     } catch (error) {
-      console.error('Error Login:', error);
-      toast.error('Terjadi kesalahan saat login');
-    } finally {
+      console.error('Error Google login:', error);
+      toast.error('Gagal memulai login Google');
       setLoading(false);
     }
   }
@@ -83,42 +44,13 @@ function Login() {
                 </Center>
               </Box>
               <Box w="100%">
-                {SHOW_OTP_LOGIN && (
-                  <>
-                    <PhoneInput
-                      countrySelectorStyleProps={{
-                        buttonStyle: {
-                          backgroundColor: colors['blue-button'],
-                        },
-                      }}
-                      inputStyle={{ width: '100%' }}
-                      defaultCountry="id"
-                      value={phone}
-                      onChange={(val) => setPhone(val)}
-                    />
-
-                    <Box py={20}>
-                      <Button
-                        fullWidth
-                        bg={colors['blue-button']}
-                        radius="xl"
-                        onClick={onLogin}
-                        loading={loading}
-                      >
-                        Masuk
-                      </Button>
-                    </Box>
-
-                    <Divider my="sm" label="atau" labelPosition="center" />
-                  </>
-                )}
-
                 <Button
                   fullWidth
                   variant="default"
                   radius="xl"
                   leftSection={<IconBrandGoogle size={18} />}
                   onClick={onGoogleLogin}
+                  loading={loading}
                 >
                   Login dengan Google
                 </Button>

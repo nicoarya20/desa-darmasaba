@@ -1,25 +1,19 @@
 /**
- * Authentication helper untuk API endpoints
+ * Authentication helper untuk API endpoints (Elysia di /api/[[...slugs]]).
  *
- * Memvalidasi JWT dari cookie BASE_SESSION_KEY — sistem session yang sama
- * dipakai middleware.ts, login OTP (validasi), dan login Google (callback).
- * (Sebelumnya helper ini keliru membaca iron-session "desa-session" yang tak
- * pernah di-set, sehingga semua endpoint admin selalu 401.)
+ * Memvalidasi sesi Better Auth (Google OAuth). Bentuk return DIJAGA sama
+ * seperti sebelumnya ({ authenticated, user | response }) supaya konsumer
+ * (route.ts onBeforeHandle + endpoint) tak perlu berubah.
  *
  * Usage:
- * import { requireAuth } from "@/lib/api-auth";
- *
- * export default async function myEndpoint() {
  *   const authResult = await requireAuth();
- *   if (!authResult.authenticated) {
- *     return authResult.response;
- *   }
- *   // Lanjut proses dengan authResult.user
- * }
+ *   if (!authResult.authenticated) return authResult.response;
+ *   // ... authResult.user
  */
 
-import { cookies } from "next/headers";
-import { jwtVerify } from "jose";
+import { headers } from "next/headers";
+import { auth } from "./auth";
+import { ROLE_USER, isAccountActive } from "./auth-policy";
 
 export type AuthUser = {
   id: string;
@@ -38,37 +32,35 @@ const jsonResponse = (status: number, message: string): Response =>
     headers: { "Content-Type": "application/json" },
   });
 
-/** Verifikasi JWT dari cookie sesi. Mengembalikan payload user atau null. */
-async function verifySessionToken(token: string): Promise<AuthUser | null> {
-  const secret = new TextEncoder().encode(process.env.BASE_TOKEN_KEY!);
-  const { payload } = await jwtVerify(token, secret, { algorithms: ["HS256"] });
-  const user = (payload as { user?: AuthUser }).user;
-  if (!user || typeof user !== "object" || !user.id) return null;
-  return user;
+/** Ambil user dari sesi Better Auth, atau null jika tak ada sesi valid. */
+async function getSessionUser(): Promise<AuthUser | null> {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session?.user?.id) return null;
+  const u = session.user as {
+    id: string;
+    roleId?: string;
+    isActive?: boolean;
+  };
+  return {
+    id: u.id,
+    roleId: u.roleId ?? ROLE_USER,
+    isActive: u.isActive ?? true,
+  };
 }
 
 export async function requireAuth(): Promise<AuthResult> {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get(process.env.BASE_SESSION_KEY!)?.value;
+    const user = await getSessionUser();
 
-    if (!token) {
+    if (!user) {
       return {
         authenticated: false,
         response: jsonResponse(401, "Unauthorized - Silakan login terlebih dahulu"),
       };
     }
 
-    const user = await verifySessionToken(token);
-    if (!user) {
-      return {
-        authenticated: false,
-        response: jsonResponse(401, "Unauthorized - Sesi tidak valid"),
-      };
-    }
-
-    // Akun nonaktif (mis. menunggu persetujuan admin) tidak boleh akses API admin.
-    if (user.isActive === false) {
+    // Akun nonaktif (dinonaktifkan admin) tidak boleh akses API admin.
+    if (!isAccountActive(user.isActive)) {
       return {
         authenticated: false,
         response: jsonResponse(403, "Akun Anda tidak aktif. Hubungi administrator."),
@@ -77,7 +69,6 @@ export async function requireAuth(): Promise<AuthResult> {
 
     return { authenticated: true, user };
   } catch {
-    // jwtVerify melempar untuk token kadaluarsa/rusak → perlakukan sebagai unauthorized
     return {
       authenticated: false,
       response: jsonResponse(401, "Unauthorized - Sesi tidak valid"),
@@ -91,10 +82,7 @@ export async function requireAuth(): Promise<AuthResult> {
  */
 export async function optionalAuth(): Promise<AuthUser | null> {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get(process.env.BASE_SESSION_KEY!)?.value;
-    if (!token) return null;
-    return await verifySessionToken(token);
+    return await getSessionUser();
   } catch {
     return null;
   }

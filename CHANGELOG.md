@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.1.83] - 2026-07-01
+### Added
+- Migrasi autentikasi ke **Better Auth** (Google OAuth saja), menyelaraskan dengan standar tim (`base-template2`). Session store di PostgreSQL, **tanpa Redis** (rate-limit storage `database`). Handler di `/api/auth/*` via `toNextJsHandler` — Elysia catch-all `/api/[[...slugs]]` tak berubah.
+- Model Better Auth: `session`, `account`, `verification`, `rate_limit`, plus kolom `emailVerified` pada `users`. Field `name`/`image` dipetakan ke `username`/`avatarUrl` existing; `roleId`/`isActive` sebagai custom field (tak bisa di-set dari client).
+- `src/lib/auth-policy.ts`: kebijakan role murni (user Google baru → `roleId "5"`, email di `SUPER_ADMIN_EMAIL` → `roleId "1"`, gate admin `roleId <= 4`), dengan unit + contract test.
+
+### Changed
+- Login admin: tombol Google memakai `authClient.signIn.social` (Better Auth), form OTP dihapus dari tampilan.
+- Guard: `requireAuth` (API), `middleware.ts` (route), `/api/auth/me` & `/api/auth/logout` kini memakai sesi Better Auth. Bentuk return `requireAuth` dipertahankan (kontrak internal).
+- User Google baru langsung `isActive: true` → diarahkan ke `/profile` tanpa perlu approval admin.
+
+### Notes
+- **Env baru wajib**: `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` (lihat `.env.example`). Redirect URI Google console: `<BETTER_AUTH_URL>/api/auth/callback/google`.
+- **Cutover**: cookie sesi berganti → semua user perlu login ulang sekali (Google, 1 klik).
+- Kode OTP/iron-session/manual-Google lama masih ada (dorman) — penghapusan & drop tabel legacy (`user_sessions`, `KodeOtp`, kolom `googleId`) ditunda ke pekerjaan terpisah karena masih dipakai modul non-auth (user management, health check).
+
 ## [0.1.82] - 2026-06-30
 ### Fixed
 - Login Google: setelah memilih akun, user tidak lagi dilempar ke `https://localhost:3000/...`. Semua redirect callback (termasuk jalur sukses) kini memakai origin publik dari header `X-Forwarded-Proto`/`X-Forwarded-Host` yang di-set proxy (Cloudflare → Portainer), bukan `req.url` yang ter-resolve ke host internal container.
