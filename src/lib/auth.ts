@@ -3,12 +3,7 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import { APIError, createAuthMiddleware } from "better-auth/api";
 import prisma from "./prisma";
 import { env } from "./env";
-
-// Roles desa-darmasaba (relasi tabel Role, id string "0".."5"):
-//   "0" DEVELOPER | "1" SUPER ADMIN | "2" ADMIN DESA
-//   "3" ADMIN KESEHATAN | "4" ADMIN PENDIDIKAN | "5" USER (Login Google)
-const ROLE_SUPER_ADMIN = "1";
-const ROLE_USER = "5";
+import { ROLE_SUPER_ADMIN, ROLE_USER, resolveRoleForNewUser } from "./auth-policy";
 
 // Pola mengikuti base-template2 (standar tim), dengan 3 penyesuaian:
 //  (A) TANPA secondaryStorage (Redis) — session store Postgres saja.
@@ -78,8 +73,9 @@ export const auth = betterAuth({
       create: {
         before: async (userData) => {
           const email = (userData as { email?: string }).email ?? "";
-          if (env.SUPER_ADMIN_EMAILS.includes(email)) {
-            return { data: { ...userData, roleId: ROLE_SUPER_ADMIN } };
+          const roleId = resolveRoleForNewUser(email, env.SUPER_ADMIN_EMAILS);
+          if (roleId !== ROLE_USER) {
+            return { data: { ...userData, roleId } };
           }
         },
       },

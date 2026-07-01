@@ -13,6 +13,7 @@
 
 import { headers } from "next/headers";
 import { auth } from "./auth";
+import { ROLE_USER, isAccountActive } from "./auth-policy";
 
 export type AuthUser = {
   id: string;
@@ -42,7 +43,7 @@ async function getSessionUser(): Promise<AuthUser | null> {
   };
   return {
     id: u.id,
-    roleId: u.roleId ?? "5",
+    roleId: u.roleId ?? ROLE_USER,
     isActive: u.isActive ?? true,
   };
 }
@@ -59,7 +60,7 @@ export async function requireAuth(): Promise<AuthResult> {
     }
 
     // Akun nonaktif (dinonaktifkan admin) tidak boleh akses API admin.
-    if (user.isActive === false) {
+    if (!isAccountActive(user.isActive)) {
       return {
         authenticated: false,
         response: jsonResponse(403, "Akun Anda tidak aktif. Hubungi administrator."),
