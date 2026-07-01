@@ -7,14 +7,14 @@ import { z } from "zod";
 
 // State Valtio
 const userState = proxy({
-  // Find Many
+  // Find Many — tab Admin (roleGroup "admin") atau semua user (menu-access, tanpa roleGroup)
   findMany: {
     data: [] as Prisma.UserGetPayload<{ include: { role: true } }>[],
     page: 1,
     totalPages: 1,
     loading: false,
     search: "",
-    load: async (page = 1, limit = 10, search = "") => {
+    load: async (page = 1, limit = 10, search = "", roleGroup?: "admin" | "warga") => {
       userState.findMany.loading = true; // ✅ Akses langsung via nama path
       userState.findMany.page = page;
       userState.findMany.search = search;
@@ -22,6 +22,7 @@ const userState = proxy({
       try {
         const query: any = { page, limit };
         if (search) query.search = search;
+        if (roleGroup) query.roleGroup = roleGroup;
 
         const res = await ApiFetch.api.user["findMany"].get({ query });
 
@@ -38,6 +39,41 @@ const userState = proxy({
         userState.findMany.totalPages = 1;
       } finally {
         userState.findMany.loading = false;
+      }
+    },
+  },
+
+  // Find Many — tab Warga (roleGroup "warga"): warga publik hasil login Google (role 5)
+  warga: {
+    data: [] as Prisma.UserGetPayload<{ include: { role: true } }>[],
+    page: 1,
+    totalPages: 1,
+    loading: false,
+    search: "",
+    load: async (page = 1, limit = 10, search = "") => {
+      userState.warga.loading = true;
+      userState.warga.page = page;
+      userState.warga.search = search;
+
+      try {
+        const query: any = { page, limit, roleGroup: "warga" };
+        if (search) query.search = search;
+
+        const res = await ApiFetch.api.user["findMany"].get({ query });
+
+        if (res.status === 200 && res.data?.success) {
+          userState.warga.data = res.data.data ?? [];
+          userState.warga.totalPages = res.data.totalPages ?? 1;
+        } else {
+          userState.warga.data = [];
+          userState.warga.totalPages = 1;
+        }
+      } catch (err) {
+        console.error("Gagal fetch warga paginated:", err);
+        userState.warga.data = [];
+        userState.warga.totalPages = 1;
+      } finally {
+        userState.warga.loading = false;
       }
     },
   },

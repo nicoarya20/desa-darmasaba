@@ -1,35 +1,30 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
+import { buildUserWhere, type RoleGroup } from "./user_where";
 
 export default async function userFindMany(context: Context) {
   const page = Number(context.query.page) || 1;
   const limit = Number(context.query.limit) || 10;
-  const search = (context.query.search as string) || '';
+  const search = (context.query.search as string) || "";
+  // "admin" | "warga" | "" (kosong = semua, kompatibel pemanggil lama seperti menu-access)
+  const roleGroup = ((context.query.roleGroup as string) || "") as RoleGroup;
   const skip = (page - 1) * limit;
 
-  // Buat where clause
-  const where: any = { isActive: true };
-
-  // Tambahkan pencarian (jika ada)
-  if (search) {
-    where.OR = [
-      { nama: { contains: search, mode: 'insensitive' } },
-    ];
-  }
+  const where = buildUserWhere(roleGroup, search);
 
   try {
     const [data, total] = await Promise.all([
       prisma.user.findMany({
-      include: {
-        role: true,
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-      skip,
-      take: limit,
-    }),
+        where,
+        include: {
+          role: true,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+        skip,
+        take: limit,
+      }),
       prisma.user.count({ where }),
     ]);
 
