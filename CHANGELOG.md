@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.87] - 2026-07-01
+### Fixed
+- **`/admin/*` selalu hang/timeout di STG** (lanjutan 0.1.85/0.1.86): fetch `get-session` dari dalam middleware — baik via origin publik, loopback, maupun proxy — selalu menggantung di container. Middleware kini membaca sesi dari **cookie cache** (`getCookieCache`) yang di-decode lokal **tanpa HTTP call**. `session.cookieCache` diaktifkan (TTL 60 dtk) agar `roleId`/`isActive` tersedia di cookie; validasi penuh sesi tetap di server (`getSession`/`requireAuth`). Perubahan role/isActive berlaku maksimal ~60 dtk.
+
 ## [0.1.86] - 2026-07-01
 ### Fixed
 - **`/admin/*` timeout intermiten (HTTP 524/hang) di STG**: setelah fix TLS 0.1.85, middleware memanggil `get-session` via `X-Forwarded-Host` (domain publik) sehingga container memanggil dirinya sendiri lewat Cloudflare (round-trip eksternal) → kadang hang >25s. Diganti ke loopback internal `http://127.0.0.1:PORT` — validasi sesi tetap jalan, tanpa keluar ke proxy, tanpa masalah TLS localhost.
