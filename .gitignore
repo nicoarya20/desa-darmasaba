@@ -58,3 +58,23 @@ next-env.d.ts
 # local scripts
 ai.sh
 
+# test artifacts (generated)
+/test-results
+/playwright-report
+
+# AI tooling configs lain (personal, per-dev)
+/.qwen
+/.gemini
+
+# internal notes (tak perlu di repo)
+/QC
+/MIND
+
+# scratch / junk files
+/foldergambar
+xx
+xx.*
+xcoba*.ts
+zgen/
+test-berita-state.ts
+
